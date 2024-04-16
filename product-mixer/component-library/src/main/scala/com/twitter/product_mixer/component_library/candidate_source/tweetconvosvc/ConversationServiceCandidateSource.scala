@@ -1,173 +1,173 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t etconvosvc
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.tweetconvosvc.{thriftscala => tcs}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etconvosvc.t et_ancestor.{thr ftscala => ta}
+ mport com.tw ter.t etconvosvc.{thr ftscala => tcs}
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case class ConversationServiceCandidateSourceRequest(
-  tweetsWithConversationMetadata: Seq[TweetWithConversationMetadata])
+case class Conversat onServ ceCand dateS ceRequest(
+  t etsW hConversat on tadata: Seq[T etW hConversat on tadata])
 
-case class TweetWithConversationMetadata(
-  tweetId: Long,
-  userId: Option[Long],
-  sourceTweetId: Option[Long],
-  sourceUserId: Option[Long],
-  inReplyToTweetId: Option[Long],
-  conversationId: Option[Long],
-  ancestors: Seq[ta.TweetAncestor])
+case class T etW hConversat on tadata(
+  t et d: Long,
+  user d: Opt on[Long],
+  s ceT et d: Opt on[Long],
+  s ceUser d: Opt on[Long],
+   nReplyToT et d: Opt on[Long],
+  conversat on d: Opt on[Long],
+  ancestors: Seq[ta.T etAncestor])
 
 /**
- * Candidate source that fetches ancestors of input candidates from Tweetconvosvc and
- * returns a flattened list of input and ancestor candidates.
+ * Cand date s ce that fetc s ancestors of  nput cand dates from T etconvosvc and
+ * returns a flattened l st of  nput and ancestor cand dates.
  */
-@Singleton
-class ConversationServiceCandidateSource @Inject() (
-  conversationServiceClient: tcs.ConversationService.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      ConversationServiceCandidateSourceRequest,
-      TweetWithConversationMetadata
+@S ngleton
+class Conversat onServ ceCand dateS ce @ nject() (
+  conversat onServ ceCl ent: tcs.Conversat onServ ce. thodPerEndpo nt)
+    extends Cand dateS ceW hExtractedFeatures[
+      Conversat onServ ceCand dateS ceRequest,
+      T etW hConversat on tadata
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("ConversationService")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("Conversat onServ ce")
 
-  private val maxModuleSize = 3
-  private val maxAncestorsInConversation = 2
-  private val numberOfRootTweets = 1
-  private val maxTweetsInConversationWithSameId = 1
+  pr vate val maxModuleS ze = 3
+  pr vate val maxAncestors nConversat on = 2
+  pr vate val numberOfRootT ets = 1
+  pr vate val maxT ets nConversat onW hSa  d = 1
 
-  override def apply(
-    request: ConversationServiceCandidateSourceRequest
-  ): Stitch[CandidatesWithSourceFeatures[TweetWithConversationMetadata]] = {
-    val inputTweetsWithConversationMetadata: Seq[TweetWithConversationMetadata] =
-      request.tweetsWithConversationMetadata
+  overr de def apply(
+    request: Conversat onServ ceCand dateS ceRequest
+  ): St ch[Cand datesW hS ceFeatures[T etW hConversat on tadata]] = {
+    val  nputT etsW hConversat on tadata: Seq[T etW hConversat on tadata] =
+      request.t etsW hConversat on tadata
     val ancestorsRequest =
-      tcs.GetAncestorsRequest(inputTweetsWithConversationMetadata.map(_.tweetId))
+      tcs.GetAncestorsRequest( nputT etsW hConversat on tadata.map(_.t et d))
 
-    // build the tweets with conversation metadata by calling the conversation service with reduced
-    // ancestors to limit to maxModuleSize
-    val tweetsWithConversationMetadataFromAncestors: Stitch[Seq[TweetWithConversationMetadata]] =
-      Stitch
-        .callFuture(conversationServiceClient.getAncestors(ancestorsRequest))
+    // bu ld t  t ets w h conversat on  tadata by call ng t  conversat on serv ce w h reduced
+    // ancestors to l m  to maxModuleS ze
+    val t etsW hConversat on tadataFromAncestors: St ch[Seq[T etW hConversat on tadata]] =
+      St ch
+        .callFuture(conversat onServ ceCl ent.getAncestors(ancestorsRequest))
         .map { getAncestorsResponse: tcs.GetAncestorsResponse =>
-          inputTweetsWithConversationMetadata
-            .zip(getAncestorsResponse.ancestors).collect {
-              case (focalTweet, tcs.TweetAncestorsResult.TweetAncestors(ancestorsResult))
-                  if ancestorsResult.nonEmpty =>
-                getTweetsInThread(focalTweet, ancestorsResult.head)
+           nputT etsW hConversat on tadata
+            .z p(getAncestorsResponse.ancestors).collect {
+              case (focalT et, tcs.T etAncestorsResult.T etAncestors(ancestorsResult))
+                   f ancestorsResult.nonEmpty =>
+                getT ets nThread(focalT et, ancestorsResult. ad)
             }.flatten
         }
 
-    // dedupe the tweets in the list and transform the calling error to
-    // return the requested tweets with conversation metadata
-    val transformedTweetsWithConversationMetadata: Stitch[Seq[TweetWithConversationMetadata]] =
-      tweetsWithConversationMetadataFromAncestors.transform {
+    // dedupe t  t ets  n t  l st and transform t  call ng error to
+    // return t  requested t ets w h conversat on  tadata
+    val transfor dT etsW hConversat on tadata: St ch[Seq[T etW hConversat on tadata]] =
+      t etsW hConversat on tadataFromAncestors.transform {
         case Return(ancestors) =>
-          Stitch.value(dedupeCandidates(inputTweetsWithConversationMetadata, ancestors))
+          St ch.value(dedupeCand dates( nputT etsW hConversat on tadata, ancestors))
         case Throw(_) =>
-          Stitch.value(inputTweetsWithConversationMetadata)
+          St ch.value( nputT etsW hConversat on tadata)
       }
 
-    // return the candidates with empty source features from transformed tweetsWithConversationMetadata
-    transformedTweetsWithConversationMetadata.map {
-      responseTweetsWithConversationMetadata: Seq[TweetWithConversationMetadata] =>
-        CandidatesWithSourceFeatures(
-          responseTweetsWithConversationMetadata,
+    // return t  cand dates w h empty s ce features from transfor d t etsW hConversat on tadata
+    transfor dT etsW hConversat on tadata.map {
+      responseT etsW hConversat on tadata: Seq[T etW hConversat on tadata] =>
+        Cand datesW hS ceFeatures(
+          responseT etsW hConversat on tadata,
           FeatureMap.empty
         )
     }
   }
 
-  private def getTweetsInThread(
-    focalTweet: TweetWithConversationMetadata,
-    ancestors: ta.TweetAncestors
-  ): Seq[TweetWithConversationMetadata] = {
-    // Re-add the focal tweet so we can easily build modules and dedupe later.
-    // Note, TweetConvoSVC returns the bottom of the thread first, so we
-    // reverse them for easy rendering.
-    val focalTweetWithConversationMetadata = TweetWithConversationMetadata(
-      tweetId = focalTweet.tweetId,
-      userId = focalTweet.userId,
-      sourceTweetId = focalTweet.sourceTweetId,
-      sourceUserId = focalTweet.sourceUserId,
-      inReplyToTweetId = focalTweet.inReplyToTweetId,
-      conversationId = Some(focalTweet.tweetId),
+  pr vate def getT ets nThread(
+    focalT et: T etW hConversat on tadata,
+    ancestors: ta.T etAncestors
+  ): Seq[T etW hConversat on tadata] = {
+    // Re-add t  focal t et so   can eas ly bu ld modules and dedupe later.
+    // Note, T etConvoSVC returns t  bottom of t  thread f rst, so  
+    // reverse t m for easy render ng.
+    val focalT etW hConversat on tadata = T etW hConversat on tadata(
+      t et d = focalT et.t et d,
+      user d = focalT et.user d,
+      s ceT et d = focalT et.s ceT et d,
+      s ceUser d = focalT et.s ceUser d,
+       nReplyToT et d = focalT et. nReplyToT et d,
+      conversat on d = So (focalT et.t et d),
       ancestors = ancestors.ancestors
     )
 
-    val parentTweets = ancestors.ancestors.map { ancestor =>
-      TweetWithConversationMetadata(
-        tweetId = ancestor.tweetId,
-        userId = Some(ancestor.userId),
-        sourceTweetId = None,
-        sourceUserId = None,
-        inReplyToTweetId = None,
-        conversationId = Some(focalTweet.tweetId),
+    val parentT ets = ancestors.ancestors.map { ancestor =>
+      T etW hConversat on tadata(
+        t et d = ancestor.t et d,
+        user d = So (ancestor.user d),
+        s ceT et d = None,
+        s ceUser d = None,
+         nReplyToT et d = None,
+        conversat on d = So (focalT et.t et d),
         ancestors = Seq.empty
       )
-    } ++ getTruncatedRootTweet(ancestors, focalTweet.tweetId)
+    } ++ getTruncatedRootT et(ancestors, focalT et.t et d)
 
-    val (intermediates, root) = parentTweets.splitAt(parentTweets.size - numberOfRootTweets)
-    val truncatedIntermediates =
-      intermediates.take(maxModuleSize - maxAncestorsInConversation).reverse
-    root ++ truncatedIntermediates :+ focalTweetWithConversationMetadata
+    val ( nter d ates, root) = parentT ets.spl At(parentT ets.s ze - numberOfRootT ets)
+    val truncated nter d ates =
+       nter d ates.take(maxModuleS ze - maxAncestors nConversat on).reverse
+    root ++ truncated nter d ates :+ focalT etW hConversat on tadata
   }
 
   /**
-   * Ancestor store truncates at 256 ancestors. For very large reply threads, we try best effort
-   * to append the root tweet to the ancestor list based on the conversationId and
-   * conversationRootAuthorId. When rendering conversation modules, we can display the root tweet
-   * instead of the 256th highest ancestor.
+   * Ancestor store truncates at 256 ancestors. For very large reply threads,   try best effort
+   * to append t  root t et to t  ancestor l st based on t  conversat on d and
+   * conversat onRootAuthor d. W n render ng conversat on modules,   can d splay t  root t et
+   *  nstead of t  256th h g st ancestor.
    */
-  private def getTruncatedRootTweet(
-    ancestors: ta.TweetAncestors,
-    focalTweetId: Long
-  ): Option[TweetWithConversationMetadata] = {
-    ancestors.conversationRootAuthorId.collect {
-      case rootAuthorId
-          if ancestors.state == ta.ReplyState.Partial &&
-            ancestors.ancestors.last.tweetId != ancestors.conversationId =>
-        TweetWithConversationMetadata(
-          tweetId = ancestors.conversationId,
-          userId = Some(rootAuthorId),
-          sourceTweetId = None,
-          sourceUserId = None,
-          inReplyToTweetId = None,
-          conversationId = Some(focalTweetId),
+  pr vate def getTruncatedRootT et(
+    ancestors: ta.T etAncestors,
+    focalT et d: Long
+  ): Opt on[T etW hConversat on tadata] = {
+    ancestors.conversat onRootAuthor d.collect {
+      case rootAuthor d
+           f ancestors.state == ta.ReplyState.Part al &&
+            ancestors.ancestors.last.t et d != ancestors.conversat on d =>
+        T etW hConversat on tadata(
+          t et d = ancestors.conversat on d,
+          user d = So (rootAuthor d),
+          s ceT et d = None,
+          s ceUser d = None,
+           nReplyToT et d = None,
+          conversat on d = So (focalT et d),
           ancestors = Seq.empty
         )
     }
   }
 
-  private def dedupeCandidates(
-    inputTweetsWithConversationMetadata: Seq[TweetWithConversationMetadata],
-    ancestors: Seq[TweetWithConversationMetadata]
-  ): Seq[TweetWithConversationMetadata] = {
-    val dedupedAncestors: Iterable[TweetWithConversationMetadata] = ancestors
-      .groupBy(_.tweetId).map {
-        case (_, duplicateAncestors)
-            if duplicateAncestors.size > maxTweetsInConversationWithSameId =>
-          duplicateAncestors.maxBy(_.conversationId.getOrElse(0L))
-        case (_, nonDuplicateAncestors) => nonDuplicateAncestors.head
+  pr vate def dedupeCand dates(
+     nputT etsW hConversat on tadata: Seq[T etW hConversat on tadata],
+    ancestors: Seq[T etW hConversat on tadata]
+  ): Seq[T etW hConversat on tadata] = {
+    val dedupedAncestors:  erable[T etW hConversat on tadata] = ancestors
+      .groupBy(_.t et d).map {
+        case (_, dupl cateAncestors)
+             f dupl cateAncestors.s ze > maxT ets nConversat onW hSa  d =>
+          dupl cateAncestors.maxBy(_.conversat on d.getOrElse(0L))
+        case (_, nonDupl cateAncestors) => nonDupl cateAncestors. ad
       }
-    // Sort by tweet id to prevent issues with future assumptions of the root being the first
-    // tweet and the focal being the last tweet in a module. The tweets as a whole do not need
-    // to be sorted overall, only the relative order within modules must be kept.
-    val sortedDedupedAncestors: Seq[TweetWithConversationMetadata] =
-      dedupedAncestors.toSeq.sortBy(_.tweetId)
+    // Sort by t et  d to prevent  ssues w h future assumpt ons of t  root be ng t  f rst
+    // t et and t  focal be ng t  last t et  n a module. T  t ets as a whole do not need
+    // to be sorted overall, only t  relat ve order w h n modules must be kept.
+    val sortedDedupedAncestors: Seq[T etW hConversat on tadata] =
+      dedupedAncestors.toSeq.sortBy(_.t et d)
 
-    val ancestorIds = sortedDedupedAncestors.map(_.tweetId).toSet
-    val updatedCandidates = inputTweetsWithConversationMetadata.filterNot { candidate =>
-      ancestorIds.contains(candidate.tweetId)
+    val ancestor ds = sortedDedupedAncestors.map(_.t et d).toSet
+    val updatedCand dates =  nputT etsW hConversat on tadata.f lterNot { cand date =>
+      ancestor ds.conta ns(cand date.t et d)
     }
-    sortedDedupedAncestors ++ updatedCandidates
+    sortedDedupedAncestors ++ updatedCand dates
   }
 }

@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
 /**
- * Mixin that implements public quoted tweet and public quoted user
- * filtering for tweet events that have quoted tweets and users.
+ * M x n that  mple nts publ c quoted t et and publ c quoted user
+ * f lter ng for t et events that have quoted t ets and users.
  */
-trait QuotedTweetOps {
-  def quotedTweet: Option[Tweet]
-  def quotedUser: Option[User]
+tra  QuotedT etOps {
+  def quotedT et: Opt on[T et]
+  def quotedUser: Opt on[User]
 
   /**
-   * Do we have evidence that the quoted user is unprotected?
+   * Do   have ev dence that t  quoted user  s unprotected?
    */
-  def quotedUserIsPublic: Boolean =
-    // The quoted user should include the `safety` struct, but if it
-    // doesn't for any reason then the quoted tweet and quoted user
-    // should not be included in the events. This is a safety measure to
-    // avoid leaking private information.
-    quotedUser.exists(_.safety.exists(!_.isProtected))
+  def quotedUser sPubl c: Boolean =
+    // T  quoted user should  nclude t  `safety` struct, but  f  
+    // doesn't for any reason t n t  quoted t et and quoted user
+    // should not be  ncluded  n t  events. T   s a safety  asure to
+    // avo d leak ng pr vate  nformat on.
+    quotedUser.ex sts(_.safety.ex sts(!_. sProtected))
 
   /**
-   * The quoted tweet, filtered as it should appear through public APIs.
+   * T  quoted t et, f ltered as   should appear through publ c AP s.
    */
-  def publicQuotedTweet: Option[Tweet] =
-    if (quotedUserIsPublic) quotedTweet else None
+  def publ cQuotedT et: Opt on[T et] =
+     f (quotedUser sPubl c) quotedT et else None
 
   /**
-   * The quoted user, filtered as it should appear through public APIs.
+   * T  quoted user, f ltered as   should appear through publ c AP s.
    */
-  def publicQuotedUser: Option[User] =
-    if (quotedUserIsPublic) quotedUser else None
+  def publ cQuotedUser: Opt on[User] =
+     f (quotedUser sPubl c) quotedUser else None
 }

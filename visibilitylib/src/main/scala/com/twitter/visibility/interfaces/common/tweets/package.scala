@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.common
+package com.tw ter.v s b l y. nterfaces.common
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.stitch.Stitch
+ mport com.tw ter.search.blender.serv ces.strato.UserSearchSafetySett ngs
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelMap
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.st ch.St ch
 
-package object tweets {
-  type SafetyLabelFetcherType = (Long, SafetyLabelType) => Stitch[Option[SafetyLabel]]
-  type SafetyLabelMapFetcherType = Long => Stitch[Option[SafetyLabelMap]]
-  type UserSearchSafetySettingsFetcherType = Long => Stitch[UserSearchSafetySettings]
+package object t ets {
+  type SafetyLabelFetc rType = (Long, SafetyLabelType) => St ch[Opt on[SafetyLabel]]
+  type SafetyLabelMapFetc rType = Long => St ch[Opt on[SafetyLabelMap]]
+  type UserSearchSafetySett ngsFetc rType = Long => St ch[UserSearchSafetySett ngs]
 }

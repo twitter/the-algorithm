@@ -1,116 +1,116 @@
-package com.twitter.product_mixer.shared_library.manhattan_client
+package com.tw ter.product_m xer.shared_l brary.manhattan_cl ent
 
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.manhattan.v1.{thriftscala => mh}
-import com.twitter.storage.client.manhattan.kv.Experiments
-import com.twitter.storage.client.manhattan.kv.Experiments.Experiment
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.NoMtlsParams
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.manhattan.v1.{thr ftscala => mh}
+ mport com.tw ter.storage.cl ent.manhattan.kv.Exper  nts
+ mport com.tw ter.storage.cl ent.manhattan.kv.Exper  nts.Exper  nt
+ mport com.tw ter.storage.cl ent.manhattan.kv.Guarantee
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo nt
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo ntBu lder
+ mport com.tw ter.storage.cl ent.manhattan.kv.NoMtlsParams
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanCluster
+ mport com.tw ter.ut l.Durat on
 
-object ManhattanClientBuilder {
+object ManhattanCl entBu lder {
 
   /**
-   * Build a ManhattanKVClient/Endpoint [[ManhattanKVEndpoint]] / [[ManhattanKVClient]]
+   * Bu ld a ManhattanKVCl ent/Endpo nt [[ManhattanKVEndpo nt]] / [[ManhattanKVCl ent]]
    *
    * @param cluster Manhattan cluster
-   * @param appId Manhattan appid
-   * @param numTries Max number of times to try
-   * @param maxTimeout Max request timeout
-   * @param maxItemsPerRequest Max items per request
-   * @param guarantee Consistency guarantee
-   * @param serviceIdentifier Service ID used to S2S Auth
-   * @param statsReceiver Stats
-   * @param experiments MH client experiments to include
-   * @return ManhattanKVEndpoint
+   * @param app d Manhattan app d
+   * @param numTr es Max number of t  s to try
+   * @param maxT  out Max request t  out
+   * @param max emsPerRequest Max  ems per request
+   * @param guarantee Cons stency guarantee
+   * @param serv ce dent f er Serv ce  D used to S2S Auth
+   * @param statsRece ver Stats
+   * @param exper  nts MH cl ent exper  nts to  nclude
+   * @return ManhattanKVEndpo nt
    */
-  def buildManhattanEndpoint(
+  def bu ldManhattanEndpo nt(
     cluster: ManhattanCluster,
-    appId: String,
-    numTries: Int,
-    maxTimeout: Duration,
+    app d: Str ng,
+    numTr es:  nt,
+    maxT  out: Durat on,
     guarantee: Guarantee,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    maxItemsPerRequest: Int = 100,
-    experiments: Seq[Experiment] = Seq(Experiments.ApertureLoadBalancer)
-  ): ManhattanKVEndpoint = {
-    val client = buildManhattanClient(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+    max emsPerRequest:  nt = 100,
+    exper  nts: Seq[Exper  nt] = Seq(Exper  nts.ApertureLoadBalancer)
+  ): ManhattanKVEndpo nt = {
+    val cl ent = bu ldManhattanCl ent(
       cluster,
-      appId,
-      serviceIdentifier,
-      experiments
+      app d,
+      serv ce dent f er,
+      exper  nts
     )
 
-    ManhattanKVEndpointBuilder(client)
+    ManhattanKVEndpo ntBu lder(cl ent)
       .defaultGuarantee(guarantee)
-      .defaultMaxTimeout(maxTimeout)
-      .maxRetryCount(numTries)
-      .maxItemsPerRequest(maxItemsPerRequest)
-      .statsReceiver(statsReceiver)
-      .build()
+      .defaultMaxT  out(maxT  out)
+      .maxRetryCount(numTr es)
+      .max emsPerRequest(max emsPerRequest)
+      .statsRece ver(statsRece ver)
+      .bu ld()
   }
 
   /**
-   *  Build a ManhattanKVClient
+   *  Bu ld a ManhattanKVCl ent
    *
    * @param cluster Manhattan cluster
-   * @param appId   Manhattan appid
-   * @param serviceIdentifier Service ID used to S2S Auth
-   * @param experiments MH client experiments to include
+   * @param app d   Manhattan app d
+   * @param serv ce dent f er Serv ce  D used to S2S Auth
+   * @param exper  nts MH cl ent exper  nts to  nclude
    *
-   * @return ManhattanKVClient
+   * @return ManhattanKVCl ent
    */
-  def buildManhattanClient(
+  def bu ldManhattanCl ent(
     cluster: ManhattanCluster,
-    appId: String,
-    serviceIdentifier: ServiceIdentifier,
-    experiments: Seq[Experiment] = Seq(Experiments.ApertureLoadBalancer)
-  ): ManhattanKVClient = {
-    val mtlsParams = serviceIdentifier match {
-      case EmptyServiceIdentifier => NoMtlsParams
-      case serviceIdentifier =>
-        ManhattanKVClientMtlsParams(
-          serviceIdentifier = serviceIdentifier,
-          opportunisticTls = OpportunisticTls.Required)
+    app d: Str ng,
+    serv ce dent f er: Serv ce dent f er,
+    exper  nts: Seq[Exper  nt] = Seq(Exper  nts.ApertureLoadBalancer)
+  ): ManhattanKVCl ent = {
+    val mtlsParams = serv ce dent f er match {
+      case EmptyServ ce dent f er => NoMtlsParams
+      case serv ce dent f er =>
+        ManhattanKVCl entMtlsParams(
+          serv ce dent f er = serv ce dent f er,
+          opportun st cTls = Opportun st cTls.Requ red)
     }
 
-    val label = s"manhattan/${cluster.prefix}"
+    val label = s"manhattan/${cluster.pref x}"
 
-    new ManhattanKVClient(
-      appId = appId,
-      dest = cluster.wilyName,
+    new ManhattanKVCl ent(
+      app d = app d,
+      dest = cluster.w lyNa ,
       mtlsParams = mtlsParams,
       label = label,
-      experiments = experiments
+      exper  nts = exper  nts
     )
   }
 
-  def buildManhattanV1FinagleClient(
+  def bu ldManhattanV1F nagleCl ent(
     cluster: ManhattanCluster,
-    serviceIdentifier: ServiceIdentifier,
-    experiments: Seq[Experiment] = Seq(Experiments.ApertureLoadBalancer)
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    val mtlsParams = serviceIdentifier match {
-      case EmptyServiceIdentifier => NoMtlsParams
-      case serviceIdentifier =>
-        ManhattanKVClientMtlsParams(
-          serviceIdentifier = serviceIdentifier,
-          opportunisticTls = OpportunisticTls.Required)
+    serv ce dent f er: Serv ce dent f er,
+    exper  nts: Seq[Exper  nt] = Seq(Exper  nts.ApertureLoadBalancer)
+  ): mh.ManhattanCoord nator. thodPerEndpo nt = {
+    val mtlsParams = serv ce dent f er match {
+      case EmptyServ ce dent f er => NoMtlsParams
+      case serv ce dent f er =>
+        ManhattanKVCl entMtlsParams(
+          serv ce dent f er = serv ce dent f er,
+          opportun st cTls = Opportun st cTls.Requ red)
     }
 
-    val label = s"manhattan/${cluster.prefix}"
+    val label = s"manhattan/${cluster.pref x}"
 
-    Experiments
-      .clientWithExperiments(experiments, mtlsParams)
-      .build[mh.ManhattanCoordinator.MethodPerEndpoint](cluster.wilyName, label)
+    Exper  nts
+      .cl entW hExper  nts(exper  nts, mtlsParams)
+      .bu ld[mh.ManhattanCoord nator. thodPerEndpo nt](cluster.w lyNa , label)
   }
 }

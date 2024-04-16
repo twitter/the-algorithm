@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.cach ng.Cac ;
+ mport com.tw ter.search.common.cach ng.Cac Ut l;
+ mport com.tw ter.search.common.cach ng.f lter.Serv cePostProcessor;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class RelevanceServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+publ c class RelevanceServ cePostProcessor
+    extends Serv cePostProcessor<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate f nal Cac <Earlyb rdRequest, Earlyb rdResponse> cac ;
 
-  public RelevanceServicePostProcessor(
-      Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = cache;
+  publ c RelevanceServ cePostProcessor(
+      Cac <Earlyb rdRequest, Earlyb rdResponse> cac ) {
+    t .cac  = cac ;
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    CacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse, Integer.MAX_VALUE);
+  @Overr de
+  publ c vo d processServ ceResponse(Earlyb rdRequestContext requestContext,
+                                     Earlyb rdResponse serv ceResponse) {
+    Cac Ut l.cac Results(cac , requestContext.getRequest(), serv ceResponse,  nteger.MAX_VALUE);
   }
 }

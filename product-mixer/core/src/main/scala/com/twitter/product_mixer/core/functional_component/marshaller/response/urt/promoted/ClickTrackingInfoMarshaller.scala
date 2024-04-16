@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.ClickTrackingInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Cl ckTrack ng nfo
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ClickTrackingInfoMarshaller @Inject() (
-  urlOverrideTypeMarshaller: UrlOverrideTypeMarshaller) {
+@S ngleton
+class Cl ckTrack ng nfoMarshaller @ nject() (
+  urlOverr deTypeMarshaller: UrlOverr deTypeMarshaller) {
 
-  def apply(clickTrackingInfo: ClickTrackingInfo): urt.ClickTrackingInfo =
-    urt.ClickTrackingInfo(
-      urlParams = clickTrackingInfo.urlParams,
-      urlOverride = clickTrackingInfo.urlOverride,
-      urlOverrideType = clickTrackingInfo.urlOverrideType.map(urlOverrideTypeMarshaller(_))
+  def apply(cl ckTrack ng nfo: Cl ckTrack ng nfo): urt.Cl ckTrack ng nfo =
+    urt.Cl ckTrack ng nfo(
+      urlParams = cl ckTrack ng nfo.urlParams,
+      urlOverr de = cl ckTrack ng nfo.urlOverr de,
+      urlOverr deType = cl ckTrack ng nfo.urlOverr deType.map(urlOverr deTypeMarshaller(_))
     )
 }

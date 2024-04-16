@@ -1,63 +1,63 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+package com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.tra n ng_data_generat on
 
-import com.twitter.ml.api.analytics.DataSetAnalyticsPlugin
-import com.twitter.ml.api.matcher.FeatureMatcher
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.FeatureStats
-import com.twitter.ml.api.IMatcher
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .analyt cs.DataSetAnalyt csPlug n
+ mport com.tw ter.ml.ap .matc r.FeatureMatc r
+ mport com.tw ter.ml.ap .ut l.FDsl
+ mport com.tw ter.ml.ap .Da lySuff xFeatureS ce
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataSetP pe
+ mport com.tw ter.ml.ap .FeatureStats
+ mport com.tw ter.ml.ap . Matc r
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.TypedJson
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.t  l nes.data_process ng.ut l.execut on.UTCDateRangeFromArgs
+ mport com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common.Earlyb rdTra n ngConf gurat on
+ mport com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common.Earlyb rdTra n ngRecapConf gurat on
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport scala.collect on.JavaConverters._
 
 /**
- * Compute counts and fractions for all labels in a Recap data source.
+ * Compute counts and fract ons for all labels  n a Recap data s ce.
  *
- * Arguments:
- * --input   recap data source (containing all labels)
- * --output  path to output JSON file containing stats
+ * Argu nts:
+ * -- nput   recap data s ce (conta n ng all labels)
+ * --output  path to output JSON f le conta n ng stats
  */
-object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+object Earlyb rdStatsJob extends Tw terExecut onApp w h UTCDateRangeFromArgs {
 
-  import DataSetAnalyticsPlugin._
-  import FDsl._
-  import RecapFeatures.IS_EARLYBIRD_UNIFIED_ENGAGEMENT
+   mport DataSetAnalyt csPlug n._
+   mport FDsl._
+   mport RecapFeatures. S_EARLYB RD_UN F ED_ENGAGEMENT
 
-  lazy val constants: EarlybirdTrainingConfiguration = new EarlybirdTrainingRecapConfiguration
-  private[this] def addGlobalEngagementLabel(record: DataRecord) = {
-    if (constants.LabelInfos.exists { labelInfo => record.hasFeature(labelInfo.feature) }) {
-      record.setFeatureValue(IS_EARLYBIRD_UNIFIED_ENGAGEMENT, true)
+  lazy val constants: Earlyb rdTra n ngConf gurat on = new Earlyb rdTra n ngRecapConf gurat on
+  pr vate[t ] def addGlobalEngage ntLabel(record: DataRecord) = {
+     f (constants.Label nfos.ex sts { label nfo => record.hasFeature(label nfo.feature) }) {
+      record.setFeatureValue( S_EARLYB RD_UN F ED_ENGAGEMENT, true)
     }
     record
   }
 
-  private[this] def labelFeatureMatcher: IMatcher = {
+  pr vate[t ] def labelFeatureMatc r:  Matc r = {
     val allLabels =
-      (IS_EARLYBIRD_UNIFIED_ENGAGEMENT :: constants.LabelInfos.map(_.feature)).map(_.getFeatureName)
-    FeatureMatcher.names(allLabels.asJava)
+      ( S_EARLYB RD_UN F ED_ENGAGEMENT :: constants.Label nfos.map(_.feature)).map(_.getFeatureNa )
+    FeatureMatc r.na s(allLabels.asJava)
   }
 
-  private[this] def computeStats(data: DataSetPipe): TypedPipe[FeatureStats] = {
+  pr vate[t ] def computeStats(data: DataSetP pe): TypedP pe[FeatureStats] = {
     data
-      .viaRecords { _.map(addGlobalEngagementLabel) }
-      .project(labelFeatureMatcher)
+      .v aRecords { _.map(addGlobalEngage ntLabel) }
+      .project(labelFeatureMatc r)
       .collectFeatureStats()
   }
 
-  override def job: Execution[Unit] = {
+  overr de def job: Execut on[Un ] = {
     for {
-      args <- Execution.getArgs
+      args <- Execut on.getArgs
       dateRange <- dateRangeEx
-      data = DailySuffixFeatureSource(args("input"))(dateRange).read
-      _ <- computeStats(data).writeExecution(TypedJson(args("output")))
-    } yield ()
+      data = Da lySuff xFeatureS ce(args(" nput"))(dateRange).read
+      _ <- computeStats(data).wr eExecut on(TypedJson(args("output")))
+    } y eld ()
   }
 }

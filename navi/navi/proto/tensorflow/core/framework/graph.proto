@@ -2,55 +2,55 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/function.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/versions.proto";
+ mport "tensorflow/core/fra work/funct on.proto";
+ mport "tensorflow/core/fra work/node_def.proto";
+ mport "tensorflow/core/fra work/vers ons.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/graph_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "GraphProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/graph_go_proto";
 
-// Represents the graph of operations
-message GraphDef {
+// Represents t  graph of operat ons
+ ssage GraphDef {
   repeated NodeDef node = 1;
 
-  // Compatibility versions of the graph.  See core/public/version.h for version
-  // history.  The GraphDef version is distinct from the TensorFlow version, and
-  // each release of TensorFlow will support a range of GraphDef versions.
-  VersionDef versions = 4;
+  // Compat b l y vers ons of t  graph.  See core/publ c/vers on.h for vers on
+  //  tory.  T  GraphDef vers on  s d st nct from t  TensorFlow vers on, and
+  // each release of TensorFlow w ll support a range of GraphDef vers ons.
+  Vers onDef vers ons = 4;
 
-  // Deprecated single version field; use versions above instead.  Since all
-  // GraphDef changes before "versions" was introduced were forward
-  // compatible, this field is entirely ignored.
-  int32 version = 3 [deprecated = true];
+  // Deprecated s ngle vers on f eld; use vers ons above  nstead.  S nce all
+  // GraphDef changes before "vers ons" was  ntroduced  re forward
+  // compat ble, t  f eld  s ent rely  gnored.
+   nt32 vers on = 3 [deprecated = true];
 
-  // "library" provides user-defined functions.
+  // "l brary" prov des user-def ned funct ons.
   //
-  // Naming:
-  //   * library.function.name are in a flat namespace.
-  //     NOTE: We may need to change it to be hierarchical to support
-  //     different orgs. E.g.,
+  // Nam ng:
+  //   * l brary.funct on.na  are  n a flat na space.
+  //     NOTE:   may need to change   to be h erarch cal to support
+  //     d fferent orgs. E.g.,
   //     { "/google/nn", { ... }},
-  //     { "/google/vision", { ... }}
+  //     { "/google/v s on", { ... }}
   //     { "/org_foo/module_bar", { ... }}
-  //     map<string, FunctionDefLib> named_lib;
-  //   * If node[i].op is the name of one function in "library",
-  //     node[i] is deemed as a function call. Otherwise, node[i].op
-  //     must be a primitive operation supported by the runtime.
+  //     map<str ng, Funct onDefL b> na d_l b;
+  //   *  f node[ ].op  s t  na  of one funct on  n "l brary",
+  //     node[ ]  s dee d as a funct on call. Ot rw se, node[ ].op
+  //     must be a pr m  ve operat on supported by t  runt  .
   //
   //
-  // Function call semantics:
+  // Funct on call semant cs:
   //
-  //   * The callee may start execution as soon as some of its inputs
-  //     are ready. The caller may want to use Tuple() mechanism to
-  //     ensure all inputs are ready in the same time.
+  //   * T  callee may start execut on as soon as so  of  s  nputs
+  //     are ready. T  caller may want to use Tuple()  chan sm to
+  //     ensure all  nputs are ready  n t  sa  t  .
   //
-  //   * The consumer of return values may start executing as soon as
-  //     the return values the consumer depends on are ready.  The
-  //     consumer may want to use Tuple() mechanism to ensure the
-  //     consumer does not start until all return values of the callee
-  //     function are ready.
-  FunctionDefLibrary library = 2;
+  //   * T  consu r of return values may start execut ng as soon as
+  //     t  return values t  consu r depends on are ready.  T 
+  //     consu r may want to use Tuple()  chan sm to ensure t 
+  //     consu r does not start unt l all return values of t  callee
+  //     funct on are ready.
+  Funct onDefL brary l brary = 2;
 }

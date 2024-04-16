@@ -1,19 +1,19 @@
-package com.twitter.visibility.interfaces.common.blender
+package com.tw ter.v s b l y. nterfaces.common.blender
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
+ mport com.tw ter.search.blender.serv ces.strato.UserSearchSafetySett ngs
+ mport com.tw ter.search.common.constants.thr ftscala.Thr ftQueryS ce
 
 case class BlenderVFRequestContext(
-  resultsPageNumber: Int,
-  candidateCount: Int,
-  querySourceOption: Option[ThriftQuerySource],
-  userSearchSafetySettings: UserSearchSafetySettings,
+  resultsPageNumber:  nt,
+  cand dateCount:  nt,
+  queryS ceOpt on: Opt on[Thr ftQueryS ce],
+  userSearchSafetySett ngs: UserSearchSafetySett ngs,
   queryHasUser: Boolean = false) {
 
-  def this(
-    resultsPageNumber: Int,
-    candidateCount: Int,
-    querySourceOption: Option[ThriftQuerySource],
-    userSearchSafetySettings: UserSearchSafetySettings
-  ) = this(resultsPageNumber, candidateCount, querySourceOption, userSearchSafetySettings, false)
+  def t (
+    resultsPageNumber:  nt,
+    cand dateCount:  nt,
+    queryS ceOpt on: Opt on[Thr ftQueryS ce],
+    userSearchSafetySett ngs: UserSearchSafetySett ngs
+  ) = t (resultsPageNumber, cand dateCount, queryS ceOpt on, userSearchSafetySett ngs, false)
 }

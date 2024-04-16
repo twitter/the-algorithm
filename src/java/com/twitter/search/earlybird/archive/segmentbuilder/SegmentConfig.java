@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veOnD skEarlyb rd ndexConf g;
 
-public class SegmentConfig {
-  private final ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig;
-  private final Amount<Long, Time> segmentZKLockExpirationTime;
-  private final int maxRetriesOnFailure;
-  private final ZooKeeperTryLockFactory tryLockFactory;
+publ c class Seg ntConf g {
+  pr vate f nal Arch veOnD skEarlyb rd ndexConf g earlyb rd ndexConf g;
+  pr vate f nal Amount<Long, T  > seg ntZKLockExp rat onT  ;
+  pr vate f nal  nt maxRetr esOnFa lure;
+  pr vate f nal ZooKeeperTryLockFactory tryLockFactory;
 
-  public SegmentConfig(
-      ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig,
-      Amount<Long, Time> segmentZKLockExpirationTime,
-      int maxRetriesOnFailure,
+  publ c Seg ntConf g(
+      Arch veOnD skEarlyb rd ndexConf g earlyb rd ndexConf g,
+      Amount<Long, T  > seg ntZKLockExp rat onT  ,
+       nt maxRetr esOnFa lure,
       ZooKeeperTryLockFactory tryLockFactory) {
 
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.segmentZKLockExpirationTime = segmentZKLockExpirationTime;
-    this.maxRetriesOnFailure = maxRetriesOnFailure;
-    this.tryLockFactory = tryLockFactory;
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
+    t .seg ntZKLockExp rat onT   = seg ntZKLockExp rat onT  ;
+    t .maxRetr esOnFa lure = maxRetr esOnFa lure;
+    t .tryLockFactory = tryLockFactory;
   }
 
-  public ArchiveOnDiskEarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  publ c Arch veOnD skEarlyb rd ndexConf g getEarlyb rd ndexConf g() {
+    return earlyb rd ndexConf g;
   }
 
-  public Amount<Long, Time> getSegmentZKLockExpirationTime() {
-    return segmentZKLockExpirationTime;
+  publ c Amount<Long, T  > getSeg ntZKLockExp rat onT  () {
+    return seg ntZKLockExp rat onT  ;
   }
 
-  public int getMaxRetriesOnFailure() {
-    return maxRetriesOnFailure;
+  publ c  nt getMaxRetr esOnFa lure() {
+    return maxRetr esOnFa lure;
   }
 
-  public ZooKeeperTryLockFactory getTryLockFactory() {
+  publ c ZooKeeperTryLockFactory getTryLockFactory() {
     return tryLockFactory;
   }
 }

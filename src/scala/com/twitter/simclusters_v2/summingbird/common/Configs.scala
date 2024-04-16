@@ -1,70 +1,70 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.ut l.Durat on
 
-object Configs {
+object Conf gs {
 
-  final val role = "cassowary"
+  f nal val role = "cassowary"
 
-  final val ZoneAtla: String = "atla"
+  f nal val ZoneAtla: Str ng = "atla"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
-  final val ModelVersion20M145K2020: String = "20M_145K_2020"
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ModelVers on20M145KDec11: Str ng = "20M_145K_dec11"
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ModelVers on20M145KUpdated: Str ng = "20M_145K_updated"
+  f nal val ModelVers on20M145K2020: Str ng = "20M_145K_2020"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-    ModelVersion20M145K2020 -> ModelVersion.Model20m145k2020
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ModelVers onMap: Map[Str ng, ModelVers on] = Map(
+    ModelVers on20M145KDec11 -> ModelVers on.Model20m145kDec11,
+    ModelVers on20M145KUpdated -> ModelVers on.Model20m145kUpdated,
+    ModelVers on20M145K2020 -> ModelVers on.Model20m145k2020
   )
 
-  final val favScoreThresholdForUserInterest: String => Double = {
-    case ModelVersion20M145KDec11 => 0.15
-    case ModelVersion20M145KUpdated => 1.0
-    case ModelVersion20M145K2020 => 0.3
-    case modelVersionStr => throw new Exception(s"$modelVersionStr is not a valid model")
+  f nal val favScoreThresholdForUser nterest: Str ng => Double = {
+    case ModelVers on20M145KDec11 => 0.15
+    case ModelVers on20M145KUpdated => 1.0
+    case ModelVers on20M145K2020 => 0.3
+    case modelVers onStr => throw new Except on(s"$modelVers onStr  s not a val d model")
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ReversedModelVersionMap = ModelVersionMap.map(_.swap)
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ReversedModelVers onMap = ModelVers onMap.map(_.swap)
 
-  final val batchesToKeep: Int = 1
+  f nal val batc sToKeep:  nt = 1
 
-  final val HalfLife: Duration = 8.hours
-  final val HalfLifeInMs: Long = HalfLife.inMilliseconds
+  f nal val HalfL fe: Durat on = 8.h s
+  f nal val HalfL fe nMs: Long = HalfL fe. nM ll seconds
 
-  final val topKTweetsPerCluster: Int = 1600
+  f nal val topKT etsPerCluster:  nt = 1600
 
-  final val topKClustersPerEntity: Int = 50
+  f nal val topKClustersPerEnt y:  nt = 50
 
-  // the config used in offline job only
-  final val topKClustersPerTweet: Int = 400
+  // t  conf g used  n offl ne job only
+  f nal val topKClustersPerT et:  nt = 400
 
-  // minimum score to save clusterIds in entityTopKClusters cache
-  // entity includes entities other than tweetId.
-  final val scoreThresholdForEntityTopKClustersCache: Double = 0.02
+  // m n mum score to save cluster ds  n ent yTopKClusters cac 
+  // ent y  ncludes ent  es ot r than t et d.
+  f nal val scoreThresholdForEnt yTopKClustersCac : Double = 0.02
 
-  // minimum score to save clusterIds in tweetTopKClusters cache
-  final val scoreThresholdForTweetTopKClustersCache: Double = 0.02
+  // m n mum score to save cluster ds  n t etTopKClusters cac 
+  f nal val scoreThresholdForT etTopKClustersCac : Double = 0.02
 
-  // minimum score to save tweetIds in clusterTopKTweets cache
-  final val scoreThresholdForClusterTopKTweetsCache: Double = 0.001
+  // m n mum score to save t et ds  n clusterTopKT ets cac 
+  f nal val scoreThresholdForClusterTopKT etsCac : Double = 0.001
 
-  // minimum score to save entities in clusterTopKEntities cache
-  final val scoreThresholdForClusterTopKEntitiesCache: Double = 0.001
+  // m n mum score to save ent  es  n clusterTopKEnt  es cac 
+  f nal val scoreThresholdForClusterTopKEnt  esCac : Double = 0.001
 
-  final val MinFavoriteCount = 8
+  f nal val M nFavor eCount = 8
 
-  final val OldestTweetInLightIndexInMillis = 1.hours.inMillis
+  f nal val OldestT et nL ght ndex nM ll s = 1.h s. nM ll s
 
-  final val OldestTweetFavEventTimeInMillis = 3.days.inMillis
+  f nal val OldestT etFavEventT   nM ll s = 3.days. nM ll s
 
-  final val FirstUpdateValue = 1
+  f nal val F rstUpdateValue = 1
 
-  final val TempUpdateValue = -1
+  f nal val TempUpdateValue = -1
 }

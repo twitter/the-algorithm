@@ -1,107 +1,107 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerDataAliases.V1Alias
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.cl entapp.thr ftscala.EventNa space
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.suggests.controller_data.ho _t ets.thr ftscala.Ho T etsControllerDataAl ases.V1Al as
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-object ProductSurfaceUtils {
+object ProductSurfaceUt ls {
 
-  def getProductSurface(eventNamespace: Option[EventNamespace]): Option[ProductSurface] = {
+  def getProductSurface(eventNa space: Opt on[EventNa space]): Opt on[ProductSurface] = {
     (
-      eventNamespace.flatMap(_.page),
-      eventNamespace.flatMap(_.section),
-      eventNamespace.flatMap(_.element)) match {
-      case (Some("home") | Some("home_latest"), _, _) => Some(ProductSurface.HomeTimeline)
-      case (Some("ntab"), _, _) => Some(ProductSurface.NotificationTab)
-      case (Some(page), Some(section), _) if isPushNotification(page, section) =>
-        Some(ProductSurface.PushNotification)
-      case (Some("search"), _, _) => Some(ProductSurface.SearchResultsPage)
-      case (_, _, Some("typeahead")) => Some(ProductSurface.SearchTypeahead)
+      eventNa space.flatMap(_.page),
+      eventNa space.flatMap(_.sect on),
+      eventNa space.flatMap(_.ele nt)) match {
+      case (So ("ho ") | So ("ho _latest"), _, _) => So (ProductSurface.Ho T  l ne)
+      case (So ("ntab"), _, _) => So (ProductSurface.Not f cat onTab)
+      case (So (page), So (sect on), _)  f  sPushNot f cat on(page, sect on) =>
+        So (ProductSurface.PushNot f cat on)
+      case (So ("search"), _, _) => So (ProductSurface.SearchResultsPage)
+      case (_, _, So ("typea ad")) => So (ProductSurface.SearchTypea ad)
       case _ => None
     }
   }
 
-  private def isPushNotification(page: String, section: String): Boolean = {
-    Seq[String]("notification", "toasts").contains(page) ||
-    (page == "app" && section == "push")
+  pr vate def  sPushNot f cat on(page: Str ng, sect on: Str ng): Boolean = {
+    Seq[Str ng]("not f cat on", "toasts").conta ns(page) ||
+    (page == "app" && sect on == "push")
   }
 
-  def getProductSurfaceInfo(
-    productSurface: Option[ProductSurface],
-    ceItem: LogEventItem,
+  def getProductSurface nfo(
+    productSurface: Opt on[ProductSurface],
+    ce em: LogEvent em,
     logEvent: LogEvent
-  ): Option[ProductSurfaceInfo] = {
+  ): Opt on[ProductSurface nfo] = {
     productSurface match {
-      case Some(ProductSurface.HomeTimeline) => createHomeTimelineInfo(ceItem)
-      case Some(ProductSurface.NotificationTab) => createNotificationTabInfo(ceItem)
-      case Some(ProductSurface.PushNotification) => createPushNotificationInfo(logEvent)
-      case Some(ProductSurface.SearchResultsPage) => createSearchResultPageInfo(ceItem, logEvent)
-      case Some(ProductSurface.SearchTypeahead) => createSearchTypeaheadInfo(ceItem, logEvent)
+      case So (ProductSurface.Ho T  l ne) => createHo T  l ne nfo(ce em)
+      case So (ProductSurface.Not f cat onTab) => createNot f cat onTab nfo(ce em)
+      case So (ProductSurface.PushNot f cat on) => createPushNot f cat on nfo(logEvent)
+      case So (ProductSurface.SearchResultsPage) => createSearchResultPage nfo(ce em, logEvent)
+      case So (ProductSurface.SearchTypea ad) => createSearchTypea ad nfo(ce em, logEvent)
       case _ => None
     }
   }
 
-  private def createPushNotificationInfo(logEvent: LogEvent): Option[ProductSurfaceInfo] =
-    NotificationClientEventUtils.getNotificationIdForPushNotification(logEvent) match {
-      case Some(notificationId) =>
-        Some(
-          ProductSurfaceInfo.PushNotificationInfo(
-            PushNotificationInfo(notificationId = notificationId)))
+  pr vate def createPushNot f cat on nfo(logEvent: LogEvent): Opt on[ProductSurface nfo] =
+    Not f cat onCl entEventUt ls.getNot f cat on dForPushNot f cat on(logEvent) match {
+      case So (not f cat on d) =>
+        So (
+          ProductSurface nfo.PushNot f cat on nfo(
+            PushNot f cat on nfo(not f cat on d = not f cat on d)))
       case _ => None
     }
 
-  private def createNotificationTabInfo(ceItem: LogEventItem): Option[ProductSurfaceInfo] =
-    NotificationClientEventUtils.getNotificationIdForNotificationTab(ceItem) match {
-      case Some(notificationId) =>
-        Some(
-          ProductSurfaceInfo.NotificationTabInfo(
-            NotificationTabInfo(notificationId = notificationId)))
+  pr vate def createNot f cat onTab nfo(ce em: LogEvent em): Opt on[ProductSurface nfo] =
+    Not f cat onCl entEventUt ls.getNot f cat on dForNot f cat onTab(ce em) match {
+      case So (not f cat on d) =>
+        So (
+          ProductSurface nfo.Not f cat onTab nfo(
+            Not f cat onTab nfo(not f cat on d = not f cat on d)))
       case _ => None
     }
 
-  private def createHomeTimelineInfo(ceItem: LogEventItem): Option[ProductSurfaceInfo] = {
-    def suggestType: Option[String] = HomeInfoUtils.getSuggestType(ceItem)
-    def controllerData: Option[V1Alias] = HomeInfoUtils.getHomeTweetControllerDataV1(ceItem)
+  pr vate def createHo T  l ne nfo(ce em: LogEvent em): Opt on[ProductSurface nfo] = {
+    def suggestType: Opt on[Str ng] = Ho  nfoUt ls.getSuggestType(ce em)
+    def controllerData: Opt on[V1Al as] = Ho  nfoUt ls.getHo T etControllerDataV1(ce em)
 
-    if (suggestType.isDefined || controllerData.isDefined) {
-      Some(
-        ProductSurfaceInfo.HomeTimelineInfo(
-          HomeTimelineInfo(
-            suggestionType = suggestType,
-            injectedPosition = controllerData.flatMap(_.injectedPosition)
+     f (suggestType. sDef ned || controllerData. sDef ned) {
+      So (
+        ProductSurface nfo.Ho T  l ne nfo(
+          Ho T  l ne nfo(
+            suggest onType = suggestType,
+             njectedPos  on = controllerData.flatMap(_. njectedPos  on)
           )))
     } else None
   }
 
-  private def createSearchResultPageInfo(
-    ceItem: LogEventItem,
+  pr vate def createSearchResultPage nfo(
+    ce em: LogEvent em,
     logEvent: LogEvent
-  ): Option[ProductSurfaceInfo] = {
-    val searchInfoUtil = new SearchInfoUtils(ceItem)
-    searchInfoUtil.getQueryOptFromItem(logEvent).map { query =>
-      ProductSurfaceInfo.SearchResultsPageInfo(
-        SearchResultsPageInfo(
+  ): Opt on[ProductSurface nfo] = {
+    val search nfoUt l = new Search nfoUt ls(ce em)
+    search nfoUt l.getQueryOptFrom em(logEvent).map { query =>
+      ProductSurface nfo.SearchResultsPage nfo(
+        SearchResultsPage nfo(
           query = query,
-          querySource = searchInfoUtil.getQuerySourceOptFromControllerDataFromItem,
-          itemPosition = ceItem.position,
-          tweetResultSources = searchInfoUtil.getTweetResultSources,
-          userResultSources = searchInfoUtil.getUserResultSources,
-          queryFilterType = searchInfoUtil.getQueryFilterType(logEvent)
+          queryS ce = search nfoUt l.getQueryS ceOptFromControllerDataFrom em,
+           emPos  on = ce em.pos  on,
+          t etResultS ces = search nfoUt l.getT etResultS ces,
+          userResultS ces = search nfoUt l.getUserResultS ces,
+          queryF lterType = search nfoUt l.getQueryF lterType(logEvent)
         ))
     }
   }
 
-  private def createSearchTypeaheadInfo(
-    ceItem: LogEventItem,
+  pr vate def createSearchTypea ad nfo(
+    ce em: LogEvent em,
     logEvent: LogEvent
-  ): Option[ProductSurfaceInfo] = {
-    logEvent.searchDetails.flatMap(_.query).map { query =>
-      ProductSurfaceInfo.SearchTypeaheadInfo(
-        SearchTypeaheadInfo(
+  ): Opt on[ProductSurface nfo] = {
+    logEvent.searchDeta ls.flatMap(_.query).map { query =>
+      ProductSurface nfo.SearchTypea ad nfo(
+        SearchTypea ad nfo(
           query = query,
-          itemPosition = ceItem.position
+           emPos  on = ce em.pos  on
         )
       )
     }

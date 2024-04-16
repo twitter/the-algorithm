@@ -1,280 +1,280 @@
-WITH vars AS (
+W TH vars AS (
   SELECT
-    TIMESTAMP('{START_TIME}') AS start_time,
-    TIMESTAMP('{END_TIME}') AS end_time,
-    UNIX_MILLIS('{END_TIME}') AS currentTs,
-    {HALFLIFE} AS halfLife,
-    {TWEET_SAMPLE_RATE} AS tweet_sample_rate,
+    T MESTAMP('{START_T ME}') AS start_t  ,
+    T MESTAMP('{END_T ME}') AS end_t  ,
+    UN X_M LL S('{END_T ME}') AS currentTs,
+    {HALFL FE} AS halfL fe,
+    {TWEET_SAMPLE_RATE} AS t et_sample_rate,
     {ENG_SAMPLE_RATE} AS eng_user_sample_rate,
-    {MIN_TWEET_FAVS} AS min_tweet_favs,
-    {MIN_TWEET_IMPS} AS min_tweet_imps,
-    {MAX_USER_LOG_N_IMPS} AS max_user_log_n_imps,
+    {M N_TWEET_FAVS} AS m n_t et_favs,
+    {M N_TWEET_ MPS} AS m n_t et_ mps,
+    {MAX_USER_LOG_N_ MPS} AS max_user_log_n_ mps,
     {MAX_USER_LOG_N_FAVS} AS max_user_log_n_favs,
     {MAX_USER_FTR} AS max_user_ftr,
-    {MAX_TWEET_FTR} AS max_tweet_ftr,
-    700 AS MAX_EXPONENT, -- this is the maximum exponent one can have in bigquery
+    {MAX_TWEET_FTR} AS max_t et_ftr,
+    700 AS MAX_EXPONENT, -- t   s t  max mum exponent one can have  n b gquery
   ),
-  -- step 1: get impressions and favs
-  impressions AS (
+  -- step 1: get  mpress ons and favs
+   mpress ons AS (
     SELECT
-      userIdentifier.userId AS user_id,
-      item.tweetInfo.actionTweetId AS tweet_id,
-      item.tweetInfo.actionTweetAuthorInfo.authorId AS author_id,
-      TRUE AS impressed,
-      MIN(eventMetadata.sourceTimestampMs) AS minTsMilli
-    FROM twttr-bql-unified-prod.unified_user_actions.streaming_unified_user_actions, vars
+      user dent f er.user d AS user_ d,
+       em.t et nfo.act onT et d AS t et_ d,
+       em.t et nfo.act onT etAuthor nfo.author d AS author_ d,
+      TRUE AS  mpressed,
+      M N(event tadata.s ceT  stampMs) AS m nTsM ll 
+    FROM twttr-bql-un f ed-prod.un f ed_user_act ons.stream ng_un f ed_user_act ons, vars
     WHERE
-      actionType = "ClientTweetLingerImpression"
-      AND DATE(dateHour) BETWEEN DATE(vars.start_time) AND DATE(vars.end_time)
-      AND TIMESTAMP_MILLIS(eventMetadata.sourceTimestampMs) BETWEEN vars.start_time AND vars.end_time
-      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 0
-      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 0
-     -- Apply tweet age filter here
-     AND timestamp_millis((1288834974657 +
-        ((item.tweetInfo.actionTweetId & 9223372036850581504) >> 22))) >= (vars.start_time)
+      act onType = "Cl entT etL nger mpress on"
+      AND DATE(dateH ) BETWEEN DATE(vars.start_t  ) AND DATE(vars.end_t  )
+      AND T MESTAMP_M LL S(event tadata.s ceT  stampMs) BETWEEN vars.start_t   AND vars.end_t  
+      AND MOD(ABS(farm_f ngerpr nt( em.t et nfo.act onT et d || '')), vars.t et_sample_rate) = 0
+      AND MOD(ABS(farm_f ngerpr nt(user dent f er.user d || '')), vars.eng_user_sample_rate) = 0
+     -- Apply t et age f lter  re
+     AND t  stamp_m ll s((1288834974657 +
+        (( em.t et nfo.act onT et d & 9223372036850581504) >> 22))) >= (vars.start_t  )
     GROUP BY 1, 2, 3
   ),
   favs AS (
     SELECT
-      userIdentifier.userId AS user_id,
-      item.tweetInfo.actionTweetId AS tweet_id,
-      item.tweetInfo.actionTweetAuthorInfo.authorId AS author_id,
-      MIN(eventMetadata.sourceTimestampMs) AS minTsMilli,
-      -- get last action, and make sure that it's a fav
-      ARRAY_AGG(actionType ORDER BY eventMetadata.sourceTimestampMs DESC LIMIT 1)[OFFSET(0)] = "ServerTweetFav" AS favorited,
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
+      user dent f er.user d AS user_ d,
+       em.t et nfo.act onT et d AS t et_ d,
+       em.t et nfo.act onT etAuthor nfo.author d AS author_ d,
+      M N(event tadata.s ceT  stampMs) AS m nTsM ll ,
+      -- get last act on, and make sure that  's a fav
+      ARRAY_AGG(act onType ORDER BY event tadata.s ceT  stampMs DESC L M T 1)[OFFSET(0)] = "ServerT etFav" AS favor ed,
+    FROM `twttr-bql-un f ed-prod.un f ed_user_act ons_engage nts.stream ng_un f ed_user_act ons_engage nts`, vars
     WHERE
-      actionType IN ("ServerTweetFav", "ServerTweetUnfav")
-      AND DATE(dateHour) BETWEEN DATE(vars.start_time) AND DATE(vars.end_time)
-      AND TIMESTAMP_MILLIS(eventMetadata.sourceTimestampMs) BETWEEN vars.start_time AND vars.end_time
-      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 0
-      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 0
-       -- Apply tweet age filter here
-      AND timestamp_millis((1288834974657 +
-        ((item.tweetInfo.actionTweetId & 9223372036850581504) >> 22))) >= (vars.start_time)
+      act onType  N ("ServerT etFav", "ServerT etUnfav")
+      AND DATE(dateH ) BETWEEN DATE(vars.start_t  ) AND DATE(vars.end_t  )
+      AND T MESTAMP_M LL S(event tadata.s ceT  stampMs) BETWEEN vars.start_t   AND vars.end_t  
+      AND MOD(ABS(farm_f ngerpr nt( em.t et nfo.act onT et d || '')), vars.t et_sample_rate) = 0
+      AND MOD(ABS(farm_f ngerpr nt(user dent f er.user d || '')), vars.eng_user_sample_rate) = 0
+       -- Apply t et age f lter  re
+      AND t  stamp_m ll s((1288834974657 +
+        (( em.t et nfo.act onT et d & 9223372036850581504) >> 22))) >= (vars.start_t  )
     GROUP BY 1, 2, 3
-    HAVING favorited
+    HAV NG favor ed
   ),
   eng_data AS (
     SELECT
-      user_id, tweet_id, author_id, impressions.minTsMilli, favorited, impressed
-    FROM impressions
-    LEFT JOIN favs USING(user_id, tweet_id, author_id)
+      user_ d, t et_ d, author_ d,  mpress ons.m nTsM ll , favor ed,  mpressed
+    FROM  mpress ons
+    LEFT JO N favs US NG(user_ d, t et_ d, author_ d)
   ),
-  eligible_tweets AS (
+  el g ble_t ets AS (
     SELECT
-      tweet_id,
-      author_id,
-      COUNTIF(favorited) num_favs,
-      COUNTIF(impressed) num_imps,
-      COUNTIF(favorited) * 1.0 / COUNTIF(impressed) AS tweet_ftr,
-      ANY_VALUE(vars.min_tweet_favs) min_tweet_favs,
-      ANY_VALUE(vars.min_tweet_imps) min_tweet_imps,
-      ANY_VALUE(vars.max_tweet_ftr) max_tweet_ftr,
+      t et_ d,
+      author_ d,
+      COUNT F(favor ed) num_favs,
+      COUNT F( mpressed) num_ mps,
+      COUNT F(favor ed) * 1.0 / COUNT F( mpressed) AS t et_ftr,
+      ANY_VALUE(vars.m n_t et_favs) m n_t et_favs,
+      ANY_VALUE(vars.m n_t et_ mps) m n_t et_ mps,
+      ANY_VALUE(vars.max_t et_ftr) max_t et_ftr,
     FROM eng_data, vars
     GROUP BY 1, 2
-    HAVING num_favs >= min_tweet_favs -- this is an aggressive filter to make the workflow efficient
-      AND num_imps >= min_tweet_imps
-      AND tweet_ftr <= max_tweet_ftr -- filter to combat spam
+    HAV NG num_favs >= m n_t et_favs -- t   s an aggress ve f lter to make t  workflow eff c ent
+      AND num_ mps >= m n_t et_ mps
+      AND t et_ftr <= max_t et_ftr -- f lter to combat spam
   ),
-  eligible_users AS (
+  el g ble_users AS (
     SELECT
-      user_id,
-      CAST(LOG10(COUNTIF(impressed) + 1) AS INT64) log_n_imps,
-      CAST(LOG10(COUNTIF(favorited) + 1) AS INT64) log_n_favs,
-      ANY_VALUE(vars.max_user_log_n_imps) max_user_log_n_imps,
+      user_ d,
+      CAST(LOG10(COUNT F( mpressed) + 1) AS  NT64) log_n_ mps,
+      CAST(LOG10(COUNT F(favor ed) + 1) AS  NT64) log_n_favs,
+      ANY_VALUE(vars.max_user_log_n_ mps) max_user_log_n_ mps,
       ANY_VALUE(vars.max_user_log_n_favs) max_user_log_n_favs,
       ANY_VALUE(vars.max_user_ftr) max_user_ftr,
-      COUNTIF(favorited) * 1.0 / COUNTIF(impressed) user_ftr
+      COUNT F(favor ed) * 1.0 / COUNT F( mpressed) user_ftr
     from eng_data, vars
     GROUP BY 1
-    HAVING
-      log_n_imps < max_user_log_n_imps
+    HAV NG
+      log_n_ mps < max_user_log_n_ mps
       AND log_n_favs < max_user_log_n_favs
       AND user_ftr < max_user_ftr
   ),
-  eligible_eng_data AS (
+  el g ble_eng_data AS (
     SELECT
-      user_id,
-      eng_data.author_id,
-      tweet_id,
-      minTsMilli,
-      favorited,
-      impressed
+      user_ d,
+      eng_data.author_ d,
+      t et_ d,
+      m nTsM ll ,
+      favor ed,
+       mpressed
     FROM eng_data
-    INNER JOIN eligible_tweets USING(tweet_id)
-    INNER JOIN eligible_users USING(user_id)
+     NNER JO N el g ble_t ets US NG(t et_ d)
+     NNER JO N el g ble_users US NG(user_ d)
   ),
   follow_graph AS (
-    SELECT userId, neighbor
-    FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph` user_user_graph, unnest(user_user_graph.neighbors) as neighbor
-    WHERE DATE(_PARTITIONTIME) =
-          (  -- Get latest partition time
-          SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-          FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph`, vars
-          WHERE Date(_PARTITIONTIME) BETWEEN
-            DATE_SUB(Date(vars.end_time),
-              INTERVAL 14 DAY) AND DATE(vars.end_time)
+    SELECT user d, ne ghbor
+    FROM `twttr-bq-cassowary-prod.user.user_user_normal zed_graph` user_user_graph, unnest(user_user_graph.ne ghbors) as ne ghbor
+    WHERE DATE(_PART T ONT ME) =
+          (  -- Get latest part  on t  
+          SELECT MAX(DATE(_PART T ONT ME)) latest_part  on
+          FROM `twttr-bq-cassowary-prod.user.user_user_normal zed_graph`, vars
+          WHERE Date(_PART T ONT ME) BETWEEN
+            DATE_SUB(Date(vars.end_t  ),
+               NTERVAL 14 DAY) AND DATE(vars.end_t  )
             )
-    AND neighbor.isFollowed is True
+    AND ne ghbor. sFollo d  s True
   ),
-  extended_eligible_eng_data AS (
+  extended_el g ble_eng_data AS (
       SELECT
-        user_id,
-        tweet_id,
-        minTsMilli,
-        favorited,
-        impressed,
-        neighbor.neighborId is NULL as is_oon_eng
-      FROM eligible_eng_data  left JOIN follow_graph ON (follow_graph.userId = eligible_eng_data.user_id AND follow_graph.neighbor.neighborId = eligible_eng_data.author_id)
+        user_ d,
+        t et_ d,
+        m nTsM ll ,
+        favor ed,
+         mpressed,
+        ne ghbor.ne ghbor d  s NULL as  s_oon_eng
+      FROM el g ble_eng_data  left JO N follow_graph ON (follow_graph.user d = el g ble_eng_data.user_ d AND follow_graph.ne ghbor.ne ghbor d = el g ble_eng_data.author_ d)
   ),
-  -- step 2: merge with iikf
-  iikf AS (
+  -- step 2:  rge w h   kf
+    kf AS (
   SELECT
-    userId AS user_id,
+    user d AS user_ d,
 
-    clusterIdToScore.key AS clusterId,
-    clusterIdToScore.value.favScore AS favScore,
-    clusterIdToScore.value.favScoreClusterNormalizedOnly AS favScoreClusterNormalizedOnly,
-    clusterIdToScore.value.favScoreProducerNormalizedOnly AS favScoreProducerNormalizedOnly,
+    cluster dToScore.key AS cluster d,
+    cluster dToScore.value.favScore AS favScore,
+    cluster dToScore.value.favScoreClusterNormal zedOnly AS favScoreClusterNormal zedOnly,
+    cluster dToScore.value.favScoreProducerNormal zedOnly AS favScoreProducerNormal zedOnly,
 
-    clusterIdToScore.value.logFavScore AS logFavScore,
-    clusterIdToScore.value.logfavScoreClusterNormalizedOnly AS logfavScoreClusterNormalizedOnly, -- probably no need for cluster normalization anymore
-    ROW_NUMBER() OVER (PARTITION BY userId ORDER BY clusterIdToScore.value.logFavScore DESC) AS uii_cluster_rank_logfavscore,
-    ROW_NUMBER() OVER (PARTITION BY userId ORDER BY clusterIdToScore.value.logfavScoreClusterNormalizedOnly DESC) AS uii_cluster_rank_logfavscoreclusternormalized,
-  FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`, UNNEST(clusterIdToScores) clusterIdToScore, vars
-  WHERE DATE(_PARTITIONTIME) =
-            (-- Get latest partition time
-            SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-            FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`
-            WHERE Date(_PARTITIONTIME) BETWEEN
-            DATE_SUB(Date(vars.end_time),
-              INTERVAL 14 DAY) AND DATE(vars.end_time)
+    cluster dToScore.value.logFavScore AS logFavScore,
+    cluster dToScore.value.logfavScoreClusterNormal zedOnly AS logfavScoreClusterNormal zedOnly, -- probably no need for cluster normal zat on anymore
+    ROW_NUMBER() OVER (PART T ON BY user d ORDER BY cluster dToScore.value.logFavScore DESC) AS u  _cluster_rank_logfavscore,
+    ROW_NUMBER() OVER (PART T ON BY user d ORDER BY cluster dToScore.value.logfavScoreClusterNormal zedOnly DESC) AS u  _cluster_rank_logfavscoreclusternormal zed,
+  FROM `twttr-bq-cassowary-prod.user.s mclusters_v2_user_to_ nterested_ n_20M_145K_2020`, UNNEST(cluster dToScores) cluster dToScore, vars
+  WHERE DATE(_PART T ONT ME) =
+            (-- Get latest part  on t  
+            SELECT MAX(DATE(_PART T ONT ME)) latest_part  on
+            FROM `twttr-bq-cassowary-prod.user.s mclusters_v2_user_to_ nterested_ n_20M_145K_2020`
+            WHERE Date(_PART T ONT ME) BETWEEN
+            DATE_SUB(Date(vars.end_t  ),
+               NTERVAL 14 DAY) AND DATE(vars.end_t  )
             )
-          AND MOD(ABS(farm_fingerprint(userId || '')), vars.eng_user_sample_rate) = 0
-          AND clusterIdToScore.value.logFavScore != 0
+          AND MOD(ABS(farm_f ngerpr nt(user d || '')), vars.eng_user_sample_rate) = 0
+          AND cluster dToScore.value.logFavScore != 0
   ),
-  eng_w_uii AS (
+  eng_w_u   AS (
     SELECT
-      T_IMP_FAV.user_id,
-      T_IMP_FAV.tweet_id,
-      T_IMP_FAV.impressed,
-      T_IMP_FAV.favorited,
-      T_IMP_FAV.minTsMilli,
-      T_IMP_FAV.is_oon_eng,
+      T_ MP_FAV.user_ d,
+      T_ MP_FAV.t et_ d,
+      T_ MP_FAV. mpressed,
+      T_ MP_FAV.favor ed,
+      T_ MP_FAV.m nTsM ll ,
+      T_ MP_FAV. s_oon_eng,
 
-      IIKF.clusterId,
-      IIKF.logFavScore,
-      IIKF.logfavScoreClusterNormalizedOnly,
-      IIKF.uii_cluster_rank_logfavscore,
-      IIKF.uii_cluster_rank_logfavscoreclusternormalized,
-    FROM extended_eligible_eng_data T_IMP_FAV, vars
-    INNER JOIN iikf
-      ON T_IMP_FAV.user_id = IIKF.user_id
+        KF.cluster d,
+        KF.logFavScore,
+        KF.logfavScoreClusterNormal zedOnly,
+        KF.u  _cluster_rank_logfavscore,
+        KF.u  _cluster_rank_logfavscoreclusternormal zed,
+    FROM extended_el g ble_eng_data T_ MP_FAV, vars
+     NNER JO N   kf
+      ON T_ MP_FAV.user_ d =   KF.user_ d
     WHERE
-        T_IMP_FAV.impressed
+        T_ MP_FAV. mpressed
   ),
-  -- step 3: Calculate tweet embedding
-  tweet_cluster_agg AS (
+  -- step 3: Calculate t et embedd ng
+  t et_cluster_agg AS (
     SELECT
-      tweet_id,
-      clusterId,
+      t et_ d,
+      cluster d,
 
-      SUM(IF(impressed, logFavScore, 0)) denom_logFavScore,
-      SUM(IF(favorited, logFavScore, 0)) nom_logFavScore,
+      SUM( F( mpressed, logFavScore, 0)) denom_logFavScore,
+      SUM( F(favor ed, logFavScore, 0)) nom_logFavScore,
 
-      COUNTIF(impressed) n_imps,
-      COUNTIF(favorited) n_favs,
+      COUNT F( mpressed) n_ mps,
+      COUNT F(favor ed) n_favs,
 
-      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 5) n_imps_at_5,
-      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 5) n_favs_at_5,
+      COUNT F( mpressed AND u  _cluster_rank_logfavscore <= 5) n_ mps_at_5,
+      COUNT F(favor ed AND u  _cluster_rank_logfavscore <= 5) n_favs_at_5,
 
-      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 5 AND is_oon_eng) n_oon_favs_at_5,
-      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 5 AND is_oon_eng) n_oon_imps_at_5,
+      COUNT F(favor ed AND u  _cluster_rank_logfavscore <= 5 AND  s_oon_eng) n_oon_favs_at_5,
+      COUNT F( mpressed AND u  _cluster_rank_logfavscore <= 5 AND  s_oon_eng) n_oon_ mps_at_5,
 
-      SUM(IF(favorited AND uii_cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_favs_at_5,
-      SUM(IF(impressed AND uii_cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_imps_at_5,
+      SUM( F(favor ed AND u  _cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - m nTsM ll ) / vars.halfL fe)) AS decayed_n_favs_at_5,
+      SUM( F( mpressed AND u  _cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - m nTsM ll ) / vars.halfL fe)) AS decayed_n_ mps_at_5,
 
-      SUM(IF(favorited, logfavScoreClusterNormalizedOnly, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS dec_sum_logfavScoreClusterNormalizedOnly,
+      SUM( F(favor ed, logfavScoreClusterNormal zedOnly, 0) * POW(0.5, (currentTs - m nTsM ll ) / vars.halfL fe)) AS dec_sum_logfavScoreClusterNormal zedOnly,
 
-      MIN(minTsMilli) minTsMilli,
+      M N(m nTsM ll ) m nTsM ll ,
 
-    FROM eng_w_uii, vars
+    FROM eng_w_u  , vars
     GROUP BY 1, 2
   ),
-  tweet_cluster_intermediate AS (
+  t et_cluster_ nter d ate AS (
     SELECT
-      tweet_id,
-      clusterId,
-      minTsMilli,
+      t et_ d,
+      cluster d,
+      m nTsM ll ,
 
-      n_imps,
+      n_ mps,
       n_favs,
 
       n_favs_at_5,
-      n_imps_at_5,
+      n_ mps_at_5,
       n_oon_favs_at_5,
-      n_oon_imps_at_5,
+      n_oon_ mps_at_5,
       decayed_n_favs_at_5,
-      decayed_n_imps_at_5,
+      decayed_n_ mps_at_5,
 
       denom_logFavScore,
       nom_logFavScore,
 
-      dec_sum_logfavScoreClusterNormalizedOnly,
+      dec_sum_logfavScoreClusterNormal zedOnly,
 
-      SAFE_DIVIDE(n_favs_at_5, n_imps_at_5) AS ftr_at_5,
+      SAFE_D V DE(n_favs_at_5, n_ mps_at_5) AS ftr_at_5,
 
-      SAFE_DIVIDE(n_oon_favs_at_5,  n_oon_imps_at_5) AS ftr_oon_at_5,
+      SAFE_D V DE(n_oon_favs_at_5,  n_oon_ mps_at_5) AS ftr_oon_at_5,
 
-      row_number() OVER (PARTITION BY tweet_id ORDER BY nom_logFavScore DESC) cluster_nom_logFavScore_ranking,
-      row_number() OVER (PARTITION BY tweet_id ORDER BY dec_sum_logfavScoreClusterNormalizedOnly DESC) cluster_decSumLogFavClusterNormalized_ranking,
-    FROM tweet_cluster_agg
+      row_number() OVER (PART T ON BY t et_ d ORDER BY nom_logFavScore DESC) cluster_nom_logFavScore_rank ng,
+      row_number() OVER (PART T ON BY t et_ d ORDER BY dec_sum_logfavScoreClusterNormal zedOnly DESC) cluster_decSumLogFavClusterNormal zed_rank ng,
+    FROM t et_cluster_agg
   ),
-  tweet_e AS (
+  t et_e AS (
     SELECT
-      tweet_id,
+      t et_ d,
 
-      MIN(minTsMilli) first_serve_millis,
-      DATE(TIMESTAMP_MILLIS(MIN(minTsMilli))) date_first_serve,
-
-      ARRAY_AGG(STRUCT(
-          clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_1000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding,
+      M N(m nTsM ll ) f rst_serve_m ll s,
+      DATE(T MESTAMP_M LL S(M N(m nTsM ll ))) date_f rst_serve,
 
       ARRAY_AGG(STRUCT(
-          clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/10000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_10000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding,
+          cluster d,
+          -- t  d v s on by MAX_EXPONENT  s to avo d overflow operat on
+          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) *  F(cluster_decSumLogFavClusterNormal zed_rank ng > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormal zed_rank ng-1))) AS ftrat5_decayed_pop_b as_1000_rank_decay_1_1
+      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) *  F(cluster_decSumLogFavClusterNormal zed_rank ng > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormal zed_rank ng-1))) DESC L M T {TWEET_EMBEDD NG_LENGTH}) ftrat5_decayed_pop_b as_1000_rank_decay_1_1_embedd ng,
 
       ARRAY_AGG(STRUCT(
-          clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) AS oon_ftrat5_decayed_pop_bias_1000_rank_decay
-      ) ORDER BY ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding,
+          cluster d,
+          -- t  d v s on by MAX_EXPONENT  s to avo d overflow operat on
+          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/10000))) - 1) *  F(cluster_decSumLogFavClusterNormal zed_rank ng > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormal zed_rank ng-1))) AS ftrat5_decayed_pop_b as_10000_rank_decay_1_1
+      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) *  F(cluster_decSumLogFavClusterNormal zed_rank ng > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormal zed_rank ng-1))) DESC L M T {TWEET_EMBEDD NG_LENGTH}) ftrat5_decayed_pop_b as_10000_rank_decay_1_1_embedd ng,
 
       ARRAY_AGG(STRUCT(
-          clusterId,
-          dec_sum_logfavScoreClusterNormalizedOnly
-          ) ORDER BY dec_sum_logfavScoreClusterNormalizedOnly DESC LIMIT {TWEET_EMBEDDING_LENGTH}) dec_sum_logfavScoreClusterNormalizedOnly_embedding,
+          cluster d,
+          -- t  d v s on by MAX_EXPONENT  s to avo d overflow operat on
+          ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) *  F(cluster_nom_logFavScore_rank ng > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_rank ng-1))) AS oon_ftrat5_decayed_pop_b as_1000_rank_decay
+      ) ORDER BY ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) *  F(cluster_nom_logFavScore_rank ng > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_rank ng-1))) DESC L M T {TWEET_EMBEDD NG_LENGTH}) oon_ftrat5_decayed_pop_b as_1000_rank_decay_embedd ng,
 
-    FROM tweet_cluster_intermediate, vars
+      ARRAY_AGG(STRUCT(
+          cluster d,
+          dec_sum_logfavScoreClusterNormal zedOnly
+          ) ORDER BY dec_sum_logfavScoreClusterNormal zedOnly DESC L M T {TWEET_EMBEDD NG_LENGTH}) dec_sum_logfavScoreClusterNormal zedOnly_embedd ng,
+
+    FROM t et_cluster_ nter d ate, vars
     GROUP BY 1
   ),
-  tweet_e_unnest AS (
+  t et_e_unnest AS (
     SELECT
-        tweet_id AS tweetId,
-        clusterToScores.clusterId AS clusterId,
-        clusterToScores.{SCORE_KEY} tweetScore
-    FROM tweet_e, UNNEST({SCORE_COLUMN}) clusterToScores
-    WHERE clusterToScores.{SCORE_KEY} IS NOT NULL
+        t et_ d AS t et d,
+        clusterToScores.cluster d AS cluster d,
+        clusterToScores.{SCORE_KEY} t etScore
+    FROM t et_e, UNNEST({SCORE_COLUMN}) clusterToScores
+    WHERE clusterToScores.{SCORE_KEY}  S NOT NULL
       AND clusterToScores.{SCORE_KEY} > 0
   )
   SELECT
-    tweetId,
-    clusterId,
-    tweetScore
-  FROM tweet_e_unnest
+    t et d,
+    cluster d,
+    t etScore
+  FROM t et_e_unnest

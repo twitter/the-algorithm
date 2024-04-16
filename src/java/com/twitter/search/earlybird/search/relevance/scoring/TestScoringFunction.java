@@ -1,52 +1,52 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import org.apache.lucene.search.Explanation;
+ mport org.apac .lucene.search.Explanat on;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
 /**
- * A dummy scoring function for test, the score is always tweetId/10000.0
- * Since score_filter: operator requires all score to be between [0, 1], if you want to use this
- * with it, don't use any tweet id larger than 10000 in your test.
+ * A dum  scor ng funct on for test, t  score  s always t et d/10000.0
+ * S nce score_f lter: operator requ res all score to be bet en [0, 1],  f   want to use t 
+ * w h  , don't use any t et  d larger than 10000  n y  test.
  */
-public class TestScoringFunction extends ScoringFunction {
-  private ThriftSearchResultMetadata metadata = null;
-  private float score;
+publ c class TestScor ngFunct on extends Scor ngFunct on {
+  pr vate Thr ftSearchResult tadata  tadata = null;
+  pr vate float score;
 
-  public TestScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  publ c TestScor ngFunct on( mmutableSc ma nterface sc ma) {
+    super(sc ma);
   }
 
-  @Override
+  @Overr de
   protected float score(float luceneQueryScore) {
-    long tweetId = tweetIDMapper.getTweetID(getCurrentDocID());
-    this.score = (float) (tweetId / 10000.0);
-    System.out.println(String.format("score for tweet %10d is %6.3f", tweetId, score));
-    return this.score;
+    long t et d = t et DMapper.getT et D(getCurrentDoc D());
+    t .score = (float) (t et d / 10000.0);
+    System.out.pr ntln(Str ng.format("score for t et %10d  s %6.3f", t et d, score));
+    return t .score;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
+  @Overr de
+  protected Explanat on doExpla n(float luceneScore) {
     return null;
   }
 
-  @Override
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
-    if (metadata == null) {
-      metadata = new ThriftSearchResultMetadata()
-          .setResultType(ThriftSearchResultType.RELEVANCE)
-          .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-      metadata.setScore(score);
+  @Overr de
+  publ c Thr ftSearchResult tadata getResult tadata(Thr ftSearchResult tadataOpt ons opt ons) {
+     f ( tadata == null) {
+       tadata = new Thr ftSearchResult tadata()
+          .setResultType(Thr ftSearchResultType.RELEVANCE)
+          .setPengu nVers on(Earlyb rdConf g.getPengu nVers onByte());
+       tadata.setScore(score);
     }
-    return metadata;
+    return  tadata;
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @Overr de
+  publ c vo d updateRelevanceStats(Thr ftSearchResultsRelevanceStats relevanceStats) {
   }
 }

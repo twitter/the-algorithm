@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.tw ter.cr_m xer.module.thr ft_cl ent
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.hydra.partition.{thriftscala => ht}
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.hydra.part  on.{thr ftscala => ht}
 
-object HydraPartitionClientModule
-    extends ThriftMethodBuilderClientModule[
-      ht.HydraPartition.ServicePerEndpoint,
-      ht.HydraPartition.MethodPerEndpoint
+object HydraPart  onCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      ht.HydraPart  on.Serv cePerEndpo nt,
+      ht.HydraPart  on. thodPerEndpo nt
     ]
-    with MtlsClient {
-  override def label: String = "hydra-partition"
+    w h MtlsCl ent {
+  overr de def label: Str ng = "hydra-part  on"
 
-  override def dest: String = "/s/hydra/hydra-partition"
+  overr de def dest: Str ng = "/s/hydra/hydra-part  on"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = methodBuilder.withTimeoutTotal(500.milliseconds)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder =  thodBu lder.w hT  outTotal(500.m ll seconds)
 
 }

@@ -1,109 +1,109 @@
-package com.twitter.timelineranker.recap.model
+package com.tw ter.t  l neranker.recap.model
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.timelines.content_features.v1.thriftscala.{ContentFeatures => ContentFeaturesV1}
-import com.twitter.timelines.content_features.{thriftscala => thrift}
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.SelfThreadMetadata
-import scala.util.Failure
-import scala.util.Success
-import scala.util.{Try => ScalaTry}
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat on
+ mport com.tw ter.t  l nes.content_features.v1.thr ftscala.{ContentFeatures => ContentFeaturesV1}
+ mport com.tw ter.t  l nes.content_features.{thr ftscala => thr ft}
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControl
+ mport com.tw ter.t etyp e.thr ftscala. d aEnt y
+ mport com.tw ter.t etyp e.thr ftscala.SelfThread tadata
+ mport scala.ut l.Fa lure
+ mport scala.ut l.Success
+ mport scala.ut l.{Try => ScalaTry}
 
 case class ContentFeatures(
   length: Short,
-  hasQuestion: Boolean,
+  hasQuest on: Boolean,
   numCaps: Short,
-  numWhiteSpaces: Short,
-  numNewlines: Option[Short],
-  videoDurationMs: Option[Int],
-  bitRate: Option[Int],
-  aspectRatioNum: Option[Short],
-  aspectRatioDen: Option[Short],
-  widths: Option[Seq[Short]],
-  heights: Option[Seq[Short]],
-  resizeMethods: Option[Seq[Short]],
-  numMediaTags: Option[Short],
-  mediaTagScreenNames: Option[Seq[String]],
-  emojiTokens: Option[Set[String]],
-  emoticonTokens: Option[Set[String]],
-  phrases: Option[Set[String]],
-  faceAreas: Option[Seq[Int]],
-  dominantColorRed: Option[Short],
-  dominantColorBlue: Option[Short],
-  dominantColorGreen: Option[Short],
-  numColors: Option[Short],
-  stickerIds: Option[Seq[Long]],
-  mediaOriginProviders: Option[Seq[String]],
-  isManaged: Option[Boolean],
-  is360: Option[Boolean],
-  viewCount: Option[Long],
-  isMonetizable: Option[Boolean],
-  isEmbeddable: Option[Boolean],
-  hasSelectedPreviewImage: Option[Boolean],
-  hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean],
-  media: Option[Seq[MediaEntity]],
-  dominantColorPercentage: Option[Double],
-  posUnigrams: Option[Set[String]],
-  posBigrams: Option[Set[String]],
-  semanticCoreAnnotations: Option[Seq[TweetEntityAnnotation]],
-  selfThreadMetadata: Option[SelfThreadMetadata],
-  tokens: Option[Seq[String]],
-  tweetText: Option[String],
-  conversationControl: Option[ConversationControl]) {
-  def toThrift: thrift.ContentFeatures =
-    thrift.ContentFeatures.V1(toThriftV1)
+  numWh eSpaces: Short,
+  numNewl nes: Opt on[Short],
+  v deoDurat onMs: Opt on[ nt],
+  b Rate: Opt on[ nt],
+  aspectRat oNum: Opt on[Short],
+  aspectRat oDen: Opt on[Short],
+  w dths: Opt on[Seq[Short]],
+    ghts: Opt on[Seq[Short]],
+  res ze thods: Opt on[Seq[Short]],
+  num d aTags: Opt on[Short],
+   d aTagScreenNa s: Opt on[Seq[Str ng]],
+  emoj Tokens: Opt on[Set[Str ng]],
+  emot conTokens: Opt on[Set[Str ng]],
+  phrases: Opt on[Set[Str ng]],
+  faceAreas: Opt on[Seq[ nt]],
+  dom nantColorRed: Opt on[Short],
+  dom nantColorBlue: Opt on[Short],
+  dom nantColorGreen: Opt on[Short],
+  numColors: Opt on[Short],
+  st cker ds: Opt on[Seq[Long]],
+   d aOr g nProv ders: Opt on[Seq[Str ng]],
+   sManaged: Opt on[Boolean],
+   s360: Opt on[Boolean],
+  v ewCount: Opt on[Long],
+   sMonet zable: Opt on[Boolean],
+   sEmbeddable: Opt on[Boolean],
+  hasSelectedPrev ew mage: Opt on[Boolean],
+  hasT le: Opt on[Boolean],
+  hasDescr pt on: Opt on[Boolean],
+  hasV s S eCallToAct on: Opt on[Boolean],
+  hasApp nstallCallToAct on: Opt on[Boolean],
+  hasWatchNowCallToAct on: Opt on[Boolean],
+   d a: Opt on[Seq[ d aEnt y]],
+  dom nantColorPercentage: Opt on[Double],
+  posUn grams: Opt on[Set[Str ng]],
+  posB grams: Opt on[Set[Str ng]],
+  semant cCoreAnnotat ons: Opt on[Seq[T etEnt yAnnotat on]],
+  selfThread tadata: Opt on[SelfThread tadata],
+  tokens: Opt on[Seq[Str ng]],
+  t etText: Opt on[Str ng],
+  conversat onControl: Opt on[Conversat onControl]) {
+  def toThr ft: thr ft.ContentFeatures =
+    thr ft.ContentFeatures.V1(toThr ftV1)
 
-  def toThriftV1: ContentFeaturesV1 =
+  def toThr ftV1: ContentFeaturesV1 =
     ContentFeaturesV1(
       length = length,
-      hasQuestion = hasQuestion,
+      hasQuest on = hasQuest on,
       numCaps = numCaps,
-      numWhiteSpaces = numWhiteSpaces,
-      numNewlines = numNewlines,
-      videoDurationMs = videoDurationMs,
-      bitRate = bitRate,
-      aspectRatioNum = aspectRatioNum,
-      aspectRatioDen = aspectRatioDen,
-      widths = widths,
-      heights = heights,
-      resizeMethods = resizeMethods,
-      numMediaTags = numMediaTags,
-      mediaTagScreenNames = mediaTagScreenNames,
-      emojiTokens = emojiTokens,
-      emoticonTokens = emoticonTokens,
+      numWh eSpaces = numWh eSpaces,
+      numNewl nes = numNewl nes,
+      v deoDurat onMs = v deoDurat onMs,
+      b Rate = b Rate,
+      aspectRat oNum = aspectRat oNum,
+      aspectRat oDen = aspectRat oDen,
+      w dths = w dths,
+        ghts =   ghts,
+      res ze thods = res ze thods,
+      num d aTags = num d aTags,
+       d aTagScreenNa s =  d aTagScreenNa s,
+      emoj Tokens = emoj Tokens,
+      emot conTokens = emot conTokens,
       phrases = phrases,
       faceAreas = faceAreas,
-      dominantColorRed = dominantColorRed,
-      dominantColorBlue = dominantColorBlue,
-      dominantColorGreen = dominantColorGreen,
+      dom nantColorRed = dom nantColorRed,
+      dom nantColorBlue = dom nantColorBlue,
+      dom nantColorGreen = dom nantColorGreen,
       numColors = numColors,
-      stickerIds = stickerIds,
-      mediaOriginProviders = mediaOriginProviders,
-      isManaged = isManaged,
-      is360 = is360,
-      viewCount = viewCount,
-      isMonetizable = isMonetizable,
-      isEmbeddable = isEmbeddable,
-      hasSelectedPreviewImage = hasSelectedPreviewImage,
-      hasTitle = hasTitle,
-      hasDescription = hasDescription,
-      hasVisitSiteCallToAction = hasVisitSiteCallToAction,
-      hasAppInstallCallToAction = hasAppInstallCallToAction,
-      hasWatchNowCallToAction = hasWatchNowCallToAction,
-      dominantColorPercentage = dominantColorPercentage,
-      posUnigrams = posUnigrams,
-      posBigrams = posBigrams,
-      semanticCoreAnnotations = semanticCoreAnnotations,
-      selfThreadMetadata = selfThreadMetadata,
+      st cker ds = st cker ds,
+       d aOr g nProv ders =  d aOr g nProv ders,
+       sManaged =  sManaged,
+       s360 =  s360,
+      v ewCount = v ewCount,
+       sMonet zable =  sMonet zable,
+       sEmbeddable =  sEmbeddable,
+      hasSelectedPrev ew mage = hasSelectedPrev ew mage,
+      hasT le = hasT le,
+      hasDescr pt on = hasDescr pt on,
+      hasV s S eCallToAct on = hasV s S eCallToAct on,
+      hasApp nstallCallToAct on = hasApp nstallCallToAct on,
+      hasWatchNowCallToAct on = hasWatchNowCallToAct on,
+      dom nantColorPercentage = dom nantColorPercentage,
+      posUn grams = posUn grams,
+      posB grams = posB grams,
+      semant cCoreAnnotat ons = semant cCoreAnnotat ons,
+      selfThread tadata = selfThread tadata,
       tokens = tokens,
-      tweetText = tweetText,
-      conversationControl = conversationControl,
-      media = media
+      t etText = t etText,
+      conversat onControl = conversat onControl,
+       d a =  d a
     )
 }
 
@@ -155,68 +155,68 @@ object ContentFeatures {
     None
   )
 
-  def fromThrift(contentFeatures: thrift.ContentFeatures): Option[ContentFeatures] =
+  def fromThr ft(contentFeatures: thr ft.ContentFeatures): Opt on[ContentFeatures] =
     contentFeatures match {
-      case thrift.ContentFeatures.V1(contentFeaturesV1) =>
-        Some(fromThriftV1(contentFeaturesV1))
+      case thr ft.ContentFeatures.V1(contentFeaturesV1) =>
+        So (fromThr ftV1(contentFeaturesV1))
       case _ =>
         None
     }
 
-  private val failure =
-    Failure[ContentFeatures](new Exception("Failure to convert content features from thrift"))
+  pr vate val fa lure =
+    Fa lure[ContentFeatures](new Except on("Fa lure to convert content features from thr ft"))
 
-  def tryFromThrift(contentFeaturesThrift: thrift.ContentFeatures): ScalaTry[ContentFeatures] =
-    fromThrift(contentFeaturesThrift) match {
-      case Some(contentFeatures) => Success[ContentFeatures](contentFeatures)
-      case None => failure
+  def tryFromThr ft(contentFeaturesThr ft: thr ft.ContentFeatures): ScalaTry[ContentFeatures] =
+    fromThr ft(contentFeaturesThr ft) match {
+      case So (contentFeatures) => Success[ContentFeatures](contentFeatures)
+      case None => fa lure
     }
 
-  def fromThriftV1(contentFeaturesV1: ContentFeaturesV1): ContentFeatures =
+  def fromThr ftV1(contentFeaturesV1: ContentFeaturesV1): ContentFeatures =
     ContentFeatures(
       length = contentFeaturesV1.length,
-      hasQuestion = contentFeaturesV1.hasQuestion,
+      hasQuest on = contentFeaturesV1.hasQuest on,
       numCaps = contentFeaturesV1.numCaps,
-      numWhiteSpaces = contentFeaturesV1.numWhiteSpaces,
-      numNewlines = contentFeaturesV1.numNewlines,
-      videoDurationMs = contentFeaturesV1.videoDurationMs,
-      bitRate = contentFeaturesV1.bitRate,
-      aspectRatioNum = contentFeaturesV1.aspectRatioNum,
-      aspectRatioDen = contentFeaturesV1.aspectRatioDen,
-      widths = contentFeaturesV1.widths,
-      heights = contentFeaturesV1.heights,
-      resizeMethods = contentFeaturesV1.resizeMethods,
-      numMediaTags = contentFeaturesV1.numMediaTags,
-      mediaTagScreenNames = contentFeaturesV1.mediaTagScreenNames,
-      emojiTokens = contentFeaturesV1.emojiTokens.map(_.toSet),
-      emoticonTokens = contentFeaturesV1.emoticonTokens.map(_.toSet),
+      numWh eSpaces = contentFeaturesV1.numWh eSpaces,
+      numNewl nes = contentFeaturesV1.numNewl nes,
+      v deoDurat onMs = contentFeaturesV1.v deoDurat onMs,
+      b Rate = contentFeaturesV1.b Rate,
+      aspectRat oNum = contentFeaturesV1.aspectRat oNum,
+      aspectRat oDen = contentFeaturesV1.aspectRat oDen,
+      w dths = contentFeaturesV1.w dths,
+        ghts = contentFeaturesV1.  ghts,
+      res ze thods = contentFeaturesV1.res ze thods,
+      num d aTags = contentFeaturesV1.num d aTags,
+       d aTagScreenNa s = contentFeaturesV1. d aTagScreenNa s,
+      emoj Tokens = contentFeaturesV1.emoj Tokens.map(_.toSet),
+      emot conTokens = contentFeaturesV1.emot conTokens.map(_.toSet),
       phrases = contentFeaturesV1.phrases.map(_.toSet),
       faceAreas = contentFeaturesV1.faceAreas,
-      dominantColorRed = contentFeaturesV1.dominantColorRed,
-      dominantColorBlue = contentFeaturesV1.dominantColorBlue,
-      dominantColorGreen = contentFeaturesV1.dominantColorGreen,
+      dom nantColorRed = contentFeaturesV1.dom nantColorRed,
+      dom nantColorBlue = contentFeaturesV1.dom nantColorBlue,
+      dom nantColorGreen = contentFeaturesV1.dom nantColorGreen,
       numColors = contentFeaturesV1.numColors,
-      stickerIds = contentFeaturesV1.stickerIds,
-      mediaOriginProviders = contentFeaturesV1.mediaOriginProviders,
-      isManaged = contentFeaturesV1.isManaged,
-      is360 = contentFeaturesV1.is360,
-      viewCount = contentFeaturesV1.viewCount,
-      isMonetizable = contentFeaturesV1.isMonetizable,
-      isEmbeddable = contentFeaturesV1.isEmbeddable,
-      hasSelectedPreviewImage = contentFeaturesV1.hasSelectedPreviewImage,
-      hasTitle = contentFeaturesV1.hasTitle,
-      hasDescription = contentFeaturesV1.hasDescription,
-      hasVisitSiteCallToAction = contentFeaturesV1.hasVisitSiteCallToAction,
-      hasAppInstallCallToAction = contentFeaturesV1.hasAppInstallCallToAction,
-      hasWatchNowCallToAction = contentFeaturesV1.hasWatchNowCallToAction,
-      dominantColorPercentage = contentFeaturesV1.dominantColorPercentage,
-      posUnigrams = contentFeaturesV1.posUnigrams.map(_.toSet),
-      posBigrams = contentFeaturesV1.posBigrams.map(_.toSet),
-      semanticCoreAnnotations = contentFeaturesV1.semanticCoreAnnotations,
-      selfThreadMetadata = contentFeaturesV1.selfThreadMetadata,
+      st cker ds = contentFeaturesV1.st cker ds,
+       d aOr g nProv ders = contentFeaturesV1. d aOr g nProv ders,
+       sManaged = contentFeaturesV1. sManaged,
+       s360 = contentFeaturesV1. s360,
+      v ewCount = contentFeaturesV1.v ewCount,
+       sMonet zable = contentFeaturesV1. sMonet zable,
+       sEmbeddable = contentFeaturesV1. sEmbeddable,
+      hasSelectedPrev ew mage = contentFeaturesV1.hasSelectedPrev ew mage,
+      hasT le = contentFeaturesV1.hasT le,
+      hasDescr pt on = contentFeaturesV1.hasDescr pt on,
+      hasV s S eCallToAct on = contentFeaturesV1.hasV s S eCallToAct on,
+      hasApp nstallCallToAct on = contentFeaturesV1.hasApp nstallCallToAct on,
+      hasWatchNowCallToAct on = contentFeaturesV1.hasWatchNowCallToAct on,
+      dom nantColorPercentage = contentFeaturesV1.dom nantColorPercentage,
+      posUn grams = contentFeaturesV1.posUn grams.map(_.toSet),
+      posB grams = contentFeaturesV1.posB grams.map(_.toSet),
+      semant cCoreAnnotat ons = contentFeaturesV1.semant cCoreAnnotat ons,
+      selfThread tadata = contentFeaturesV1.selfThread tadata,
       tokens = contentFeaturesV1.tokens.map(_.toSeq),
-      tweetText = contentFeaturesV1.tweetText,
-      conversationControl = contentFeaturesV1.conversationControl,
-      media = contentFeaturesV1.media
+      t etText = contentFeaturesV1.t etText,
+      conversat onControl = contentFeaturesV1.conversat onControl,
+       d a = contentFeaturesV1. d a
     )
 }

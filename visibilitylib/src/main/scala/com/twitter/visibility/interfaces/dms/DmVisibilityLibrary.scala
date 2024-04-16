@@ -1,88 +1,88 @@
-package com.twitter.visibility.interfaces.dms
+package com.tw ter.v s b l y. nterfaces.dms
 
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.DmId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.{DmId => DmContentId}
-import com.twitter.visibility.models.SafetyLevel.DirectMessages
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Reason.DeactivatedAuthor
-import com.twitter.visibility.rules.Reason.ErasedAuthor
-import com.twitter.visibility.rules.Reason.Nsfw
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.common.Dm d
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d.{Dm d => DmContent d}
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssages
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules.Reason.Deact vatedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.ErasedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.Nsfw
 
-object DmVisibilityLibrary {
-  type Type = DmVisibilityRequest => Stitch[DmVisibilityResponse]
+object DmV s b l yL brary {
+  type Type = DmV s b l yRequest => St ch[DmV s b l yResponse]
 
-  case class DmVisibilityRequest(
-    dmId: DmId,
-    dmAuthorUserId: UserId,
-    viewerContext: ViewerContext)
+  case class DmV s b l yRequest(
+    dm d: Dm d,
+    dmAuthorUser d: User d,
+    v e rContext: V e rContext)
 
-  case class DmVisibilityResponse(isMessageNsfw: Boolean)
+  case class DmV s b l yResponse( s ssageNsfw: Boolean)
 
-  val DefaultSafetyLevel: SafetyLevel = DirectMessages
+  val DefaultSafetyLevel: SafetyLevel = D rect ssages
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    enableVfFeatureHydrationInShim: Gate[Unit] = Gate.False
+    v s b l yL brary: V s b l yL brary,
+    stratoCl ent: StratoCl ent,
+    userS ce: UserS ce,
+    enableVfFeatureHydrat on nSh m: Gate[Un ] = Gate.False
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
 
-    { r: DmVisibilityRequest =>
-      vfEngineCounter.incr()
+    { r: DmV s b l yRequest =>
+      vfEng neCounter. ncr()
 
-      val contentId = DmContentId(r.dmId)
-      val dmAuthorUserId = r.dmAuthorUserId
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydrationInShim()
+      val content d = DmContent d(r.dm d)
+      val dmAuthorUser d = r.dmAuthorUser d
+      val  sVfFeatureHydrat onEnabled = enableVfFeatureHydrat on nSh m()
 
       val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(authorFeatures.forAuthorId(dmAuthorUserId))
+        v s b l yL brary.featureMapBu lder(
+          Seq(authorFeatures.forAuthor d(dmAuthorUser d))
         )
 
-      val resp = if (isVfFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId,
+      val resp =  f ( sVfFeatureHydrat onEnabled) {
+        FeatureMap.resolve(featureMap, l braryStatsRece ver).flatMap { resolvedFeatureMap =>
+          v s b l yL brary.runRuleEng ne(
+            content d,
             resolvedFeatureMap,
-            r.viewerContext,
+            r.v e rContext,
             DefaultSafetyLevel
           )
         }
       } else {
-        visibilityLibrary
-          .runRuleEngine(
-            contentId,
+        v s b l yL brary
+          .runRuleEng ne(
+            content d,
             featureMap,
-            r.viewerContext,
+            r.v e rContext,
             DefaultSafetyLevel
           )
       }
 
-      resp.map(buildResponse)
+      resp.map(bu ldResponse)
     }
   }
 
-  private[this] def buildResponse(visibilityResult: VisibilityResult) =
-    visibilityResult.verdict match {
-      case Drop(Nsfw | ErasedAuthor | DeactivatedAuthor, _) =>
-        DmVisibilityResponse(isMessageNsfw = true)
+  pr vate[t ] def bu ldResponse(v s b l yResult: V s b l yResult) =
+    v s b l yResult.verd ct match {
+      case Drop(Nsfw | ErasedAuthor | Deact vatedAuthor, _) =>
+        DmV s b l yResponse( s ssageNsfw = true)
       case _ =>
-        DmVisibilityResponse(isMessageNsfw = false)
+        DmV s b l yResponse( s ssageNsfw = false)
     }
 
 }

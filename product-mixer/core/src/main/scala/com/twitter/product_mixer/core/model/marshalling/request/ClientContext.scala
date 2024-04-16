@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+ mport com.fasterxml.jackson.annotat on.Json gnore
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
 
 /**
- * ClientContext contains fields related to the client making the request.
+ * Cl entContext conta ns f elds related to t  cl ent mak ng t  request.
  */
-case class ClientContext(
-  userId: Option[Long],
-  guestId: Option[Long],
-  guestIdAds: Option[Long],
-  guestIdMarketing: Option[Long],
-  appId: Option[Long],
-  ipAddress: Option[String],
-  userAgent: Option[String],
-  countryCode: Option[String],
-  languageCode: Option[String],
-  isTwoffice: Option[Boolean],
-  userRoles: Option[Set[String]],
-  deviceId: Option[String],
-  mobileDeviceId: Option[String],
-  mobileDeviceAdId: Option[String],
-  limitAdTracking: Option[Boolean])
+case class Cl entContext(
+  user d: Opt on[Long],
+  guest d: Opt on[Long],
+  guest dAds: Opt on[Long],
+  guest dMarket ng: Opt on[Long],
+  app d: Opt on[Long],
+   pAddress: Opt on[Str ng],
+  userAgent: Opt on[Str ng],
+  countryCode: Opt on[Str ng],
+  languageCode: Opt on[Str ng],
+   sTwoff ce: Opt on[Boolean],
+  userRoles: Opt on[Set[Str ng]],
+  dev ce d: Opt on[Str ng],
+  mob leDev ce d: Opt on[Str ng],
+  mob leDev ceAd d: Opt on[Str ng],
+  l m AdTrack ng: Opt on[Boolean])
 
-object ClientContext {
-  val empty: ClientContext = ClientContext(
-    userId = None,
-    guestId = None,
-    guestIdAds = None,
-    guestIdMarketing = None,
-    appId = None,
-    ipAddress = None,
+object Cl entContext {
+  val empty: Cl entContext = Cl entContext(
+    user d = None,
+    guest d = None,
+    guest dAds = None,
+    guest dMarket ng = None,
+    app d = None,
+     pAddress = None,
     userAgent = None,
     countryCode = None,
     languageCode = None,
-    isTwoffice = None,
+     sTwoff ce = None,
     userRoles = None,
-    deviceId = None,
-    mobileDeviceId = None,
-    mobileDeviceAdId = None,
-    limitAdTracking = None
+    dev ce d = None,
+    mob leDev ce d = None,
+    mob leDev ceAd d = None,
+    l m AdTrack ng = None
   )
 }
 
 /**
- * HasClientContext indicates that a request has [[ClientContext]] and adds helper functions for
- * accessing [[ClientContext]] fields.
+ * HasCl entContext  nd cates that a request has [[Cl entContext]] and adds  lper funct ons for
+ * access ng [[Cl entContext]] f elds.
  */
-trait HasClientContext {
-  def clientContext: ClientContext
+tra  HasCl entContext {
+  def cl entContext: Cl entContext
 
   /**
-   * getRequiredUserId returns a userId and throw if it's missing.
+   * getRequ redUser d returns a user d and throw  f  's m ss ng.
    *
-   * @note logged out requests are disabled by default so this is safe for most products
+   * @note logged out requests are d sabled by default so t   s safe for most products
    */
-  @JsonIgnore /** Jackson tries to serialize this method, throwing an exception for guest products */
-  def getRequiredUserId: Long = clientContext.userId.getOrElse(
-    throw PipelineFailure(BadRequest, "Missing required field: userId"))
+  @Json gnore /** Jackson tr es to ser al ze t   thod, throw ng an except on for guest products */
+  def getRequ redUser d: Long = cl entContext.user d.getOrElse(
+    throw P pel neFa lure(BadRequest, "M ss ng requ red f eld: user d"))
 
   /**
-   * getOptionalUserId returns a userId if one is set
+   * getOpt onalUser d returns a user d  f one  s set
    */
-  def getOptionalUserId: Option[Long] = clientContext.userId
+  def getOpt onalUser d: Opt on[Long] = cl entContext.user d
 
   /**
-   * getUserIdLoggedOutSupport returns a userId and falls back to 0 if none is set
+   * getUser dLoggedOutSupport returns a user d and falls back to 0  f none  s set
    */
-  def getUserIdLoggedOutSupport: Long = clientContext.userId.getOrElse(0L)
+  def getUser dLoggedOutSupport: Long = cl entContext.user d.getOrElse(0L)
 
   /**
-   * getUserOrGuestId returns a userId or a guestId if no userId has been set
+   * getUserOrGuest d returns a user d or a guest d  f no user d has been set
    */
-  def getUserOrGuestId: Option[Long] = clientContext.userId.orElse(clientContext.guestId)
+  def getUserOrGuest d: Opt on[Long] = cl entContext.user d.orElse(cl entContext.guest d)
 
   /**
-   * getCountryCode returns a country code if one is set
+   * getCountryCode returns a country code  f one  s set
    */
-  def getCountryCode: Option[String] = clientContext.countryCode
+  def getCountryCode: Opt on[Str ng] = cl entContext.countryCode
 
   /**
-   * getLanguageCode returns a language code if one is set
+   * getLanguageCode returns a language code  f one  s set
    */
-  def getLanguageCode: Option[String] = clientContext.languageCode
+  def getLanguageCode: Opt on[Str ng] = cl entContext.languageCode
 
   /**
-   * isLoggedOut returns true if the user is logged out (no userId present).
+   *  sLoggedOut returns true  f t  user  s logged out (no user d present).
    *
-   * @note this can be useful in conjunction with [[getUserIdLoggedOutSupport]]
+   * @note t  can be useful  n conjunct on w h [[getUser dLoggedOutSupport]]
    */
-  def isLoggedOut: Boolean = clientContext.userId.isEmpty
+  def  sLoggedOut: Boolean = cl entContext.user d. sEmpty
 }

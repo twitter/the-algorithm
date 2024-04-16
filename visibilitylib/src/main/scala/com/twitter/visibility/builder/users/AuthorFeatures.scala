@@ -1,221 +1,221 @@
-package com.twitter.visibility.builder.users
+package com.tw ter.v s b l y.bu lder.users
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.Labels
-import com.twitter.gizmoduck.thriftscala.Profile
-import com.twitter.gizmoduck.thriftscala.Safety
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.Label
+ mport com.tw ter.g zmoduck.thr ftscala.Labels
+ mport com.tw ter.g zmoduck.thr ftscala.Prof le
+ mport com.tw ter.g zmoduck.thr ftscala.Safety
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.features._
 
-class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("author_features")
+class AuthorFeatures(userS ce: UserS ce, statsRece ver: StatsRece ver) {
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("author_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val authorUserLabels =
-    scopedStatsReceiver.scope(AuthorUserLabels.name).counter("requests")
-  private[this] val authorIsSuspended =
-    scopedStatsReceiver.scope(AuthorIsSuspended.name).counter("requests")
-  private[this] val authorIsProtected =
-    scopedStatsReceiver.scope(AuthorIsProtected.name).counter("requests")
-  private[this] val authorIsDeactivated =
-    scopedStatsReceiver.scope(AuthorIsDeactivated.name).counter("requests")
-  private[this] val authorIsErased =
-    scopedStatsReceiver.scope(AuthorIsErased.name).counter("requests")
-  private[this] val authorIsOffboarded =
-    scopedStatsReceiver.scope(AuthorIsOffboarded.name).counter("requests")
-  private[this] val authorIsNsfwUser =
-    scopedStatsReceiver.scope(AuthorIsNsfwUser.name).counter("requests")
-  private[this] val authorIsNsfwAdmin =
-    scopedStatsReceiver.scope(AuthorIsNsfwAdmin.name).counter("requests")
-  private[this] val authorTakedownReasons =
-    scopedStatsReceiver.scope(AuthorTakedownReasons.name).counter("requests")
-  private[this] val authorHasDefaultProfileImage =
-    scopedStatsReceiver.scope(AuthorHasDefaultProfileImage.name).counter("requests")
-  private[this] val authorAccountAge =
-    scopedStatsReceiver.scope(AuthorAccountAge.name).counter("requests")
-  private[this] val authorIsVerified =
-    scopedStatsReceiver.scope(AuthorIsVerified.name).counter("requests")
-  private[this] val authorScreenName =
-    scopedStatsReceiver.scope(AuthorScreenName.name).counter("requests")
-  private[this] val authorIsBlueVerified =
-    scopedStatsReceiver.scope(AuthorIsBlueVerified.name).counter("requests")
+  pr vate[t ] val authorUserLabels =
+    scopedStatsRece ver.scope(AuthorUserLabels.na ).counter("requests")
+  pr vate[t ] val author sSuspended =
+    scopedStatsRece ver.scope(Author sSuspended.na ).counter("requests")
+  pr vate[t ] val author sProtected =
+    scopedStatsRece ver.scope(Author sProtected.na ).counter("requests")
+  pr vate[t ] val author sDeact vated =
+    scopedStatsRece ver.scope(Author sDeact vated.na ).counter("requests")
+  pr vate[t ] val author sErased =
+    scopedStatsRece ver.scope(Author sErased.na ).counter("requests")
+  pr vate[t ] val author sOffboarded =
+    scopedStatsRece ver.scope(Author sOffboarded.na ).counter("requests")
+  pr vate[t ] val author sNsfwUser =
+    scopedStatsRece ver.scope(Author sNsfwUser.na ).counter("requests")
+  pr vate[t ] val author sNsfwAdm n =
+    scopedStatsRece ver.scope(Author sNsfwAdm n.na ).counter("requests")
+  pr vate[t ] val authorTakedownReasons =
+    scopedStatsRece ver.scope(AuthorTakedownReasons.na ).counter("requests")
+  pr vate[t ] val authorHasDefaultProf le mage =
+    scopedStatsRece ver.scope(AuthorHasDefaultProf le mage.na ).counter("requests")
+  pr vate[t ] val authorAccountAge =
+    scopedStatsRece ver.scope(AuthorAccountAge.na ).counter("requests")
+  pr vate[t ] val author sVer f ed =
+    scopedStatsRece ver.scope(Author sVer f ed.na ).counter("requests")
+  pr vate[t ] val authorScreenNa  =
+    scopedStatsRece ver.scope(AuthorScreenNa .na ).counter("requests")
+  pr vate[t ] val author sBlueVer f ed =
+    scopedStatsRece ver.scope(Author sBlueVer f ed.na ).counter("requests")
 
-  def forAuthor(author: User): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forAuthor(author: User): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    _.withConstantFeature(AuthorId, Set(author.id))
-      .withConstantFeature(AuthorUserLabels, authorUserLabels(author))
-      .withConstantFeature(AuthorIsProtected, authorIsProtected(author))
-      .withConstantFeature(AuthorIsSuspended, authorIsSuspended(author))
-      .withConstantFeature(AuthorIsDeactivated, authorIsDeactivated(author))
-      .withConstantFeature(AuthorIsErased, authorIsErased(author))
-      .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
-      .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
-      .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
-      .withConstantFeature(AuthorAccountAge, authorAccountAge(author))
-      .withConstantFeature(AuthorIsNsfwUser, authorIsNsfwUser(author))
-      .withConstantFeature(AuthorIsNsfwAdmin, authorIsNsfwAdmin(author))
-      .withConstantFeature(AuthorIsVerified, authorIsVerified(author))
-      .withConstantFeature(AuthorScreenName, authorScreenName(author))
-      .withConstantFeature(AuthorIsBlueVerified, authorIsBlueVerified(author))
+    _.w hConstantFeature(Author d, Set(author. d))
+      .w hConstantFeature(AuthorUserLabels, authorUserLabels(author))
+      .w hConstantFeature(Author sProtected, author sProtected(author))
+      .w hConstantFeature(Author sSuspended, author sSuspended(author))
+      .w hConstantFeature(Author sDeact vated, author sDeact vated(author))
+      .w hConstantFeature(Author sErased, author sErased(author))
+      .w hConstantFeature(Author sOffboarded, author sOffboarded(author))
+      .w hConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
+      .w hConstantFeature(AuthorHasDefaultProf le mage, authorHasDefaultProf le mage(author))
+      .w hConstantFeature(AuthorAccountAge, authorAccountAge(author))
+      .w hConstantFeature(Author sNsfwUser, author sNsfwUser(author))
+      .w hConstantFeature(Author sNsfwAdm n, author sNsfwAdm n(author))
+      .w hConstantFeature(Author sVer f ed, author sVer f ed(author))
+      .w hConstantFeature(AuthorScreenNa , authorScreenNa (author))
+      .w hConstantFeature(Author sBlueVer f ed, author sBlueVer f ed(author))
   }
 
-  def forAuthorNoDefaults(author: User): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forAuthorNoDefaults(author: User): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    _.withConstantFeature(AuthorId, Set(author.id))
-      .withConstantFeature(AuthorUserLabels, authorUserLabelsOpt(author))
-      .withConstantFeature(AuthorIsProtected, authorIsProtectedOpt(author))
-      .withConstantFeature(AuthorIsSuspended, authorIsSuspendedOpt(author))
-      .withConstantFeature(AuthorIsDeactivated, authorIsDeactivatedOpt(author))
-      .withConstantFeature(AuthorIsErased, authorIsErasedOpt(author))
-      .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
-      .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
-      .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
-      .withConstantFeature(AuthorAccountAge, authorAccountAge(author))
-      .withConstantFeature(AuthorIsNsfwUser, authorIsNsfwUserOpt(author))
-      .withConstantFeature(AuthorIsNsfwAdmin, authorIsNsfwAdminOpt(author))
-      .withConstantFeature(AuthorIsVerified, authorIsVerifiedOpt(author))
-      .withConstantFeature(AuthorScreenName, authorScreenName(author))
-      .withConstantFeature(AuthorIsBlueVerified, authorIsBlueVerified(author))
+    _.w hConstantFeature(Author d, Set(author. d))
+      .w hConstantFeature(AuthorUserLabels, authorUserLabelsOpt(author))
+      .w hConstantFeature(Author sProtected, author sProtectedOpt(author))
+      .w hConstantFeature(Author sSuspended, author sSuspendedOpt(author))
+      .w hConstantFeature(Author sDeact vated, author sDeact vatedOpt(author))
+      .w hConstantFeature(Author sErased, author sErasedOpt(author))
+      .w hConstantFeature(Author sOffboarded, author sOffboarded(author))
+      .w hConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
+      .w hConstantFeature(AuthorHasDefaultProf le mage, authorHasDefaultProf le mage(author))
+      .w hConstantFeature(AuthorAccountAge, authorAccountAge(author))
+      .w hConstantFeature(Author sNsfwUser, author sNsfwUserOpt(author))
+      .w hConstantFeature(Author sNsfwAdm n, author sNsfwAdm nOpt(author))
+      .w hConstantFeature(Author sVer f ed, author sVer f edOpt(author))
+      .w hConstantFeature(AuthorScreenNa , authorScreenNa (author))
+      .w hConstantFeature(Author sBlueVer f ed, author sBlueVer f ed(author))
   }
 
-  def forAuthorId(authorId: Long): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forAuthor d(author d: Long): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    _.withConstantFeature(AuthorId, Set(authorId))
-      .withFeature(AuthorUserLabels, authorUserLabels(authorId))
-      .withFeature(AuthorIsProtected, authorIsProtected(authorId))
-      .withFeature(AuthorIsSuspended, authorIsSuspended(authorId))
-      .withFeature(AuthorIsDeactivated, authorIsDeactivated(authorId))
-      .withFeature(AuthorIsErased, authorIsErased(authorId))
-      .withFeature(AuthorIsOffboarded, authorIsOffboarded(authorId))
-      .withFeature(AuthorTakedownReasons, authorTakedownReasons(authorId))
-      .withFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(authorId))
-      .withFeature(AuthorAccountAge, authorAccountAge(authorId))
-      .withFeature(AuthorIsNsfwUser, authorIsNsfwUser(authorId))
-      .withFeature(AuthorIsNsfwAdmin, authorIsNsfwAdmin(authorId))
-      .withFeature(AuthorIsVerified, authorIsVerified(authorId))
-      .withFeature(AuthorScreenName, authorScreenName(authorId))
-      .withFeature(AuthorIsBlueVerified, authorIsBlueVerified(authorId))
+    _.w hConstantFeature(Author d, Set(author d))
+      .w hFeature(AuthorUserLabels, authorUserLabels(author d))
+      .w hFeature(Author sProtected, author sProtected(author d))
+      .w hFeature(Author sSuspended, author sSuspended(author d))
+      .w hFeature(Author sDeact vated, author sDeact vated(author d))
+      .w hFeature(Author sErased, author sErased(author d))
+      .w hFeature(Author sOffboarded, author sOffboarded(author d))
+      .w hFeature(AuthorTakedownReasons, authorTakedownReasons(author d))
+      .w hFeature(AuthorHasDefaultProf le mage, authorHasDefaultProf le mage(author d))
+      .w hFeature(AuthorAccountAge, authorAccountAge(author d))
+      .w hFeature(Author sNsfwUser, author sNsfwUser(author d))
+      .w hFeature(Author sNsfwAdm n, author sNsfwAdm n(author d))
+      .w hFeature(Author sVer f ed, author sVer f ed(author d))
+      .w hFeature(AuthorScreenNa , authorScreenNa (author d))
+      .w hFeature(Author sBlueVer f ed, author sBlueVer f ed(author d))
   }
 
-  def forNoAuthor(): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(AuthorId, Set.empty[Long])
-      .withConstantFeature(AuthorUserLabels, Seq.empty)
-      .withConstantFeature(AuthorIsProtected, false)
-      .withConstantFeature(AuthorIsSuspended, false)
-      .withConstantFeature(AuthorIsDeactivated, false)
-      .withConstantFeature(AuthorIsErased, false)
-      .withConstantFeature(AuthorIsOffboarded, false)
-      .withConstantFeature(AuthorTakedownReasons, Seq.empty)
-      .withConstantFeature(AuthorHasDefaultProfileImage, false)
-      .withConstantFeature(AuthorAccountAge, Duration.Zero)
-      .withConstantFeature(AuthorIsNsfwUser, false)
-      .withConstantFeature(AuthorIsNsfwAdmin, false)
-      .withConstantFeature(AuthorIsVerified, false)
-      .withConstantFeature(AuthorIsBlueVerified, false)
+  def forNoAuthor(): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(Author d, Set.empty[Long])
+      .w hConstantFeature(AuthorUserLabels, Seq.empty)
+      .w hConstantFeature(Author sProtected, false)
+      .w hConstantFeature(Author sSuspended, false)
+      .w hConstantFeature(Author sDeact vated, false)
+      .w hConstantFeature(Author sErased, false)
+      .w hConstantFeature(Author sOffboarded, false)
+      .w hConstantFeature(AuthorTakedownReasons, Seq.empty)
+      .w hConstantFeature(AuthorHasDefaultProf le mage, false)
+      .w hConstantFeature(AuthorAccountAge, Durat on.Zero)
+      .w hConstantFeature(Author sNsfwUser, false)
+      .w hConstantFeature(Author sNsfwAdm n, false)
+      .w hConstantFeature(Author sVer f ed, false)
+      .w hConstantFeature(Author sBlueVer f ed, false)
   }
 
   def authorUserLabels(author: User): Seq[Label] =
     authorUserLabels(author.labels)
 
-  def authorIsSuspended(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsSuspended(Some(safety)))
+  def author sSuspended(author d: Long): St ch[Boolean] =
+    userS ce.getSafety(author d).map(safety => author sSuspended(So (safety)))
 
-  def authorIsSuspendedOpt(author: User): Option[Boolean] = {
-    authorIsSuspended.incr()
+  def author sSuspendedOpt(author: User): Opt on[Boolean] = {
+    author sSuspended. ncr()
     author.safety.map(_.suspended)
   }
 
-  private def authorIsSuspended(safety: Option[Safety]): Boolean = {
-    authorIsSuspended.incr()
-    safety.exists(_.suspended)
+  pr vate def author sSuspended(safety: Opt on[Safety]): Boolean = {
+    author sSuspended. ncr()
+    safety.ex sts(_.suspended)
   }
 
-  def authorIsProtected(author: User): Boolean =
-    authorIsProtected(author.safety)
+  def author sProtected(author: User): Boolean =
+    author sProtected(author.safety)
 
-  def authorIsDeactivated(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsDeactivated(Some(safety)))
+  def author sDeact vated(author d: Long): St ch[Boolean] =
+    userS ce.getSafety(author d).map(safety => author sDeact vated(So (safety)))
 
-  def authorIsDeactivatedOpt(author: User): Option[Boolean] = {
-    authorIsDeactivated.incr()
-    author.safety.map(_.deactivated)
+  def author sDeact vatedOpt(author: User): Opt on[Boolean] = {
+    author sDeact vated. ncr()
+    author.safety.map(_.deact vated)
   }
 
-  private def authorIsDeactivated(safety: Option[Safety]): Boolean = {
-    authorIsDeactivated.incr()
-    safety.exists(_.deactivated)
+  pr vate def author sDeact vated(safety: Opt on[Safety]): Boolean = {
+    author sDeact vated. ncr()
+    safety.ex sts(_.deact vated)
   }
 
-  def authorIsErased(author: User): Boolean = {
-    authorIsErased.incr()
-    author.safety.exists(_.erased)
+  def author sErased(author: User): Boolean = {
+    author sErased. ncr()
+    author.safety.ex sts(_.erased)
   }
 
-  def authorIsOffboarded(authorId: Long): Stitch[Boolean] = {
-    userSource.getSafety(authorId).map(safety => authorIsOffboarded(Some(safety)))
+  def author sOffboarded(author d: Long): St ch[Boolean] = {
+    userS ce.getSafety(author d).map(safety => author sOffboarded(So (safety)))
   }
 
-  def authorIsNsfwUser(author: User): Boolean = {
-    authorIsNsfwUser(author.safety)
+  def author sNsfwUser(author: User): Boolean = {
+    author sNsfwUser(author.safety)
   }
 
-  def authorIsNsfwUser(authorId: Long): Stitch[Boolean] = {
-    userSource.getSafety(authorId).map(safety => authorIsNsfwUser(Some(safety)))
+  def author sNsfwUser(author d: Long): St ch[Boolean] = {
+    userS ce.getSafety(author d).map(safety => author sNsfwUser(So (safety)))
   }
 
-  def authorIsNsfwUser(safety: Option[Safety]): Boolean = {
-    authorIsNsfwUser.incr()
-    safety.exists(_.nsfwUser)
+  def author sNsfwUser(safety: Opt on[Safety]): Boolean = {
+    author sNsfwUser. ncr()
+    safety.ex sts(_.nsfwUser)
   }
 
-  def authorIsNsfwAdminOpt(author: User): Option[Boolean] = {
-    authorIsNsfwAdmin.incr()
-    author.safety.map(_.nsfwAdmin)
+  def author sNsfwAdm nOpt(author: User): Opt on[Boolean] = {
+    author sNsfwAdm n. ncr()
+    author.safety.map(_.nsfwAdm n)
   }
 
-  def authorTakedownReasons(authorId: Long): Stitch[Seq[TakedownReason]] = {
-    authorTakedownReasons.incr()
-    userSource.getTakedownReasons(authorId)
+  def authorTakedownReasons(author d: Long): St ch[Seq[TakedownReason]] = {
+    authorTakedownReasons. ncr()
+    userS ce.getTakedownReasons(author d)
   }
 
-  def authorHasDefaultProfileImage(authorId: Long): Stitch[Boolean] =
-    userSource.getProfile(authorId).map(profile => authorHasDefaultProfileImage(Some(profile)))
+  def authorHasDefaultProf le mage(author d: Long): St ch[Boolean] =
+    userS ce.getProf le(author d).map(prof le => authorHasDefaultProf le mage(So (prof le)))
 
-  def authorAccountAge(authorId: Long): Stitch[Duration] =
-    userSource.getCreatedAtMsec(authorId).map(authorAccountAgeFromTimestamp)
+  def authorAccountAge(author d: Long): St ch[Durat on] =
+    userS ce.getCreatedAtMsec(author d).map(authorAccountAgeFromT  stamp)
 
-  def authorIsVerified(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsVerified(Some(safety)))
+  def author sVer f ed(author d: Long): St ch[Boolean] =
+    userS ce.getSafety(author d).map(safety => author sVer f ed(So (safety)))
 
-  def authorIsVerifiedOpt(author: User): Option[Boolean] = {
-    authorIsVerified.incr()
-    author.safety.map(_.verified)
+  def author sVer f edOpt(author: User): Opt on[Boolean] = {
+    author sVer f ed. ncr()
+    author.safety.map(_.ver f ed)
   }
 
-  private def authorIsVerified(safety: Option[Safety]): Boolean = {
-    authorIsVerified.incr()
-    safety.exists(_.verified)
+  pr vate def author sVer f ed(safety: Opt on[Safety]): Boolean = {
+    author sVer f ed. ncr()
+    safety.ex sts(_.ver f ed)
   }
 
-  def authorScreenName(author: User): Option[String] = {
-    authorScreenName.incr()
-    author.profile.map(_.screenName)
+  def authorScreenNa (author: User): Opt on[Str ng] = {
+    authorScreenNa . ncr()
+    author.prof le.map(_.screenNa )
   }
 
-  def authorScreenName(authorId: Long): Stitch[String] = {
-    authorScreenName.incr()
-    userSource.getProfile(authorId).map(profile => profile.screenName)
+  def authorScreenNa (author d: Long): St ch[Str ng] = {
+    authorScreenNa . ncr()
+    userS ce.getProf le(author d).map(prof le => prof le.screenNa )
   }
 }

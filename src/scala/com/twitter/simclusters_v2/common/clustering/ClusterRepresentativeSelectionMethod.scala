@@ -1,30 +1,30 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Ne ghborW h  ghts
 
 /**
- * Select a cluster member as cluster representative.
+ * Select a cluster  mber as cluster representat ve.
  */
-trait ClusterRepresentativeSelectionMethod[T] {
+tra  ClusterRepresentat veSelect on thod[T] {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * T  ma n external-fac ng  thod. Sub-classes should  mple nt t   thod.
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @param cluster A set of Ne ghborW h  ghts.
+   * @param embedd ngs A map of producer  D -> embedd ng.
    *
-   * @return UserId of the member chosen as representative.
+   * @return User d of t   mber chosen as representat ve.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T]
-  ): UserId
+  def selectClusterRepresentat ve(
+    cluster: Set[Ne ghborW h  ghts],
+    embedd ngs: Map[User d, T]
+  ): User d
 
 }
 
-object ClusterRepresentativeSelectionStatistics {
+object ClusterRepresentat veSelect onStat st cs {
 
-  // Statistics, to be imported where recorded.
-  val StatClusterRepresentativeSelectionTime = "cluster_representative_selection_total_time_ms"
+  // Stat st cs, to be  mported w re recorded.
+  val StatClusterRepresentat veSelect onT   = "cluster_representat ve_select on_total_t  _ms"
 }

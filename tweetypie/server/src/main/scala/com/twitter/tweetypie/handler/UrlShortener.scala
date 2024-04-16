@@ -1,46 +1,46 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.service.talon.thriftscala._
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tco_util.DisplayUrl
-import com.twitter.tco_util.TcoUrl
-import com.twitter.tweetypie.backends.Talon
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.store.Guano
-import com.twitter.tweetypie.thriftscala.ShortenedUrl
-import scala.util.control.NoStackTrace
+ mport com.tw ter.serv ce.talon.thr ftscala._
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.tco_ut l.D splayUrl
+ mport com.tw ter.tco_ut l.TcoUrl
+ mport com.tw ter.t etyp e.backends.Talon
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.store.Guano
+ mport com.tw ter.t etyp e.thr ftscala.ShortenedUrl
+ mport scala.ut l.control.NoStackTrace
 
 object UrlShortener {
-  type Type = FutureArrow[(String, Context), ShortenedUrl]
+  type Type = FutureArrow[(Str ng, Context), ShortenedUrl]
 
   case class Context(
-    tweetId: TweetId,
-    userId: UserId,
-    createdAt: Time,
+    t et d: T et d,
+    user d: User d,
+    createdAt: T  ,
     userProtected: Boolean,
-    clientAppId: Option[Long] = None,
-    remoteHost: Option[String] = None,
+    cl entApp d: Opt on[Long] = None,
+    remoteHost: Opt on[Str ng] = None,
     dark: Boolean = false)
 
-  object MalwareUrlError extends Exception with NoStackTrace
-  object InvalidUrlError extends Exception with NoStackTrace
+  object MalwareUrlError extends Except on w h NoStackTrace
+  object  nval dUrlError extends Except on w h NoStackTrace
 
   /**
-   * Returns a new UrlShortener that checks the response from the underlying shortner
-   * and, if the request is not dark but fails with a MalwareUrlError, scribes request
-   * info to guano.
+   * Returns a new UrlShortener that c cks t  response from t  underly ng shortner
+   * and,  f t  request  s not dark but fa ls w h a MalwareUrlError, scr bes request
+   *  nfo to guano.
    */
-  def scribeMalware(guano: Guano)(underlying: Type): Type =
+  def scr beMalware(guano: Guano)(underly ng: Type): Type =
     FutureArrow {
       case (longUrl, ctx) =>
-        underlying((longUrl, ctx)).onFailure {
-          case MalwareUrlError if !ctx.dark =>
-            guano.scribeMalwareAttempt(
+        underly ng((longUrl, ctx)).onFa lure {
+          case MalwareUrlError  f !ctx.dark =>
+            guano.scr beMalwareAttempt(
               Guano.MalwareAttempt(
                 longUrl,
-                ctx.userId,
-                ctx.clientAppId,
+                ctx.user d,
+                ctx.cl entApp d,
                 ctx.remoteHost
               )
             )
@@ -55,50 +55,50 @@ object UrlShortener {
       case (longUrl, ctx) =>
         val request =
           ShortenRequest(
-            userId = ctx.userId,
+            user d = ctx.user d,
             longUrl = longUrl,
-            auditMsg = "tweetypie",
-            directMessage = Some(false),
-            protectedAccount = Some(ctx.userProtected),
+            aud Msg = "t etyp e",
+            d rect ssage = So (false),
+            protectedAccount = So (ctx.userProtected),
             maxShortUrlLength = None,
-            tweetData = Some(TweetData(ctx.tweetId, ctx.createdAt.inMilliseconds)),
-            trafficType =
-              if (ctx.dark) ShortenTrafficType.Testing
-              else ShortenTrafficType.Production
+            t etData = So (T etData(ctx.t et d, ctx.createdAt. nM ll seconds)),
+            traff cType =
+               f (ctx.dark) ShortenTraff cType.Test ng
+              else ShortenTraff cType.Product on
           )
 
         talonShorten(request).flatMap { res =>
           res.responseCode match {
             case ResponseCode.Ok =>
-              if (res.malwareStatus == MalwareStatus.UrlBlocked) {
-                Future.exception(MalwareUrlError)
+               f (res.malwareStatus == MalwareStatus.UrlBlocked) {
+                Future.except on(MalwareUrlError)
               } else {
                 val shortUrl =
                   res.fullShortUrl.getOrElse {
-                    // fall back to fromSlug if talon response does not have the full short url
-                    // Could be replaced with an exception once the initial integration on production
-                    // is done
-                    TcoUrl.fromSlug(res.shortUrl, TcoUrl.isHttps(res.longUrl))
+                    // fall back to fromSlug  f talon response does not have t  full short url
+                    // Could be replaced w h an except on once t   n  al  ntegrat on on product on
+                    //  s done
+                    TcoUrl.fromSlug(res.shortUrl, TcoUrl. sHttps(res.longUrl))
                   }
 
                 Future.value(
                   ShortenedUrl(
                     shortUrl = shortUrl,
                     longUrl = res.longUrl,
-                    displayText = DisplayUrl(shortUrl, Some(res.longUrl), true)
+                    d splayText = D splayUrl(shortUrl, So (res.longUrl), true)
                   )
                 )
               }
 
-            case ResponseCode.BadInput =>
-              log.warn(s"Talon rejected URL that Extractor thought was fine: $longUrl")
-              Future.exception(InvalidUrlError)
+            case ResponseCode.Bad nput =>
+              log.warn(s"Talon rejected URL that Extractor thought was f ne: $longUrl")
+              Future.except on( nval dUrlError)
 
-            // we shouldn't see other ResponseCodes, because Talon.Shorten translates them to
-            // exceptions, but we have this catch-all just in case.
+            //   shouldn't see ot r ResponseCodes, because Talon.Shorten translates t m to
+            // except ons, but   have t  catch-all just  n case.
             case resCode =>
               log.warn(s"Unexpected response code $resCode for '$longUrl'")
-              Future.exception(OverCapacity("talon"))
+              Future.except on(OverCapac y("talon"))
           }
         }
     }

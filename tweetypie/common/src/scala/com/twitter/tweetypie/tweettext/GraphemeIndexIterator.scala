@@ -1,44 +1,44 @@
-package com.twitter.tweetypie.tweettext
+package com.tw ter.t etyp e.t ettext
 
-import com.ibm.icu.text.BreakIterator
+ mport com. bm. cu.text.Break erator
 
 /**
- * Adapt the [[BreakIterator]] interface to a scala [[Iterator]]
- * over the offsets of user-perceived characters in a String.
+ * Adapt t  [[Break erator]]  nterface to a scala [[ erator]]
+ * over t  offsets of user-perce ved characters  n a Str ng.
  */
-object GraphemeIndexIterator {
+object Grap   ndex erator {
 
   /**
-   * Produce an iterator over indices in the string that mark the end
-   * of a user-perceived character (grapheme)
+   * Produce an  erator over  nd ces  n t  str ng that mark t  end
+   * of a user-perce ved character (grap  )
    */
-  def ends(s: String): Iterator[Offset.CodeUnit] =
-    // The start of every grapheme but the first is also a grapheme
-    // end. The last grapheme ends at the end of the string.
-    starts(s).drop(1) ++ Iterator(Offset.CodeUnit.length(s))
+  def ends(s: Str ng):  erator[Offset.CodeUn ] =
+    // T  start of every grap   but t  f rst  s also a grap  
+    // end. T  last grap   ends at t  end of t  str ng.
+    starts(s).drop(1) ++  erator(Offset.CodeUn .length(s))
 
   /**
-   * Produce an iterator over indices in the string that mark the start
-   * of a user-perceived character (grapheme)
+   * Produce an  erator over  nd ces  n t  str ng that mark t  start
+   * of a user-perce ved character (grap  )
    */
-  def starts(s: String): Iterator[Offset.CodeUnit] =
-    new Iterator[Offset.CodeUnit] {
-      private[this] val it = BreakIterator.getCharacterInstance()
+  def starts(s: Str ng):  erator[Offset.CodeUn ] =
+    new  erator[Offset.CodeUn ] {
+      pr vate[t ] val   = Break erator.getCharacter nstance()
 
-      it.setText(s)
+       .setText(s)
 
-      override def hasNext: Boolean = it.current < s.length
+      overr de def hasNext: Boolean =  .current < s.length
 
-      override def next: Offset.CodeUnit = {
-        if (!hasNext) throw new IllegalArgumentException(s"${it.current()}, ${s.length}")
+      overr de def next: Offset.CodeUn  = {
+         f (!hasNext) throw new  llegalArgu ntExcept on(s"${ .current()}, ${s.length}")
 
-        // No matter what, we will be returning the value of `current`,
-        // which is the index of the start of the next grapheme.
-        val result = it.current()
+        // No matter what,   w ll be return ng t  value of `current`,
+        // wh ch  s t   ndex of t  start of t  next grap  .
+        val result =  .current()
 
-        it.next()
+         .next()
 
-        Offset.CodeUnit(result)
+        Offset.CodeUn (result)
       }
     }
 }

@@ -1,146 +1,146 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.contentrecommender.{thriftscala => cr}
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TSPMetricTagFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.inferred_topic.InferredTopicAdapter
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.strato.topics.TopicSocialProofClient
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => sid}
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.tsp.{thriftscala => tsp}
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.contentrecom nder.{thr ftscala => cr}
+ mport com.tw ter.ho _m xer.model.Ho Features.Cand dateS ce dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.TSP tr cTagFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Top cContextFunct onal yTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Top c dSoc alContextFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters. nferred_top c. nferredTop cAdapter
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Bas cTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Recom ndat onTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.cl ents.strato.top cs.Top cSoc alProofCl ent
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.cand date_t et_s ce_ d.{thr ftscala => s d}
+ mport com.tw ter.top cl st ng.Top cL st ngV e rContext
+ mport com.tw ter.tsp.{thr ftscala => tsp}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
-object TSPInferredTopicFeature extends Feature[TweetCandidate, Map[Long, Double]]
-object TSPInferredTopicDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object TSP nferredTop cFeature extends Feature[T etCand date, Map[Long, Double]]
+object TSP nferredTop cDataRecordFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class TSPInferredTopicFeatureHydrator @Inject() (
-  topicSocialProofClient: TopicSocialProofClient)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class TSP nferredTop cFeatureHydrator @ nject() (
+  top cSoc alProofCl ent: Top cSoc alProofCl ent)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TSPInferredTopic")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("TSP nferredTop c")
 
-  override val features: Set[Feature[_, _]] = Set(
-    TSPInferredTopicFeature,
-    TSPInferredTopicDataRecordFeature,
-    TopicIdSocialContextFeature,
-    TopicContextFunctionalityTypeFeature
+  overr de val features: Set[Feature[_, _]] = Set(
+    TSP nferredTop cFeature,
+    TSP nferredTop cDataRecordFeature,
+    Top c dSoc alContextFeature,
+    Top cContextFunct onal yTypeFeature
   )
 
-  private val topK = 3
+  pr vate val topK = 3
 
-  private val SourcesToSetSocialProof: Set[sid.CandidateTweetSourceId] =
-    Set(sid.CandidateTweetSourceId.Simcluster)
+  pr vate val S cesToSetSoc alProof: Set[s d.Cand dateT etS ce d] =
+    Set(s d.Cand dateT etS ce d.S mcluster)
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(TSPInferredTopicFeature, Map.empty[Long, Double])
-    .add(TSPInferredTopicDataRecordFeature, new DataRecord())
-    .add(TopicIdSocialContextFeature, None)
-    .add(TopicContextFunctionalityTypeFeature, None)
-    .build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add(TSP nferredTop cFeature, Map.empty[Long, Double])
+    .add(TSP nferredTop cDataRecordFeature, new DataRecord())
+    .add(Top c dSoc alContextFeature, None)
+    .add(Top cContextFunct onal yTypeFeature, None)
+    .bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val tags = candidates.collect {
-      case candidate if candidate.features.getTry(TSPMetricTagFeature).isReturn =>
-        candidate.candidate.id -> candidate.features
-          .getOrElse(TSPMetricTagFeature, Set.empty[tsp.MetricTag])
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val tags = cand dates.collect {
+      case cand date  f cand date.features.getTry(TSP tr cTagFeature). sReturn =>
+        cand date.cand date. d -> cand date.features
+          .getOrElse(TSP tr cTagFeature, Set.empty[tsp. tr cTag])
     }.toMap
 
-    val topicSocialProofRequest = tsp.TopicSocialProofRequest(
-      userId = query.getRequiredUserId,
-      tweetIds = candidates.map(_.candidate.id).toSet,
-      displayLocation = cr.DisplayLocation.HomeTimeline,
-      topicListingSetting = tsp.TopicListingSetting.Followable,
-      context = TopicListingViewerContext.fromClientContext(query.clientContext).toThrift,
+    val top cSoc alProofRequest = tsp.Top cSoc alProofRequest(
+      user d = query.getRequ redUser d,
+      t et ds = cand dates.map(_.cand date. d).toSet,
+      d splayLocat on = cr.D splayLocat on.Ho T  l ne,
+      top cL st ngSett ng = tsp.Top cL st ngSett ng.Followable,
+      context = Top cL st ngV e rContext.fromCl entContext(query.cl entContext).toThr ft,
       bypassModes = None,
-      // Only TweetMixer source has this data. Convert the TweetMixer metric tag to tsp metric tag.
-      tags = if (tags.isEmpty) None else Some(tags)
+      // Only T etM xer s ce has t  data. Convert t  T etM xer  tr c tag to tsp  tr c tag.
+      tags =  f (tags. sEmpty) None else So (tags)
     )
 
-    topicSocialProofClient
-      .getTopicTweetSocialProofResponse(topicSocialProofRequest)
+    top cSoc alProofCl ent
+      .getTop cT etSoc alProofResponse(top cSoc alProofRequest)
       .map {
-        case Some(response) =>
-          handleResponse(response, candidates)
-        case _ => candidates.map { _ => DefaultFeatureMap }
+        case So (response) =>
+          handleResponse(response, cand dates)
+        case _ => cand dates.map { _ => DefaultFeatureMap }
       }
   }
 
-  private def handleResponse(
-    response: tsp.TopicSocialProofResponse,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
+  pr vate def handleResponse(
+    response: tsp.Top cSoc alProofResponse,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
   ): Seq[FeatureMap] = {
-    candidates.map { candidate =>
-      val topicWithScores = response.socialProofs.getOrElse(candidate.candidate.id, Seq.empty)
-      if (topicWithScores.nonEmpty) {
-        val (socialProofId, socialProofFunctionalityType) =
-          if (candidate.features
-              .getOrElse(CandidateSourceIdFeature, None)
-              .exists(SourcesToSetSocialProof.contains)) {
-            getSocialProof(topicWithScores)
+    cand dates.map { cand date =>
+      val top cW hScores = response.soc alProofs.getOrElse(cand date.cand date. d, Seq.empty)
+       f (top cW hScores.nonEmpty) {
+        val (soc alProof d, soc alProofFunct onal yType) =
+           f (cand date.features
+              .getOrElse(Cand dateS ce dFeature, None)
+              .ex sts(S cesToSetSoc alProof.conta ns)) {
+            getSoc alProof(top cW hScores)
           } else (None, None)
 
-        val inferredTopicFeatures =
-          topicWithScores.sortBy(-_.score).take(topK).map(a => (a.topicId, a.score)).toMap
+        val  nferredTop cFeatures =
+          top cW hScores.sortBy(-_.score).take(topK).map(a => (a.top c d, a.score)).toMap
 
-        val inferredTopicDataRecord =
-          InferredTopicAdapter.adaptToDataRecords(inferredTopicFeatures).asScala.head
+        val  nferredTop cDataRecord =
+           nferredTop cAdapter.adaptToDataRecords( nferredTop cFeatures).asScala. ad
 
-        FeatureMapBuilder()
-          .add(TSPInferredTopicFeature, inferredTopicFeatures)
-          .add(TSPInferredTopicDataRecordFeature, inferredTopicDataRecord)
-          .add(TopicIdSocialContextFeature, socialProofId)
-          .add(TopicContextFunctionalityTypeFeature, socialProofFunctionalityType)
-          .build()
+        FeatureMapBu lder()
+          .add(TSP nferredTop cFeature,  nferredTop cFeatures)
+          .add(TSP nferredTop cDataRecordFeature,  nferredTop cDataRecord)
+          .add(Top c dSoc alContextFeature, soc alProof d)
+          .add(Top cContextFunct onal yTypeFeature, soc alProofFunct onal yType)
+          .bu ld()
       } else DefaultFeatureMap
     }
   }
 
-  private def getSocialProof(
-    topicWithScores: Seq[tsp.TopicWithScore]
-  ): (Option[Long], Option[TopicContextFunctionalityType]) = {
-    val followingTopicId = topicWithScores.collectFirst {
-      case tsp.TopicWithScore(topicId, _, _, Some(tsp.TopicFollowType.Following)) => topicId
+  pr vate def getSoc alProof(
+    top cW hScores: Seq[tsp.Top cW hScore]
+  ): (Opt on[Long], Opt on[Top cContextFunct onal yType]) = {
+    val follow ngTop c d = top cW hScores.collectF rst {
+      case tsp.Top cW hScore(top c d, _, _, So (tsp.Top cFollowType.Follow ng)) => top c d
     }
 
-    if (followingTopicId.nonEmpty) {
-      return (followingTopicId, Some(BasicTopicContextFunctionalityType))
+     f (follow ngTop c d.nonEmpty) {
+      return (follow ngTop c d, So (Bas cTop cContextFunct onal yType))
     }
 
-    val implicitFollowingId = topicWithScores.collectFirst {
-      case tsp.TopicWithScore(topicId, _, _, Some(tsp.TopicFollowType.ImplicitFollow)) =>
-        topicId
+    val  mpl c Follow ng d = top cW hScores.collectF rst {
+      case tsp.Top cW hScore(top c d, _, _, So (tsp.Top cFollowType. mpl c Follow)) =>
+        top c d
     }
 
-    if (implicitFollowingId.nonEmpty) {
-      return (implicitFollowingId, Some(RecommendationTopicContextFunctionalityType))
+     f ( mpl c Follow ng d.nonEmpty) {
+      return ( mpl c Follow ng d, So (Recom ndat onTop cContextFunct onal yType))
     }
 
     (None, None)

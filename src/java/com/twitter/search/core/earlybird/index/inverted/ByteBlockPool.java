@@ -1,58 +1,58 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
-public class ByteBlockPool extends BaseByteBlockPool implements Flushable {
+publ c class ByteBlockPool extends BaseByteBlockPool  mple nts Flushable {
 
-  public ByteBlockPool() {
+  publ c ByteBlockPool() {
   }
 
   /**
-   * Used for loading flushed pool.
+   * Used for load ng flus d pool.
    */
-  private ByteBlockPool(Pool pool, int bufferUpto, int byteUpTo, int byteOffset) {
+  pr vate ByteBlockPool(Pool pool,  nt bufferUpto,  nt byteUpTo,  nt byteOffset) {
     super(pool, bufferUpto, byteUpTo, byteOffset);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<ByteBlockPool> {
-    private static final String BUFFER_UP_TO_PROP_NAME = "bufferUpto";
-    private static final String BYTE_UP_TO_PROP_NAME = "byteUpto";
-    private static final String BYTE_OFFSET_PROP_NAME = "byteOffset";
+  publ c stat c class FlushHandler extends Flushable.Handler<ByteBlockPool> {
+    pr vate stat c f nal Str ng BUFFER_UP_TO_PROP_NAME = "bufferUpto";
+    pr vate stat c f nal Str ng BYTE_UP_TO_PROP_NAME = "byteUpto";
+    pr vate stat c f nal Str ng BYTE_OFFSET_PROP_NAME = "byteOffset";
 
-    public FlushHandler(ByteBlockPool objectToFlush) {
+    publ c FlushHandler(ByteBlockPool objectToFlush) {
       super(objectToFlush);
     }
 
-    public FlushHandler() {
+    publ c FlushHandler() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
       ByteBlockPool objectToFlush = getObjectToFlush();
-      out.writeByteArray2D(objectToFlush.pool.buffers, objectToFlush.bufferUpto + 1);
-      flushInfo.addIntProperty(BUFFER_UP_TO_PROP_NAME, objectToFlush.bufferUpto);
-      flushInfo.addIntProperty(BYTE_UP_TO_PROP_NAME, objectToFlush.byteUpto);
-      flushInfo.addIntProperty(BYTE_OFFSET_PROP_NAME, objectToFlush.byteOffset);
+      out.wr eByteArray2D(objectToFlush.pool.buffers, objectToFlush.bufferUpto + 1);
+      flush nfo.add ntProperty(BUFFER_UP_TO_PROP_NAME, objectToFlush.bufferUpto);
+      flush nfo.add ntProperty(BYTE_UP_TO_PROP_NAME, objectToFlush.byteUpto);
+      flush nfo.add ntProperty(BYTE_OFFSET_PROP_NAME, objectToFlush.byteOffset);
     }
 
-    @Override
-    protected ByteBlockPool doLoad(FlushInfo flushInfo,
-                                   DataDeserializer in) throws IOException {
+    @Overr de
+    protected ByteBlockPool doLoad(Flush nfo flush nfo,
+                                   DataDeser al zer  n) throws  OExcept on {
       return new ByteBlockPool(
-              new BaseByteBlockPool.Pool(in.readByteArray2D()),
-              flushInfo.getIntProperty(BUFFER_UP_TO_PROP_NAME),
-              flushInfo.getIntProperty(BYTE_UP_TO_PROP_NAME),
-              flushInfo.getIntProperty(BYTE_OFFSET_PROP_NAME));
+              new BaseByteBlockPool.Pool( n.readByteArray2D()),
+              flush nfo.get ntProperty(BUFFER_UP_TO_PROP_NAME),
+              flush nfo.get ntProperty(BYTE_UP_TO_PROP_NAME),
+              flush nfo.get ntProperty(BYTE_OFFSET_PROP_NAME));
     }
   }
 }

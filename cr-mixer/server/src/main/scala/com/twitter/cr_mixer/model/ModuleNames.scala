@@ -1,122 +1,122 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
 /**
- * Define name annotated module names here
+ * Def ne na  annotated module na s  re
  */
-object ModuleNames {
+object ModuleNa s {
 
-  final val FrsStore = "FrsStore"
-  final val UssStore = "UssStore"
-  final val UssStratoColumn = "UssStratoColumn"
-  final val RsxStore = "RsxStore"
-  final val RmsTweetLogFavLongestL2EmbeddingStore = "RmsTweetLogFavLongestL2EmbeddingStore"
-  final val RmsUserFavBasedProducerEmbeddingStore = "RmsUserFavBasedProducerEmbeddingStore"
-  final val RmsUserLogFavInterestedInEmbeddingStore = "RmsUserLogFavInterestedInEmbeddingStore"
-  final val RmsUserFollowInterestedInEmbeddingStore = "RmsUserFollowInterestedInEmbeddingStore"
-  final val StpStore = "StpStore"
-  final val TwiceClustersMembersStore = "TwiceClustersMembersStore"
-  final val TripCandidateStore = "TripCandidateStore"
+  f nal val FrsStore = "FrsStore"
+  f nal val UssStore = "UssStore"
+  f nal val UssStratoColumn = "UssStratoColumn"
+  f nal val RsxStore = "RsxStore"
+  f nal val RmsT etLogFavLongestL2Embedd ngStore = "RmsT etLogFavLongestL2Embedd ngStore"
+  f nal val RmsUserFavBasedProducerEmbedd ngStore = "RmsUserFavBasedProducerEmbedd ngStore"
+  f nal val RmsUserLogFav nterested nEmbedd ngStore = "RmsUserLogFav nterested nEmbedd ngStore"
+  f nal val RmsUserFollow nterested nEmbedd ngStore = "RmsUserFollow nterested nEmbedd ngStore"
+  f nal val StpStore = "StpStore"
+  f nal val Tw ceClusters mbersStore = "Tw ceClusters mbersStore"
+  f nal val Tr pCand dateStore = "Tr pCand dateStore"
 
-  final val ConsumerEmbeddingBasedTripSimilarityEngine =
-    "ConsumerEmbeddingBasedTripSimilarityEngine"
-  final val ConsumerEmbeddingBasedTwHINANNSimilarityEngine =
-    "ConsumerEmbeddingBasedTwHINANNSimilarityEngine"
-  final val ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine =
-    "ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine"
-  final val ConsumersBasedUserAdGraphSimilarityEngine =
-    "ConsumersBasedUserAdGraphSimilarityEngine"
-  final val ConsumersBasedUserVideoGraphSimilarityEngine =
-    "ConsumersBasedUserVideoGraphSimilarityEngine"
+  f nal val Consu rEmbedd ngBasedTr pS m lar yEng ne =
+    "Consu rEmbedd ngBasedTr pS m lar yEng ne"
+  f nal val Consu rEmbedd ngBasedTwH NANNS m lar yEng ne =
+    "Consu rEmbedd ngBasedTwH NANNS m lar yEng ne"
+  f nal val Consu rEmbedd ngBasedTwoTo rANNS m lar yEng ne =
+    "Consu rEmbedd ngBasedTwoTo rANNS m lar yEng ne"
+  f nal val Consu rsBasedUserAdGraphS m lar yEng ne =
+    "Consu rsBasedUserAdGraphS m lar yEng ne"
+  f nal val Consu rsBasedUserV deoGraphS m lar yEng ne =
+    "Consu rsBasedUserV deoGraphS m lar yEng ne"
 
-  final val ConsumerBasedWalsSimilarityEngine = "ConsumerBasedWalsSimilarityEngine"
+  f nal val Consu rBasedWalsS m lar yEng ne = "Consu rBasedWalsS m lar yEng ne"
 
-  final val TweetBasedTwHINANNSimilarityEngine = "TweetBasedTwHINANNSimilarityEngine"
+  f nal val T etBasedTwH NANNS m lar yEng ne = "T etBasedTwH NANNS m lar yEng ne"
 
-  final val SimClustersANNSimilarityEngine = "SimClustersANNSimilarityEngine"
+  f nal val S mClustersANNS m lar yEng ne = "S mClustersANNS m lar yEng ne"
 
-  final val ProdSimClustersANNServiceClientName = "ProdSimClustersANNServiceClient"
-  final val ExperimentalSimClustersANNServiceClientName = "ExperimentalSimClustersANNServiceClient"
-  final val SimClustersANNServiceClientName1 = "SimClustersANNServiceClient1"
-  final val SimClustersANNServiceClientName2 = "SimClustersANNServiceClient2"
-  final val SimClustersANNServiceClientName3 = "SimClustersANNServiceClient3"
-  final val SimClustersANNServiceClientName5 = "SimClustersANNServiceClient5"
-  final val SimClustersANNServiceClientName4 = "SimClustersANNServiceClient4"
-  final val UnifiedCache = "unifiedCache"
-  final val MLScoreCache = "mlScoreCache"
-  final val TweetRecommendationResultsCache = "tweetRecommendationResultsCache"
-  final val EarlybirdTweetsCache = "earlybirdTweetsCache"
-  final val EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache =
-    "earlybirdTweetsWithoutRetweetsRepliesCacheStore"
-  final val EarlybirdRecencyBasedWithRetweetsRepliesTweetsCache =
-    "earlybirdTweetsWithRetweetsRepliesCacheStore"
+  f nal val ProdS mClustersANNServ ceCl entNa  = "ProdS mClustersANNServ ceCl ent"
+  f nal val Exper  ntalS mClustersANNServ ceCl entNa  = "Exper  ntalS mClustersANNServ ceCl ent"
+  f nal val S mClustersANNServ ceCl entNa 1 = "S mClustersANNServ ceCl ent1"
+  f nal val S mClustersANNServ ceCl entNa 2 = "S mClustersANNServ ceCl ent2"
+  f nal val S mClustersANNServ ceCl entNa 3 = "S mClustersANNServ ceCl ent3"
+  f nal val S mClustersANNServ ceCl entNa 5 = "S mClustersANNServ ceCl ent5"
+  f nal val S mClustersANNServ ceCl entNa 4 = "S mClustersANNServ ceCl ent4"
+  f nal val Un f edCac  = "un f edCac "
+  f nal val MLScoreCac  = "mlScoreCac "
+  f nal val T etRecom ndat onResultsCac  = "t etRecom ndat onResultsCac "
+  f nal val Earlyb rdT etsCac  = "earlyb rdT etsCac "
+  f nal val Earlyb rdRecencyBasedW houtRet etsRepl esT etsCac  =
+    "earlyb rdT etsW houtRet etsRepl esCac Store"
+  f nal val Earlyb rdRecencyBasedW hRet etsRepl esT etsCac  =
+    "earlyb rdT etsW hRet etsRepl esCac Store"
 
-  final val AbDeciderLogger = "abDeciderLogger"
-  final val TopLevelApiDdgMetricsLogger = "topLevelApiDdgMetricsLogger"
-  final val TweetRecsLogger = "tweetRecsLogger"
-  final val BlueVerifiedTweetRecsLogger = "blueVerifiedTweetRecsLogger"
-  final val RelatedTweetsLogger = "relatedTweetsLogger"
-  final val UtegTweetsLogger = "utegTweetsLogger"
-  final val AdsRecommendationsLogger = "adsRecommendationLogger"
+  f nal val AbDec derLogger = "abDec derLogger"
+  f nal val TopLevelAp Ddg tr csLogger = "topLevelAp Ddg tr csLogger"
+  f nal val T etRecsLogger = "t etRecsLogger"
+  f nal val BlueVer f edT etRecsLogger = "blueVer f edT etRecsLogger"
+  f nal val RelatedT etsLogger = "relatedT etsLogger"
+  f nal val UtegT etsLogger = "utegT etsLogger"
+  f nal val AdsRecom ndat onsLogger = "adsRecom ndat onLogger"
 
-  final val OfflineSimClustersANNInterestedInSimilarityEngine =
-    "OfflineSimClustersANNInterestedInSimilarityEngine"
+  f nal val Offl neS mClustersANN nterested nS m lar yEng ne =
+    "Offl neS mClustersANN nterested nS m lar yEng ne"
 
-  final val RealGraphOonStore = "RealGraphOonStore"
-  final val RealGraphInStore = "RealGraphInStore"
+  f nal val RealGraphOonStore = "RealGraphOonStore"
+  f nal val RealGraph nStore = "RealGraph nStore"
 
-  final val OfflineTweet2020CandidateStore = "OfflineTweet2020CandidateStore"
-  final val OfflineTweet2020Hl0El15CandidateStore = "OfflineTweet2020Hl0El15CandidateStore"
-  final val OfflineTweet2020Hl2El15CandidateStore = "OfflineTweet2020Hl2El15CandidateStore"
-  final val OfflineTweet2020Hl2El50CandidateStore = "OfflineTweet2020Hl2El50CandidateStore"
-  final val OfflineTweet2020Hl8El50CandidateStore = "OfflineTweet2020Hl8El50CandidateStore"
-  final val OfflineTweetMTSCandidateStore = "OfflineTweetMTSCandidateStore"
+  f nal val Offl neT et2020Cand dateStore = "Offl neT et2020Cand dateStore"
+  f nal val Offl neT et2020Hl0El15Cand dateStore = "Offl neT et2020Hl0El15Cand dateStore"
+  f nal val Offl neT et2020Hl2El15Cand dateStore = "Offl neT et2020Hl2El15Cand dateStore"
+  f nal val Offl neT et2020Hl2El50Cand dateStore = "Offl neT et2020Hl2El50Cand dateStore"
+  f nal val Offl neT et2020Hl8El50Cand dateStore = "Offl neT et2020Hl8El50Cand dateStore"
+  f nal val Offl neT etMTSCand dateStore = "Offl neT etMTSCand dateStore"
 
-  final val OfflineFavDecayedSumCandidateStore = "OfflineFavDecayedSumCandidateStore"
-  final val OfflineFtrAt5Pop1000RankDecay11CandidateStore =
-    "OfflineFtrAt5Pop1000RankDecay11CandidateStore"
-  final val OfflineFtrAt5Pop10000RankDecay11CandidateStore =
-    "OfflineFtrAt5Pop10000RankDecay11CandidateStore"
+  f nal val Offl neFavDecayedSumCand dateStore = "Offl neFavDecayedSumCand dateStore"
+  f nal val Offl neFtrAt5Pop1000RankDecay11Cand dateStore =
+    "Offl neFtrAt5Pop1000RankDecay11Cand dateStore"
+  f nal val Offl neFtrAt5Pop10000RankDecay11Cand dateStore =
+    "Offl neFtrAt5Pop10000RankDecay11Cand dateStore"
 
-  final val TwhinCollabFilterStratoStoreForFollow = "TwhinCollabFilterStratoStoreForFollow"
-  final val TwhinCollabFilterStratoStoreForEngagement = "TwhinCollabFilterStratoStoreForEngagement"
-  final val TwhinMultiClusterStratoStoreForFollow = "TwhinMultiClusterStratoStoreForFollow"
-  final val TwhinMultiClusterStratoStoreForEngagement = "TwhinMultiClusterStratoStoreForEngagement"
+  f nal val Twh nCollabF lterStratoStoreForFollow = "Twh nCollabF lterStratoStoreForFollow"
+  f nal val Twh nCollabF lterStratoStoreForEngage nt = "Twh nCollabF lterStratoStoreForEngage nt"
+  f nal val Twh nMult ClusterStratoStoreForFollow = "Twh nMult ClusterStratoStoreForFollow"
+  f nal val Twh nMult ClusterStratoStoreForEngage nt = "Twh nMult ClusterStratoStoreForEngage nt"
 
-  final val ProducerBasedUserAdGraphSimilarityEngine =
-    "ProducerBasedUserAdGraphSimilarityEngine"
-  final val ProducerBasedUserTweetGraphSimilarityEngine =
-    "ProducerBasedUserTweetGraphSimilarityEngine"
-  final val ProducerBasedUnifiedSimilarityEngine = "ProducerBasedUnifiedSimilarityEngine"
+  f nal val ProducerBasedUserAdGraphS m lar yEng ne =
+    "ProducerBasedUserAdGraphS m lar yEng ne"
+  f nal val ProducerBasedUserT etGraphS m lar yEng ne =
+    "ProducerBasedUserT etGraphS m lar yEng ne"
+  f nal val ProducerBasedUn f edS m lar yEng ne = "ProducerBasedUn f edS m lar yEng ne"
 
-  final val TweetBasedUserAdGraphSimilarityEngine = "TweetBasedUserAdGraphSimilarityEngine"
-  final val TweetBasedUserTweetGraphSimilarityEngine = "TweetBasedUserTweetGraphSimilarityEngine"
-  final val TweetBasedUserVideoGraphSimilarityEngine = "TweetBasedUserVideoGraphSimilarityEngine"
-  final val TweetBasedQigSimilarityEngine = "TweetBasedQigSimilarityEngine"
-  final val TweetBasedUnifiedSimilarityEngine = "TweetBasedUnifiedSimilarityEngine"
+  f nal val T etBasedUserAdGraphS m lar yEng ne = "T etBasedUserAdGraphS m lar yEng ne"
+  f nal val T etBasedUserT etGraphS m lar yEng ne = "T etBasedUserT etGraphS m lar yEng ne"
+  f nal val T etBasedUserV deoGraphS m lar yEng ne = "T etBasedUserV deoGraphS m lar yEng ne"
+  f nal val T etBasedQ gS m lar yEng ne = "T etBasedQ gS m lar yEng ne"
+  f nal val T etBasedUn f edS m lar yEng ne = "T etBasedUn f edS m lar yEng ne"
 
-  final val TwhinCollabFilterSimilarityEngine = "TwhinCollabFilterSimilarityEngine"
+  f nal val Twh nCollabF lterS m lar yEng ne = "Twh nCollabF lterS m lar yEng ne"
 
-  final val ConsumerBasedUserTweetGraphStore = "ConsumerBasedUserTweetGraphStore"
-  final val ConsumerBasedUserVideoGraphStore = "ConsumerBasedUserVideoGraphStore"
-  final val ConsumerBasedUserAdGraphStore = "ConsumerBasedUserAdGraphStore"
+  f nal val Consu rBasedUserT etGraphStore = "Consu rBasedUserT etGraphStore"
+  f nal val Consu rBasedUserV deoGraphStore = "Consu rBasedUserV deoGraphStore"
+  f nal val Consu rBasedUserAdGraphStore = "Consu rBasedUserAdGraphStore"
 
-  final val UserTweetEntityGraphSimilarityEngine =
-    "UserTweetEntityGraphSimilarityEngine"
+  f nal val UserT etEnt yGraphS m lar yEng ne =
+    "UserT etEnt yGraphS m lar yEng ne"
 
-  final val CertoTopicTweetSimilarityEngine = "CertoTopicTweetSimilarityEngine"
-  final val CertoStratoStoreName = "CertoStratoStore"
+  f nal val CertoTop cT etS m lar yEng ne = "CertoTop cT etS m lar yEng ne"
+  f nal val CertoStratoStoreNa  = "CertoStratoStore"
 
-  final val SkitTopicTweetSimilarityEngine = "SkitTopicTweetSimilarityEngine"
-  final val SkitHighPrecisionTopicTweetSimilarityEngine =
-    "SkitHighPrecisionTopicTweetSimilarityEngine"
-  final val SkitStratoStoreName = "SkitStratoStore"
+  f nal val Sk Top cT etS m lar yEng ne = "Sk Top cT etS m lar yEng ne"
+  f nal val Sk H ghPrec s onTop cT etS m lar yEng ne =
+    "Sk H ghPrec s onTop cT etS m lar yEng ne"
+  f nal val Sk StratoStoreNa  = "Sk StratoStore"
 
-  final val HomeNaviGRPCClient = "HomeNaviGRPCClient"
-  final val AdsFavedNaviGRPCClient = "AdsFavedNaviGRPCClient"
-  final val AdsMonetizableNaviGRPCClient = "AdsMonetizableNaviGRPCClient"
+  f nal val Ho Nav GRPCCl ent = "Ho Nav GRPCCl ent"
+  f nal val AdsFavedNav GRPCCl ent = "AdsFavedNav GRPCCl ent"
+  f nal val AdsMonet zableNav GRPCCl ent = "AdsMonet zableNav GRPCCl ent"
 
-  final val RetweetBasedDiffusionRecsMhStore = "RetweetBasedDiffusionRecsMhStore"
-  final val DiffusionBasedSimilarityEngine = "DiffusionBasedSimilarityEngine"
+  f nal val Ret etBasedD ffus onRecsMhStore = "Ret etBasedD ffus onRecsMhStore"
+  f nal val D ffus onBasedS m lar yEng ne = "D ffus onBasedS m lar yEng ne"
 
-  final val BlueVerifiedAnnotationStore = "BlueVerifiedAnnotationStore"
+  f nal val BlueVer f edAnnotat onStore = "BlueVer f edAnnotat onStore"
 }

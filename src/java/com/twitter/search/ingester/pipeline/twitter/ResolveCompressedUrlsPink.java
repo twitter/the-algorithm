@@ -1,96 +1,96 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.pink_floyd.thrift.ClientIdentifier;
-import com.twitter.pink_floyd.thrift.Mask;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.pink_floyd.thrift.UrlReadRequest;
-import com.twitter.pink_floyd.thrift.UrlReadResponse;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.util.Await;
-import com.twitter.util.Future;
-import com.twitter.util.Throw;
-import com.twitter.util.Throwables;
-import com.twitter.util.Try;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.p nk_floyd.thr ft.Cl ent dent f er;
+ mport com.tw ter.p nk_floyd.thr ft.Mask;
+ mport com.tw ter.p nk_floyd.thr ft.Storer;
+ mport com.tw ter.p nk_floyd.thr ft.UrlData;
+ mport com.tw ter.p nk_floyd.thr ft.UrlReadRequest;
+ mport com.tw ter.p nk_floyd.thr ft.UrlReadResponse;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Throw;
+ mport com.tw ter.ut l.Throwables;
+ mport com.tw ter.ut l.Try;
 
-import static com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsUtils.getUrlInfo;
+ mport stat c com.tw ter.search. ngester.p pel ne.tw ter.ResolveCompressedUrlsUt ls.getUrl nfo;
 
 /**
- * Resolve compressed URL via Pink
+ * Resolve compressed URL v a P nk
  */
-public class ResolveCompressedUrlsPink {
-  private static final Logger LOG = LoggerFactory.getLogger(ResolveCompressedUrlsPink.class);
-  private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
+publ c class ResolveCompressedUrlsP nk {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(ResolveCompressedUrlsP nk.class);
+  pr vate stat c f nal Str ng P NK_REQUESTS_BATCH_S ZE_DEC DER_KEY = "p nk_requests_batch_s ze";
 
-  private final Storer.ServiceIface storerClient;
-  private final ClientIdentifier pinkClientId;
-  private final Mask requestMask;
-  private final SearchDecider decider;
+  pr vate f nal Storer.Serv ce face storerCl ent;
+  pr vate f nal Cl ent dent f er p nkCl ent d;
+  pr vate f nal Mask requestMask;
+  pr vate f nal SearchDec der dec der;
 
-  // Use ServerSet to construct a metadata store client
-  public ResolveCompressedUrlsPink(Storer.ServiceIface storerClient,
-                                   String pinkClientId,
-                                   Decider decider) {
-    this.storerClient = storerClient;
-    this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
-    this.decider = new SearchDecider(Preconditions.checkNotNull(decider));
+  // Use ServerSet to construct a  tadata store cl ent
+  publ c ResolveCompressedUrlsP nk(Storer.Serv ce face storerCl ent,
+                                   Str ng p nkCl ent d,
+                                   Dec der dec der) {
+    t .storerCl ent = storerCl ent;
+    t .p nkCl ent d = Cl ent dent f er.valueOf(p nkCl ent d);
+    t .dec der = new SearchDec der(Precond  ons.c ckNotNull(dec der));
 
     requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    requestMask.setResolut on(true);
+    requestMask.setHtmlBas cs(true);
+    requestMask.setUrlD rect nfo(true);
   }
 
   /**
-   * Resolve a set of URLs using PinkFloyd.
+   * Resolve a set of URLs us ng P nkFloyd.
    */
-  public Map<String, ResolveCompressedUrlsUtils.UrlInfo> resolveUrls(Set<String> urls) {
-    if (urls == null || urls.size() == 0) {
+  publ c Map<Str ng, ResolveCompressedUrlsUt ls.Url nfo> resolveUrls(Set<Str ng> urls) {
+     f (urls == null || urls.s ze() == 0) {
       return null;
     }
 
-    List<String> urlsList = ImmutableList.copyOf(urls);
-    int batchSize = decider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        ? decider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
+    L st<Str ng> urlsL st =  mmutableL st.copyOf(urls);
+     nt batchS ze = dec der.featureEx sts(P NK_REQUESTS_BATCH_S ZE_DEC DER_KEY)
+        ? dec der.getAva lab l y(P NK_REQUESTS_BATCH_S ZE_DEC DER_KEY)
         : 10000;
-    int numRequests = (int) Math.ceil(1.0 * urlsList.size() / batchSize);
+     nt numRequests = ( nt) Math.ce l(1.0 * urlsL st.s ze() / batchS ze);
 
-    List<Future<UrlReadResponse>> responseFutures = Lists.newArrayList();
-    for (int i = 0; i < numRequests; ++i) {
+    L st<Future<UrlReadResponse>> responseFutures = L sts.newArrayL st();
+    for ( nt   = 0;   < numRequests; ++ ) {
       UrlReadRequest request = new UrlReadRequest();
       request.setUrls(
-          urlsList.subList(i * batchSize, Math.min(urlsList.size(), (i + 1) * batchSize)));
+          urlsL st.subL st(  * batchS ze, Math.m n(urlsL st.s ze(), (  + 1) * batchS ze)));
       request.setMask(requestMask);
-      request.setClientId(pinkClientId);
+      request.setCl ent d(p nkCl ent d);
 
-      // Send all requests in parallel.
-      responseFutures.add(storerClient.read(request));
+      // Send all requests  n parallel.
+      responseFutures.add(storerCl ent.read(request));
     }
 
-    Map<String, ResolveCompressedUrlsUtils.UrlInfo> resultMap = Maps.newHashMap();
+    Map<Str ng, ResolveCompressedUrlsUt ls.Url nfo> resultMap = Maps.newHashMap();
     for (Future<UrlReadResponse> responseFuture : responseFutures) {
       Try<UrlReadResponse> tryResponse = getResponseTry(responseFuture);
-      if (tryResponse.isThrow()) {
-        continue;
+       f (tryResponse. sThrow()) {
+        cont nue;
       }
 
       UrlReadResponse response = tryResponse.get();
       for (UrlData urlData : response.getData()) {
-        if (ResolveCompressedUrlsUtils.isResolved(urlData)) {
-          resultMap.put(urlData.url, getUrlInfo(urlData));
+         f (ResolveCompressedUrlsUt ls. sResolved(urlData)) {
+          resultMap.put(urlData.url, getUrl nfo(urlData));
         }
       }
     }
@@ -98,16 +98,16 @@ public class ResolveCompressedUrlsPink {
     return resultMap;
   }
 
-  private Try<UrlReadResponse> getResponseTry(Future<UrlReadResponse> responseFuture) {
+  pr vate Try<UrlReadResponse> getResponseTry(Future<UrlReadResponse> responseFuture) {
     try {
-      Try<UrlReadResponse> tryResponse = Await.result(responseFuture.liftToTry());
-      if (tryResponse.isThrow()) {
+      Try<UrlReadResponse> tryResponse = Awa .result(responseFuture.l ftToTry());
+       f (tryResponse. sThrow()) {
         Throwable throwable = ((Throw) tryResponse).e();
-        LOG.warn("Failed to resolve URLs with Pink Storer.", throwable);
+        LOG.warn("Fa led to resolve URLs w h P nk Storer.", throwable);
       }
       return tryResponse;
-    } catch (Exception e) {
-      return Throwables.unchecked(e);
+    } catch (Except on e) {
+      return Throwables.unc cked(e);
     }
   }
 }

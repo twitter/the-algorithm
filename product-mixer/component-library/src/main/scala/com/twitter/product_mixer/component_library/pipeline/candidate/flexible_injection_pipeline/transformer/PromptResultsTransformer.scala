@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r
 
-import com.twitter.onboarding.injections.{thriftscala => flipinjection}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.FullCoverPromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.HalfCoverPromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+ mport com.tw ter.onboard ng. nject ons.{thr ftscala => fl p nject on}
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.flex ble_ nject on_p pel ne. nter d atePrompt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BasePromptCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.FullCoverPromptCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.HalfCoverPromptCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date. nl nePromptCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.PromptCarouselT leCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.RelevancePromptCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
 
-object PromptResultsTransformer
-    extends CandidatePipelineResultsTransformer[
-      IntermediatePrompt,
-      BasePromptCandidate[Any]
+object PromptResultsTransfor r
+    extends Cand dateP pel neResultsTransfor r[
+       nter d atePrompt,
+      BasePromptCand date[Any]
     ] {
 
   /**
-   * Transforms a Flip Injection to a Product Mixer domain object deriving from BasePromptCandidate.
-   * Supported injection types have to match those declared in com.twitter.product_mixer.component_library.transformer.flexible_injection_pipeline.FlipQueryTransformer#supportedPromptFormats
+   * Transforms a Fl p  nject on to a Product M xer doma n object der v ng from BasePromptCand date.
+   * Supported  nject on types have to match those declared  n com.tw ter.product_m xer.component_l brary.transfor r.flex ble_ nject on_p pel ne.Fl pQueryTransfor r#supportedPromptFormats
    */
-  override def transform(input: IntermediatePrompt): BasePromptCandidate[Any] =
-    input.injection match {
-      case inlinePrompt: flipinjection.Injection.InlinePrompt =>
-        InlinePromptCandidate(id = inlinePrompt.inlinePrompt.injectionIdentifier
-          .getOrElse(throw new MissingInjectionId(input.injection)))
-      case _: flipinjection.Injection.FullCover =>
-        FullCoverPromptCandidate(id = "0")
-      case _: flipinjection.Injection.HalfCover =>
-        HalfCoverPromptCandidate(id = "0")
-      case _: flipinjection.Injection.TilesCarousel =>
-        PromptCarouselTileCandidate(id =
-          input.offsetInModule.getOrElse(throw FlipPromptOffsetInModuleMissing))
-      case relevancePrompt: flipinjection.Injection.RelevancePrompt =>
-        RelevancePromptCandidate(
-          id = relevancePrompt.relevancePrompt.injectionIdentifier,
-          position = relevancePrompt.relevancePrompt.requestedPosition.map(_.toInt))
-      case injection => throw new UnsupportedInjectionType(injection)
+  overr de def transform( nput:  nter d atePrompt): BasePromptCand date[Any] =
+     nput. nject on match {
+      case  nl nePrompt: fl p nject on. nject on. nl nePrompt =>
+         nl nePromptCand date( d =  nl nePrompt. nl nePrompt. nject on dent f er
+          .getOrElse(throw new M ss ng nject on d( nput. nject on)))
+      case _: fl p nject on. nject on.FullCover =>
+        FullCoverPromptCand date( d = "0")
+      case _: fl p nject on. nject on.HalfCover =>
+        HalfCoverPromptCand date( d = "0")
+      case _: fl p nject on. nject on.T lesCarousel =>
+        PromptCarouselT leCand date( d =
+           nput.offset nModule.getOrElse(throw Fl pPromptOffset nModuleM ss ng))
+      case relevancePrompt: fl p nject on. nject on.RelevancePrompt =>
+        RelevancePromptCand date(
+           d = relevancePrompt.relevancePrompt. nject on dent f er,
+          pos  on = relevancePrompt.relevancePrompt.requestedPos  on.map(_.to nt))
+      case  nject on => throw new Unsupported nject onType( nject on)
     }
 }
 
-class MissingInjectionId(injection: flipinjection.Injection)
-    extends IllegalArgumentException(
-      s"Injection identifier is missing ${TransportMarshaller.getSimpleName(injection.getClass)}")
+class M ss ng nject on d( nject on: fl p nject on. nject on)
+    extends  llegalArgu ntExcept on(
+      s" nject on  dent f er  s m ss ng ${TransportMarshaller.getS mpleNa ( nject on.getClass)}")
 
-class UnsupportedInjectionType(injection: flipinjection.Injection)
-    extends UnsupportedOperationException(
-      s"Unsupported FLIP injection Type : ${TransportMarshaller.getSimpleName(injection.getClass)}")
+class Unsupported nject onType( nject on: fl p nject on. nject on)
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported FL P  nject on Type : ${TransportMarshaller.getS mpleNa ( nject on.getClass)}")
 
-object FlipPromptOffsetInModuleMissing
-    extends NoSuchElementException(
-      "FlipPromptOffsetInModuleFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+object Fl pPromptOffset nModuleM ss ng
+    extends NoSuchEle ntExcept on(
+      "Fl pPromptOffset nModuleFeature must be set for t  T lesCarousel FL P  nject on  n PromptCand dateS ce")

@@ -1,11 +1,11 @@
-scala_library(
+scala_l brary(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/recommendations:aggregate",
-        "src/scala/com/twitter/ml/featurestore/lib/embedding",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/common/ml",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/ml/featurestore/catalog/features/recom ndat ons:aggregate",
+        "src/scala/com/tw ter/ml/featurestore/l b/embedd ng",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/scala/com/tw ter/s mclusters_v2/common/ml",
     ],
 )

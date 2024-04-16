@@ -1,208 +1,208 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.DefaultScore
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.MaxNumIntermediateNodesToKeep
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.FirstDegreeCandidatesTimeout
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.onboarding.relevance.features.ymbii.ExpansionCandidateScores
-import com.twitter.onboarding.relevance.features.ymbii.RawYMBIICandidateFeatures
-import com.twitter.onboarding.relevance.store.thriftscala.CandidatesFollowedV1
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import scala.collection.immutable
-import scala.util.control.NonFatal
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.RealGraphExpans onRepos ory.DefaultScore
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.RealGraphExpans onRepos ory.MaxNum nter d ateNodesToKeep
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.RealGraphExpans onRepos ory.F rstDegreeCand datesT  out
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models._
+ mport com.tw ter.onboard ng.relevance.features.ymb  .Expans onCand dateScores
+ mport com.tw ter.onboard ng.relevance.features.ymb  .RawYMB  Cand dateFeatures
+ mport com.tw ter.onboard ng.relevance.store.thr ftscala.Cand datesFollo dV1
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.ut l.Durat on
+ mport scala.collect on. mmutable
+ mport scala.ut l.control.NonFatal
 
-private final case class InterestExpansionCandidate(
-  userID: Long,
+pr vate f nal case class  nterestExpans onCand date(
+  user D: Long,
   score: Double,
-  features: RawYMBIICandidateFeatures)
+  features: RawYMB  Cand dateFeatures)
 
-abstract class RealGraphExpansionRepository[Request](
-  realgraphExpansionStore: Fetcher[
+abstract class RealGraphExpans onRepos ory[Request](
+  realgraphExpans onStore: Fetc r[
     Long,
-    Unit,
-    CandidatesFollowedV1
+    Un ,
+    Cand datesFollo dV1
   ],
-  override val identifier: CandidateSourceIdentifier,
-  statsReceiver: StatsReceiver = NullStatsReceiver,
-  maxUnderlyingCandidatesToQuery: Int = 50,
-  maxCandidatesToReturn: Int = 40,
-  overrideUnderlyingTimeout: Option[Duration] = None,
-  appendSocialProof: Boolean = false)
-    extends CandidateSource[
+  overr de val  dent f er: Cand dateS ce dent f er,
+  statsRece ver: StatsRece ver = NullStatsRece ver,
+  maxUnderly ngCand datesToQuery:  nt = 50,
+  maxCand datesToReturn:  nt = 40,
+  overr deUnderly ngT  out: Opt on[Durat on] = None,
+  appendSoc alProof: Boolean = false)
+    extends Cand dateS ce[
       Request,
-      CandidateUser
+      Cand dateUser
     ] {
 
-  val underlyingCandidateSource: Seq[
-    CandidateSource[
+  val underly ngCand dateS ce: Seq[
+    Cand dateS ce[
       Request,
-      CandidateUser
+      Cand dateUser
     ]
   ]
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName).scope(identifier.name)
-  private val underlyingCandidateSourceFailureStats =
-    stats.scope("underlying_candidate_source_failure")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa ).scope( dent f er.na )
+  pr vate val underly ngCand dateS ceFa lureStats =
+    stats.scope("underly ng_cand date_s ce_fa lure")
 
   def apply(
     request: Request,
-  ): Stitch[Seq[CandidateUser]] = {
+  ): St ch[Seq[Cand dateUser]] = {
 
-    val candidatesFromUnderlyingSourcesStitch: Seq[Stitch[Seq[CandidateUser]]] =
-      underlyingCandidateSource.map { candidateSource =>
-        candidateSource
+    val cand datesFromUnderly ngS cesSt ch: Seq[St ch[Seq[Cand dateUser]]] =
+      underly ngCand dateS ce.map { cand dateS ce =>
+        cand dateS ce
           .apply(request)
-          .within(overrideUnderlyingTimeout.getOrElse(FirstDegreeCandidatesTimeout))(
-            DefaultTimer
+          .w h n(overr deUnderly ngT  out.getOrElse(F rstDegreeCand datesT  out))(
+            DefaultT  r
           )
           .handle {
             case NonFatal(e) =>
-              underlyingCandidateSourceFailureStats
-                .counter(candidateSource.identifier.name, e.getClass.getSimpleName).incr()
+              underly ngCand dateS ceFa lureStats
+                .counter(cand dateS ce. dent f er.na , e.getClass.getS mpleNa ). ncr()
               Seq.empty
           }
       }
 
     for {
-      underlyingCandidatesFromEachAlgo <- Stitch.collect(candidatesFromUnderlyingSourcesStitch)
-      // The first algorithm in the list has the highest priority. Depending on if its not
-      // populated, fall back to other algorithms. Once a particular algorithm is chosen, only
-      // take the top few candidates from the underlying store for expansion.
-      underlyingCandidatesTuple =
-        underlyingCandidatesFromEachAlgo
-          .zip(underlyingCandidateSource)
-          .find(_._1.nonEmpty)
+      underly ngCand datesFromEachAlgo <- St ch.collect(cand datesFromUnderly ngS cesSt ch)
+      // T  f rst algor hm  n t  l st has t  h g st pr or y. Depend ng on  f  s not
+      // populated, fall back to ot r algor hms. Once a part cular algor hm  s chosen, only
+      // take t  top few cand dates from t  underly ng store for expans on.
+      underly ngCand datesTuple =
+        underly ngCand datesFromEachAlgo
+          .z p(underly ngCand dateS ce)
+          .f nd(_._1.nonEmpty)
 
-      underlyingAlgorithmUsed: Option[CandidateSourceIdentifier] = underlyingCandidatesTuple.map {
-        case (_, candidateSource) => candidateSource.identifier
+      underly ngAlgor hmUsed: Opt on[Cand dateS ce dent f er] = underly ngCand datesTuple.map {
+        case (_, cand dateS ce) => cand dateS ce. dent f er
       }
 
-      // Take maxUnderlyingCandidatesToQuery to query realgraphExpansionStore
-      underlyingCandidates =
-        underlyingCandidatesTuple
+      // Take maxUnderly ngCand datesToQuery to query realgraphExpans onStore
+      underly ngCand dates =
+        underly ngCand datesTuple
           .map {
-            case (candidates, candidateSource) =>
+            case (cand dates, cand dateS ce) =>
               stats
-                .scope("underlyingAlgorithmUsedScope").counter(
-                  candidateSource.identifier.name).incr()
-              candidates
+                .scope("underly ngAlgor hmUsedScope").counter(
+                  cand dateS ce. dent f er.na ). ncr()
+              cand dates
           }
           .getOrElse(Seq.empty)
-          .sortBy(_.score.getOrElse(DefaultScore))(Ordering.Double.reverse)
-          .take(maxUnderlyingCandidatesToQuery)
+          .sortBy(_.score.getOrElse(DefaultScore))(Order ng.Double.reverse)
+          .take(maxUnderly ngCand datesToQuery)
 
-      underlyingCandidateMap: Map[Long, Double] = underlyingCandidates.map { candidate =>
-        (candidate.id, candidate.score.getOrElse(DefaultScore))
+      underly ngCand dateMap: Map[Long, Double] = underly ngCand dates.map { cand date =>
+        (cand date. d, cand date.score.getOrElse(DefaultScore))
       }.toMap
 
-      expansionCandidates <-
-        Stitch
-          .traverse(underlyingCandidateMap.keySet.toSeq) { candidateId =>
-            Stitch.join(
-              Stitch.value(candidateId),
-              realgraphExpansionStore.fetch(candidateId).map(_.v))
+      expans onCand dates <-
+        St ch
+          .traverse(underly ngCand dateMap.keySet.toSeq) { cand date d =>
+            St ch.jo n(
+              St ch.value(cand date d),
+              realgraphExpans onStore.fetch(cand date d).map(_.v))
 
           }.map(_.toMap)
 
-      rerankedCandidates: Seq[InterestExpansionCandidate] =
-        rerankCandidateExpansions(underlyingCandidateMap, expansionCandidates)
+      rerankedCand dates: Seq[ nterestExpans onCand date] =
+        rerankCand dateExpans ons(underly ngCand dateMap, expans onCand dates)
 
-      rerankedCandidatesFiltered = rerankedCandidates.take(maxCandidatesToReturn)
+      rerankedCand datesF ltered = rerankedCand dates.take(maxCand datesToReturn)
 
-    } yield {
-      rerankedCandidatesFiltered.map { candidate =>
-        val socialProofReason = if (appendSocialProof) {
-          val socialProofIds = candidate.features.expansionCandidateScores
-            .map(_.intermediateCandidateId)
-          Some(
-            Reason(Some(
-              AccountProof(followProof = Some(FollowProof(socialProofIds, socialProofIds.size))))))
+    } y eld {
+      rerankedCand datesF ltered.map { cand date =>
+        val soc alProofReason =  f (appendSoc alProof) {
+          val soc alProof ds = cand date.features.expans onCand dateScores
+            .map(_. nter d ateCand date d)
+          So (
+            Reason(So (
+              AccountProof(followProof = So (FollowProof(soc alProof ds, soc alProof ds.s ze))))))
         } else {
           None
         }
-        CandidateUser(
-          id = candidate.userID,
-          score = Some(candidate.score),
-          reason = socialProofReason,
-          userCandidateSourceDetails = Some(
-            UserCandidateSourceDetails(
-              primaryCandidateSource = Some(identifier),
-              candidateSourceFeatures = Map(identifier -> Seq(candidate.features))
+        Cand dateUser(
+           d = cand date.user D,
+          score = So (cand date.score),
+          reason = soc alProofReason,
+          userCand dateS ceDeta ls = So (
+            UserCand dateS ceDeta ls(
+              pr maryCand dateS ce = So ( dent f er),
+              cand dateS ceFeatures = Map( dent f er -> Seq(cand date.features))
             ))
-        ).addAddressBookMetadataIfAvailable(underlyingAlgorithmUsed.toSeq)
+        ).addAddressBook tadata fAva lable(underly ngAlgor hmUsed.toSeq)
       }
     }
   }
 
   /**
-   * Expands underlying candidates, returning them in sorted order.
+   * Expands underly ng cand dates, return ng t m  n sorted order.
    *
-   * @param underlyingCandidatesMap A map from underlying candidate id to score
-   * @param expansionCandidateMap A map from underlying candidate id to optional expansion candidates
-   * @return A sorted sequence of expansion candidates and associated scores
+   * @param underly ngCand datesMap A map from underly ng cand date  d to score
+   * @param expans onCand dateMap A map from underly ng cand date  d to opt onal expans on cand dates
+   * @return A sorted sequence of expans on cand dates and assoc ated scores
    */
-  private def rerankCandidateExpansions(
-    underlyingCandidatesMap: Map[Long, Double],
-    expansionCandidateMap: Map[Long, Option[CandidatesFollowedV1]]
-  ): Seq[InterestExpansionCandidate] = {
+  pr vate def rerankCand dateExpans ons(
+    underly ngCand datesMap: Map[Long, Double],
+    expans onCand dateMap: Map[Long, Opt on[Cand datesFollo dV1]]
+  ): Seq[ nterestExpans onCand date] = {
 
     // extract features
-    val candidates: Seq[(Long, ExpansionCandidateScores)] = for {
-      (underlyingCandidateId, underlyingCandidateScore) <- underlyingCandidatesMap.toSeq
-      expansionCandidates =
-        expansionCandidateMap
-          .get(underlyingCandidateId)
+    val cand dates: Seq[(Long, Expans onCand dateScores)] = for {
+      (underly ngCand date d, underly ngCand dateScore) <- underly ngCand datesMap.toSeq
+      expans onCand dates =
+        expans onCand dateMap
+          .get(underly ngCand date d)
           .flatten
-          .map(_.candidatesFollowed)
+          .map(_.cand datesFollo d)
           .getOrElse(Seq.empty)
-      expansionCandidate <- expansionCandidates
-    } yield expansionCandidate.candidateID -> ExpansionCandidateScores(
-      underlyingCandidateId,
-      Some(underlyingCandidateScore),
-      Some(expansionCandidate.score)
+      expans onCand date <- expans onCand dates
+    } y eld expans onCand date.cand date D -> Expans onCand dateScores(
+      underly ngCand date d,
+      So (underly ngCand dateScore),
+      So (expans onCand date.score)
     )
 
-    // merge intermediate nodes for the same candidate
-    val dedupedCandidates: Seq[(Long, Seq[ExpansionCandidateScores])] =
-      candidates.groupBy(_._1).mapValues(_.map(_._2).sortBy(_.intermediateCandidateId)).toSeq
+    //  rge  nter d ate nodes for t  sa  cand date
+    val dedupedCand dates: Seq[(Long, Seq[Expans onCand dateScores])] =
+      cand dates.groupBy(_._1).mapValues(_.map(_._2).sortBy(_. nter d ateCand date d)).toSeq
 
-    // score the candidate
-    val candidatesWithTotalScore: Seq[((Long, Seq[ExpansionCandidateScores]), Double)] =
-      dedupedCandidates.map { candidate: (Long, Seq[ExpansionCandidateScores]) =>
+    // score t  cand date
+    val cand datesW hTotalScore: Seq[((Long, Seq[Expans onCand dateScores]), Double)] =
+      dedupedCand dates.map { cand date: (Long, Seq[Expans onCand dateScores]) =>
         (
-          candidate,
-          candidate._2.map { ieScore: ExpansionCandidateScores =>
-            ieScore.scoreFromUserToIntermediateCandidate.getOrElse(DefaultScore) *
-              ieScore.scoreFromIntermediateToExpansionCandidate.getOrElse(DefaultScore)
+          cand date,
+          cand date._2.map {  eScore: Expans onCand dateScores =>
+             eScore.scoreFromUserTo nter d ateCand date.getOrElse(DefaultScore) *
+               eScore.scoreFrom nter d ateToExpans onCand date.getOrElse(DefaultScore)
           }.sum)
       }
 
-    // sort candidate by score
+    // sort cand date by score
     for {
-      ((candidate, edges), score) <- candidatesWithTotalScore.sortBy(_._2)(Ordering[Double].reverse)
-    } yield InterestExpansionCandidate(
-      candidate,
+      ((cand date, edges), score) <- cand datesW hTotalScore.sortBy(_._2)(Order ng[Double].reverse)
+    } y eld  nterestExpans onCand date(
+      cand date,
       score,
-      RawYMBIICandidateFeatures(
-        edges.size,
-        edges.take(MaxNumIntermediateNodesToKeep).to[immutable.Seq])
+      RawYMB  Cand dateFeatures(
+        edges.s ze,
+        edges.take(MaxNum nter d ateNodesToKeep).to[ mmutable.Seq])
     )
   }
 
 }
 
-object RealGraphExpansionRepository {
-  private val FirstDegreeCandidatesTimeout: Duration = 250.milliseconds
-  private val MaxNumIntermediateNodesToKeep = 20
-  private val DefaultScore = 0.0d
+object RealGraphExpans onRepos ory {
+  pr vate val F rstDegreeCand datesT  out: Durat on = 250.m ll seconds
+  pr vate val MaxNum nter d ateNodesToKeep = 20
+  pr vate val DefaultScore = 0.0d
 
 }

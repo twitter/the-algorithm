@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.adserver.{thr ftscala => ads}
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait AdsDisplayLocationBuilder[-Query <: PipelineQuery with AdsQuery] {
+tra  AdsD splayLocat onBu lder[-Query <: P pel neQuery w h AdsQuery] {
 
-  def apply(query: Query): ads.DisplayLocation
+  def apply(query: Query): ads.D splayLocat on
 }
 
-case class StaticAdsDisplayLocationBuilder(displayLocation: ads.DisplayLocation)
-    extends AdsDisplayLocationBuilder[PipelineQuery with AdsQuery] {
+case class Stat cAdsD splayLocat onBu lder(d splayLocat on: ads.D splayLocat on)
+    extends AdsD splayLocat onBu lder[P pel neQuery w h AdsQuery] {
 
-  def apply(query: PipelineQuery with AdsQuery): ads.DisplayLocation = displayLocation
+  def apply(query: P pel neQuery w h AdsQuery): ads.D splayLocat on = d splayLocat on
 }

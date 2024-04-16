@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+package com.tw ter.product_m xer.core.feature.featuremap.datarecord
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataRecord rger
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.datarecord._
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
 
 object DataRecordConverter {
-  val merger = new DataRecordMerger
+  val  rger = new DataRecord rger
 }
 
 /**
- * Constructs a FeatureMap from a DataRecord, given a predefined set of features from a FeaturesScope.
+ * Constructs a FeatureMap from a DataRecord, g ven a predef ned set of features from a FeaturesScope.
  *
- * @param featuresScope scope of predefined set of BaseDataRecordFeatures that should be included in the output FeatureMap.
+ * @param featuresScope scope of predef ned set of BaseDataRecordFeatures that should be  ncluded  n t  output FeatureMap.
  */
 class DataRecordConverter[DRFeature <: BaseDataRecordFeature[_, _]](
   featuresScope: FeaturesScope[DRFeature]) {
-  import DataRecordConverter._
+   mport DataRecordConverter._
 
   def toDataRecord(featureMap: FeatureMap): DataRecord = {
-    // Initialize a DataRecord with the Feature Store features in it and then add all the
-    // non-Feature Store features that support DataRecords to DataRecord. We don't
-    // need to add Feature Store features because they're already in the initial DataRecord.
-    // If there are any pre-built DataRecords, we merge those in.
-    val richDataRecord = featuresScope.getFeatureStoreFeaturesDataRecord(featureMap)
+    //  n  al ze a DataRecord w h t  Feature Store features  n   and t n add all t 
+    // non-Feature Store features that support DataRecords to DataRecord.   don't
+    // need to add Feature Store features because t y're already  n t   n  al DataRecord.
+    //  f t re are any pre-bu lt DataRecords,    rge those  n.
+    val r chDataRecord = featuresScope.getFeatureStoreFeaturesDataRecord(featureMap)
     val features = featuresScope.getNonFeatureStoreDataRecordFeatures(featureMap)
     features.foreach {
       case _: FeatureStoreDataRecordFeature[_, _] =>
-      case requiredFeature: DataRecordFeature[_, _] with DataRecordCompatible[_] =>
-        richDataRecord.setFeatureValue(
-          requiredFeature.mlFeature,
-          requiredFeature.toDataRecordFeatureValue(
-            featureMap.get(requiredFeature).asInstanceOf[requiredFeature.FeatureType]))
-      case optionalFeature: DataRecordOptionalFeature[_, _] with DataRecordCompatible[_] =>
+      case requ redFeature: DataRecordFeature[_, _] w h DataRecordCompat ble[_] =>
+        r chDataRecord.setFeatureValue(
+          requ redFeature.mlFeature,
+          requ redFeature.toDataRecordFeatureValue(
+            featureMap.get(requ redFeature).as nstanceOf[requ redFeature.FeatureType]))
+      case opt onalFeature: DataRecordOpt onalFeature[_, _] w h DataRecordCompat ble[_] =>
         featureMap
           .get(
-            optionalFeature.asInstanceOf[Feature[_, Option[optionalFeature.FeatureType]]]).foreach {
+            opt onalFeature.as nstanceOf[Feature[_, Opt on[opt onalFeature.FeatureType]]]).foreach {
             value =>
-              richDataRecord
+              r chDataRecord
                 .setFeatureValue(
-                  optionalFeature.mlFeature,
-                  optionalFeature.toDataRecordFeatureValue(value))
+                  opt onalFeature.mlFeature,
+                  opt onalFeature.toDataRecordFeatureValue(value))
           }
-      case dataRecordInAFeature: DataRecordInAFeature[_] =>
-        merger.merge(richDataRecord.getRecord, featureMap.get(dataRecordInAFeature))
+      case dataRecord nAFeature: DataRecord nAFeature[_] =>
+         rger. rge(r chDataRecord.getRecord, featureMap.get(dataRecord nAFeature))
     }
-    richDataRecord.getRecord
+    r chDataRecord.getRecord
   }
 }

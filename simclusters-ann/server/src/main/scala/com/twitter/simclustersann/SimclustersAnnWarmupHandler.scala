@@ -1,73 +1,73 @@
-package com.twitter.simclustersann
+package com.tw ter.s mclustersann
 
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import javax.inject.Inject
-import scala.util.control.NonFatal
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Await
-import com.twitter.util.ExecutorServiceFuturePool
-import com.twitter.util.Future
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter. nject.ut ls.Handler
+ mport javax. nject. nject
+ mport scala.ut l.control.NonFatal
+ mport com.google.common.ut l.concurrent.RateL m er
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.ExecutorServ ceFuturePool
+ mport com.tw ter.ut l.Future
 
-class SimclustersAnnWarmupHandler @Inject() (
-  clusterTweetCandidatesStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]],
-  futurePool: ExecutorServiceFuturePool,
-  rateLimiter: RateLimiter,
-  statsReceiver: StatsReceiver)
+class S mclustersAnnWarmupHandler @ nject() (
+  clusterT etCand datesStore: ReadableStore[Cluster d, Seq[(T et d, Double)]],
+  futurePool: ExecutorServ ceFuturePool,
+  rateL m er: RateL m er,
+  statsRece ver: StatsRece ver)
     extends Handler
-    with Logging {
+    w h Logg ng {
 
-  private val stats = statsReceiver.scope(this.getClass.getName)
+  pr vate val stats = statsRece ver.scope(t .getClass.getNa )
 
-  private val scopedStats = stats.scope("fetchFromCache")
-  private val clusters = scopedStats.counter("clusters")
-  private val fetchedKeys = scopedStats.counter("keys")
-  private val failures = scopedStats.counter("failures")
-  private val success = scopedStats.counter("success")
+  pr vate val scopedStats = stats.scope("fetchFromCac ")
+  pr vate val clusters = scopedStats.counter("clusters")
+  pr vate val fetc dKeys = scopedStats.counter("keys")
+  pr vate val fa lures = scopedStats.counter("fa lures")
+  pr vate val success = scopedStats.counter("success")
 
-  private val SimclustersNumber = 144428
+  pr vate val S mclustersNumber = 144428
 
-  override def handle(): Unit = {
+  overr de def handle(): Un  = {
     try {
-      val clusterIds = List.range(1, SimclustersNumber)
-      val futures: Seq[Future[Unit]] = clusterIds
-        .map { clusterId =>
-          clusters.incr()
+      val cluster ds = L st.range(1, S mclustersNumber)
+      val futures: Seq[Future[Un ]] = cluster ds
+        .map { cluster d =>
+          clusters. ncr()
           futurePool {
-            rateLimiter.acquire()
+            rateL m er.acqu re()
 
-            Await.result(
-              clusterTweetCandidatesStore
-                .get(clusterId)
+            Awa .result(
+              clusterT etCand datesStore
+                .get(cluster d)
                 .onSuccess { _ =>
-                  success.incr()
+                  success. ncr()
                 }
                 .handle {
                   case NonFatal(e) =>
-                    failures.incr()
+                    fa lures. ncr()
                 },
-              timeout = 10.seconds
+              t  out = 10.seconds
             )
-            fetchedKeys.incr()
+            fetc dKeys. ncr()
           }
         }
 
-      Await.result(Future.collect(futures), timeout = 10.minutes)
+      Awa .result(Future.collect(futures), t  out = 10.m nutes)
 
     } catch {
-      case NonFatal(e) => error(e.getMessage, e)
-    } finally {
+      case NonFatal(e) => error(e.get ssage, e)
+    } f nally {
       try {
         futurePool.executor.shutdown()
       } catch {
         case NonFatal(_) =>
       }
-      info("Warmup done.")
+       nfo("Warmup done.")
     }
   }
 }

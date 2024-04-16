@@ -1,31 +1,31 @@
-#!/bin/bash
+#!/b n/bash
 
 set -o nounset
 set -eu
 
 DC="atla"
 ROLE="$USER"
-SERVICE="representation-scorer"
-INSTANCE="0"
-KEY="$DC/$ROLE/devel/$SERVICE/$INSTANCE"
+SERV CE="representat on-scorer"
+ NSTANCE="0"
+KEY="$DC/$ROLE/devel/$SERV CE/$ NSTANCE"
 
-while test $# -gt 0; do
-  case "$1" in
-    -h|--help)
-      echo "$0 Set up an ssh tunnel for $SERVICE remote debugging and disable aurora health checks"
+wh le test $# -gt 0; do
+  case "$1"  n
+    -h|-- lp)
+      echo "$0 Set up an ssh tunnel for $SERV CE remote debugg ng and d sable aurora  alth c cks"
       echo " "
-      echo "See representation-scorer/README.md for details of how to use this script, and go/remote-debug for"
-      echo "general information about remote debugging in Aurora"
+      echo "See representat on-scorer/README.md for deta ls of how to use t  scr pt, and go/remote-debug for"
+      echo "general  nformat on about remote debugg ng  n Aurora"
       echo " "
-      echo "Default instance if called with no args:"
+      echo "Default  nstance  f called w h no args:"
       echo "  $KEY"
       echo " "
-      echo "Positional args:"
-      echo "  $0 [datacentre] [role] [service_name] [instance]"
+      echo "Pos  onal args:"
+      echo "  $0 [datacentre] [role] [serv ce_na ] [ nstance]"
       echo " "
-      echo "Options:"
-      echo "  -h, --help                show brief help"
-      exit 0
+      echo "Opt ons:"
+      echo "  -h, -- lp                show br ef  lp"
+      ex  0
       ;;
     *)
       break
@@ -33,33 +33,33 @@ while test $# -gt 0; do
   esac
 done
 
-if [ -n "${1-}" ]; then
+ f [ -n "${1-}" ]; t n
   DC="$1"
-fi
+f 
 
-if [ -n "${2-}" ]; then
+ f [ -n "${2-}" ]; t n
   ROLE="$2"
-fi
+f 
 
-if [ -n "${3-}" ]; then
-  SERVICE="$3"
-fi
+ f [ -n "${3-}" ]; t n
+  SERV CE="$3"
+f 
 
-if [ -n "${4-}" ]; then
-  INSTANCE="$4"
-fi
+ f [ -n "${4-}" ]; t n
+   NSTANCE="$4"
+f 
 
-KEY="$DC/$ROLE/devel/$SERVICE/$INSTANCE"
-read -p "Set up remote debugger tunnel for $KEY? (y/n) " -r CONFIRM
-if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
-  echo "Exiting, tunnel not created"
-  exit 1
-fi
+KEY="$DC/$ROLE/devel/$SERV CE/$ NSTANCE"
+read -p "Set up remote debugger tunnel for $KEY? (y/n) " -r CONF RM
+ f [[ ! $CONF RM =~ ^[Yy]$ ]]; t n
+  echo "Ex  ng, tunnel not created"
+  ex  1
+f 
 
-echo "Disabling health check and opening tunnel. Exit with control-c when you're finished"
-CMD="aurora task ssh $KEY -c 'touch .healthchecksnooze' && aurora task ssh $KEY -L '5005:debug' --ssh-options '-N -S none -v '"
+echo "D sabl ng  alth c ck and open ng tunnel. Ex  w h control-c w n   f n s d"
+CMD="aurora task ssh $KEY -c 'touch . althc cksnooze' && aurora task ssh $KEY -L '5005:debug' --ssh-opt ons '-N -S none -v '"
 
-echo "Running $CMD"
+echo "Runn ng $CMD"
 eval "$CMD"
 
 

@@ -1,121 +1,121 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2016 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow.grpc;
 
-import "tensorflow/core/protobuf/master.proto";
+ mport "tensorflow/core/protobuf/master.proto";
 
-option java_outer_classname = "MasterServiceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on java_outer_classna  = "MasterServ ceProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.d strunt  ";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// MasterService defines a TensorFlow service with which a client can
-// interact to execute a distributed TensorFlow computation.
+// MasterServ ce def nes a TensorFlow serv ce w h wh ch a cl ent can
+//  nteract to execute a d str buted TensorFlow computat on.
 //
-// A master service keeps track of multiple "master sessions". Each
-// session encapsulates a computation graph and its associated state,
-// and typically corresponds to a single "client session" (e.g. a
-// `tensorflow::Session` instance).
+// A master serv ce keeps track of mult ple "master sess ons". Each
+// sess on encapsulates a computat on graph and  s assoc ated state,
+// and typ cally corresponds to a s ngle "cl ent sess on" (e.g. a
+// `tensorflow::Sess on`  nstance).
 //
-// A session is responsible for the following:
-// * assigning each node to a device (locally or remotely) using a
-//   placement algorithm. This may make decisions based on collected
-//   statistics from the workers in the system (e.g., memory usage,
-//   bandwidth consumption, etc.)
+// A sess on  s respons ble for t  follow ng:
+// * ass gn ng each node to a dev ce (locally or remotely) us ng a
+//   place nt algor hm. T  may make dec s ons based on collected
+//   stat st cs from t  workers  n t  system (e.g.,  mory usage,
+//   bandw dth consumpt on, etc.)
 //
-// * inserting intermediate nodes and edges to support cross-device
-//   and cross-process data flows and resource management.
+// *  nsert ng  nter d ate nodes and edges to support cross-dev ce
+//   and cross-process data flows and res ce manage nt.
 //
-// * issuing commands to workers to execute the subgraphs associated
-//   with those workers.
+// *  ssu ng commands to workers to execute t  subgraphs assoc ated
+//   w h those workers.
 //
-// Typically, a client carries out an iterative computation
-// (e.g. training) by invoking RPCs against the master in a
-// client-side loop. The client first creates a client session that
-// connects to a particular master (using gRPC for example). The
-// master creates a corresponding master session that is hosted on
-// the master and caches state between the client's invocations.
+// Typ cally, a cl ent carr es out an  erat ve computat on
+// (e.g. tra n ng) by  nvok ng RPCs aga nst t  master  n a
+// cl ent-s de loop. T  cl ent f rst creates a cl ent sess on that
+// connects to a part cular master (us ng gRPC for example). T 
+// master creates a correspond ng master sess on that  s hosted on
+// t  master and cac s state bet en t  cl ent's  nvocat ons.
 //
-// After the session is established, the master returns an opaque
-// handle to the client that can be used to associate the client and
-// master sessions.
+// After t  sess on  s establ s d, t  master returns an opaque
+// handle to t  cl ent that can be used to assoc ate t  cl ent and
+// master sess ons.
 //
-// The client may send an initial graph to the master in the
-// CreateSession call, and add nodes to the graph using ExtendSession.
+// T  cl ent may send an  n  al graph to t  master  n t 
+// CreateSess on call, and add nodes to t  graph us ng ExtendSess on.
 //
-// The most frequent operation a master is "RunStep", which implements
-// the `Session::Run()` API. It supports feeding in arguments,
-// executing a dataflow computation, and fetching arguments.
+// T  most frequent operat on a master  s "RunStep", wh ch  mple nts
+// t  `Sess on::Run()` AP .   supports feed ng  n argu nts,
+// execut ng a dataflow computat on, and fetch ng argu nts.
 //
-// Finally, when the client no longer needs the session, it should
-// close the session by invoking CloseSession, which allows the master
-// to reclaim resources associated with the session. The master may
-// implement a garbage collection scheme that closes sessions that
-// have been inactive for some time.
+// F nally, w n t  cl ent no longer needs t  sess on,   should
+// close t  sess on by  nvok ng CloseSess on, wh ch allows t  master
+// to recla m res ces assoc ated w h t  sess on. T  master may
+//  mple nt a garbage collect on sc   that closes sess ons that
+// have been  nact ve for so  t  .
 //
-// For example, the following pseudo-code illustrates how a client
-// interacts with a master:
+// For example, t  follow ng pseudo-code  llustrates how a cl ent
+//  nteracts w h a master:
 //
-// stub = NewStub("/job:mnist/replica:0/task:0")
-// {handle} = stub->CreateSession({graph_def})
+// stub = NewStub("/job:mn st/repl ca:0/task:0")
+// {handle} = stub->CreateSess on({graph_def})
 // do {
-//   stub->RunStep({handle, {feeds}, {fetches}})
-//   // The client can evaluate a predicate locally, based on the
-//   // result of `fetches`, to determine whether to terminate. For
-//   // example, it might fetch the loss and evaluate whether it is less
-//   // than some threshold.
-// } while (!should_stop({fetches}));
-// stub->CloseSession({handle})
+//   stub->RunStep({handle, {feeds}, {fetc s}})
+//   // T  cl ent can evaluate a pred cate locally, based on t 
+//   // result of `fetc s`, to determ ne w t r to term nate. For
+//   // example,   m ght fetch t  loss and evaluate w t r    s less
+//   // than so  threshold.
+// } wh le (!should_stop({fetc s}));
+// stub->CloseSess on({handle})
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-service MasterService {
-  // Creates a session.
-  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+serv ce MasterServ ce {
+  // Creates a sess on.
+  rpc CreateSess on(CreateSess onRequest) returns (CreateSess onResponse);
 
-  // Extends a session.
-  rpc ExtendSession(ExtendSessionRequest) returns (ExtendSessionResponse);
+  // Extends a sess on.
+  rpc ExtendSess on(ExtendSess onRequest) returns (ExtendSess onResponse);
 
-  // Prepares future partial run calls.
-  rpc PartialRunSetup(PartialRunSetupRequest) returns (PartialRunSetupResponse);
+  // Prepares future part al run calls.
+  rpc Part alRunSetup(Part alRunSetupRequest) returns (Part alRunSetupResponse);
 
-  // Drives the graph computation.
+  // Dr ves t  graph computat on.
   rpc RunStep(RunStepRequest) returns (RunStepResponse);
 
-  // Closes a session.
-  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+  // Closes a sess on.
+  rpc CloseSess on(CloseSess onRequest) returns (CloseSess onResponse);
 
-  // List the devices usable by the master.
-  rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+  // L st t  dev ces usable by t  master.
+  rpc L stDev ces(L stDev cesRequest) returns (L stDev cesResponse);
 
-  // Close and abandon all existing sessions.  Ongoing computations
-  // will no longer affect fresh ones via the resources in containers listed in
-  // the ResetRequest.  See ResetRequest for more details.
+  // Close and abandon all ex st ng sess ons.  Ongo ng computat ons
+  // w ll no longer affect fresh ones v a t  res ces  n conta ners l sted  n
+  // t  ResetRequest.  See ResetRequest for more deta ls.
   rpc Reset(ResetRequest) returns (ResetResponse);
 
-  // Registers a callable for execution with RunCallable.
+  // Reg sters a callable for execut on w h RunCallable.
   rpc MakeCallable(MakeCallableRequest) returns (MakeCallableResponse);
 
-  // Executes a callable registered with MakeCallable.
+  // Executes a callable reg stered w h MakeCallable.
   rpc RunCallable(RunCallableRequest) returns (RunCallableResponse);
 
-  // Frees resources associated with a callable registered with MakeCallable.
+  // Frees res ces assoc ated w h a callable reg stered w h MakeCallable.
   rpc ReleaseCallable(ReleaseCallableRequest) returns (ReleaseCallableResponse);
 }

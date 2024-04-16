@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.queryparser;
+package com.tw ter.search.earlyb rd.queryparser;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
+ mport com.tw ter.search.common.constants.QueryCac Constants;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.Phrase;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.Spec alTerm;
+ mport com.tw ter.search.queryparser.query.Term;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.queryparser.query.search.SearchQueryV s or;
 
 /**
- * Visitor to detect presence of any antisocial / spam operator in a Query.
- * Visitor returns true if any operators it detects were found.
+ * V s or to detect presence of any ant soc al / spam operator  n a Query.
+ * V s or returns true  f any operators   detects  re found.
  */
-public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
-  // True if the query contains any operator to include antisocial tweets.
-  private boolean includeAntisocial = false;
+publ c class DetectAnt soc alV s or extends SearchQueryV s or<Boolean> {
+  // True  f t  query conta ns any operator to  nclude ant soc al t ets.
+  pr vate boolean  ncludeAnt soc al = false;
 
-  // True if the query contains any operator to exclude antisocial/spam tweets.
-  private boolean excludeAntisocial = false;
+  // True  f t  query conta ns any operator to exclude ant soc al/spam t ets.
+  pr vate boolean excludeAnt soc al = false;
 
-  // True if the query contains an antisocial tweets filter.
-  private boolean filterAntisocial = false;
+  // True  f t  query conta ns an ant soc al t ets f lter.
+  pr vate boolean f lterAnt soc al = false;
 
-  public boolean hasIncludeAntisocial() {
-    return includeAntisocial;
+  publ c boolean has ncludeAnt soc al() {
+    return  ncludeAnt soc al;
   }
 
-  public boolean hasExcludeAntisocial() {
-    return excludeAntisocial;
+  publ c boolean hasExcludeAnt soc al() {
+    return excludeAnt soc al;
   }
 
-  public boolean hasFilterAntisocial() {
-    return filterAntisocial;
+  publ c boolean hasF lterAnt soc al() {
+    return f lterAnt soc al;
   }
 
-  public boolean hasAnyAntisocialOperator() {
-    // Top tweets is considered an antisocial operator due to scoring also excluding
-    // spam tweets.
-    return hasIncludeAntisocial() || hasExcludeAntisocial() || hasFilterAntisocial();
+  publ c boolean hasAnyAnt soc alOperator() {
+    // Top t ets  s cons dered an ant soc al operator due to scor ng also exclud ng
+    // spam t ets.
+    return has ncludeAnt soc al() || hasExcludeAnt soc al() || hasF lterAnt soc al();
   }
 
-  @Override public Boolean visit(Disjunction disjunction) throws QueryParserException {
+  @Overr de publ c Boolean v s (D sjunct on d sjunct on) throws QueryParserExcept on {
     boolean found = false;
-    for (com.twitter.search.queryparser.query.Query node : disjunction.getChildren()) {
-      if (node.accept(this)) {
+    for (com.tw ter.search.queryparser.query.Query node : d sjunct on.getCh ldren()) {
+       f (node.accept(t )) {
         found = true;
       }
     }
     return found;
   }
 
-  @Override public Boolean visit(Conjunction conjunction) throws QueryParserException {
+  @Overr de publ c Boolean v s (Conjunct on conjunct on) throws QueryParserExcept on {
     boolean found = false;
-    for (com.twitter.search.queryparser.query.Query node : conjunction.getChildren()) {
-      if (node.accept(this)) {
+    for (com.tw ter.search.queryparser.query.Query node : conjunct on.getCh ldren()) {
+       f (node.accept(t )) {
         found = true;
       }
     }
     return found;
   }
 
-  @Override public Boolean visit(SearchOperator operator) throws QueryParserException {
+  @Overr de publ c Boolean v s (SearchOperator operator) throws QueryParserExcept on {
     boolean found = false;
-    switch (operator.getOperatorType()) {
-      case INCLUDE:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
+    sw ch (operator.getOperatorType()) {
+      case  NCLUDE:
+         f (SearchOperatorConstants.ANT SOC AL.equals(operator.getOperand())) {
+           f (operator.mustNotOccur()) {
+            excludeAnt soc al = true;
           } else {
-            includeAntisocial = true;
+             ncludeAnt soc al = true;
           }
           found = true;
         }
         break;
       case EXCLUDE:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            includeAntisocial = true;
+         f (SearchOperatorConstants.ANT SOC AL.equals(operator.getOperand())) {
+           f (operator.mustNotOccur()) {
+             ncludeAnt soc al = true;
           } else {
-            excludeAntisocial = true;
+            excludeAnt soc al = true;
           }
           found = true;
         }
         break;
-      case FILTER:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
+      case F LTER:
+         f (SearchOperatorConstants.ANT SOC AL.equals(operator.getOperand())) {
+           f (operator.mustNotOccur()) {
+            excludeAnt soc al = true;
           } else {
-            filterAntisocial = true;
+            f lterAnt soc al = true;
           }
           found = true;
         }
         break;
-      case CACHED_FILTER:
-        if (QueryCacheConstants.EXCLUDE_SPAM.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS
+      case CACHED_F LTER:
+         f (QueryCac Constants.EXCLUDE_SPAM.equals(operator.getOperand())
+            || QueryCac Constants.EXCLUDE_SPAM_AND_NAT VERETWEETS.equals(operator.getOperand())
+            || QueryCac Constants.EXCLUDE_ANT SOC AL.equals(operator.getOperand())
+            || QueryCac Constants.EXCLUDE_ANT SOC AL_AND_NAT VERETWEETS
                 .equals(operator.getOperand())) {
 
-          excludeAntisocial = true;
+          excludeAnt soc al = true;
           found = true;
         }
         break;
@@ -114,18 +114,18 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
     return found;
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
+  @Overr de
+  publ c Boolean v s (Spec alTerm spec al) throws QueryParserExcept on {
     return false;
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
+  @Overr de
+  publ c Boolean v s (Phrase phrase) throws QueryParserExcept on {
     return false;
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
+  @Overr de
+  publ c Boolean v s (Term term) throws QueryParserExcept on {
     return false;
   }
 }

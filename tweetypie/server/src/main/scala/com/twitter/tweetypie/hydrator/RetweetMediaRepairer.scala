@@ -1,14 +1,14 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
 /**
- * Retweets should never have their own media, and should never be cached with a media
- * entity.
+ * Ret ets should never have t  r own  d a, and should never be cac d w h a  d a
+ * ent y.
  */
-object RetweetMediaRepairer extends Mutation[Tweet] {
-  def apply(tweet: Tweet): Option[Tweet] = {
-    if (isRetweet(tweet) && getMedia(tweet).nonEmpty)
-      Some(TweetLenses.media.set(tweet, Nil))
+object Ret et d aRepa rer extends Mutat on[T et] {
+  def apply(t et: T et): Opt on[T et] = {
+     f ( sRet et(t et) && get d a(t et).nonEmpty)
+      So (T etLenses. d a.set(t et, N l))
     else
       None
   }

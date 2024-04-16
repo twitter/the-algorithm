@@ -1,104 +1,104 @@
-package com.twitter.tsp.common
+package com.tw ter.tsp.common
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
 
-object TopicSocialProofParams {
+object Top cSoc alProofParams {
 
-  object TopicTweetsSemanticCoreVersionId
+  object Top cT etsSemant cCoreVers on d
       extends FSBoundedParam[Long](
-        name = "topic_tweets_semantic_core_annotation_version_id",
+        na  = "top c_t ets_semant c_core_annotat on_vers on_ d",
         default = 1433487161551032320L,
-        min = 0L,
+        m n = 0L,
         max = Long.MaxValue
       )
-  object TopicTweetsSemanticCoreVersionIdsSet
+  object Top cT etsSemant cCoreVers on dsSet
       extends FSParam[Set[Long]](
-        name = "topic_tweets_semantic_core_annotation_version_id_allowed_set",
-        default = Set(TopicTweetsSemanticCoreVersionId.default))
+        na  = "top c_t ets_semant c_core_annotat on_vers on_ d_allo d_set",
+        default = Set(Top cT etsSemant cCoreVers on d.default))
 
   /**
-   * Controls the Topic Social Proof cosine similarity threshold for the Topic Tweets.
+   * Controls t  Top c Soc al Proof cos ne s m lar y threshold for t  Top c T ets.
    */
-  object TweetToTopicCosineSimilarityThreshold
+  object T etToTop cCos neS m lar yThreshold
       extends FSBoundedParam[Double](
-        name = "topic_tweets_cosine_similarity_threshold_tsp",
+        na  = "top c_t ets_cos ne_s m lar y_threshold_tsp",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object EnablePersonalizedContextTopics // master feature switch to enable backfill
+  object EnablePersonal zedContextTop cs // master feature sw ch to enable backf ll
       extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_personalized_contexts",
+        na  = "top c_t ets_personal zed_contexts_enable_personal zed_contexts",
         default = false
       )
 
-  object EnableYouMightLikeTopic
+  object Enable M ghtL keTop c
       extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_you_might_like",
+        na  = "top c_t ets_personal zed_contexts_enable_ _m ght_l ke",
         default = false
       )
 
-  object EnableRecentEngagementsTopic
+  object EnableRecentEngage ntsTop c
       extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_recent_engagements",
+        na  = "top c_t ets_personal zed_contexts_enable_recent_engage nts",
         default = false
       )
 
-  object EnableTopicTweetHealthFilterPersonalizedContexts
+  object EnableTop cT et althF lterPersonal zedContexts
       extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_health_switch",
+        na  = "top c_t ets_personal zed_contexts_ alth_sw ch",
         default = true
       )
 
-  object EnableTweetToTopicScoreRanking
+  object EnableT etToTop cScoreRank ng
       extends FSParam[Boolean](
-        name = "topic_tweets_enable_tweet_to_topic_score_ranking",
+        na  = "top c_t ets_enable_t et_to_top c_score_rank ng",
         default = true
       )
 
 }
 
-object FeatureSwitchConfig {
-  private val enumFeatureSwitchOverrides = FeatureSwitchOverrideUtil
-    .getEnumFSOverrides(
-      NullStatsReceiver,
+object FeatureSw chConf g {
+  pr vate val enumFeatureSw chOverr des = FeatureSw chOverr deUt l
+    .getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
     )
 
-  private val intFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides()
+  pr vate val  ntFeatureSw chOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des()
 
-  private val longFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedLongFSOverrides(
-    TopicSocialProofParams.TopicTweetsSemanticCoreVersionId
+  pr vate val longFeatureSw chOverr des = FeatureSw chOverr deUt l.getBoundedLongFSOverr des(
+    Top cSoc alProofParams.Top cT etsSemant cCoreVers on d
   )
 
-  private val doubleFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-    TopicSocialProofParams.TweetToTopicCosineSimilarityThreshold,
+  pr vate val doubleFeatureSw chOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+    Top cSoc alProofParams.T etToTop cCos neS m lar yThreshold,
   )
 
-  private val longSetFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getLongSetFSOverrides(
-    TopicSocialProofParams.TopicTweetsSemanticCoreVersionIdsSet,
+  pr vate val longSetFeatureSw chOverr des = FeatureSw chOverr deUt l.getLongSetFSOverr des(
+    Top cSoc alProofParams.Top cT etsSemant cCoreVers on dsSet,
   )
 
-  private val booleanFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    TopicSocialProofParams.EnablePersonalizedContextTopics,
-    TopicSocialProofParams.EnableYouMightLikeTopic,
-    TopicSocialProofParams.EnableRecentEngagementsTopic,
-    TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContexts,
-    TopicSocialProofParams.EnableTweetToTopicScoreRanking,
+  pr vate val booleanFeatureSw chOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+    Top cSoc alProofParams.EnablePersonal zedContextTop cs,
+    Top cSoc alProofParams.Enable M ghtL keTop c,
+    Top cSoc alProofParams.EnableRecentEngage ntsTop c,
+    Top cSoc alProofParams.EnableTop cT et althF lterPersonal zedContexts,
+    Top cSoc alProofParams.EnableT etToTop cScoreRank ng,
   )
-  val config: BaseConfig = BaseConfigBuilder()
-    .set(enumFeatureSwitchOverrides: _*)
-    .set(intFeatureSwitchOverrides: _*)
-    .set(longFeatureSwitchOverrides: _*)
-    .set(doubleFeatureSwitchOverrides: _*)
-    .set(longSetFeatureSwitchOverrides: _*)
-    .set(booleanFeatureSwitchOverrides: _*)
-    .build()
+  val conf g: BaseConf g = BaseConf gBu lder()
+    .set(enumFeatureSw chOverr des: _*)
+    .set( ntFeatureSw chOverr des: _*)
+    .set(longFeatureSw chOverr des: _*)
+    .set(doubleFeatureSw chOverr des: _*)
+    .set(longSetFeatureSw chOverr des: _*)
+    .set(booleanFeatureSw chOverr des: _*)
+    .bu ld()
 }

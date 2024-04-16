@@ -1,32 +1,32 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.simclusters_v2.summingbird.common.EntityUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Ent yUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-case class TopKClustersForEntityReadableStore(
-  underlyingStore: ReadableStore[EntityWithVersion, TopKClustersWithScores])
-    extends ReadableStore[EntityWithVersion, TopKClustersWithScores] {
+case class TopKClustersForEnt yReadableStore(
+  underly ngStore: ReadableStore[Ent yW hVers on, TopKClustersW hScores])
+    extends ReadableStore[Ent yW hVers on, TopKClustersW hScores] {
 
-  override def multiGet[K1 <: EntityWithVersion](
+  overr de def mult Get[K1 <: Ent yW hVers on](
     ks: Set[K1]
-  ): Map[K1, Future[Option[TopKClustersWithScores]]] = {
-    val nowInMs = Time.now.inMilliseconds
-    underlyingStore
-      .multiGet(ks)
+  ): Map[K1, Future[Opt on[TopKClustersW hScores]]] = {
+    val now nMs = T  .now. nM ll seconds
+    underly ngStore
+      .mult Get(ks)
       .mapValues { resFuture =>
         resFuture.map { resOpt =>
-          resOpt.map { clustersWithScores =>
-            clustersWithScores.copy(
-              topClustersByFavClusterNormalizedScore = EntityUtil.updateScoreWithLatestTimestamp(
-                clustersWithScores.topClustersByFavClusterNormalizedScore,
-                nowInMs
+          resOpt.map { clustersW hScores =>
+            clustersW hScores.copy(
+              topClustersByFavClusterNormal zedScore = Ent yUt l.updateScoreW hLatestT  stamp(
+                clustersW hScores.topClustersByFavClusterNormal zedScore,
+                now nMs
               ),
-              topClustersByFollowClusterNormalizedScore = EntityUtil.updateScoreWithLatestTimestamp(
-                clustersWithScores.topClustersByFollowClusterNormalizedScore,
-                nowInMs
+              topClustersByFollowClusterNormal zedScore = Ent yUt l.updateScoreW hLatestT  stamp(
+                clustersW hScores.topClustersByFollowClusterNormal zedScore,
+                now nMs
               )
             )
           }

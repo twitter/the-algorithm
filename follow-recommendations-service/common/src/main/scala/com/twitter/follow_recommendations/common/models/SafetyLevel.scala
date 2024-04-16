@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
+ mport com.tw ter.spam.rtf.thr ftscala.{SafetyLevel => Thr ftSafetyLevel}
 
-sealed trait SafetyLevel {
-  def toThrift: ThriftSafetyLevel
+sealed tra  SafetyLevel {
+  def toThr ft: Thr ftSafetyLevel
 }
 
 object SafetyLevel {
-  case object Recommendations extends SafetyLevel {
-    override val toThrift = ThriftSafetyLevel.Recommendations
+  case object Recom ndat ons extends SafetyLevel {
+    overr de val toThr ft = Thr ftSafetyLevel.Recom ndat ons
   }
 
-  case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
-    override val toThrift = ThriftSafetyLevel.TopicsLandingPageTopicRecommendations
+  case object Top csLand ngPageTop cRecom ndat ons extends SafetyLevel {
+    overr de val toThr ft = Thr ftSafetyLevel.Top csLand ngPageTop cRecom ndat ons
   }
 }

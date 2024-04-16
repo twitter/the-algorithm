@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.DependentCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+ mport com.tw ter.adserver.{thr ftscala => ads}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.DependentCand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
 
-class AdsDependentCandidatePipelineConfig[Query <: PipelineQuery with AdsQuery](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  override val gates: Seq[BaseGate[Query]],
-  override val candidateSource: CandidateSource[
+class AdsDependentCand dateP pel neConf g[Query <: P pel neQuery w h AdsQuery](
+  overr de val  dent f er: Cand dateP pel ne dent f er,
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]],
+  overr de val supportedCl entParam: Opt on[FSParam[Boolean]],
+  overr de val gates: Seq[BaseGate[Query]],
+  overr de val cand dateS ce: Cand dateS ce[
     ads.AdRequestParams,
-    ads.AdImpression
+    ads.Ad mpress on
   ],
-  override val filters: Seq[Filter[Query, AdsCandidate]],
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[Query, AdsCandidate, _]
+  overr de val f lters: Seq[F lter[Query, AdsCand date]],
+  overr de val postF lterFeatureHydrat on: Seq[
+    BaseCand dateFeatureHydrator[Query, AdsCand date, _]
   ],
-  override val decorator: Option[CandidateDecorator[Query, AdsCandidate]],
-  override val alerts: Seq[Alert],
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  urtRequest: Option[Boolean],
-  getOrganicItemIds: GetOrganicItemIds,
-  countNumOrganicItems: CountNumOrganicItems[Query],
-) extends DependentCandidatePipelineConfig[
+  overr de val decorator: Opt on[Cand dateDecorator[Query, AdsCand date]],
+  overr de val alerts: Seq[Alert],
+  adsD splayLocat onBu lder: AdsD splayLocat onBu lder[Query],
+  urtRequest: Opt on[Boolean],
+  getOrgan c em ds: GetOrgan c em ds,
+  countNumOrgan c ems: CountNumOrgan c ems[Query],
+) extends DependentCand dateP pel neConf g[
       Query,
       ads.AdRequestParams,
-      ads.AdImpression,
-      AdsCandidate
+      ads.Ad mpress on,
+      AdsCand date
     ] {
 
-  override def queryTransformer: DependentCandidatePipelineQueryTransformer[
+  overr de def queryTransfor r: DependentCand dateP pel neQueryTransfor r[
     Query,
     ads.AdRequestParams
-  ] = AdsDependentCandidatePipelineQueryTransformer(
-    adsDisplayLocationBuilder = adsDisplayLocationBuilder,
-    getOrganicItemIds = getOrganicItemIds,
-    countNumOrganicItems = countNumOrganicItems,
+  ] = AdsDependentCand dateP pel neQueryTransfor r(
+    adsD splayLocat onBu lder = adsD splayLocat onBu lder,
+    getOrgan c em ds = getOrgan c em ds,
+    countNumOrgan c ems = countNumOrgan c ems,
     urtRequest = urtRequest
   )
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ads.AdImpression,
-    AdsCandidate
-  ] = AdsCandidatePipelineResultsTransformer
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    ads.Ad mpress on,
+    AdsCand date
+  ] = AdsCand dateP pel neResultsTransfor r
 }

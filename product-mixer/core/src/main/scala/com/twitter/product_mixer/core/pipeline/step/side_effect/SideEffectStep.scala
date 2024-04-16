@@ -1,102 +1,102 @@
-package com.twitter.product_mixer.core.pipeline.step.side_effect
+package com.tw ter.product_m xer.core.p pel ne.step.s de_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasExecutorResults
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.doma n_marshaller_executor.Doma nMarshallerExecutor
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_result_s de_effect_executor.P pel neResultS deEffectExecutor
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A side effect step, it takes the input list of side effects and and executes them.
+ * A s de effect step,   takes t   nput l st of s de effects and and executes t m.
  *
- * @param sideEffectExecutor Side Effect Executor
+ * @param s deEffectExecutor S de Effect Executor
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResultType Domain Marshaller result type
- * @tparam State The pipeline state domain model.
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Doma nResultType Doma n Marshaller result type
+ * @tparam State T  p pel ne state doma n model.
  */
-case class SideEffectStep[
-  Query <: PipelineQuery,
-  DomainResultType <: HasMarshalling,
-  State <: HasQuery[Query, State] with HasExecutorResults[State]] @Inject() (
-  sideEffectExecutor: PipelineResultSideEffectExecutor)
+case class S deEffectStep[
+  Query <: P pel neQuery,
+  Doma nResultType <: HasMarshall ng,
+  State <: HasQuery[Query, State] w h HasExecutorResults[State]] @ nject() (
+  s deEffectExecutor: P pel neResultS deEffectExecutor)
     extends Step[
       State,
-      PipelineStepConfig[Query, DomainResultType],
-      PipelineResultSideEffect.Inputs[
+      P pel neStepConf g[Query, Doma nResultType],
+      P pel neResultS deEffect. nputs[
         Query,
-        DomainResultType
+        Doma nResultType
       ],
-      PipelineResultSideEffectExecutor.Result
+      P pel neResultS deEffectExecutor.Result
     ] {
-  override def isEmpty(config: PipelineStepConfig[Query, DomainResultType]): Boolean =
-    config.sideEffects.isEmpty
+  overr de def  sEmpty(conf g: P pel neStepConf g[Query, Doma nResultType]): Boolean =
+    conf g.s deEffects. sEmpty
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: PipelineStepConfig[Query, DomainResultType]
-  ): PipelineResultSideEffect.Inputs[Query, DomainResultType] = {
-    val selectorResults = state.executorResultsByPipelineStep
+    conf g: P pel neStepConf g[Query, Doma nResultType]
+  ): P pel neResultS deEffect. nputs[Query, Doma nResultType] = {
+    val selectorResults = state.executorResultsByP pel neStep
       .getOrElse(
-        config.selectorStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Selector Result in Side Effect Step")).asInstanceOf[SelectorExecutorResult]
+        conf g.selectorStep dent f er,
+        throw P pel neFa lure(
+           llegalStateFa lure,
+          "M ss ng Selector Result  n S de Effect Step")).as nstanceOf[SelectorExecutorResult]
 
-    val domainMarshallerResult = state.executorResultsByPipelineStep
+    val doma nMarshallerResult = state.executorResultsByP pel neStep
       .getOrElse(
-        config.domainMarshallerStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Domain Marshaller Result in Side Effect Step")).asInstanceOf[
-        DomainMarshallerExecutor.Result[DomainResultType]]
+        conf g.doma nMarshallerStep dent f er,
+        throw P pel neFa lure(
+           llegalStateFa lure,
+          "M ss ng Doma n Marshaller Result  n S de Effect Step")).as nstanceOf[
+        Doma nMarshallerExecutor.Result[Doma nResultType]]
 
-    PipelineResultSideEffect.Inputs(
+    P pel neResultS deEffect. nputs(
       query = state.query,
-      selectedCandidates = selectorResults.selectedCandidates,
-      remainingCandidates = selectorResults.remainingCandidates,
-      droppedCandidates = selectorResults.droppedCandidates,
-      response = domainMarshallerResult.result
+      selectedCand dates = selectorResults.selectedCand dates,
+      rema n ngCand dates = selectorResults.rema n ngCand dates,
+      droppedCand dates = selectorResults.droppedCand dates,
+      response = doma nMarshallerResult.result
     )
   }
 
-  override def arrow(
-    config: PipelineStepConfig[Query, DomainResultType],
+  overr de def arrow(
+    conf g: P pel neStepConf g[Query, Doma nResultType],
     context: Executor.Context
   ): Arrow[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
-  ] = sideEffectExecutor.arrow(config.sideEffects, context)
+    P pel neResultS deEffect. nputs[Query, Doma nResultType],
+    P pel neResultS deEffectExecutor.Result
+  ] = s deEffectExecutor.arrow(conf g.s deEffects, context)
 
-  override def updateState(
+  overr de def updateState(
     state: State,
-    executorResult: PipelineResultSideEffectExecutor.Result,
-    config: PipelineStepConfig[Query, DomainResultType]
+    executorResult: P pel neResultS deEffectExecutor.Result,
+    conf g: P pel neStepConf g[Query, Doma nResultType]
   ): State = state
 }
 
 /**
- * Wrapper case class containing side effects to be executed and other information needed to execute
- * @param sideEffects The side effects to execute.
- * @param selectorStepIdentifier The identifier of the selector step in the parent
- *                               pipeline to get selection results from.
- * @param domainMarshallerStepIdentifier The identifier of the domain marshaller step in the parent
- *                                       pipeline to get domain marshalled results from.
+ * Wrapper case class conta n ng s de effects to be executed and ot r  nformat on needed to execute
+ * @param s deEffects T  s de effects to execute.
+ * @param selectorStep dent f er T   dent f er of t  selector step  n t  parent
+ *                               p pel ne to get select on results from.
+ * @param doma nMarshallerStep dent f er T   dent f er of t  doma n marshaller step  n t  parent
+ *                                       p pel ne to get doma n marshalled results from.
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResultType Domain Marshaller result type
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Doma nResultType Doma n Marshaller result type
  */
-case class PipelineStepConfig[Query <: PipelineQuery, DomainResultType <: HasMarshalling](
-  sideEffects: Seq[PipelineResultSideEffect[Query, DomainResultType]],
-  selectorStepIdentifier: PipelineStepIdentifier,
-  domainMarshallerStepIdentifier: PipelineStepIdentifier)
+case class P pel neStepConf g[Query <: P pel neQuery, Doma nResultType <: HasMarshall ng](
+  s deEffects: Seq[P pel neResultS deEffect[Query, Doma nResultType]],
+  selectorStep dent f er: P pel neStep dent f er,
+  doma nMarshallerStep dent f er: P pel neStep dent f er)

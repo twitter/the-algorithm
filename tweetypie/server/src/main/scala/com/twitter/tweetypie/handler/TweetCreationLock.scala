@@ -1,68 +1,68 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.servo.cache.Cache
-import com.twitter.servo.util.Scribe
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala.PostTweetResult
-import com.twitter.tweetypie.util.TweetCreationLock.Key
-import com.twitter.tweetypie.util.TweetCreationLock.State
-import com.twitter.util.Base64Long
-import scala.util.Random
-import scala.util.control.NoStackTrace
-import scala.util.control.NonFatal
+ mport com.tw ter.servo.cac .Cac 
+ mport com.tw ter.servo.ut l.Scr be
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala.PostT etResult
+ mport com.tw ter.t etyp e.ut l.T etCreat onLock.Key
+ mport com.tw ter.t etyp e.ut l.T etCreat onLock.State
+ mport com.tw ter.ut l.Base64Long
+ mport scala.ut l.Random
+ mport scala.ut l.control.NoStackTrace
+ mport scala.ut l.control.NonFatal
 
 /**
- * This exception is returned from TweetCreationLock if there is an
- * in-progress cache entry for this key. It is possible that the key
- * exists because the key was not properly cleaned up, but it's
- * impossible to differentiate between these cases. We resolve this by
- * returning TweetCreationInProgress and having a (relatively) short TTL
- * on the cache entry so that the client and/or user may retry.
+ * T  except on  s returned from T etCreat onLock  f t re  s an
+ *  n-progress cac  entry for t  key.    s poss ble that t  key
+ * ex sts because t  key was not properly cleaned up, but  's
+ *  mposs ble to d fferent ate bet en t se cases.   resolve t  by
+ * return ng T etCreat on nProgress and hav ng a (relat vely) short TTL
+ * on t  cac  entry so that t  cl ent and/or user may retry.
  */
-case object TweetCreationInProgress extends Exception with NoStackTrace
+case object T etCreat on nProgress extends Except on w h NoStackTrace
 
 /**
- * Thrown when the TweetCreationLock discovers that there is already
- * a tweet with the specified uniqueness id.
+ * Thrown w n t  T etCreat onLock d scovers that t re  s already
+ * a t et w h t  spec f ed un queness  d.
  */
-case class DuplicateTweetCreation(tweetId: TweetId) extends Exception with NoStackTrace
+case class Dupl cateT etCreat on(t et d: T et d) extends Except on w h NoStackTrace
 
-trait TweetCreationLock {
+tra  T etCreat onLock {
   def apply(
     key: Key,
     dark: Boolean,
     nullcast: Boolean
   )(
-    insert: => Future[PostTweetResult]
-  ): Future[PostTweetResult]
-  def unlock(key: Key): Future[Unit]
+     nsert: => Future[PostT etResult]
+  ): Future[PostT etResult]
+  def unlock(key: Key): Future[Un ]
 }
 
-object CacheBasedTweetCreationLock {
+object Cac BasedT etCreat onLock {
 
   /**
-   * Indicates that setting the lock value failed because the state of
-   * that key in the cache has been changed (by another process or
-   * cache eviction).
+   *  nd cates that sett ng t  lock value fa led because t  state of
+   * that key  n t  cac  has been changed (by anot r process or
+   * cac  ev ct on).
    */
-  case object UnexpectedCacheState extends Exception with NoStackTrace
+  case object UnexpectedCac State extends Except on w h NoStackTrace
 
   /**
-   * Thrown when the process of updating the lock cache failed more
-   * than the allowed number of times.
+   * Thrown w n t  process of updat ng t  lock cac  fa led more
+   * than t  allo d number of t  s.
    */
-  case class RetriesExhausted(failures: Seq[Exception]) extends Exception with NoStackTrace
+  case class Retr esExhausted(fa lures: Seq[Except on]) extends Except on w h NoStackTrace
 
-  def shouldRetry(e: Exception): Boolean =
+  def shouldRetry(e: Except on): Boolean =
     e match {
-      case TweetCreationInProgress => false
-      case _: DuplicateTweetCreation => false
-      case _: RetriesExhausted => false
+      case T etCreat on nProgress => false
+      case _: Dupl cateT etCreat on => false
+      case _: Retr esExhausted => false
       case _ => true
     }
 
-  def ttlChooser(shortTtl: Duration, longTtl: Duration): (Key, State) => Duration =
+  def ttlChooser(shortTtl: Durat on, longTtl: Durat on): (Key, State) => Durat on =
     (_, state) =>
       state match {
         case _: State.AlreadyCreated => longTtl
@@ -70,332 +70,332 @@ object CacheBasedTweetCreationLock {
       }
 
   /**
-   * The log format is tab-separated (base 64 tweet_id, base 64
-   * uniqueness_id). It's logged this way in order to minimize the
-   * storage requirement and to make it easy to analyze. Each log line
-   * should be 24 bytes, including newline.
+   * T  log format  s tab-separated (base 64 t et_ d, base 64
+   * un queness_ d).  's logged t  way  n order to m n m ze t 
+   * storage requ re nt and to make   easy to analyze. Each log l ne
+   * should be 24 bytes,  nclud ng newl ne.
    */
-  val formatUniquenessLogEntry: ((String, TweetId)) => String = {
-    case (uniquenessId, tweetId) => Base64Long.toBase64(tweetId) + "\t" + uniquenessId
+  val formatUn quenessLogEntry: ((Str ng, T et d)) => Str ng = {
+    case (un queness d, t et d) => Base64Long.toBase64(t et d) + "\t" + un queness d
   }
 
   /**
-   * Scribe the uniqueness id paired with the tweet id so that we can
-   * track the rate of failures of the uniqueness id check by
-   * detecting multiple tweets created with the same uniqueness id.
+   * Scr be t  un queness  d pa red w h t  t et  d so that   can
+   * track t  rate of fa lures of t  un queness  d c ck by
+   * detect ng mult ple t ets created w h t  sa  un queness  d.
    *
-   * Scribe to a test category because we only need to keep this
-   * information around for long enough to find any duplicates.
+   * Scr be to a test category because   only need to keep t 
+   *  nformat on around for long enough to f nd any dupl cates.
    */
-  val ScribeUniquenessId: FutureEffect[(String, TweetId)] =
-    Scribe("test_tweetypie_uniqueness_id") contramap formatUniquenessLogEntry
+  val Scr beUn queness d: FutureEffect[(Str ng, T et d)] =
+    Scr be("test_t etyp e_un queness_ d") contramap formatUn quenessLogEntry
 
-  private[this] val UniquenessIdLog = Logger("com.twitter.tweetypie.handler.UniquenessId")
+  pr vate[t ] val Un queness dLog = Logger("com.tw ter.t etyp e.handler.Un queness d")
 
   /**
-   * Log the uniqueness ids to a standard logger (for use when it's
-   * not production traffic).
+   * Log t  un queness  ds to a standard logger (for use w n  's
+   * not product on traff c).
    */
-  val LogUniquenessId: FutureEffect[(String, TweetId)] = FutureEffect[(String, TweetId)] { rec =>
-    UniquenessIdLog.info(formatUniquenessLogEntry(rec))
-    Future.Unit
+  val LogUn queness d: FutureEffect[(Str ng, T et d)] = FutureEffect[(Str ng, T et d)] { rec =>
+    Un queness dLog. nfo(formatUn quenessLogEntry(rec))
+    Future.Un 
   }
 
-  private val log = Logger(getClass)
+  pr vate val log = Logger(getClass)
 }
 
 /**
- * This class adds locking around Tweet creation, to prevent creating
- * duplicate tweets when two identical requests arrive simultaneously.
- * A lock is created in cache using the user id and a hash of the tweet text
- * in the case of tweets, or the source_status_id in the case of retweets.
- * If another process attempts to lock for the same user and hash, the request
- * fails as a duplicate.  The lock lasts for 10 seconds if it is not deleted.
- * Given the hard timeout of 5 seconds on all requests, it should never take
- * us longer than 5 seconds to create a request, but we've observed times of up
- * to 10 seconds to create statuses for some of our more popular users.
+ * T  class adds lock ng around T et creat on, to prevent creat ng
+ * dupl cate t ets w n two  dent cal requests arr ve s multaneously.
+ * A lock  s created  n cac  us ng t  user  d and a hash of t  t et text
+ *  n t  case of t ets, or t  s ce_status_ d  n t  case of ret ets.
+ *  f anot r process attempts to lock for t  sa  user and hash, t  request
+ * fa ls as a dupl cate.  T  lock lasts for 10 seconds  f    s not deleted.
+ * G ven t  hard t  out of 5 seconds on all requests,   should never take
+ * us longer than 5 seconds to create a request, but  've observed t  s of up
+ * to 10 seconds to create statuses for so  of   more popular users.
  *
- * When a request with a uniqueness id is successful, the id of the
- * created tweet will be stored in the cache so that subsequent
- * requests can retrieve the originally-created tweet rather than
- * duplicating creation or getting an exception.
+ * W n a request w h a un queness  d  s successful, t   d of t 
+ * created t et w ll be stored  n t  cac  so that subsequent
+ * requests can retr eve t  or g nally-created t et rat r than
+ * dupl cat ng creat on or gett ng an except on.
  */
-class CacheBasedTweetCreationLock(
-  cache: Cache[Key, State],
-  maxTries: Int,
-  stats: StatsReceiver,
-  logUniquenessId: FutureEffect[(String, TweetId)])
-    extends TweetCreationLock {
-  import CacheBasedTweetCreationLock._
+class Cac BasedT etCreat onLock(
+  cac : Cac [Key, State],
+  maxTr es:  nt,
+  stats: StatsRece ver,
+  logUn queness d: FutureEffect[(Str ng, T et d)])
+    extends T etCreat onLock {
+   mport Cac BasedT etCreat onLock._
 
-  private[this] val eventCounters = stats.scope("event")
+  pr vate[t ] val eventCounters = stats.scope("event")
 
-  private[this] def event(k: Key, name: String): Unit = {
-    log.debug(s"$name:$k")
-    eventCounters.counter(name).incr()
+  pr vate[t ] def event(k: Key, na : Str ng): Un  = {
+    log.debug(s"$na :$k")
+    eventCounters.counter(na ). ncr()
   }
 
-  private[this] def retryLoop[A](action: => Future[A]): Future[A] = {
-    def go(failures: List[Exception]): Future[A] =
-      if (failures.length >= maxTries) {
-        Future.exception(RetriesExhausted(failures.reverse))
+  pr vate[t ] def retryLoop[A](act on: => Future[A]): Future[A] = {
+    def go(fa lures: L st[Except on]): Future[A] =
+       f (fa lures.length >= maxTr es) {
+        Future.except on(Retr esExhausted(fa lures.reverse))
       } else {
-        action.rescue {
-          case e: Exception if shouldRetry(e) => go(e :: failures)
+        act on.rescue {
+          case e: Except on  f shouldRetry(e) => go(e :: fa lures)
         }
       }
 
-    go(Nil)
+    go(N l)
   }
 
-  private[this] val lockerExceptions = ExceptionCounter(stats)
+  pr vate[t ] val lockerExcept ons = Except onCounter(stats)
 
   /**
-   * Obtain the lock for creating a tweet. If this method completes
-   * without throwing an exception, then the lock value was
-   * successfully set in cache, which indicates a high probability
-   * that this is the only process that is attempting to create this
-   * tweet. (The uncertainty comes from the possibility of lock
-   * entries missing from the cache.)
+   * Obta n t  lock for creat ng a t et.  f t   thod completes
+   * w hout throw ng an except on, t n t  lock value was
+   * successfully set  n cac , wh ch  nd cates a h gh probab l y
+   * that t   s t  only process that  s attempt ng to create t 
+   * t et. (T  uncerta nty co s from t  poss b l y of lock
+   * entr es m ss ng from t  cac .)
    *
-   * @throws TweetCreationInProgress if there is another process
-   *   trying to create this tweet.
+   * @throws T etCreat on nProgress  f t re  s anot r process
+   *   try ng to create t  t et.
    *
-   * @throws DuplicateTweetCreation if a tweet has already been
-   *   created for a duplicate request. The exception has the id of
-   *   the created tweet.
+   * @throws Dupl cateT etCreat on  f a t et has already been
+   *   created for a dupl cate request. T  except on has t   d of
+   *   t  created t et.
    *
-   * @throws RetriesExhausted if obtaining the lock failed more than
-   *   the requisite number of times.
+   * @throws Retr esExhausted  f obta n ng t  lock fa led more than
+   *   t  requ s e number of t  s.
    */
-  private[this] def obtainLock(k: Key, token: Long): Future[Time] = retryLoop {
-    val lockTime = Time.now
+  pr vate[t ] def obta nLock(k: Key, token: Long): Future[T  ] = retryLoop {
+    val lockT   = T  .now
 
-    // Get the current state for this key.
-    cache
-      .getWithChecksum(Seq(k))
-      .flatMap(initialStateKvr => Future.const(initialStateKvr(k)))
+    // Get t  current state for t  key.
+    cac 
+      .getW hC cksum(Seq(k))
+      .flatMap( n  alStateKvr => Future.const( n  alStateKvr(k)))
       .flatMap {
         case None =>
-          // Nothing in cache for this key
-          cache
-            .add(k, State.InProgress(token, lockTime))
+          // Noth ng  n cac  for t  key
+          cac 
+            .add(k, State. nProgress(token, lockT  ))
             .flatMap {
-              case true => Future.value(lockTime)
-              case false => Future.exception(UnexpectedCacheState)
+              case true => Future.value(lockT  )
+              case false => Future.except on(UnexpectedCac State)
             }
-        case Some((Throw(e), _)) =>
-          Future.exception(e)
-        case Some((Return(st), cs)) =>
+        case So ((Throw(e), _)) =>
+          Future.except on(e)
+        case So ((Return(st), cs)) =>
           st match {
             case State.Unlocked =>
-              // There is an Unlocked entry for this key, which
-              // implies that a previous attempt was cleaned up.
-              cache
-                .checkAndSet(k, State.InProgress(token, lockTime), cs)
+              // T re  s an Unlocked entry for t  key, wh ch
+              //  mpl es that a prev ous attempt was cleaned up.
+              cac 
+                .c ckAndSet(k, State. nProgress(token, lockT  ), cs)
                 .flatMap {
-                  case true => Future.value(lockTime)
-                  case false => Future.exception(UnexpectedCacheState)
+                  case true => Future.value(lockT  )
+                  case false => Future.except on(UnexpectedCac State)
                 }
-            case State.InProgress(cachedToken, creationStartedTimestamp) =>
-              if (cachedToken == token) {
-                // There is an in-progress entry for *this process*. This
-                // can happen on a retry if the `add` actually succeeds
-                // but the future fails. The retry can return the result
-                // of the add that we previously tried.
-                Future.value(creationStartedTimestamp)
+            case State. nProgress(cac dToken, creat onStartedT  stamp) =>
+               f (cac dToken == token) {
+                // T re  s an  n-progress entry for *t  process*. T 
+                // can happen on a retry  f t  `add` actually succeeds
+                // but t  future fa ls. T  retry can return t  result
+                // of t  add that   prev ously tr ed.
+                Future.value(creat onStartedT  stamp)
               } else {
-                // There is an in-progress entry for *a different
-                // process*. This implies that there is another tweet
-                // creation in progress for *this tweet*.
-                val tweetCreationAge = Time.now - creationStartedTimestamp
-                k.uniquenessId.foreach { id =>
-                  log.info(
-                    "Found an in-progress tweet creation for uniqueness id %s %s ago"
-                      .format(id, tweetCreationAge)
+                // T re  s an  n-progress entry for *a d fferent
+                // process*. T   mpl es that t re  s anot r t et
+                // creat on  n progress for *t  t et*.
+                val t etCreat onAge = T  .now - creat onStartedT  stamp
+                k.un queness d.foreach {  d =>
+                  log. nfo(
+                    "Found an  n-progress t et creat on for un queness  d %s %s ago"
+                      .format( d, t etCreat onAge)
                   )
                 }
-                stats.stat("in_progress_age_ms").add(tweetCreationAge.inMilliseconds)
-                Future.exception(TweetCreationInProgress)
+                stats.stat(" n_progress_age_ms").add(t etCreat onAge. nM ll seconds)
+                Future.except on(T etCreat on nProgress)
               }
-            case State.AlreadyCreated(tweetId, creationStartedTimestamp) =>
-              // Another process successfully created a tweet for this
+            case State.AlreadyCreated(t et d, creat onStartedT  stamp) =>
+              // Anot r process successfully created a t et for t 
               // key.
-              val tweetCreationAge = Time.now - creationStartedTimestamp
-              stats.stat("already_created_age_ms").add(tweetCreationAge.inMilliseconds)
-              Future.exception(DuplicateTweetCreation(tweetId))
+              val t etCreat onAge = T  .now - creat onStartedT  stamp
+              stats.stat("already_created_age_ms").add(t etCreat onAge. nM ll seconds)
+              Future.except on(Dupl cateT etCreat on(t et d))
           }
       }
   }
 
   /**
-   * Attempt to remove this process' lock entry from the cache. This
-   * is done by writing a short-lived tombstone, so that we can ensure
-   * that we only overwrite the entry if it is still an entry for this
-   * process instead of another process' entry.
+   * Attempt to remove t  process' lock entry from t  cac . T 
+   *  s done by wr  ng a short-l ved tombstone, so that   can ensure
+   * that   only overwr e t  entry  f    s st ll an entry for t 
+   * process  nstead of anot r process' entry.
    */
-  private[this] def cleanupLoop(k: Key, token: Long): Future[Unit] =
+  pr vate[t ] def cleanupLoop(k: Key, token: Long): Future[Un ] =
     retryLoop {
-      // Instead of deleting the value, we attempt to write Unlocked,
-      // because we only want to delete it if it was the value that we
-      // wrote ourselves, and there is no delete call that is
-      // conditional on the extant value.
-      cache
-        .getWithChecksum(Seq(k))
+      //  nstead of delet ng t  value,   attempt to wr e Unlocked,
+      // because   only want to delete    f   was t  value that  
+      // wrote  selves, and t re  s no delete call that  s
+      // cond  onal on t  extant value.
+      cac 
+        .getW hC cksum(Seq(k))
         .flatMap(kvr => Future.const(kvr(k)))
         .flatMap {
           case None =>
-            // Nothing in the cache for this tweet creation, so cleanup
-            // is successful.
-            Future.Unit
+            // Noth ng  n t  cac  for t  t et creat on, so cleanup
+            //  s successful.
+            Future.Un 
 
-          case Some((tryV, cs)) =>
-            // If we failed trying to deserialize the value, then we
-            // want to let the error bubble up, because there is no good
-            // recovery procedure, since we can't tell whether the entry
-            // is ours.
+          case So ((tryV, cs)) =>
+            //  f   fa led try ng to deser al ze t  value, t n  
+            // want to let t  error bubble up, because t re  s no good
+            // recovery procedure, s nce   can't tell w t r t  entry
+            //  s  s.
             Future.const(tryV).flatMap {
-              case State.InProgress(presentToken, _) =>
-                if (presentToken == token) {
-                  // This is *our* in-progress marker, so we want to
-                  // overwrite it with the tombstone. If checkAndSet
-                  // returns false, that's OK, because that means
-                  // someone else overwrote the value, and we don't have
-                  // to clean it up anymore.
-                  cache.checkAndSet(k, State.Unlocked, cs).unit
+              case State. nProgress(presentToken, _) =>
+                 f (presentToken == token) {
+                  // T   s * *  n-progress marker, so   want to
+                  // overwr e   w h t  tombstone.  f c ckAndSet
+                  // returns false, that's OK, because that  ans
+                  // so one else overwrote t  value, and   don't have
+                  // to clean   up anymore.
+                  cac .c ckAndSet(k, State.Unlocked, cs).un 
                 } else {
-                  // Indicates that another request has overwritten our
-                  // state before we cleaned it up. This should only
-                  // happen when our token was cleared from cache and
-                  // another process started a duplicate create. This
-                  // should be very infrequent. We count it just to be
+                  //  nd cates that anot r request has overwr ten  
+                  // state before   cleaned   up. T  should only
+                  // happen w n   token was cleared from cac  and
+                  // anot r process started a dupl cate create. T 
+                  // should be very  nfrequent.   count   just to be
                   // sure.
-                  event(k, "other_attempt_in_progress")
-                  Future.Unit
+                  event(k, "ot r_attempt_ n_progress")
+                  Future.Un 
                 }
 
               case _ =>
-                // Cleanup has succeeded, because we are not responsible
-                // for the cache entry anymore.
-                Future.Unit
+                // Cleanup has succeeded, because   are not respons ble
+                // for t  cac  entry anymore.
+                Future.Un 
             }
         }
     }.onSuccess { _ => event(k, "cleanup_attempt_succeeded") }
       .handle {
-        case _ => event(k, "cleanup_attempt_failed")
+        case _ => event(k, "cleanup_attempt_fa led")
       }
 
   /**
-   * Mark that a tweet has been successfully created. Subsequent calls
-   * to `apply` with this key will receive a DuplicateTweetCreation
-   * exception with the specified id.
+   * Mark that a t et has been successfully created. Subsequent calls
+   * to `apply` w h t  key w ll rece ve a Dupl cateT etCreat on
+   * except on w h t  spec f ed  d.
    */
-  private[this] def creationComplete(k: Key, tweetId: TweetId, lockTime: Time): Future[Unit] =
-    // Unconditionally set the state because regardless of the
-    // value present, we know that we want to transition to the
-    // AlreadyCreated state for this key.
-    retryLoop(cache.set(k, State.AlreadyCreated(tweetId, lockTime)))
+  pr vate[t ] def creat onComplete(k: Key, t et d: T et d, lockT  : T  ): Future[Un ] =
+    // Uncond  onally set t  state because regardless of t 
+    // value present,   know that   want to trans  on to t 
+    // AlreadyCreated state for t  key.
+    retryLoop(cac .set(k, State.AlreadyCreated(t et d, lockT  )))
       .onSuccess(_ => event(k, "mark_created_succeeded"))
-      .onFailure { case _ => event(k, "mark_created_failed") }
-      // If this fails, it's OK for the request to complete
-      // successfully, because it's more harmful to create the tweet
-      // and return failure than it is to complete it successfully,
-      // but fail to honor the uniqueness id next time.
+      .onFa lure { case _ => event(k, "mark_created_fa led") }
+      //  f t  fa ls,  's OK for t  request to complete
+      // successfully, because  's more harmful to create t  t et
+      // and return fa lure than    s to complete   successfully,
+      // but fa l to honor t  un queness  d next t  .
       .handle { case NonFatal(_) => }
 
-  private[this] def createWithLock(
+  pr vate[t ] def createW hLock(
     k: Key,
-    create: => Future[PostTweetResult]
-  ): Future[PostTweetResult] = {
+    create: => Future[PostT etResult]
+  ): Future[PostT etResult] = {
     val token = Random.nextLong
     event(k, "lock_attempted")
 
-    obtainLock(k, token)
-      .onSuccess { _ => event(k, "lock_obtained") }
+    obta nLock(k, token)
+      .onSuccess { _ => event(k, "lock_obta ned") }
       .handle {
-        // If we run out of retries when trying to get the lock, then
-        // just go ahead with tweet creation. We should keep an eye on
-        // how frequently this happens, because this means that the
-        // only sign that this is happening will be duplicate tweet
-        // creations.
-        case RetriesExhausted(failures) =>
-          event(k, "lock_failure_ignored")
-          // Treat this as the time that we obtained the lock.
-          Time.now
+        //  f   run out of retr es w n try ng to get t  lock, t n
+        // just go a ad w h t et creat on.   should keep an eye on
+        // how frequently t  happens, because t   ans that t 
+        // only s gn that t   s happen ng w ll be dupl cate t et
+        // creat ons.
+        case Retr esExhausted(fa lures) =>
+          event(k, "lock_fa lure_ gnored")
+          // Treat t  as t  t   that   obta ned t  lock.
+          T  .now
       }
-      .onFailure {
-        case e => lockerExceptions(e)
+      .onFa lure {
+        case e => lockerExcept ons(e)
       }
-      .flatMap { lockTime =>
+      .flatMap { lockT   =>
         create.transform {
-          case r @ Return(PostTweetResult(_, Some(tweet), _, _, _, _, _)) =>
+          case r @ Return(PostT etResult(_, So (t et), _, _, _, _, _)) =>
             event(k, "create_succeeded")
 
-            k.uniquenessId.foreach { u => logUniquenessId((u, tweet.id)) }
+            k.un queness d.foreach { u => logUn queness d((u, t et. d)) }
 
-            // Update the lock entry to remember the id of the tweet we
-            // created and extend the TTL.
-            creationComplete(k, tweet.id, lockTime).before(Future.const(r))
-          case other =>
-            other match {
+            // Update t  lock entry to re mber t   d of t  t et  
+            // created and extend t  TTL.
+            creat onComplete(k, t et. d, lockT  ).before(Future.const(r))
+          case ot r =>
+            ot r match {
               case Throw(e) =>
-                log.debug(s"Tweet creation failed for key $k", e)
+                log.debug(s"T et creat on fa led for key $k", e)
               case Return(r) =>
-                log.debug(s"Tweet creation failed for key $k, so unlocking: $r")
+                log.debug(s"T et creat on fa led for key $k, so unlock ng: $r")
             }
 
-            event(k, "create_failed")
+            event(k, "create_fa led")
 
-            // Attempt to clean up the lock after the failed create.
-            cleanupLoop(k, token).before(Future.const(other))
+            // Attempt to clean up t  lock after t  fa led create.
+            cleanupLoop(k, token).before(Future.const(ot r))
         }
       }
   }
 
   /**
-   * Make a best-effort attempt at removing the duplicate cache entry
-   * for this key. If this fails, it is not catastrophic. The worst-case
-   * behavior should be that the user has to wait for the short TTL to
-   * elapse before tweeting succeeds.
+   * Make a best-effort attempt at remov ng t  dupl cate cac  entry
+   * for t  key.  f t  fa ls,    s not catastroph c. T  worst-case
+   * behav or should be that t  user has to wa  for t  short TTL to
+   * elapse before t et ng succeeds.
    */
-  def unlock(k: Key): Future[Unit] =
-    retryLoop(cache.delete(k).unit).onSuccess(_ => event(k, "deleted"))
+  def unlock(k: Key): Future[Un ] =
+    retryLoop(cac .delete(k).un ).onSuccess(_ => event(k, "deleted"))
 
   /**
-   * Prevent duplicate tweet creation.
+   * Prevent dupl cate t et creat on.
    *
-   * Ensures that no more than one tweet creation for the same key is
-   * happening at the same time. If `create` fails, then the key will
-   * be removed from the cache. If it succeeds, then the key will be
-   * retained.
+   * Ensures that no more than one t et creat on for t  sa  key  s
+   * happen ng at t  sa  t  .  f `create` fa ls, t n t  key w ll
+   * be removed from t  cac .  f   succeeds, t n t  key w ll be
+   * reta ned.
    *
-   * @throws DuplicateTweetCreation if a tweet has already been
-   *   created by a previous request. The exception has the id of the
-   *   created tweet.
+   * @throws Dupl cateT etCreat on  f a t et has already been
+   *   created by a prev ous request. T  except on has t   d of t 
+   *   created t et.
    *
-   * @throws TweetCreationInProgress. See the documentation above.
+   * @throws T etCreat on nProgress. See t  docu ntat on above.
    */
   def apply(
     k: Key,
-    isDark: Boolean,
+     sDark: Boolean,
     nullcast: Boolean
   )(
-    create: => Future[PostTweetResult]
-  ): Future[PostTweetResult] =
-    if (isDark) {
+    create: => Future[PostT etResult]
+  ): Future[PostT etResult] =
+     f ( sDark) {
       event(k, "dark_create")
       create
-    } else if (nullcast) {
+    } else  f (nullcast) {
       event(k, "nullcast_create")
       create
     } else {
-      createWithLock(k, create).onFailure {
-        // Another process is creating this same tweet (or has already
-        // created it)
-        case TweetCreationInProgress =>
-          event(k, "tweet_creation_in_progress")
-        case _: DuplicateTweetCreation =>
-          event(k, "tweet_already_created")
+      createW hLock(k, create).onFa lure {
+        // Anot r process  s creat ng t  sa  t et (or has already
+        // created  )
+        case T etCreat on nProgress =>
+          event(k, "t et_creat on_ n_progress")
+        case _: Dupl cateT etCreat on =>
+          event(k, "t et_already_created")
         case _ =>
       }
     }

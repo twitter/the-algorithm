@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird.stats;
+package com.tw ter.search.earlyb rd.stats;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchRequestStats;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchRequestStats;
 
 /**
- * SearchRequestStats with earlybird-specific additional stats.
+ * SearchRequestStats w h earlyb rd-spec f c add  onal stats.
  */
-public final class EarlybirdRPCStats {
-  private final SearchRequestStats requestStats;
-  // Number of queries that were terminated early.
-  private final SearchCounter earlyTerminatedRequests;
+publ c f nal class Earlyb rdRPCStats {
+  pr vate f nal SearchRequestStats requestStats;
+  // Number of quer es that  re term nated early.
+  pr vate f nal SearchCounter earlyTerm natedRequests;
 
-  // We do not count client error in the response error rate, but track it separately.
-  private final SearchRateCounter responseClientErrors;
+  //   do not count cl ent error  n t  response error rate, but track   separately.
+  pr vate f nal SearchRateCounter responseCl entErrors;
 
-  public EarlybirdRPCStats(String name) {
-    requestStats = SearchRequestStats.export(name, TimeUnit.MICROSECONDS, true, true);
-    earlyTerminatedRequests = SearchCounter.export(name + "_early_terminated");
-    responseClientErrors = SearchRateCounter.export(name + "_client_error");
+  publ c Earlyb rdRPCStats(Str ng na ) {
+    requestStats = SearchRequestStats.export(na , T  Un .M CROSECONDS, true, true);
+    earlyTerm natedRequests = SearchCounter.export(na  + "_early_term nated");
+    responseCl entErrors = SearchRateCounter.export(na  + "_cl ent_error");
   }
 
-  public long getRequestRate() {
+  publ c long getRequestRate() {
     return (long) (double) requestStats.getRequestRate().read();
   }
 
-  public long getAverageLatency() {
-    return (long) (double) requestStats.getTimerStats().read();
+  publ c long getAverageLatency() {
+    return (long) (double) requestStats.getT  rStats().read();
   }
 
   /**
-   * Records a completed earlybird request.
-   * @param latencyUs how long the request took to complete, in microseconds.
-   * @param resultsCount how many results were returned.
-   * @param success whether the request was successful or not.
-   * @param earlyTerminated whether the request terminated early or not.
-   * @param clientError whether the request failure is caused by client errors
+   * Records a completed earlyb rd request.
+   * @param latencyUs how long t  request took to complete,  n m croseconds.
+   * @param resultsCount how many results  re returned.
+   * @param success w t r t  request was successful or not.
+   * @param earlyTerm nated w t r t  request term nated early or not.
+   * @param cl entError w t r t  request fa lure  s caused by cl ent errors
    */
-  public void requestComplete(long latencyUs, long resultsCount, boolean success,
-                              boolean earlyTerminated, boolean clientError) {
-    // We treat client errors as successes for top-line metrics to prevent bad client requests (like
-    // malformed queries) from dropping our success rate and generating alerts.
-    requestStats.requestComplete(latencyUs, resultsCount, success || clientError);
+  publ c vo d requestComplete(long latencyUs, long resultsCount, boolean success,
+                              boolean earlyTerm nated, boolean cl entError) {
+    //   treat cl ent errors as successes for top-l ne  tr cs to prevent bad cl ent requests (l ke
+    // malfor d quer es) from dropp ng   success rate and generat ng alerts.
+    requestStats.requestComplete(latencyUs, resultsCount, success || cl entError);
 
-    if (earlyTerminated) {
-      earlyTerminatedRequests.increment();
+     f (earlyTerm nated) {
+      earlyTerm natedRequests. ncre nt();
     }
-    if (clientError) {
-      responseClientErrors.increment();
+     f (cl entError) {
+      responseCl entErrors. ncre nt();
     }
   }
 }

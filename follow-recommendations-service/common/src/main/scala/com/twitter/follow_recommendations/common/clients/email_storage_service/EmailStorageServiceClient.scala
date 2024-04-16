@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.clients.email_storage_service
+package com.tw ter.follow_recom ndat ons.common.cl ents.ema l_storage_serv ce
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.emailstorage.api.thriftscala.EmailStorageService
-import com.twitter.emailstorage.api.thriftscala.GetUsersEmailsRequest
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cds.contact_consent_state.thr ftscala.PurposeOfProcess ng
+ mport com.tw ter.ema lstorage.ap .thr ftscala.Ema lStorageServ ce
+ mport com.tw ter.ema lstorage.ap .thr ftscala.GetUsersEma lsRequest
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class EmailStorageServiceClient @Inject() (
-  val emailStorageService: EmailStorageService.MethodPerEndpoint) {
+@S ngleton
+class Ema lStorageServ ceCl ent @ nject() (
+  val ema lStorageServ ce: Ema lStorageServ ce. thodPerEndpo nt) {
 
-  def getVerifiedEmail(
-    userId: Long,
-    purposeOfProcessing: PurposeOfProcessing
-  ): Stitch[Option[String]] = {
-    val req = GetUsersEmailsRequest(
-      userIds = Seq(userId),
-      clientIdentifier = Some("follow-recommendations-service"),
-      purposesOfProcessing = Some(Seq(purposeOfProcessing))
+  def getVer f edEma l(
+    user d: Long,
+    purposeOfProcess ng: PurposeOfProcess ng
+  ): St ch[Opt on[Str ng]] = {
+    val req = GetUsersEma lsRequest(
+      user ds = Seq(user d),
+      cl ent dent f er = So ("follow-recom ndat ons-serv ce"),
+      purposesOfProcess ng = So (Seq(purposeOfProcess ng))
     )
 
-    Stitch.callFuture(emailStorageService.getUsersEmails(req)) map {
-      _.usersEmails.map(_.confirmedEmail.map(_.email)).head
+    St ch.callFuture(ema lStorageServ ce.getUsersEma ls(req)) map {
+      _.usersEma ls.map(_.conf r dEma l.map(_.ema l)). ad
     }
   }
 }

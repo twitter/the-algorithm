@@ -1,167 +1,167 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.StitchSeqGroup
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanException
-import com.twitter.tweetypie.storage.TweetStateRecord.BounceDeleted
-import com.twitter.tweetypie.storage.TweetStateRecord.HardDeleted
-import com.twitter.tweetypie.storage.TweetStateRecord.SoftDeleted
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.St chSeqGroup
+ mport com.tw ter.storage.cl ent.manhattan.kv.Den edManhattanExcept on
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanExcept on
+ mport com.tw ter.t etyp e.storage.T etStateRecord.BounceDeleted
+ mport com.tw ter.t etyp e.storage.T etStateRecord.HardDeleted
+ mport com.tw ter.t etyp e.storage.T etStateRecord.SoftDeleted
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetT et
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
 
-object GetTweetHandler {
-  private[this] val logger = Logger(getClass)
+object GetT etHandler {
+  pr vate[t ] val logger = Logger(getClass)
 
   //////////////////////////////////////////////////
-  // Logging racy reads for later validation.
+  // Logg ng racy reads for later val dat on.
 
-  val RacyTweetWindow: Duration = 10.seconds
+  val RacyT etW ndow: Durat on = 10.seconds
 
   /**
-   * If this read is soon after the tweet was created, then we would usually
-   * expect it to be served from cache. This early read indicates that this
-   * tweet is prone to consistency issues, so we log what's present in
-   * Manhattan at the time of the read for later analysis.
+   *  f t  read  s soon after t  t et was created, t n   would usually
+   * expect   to be served from cac . T  early read  nd cates that t 
+   * t et  s prone to cons stency  ssues, so   log what's present  n
+   * Manhattan at t  t   of t  read for later analys s.
    */
-  private[this] def logRacyRead(tweetId: TweetId, records: Seq[TweetManhattanRecord]): Unit =
-    if (SnowflakeId.isSnowflakeId(tweetId)) {
-      val tweetAge = Time.now.since(SnowflakeId(tweetId).time)
-      if (tweetAge <= RacyTweetWindow) {
-        val sb = new StringBuilder
-        sb.append("racy_tweet_read\t")
-          .append(tweetId)
+  pr vate[t ] def logRacyRead(t et d: T et d, records: Seq[T etManhattanRecord]): Un  =
+     f (Snowflake d. sSnowflake d(t et d)) {
+      val t etAge = T  .now.s nce(Snowflake d(t et d).t  )
+       f (t etAge <= RacyT etW ndow) {
+        val sb = new Str ngBu lder
+        sb.append("racy_t et_read\t")
+          .append(t et d)
           .append('\t')
-          .append(tweetAge.inMilliseconds) // Log the age for analysis purposes
+          .append(t etAge. nM ll seconds) // Log t  age for analys s purposes
         records.foreach { rec =>
           sb.append('\t')
             .append(rec.lkey)
-          rec.value.timestamp.foreach { ts =>
-            // If there is a timestamp for this key, log it so that we can tell
-            // later on whether a value should have been present. We expect
-            // keys written in a single write to have the same timestamp, and
-            // generally, keys written in separate writes will have different
-            // timestamps. The timestamp value is optional in Manhattan, but
-            // we expect there to always be a value for the timestamp.
+          rec.value.t  stamp.foreach { ts =>
+            //  f t re  s a t  stamp for t  key, log   so that   can tell
+            // later on w t r a value should have been present.   expect
+            // keys wr ten  n a s ngle wr e to have t  sa  t  stamp, and
+            // generally, keys wr ten  n separate wr es w ll have d fferent
+            // t  stamps. T  t  stamp value  s opt onal  n Manhattan, but
+            //   expect t re to always be a value for t  t  stamp.
             sb.append(':')
-              .append(ts.inMilliseconds)
+              .append(ts. nM ll seconds)
           }
         }
-        logger.info(sb.toString)
+        logger. nfo(sb.toStr ng)
       }
     }
 
   /**
-   * Convert a set of records from Manhattan into a GetTweet.Response.
+   * Convert a set of records from Manhattan  nto a GetT et.Response.
    */
-  def tweetResponseFromRecords(
-    tweetId: TweetId,
-    mhRecords: Seq[TweetManhattanRecord],
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): GetTweet.Response =
-    if (mhRecords.isEmpty) {
-      GetTweet.Response.NotFound
+  def t etResponseFromRecords(
+    t et d: T et d,
+    mhRecords: Seq[T etManhattanRecord],
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): GetT et.Response =
+     f (mhRecords. sEmpty) {
+      GetT et.Response.NotFound
     } else {
-      // If no internal fields are present or no required fields present, we consider the tweet
-      // as not returnable (even if some additional fields are present)
-      def tweetFromRecords(tweetId: TweetId, mhRecords: Seq[TweetManhattanRecord]) = {
-        val storedTweet = buildStoredTweet(tweetId, mhRecords)
-        if (storedTweet.getFieldBlobs(expectedFields).nonEmpty) {
-          if (isValid(storedTweet)) {
-            statsReceiver.counter("valid").incr()
-            Some(StorageConversions.fromStoredTweet(storedTweet))
+      //  f no  nternal f elds are present or no requ red f elds present,   cons der t  t et
+      // as not returnable (even  f so  add  onal f elds are present)
+      def t etFromRecords(t et d: T et d, mhRecords: Seq[T etManhattanRecord]) = {
+        val storedT et = bu ldStoredT et(t et d, mhRecords)
+         f (storedT et.getF eldBlobs(expectedF elds).nonEmpty) {
+           f ( sVal d(storedT et)) {
+            statsRece ver.counter("val d"). ncr()
+            So (StorageConvers ons.fromStoredT et(storedT et))
           } else {
-            log.info(s"Invalid Tweet Id: $tweetId")
-            statsReceiver.counter("invalid").incr()
+            log. nfo(s" nval d T et  d: $t et d")
+            statsRece ver.counter(" nval d"). ncr()
             None
           }
         } else {
-          // The Tweet contained none of the fields defined in `expectedFields`
-          log.info(s"Expected Fields Not Present Tweet Id: $tweetId")
-          statsReceiver.counter("expected_fields_not_present").incr()
+          // T  T et conta ned none of t  f elds def ned  n `expectedF elds`
+          log. nfo(s"Expected F elds Not Present T et  d: $t et d")
+          statsRece ver.counter("expected_f elds_not_present"). ncr()
           None
         }
       }
 
-      val stateRecord = TweetStateRecord.mostRecent(mhRecords)
+      val stateRecord = T etStateRecord.mostRecent(mhRecords)
       stateRecord match {
-        // some  other cases don't require an attempt to construct a Tweet
-        case Some(_: SoftDeleted) | Some(_: HardDeleted) => GetTweet.Response.Deleted
+        // so   ot r cases don't requ re an attempt to construct a T et
+        case So (_: SoftDeleted) | So (_: HardDeleted) => GetT et.Response.Deleted
 
-        // all other cases require an attempt to construct a Tweet, which may not be successful
+        // all ot r cases requ re an attempt to construct a T et, wh ch may not be successful
         case _ =>
-          logRacyRead(tweetId, mhRecords)
-          (stateRecord, tweetFromRecords(tweetId, mhRecords)) match {
-            // BounceDeleted contains the Tweet data so that callers can access data on the the
-            // tweet (e.g. hard delete daemon requires conversationId and userId. There are no
-            // plans for Tweetypie server to make use of the returned tweet at this time.
-            case (Some(_: BounceDeleted), Some(tweet)) => GetTweet.Response.BounceDeleted(tweet)
-            case (Some(_: BounceDeleted), None) => GetTweet.Response.Deleted
-            case (_, Some(tweet)) => GetTweet.Response.Found(tweet)
-            case _ => GetTweet.Response.NotFound
+          logRacyRead(t et d, mhRecords)
+          (stateRecord, t etFromRecords(t et d, mhRecords)) match {
+            // BounceDeleted conta ns t  T et data so that callers can access data on t  t 
+            // t et (e.g. hard delete daemon requ res conversat on d and user d. T re are no
+            // plans for T etyp e server to make use of t  returned t et at t  t  .
+            case (So (_: BounceDeleted), So (t et)) => GetT et.Response.BounceDeleted(t et)
+            case (So (_: BounceDeleted), None) => GetT et.Response.Deleted
+            case (_, So (t et)) => GetT et.Response.Found(t et)
+            case _ => GetT et.Response.NotFound
           }
       }
     }
 
-  def apply(read: ManhattanOperations.Read, statsReceiver: StatsReceiver): GetTweet = {
+  def apply(read: ManhattanOperat ons.Read, statsRece ver: StatsRece ver): GetT et = {
 
     object stats {
-      val getTweetScope = statsReceiver.scope("getTweet")
-      val deniedCounter: Counter = getTweetScope.counter("mh_denied")
-      val mhExceptionCounter: Counter = getTweetScope.counter("mh_exception")
-      val nonFatalExceptionCounter: Counter = getTweetScope.counter("non_fatal_exception")
-      val notFoundCounter: Counter = getTweetScope.counter("not_found")
+      val getT etScope = statsRece ver.scope("getT et")
+      val den edCounter: Counter = getT etScope.counter("mh_den ed")
+      val mhExcept onCounter: Counter = getT etScope.counter("mh_except on")
+      val nonFatalExcept onCounter: Counter = getT etScope.counter("non_fatal_except on")
+      val notFoundCounter: Counter = getT etScope.counter("not_found")
     }
 
-    object mhGroup extends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
-      override def run(tweetIds: Seq[TweetId]): Stitch[Seq[Seq[TweetManhattanRecord]]] = {
-        Stats.addWidthStat("getTweet", "tweetIds", tweetIds.size, statsReceiver)
-        Stitch.traverse(tweetIds)(read(_))
+    object mhGroup extends St chSeqGroup[T et d, Seq[T etManhattanRecord]] {
+      overr de def run(t et ds: Seq[T et d]): St ch[Seq[Seq[T etManhattanRecord]]] = {
+        Stats.addW dthStat("getT et", "t et ds", t et ds.s ze, statsRece ver)
+        St ch.traverse(t et ds)(read(_))
       }
     }
 
-    tweetId =>
-      if (tweetId <= 0) {
-        Stitch.NotFound
+    t et d =>
+       f (t et d <= 0) {
+        St ch.NotFound
       } else {
-        Stitch
-          .call(tweetId, mhGroup)
-          .map(mhRecords => tweetResponseFromRecords(tweetId, mhRecords, stats.getTweetScope))
-          .liftToTry
+        St ch
+          .call(t et d, mhGroup)
+          .map(mhRecords => t etResponseFromRecords(t et d, mhRecords, stats.getT etScope))
+          .l ftToTry
           .map {
-            case Throw(mhException: DeniedManhattanException) =>
-              stats.deniedCounter.incr()
-              Throw(RateLimited("", mhException))
+            case Throw(mhExcept on: Den edManhattanExcept on) =>
+              stats.den edCounter. ncr()
+              Throw(RateL m ed("", mhExcept on))
 
-            // Encountered some other Manhattan error
-            case t @ Throw(_: ManhattanException) =>
-              stats.mhExceptionCounter.incr()
+            // Encountered so  ot r Manhattan error
+            case t @ Throw(_: ManhattanExcept on) =>
+              stats.mhExcept onCounter. ncr()
               t
 
-            // Something else happened
+            // So th ng else happened
             case t @ Throw(ex) =>
-              stats.nonFatalExceptionCounter.incr()
-              TweetUtils.log
-                .warning(ex, s"Unhandled exception in GetTweetHandler for tweetId: $tweetId")
+              stats.nonFatalExcept onCounter. ncr()
+              T etUt ls.log
+                .warn ng(ex, s"Unhandled except on  n GetT etHandler for t et d: $t et d")
               t
 
-            case r @ Return(GetTweet.Response.NotFound) =>
-              stats.notFoundCounter.incr()
+            case r @ Return(GetT et.Response.NotFound) =>
+              stats.notFoundCounter. ncr()
               r
 
             case r @ Return(_) => r
           }
-          .lowerFromTry
+          .lo rFromTry
       }
   }
 }

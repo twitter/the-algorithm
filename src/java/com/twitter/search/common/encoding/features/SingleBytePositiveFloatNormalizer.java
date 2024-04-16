@@ -1,35 +1,35 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
 /**
- * Normalizes using the logic described in {@link SingleBytePositiveFloatUtil}.
+ * Normal zes us ng t  log c descr bed  n {@l nk S ngleBytePos  veFloatUt l}.
  */
-public class SingleBytePositiveFloatNormalizer extends ByteNormalizer {
+publ c class S ngleBytePos  veFloatNormal zer extends ByteNormal zer {
 
-  @Override
-  public byte normalize(double val) {
-    return SingleBytePositiveFloatUtil.toSingleBytePositiveFloat((float) val);
+  @Overr de
+  publ c byte normal ze(double val) {
+    return S ngleBytePos  veFloatUt l.toS ngleBytePos  veFloat((float) val);
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return SingleBytePositiveFloatUtil.toJavaFloat(norm);
-  }
-
-  /**
-   * Get the upper bound of the raw value for a normalized byte.
-   * @deprecated This is wrongly implemented, always use unnormLowerBound(),
-   * or use SmartIntegerNormalizer.
-   */
-  @Override @Deprecated
-  public double unnormUpperBound(byte norm) {
-    return 1 + SingleBytePositiveFloatUtil.toJavaFloat(norm);
+  @Overr de
+  publ c double unnormLo rBound(byte norm) {
+    return S ngleBytePos  veFloatUt l.toJavaFloat(norm);
   }
 
   /**
-   * Return the the post-log2 unnormalized value. This is only used for some legacy Earlybird
-   * features and scoring functions.
+   * Get t  upper bound of t  raw value for a normal zed byte.
+   * @deprecated T   s wrongly  mple nted, always use unnormLo rBound(),
+   * or use Smart ntegerNormal zer.
    */
-  public double unnormAndLog2(byte norm) {
-    return SingleBytePositiveFloatUtil.toLog2Double(norm);
+  @Overr de @Deprecated
+  publ c double unnormUpperBound(byte norm) {
+    return 1 + S ngleBytePos  veFloatUt l.toJavaFloat(norm);
+  }
+
+  /**
+   * Return t  t  post-log2 unnormal zed value. T   s only used for so  legacy Earlyb rd
+   * features and scor ng funct ons.
+   */
+  publ c double unnormAndLog2(byte norm) {
+    return S ngleBytePos  veFloatUt l.toLog2Double(norm);
   }
 }

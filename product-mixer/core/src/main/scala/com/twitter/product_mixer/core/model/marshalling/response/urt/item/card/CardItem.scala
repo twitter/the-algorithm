@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
 
-object CardItem {
-  val CardEntryNamespace = EntryNamespace("card")
+object Card em {
+  val CardEntryNa space = EntryNa space("card")
 }
 
-case class CardItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  cardUrl: String,
-  text: Option[String],
-  subtext: Option[String],
-  url: Option[Url],
-  displayType: Option[CardDisplayType])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = CardItem.CardEntryNamespace
+case class Card em(
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  cardUrl: Str ng,
+  text: Opt on[Str ng],
+  subtext: Opt on[Str ng],
+  url: Opt on[Url],
+  d splayType: Opt on[CardD splayType])
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = Card em.CardEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

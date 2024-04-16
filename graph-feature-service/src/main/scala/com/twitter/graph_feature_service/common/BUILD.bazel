@@ -1,8 +1,8 @@
-scala_library(
+scala_l brary(
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = ["src/scala/com/twitter/storehaus_internal/util"],
+    dependenc es = ["src/scala/com/tw ter/storehaus_ nternal/ut l"],
 )

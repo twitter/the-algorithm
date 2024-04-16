@@ -1,44 +1,44 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexOptions;
+ mport org.apac .lucene.docu nt.F eld;
+ mport org.apac .lucene.docu nt.F eldType;
+ mport org.apac .lucene. ndex. ndexOpt ons;
 
 /**
- * A Lucene numeric field, similar to the LegacyIntField, LegacyLongField, etc. Lucene classes that
- * were removed in Lucene 7.0.0.
+ * A Lucene nu r c f eld, s m lar to t  Legacy ntF eld, LegacyLongF eld, etc. Lucene classes that
+ *  re removed  n Lucene 7.0.0.
  */
-public final class NumericField extends Field {
-  private static final FieldType NUMERIC_FIELD_TYPE = new FieldType();
-  static {
-    NUMERIC_FIELD_TYPE.setTokenized(true);
-    NUMERIC_FIELD_TYPE.setOmitNorms(true);
-    NUMERIC_FIELD_TYPE.setIndexOptions(IndexOptions.DOCS);
-    NUMERIC_FIELD_TYPE.freeze();
+publ c f nal class Nu r cF eld extends F eld {
+  pr vate stat c f nal F eldType NUMER C_F ELD_TYPE = new F eldType();
+  stat c {
+    NUMER C_F ELD_TYPE.setToken zed(true);
+    NUMER C_F ELD_TYPE.setOm Norms(true);
+    NUMER C_F ELD_TYPE.set ndexOpt ons( ndexOpt ons.DOCS);
+    NUMER C_F ELD_TYPE.freeze();
   }
 
   /**
-   * Creates a new integer field with the given name and value.
+   * Creates a new  nteger f eld w h t  g ven na  and value.
    */
-  public static NumericField newIntField(String fieldName, int value) {
-    NumericField field = new NumericField(fieldName);
-    field.fieldsData = Integer.valueOf(value);
-    return field;
+  publ c stat c Nu r cF eld new ntF eld(Str ng f eldNa ,  nt value) {
+    Nu r cF eld f eld = new Nu r cF eld(f eldNa );
+    f eld.f eldsData =  nteger.valueOf(value);
+    return f eld;
   }
 
   /**
-   * Creates a new long field with the given name and value.
+   * Creates a new long f eld w h t  g ven na  and value.
    */
-  public static NumericField newLongField(String fieldName, long value) {
-    NumericField field = new NumericField(fieldName);
-    field.fieldsData = Long.valueOf(value);
-    return field;
+  publ c stat c Nu r cF eld newLongF eld(Str ng f eldNa , long value) {
+    Nu r cF eld f eld = new Nu r cF eld(f eldNa );
+    f eld.f eldsData = Long.valueOf(value);
+    return f eld;
   }
 
-  // We could replace the static methods with constructors, but I think that would make it much
-  // easier to accidentally use NumericField(String, int) instead of NumericField(String, long),
-  // for example, leading to hard to debug errors.
-  private NumericField(String fieldName) {
-    super(fieldName, NUMERIC_FIELD_TYPE);
+  //   could replace t  stat c  thods w h constructors, but   th nk that would make   much
+  // eas er to acc dentally use Nu r cF eld(Str ng,  nt)  nstead of Nu r cF eld(Str ng, long),
+  // for example, lead ng to hard to debug errors.
+  pr vate Nu r cF eld(Str ng f eldNa ) {
+    super(f eldNa , NUMER C_F ELD_TYPE);
   }
 }

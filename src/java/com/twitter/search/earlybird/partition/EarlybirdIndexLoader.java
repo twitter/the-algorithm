@@ -1,224 +1,224 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedMap;
+ mport java. o.Buffered nputStream;
+ mport java. o. OExcept on;
+ mport java.t  .Durat on;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
+ mport java.ut l.SortedMap;
 
-import com.google.common.base.Stopwatch;
+ mport com.google.common.base.Stopwatch;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.compress.ut ls.L sts;
+ mport org.apac .hadoop.fs.FSData nputStream;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.util.ActionLogger;
-import com.twitter.search.earlybird.util.ParallelUtil;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.part  on ng.base.T  Sl ce;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.earlyb rd.common.NonPag ngAssert;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
+ mport com.tw ter.search.earlyb rd.ut l.Act onLogger;
+ mport com.tw ter.search.earlyb rd.ut l.ParallelUt l;
 
 /**
- * Loads an index from HDFS, if possible, or indexes all tweets from scratch using a
+ * Loads an  ndex from HDFS,  f poss ble, or  ndexes all t ets from scratch us ng a
  * FreshStartupHandler.
  */
-public class EarlybirdIndexLoader {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexLoader.class);
+publ c class Earlyb rd ndexLoader {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rd ndexLoader.class);
 
-  public static final String ENV_FOR_TESTS = "test_env";
+  publ c stat c f nal Str ng ENV_FOR_TESTS = "test_env";
 
-  // To determine whether we should or should not load the most recent index from HDFS if available.
-  public static final long INDEX_FRESHNESS_THRESHOLD_MILLIS = Duration.ofDays(1).toMillis();
+  // To determ ne w t r   should or should not load t  most recent  ndex from HDFS  f ava lable.
+  publ c stat c f nal long  NDEX_FRESHNESS_THRESHOLD_M LL S = Durat on.ofDays(1).toM ll s();
 
-  private static final NonPagingAssert LOADING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
-          new NonPagingAssert("loading_too_many_non_optimized_segments");
+  pr vate stat c f nal NonPag ngAssert LOAD NG_TOO_MANY_NON_OPT M ZED_SEGMENTS =
+          new NonPag ngAssert("load ng_too_many_non_opt m zed_seg nts");
 
-  private final FileSystem fileSystem;
-  private final Path indexPath;
-  private final PartitionConfig partitionConfig;
-  private final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final Clock clock;
-  // Aurora environment we're running in: "prod", "loadtest", "staging2" etc. etc
-  private final String environment;
+  pr vate f nal F leSystem f leSystem;
+  pr vate f nal Path  ndexPath;
+  pr vate f nal Part  onConf g part  onConf g;
+  pr vate f nal Earlyb rdSeg ntFactory earlyb rdSeg ntFactory;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
+  pr vate f nal Clock clock;
+  // Aurora env ron nt  're runn ng  n: "prod", "loadtest", "stag ng2" etc. etc
+  pr vate f nal Str ng env ron nt;
 
-  public EarlybirdIndexLoader(
-      FileSystem fileSystem,
-      String indexHDFSPath,
-      String environment,
-      PartitionConfig partitionConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      SegmentSyncConfig segmentSyncConfig,
+  publ c Earlyb rd ndexLoader(
+      F leSystem f leSystem,
+      Str ng  ndexHDFSPath,
+      Str ng env ron nt,
+      Part  onConf g part  onConf g,
+      Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+      Seg ntSyncConf g seg ntSyncConf g,
       Clock clock
   ) {
-    this.fileSystem = fileSystem;
-    this.partitionConfig = partitionConfig;
-    this.earlybirdSegmentFactory = earlybirdSegmentFactory;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.indexPath = EarlybirdIndexFlusher.buildPathToIndexes(indexHDFSPath, partitionConfig);
-    this.clock = clock;
-    this.environment = environment;
+    t .f leSystem = f leSystem;
+    t .part  onConf g = part  onConf g;
+    t .earlyb rdSeg ntFactory = earlyb rdSeg ntFactory;
+    t .seg ntSyncConf g = seg ntSyncConf g;
+    t . ndexPath = Earlyb rd ndexFlus r.bu ldPathTo ndexes( ndexHDFSPath, part  onConf g);
+    t .clock = clock;
+    t .env ron nt = env ron nt;
   }
 
   /**
-   * Tries to load an index from HDFS for this FlushVersion/Partition/Cluster. Returns an empty
-   * option if there is no index found.
+   * Tr es to load an  ndex from HDFS for t  FlushVers on/Part  on/Cluster. Returns an empty
+   * opt on  f t re  s no  ndex found.
    */
-  public Optional<EarlybirdIndex> loadIndex() {
+  publ c Opt onal<Earlyb rd ndex> load ndex() {
     try {
-      Optional<EarlybirdIndex> loadedIndex =
-          ActionLogger.call("Load index from HDFS.", this::loadFromHDFS);
+      Opt onal<Earlyb rd ndex> loaded ndex =
+          Act onLogger.call("Load  ndex from HDFS.", t ::loadFromHDFS);
 
-      if (loadedIndex.isPresent()) {
-        EarlybirdIndex index = loadedIndex.get();
-        int numOfNonOptimized = index.numOfNonOptimizedSegments();
-        if (numOfNonOptimized > EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS) {
-          // We should never have too many unoptimized segments. If this happens we likely have a
-          // bug somewhere that caused another Earlybird to flush too many unoptimized segments.
-          // Use NonPagingAssert to alert the oncall if this happens so they can look into it.
-          LOG.error("Found {} non-optimized segments when loading from disk!", numOfNonOptimized);
-          LOADING_TOO_MANY_NON_OPTIMIZED_SEGMENTS.assertFailed();
+       f (loaded ndex. sPresent()) {
+        Earlyb rd ndex  ndex = loaded ndex.get();
+         nt numOfNonOpt m zed =  ndex.numOfNonOpt m zedSeg nts();
+         f (numOfNonOpt m zed > Earlyb rd ndex.MAX_NUM_OF_NON_OPT M ZED_SEGMENTS) {
+          //   should never have too many unopt m zed seg nts.  f t  happens   l kely have a
+          // bug so w re that caused anot r Earlyb rd to flush too many unopt m zed seg nts.
+          // Use NonPag ngAssert to alert t  oncall  f t  happens so t y can look  nto  .
+          LOG.error("Found {} non-opt m zed seg nts w n load ng from d sk!", numOfNonOpt m zed);
+          LOAD NG_TOO_MANY_NON_OPT M ZED_SEGMENTS.assertFa led();
 
-          // If there are too many unoptimized segments, optimize the older ones until there are
-          // only MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS left in the unoptimized state. The segment info
-          // list is always in order, so we will never try to optimize the most recent segments
-          // here.
-          int numSegmentsToOptimize =
-              numOfNonOptimized - EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS;
-          LOG.info("Will try to optimize {} segments", numSegmentsToOptimize);
-          for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-            if (numSegmentsToOptimize > 0 && !segmentInfo.isOptimized()) {
-              Stopwatch optimizationStopwatch = Stopwatch.createStarted();
-              LOG.info("Starting to optimize segment: {}", segmentInfo.getSegmentName());
-              segmentInfo.getIndexSegment().optimizeIndexes();
-              numSegmentsToOptimize--;
-              LOG.info("Optimization of segment {} finished in {}.",
-                  segmentInfo.getSegmentName(), optimizationStopwatch);
+          //  f t re are too many unopt m zed seg nts, opt m ze t  older ones unt l t re are
+          // only MAX_NUM_OF_NON_OPT M ZED_SEGMENTS left  n t  unopt m zed state. T  seg nt  nfo
+          // l st  s always  n order, so   w ll never try to opt m ze t  most recent seg nts
+          //  re.
+           nt numSeg ntsToOpt m ze =
+              numOfNonOpt m zed - Earlyb rd ndex.MAX_NUM_OF_NON_OPT M ZED_SEGMENTS;
+          LOG. nfo("W ll try to opt m ze {} seg nts", numSeg ntsToOpt m ze);
+          for (Seg nt nfo seg nt nfo :  ndex.getSeg nt nfoL st()) {
+             f (numSeg ntsToOpt m ze > 0 && !seg nt nfo. sOpt m zed()) {
+              Stopwatch opt m zat onStopwatch = Stopwatch.createStarted();
+              LOG. nfo("Start ng to opt m ze seg nt: {}", seg nt nfo.getSeg ntNa ());
+              seg nt nfo.get ndexSeg nt().opt m ze ndexes();
+              numSeg ntsToOpt m ze--;
+              LOG. nfo("Opt m zat on of seg nt {} f n s d  n {}.",
+                  seg nt nfo.getSeg ntNa (), opt m zat onStopwatch);
             }
           }
         }
 
-        int newNumOfNonOptimized = index.numOfNonOptimizedSegments();
-        LOG.info("Loaded {} segments. {} are unoptimized.",
-                index.getSegmentInfoList().size(),
-                newNumOfNonOptimized);
+         nt newNumOfNonOpt m zed =  ndex.numOfNonOpt m zedSeg nts();
+        LOG. nfo("Loaded {} seg nts. {} are unopt m zed.",
+                 ndex.getSeg nt nfoL st().s ze(),
+                newNumOfNonOpt m zed);
 
-        return loadedIndex;
+        return loaded ndex;
       }
     } catch (Throwable e) {
-      LOG.error("Error loading index from HDFS, will index from scratch.", e);
+      LOG.error("Error load ng  ndex from HDFS, w ll  ndex from scratch.", e);
     }
 
-    return Optional.empty();
+    return Opt onal.empty();
   }
 
-  private Optional<EarlybirdIndex> loadFromHDFS() throws Exception {
-    SortedMap<Long, Path> pathsByTime =
-        EarlybirdIndexFlusher.getIndexPathsByTime(indexPath, fileSystem);
+  pr vate Opt onal<Earlyb rd ndex> loadFromHDFS() throws Except on {
+    SortedMap<Long, Path> pathsByT   =
+        Earlyb rd ndexFlus r.get ndexPathsByT  ( ndexPath, f leSystem);
 
-    if (pathsByTime.isEmpty()) {
-      LOG.info("Could not load index from HDFS (path: {}), will index from scratch.", indexPath);
-      return Optional.empty();
+     f (pathsByT  . sEmpty()) {
+      LOG. nfo("Could not load  ndex from HDFS (path: {}), w ll  ndex from scratch.",  ndexPath);
+      return Opt onal.empty();
     }
 
-    long mostRecentIndexTimeMillis = pathsByTime.lastKey();
-    Path mostRecentIndexPath = pathsByTime.get(mostRecentIndexTimeMillis);
+    long mostRecent ndexT  M ll s = pathsByT  .lastKey();
+    Path mostRecent ndexPath = pathsByT  .get(mostRecent ndexT  M ll s);
 
-    if (clock.nowMillis() - mostRecentIndexTimeMillis > INDEX_FRESHNESS_THRESHOLD_MILLIS) {
-      LOG.info("Most recent index in HDFS (path: {}) is old, will do a fresh startup.",
-              mostRecentIndexPath);
-      return Optional.empty();
+     f (clock.nowM ll s() - mostRecent ndexT  M ll s >  NDEX_FRESHNESS_THRESHOLD_M LL S) {
+      LOG. nfo("Most recent  ndex  n HDFS (path: {})  s old, w ll do a fresh startup.",
+              mostRecent ndexPath);
+      return Opt onal.empty();
     }
 
-    EarlybirdIndex index = ActionLogger.call(
-        "loading index from " + mostRecentIndexPath,
-        () -> loadIndex(mostRecentIndexPath));
+    Earlyb rd ndex  ndex = Act onLogger.call(
+        "load ng  ndex from " + mostRecent ndexPath,
+        () -> load ndex(mostRecent ndexPath));
 
-    return Optional.of(index);
+    return Opt onal.of( ndex);
   }
 
-  private EarlybirdIndex loadIndex(Path flushPath) throws Exception {
-    Path indexInfoPath = flushPath.suffix("/" + EarlybirdIndexFlusher.INDEX_INFO);
+  pr vate Earlyb rd ndex load ndex(Path flushPath) throws Except on {
+    Path  ndex nfoPath = flushPath.suff x("/" + Earlyb rd ndexFlus r. NDEX_ NFO);
 
-    FlushInfo indexInfo;
-    try (FSDataInputStream infoInputStream = fileSystem.open(indexInfoPath)) {
-      indexInfo = FlushInfo.loadFromYaml(infoInputStream);
+    Flush nfo  ndex nfo;
+    try (FSData nputStream  nfo nputStream = f leSystem.open( ndex nfoPath)) {
+       ndex nfo = Flush nfo.loadFromYaml( nfo nputStream);
     }
 
-    FlushInfo segmentsFlushInfo = indexInfo.getSubProperties(EarlybirdIndexFlusher.SEGMENTS);
-    List<String> segmentNames = Lists.newArrayList(segmentsFlushInfo.getKeyIterator());
+    Flush nfo seg ntsFlush nfo =  ndex nfo.getSubPropert es(Earlyb rd ndexFlus r.SEGMENTS);
+    L st<Str ng> seg ntNa s = L sts.newArrayL st(seg ntsFlush nfo.getKey erator());
 
-    // This should only happen if you're running in stagingN and loading a prod index through
-    // the read_index_from_prod_location flag. In this case, we point to a directory that has
-    // a lot more than the number of segments we want in staging and we trim this list to the
-    // desired number.
-    if (environment.matches("staging\\d")) {
-      if (segmentNames.size() > partitionConfig.getMaxEnabledLocalSegments()) {
-        LOG.info("Trimming list of loaded segments from size {} to size {}.",
-            segmentNames.size(), partitionConfig.getMaxEnabledLocalSegments());
-        segmentNames = segmentNames.subList(
-            segmentNames.size() - partitionConfig.getMaxEnabledLocalSegments(),
-            segmentNames.size());
+    // T  should only happen  f   runn ng  n stag ngN and load ng a prod  ndex through
+    // t  read_ ndex_from_prod_locat on flag.  n t  case,   po nt to a d rectory that has
+    // a lot more than t  number of seg nts   want  n stag ng and   tr m t  l st to t 
+    // des red number.
+     f (env ron nt.matc s("stag ng\\d")) {
+       f (seg ntNa s.s ze() > part  onConf g.getMaxEnabledLocalSeg nts()) {
+        LOG. nfo("Tr mm ng l st of loaded seg nts from s ze {} to s ze {}.",
+            seg ntNa s.s ze(), part  onConf g.getMaxEnabledLocalSeg nts());
+        seg ntNa s = seg ntNa s.subL st(
+            seg ntNa s.s ze() - part  onConf g.getMaxEnabledLocalSeg nts(),
+            seg ntNa s.s ze());
       }
     }
 
-    List<SegmentInfo> segmentInfoList = ParallelUtil.parmap("load-index", name -> {
-      FlushInfo subProperties = segmentsFlushInfo.getSubProperties(name);
-      long timesliceID = subProperties.getLongProperty(EarlybirdIndexFlusher.TIMESLICE_ID);
-      return ActionLogger.call(
-          "loading segment " + name,
-          () -> loadSegment(flushPath, name, timesliceID));
-    }, segmentNames);
+    L st<Seg nt nfo> seg nt nfoL st = ParallelUt l.parmap("load- ndex", na  -> {
+      Flush nfo subPropert es = seg ntsFlush nfo.getSubPropert es(na );
+      long t  sl ce D = subPropert es.getLongProperty(Earlyb rd ndexFlus r.T MESL CE_ D);
+      return Act onLogger.call(
+          "load ng seg nt " + na ,
+          () -> loadSeg nt(flushPath, na , t  sl ce D));
+    }, seg ntNa s);
 
-    return new EarlybirdIndex(
-        segmentInfoList,
-        indexInfo.getLongProperty(EarlybirdIndexFlusher.TWEET_KAFKA_OFFSET),
-        indexInfo.getLongProperty(EarlybirdIndexFlusher.UPDATE_KAFKA_OFFSET));
+    return new Earlyb rd ndex(
+        seg nt nfoL st,
+         ndex nfo.getLongProperty(Earlyb rd ndexFlus r.TWEET_KAFKA_OFFSET),
+         ndex nfo.getLongProperty(Earlyb rd ndexFlus r.UPDATE_KAFKA_OFFSET));
   }
 
-  private SegmentInfo loadSegment(
+  pr vate Seg nt nfo loadSeg nt(
       Path flushPath,
-      String segmentName,
-      long timesliceID
-  ) throws IOException {
-    Path segmentPrefix = flushPath.suffix("/" + segmentName);
-    Path segmentPath = segmentPrefix.suffix(EarlybirdIndexFlusher.DATA_SUFFIX);
+      Str ng seg ntNa ,
+      long t  sl ce D
+  ) throws  OExcept on {
+    Path seg ntPref x = flushPath.suff x("/" + seg ntNa );
+    Path seg ntPath = seg ntPref x.suff x(Earlyb rd ndexFlus r.DATA_SUFF X);
 
-    TimeSlice timeSlice = new TimeSlice(
-        timesliceID,
-        EarlybirdConfig.getMaxSegmentSize(),
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions());
+    T  Sl ce t  Sl ce = new T  Sl ce(
+        t  sl ce D,
+        Earlyb rdConf g.getMaxSeg ntS ze(),
+        part  onConf g.get ndex ngHashPart  on D(),
+        part  onConf g.getNumPart  ons());
 
-    SegmentInfo segmentInfo = new SegmentInfo(
-        timeSlice.getSegment(),
-        earlybirdSegmentFactory,
-        segmentSyncConfig);
+    Seg nt nfo seg nt nfo = new Seg nt nfo(
+        t  Sl ce.getSeg nt(),
+        earlyb rdSeg ntFactory,
+        seg ntSyncConf g);
 
-    Path infoPath = segmentPrefix.suffix(EarlybirdIndexFlusher.INFO_SUFFIX);
-    FlushInfo flushInfo;
-    try (FSDataInputStream infoInputStream = fileSystem.open(infoPath)) {
-      flushInfo = FlushInfo.loadFromYaml(infoInputStream);
+    Path  nfoPath = seg ntPref x.suff x(Earlyb rd ndexFlus r. NFO_SUFF X);
+    Flush nfo flush nfo;
+    try (FSData nputStream  nfo nputStream = f leSystem.open( nfoPath)) {
+      flush nfo = Flush nfo.loadFromYaml( nfo nputStream);
     }
 
-    FSDataInputStream inputStream = fileSystem.open(segmentPath);
+    FSData nputStream  nputStream = f leSystem.open(seg ntPath);
 
-    // It's significantly slower to read from the FSDataInputStream on demand, so we
-    // use a buffered reader to pre-read bigger chunks.
-    int bufferSize = 1 << 22; // 4MB
-    BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, bufferSize);
+    //  's s gn f cantly slo r to read from t  FSData nputStream on demand, so  
+    // use a buffered reader to pre-read b gger chunks.
+     nt bufferS ze = 1 << 22; // 4MB
+    Buffered nputStream buffered nputStream = new Buffered nputStream( nputStream, bufferS ze);
 
-    DataDeserializer in = new DataDeserializer(bufferedInputStream, segmentName);
-    segmentInfo.getIndexSegment().load(in, flushInfo);
+    DataDeser al zer  n = new DataDeser al zer(buffered nputStream, seg ntNa );
+    seg nt nfo.get ndexSeg nt().load( n, flush nfo);
 
-    return segmentInfo;
+    return seg nt nfo;
   }
 }

@@ -1,73 +1,73 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport org.slf4j.Marker;
+ mport org.slf4j.MarkerFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.EarlybirdStatus;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
 
 /**
- * Used for handling exceptions considered critical.
+ * Used for handl ng except ons cons dered cr  cal.
  *
- * When you handle an exception with this class, two things might happen.
- * 1. If earlybirds are still starting, we'll shut them down.
- * 2. If earlybirds have started, we'll increment a counter that will cause alerts.
+ * W n   handle an except on w h t  class, two th ngs m ght happen.
+ * 1.  f earlyb rds are st ll start ng,  'll shut t m down.
+ * 2.  f earlyb rds have started,  'll  ncre nt a counter that w ll cause alerts.
  *
- * If you want to verify that your code handles exceptions as you expect, you can use the
- * helper class ExceptionCauser.
+ *  f   want to ver fy that y  code handles except ons as   expect,   can use t 
+ *  lper class Except onCauser.
  */
-public class CriticalExceptionHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(CriticalExceptionHandler.class);
-  private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
+publ c class Cr  calExcept onHandler {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Cr  calExcept onHandler.class);
+  pr vate stat c f nal Marker FATAL = MarkerFactory.getMarker("FATAL");
 
-  // This stat should remain at 0 during normal operations.
-  // This stat being non-zero should trigger alerts.
-  public static final SearchCounter CRITICAL_EXCEPTION_COUNT =
-      SearchCounter.export("fatal_exception_count");
+  // T  stat should rema n at 0 dur ng normal operat ons.
+  // T  stat be ng non-zero should tr gger alerts.
+  publ c stat c f nal SearchCounter CR T CAL_EXCEPT ON_COUNT =
+      SearchCounter.export("fatal_except on_count");
 
-  public static final SearchCounter UNSAFE_MEMORY_ACCESS =
-      SearchCounter.export("unsafe_memory_access");
+  publ c stat c f nal SearchCounter UNSAFE_MEMORY_ACCESS =
+      SearchCounter.export("unsafe_ mory_access");
 
-  private Runnable shutdownHook;
+  pr vate Runnable shutdownHook;
 
-  public void setShutdownHook(Runnable shutdownHook) {
-    this.shutdownHook = shutdownHook;
+  publ c vo d setShutdownHook(Runnable shutdownHook) {
+    t .shutdownHook = shutdownHook;
   }
 
   /**
-   * Handle a critical exception.
+   * Handle a cr  cal except on.
    *
-   * @param thrower Instance of the class where the exception was thrown.
-   * @param thrown The exception.
+   * @param thro r  nstance of t  class w re t  except on was thrown.
+   * @param thrown T  except on.
    */
-  public void handle(Object thrower, Throwable thrown) {
-    if (thrown == null) {
+  publ c vo d handle(Object thro r, Throwable thrown) {
+     f (thrown == null) {
       return;
     }
 
     try {
-      handleFatalException(thrower, thrown);
+      handleFatalExcept on(thro r, thrown);
     } catch (Throwable e) {
-      LOG.error("Unexpected exception in EarlybirdExceptionHandler.handle() while handling an "
-                + "unexpected exception from " + thrower.getClass(), e);
+      LOG.error("Unexpected except on  n Earlyb rdExcept onHandler.handle() wh le handl ng an "
+                + "unexpected except on from " + thro r.getClass(), e);
     }
   }
 
-  @VisibleForTesting
-  boolean shouldIncrementFatalExceptionCounter(Throwable thrown) {
+  @V s bleForTest ng
+  boolean should ncre ntFatalExcept onCounter(Throwable thrown) {
     // See D212952
-    // We don't want to get pages when this happens.
+    //   don't want to get pages w n t  happens.
     for (Throwable t = thrown; t != null; t = t.getCause()) {
-      if (t instanceof InternalError && t.getMessage() != null
-          && t.getMessage().contains("unsafe memory access operation")) {
-        // Don't treat InternalError caused by unsafe memory access operation which is usually
-        // triggered by SIGBUS for accessing a corrupted memory block.
-        UNSAFE_MEMORY_ACCESS.increment();
+       f (t  nstanceof  nternalError && t.get ssage() != null
+          && t.get ssage().conta ns("unsafe  mory access operat on")) {
+        // Don't treat  nternalError caused by unsafe  mory access operat on wh ch  s usually
+        // tr ggered by S GBUS for access ng a corrupted  mory block.
+        UNSAFE_MEMORY_ACCESS. ncre nt();
         return false;
       }
     }
@@ -76,38 +76,38 @@ public class CriticalExceptionHandler {
   }
 
   /**
-   * Handle an exception that's considered fatal.
+   * Handle an except on that's cons dered fatal.
    *
-   * @param thrower instance of the class where the exception was thrown.
-   * @param thrown The Error or Exception.
+   * @param thro r  nstance of t  class w re t  except on was thrown.
+   * @param thrown T  Error or Except on.
    */
-  private void handleFatalException(Object thrower, Throwable thrown) {
-    LOG.error(FATAL, "Fatal exception in " + thrower.getClass() + ":", thrown);
+  pr vate vo d handleFatalExcept on(Object thro r, Throwable thrown) {
+    LOG.error(FATAL, "Fatal except on  n " + thro r.getClass() + ":", thrown);
 
-    if (shouldIncrementFatalExceptionCounter(thrown)) {
-      CRITICAL_EXCEPTION_COUNT.increment();
+     f (should ncre ntFatalExcept onCounter(thrown)) {
+      CR T CAL_EXCEPT ON_COUNT. ncre nt();
     }
 
-    if (EarlybirdStatus.isStarting()) {
-      LOG.error(FATAL, "Got fatal exception while starting up, exiting ...");
-      if (this.shutdownHook != null) {
-        this.shutdownHook.run();
+     f (Earlyb rdStatus. sStart ng()) {
+      LOG.error(FATAL, "Got fatal except on wh le start ng up, ex  ng ...");
+       f (t .shutdownHook != null) {
+        t .shutdownHook.run();
       } else {
-        LOG.error("earlybirdServer not set, can't shut down.");
+        LOG.error("earlyb rdServer not set, can't shut down.");
       }
 
-      if (!Config.environmentIsTest()) {
-        // Sleep for 3 minutes to allow the fatal exception to be caught by observability.
+       f (!Conf g.env ron nt sTest()) {
+        // Sleep for 3 m nutes to allow t  fatal except on to be caught by observab l y.
         try {
           Thread.sleep(3 * 60 * 1000);
-        } catch (InterruptedException e) {
-          LOG.error(FATAL, "interupted sleep while shutting down.");
+        } catch ( nterruptedExcept on e) {
+          LOG.error(FATAL, " nterupted sleep wh le shutt ng down.");
         }
-        LOG.info("Terminate JVM.");
-        //CHECKSTYLE:OFF RegexpSinglelineJava
+        LOG. nfo("Term nate JVM.");
+        //CHECKSTYLE:OFF RegexpS nglel neJava
         // See SEARCH-15256
-        System.exit(-1);
-        //CHECKSTYLE:ON RegexpSinglelineJava
+        System.ex (-1);
+        //CHECKSTYLE:ON RegexpS nglel neJava
       }
     }
   }

@@ -1,26 +1,26 @@
-package com.twitter.usersignalservice
-package service
+package com.tw ter.users gnalserv ce
+package serv ce
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.storehaus.StitchOfReadableStore
-import com.twitter.usersignalservice.config.SignalFetcherConfig
-import com.twitter.usersignalservice.handler.UserSignalHandler
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import com.twitter.util.Timer
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.storehaus.St chOfReadableStore
+ mport com.tw ter.users gnalserv ce.conf g.S gnalFetc rConf g
+ mport com.tw ter.users gnalserv ce.handler.UserS gnalHandler
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalRequest
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalResponse
+ mport com.tw ter.ut l.T  r
 
-@Singleton
-class UserSignalService @Inject() (
-  signalFetcherConfig: SignalFetcherConfig,
-  timer: Timer,
-  stats: StatsReceiver) {
+@S ngleton
+class UserS gnalServ ce @ nject() (
+  s gnalFetc rConf g: S gnalFetc rConf g,
+  t  r: T  r,
+  stats: StatsRece ver) {
 
-  private val userSignalHandler =
-    new UserSignalHandler(signalFetcherConfig, timer, stats)
+  pr vate val userS gnalHandler =
+    new UserS gnalHandler(s gnalFetc rConf g, t  r, stats)
 
-  val userSignalServiceHandlerStoreStitch: BatchSignalRequest => com.twitter.stitch.Stitch[
-    BatchSignalResponse
-  ] = StitchOfReadableStore(userSignalHandler.toReadableStore)
+  val userS gnalServ ceHandlerStoreSt ch: BatchS gnalRequest => com.tw ter.st ch.St ch[
+    BatchS gnalResponse
+  ] = St chOfReadableStore(userS gnalHandler.toReadableStore)
 }

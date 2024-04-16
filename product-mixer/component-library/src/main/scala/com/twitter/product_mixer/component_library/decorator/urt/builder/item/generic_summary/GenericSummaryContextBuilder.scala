@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.gener c_summary
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.r chtext.BaseR chTextBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Hor zon con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary.Gener cSummaryContext
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class GenericSummaryContextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  richTextBuilder: BaseRichTextBuilder[Query, Candidate],
-  icon: Option[HorizonIcon] = None) {
+case class Gener cSummaryContextBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  r chTextBu lder: BaseR chTextBu lder[Query, Cand date],
+   con: Opt on[Hor zon con] = None) {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): GenericSummaryContext = GenericSummaryContext(
-    richTextBuilder.apply(query, candidate, candidateFeatures),
-    icon
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Gener cSummaryContext = Gener cSummaryContext(
+    r chTextBu lder.apply(query, cand date, cand dateFeatures),
+     con
   )
 }

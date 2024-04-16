@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.common.ml
+package com.tw ter.s mclusters_v2.common.ml
 
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .Feature.SparseCont nuous
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
 
-class SimClustersEmbeddingAdapter(embeddingFeature: SparseContinuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+class S mClustersEmbedd ngAdapter(embedd ngFeature: SparseCont nuous)
+    extends  RecordOneToOneAdapter[S mClustersEmbedd ng] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature)
+  overr de def getFeatureContext: FeatureContext = new FeatureContext(embedd ngFeature)
 
-  override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
-    val embeddingMap = embedding.embedding.map {
-      case (clusterId, score) =>
-        (clusterId.toString, score)
+  overr de def adaptToDataRecord(embedd ng: S mClustersEmbedd ng): DataRecord = {
+    val embedd ngMap = embedd ng.embedd ng.map {
+      case (cluster d, score) =>
+        (cluster d.toStr ng, score)
     }.toMap
 
-    new DataRecord().setFeatureValue(embeddingFeature, embeddingMap)
+    new DataRecord().setFeatureValue(embedd ngFeature, embedd ngMap)
   }
 }
 
-class NormalizedSimClustersEmbeddingAdapter(
-  embeddingFeature: SparseContinuous,
-  normFeature: Continuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+class Normal zedS mClustersEmbedd ngAdapter(
+  embedd ngFeature: SparseCont nuous,
+  normFeature: Cont nuous)
+    extends  RecordOneToOneAdapter[S mClustersEmbedd ng] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature, normFeature)
+  overr de def getFeatureContext: FeatureContext = new FeatureContext(embedd ngFeature, normFeature)
 
-  override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
+  overr de def adaptToDataRecord(embedd ng: S mClustersEmbedd ng): DataRecord = {
 
-    val normalizedEmbedding = Map(
-      embedding.sortedClusterIds.map(_.toString).zip(embedding.normalizedSortedScores): _*)
+    val normal zedEmbedd ng = Map(
+      embedd ng.sortedCluster ds.map(_.toStr ng).z p(embedd ng.normal zedSortedScores): _*)
 
-    val dataRecord = new DataRecord().setFeatureValue(embeddingFeature, normalizedEmbedding)
-    dataRecord.setFeatureValue(normFeature, embedding.l2norm)
+    val dataRecord = new DataRecord().setFeatureValue(embedd ngFeature, normal zedEmbedd ng)
+    dataRecord.setFeatureValue(normFeature, embedd ng.l2norm)
   }
 }

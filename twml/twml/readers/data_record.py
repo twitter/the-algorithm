@@ -1,15 +1,15 @@
-# pylint: disable=invalid-name
+# pyl nt: d sable= nval d-na 
 """
-This module includes facilities for manipulating data records.
+T  module  ncludes fac l  es for man pulat ng data records.
 """
 
-from twitter.deepbird.io.legacy.readers.data_record import (
+from tw ter.deepb rd. o.legacy.readers.data_record  mport (
   _SPEC_TO_TF,  # noqa: F401
-  SPARSE_DATA_RECORD_FEATURE_FIELDS,  # noqa: F401
+  SPARSE_DATA_RECORD_FEATURE_F ELDS,  # noqa: F401
   _FeaturesBase,  # noqa: F401
   _Features,  # noqa: F401
-  _DiscreteFeatures,  # noqa: F401
-  _StringFeatures,  # noqa: F401
+  _D screteFeatures,  # noqa: F401
+  _Str ngFeatures,  # noqa: F401
   _BaseDataRecord,  # noqa: F401
   DataRecord,  # noqa: F401
 )

@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.candidate_source.business_profiles
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.bus ness_prof les
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherWithSourceFeaturesSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn.{
-  Value => TeamMembersSlice
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.NextCursorFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.Prev ousCursorFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ewFetc rW hS ceFeaturesS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.consu r_ dent y.bus ness_prof les.Bus nessProf leTeam mbersOnUserCl entColumn
+ mport com.tw ter.strato.generated.cl ent.consu r_ dent y.bus ness_prof les.Bus nessProf leTeam mbersOnUserCl entColumn.{
+  Value => Team mbersSl ce
 }
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn.{
-  View => TeamMembersView
+ mport com.tw ter.strato.generated.cl ent.consu r_ dent y.bus ness_prof les.Bus nessProf leTeam mbersOnUserCl entColumn.{
+  V ew => Team mbersV ew
 }
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TeamMembersCandidateSource @Inject() (
-  column: BusinessProfileTeamMembersOnUserClientColumn)
-    extends StratoKeyViewFetcherWithSourceFeaturesSource[
+@S ngleton
+class Team mbersCand dateS ce @ nject() (
+  column: Bus nessProf leTeam mbersOnUserCl entColumn)
+    extends StratoKeyV ewFetc rW hS ceFeaturesS ce[
       Long,
-      TeamMembersView,
-      TeamMembersSlice,
+      Team mbersV ew,
+      Team mbersSl ce,
       Long
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "BusinessProfileTeamMembers")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    "Bus nessProf leTeam mbers")
 
-  override val fetcher: Fetcher[Long, TeamMembersView, TeamMembersSlice] = column.fetcher
+  overr de val fetc r: Fetc r[Long, Team mbersV ew, Team mbersSl ce] = column.fetc r
 
-  override def stratoResultTransformer(
+  overr de def stratoResultTransfor r(
     stratoKey: Long,
-    stratoResult: TeamMembersSlice
+    stratoResult: Team mbersSl ce
   ): Seq[Long] =
-    stratoResult.members
+    stratoResult. mbers
 
-  override protected def extractFeaturesFromStratoResult(
+  overr de protected def extractFeaturesFromStratoResult(
     stratoKey: Long,
-    stratoResult: TeamMembersSlice
+    stratoResult: Team mbersSl ce
   ): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    stratoResult.previousCursor.foreach { cursor =>
-      featureMapBuilder.add(PreviousCursorFeature, cursor.toString)
+    val featureMapBu lder = FeatureMapBu lder()
+    stratoResult.prev ousCursor.foreach { cursor =>
+      featureMapBu lder.add(Prev ousCursorFeature, cursor.toStr ng)
     }
     stratoResult.nextCursor.foreach { cursor =>
-      featureMapBuilder.add(NextCursorFeature, cursor.toString)
+      featureMapBu lder.add(NextCursorFeature, cursor.toStr ng)
     }
-    featureMapBuilder.build()
+    featureMapBu lder.bu ld()
   }
 }

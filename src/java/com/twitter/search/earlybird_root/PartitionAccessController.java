@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.root.SearchRootModule;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
 
 /**
- * Determines if a root should send requests to certain partitions based on if they have been turned
- * off by decider.
+ * Determ nes  f a root should send requests to certa n part  ons based on  f t y have been turned
+ * off by dec der.
  */
-public class PartitionAccessController {
-  private final String clusterName;
-  private final SearchDecider decider;
+publ c class Part  onAccessController {
+  pr vate f nal Str ng clusterNa ;
+  pr vate f nal SearchDec der dec der;
 
-  @Inject
-  public PartitionAccessController(
-      @Named(SearchRootModule.NAMED_SEARCH_ROOT_NAME) String clusterName,
-      @Named(SearchRootModule.NAMED_PARTITION_DECIDER) SearchDecider partitionDecider) {
-    this.clusterName = clusterName;
-    this.decider = partitionDecider;
+  @ nject
+  publ c Part  onAccessController(
+      @Na d(SearchRootModule.NAMED_SEARCH_ROOT_NAME) Str ng clusterNa ,
+      @Na d(SearchRootModule.NAMED_PART T ON_DEC DER) SearchDec der part  onDec der) {
+    t .clusterNa  = clusterNa ;
+    t .dec der = part  onDec der;
   }
 
   /**
-   * Should root send requests to a given partition
-   * Designed to be used to quickly stop hitting a partition of there are problems with it.
+   * Should root send requests to a g ven part  on
+   * Des gned to be used to qu ckly stop h t ng a part  on of t re are problems w h  .
    */
-  public boolean canAccessPartition(
-      String tierName, int partitionNum, String clientId, EarlybirdRequestType requestType) {
+  publ c boolean canAccessPart  on(
+      Str ng t erNa ,  nt part  onNum, Str ng cl ent d, Earlyb rdRequestType requestType) {
 
-    String partitionDeciderName =
-        String.format("cluster_%s_skip_tier_%s_partition_%s", clusterName, tierName, partitionNum);
-    if (decider.isAvailable(partitionDeciderName)) {
-      SearchCounter.export(partitionDeciderName).increment();
+    Str ng part  onDec derNa  =
+        Str ng.format("cluster_%s_sk p_t er_%s_part  on_%s", clusterNa , t erNa , part  onNum);
+     f (dec der. sAva lable(part  onDec derNa )) {
+      SearchCounter.export(part  onDec derNa ). ncre nt();
       return false;
     }
 
-    String clientDeciderName = String.format("cluster_%s_skip_tier_%s_partition_%s_client_id_%s",
-        clusterName, tierName, partitionNum, clientId);
-    if (decider.isAvailable(clientDeciderName)) {
-      SearchCounter.export(clientDeciderName).increment();
+    Str ng cl entDec derNa  = Str ng.format("cluster_%s_sk p_t er_%s_part  on_%s_cl ent_ d_%s",
+        clusterNa , t erNa , part  onNum, cl ent d);
+     f (dec der. sAva lable(cl entDec derNa )) {
+      SearchCounter.export(cl entDec derNa ). ncre nt();
       return false;
     }
 
-    String requestTypeDeciderName = String.format(
-        "cluster_%s_skip_tier_%s_partition_%s_request_type_%s",
-        clusterName, tierName, partitionNum, requestType.getNormalizedName());
-    if (decider.isAvailable(requestTypeDeciderName)) {
-      SearchCounter.export(requestTypeDeciderName).increment();
+    Str ng requestTypeDec derNa  = Str ng.format(
+        "cluster_%s_sk p_t er_%s_part  on_%s_request_type_%s",
+        clusterNa , t erNa , part  onNum, requestType.getNormal zedNa ());
+     f (dec der. sAva lable(requestTypeDec derNa )) {
+      SearchCounter.export(requestTypeDec derNa ). ncre nt();
       return false;
     }
 
-    String clientRequestTypeDeciderName = String.format(
-        "cluster_%s_skip_tier_%s_partition_%s_client_id_%s_request_type_%s",
-        clusterName, tierName, partitionNum, clientId, requestType.getNormalizedName());
-    if (decider.isAvailable(clientRequestTypeDeciderName)) {
-      SearchCounter.export(clientRequestTypeDeciderName).increment();
+    Str ng cl entRequestTypeDec derNa  = Str ng.format(
+        "cluster_%s_sk p_t er_%s_part  on_%s_cl ent_ d_%s_request_type_%s",
+        clusterNa , t erNa , part  onNum, cl ent d, requestType.getNormal zedNa ());
+     f (dec der. sAva lable(cl entRequestTypeDec derNa )) {
+      SearchCounter.export(cl entRequestTypeDec derNa ). ncre nt();
       return false;
     }
 
     return true;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  publ c Str ng getClusterNa () {
+    return clusterNa ;
   }
 }

@@ -1,174 +1,174 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
-import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditInvalidEditControlException
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditUpdateEditControlException
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditControlEdit
-import com.twitter.tweetypie.thriftscala.EditControlInitial
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Try
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Duration
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t etyp e.ut l.T etEd Fa lure.T etEd  nval dEd ControlExcept on
+ mport com.tw ter.t etyp e.ut l.T etEd Fa lure.T etEd UpdateEd ControlExcept on
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala.Ed ControlEd 
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control n  al
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Durat on
 
-object EditControlUtil {
+object Ed ControlUt l {
 
-  val maxTweetEditsAllowed = 5
-  val oldEditTimeWindow = Duration.fromMinutes(30)
-  val editTimeWindow = Duration.fromMinutes(60)
+  val maxT etEd sAllo d = 5
+  val oldEd T  W ndow = Durat on.fromM nutes(30)
+  val ed T  W ndow = Durat on.fromM nutes(60)
 
-  def editControlEdit(
-    initialTweetId: TweetId,
-    editControlInitial: Option[EditControlInitial] = None
-  ): EditControl.Edit =
-    EditControl.Edit(
-      EditControlEdit(initialTweetId = initialTweetId, editControlInitial = editControlInitial))
+  def ed ControlEd (
+     n  alT et d: T et d,
+    ed Control n  al: Opt on[Ed Control n  al] = None
+  ): Ed Control.Ed  =
+    Ed Control.Ed (
+      Ed ControlEd ( n  alT et d =  n  alT et d, ed Control n  al = ed Control n  al))
 
-  // EditControl for the tweet that is not an edit, that is, any regular tweet we create
-  // that can, potentially, be edited later.
-  def makeEditControlInitial(
-    tweetId: TweetId,
-    createdAt: Time,
-    setEditWindowToSixtyMinutes: Gate[Unit] = Gate(_ => false)
-  ): EditControl.Initial = {
-    val editWindow = if (setEditWindowToSixtyMinutes()) editTimeWindow else oldEditTimeWindow
-    val initial = EditControlInitial(
-      editTweetIds = Seq(tweetId),
-      editableUntilMsecs = Some(createdAt.plus(editWindow).inMilliseconds),
-      editsRemaining = Some(maxTweetEditsAllowed),
-      isEditEligible = defaultIsEditEligible,
+  // Ed Control for t  t et that  s not an ed , that  s, any regular t et   create
+  // that can, potent ally, be ed ed later.
+  def makeEd Control n  al(
+    t et d: T et d,
+    createdAt: T  ,
+    setEd W ndowToS xtyM nutes: Gate[Un ] = Gate(_ => false)
+  ): Ed Control. n  al = {
+    val ed W ndow =  f (setEd W ndowToS xtyM nutes()) ed T  W ndow else oldEd T  W ndow
+    val  n  al = Ed Control n  al(
+      ed T et ds = Seq(t et d),
+      ed ableUnt lMsecs = So (createdAt.plus(ed W ndow). nM ll seconds),
+      ed sRema n ng = So (maxT etEd sAllo d),
+       sEd El g ble = default sEd El g ble,
     )
-    EditControl.Initial(initial)
+    Ed Control. n  al( n  al)
   }
 
-  // Returns if a given latestTweetId is the latest edit in the EditControl
-  def isLatestEdit(
-    tweetEditControl: Option[EditControl],
-    latestTweetId: TweetId
+  // Returns  f a g ven latestT et d  s t  latest ed   n t  Ed Control
+  def  sLatestEd (
+    t etEd Control: Opt on[Ed Control],
+    latestT et d: T et d
   ): Try[Boolean] = {
-    tweetEditControl match {
-      case Some(EditControl.Initial(initial)) =>
-        isLatestEditFromEditControlInitial(Some(initial), latestTweetId)
-      case Some(EditControl.Edit(edit)) =>
-        isLatestEditFromEditControlInitial(
-          edit.editControlInitial,
-          latestTweetId
+    t etEd Control match {
+      case So (Ed Control. n  al( n  al)) =>
+         sLatestEd FromEd Control n  al(So ( n  al), latestT et d)
+      case So (Ed Control.Ed (ed )) =>
+         sLatestEd FromEd Control n  al(
+          ed .ed Control n  al,
+          latestT et d
         )
-      case _ => Throw(TweetEditInvalidEditControlException)
+      case _ => Throw(T etEd  nval dEd ControlExcept on)
     }
   }
 
-  // Returns if a given latestTweetId is the latest edit in the EditControlInitial
-  private def isLatestEditFromEditControlInitial(
-    initialTweetEditControl: Option[EditControlInitial],
-    latestTweetId: TweetId
+  // Returns  f a g ven latestT et d  s t  latest ed   n t  Ed Control n  al
+  pr vate def  sLatestEd FromEd Control n  al(
+     n  alT etEd Control: Opt on[Ed Control n  al],
+    latestT et d: T et d
   ): Try[Boolean] = {
-    initialTweetEditControl match {
-      case Some(initial) =>
-        Return(latestTweetId == initial.editTweetIds.last)
-      case _ => Throw(TweetEditInvalidEditControlException)
+     n  alT etEd Control match {
+      case So ( n  al) =>
+        Return(latestT et d ==  n  al.ed T et ds.last)
+      case _ => Throw(T etEd  nval dEd ControlExcept on)
     }
   }
 
-  /* Create an updated edit control for an initialTweet given the id of the new edit */
-  def editControlForInitialTweet(
-    initialTweet: Tweet,
-    newEditId: TweetId
-  ): Try[EditControl.Initial] = {
-    initialTweet.editControl match {
-      case Some(EditControl.Initial(initial)) =>
-        Return(EditControl.Initial(plusEdit(initial, newEditId)))
+  /* Create an updated ed  control for an  n  alT et g ven t   d of t  new ed  */
+  def ed ControlFor n  alT et(
+     n  alT et: T et,
+    newEd  d: T et d
+  ): Try[Ed Control. n  al] = {
+     n  alT et.ed Control match {
+      case So (Ed Control. n  al( n  al)) =>
+        Return(Ed Control. n  al(plusEd ( n  al, newEd  d)))
 
-      case Some(EditControl.Edit(_)) => Throw(TweetEditUpdateEditControlException)
+      case So (Ed Control.Ed (_)) => Throw(T etEd UpdateEd ControlExcept on)
 
       case _ =>
-        initialTweet.coreData match {
-          case Some(coreData) =>
+         n  alT et.coreData match {
+          case So (coreData) =>
             Return(
-              makeEditControlInitial(
-                tweetId = initialTweet.id,
-                createdAt = Time.fromMilliseconds(coreData.createdAtSecs * 1000),
-                setEditWindowToSixtyMinutes = Gate(_ => true)
+              makeEd Control n  al(
+                t et d =  n  alT et. d,
+                createdAt = T  .fromM ll seconds(coreData.createdAtSecs * 1000),
+                setEd W ndowToS xtyM nutes = Gate(_ => true)
               )
             )
-          case None => Throw(new Exception("Tweet Missing Required CoreData"))
+          case None => Throw(new Except on("T et M ss ng Requ red CoreData"))
         }
     }
   }
 
-  def updateEditControl(tweet: Tweet, newEditId: TweetId): Try[Tweet] =
-    editControlForInitialTweet(tweet, newEditId).map { editControl =>
-      tweet.copy(editControl = Some(editControl))
+  def updateEd Control(t et: T et, newEd  d: T et d): Try[T et] =
+    ed ControlFor n  alT et(t et, newEd  d).map { ed Control =>
+      t et.copy(ed Control = So (ed Control))
     }
 
-  def plusEdit(initial: EditControlInitial, newEditId: TweetId): EditControlInitial = {
-    val newEditTweetIds = (initial.editTweetIds :+ newEditId).distinct.sorted
-    val editsCount = newEditTweetIds.size - 1 // as there is the original tweet ID there too.
-    initial.copy(
-      editTweetIds = newEditTweetIds,
-      editsRemaining = Some(maxTweetEditsAllowed - editsCount),
+  def plusEd ( n  al: Ed Control n  al, newEd  d: T et d): Ed Control n  al = {
+    val newEd T et ds = ( n  al.ed T et ds :+ newEd  d).d st nct.sorted
+    val ed sCount = newEd T et ds.s ze - 1 // as t re  s t  or g nal t et  D t re too.
+     n  al.copy(
+      ed T et ds = newEd T et ds,
+      ed sRema n ng = So (maxT etEd sAllo d - ed sCount),
     )
   }
 
-  // The ID of the initial Tweet if this is an edit
-  def getInitialTweetIdIfEdit(tweet: Tweet): Option[TweetId] = tweet.editControl match {
-    case Some(EditControl.Edit(edit)) => Some(edit.initialTweetId)
+  // T   D of t   n  al T et  f t   s an ed 
+  def get n  alT et d fEd (t et: T et): Opt on[T et d] = t et.ed Control match {
+    case So (Ed Control.Ed (ed )) => So (ed . n  alT et d)
     case _ => None
   }
 
-  // If this is the first tweet in an edit chain, return the same tweet id
-  // otherwise return the result of getInitialTweetId
-  def getInitialTweetId(tweet: Tweet): TweetId =
-    getInitialTweetIdIfEdit(tweet).getOrElse(tweet.id)
+  //  f t   s t  f rst t et  n an ed  cha n, return t  sa  t et  d
+  // ot rw se return t  result of get n  alT et d
+  def get n  alT et d(t et: T et): T et d =
+    get n  alT et d fEd (t et).getOrElse(t et. d)
 
-  def isInitialTweet(tweet: Tweet): Boolean =
-    getInitialTweetId(tweet) == tweet.id
+  def  s n  alT et(t et: T et): Boolean =
+    get n  alT et d(t et) == t et. d
 
-  // Extracted just so that we can easily track where the values of isEditEligible is coming from.
-  private def defaultIsEditEligible: Option[Boolean] = Some(true)
+  // Extracted just so that   can eas ly track w re t  values of  sEd El g ble  s com ng from.
+  pr vate def default sEd El g ble: Opt on[Boolean] = So (true)
 
-  // returns true if it's an edit of a Tweet or an initial Tweet that's been edited
-  def isEditTweet(tweet: Tweet): Boolean =
-    tweet.editControl match {
-      case Some(eci: EditControl.Initial) if eci.initial.editTweetIds.size <= 1 => false
-      case Some(_: EditControl.Initial) | Some(_: EditControl.Edit) | Some(
-            EditControl.UnknownUnionField(_)) =>
+  // returns true  f  's an ed  of a T et or an  n  al T et that's been ed ed
+  def  sEd T et(t et: T et): Boolean =
+    t et.ed Control match {
+      case So (ec : Ed Control. n  al)  f ec . n  al.ed T et ds.s ze <= 1 => false
+      case So (_: Ed Control. n  al) | So (_: Ed Control.Ed ) | So (
+            Ed Control.UnknownUn onF eld(_)) =>
         true
       case None => false
     }
 
-  // returns true if editControl is from an edit of a Tweet
-  // returns false for any other state, including edit intial.
-  def isEditControlEdit(editControl: EditControl): Boolean = {
-    editControl match {
-      case _: EditControl.Edit | EditControl.UnknownUnionField(_) => true
+  // returns true  f ed Control  s from an ed  of a T et
+  // returns false for any ot r state,  nclud ng ed   nt al.
+  def  sEd ControlEd (ed Control: Ed Control): Boolean = {
+    ed Control match {
+      case _: Ed Control.Ed  | Ed Control.UnknownUn onF eld(_) => true
       case _ => false
     }
   }
 
-  def getEditTweetIds(editControl: Option[EditControl]): Try[Seq[TweetId]] = {
-    editControl match {
-      case Some(EditControl.Edit(EditControlEdit(_, Some(eci)))) =>
-        Return(eci.editTweetIds)
-      case Some(EditControl.Initial(initial)) =>
-        Return(initial.editTweetIds)
+  def getEd T et ds(ed Control: Opt on[Ed Control]): Try[Seq[T et d]] = {
+    ed Control match {
+      case So (Ed Control.Ed (Ed ControlEd (_, So (ec )))) =>
+        Return(ec .ed T et ds)
+      case So (Ed Control. n  al( n  al)) =>
+        Return( n  al.ed T et ds)
       case _ =>
-        Throw(new Exception(s"EditControlInitial not found in $editControl"))
+        Throw(new Except on(s"Ed Control n  al not found  n $ed Control"))
     }
   }
 }
 
-object TweetEditFailure {
-  abstract class TweetEditException(msg: String) extends Exception(msg)
+object T etEd Fa lure {
+  abstract class T etEd Except on(msg: Str ng) extends Except on(msg)
 
-  case object TweetEditGetInitialEditControlException
-      extends TweetEditException("Initial EditControl not found")
+  case object T etEd Get n  alEd ControlExcept on
+      extends T etEd Except on(" n  al Ed Control not found")
 
-  case object TweetEditInvalidEditControlException
-      extends TweetEditException("Invalid EditControl for initial_tweet")
+  case object T etEd  nval dEd ControlExcept on
+      extends T etEd Except on(" nval d Ed Control for  n  al_t et")
 
-  case object TweetEditUpdateEditControlException
-      extends TweetEditException("Invalid Edit Control Update")
+  case object T etEd UpdateEd ControlExcept on
+      extends T etEd Except on(" nval d Ed  Control Update")
 }

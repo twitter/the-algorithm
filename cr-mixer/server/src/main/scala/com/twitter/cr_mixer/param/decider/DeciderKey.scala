@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.param.decider
+package com.tw ter.cr_m xer.param.dec der
 
-import com.twitter.servo.decider.DeciderKeyEnum
+ mport com.tw ter.servo.dec der.Dec derKeyEnum
 
-object DeciderConstants {
-  val enableHealthSignalsScoreDeciderKey = "enable_tweet_health_score"
-  val enableUTGRealTimeTweetEngagementScoreDeciderKey = "enable_utg_realtime_tweet_engagement_score"
-  val enableUserAgathaScoreDeciderKey = "enable_user_agatha_score"
-  val enableUserTweetEntityGraphTrafficDeciderKey = "enable_user_tweet_entity_graph_traffic"
-  val enableUserTweetGraphTrafficDeciderKey = "enable_user_tweet_graph_traffic"
-  val enableUserVideoGraphTrafficDeciderKey = "enable_user_video_graph_traffic"
-  val enableUserAdGraphTrafficDeciderKey = "enable_user_ad_graph_traffic"
-  val enableSimClustersANN2DarkTrafficDeciderKey = "enable_simclusters_ann_2_dark_traffic"
-  val enableQigSimilarTweetsTrafficDeciderKey = "enable_qig_similar_tweets_traffic"
-  val enableFRSTrafficDeciderKey = "enable_frs_traffic"
-  val upperFunnelPerStepScribeRate = "upper_funnel_per_step_scribe_rate"
-  val kafkaMessageScribeSampleRate = "kafka_message_scribe_sample_rate"
-  val enableRealGraphMhStoreDeciderKey = "enable_real_graph_mh_store"
-  val topLevelApiDdgMetricsScribeRate = "top_level_api_ddg_metrics_scribe_rate"
-  val adsRecommendationsPerExperimentScribeRate = "ads_recommendations_per_experiment_scribe_rate"
-  val enableScribeForBlueVerifiedTweetCandidates =
-    "enable_scribe_for_blue_verified_tweet_candidates"
+object Dec derConstants {
+  val enable althS gnalsScoreDec derKey = "enable_t et_ alth_score"
+  val enableUTGRealT  T etEngage ntScoreDec derKey = "enable_utg_realt  _t et_engage nt_score"
+  val enableUserAgathaScoreDec derKey = "enable_user_agatha_score"
+  val enableUserT etEnt yGraphTraff cDec derKey = "enable_user_t et_ent y_graph_traff c"
+  val enableUserT etGraphTraff cDec derKey = "enable_user_t et_graph_traff c"
+  val enableUserV deoGraphTraff cDec derKey = "enable_user_v deo_graph_traff c"
+  val enableUserAdGraphTraff cDec derKey = "enable_user_ad_graph_traff c"
+  val enableS mClustersANN2DarkTraff cDec derKey = "enable_s mclusters_ann_2_dark_traff c"
+  val enableQ gS m larT etsTraff cDec derKey = "enable_q g_s m lar_t ets_traff c"
+  val enableFRSTraff cDec derKey = "enable_frs_traff c"
+  val upperFunnelPerStepScr beRate = "upper_funnel_per_step_scr be_rate"
+  val kafka ssageScr beSampleRate = "kafka_ ssage_scr be_sample_rate"
+  val enableRealGraphMhStoreDec derKey = "enable_real_graph_mh_store"
+  val topLevelAp Ddg tr csScr beRate = "top_level_ap _ddg_ tr cs_scr be_rate"
+  val adsRecom ndat onsPerExper  ntScr beRate = "ads_recom ndat ons_per_exper  nt_scr be_rate"
+  val enableScr beForBlueVer f edT etCand dates =
+    "enable_scr be_for_blue_ver f ed_t et_cand dates"
 
-  val enableUserStateStoreDeciderKey = "enable_user_state_store"
-  val enableUserMediaRepresentationStoreDeciderKey =
-    "enable_user_media_representation_store"
-  val enableMagicRecsRealTimeAggregatesStoreDeciderKey =
-    "enable_magic_recs_real_time_aggregates_store"
+  val enableUserStateStoreDec derKey = "enable_user_state_store"
+  val enableUser d aRepresentat onStoreDec derKey =
+    "enable_user_ d a_representat on_store"
+  val enableMag cRecsRealT  AggregatesStoreDec derKey =
+    "enable_mag c_recs_real_t  _aggregates_store"
 
-  val enableEarlybirdTrafficDeciderKey = "enable_earlybird_traffic"
+  val enableEarlyb rdTraff cDec derKey = "enable_earlyb rd_traff c"
 
-  val enableTopicTweetTrafficDeciderKey = "enable_topic_tweet_traffic"
+  val enableTop cT etTraff cDec derKey = "enable_top c_t et_traff c"
 
-  val getTweetRecommendationsCacheRate = "get_tweet_recommendations_cache_rate"
+  val getT etRecom ndat onsCac Rate = "get_t et_recom ndat ons_cac _rate"
 }
 
-object DeciderKey extends DeciderKeyEnum {
+object Dec derKey extends Dec derKeyEnum {
 
-  val enableHealthSignalsScoreDeciderKey: Value = Value(
-    DeciderConstants.enableHealthSignalsScoreDeciderKey
-  )
-
-  val enableUtgRealTimeTweetEngagementScoreDeciderKey: Value = Value(
-    DeciderConstants.enableUTGRealTimeTweetEngagementScoreDeciderKey
-  )
-  val enableUserAgathaScoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserAgathaScoreDeciderKey
-  )
-  val enableUserMediaRepresentationStoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserMediaRepresentationStoreDeciderKey
+  val enable althS gnalsScoreDec derKey: Value = Value(
+    Dec derConstants.enable althS gnalsScoreDec derKey
   )
 
-  val enableMagicRecsRealTimeAggregatesStore: Value = Value(
-    DeciderConstants.enableMagicRecsRealTimeAggregatesStoreDeciderKey
+  val enableUtgRealT  T etEngage ntScoreDec derKey: Value = Value(
+    Dec derConstants.enableUTGRealT  T etEngage ntScoreDec derKey
+  )
+  val enableUserAgathaScoreDec derKey: Value = Value(
+    Dec derConstants.enableUserAgathaScoreDec derKey
+  )
+  val enableUser d aRepresentat onStoreDec derKey: Value = Value(
+    Dec derConstants.enableUser d aRepresentat onStoreDec derKey
   )
 
-  val enableUserStateStoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserStateStoreDeciderKey
+  val enableMag cRecsRealT  AggregatesStore: Value = Value(
+    Dec derConstants.enableMag cRecsRealT  AggregatesStoreDec derKey
   )
 
-  val enableRealGraphMhStoreDeciderKey: Value = Value(
-    DeciderConstants.enableRealGraphMhStoreDeciderKey
+  val enableUserStateStoreDec derKey: Value = Value(
+    Dec derConstants.enableUserStateStoreDec derKey
   )
 
-  val enableEarlybirdTrafficDeciderKey: Value = Value(
-    DeciderConstants.enableEarlybirdTrafficDeciderKey)
+  val enableRealGraphMhStoreDec derKey: Value = Value(
+    Dec derConstants.enableRealGraphMhStoreDec derKey
+  )
+
+  val enableEarlyb rdTraff cDec derKey: Value = Value(
+    Dec derConstants.enableEarlyb rdTraff cDec derKey)
 }

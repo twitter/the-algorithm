@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.tw ter.product_m xer.component_l brary.model.presentat on.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.common.presentat on.urt.BaseUrt emPresentat on
+ mport com.tw ter.product_m xer.core.model.common.presentat on.urt.BaseUrtModulePresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-case class UrtItemPresentation(
-  override val timelineItem: TimelineItem,
-  override val modulePresentation: Option[BaseUrtModulePresentation] = None)
-    extends BaseUrtItemPresentation
+case class Urt emPresentat on(
+  overr de val t  l ne em: T  l ne em,
+  overr de val modulePresentat on: Opt on[BaseUrtModulePresentat on] = None)
+    extends BaseUrt emPresentat on

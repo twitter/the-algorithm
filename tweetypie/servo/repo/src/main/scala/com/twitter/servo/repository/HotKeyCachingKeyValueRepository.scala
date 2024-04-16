@@ -1,73 +1,73 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.cache.{InProcessCache, StatsReceiverCacheObserver}
-import com.twitter.servo.util.FrequencyCounter
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.servo.cac .{ nProcessCac , StatsRece verCac Observer}
+ mport com.tw ter.servo.ut l.FrequencyCounter
+ mport com.tw ter.ut l.Future
 
 /**
- * A KeyValueRepository which uses a sliding window to track
- * the frequency at which keys are requested and diverts requests
- * for keys above the promotionThreshold through an in-memory request cache.
+ * A KeyValueRepos ory wh ch uses a sl d ng w ndow to track
+ * t  frequency at wh ch keys are requested and d verts requests
+ * for keys above t  promot onThreshold through an  n- mory request cac .
  *
- * @param underlyingRepo
- *   the underlying KeyValueRepository
+ * @param underly ngRepo
+ *   t  underly ng KeyValueRepos ory
  * @param newQuery
- *   a function for converting a subset of the keys of the original query into a new query.
- * @param windowSize
- *   the number of previous requests to include in the window
- * @param promotionThreshold
- *   the number of requests for the same key in the window required
- *   to divert the request through the request cache
- * @param cacheFactory
- *   a function which constructs a future response cache of the given size
- * @param statsReceiver
- *   records stats on the cache
- * @param disableLogging
- *   disables logging in token cache for pdp purposes
+ *   a funct on for convert ng a subset of t  keys of t  or g nal query  nto a new query.
+ * @param w ndowS ze
+ *   t  number of prev ous requests to  nclude  n t  w ndow
+ * @param promot onThreshold
+ *   t  number of requests for t  sa  key  n t  w ndow requ red
+ *   to d vert t  request through t  request cac 
+ * @param cac Factory
+ *   a funct on wh ch constructs a future response cac  of t  g ven s ze
+ * @param statsRece ver
+ *   records stats on t  cac 
+ * @param d sableLogg ng
+ *   d sables logg ng  n token cac  for pdp purposes
  */
-object HotKeyCachingKeyValueRepository {
+object HotKeyCach ngKeyValueRepos ory {
   def apply[Q <: Seq[K], K, V](
-    underlyingRepo: KeyValueRepository[Q, K, V],
-    newQuery: SubqueryBuilder[Q, K],
-    windowSize: Int,
-    promotionThreshold: Int,
-    cacheFactory: Int => InProcessCache[K, Future[Option[V]]],
-    statsReceiver: StatsReceiver,
-    disableLogging: Boolean = false
-  ): KeyValueRepository[Q, K, V] = {
-    val log = Logger.get(getClass.getSimpleName)
+    underly ngRepo: KeyValueRepos ory[Q, K, V],
+    newQuery: SubqueryBu lder[Q, K],
+    w ndowS ze:  nt,
+    promot onThreshold:  nt,
+    cac Factory:  nt =>  nProcessCac [K, Future[Opt on[V]]],
+    statsRece ver: StatsRece ver,
+    d sableLogg ng: Boolean = false
+  ): KeyValueRepos ory[Q, K, V] = {
+    val log = Logger.get(getClass.getS mpleNa )
 
-    val promotionsCounter = statsReceiver.counter("promotions")
+    val promot onsCounter = statsRece ver.counter("promot ons")
 
-    val onPromotion = { (k: K) =>
-      log.debug("key %s promoted to HotKeyCache", k.toString)
-      promotionsCounter.incr()
+    val onPromot on = { (k: K) =>
+      log.debug("key %s promoted to HotKeyCac ", k.toStr ng)
+      promot onsCounter. ncr()
     }
 
-    val frequencyCounter = new FrequencyCounter[K](windowSize, promotionThreshold, onPromotion)
+    val frequencyCounter = new FrequencyCounter[K](w ndowS ze, promot onThreshold, onPromot on)
 
-    // Maximum cache size occurs in the event that every key in the buffer occurs
-    // `promotionThreshold` times. We apply a failure-refreshing filter to avoid
-    // caching failed responses.
-    val cache =
-      InProcessCache.withFilter(
-        cacheFactory(windowSize / promotionThreshold)
+    // Max mum cac  s ze occurs  n t  event that every key  n t  buffer occurs
+    // `promot onThreshold` t  s.   apply a fa lure-refresh ng f lter to avo d
+    // cach ng fa led responses.
+    val cac  =
+       nProcessCac .w hF lter(
+        cac Factory(w ndowS ze / promot onThreshold)
       )(
-        ResponseCachingKeyValueRepository.refreshFailures
+        ResponseCach ngKeyValueRepos ory.refreshFa lures
       )
 
     val observer =
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, "request_cache", disableLogging)
+      new StatsRece verCac Observer(statsRece ver, w ndowS ze, "request_cac ", d sableLogg ng)
 
-    val cachingRepo =
-      new ResponseCachingKeyValueRepository[Q, K, V](underlyingRepo, cache, newQuery, observer)
+    val cach ngRepo =
+      new ResponseCach ngKeyValueRepos ory[Q, K, V](underly ngRepo, cac , newQuery, observer)
 
-    KeyValueRepository.selected(
-      frequencyCounter.incr,
-      cachingRepo,
-      underlyingRepo,
+    KeyValueRepos ory.selected(
+      frequencyCounter. ncr,
+      cach ngRepo,
+      underly ngRepo,
       newQuery
     )
   }

@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleShowMoreBehaviorBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleShowMoreBehav orBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav orRevealByCount
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class ModuleDynamicShowMoreBehaviorRevealByCountBuilder(
-  initialItemsCount: Int,
-  showMoreItemsCount: Int)
-    extends BaseModuleShowMoreBehaviorBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class ModuleDynam cShowMoreBehav orRevealByCountBu lder(
+   n  al emsCount:  nt,
+  showMore emsCount:  nt)
+    extends BaseModuleShowMoreBehav orBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleShowMoreBehavior = ModuleShowMoreBehaviorRevealByCount(
-    initialItemsCount = initialItemsCount,
-    showMoreItemsCount = showMoreItemsCount
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Seq[Cand dateW hFeatures[Un versalNoun[Any]]]
+  ): ModuleShowMoreBehav or = ModuleShowMoreBehav orRevealByCount(
+     n  al emsCount =  n  al emsCount,
+    showMore emsCount = showMore emsCount
   )
 }

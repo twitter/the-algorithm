@@ -1,15 +1,15 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
-import com.twitter.timelineservice.thriftscala.TimelineEntryPerspective
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce.GetPerspect ves
+ mport com.tw ter.t  l neserv ce.thr ftscala.T  l neEntryPerspect ve
 
-object PerspectiveRepository {
+object Perspect veRepos ory {
 
   /**
-   * Same type as com.twitter.stitch.timelineservice.TimelineService.GetPerspectives but without
-   * using Arrow.
+   * Sa  type as com.tw ter.st ch.t  l neserv ce.T  l neServ ce.GetPerspect ves but w hout
+   * us ng Arrow.
    */
-  type Type = GetPerspectives.Query => Stitch[TimelineEntryPerspective]
+  type Type = GetPerspect ves.Query => St ch[T  l neEntryPerspect ve]
 }

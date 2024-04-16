@@ -1,14 +1,14 @@
-package com.twitter.visibility.configapi
+package com.tw ter.v s b l y.conf gap 
 
-import com.twitter.timelines.configapi._
+ mport com.tw ter.t  l nes.conf gap ._
 
-case class VisibilityRequestContext(
-  userId: Option[Long],
-  guestId: Option[Long],
-  experimentContext: ExperimentContext = NullExperimentContext,
+case class V s b l yRequestContext(
+  user d: Opt on[Long],
+  guest d: Opt on[Long],
+  exper  ntContext: Exper  ntContext = NullExper  ntContext,
   featureContext: FeatureContext = NullFeatureContext)
     extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithExperimentContext
-    with WithFeatureContext
+    w h W hUser d
+    w h W hGuest d
+    w h W hExper  ntContext
+    w h W hFeatureContext

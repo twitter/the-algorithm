@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.tw ter.t etyp e.thr ftscala.ent  es
 
-import com.twitter.tweetypie.thriftscala.TextRange
-import com.twitter.tweetypie.tweettext.TextEntity
+ mport com.tw ter.t etyp e.thr ftscala.TextRange
+ mport com.tw ter.t etyp e.t ettext.TextEnt y
 
-object TextRangeEntityAdapter extends TextEntity[TextRange] {
-  override def fromIndex(entity: TextRange): Short = entity.fromIndex.toShort
-  override def toIndex(entity: TextRange): Short = entity.toIndex.toShort
-  override def move(entity: TextRange, fromIndex: Short, toIndex: Short): TextRange =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+object TextRangeEnt yAdapter extends TextEnt y[TextRange] {
+  overr de def from ndex(ent y: TextRange): Short = ent y.from ndex.toShort
+  overr de def to ndex(ent y: TextRange): Short = ent y.to ndex.toShort
+  overr de def move(ent y: TextRange, from ndex: Short, to ndex: Short): TextRange =
+    ent y.copy(from ndex = from ndex, to ndex = to ndex)
 }

@@ -1,15 +1,15 @@
-package com.twitter.search.core.earlybird.index.extensions;
+package com.tw ter.search.core.earlyb rd. ndex.extens ons;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * Base index extensions class.
+ * Base  ndex extens ons class.
  */
-public interface EarlybirdIndexExtensionsData {
+publ c  nterface Earlyb rd ndexExtens onsData {
   /**
-   * Sets up the extensions for the given reader.
+   * Sets up t  extens ons for t  g ven reader.
    */
-  void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) throws IOException;
+  vo d setupExtens ons(Earlyb rd ndexSeg ntAtom cReader atom cReader) throws  OExcept on;
 }

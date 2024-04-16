@@ -1,148 +1,148 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.convers ons.Durat onOps._
 
-object FeatureStoreSourceParams {
-  case object EnableTopicAggregateFeatures
+object FeatureStoreS ceParams {
+  case object EnableTop cAggregateFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTopicAggregateFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableTop cAggregateFeatures,
         default = true
       )
-  case object EnableAlgorithmAggregateFeatures
+  case object EnableAlgor hmAggregateFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAlgorithmAggregateFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableAlgor hmAggregateFeatures,
         default = false
       )
-  case object EnableAuthorTopicAggregateFeatures
+  case object EnableAuthorTop cAggregateFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAuthorTopicAggregateFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableAuthorTop cAggregateFeatures,
         default = true
       )
-  case object EnableUserTopicFeatures
+  case object EnableUserTop cFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserTopicFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableUserTop cFeatures,
         default = false
       )
   case object EnableTargetUserFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableTargetUserFeatures,
         default = true
       )
-  case object EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature
+  case object EnableTargetUserUserAuthorUserStateRealT  AggregatesFeature
       extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature,
+        na  =
+          FeatureHydrat onS cesFeatureSw chKeys.EnableTargetUserUserAuthorUserStateRealT  AggregatesFeature,
         default = true
       )
-  case object EnableTargetUserResurrectionFeatures
+  case object EnableTargetUserResurrect onFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserResurrectionFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableTargetUserResurrect onFeatures,
         default = true
       )
-  case object EnableTargetUserWtfImpressionFeatures
+  case object EnableTargetUserWtf mpress onFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserWtfImpressionFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableTargetUserWtf mpress onFeatures,
         default = true
       )
-  case object EnableCandidateUserFeatures
+  case object EnableCand dateUserFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableCand dateUserFeatures,
         default = true
       )
-  case object EnableCandidateUserAuthorRealTimeAggregateFeatures
+  case object EnableCand dateUserAuthorRealT  AggregateFeatures
       extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserAuthorRealTimeAggregateFeatures,
+        na  =
+          FeatureHydrat onS cesFeatureSw chKeys.EnableCand dateUserAuthorRealT  AggregateFeatures,
         default = true
       )
-  case object EnableCandidateUserResurrectionFeatures
+  case object EnableCand dateUserResurrect onFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserResurrectionFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableCand dateUserResurrect onFeatures,
         default = true
       )
-  case object EnableCandidateUserTimelinesAuthorAggregateFeatures
+  case object EnableCand dateUserT  l nesAuthorAggregateFeatures
       extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserTimelinesAuthorAggregateFeatures,
+        na  =
+          FeatureHydrat onS cesFeatureSw chKeys.EnableCand dateUserT  l nesAuthorAggregateFeatures,
         default = true
       )
-  case object EnableUserCandidateEdgeFeatures
+  case object EnableUserCand dateEdgeFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserCandidateEdgeFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableUserCand dateEdgeFeatures,
         default = true
       )
-  case object EnableUserCandidateWtfImpressionCandidateFeatures
+  case object EnableUserCand dateWtf mpress onCand dateFeatures
       extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableUserCandidateWtfImpressionCandidateFeatures,
+        na  =
+          FeatureHydrat onS cesFeatureSw chKeys.EnableUserCand dateWtf mpress onCand dateFeatures,
         default = true
       )
   case object EnableUserWtfAlgEdgeFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserWtfAlgEdgeFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableUserWtfAlgEdgeFeatures,
         default = false
       )
-  case object EnableSimilarToUserFeatures
+  case object EnableS m larToUserFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableSimilarToUserFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableS m larToUserFeatures,
         default = true
       )
 
-  case object EnableCandidatePrecomputedNotificationFeatures
+  case object EnableCand datePrecomputedNot f cat onFeatures
       extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidatePrecomputedNotificationFeatures,
+        na  =
+          FeatureHydrat onS cesFeatureSw chKeys.EnableCand datePrecomputedNot f cat onFeatures,
         default = false
       )
 
-  case object EnableCandidateClientFeatures
+  case object EnableCand dateCl entFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateClientFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableCand dateCl entFeatures,
         default = false
       )
 
-  case object EnableUserClientFeatures
+  case object EnableUserCl entFeatures
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserClientFeatures,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.EnableUserCl entFeatures,
         default = false
       )
 
-  case object EnableSeparateClientForTimelinesAuthors
+  case object EnableSeparateCl entForT  l nesAuthors
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForTimelinesAuthor,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.UseSeparateCl entForT  l nesAuthor,
         default = false
       )
 
-  case object EnableSeparateClientForMetricCenterUserCounting
+  case object EnableSeparateCl entFor tr cCenterUserCount ng
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientMetricCenterUserCounting,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.UseSeparateCl ent tr cCenterUserCount ng,
         default = false
       )
 
-  case object EnableSeparateClientForNotifications
+  case object EnableSeparateCl entForNot f cat ons
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForNotifications,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.UseSeparateCl entForNot f cat ons,
         default = false
       )
 
-  case object EnableSeparateClientForGizmoduck
+  case object EnableSeparateCl entForG zmoduck
       extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForGizmoduck,
+        na  = FeatureHydrat onS cesFeatureSw chKeys.UseSeparateCl entForG zmoduck,
         default = false
       )
 
-  case object GlobalFetchTimeout
-      extends FSBoundedParam[Duration](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.FeatureHydrationTimeout,
-        default = 240.millisecond,
-        min = 100.millisecond,
-        max = 400.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+  case object GlobalFetchT  out
+      extends FSBoundedParam[Durat on](
+        na  = FeatureHydrat onS cesFeatureSw chKeys.FeatureHydrat onT  out,
+        default = 240.m ll second,
+        m n = 100.m ll second,
+        max = 400.m ll second)
+      w h HasDurat onConvers on {
+    overr de def durat onConvers on: Durat onConvers on = Durat onConvers on.FromM ll s
   }
 }

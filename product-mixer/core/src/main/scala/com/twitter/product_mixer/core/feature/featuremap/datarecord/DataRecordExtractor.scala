@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+package com.tw ter.product_m xer.core.feature.featuremap.datarecord
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.datarecord._
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport scala.collect on.JavaConverters._
 
 /**
- * Constructs a DataRecord from a FeatureMap, given a predefined set of features.
+ * Constructs a DataRecord from a FeatureMap, g ven a predef ned set of features.
  *
- * @param features predefined set of BaseDataRecordFeatures that should be included in the output DataRecord.
+ * @param features predef ned set of BaseDataRecordFeatures that should be  ncluded  n t  output DataRecord.
  */
 class DataRecordExtractor[DRFeature <: BaseDataRecordFeature[_, _]](
   features: Set[DRFeature]) {
 
-  private val featureContext = new FeatureContext(features.collect {
-    case dataRecordCompatible: DataRecordCompatible[_] => dataRecordCompatible.mlFeature
+  pr vate val featureContext = new FeatureContext(features.collect {
+    case dataRecordCompat ble: DataRecordCompat ble[_] => dataRecordCompat ble.mlFeature
   }.asJava)
 
   def fromDataRecord(dataRecord: DataRecord): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    val richDataRecord = SRichDataRecord(dataRecord, featureContext)
+    val featureMapBu lder = FeatureMapBu lder()
+    val r chDataRecord = SR chDataRecord(dataRecord, featureContext)
     features.foreach {
-      // FeatureStoreDataRecordFeature is currently not supported
+      // FeatureStoreDataRecordFeature  s currently not supported
       case _: FeatureStoreDataRecordFeature[_, _] =>
-        throw new UnsupportedOperationException(
+        throw new UnsupportedOperat onExcept on(
           "FeatureStoreDataRecordFeature cannot be extracted from a DataRecord")
-      case feature: DataRecordFeature[_, _] with DataRecordCompatible[_] =>
-        // Java API will return null, so use Option to convert it to Scala Option which is None when null.
-        richDataRecord.getFeatureValueOpt(feature.mlFeature)(
+      case feature: DataRecordFeature[_, _] w h DataRecordCompat ble[_] =>
+        // Java AP  w ll return null, so use Opt on to convert   to Scala Opt on wh ch  s None w n null.
+        r chDataRecord.getFeatureValueOpt(feature.mlFeature)(
           feature.fromDataRecordFeatureValue) match {
-          case Some(value) =>
-            featureMapBuilder.add(feature.asInstanceOf[Feature[_, feature.FeatureType]], value)
+          case So (value) =>
+            featureMapBu lder.add(feature.as nstanceOf[Feature[_, feature.FeatureType]], value)
           case None =>
-            featureMapBuilder.addFailure(
+            featureMapBu lder.addFa lure(
               feature,
-              PipelineFailure(
-                IllegalStateFailure,
-                s"Required DataRecord feature is missing: ${feature.mlFeature.getFeatureName}")
+              P pel neFa lure(
+                 llegalStateFa lure,
+                s"Requ red DataRecord feature  s m ss ng: ${feature.mlFeature.getFeatureNa }")
             )
         }
-      case feature: DataRecordOptionalFeature[_, _] with DataRecordCompatible[_] =>
+      case feature: DataRecordOpt onalFeature[_, _] w h DataRecordCompat ble[_] =>
         val featureValue =
-          richDataRecord.getFeatureValueOpt(feature.mlFeature)(feature.fromDataRecordFeatureValue)
-        featureMapBuilder
-          .add(feature.asInstanceOf[Feature[_, Option[feature.FeatureType]]], featureValue)
-      // DataRecordInAFeature is currently not supported
-      case _: DataRecordInAFeature[_] =>
-        throw new UnsupportedOperationException(
-          "DataRecordInAFeature cannot be extracted from a DataRecord")
+          r chDataRecord.getFeatureValueOpt(feature.mlFeature)(feature.fromDataRecordFeatureValue)
+        featureMapBu lder
+          .add(feature.as nstanceOf[Feature[_, Opt on[feature.FeatureType]]], featureValue)
+      // DataRecord nAFeature  s currently not supported
+      case _: DataRecord nAFeature[_] =>
+        throw new UnsupportedOperat onExcept on(
+          "DataRecord nAFeature cannot be extracted from a DataRecord")
     }
-    featureMapBuilder.build()
+    featureMapBu lder.bu ld()
   }
 }

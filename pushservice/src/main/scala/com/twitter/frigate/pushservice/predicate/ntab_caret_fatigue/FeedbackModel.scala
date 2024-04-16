@@ -1,134 +1,134 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.notificationservice.feedback.thriftscala.FeedbackMetadata
-import com.twitter.notificationservice.feedback.thriftscala.InlineFeedback
-import com.twitter.notificationservice.feedback.thriftscala.FeedbackValue
-import com.twitter.notificationservice.feedback.thriftscala.YesOrNoAnswer
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.FeedbackPromptValue
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.not f cat onserv ce.feedback.thr ftscala.Feedback tadata
+ mport com.tw ter.not f cat onserv ce.feedback.thr ftscala. nl neFeedback
+ mport com.tw ter.not f cat onserv ce.feedback.thr ftscala.FeedbackValue
+ mport com.tw ter.not f cat onserv ce.feedback.thr ftscala.YesOrNoAns r
 
-object FeedbackTypeEnum extends Enumeration {
+object FeedbackTypeEnum extends Enu rat on {
   val Unknown = Value
-  val CaretDislike = Value
-  val InlineDislike = Value
-  val InlineLike = Value
-  val InlineRevertedLike = Value
-  val InlineRevertedDislike = Value
+  val CaretD sl ke = Value
+  val  nl neD sl ke = Value
+  val  nl neL ke = Value
+  val  nl neRevertedL ke = Value
+  val  nl neRevertedD sl ke = Value
   val PromptRelevant = Value
-  val PromptIrrelevant = Value
-  val InlineDismiss = Value
-  val InlineRevertedDismiss = Value
-  val InlineSeeLess = Value
-  val InlineRevertedSeeLess = Value
-  val InlineNotRelevant = Value
-  val InlineRevertedNotRelevant = Value
+  val Prompt rrelevant = Value
+  val  nl neD sm ss = Value
+  val  nl neRevertedD sm ss = Value
+  val  nl neSeeLess = Value
+  val  nl neRevertedSeeLess = Value
+  val  nl neNotRelevant = Value
+  val  nl neRevertedNotRelevant = Value
 
-  def safeFindByName(name: String): Value =
-    values.find(_.toString.toLowerCase() == name.toLowerCase()).getOrElse(Unknown)
+  def safeF ndByNa (na : Str ng): Value =
+    values.f nd(_.toStr ng.toLo rCase() == na .toLo rCase()).getOrElse(Unknown)
 }
 
-trait FeedbackModel {
+tra  FeedbackModel {
 
-  def timestampMs: Long
+  def t  stampMs: Long
 
   def feedbackTypeEnum: FeedbackTypeEnum.Value
 
-  def notificationImpressionId: Option[String]
+  def not f cat on mpress on d: Opt on[Str ng]
 
-  def notification: Option[FrigateNotification] = None
+  def not f cat on: Opt on[Fr gateNot f cat on] = None
 }
 
 case class CaretFeedbackModel(
-  caretFeedbackDetails: CaretFeedbackDetails,
-  notificationOpt: Option[FrigateNotification] = None)
+  caretFeedbackDeta ls: CaretFeedbackDeta ls,
+  not f cat onOpt: Opt on[Fr gateNot f cat on] = None)
     extends FeedbackModel {
 
-  override def timestampMs: Long = caretFeedbackDetails.eventTimestamp
+  overr de def t  stampMs: Long = caretFeedbackDeta ls.eventT  stamp
 
-  override def feedbackTypeEnum: FeedbackTypeEnum.Value = FeedbackTypeEnum.CaretDislike
+  overr de def feedbackTypeEnum: FeedbackTypeEnum.Value = FeedbackTypeEnum.CaretD sl ke
 
-  override def notificationImpressionId: Option[String] = caretFeedbackDetails.impressionId
+  overr de def not f cat on mpress on d: Opt on[Str ng] = caretFeedbackDeta ls. mpress on d
 
-  override def notification: Option[FrigateNotification] = notificationOpt
+  overr de def not f cat on: Opt on[Fr gateNot f cat on] = not f cat onOpt
 
-  def notificationGenericType: Option[GenericType] = {
-    caretFeedbackDetails.genericNotificationMetadata match {
-      case Some(genericNotificationMetadata) =>
-        Some(genericNotificationMetadata.genericType)
+  def not f cat onGener cType: Opt on[Gener cType] = {
+    caretFeedbackDeta ls.gener cNot f cat on tadata match {
+      case So (gener cNot f cat on tadata) =>
+        So (gener cNot f cat on tadata.gener cType)
       case None => None
     }
   }
 }
 
-case class InlineFeedbackModel(
+case class  nl neFeedbackModel(
   feedback: FeedbackPromptValue,
-  notificationOpt: Option[FrigateNotification] = None)
+  not f cat onOpt: Opt on[Fr gateNot f cat on] = None)
     extends FeedbackModel {
 
-  override def timestampMs: Long = feedback.createdAt.inMilliseconds
+  overr de def t  stampMs: Long = feedback.createdAt. nM ll seconds
 
-  override def feedbackTypeEnum: FeedbackTypeEnum.Value = {
+  overr de def feedbackTypeEnum: FeedbackTypeEnum.Value = {
     feedback.feedbackValue match {
       case FeedbackValue(
             _,
             _,
             _,
-            Some(FeedbackMetadata.InlineFeedback(InlineFeedback(Some(answer))))) =>
-        FeedbackTypeEnum.safeFindByName("inline" + answer)
+            So (Feedback tadata. nl neFeedback( nl neFeedback(So (ans r))))) =>
+        FeedbackTypeEnum.safeF ndByNa (" nl ne" + ans r)
       case _ => FeedbackTypeEnum.Unknown
     }
   }
 
-  override def notificationImpressionId: Option[String] = Some(feedback.feedbackValue.impressionId)
+  overr de def not f cat on mpress on d: Opt on[Str ng] = So (feedback.feedbackValue. mpress on d)
 
-  override def notification: Option[FrigateNotification] = notificationOpt
+  overr de def not f cat on: Opt on[Fr gateNot f cat on] = not f cat onOpt
 }
 
 case class PromptFeedbackModel(
   feedback: FeedbackPromptValue,
-  notificationOpt: Option[FrigateNotification] = None)
+  not f cat onOpt: Opt on[Fr gateNot f cat on] = None)
     extends FeedbackModel {
 
-  override def timestampMs: Long = feedback.createdAt.inMilliseconds
+  overr de def t  stampMs: Long = feedback.createdAt. nM ll seconds
 
-  override def feedbackTypeEnum: FeedbackTypeEnum.Value = {
+  overr de def feedbackTypeEnum: FeedbackTypeEnum.Value = {
     feedback.feedbackValue match {
-      case FeedbackValue(_, _, _, Some(FeedbackMetadata.YesOrNoAnswer(answer))) =>
-        answer match {
-          case YesOrNoAnswer.Yes => FeedbackTypeEnum.PromptRelevant
-          case YesOrNoAnswer.No => FeedbackTypeEnum.PromptIrrelevant
+      case FeedbackValue(_, _, _, So (Feedback tadata.YesOrNoAns r(ans r))) =>
+        ans r match {
+          case YesOrNoAns r.Yes => FeedbackTypeEnum.PromptRelevant
+          case YesOrNoAns r.No => FeedbackTypeEnum.Prompt rrelevant
           case _ => FeedbackTypeEnum.Unknown
         }
       case _ => FeedbackTypeEnum.Unknown
     }
   }
 
-  override def notificationImpressionId: Option[String] = Some(feedback.feedbackValue.impressionId)
+  overr de def not f cat on mpress on d: Opt on[Str ng] = So (feedback.feedbackValue. mpress on d)
 
-  override def notification: Option[FrigateNotification] = notificationOpt
+  overr de def not f cat on: Opt on[Fr gateNot f cat on] = not f cat onOpt
 }
 
 object FeedbackModelHydrator {
 
-  def HydrateNotification(
+  def HydrateNot f cat on(
     feedbacks: Seq[FeedbackModel],
-    history: Seq[FrigateNotification]
+     tory: Seq[Fr gateNot f cat on]
   ): Seq[FeedbackModel] = {
     feedbacks.map {
-      case feedback @ (inlineFeedback: InlineFeedbackModel) =>
-        inlineFeedback.copy(notificationOpt = history.find(
-          _.impressionId
-            .equals(feedback.notificationImpressionId)))
+      case feedback @ ( nl neFeedback:  nl neFeedbackModel) =>
+         nl neFeedback.copy(not f cat onOpt =  tory.f nd(
+          _. mpress on d
+            .equals(feedback.not f cat on mpress on d)))
       case feedback @ (caretFeedback: CaretFeedbackModel) =>
-        caretFeedback.copy(notificationOpt = history.find(
-          _.impressionId
-            .equals(feedback.notificationImpressionId)))
+        caretFeedback.copy(not f cat onOpt =  tory.f nd(
+          _. mpress on d
+            .equals(feedback.not f cat on mpress on d)))
       case feedback @ (promptFeedback: PromptFeedbackModel) =>
-        promptFeedback.copy(notificationOpt = history.find(
-          _.impressionId
-            .equals(feedback.notificationImpressionId)))
+        promptFeedback.copy(not f cat onOpt =  tory.f nd(
+          _. mpress on d
+            .equals(feedback.not f cat on mpress on d)))
       case feedback => feedback
     }
 

@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotPinnableReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnedReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorBlockUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportTweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowTopic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowTopicV2
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteUser
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.NotP nnableReplyP nState
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.P nnableReplyP nState
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.P nnedReplyP nState
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orBlockUser
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orMarkNot nterestedTop c
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orReplyP nState
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orReportL st
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orReportT et
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orToggleFollowTop c
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orToggleFollowTop cV2
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orToggleFollowUser
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orToggleMuteL st
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orToggleMuteUser
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RichFeedbackBehaviorMarshaller @Inject() () {
+@S ngleton
+class R chFeedbackBehav orMarshaller @ nject() () {
 
-  def apply(richFeedbackBehavior: RichFeedbackBehavior): urt.RichFeedbackBehavior =
-    richFeedbackBehavior match {
-      case RichFeedbackBehaviorReportList(listId, userId) =>
-        urt.RichFeedbackBehavior.ReportList(urt.RichFeedbackBehaviorReportList(listId, userId))
-      case RichFeedbackBehaviorBlockUser(userId) =>
-        urt.RichFeedbackBehavior.BlockUser(urt.RichFeedbackBehaviorBlockUser(userId))
-      case RichFeedbackBehaviorToggleFollowTopic(topicId) =>
-        urt.RichFeedbackBehavior.ToggleFollowTopic(
-          urt.RichFeedbackBehaviorToggleFollowTopic(topicId))
-      case RichFeedbackBehaviorToggleFollowTopicV2(topicId) =>
-        urt.RichFeedbackBehavior.ToggleFollowTopicV2(
-          urt.RichFeedbackBehaviorToggleFollowTopicV2(topicId))
-      case RichFeedbackBehaviorToggleMuteList(listId) =>
-        urt.RichFeedbackBehavior.ToggleMuteList(urt.RichFeedbackBehaviorToggleMuteList(listId))
-      case RichFeedbackBehaviorMarkNotInterestedTopic(topicId) =>
-        urt.RichFeedbackBehavior.MarkNotInterestedTopic(
-          urt.RichFeedbackBehaviorMarkNotInterestedTopic(topicId))
-      case RichFeedbackBehaviorReplyPinState(replyPinState) =>
-        val pinState: urt.ReplyPinState = replyPinState match {
-          case PinnedReplyPinState => urt.ReplyPinState.Pinned
-          case PinnableReplyPinState => urt.ReplyPinState.Pinnable
-          case NotPinnableReplyPinState => urt.ReplyPinState.NotPinnable
+  def apply(r chFeedbackBehav or: R chFeedbackBehav or): urt.R chFeedbackBehav or =
+    r chFeedbackBehav or match {
+      case R chFeedbackBehav orReportL st(l st d, user d) =>
+        urt.R chFeedbackBehav or.ReportL st(urt.R chFeedbackBehav orReportL st(l st d, user d))
+      case R chFeedbackBehav orBlockUser(user d) =>
+        urt.R chFeedbackBehav or.BlockUser(urt.R chFeedbackBehav orBlockUser(user d))
+      case R chFeedbackBehav orToggleFollowTop c(top c d) =>
+        urt.R chFeedbackBehav or.ToggleFollowTop c(
+          urt.R chFeedbackBehav orToggleFollowTop c(top c d))
+      case R chFeedbackBehav orToggleFollowTop cV2(top c d) =>
+        urt.R chFeedbackBehav or.ToggleFollowTop cV2(
+          urt.R chFeedbackBehav orToggleFollowTop cV2(top c d))
+      case R chFeedbackBehav orToggleMuteL st(l st d) =>
+        urt.R chFeedbackBehav or.ToggleMuteL st(urt.R chFeedbackBehav orToggleMuteL st(l st d))
+      case R chFeedbackBehav orMarkNot nterestedTop c(top c d) =>
+        urt.R chFeedbackBehav or.MarkNot nterestedTop c(
+          urt.R chFeedbackBehav orMarkNot nterestedTop c(top c d))
+      case R chFeedbackBehav orReplyP nState(replyP nState) =>
+        val p nState: urt.ReplyP nState = replyP nState match {
+          case P nnedReplyP nState => urt.ReplyP nState.P nned
+          case P nnableReplyP nState => urt.ReplyP nState.P nnable
+          case NotP nnableReplyP nState => urt.ReplyP nState.NotP nnable
         }
-        urt.RichFeedbackBehavior.ReplyPinState(urt.RichFeedbackBehaviorReplyPinState(pinState))
-      case RichFeedbackBehaviorToggleMuteUser(userId) =>
-        urt.RichFeedbackBehavior.ToggleMuteUser(urt.RichFeedbackBehaviorToggleMuteUser(userId))
-      case RichFeedbackBehaviorToggleFollowUser(userId) =>
-        urt.RichFeedbackBehavior.ToggleFollowUser(urt.RichFeedbackBehaviorToggleFollowUser(userId))
-      case RichFeedbackBehaviorReportTweet(entryId) =>
-        urt.RichFeedbackBehavior.ReportTweet(urt.RichFeedbackBehaviorReportTweet(entryId))
+        urt.R chFeedbackBehav or.ReplyP nState(urt.R chFeedbackBehav orReplyP nState(p nState))
+      case R chFeedbackBehav orToggleMuteUser(user d) =>
+        urt.R chFeedbackBehav or.ToggleMuteUser(urt.R chFeedbackBehav orToggleMuteUser(user d))
+      case R chFeedbackBehav orToggleFollowUser(user d) =>
+        urt.R chFeedbackBehav or.ToggleFollowUser(urt.R chFeedbackBehav orToggleFollowUser(user d))
+      case R chFeedbackBehav orReportT et(entry d) =>
+        urt.R chFeedbackBehav or.ReportT et(urt.R chFeedbackBehav orReportT et(entry d))
     }
 }

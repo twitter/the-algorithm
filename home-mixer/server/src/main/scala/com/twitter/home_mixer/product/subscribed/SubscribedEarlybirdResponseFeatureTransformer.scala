@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.product.subscribed
+package com.tw ter.ho _m xer.product.subscr bed
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.search.earlybird.{thriftscala => t}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
 
-object SubscribedEarlybirdResponseFeatureTransformer
-    extends CandidateFeatureTransformer[t.ThriftSearchResult] {
+object Subscr bedEarlyb rdResponseFeatureTransfor r
+    extends Cand dateFeatureTransfor r[t.Thr ftSearchResult] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("SubscribedEarlybirdResponse")
+  overr de val  dent f er: Transfor r dent f er =
+    Transfor r dent f er("Subscr bedEarlyb rdResponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsRetweetFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+  overr de val features: Set[Feature[_, _]] = Set(
+    Author dFeature,
+     nReplyToT et dFeature,
+     sRet etFeature,
+    S ceT et dFeature,
+    S ceUser dFeature,
   )
 
-  override def transform(candidate: t.ThriftSearchResult): FeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, candidate.tweetypieTweet.flatMap(_.coreData.map(_.userId)))
+  overr de def transform(cand date: t.Thr ftSearchResult): FeatureMap = FeatureMapBu lder()
+    .add(Author dFeature, cand date.t etyp eT et.flatMap(_.coreData.map(_.user d)))
     .add(
-      InReplyToTweetIdFeature,
-      candidate.tweetypieTweet.flatMap(_.coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))))
-    .add(IsRetweetFeature, candidate.metadata.exists(_.isRetweet.contains(true)))
-    .add(SourceTweetIdFeature, candidate.sourceTweetypieTweet.map(_.id))
-    .add(SourceUserIdFeature, candidate.sourceTweetypieTweet.flatMap(_.coreData.map(_.userId)))
-    .build()
+       nReplyToT et dFeature,
+      cand date.t etyp eT et.flatMap(_.coreData.flatMap(_.reply.flatMap(_. nReplyToStatus d))))
+    .add( sRet etFeature, cand date. tadata.ex sts(_. sRet et.conta ns(true)))
+    .add(S ceT et dFeature, cand date.s ceT etyp eT et.map(_. d))
+    .add(S ceUser dFeature, cand date.s ceT etyp eT et.flatMap(_.coreData.map(_.user d)))
+    .bu ld()
 }

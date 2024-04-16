@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
 /**
- * This class represents that coordindated earlybird action can not acquire the lock so that it
- * throws this exception.
+ * T  class represents that coord ndated earlyb rd act on can not acqu re t  lock so that  
+ * throws t  except on.
  */
-public class CoordinatedEarlybirdActionLockFailed extends Exception {
-  public CoordinatedEarlybirdActionLockFailed(String message) {
-    super(message);
+publ c class Coord natedEarlyb rdAct onLockFa led extends Except on {
+  publ c Coord natedEarlyb rdAct onLockFa led(Str ng  ssage) {
+    super( ssage);
   }
 }

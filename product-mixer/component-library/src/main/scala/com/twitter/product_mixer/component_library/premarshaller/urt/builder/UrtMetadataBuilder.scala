@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
 
-trait BaseUrtMetadataBuilder[-Query <: PipelineQuery] {
-  def build(
+tra  BaseUrt tadataBu lder[-Query <: P pel neQuery] {
+  def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata
+    entr es: Seq[T  l neEntry]
+  ): T  l ne tadata
 }
 
-case class UrtMetadataBuilder(
-  title: Option[String] = None,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[PipelineQuery]])
-    extends BaseUrtMetadataBuilder[PipelineQuery] {
+case class Urt tadataBu lder(
+  t le: Opt on[Str ng] = None,
+  scr beConf gBu lder: Opt on[T  l neScr beConf gBu lder[P pel neQuery]])
+    extends BaseUrt tadataBu lder[P pel neQuery] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata = TimelineMetadata(
-    title = title,
-    scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
+  overr de def bu ld(
+    query: P pel neQuery,
+    entr es: Seq[T  l neEntry]
+  ): T  l ne tadata = T  l ne tadata(
+    t le = t le,
+    scr beConf g = scr beConf gBu lder.flatMap(_.bu ld(query, entr es))
   )
 }
 
-case class UrtMetadataStringCenterBuilder(
-  titleKey: ExternalString,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[PipelineQuery]],
-  stringCenter: StringCenter)
-    extends BaseUrtMetadataBuilder[PipelineQuery] {
+case class Urt tadataStr ngCenterBu lder(
+  t leKey: ExternalStr ng,
+  scr beConf gBu lder: Opt on[T  l neScr beConf gBu lder[P pel neQuery]],
+  str ngCenter: Str ngCenter)
+    extends BaseUrt tadataBu lder[P pel neQuery] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata = TimelineMetadata(
-    title = Some(stringCenter.prepare(titleKey)),
-    scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
+  overr de def bu ld(
+    query: P pel neQuery,
+    entr es: Seq[T  l neEntry]
+  ): T  l ne tadata = T  l ne tadata(
+    t le = So (str ngCenter.prepare(t leKey)),
+    scr beConf g = scr beConf gBu lder.flatMap(_.bu ld(query, entr es))
   )
 }

@@ -1,13 +1,13 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.tweet_note
-namespace rb TweetyPie
-// Specific namespace to avoid golang circular import
-namespace go tweetypie.tweet
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space py gen.tw ter.t etyp e.t et_note
+na space rb T etyP e
+// Spec f c na space to avo d golang c rcular  mport
+na space go t etyp e.t et
 
-// Struct representing a NoteTweet associated with a Tweet
-struct NoteTweet {
-  1: required i64 id (strato.space = 'NoteTweet', strato.name = "note_tweet", personalDataType = 'TwitterArticleID')
-  2: optional bool is_expandable (strato.name = "is_expandable")
-} (persisted='true', hasPersonalData = 'true', strato.graphql.typename = 'NoteTweetData')
+// Struct represent ng a NoteT et assoc ated w h a T et
+struct NoteT et {
+  1: requ red  64  d (strato.space = 'NoteT et', strato.na  = "note_t et", personalDataType = 'Tw terArt cle D')
+  2: opt onal bool  s_expandable (strato.na  = " s_expandable")
+} (pers sted='true', hasPersonalData = 'true', strato.graphql.typena  = 'NoteT etData')

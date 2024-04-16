@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.tw ter.follow_recom ndat ons.common.pred cates.sgs
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.convers ons.Durat onOps._
 
-object SgsPredicateParams {
-  case object SgsRelationshipsPredicateTimeout
-      extends FSBoundedParam[Duration](
-        name = "sgs_predicate_relationships_timeout_in_millis",
-        default = 300.millisecond,
-        min = 1.millisecond,
-        max = 1000.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+object SgsPred cateParams {
+  case object SgsRelat onsh psPred cateT  out
+      extends FSBoundedParam[Durat on](
+        na  = "sgs_pred cate_relat onsh ps_t  out_ n_m ll s",
+        default = 300.m ll second,
+        m n = 1.m ll second,
+        max = 1000.m ll second)
+      w h HasDurat onConvers on {
+    overr de def durat onConvers on: Durat onConvers on = Durat onConvers on.FromM ll s
   }
 }

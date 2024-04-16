@@ -1,309 +1,309 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.cache.client._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.storehaus.WritableStore
-import com.twitter.storehaus_internal.nighthawk_kv.CacheClientNighthawkConfig
-import com.twitter.storehaus_internal.nighthawk_kv.NighthawkStore
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.UserReindexingNighthawkWritableDataRecordStore._
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logger
-import java.nio.ByteBuffer
-import java.util
-import scala.util.Random
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.thr ft.CompactThr ftCodec
+ mport com.tw ter.cac .cl ent._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.storehaus.Wr ableStore
+ mport com.tw ter.storehaus_ nternal.n ghthawk_kv.Cac Cl entN ghthawkConf g
+ mport com.tw ter.storehaus_ nternal.n ghthawk_kv.N ghthawkStore
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron.UserRe ndex ngN ghthawkWr ableDataRecordStore._
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logger
+ mport java.n o.ByteBuffer
+ mport java.ut l
+ mport scala.ut l.Random
 
-object UserReindexingNighthawkWritableDataRecordStore {
-  implicit val longInjection = Injection.long2BigEndian
-  implicit val dataRecordInjection: Injection[DataRecord, Array[Byte]] =
-    CompactThriftCodec[DataRecord]
-  val arrayToByteBuffer = Injection.connect[Array[Byte], ByteBuffer]
-  val longToByteBuffer = longInjection.andThen(arrayToByteBuffer)
-  val dataRecordToByteBuffer = dataRecordInjection.andThen(arrayToByteBuffer)
+object UserRe ndex ngN ghthawkWr ableDataRecordStore {
+   mpl c  val long nject on =  nject on.long2B gEnd an
+   mpl c  val dataRecord nject on:  nject on[DataRecord, Array[Byte]] =
+    CompactThr ftCodec[DataRecord]
+  val arrayToByteBuffer =  nject on.connect[Array[Byte], ByteBuffer]
+  val longToByteBuffer = long nject on.andT n(arrayToByteBuffer)
+  val dataRecordToByteBuffer = dataRecord nject on.andT n(arrayToByteBuffer)
 
   def getBtreeStore(
-    nighthawkCacheConfig: CacheClientNighthawkConfig,
-    targetSize: Int,
-    statsReceiver: StatsReceiver,
-    trimRate: Double
-  ): UserReindexingNighthawkBtreeWritableDataRecordStore =
-    new UserReindexingNighthawkBtreeWritableDataRecordStore(
-      nighthawkStore = NighthawkStore[UserId, TimestampMs, DataRecord](nighthawkCacheConfig)
-        .asInstanceOf[NighthawkStore[UserId, TimestampMs, DataRecord]],
-      tableName = nighthawkCacheConfig.table.toString,
-      targetSize = targetSize,
-      statsReceiver = statsReceiver,
-      trimRate = trimRate
+    n ghthawkCac Conf g: Cac Cl entN ghthawkConf g,
+    targetS ze:  nt,
+    statsRece ver: StatsRece ver,
+    tr mRate: Double
+  ): UserRe ndex ngN ghthawkBtreeWr ableDataRecordStore =
+    new UserRe ndex ngN ghthawkBtreeWr ableDataRecordStore(
+      n ghthawkStore = N ghthawkStore[User d, T  stampMs, DataRecord](n ghthawkCac Conf g)
+        .as nstanceOf[N ghthawkStore[User d, T  stampMs, DataRecord]],
+      tableNa  = n ghthawkCac Conf g.table.toStr ng,
+      targetS ze = targetS ze,
+      statsRece ver = statsRece ver,
+      tr mRate = tr mRate
     )
 
   def getHashStore(
-    nighthawkCacheConfig: CacheClientNighthawkConfig,
-    targetSize: Int,
-    statsReceiver: StatsReceiver,
-    trimRate: Double
-  ): UserReindexingNighthawkHashWritableDataRecordStore =
-    new UserReindexingNighthawkHashWritableDataRecordStore(
-      nighthawkStore = NighthawkStore[UserId, AuthorId, DataRecord](nighthawkCacheConfig)
-        .asInstanceOf[NighthawkStore[UserId, AuthorId, DataRecord]],
-      tableName = nighthawkCacheConfig.table.toString,
-      targetSize = targetSize,
-      statsReceiver = statsReceiver,
-      trimRate = trimRate
+    n ghthawkCac Conf g: Cac Cl entN ghthawkConf g,
+    targetS ze:  nt,
+    statsRece ver: StatsRece ver,
+    tr mRate: Double
+  ): UserRe ndex ngN ghthawkHashWr ableDataRecordStore =
+    new UserRe ndex ngN ghthawkHashWr ableDataRecordStore(
+      n ghthawkStore = N ghthawkStore[User d, Author d, DataRecord](n ghthawkCac Conf g)
+        .as nstanceOf[N ghthawkStore[User d, Author d, DataRecord]],
+      tableNa  = n ghthawkCac Conf g.table.toStr ng,
+      targetS ze = targetS ze,
+      statsRece ver = statsRece ver,
+      tr mRate = tr mRate
     )
 
-  def buildTimestampedByteBuffer(timestamp: Long, bb: ByteBuffer): ByteBuffer = {
-    val timestampedBb = ByteBuffer.allocate(getLength(bb) + java.lang.Long.SIZE)
-    timestampedBb.putLong(timestamp)
-    timestampedBb.put(bb)
-    timestampedBb
+  def bu ldT  stampedByteBuffer(t  stamp: Long, bb: ByteBuffer): ByteBuffer = {
+    val t  stampedBb = ByteBuffer.allocate(getLength(bb) + java.lang.Long.S ZE)
+    t  stampedBb.putLong(t  stamp)
+    t  stampedBb.put(bb)
+    t  stampedBb
   }
 
-  def extractTimestampFromTimestampedByteBuffer(bb: ByteBuffer): Long = {
+  def extractT  stampFromT  stampedByteBuffer(bb: ByteBuffer): Long = {
     bb.getLong(0)
   }
 
-  def extractValueFromTimestampedByteBuffer(bb: ByteBuffer): ByteBuffer = {
-    val bytes = new Array[Byte](getLength(bb) - java.lang.Long.SIZE)
-    util.Arrays.copyOfRange(bytes, java.lang.Long.SIZE, getLength(bb))
+  def extractValueFromT  stampedByteBuffer(bb: ByteBuffer): ByteBuffer = {
+    val bytes = new Array[Byte](getLength(bb) - java.lang.Long.S ZE)
+    ut l.Arrays.copyOfRange(bytes, java.lang.Long.S ZE, getLength(bb))
     ByteBuffer.wrap(bytes)
   }
 
-  def transformAndBuildKeyValueMapping(
-    table: String,
-    userId: UserId,
-    authorIdsAndDataRecords: Seq[(AuthorId, DataRecord)]
+  def transformAndBu ldKeyValueMapp ng(
+    table: Str ng,
+    user d: User d,
+    author dsAndDataRecords: Seq[(Author d, DataRecord)]
   ): KeyValue = {
-    val timestamp = Time.now.inMillis
-    val pkey = longToByteBuffer(userId)
-    val lkeysAndTimestampedValues = authorIdsAndDataRecords.map {
-      case (authorId, dataRecord) =>
-        val lkey = longToByteBuffer(authorId)
-        // Create a byte buffer with a prepended timestamp to reduce deserialization cost
-        // when parsing values. We only have to extract and deserialize the timestamp in the
-        // ByteBuffer in order to sort the value, as opposed to deserializing the DataRecord
-        // and having to get a timestamp feature value from the DataRecord.
+    val t  stamp = T  .now. nM ll s
+    val pkey = longToByteBuffer(user d)
+    val lkeysAndT  stampedValues = author dsAndDataRecords.map {
+      case (author d, dataRecord) =>
+        val lkey = longToByteBuffer(author d)
+        // Create a byte buffer w h a prepended t  stamp to reduce deser al zat on cost
+        // w n pars ng values.   only have to extract and deser al ze t  t  stamp  n t 
+        // ByteBuffer  n order to sort t  value, as opposed to deser al z ng t  DataRecord
+        // and hav ng to get a t  stamp feature value from t  DataRecord.
         val dataRecordBb = dataRecordToByteBuffer(dataRecord)
-        val timestampedValue = buildTimestampedByteBuffer(timestamp, dataRecordBb)
-        (lkey, timestampedValue)
+        val t  stampedValue = bu ldT  stampedByteBuffer(t  stamp, dataRecordBb)
+        (lkey, t  stampedValue)
     }
-    buildKeyValueMapping(table, pkey, lkeysAndTimestampedValues)
+    bu ldKeyValueMapp ng(table, pkey, lkeysAndT  stampedValues)
   }
 
-  def buildKeyValueMapping(
-    table: String,
+  def bu ldKeyValueMapp ng(
+    table: Str ng,
     pkey: ByteBuffer,
-    lkeysAndTimestampedValues: Seq[(ByteBuffer, ByteBuffer)]
+    lkeysAndT  stampedValues: Seq[(ByteBuffer, ByteBuffer)]
   ): KeyValue = {
-    val lkeys = lkeysAndTimestampedValues.map { case (lkey, _) => lkey }
-    val timestampedValues = lkeysAndTimestampedValues.map { case (_, value) => value }
+    val lkeys = lkeysAndT  stampedValues.map { case (lkey, _) => lkey }
+    val t  stampedValues = lkeysAndT  stampedValues.map { case (_, value) => value }
     val kv = KeyValue(
       key = Key(table = table, pkey = pkey, lkeys = lkeys),
-      value = Value(timestampedValues)
+      value = Value(t  stampedValues)
     )
     kv
   }
 
-  private def getLength(bb: ByteBuffer): Int = {
-    // capacity can be an over-estimate of the actual length (remaining - start position)
-    // but it's the safest to avoid overflows.
-    bb.capacity()
+  pr vate def getLength(bb: ByteBuffer):  nt = {
+    // capac y can be an over-est mate of t  actual length (rema n ng - start pos  on)
+    // but  's t  safest to avo d overflows.
+    bb.capac y()
   }
 }
 
 /**
- * Implements a NH store that stores aggregate feature DataRecords using userId as the primary key.
+ *  mple nts a NH store that stores aggregate feature DataRecords us ng user d as t  pr mary key.
  *
- * This store re-indexes user-author keyed real-time aggregate (RTA) features on userId by
- * writing to a userId primary key (pkey) and timestamp secondary key (lkey). To fetch user-author
- * RTAs for a given user from cache, the caller just needs to make a single RPC for the userId pkey.
- * The downside of a re-indexing store is that we cannot store arbitrarily many secondary keys
- * under the primary key. This specific implementation using the NH btree backend also mandates
- * mandates an ordering of secondary keys - we therefore use timestamp as the secondary key
- * as opposed to say authorId.
+ * T  store re- ndexes user-author keyed real-t   aggregate (RTA) features on user d by
+ * wr  ng to a user d pr mary key (pkey) and t  stamp secondary key (lkey). To fetch user-author
+ * RTAs for a g ven user from cac , t  caller just needs to make a s ngle RPC for t  user d pkey.
+ * T  downs de of a re- ndex ng store  s that   cannot store arb rar ly many secondary keys
+ * under t  pr mary key. T  spec f c  mple ntat on us ng t  NH btree backend also mandates
+ * mandates an order ng of secondary keys -   t refore use t  stamp as t  secondary key
+ * as opposed to say author d.
  *
- * Note that a caller of the btree backed NH re-indexing store receives back a response where the
- * secondary key is a timestamp. The associated value is a DataRecord containing user-author related
- * aggregate features which was last updated at the timestamp. The caller therefore needs to handle
- * the response and dedupe on unique, most recent user-author pairs.
+ * Note that a caller of t  btree backed NH re- ndex ng store rece ves back a response w re t 
+ * secondary key  s a t  stamp. T  assoc ated value  s a DataRecord conta n ng user-author related
+ * aggregate features wh ch was last updated at t  t  stamp. T  caller t refore needs to handle
+ * t  response and dedupe on un que, most recent user-author pa rs.
  *
- * For a discussion on this and other implementations, please see:
- * https://docs.google.com/document/d/1yVzAbQ_ikLqwSf230URxCJmSKj5yZr5dYv6TwBlQw18/edit
+ * For a d scuss on on t  and ot r  mple ntat ons, please see:
+ * https://docs.google.com/docu nt/d/1yVzAbQ_ kLqwSf230URxCJmSKj5yZr5dYv6TwBlQw18/ed 
  */
-class UserReindexingNighthawkBtreeWritableDataRecordStore(
-  nighthawkStore: NighthawkStore[UserId, TimestampMs, DataRecord],
-  tableName: String,
-  targetSize: Int,
-  statsReceiver: StatsReceiver,
-  trimRate: Double = 0.1 // by default, trim on 10% of puts
-) extends WritableStore[(AggregationKey, BatchID), Option[DataRecord]] {
+class UserRe ndex ngN ghthawkBtreeWr ableDataRecordStore(
+  n ghthawkStore: N ghthawkStore[User d, T  stampMs, DataRecord],
+  tableNa : Str ng,
+  targetS ze:  nt,
+  statsRece ver: StatsRece ver,
+  tr mRate: Double = 0.1 // by default, tr m on 10% of puts
+) extends Wr ableStore[(Aggregat onKey, Batch D), Opt on[DataRecord]] {
 
-  private val scope = getClass.getSimpleName
-  private val failures = statsReceiver.counter(scope, "failures")
-  private val log = Logger.getLogger(getClass)
-  private val random: Random = new Random(1729L)
+  pr vate val scope = getClass.getS mpleNa 
+  pr vate val fa lures = statsRece ver.counter(scope, "fa lures")
+  pr vate val log = Logger.getLogger(getClass)
+  pr vate val random: Random = new Random(1729L)
 
-  override def put(kv: ((AggregationKey, BatchID), Option[DataRecord])): Future[Unit] = {
-    val ((aggregationKey, _), dataRecordOpt) = kv
-    // Fire-and-forget below because the store itself should just be a side effect
-    // as it's just making re-indexed writes based on the writes to the primary store.
+  overr de def put(kv: ((Aggregat onKey, Batch D), Opt on[DataRecord])): Future[Un ] = {
+    val ((aggregat onKey, _), dataRecordOpt) = kv
+    // F re-and-forget below because t  store  self should just be a s de effect
+    // as  's just mak ng re- ndexed wr es based on t  wr es to t  pr mary store.
     for {
-      userId <- aggregationKey.discreteFeaturesById.get(SharedFeatures.USER_ID.getFeatureId)
+      user d <- aggregat onKey.d screteFeaturesBy d.get(SharedFeatures.USER_ D.getFeature d)
       dataRecord <- dataRecordOpt
-    } yield {
-      SRichDataRecord(dataRecord)
-        .getFeatureValueOpt(TypedAggregateGroup.timestampFeature)
+    } y eld {
+      SR chDataRecord(dataRecord)
+        .getFeatureValueOpt(TypedAggregateGroup.t  stampFeature)
         .map(_.toLong) // convert to Scala Long
-        .map { timestamp =>
-          val trim: Future[Unit] = if (random.nextDouble <= trimRate) {
-            val trimKey = TrimKey(
-              table = tableName,
-              pkey = longToByteBuffer(userId),
-              targetSize = targetSize,
-              ascending = true
+        .map { t  stamp =>
+          val tr m: Future[Un ] =  f (random.nextDouble <= tr mRate) {
+            val tr mKey = Tr mKey(
+              table = tableNa ,
+              pkey = longToByteBuffer(user d),
+              targetS ze = targetS ze,
+              ascend ng = true
             )
-            nighthawkStore.client.trim(Seq(trimKey)).unit
+            n ghthawkStore.cl ent.tr m(Seq(tr mKey)).un 
           } else {
-            Future.Unit
+            Future.Un 
           }
-          // We should wait for trim to complete above
-          val fireAndForget = trim.before {
-            val kvTuple = ((userId, timestamp), Some(dataRecord))
-            nighthawkStore.put(kvTuple)
+          //   should wa  for tr m to complete above
+          val f reAndForget = tr m.before {
+            val kvTuple = ((user d, t  stamp), So (dataRecord))
+            n ghthawkStore.put(kvTuple)
           }
 
-          fireAndForget.onFailure {
+          f reAndForget.onFa lure {
             case e =>
-              failures.incr()
-              log.error("Failure in UserReindexingNighthawkHashWritableDataRecordStore", e)
+              fa lures. ncr()
+              log.error("Fa lure  n UserRe ndex ngN ghthawkHashWr ableDataRecordStore", e)
           }
         }
     }
-    // Ignore fire-and-forget result above and simply return
-    Future.Unit
+    //  gnore f re-and-forget result above and s mply return
+    Future.Un 
   }
 }
 
 /**
- * Implements a NH store that stores aggregate feature DataRecords using userId as the primary key.
+ *  mple nts a NH store that stores aggregate feature DataRecords us ng user d as t  pr mary key.
  *
- * This store re-indexes user-author keyed real-time aggregate (RTA) features on userId by
- * writing to a userId primary key (pkey) and authorId secondary key (lkey). To fetch user-author
- * RTAs for a given user from cache, the caller just needs to make a single RPC for the userId pkey.
- * The downside of a re-indexing store is that we cannot store arbitrarily
- * many secondary keys under the primary key. We have to limit them in some way;
- * here, we do so by randomly (based on trimRate) issuing an HGETALL command (via scan) to
- * retrieve the whole hash, sort by oldest timestamp, and then remove the oldest authors to keep
- * only targetSize authors (aka trim), where targetSize is configurable.
+ * T  store re- ndexes user-author keyed real-t   aggregate (RTA) features on user d by
+ * wr  ng to a user d pr mary key (pkey) and author d secondary key (lkey). To fetch user-author
+ * RTAs for a g ven user from cac , t  caller just needs to make a s ngle RPC for t  user d pkey.
+ * T  downs de of a re- ndex ng store  s that   cannot store arb rar ly
+ * many secondary keys under t  pr mary key.   have to l m  t m  n so  way;
+ *  re,   do so by randomly (based on tr mRate)  ssu ng an HGETALL command (v a scan) to
+ * retr eve t  whole hash, sort by oldest t  stamp, and t n remove t  oldest authors to keep
+ * only targetS ze authors (aka tr m), w re targetS ze  s conf gurable.
  *
- * @note The full hash returned from scan could be as large (or even larger) than targetSize,
- * which could mean many DataRecords to deserialize, especially at high write qps.
- * To reduce deserialization cost post-scan, we use timestamped values with a prepended timestamp
- * in the value ByteBuffer; this allows us to only deserialize the timestamp and not the full
- * DataRecord when sorting. This is necessary in order to identify the oldest values to trim.
- * When we do a put for a new (user, author) pair, we also write out timestamped values.
+ * @note T  full hash returned from scan could be as large (or even larger) than targetS ze,
+ * wh ch could  an many DataRecords to deser al ze, espec ally at h gh wr e qps.
+ * To reduce deser al zat on cost post-scan,   use t  stamped values w h a prepended t  stamp
+ *  n t  value ByteBuffer; t  allows us to only deser al ze t  t  stamp and not t  full
+ * DataRecord w n sort ng. T   s necessary  n order to  dent fy t  oldest values to tr m.
+ * W n   do a put for a new (user, author) pa r,   also wr e out t  stamped values.
  *
- * For a discussion on this and other implementations, please see:
- * https://docs.google.com/document/d/1yVzAbQ_ikLqwSf230URxCJmSKj5yZr5dYv6TwBlQw18/edit
+ * For a d scuss on on t  and ot r  mple ntat ons, please see:
+ * https://docs.google.com/docu nt/d/1yVzAbQ_ kLqwSf230URxCJmSKj5yZr5dYv6TwBlQw18/ed 
  */
-class UserReindexingNighthawkHashWritableDataRecordStore(
-  nighthawkStore: NighthawkStore[UserId, AuthorId, DataRecord],
-  tableName: String,
-  targetSize: Int,
-  statsReceiver: StatsReceiver,
-  trimRate: Double = 0.1 // by default, trim on 10% of puts
-) extends WritableStore[(AggregationKey, BatchID), Option[DataRecord]] {
+class UserRe ndex ngN ghthawkHashWr ableDataRecordStore(
+  n ghthawkStore: N ghthawkStore[User d, Author d, DataRecord],
+  tableNa : Str ng,
+  targetS ze:  nt,
+  statsRece ver: StatsRece ver,
+  tr mRate: Double = 0.1 // by default, tr m on 10% of puts
+) extends Wr ableStore[(Aggregat onKey, Batch D), Opt on[DataRecord]] {
 
-  private val scope = getClass.getSimpleName
-  private val scanMismatchErrors = statsReceiver.counter(scope, "scanMismatchErrors")
-  private val failures = statsReceiver.counter(scope, "failures")
-  private val log = Logger.getLogger(getClass)
-  private val random: Random = new Random(1729L)
-  private val arrayToByteBuffer = Injection.connect[Array[Byte], ByteBuffer]
-  private val longToByteBuffer = Injection.long2BigEndian.andThen(arrayToByteBuffer)
+  pr vate val scope = getClass.getS mpleNa 
+  pr vate val scanM smatchErrors = statsRece ver.counter(scope, "scanM smatchErrors")
+  pr vate val fa lures = statsRece ver.counter(scope, "fa lures")
+  pr vate val log = Logger.getLogger(getClass)
+  pr vate val random: Random = new Random(1729L)
+  pr vate val arrayToByteBuffer =  nject on.connect[Array[Byte], ByteBuffer]
+  pr vate val longToByteBuffer =  nject on.long2B gEnd an.andT n(arrayToByteBuffer)
 
-  override def put(kv: ((AggregationKey, BatchID), Option[DataRecord])): Future[Unit] = {
-    val ((aggregationKey, _), dataRecordOpt) = kv
-    // Fire-and-forget below because the store itself should just be a side effect
-    // as it's just making re-indexed writes based on the writes to the primary store.
+  overr de def put(kv: ((Aggregat onKey, Batch D), Opt on[DataRecord])): Future[Un ] = {
+    val ((aggregat onKey, _), dataRecordOpt) = kv
+    // F re-and-forget below because t  store  self should just be a s de effect
+    // as  's just mak ng re- ndexed wr es based on t  wr es to t  pr mary store.
     for {
-      userId <- aggregationKey.discreteFeaturesById.get(SharedFeatures.USER_ID.getFeatureId)
-      authorId <- aggregationKey.discreteFeaturesById.get(
-        TimelinesSharedFeatures.SOURCE_AUTHOR_ID.getFeatureId)
+      user d <- aggregat onKey.d screteFeaturesBy d.get(SharedFeatures.USER_ D.getFeature d)
+      author d <- aggregat onKey.d screteFeaturesBy d.get(
+        T  l nesSharedFeatures.SOURCE_AUTHOR_ D.getFeature d)
       dataRecord <- dataRecordOpt
-    } yield {
-      val scanAndTrim: Future[Unit] = if (random.nextDouble <= trimRate) {
+    } y eld {
+      val scanAndTr m: Future[Un ] =  f (random.nextDouble <= tr mRate) {
         val scanKey = ScanKey(
-          table = tableName,
-          pkey = longToByteBuffer(userId)
+          table = tableNa ,
+          pkey = longToByteBuffer(user d)
         )
-        nighthawkStore.client.scan(Seq(scanKey)).flatMap { scanResults: Seq[Try[KeyValue]] =>
-          scanResults.headOption
-            .flatMap(_.toOption).map { keyValue: KeyValue =>
+        n ghthawkStore.cl ent.scan(Seq(scanKey)).flatMap { scanResults: Seq[Try[KeyValue]] =>
+          scanResults. adOpt on
+            .flatMap(_.toOpt on).map { keyValue: KeyValue =>
               val lkeys: Seq[ByteBuffer] = keyValue.key.lkeys
-              // these are timestamped bytebuffers
-              val timestampedValues: Seq[ByteBuffer] = keyValue.value.values
-              // this should fail loudly if this is not true. it would indicate
-              // there is a mistake in the scan.
-              if (lkeys.size != timestampedValues.size) scanMismatchErrors.incr()
-              assert(lkeys.size == timestampedValues.size)
-              if (lkeys.size > targetSize) {
-                val numToRemove = targetSize - lkeys.size
-                // sort by oldest and take top k oldest and remove - this is equivalent to a trim
+              // t se are t  stamped bytebuffers
+              val t  stampedValues: Seq[ByteBuffer] = keyValue.value.values
+              // t  should fa l loudly  f t   s not true.   would  nd cate
+              // t re  s a m stake  n t  scan.
+               f (lkeys.s ze != t  stampedValues.s ze) scanM smatchErrors. ncr()
+              assert(lkeys.s ze == t  stampedValues.s ze)
+               f (lkeys.s ze > targetS ze) {
+                val numToRemove = targetS ze - lkeys.s ze
+                // sort by oldest and take top k oldest and remove - t   s equ valent to a tr m
                 val oldestKeys: Seq[ByteBuffer] = lkeys
-                  .zip(timestampedValues)
+                  .z p(t  stampedValues)
                   .map {
-                    case (lkey, timestampedValue) =>
-                      val timestamp = extractTimestampFromTimestampedByteBuffer(timestampedValue)
-                      (timestamp, lkey)
+                    case (lkey, t  stampedValue) =>
+                      val t  stamp = extractT  stampFromT  stampedByteBuffer(t  stampedValue)
+                      (t  stamp, lkey)
                   }
-                  .sortBy { case (timestamp, _) => timestamp }
+                  .sortBy { case (t  stamp, _) => t  stamp }
                   .take(numToRemove)
                   .map { case (_, k) => k }
-                val pkey = longToByteBuffer(userId)
-                val key = Key(table = tableName, pkey = pkey, lkeys = oldestKeys)
-                // NOTE: `remove` is a batch API, and we group all lkeys into a single batch (batch
-                // size = single group of lkeys = 1). Instead, we could separate lkeys into smaller
-                // groups and have batch size = number of groups, but this is more complex.
-                // Performance implications of batching vs non-batching need to be assessed.
-                nighthawkStore.client
+                val pkey = longToByteBuffer(user d)
+                val key = Key(table = tableNa , pkey = pkey, lkeys = oldestKeys)
+                // NOTE: `remove`  s a batch AP , and   group all lkeys  nto a s ngle batch (batch
+                // s ze = s ngle group of lkeys = 1).  nstead,   could separate lkeys  nto smaller
+                // groups and have batch s ze = number of groups, but t   s more complex.
+                // Performance  mpl cat ons of batch ng vs non-batch ng need to be assessed.
+                n ghthawkStore.cl ent
                   .remove(Seq(key))
                   .map { responses =>
-                    responses.map(resp => nighthawkStore.processValue(resp))
-                  }.unit
+                    responses.map(resp => n ghthawkStore.processValue(resp))
+                  }.un 
               } else {
-                Future.Unit
+                Future.Un 
               }
-            }.getOrElse(Future.Unit)
+            }.getOrElse(Future.Un )
         }
       } else {
-        Future.Unit
+        Future.Un 
       }
-      // We should wait for scan and trim to complete above
-      val fireAndForget = scanAndTrim.before {
-        val kv = transformAndBuildKeyValueMapping(tableName, userId, Seq((authorId, dataRecord)))
-        nighthawkStore.client
+      //   should wa  for scan and tr m to complete above
+      val f reAndForget = scanAndTr m.before {
+        val kv = transformAndBu ldKeyValueMapp ng(tableNa , user d, Seq((author d, dataRecord)))
+        n ghthawkStore.cl ent
           .put(Seq(kv))
           .map { responses =>
-            responses.map(resp => nighthawkStore.processValue(resp))
-          }.unit
+            responses.map(resp => n ghthawkStore.processValue(resp))
+          }.un 
       }
-      fireAndForget.onFailure {
+      f reAndForget.onFa lure {
         case e =>
-          failures.incr()
-          log.error("Failure in UserReindexingNighthawkHashWritableDataRecordStore", e)
+          fa lures. ncr()
+          log.error("Fa lure  n UserRe ndex ngN ghthawkHashWr ableDataRecordStore", e)
       }
     }
-    // Ignore fire-and-forget result above and simply return
-    Future.Unit
+    //  gnore f re-and-forget result above and s mply return
+    Future.Un 
   }
 }

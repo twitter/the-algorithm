@@ -1,147 +1,147 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.reflect.ClassTag
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport scala.reflect.ClassTag
 
-sealed trait SubpoolIncludeTypes
+sealed tra  Subpool ncludeTypes
 
-trait IncludeInSubpool[-Query <: PipelineQuery] extends SubpoolIncludeTypes {
+tra   nclude nSubpool[-Query <: P pel neQuery] extends Subpool ncludeTypes {
 
   /**
-   * Given the `query`, current `remainingCandidate`, and the `result`,
-   * returns whether the specific `remainingCandidate` should be passed into the
-   * [[SelectFromSubpoolCandidates]]'s [[SelectFromSubpoolCandidates.selector]]
+   * G ven t  `query`, current `rema n ngCand date`, and t  `result`,
+   * returns w t r t  spec f c `rema n ngCand date` should be passed  nto t 
+   * [[SelectFromSubpoolCand dates]]'s [[SelectFromSubpoolCand dates.selector]]
    *
-   * @note the `result` contains the [[SelectorResult.result]] that was passed into this selector,
-   *       so each `remainingCandidate` will get the same `result` Seq.
+   * @note t  `result` conta ns t  [[SelectorResult.result]] that was passed  nto t  selector,
+   *       so each `rema n ngCand date` w ll get t  sa  `result` Seq.
    */
   def apply(
     query: Query,
-    remainingCandidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
+    rema n ngCand date: Cand dateW hDeta ls,
+    result: Seq[Cand dateW hDeta ls]
   ): Boolean
 }
 
-case class IncludeCandidateTypeInSubpool[CandidateType <: UniversalNoun[_]](
+case class  ncludeCand dateType nSubpool[Cand dateType <: Un versalNoun[_]](
 )(
-  implicit tag: ClassTag[CandidateType])
-    extends IncludeInSubpool[PipelineQuery] {
+   mpl c  tag: ClassTag[Cand dateType])
+    extends  nclude nSubpool[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Boolean = remainingCandidate.isCandidateType[CandidateType]()
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand date: Cand dateW hDeta ls,
+    result: Seq[Cand dateW hDeta ls]
+  ): Boolean = rema n ngCand date. sCand dateType[Cand dateType]()
 }
 
-trait IncludeSetInSubpool[-Query <: PipelineQuery] extends SubpoolIncludeTypes {
+tra   ncludeSet nSubpool[-Query <: P pel neQuery] extends Subpool ncludeTypes {
 
   /**
-   * Given the `query`, all `remainingCandidates`` and `results`,
-   * returns a Set of which candidates should be included in the subpool.
+   * G ven t  `query`, all `rema n ngCand dates`` and `results`,
+   * returns a Set of wh ch cand dates should be  ncluded  n t  subpool.
    *
-   * @note the returned set is only used to determine subpool membership. Mutating the candidates
-   *       is invalid and won't work. The order of the candidates will be preserved from the current
-   *       order of the remaining candidates sequence.
+   * @note t  returned set  s only used to determ ne subpool  mbersh p. Mutat ng t  cand dates
+   *        s  nval d and won't work. T  order of t  cand dates w ll be preserved from t  current
+   *       order of t  rema n ng cand dates sequence.
    */
   def apply(
     query: Query,
-    remainingCandidate: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Set[CandidateWithDetails]
+    rema n ngCand date: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
+  ): Set[Cand dateW hDeta ls]
 }
 
-sealed trait SubpoolRemainingCandidatesHandler
+sealed tra  SubpoolRema n ngCand datesHandler
 
 /**
- * Candidates remaining in the subpool after running the selector will be
- * prepended to the beginning of the [[SelectorResult.remainingCandidates]]
+ * Cand dates rema n ng  n t  subpool after runn ng t  selector w ll be
+ * prepended to t  beg nn ng of t  [[SelectorResult.rema n ngCand dates]]
  */
-case object PrependToBeginningOfRemainingCandidates extends SubpoolRemainingCandidatesHandler
+case object PrependToBeg nn ngOfRema n ngCand dates extends SubpoolRema n ngCand datesHandler
 
 /**
- * Candidates remaining in the subpool after running the selector will be
- * appended to the end of the [[SelectorResult.remainingCandidates]]
+ * Cand dates rema n ng  n t  subpool after runn ng t  selector w ll be
+ * appended to t  end of t  [[SelectorResult.rema n ngCand dates]]
  */
-case object AppendToEndOfRemainingCandidates extends SubpoolRemainingCandidatesHandler
+case object AppendToEndOfRema n ngCand dates extends SubpoolRema n ngCand datesHandler
 
 /**
- * Creates a subpool of all `remainingCandidates` for which [[subpoolInclude]] resolves to true
- * (in the same order as the original `remainingCandidates`) and runs the [[selector]] with the
- * subpool passed in as the `remainingCandidates`.
+ * Creates a subpool of all `rema n ngCand dates` for wh ch [[subpool nclude]] resolves to true
+ * ( n t  sa  order as t  or g nal `rema n ngCand dates`) and runs t  [[selector]] w h t 
+ * subpool passed  n as t  `rema n ngCand dates`.
  *
- * Most customers want to use a IncludeInSubpool that chooses if each candidate should be included
- * in the subpool.
- * Where necessary, IncludeSetInSubpool allows you to define them in bulk w/ a Set.
+ * Most custo rs want to use a  nclude nSubpool that chooses  f each cand date should be  ncluded
+ *  n t  subpool.
+ * W re necessary,  ncludeSet nSubpool allows   to def ne t m  n bulk w/ a Set.
  *
- * @note any candidates in the subpool which are not added to the [[SelectorResult.result]]
- *       will be treated according to the [[SubpoolRemainingCandidatesHandler]]
+ * @note any cand dates  n t  subpool wh ch are not added to t  [[SelectorResult.result]]
+ *       w ll be treated accord ng to t  [[SubpoolRema n ngCand datesHandler]]
  */
-class SelectFromSubpoolCandidates[-Query <: PipelineQuery] private[selector] (
+class SelectFromSubpoolCand dates[-Query <: P pel neQuery] pr vate[selector] (
   val selector: Selector[Query],
-  subpoolInclude: SubpoolIncludeTypes,
-  subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-    AppendToEndOfRemainingCandidates)
+  subpool nclude: Subpool ncludeTypes,
+  subpoolRema n ngCand datesHandler: SubpoolRema n ngCand datesHandler =
+    AppendToEndOfRema n ngCand dates)
     extends Selector[Query] {
 
-  override val pipelineScope: CandidateScope = selector.pipelineScope
+  overr de val p pel neScope: Cand dateScope = selector.p pel neScope
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
 
-    val (selectedCandidates, otherCandidates) = subpoolInclude match {
-      case includeInSubpool: IncludeInSubpool[Query] =>
-        remainingCandidates.partition(candidate =>
-          pipelineScope.contains(candidate) && includeInSubpool(query, candidate, result))
-      case includeSetInSubpool: IncludeSetInSubpool[Query] =>
-        val includeSet =
-          includeSetInSubpool(query, remainingCandidates.filter(pipelineScope.contains), result)
-        remainingCandidates.partition(candidate => includeSet.contains(candidate))
+    val (selectedCand dates, ot rCand dates) = subpool nclude match {
+      case  nclude nSubpool:  nclude nSubpool[Query] =>
+        rema n ngCand dates.part  on(cand date =>
+          p pel neScope.conta ns(cand date) &&  nclude nSubpool(query, cand date, result))
+      case  ncludeSet nSubpool:  ncludeSet nSubpool[Query] =>
+        val  ncludeSet =
+           ncludeSet nSubpool(query, rema n ngCand dates.f lter(p pel neScope.conta ns), result)
+        rema n ngCand dates.part  on(cand date =>  ncludeSet.conta ns(cand date))
     }
 
-    val underlyingSelectorResult = selector.apply(query, selectedCandidates, result)
-    val remainingCandidatesWithSubpoolRemainingCandidates =
-      subpoolRemainingCandidatesHandler match {
-        case AppendToEndOfRemainingCandidates =>
-          otherCandidates ++ underlyingSelectorResult.remainingCandidates
-        case PrependToBeginningOfRemainingCandidates =>
-          underlyingSelectorResult.remainingCandidates ++ otherCandidates
+    val underly ngSelectorResult = selector.apply(query, selectedCand dates, result)
+    val rema n ngCand datesW hSubpoolRema n ngCand dates =
+      subpoolRema n ngCand datesHandler match {
+        case AppendToEndOfRema n ngCand dates =>
+          ot rCand dates ++ underly ngSelectorResult.rema n ngCand dates
+        case PrependToBeg nn ngOfRema n ngCand dates =>
+          underly ngSelectorResult.rema n ngCand dates ++ ot rCand dates
       }
-    underlyingSelectorResult.copy(remainingCandidates =
-      remainingCandidatesWithSubpoolRemainingCandidates)
+    underly ngSelectorResult.copy(rema n ngCand dates =
+      rema n ngCand datesW hSubpoolRema n ngCand dates)
   }
 
-  override def toString: String = s"SelectFromSubpoolCandidates(${selector.toString}))"
+  overr de def toStr ng: Str ng = s"SelectFromSubpoolCand dates(${selector.toStr ng}))"
 }
 
-object SelectFromSubpoolCandidates {
-  def apply[Query <: PipelineQuery](
+object SelectFromSubpoolCand dates {
+  def apply[Query <: P pel neQuery](
     selector: Selector[Query],
-    includeInSubpool: IncludeInSubpool[Query],
-    subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-      AppendToEndOfRemainingCandidates
-  ) = new SelectFromSubpoolCandidates[Query](
+     nclude nSubpool:  nclude nSubpool[Query],
+    subpoolRema n ngCand datesHandler: SubpoolRema n ngCand datesHandler =
+      AppendToEndOfRema n ngCand dates
+  ) = new SelectFromSubpoolCand dates[Query](
     selector,
-    includeInSubpool,
-    subpoolRemainingCandidatesHandler
+     nclude nSubpool,
+    subpoolRema n ngCand datesHandler
   )
 
-  def includeSet[Query <: PipelineQuery](
+  def  ncludeSet[Query <: P pel neQuery](
     selector: Selector[Query],
-    includeSetInSubpool: IncludeSetInSubpool[Query],
-    subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-      AppendToEndOfRemainingCandidates
-  ) = new SelectFromSubpoolCandidates[Query](
+     ncludeSet nSubpool:  ncludeSet nSubpool[Query],
+    subpoolRema n ngCand datesHandler: SubpoolRema n ngCand datesHandler =
+      AppendToEndOfRema n ngCand dates
+  ) = new SelectFromSubpoolCand dates[Query](
     selector,
-    includeSetInSubpool,
-    subpoolRemainingCandidatesHandler
+     ncludeSet nSubpool,
+    subpoolRema n ngCand datesHandler
   )
 }

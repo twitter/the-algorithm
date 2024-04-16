@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.tw ter.product_m xer.component_l brary.feature.featurestorev1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+ mport com.tw ter.ml.ap .transform.FeatureRena Transform
+ mport com.tw ter.ml.featurestore.catalog.ent  es
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.ml.featurestore.l b.feature.T  l nesAggregat onFra workFeatureGroup
+ mport com.tw ter.ml.featurestore.l b.feature.{Feature => FSv1Feature}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etAuthor dFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport scala.reflect.ClassTag
 
-object FeatureStoreV1TweetCandidateAuthorIdFeature {
-  def apply[Query <: PipelineQuery, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, TweetCandidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
+object FeatureStoreV1T etCand dateAuthor dFeature {
+  def apply[Query <: P pel neQuery, Value](
+    feature: FSv1Feature[User d, Value],
+    legacyNa : Opt on[Str ng] = None,
+    defaultValue: Opt on[Value] = None,
+    enabledParam: Opt on[FSParam[Boolean]] = None
+  ): FeatureStoreV1Cand dateFeature[Query, T etCand date, _ <: Ent y d, Value] =
+    FeatureStoreV1Cand dateFeature(
       feature,
-      TweetCandidateAuthorIdEntity,
-      legacyName,
+      T etCand dateAuthor dEnt y,
+      legacyNa ,
       defaultValue,
       enabledParam)
 }
 
-object FeatureStoreV1TweetCandidateAuthorIdAggregateFeature {
-  def apply[Query <: PipelineQuery](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[UserId],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, TweetCandidate, _ <: EntityId] =
-    FeatureStoreV1CandidateFeatureGroup(
+object FeatureStoreV1T etCand dateAuthor dAggregateFeature {
+  def apply[Query <: P pel neQuery](
+    featureGroup: T  l nesAggregat onFra workFeatureGroup[User d],
+    enabledParam: Opt on[FSParam[Boolean]] = None,
+    keepLegacyNa s: Boolean = false,
+    featureNa Transform: Opt on[FeatureRena Transform] = None
+  ): FeatureStoreV1Cand dateFeatureGroup[Query, T etCand date, _ <: Ent y d] =
+    FeatureStoreV1Cand dateFeatureGroup(
       featureGroup,
-      TweetCandidateAuthorIdEntity,
+      T etCand dateAuthor dEnt y,
       enabledParam,
-      keepLegacyNames,
-      featureNameTransform
-    )(implicitly[ClassTag[UserId]])
+      keepLegacyNa s,
+      featureNa Transform
+    )( mpl c ly[ClassTag[User d]])
 }
 
-object TweetCandidateAuthorIdEntity
-    extends FeatureStoreV1CandidateEntity[PipelineQuery, TweetCandidate, UserId] {
-  override val entity: Entity[UserId] = entities.core.Author
+object T etCand dateAuthor dEnt y
+    extends FeatureStoreV1Cand dateEnt y[P pel neQuery, T etCand date, User d] {
+  overr de val ent y: Ent y[User d] = ent  es.core.Author
 
-  override def entityWithId(
-    query: PipelineQuery,
-    tweet: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[UserId] =
-    entity.withId(UserId(existingFeatures.get(TweetAuthorIdFeature)))
+  overr de def ent yW h d(
+    query: P pel neQuery,
+    t et: T etCand date,
+    ex st ngFeatures: FeatureMap
+  ): Ent yW h d[User d] =
+    ent y.w h d(User d(ex st ngFeatures.get(T etAuthor dFeature)))
 }

@@ -1,58 +1,58 @@
-package com.twitter.home_mixer.util.tweetypie
+package com.tw ter.ho _m xer.ut l.t etyp e
 
-import com.twitter.tweetypie.{thriftscala => tp}
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
 
-object RequestFields {
+object RequestF elds {
 
-  val CoreTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.IdField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.CoreDataField.id)
+  val CoreT etF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    tp.T et nclude.T etF eld d(tp.T et. dF eld. d),
+    tp.T et nclude.T etF eld d(tp.T et.CoreDataF eld. d)
   )
-  val MediaFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.MediaField.id),
+  val  d aF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    tp.T et nclude.T etF eld d(tp.T et. d aF eld. d),
   )
-  val SelfThreadFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.SelfThreadMetadataField.id)
+  val SelfThreadF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    tp.T et nclude.T etF eld d(tp.T et.SelfThread tadataF eld. d)
   )
-  val MentionsTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.MentionsField.id)
+  val  nt onsT etF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    tp.T et nclude.T etF eld d(tp.T et. nt onsF eld. d)
   )
-  val SemanticAnnotationTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.EscherbirdEntityAnnotationsField.id)
+  val Semant cAnnotat onT etF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    tp.T et nclude.T etF eld d(tp.T et.Esc rb rdEnt yAnnotat onsF eld. d)
   )
-  val NsfwLabelFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    // Tweet fields containing NSFW related attributes.
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfwHighRecallLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfwHighPrecisionLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfaHighRecallLabelField.id)
+  val NsfwLabelF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    // T et f elds conta n ng NSFW related attr butes.
+    tp.T et nclude.T etF eld d(tp.T et.NsfwH ghRecallLabelF eld. d),
+    tp.T et nclude.T etF eld d(tp.T et.NsfwH ghPrec s onLabelF eld. d),
+    tp.T et nclude.T etF eld d(tp.T et.NsfaH ghRecallLabelF eld. d)
   )
-  val SafetyLabelFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    // Tweet fields containing RTF labels for abuse and spam.
-    tp.TweetInclude.TweetFieldId(tp.Tweet.SpamLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.AbusiveLabelField.id)
+  val SafetyLabelF elds: Set[tp.T et nclude] = Set[tp.T et nclude](
+    // T et f elds conta n ng RTF labels for abuse and spam.
+    tp.T et nclude.T etF eld d(tp.T et.SpamLabelF eld. d),
+    tp.T et nclude.T etF eld d(tp.T et.Abus veLabelF eld. d)
   )
-  val ConversationControlField: Set[tp.TweetInclude] =
-    Set[tp.TweetInclude](tp.TweetInclude.TweetFieldId(tp.Tweet.ConversationControlField.id))
+  val Conversat onControlF eld: Set[tp.T et nclude] =
+    Set[tp.T et nclude](tp.T et nclude.T etF eld d(tp.T et.Conversat onControlF eld. d))
 
-  val TweetTPHydrationFields: Set[tp.TweetInclude] = CoreTweetFields ++
-    NsfwLabelFields ++
-    SafetyLabelFields ++
-    SemanticAnnotationTweetFields ++
+  val T etTPHydrat onF elds: Set[tp.T et nclude] = CoreT etF elds ++
+    NsfwLabelF elds ++
+    SafetyLabelF elds ++
+    Semant cAnnotat onT etF elds ++
     Set(
-      tp.TweetInclude.TweetFieldId(tp.Tweet.TakedownCountryCodesField.id),
-      // QTs imply a TweetyPie -> SGS request dependency
-      tp.TweetInclude.TweetFieldId(tp.Tweet.QuotedTweetField.id),
-      tp.TweetInclude.TweetFieldId(tp.Tweet.CommunitiesField.id),
-      // Field required for determining if a Tweet was created via News Camera.
-      tp.TweetInclude.TweetFieldId(tp.Tweet.ComposerSourceField.id),
-      tp.TweetInclude.TweetFieldId(tp.Tweet.LanguageField.id)
+      tp.T et nclude.T etF eld d(tp.T et.TakedownCountryCodesF eld. d),
+      // QTs  mply a T etyP e -> SGS request dependency
+      tp.T et nclude.T etF eld d(tp.T et.QuotedT etF eld. d),
+      tp.T et nclude.T etF eld d(tp.T et.Commun  esF eld. d),
+      // F eld requ red for determ n ng  f a T et was created v a News Ca ra.
+      tp.T et nclude.T etF eld d(tp.T et.ComposerS ceF eld. d),
+      tp.T et nclude.T etF eld d(tp.T et.LanguageF eld. d)
     )
 
-  val TweetStaticEntitiesFields: Set[tp.TweetInclude] =
-    MentionsTweetFields ++ CoreTweetFields ++ SemanticAnnotationTweetFields ++ MediaFields
+  val T etStat cEnt  esF elds: Set[tp.T et nclude] =
+     nt onsT etF elds ++ CoreT etF elds ++ Semant cAnnotat onT etF elds ++  d aF elds
 
-  val ContentFields: Set[tp.TweetInclude] = CoreTweetFields ++ MediaFields ++ SelfThreadFields ++
-    ConversationControlField ++ SemanticAnnotationTweetFields ++
-    Set[tp.TweetInclude](
-      tp.TweetInclude.MediaEntityFieldId(tp.MediaEntity.AdditionalMetadataField.id))
+  val ContentF elds: Set[tp.T et nclude] = CoreT etF elds ++  d aF elds ++ SelfThreadF elds ++
+    Conversat onControlF eld ++ Semant cAnnotat onT etF elds ++
+    Set[tp.T et nclude](
+      tp.T et nclude. d aEnt yF eld d(tp. d aEnt y.Add  onal tadataF eld. d))
 }

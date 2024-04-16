@@ -1,79 +1,79 @@
-namespace java com.twitter.tweetypie.storage_internal.thriftjava
-#@namespace scala com.twitter.tweetypie.storage_internal.thriftscala
+na space java com.tw ter.t etyp e.storage_ nternal.thr ftjava
+#@na space scala com.tw ter.t etyp e.storage_ nternal.thr ftscala
 
 struct StoredReply {
-  1: i64 in_reply_to_status_id (personalDataType = 'TweetId')
-  2: i64 in_reply_to_user_id (personalDataType = 'UserId')
-  3: optional i64 conversation_id (personalDataType = 'TweetId')
-} (hasPersonalData = 'true', persisted='true')
+  1:  64  n_reply_to_status_ d (personalDataType = 'T et d')
+  2:  64  n_reply_to_user_ d (personalDataType = 'User d')
+  3: opt onal  64 conversat on_ d (personalDataType = 'T et d')
+} (hasPersonalData = 'true', pers sted='true')
 
 struct StoredShare {
-  1: i64 source_status_id (personalDataType = 'TweetId')
-  2: i64 source_user_id (personalDataType = 'UserId')
-  3: i64 parent_status_id (personalDataType = 'TweetId')
-} (hasPersonalData = 'true', persisted='true')
+  1:  64 s ce_status_ d (personalDataType = 'T et d')
+  2:  64 s ce_user_ d (personalDataType = 'User d')
+  3:  64 parent_status_ d (personalDataType = 'T et d')
+} (hasPersonalData = 'true', pers sted='true')
 
 struct StoredGeo {
-  1: double latitude (personalDataType = 'GpsCoordinates')
-  2: double longitude (personalDataType = 'GpsCoordinates')
-  3: i32 geo_precision (personalDataType = 'GpsCoordinates')
-  4: i64 entity_id (personalDataType = 'PublishedPreciseLocationTweet, PublishedCoarseLocationTweet')
-  5: optional string name (personalDataType = 'PublishedPreciseLocationTweet, PublishedCoarseLocationTweet')
-} (hasPersonalData = 'true', persisted='true')
+  1: double lat ude (personalDataType = 'GpsCoord nates')
+  2: double long ude (personalDataType = 'GpsCoord nates')
+  3:  32 geo_prec s on (personalDataType = 'GpsCoord nates')
+  4:  64 ent y_ d (personalDataType = 'Publ s dPrec seLocat onT et, Publ s dCoarseLocat onT et')
+  5: opt onal str ng na  (personalDataType = 'Publ s dPrec seLocat onT et, Publ s dCoarseLocat onT et')
+} (hasPersonalData = 'true', pers sted='true')
 
-struct StoredMediaEntity {
-  1: i64 id (personalDataType = 'MediaId')
-  2: i8 media_type (personalDataType = 'ContentTypeTweetMedia')
-  3: i16 width
-  4: i16 height
-} (hasPersonalData = 'true', persisted='true')
+struct Stored d aEnt y {
+  1:  64  d (personalDataType = ' d a d')
+  2:  8  d a_type (personalDataType = 'ContentTypeT et d a')
+  3:  16 w dth
+  4:  16   ght
+} (hasPersonalData = 'true', pers sted='true')
 
 struct StoredNarrowcast {
-  1: optional list<string> language (personalDataType = 'InferredLanguage')
-  2: optional list<string> location (personalDataType = 'PublishedCoarseLocationTweet')
-  3: optional list<i64> ids (personalDataType = 'TweetId')
-} (hasPersonalData = 'true', persisted='true')
+  1: opt onal l st<str ng> language (personalDataType = ' nferredLanguage')
+  2: opt onal l st<str ng> locat on (personalDataType = 'Publ s dCoarseLocat onT et')
+  3: opt onal l st< 64>  ds (personalDataType = 'T et d')
+} (hasPersonalData = 'true', pers sted='true')
 
-struct StoredQuotedTweet {
-  1: i64 tweet_id (personalDataType = 'TweetId')        // the tweet id being quoted
-  2: i64 user_id (personalDataType = 'UserId')          // the user id being quoted
-  3: string short_url (personalDataType = 'ShortUrl')   // tco url - used when rendering in backwards-compat mode
-} (hasPersonalData = 'true', persisted='true')
+struct StoredQuotedT et {
+  1:  64 t et_ d (personalDataType = 'T et d')        // t  t et  d be ng quoted
+  2:  64 user_ d (personalDataType = 'User d')          // t  user  d be ng quoted
+  3: str ng short_url (personalDataType = 'ShortUrl')   // tco url - used w n render ng  n backwards-compat mode
+} (hasPersonalData = 'true', pers sted='true')
 
-struct StoredTweet {
-  1: i64 id (personalDataType = 'TweetId')
-  2: optional i64 user_id (personalDataType = 'UserId')
-  3: optional string text (personalDataType = 'PrivateTweets, PublicTweets')
-  4: optional string created_via (personalDataType = 'ClientType')
-  5: optional i64 created_at_sec (personalDataType = 'PrivateTimestamp, PublicTimestamp')    // in seconds
+struct StoredT et {
+  1:  64  d (personalDataType = 'T et d')
+  2: opt onal  64 user_ d (personalDataType = 'User d')
+  3: opt onal str ng text (personalDataType = 'Pr vateT ets, Publ cT ets')
+  4: opt onal str ng created_v a (personalDataType = 'Cl entType')
+  5: opt onal  64 created_at_sec (personalDataType = 'Pr vateT  stamp, Publ cT  stamp')    //  n seconds
 
-  6: optional StoredReply reply
-  7: optional StoredShare share
-  8: optional i64 contributor_id (personalDataType = 'Contributor')
-  9: optional StoredGeo geo
-  11: optional bool has_takedown
-  12: optional bool nsfw_user (personalDataType = 'TweetSafetyLabels')
-  13: optional bool nsfw_admin (personalDataType = 'TweetSafetyLabels')
-  14: optional list<StoredMediaEntity> media
-  15: optional StoredNarrowcast narrowcast
-  16: optional bool nullcast
-  17: optional i64 tracking_id (personalDataType = 'ImpressionId')
-  18: optional i64 updated_at (personalDataType = 'PrivateTimestamp, PublicTimestamp')
-  19: optional StoredQuotedTweet quoted_tweet
-} (hasPersonalData = 'true', persisted='true')
+  6: opt onal StoredReply reply
+  7: opt onal StoredShare share
+  8: opt onal  64 contr butor_ d (personalDataType = 'Contr butor')
+  9: opt onal StoredGeo geo
+  11: opt onal bool has_takedown
+  12: opt onal bool nsfw_user (personalDataType = 'T etSafetyLabels')
+  13: opt onal bool nsfw_adm n (personalDataType = 'T etSafetyLabels')
+  14: opt onal l st<Stored d aEnt y>  d a
+  15: opt onal StoredNarrowcast narrowcast
+  16: opt onal bool nullcast
+  17: opt onal  64 track ng_ d (personalDataType = ' mpress on d')
+  18: opt onal  64 updated_at (personalDataType = 'Pr vateT  stamp, Publ cT  stamp')
+  19: opt onal StoredQuotedT et quoted_t et
+} (hasPersonalData = 'true', pers sted='true')
 
-struct CoreFields {
-  2: optional i64 user_id (personalDataType = 'UserId')
-  3: optional string text (personalDataType = 'PrivateTweets, PublicTweets')
-  4: optional string created_via (personalDataType = 'ClientType')
-  5: optional i64 created_at_sec (personalDataType = 'PrivateTimestamp, PublicTimestamp')
+struct CoreF elds {
+  2: opt onal  64 user_ d (personalDataType = 'User d')
+  3: opt onal str ng text (personalDataType = 'Pr vateT ets, Publ cT ets')
+  4: opt onal str ng created_v a (personalDataType = 'Cl entType')
+  5: opt onal  64 created_at_sec (personalDataType = 'Pr vateT  stamp, Publ cT  stamp')
 
-  6: optional StoredReply reply
-  7: optional StoredShare share
-  8: optional i64 contributor_id (personalDataType = 'Contributor')
-  19: optional StoredQuotedTweet quoted_tweet
-} (hasPersonalData = 'true', persisted='true')
+  6: opt onal StoredReply reply
+  7: opt onal StoredShare share
+  8: opt onal  64 contr butor_ d (personalDataType = 'Contr butor')
+  19: opt onal StoredQuotedT et quoted_t et
+} (hasPersonalData = 'true', pers sted='true')
 
-struct InternalTweet {
- 1: optional CoreFields core_fields
-} (hasPersonalData = 'true', persisted='true')
+struct  nternalT et {
+ 1: opt onal CoreF elds core_f elds
+} (hasPersonalData = 'true', pers sted='true')

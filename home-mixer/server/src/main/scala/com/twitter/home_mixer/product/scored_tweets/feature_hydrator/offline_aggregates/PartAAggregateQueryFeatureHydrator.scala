@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartARepository
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.servo.repository.Repository
-import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartAStoreRegister
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T  l neAggregate tadataRepos ory
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T  l neAggregatePartARepos ory
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.servo.repos ory.Repos ory
+ mport com.tw ter.t  l nes.data_process ng.jobs.t  l ne_rank ng_user_features.T  l nesPartAStoreReg ster
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.StoreConf g
+ mport com.tw ter.t  l nes.suggests.common.dense_data_record.thr ftscala.DenseFeature tadata
+ mport com.tw ter.user_sess on_store.thr ftjava.UserSess on
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 object PartAAggregateRootFeature extends BaseAggregateRootFeature {
-  override val aggregateStores: Set[StoreConfig[_]] = TimelinesPartAStoreRegister.allStores
+  overr de val aggregateStores: Set[StoreConf g[_]] = T  l nesPartAStoreReg ster.allStores
 }
 
-@Singleton
-class PartAAggregateQueryFeatureHydrator @Inject() (
-  @Named(TimelineAggregatePartARepository)
-  repository: Repository[Long, Option[UserSession]],
-  @Named(TimelineAggregateMetadataRepository)
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]])
+@S ngleton
+class PartAAggregateQueryFeatureHydrator @ nject() (
+  @Na d(T  l neAggregatePartARepos ory)
+  repos ory: Repos ory[Long, Opt on[UserSess on]],
+  @Na d(T  l neAggregate tadataRepos ory)
+   tadataRepos ory: Repos ory[ nt, Opt on[DenseFeature tadata]])
     extends BaseAggregateQueryFeatureHydrator(
-      repository,
-      metadataRepository,
+      repos ory,
+       tadataRepos ory,
       PartAAggregateRootFeature
     ) {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PartAAggregateQuery")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("PartAAggregateQuery")
 
-  override val features = Set(PartAAggregateRootFeature)
+  overr de val features = Set(PartAAggregateRootFeature)
 }

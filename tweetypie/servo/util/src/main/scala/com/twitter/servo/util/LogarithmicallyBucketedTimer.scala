@@ -1,35 +1,35 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.{StatsRece ver, Stat}
+ mport com.tw ter.ut l.Future
 
-object LogarithmicallyBucketedTimer {
-  val LatencyStatName = "latency_ms"
+object Logar hm callyBucketedT  r {
+  val LatencyStatNa  = "latency_ms"
 }
 
 /**
- * helper to bucket timings by quantity. it produces base10 and baseE log buckets.
+ *  lper to bucket t m ngs by quant y.   produces base10 and baseE log buckets.
  */
-class LogarithmicallyBucketedTimer(
-  statsReceiver: StatsReceiver,
-  prefix: String = LogarithmicallyBucketedTimer.LatencyStatName) {
+class Logar hm callyBucketedT  r(
+  statsRece ver: StatsRece ver,
+  pref x: Str ng = Logar hm callyBucketedT  r.LatencyStatNa ) {
 
-  protected[this] def base10Key(count: Int) =
-    prefix + "_log_10_" + math.floor(math.log10(count)).toInt
+  protected[t ] def base10Key(count:  nt) =
+    pref x + "_log_10_" + math.floor(math.log10(count)).to nt
 
-  protected[this] def baseEKey(count: Int) =
-    prefix + "_log_E_" + math.floor(math.log(count)).toInt
+  protected[t ] def baseEKey(count:  nt) =
+    pref x + "_log_E_" + math.floor(math.log(count)).to nt
 
   /**
-   * takes the base10 and baseE logs of the count, adds timings to the
-   * appropriate buckets
+   * takes t  base10 and baseE logs of t  count, adds t m ngs to t 
+   * appropr ate buckets
    */
-  def apply[T](count: Int = 0)(f: => Future[T]) = {
-    Stat.timeFuture(statsReceiver.stat(prefix)) {
-      // only bucketize for positive, non-zero counts
-      if (count > 0) {
-        Stat.timeFuture(statsReceiver.stat(base10Key(count))) {
-          Stat.timeFuture(statsReceiver.stat(baseEKey(count))) {
+  def apply[T](count:  nt = 0)(f: => Future[T]) = {
+    Stat.t  Future(statsRece ver.stat(pref x)) {
+      // only bucket ze for pos  ve, non-zero counts
+       f (count > 0) {
+        Stat.t  Future(statsRece ver.stat(base10Key(count))) {
+          Stat.t  Future(statsRece ver.stat(baseEKey(count))) {
             f
           }
         }

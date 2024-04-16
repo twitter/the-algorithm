@@ -1,245 +1,245 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.marshaller.timeline_logging.PromotedTweetDetailsMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.TweetDetailsMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.WhoToFollowDetailsMarshaller
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetMiddleFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasDarkRequestFeature
-import com.twitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeServedCandidatesFlag
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableScribeServedCandidatesParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidateDecorator
-import com.twitter.product_mixer.component_library.side_effect.ScribeLogEventSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.timeline_logging.{thriftscala => thrift}
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.ho _m xer.marshaller.t  l ne_logg ng.PromotedT etDeta lsMarshaller
+ mport com.tw ter.ho _m xer.marshaller.t  l ne_logg ng.T etDeta lsMarshaller
+ mport com.tw ter.ho _m xer.marshaller.t  l ne_logg ng.WhoToFollowDeta lsMarshaller
+ mport com.tw ter.ho _m xer.model.Ho Features.Get n  alFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.GetM ddleFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.GetNe rFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.GetOlderFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.HasDarkRequestFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.RequestJo n dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedRequest dFeature
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext.RequestContext
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.model.request.HasSeenT et ds
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProduct
+ mport com.tw ter.ho _m xer.param.Ho M xerFlagNa .Scr beServedCand datesFlag
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.EnableScr beServedCand datesParam
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.logp pel ne.cl ent.common.EventPubl s r
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseUserCand date
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module.WhoToFollowCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_subscr be_module.WhoToSubscr beCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.s de_effect.Scr beLogEventS deEffect
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddEntr esT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Module em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => thr ft}
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Side effect that logs home timeline served candidates to Scribe.
+ * S de effect that logs ho  t  l ne served cand dates to Scr be.
  */
-@Singleton
-class HomeScribeServedCandidatesSideEffect @Inject() (
-  @Flag(ScribeServedCandidatesFlag) enableScribeServedCandidates: Boolean,
-  scribeEventPublisher: EventPublisher[thrift.ServedEntry])
-    extends ScribeLogEventSideEffect[
-      thrift.ServedEntry,
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+@S ngleton
+class Ho Scr beServedCand datesS deEffect @ nject() (
+  @Flag(Scr beServedCand datesFlag) enableScr beServedCand dates: Boolean,
+  scr beEventPubl s r: EventPubl s r[thr ft.ServedEntry])
+    extends Scr beLogEventS deEffect[
+      thr ft.ServedEntry,
+      P pel neQuery w h HasSeenT et ds w h HasDev ceContext,
+      T  l ne
     ]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+    w h P pel neResultS deEffect.Cond  onally[
+      P pel neQuery w h HasSeenT et ds w h HasDev ceContext,
+      T  l ne
     ] {
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("HomeScribeServedCandidates")
+  overr de val  dent f er: S deEffect dent f er = S deEffect dent f er("Ho Scr beServedCand dates")
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Boolean = enableScribeServedCandidates && query.params(EnableScribeServedCandidatesParam)
+  overr de def only f(
+    query: P pel neQuery w h HasSeenT et ds w h HasDev ceContext,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: T  l ne
+  ): Boolean = enableScr beServedCand dates && query.params(EnableScr beServedCand datesParam)
 
-  override def buildLogEvents(
-    query: PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Seq[thrift.ServedEntry] = {
-    val timelineType = query.product match {
-      case FollowingProduct => thrift.TimelineType.HomeLatest
-      case ForYouProduct => thrift.TimelineType.Home
-      case SubscribedProduct => thrift.TimelineType.HomeSubscribed
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  overr de def bu ldLogEvents(
+    query: P pel neQuery w h HasSeenT et ds w h HasDev ceContext,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: T  l ne
+  ): Seq[thr ft.ServedEntry] = {
+    val t  l neType = query.product match {
+      case Follow ngProduct => thr ft.T  l neType.Ho Latest
+      case For Product => thr ft.T  l neType.Ho 
+      case Subscr bedProduct => thr ft.T  l neType.Ho Subscr bed
+      case ot r => throw new UnsupportedOperat onExcept on(s"Unknown product: $ot r")
     }
-    val requestProvenance = query.deviceContext.map { deviceContext =>
-      deviceContext.requestContextValue match {
-        case RequestContext.Foreground => thrift.RequestProvenance.Foreground
-        case RequestContext.Launch => thrift.RequestProvenance.Launch
-        case RequestContext.PullToRefresh => thrift.RequestProvenance.Ptr
-        case _ => thrift.RequestProvenance.Other
+    val requestProvenance = query.dev ceContext.map { dev ceContext =>
+      dev ceContext.requestContextValue match {
+        case RequestContext.Foreground => thr ft.RequestProvenance.Foreground
+        case RequestContext.Launch => thr ft.RequestProvenance.Launch
+        case RequestContext.PullToRefresh => thr ft.RequestProvenance.Ptr
+        case _ => thr ft.RequestProvenance.Ot r
       }
     }
     val queryType = query.features.map { featureMap =>
-      if (featureMap.getOrElse(GetOlderFeature, false)) thrift.QueryType.GetOlder
-      else if (featureMap.getOrElse(GetNewerFeature, false)) thrift.QueryType.GetNewer
-      else if (featureMap.getOrElse(GetMiddleFeature, false)) thrift.QueryType.GetMiddle
-      else if (featureMap.getOrElse(GetInitialFeature, false)) thrift.QueryType.GetInitial
-      else thrift.QueryType.Other
+       f (featureMap.getOrElse(GetOlderFeature, false)) thr ft.QueryType.GetOlder
+      else  f (featureMap.getOrElse(GetNe rFeature, false)) thr ft.QueryType.GetNe r
+      else  f (featureMap.getOrElse(GetM ddleFeature, false)) thr ft.QueryType.GetM ddle
+      else  f (featureMap.getOrElse(Get n  alFeature, false)) thr ft.QueryType.Get n  al
+      else thr ft.QueryType.Ot r
     }
-    val requestInfo = thrift.RequestInfo(
-      requestTimeMs = query.queryTime.inMilliseconds,
-      traceId = Trace.id.traceId.toLong,
-      userId = query.getOptionalUserId,
-      clientAppId = query.clientContext.appId,
+    val request nfo = thr ft.Request nfo(
+      requestT  Ms = query.queryT  . nM ll seconds,
+      trace d = Trace. d.trace d.toLong,
+      user d = query.getOpt onalUser d,
+      cl entApp d = query.cl entContext.app d,
       hasDarkRequest = query.features.flatMap(_.getOrElse(HasDarkRequestFeature, None)),
-      parentId = Some(Trace.id.parentId.toLong),
-      spanId = Some(Trace.id.spanId.toLong),
-      timelineType = Some(timelineType),
-      ipAddress = query.clientContext.ipAddress,
-      userAgent = query.clientContext.userAgent,
+      parent d = So (Trace. d.parent d.toLong),
+      span d = So (Trace. d.span d.toLong),
+      t  l neType = So (t  l neType),
+       pAddress = query.cl entContext. pAddress,
+      userAgent = query.cl entContext.userAgent,
       queryType = queryType,
       requestProvenance = requestProvenance,
-      languageCode = query.clientContext.languageCode,
-      countryCode = query.clientContext.countryCode,
-      requestEndTimeMs = Some(Time.now.inMilliseconds),
-      servedRequestId = query.features.flatMap(_.getOrElse(ServedRequestIdFeature, None)),
-      requestJoinId = query.features.flatMap(_.getOrElse(RequestJoinIdFeature, None))
+      languageCode = query.cl entContext.languageCode,
+      countryCode = query.cl entContext.countryCode,
+      requestEndT  Ms = So (T  .now. nM ll seconds),
+      servedRequest d = query.features.flatMap(_.getOrElse(ServedRequest dFeature, None)),
+      requestJo n d = query.features.flatMap(_.getOrElse(RequestJo n dFeature, None))
     )
 
-    val tweetIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-      selectedCandidates.flatMap {
-        case item: ItemCandidateWithDetails if item.candidate.isInstanceOf[BaseTweetCandidate] =>
-          Seq((item.candidateIdLong, item))
-        case module: ModuleCandidateWithDetails
-            if module.candidates.headOption.exists(_.candidate.isInstanceOf[BaseTweetCandidate]) =>
-          module.candidates.map(item => (item.candidateIdLong, item))
+    val t et dTo emCand dateMap: Map[Long,  emCand dateW hDeta ls] =
+      selectedCand dates.flatMap {
+        case  em:  emCand dateW hDeta ls  f  em.cand date. s nstanceOf[BaseT etCand date] =>
+          Seq(( em.cand date dLong,  em))
+        case module: ModuleCand dateW hDeta ls
+             f module.cand dates. adOpt on.ex sts(_.cand date. s nstanceOf[BaseT etCand date]) =>
+          module.cand dates.map( em => ( em.cand date dLong,  em))
         case _ => Seq.empty
       }.toMap
 
-    val userIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-      selectedCandidates.flatMap {
-        case module: ModuleCandidateWithDetails
-            if module.candidates.forall(_.candidate.isInstanceOf[BaseUserCandidate]) =>
-          module.candidates.map { item =>
-            (item.candidateIdLong, item)
+    val user dTo emCand dateMap: Map[Long,  emCand dateW hDeta ls] =
+      selectedCand dates.flatMap {
+        case module: ModuleCand dateW hDeta ls
+             f module.cand dates.forall(_.cand date. s nstanceOf[BaseUserCand date]) =>
+          module.cand dates.map {  em =>
+            ( em.cand date dLong,  em)
           }
         case _ => Seq.empty
       }.toMap
 
-    response.instructions.zipWithIndex
+    response. nstruct ons.z pW h ndex
       .collect {
-        case (AddEntriesTimelineInstruction(entries), index) =>
-          entries.collect {
-            case entry: TweetItem if entry.promotedMetadata.isDefined =>
-              val promotedTweetDetails = PromotedTweetDetailsMarshaller(entry, index)
+        case (AddEntr esT  l ne nstruct on(entr es),  ndex) =>
+          entr es.collect {
+            case entry: T et em  f entry.promoted tadata. sDef ned =>
+              val promotedT etDeta ls = PromotedT etDeta lsMarshaller(entry,  ndex)
               Seq(
-                thrift.EntryInfo(
-                  id = entry.id,
-                  position = index.shortValue(),
-                  entryId = entry.entryIdentifier,
-                  entryType = thrift.EntryType.PromotedTweet,
-                  sortIndex = entry.sortIndex,
-                  verticalSize = Some(1),
-                  displayType = Some(entry.displayType.toString),
-                  details = Some(thrift.ItemDetails.PromotedTweetDetails(promotedTweetDetails))
+                thr ft.Entry nfo(
+                   d = entry. d,
+                  pos  on =  ndex.shortValue(),
+                  entry d = entry.entry dent f er,
+                  entryType = thr ft.EntryType.PromotedT et,
+                  sort ndex = entry.sort ndex,
+                  vert calS ze = So (1),
+                  d splayType = So (entry.d splayType.toStr ng),
+                  deta ls = So (thr ft. emDeta ls.PromotedT etDeta ls(promotedT etDeta ls))
                 )
               )
-            case entry: TweetItem =>
-              val candidate = tweetIdToItemCandidateMap(entry.id)
-              val tweetDetails = TweetDetailsMarshaller(entry, candidate)
+            case entry: T et em =>
+              val cand date = t et dTo emCand dateMap(entry. d)
+              val t etDeta ls = T etDeta lsMarshaller(entry, cand date)
               Seq(
-                thrift.EntryInfo(
-                  id = candidate.candidateIdLong,
-                  position = index.shortValue(),
-                  entryId = entry.entryIdentifier,
-                  entryType = thrift.EntryType.Tweet,
-                  sortIndex = entry.sortIndex,
-                  verticalSize = Some(1),
-                  score = candidate.features.getOrElse(ScoreFeature, None),
-                  displayType = Some(entry.displayType.toString),
-                  details = Some(thrift.ItemDetails.TweetDetails(tweetDetails))
+                thr ft.Entry nfo(
+                   d = cand date.cand date dLong,
+                  pos  on =  ndex.shortValue(),
+                  entry d = entry.entry dent f er,
+                  entryType = thr ft.EntryType.T et,
+                  sort ndex = entry.sort ndex,
+                  vert calS ze = So (1),
+                  score = cand date.features.getOrElse(ScoreFeature, None),
+                  d splayType = So (entry.d splayType.toStr ng),
+                  deta ls = So (thr ft. emDeta ls.T etDeta ls(t etDeta ls))
                 )
               )
-            case module: TimelineModule
-                if module.entryNamespace.toString == WhoToFollowCandidateDecorator.EntryNamespaceString =>
-              module.items.collect {
-                case ModuleItem(entry: UserItem, _, _) =>
-                  val candidate = userIdToItemCandidateMap(entry.id)
-                  val whoToFollowDetails = WhoToFollowDetailsMarshaller(entry, candidate)
-                  thrift.EntryInfo(
-                    id = entry.id,
-                    position = index.shortValue(),
-                    entryId = module.entryIdentifier,
-                    entryType = thrift.EntryType.WhoToFollowModule,
-                    sortIndex = module.sortIndex,
-                    score = candidate.features.getOrElse(ScoreFeature, None),
-                    displayType = Some(entry.displayType.toString),
-                    details = Some(thrift.ItemDetails.WhoToFollowDetails(whoToFollowDetails))
+            case module: T  l neModule
+                 f module.entryNa space.toStr ng == WhoToFollowCand dateDecorator.EntryNa spaceStr ng =>
+              module. ems.collect {
+                case Module em(entry: User em, _, _) =>
+                  val cand date = user dTo emCand dateMap(entry. d)
+                  val whoToFollowDeta ls = WhoToFollowDeta lsMarshaller(entry, cand date)
+                  thr ft.Entry nfo(
+                     d = entry. d,
+                    pos  on =  ndex.shortValue(),
+                    entry d = module.entry dent f er,
+                    entryType = thr ft.EntryType.WhoToFollowModule,
+                    sort ndex = module.sort ndex,
+                    score = cand date.features.getOrElse(ScoreFeature, None),
+                    d splayType = So (entry.d splayType.toStr ng),
+                    deta ls = So (thr ft. emDeta ls.WhoToFollowDeta ls(whoToFollowDeta ls))
                   )
               }
-            case module: TimelineModule
-                if module.entryNamespace.toString == WhoToSubscribeCandidateDecorator.EntryNamespaceString =>
-              module.items.collect {
-                case ModuleItem(entry: UserItem, _, _) =>
-                  val candidate = userIdToItemCandidateMap(entry.id)
-                  val whoToSubscribeDetails = WhoToFollowDetailsMarshaller(entry, candidate)
-                  thrift.EntryInfo(
-                    id = entry.id,
-                    position = index.shortValue(),
-                    entryId = module.entryIdentifier,
-                    entryType = thrift.EntryType.WhoToSubscribeModule,
-                    sortIndex = module.sortIndex,
-                    score = candidate.features.getOrElse(ScoreFeature, None),
-                    displayType = Some(entry.displayType.toString),
-                    details = Some(thrift.ItemDetails.WhoToFollowDetails(whoToSubscribeDetails))
+            case module: T  l neModule
+                 f module.entryNa space.toStr ng == WhoToSubscr beCand dateDecorator.EntryNa spaceStr ng =>
+              module. ems.collect {
+                case Module em(entry: User em, _, _) =>
+                  val cand date = user dTo emCand dateMap(entry. d)
+                  val whoToSubscr beDeta ls = WhoToFollowDeta lsMarshaller(entry, cand date)
+                  thr ft.Entry nfo(
+                     d = entry. d,
+                    pos  on =  ndex.shortValue(),
+                    entry d = module.entry dent f er,
+                    entryType = thr ft.EntryType.WhoToSubscr beModule,
+                    sort ndex = module.sort ndex,
+                    score = cand date.features.getOrElse(ScoreFeature, None),
+                    d splayType = So (entry.d splayType.toStr ng),
+                    deta ls = So (thr ft. emDeta ls.WhoToFollowDeta ls(whoToSubscr beDeta ls))
                   )
               }
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.items.headOption.exists(
-                  _.item.isInstanceOf[TweetItem]) =>
-              module.items.collect {
-                case ModuleItem(entry: TweetItem, _, _) =>
-                  val candidate = tweetIdToItemCandidateMap(entry.id)
-                  thrift.EntryInfo(
-                    id = entry.id,
-                    position = index.shortValue(),
-                    entryId = module.entryIdentifier,
-                    entryType = thrift.EntryType.ConversationModule,
-                    sortIndex = module.sortIndex,
-                    score = candidate.features.getOrElse(ScoreFeature, None),
-                    displayType = Some(entry.displayType.toString)
+            case module: T  l neModule
+                 f module.sort ndex. sDef ned && module. ems. adOpt on.ex sts(
+                  _. em. s nstanceOf[T et em]) =>
+              module. ems.collect {
+                case Module em(entry: T et em, _, _) =>
+                  val cand date = t et dTo emCand dateMap(entry. d)
+                  thr ft.Entry nfo(
+                     d = entry. d,
+                    pos  on =  ndex.shortValue(),
+                    entry d = module.entry dent f er,
+                    entryType = thr ft.EntryType.Conversat onModule,
+                    sort ndex = module.sort ndex,
+                    score = cand date.features.getOrElse(ScoreFeature, None),
+                    d splayType = So (entry.d splayType.toStr ng)
                   )
               }
             case _ => Seq.empty
           }.flatten
-        // Other instructions
-        case _ => Seq.empty[thrift.EntryInfo]
-      }.flatten.map { entryInfo =>
-        thrift.ServedEntry(
-          entry = Some(entryInfo),
-          request = requestInfo
+        // Ot r  nstruct ons
+        case _ => Seq.empty[thr ft.Entry nfo]
+      }.flatten.map { entry nfo =>
+        thr ft.ServedEntry(
+          entry = So (entry nfo),
+          request = request nfo
         )
       }
   }
 
-  override val logPipelinePublisher: EventPublisher[thrift.ServedEntry] =
-    scribeEventPublisher
+  overr de val logP pel nePubl s r: EventPubl s r[thr ft.ServedEntry] =
+    scr beEventPubl s r
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert()
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert()
   )
 }

@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder
 
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorUpdater.getCursorByType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder.Sl ceCursorUpdater.getCursorByType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Cursor em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object SliceCursorUpdater {
+object Sl ceCursorUpdater {
 
   def getCursorByType(
-    items: Seq[SliceItem],
+     ems: Seq[Sl ce em],
     cursorType: CursorType
-  ): Option[CursorItem] = {
-    items.collectFirst {
-      case cursor: CursorItem if cursor.cursorType == cursorType => cursor
+  ): Opt on[Cursor em] = {
+     ems.collectF rst {
+      case cursor: Cursor em  f cursor.cursorType == cursorType => cursor
     }
   }
 }
 
 /**
- * If [[SliceCursorBuilder.includeOperation]] is true and a cursor does exist in the `items`,
- * this will run the the underlying [[SliceCursorBuilder]] with the full `items`
- * (including all cursors which may be present) then filter out only the originally
- * found [[CursorItem]] from the results). Then append the new cursor to the end of the results.
+ *  f [[Sl ceCursorBu lder. ncludeOperat on]]  s true and a cursor does ex st  n t  ` ems`,
+ * t  w ll run t  t  underly ng [[Sl ceCursorBu lder]] w h t  full ` ems`
+ * ( nclud ng all cursors wh ch may be present) t n f lter out only t  or g nally
+ * found [[Cursor em]] from t  results). T n append t  new cursor to t  end of t  results.
  *
- * If you have multiple cursors that need to be updated, you will need to have multiple updaters.
+ *  f   have mult ple cursors that need to be updated,   w ll need to have mult ple updaters.
  *
- * If a CursorCandidate is returned by a Candidate Source, use this trait to update the Cursor
- * (if necessary) and add it to the end of the candidates list.
+ *  f a CursorCand date  s returned by a Cand date S ce, use t  tra  to update t  Cursor
+ * ( f necessary) and add   to t  end of t  cand dates l st.
  */
-trait SliceCursorUpdater[-Query <: PipelineQuery] extends SliceCursorBuilder[Query] { self =>
+tra  Sl ceCursorUpdater[-Query <: P pel neQuery] extends Sl ceCursorBu lder[Query] { self =>
 
-  def getExistingCursor(items: Seq[SliceItem]): Option[CursorItem] = {
-    getCursorByType(items, self.cursorType)
+  def getEx st ngCursor( ems: Seq[Sl ce em]): Opt on[Cursor em] = {
+    getCursorByType( ems, self.cursorType)
   }
 
-  def update(query: Query, items: Seq[SliceItem]): Seq[SliceItem] = {
-    if (includeOperation(query, items)) {
-      getExistingCursor(items)
-        .map { existingCursor =>
-          // Safe get because includeOperation() is shared in this context
-          val newCursor = build(query, items).get
+  def update(query: Query,  ems: Seq[Sl ce em]): Seq[Sl ce em] = {
+     f ( ncludeOperat on(query,  ems)) {
+      getEx st ngCursor( ems)
+        .map { ex st ngCursor =>
+          // Safe get because  ncludeOperat on()  s shared  n t  context
+          val newCursor = bu ld(query,  ems).get
 
-          items.filterNot(_ == existingCursor) :+ newCursor
-        }.getOrElse(items)
-    } else items
+           ems.f lterNot(_ == ex st ngCursor) :+ newCursor
+        }.getOrElse( ems)
+    } else  ems
   }
 }
 
-trait SliceCursorUpdaterFromUnderlyingBuilder[-Query <: PipelineQuery]
-    extends SliceCursorUpdater[Query] {
-  def underlying: SliceCursorBuilder[Query]
-  override def cursorValue(
+tra  Sl ceCursorUpdaterFromUnderly ngBu lder[-Query <: P pel neQuery]
+    extends Sl ceCursorUpdater[Query] {
+  def underly ng: Sl ceCursorBu lder[Query]
+  overr de def cursorValue(
     query: Query,
-    entries: Seq[SliceItem]
-  ): String = underlying.cursorValue(query, entries)
+    entr es: Seq[Sl ce em]
+  ): Str ng = underly ng.cursorValue(query, entr es)
 }

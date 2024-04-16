@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.SorterFromOrder ng
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.SorterProv der
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 object UpdateSortResults {
   def apply(
-    ordering: Ordering[CandidateWithDetails]
+    order ng: Order ng[Cand dateW hDeta ls]
   ) =
-    new UpdateSortResults((_, _, _) => SorterFromOrdering(ordering))
+    new UpdateSortResults((_, _, _) => SorterFromOrder ng(order ng))
 }
 
 /**
- * Sort item and module (not items inside modules) results.
+ * Sort  em and module (not  ems  ns de modules) results.
  *
- * For example, we could specify the following ordering to sort by score descending:
- * Ordering
- *   .by[CandidateWithDetails, Double](_.features.get(ScoreFeature) match {
+ * For example,   could spec fy t  follow ng order ng to sort by score descend ng:
+ * Order ng
+ *   .by[Cand dateW hDeta ls, Double](_.features.get(ScoreFeature) match {
  *     case Scored(score) => score
- *     case _ => Double.MinValue
+ *     case _ => Double.M nValue
  *   }).reverse
  */
 case class UpdateSortResults(
-  sorterProvider: SorterProvider,
-  override val pipelineScope: CandidateScope = AllPipelines)
-    extends Selector[PipelineQuery] {
+  sorterProv der: SorterProv der,
+  overr de val p pel neScope: Cand dateScope = AllP pel nes)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val updatedResult = sorterProvider.sorter(query, remainingCandidates, result).sort(result)
+    val updatedResult = sorterProv der.sorter(query, rema n ngCand dates, result).sort(result)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = updatedResult)
+    SelectorResult(rema n ngCand dates = rema n ngCand dates, result = updatedResult)
   }
 }

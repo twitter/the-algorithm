@@ -1,134 +1,134 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene.analys s.tokenattr butes.PayloadAttr bute;
+ mport org.apac .lucene.analys s.tokenattr butes.TermToBytesRefAttr bute;
+ mport org.apac .lucene.ut l.Attr buteS ce;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.util.analysis.TermPayloadAttribute;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+ mport com.tw ter.search.common.hashtable.HashTable;
+ mport com.tw ter.search.common.ut l.analys s.TermPayloadAttr bute;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount ngArrayWr er;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap.FacetF eld;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntWr er;
 
-public class InvertedRealtimeIndexWriter
-    implements EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumer {
-  private final InvertedRealtimeIndex invertedIndex;
-  private final FacetCountingArrayWriter facetArray;
-  private final FacetField facetField;
+publ c class  nvertedRealt   ndexWr er
+     mple nts Earlyb rdRealt   ndexSeg ntWr er. nvertedDocConsu r {
+  pr vate f nal  nvertedRealt   ndex  nverted ndex;
+  pr vate f nal FacetCount ngArrayWr er facetArray;
+  pr vate f nal FacetF eld facetF eld;
 
-  private TermToBytesRefAttribute termAtt;
-  private TermPayloadAttribute termPayloadAtt;
-  private PayloadAttribute payloadAtt;
-  private boolean currentDocIsOffensive;
+  pr vate TermToBytesRefAttr bute termAtt;
+  pr vate TermPayloadAttr bute termPayloadAtt;
+  pr vate PayloadAttr bute payloadAtt;
+  pr vate boolean currentDoc sOffens ve;
 
   /**
-   * Creates a new writer for writing to an inverted in-memory real-time index.
+   * Creates a new wr er for wr  ng to an  nverted  n- mory real-t    ndex.
    */
-  public InvertedRealtimeIndexWriter(
-          InvertedRealtimeIndex index,
-          FacetField facetField,
-          FacetCountingArrayWriter facetArray) {
+  publ c  nvertedRealt   ndexWr er(
+           nvertedRealt   ndex  ndex,
+          FacetF eld facetF eld,
+          FacetCount ngArrayWr er facetArray) {
     super();
-    this.invertedIndex = index;
-    this.facetArray = facetArray;
-    this.facetField = facetField;
+    t . nverted ndex =  ndex;
+    t .facetArray = facetArray;
+    t .facetF eld = facetF eld;
   }
 
-  @Override
-  public void start(AttributeSource attributeSource, boolean docIsOffensive) {
-    termAtt = attributeSource.addAttribute(TermToBytesRefAttribute.class);
-    termPayloadAtt = attributeSource.addAttribute(TermPayloadAttribute.class);
-    payloadAtt = attributeSource.addAttribute(PayloadAttribute.class);
-    currentDocIsOffensive = docIsOffensive;
+  @Overr de
+  publ c vo d start(Attr buteS ce attr buteS ce, boolean doc sOffens ve) {
+    termAtt = attr buteS ce.addAttr bute(TermToBytesRefAttr bute.class);
+    termPayloadAtt = attr buteS ce.addAttr bute(TermPayloadAttr bute.class);
+    payloadAtt = attr buteS ce.addAttr bute(PayloadAttr bute.class);
+    currentDoc sOffens ve = doc sOffens ve;
   }
 
   /**
-   * Adds a posting to the provided inverted index.
+   * Adds a post ng to t  prov ded  nverted  ndex.
    *
-   * @param termBytesRef is a payload that is stored with the term. It is only stored once for each
+   * @param termBytesRef  s a payload that  s stored w h t  term.    s only stored once for each
    *                     term.
-   * @param postingPayload is a byte payload that will be stored separately for every posting.
-   * @return term id of the added posting.
+   * @param post ngPayload  s a byte payload that w ll be stored separately for every post ng.
+   * @return term  d of t  added post ng.
    */
-  public static int indexTerm(InvertedRealtimeIndex invertedIndex, BytesRef termBytesRef,
-      int docID, int position, BytesRef termPayload,
-      BytesRef postingPayload, TermPointerEncoding termPointerEncoding) {
+  publ c stat c  nt  ndexTerm( nvertedRealt   ndex  nverted ndex, BytesRef termBytesRef,
+       nt doc D,  nt pos  on, BytesRef termPayload,
+      BytesRef post ngPayload, TermPo nterEncod ng termPo nterEncod ng) {
 
-    InvertedRealtimeIndex.TermHashTable hashTable = invertedIndex.getHashTable();
-    BaseByteBlockPool termPool = invertedIndex.getTermPool();
+     nvertedRealt   ndex.TermHashTable hashTable =  nverted ndex.getHashTable();
+    BaseByteBlockPool termPool =  nverted ndex.getTermPool();
 
-    TermsArray termsArray = invertedIndex.getTermsArray();
+    TermsArray termsArray =  nverted ndex.getTermsArray();
 
-    long hashTableInfoForBytesRef = hashTable.lookupItem(termBytesRef);
-    int termID = HashTable.decodeItemId(hashTableInfoForBytesRef);
-    int hashTableSlot = HashTable.decodeHashPosition(hashTableInfoForBytesRef);
+    long hashTable nfoForBytesRef = hashTable.lookup em(termBytesRef);
+     nt term D = HashTable.decode em d(hashTable nfoForBytesRef);
+     nt hashTableSlot = HashTable.decodeHashPos  on(hashTable nfoForBytesRef);
 
-    invertedIndex.adjustMaxPosition(position);
+     nverted ndex.adjustMaxPos  on(pos  on);
 
-    if (termID == HashTable.EMPTY_SLOT) {
-      // First time we are seeing this token since we last flushed the hash.
-      // the LSB in textStart denotes whether this term has a term payload
-      int textStart = ByteTermUtils.copyToTermPool(termPool, termBytesRef);
+     f (term D == HashTable.EMPTY_SLOT) {
+      // F rst t     are see ng t  token s nce   last flus d t  hash.
+      // t  LSB  n textStart denotes w t r t  term has a term payload
+       nt textStart = ByteTermUt ls.copyToTermPool(termPool, termBytesRef);
       boolean hasTermPayload = termPayload != null;
-      int termPointer = termPointerEncoding.encodeTermPointer(textStart, hasTermPayload);
+       nt termPo nter = termPo nterEncod ng.encodeTermPo nter(textStart, hasTermPayload);
 
-      if (hasTermPayload) {
-        ByteTermUtils.copyToTermPool(termPool, termPayload);
+       f (hasTermPayload) {
+        ByteTermUt ls.copyToTermPool(termPool, termPayload);
       }
 
-      termID = invertedIndex.getNumTerms();
-      invertedIndex.incrementNumTerms();
-      if (termID >= termsArray.getSize()) {
-        termsArray = invertedIndex.growTermsArray();
+      term D =  nverted ndex.getNumTerms();
+       nverted ndex. ncre ntNumTerms();
+       f (term D >= termsArray.getS ze()) {
+        termsArray =  nverted ndex.growTermsArray();
       }
 
-      termsArray.termPointers[termID] = termPointer;
+      termsArray.termPo nters[term D] = termPo nter;
 
-      Preconditions.checkState(hashTable.slots()[hashTableSlot] == HashTable.EMPTY_SLOT);
-      hashTable.setSlot(hashTableSlot, termID);
+      Precond  ons.c ckState(hashTable.slots()[hashTableSlot] == HashTable.EMPTY_SLOT);
+      hashTable.setSlot(hashTableSlot, term D);
 
-      if (invertedIndex.getNumTerms() * 2 >= hashTable.numSlots()) {
-        invertedIndex.rehashPostings(2 * hashTable.numSlots());
+       f ( nverted ndex.getNumTerms() * 2 >= hashTable.numSlots()) {
+         nverted ndex.rehashPost ngs(2 * hashTable.numSlots());
       }
 
-      // Insert termID into termsSkipList.
-      invertedIndex.insertToTermsSkipList(termBytesRef, termID);
+      //  nsert term D  nto termsSk pL st.
+       nverted ndex. nsertToTermsSk pL st(termBytesRef, term D);
     }
 
-    invertedIndex.incrementSumTotalTermFreq();
-    invertedIndex.getPostingList()
-        .appendPosting(termID, termsArray, docID, position, postingPayload);
+     nverted ndex. ncre ntSumTotalTermFreq();
+     nverted ndex.getPost ngL st()
+        .appendPost ng(term D, termsArray, doc D, pos  on, post ngPayload);
 
-    return termID;
+    return term D;
   }
 
   /**
-   * Delete a posting that was inserted out of order.
+   * Delete a post ng that was  nserted out of order.
    *
-   * This function needs work before it is used in production:
-   * - It should take an isDocOffensive parameter so we can decrement the offensive
-   *   document count for the term.
-   * - It doesn't allow the same concurrency guarantees that the other posting methods do.
+   * T  funct on needs work before    s used  n product on:
+   * -   should take an  sDocOffens ve para ter so   can decre nt t  offens ve
+   *   docu nt count for t  term.
+   * -   doesn't allow t  sa  concurrency guarantees that t  ot r post ng  thods do.
    */
-  public static void deletePosting(
-      InvertedRealtimeIndex invertedIndex, BytesRef termBytesRef, int docID) {
+  publ c stat c vo d deletePost ng(
+       nvertedRealt   ndex  nverted ndex, BytesRef termBytesRef,  nt doc D) {
 
-    long hashTableInfoForBytesRef = invertedIndex.getHashTable().lookupItem(termBytesRef);
-    int termID = HashTable.decodeItemId(hashTableInfoForBytesRef);
+    long hashTable nfoForBytesRef =  nverted ndex.getHashTable().lookup em(termBytesRef);
+     nt term D = HashTable.decode em d(hashTable nfoForBytesRef);
 
-    if (termID != HashTable.EMPTY_SLOT) {
-      // Have seen this term before, and the field that supports deletes.
-      invertedIndex.getPostingList().deletePosting(termID, invertedIndex.getTermsArray(), docID);
+     f (term D != HashTable.EMPTY_SLOT) {
+      // Have seen t  term before, and t  f eld that supports deletes.
+       nverted ndex.getPost ngL st().deletePost ng(term D,  nverted ndex.getTermsArray(), doc D);
     }
   }
 
-  @Override
-  public void add(int docID, int position) {
-    final BytesRef payload;
-    if (payloadAtt == null) {
+  @Overr de
+  publ c vo d add( nt doc D,  nt pos  on) {
+    f nal BytesRef payload;
+     f (payloadAtt == null) {
       payload = null;
     } else {
       payload = payloadAtt.getPayload();
@@ -136,27 +136,27 @@ public class InvertedRealtimeIndexWriter
 
     BytesRef termPayload = termPayloadAtt.getTermPayload();
 
-    int termID = indexTerm(invertedIndex, termAtt.getBytesRef(),
-        docID, position, termPayload, payload,
-        invertedIndex.getTermPointerEncoding());
+     nt term D =  ndexTerm( nverted ndex, termAtt.getBytesRef(),
+        doc D, pos  on, termPayload, payload,
+         nverted ndex.getTermPo nterEncod ng());
 
-    if (termID == -1) {
+     f (term D == -1) {
       return;
     }
 
-    TermsArray termsArray = invertedIndex.getTermsArray();
+    TermsArray termsArray =  nverted ndex.getTermsArray();
 
-    if (currentDocIsOffensive && termsArray.offensiveCounters != null) {
-      termsArray.offensiveCounters[termID]++;
+     f (currentDoc sOffens ve && termsArray.offens veCounters != null) {
+      termsArray.offens veCounters[term D]++;
     }
 
-    if (facetField != null) {
-      facetArray.addFacet(docID, facetField.getFacetId(), termID);
+     f (facetF eld != null) {
+      facetArray.addFacet(doc D, facetF eld.getFacet d(), term D);
     }
   }
 
-  @Override
-  public void finish() {
+  @Overr de
+  publ c vo d f n sh() {
     payloadAtt = null;
     termPayloadAtt = null;
   }

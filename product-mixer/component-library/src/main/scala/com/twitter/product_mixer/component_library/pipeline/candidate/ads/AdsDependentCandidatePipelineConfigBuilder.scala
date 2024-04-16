@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad.AdsCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.adserver.thr ftscala.Ad mpress on
+ mport com.tw ter.adserver.thr ftscala.AdRequestParams
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.Urt emCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.ad.AdsCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AdsDependentCandidatePipelineConfigBuilder @Inject() () {
+@S ngleton
+class AdsDependentCand dateP pel neConf gBu lder @ nject() () {
 
   /**
-   * Build a AdsDependentCandidatePipelineConfig
+   * Bu ld a AdsDependentCand dateP pel neConf g
    */
-  def build[Query <: PipelineQuery with AdsQuery](
-    adsCandidateSource: CandidateSource[AdRequestParams, AdImpression],
-    identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("Ads"),
-    adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-    getOrganicItemIds: GetOrganicItemIds = EmptyOrganicItemIds,
-    countNumOrganicItems: CountNumOrganicItems[Query] = CountAllCandidates,
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
+  def bu ld[Query <: P pel neQuery w h AdsQuery](
+    adsCand dateS ce: Cand dateS ce[AdRequestParams, Ad mpress on],
+     dent f er: Cand dateP pel ne dent f er = Cand dateP pel ne dent f er("Ads"),
+    adsD splayLocat onBu lder: AdsD splayLocat onBu lder[Query],
+    getOrgan c em ds: GetOrgan c em ds = EmptyOrgan c em ds,
+    countNumOrgan c ems: CountNumOrgan c ems[Query] = CountAllCand dates,
+    enabledDec derParam: Opt on[Dec derParam[Boolean]] = None,
+    supportedCl entParam: Opt on[FSParam[Boolean]] = None,
     gates: Seq[BaseGate[Query]] = Seq.empty,
-    filters: Seq[Filter[Query, AdsCandidate]] = Seq.empty,
-    postFilterFeatureHydration: Seq[BaseCandidateFeatureHydrator[Query, AdsCandidate, _]] =
+    f lters: Seq[F lter[Query, AdsCand date]] = Seq.empty,
+    postF lterFeatureHydrat on: Seq[BaseCand dateFeatureHydrator[Query, AdsCand date, _]] =
       Seq.empty,
-    decorator: Option[CandidateDecorator[Query, AdsCandidate]] =
-      Some(UrtItemCandidateDecorator(AdsCandidateUrtItemBuilder())),
+    decorator: Opt on[Cand dateDecorator[Query, AdsCand date]] =
+      So (Urt emCand dateDecorator(AdsCand dateUrt emBu lder())),
     alerts: Seq[Alert] = Seq.empty,
-    urtRequest: Option[Boolean] = None,
-  ): AdsDependentCandidatePipelineConfig[Query] = new AdsDependentCandidatePipelineConfig[Query](
-    identifier = identifier,
-    enabledDeciderParam = enabledDeciderParam,
-    supportedClientParam = supportedClientParam,
+    urtRequest: Opt on[Boolean] = None,
+  ): AdsDependentCand dateP pel neConf g[Query] = new AdsDependentCand dateP pel neConf g[Query](
+     dent f er =  dent f er,
+    enabledDec derParam = enabledDec derParam,
+    supportedCl entParam = supportedCl entParam,
     gates = gates,
-    candidateSource = adsCandidateSource,
-    filters = filters,
-    postFilterFeatureHydration = postFilterFeatureHydration,
+    cand dateS ce = adsCand dateS ce,
+    f lters = f lters,
+    postF lterFeatureHydrat on = postF lterFeatureHydrat on,
     decorator = decorator,
     alerts = alerts,
-    adsDisplayLocationBuilder = adsDisplayLocationBuilder,
-    getOrganicItemIds = getOrganicItemIds,
-    countNumOrganicItems = countNumOrganicItems,
+    adsD splayLocat onBu lder = adsD splayLocat onBu lder,
+    getOrgan c em ds = getOrgan c em ds,
+    countNumOrgan c ems = countNumOrgan c ems,
     urtRequest = urtRequest)
 }

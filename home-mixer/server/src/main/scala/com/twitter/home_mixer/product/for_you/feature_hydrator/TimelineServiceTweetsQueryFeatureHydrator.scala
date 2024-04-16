@@ -1,62 +1,62 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.tw ter.ho _m xer.product.for_ .feature_hydrator
 
-import com.twitter.home_mixer.marshaller.timelines.DeviceContextMarshaller
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.Dev ceContextMarshaller
+ mport com.tw ter.ho _m xer.model.Ho Features.T  l neServ ceT etsFeature
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class TimelineServiceTweetsQueryFeatureHydrator @Inject() (
-  timelineService: TimelineService,
-  deviceContextMarshaller: DeviceContextMarshaller)
-    extends QueryFeatureHydrator[PipelineQuery with HasDeviceContext] {
+@S ngleton
+case class T  l neServ ceT etsQueryFeatureHydrator @ nject() (
+  t  l neServ ce: T  l neServ ce,
+  dev ceContextMarshaller: Dev ceContextMarshaller)
+    extends QueryFeatureHydrator[P pel neQuery w h HasDev ceContext] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TimelineServiceTweets")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("T  l neServ ceT ets")
 
-  override val features: Set[Feature[_, _]] = Set(TimelineServiceTweetsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(T  l neServ ceT etsFeature)
 
-  private val MaxTimelineServiceTweets = 200
+  pr vate val MaxT  l neServ ceT ets = 200
 
-  override def hydrate(query: PipelineQuery with HasDeviceContext): Stitch[FeatureMap] = {
-    val deviceContext = query.deviceContext.getOrElse(DeviceContext.Empty)
+  overr de def hydrate(query: P pel neQuery w h HasDev ceContext): St ch[FeatureMap] = {
+    val dev ceContext = query.dev ceContext.getOrElse(Dev ceContext.Empty)
 
-    val timelineQueryOptions = t.TimelineQueryOptions(
-      contextualUserId = query.clientContext.userId,
-      deviceContext = Some(deviceContextMarshaller(deviceContext, query.clientContext))
+    val t  l neQueryOpt ons = t.T  l neQueryOpt ons(
+      contextualUser d = query.cl entContext.user d,
+      dev ceContext = So (dev ceContextMarshaller(dev ceContext, query.cl entContext))
     )
 
-    val timelineServiceQuery = t.TimelineQuery(
-      timelineType = t.TimelineType.Home,
-      timelineId = query.getRequiredUserId,
-      maxCount = MaxTimelineServiceTweets.toShort,
+    val t  l neServ ceQuery = t.T  l neQuery(
+      t  l neType = t.T  l neType.Ho ,
+      t  l ne d = query.getRequ redUser d,
+      maxCount = MaxT  l neServ ceT ets.toShort,
       cursor2 = None,
-      options = Some(timelineQueryOptions),
-      timelineId2 = query.clientContext.userId.map(t.TimelineId(t.TimelineType.Home, _, None)),
+      opt ons = So (t  l neQueryOpt ons),
+      t  l ne d2 = query.cl entContext.user d.map(t.T  l ne d(t.T  l neType.Ho , _, None)),
     )
 
-    timelineService.getTimeline(timelineServiceQuery).map { timeline =>
-      val tweets = timeline.entries.collect {
-        case t.TimelineEntry.Tweet(tweet) => tweet.statusId
+    t  l neServ ce.getT  l ne(t  l neServ ceQuery).map { t  l ne =>
+      val t ets = t  l ne.entr es.collect {
+        case t.T  l neEntry.T et(t et) => t et.status d
       }
 
-      FeatureMapBuilder().add(TimelineServiceTweetsFeature, tweets).build()
+      FeatureMapBu lder().add(T  l neServ ceT etsFeature, t ets).bu ld()
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.7)
   )
 }

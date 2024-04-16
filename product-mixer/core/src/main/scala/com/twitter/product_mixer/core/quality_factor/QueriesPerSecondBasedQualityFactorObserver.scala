@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Try
 
-case class QueriesPerSecondBasedQualityFactorObserver(
-  override val qualityFactor: QueriesPerSecondBasedQualityFactor)
-    extends QualityFactorObserver {
-  override def apply(
+case class Quer esPerSecondBasedQual yFactorObserver(
+  overr de val qual yFactor: Quer esPerSecondBasedQual yFactor)
+    extends Qual yFactorObserver {
+  overr de def apply(
     result: Try[_],
-    latency: Duration
-  ): Unit = {
+    latency: Durat on
+  ): Un  = {
     result
-      .onSuccess(_ => qualityFactor.update())
-      .onFailure {
-        case t if qualityFactor.config.ignorableFailures.isDefinedAt(t) => ()
-        // Degrade qf as a proactive mitigation for any non ignorable failures.
-        case _ => qualityFactor.update(Int.MaxValue)
+      .onSuccess(_ => qual yFactor.update())
+      .onFa lure {
+        case t  f qual yFactor.conf g. gnorableFa lures. sDef nedAt(t) => ()
+        // Degrade qf as a proact ve m  gat on for any non  gnorable fa lures.
+        case _ => qual yFactor.update( nt.MaxValue)
       }
   }
 }

@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Soc alContextMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleConversat on tadata
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleConversationMetadataMarshaller @Inject() (
-  socialContextMarshaller: SocialContextMarshaller) {
+@S ngleton
+class ModuleConversat on tadataMarshaller @ nject() (
+  soc alContextMarshaller: Soc alContextMarshaller) {
 
   def apply(
-    moduleConversationMetadata: ModuleConversationMetadata
-  ): urt.ModuleConversationMetadata = urt.ModuleConversationMetadata(
-    allTweetIds = moduleConversationMetadata.allTweetIds,
-    socialContext = moduleConversationMetadata.socialContext.map(socialContextMarshaller(_)),
-    enableDeduplication = moduleConversationMetadata.enableDeduplication
+    moduleConversat on tadata: ModuleConversat on tadata
+  ): urt.ModuleConversat on tadata = urt.ModuleConversat on tadata(
+    allT et ds = moduleConversat on tadata.allT et ds,
+    soc alContext = moduleConversat on tadata.soc alContext.map(soc alContextMarshaller(_)),
+    enableDedupl cat on = moduleConversat on tadata.enableDedupl cat on
   )
 }

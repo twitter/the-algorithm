@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.thriftscala.DebugDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import scala.collection.convert.ImplicitConversions._
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.DebugDataRecord
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport scala.collect on.convert. mpl c Convers ons._
 
-// contains the standard dataRecord struct, and the debug version if required
-case class RichDataRecord(
-  dataRecord: Option[DataRecord] = None,
-  debugDataRecord: Option[DebugDataRecord] = None,
+// conta ns t  standard dataRecord struct, and t  debug vers on  f requ red
+case class R chDataRecord(
+  dataRecord: Opt on[DataRecord] = None,
+  debugDataRecord: Opt on[DebugDataRecord] = None,
 )
 
-trait HasDataRecord extends Logging {
-  def dataRecord: Option[RichDataRecord]
+tra  HasDataRecord extends Logg ng {
+  def dataRecord: Opt on[R chDataRecord]
 
   def toDebugDataRecord(dr: DataRecord, featureContext: FeatureContext): DebugDataRecord = {
 
-    val binaryFeatures: Option[Set[String]] = if (dr.isSetBinaryFeatures) {
-      Some(dr.getBinaryFeatures.flatMap { id =>
-        Try(featureContext.getFeature(id).getFeatureName).toOption
+    val b naryFeatures: Opt on[Set[Str ng]] =  f (dr. sSetB naryFeatures) {
+      So (dr.getB naryFeatures.flatMap {  d =>
+        Try(featureContext.getFeature( d).getFeatureNa ).toOpt on
       }.toSet)
     } else None
 
-    val continuousFeatures: Option[Map[String, Double]] = if (dr.isSetContinuousFeatures) {
-      Some(dr.getContinuousFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value.toDouble
+    val cont nuousFeatures: Opt on[Map[Str ng, Double]] =  f (dr. sSetCont nuousFeatures) {
+      So (dr.getCont nuousFeatures.flatMap {
+        case ( d, value) =>
+          Try(featureContext.getFeature( d).getFeatureNa ).toOpt on.map {  d =>
+             d -> value.toDouble
           }
       }.toMap)
     } else None
 
-    val discreteFeatures: Option[Map[String, Long]] = if (dr.isSetDiscreteFeatures) {
-      Some(dr.getDiscreteFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value.toLong
+    val d screteFeatures: Opt on[Map[Str ng, Long]] =  f (dr. sSetD screteFeatures) {
+      So (dr.getD screteFeatures.flatMap {
+        case ( d, value) =>
+          Try(featureContext.getFeature( d).getFeatureNa ).toOpt on.map {  d =>
+             d -> value.toLong
           }
       }.toMap)
     } else None
 
-    val stringFeatures: Option[Map[String, String]] = if (dr.isSetStringFeatures) {
-      Some(dr.getStringFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value
+    val str ngFeatures: Opt on[Map[Str ng, Str ng]] =  f (dr. sSetStr ngFeatures) {
+      So (dr.getStr ngFeatures.flatMap {
+        case ( d, value) =>
+          Try(featureContext.getFeature( d).getFeatureNa ).toOpt on.map {  d =>
+             d -> value
           }
       }.toMap)
     } else None
 
-    val sparseBinaryFeatures: Option[Map[String, Set[String]]] = if (dr.isSetSparseBinaryFeatures) {
-      Some(dr.getSparseBinaryFeatures.flatMap {
-        case (id, values) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> values.toSet
+    val sparseB naryFeatures: Opt on[Map[Str ng, Set[Str ng]]] =  f (dr. sSetSparseB naryFeatures) {
+      So (dr.getSparseB naryFeatures.flatMap {
+        case ( d, values) =>
+          Try(featureContext.getFeature( d).getFeatureNa ).toOpt on.map {  d =>
+             d -> values.toSet
           }
       }.toMap)
     } else None
 
-    val sparseContinuousFeatures: Option[Map[String, Map[String, Double]]] =
-      if (dr.isSetSparseContinuousFeatures) {
-        Some(dr.getSparseContinuousFeatures.flatMap {
-          case (id, values) =>
-            Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-              id -> values.map {
+    val sparseCont nuousFeatures: Opt on[Map[Str ng, Map[Str ng, Double]]] =
+       f (dr. sSetSparseCont nuousFeatures) {
+        So (dr.getSparseCont nuousFeatures.flatMap {
+          case ( d, values) =>
+            Try(featureContext.getFeature( d).getFeatureNa ).toOpt on.map {  d =>
+               d -> values.map {
                 case (str, value) =>
                   str -> value.toDouble
               }.toMap
@@ -74,12 +74,12 @@ trait HasDataRecord extends Logging {
       } else None
 
     DebugDataRecord(
-      binaryFeatures = binaryFeatures,
-      continuousFeatures = continuousFeatures,
-      discreteFeatures = discreteFeatures,
-      stringFeatures = stringFeatures,
-      sparseBinaryFeatures = sparseBinaryFeatures,
-      sparseContinuousFeatures = sparseContinuousFeatures,
+      b naryFeatures = b naryFeatures,
+      cont nuousFeatures = cont nuousFeatures,
+      d screteFeatures = d screteFeatures,
+      str ngFeatures = str ngFeatures,
+      sparseB naryFeatures = sparseB naryFeatures,
+      sparseCont nuousFeatures = sparseCont nuousFeatures,
     )
   }
 

@@ -1,36 +1,36 @@
-package com.twitter.unified_user_actions.adapter.uua_aggregates
+package com.tw ter.un f ed_user_act ons.adapter.uua_aggregates
 
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.KeyedUuaTweet
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.KeyedUuaT et
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
 
-abstract class BaseUuaAction(actionType: ActionType) {
-  def getRekeyedUUA(input: UnifiedUserAction): Option[KeyedUuaTweet] =
-    getTweetIdFromItem(input.item).map { tweetId =>
-      KeyedUuaTweet(
-        tweetId = tweetId,
-        actionType = input.actionType,
-        userIdentifier = input.userIdentifier,
-        eventMetadata = EventMetadata(
-          sourceTimestampMs = input.eventMetadata.sourceTimestampMs,
-          receivedTimestampMs = AdapterUtils.currentTimestampMs,
-          sourceLineage = input.eventMetadata.sourceLineage
+abstract class BaseUuaAct on(act onType: Act onType) {
+  def getRekeyedUUA( nput: Un f edUserAct on): Opt on[KeyedUuaT et] =
+    getT et dFrom em( nput. em).map { t et d =>
+      KeyedUuaT et(
+        t et d = t et d,
+        act onType =  nput.act onType,
+        user dent f er =  nput.user dent f er,
+        event tadata = Event tadata(
+          s ceT  stampMs =  nput.event tadata.s ceT  stampMs,
+          rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+          s ceL neage =  nput.event tadata.s ceL neage
         )
       )
     }
 
-  protected def getTweetIdFromItem(item: Item): Option[Long] = {
-    item match {
-      case Item.TweetInfo(tweetInfo) => Some(tweetInfo.actionTweetId)
+  protected def getT et dFrom em( em:  em): Opt on[Long] = {
+     em match {
+      case  em.T et nfo(t et nfo) => So (t et nfo.act onT et d)
       case _ => None
     }
   }
 }
 
 /**
- * When there is a new user creation event in Gizmoduck
+ * W n t re  s a new user creat on event  n G zmoduck
  */
-object ClientTweetRenderImpressionUua extends BaseUuaAction(ActionType.ClientTweetRenderImpression)
+object Cl entT etRender mpress onUua extends BaseUuaAct on(Act onType.Cl entT etRender mpress on)

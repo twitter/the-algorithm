@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object SimilarUserExpanderParams {
+object S m larUserExpanderParams {
 
-  case object EnableNonDirectFollowExpansion
-      extends FSParam[Boolean]("similar_user_enable_non_direct_follow_expansion", true)
+  case object EnableNonD rectFollowExpans on
+      extends FSParam[Boolean]("s m lar_user_enable_non_d rect_follow_expans on", true)
 
-  case object EnableSimsExpandSeedAccountsSort
-      extends FSParam[Boolean]("similar_user_enable_sims_expander_seed_account_sort", false)
+  case object EnableS msExpandSeedAccountsSort
+      extends FSParam[Boolean]("s m lar_user_enable_s ms_expander_seed_account_sort", false)
 
-  case object DefaultExpansionInputCount
-      extends FSBoundedParam[Int](
-        name = "similar_user_default_expansion_input_count",
-        default = Integer.MAX_VALUE,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object DefaultExpans on nputCount
+      extends FSBoundedParam[ nt](
+        na  = "s m lar_user_default_expans on_ nput_count",
+        default =  nteger.MAX_VALUE,
+        m n = 0,
+        max =  nteger.MAX_VALUE)
 
-  case object DefaultFinalCandidatesReturnedCount
-      extends FSBoundedParam[Int](
-        name = "similar_user_default_final_candidates_returned_count",
-        default = Integer.MAX_VALUE,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  case object DefaultF nalCand datesReturnedCount
+      extends FSBoundedParam[ nt](
+        na  = "s m lar_user_default_f nal_cand dates_returned_count",
+        default =  nteger.MAX_VALUE,
+        m n = 0,
+        max =  nteger.MAX_VALUE)
 
-  case object DefaultEnableImplicitEngagedExpansion
-      extends FSParam[Boolean]("similar_user_enable_implicit_engaged_expansion", true)
+  case object DefaultEnable mpl c EngagedExpans on
+      extends FSParam[Boolean]("s m lar_user_enable_ mpl c _engaged_expans on", true)
 
 }

@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
-object TimelineEntry {
-  def fromThrift(entry: thrift.TimelineEntry): TimelineEntry = {
+object T  l neEntry {
+  def fromThr ft(entry: thr ft.T  l neEntry): T  l neEntry = {
     entry match {
-      case thrift.TimelineEntry.Tweet(e) => Tweet.fromThrift(e)
-      case thrift.TimelineEntry.TweetypieTweet(e) => new HydratedTweetEntry(e)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $entry")
+      case thr ft.T  l neEntry.T et(e) => T et.fromThr ft(e)
+      case thr ft.T  l neEntry.T etyp eT et(e) => new HydratedT etEntry(e)
+      case _ => throw new  llegalArgu ntExcept on(s"Unsupported type: $entry")
     }
   }
 }
 
-trait TimelineEntry {
-  def toTimelineEntryThrift: thrift.TimelineEntry
-  def throwIfInvalid(): Unit
+tra  T  l neEntry {
+  def toT  l neEntryThr ft: thr ft.T  l neEntry
+  def throw f nval d(): Un 
 }

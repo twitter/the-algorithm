@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.clients.common
+package com.tw ter.follow_recom ndat ons.common.cl ents.common
 
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.inject.thrift.modules.ThriftClientModule
-import scala.reflect.ClassTag
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.thr ft.Protocols
+ mport com.tw ter.follow_recom ndat ons.common.constants.Serv ceConstants._
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl entModule
+ mport scala.reflect.ClassTag
 
 /**
- * basic client configurations that we apply for all of our clients go in here
+ * bas c cl ent conf gurat ons that   apply for all of   cl ents go  n  re
  */
-abstract class BaseClientModule[T: ClassTag] extends ThriftClientModule[T] {
-  def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client = {
-    client
-      .withProtocolFactory(
-        Protocols.binaryFactory(
-          stringLengthLimit = StringLengthLimit,
-          containerLengthLimit = ContainerLengthLimit))
+abstract class BaseCl entModule[T: ClassTag] extends Thr ftCl entModule[T] {
+  def conf gureThr ftMuxCl ent(cl ent: Thr ftMux.Cl ent): Thr ftMux.Cl ent = {
+    cl ent
+      .w hProtocolFactory(
+        Protocols.b naryFactory(
+          str ngLengthL m  = Str ngLengthL m ,
+          conta nerLengthL m  = Conta nerLengthL m ))
   }
 }

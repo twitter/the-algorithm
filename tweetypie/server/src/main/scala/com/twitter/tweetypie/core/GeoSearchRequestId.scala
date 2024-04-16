@@ -1,3 +1,3 @@
-package com.twitter.tweetypie.core
+package com.tw ter.t etyp e.core
 
-case class GeoSearchRequestId(requestID: String)
+case class GeoSearchRequest d(request D: Str ng)

@@ -1,79 +1,79 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.Feature.Text
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.onboarding.relevance.util.metadata.LanguageUtil
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.snowflake.id.SnowflakeId
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.ml.ap .Feature.B nary
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .Feature.D screte
+ mport com.tw ter.ml.ap .Feature.Text
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.onboard ng.relevance.ut l. tadata.LanguageUt l
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.snowflake. d.Snowflake d
 
-object ClientContextAdapter extends IRecordOneToOneAdapter[(ClientContext, DisplayLocation)] {
+object Cl entContextAdapter extends  RecordOneToOneAdapter[(Cl entContext, D splayLocat on)] {
 
-  // we name features with `user.account` for relatively static user-related features
+  //   na  features w h `user.account` for relat vely stat c user-related features
   val USER_COUNTRY: Text = new Text("user.account.country")
   val USER_LANGUAGE: Text = new Text("user.account.language")
-  // we name features with `user.context` for more dynamic user-related features
-  val USER_LANGUAGE_PREFIX: Text = new Text("user.context.language_prefix")
-  val USER_CLIENT: Discrete = new Discrete("user.context.client")
-  val USER_AGE: Continuous = new Continuous("user.context.age")
-  val USER_IS_RECENT: Binary = new Binary("user.is.recent")
-  // we name features with `meta` for meta info about the WTF recommendation request
-  val META_DISPLAY_LOCATION: Text = new Text("meta.display_location")
-  val META_POSITION: Discrete = new Discrete("meta.position")
-  // This indicates whether a data point is from a random serving policy
-  val META_IS_RANDOM: Binary = new Binary("prediction.engine.is_random")
+  //   na  features w h `user.context` for more dynam c user-related features
+  val USER_LANGUAGE_PREF X: Text = new Text("user.context.language_pref x")
+  val USER_CL ENT: D screte = new D screte("user.context.cl ent")
+  val USER_AGE: Cont nuous = new Cont nuous("user.context.age")
+  val USER_ S_RECENT: B nary = new B nary("user. s.recent")
+  //   na  features w h ` ta` for  ta  nfo about t  WTF recom ndat on request
+  val META_D SPLAY_LOCAT ON: Text = new Text(" ta.d splay_locat on")
+  val META_POS T ON: D screte = new D screte(" ta.pos  on")
+  // T   nd cates w t r a data po nt  s from a random serv ng pol cy
+  val META_ S_RANDOM: B nary = new B nary("pred ct on.eng ne. s_random")
 
-  val RECENT_WIN_IN_DAYS: Int = 30
-  val GOAL_META_POSITION: Long = 1L
-  val GOAL_META_IS_RANDOM: Boolean = true
+  val RECENT_W N_ N_DAYS:  nt = 30
+  val GOAL_META_POS T ON: Long = 1L
+  val GOAL_META_ S_RANDOM: Boolean = true
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
+  overr de val getFeatureContext: FeatureContext = new FeatureContext(
     USER_COUNTRY,
     USER_LANGUAGE,
     USER_AGE,
-    USER_LANGUAGE_PREFIX,
-    USER_CLIENT,
-    USER_IS_RECENT,
-    META_DISPLAY_LOCATION,
-    META_POSITION,
-    META_IS_RANDOM
+    USER_LANGUAGE_PREF X,
+    USER_CL ENT,
+    USER_ S_RECENT,
+    META_D SPLAY_LOCAT ON,
+    META_POS T ON,
+    META_ S_RANDOM
   )
 
   /**
-   * we only want to set the relevant fields iff they exist to eliminate redundant information
-   * we do some simple normalization on the language code
-   * we set META_POSITION to 1 always
-   * we set META_IS_RANDOM to true always to simulate a random serving distribution
-   * @param record ClientContext and DisplayLocation from the request
+   *   only want to set t  relevant f elds  ff t y ex st to el m nate redundant  nformat on
+   *   do so  s mple normal zat on on t  language code
+   *   set META_POS T ON to 1 always
+   *   set META_ S_RANDOM to true always to s mulate a random serv ng d str but on
+   * @param record Cl entContext and D splayLocat on from t  request
    */
-  override def adaptToDataRecord(target: (ClientContext, DisplayLocation)): DataRecord = {
+  overr de def adaptToDataRecord(target: (Cl entContext, D splayLocat on)): DataRecord = {
     val dr = new DataRecord()
     val cc = target._1
     val dl = target._2
     cc.countryCode.foreach(countryCode => dr.setFeatureValue(USER_COUNTRY, countryCode))
     cc.languageCode.foreach(rawLanguageCode => {
-      val userLanguage = LanguageUtil.simplifyLanguage(rawLanguageCode)
-      val userLanguagePrefix = userLanguage.take(2)
+      val userLanguage = LanguageUt l.s mpl fyLanguage(rawLanguageCode)
+      val userLanguagePref x = userLanguage.take(2)
       dr.setFeatureValue(USER_LANGUAGE, userLanguage)
-      dr.setFeatureValue(USER_LANGUAGE_PREFIX, userLanguagePrefix)
+      dr.setFeatureValue(USER_LANGUAGE_PREF X, userLanguagePref x)
     })
-    cc.appId.foreach(appId => dr.setFeatureValue(USER_CLIENT, appId))
-    cc.userId.foreach(id =>
-      SnowflakeId.timeFromIdOpt(id).map { signupTime =>
-        val userAge = signupTime.untilNow.inMillis.toDouble
+    cc.app d.foreach(app d => dr.setFeatureValue(USER_CL ENT, app d))
+    cc.user d.foreach( d =>
+      Snowflake d.t  From dOpt( d).map { s gnupT   =>
+        val userAge = s gnupT  .unt lNow. nM ll s.toDouble
         dr.setFeatureValue(USER_AGE, userAge)
-        dr.setFeatureValue(USER_IS_RECENT, signupTime.untilNow.inDays <= RECENT_WIN_IN_DAYS)
-        signupTime.untilNow.inDays
+        dr.setFeatureValue(USER_ S_RECENT, s gnupT  .unt lNow. nDays <= RECENT_W N_ N_DAYS)
+        s gnupT  .unt lNow. nDays
       })
-    dr.setFeatureValue(META_DISPLAY_LOCATION, dl.toFsName)
-    dr.setFeatureValue(META_POSITION, GOAL_META_POSITION)
-    dr.setFeatureValue(META_IS_RANDOM, GOAL_META_IS_RANDOM)
+    dr.setFeatureValue(META_D SPLAY_LOCAT ON, dl.toFsNa )
+    dr.setFeatureValue(META_POS T ON, GOAL_META_POS T ON)
+    dr.setFeatureValue(META_ S_RANDOM, GOAL_META_ S_RANDOM)
     dr
   }
 }

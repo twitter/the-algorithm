@@ -1,324 +1,324 @@
-# Naming convention:
-# For publishing action types, use [Publish][ActionTypeInThrift]. Please see the Thrift definition at unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions/action_info.thrift
+# Nam ng convent on:
+# For publ sh ng act on types, use [Publ sh][Act onType nThr ft]. Please see t  Thr ft def n  on at un f ed_user_act ons/thr ft/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/act on_ nfo.thr ft
 
-PublishServerTweetFav:
-  default_availability: 0
-PublishServerTweetUnfav:
-  default_availability: 0
-PublishServerTweetCreate:
-  default_availability: 0
-PublishServerTweetReply:
-  default_availability: 0
-PublishServerTweetQuote:
-  default_availability: 0
-PublishServerTweetRetweet:
-  default_availability: 0
-PublishServerTweetDelete:
-  default_availability: 0
-PublishServerTweetUnreply:
-  default_availability: 0
-PublishServerTweetUnquote:
-  default_availability: 0
-PublishServerTweetUnretweet:
-  default_availability: 0
-PublishServerTweetEdit:
-  default_availability: 0
-PublishServerTweetReport:
-  default_availability: 0
-PublishServerProfileFollow:
-  default_availability: 0
-PublishServerProfileUnfollow:
-  default_availability: 0
-PublishServerProfileBlock:
-  default_availability: 0
-PublishServerProfileUnblock:
-  default_availability: 0
-PublishServerProfileMute:
-  default_availability: 0
-PublishServerProfileUnmute:
-  default_availability: 0
-PublishServerProfileReport:
-  default_availability: 0
-PublishClientTweetFav:
-  default_availability: 0
-PublishClientTweetUnfav:
-  default_availability: 0
-PublishClientTweetLingerImpression:
-  default_availability: 0
-PublishClientTweetRenderImpression:
-  default_availability: 0
-PublishClientTweetReply:
-  default_availability: 0
-PublishClientTweetQuote:
-  default_availability: 0
-PublishClientTweetRetweet:
-  default_availability: 0
-PublishClientTweetClickReply:
-  default_availability: 0
-PublishClientTweetClickQuote:
-  default_availability: 0
-PublishClientTweetVideoPlayback25:
-  default_availability: 0
-PublishClientTweetVideoPlayback50:
-  default_availability: 0
-PublishClientTweetVideoPlayback75:
-  default_availability: 0
-PublishClientTweetVideoPlayback95:
-  default_availability: 0
-PublishClientTweetVideoPlayFromTap:
-  default_availability: 0
-PublishClientTweetVideoQualityView:
-  default_availability: 0
-PublishClientTweetVideoView:
-  default_availability: 0
-PublishClientTweetVideoMrcView:
-  default_availability: 0
-PublishClientTweetVideoViewThreshold:
-  default_availability: 0
-PublishClientTweetVideoCtaUrlClick:
-  default_availability: 0
-PublishClientTweetVideoCtaWatchClick:
-  default_availability: 0
-PublishClientTweetUnretweet:
-  default_availability: 0
-PublishClientTweetClickCaret:
-  default_availability: 0
-PublishClientTweetPhotoExpand:
-  default_availability: 0
-PublishClientTweetClickMentionScreenName:
-  default_availability: 0
-PublishClientCardClick:
-  default_availability: 0
-PublishClientCardOpenApp:
-  default_availability: 0
-PublishClientCardAppInstallAttempt:
-  default_availability: 0
-PublishClientPollCardVote:
-  default_availability: 0
-PublishClientTweetProfileMentionClick:
-  default_availability: 0
-PublishClientTweetClick:
-  default_availability: 0
-PublishClientTopicFollow:
-  default_availability: 0
-PublishClientTopicUnfollow:
-  default_availability: 0
-PublishClientTopicNotInterestedIn:
-  default_availability: 0
-PublishClientTopicUndoNotInterestedIn:
-  default_availability: 0
-PublishClientTweetNotHelpful:
-  default_availability: 0
-PublishClientTweetUndoNotHelpful:
-  default_availability: 0
-PublishClientTweetReport:
-  default_availability: 0
-PublishClientTweetNotInterestedIn:
-  default_availability: 0
-PublishClientTweetUndoNotInterestedIn:
-  default_availability: 0
-PublishClientTweetNotAboutTopic:
-  default_availability: 0
-PublishClientTweetUndoNotAboutTopic:
-  default_availability: 0
-PublishClientTweetNotRecent:
-  default_availability: 0
-PublishClientTweetUndoNotRecent:
-  default_availability: 0
-PublishClientTweetSeeFewer:
-  default_availability: 0
-PublishClientTweetUndoSeeFewer:
-  default_availability: 0
-PublishClientTweetNotRelevant:
-  default_availability: 0
-PublishClientTweetUndoNotRelevant:
-  default_availability: 0
-PublishClientProfileFollowAttempt:
-  default_availability: 0
-PublishClientTweetFavoriteAttempt:
-  default_availability: 0
-PublishClientTweetRetweetAttempt:
-  default_availability: 0
-PublishClientTweetReplyAttempt:
-  default_availability: 0
-PublishClientCTALoginClick:
-  default_availability: 0
-PublishClientCTALoginStart:
-  default_availability: 0
-PublishClientCTALoginSuccess:
-  default_availability: 0
-PublishClientCTASignupClick:
-  default_availability: 0
-PublishClientCTASignupSuccess:
-  default_availability: 0
-PublishClientProfileBlock:
-    default_availability: 0
-PublishClientProfileUnblock:
-  default_availability: 0
-PublishClientProfileMute:
-  default_availability: 0
-PublishClientProfileReport:
-  default_availability: 0
-PublishClientProfileFollow:
-  default_availability: 0
-PublishClientProfileClick:
-  default_availability: 0
-PublishClientTweetFollowAuthor:
-  default_availability: 0
-PublishClientTweetUnfollowAuthor:
-  default_availability: 0
-PublishClientTweetBlockAuthor:
-  default_availability: 0
-PublishClientTweetUnblockAuthor:
-  default_availability: 0
-PublishClientTweetMuteAuthor:
-  default_availability: 0
-PublishClientNotificationOpen:
-  default_availability: 0
-PublishClientNotificationClick:
-  default_availability: 0
-PublishClientNotificationSeeLessOften:
-  default_availability: 0
-PublishClientNotificationDismiss:
-  default_availability: 0
-PublishClientTypeaheadClick:
-  default_availability: 0
-PublishClientFeedbackPromptSubmit:
-  default_availability: 0
-PublishClientProfileShow:
-  default_availability: 0
-PublishClientTweetV2Impression:
-  default_availability: 0
-PublishClientTweetVideoFullscreenV2Impression:
-  default_availability: 0
-PublishClientTweetImageFullscreenV2Impression:
-  default_availability: 0
-PublishClientProfileV2Impression:
-  default_availability: 0
-PublishClientTweetClickProfile:
-  default_availability: 0
-PublishClientTweetClickShare:
-  default_availability: 0
-PublishClientTweetShareViaCopyLink:
-  default_availability: 0
-PublishClientTweetClickSendViaDirectMessage:
-  default_availability: 0
-PublishClientTweetShareViaBookmark:
-  default_availability: 0
-PublishClientTweetUnbookmark:
-  default_availability: 0
-PublishClientTweetClickHashtag:
-  default_availability: 0
-PublishClientTweetBookmark:
-  default_availability: 0
-PublishClientTweetOpenLink:
-  default_availability: 0
-PublishClientTweetTakeScreenshot:
-  default_availability: 0
-PublishClientTweetVideoPlaybackStart:
-  default_availability: 0
-PublishClientTweetVideoPlaybackComplete:
-  default_availability: 0
-PublishClientTweetEmailClick:
-  default_availability: 0
-PublishClientAppExit:
-  default_availability: 0
-PublishClientTweetGalleryImpression:
-  default_availability: 0
-PublishClientTweetDetailsImpression:
-  default_availability: 0
-PublishClientTweetMomentImpression:
-  default_availability: 0
-PublishServerUserCreate:
-  default_availability: 0
-PublishServerUserUpdate:
-  default_availability: 0
-PublishServerPromotedTweetFav:
-  default_availability: 0
-PublishServerPromotedTweetUnfav:
-  default_availability: 0
-PublishServerPromotedTweetReply:
-  default_availability: 0
-PublishServerPromotedTweetRetweet:
-  default_availability: 0
-PublishServerPromotedTweetComposeTweet:
-  default_availability: 0
-PublishServerPromotedTweetBlockAuthor:
-  default_availability: 0
-PublishServerPromotedTweetUnblockAuthor:
-  default_availability: 0
-PublishServerPromotedTweetClick:
-  default_availability: 0
-PublishServerPromotedTweetReport:
-  default_availability: 0
-PublishServerPromotedProfileFollow:
-  default_availability: 0
-PublishServerPromotedProfileUnfollow:
-  default_availability: 0
-PublishServerPromotedTweetMuteAuthor:
-  default_availability: 0
-PublishServerPromotedTweetClickProfile:
-  default_availability: 0
-PublishServerPromotedTweetClickHashtag:
-  default_availability: 0
-PublishServerPromotedTweetOpenLink:
-  default_availability: 0
-PublishServerPromotedTweetCarouselSwipeNext:
-  default_availability: 0
-PublishServerPromotedTweetCarouselSwipePrevious:
-  default_availability: 0
-PublishServerPromotedTweetLingerImpressionShort:
-  default_availability: 0
-PublishServerPromotedTweetLingerImpressionMedium:
-  default_availability: 0
-PublishServerPromotedTweetLingerImpressionLong:
-  default_availability: 0
-PublishServerPromotedTweetClickSpotlight:
-  default_availability: 0
-PublishServerPromotedTweetViewSpotlight:
-  default_availability: 0
-PublishServerPromotedTrendView:
-  default_availability: 0
-PublishServerPromotedTrendClick:
-  default_availability: 0
-PublishServerPromotedTweetVideoPlayback25:
-  default_availability: 0
-PublishServerPromotedTweetVideoPlayback50:
-  default_availability: 0
-PublishServerPromotedTweetVideoPlayback75:
-  default_availability: 0
-PublishServerPromotedTweetVideoAdPlayback25:
-  default_availability: 0
-PublishServerPromotedTweetVideoAdPlayback50:
-  default_availability: 0
-PublishServerPromotedTweetVideoAdPlayback75:
-  default_availability: 0
-PublishServerTweetVideoAdPlayback25:
-  default_availability: 0
-PublishServerTweetVideoAdPlayback50:
-  default_availability: 0
-PublishServerTweetVideoAdPlayback75:
-  default_availability: 0
-PublishServerPromotedTweetDismissWithoutReason:
-  default_availability: 0
-PublishServerPromotedTweetDismissUninteresting:
-  default_availability: 0
-PublishServerPromotedTweetDismissRepetitive:
-  default_availability: 0
-PublishServerPromotedTweetDismissSpam:
-  default_availability: 0
-PublishServerTweetArchiveFavorite:
-  default_availability: 0
-PublishServerTweetUnarchiveFavorite:
-  default_availability: 0
-PublishServerTweetArchiveRetweet:
-  default_availability: 0
-PublishServerTweetUnarchiveRetweet:
-  default_availability: 0
-RekeyUUAClientTweetRenderImpression:
-  default_availability: 0
-RekeyUUAIesourceClientTweetRenderImpression:
-  default_availability: 0
-EnrichmentPlannerSampling:
-  default_availability: 0
+Publ shServerT etFav:
+  default_ava lab l y: 0
+Publ shServerT etUnfav:
+  default_ava lab l y: 0
+Publ shServerT etCreate:
+  default_ava lab l y: 0
+Publ shServerT etReply:
+  default_ava lab l y: 0
+Publ shServerT etQuote:
+  default_ava lab l y: 0
+Publ shServerT etRet et:
+  default_ava lab l y: 0
+Publ shServerT etDelete:
+  default_ava lab l y: 0
+Publ shServerT etUnreply:
+  default_ava lab l y: 0
+Publ shServerT etUnquote:
+  default_ava lab l y: 0
+Publ shServerT etUnret et:
+  default_ava lab l y: 0
+Publ shServerT etEd :
+  default_ava lab l y: 0
+Publ shServerT etReport:
+  default_ava lab l y: 0
+Publ shServerProf leFollow:
+  default_ava lab l y: 0
+Publ shServerProf leUnfollow:
+  default_ava lab l y: 0
+Publ shServerProf leBlock:
+  default_ava lab l y: 0
+Publ shServerProf leUnblock:
+  default_ava lab l y: 0
+Publ shServerProf leMute:
+  default_ava lab l y: 0
+Publ shServerProf leUnmute:
+  default_ava lab l y: 0
+Publ shServerProf leReport:
+  default_ava lab l y: 0
+Publ shCl entT etFav:
+  default_ava lab l y: 0
+Publ shCl entT etUnfav:
+  default_ava lab l y: 0
+Publ shCl entT etL nger mpress on:
+  default_ava lab l y: 0
+Publ shCl entT etRender mpress on:
+  default_ava lab l y: 0
+Publ shCl entT etReply:
+  default_ava lab l y: 0
+Publ shCl entT etQuote:
+  default_ava lab l y: 0
+Publ shCl entT etRet et:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckReply:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckQuote:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlayback25:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlayback50:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlayback75:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlayback95:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlayFromTap:
+  default_ava lab l y: 0
+Publ shCl entT etV deoQual yV ew:
+  default_ava lab l y: 0
+Publ shCl entT etV deoV ew:
+  default_ava lab l y: 0
+Publ shCl entT etV deoMrcV ew:
+  default_ava lab l y: 0
+Publ shCl entT etV deoV ewThreshold:
+  default_ava lab l y: 0
+Publ shCl entT etV deoCtaUrlCl ck:
+  default_ava lab l y: 0
+Publ shCl entT etV deoCtaWatchCl ck:
+  default_ava lab l y: 0
+Publ shCl entT etUnret et:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckCaret:
+  default_ava lab l y: 0
+Publ shCl entT etPhotoExpand:
+  default_ava lab l y: 0
+Publ shCl entT etCl ck nt onScreenNa :
+  default_ava lab l y: 0
+Publ shCl entCardCl ck:
+  default_ava lab l y: 0
+Publ shCl entCardOpenApp:
+  default_ava lab l y: 0
+Publ shCl entCardApp nstallAttempt:
+  default_ava lab l y: 0
+Publ shCl entPollCardVote:
+  default_ava lab l y: 0
+Publ shCl entT etProf le nt onCl ck:
+  default_ava lab l y: 0
+Publ shCl entT etCl ck:
+  default_ava lab l y: 0
+Publ shCl entTop cFollow:
+  default_ava lab l y: 0
+Publ shCl entTop cUnfollow:
+  default_ava lab l y: 0
+Publ shCl entTop cNot nterested n:
+  default_ava lab l y: 0
+Publ shCl entTop cUndoNot nterested n:
+  default_ava lab l y: 0
+Publ shCl entT etNot lpful:
+  default_ava lab l y: 0
+Publ shCl entT etUndoNot lpful:
+  default_ava lab l y: 0
+Publ shCl entT etReport:
+  default_ava lab l y: 0
+Publ shCl entT etNot nterested n:
+  default_ava lab l y: 0
+Publ shCl entT etUndoNot nterested n:
+  default_ava lab l y: 0
+Publ shCl entT etNotAboutTop c:
+  default_ava lab l y: 0
+Publ shCl entT etUndoNotAboutTop c:
+  default_ava lab l y: 0
+Publ shCl entT etNotRecent:
+  default_ava lab l y: 0
+Publ shCl entT etUndoNotRecent:
+  default_ava lab l y: 0
+Publ shCl entT etSeeFe r:
+  default_ava lab l y: 0
+Publ shCl entT etUndoSeeFe r:
+  default_ava lab l y: 0
+Publ shCl entT etNotRelevant:
+  default_ava lab l y: 0
+Publ shCl entT etUndoNotRelevant:
+  default_ava lab l y: 0
+Publ shCl entProf leFollowAttempt:
+  default_ava lab l y: 0
+Publ shCl entT etFavor eAttempt:
+  default_ava lab l y: 0
+Publ shCl entT etRet etAttempt:
+  default_ava lab l y: 0
+Publ shCl entT etReplyAttempt:
+  default_ava lab l y: 0
+Publ shCl entCTALog nCl ck:
+  default_ava lab l y: 0
+Publ shCl entCTALog nStart:
+  default_ava lab l y: 0
+Publ shCl entCTALog nSuccess:
+  default_ava lab l y: 0
+Publ shCl entCTAS gnupCl ck:
+  default_ava lab l y: 0
+Publ shCl entCTAS gnupSuccess:
+  default_ava lab l y: 0
+Publ shCl entProf leBlock:
+    default_ava lab l y: 0
+Publ shCl entProf leUnblock:
+  default_ava lab l y: 0
+Publ shCl entProf leMute:
+  default_ava lab l y: 0
+Publ shCl entProf leReport:
+  default_ava lab l y: 0
+Publ shCl entProf leFollow:
+  default_ava lab l y: 0
+Publ shCl entProf leCl ck:
+  default_ava lab l y: 0
+Publ shCl entT etFollowAuthor:
+  default_ava lab l y: 0
+Publ shCl entT etUnfollowAuthor:
+  default_ava lab l y: 0
+Publ shCl entT etBlockAuthor:
+  default_ava lab l y: 0
+Publ shCl entT etUnblockAuthor:
+  default_ava lab l y: 0
+Publ shCl entT etMuteAuthor:
+  default_ava lab l y: 0
+Publ shCl entNot f cat onOpen:
+  default_ava lab l y: 0
+Publ shCl entNot f cat onCl ck:
+  default_ava lab l y: 0
+Publ shCl entNot f cat onSeeLessOften:
+  default_ava lab l y: 0
+Publ shCl entNot f cat onD sm ss:
+  default_ava lab l y: 0
+Publ shCl entTypea adCl ck:
+  default_ava lab l y: 0
+Publ shCl entFeedbackPromptSubm :
+  default_ava lab l y: 0
+Publ shCl entProf leShow:
+  default_ava lab l y: 0
+Publ shCl entT etV2 mpress on:
+  default_ava lab l y: 0
+Publ shCl entT etV deoFullscreenV2 mpress on:
+  default_ava lab l y: 0
+Publ shCl entT et mageFullscreenV2 mpress on:
+  default_ava lab l y: 0
+Publ shCl entProf leV2 mpress on:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckProf le:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckShare:
+  default_ava lab l y: 0
+Publ shCl entT etShareV aCopyL nk:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckSendV aD rect ssage:
+  default_ava lab l y: 0
+Publ shCl entT etShareV aBookmark:
+  default_ava lab l y: 0
+Publ shCl entT etUnbookmark:
+  default_ava lab l y: 0
+Publ shCl entT etCl ckHashtag:
+  default_ava lab l y: 0
+Publ shCl entT etBookmark:
+  default_ava lab l y: 0
+Publ shCl entT etOpenL nk:
+  default_ava lab l y: 0
+Publ shCl entT etTakeScreenshot:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlaybackStart:
+  default_ava lab l y: 0
+Publ shCl entT etV deoPlaybackComplete:
+  default_ava lab l y: 0
+Publ shCl entT etEma lCl ck:
+  default_ava lab l y: 0
+Publ shCl entAppEx :
+  default_ava lab l y: 0
+Publ shCl entT etGallery mpress on:
+  default_ava lab l y: 0
+Publ shCl entT etDeta ls mpress on:
+  default_ava lab l y: 0
+Publ shCl entT etMo nt mpress on:
+  default_ava lab l y: 0
+Publ shServerUserCreate:
+  default_ava lab l y: 0
+Publ shServerUserUpdate:
+  default_ava lab l y: 0
+Publ shServerPromotedT etFav:
+  default_ava lab l y: 0
+Publ shServerPromotedT etUnfav:
+  default_ava lab l y: 0
+Publ shServerPromotedT etReply:
+  default_ava lab l y: 0
+Publ shServerPromotedT etRet et:
+  default_ava lab l y: 0
+Publ shServerPromotedT etComposeT et:
+  default_ava lab l y: 0
+Publ shServerPromotedT etBlockAuthor:
+  default_ava lab l y: 0
+Publ shServerPromotedT etUnblockAuthor:
+  default_ava lab l y: 0
+Publ shServerPromotedT etCl ck:
+  default_ava lab l y: 0
+Publ shServerPromotedT etReport:
+  default_ava lab l y: 0
+Publ shServerPromotedProf leFollow:
+  default_ava lab l y: 0
+Publ shServerPromotedProf leUnfollow:
+  default_ava lab l y: 0
+Publ shServerPromotedT etMuteAuthor:
+  default_ava lab l y: 0
+Publ shServerPromotedT etCl ckProf le:
+  default_ava lab l y: 0
+Publ shServerPromotedT etCl ckHashtag:
+  default_ava lab l y: 0
+Publ shServerPromotedT etOpenL nk:
+  default_ava lab l y: 0
+Publ shServerPromotedT etCarouselSw peNext:
+  default_ava lab l y: 0
+Publ shServerPromotedT etCarouselSw pePrev ous:
+  default_ava lab l y: 0
+Publ shServerPromotedT etL nger mpress onShort:
+  default_ava lab l y: 0
+Publ shServerPromotedT etL nger mpress on d um:
+  default_ava lab l y: 0
+Publ shServerPromotedT etL nger mpress onLong:
+  default_ava lab l y: 0
+Publ shServerPromotedT etCl ckSpotl ght:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV ewSpotl ght:
+  default_ava lab l y: 0
+Publ shServerPromotedTrendV ew:
+  default_ava lab l y: 0
+Publ shServerPromotedTrendCl ck:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV deoPlayback25:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV deoPlayback50:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV deoPlayback75:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV deoAdPlayback25:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV deoAdPlayback50:
+  default_ava lab l y: 0
+Publ shServerPromotedT etV deoAdPlayback75:
+  default_ava lab l y: 0
+Publ shServerT etV deoAdPlayback25:
+  default_ava lab l y: 0
+Publ shServerT etV deoAdPlayback50:
+  default_ava lab l y: 0
+Publ shServerT etV deoAdPlayback75:
+  default_ava lab l y: 0
+Publ shServerPromotedT etD sm ssW houtReason:
+  default_ava lab l y: 0
+Publ shServerPromotedT etD sm ssUn nterest ng:
+  default_ava lab l y: 0
+Publ shServerPromotedT etD sm ssRepet  ve:
+  default_ava lab l y: 0
+Publ shServerPromotedT etD sm ssSpam:
+  default_ava lab l y: 0
+Publ shServerT etArch veFavor e:
+  default_ava lab l y: 0
+Publ shServerT etUnarch veFavor e:
+  default_ava lab l y: 0
+Publ shServerT etArch veRet et:
+  default_ava lab l y: 0
+Publ shServerT etUnarch veRet et:
+  default_ava lab l y: 0
+RekeyUUACl entT etRender mpress on:
+  default_ava lab l y: 0
+RekeyUUA es ceCl entT etRender mpress on:
+  default_ava lab l y: 0
+Enr ch ntPlannerSampl ng:
+  default_ava lab l y: 0
 

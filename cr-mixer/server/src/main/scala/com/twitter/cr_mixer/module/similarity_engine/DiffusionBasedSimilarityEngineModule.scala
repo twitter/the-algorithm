@@ -1,50 +1,50 @@
-package com.twitter.cr_mixer.module
-package similarity_engine
+package com.tw ter.cr_m xer.module
+package s m lar y_eng ne
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.similarity_engine.DiffusionBasedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.DiffusionBasedSimilarityEngine.Query
-import com.twitter.cr_mixer.similarity_engine.LookupSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.s mclusters_v2.thr ftscala.T etsW hScore
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.D ffus onBasedS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.D ffus onBasedS m lar yEng ne.Query
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.LookupS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object DiffusionBasedSimilarityEngineModule extends TwitterModule {
-  @Provides
-  @Singleton
-  @Named(ModuleNames.DiffusionBasedSimilarityEngine)
-  def providesDiffusionBasedSimilarityEngineModule(
-    @Named(ModuleNames.RetweetBasedDiffusionRecsMhStore)
-    retweetBasedDiffusionRecsMhStore: ReadableStore[Long, TweetsWithScore],
-    timeoutConfig: TimeoutConfig,
-    globalStats: StatsReceiver
-  ): LookupSimilarityEngine[Query, TweetWithScore] = {
+object D ffus onBasedS m lar yEng neModule extends Tw terModule {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.D ffus onBasedS m lar yEng ne)
+  def prov desD ffus onBasedS m lar yEng neModule(
+    @Na d(ModuleNa s.Ret etBasedD ffus onRecsMhStore)
+    ret etBasedD ffus onRecsMhStore: ReadableStore[Long, T etsW hScore],
+    t  outConf g: T  outConf g,
+    globalStats: StatsRece ver
+  ): LookupS m lar yEng ne[Query, T etW hScore] = {
 
-    val versionedStoreMap = Map(
-      ModelConfig.RetweetBasedDiffusion -> DiffusionBasedSimilarityEngine(
-        retweetBasedDiffusionRecsMhStore,
+    val vers onedStoreMap = Map(
+      ModelConf g.Ret etBasedD ffus on -> D ffus onBasedS m lar yEng ne(
+        ret etBasedD ffus onRecsMhStore,
         globalStats),
     )
 
-    new LookupSimilarityEngine[Query, TweetWithScore](
-      versionedStoreMap = versionedStoreMap,
-      identifier = SimilarityEngineType.DiffusionBasedTweet,
+    new LookupS m lar yEng ne[Query, T etW hScore](
+      vers onedStoreMap = vers onedStoreMap,
+       dent f er = S m lar yEng neType.D ffus onBasedT et,
       globalStats = globalStats,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       )
     )

@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/search/blender/services/strato",
-        "src/thrift/com/twitter/spam/rtf:safety-label-scala",
-        "src/thrift/com/twitter/spam/rtf:tweet-rtf-event-scala",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "strato/src/main/scala/com/twitter/strato/data",
-        "strato/src/main/scala/com/twitter/strato/thrift",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/search/blender/serv ces/strato",
+        "src/thr ft/com/tw ter/spam/rtf:safety-label-scala",
+        "src/thr ft/com/tw ter/spam/rtf:t et-rtf-event-scala",
+        "st ch/st ch-core",
+        "strato/src/ma n/scala/com/tw ter/strato/catalog",
+        "strato/src/ma n/scala/com/tw ter/strato/cl ent",
+        "strato/src/ma n/scala/com/tw ter/strato/data",
+        "strato/src/ma n/scala/com/tw ter/strato/thr ft",
     ],
 )

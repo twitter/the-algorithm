@@ -1,150 +1,150 @@
-package com.twitter.timelines.prediction.features.simcluster
+package com.tw ter.t  l nes.pred ct on.features.s mcluster
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.{Feature, FeatureContext}
-import com.twitter.ml.api.Feature.{Continuous, SparseBinary, SparseContinuous}
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.ap .{Feature, FeatureContext}
+ mport com.tw ter.ml.ap .Feature.{Cont nuous, SparseB nary, SparseCont nuous}
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport com.tw ter.t  l nes.suggests.common.record.thr ftscala.Suggest onRecord
+ mport scala.collect on.JavaConverters._
 
-class SimclusterTweetFeatures(statsReceiver: StatsReceiver) extends CombineCountsBase {
-  import SimclusterTweetFeatures._
+class S mclusterT etFeatures(statsRece ver: StatsRece ver) extends Comb neCountsBase {
+   mport S mclusterT etFeatures._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private[this] val invalidSimclusterModelVersion = scopedStatsReceiver
-    .counter("invalidSimclusterModelVersion")
-  private[this] val getFeaturesFromOverlappingSimclusterIdsCount = scopedStatsReceiver
-    .counter("getFeaturesFromOverlappingSimclusterIdsCount")
-  private[this] val emptySimclusterMaps = scopedStatsReceiver
-    .counter("emptySimclusterMaps")
-  private[this] val nonOverlappingSimclusterMaps = scopedStatsReceiver
-    .counter("nonOverlappingSimclusterMaps")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate[t ] val  nval dS mclusterModelVers on = scopedStatsRece ver
+    .counter(" nval dS mclusterModelVers on")
+  pr vate[t ] val getFeaturesFromOverlapp ngS mcluster dsCount = scopedStatsRece ver
+    .counter("getFeaturesFromOverlapp ngS mcluster dsCount")
+  pr vate[t ] val emptyS mclusterMaps = scopedStatsRece ver
+    .counter("emptyS mclusterMaps")
+  pr vate[t ] val nonOverlapp ngS mclusterMaps = scopedStatsRece ver
+    .counter("nonOverlapp ngS mclusterMaps")
 
-  // Parameters required by CombineCountsBase
-  override val topK: Int = 5
-  override val hardLimit: Option[Int] = None
-  override val precomputedCountFeatures: Seq[Feature[_]] = Seq(
-    SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE,
-    SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE
+  // Para ters requ red by Comb neCountsBase
+  overr de val topK:  nt = 5
+  overr de val hardL m : Opt on[ nt] = None
+  overr de val precomputedCountFeatures: Seq[Feature[_]] = Seq(
+    S MCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE,
+    S MCLUSTER_TWEET_TOPK_SORT_BY_COMB NED_SCORE
   )
 
-  private def getFeaturesFromOverlappingSimclusterIds(
-    userSimclustersInterestedInMap: Map[String, Double],
-    tweetSimclustersTopKMap: Map[String, Double]
-  ): Map[Feature[_], List[Double]] = {
-    getFeaturesFromOverlappingSimclusterIdsCount.incr
-    if (userSimclustersInterestedInMap.isEmpty || tweetSimclustersTopKMap.isEmpty) {
-      emptySimclusterMaps.incr
+  pr vate def getFeaturesFromOverlapp ngS mcluster ds(
+    userS mclusters nterested nMap: Map[Str ng, Double],
+    t etS mclustersTopKMap: Map[Str ng, Double]
+  ): Map[Feature[_], L st[Double]] = {
+    getFeaturesFromOverlapp ngS mcluster dsCount. ncr
+     f (userS mclusters nterested nMap. sEmpty || t etS mclustersTopKMap. sEmpty) {
+      emptyS mclusterMaps. ncr
       Map.empty
     } else {
-      val overlappingSimclusterIds =
-        userSimclustersInterestedInMap.keySet intersect tweetSimclustersTopKMap.keySet
-      if (overlappingSimclusterIds.isEmpty) {
-        nonOverlappingSimclusterMaps.incr
+      val overlapp ngS mcluster ds =
+        userS mclusters nterested nMap.keySet  ntersect t etS mclustersTopKMap.keySet
+       f (overlapp ngS mcluster ds. sEmpty) {
+        nonOverlapp ngS mclusterMaps. ncr
         Map.empty
       } else {
-        val (combinedScores, tweetScores) = overlappingSimclusterIds.map { id =>
-          val tweetScore = tweetSimclustersTopKMap.getOrElse(id, 0.0)
-          val combinedScore = userSimclustersInterestedInMap.getOrElse(id, 0.0) * tweetScore
-          (combinedScore, tweetScore)
-        }.unzip
+        val (comb nedScores, t etScores) = overlapp ngS mcluster ds.map {  d =>
+          val t etScore = t etS mclustersTopKMap.getOrElse( d, 0.0)
+          val comb nedScore = userS mclusters nterested nMap.getOrElse( d, 0.0) * t etScore
+          (comb nedScore, t etScore)
+        }.unz p
         Map(
-          SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE -> combinedScores.toList,
-          SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE -> tweetScores.toList
+          S MCLUSTER_TWEET_TOPK_SORT_BY_COMB NED_SCORE -> comb nedScores.toL st,
+          S MCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE -> t etScores.toL st
         )
       }
     }
   }
 
   def getCountFeaturesValuesMap(
-    suggestionRecord: SuggestionRecord,
-    simclustersTweetTopKMap: Map[String, Double]
-  ): Map[Feature[_], List[Double]] = {
-    val userSimclustersInterestedInMap = formatUserSimclustersInterestedIn(suggestionRecord)
+    suggest onRecord: Suggest onRecord,
+    s mclustersT etTopKMap: Map[Str ng, Double]
+  ): Map[Feature[_], L st[Double]] = {
+    val userS mclusters nterested nMap = formatUserS mclusters nterested n(suggest onRecord)
 
-    val tweetSimclustersTopKMap = formatTweetSimclustersTopK(simclustersTweetTopKMap)
+    val t etS mclustersTopKMap = formatT etS mclustersTopK(s mclustersT etTopKMap)
 
-    getFeaturesFromOverlappingSimclusterIds(userSimclustersInterestedInMap, tweetSimclustersTopKMap)
+    getFeaturesFromOverlapp ngS mcluster ds(userS mclusters nterested nMap, t etS mclustersTopKMap)
   }
 
-  def filterByModelVersion(
-    simclustersMapOpt: Option[Map[String, Double]]
-  ): Option[Map[String, Double]] = {
-    simclustersMapOpt.flatMap { simclustersMap =>
-      val filteredSimclustersMap = simclustersMap.filter {
-        case (clusterId, score) =>
-          // The clusterId format is ModelVersion.IntegerClusterId.ScoreType as specified at
-          // com.twitter.ml.featurestore.catalog.features.recommendations.SimClustersV2TweetTopClusters
-          clusterId.contains(SimclusterFeatures.SIMCLUSTER_MODEL_VERSION)
+  def f lterByModelVers on(
+    s mclustersMapOpt: Opt on[Map[Str ng, Double]]
+  ): Opt on[Map[Str ng, Double]] = {
+    s mclustersMapOpt.flatMap { s mclustersMap =>
+      val f lteredS mclustersMap = s mclustersMap.f lter {
+        case (cluster d, score) =>
+          // T  cluster d format  s ModelVers on. ntegerCluster d.ScoreType as spec f ed at
+          // com.tw ter.ml.featurestore.catalog.features.recom ndat ons.S mClustersV2T etTopClusters
+          cluster d.conta ns(S mclusterFeatures.S MCLUSTER_MODEL_VERS ON)
       }
 
-      // The assumption is that the simclustersMap will contain clusterIds with the same modelVersion.
-      // We maintain this counter to make sure that the hardcoded modelVersion we are using is correct.
-      if (simclustersMap.size > filteredSimclustersMap.size) {
-        invalidSimclusterModelVersion.incr
+      // T  assumpt on  s that t  s mclustersMap w ll conta n cluster ds w h t  sa  modelVers on.
+      //   ma nta n t  counter to make sure that t  hardcoded modelVers on   are us ng  s correct.
+       f (s mclustersMap.s ze > f lteredS mclustersMap.s ze) {
+         nval dS mclusterModelVers on. ncr
       }
 
-      if (filteredSimclustersMap.nonEmpty) Some(filteredSimclustersMap) else None
+       f (f lteredS mclustersMap.nonEmpty) So (f lteredS mclustersMap) else None
     }
   }
 
-  val allFeatures: Seq[Feature[_]] = outputFeaturesPostMerge.toSeq ++ Seq(
-    SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS,
-    SIMCLUSTER_TWEET_TOPK_CLUSTER_SCORES)
+  val allFeatures: Seq[Feature[_]] = outputFeaturesPost rge.toSeq ++ Seq(
+    S MCLUSTER_TWEET_TOPK_CLUSTER_ DS,
+    S MCLUSTER_TWEET_TOPK_CLUSTER_SCORES)
   val featureContext = new FeatureContext(allFeatures: _*)
 }
 
-object SimclusterTweetFeatures {
-  val SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS = new SparseBinary(
-    s"${SimclusterFeatures.prefix}.tweet_topk_cluster_ids",
-    Set(InferredInterests).asJava
+object S mclusterT etFeatures {
+  val S MCLUSTER_TWEET_TOPK_CLUSTER_ DS = new SparseB nary(
+    s"${S mclusterFeatures.pref x}.t et_topk_cluster_ ds",
+    Set( nferred nterests).asJava
   )
-  val SIMCLUSTER_TWEET_TOPK_CLUSTER_SCORES = new SparseContinuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_cluster_scores",
-    Set(EngagementScore, InferredInterests).asJava
-  )
-
-  val SIMCLUSTER_TWEET_TOPK_CLUSTER_ID =
-    TypedAggregateGroup.sparseFeature(SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS)
-
-  val SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE = new Continuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_sort_by_tweet_score",
-    Set(EngagementScore, InferredInterests).asJava
+  val S MCLUSTER_TWEET_TOPK_CLUSTER_SCORES = new SparseCont nuous(
+    s"${S mclusterFeatures.pref x}.t et_topk_cluster_scores",
+    Set(Engage ntScore,  nferred nterests).asJava
   )
 
-  val SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE = new Continuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_sort_by_combined_score",
-    Set(EngagementScore, InferredInterests).asJava
+  val S MCLUSTER_TWEET_TOPK_CLUSTER_ D =
+    TypedAggregateGroup.sparseFeature(S MCLUSTER_TWEET_TOPK_CLUSTER_ DS)
+
+  val S MCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE = new Cont nuous(
+    s"${S mclusterFeatures.pref x}.t et_topk_sort_by_t et_score",
+    Set(Engage ntScore,  nferred nterests).asJava
   )
 
-  def formatUserSimclustersInterestedIn(suggestionRecord: SuggestionRecord): Map[String, Double] = {
-    suggestionRecord.userSimclustersInterestedIn
-      .map { clustersUserIsInterestedIn =>
-        if (clustersUserIsInterestedIn.knownForModelVersion == SimclusterFeatures.SIMCLUSTER_MODEL_VERSION) {
-          clustersUserIsInterestedIn.clusterIdToScores.collect {
-            case (clusterId, scores) if scores.favScore.isDefined =>
-              (clusterId.toString, scores.favScore.get)
+  val S MCLUSTER_TWEET_TOPK_SORT_BY_COMB NED_SCORE = new Cont nuous(
+    s"${S mclusterFeatures.pref x}.t et_topk_sort_by_comb ned_score",
+    Set(Engage ntScore,  nferred nterests).asJava
+  )
+
+  def formatUserS mclusters nterested n(suggest onRecord: Suggest onRecord): Map[Str ng, Double] = {
+    suggest onRecord.userS mclusters nterested n
+      .map { clustersUser s nterested n =>
+         f (clustersUser s nterested n.knownForModelVers on == S mclusterFeatures.S MCLUSTER_MODEL_VERS ON) {
+          clustersUser s nterested n.cluster dToScores.collect {
+            case (cluster d, scores)  f scores.favScore. sDef ned =>
+              (cluster d.toStr ng, scores.favScore.get)
           }
-        } else Map.empty[String, Double]
-      }.getOrElse(Map.empty[String, Double])
+        } else Map.empty[Str ng, Double]
+      }.getOrElse(Map.empty[Str ng, Double])
       .toMap
   }
 
-  def formatTweetSimclustersTopK(
-    simclustersTweetTopKMap: Map[String, Double]
-  ): Map[String, Double] = {
-    simclustersTweetTopKMap.collect {
-      case (clusterId, score) =>
-        // The clusterId format is <ModelVersion.IntegerClusterId.ScoreType> as specified at
-        // com.twitter.ml.featurestore.catalog.features.recommendations.SimClustersV2TweetTopClusters
-        // and we want to extract the IntegerClusterId.
-        // The split function takes a regex; therefore, we need to escape . and we also need to escape
-        // \ since they are both special characters. Hence, the double \\.
-        val clusterIdSplit = clusterId.split("\\.")
-        val integerClusterId = clusterIdSplit(1) // The IntegerClusterId is at position 1.
-        (integerClusterId, score)
+  def formatT etS mclustersTopK(
+    s mclustersT etTopKMap: Map[Str ng, Double]
+  ): Map[Str ng, Double] = {
+    s mclustersT etTopKMap.collect {
+      case (cluster d, score) =>
+        // T  cluster d format  s <ModelVers on. ntegerCluster d.ScoreType> as spec f ed at
+        // com.tw ter.ml.featurestore.catalog.features.recom ndat ons.S mClustersV2T etTopClusters
+        // and   want to extract t   ntegerCluster d.
+        // T  spl  funct on takes a regex; t refore,   need to escape . and   also need to escape
+        // \ s nce t y are both spec al characters.  nce, t  double \\.
+        val cluster dSpl  = cluster d.spl ("\\.")
+        val  ntegerCluster d = cluster dSpl (1) // T   ntegerCluster d  s at pos  on 1.
+        ( ntegerCluster d, score)
     }
   }
 }

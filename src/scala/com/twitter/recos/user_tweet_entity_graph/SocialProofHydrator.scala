@@ -1,109 +1,109 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.tw ter.recos.user_t et_ent y_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.counting.tweet.{
-  TweetMetadataRecommendationInfo,
-  TweetRecommendationInfo
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.algor hms.count ng.t et.{
+  T et tadataRecom ndat on nfo,
+  T etRecom ndat on nfo
 }
-import com.twitter.recos.recos_common.thriftscala.{SocialProof, SocialProofType}
+ mport com.tw ter.recos.recos_common.thr ftscala.{Soc alProof, Soc alProofType}
 
-import scala.collection.JavaConverters._
+ mport scala.collect on.JavaConverters._
 
-class SocialProofHydrator(statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofsDup = stats.counter("socialProofsDup")
-  private val socialProofsUni = stats.counter("socialProofsUni")
-  private val socialProofByTypeDup = stats.counter("socialProofByTypeDup")
-  private val socialProofByTypeUni = stats.counter("socialProofByTypeUni")
+class Soc alProofHydrator(statsRece ver: StatsRece ver) {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val soc alProofsDup = stats.counter("soc alProofsDup")
+  pr vate val soc alProofsUn  = stats.counter("soc alProofsUn ")
+  pr vate val soc alProofByTypeDup = stats.counter("soc alProofByTypeDup")
+  pr vate val soc alProofByTypeUn  = stats.counter("soc alProofByTypeUn ")
 
-  // If the social proof type is favorite, there are cases that one user favs, unfavs and then favs the same tweet again.
-  // In this case, UTEG only returns one valid social proof. Note that GraphJet library compares the number of unique users
-  // with the minSocialProofThreshold, so the threshold checking logic is correct.
-  // If the social proof type is reply or quote, there are valid cases that one user replies the same tweet multiple times.
-  // GraphJet does not handle this deduping because this is Twitter specific logic.
-  def getSocialProofs(
-    socialProofType: SocialProofType,
+  //  f t  soc al proof type  s favor e, t re are cases that one user favs, unfavs and t n favs t  sa  t et aga n.
+  //  n t  case, UTEG only returns one val d soc al proof. Note that GraphJet l brary compares t  number of un que users
+  // w h t  m nSoc alProofThreshold, so t  threshold c ck ng log c  s correct.
+  //  f t  soc al proof type  s reply or quote, t re are val d cases that one user repl es t  sa  t et mult ple t  s.
+  // GraphJet does not handle t  dedup ng because t   s Tw ter spec f c log c.
+  def getSoc alProofs(
+    soc alProofType: Soc alProofType,
     users: Seq[Long],
-    metadata: Seq[Long]
-  ): Seq[SocialProof] = {
-    if (socialProofType == SocialProofType.Favorite && users.size > 1 && users.size != users.distinct.size) {
-      socialProofsDup.incr()
-      val unique = users
-        .zip(metadata)
-        .foldLeft[Seq[(Long, Long)]](Nil) { (list, next) =>
+     tadata: Seq[Long]
+  ): Seq[Soc alProof] = {
+     f (soc alProofType == Soc alProofType.Favor e && users.s ze > 1 && users.s ze != users.d st nct.s ze) {
+      soc alProofsDup. ncr()
+      val un que = users
+        .z p( tadata)
+        .foldLeft[Seq[(Long, Long)]](N l) { (l st, next) =>
           {
-            val test = list find { _._1 == next._1 }
-            if (test.isEmpty) next +: list else list
+            val test = l st f nd { _._1 == next._1 }
+             f (test. sEmpty) next +: l st else l st
           }
         }
         .reverse
-      unique.map { case (user, data) => SocialProof(user, Some(data)) }
+      un que.map { case (user, data) => Soc alProof(user, So (data)) }
     } else {
-      socialProofsUni.incr()
-      users.zip(metadata).map { case (user, data) => SocialProof(user, Some(data)) }
+      soc alProofsUn . ncr()
+      users.z p( tadata).map { case (user, data) => Soc alProof(user, So (data)) }
     }
 
   }
 
-  // Extract and dedup social proofs from GraphJet. Only Favorite based social proof needs to dedup.
-  // Return the social proofs (userId, metadata) pair in SocialProof thrift objects.
-  def addTweetSocialProofs(
-    tweet: TweetRecommendationInfo
-  ): Option[Map[SocialProofType, Seq[SocialProof]]] = {
-    Some(
-      tweet.getSocialProof.asScala.map {
-        case (socialProofType, socialProof) =>
-          val socialProofThriftType = SocialProofType(socialProofType.toByte)
+  // Extract and dedup soc al proofs from GraphJet. Only Favor e based soc al proof needs to dedup.
+  // Return t  soc al proofs (user d,  tadata) pa r  n Soc alProof thr ft objects.
+  def addT etSoc alProofs(
+    t et: T etRecom ndat on nfo
+  ): Opt on[Map[Soc alProofType, Seq[Soc alProof]]] = {
+    So (
+      t et.getSoc alProof.asScala.map {
+        case (soc alProofType, soc alProof) =>
+          val soc alProofThr ftType = Soc alProofType(soc alProofType.toByte)
           (
-            socialProofThriftType,
-            getSocialProofs(
-              socialProofThriftType,
-              socialProof.getConnectingUsers.asScala.map(_.toLong),
-              socialProof.getMetadata.asScala.map(_.toLong)
+            soc alProofThr ftType,
+            getSoc alProofs(
+              soc alProofThr ftType,
+              soc alProof.getConnect ngUsers.asScala.map(_.toLong),
+              soc alProof.get tadata.asScala.map(_.toLong)
             )
           )
       }.toMap
     )
   }
 
-  def getSocialProofs(users: Seq[Long]): Seq[Long] = {
-    if (users.size > 1) {
-      val distinctUsers = users.distinct
-      if (users.size != distinctUsers.size) {
-        socialProofByTypeDup.incr()
+  def getSoc alProofs(users: Seq[Long]): Seq[Long] = {
+     f (users.s ze > 1) {
+      val d st nctUsers = users.d st nct
+       f (users.s ze != d st nctUsers.s ze) {
+        soc alProofByTypeDup. ncr()
       } else {
-        socialProofByTypeUni.incr()
+        soc alProofByTypeUn . ncr()
       }
-      distinctUsers
+      d st nctUsers
     } else {
-      socialProofByTypeUni.incr()
+      soc alProofByTypeUn . ncr()
       users
     }
   }
 
-  // Extract and dedup social proofs from GraphJet. All social proof types need to dedup.
-  // Return the userId social proofs without metadata.
-  def addTweetSocialProofByType(tweet: TweetRecommendationInfo): Map[SocialProofType, Seq[Long]] = {
-    tweet.getSocialProof.asScala.map {
-      case (socialProofType, socialProof) =>
+  // Extract and dedup soc al proofs from GraphJet. All soc al proof types need to dedup.
+  // Return t  user d soc al proofs w hout  tadata.
+  def addT etSoc alProofByType(t et: T etRecom ndat on nfo): Map[Soc alProofType, Seq[Long]] = {
+    t et.getSoc alProof.asScala.map {
+      case (soc alProofType, soc alProof) =>
         (
-          SocialProofType(socialProofType.toByte),
-          getSocialProofs(socialProof.getConnectingUsers.asScala.map(_.toLong))
+          Soc alProofType(soc alProofType.toByte),
+          getSoc alProofs(soc alProof.getConnect ngUsers.asScala.map(_.toLong))
         )
     }.toMap
   }
 
-  // The Hashtag and URL Social Proof. Dedup is not necessary.
-  def addMetadataSocialProofByType(
-    tweetMetadataRec: TweetMetadataRecommendationInfo
-  ): Map[SocialProofType, Map[Long, Seq[Long]]] = {
-    tweetMetadataRec.getSocialProof.asScala.map {
-      case (socialProofType, socialProof) =>
+  // T  Hashtag and URL Soc al Proof. Dedup  s not necessary.
+  def add tadataSoc alProofByType(
+    t et tadataRec: T et tadataRecom ndat on nfo
+  ): Map[Soc alProofType, Map[Long, Seq[Long]]] = {
+    t et tadataRec.getSoc alProof.asScala.map {
+      case (soc alProofType, soc alProof) =>
         (
-          SocialProofType(socialProofType.toByte),
-          socialProof.asScala.map {
-            case (authorId, tweetIds) =>
-              (authorId.toLong, tweetIds.asScala.map(_.toLong))
+          Soc alProofType(soc alProofType.toByte),
+          soc alProof.asScala.map {
+            case (author d, t et ds) =>
+              (author d.toLong, t et ds.asScala.map(_.toLong))
           }.toMap)
     }.toMap
   }

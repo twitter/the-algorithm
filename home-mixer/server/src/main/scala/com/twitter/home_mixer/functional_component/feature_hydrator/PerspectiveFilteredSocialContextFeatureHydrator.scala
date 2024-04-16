@@ -1,71 +1,71 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
-import com.twitter.timelineservice.thriftscala.PerspectiveType
-import com.twitter.timelineservice.thriftscala.PerspectiveType.Favorited
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Favor edByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Perspect veF lteredL kedByUser dsFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce.GetPerspect ves
+ mport com.tw ter.t  l neserv ce.thr ftscala.Perspect veType
+ mport com.tw ter.t  l neserv ce.thr ftscala.Perspect veType.Favor ed
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Filter out unlike edges from liked-by tweets
- * Useful if the likes come from a cache and because UTEG does not fully remove unlike edges.
+ * F lter out unl ke edges from l ked-by t ets
+ * Useful  f t  l kes co  from a cac  and because UTEG does not fully remove unl ke edges.
  */
-@Singleton
-class PerspectiveFilteredSocialContextFeatureHydrator @Inject() (timelineService: TimelineService)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class Perspect veF lteredSoc alContextFeatureHydrator @ nject() (t  l neServ ce: T  l neServ ce)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PerspectiveFilteredSocialContext")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Perspect veF lteredSoc alContext")
 
-  override val features: Set[Feature[_, _]] = Set(PerspectiveFilteredLikedByUserIdsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(Perspect veF lteredL kedByUser dsFeature)
 
-  private val MaxCountUsers = 10
-  private val favoritePerspectiveSet: Set[PerspectiveType] = Set(Favorited)
+  pr vate val MaxCountUsers = 10
+  pr vate val favor ePerspect veSet: Set[Perspect veType] = Set(Favor ed)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadStitch {
-    val engagingUserIdtoTweetId = candidates.flatMap { candidate =>
-      candidate.features
-        .getOrElse(FavoritedByUserIdsFeature, Seq.empty).take(MaxCountUsers)
-        .map(favoritedBy => favoritedBy -> candidate.candidate.id)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadSt ch {
+    val engag ngUser dtoT et d = cand dates.flatMap { cand date =>
+      cand date.features
+        .getOrElse(Favor edByUser dsFeature, Seq.empty).take(MaxCountUsers)
+        .map(favor edBy => favor edBy -> cand date.cand date. d)
     }
 
-    val queries = engagingUserIdtoTweetId.map {
-      case (userId, tweetId) =>
-        GetPerspectives.Query(userId = userId, tweetId = tweetId, types = favoritePerspectiveSet)
+    val quer es = engag ngUser dtoT et d.map {
+      case (user d, t et d) =>
+        GetPerspect ves.Query(user d = user d, t et d = t et d, types = favor ePerspect veSet)
     }
 
-    Stitch.collect(queries.map(timelineService.getPerspective)).map { perspectiveResults =>
-      val validUserIdTweetIds: Set[(Long, Long)] =
-        queries
-          .zip(perspectiveResults)
-          .collect { case (query, perspective) if perspective.favorited => query }
-          .map(query => (query.userId, query.tweetId))
+    St ch.collect(quer es.map(t  l neServ ce.getPerspect ve)).map { perspect veResults =>
+      val val dUser dT et ds: Set[(Long, Long)] =
+        quer es
+          .z p(perspect veResults)
+          .collect { case (query, perspect ve)  f perspect ve.favor ed => query }
+          .map(query => (query.user d, query.t et d))
           .toSet
 
-      candidates.map { candidate =>
-        val perspectiveFilteredFavoritedByUserIds: Seq[Long] = candidate.features
-          .getOrElse(FavoritedByUserIdsFeature, Seq.empty).take(MaxCountUsers)
-          .filter { userId => validUserIdTweetIds.contains((userId, candidate.candidate.id)) }
+      cand dates.map { cand date =>
+        val perspect veF lteredFavor edByUser ds: Seq[Long] = cand date.features
+          .getOrElse(Favor edByUser dsFeature, Seq.empty).take(MaxCountUsers)
+          .f lter { user d => val dUser dT et ds.conta ns((user d, cand date.cand date. d)) }
 
-        FeatureMapBuilder()
-          .add(PerspectiveFilteredLikedByUserIdsFeature, perspectiveFilteredFavoritedByUserIds)
-          .build()
+        FeatureMapBu lder()
+          .add(Perspect veF lteredL kedByUser dsFeature, perspect veF lteredFavor edByUser ds)
+          .bu ld()
       }
     }
   }

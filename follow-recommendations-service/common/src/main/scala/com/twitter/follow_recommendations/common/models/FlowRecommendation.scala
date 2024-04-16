@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-case class FlowRecommendation(userId: Long) {
+case class FlowRecom ndat on(user d: Long) {
 
-  def toThrift: t.FlowRecommendation =
-    t.FlowRecommendation(userId = userId)
+  def toThr ft: t.FlowRecom ndat on =
+    t.FlowRecom ndat on(user d = user d)
 
-  def toOfflineThrift: offline.OfflineFlowRecommendation =
-    offline.OfflineFlowRecommendation(userId = userId)
+  def toOffl neThr ft: offl ne.Offl neFlowRecom ndat on =
+    offl ne.Offl neFlowRecom ndat on(user d = user d)
 
 }
 
-object FlowRecommendation {
-  def fromThrift(flowRecommendation: t.FlowRecommendation): FlowRecommendation = {
-    FlowRecommendation(
-      userId = flowRecommendation.userId
+object FlowRecom ndat on {
+  def fromThr ft(flowRecom ndat on: t.FlowRecom ndat on): FlowRecom ndat on = {
+    FlowRecom ndat on(
+      user d = flowRecom ndat on.user d
     )
   }
 

@@ -1,132 +1,132 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.geoduck.common.{thriftscala => Geoduck}
-import com.twitter.geoduck.service.thriftscala.GeoContext
-import com.twitter.geoduck.service.thriftscala.Key
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.geoduck.util.service.GeoduckLocate
-import com.twitter.geoduck.util.service.LocationResponseExtractors
-import com.twitter.geoduck.util.{primitives => GDPrimitive}
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.{thriftscala => TP}
+ mport com.tw ter.geoduck.common.{thr ftscala => Geoduck}
+ mport com.tw ter.geoduck.serv ce.thr ftscala.GeoContext
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Key
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter.geoduck.ut l.serv ce.GeoduckLocate
+ mport com.tw ter.geoduck.ut l.serv ce.Locat onResponseExtractors
+ mport com.tw ter.geoduck.ut l.{pr m  ves => GDPr m  ve}
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.{thr ftscala => TP}
 
 object GeoduckPlaceConverter {
 
-  def LocationResponseToTPPlace(lang: String, lr: LocationResponse): Option[TP.Place] =
-    GDPrimitive.Place
-      .fromLocationResponse(lr)
-      .headOption
+  def Locat onResponseToTPPlace(lang: Str ng, lr: Locat onResponse): Opt on[TP.Place] =
+    GDPr m  ve.Place
+      .fromLocat onResponse(lr)
+      . adOpt on
       .map(apply(lang, _))
 
   def convertPlaceType(pt: Geoduck.PlaceType): TP.PlaceType = pt match {
     case Geoduck.PlaceType.Unknown => TP.PlaceType.Unknown
     case Geoduck.PlaceType.Country => TP.PlaceType.Country
-    case Geoduck.PlaceType.Admin => TP.PlaceType.Admin
-    case Geoduck.PlaceType.City => TP.PlaceType.City
-    case Geoduck.PlaceType.Neighborhood => TP.PlaceType.Neighborhood
-    case Geoduck.PlaceType.Poi => TP.PlaceType.Poi
-    case Geoduck.PlaceType.ZipCode => TP.PlaceType.Admin
-    case Geoduck.PlaceType.Metro => TP.PlaceType.Admin
-    case Geoduck.PlaceType.Admin0 => TP.PlaceType.Admin
-    case Geoduck.PlaceType.Admin1 => TP.PlaceType.Admin
+    case Geoduck.PlaceType.Adm n => TP.PlaceType.Adm n
+    case Geoduck.PlaceType.C y => TP.PlaceType.C y
+    case Geoduck.PlaceType.Ne ghborhood => TP.PlaceType.Ne ghborhood
+    case Geoduck.PlaceType.Po  => TP.PlaceType.Po 
+    case Geoduck.PlaceType.Z pCode => TP.PlaceType.Adm n
+    case Geoduck.PlaceType. tro => TP.PlaceType.Adm n
+    case Geoduck.PlaceType.Adm n0 => TP.PlaceType.Adm n
+    case Geoduck.PlaceType.Adm n1 => TP.PlaceType.Adm n
     case _ =>
-      throw new IllegalStateException(s"Invalid place type: $pt")
+      throw new  llegalStateExcept on(s" nval d place type: $pt")
   }
 
-  def convertPlaceName(gd: Geoduck.PlaceName): TP.PlaceName =
-    TP.PlaceName(
-      name = gd.name,
+  def convertPlaceNa (gd: Geoduck.PlaceNa ): TP.PlaceNa  =
+    TP.PlaceNa (
+      na  = gd.na ,
       language = gd.language.getOrElse("en"),
-      `type` = convertPlaceNameType(gd.nameType),
+      `type` = convertPlaceNa Type(gd.na Type),
       preferred = gd.preferred
     )
 
-  def convertPlaceNameType(pt: Geoduck.PlaceNameType): TP.PlaceNameType = pt match {
-    case Geoduck.PlaceNameType.Normal => TP.PlaceNameType.Normal
-    case Geoduck.PlaceNameType.Abbreviation => TP.PlaceNameType.Abbreviation
-    case Geoduck.PlaceNameType.Synonym => TP.PlaceNameType.Synonym
+  def convertPlaceNa Type(pt: Geoduck.PlaceNa Type): TP.PlaceNa Type = pt match {
+    case Geoduck.PlaceNa Type.Normal => TP.PlaceNa Type.Normal
+    case Geoduck.PlaceNa Type.Abbrev at on => TP.PlaceNa Type.Abbrev at on
+    case Geoduck.PlaceNa Type.Synonym => TP.PlaceNa Type.Synonym
     case _ =>
-      throw new IllegalStateException(s"Invalid place name type: $pt")
+      throw new  llegalStateExcept on(s" nval d place na  type: $pt")
   }
 
-  def convertAttributes(attrs: collection.Set[Geoduck.PlaceAttribute]): Map[String, String] =
+  def convertAttr butes(attrs: collect on.Set[Geoduck.PlaceAttr bute]): Map[Str ng, Str ng] =
     attrs.map(attr => attr.key -> attr.value.getOrElse("")).toMap
 
-  def convertBoundingBox(geom: GDPrimitive.Geometry): Seq[TP.GeoCoordinates] =
-    geom.coordinates.map { coord =>
-      TP.GeoCoordinates(
-        latitude = coord.lat,
-        longitude = coord.lon
+  def convertBound ngBox(geom: GDPr m  ve.Geo try): Seq[TP.GeoCoord nates] =
+    geom.coord nates.map { coord =>
+      TP.GeoCoord nates(
+        lat ude = coord.lat,
+        long ude = coord.lon
       )
     }
 
-  def apply(queryLang: String, geoplace: GDPrimitive.Place): TP.Place = {
-    val bestname = geoplace.bestName(queryLang).getOrElse(geoplace.hexId)
+  def apply(queryLang: Str ng, geoplace: GDPr m  ve.Place): TP.Place = {
+    val bestna  = geoplace.bestNa (queryLang).getOrElse(geoplace. x d)
     TP.Place(
-      id = geoplace.hexId,
+       d = geoplace. x d,
       `type` = convertPlaceType(geoplace.placeType),
-      name = bestname,
-      fullName = geoplace.fullName(queryLang).getOrElse(bestname),
-      attributes = convertAttributes(geoplace.attributes),
-      boundingBox = geoplace.boundingBox.map(convertBoundingBox),
+      na  = bestna ,
+      fullNa  = geoplace.fullNa (queryLang).getOrElse(bestna ),
+      attr butes = convertAttr butes(geoplace.attr butes),
+      bound ngBox = geoplace.bound ngBox.map(convertBound ngBox),
       countryCode = geoplace.countryCode,
-      containers = Some(geoplace.cone.map(_.hexId).toSet + geoplace.hexId),
-      countryName = geoplace.countryName(queryLang)
+      conta ners = So (geoplace.cone.map(_. x d).toSet + geoplace. x d),
+      countryNa  = geoplace.countryNa (queryLang)
     )
   }
 
-  def convertGDKey(key: Key, lang: String): PlaceKey = {
-    val Key.PlaceId(pid) = key
-    PlaceKey("%016x".format(pid), lang)
+  def convertGDKey(key: Key, lang: Str ng): PlaceKey = {
+    val Key.Place d(p d) = key
+    PlaceKey("%016x".format(p d), lang)
   }
 }
 
-object GeoduckPlaceRepository {
+object GeoduckPlaceRepos ory {
   val context: GeoContext =
     GeoContext(
-      placeFields = Set(
-        Geoduck.PlaceQueryFields.Attributes,
-        Geoduck.PlaceQueryFields.BoundingBox,
-        Geoduck.PlaceQueryFields.PlaceNames,
-        Geoduck.PlaceQueryFields.Cone
+      placeF elds = Set(
+        Geoduck.PlaceQueryF elds.Attr butes,
+        Geoduck.PlaceQueryF elds.Bound ngBox,
+        Geoduck.PlaceQueryF elds.PlaceNa s,
+        Geoduck.PlaceQueryF elds.Cone
       ),
       placeTypes = Set(
         Geoduck.PlaceType.Country,
-        Geoduck.PlaceType.Admin0,
-        Geoduck.PlaceType.Admin1,
-        Geoduck.PlaceType.City,
-        Geoduck.PlaceType.Neighborhood
+        Geoduck.PlaceType.Adm n0,
+        Geoduck.PlaceType.Adm n1,
+        Geoduck.PlaceType.C y,
+        Geoduck.PlaceType.Ne ghborhood
       ),
-      includeCountryCode = true,
+       ncludeCountryCode = true,
       hydrateCone = true
     )
 
-  def apply(geoduck: GeoduckLocate): PlaceRepository.Type = {
-    val geoduckGroup = LegacySeqGroup((ids: Seq[Key.PlaceId]) => geoduck(context, ids))
+  def apply(geoduck: GeoduckLocate): PlaceRepos ory.Type = {
+    val geoduckGroup = LegacySeqGroup(( ds: Seq[Key.Place d]) => geoduck(context,  ds))
 
     placeKey =>
-      val placeId =
+      val place d =
         try {
-          Stitch.value(
-            Key.PlaceId(java.lang.Long.parseUnsignedLong(placeKey.placeId, 16))
+          St ch.value(
+            Key.Place d(java.lang.Long.parseUns gnedLong(placeKey.place d, 16))
           )
         } catch {
-          case _: NumberFormatException => Stitch.exception(NotFound)
+          case _: NumberFormatExcept on => St ch.except on(NotFound)
         }
 
-      placeId
-        .flatMap(id => Stitch.call(id, geoduckGroup))
-        .rescue { case LocationResponseExtractors.Failure(ex) => Stitch.exception(ex) }
+      place d
+        .flatMap( d => St ch.call( d, geoduckGroup))
+        .rescue { case Locat onResponseExtractors.Fa lure(ex) => St ch.except on(ex) }
         .map { resp =>
-          GDPrimitive.Place
-            .fromLocationResponse(resp)
-            .headOption
+          GDPr m  ve.Place
+            .fromLocat onResponse(resp)
+            . adOpt on
             .map(GeoduckPlaceConverter(placeKey.language, _))
         }
-        .lowerFromOption()
+        .lo rFromOpt on()
   }
 
 }

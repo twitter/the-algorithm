@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+package com.tw ter.product_m xer.core.funct onal_component.feature_hydrator
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.SupportsConditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.SupportsCond  onally
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Hydrate features about the query itself (not about the candidates)
- * e.g. features about the user who is making the request, what country the request originated from, etc.
+ * Hydrate features about t  query  self (not about t  cand dates)
+ * e.g. features about t  user who  s mak ng t  request, what country t  request or g nated from, etc.
  *
- * @note [[BaseQueryFeatureHydrator]]s populate [[Feature]]s with last-write-wins semantics for
- *       duplicate [[Feature]]s, where the last hydrator to run that populates a [[Feature]] will
- *       override any previously run [[BaseQueryFeatureHydrator]]s values for that [[Feature]].
- *       In a [[com.twitter.product_mixer.core.pipeline.PipelineConfig PipelineConfig]] this means
- *       that the right-most [[BaseQueryFeatureHydrator]] to populate a given [[Feature]] will be
- *       the value that is available to use.
+ * @note [[BaseQueryFeatureHydrator]]s populate [[Feature]]s w h last-wr e-w ns semant cs for
+ *       dupl cate [[Feature]]s, w re t  last hydrator to run that populates a [[Feature]] w ll
+ *       overr de any prev ously run [[BaseQueryFeatureHydrator]]s values for that [[Feature]].
+ *        n a [[com.tw ter.product_m xer.core.p pel ne.P pel neConf g P pel neConf g]] t   ans
+ *       that t  r ght-most [[BaseQueryFeatureHydrator]] to populate a g ven [[Feature]] w ll be
+ *       t  value that  s ava lable to use.
  *
- * @note if you want to conditionally run a [[BaseQueryFeatureHydrator]] you can use the mixin [[com.twitter.product_mixer.core.model.common.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use [[com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated.ParamGatedQueryFeatureHydrator]]
+ * @note  f   want to cond  onally run a [[BaseQueryFeatureHydrator]]   can use t  m x n [[com.tw ter.product_m xer.core.model.common.Cond  onally]]
+ *       or to gate on a [[com.tw ter.t  l nes.conf gap .Param]]   can use [[com.tw ter.product_m xer.component_l brary.feature_hydrator.query.param_gated.ParamGatedQueryFeatureHydrator]]
  *
- * @note Any exceptions that are thrown or returned as [[Stitch.exception]] will be added to the
- *       [[FeatureMap]] for the [[Feature]]s that were supposed to be hydrated.
- *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
- *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]]
+ * @note Any except ons that are thrown or returned as [[St ch.except on]] w ll be added to t 
+ *       [[FeatureMap]] for t  [[Feature]]s that  re supposed to be hydrated.
+ *       Access ng a fa led Feature w ll throw  f us ng [[FeatureMap.get]] for Features that aren't
+ *       [[com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure]]
  */
-trait BaseQueryFeatureHydrator[-Query <: PipelineQuery, FeatureType <: Feature[_, _]]
+tra  BaseQueryFeatureHydrator[-Query <: P pel neQuery, FeatureType <: Feature[_, _]]
     extends FeatureHydrator[FeatureType]
-    with SupportsConditionally[Query] {
+    w h SupportsCond  onally[Query] {
 
-  override val identifier: FeatureHydratorIdentifier
+  overr de val  dent f er: FeatureHydrator dent f er
 
-  /** Hydrates a [[FeatureMap]] for a given [[Query]] */
-  def hydrate(query: Query): Stitch[FeatureMap]
+  /** Hydrates a [[FeatureMap]] for a g ven [[Query]] */
+  def hydrate(query: Query): St ch[FeatureMap]
 }
 
-trait QueryFeatureHydrator[-Query <: PipelineQuery]
+tra  QueryFeatureHydrator[-Query <: P pel neQuery]
     extends BaseQueryFeatureHydrator[Query, Feature[_, _]]
 
 /**
- * When an [[AsyncHydrator]] is run it will hydrate features in the background
- * and will make them available starting at the specified point in execution.
+ * W n an [[AsyncHydrator]]  s run   w ll hydrate features  n t  background
+ * and w ll make t m ava lable start ng at t  spec f ed po nt  n execut on.
  *
- * When `hydrateBefore` is reached, any duplicate [[Feature]]s that were already hydrated will be
- * overridden with the new value from the [[AsyncHydrator]]
+ * W n `hydrateBefore`  s reac d, any dupl cate [[Feature]]s that  re already hydrated w ll be
+ * overr dden w h t  new value from t  [[AsyncHydrator]]
  *
- * @note [[AsyncHydrator]]s have the same last-write-wins semantics for duplicate [[Feature]]s
- *       as [[BaseQueryFeatureHydrator]] but with some nuance. If [[AsyncHydrator]]s for the
- *       same [[Feature]] have the same `hydrateBefore` then the right-most [[AsyncHydrator]]s
- *       value takes precedence. Similarly, [[AsyncHydrator]]s always hydrate after any other
- *       [[BaseQueryFeatureHydrator]]. See the examples for more detail.
- * @example if [[QueryFeatureHydrator]]s that populate the same [[Feature]] are defined in a `PipelineConfig`
- *          such as `[ asyncHydratorForFeatureA, normalHydratorForFeatureA ]`, where `asyncHydratorForFeatureA`
- *          is an [[AsyncHydrator]], when `asyncHydratorForFeatureA` reaches it's `hydrateBefore`
- *          Step in the Pipeline, the value for `FeatureA` from the `asyncHydratorForFeatureA` will override
- *          the existing value from `normalHydratorForFeatureA`, even though in the initial `PipelineConfig`
- *          they are ordered differently.
- * @example if [[AsyncHydrator]]s that populate the same [[Feature]] are defined in a `PipelineConfig`
- *          such as `[ asyncHydratorForFeatureA1, asyncHydratorForFeatureA2 ]`, where both [[AsyncHydrator]]s
- *          have the same `hydrateBefore`, when `hydrateBefore` is reached, the value for `FeatureA` from
- *          `asyncHydratorForFeatureA2` will override the value from `asyncHydratorForFeatureA1`.
+ * @note [[AsyncHydrator]]s have t  sa  last-wr e-w ns semant cs for dupl cate [[Feature]]s
+ *       as [[BaseQueryFeatureHydrator]] but w h so  nuance.  f [[AsyncHydrator]]s for t 
+ *       sa  [[Feature]] have t  sa  `hydrateBefore` t n t  r ght-most [[AsyncHydrator]]s
+ *       value takes precedence. S m larly, [[AsyncHydrator]]s always hydrate after any ot r
+ *       [[BaseQueryFeatureHydrator]]. See t  examples for more deta l.
+ * @example  f [[QueryFeatureHydrator]]s that populate t  sa  [[Feature]] are def ned  n a `P pel neConf g`
+ *          such as `[ asyncHydratorForFeatureA, normalHydratorForFeatureA ]`, w re `asyncHydratorForFeatureA`
+ *           s an [[AsyncHydrator]], w n `asyncHydratorForFeatureA` reac s  's `hydrateBefore`
+ *          Step  n t  P pel ne, t  value for `FeatureA` from t  `asyncHydratorForFeatureA` w ll overr de
+ *          t  ex st ng value from `normalHydratorForFeatureA`, even though  n t   n  al `P pel neConf g`
+ *          t y are ordered d fferently.
+ * @example  f [[AsyncHydrator]]s that populate t  sa  [[Feature]] are def ned  n a `P pel neConf g`
+ *          such as `[ asyncHydratorForFeatureA1, asyncHydratorForFeatureA2 ]`, w re both [[AsyncHydrator]]s
+ *          have t  sa  `hydrateBefore`, w n `hydrateBefore`  s reac d, t  value for `FeatureA` from
+ *          `asyncHydratorForFeatureA2` w ll overr de t  value from `asyncHydratorForFeatureA1`.
  */
-trait AsyncHydrator {
+tra  AsyncHydrator {
   _: BaseQueryFeatureHydrator[_, _] =>
 
   /**
-   * A [[PipelineStepIdentifier]] from the [[com.twitter.product_mixer.core.pipeline.PipelineConfig]] this is used in
-   * by which the [[FeatureMap]] returned by this [[AsyncHydrator]] will be completed.
+   * A [[P pel neStep dent f er]] from t  [[com.tw ter.product_m xer.core.p pel ne.P pel neConf g]] t   s used  n
+   * by wh ch t  [[FeatureMap]] returned by t  [[AsyncHydrator]] w ll be completed.
    *
-   * Access to the [[Feature]]s from this [[AsyncHydrator]] prior to reaching the provided
-   * [[PipelineStepIdentifier]]s will result in a [[com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException]].
+   * Access to t  [[Feature]]s from t  [[AsyncHydrator]] pr or to reach ng t  prov ded
+   * [[P pel neStep dent f er]]s w ll result  n a [[com.tw ter.product_m xer.core.feature.featuremap.M ss ngFeatureExcept on]].
    *
-   * @note If [[PipelineStepIdentifier]] is a Step which is run in parallel, the [[Feature]]s will be available for all the parallel Steps.
+   * @note  f [[P pel neStep dent f er]]  s a Step wh ch  s run  n parallel, t  [[Feature]]s w ll be ava lable for all t  parallel Steps.
    */
-  def hydrateBefore: PipelineStepIdentifier
+  def hydrateBefore: P pel neStep dent f er
 }

@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsExtendedReplyFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sExtendedReplyFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
 
-object IsExtendedReplyFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+object  sExtendedReplyFeatureHydrator
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("IsExtendedReply")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(" sExtendedReply")
 
-  override def features: Set[Feature[_, _]] = Set(IsExtendedReplyFeature)
+  overr de def features: Set[Feature[_, _]] = Set( sExtendedReplyFeature)
 
-  private val TrueFeatureMap = FeatureMapBuilder().add(IsExtendedReplyFeature, true).build()
-  private val FalseFeatureMap = FeatureMapBuilder().add(IsExtendedReplyFeature, false).build()
+  pr vate val TrueFeatureMap = FeatureMapBu lder().add( sExtendedReplyFeature, true).bu ld()
+  pr vate val FalseFeatureMap = FeatureMapBu lder().add( sExtendedReplyFeature, false).bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offload {
-    val followedUsers =
-      query.features.map(_.get(SGSFollowedUsersFeature)).getOrElse(Seq.empty).toSet
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offload {
+    val follo dUsers =
+      query.features.map(_.get(SGSFollo dUsersFeature)).getOrElse(Seq.empty).toSet
 
-    candidates.map { candidate =>
-      val features = candidate.features
-      val isExtendedReply = features.getOrElse(InReplyToTweetIdFeature, None).nonEmpty &&
-        !features.getOrElse(IsRetweetFeature, false) &&
-        features.getOrElse(InReplyToUserIdFeature, None).exists(!followedUsers.contains(_))
+    cand dates.map { cand date =>
+      val features = cand date.features
+      val  sExtendedReply = features.getOrElse( nReplyToT et dFeature, None).nonEmpty &&
+        !features.getOrElse( sRet etFeature, false) &&
+        features.getOrElse( nReplyToUser dFeature, None).ex sts(!follo dUsers.conta ns(_))
 
-      if (isExtendedReply) TrueFeatureMap else FalseFeatureMap
+       f ( sExtendedReply) TrueFeatureMap else FalseFeatureMap
     }
   }
 }

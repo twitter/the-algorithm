@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.annotations.Flag
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.annotations.DarkTrafficService
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.thrift.filters.DarkTrafficFilter
-import com.twitter.servo.decider.DeciderGateBuilder
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent.MtlsThr ftMuxCl entSyntax
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.annotat ons.DarkTraff cServ ce
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derKey
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.FollowRecom ndat onsThr ftServ ce
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.thr ft.f lters.DarkTraff cF lter
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
 
-object DiffyModule extends TwitterModule {
-  // diffy.dest is defined in the Follow Recommendations Service aurora file
-  // and points to the Dark Traffic Proxy server
-  private val destFlag =
-    flag[String]("diffy.dest", "/$/nil", "Resolvable name of diffy-service or proxy")
+object D ffyModule extends Tw terModule {
+  // d ffy.dest  s def ned  n t  Follow Recom ndat ons Serv ce aurora f le
+  // and po nts to t  Dark Traff c Proxy server
+  pr vate val destFlag =
+    flag[Str ng]("d ffy.dest", "/$/n l", "Resolvable na  of d ffy-serv ce or proxy")
 
-  @Provides
-  @Singleton
-  @DarkTrafficService
-  def provideDarkTrafficService(
-    serviceIdentifier: ServiceIdentifier
-  ): FollowRecommendationsThriftService.ReqRepServicePerEndpoint = {
-    ThriftMux.client
-      .withClientId(ClientId("follow_recos_service_darktraffic_proxy_client"))
-      .withMutualTls(serviceIdentifier)
-      .servicePerEndpoint[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
+  @Prov des
+  @S ngleton
+  @DarkTraff cServ ce
+  def prov deDarkTraff cServ ce(
+    serv ce dent f er: Serv ce dent f er
+  ): FollowRecom ndat onsThr ftServ ce.ReqRepServ cePerEndpo nt = {
+    Thr ftMux.cl ent
+      .w hCl ent d(Cl ent d("follow_recos_serv ce_darktraff c_proxy_cl ent"))
+      .w hMutualTls(serv ce dent f er)
+      .serv cePerEndpo nt[FollowRecom ndat onsThr ftServ ce.ReqRepServ cePerEndpo nt](
         dest = destFlag(),
-        label = "darktrafficproxy"
+        label = "darktraff cproxy"
       )
   }
 
-  @Provides
-  @Singleton
-  def provideDarkTrafficFilter(
-    @DarkTrafficService darkService: FollowRecommendationsThriftService.ReqRepServicePerEndpoint,
-    deciderGateBuilder: DeciderGateBuilder,
-    statsReceiver: StatsReceiver,
-    @Flag("environment") env: String
-  ): DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint] = {
-    // sampleFunction is used to determine which requests should get replicated
-    // to the dark traffic proxy server
-    val sampleFunction: Any => Boolean = { _ =>
-      // check whether the current FRS instance is deployed in production
+  @Prov des
+  @S ngleton
+  def prov deDarkTraff cF lter(
+    @DarkTraff cServ ce darkServ ce: FollowRecom ndat onsThr ftServ ce.ReqRepServ cePerEndpo nt,
+    dec derGateBu lder: Dec derGateBu lder,
+    statsRece ver: StatsRece ver,
+    @Flag("env ron nt") env: Str ng
+  ): DarkTraff cF lter[FollowRecom ndat onsThr ftServ ce.ReqRepServ cePerEndpo nt] = {
+    // sampleFunct on  s used to determ ne wh ch requests should get repl cated
+    // to t  dark traff c proxy server
+    val sampleFunct on: Any => Boolean = { _ =>
+      // c ck w t r t  current FRS  nstance  s deployed  n product on
       env match {
         case "prod" =>
-          statsReceiver.scope("provideDarkTrafficFilter").counter("prod").incr()
-          destFlag.isDefined && deciderGateBuilder
-            .keyToFeature(DeciderKey.EnableTrafficDarkReading).isAvailable(RandomRecipient)
+          statsRece ver.scope("prov deDarkTraff cF lter").counter("prod"). ncr()
+          destFlag. sDef ned && dec derGateBu lder
+            .keyToFeature(Dec derKey.EnableTraff cDarkRead ng). sAva lable(RandomRec p ent)
         case _ =>
-          statsReceiver.scope("provideDarkTrafficFilter").counter("devel").incr()
-          // replicate zero requests if in non-production environment
+          statsRece ver.scope("prov deDarkTraff cF lter").counter("devel"). ncr()
+          // repl cate zero requests  f  n non-product on env ron nt
           false
       }
     }
-    new DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
-      darkService,
-      sampleFunction,
-      forwardAfterService = true,
-      statsReceiver.scope("DarkTrafficFilter"),
-      lookupByMethod = true
+    new DarkTraff cF lter[FollowRecom ndat onsThr ftServ ce.ReqRepServ cePerEndpo nt](
+      darkServ ce,
+      sampleFunct on,
+      forwardAfterServ ce = true,
+      statsRece ver.scope("DarkTraff cF lter"),
+      lookupBy thod = true
     )
   }
 }

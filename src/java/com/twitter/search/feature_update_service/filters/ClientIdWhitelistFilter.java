@@ -1,57 +1,57 @@
-package com.twitter.search.feature_update_service.filters;
+package com.tw ter.search.feature_update_serv ce.f lters;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+ mport com.google. nject. nject;
+ mport com.google. nject.S ngleton;
 
-import com.twitter.finagle.Service;
-import com.twitter.finatra.thrift.AbstractThriftFilter;
-import com.twitter.finatra.thrift.ThriftRequest;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f natra.thr ft.AbstractThr ftF lter;
+ mport com.tw ter.f natra.thr ft.Thr ftRequest;
+ mport com.tw ter. nject.annotat ons.Flag;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponse;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponseCode;
+ mport com.tw ter.search.feature_update_serv ce.wh el st.Cl ent dWh el st;
+ mport com.tw ter.ut l.Future;
 
-@Singleton
-public class ClientIdWhitelistFilter extends AbstractThriftFilter {
-  private final boolean enabled;
-  private final ClientIdWhitelist whitelist;
+@S ngleton
+publ c class Cl ent dWh el stF lter extends AbstractThr ftF lter {
+  pr vate f nal boolean enabled;
+  pr vate f nal Cl ent dWh el st wh el st;
 
-  private final SearchRateCounter unknownClientIdStat =
-      SearchRateCounter.export("unknown_client_id");
-  private final SearchRateCounter noClientIdStat =
-      SearchRateCounter.export("no_client_id");
+  pr vate f nal SearchRateCounter unknownCl ent dStat =
+      SearchRateCounter.export("unknown_cl ent_ d");
+  pr vate f nal SearchRateCounter noCl ent dStat =
+      SearchRateCounter.export("no_cl ent_ d");
 
-  @Inject
-  public ClientIdWhitelistFilter(
-      ClientIdWhitelist whitelist,
-      @Flag("client.whitelist.enable") Boolean enabled
+  @ nject
+  publ c Cl ent dWh el stF lter(
+      Cl ent dWh el st wh el st,
+      @Flag("cl ent.wh el st.enable") Boolean enabled
   ) {
-    this.whitelist = whitelist;
-    this.enabled = enabled;
+    t .wh el st = wh el st;
+    t .enabled = enabled;
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public <T, R> Future<R> apply(ThriftRequest<T> request, Service<ThriftRequest<T>, R> svc) {
-    if (!enabled) {
+  @Overr de
+  @SuppressWarn ngs("unc cked")
+  publ c <T, R> Future<R> apply(Thr ftRequest<T> request, Serv ce<Thr ftRequest<T>, R> svc) {
+     f (!enabled) {
       return svc.apply(request);
     }
-    if (request.clientId().isEmpty()) {
-      noClientIdStat.increment();
+     f (request.cl ent d(). sEmpty()) {
+      noCl ent dStat. ncre nt();
       return (Future<R>) Future.value(
-          new FeatureUpdateResponse(FeatureUpdateResponseCode.MISSING_CLIENT_ERROR)
-              .setDetailMessage("finagle clientId is required in request"));
+          new FeatureUpdateResponse(FeatureUpdateResponseCode.M SS NG_CL ENT_ERROR)
+              .setDeta l ssage("f nagle cl ent d  s requ red  n request"));
 
-    } else if (!whitelist.isClientAllowed(request.clientId().get())) {
-      // It's safe to use get() in the above condition because
-      // clientId was already checked for emptiness
-      unknownClientIdStat.increment();
+    } else  f (!wh el st. sCl entAllo d(request.cl ent d().get())) {
+      //  's safe to use get()  n t  above cond  on because
+      // cl ent d was already c cked for empt ness
+      unknownCl ent dStat. ncre nt();
       return (Future<R>) Future.value(
-          new FeatureUpdateResponse(FeatureUpdateResponseCode.UNKNOWN_CLIENT_ERROR)
-              .setDetailMessage(String.format(
-                  "request contains unknown finagle clientId: %s", request.clientId().toString())));
+          new FeatureUpdateResponse(FeatureUpdateResponseCode.UNKNOWN_CL ENT_ERROR)
+              .setDeta l ssage(Str ng.format(
+                  "request conta ns unknown f nagle cl ent d: %s", request.cl ent d().toStr ng())));
     } else {
       return svc.apply(request);
     }

@@ -1,253 +1,253 @@
-package com.twitter.timelineranker.server
+package com.tw ter.t  l neranker.server
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FunctionArrow
-import com.twitter.timelineranker.entity_tweets.EntityTweetsRepository
-import com.twitter.timelineranker.in_network_tweets.InNetworkTweetRepository
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.observe.ObservedRequests
-import com.twitter.timelineranker.recap_author.RecapAuthorRepository
-import com.twitter.timelineranker.recap_hydration.RecapHydrationRepository
-import com.twitter.timelineranker.repository._
-import com.twitter.timelineranker.uteg_liked_by_tweets.UtegLikedByTweetsRepository
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.authorization.TimelinesClientRequestAuthorizer
-import com.twitter.timelines.observe.DebugObserver
-import com.twitter.timelines.observe.ObservedAndValidatedRequests
-import com.twitter.timelines.observe.QueryWidth
-import com.twitter.timelines.observe.ServiceObserver
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.f nagle.T  outExcept on
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.Funct onArrow
+ mport com.tw ter.t  l neranker.ent y_t ets.Ent yT etsRepos ory
+ mport com.tw ter.t  l neranker. n_network_t ets. nNetworkT etRepos ory
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l neranker.observe.ObservedRequests
+ mport com.tw ter.t  l neranker.recap_author.RecapAuthorRepos ory
+ mport com.tw ter.t  l neranker.recap_hydrat on.RecapHydrat onRepos ory
+ mport com.tw ter.t  l neranker.repos ory._
+ mport com.tw ter.t  l neranker.uteg_l ked_by_t ets.UtegL kedByT etsRepos ory
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.author zat on.T  l nesCl entRequestAuthor zer
+ mport com.tw ter.t  l nes.observe.DebugObserver
+ mport com.tw ter.t  l nes.observe.ObservedAndVal datedRequests
+ mport com.tw ter.t  l nes.observe.QueryW dth
+ mport com.tw ter.t  l nes.observe.Serv ceObserver
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
-object TimelineRanker {
-  def toTimelineErrorThriftResponse(
+object T  l neRanker {
+  def toT  l neErrorThr ftResponse(
     ex: Throwable,
-    reason: Option[thrift.ErrorReason] = None
-  ): thrift.GetTimelineResponse = {
-    thrift.GetTimelineResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+    reason: Opt on[thr ft.ErrorReason] = None
+  ): thr ft.GetT  l neResponse = {
+    thr ft.GetT  l neResponse(
+      error = So (thr ft.T  l neError( ssage = ex.toStr ng, reason))
     )
   }
 
-  def getTimelinesExceptionHandler: PartialFunction[
+  def getT  l nesExcept onHandler: Part alFunct on[
     Throwable,
-    Future[thrift.GetTimelineResponse]
+    Future[thr ft.GetT  l neResponse]
   ] = {
-    case e: TimeoutException =>
-      Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
-      Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
-    case e => Future.value(toTimelineErrorThriftResponse(e))
+    case e: T  outExcept on =>
+      Future.value(toT  l neErrorThr ftResponse(e, So (thr ft.ErrorReason.UpstreamT  out)))
+    case e: Throwable  f ObservedAndVal datedRequests. sOverCapac yExcept on(e) =>
+      Future.value(toT  l neErrorThr ftResponse(e, So (thr ft.ErrorReason.OverCapac y)))
+    case e => Future.value(toT  l neErrorThr ftResponse(e))
   }
 
-  def toErrorThriftResponse(
+  def toErrorThr ftResponse(
     ex: Throwable,
-    reason: Option[thrift.ErrorReason] = None
-  ): thrift.GetCandidateTweetsResponse = {
-    thrift.GetCandidateTweetsResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+    reason: Opt on[thr ft.ErrorReason] = None
+  ): thr ft.GetCand dateT etsResponse = {
+    thr ft.GetCand dateT etsResponse(
+      error = So (thr ft.T  l neError( ssage = ex.toStr ng, reason))
     )
   }
 
-  def exceptionHandler: PartialFunction[Throwable, Future[thrift.GetCandidateTweetsResponse]] = {
-    case e: TimeoutException =>
-      Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
-      Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
-    case e => Future.value(toErrorThriftResponse(e))
+  def except onHandler: Part alFunct on[Throwable, Future[thr ft.GetCand dateT etsResponse]] = {
+    case e: T  outExcept on =>
+      Future.value(toErrorThr ftResponse(e, So (thr ft.ErrorReason.UpstreamT  out)))
+    case e: Throwable  f ObservedAndVal datedRequests. sOverCapac yExcept on(e) =>
+      Future.value(toErrorThr ftResponse(e, So (thr ft.ErrorReason.OverCapac y)))
+    case e => Future.value(toErrorThr ftResponse(e))
   }
 }
 
-class TimelineRanker(
-  routingRepository: RoutingTimelineRepository,
-  inNetworkTweetRepository: InNetworkTweetRepository,
-  recapHydrationRepository: RecapHydrationRepository,
-  recapAuthorRepository: RecapAuthorRepository,
-  entityTweetsRepository: EntityTweetsRepository,
-  utegLikedByTweetsRepository: UtegLikedByTweetsRepository,
-  serviceObserver: ServiceObserver,
-  val abdecider: Option[LoggingABDecider],
-  override val clientRequestAuthorizer: TimelinesClientRequestAuthorizer,
-  override val debugObserver: DebugObserver,
-  queryParamInitializer: FunctionArrow[RecapQuery, Future[RecapQuery]],
-  statsReceiver: StatsReceiver)
-    extends thrift.TimelineRanker.MethodPerEndpoint
-    with ObservedRequests {
+class T  l neRanker(
+  rout ngRepos ory: Rout ngT  l neRepos ory,
+   nNetworkT etRepos ory:  nNetworkT etRepos ory,
+  recapHydrat onRepos ory: RecapHydrat onRepos ory,
+  recapAuthorRepos ory: RecapAuthorRepos ory,
+  ent yT etsRepos ory: Ent yT etsRepos ory,
+  utegL kedByT etsRepos ory: UtegL kedByT etsRepos ory,
+  serv ceObserver: Serv ceObserver,
+  val abdec der: Opt on[Logg ngABDec der],
+  overr de val cl entRequestAuthor zer: T  l nesCl entRequestAuthor zer,
+  overr de val debugObserver: DebugObserver,
+  queryParam n  al zer: Funct onArrow[RecapQuery, Future[RecapQuery]],
+  statsRece ver: StatsRece ver)
+    extends thr ft.T  l neRanker. thodPerEndpo nt
+    w h ObservedRequests {
 
-  override val requestWidthStats: Stat = statsReceiver.stat("TimelineRanker/requestWidth")
+  overr de val requestW dthStats: Stat = statsRece ver.stat("T  l neRanker/requestW dth")
 
-  private[this] val getTimelinesStats = serviceObserver.readMethodStats(
-    "getTimelines",
-    QueryWidth.one[TimelineQuery]
+  pr vate[t ] val getT  l nesStats = serv ceObserver.read thodStats(
+    "getT  l nes",
+    QueryW dth.one[T  l neQuery]
   )
 
-  private[this] val getInNetworkTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getInNetworkTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  pr vate[t ] val get nNetworkT etCand datesStats = serv ceObserver.read thodStats(
+    "get nNetworkT etCand dates",
+    QueryW dth.one[RecapQuery]
   )
 
-  private[this] val hydrateTweetCandidatesStats = serviceObserver.readMethodStats(
-    "hydrateTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  pr vate[t ] val hydrateT etCand datesStats = serv ceObserver.read thodStats(
+    "hydrateT etCand dates",
+    QueryW dth.one[RecapQuery]
   )
 
-  private[this] val getRecapCandidatesFromAuthorsStats = serviceObserver.readMethodStats(
-    "getRecapCandidatesFromAuthors",
-    QueryWidth.one[RecapQuery]
+  pr vate[t ] val getRecapCand datesFromAuthorsStats = serv ceObserver.read thodStats(
+    "getRecapCand datesFromAuthors",
+    QueryW dth.one[RecapQuery]
   )
 
-  private[this] val getEntityTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getEntityTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  pr vate[t ] val getEnt yT etCand datesStats = serv ceObserver.read thodStats(
+    "getEnt yT etCand dates",
+    QueryW dth.one[RecapQuery]
   )
 
-  private[this] val getUtegLikedByTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getUtegLikedByTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  pr vate[t ] val getUtegL kedByT etCand datesStats = serv ceObserver.read thodStats(
+    "getUtegL kedByT etCand dates",
+    QueryW dth.one[RecapQuery]
   )
 
-  def getTimelines(
-    thriftQueries: Seq[thrift.TimelineQuery]
-  ): Future[Seq[thrift.GetTimelineResponse]] = {
+  def getT  l nes(
+    thr ftQuer es: Seq[thr ft.T  l neQuery]
+  ): Future[Seq[thr ft.GetT  l neResponse]] = {
     Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(TimelineQuery.fromThrift(thriftQuery)) match {
+      thr ftQuer es.map { thr ftQuery =>
+        Try(T  l neQuery.fromThr ft(thr ftQuery)) match {
           case Return(query) =>
-            observeAndValidate(
+            observeAndVal date(
               query,
-              Seq(query.userId),
-              getTimelinesStats,
-              TimelineRanker.getTimelinesExceptionHandler) { validatedQuery =>
-              routingRepository.get(validatedQuery).map { timeline =>
-                thrift.GetTimelineResponse(Some(timeline.toThrift))
+              Seq(query.user d),
+              getT  l nesStats,
+              T  l neRanker.getT  l nesExcept onHandler) { val datedQuery =>
+              rout ngRepos ory.get(val datedQuery).map { t  l ne =>
+                thr ft.GetT  l neResponse(So (t  l ne.toThr ft))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toTimelineErrorThriftResponse(e))
+          case Throw(e) => Future.value(T  l neRanker.toT  l neErrorThr ftResponse(e))
         }
       }
     )
   }
 
-  def getRecycledTweetCandidates(
-    thriftQueries: Seq[thrift.RecapQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
+  def getRecycledT etCand dates(
+    thr ftQuer es: Seq[thr ft.RecapQuery]
+  ): Future[Seq[thr ft.GetCand dateT etsResponse]] = {
     Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
+      thr ftQuer es.map { thr ftQuery =>
+        Try(RecapQuery.fromThr ft(thr ftQuery)) match {
           case Return(query) =>
-            observeAndValidate(
+            observeAndVal date(
               query,
-              Seq(query.userId),
-              getInNetworkTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => inNetworkTweetRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+              Seq(query.user d),
+              get nNetworkT etCand datesStats,
+              T  l neRanker.except onHandler
+            ) { val datedQuery =>
+              Future(queryParam n  al zer(val datedQuery)).flatten.l ftToTry.flatMap {
+                case Return(q) =>  nNetworkT etRepos ory.get(q).map(_.toThr ft)
+                case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
         }
       }
     )
   }
 
-  def hydrateTweetCandidates(
-    thriftQueries: Seq[thrift.RecapHydrationQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
+  def hydrateT etCand dates(
+    thr ftQuer es: Seq[thr ft.RecapHydrat onQuery]
+  ): Future[Seq[thr ft.GetCand dateT etsResponse]] = {
     Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
+      thr ftQuer es.map { thr ftQuery =>
+        Try(RecapQuery.fromThr ft(thr ftQuery)) match {
           case Return(query) =>
-            observeAndValidate(
+            observeAndVal date(
               query,
-              Seq(query.userId),
-              hydrateTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => recapHydrationRepository.hydrate(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+              Seq(query.user d),
+              hydrateT etCand datesStats,
+              T  l neRanker.except onHandler
+            ) { val datedQuery =>
+              Future(queryParam n  al zer(val datedQuery)).flatten.l ftToTry.flatMap {
+                case Return(q) => recapHydrat onRepos ory.hydrate(q).map(_.toThr ft)
+                case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
         }
       }
     )
   }
 
-  def getRecapCandidatesFromAuthors(
-    thriftQueries: Seq[thrift.RecapQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
+  def getRecapCand datesFromAuthors(
+    thr ftQuer es: Seq[thr ft.RecapQuery]
+  ): Future[Seq[thr ft.GetCand dateT etsResponse]] = {
     Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
+      thr ftQuer es.map { thr ftQuery =>
+        Try(RecapQuery.fromThr ft(thr ftQuery)) match {
           case Return(query) =>
-            observeAndValidate(
+            observeAndVal date(
               query,
-              Seq(query.userId),
-              getRecapCandidatesFromAuthorsStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => recapAuthorRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+              Seq(query.user d),
+              getRecapCand datesFromAuthorsStats,
+              T  l neRanker.except onHandler
+            ) { val datedQuery =>
+              Future(queryParam n  al zer(val datedQuery)).flatten.l ftToTry.flatMap {
+                case Return(q) => recapAuthorRepos ory.get(q).map(_.toThr ft)
+                case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
         }
       }
     )
   }
 
-  def getEntityTweetCandidates(
-    thriftQueries: Seq[thrift.EntityTweetsQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
+  def getEnt yT etCand dates(
+    thr ftQuer es: Seq[thr ft.Ent yT etsQuery]
+  ): Future[Seq[thr ft.GetCand dateT etsResponse]] = {
     Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
+      thr ftQuer es.map { thr ftQuery =>
+        Try(RecapQuery.fromThr ft(thr ftQuery)) match {
           case Return(query) =>
-            observeAndValidate(
+            observeAndVal date(
               query,
-              Seq(query.userId),
-              getEntityTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => entityTweetsRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+              Seq(query.user d),
+              getEnt yT etCand datesStats,
+              T  l neRanker.except onHandler
+            ) { val datedQuery =>
+              Future(queryParam n  al zer(val datedQuery)).flatten.l ftToTry.flatMap {
+                case Return(q) => ent yT etsRepos ory.get(q).map(_.toThr ft)
+                case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
         }
       }
     )
   }
 
-  def getUtegLikedByTweetCandidates(
-    thriftQueries: Seq[thrift.UtegLikedByTweetsQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
+  def getUtegL kedByT etCand dates(
+    thr ftQuer es: Seq[thr ft.UtegL kedByT etsQuery]
+  ): Future[Seq[thr ft.GetCand dateT etsResponse]] = {
     Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
+      thr ftQuer es.map { thr ftQuery =>
+        Try(RecapQuery.fromThr ft(thr ftQuery)) match {
           case Return(query) =>
-            observeAndValidate(
+            observeAndVal date(
               query,
-              Seq(query.userId),
-              getUtegLikedByTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => utegLikedByTweetsRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+              Seq(query.user d),
+              getUtegL kedByT etCand datesStats,
+              T  l neRanker.except onHandler
+            ) { val datedQuery =>
+              Future(queryParam n  al zer(val datedQuery)).flatten.l ftToTry.flatMap {
+                case Return(q) => utegL kedByT etsRepos ory.get(q).map(_.toThr ft)
+                case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          case Throw(e) => Future.value(T  l neRanker.toErrorThr ftResponse(e))
         }
       }
     )

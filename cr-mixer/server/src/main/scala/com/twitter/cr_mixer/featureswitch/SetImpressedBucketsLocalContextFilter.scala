@@ -1,21 +1,21 @@
-package com.twitter.cr_mixer.featureswitch
+package com.tw ter.cr_m xer.featuresw ch
 
-import com.twitter.finagle.Filter
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.concurrent.TrieMap
-import com.twitter.abdecider.Bucket
-import com.twitter.finagle.Service
+ mport com.tw ter.f nagle.F lter
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.concurrent.Tr eMap
+ mport com.tw ter.abdec der.Bucket
+ mport com.tw ter.f nagle.Serv ce
 
-@Singleton
-class SetImpressedBucketsLocalContextFilter @Inject() () extends Filter.TypeAgnostic {
-  override def toFilter[Req, Rep]: Filter[Req, Rep, Req, Rep] =
-    (request: Req, service: Service[Req, Rep]) => {
+@S ngleton
+class Set mpressedBucketsLocalContextF lter @ nject() () extends F lter.TypeAgnost c {
+  overr de def toF lter[Req, Rep]: F lter[Req, Rep, Req, Rep] =
+    (request: Req, serv ce: Serv ce[Req, Rep]) => {
 
-      val concurrentTrieMap = TrieMap
-        .empty[Bucket, Boolean] // Trie map has no locks and O(1) inserts
-      CrMixerImpressedBuckets.localImpressedBucketsMap.let(concurrentTrieMap) {
-        service(request)
+      val concurrentTr eMap = Tr eMap
+        .empty[Bucket, Boolean] // Tr e map has no locks and O(1)  nserts
+      CrM xer mpressedBuckets.local mpressedBucketsMap.let(concurrentTr eMap) {
+        serv ce(request)
       }
     }
 

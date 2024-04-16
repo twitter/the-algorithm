@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate
 
 /**
- * A [[Predicate]] that triggers if the metric this is used with lowers below
- * the [[threshold]] for [[datapointsPastThreshold]] per [[duration]]
+ * A [[Pred cate]] that tr ggers  f t   tr c t   s used w h lo rs below
+ * t  [[threshold]] for [[datapo ntsPastThreshold]] per [[durat on]]
  */
-case class TriggerIfBelow(
-  override val threshold: Double,
-  override val datapointsPastThreshold: Int = 10,
-  override val duration: Int = 15,
-  override val metricGranularity: MetricGranularity = Minutes)
-    extends Predicate
-    with ThroughputPredicate {
-  override val operator: Operator = `<`
+case class Tr gger fBelow(
+  overr de val threshold: Double,
+  overr de val datapo ntsPastThreshold:  nt = 10,
+  overr de val durat on:  nt = 15,
+  overr de val  tr cGranular y:  tr cGranular y = M nutes)
+    extends Pred cate
+    w h ThroughputPred cate {
+  overr de val operator: Operator = `<`
 }

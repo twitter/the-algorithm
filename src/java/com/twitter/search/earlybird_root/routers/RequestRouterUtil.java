@@ -1,106 +1,106 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.util.Await;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdServ ceResponse;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-public final class RequestRouterUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(RequestRouterUtil.class);
+publ c f nal class RequestRouterUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(RequestRouterUt l.class);
 
-  private RequestRouterUtil() {
+  pr vate RequestRouterUt l() {
   }
 
   /**
-   * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * Returns t  funct on that c cks  f t  m nSearc dStatus D on t   rged response  s h g r
+   * than t  max  D  n t  request.
    *
-   * @param requestContext The request context that stores the request.
-   * @param operator The operator that we're checking against (max_id or until_time).
-   * @param requestMaxId The maxId specified in the request (in the given operator).
-   * @param realtimeResponseFuture The response from the realtime cluster.
-   * @param protectedResponseFuture The response from the protected cluster.
-   * @param fullArchiveResponseFuture The response from the full archive cluster.
-   * @param stat The stat to increment if minSearchedStatusID on the merged response is higher than
-   *             the max ID in the request.
-   * @return A function that checks if the minSearchedStatusID on the merged response is higher than
-   *         the max ID in the request.
+   * @param requestContext T  request context that stores t  request.
+   * @param operator T  operator that  're c ck ng aga nst (max_ d or unt l_t  ).
+   * @param requestMax d T  max d spec f ed  n t  request ( n t  g ven operator).
+   * @param realt  ResponseFuture T  response from t  realt   cluster.
+   * @param protectedResponseFuture T  response from t  protected cluster.
+   * @param fullArch veResponseFuture T  response from t  full arch ve cluster.
+   * @param stat T  stat to  ncre nt  f m nSearc dStatus D on t   rged response  s h g r than
+   *             t  max  D  n t  request.
+   * @return A funct on that c cks  f t  m nSearc dStatus D on t   rged response  s h g r than
+   *         t  max  D  n t  request.
    */
-  public static Function<EarlybirdResponse, EarlybirdResponse> checkMinSearchedStatusId(
-      final EarlybirdRequestContext requestContext,
-      final String operator,
-      final Optional<Long> requestMaxId,
-      final Future<EarlybirdServiceResponse> realtimeResponseFuture,
-      final Future<EarlybirdServiceResponse> protectedResponseFuture,
-      final Future<EarlybirdServiceResponse> fullArchiveResponseFuture,
-      final SearchCounter stat) {
-    return new Function<EarlybirdResponse, EarlybirdResponse>() {
-      @Override
-      public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-        if (requestMaxId.isPresent()
-            && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
-            && mergedResponse.isSetSearchResults()
-            && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-          long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-          if (minSearchedStatusId > requestMaxId.get()) {
-            stat.increment();
-            // We're logging this only for STRICT RECENCY as it was very spammy for all types of
-            // request. We don't expect this to happen for STRICT RECENCY but we're tracking
-            // with the stat when it happens for RELEVANCE and RECENCY
-            if (requestContext.getEarlybirdRequestType() == EarlybirdRequestType.STRICT_RECENCY) {
-              String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
+  publ c stat c Funct on<Earlyb rdResponse, Earlyb rdResponse> c ckM nSearc dStatus d(
+      f nal Earlyb rdRequestContext requestContext,
+      f nal Str ng operator,
+      f nal Opt onal<Long> requestMax d,
+      f nal Future<Earlyb rdServ ceResponse> realt  ResponseFuture,
+      f nal Future<Earlyb rdServ ceResponse> protectedResponseFuture,
+      f nal Future<Earlyb rdServ ceResponse> fullArch veResponseFuture,
+      f nal SearchCounter stat) {
+    return new Funct on<Earlyb rdResponse, Earlyb rdResponse>() {
+      @Overr de
+      publ c Earlyb rdResponse apply(Earlyb rdResponse  rgedResponse) {
+         f (requestMax d. sPresent()
+            && ( rgedResponse.getResponseCode() == Earlyb rdResponseCode.SUCCESS)
+            &&  rgedResponse. sSetSearchResults()
+            &&  rgedResponse.getSearchResults(). sSetM nSearc dStatus D()) {
+          long m nSearc dStatus d =  rgedResponse.getSearchResults().getM nSearc dStatus D();
+           f (m nSearc dStatus d > requestMax d.get()) {
+            stat. ncre nt();
+            //  're logg ng t  only for STR CT RECENCY as   was very spam  for all types of
+            // request.   don't expect t  to happen for STR CT RECENCY but  're track ng
+            // w h t  stat w n   happens for RELEVANCE and RECENCY
+             f (requestContext.getEarlyb rdRequestType() == Earlyb rdRequestType.STR CT_RECENCY) {
+              Str ng log ssage = "Response has a m nSearc dStatus D ({}) larger than request "
                   + operator + " ({})."
                   + "\nrequest type: {}"
                   + "\nrequest: {}"
-                  + "\nmerged response: {}"
-                  + "\nrealtime response: {}"
+                  + "\n rged response: {}"
+                  + "\nrealt   response: {}"
                   + "\nprotected response: {}"
-                  + "\nfull archive response: {}";
-              List<Object> logMessageParams = Lists.newArrayList();
-              logMessageParams.add(minSearchedStatusId);
-              logMessageParams.add(requestMaxId.get());
-              logMessageParams.add(requestContext.getEarlybirdRequestType());
-              logMessageParams.add(requestContext.getRequest());
-              logMessageParams.add(mergedResponse);
+                  + "\nfull arch ve response: {}";
+              L st<Object> log ssageParams = L sts.newArrayL st();
+              log ssageParams.add(m nSearc dStatus d);
+              log ssageParams.add(requestMax d.get());
+              log ssageParams.add(requestContext.getEarlyb rdRequestType());
+              log ssageParams.add(requestContext.getRequest());
+              log ssageParams.add( rgedResponse);
 
-              // The realtime, protected and full archive response futures are "done" at this point:
-              // we have to wait for them in order to build the merged response. So it's ok to call
-              // Await.result() here to get the responses: it's a no-op.
+              // T  realt  , protected and full arch ve response futures are "done" at t  po nt:
+              //   have to wa  for t m  n order to bu ld t   rged response. So  's ok to call
+              // Awa .result()  re to get t  responses:  's a no-op.
               try {
-                logMessageParams.add(Await.result(realtimeResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+                log ssageParams.add(Awa .result(realt  ResponseFuture).getResponse());
+              } catch (Except on e) {
+                log ssageParams.add(e);
               }
               try {
-                logMessageParams.add(Await.result(protectedResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+                log ssageParams.add(Awa .result(protectedResponseFuture).getResponse());
+              } catch (Except on e) {
+                log ssageParams.add(e);
               }
               try {
-                logMessageParams.add(Await.result(fullArchiveResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+                log ssageParams.add(Awa .result(fullArch veResponseFuture).getResponse());
+              } catch (Except on e) {
+                log ssageParams.add(e);
               }
 
-              LOG.warn(logMessage, logMessageParams.toArray());
+              LOG.warn(log ssage, log ssageParams.toArray());
             }
           }
         }
 
-        return mergedResponse;
+        return  rgedResponse;
       }
     };
   }

@@ -1,29 +1,29 @@
 target(
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility",
+    dependenc es = [
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y",
     ],
 )
 
 target(
-    name = "conversations",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/conversations",
+    na  = "conversat ons",
+    dependenc es = [
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/ nterfaces/common/t ets",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/ nterfaces/conversat ons",
     ],
 )
 
 target(
-    name = "tweets",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/generators",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/tweets",
+    na  = "t ets",
+    dependenc es = [
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/generators",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/ nterfaces/common/t ets",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/ nterfaces/t ets",
     ],
 )
 
 target(
-    name = "users",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/users",
+    na  = "users",
+    dependenc es = [
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/ nterfaces/users",
     ],
 )

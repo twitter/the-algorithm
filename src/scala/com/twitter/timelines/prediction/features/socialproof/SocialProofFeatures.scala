@@ -1,172 +1,172 @@
-package com.twitter.timelines.prediction.features.socialproof
+package com.tw ter.t  l nes.pred ct on.features.soc alproof
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.timelines.prediction.features.socialproof.SocialProofDataRecordFeatures._
-import com.twitter.timelines.socialproof.thriftscala.SocialProof
-import com.twitter.timelines.socialproof.v1.thriftscala.SocialProofType
-import com.twitter.timelines.util.CommonTypes.UserId
-import scala.collection.JavaConverters._
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature.B nary
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .Feature.SparseB nary
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.t  l nes.pred ct on.features.soc alproof.Soc alProofDataRecordFeatures._
+ mport com.tw ter.t  l nes.soc alproof.thr ftscala.Soc alProof
+ mport com.tw ter.t  l nes.soc alproof.v1.thr ftscala.Soc alProofType
+ mport com.tw ter.t  l nes.ut l.CommonTypes.User d
+ mport scala.collect on.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
 
-abstract class SocialProofUserGroundTruth(userIds: Seq[UserId], count: Int) {
-  require(
-    count >= userIds.size,
-    "count must be equal to or greater than the number of entries in userIds"
+abstract class Soc alProofUserGroundTruth(user ds: Seq[User d], count:  nt) {
+  requ re(
+    count >= user ds.s ze,
+    "count must be equal to or greater than t  number of entr es  n user ds"
   )
-  // Using Double as the return type to make it more convenient for these values to be used as
+  // Us ng Double as t  return type to make   more conven ent for t se values to be used as
   // ML feature values.
-  val displayedUserCount: Double = userIds.size.toDouble
-  val undisplayedUserCount: Double = count - userIds.size.toDouble
+  val d splayedUserCount: Double = user ds.s ze.toDouble
+  val und splayedUserCount: Double = count - user ds.s ze.toDouble
   val totalCount: Double = count.toDouble
 
-  def featureDisplayedUsers: SparseBinary
-  def featureDisplayedUserCount: Continuous
-  def featureUndisplayedUserCount: Continuous
-  def featureTotalUserCount: Continuous
+  def featureD splayedUsers: SparseB nary
+  def featureD splayedUserCount: Cont nuous
+  def featureUnd splayedUserCount: Cont nuous
+  def featureTotalUserCount: Cont nuous
 
-  def setFeatures(rec: DataRecord): Unit = {
-    rec.setFeatureValue(featureDisplayedUsers, toStringSet(userIds))
-    rec.setFeatureValue(featureDisplayedUserCount, displayedUserCount)
-    rec.setFeatureValue(featureUndisplayedUserCount, undisplayedUserCount)
+  def setFeatures(rec: DataRecord): Un  = {
+    rec.setFeatureValue(featureD splayedUsers, toStr ngSet(user ds))
+    rec.setFeatureValue(featureD splayedUserCount, d splayedUserCount)
+    rec.setFeatureValue(featureUnd splayedUserCount, und splayedUserCount)
     rec.setFeatureValue(featureTotalUserCount, totalCount)
   }
-  protected def toStringSet(value: Seq[Long]): Set[String] = {
-    value.map(_.toString).toSet
+  protected def toStr ngSet(value: Seq[Long]): Set[Str ng] = {
+    value.map(_.toStr ng).toSet
   }
 }
 
-case class FavoritedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empty, count: Int = 0)
-    extends SocialProofUserGroundTruth(userIds, count) {
+case class Favor edBySoc alProofUserGroundTruth(user ds: Seq[User d] = Seq.empty, count:  nt = 0)
+    extends Soc alProofUserGroundTruth(user ds, count) {
 
-  override val featureDisplayedUsers = SocialProofDisplayedFavoritedByUsers
-  override val featureDisplayedUserCount = SocialProofDisplayedFavoritedByUserCount
-  override val featureUndisplayedUserCount = SocialProofUndisplayedFavoritedByUserCount
-  override val featureTotalUserCount = SocialProofTotalFavoritedByUserCount
+  overr de val featureD splayedUsers = Soc alProofD splayedFavor edByUsers
+  overr de val featureD splayedUserCount = Soc alProofD splayedFavor edByUserCount
+  overr de val featureUnd splayedUserCount = Soc alProofUnd splayedFavor edByUserCount
+  overr de val featureTotalUserCount = Soc alProofTotalFavor edByUserCount
 }
 
-case class RetweetedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empty, count: Int = 0)
-    extends SocialProofUserGroundTruth(userIds, count) {
+case class Ret etedBySoc alProofUserGroundTruth(user ds: Seq[User d] = Seq.empty, count:  nt = 0)
+    extends Soc alProofUserGroundTruth(user ds, count) {
 
-  override val featureDisplayedUsers = SocialProofDisplayedRetweetedByUsers
-  override val featureDisplayedUserCount = SocialProofDisplayedRetweetedByUserCount
-  override val featureUndisplayedUserCount = SocialProofUndisplayedRetweetedByUserCount
-  override val featureTotalUserCount = SocialProofTotalRetweetedByUserCount
+  overr de val featureD splayedUsers = Soc alProofD splayedRet etedByUsers
+  overr de val featureD splayedUserCount = Soc alProofD splayedRet etedByUserCount
+  overr de val featureUnd splayedUserCount = Soc alProofUnd splayedRet etedByUserCount
+  overr de val featureTotalUserCount = Soc alProofTotalRet etedByUserCount
 }
 
-case class RepliedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empty, count: Int = 0)
-    extends SocialProofUserGroundTruth(userIds, count) {
+case class Repl edBySoc alProofUserGroundTruth(user ds: Seq[User d] = Seq.empty, count:  nt = 0)
+    extends Soc alProofUserGroundTruth(user ds, count) {
 
-  override val featureDisplayedUsers = SocialProofDisplayedRepliedByUsers
-  override val featureDisplayedUserCount = SocialProofDisplayedRepliedByUserCount
-  override val featureUndisplayedUserCount = SocialProofUndisplayedRepliedByUserCount
-  override val featureTotalUserCount = SocialProofTotalRepliedByUserCount
+  overr de val featureD splayedUsers = Soc alProofD splayedRepl edByUsers
+  overr de val featureD splayedUserCount = Soc alProofD splayedRepl edByUserCount
+  overr de val featureUnd splayedUserCount = Soc alProofUnd splayedRepl edByUserCount
+  overr de val featureTotalUserCount = Soc alProofTotalRepl edByUserCount
 }
 
-case class SocialProofFeatures(
-  hasSocialProof: Boolean,
-  favoritedBy: FavoritedBySocialProofUserGroundTruth = FavoritedBySocialProofUserGroundTruth(),
-  retweetedBy: RetweetedBySocialProofUserGroundTruth = RetweetedBySocialProofUserGroundTruth(),
-  repliedBy: RepliedBySocialProofUserGroundTruth = RepliedBySocialProofUserGroundTruth()) {
+case class Soc alProofFeatures(
+  hasSoc alProof: Boolean,
+  favor edBy: Favor edBySoc alProofUserGroundTruth = Favor edBySoc alProofUserGroundTruth(),
+  ret etedBy: Ret etedBySoc alProofUserGroundTruth = Ret etedBySoc alProofUserGroundTruth(),
+  repl edBy: Repl edBySoc alProofUserGroundTruth = Repl edBySoc alProofUserGroundTruth()) {
 
-  def setFeatures(dataRecord: DataRecord): Unit =
-    if (hasSocialProof) {
-      dataRecord.setFeatureValue(HasSocialProof, hasSocialProof)
-      favoritedBy.setFeatures(dataRecord)
-      retweetedBy.setFeatures(dataRecord)
-      repliedBy.setFeatures(dataRecord)
+  def setFeatures(dataRecord: DataRecord): Un  =
+     f (hasSoc alProof) {
+      dataRecord.setFeatureValue(HasSoc alProof, hasSoc alProof)
+      favor edBy.setFeatures(dataRecord)
+      ret etedBy.setFeatures(dataRecord)
+      repl edBy.setFeatures(dataRecord)
     }
 }
 
-object SocialProofFeatures {
-  def apply(socialProofs: Seq[SocialProof]): SocialProofFeatures =
-    socialProofs.foldLeft(SocialProofFeatures(hasSocialProof = socialProofs.nonEmpty))(
-      (prevFeatures, socialProof) => {
-        val userIds = socialProof.v1.userIds
-        val count = socialProof.v1.count
-        socialProof.v1.socialProofType match {
-          case SocialProofType.FavoritedBy =>
-            prevFeatures.copy(favoritedBy = FavoritedBySocialProofUserGroundTruth(userIds, count))
-          case SocialProofType.RetweetedBy =>
-            prevFeatures.copy(retweetedBy = RetweetedBySocialProofUserGroundTruth(userIds, count))
-          case SocialProofType.RepliedBy =>
-            prevFeatures.copy(repliedBy = RepliedBySocialProofUserGroundTruth(userIds, count))
+object Soc alProofFeatures {
+  def apply(soc alProofs: Seq[Soc alProof]): Soc alProofFeatures =
+    soc alProofs.foldLeft(Soc alProofFeatures(hasSoc alProof = soc alProofs.nonEmpty))(
+      (prevFeatures, soc alProof) => {
+        val user ds = soc alProof.v1.user ds
+        val count = soc alProof.v1.count
+        soc alProof.v1.soc alProofType match {
+          case Soc alProofType.Favor edBy =>
+            prevFeatures.copy(favor edBy = Favor edBySoc alProofUserGroundTruth(user ds, count))
+          case Soc alProofType.Ret etedBy =>
+            prevFeatures.copy(ret etedBy = Ret etedBySoc alProofUserGroundTruth(user ds, count))
+          case Soc alProofType.Repl edBy =>
+            prevFeatures.copy(repl edBy = Repl edBySoc alProofUserGroundTruth(user ds, count))
           case _ =>
-            prevFeatures // skip silently instead of breaking jobs, since this isn't used yet
+            prevFeatures // sk p s lently  nstead of break ng jobs, s nce t   sn't used yet
         }
       })
 }
 
-object SocialProofDataRecordFeatures {
-  val HasSocialProof = new Binary("recap.social_proof.has_social_proof")
+object Soc alProofDataRecordFeatures {
+  val HasSoc alProof = new B nary("recap.soc al_proof.has_soc al_proof")
 
-  val SocialProofDisplayedFavoritedByUsers = new SparseBinary(
-    "recap.social_proof.list.displayed.favorited_by",
-    Set(UserId, PublicLikes, PrivateLikes).asJava
+  val Soc alProofD splayedFavor edByUsers = new SparseB nary(
+    "recap.soc al_proof.l st.d splayed.favor ed_by",
+    Set(User d, Publ cL kes, Pr vateL kes).asJava
   )
-  val SocialProofDisplayedFavoritedByUserCount = new Continuous(
-    "recap.social_proof.count.displayed.favorited_by",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  val Soc alProofD splayedFavor edByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.d splayed.favor ed_by",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava
   )
-  val SocialProofUndisplayedFavoritedByUserCount = new Continuous(
-    "recap.social_proof.count.undisplayed.favorited_by",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  val Soc alProofUnd splayedFavor edByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.und splayed.favor ed_by",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava
   )
-  val SocialProofTotalFavoritedByUserCount = new Continuous(
-    "recap.social_proof.count.total.favorited_by",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
-  )
-
-  val SocialProofDisplayedRetweetedByUsers = new SparseBinary(
-    "recap.social_proof.list.displayed.retweeted_by",
-    Set(UserId, PublicRetweets, PrivateRetweets).asJava
-  )
-  val SocialProofDisplayedRetweetedByUserCount = new Continuous(
-    "recap.social_proof.count.displayed.retweeted_by",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val SocialProofUndisplayedRetweetedByUserCount = new Continuous(
-    "recap.social_proof.count.undisplayed.retweeted_by",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val SocialProofTotalRetweetedByUserCount = new Continuous(
-    "recap.social_proof.count.total.retweeted_by",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  val Soc alProofTotalFavor edByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.total.favor ed_by",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava
   )
 
-  val SocialProofDisplayedRepliedByUsers = new SparseBinary(
-    "recap.social_proof.list.displayed.replied_by",
-    Set(UserId, PublicReplies, PrivateReplies).asJava
+  val Soc alProofD splayedRet etedByUsers = new SparseB nary(
+    "recap.soc al_proof.l st.d splayed.ret eted_by",
+    Set(User d, Publ cRet ets, Pr vateRet ets).asJava
   )
-  val SocialProofDisplayedRepliedByUserCount = new Continuous(
-    "recap.social_proof.count.displayed.replied_by",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  val Soc alProofD splayedRet etedByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.d splayed.ret eted_by",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava
   )
-  val SocialProofUndisplayedRepliedByUserCount = new Continuous(
-    "recap.social_proof.count.undisplayed.replied_by",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  val Soc alProofUnd splayedRet etedByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.und splayed.ret eted_by",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava
   )
-  val SocialProofTotalRepliedByUserCount = new Continuous(
-    "recap.social_proof.count.total.replied_by",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  val Soc alProofTotalRet etedByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.total.ret eted_by",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava
+  )
+
+  val Soc alProofD splayedRepl edByUsers = new SparseB nary(
+    "recap.soc al_proof.l st.d splayed.repl ed_by",
+    Set(User d, Publ cRepl es, Pr vateRepl es).asJava
+  )
+  val Soc alProofD splayedRepl edByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.d splayed.repl ed_by",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava
+  )
+  val Soc alProofUnd splayedRepl edByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.und splayed.repl ed_by",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava
+  )
+  val Soc alProofTotalRepl edByUserCount = new Cont nuous(
+    "recap.soc al_proof.count.total.repl ed_by",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava
   )
 
   val AllFeatures = Seq(
-    HasSocialProof,
-    SocialProofDisplayedFavoritedByUsers,
-    SocialProofDisplayedFavoritedByUserCount,
-    SocialProofUndisplayedFavoritedByUserCount,
-    SocialProofTotalFavoritedByUserCount,
-    SocialProofDisplayedRetweetedByUsers,
-    SocialProofDisplayedRetweetedByUserCount,
-    SocialProofUndisplayedRetweetedByUserCount,
-    SocialProofTotalRetweetedByUserCount,
-    SocialProofDisplayedRepliedByUsers,
-    SocialProofDisplayedRepliedByUserCount,
-    SocialProofUndisplayedRepliedByUserCount,
-    SocialProofTotalRepliedByUserCount
+    HasSoc alProof,
+    Soc alProofD splayedFavor edByUsers,
+    Soc alProofD splayedFavor edByUserCount,
+    Soc alProofUnd splayedFavor edByUserCount,
+    Soc alProofTotalFavor edByUserCount,
+    Soc alProofD splayedRet etedByUsers,
+    Soc alProofD splayedRet etedByUserCount,
+    Soc alProofUnd splayedRet etedByUserCount,
+    Soc alProofTotalRet etedByUserCount,
+    Soc alProofD splayedRepl edByUsers,
+    Soc alProofD splayedRepl edByUserCount,
+    Soc alProofUnd splayedRepl edByUserCount,
+    Soc alProofTotalRepl edByUserCount
   )
 }

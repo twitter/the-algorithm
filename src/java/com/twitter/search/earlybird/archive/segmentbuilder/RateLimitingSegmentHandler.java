@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.util.HashMap;
-import java.util.Map;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
 
-import com.twitter.common.util.Clock;
+ mport com.tw ter.common.ut l.Clock;
 
 /**
- * A class that prevents handling a given segment more than once every hdfsCheckIntervalMillis
+ * A class that prevents handl ng a g ven seg nt more than once every hdfsC ck ntervalM ll s
  */
-public class RateLimitingSegmentHandler {
-  private final long hdfsCheckIntervalMillis;
-  private final Clock clock;
-  private final Map<String, Long> segmentNameToLastUpdatedTimeMillis = new HashMap<>();
+publ c class RateL m  ngSeg ntHandler {
+  pr vate f nal long hdfsC ck ntervalM ll s;
+  pr vate f nal Clock clock;
+  pr vate f nal Map<Str ng, Long> seg ntNa ToLastUpdatedT  M ll s = new HashMap<>();
 
-  RateLimitingSegmentHandler(long hdfsCheckIntervalMillis, Clock clock) {
-    this.hdfsCheckIntervalMillis = hdfsCheckIntervalMillis;
-    this.clock = clock;
+  RateL m  ngSeg ntHandler(long hdfsC ck ntervalM ll s, Clock clock) {
+    t .hdfsC ck ntervalM ll s = hdfsC ck ntervalM ll s;
+    t .clock = clock;
   }
 
-  SegmentBuilderSegment processSegment(SegmentBuilderSegment segment)
-      throws SegmentUpdaterException, SegmentInfoConstructionException {
+  Seg ntBu lderSeg nt processSeg nt(Seg ntBu lderSeg nt seg nt)
+      throws Seg ntUpdaterExcept on, Seg nt nfoConstruct onExcept on {
 
-    String segmentName = segment.getSegmentName();
+    Str ng seg ntNa  = seg nt.getSeg ntNa ();
 
-    Long lastUpdatedMillis = segmentNameToLastUpdatedTimeMillis.get(segmentName);
-    if (lastUpdatedMillis == null) {
-      lastUpdatedMillis = 0L;
+    Long lastUpdatedM ll s = seg ntNa ToLastUpdatedT  M ll s.get(seg ntNa );
+     f (lastUpdatedM ll s == null) {
+      lastUpdatedM ll s = 0L;
     }
 
-    long nowMillis = clock.nowMillis();
-    if (nowMillis - lastUpdatedMillis < hdfsCheckIntervalMillis) {
-      return segment;
+    long nowM ll s = clock.nowM ll s();
+     f (nowM ll s - lastUpdatedM ll s < hdfsC ck ntervalM ll s) {
+      return seg nt;
     }
-    segmentNameToLastUpdatedTimeMillis.put(segmentName, nowMillis);
+    seg ntNa ToLastUpdatedT  M ll s.put(seg ntNa , nowM ll s);
 
-    return segment.handle();
+    return seg nt.handle();
   }
 }

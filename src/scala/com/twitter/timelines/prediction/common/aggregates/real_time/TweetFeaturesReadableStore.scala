@@ -1,53 +1,53 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.featurestore.l b.T et d
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecord
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.onl ne.{FeatureStoreCl ent, FeatureStoreRequest}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesAdapterBase
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.JavaConverters._
 
-class TweetFeaturesReadableStore(
-  featureStoreClient: FeatureStoreClient,
-  tweetEntity: Entity[TweetId],
-  tweetFeaturesAdapter: TimelinesAdapterBase[PredictionRecord])
+class T etFeaturesReadableStore(
+  featureStoreCl ent: FeatureStoreCl ent,
+  t etEnt y: Ent y[T et d],
+  t etFeaturesAdapter: T  l nesAdapterBase[Pred ct onRecord])
     extends ReadableStore[Set[Long], DataRecord] {
 
-  override def multiGet[K <: Set[Long]](keys: Set[K]): Map[K, Future[Option[DataRecord]]] = {
+  overr de def mult Get[K <: Set[Long]](keys: Set[K]): Map[K, Future[Opt on[DataRecord]]] = {
     val orderedKeys: Seq[K] = keys.toSeq
     val featureStoreRequests: Seq[FeatureStoreRequest] = getFeatureStoreRequests(orderedKeys)
-    val predictionRecordsFut: Future[Seq[PredictionRecord]] = featureStoreClient(
+    val pred ct onRecordsFut: Future[Seq[Pred ct onRecord]] = featureStoreCl ent(
       featureStoreRequests)
 
-    getDataRecordMap(orderedKeys, predictionRecordsFut)
+    getDataRecordMap(orderedKeys, pred ct onRecordsFut)
   }
 
-  private def getFeatureStoreRequests[K <: Set[Long]](
+  pr vate def getFeatureStoreRequests[K <: Set[Long]](
     orderedKeys: Seq[K]
   ): Seq[FeatureStoreRequest] = {
     orderedKeys.map { key: Set[Long] =>
       FeatureStoreRequest(
-        entityIds = key.map { tweetId => tweetEntity.withId(TweetId(tweetId)) }.toSeq
+        ent y ds = key.map { t et d => t etEnt y.w h d(T et d(t et d)) }.toSeq
       )
     }
   }
 
-  private def getDataRecordMap[K <: Set[Long]](
+  pr vate def getDataRecordMap[K <: Set[Long]](
     orderedKeys: Seq[K],
-    predictionRecordsFut: Future[Seq[PredictionRecord]]
-  ): Map[K, Future[Option[DataRecord]]] = {
-    orderedKeys.zipWithIndex.map {
-      case (tweetIdSet, index) =>
-        val dataRecordFutOpt: Future[Option[DataRecord]] = predictionRecordsFut.map {
-          predictionRecords =>
-            predictionRecords.lift(index).flatMap { predictionRecordAtIndex: PredictionRecord =>
-              tweetFeaturesAdapter.adaptToDataRecords(predictionRecordAtIndex).asScala.headOption
+    pred ct onRecordsFut: Future[Seq[Pred ct onRecord]]
+  ): Map[K, Future[Opt on[DataRecord]]] = {
+    orderedKeys.z pW h ndex.map {
+      case (t et dSet,  ndex) =>
+        val dataRecordFutOpt: Future[Opt on[DataRecord]] = pred ct onRecordsFut.map {
+          pred ct onRecords =>
+            pred ct onRecords.l ft( ndex).flatMap { pred ct onRecordAt ndex: Pred ct onRecord =>
+              t etFeaturesAdapter.adaptToDataRecords(pred ct onRecordAt ndex).asScala. adOpt on
             }
         }
-        (tweetIdSet, dataRecordFutOpt)
+        (t et dSet, dataRecordFutOpt)
     }.toMap
   }
 }

@@ -1,702 +1,702 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.NavigableMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+ mport java. o.F le;
+ mport java. o.F leNotFoundExcept on;
+ mport java. o.F leWr er;
+ mport java. o. OExcept on;
+ mport java.ut l.Calendar;
+ mport java.ut l.Collect on;
+ mport java.ut l.Date;
+ mport java.ut l.Nav gableMap;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
+ mport java.ut l.regex.Matc r;
+ mport java.ut l.regex.Pattern;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons. o. OUt ls;
+ mport org.apac .commons.lang3.t  .FastDateFormat;
+ mport org.apac .hadoop.fs.F leStatus;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.common.util.io.LineRecordFileReader;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.StatusBatchFlushVersion;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common.ut l.date.DateUt l;
+ mport com.tw ter.search.common.ut l. o.L neRecordF leReader;
+ mport com.tw ter.search.common.ut l.zktrylock.TryLock;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.part  on.HdfsUt l;
+ mport com.tw ter.search.earlyb rd.part  on.StatusBatchFlushVers on;
 
 /**
- * Provides access to preprocessed statuses (tweets) to be indexed by archive search earlybirds.
+ * Prov des access to preprocessed statuses (t ets) to be  ndexed by arch ve search earlyb rds.
  *
- * These tweets can be coming from a scrub gen or from the output of the daily jobs.
+ * T se t ets can be com ng from a scrub gen or from t  output of t  da ly jobs.
  */
-public class DailyStatusBatches {
-  private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatches.class);
+publ c class Da lyStatusBatc s {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Da lyStatusBatc s.class);
 
-  // Maximum time to spend on obtaining daily status batches by computing or loading from HDFS
-  private static final Amount<Long, Time> MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_max_initial_load_time_minutes"),
-          Time.MINUTES);
-  // Time to wait before trying again when obtaining daily status batches fails
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_waiting_time_minutes"),
-          Time.MINUTES);
-  private static final String DAILY_STATUS_BATCHES_SYNC_PATH =
-      EarlybirdProperty.ZK_APP_ROOT.get() + "/daily_batches_sync";
-  private static final String DAILY_BATCHES_ZK_LOCK = "daily_batches_zk_lock";
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_zk_lock_expiration_minutes"),
-          Time.MINUTES);
+  // Max mum t   to spend on obta n ng da ly status batc s by comput ng or load ng from HDFS
+  pr vate stat c f nal Amount<Long, T  > MAX_T ME_ALLOWED_DA LY_STATUS_BATCHES_M NUTES =
+      Amount.of(Earlyb rdConf g.getLong("da ly_status_batc s_max_ n  al_load_t  _m nutes"),
+          T  .M NUTES);
+  // T   to wa  before try ng aga n w n obta n ng da ly status batc s fa ls
+  pr vate stat c f nal Amount<Long, T  > DA LY_STATUS_BATCHES_WA T NG_T ME_M NUTES =
+      Amount.of(Earlyb rdConf g.getLong("da ly_status_batc s_wa  ng_t  _m nutes"),
+          T  .M NUTES);
+  pr vate stat c f nal Str ng DA LY_STATUS_BATCHES_SYNC_PATH =
+      Earlyb rdProperty.ZK_APP_ROOT.get() + "/da ly_batc s_sync";
+  pr vate stat c f nal Str ng DA LY_BATCHES_ZK_LOCK = "da ly_batc s_zk_lock";
+  pr vate stat c f nal Amount<Long, T  > DA LY_STATUS_BATCHES_ZK_LOCK_EXP RAT ON_M NUTES =
+      Amount.of(Earlyb rdConf g.getLong("da ly_status_batc s_zk_lock_exp rat on_m nutes"),
+          T  .M NUTES);
 
-  static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+  stat c f nal FastDateFormat DATE_FORMAT = FastDateFormat.get nstance("yyyyMMdd");
 
-  // before this date, there was no twitter
-  private static final Date FIRST_TWITTER_DAY = DateUtil.toDate(2006, 2, 1);
+  // before t  date, t re was no tw ter
+  pr vate stat c f nal Date F RST_TW TTER_DAY = DateUt l.toDate(2006, 2, 1);
 
-  private static final String STATUS_BATCHES_PREFIX = "status_batches";
+  pr vate stat c f nal Str ng STATUS_BATCHES_PREF X = "status_batc s";
 
-  private final String rootDir =
-      EarlybirdConfig.getString("hdfs_offline_segment_sync_dir", "top_archive_statuses");
+  pr vate f nal Str ng rootD r =
+      Earlyb rdConf g.getStr ng("hdfs_offl ne_seg nt_sync_d r", "top_arch ve_statuses");
 
-  private final String buildGen =
-      EarlybirdConfig.getString("offline_segment_build_gen", "bg_1");
+  pr vate f nal Str ng bu ldGen =
+      Earlyb rdConf g.getStr ng("offl ne_seg nt_bu ld_gen", "bg_1");
 
-  public static final String STATUS_SUBDIR_NAME = "statuses";
-  public static final String LAYOUT_SUBDIR_NAME = "layouts";
-  public static final String SCRUB_GEN_SUFFIX_PATTERN = "scrubbed/%s";
+  publ c stat c f nal Str ng STATUS_SUBD R_NAME = "statuses";
+  publ c stat c f nal Str ng LAYOUT_SUBD R_NAME = "la ts";
+  publ c stat c f nal Str ng SCRUB_GEN_SUFF X_PATTERN = "scrubbed/%s";
 
-  private static final String INTERMEDIATE_COUNTS_SUBDIR_NAME = "counts";
-  private static final String SUCCESS_FILE_NAME = "_SUCCESS";
-  private static final Pattern HASH_PARTITION_PATTERN = Pattern.compile("p_(\\d+)_of_(\\d+)");
-  private static final Date FIRST_TWEET_DAY = DateUtil.toDate(2006, 3, 21);
+  pr vate stat c f nal Str ng  NTERMED ATE_COUNTS_SUBD R_NAME = "counts";
+  pr vate stat c f nal Str ng SUCCESS_F LE_NAME = "_SUCCESS";
+  pr vate stat c f nal Pattern HASH_PART T ON_PATTERN = Pattern.comp le("p_(\\d+)_of_(\\d+)");
+  pr vate stat c f nal Date F RST_TWEET_DAY = DateUt l.toDate(2006, 3, 21);
 
-  private final Path rootPath = new Path(rootDir);
-  private final Path buildGenPath = new Path(rootPath, buildGen);
-  private final Path statusPath = new Path(buildGenPath, STATUS_SUBDIR_NAME);
+  pr vate f nal Path rootPath = new Path(rootD r);
+  pr vate f nal Path bu ldGenPath = new Path(rootPath, bu ldGen);
+  pr vate f nal Path statusPath = new Path(bu ldGenPath, STATUS_SUBD R_NAME);
 
-  private final NavigableMap<Date, DailyStatusBatch> statusBatches = Maps.newTreeMap();
+  pr vate f nal Nav gableMap<Date, Da lyStatusBatch> statusBatc s = Maps.newTreeMap();
 
-  private Date firstValidDay = null;
-  private Date lastValidDay = null;
+  pr vate Date f rstVal dDay = null;
+  pr vate Date lastVal dDay = null;
 
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final Date scrubGenDay;
-  private long numberOfDaysWithValidScrubGenData;
+  pr vate f nal ZooKeeperTryLockFactory zkTryLockFactory;
+  pr vate f nal Date scrubGenDay;
+  pr vate long numberOfDaysW hVal dScrubGenData;
 
-  public DailyStatusBatches(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory, Date scrubGenDay) throws IOException {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.scrubGenDay = scrubGenDay;
+  publ c Da lyStatusBatc s(
+      ZooKeeperTryLockFactory zooKeeperTryLockFactory, Date scrubGenDay) throws  OExcept on {
+    t .zkTryLockFactory = zooKeeperTryLockFactory;
+    t .scrubGenDay = scrubGenDay;
 
-    FileSystem hdfs = null;
+    F leSystem hdfs = null;
     try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-      verifyDirectory(hdfs);
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+      hdfs = HdfsUt l.getHdfsF leSystem();
+      ver fyD rectory(hdfs);
+    } f nally {
+       OUt ls.closeQu etly(hdfs);
     }
   }
 
-  @VisibleForTesting
-  public Date getScrubGenDay() {
+  @V s bleForTest ng
+  publ c Date getScrubGenDay() {
     return scrubGenDay;
   }
 
-  public Collection<DailyStatusBatch> getStatusBatches() {
-    return statusBatches.values();
+  publ c Collect on<Da lyStatusBatch> getStatusBatc s() {
+    return statusBatc s.values();
   }
 
   /**
-   * Reset the states of the directory
+   * Reset t  states of t  d rectory
    */
-  private void resetDirectory() {
-    statusBatches.clear();
-    firstValidDay = null;
-    lastValidDay = null;
+  pr vate vo d resetD rectory() {
+    statusBatc s.clear();
+    f rstVal dDay = null;
+    lastVal dDay = null;
   }
 
   /**
-   *  Indicate whether the directory has been initialized
+   *   nd cate w t r t  d rectory has been  n  al zed
    */
-  private boolean isInitialized() {
-    return lastValidDay != null;
+  pr vate boolean  s n  al zed() {
+    return lastVal dDay != null;
   }
 
   /**
-   * Load the daily status batches from HDFS; return true if one or more batches could be loaded.
+   * Load t  da ly status batc s from HDFS; return true  f one or more batc s could be loaded.
    **/
-  private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOException {
-    // first find the latest valid end date of statuses
-    final Date lastValidStatusDay = getLastValidInputDateFromNow(fs);
-    if (lastValidStatusDay != null) {
-      if (hasStatusBatchesOnHdfs(fs, lastValidStatusDay)) {
-        if (loadStatusBatchesFromHdfs(fs, lastValidStatusDay)) {
+  pr vate boolean refreshByLoad ngHDFSStatusBatc s(f nal F leSystem fs) throws  OExcept on {
+    // f rst f nd t  latest val d end date of statuses
+    f nal Date lastVal dStatusDay = getLastVal d nputDateFromNow(fs);
+     f (lastVal dStatusDay != null) {
+       f (hasStatusBatc sOnHdfs(fs, lastVal dStatusDay)) {
+         f (loadStatusBatc sFromHdfs(fs, lastVal dStatusDay)) {
           return true;
         }
       }
     }
 
-    resetDirectory();
+    resetD rectory();
     return false;
   }
 
   /**
-   * Checks the directory for new data and returns true, if one or more new batches could be loaded.
+   * C cks t  d rectory for new data and returns true,  f one or more new batc s could be loaded.
    */
-  public void refresh() throws IOException {
-    final FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
+  publ c vo d refresh() throws  OExcept on {
+    f nal F leSystem hdfs = HdfsUt l.getHdfsF leSystem();
 
-    final Stopwatch stopwatch = Stopwatch.createStarted();
+    f nal Stopwatch stopwatch = Stopwatch.createStarted();
     try {
-      if (!isInitialized()) {
-        if (initializeDailyStatusBatches(hdfs, stopwatch)) {
-          LOG.info("Successfully obtained daily status batches after {}", stopwatch);
+       f (! s n  al zed()) {
+         f ( n  al zeDa lyStatusBatc s(hdfs, stopwatch)) {
+          LOG. nfo("Successfully obta ned da ly status batc s after {}", stopwatch);
         } else {
-          String errMsg = "Failed to load or compute daily status batches after "
-              + stopwatch.toString();
+          Str ng errMsg = "Fa led to load or compute da ly status batc s after "
+              + stopwatch.toStr ng();
           LOG.error(errMsg);
-          throw new IOException(errMsg);
+          throw new  OExcept on(errMsg);
         }
       } else {
-        loadNewDailyBatches(hdfs);
+        loadNewDa lyBatc s(hdfs);
       }
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+    } f nally {
+       OUt ls.closeQu etly(hdfs);
     }
   }
 
-  private boolean initializeDailyStatusBatches(final FileSystem hdfs,
-                                               final Stopwatch stopwatch) throws IOException {
-    long timeSpentOnDailyBatches = 0L;
-    long maxAllowedTimeMs = MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
-    long waitingTimeMs = DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES.as(Time.MILLISECONDS);
-    boolean firstLoop = true;
-    LOG.info("Starting to load or compute daily status batches for the first time.");
-    while (timeSpentOnDailyBatches <= maxAllowedTimeMs && !Thread.currentThread().isInterrupted()) {
-      if (!firstLoop) {
+  pr vate boolean  n  al zeDa lyStatusBatc s(f nal F leSystem hdfs,
+                                               f nal Stopwatch stopwatch) throws  OExcept on {
+    long t  SpentOnDa lyBatc s = 0L;
+    long maxAllo dT  Ms = MAX_T ME_ALLOWED_DA LY_STATUS_BATCHES_M NUTES.as(T  .M LL SECONDS);
+    long wa  ngT  Ms = DA LY_STATUS_BATCHES_WA T NG_T ME_M NUTES.as(T  .M LL SECONDS);
+    boolean f rstLoop = true;
+    LOG. nfo("Start ng to load or compute da ly status batc s for t  f rst t  .");
+    wh le (t  SpentOnDa lyBatc s <= maxAllo dT  Ms && !Thread.currentThread(). s nterrupted()) {
+       f (!f rstLoop) {
         try {
-          LOG.info("Sleeping " + waitingTimeMs
-              + " millis before trying to obtain daily batches again");
-          Thread.sleep(waitingTimeMs);
-        } catch (InterruptedException e) {
-          LOG.warn("Interrupted while waiting to load daily batches", e);
-          Thread.currentThread().interrupt();
+          LOG. nfo("Sleep ng " + wa  ngT  Ms
+              + " m ll s before try ng to obta n da ly batc s aga n");
+          Thread.sleep(wa  ngT  Ms);
+        } catch ( nterruptedExcept on e) {
+          LOG.warn(" nterrupted wh le wa  ng to load da ly batc s", e);
+          Thread.currentThread(). nterrupt();
           break;
         }
       }
 
-      if (isStatusBatchLoadingEnabled() && refreshByLoadingHDFSStatusBatches(hdfs)) {
-        LOG.info("Successfully loaded daily status batches after {}", stopwatch);
+       f ( sStatusBatchLoad ngEnabled() && refreshByLoad ngHDFSStatusBatc s(hdfs)) {
+        LOG. nfo("Successfully loaded da ly status batc s after {}", stopwatch);
         return true;
       }
 
-      final AtomicBoolean successRef = new AtomicBoolean(false);
-      if (computeDailyBatchesWithZKLock(hdfs, successRef, stopwatch)) {
+      f nal Atom cBoolean successRef = new Atom cBoolean(false);
+       f (computeDa lyBatc sW hZKLock(hdfs, successRef, stopwatch)) {
         return successRef.get();
       }
 
-      timeSpentOnDailyBatches = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-      firstLoop = false;
+      t  SpentOnDa lyBatc s = stopwatch.elapsed(T  Un .M LL SECONDS);
+      f rstLoop = false;
     }
 
     return false;
   }
 
-  private boolean computeDailyBatchesWithZKLock(final FileSystem hdfs,
-                                                final AtomicBoolean successRef,
-                                                final Stopwatch stopwatch) throws IOException {
-    // Using a global lock to coordinate among earlybirds and segment builders so that only
-    // one instance would hit the HDFS name node to query the daily status directories
+  pr vate boolean computeDa lyBatc sW hZKLock(f nal F leSystem hdfs,
+                                                f nal Atom cBoolean successRef,
+                                                f nal Stopwatch stopwatch) throws  OExcept on {
+    // Us ng a global lock to coord nate among earlyb rds and seg nt bu lders so that only
+    // one  nstance would h  t  HDFS na  node to query t  da ly status d rector es
     TryLock lock = zkTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        DAILY_STATUS_BATCHES_SYNC_PATH,
-        DAILY_BATCHES_ZK_LOCK,
-        DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES);
+        DatabaseConf g.getLocalHostna (),
+        DA LY_STATUS_BATCHES_SYNC_PATH,
+        DA LY_BATCHES_ZK_LOCK,
+        DA LY_STATUS_BATCHES_ZK_LOCK_EXP RAT ON_M NUTES);
 
-    return lock.tryWithLock(() -> {
-      LOG.info("Obtained ZK lock to compute daily status batches after {}", stopwatch);
-      successRef.set(initialLoadDailyBatchInfos(hdfs));
-      if (successRef.get()) {
-        LOG.info("Successfully computed daily status batches after {}", stopwatch);
-        if (isStatusBatchFlushingEnabled()) {
-          LOG.info("Starting to store daily status batches to HDFS");
-          if (storeStatusBatchesToHdfs(hdfs, lastValidDay)) {
-            LOG.info("Successfully stored daily status batches to HDFS");
+    return lock.tryW hLock(() -> {
+      LOG. nfo("Obta ned ZK lock to compute da ly status batc s after {}", stopwatch);
+      successRef.set( n  alLoadDa lyBatch nfos(hdfs));
+       f (successRef.get()) {
+        LOG. nfo("Successfully computed da ly status batc s after {}", stopwatch);
+         f ( sStatusBatchFlush ngEnabled()) {
+          LOG. nfo("Start ng to store da ly status batc s to HDFS");
+           f (storeStatusBatc sToHdfs(hdfs, lastVal dDay)) {
+            LOG. nfo("Successfully stored da ly status batc s to HDFS");
           } else {
-            LOG.warn("Failed storing daily status batches to HDFS");
+            LOG.warn("Fa led stor ng da ly status batc s to HDFS");
           }
         }
       } else {
-        LOG.info("Failed loading daily status info");
+        LOG. nfo("Fa led load ng da ly status  nfo");
       }
     });
   }
 
-  private void verifyDirectory(FileSystem hdfs) throws IOException {
-    if (!hdfs.exists(rootPath)) {
-      throw new IOException("Root dir '" + rootPath + "' does not exist.");
+  pr vate vo d ver fyD rectory(F leSystem hdfs) throws  OExcept on {
+     f (!hdfs.ex sts(rootPath)) {
+      throw new  OExcept on("Root d r '" + rootPath + "' does not ex st.");
     }
 
-    if (!hdfs.exists(buildGenPath)) {
-      throw new IOException("Build gen dir '" + buildGenPath + "' does not exist.");
+     f (!hdfs.ex sts(bu ldGenPath)) {
+      throw new  OExcept on("Bu ld gen d r '" + bu ldGenPath + "' does not ex st.");
     }
 
-    if (!hdfs.exists(statusPath)) {
-      throw new IOException("Status dir '" + statusPath + "' does not exist.");
+     f (!hdfs.ex sts(statusPath)) {
+      throw new  OExcept on("Status d r '" + statusPath + "' does not ex st.");
     }
   }
 
-  private void loadNewDailyBatches(FileSystem hdfs) throws IOException {
-    Preconditions.checkNotNull(lastValidDay);
+  pr vate vo d loadNewDa lyBatc s(F leSystem hdfs) throws  OExcept on {
+    Precond  ons.c ckNotNull(lastVal dDay);
 
-    Calendar day = Calendar.getInstance();
-    day.setTime(lastValidDay);
+    Calendar day = Calendar.get nstance();
+    day.setT  (lastVal dDay);
     day.add(Calendar.DATE, 1);
 
-    while (loadDay(hdfs, day.getTime()) != null) {
-      lastValidDay = day.getTime();
+    wh le (loadDay(hdfs, day.getT  ()) != null) {
+      lastVal dDay = day.getT  ();
       day.add(Calendar.DATE, 1);
     }
   }
 
-  private boolean initialLoadDailyBatchInfos(FileSystem hdfs) throws IOException {
-    LOG.info("Starting to build timeslice map from scratch.");
+  pr vate boolean  n  alLoadDa lyBatch nfos(F leSystem hdfs) throws  OExcept on {
+    LOG. nfo("Start ng to bu ld t  sl ce map from scratch.");
 
-    final Date lastValidStatusDay = getLastValidInputDateFromNow(hdfs);
+    f nal Date lastVal dStatusDay = getLastVal d nputDateFromNow(hdfs);
 
-    if (lastValidStatusDay == null) {
-      LOG.warn("No data found in " + statusPath + " and scrubbed path");
+     f (lastVal dStatusDay == null) {
+      LOG.warn("No data found  n " + statusPath + " and scrubbed path");
       return false;
     }
-    int mostRecentYear = DateUtil.getCalendar(lastValidStatusDay).get(Calendar.YEAR);
-    for (int year = 2006; year <= mostRecentYear; ++year) {
-      // construct path to avoid hdfs.listStatus() calls
-      Calendar day = Calendar.getInstance();
+     nt mostRecentYear = DateUt l.getCalendar(lastVal dStatusDay).get(Calendar.YEAR);
+    for ( nt year = 2006; year <= mostRecentYear; ++year) {
+      // construct path to avo d hdfs.l stStatus() calls
+      Calendar day = Calendar.get nstance();
       day.set(year, Calendar.JANUARY, 1, 0, 0, 0);
-      day.set(Calendar.MILLISECOND, 0);
+      day.set(Calendar.M LL SECOND, 0);
 
-      Calendar yearEnd = Calendar.getInstance();
+      Calendar yearEnd = Calendar.get nstance();
       yearEnd.set(year, Calendar.DECEMBER, 31, 0, 0, 0);
-      yearEnd.set(Calendar.MILLISECOND, 0);
+      yearEnd.set(Calendar.M LL SECOND, 0);
 
-      if (lastValidDay != null) {
-        // We're updating.
-        if (lastValidDay.after(yearEnd.getTime())) {
-          // This year was already loaded.
-          continue;
+       f (lastVal dDay != null) {
+        //  're updat ng.
+         f (lastVal dDay.after(yearEnd.getT  ())) {
+          // T  year was already loaded.
+          cont nue;
         }
-        if (lastValidDay.after(day.getTime())) {
-          // Start one day after last valid date.
-          day.setTime(lastValidDay);
+         f (lastVal dDay.after(day.getT  ())) {
+          // Start one day after last val d date.
+          day.setT  (lastVal dDay);
           day.add(Calendar.DATE, 1);
         }
       }
 
       for (; !day.after(yearEnd); day.add(Calendar.DATE, 1)) {
-        loadDay(hdfs, day.getTime());
+        loadDay(hdfs, day.getT  ());
       }
     }
 
     boolean updated = false;
-    numberOfDaysWithValidScrubGenData = 0;
+    numberOfDaysW hVal dScrubGenData = 0;
 
-    // Iterate batches in sorted order.
-    for (DailyStatusBatch batch : statusBatches.values()) {
-      if (!batch.isValid()) {
+    //  erate batc s  n sorted order.
+    for (Da lyStatusBatch batch : statusBatc s.values()) {
+       f (!batch. sVal d()) {
         break;
       }
-      if (batch.getDate().before(scrubGenDay)) {
-        numberOfDaysWithValidScrubGenData++;
+       f (batch.getDate().before(scrubGenDay)) {
+        numberOfDaysW hVal dScrubGenData++;
       }
-      if (firstValidDay == null) {
-        firstValidDay = batch.getDate();
+       f (f rstVal dDay == null) {
+        f rstVal dDay = batch.getDate();
       }
-      if (lastValidDay == null || lastValidDay.before(batch.getDate())) {
-        lastValidDay = batch.getDate();
+       f (lastVal dDay == null || lastVal dDay.before(batch.getDate())) {
+        lastVal dDay = batch.getDate();
         updated = true;
       }
     }
 
-    LOG.info("Number of statusBatches: {}", statusBatches.size());
+    LOG. nfo("Number of statusBatc s: {}", statusBatc s.s ze());
     return updated;
   }
 
-  private static String filesToString(FileStatus[] files) {
-    if (files == null) {
+  pr vate stat c Str ng f lesToStr ng(F leStatus[] f les) {
+     f (f les == null) {
       return "null";
     }
-    StringBuilder b = new StringBuilder();
-    for (FileStatus s : files) {
-      b.append(s.getPath().toString()).append(", ");
+    Str ngBu lder b = new Str ngBu lder();
+    for (F leStatus s : f les) {
+      b.append(s.getPath().toStr ng()).append(", ");
     }
-    return b.toString();
+    return b.toStr ng();
   }
 
-  @VisibleForTesting
-  protected DailyStatusBatch loadDay(FileSystem hdfs, Date day) throws IOException {
-    Path dayPath = new Path(getStatusPathToUseForDay(day), ArchiveHDFSUtils.dateToPath(day, "/"));
-    LOG.debug("Looking for batch in " + dayPath.toString());
-    DailyStatusBatch result = this.statusBatches.get(day);
-    if (result != null) {
+  @V s bleForTest ng
+  protected Da lyStatusBatch loadDay(F leSystem hdfs, Date day) throws  OExcept on {
+    Path dayPath = new Path(getStatusPathToUseForDay(day), Arch veHDFSUt ls.dateToPath(day, "/"));
+    LOG.debug("Look ng for batch  n " + dayPath.toStr ng());
+    Da lyStatusBatch result = t .statusBatc s.get(day);
+     f (result != null) {
       return result;
     }
 
-    final FileStatus[] files;
+    f nal F leStatus[] f les;
     try {
-      files = hdfs.listStatus(dayPath);
-      LOG.debug("Files found:  " + filesToString(files));
-    } catch (FileNotFoundException e) {
-      LOG.debug("loadDay() called, but directory does not exist for day: " + day
-          + " in: " + dayPath);
+      f les = hdfs.l stStatus(dayPath);
+      LOG.debug("F les found:  " + f lesToStr ng(f les));
+    } catch (F leNotFoundExcept on e) {
+      LOG.debug("loadDay() called, but d rectory does not ex st for day: " + day
+          + "  n: " + dayPath);
       return null;
     }
 
-    if (files != null && files.length > 0) {
-      for (FileStatus file : files) {
-        Matcher matcher = HASH_PARTITION_PATTERN.matcher(file.getPath().getName());
-        if (matcher.matches()) {
-          int numHashPartitions = Integer.parseInt(matcher.group(2));
-          result = new DailyStatusBatch(
-              day, numHashPartitions, getStatusPathToUseForDay(day), hdfs);
+     f (f les != null && f les.length > 0) {
+      for (F leStatus f le : f les) {
+        Matc r matc r = HASH_PART T ON_PATTERN.matc r(f le.getPath().getNa ());
+         f (matc r.matc s()) {
+           nt numHashPart  ons =  nteger.parse nt(matc r.group(2));
+          result = new Da lyStatusBatch(
+              day, numHashPart  ons, getStatusPathToUseForDay(day), hdfs);
 
-          for (int partitionID = 0; partitionID < numHashPartitions; partitionID++) {
-            result.addPartition(hdfs, dayPath, partitionID);
+          for ( nt part  on D = 0; part  on D < numHashPart  ons; part  on D++) {
+            result.addPart  on(hdfs, dayPath, part  on D);
           }
 
-          if (result.isValid()) {
-            statusBatches.put(day, result);
+           f (result. sVal d()) {
+            statusBatc s.put(day, result);
             return result;
           } else {
-            LOG.info("Invalid batch found for day: " + day + ", batch: " + result);
+            LOG. nfo(" nval d batch found for day: " + day + ", batch: " + result);
           }
         } else {
-          // skip logging the intermediate count subdirectories or _SUCCESS files.
-          if (!INTERMEDIATE_COUNTS_SUBDIR_NAME.equals(file.getPath().getName())
-              && !SUCCESS_FILE_NAME.equals(file.getPath().getName())) {
-            LOG.warn("Path does not match hash partition pattern: " + file.getPath());
+          // sk p logg ng t   nter d ate count subd rector es or _SUCCESS f les.
+           f (! NTERMED ATE_COUNTS_SUBD R_NAME.equals(f le.getPath().getNa ())
+              && !SUCCESS_F LE_NAME.equals(f le.getPath().getNa ())) {
+            LOG.warn("Path does not match hash part  on pattern: " + f le.getPath());
           }
         }
       }
     } else {
-      LOG.warn("No data found for day: " + day + " in: " + dayPath
-              + " files null: " + (files == null));
+      LOG.warn("No data found for day: " + day + "  n: " + dayPath
+              + " f les null: " + (f les == null));
     }
 
     return null;
   }
 
   /**
-   * Determines if this directory has a valid batch for the given day.
+   * Determ nes  f t  d rectory has a val d batch for t  g ven day.
    */
-  public boolean hasValidBatchForDay(Date day) throws IOException {
-    FileSystem hdfs = null;
+  publ c boolean hasVal dBatchForDay(Date day) throws  OExcept on {
+    F leSystem hdfs = null;
     try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-      return hasValidBatchForDay(hdfs, day);
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+      hdfs = HdfsUt l.getHdfsF leSystem();
+      return hasVal dBatchForDay(hdfs, day);
+    } f nally {
+       OUt ls.closeQu etly(hdfs);
     }
   }
 
-  private boolean hasValidBatchForDay(FileSystem fs, Date day) throws IOException {
-    DailyStatusBatch batch = loadDay(fs, day);
+  pr vate boolean hasVal dBatchForDay(F leSystem fs, Date day) throws  OExcept on {
+    Da lyStatusBatch batch = loadDay(fs, day);
 
-    return batch != null && batch.isValid();
+    return batch != null && batch. sVal d();
   }
 
-  @VisibleForTesting
-  Date getFirstValidDay() {
-    return firstValidDay;
+  @V s bleForTest ng
+  Date getF rstVal dDay() {
+    return f rstVal dDay;
   }
 
-  @VisibleForTesting
-  Date getLastValidDay() {
-    return lastValidDay;
+  @V s bleForTest ng
+  Date getLastVal dDay() {
+    return lastVal dDay;
   }
 
-  private Date getLastValidInputDateFromNow(FileSystem hdfs) throws IOException {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date()); // current date
-    return getLastValidInputDate(hdfs, cal);
+  pr vate Date getLastVal d nputDateFromNow(F leSystem hdfs) throws  OExcept on {
+    Calendar cal = Calendar.get nstance();
+    cal.setT  (new Date()); // current date
+    return getLastVal d nputDate(hdfs, cal);
   }
 
   /**
-   * Starting from current date, probe backward till we find a valid input Date
+   * Start ng from current date, probe backward t ll   f nd a val d  nput Date
    */
-  @VisibleForTesting
-  Date getLastValidInputDate(FileSystem hdfs, Calendar cal) throws IOException {
-    cal.set(Calendar.MILLISECOND, 0);
+  @V s bleForTest ng
+  Date getLastVal d nputDate(F leSystem hdfs, Calendar cal) throws  OExcept on {
+    cal.set(Calendar.M LL SECOND, 0);
     cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.M NUTE, 0);
     cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    Date lastValidInputDate = cal.getTime();
-    LOG.info("Probing backwards for last valid data date from " + lastValidInputDate);
-    while (lastValidInputDate.after(FIRST_TWITTER_DAY)) {
-      if (hasValidBatchForDay(hdfs, lastValidInputDate)) {
-        LOG.info("Found latest valid data on date " + lastValidInputDate);
-        LOG.info("  Used path: {}", getStatusPathToUseForDay(lastValidInputDate));
-        return lastValidInputDate;
+    cal.set(Calendar.M LL SECOND, 0);
+    Date lastVal d nputDate = cal.getT  ();
+    LOG. nfo("Prob ng backwards for last val d data date from " + lastVal d nputDate);
+    wh le (lastVal d nputDate.after(F RST_TW TTER_DAY)) {
+       f (hasVal dBatchForDay(hdfs, lastVal d nputDate)) {
+        LOG. nfo("Found latest val d data on date " + lastVal d nputDate);
+        LOG. nfo("  Used path: {}", getStatusPathToUseForDay(lastVal d nputDate));
+        return lastVal d nputDate;
       }
       cal.add(Calendar.DATE, -1);
-      lastValidInputDate = cal.getTime();
+      lastVal d nputDate = cal.getT  ();
     }
 
     return null;
   }
 
   /**
-   * Check if the daily status batches are already on HDFS
+   * C ck  f t  da ly status batc s are already on HDFS
    */
-  @VisibleForTesting
-  boolean hasStatusBatchesOnHdfs(FileSystem fs, Date lastDataDay) {
-    String hdfsFileName = getHdfsStatusBatchSyncFileName(lastDataDay);
+  @V s bleForTest ng
+  boolean hasStatusBatc sOnHdfs(F leSystem fs, Date lastDataDay) {
+    Str ng hdfsF leNa  = getHdfsStatusBatchSyncF leNa (lastDataDay);
     try {
-      return fs.exists(new Path(hdfsFileName));
-    } catch (IOException ex) {
-      LOG.error("Failed checking status batch file on HDFS: " + hdfsFileName, ex);
+      return fs.ex sts(new Path(hdfsF leNa ));
+    } catch ( OExcept on ex) {
+      LOG.error("Fa led c ck ng status batch f le on HDFS: " + hdfsF leNa , ex);
       return false;
     }
   }
 
   /**
-   * Load the daily status batches from HDFS by first copying the file from HDFS to local disk
-   * and then reading from the local disk.
+   * Load t  da ly status batc s from HDFS by f rst copy ng t  f le from HDFS to local d sk
+   * and t n read ng from t  local d sk.
    *
-   * @param day the latest day of valid statuses.
-   * @return true if the loading is successful.
+   * @param day t  latest day of val d statuses.
+   * @return true  f t  load ng  s successful.
    */
-  @VisibleForTesting
-  boolean loadStatusBatchesFromHdfs(FileSystem fs, Date day) {
-    // set the directory state to initial state
-    resetDirectory();
+  @V s bleForTest ng
+  boolean loadStatusBatc sFromHdfs(F leSystem fs, Date day) {
+    // set t  d rectory state to  n  al state
+    resetD rectory();
 
-    String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
-    String fileLocalPath = getLocalStatusBatchSyncFileName(day);
+    Str ng f leHdfsPath = getHdfsStatusBatchSyncF leNa (day);
+    Str ng f leLocalPath = getLocalStatusBatchSyncF leNa (day);
 
-    LOG.info("Using " + fileHdfsPath + " as the HDFS batch summary load path.");
-    LOG.info("Using " + fileLocalPath + " as the local batch summary sync path.");
+    LOG. nfo("Us ng " + f leHdfsPath + " as t  HDFS batch summary load path.");
+    LOG. nfo("Us ng " + f leLocalPath + " as t  local batch summary sync path.");
 
-    LineRecordFileReader lineReader = null;
+    L neRecordF leReader l neReader = null;
     try {
-      fs.copyToLocalFile(new Path(fileHdfsPath), new Path(fileLocalPath));
+      fs.copyToLocalF le(new Path(f leHdfsPath), new Path(f leLocalPath));
 
-      lineReader = new LineRecordFileReader(fileLocalPath);
-      String batchLine;
-      while ((batchLine = lineReader.readNext()) != null) {
-        DailyStatusBatch batch = DailyStatusBatch.deserializeFromJson(batchLine);
-        if (batch == null) {
-          LOG.error("Invalid daily status batch constructed from line: " + batchLine);
-          resetDirectory();
+      l neReader = new L neRecordF leReader(f leLocalPath);
+      Str ng batchL ne;
+      wh le ((batchL ne = l neReader.readNext()) != null) {
+        Da lyStatusBatch batch = Da lyStatusBatch.deser al zeFromJson(batchL ne);
+         f (batch == null) {
+          LOG.error(" nval d da ly status batch constructed from l ne: " + batchL ne);
+          resetD rectory();
           return false;
         }
         Date date = batch.getDate();
-        if (firstValidDay == null || firstValidDay.after(date)) {
-          firstValidDay = date;
+         f (f rstVal dDay == null || f rstVal dDay.after(date)) {
+          f rstVal dDay = date;
         }
-        if (lastValidDay == null || lastValidDay.before(date)) {
-          lastValidDay = date;
+         f (lastVal dDay == null || lastVal dDay.before(date)) {
+          lastVal dDay = date;
         }
-        statusBatches.put(date, batch);
+        statusBatc s.put(date, batch);
       }
-      LOG.info("Loaded {} status batches from HDFS: {}",
-          statusBatches.size(), fileHdfsPath);
-      LOG.info("First entry: {}", statusBatches.firstEntry().getValue().toString());
-      LOG.info("Last entry: {}", statusBatches.lastEntry().getValue().toString());
+      LOG. nfo("Loaded {} status batc s from HDFS: {}",
+          statusBatc s.s ze(), f leHdfsPath);
+      LOG. nfo("F rst entry: {}", statusBatc s.f rstEntry().getValue().toStr ng());
+      LOG. nfo("Last entry: {}", statusBatc s.lastEntry().getValue().toStr ng());
 
       return true;
-    } catch (IOException ex) {
-      LOG.error("Failed loading time slices from HDFS: " + fileHdfsPath, ex);
-      resetDirectory();
+    } catch ( OExcept on ex) {
+      LOG.error("Fa led load ng t   sl ces from HDFS: " + f leHdfsPath, ex);
+      resetD rectory();
       return false;
-    } finally {
-      if (lineReader != null) {
-        lineReader.stop();
+    } f nally {
+       f (l neReader != null) {
+        l neReader.stop();
       }
     }
   }
 
   /**
-   * Flush the daily status batches to local disk and then upload to HDFS.
+   * Flush t  da ly status batc s to local d sk and t n upload to HDFS.
    */
-  private boolean storeStatusBatchesToHdfs(FileSystem fs, Date day) {
-    Preconditions.checkNotNull(lastValidDay);
+  pr vate boolean storeStatusBatc sToHdfs(F leSystem fs, Date day) {
+    Precond  ons.c ckNotNull(lastVal dDay);
 
-    if (!StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.isOfficial()) {
-      LOG.info("Status batch flush version is not official, no batches will be flushed to HDFS");
+     f (!StatusBatchFlushVers on.CURRENT_FLUSH_VERS ON. sOff c al()) {
+      LOG. nfo("Status batch flush vers on  s not off c al, no batc s w ll be flus d to HDFS");
       return true;
     }
 
-    String fileLocalPath = getLocalStatusBatchSyncFileName(day);
+    Str ng f leLocalPath = getLocalStatusBatchSyncF leNa (day);
 
-    // Flush to local disk
-    File outputFile = null;
-    FileWriter fileWriter = null;
+    // Flush to local d sk
+    F le outputF le = null;
+    F leWr er f leWr er = null;
     try {
-      LOG.info("Flushing daily status batches into: " + fileLocalPath);
-      outputFile = new File(fileLocalPath);
-      outputFile.getParentFile().mkdirs();
-      if (!outputFile.getParentFile().exists()) {
-        LOG.error("Cannot create directory: " + outputFile.getParentFile().toString());
+      LOG. nfo("Flush ng da ly status batc s  nto: " + f leLocalPath);
+      outputF le = new F le(f leLocalPath);
+      outputF le.getParentF le().mkd rs();
+       f (!outputF le.getParentF le().ex sts()) {
+        LOG.error("Cannot create d rectory: " + outputF le.getParentF le().toStr ng());
         return false;
       }
-      fileWriter = new FileWriter(outputFile, false);
-      for (Date date : statusBatches.keySet()) {
-        fileWriter.write(statusBatches.get(date).serializeToJson());
-        fileWriter.write("\n");
+      f leWr er = new F leWr er(outputF le, false);
+      for (Date date : statusBatc s.keySet()) {
+        f leWr er.wr e(statusBatc s.get(date).ser al zeToJson());
+        f leWr er.wr e("\n");
       }
-      fileWriter.flush();
+      f leWr er.flush();
 
-      // Upload the file to HDFS
-      return uploadStatusBatchesToHdfs(fs, day);
-    } catch (IOException e) {
-      String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
-      LOG.error("Failed storing status batches to HDFS: " + fileHdfsPath, e);
+      // Upload t  f le to HDFS
+      return uploadStatusBatc sToHdfs(fs, day);
+    } catch ( OExcept on e) {
+      Str ng f leHdfsPath = getHdfsStatusBatchSyncF leNa (day);
+      LOG.error("Fa led stor ng status batc s to HDFS: " + f leHdfsPath, e);
       return false;
-    } finally {
+    } f nally {
       try {
-        if (fileWriter != null) {
-          fileWriter.close();
+         f (f leWr er != null) {
+          f leWr er.close();
         }
-      } catch (IOException e) {
-        LOG.error("Error to close fileWrite.", e);
+      } catch ( OExcept on e) {
+        LOG.error("Error to close f leWr e.", e);
       }
-      if (outputFile != null) {
-        // Delete the local file
-        outputFile.delete();
+       f (outputF le != null) {
+        // Delete t  local f le
+        outputF le.delete();
       }
     }
   }
 
   /**
-   * Upload the status batches to HDFS.
+   * Upload t  status batc s to HDFS.
    */
-  @VisibleForTesting
-  boolean uploadStatusBatchesToHdfs(FileSystem fs, Date day) {
-    String localFileName = getLocalStatusBatchSyncFileName(day);
-    String hdfsFileName = getHdfsStatusBatchSyncFileName(day);
+  @V s bleForTest ng
+  boolean uploadStatusBatc sToHdfs(F leSystem fs, Date day) {
+    Str ng localF leNa  = getLocalStatusBatchSyncF leNa (day);
+    Str ng hdfsF leNa  = getHdfsStatusBatchSyncF leNa (day);
 
-    LOG.info("Using " + hdfsFileName + " as the HDFS batch summary upload path.");
-    LOG.info("Using " + localFileName + " as the local batch summary sync path.");
+    LOG. nfo("Us ng " + hdfsF leNa  + " as t  HDFS batch summary upload path.");
+    LOG. nfo("Us ng " + localF leNa  + " as t  local batch summary sync path.");
 
     try {
-      Path hdfsFilePath = new Path(hdfsFileName);
-      if (fs.exists(hdfsFilePath)) {
-        LOG.warn("Found status batch file on HDFS: " + hdfsFileName);
+      Path hdfsF lePath = new Path(hdfsF leNa );
+       f (fs.ex sts(hdfsF lePath)) {
+        LOG.warn("Found status batch f le on HDFS: " + hdfsF leNa );
         return true;
       }
 
-      String hdfsTempName = getHdfsStatusBatchTempSyncFileName(day);
-      Path hdfsTempPath = new Path(hdfsTempName);
-      if (fs.exists(hdfsTempPath)) {
-        LOG.info("Found existing temporary status batch file on HDFS, removing: " + hdfsTempName);
-        if (!fs.delete(hdfsTempPath, false)) {
-          LOG.error("Failed to delete temporary file: " + hdfsTempName);
+      Str ng hdfsTempNa  = getHdfsStatusBatchTempSyncF leNa (day);
+      Path hdfsTempPath = new Path(hdfsTempNa );
+       f (fs.ex sts(hdfsTempPath)) {
+        LOG. nfo("Found ex st ng temporary status batch f le on HDFS, remov ng: " + hdfsTempNa );
+         f (!fs.delete(hdfsTempPath, false)) {
+          LOG.error("Fa led to delete temporary f le: " + hdfsTempNa );
           return false;
         }
       }
-      fs.copyFromLocalFile(new Path(localFileName), hdfsTempPath);
+      fs.copyFromLocalF le(new Path(localF leNa ), hdfsTempPath);
 
-      if (fs.rename(hdfsTempPath, hdfsFilePath)) {
-        LOG.debug("Renamed " + hdfsTempName + " on HDFS to: " + hdfsFileName);
+       f (fs.rena (hdfsTempPath, hdfsF lePath)) {
+        LOG.debug("Rena d " + hdfsTempNa  + " on HDFS to: " + hdfsF leNa );
         return true;
       } else {
-        LOG.error("Failed to rename " + hdfsTempName + " on HDFS to: " + hdfsFileName);
+        LOG.error("Fa led to rena  " + hdfsTempNa  + " on HDFS to: " + hdfsF leNa );
         return false;
       }
-    } catch (IOException ex) {
-      LOG.error("Failed uploading status batch file to HDFS: " + hdfsFileName, ex);
+    } catch ( OExcept on ex) {
+      LOG.error("Fa led upload ng status batch f le to HDFS: " + hdfsF leNa , ex);
       return false;
     }
   }
 
-  private static boolean isStatusBatchFlushingEnabled() {
-    return EarlybirdProperty.ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED.get(false);
+  pr vate stat c boolean  sStatusBatchFlush ngEnabled() {
+    return Earlyb rdProperty.ARCH VE_DA LY_STATUS_BATCH_FLUSH NG_ENABLED.get(false);
   }
 
-  private static boolean isStatusBatchLoadingEnabled() {
-    return EarlybirdConfig.getBool("archive_daily_status_batch_loading_enabled", false);
+  pr vate stat c boolean  sStatusBatchLoad ngEnabled() {
+    return Earlyb rdConf g.getBool("arch ve_da ly_status_batch_load ng_enabled", false);
   }
 
-  private static String getVersionFileExtension() {
-    return StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  pr vate stat c Str ng getVers onF leExtens on() {
+    return StatusBatchFlushVers on.CURRENT_FLUSH_VERS ON.getVers onF leExtens on();
   }
 
-  String getStatusBatchSyncRootDir() {
-    return EarlybirdConfig.getString("archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+  Str ng getStatusBatchSyncRootD r() {
+    return Earlyb rdConf g.getStr ng("arch ve_da ly_status_batch_sync_d r",
+        "da ly_status_batc s") + "/" + scrubGenSuff x();
   }
 
-  @VisibleForTesting
-  String getLocalStatusBatchSyncFileName(Date day) {
-    return  getStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+  @V s bleForTest ng
+  Str ng getLocalStatusBatchSyncF leNa (Date day) {
+    return  getStatusBatchSyncRootD r() + "/" + STATUS_BATCHES_PREF X + "_"
+        + DATE_FORMAT.format(day) + getVers onF leExtens on();
   }
 
-  String getHdfsStatusBatchSyncRootDir() {
-    return EarlybirdConfig.getString("hdfs_archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+  Str ng getHdfsStatusBatchSyncRootD r() {
+    return Earlyb rdConf g.getStr ng("hdfs_arch ve_da ly_status_batch_sync_d r",
+        "da ly_status_batc s") + "/" + scrubGenSuff x();
   }
 
-  @VisibleForTesting
-  String getHdfsStatusBatchSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+  @V s bleForTest ng
+  Str ng getHdfsStatusBatchSyncF leNa (Date day) {
+    return getHdfsStatusBatchSyncRootD r() + "/" + STATUS_BATCHES_PREF X + "_"
+        + DATE_FORMAT.format(day) + getVers onF leExtens on();
   }
 
-  private String getHdfsStatusBatchTempSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + DatabaseConfig.getLocalHostname() + "_"
-        + STATUS_BATCHES_PREFIX + "_" + DATE_FORMAT.format(day) + getVersionFileExtension();
+  pr vate Str ng getHdfsStatusBatchTempSyncF leNa (Date day) {
+    return getHdfsStatusBatchSyncRootD r() + "/" + DatabaseConf g.getLocalHostna () + "_"
+        + STATUS_BATCHES_PREF X + "_" + DATE_FORMAT.format(day) + getVers onF leExtens on();
   }
 
-  private String scrubGenSuffix() {
-    return String.format(SCRUB_GEN_SUFFIX_PATTERN, DATE_FORMAT.format(scrubGenDay));
+  pr vate Str ng scrubGenSuff x() {
+    return Str ng.format(SCRUB_GEN_SUFF X_PATTERN, DATE_FORMAT.format(scrubGenDay));
   }
 
   /**
-   * Returns the path to the directory that stores the statuses for the given day.
+   * Returns t  path to t  d rectory that stores t  statuses for t  g ven day.
    */
-  public Path getStatusPathToUseForDay(Date day) {
-    if (!day.before(scrubGenDay)) {
+  publ c Path getStatusPathToUseForDay(Date day) {
+     f (!day.before(scrubGenDay)) {
       return statusPath;
     }
 
-    String suffix = scrubGenSuffix();
-    Preconditions.checkArgument(!suffix.isEmpty());
-    Path scrubPath = new Path(buildGenPath, suffix);
-    return new Path(scrubPath, STATUS_SUBDIR_NAME);
+    Str ng suff x = scrubGenSuff x();
+    Precond  ons.c ckArgu nt(!suff x. sEmpty());
+    Path scrubPath = new Path(bu ldGenPath, suff x);
+    return new Path(scrubPath, STATUS_SUBD R_NAME);
   }
 
   /**
-   * Determines if the data for the specified scrub gen was fully built, by checking the number of
-   * days for which data was built against the expected number of days extracted from the specified
+   * Determ nes  f t  data for t  spec f ed scrub gen was fully bu lt, by c ck ng t  number of
+   * days for wh ch data was bu lt aga nst t  expected number of days extracted from t  spec f ed
    * scrub gen date.
    */
-  public boolean isScrubGenDataFullyBuilt(FileSystem hdfs) throws IOException {
-    initialLoadDailyBatchInfos(hdfs);
-    if (numberOfDaysWithValidScrubGenData == 0) {
-      LOG.warn("numberOfDaysWithValidScrubGenData is 0");
+  publ c boolean  sScrubGenDataFullyBu lt(F leSystem hdfs) throws  OExcept on {
+     n  alLoadDa lyBatch nfos(hdfs);
+     f (numberOfDaysW hVal dScrubGenData == 0) {
+      LOG.warn("numberOfDaysW hVal dScrubGenData  s 0");
     }
-    long expectedDays = getDiffBetweenDays(scrubGenDay);
-    return expectedDays == numberOfDaysWithValidScrubGenData;
+    long expectedDays = getD ffBet enDays(scrubGenDay);
+    return expectedDays == numberOfDaysW hVal dScrubGenData;
   }
 
-  @VisibleForTesting
-  long getDiffBetweenDays(Date day) {
-    long diff = day.getTime() - FIRST_TWEET_DAY.getTime();
-    return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+  @V s bleForTest ng
+  long getD ffBet enDays(Date day) {
+    long d ff = day.getT  () - F RST_TWEET_DAY.getT  ();
+    return T  Un .DAYS.convert(d ff, T  Un .M LL SECONDS);
   }
 }

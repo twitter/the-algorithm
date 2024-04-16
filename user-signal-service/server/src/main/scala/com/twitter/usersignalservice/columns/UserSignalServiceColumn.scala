@@ -1,49 +1,49 @@
-package com.twitter.usersignalservice.columns
+package com.tw ter.users gnalserv ce.columns
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.catalog.Ops
-import com.twitter.strato.config.Policy
-import com.twitter.strato.config.ReadWritePolicy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.usersignalservice.service.UserSignalService
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import javax.inject.Inject
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.catalog.Ops
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.conf g.ReadWr ePol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on
+ mport com.tw ter.strato.data.L fecycle
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.users gnalserv ce.serv ce.UserS gnalServ ce
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalRequest
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalResponse
+ mport javax. nject. nject
 
-class UserSignalServiceColumn @Inject() (userSignalService: UserSignalService)
-    extends StratoFed.Column(UserSignalServiceColumn.Path)
-    with StratoFed.Fetch.Stitch {
+class UserS gnalServ ceColumn @ nject() (userS gnalServ ce: UserS gnalServ ce)
+    extends StratoFed.Column(UserS gnalServ ceColumn.Path)
+    w h StratoFed.Fetch.St ch {
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(Description.PlainText("User Signal Service Federated Column")))
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (L fecycle.Product on),
+    descr pt on = So (Descr pt on.Pla nText("User S gnal Serv ce Federated Column")))
 
-  override def ops: Ops = super.ops
+  overr de def ops: Ops = super.ops
 
-  override type Key = BatchSignalRequest
-  override type View = Unit
-  override type Value = BatchSignalResponse
+  overr de type Key = BatchS gnalRequest
+  overr de type V ew = Un 
+  overr de type Value = BatchS gnalResponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[BatchSignalRequest]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[BatchSignalResponse]
+  overr de val keyConv: Conv[Key] = ScroogeConv.fromStruct[BatchS gnalRequest]
+  overr de val v ewConv: Conv[V ew] = Conv.ofType
+  overr de val valueConv: Conv[Value] = ScroogeConv.fromStruct[BatchS gnalResponse]
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    userSignalService
-      .userSignalServiceHandlerStoreStitch(key)
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] = {
+    userS gnalServ ce
+      .userS gnalServ ceHandlerStoreSt ch(key)
       .map(result => found(result))
       .handle {
-        case NotFound => missing
+        case NotFound => m ss ng
       }
   }
 }
 
-object UserSignalServiceColumn {
-  val Path = "recommendations/user-signal-service/signals"
+object UserS gnalServ ceColumn {
+  val Path = "recom ndat ons/user-s gnal-serv ce/s gnals"
 }

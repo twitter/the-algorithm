@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird.document;
+package com.tw ter.search.earlyb rd.docu nt;
 
 /**
- * DeletedStatus is a marker indicating that the specified tweet in the specified
- * timeslice has been deleted.
+ * DeletedStatus  s a marker  nd cat ng that t  spec f ed t et  n t  spec f ed
+ * t  sl ce has been deleted.
  */
-public final class DeletedStatus {
-  public final long timeSliceID;
-  public final long statusID;
+publ c f nal class DeletedStatus {
+  publ c f nal long t  Sl ce D;
+  publ c f nal long status D;
 
-  public DeletedStatus(long timeSliceID, long statusID) {
-    this.timeSliceID = timeSliceID;
-    this.statusID = statusID;
+  publ c DeletedStatus(long t  Sl ce D, long status D) {
+    t .t  Sl ce D = t  Sl ce D;
+    t .status D = status D;
   }
 }

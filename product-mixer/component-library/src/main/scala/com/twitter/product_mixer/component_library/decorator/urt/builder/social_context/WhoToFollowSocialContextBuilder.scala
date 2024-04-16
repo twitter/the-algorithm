@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.soc al_context
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LocationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NewUserGeneralContextType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter. rm .{thr ftscala => h}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FollowGeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Locat onGeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.NewUserGeneralContextType
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class WhoToFollowSocialContextBuilder(
-  socialTextFeature: Feature[_, Option[String]],
-  contextTypeFeature: Feature[_, Option[h.ContextType]])
-    extends BaseSocialContextBuilder[PipelineQuery, UserCandidate] {
+case class WhoToFollowSoc alContextBu lder(
+  soc alTextFeature: Feature[_, Opt on[Str ng]],
+  contextTypeFeature: Feature[_, Opt on[h.ContextType]])
+    extends BaseSoc alContextBu lder[P pel neQuery, UserCand date] {
 
   def apply(
-    query: PipelineQuery,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[GeneralContext] = {
-    val socialTextOpt = candidateFeatures.getOrElse(socialTextFeature, None)
-    val contextTypeOpt = convertContextType(candidateFeatures.getOrElse(contextTypeFeature, None))
+    query: P pel neQuery,
+    cand date: UserCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[GeneralContext] = {
+    val soc alTextOpt = cand dateFeatures.getOrElse(soc alTextFeature, None)
+    val contextTypeOpt = convertContextType(cand dateFeatures.getOrElse(contextTypeFeature, None))
 
-    (socialTextOpt, contextTypeOpt) match {
-      case (Some(socialText), Some(contextType)) if socialText.nonEmpty =>
-        Some(
+    (soc alTextOpt, contextTypeOpt) match {
+      case (So (soc alText), So (contextType))  f soc alText.nonEmpty =>
+        So (
           GeneralContext(
-            text = socialText,
+            text = soc alText,
             contextType = contextType,
             url = None,
-            contextImageUrls = None,
-            landingUrl = None))
+            context mageUrls = None,
+            land ngUrl = None))
       case _ => None
     }
   }
 
-  private def convertContextType(contextType: Option[h.ContextType]): Option[GeneralContextType] =
+  pr vate def convertContextType(contextType: Opt on[h.ContextType]): Opt on[GeneralContextType] =
     contextType match {
-      case Some(h.ContextType.Geo) => Some(LocationGeneralContextType)
-      case Some(h.ContextType.Social) => Some(FollowGeneralContextType)
-      case Some(h.ContextType.NewUser) => Some(NewUserGeneralContextType)
+      case So (h.ContextType.Geo) => So (Locat onGeneralContextType)
+      case So (h.ContextType.Soc al) => So (FollowGeneralContextType)
+      case So (h.ContextType.NewUser) => So (NewUserGeneralContextType)
       case _ => None
     }
 }

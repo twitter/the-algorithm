@@ -1,145 +1,145 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrays;
+ mport  .un m .ds .fastut l.longs.Long2 ntMap;
+ mport  .un m .ds .fastut l.longs.Long2 ntOpenHashMap;
+ mport  .un m .ds .fastut l.longs.LongArrays;
 
 /**
- * After a segment is complete, we call {@link EarlybirdSegment#optimizeIndexes()} to compact the
- * doc IDs assigned to the tweets in this segment, so that we can do faster ceil and floor lookups.
+ * After a seg nt  s complete,   call {@l nk Earlyb rdSeg nt#opt m ze ndexes()} to compact t 
+ * doc  Ds ass gned to t  t ets  n t  seg nt, so that   can do faster ce l and floor lookups.
  */
-public class OptimizedTweetIDMapper extends TweetIDMapper {
-  // Maps doc IDs to tweet IDs. Therefore, it should be sorted in descending order of tweet IDs.
-  protected final long[] inverseMap;
-  private final Long2IntMap tweetIdToDocIdMap;
+publ c class Opt m zedT et DMapper extends T et DMapper {
+  // Maps doc  Ds to t et  Ds. T refore,   should be sorted  n descend ng order of t et  Ds.
+  protected f nal long[]  nverseMap;
+  pr vate f nal Long2 ntMap t et dToDoc dMap;
 
-  private OptimizedTweetIDMapper(long[] inverseMap,
-                                 long minTweetID,
-                                 long maxTweetID,
-                                 int minDocID,
-                                 int maxDocID) {
-    super(minTweetID, maxTweetID, minDocID, maxDocID, inverseMap.length);
-    this.inverseMap = inverseMap;
-    this.tweetIdToDocIdMap = buildTweetIdToDocIdMap();
+  pr vate Opt m zedT et DMapper(long[]  nverseMap,
+                                 long m nT et D,
+                                 long maxT et D,
+                                  nt m nDoc D,
+                                  nt maxDoc D) {
+    super(m nT et D, maxT et D, m nDoc D, maxDoc D,  nverseMap.length);
+    t . nverseMap =  nverseMap;
+    t .t et dToDoc dMap = bu ldT et dToDoc dMap();
   }
 
-  public OptimizedTweetIDMapper(OutOfOrderRealtimeTweetIDMapper source) throws IOException {
-    super(source.getMinTweetID(),
-          source.getMaxTweetID(),
+  publ c Opt m zedT et DMapper(OutOfOrderRealt  T et DMapper s ce) throws  OExcept on {
+    super(s ce.getM nT et D(),
+          s ce.getMaxT et D(),
           0,
-          source.getNumDocs() - 1,
-          source.getNumDocs());
-    inverseMap = source.sortTweetIds();
-    tweetIdToDocIdMap = buildTweetIdToDocIdMap();
+          s ce.getNumDocs() - 1,
+          s ce.getNumDocs());
+     nverseMap = s ce.sortT et ds();
+    t et dToDoc dMap = bu ldT et dToDoc dMap();
   }
 
-  private Long2IntMap buildTweetIdToDocIdMap() {
-    int[] values = new int[inverseMap.length];
-    for (int i = 0; i < values.length; i++) {
-      values[i] = i;
+  pr vate Long2 ntMap bu ldT et dToDoc dMap() {
+     nt[] values = new  nt[ nverseMap.length];
+    for ( nt   = 0;   < values.length;  ++) {
+      values[ ] =  ;
     }
 
-    Long2IntMap map = new Long2IntOpenHashMap(inverseMap, values);
+    Long2 ntMap map = new Long2 ntOpenHashMap( nverseMap, values);
     map.defaultReturnValue(-1);
     return map;
   }
 
-  @Override
-  public int getDocID(long tweetID) {
-    return tweetIdToDocIdMap.getOrDefault(tweetID, ID_NOT_FOUND);
+  @Overr de
+  publ c  nt getDoc D(long t et D) {
+    return t et dToDoc dMap.getOrDefault(t et D,  D_NOT_FOUND);
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+  @Overr de
+  protected  nt getNextDoc D nternal( nt doc D) {
+    // T  doc  Ds are consecut ve and T et DMapper already c cked t  boundary cond  ons.
+    return doc D + 1;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+  @Overr de
+  protected  nt getPrev ousDoc D nternal( nt doc D) {
+    // T  doc  Ds are consecut ve and T et DMapper already c cked t  boundary cond  ons.
+    return doc D - 1;
   }
 
-  @Override
-  public long getTweetID(int internalID) {
-    return inverseMap[internalID];
+  @Overr de
+  publ c long getT et D( nt  nternal D) {
+    return  nverseMap[ nternal D];
   }
 
-  @Override
-  protected int findDocIDBoundInternal(long tweetID, boolean findMaxDocID) {
-    int docId = tweetIdToDocIdMap.get(tweetID);
-    if (docId >= 0) {
-      return docId;
+  @Overr de
+  protected  nt f ndDoc DBound nternal(long t et D, boolean f ndMaxDoc D) {
+     nt doc d = t et dToDoc dMap.get(t et D);
+     f (doc d >= 0) {
+      return doc d;
     }
 
-    int binarySearchResult =
-        LongArrays.binarySearch(inverseMap, tweetID, (k1, k2) -> -Long.compare(k1, k2));
-    // Since the tweet ID is not present in this mapper, the binary search should return a negative
-    // value (-insertionPoint - 1). And since TweetIDMapper.findDocIdBound() already verified that
-    // tweetID is not smaller than all tweet IDs in this mapper, and not larger than all tweet IDs
-    // in this mapper, the insertionPoint should never be 0 or inverseMap.length.
-    int insertionPoint = -binarySearchResult - 1;
-    // The insertion point is the index in the tweet array of the upper bound of the search, so if
-    // we want the lower bound, because doc IDs are dense, we subtract one.
-    return findMaxDocID ? insertionPoint : insertionPoint - 1;
+     nt b narySearchResult =
+        LongArrays.b narySearch( nverseMap, t et D, (k1, k2) -> -Long.compare(k1, k2));
+    // S nce t  t et  D  s not present  n t  mapper, t  b nary search should return a negat ve
+    // value (- nsert onPo nt - 1). And s nce T et DMapper.f ndDoc dBound() already ver f ed that
+    // t et D  s not smaller than all t et  Ds  n t  mapper, and not larger than all t et  Ds
+    //  n t  mapper, t   nsert onPo nt should never be 0 or  nverseMap.length.
+     nt  nsert onPo nt = -b narySearchResult - 1;
+    // T   nsert on po nt  s t   ndex  n t  t et array of t  upper bound of t  search, so  f
+    //   want t  lo r bound, because doc  Ds are dense,   subtract one.
+    return f ndMaxDoc D ?  nsert onPo nt :  nsert onPo nt - 1;
   }
 
-  @Override
-  protected final int addMappingInternal(final long tweetID) {
-    throw new UnsupportedOperationException("The OptimizedTweetIDMapper is immutable.");
+  @Overr de
+  protected f nal  nt addMapp ng nternal(f nal long t et D) {
+    throw new UnsupportedOperat onExcept on("T  Opt m zedT et DMapper  s  mmutable.");
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    throw new UnsupportedOperationException("OptimizedTweetIDMapper is already optimized.");
+  @Overr de
+  publ c Doc DToT et DMapper opt m ze() {
+    throw new UnsupportedOperat onExcept on("Opt m zedT et DMapper  s already opt m zed.");
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<OptimizedTweetIDMapper> {
-    private static final String MIN_TWEET_ID_PROP_NAME = "MinTweetID";
-    private static final String MAX_TWEET_ID_PROP_NAME = "MaxTweetID";
-    private static final String MIN_DOC_ID_PROP_NAME = "MinDocID";
-    private static final String MAX_DOC_ID_PROP_NAME = "MaxDocID";
+  publ c stat c class FlushHandler extends Flushable.Handler<Opt m zedT et DMapper> {
+    pr vate stat c f nal Str ng M N_TWEET_ D_PROP_NAME = "M nT et D";
+    pr vate stat c f nal Str ng MAX_TWEET_ D_PROP_NAME = "MaxT et D";
+    pr vate stat c f nal Str ng M N_DOC_ D_PROP_NAME = "M nDoc D";
+    pr vate stat c f nal Str ng MAX_DOC_ D_PROP_NAME = "MaxDoc D";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(OptimizedTweetIDMapper objectToFlush) {
+    publ c FlushHandler(Opt m zedT et DMapper objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedTweetIDMapper objectToFlush = getObjectToFlush();
-      flushInfo.addLongProperty(MIN_TWEET_ID_PROP_NAME, objectToFlush.getMinTweetID());
-      flushInfo.addLongProperty(MAX_TWEET_ID_PROP_NAME, objectToFlush.getMaxTweetID());
-      flushInfo.addIntProperty(MIN_DOC_ID_PROP_NAME, objectToFlush.getMinDocID());
-      flushInfo.addIntProperty(MAX_DOC_ID_PROP_NAME, objectToFlush.getMaxDocID());
-      out.writeLongArray(objectToFlush.inverseMap);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      Opt m zedT et DMapper objectToFlush = getObjectToFlush();
+      flush nfo.addLongProperty(M N_TWEET_ D_PROP_NAME, objectToFlush.getM nT et D());
+      flush nfo.addLongProperty(MAX_TWEET_ D_PROP_NAME, objectToFlush.getMaxT et D());
+      flush nfo.add ntProperty(M N_DOC_ D_PROP_NAME, objectToFlush.getM nDoc D());
+      flush nfo.add ntProperty(MAX_DOC_ D_PROP_NAME, objectToFlush.getMaxDoc D());
+      out.wr eLongArray(objectToFlush. nverseMap);
     }
 
-    @Override
-    protected OptimizedTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      return new OptimizedTweetIDMapper(in.readLongArray(),
-                                        flushInfo.getLongProperty(MIN_TWEET_ID_PROP_NAME),
-                                        flushInfo.getLongProperty(MAX_TWEET_ID_PROP_NAME),
-                                        flushInfo.getIntProperty(MIN_DOC_ID_PROP_NAME),
-                                        flushInfo.getIntProperty(MAX_DOC_ID_PROP_NAME));
+    @Overr de
+    protected Opt m zedT et DMapper doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+      return new Opt m zedT et DMapper( n.readLongArray(),
+                                        flush nfo.getLongProperty(M N_TWEET_ D_PROP_NAME),
+                                        flush nfo.getLongProperty(MAX_TWEET_ D_PROP_NAME),
+                                        flush nfo.get ntProperty(M N_DOC_ D_PROP_NAME),
+                                        flush nfo.get ntProperty(MAX_DOC_ D_PROP_NAME));
     }
   }
 }

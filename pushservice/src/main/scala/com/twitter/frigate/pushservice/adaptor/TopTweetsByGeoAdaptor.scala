@@ -1,277 +1,277 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.params.PopGeoTweetVersion
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.params.TopTweetsForGeoCombination
-import com.twitter.frigate.pushservice.params.TopTweetsForGeoRankingFunction
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.predicate.DiscoverTwitterPredicate
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.geoduck.common.thriftscala.{Location => GeoLocation}
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.collection.Map
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.Cand dateS ceEl g ble
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.common.pred cate.CommonOutNetworkT etCand datesS cePred cates.f lterOutReplyT et
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes
+ mport com.tw ter.fr gate.pushserv ce.params.PopGeoT etVers on
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.params.TopT etsForGeoComb nat on
+ mport com.tw ter.fr gate.pushserv ce.params.TopT etsForGeoRank ngFunct on
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FS}
+ mport com.tw ter.fr gate.pushserv ce.pred cate.D scoverTw terPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TargetPred cates
+ mport com.tw ter.fr gate.pushserv ce.ut l. d aCRT
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushAdaptorUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.geoduck.common.thr ftscala.{Locat on => GeoLocat on}
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter.g zmoduck.thr ftscala.UserType
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopT ets nPlace
+ mport com.tw ter.recom ndat on. nterests.d scovery.core.model. nterestDoma n
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.FutureOps
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport scala.collect on.Map
 
-case class PlaceTweetScore(place: String, tweetId: Long, score: Double) {
-  def toTweetScore: (Long, Double) = (tweetId, score)
+case class PlaceT etScore(place: Str ng, t et d: Long, score: Double) {
+  def toT etScore: (Long, Double) = (t et d, score)
 }
-case class TopTweetsByGeoAdaptor(
-  geoduckStoreV2: ReadableStore[Long, LocationResponse],
-  softUserGeoLocationStore: ReadableStore[Long, GeoLocation],
-  topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
-  topTweetsByGeoStoreV2: ReadableStore[String, PopTweetsInPlace],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case class TopT etsByGeoAdaptor(
+  geoduckStoreV2: ReadableStore[Long, Locat onResponse],
+  softUserGeoLocat onStore: ReadableStore[Long, GeoLocat on],
+  topT etsByGeoStore: ReadableStore[ nterestDoma n[Str ng], Map[Str ng, L st[(Long, Double)]]],
+  topT etsByGeoStoreV2: ReadableStore[Str ng, PopT ets nPlace],
+  t etyP eStore: ReadableStore[Long, T etyP eResult],
+  t etyP eStoreNoVF: ReadableStore[Long, T etyP eResult],
+  globalStats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  override def name: String = this.getClass.getSimpleName
+  overr de def na : Str ng = t .getClass.getS mpleNa 
 
-  private[this] val stats = globalStats.scope("TopTweetsByGeoAdaptor")
-  private[this] val noGeohashUserCounter: Counter = stats.counter("users_with_no_geohash_counter")
-  private[this] val incomingRequestCounter: Counter = stats.counter("incoming_request_counter")
-  private[this] val incomingLoggedOutRequestCounter: Counter =
-    stats.counter("incoming_logged_out_request_counter")
-  private[this] val loggedOutRawCandidatesCounter =
-    stats.counter("logged_out_raw_candidates_counter")
-  private[this] val emptyLoggedOutRawCandidatesCounter =
-    stats.counter("logged_out_empty_raw_candidates")
-  private[this] val outputTopTweetsByGeoCounter: Stat =
-    stats.stat("output_top_tweets_by_geo_counter")
-  private[this] val loggedOutPopByGeoV2CandidatesCounter: Counter =
-    stats.counter("logged_out_pop_by_geo_candidates")
-  private[this] val dormantUsersSince14DaysCounter: Counter =
-    stats.counter("dormant_user_since_14_days_counter")
-  private[this] val dormantUsersSince30DaysCounter: Counter =
-    stats.counter("dormant_user_since_30_days_counter")
-  private[this] val nonDormantUsersSince14DaysCounter: Counter =
-    stats.counter("non_dormant_user_since_14_days_counter")
-  private[this] val topTweetsByGeoTake100Counter: Counter =
-    stats.counter("top_tweets_by_geo_take_100_counter")
-  private[this] val combinationRequestsCounter =
-    stats.scope("combination_method_request_counter")
-  private[this] val popGeoTweetVersionCounter =
-    stats.scope("popgeo_tweet_version_counter")
-  private[this] val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
+  pr vate[t ] val stats = globalStats.scope("TopT etsByGeoAdaptor")
+  pr vate[t ] val noGeohashUserCounter: Counter = stats.counter("users_w h_no_geohash_counter")
+  pr vate[t ] val  ncom ngRequestCounter: Counter = stats.counter(" ncom ng_request_counter")
+  pr vate[t ] val  ncom ngLoggedOutRequestCounter: Counter =
+    stats.counter(" ncom ng_logged_out_request_counter")
+  pr vate[t ] val loggedOutRawCand datesCounter =
+    stats.counter("logged_out_raw_cand dates_counter")
+  pr vate[t ] val emptyLoggedOutRawCand datesCounter =
+    stats.counter("logged_out_empty_raw_cand dates")
+  pr vate[t ] val outputTopT etsByGeoCounter: Stat =
+    stats.stat("output_top_t ets_by_geo_counter")
+  pr vate[t ] val loggedOutPopByGeoV2Cand datesCounter: Counter =
+    stats.counter("logged_out_pop_by_geo_cand dates")
+  pr vate[t ] val dormantUsersS nce14DaysCounter: Counter =
+    stats.counter("dormant_user_s nce_14_days_counter")
+  pr vate[t ] val dormantUsersS nce30DaysCounter: Counter =
+    stats.counter("dormant_user_s nce_30_days_counter")
+  pr vate[t ] val nonDormantUsersS nce14DaysCounter: Counter =
+    stats.counter("non_dormant_user_s nce_14_days_counter")
+  pr vate[t ] val topT etsByGeoTake100Counter: Counter =
+    stats.counter("top_t ets_by_geo_take_100_counter")
+  pr vate[t ] val comb nat onRequestsCounter =
+    stats.scope("comb nat on_ thod_request_counter")
+  pr vate[t ] val popGeoT etVers onCounter =
+    stats.scope("popgeo_t et_vers on_counter")
+  pr vate[t ] val nonReplyT etsCounter = stats.counter("non_reply_t ets")
 
-  val MaxGeoHashSize = 4
+  val MaxGeoHashS ze = 4
 
-  private def constructKeys(
-    geohash: Option[String],
-    accountCountryCode: Option[String],
-    keyLengths: Seq[Int],
-    version: PopGeoTweetVersion.Value
-  ): Set[String] = {
+  pr vate def constructKeys(
+    geohash: Opt on[Str ng],
+    accountCountryCode: Opt on[Str ng],
+    keyLengths: Seq[ nt],
+    vers on: PopGeoT etVers on.Value
+  ): Set[Str ng] = {
     val geohashKeys = geohash match {
-      case Some(hash) => keyLengths.map { version + "_geohash_" + hash.take(_) }
+      case So (hash) => keyLengths.map { vers on + "_geohash_" + hash.take(_) }
       case _ => Seq.empty
     }
 
     val accountCountryCodeKeys =
-      accountCountryCode.toSeq.map(version + "_country_" + _.toUpperCase)
+      accountCountryCode.toSeq.map(vers on + "_country_" + _.toUpperCase)
     (geohashKeys ++ accountCountryCodeKeys).toSet
   }
 
-  def convertToPlaceTweetScore(
-    popTweetsInPlace: Seq[PopTweetsInPlace]
-  ): Seq[PlaceTweetScore] = {
-    popTweetsInPlace.flatMap {
+  def convertToPlaceT etScore(
+    popT ets nPlace: Seq[PopT ets nPlace]
+  ): Seq[PlaceT etScore] = {
+    popT ets nPlace.flatMap {
       case p =>
-        p.popTweets.map {
-          case popTweet => PlaceTweetScore(p.place, popTweet.tweetId, popTweet.score)
+        p.popT ets.map {
+          case popT et => PlaceT etScore(p.place, popT et.t et d, popT et.score)
         }
     }
   }
 
-  def sortGeoHashTweets(
-    placeTweetScores: Seq[PlaceTweetScore],
-    rankingFunction: TopTweetsForGeoRankingFunction.Value
-  ): Seq[PlaceTweetScore] = {
-    rankingFunction match {
-      case TopTweetsForGeoRankingFunction.Score =>
-        placeTweetScores.sortBy(_.score)(Ordering[Double].reverse)
-      case TopTweetsForGeoRankingFunction.GeohashLengthAndThenScore =>
-        placeTweetScores
-          .sortBy(row => (row.place.length, row.score))(Ordering[(Int, Double)].reverse)
+  def sortGeoHashT ets(
+    placeT etScores: Seq[PlaceT etScore],
+    rank ngFunct on: TopT etsForGeoRank ngFunct on.Value
+  ): Seq[PlaceT etScore] = {
+    rank ngFunct on match {
+      case TopT etsForGeoRank ngFunct on.Score =>
+        placeT etScores.sortBy(_.score)(Order ng[Double].reverse)
+      case TopT etsForGeoRank ngFunct on.GeohashLengthAndT nScore =>
+        placeT etScores
+          .sortBy(row => (row.place.length, row.score))(Order ng[( nt, Double)].reverse)
     }
   }
 
   def getResultsForLambdaStore(
-    inputTarget: Target,
-    geohash: Option[String],
-    store: ReadableStore[String, PopTweetsInPlace],
-    topk: Int,
-    version: PopGeoTweetVersion.Value
+     nputTarget: Target,
+    geohash: Opt on[Str ng],
+    store: ReadableStore[Str ng, PopT ets nPlace],
+    topk:  nt,
+    vers on: PopGeoT etVers on.Value
   ): Future[Seq[(Long, Double)]] = {
-    inputTarget.accountCountryCode.flatMap { countryCode =>
+     nputTarget.accountCountryCode.flatMap { countryCode =>
       val keys = {
-        if (inputTarget.params(FS.EnableCountryCodeBackoffTopTweetsByGeo))
-          constructKeys(geohash, countryCode, inputTarget.params(FS.GeoHashLengthList), version)
+         f ( nputTarget.params(FS.EnableCountryCodeBackoffTopT etsByGeo))
+          constructKeys(geohash, countryCode,  nputTarget.params(FS.GeoHashLengthL st), vers on)
         else
-          constructKeys(geohash, None, inputTarget.params(FS.GeoHashLengthList), version)
+          constructKeys(geohash, None,  nputTarget.params(FS.GeoHashLengthL st), vers on)
       }
       FutureOps
-        .mapCollect(store.multiGet(keys)).map {
-          case geohashTweetMap =>
-            val popTweets =
-              geohashTweetMap.values.flatten.toSeq
-            val results = sortGeoHashTweets(
-              convertToPlaceTweetScore(popTweets),
-              inputTarget.params(FS.RankingFunctionForTopTweetsByGeo))
-              .map(_.toTweetScore).take(topk)
+        .mapCollect(store.mult Get(keys)).map {
+          case geohashT etMap =>
+            val popT ets =
+              geohashT etMap.values.flatten.toSeq
+            val results = sortGeoHashT ets(
+              convertToPlaceT etScore(popT ets),
+               nputTarget.params(FS.Rank ngFunct onForTopT etsByGeo))
+              .map(_.toT etScore).take(topk)
             results
         }
     }
   }
 
-  def getPopGeoTweetsForLoggedOutUsers(
-    inputTarget: Target,
-    store: ReadableStore[String, PopTweetsInPlace]
+  def getPopGeoT etsForLoggedOutUsers(
+     nputTarget: Target,
+    store: ReadableStore[Str ng, PopT ets nPlace]
   ): Future[Seq[(Long, Double)]] = {
-    inputTarget.countryCode.flatMap { countryCode =>
-      val keys = constructKeys(None, countryCode, Seq(4), PopGeoTweetVersion.Prod)
-      FutureOps.mapCollect(store.multiGet(keys)).map {
-        case tweetMap =>
-          val tweets = tweetMap.values.flatten.toSeq
-          loggedOutPopByGeoV2CandidatesCounter.incr(tweets.size)
-          val popTweets = sortGeoHashTweets(
-            convertToPlaceTweetScore(tweets),
-            TopTweetsForGeoRankingFunction.Score).map(_.toTweetScore)
-          popTweets
+     nputTarget.countryCode.flatMap { countryCode =>
+      val keys = constructKeys(None, countryCode, Seq(4), PopGeoT etVers on.Prod)
+      FutureOps.mapCollect(store.mult Get(keys)).map {
+        case t etMap =>
+          val t ets = t etMap.values.flatten.toSeq
+          loggedOutPopByGeoV2Cand datesCounter. ncr(t ets.s ze)
+          val popT ets = sortGeoHashT ets(
+            convertToPlaceT etScore(t ets),
+            TopT etsForGeoRank ngFunct on.Score).map(_.toT etScore)
+          popT ets
       }
     }
   }
 
-  def getRankedTweets(
-    inputTarget: Target,
-    geohash: Option[String]
+  def getRankedT ets(
+     nputTarget: Target,
+    geohash: Opt on[Str ng]
   ): Future[Seq[(Long, Double)]] = {
-    val MaxTopTweetsByGeoCandidatesToTake =
-      inputTarget.params(FS.MaxTopTweetsByGeoCandidatesToTake)
-    val scoringFn: String = inputTarget.params(FS.ScoringFuncForTopTweetsByGeo)
-    val combinationMethod = inputTarget.params(FS.TopTweetsByGeoCombinationParam)
-    val popGeoTweetVersion = inputTarget.params(FS.PopGeoTweetVersionParam)
+    val MaxTopT etsByGeoCand datesToTake =
+       nputTarget.params(FS.MaxTopT etsByGeoCand datesToTake)
+    val scor ngFn: Str ng =  nputTarget.params(FS.Scor ngFuncForTopT etsByGeo)
+    val comb nat on thod =  nputTarget.params(FS.TopT etsByGeoComb nat onParam)
+    val popGeoT etVers on =  nputTarget.params(FS.PopGeoT etVers onParam)
 
-    inputTarget.isHeavyUserState.map { isHeavyUser =>
+     nputTarget. s avyUserState.map {  s avyUser =>
       stats
-        .scope(combinationMethod.toString).scope(popGeoTweetVersion.toString).scope(
-          "IsHeavyUser_" + isHeavyUser.toString).counter().incr()
+        .scope(comb nat on thod.toStr ng).scope(popGeoT etVers on.toStr ng).scope(
+          " s avyUser_" +  s avyUser.toStr ng).counter(). ncr()
     }
-    combinationRequestsCounter.scope(combinationMethod.toString).counter().incr()
-    popGeoTweetVersionCounter.scope(popGeoTweetVersion.toString).counter().incr()
-    lazy val geoStoreResults = if (geohash.isDefined) {
-      val hash = geohash.get.take(MaxGeoHashSize)
-      topTweetsByGeoStore
+    comb nat onRequestsCounter.scope(comb nat on thod.toStr ng).counter(). ncr()
+    popGeoT etVers onCounter.scope(popGeoT etVers on.toStr ng).counter(). ncr()
+    lazy val geoStoreResults =  f (geohash. sDef ned) {
+      val hash = geohash.get.take(MaxGeoHashS ze)
+      topT etsByGeoStore
         .get(
-          InterestDomain[String](hash)
+           nterestDoma n[Str ng](hash)
         )
         .map {
-          case Some(scoringFnToTweetsMapOpt) =>
-            val tweetsWithScore = scoringFnToTweetsMapOpt
-              .getOrElse(scoringFn, List.empty)
-            val sortedResults = sortGeoHashTweets(
-              tweetsWithScore.map {
-                case (tweetId, score) => PlaceTweetScore(hash, tweetId, score)
+          case So (scor ngFnToT etsMapOpt) =>
+            val t etsW hScore = scor ngFnToT etsMapOpt
+              .getOrElse(scor ngFn, L st.empty)
+            val sortedResults = sortGeoHashT ets(
+              t etsW hScore.map {
+                case (t et d, score) => PlaceT etScore(hash, t et d, score)
               },
-              TopTweetsForGeoRankingFunction.Score
-            ).map(_.toTweetScore).take(
-                MaxTopTweetsByGeoCandidatesToTake
+              TopT etsForGeoRank ngFunct on.Score
+            ).map(_.toT etScore).take(
+                MaxTopT etsByGeoCand datesToTake
               )
             sortedResults
           case _ => Seq.empty
         }
     } else Future.value(Seq.empty)
-    lazy val versionPopGeoTweetResults =
+    lazy val vers onPopGeoT etResults =
       getResultsForLambdaStore(
-        inputTarget,
+         nputTarget,
         geohash,
-        topTweetsByGeoStoreV2,
-        MaxTopTweetsByGeoCandidatesToTake,
-        popGeoTweetVersion
+        topT etsByGeoStoreV2,
+        MaxTopT etsByGeoCand datesToTake,
+        popGeoT etVers on
       )
-    combinationMethod match {
-      case TopTweetsForGeoCombination.Default => geoStoreResults
-      case TopTweetsForGeoCombination.AccountsTweetFavAsBackfill =>
-        Future.join(geoStoreResults, versionPopGeoTweetResults).map {
-          case (geoStoreTweets, versionPopGeoTweets) =>
-            (geoStoreTweets ++ versionPopGeoTweets).take(MaxTopTweetsByGeoCandidatesToTake)
+    comb nat on thod match {
+      case TopT etsForGeoComb nat on.Default => geoStoreResults
+      case TopT etsForGeoComb nat on.AccountsT etFavAsBackf ll =>
+        Future.jo n(geoStoreResults, vers onPopGeoT etResults).map {
+          case (geoStoreT ets, vers onPopGeoT ets) =>
+            (geoStoreT ets ++ vers onPopGeoT ets).take(MaxTopT etsByGeoCand datesToTake)
         }
-      case TopTweetsForGeoCombination.AccountsTweetFavIntermixed =>
-        Future.join(geoStoreResults, versionPopGeoTweetResults).map {
-          case (geoStoreTweets, versionPopGeoTweets) =>
-            CandidateSource.interleaveSeqs(Seq(geoStoreTweets, versionPopGeoTweets))
+      case TopT etsForGeoComb nat on.AccountsT etFav nterm xed =>
+        Future.jo n(geoStoreResults, vers onPopGeoT etResults).map {
+          case (geoStoreT ets, vers onPopGeoT ets) =>
+            Cand dateS ce. nterleaveSeqs(Seq(geoStoreT ets, vers onPopGeoT ets))
         }
     }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    if (inputTarget.isLoggedOutUser) {
-      incomingLoggedOutRequestCounter.incr()
-      val rankedTweets = getPopGeoTweetsForLoggedOutUsers(inputTarget, topTweetsByGeoStoreV2)
-      val rawCandidates = {
-        rankedTweets.map { rt =>
+  overr de def get( nputTarget: Target): Future[Opt on[Seq[RawCand date]]] = {
+     f ( nputTarget. sLoggedOutUser) {
+       ncom ngLoggedOutRequestCounter. ncr()
+      val rankedT ets = getPopGeoT etsForLoggedOutUsers( nputTarget, topT etsByGeoStoreV2)
+      val rawCand dates = {
+        rankedT ets.map { rt =>
           FutureOps
             .mapCollect(
-              tweetyPieStore
-                .multiGet(rt.map { case (tweetId, _) => tweetId }.toSet))
-            .map { tweetyPieResultMap =>
-              val results = buildTopTweetsByGeoRawCandidates(
-                inputTarget,
+              t etyP eStore
+                .mult Get(rt.map { case (t et d, _) => t et d }.toSet))
+            .map { t etyP eResultMap =>
+              val results = bu ldTopT etsByGeoRawCand dates(
+                 nputTarget,
                 None,
-                tweetyPieResultMap
+                t etyP eResultMap
               )
-              if (results.isEmpty) {
-                emptyLoggedOutRawCandidatesCounter.incr()
+               f (results. sEmpty) {
+                emptyLoggedOutRawCand datesCounter. ncr()
               }
-              loggedOutRawCandidatesCounter.incr(results.size)
-              Some(results)
+              loggedOutRawCand datesCounter. ncr(results.s ze)
+              So (results)
             }
         }.flatten
       }
-      rawCandidates
+      rawCand dates
     } else {
-      incomingRequestCounter.incr()
-      getGeoHashForUsers(inputTarget).flatMap { geohash =>
-        if (geohash.isEmpty) noGeohashUserCounter.incr()
-        getRankedTweets(inputTarget, geohash).map { rt =>
-          if (rt.size == 100) {
-            topTweetsByGeoTake100Counter.incr(1)
+       ncom ngRequestCounter. ncr()
+      getGeoHashForUsers( nputTarget).flatMap { geohash =>
+         f (geohash. sEmpty) noGeohashUserCounter. ncr()
+        getRankedT ets( nputTarget, geohash).map { rt =>
+           f (rt.s ze == 100) {
+            topT etsByGeoTake100Counter. ncr(1)
           }
           FutureOps
-            .mapCollect((inputTarget.params(FS.EnableVFInTweetypie) match {
-              case true => tweetyPieStore
-              case false => tweetyPieStoreNoVF
-            }).multiGet(rt.map { case (tweetId, _) => tweetId }.toSet))
-            .map { tweetyPieResultMap =>
-              Some(
-                buildTopTweetsByGeoRawCandidates(
-                  inputTarget,
+            .mapCollect(( nputTarget.params(FS.EnableVF nT etyp e) match {
+              case true => t etyP eStore
+              case false => t etyP eStoreNoVF
+            }).mult Get(rt.map { case (t et d, _) => t et d }.toSet))
+            .map { t etyP eResultMap =>
+              So (
+                bu ldTopT etsByGeoRawCand dates(
+                   nputTarget,
                   None,
-                  filterOutReplyTweet(
-                    tweetyPieResultMap,
-                    nonReplyTweetsCounter
+                  f lterOutReplyT et(
+                    t etyP eResultMap,
+                    nonReplyT etsCounter
                   )
                 )
               )
@@ -281,129 +281,129 @@ case class TopTweetsByGeoAdaptor(
     }
   }
 
-  private def getGeoHashForUsers(
-    inputTarget: Target
-  ): Future[Option[String]] = {
+  pr vate def getGeoHashForUsers(
+     nputTarget: Target
+  ): Future[Opt on[Str ng]] = {
 
-    inputTarget.targetUser.flatMap {
-      case Some(user) =>
+     nputTarget.targetUser.flatMap {
+      case So (user) =>
         user.userType match {
           case UserType.Soft =>
-            softUserGeoLocationStore
-              .get(inputTarget.targetId)
-              .map(_.flatMap(_.geohash.flatMap(_.stringGeohash)))
+            softUserGeoLocat onStore
+              .get( nputTarget.target d)
+              .map(_.flatMap(_.geohash.flatMap(_.str ngGeohash)))
 
           case _ =>
-            geoduckStoreV2.get(inputTarget.targetId).map(_.flatMap(_.geohash))
+            geoduckStoreV2.get( nputTarget.target d).map(_.flatMap(_.geohash))
         }
 
       case None => Future.None
     }
   }
 
-  private def buildTopTweetsByGeoRawCandidates(
+  pr vate def bu ldTopT etsByGeoRawCand dates(
     target: PushTypes.Target,
-    locationName: Option[String],
-    topTweets: Map[Long, Option[TweetyPieResult]]
-  ): Seq[RawCandidate with TweetCandidate] = {
-    val candidates = topTweets.map { tweetIdTweetyPieResultMap =>
-      PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-        inputTarget = target,
-        id = tweetIdTweetyPieResultMap._1,
-        mediaCRT = MediaCRT(
-          CommonRecommendationType.GeoPopTweet,
-          CommonRecommendationType.GeoPopTweet,
-          CommonRecommendationType.GeoPopTweet
+    locat onNa : Opt on[Str ng],
+    topT ets: Map[Long, Opt on[T etyP eResult]]
+  ): Seq[RawCand date w h T etCand date] = {
+    val cand dates = topT ets.map { t et dT etyP eResultMap =>
+      PushAdaptorUt l.generateOutOfNetworkT etCand dates(
+         nputTarget = target,
+         d = t et dT etyP eResultMap._1,
+         d aCRT =  d aCRT(
+          CommonRecom ndat onType.GeoPopT et,
+          CommonRecom ndat onType.GeoPopT et,
+          CommonRecom ndat onType.GeoPopT et
         ),
-        result = tweetIdTweetyPieResultMap._2,
-        localizedEntity = None
+        result = t et dT etyP eResultMap._2,
+        local zedEnt y = None
       )
     }.toSeq
-    outputTopTweetsByGeoCounter.add(candidates.length)
-    candidates
+    outputTopT etsByGeoCounter.add(cand dates.length)
+    cand dates
   }
 
-  private val topTweetsByGeoFrequencyPredicate = {
-    TargetPredicates
-      .pushRecTypeFatiguePredicate(
-        CommonRecommendationType.GeoPopTweet,
-        FS.TopTweetsByGeoPushInterval,
-        FS.MaxTopTweetsByGeoPushGivenInterval,
+  pr vate val topT etsByGeoFrequencyPred cate = {
+    TargetPred cates
+      .pushRecTypeFat guePred cate(
+        CommonRecom ndat onType.GeoPopT et,
+        FS.TopT etsByGeoPush nterval,
+        FS.MaxTopT etsByGeoPushG ven nterval,
         stats
       )
   }
 
-  def getAvailabilityForDormantUser(target: Target): Future[Boolean] = {
-    lazy val isDormantUserNotFatigued = topTweetsByGeoFrequencyPredicate(Seq(target)).map(_.head)
-    lazy val enableTopTweetsByGeoForDormantUsers =
-      target.params(FS.EnableTopTweetsByGeoCandidatesForDormantUsers)
+  def getAva lab l yForDormantUser(target: Target): Future[Boolean] = {
+    lazy val  sDormantUserNotFat gued = topT etsByGeoFrequencyPred cate(Seq(target)).map(_. ad)
+    lazy val enableTopT etsByGeoForDormantUsers =
+      target.params(FS.EnableTopT etsByGeoCand datesForDormantUsers)
 
-    target.lastHTLVisitTimestamp.flatMap {
-      case Some(lastHTLTimestamp) =>
-        val minTimeSinceLastLogin =
-          target.params(FS.MinimumTimeSinceLastLoginForGeoPopTweetPush).ago
-        val timeSinceInactive = target.params(FS.TimeSinceLastLoginForGeoPopTweetPush).ago
-        val lastActiveTimestamp = Time.fromMilliseconds(lastHTLTimestamp)
-        if (lastActiveTimestamp > minTimeSinceLastLogin) {
-          nonDormantUsersSince14DaysCounter.incr()
+    target.lastHTLV s T  stamp.flatMap {
+      case So (lastHTLT  stamp) =>
+        val m nT  S nceLastLog n =
+          target.params(FS.M n mumT  S nceLastLog nForGeoPopT etPush).ago
+        val t  S nce nact ve = target.params(FS.T  S nceLastLog nForGeoPopT etPush).ago
+        val lastAct veT  stamp = T  .fromM ll seconds(lastHTLT  stamp)
+         f (lastAct veT  stamp > m nT  S nceLastLog n) {
+          nonDormantUsersS nce14DaysCounter. ncr()
           Future.False
         } else {
-          dormantUsersSince14DaysCounter.incr()
-          isDormantUserNotFatigued.map { isUserNotFatigued =>
-            lastActiveTimestamp < timeSinceInactive &&
-            enableTopTweetsByGeoForDormantUsers &&
-            isUserNotFatigued
+          dormantUsersS nce14DaysCounter. ncr()
+           sDormantUserNotFat gued.map {  sUserNotFat gued =>
+            lastAct veT  stamp < t  S nce nact ve &&
+            enableTopT etsByGeoForDormantUsers &&
+             sUserNotFat gued
           }
         }
       case _ =>
-        dormantUsersSince30DaysCounter.incr()
-        isDormantUserNotFatigued.map { isUserNotFatigued =>
-          enableTopTweetsByGeoForDormantUsers && isUserNotFatigued
+        dormantUsersS nce30DaysCounter. ncr()
+         sDormantUserNotFat gued.map {  sUserNotFat gued =>
+          enableTopT etsByGeoForDormantUsers &&  sUserNotFat gued
         }
     }
   }
 
-  def getAvailabilityForPlaybookSetUp(target: Target): Future[Boolean] = {
-    lazy val enableTopTweetsByGeoForNewUsers = target.params(FS.EnableTopTweetsByGeoCandidates)
-    val isTargetEligibleForMrFatigueCheck = target.isAccountAtleastNDaysOld(
-      target.params(FS.MrMinDurationSincePushForTopTweetsByGeoPushes))
-    val isMrFatigueCheckEnabled =
-      target.params(FS.EnableMrMinDurationSinceMrPushFatigue)
-    val applyPredicateForTopTweetsByGeo =
-      if (isMrFatigueCheckEnabled) {
-        if (isTargetEligibleForMrFatigueCheck) {
-          DiscoverTwitterPredicate
-            .minDurationElapsedSinceLastMrPushPredicate(
-              name,
-              FS.MrMinDurationSincePushForTopTweetsByGeoPushes,
+  def getAva lab l yForPlaybookSetUp(target: Target): Future[Boolean] = {
+    lazy val enableTopT etsByGeoForNewUsers = target.params(FS.EnableTopT etsByGeoCand dates)
+    val  sTargetEl g bleForMrFat gueC ck = target. sAccountAtleastNDaysOld(
+      target.params(FS.MrM nDurat onS ncePushForTopT etsByGeoPus s))
+    val  sMrFat gueC ckEnabled =
+      target.params(FS.EnableMrM nDurat onS nceMrPushFat gue)
+    val applyPred cateForTopT etsByGeo =
+       f ( sMrFat gueC ckEnabled) {
+         f ( sTargetEl g bleForMrFat gueC ck) {
+          D scoverTw terPred cate
+            .m nDurat onElapsedS nceLastMrPushPred cate(
+              na ,
+              FS.MrM nDurat onS ncePushForTopT etsByGeoPus s,
               stats
-            ).andThen(
-              topTweetsByGeoFrequencyPredicate
-            )(Seq(target)).map(_.head)
+            ).andT n(
+              topT etsByGeoFrequencyPred cate
+            )(Seq(target)).map(_. ad)
         } else {
           Future.False
         }
       } else {
-        topTweetsByGeoFrequencyPredicate(Seq(target)).map(_.head)
+        topT etsByGeoFrequencyPred cate(Seq(target)).map(_. ad)
       }
-    applyPredicateForTopTweetsByGeo.map { predicateResult =>
-      predicateResult && enableTopTweetsByGeoForNewUsers
+    applyPred cateForTopT etsByGeo.map { pred cateResult =>
+      pred cateResult && enableTopT etsByGeoForNewUsers
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    if (target.isLoggedOutUser) {
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
+     f (target. sLoggedOutUser) {
       Future.True
     } else {
-      PushDeviceUtil
-        .isRecommendationsEligible(target).map(
-          _ && target.params(PushParams.PopGeoCandidatesDecider)).flatMap { isAvailable =>
-          if (isAvailable) {
+      PushDev ceUt l
+        . sRecom ndat onsEl g ble(target).map(
+          _ && target.params(PushParams.PopGeoCand datesDec der)).flatMap {  sAva lable =>
+           f ( sAva lable) {
             Future
-              .join(getAvailabilityForDormantUser(target), getAvailabilityForPlaybookSetUp(target))
+              .jo n(getAva lab l yForDormantUser(target), getAva lab l yForPlaybookSetUp(target))
               .map {
-                case (isAvailableForDormantUser, isAvailableForPlaybook) =>
-                  isAvailableForDormantUser || isAvailableForPlaybook
+                case ( sAva lableForDormantUser,  sAva lableForPlaybook) =>
+                   sAva lableForDormantUser ||  sAva lableForPlaybook
                 case _ => false
               }
           } else Future.False

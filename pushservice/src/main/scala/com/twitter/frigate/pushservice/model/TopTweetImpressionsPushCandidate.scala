@@ -1,70 +1,70 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TopTweetImpressionsCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.TopTweetImpressionsCandidateIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.TopTweetImpressionsNTabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.TopTweetImpressionsPredicates
-import com.twitter.frigate.pushservice.take.predicates.BasicTweetPredicatesForRFPH
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.stitch.tweetypie.TweetyPie
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.TopT et mpress onsCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.TopT et mpress onsCand date b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.TopT et mpress onsNTabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TopT et mpress onsPred cates
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.Bas cT etPred catesForRFPH
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContext
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContextValue
+ mport com.tw ter.st ch.t etyp e.T etyP e
 
 /**
- * This class defines a hydrated [[TopTweetImpressionsCandidate]]
+ * T  class def nes a hydrated [[TopT et mpress onsCand date]]
  *
- * @param candidate: [[TopTweetImpressionsCandidate]] for the candidate representing the user's Tweet with the most impressions
- * @param copyIds: push and ntab notification copy
- * @param stats: finagle scoped states receiver
- * @param pushModelScorer: ML model score object for fetching prediction scores
+ * @param cand date: [[TopT et mpress onsCand date]] for t  cand date represent ng t  user's T et w h t  most  mpress ons
+ * @param copy ds: push and ntab not f cat on copy
+ * @param stats: f nagle scoped states rece ver
+ * @param pushModelScorer: ML model score object for fetch ng pred ct on scores
  */
-class TopTweetImpressionsPushCandidate(
-  candidate: RawCandidate with TopTweetImpressionsCandidate,
-  copyIds: CopyIds
+class TopT et mpress onsPushCand date(
+  cand date: RawCand date w h TopT et mpress onsCand date,
+  copy ds: Copy ds
 )(
-  implicit stats: StatsReceiver,
+   mpl c  stats: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with TopTweetImpressionsCandidate
-    with TopTweetImpressionsNTabRequestHydrator
-    with TopTweetImpressionsCandidateIbis2Hydrator {
-  override val target: PushTypes.Target = candidate.target
-  override val commonRecType: CommonRecommendationType = candidate.commonRecType
-  override val tweetId: Long = candidate.tweetId
-  override lazy val tweetyPieResult: Option[TweetyPie.TweetyPieResult] =
-    candidate.tweetyPieResult
-  override val impressionsCount: Long = candidate.impressionsCount
+    extends PushCand date
+    w h TopT et mpress onsCand date
+    w h TopT et mpress onsNTabRequestHydrator
+    w h TopT et mpress onsCand date b s2Hydrator {
+  overr de val target: PushTypes.Target = cand date.target
+  overr de val commonRecType: CommonRecom ndat onType = cand date.commonRecType
+  overr de val t et d: Long = cand date.t et d
+  overr de lazy val t etyP eResult: Opt on[T etyP e.T etyP eResult] =
+    cand date.t etyP eResult
+  overr de val  mpress onsCount: Long = cand date. mpress onsCount
 
-  override val statsReceiver: StatsReceiver = stats.scope(getClass.getSimpleName)
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val storyContext: Option[StoryContext] =
-    Some(StoryContext(altText = "", value = Some(StoryContextValue.Tweets(Seq(tweetId)))))
+  overr de val statsRece ver: StatsRece ver = stats.scope(getClass.getS mpleNa )
+  overr de val pushCopy d: Opt on[ nt] = copy ds.pushCopy d
+  overr de val ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
+  overr de val copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
+  overr de val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
+  overr de val storyContext: Opt on[StoryContext] =
+    So (StoryContext(altText = "", value = So (StoryContextValue.T ets(Seq(t et d)))))
 }
 
-case class TopTweetImpressionsPushCandidatePredicates(config: Config)
-    extends BasicTweetPredicatesForRFPH[TopTweetImpressionsPushCandidate] {
+case class TopT et mpress onsPushCand datePred cates(conf g: Conf g)
+    extends Bas cT etPred catesForRFPH[TopT et mpress onsPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[TopTweetImpressionsPushCandidate]
-  ] = List(
-    TopTweetImpressionsPredicates.topTweetImpressionsFatiguePredicate
+  overr de val preCand dateSpec f cPred cates: L st[
+    Na dPred cate[TopT et mpress onsPushCand date]
+  ] = L st(
+    TopT et mpress onsPred cates.topT et mpress onsFat guePred cate
   )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[TopTweetImpressionsPushCandidate]
-  ] = List(
-    TopTweetImpressionsPredicates.topTweetImpressionsThreshold()
+  overr de val postCand dateSpec f cPred cates: L st[
+    Na dPred cate[TopT et mpress onsPushCand date]
+  ] = L st(
+    TopT et mpress onsPred cates.topT et mpress onsThreshold()
   )
 }

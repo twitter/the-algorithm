@@ -1,69 +1,69 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated.columns
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.context.RequestContext
-import com.twitter.tweetypie.thriftscala.{graphql => gql}
-import com.twitter.tweetypie.{thriftscala => thrift}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle.Product on
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.opcontext.OpContext
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.t etyp e.federated.context.GetRequestContext
+ mport com.tw ter.t etyp e.federated.context.RequestContext
+ mport com.tw ter.t etyp e.thr ftscala.{graphql => gql}
+ mport com.tw ter.t etyp e.{thr ftscala => thr ft}
 
-class UnretweetColumn(
-  unretweet: thrift.UnretweetRequest => Future[thrift.UnretweetResult],
+class Unret etColumn(
+  unret et: thr ft.Unret etRequest => Future[thr ft.Unret etResult],
   getRequestContext: GetRequestContext,
-) extends StratoFed.Column("tweetypie/unretweet.Tweet")
-    with StratoFed.Execute.StitchWithContext
-    with StratoFed.HandleDarkRequests {
+) extends StratoFed.Column("t etyp e/unret et.T et")
+    w h StratoFed.Execute.St chW hContext
+    w h StratoFed.HandleDarkRequests {
 
-  override val policy: Policy = AccessPolicy.TweetMutationCommonAccessPolicies
+  overr de val pol cy: Pol cy = AccessPol cy.T etMutat onCommonAccessPol c es
 
-  // It's acceptable to retry or reapply an unretweet operation,
-  // as multiple calls result in the same end state.
-  override val isIdempotent: Boolean = true
+  //  's acceptable to retry or reapply an unret et operat on,
+  // as mult ple calls result  n t  sa  end state.
+  overr de val  s dempotent: Boolean = true
 
-  override type Arg = gql.UnretweetRequest
-  override type Result = gql.UnretweetResponseWithSubqueryPrefetchItems
+  overr de type Arg = gql.Unret etRequest
+  overr de type Result = gql.Unret etResponseW hSubqueryPrefetch ems
 
-  override val argConv: Conv[Arg] = ScroogeConv.fromStruct
-  override val resultConv: Conv[Result] = ScroogeConv.fromStruct
+  overr de val argConv: Conv[Arg] = ScroogeConv.fromStruct
+  overr de val resultConv: Conv[Result] = ScroogeConv.fromStruct
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata =
-    OpMetadata(
-      Some(Production),
-      Some(PlainText("Removes any retweets by the calling user of the given source tweet.")))
+  overr de val contact nfo: Contact nfo = T etyp eContact nfo
+  overr de val  tadata: Op tadata =
+    Op tadata(
+      So (Product on),
+      So (Pla nText("Removes any ret ets by t  call ng user of t  g ven s ce t et.")))
 
-  override def execute(gqlRequest: Arg, opContext: OpContext): Stitch[Result] = {
+  overr de def execute(gqlRequest: Arg, opContext: OpContext): St ch[Result] = {
     val ctx: RequestContext = getRequestContext(opContext)
-    val req = thrift.UnretweetRequest(
-      ctx.twitterUserId,
-      gqlRequest.sourceTweetId,
+    val req = thr ft.Unret etRequest(
+      ctx.tw terUser d,
+      gqlRequest.s ceT et d,
     )
 
-    val stitchUnretweet = handleDarkRequest(opContext)(
-      light = Stitch.callFuture(unretweet(req)),
-      // For dark requests, we don't want to send traffic to tweetypie.
-      // Since the response is the same regardless of the request, we take a no-op
-      // action instead.
-      dark = Stitch.value(thrift.UnretweetResult(state = thrift.TweetDeleteState.Ok))
+    val st chUnret et = handleDarkRequest(opContext)(
+      l ght = St ch.callFuture(unret et(req)),
+      // For dark requests,   don't want to send traff c to t etyp e.
+      // S nce t  response  s t  sa  regardless of t  request,   take a no-op
+      // act on  nstead.
+      dark = St ch.value(thr ft.Unret etResult(state = thr ft.T etDeleteState.Ok))
     )
 
-    stitchUnretweet.map { _ =>
-      gql.UnretweetResponseWithSubqueryPrefetchItems(
-        data = Some(gql.UnretweetResponse(Some(gqlRequest.sourceTweetId)))
+    st chUnret et.map { _ =>
+      gql.Unret etResponseW hSubqueryPrefetch ems(
+        data = So (gql.Unret etResponse(So (gqlRequest.s ceT et d)))
       )
     }
   }
 }
 
-object UnretweetColumn {
-  val Path = "tweetypie/unretweet.Tweet"
+object Unret etColumn {
+  val Path = "t etyp e/unret et.T et"
 }

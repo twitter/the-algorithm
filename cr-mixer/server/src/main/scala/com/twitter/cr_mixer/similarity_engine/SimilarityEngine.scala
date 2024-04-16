@@ -1,168 +1,168 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mux.ServerApplicationError
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import com.twitter.util.logging.Logging
-import org.apache.thrift.TApplicationException
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.GlobalRequestT  outExcept on
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.mux.ServerAppl cat onError
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.relevance_platform.common. nject on.SeqObject nject on
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  outExcept on
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport org.apac .thr ft.TAppl cat onExcept on
 
 /**
- * A SimilarityEngine is a wrapper which, given a [[Query]], returns a list of [[Candidate]]
- * The main purposes of a SimilarityEngine is to provide a consistent interface for candidate
- * generation logic, and provides default functions, including:
- * - Identification
- * - Observability
- * - Timeout settings
- * - Exception Handling
- * - Gating by Deciders & FeatureSwitch settings
- * - (coming soon): Dark traffic
+ * A S m lar yEng ne  s a wrapper wh ch, g ven a [[Query]], returns a l st of [[Cand date]]
+ * T  ma n purposes of a S m lar yEng ne  s to prov de a cons stent  nterface for cand date
+ * generat on log c, and prov des default funct ons,  nclud ng:
+ * -  dent f cat on
+ * - Observab l y
+ * - T  out sett ngs
+ * - Except on Handl ng
+ * - Gat ng by Dec ders & FeatureSw ch sett ngs
+ * - (com ng soon): Dark traff c
  *
  * Note:
- * A SimilarityEngine by itself is NOT meant to be cacheable.
- * Caching should be implemented in the underlying ReadableStore that provides the [[Candidate]]s
+ * A S m lar yEng ne by  self  s NOT  ant to be cac able.
+ * Cach ng should be  mple nted  n t  underly ng ReadableStore that prov des t  [[Cand date]]s
  *
- * Please keep extension of this class local this directory only
+ * Please keep extens on of t  class local t  d rectory only
  *
  */
-trait SimilarityEngine[Query, Candidate] {
+tra  S m lar yEng ne[Query, Cand date] {
 
   /**
-   * Uniquely identifies a similarity engine.
-   * Avoid using the same engine type for more than one engine, it will cause stats to double count
+   * Un quely  dent f es a s m lar y eng ne.
+   * Avo d us ng t  sa  eng ne type for more than one eng ne,   w ll cause stats to double count
    */
-  private[similarity_engine] def identifier: SimilarityEngineType
+  pr vate[s m lar y_eng ne] def  dent f er: S m lar yEng neType
 
-  def getCandidates(query: Query): Future[Option[Seq[Candidate]]]
+  def getCand dates(query: Query): Future[Opt on[Seq[Cand date]]]
 
 }
 
-object SimilarityEngine extends Logging {
-  case class SimilarityEngineConfig(
-    timeout: Duration,
-    gatingConfig: GatingConfig)
+object S m lar yEng ne extends Logg ng {
+  case class S m lar yEng neConf g(
+    t  out: Durat on,
+    gat ngConf g: Gat ngConf g)
 
   /**
-   * Controls for whether or not this Engine is enabled.
-   * In our previous design, we were expecting a Sim Engine will only take one set of Params,
-   * and that’s why we decided to have GatingConfig and the EnableFeatureSwitch in the trait.
-   * However, we now have two candidate generation pipelines: Tweet Rec, Related Tweets
-   * and they are now having their own set of Params, but EnableFeatureSwitch can only put in 1 fixed value.
-   * We need some further refactor work to make it more flexible.
+   * Controls for w t r or not t  Eng ne  s enabled.
+   *  n   prev ous des gn,    re expect ng a S m Eng ne w ll only take one set of Params,
+   * and that’s why   dec ded to have Gat ngConf g and t  EnableFeatureSw ch  n t  tra .
+   * Ho ver,   now have two cand date generat on p pel nes: T et Rec, Related T ets
+   * and t y are now hav ng t  r own set of Params, but EnableFeatureSw ch can only put  n 1 f xed value.
+   *   need so  furt r refactor work to make   more flex ble.
    *
-   * @param deciderConfig Gate the Engine by a decider. If specified,
-   * @param enableFeatureSwitch. DO NOT USE IT FOR NOW. It needs some refactorting. Please set it to None (SD-20268)
+   * @param dec derConf g Gate t  Eng ne by a dec der.  f spec f ed,
+   * @param enableFeatureSw ch. DO NOT USE  T FOR NOW.   needs so  refactort ng. Please set   to None (SD-20268)
    */
-  case class GatingConfig(
-    deciderConfig: Option[DeciderConfig],
-    enableFeatureSwitch: Option[
+  case class Gat ngConf g(
+    dec derConf g: Opt on[Dec derConf g],
+    enableFeatureSw ch: Opt on[
       FSParam[Boolean]
-    ]) // Do NOT use the enableFeatureSwitch. It needs some refactoring.
+    ]) // Do NOT use t  enableFeatureSw ch.   needs so  refactor ng.
 
-  case class DeciderConfig(
-    decider: CrMixerDecider,
-    deciderString: String)
+  case class Dec derConf g(
+    dec der: CrM xerDec der,
+    dec derStr ng: Str ng)
 
-  case class MemCacheConfig[K](
-    cacheClient: Client,
-    ttl: Duration,
+  case class  mCac Conf g[K](
+    cac Cl ent: Cl ent,
+    ttl: Durat on,
     asyncUpdate: Boolean = false,
-    keyToString: K => String)
+    keyToStr ng: K => Str ng)
 
-  private[similarity_engine] def isEnabled(
+  pr vate[s m lar y_eng ne] def  sEnabled(
     params: Params,
-    gatingConfig: GatingConfig
+    gat ngConf g: Gat ngConf g
   ): Boolean = {
-    val enabledByDecider =
-      gatingConfig.deciderConfig.forall { config =>
-        config.decider.isAvailable(config.deciderString)
+    val enabledByDec der =
+      gat ngConf g.dec derConf g.forall { conf g =>
+        conf g.dec der. sAva lable(conf g.dec derStr ng)
       }
 
-    val enabledByFS = gatingConfig.enableFeatureSwitch.forall(params.apply)
+    val enabledByFS = gat ngConf g.enableFeatureSw ch.forall(params.apply)
 
-    enabledByDecider && enabledByFS
+    enabledByDec der && enabledByFS
   }
 
-  // Default key hasher for memcache keys
-  val keyHasher: KeyHasher = KeyHasher.FNV1A_64
+  // Default key has r for  mcac  keys
+  val keyHas r: KeyHas r = KeyHas r.FNV1A_64
 
   /**
-   * Add a MemCache wrapper to a ReadableStore with a preset key and value injection functions
-   * Note: The [[Query]] object needs to be cacheable,
-   * i.e. it cannot be a runtime objects or complex objects, for example, configapi.Params
+   * Add a  mCac  wrapper to a ReadableStore w h a preset key and value  nject on funct ons
+   * Note: T  [[Query]] object needs to be cac able,
+   *  .e.   cannot be a runt   objects or complex objects, for example, conf gap .Params
    *
-   * @param underlyingStore un-cached store implementation
-   * @param keyPrefix       a prefix differentiates 2 stores if they share the same key space.
-   *                        e.x. 2 implementations of ReadableStore[UserId, Seq[Candidiate] ]
-   *                        can use prefix "store_v1", "store_v2"
-   * @return                A ReadableStore with a MemCache wrapper
+   * @param underly ngStore un-cac d store  mple ntat on
+   * @param keyPref x       a pref x d fferent ates 2 stores  f t y share t  sa  key space.
+   *                        e.x. 2  mple ntat ons of ReadableStore[User d, Seq[Cand d ate] ]
+   *                        can use pref x "store_v1", "store_v2"
+   * @return                A ReadableStore w h a  mCac  wrapper
    */
-  private[similarity_engine] def addMemCache[Query, Candidate <: Serializable](
-    underlyingStore: ReadableStore[Query, Seq[Candidate]],
-    memCacheConfig: MemCacheConfig[Query],
-    keyPrefix: Option[String] = None,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[Query, Seq[Candidate]] = {
-    val prefix = keyPrefix.getOrElse("")
+  pr vate[s m lar y_eng ne] def add mCac [Query, Cand date <: Ser al zable](
+    underly ngStore: ReadableStore[Query, Seq[Cand date]],
+     mCac Conf g:  mCac Conf g[Query],
+    keyPref x: Opt on[Str ng] = None,
+    statsRece ver: StatsRece ver
+  ): ReadableStore[Query, Seq[Cand date]] = {
+    val pref x = keyPref x.getOrElse("")
 
-    ObservedMemcachedReadableStore.fromCacheClient[Query, Seq[Candidate]](
-      backingStore = underlyingStore,
-      cacheClient = memCacheConfig.cacheClient,
-      ttl = memCacheConfig.ttl,
-      asyncUpdate = memCacheConfig.asyncUpdate,
+    Observed mcac dReadableStore.fromCac Cl ent[Query, Seq[Cand date]](
+      back ngStore = underly ngStore,
+      cac Cl ent =  mCac Conf g.cac Cl ent,
+      ttl =  mCac Conf g.ttl,
+      asyncUpdate =  mCac Conf g.asyncUpdate,
     )(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[Candidate]()),
-      keyToString = { k: Query => s"CRMixer:$prefix${memCacheConfig.keyToString(k)}" },
-      statsReceiver = statsReceiver
+      value nject on = LZ4 nject on.compose(SeqObject nject on[Cand date]()),
+      keyToStr ng = { k: Query => s"CRM xer:$pref x${ mCac Conf g.keyToStr ng(k)}" },
+      statsRece ver = statsRece ver
     )
   }
 
-  private val timer = com.twitter.finagle.util.DefaultTimer
+  pr vate val t  r = com.tw ter.f nagle.ut l.DefaultT  r
 
   /**
-   * Applies runtime configs, like stats, timeouts, exception handling, onto fn
+   * Appl es runt   conf gs, l ke stats, t  outs, except on handl ng, onto fn
    */
-  private[similarity_engine] def getFromFn[Query, Candidate](
-    fn: Query => Future[Option[Seq[Candidate]]],
+  pr vate[s m lar y_eng ne] def getFromFn[Query, Cand date](
+    fn: Query => Future[Opt on[Seq[Cand date]]],
     storeQuery: Query,
-    engineConfig: SimilarityEngineConfig,
+    eng neConf g: S m lar yEng neConf g,
     params: Params,
-    scopedStats: StatsReceiver
-  ): Future[Option[Seq[Candidate]]] = {
-    if (isEnabled(params, engineConfig.gatingConfig)) {
-      scopedStats.counter("gate_enabled").incr()
+    scopedStats: StatsRece ver
+  ): Future[Opt on[Seq[Cand date]]] = {
+     f ( sEnabled(params, eng neConf g.gat ngConf g)) {
+      scopedStats.counter("gate_enabled"). ncr()
 
-      StatsUtil
-        .trackOptionItemsStats(scopedStats) {
-          fn.apply(storeQuery).raiseWithin(engineConfig.timeout)(timer)
+      StatsUt l
+        .trackOpt on emsStats(scopedStats) {
+          fn.apply(storeQuery).ra seW h n(eng neConf g.t  out)(t  r)
         }
         .rescue {
-          case _: TimeoutException | _: GlobalRequestTimeoutException | _: TApplicationException |
-              _: ClientDiscardedRequestException |
-              _: ServerApplicationError // TApplicationException inside
+          case _: T  outExcept on | _: GlobalRequestT  outExcept on | _: TAppl cat onExcept on |
+              _: Cl entD scardedRequestExcept on |
+              _: ServerAppl cat onError // TAppl cat onExcept on  ns de
               =>
-            debug("Failed to fetch. request aborted or timed out")
+            debug("Fa led to fetch. request aborted or t  d out")
             Future.None
           case e =>
-            error("Failed to fetch. request aborted or timed out", e)
+            error("Fa led to fetch. request aborted or t  d out", e)
             Future.None
         }
     } else {
-      scopedStats.counter("gate_disabled").incr()
+      scopedStats.counter("gate_d sabled"). ncr()
       Future.None
     }
   }

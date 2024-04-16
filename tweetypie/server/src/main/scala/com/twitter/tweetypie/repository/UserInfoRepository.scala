@@ -1,138 +1,138 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.gizmoduck.thriftscala.UserResponseState
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala.UserIdentity
-import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityRequest
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.thriftscala.UserVisibilityResult
+ mport com.tw ter.g zmoduck.thr ftscala.UserResponseState
+ mport com.tw ter.spam.rtf.thr ftscala.{SafetyLevel => Thr ftSafetyLevel}
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.thr ftscala.User dent y
+ mport com.tw ter.v s b l y. nterfaces.t ets.UserUnava lableStateV s b l yL brary
+ mport com.tw ter.v s b l y. nterfaces.t ets.UserUnava lableStateV s b l yRequest
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.UserUnava lableStateEnum
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.thr ftscala.UserV s b l yResult
 
 /**
- * Some types of user (e.g. frictionless users) may not
- * have profiles, so a missing UserIdentity may mean that the user
- * does not exist, or that the user does not have a profile.
+ * So  types of user (e.g. fr ct onless users) may not
+ * have prof les, so a m ss ng User dent y may  an that t  user
+ * does not ex st, or that t  user does not have a prof le.
  */
-object UserIdentityRepository {
-  type Type = UserKey => Stitch[UserIdentity]
+object User dent yRepos ory {
+  type Type = UserKey => St ch[User dent y]
 
-  def apply(repo: UserRepository.Type): Type = { key =>
-    val opts = UserQueryOptions(Set(UserField.Profile), UserVisibility.Mentionable)
+  def apply(repo: UserRepos ory.Type): Type = { key =>
+    val opts = UserQueryOpt ons(Set(UserF eld.Prof le), UserV s b l y. nt onable)
     repo(key, opts)
       .map { user =>
-        user.profile.map { profile =>
-          UserIdentity(
-            id = user.id,
-            screenName = profile.screenName,
-            realName = profile.name
+        user.prof le.map { prof le =>
+          User dent y(
+             d = user. d,
+            screenNa  = prof le.screenNa ,
+            realNa  = prof le.na 
           )
         }
       }
-      .lowerFromOption()
+      .lo rFromOpt on()
   }
 }
 
-object UserProtectionRepository {
-  type Type = UserKey => Stitch[Boolean]
+object UserProtect onRepos ory {
+  type Type = UserKey => St ch[Boolean]
 
-  def apply(repo: UserRepository.Type): Type = {
-    val opts = UserQueryOptions(Set(UserField.Safety), UserVisibility.All)
+  def apply(repo: UserRepos ory.Type): Type = {
+    val opts = UserQueryOpt ons(Set(UserF eld.Safety), UserV s b l y.All)
 
     userKey =>
       repo(userKey, opts)
-        .map(user => user.safety.map(_.isProtected))
-        .lowerFromOption()
+        .map(user => user.safety.map(_. sProtected))
+        .lo rFromOpt on()
   }
 }
 
 /**
- * Query Gizmoduck to check if a user `forUserId` can see user `userKey`.
- * If forUserId is Some(), this will also check protected relationship,
- * if it's None, it will check others as per UserVisibility.Visible policy in
- * UserRepository.scala. If forUserId is None, this doesn't verify any
- * relationships, visibility is determined based solely on user's
- * properties (eg. deactivated, suspended, etc)
+ * Query G zmoduck to c ck  f a user `forUser d` can see user `userKey`.
+ *  f forUser d  s So (), t  w ll also c ck protected relat onsh p,
+ *  f  's None,   w ll c ck ot rs as per UserV s b l y.V s ble pol cy  n
+ * UserRepos ory.scala.  f forUser d  s None, t  doesn't ver fy any
+ * relat onsh ps, v s b l y  s determ ned based solely on user's
+ * propert es (eg. deact vated, suspended, etc)
  */
-object UserVisibilityRepository {
-  type Type = Query => Stitch[Option[FilteredState.Unavailable]]
+object UserV s b l yRepos ory {
+  type Type = Query => St ch[Opt on[F lteredState.Unava lable]]
 
   case class Query(
     userKey: UserKey,
-    forUserId: Option[UserId],
-    tweetId: TweetId,
-    isRetweet: Boolean,
-    isInnerQuotedTweet: Boolean,
-    safetyLevel: Option[ThriftSafetyLevel])
+    forUser d: Opt on[User d],
+    t et d: T et d,
+     sRet et: Boolean,
+     s nnerQuotedT et: Boolean,
+    safetyLevel: Opt on[Thr ftSafetyLevel])
 
   def apply(
-    repo: UserRepository.Type,
-    userUnavailableAuthorStateVisibilityLibrary: UserUnavailableStateVisibilityLibrary.Type
+    repo: UserRepos ory.Type,
+    userUnava lableAuthorStateV s b l yL brary: UserUnava lableStateV s b l yL brary.Type
   ): Type =
     query => {
       repo(
         query.userKey,
-        UserQueryOptions(
+        UserQueryOpt ons(
           Set(),
-          UserVisibility.Visible,
-          forUserId = query.forUserId,
-          filteredAsFailure = true,
+          UserV s b l y.V s ble,
+          forUser d = query.forUser d,
+          f lteredAsFa lure = true,
           safetyLevel = query.safetyLevel
         )
       )
-      // We don't actually care about the response here (User's data), only whether
-      // it was filtered or not
+      //   don't actually care about t  response  re (User's data), only w t r
+      //   was f ltered or not
         .map { case _ => None }
         .rescue {
-          case fs: FilteredState.Unavailable => Stitch.value(Some(fs))
-          case UserFilteredFailure(state, reason) =>
-            userUnavailableAuthorStateVisibilityLibrary
+          case fs: F lteredState.Unava lable => St ch.value(So (fs))
+          case UserF lteredFa lure(state, reason) =>
+            userUnava lableAuthorStateV s b l yL brary
               .apply(
-                UserUnavailableStateVisibilityRequest(
+                UserUnava lableStateV s b l yRequest(
                   query.safetyLevel
-                    .map(SafetyLevel.fromThrift).getOrElse(SafetyLevel.FilterDefault),
-                  query.tweetId,
-                  ViewerContext.fromContextWithViewerIdFallback(query.forUserId),
-                  toUserUnavailableState(state, reason),
-                  query.isRetweet,
-                  query.isInnerQuotedTweet
+                    .map(SafetyLevel.fromThr ft).getOrElse(SafetyLevel.F lterDefault),
+                  query.t et d,
+                  V e rContext.fromContextW hV e r dFallback(query.forUser d),
+                  toUserUnava lableState(state, reason),
+                  query. sRet et,
+                  query. s nnerQuotedT et
                 )
-              ).map(VisibilityResultToFilteredState.toFilteredStateUnavailable)
-          case NotFound => Stitch.value(Some(FilteredState.Unavailable.Author.NotFound))
+              ).map(V s b l yResultToF lteredState.toF lteredStateUnava lable)
+          case NotFound => St ch.value(So (F lteredState.Unava lable.Author.NotFound))
         }
     }
 
-  def toUserUnavailableState(
+  def toUserUnava lableState(
     userResponseState: UserResponseState,
-    userVisibilityResult: Option[UserVisibilityResult]
-  ): UserUnavailableStateEnum = {
-    (userResponseState, userVisibilityResult) match {
-      case (UserResponseState.DeactivatedUser, _) => UserUnavailableStateEnum.Deactivated
-      case (UserResponseState.OffboardedUser, _) => UserUnavailableStateEnum.Offboarded
-      case (UserResponseState.ErasedUser, _) => UserUnavailableStateEnum.Erased
-      case (UserResponseState.SuspendedUser, _) => UserUnavailableStateEnum.Suspended
-      case (UserResponseState.ProtectedUser, _) => UserUnavailableStateEnum.Protected
-      case (_, Some(result)) => UserUnavailableStateEnum.Filtered(result)
-      case _ => UserUnavailableStateEnum.Unavailable
+    userV s b l yResult: Opt on[UserV s b l yResult]
+  ): UserUnava lableStateEnum = {
+    (userResponseState, userV s b l yResult) match {
+      case (UserResponseState.Deact vatedUser, _) => UserUnava lableStateEnum.Deact vated
+      case (UserResponseState.OffboardedUser, _) => UserUnava lableStateEnum.Offboarded
+      case (UserResponseState.ErasedUser, _) => UserUnava lableStateEnum.Erased
+      case (UserResponseState.SuspendedUser, _) => UserUnava lableStateEnum.Suspended
+      case (UserResponseState.ProtectedUser, _) => UserUnava lableStateEnum.Protected
+      case (_, So (result)) => UserUnava lableStateEnum.F ltered(result)
+      case _ => UserUnava lableStateEnum.Unava lable
     }
   }
 }
 
-object UserViewRepository {
-  type Type = Query => Stitch[User]
+object UserV ewRepos ory {
+  type Type = Query => St ch[User]
 
   case class Query(
     userKey: UserKey,
-    forUserId: Option[UserId],
-    visibility: UserVisibility,
-    queryFields: Set[UserField] = Set(UserField.View))
+    forUser d: Opt on[User d],
+    v s b l y: UserV s b l y,
+    queryF elds: Set[UserF eld] = Set(UserF eld.V ew))
 
-  def apply(repo: UserRepository.Type): UserViewRepository.Type =
+  def apply(repo: UserRepos ory.Type): UserV ewRepos ory.Type =
     query =>
-      repo(query.userKey, UserQueryOptions(query.queryFields, query.visibility, query.forUserId))
+      repo(query.userKey, UserQueryOpt ons(query.queryF elds, query.v s b l y, query.forUser d))
 }

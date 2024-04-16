@@ -1,53 +1,53 @@
-// Protocol messages for describing features for machine learning model
-// training or inference.
+// Protocol  ssages for descr b ng features for mach ne learn ng model
+// tra n ng or  nference.
 //
-// There are three base Feature types:
+// T re are three base Feature types:
 //   - bytes
 //   - float
-//   - int64
+//   -  nt64
 //
-// A Feature contains Lists which may hold zero or more values.  These
-// lists are the base values BytesList, FloatList, Int64List.
+// A Feature conta ns L sts wh ch may hold zero or more values.  T se
+// l sts are t  base values BytesL st, FloatL st,  nt64L st.
 //
-// Features are organized into categories by name.  The Features message
-// contains the mapping from name to Feature.
+// Features are organ zed  nto categor es by na .  T  Features  ssage
+// conta ns t  mapp ng from na  to Feature.
 //
-// Example Features for a movie recommendation application:
+// Example Features for a mov e recom ndat on appl cat on:
 //   feature {
 //     key: "age"
-//     value { float_list {
+//     value { float_l st {
 //       value: 29.0
 //     }}
 //   }
 //   feature {
-//     key: "movie"
-//     value { bytes_list {
-//       value: "The Shawshank Redemption"
-//       value: "Fight Club"
+//     key: "mov e"
+//     value { bytes_l st {
+//       value: "T  Shawshank Redempt on"
+//       value: "F ght Club"
 //     }}
 //   }
 //   feature {
-//     key: "movie_ratings"
-//     value { float_list {
+//     key: "mov e_rat ngs"
+//     value { float_l st {
 //       value: 9.0
 //       value: 9.7
 //     }}
 //   }
 //   feature {
-//     key: "suggestion"
-//     value { bytes_list {
-//       value: "Inception"
+//     key: "suggest on"
+//     value { bytes_l st {
+//       value: " ncept on"
 //     }}
 //   }
 //   feature {
-//     key: "suggestion_purchased"
-//     value { int64_list {
+//     key: "suggest on_purchased"
+//     value {  nt64_l st {
 //       value: 1
 //     }}
 //   }
 //   feature {
-//     key: "purchase_price"
-//     value { float_list {
+//     key: "purchase_pr ce"
+//     value { float_l st {
 //       value: 9.99
 //     }}
 //   }
@@ -57,54 +57,54 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FeatureProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.example";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/example";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "FeatureProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.example";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/example";
 
-// LINT.IfChange
-// Containers to hold repeated fundamental values.
-message BytesList {
+// L NT. fChange
+// Conta ners to hold repeated funda ntal values.
+ ssage BytesL st {
   repeated bytes value = 1;
 }
-message FloatList {
+ ssage FloatL st {
   repeated float value = 1 [packed = true];
 }
-message Int64List {
-  repeated int64 value = 1 [packed = true];
+ ssage  nt64L st {
+  repeated  nt64 value = 1 [packed = true];
 }
 
-// Containers for non-sequential data.
-message Feature {
-  // Each feature can be exactly one kind.
-  oneof kind {
-    BytesList bytes_list = 1;
-    FloatList float_list = 2;
-    Int64List int64_list = 3;
+// Conta ners for non-sequent al data.
+ ssage Feature {
+  // Each feature can be exactly one k nd.
+  oneof k nd {
+    BytesL st bytes_l st = 1;
+    FloatL st float_l st = 2;
+     nt64L st  nt64_l st = 3;
   }
 }
 
-message Features {
-  // Map from feature name to feature.
-  map<string, Feature> feature = 1;
+ ssage Features {
+  // Map from feature na  to feature.
+  map<str ng, Feature> feature = 1;
 }
 
-// Containers for sequential data.
+// Conta ners for sequent al data.
 //
-// A FeatureList contains lists of Features.  These may hold zero or more
+// A FeatureL st conta ns l sts of Features.  T se may hold zero or more
 // Feature values.
 //
-// FeatureLists are organized into categories by name.  The FeatureLists message
-// contains the mapping from name to FeatureList.
+// FeatureL sts are organ zed  nto categor es by na .  T  FeatureL sts  ssage
+// conta ns t  mapp ng from na  to FeatureL st.
 //
-message FeatureList {
+ ssage FeatureL st {
   repeated Feature feature = 1;
 }
 
-message FeatureLists {
-  // Map from feature name to feature list.
-  map<string, FeatureList> feature_list = 1;
+ ssage FeatureL sts {
+  // Map from feature na  to feature l st.
+  map<str ng, FeatureL st> feature_l st = 1;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+// L NT.T nChange(
+//     https://www.tensorflow.org/code/tensorflow/python/tra n ng/tra n ng.py)

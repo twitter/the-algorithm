@@ -1,162 +1,162 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedValueStatus
-import com.twitter.servo.cache.LockingCache
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.backends.GeoScrubEventStore
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.servo.cac .Cac d
+ mport com.tw ter.servo.cac .Cac dValueStatus
+ mport com.tw ter.servo.cac .Lock ngCac 
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t etyp e.backends.GeoScrubEventStore
+ mport com.tw ter.t etyp e.thr ftscala._
 
 /**
- * Scrub geo information from Tweets.
+ * Scrub geo  nformat on from T ets.
  */
-object ScrubGeo extends TweetStore.SyncModule {
+object ScrubGeo extends T etStore.SyncModule {
 
   case class Event(
-    tweetIdSet: Set[TweetId],
-    userId: UserId,
-    optUser: Option[User],
-    timestamp: Time,
+    t et dSet: Set[T et d],
+    user d: User d,
+    optUser: Opt on[User],
+    t  stamp: T  ,
     enqueueMax: Boolean)
-      extends SyncTweetStoreEvent("scrub_geo")
-      with TweetStoreTweetEvent {
+      extends SyncT etStoreEvent("scrub_geo")
+      w h T etStoreT etEvent {
 
-    val tweetIds: Seq[TweetId] = tweetIdSet.toSeq
+    val t et ds: Seq[T et d] = t et dSet.toSeq
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      tweetIds.map { tweetId =>
-        TweetEventData.TweetScrubGeoEvent(
-          TweetScrubGeoEvent(
-            tweetId = tweetId,
-            userId = userId
+    overr de def toT etEventData: Seq[T etEventData] =
+      t et ds.map { t et d =>
+        T etEventData.T etScrubGeoEvent(
+          T etScrubGeoEvent(
+            t et d = t et d,
+            user d = user d
           )
         )
       }
   }
 
-  trait Store {
+  tra  Store {
     val scrubGeo: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val scrubGeo: FutureEffect[Event] = wrap(underlying.scrubGeo)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val scrubGeo: FutureEffect[Event] = wrap(underly ng.scrubGeo)
   }
 
   object Store {
     def apply(
       logLensStore: LogLensStore,
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      replicatingStore: ReplicatingTweetStore
+      manhattanStore: ManhattanT etStore,
+      cach ngT etStore: Cach ngT etStore,
+      eventBusEnqueueStore: T etEventBusStore,
+      repl cat ngStore: Repl cat ngT etStore
     ): Store =
       new Store {
-        override val scrubGeo: FutureEffect[Event] =
-          FutureEffect.inParallel(
+        overr de val scrubGeo: FutureEffect[Event] =
+          FutureEffect. nParallel(
             logLensStore.scrubGeo,
             manhattanStore.scrubGeo,
-            cachingTweetStore.scrubGeo,
+            cach ngT etStore.scrubGeo,
             eventBusEnqueueStore.scrubGeo,
-            replicatingStore.scrubGeo
+            repl cat ngStore.scrubGeo
           )
       }
   }
 }
 
-object ReplicatedScrubGeo extends TweetStore.ReplicatedModule {
+object Repl catedScrubGeo extends T etStore.Repl catedModule {
 
-  case class Event(tweetIds: Seq[TweetId]) extends ReplicatedTweetStoreEvent("replicated_scrub_geo")
+  case class Event(t et ds: Seq[T et d]) extends Repl catedT etStoreEvent("repl cated_scrub_geo")
 
-  trait Store {
-    val replicatedScrubGeo: FutureEffect[Event]
+  tra  Store {
+    val repl catedScrubGeo: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedScrubGeo: FutureEffect[Event] = wrap(underlying.replicatedScrubGeo)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedScrubGeo: FutureEffect[Event] = wrap(underly ng.repl catedScrubGeo)
   }
 
   object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
+    def apply(cach ngT etStore: Cach ngT etStore): Store = {
       new Store {
-        override val replicatedScrubGeo: FutureEffect[Event] =
-          cachingTweetStore.replicatedScrubGeo
+        overr de val repl catedScrubGeo: FutureEffect[Event] =
+          cach ngT etStore.repl catedScrubGeo
       }
     }
   }
 }
 
 /**
- * Update the timestamp of the user's most recent request to delete all
- * location data attached to her tweets. We use the timestamp to ensure
- * that even if we fail to scrub a particular tweet in storage, we will
- * not return geo information with that tweet.
+ * Update t  t  stamp of t  user's most recent request to delete all
+ * locat on data attac d to  r t ets.   use t  t  stamp to ensure
+ * that even  f   fa l to scrub a part cular t et  n storage,   w ll
+ * not return geo  nformat on w h that t et.
  *
- * See http://go/geoscrub for more details.
+ * See http://go/geoscrub for more deta ls.
  */
-object ScrubGeoUpdateUserTimestamp extends TweetStore.SyncModule {
+object ScrubGeoUpdateUserT  stamp extends T etStore.SyncModule {
 
-  case class Event(userId: UserId, timestamp: Time, optUser: Option[User])
-      extends SyncTweetStoreEvent("scrub_geo_update_user_timestamp")
-      with TweetStoreTweetEvent {
+  case class Event(user d: User d, t  stamp: T  , optUser: Opt on[User])
+      extends SyncT etStoreEvent("scrub_geo_update_user_t  stamp")
+      w h T etStoreT etEvent {
 
-    def mightHaveGeotaggedStatuses: Boolean =
+    def m ghtHaveGeotaggedStatuses: Boolean =
       optUser.forall(_.account.forall(_.hasGeotaggedStatuses == true))
 
-    def maxTweetId: TweetId = SnowflakeId.firstIdFor(timestamp + 1.millisecond) - 1
+    def maxT et d: T et d = Snowflake d.f rst dFor(t  stamp + 1.m ll second) - 1
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.UserScrubGeoEvent(
+        T etEventData.UserScrubGeoEvent(
           UserScrubGeoEvent(
-            userId = userId,
-            maxTweetId = maxTweetId
+            user d = user d,
+            maxT et d = maxT et d
           )
         )
       )
 
     /**
-     * How to update a geo scrub timestamp cache entry. Always prefers
-     * the highest timestamp value that is available, regardless of when
-     * it was added to cache.
+     * How to update a geo scrub t  stamp cac  entry. Always prefers
+     * t  h g st t  stamp value that  s ava lable, regardless of w n
+     *   was added to cac .
      */
-    def cacheHandler: LockingCache.Handler[Cached[Time]] = {
-      case Some(c) if c.value.exists(_ >= timestamp) => None
-      case _ => Some(Cached(Some(timestamp), CachedValueStatus.Found, Time.now))
+    def cac Handler: Lock ngCac .Handler[Cac d[T  ]] = {
+      case So (c)  f c.value.ex sts(_ >= t  stamp) => None
+      case _ => So (Cac d(So (t  stamp), Cac dValueStatus.Found, T  .now))
     }
   }
 
-  trait Store {
-    val scrubGeoUpdateUserTimestamp: FutureEffect[Event]
+  tra  Store {
+    val scrubGeoUpdateUserT  stamp: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val scrubGeoUpdateUserTimestamp: FutureEffect[Event] = wrap(
-      underlying.scrubGeoUpdateUserTimestamp)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val scrubGeoUpdateUserT  stamp: FutureEffect[Event] = wrap(
+      underly ng.scrubGeoUpdateUserT  stamp)
   }
 
   object Store {
     def apply(
-      geotagUpdateStore: GizmoduckUserGeotagUpdateStore,
-      tweetEventBusStore: TweetEventBusStore,
-      setInManhattan: GeoScrubEventStore.SetGeoScrubTimestamp,
-      cache: LockingCache[UserId, Cached[Time]]
+      geotagUpdateStore: G zmoduckUserGeotagUpdateStore,
+      t etEventBusStore: T etEventBusStore,
+      set nManhattan: GeoScrubEventStore.SetGeoScrubT  stamp,
+      cac : Lock ngCac [User d, Cac d[T  ]]
     ): Store = {
       val manhattanEffect =
-        setInManhattan.asFutureEffect
-          .contramap[Event](e => (e.userId, e.timestamp))
+        set nManhattan.asFutureEffect
+          .contramap[Event](e => (e.user d, e.t  stamp))
 
-      val cacheEffect =
-        FutureEffect[Event](e => cache.lockAndSet(e.userId, e.cacheHandler).unit)
+      val cac Effect =
+        FutureEffect[Event](e => cac .lockAndSet(e.user d, e.cac Handler).un )
 
       new Store {
-        override val scrubGeoUpdateUserTimestamp: FutureEffect[Event] =
-          FutureEffect.inParallel(
+        overr de val scrubGeoUpdateUserT  stamp: FutureEffect[Event] =
+          FutureEffect. nParallel(
             manhattanEffect,
-            cacheEffect,
-            geotagUpdateStore.scrubGeoUpdateUserTimestamp,
-            tweetEventBusStore.scrubGeoUpdateUserTimestamp
+            cac Effect,
+            geotagUpdateStore.scrubGeoUpdateUserT  stamp,
+            t etEventBusStore.scrubGeoUpdateUserT  stamp
           )
       }
     }

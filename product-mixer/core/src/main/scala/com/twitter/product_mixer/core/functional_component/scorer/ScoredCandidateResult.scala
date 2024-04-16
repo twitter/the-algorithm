@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.scorer
+package com.tw ter.product_m xer.core.funct onal_component.scorer
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
 
-/** A [[Candidate]] and it's [[FeatureMap]] after being processed by a [[Scorer]] */
-case class ScoredCandidateResult[Candidate <: UniversalNoun[Any]](
-  candidate: Candidate,
+/** A [[Cand date]] and  's [[FeatureMap]] after be ng processed by a [[Scorer]] */
+case class ScoredCand dateResult[Cand date <: Un versalNoun[Any]](
+  cand date: Cand date,
   scorerResult: FeatureMap)
-    extends CandidateWithFeatures[Candidate] {
-  override val features: FeatureMap = scorerResult
+    extends Cand dateW hFeatures[Cand date] {
+  overr de val features: FeatureMap = scorerResult
 }

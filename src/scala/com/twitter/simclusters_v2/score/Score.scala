@@ -1,22 +1,22 @@
-package com.twitter.simclusters_v2.score
+package com.tw ter.s mclusters_v2.score
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore}
 
 /**
- * A uniform value type for all kinds of Calculation Score.
+ * A un form value type for all k nds of Calculat on Score.
  **/
 case class Score(score: Double) {
 
-  implicit lazy val toThrift: ThriftScore = {
-    ThriftScore(score)
+   mpl c  lazy val toThr ft: Thr ftScore = {
+    Thr ftScore(score)
   }
 }
 
 object Score {
 
   /**
-   * Only support Double Type Thrift score
+   * Only support Double Type Thr ft score
    */
-  implicit val fromThriftScore: ThriftScore => Score = { thriftScore => Score(thriftScore.score) }
+   mpl c  val fromThr ftScore: Thr ftScore => Score = { thr ftScore => Score(thr ftScore.score) }
 
 }

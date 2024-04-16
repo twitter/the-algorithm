@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.subscribed.param
+package com.tw ter.ho _m xer.product.subscr bed.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.subscribed.param.SubscribedParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.param.dec der.Dec derKey
+ mport com.tw ter.ho _m xer.product.subscr bed.param.Subscr bedParam._
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SubscribedParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableSubscribedProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@S ngleton
+class Subscr bedParamConf g @ nject() () extends ProductParamConf g {
+  overr de val enabledDec derKey: Dec derKeyNa  = Dec derKey.EnableSubscr bedProduct
+  overr de val supportedCl entFSNa : Str ng = SupportedCl entFSNa 
 
-  override val boundedIntFSOverrides = Seq(
+  overr de val bounded ntFSOverr des = Seq(
     ServerMaxResultsParam
   )
 }

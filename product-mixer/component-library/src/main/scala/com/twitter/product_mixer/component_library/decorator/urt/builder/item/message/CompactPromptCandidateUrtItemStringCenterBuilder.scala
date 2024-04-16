@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em. ssage
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.message.CompactPromptCandidateUrtItemStringCenterBuilder.CompactPromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CompactPromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em. ssage.CompactPromptCand dateUrt emStr ngCenterBu lder.CompactPromptCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.CompactPromptCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.r chtext.BaseR chTextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.CompactPrompt ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssagePrompt em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object CompactPromptCandidateUrtItemStringCenterBuilder {
-  val CompactPromptClientEventInfoElement: String = "message"
+object CompactPromptCand dateUrt emStr ngCenterBu lder {
+  val CompactPromptCl entEvent nfoEle nt: Str ng = " ssage"
 }
 
-case class CompactPromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CompactPromptCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CompactPromptCandidate]
+case class CompactPromptCand dateUrt emStr ngCenterBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, CompactPromptCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, CompactPromptCand date]
   ] = None,
-  headerTextBuilder: BaseStr[Query, CompactPromptCandidate],
-  bodyTextBuilder: Option[BaseStr[Query, CompactPromptCandidate]] = None,
-  headerRichTextBuilder: Option[BaseRichTextBuilder[Query, CompactPromptCandidate]] = None,
-  bodyRichTextBuilder: Option[BaseRichTextBuilder[Query, CompactPromptCandidate]] = None)
-    extends CandidateUrtEntryBuilder[Query, CompactPromptCandidate, MessagePromptItem] {
+   aderTextBu lder: BaseStr[Query, CompactPromptCand date],
+  bodyTextBu lder: Opt on[BaseStr[Query, CompactPromptCand date]] = None,
+   aderR chTextBu lder: Opt on[BaseR chTextBu lder[Query, CompactPromptCand date]] = None,
+  bodyR chTextBu lder: Opt on[BaseR chTextBu lder[Query, CompactPromptCand date]] = None)
+    extends Cand dateUrtEntryBu lder[Query, CompactPromptCand date,  ssagePrompt em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    compactPromptCandidate: CompactPromptCandidate,
-    candidateFeatures: FeatureMap
-  ): MessagePromptItem =
-    MessagePromptItem(
-      id = compactPromptCandidate.id.toString,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
+    compactPromptCand date: CompactPromptCand date,
+    cand dateFeatures: FeatureMap
+  ):  ssagePrompt em =
+     ssagePrompt em(
+       d = compactPromptCand date. d.toStr ng,
+      sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query,
-        compactPromptCandidate,
-        candidateFeatures,
-        Some(CompactPromptClientEventInfoElement)),
-      feedbackActionInfo = feedbackActionInfoBuilder.flatMap(
-        _.apply(query, compactPromptCandidate, candidateFeatures)),
-      isPinned = None,
-      content = CompactPromptMessageContent(
-        headerText = headerTextBuilder.apply(query, compactPromptCandidate, candidateFeatures),
-        bodyText = bodyTextBuilder.map(_.apply(query, compactPromptCandidate, candidateFeatures)),
-        primaryButtonAction = None,
-        secondaryButtonAction = None,
-        action = None,
-        headerRichText =
-          headerRichTextBuilder.map(_.apply(query, compactPromptCandidate, candidateFeatures)),
-        bodyRichText =
-          bodyRichTextBuilder.map(_.apply(query, compactPromptCandidate, candidateFeatures))
+        compactPromptCand date,
+        cand dateFeatures,
+        So (CompactPromptCl entEvent nfoEle nt)),
+      feedbackAct on nfo = feedbackAct on nfoBu lder.flatMap(
+        _.apply(query, compactPromptCand date, cand dateFeatures)),
+       sP nned = None,
+      content = CompactPrompt ssageContent(
+         aderText =  aderTextBu lder.apply(query, compactPromptCand date, cand dateFeatures),
+        bodyText = bodyTextBu lder.map(_.apply(query, compactPromptCand date, cand dateFeatures)),
+        pr maryButtonAct on = None,
+        secondaryButtonAct on = None,
+        act on = None,
+         aderR chText =
+           aderR chTextBu lder.map(_.apply(query, compactPromptCand date, cand dateFeatures)),
+        bodyR chText =
+          bodyR chTextBu lder.map(_.apply(query, compactPromptCand date, cand dateFeatures))
       ),
-      impressionCallbacks = None
+       mpress onCallbacks = None
     )
 }

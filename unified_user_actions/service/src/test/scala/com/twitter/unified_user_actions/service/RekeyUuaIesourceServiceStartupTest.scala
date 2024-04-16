@@ -1,173 +1,173 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.google.inject.Stage
-import com.twitter.adserver.thriftscala.DisplayLocation
-import com.twitter.app.GlobalFlag
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.AckMode
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.KafkaTopic
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.finatra.kafka.test.KafkaFeatureTest
-import com.twitter.iesource.thriftscala.ClientEventContext
-import com.twitter.iesource.thriftscala.TweetImpression
-import com.twitter.iesource.thriftscala.ClientType
-import com.twitter.iesource.thriftscala.ContextualEventNamespace
-import com.twitter.iesource.thriftscala.EngagingContext
-import com.twitter.iesource.thriftscala.EventSource
-import com.twitter.iesource.thriftscala.InteractionDetails
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.iesource.thriftscala.UserIdentifier
-import com.twitter.inject.server.EmbeddedTwitterServer
-import com.twitter.kafka.client.processor.KafkaConsumerClient
-import com.twitter.unified_user_actions.kafka.ClientConfigs
-import com.twitter.unified_user_actions.service.module.KafkaProcessorRekeyUuaIesourceModule
-import com.twitter.unified_user_actions.thriftscala.KeyedUuaTweet
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
+ mport com.google. nject.Stage
+ mport com.tw ter.adserver.thr ftscala.D splayLocat on
+ mport com.tw ter.app.GlobalFlag
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.f natra.kafka.doma n.AckMode
+ mport com.tw ter.f natra.kafka.doma n.KafkaGroup d
+ mport com.tw ter.f natra.kafka.doma n.KafkaTop c
+ mport com.tw ter.f natra.kafka.doma n.SeekStrategy
+ mport com.tw ter.f natra.kafka.producers.F nagleKafkaProducerBu lder
+ mport com.tw ter.f natra.kafka.serde.ScalaSerdes
+ mport com.tw ter.f natra.kafka.serde.UnKeyedSerde
+ mport com.tw ter.f natra.kafka.test.KafkaFeatureTest
+ mport com.tw ter. es ce.thr ftscala.Cl entEventContext
+ mport com.tw ter. es ce.thr ftscala.T et mpress on
+ mport com.tw ter. es ce.thr ftscala.Cl entType
+ mport com.tw ter. es ce.thr ftscala.ContextualEventNa space
+ mport com.tw ter. es ce.thr ftscala.Engag ngContext
+ mport com.tw ter. es ce.thr ftscala.EventS ce
+ mport com.tw ter. es ce.thr ftscala. nteract onDeta ls
+ mport com.tw ter. es ce.thr ftscala. nteract onEvent
+ mport com.tw ter. es ce.thr ftscala. nteract onType
+ mport com.tw ter. es ce.thr ftscala. nteract onTargetType
+ mport com.tw ter. es ce.thr ftscala.User dent f er
+ mport com.tw ter. nject.server.EmbeddedTw terServer
+ mport com.tw ter.kafka.cl ent.processor.KafkaConsu rCl ent
+ mport com.tw ter.un f ed_user_act ons.kafka.Cl entConf gs
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorRekeyUua es ceModule
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.KeyedUuaT et
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.StorageUn 
 
-class RekeyUuaIesourceServiceStartupTest extends KafkaFeatureTest {
-  private val inputTopic =
-    kafkaTopic(ScalaSerdes.Long, ScalaSerdes.CompactThrift[InteractionEvent], name = "source")
-  private val outputTopic =
-    kafkaTopic(ScalaSerdes.Long, ScalaSerdes.Thrift[KeyedUuaTweet], name = "sink")
+class RekeyUua es ceServ ceStartupTest extends KafkaFeatureTest {
+  pr vate val  nputTop c =
+    kafkaTop c(ScalaSerdes.Long, ScalaSerdes.CompactThr ft[ nteract onEvent], na  = "s ce")
+  pr vate val outputTop c =
+    kafkaTop c(ScalaSerdes.Long, ScalaSerdes.Thr ft[KeyedUuaT et], na  = "s nk")
 
   val startupFlags = Map(
-    "kafka.group.id" -> "client-event",
-    "kafka.producer.client.id" -> "uua",
-    "kafka.source.topic" -> inputTopic.topic,
-    "kafka.sink.topics" -> outputTopic.topic,
-    "kafka.consumer.fetch.min" -> "6.megabytes",
-    "kafka.max.pending.requests" -> "100",
+    "kafka.group. d" -> "cl ent-event",
+    "kafka.producer.cl ent. d" -> "uua",
+    "kafka.s ce.top c" ->  nputTop c.top c,
+    "kafka.s nk.top cs" -> outputTop c.top c,
+    "kafka.consu r.fetch.m n" -> "6. gabytes",
+    "kafka.max.pend ng.requests" -> "100",
     "kafka.worker.threads" -> "1",
     "kafka.trust.store.enable" -> "false",
-    "kafka.producer.batch.size" -> "0.byte",
+    "kafka.producer.batch.s ze" -> "0.byte",
     "cluster" -> "atla",
   )
 
-  val deciderFlags = Map(
-    "decider.base" -> "/decider.yml"
+  val dec derFlags = Map(
+    "dec der.base" -> "/dec der.yml"
   )
 
-  override protected def kafkaBootstrapFlag: Map[String, String] = {
+  overr de protected def kafkaBootstrapFlag: Map[Str ng, Str ng] = {
     Map(
-      ClientConfigs.kafkaBootstrapServerConfig -> kafkaCluster.bootstrapServers(),
-      ClientConfigs.kafkaBootstrapServerRemoteDestConfig -> kafkaCluster.bootstrapServers(),
+      Cl entConf gs.kafkaBootstrapServerConf g -> kafkaCluster.bootstrapServers(),
+      Cl entConf gs.kafkaBootstrapServerRemoteDestConf g -> kafkaCluster.bootstrapServers(),
     )
   }
 
-  override val server: EmbeddedTwitterServer = new EmbeddedTwitterServer(
-    twitterServer = new RekeyUuaIesourceService() {
-      override def warmup(): Unit = {
+  overr de val server: EmbeddedTw terServer = new EmbeddedTw terServer(
+    tw terServer = new RekeyUua es ceServ ce() {
+      overr de def warmup(): Un  = {
         // noop
       }
 
-      override val overrideModules = Seq(
-        KafkaProcessorRekeyUuaIesourceModule
+      overr de val overr deModules = Seq(
+        KafkaProcessorRekeyUua es ceModule
       )
     },
-    globalFlags = Map[GlobalFlag[_], String](
-      com.twitter.finatra.kafka.consumers.enableTlsAndKerberos -> "false",
+    globalFlags = Map[GlobalFlag[_], Str ng](
+      com.tw ter.f natra.kafka.consu rs.enableTlsAndKerberos -> "false",
     ),
-    flags = startupFlags ++ kafkaBootstrapFlag ++ deciderFlags,
-    stage = Stage.PRODUCTION
+    flags = startupFlags ++ kafkaBootstrapFlag ++ dec derFlags,
+    stage = Stage.PRODUCT ON
   )
 
-  private def getConsumer(
-    seekStrategy: SeekStrategy = SeekStrategy.BEGINNING,
+  pr vate def getConsu r(
+    seekStrategy: SeekStrategy = SeekStrategy.BEG NN NG,
   ) = {
-    val builder = FinagleKafkaConsumerBuilder()
-      .dest(brokers.map(_.brokerList()).mkString(","))
-      .clientId("consumer")
-      .groupId(KafkaGroupId("validator"))
-      .keyDeserializer(ScalaSerdes.Long.deserializer)
-      .valueDeserializer(ScalaSerdes.CompactThrift[InteractionEvent].deserializer)
-      .requestTimeout(Duration.fromSeconds(1))
-      .enableAutoCommit(false)
+    val bu lder = F nagleKafkaConsu rBu lder()
+      .dest(brokers.map(_.brokerL st()).mkStr ng(","))
+      .cl ent d("consu r")
+      .group d(KafkaGroup d("val dator"))
+      .keyDeser al zer(ScalaSerdes.Long.deser al zer)
+      .valueDeser al zer(ScalaSerdes.CompactThr ft[ nteract onEvent].deser al zer)
+      .requestT  out(Durat on.fromSeconds(1))
+      .enableAutoComm (false)
       .seekStrategy(seekStrategy)
 
-    new KafkaConsumerClient(builder.config)
+    new KafkaConsu rCl ent(bu lder.conf g)
   }
 
-  private def getUUAConsumer(
-    seekStrategy: SeekStrategy = SeekStrategy.BEGINNING,
+  pr vate def getUUAConsu r(
+    seekStrategy: SeekStrategy = SeekStrategy.BEG NN NG,
   ) = {
-    val builder = FinagleKafkaConsumerBuilder()
-      .dest(brokers.map(_.brokerList()).mkString(","))
-      .clientId("consumer_uua")
-      .groupId(KafkaGroupId("validator_uua"))
-      .keyDeserializer(UnKeyedSerde.deserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[KeyedUuaTweet].deserializer)
-      .requestTimeout(Duration.fromSeconds(1))
-      .enableAutoCommit(false)
+    val bu lder = F nagleKafkaConsu rBu lder()
+      .dest(brokers.map(_.brokerL st()).mkStr ng(","))
+      .cl ent d("consu r_uua")
+      .group d(KafkaGroup d("val dator_uua"))
+      .keyDeser al zer(UnKeyedSerde.deser al zer)
+      .valueDeser al zer(ScalaSerdes.Thr ft[KeyedUuaT et].deser al zer)
+      .requestT  out(Durat on.fromSeconds(1))
+      .enableAutoComm (false)
       .seekStrategy(seekStrategy)
 
-    new KafkaConsumerClient(builder.config)
+    new KafkaConsu rCl ent(bu lder.conf g)
   }
 
-  private def getProducer(clientId: String = "producer") = {
-    FinagleKafkaProducerBuilder()
-      .dest(brokers.map(_.brokerList()).mkString(","))
-      .clientId(clientId)
+  pr vate def getProducer(cl ent d: Str ng = "producer") = {
+    F nagleKafkaProducerBu lder()
+      .dest(brokers.map(_.brokerL st()).mkStr ng(","))
+      .cl ent d(cl ent d)
       .ackMode(AckMode.ALL)
-      .batchSize(StorageUnit.zero)
-      .keySerializer(ScalaSerdes.Long.serializer)
-      .valueSerializer(ScalaSerdes.CompactThrift[InteractionEvent].serializer)
-      .build()
+      .batchS ze(StorageUn .zero)
+      .keySer al zer(ScalaSerdes.Long.ser al zer)
+      .valueSer al zer(ScalaSerdes.CompactThr ft[ nteract onEvent].ser al zer)
+      .bu ld()
   }
 
-  test("RekeyUuaIesourceService starts") {
-    server.assertHealthy()
+  test("RekeyUua es ceServ ce starts") {
+    server.assert althy()
   }
 
-  test("RekeyUuaIesourceService should process input events") {
+  test("RekeyUua es ceServ ce should process  nput events") {
     val producer = getProducer()
-    val inputConsumer = getConsumer()
-    val uuaConsumer = getUUAConsumer()
+    val  nputConsu r = getConsu r()
+    val uuaConsu r = getUUAConsu r()
 
-    val value: InteractionEvent = InteractionEvent(
-      targetId = 1L,
-      targetType = InteractionTargetType.Tweet,
-      engagingUserId = 11L,
-      eventSource = EventSource.ClientEvent,
-      timestampMillis = 123456L,
-      interactionType = Some(InteractionType.TweetRenderImpression),
-      details = InteractionDetails.TweetRenderImpression(TweetImpression()),
-      additionalEngagingUserIdentifiers = UserIdentifier(),
-      engagingContext = EngagingContext.ClientEventContext(
-        ClientEventContext(
-          clientEventNamespace = ContextualEventNamespace(),
-          clientType = ClientType.Iphone,
-          displayLocation = DisplayLocation(1)))
+    val value:  nteract onEvent =  nteract onEvent(
+      target d = 1L,
+      targetType =  nteract onTargetType.T et,
+      engag ngUser d = 11L,
+      eventS ce = EventS ce.Cl entEvent,
+      t  stampM ll s = 123456L,
+       nteract onType = So ( nteract onType.T etRender mpress on),
+      deta ls =  nteract onDeta ls.T etRender mpress on(T et mpress on()),
+      add  onalEngag ngUser dent f ers = User dent f er(),
+      engag ngContext = Engag ngContext.Cl entEventContext(
+        Cl entEventContext(
+          cl entEventNa space = ContextualEventNa space(),
+          cl entType = Cl entType. phone,
+          d splayLocat on = D splayLocat on(1)))
     )
 
     try {
-      server.assertHealthy()
+      server.assert althy()
 
       // before, should be empty
-      inputConsumer.subscribe(Set(KafkaTopic(inputTopic.topic)))
-      assert(inputConsumer.poll().count() == 0)
+       nputConsu r.subscr be(Set(KafkaTop c( nputTop c.top c)))
+      assert( nputConsu r.poll().count() == 0)
 
-      // after, should contain at least a message
-      await(producer.send(inputTopic.topic, value.targetId, value, System.currentTimeMillis))
+      // after, should conta n at least a  ssage
+      awa (producer.send( nputTop c.top c, value.target d, value, System.currentT  M ll s))
       producer.flush()
-      assert(inputConsumer.poll().count() == 1)
+      assert( nputConsu r.poll().count() == 1)
 
-      uuaConsumer.subscribe(Set(KafkaTopic(outputTopic.topic)))
-      // This is tricky: it is not guaranteed that the srvice can process and output the
-      // event to output topic faster than the below consumer. So we'd use a timer here which may
-      // not be the best practice.
-      // If someone finds the below test is flaky, please just remove the below test completely.
+      uuaConsu r.subscr be(Set(KafkaTop c(outputTop c.top c)))
+      // T   s tr cky:    s not guaranteed that t  srv ce can process and output t 
+      // event to output top c faster than t  below consu r. So  'd use a t  r  re wh ch may
+      // not be t  best pract ce.
+      //  f so one f nds t  below test  s flaky, please just remove t  below test completely.
       Thread.sleep(5000L)
-      assert(uuaConsumer.poll().count() == 1)
-    } finally {
-      await(producer.close())
-      inputConsumer.close()
+      assert(uuaConsu r.poll().count() == 1)
+    } f nally {
+      awa (producer.close())
+       nputConsu r.close()
     }
   }
 }

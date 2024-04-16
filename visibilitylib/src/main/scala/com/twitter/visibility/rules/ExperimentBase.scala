@@ -1,16 +1,16 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.params.LabelSourceParam
-import com.twitter.visibility.models.LabelSource
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.v s b l y.conf gap .params.LabelS ceParam
+ mport com.tw ter.v s b l y.models.LabelS ce
 
-object ExperimentBase {
-  val sourceToParamMap: Map[LabelSource, LabelSourceParam] = Map.empty
+object Exper  ntBase {
+  val s ceToParamMap: Map[LabelS ce, LabelS ceParam] = Map.empty
 
-  final def shouldFilterForSource(params: Params, labelSourceOpt: Option[LabelSource]): Boolean = {
-    labelSourceOpt
-      .map { source =>
-        val param = ExperimentBase.sourceToParamMap.get(source)
+  f nal def shouldF lterForS ce(params: Params, labelS ceOpt: Opt on[LabelS ce]): Boolean = {
+    labelS ceOpt
+      .map { s ce =>
+        val param = Exper  ntBase.s ceToParamMap.get(s ce)
         param.map(params.apply).getOrElse(true)
       }
       .getOrElse(true)

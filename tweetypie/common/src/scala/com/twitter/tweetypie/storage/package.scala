@@ -1,11 +1,11 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import java.nio.ByteBuffer
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanValue
+ mport java.n o.ByteBuffer
 
 package object storage {
-  type TweetId = Long
-  type FieldId = Short
+  type T et d = Long
+  type F eld d = Short
 
-  type TweetManhattanValue = ManhattanValue[ByteBuffer]
+  type T etManhattanValue = ManhattanValue[ByteBuffer]
 }

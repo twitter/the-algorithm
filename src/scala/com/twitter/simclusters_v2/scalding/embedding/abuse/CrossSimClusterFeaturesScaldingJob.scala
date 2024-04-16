@@ -1,149 +1,149 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse
 
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.Years
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInTruncatedKMatrix
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.AdhocCrossSimClusterInteractionScores
-import com.twitter.simclusters_v2.thriftscala.ClustersScore
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.CassowaryJob
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterFavInteractionFeaturesScalaDataset
-import java.util.TimeZone
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng.Years
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.NumBlocksP95
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.getFlockBlocksSparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.getUser nterested nTruncatedKMatr x
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.Cluster d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.User d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.AdhocCrossS mCluster nteract onScores
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.CassowaryJob
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocCrossS mclusterBlock nteract onFeaturesScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocCrossS mclusterFav nteract onFeaturesScalaDataset
+ mport java.ut l.T  Zone
 
 /*
 To run:
-scalding remote run \
+scald ng remote run \
 --user cassowary \
---submitter hadoopnest1.atla.twitter.com \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:cross_simcluster-adhoc \
---main-class com.twitter.simclusters_v2.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--subm ter hadoopnest1.atla.tw ter.com \
+--target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/abuse:cross_s mcluster-adhoc \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.CrossS mClusterFeaturesScald ngJob \
+--subm ter- mory 128192. gabyte --hadoop-propert es "mapreduce.map. mory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce. mory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
 -- \
 --date 2021-02-07 \
---dalEnvironment Prod
+--dalEnv ron nt Prod
  */
 
-object CrossSimClusterFeaturesUtil {
+object CrossS mClusterFeaturesUt l {
 
   /**
-   * To generate the interaction score for 2 simclusters c1 and c2 for all cluster combinations (I):
-   * a) Get C - user interestedIn matrix, User * Cluster
-   * b) Get INT - positive or negative interaction matrix, User * User
-   * c) Compute C^T*INT
-   * d) Finally, return C^T*INT*C
+   * To generate t   nteract on score for 2 s mclusters c1 and c2 for all cluster comb nat ons ( ):
+   * a) Get C - user  nterested n matr x, User * Cluster
+   * b) Get  NT - pos  ve or negat ve  nteract on matr x, User * User
+   * c) Compute C^T* NT
+   * d) F nally, return C^T* NT*C
    */
   def getCrossClusterScores(
-    userClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    userInteractionMatrix: SparseMatrix[UserId, UserId, Double]
-  ): SparseMatrix[ClusterId, ClusterId, Double] = {
-    // intermediate = C^T*INT
-    val intermediateResult = userClusterMatrix.transpose.multiplySparseMatrix(userInteractionMatrix)
-    // return intermediate*C
-    intermediateResult.multiplySparseMatrix(userClusterMatrix)
+    userClusterMatr x: SparseMatr x[User d, Cluster d, Double],
+    user nteract onMatr x: SparseMatr x[User d, User d, Double]
+  ): SparseMatr x[Cluster d, Cluster d, Double] = {
+    //  nter d ate = C^T* NT
+    val  nter d ateResult = userClusterMatr x.transpose.mult plySparseMatr x(user nteract onMatr x)
+    // return  nter d ate*C
+     nter d ateResult.mult plySparseMatr x(userClusterMatr x)
   }
 }
 
-object CrossSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
-  override def jobName: String = "AdhocAbuseCrossSimClusterFeaturesScaldingJob"
+object CrossS mClusterFeaturesScald ngJob extends AdhocExecut onApp w h CassowaryJob {
+  overr de def jobNa : Str ng = "AdhocAbuseCrossS mClusterFeaturesScald ngJob"
 
-  private val outputPathBlocksThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_cross_simcluster_block_features"
+  pr vate val outputPathBlocksThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = ModelVers on.Model20m145kUpdated,
+    pathSuff x = "abuse_cross_s mcluster_block_features"
   )
 
-  private val outputPathFavThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_cross_simcluster_fav_features"
+  pr vate val outputPathFavThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = ModelVers on.Model20m145kUpdated,
+    pathSuff x = "abuse_cross_s mcluster_fav_features"
   )
 
-  private val HalfLifeInDaysForFavScore = 100
+  pr vate val HalfL fe nDaysForFavScore = 100
 
-  // Adhoc jobs which use all user interestedIn simclusters (default=50) was failing
-  // Hence truncating the number of clusters
-  private val MaxNumClustersPerUser = 20
+  // Adhoc jobs wh ch use all user  nterested n s mclusters (default=50) was fa l ng
+  //  nce truncat ng t  number of clusters
+  pr vate val MaxNumClustersPerUser = 20
 
-  import CrossSimClusterFeaturesUtil._
-  override def runOnDateRange(
+   mport CrossS mClusterFeaturesUt l._
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val normalizedUserInterestedInMatrix: SparseMatrix[UserId, ClusterId, Double] =
-      getUserInterestedInTruncatedKMatrix(MaxNumClustersPerUser).rowL2Normalize
+    val normal zedUser nterested nMatr x: SparseMatr x[User d, Cluster d, Double] =
+      getUser nterested nTruncatedKMatr x(MaxNumClustersPerUser).rowL2Normal ze
 
-    //the below code is to get cross simcluster features from flockblocks - negative user-user interactions.
-    val flockBlocksMatrix: SparseMatrix[UserId, UserId, Double] =
-      getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+    //t  below code  s to get cross s mcluster features from flockblocks - negat ve user-user  nteract ons.
+    val flockBlocksMatr x: SparseMatr x[User d, User d, Double] =
+      getFlockBlocksSparseMatr x(NumBlocksP95, dateRange.prepend(Years(1)))
 
-    val crossClusterBlockScores: SparseMatrix[ClusterId, ClusterId, Double] =
-      getCrossClusterScores(normalizedUserInterestedInMatrix, flockBlocksMatrix)
+    val crossClusterBlockScores: SparseMatr x[Cluster d, Cluster d, Double] =
+      getCrossClusterScores(normal zedUser nterested nMatr x, flockBlocksMatr x)
 
-    val blockScores: TypedPipe[AdhocCrossSimClusterInteractionScores] =
+    val blockScores: TypedP pe[AdhocCrossS mCluster nteract onScores] =
       crossClusterBlockScores.rowAsKeys
-        .mapValues(List(_)).sumByKey.toTypedPipe.map {
-          case (givingClusterId, receivingClustersWithScores) =>
-            AdhocCrossSimClusterInteractionScores(
-              clusterId = givingClusterId,
-              clusterScores = receivingClustersWithScores.map {
+        .mapValues(L st(_)).sumByKey.toTypedP pe.map {
+          case (g v ngCluster d, rece v ngClustersW hScores) =>
+            AdhocCrossS mCluster nteract onScores(
+              cluster d = g v ngCluster d,
+              clusterScores = rece v ngClustersW hScores.map {
                 case (cluster, score) => ClustersScore(cluster, score)
               })
         }
 
-    // get cross simcluster features from fav graph - positive user-user interactions
-    val favGraphMatrix: SparseMatrix[UserId, UserId, Double] =
-      SparseMatrix.apply[UserId, UserId, Double](
-        ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
+    // get cross s mcluster features from fav graph - pos  ve user-user  nteract ons
+    val favGraphMatr x: SparseMatr x[User d, User d, Double] =
+      SparseMatr x.apply[User d, User d, Double](
+        ExternalDataS ces.getFavEdges(HalfL fe nDaysForFavScore))
 
-    val crossClusterFavScores: SparseMatrix[ClusterId, ClusterId, Double] =
-      getCrossClusterScores(normalizedUserInterestedInMatrix, favGraphMatrix)
+    val crossClusterFavScores: SparseMatr x[Cluster d, Cluster d, Double] =
+      getCrossClusterScores(normal zedUser nterested nMatr x, favGraphMatr x)
 
-    val favScores: TypedPipe[AdhocCrossSimClusterInteractionScores] =
+    val favScores: TypedP pe[AdhocCrossS mCluster nteract onScores] =
       crossClusterFavScores.rowAsKeys
-        .mapValues(List(_)).sumByKey.toTypedPipe.map {
-          case (givingClusterId, receivingClustersWithScores) =>
-            AdhocCrossSimClusterInteractionScores(
-              clusterId = givingClusterId,
-              clusterScores = receivingClustersWithScores.map {
+        .mapValues(L st(_)).sumByKey.toTypedP pe.map {
+          case (g v ngCluster d, rece v ngClustersW hScores) =>
+            AdhocCrossS mCluster nteract onScores(
+              cluster d = g v ngCluster d,
+              clusterScores = rece v ngClustersW hScores.map {
                 case (cluster, score) => ClustersScore(cluster, score)
               })
         }
-    // write both block and fav interaction matrices to hdfs in thrift format
-    Execution
-      .zip(
-        blockScores.writeDALSnapshotExecution(
-          AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset,
-          D.Daily,
-          D.Suffix(outputPathBlocksThrift),
+    // wr e both block and fav  nteract on matr ces to hdfs  n thr ft format
+    Execut on
+      .z p(
+        blockScores.wr eDALSnapshotExecut on(
+          AdhocCrossS mclusterBlock nteract onFeaturesScalaDataset,
+          D.Da ly,
+          D.Suff x(outputPathBlocksThr ft),
           D.Parquet,
           dateRange.`end`),
-        favScores.writeDALSnapshotExecution(
-          AdhocCrossSimclusterFavInteractionFeaturesScalaDataset,
-          D.Daily,
-          D.Suffix(outputPathFavThrift),
+        favScores.wr eDALSnapshotExecut on(
+          AdhocCrossS mclusterFav nteract onFeaturesScalaDataset,
+          D.Da ly,
+          D.Suff x(outputPathFavThr ft),
           D.Parquet,
           dateRange.`end`)
-      ).unit
+      ).un 
   }
 }

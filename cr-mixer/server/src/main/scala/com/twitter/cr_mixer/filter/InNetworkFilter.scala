@@ -1,80 +1,80 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.UtegT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.param.UtegT etGlobalParams
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /***
- * Filters in-network tweets
+ * F lters  n-network t ets
  */
-@Singleton
-case class InNetworkFilter @Inject() (
-  @Named(ModuleNames.RealGraphInStore) realGraphStoreMh: ReadableStore[UserId, CandidateSeq],
-  globalStats: StatsReceiver)
-    extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
-  import InNetworkFilter._
+@S ngleton
+case class  nNetworkF lter @ nject() (
+  @Na d(ModuleNa s.RealGraph nStore) realGraphStoreMh: ReadableStore[User d, Cand dateSeq],
+  globalStats: StatsRece ver)
+    extends F lterBase {
+  overr de val na : Str ng = t .getClass.getCanon calNa 
+   mport  nNetworkF lter._
 
-  override type ConfigType = FilterConfig
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val filterCandidatesStats = stats.scope("filter_candidates")
+  overr de type Conf gType = F lterConf g
+  pr vate val stats: StatsRece ver = globalStats.scope(t .getClass.getCanon calNa )
+  pr vate val f lterCand datesStats = stats.scope("f lter_cand dates")
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    filterConfig: FilterConfig,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    StatsUtil.trackItemsStats(filterCandidatesStats) {
-      filterCandidates(candidates, filterConfig)
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    f lterConf g: F lterConf g,
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    StatsUt l.track emsStats(f lterCand datesStats) {
+      f lterCand dates(cand dates, f lterConf g)
     }
   }
 
-  private def filterCandidates(
-    candidates: Seq[Seq[InitialCandidate]],
-    filterConfig: FilterConfig,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  pr vate def f lterCand dates(
+    cand dates: Seq[Seq[ n  alCand date]],
+    f lterConf g: F lterConf g,
+  ): Future[Seq[Seq[ n  alCand date]]] = {
 
-    if (!filterConfig.enableInNetworkFilter) {
-      Future.value(candidates)
+     f (!f lterConf g.enable nNetworkF lter) {
+      Future.value(cand dates)
     } else {
-      filterConfig.userIdOpt match {
-        case Some(userId) =>
+      f lterConf g.user dOpt match {
+        case So (user d) =>
           realGraphStoreMh
-            .get(userId).map(_.map(_.candidates.map(_.userId)).getOrElse(Seq.empty).toSet).map {
-              realGraphInNetworkAuthorsSet =>
-                candidates.map(_.filterNot { candidate =>
-                  realGraphInNetworkAuthorsSet.contains(candidate.tweetInfo.authorId)
+            .get(user d).map(_.map(_.cand dates.map(_.user d)).getOrElse(Seq.empty).toSet).map {
+              realGraph nNetworkAuthorsSet =>
+                cand dates.map(_.f lterNot { cand date =>
+                  realGraph nNetworkAuthorsSet.conta ns(cand date.t et nfo.author d)
                 })
             }
-        case None => Future.value(candidates)
+        case None => Future.value(cand dates)
       }
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     request: CGQueryType
-  ): FilterConfig = {
+  ): F lterConf g = {
     request match {
-      case UtegTweetCandidateGeneratorQuery(userId, _, _, _, _, params, _) =>
-        FilterConfig(Some(userId), params(UtegTweetGlobalParams.EnableInNetworkFilterParam))
-      case _ => FilterConfig(None, false)
+      case UtegT etCand dateGeneratorQuery(user d, _, _, _, _, params, _) =>
+        F lterConf g(So (user d), params(UtegT etGlobalParams.Enable nNetworkF lterParam))
+      case _ => F lterConf g(None, false)
     }
   }
 }
 
-object InNetworkFilter {
-  case class FilterConfig(
-    userIdOpt: Option[UserId],
-    enableInNetworkFilter: Boolean)
+object  nNetworkF lter {
+  case class F lterConf g(
+    user dOpt: Opt on[User d],
+    enable nNetworkF lter: Boolean)
 }

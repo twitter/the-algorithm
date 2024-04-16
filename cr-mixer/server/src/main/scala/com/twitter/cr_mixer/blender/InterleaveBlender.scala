@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.blender
+package com.tw ter.cr_m xer.blender
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.ut l. nterleaveUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class InterleaveBlender @Inject() (globalStats: StatsReceiver) {
+@S ngleton
+case class  nterleaveBlender @ nject() (globalStats: StatsRece ver) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  pr vate val na : Str ng = t .getClass.getCanon calNa 
+  pr vate val stats: StatsRece ver = globalStats.scope(na )
 
   /**
-   * Interleaves candidates, by taking 1 candidate from each Seq[Seq[InitialCandidate]] in sequence,
-   * until we run out of candidates.
+   *  nterleaves cand dates, by tak ng 1 cand date from each Seq[Seq[ n  alCand date]]  n sequence,
+   * unt l   run out of cand dates.
    */
   def blend(
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+     nputCand dates: Seq[Seq[ n  alCand date]],
+  ): Future[Seq[BlendedCand date]] = {
 
-    val interleavedCandidates = InterleaveUtil.interleave(inputCandidates)
+    val  nterleavedCand dates =  nterleaveUt l. nterleave( nputCand dates)
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("cand dates").add( nterleavedCand dates.s ze)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blendedCand dates = BlendedCand datesBu lder.bu ld( nputCand dates,  nterleavedCand dates)
+    Future.value(blendedCand dates)
   }
 
 }

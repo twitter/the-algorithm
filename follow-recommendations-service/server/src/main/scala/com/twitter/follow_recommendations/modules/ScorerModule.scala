@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance.ep_model.common.CommonConstants
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.EPScorerBuilder
-import java.io.File
-import java.io.FileOutputStream
-import scala.language.postfixOps
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.relevance.ep_model.common.CommonConstants
+ mport com.tw ter.relevance.ep_model.scorer.EPScorer
+ mport com.tw ter.relevance.ep_model.scorer.EPScorerBu lder
+ mport java. o.F le
+ mport java. o.F leOutputStream
+ mport scala.language.postf xOps
 
-object ScorerModule extends TwitterModule {
-  private val STPScorerPath = "/quality/stp_models/20141223"
+object ScorerModule extends Tw terModule {
+  pr vate val STPScorerPath = "/qual y/stp_models/20141223"
 
-  private def fileFromResource(resource: String): File = {
-    val inputStream = getClass.getResourceAsStream(resource)
-    val file = File.createTempFile(resource, "temp")
-    val fos = new FileOutputStream(file)
-    Iterator
-      .continually(inputStream.read)
-      .takeWhile(-1 !=)
-      .foreach(fos.write)
-    file
+  pr vate def f leFromRes ce(res ce: Str ng): F le = {
+    val  nputStream = getClass.getRes ceAsStream(res ce)
+    val f le = F le.createTempF le(res ce, "temp")
+    val fos = new F leOutputStream(f le)
+     erator
+      .cont nually( nputStream.read)
+      .takeWh le(-1 !=)
+      .foreach(fos.wr e)
+    f le
   }
 
-  @Provides
-  @Singleton
-  def provideEpScorer: EPScorer = {
+  @Prov des
+  @S ngleton
+  def prov deEpScorer: EPScorer = {
     val modelPath =
-      fileFromResource(STPScorerPath + "/" + CommonConstants.EP_MODEL_FILE_NAME).getAbsolutePath
-    val trainingConfigPath =
-      fileFromResource(STPScorerPath + "/" + CommonConstants.TRAINING_CONFIG).getAbsolutePath
-    val epScorer = new EPScorerBuilder
+      f leFromRes ce(STPScorerPath + "/" + CommonConstants.EP_MODEL_F LE_NAME).getAbsolutePath
+    val tra n ngConf gPath =
+      f leFromRes ce(STPScorerPath + "/" + CommonConstants.TRA N NG_CONF G).getAbsolutePath
+    val epScorer = new EPScorerBu lder
     epScorer
-      .withModelPath(modelPath)
-      .withTrainingConfig(trainingConfigPath)
-      .build()
+      .w hModelPath(modelPath)
+      .w hTra n ngConf g(tra n ngConf gPath)
+      .bu ld()
   }
 }

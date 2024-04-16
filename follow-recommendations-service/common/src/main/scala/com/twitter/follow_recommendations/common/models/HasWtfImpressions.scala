@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
-trait HasWtfImpressions {
+tra  HasWtf mpress ons {
 
-  def wtfImpressions: Option[Seq[WtfImpression]]
+  def wtf mpress ons: Opt on[Seq[Wtf mpress on]]
 
-  lazy val numWtfImpressions: Int = wtfImpressions.map(_.size).getOrElse(0)
+  lazy val numWtf mpress ons:  nt = wtf mpress ons.map(_.s ze).getOrElse(0)
 
-  lazy val candidateImpressions: Map[Long, WtfImpression] = wtfImpressions
-    .map { imprMap =>
-      imprMap.map { i =>
-        i.candidateId -> i
+  lazy val cand date mpress ons: Map[Long, Wtf mpress on] = wtf mpress ons
+    .map {  mprMap =>
+       mprMap.map {   =>
+         .cand date d ->  
       }.toMap
     }.getOrElse(Map.empty)
 
-  lazy val latestImpressionTime: Time = {
-    if (wtfImpressions.exists(_.nonEmpty)) {
-      wtfImpressions.get.map(_.latestTime).max
-    } else Time.Top
+  lazy val latest mpress onT  : T   = {
+     f (wtf mpress ons.ex sts(_.nonEmpty)) {
+      wtf mpress ons.get.map(_.latestT  ).max
+    } else T  .Top
   }
 
-  def getCandidateImpressionCounts(id: Long): Option[Int] =
-    candidateImpressions.get(id).map(_.counts)
+  def getCand date mpress onCounts( d: Long): Opt on[ nt] =
+    cand date mpress ons.get( d).map(_.counts)
 
-  def getCandidateLatestTime(id: Long): Option[Time] = {
-    candidateImpressions.get(id).map(_.latestTime)
+  def getCand dateLatestT  ( d: Long): Opt on[T  ] = {
+    cand date mpress ons.get( d).map(_.latestT  )
   }
 }

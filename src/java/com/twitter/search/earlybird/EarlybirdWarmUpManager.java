@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common.zookeeper.ServerSet;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
 
-public class EarlybirdWarmUpManager {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdWarmUpManager.class);
-  private static final String WARM_UP_ON_DURATION_DECIDER_KEY_PATTERN =
-      "%s_warm_up_duration_seconds";
+publ c class Earlyb rdWarmUpManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdWarmUpManager.class);
+  pr vate stat c f nal Str ng WARM_UP_ON_DURAT ON_DEC DER_KEY_PATTERN =
+      "%s_warm_up_durat on_seconds";
 
-  private final EarlybirdServerSetManager earlybirdServerSetManager;
-  private final String clusterName;
-  private final SearchIndexingMetricSet.StartupMetric startUpInWarmUpMetric;
-  private final Decider decider;
-  private final Clock clock;
+  pr vate f nal Earlyb rdServerSetManager earlyb rdServerSetManager;
+  pr vate f nal Str ng clusterNa ;
+  pr vate f nal Search ndex ng tr cSet.Startup tr c startUp nWarmUp tr c;
+  pr vate f nal Dec der dec der;
+  pr vate f nal Clock clock;
 
-  public EarlybirdWarmUpManager(EarlybirdServerSetManager earlybirdServerSetManager,
-                                PartitionConfig partitionConfig,
-                                SearchIndexingMetricSet searchIndexingMetricSet,
-                                Decider decider,
+  publ c Earlyb rdWarmUpManager(Earlyb rdServerSetManager earlyb rdServerSetManager,
+                                Part  onConf g part  onConf g,
+                                Search ndex ng tr cSet search ndex ng tr cSet,
+                                Dec der dec der,
                                 Clock clock) {
-    this.earlybirdServerSetManager = earlybirdServerSetManager;
-    this.clusterName = partitionConfig.getClusterName();
-    this.startUpInWarmUpMetric = searchIndexingMetricSet.startupInWarmUp;
-    this.decider = decider;
-    this.clock = clock;
+    t .earlyb rdServerSetManager = earlyb rdServerSetManager;
+    t .clusterNa  = part  onConf g.getClusterNa ();
+    t .startUp nWarmUp tr c = search ndex ng tr cSet.startup nWarmUp;
+    t .dec der = dec der;
+    t .clock = clock;
   }
 
-  public String getServerSetIdentifier() {
-    return earlybirdServerSetManager.getServerSetIdentifier();
+  publ c Str ng getServerSet dent f er() {
+    return earlyb rdServerSetManager.getServerSet dent f er();
   }
 
   /**
-   * Warms up the earlybird. The earlybird joins a special server set that gets production dark
-   * reads, and leaves this server set after a specified period of time.
+   * Warms up t  earlyb rd. T  earlyb rd jo ns a spec al server set that gets product on dark
+   * reads, and leaves t  server set after a spec f ed per od of t  .
    */
-  public void warmUp() throws InterruptedException, ServerSet.UpdateException {
-    int warmUpDurationSeconds = DeciderUtil.getAvailability(
-        decider,
-        String.format(WARM_UP_ON_DURATION_DECIDER_KEY_PATTERN, clusterName.replaceAll("-", "_")));
-    if (warmUpDurationSeconds == 0) {
-      LOG.info(String.format("Warm up stage duration for cluster %s set to 0. Skipping.",
-                             clusterName));
+  publ c vo d warmUp() throws  nterruptedExcept on, ServerSet.UpdateExcept on {
+     nt warmUpDurat onSeconds = Dec derUt l.getAva lab l y(
+        dec der,
+        Str ng.format(WARM_UP_ON_DURAT ON_DEC DER_KEY_PATTERN, clusterNa .replaceAll("-", "_")));
+     f (warmUpDurat onSeconds == 0) {
+      LOG. nfo(Str ng.format("Warm up stage durat on for cluster %s set to 0. Sk pp ng.",
+                             clusterNa ));
       return;
     }
 
-    earlybirdServerSetManager.joinServerSet("internal warm up");
+    earlyb rdServerSetManager.jo nServerSet(" nternal warm up");
 
-    // If doWarmUp() is interrupted, try to leave the server set, and propagate the
-    // InterruptedException. Otherwise, try to leave the server set, and propagate any exception
-    // that it might throw.
-    InterruptedException warmUpInterruptedException = null;
+    //  f doWarmUp()  s  nterrupted, try to leave t  server set, and propagate t 
+    //  nterruptedExcept on. Ot rw se, try to leave t  server set, and propagate any except on
+    // that   m ght throw.
+     nterruptedExcept on warmUp nterruptedExcept on = null;
     try {
-      doWarmUp(warmUpDurationSeconds);
-    } catch (InterruptedException e) {
-      warmUpInterruptedException = e;
+      doWarmUp(warmUpDurat onSeconds);
+    } catch ( nterruptedExcept on e) {
+      warmUp nterruptedExcept on = e;
       throw e;
-    } finally {
-      if (warmUpInterruptedException != null) {
+    } f nally {
+       f (warmUp nterruptedExcept on != null) {
         try {
-          earlybirdServerSetManager.leaveServerSet("internal warm up");
-        } catch (Exception e) {
-          warmUpInterruptedException.addSuppressed(e);
+          earlyb rdServerSetManager.leaveServerSet(" nternal warm up");
+        } catch (Except on e) {
+          warmUp nterruptedExcept on.addSuppressed(e);
         }
       } else {
-        earlybirdServerSetManager.leaveServerSet("internal warm up");
+        earlyb rdServerSetManager.leaveServerSet(" nternal warm up");
       }
     }
   }
 
-  @VisibleForTesting
-  protected void doWarmUp(int warmUpDurationSeconds) throws InterruptedException {
-    long warmUpStartTimeMillis = clock.nowMillis();
-    LOG.info(String.format("Warming up for %d seconds.", warmUpDurationSeconds));
-    EarlybirdStatus.beginEvent("warm_up", startUpInWarmUpMetric);
+  @V s bleForTest ng
+  protected vo d doWarmUp( nt warmUpDurat onSeconds) throws  nterruptedExcept on {
+    long warmUpStartT  M ll s = clock.nowM ll s();
+    LOG. nfo(Str ng.format("Warm ng up for %d seconds.", warmUpDurat onSeconds));
+    Earlyb rdStatus.beg nEvent("warm_up", startUp nWarmUp tr c);
 
-    // Sleep for warmUpDurationSeconds seconds, but check if the server is going down every second.
-    int count = 0;
+    // Sleep for warmUpDurat onSeconds seconds, but c ck  f t  server  s go ng down every second.
+     nt count = 0;
     try {
-      while ((count++ < warmUpDurationSeconds)
-             && (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING)) {
-        clock.waitFor(1000);
+      wh le ((count++ < warmUpDurat onSeconds)
+             && (Earlyb rdStatus.getStatusCode() != Earlyb rdStatusCode.STOPP NG)) {
+        clock.wa For(1000);
       }
-    } finally {
-      LOG.info(String.format("Done warming up after %d milliseconds.",
-                             clock.nowMillis() - warmUpStartTimeMillis));
-      EarlybirdStatus.endEvent("warm_up", startUpInWarmUpMetric);
+    } f nally {
+      LOG. nfo(Str ng.format("Done warm ng up after %d m ll seconds.",
+                             clock.nowM ll s() - warmUpStartT  M ll s));
+      Earlyb rdStatus.endEvent("warm_up", startUp nWarmUp tr c);
     }
   }
 }

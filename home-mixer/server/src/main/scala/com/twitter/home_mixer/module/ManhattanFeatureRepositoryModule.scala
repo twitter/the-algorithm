@@ -1,467 +1,467 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.bijection.thrift.ThriftCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.home_mixer.param.HomeMixerInjectionNames._
-import com.twitter.home_mixer.util.InjectionTransformerImplicits._
-import com.twitter.home_mixer.util.LanguageUtil
-import com.twitter.home_mixer.util.TensorFlowUtil
-import com.twitter.inject.TwitterModule
-import com.twitter.manhattan.v1.{thriftscala => mh}
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.{thriftscala => fs}
-import com.twitter.onboarding.relevance.features.{thriftjava => rf}
-import com.twitter.product_mixer.shared_library.manhattan_client.ManhattanClientBuilder
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.service.metastore.gen.{thriftscala => smg}
-import com.twitter.servo.cache._
-import com.twitter.servo.manhattan.ManhattanKeyValueRepository
-import com.twitter.servo.repository.CachingKeyValueRepository
-import com.twitter.servo.repository.ChunkingStrategy
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.Repository
-import com.twitter.servo.repository.keysAsQuery
-import com.twitter.servo.util.Transformer
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.author_features.v1.{thriftjava => af}
-import com.twitter.timelines.suggests.common.dense_data_record.{thriftscala => ddr}
-import com.twitter.user_session_store.{thriftscala => uss_scala}
-import com.twitter.user_session_store.{thriftjava => uss}
-import com.twitter.util.Duration
-import com.twitter.util.Try
-import java.nio.ByteBuffer
-import javax.inject.Named
-import javax.inject.Singleton
-import org.apache.thrift.protocol.TCompactProtocol
-import org.apache.thrift.transport.TMemoryInputTransport
-import org.apache.thrift.transport.TTransport
+ mport com.google. nject.Prov des
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.b ject on.thr ft.Thr ftCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s._
+ mport com.tw ter.ho _m xer.ut l. nject onTransfor r mpl c s._
+ mport com.tw ter.ho _m xer.ut l.LanguageUt l
+ mport com.tw ter.ho _m xer.ut l.TensorFlowUt l
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.manhattan.v1.{thr ftscala => mh}
+ mport com.tw ter.ml.ap .{thr ftscala => ml}
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.{thr ftscala => fs}
+ mport com.tw ter.onboard ng.relevance.features.{thr ftjava => rf}
+ mport com.tw ter.product_m xer.shared_l brary.manhattan_cl ent.ManhattanCl entBu lder
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaB naryThr ft
+ mport com.tw ter.search.common.constants.{thr ftscala => scc}
+ mport com.tw ter.serv ce. tastore.gen.{thr ftscala => smg}
+ mport com.tw ter.servo.cac ._
+ mport com.tw ter.servo.manhattan.ManhattanKeyValueRepos ory
+ mport com.tw ter.servo.repos ory.Cach ngKeyValueRepos ory
+ mport com.tw ter.servo.repos ory.Chunk ngStrategy
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.servo.repos ory.Repos ory
+ mport com.tw ter.servo.repos ory.keysAsQuery
+ mport com.tw ter.servo.ut l.Transfor r
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanClusters
+ mport com.tw ter.t  l nes.author_features.v1.{thr ftjava => af}
+ mport com.tw ter.t  l nes.suggests.common.dense_data_record.{thr ftscala => ddr}
+ mport com.tw ter.user_sess on_store.{thr ftscala => uss_scala}
+ mport com.tw ter.user_sess on_store.{thr ftjava => uss}
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Try
+ mport java.n o.ByteBuffer
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
+ mport org.apac .thr ft.protocol.TCompactProtocol
+ mport org.apac .thr ft.transport.T mory nputTransport
+ mport org.apac .thr ft.transport.TTransport
 
-object ManhattanFeatureRepositoryModule extends TwitterModule {
+object ManhattanFeatureRepos oryModule extends Tw terModule {
 
-  private val DEFAULT_RPC_CHUNK_SIZE = 50
+  pr vate val DEFAULT_RPC_CHUNK_S ZE = 50
 
-  private val ThriftEntityIdInjection = ScalaBinaryThrift(fs.EntityId)
+  pr vate val Thr ftEnt y d nject on = ScalaB naryThr ft(fs.Ent y d)
 
-  private val FeatureStoreUserIdKeyTransformer = new Transformer[Long, ByteBuffer] {
-    override def to(userId: Long): Try[ByteBuffer] = {
-      Try(ByteBuffer.wrap(ThriftEntityIdInjection.apply(UserId(userId).toThrift)))
+  pr vate val FeatureStoreUser dKeyTransfor r = new Transfor r[Long, ByteBuffer] {
+    overr de def to(user d: Long): Try[ByteBuffer] = {
+      Try(ByteBuffer.wrap(Thr ftEnt y d nject on.apply(User d(user d).toThr ft)))
     }
-    override def from(b: ByteBuffer): Try[Long] = ???
+    overr de def from(b: ByteBuffer): Try[Long] = ???
   }
 
-  private val FloatTensorTransformer = new Transformer[ByteBuffer, ml.FloatTensor] {
-    override def to(input: ByteBuffer): Try[ml.FloatTensor] = {
-      val floatTensor = TensorFlowUtil.embeddingByteBufferToFloatTensor(input)
+  pr vate val FloatTensorTransfor r = new Transfor r[ByteBuffer, ml.FloatTensor] {
+    overr de def to( nput: ByteBuffer): Try[ml.FloatTensor] = {
+      val floatTensor = TensorFlowUt l.embedd ngByteBufferToFloatTensor( nput)
       Try(floatTensor)
     }
 
-    override def from(b: ml.FloatTensor): Try[ByteBuffer] = ???
+    overr de def from(b: ml.FloatTensor): Try[ByteBuffer] = ???
   }
 
-  private val LanguageTransformer = new Transformer[ByteBuffer, Seq[scc.ThriftLanguage]] {
-    override def to(input: ByteBuffer): Try[Seq[scc.ThriftLanguage]] = {
+  pr vate val LanguageTransfor r = new Transfor r[ByteBuffer, Seq[scc.Thr ftLanguage]] {
+    overr de def to( nput: ByteBuffer): Try[Seq[scc.Thr ftLanguage]] = {
       Try.fromScala(
-        Bijections
-          .BinaryScalaInjection(smg.UserLanguages)
-          .andThen(Bijections.byteBuffer2Buf.inverse)
-          .invert(input).map(LanguageUtil.computeLanguages(_)))
+        B ject ons
+          .B naryScala nject on(smg.UserLanguages)
+          .andT n(B ject ons.byteBuffer2Buf. nverse)
+          . nvert( nput).map(LanguageUt l.computeLanguages(_)))
     }
 
-    override def from(b: Seq[scc.ThriftLanguage]): Try[ByteBuffer] = ???
+    overr de def from(b: Seq[scc.Thr ftLanguage]): Try[ByteBuffer] = ???
   }
 
-  private val LongKeyTransformer = Injection
+  pr vate val LongKeyTransfor r =  nject on
     .connect[Long, Array[Byte]]
-    .toByteBufferTransformer()
+    .toByteBufferTransfor r()
 
-  // manhattan clients
+  // manhattan cl ents
 
-  @Provides
-  @Singleton
-  @Named(ManhattanApolloClient)
-  def providesManhattanApolloClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
+  @Prov des
+  @S ngleton
+  @Na d(ManhattanApolloCl ent)
+  def prov desManhattanApolloCl ent(
+    serv ce dent f er: Serv ce dent f er
+  ): mh.ManhattanCoord nator. thodPerEndpo nt = {
+    ManhattanCl entBu lder
+      .bu ldManhattanV1F nagleCl ent(
         ManhattanClusters.apollo,
-        serviceIdentifier
+        serv ce dent f er
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(ManhattanAthenaClient)
-  def providesManhattanAthenaClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
-        ManhattanClusters.athena,
-        serviceIdentifier
+  @Prov des
+  @S ngleton
+  @Na d(ManhattanAt naCl ent)
+  def prov desManhattanAt naCl ent(
+    serv ce dent f er: Serv ce dent f er
+  ): mh.ManhattanCoord nator. thodPerEndpo nt = {
+    ManhattanCl entBu lder
+      .bu ldManhattanV1F nagleCl ent(
+        ManhattanClusters.at na,
+        serv ce dent f er
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(ManhattanOmegaClient)
-  def providesManhattanOmegaClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
-        ManhattanClusters.omega,
-        serviceIdentifier
+  @Prov des
+  @S ngleton
+  @Na d(ManhattanO gaCl ent)
+  def prov desManhattanO gaCl ent(
+    serv ce dent f er: Serv ce dent f er
+  ): mh.ManhattanCoord nator. thodPerEndpo nt = {
+    ManhattanCl entBu lder
+      .bu ldManhattanV1F nagleCl ent(
+        ManhattanClusters.o ga,
+        serv ce dent f er
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(ManhattanStarbuckClient)
-  def providesManhattanStarbuckClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
+  @Prov des
+  @S ngleton
+  @Na d(ManhattanStarbuckCl ent)
+  def prov desManhattanStarbuckCl ent(
+    serv ce dent f er: Serv ce dent f er
+  ): mh.ManhattanCoord nator. thodPerEndpo nt = {
+    ManhattanCl entBu lder
+      .bu ldManhattanV1F nagleCl ent(
         ManhattanClusters.starbuck,
-        serviceIdentifier
+        serv ce dent f er
       )
   }
 
-  // non-cached manhattan repositories
+  // non-cac d manhattan repos or es
 
-  @Provides
-  @Singleton
-  @Named(MetricCenterUserCountingFeatureRepository)
-  def providesMetricCenterUserCountingFeatureRepository(
-    @Named(ManhattanStarbuckClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, rf.MCUserCountingFeatures] = {
+  @Prov des
+  @S ngleton
+  @Na d( tr cCenterUserCount ngFeatureRepos ory)
+  def prov des tr cCenterUserCount ngFeatureRepos ory(
+    @Na d(ManhattanStarbuckCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt
+  ): KeyValueRepos ory[Seq[Long], Long, rf.MCUserCount ngFeatures] = {
 
-    val valueTransformer = ThriftCodec
-      .toBinary[rf.MCUserCountingFeatures]
-      .toByteBufferTransformer()
-      .flip
+    val valueTransfor r = Thr ftCodec
+      .toB nary[rf.MCUserCount ngFeatures]
+      .toByteBufferTransfor r()
+      .fl p
 
-    batchedManhattanKeyValueRepository[Long, rf.MCUserCountingFeatures](
-      client = client,
-      keyTransformer = LongKeyTransformer,
-      valueTransformer = valueTransformer,
-      appId = "wtf_ml",
-      dataset = "mc_user_counting_features_v0_starbuck",
-      timeoutInMillis = 100
+    batc dManhattanKeyValueRepos ory[Long, rf.MCUserCount ngFeatures](
+      cl ent = cl ent,
+      keyTransfor r = LongKeyTransfor r,
+      valueTransfor r = valueTransfor r,
+      app d = "wtf_ml",
+      dataset = "mc_user_count ng_features_v0_starbuck",
+      t  out nM ll s = 100
     )
   }
 
   /**
-   * A repository of the offline aggregate feature metadata necessary to decode
+   * A repos ory of t  offl ne aggregate feature  tadata necessary to decode
    * DenseCompactDataRecords.
    *
-   * This repository is expected to virtually always pick up the metadata form the local cache with
+   * T  repos ory  s expected to v rtually always p ck up t   tadata form t  local cac  w h
    * nearly 0 latency.
    */
-  @Provides
-  @Singleton
-  @Named(TimelineAggregateMetadataRepository)
-  def providesTimelineAggregateMetadataRepository(
-    @Named(ManhattanAthenaClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): Repository[Int, Option[ddr.DenseFeatureMetadata]] = {
+  @Prov des
+  @S ngleton
+  @Na d(T  l neAggregate tadataRepos ory)
+  def prov desT  l neAggregate tadataRepos ory(
+    @Na d(ManhattanAt naCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt
+  ): Repos ory[ nt, Opt on[ddr.DenseFeature tadata]] = {
 
-    val keyTransformer = Injection
-      .connect[Int, Array[Byte]]
-      .toByteBufferTransformer()
+    val keyTransfor r =  nject on
+      .connect[ nt, Array[Byte]]
+      .toByteBufferTransfor r()
 
-    val valueTransformer = new Transformer[ByteBuffer, ddr.DenseFeatureMetadata] {
-      private val compactProtocolFactory = new TCompactProtocol.Factory
+    val valueTransfor r = new Transfor r[ByteBuffer, ddr.DenseFeature tadata] {
+      pr vate val compactProtocolFactory = new TCompactProtocol.Factory
 
-      def to(buffer: ByteBuffer): Try[ddr.DenseFeatureMetadata] = Try {
+      def to(buffer: ByteBuffer): Try[ddr.DenseFeature tadata] = Try {
         val transport = transportFromByteBuffer(buffer)
-        ddr.DenseFeatureMetadata.decode(compactProtocolFactory.getProtocol(transport))
+        ddr.DenseFeature tadata.decode(compactProtocolFactory.getProtocol(transport))
       }
 
-      // Encoding intentionally not implemented as it is never used
-      def from(metadata: ddr.DenseFeatureMetadata): Try[ByteBuffer] = ???
+      // Encod ng  ntent onally not  mple nted as    s never used
+      def from( tadata: ddr.DenseFeature tadata): Try[ByteBuffer] = ???
     }
 
-    val inProcessCache: Cache[Int, Cached[ddr.DenseFeatureMetadata]] = InProcessLruCacheFactory(
-      ttl = Duration.fromMinutes(20),
-      lruSize = 30
-    ).apply(serializer = Transformer(_ => ???, _ => ???)) // Serialization is not necessary here.
+    val  nProcessCac : Cac [ nt, Cac d[ddr.DenseFeature tadata]] =  nProcessLruCac Factory(
+      ttl = Durat on.fromM nutes(20),
+      lruS ze = 30
+    ).apply(ser al zer = Transfor r(_ => ???, _ => ???)) // Ser al zat on  s not necessary  re.
 
-    val keyValueRepository = new ManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = keyTransformer,
-      valueTransformer = valueTransformer,
-      appId = "timelines_dense_aggregates_encoding_metadata", // Expected QPS is negligible.
-      dataset = "user_session_dense_feature_metadata",
-      timeoutInMillis = 100
+    val keyValueRepos ory = new ManhattanKeyValueRepos ory(
+      cl ent = cl ent,
+      keyTransfor r = keyTransfor r,
+      valueTransfor r = valueTransfor r,
+      app d = "t  l nes_dense_aggregates_encod ng_ tadata", // Expected QPS  s negl g ble.
+      dataset = "user_sess on_dense_feature_ tadata",
+      t  out nM ll s = 100
     )
 
-    KeyValueRepository
-      .singular(
-        new CachingKeyValueRepository[Seq[Int], Int, ddr.DenseFeatureMetadata](
-          keyValueRepository,
-          new NonLockingCache(inProcessCache),
-          keysAsQuery[Int]
+    KeyValueRepos ory
+      .s ngular(
+        new Cach ngKeyValueRepos ory[Seq[ nt],  nt, ddr.DenseFeature tadata](
+          keyValueRepos ory,
+          new NonLock ngCac ( nProcessCac ),
+          keysAsQuery[ nt]
         )
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(RealGraphFeatureRepository)
-  def providesRealGraphFeatureRepository(
-    @Named(ManhattanAthenaClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): Repository[Long, Option[uss_scala.UserSession]] = {
-    val valueTransformer = CompactScalaCodec(uss_scala.UserSession).toByteBufferTransformer().flip
+  @Prov des
+  @S ngleton
+  @Na d(RealGraphFeatureRepos ory)
+  def prov desRealGraphFeatureRepos ory(
+    @Na d(ManhattanAt naCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt
+  ): Repos ory[Long, Opt on[uss_scala.UserSess on]] = {
+    val valueTransfor r = CompactScalaCodec(uss_scala.UserSess on).toByteBufferTransfor r().fl p
 
-    KeyValueRepository.singular(
-      new ManhattanKeyValueRepository(
-        client = client,
-        keyTransformer = LongKeyTransformer,
-        valueTransformer = valueTransformer,
-        appId = "real_graph",
-        dataset = "split_real_graph_features",
-        timeoutInMillis = 100,
+    KeyValueRepos ory.s ngular(
+      new ManhattanKeyValueRepos ory(
+        cl ent = cl ent,
+        keyTransfor r = LongKeyTransfor r,
+        valueTransfor r = valueTransfor r,
+        app d = "real_graph",
+        dataset = "spl _real_graph_features",
+        t  out nM ll s = 100,
       )
     )
   }
 
-  // cached manhattan repositories
+  // cac d manhattan repos or es
 
-  @Provides
-  @Singleton
-  @Named(AuthorFeatureRepository)
-  def providesAuthorFeatureRepository(
-    @Named(ManhattanAthenaClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-    @Named(HomeAuthorFeaturesCacheClient) cacheClient: Memcache
-  ): KeyValueRepository[Seq[Long], Long, af.AuthorFeatures] = {
+  @Prov des
+  @S ngleton
+  @Na d(AuthorFeatureRepos ory)
+  def prov desAuthorFeatureRepos ory(
+    @Na d(ManhattanAt naCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt,
+    @Na d(Ho AuthorFeaturesCac Cl ent) cac Cl ent:  mcac 
+  ): KeyValueRepos ory[Seq[Long], Long, af.AuthorFeatures] = {
 
-    val valueInjection = ThriftCodec
+    val value nject on = Thr ftCodec
       .toCompact[af.AuthorFeatures]
 
-    val keyValueRepository = batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = LongKeyTransformer,
-      valueTransformer = valueInjection.toByteBufferTransformer().flip,
-      appId = "timelines_author_feature_store_athena",
-      dataset = "timelines_author_features",
-      timeoutInMillis = 100
+    val keyValueRepos ory = batc dManhattanKeyValueRepos ory(
+      cl ent = cl ent,
+      keyTransfor r = LongKeyTransfor r,
+      valueTransfor r = value nject on.toByteBufferTransfor r().fl p,
+      app d = "t  l nes_author_feature_store_at na",
+      dataset = "t  l nes_author_features",
+      t  out nM ll s = 100
     )
 
-    val remoteCacheRepo = buildMemCachedRepository(
-      keyValueRepository = keyValueRepository,
-      cacheClient = cacheClient,
-      cachePrefix = "AuthorFeatureHydrator",
-      ttl = 12.hours,
-      valueInjection = valueInjection)
+    val remoteCac Repo = bu ld mCac dRepos ory(
+      keyValueRepos ory = keyValueRepos ory,
+      cac Cl ent = cac Cl ent,
+      cac Pref x = "AuthorFeatureHydrator",
+      ttl = 12.h s,
+      value nject on = value nject on)
 
-    buildInProcessCachedRepository(
-      keyValueRepository = remoteCacheRepo,
-      ttl = 15.minutes,
-      size = 8000,
-      valueInjection = valueInjection
+    bu ld nProcessCac dRepos ory(
+      keyValueRepos ory = remoteCac Repo,
+      ttl = 15.m nutes,
+      s ze = 8000,
+      value nject on = value nject on
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinAuthorFollowFeatureRepository)
-  def providesTwhinAuthorFollowFeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-    @Named(TwhinAuthorFollowFeatureCacheClient) cacheClient: Memcache
-  ): KeyValueRepository[Seq[Long], Long, ml.FloatTensor] = {
-    val keyValueRepository =
-      batchedManhattanKeyValueRepository(
-        client = client,
-        keyTransformer = FeatureStoreUserIdKeyTransformer,
-        valueTransformer = FloatTensorTransformer,
-        appId = "ml_features_apollo",
-        dataset = "twhin_author_follow_embedding_fsv1__v1_thrift__embedding",
-        timeoutInMillis = 100
+  @Prov des
+  @S ngleton
+  @Na d(Twh nAuthorFollowFeatureRepos ory)
+  def prov desTwh nAuthorFollowFeatureRepos ory(
+    @Na d(ManhattanApolloCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt,
+    @Na d(Twh nAuthorFollowFeatureCac Cl ent) cac Cl ent:  mcac 
+  ): KeyValueRepos ory[Seq[Long], Long, ml.FloatTensor] = {
+    val keyValueRepos ory =
+      batc dManhattanKeyValueRepos ory(
+        cl ent = cl ent,
+        keyTransfor r = FeatureStoreUser dKeyTransfor r,
+        valueTransfor r = FloatTensorTransfor r,
+        app d = "ml_features_apollo",
+        dataset = "twh n_author_follow_embedd ng_fsv1__v1_thr ft__embedd ng",
+        t  out nM ll s = 100
       )
 
-    val valueInjection: Injection[ml.FloatTensor, Array[Byte]] =
-      BinaryScalaCodec(ml.FloatTensor)
+    val value nject on:  nject on[ml.FloatTensor, Array[Byte]] =
+      B naryScalaCodec(ml.FloatTensor)
 
-    buildMemCachedRepository(
-      keyValueRepository = keyValueRepository,
-      cacheClient = cacheClient,
-      cachePrefix = "twhinAuthorFollows",
-      ttl = 24.hours,
-      valueInjection = valueInjection
+    bu ld mCac dRepos ory(
+      keyValueRepos ory = keyValueRepos ory,
+      cac Cl ent = cac Cl ent,
+      cac Pref x = "twh nAuthorFollows",
+      ttl = 24.h s,
+      value nject on = value nject on
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserLanguagesRepository)
-  def providesUserLanguagesFeatureRepository(
-    @Named(ManhattanStarbuckClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, Seq[scc.ThriftLanguage]] = {
-    batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = LongKeyTransformer,
-      valueTransformer = LanguageTransformer,
-      appId = "user_metadata",
+  @Prov des
+  @S ngleton
+  @Na d(UserLanguagesRepos ory)
+  def prov desUserLanguagesFeatureRepos ory(
+    @Na d(ManhattanStarbuckCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt
+  ): KeyValueRepos ory[Seq[Long], Long, Seq[scc.Thr ftLanguage]] = {
+    batc dManhattanKeyValueRepos ory(
+      cl ent = cl ent,
+      keyTransfor r = LongKeyTransfor r,
+      valueTransfor r = LanguageTransfor r,
+      app d = "user_ tadata",
       dataset = "languages",
-      timeoutInMillis = 70
+      t  out nM ll s = 70
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinUserFollowFeatureRepository)
-  def providesTwhinUserFollowFeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, ml.FloatTensor] = {
-    batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = FeatureStoreUserIdKeyTransformer,
-      valueTransformer = FloatTensorTransformer,
-      appId = "ml_features_apollo",
-      dataset = "twhin_user_follow_embedding_fsv1__v1_thrift__embedding",
-      timeoutInMillis = 100
+  @Prov des
+  @S ngleton
+  @Na d(Twh nUserFollowFeatureRepos ory)
+  def prov desTwh nUserFollowFeatureRepos ory(
+    @Na d(ManhattanApolloCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt
+  ): KeyValueRepos ory[Seq[Long], Long, ml.FloatTensor] = {
+    batc dManhattanKeyValueRepos ory(
+      cl ent = cl ent,
+      keyTransfor r = FeatureStoreUser dKeyTransfor r,
+      valueTransfor r = FloatTensorTransfor r,
+      app d = "ml_features_apollo",
+      dataset = "twh n_user_follow_embedd ng_fsv1__v1_thr ft__embedd ng",
+      t  out nM ll s = 100
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TimelineAggregatePartARepository)
-  def providesTimelineAggregatePartARepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-  ): Repository[Long, Option[uss.UserSession]] =
-    timelineAggregateRepository(
-      mhClient = client,
-      mhDataset = "timelines_aggregates_v2_features_by_user_part_a_apollo",
-      mhAppId = "timelines_aggregates_v2_features_by_user_part_a_apollo"
+  @Prov des
+  @S ngleton
+  @Na d(T  l neAggregatePartARepos ory)
+  def prov desT  l neAggregatePartARepos ory(
+    @Na d(ManhattanApolloCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt,
+  ): Repos ory[Long, Opt on[uss.UserSess on]] =
+    t  l neAggregateRepos ory(
+      mhCl ent = cl ent,
+      mhDataset = "t  l nes_aggregates_v2_features_by_user_part_a_apollo",
+      mhApp d = "t  l nes_aggregates_v2_features_by_user_part_a_apollo"
     )
 
-  @Provides
-  @Singleton
-  @Named(TimelineAggregatePartBRepository)
-  def providesTimelineAggregatePartBRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-  ): Repository[Long, Option[uss.UserSession]] =
-    timelineAggregateRepository(
-      mhClient = client,
-      mhDataset = "timelines_aggregates_v2_features_by_user_part_b_apollo",
-      mhAppId = "timelines_aggregates_v2_features_by_user_part_b_apollo"
+  @Prov des
+  @S ngleton
+  @Na d(T  l neAggregatePartBRepos ory)
+  def prov desT  l neAggregatePartBRepos ory(
+    @Na d(ManhattanApolloCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt,
+  ): Repos ory[Long, Opt on[uss.UserSess on]] =
+    t  l neAggregateRepos ory(
+      mhCl ent = cl ent,
+      mhDataset = "t  l nes_aggregates_v2_features_by_user_part_b_apollo",
+      mhApp d = "t  l nes_aggregates_v2_features_by_user_part_b_apollo"
     )
 
-  @Provides
-  @Singleton
-  @Named(TwhinUserEngagementFeatureRepository)
-  def providesTwhinUserEngagementFeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, ml.FloatTensor] = {
+  @Prov des
+  @S ngleton
+  @Na d(Twh nUserEngage ntFeatureRepos ory)
+  def prov desTwh nUserEngage ntFeatureRepos ory(
+    @Na d(ManhattanApolloCl ent) cl ent: mh.ManhattanCoord nator. thodPerEndpo nt
+  ): KeyValueRepos ory[Seq[Long], Long, ml.FloatTensor] = {
 
-    batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = FeatureStoreUserIdKeyTransformer,
-      valueTransformer = FloatTensorTransformer,
-      appId = "ml_features_apollo",
-      dataset = "twhin_user_engagement_embedding_fsv1__v1_thrift__embedding",
-      timeoutInMillis = 100
+    batc dManhattanKeyValueRepos ory(
+      cl ent = cl ent,
+      keyTransfor r = FeatureStoreUser dKeyTransfor r,
+      valueTransfor r = FloatTensorTransfor r,
+      app d = "ml_features_apollo",
+      dataset = "twh n_user_engage nt_embedd ng_fsv1__v1_thr ft__embedd ng",
+      t  out nM ll s = 100
     )
   }
 
-  private def buildMemCachedRepository[K, V](
-    keyValueRepository: KeyValueRepository[Seq[K], K, V],
-    cacheClient: Memcache,
-    cachePrefix: String,
-    ttl: Duration,
-    valueInjection: Injection[V, Array[Byte]]
-  ): CachingKeyValueRepository[Seq[K], K, V] = {
-    val cachedSerializer = CachedSerializer.binary(
-      valueInjection.toByteArrayTransformer()
+  pr vate def bu ld mCac dRepos ory[K, V](
+    keyValueRepos ory: KeyValueRepos ory[Seq[K], K, V],
+    cac Cl ent:  mcac ,
+    cac Pref x: Str ng,
+    ttl: Durat on,
+    value nject on:  nject on[V, Array[Byte]]
+  ): Cach ngKeyValueRepos ory[Seq[K], K, V] = {
+    val cac dSer al zer = Cac dSer al zer.b nary(
+      value nject on.toByteArrayTransfor r()
     )
 
-    val cache = MemcacheCacheFactory(
-      cacheClient,
+    val cac  =  mcac Cac Factory(
+      cac Cl ent,
       ttl,
-      PrefixKeyTransformerFactory(cachePrefix)
-    )[K, Cached[V]](cachedSerializer)
+      Pref xKeyTransfor rFactory(cac Pref x)
+    )[K, Cac d[V]](cac dSer al zer)
 
-    new CachingKeyValueRepository(
-      keyValueRepository,
-      new NonLockingCache(cache),
+    new Cach ngKeyValueRepos ory(
+      keyValueRepos ory,
+      new NonLock ngCac (cac ),
       keysAsQuery[K]
     )
   }
 
-  private def buildInProcessCachedRepository[K, V](
-    keyValueRepository: KeyValueRepository[Seq[K], K, V],
-    ttl: Duration,
-    size: Int,
-    valueInjection: Injection[V, Array[Byte]]
-  ): CachingKeyValueRepository[Seq[K], K, V] = {
-    val cachedSerializer = CachedSerializer.binary(
-      valueInjection.toByteArrayTransformer()
+  pr vate def bu ld nProcessCac dRepos ory[K, V](
+    keyValueRepos ory: KeyValueRepos ory[Seq[K], K, V],
+    ttl: Durat on,
+    s ze:  nt,
+    value nject on:  nject on[V, Array[Byte]]
+  ): Cach ngKeyValueRepos ory[Seq[K], K, V] = {
+    val cac dSer al zer = Cac dSer al zer.b nary(
+      value nject on.toByteArrayTransfor r()
     )
 
-    val cache = InProcessLruCacheFactory(
+    val cac  =  nProcessLruCac Factory(
       ttl = ttl,
-      lruSize = size
-    )[K, Cached[V]](cachedSerializer)
+      lruS ze = s ze
+    )[K, Cac d[V]](cac dSer al zer)
 
-    new CachingKeyValueRepository(
-      keyValueRepository,
-      new NonLockingCache(cache),
+    new Cach ngKeyValueRepos ory(
+      keyValueRepos ory,
+      new NonLock ngCac (cac ),
       keysAsQuery[K]
     )
   }
 
-  private def batchedManhattanKeyValueRepository[K, V](
-    client: mh.ManhattanCoordinator.MethodPerEndpoint,
-    keyTransformer: Transformer[K, ByteBuffer],
-    valueTransformer: Transformer[ByteBuffer, V],
-    appId: String,
-    dataset: String,
-    timeoutInMillis: Int,
-    chunkSize: Int = DEFAULT_RPC_CHUNK_SIZE
-  ): KeyValueRepository[Seq[K], K, V] =
-    KeyValueRepository.chunked(
-      new ManhattanKeyValueRepository(
-        client = client,
-        keyTransformer = keyTransformer,
-        valueTransformer = valueTransformer,
-        appId = appId,
+  pr vate def batc dManhattanKeyValueRepos ory[K, V](
+    cl ent: mh.ManhattanCoord nator. thodPerEndpo nt,
+    keyTransfor r: Transfor r[K, ByteBuffer],
+    valueTransfor r: Transfor r[ByteBuffer, V],
+    app d: Str ng,
+    dataset: Str ng,
+    t  out nM ll s:  nt,
+    chunkS ze:  nt = DEFAULT_RPC_CHUNK_S ZE
+  ): KeyValueRepos ory[Seq[K], K, V] =
+    KeyValueRepos ory.chunked(
+      new ManhattanKeyValueRepos ory(
+        cl ent = cl ent,
+        keyTransfor r = keyTransfor r,
+        valueTransfor r = valueTransfor r,
+        app d = app d,
         dataset = dataset,
-        timeoutInMillis = timeoutInMillis
+        t  out nM ll s = t  out nM ll s
       ),
-      chunker = ChunkingStrategy.equalSize(chunkSize)
+      chunker = Chunk ngStrategy.equalS ze(chunkS ze)
     )
 
-  private def transportFromByteBuffer(buffer: ByteBuffer): TTransport =
-    new TMemoryInputTransport(
+  pr vate def transportFromByteBuffer(buffer: ByteBuffer): TTransport =
+    new T mory nputTransport(
       buffer.array(),
-      buffer.arrayOffset() + buffer.position(),
-      buffer.remaining())
+      buffer.arrayOffset() + buffer.pos  on(),
+      buffer.rema n ng())
 
-  private def timelineAggregateRepository(
-    mhClient: mh.ManhattanCoordinator.MethodPerEndpoint,
-    mhDataset: String,
-    mhAppId: String
-  ): Repository[Long, Option[uss.UserSession]] = {
-    val valueInjection = ThriftCodec
-      .toCompact[uss.UserSession]
+  pr vate def t  l neAggregateRepos ory(
+    mhCl ent: mh.ManhattanCoord nator. thodPerEndpo nt,
+    mhDataset: Str ng,
+    mhApp d: Str ng
+  ): Repos ory[Long, Opt on[uss.UserSess on]] = {
+    val value nject on = Thr ftCodec
+      .toCompact[uss.UserSess on]
 
-    KeyValueRepository.singular(
-      new ManhattanKeyValueRepository(
-        client = mhClient,
-        keyTransformer = LongKeyTransformer,
-        valueTransformer = valueInjection.toByteBufferTransformer().flip,
-        appId = mhAppId,
+    KeyValueRepos ory.s ngular(
+      new ManhattanKeyValueRepos ory(
+        cl ent = mhCl ent,
+        keyTransfor r = LongKeyTransfor r,
+        valueTransfor r = value nject on.toByteBufferTransfor r().fl p,
+        app d = mhApp d,
         dataset = mhDataset,
-        timeoutInMillis = 100
+        t  out nM ll s = 100
       )
     )
   }

@@ -1,49 +1,49 @@
 """
-Parameters used in ClemNet.
+Para ters used  n ClemNet.
 """
-from typing import List, Optional
+from typ ng  mport L st, Opt onal
 
-from pydantic import BaseModel, Extra, Field, PositiveInt
+from pydant c  mport BaseModel, Extra, F eld, Pos  ve nt
 
 
-# checkstyle: noqa
+# c ckstyle: noqa
 
 
 class ExtendedBaseModel(BaseModel):
-  class Config:
-    extra = Extra.forbid
+  class Conf g:
+    extra = Extra.forb d
 
 
 class DenseParams(ExtendedBaseModel):
-  name: Optional[str]
-  bias_initializer: str = "zeros"
-  kernel_initializer: str = "glorot_uniform"
-  output_size: PositiveInt
-  use_bias: bool = Field(True)
+  na : Opt onal[str]
+  b as_ n  al zer: str = "zeros"
+  kernel_ n  al zer: str = "glorot_un form"
+  output_s ze: Pos  ve nt
+  use_b as: bool = F eld(True)
 
 
 class ConvParams(ExtendedBaseModel):
-  name: Optional[str]
-  bias_initializer: str = "zeros"
-  filters: PositiveInt
-  kernel_initializer: str = "glorot_uniform"
-  kernel_size: PositiveInt
-  padding: str = "SAME"
-  strides: PositiveInt = 1
-  use_bias: bool = Field(True)
+  na : Opt onal[str]
+  b as_ n  al zer: str = "zeros"
+  f lters: Pos  ve nt
+  kernel_ n  al zer: str = "glorot_un form"
+  kernel_s ze: Pos  ve nt
+  padd ng: str = "SAME"
+  str des: Pos  ve nt = 1
+  use_b as: bool = F eld(True)
 
 
 class BlockParams(ExtendedBaseModel):
-  activation: Optional[str]
-  conv: Optional[ConvParams]
-  dense: Optional[DenseParams]
-  residual: Optional[bool]
+  act vat on: Opt onal[str]
+  conv: Opt onal[ConvParams]
+  dense: Opt onal[DenseParams]
+  res dual: Opt onal[bool]
 
 
 class TopLayerParams(ExtendedBaseModel):
-  n_labels: PositiveInt
+  n_labels: Pos  ve nt
 
 
 class ClemNetParams(ExtendedBaseModel):
-  blocks: List[BlockParams] = []
-  top: Optional[TopLayerParams]
+  blocks: L st[BlockParams] = []
+  top: Opt onal[TopLayerParams]

@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.utils
+package com.tw ter.follow_recom ndat ons.ut ls
 
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.SideEffectsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
+ mport com.tw ter.follow_recom ndat ons.common.base.Recom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base.S deEffectsUt l
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
 
-trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidate <: CandidateUser]
-    extends SideEffectsUtil[Target, Candidate] {
-  recommendationFlow: RecommendationFlow[Target, Candidate] =>
+tra  Recom ndat onFlowBaseS deEffectsUt l[Target <: HasCl entContext, Cand date <: Cand dateUser]
+    extends S deEffectsUt l[Target, Cand date] {
+  recom ndat onFlow: Recom ndat onFlow[Target, Cand date] =>
 
-  override def applySideEffects(
+  overr de def applyS deEffects(
     target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate],
-    mergedCandidates: Seq[Candidate],
-    filteredCandidates: Seq[Candidate],
-    rankedCandidates: Seq[Candidate],
-    transformedCandidates: Seq[Candidate],
-    truncatedCandidates: Seq[Candidate],
-    results: Seq[Candidate]
-  ): Stitch[Unit] = {
-    Stitch.async(
-      Stitch.collect(
+    cand dateS ces: Seq[Cand dateS ce[Target, Cand date]],
+    cand datesFromCand dateS ces: Seq[Cand date],
+     rgedCand dates: Seq[Cand date],
+    f lteredCand dates: Seq[Cand date],
+    rankedCand dates: Seq[Cand date],
+    transfor dCand dates: Seq[Cand date],
+    truncatedCand dates: Seq[Cand date],
+    results: Seq[Cand date]
+  ): St ch[Un ] = {
+    St ch.async(
+      St ch.collect(
         Seq(
-          applySideEffectsCandidateSourceCandidates(
+          applyS deEffectsCand dateS ceCand dates(
             target,
-            candidateSources,
-            candidatesFromCandidateSources),
-          applySideEffectsMergedCandidates(target, mergedCandidates),
-          applySideEffectsFilteredCandidates(target, filteredCandidates),
-          applySideEffectsRankedCandidates(target, rankedCandidates),
-          applySideEffectsTransformedCandidates(target, transformedCandidates),
-          applySideEffectsTruncatedCandidates(target, truncatedCandidates),
-          applySideEffectsResults(target, results)
+            cand dateS ces,
+            cand datesFromCand dateS ces),
+          applyS deEffects rgedCand dates(target,  rgedCand dates),
+          applyS deEffectsF lteredCand dates(target, f lteredCand dates),
+          applyS deEffectsRankedCand dates(target, rankedCand dates),
+          applyS deEffectsTransfor dCand dates(target, transfor dCand dates),
+          applyS deEffectsTruncatedCand dates(target, truncatedCand dates),
+          applyS deEffectsResults(target, results)
         )
       ))
   }
 
   /*
-  In subclasses, override functions below to apply custom side effects at each step in pipeline.
-  Call super.applySideEffectsXYZ to scribe basic scribes implemented in this parent class
+   n subclasses, overr de funct ons below to apply custom s de effects at each step  n p pel ne.
+  Call super.applyS deEffectsXYZ to scr be bas c scr bes  mple nted  n t  parent class
    */
-  def applySideEffectsCandidateSourceCandidates(
+  def applyS deEffectsCand dateS ceCand dates(
     target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate]
-  ): Stitch[Unit] = {
-    val candidatesGroupedByCandidateSources =
-      candidatesFromCandidateSources.groupBy(
-        _.getPrimaryCandidateSource.getOrElse(CandidateSourceIdentifier("NoCandidateSource")))
+    cand dateS ces: Seq[Cand dateS ce[Target, Cand date]],
+    cand datesFromCand dateS ces: Seq[Cand date]
+  ): St ch[Un ] = {
+    val cand datesGroupedByCand dateS ces =
+      cand datesFromCand dateS ces.groupBy(
+        _.getPr maryCand dateS ce.getOrElse(Cand dateS ce dent f er("NoCand dateS ce")))
 
-    target.getOptionalUserId match {
-      case Some(userId) =>
-        val userAgeOpt = SnowflakeId.timeFromIdOpt(userId).map(_.untilNow.inDays)
+    target.getOpt onalUser d match {
+      case So (user d) =>
+        val userAgeOpt = Snowflake d.t  From dOpt(user d).map(_.unt lNow. nDays)
         userAgeOpt match {
-          case Some(userAge) if userAge <= 30 =>
-            candidateSources.map { candidateSource =>
+          case So (userAge)  f userAge <= 30 =>
+            cand dateS ces.map { cand dateS ce =>
               {
-                val candidateSourceStats = statsReceiver.scope(candidateSource.identifier.name)
+                val cand dateS ceStats = statsRece ver.scope(cand dateS ce. dent f er.na )
 
-                val isEmpty =
-                  !candidatesGroupedByCandidateSources.keySet.contains(candidateSource.identifier)
+                val  sEmpty =
+                  !cand datesGroupedByCand dateS ces.keySet.conta ns(cand dateS ce. dent f er)
 
-                if (userAge <= 1)
-                  candidateSourceStats
-                    .scope("user_age", "1", "empty").counter(isEmpty.toString).incr()
-                if (userAge <= 7)
-                  candidateSourceStats
-                    .scope("user_age", "7", "empty").counter(isEmpty.toString).incr()
-                if (userAge <= 30)
-                  candidateSourceStats
-                    .scope("user_age", "30", "empty").counter(isEmpty.toString).incr()
+                 f (userAge <= 1)
+                  cand dateS ceStats
+                    .scope("user_age", "1", "empty").counter( sEmpty.toStr ng). ncr()
+                 f (userAge <= 7)
+                  cand dateS ceStats
+                    .scope("user_age", "7", "empty").counter( sEmpty.toStr ng). ncr()
+                 f (userAge <= 30)
+                  cand dateS ceStats
+                    .scope("user_age", "30", "empty").counter( sEmpty.toStr ng). ncr()
               }
             }
-          case _ => Nil
+          case _ => N l
         }
-      case None => Nil
+      case None => N l
     }
-    Stitch.Unit
+    St ch.Un 
   }
 
-  def applySideEffectsBaseCandidates(
+  def applyS deEffectsBaseCand dates(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = Stitch.Unit
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = St ch.Un 
 
-  def applySideEffectsMergedCandidates(
+  def applyS deEffects rgedCand dates(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = applyS deEffectsBaseCand dates(target, cand dates)
 
-  def applySideEffectsFilteredCandidates(
+  def applyS deEffectsF lteredCand dates(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = applyS deEffectsBaseCand dates(target, cand dates)
 
-  def applySideEffectsRankedCandidates(
+  def applyS deEffectsRankedCand dates(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = applyS deEffectsBaseCand dates(target, cand dates)
 
-  def applySideEffectsTransformedCandidates(
+  def applyS deEffectsTransfor dCand dates(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = applyS deEffectsBaseCand dates(target, cand dates)
 
-  def applySideEffectsTruncatedCandidates(
+  def applyS deEffectsTruncatedCand dates(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = applyS deEffectsBaseCand dates(target, cand dates)
 
-  def applySideEffectsResults(
+  def applyS deEffectsResults(
     target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+    cand dates: Seq[Cand date]
+  ): St ch[Un ] = applyS deEffectsBaseCand dates(target, cand dates)
 }

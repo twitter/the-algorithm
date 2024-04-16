@@ -1,201 +1,201 @@
-package com.twitter.search.common.relevance.entities;
+package com.tw ter.search.common.relevance.ent  es;
 
-import java.util.List;
-import java.util.Optional;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoTags;
-import com.twitter.tweetypie.thriftjava.GeoCoordinates;
-import com.twitter.tweetypie.thriftjava.Place;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeoLocat onS ce;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeoTags;
+ mport com.tw ter.t etyp e.thr ftjava.GeoCoord nates;
+ mport com.tw ter.t etyp e.thr ftjava.Place;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+ mport geo.google.datamodel.GeoAddressAccuracy;
 
 /**
- * A GeoObject, extending a GeoCoordinate to include radius and accuracy
+ * A GeoObject, extend ng a GeoCoord nate to  nclude rad us and accuracy
  */
-public class GeoObject {
+publ c class GeoObject {
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1.0;
+  publ c stat c f nal  nt  NT_F ELD_NOT_PRESENT = -1;
+  publ c stat c f nal double DOUBLE_F ELD_NOT_PRESENT = -1.0;
 
-  private double latitude = DOUBLE_FIELD_NOT_PRESENT;
-  private double longitude = DOUBLE_FIELD_NOT_PRESENT;
-  private double radius = DOUBLE_FIELD_NOT_PRESENT;
+  pr vate double lat ude = DOUBLE_F ELD_NOT_PRESENT;
+  pr vate double long ude = DOUBLE_F ELD_NOT_PRESENT;
+  pr vate double rad us = DOUBLE_F ELD_NOT_PRESENT;
 
-  private final ThriftGeoLocationSource source;
+  pr vate f nal Thr ftGeoLocat onS ce s ce;
 
-  // Valid range is 0-9. With 0 being unknown and 9 being most accurate.
-  // If this GeoObject is valid, this should be set to INT_FIELD_NOT_PRESENT
-  private int accuracy = 0;
+  // Val d range  s 0-9. W h 0 be ng unknown and 9 be ng most accurate.
+  //  f t  GeoObject  s val d, t  should be set to  NT_F ELD_NOT_PRESENT
+  pr vate  nt accuracy = 0;
 
-  /** Creates a new GeoObject instance. */
-  public GeoObject(double lat, double lon, ThriftGeoLocationSource source) {
-    this(lat, lon, 0, source);
+  /** Creates a new GeoObject  nstance. */
+  publ c GeoObject(double lat, double lon, Thr ftGeoLocat onS ce s ce) {
+    t (lat, lon, 0, s ce);
   }
 
-  /** Creates a new GeoObject instance. */
-  public GeoObject(double lat, double lon, int acc, ThriftGeoLocationSource source) {
-    latitude = lat;
-    longitude = lon;
+  /** Creates a new GeoObject  nstance. */
+  publ c GeoObject(double lat, double lon,  nt acc, Thr ftGeoLocat onS ce s ce) {
+    lat ude = lat;
+    long ude = lon;
     accuracy = acc;
-    this.source = source;
+    t .s ce = s ce;
   }
 
-  /** Creates a new GeoObject instance. */
-  public GeoObject(ThriftGeoLocationSource source) {
-    this.source = source;
+  /** Creates a new GeoObject  nstance. */
+  publ c GeoObject(Thr ftGeoLocat onS ce s ce) {
+    t .s ce = s ce;
   }
 
   /**
-   * Tries to create a {@code GeoObject} instance from a given TweetyPie {@code Place} struct based
-   * on its bounding box coordinates.
+   * Tr es to create a {@code GeoObject}  nstance from a g ven T etyP e {@code Place} struct based
+   * on  s bound ng box coord nates.
    *
    * @param place
-   * @return {@code Optional} instance with {@code GeoObject} if bounding box coordinates are
-   *         available, or an empty {@code Optional}.
+   * @return {@code Opt onal}  nstance w h {@code GeoObject}  f bound ng box coord nates are
+   *         ava lable, or an empty {@code Opt onal}.
    */
-  public static Optional<GeoObject> fromPlace(Place place) {
-    // Can't use place.centroid: from the sample of data, centroid seems to always be null
+  publ c stat c Opt onal<GeoObject> fromPlace(Place place) {
+    // Can't use place.centro d: from t  sample of data, centro d seems to always be null
     // (as of May 17 2016).
-    if (place.isSetBounding_box() && place.getBounding_boxSize() > 0) {
-      int pointsCount = place.getBounding_boxSize();
+     f (place. sSetBound ng_box() && place.getBound ng_boxS ze() > 0) {
+       nt po ntsCount = place.getBound ng_boxS ze();
 
-      if (pointsCount == 1) {
-        GeoCoordinates point = place.getBounding_box().get(0);
-        return Optional.of(createForIngester(point.getLatitude(), point.getLongitude()));
+       f (po ntsCount == 1) {
+        GeoCoord nates po nt = place.getBound ng_box().get(0);
+        return Opt onal.of(createFor ngester(po nt.getLat ude(), po nt.getLong ude()));
       } else {
-        double sumLatitude = 0.0;
-        double sumLongitude = 0.0;
+        double sumLat ude = 0.0;
+        double sumLong ude = 0.0;
 
-        List<GeoCoordinates> box = place.getBounding_box();
+        L st<GeoCoord nates> box = place.getBound ng_box();
 
-        // Drop the last point if it's the same as the first point.
-        // The same logic is present in several other classes dealing with places.
-        // See e.g. birdherd/src/main/scala/com/twitter/birdherd/tweetypie/TweetyPiePlace.scala
-        if (box.get(pointsCount - 1).equals(box.get(0))) {
-          pointsCount--;
+        // Drop t  last po nt  f  's t  sa  as t  f rst po nt.
+        // T  sa  log c  s present  n several ot r classes deal ng w h places.
+        // See e.g. b rd rd/src/ma n/scala/com/tw ter/b rd rd/t etyp e/T etyP ePlace.scala
+         f (box.get(po ntsCount - 1).equals(box.get(0))) {
+          po ntsCount--;
         }
 
-        for (int i = 0; i < pointsCount; i++) {
-          GeoCoordinates coords = box.get(i);
-          sumLatitude += coords.getLatitude();
-          sumLongitude += coords.getLongitude();
+        for ( nt   = 0;   < po ntsCount;  ++) {
+          GeoCoord nates coords = box.get( );
+          sumLat ude += coords.getLat ude();
+          sumLong ude += coords.getLong ude();
         }
 
-        double averageLatitude = sumLatitude / pointsCount;
-        double averageLongitude = sumLongitude / pointsCount;
-        return Optional.of(GeoObject.createForIngester(averageLatitude, averageLongitude));
+        double averageLat ude = sumLat ude / po ntsCount;
+        double averageLong ude = sumLong ude / po ntsCount;
+        return Opt onal.of(GeoObject.createFor ngester(averageLat ude, averageLong ude));
       }
     }
-    return Optional.empty();
+    return Opt onal.empty();
   }
 
-  public void setRadius(double radius) {
-    this.radius = radius;
+  publ c vo d setRad us(double rad us) {
+    t .rad us = rad us;
   }
 
-  public Double getRadius() {
-    return radius;
+  publ c Double getRad us() {
+    return rad us;
   }
 
-  public void setLatitude(double latitude) {
-    this.latitude = latitude;
+  publ c vo d setLat ude(double lat ude) {
+    t .lat ude = lat ude;
   }
 
-  public Double getLatitude() {
-    return latitude;
+  publ c Double getLat ude() {
+    return lat ude;
   }
 
-  public void setLongitude(double longitude) {
-    this.longitude = longitude;
+  publ c vo d setLong ude(double long ude) {
+    t .long ude = long ude;
   }
 
-  public Double getLongitude() {
-    return longitude;
+  publ c Double getLong ude() {
+    return long ude;
   }
 
-  public int getAccuracy() {
+  publ c  nt getAccuracy() {
     return accuracy;
   }
 
-  public void setAccuracy(int accuracy) {
-    this.accuracy = accuracy;
+  publ c vo d setAccuracy( nt accuracy) {
+    t .accuracy = accuracy;
   }
 
-  public ThriftGeoLocationSource getSource() {
-    return source;
+  publ c Thr ftGeoLocat onS ce getS ce() {
+    return s ce;
   }
 
-  /** Convers this GeoObject instance to a ThriftGeoTags instance. */
-  public ThriftGeoTags toThriftGeoTags(long twitterMessageId) {
-    ThriftGeoTags geoTags = new ThriftGeoTags();
-    geoTags.setStatusId(twitterMessageId);
-    geoTags.setLatitude(getLatitude());
-    geoTags.setLongitude(getLongitude());
+  /** Convers t  GeoObject  nstance to a Thr ftGeoTags  nstance. */
+  publ c Thr ftGeoTags toThr ftGeoTags(long tw ter ssage d) {
+    Thr ftGeoTags geoTags = new Thr ftGeoTags();
+    geoTags.setStatus d(tw ter ssage d);
+    geoTags.setLat ude(getLat ude());
+    geoTags.setLong ude(getLong ude());
     geoTags.setAccuracy(accuracy);
-    geoTags.setGeoLocationSource(source);
+    geoTags.setGeoLocat onS ce(s ce);
     return geoTags;
   }
 
-  private static final double COORDS_EQUALITY_THRESHOLD = 1e-7;
+  pr vate stat c f nal double COORDS_EQUAL TY_THRESHOLD = 1e-7;
 
   /**
-   * Performs an approximate comparison between the two GeoObject instances.
+   * Performs an approx mate compar son bet en t  two GeoObject  nstances.
    *
-   * @deprecated This code is not performant and should not be used in
-   * production code. Use only for tests. See SEARCH-5148.
+   * @deprecated T  code  s not performant and should not be used  n
+   * product on code. Use only for tests. See SEARCH-5148.
    */
   @Deprecated
-  @VisibleForTesting
-  public static boolean approxEquals(GeoObject a, GeoObject b) {
-    if (a == null && b == null) {
+  @V s bleForTest ng
+  publ c stat c boolean approxEquals(GeoObject a, GeoObject b) {
+     f (a == null && b == null) {
       return true;
     }
-    if ((a == null && b != null) || (a != null && b == null)) {
+     f ((a == null && b != null) || (a != null && b == null)) {
       return false;
     }
 
-    if (a.accuracy != b.accuracy) {
+     f (a.accuracy != b.accuracy) {
       return false;
     }
-    if (Math.abs(a.latitude - b.latitude) > COORDS_EQUALITY_THRESHOLD) {
+     f (Math.abs(a.lat ude - b.lat ude) > COORDS_EQUAL TY_THRESHOLD) {
       return false;
     }
-    if (Math.abs(a.longitude - b.longitude) > COORDS_EQUALITY_THRESHOLD) {
+     f (Math.abs(a.long ude - b.long ude) > COORDS_EQUAL TY_THRESHOLD) {
       return false;
     }
-    if (Double.compare(a.radius, b.radius) != 0) {
+     f (Double.compare(a.rad us, b.rad us) != 0) {
       return false;
     }
-    if (a.source != b.source) {
+     f (a.s ce != b.s ce) {
       return false;
     }
 
     return true;
   }
 
-  @Override
-  public String toString() {
+  @Overr de
+  publ c Str ng toStr ng() {
     return "GeoObject{"
-        + "latitude=" + latitude
-        + ", longitude=" + longitude
-        + ", radius=" + radius
-        + ", source=" + source
+        + "lat ude=" + lat ude
+        + ", long ude=" + long ude
+        + ", rad us=" + rad us
+        + ", s ce=" + s ce
         + ", accuracy=" + accuracy
         + '}';
   }
 
   /**
-   * Convenience factory method for ingester purposes.
+   * Conven ence factory  thod for  ngester purposes.
    */
-  public static GeoObject createForIngester(double latitude, double longitude) {
+  publ c stat c GeoObject createFor ngester(double lat ude, double long ude) {
     return new GeoObject(
-        latitude,
-        longitude,
-        // store with highest level of accuracy: POINT_LEVEL
-        GeoAddressAccuracy.POINT_LEVEL.getCode(),
-        ThriftGeoLocationSource.GEOTAG);
+        lat ude,
+        long ude,
+        // store w h h g st level of accuracy: PO NT_LEVEL
+        GeoAddressAccuracy.PO NT_LEVEL.getCode(),
+        Thr ftGeoLocat onS ce.GEOTAG);
   }
 }

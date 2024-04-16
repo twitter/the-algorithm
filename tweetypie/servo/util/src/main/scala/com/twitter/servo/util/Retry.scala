@@ -1,100 +1,100 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.{Backoff, Service, TimeoutException, WriteException}
-import com.twitter.finagle.service.{RetryExceptionsFilter, RetryPolicy}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.util.{Duration, Future, Throw, Timer, Try}
+ mport com.tw ter.f nagle.{Backoff, Serv ce, T  outExcept on, Wr eExcept on}
+ mport com.tw ter.f nagle.serv ce.{RetryExcept onsF lter, RetryPol cy}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.ut l.{Durat on, Future, Throw, T  r, Try}
 
 /**
- * Allows an action to be retried according to a backoff strategy.
- * This is an adaption of the Finagle RetryExceptionsFilter, but with an
- * arbitrary asynchronous computation.
+ * Allows an act on to be retr ed accord ng to a backoff strategy.
+ * T   s an adapt on of t  F nagle RetryExcept onsF lter, but w h an
+ * arb rary asynchronous computat on.
  */
 class Retry(
-  statsReceiver: StatsReceiver,
+  statsRece ver: StatsRece ver,
   backoffs: Backoff,
-  private[this] val timer: Timer = DefaultTimer) {
+  pr vate[t ] val t  r: T  r = DefaultT  r) {
 
   /**
-   * retry on specific exceptions
+   * retry on spec f c except ons
    */
   def apply[T](
     f: () => Future[T]
   )(
-    shouldRetry: PartialFunction[Throwable, Boolean]
+    shouldRetry: Part alFunct on[Throwable, Boolean]
   ): Future[T] = {
-    val policy = RetryPolicy.backoff[Try[Nothing]](backoffs) {
-      case Throw(t) if shouldRetry.isDefinedAt(t) => shouldRetry(t)
+    val pol cy = RetryPol cy.backoff[Try[Noth ng]](backoffs) {
+      case Throw(t)  f shouldRetry. sDef nedAt(t) => shouldRetry(t)
     }
 
-    val service = new Service[Unit, T] {
-      override def apply(u: Unit): Future[T] = f()
+    val serv ce = new Serv ce[Un , T] {
+      overr de def apply(u: Un ): Future[T] = f()
     }
 
-    val retrying = new RetryExceptionsFilter(policy, timer, statsReceiver) andThen service
+    val retry ng = new RetryExcept onsF lter(pol cy, t  r, statsRece ver) andT n serv ce
 
-    retrying()
+    retry ng()
   }
 
-  @deprecated("release() has no function and will be removed", "2.8.2")
-  def release(): Unit = {}
+  @deprecated("release() has no funct on and w ll be removed", "2.8.2")
+  def release(): Un  = {}
 }
 
 /**
- * Use to configure separate backoffs for WriteExceptions, TimeoutExceptions,
- * and service-specific exceptions
+ * Use to conf gure separate backoffs for Wr eExcept ons, T  outExcept ons,
+ * and serv ce-spec f c except ons
  */
-class ServiceRetryPolicy(
-  writeExceptionBackoffs: Backoff,
-  timeoutBackoffs: Backoff,
-  serviceBackoffs: Backoff,
-  shouldRetryService: PartialFunction[Throwable, Boolean])
-    extends RetryPolicy[Try[Nothing]] {
-  override def apply(r: Try[Nothing]) = r match {
-    case Throw(t) if shouldRetryService.isDefinedAt(t) =>
-      if (shouldRetryService(t))
-        onServiceException
+class Serv ceRetryPol cy(
+  wr eExcept onBackoffs: Backoff,
+  t  outBackoffs: Backoff,
+  serv ceBackoffs: Backoff,
+  shouldRetryServ ce: Part alFunct on[Throwable, Boolean])
+    extends RetryPol cy[Try[Noth ng]] {
+  overr de def apply(r: Try[Noth ng]) = r match {
+    case Throw(t)  f shouldRetryServ ce. sDef nedAt(t) =>
+       f (shouldRetryServ ce(t))
+        onServ ceExcept on
       else
         None
-    case Throw(_: WriteException) => onWriteException
-    case Throw(_: TimeoutException) => onTimeoutException
+    case Throw(_: Wr eExcept on) => onWr eExcept on
+    case Throw(_: T  outExcept on) => onT  outExcept on
     case _ => None
   }
 
   def copy(
-    writeExceptionBackoffs: Backoff = writeExceptionBackoffs,
-    timeoutBackoffs: Backoff = timeoutBackoffs,
-    serviceBackoffs: Backoff = serviceBackoffs,
-    shouldRetryService: PartialFunction[Throwable, Boolean] = shouldRetryService
+    wr eExcept onBackoffs: Backoff = wr eExcept onBackoffs,
+    t  outBackoffs: Backoff = t  outBackoffs,
+    serv ceBackoffs: Backoff = serv ceBackoffs,
+    shouldRetryServ ce: Part alFunct on[Throwable, Boolean] = shouldRetryServ ce
   ) =
-    new ServiceRetryPolicy(
-      writeExceptionBackoffs,
-      timeoutBackoffs,
-      serviceBackoffs,
-      shouldRetryService
+    new Serv ceRetryPol cy(
+      wr eExcept onBackoffs,
+      t  outBackoffs,
+      serv ceBackoffs,
+      shouldRetryServ ce
     )
 
-  private[this] def onWriteException = consume(writeExceptionBackoffs) { tail =>
-    copy(writeExceptionBackoffs = tail)
+  pr vate[t ] def onWr eExcept on = consu (wr eExcept onBackoffs) { ta l =>
+    copy(wr eExcept onBackoffs = ta l)
   }
 
-  private[this] def onTimeoutException = consume(timeoutBackoffs) { tail =>
-    copy(timeoutBackoffs = tail)
+  pr vate[t ] def onT  outExcept on = consu (t  outBackoffs) { ta l =>
+    copy(t  outBackoffs = ta l)
   }
 
-  private[this] def onServiceException = consume(serviceBackoffs) { tail =>
-    copy(serviceBackoffs = tail)
+  pr vate[t ] def onServ ceExcept on = consu (serv ceBackoffs) { ta l =>
+    copy(serv ceBackoffs = ta l)
   }
 
-  private[this] def consume(b: Backoff)(f: Backoff => ServiceRetryPolicy) = {
-    if (b.isExhausted) None
-    else Some((b.duration, f(b.next)))
+  pr vate[t ] def consu (b: Backoff)(f: Backoff => Serv ceRetryPol cy) = {
+     f (b. sExhausted) None
+    else So ((b.durat on, f(b.next)))
   }
 
-  override val toString = "ServiceRetryPolicy(%s, %s, %s)".format(
-    writeExceptionBackoffs,
-    timeoutBackoffs,
-    serviceBackoffs
+  overr de val toStr ng = "Serv ceRetryPol cy(%s, %s, %s)".format(
+    wr eExcept onBackoffs,
+    t  outBackoffs,
+    serv ceBackoffs
   )
 }

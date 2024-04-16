@@ -1,90 +1,90 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.store.TweetStoreEvent.NoRetry
-import com.twitter.tweetypie.store.TweetStoreEvent.RetryStrategy
-import com.twitter.tweetypie.thriftscala.AsyncIncrBookmarkCountRequest
-import com.twitter.tweetypie.thriftscala.AsyncWriteAction
+ mport com.tw ter.t etyp e.store.T etStoreEvent.NoRetry
+ mport com.tw ter.t etyp e.store.T etStoreEvent.RetryStrategy
+ mport com.tw ter.t etyp e.thr ftscala.Async ncrBookmarkCountRequest
+ mport com.tw ter.t etyp e.thr ftscala.AsyncWr eAct on
 
-object IncrBookmarkCount extends TweetStore.SyncModule {
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends SyncTweetStoreEvent("incr_bookmark_count") {
-    val toAsyncRequest: AsyncIncrBookmarkCountRequest =
-      AsyncIncrBookmarkCountRequest(tweetId = tweetId, delta = delta)
+object  ncrBookmarkCount extends T etStore.SyncModule {
+  case class Event(t et d: T et d, delta:  nt, t  stamp: T  )
+      extends SyncT etStoreEvent(" ncr_bookmark_count") {
+    val toAsyncRequest: Async ncrBookmarkCountRequest =
+      Async ncrBookmarkCountRequest(t et d = t et d, delta = delta)
   }
 
-  trait Store {
-    val incrBookmarkCount: FutureEffect[Event]
+  tra  Store {
+    val  ncrBookmarkCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val incrBookmarkCount: FutureEffect[Event] = wrap(underlying.incrBookmarkCount)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val  ncrBookmarkCount: FutureEffect[Event] = wrap(underly ng. ncrBookmarkCount)
   }
 
   object Store {
     def apply(
       asyncEnqueueStore: AsyncEnqueueStore,
-      replicatingStore: ReplicatingTweetStore
+      repl cat ngStore: Repl cat ngT etStore
     ): Store = {
       new Store {
-        override val incrBookmarkCount: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            asyncEnqueueStore.incrBookmarkCount,
-            replicatingStore.incrBookmarkCount
+        overr de val  ncrBookmarkCount: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            asyncEnqueueStore. ncrBookmarkCount,
+            repl cat ngStore. ncrBookmarkCount
           )
       }
     }
   }
 }
 
-object AsyncIncrBookmarkCount extends TweetStore.AsyncModule {
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends AsyncTweetStoreEvent("async_incr_bookmark_event") {
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      Future.Unit
+object Async ncrBookmarkCount extends T etStore.AsyncModule {
+  case class Event(t et d: T et d, delta:  nt, t  stamp: T  )
+      extends AsyncT etStoreEvent("async_ ncr_bookmark_event") {
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      Future.Un 
 
-    override def retryStrategy: RetryStrategy = NoRetry
+    overr de def retryStrategy: RetryStrategy = NoRetry
   }
 
-  trait Store {
-    def asyncIncrBookmarkCount: FutureEffect[Event]
+  tra  Store {
+    def async ncrBookmarkCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncIncrBookmarkCount: FutureEffect[Event] = wrap(
-      underlying.asyncIncrBookmarkCount)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val async ncrBookmarkCount: FutureEffect[Event] = wrap(
+      underly ng.async ncrBookmarkCount)
   }
 
   object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
+    def apply(t etCountsUpdat ngStore: T etCountsCac Updat ngStore): Store = {
       new Store {
-        override def asyncIncrBookmarkCount: FutureEffect[AsyncIncrBookmarkCount.Event] =
-          tweetCountsUpdatingStore.asyncIncrBookmarkCount
+        overr de def async ncrBookmarkCount: FutureEffect[Async ncrBookmarkCount.Event] =
+          t etCountsUpdat ngStore.async ncrBookmarkCount
       }
     }
   }
 }
 
-object ReplicatedIncrBookmarkCount extends TweetStore.ReplicatedModule {
-  case class Event(tweetId: TweetId, delta: Int)
-      extends ReplicatedTweetStoreEvent("replicated_incr_bookmark_count") {
-    override def retryStrategy: RetryStrategy = NoRetry
+object Repl cated ncrBookmarkCount extends T etStore.Repl catedModule {
+  case class Event(t et d: T et d, delta:  nt)
+      extends Repl catedT etStoreEvent("repl cated_ ncr_bookmark_count") {
+    overr de def retryStrategy: RetryStrategy = NoRetry
   }
 
-  trait Store {
-    val replicatedIncrBookmarkCount: FutureEffect[Event]
+  tra  Store {
+    val repl cated ncrBookmarkCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedIncrBookmarkCount: FutureEffect[Event] = wrap(
-      underlying.replicatedIncrBookmarkCount)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl cated ncrBookmarkCount: FutureEffect[Event] = wrap(
+      underly ng.repl cated ncrBookmarkCount)
   }
 
   object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
+    def apply(t etCountsUpdat ngStore: T etCountsCac Updat ngStore): Store = {
       new Store {
-        override val replicatedIncrBookmarkCount: FutureEffect[Event] = {
-          tweetCountsUpdatingStore.replicatedIncrBookmarkCount
+        overr de val repl cated ncrBookmarkCount: FutureEffect[Event] = {
+          t etCountsUpdat ngStore.repl cated ncrBookmarkCount
         }
       }
     }

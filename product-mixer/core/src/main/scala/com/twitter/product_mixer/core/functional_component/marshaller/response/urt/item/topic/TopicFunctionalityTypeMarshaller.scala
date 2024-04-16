@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PivotTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.RecommendationTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Bas cTop cFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.P votTop cFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Recom ndat onTop cFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top cFunct onal yType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicFunctionalityTypeMarshaller @Inject() () {
+@S ngleton
+class Top cFunct onal yTypeMarshaller @ nject() () {
 
-  def apply(topicFunctionalityType: TopicFunctionalityType): urt.TopicFunctionalityType =
-    topicFunctionalityType match {
-      case BasicTopicFunctionalityType => urt.TopicFunctionalityType.Basic
-      case RecommendationTopicFunctionalityType => urt.TopicFunctionalityType.Recommendation
-      case PivotTopicFunctionalityType => urt.TopicFunctionalityType.Pivot
+  def apply(top cFunct onal yType: Top cFunct onal yType): urt.Top cFunct onal yType =
+    top cFunct onal yType match {
+      case Bas cTop cFunct onal yType => urt.Top cFunct onal yType.Bas c
+      case Recom ndat onTop cFunct onal yType => urt.Top cFunct onal yType.Recom ndat on
+      case P votTop cFunct onal yType => urt.Top cFunct onal yType.P vot
     }
 }

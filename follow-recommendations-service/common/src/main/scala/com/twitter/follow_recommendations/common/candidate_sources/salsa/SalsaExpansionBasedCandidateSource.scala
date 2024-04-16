@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.salsa
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
 
-abstract class SalsaExpansionBasedCandidateSource[Target](salsaExpander: SalsaExpander)
-    extends CandidateSource[Target, CandidateUser] {
+abstract class SalsaExpans onBasedCand dateS ce[Target](salsaExpander: SalsaExpander)
+    extends Cand dateS ce[Target, Cand dateUser] {
 
-  // Define first/second degree as empty sequences in cases of subclasses
-  // that don't implement one or the other.
-  // Example: MagicRecs only uses first degree nodes, and can ignore implementing secondDegreeNodes
+  // Def ne f rst/second degree as empty sequences  n cases of subclasses
+  // that don't  mple nt one or t  ot r.
+  // Example: Mag cRecs only uses f rst degree nodes, and can  gnore  mple nt ng secondDegreeNodes
   //
-  // This allows apply(target) to combine both in the base class
-  def firstDegreeNodes(target: Target): Stitch[Seq[Long]] = Stitch.value(Seq())
+  // T  allows apply(target) to comb ne both  n t  base class
+  def f rstDegreeNodes(target: Target): St ch[Seq[Long]] = St ch.value(Seq())
 
-  def secondDegreeNodes(target: Target): Stitch[Seq[Long]] = Stitch.value(Seq())
+  def secondDegreeNodes(target: Target): St ch[Seq[Long]] = St ch.value(Seq())
 
   // max number output results
-  def maxResults(target: Target): Int
+  def maxResults(target: Target):  nt
 
-  override def apply(target: Target): Stitch[Seq[CandidateUser]] = {
-    val nodes = Stitch.join(firstDegreeNodes(target), secondDegreeNodes(target))
+  overr de def apply(target: Target): St ch[Seq[Cand dateUser]] = {
+    val nodes = St ch.jo n(f rstDegreeNodes(target), secondDegreeNodes(target))
 
     nodes.flatMap {
-      case (firstDegreeCandidates, secondDegreeCandidates) => {
-        salsaExpander(firstDegreeCandidates, secondDegreeCandidates, maxResults(target))
-          .map(_.map(_.withCandidateSource(identifier)).sortBy(-_.score.getOrElse(0.0)))
+      case (f rstDegreeCand dates, secondDegreeCand dates) => {
+        salsaExpander(f rstDegreeCand dates, secondDegreeCand dates, maxResults(target))
+          .map(_.map(_.w hCand dateS ce( dent f er)).sortBy(-_.score.getOrElse(0.0)))
       }
     }
   }

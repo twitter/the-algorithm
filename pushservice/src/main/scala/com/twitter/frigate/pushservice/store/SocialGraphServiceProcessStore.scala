@@ -1,20 +1,20 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.frigate.pushservice.params.PushQPSLimitConstants.SocialGraphServiceBatchSize
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.params.PushQPSL m Constants.Soc alGraphServ ceBatchS ze
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class SocialGraphServiceProcessStore(edgeStore: ReadableStore[RelationEdge, Boolean])
-    extends ReadableStore[RelationEdge, Boolean] {
-  override def multiGet[T <: RelationEdge](
-    relationEdges: Set[T]
-  ): Map[T, Future[Option[Boolean]]] = {
-    val splitSet = relationEdges.grouped(SocialGraphServiceBatchSize).toSet
-    splitSet
-      .map { relationship =>
-        edgeStore.multiGet(relationship)
-      }.foldLeft(Map.empty[T, Future[Option[Boolean]]]) { (map1, map2) =>
+case class Soc alGraphServ ceProcessStore(edgeStore: ReadableStore[Relat onEdge, Boolean])
+    extends ReadableStore[Relat onEdge, Boolean] {
+  overr de def mult Get[T <: Relat onEdge](
+    relat onEdges: Set[T]
+  ): Map[T, Future[Opt on[Boolean]]] = {
+    val spl Set = relat onEdges.grouped(Soc alGraphServ ceBatchS ze).toSet
+    spl Set
+      .map { relat onsh p =>
+        edgeStore.mult Get(relat onsh p)
+      }.foldLeft(Map.empty[T, Future[Opt on[Boolean]]]) { (map1, map2) =>
         map1 ++ map2
       }
   }

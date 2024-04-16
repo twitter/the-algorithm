@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.BasicTopicPageHeaderDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PersonalizedTopicPageHeaderDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeaderDisplayType
-import com.twitter.pages.render.{thriftscala => urp}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Bas cTop cPage aderD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Personal zedTop cPage aderD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Top cPage aderD splayType
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicPageHeaderDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class Top cPage aderD splayTypeMarshaller @ nject() () {
 
   def apply(
-    topicPageHeaderDisplayType: TopicPageHeaderDisplayType
-  ): urp.TopicPageHeaderDisplayType = topicPageHeaderDisplayType match {
-    case BasicTopicPageHeaderDisplayType => urp.TopicPageHeaderDisplayType.Basic
-    case PersonalizedTopicPageHeaderDisplayType => urp.TopicPageHeaderDisplayType.Personalized
+    top cPage aderD splayType: Top cPage aderD splayType
+  ): urp.Top cPage aderD splayType = top cPage aderD splayType match {
+    case Bas cTop cPage aderD splayType => urp.Top cPage aderD splayType.Bas c
+    case Personal zedTop cPage aderD splayType => urp.Top cPage aderD splayType.Personal zed
   }
 }

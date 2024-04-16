@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
 /**
- * serializedRequestCursor is any serialized representation of a cursor.
+ * ser al zedRequestCursor  s any ser al zed representat on of a cursor.
  *
- * The serialized representation is implementation-specific but will often be a base 64
- * representation of a Thrift struct. Cursors should not be deserialized in the unmarshaller.
+ * T  ser al zed representat on  s  mple ntat on-spec f c but w ll often be a base 64
+ * representat on of a Thr ft struct. Cursors should not be deser al zed  n t  unmarshaller.
  */
-trait HasSerializedRequestCursor {
-  def serializedRequestCursor: Option[String]
+tra  HasSer al zedRequestCursor {
+  def ser al zedRequestCursor: Opt on[Str ng]
 }

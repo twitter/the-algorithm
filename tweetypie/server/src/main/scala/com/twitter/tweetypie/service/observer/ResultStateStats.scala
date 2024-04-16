@@ -1,19 +1,19 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
 /**
- * "Result State" is, for every singular tweet read, we categorize the tweet
- * result as a success or failure.
- * These stats enable us to track true TPS success rates.
+ * "Result State"  s, for every s ngular t et read,   categor ze t  t et
+ * result as a success or fa lure.
+ * T se stats enable us to track true TPS success rates.
  */
-private[service] case class ResultStateStats(private val underlying: StatsReceiver) {
-  private val stats = underlying.scope("result_state")
-  private val successCounter = stats.counter("success")
-  private val failedCounter = stats.counter("failed")
+pr vate[serv ce] case class ResultStateStats(pr vate val underly ng: StatsRece ver) {
+  pr vate val stats = underly ng.scope("result_state")
+  pr vate val successCounter = stats.counter("success")
+  pr vate val fa ledCounter = stats.counter("fa led")
 
-  def success(delta: Long = 1): Unit = successCounter.incr(delta)
-  def failed(delta: Long = 1): Unit = failedCounter.incr(delta)
+  def success(delta: Long = 1): Un  = successCounter. ncr(delta)
+  def fa led(delta: Long = 1): Un  = fa ledCounter. ncr(delta)
 }

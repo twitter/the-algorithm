@@ -1,148 +1,148 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport java.ut l.L st;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
-import com.twitter.search.common.clientstats.FinagleClientStatsFilter;
-import com.twitter.search.common.root.LoggingFilter;
-import com.twitter.search.common.root.RequestValidationFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusResponse;
-import com.twitter.search.earlybird_root.caching.RecencyCacheFilter;
-import com.twitter.search.earlybird_root.caching.RelevanceCacheFilter;
-import com.twitter.search.earlybird_root.caching.RelevanceZeroResultsCacheFilter;
-import com.twitter.search.earlybird_root.caching.StrictRecencyCacheFilter;
-import com.twitter.search.earlybird_root.caching.TermStatsCacheFilter;
-import com.twitter.search.earlybird_root.caching.TopTweetsCacheFilter;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.ClientIdQueryOperatorStatsFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdTrackingFilter;
-import com.twitter.search.earlybird_root.filters.ClientRequestTimeFilter;
-import com.twitter.search.earlybird_root.filters.DeadlineTimeoutStatsFilter;
-import com.twitter.search.earlybird_root.filters.EarlybirdFeatureSchemaAnnotateFilter;
-import com.twitter.search.earlybird_root.filters.FullArchiveProtectedOperatorFilter;
-import com.twitter.search.earlybird_root.filters.InitializeRequestContextFilter;
-import com.twitter.search.earlybird_root.filters.IsUserProtectedMetadataTrackingFilter;
-import com.twitter.search.earlybird_root.filters.MetadataTrackingFilter;
-import com.twitter.search.earlybird_root.filters.NullcastTrackingFilter;
-import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
-import com.twitter.search.earlybird_root.filters.QueryOperatorStatFilter;
-import com.twitter.search.earlybird_root.filters.RequestResultStatsFilter;
-import com.twitter.search.earlybird_root.filters.RequestSuccessStatsFilter;
-import com.twitter.search.earlybird_root.filters.ResponseCodeStatFilter;
-import com.twitter.search.earlybird_root.filters.ResultTierCountFilter;
-import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContextFilter;
-import com.twitter.search.earlybird_root.filters.RejectRequestsByQuerySourceFilter;
-import com.twitter.search.earlybird_root.filters.StratoAttributionClientIdFilter;
-import com.twitter.search.earlybird_root.filters.TopLevelExceptionHandlingFilter;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.mtls.author zat on.server.MtlsServerSess onTrackerF lter;
+ mport com.tw ter.search.common.cl entstats.F nagleCl entStatsF lter;
+ mport com.tw ter.search.common.root.Logg ngF lter;
+ mport com.tw ter.search.common.root.RequestVal dat onF lter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusResponse;
+ mport com.tw ter.search.earlyb rd_root.cach ng.RecencyCac F lter;
+ mport com.tw ter.search.earlyb rd_root.cach ng.RelevanceCac F lter;
+ mport com.tw ter.search.earlyb rd_root.cach ng.RelevanceZeroResultsCac F lter;
+ mport com.tw ter.search.earlyb rd_root.cach ng.Str ctRecencyCac F lter;
+ mport com.tw ter.search.earlyb rd_root.cach ng.TermStatsCac F lter;
+ mport com.tw ter.search.earlyb rd_root.cach ng.TopT etsCac F lter;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.f lters.Cl ent dQueryOperatorStatsF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Cl ent dQuotaF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Cl ent dTrack ngF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Cl entRequestT  F lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Deadl neT  outStatsF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdFeatureSc maAnnotateF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.FullArch veProtectedOperatorF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters. n  al zeRequestContextF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters. sUserProtected tadataTrack ngF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters. tadataTrack ngF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.NullcastTrack ngF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.PostCac RequestTypeCountF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.PreCac RequestTypeCountF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.QueryLangStatF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.QueryOperatorStatF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.RequestResultStatsF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.RequestSuccessStatsF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.ResponseCodeStatF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.ResultT erCountF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.SearchPayloadS zeLocalContextF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.RejectRequestsByQueryS ceF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.StratoAttr but onCl ent dF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.TopLevelExcept onHandl ngF lter;
+ mport com.tw ter.ut l.Future;
 
-@Singleton
-public class FullArchiveRootService implements EarlybirdService.ServiceIface {
+@S ngleton
+publ c class FullArch veRootServ ce  mple nts Earlyb rdServ ce.Serv ce face {
 
-  private final Service<EarlybirdRequest, EarlybirdResponse> allFiltersAndService;
+  pr vate f nal Serv ce<Earlyb rdRequest, Earlyb rdResponse> allF ltersAndServ ce;
 
-  @Inject
-  public FullArchiveRootService(
-      TopLevelExceptionHandlingFilter topLevelExceptionHandlingFilter,
-      ResponseCodeStatFilter responseCodeStatFilter,
-      LoggingFilter<EarlybirdRequest, EarlybirdResponse> loggingFilter,
-      RequestValidationFilter<EarlybirdRequest, EarlybirdResponse> validationFilter,
-      MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse> mtlsFilter,
-      FinagleClientStatsFilter<EarlybirdRequest, EarlybirdResponse> finagleStatsFilter,
-      InitializeFilter initializeFilter,
-      InitializeRequestContextFilter initializeRequestContextFilter,
-      QueryLangStatFilter queryLangStatFilter,
-      FullArchiveProtectedOperatorFilter protectedOperatorFilter,
-      QueryOperatorStatFilter queryOperatorStatFilter,
-      ClientIdQueryOperatorStatsFilter clientIdQueryOperatorStatsFilter,
-      IsUserProtectedMetadataTrackingFilter isUserProtectedMetadataTrackingFilter,
-      RequestResultStatsFilter requestResultStatsFilter,
-      PreCacheRequestTypeCountFilter preCacheCountFilter,
-      RecencyCacheFilter recencyCacheFilter,
-      RelevanceCacheFilter relevanceCacheFilter,
-      RelevanceZeroResultsCacheFilter relevanceZeroResultsCacheFilter,
-      StrictRecencyCacheFilter strictRecencyCacheFilter,
-      TermStatsCacheFilter termStatsCacheFilter,
-      TopTweetsCacheFilter topTweetsCacheFilter,
-      PostCacheRequestTypeCountFilter postCacheCountFilter,
-      ClientIdTrackingFilter clientIdTrackingFilter,
-      ClientIdQuotaFilter quotaFilter,
-      RejectRequestsByQuerySourceFilter rejectRequestsByQuerySourceFilter,
-      MetadataTrackingFilter metadataTrackingFilter,
-      MultiTierResultsMergeFilter multiTierResultsMergeFilter,
-      RequestSuccessStatsFilter requestSuccessStatsFilter,
-      NullcastTrackingFilter nullcastTrackingFilter,
-      ClientRequestTimeFilter clientRequestTimeFilter,
-      DeadlineTimeoutStatsFilter deadlineTimeoutStatsFilter,
-      EarlybirdFeatureSchemaAnnotateFilter featureSchemaAnnotateFilter,
-      SearchPayloadSizeLocalContextFilter searchPayloadSizeLocalContextFilter,
-      EarlybirdQueryRewriteFilter queryRewriteFilter,
-      ResultTierCountFilter resultTierCountFilter,
-      StratoAttributionClientIdFilter stratoAttributionClientIdFilter,
-      Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> chainedScatterGatherService
+  @ nject
+  publ c FullArch veRootServ ce(
+      TopLevelExcept onHandl ngF lter topLevelExcept onHandl ngF lter,
+      ResponseCodeStatF lter responseCodeStatF lter,
+      Logg ngF lter<Earlyb rdRequest, Earlyb rdResponse> logg ngF lter,
+      RequestVal dat onF lter<Earlyb rdRequest, Earlyb rdResponse> val dat onF lter,
+      MtlsServerSess onTrackerF lter<Earlyb rdRequest, Earlyb rdResponse> mtlsF lter,
+      F nagleCl entStatsF lter<Earlyb rdRequest, Earlyb rdResponse> f nagleStatsF lter,
+       n  al zeF lter  n  al zeF lter,
+       n  al zeRequestContextF lter  n  al zeRequestContextF lter,
+      QueryLangStatF lter queryLangStatF lter,
+      FullArch veProtectedOperatorF lter protectedOperatorF lter,
+      QueryOperatorStatF lter queryOperatorStatF lter,
+      Cl ent dQueryOperatorStatsF lter cl ent dQueryOperatorStatsF lter,
+       sUserProtected tadataTrack ngF lter  sUserProtected tadataTrack ngF lter,
+      RequestResultStatsF lter requestResultStatsF lter,
+      PreCac RequestTypeCountF lter preCac CountF lter,
+      RecencyCac F lter recencyCac F lter,
+      RelevanceCac F lter relevanceCac F lter,
+      RelevanceZeroResultsCac F lter relevanceZeroResultsCac F lter,
+      Str ctRecencyCac F lter str ctRecencyCac F lter,
+      TermStatsCac F lter termStatsCac F lter,
+      TopT etsCac F lter topT etsCac F lter,
+      PostCac RequestTypeCountF lter postCac CountF lter,
+      Cl ent dTrack ngF lter cl ent dTrack ngF lter,
+      Cl ent dQuotaF lter quotaF lter,
+      RejectRequestsByQueryS ceF lter rejectRequestsByQueryS ceF lter,
+       tadataTrack ngF lter  tadataTrack ngF lter,
+      Mult T erResults rgeF lter mult T erResults rgeF lter,
+      RequestSuccessStatsF lter requestSuccessStatsF lter,
+      NullcastTrack ngF lter nullcastTrack ngF lter,
+      Cl entRequestT  F lter cl entRequestT  F lter,
+      Deadl neT  outStatsF lter deadl neT  outStatsF lter,
+      Earlyb rdFeatureSc maAnnotateF lter featureSc maAnnotateF lter,
+      SearchPayloadS zeLocalContextF lter searchPayloadS zeLocalContextF lter,
+      Earlyb rdQueryRewr eF lter queryRewr eF lter,
+      ResultT erCountF lter resultT erCountF lter,
+      StratoAttr but onCl ent dF lter stratoAttr but onCl ent dF lter,
+      Serv ce<Earlyb rdRequestContext, L st<Future<Earlyb rdResponse>>> cha nedScatterGat rServ ce
       ) {
 
-    this.allFiltersAndService =
-        loggingFilter
-            .andThen(topLevelExceptionHandlingFilter)
-            .andThen(stratoAttributionClientIdFilter)
-            .andThen(clientRequestTimeFilter)
-            .andThen(searchPayloadSizeLocalContextFilter)
-            .andThen(requestSuccessStatsFilter)
-            .andThen(requestResultStatsFilter)
-            .andThen(responseCodeStatFilter)
-            .andThen(validationFilter)
-            .andThen(mtlsFilter)
-            .andThen(finagleStatsFilter)
-            .andThen(clientIdTrackingFilter)
-            .andThen(quotaFilter)
-            .andThen(rejectRequestsByQuerySourceFilter)
-            .andThen(metadataTrackingFilter)
-            .andThen(initializeFilter)
-            .andThen(initializeRequestContextFilter)
-            .andThen(deadlineTimeoutStatsFilter)
-            .andThen(queryLangStatFilter)
-            .andThen(protectedOperatorFilter)
-            .andThen(queryOperatorStatFilter)
-            .andThen(clientIdQueryOperatorStatsFilter)
-            .andThen(isUserProtectedMetadataTrackingFilter)
-            .andThen(preCacheCountFilter)
-            .andThen(nullcastTrackingFilter)
-            .andThen(recencyCacheFilter)
-            .andThen(relevanceCacheFilter)
-            .andThen(relevanceZeroResultsCacheFilter)
-            .andThen(strictRecencyCacheFilter)
-            .andThen(termStatsCacheFilter)
-            .andThen(topTweetsCacheFilter)
-            .andThen(postCacheCountFilter)
-            .andThen(queryRewriteFilter)
-            .andThen(featureSchemaAnnotateFilter)
-            .andThen(resultTierCountFilter)
-            .andThen(multiTierResultsMergeFilter)
-            .andThen(chainedScatterGatherService);
+    t .allF ltersAndServ ce =
+        logg ngF lter
+            .andT n(topLevelExcept onHandl ngF lter)
+            .andT n(stratoAttr but onCl ent dF lter)
+            .andT n(cl entRequestT  F lter)
+            .andT n(searchPayloadS zeLocalContextF lter)
+            .andT n(requestSuccessStatsF lter)
+            .andT n(requestResultStatsF lter)
+            .andT n(responseCodeStatF lter)
+            .andT n(val dat onF lter)
+            .andT n(mtlsF lter)
+            .andT n(f nagleStatsF lter)
+            .andT n(cl ent dTrack ngF lter)
+            .andT n(quotaF lter)
+            .andT n(rejectRequestsByQueryS ceF lter)
+            .andT n( tadataTrack ngF lter)
+            .andT n( n  al zeF lter)
+            .andT n( n  al zeRequestContextF lter)
+            .andT n(deadl neT  outStatsF lter)
+            .andT n(queryLangStatF lter)
+            .andT n(protectedOperatorF lter)
+            .andT n(queryOperatorStatF lter)
+            .andT n(cl ent dQueryOperatorStatsF lter)
+            .andT n( sUserProtected tadataTrack ngF lter)
+            .andT n(preCac CountF lter)
+            .andT n(nullcastTrack ngF lter)
+            .andT n(recencyCac F lter)
+            .andT n(relevanceCac F lter)
+            .andT n(relevanceZeroResultsCac F lter)
+            .andT n(str ctRecencyCac F lter)
+            .andT n(termStatsCac F lter)
+            .andT n(topT etsCac F lter)
+            .andT n(postCac CountF lter)
+            .andT n(queryRewr eF lter)
+            .andT n(featureSc maAnnotateF lter)
+            .andT n(resultT erCountF lter)
+            .andT n(mult T erResults rgeF lter)
+            .andT n(cha nedScatterGat rServ ce);
   }
 
-  @Override
-  public Future<String> getName() {
-    return Future.value("fullarchive");
+  @Overr de
+  publ c Future<Str ng> getNa () {
+    return Future.value("fullarch ve");
   }
 
-  @Override
-  public Future<EarlybirdStatusResponse> getStatus() {
-    throw new UnsupportedOperationException("not supported");
+  @Overr de
+  publ c Future<Earlyb rdStatusResponse> getStatus() {
+    throw new UnsupportedOperat onExcept on("not supported");
   }
 
-  @Override
-  public Future<EarlybirdResponse> search(EarlybirdRequest request) {
-    return allFiltersAndService.apply(request);
+  @Overr de
+  publ c Future<Earlyb rdResponse> search(Earlyb rdRequest request) {
+    return allF ltersAndServ ce.apply(request);
   }
 }

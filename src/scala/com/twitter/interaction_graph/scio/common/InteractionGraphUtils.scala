@@ -1,39 +1,39 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
+ mport com.tw ter. nteract on_graph.thr ftscala.T  Ser esStat st cs
 
-object InteractionGraphUtils {
-  final val MIN_FEATURE_VALUE = Math.pow(0.955, 60)
-  final val MAX_DAYS_RETENTION = 60L
-  final val MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+object  nteract onGraphUt ls {
+  f nal val M N_FEATURE_VALUE = Math.pow(0.955, 60)
+  f nal val MAX_DAYS_RETENT ON = 60L
+  f nal val M LL SECONDS_PER_DAY = 1000 * 60 * 60 * 24
 
-  def updateTimeSeriesStatistics(
-    timeSeriesStatistics: TimeSeriesStatistics,
+  def updateT  Ser esStat st cs(
+    t  Ser esStat st cs: T  Ser esStat st cs,
     currValue: Double,
     alpha: Double
-  ): TimeSeriesStatistics = {
-    val numNonZeroDays = timeSeriesStatistics.numNonZeroDays + 1
+  ): T  Ser esStat st cs = {
+    val numNonZeroDays = t  Ser esStat st cs.numNonZeroDays + 1
 
-    val delta = currValue - timeSeriesStatistics.mean
-    val updatedMean = timeSeriesStatistics.mean + delta / numNonZeroDays
-    val m2ForVariance = timeSeriesStatistics.m2ForVariance + delta * (currValue - updatedMean)
-    val ewma = alpha * currValue + timeSeriesStatistics.ewma
+    val delta = currValue - t  Ser esStat st cs. an
+    val updated an = t  Ser esStat st cs. an + delta / numNonZeroDays
+    val m2ForVar ance = t  Ser esStat st cs.m2ForVar ance + delta * (currValue - updated an)
+    val ewma = alpha * currValue + t  Ser esStat st cs.ewma
 
-    timeSeriesStatistics.copy(
-      mean = updatedMean,
-      m2ForVariance = m2ForVariance,
+    t  Ser esStat st cs.copy(
+       an = updated an,
+      m2ForVar ance = m2ForVar ance,
       ewma = ewma,
       numNonZeroDays = numNonZeroDays
     )
   }
 
-  def addToTimeSeriesStatistics(
-    timeSeriesStatistics: TimeSeriesStatistics,
+  def addToT  Ser esStat st cs(
+    t  Ser esStat st cs: T  Ser esStat st cs,
     currValue: Double
-  ): TimeSeriesStatistics = {
-    timeSeriesStatistics.copy(
-      mean = timeSeriesStatistics.mean + currValue,
-      ewma = timeSeriesStatistics.ewma + currValue
+  ): T  Ser esStat st cs = {
+    t  Ser esStat st cs.copy(
+       an = t  Ser esStat st cs. an + currValue,
+      ewma = t  Ser esStat st cs.ewma + currValue
     )
   }
 

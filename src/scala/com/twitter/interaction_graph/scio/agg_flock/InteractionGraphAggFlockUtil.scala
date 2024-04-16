@@ -1,62 +1,62 @@
-package com.twitter.interaction_graph.scio.agg_flock
+package com.tw ter. nteract on_graph.sc o.agg_flock
 
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.Min
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import org.joda.time.Interval
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.algeb rd.M n
+ mport com.tw ter.flockdb.tools.datasets.flock.thr ftscala.FlockEdge
+ mport com.tw ter. nteract on_graph.sc o.common. nteract onGraphRaw nput
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport java.t  . nstant
+ mport java.t  .temporal.ChronoUn 
+ mport org.joda.t  . nterval
 
-object InteractionGraphAggFlockUtil {
+object  nteract onGraphAggFlockUt l {
 
   def getFlockFeatures(
-    edges: SCollection[FlockEdge],
-    featureName: FeatureName,
-    dateInterval: Interval
-  ): SCollection[InteractionGraphRawInput] = {
+    edges: SCollect on[FlockEdge],
+    featureNa : FeatureNa ,
+    date nterval:  nterval
+  ): SCollect on[ nteract onGraphRaw nput] = {
     edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
+      .w hNa (s"${featureNa .toStr ng} - Convert ng flock edge to  nteract on graph  nput")
       .map { edge =>
-        // NOTE: getUpdatedAt gives time in the seconds resolution
-        // Because we use .extend() when reading the data source, the updatedAt time might be larger than the dateRange.
-        // We need to cap them, otherwise, DateUtil.diffDays gives incorrect results.
-        val start = (edge.updatedAt * 1000L).min(dateInterval.getEnd.toInstant.getMillis)
-        val end = dateInterval.getStart.toInstant.getMillis
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(start),
-          Instant.ofEpochMilli(end)
+        // NOTE: getUpdatedAt g ves t    n t  seconds resolut on
+        // Because   use .extend() w n read ng t  data s ce, t  updatedAt t   m ght be larger than t  dateRange.
+        //   need to cap t m, ot rw se, DateUt l.d ffDays g ves  ncorrect results.
+        val start = (edge.updatedAt * 1000L).m n(date nterval.getEnd.to nstant.getM ll s)
+        val end = date nterval.getStart.to nstant.getM ll s
+        val age = ChronoUn .DAYS.bet en(
+           nstant.ofEpochM ll (start),
+           nstant.ofEpochM ll (end)
         ) + 1
-        InteractionGraphRawInput(edge.sourceId, edge.destinationId, featureName, age.toInt, 1.0)
+         nteract onGraphRaw nput(edge.s ce d, edge.dest nat on d, featureNa , age.to nt, 1.0)
       }
 
   }
 
   def getMutualFollowFeature(
-    flockFollowFeature: SCollection[InteractionGraphRawInput]
-  ): SCollection[InteractionGraphRawInput] = {
+    flockFollowFeature: SCollect on[ nteract onGraphRaw nput]
+  ): SCollect on[ nteract onGraphRaw nput] = {
     flockFollowFeature
-      .withName("Convert FlockFollows to Mutual Follows")
-      .map { input =>
-        val sourceId = input.src
-        val destId = input.dst
+      .w hNa ("Convert FlockFollows to Mutual Follows")
+      .map {  nput =>
+        val s ce d =  nput.src
+        val dest d =  nput.dst
 
-        if (sourceId < destId) {
-          Tuple2(sourceId, destId) -> Tuple2(Set(true), Min(input.age)) // true means follow
+         f (s ce d < dest d) {
+          Tuple2(s ce d, dest d) -> Tuple2(Set(true), M n( nput.age)) // true  ans follow
         } else {
-          Tuple2(destId, sourceId) -> Tuple2(Set(false), Min(input.age)) // false means followed_by
+          Tuple2(dest d, s ce d) -> Tuple2(Set(false), M n( nput.age)) // false  ans follo d_by
         }
       }
       .sumByKey
       .flatMap {
-        case ((id1, id2), (followSet, minAge)) if followSet.size == 2 =>
-          val age = minAge.get
+        case (( d1,  d2), (followSet, m nAge))  f followSet.s ze == 2 =>
+          val age = m nAge.get
           Seq(
-            InteractionGraphRawInput(id1, id2, FeatureName.NumMutualFollows, age, 1.0),
-            InteractionGraphRawInput(id2, id1, FeatureName.NumMutualFollows, age, 1.0))
+             nteract onGraphRaw nput( d1,  d2, FeatureNa .NumMutualFollows, age, 1.0),
+             nteract onGraphRaw nput( d2,  d1, FeatureNa .NumMutualFollows, age, 1.0))
         case _ =>
-          Nil
+          N l
       }
   }
 

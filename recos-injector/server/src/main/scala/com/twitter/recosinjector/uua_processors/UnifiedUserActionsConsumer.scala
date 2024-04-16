@@ -1,71 +1,71 @@
-package com.twitter.recosinjector.uua_processors
+package com.tw ter.recos njector.uua_processors
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.kafka.client.processor.ThreadSafeKafkaConsumerClient
-import com.twitter.conversions.StorageUnitOps._
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.f natra.kafka.doma n.KafkaGroup d
+ mport com.tw ter.f natra.kafka.doma n.SeekStrategy
+ mport com.tw ter.f natra.kafka.serde.ScalaSerdes
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.f natra.kafka.serde.UnKeyedSerde
+ mport org.apac .kafka.cl ents.CommonCl entConf gs
+ mport org.apac .kafka.common.conf g.SaslConf gs
+ mport org.apac .kafka.common.conf g.SslConf gs
+ mport org.apac .kafka.common.secur y.auth.Secur yProtocol
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.kafka.cl ent.processor.AtLeastOnceProcessor
+ mport com.tw ter.kafka.cl ent.processor.ThreadSafeKafkaConsu rCl ent
+ mport com.tw ter.convers ons.StorageUn Ops._
 
-class UnifiedUserActionsConsumer(
-  processor: UnifiedUserActionProcessor,
-  truststoreLocation: String
+class Un f edUserAct onsConsu r(
+  processor: Un f edUserAct onProcessor,
+  truststoreLocat on: Str ng
 )(
-  implicit statsReceiver: StatsReceiver) {
-  import UnifiedUserActionsConsumer._
+   mpl c  statsRece ver: StatsRece ver) {
+   mport Un f edUserAct onsConsu r._
 
-  private val kafkaClient = new ThreadSafeKafkaConsumerClient[UnKeyed, UnifiedUserAction](
-    FinagleKafkaConsumerBuilder[UnKeyed, UnifiedUserAction]()
-      .groupId(KafkaGroupId(uuaRecosInjectorGroupId))
-      .keyDeserializer(UnKeyedSerde.deserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[UnifiedUserAction].deserializer)
+  pr vate val kafkaCl ent = new ThreadSafeKafkaConsu rCl ent[UnKeyed, Un f edUserAct on](
+    F nagleKafkaConsu rBu lder[UnKeyed, Un f edUserAct on]()
+      .group d(KafkaGroup d(uuaRecos njectorGroup d))
+      .keyDeser al zer(UnKeyedSerde.deser al zer)
+      .valueDeser al zer(ScalaSerdes.Thr ft[Un f edUserAct on].deser al zer)
       .dest(uuaDest)
       .maxPollRecords(maxPollRecords)
-      .maxPollInterval(maxPollInterval)
+      .maxPoll nterval(maxPoll nterval)
       .fetchMax(fetchMax)
       .seekStrategy(SeekStrategy.END)
-      .enableAutoCommit(false) // AtLeastOnceProcessor performs commits manually
-      .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-      .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
-      .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-      .config)
+      .enableAutoComm (false) // AtLeastOnceProcessor performs comm s manually
+      .w hConf g(CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G, Secur yProtocol.SASL_SSL.toStr ng)
+      .w hConf g(SslConf gs.SSL_TRUSTSTORE_LOCAT ON_CONF G, truststoreLocat on)
+      .w hConf g(SaslConf gs.SASL_MECHAN SM, SaslConf gs.GSSAP _MECHAN SM)
+      .w hConf g(SaslConf gs.SASL_KERBEROS_SERV CE_NAME, "kafka")
+      .w hConf g(SaslConf gs.SASL_KERBEROS_SERVER_NAME, "kafka")
+      .conf g)
 
-  val atLeastOnceProcessor: AtLeastOnceProcessor[UnKeyed, UnifiedUserAction] = {
-    AtLeastOnceProcessor[UnKeyed, UnifiedUserAction](
-      name = processorName,
-      topic = uuaTopic,
-      consumer = kafkaClient,
+  val atLeastOnceProcessor: AtLeastOnceProcessor[UnKeyed, Un f edUserAct on] = {
+    AtLeastOnceProcessor[UnKeyed, Un f edUserAct on](
+      na  = processorNa ,
+      top c = uuaTop c,
+      consu r = kafkaCl ent,
       processor = processor.apply,
-      maxPendingRequests = maxPendingRequests,
+      maxPend ngRequests = maxPend ngRequests,
       workerThreads = workerThreads,
-      commitIntervalMs = commitIntervalMs,
-      statsReceiver = statsReceiver.scope(processorName)
+      comm  ntervalMs = comm  ntervalMs,
+      statsRece ver = statsRece ver.scope(processorNa )
     )
   }
 
 }
 
-object UnifiedUserActionsConsumer {
+object Un f edUserAct onsConsu r {
   val maxPollRecords = 1000
-  val maxPollInterval = 5.minutes
-  val fetchMax = 1.megabytes
-  val maxPendingRequests = 1000
+  val maxPoll nterval = 5.m nutes
+  val fetchMax = 1. gabytes
+  val maxPend ngRequests = 1000
   val workerThreads = 16
-  val commitIntervalMs = 10.seconds.inMilliseconds
-  val processorName = "unified_user_actions_processor"
-  val uuaTopic = "unified_user_actions_engagements"
-  val uuaDest = "/s/kafka/bluebird-1:kafka-tls"
-  val uuaRecosInjectorGroupId = "recos-injector"
+  val comm  ntervalMs = 10.seconds. nM ll seconds
+  val processorNa  = "un f ed_user_act ons_processor"
+  val uuaTop c = "un f ed_user_act ons_engage nts"
+  val uuaDest = "/s/kafka/blueb rd-1:kafka-tls"
+  val uuaRecos njectorGroup d = "recos- njector"
 }

@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-object TwitterListItem {
-  val ListEntryNamespace = EntryNamespace("list")
+object Tw terL st em {
+  val L stEntryNa space = EntryNa space("l st")
 }
 
-case class TwitterListItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  displayType: Option[TwitterListDisplayType])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TwitterListItem.ListEntryNamespace
+case class Tw terL st em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  d splayType: Opt on[Tw terL stD splayType])
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = Tw terL st em.L stEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

@@ -1,95 +1,95 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutProductLaunchCandidate
-import com.twitter.frigate.common.util.{FeatureSwitchParams => FS}
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.magic_events.thriftscala.ProductType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesUtil
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutProductLaunchIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutProductLaunchNtabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Mag cFanoutProductLaunchCand date
+ mport com.tw ter.fr gate.common.ut l.{FeatureSw chParams => FS}
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.ProductType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutPred catesUt l
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.Mag cFanoutProductLaunch b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.Mag cFanoutProductLaunchNtabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutPred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue.Mag cFanoutNtabCaretFat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.Bas cSendHandlerPred cates
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-class MagicFanoutProductLaunchPushCandidate(
-  candidate: RawCandidate with MagicFanoutProductLaunchCandidate,
-  copyIds: CopyIds
+class Mag cFanoutProductLaunchPushCand date(
+  cand date: RawCand date w h Mag cFanoutProductLaunchCand date,
+  copy ds: Copy ds
 )(
-  implicit val statsScoped: StatsReceiver,
+   mpl c  val statsScoped: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with MagicFanoutProductLaunchCandidate
-    with MagicFanoutProductLaunchIbis2Hydrator
-    with MagicFanoutProductLaunchNtabRequestHydrator {
+    extends PushCand date
+    w h Mag cFanoutProductLaunchCand date
+    w h Mag cFanoutProductLaunch b s2Hydrator
+    w h Mag cFanoutProductLaunchNtabRequestHydrator {
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  overr de val fr gateNot f cat on: Fr gateNot f cat on = cand date.fr gateNot f cat on
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  overr de val pushCopy d: Opt on[ nt] = copy ds.pushCopy d
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  overr de val ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
 
-  override val pushId: Long = candidate.pushId
+  overr de val push d: Long = cand date.push d
 
-  override val productLaunchType: ProductType = candidate.productLaunchType
+  overr de val productLaunchType: ProductType = cand date.productLaunchType
 
-  override val candidateMagicEventsReasons: Seq[MagicEventsReason] =
-    candidate.candidateMagicEventsReasons
+  overr de val cand dateMag cEventsReasons: Seq[Mag cEventsReason] =
+    cand date.cand dateMag cEventsReasons
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  overr de val copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
 
-  override val target: Target = candidate.target
+  overr de val target: Target = cand date.target
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  overr de val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("MagicFanoutProductLaunchPushCandidate")
+  overr de val statsRece ver: StatsRece ver =
+    statsScoped.scope("Mag cFanoutProductLaunchPushCand date")
 }
 
-case class MagicFanoutProductLaunchPushCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutProductLaunchPushCandidate] {
+case class Mag cFanoutProductLaunchPushCand datePred cates(conf g: Conf g)
+    extends Bas cSendHandlerPred cates[Mag cFanoutProductLaunchPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutProductLaunchPushCandidate]
+  overr de val preCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutProductLaunchPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_blue_verified",
-        MagicFanoutPredicatesUtil.shouldSkipBlueVerifiedCheckForCandidate,
-        PredicatesForCandidate.isTargetBlueVerified.flip
-      ), // no need to send if target is already Blue Verified
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_legacy_verified",
-        MagicFanoutPredicatesUtil.shouldSkipLegacyVerifiedCheckForCandidate,
-        PredicatesForCandidate.isTargetLegacyVerified.flip
-      ), // no need to send if target is already Legacy Verified
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_super_follow_creator",
-        MagicFanoutPredicatesUtil.shouldSkipSuperFollowCreatorCheckForCandidate,
-        PredicatesForCandidate.isTargetSuperFollowCreator.flip
-      ), // no need to send if target is already Super Follow Creator
-      PredicatesForCandidate.paramPredicate(
-        FS.EnableMagicFanoutProductLaunch
+    L st(
+      Pred catesForCand date. sDev ceEl g bleForCreatorPush,
+      Pred catesForCand date.exceptedPred cate(
+        "excepted_ s_target_blue_ver f ed",
+        Mag cFanoutPred catesUt l.shouldSk pBlueVer f edC ckForCand date,
+        Pred catesForCand date. sTargetBlueVer f ed.fl p
+      ), // no need to send  f target  s already Blue Ver f ed
+      Pred catesForCand date.exceptedPred cate(
+        "excepted_ s_target_legacy_ver f ed",
+        Mag cFanoutPred catesUt l.shouldSk pLegacyVer f edC ckForCand date,
+        Pred catesForCand date. sTargetLegacyVer f ed.fl p
+      ), // no need to send  f target  s already Legacy Ver f ed
+      Pred catesForCand date.exceptedPred cate(
+        "excepted_ s_target_super_follow_creator",
+        Mag cFanoutPred catesUt l.shouldSk pSuperFollowCreatorC ckForCand date,
+        Pred catesForCand date. sTargetSuperFollowCreator.fl p
+      ), // no need to send  f target  s already Super Follow Creator
+      Pred catesForCand date.paramPred cate(
+        FS.EnableMag cFanoutProductLaunch
       ),
-      MagicFanoutPredicatesForCandidate.magicFanoutProductLaunchFatigue(),
+      Mag cFanoutPred catesForCand date.mag cFanoutProductLaunchFat gue(),
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutProductLaunchPushCandidate]
+  overr de val postCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutProductLaunchPushCand date]
   ] =
-    List(
-      MagicFanoutNtabCaretFatiguePredicate(),
+    L st(
+      Mag cFanoutNtabCaretFat guePred cate(),
     )
 }

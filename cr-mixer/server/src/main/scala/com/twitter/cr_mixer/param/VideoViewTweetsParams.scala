@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
 
-object VideoViewTweetsParams {
-  object EnableSourceParam
+object V deoV ewT etsParams {
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "signal_videoviewtweets_enable_source",
+        na  = "s gnal_v deov ewt ets_enable_s ce",
         default = false
       )
 
-  object EnableSourceImpressionParam
+  object EnableS ce mpress onParam
       extends FSParam[Boolean](
-        name = "signal_videoviewtweets_enableimpression_source",
+        na  = "s gnal_v deov ewt ets_enable mpress on_s ce",
         default = false
       )
 
-  object VideoViewTweetType extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+  object V deoV ewT etType extends Enu rat on {
+    protected case class S gnalTypeValue(s gnalType: S gnalType) extends super.Val
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToS gnalTypeValue(x: Value): S gnalTypeValue =
+      x.as nstanceOf[S gnalTypeValue]
 
-    val VideoTweetQualityView: SignalTypeValue = SignalTypeValue(SignalType.VideoView90dQualityV1)
-    val VideoTweetPlayback50: SignalTypeValue = SignalTypeValue(SignalType.VideoView90dPlayback50V1)
+    val V deoT etQual yV ew: S gnalTypeValue = S gnalTypeValue(S gnalType.V deoV ew90dQual yV1)
+    val V deoT etPlayback50: S gnalTypeValue = S gnalTypeValue(S gnalType.V deoV ew90dPlayback50V1)
   }
 
-  object VideoViewTweetTypeParam
-      extends FSEnumParam[VideoViewTweetType.type](
-        name = "signal_videoviewtweets_videoviewtype_id",
-        default = VideoViewTweetType.VideoTweetQualityView,
-        enum = VideoViewTweetType
+  object V deoV ewT etTypeParam
+      extends FSEnumParam[V deoV ewT etType.type](
+        na  = "s gnal_v deov ewt ets_v deov ewtype_ d",
+        default = V deoV ewT etType.V deoT etQual yV ew,
+        enum = V deoV ewT etType
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(EnableSourceParam, EnableSourceImpressionParam, VideoViewTweetTypeParam)
+  val AllParams: Seq[Param[_] w h FSNa ] =
+    Seq(EnableS ceParam, EnableS ce mpress onParam, V deoV ewT etTypeParam)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceImpressionParam,
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam,
+      EnableS ce mpress onParam,
     )
-    val enumOverrides =
-      FeatureSwitchOverrideUtil.getEnumFSOverrides(
-        NullStatsReceiver,
+    val enumOverr des =
+      FeatureSw chOverr deUt l.getEnumFSOverr des(
+        NullStatsRece ver,
         Logger(getClass),
-        VideoViewTweetTypeParam)
+        V deoV ewT etTypeParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(enumOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(enumOverr des: _*)
+      .bu ld()
   }
 
 }

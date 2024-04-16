@@ -1,43 +1,43 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.hdfs_sources.{
-  NormsAndCountsFixedPathSource,
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, ProcAtla}
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch._
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{
+  NormsAndCountsF xedPathS ce,
   ProducerNormsAndCountsScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
+ mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.NormsAndCounts
 
 object ProducerNormsAndCounts {
 
   def getNormsAndCounts(
-    input: TypedPipe[Edge]
+     nput: TypedP pe[Edge]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[NormsAndCounts] = {
-    val numRecordsInNormsAndCounts = Stat("num_records_in_norms_and_counts")
-    input
+     mpl c  un que D: Un que D
+  ): TypedP pe[NormsAndCounts] = {
+    val numRecords nNormsAndCounts = Stat("num_records_ n_norms_and_counts")
+     nput
       .map {
-        case Edge(srcId, destId, isFollowEdge, favWt) =>
-          val followOrNot = if (isFollowEdge) 1 else 0
-          ((srcId, destId), (followOrNot, favWt))
+        case Edge(src d, dest d,  sFollowEdge, favWt) =>
+          val followOrNot =  f ( sFollowEdge) 1 else 0
+          ((src d, dest d), (followOrNot, favWt))
       }
       .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(2500)
+      // Uncom nt for adhoc job
+      //.w hReducers(2500)
       .map {
-        case ((srcId, destId), (followOrNot, favWt)) =>
-          val favOrNot = if (favWt > 0) 1 else 0
-          val logFavScore = if (favWt > 0) UserUserNormalizedGraph.logTransformation(favWt) else 0.0
+        case ((src d, dest d), (followOrNot, favWt)) =>
+          val favOrNot =  f (favWt > 0) 1 else 0
+          val logFavScore =  f (favWt > 0) UserUserNormal zedGraph.logTransformat on(favWt) else 0.0
           (
-            destId,
+            dest d,
             (
               followOrNot,
               favWt * favWt,
@@ -49,11 +49,11 @@ object ProducerNormsAndCounts {
               logFavScore * followOrNot.toDouble))
       }
       .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(500)
+      // Uncom nt for adhoc job
+      //.w hReducers(500)
       .map {
         case (
-              id,
+               d,
               (
                 followCount,
                 favSumSquare,
@@ -63,71 +63,71 @@ object ProducerNormsAndCounts {
                 logFavSumSquare,
                 logFavSumOnFavEdges,
                 logFavSumOnFollowEdges)) =>
-          val followerNorm = math.sqrt(followCount)
+          val follo rNorm = math.sqrt(followCount)
           val faverNorm = math.sqrt(favSumSquare)
-          numRecordsInNormsAndCounts.inc()
+          numRecords nNormsAndCounts. nc()
           NormsAndCounts(
-            userId = id,
-            followerL2Norm = Some(followerNorm),
-            faverL2Norm = Some(faverNorm),
-            followerCount = Some(followCount),
-            faverCount = Some(favCount),
-            favWeightsOnFavEdgesSum = Some(favSumOnFavEdges),
-            favWeightsOnFollowEdgesSum = Some(favSumOnFollowEdges),
-            logFavL2Norm = Some(math.sqrt(logFavSumSquare)),
-            logFavWeightsOnFavEdgesSum = Some(logFavSumOnFavEdges),
-            logFavWeightsOnFollowEdgesSum = Some(logFavSumOnFollowEdges)
+            user d =  d,
+            follo rL2Norm = So (follo rNorm),
+            faverL2Norm = So (faverNorm),
+            follo rCount = So (followCount),
+            faverCount = So (favCount),
+            fav  ghtsOnFavEdgesSum = So (favSumOnFavEdges),
+            fav  ghtsOnFollowEdgesSum = So (favSumOnFollowEdges),
+            logFavL2Norm = So (math.sqrt(logFavSumSquare)),
+            logFav  ghtsOnFavEdgesSum = So (logFavSumOnFavEdges),
+            logFav  ghtsOnFollowEdgesSum = So (logFavSumOnFollowEdges)
           )
       }
   }
 
   def run(
-    halfLifeInDaysForFavScore: Int
+    halfL fe nDaysForFavScore:  nt
   )(
-    implicit uniqueID: UniqueID,
+     mpl c  un que D: Un que D,
     date: DateRange
-  ): TypedPipe[NormsAndCounts] = {
-    val input =
-      UserUserNormalizedGraph.getFollowEdges.map {
+  ): TypedP pe[NormsAndCounts] = {
+    val  nput =
+      UserUserNormal zedGraph.getFollowEdges.map {
         case (src, dest) =>
-          Edge(src, dest, isFollowEdge = true, 0.0)
-      } ++ UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore).map {
+          Edge(src, dest,  sFollowEdge = true, 0.0)
+      } ++ UserUserNormal zedGraph.getFavEdges(halfL fe nDaysForFavScore).map {
         case (src, dest, wt) =>
-          Edge(src, dest, isFollowEdge = false, wt)
+          Edge(src, dest,  sFollowEdge = false, wt)
       }
-    getNormsAndCounts(input)
+    getNormsAndCounts( nput)
   }
 }
 
-object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2018-06-16"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(7)
-  private val firstStartDate = DateRange.parse(firstTime).start
-  private val halfLifeInDaysForFavScore = 100
+object ProducerNormsAndCountsBatch extends Tw terSc duledExecut onApp {
+  pr vate val f rstT  : Str ng = "2018-06-16"
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
+  pr vate val batch ncre nt: Durat on = Days(7)
+  pr vate val f rstStartDate = DateRange.parse(f rstT  ).start
+  pr vate val halfL fe nDaysForFavScore = 100
 
-  private val outputPath: String = "/user/cassowary/processed/producer_norms_and_counts"
-  private val log = Logger()
+  pr vate val outputPath: Str ng = "/user/cassowary/processed/producer_norms_and_counts"
+  pr vate val log = Logger()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          Util.printCounters(
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
+          Ut l.pr ntCounters(
             ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore)
-              .writeDALSnapshotExecution(
+              .run(halfL fe nDaysForFavScore)
+              .wr eDALSnapshotExecut on(
                 ProducerNormsAndCountsScalaDataset,
-                D.Daily,
-                D.Suffix(outputPath),
+                D.Da ly,
+                D.Suff x(outputPath),
                 D.EBLzo(),
                 dateRange.end)
           )
@@ -136,24 +136,24 @@ object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
   }
 }
 
-object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object ProducerNormsAndCountsAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val date = DateRange.parse(args.list("date"))
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+           mpl c  val date = DateRange.parse(args.l st("date"))
 
-          Util.printCounters(
+          Ut l.pr ntCounters(
             ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore = 100)
-              .forceToDiskExecution.flatMap { result =>
-                Execution.zip(
-                  result.writeExecution(NormsAndCountsFixedPathSource(args("outputDir"))),
-                  result.printSummary("Producer norms and counts")
+              .run(halfL fe nDaysForFavScore = 100)
+              .forceToD skExecut on.flatMap { result =>
+                Execut on.z p(
+                  result.wr eExecut on(NormsAndCountsF xedPathS ce(args("outputD r"))),
+                  result.pr ntSummary("Producer norms and counts")
                 )
               }
           )
@@ -161,34 +161,34 @@ object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
     }
 }
 
-object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+object DumpNormsAndCountsAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
 
-          val users = args.list("users").map(_.toLong).toSet
-          val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(NormsAndCountsFixedPathSource(inputDir))
+          val users = args.l st("users").map(_.toLong).toSet
+          val  nput = args.opt onal(" nputD r") match {
+            case So ( nputD r) => TypedP pe.from(NormsAndCountsF xedPathS ce( nputD r))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+                .toTypedP pe
           }
 
-          if (users.isEmpty) {
-            input.printSummary("Producer norms and counts")
+           f (users. sEmpty) {
+             nput.pr ntSummary("Producer norms and counts")
           } else {
-            input
+             nput
               .collect {
-                case rec if users.contains(rec.userId) =>
-                  Util.prettyJsonMapper.writeValueAsString(rec).replaceAll("\n", " ")
+                case rec  f users.conta ns(rec.user d) =>
+                  Ut l.prettyJsonMapper.wr eValueAsStr ng(rec).replaceAll("\n", " ")
               }
-              .toIterableExecution
-              .map { strings => println(strings.mkString("\n")) }
+              .to erableExecut on
+              .map { str ngs => pr ntln(str ngs.mkStr ng("\n")) }
           }
         }
     }

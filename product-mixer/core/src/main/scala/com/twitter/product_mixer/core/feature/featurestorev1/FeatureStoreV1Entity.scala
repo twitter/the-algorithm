@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.feature.featurestorev1
+package com.tw ter.product_m xer.core.feature.featurestorev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-sealed trait FeatureStoreV1Entity[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId] {
+sealed tra  FeatureStoreV1Ent y[
+  -Query <: P pel neQuery,
+  - nput,
+  FeatureStoreEnt y d <: Ent y d] {
 
-  val entity: Entity[FeatureStoreEntityId]
+  val ent y: Ent y[FeatureStoreEnt y d]
 }
 
-trait FeatureStoreV1QueryEntity[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1Entity[Query, Query, FeatureStoreEntityId] {
+tra  FeatureStoreV1QueryEnt y[-Query <: P pel neQuery, FeatureStoreEnt y d <: Ent y d]
+    extends FeatureStoreV1Ent y[Query, Query, FeatureStoreEnt y d] {
 
-  def entityWithId(query: Query): EntityWithId[FeatureStoreEntityId]
+  def ent yW h d(query: Query): Ent yW h d[FeatureStoreEnt y d]
 }
 
-trait FeatureStoreV1CandidateEntity[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1Entity[Query, Input, FeatureStoreEntityId] {
+tra  FeatureStoreV1Cand dateEnt y[
+  -Query <: P pel neQuery,
+  - nput <: Un versalNoun[Any],
+  FeatureStoreEnt y d <: Ent y d]
+    extends FeatureStoreV1Ent y[Query,  nput, FeatureStoreEnt y d] {
 
-  def entityWithId(
+  def ent yW h d(
     query: Query,
-    input: Input,
-    existingFeatures: FeatureMap
-  ): EntityWithId[FeatureStoreEntityId]
+     nput:  nput,
+    ex st ngFeatures: FeatureMap
+  ): Ent yW h d[FeatureStoreEnt y d]
 }

@@ -1,70 +1,70 @@
-import os
+ mport os
 
-from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR, MAX_SEQ_LENGTH
+from tox c y_ml_p pel ne.sett ngs.default_sett ngs_tox  mport LOCAL_D R, MAX_SEQ_LENGTH
 try:
-  from toxicity_ml_pipeline.optim.losses import MaskedBCE
-except ImportError:
-  print('No MaskedBCE loss')
-from toxicity_ml_pipeline.utils.helpers import execute_command
+  from tox c y_ml_p pel ne.opt m.losses  mport MaskedBCE
+except  mportError:
+  pr nt('No MaskedBCE loss')
+from tox c y_ml_p pel ne.ut ls. lpers  mport execute_command
 
-import tensorflow as tf
+ mport tensorflow as tf
 
 
 try:
-  from twitter.cuad.representation.models.text_encoder import TextEncoder
+  from tw ter.cuad.representat on.models.text_encoder  mport TextEncoder
 except ModuleNotFoundError:
-  print("No TextEncoder package")
+  pr nt("No TextEncoder package")
 
 try:
-  from transformers import TFAutoModelForSequenceClassification
+  from transfor rs  mport TFAutoModelForSequenceClass f cat on
 except ModuleNotFoundError:
-  print("No HuggingFace package")
+  pr nt("No Hugg ngFace package")
 
-LOCAL_MODEL_DIR = os.path.join(LOCAL_DIR, "models")
+LOCAL_MODEL_D R = os.path.jo n(LOCAL_D R, "models")
 
 
-def reload_model_weights(weights_dir, language, **kwargs):
-  optimizer = tf.keras.optimizers.Adam(0.01)
+def reload_model_  ghts(  ghts_d r, language, **kwargs):
+  opt m zer = tf.keras.opt m zers.Adam(0.01)
   model_type = (
-    "twitter_bert_base_en_uncased_mlm"
-    if language == "en"
-    else "twitter_multilingual_bert_base_cased_mlm"
+    "tw ter_bert_base_en_uncased_mlm"
+     f language == "en"
+    else "tw ter_mult l ngual_bert_base_cased_mlm"
   )
-  model = load(optimizer=optimizer, seed=42, model_type=model_type, **kwargs)
-  model.load_weights(weights_dir)
+  model = load(opt m zer=opt m zer, seed=42, model_type=model_type, **kwargs)
+  model.load_  ghts(  ghts_d r)
 
   return model
 
 
 def _locally_copy_models(model_type):
-  if model_type == "twitter_multilingual_bert_base_cased_mlm":
-    preprocessor = "bert_multi_cased_preprocess_3"
-  elif model_type == "twitter_bert_base_en_uncased_mlm":
+   f model_type == "tw ter_mult l ngual_bert_base_cased_mlm":
+    preprocessor = "bert_mult _cased_preprocess_3"
+  el f model_type == "tw ter_bert_base_en_uncased_mlm":
     preprocessor = "bert_en_uncased_preprocess_3"
   else:
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  copy_cmd = """mkdir {local_dir}
-gsutil cp -r ...
-gsutil cp -r ..."""
+  copy_cmd = """mkd r {local_d r}
+gsut l cp -r ...
+gsut l cp -r ..."""
   execute_command(
-    copy_cmd.format(model_type=model_type, preprocessor=preprocessor, local_dir=LOCAL_MODEL_DIR)
+    copy_cmd.format(model_type=model_type, preprocessor=preprocessor, local_d r=LOCAL_MODEL_D R)
   )
 
   return preprocessor
 
 
-def load_encoder(model_type, trainable):
+def load_encoder(model_type, tra nable):
   try:
     model = TextEncoder(
       max_seq_lengths=MAX_SEQ_LENGTH,
       model_type=model_type,
       cluster="gcp",
-      trainable=trainable,
-      enable_dynamic_shapes=True,
+      tra nable=tra nable,
+      enable_dynam c_shapes=True,
     )
   except (OSError, tf.errors.AbortedError) as e:
-    print(e)
+    pr nt(e)
     preprocessor = _locally_copy_models(model_type)
 
     model = TextEncoder(
@@ -72,156 +72,156 @@ def load_encoder(model_type, trainable):
       local_model_path=f"models/{model_type}",
       local_preprocessor_path=f"models/{preprocessor}",
       cluster="gcp",
-      trainable=trainable,
-      enable_dynamic_shapes=True,
+      tra nable=tra nable,
+      enable_dynam c_shapes=True,
     )
 
   return model
 
 
-def get_loss(loss_name, from_logits, **kwargs):
-  loss_name = loss_name.lower()
-  if loss_name == "bce":
-    print("Binary CE loss")
-    return tf.keras.losses.BinaryCrossentropy(from_logits=from_logits)
+def get_loss(loss_na , from_log s, **kwargs):
+  loss_na  = loss_na .lo r()
+   f loss_na  == "bce":
+    pr nt("B nary CE loss")
+    return tf.keras.losses.B naryCrossentropy(from_log s=from_log s)
 
-  if loss_name == "cce":
-    print("Categorical cross-entropy loss")
-    return tf.keras.losses.CategoricalCrossentropy(from_logits=from_logits)
+   f loss_na  == "cce":
+    pr nt("Categor cal cross-entropy loss")
+    return tf.keras.losses.Categor calCrossentropy(from_log s=from_log s)
 
-  if loss_name == "scce":
-    print("Sparse categorical cross-entropy loss")
-    return tf.keras.losses.SparseCategoricalCrossentropy(from_logits=from_logits)
+   f loss_na  == "scce":
+    pr nt("Sparse categor cal cross-entropy loss")
+    return tf.keras.losses.SparseCategor calCrossentropy(from_log s=from_log s)
 
-  if loss_name == "focal_bce":
+   f loss_na  == "focal_bce":
     gamma = kwargs.get("gamma", 2)
-    print("Focal binary CE loss", gamma)
-    return tf.keras.losses.BinaryFocalCrossentropy(gamma=gamma, from_logits=from_logits)
+    pr nt("Focal b nary CE loss", gamma)
+    return tf.keras.losses.B naryFocalCrossentropy(gamma=gamma, from_log s=from_log s)
 
-  if loss_name == 'masked_bce':
-    multitask = kwargs.get("multitask", False)
-    if from_logits or multitask:
-      raise NotImplementedError
-    print(f'Masked Binary Cross Entropy')
+   f loss_na  == 'masked_bce':
+    mult ask = kwargs.get("mult ask", False)
+     f from_log s or mult ask:
+      ra se Not mple ntedError
+    pr nt(f'Masked B nary Cross Entropy')
     return MaskedBCE()
 
-  if loss_name == "inv_kl_loss":
-    raise NotImplementedError
+   f loss_na  == " nv_kl_loss":
+    ra se Not mple ntedError
 
-  raise ValueError(
-    f"This loss name is not valid: {loss_name}. Accepted loss names: BCE, masked BCE, CCE, sCCE, "
-    f"Focal_BCE, inv_KL_loss"
+  ra se ValueError(
+    f"T  loss na   s not val d: {loss_na }. Accepted loss na s: BCE, masked BCE, CCE, sCCE, "
+    f"Focal_BCE,  nv_KL_loss"
   )
 
-def _add_additional_embedding_layer(doc_embedding, glorot, seed):
-  doc_embedding = tf.keras.layers.Dense(768, activation="tanh", kernel_initializer=glorot)(doc_embedding)
-  doc_embedding = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedding)
-  return doc_embedding
+def _add_add  onal_embedd ng_layer(doc_embedd ng, glorot, seed):
+  doc_embedd ng = tf.keras.layers.Dense(768, act vat on="tanh", kernel_ n  al zer=glorot)(doc_embedd ng)
+  doc_embedd ng = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedd ng)
+  return doc_embedd ng
 
-def _get_bias(**kwargs):
-  smart_bias_value = kwargs.get('smart_bias_value', 0)
-  print('Smart bias init to ', smart_bias_value)
-  output_bias = tf.keras.initializers.Constant(smart_bias_value)
-  return output_bias
+def _get_b as(**kwargs):
+  smart_b as_value = kwargs.get('smart_b as_value', 0)
+  pr nt('Smart b as  n  to ', smart_b as_value)
+  output_b as = tf.keras. n  al zers.Constant(smart_b as_value)
+  return output_b as
 
 
-def load_inhouse_bert(model_type, trainable, seed, **kwargs):
-  inputs = tf.keras.layers.Input(shape=(), dtype=tf.string)
-  encoder = load_encoder(model_type=model_type, trainable=trainable)
-  doc_embedding = encoder([inputs])["pooled_output"]
-  doc_embedding = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedding)
+def load_ nhouse_bert(model_type, tra nable, seed, **kwargs):
+   nputs = tf.keras.layers. nput(shape=(), dtype=tf.str ng)
+  encoder = load_encoder(model_type=model_type, tra nable=tra nable)
+  doc_embedd ng = encoder([ nputs])["pooled_output"]
+  doc_embedd ng = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedd ng)
 
-  glorot = tf.keras.initializers.glorot_uniform(seed=seed)
-  if kwargs.get("additional_layer", False):
-    doc_embedding = _add_additional_embedding_layer(doc_embedding, glorot, seed)
+  glorot = tf.keras. n  al zers.glorot_un form(seed=seed)
+   f kwargs.get("add  onal_layer", False):
+    doc_embedd ng = _add_add  onal_embedd ng_layer(doc_embedd ng, glorot, seed)
 
-  if kwargs.get('content_num_classes', None):
-    probs = get_last_layer(glorot=glorot, last_layer_name='target_output', **kwargs)(doc_embedding)
+   f kwargs.get('content_num_classes', None):
+    probs = get_last_layer(glorot=glorot, last_layer_na ='target_output', **kwargs)(doc_embedd ng)
     second_probs = get_last_layer(num_classes=kwargs['content_num_classes'],
-                                  last_layer_name='content_output',
-                                  glorot=glorot)(doc_embedding)
+                                  last_layer_na ='content_output',
+                                  glorot=glorot)(doc_embedd ng)
     probs = [probs, second_probs]
   else:
-    probs = get_last_layer(glorot=glorot, **kwargs)(doc_embedding)
-  model = tf.keras.models.Model(inputs=inputs, outputs=probs)
+    probs = get_last_layer(glorot=glorot, **kwargs)(doc_embedd ng)
+  model = tf.keras.models.Model( nputs= nputs, outputs=probs)
 
   return model, False
 
 def get_last_layer(**kwargs):
-  output_bias = _get_bias(**kwargs)
-  if 'glorot' in kwargs:
+  output_b as = _get_b as(**kwargs)
+   f 'glorot'  n kwargs:
     glorot = kwargs['glorot']
   else:
-    glorot = tf.keras.initializers.glorot_uniform(seed=kwargs['seed'])
-  layer_name = kwargs.get('last_layer_name', 'dense_1')
+    glorot = tf.keras. n  al zers.glorot_un form(seed=kwargs['seed'])
+  layer_na  = kwargs.get('last_layer_na ', 'dense_1')
 
-  if kwargs.get('num_classes', 1) > 1:
+   f kwargs.get('num_classes', 1) > 1:
     last_layer = tf.keras.layers.Dense(
-      kwargs["num_classes"], activation="softmax", kernel_initializer=glorot,
-      bias_initializer=output_bias, name=layer_name
+      kwargs["num_classes"], act vat on="softmax", kernel_ n  al zer=glorot,
+      b as_ n  al zer=output_b as, na =layer_na 
     )
 
-  elif kwargs.get('num_raters', 1) > 1:
-    if kwargs.get('multitask', False):
-      raise NotImplementedError
+  el f kwargs.get('num_raters', 1) > 1:
+     f kwargs.get('mult ask', False):
+      ra se Not mple ntedError
     last_layer = tf.keras.layers.Dense(
-      kwargs['num_raters'], activation="sigmoid", kernel_initializer=glorot,
-      bias_initializer=output_bias, name='probs')
+      kwargs['num_raters'], act vat on="s gmo d", kernel_ n  al zer=glorot,
+      b as_ n  al zer=output_b as, na ='probs')
 
   else:
     last_layer = tf.keras.layers.Dense(
-      1, activation="sigmoid", kernel_initializer=glorot,
-      bias_initializer=output_bias, name=layer_name
+      1, act vat on="s gmo d", kernel_ n  al zer=glorot,
+      b as_ n  al zer=output_b as, na =layer_na 
     )
 
   return last_layer
 
-def load_bertweet(**kwargs):
-  bert = TFAutoModelForSequenceClassification.from_pretrained(
-    os.path.join(LOCAL_MODEL_DIR, "bertweet-base"),
+def load_bert et(**kwargs):
+  bert = TFAutoModelForSequenceClass f cat on.from_pretra ned(
+    os.path.jo n(LOCAL_MODEL_D R, "bert et-base"),
     num_labels=1,
-    classifier_dropout=0.1,
-    hidden_size=768,
+    class f er_dropout=0.1,
+    h dden_s ze=768,
   )
-  if "num_classes" in kwargs and kwargs["num_classes"] > 2:
-    raise NotImplementedError
+   f "num_classes"  n kwargs and kwargs["num_classes"] > 2:
+    ra se Not mple ntedError
 
   return bert, True
 
 
 def load(
-  optimizer,
+  opt m zer,
   seed,
-  model_type="twitter_multilingual_bert_base_cased_mlm",
-  loss_name="BCE",
-  trainable=True,
+  model_type="tw ter_mult l ngual_bert_base_cased_mlm",
+  loss_na ="BCE",
+  tra nable=True,
   **kwargs,
 ):
-  if model_type == "bertweet-base":
-    model, from_logits = load_bertweet()
+   f model_type == "bert et-base":
+    model, from_log s = load_bert et()
   else:
-    model, from_logits = load_inhouse_bert(model_type, trainable, seed, **kwargs)
+    model, from_log s = load_ nhouse_bert(model_type, tra nable, seed, **kwargs)
 
-  pr_auc = tf.keras.metrics.AUC(curve="PR", name="pr_auc", from_logits=from_logits)
-  roc_auc = tf.keras.metrics.AUC(curve="ROC", name="roc_auc", from_logits=from_logits)
+  pr_auc = tf.keras. tr cs.AUC(curve="PR", na ="pr_auc", from_log s=from_log s)
+  roc_auc = tf.keras. tr cs.AUC(curve="ROC", na ="roc_auc", from_log s=from_log s)
 
-  loss = get_loss(loss_name, from_logits, **kwargs)
-  if kwargs.get('content_num_classes', None):
-    second_loss = get_loss(loss_name=kwargs['content_loss_name'], from_logits=from_logits)
-    loss_weights = {'content_output': kwargs['content_loss_weight'], 'target_output': 1}
-    model.compile(
-      optimizer=optimizer,
+  loss = get_loss(loss_na , from_log s, **kwargs)
+   f kwargs.get('content_num_classes', None):
+    second_loss = get_loss(loss_na =kwargs['content_loss_na '], from_log s=from_log s)
+    loss_  ghts = {'content_output': kwargs['content_loss_  ght'], 'target_output': 1}
+    model.comp le(
+      opt m zer=opt m zer,
       loss={'content_output': second_loss, 'target_output': loss},
-      loss_weights=loss_weights,
-      metrics=[pr_auc, roc_auc],
+      loss_  ghts=loss_  ghts,
+       tr cs=[pr_auc, roc_auc],
     )
 
   else:
-    model.compile(
-      optimizer=optimizer,
+    model.comp le(
+      opt m zer=opt m zer,
       loss=loss,
-      metrics=[pr_auc, roc_auc],
+       tr cs=[pr_auc, roc_auc],
     )
-  print(model.summary(), "logits: ", from_logits)
+  pr nt(model.summary(), "log s: ", from_log s)
 
   return model

@@ -1,198 +1,198 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.tw ter.s mclusters_v2.scald ng.optout
 
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Durat on
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng.TypedTsv
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.Semant cCoreEnt y d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClusterType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser sKnownFor
+ mport com.tw ter.s mclusters_v2.thr ftscala.Semant cCoreEnt yW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserToKnownForClusters
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
+ mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferredEnt  es
 
 /**
- * Creates opt-out compliant KnownFor datasets based on plain user -> KnownFor data and users'
- * opt-out selections from YourTwitterData. In essence, we remove any cluster whose inferred
- * entities were opted out by the user.
- * The opted out KnownFor dataset should be the default dataset to be consumed, instead of the
- * plain KnownFor, which is not opt-out compliant.
+ * Creates opt-out compl ant KnownFor datasets based on pla n user -> KnownFor data and users'
+ * opt-out select ons from Y Tw terData.  n essence,   remove any cluster whose  nferred
+ * ent  es  re opted out by t  user.
+ * T  opted out KnownFor dataset should be t  default dataset to be consu d,  nstead of t 
+ * pla n KnownFor, wh ch  s not opt-out compl ant.
  */
 object KnownForOptOut {
 
-  def filterOptedOutKnownFor(
-    knownForPipe: TypedPipe[(UserId, ClustersUserIsKnownFor)],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, ClustersUserIsKnownFor)] = {
+  def f lterOptedOutKnownFor(
+    knownForP pe: TypedP pe[(User d, ClustersUser sKnownFor)],
+    optedOutEnt  es: TypedP pe[(User d, Set[Semant cCoreEnt y d])],
+    clusterToEnt  es: TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])]
+  ): TypedP pe[(User d, ClustersUser sKnownFor)] = {
 
-    val validKnownFor = SimClustersOptOutUtil.filterOptedOutClusters(
-      userToClusters = knownForPipe.mapValues(_.clusterIdToScores.keySet.toSeq),
-      optedOutEntities = optedOutEntities,
-      legibleClusters = clusterToEntities
+    val val dKnownFor = S mClustersOptOutUt l.f lterOptedOutClusters(
+      userToClusters = knownForP pe.mapValues(_.cluster dToScores.keySet.toSeq),
+      optedOutEnt  es = optedOutEnt  es,
+      leg bleClusters = clusterToEnt  es
     )
 
-    knownForPipe
-      .leftJoin(validKnownFor)
+    knownForP pe
+      .leftJo n(val dKnownFor)
       .mapValues {
-        case (originalKnownFors, validKnownForOpt) =>
-          val validKnownFor = validKnownForOpt.getOrElse(Seq()).toSet
+        case (or g nalKnownFors, val dKnownForOpt) =>
+          val val dKnownFor = val dKnownForOpt.getOrElse(Seq()).toSet
 
-          originalKnownFors.copy(
-            clusterIdToScores = originalKnownFors.clusterIdToScores.filterKeys(validKnownFor)
+          or g nalKnownFors.copy(
+            cluster dToScores = or g nalKnownFors.cluster dToScores.f lterKeys(val dKnownFor)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .f lter(_._2.cluster dToScores.nonEmpty)
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron known_for_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+  --start_cron known_for_optout_da ly \
+  src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-03-29")
+object KnownForOptOutDa lyBatchJob extends Sc duledExecut onApp {
+  overr de def f rstT  : R chDate = R chDate("2021-03-29")
 
-  override def batchIncrement: Duration = Days(1)
+  overr de def batch ncre nt: Durat on = Days(1)
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val optedOutEntitiesPipe = SimClustersOptOutUtil
-      .getP13nOptOutSources(dateRange.embiggen(Days(2)), ClusterType.KnownFor)
-      .forceToDisk
+    val optedOutEnt  esP pe = S mClustersOptOutUt l
+      .getP13nOptOutS ces(dateRange.emb ggen(Days(2)), ClusterType.KnownFor)
+      .forceToD sk
 
-    val clusterToEntitiesPipe = InferredEntities.getLegibleEntityEmbeddings(dateRange, timeZone)
+    val clusterToEnt  esP pe =  nferredEnt  es.getLeg bleEnt yEmbedd ngs(dateRange, t  Zone)
 
     val knownFor2020 = DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-        dateRange.embiggen(Days(10)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+        S mclustersV2RawKnownFor20M145K2020ScalaDataset,
+        dateRange.emb ggen(Days(10)))
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_2020_knownfor")
+      .count("num_users_w h_2020_knownfor")
 
-    val filtered2020KnownForExec = {
-      val filtered2020KnownForData = KnownForOptOut
-        .filterOptedOutKnownFor(
-          knownForPipe = knownFor2020,
-          optedOutEntities = optedOutEntitiesPipe,
-          clusterToEntities = clusterToEntitiesPipe
+    val f ltered2020KnownForExec = {
+      val f ltered2020KnownForData = KnownForOptOut
+        .f lterOptedOutKnownFor(
+          knownForP pe = knownFor2020,
+          optedOutEnt  es = optedOutEnt  esP pe,
+          clusterToEnt  es = clusterToEnt  esP pe
         )
-        .count("num_users_with_compliant_2020_knownfor")
-        .forceToDisk
+        .count("num_users_w h_compl ant_2020_knownfor")
+        .forceToD sk
 
-      Execution
-        .zip(
-          filtered2020KnownForData
+      Execut on
+        .z p(
+          f ltered2020KnownForData
             .map { case (k, v) => KeyVal(k, v) }
-            .writeDALVersionedKeyValExecution(
-              SimclustersV2KnownFor20M145K2020ScalaDataset,
-              D.Suffix(DataPaths.KnownFor2020Path)
+            .wr eDALVers onedKeyValExecut on(
+              S mclustersV2KnownFor20M145K2020ScalaDataset,
+              D.Suff x(DataPaths.KnownFor2020Path)
             ),
-          filtered2020KnownForData
+          f ltered2020KnownForData
             .map {
-              case (userId, ClustersUserIsKnownFor(modelVersion, clusters)) =>
-                UserToKnownForClusters(userId, modelVersion, clusters)
+              case (user d, ClustersUser sKnownFor(modelVers on, clusters)) =>
+                UserToKnownForClusters(user d, modelVers on, clusters)
             }
-            .writeDALSnapshotExecution(
-              dataset = SimclustersV2KnownFor20M145K2020ThriftScalaDataset,
-              updateStep = D.Daily,
-              pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDatasetPath),
+            .wr eDALSnapshotExecut on(
+              dataset = S mclustersV2KnownFor20M145K2020Thr ftScalaDataset,
+              updateStep = D.Da ly,
+              pathLa t = D.Suff x(DataPaths.KnownFor2020Thr ftDatasetPath),
               fmt = D.Parquet,
               endDate = dateRange.end
             )
-        ).unit
+        ).un 
     }
 
-    Util.printCounters(filtered2020KnownForExec)
+    Ut l.pr ntCounters(f ltered2020KnownForExec)
 
   }
 }
 
 /**
- * For debugging only. Does a filtering run and prints the differences before/after the opt out
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/optout:knownfor_optout-adhoc && \
- oscar hdfs --user recos-platform --screen --tee your_ldap \
+ * For debugg ng only. Does a f lter ng run and pr nts t  d fferences before/after t  opt out
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/optout:knownfor_optout-adhoc && \
+ oscar hdfs --user recos-platform --screen --tee y _ldap \
   --bundle knownfor_optout-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob \
+  --tool com.tw ter.s mclusters_v2.scald ng.optout.KnownForOptOutAdhocJob \
  -- --date 2019-10-12
  */
-object KnownForOptOutAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
+object KnownForOptOutAdhocJob extends AdhocExecut onApp {
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val knownForPipe = DAL
-      .readMostRecentSnapshotNoOlderThan(SimclustersV2RawKnownFor20M145KDec11ScalaDataset, Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val knownForP pe = DAL
+      .readMostRecentSnapshotNoOlderThan(S mclustersV2RawKnownFor20M145KDec11ScalaDataset, Days(30))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_knownfor")
+      .count("num_users_w h_knownfor")
 
-    val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.KnownFor)
-        .count("num_users_with_optouts")
+    val userOptoutEnt  es: TypedP pe[(User d, Set[Semant cCoreEnt y d])] =
+      S mClustersOptOutUt l
+        .getP13nOptOutS ces(dateRange.emb ggen(Days(4)), ClusterType.KnownFor)
+        .count("num_users_w h_optouts")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_cluster_to_entities")
+    val clusterToEnt  es =  nferredEnt  es
+      .getLeg bleEnt yEmbedd ngs(dateRange, t  Zone)
+      .count("num_cluster_to_ent  es")
 
-    val filteredKnownForPipe = KnownForOptOut.filterOptedOutKnownFor(
-      knownForPipe,
-      userOptoutEntities,
-      clusterToEntities
+    val f lteredKnownForP pe = KnownForOptOut.f lterOptedOutKnownFor(
+      knownForP pe,
+      userOptoutEnt  es,
+      clusterToEnt  es
     )
 
-    val output = knownForPipe
-      .join(filteredKnownForPipe)
+    val output = knownForP pe
+      .jo n(f lteredKnownForP pe)
       .collect {
-        case (userId, (originalKnownFor, filtered))
-            if originalKnownFor.clusterIdToScores != filtered.clusterIdToScores =>
-          (userId, (originalKnownFor, filtered))
+        case (user d, (or g nalKnownFor, f ltered))
+             f or g nalKnownFor.cluster dToScores != f ltered.cluster dToScores =>
+          (user d, (or g nalKnownFor, f ltered))
       }
-      .join(userOptoutEntities)
+      .jo n(userOptoutEnt  es)
       .map {
-        case (userId, ((originalKnownFor, filtered), optoutEntities)) =>
+        case (user d, ((or g nalKnownFor, f ltered), optoutEnt  es)) =>
           Seq(
-            "userId=" + userId,
-            "originalKnownFor=" + originalKnownFor,
-            "filteredKnownFor=" + filtered,
-            "optoutEntities=" + optoutEntities
-          ).mkString("\t")
+            "user d=" + user d,
+            "or g nalKnownFor=" + or g nalKnownFor,
+            "f lteredKnownFor=" + f ltered,
+            "optoutEnt  es=" + optoutEnt  es
+          ).mkStr ng("\t")
       }
 
     val outputPath = "/user/recos-platform/adhoc/knownfor_optout"
-    output.writeExecution(TypedTsv(outputPath))
+    output.wr eExecut on(TypedTsv(outputPath))
   }
 }

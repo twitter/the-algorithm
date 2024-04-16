@@ -1,56 +1,56 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.util.IdentityHashMap;
+ mport java.ut l. dent yHashMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
+ mport com.tw ter.search.queryparser.query.BooleanQuery;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.annotat on.Annotat on;
+ mport com.tw ter.search.queryparser.v s ors.DetectAnnotat onV s or;
 
 /**
- * A visitor that collects node ranks from :r annotation in the query
+ * A v s or that collects node ranks from :r annotat on  n t  query
  */
-public class QueryRankVisitor extends DetectAnnotationVisitor {
-  private final IdentityHashMap<Query, Integer> nodeToRankMap = Maps.newIdentityHashMap();
+publ c class QueryRankV s or extends DetectAnnotat onV s or {
+  pr vate f nal  dent yHashMap<Query,  nteger> nodeToRankMap = Maps.new dent yHashMap();
 
-  public QueryRankVisitor() {
-    super(Annotation.Type.NODE_RANK);
+  publ c QueryRankV s or() {
+    super(Annotat on.Type.NODE_RANK);
   }
 
-  @Override
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+  @Overr de
+  protected boolean v s BooleanQuery(BooleanQuery query) throws QueryParserExcept on {
+     f (query.hasAnnotat onType(Annotat on.Type.NODE_RANK)) {
+      collectNodeRank(query.getAnnotat onOf(Annotat on.Type.NODE_RANK).get(), query);
     }
 
     boolean found = false;
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
+    for (Query ch ld : query.getCh ldren()) {
+      found |= ch ld.accept(t );
     }
     return found;
   }
 
-  @Override
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+  @Overr de
+  protected boolean v s Query(Query query) throws QueryParserExcept on {
+     f (query.hasAnnotat onType(Annotat on.Type.NODE_RANK)) {
+      collectNodeRank(query.getAnnotat onOf(Annotat on.Type.NODE_RANK).get(), query);
       return true;
     }
 
     return false;
   }
 
-  private void collectNodeRank(Annotation anno, Query query) {
-    Preconditions.checkArgument(anno.getType() == Annotation.Type.NODE_RANK);
-    int rank = (Integer) anno.getValue();
+  pr vate vo d collectNodeRank(Annotat on anno, Query query) {
+    Precond  ons.c ckArgu nt(anno.getType() == Annotat on.Type.NODE_RANK);
+     nt rank = ( nteger) anno.getValue();
     nodeToRankMap.put(query, rank);
   }
 
-  public IdentityHashMap<Query, Integer> getNodeToRankMap() {
+  publ c  dent yHashMap<Query,  nteger> getNodeToRankMap() {
     return nodeToRankMap;
   }
 }

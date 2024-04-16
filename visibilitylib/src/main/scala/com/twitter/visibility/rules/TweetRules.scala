@@ -1,594 +1,594 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceHighToxicityModelScoreThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceReportedTweetModelScoreThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropProtectedRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetNonMemberLimitedActionsRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.StaleTweetLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.features.{TweetDeleteReason => FeatureTweetDeleteReason}
-import com.twitter.visibility.models.TweetDeleteReason
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.ViewerIsExclusiveTweetAuthor
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.CommunityTweetAuthorRemoved
-import com.twitter.visibility.rules.Reason.CommunityTweetHidden
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.StaleTweet
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+ mport com.tw ter.v s b l y.common.act ons.L m edEngage ntReason
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.AdAvo danceH ghTox c yModelScoreThresholdParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.AdAvo danceReportedT etModelScoreThresholdParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.Commun yT etCommun yUnava lableL m edAct onsRulesEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.Commun yT etDropProtectedRuleEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.Commun yT etDropRuleEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.Commun yT etL m edAct onsRulesEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.Commun yT et mberRemovedL m edAct onsRulesEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.Commun yT etNon mberL m edAct onsRuleEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.StaleT etL m edAct onsRulesEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.TrustedFr endsT etL m edEngage ntsRuleEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams._
+ mport com.tw ter.v s b l y.features.{T etDeleteReason => FeatureT etDeleteReason}
+ mport com.tw ter.v s b l y.models.T etDeleteReason
+ mport com.tw ter.v s b l y.models.T etSafetyLabelType
+ mport com.tw ter.v s b l y.rules.Cond  on.V e r sExclus veT etAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on._
+ mport com.tw ter.v s b l y.rules.Reason.Commun yT etAuthorRemoved
+ mport com.tw ter.v s b l y.rules.Reason.Commun yT etH dden
+ mport com.tw ter.v s b l y.rules.Reason.Nsfw
+ mport com.tw ter.v s b l y.rules.Reason.StaleT et
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
+ mport com.tw ter.v s b l y.rules.RuleAct onS ceBu lder.T etSafetyLabelS ceBu lder
 
-abstract class TweetHasLabelRule(action: Action, tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, TweetHasLabel(tweetSafetyLabelType)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+abstract class T etHasLabelRule(act on: Act on, t etSafetyLabelType: T etSafetyLabelType)
+    extends RuleW hConstantAct on(act on, T etHasLabel(t etSafetyLabelType)) {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(t etSafetyLabelType))
 }
 
-abstract class ConditionWithTweetLabelRule(
-  action: Action,
-  condition: Condition,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, And(TweetHasLabel(tweetSafetyLabelType), condition)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+abstract class Cond  onW hT etLabelRule(
+  act on: Act on,
+  cond  on: Cond  on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends RuleW hConstantAct on(act on, And(T etHasLabel(t etSafetyLabelType), cond  on)) {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(t etSafetyLabelType))
 }
 
-abstract class NonAuthorWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, NonAuthorViewer, tweetSafetyLabelType) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+abstract class NonAuthorW hT etLabelRule(
+  act on: Act on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(act on, NonAuthorV e r, t etSafetyLabelType) {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(t etSafetyLabelType))
 }
 
-abstract class NonFollowerWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      LoggedOutOrViewerNotFollowingAuthor,
-      tweetSafetyLabelType
+abstract class NonFollo rW hT etLabelRule(
+  act on: Act on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      act on,
+      LoggedOutOrV e rNotFollow ngAuthor,
+      t etSafetyLabelType
     )
 
-abstract class NonAuthorAndNonFollowerWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(NonAuthorViewer, LoggedOutOrViewerNotFollowingAuthor),
-      tweetSafetyLabelType
+abstract class NonAuthorAndNonFollo rW hT etLabelRule(
+  act on: Act on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      act on,
+      And(NonAuthorV e r, LoggedOutOrV e rNotFollow ngAuthor),
+      t etSafetyLabelType
     )
 
-abstract class NonFollowerWithUqfTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
+abstract class NonFollo rW hUqfT etLabelRule(
+  act on: Act on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      act on,
       Or(
-        LoggedOutViewer,
+        LoggedOutV e r,
         And(
-          NonAuthorViewer,
-          Not(ViewerDoesFollowAuthor),
-          ViewerHasUqfEnabled
+          NonAuthorV e r,
+          Not(V e rDoesFollowAuthor),
+          V e rHasUqfEnabled
         )
       ),
-      tweetSafetyLabelType
+      t etSafetyLabelType
     )
 
-abstract class ViewerWithUqfTweetLabelRule(action: Action, labelValue: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, ViewerHasUqfEnabled, labelValue)
+abstract class V e rW hUqfT etLabelRule(act on: Act on, labelValue: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(act on, V e rHasUqfEnabled, labelValue)
 
-case object ConversationControlRules {
+case object Conversat onControlRules {
 
-  abstract class ConversationControlBaseRule(condition: Condition)
-      extends RuleWithConstantAction(
-        LimitedEngagements(LimitedEngagementReason.ConversationControl),
-        condition) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(TweetConversationControlEnabledParam)
+  abstract class Conversat onControlBaseRule(cond  on: Cond  on)
+      extends RuleW hConstantAct on(
+        L m edEngage nts(L m edEngage ntReason.Conversat onControl),
+        cond  on) {
+    overr de def enabled: Seq[RuleParam[Boolean]] = Seq(T etConversat onControlEnabledParam)
   }
 
-  object LimitRepliesCommunityConversationRule
-      extends ConversationControlBaseRule(
+  object L m Repl esCommun yConversat onRule
+      extends Conversat onControlBaseRule(
         And(
-          TweetIsCommunityConversation,
+          T et sCommun yConversat on,
           Not(
             Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation,
-              ConversationRootAuthorDoesFollowViewer
+              LoggedOutV e r,
+              Ret et,
+              V e r sT etConversat onRootAuthor,
+              V e r s nv edToT etConversat on,
+              Conversat onRootAuthorDoesFollowV e r
             ))
         )
       )
 
-  object LimitRepliesFollowersConversationRule
-      extends ConversationControlBaseRule(
+  object L m Repl esFollo rsConversat onRule
+      extends Conversat onControlBaseRule(
         And(
-          TweetIsFollowersConversation,
+          T et sFollo rsConversat on,
           Not(
             Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation,
-              ViewerDoesFollowConversationRootAuthor
+              LoggedOutV e r,
+              Ret et,
+              V e r sT etConversat onRootAuthor,
+              V e r s nv edToT etConversat on,
+              V e rDoesFollowConversat onRootAuthor
             ))
         )
       )
 
-  object LimitRepliesByInvitationConversationRule
-      extends ConversationControlBaseRule(
+  object L m Repl esBy nv at onConversat onRule
+      extends Conversat onControlBaseRule(
         And(
-          TweetIsByInvitationConversation,
+          T et sBy nv at onConversat on,
           Not(
             Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation
+              LoggedOutV e r,
+              Ret et,
+              V e r sT etConversat onRootAuthor,
+              V e r s nv edToT etConversat on
             ))
         )
       )
 
 }
 
-abstract class NonAuthorViewerOptInFilteringWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(NonAuthorViewer, LoggedOutOrViewerOptInFiltering),
-      tweetSafetyLabelType)
+abstract class NonAuthorV e rOpt nF lter ngW hT etLabelRule(
+  act on: Act on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      act on,
+      And(NonAuthorV e r, LoggedOutOrV e rOpt nF lter ng),
+      t etSafetyLabelType)
 
-abstract class NonFollowerViewerOptInFilteringWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(LoggedOutOrViewerNotFollowingAuthor, LoggedOutOrViewerOptInFiltering),
-      tweetSafetyLabelType
+abstract class NonFollo rV e rOpt nF lter ngW hT etLabelRule(
+  act on: Act on,
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      act on,
+      And(LoggedOutOrV e rNotFollow ngAuthor, LoggedOutOrV e rOpt nF lter ng),
+      t etSafetyLabelType
     )
 
-object TweetNsfwUserDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwUserAuthor)
-object TweetNsfwAdminDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwAdminAuthor)
+object T etNsfwUserDropRule extends RuleW hConstantAct on(Drop(Nsfw), T etHasNsfwUserAuthor)
+object T etNsfwAdm nDropRule extends RuleW hConstantAct on(Drop(Nsfw), T etHasNsfwAdm nAuthor)
 
-object NullcastedTweetRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(Nullcast, Not(Retweet), Not(IsQuotedInnerTweet), Not(TweetIsCommunityTweet)))
+object NullcastedT etRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
+      And(Nullcast, Not(Ret et), Not( sQuoted nnerT et), Not(T et sCommun yT et)))
 
-object MutedRetweetsRule
-    extends RuleWithConstantAction(Drop(Unspecified), And(Retweet, ViewerMutesRetweetsFromAuthor))
+object MutedRet etsRule
+    extends RuleW hConstantAct on(Drop(Unspec f ed), And(Ret et, V e rMutesRet etsFromAuthor))
 
-abstract class FilterCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropRuleEnabledParam)
+abstract class F lterCommun yT etsRule(overr de val act on: Act on)
+    extends RuleW hConstantAct on(act on, T et sCommun yT et) {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(Commun yT etDropRuleEnabledParam)
 }
 
-object DropCommunityTweetsRule extends FilterCommunityTweetsRule(Drop(CommunityTweetHidden))
+object DropCommun yT etsRule extends F lterCommun yT etsRule(Drop(Commun yT etH dden))
 
-object TombstoneCommunityTweetsRule
-    extends FilterCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+object TombstoneCommun yT etsRule
+    extends F lterCommun yT etsRule(Tombstone(Ep aph.Unava lable))
 
-abstract class FilterCommunityTweetCommunityNotVisibleRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
+abstract class F lterCommun yT etCommun yNotV s bleRule(overr de val act on: Act on)
+    extends RuleW hConstantAct on(
+      act on,
       And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        Not(CommunityTweetCommunityVisible),
+        NonAuthorV e r,
+        T et sCommun yT et,
+        Not(Commun yT etCommun yV s ble),
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(DropCommunityTweetWithUndefinedCommunityRuleEnabledParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(DropCommun yT etW hUndef nedCommun yRuleEnabledParam)
 }
 
-object DropCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Drop(CommunityTweetHidden))
+object DropCommun yT etCommun yNotV s bleRule
+    extends F lterCommun yT etCommun yNotV s bleRule(Drop(Commun yT etH dden))
 
-object TombstoneCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Tombstone(Epitaph.Unavailable))
+object TombstoneCommun yT etCommun yNotV s bleRule
+    extends F lterCommun yT etCommun yNotV s bleRule(Tombstone(Ep aph.Unava lable))
 
-abstract class FilterAllCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetsEnabledParam)
+abstract class F lterAllCommun yT etsRule(overr de val act on: Act on)
+    extends RuleW hConstantAct on(act on, T et sCommun yT et) {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(Commun yT etsEnabledParam)
 }
 
-object DropAllCommunityTweetsRule extends FilterAllCommunityTweetsRule(Drop(Unspecified))
+object DropAllCommun yT etsRule extends F lterAllCommun yT etsRule(Drop(Unspec f ed))
 
-object TombstoneAllCommunityTweetsRule
-    extends FilterAllCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+object TombstoneAllCommun yT etsRule
+    extends F lterAllCommun yT etsRule(Tombstone(Ep aph.Unava lable))
 
-object DropOuterCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, Not(IsQuotedInnerTweet)))
+object DropOuterCommun yT etsRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
+      And(T et sCommun yT et, Not( sQuoted nnerT et)))
 
-object DropAllHiddenCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, CommunityTweetIsHidden))
+object DropAllH ddenCommun yT etsRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
+      And(T et sCommun yT et, Commun yT et sH dden))
 
-abstract class FilterHiddenCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
+abstract class F lterH ddenCommun yT etsRule(overr de val act on: Act on)
+    extends RuleW hConstantAct on(
+      act on,
       And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        CommunityTweetIsHidden,
-        Not(ViewerIsCommunityModerator)
+        NonAuthorV e r,
+        T et sCommun yT et,
+        Commun yT et sH dden,
+        Not(V e r sCommun yModerator)
       ))
 
-object DropHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Drop(CommunityTweetHidden))
+object DropH ddenCommun yT etsRule
+    extends F lterH ddenCommun yT etsRule(Drop(Commun yT etH dden))
 
-object TombstoneHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Tombstone(Epitaph.CommunityTweetHidden))
+object TombstoneH ddenCommun yT etsRule
+    extends F lterH ddenCommun yT etsRule(Tombstone(Ep aph.Commun yT etH dden))
 
-object DropAllAuthorRemovedCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, CommunityTweetAuthorIsRemoved))
+object DropAllAuthorRemovedCommun yT etsRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
+      And(T et sCommun yT et, Commun yT etAuthor sRemoved))
 
-abstract class FilterAuthorRemovedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
+abstract class F lterAuthorRemovedCommun yT etsRule(overr de val act on: Act on)
+    extends RuleW hConstantAct on(
+      act on,
       And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        CommunityTweetAuthorIsRemoved,
-        Not(ViewerIsCommunityModerator)
+        NonAuthorV e r,
+        T et sCommun yT et,
+        Commun yT etAuthor sRemoved,
+        Not(V e r sCommun yModerator)
       ))
 
-object DropAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Drop(CommunityTweetAuthorRemoved))
+object DropAuthorRemovedCommun yT etsRule
+    extends F lterAuthorRemovedCommun yT etsRule(Drop(Commun yT etAuthorRemoved))
 
-object TombstoneAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+object TombstoneAuthorRemovedCommun yT etsRule
+    extends F lterAuthorRemovedCommun yT etsRule(Tombstone(Ep aph.Unava lable))
 
-abstract class FilterProtectedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(TweetIsCommunityTweet, ProtectedAuthor, NonAuthorViewer)) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropProtectedRuleEnabledParam)
+abstract class F lterProtectedCommun yT etsRule(overr de val act on: Act on)
+    extends RuleW hConstantAct on(
+      act on,
+      And(T et sCommun yT et, ProtectedAuthor, NonAuthorV e r)) {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(Commun yT etDropProtectedRuleEnabledParam)
 }
 
-object DropProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Drop(CommunityTweetHidden))
+object DropProtectedCommun yT etsRule
+    extends F lterProtectedCommun yT etsRule(Drop(Commun yT etH dden))
 
-object TombstoneProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+object TombstoneProtectedCommun yT etsRule
+    extends F lterProtectedCommun yT etsRule(Tombstone(Ep aph.Unava lable))
 
-abstract class CommunityTweetCommunityUnavailableLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: CommunityTweetCommunityUnavailable,
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
+abstract class Commun yT etCommun yUnava lableL m edAct onsRule(
+  reason: L m edEngage ntReason,
+  cond  on: Commun yT etCommun yUnava lable,
+) extends RuleW hConstantAct on(
+      L m edEngage nts(reason),
       And(
-        Not(NonAuthorViewer),
-        TweetIsCommunityTweet,
-        condition,
+        Not(NonAuthorV e r),
+        T et sCommun yT et,
+        cond  on,
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    Commun yT etCommun yUnava lableL m edAct onsRulesEnabledParam)
 }
 
-object CommunityTweetCommunityNotFoundLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunityNotFound,
-      CommunityTweetCommunityNotFound,
+object Commun yT etCommun yNotFoundL m edAct onsRule
+    extends Commun yT etCommun yUnava lableL m edAct onsRule(
+      L m edEngage ntReason.Commun yT etCommun yNotFound,
+      Commun yT etCommun yNotFound,
     )
 
-object CommunityTweetCommunityDeletedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunityDeleted,
-      CommunityTweetCommunityDeleted,
+object Commun yT etCommun yDeletedL m edAct onsRule
+    extends Commun yT etCommun yUnava lableL m edAct onsRule(
+      L m edEngage ntReason.Commun yT etCommun yDeleted,
+      Commun yT etCommun yDeleted,
     )
 
-object CommunityTweetCommunitySuspendedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunitySuspended,
-      CommunityTweetCommunitySuspended,
+object Commun yT etCommun ySuspendedL m edAct onsRule
+    extends Commun yT etCommun yUnava lableL m edAct onsRule(
+      L m edEngage ntReason.Commun yT etCommun ySuspended,
+      Commun yT etCommun ySuspended,
     )
 
-abstract class CommunityTweetModeratedLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: CommunityTweetIsModerated,
+abstract class Commun yT etModeratedL m edAct onsRule(
+  reason: L m edEngage ntReason,
+  cond  on: Commun yT et sModerated,
   enabledParam: RuleParam[Boolean],
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
+) extends RuleW hConstantAct on(
+      L m edEngage nts(reason),
       And(
-        TweetIsCommunityTweet,
-        condition,
+        T et sCommun yT et,
+        cond  on,
         Or(
-          Not(NonAuthorViewer),
-          ViewerIsCommunityModerator,
+          Not(NonAuthorV e r),
+          V e r sCommun yModerator,
         )
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(enabledParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(enabledParam)
 }
 
-object CommunityTweetMemberRemovedLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetMemberRemoved,
-      CommunityTweetAuthorIsRemoved,
-      CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
+object Commun yT et mberRemovedL m edAct onsRule
+    extends Commun yT etModeratedL m edAct onsRule(
+      L m edEngage ntReason.Commun yT et mberRemoved,
+      Commun yT etAuthor sRemoved,
+      Commun yT et mberRemovedL m edAct onsRulesEnabledParam,
     )
 
-object CommunityTweetHiddenLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetHidden,
-      CommunityTweetIsHidden,
-      CommunityTweetLimitedActionsRulesEnabledParam,
+object Commun yT etH ddenL m edAct onsRule
+    extends Commun yT etModeratedL m edAct onsRule(
+      L m edEngage ntReason.Commun yT etH dden,
+      Commun yT et sH dden,
+      Commun yT etL m edAct onsRulesEnabledParam,
     )
 
-abstract class CommunityTweetLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: Condition,
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
+abstract class Commun yT etL m edAct onsRule(
+  reason: L m edEngage ntReason,
+  cond  on: Cond  on,
+) extends RuleW hConstantAct on(
+      L m edEngage nts(reason),
       And(
-        TweetIsCommunityTweet,
-        condition
+        T et sCommun yT et,
+        cond  on
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetLimitedActionsRulesEnabledParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(Commun yT etL m edAct onsRulesEnabledParam)
 }
 
-object CommunityTweetMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetMember,
-      ViewerIsCommunityMember,
+object Commun yT et mberL m edAct onsRule
+    extends Commun yT etL m edAct onsRule(
+      L m edEngage ntReason.Commun yT et mber,
+      V e r sCommun y mber,
     )
 
-object CommunityTweetNonMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetNonMember,
-      Not(ViewerIsCommunityMember),
+object Commun yT etNon mberL m edAct onsRule
+    extends Commun yT etL m edAct onsRule(
+      L m edEngage ntReason.Commun yT etNon mber,
+      Not(V e r sCommun y mber),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    CommunityTweetNonMemberLimitedActionsRuleEnabledParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    Commun yT etNon mberL m edAct onsRuleEnabledParam)
 }
 
-object ReportedTweetInterstitialRule
-    extends RuleWithConstantAction(
-      Interstitial(Reason.ViewerReportedTweet),
+object ReportedT et nterst  alRule
+    extends RuleW hConstantAct on(
+       nterst  al(Reason.V e rReportedT et),
       And(
-        NonAuthorViewer,
-        Not(Retweet),
-        ViewerReportsTweet
+        NonAuthorV e r,
+        Not(Ret et),
+        V e rReportsT et
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialRule)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedT et nterst  alRule)
 }
 
-object ReportedTweetInterstitialSearchRule
-    extends RuleWithConstantAction(
-      Interstitial(Reason.ViewerReportedTweet),
+object ReportedT et nterst  alSearchRule
+    extends RuleW hConstantAct on(
+       nterst  al(Reason.V e rReportedT et),
       And(
-        NonAuthorViewer,
-        Not(Retweet),
-        ViewerReportsTweet
+        NonAuthorV e r,
+        Not(Ret et),
+        V e rReportsT et
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialSearchRule)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedT et nterst  alSearchRule)
 }
 
-abstract class FilterExclusiveTweetContentRule(
-  action: Action,
-  additionalCondition: Condition = Condition.True)
-    extends RuleWithConstantAction(
-      action,
+abstract class F lterExclus veT etContentRule(
+  act on: Act on,
+  add  onalCond  on: Cond  on = Cond  on.True)
+    extends RuleW hConstantAct on(
+      act on,
       And(
-        additionalCondition,
-        TweetIsExclusiveContent,
+        add  onalCond  on,
+        T et sExclus veContent,
         Or(
-          LoggedOutViewer,
+          LoggedOutV e r,
           Not(
             Or(
-              ViewerIsExclusiveTweetAuthor,
-              ViewerSuperFollowsExclusiveTweetAuthor,
+              V e r sExclus veT etAuthor,
+              V e rSuperFollowsExclus veT etAuthor,
               And(
-                Not(NonAuthorViewer),
-                Not(Retweet)
+                Not(NonAuthorV e r),
+                Not(Ret et)
               )
             )
           ),
         ),
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropExclusiveTweetContentRule)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropExclusiveTweetContentRuleFailClosed)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropExclus veT etContentRule)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(
+    EnableDropExclus veT etContentRuleFa lClosed)
 }
 
-object DropExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Drop(Reason.ExclusiveTweet))
+object DropExclus veT etContentRule
+    extends F lterExclus veT etContentRule(Drop(Reason.Exclus veT et))
 
-object TombstoneExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Tombstone(Epitaph.SuperFollowsContent))
+object TombstoneExclus veT etContentRule
+    extends F lterExclus veT etContentRule(Tombstone(Ep aph.SuperFollowsContent))
 
-object TombstoneExclusiveQuotedTweetContentRule
-    extends FilterExclusiveTweetContentRule(
-      Tombstone(Epitaph.SuperFollowsContent),
-      IsQuotedInnerTweet
+object TombstoneExclus veQuotedT etContentRule
+    extends F lterExclus veT etContentRule(
+      Tombstone(Ep aph.SuperFollowsContent),
+       sQuoted nnerT et
     )
 
-object DropAllExclusiveTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ExclusiveTweet),
-      TweetIsExclusiveContent
+object DropAllExclus veT etsRule
+    extends RuleW hConstantAct on(
+      Drop(Reason.Exclus veT et),
+      T et sExclus veContent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllExclusiveTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropAllExclusiveTweetsRuleFailClosedParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllExclus veT etsRuleParam)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(
+    EnableDropAllExclus veT etsRuleFa lClosedParam)
 }
 
-object DropTweetsWithGeoRestrictedMediaRule
-    extends RuleWithConstantAction(Drop(Unspecified), MediaRestrictedInViewerCountry) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropTweetsWithGeoRestrictedMediaRuleParam)
+object DropT etsW hGeoRestr cted d aRule
+    extends RuleW hConstantAct on(Drop(Unspec f ed),  d aRestr cted nV e rCountry) {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    EnableDropT etsW hGeoRestr cted d aRuleParam)
 }
 
-object TrustedFriendsTweetLimitedEngagementsRule
-    extends RuleWithConstantAction(
-      LimitedEngagements(LimitedEngagementReason.TrustedFriendsTweet),
-      TweetIsTrustedFriendsContent
+object TrustedFr endsT etL m edEngage ntsRule
+    extends RuleW hConstantAct on(
+      L m edEngage nts(L m edEngage ntReason.TrustedFr endsT et),
+      T et sTrustedFr endsContent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    TrustedFr endsT etL m edEngage ntsRuleEnabledParam
   )
 }
 
-object DropAllTrustedFriendsTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.TrustedFriendsTweet),
-      TweetIsTrustedFriendsContent
+object DropAllTrustedFr endsT etsRule
+    extends RuleW hConstantAct on(
+      Drop(Reason.TrustedFr endsT et),
+      T et sTrustedFr endsContent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllTrustedFriendsTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllTrustedFr endsT etsRuleParam)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
 }
 
-object DropAllCollabInvitationTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      TweetIsCollabInvitationContent
+object DropAllCollab nv at onT etsRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
+      T et sCollab nv at onContent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllCollabInvitationTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllCollab nv at onT etsRuleParam)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
 }
 
-abstract class FilterTrustedFriendsTweetContentRule(action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
+abstract class F lterTrustedFr endsT etContentRule(act on: Act on)
+    extends OnlyW nNotAuthorV e rRule(
+      act on,
       And(
-        TweetIsTrustedFriendsContent,
+        T et sTrustedFr endsContent,
         Not(
           Or(
-            ViewerIsTrustedFriendsTweetAuthor,
-            ViewerIsTrustedFriend
+            V e r sTrustedFr endsT etAuthor,
+            V e r sTrustedFr end
           )
         )
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropTrustedFriendsTweetContentRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropTrustedFr endsT etContentRuleParam)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
 }
 
-object DropTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Drop(Reason.TrustedFriendsTweet))
+object DropTrustedFr endsT etContentRule
+    extends F lterTrustedFr endsT etContentRule(Drop(Reason.TrustedFr endsT et))
 
-object TombstoneTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Tombstone(Epitaph.Unavailable))
+object TombstoneTrustedFr endsT etContentRule
+    extends F lterTrustedFr endsT etContentRule(Tombstone(Ep aph.Unava lable))
 
-object TweetNsfwUserAdminAvoidRule
-    extends RuleWithConstantAction(
-      Avoid(),
+object T etNsfwUserAdm nAvo dRule
+    extends RuleW hConstantAct on(
+      Avo d(),
       Or(
-        TweetHasNsfwUserAuthor,
-        TweetHasNsfwAdminAuthor,
+        T etHasNsfwUserAuthor,
+        T etHasNsfwAdm nAuthor,
         NsfwUserAuthor,
-        NsfwAdminAuthor
+        NsfwAdm nAuthor
       )
     )
 
-object AvoidHighToxicityModelScoreRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighToxicityScore,
-        AdAvoidanceHighToxicityModelScoreThresholdParam)
+object Avo dH ghTox c yModelScoreRule
+    extends RuleW hConstantAct on(
+      Avo d(),
+      T etHasLabelW hScoreAboveThresholdW hParam(
+        T etSafetyLabelType.H ghTox c yScore,
+        AdAvo danceH ghTox c yModelScoreThresholdParam)
     )
 
-object AvoidReportedTweetModelScoreRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighPReportedTweetScore,
-        AdAvoidanceReportedTweetModelScoreThresholdParam)
+object Avo dReportedT etModelScoreRule
+    extends RuleW hConstantAct on(
+      Avo d(),
+      T etHasLabelW hScoreAboveThresholdW hParam(
+        T etSafetyLabelType.H ghPReportedT etScore,
+        AdAvo danceReportedT etModelScoreThresholdParam)
     )
 
-object TombstoneDeletedOuterTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
+object TombstoneDeletedOuterT etRule
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.Deleted),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
-        Not(IsQuotedInnerTweet)
+        Equals(FeatureT etDeleteReason, T etDeleteReason.Deleted),
+        Not( sQuoted nnerT et)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateT etRulesParam)
 }
 
-object TombstoneDeletedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
+object TombstoneDeletedT etRule
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.Deleted),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
+        Equals(FeatureT etDeleteReason, T etDeleteReason.Deleted),
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateT etRulesParam)
 }
 
-object TombstoneDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
+object TombstoneDeletedQuotedT etRule
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.Deleted),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
-        IsQuotedInnerTweet
+        Equals(FeatureT etDeleteReason, T etDeleteReason.Deleted),
+         sQuoted nnerT et
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateT etRulesParam)
 }
 
-object TombstoneBounceDeletedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
-      Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
+object TombstoneBounceDeletedT etRule
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.BounceDeleted),
+      Equals(FeatureT etDeleteReason, T etDeleteReason.BounceDeleted),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateT etRulesParam)
 }
 
-object TombstoneBounceDeletedOuterTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
+object TombstoneBounceDeletedOuterT etRule
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.BounceDeleted),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
-        Not(IsQuotedInnerTweet)
+        Equals(FeatureT etDeleteReason, T etDeleteReason.BounceDeleted),
+        Not( sQuoted nnerT et)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateT etRulesParam)
 }
 
-object TombstoneBounceDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
+object TombstoneBounceDeletedQuotedT etRule
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.BounceDeleted),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
-        IsQuotedInnerTweet
+        Equals(FeatureT etDeleteReason, T etDeleteReason.BounceDeleted),
+         sQuoted nnerT et
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateT etRulesParam)
 }
 
 
-object DropStaleTweetsRule
-    extends RuleWithConstantAction(
-      Drop(StaleTweet),
-      And(TweetIsStaleTweet, Not(IsQuotedInnerTweet), Not(Retweet), Not(IsSourceTweet))) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableStaleTweetDropRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableStaleTweetDropRuleFailClosedParam)
+object DropStaleT etsRule
+    extends RuleW hConstantAct on(
+      Drop(StaleT et),
+      And(T et sStaleT et, Not( sQuoted nnerT et), Not(Ret et), Not( sS ceT et))) {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableStaleT etDropRuleParam)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(
+    EnableStaleT etDropRuleFa lClosedParam)
 }
 
-object StaleTweetLimitedActionsRule
-    extends RuleWithConstantAction(
-      LimitedEngagements(LimitedEngagementReason.StaleTweet),
-      TweetIsStaleTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(StaleTweetLimitedActionsRulesEnabledParam)
+object StaleT etL m edAct onsRule
+    extends RuleW hConstantAct on(
+      L m edEngage nts(L m edEngage ntReason.StaleT et),
+      T et sStaleT et) {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(StaleT etL m edAct onsRulesEnabledParam)
 }

@@ -1,150 +1,150 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.tweetypie.storage.Response.TweetResponseCode
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.DeletedTweet
-import scala.util.control.NonFatal
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.kv.Den edManhattanExcept on
+ mport com.tw ter.t etyp e.storage.Response.T etResponseCode
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.t etyp e.storage_ nternal.thr ftscala.StoredT et
+ mport com.tw ter.t etyp e.thr ftscala.DeletedT et
+ mport scala.ut l.control.NonFatal
 
-sealed trait DeleteState
+sealed tra  DeleteState
 object DeleteState {
 
   /**
-   * This tweet is deleted but has not been permanently deleted from Manhattan. Tweets in this state
+   * T  t et  s deleted but has not been permanently deleted from Manhattan. T ets  n t  state
    * may be undeleted.
    */
   case object SoftDeleted extends DeleteState
 
   /**
-   * This tweet is deleted after being bounced for violating the Twitter Rules but has not been
-   * permanently deleted from Manhattan. Tweets in this state may NOT be undeleted.
+   * T  t et  s deleted after be ng bounced for v olat ng t  Tw ter Rules but has not been
+   * permanently deleted from Manhattan. T ets  n t  state may NOT be undeleted.
    */
   case object BounceDeleted extends DeleteState
 
   /**
-   * This tweet has been permanently deleted from Manhattan.
+   * T  t et has been permanently deleted from Manhattan.
    */
   case object HardDeleted extends DeleteState
 
   /**
-   * There is no data in Manhattan to distinguish this tweet id from one that never existed.
+   * T re  s no data  n Manhattan to d st ngu sh t  t et  d from one that never ex sted.
    */
   case object NotFound extends DeleteState
 
   /**
-   * This tweet exists and is not in a deleted state.
+   * T  t et ex sts and  s not  n a deleted state.
    */
   case object NotDeleted extends DeleteState
 }
 
-case class DeletedTweetResponse(
-  tweetId: TweetId,
-  overallResponse: TweetResponseCode,
+case class DeletedT etResponse(
+  t et d: T et d,
+  overallResponse: T etResponseCode,
   deleteState: DeleteState,
-  tweet: Option[DeletedTweet])
+  t et: Opt on[DeletedT et])
 
-object GetDeletedTweetsHandler {
+object GetDeletedT etsHandler {
   def apply(
-    read: ManhattanOperations.Read,
-    stats: StatsReceiver
-  ): TweetStorageClient.GetDeletedTweets =
-    (unfilteredTweetIds: Seq[TweetId]) => {
-      val tweetIds = unfilteredTweetIds.filter(_ > 0)
+    read: ManhattanOperat ons.Read,
+    stats: StatsRece ver
+  ): T etStorageCl ent.GetDeletedT ets =
+    (unf lteredT et ds: Seq[T et d]) => {
+      val t et ds = unf lteredT et ds.f lter(_ > 0)
 
-      Stats.addWidthStat("getDeletedTweets", "tweetIds", tweetIds.size, stats)
+      Stats.addW dthStat("getDeletedT ets", "t et ds", t et ds.s ze, stats)
 
-      val stitches = tweetIds.map { tweetId =>
-        read(tweetId)
+      val st c s = t et ds.map { t et d =>
+        read(t et d)
           .map { mhRecords =>
-            val storedTweet = buildStoredTweet(tweetId, mhRecords)
+            val storedT et = bu ldStoredT et(t et d, mhRecords)
 
-            TweetStateRecord.mostRecent(mhRecords) match {
-              case Some(m: TweetStateRecord.SoftDeleted) => softDeleted(m, storedTweet)
-              case Some(m: TweetStateRecord.BounceDeleted) => bounceDeleted(m, storedTweet)
-              case Some(m: TweetStateRecord.HardDeleted) => hardDeleted(m, storedTweet)
-              case _ if storedTweet.getFieldBlobs(expectedFields).isEmpty => notFound(tweetId)
-              case _ => notDeleted(tweetId, storedTweet)
+            T etStateRecord.mostRecent(mhRecords) match {
+              case So (m: T etStateRecord.SoftDeleted) => softDeleted(m, storedT et)
+              case So (m: T etStateRecord.BounceDeleted) => bounceDeleted(m, storedT et)
+              case So (m: T etStateRecord.HardDeleted) => hardDeleted(m, storedT et)
+              case _  f storedT et.getF eldBlobs(expectedF elds). sEmpty => notFound(t et d)
+              case _ => notDeleted(t et d, storedT et)
             }
           }
           .handle {
-            case _: DeniedManhattanException =>
-              DeletedTweetResponse(
-                tweetId,
-                TweetResponseCode.OverCapacity,
+            case _: Den edManhattanExcept on =>
+              DeletedT etResponse(
+                t et d,
+                T etResponseCode.OverCapac y,
                 DeleteState.NotFound,
                 None
               )
 
             case NonFatal(ex) =>
-              TweetUtils.log.warning(
+              T etUt ls.log.warn ng(
                 ex,
-                s"Unhandled exception in GetDeletedTweetsHandler for tweetId: $tweetId"
+                s"Unhandled except on  n GetDeletedT etsHandler for t et d: $t et d"
               )
-              DeletedTweetResponse(tweetId, TweetResponseCode.Failure, DeleteState.NotFound, None)
+              DeletedT etResponse(t et d, T etResponseCode.Fa lure, DeleteState.NotFound, None)
           }
       }
 
-      Stitch.collect(stitches)
+      St ch.collect(st c s)
     }
 
-  private def notFound(tweetId: TweetId) =
-    DeletedTweetResponse(
-      tweetId = tweetId,
-      overallResponse = TweetResponseCode.Success,
+  pr vate def notFound(t et d: T et d) =
+    DeletedT etResponse(
+      t et d = t et d,
+      overallResponse = T etResponseCode.Success,
       deleteState = DeleteState.NotFound,
-      tweet = None
+      t et = None
     )
 
-  private def softDeleted(record: TweetStateRecord.SoftDeleted, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      record.tweetId,
-      TweetResponseCode.Success,
+  pr vate def softDeleted(record: T etStateRecord.SoftDeleted, storedT et: StoredT et) =
+    DeletedT etResponse(
+      record.t et d,
+      T etResponseCode.Success,
       DeleteState.SoftDeleted,
-      Some(
-        StorageConversions
-          .toDeletedTweet(storedTweet)
-          .copy(deletedAtMsec = Some(record.createdAt))
+      So (
+        StorageConvers ons
+          .toDeletedT et(storedT et)
+          .copy(deletedAtMsec = So (record.createdAt))
       )
     )
 
-  private def bounceDeleted(record: TweetStateRecord.BounceDeleted, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      record.tweetId,
-      TweetResponseCode.Success,
+  pr vate def bounceDeleted(record: T etStateRecord.BounceDeleted, storedT et: StoredT et) =
+    DeletedT etResponse(
+      record.t et d,
+      T etResponseCode.Success,
       DeleteState.BounceDeleted,
-      Some(
-        StorageConversions
-          .toDeletedTweet(storedTweet)
-          .copy(deletedAtMsec = Some(record.createdAt))
+      So (
+        StorageConvers ons
+          .toDeletedT et(storedT et)
+          .copy(deletedAtMsec = So (record.createdAt))
       )
     )
 
-  private def hardDeleted(record: TweetStateRecord.HardDeleted, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      record.tweetId,
-      TweetResponseCode.Success,
+  pr vate def hardDeleted(record: T etStateRecord.HardDeleted, storedT et: StoredT et) =
+    DeletedT etResponse(
+      record.t et d,
+      T etResponseCode.Success,
       DeleteState.HardDeleted,
-      Some(
-        StorageConversions
-          .toDeletedTweet(storedTweet)
+      So (
+        StorageConvers ons
+          .toDeletedT et(storedT et)
           .copy(
-            hardDeletedAtMsec = Some(record.createdAt),
-            deletedAtMsec = Some(record.deletedAt)
+            hardDeletedAtMsec = So (record.createdAt),
+            deletedAtMsec = So (record.deletedAt)
           )
       )
     )
 
   /**
-   * notDeleted returns a tweet to simplify tweetypie.handler.UndeleteTweetHandler
+   * notDeleted returns a t et to s mpl fy t etyp e.handler.UndeleteT etHandler
    */
-  private def notDeleted(tweetId: TweetId, storedTweet: StoredTweet) =
-    DeletedTweetResponse(
-      tweetId = tweetId,
-      overallResponse = TweetResponseCode.Success,
+  pr vate def notDeleted(t et d: T et d, storedT et: StoredT et) =
+    DeletedT etResponse(
+      t et d = t et d,
+      overallResponse = T etResponseCode.Success,
       deleteState = DeleteState.NotDeleted,
-      tweet = Some(StorageConversions.toDeletedTweet(storedTweet))
+      t et = So (StorageConvers ons.toDeletedT et(storedT et))
     )
 }

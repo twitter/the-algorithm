@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.pipeline_executor
+package com.tw ter.product_m xer.core.serv ce.p pel ne_executor
 
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.service.ExecutorResult
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neResult
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
 
-case class PipelineExecutorResult[ResultType](
-  pipelineResult: PipelineResult[ResultType])
+case class P pel neExecutorResult[ResultType](
+  p pel neResult: P pel neResult[ResultType])
     extends ExecutorResult

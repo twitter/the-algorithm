@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.tw ter.ho _m xer.funct onal_component.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object SupportedLanguagesGate extends Gate[PipelineQuery] {
+object SupportedLanguagesGate extends Gate[P pel neQuery] {
 
-  override val identifier: GateIdentifier = GateIdentifier("SupportedLanguages")
+  overr de val  dent f er: Gate dent f er = Gate dent f er("SupportedLanguages")
 
-  // Production languages which have high translation coverage for strings used in Home Timeline.
-  private val supportedLanguages: Set[String] = Set(
-    "ar", // Arabic
-    "ar-x-fm", // Arabic (Female)
-    "bg", // Bulgarian
-    "bn", // Bengali
+  // Product on languages wh ch have h gh translat on coverage for str ngs used  n Ho  T  l ne.
+  pr vate val supportedLanguages: Set[Str ng] = Set(
+    "ar", // Arab c
+    "ar-x-fm", // Arab c (Female)
+    "bg", // Bulgar an
+    "bn", // Bengal 
     "ca", // Catalan
     "cs", // Czech
-    "da", // Danish
+    "da", // Dan sh
     "de", // German
     "el", // Greek
-    "en", // English
-    "en-gb", // British English
-    "en-ss", // English Screen shot
-    "en-xx", // English Pseudo
-    "es", // Spanish
+    "en", // Engl sh
+    "en-gb", // Br  sh Engl sh
+    "en-ss", // Engl sh Screen shot
+    "en-xx", // Engl sh Pseudo
+    "es", // Span sh
     "eu", // Basque
-    "fa", // Farsi (Persian)
-    "fi", // Finnish
-    "fil", // Filipino
+    "fa", // Fars  (Pers an)
+    "f ", // F nn sh
+    "f l", // F l p no
     "fr", // French
-    "ga", // Irish
-    "gl", // Galician
-    "gu", // Gujarati
-    "he", // Hebrew
-    "hi", // Hindi
-    "hr", // Croatian
-    "hu", // Hungarian
-    "id", // Indonesian
-    "it", // Italian
+    "ga", //  r sh
+    "gl", // Gal c an
+    "gu", // Gujarat 
+    " ", //  brew
+    "h ", // H nd 
+    "hr", // Croat an
+    "hu", // Hungar an
+    " d", //  ndones an
+    " ", //  al an
     "ja", // Japanese
     "kn", // Kannada
     "ko", // Korean
-    "mr", // Marathi
+    "mr", // Marath 
     "msa", // Malay
     "nl", // Dutch
-    "no", // Norwegian
-    "pl", // Polish
+    "no", // Nor g an
+    "pl", // Pol sh
     "pt", // Portuguese
-    "ro", // Romanian
-    "ru", // Russian
+    "ro", // Roman an
+    "ru", // Russ an
     "sk", // Slovak
-    "sr", // Serbian
-    "sv", // Swedish
-    "ta", // Tamil
-    "th", // Thai
-    "tr", // Turkish
-    "uk", // Ukrainian
+    "sr", // Serb an
+    "sv", // S d sh
+    "ta", // Tam l
+    "th", // Tha 
+    "tr", // Turk sh
+    "uk", // Ukra n an
     "ur", // Urdu
-    "vi", // Vietnamese
-    "zh-cn", // Simplified Chinese
-    "zh-tw" // Traditional Chinese
+    "v ", // V etna se
+    "zh-cn", // S mpl f ed Ch nese
+    "zh-tw" // Trad  onal Ch nese
   )
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.getLanguageCode.forall(supportedLanguages.contains))
+  overr de def shouldCont nue(query: P pel neQuery): St ch[Boolean] =
+    St ch.value(query.getLanguageCode.forall(supportedLanguages.conta ns))
 }

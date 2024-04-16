@@ -1,314 +1,314 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.{Monoid, OptionMonoid, Semigroup}
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
-import com.twitter.simclusters_v2.thriftscala.{BipartiteClusterQuality, SampledEdge}
-import java.util.PriorityQueue
-import scala.collection.JavaConverters._
+ mport com.tw ter.algeb rd.{Mono d, Opt onMono d, Sem group}
+ mport com.tw ter.algeb rd.mutable.Pr or yQueueMono d
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l.D str but on
+ mport com.tw ter.s mclusters_v2.thr ftscala.{B part eClusterQual y, SampledEdge}
+ mport java.ut l.Pr or yQueue
+ mport scala.collect on.JavaConverters._
 
-object BipartiteClusterEvaluationClasses {
-  case class Weights(
-    isFollowEdge: Double,
-    isFavEdge: Double,
-    favWtIfFollowEdge: Double,
-    favWtIfFavEdge: Double)
+object B part eClusterEvaluat onClasses {
+  case class   ghts(
+     sFollowEdge: Double,
+     sFavEdge: Double,
+    favWt fFollowEdge: Double,
+    favWt fFavEdge: Double)
 
-  object WeightsMonoid extends Monoid[Weights] {
-    override def zero = Weights(0.0, 0.0, 0.0, 0.0)
+  object   ghtsMono d extends Mono d[  ghts] {
+    overr de def zero =   ghts(0.0, 0.0, 0.0, 0.0)
 
-    override def plus(l: Weights, r: Weights): Weights = {
-      Weights(
-        l.isFollowEdge + r.isFollowEdge,
-        l.isFavEdge + r.isFavEdge,
-        l.favWtIfFollowEdge + r.favWtIfFollowEdge,
-        l.favWtIfFavEdge + r.favWtIfFavEdge
+    overr de def plus(l:   ghts, r:   ghts):   ghts = {
+        ghts(
+        l. sFollowEdge + r. sFollowEdge,
+        l. sFavEdge + r. sFavEdge,
+        l.favWt fFollowEdge + r.favWt fFollowEdge,
+        l.favWt fFavEdge + r.favWt fFavEdge
       )
     }
   }
 
-  implicit val wm: Monoid[Weights] = WeightsMonoid
+   mpl c  val wm: Mono d[  ghts] =   ghtsMono d
 
   case class SampledEdgeData(
-    favWtIfFollowEdge: Double,
-    favWtIfFavEdge: Double,
+    favWt fFollowEdge: Double,
+    favWt fFavEdge: Double,
     followScoreToCluster: Double,
     favScoreToCluster: Double)
 
-  implicit val samplerMonoid: PriorityQueueMonoid[((Long, Long), SampledEdgeData)] =
-    Util.reservoirSamplerMonoidForPairs[(Long, Long), SampledEdgeData](2000)(Util.edgeOrdering)
+   mpl c  val samplerMono d: Pr or yQueueMono d[((Long, Long), SampledEdgeData)] =
+    Ut l.reservo rSamplerMono dForPa rs[(Long, Long), SampledEdgeData](2000)(Ut l.edgeOrder ng)
 
-  implicit val sampledEdgesMonoid: PriorityQueueMonoid[SampledEdge] =
-    Util.reservoirSamplerMonoid(
+   mpl c  val sampledEdgesMono d: Pr or yQueueMono d[SampledEdge] =
+    Ut l.reservo rSamplerMono d(
       10000,
-      { sampledEdge: SampledEdge => (sampledEdge.followerId, sampledEdge.followeeId) }
-    )(Util.edgeOrdering)
+      { sampledEdge: SampledEdge => (sampledEdge.follo r d, sampledEdge.follo e d) }
+    )(Ut l.edgeOrder ng)
 
-  case class BipartiteIntermediateResults(
-    inClusterWeights: Weights,
-    totalOutgoingVolumes: Weights,
-    interestedInSize: Int,
-    edgeSample: PriorityQueue[((Long, Long), SampledEdgeData)]) {
-    override def toString: String = {
+  case class B part e nter d ateResults(
+     nCluster  ghts:   ghts,
+    totalOutgo ngVolu s:   ghts,
+     nterested nS ze:  nt,
+    edgeSample: Pr or yQueue[((Long, Long), SampledEdgeData)]) {
+    overr de def toStr ng: Str ng = {
       "BCR(%s, %s, %d, %s)".format(
-        inClusterWeights,
-        totalOutgoingVolumes,
-        interestedInSize,
-        edgeSample.iterator().asScala.toSeq.toString()
+         nCluster  ghts,
+        totalOutgo ngVolu s,
+         nterested nS ze,
+        edgeSample. erator().asScala.toSeq.toStr ng()
       )
     }
   }
 
-  object BIRMonoid extends Monoid[BipartiteIntermediateResults] {
-    override def zero =
-      BipartiteIntermediateResults(WeightsMonoid.zero, WeightsMonoid.zero, 0, samplerMonoid.zero)
+  object B RMono d extends Mono d[B part e nter d ateResults] {
+    overr de def zero =
+      B part e nter d ateResults(  ghtsMono d.zero,   ghtsMono d.zero, 0, samplerMono d.zero)
 
-    override def plus(
-      l: BipartiteIntermediateResults,
-      r: BipartiteIntermediateResults
-    ): BipartiteIntermediateResults = {
-      BipartiteIntermediateResults(
-        WeightsMonoid.plus(l.inClusterWeights, r.inClusterWeights),
-        WeightsMonoid.plus(l.totalOutgoingVolumes, r.totalOutgoingVolumes),
-        l.interestedInSize + r.interestedInSize,
-        samplerMonoid.plus(l.edgeSample, r.edgeSample)
+    overr de def plus(
+      l: B part e nter d ateResults,
+      r: B part e nter d ateResults
+    ): B part e nter d ateResults = {
+      B part e nter d ateResults(
+          ghtsMono d.plus(l. nCluster  ghts, r. nCluster  ghts),
+          ghtsMono d.plus(l.totalOutgo ngVolu s, r.totalOutgo ngVolu s),
+        l. nterested nS ze + r. nterested nS ze,
+        samplerMono d.plus(l.edgeSample, r.edgeSample)
       )
     }
   }
 
-  implicit val bIRMonoid: Monoid[BipartiteIntermediateResults] = BIRMonoid
+   mpl c  val b RMono d: Mono d[B part e nter d ateResults] = B RMono d
 
-  def makeThriftSampledEdge(edge: (Long, Long), data: SampledEdgeData): SampledEdge = {
-    val (followerId, followeeId) = edge
+  def makeThr ftSampledEdge(edge: (Long, Long), data: SampledEdgeData): SampledEdge = {
+    val (follo r d, follo e d) = edge
     SampledEdge(
-      followerId = followerId,
-      followeeId = followeeId,
-      favWtIfFollowEdge = Some(data.favWtIfFollowEdge),
-      favWtIfFavEdge = Some(data.favWtIfFavEdge),
-      followScoreToCluster = Some(data.followScoreToCluster),
-      favScoreToCluster = Some(data.favScoreToCluster)
+      follo r d = follo r d,
+      follo e d = follo e d,
+      favWt fFollowEdge = So (data.favWt fFollowEdge),
+      favWt fFavEdge = So (data.favWt fFavEdge),
+      followScoreToCluster = So (data.followScoreToCluster),
+      favScoreToCluster = So (data.favScoreToCluster)
     )
   }
 
-  object ClusterQualitySemigroup extends Semigroup[BipartiteClusterQuality] {
-    val doubleOM: Monoid[Option[Double]] = new OptionMonoid[Double]
-    val intOM: Monoid[Option[Int]] = new OptionMonoid[Int]
-    val longOM: Monoid[Option[Long]] = new OptionMonoid[Long]
+  object ClusterQual ySem group extends Sem group[B part eClusterQual y] {
+    val doubleOM: Mono d[Opt on[Double]] = new Opt onMono d[Double]
+    val  ntOM: Mono d[Opt on[ nt]] = new Opt onMono d[ nt]
+    val longOM: Mono d[Opt on[Long]] = new Opt onMono d[Long]
 
-    override def plus(l: BipartiteClusterQuality, r: BipartiteClusterQuality) =
-      BipartiteClusterQuality(
-        inClusterFollowEdges = doubleOM.plus(l.inClusterFollowEdges, r.inClusterFollowEdges),
-        inClusterFavEdges = doubleOM.plus(l.inClusterFavEdges, r.inClusterFavEdges),
-        favWtSumOfInClusterFollowEdges = doubleOM
-          .plus(l.favWtSumOfInClusterFollowEdges, r.favWtSumOfInClusterFollowEdges),
-        favWtSumOfInClusterFavEdges = doubleOM
-          .plus(l.favWtSumOfInClusterFavEdges, r.favWtSumOfInClusterFavEdges),
-        outgoingFollowEdges = doubleOM.plus(l.outgoingFollowEdges, r.outgoingFollowEdges),
-        outgoingFavEdges = doubleOM.plus(l.outgoingFavEdges, r.outgoingFavEdges),
-        favWtSumOfOutgoingFollowEdges = doubleOM
-          .plus(l.favWtSumOfOutgoingFollowEdges, r.favWtSumOfOutgoingFollowEdges),
-        favWtSumOfOutgoingFavEdges = doubleOM
-          .plus(l.favWtSumOfOutgoingFavEdges, r.favWtSumOfOutgoingFavEdges),
-        incomingFollowEdges = doubleOM.plus(l.incomingFollowEdges, r.incomingFollowEdges),
-        incomingFavEdges = doubleOM.plus(l.incomingFavEdges, r.incomingFavEdges),
-        favWtSumOfIncomingFollowEdges = doubleOM
-          .plus(l.favWtSumOfIncomingFollowEdges, r.favWtSumOfIncomingFollowEdges),
-        favWtSumOfIncomingFavEdges = doubleOM
-          .plus(l.favWtSumOfIncomingFavEdges, r.favWtSumOfIncomingFavEdges),
-        interestedInSize = None,
-        sampledEdges = Some(
-          sampledEdgesMonoid
+    overr de def plus(l: B part eClusterQual y, r: B part eClusterQual y) =
+      B part eClusterQual y(
+         nClusterFollowEdges = doubleOM.plus(l. nClusterFollowEdges, r. nClusterFollowEdges),
+         nClusterFavEdges = doubleOM.plus(l. nClusterFavEdges, r. nClusterFavEdges),
+        favWtSumOf nClusterFollowEdges = doubleOM
+          .plus(l.favWtSumOf nClusterFollowEdges, r.favWtSumOf nClusterFollowEdges),
+        favWtSumOf nClusterFavEdges = doubleOM
+          .plus(l.favWtSumOf nClusterFavEdges, r.favWtSumOf nClusterFavEdges),
+        outgo ngFollowEdges = doubleOM.plus(l.outgo ngFollowEdges, r.outgo ngFollowEdges),
+        outgo ngFavEdges = doubleOM.plus(l.outgo ngFavEdges, r.outgo ngFavEdges),
+        favWtSumOfOutgo ngFollowEdges = doubleOM
+          .plus(l.favWtSumOfOutgo ngFollowEdges, r.favWtSumOfOutgo ngFollowEdges),
+        favWtSumOfOutgo ngFavEdges = doubleOM
+          .plus(l.favWtSumOfOutgo ngFavEdges, r.favWtSumOfOutgo ngFavEdges),
+         ncom ngFollowEdges = doubleOM.plus(l. ncom ngFollowEdges, r. ncom ngFollowEdges),
+         ncom ngFavEdges = doubleOM.plus(l. ncom ngFavEdges, r. ncom ngFavEdges),
+        favWtSumOf ncom ngFollowEdges = doubleOM
+          .plus(l.favWtSumOf ncom ngFollowEdges, r.favWtSumOf ncom ngFollowEdges),
+        favWtSumOf ncom ngFavEdges = doubleOM
+          .plus(l.favWtSumOf ncom ngFavEdges, r.favWtSumOf ncom ngFavEdges),
+         nterested nS ze = None,
+        sampledEdges = So (
+          sampledEdgesMono d
             .plus(
-              sampledEdgesMonoid.build(l.sampledEdges.getOrElse(Nil)),
-              sampledEdgesMonoid.build(r.sampledEdges.getOrElse(Nil))
+              sampledEdgesMono d.bu ld(l.sampledEdges.getOrElse(N l)),
+              sampledEdgesMono d.bu ld(r.sampledEdges.getOrElse(N l))
             )
-            .iterator()
+            . erator()
             .asScala
             .toSeq),
-        knownForSize = intOM.plus(l.knownForSize, r.knownForSize),
-        correlationOfFavWtIfFollowWithPredictedFollow = None,
-        correlationOfFavWtIfFavWithPredictedFav = None,
-        relativePrecisionUsingFavWtIfFav = None,
-        averagePrecisionOfWholeGraphUsingFavWtIfFav = l.averagePrecisionOfWholeGraphUsingFavWtIfFav
+        knownForS ze =  ntOM.plus(l.knownForS ze, r.knownForS ze),
+        correlat onOfFavWt fFollowW hPred ctedFollow = None,
+        correlat onOfFavWt fFavW hPred ctedFav = None,
+        relat vePrec s onUs ngFavWt fFav = None,
+        averagePrec s onOfWholeGraphUs ngFavWt fFav = l.averagePrec s onOfWholeGraphUs ngFavWt fFav
       )
   }
 
-  implicit val bcqSemigroup: Semigroup[BipartiteClusterQuality] =
-    ClusterQualitySemigroup
+   mpl c  val bcqSem group: Sem group[B part eClusterQual y] =
+    ClusterQual ySem group
 
-  case class PrintableBipartiteQuality(
-    incomingFollowUnweightedRecall: String,
-    incomingFavUnweightedRecall: String,
-    incomingFollowWeightedRecall: String,
-    incomingFavWeightedRecall: String,
-    outgoingFollowUnweightedRecall: String,
-    outgoingFavUnweightedRecall: String,
-    outgoingFollowWeightedRecall: String,
-    outgoingFavWeightedRecall: String,
-    incomingFollowEdges: String,
-    incomingFavEdges: String,
-    favWtSumOfIncomingFollowEdges: String,
-    favWtSumOfIncomingFavEdges: String,
-    outgoingFollowEdges: String,
-    outgoingFavEdges: String,
-    favWtSumOfOutgoingFollowEdges: String,
-    favWtSumOfOutgoingFavEdges: String,
-    correlationOfFavWtIfFollow: String,
-    correlationOfFavWtIfFav: String,
-    relativePrecisionUsingFavWt: String,
-    averagePrecisionOfWholeGraphUsingFavWt: String,
-    interestedInSize: String,
-    knownForSize: String)
+  case class Pr ntableB part eQual y(
+     ncom ngFollowUn  ghtedRecall: Str ng,
+     ncom ngFavUn  ghtedRecall: Str ng,
+     ncom ngFollow  ghtedRecall: Str ng,
+     ncom ngFav  ghtedRecall: Str ng,
+    outgo ngFollowUn  ghtedRecall: Str ng,
+    outgo ngFavUn  ghtedRecall: Str ng,
+    outgo ngFollow  ghtedRecall: Str ng,
+    outgo ngFav  ghtedRecall: Str ng,
+     ncom ngFollowEdges: Str ng,
+     ncom ngFavEdges: Str ng,
+    favWtSumOf ncom ngFollowEdges: Str ng,
+    favWtSumOf ncom ngFavEdges: Str ng,
+    outgo ngFollowEdges: Str ng,
+    outgo ngFavEdges: Str ng,
+    favWtSumOfOutgo ngFollowEdges: Str ng,
+    favWtSumOfOutgo ngFavEdges: Str ng,
+    correlat onOfFavWt fFollow: Str ng,
+    correlat onOfFavWt fFav: Str ng,
+    relat vePrec s onUs ngFavWt: Str ng,
+    averagePrec s onOfWholeGraphUs ngFavWt: Str ng,
+     nterested nS ze: Str ng,
+    knownForS ze: Str ng)
 
-  def printableBipartiteQuality(in: BipartiteClusterQuality): PrintableBipartiteQuality = {
-    def getRatio(numOpt: Option[Double], denOpt: Option[Double]): String = {
-      val r = if (denOpt.exists(_ > 0)) {
+  def pr ntableB part eQual y( n: B part eClusterQual y): Pr ntableB part eQual y = {
+    def getRat o(numOpt: Opt on[Double], denOpt: Opt on[Double]): Str ng = {
+      val r =  f (denOpt.ex sts(_ > 0)) {
         numOpt.getOrElse(0.0) / denOpt.get
       } else 0.0
       "%.3f".format(r)
     }
 
-    val formatter = new java.text.DecimalFormat("###,###.#")
+    val formatter = new java.text.Dec malFormat("###,###.#")
 
-    def denString(denOpt: Option[Double]): String =
+    def denStr ng(denOpt: Opt on[Double]): Str ng =
       formatter.format(denOpt.getOrElse(0.0))
 
-    val correlationOfFavWtIfFollow =
-      in.correlationOfFavWtIfFollowWithPredictedFollow match {
+    val correlat onOfFavWt fFollow =
+       n.correlat onOfFavWt fFollowW hPred ctedFollow match {
         case None =>
-          in.sampledEdges.map { samples =>
-            val pairs = samples.map { s =>
-              (s.predictedFollowScore.getOrElse(0.0), s.favWtIfFollowEdge.getOrElse(0.0))
+           n.sampledEdges.map { samples =>
+            val pa rs = samples.map { s =>
+              (s.pred ctedFollowScore.getOrElse(0.0), s.favWt fFollowEdge.getOrElse(0.0))
             }
-            Util.computeCorrelation(pairs.iterator)
+            Ut l.computeCorrelat on(pa rs. erator)
           }
         case x @ _ => x
       }
 
-    val correlationOfFavWtIfFav =
-      in.correlationOfFavWtIfFavWithPredictedFav match {
+    val correlat onOfFavWt fFav =
+       n.correlat onOfFavWt fFavW hPred ctedFav match {
         case None =>
-          in.sampledEdges.map { samples =>
-            val pairs = samples.map { s =>
-              (s.predictedFavScore.getOrElse(0.0), s.favWtIfFavEdge.getOrElse(0.0))
+           n.sampledEdges.map { samples =>
+            val pa rs = samples.map { s =>
+              (s.pred ctedFavScore.getOrElse(0.0), s.favWt fFavEdge.getOrElse(0.0))
             }
-            Util.computeCorrelation(pairs.iterator)
+            Ut l.computeCorrelat on(pa rs. erator)
           }
         case x @ _ => x
       }
 
-    PrintableBipartiteQuality(
-      incomingFollowUnweightedRecall = getRatio(in.inClusterFollowEdges, in.incomingFollowEdges),
-      incomingFavUnweightedRecall = getRatio(in.inClusterFavEdges, in.incomingFavEdges),
-      incomingFollowWeightedRecall =
-        getRatio(in.favWtSumOfInClusterFollowEdges, in.favWtSumOfIncomingFollowEdges),
-      incomingFavWeightedRecall =
-        getRatio(in.favWtSumOfInClusterFavEdges, in.favWtSumOfIncomingFavEdges),
-      outgoingFollowUnweightedRecall = getRatio(in.inClusterFollowEdges, in.outgoingFollowEdges),
-      outgoingFavUnweightedRecall = getRatio(in.inClusterFavEdges, in.outgoingFavEdges),
-      outgoingFollowWeightedRecall =
-        getRatio(in.favWtSumOfInClusterFollowEdges, in.favWtSumOfOutgoingFollowEdges),
-      outgoingFavWeightedRecall =
-        getRatio(in.favWtSumOfInClusterFavEdges, in.favWtSumOfOutgoingFavEdges),
-      incomingFollowEdges = denString(in.incomingFollowEdges),
-      incomingFavEdges = denString(in.incomingFavEdges),
-      favWtSumOfIncomingFollowEdges = denString(in.favWtSumOfIncomingFollowEdges),
-      favWtSumOfIncomingFavEdges = denString(in.favWtSumOfIncomingFavEdges),
-      outgoingFollowEdges = denString(in.outgoingFollowEdges),
-      outgoingFavEdges = denString(in.outgoingFavEdges),
-      favWtSumOfOutgoingFollowEdges = denString(in.favWtSumOfOutgoingFollowEdges),
-      favWtSumOfOutgoingFavEdges = denString(in.favWtSumOfOutgoingFavEdges),
-      correlationOfFavWtIfFollow = "%.3f"
-        .format(correlationOfFavWtIfFollow.getOrElse(0.0)),
-      correlationOfFavWtIfFav = "%.3f"
-        .format(correlationOfFavWtIfFav.getOrElse(0.0)),
-      relativePrecisionUsingFavWt =
-        "%.2g".format(in.relativePrecisionUsingFavWtIfFav.getOrElse(0.0)),
-      averagePrecisionOfWholeGraphUsingFavWt =
-        "%.2g".format(in.averagePrecisionOfWholeGraphUsingFavWtIfFav.getOrElse(0.0)),
-      interestedInSize = in.interestedInSize.getOrElse(0).toString,
-      knownForSize = in.knownForSize.getOrElse(0).toString
+    Pr ntableB part eQual y(
+       ncom ngFollowUn  ghtedRecall = getRat o( n. nClusterFollowEdges,  n. ncom ngFollowEdges),
+       ncom ngFavUn  ghtedRecall = getRat o( n. nClusterFavEdges,  n. ncom ngFavEdges),
+       ncom ngFollow  ghtedRecall =
+        getRat o( n.favWtSumOf nClusterFollowEdges,  n.favWtSumOf ncom ngFollowEdges),
+       ncom ngFav  ghtedRecall =
+        getRat o( n.favWtSumOf nClusterFavEdges,  n.favWtSumOf ncom ngFavEdges),
+      outgo ngFollowUn  ghtedRecall = getRat o( n. nClusterFollowEdges,  n.outgo ngFollowEdges),
+      outgo ngFavUn  ghtedRecall = getRat o( n. nClusterFavEdges,  n.outgo ngFavEdges),
+      outgo ngFollow  ghtedRecall =
+        getRat o( n.favWtSumOf nClusterFollowEdges,  n.favWtSumOfOutgo ngFollowEdges),
+      outgo ngFav  ghtedRecall =
+        getRat o( n.favWtSumOf nClusterFavEdges,  n.favWtSumOfOutgo ngFavEdges),
+       ncom ngFollowEdges = denStr ng( n. ncom ngFollowEdges),
+       ncom ngFavEdges = denStr ng( n. ncom ngFavEdges),
+      favWtSumOf ncom ngFollowEdges = denStr ng( n.favWtSumOf ncom ngFollowEdges),
+      favWtSumOf ncom ngFavEdges = denStr ng( n.favWtSumOf ncom ngFavEdges),
+      outgo ngFollowEdges = denStr ng( n.outgo ngFollowEdges),
+      outgo ngFavEdges = denStr ng( n.outgo ngFavEdges),
+      favWtSumOfOutgo ngFollowEdges = denStr ng( n.favWtSumOfOutgo ngFollowEdges),
+      favWtSumOfOutgo ngFavEdges = denStr ng( n.favWtSumOfOutgo ngFavEdges),
+      correlat onOfFavWt fFollow = "%.3f"
+        .format(correlat onOfFavWt fFollow.getOrElse(0.0)),
+      correlat onOfFavWt fFav = "%.3f"
+        .format(correlat onOfFavWt fFav.getOrElse(0.0)),
+      relat vePrec s onUs ngFavWt =
+        "%.2g".format( n.relat vePrec s onUs ngFavWt fFav.getOrElse(0.0)),
+      averagePrec s onOfWholeGraphUs ngFavWt =
+        "%.2g".format( n.averagePrec s onOfWholeGraphUs ngFavWt fFav.getOrElse(0.0)),
+       nterested nS ze =  n. nterested nS ze.getOrElse(0).toStr ng,
+      knownForS ze =  n.knownForS ze.getOrElse(0).toStr ng
     )
   }
 
   case class ClusterResultsSummary(
-    numClustersWithZeroInterestedIn: Int,
-    numClustersWithZeroFollowWtRecall: Int,
-    numClustersWithZeroFavWtRecall: Int,
-    numClustersWithZeroFollowAndFavWtRecall: Int,
-    interestedInSizeDist: Distribution,
-    outgoingFollowWtRecallDist: Distribution,
-    outgoingFavWtRecallDist: Distribution,
-    incomingFollowWtRecallDist: Distribution,
-    incomingFavWtRecallDist: Distribution,
-    followCorrelationDist: Distribution,
-    favCorrelationDist: Distribution,
-    relativePrecisionDist: Distribution)
+    numClustersW hZero nterested n:  nt,
+    numClustersW hZeroFollowWtRecall:  nt,
+    numClustersW hZeroFavWtRecall:  nt,
+    numClustersW hZeroFollowAndFavWtRecall:  nt,
+     nterested nS zeD st: D str but on,
+    outgo ngFollowWtRecallD st: D str but on,
+    outgo ngFavWtRecallD st: D str but on,
+     ncom ngFollowWtRecallD st: D str but on,
+     ncom ngFavWtRecallD st: D str but on,
+    followCorrelat onD st: D str but on,
+    favCorrelat onD st: D str but on,
+    relat vePrec s onD st: D str but on)
 
   def getClusterResultsSummary(
-    perClusterResults: TypedPipe[BipartiteClusterQuality]
-  ): Execution[Option[ClusterResultsSummary]] = {
+    perClusterResults: TypedP pe[B part eClusterQual y]
+  ): Execut on[Opt on[ClusterResultsSummary]] = {
     perClusterResults
-      .map { clusterQuality =>
-        val printableQuality = printableBipartiteQuality(clusterQuality)
-        val isFollowRecallZero =
-          if (!clusterQuality.favWtSumOfInClusterFollowEdges
-              .exists(_ > 0)) 1
+      .map { clusterQual y =>
+        val pr ntableQual y = pr ntableB part eQual y(clusterQual y)
+        val  sFollowRecallZero =
+           f (!clusterQual y.favWtSumOf nClusterFollowEdges
+              .ex sts(_ > 0)) 1
           else 0
-        val isFavRecallZero =
-          if (!clusterQuality.favWtSumOfInClusterFavEdges.exists(_ > 0)) 1
+        val  sFavRecallZero =
+           f (!clusterQual y.favWtSumOf nClusterFavEdges.ex sts(_ > 0)) 1
           else 0
         (
-          if (!clusterQuality.interestedInSize.exists(_ > 0)) 1 else 0,
-          isFollowRecallZero,
-          isFavRecallZero,
-          isFavRecallZero * isFollowRecallZero,
-          clusterQuality.interestedInSize.toList.map(_.toDouble),
-          List(printableQuality.outgoingFollowWeightedRecall.toDouble),
-          List(printableQuality.outgoingFavWeightedRecall.toDouble),
-          List(printableQuality.incomingFollowWeightedRecall.toDouble),
-          List(printableQuality.incomingFavWeightedRecall.toDouble),
-          List(printableQuality.correlationOfFavWtIfFollow.toDouble),
-          List(printableQuality.correlationOfFavWtIfFav.toDouble),
-          List(printableQuality.relativePrecisionUsingFavWt.toDouble)
+           f (!clusterQual y. nterested nS ze.ex sts(_ > 0)) 1 else 0,
+           sFollowRecallZero,
+           sFavRecallZero,
+           sFavRecallZero *  sFollowRecallZero,
+          clusterQual y. nterested nS ze.toL st.map(_.toDouble),
+          L st(pr ntableQual y.outgo ngFollow  ghtedRecall.toDouble),
+          L st(pr ntableQual y.outgo ngFav  ghtedRecall.toDouble),
+          L st(pr ntableQual y. ncom ngFollow  ghtedRecall.toDouble),
+          L st(pr ntableQual y. ncom ngFav  ghtedRecall.toDouble),
+          L st(pr ntableQual y.correlat onOfFavWt fFollow.toDouble),
+          L st(pr ntableQual y.correlat onOfFavWt fFav.toDouble),
+          L st(pr ntableQual y.relat vePrec s onUs ngFavWt.toDouble)
         )
       }
       .sum
-      .toOptionExecution
+      .toOpt onExecut on
       .map { opt =>
         opt.map {
           case (
-                zeroInterestedIn,
+                zero nterested n,
                 zeroFollowRecall,
                 zeroFavRecall,
                 zeroFollowAndFavRecall,
-                interestedInSizeList,
-                outgoingFollowWtRecallList,
-                outgoingFavWtRecallList,
-                incomingFollowWtRecallList,
-                incomingFavWtRecallList,
-                followCorrelationList,
-                favCorrelationList,
-                relativePrecisionList
+                 nterested nS zeL st,
+                outgo ngFollowWtRecallL st,
+                outgo ngFavWtRecallL st,
+                 ncom ngFollowWtRecallL st,
+                 ncom ngFavWtRecallL st,
+                followCorrelat onL st,
+                favCorrelat onL st,
+                relat vePrec s onL st
               ) =>
             ClusterResultsSummary(
-              numClustersWithZeroInterestedIn = zeroInterestedIn,
-              numClustersWithZeroFollowWtRecall = zeroFollowRecall,
-              numClustersWithZeroFavWtRecall = zeroFavRecall,
-              numClustersWithZeroFollowAndFavWtRecall = zeroFollowAndFavRecall,
-              interestedInSizeDist = Util.distributionFromArray(interestedInSizeList.toArray),
-              outgoingFollowWtRecallDist = Util
-                .distributionFromArray(outgoingFollowWtRecallList.toArray),
-              outgoingFavWtRecallDist = Util.distributionFromArray(outgoingFavWtRecallList.toArray),
-              incomingFollowWtRecallDist = Util
-                .distributionFromArray(incomingFollowWtRecallList.toArray),
-              incomingFavWtRecallDist = Util.distributionFromArray(incomingFavWtRecallList.toArray),
-              followCorrelationDist = Util.distributionFromArray(followCorrelationList.toArray),
-              favCorrelationDist = Util.distributionFromArray(favCorrelationList.toArray),
-              relativePrecisionDist = Util.distributionFromArray(relativePrecisionList.toArray)
+              numClustersW hZero nterested n = zero nterested n,
+              numClustersW hZeroFollowWtRecall = zeroFollowRecall,
+              numClustersW hZeroFavWtRecall = zeroFavRecall,
+              numClustersW hZeroFollowAndFavWtRecall = zeroFollowAndFavRecall,
+               nterested nS zeD st = Ut l.d str but onFromArray( nterested nS zeL st.toArray),
+              outgo ngFollowWtRecallD st = Ut l
+                .d str but onFromArray(outgo ngFollowWtRecallL st.toArray),
+              outgo ngFavWtRecallD st = Ut l.d str but onFromArray(outgo ngFavWtRecallL st.toArray),
+               ncom ngFollowWtRecallD st = Ut l
+                .d str but onFromArray( ncom ngFollowWtRecallL st.toArray),
+               ncom ngFavWtRecallD st = Ut l.d str but onFromArray( ncom ngFavWtRecallL st.toArray),
+              followCorrelat onD st = Ut l.d str but onFromArray(followCorrelat onL st.toArray),
+              favCorrelat onD st = Ut l.d str but onFromArray(favCorrelat onL st.toArray),
+              relat vePrec s onD st = Ut l.d str but onFromArray(relat vePrec s onL st.toArray)
             )
         }
       }

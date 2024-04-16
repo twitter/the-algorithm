@@ -1,50 +1,50 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.storehaus_internal.memcache.ConnectionConfig
-import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
-import com.twitter.storehaus_internal.util.TTL
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import com.twitter.summingbird_internal.runner.store_config.OnlineStoreOnlyConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.storehaus_ nternal. mcac .Connect onConf g
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Conf g
+ mport com.tw ter.storehaus_ nternal.ut l.KeyPref x
+ mport com.tw ter.storehaus_ nternal.ut l.TTL
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
+ mport com.tw ter.summ ngb rd_ nternal.runner.store_conf g.Onl neStoreOnlyConf g
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateStore
+ mport com.tw ter.ut l.Durat on
 
-object RealTimeAggregateStore {
-  val twCacheWilyPrefix = "/srv#" // s2s is only supported for wily path
+object RealT  AggregateStore {
+  val twCac W lyPref x = "/srv#" // s2s  s only supported for w ly path
 
-  def makeEndpoint(
-    memcacheDataSet: String,
-    isProd: Boolean,
-    twCacheWilyPrefix: String = twCacheWilyPrefix
-  ): String = {
-    val env = if (isProd) "prod" else "test"
-    s"$twCacheWilyPrefix/$env/local/cache/$memcacheDataSet"
+  def makeEndpo nt(
+     mcac DataSet: Str ng,
+     sProd: Boolean,
+    twCac W lyPref x: Str ng = twCac W lyPref x
+  ): Str ng = {
+    val env =  f ( sProd) "prod" else "test"
+    s"$twCac W lyPref x/$env/local/cac /$ mcac DataSet"
   }
 }
 
-case class RealTimeAggregateStore(
-  memcacheDataSet: String,
-  isProd: Boolean = false,
-  cacheTTL: Duration = 1.day)
-    extends OnlineStoreOnlyConfig[MemcacheConfig]
-    with AggregateStore {
-  import RealTimeAggregateStore._
+case class RealT  AggregateStore(
+   mcac DataSet: Str ng,
+   sProd: Boolean = false,
+  cac TTL: Durat on = 1.day)
+    extends Onl neStoreOnlyConf g[ mcac Conf g]
+    w h AggregateStore {
+   mport RealT  AggregateStore._
 
-  override val name: String = ""
-  val storeKeyPrefix: KeyPrefix = KeyPrefix(name)
-  val memcacheZkEndPoint: String = makeEndpoint(memcacheDataSet, isProd)
+  overr de val na : Str ng = ""
+  val storeKeyPref x: KeyPref x = KeyPref x(na )
+  val  mcac ZkEndPo nt: Str ng = makeEndpo nt( mcac DataSet,  sProd)
 
-  def online: MemcacheConfig = online(serviceIdentifier = EmptyServiceIdentifier)
+  def onl ne:  mcac Conf g = onl ne(serv ce dent f er = EmptyServ ce dent f er)
 
-  def online(serviceIdentifier: ServiceIdentifier = EmptyServiceIdentifier): MemcacheConfig =
-    new MemcacheConfig {
-      val endpoint = ZkEndPoint(memcacheZkEndPoint)
-      override val connectionConfig =
-        ConnectionConfig(endpoint, serviceIdentifier = serviceIdentifier)
-      override val keyPrefix = storeKeyPrefix
-      override val ttl = TTL(Duration.fromMilliseconds(cacheTTL.inMillis))
+  def onl ne(serv ce dent f er: Serv ce dent f er = EmptyServ ce dent f er):  mcac Conf g =
+    new  mcac Conf g {
+      val endpo nt = ZkEndPo nt( mcac ZkEndPo nt)
+      overr de val connect onConf g =
+        Connect onConf g(endpo nt, serv ce dent f er = serv ce dent f er)
+      overr de val keyPref x = storeKeyPref x
+      overr de val ttl = TTL(Durat on.fromM ll seconds(cac TTL. nM ll s))
     }
 }

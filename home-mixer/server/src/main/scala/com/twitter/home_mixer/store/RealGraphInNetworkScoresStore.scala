@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.store
+package com.tw ter.ho _m xer.store
 
-import com.twitter.bijection.Injection
-import com.twitter.home_mixer.store.ManhattanRealGraphKVDescriptor._
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.ReadOnlyKeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.{thriftscala => wtf}
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.ho _m xer.store.ManhattanRealGraphKVDescr ptor._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.B naryScala nject on
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo nt
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ReadOnlyKeyDescr ptor
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ValueDescr ptor
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.wtf.cand date.{thr ftscala => wtf}
 
-object ManhattanRealGraphKVDescriptor {
-  implicit val byteArray2Buf = Bijections.BytesBijection
+object ManhattanRealGraphKVDescr ptor {
+   mpl c  val byteArray2Buf = B ject ons.BytesB ject on
 
-  val realGraphDatasetName = "real_graph_scores_in"
-  val keyInjection = Injection.connect[Long, Array[Byte]].andThen(Bijections.BytesInjection)
-  val keyDesc = ReadOnlyKeyDescriptor(keyInjection)
-  val valueDesc = ValueDescriptor(BinaryScalaInjection(wtf.CandidateSeq))
-  val realGraphDatasetKey = keyDesc.withDataset(realGraphDatasetName)
+  val realGraphDatasetNa  = "real_graph_scores_ n"
+  val key nject on =  nject on.connect[Long, Array[Byte]].andT n(B ject ons.Bytes nject on)
+  val keyDesc = ReadOnlyKeyDescr ptor(key nject on)
+  val valueDesc = ValueDescr ptor(B naryScala nject on(wtf.Cand dateSeq))
+  val realGraphDatasetKey = keyDesc.w hDataset(realGraphDatasetNa )
 }
 
 /**
- * Hydrates real graph in network scores for a viewer
+ * Hydrates real graph  n network scores for a v e r
  */
-class RealGraphInNetworkScoresStore(manhattanKVEndpoint: ManhattanKVEndpoint)
-    extends ReadableStore[Long, Seq[wtf.Candidate]] {
+class RealGraph nNetworkScoresStore(manhattanKVEndpo nt: ManhattanKVEndpo nt)
+    extends ReadableStore[Long, Seq[wtf.Cand date]] {
 
-  override def get(viewerId: Long): Future[Option[Seq[wtf.Candidate]]] = Stitch
-    .run(manhattanKVEndpoint.get(realGraphDatasetKey.withPkey(viewerId), valueDesc))
-    .map(_.map(mhResponse => mhResponse.contents.candidates))
+  overr de def get(v e r d: Long): Future[Opt on[Seq[wtf.Cand date]]] = St ch
+    .run(manhattanKVEndpo nt.get(realGraphDatasetKey.w hPkey(v e r d), valueDesc))
+    .map(_.map(mhResponse => mhResponse.contents.cand dates))
 }

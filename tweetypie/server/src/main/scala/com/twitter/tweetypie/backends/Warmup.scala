@@ -1,168 +1,168 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.util.Timer
-import com.twitter.util.Promise
-import scala.util.control.NoStackTrace
+ mport com.tw ter.concurrent.AsyncSemaphore
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.Prom se
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Tools for building warmup actions on backend clients. The basic
- * idea is to make requests to backends repeatedly until they succeed.
+ * Tools for bu ld ng warmup act ons on backend cl ents. T  bas c
+ *  dea  s to make requests to backends repeatedly unt l t y succeed.
  */
 object Warmup {
 
   /**
-   * Signals that a warmup action was aborted because warmup is
+   * S gnals that a warmup act on was aborted because warmup  s
    * complete.
    */
-  object WarmupComplete extends Exception with NoStackTrace
+  object WarmupComplete extends Except on w h NoStackTrace
 
   /**
-   * Configuration for warmup actions.
+   * Conf gurat on for warmup act ons.
    *
-   * @param maxOutstandingRequests: Limit on total number of outstanding warmup requests.
-   * @param maxWarmupDuration: Total amount of time warmup is allowed to take.
-   * @param requestTimeouts: Time limit for individual warmup actions.
-   * @param reliability: Criteria for how many times each warmup should be run.
+   * @param maxOutstand ngRequests: L m  on total number of outstand ng warmup requests.
+   * @param maxWarmupDurat on: Total amount of t   warmup  s allo d to take.
+   * @param requestT  outs: T   l m  for  nd v dual warmup act ons.
+   * @param rel ab l y: Cr er a for how many t  s each warmup should be run.
    */
-  case class Settings(
-    maxOutstandingRequests: Int,
-    maxWarmupDuration: Duration,
-    requestTimeouts: Map[String, Duration],
-    reliability: Reliably) {
-    def toRunner(logger: Logger, timer: Timer): Runner =
-      new WithTimeouts(requestTimeouts, timer)
-        .within(new Logged(logger))
-        .within(new LimitedConcurrency(maxOutstandingRequests))
-        .within(reliability)
+  case class Sett ngs(
+    maxOutstand ngRequests:  nt,
+    maxWarmupDurat on: Durat on,
+    requestT  outs: Map[Str ng, Durat on],
+    rel ab l y: Rel ably) {
+    def toRunner(logger: Logger, t  r: T  r): Runner =
+      new W hT  outs(requestT  outs, t  r)
+        .w h n(new Logged(logger))
+        .w h n(new L m edConcurrency(maxOutstand ngRequests))
+        .w h n(rel ab l y)
 
-    def apply[A: Warmup](value: A, logger: Logger, timer: Timer): Future[Unit] =
-      toRunner(logger, timer)
+    def apply[A: Warmup](value: A, logger: Logger, t  r: T  r): Future[Un ] =
+      toRunner(logger, t  r)
         .run(value)
-        .raiseWithin(maxWarmupDuration)(timer)
+        .ra seW h n(maxWarmupDurat on)(t  r)
         .handle { case _ => }
   }
 
   /**
-   * Strategy for running Warmup actions.
+   * Strategy for runn ng Warmup act ons.
    */
-  trait Runner { self =>
+  tra  Runner { self =>
 
     /**
-     * Run one single warmup action.
+     * Run one s ngle warmup act on.
      */
-    def runOne(name: String, action: => Future[Unit]): Future[Unit]
+    def runOne(na : Str ng, act on: => Future[Un ]): Future[Un ]
 
     /**
-     * Compose these two Runners by calling this Runner's runOne
-     * inside of other's runOne.
+     * Compose t se two Runners by call ng t  Runner's runOne
+     *  ns de of ot r's runOne.
      */
-    final def within(other: Runner): Runner =
+    f nal def w h n(ot r: Runner): Runner =
       new Runner {
-        override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
-          other.runOne(name, self.runOne(name, action))
+        overr de def runOne(na : Str ng, act on: => Future[Un ]): Future[Un ] =
+          ot r.runOne(na , self.runOne(na , act on))
       }
 
     /**
-     * Execute all of the warmup actions for the given value using
-     * this runner.
+     * Execute all of t  warmup act ons for t  g ven value us ng
+     * t  runner.
      */
-    final def run[T](t: T)(implicit w: Warmup[T]): Future[Unit] =
-      Future.join(w.actions.toSeq.map { case (name, f) => runOne(name, f(t).unit) })
+    f nal def run[T](t: T)( mpl c  w: Warmup[T]): Future[Un ] =
+      Future.jo n(w.act ons.toSeq.map { case (na , f) => runOne(na , f(t).un ) })
   }
 
   /**
-   * Set a ceiling on the amount of time each kind of warmup action is
-   * allowed to take.
+   * Set a ce l ng on t  amount of t   each k nd of warmup act on  s
+   * allo d to take.
    */
-  class WithTimeouts(timeouts: Map[String, Duration], timer: Timer) extends Runner {
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
-      timeouts.get(name).map(action.raiseWithin(_)(timer)).getOrElse(action)
+  class W hT  outs(t  outs: Map[Str ng, Durat on], t  r: T  r) extends Runner {
+    overr de def runOne(na : Str ng, act on: => Future[Un ]): Future[Un ] =
+      t  outs.get(na ).map(act on.ra seW h n(_)(t  r)).getOrElse(act on)
   }
 
   /**
-   * Execute each action until its reliability is estimated to be
-   * above the given threshold. The reliability is initially assumed
-   * to be zero. The reliability is estimated as an exponential moving
-   * average, with the new data point given the appropriate weight so
-   * that a single data point will no longer be able to push the
-   * average below the threshold.
+   * Execute each act on unt l  s rel ab l y  s est mated to be
+   * above t  g ven threshold. T  rel ab l y  s  n  ally assu d
+   * to be zero. T  rel ab l y  s est mated as an exponent al mov ng
+   * average, w h t  new data po nt g ven t  appropr ate   ght so
+   * that a s ngle data po nt w ll no longer be able to push t 
+   * average below t  threshold.
    *
-   * The warmup action is considered successful if it does not throw
-   * an exception. No timeouts are applied.
+   * T  warmup act on  s cons dered successful  f   does not throw
+   * an except on. No t  outs are appl ed.
    *
-   * The threshold must be in the interval [0, 1).
+   * T  threshold must be  n t   nterval [0, 1).
    *
-   * The concurrency level determines how many outstanding requests
-   * to maintain until the threshold is reached. This allows warmup
-   * to happen more rapidly when individual requests have high
+   * T  concurrency level determ nes how many outstand ng requests
+   * to ma nta n unt l t  threshold  s reac d. T  allows warmup
+   * to happen more rap dly w n  nd v dual requests have h gh
    * latency.
    *
-   * maxAttempts limits the total number of tries that we are allowed
-   * to try to reach the reliability threshold. This is a safety
-   * measure to prevent overloading whatever subsystem we are
-   * attempting to warm up.
+   * maxAttempts l m s t  total number of tr es that   are allo d
+   * to try to reach t  rel ab l y threshold. T   s a safety
+   *  asure to prevent overload ng whatever subsystem   are
+   * attempt ng to warm up.
    */
-  case class Reliably(reliabilityThreshold: Double, concurrency: Int, maxAttempts: Int)
+  case class Rel ably(rel ab l yThreshold: Double, concurrency:  nt, maxAttempts:  nt)
       extends Runner {
-    require(reliabilityThreshold < 1)
-    require(reliabilityThreshold >= 0)
-    require(concurrency > 0)
-    require(maxAttempts > 0)
+    requ re(rel ab l yThreshold < 1)
+    requ re(rel ab l yThreshold >= 0)
+    requ re(concurrency > 0)
+    requ re(maxAttempts > 0)
 
-    // Find the weight at which one failure will not push us under the
-    // reliabilityThreshold.
-    val weight: Double = 1 - math.pow(
-      1 - reliabilityThreshold,
-      (1 - reliabilityThreshold) / reliabilityThreshold
+    // F nd t    ght at wh ch one fa lure w ll not push us under t 
+    // rel ab l yThreshold.
+    val   ght: Double = 1 - math.pow(
+      1 - rel ab l yThreshold,
+      (1 - rel ab l yThreshold) / rel ab l yThreshold
     )
 
-    // Make sure that rounding error did not cause weight to become zero.
-    require(weight > 0)
-    require(weight <= 1)
+    // Make sure that round ng error d d not cause   ght to beco  zero.
+    requ re(  ght > 0)
+    requ re(  ght <= 1)
 
-    // On each iteration, we discount the current reliability by this
-    // factor before adding in the new reliability data point.
-    val decay: Double = 1 - weight
+    // On each  erat on,   d scount t  current rel ab l y by t 
+    // factor before add ng  n t  new rel ab l y data po nt.
+    val decay: Double = 1 -   ght
 
-    // Make sure that rounding error did not cause decay to be zero.
-    require(decay < 1)
+    // Make sure that round ng error d d not cause decay to be zero.
+    requ re(decay < 1)
 
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] = {
-      def go(attempts: Int, reliability: Double, outstanding: Seq[Future[Unit]]): Future[Unit] =
-        if (reliability >= reliabilityThreshold || (attempts == 0 && outstanding.isEmpty)) {
-          // We hit the threshold or ran out of tries.  Don't cancel any
-          // outstanding requests, just wait for them all to complete.
-          Future.join(outstanding.map(_.handle { case _ => }))
-        } else if (attempts > 0 && outstanding.length < concurrency) {
-          // We have not yet hit the reliability threshold, and we
-          // still have available concurrency, so make a new request.
-          go(attempts - 1, reliability, action +: outstanding)
+    overr de def runOne(na : Str ng, act on: => Future[Un ]): Future[Un ] = {
+      def go(attempts:  nt, rel ab l y: Double, outstand ng: Seq[Future[Un ]]): Future[Un ] =
+         f (rel ab l y >= rel ab l yThreshold || (attempts == 0 && outstand ng. sEmpty)) {
+          //   h  t  threshold or ran out of tr es.  Don't cancel any
+          // outstand ng requests, just wa  for t m all to complete.
+          Future.jo n(outstand ng.map(_.handle { case _ => }))
+        } else  f (attempts > 0 && outstand ng.length < concurrency) {
+          //   have not yet h  t  rel ab l y threshold, and  
+          // st ll have ava lable concurrency, so make a new request.
+          go(attempts - 1, rel ab l y, act on +: outstand ng)
         } else {
-          val sel = Future.select(outstanding)
+          val sel = Future.select(outstand ng)
 
-          // We need this promise wrapper because if the select is
-          // interrupted, it relays the interrupt to the outstanding
-          // requests but does not itself return with a
-          // failure. Wrapping in a promise lets us differentiate
-          // between an interrupt coming from above and the created
-          // Future failing for another reason.
-          val p = new Promise[(Try[Unit], Seq[Future[Unit]])]
-          p.setInterruptHandler {
+          //   need t  prom se wrapper because  f t  select  s
+          //  nterrupted,   relays t   nterrupt to t  outstand ng
+          // requests but does not  self return w h a
+          // fa lure. Wrapp ng  n a prom se lets us d fferent ate
+          // bet en an  nterrupt com ng from above and t  created
+          // Future fa l ng for anot r reason.
+          val p = new Prom se[(Try[Un ], Seq[Future[Un ]])]
+          p.set nterruptHandler {
             case e =>
-              // Interrupt the outstanding requests.
-              sel.raise(e)
-              // Halt the computation with a failure.
-              p.updateIfEmpty(Throw(e))
+              //  nterrupt t  outstand ng requests.
+              sel.ra se(e)
+              // Halt t  computat on w h a fa lure.
+              p.update fEmpty(Throw(e))
           }
 
-          // When the select finishes, update the promise with the value.
-          sel.respond(p.updateIfEmpty)
+          // W n t  select f n s s, update t  prom se w h t  value.
+          sel.respond(p.update fEmpty)
           p.flatMap {
-            case (tryRes, remaining) =>
-              val delta = if (tryRes.isReturn) weight else 0
-              go(attempts, reliability * decay + delta, remaining)
+            case (tryRes, rema n ng) =>
+              val delta =  f (tryRes. sReturn)   ght else 0
+              go(attempts, rel ab l y * decay + delta, rema n ng)
           }
         }
 
@@ -171,96 +171,96 @@ object Warmup {
   }
 
   /**
-   * Write a log message recording each invocation of each warmup
-   * action. The log message is comma-separated, with the following
-   * fields:
+   * Wr e a log  ssage record ng each  nvocat on of each warmup
+   * act on. T  log  ssage  s comma-separated, w h t  follow ng
+   * f elds:
    *
-   *     name:
-   *         The supplied name.
+   *     na :
+   *         T  suppl ed na .
    *
-   *     start time:
-   *         The number of milliseconds since the start of the Unix
+   *     start t  :
+   *         T  number of m ll seconds s nce t  start of t  Un x
    *         epoch.
    *
-   *     duration:
-   *         How long this warmup action took, in milliseconds.
+   *     durat on:
+   *         How long t  warmup act on took,  n m ll seconds.
    *
    *     result:
-   *         "passed" or "failed" depending on whether the Future
-   *         returned an exception.
+   *         "passed" or "fa led" depend ng on w t r t  Future
+   *         returned an except on.
    *
-   *     exception type:
-   *         If the result "failed", then this will be the name of
-   *         the exception that casued the failure. If it "passed",
-   *         it will be the empty string.
+   *     except on type:
+   *          f t  result "fa led", t n t  w ll be t  na  of
+   *         t  except on that casued t  fa lure.  f   "passed",
+   *           w ll be t  empty str ng.
    *
-   * These messages should be sufficient to get a picture of how
-   * warmup proceeded, since they allow the messages to be ordered
-   * and sorted by type. You can use this information to tune the
-   * warmup parameters.
+   * T se  ssages should be suff c ent to get a p cture of how
+   * warmup proceeded, s nce t y allow t   ssages to be ordered
+   * and sorted by type.   can use t   nformat on to tune t 
+   * warmup para ters.
    */
   class Logged(logger: Logger) extends Runner {
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] = {
-      val start = Time.now
-      val startStr = start.sinceEpoch.inMilliseconds.toString
+    overr de def runOne(na : Str ng, act on: => Future[Un ]): Future[Un ] = {
+      val start = T  .now
+      val startStr = start.s nceEpoch. nM ll seconds.toStr ng
 
-      action.respond {
+      act on.respond {
         case Throw(WarmupComplete) =>
-        // Don't log anything for computations that we abandoned
-        // because warmup is complete.
+        // Don't log anyth ng for computat ons that   abandoned
+        // because warmup  s complete.
 
         case r =>
-          val duration = (Time.now - start).inMilliseconds
+          val durat on = (T  .now - start). nM ll seconds
           val result = r match {
-            case Throw(e) => "failed," + e.toString.takeWhile(_ != '\n')
+            case Throw(e) => "fa led," + e.toStr ng.takeWh le(_ != '\n')
             case _ => "passed,"
           }
-          logger.info(s"$name,${startStr}ms,${duration}ms,$result")
+          logger. nfo(s"$na ,${startStr}ms,${durat on}ms,$result")
       }
     }
   }
 
   /**
-   * Ensure that no more than the specified number of invocations of a
-   * warmup action are happening at one time.
+   * Ensure that no more than t  spec f ed number of  nvocat ons of a
+   * warmup act on are happen ng at one t  .
    */
-  class LimitedConcurrency(limit: Int) extends Runner {
-    private[this] val sem = new AsyncSemaphore(limit)
-    override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
-      sem.acquireAndRun(action)
+  class L m edConcurrency(l m :  nt) extends Runner {
+    pr vate[t ] val sem = new AsyncSemaphore(l m )
+    overr de def runOne(na : Str ng, act on: => Future[Un ]): Future[Un ] =
+      sem.acqu reAndRun(act on)
   }
 
   /**
-   * Create a new Warmup that performs this single action.
+   * Create a new Warmup that performs t  s ngle act on.
    */
-  def apply[A](name: String)(f: A => Future[_]): Warmup[A] = new Warmup(Map(name -> f))
+  def apply[A](na : Str ng)(f: A => Future[_]): Warmup[A] = new Warmup(Map(na  -> f))
 
   /**
-   * Create a Warmup that does nothing. This is useful in concert with
-   * warmField.
+   * Create a Warmup that does noth ng. T   s useful  n concert w h
+   * warmF eld.
    */
   def empty[A]: Warmup[A] = new Warmup[A](Map.empty)
 }
 
 /**
- * A set of independent warmup actions. Each action should be the
- * minimum work that can be done in order to exercise a code
- * path. Runners can be used to e.g. run the actions repeatedly or
- * with timeouts.
+ * A set of  ndependent warmup act ons. Each act on should be t 
+ * m n mum work that can be done  n order to exerc se a code
+ * path. Runners can be used to e.g. run t  act ons repeatedly or
+ * w h t  outs.
  */
-class Warmup[A](val actions: Map[String, A => Future[_]]) {
-  def ++(other: Warmup[A]) = new Warmup[A](actions ++ other.actions)
+class Warmup[A](val act ons: Map[Str ng, A => Future[_]]) {
+  def ++(ot r: Warmup[A]) = new Warmup[A](act ons ++ ot r.act ons)
 
   /**
-   * The names of the individual warmup actions that this warmup is
+   * T  na s of t   nd v dual warmup act ons that t  warmup  s
    * composed of.
    */
-  def names: Set[String] = actions.keySet
+  def na s: Set[Str ng] = act ons.keySet
 
   /**
-   * Create a new Warmup that does all of the actions of this warmup
-   * and additionally does warmup on the value specified by `f`.
+   * Create a new Warmup that does all of t  act ons of t  warmup
+   * and add  onally does warmup on t  value spec f ed by `f`.
    */
-  def warmField[B](f: A => B)(implicit w: Warmup[B]): Warmup[A] =
-    new Warmup[A](actions ++ (w.actions.mapValues(f.andThen)))
+  def warmF eld[B](f: A => B)( mpl c  w: Warmup[B]): Warmup[A] =
+    new Warmup[A](act ons ++ (w.act ons.mapValues(f.andT n)))
 }

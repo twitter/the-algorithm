@@ -1,72 +1,72 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.ml.api._
-import scala.collection.mutable
+ mport com.tw ter.ml.ap ._
+ mport scala.collect on.mutable
 
-trait FeatureCache[T] {
+tra  FeatureCac [T] {
   /*
-   * Constructs feature names from scratch given an aggregate query and an output
-   * feature name. E.g. given mean operator and "sum". This function is slow and should
-   * only be called at pre-computation time.
+   * Constructs feature na s from scratch g ven an aggregate query and an output
+   * feature na . E.g. g ven  an operator and "sum". T  funct on  s slow and should
+   * only be called at pre-computat on t  .
    *
-   * @param query Details of aggregate feature
-   * @name Name of "output" feature for which we want to construct feature name
-   * @return Full name of output feature
+   * @param query Deta ls of aggregate feature
+   * @na  Na  of "output" feature for wh ch   want to construct feature na 
+   * @return Full na  of output feature
    */
-  private def uncachedFullFeatureName(query: AggregateFeature[T], name: String): String =
-    List(query.featurePrefix, name).mkString(".")
+  pr vate def uncac dFullFeatureNa (query: AggregateFeature[T], na : Str ng): Str ng =
+    L st(query.featurePref x, na ).mkStr ng(".")
 
   /*
-   * A cache from (aggregate query, output feature name) -> fully qualified feature name
-   * lazy since it doesn't need to be serialized to the mappers
+   * A cac  from (aggregate query, output feature na ) -> fully qual f ed feature na 
+   * lazy s nce   doesn't need to be ser al zed to t  mappers
    */
-  private lazy val featureNameCache = mutable.Map[(AggregateFeature[T], String), String]()
+  pr vate lazy val featureNa Cac  = mutable.Map[(AggregateFeature[T], Str ng), Str ng]()
 
   /*
-   * A cache from (aggregate query, output feature name) -> precomputed output feature
-   * lazy since it doesn't need to be serialized to the mappers
+   * A cac  from (aggregate query, output feature na ) -> precomputed output feature
+   * lazy s nce   doesn't need to be ser al zed to t  mappers
    */
-  private lazy val featureCache = mutable.Map[(AggregateFeature[T], String), Feature[_]]()
+  pr vate lazy val featureCac  = mutable.Map[(AggregateFeature[T], Str ng), Feature[_]]()
 
   /**
-   * Given an (aggregate query, output feature name, output feature type),
-   * look it up using featureNameCache and featureCache, falling back to uncachedFullFeatureName()
+   * G ven an (aggregate query, output feature na , output feature type),
+   * look   up us ng featureNa Cac  and featureCac , fall ng back to uncac dFullFeatureNa ()
    * as a last resort to construct a precomputed output feature. Should only be
-   * called at pre-computation time.
+   * called at pre-computat on t  .
    *
-   * @param query Details of aggregate feature
-   * @name Name of "output" feature we want to precompute
-   * @aggregateFeatureType type of "output" feature we want to precompute
+   * @param query Deta ls of aggregate feature
+   * @na  Na  of "output" feature   want to precompute
+   * @aggregateFeatureType type of "output" feature   want to precompute
    */
-  def cachedFullFeature(
+  def cac dFullFeature(
     query: AggregateFeature[T],
-    name: String,
+    na : Str ng,
     aggregateFeatureType: FeatureType
   ): Feature[_] = {
-    lazy val cachedFeatureName = featureNameCache.getOrElseUpdate(
-      (query, name),
-      uncachedFullFeatureName(query, name)
+    lazy val cac dFeatureNa  = featureNa Cac .getOrElseUpdate(
+      (query, na ),
+      uncac dFullFeatureNa (query, na )
     )
 
-    def uncachedFullFeature(): Feature[_] = {
+    def uncac dFullFeature(): Feature[_] = {
       val personalDataTypes =
-        AggregationMetricCommon.derivePersonalDataTypes(query.feature, query.label)
+        Aggregat on tr cCommon.der vePersonalDataTypes(query.feature, query.label)
 
       aggregateFeatureType match {
-        case FeatureType.BINARY => new Feature.Binary(cachedFeatureName, personalDataTypes)
-        case FeatureType.DISCRETE => new Feature.Discrete(cachedFeatureName, personalDataTypes)
-        case FeatureType.STRING => new Feature.Text(cachedFeatureName, personalDataTypes)
-        case FeatureType.CONTINUOUS => new Feature.Continuous(cachedFeatureName, personalDataTypes)
-        case FeatureType.SPARSE_BINARY =>
-          new Feature.SparseBinary(cachedFeatureName, personalDataTypes)
-        case FeatureType.SPARSE_CONTINUOUS =>
-          new Feature.SparseContinuous(cachedFeatureName, personalDataTypes)
+        case FeatureType.B NARY => new Feature.B nary(cac dFeatureNa , personalDataTypes)
+        case FeatureType.D SCRETE => new Feature.D screte(cac dFeatureNa , personalDataTypes)
+        case FeatureType.STR NG => new Feature.Text(cac dFeatureNa , personalDataTypes)
+        case FeatureType.CONT NUOUS => new Feature.Cont nuous(cac dFeatureNa , personalDataTypes)
+        case FeatureType.SPARSE_B NARY =>
+          new Feature.SparseB nary(cac dFeatureNa , personalDataTypes)
+        case FeatureType.SPARSE_CONT NUOUS =>
+          new Feature.SparseCont nuous(cac dFeatureNa , personalDataTypes)
       }
     }
 
-    featureCache.getOrElseUpdate(
-      (query, name),
-      uncachedFullFeature()
+    featureCac .getOrElseUpdate(
+      (query, na ),
+      uncac dFullFeature()
     )
   }
 }

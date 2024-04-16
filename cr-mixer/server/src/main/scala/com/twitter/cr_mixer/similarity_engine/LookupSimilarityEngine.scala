@@ -1,78 +1,78 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne. mCac Conf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Future
 
-case class LookupEngineQuery[Query](
-  storeQuery: Query, // the actual Query type of the underlying store
-  lookupKey: String,
+case class LookupEng neQuery[Query](
+  storeQuery: Query, // t  actual Query type of t  underly ng store
+  lookupKey: Str ng,
   params: Params,
 )
 
 /**
- * This Engine provides a map interface for looking up different model implementations.
- * It provides modelId level monitoring for free.
+ * T  Eng ne prov des a map  nterface for look ng up d fferent model  mple ntat ons.
+ *   prov des model d level mon or ng for free.
  *
- * Example use cases include OfflineSimClusters lookup
+ * Example use cases  nclude Offl neS mClusters lookup
  *
  *
- * @param versionedStoreMap   A mapping from a modelId to a corresponding implementation
- * @param memCacheConfigOpt   If specified, it will wrap the underlying store with a MemCache layer
- *                            You should only enable this for cacheable queries, e.x. TweetIds.
- *                            consumer based UserIds are generally not possible to cache.
+ * @param vers onedStoreMap   A mapp ng from a model d to a correspond ng  mple ntat on
+ * @param  mCac Conf gOpt    f spec f ed,   w ll wrap t  underly ng store w h a  mCac  layer
+ *                              should only enable t  for cac able quer es, e.x. T et ds.
+ *                            consu r based User ds are generally not poss ble to cac .
  */
-class LookupSimilarityEngine[Query, Candidate <: Serializable](
-  versionedStoreMap: Map[String, ReadableStore[Query, Seq[Candidate]]], // key = modelId
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-  memCacheConfigOpt: Option[MemCacheConfig[Query]] = None)
-    extends SimilarityEngine[LookupEngineQuery[Query], Candidate] {
+class LookupS m lar yEng ne[Query, Cand date <: Ser al zable](
+  vers onedStoreMap: Map[Str ng, ReadableStore[Query, Seq[Cand date]]], // key = model d
+  overr de val  dent f er: S m lar yEng neType,
+  globalStats: StatsRece ver,
+  eng neConf g: S m lar yEng neConf g,
+   mCac Conf gOpt: Opt on[ mCac Conf g[Query]] = None)
+    extends S m lar yEng ne[LookupEng neQuery[Query], Cand date] {
 
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  pr vate val scopedStats = globalStats.scope("s m lar yEng ne",  dent f er.toStr ng)
 
-  private val underlyingLookupMap = {
-    memCacheConfigOpt match {
-      case Some(config) =>
-        versionedStoreMap.map {
-          case (modelId, store) =>
+  pr vate val underly ngLookupMap = {
+     mCac Conf gOpt match {
+      case So (conf g) =>
+        vers onedStoreMap.map {
+          case (model d, store) =>
             (
-              modelId,
-              SimilarityEngine.addMemCache(
-                underlyingStore = store,
-                memCacheConfig = config,
-                keyPrefix = Some(modelId),
-                statsReceiver = scopedStats
+              model d,
+              S m lar yEng ne.add mCac (
+                underly ngStore = store,
+                 mCac Conf g = conf g,
+                keyPref x = So (model d),
+                statsRece ver = scopedStats
               )
             )
         }
-      case _ => versionedStoreMap
+      case _ => vers onedStoreMap
     }
   }
 
-  override def getCandidates(
-    engineQuery: LookupEngineQuery[Query]
-  ): Future[Option[Seq[Candidate]]] = {
-    val versionedStore =
-      underlyingLookupMap
+  overr de def getCand dates(
+    eng neQuery: LookupEng neQuery[Query]
+  ): Future[Opt on[Seq[Cand date]]] = {
+    val vers onedStore =
+      underly ngLookupMap
         .getOrElse(
-          engineQuery.lookupKey,
-          throw new IllegalArgumentException(
-            s"${this.getClass.getSimpleName} ${identifier.toString}: ModelId ${engineQuery.lookupKey} does not exist"
+          eng neQuery.lookupKey,
+          throw new  llegalArgu ntExcept on(
+            s"${t .getClass.getS mpleNa } ${ dent f er.toStr ng}: Model d ${eng neQuery.lookupKey} does not ex st"
           )
         )
 
-    SimilarityEngine.getFromFn(
-      fn = versionedStore.get,
-      storeQuery = engineQuery.storeQuery,
-      engineConfig = engineConfig,
-      params = engineQuery.params,
-      scopedStats = scopedStats.scope(engineQuery.lookupKey)
+    S m lar yEng ne.getFromFn(
+      fn = vers onedStore.get,
+      storeQuery = eng neQuery.storeQuery,
+      eng neConf g = eng neConf g,
+      params = eng neQuery.params,
+      scopedStats = scopedStats.scope(eng neQuery.lookupKey)
     )
   }
 }

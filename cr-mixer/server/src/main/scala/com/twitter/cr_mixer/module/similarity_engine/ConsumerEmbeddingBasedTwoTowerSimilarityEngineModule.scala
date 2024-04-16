@@ -1,49 +1,49 @@
-package com.twitter.cr_mixer.module
-package similarity_engine
+package com.tw ter.cr_m xer.module
+package s m lar y_eng ne
 
-import com.google.inject.Provides
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.module.EmbeddingStoreModule
-import com.twitter.cr_mixer.module.thrift_client.AnnQueryServiceClientModule
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import com.twitter.ml.api.{thriftscala => api}
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
+ mport com.google. nject.Prov des
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.cr_m xer.module.Embedd ngStoreModule
+ mport com.tw ter.cr_m xer.module.thr ft_cl ent.AnnQueryServ ceCl entModule
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.HnswANNS m lar yEng ne
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
+ mport com.tw ter.ml.ap .{thr ftscala => ap }
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
 
-object ConsumerEmbeddingBasedTwoTowerSimilarityEngineModule extends TwitterModule {
-  @Provides
-  @Named(ModuleNames.ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine)
-  def providesConsumerEmbeddingBasedTwoTowerANNSimilarityEngine(
-    @Named(EmbeddingStoreModule.TwoTowerFavConsumerEmbeddingMhStoreName)
-    twoTowerFavConsumerEmbeddingMhStore: ReadableStore[InternalId, api.Embedding],
-    @Named(AnnQueryServiceClientModule.TwoTowerFavAnnServiceClientName)
-    twoTowerFavAnnService: AnnQueryService.MethodPerEndpoint,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver
-  ): HnswANNSimilarityEngine = {
-    new HnswANNSimilarityEngine(
-      embeddingStoreLookUpMap = Map(
-        ModelConfig.TwoTowerFavALL20220808 -> twoTowerFavConsumerEmbeddingMhStore,
+object Consu rEmbedd ngBasedTwoTo rS m lar yEng neModule extends Tw terModule {
+  @Prov des
+  @Na d(ModuleNa s.Consu rEmbedd ngBasedTwoTo rANNS m lar yEng ne)
+  def prov desConsu rEmbedd ngBasedTwoTo rANNS m lar yEng ne(
+    @Na d(Embedd ngStoreModule.TwoTo rFavConsu rEmbedd ngMhStoreNa )
+    twoTo rFavConsu rEmbedd ngMhStore: ReadableStore[ nternal d, ap .Embedd ng],
+    @Na d(AnnQueryServ ceCl entModule.TwoTo rFavAnnServ ceCl entNa )
+    twoTo rFavAnnServ ce: AnnQueryServ ce. thodPerEndpo nt,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver
+  ): HnswANNS m lar yEng ne = {
+    new HnswANNS m lar yEng ne(
+      embedd ngStoreLookUpMap = Map(
+        ModelConf g.TwoTo rFavALL20220808 -> twoTo rFavConsu rEmbedd ngMhStore,
       ),
-      annServiceLookUpMap = Map(
-        ModelConfig.TwoTowerFavALL20220808 -> twoTowerFavAnnService,
+      annServ ceLookUpMap = Map(
+        ModelConf g.TwoTo rFavALL20220808 -> twoTo rFavAnnServ ce,
       ),
-      globalStats = statsReceiver,
-      identifier = SimilarityEngineType.ConsumerEmbeddingBasedTwoTowerANN,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+      globalStats = statsRece ver,
+       dent f er = S m lar yEng neType.Consu rEmbedd ngBasedTwoTo rANN,
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       )
     )

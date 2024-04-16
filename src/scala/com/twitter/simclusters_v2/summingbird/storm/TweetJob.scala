@@ -1,231 +1,231 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.tw ter.s mclusters_v2.summ ngb rd.storm
 
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.SimClustersTweetProfile
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersHashUtil
-import com.twitter.simclusters_v2.summingbird.common.SimClustersInterestedInUtil
-import com.twitter.simclusters_v2.summingbird.common.StatsUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.summingbird._
-import com.twitter.summingbird.option.JobId
-import com.twitter.timelineservice.thriftscala.Event
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineservice.thriftscala.EventAliases.FavoriteAlias
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons._
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.S mClustersT etProf le
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Conf gs
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersHashUt l
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClusters nterested nUt l
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.StatsUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.summ ngb rd._
+ mport com.tw ter.summ ngb rd.opt on.Job d
+ mport com.tw ter.t  l neserv ce.thr ftscala.Event
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.t  l neserv ce.thr ftscala.EventAl ases.Favor eAl as
 
-object TweetJob {
+object T etJob {
 
-  import Implicits._
-  import StatsUtil._
+   mport  mpl c s._
+   mport StatsUt l._
 
-  object NodeName {
-    final val TweetClusterScoreFlatMapNodeName: String = "TweetClusterScoreFlatMap"
-    final val TweetClusterUpdatedScoresFlatMapNodeName: String = "TweetClusterUpdatedScoreFlatMap"
-    final val TweetClusterScoreSummerNodeName: String = "TweetClusterScoreSummer"
-    final val TweetTopKNodeName: String = "TweetTopKSummer"
-    final val ClusterTopKTweetsNodeName: String = "ClusterTopKTweetsSummer"
-    final val ClusterTopKTweetsLightNodeName: String = "ClusterTopKTweetsLightSummer"
+  object NodeNa  {
+    f nal val T etClusterScoreFlatMapNodeNa : Str ng = "T etClusterScoreFlatMap"
+    f nal val T etClusterUpdatedScoresFlatMapNodeNa : Str ng = "T etClusterUpdatedScoreFlatMap"
+    f nal val T etClusterScoreSum rNodeNa : Str ng = "T etClusterScoreSum r"
+    f nal val T etTopKNodeNa : Str ng = "T etTopKSum r"
+    f nal val ClusterTopKT etsNodeNa : Str ng = "ClusterTopKT etsSum r"
+    f nal val ClusterTopKT etsL ghtNodeNa : Str ng = "ClusterTopKT etsL ghtSum r"
   }
 
   def generate[P <: Platform[P]](
-    profile: SimClustersTweetProfile,
-    timelineEventSource: Producer[P, Event],
-    userInterestedInService: P#Service[Long, ClustersUserIsInterestedIn],
-    tweetClusterScoreStore: P#Store[(SimClusterEntity, FullClusterIdBucket), ClustersWithScores],
-    tweetTopKClustersStore: P#Store[EntityWithVersion, TopKClustersWithScores],
-    clusterTopKTweetsStore: P#Store[FullClusterId, TopKTweetsWithScores],
-    clusterTopKTweetsLightStore: Option[P#Store[FullClusterId, TopKTweetsWithScores]]
+    prof le: S mClustersT etProf le,
+    t  l neEventS ce: Producer[P, Event],
+    user nterested nServ ce: P#Serv ce[Long, ClustersUser s nterested n],
+    t etClusterScoreStore: P#Store[(S mClusterEnt y, FullCluster dBucket), ClustersW hScores],
+    t etTopKClustersStore: P#Store[Ent yW hVers on, TopKClustersW hScores],
+    clusterTopKT etsStore: P#Store[FullCluster d, TopKT etsW hScores],
+    clusterTopKT etsL ghtStore: Opt on[P#Store[FullCluster d, TopKT etsW hScores]]
   )(
-    implicit jobId: JobId
-  ): TailProducer[P, Any] = {
+     mpl c  job d: Job d
+  ): Ta lProducer[P, Any] = {
 
-    val userInterestNonEmptyCount = Counter(Group(jobId.get), Name("num_user_interests_non_empty"))
-    val userInterestEmptyCount = Counter(Group(jobId.get), Name("num_user_interests_empty"))
+    val user nterestNonEmptyCount = Counter(Group(job d.get), Na ("num_user_ nterests_non_empty"))
+    val user nterestEmptyCount = Counter(Group(job d.get), Na ("num_user_ nterests_empty"))
 
-    val numClustersCount = Counter(Group(jobId.get), Name("num_clusters"))
+    val numClustersCount = Counter(Group(job d.get), Na ("num_clusters"))
 
-    val entityClusterPairCount = Counter(Group(jobId.get), Name("num_entity_cluster_pairs_emitted"))
+    val ent yClusterPa rCount = Counter(Group(job d.get), Na ("num_ent y_cluster_pa rs_em ted"))
 
-    // Fav QPS is around 6K
-    val qualifiedFavEvents = timelineEventSource
+    // Fav QPS  s around 6K
+    val qual f edFavEvents = t  l neEventS ce
       .collect {
-        case Event.Favorite(favEvent)
-            if favEvent.userId != favEvent.tweetUserId && !isTweetTooOld(favEvent) =>
-          (favEvent.userId, favEvent)
+        case Event.Favor e(favEvent)
+             f favEvent.user d != favEvent.t etUser d && ! sT etTooOld(favEvent) =>
+          (favEvent.user d, favEvent)
       }
-      .observe("num_qualified_favorite_events")
+      .observe("num_qual f ed_favor e_events")
 
-    val entityWithSimClustersProducer = qualifiedFavEvents
-      .leftJoin(userInterestedInService)
+    val ent yW hS mClustersProducer = qual f edFavEvents
+      .leftJo n(user nterested nServ ce)
       .map {
-        case (_, (favEvent, userInterestOpt)) =>
-          (favEvent.tweetId, (favEvent, userInterestOpt))
+        case (_, (favEvent, user nterestOpt)) =>
+          (favEvent.t et d, (favEvent, user nterestOpt))
       }
       .flatMap {
-        case (_, (favEvent, Some(userInterests))) =>
-          userInterestNonEmptyCount.incr()
+        case (_, (favEvent, So (user nterests))) =>
+          user nterestNonEmptyCount. ncr()
 
-          val timestamp = favEvent.eventTimeMs
+          val t  stamp = favEvent.eventT  Ms
 
-          val clustersWithScores = SimClustersInterestedInUtil.topClustersWithScores(userInterests)
+          val clustersW hScores = S mClusters nterested nUt l.topClustersW hScores(user nterests)
 
-          // clusters.size is around 25 in average
-          numClustersCount.incrBy(clustersWithScores.size)
+          // clusters.s ze  s around 25  n average
+          numClustersCount. ncrBy(clustersW hScores.s ze)
 
-          val simClusterScoresByHashBucket = clustersWithScores.groupBy {
-            case (clusterId, _) => SimClustersHashUtil.clusterIdToBucket(clusterId)
+          val s mClusterScoresByHashBucket = clustersW hScores.groupBy {
+            case (cluster d, _) => S mClustersHashUt l.cluster dToBucket(cluster d)
           }
 
           for {
-            (hashBucket, scores) <- simClusterScoresByHashBucket
-          } yield {
-            entityClusterPairCount.incr()
+            (hashBucket, scores) <- s mClusterScoresByHashBucket
+          } y eld {
+            ent yClusterPa rCount. ncr()
 
-            val clusterBucket = FullClusterIdBucket(userInterests.knownForModelVersion, hashBucket)
+            val clusterBucket = FullCluster dBucket(user nterests.knownForModelVers on, hashBucket)
 
-            val tweetId: SimClusterEntity = SimClusterEntity.TweetId(favEvent.tweetId)
+            val t et d: S mClusterEnt y = S mClusterEnt y.T et d(favEvent.t et d)
 
-            (tweetId, clusterBucket) -> SimClustersInterestedInUtil
-              .buildClusterWithScores(
+            (t et d, clusterBucket) -> S mClusters nterested nUt l
+              .bu ldClusterW hScores(
                 scores,
-                timestamp,
-                profile.favScoreThresholdForUserInterest
+                t  stamp,
+                prof le.favScoreThresholdForUser nterest
               )
           }
         case _ =>
-          userInterestEmptyCount.incr()
+          user nterestEmptyCount. ncr()
           None
       }
-      .observe("entity_cluster_delta_scores")
-      .name(NodeName.TweetClusterScoreFlatMapNodeName)
-      .sumByKey(tweetClusterScoreStore)(clustersWithScoreMonoid)
-      .name(NodeName.TweetClusterScoreSummerNodeName)
+      .observe("ent y_cluster_delta_scores")
+      .na (NodeNa .T etClusterScoreFlatMapNodeNa )
+      .sumByKey(t etClusterScoreStore)(clustersW hScoreMono d)
+      .na (NodeNa .T etClusterScoreSum rNodeNa )
       .map {
-        case ((simClusterEntity, clusterBucket), (oldValueOpt, deltaValue)) =>
-          val updatedClusterIds = deltaValue.clustersToScore.map(_.keySet).getOrElse(Set.empty[Int])
+        case ((s mClusterEnt y, clusterBucket), (oldValueOpt, deltaValue)) =>
+          val updatedCluster ds = deltaValue.clustersToScore.map(_.keySet).getOrElse(Set.empty[ nt])
 
-          (simClusterEntity, clusterBucket) -> clustersWithScoreMonoid.plus(
+          (s mClusterEnt y, clusterBucket) -> clustersW hScoreMono d.plus(
             oldValueOpt
               .map { oldValue =>
                 oldValue.copy(
                   clustersToScore =
-                    oldValue.clustersToScore.map(_.filterKeys(updatedClusterIds.contains))
+                    oldValue.clustersToScore.map(_.f lterKeys(updatedCluster ds.conta ns))
                 )
-              }.getOrElse(clustersWithScoreMonoid.zero),
+              }.getOrElse(clustersW hScoreMono d.zero),
             deltaValue
           )
       }
-      .observe("entity_cluster_updated_scores")
-      .name(NodeName.TweetClusterUpdatedScoresFlatMapNodeName)
+      .observe("ent y_cluster_updated_scores")
+      .na (NodeNa .T etClusterUpdatedScoresFlatMapNodeNa )
 
-    val tweetTopK = entityWithSimClustersProducer
+    val t etTopK = ent yW hS mClustersProducer
       .flatMap {
-        case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores)
-            if simClusterEntity.isInstanceOf[SimClusterEntity.TweetId] =>
-          clusterWithScores.clustersToScore
+        case ((s mClusterEnt y, FullCluster dBucket(modelVers on, _)), clusterW hScores)
+             f s mClusterEnt y. s nstanceOf[S mClusterEnt y.T et d] =>
+          clusterW hScores.clustersToScore
             .map { clustersToScores =>
-              val topClustersWithFavScores = clustersToScores.mapValues { scores: Scores =>
+              val topClustersW hFavScores = clustersToScores.mapValues { scores: Scores =>
                 Scores(
-                  favClusterNormalized8HrHalfLifeScore =
-                    scores.favClusterNormalized8HrHalfLifeScore.filter(
-                      _.value >= Configs.scoreThresholdForTweetTopKClustersCache
+                  favClusterNormal zed8HrHalfL feScore =
+                    scores.favClusterNormal zed8HrHalfL feScore.f lter(
+                      _.value >= Conf gs.scoreThresholdForT etTopKClustersCac 
                     )
                 )
               }
 
               (
-                EntityWithVersion(simClusterEntity, modelVersion),
-                TopKClustersWithScores(Some(topClustersWithFavScores), None)
+                Ent yW hVers on(s mClusterEnt y, modelVers on),
+                TopKClustersW hScores(So (topClustersW hFavScores), None)
               )
             }
         case _ =>
           None
 
       }
-      .observe("tweet_topk_updates")
-      .sumByKey(tweetTopKClustersStore)(topKClustersWithScoresMonoid)
-      .name(NodeName.TweetTopKNodeName)
+      .observe("t et_topk_updates")
+      .sumByKey(t etTopKClustersStore)(topKClustersW hScoresMono d)
+      .na (NodeNa .T etTopKNodeNa )
 
-    val clusterTopKTweets = entityWithSimClustersProducer
+    val clusterTopKT ets = ent yW hS mClustersProducer
       .flatMap {
-        case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores) =>
-          simClusterEntity match {
-            case SimClusterEntity.TweetId(tweetId) =>
-              clusterWithScores.clustersToScore
+        case ((s mClusterEnt y, FullCluster dBucket(modelVers on, _)), clusterW hScores) =>
+          s mClusterEnt y match {
+            case S mClusterEnt y.T et d(t et d) =>
+              clusterW hScores.clustersToScore
                 .map { clustersToScores =>
                   clustersToScores.toSeq.map {
-                    case (clusterId, scores) =>
-                      val topTweetsByFavScore = Map(
-                        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                          scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
-                            Configs.scoreThresholdForClusterTopKTweetsCache)))
+                    case (cluster d, scores) =>
+                      val topT etsByFavScore = Map(
+                        t et d -> Scores(favClusterNormal zed8HrHalfL feScore =
+                          scores.favClusterNormal zed8HrHalfL feScore.f lter(_.value >=
+                            Conf gs.scoreThresholdForClusterTopKT etsCac )))
 
                       (
-                        FullClusterId(modelVersion, clusterId),
-                        TopKTweetsWithScores(Some(topTweetsByFavScore), None)
+                        FullCluster d(modelVers on, cluster d),
+                        TopKT etsW hScores(So (topT etsByFavScore), None)
                       )
                   }
-                }.getOrElse(Nil)
+                }.getOrElse(N l)
             case _ =>
-              Nil
+              N l
           }
       }
-      .observe("cluster_topk_tweets_updates")
-      .sumByKey(clusterTopKTweetsStore)(topKTweetsWithScoresMonoid)
-      .name(NodeName.ClusterTopKTweetsNodeName)
+      .observe("cluster_topk_t ets_updates")
+      .sumByKey(clusterTopKT etsStore)(topKT etsW hScoresMono d)
+      .na (NodeNa .ClusterTopKT etsNodeNa )
 
-    val clusterTopKTweetsLight = clusterTopKTweetsLightStore.map { lightStore =>
-      entityWithSimClustersProducer
+    val clusterTopKT etsL ght = clusterTopKT etsL ghtStore.map { l ghtStore =>
+      ent yW hS mClustersProducer
         .flatMap {
-          case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores) =>
-            simClusterEntity match {
-              case SimClusterEntity.TweetId(tweetId) if isTweetTooOldForLight(tweetId) =>
-                clusterWithScores.clustersToScore
+          case ((s mClusterEnt y, FullCluster dBucket(modelVers on, _)), clusterW hScores) =>
+            s mClusterEnt y match {
+              case S mClusterEnt y.T et d(t et d)  f  sT etTooOldForL ght(t et d) =>
+                clusterW hScores.clustersToScore
                   .map { clustersToScores =>
                     clustersToScores.toSeq.map {
-                      case (clusterId, scores) =>
-                        val topTweetsByFavScore = Map(
-                          tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                            scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
-                              Configs.scoreThresholdForClusterTopKTweetsCache)))
+                      case (cluster d, scores) =>
+                        val topT etsByFavScore = Map(
+                          t et d -> Scores(favClusterNormal zed8HrHalfL feScore =
+                            scores.favClusterNormal zed8HrHalfL feScore.f lter(_.value >=
+                              Conf gs.scoreThresholdForClusterTopKT etsCac )))
 
                         (
-                          FullClusterId(modelVersion, clusterId),
-                          TopKTweetsWithScores(Some(topTweetsByFavScore), None)
+                          FullCluster d(modelVers on, cluster d),
+                          TopKT etsW hScores(So (topT etsByFavScore), None)
                         )
                     }
-                  }.getOrElse(Nil)
+                  }.getOrElse(N l)
               case _ =>
-                Nil
+                N l
             }
         }
-        .observe("cluster_topk_tweets_updates")
-        .sumByKey(lightStore)(topKTweetsWithScoresLightMonoid)
-        .name(NodeName.ClusterTopKTweetsLightNodeName)
+        .observe("cluster_topk_t ets_updates")
+        .sumByKey(l ghtStore)(topKT etsW hScoresL ghtMono d)
+        .na (NodeNa .ClusterTopKT etsL ghtNodeNa )
     }
 
-    clusterTopKTweetsLight match {
-      case Some(lightNode) =>
-        tweetTopK.also(clusterTopKTweets).also(lightNode)
+    clusterTopKT etsL ght match {
+      case So (l ghtNode) =>
+        t etTopK.also(clusterTopKT ets).also(l ghtNode)
       case None =>
-        tweetTopK.also(clusterTopKTweets)
+        t etTopK.also(clusterTopKT ets)
     }
   }
 
-  // Boolean check to see if the tweet is too old
-  private def isTweetTooOld(favEvent: FavoriteAlias): Boolean = {
-    favEvent.tweet.forall { tweet =>
-      SnowflakeId.unixTimeMillisOptFromId(tweet.id).exists { millis =>
-        System.currentTimeMillis() - millis >= Configs.OldestTweetFavEventTimeInMillis
+  // Boolean c ck to see  f t  t et  s too old
+  pr vate def  sT etTooOld(favEvent: Favor eAl as): Boolean = {
+    favEvent.t et.forall { t et =>
+      Snowflake d.un xT  M ll sOptFrom d(t et. d).ex sts { m ll s =>
+        System.currentT  M ll s() - m ll s >= Conf gs.OldestT etFavEventT   nM ll s
       }
     }
   }
 
-  private def isTweetTooOldForLight(tweetId: Long): Boolean = {
-    SnowflakeId.unixTimeMillisOptFromId(tweetId).exists { millis =>
-      System.currentTimeMillis() - millis >= Configs.OldestTweetInLightIndexInMillis
+  pr vate def  sT etTooOldForL ght(t et d: Long): Boolean = {
+    Snowflake d.un xT  M ll sOptFrom d(t et d).ex sts { m ll s =>
+      System.currentT  M ll s() - m ll s >= Conf gs.OldestT et nL ght ndex nM ll s
     }
   }
 

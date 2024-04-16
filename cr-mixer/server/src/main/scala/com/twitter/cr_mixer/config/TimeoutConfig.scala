@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.config
+package com.tw ter.cr_m xer.conf g
 
-import com.twitter.util.Duration
+ mport com.tw ter.ut l.Durat on
 
-case class TimeoutConfig(
-  /* Default timeouts for candidate generator */
-  serviceTimeout: Duration,
-  signalFetchTimeout: Duration,
-  similarityEngineTimeout: Duration,
-  annServiceClientTimeout: Duration,
-  /* For Uteg Candidate Generator */
-  utegSimilarityEngineTimeout: Duration,
+case class T  outConf g(
+  /* Default t  outs for cand date generator */
+  serv ceT  out: Durat on,
+  s gnalFetchT  out: Durat on,
+  s m lar yEng neT  out: Durat on,
+  annServ ceCl entT  out: Durat on,
+  /* For Uteg Cand date Generator */
+  utegS m lar yEng neT  out: Durat on,
   /* For User State Store */
-  userStateUnderlyingStoreTimeout: Duration,
-  userStateStoreTimeout: Duration,
-  /* For FRS based tweets */
-  // Timeout passed to EarlyBird server
-  earlybirdServerTimeout: Duration,
-  // Timeout set on CrMixer side
-  earlybirdSimilarityEngineTimeout: Duration,
-  frsBasedTweetEndpointTimeout: Duration,
-  topicTweetEndpointTimeout: Duration,
-  // Timeout Settings for Navi gRPC Client
-  naviRequestTimeout: Duration)
+  userStateUnderly ngStoreT  out: Durat on,
+  userStateStoreT  out: Durat on,
+  /* For FRS based t ets */
+  // T  out passed to EarlyB rd server
+  earlyb rdServerT  out: Durat on,
+  // T  out set on CrM xer s de
+  earlyb rdS m lar yEng neT  out: Durat on,
+  frsBasedT etEndpo ntT  out: Durat on,
+  top cT etEndpo ntT  out: Durat on,
+  // T  out Sett ngs for Nav  gRPC Cl ent
+  nav RequestT  out: Durat on)

@@ -1,297 +1,297 @@
-package com.twitter.simclusters_v2.scio.common
+package com.tw ter.s mclusters_v2.sc o.common
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.common.util.Clock
-import com.twitter.common_header.thriftscala.CommonHeader
-import com.twitter.common_header.thriftscala.IdType
-import com.twitter.common_header.thriftscala.VersionedCommonHeader
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
-import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.ValidFlockEdgeStateId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.getStandardLanguageCode
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import org.joda.time.Interval
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.util.Duration
-import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchScalaDataset
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.common.ut l.Clock
+ mport com.tw ter.common_ ader.thr ftscala.Common ader
+ mport com.tw ter.common_ ader.thr ftscala. dType
+ mport com.tw ter.common_ ader.thr ftscala.Vers onedCommon ader
+ mport com.tw ter.fr gate.data_p pel ne.mag crecs.mag crecs_not f cat ons_l e.thr ftscala.Mag cRecsNot f cat onL e
+ mport com.tw ter.fr gate.data_p pel ne.scald ng.mag crecs.mag crecs_not f cat on_l e.Mag crecsNot f cat onL e1DayLagScalaDataset
+ mport com.tw ter. es ce.thr ftscala. nteract onEvent
+ mport com.tw ter. es ce.thr ftscala. nteract onTargetType
+ mport com.tw ter. nterests_ds.jobs. nterests_serv ce.UserTop cRelat onSnapshotScalaDataset
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onType
+ mport com.tw ter. nterests.thr ftscala.User nterestsRelat onSnapshot
+ mport com.tw ter.pengu n.scald ng.datasets.Pengu nUserLanguagesScalaDataset
+ mport com.tw ter.search.adapt ve.scr b ng.thr ftscala.Adapt veSearchScr beLog
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserUserFavGraphScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces.Val dFlockEdgeState d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces.getStandardLanguageCode
+ mport com.tw ter.twadoop.user.gen.thr ftscala.Comb nedUser
+ mport flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
+ mport flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
+ mport flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
+ mport flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
+ mport org.joda.t  . nterval
+ mport com.tw ter.s mclusters_v2.thr ftscala.EdgeW hDecayed  ghts
+ mport com.tw ter.users ce.snapshot.comb ned.Users ceScalaDataset
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport com.tw ter.ut l.Durat on
+ mport twadoop_conf g.conf gurat on.log_categor es.group.search.Adapt veSearchScalaDataset
 
-object ExternalDataSources {
-  def userSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+object ExternalDataS ces {
+  def userS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[CombinedUser] = {
-    sc.customInput(
-      "ReadUserSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[Comb nedUser] = {
+    sc.custom nput(
+      "ReadUserS ce",
       DAL
         .readMostRecentSnapshotNoOlderThan(
-          UsersourceScalaDataset,
+          Users ceScalaDataset,
           noOlderThan,
           Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod
+          DAL.Env ron nt.Prod
         )
     )
   }
 
-  def userCountrySource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def userCountryS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, String)] = {
-    sc.customInput(
-        "ReadUserCountrySource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Str ng)] = {
+    sc.custom nput(
+        "ReadUserCountryS ce",
         DAL
           .readMostRecentSnapshotNoOlderThan(
-            UsersourceFlatScalaDataset,
+            Users ceFlatScalaDataset,
             noOlderThan,
             Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod,
+            DAL.Env ron nt.Prod,
           )
       ).flatMap { flatUser =>
         for {
-          userId <- flatUser.id
+          user d <- flatUser. d
           country <- flatUser.accountCountryCode
-        } yield {
-          (userId, country.toUpperCase)
+        } y eld {
+          (user d, country.toUpperCase)
         }
-      }.distinct
+      }.d st nct
   }
 
-  def userUserFavSource(
-    noOlderThan: Duration = Duration.fromDays(14)
+  def userUserFavS ce(
+    noOlderThan: Durat on = Durat on.fromDays(14)
   )(
-    implicit sc: ScioContext
-  ): SCollection[EdgeWithDecayedWeights] = {
-    sc.customInput(
-      "ReadUserUserFavSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[EdgeW hDecayed  ghts] = {
+    sc.custom nput(
+      "ReadUserUserFavS ce",
       DAL
         .readMostRecentSnapshotNoOlderThan(
           UserUserFavGraphScalaDataset,
           noOlderThan,
           Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod
+          DAL.Env ron nt.Prod
         )
     )
   }
 
-  def inferredUserConsumedLanguageSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def  nferredUserConsu dLanguageS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Seq[(String, Double)])] = {
-    sc.customInput(
-        "ReadInferredUserConsumedLanguageSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Seq[(Str ng, Double)])] = {
+    sc.custom nput(
+        "Read nferredUserConsu dLanguageS ce",
         DAL
           .readMostRecentSnapshotNoOlderThan(
-            PenguinUserLanguagesScalaDataset,
+            Pengu nUserLanguagesScalaDataset,
             noOlderThan,
             Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+            DAL.Env ron nt.Prod
           )
       ).map { kv =>
-        val consumed = kv.value.consumed
+        val consu d = kv.value.consu d
           .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
+            case scoredStr ng  f scoredStr ng.  ght > 0.001 => //throw away 5% outl ers
+              (getStandardLanguageCode(scoredStr ng. em), scoredStr ng.  ght)
           }.collect {
-            case (Some(language), score) => (language, score)
+            case (So (language), score) => (language, score)
           }
-        (kv.key, consumed)
+        (kv.key, consu d)
       }
   }
 
-  def flockBlockSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def flockBlockS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Long)] = {
+    sc.custom nput(
         "ReadFlockBlock",
         DAL.readMostRecentSnapshotNoOlderThan(
           FlockBlocksEdgesScalaDataset,
           noOlderThan,
           Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod))
+          DAL.Env ron nt.Prod))
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def flockFollowSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def flockFollowS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Long)] = {
+    sc.custom nput(
         "ReadFlockFollow",
         DAL
           .readMostRecentSnapshotNoOlderThan(
             FlockFollowsEdgesScalaDataset,
             noOlderThan,
             Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod))
+            DAL.Env ron nt.Prod))
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def flockReportAsAbuseSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def flockReportAsAbuseS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Long)] = {
+    sc.custom nput(
         "ReadFlockReportAsAbuseJava",
         DAL
           .readMostRecentSnapshotNoOlderThan(
             FlockReportAsAbuseEdgesScalaDataset,
             noOlderThan,
             Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod)
+            DAL.Env ron nt.Prod)
       )
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def flockReportAsSpamSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def flockReportAsSpamS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    sc.customInput(
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Long)] = {
+    sc.custom nput(
         "ReadFlockReportAsSpam",
         DAL
           .readMostRecentSnapshotNoOlderThan(
             FlockReportAsSpamEdgesScalaDataset,
             noOlderThan,
             Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod))
+            DAL.Env ron nt.Prod))
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def ieSourceTweetEngagementsSource(
-    interval: Interval
+  def  eS ceT etEngage ntsS ce(
+     nterval:  nterval
   )(
-    implicit sc: ScioContext
-  ): SCollection[InteractionEvent] = {
-    sc.customInput(
-        "ReadIeSourceTweetEngagementsSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[ nteract onEvent] = {
+    sc.custom nput(
+        "Read eS ceT etEngage ntsS ce",
         DAL
           .read(
-            com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset,
-            interval,
-            DAL.Environment.Prod,
+            com.tw ter. es ce.process ng.events.batch.ServerEngage ntsScalaDataset,
+             nterval,
+            DAL.Env ron nt.Prod,
           )
-      ).filter { event =>
-        // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+      ).f lter { event =>
+        // f lter out logged out users because t  r favor es are less rel able
+        event.engag ngUser d > 0L && event.targetType ==  nteract onTargetType.T et
       }
   }
 
-  def topicFollowGraphSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  def top cFollowGraphS ce(
+    noOlderThan: Durat on = Durat on.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    // The implementation here is slightly different than the topicFollowGraphSource function in
-    // src/scala/com/twitter/simclusters_v2/scalding/embedding/common/ExternalDataSources.scala
-    // We don't do an additional hashJoin on uttFollowableEntitiesSource.
-    sc.customInput(
-        "ReadTopicFollowGraphSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Long)] = {
+    // T   mple ntat on  re  s sl ghtly d fferent than t  top cFollowGraphS ce funct on  n
+    // src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/common/ExternalDataS ces.scala
+    //   don't do an add  onal hashJo n on uttFollowableEnt  esS ce.
+    sc.custom nput(
+        "ReadTop cFollowGraphS ce",
         DAL
           .readMostRecentSnapshotNoOlderThan(
-            UserTopicRelationSnapshotScalaDataset,
+            UserTop cRelat onSnapshotScalaDataset,
             noOlderThan,
             Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+            DAL.Env ron nt.Prod
           )
       ).collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+        case user nterestsRelat onSnapshot: User nterestsRelat onSnapshot
+             f user nterestsRelat onSnapshot. nterestType == "UTT" &&
+              user nterestsRelat onSnapshot.relat on ==  nterestRelat onType.Follo d =>
+          (user nterestsRelat onSnapshot. nterest d, user nterestsRelat onSnapshot.user d)
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
-    interval: Interval
+  def mag cRecsNotf cat onOpenOrCl ckEventsS ce(
+     nterval:  nterval
   )(
-    implicit sc: ScioContext
-  ): SCollection[MagicRecsNotificationLite] = {
-    sc.customInput(
-        "ReadMagicRecsNotficationOpenOrClickEventsSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[Mag cRecsNot f cat onL e] = {
+    sc.custom nput(
+        "ReadMag cRecsNotf cat onOpenOrCl ckEventsS ce",
         DAL
-          .read(MagicrecsNotificationLite1DayLagScalaDataset, interval, DAL.Environment.Prod))
-      .filter { entry =>
-        // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
-        val userIdExists = entry.targetUserId.isDefined
-        val tweetIdExists = entry.tweetId.isDefined
-        val openOrClickExists =
-          entry.openTimestampMs.isDefined || entry.ntabClickTimestampMs.isDefined
-        userIdExists && tweetIdExists && openOrClickExists
+          .read(Mag crecsNot f cat onL e1DayLagScalaDataset,  nterval, DAL.Env ron nt.Prod))
+      .f lter { entry =>
+        // keep entr es w h a val d user d and t et d, opened or cl cked t  stamp def ned
+        val user dEx sts = entry.targetUser d. sDef ned
+        val t et dEx sts = entry.t et d. sDef ned
+        val openOrCl ckEx sts =
+          entry.openT  stampMs. sDef ned || entry.ntabCl ckT  stampMs. sDef ned
+        user dEx sts && t et dEx sts && openOrCl ckEx sts
       }
   }
 
-  def adaptiveSearchScribeLogsSource(
-    interval: Interval
+  def adapt veSearchScr beLogsS ce(
+     nterval:  nterval
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, String)] = {
-    sc.customInput(
-        "ReadAdaptiveSearchScribeLogsSource",
+     mpl c  sc: Sc oContext
+  ): SCollect on[(Long, Str ng)] = {
+    sc.custom nput(
+        "ReadAdapt veSearchScr beLogsS ce",
         DAL
-          .read(AdaptiveSearchScalaDataset, interval, DAL.Environment.Prod))
-      .flatMap({ scribeLog: AdaptiveSearchScribeLog =>
+          .read(Adapt veSearchScalaDataset,  nterval, DAL.Env ron nt.Prod))
+      .flatMap({ scr beLog: Adapt veSearchScr beLog =>
         for {
-          userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
-          // filter out logged out search queries
-          if userId != 0
-          queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
-        } yield {
-          (userId, Set(queryString))
+          user d <- user dFromBlenderAdapt veScr beLog(scr beLog)
+          // f lter out logged out search quer es
+           f user d != 0
+          queryStr ng <- scr beLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
+        } y eld {
+          (user d, Set(queryStr ng))
         }
       })
-      // if a user searches for the same query multiple times, there could be duplicates.
-      // De-dup them to get the distinct queries searched by a user
+      //  f a user searc s for t  sa  query mult ple t  s, t re could be dupl cates.
+      // De-dup t m to get t  d st nct quer es searc d by a user
       .sumByKey
       .flatMap {
-        case (userId, distinctQuerySet) =>
-          distinctQuerySet.map { query =>
-            (userId, query)
+        case (user d, d st nctQuerySet) =>
+          d st nctQuerySet.map { query =>
+            (user d, query)
           }
       }
   }
 
-  private def userIdFromBlenderAdaptiveScribeLog(
-    blenderAdaptiveLog: AdaptiveSearchScribeLog
-  ): Option[Long] = {
-    blenderAdaptiveLog.versionedCommonHeader match {
-      case VersionedCommonHeader.CommonHeader(CommonHeader.ServerHeader(serverHeader)) =>
-        serverHeader.requestInfo match {
-          case Some(requestInfo) => requestInfo.ids.get(IdType.UserId).map(_.toLong)
+  pr vate def user dFromBlenderAdapt veScr beLog(
+    blenderAdapt veLog: Adapt veSearchScr beLog
+  ): Opt on[Long] = {
+    blenderAdapt veLog.vers onedCommon ader match {
+      case Vers onedCommon ader.Common ader(Common ader.Server ader(server ader)) =>
+        server ader.request nfo match {
+          case So (request nfo) => request nfo. ds.get( dType.User d).map(_.toLong)
           case _ => None
         }
       case _ => None

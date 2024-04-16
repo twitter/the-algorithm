@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
 
-public final class EarlybirdRequestPreLogger {
-  private final EarlybirdRequestLogger logger;
+publ c f nal class Earlyb rdRequestPreLogger {
+  pr vate f nal Earlyb rdRequestLogger logger;
 
-  public static EarlybirdRequestPreLogger buildForRoot(Decider decider) {
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForRoot(
-        EarlybirdRequestPreLogger.class.getName(), Integer.MAX_VALUE, decider);
+  publ c stat c Earlyb rdRequestPreLogger bu ldForRoot(Dec der dec der) {
+    Earlyb rdRequestLogger requestLogger = Earlyb rdRequestLogger.bu ldForRoot(
+        Earlyb rdRequestPreLogger.class.getNa (),  nteger.MAX_VALUE, dec der);
 
-    return new EarlybirdRequestPreLogger(requestLogger);
+    return new Earlyb rdRequestPreLogger(requestLogger);
   }
 
-  public static EarlybirdRequestPreLogger buildForShard(
-      int latencyWarnThreshold, Decider decider) {
+  publ c stat c Earlyb rdRequestPreLogger bu ldForShard(
+       nt latencyWarnThreshold, Dec der dec der) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForShard(
-        EarlybirdRequestPreLogger.class.getName(), latencyWarnThreshold, decider);
+    Earlyb rdRequestLogger requestLogger = Earlyb rdRequestLogger.bu ldForShard(
+        Earlyb rdRequestPreLogger.class.getNa (), latencyWarnThreshold, dec der);
 
-    return new EarlybirdRequestPreLogger(requestLogger);
+    return new Earlyb rdRequestPreLogger(requestLogger);
   }
 
-  private EarlybirdRequestPreLogger(EarlybirdRequestLogger logger) {
-    this.logger = logger;
+  pr vate Earlyb rdRequestPreLogger(Earlyb rdRequestLogger logger) {
+    t .logger = logger;
   }
 
-  public void logRequest(EarlybirdRequest request) {
+  publ c vo d logRequest(Earlyb rdRequest request) {
     logger.logRequest(request, null, null);
   }
 }

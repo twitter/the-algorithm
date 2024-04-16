@@ -1,175 +1,175 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.tw ter.s mclusters_v2.scald ng.offl ne_job
 
-import com.twitter.scalding._
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
-import com.twitter.simclusters_v2.thriftscala._
-import java.util.TimeZone
+ mport com.tw ter.scald ng._
+ mport com.tw ter.s mclusters_v2.common._
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.{Conf gs, S mClusters nterested nUt l}
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport java.ut l.T  Zone
 
-object SimClustersOfflineJob {
-  import SimClustersOfflineJobUtil._
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+object S mClustersOffl neJob {
+   mport S mClustersOffl neJobUt l._
+   mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
 
-  val modelVersionMap: Map[String, PersistedModelVersion] = Map(
-    ModelVersions.Model20M145KDec11 -> PersistedModelVersion.Model20m145kDec11,
-    ModelVersions.Model20M145KUpdated -> PersistedModelVersion.Model20m145kUpdated
+  val modelVers onMap: Map[Str ng, Pers stedModelVers on] = Map(
+    ModelVers ons.Model20M145KDec11 -> Pers stedModelVers on.Model20m145kDec11,
+    ModelVers ons.Model20M145KUpdated -> Pers stedModelVers on.Model20m145kUpdated
   )
 
   /**
-   * Get a list of tweets that received at least one fav in the last tweetTtl Duration
+   * Get a l st of t ets that rece ved at least one fav  n t  last t etTtl Durat on
    */
-  def getSubsetOfValidTweets(tweetTtl: Duration)(implicit dateRange: DateRange): TypedPipe[Long] = {
-    readTimelineFavoriteData(DateRange(dateRange.end - tweetTtl, dateRange.end)).map(_._2).distinct
+  def getSubsetOfVal dT ets(t etTtl: Durat on)( mpl c  dateRange: DateRange): TypedP pe[Long] = {
+    readT  l neFavor eData(DateRange(dateRange.end - t etTtl, dateRange.end)).map(_._2).d st nct
   }
 
   /**
-   * Note that this job will write several types of scores into the same data set. Please use filter
-   * to take the score types you need.
+   * Note that t  job w ll wr e several types of scores  nto t  sa  data set. Please use f lter
+   * to take t  score types   need.
    */
-  def computeAggregatedTweetClusterScores(
+  def computeAggregatedT etClusterScores(
     dateRange: DateRange,
-    userInterestsData: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    favoriteData: TypedPipe[(UserId, TweetId, Timestamp)],
-    previousTweetClusterScores: TypedPipe[TweetAndClusterScores]
+    user nterestsData: TypedP pe[(Long, ClustersUser s nterested n)],
+    favor eData: TypedP pe[(User d, T et d, T  stamp)],
+    prev ousT etClusterScores: TypedP pe[T etAndClusterScores]
   )(
-    implicit timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[TweetAndClusterScores] = {
+     mpl c  t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[T etAndClusterScores] = {
 
-    val latestTimeStamp = dateRange.end.timestamp
+    val latestT  Stamp = dateRange.end.t  stamp
 
-    val currentScores: TypedPipe[
-      ((Long, Int, PersistedModelVersion, Option[PersistedScoreType]), PersistedScores)
+    val currentScores: TypedP pe[
+      ((Long,  nt, Pers stedModelVers on, Opt on[Pers stedScoreType]), Pers stedScores)
     ] =
-      favoriteData
+      favor eData
         .map {
-          case (userId, tweetId, timestamp) =>
-            (userId, (tweetId, timestamp))
+          case (user d, t et d, t  stamp) =>
+            (user d, (t et d, t  stamp))
         }
         .count("NumFavEvents")
-        .leftJoin(userInterestsData)
-        .withReducers(600)
+        .leftJo n(user nterestsData)
+        .w hReducers(600)
         .flatMap {
-          case (_, ((tweetId, timestamp), Some(userInterests))) =>
-            val clustersWithScores =
-              SimClustersInterestedInUtil.topClustersWithScores(userInterests)
+          case (_, ((t et d, t  stamp), So (user nterests))) =>
+            val clustersW hScores =
+              S mClusters nterested nUt l.topClustersW hScores(user nterests)
             (
               for {
-                (clusterId, scores) <- clustersWithScores
-                if scores.favScore >= Configs.favScoreThresholdForUserInterest(
-                  userInterests.knownForModelVersion)
-              } yield {
-                // write several types of scores
+                (cluster d, scores) <- clustersW hScores
+                 f scores.favScore >= Conf gs.favScoreThresholdForUser nterest(
+                  user nterests.knownForModelVers on)
+              } y eld {
+                // wr e several types of scores
                 Seq(
                   (
-                    tweetId,
-                    clusterId,
-                    modelVersionMap(userInterests.knownForModelVersion),
-                    Some(PersistedScoreType.NormalizedFav8HrHalfLife)) ->
-                    // let the score decay to latestTimeStamp
-                    persistedScoresMonoid.plus(
-                      persistedScoresMonoid
-                        .build(scores.clusterNormalizedFavScore, timestamp),
-                      persistedScoresMonoid.build(0.0, latestTimeStamp)
+                    t et d,
+                    cluster d,
+                    modelVers onMap(user nterests.knownForModelVers on),
+                    So (Pers stedScoreType.Normal zedFav8HrHalfL fe)) ->
+                    // let t  score decay to latestT  Stamp
+                    pers stedScoresMono d.plus(
+                      pers stedScoresMono d
+                        .bu ld(scores.clusterNormal zedFavScore, t  stamp),
+                      pers stedScoresMono d.bu ld(0.0, latestT  Stamp)
                     ),
                   (
-                    tweetId,
-                    clusterId,
-                    modelVersionMap(userInterests.knownForModelVersion),
-                    Some(PersistedScoreType.NormalizedFollow8HrHalfLife)) ->
-                    // let the score decay to latestTimeStamp
-                    persistedScoresMonoid.plus(
-                      persistedScoresMonoid
-                        .build(scores.clusterNormalizedFollowScore, timestamp),
-                      persistedScoresMonoid.build(0.0, latestTimeStamp)
+                    t et d,
+                    cluster d,
+                    modelVers onMap(user nterests.knownForModelVers on),
+                    So (Pers stedScoreType.Normal zedFollow8HrHalfL fe)) ->
+                    // let t  score decay to latestT  Stamp
+                    pers stedScoresMono d.plus(
+                      pers stedScoresMono d
+                        .bu ld(scores.clusterNormal zedFollowScore, t  stamp),
+                      pers stedScoresMono d.bu ld(0.0, latestT  Stamp)
                     ),
                   (
-                    tweetId,
-                    clusterId,
-                    modelVersionMap(userInterests.knownForModelVersion),
-                    Some(PersistedScoreType.NormalizedLogFav8HrHalfLife)) ->
-                    // let the score decay to latestTimeStamp
-                    persistedScoresMonoid.plus(
-                      persistedScoresMonoid
-                        .build(scores.clusterNormalizedLogFavScore, timestamp),
-                      persistedScoresMonoid.build(0.0, latestTimeStamp)
+                    t et d,
+                    cluster d,
+                    modelVers onMap(user nterests.knownForModelVers on),
+                    So (Pers stedScoreType.Normal zedLogFav8HrHalfL fe)) ->
+                    // let t  score decay to latestT  Stamp
+                    pers stedScoresMono d.plus(
+                      pers stedScoresMono d
+                        .bu ld(scores.clusterNormal zedLogFavScore, t  stamp),
+                      pers stedScoresMono d.bu ld(0.0, latestT  Stamp)
                     )
                 )
               }
             ).flatten
           case _ =>
-            Nil
+            N l
         }
-        .count("NumTweetClusterScoreUpdates")
-        .sumByLocalKeys // there is a .sumByKey later, so just doing a local sum here.
+        .count("NumT etClusterScoreUpdates")
+        .sumByLocalKeys // t re  s a .sumByKey later, so just do ng a local sum  re.
 
-    val previousScores: TypedPipe[
-      ((Long, Int, PersistedModelVersion, Option[PersistedScoreType]), PersistedScores)
+    val prev ousScores: TypedP pe[
+      ((Long,  nt, Pers stedModelVers on, Opt on[Pers stedScoreType]), Pers stedScores)
     ] =
-      previousTweetClusterScores.map { v =>
-        (v.tweetId, v.clusterId, v.modelVersion, v.scoreType) -> v.scores
+      prev ousT etClusterScores.map { v =>
+        (v.t et d, v.cluster d, v.modelVers on, v.scoreType) -> v.scores
       }
 
-    // add current scores and previous scores
-    (currentScores ++ previousScores).sumByKey
-      .withReducers(1000)
+    // add current scores and prev ous scores
+    (currentScores ++ prev ousScores).sumByKey
+      .w hReducers(1000)
       .map {
-        case ((tweetId, clusterId, modelVersion, scoreType), scores) =>
-          TweetAndClusterScores(tweetId, clusterId, modelVersion, scores, scoreType)
+        case ((t et d, cluster d, modelVers on, scoreType), scores) =>
+          T etAndClusterScores(t et d, cluster d, modelVers on, scores, scoreType)
       }
-      .count("NumAggregatedTweetClusterScores")
+      .count("NumAggregatedT etClusterScores")
   }
 
-  def computeTweetTopKClusters(
-    latestTweetClusterScores: TypedPipe[TweetAndClusterScores],
-    topK: Int = Configs.topKClustersPerTweet,
-    scoreThreshold: Double = Configs.scoreThresholdForEntityTopKClustersCache
+  def computeT etTopKClusters(
+    latestT etClusterScores: TypedP pe[T etAndClusterScores],
+    topK:  nt = Conf gs.topKClustersPerT et,
+    scoreThreshold: Double = Conf gs.scoreThresholdForEnt yTopKClustersCac 
   )(
-    implicit timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[TweetTopKClustersWithScores] = {
-    latestTweetClusterScores
+     mpl c  t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[T etTopKClustersW hScores] = {
+    latestT etClusterScores
       .flatMap { v =>
         val score = v.scores.score.map(_.value).getOrElse(0.0)
-        if (score < scoreThreshold) {
+         f (score < scoreThreshold) {
           None
         } else {
-          Some((v.tweetId, v.modelVersion, v.scoreType) -> (v.clusterId, v.scores))
+          So ((v.t et d, v.modelVers on, v.scoreType) -> (v.cluster d, v.scores))
         }
       }
-      .count("NumAggregatedTweetClusterScoresAfterFilteringInTweetTopK")
+      .count("NumAggregatedT etClusterScoresAfterF lter ng nT etTopK")
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Order ng.by(_._2))
       .map {
-        case ((tweetId, modelVersion, scoreType), topKClusters) =>
-          TweetTopKClustersWithScores(tweetId, modelVersion, topKClusters.toMap, scoreType)
+        case ((t et d, modelVers on, scoreType), topKClusters) =>
+          T etTopKClustersW hScores(t et d, modelVers on, topKClusters.toMap, scoreType)
       }
-      .count("NumTweetTopK")
+      .count("NumT etTopK")
   }
 
-  def computeClusterTopKTweets(
-    latestTweetClusterScores: TypedPipe[TweetAndClusterScores],
-    topK: Int = Configs.topKTweetsPerCluster,
-    scoreThreshold: Double = Configs.scoreThresholdForClusterTopKTweetsCache
+  def computeClusterTopKT ets(
+    latestT etClusterScores: TypedP pe[T etAndClusterScores],
+    topK:  nt = Conf gs.topKT etsPerCluster,
+    scoreThreshold: Double = Conf gs.scoreThresholdForClusterTopKT etsCac 
   )(
-    implicit timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[ClusterTopKTweetsWithScores] = {
-    latestTweetClusterScores
+     mpl c  t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[ClusterTopKT etsW hScores] = {
+    latestT etClusterScores
       .flatMap { v =>
         val score = v.scores.score.map(_.value).getOrElse(0.0)
-        if (score < scoreThreshold) {
+         f (score < scoreThreshold) {
           None
         } else {
-          Some((v.clusterId, v.modelVersion, v.scoreType) -> (v.tweetId, v.scores))
+          So ((v.cluster d, v.modelVers on, v.scoreType) -> (v.t et d, v.scores))
         }
       }
-      .count("NumAggregatedTweetClusterScoresAfterFilteringInClusterTopK")
+      .count("NumAggregatedT etClusterScoresAfterF lter ng nClusterTopK")
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Order ng.by(_._2))
       .map {
-        case ((clusterId, modelVersion, scoreType), topKTweets) =>
-          ClusterTopKTweetsWithScores(clusterId, modelVersion, topKTweets.toMap, scoreType)
+        case ((cluster d, modelVers on, scoreType), topKT ets) =>
+          ClusterTopKT etsW hScores(cluster d, modelVers on, topKT ets.toMap, scoreType)
       }
       .count("NumClusterTopK")
   }

@@ -1,16 +1,16 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.stitch.Stitch
-import com.twitter.util.Base64Long
+ mport com.tw ter.servo.cac .ScopedCac Key
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Base64Long
 
-case class GeoScrubTimestampKey(userId: UserId)
-    extends ScopedCacheKey("t", "gs", 1, Base64Long.toBase64(userId))
+case class GeoScrubT  stampKey(user d: User d)
+    extends ScopedCac Key("t", "gs", 1, Base64Long.toBase64(user d))
 
-object GeoScrubTimestampRepository {
-  type Type = UserId => Stitch[Time]
+object GeoScrubT  stampRepos ory {
+  type Type = User d => St ch[T  ]
 
-  def apply(getLastGeoScrubTime: UserId => Stitch[Option[Time]]): Type =
-    userId => getLastGeoScrubTime(userId).lowerFromOption()
+  def apply(getLastGeoScrubT  : User d => St ch[Opt on[T  ]]): Type =
+    user d => getLastGeoScrubT  (user d).lo rFromOpt on()
 }

@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.tw ter.follow_recom ndat ons.common.rankers.common
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import scala.collection.mutable
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport scala.collect on.mutable
 
-object DedupCandidates {
-  def apply[C <: UniversalNoun[Long]](input: Seq[C]): Seq[C] = {
+object DedupCand dates {
+  def apply[C <: Un versalNoun[Long]]( nput: Seq[C]): Seq[C] = {
     val seen = mutable.HashSet[Long]()
-    input.filter { candidate => seen.add(candidate.id) }
+     nput.f lter { cand date => seen.add(cand date. d) }
   }
 }

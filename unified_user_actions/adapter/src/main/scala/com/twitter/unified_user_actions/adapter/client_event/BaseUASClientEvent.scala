@@ -1,62 +1,62 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.logbase.thr ftscala.LogBase
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-abstract class BaseUASClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+abstract class BaseUASCl entEvent(act onType: Act onType)
+    extends BaseCl entEvent(act onType = act onType) {
 
-  override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
-    val logBase: Option[LogBase] = logEvent.logBase
-    val ceItem = LogEventItem.unsafeEmpty
+  overr de def toUn f edUserAct on(logEvent: LogEvent): Seq[Un f edUserAct on] = {
+    val logBase: Opt on[LogBase] = logEvent.logBase
+    val ce em = LogEvent em.unsafeEmpty
 
-    val uuaOpt: Option[UnifiedUserAction] = for {
-      eventTimestamp <- logBase.flatMap(getSourceTimestamp)
-      uuaItem <- getUuaItem(ceItem, logEvent)
-    } yield {
-      val userIdentifier: UserIdentifier = UserIdentifier(
-        userId = logBase.flatMap(_.userId),
-        guestIdMarketing = logBase.flatMap(_.guestIdMarketing))
+    val uuaOpt: Opt on[Un f edUserAct on] = for {
+      eventT  stamp <- logBase.flatMap(getS ceT  stamp)
+      uua em <- getUua em(ce em, logEvent)
+    } y eld {
+      val user dent f er: User dent f er = User dent f er(
+        user d = logBase.flatMap(_.user d),
+        guest dMarket ng = logBase.flatMap(_.guest dMarket ng))
 
-      val productSurface: Option[ProductSurface] = ProductSurfaceUtils
-        .getProductSurface(logEvent.eventNamespace)
+      val productSurface: Opt on[ProductSurface] = ProductSurfaceUt ls
+        .getProductSurface(logEvent.eventNa space)
 
-      val eventMetaData: EventMetadata = ClientEventCommonUtils
-        .getEventMetadata(
-          eventTimestamp = eventTimestamp,
+      val event taData: Event tadata = Cl entEventCommonUt ls
+        .getEvent tadata(
+          eventT  stamp = eventT  stamp,
           logEvent = logEvent,
-          ceItem = ceItem,
+          ce em = ce em,
           productSurface = productSurface
         )
 
-      UnifiedUserAction(
-        userIdentifier = userIdentifier,
-        item = uuaItem,
-        actionType = actionType,
-        eventMetadata = eventMetaData,
+      Un f edUserAct on(
+        user dent f er = user dent f er,
+         em = uua em,
+        act onType = act onType,
+        event tadata = event taData,
         productSurface = productSurface,
-        productSurfaceInfo =
-          ProductSurfaceUtils.getProductSurfaceInfo(productSurface, ceItem, logEvent)
+        productSurface nfo =
+          ProductSurfaceUt ls.getProductSurface nfo(productSurface, ce em, logEvent)
       )
     }
 
     uuaOpt match {
-      case Some(uua) => Seq(uua)
-      case _ => Nil
+      case So (uua) => Seq(uua)
+      case _ => N l
     }
   }
 
-  override def getUuaItem(
-    ceItem: LogEventItem,
+  overr de def getUua em(
+    ce em: LogEvent em,
     logEvent: LogEvent
-  ): Option[Item] = for {
-    performanceDetails <- logEvent.performanceDetails
-    duration <- performanceDetails.durationMs
-  } yield {
-    Item.UasInfo(UASInfo(timeSpentMs = duration))
+  ): Opt on[ em] = for {
+    performanceDeta ls <- logEvent.performanceDeta ls
+    durat on <- performanceDeta ls.durat onMs
+  } y eld {
+     em.Uas nfo(UAS nfo(t  SpentMs = durat on))
   }
 }

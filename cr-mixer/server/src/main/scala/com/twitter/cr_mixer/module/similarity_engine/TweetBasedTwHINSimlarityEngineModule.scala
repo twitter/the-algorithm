@@ -1,69 +1,69 @@
-package com.twitter.cr_mixer.module.similarity_engine
-import com.google.inject.Provides
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.module.EmbeddingStoreModule
-import com.twitter.cr_mixer.module.thrift_client.AnnQueryServiceClientModule
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import com.twitter.ml.api.{thriftscala => api}
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.HnswANNEngineQuery
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
+package com.tw ter.cr_m xer.module.s m lar y_eng ne
+ mport com.google. nject.Prov des
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.cr_m xer.module.Embedd ngStoreModule
+ mport com.tw ter.cr_m xer.module.thr ft_cl ent.AnnQueryServ ceCl entModule
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.HnswANNS m lar yEng ne
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
+ mport com.tw ter.ml.ap .{thr ftscala => ap }
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.HnswANNEng neQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
 
-object TweetBasedTwHINSimlarityEngineModule extends TwitterModule {
-  @Provides
-  @Named(ModuleNames.TweetBasedTwHINANNSimilarityEngine)
-  def providesTweetBasedTwHINANNSimilarityEngine(
+object T etBasedTwH NS mlar yEng neModule extends Tw terModule {
+  @Prov des
+  @Na d(ModuleNa s.T etBasedTwH NANNS m lar yEng ne)
+  def prov desT etBasedTwH NANNS m lar yEng ne(
     // MH stores
-    @Named(EmbeddingStoreModule.TwHINEmbeddingRegularUpdateMhStoreName)
-    twHINEmbeddingRegularUpdateMhStore: ReadableStore[InternalId, api.Embedding],
-    @Named(EmbeddingStoreModule.DebuggerDemoTweetEmbeddingMhStoreName)
-    debuggerDemoTweetEmbeddingMhStore: ReadableStore[InternalId, api.Embedding],
-    // ANN clients
-    @Named(AnnQueryServiceClientModule.TwHINRegularUpdateAnnServiceClientName)
-    twHINRegularUpdateAnnService: AnnQueryService.MethodPerEndpoint,
-    @Named(AnnQueryServiceClientModule.DebuggerDemoAnnServiceClientName)
-    debuggerDemoAnnService: AnnQueryService.MethodPerEndpoint,
-    // Other configs
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver
-  ): HnswANNSimilarityEngine = {
-    new HnswANNSimilarityEngine(
-      embeddingStoreLookUpMap = Map(
-        ModelConfig.TweetBasedTwHINRegularUpdateAll20221024 -> twHINEmbeddingRegularUpdateMhStore,
-        ModelConfig.DebuggerDemo -> debuggerDemoTweetEmbeddingMhStore,
+    @Na d(Embedd ngStoreModule.TwH NEmbedd ngRegularUpdateMhStoreNa )
+    twH NEmbedd ngRegularUpdateMhStore: ReadableStore[ nternal d, ap .Embedd ng],
+    @Na d(Embedd ngStoreModule.DebuggerDemoT etEmbedd ngMhStoreNa )
+    debuggerDemoT etEmbedd ngMhStore: ReadableStore[ nternal d, ap .Embedd ng],
+    // ANN cl ents
+    @Na d(AnnQueryServ ceCl entModule.TwH NRegularUpdateAnnServ ceCl entNa )
+    twH NRegularUpdateAnnServ ce: AnnQueryServ ce. thodPerEndpo nt,
+    @Na d(AnnQueryServ ceCl entModule.DebuggerDemoAnnServ ceCl entNa )
+    debuggerDemoAnnServ ce: AnnQueryServ ce. thodPerEndpo nt,
+    // Ot r conf gs
+    @Na d(ModuleNa s.Un f edCac ) crM xerUn f edCac Cl ent:  mcac dCl ent,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver
+  ): HnswANNS m lar yEng ne = {
+    new HnswANNS m lar yEng ne(
+      embedd ngStoreLookUpMap = Map(
+        ModelConf g.T etBasedTwH NRegularUpdateAll20221024 -> twH NEmbedd ngRegularUpdateMhStore,
+        ModelConf g.DebuggerDemo -> debuggerDemoT etEmbedd ngMhStore,
       ),
-      annServiceLookUpMap = Map(
-        ModelConfig.TweetBasedTwHINRegularUpdateAll20221024 -> twHINRegularUpdateAnnService,
-        ModelConfig.DebuggerDemo -> debuggerDemoAnnService,
+      annServ ceLookUpMap = Map(
+        ModelConf g.T etBasedTwH NRegularUpdateAll20221024 -> twH NRegularUpdateAnnServ ce,
+        ModelConf g.DebuggerDemo -> debuggerDemoAnnServ ce,
       ),
-      globalStats = statsReceiver,
-      identifier = SimilarityEngineType.TweetBasedTwHINANN,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+      globalStats = statsRece ver,
+       dent f er = S m lar yEng neType.T etBasedTwH NANN,
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       ),
-      memCacheConfigOpt = Some(
-        SimilarityEngine.MemCacheConfig[HnswANNEngineQuery](
-          cacheClient = crMixerUnifiedCacheClient,
-          ttl = 30.minutes,
-          keyToString = (query: HnswANNEngineQuery) =>
-            SimilarityEngine.keyHasher.hashKey(query.cacheKey.getBytes).toString
+       mCac Conf gOpt = So (
+        S m lar yEng ne. mCac Conf g[HnswANNEng neQuery](
+          cac Cl ent = crM xerUn f edCac Cl ent,
+          ttl = 30.m nutes,
+          keyToStr ng = (query: HnswANNEng neQuery) =>
+            S m lar yEng ne.keyHas r.hashKey(query.cac Key.getBytes).toStr ng
         ))
     )
   }

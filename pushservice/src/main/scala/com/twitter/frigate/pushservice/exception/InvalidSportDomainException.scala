@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.exception
+package com.tw ter.fr gate.pushserv ce.except on
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Throw exception if the sport domain is not supported by MagicFanoutSports
+ * Throw except on  f t  sport doma n  s not supported by Mag cFanoutSports
  *
- * @param message Exception message
+ * @param  ssage Except on  ssage
  */
-class InvalidSportDomainException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+class  nval dSportDoma nExcept on(pr vate val  ssage: Str ng)
+    extends Except on( ssage)
+    w h NoStackTrace

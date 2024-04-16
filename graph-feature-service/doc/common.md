@@ -1,25 +1,25 @@
-# Common thrift types
+# Common thr ft types
 
-GFS uses several thrift datastructures which are common to multiple queries. They are listed below.
+GFS uses several thr ft datastructures wh ch are common to mult ple quer es. T y are l sted below.
 
 ## EdgeType
 
-`EdgeType` is a thrift enum which specifies which edge types to query for the graph.
+`EdgeType`  s a thr ft enum wh ch spec f es wh ch edge types to query for t  graph.
 
-```thrift
+```thr ft
 enum EdgeType {
-  FOLLOWING,
+  FOLLOW NG,
   FOLLOWED_BY,
-  FAVORITE,
-  FAVORITED_BY,
+  FAVOR TE,
+  FAVOR TED_BY,
   RETWEET,
   RETWEETED_BY,
   REPLY,
   REPLYED_BY,
-  MENTION,
-  MENTIONED_BY,
+  MENT ON,
+  MENT ONED_BY,
   MUTUAL_FOLLOW,
-  SIMILAR_TO, // more edge types (like block, report, etc.) can be supported later.
+  S M LAR_TO, // more edge types (l ke block, report, etc.) can be supported later.
   RESERVED_12,
   RESERVED_13,
   RESERVED_14,
@@ -32,31 +32,31 @@ enum EdgeType {
 }
 ```
 
-For an example of how this is used, consider the `GetNeighbors` query. If we set the `edgeType` field
-of the `GfsNeighborsRequest`, the response will contain all the users that the specified user follows.
-If, on the other hand, we set `edgeType` to be `FollowedBy` it will return all the users who are
-followed by the specified user.
+For an example of how t   s used, cons der t  `GetNe ghbors` query.  f   set t  `edgeType` f eld
+of t  `GfsNe ghborsRequest`, t  response w ll conta n all t  users that t  spec f ed user follows.
+ f, on t  ot r hand,   set `edgeType` to be `Follo dBy`   w ll return all t  users who are
+follo d by t  spec f ed user.
 
 ## FeatureType
 
-`FeatureType` is a thrift struct which is used in queries which require two edge types.
+`FeatureType`  s a thr ft struct wh ch  s used  n quer es wh ch requ re two edge types.
 
-```thrift
+```thr ft
 struct FeatureType {
-  1: required EdgeType leftEdgeType // edge type from source user
-  2: required EdgeType rightEdgeType // edge type from candidate user
-}(persisted="true")
+  1: requ red EdgeType leftEdgeType // edge type from s ce user
+  2: requ red EdgeType r ghtEdgeType // edge type from cand date user
+}(pers sted="true")
 ```
 
-## UserWithScore
+## UserW hScore
 
-The candidate generation queries return lists of candidates together with a computed score for the
-relevant feature. `UserWithScore` is a thrift struct which bundles together a candidate's ID with
-the score.
+T  cand date generat on quer es return l sts of cand dates toget r w h a computed score for t 
+relevant feature. `UserW hScore`  s a thr ft struct wh ch bundles toget r a cand date's  D w h
+t  score.
 
-```thrift
-struct UserWithScore {
-  1: required i64 userId
-  2: required double score
+```thr ft
+struct UserW hScore {
+  1: requ red  64 user d
+  2: requ red double score
 }
 ```

@@ -1,196 +1,196 @@
-package com.twitter.search.earlybird.queryparser;
+package com.tw ter.search.earlyb rd.queryparser;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.ArrayL st;
+ mport java.ut l. dent yHashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.ut l.text.H ghFrequencyTermPa rs;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.queryparser.parser.Ser al zedQueryParser;
+ mport com.tw ter.search.queryparser.query.BooleanQuery;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.Operator;
+ mport com.tw ter.search.queryparser.query.Phrase;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryNodeUt ls;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.QueryV s or;
+ mport com.tw ter.search.queryparser.query.Spec alTerm;
+ mport com.tw ter.search.queryparser.query.Term;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
 
 /**
- * Iterates over the Query, modifying it to include high frequency term pairs, replacing
- * singular high frequency terms where possible.
+ *  erates over t  Query, mod fy ng   to  nclude h gh frequency term pa rs, replac ng
+ * s ngular h gh frequency terms w re poss ble.
  *
- * Assumes that this will be used IMMEDIATELY after using HighFrequencyTermPairExtractor
+ * Assu s that t  w ll be used  MMED ATELY after us ng H ghFrequencyTermPa rExtractor
  *
- * There are two primary functions of this visitor:
- *  1. Append hf_term_pairs to each group's root node.
- *  2. Remove all unnecessary term queries (unnecessary as they are captured by an hf_term_pair)
+ * T re are two pr mary funct ons of t  v s or:
+ *  1. Append hf_term_pa rs to each group's root node.
+ *  2. Remove all unnecessary term quer es (unnecessary as t y are captured by an hf_term_pa r)
  *
- * Every time the visitor finishes visiting a node, HighFrequencyTermQueryGroup.numVisits will be
- * incremented for that node's group. When numVisits == numChildren, we know we have just finished
- * processing the root of the group. At this point, we must append relevant hf_term_pairs to this
+ * Every t   t  v s or f n s s v s  ng a node, H ghFrequencyTermQueryGroup.numV s s w ll be
+ *  ncre nted for that node's group. W n numV s s == numCh ldren,   know   have just f n s d
+ * process ng t  root of t  group. At t  po nt,   must append relevant hf_term_pa rs to t 
  * node.
  */
-public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      HighFrequencyTermPairRewriteVisitor.class);
-  private static final SearchRateCounter SEARCH_HF_PAIR_COUNTER =
-      SearchRateCounter.export("hf_pair_rewrite");
+publ c class H ghFrequencyTermPa rRewr eV s or extends QueryV s or<Query> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(
+      H ghFrequencyTermPa rRewr eV s or.class);
+  pr vate stat c f nal SearchRateCounter SEARCH_HF_PA R_COUNTER =
+      SearchRateCounter.export("hf_pa r_rewr e");
 
-  private final ArrayList<HighFrequencyTermQueryGroup> groupList;
-  private final IdentityHashMap<Query, Integer> groupIds;
-  private final boolean allowNegativeOrRewrite;
+  pr vate f nal ArrayL st<H ghFrequencyTermQueryGroup> groupL st;
+  pr vate f nal  dent yHashMap<Query,  nteger> group ds;
+  pr vate f nal boolean allowNegat veOrRewr e;
 
   /**
-   * Creates a new HighFrequencyTermPairRewriteVisitor. Should be used only IMMEDIATELY after using
-   * a HighFrequencyTermPairExtractor
-   * @param groupList The groups extracted using HighFrequencyTermPairExtractor
-   * @param groupIds the mapping from query to the HF term query group
+   * Creates a new H ghFrequencyTermPa rRewr eV s or. Should be used only  MMED ATELY after us ng
+   * a H ghFrequencyTermPa rExtractor
+   * @param groupL st T  groups extracted us ng H ghFrequencyTermPa rExtractor
+   * @param group ds t  mapp ng from query to t  HF term query group
    */
-  public HighFrequencyTermPairRewriteVisitor(ArrayList<HighFrequencyTermQueryGroup> groupList,
-                                             IdentityHashMap<Query, Integer> groupIds) {
-    this(groupList, groupIds, true);
+  publ c H ghFrequencyTermPa rRewr eV s or(ArrayL st<H ghFrequencyTermQueryGroup> groupL st,
+                                              dent yHashMap<Query,  nteger> group ds) {
+    t (groupL st, group ds, true);
   }
 
   /**
-   * Creates a new HighFrequencyTermPairRewriteVisitor. Should be used only IMMEDIATELY after using
-   * a HighFrequencyTermPairExtractor
-   * @param groupList The groups extracted using HighFrequencyTermPairExtractor
-   * @param groupIds the mapping from query to the HF term query group
-   * @param allowNegativeOrRewrite whether to allow rewrite for 'or (-terms)'
+   * Creates a new H ghFrequencyTermPa rRewr eV s or. Should be used only  MMED ATELY after us ng
+   * a H ghFrequencyTermPa rExtractor
+   * @param groupL st T  groups extracted us ng H ghFrequencyTermPa rExtractor
+   * @param group ds t  mapp ng from query to t  HF term query group
+   * @param allowNegat veOrRewr e w t r to allow rewr e for 'or (-terms)'
    */
-  public HighFrequencyTermPairRewriteVisitor(ArrayList<HighFrequencyTermQueryGroup> groupList,
-                                             IdentityHashMap<Query, Integer> groupIds,
-                                             boolean allowNegativeOrRewrite) {
-    this.groupList = groupList;
-    this.groupIds = groupIds;
-    this.allowNegativeOrRewrite = allowNegativeOrRewrite;
+  publ c H ghFrequencyTermPa rRewr eV s or(ArrayL st<H ghFrequencyTermQueryGroup> groupL st,
+                                              dent yHashMap<Query,  nteger> group ds,
+                                             boolean allowNegat veOrRewr e) {
+    t .groupL st = groupL st;
+    t .group ds = group ds;
+    t .allowNegat veOrRewr e = allowNegat veOrRewr e;
   }
 
   /**
-   * This method logs successful rewrites, and protects against unsuccessful ones by
-   * catching all exceptions and restoring the previous query. 
+   * T   thod logs successful rewr es, and protects aga nst unsuccessful ones by
+   * catch ng all except ons and restor ng t  prev ous query. 
    */
-  public static Query safeRewrite(Query safeQuery, boolean allowNegativeOrRewrite)
-      throws QueryParserException {
+  publ c stat c Query safeRewr e(Query safeQuery, boolean allowNegat veOrRewr e)
+      throws QueryParserExcept on {
     Query query = safeQuery;
 
-    ArrayList<HighFrequencyTermQueryGroup> groups = Lists.newArrayList();
-    IdentityHashMap<Query, Integer> groupIds = Maps.newIdentityHashMap();
+    ArrayL st<H ghFrequencyTermQueryGroup> groups = L sts.newArrayL st();
+     dent yHashMap<Query,  nteger> group ds = Maps.new dent yHashMap();
 
-    // Step 1: extract high frequency term pairs and phrases.
+    // Step 1: extract h gh frequency term pa rs and phrases.
     try {
-      int hfTermsFound = query.accept(new HighFrequencyTermPairExtractor(groups, groupIds));
-      if (hfTermsFound < 2) {
+       nt hfTermsFound = query.accept(new H ghFrequencyTermPa rExtractor(groups, group ds));
+       f (hfTermsFound < 2) {
         return query;
       }
-    } catch (Exception e) {
-      LOG.error("Exception while extracting high frequency term pairs", e);
+    } catch (Except on e) {
+      LOG.error("Except on wh le extract ng h gh frequency term pa rs", e);
       return query;
     }
 
-    // Step 2: rewrite (safely).
-    String original = query.serialize();
+    // Step 2: rewr e (safely).
+    Str ng or g nal = query.ser al ze();
     try {
       query = query.accept(
-          new HighFrequencyTermPairRewriteVisitor(groups, groupIds, allowNegativeOrRewrite))
-          .simplify();
-      String rewrite = query.serialize();
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Optimized query: " + original + " -> " + rewrite);
+          new H ghFrequencyTermPa rRewr eV s or(groups, group ds, allowNegat veOrRewr e))
+          .s mpl fy();
+      Str ng rewr e = query.ser al ze();
+       f (LOG. sDebugEnabled()) {
+        LOG.debug("Opt m zed query: " + or g nal + " -> " + rewr e);
       }
-      SEARCH_HF_PAIR_COUNTER.increment();
+      SEARCH_HF_PA R_COUNTER. ncre nt();
       return query;
-    } catch (Exception e) {
-      LOG.error("Exception rewriting high frequency term pairs", e);
-      return new SerializedQueryParser(EarlybirdConfig.getPenguinVersion()).parse(original);
+    } catch (Except on e) {
+      LOG.error("Except on rewr  ng h gh frequency term pa rs", e);
+      return new Ser al zedQueryParser(Earlyb rdConf g.getPengu nVers on()).parse(or g nal);
     }
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * T  rewr ten query to use t  hf_term_pa r operators.
    *
-   * @param disjunction query node which must have been previously visited by
-   *                    HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @param d sjunct on query node wh ch must have been prev ously v s ed by
+   *                    H ghFrequencyTermPa rExtractor and not had  s v s or data cleared.
    */
-  @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
-    return visit((BooleanQuery) disjunction);
+  @Overr de
+  publ c Query v s (D sjunct on d sjunct on) throws QueryParserExcept on {
+    return v s ((BooleanQuery) d sjunct on);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * T  rewr ten query to use t  hf_term_pa r operators.
    *
-   * @param conjunction query node which must have been previously visited by
-   *                    HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @param conjunct on query node wh ch must have been prev ously v s ed by
+   *                    H ghFrequencyTermPa rExtractor and not had  s v s or data cleared.
    */
-  @Override
-  public Query visit(Conjunction conjunction) throws QueryParserException {
-    return visit((BooleanQuery) conjunction);
+  @Overr de
+  publ c Query v s (Conjunct on conjunct on) throws QueryParserExcept on {
+    return v s ((BooleanQuery) conjunct on);
   }
 
   /**
-   * Applies this visitor to a BooleanQuery.
+   * Appl es t  v s or to a BooleanQuery.
    */
-  public Query visit(BooleanQuery booleanQuery) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(booleanQuery));
+  publ c Query v s (BooleanQuery booleanQuery) throws QueryParserExcept on {
+    H ghFrequencyTermQueryGroup group = groupL st.get(group ds.get(booleanQuery));
     queryPreprocess(group);
 
-    ArrayList<Query> children = Lists.newArrayList();
-    for (Query node : booleanQuery.getChildren()) {
-      if (booleanQuery.isTypeOf(Query.QueryType.DISJUNCTION) && node.mustOccur()) {
-        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
-        // Implementation is too difficult and would make this rewriter even MORE complicated for
-        // a rarely used query. For now, we ignore it completely. We might gain some benefit in the
-        // future if we decide to create a new extractor and rewriter and rewrite this subquery, and
-        // that wouldn't complicate things too much.
-        children.add(node);
-        continue;
+    ArrayL st<Query> ch ldren = L sts.newArrayL st();
+    for (Query node : booleanQuery.getCh ldren()) {
+       f (booleanQuery. sTypeOf(Query.QueryType.D SJUNCT ON) && node.mustOccur()) {
+        // Potent al Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pa r a b 0.05])
+        //  mple ntat on  s too d ff cult and would make t  rewr er even MORE compl cated for
+        // a rarely used query. For now,    gnore   completely.   m ght ga n so  benef   n t 
+        // future  f   dec de to create a new extractor and rewr er and rewr e t  subquery, and
+        // that wouldn't compl cate th ngs too much.
+        ch ldren.add(node);
+        cont nue;
       }
-      Query child = node.accept(this);
-      if (child != null) {
-        children.add(child);
+      Query ch ld = node.accept(t );
+       f (ch ld != null) {
+        ch ldren.add(ch ld);
       }
     }
 
-    Query newBooleanQuery = booleanQuery.newBuilder().setChildren(children).build();
+    Query newBooleanQuery = booleanQuery.newBu lder().setCh ldren(ch ldren).bu ld();
 
     return queryPostprocess(newBooleanQuery, group);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * T  rewr ten query to use t  hf_term_pa r operators.
    *
-   * @param phraseToVisit query node which must have been previously visited by
-   *               HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @param phraseToV s  query node wh ch must have been prev ously v s ed by
+   *               H ghFrequencyTermPa rExtractor and not had  s v s or data cleared.
    */
-  @Override
-  public Query visit(Phrase phraseToVisit) throws QueryParserException {
-    Phrase phrase = phraseToVisit;
+  @Overr de
+  publ c Query v s (Phrase phraseToV s ) throws QueryParserExcept on {
+    Phrase phrase = phraseToV s ;
 
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(phrase));
+    H ghFrequencyTermQueryGroup group = groupL st.get(group ds.get(phrase));
     queryPreprocess(group);
 
-    // Remove all high frequency phrases from the query that do not have any annotations.
-    // This will cause phrase de-duping, which we probably don't care about.
-    if (!hasAnnotations(phrase) && (
-        group.hfPhrases.contains(phrase.getPhraseValue())
-        || group.preusedHFPhrases.contains(phrase.getPhraseValue()))) {
-      // This term will be appended to the end of the query in the form of a pair.
+    // Remove all h gh frequency phrases from t  query that do not have any annotat ons.
+    // T  w ll cause phrase de-dup ng, wh ch   probably don't care about.
+     f (!hasAnnotat ons(phrase) && (
+        group.hfPhrases.conta ns(phrase.getPhraseValue())
+        || group.preusedHFPhrases.conta ns(phrase.getPhraseValue()))) {
+      // T  term w ll be appended to t  end of t  query  n t  form of a pa r.
       phrase = null;
     }
 
@@ -198,25 +198,25 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * T  rewr ten query to use t  hf_term_pa r operators.
    *
-   * @param termToVisit query node which must have been previously visited by
-   *             HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @param termToV s  query node wh ch must have been prev ously v s ed by
+   *             H ghFrequencyTermPa rExtractor and not had  s v s or data cleared.
    */
-  @Override
-  public Query visit(Term termToVisit) throws QueryParserException {
-    Term term = termToVisit;
+  @Overr de
+  publ c Query v s (Term termToV s ) throws QueryParserExcept on {
+    Term term = termToV s ;
 
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(term));
+    H ghFrequencyTermQueryGroup group = groupL st.get(group ds.get(term));
     queryPreprocess(group);
 
-    // Remove all high frequency terms from the query that do not have any annotations. This will
-    // do term de-duping within a group, which may effect scoring, but since these are high df
-    // terms, they don't have much of an impact anyways.
-    if (!hasAnnotations(term)
-        && (group.preusedHFTokens.contains(term.getValue())
-            || group.hfTokens.contains(term.getValue()))) {
-      // This term will be appended to the end of the query in the form of a pair.
+    // Remove all h gh frequency terms from t  query that do not have any annotat ons. T  w ll
+    // do term de-dup ng w h n a group, wh ch may effect scor ng, but s nce t se are h gh df
+    // terms, t y don't have much of an  mpact anyways.
+     f (!hasAnnotat ons(term)
+        && (group.preusedHFTokens.conta ns(term.getValue())
+            || group.hfTokens.conta ns(term.getValue()))) {
+      // T  term w ll be appended to t  end of t  query  n t  form of a pa r.
       term = null;
     }
 
@@ -224,135 +224,135 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * T  rewr ten query to use t  hf_term_pa r operators.
    *
-   * @param operator query node which must have been previously visited by
-   *                 HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @param operator query node wh ch must have been prev ously v s ed by
+   *                 H ghFrequencyTermPa rExtractor and not had  s v s or data cleared.
    */
-  @Override
-  public Query visit(Operator operator) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(operator));
+  @Overr de
+  publ c Query v s (Operator operator) throws QueryParserExcept on {
+    H ghFrequencyTermQueryGroup group = groupL st.get(group ds.get(operator));
     queryPreprocess(group);
 
     return queryPostprocess(operator, group);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * T  rewr ten query to use t  hf_term_pa r operators.
    *
-   * @param special query node which must have been previously visited by
-   *                HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @param spec al query node wh ch must have been prev ously v s ed by
+   *                H ghFrequencyTermPa rExtractor and not had  s v s or data cleared.
    */
-  @Override
-  public Query visit(SpecialTerm special) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(special));
+  @Overr de
+  publ c Query v s (Spec alTerm spec al) throws QueryParserExcept on {
+    H ghFrequencyTermQueryGroup group = groupL st.get(group ds.get(spec al));
     queryPreprocess(group);
 
-    return queryPostprocess(special, group);
+    return queryPostprocess(spec al, group);
   }
 
   /**
-   * Before visiting a node's children, we must process its group's distributiveToken. This way, a
-   * node only has to check its grandparent group for a distributiveToken instead of recursing all
-   * of the way up to the root of the tree.
+   * Before v s  ng a node's ch ldren,   must process  s group's d str but veToken. T  way, a
+   * node only has to c ck  s grandparent group for a d str but veToken  nstead of recurs ng all
+   * of t  way up to t  root of t  tree.
    */
-  private void queryPreprocess(HighFrequencyTermQueryGroup group) {
-    if (group.distributiveToken == null) {
-      group.distributiveToken = getAncestorDistributiveToken(group);
+  pr vate vo d queryPreprocess(H ghFrequencyTermQueryGroup group) {
+     f (group.d str but veToken == null) {
+      group.d str but veToken = getAncestorD str but veToken(group);
     }
   }
 
   /**
-   * If the query isn't the root of the group, returns the query. Otherwise, if the query's
-   * group has at most one hf term, return the query. Otherwise, returns the query with hf_term_pair
-   * operators created from the group's hf terms appended to it.
+   *  f t  query  sn't t  root of t  group, returns t  query. Ot rw se,  f t  query's
+   * group has at most one hf term, return t  query. Ot rw se, returns t  query w h hf_term_pa r
+   * operators created from t  group's hf terms appended to  .
    */
-  private Query queryPostprocess(@Nullable Query query, HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+  pr vate Query queryPostprocess(@Nullable Query query, H ghFrequencyTermQueryGroup group)
+      throws QueryParserExcept on {
 
-    group.numVisits++;
-    if (group.numMembers == group.numVisits
-        && (!group.hfTokens.isEmpty() || !group.preusedHFTokens.isEmpty()
+    group.numV s s++;
+     f (group.num mbers == group.numV s s
+        && (!group.hfTokens. sEmpty() || !group.preusedHFTokens. sEmpty()
         || group.hasPhrases())) {
 
       group.removePreusedTokens();
-      String ancestorDistributiveToken = getAncestorDistributiveToken(group);
+      Str ng ancestorD str but veToken = getAncestorD str but veToken(group);
 
-      // Need at least 2 tokens to perform a pair rewrite.  Try to get one
-      // additional token from ancestors, and if that fails, from phrases.
-      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 1
-          && ancestorDistributiveToken != null) {
-        group.preusedHFTokens.add(ancestorDistributiveToken);
+      // Need at least 2 tokens to perform a pa r rewr e.  Try to get one
+      // add  onal token from ancestors, and  f that fa ls, from phrases.
+       f ((group.hfTokens.s ze() + group.preusedHFTokens.s ze()) == 1
+          && ancestorD str but veToken != null) {
+        group.preusedHFTokens.add(ancestorD str but veToken);
       }
-      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 1) {
-        String tokenFromPhrase = group.getTokenFromPhrase();
-        if (tokenFromPhrase != null) {
+       f ((group.hfTokens.s ze() + group.preusedHFTokens.s ze()) == 1) {
+        Str ng tokenFromPhrase = group.getTokenFromPhrase();
+         f (tokenFromPhrase != null) {
           group.preusedHFTokens.add(tokenFromPhrase);
         }
       }
 
-      return appendPairs(query, group);
+      return appendPa rs(query, group);
     }
 
     return query;
   }
 
   /**
-   * Returns the distributiveToken of group's grandparent.
+   * Returns t  d str but veToken of group's grandparent.
    */
-  private String getAncestorDistributiveToken(HighFrequencyTermQueryGroup group) {
-    String ancestorDistributiveToken = null;
-    if (group.parentGroupIdx >= 0 && groupList.get(group.parentGroupIdx).parentGroupIdx >= 0) {
-      ancestorDistributiveToken =
-              groupList.get(groupList.get(group.parentGroupIdx).parentGroupIdx).distributiveToken;
+  pr vate Str ng getAncestorD str but veToken(H ghFrequencyTermQueryGroup group) {
+    Str ng ancestorD str but veToken = null;
+     f (group.parentGroup dx >= 0 && groupL st.get(group.parentGroup dx).parentGroup dx >= 0) {
+      ancestorD str but veToken =
+              groupL st.get(groupL st.get(group.parentGroup dx).parentGroup dx).d str but veToken;
     }
-    return ancestorDistributiveToken;
+    return ancestorD str but veToken;
   }
 
   /**
-   * Returns the hf_term_pair operators created using the hf terms of the group appended to query.
+   * Returns t  hf_term_pa r operators created us ng t  hf terms of t  group appended to query.
    *
-   * @param query The query which the new hf_term_pair operators will be appended to.
-   * @param group The group which this query belongs to.
-   * @return The hf_term_pair operators created using the hf terms of the group appended to query.
+   * @param query T  query wh ch t  new hf_term_pa r operators w ll be appended to.
+   * @param group T  group wh ch t  query belongs to.
+   * @return T  hf_term_pa r operators created us ng t  hf terms of t  group appended to query.
    */
-  private Query appendPairs(@Nullable Query query, HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+  pr vate Query appendPa rs(@Nullable Query query, H ghFrequencyTermQueryGroup group)
+      throws QueryParserExcept on {
 
     BooleanQuery query2 = createQueryFromGroup(group);
 
-    // If either of the queries are null, do not have to worry about combining them.
-    if (query2 == null) {
+    //  f e  r of t  quer es are null, do not have to worry about comb n ng t m.
+     f (query2 == null) {
       return query;
-    } else if (query == null) {
+    } else  f (query == null) {
       return query2;
     }
 
     Query newQuery;
 
-    if (query.isTypeOf(Query.QueryType.CONJUNCTION)
-        || query.isTypeOf(Query.QueryType.DISJUNCTION)) {
-      // Adding children in this way is safer when its query is a conjunction or disjunction
-      // ex. Other way: (+ +de -la -the) => (+ (+ +de -la -the) -[hf_term_pair la the 0.005])
-      //     This way: (+ +de -la -the) => (+ +de -la -the -[hf_term_pair la the 0.005])
-      return ((BooleanQuery.Builder) query.newBuilder()).addChildren(query2.getChildren()).build();
-    } else if (!group.isPositive) {
-      // In lucene, [+ (-term1, -term2, ...)] has non-deterministic behavior and the rewrite is not
-      // efficient from query execution perspective.  So, we will not do this rewrite if it is
-      // configured that way.
-      if (!allowNegativeOrRewrite) {
+     f (query. sTypeOf(Query.QueryType.CONJUNCT ON)
+        || query. sTypeOf(Query.QueryType.D SJUNCT ON)) {
+      // Add ng ch ldren  n t  way  s safer w n  s query  s a conjunct on or d sjunct on
+      // ex. Ot r way: (+ +de -la -t ) => (+ (+ +de -la -t ) -[hf_term_pa r la t  0.005])
+      //     T  way: (+ +de -la -t ) => (+ +de -la -t  -[hf_term_pa r la t  0.005])
+      return ((BooleanQuery.Bu lder) query.newBu lder()).addCh ldren(query2.getCh ldren()).bu ld();
+    } else  f (!group. sPos  ve) {
+      //  n lucene, [+ (-term1, -term2, ...)] has non-determ n st c behav or and t  rewr e  s not
+      // eff c ent from query execut on perspect ve.  So,   w ll not do t  rewr e  f    s
+      // conf gured that way.
+       f (!allowNegat veOrRewr e) {
         return query;
       }
 
-      // Negate both queries to combine, and the append as a conjunction, followed by negating
-      // whole query. Equivalent to appending as a disjunction.
-      newQuery = QueryNodeUtils.appendAsConjunction(
+      // Negate both quer es to comb ne, and t  append as a conjunct on, follo d by negat ng
+      // whole query. Equ valent to append ng as a d sjunct on.
+      newQuery = QueryNodeUt ls.appendAsConjunct on(
           query.negate(),
           query2.negate()
       );
       newQuery = newQuery.makeMustNot();
     } else {
-      newQuery = QueryNodeUtils.appendAsConjunction(query, query2);
+      newQuery = QueryNodeUt ls.appendAsConjunct on(query, query2);
       newQuery = newQuery.makeDefault();
     }
 
@@ -360,23 +360,23 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   }
 
   /**
-   * Creates a conjunction of term_pairs using the sets of hf terms in HighFrequencyTermQueryGroup
-   * group. If !group.isPositive, will return a disjunction of negated pairs. If there aren't enough
-   * hfTokens, will return null.
+   * Creates a conjunct on of term_pa rs us ng t  sets of hf terms  n H ghFrequencyTermQueryGroup
+   * group.  f !group. sPos  ve, w ll return a d sjunct on of negated pa rs.  f t re aren't enough
+   * hfTokens, w ll return null.
    */
-  private BooleanQuery createQueryFromGroup(HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+  pr vate BooleanQuery createQueryFromGroup(H ghFrequencyTermQueryGroup group)
+      throws QueryParserExcept on {
 
-    if (!group.hfTokens.isEmpty() || group.preusedHFTokens.size() > 1 || group.hasPhrases()) {
-      List<Query>  terms = createTermPairsForGroup(group.hfTokens,
+     f (!group.hfTokens. sEmpty() || group.preusedHFTokens.s ze() > 1 || group.hasPhrases()) {
+      L st<Query>  terms = createTermPa rsForGroup(group.hfTokens,
                                                    group.preusedHFTokens,
                                                    group.hfPhrases,
                                                    group.preusedHFPhrases);
 
-      if (group.isPositive) {
-        return new Conjunction(terms);
+       f (group. sPos  ve) {
+        return new Conjunct on(terms);
       } else {
-        return new Disjunction(Lists.transform(terms, QueryNodeUtils.NEGATE_QUERY));
+        return new D sjunct on(L sts.transform(terms, QueryNodeUt ls.NEGATE_QUERY));
       }
     }
 
@@ -384,94 +384,94 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   }
 
   /**
-   * Creates HF_TERM_PAIR terms out of hfTokens and optHFTokens. Attempts to create the minimal
-   * amount of tokens necessary. optHFToken pairs should be given a weight of 0.0 and not be scored,
-   * as they are likely already included in the query in a phrase or an annotated term.
+   * Creates HF_TERM_PA R terms out of hfTokens and optHFTokens. Attempts to create t  m n mal
+   * amount of tokens necessary. optHFToken pa rs should be g ven a   ght of 0.0 and not be scored,
+   * as t y are l kely already  ncluded  n t  query  n a phrase or an annotated term.
    * @param hfTokens
    * @param optHFTokens
-   * @return A list of hf_term_pair operators.
+   * @return A l st of hf_term_pa r operators.
    */
-  private List<Query> createTermPairsForGroup(Set<String> hfTokens,
-                                              Set<String> optHFTokens,
-                                              Set<String> hfPhrases,
-                                              Set<String> optHFPhrases) {
-    // Handle sets with only one token.
-    if (optHFTokens.size() == 1 && hfTokens.size() > 0) {
-      // (* "a not_hf" b c) => (* "a not_hf" [hf_term_pair a b 0.05] [hf_term_pair b c 0.05])
+  pr vate L st<Query> createTermPa rsForGroup(Set<Str ng> hfTokens,
+                                              Set<Str ng> optHFTokens,
+                                              Set<Str ng> hfPhrases,
+                                              Set<Str ng> optHFPhrases) {
+    // Handle sets w h only one token.
+     f (optHFTokens.s ze() == 1 && hfTokens.s ze() > 0) {
+      // (* "a not_hf" b c) => (* "a not_hf" [hf_term_pa r a b 0.05] [hf_term_pa r b c 0.05])
       // optHFTokens: [a] hfTokens: [b, c] => optHFTokens: [] hfTokens: [a, b, c]
       hfTokens.addAll(optHFTokens);
       optHFTokens.clear();
-    } else if (hfTokens.size() == 1 && optHFTokens.size() > 0) {
-      // (* "a b" not_hf c) => (* "a b" not_hf [hf_term_pair a b 0.0] [hf_term_pair a c 0.005])
+    } else  f (hfTokens.s ze() == 1 && optHFTokens.s ze() > 0) {
+      // (* "a b" not_hf c) => (* "a b" not_hf [hf_term_pa r a b 0.0] [hf_term_pa r a c 0.005])
       // optHFTokens: [a, b] hfTokens: [c] => optHFTokens: [a, b] hfTokens: [a, c]
-      String term = optHFTokens.iterator().next();
+      Str ng term = optHFTokens. erator().next();
       hfTokens.add(term);
     }
 
-    List<Query> terms = createTermPairs(hfTokens, true, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT);
-    terms.addAll(createTermPairs(optHFTokens, false, 0));
-    terms.addAll(createPhrasePairs(hfPhrases, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT));
-    terms.addAll(createPhrasePairs(optHFPhrases, 0));
+    L st<Query> terms = createTermPa rs(hfTokens, true, H ghFrequencyTermPa rs.HF_DEFAULT_WE GHT);
+    terms.addAll(createTermPa rs(optHFTokens, false, 0));
+    terms.addAll(createPhrasePa rs(hfPhrases, H ghFrequencyTermPa rs.HF_DEFAULT_WE GHT));
+    terms.addAll(createPhrasePa rs(optHFPhrases, 0));
 
     return terms;
   }
 
   /**
-   * Turns a set of hf terms into a list of hf_term_pair operators. Each term will be used at least
-   * once in as few pairs as possible.
+   * Turns a set of hf terms  nto a l st of hf_term_pa r operators. Each term w ll be used at least
+   * once  n as few pa rs as poss ble.
    * @param tokens
-   * @param createSingle If the set contains only one query, the returned list will contain a single
-   *                     Term for that query if createSingle is true, and an empty list otherwise.
-   * @param weight Each term pair will be given a score boost of serializedWeight.
+   * @param createS ngle  f t  set conta ns only one query, t  returned l st w ll conta n a s ngle
+   *                     Term for that query  f createS ngle  s true, and an empty l st ot rw se.
+   * @param   ght Each term pa r w ll be g ven a score boost of ser al zed  ght.
    * @return
    */
-  private static List<Query> createTermPairs(Set<String> tokens, boolean createSingle,
-      double weight) {
+  pr vate stat c L st<Query> createTermPa rs(Set<Str ng> tokens, boolean createS ngle,
+      double   ght) {
 
-    List<Query> terms = Lists.newArrayList();
-    if (tokens.size() >= 2) {
-      int tokensLeft = tokens.size();
-      String token1 = null;
-      for (String token2 : tokens) {
-        if (token1 == null) {
+    L st<Query> terms = L sts.newArrayL st();
+     f (tokens.s ze() >= 2) {
+       nt tokensLeft = tokens.s ze();
+      Str ng token1 = null;
+      for (Str ng token2 : tokens) {
+         f (token1 == null) {
           token1 = token2;
         } else {
-          terms.add(createHFTermPair(token1, token2, weight));
+          terms.add(createHFTermPa r(token1, token2,   ght));
 
-          if (tokensLeft > 2) { // Only reset if there is more than one token remaining.
+           f (tokensLeft > 2) { // Only reset  f t re  s more than one token rema n ng.
             token1 = null;
           }
         }
         tokensLeft--;
       }
-    } else if (createSingle && !tokens.isEmpty()) { // Only one high frequency token
-      // Need to add token as a term because it was removed from the query earlier in rewriting.
-      Term newTerm = new Term(tokens.iterator().next());
+    } else  f (createS ngle && !tokens. sEmpty()) { // Only one h gh frequency token
+      // Need to add token as a term because   was removed from t  query earl er  n rewr  ng.
+      Term newTerm = new Term(tokens. erator().next());
       terms.add(newTerm);
     }
 
     return terms;
   }
 
-  private static List<Query> createPhrasePairs(Set<String> phrases, double weight) {
-    List<Query> ops = Lists.newArrayList();
-    for (String phrase : phrases) {
-      String[] terms = phrase.split(" ");
+  pr vate stat c L st<Query> createPhrasePa rs(Set<Str ng> phrases, double   ght) {
+    L st<Query> ops = L sts.newArrayL st();
+    for (Str ng phrase : phrases) {
+      Str ng[] terms = phrase.spl (" ");
       assert terms.length == 2;
-      SearchOperator op = new SearchOperator(SearchOperator.Type.HF_PHRASE_PAIR,
-          terms[0], terms[1], Double.toString(weight));
+      SearchOperator op = new SearchOperator(SearchOperator.Type.HF_PHRASE_PA R,
+          terms[0], terms[1], Double.toStr ng(  ght));
       ops.add(op);
     }
     return ops;
   }
 
-  private static SearchOperator createHFTermPair(String token1, String token2, double weight) {
-    SearchOperator op = new SearchOperator(SearchOperator.Type.HF_TERM_PAIR,
-        token1, token2, Double.toString(weight));
+  pr vate stat c SearchOperator createHFTermPa r(Str ng token1, Str ng token2, double   ght) {
+    SearchOperator op = new SearchOperator(SearchOperator.Type.HF_TERM_PA R,
+        token1, token2, Double.toStr ng(  ght));
     return op;
   }
 
-  private static boolean hasAnnotations(com.twitter.search.queryparser.query.Query node) {
-    return node.hasAnnotations();
+  pr vate stat c boolean hasAnnotat ons(com.tw ter.search.queryparser.query.Query node) {
+    return node.hasAnnotat ons();
   }
 }

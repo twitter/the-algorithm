@@ -1,54 +1,54 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.stitch.Stitch
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.st ch.St ch
 
-object StitchUtils {
-  def trackLatency[T](latencyStat: Stat, s: => Stitch[T]): Stitch[T] = {
-    Stitch
-      .time(s)
+object St chUt ls {
+  def trackLatency[T](latencyStat: Stat, s: => St ch[T]): St ch[T] = {
+    St ch
+      .t  (s)
       .map {
-        case (res, duration) =>
-          latencyStat.add(duration.inMillis)
+        case (res, durat on) =>
+          latencyStat.add(durat on. nM ll s)
           res
       }
-      .lowerFromTry
+      .lo rFromTry
   }
 
-  def observe[T](statsReceiver: StatsReceiver, apiName: String): Stitch[T] => Stitch[T] = {
-    val stats = statsReceiver.scope(apiName)
+  def observe[T](statsRece ver: StatsRece ver, ap Na : Str ng): St ch[T] => St ch[T] = {
+    val stats = statsRece ver.scope(ap Na )
 
     val requests = stats.counter("requests")
     val success = stats.counter("success")
     val latencyStat = stats.stat("latency_ms")
 
-    val exceptionCounter =
-      new servo.util.ExceptionCounter(stats, "failures")
+    val except onCounter =
+      new servo.ut l.Except onCounter(stats, "fa lures")
 
-    stitch =>
-      trackLatency(latencyStat, stitch)
+    st ch =>
+      trackLatency(latencyStat, st ch)
         .respond {
           case Return(_) =>
-            requests.incr()
-            success.incr()
+            requests. ncr()
+            success. ncr()
 
           case Throw(e) =>
-            exceptionCounter(e)
-            requests.incr()
+            except onCounter(e)
+            requests. ncr()
         }
   }
 
-  def translateExceptions[T](
-    stitch: Stitch[T],
-    translateException: PartialFunction[Throwable, Throwable]
-  ): Stitch[T] =
-    stitch.rescue {
-      case t if translateException.isDefinedAt(t) =>
-        Stitch.exception(translateException(t))
-      case t => Stitch.exception(t)
+  def translateExcept ons[T](
+    st ch: St ch[T],
+    translateExcept on: Part alFunct on[Throwable, Throwable]
+  ): St ch[T] =
+    st ch.rescue {
+      case t  f translateExcept on. sDef nedAt(t) =>
+        St ch.except on(translateExcept on(t))
+      case t => St ch.except on(t)
     }
 }

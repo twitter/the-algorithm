@@ -1,14 +1,14 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.S ngleton
 
-object TSPClientIdModule extends TwitterModule {
-  private val clientIdFlag = flag("thrift.clientId", "topic-social-proof.prod", "Thrift client id")
+object TSPCl ent dModule extends Tw terModule {
+  pr vate val cl ent dFlag = flag("thr ft.cl ent d", "top c-soc al-proof.prod", "Thr ft cl ent  d")
 
-  @Provides
-  @Singleton
-  def providesClientId: ClientId = ClientId(clientIdFlag())
+  @Prov des
+  @S ngleton
+  def prov desCl ent d: Cl ent d = Cl ent d(cl ent dFlag())
 }

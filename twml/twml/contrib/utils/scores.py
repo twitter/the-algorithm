@@ -1,33 +1,33 @@
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-def get_pairwise_scores(tensor_input):
+def get_pa rw se_scores(tensor_ nput):
   """
-  This is so far used in pariwise learning-to-rank
+  T   s so far used  n par w se learn ng-to-rank
 
-  Arguments:
-    tensor_input: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
+  Argu nts:
+    tensor_ nput: a dense `Tensor` of shape [n_data, 1]
+      n_data  s t  number of teet cand dates
 
   Returns:
-    pairwise scores: a dense `Tensor` of shape [n_data, n_data].
+    pa rw se scores: a dense `Tensor` of shape [n_data, n_data].
   """
-  return tensor_input - tf.transpose(tensor_input)
+  return tensor_ nput - tf.transpose(tensor_ nput)
 
 
-def get_pairwise_label_scores(labels):
+def get_pa rw se_label_scores(labels):
   """
-  This is so far used in pariwise learning-to-rank
+  T   s so far used  n par w se learn ng-to-rank
   Args:
     labels: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
+      n_data  s t  number of teet cand dates
   Returns:
-    pairwise label scores: a dense `Tensor` of shape [n_data, n_data].
-      each value is within [0, 1]
+    pa rw se label scores: a dense `Tensor` of shape [n_data, n_data].
+      each value  s w h n [0, 1]
   """
-  # raw pairwise label scores/differences
-  pairwise_label_scores = get_pairwise_scores(labels)
-  # sanity check to make sure values in differences_ij are [-1, 1]
-  differences_ij = tf.maximum(tf.minimum(1.0, pairwise_label_scores), -1.0)
-  # values in pairwise_label_scores are within [0, 1] for cross entropy
-  return (1.0 / 2.0) * (1.0 + differences_ij)
+  # raw pa rw se label scores/d fferences
+  pa rw se_label_scores = get_pa rw se_scores(labels)
+  # san y c ck to make sure values  n d fferences_ j are [-1, 1]
+  d fferences_ j = tf.max mum(tf.m n mum(1.0, pa rw se_label_scores), -1.0)
+  # values  n pa rw se_label_scores are w h n [0, 1] for cross entropy
+  return (1.0 / 2.0) * (1.0 + d fferences_ j)

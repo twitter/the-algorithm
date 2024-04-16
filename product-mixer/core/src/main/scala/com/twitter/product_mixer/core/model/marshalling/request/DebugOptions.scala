@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
-trait DebugOptions {
-  // Manually override the request time which is useful for writing deterministic Feature tests,
-  // since Feature tests do not support mocking Time. For example, URT sort indexes start with a
-  // Snowflake ID based on request time if no initialSortIndex is set on the request cursor, so to
-  // write a Feature test for this scenario, we can manually set the request time to use here.
-  def requestTimeOverride: Option[Time] = None
+tra  DebugOpt ons {
+  // Manually overr de t  request t   wh ch  s useful for wr  ng determ n st c Feature tests,
+  // s nce Feature tests do not support mock ng T  . For example, URT sort  ndexes start w h a
+  // Snowflake  D based on request t    f no  n  alSort ndex  s set on t  request cursor, so to
+  // wr e a Feature test for t  scenar o,   can manually set t  request t   to use  re.
+  def requestT  Overr de: Opt on[T  ] = None
 }
 
-trait HasDebugOptions {
-  def debugOptions: Option[DebugOptions]
+tra  HasDebugOpt ons {
+  def debugOpt ons: Opt on[DebugOpt ons]
 }

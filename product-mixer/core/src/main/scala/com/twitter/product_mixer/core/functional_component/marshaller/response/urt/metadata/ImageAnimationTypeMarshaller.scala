@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageAn mat onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Bounce
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ImageAnimationTypeMarshaller @Inject() () {
+@S ngleton
+class  mageAn mat onTypeMarshaller @ nject() () {
 
-  def apply(imageAnimationType: ImageAnimationType): urt.ImageAnimationType =
-    imageAnimationType match {
-      case Bounce => urt.ImageAnimationType.Bounce
+  def apply( mageAn mat onType:  mageAn mat onType): urt. mageAn mat onType =
+     mageAn mat onType match {
+      case Bounce => urt. mageAn mat onType.Bounce
     }
 }

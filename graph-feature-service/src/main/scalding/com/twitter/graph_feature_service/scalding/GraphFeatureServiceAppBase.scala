@@ -1,85 +1,85 @@
-package com.twitter.graph_feature_service.scalding
+package com.tw ter.graph_feature_serv ce.scald ng
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.{
+  Analyt csBatchExecut on,
+  Analyt csBatchExecut onArgs,
+  BatchDescr pt on,
+  BatchF rstT  ,
+  Batch ncre nt,
+  Tw terSc duledExecut onApp
 }
-import java.util.TimeZone
+ mport java.ut l.T  Zone
 
 /**
- * Each job only needs to implement this runOnDateRange() function. It makes it easier for testing.
+ * Each job only needs to  mple nt t  runOnDateRange() funct on.   makes   eas er for test ng.
  */
-trait GraphFeatureServiceBaseJob {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+tra  GraphFeatureServ ceBaseJob {
+   mpl c  val t  Zone: T  Zone = DateOps.UTC
+   mpl c  val dateParser: DateParser = DateParser.default
 
   def runOnDateRange(
-    enableValueGraphs: Option[Boolean] = None,
-    enableKeyGraphs: Option[Boolean] = None
+    enableValueGraphs: Opt on[Boolean] = None,
+    enableKeyGraphs: Opt on[Boolean] = None
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ]
 
   /**
-   * Print customized counters in the log
+   * Pr nt custom zed counters  n t  log
    */
-  def printerCounters[T](execution: Execution[T]): Execution[Unit] = {
-    execution.getCounters
+  def pr nterCounters[T](execut on: Execut on[T]): Execut on[Un ] = {
+    execut on.getCounters
       .flatMap {
         case (_, counters) =>
           counters.toMap.toSeq
             .sortBy(e => (e._1.group, e._1.counter))
             .foreach {
               case (statKey, value) =>
-                println(s"${statKey.group}\t${statKey.counter}\t$value")
+                pr ntln(s"${statKey.group}\t${statKey.counter}\t$value")
             }
-          Execution.unit
+          Execut on.un 
       }
   }
 }
 
 /**
- * Trait that wraps things about adhoc jobs.
+ * Tra  that wraps th ngs about adhoc jobs.
  */
-trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeatureServiceBaseJob {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
-      printerCounters(runOnDateRange())
+tra  GraphFeatureServ ceAdhocBaseApp extends Tw terExecut onApp w h GraphFeatureServ ceBaseJob {
+  overr de def job: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    Execut on.getArgs.flatMap { args: Args =>
+       mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))(t  Zone, dateParser)
+      pr nterCounters(runOnDateRange())
     }
   }
 }
 
 /**
- * Trait that wraps things about scheduled jobs.
+ * Tra  that wraps th ngs about sc duled jobs.
  *
- * A new daily app only needs to declare the starting date.
+ * A new da ly app only needs to declare t  start ng date.
  */
-trait GraphFeatureServiceScheduledBaseApp
-    extends TwitterScheduledExecutionApp
-    with GraphFeatureServiceBaseJob {
+tra  GraphFeatureServ ceSc duledBaseApp
+    extends Tw terSc duledExecut onApp
+    w h GraphFeatureServ ceBaseJob {
 
-  def firstTime: RichDate // for example: RichDate("2018-02-21")
+  def f rstT  : R chDate // for example: R chDate("2018-02-21")
 
-  def batchIncrement: Duration = Days(1)
+  def batch ncre nt: Durat on = Days(1)
 
-  override def scheduledJob: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    val analyticsArgs = AnalyticsBatchExecutionArgs(
-      batchDesc = BatchDescription(getClass.getName),
-      firstTime = BatchFirstTime(firstTime),
-      batchIncrement = BatchIncrement(batchIncrement)
+  overr de def sc duledJob: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    val analyt csArgs = Analyt csBatchExecut onArgs(
+      batchDesc = BatchDescr pt on(getClass.getNa ),
+      f rstT   = BatchF rstT  (f rstT  ),
+      batch ncre nt = Batch ncre nt(batch ncre nt)
     )
 
-    AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
-      printerCounters(runOnDateRange())
+    Analyt csBatchExecut on(analyt csArgs) {  mpl c  dateRange =>
+      pr nterCounters(runOnDateRange())
     }
   }
 }

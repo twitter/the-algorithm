@@ -1,130 +1,130 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.search.Explanation;
+ mport org.apac .lucene.search.Explanat on;
 
-import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.search.common.relevance.features.MutableFeatureNormal zers;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
 /**
- * A toptweets query cache index selection scoring function that is based purely on retweet counts.
- * The goal of this scoring functon is to deprecate itweet score in entirety.
+ * A topt ets query cac   ndex select on scor ng funct on that  s based purely on ret et counts.
+ * T  goal of t  scor ng functon  s to deprecate   et score  n ent rety.
  *
- * Once all legacy itweet scores are drained from existing earlybird index, new parus score replaces
- * existing itweet score position, then this class will be deprecated, a new scoring function
- * using parus score shall replace this.
+ * Once all legacy   et scores are dra ned from ex st ng earlyb rd  ndex, new parus score replaces
+ * ex st ng   et score pos  on, t n t  class w ll be deprecated, a new scor ng funct on
+ * us ng parus score shall replace t .
  *
- * this scoring function is only used in Query Cache for marking top tweets
- * in the background. When searched, those tweets are still ranked with linear or model-based
- * scoring function.
+ * t  scor ng funct on  s only used  n Query Cac  for mark ng top t ets
+ *  n t  background. W n searc d, those t ets are st ll ranked w h l near or model-based
+ * scor ng funct on.
  *
  */
-public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
-  private static final double DEFAULT_RECENCY_SCORE_FRACTION = 0.1;
-  private static final double DEFAULT_SIGMOID_APLHA = 0.008;
-  private static final int DEFAULT_RECENCY_CENTER_MINUTES = 1080;
+publ c class Ret etBasedTopT etsScor ngFunct on extends Scor ngFunct on {
+  pr vate stat c f nal double DEFAULT_RECENCY_SCORE_FRACT ON = 0.1;
+  pr vate stat c f nal double DEFAULT_S GMO D_APLHA = 0.008;
+  pr vate stat c f nal  nt DEFAULT_RECENCY_CENTER_M NUTES = 1080;
 
-  // if you update the default cut off, make sure you update the query cache filter in
-  // querycache.yml
+  //  f   update t  default cut off, make sure   update t  query cac  f lter  n
+  // querycac .yml
   //
-  // we know currently each time slice, each partition has about 10K entries in toptweets query
-  // cache. These are unique tweets. Looking at retweet updates, each time slice, each partition has
-  // about 650K unique tweets that received retweet. To create roughly similar number of entries in
-  // query cache, we need top 2% of such tweets, and that sets to min retweet count to 4.
-  // In this linear scoring function, we will rescale retweet count to [0, 1] range,
-  // with an input range of [0, 20]. Given the realtime factor's weight of 0.1, that give our
-  // minimal retweet score threshold to: 4/20 * 0.9 = 0.18.
-  // Testing on prod showed much higher volume due to the generous setting of max value of 20,
-  // (highest we have seen is 14). Adjusted to 0.21 which gave us similar volume.
-  private static final double DEFAULT_CUT_OFF_SCORE = 0.21;
+  //   know currently each t   sl ce, each part  on has about 10K entr es  n topt ets query
+  // cac . T se are un que t ets. Look ng at ret et updates, each t   sl ce, each part  on has
+  // about 650K un que t ets that rece ved ret et. To create roughly s m lar number of entr es  n
+  // query cac ,   need top 2% of such t ets, and that sets to m n ret et count to 4.
+  //  n t  l near scor ng funct on,   w ll rescale ret et count to [0, 1] range,
+  // w h an  nput range of [0, 20]. G ven t  realt   factor's   ght of 0.1, that g ve  
+  // m n mal ret et score threshold to: 4/20 * 0.9 = 0.18.
+  // Test ng on prod sho d much h g r volu  due to t  generous sett ng of max value of 20,
+  // (h g st   have seen  s 14). Adjusted to 0.21 wh ch gave us s m lar volu .
+  pr vate stat c f nal double DEFAULT_CUT_OFF_SCORE = 0.21;
 
-  // Normalize retweet counts from [0, 20] range to [0, 1] range
-  private static final double MAX_RETWEET_COUNT = 20.0;
-  private static final double MIN_USER_REPUTATION = 40.0;  // matches itweet system threshold
-
-  /**
-   * The scores for the retweet based top tweets have to be in the [0, 1] interval. So we can't use
-   * SKIP_HIT as the lowest possible score, and instead have to use Float.MIN_VALUE.
-   *
-   * It's OK to use different values for these constants, because they do not interfere with each
-   * other. This constant is only used in RetweetBasedTopTweetsScoringFunction, which is only used
-   * to filter the hits for the [score_filter retweets minScore maxScore] operator. So the scores
-   * returned by RetweetBasedTopTweetsScoringFunction.score() do not have any impact on the final
-   * hit score.
-   *
-   * See EarlybirdLuceneQueryVisitor.visitScoredFilterOperator() and ScoreFilterQuery for more details.
-   */
-  private static final float RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE = Float.MIN_VALUE;
-
-  private final double recencyScoreFraction;
-  private final double sigmoidAlpha;
-  private final double cutOffScore;
-  private final int recencyCenterMinutes;
-  private final double maxRecency;
-
-  private final int currentTimeSeconds;
-
-  private ThriftSearchResultMetadata metadata = null;
-  private double score;
-  private double retweetCount;
-
-  public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema) {
-    this(schema, DEFAULT_RECENCY_SCORE_FRACTION,
-         DEFAULT_SIGMOID_APLHA,
-         DEFAULT_CUT_OFF_SCORE,
-         DEFAULT_RECENCY_CENTER_MINUTES);
-  }
+  // Normal ze ret et counts from [0, 20] range to [0, 1] range
+  pr vate stat c f nal double MAX_RETWEET_COUNT = 20.0;
+  pr vate stat c f nal double M N_USER_REPUTAT ON = 40.0;  // matc s   et system threshold
 
   /**
-   * Creates a no decay scoring function (used by top archive).
-   * Otherwise same as default constructor.
-   * @param nodecay  If no decay is set to true. Alpha is set to 0.0.
+   * T  scores for t  ret et based top t ets have to be  n t  [0, 1]  nterval. So   can't use
+   * SK P_H T as t  lo st poss ble score, and  nstead have to use Float.M N_VALUE.
+   *
+   *  's OK to use d fferent values for t se constants, because t y do not  nterfere w h each
+   * ot r. T  constant  s only used  n Ret etBasedTopT etsScor ngFunct on, wh ch  s only used
+   * to f lter t  h s for t  [score_f lter ret ets m nScore maxScore] operator. So t  scores
+   * returned by Ret etBasedTopT etsScor ngFunct on.score() do not have any  mpact on t  f nal
+   * h  score.
+   *
+   * See Earlyb rdLuceneQueryV s or.v s ScoredF lterOperator() and ScoreF lterQuery for more deta ls.
    */
-  public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema, boolean nodecay) {
-    this(schema, DEFAULT_RECENCY_SCORE_FRACTION,
-         nodecay ? 0.0 : DEFAULT_SIGMOID_APLHA,
+  pr vate stat c f nal float RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE = Float.M N_VALUE;
+
+  pr vate f nal double recencyScoreFract on;
+  pr vate f nal double s gmo dAlpha;
+  pr vate f nal double cutOffScore;
+  pr vate f nal  nt recencyCenterM nutes;
+  pr vate f nal double maxRecency;
+
+  pr vate f nal  nt currentT  Seconds;
+
+  pr vate Thr ftSearchResult tadata  tadata = null;
+  pr vate double score;
+  pr vate double ret etCount;
+
+  publ c Ret etBasedTopT etsScor ngFunct on( mmutableSc ma nterface sc ma) {
+    t (sc ma, DEFAULT_RECENCY_SCORE_FRACT ON,
+         DEFAULT_S GMO D_APLHA,
          DEFAULT_CUT_OFF_SCORE,
-         DEFAULT_RECENCY_CENTER_MINUTES);
+         DEFAULT_RECENCY_CENTER_M NUTES);
   }
 
-  public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema,
-                                              double recencyScoreFraction, double sigmoidAlpha,
-                                              double cutOffScore, int recencyCenterMinutes) {
-    super(schema);
-    this.recencyScoreFraction = recencyScoreFraction;
-    this.sigmoidAlpha = sigmoidAlpha;
-    this.cutOffScore = cutOffScore;
-    this.recencyCenterMinutes = recencyCenterMinutes;
-    this.maxRecency = computeSigmoid(0);
-    this.currentTimeSeconds = (int) (System.currentTimeMillis() / 1000);
+  /**
+   * Creates a no decay scor ng funct on (used by top arch ve).
+   * Ot rw se sa  as default constructor.
+   * @param nodecay   f no decay  s set to true. Alpha  s set to 0.0.
+   */
+  publ c Ret etBasedTopT etsScor ngFunct on( mmutableSc ma nterface sc ma, boolean nodecay) {
+    t (sc ma, DEFAULT_RECENCY_SCORE_FRACT ON,
+         nodecay ? 0.0 : DEFAULT_S GMO D_APLHA,
+         DEFAULT_CUT_OFF_SCORE,
+         DEFAULT_RECENCY_CENTER_M NUTES);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) throws IOException {
-    // Reset the data for each tweet!!!
-    metadata = null;
-    if (documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)
-        || (documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION)
-            < MIN_USER_REPUTATION)) {
+  publ c Ret etBasedTopT etsScor ngFunct on( mmutableSc ma nterface sc ma,
+                                              double recencyScoreFract on, double s gmo dAlpha,
+                                              double cutOffScore,  nt recencyCenterM nutes) {
+    super(sc ma);
+    t .recencyScoreFract on = recencyScoreFract on;
+    t .s gmo dAlpha = s gmo dAlpha;
+    t .cutOffScore = cutOffScore;
+    t .recencyCenterM nutes = recencyCenterM nutes;
+    t .maxRecency = computeS gmo d(0);
+    t .currentT  Seconds = ( nt) (System.currentT  M ll s() / 1000);
+  }
+
+  @Overr de
+  protected float score(float luceneQueryScore) throws  OExcept on {
+    // Reset t  data for each t et!!!
+     tadata = null;
+     f (docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_OFFENS VE_FLAG)
+        || (docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.USER_REPUTAT ON)
+            < M N_USER_REPUTAT ON)) {
       score = RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE;
     } else {
-      // Note that here we want the post log2 value, as the MAX_RETWEET_COUNT was actually
+      // Note that  re   want t  post log2 value, as t  MAX_RETWEET_COUNT was actually
       // set up for that.
-      retweetCount = MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2(
-          (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT));
-      final double recencyScore = computeTopTweetRecencyScore();
+      ret etCount = MutableFeatureNormal zers.BYTE_NORMAL ZER.unnormAndLog2(
+          (byte) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.RETWEET_COUNT));
+      f nal double recencyScore = computeTopT etRecencyScore();
 
-      score = (retweetCount / MAX_RETWEET_COUNT) * (1 - recencyScoreFraction)
-          + recencyScoreFraction * recencyScore;
+      score = (ret etCount / MAX_RETWEET_COUNT) * (1 - recencyScoreFract on)
+          + recencyScoreFract on * recencyScore;
 
-      if (score < this.cutOffScore) {
+       f (score < t .cutOffScore) {
         score = RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE;
       }
     }
@@ -132,34 +132,34 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
     return (float) score;
   }
 
-  private double computeSigmoid(double x) {
-    return 1.0f / (1.0f + Math.exp(sigmoidAlpha * (x - recencyCenterMinutes)));
+  pr vate double computeS gmo d(double x) {
+    return 1.0f / (1.0f + Math.exp(s gmo dAlpha * (x - recencyCenterM nutes)));
   }
 
-  private double computeTopTweetRecencyScore() {
-    double diffMinutes =
-        Math.max(0, currentTimeSeconds - timeMapper.getTime(getCurrentDocID())) / 60.0;
-    return computeSigmoid(diffMinutes) / maxRecency;
+  pr vate double computeTopT etRecencyScore() {
+    double d ffM nutes =
+        Math.max(0, currentT  Seconds - t  Mapper.getT  (getCurrentDoc D())) / 60.0;
+    return computeS gmo d(d ffM nutes) / maxRecency;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
+  @Overr de
+  protected Explanat on doExpla n(float luceneScore) {
     return null;
   }
 
-  @Override
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
-    if (metadata == null) {
-      metadata = new ThriftSearchResultMetadata()
-          .setResultType(ThriftSearchResultType.POPULAR)
-          .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-      metadata.setRetweetCount((int) retweetCount);
-      metadata.setScore(score);
+  @Overr de
+  publ c Thr ftSearchResult tadata getResult tadata(Thr ftSearchResult tadataOpt ons opt ons) {
+     f ( tadata == null) {
+       tadata = new Thr ftSearchResult tadata()
+          .setResultType(Thr ftSearchResultType.POPULAR)
+          .setPengu nVers on(Earlyb rdConf g.getPengu nVers onByte());
+       tadata.setRet etCount(( nt) ret etCount);
+       tadata.setScore(score);
     }
-    return metadata;
+    return  tadata;
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @Overr de
+  publ c vo d updateRelevanceStats(Thr ftSearchResultsRelevanceStats relevanceStats) {
   }
 }

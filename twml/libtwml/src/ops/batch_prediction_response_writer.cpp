@@ -1,82 +1,82 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("BatchPredictionResponseWriter")
+REG STER_OP("BatchPred ct onResponseWr er")
 .Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("values: T")
-.Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+. nput("keys:  nt64")
+. nput("values: T")
+.Output("result: u nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
   return Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that packages keys and values into a BatchPredictionResponse.
+A tensorflow OP that packages keys and values  nto a BatchPred ct onResponse.
 
-values: input feature value. (float/double)
-keys: feature ids from the original BatchPredictionRequest. (int64)
+values:  nput feature value. (float/double)
+keys: feature  ds from t  or g nal BatchPred ct onRequest. ( nt64)
 
 Outputs
-  bytes: output BatchPredictionRequest serialized using Thrift into a uint8 tensor.
+  bytes: output BatchPred ct onRequest ser al zed us ng Thr ft  nto a u nt8 tensor.
 )doc");
 
-template<typename T>
-class BatchPredictionResponseWriter : public OpKernel {
- public:
-  explicit BatchPredictionResponseWriter(OpKernelConstruction* context)
+template<typena  T>
+class BatchPred ct onResponseWr er : publ c OpKernel {
+ publ c:
+  expl c  BatchPred ct onResponseWr er(OpKernelConstruct on* context)
   : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
-    const Tensor& values = context->input(1);
+  vo d Compute(OpKernelContext* context) overr de {
+    const Tensor& keys = context-> nput(0);
+    const Tensor& values = context-> nput(1);
 
     try {
-      // Ensure the inner dimension matches.
-      if (values.dim_size(values.dims() - 1) != keys.dim_size(keys.dims() - 1)) {
-        throw std::runtime_error("The sizes of keys and values need to match");
+      // Ensure t   nner d  ns on matc s.
+       f (values.d m_s ze(values.d ms() - 1) != keys.d m_s ze(keys.d ms() - 1)) {
+        throw std::runt  _error("T  s zes of keys and values need to match");
       }
 
-      // set inputs as twml::Tensor
-      const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-      const twml::Tensor in_values_ = TFTensor_to_twml_tensor(values);
-      // no tensors in this op
-      const twml::Tensor dummy_dense_keys_;
-      const std::vector<twml::RawTensor> dummy_dense_values_;
+      // set  nputs as twml::Tensor
+      const twml::Tensor  n_keys_ = TFTensor_to_twml_tensor(keys);
+      const twml::Tensor  n_values_ = TFTensor_to_twml_tensor(values);
+      // no tensors  n t  op
+      const twml::Tensor dum _dense_keys_;
+      const std::vector<twml::RawTensor> dum _dense_values_;
 
-      // call constructor BatchPredictionResponse
-      twml::BatchPredictionResponse tempResult(
-        in_keys_, in_values_, dummy_dense_keys_, dummy_dense_values_);
+      // call constructor BatchPred ct onResponse
+      twml::BatchPred ct onResponse tempResult(
+         n_keys_,  n_values_, dum _dense_keys_, dum _dense_values_);
 
-      // determine the length of the result
-      int len = tempResult.encodedSize();
+      // determ ne t  length of t  result
+       nt len = tempResult.encodedS ze();
       TensorShape result_shape = {1, len};
 
-      // Create an output tensor, the size is determined by the content of input.
+      // Create an output tensor, t  s ze  s determ ned by t  content of  nput.
       Tensor* result = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape,
+      OP_REQU RES_OK(context, context->allocate_output(0, result_shape,
                                                        &result));
       twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
 
-      // Call writer of BatchPredictionResponse
-      tempResult.write(out_result);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // Call wr er of BatchPred ct onResponse
+      tempResult.wr e(out_result);
+    } catch(const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-#define REGISTER(Type)                     \
+#def ne REG STER(Type)                     \
                                            \
-  REGISTER_KERNEL_BUILDER(                 \
-    Name("BatchPredictionResponseWriter")  \
-    .Device(DEVICE_CPU)                    \
-    .TypeConstraint<Type>("T"),            \
-    BatchPredictionResponseWriter<Type>);  \
+  REG STER_KERNEL_BU LDER(                 \
+    Na ("BatchPred ct onResponseWr er")  \
+    .Dev ce(DEV CE_CPU)                    \
+    .TypeConstra nt<Type>("T"),            \
+    BatchPred ct onResponseWr er<Type>);  \
 
-REGISTER(float);
-REGISTER(double);
+REG STER(float);
+REG STER(double);

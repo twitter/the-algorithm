@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color.RosettaColor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Badge
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-case class ForwardPivot(
-  text: RichText,
-  landingUrl: Url,
-  displayType: ForwardPivotDisplayType,
-  iconImageVariant: Option[ImageVariant],
-  stateBadge: Option[Badge],
-  subtext: Option[RichText],
-  backgroundColorName: Option[RosettaColor],
-  engagementNudge: Option[Boolean],
-  softInterventionDisplayType: Option[SoftInterventionDisplayType])
+case class ForwardP vot(
+  text: R chText,
+  land ngUrl: Url,
+  d splayType: ForwardP votD splayType,
+   con mageVar ant: Opt on[ mageVar ant],
+  stateBadge: Opt on[Badge],
+  subtext: Opt on[R chText],
+  backgroundColorNa : Opt on[RosettaColor],
+  engage ntNudge: Opt on[Boolean],
+  soft ntervent onD splayType: Opt on[Soft ntervent onD splayType])

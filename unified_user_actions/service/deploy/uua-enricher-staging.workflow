@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-enricher-staging",
-  "config-files": [
-    "uua-enricher.aurora"
+  "role": "d scode",
+  "na ": "uua-enr c r-stag ng",
+  "conf g-f les": [
+    "uua-enr c r.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-enricher"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-enr c r"
       },
       {
         "type": "packer",
-        "name": "uua-enricher-staging",
-        "artifact": "./dist/uua-enricher.zip"
+        "na ": "uua-enr c r-stag ng",
+        "art fact": "./d st/uua-enr c r.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-enricher-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-enricher"
+          "na ": "uua-enr c r-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-enr c r"
         }
       ]
     }

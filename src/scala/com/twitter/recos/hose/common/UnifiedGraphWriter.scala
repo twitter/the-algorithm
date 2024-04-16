@@ -1,217 +1,217 @@
-package com.twitter.recos.hose.common
+package com.tw ter.recos.hose.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment
-import com.twitter.kafka.client.processor.{AtLeastOnceProcessor, ThreadSafeKafkaConsumerClient}
-import com.twitter.logging.Logger
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.{ConcurrentLinkedQueue, ExecutorService, Executors, Semaphore}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.graphjet.b part e.Left ndexedMult Seg ntB part eGraph
+ mport com.tw ter.graphjet.b part e.seg nt.Left ndexedB part eGraphSeg nt
+ mport com.tw ter.kafka.cl ent.processor.{AtLeastOnceProcessor, ThreadSafeKafkaConsu rCl ent}
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport java.ut l.concurrent.atom c.Atom cBoolean
+ mport java.ut l.concurrent.{ConcurrentL nkedQueue, ExecutorServ ce, Executors, Semaphore}
 
 /**
- * The class submits a number of graph writer threads, BufferedEdgeWriter,
- * during service startup. One of them is live writer thread, and the other $(numBootstrapWriters - 1)
- * are catchup writer threads. All of them consume kafka events from an internal concurrent queue,
- * which is populated by kafka reader threads. At bootstrap time, the kafka reader threads look
- * back kafka offset from several hours ago and populate the internal concurrent queue.
- * Each graph writer thread writes to an individual graph segment separately.
- * The (numBootstrapWriters - 1) catchup writer threads will stop once all events
- * between current system time at startup and the time in memcache are processed.
- * The live writer thread will continue to write all incoming kafka events.
- * It lives through the entire life cycle of recos graph service.
+ * T  class subm s a number of graph wr er threads, BufferedEdgeWr er,
+ * dur ng serv ce startup. One of t m  s l ve wr er thread, and t  ot r $(numBootstrapWr ers - 1)
+ * are catchup wr er threads. All of t m consu  kafka events from an  nternal concurrent queue,
+ * wh ch  s populated by kafka reader threads. At bootstrap t  , t  kafka reader threads look
+ * back kafka offset from several h s ago and populate t   nternal concurrent queue.
+ * Each graph wr er thread wr es to an  nd v dual graph seg nt separately.
+ * T  (numBootstrapWr ers - 1) catchup wr er threads w ll stop once all events
+ * bet en current system t   at startup and t  t    n  mcac  are processed.
+ * T  l ve wr er thread w ll cont nue to wr e all  ncom ng kafka events.
+ *   l ves through t  ent re l fe cycle of recos graph serv ce.
  */
-trait UnifiedGraphWriter[
-  TSegment <: LeftIndexedBipartiteGraphSegment,
-  TGraph <: LeftIndexedMultiSegmentBipartiteGraph[TSegment]] { writer =>
+tra  Un f edGraphWr er[
+  TSeg nt <: Left ndexedB part eGraphSeg nt,
+  TGraph <: Left ndexedMult Seg ntB part eGraph[TSeg nt]] { wr er =>
 
-  import UnifiedGraphWriter._
+   mport Un f edGraphWr er._
 
-  def shardId: String
-  def env: String
-  def hosename: String
-  def bufferSize: Int
-  def consumerNum: Int
-  def catchupWriterNum: Int
-  def kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage]
-  def clientId: String
-  def statsReceiver: StatsReceiver
-
-  /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
-   */
-  def addEdgeToGraph(graph: TGraph, recosHoseMessage: RecosHoseMessage): Unit
+  def shard d: Str ng
+  def env: Str ng
+  def hosena : Str ng
+  def bufferS ze:  nt
+  def consu rNum:  nt
+  def catchupWr erNum:  nt
+  def kafkaConsu rBu lder: F nagleKafkaConsu rBu lder[Str ng, RecosHose ssage]
+  def cl ent d: Str ng
+  def statsRece ver: StatsRece ver
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * Adds a RecosHose ssage to t  graph. used by l ve wr er to  nsert edges to t 
+   * current seg nt
    */
-  def addEdgeToSegment(segment: TSegment, recosHoseMessage: RecosHoseMessage): Unit
+  def addEdgeToGraph(graph: TGraph, recosHose ssage: RecosHose ssage): Un 
 
-  private val log = Logger()
-  private val isRunning: AtomicBoolean = new AtomicBoolean(true)
-  private val initialized: AtomicBoolean = new AtomicBoolean(false)
-  private var processors: Seq[AtLeastOnceProcessor[String, RecosHoseMessage]] = Seq.empty
-  private var consumers: Seq[ThreadSafeKafkaConsumerClient[String, RecosHoseMessage]] = Seq.empty
-  private val threadPool: ExecutorService = Executors.newCachedThreadPool()
+  /**
+   * Adds a RecosHose ssage to t  g ven seg nt  n t  graph. Used by catch up wr ers to
+   *  nsert edges to non-current (old) seg nts
+   */
+  def addEdgeToSeg nt(seg nt: TSeg nt, recosHose ssage: RecosHose ssage): Un 
 
-  def shutdown(): Unit = {
+  pr vate val log = Logger()
+  pr vate val  sRunn ng: Atom cBoolean = new Atom cBoolean(true)
+  pr vate val  n  al zed: Atom cBoolean = new Atom cBoolean(false)
+  pr vate var processors: Seq[AtLeastOnceProcessor[Str ng, RecosHose ssage]] = Seq.empty
+  pr vate var consu rs: Seq[ThreadSafeKafkaConsu rCl ent[Str ng, RecosHose ssage]] = Seq.empty
+  pr vate val threadPool: ExecutorServ ce = Executors.newCac dThreadPool()
+
+  def shutdown(): Un  = {
     processors.foreach { processor =>
       processor.close()
     }
     processors = Seq.empty
-    consumers.foreach { consumer =>
-      consumer.close()
+    consu rs.foreach { consu r =>
+      consu r.close()
     }
-    consumers = Seq.empty
+    consu rs = Seq.empty
     threadPool.shutdown()
-    isRunning.set(false)
+     sRunn ng.set(false)
   }
 
-  def initHose(liveGraph: TGraph): Unit = this.synchronized {
-    if (!initialized.get) {
-      initialized.set(true)
+  def  n Hose(l veGraph: TGraph): Un  = t .synchron zed {
+     f (! n  al zed.get) {
+       n  al zed.set(true)
 
-      val queue: java.util.Queue[Array[RecosHoseMessage]] =
-        new ConcurrentLinkedQueue[Array[RecosHoseMessage]]()
-      val queuelimit: Semaphore = new Semaphore(1024)
+      val queue: java.ut l.Queue[Array[RecosHose ssage]] =
+        new ConcurrentL nkedQueue[Array[RecosHose ssage]]()
+      val queuel m : Semaphore = new Semaphore(1024)
 
-      initRecosHoseKafka(queue, queuelimit)
-      initGrpahWriters(liveGraph, queue, queuelimit)
+       n RecosHoseKafka(queue, queuel m )
+       n GrpahWr ers(l veGraph, queue, queuel m )
     } else {
-      throw new RuntimeException("attempt to re-init kafka hose")
+      throw new Runt  Except on("attempt to re- n  kafka hose")
     }
   }
 
-  private def initRecosHoseKafka(
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
-  ): Unit = {
+  pr vate def  n RecosHoseKafka(
+    queue: java.ut l.Queue[Array[RecosHose ssage]],
+    queuel m : Semaphore,
+  ): Un  = {
     try {
-      consumers = (0 until consumerNum).map { index =>
-        new ThreadSafeKafkaConsumerClient(
-          kafkaConsumerBuilder.clientId(s"clientId-$index").enableAutoCommit(false).config)
+      consu rs = (0 unt l consu rNum).map {  ndex =>
+        new ThreadSafeKafkaConsu rCl ent(
+          kafkaConsu rBu lder.cl ent d(s"cl ent d-$ ndex").enableAutoComm (false).conf g)
       }
-      processors = consumers.zipWithIndex.map {
-        case (consumer, index) =>
-          val bufferedWriter = BufferedEdgeCollector(bufferSize, queue, queuelimit, statsReceiver)
-          val processor = RecosEdgeProcessor(bufferedWriter)(statsReceiver)
+      processors = consu rs.z pW h ndex.map {
+        case (consu r,  ndex) =>
+          val bufferedWr er = BufferedEdgeCollector(bufferS ze, queue, queuel m , statsRece ver)
+          val processor = RecosEdgeProcessor(bufferedWr er)(statsRece ver)
 
-          AtLeastOnceProcessor[String, RecosHoseMessage](
-            s"recos-injector-kafka-$index",
-            hosename,
-            consumer,
+          AtLeastOnceProcessor[Str ng, RecosHose ssage](
+            s"recos- njector-kafka-$ ndex",
+            hosena ,
+            consu r,
             processor.process,
-            maxPendingRequests = MaxPendingRequests * bufferSize,
+            maxPend ngRequests = MaxPend ngRequests * bufferS ze,
             workerThreads = ProcessorThreads,
-            commitIntervalMs = CommitIntervalMs,
-            statsReceiver = statsReceiver
+            comm  ntervalMs = Comm  ntervalMs,
+            statsRece ver = statsRece ver
           )
       }
 
-      log.info(s"starting ${processors.size} recosKafka processors")
+      log. nfo(s"start ng ${processors.s ze} recosKafka processors")
       processors.foreach { processor =>
         processor.start()
       }
     } catch {
       case e: Throwable =>
-        e.printStackTrace()
-        log.error(e, e.toString)
+        e.pr ntStackTrace()
+        log.error(e, e.toStr ng)
         processors.foreach { processor =>
           processor.close()
         }
         processors = Seq.empty
-        consumers.foreach { consumer =>
-          consumer.close()
+        consu rs.foreach { consu r =>
+          consu r.close()
         }
-        consumers = Seq.empty
+        consu rs = Seq.empty
     }
   }
 
   /**
-   * Initialize the graph writers,
-   * by first creating catch up writers to bootstrap the older segments,
-   * and then assigning a live writer to populate the live segment.
+   *  n  al ze t  graph wr ers,
+   * by f rst creat ng catch up wr ers to bootstrap t  older seg nts,
+   * and t n ass gn ng a l ve wr er to populate t  l ve seg nt.
    */
-  private def initGrpahWriters(
-    liveGraph: TGraph,
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore
-  ): Unit = {
-    // define a number of (numBootstrapWriters - 1) catchup writer threads, each of which will write
-    // to a separate graph segment.
-    val catchupWriters = (0 until (catchupWriterNum - 1)).map { index =>
-      val segment = liveGraph.getLiveSegment
-      liveGraph.rollForwardSegment()
-      getCatchupWriter(segment, queue, queuelimit, index)
+  pr vate def  n GrpahWr ers(
+    l veGraph: TGraph,
+    queue: java.ut l.Queue[Array[RecosHose ssage]],
+    queuel m : Semaphore
+  ): Un  = {
+    // def ne a number of (numBootstrapWr ers - 1) catchup wr er threads, each of wh ch w ll wr e
+    // to a separate graph seg nt.
+    val catchupWr ers = (0 unt l (catchupWr erNum - 1)).map {  ndex =>
+      val seg nt = l veGraph.getL veSeg nt
+      l veGraph.rollForwardSeg nt()
+      getCatchupWr er(seg nt, queue, queuel m ,  ndex)
     }
-    val threadPool: ExecutorService = Executors.newCachedThreadPool()
+    val threadPool: ExecutorServ ce = Executors.newCac dThreadPool()
 
-    // define one live writer thread
-    val liveWriter = getLiveWriter(liveGraph, queue, queuelimit)
-    log.info("starting live graph writer that runs until service shutdown")
-    threadPool.submit(liveWriter)
-    log.info(
-      "starting catchup graph writer, which will terminate as soon as the catchup segment is full"
+    // def ne one l ve wr er thread
+    val l veWr er = getL veWr er(l veGraph, queue, queuel m )
+    log. nfo("start ng l ve graph wr er that runs unt l serv ce shutdown")
+    threadPool.subm (l veWr er)
+    log. nfo(
+      "start ng catchup graph wr er, wh ch w ll term nate as soon as t  catchup seg nt  s full"
     )
-    catchupWriters.map(threadPool.submit(_))
+    catchupWr ers.map(threadPool.subm (_))
   }
 
-  private def getLiveWriter(
-    liveGraph: TGraph,
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore
-  ): BufferedEdgeWriter = {
-    val liveEdgeCollector = new EdgeCollector {
-      override def addEdge(message: RecosHoseMessage): Unit = addEdgeToGraph(liveGraph, message)
+  pr vate def getL veWr er(
+    l veGraph: TGraph,
+    queue: java.ut l.Queue[Array[RecosHose ssage]],
+    queuel m : Semaphore
+  ): BufferedEdgeWr er = {
+    val l veEdgeCollector = new EdgeCollector {
+      overr de def addEdge( ssage: RecosHose ssage): Un  = addEdgeToGraph(l veGraph,  ssage)
     }
-    BufferedEdgeWriter(
+    BufferedEdgeWr er(
       queue,
-      queuelimit,
-      liveEdgeCollector,
-      statsReceiver.scope("liveWriter"),
-      isRunning.get
+      queuel m ,
+      l veEdgeCollector,
+      statsRece ver.scope("l veWr er"),
+       sRunn ng.get
     )
   }
 
-  private def getCatchupWriter(
-    segment: TSegment,
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
-    catchupWriterIndex: Int
-  ): BufferedEdgeWriter = {
+  pr vate def getCatchupWr er(
+    seg nt: TSeg nt,
+    queue: java.ut l.Queue[Array[RecosHose ssage]],
+    queuel m : Semaphore,
+    catchupWr er ndex:  nt
+  ): BufferedEdgeWr er = {
     val catchupEdgeCollector = new EdgeCollector {
       var currentNumEdges = 0
 
-      override def addEdge(message: RecosHoseMessage): Unit = {
+      overr de def addEdge( ssage: RecosHose ssage): Un  = {
         currentNumEdges += 1
-        addEdgeToSegment(segment, message)
+        addEdgeToSeg nt(seg nt,  ssage)
       }
     }
-    val maxEdges = segment.getMaxNumEdges
+    val maxEdges = seg nt.getMaxNumEdges
 
-    def runCondition(): Boolean = {
-      isRunning.get && ((maxEdges - catchupEdgeCollector.currentNumEdges) > bufferSize)
+    def runCond  on(): Boolean = {
+       sRunn ng.get && ((maxEdges - catchupEdgeCollector.currentNumEdges) > bufferS ze)
     }
 
-    BufferedEdgeWriter(
+    BufferedEdgeWr er(
       queue,
-      queuelimit,
+      queuel m ,
       catchupEdgeCollector,
-      statsReceiver.scope("catcher_" + catchupWriterIndex),
-      runCondition
+      statsRece ver.scope("catc r_" + catchupWr er ndex),
+      runCond  on
     )
   }
 }
 
-private object UnifiedGraphWriter {
+pr vate object Un f edGraphWr er {
 
-  // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
+  // T  RecosEdgeProcessor  s not thread-safe. Only use one thread to process each  nstance.
   val ProcessorThreads = 1
-  // Each one cache at most 1000 * bufferSize requests.
-  val MaxPendingRequests = 1000
-  // Short Commit MS to reduce duplicate messages.
-  val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
+  // Each one cac  at most 1000 * bufferS ze requests.
+  val MaxPend ngRequests = 1000
+  // Short Comm  MS to reduce dupl cate  ssages.
+  val Comm  ntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
 }

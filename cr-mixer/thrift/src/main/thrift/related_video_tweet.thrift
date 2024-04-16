@@ -1,23 +1,23 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-include "product.thrift"
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+ nclude "product.thr ft"
+ nclude "com/tw ter/product_m xer/core/cl ent_context.thr ft"
+ nclude "com/tw ter/s mclusters_v2/ dent f er.thr ft"
 
-struct RelatedVideoTweetRequest {
-  1: required identifier.InternalId internalId
-	2: required product.Product product
-	3: required client_context.ClientContext clientContext # RUX LogOut will have clientContext.userId = None
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct RelatedV deoT etRequest {
+  1: requ red  dent f er. nternal d  nternal d
+	2: requ red product.Product product
+	3: requ red cl ent_context.Cl entContext cl entContext # RUX LogOut w ll have cl entContext.user d = None
+	4: opt onal l st< 64> excludedT et ds (personalDataType = 'T et d')
+} (pers sted='true', hasPersonalData='true')
 
-struct RelatedVideoTweet {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: optional double score
-} (persisted='true', hasPersonalData='true')
+struct RelatedV deoT et {
+  1: requ red  64 t et d (personalDataType = 'T et d')
+  2: opt onal double score
+} (pers sted='true', hasPersonalData='true')
 
-struct RelatedVideoTweetResponse {
-  1: required list<RelatedVideoTweet> tweets
-} (persisted='true')
+struct RelatedV deoT etResponse {
+  1: requ red l st<RelatedV deoT et> t ets
+} (pers sted='true')

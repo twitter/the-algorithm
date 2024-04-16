@@ -1,6 +1,6 @@
-package com.twitter.visibility.util
+package com.tw ter.v s b l y.ut l
 
-object NamingUtils {
-  def getFriendlyName(a: Any): String = getFriendlyNameFromClass(a.getClass)
-  def getFriendlyNameFromClass(a: Class[_]): String = a.getSimpleName.stripSuffix("$")
+object Nam ngUt ls {
+  def getFr endlyNa (a: Any): Str ng = getFr endlyNa FromClass(a.getClass)
+  def getFr endlyNa FromClass(a: Class[_]): Str ng = a.getS mpleNa .str pSuff x("$")
 }

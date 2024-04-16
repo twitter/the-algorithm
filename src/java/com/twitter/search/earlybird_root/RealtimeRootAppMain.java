@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.Arrays;
-import java.util.Collection;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect on;
 
-import com.google.inject.Module;
+ mport com.google. nject.Module;
 
-import com.twitter.search.common.root.SearchRootAppMain;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+ mport com.tw ter.search.common.root.SearchRootAppMa n;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
 
-public class RealtimeRootAppMain extends SearchRootAppMain<RealtimeRootServer> {
+publ c class Realt  RootAppMa n extends SearchRootAppMa n<Realt  RootServer> {
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * Bo lerplate for t  Java-fr endly AbstractTw terServer
    */
-  public static class Main {
-    public static void main(String[] args) {
-      new RealtimeRootAppMain().main(args);
+  publ c stat c class Ma n {
+    publ c stat c vo d ma n(Str ng[] args) {
+      new Realt  RootAppMa n().ma n(args);
     }
   }
 
-  @Override
-  protected Collection<? extends Module> getAdditionalModules() {
-    return Arrays.asList(
-        new EarlybirdCommonModule(),
-        new EarlybirdCacheCommonModule(),
-        new RealtimeRootAppModule(),
-        new RealtimeScatterGatherModule());
+  @Overr de
+  protected Collect on<? extends Module> getAdd  onalModules() {
+    return Arrays.asL st(
+        new Earlyb rdCommonModule(),
+        new Earlyb rdCac CommonModule(),
+        new Realt  RootAppModule(),
+        new Realt  ScatterGat rModule());
   }
 
-  @Override
-  protected Class<RealtimeRootServer> getSearchRootServerClass() {
-    return RealtimeRootServer.class;
+  @Overr de
+  protected Class<Realt  RootServer> getSearchRootServerClass() {
+    return Realt  RootServer.class;
   }
 
-  @Override
-  protected Class<?> getServiceIfaceClass() {
-    return EarlybirdService.ServiceIface.class;
+  @Overr de
+  protected Class<?> getServ ce faceClass() {
+    return Earlyb rdServ ce.Serv ce face.class;
   }
 }

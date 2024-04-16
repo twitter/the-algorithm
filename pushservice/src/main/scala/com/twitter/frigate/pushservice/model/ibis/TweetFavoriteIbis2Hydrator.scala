@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetFavoriteCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etFavor eCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.ut l.Future
 
-trait TweetFavoriteCandidateIbis2Hydrator
-    extends TweetCandidateIbis2Hydrator
-    with RankedSocialContextIbis2Hydrator {
-  self: PushCandidate with TweetFavoriteCandidate with TweetAuthorDetails =>
+tra  T etFavor eCand date b s2Hydrator
+    extends T etCand date b s2Hydrator
+    w h RankedSoc alContext b s2Hydrator {
+  self: PushCand date w h T etFavor eCand date w h T etAuthorDeta ls =>
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
+  overr de lazy val t etModelValues: Future[Map[Str ng, Str ng]] =
     for {
-      socialContextModelValues <- socialContextModelValues
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ mediaModelValue ++ otherModelValues ++ socialContextModelValues ++ tweetInlineModelValues
+      soc alContextModelValues <- soc alContextModelValues
+      superModelValues <- super.t etModelValues
+      t et nl neModelValues <- t et nl neAct onModelValue
+    } y eld {
+      superModelValues ++  d aModelValue ++ ot rModelValues ++ soc alContextModelValues ++ t et nl neModelValues
     }
 }

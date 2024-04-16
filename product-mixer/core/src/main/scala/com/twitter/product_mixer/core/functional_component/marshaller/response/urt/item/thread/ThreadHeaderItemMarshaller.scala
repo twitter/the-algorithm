@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.thread
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread.ThreadHeaderItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.thread.Thread ader em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ThreadHeaderItemMarshaller @Inject() (
-  threadHeaderContentMarshaller: ThreadHeaderContentMarshaller) {
+@S ngleton
+class Thread ader emMarshaller @ nject() (
+  thread aderContentMarshaller: Thread aderContentMarshaller) {
 
-  def apply(threadHeaderItem: ThreadHeaderItem): urt.TimelineItemContent.ThreadHeader =
-    urt.TimelineItemContent.ThreadHeader(
-      urt.ThreadHeaderItem(
-        content = threadHeaderContentMarshaller(threadHeaderItem.content)
+  def apply(thread ader em: Thread ader em): urt.T  l ne emContent.Thread ader =
+    urt.T  l ne emContent.Thread ader(
+      urt.Thread ader em(
+        content = thread aderContentMarshaller(thread ader em.content)
       )
     )
 }

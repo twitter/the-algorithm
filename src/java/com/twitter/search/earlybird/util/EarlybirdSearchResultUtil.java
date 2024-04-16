@@ -1,182 +1,182 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.collect. mmutableMap;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultsRelevanceStatsUtil;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultDebugInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common.query.thr ftjava.EarlyTerm nat on nfo;
+ mport com.tw ter.search.common.ut l.earlyb rd.ResultsUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Thr ftSearchResultUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Thr ftSearchResultsRelevanceStatsUt l;
+ mport com.tw ter.search.core.earlyb rd.facets.Language togram;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.search.H ;
+ mport com.tw ter.search.earlyb rd.search.SearchResults nfo;
+ mport com.tw ter.search.earlyb rd.search.S mpleSearchResults;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultDebug nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
-// EarlybirdSearchResultUtil contains some simple static methods for constructing
-// ThriftSearchResult objects.
-public final class EarlybirdSearchResultUtil {
-  public static final double MIN_LANGUAGE_RATIO_TO_KEEP = 0.002;
+// Earlyb rdSearchResultUt l conta ns so  s mple stat c  thods for construct ng
+// Thr ftSearchResult objects.
+publ c f nal class Earlyb rdSearchResultUt l {
+  publ c stat c f nal double M N_LANGUAGE_RAT O_TO_KEEP = 0.002;
 
-  private EarlybirdSearchResultUtil() { }
+  pr vate Earlyb rdSearchResultUt l() { }
 
   /**
-   * Update result stats on the ThriftSearchResult.
+   * Update result stats on t  Thr ftSearchResult.
    */
-  public static void setResultStatistics(ThriftSearchResults results, SearchResultsInfo info) {
-    results.setNumHitsProcessed(info.getNumHitsProcessed());
-    results.setNumPartitionsEarlyTerminated(info.isEarlyTerminated() ? 1 : 0);
-    if (info.isSetSearchedStatusIDs()) {
-      results.setMaxSearchedStatusID(info.getMaxSearchedStatusID());
-      results.setMinSearchedStatusID(info.getMinSearchedStatusID());
+  publ c stat c vo d setResultStat st cs(Thr ftSearchResults results, SearchResults nfo  nfo) {
+    results.setNumH sProcessed( nfo.getNumH sProcessed());
+    results.setNumPart  onsEarlyTerm nated( nfo. sEarlyTerm nated() ? 1 : 0);
+     f ( nfo. sSetSearc dStatus Ds()) {
+      results.setMaxSearc dStatus D( nfo.getMaxSearc dStatus D());
+      results.setM nSearc dStatus D( nfo.getM nSearc dStatus D());
     }
 
-    if (info.isSetSearchedTimes()) {
-      results.setMaxSearchedTimeSinceEpoch(info.getMaxSearchedTime());
-      results.setMinSearchedTimeSinceEpoch(info.getMinSearchedTime());
+     f ( nfo. sSetSearc dT  s()) {
+      results.setMaxSearc dT  S nceEpoch( nfo.getMaxSearc dT  ());
+      results.setM nSearc dT  S nceEpoch( nfo.getM nSearc dT  ());
     }
   }
 
   /**
-   * Create an EarlyTerminationInfo based on information inside a SearchResultsInfo.
+   * Create an EarlyTerm nat on nfo based on  nformat on  ns de a SearchResults nfo.
    */
-  public static EarlyTerminationInfo prepareEarlyTerminationInfo(SearchResultsInfo info) {
-    EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(info.isEarlyTerminated());
-    if (info.isEarlyTerminated()) {
-      earlyTerminationInfo.setEarlyTerminationReason(info.getEarlyTerminationReason());
+  publ c stat c EarlyTerm nat on nfo prepareEarlyTerm nat on nfo(SearchResults nfo  nfo) {
+    EarlyTerm nat on nfo earlyTerm nat on nfo = new EarlyTerm nat on nfo( nfo. sEarlyTerm nated());
+     f ( nfo. sEarlyTerm nated()) {
+      earlyTerm nat on nfo.setEarlyTerm nat onReason( nfo.getEarlyTerm nat onReason());
     }
-    return earlyTerminationInfo;
+    return earlyTerm nat on nfo;
   }
 
   /**
-   * Populate language histogram inside ThriftSerachResults.
+   * Populate language  togram  ns de Thr ftSerachResults.
    */
-  public static void setLanguageHistogram(ThriftSearchResults results,
-                                          LanguageHistogram languageHistogram) {
-    int sum = 0;
-    for (int value : languageHistogram.getLanguageHistogram()) {
+  publ c stat c vo d setLanguage togram(Thr ftSearchResults results,
+                                          Language togram language togram) {
+     nt sum = 0;
+    for ( nt value : language togram.getLanguage togram()) {
       sum += value;
     }
-    if (sum == 0) {
+     f (sum == 0) {
       return;
     }
-    ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
-    int threshold = (int) (sum * MIN_LANGUAGE_RATIO_TO_KEEP);
-    for (Map.Entry<ThriftLanguage, Integer> entry : languageHistogram.getLanguageHistogramAsMap()
+     mmutableMap.Bu lder<Thr ftLanguage,  nteger> bu lder =  mmutableMap.bu lder();
+     nt threshold = ( nt) (sum * M N_LANGUAGE_RAT O_TO_KEEP);
+    for (Map.Entry<Thr ftLanguage,  nteger> entry : language togram.getLanguage togramAsMap()
                                                                      .entrySet()) {
-      if (entry.getValue() > threshold) {
-        builder.put(entry.getKey(), entry.getValue());
+       f (entry.getValue() > threshold) {
+        bu lder.put(entry.getKey(), entry.getValue());
       }
     }
-    Map<ThriftLanguage, Integer> langCounts = builder.build();
-    if (langCounts.size() > 0) {
-      results.setLanguageHistogram(langCounts);
+    Map<Thr ftLanguage,  nteger> langCounts = bu lder.bu ld();
+     f (langCounts.s ze() > 0) {
+      results.setLanguage togram(langCounts);
     }
   }
 
-  private static void addDebugInfoToResults(List<ThriftSearchResult> resultArray,
-                                            @Nullable PartitionConfig partitionConfig) {
-    if (partitionConfig == null) {
+  pr vate stat c vo d addDebug nfoToResults(L st<Thr ftSearchResult> resultArray,
+                                            @Nullable Part  onConf g part  onConf g) {
+     f (part  onConf g == null) {
       return;
     }
-    ThriftSearchResultDebugInfo debugInfo = new ThriftSearchResultDebugInfo();
-    debugInfo.setHostname(DatabaseConfig.getLocalHostname());
-    // These info can also come from EarlybirdServer.get().getPartitionConfig() if we add such a
-    // getter for partitionConfig().
-    debugInfo.setPartitionId(partitionConfig.getIndexingHashPartitionID());
-    debugInfo.setTiername(partitionConfig.getTierName());
-    debugInfo.setClusterName(partitionConfig.getClusterName());
+    Thr ftSearchResultDebug nfo debug nfo = new Thr ftSearchResultDebug nfo();
+    debug nfo.setHostna (DatabaseConf g.getLocalHostna ());
+    // T se  nfo can also co  from Earlyb rdServer.get().getPart  onConf g()  f   add such a
+    // getter for part  onConf g().
+    debug nfo.setPart  on d(part  onConf g.get ndex ngHashPart  on D());
+    debug nfo.setT erna (part  onConf g.getT erNa ());
+    debug nfo.setClusterNa (part  onConf g.getClusterNa ());
 
-    for (ThriftSearchResult result : resultArray) {
-      result.setDebugInfo(debugInfo);
+    for (Thr ftSearchResult result : resultArray) {
+      result.setDebug nfo(debug nfo);
     }
   }
 
   /**
-   * Write results into the result array.
-   * @param resultArray the result array to write into.
-   * @param hits the hits from the search.
-   * @param partitionConfig partition config used to fill in debug info. Pass in null if no debug
-   * info should be written into results.
+   * Wr e results  nto t  result array.
+   * @param resultArray t  result array to wr e  nto.
+   * @param h s t  h s from t  search.
+   * @param part  onConf g part  on conf g used to f ll  n debug  nfo. Pass  n null  f no debug
+   *  nfo should be wr ten  nto results.
    */
-  public static void prepareResultsArray(List<ThriftSearchResult> resultArray,
-                                         SimpleSearchResults hits,
-                                         @Nullable PartitionConfig partitionConfig) {
-    for (int i = 0; i < hits.numHits(); i++) {
-      final Hit hit = hits.getHit(i);
-      final long id = hit.getStatusID();
-      final ThriftSearchResult result = new ThriftSearchResult(id);
-      final ThriftSearchResultMetadata resultMetadata = hit.getMetadata();
-      result.setMetadata(resultMetadata);
+  publ c stat c vo d prepareResultsArray(L st<Thr ftSearchResult> resultArray,
+                                         S mpleSearchResults h s,
+                                         @Nullable Part  onConf g part  onConf g) {
+    for ( nt   = 0;   < h s.numH s();  ++) {
+      f nal H  h  = h s.getH ( );
+      f nal long  d = h .getStatus D();
+      f nal Thr ftSearchResult result = new Thr ftSearchResult( d);
+      f nal Thr ftSearchResult tadata result tadata = h .get tadata();
+      result.set tadata(result tadata);
       resultArray.add(result);
     }
-    addDebugInfoToResults(resultArray, partitionConfig);
+    addDebug nfoToResults(resultArray, part  onConf g);
   }
 
   /**
-   * Write results into the result array.
-   * @param resultArray the result array to write into.
-   * @param hits the hits from the search.
-   * @param userIDWhitelist Used to set flag ThriftSearchResultMetadata.dontFilterUser.
-   * @param partitionConfig partition config used to fill in debug info. Pass in null if no debug
-   * info should be written into results.
+   * Wr e results  nto t  result array.
+   * @param resultArray t  result array to wr e  nto.
+   * @param h s t  h s from t  search.
+   * @param user DWh el st Used to set flag Thr ftSearchResult tadata.dontF lterUser.
+   * @param part  onConf g part  on conf g used to f ll  n debug  nfo. Pass  n null  f no debug
+   *  nfo should be wr ten  nto results.
    */
-  public static void prepareRelevanceResultsArray(List<ThriftSearchResult> resultArray,
-                                                  RelevanceSearchResults hits,
-                                                  Set<Long> userIDWhitelist,
-                                                  @Nullable PartitionConfig partitionConfig) {
-    for (int i = 0; i < hits.numHits(); i++) {
-      final long id = hits.getHit(i).getStatusID();
-      final ThriftSearchResult result = new ThriftSearchResult(id);
-      final ThriftSearchResultMetadata resultMetadata = hits.resultMetadata[i];
-      result.setMetadata(resultMetadata);
-      if (userIDWhitelist != null) {
-        resultMetadata.setDontFilterUser(userIDWhitelist.contains(resultMetadata.getFromUserId()));
+  publ c stat c vo d prepareRelevanceResultsArray(L st<Thr ftSearchResult> resultArray,
+                                                  RelevanceSearchResults h s,
+                                                  Set<Long> user DWh el st,
+                                                  @Nullable Part  onConf g part  onConf g) {
+    for ( nt   = 0;   < h s.numH s();  ++) {
+      f nal long  d = h s.getH ( ).getStatus D();
+      f nal Thr ftSearchResult result = new Thr ftSearchResult( d);
+      f nal Thr ftSearchResult tadata result tadata = h s.result tadata[ ];
+      result.set tadata(result tadata);
+       f (user DWh el st != null) {
+        result tadata.setDontF lterUser(user DWh el st.conta ns(result tadata.getFromUser d()));
       }
 
       resultArray.add(result);
     }
-    addDebugInfoToResults(resultArray, partitionConfig);
+    addDebug nfoToResults(resultArray, part  onConf g);
   }
 
   /**
-   * Merge a List of ThriftSearchResults into a single ThriftSearchResults object.
+   *  rge a L st of Thr ftSearchResults  nto a s ngle Thr ftSearchResults object.
    */
-  public static ThriftSearchResults mergeSearchResults(List<ThriftSearchResults> allSearchResults) {
-    ThriftSearchResults mergedResults = new ThriftSearchResults();
-    mergedResults.setRelevanceStats(new ThriftSearchResultsRelevanceStats());
+  publ c stat c Thr ftSearchResults  rgeSearchResults(L st<Thr ftSearchResults> allSearchResults) {
+    Thr ftSearchResults  rgedResults = new Thr ftSearchResults();
+     rgedResults.setRelevanceStats(new Thr ftSearchResultsRelevanceStats());
 
-    mergedResults.setHitCounts(ResultsUtil.aggregateCountMap(allSearchResults,
-        ThriftSearchResultUtil.HIT_COUNTS_MAP_GETTER));
+     rgedResults.setH Counts(ResultsUt l.aggregateCountMap(allSearchResults,
+        Thr ftSearchResultUt l.H T_COUNTS_MAP_GETTER));
 
-    mergedResults.setLanguageHistogram(ResultsUtil.aggregateCountMap(allSearchResults,
-        ThriftSearchResultUtil.LANG_MAP_GETTER));
+     rgedResults.setLanguage togram(ResultsUt l.aggregateCountMap(allSearchResults,
+        Thr ftSearchResultUt l.LANG_MAP_GETTER));
 
-    for (ThriftSearchResults searchResults : allSearchResults) {
+    for (Thr ftSearchResults searchResults : allSearchResults) {
       // Add results
-      mergedResults.getResults().addAll(searchResults.getResults());
+       rgedResults.getResults().addAll(searchResults.getResults());
       // Update counts
-      ThriftSearchResultUtil.incrementCounts(mergedResults, searchResults);
+      Thr ftSearchResultUt l. ncre ntCounts( rgedResults, searchResults);
       // Update relevance stats
-      if (searchResults.getRelevanceStats() != null) {
-        ThriftSearchResultsRelevanceStatsUtil.addRelevanceStats(mergedResults.getRelevanceStats(),
+       f (searchResults.getRelevanceStats() != null) {
+        Thr ftSearchResultsRelevanceStatsUt l.addRelevanceStats( rgedResults.getRelevanceStats(),
             searchResults.getRelevanceStats());
       }
     }
 
-    return mergedResults;
+    return  rgedResults;
   }
 }

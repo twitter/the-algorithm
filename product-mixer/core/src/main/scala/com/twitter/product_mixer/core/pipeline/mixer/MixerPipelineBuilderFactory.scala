@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+package com.tw ter.product_m xer.core.p pel ne.m xer
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.serv ce.cand date_p pel ne_executor.Cand dateP pel neExecutor
+ mport com.tw ter.product_m xer.core.serv ce.doma n_marshaller_executor.Doma nMarshallerExecutor
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutor
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_result_s de_effect_executor.P pel neResultS deEffectExecutor
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutor
+ mport com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor.TransportMarshallerExecutor
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MixerPipelineBuilderFactory @Inject() (
-  candidatePipelineExecutor: CandidatePipelineExecutor,
+@S ngleton
+class M xerP pel neBu lderFactory @ nject() (
+  cand dateP pel neExecutor: Cand dateP pel neExecutor,
   gateExecutor: GateExecutor,
   selectorExecutor: SelectorExecutor,
   queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
   asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
+  doma nMarshallerExecutor: Doma nMarshallerExecutor,
   transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  statsReceiver: StatsReceiver) {
+  p pel neResultS deEffectExecutor: P pel neResultS deEffectExecutor,
+  cand dateP pel neBu lderFactory: Cand dateP pel neBu lderFactory,
+  statsRece ver: StatsRece ver) {
   def get[
-    Query <: PipelineQuery,
-    DomainResultType <: HasMarshalling,
+    Query <: P pel neQuery,
+    Doma nResultType <: HasMarshall ng,
     Result
-  ]: MixerPipelineBuilder[Query, DomainResultType, Result] = {
-    new MixerPipelineBuilder[Query, DomainResultType, Result](
-      candidatePipelineExecutor,
+  ]: M xerP pel neBu lder[Query, Doma nResultType, Result] = {
+    new M xerP pel neBu lder[Query, Doma nResultType, Result](
+      cand dateP pel neExecutor,
       gateExecutor,
       selectorExecutor,
       queryFeatureHydratorExecutor,
       asyncFeatureMapExecutor,
-      domainMarshallerExecutor,
+      doma nMarshallerExecutor,
       transportMarshallerExecutor,
-      pipelineResultSideEffectExecutor,
-      candidatePipelineBuilderFactory,
-      statsReceiver
+      p pel neResultS deEffectExecutor,
+      cand dateP pel neBu lderFactory,
+      statsRece ver
     )
   }
 }

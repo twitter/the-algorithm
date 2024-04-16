@@ -1,145 +1,145 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.cache._
-import com.twitter.servo.util.{Effect, Gate, RateLimitingLogger}
-import com.twitter.util._
-import scala.collection.mutable
-import scala.util.Random
+ mport com.tw ter.logg ng.{Level, Logger}
+ mport com.tw ter.servo.cac ._
+ mport com.tw ter.servo.ut l.{Effect, Gate, RateL m  ngLogger}
+ mport com.tw ter.ut l._
+ mport scala.collect on.mutable
+ mport scala.ut l.Random
 
 /**
- * A set of classes that indicate how to handle cached results.
+ * A set of classes that  nd cate how to handle cac d results.
  */
-sealed abstract class CachedResultAction[+V]
+sealed abstract class Cac dResultAct on[+V]
 
-object CachedResultAction {
+object Cac dResultAct on {
 
-  /** Indicates a key should be fetched from the underlying repo */
-  case object HandleAsMiss extends CachedResultAction[Nothing]
+  /**  nd cates a key should be fetc d from t  underly ng repo */
+  case object HandleAsM ss extends Cac dResultAct on[Noth ng]
 
-  /** Indicates a key should be returned as not-found, and not fetched from the underlying repo */
-  case object HandleAsNotFound extends CachedResultAction[Nothing]
+  /**  nd cates a key should be returned as not-found, and not fetc d from t  underly ng repo */
+  case object HandleAsNotFound extends Cac dResultAct on[Noth ng]
 
-  /** Indicates the value should be returned as found */
-  case class HandleAsFound[V](value: V) extends CachedResultAction[V]
+  /**  nd cates t  value should be returned as found */
+  case class HandleAsFound[V](value: V) extends Cac dResultAct on[V]
 
-  /** Indicates the value should not be cached */
-  case object HandleAsDoNotCache extends CachedResultAction[Nothing]
+  /**  nd cates t  value should not be cac d */
+  case object HandleAsDoNotCac  extends Cac dResultAct on[Noth ng]
 
-  /** Indicates that the given action should be applied, and the given function applied to the resulting value */
-  case class TransformSubAction[V](action: CachedResultAction[V], f: V => V)
-      extends CachedResultAction[V]
+  /**  nd cates that t  g ven act on should be appl ed, and t  g ven funct on appl ed to t  result ng value */
+  case class TransformSubAct on[V](act on: Cac dResultAct on[V], f: V => V)
+      extends Cac dResultAct on[V]
 
-  /** Indicates the key should be returned as a failure */
-  case class HandleAsFailed(t: Throwable) extends CachedResultAction[Nothing]
+  /**  nd cates t  key should be returned as a fa lure */
+  case class HandleAsFa led(t: Throwable) extends Cac dResultAct on[Noth ng]
 
-  /** Indicates that the value should be refetched asynchronously, be immediately treated
-   * as the given action. */
-  case class SoftExpiration[V](action: CachedResultAction[V]) extends CachedResultAction[V]
+  /**  nd cates that t  value should be refetc d asynchronously, be  m d ately treated
+   * as t  g ven act on. */
+  case class SoftExp rat on[V](act on: Cac dResultAct on[V]) extends Cac dResultAct on[V]
 }
 
 /**
- * A set of classes representing the various states for a cached result.
+ * A set of classes represent ng t  var ous states for a cac d result.
  */
-sealed abstract class CachedResult[+K, +V] {
+sealed abstract class Cac dResult[+K, +V] {
   def key: K
 }
 
-object CachedResult {
-  import CachedResultAction._
+object Cac dResult {
+   mport Cac dResultAct on._
 
-  /** Indicates the key was not in cache */
-  case class NotFound[K](key: K) extends CachedResult[K, Nothing]
+  /**  nd cates t  key was not  n cac  */
+  case class NotFound[K](key: K) extends Cac dResult[K, Noth ng]
 
-  /** Indicates there was an error fetching the key */
-  case class Failed[K](key: K, t: Throwable) extends CachedResult[K, Nothing]
+  /**  nd cates t re was an error fetch ng t  key */
+  case class Fa led[K](key: K, t: Throwable) extends Cac dResult[K, Noth ng]
 
-  /** Indicates the cached value could not be deserialized */
-  case class DeserializationFailed[K](key: K) extends CachedResult[K, Nothing]
+  /**  nd cates t  cac d value could not be deser al zed */
+  case class Deser al zat onFa led[K](key: K) extends Cac dResult[K, Noth ng]
 
-  /** Indicates the cached value could not be serialized */
-  case class SerializationFailed[K](key: K) extends CachedResult[K, Nothing]
+  /**  nd cates t  cac d value could not be ser al zed */
+  case class Ser al zat onFa led[K](key: K) extends Cac dResult[K, Noth ng]
 
-  /** Indicates that a NotFound tombstone was found in cached */
-  case class CachedNotFound[K](
+  /**  nd cates that a NotFound tombstone was found  n cac d */
+  case class Cac dNotFound[K](
     key: K,
-    cachedAt: Time,
-    softTtlStep: Option[Short] = None)
-      extends CachedResult[K, Nothing]
+    cac dAt: T  ,
+    softTtlStep: Opt on[Short] = None)
+      extends Cac dResult[K, Noth ng]
 
-  /** Indicates that a Deleted tombstone was found in cached */
-  case class CachedDeleted[K](
+  /**  nd cates that a Deleted tombstone was found  n cac d */
+  case class Cac dDeleted[K](
     key: K,
-    cachedAt: Time,
-    softTtlStep: Option[Short] = None)
-      extends CachedResult[K, Nothing]
+    cac dAt: T  ,
+    softTtlStep: Opt on[Short] = None)
+      extends Cac dResult[K, Noth ng]
 
-  /** Indicates that value was found in cached */
-  case class CachedFound[K, V](
+  /**  nd cates that value was found  n cac d */
+  case class Cac dFound[K, V](
     key: K,
     value: V,
-    cachedAt: Time,
-    softTtlStep: Option[Short] = None)
-      extends CachedResult[K, V]
+    cac dAt: T  ,
+    softTtlStep: Opt on[Short] = None)
+      extends Cac dResult[K, V]
 
-  /** Indicates that value should not be cached until */
-  case class DoNotCache[K](key: K, until: Option[Time]) extends CachedResult[K, Nothing]
+  /**  nd cates that value should not be cac d unt l */
+  case class DoNotCac [K](key: K, unt l: Opt on[T  ]) extends Cac dResult[K, Noth ng]
 
-  type Handler[K, V] = CachedResult[K, V] => CachedResultAction[V]
+  type Handler[K, V] = Cac dResult[K, V] => Cac dResultAct on[V]
 
-  type PartialHandler[K, V] = CachedResult[K, V] => Option[CachedResultAction[V]]
+  type Part alHandler[K, V] = Cac dResult[K, V] => Opt on[Cac dResultAct on[V]]
 
   type HandlerFactory[Q, K, V] = Q => Handler[K, V]
 
   /**
-   * companion object for Handler type
+   * compan on object for Handler type
    */
   object Handler {
 
     /**
-     * terminate a PartialHandler to produce a new Handler
+     * term nate a Part alHandler to produce a new Handler
      */
     def apply[K, V](
-      partial: PartialHandler[K, V],
+      part al: Part alHandler[K, V],
       handler: Handler[K, V] = defaultHandler[K, V]
-    ): Handler[K, V] = { cachedResult =>
-      partial(cachedResult) match {
-        case Some(s) => s
-        case None => handler(cachedResult)
+    ): Handler[K, V] = { cac dResult =>
+      part al(cac dResult) match {
+        case So (s) => s
+        case None => handler(cac dResult)
       }
     }
   }
 
   /**
-   * companion object for PartialHandler type
+   * compan on object for Part alHandler type
    */
-  object PartialHandler {
+  object Part alHandler {
 
     /**
-     * Sugar to produce a PartialHandler from a PartialFunction. Successive calls to
-     * isDefined MUST return the same result. Otherwise, take the syntax hit and wire
-     * up your own PartialHandler.
+     * Sugar to produce a Part alHandler from a Part alFunct on. Success ve calls to
+     *  sDef ned MUST return t  sa  result. Ot rw se, take t  syntax h  and w re
+     * up y  own Part alHandler.
      */
     def apply[K, V](
-      partial: PartialFunction[CachedResult[K, V], CachedResultAction[V]]
-    ): PartialHandler[K, V] = partial.lift
+      part al: Part alFunct on[Cac dResult[K, V], Cac dResultAct on[V]]
+    ): Part alHandler[K, V] = part al.l ft
 
     /**
-     * chain one PartialHandler after another to produce a new PartialHandler
+     * cha n one Part alHandler after anot r to produce a new Part alHandler
      */
     def orElse[K, V](
-      thisHandler: PartialHandler[K, V],
-      thatHandler: PartialHandler[K, V]
-    ): PartialHandler[K, V] = { cachedResult =>
-      thisHandler(cachedResult) match {
-        case some @ Some(_) => some
-        case None => thatHandler(cachedResult)
+      t Handler: Part alHandler[K, V],
+      thatHandler: Part alHandler[K, V]
+    ): Part alHandler[K, V] = { cac dResult =>
+      t Handler(cac dResult) match {
+        case so  @ So (_) => so 
+        case None => thatHandler(cac dResult)
       }
     }
   }
 
   /**
-   * companion object for HandlerFactory type
+   * compan on object for HandlerFactory type
    */
   object HandlerFactory {
     def apply[Q, K, V](handler: Handler[K, V]): HandlerFactory[Q, K, V] = _ => handler
@@ -149,383 +149,383 @@ object CachedResult {
     HandlerFactory[Q, K, V](defaultHandler)
 
   /**
-   * This is the default Handler. Failures are treated as misses.
+   * T   s t  default Handler. Fa lures are treated as m sses.
    */
   def defaultHandler[K, V]: Handler[K, V] = {
-    case NotFound(_) | Failed(_, _) => HandleAsMiss
-    case DeserializationFailed(_) | SerializationFailed(_) => HandleAsMiss
-    case CachedNotFound(_, _, _) | CachedDeleted(_, _, _) => HandleAsNotFound
-    case CachedFound(_, value, _, _) => HandleAsFound(value)
-    case DoNotCache(_, Some(time)) if Time.now > time => HandleAsMiss
-    case DoNotCache(_, _) => HandleAsDoNotCache
+    case NotFound(_) | Fa led(_, _) => HandleAsM ss
+    case Deser al zat onFa led(_) | Ser al zat onFa led(_) => HandleAsM ss
+    case Cac dNotFound(_, _, _) | Cac dDeleted(_, _, _) => HandleAsNotFound
+    case Cac dFound(_, value, _, _) => HandleAsFound(value)
+    case DoNotCac (_, So (t  ))  f T  .now > t   => HandleAsM ss
+    case DoNotCac (_, _) => HandleAsDoNotCac 
   }
 
   /**
-   * A PartialHandler that bubbles memcache failures up instead of converting
-   * those failures to misses.
+   * A Part alHandler that bubbles  mcac  fa lures up  nstead of convert ng
+   * those fa lures to m sses.
    */
-  def failuresAreFailures[K, V] = PartialHandler[K, V] {
-    case Failed(_, t) => HandleAsFailed(t)
+  def fa luresAreFa lures[K, V] = Part alHandler[K, V] {
+    case Fa led(_, t) => HandleAsFa led(t)
   }
 
   /**
-   * A PartialHandler that doesn't attempt to write back to cache if the initial
-   * cache read failed, but still fetches from the underlying repo.
+   * A Part alHandler that doesn't attempt to wr e back to cac   f t   n  al
+   * cac  read fa led, but st ll fetc s from t  underly ng repo.
    */
-  def failuresAreDoNotCache[K, V] = PartialHandler[K, V] {
-    case Failed(_, _) => HandleAsDoNotCache
+  def fa luresAreDoNotCac [K, V] = Part alHandler[K, V] {
+    case Fa led(_, _) => HandleAsDoNotCac 
   }
 
   /**
-   * A function that takes a cachedAt time and ttl, and returns an expiry time.  This function
-   * _must_ be deterministic with respect to the arguments provided, otherwise, you might get a
-   * MatchError when using this with softTtlExpiration.
+   * A funct on that takes a cac dAt t   and ttl, and returns an exp ry t  .  T  funct on
+   * _must_ be determ n st c w h respect to t  argu nts prov ded, ot rw se,   m ght get a
+   * MatchError w n us ng t  w h softTtlExp rat on.
    */
-  type Expiry = (Time, Duration) => Time
+  type Exp ry = (T  , Durat on) => T  
 
   /**
-   * An Expiry function with an epsilon of zero.
+   * An Exp ry funct on w h an eps lon of zero.
    */
-  val fixedExpiry: Expiry = (cachedAt: Time, ttl: Duration) => cachedAt + ttl
+  val f xedExp ry: Exp ry = (cac dAt: T  , ttl: Durat on) => cac dAt + ttl
 
   /**
-   * A repeatable "random" expiry function that perturbs the ttl with a random value
+   * A repeatable "random" exp ry funct on that perturbs t  ttl w h a random value
    * no greater than +/-(ttl * maxFactor).
    */
-  def randomExpiry(maxFactor: Float): Expiry = {
-    if (maxFactor == 0) {
-      fixedExpiry
-    } else { (cachedAt: Time, ttl: Duration) =>
+  def randomExp ry(maxFactor: Float): Exp ry = {
+     f (maxFactor == 0) {
+      f xedExp ry
+    } else { (cac dAt: T  , ttl: Durat on) =>
       {
-        val factor = (2 * new Random(cachedAt.inMilliseconds).nextFloat - 1) * maxFactor
-        cachedAt + ttl + Duration.fromNanoseconds((factor * ttl.inNanoseconds).toLong)
+        val factor = (2 * new Random(cac dAt. nM ll seconds).nextFloat - 1) * maxFactor
+        cac dAt + ttl + Durat on.fromNanoseconds((factor * ttl. nNanoseconds).toLong)
       }
     }
   }
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl.
+   * soft-exp res Cac dFound and Cac dNotFound based on a ttl.
    *
    * @param ttl
-   *  values older than this will be considered expired, but still
-   *  returned, and asynchronously refreshed in cache.
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than t  w ll be cons dered exp red, but st ll
+   *  returned, and asynchronously refres d  n cac .
+   * @param exp ry
+   *  (opt onal) funct on to compute t  exp ry t  
    */
-  def softTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] =
-    softTtlExpiration(_ => ttl, expiry)
+  def softTtlExp rat on[K, V](
+    ttl: Durat on,
+    exp ry: Exp ry = f xedExp ry
+  ): Part alHandler[K, V] =
+    softTtlExp rat on(_ => ttl, exp ry)
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl derived from the value
+   * soft-exp res Cac dFound and Cac dNotFound based on a ttl der ved from t  value
    *
    * @param ttl
-   *  values older than this will be considered expired, but still
-   *  returned, and asynchronously refreshed in cache.
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than t  w ll be cons dered exp red, but st ll
+   *  returned, and asynchronously refres d  n cac .
+   * @param exp ry
+   *  (opt onal) funct on to compute t  exp ry t  
    */
-  def softTtlExpiration[K, V](
-    ttl: Option[V] => Duration,
-    expiry: Expiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, _) if expiry(cachedAt, ttl(Some(value))) < Time.now =>
-      SoftExpiration(HandleAsFound(value))
-    case CachedNotFound(_, cachedAt, _) if expiry(cachedAt, ttl(None)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+  def softTtlExp rat on[K, V](
+    ttl: Opt on[V] => Durat on,
+    exp ry: Exp ry
+  ): Part alHandler[K, V] = Part alHandler[K, V] {
+    case Cac dFound(_, value, cac dAt, _)  f exp ry(cac dAt, ttl(So (value))) < T  .now =>
+      SoftExp rat on(HandleAsFound(value))
+    case Cac dNotFound(_, cac dAt, _)  f exp ry(cac dAt, ttl(None)) < T  .now =>
+      SoftExp rat on(HandleAsNotFound)
   }
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl derived from both the value
-   * and the softTtlStep
+   * soft-exp res Cac dFound and Cac dNotFound based on a ttl der ved from both t  value
+   * and t  softTtlStep
    *
    * @param ttl
-   *   values older than this will be considered expired, but still returned, and
-   *  asynchronously refreshed in cache.
-   * @param expiry
-   *   (optional) function to compute the expiry time
+   *   values older than t  w ll be cons dered exp red, but st ll returned, and
+   *  asynchronously refres d  n cac .
+   * @param exp ry
+   *   (opt onal) funct on to compute t  exp ry t  
    */
-  def steppedSoftTtlExpiration[K, V](
-    ttl: (Option[V], Option[Short]) => Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(Some(value), softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsFound(value))
-    case CachedNotFound(_, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
-    case CachedDeleted(_, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+  def steppedSoftTtlExp rat on[K, V](
+    ttl: (Opt on[V], Opt on[Short]) => Durat on,
+    exp ry: Exp ry = f xedExp ry
+  ): Part alHandler[K, V] = Part alHandler[K, V] {
+    case Cac dFound(_, value, cac dAt, softTtlStep)
+         f exp ry(cac dAt, ttl(So (value), softTtlStep)) < T  .now =>
+      SoftExp rat on(HandleAsFound(value))
+    case Cac dNotFound(_, cac dAt, softTtlStep)
+         f exp ry(cac dAt, ttl(None, softTtlStep)) < T  .now =>
+      SoftExp rat on(HandleAsNotFound)
+    case Cac dDeleted(_, cac dAt, softTtlStep)
+         f exp ry(cac dAt, ttl(None, softTtlStep)) < T  .now =>
+      SoftExp rat on(HandleAsNotFound)
   }
 
   /**
-   * hard-expires CachedFound and CachedNotFound based on a ttl.
+   * hard-exp res Cac dFound and Cac dNotFound based on a ttl.
    *
    * @param ttl
-   *  values older than this will be considered a miss
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than t  w ll be cons dered a m ss
+   * @param exp ry
+   *  (opt onal) funct on to compute t  exp ry t  
    */
-  def hardTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] =
-    hardTtlExpiration(_ => ttl, expiry)
+  def hardTtlExp rat on[K, V](
+    ttl: Durat on,
+    exp ry: Exp ry = f xedExp ry
+  ): Part alHandler[K, V] =
+    hardTtlExp rat on(_ => ttl, exp ry)
 
   /**
-   * hard-expires CachedFound and CachedNotFound based on a ttl derived from the value
+   * hard-exp res Cac dFound and Cac dNotFound based on a ttl der ved from t  value
    *
    * @param ttl
-   *  values older than this will be considered a miss
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than t  w ll be cons dered a m ss
+   * @param exp ry
+   *  (opt onal) funct on to compute t  exp ry t  
    */
-  def hardTtlExpiration[K, V](
-    ttl: Option[V] => Duration,
-    expiry: Expiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, _) if expiry(cachedAt, ttl(Some(value))) < Time.now =>
-      HandleAsMiss
-    case CachedNotFound(_, cachedAt, _) if expiry(cachedAt, ttl(None)) < Time.now =>
-      HandleAsMiss
+  def hardTtlExp rat on[K, V](
+    ttl: Opt on[V] => Durat on,
+    exp ry: Exp ry
+  ): Part alHandler[K, V] = Part alHandler[K, V] {
+    case Cac dFound(_, value, cac dAt, _)  f exp ry(cac dAt, ttl(So (value))) < T  .now =>
+      HandleAsM ss
+    case Cac dNotFound(_, cac dAt, _)  f exp ry(cac dAt, ttl(None)) < T  .now =>
+      HandleAsM ss
   }
 
   /**
-   * hard-expires a CachedNotFound tombstone based on a ttl
+   * hard-exp res a Cac dNotFound tombstone based on a ttl
    *
    * @param ttl
-   *  values older than this will be considered expired
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than t  w ll be cons dered exp red
+   * @param exp ry
+   *  (opt onal) funct on to compute t  exp ry t  
    */
-  def notFoundHardTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedNotFound(_, cachedAt, _) =>
-      if (expiry(cachedAt, ttl) < Time.now)
-        HandleAsMiss
+  def notFoundHardTtlExp rat on[K, V](
+    ttl: Durat on,
+    exp ry: Exp ry = f xedExp ry
+  ): Part alHandler[K, V] = Part alHandler[K, V] {
+    case Cac dNotFound(_, cac dAt, _) =>
+       f (exp ry(cac dAt, ttl) < T  .now)
+        HandleAsM ss
       else
         HandleAsNotFound
   }
 
   /**
-   * hard-expires a CachedDeleted tombstone based on a ttl
+   * hard-exp res a Cac dDeleted tombstone based on a ttl
    *
    * @param ttl
-   *  values older than this will be considered expired
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than t  w ll be cons dered exp red
+   * @param exp ry
+   *  (opt onal) funct on to compute t  exp ry t  
    */
-  def deletedHardTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedDeleted(_, cachedAt, _) =>
-      if (expiry(cachedAt, ttl) < Time.now)
-        HandleAsMiss
+  def deletedHardTtlExp rat on[K, V](
+    ttl: Durat on,
+    exp ry: Exp ry = f xedExp ry
+  ): Part alHandler[K, V] = Part alHandler[K, V] {
+    case Cac dDeleted(_, cac dAt, _) =>
+       f (exp ry(cac dAt, ttl) < T  .now)
+        HandleAsM ss
       else
         HandleAsNotFound
   }
 
   /**
-   * read only from cache, never fall back to underlying KeyValueRepository
+   * read only from cac , never fall back to underly ng KeyValueRepos ory
    */
-  def cacheOnly[K, V]: Handler[K, V] = {
-    case CachedFound(_, value, _, _) => HandleAsFound(value)
+  def cac Only[K, V]: Handler[K, V] = {
+    case Cac dFound(_, value, _, _) => HandleAsFound(value)
     case _ => HandleAsNotFound
   }
 
   /**
-   * use either primary or backup Handler, depending on usePrimary result
+   * use e  r pr mary or backup Handler, depend ng on usePr mary result
    *
-   * @param primaryHandler
-   *   the handler to be used if usePrimary evaluates to true
+   * @param pr maryHandler
+   *   t  handler to be used  f usePr mary evaluates to true
    * @param backupHandler
-   *   the handle to be used if usePrimary evaluates to false
-   * @param usePrimary
-   *   evaluates the query to determine which handler to use
+   *   t  handle to be used  f usePr mary evaluates to false
+   * @param usePr mary
+   *   evaluates t  query to determ ne wh ch handler to use
    */
-  def switchedHandlerFactory[Q, K, V](
-    primaryHandler: Handler[K, V],
+  def sw c dHandlerFactory[Q, K, V](
+    pr maryHandler: Handler[K, V],
     backupHandler: Handler[K, V],
-    usePrimary: Q => Boolean
+    usePr mary: Q => Boolean
   ): HandlerFactory[Q, K, V] = { query =>
-    if (usePrimary(query))
-      primaryHandler
+     f (usePr mary(query))
+      pr maryHandler
     else
       backupHandler
   }
 }
 
-object CacheResultObserver {
-  case class CachingRepositoryResult[K, V](
-    resultFromCache: KeyValueResult[K, Cached[V]],
-    resultFromCacheMissReadthrough: KeyValueResult[K, V],
+object Cac ResultObserver {
+  case class Cach ngRepos oryResult[K, V](
+    resultFromCac : KeyValueResult[K, Cac d[V]],
+    resultFromCac M ssReadthrough: KeyValueResult[K, V],
     resultFromSoftTtlReadthrough: KeyValueResult[K, V])
-  def unit[K, V] = Effect.unit[CachingRepositoryResult[K, V]]
+  def un [K, V] = Effect.un [Cach ngRepos oryResult[K, V]]
 }
 
-object CachingKeyValueRepository {
-  type CacheResultObserver[K, V] = Effect[CacheResultObserver.CachingRepositoryResult[K, V]]
+object Cach ngKeyValueRepos ory {
+  type Cac ResultObserver[K, V] = Effect[Cac ResultObserver.Cach ngRepos oryResult[K, V]]
 }
 
 /**
- * Reads keyed values from a LockingCache, and reads through to an underlying
- * KeyValueRepository for misses. supports a "soft ttl", beyond which values
- * will be read through out-of-band to the originating request
+ * Reads keyed values from a Lock ngCac , and reads through to an underly ng
+ * KeyValueRepos ory for m sses. supports a "soft ttl", beyond wh ch values
+ * w ll be read through out-of-band to t  or g nat ng request
  *
- * @param underlying
- * the underlying KeyValueRepository
- * @param cache
- * the locking cache to read from
+ * @param underly ng
+ * t  underly ng KeyValueRepos ory
+ * @param cac 
+ * t  lock ng cac  to read from
  * @param newQuery
- * a function for converting a subset of the keys of the original query into a new
- * query.  this is used to construct the query passed to the underlying repository
- * to fetch the cache misses.
+ * a funct on for convert ng a subset of t  keys of t  or g nal query  nto a new
+ * query.  t   s used to construct t  query passed to t  underly ng repos ory
+ * to fetch t  cac  m sses.
  * @param handlerFactory
- * A factory to produce functions that specify policies about how to handle results
- * from cache. (i.e. to handle failures as misses vs failures, etc)
- * @param picker
- * used to choose between the value in cache and the value read from the DB when
- * storing values in the cache
+ * A factory to produce funct ons that spec fy pol c es about how to handle results
+ * from cac . ( .e. to handle fa lures as m sses vs fa lures, etc)
+ * @param p cker
+ * used to choose bet en t  value  n cac  and t  value read from t  DB w n
+ * stor ng values  n t  cac 
  * @param observer
- * a CacheObserver for collecting cache statistics*
- * @param writeSoftTtlStep
- * Write the soft_ttl_step value to indicate number of consistent reads from underlying store
- * @param cacheResultObserver
- * An [[Effect]] of type [[CacheResultObserver.CachingRepositoryResult]] which is useful for examining
- * the results from the cache, underlying storage, and any later read-throughs. The effect is
- * executed asynchronously from the request path and has no bearing on the Future[KeyValueResult]*
- * returned from this Repository.
+ * a Cac Observer for collect ng cac  stat st cs*
+ * @param wr eSoftTtlStep
+ * Wr e t  soft_ttl_step value to  nd cate number of cons stent reads from underly ng store
+ * @param cac ResultObserver
+ * An [[Effect]] of type [[Cac ResultObserver.Cach ngRepos oryResult]] wh ch  s useful for exam n ng
+ * t  results from t  cac , underly ng storage, and any later read-throughs. T  effect  s
+ * executed asynchronously from t  request path and has no bear ng on t  Future[KeyValueResult]*
+ * returned from t  Repos ory.
  */
-class CachingKeyValueRepository[Q <: Seq[K], K, V](
-  underlying: KeyValueRepository[Q, K, V],
-  val cache: LockingCache[K, Cached[V]],
-  newQuery: SubqueryBuilder[Q, K],
-  handlerFactory: CachedResult.HandlerFactory[Q, K, V] =
-    CachedResult.defaultHandlerFactory[Q, K, V],
-  picker: LockingCache.Picker[Cached[V]] = new PreferNewestCached[V]: PreferNewestCached[V],
-  observer: CacheObserver = NullCacheObserver,
-  writeSoftTtlStep: Gate[Unit] = Gate.False,
-  cacheResultObserver: CachingKeyValueRepository.CacheResultObserver[K, V] =
-    CacheResultObserver.unit[K, V]: Effect[CacheResultObserver.CachingRepositoryResult[K, V]])
-    extends KeyValueRepository[Q, K, V] {
-  import CachedResult._
-  import CachedResultAction._
+class Cach ngKeyValueRepos ory[Q <: Seq[K], K, V](
+  underly ng: KeyValueRepos ory[Q, K, V],
+  val cac : Lock ngCac [K, Cac d[V]],
+  newQuery: SubqueryBu lder[Q, K],
+  handlerFactory: Cac dResult.HandlerFactory[Q, K, V] =
+    Cac dResult.defaultHandlerFactory[Q, K, V],
+  p cker: Lock ngCac .P cker[Cac d[V]] = new PreferNe stCac d[V]: PreferNe stCac d[V],
+  observer: Cac Observer = NullCac Observer,
+  wr eSoftTtlStep: Gate[Un ] = Gate.False,
+  cac ResultObserver: Cach ngKeyValueRepos ory.Cac ResultObserver[K, V] =
+    Cac ResultObserver.un [K, V]: Effect[Cac ResultObserver.Cach ngRepos oryResult[K, V]])
+    extends KeyValueRepos ory[Q, K, V] {
+   mport Cac dResult._
+   mport Cac dResultAct on._
 
-  protected[this] val log = Logger.get(getClass.getSimpleName)
-  private[this] val rateLimitedLogger = new RateLimitingLogger(logger = log)
+  protected[t ] val log = Logger.get(getClass.getS mpleNa )
+  pr vate[t ] val rateL m edLogger = new RateL m  ngLogger(logger = log)
 
-  protected[this] val effectiveCacheStats = observer.scope("effective")
+  protected[t ] val effect veCac Stats = observer.scope("effect ve")
 
   /**
-   * Calculates the softTtlStep based on result from cache and underlying store.
-   * The softTtlStep indicates how many times we have
-   * performed & recorded a consistent read-through.
-   * A value of None is equivalent to Some(0) - it indicates zero consistent read-throughs.
+   * Calculates t  softTtlStep based on result from cac  and underly ng store.
+   * T  softTtlStep  nd cates how many t  s   have
+   * perfor d & recorded a cons stent read-through.
+   * A value of None  s equ valent to So (0) -    nd cates zero cons stent read-throughs.
    */
-  protected[this] def updateSoftTtlStep(
-    underlyingResult: Option[V],
-    cachedResult: Cached[V]
-  ): Option[Short] = {
-    if (writeSoftTtlStep() && underlyingResult == cachedResult.value) {
-      cachedResult.softTtlStep match {
-        case Some(step) if step < Short.MaxValue => Some((step + 1).toShort)
-        case Some(step) if step == Short.MaxValue => cachedResult.softTtlStep
-        case _ => Some(1)
+  protected[t ] def updateSoftTtlStep(
+    underly ngResult: Opt on[V],
+    cac dResult: Cac d[V]
+  ): Opt on[Short] = {
+     f (wr eSoftTtlStep() && underly ngResult == cac dResult.value) {
+      cac dResult.softTtlStep match {
+        case So (step)  f step < Short.MaxValue => So ((step + 1).toShort)
+        case So (step)  f step == Short.MaxValue => cac dResult.softTtlStep
+        case _ => So (1)
       }
     } else {
       None
     }
   }
 
-  protected case class ProcessedCacheResult(
-    hits: Map[K, V],
-    misses: Seq[K],
-    doNotCache: Set[K],
-    failures: Map[K, Throwable],
+  protected case class ProcessedCac Result(
+    h s: Map[K, V],
+    m sses: Seq[K],
+    doNotCac : Set[K],
+    fa lures: Map[K, Throwable],
     tombstones: Set[K],
-    softExpirations: Seq[K],
+    softExp rat ons: Seq[K],
     transforms: Map[K, (V => V)])
 
-  override def apply(keys: Q): Future[KeyValueResult[K, V]] = {
-    getFromCache(keys).flatMap { cacheResult =>
-      val ProcessedCacheResult(
-        hits,
-        misses,
-        doNotCache,
-        failures,
+  overr de def apply(keys: Q): Future[KeyValueResult[K, V]] = {
+    getFromCac (keys).flatMap { cac Result =>
+      val ProcessedCac Result(
+        h s,
+        m sses,
+        doNotCac ,
+        fa lures,
         tombstones,
-        softExpirations,
+        softExp rat ons,
         transforms
       ) =
-        process(keys, cacheResult)
+        process(keys, cac Result)
 
-      if (log.isLoggable(Level.TRACE)) {
+       f (log. sLoggable(Level.TRACE)) {
         log.trace(
-          "CachingKVR.apply keys %d hit %d miss %d noCache %d failure %d " +
+          "Cach ngKVR.apply keys %d h  %d m ss %d noCac  %d fa lure %d " +
             "tombstone %d softexp %d",
-          keys.size,
-          hits.size,
-          misses.size,
-          doNotCache.size,
-          failures.size,
-          tombstones.size,
-          softExpirations.size
+          keys.s ze,
+          h s.s ze,
+          m sses.s ze,
+          doNotCac .s ze,
+          fa lures.s ze,
+          tombstones.s ze,
+          softExp rat ons.s ze
         )
       }
-      recordCacheStats(
+      recordCac Stats(
         keys,
-        notFound = misses.toSet,
-        doNotCache = doNotCache,
-        expired = softExpirations.toSet,
-        numFailures = failures.size,
-        numTombstones = tombstones.size
+        notFound = m sses.toSet,
+        doNotCac  = doNotCac ,
+        exp red = softExp rat ons.toSet,
+        numFa lures = fa lures.s ze,
+        numTombstones = tombstones.s ze
       )
 
       // now read through all notFound
-      val underlyingQuery = newQuery(misses ++ doNotCache, keys)
-      val writeToCacheQuery = if (doNotCache.nonEmpty) newQuery(misses, keys) else underlyingQuery
-      val futureFromUnderlying = readThrough(underlyingQuery, writeToCacheQuery)
+      val underly ngQuery = newQuery(m sses ++ doNotCac , keys)
+      val wr eToCac Query =  f (doNotCac .nonEmpty) newQuery(m sses, keys) else underly ngQuery
+      val futureFromUnderly ng = readThrough(underly ngQuery, wr eToCac Query)
 
-      // async read-through for the expired results, ignore results
-      val softExpirationQuery = newQuery(softExpirations, keys)
-      val futureFromSoftExpiry = readThrough(softExpirationQuery, softExpirationQuery, cacheResult)
+      // async read-through for t  exp red results,  gnore results
+      val softExp rat onQuery = newQuery(softExp rat ons, keys)
+      val futureFromSoftExp ry = readThrough(softExp rat onQuery, softExp rat onQuery, cac Result)
 
-      // merge all results together
+      //  rge all results toget r
       for {
-        fromUnderlying <- futureFromUnderlying
-        fromCache = KeyValueResult(hits, tombstones, failures)
-        fromUnderlyingTransformed = transformResults(fromUnderlying, transforms)
-      } yield {
-        futureFromSoftExpiry.onSuccess { readThroughResults =>
-          cacheResultObserver(
-            CacheResultObserver.CachingRepositoryResult(
-              cacheResult,
-              fromUnderlyingTransformed,
+        fromUnderly ng <- futureFromUnderly ng
+        fromCac  = KeyValueResult(h s, tombstones, fa lures)
+        fromUnderly ngTransfor d = transformResults(fromUnderly ng, transforms)
+      } y eld {
+        futureFromSoftExp ry.onSuccess { readThroughResults =>
+          cac ResultObserver(
+            Cac ResultObserver.Cach ngRepos oryResult(
+              cac Result,
+              fromUnderly ngTransfor d,
               readThroughResults
             )
           )
         }
-        KeyValueResult.sum(Seq(fromCache, fromUnderlyingTransformed))
+        KeyValueResult.sum(Seq(fromCac , fromUnderly ngTransfor d))
       }
     }
   }
 
   /**
-   * Given results and a map of keys to transform functions, apply those transform functions
-   * to the found results.
+   * G ven results and a map of keys to transform funct ons, apply those transform funct ons
+   * to t  found results.
    */
-  protected[this] def transformResults(
+  protected[t ] def transformResults(
     results: KeyValueResult[K, V],
     transforms: Map[K, (V => V)]
   ): KeyValueResult[K, V] = {
-    if (transforms.isEmpty) {
+     f (transforms. sEmpty) {
       results
     } else {
       results.copy(found = results.found.map {
@@ -535,198 +535,198 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
     }
   }
 
-  protected[this] def getFromCache(keys: Seq[K]): Future[KeyValueResult[K, Cached[V]]] = {
-    val uniqueKeys = keys.distinct
-    cache.get(uniqueKeys) handle {
+  protected[t ] def getFromCac (keys: Seq[K]): Future[KeyValueResult[K, Cac d[V]]] = {
+    val un queKeys = keys.d st nct
+    cac .get(un queKeys) handle {
       case t: Throwable =>
-        rateLimitedLogger.logThrowable(t, "exception caught in cache get")
+        rateL m edLogger.logThrowable(t, "except on caught  n cac  get")
 
-        // treat total cache failure as a fetch that returned all failures
-        KeyValueResult(failed = uniqueKeys.map { _ -> t }.toMap)
+        // treat total cac  fa lure as a fetch that returned all fa lures
+        KeyValueResult(fa led = un queKeys.map { _ -> t }.toMap)
     }
   }
 
   /**
-   * Buckets cache results according to the wishes of the CachedResultHandler
+   * Buckets cac  results accord ng to t  w s s of t  Cac dResultHandler
    */
-  protected[this] def process(
+  protected[t ] def process(
     keys: Q,
-    cacheResult: KeyValueResult[K, Cached[V]]
-  ): ProcessedCacheResult = {
-    val cachedResultHandler = handlerFactory(keys)
+    cac Result: KeyValueResult[K, Cac d[V]]
+  ): ProcessedCac Result = {
+    val cac dResultHandler = handlerFactory(keys)
 
-    val hits = Map.newBuilder[K, V]
-    val misses = new mutable.ArrayBuffer[K]
-    val failures = Map.newBuilder[K, Throwable]
-    val tombstones = Set.newBuilder[K]
-    val softExpiredKeys = new mutable.ListBuffer[K]
-    val doNotCache = Set.newBuilder[K]
-    val transforms = Map.newBuilder[K, (V => V)]
+    val h s = Map.newBu lder[K, V]
+    val m sses = new mutable.ArrayBuffer[K]
+    val fa lures = Map.newBu lder[K, Throwable]
+    val tombstones = Set.newBu lder[K]
+    val softExp redKeys = new mutable.L stBuffer[K]
+    val doNotCac  = Set.newBu lder[K]
+    val transforms = Map.newBu lder[K, (V => V)]
 
     for (key <- keys) {
-      val cachedResult = cacheResult(key) match {
-        case Throw(t) => Failed(key, t)
+      val cac dResult = cac Result(key) match {
+        case Throw(t) => Fa led(key, t)
         case Return(None) => NotFound(key)
-        case Return(Some(cached)) =>
-          cached.status match {
-            case CachedValueStatus.Found =>
-              cached.value match {
+        case Return(So (cac d)) =>
+          cac d.status match {
+            case Cac dValueStatus.Found =>
+              cac d.value match {
                 case None => NotFound(key)
-                case Some(value) =>
-                  CachedFound(
+                case So (value) =>
+                  Cac dFound(
                     key,
                     value,
-                    cached.cachedAt,
-                    cached.softTtlStep
+                    cac d.cac dAt,
+                    cac d.softTtlStep
                   )
               }
-            case CachedValueStatus.NotFound => CachedNotFound(key, cached.cachedAt)
-            case CachedValueStatus.Deleted => CachedDeleted(key, cached.cachedAt)
-            case CachedValueStatus.SerializationFailed => SerializationFailed(key)
-            case CachedValueStatus.DeserializationFailed => DeserializationFailed(key)
-            case CachedValueStatus.Evicted => NotFound(key)
-            case CachedValueStatus.DoNotCache => DoNotCache(key, cached.doNotCacheUntil)
+            case Cac dValueStatus.NotFound => Cac dNotFound(key, cac d.cac dAt)
+            case Cac dValueStatus.Deleted => Cac dDeleted(key, cac d.cac dAt)
+            case Cac dValueStatus.Ser al zat onFa led => Ser al zat onFa led(key)
+            case Cac dValueStatus.Deser al zat onFa led => Deser al zat onFa led(key)
+            case Cac dValueStatus.Ev cted => NotFound(key)
+            case Cac dValueStatus.DoNotCac  => DoNotCac (key, cac d.doNotCac Unt l)
           }
       }
 
-      def processAction(action: CachedResultAction[V]): Unit = {
-        action match {
-          case HandleAsMiss => misses += key
-          case HandleAsFound(value) => hits += key -> value
+      def processAct on(act on: Cac dResultAct on[V]): Un  = {
+        act on match {
+          case HandleAsM ss => m sses += key
+          case HandleAsFound(value) => h s += key -> value
           case HandleAsNotFound => tombstones += key
-          case HandleAsDoNotCache => doNotCache += key
-          case HandleAsFailed(t) => failures += key -> t
-          case TransformSubAction(subAction, f) =>
+          case HandleAsDoNotCac  => doNotCac  += key
+          case HandleAsFa led(t) => fa lures += key -> t
+          case TransformSubAct on(subAct on, f) =>
             transforms += key -> f
-            processAction(subAction)
-          case SoftExpiration(subAction) =>
-            softExpiredKeys += key
-            processAction(subAction)
+            processAct on(subAct on)
+          case SoftExp rat on(subAct on) =>
+            softExp redKeys += key
+            processAct on(subAct on)
         }
       }
 
-      processAction(cachedResultHandler(cachedResult))
+      processAct on(cac dResultHandler(cac dResult))
     }
 
-    ProcessedCacheResult(
-      hits.result(),
-      misses,
-      doNotCache.result(),
-      failures.result(),
+    ProcessedCac Result(
+      h s.result(),
+      m sses,
+      doNotCac .result(),
+      fa lures.result(),
       tombstones.result(),
-      softExpiredKeys,
+      softExp redKeys,
       transforms.result()
     )
   }
 
-  protected[this] def recordCacheStats(
+  protected[t ] def recordCac Stats(
     keys: Seq[K],
     notFound: Set[K],
-    doNotCache: Set[K],
-    expired: Set[K],
-    numFailures: Int,
-    numTombstones: Int
-  ): Unit = {
+    doNotCac : Set[K],
+    exp red: Set[K],
+    numFa lures:  nt,
+    numTombstones:  nt
+  ): Un  = {
     keys.foreach { key =>
-      val wasntFound = notFound.contains(key)
-      val keyString = key.toString
-      if (wasntFound || expired.contains(key))
-        effectiveCacheStats.miss(keyString)
+      val wasntFound = notFound.conta ns(key)
+      val keyStr ng = key.toStr ng
+       f (wasntFound || exp red.conta ns(key))
+        effect veCac Stats.m ss(keyStr ng)
       else
-        effectiveCacheStats.hit(keyString)
+        effect veCac Stats.h (keyStr ng)
 
-      if (wasntFound)
-        observer.miss(keyString)
+       f (wasntFound)
+        observer.m ss(keyStr ng)
       else
-        observer.hit(keyString)
+        observer.h (keyStr ng)
     }
-    observer.expired(expired.size)
-    observer.failure(numFailures)
+    observer.exp red(exp red.s ze)
+    observer.fa lure(numFa lures)
     observer.tombstone(numTombstones)
-    observer.noCache(doNotCache.size)
+    observer.noCac (doNotCac .s ze)
   }
 
   /**
-   * read through to the underlying repository
+   * read through to t  underly ng repos ory
    *
-   * @param cacheKeys
-   *   the keys to read and cache
+   * @param cac Keys
+   *   t  keys to read and cac 
    */
-  def readThrough(cacheKeys: Q): Future[KeyValueResult[K, V]] = {
-    readThrough(cacheKeys, cacheKeys)
+  def readThrough(cac Keys: Q): Future[KeyValueResult[K, V]] = {
+    readThrough(cac Keys, cac Keys)
   }
 
   /**
-   * read through to the underlying repository
+   * read through to t  underly ng repos ory
    *
-   * @param writeToCacheQuery
-   *   the query to pass to the writeToCache method after getting a result back from the
-   *   underlying repository.  this query can be exactly the same as underlyingQuery if
-   *   all readThrough keys should be cached, or it may contain a subset of the keys if
-   *   some keys should not be written back to cache.
-   * @param cacheResult
-   *   the current cache results for underlyingQuery.
+   * @param wr eToCac Query
+   *   t  query to pass to t  wr eToCac   thod after gett ng a result back from t 
+   *   underly ng repos ory.  t  query can be exactly t  sa  as underly ngQuery  f
+   *   all readThrough keys should be cac d, or   may conta n a subset of t  keys  f
+   *   so  keys should not be wr ten back to cac .
+   * @param cac Result
+   *   t  current cac  results for underly ngQuery.
    */
   def readThrough(
-    underlyingQuery: Q,
-    writeToCacheQuery: Q,
-    cacheResult: KeyValueResult[K, Cached[V]] = KeyValueResult.empty
+    underly ngQuery: Q,
+    wr eToCac Query: Q,
+    cac Result: KeyValueResult[K, Cac d[V]] = KeyValueResult.empty
   ): Future[KeyValueResult[K, V]] = {
-    if (underlyingQuery.isEmpty) {
+     f (underly ngQuery. sEmpty) {
       KeyValueResult.emptyFuture
     } else {
-      underlying(underlyingQuery).onSuccess { result =>
-        if (writeToCacheQuery.nonEmpty) {
-          writeToCache(writeToCacheQuery, result, cacheResult)
+      underly ng(underly ngQuery).onSuccess { result =>
+         f (wr eToCac Query.nonEmpty) {
+          wr eToCac (wr eToCac Query, result, cac Result)
         }
       }
     }
   }
 
   /**
-   * Writes the contents of the given KeyValueResult to cache.
+   * Wr es t  contents of t  g ven KeyValueResult to cac .
    */
-  def writeToCache(
+  def wr eToCac (
     keys: Q,
-    underlyingResult: KeyValueResult[K, V],
-    cacheResult: KeyValueResult[K, Cached[V]] = KeyValueResult[K, Cached[V]]()
-  ): Unit = {
-    lazy val cachedEmpty = {
-      val now = Time.now
-      Cached[V](None, CachedValueStatus.NotFound, now, Some(now), softTtlStep = None)
+    underly ngResult: KeyValueResult[K, V],
+    cac Result: KeyValueResult[K, Cac d[V]] = KeyValueResult[K, Cac d[V]]()
+  ): Un  = {
+    lazy val cac dEmpty = {
+      val now = T  .now
+      Cac d[V](None, Cac dValueStatus.NotFound, now, So (now), softTtlStep = None)
     }
 
     keys.foreach { key =>
-      // only cache Returns from the underlying repo, skip Throws.
-      // iff cached value matches value from underlying store
-      // (for both NotFound and Found results), increment softTtlStep
-      // otherwise, set softTtlStep to None
-      underlyingResult(key) match {
-        case Return(optUnderlyingVal) =>
+      // only cac  Returns from t  underly ng repo, sk p Throws.
+      //  ff cac d value matc s value from underly ng store
+      // (for both NotFound and Found results),  ncre nt softTtlStep
+      // ot rw se, set softTtlStep to None
+      underly ngResult(key) match {
+        case Return(optUnderly ngVal) =>
           val softTtlStep =
-            cacheResult(key) match {
-              case Return(Some(cacheVal)) => updateSoftTtlStep(optUnderlyingVal, cacheVal)
+            cac Result(key) match {
+              case Return(So (cac Val)) => updateSoftTtlStep(optUnderly ngVal, cac Val)
               case _ => None
             }
 
           val status =
-            optUnderlyingVal match {
-              case Some(_) => CachedValueStatus.Found
-              case None => CachedValueStatus.NotFound
+            optUnderly ngVal match {
+              case So (_) => Cac dValueStatus.Found
+              case None => Cac dValueStatus.NotFound
             }
 
-          val cached =
-            cachedEmpty.copy(
-              value = optUnderlyingVal,
+          val cac d =
+            cac dEmpty.copy(
+              value = optUnderly ngVal,
               status = status,
               softTtlStep = softTtlStep
             )
 
-          cache
-            .lockAndSet(key, LockingCache.PickingHandler(cached, picker))
-            .onFailure {
+          cac 
+            .lockAndSet(key, Lock ngCac .P ck ngHandler(cac d, p cker))
+            .onFa lure {
               case t: Throwable =>
-                rateLimitedLogger.logThrowable(t, "exception caught in lockAndSet")
+                rateL m edLogger.logThrowable(t, "except on caught  n lockAndSet")
             }
 
         case Throw(_) => None

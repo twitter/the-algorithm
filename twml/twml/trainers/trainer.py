@@ -1,1777 +1,1777 @@
-# pylint: disable=too-many-lines
+# pyl nt: d sable=too-many-l nes
 """
-``twml.trainers.Trainer`` is a wrapper around `tf.estimator.Estimator
-<https://www.tensorflow.org/versions/master/api_docs/python/tf/estimator/Estimator>`_
-to expose an easier to use API by
-hiding rarely used config knobs and supplying default values.
+``twml.tra ners.Tra ner``  s a wrapper around `tf.est mator.Est mator
+<https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/est mator/Est mator>`_
+to expose an eas er to use AP  by
+h d ng rarely used conf g knobs and supply ng default values.
 
-The `Trainer` facilitates multi-phase training commonly used at Twitter: e.g.
-MDL calibration -> MLP training -> Isotonic calibration.
-The `Trainer` also facilitates hyperparameters tuning,
-with its simple `add_parser_arguments()` method.
+T  `Tra ner` fac l ates mult -phase tra n ng commonly used at Tw ter: e.g.
+MDL cal brat on -> MLP tra n ng ->  soton c cal brat on.
+T  `Tra ner` also fac l ates hyperpara ters tun ng,
+w h  s s mple `add_parser_argu nts()`  thod.
 
-Learning rate decay functions
+Learn ng rate decay funct ons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Please note that we have four learning rate decay functions to choose from.
-Additionally, each trainer can only take one learning rate decay function and its parameters.
-If that is not the case, it will throw an error.
-Also, please note that the learning rate decay is a positional argument and should be placed as
-the last argument to the trainer, as you can see in the example above.
-The four learning decays options are:
+Please note that   have f  learn ng rate decay funct ons to choose from.
+Add  onally, each tra ner can only take one learn ng rate decay funct on and  s para ters.
+ f that  s not t  case,   w ll throw an error.
+Also, please note that t  learn ng rate decay  s a pos  onal argu nt and should be placed as
+t  last argu nt to t  tra ner, as   can see  n t  example above.
+T  f  learn ng decays opt ons are:
 
-1. inverse_learning_rate_decay:
+1.  nverse_learn ng_rate_decay:
 
-  The function returns the decayed learning rate. It is computed as:
-
-  ::
-
-    decayed_learning_rate = learning_rate / (1 + decay_rate * global_step /decay_step)
-    final_decayed_learning_rate = max(decayed_learning_rate, min_learning_rate)
-
-
-2. polynomial_learning_rate_decay:
-
-  The function returns the decayed learning rate. It is computed as:
+  T  funct on returns t  decayed learn ng rate.    s computed as:
 
   ::
 
-    global_step = min(global_step, decay_steps)
-    decayed_learning_rate = (learning_rate - end_learning_rate) *
-                            (1 - global_step / decay_steps) ^ (power) +
-                            end_learning_rate
+    decayed_learn ng_rate = learn ng_rate / (1 + decay_rate * global_step /decay_step)
+    f nal_decayed_learn ng_rate = max(decayed_learn ng_rate, m n_learn ng_rate)
 
 
-3. piecewise_constant_learning_rate_decay:
+2. polynom al_learn ng_rate_decay:
 
-  Piecewise constant from boundaries and interval values.
-
-  Example: use a learning rate that's 1.0 for the first 100001 steps, 0.5 for
-  the next 10000 steps, and 0.1 for any additional steps.
+  T  funct on returns t  decayed learn ng rate.    s computed as:
 
   ::
 
-    global_step = tf.Variable(0, trainable=False)
-    boundaries = [100000, 110000]
+    global_step = m n(global_step, decay_steps)
+    decayed_learn ng_rate = (learn ng_rate - end_learn ng_rate) *
+                            (1 - global_step / decay_steps) ^ (po r) +
+                            end_learn ng_rate
+
+
+3. p ecew se_constant_learn ng_rate_decay:
+
+  P ecew se constant from boundar es and  nterval values.
+
+  Example: use a learn ng rate that's 1.0 for t  f rst 100001 steps, 0.5 for
+  t  next 10000 steps, and 0.1 for any add  onal steps.
+
+  ::
+
+    global_step = tf.Var able(0, tra nable=False)
+    boundar es = [100000, 110000]
     values = [1.0, 0.5, 0.1]
-    learning_rate = tf.train.piecewise_constant(global_step, boundaries, values)
+    learn ng_rate = tf.tra n.p ecew se_constant(global_step, boundar es, values)
 
-4. exponential_learning_rate_decay:
+4. exponent al_learn ng_rate_decay:
 
-  The function returns the decayed learning rate. It is computed as:
+  T  funct on returns t  decayed learn ng rate.    s computed as:
 
   ::
 
-    decayed_learning_rate = learning_rate * decay_rate ^ (global_step / decay_steps)
+    decayed_learn ng_rate = learn ng_rate * decay_rate ^ (global_step / decay_steps)
 
 """
 
-import datetime
-import functools
-import math
-from operator import itemgetter
-import os
-import pprint as pp
-import random
-from string import Template
-import subprocess
-import sys
-import time
-from threading import Thread
+ mport datet  
+ mport functools
+ mport math
+from operator  mport  emgetter
+ mport os
+ mport ppr nt as pp
+ mport random
+from str ng  mport Template
+ mport subprocess
+ mport sys
+ mport t  
+from thread ng  mport Thread
 
-from twitter.common.metrics import AtomicGauge
-from twitter.deepbird.stats_server import utils as stats_server_utils
-from twitter.deepbird.stats_server.stats_exporter import StatsExporter
-from twitter.ml.common import metrics
-from twitter.ml.common.kubernetes import kubectl_delete_by_name, Resource
-from twitter.ml.twml.status import get_distributed_training_job_status, TrainingJobStatus
+from tw ter.common. tr cs  mport Atom cGauge
+from tw ter.deepb rd.stats_server  mport ut ls as stats_server_ut ls
+from tw ter.deepb rd.stats_server.stats_exporter  mport StatsExporter
+from tw ter.ml.common  mport  tr cs
+from tw ter.ml.common.kubernetes  mport kubectl_delete_by_na , Res ce
+from tw ter.ml.twml.status  mport get_d str buted_tra n ng_job_status, Tra n ngJobStatus
 
-from absl import logging
-from twml.optimizers import LazyAdamOptimizer, optimize_loss, OPTIMIZER_SUMMARIES
-from twml.contrib.optimizers import DeepGradientCompressionOptimizer
-from twml.tracking import ExperimentTracker
-from twml.util import (delete_file_or_dir,
-                       get_distributed_training_job_path,
-                       sanitize_hdfs_path)
+from absl  mport logg ng
+from twml.opt m zers  mport LazyAdamOpt m zer, opt m ze_loss, OPT M ZER_SUMMAR ES
+from twml.contr b.opt m zers  mport DeepGrad entCompress onOpt m zer
+from twml.track ng  mport Exper  ntTracker
+from twml.ut l  mport (delete_f le_or_d r,
+                       get_d str buted_tra n ng_job_path,
+                       san  ze_hdfs_path)
 try:
-  from urllib import quote as encode_url
-except ImportError:
-  from urllib.parse import quote as encode_url
-import tensorflow.compat.v1 as tf
-import tensorflow
-import tensorflow_hub as hub
+  from urll b  mport quote as encode_url
+except  mportError:
+  from urll b.parse  mport quote as encode_url
+ mport tensorflow.compat.v1 as tf
+ mport tensorflow
+ mport tensorflow_hub as hub
 
-import twitter.ml.twml.kubernetes.status as k8s_status
-import twml
-import twml.export_output_fns
-import twml.learning_rate_decay
-import twml.metrics
+ mport tw ter.ml.twml.kubernetes.status as k8s_status
+ mport twml
+ mport twml.export_output_fns
+ mport twml.learn ng_rate_decay
+ mport twml. tr cs
 
 
 _CLUSTER_TEMPLATE = Template('''{
   "cluster": {
     "ps": [$PS],
-    "chief": [$CHIEF],
+    "ch ef": [$CH EF],
     "worker": [$WORKER]
   },
-  "task": {"type": "$TYPE", "index": $INDEX}
+  "task": {"type": "$TYPE", " ndex": $ NDEX}
 }
 ''')
 
 
-def init_from_checkpoint(init_dir, init_map):
+def  n _from_c ckpo nt( n _d r,  n _map):
   """
-  Wrapper around tf.train.init_from_checkpoint
+  Wrapper around tf.tra n. n _from_c ckpo nt
   """
-  if init_dir:
-    init_dir = sanitize_hdfs_path(init_dir)
-    tf.train.init_from_checkpoint(init_dir, init_map)
+   f  n _d r:
+     n _d r = san  ze_hdfs_path( n _d r)
+    tf.tra n. n _from_c ckpo nt( n _d r,  n _map)
 
 
-class Trainer(object):
+class Tra ner(object):
   """
-  This class wraps ``tf.estimator.Estimator`` to make construction, saving, and loading easier.
-  Supports multi-phase training (for example, use a Trainer for MDL calibration, then
-  another for training the rest of the model, then another for isotonic calibration).
-  The Trainer also implements a training and evaluation loop via the ``learn()`` method.
-  Each Trainer is associated to a fixed set of hyper parameters (params), and a single model
-  specified by ``build_graph``. Given these constraints, a single Trainer can be called
-  multiple times for training and evaluation over multiple epochs.
+  T  class wraps ``tf.est mator.Est mator`` to make construct on, sav ng, and load ng eas er.
+  Supports mult -phase tra n ng (for example, use a Tra ner for MDL cal brat on, t n
+  anot r for tra n ng t  rest of t  model, t n anot r for  soton c cal brat on).
+  T  Tra ner also  mple nts a tra n ng and evaluat on loop v a t  ``learn()``  thod.
+  Each Tra ner  s assoc ated to a f xed set of hyper para ters (params), and a s ngle model
+  spec f ed by ``bu ld_graph``. G ven t se constra nts, a s ngle Tra ner can be called
+  mult ple t  s for tra n ng and evaluat on over mult ple epochs.
 
-  However, if you intend to try different sets of hyper-parameters, we recommend you instantiate
-  a different Trainer for each such experiment. That way, each experiment can be tracked
-  in a different ``save_dir``. Indeed, after calling ``learn``, a Trainer's save_dir will contain
-  checkpoints of the model (its graph, and variables), and the history of metrics (for example,
-  evaluation accuracy at each epoch), and other store observations like the average time per step.
-  The latter metrics can be viewed by pointing
-  TensorBoard to the save_dir and accessing TensorBoard via your browser.
+  Ho ver,  f    ntend to try d fferent sets of hyper-para ters,   recom nd    nstant ate
+  a d fferent Tra ner for each such exper  nt. That way, each exper  nt can be tracked
+   n a d fferent ``save_d r``.  ndeed, after call ng ``learn``, a Tra ner's save_d r w ll conta n
+  c ckpo nts of t  model ( s graph, and var ables), and t   tory of  tr cs (for example,
+  evaluat on accuracy at each epoch), and ot r store observat ons l ke t  average t   per step.
+  T  latter  tr cs can be v e d by po nt ng
+  TensorBoard to t  save_d r and access ng TensorBoard v a y  browser.
   """
 
-  def __init__(self, name, params, build_graph_fn,
-               metric_fn=None,
-               optimize_loss_fn=None,
-               run_config=None,
-               save_dir=None,
-               init_from_dir=None,
-               init_map=None,
+  def __ n __(self, na , params, bu ld_graph_fn,
+                tr c_fn=None,
+               opt m ze_loss_fn=None,
+               run_conf g=None,
+               save_d r=None,
+                n _from_d r=None,
+                n _map=None,
                warm_start_from=None,
-               profiler_steps=None,
+               prof ler_steps=None,
                **kwargs):
     """
 
     Args:
-      name (String):
-        string name of this estimator; used as scope names for variables and tensors.
-      params (HParams, Namespace, or Dict):
-        hyper-parameters to be passed to Estimator constructor.
-        Must include params.train_batch_size and params.eval_batch_size.
-        Note that params is passed to twml.util.convert_to_hparams() to produce an HParams.
-      build_graph_fn:
-        A function for building tensorflow graphs.
-        This matches TensorFlow Estimator's model_fn signature.
+      na  (Str ng):
+        str ng na  of t  est mator; used as scope na s for var ables and tensors.
+      params (HParams, Na space, or D ct):
+        hyper-para ters to be passed to Est mator constructor.
+        Must  nclude params.tra n_batch_s ze and params.eval_batch_s ze.
+        Note that params  s passed to twml.ut l.convert_to_hparams() to produce an HParams.
+      bu ld_graph_fn:
+        A funct on for bu ld ng tensorflow graphs.
+        T  matc s TensorFlow Est mator's model_fn s gnature.
         For example,
 
         .. code-block:: python
 
-          def build_graph(features, label, mode, params, config=None):
-            # Implements a simple binary logistic regression model
-            sparse_tf = twml.util.convert_to_sparse(features, params.input_size_bits)
+          def bu ld_graph(features, label, mode, params, conf g=None):
+            #  mple nts a s mple b nary log st c regress on model
+            sparse_tf = twml.ut l.convert_to_sparse(features, params. nput_s ze_b s)
 
-            logits = twml.layers.full_sparse(sparse_tf, 1 << params.input_size_bits, 1)
+            log s = twml.layers.full_sparse(sparse_tf, 1 << params. nput_s ze_b s, 1)
 
-            if mode == 'infer':
+             f mode == ' nfer':
               loss = None
             else:
-              loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=logits)
-              loss = twml.util.weighted_average(loss, features['weights'])
+              loss = tf.nn.s gmo d_cross_entropy_w h_log s(labels=label, log s=log s)
+              loss = twml.ut l.  ghted_average(loss, features['  ghts'])
 
-            output = tf.nn.sigmoid(logits)
+            output = tf.nn.s gmo d(log s)
 
             return {'output': output, 'loss': loss}
 
         Args:
-          features (dict of Tensor keyed by a string name):
-            input tensors.
-          mode (tf.estimator.ModeKeys / String):
-            one of 'train', 'eval', 'infer'.
+          features (d ct of Tensor keyed by a str ng na ):
+             nput tensors.
+          mode (tf.est mator.ModeKeys / Str ng):
+            one of 'tra n', 'eval', ' nfer'.
           label (Tensor):
-            if in ``mode == 'train'`` mode, these contain the corresponding labels for input.
+             f  n ``mode == 'tra n'`` mode, t se conta n t  correspond ng labels for  nput.
           params (HParams):
-            hyper parameters that control how to build a graph.
-          config:
-            the RunConfig object passed to Estimator constructor.
+            hyper para ters that control how to bu ld a graph.
+          conf g:
+            t  RunConf g object passed to Est mator constructor.
 
-        This function is expected to return a dictionary containing the following keys:
+        T  funct on  s expected to return a d ct onary conta n ng t  follow ng keys:
 
-        * 'output': a node representing model output; required.
-        * 'loss': (required) a loss node used for optimization; required for training and
-          evaluation.
-        * 'train_op': (optional) an operation that minimizes the loss (as output by
-          `tf.train.Optimizer.minimize`). If train_op is specified, train_op is used
-          for optimization as opposed to loss. Loss is always logged to tensorboard.
+        * 'output': a node represent ng model output; requ red.
+        * 'loss': (requ red) a loss node used for opt m zat on; requ red for tra n ng and
+          evaluat on.
+        * 'tra n_op': (opt onal) an operat on that m n m zes t  loss (as output by
+          `tf.tra n.Opt m zer.m n m ze`).  f tra n_op  s spec f ed, tra n_op  s used
+          for opt m zat on as opposed to loss. Loss  s always logged to tensorboard.
 
         Notes:
 
-        * any tf.summary written inside build graph are logged to tensorboard during training.
-        * the ``build_graph_fn`` is called once or twice per epoch (once per training,
-          once per evaluation). All data loading (and preprocessing) logic not required
-          for serving should be in the ``input_fn`` passed to ``learn``, ``train``,
+        * any tf.summary wr ten  ns de bu ld graph are logged to tensorboard dur ng tra n ng.
+        * t  ``bu ld_graph_fn``  s called once or tw ce per epoch (once per tra n ng,
+          once per evaluat on). All data load ng (and preprocess ng) log c not requ red
+          for serv ng should be  n t  `` nput_fn`` passed to ``learn``, ``tra n``,
           ``evalulate``, etc.
 
-      optimize_loss_fn:
-        Defaults to Trainer.get_train_op. A function that takes params and loss as arguments
-        and returns a training op. The training op is used to update parameters (that is, to learn).
-      metric_fn:
-        A function that returns the eval_metric_ops dict given graph_output, labels and weights.
+      opt m ze_loss_fn:
+        Defaults to Tra ner.get_tra n_op. A funct on that takes params and loss as argu nts
+        and returns a tra n ng op. T  tra n ng op  s used to update para ters (that  s, to learn).
+       tr c_fn:
+        A funct on that returns t  eval_ tr c_ops d ct g ven graph_output, labels and   ghts.
         Defaults to None.
-        Use ``twml.metrics.get_binary_class_metric_fn()`` to return a ``metric_fn``
-        which implements many binary classification metrics.
-      run_config (RunConfig):
-        optional configuration to be passed to Estimator constructor. Defaults to None.
-      save_dir (String):
-        optional directory where to save model checkpoints,
-        tensorboard event files and trained parameters.
-        Overwrites and defaults to run_config.model_dir.
-      init_from_dir (String):
-        optional directory to load weights from.
-        if set to None (the default), do not init from any directory.
-      init_map (map from String to String):
-        Must be specified if init_from_dir is specified.
-        Defines which scopes and variables to load.
-        Keys are the variables and scopes to load from the directory.
-        Values are the destinations (in the current graph) to load into.
-        See tf.init_from_checkpoint for more information.
-        Note that the the trainer prepends name_scope of the form `name`/model/ to the name_scope
-        of any variable defined inside `build_graph_fn` and this should be taken into account when
-        defining the values.
+        Use ``twml. tr cs.get_b nary_class_ tr c_fn()`` to return a `` tr c_fn``
+        wh ch  mple nts many b nary class f cat on  tr cs.
+      run_conf g (RunConf g):
+        opt onal conf gurat on to be passed to Est mator constructor. Defaults to None.
+      save_d r (Str ng):
+        opt onal d rectory w re to save model c ckpo nts,
+        tensorboard event f les and tra ned para ters.
+        Overwr es and defaults to run_conf g.model_d r.
+       n _from_d r (Str ng):
+        opt onal d rectory to load   ghts from.
+         f set to None (t  default), do not  n  from any d rectory.
+       n _map (map from Str ng to Str ng):
+        Must be spec f ed  f  n _from_d r  s spec f ed.
+        Def nes wh ch scopes and var ables to load.
+        Keys are t  var ables and scopes to load from t  d rectory.
+        Values are t  dest nat ons ( n t  current graph) to load  nto.
+        See tf. n _from_c ckpo nt for more  nformat on.
+        Note that t  t  tra ner prepends na _scope of t  form `na `/model/ to t  na _scope
+        of any var able def ned  ns de `bu ld_graph_fn` and t  should be taken  nto account w n
+        def n ng t  values.
       warm_start_from:
-        Optional string filepath to a checkpoint to warm-start from,
-        or a tf.estimator.WarmStartSettings object to fully configure warm-starting.
-        If the string filepath is provided instead of a WarmStartSettings,
-        then all variables are warm-started, and it is assumed that
-        vocabularies and Tensor names are unchanged.
-      profiler_steps (Integer):
-        Defaults to None. If set defines the number of steps in the
-        `tf.train.ProfileHook <https://www.tensorflow.org/api_docs/python/tf/train/ProfilerHook>`_.
-        Captures CPU/GPU profiling information every ``profiler_steps`` steps or seconds.
-        When executing ``learn``, ``train`` or ``predict`` methods,
-        with ``profiler_steps`` set to a number,
-        a ``timeline_X.json`` file is created in the save_dir. This file contains profiling data
-        storedin Chrome trace format. To view stored data, use the Chrome browser to follow
-        these steps:
+        Opt onal str ng f lepath to a c ckpo nt to warm-start from,
+        or a tf.est mator.WarmStartSett ngs object to fully conf gure warm-start ng.
+         f t  str ng f lepath  s prov ded  nstead of a WarmStartSett ngs,
+        t n all var ables are warm-started, and    s assu d that
+        vocabular es and Tensor na s are unchanged.
+      prof ler_steps ( nteger):
+        Defaults to None.  f set def nes t  number of steps  n t 
+        `tf.tra n.Prof leHook <https://www.tensorflow.org/ap _docs/python/tf/tra n/Prof lerHook>`_.
+        Captures CPU/GPU prof l ng  nformat on every ``prof ler_steps`` steps or seconds.
+        W n execut ng ``learn``, ``tra n`` or ``pred ct``  thods,
+        w h ``prof ler_steps`` set to a number,
+        a ``t  l ne_X.json`` f le  s created  n t  save_d r. T  f le conta ns prof l ng data
+        stored n Chro  trace format. To v ew stored data, use t  Chro  browser to follow
+        t se steps:
 
-        1) Go to the page chrome://tracing.
-        2) In the upper left corner, you will find Load button.
-        3) Press it and load our JSON file, which can be found in the ``save_dir``
+        1) Go to t  page chro ://trac ng.
+        2)  n t  upper left corner,   w ll f nd Load button.
+        3) Press   and load   JSON f le, wh ch can be found  n t  ``save_d r``
 
-        *Warning*: This could create too many these json files which can be a potential problem,
-        e.g. for  HDFS there is normally quota forfile count, so use with caution.
+        *Warn ng*: T  could create too many t se json f les wh ch can be a potent al problem,
+        e.g. for  HDFS t re  s normally quota forf le count, so use w h caut on.
 
-        Note: this argument is ignored when a non-None ``hooks`` argument is pasesd to
-        ``train``, ``learn``, or ``predict`` methods. The hook can be added manually by passing
-        ``trainer.train(..., hooks=myhooks.extend(trainer.get_train_hooks()))``, for example.
+        Note: t  argu nt  s  gnored w n a non-None ``hooks`` argu nt  s pasesd to
+        ``tra n``, ``learn``, or ``pred ct``  thods. T  hook can be added manually by pass ng
+        ``tra ner.tra n(..., hooks= hooks.extend(tra ner.get_tra n_hooks()))``, for example.
     """
 
-    if tensorflow.__version__ >= "2.0":
-      RuntimeError("Trainer not yet supported for Tensorflow >= 2.0")
+     f tensorflow.__vers on__ >= "2.0":
+      Runt  Error("Tra ner not yet supported for Tensorflow >= 2.0")
 
-    self._name = name
-    self._build_graph_fn = build_graph_fn
-    self._metric_fn = metric_fn
+    self._na  = na 
+    self._bu ld_graph_fn = bu ld_graph_fn
+    self._ tr c_fn =  tr c_fn
     self._tensorboard_handle = None
-    self._current_estimator_spec = None  # holds the current estimator spec
-    self._profiler_steps = profiler_steps
+    self._current_est mator_spec = None  # holds t  current est mator spec
+    self._prof ler_steps = prof ler_steps
     self._export_output_fn = None
-    self._is_early_stopping = False
+    self._ s_early_stopp ng = False
 
-    # NOTE: Sanitize all HDFS paths first.
-    save_dir = sanitize_hdfs_path(save_dir)
-    init_from_dir = sanitize_hdfs_path(init_from_dir)
+    # NOTE: San  ze all HDFS paths f rst.
+    save_d r = san  ze_hdfs_path(save_d r)
+     n _from_d r = san  ze_hdfs_path( n _from_d r)
 
-    # warm_start_from can be of type tf.estimator.WarmStartSettings.
-    if isinstance(warm_start_from, str):
-      warm_start_from = sanitize_hdfs_path(warm_start_from)
+    # warm_start_from can be of type tf.est mator.WarmStartSett ngs.
+     f  s nstance(warm_start_from, str):
+      warm_start_from = san  ze_hdfs_path(warm_start_from)
 
-    # convert to twitter.deepbird.hparam.hparam.HParams object
-    params = twml.util.convert_to_hparams(params)
+    # convert to tw ter.deepb rd.hparam.hparam.HParams object
+    params = twml.ut l.convert_to_hparams(params)
 
-    # keep a copy of the params because calling self._estimator.params creates a deepcopy
+    # keep a copy of t  params because call ng self._est mator.params creates a deepcopy
     self._params = params
-    self.check_params()
+    self.c ck_params()
 
-    self._using_hogwild = True if os.environ.get('TWML_HOGWILD_PORTS') else False
-    # configure Hogwild (needs to be called before RunConfig is created)
-    self._hogwild_setup()
+    self._us ng_hogw ld = True  f os.env ron.get('TWML_HOGW LD_PORTS') else False
+    # conf gure Hogw ld (needs to be called before RunConf g  s created)
+    self._hogw ld_setup()
 
-    if not run_config:
-      session_config = tf.ConfigProto()
-      # By default each process tries to allocate (almost) all of the memory.
-      # This option ensures the gpu memory grows dynamically instead.
-      session_config.gpu_options.allow_growth = True  # pylint: disable=no-member
+     f not run_conf g:
+      sess on_conf g = tf.Conf gProto()
+      # By default each process tr es to allocate (almost) all of t   mory.
+      # T  opt on ensures t  gpu  mory grows dynam cally  nstead.
+      sess on_conf g.gpu_opt ons.allow_growth = True  # pyl nt: d sable=no- mber
 
-      if 'TWML_NUM_CPUS' in os.environ:
-        num_available_cpus = int(os.environ.get("TWML_MESOS_CPU", "8"))
-        if params.num_mkl_threads > 1:
-          os.environ["OMP_NUM_THREADS"] = str(params.num_mkl_threads)
-          os.environ["MKL_NUM_THREADS"] = str(params.num_mkl_threads)
-          session_config.inter_op_parallelism_threads = num_available_cpus // params.num_mkl_threads
-          session_config.intra_op_parallelism_threads = params.num_mkl_threads
+       f 'TWML_NUM_CPUS'  n os.env ron:
+        num_ava lable_cpus =  nt(os.env ron.get("TWML_MESOS_CPU", "8"))
+         f params.num_mkl_threads > 1:
+          os.env ron["OMP_NUM_THREADS"] = str(params.num_mkl_threads)
+          os.env ron["MKL_NUM_THREADS"] = str(params.num_mkl_threads)
+          sess on_conf g. nter_op_parallel sm_threads = num_ava lable_cpus // params.num_mkl_threads
+          sess on_conf g. ntra_op_parallel sm_threads = params.num_mkl_threads
 
-      run_config = tf.estimator.RunConfig(
-        session_config=session_config,
-        keep_checkpoint_max=self._params.get('keep_checkpoint_max', 20),
+      run_conf g = tf.est mator.RunConf g(
+        sess on_conf g=sess on_conf g,
+        keep_c ckpo nt_max=self._params.get('keep_c ckpo nt_max', 20),
         log_step_count_steps=10000,
-        save_checkpoints_secs=self._params.get('save_checkpoints_secs', 600),
+        save_c ckpo nts_secs=self._params.get('save_c ckpo nts_secs', 600),
         tf_random_seed=self._tf_random_seed())
-    elif not isinstance(run_config, tf.estimator.RunConfig):
-      raise ValueError("Expecting run_config argument of type None or tf.estimator.RunConfig"
-        "Got %s instead." % type(run_config).__name__)
-    elif os.environ.get('TWML_HOGWILD_PORTS'):
-      raise ValueError("Custom RunConfig not supported with Hogwild")
+    el f not  s nstance(run_conf g, tf.est mator.RunConf g):
+      ra se ValueError("Expect ng run_conf g argu nt of type None or tf.est mator.RunConf g"
+        "Got %s  nstead." % type(run_conf g).__na __)
+    el f os.env ron.get('TWML_HOGW LD_PORTS'):
+      ra se ValueError("Custom RunConf g not supported w h Hogw ld")
 
-    if run_config.model_dir is None and save_dir is None:
-      raise ValueError(
-          "Expecting either save_dir or run_config.model_dir to be specified. Got None for each.")
-    elif run_config.model_dir is None:
-      run_config = run_config.replace(model_dir=save_dir)
-    elif save_dir is None:
-      save_dir = run_config.model_dir
+     f run_conf g.model_d r  s None and save_d r  s None:
+      ra se ValueError(
+          "Expect ng e  r save_d r or run_conf g.model_d r to be spec f ed. Got None for each.")
+    el f run_conf g.model_d r  s None:
+      run_conf g = run_conf g.replace(model_d r=save_d r)
+    el f save_d r  s None:
+      save_d r = run_conf g.model_d r
 
-    self._save_dir = save_dir
-    self.experiment_tracker = ExperimentTracker(self._params, run_config, self._save_dir)
+    self._save_d r = save_d r
+    self.exper  nt_tracker = Exper  ntTracker(self._params, run_conf g, self._save_d r)
 
-    # Check if should delete the tsd running this training job. In certain use case when 
-    # there are other tf operations following trainer.train_and_evaluate (or trainer.learn),
-    # additional state files need to be specified to ensure those steps are executed after job restart.
-    kwargs['gke_state_files'] = kwargs.get('gke_state_files', ['_SUCCESS'])
-    self._maybe_del_tsd_exit(kwargs['gke_state_files'])
-    logging.info("Checkpoint and event files will be saved at save_dir=%s", save_dir)
-    self._optimize_loss_fn = self.get_train_op if optimize_loss_fn is None else optimize_loss_fn
+    # C ck  f should delete t  tsd runn ng t  tra n ng job.  n certa n use case w n 
+    # t re are ot r tf operat ons follow ng tra ner.tra n_and_evaluate (or tra ner.learn),
+    # add  onal state f les need to be spec f ed to ensure those steps are executed after job restart.
+    kwargs['gke_state_f les'] = kwargs.get('gke_state_f les', ['_SUCCESS'])
+    self._maybe_del_tsd_ex (kwargs['gke_state_f les'])
+    logg ng. nfo("C ckpo nt and event f les w ll be saved at save_d r=%s", save_d r)
+    self._opt m ze_loss_fn = self.get_tra n_op  f opt m ze_loss_fn  s None else opt m ze_loss_fn
 
-    # overwrite the current save_dir
-    if self._params.get('overwrite_save_dir') and tf.io.gfile.exists(self._save_dir):
-      logging.info("Trainer overwriting existing save directory: %s (params.overwrite_save_dir)"
-                   % self._save_dir)
-      # if distributed or hogwild:
-      if self._params.get('distributed', False):
-        # sleep for 30 seconds to allow each worker to get to this point.
-        time.sleep(30)
-        if run_config.is_chief:
-          logging.info("Chief deleting the save_dir now")
-          delete_file_or_dir(self._save_dir)
-        # sleep for 30 seconds to allow each worker to get to this point.
-        time.sleep(30)
+    # overwr e t  current save_d r
+     f self._params.get('overwr e_save_d r') and tf. o.gf le.ex sts(self._save_d r):
+      logg ng. nfo("Tra ner overwr  ng ex st ng save d rectory: %s (params.overwr e_save_d r)"
+                   % self._save_d r)
+      #  f d str buted or hogw ld:
+       f self._params.get('d str buted', False):
+        # sleep for 30 seconds to allow each worker to get to t  po nt.
+        t  .sleep(30)
+         f run_conf g. s_ch ef:
+          logg ng. nfo("Ch ef delet ng t  save_d r now")
+          delete_f le_or_d r(self._save_d r)
+        # sleep for 30 seconds to allow each worker to get to t  po nt.
+        t  .sleep(30)
       else:
-        delete_file_or_dir(self._save_dir)
+        delete_f le_or_d r(self._save_d r)
 
-    # Exposing stats to a /vars.json endpoint that will be collected
-    # by the absorber
-    if self._params.get('stats_port'):
+    # Expos ng stats to a /vars.json endpo nt that w ll be collected
+    # by t  absorber
+     f self._params.get('stats_port'):
       try:
-        stats_server_utils.start_stats_server(self._params.get('stats_port'), self._save_dir)
-      except Exception as err:
-        logging.error('Failed to start the stats server. Error: %s', str(err))
+        stats_server_ut ls.start_stats_server(self._params.get('stats_port'), self._save_d r)
+      except Except on as err:
+        logg ng.error('Fa led to start t  stats server. Error: %s', str(err))
 
-    checkpoint = os.path.join(self._save_dir, 'checkpoint')
-    if tf.io.gfile.exists(checkpoint):
-      logging.info("The provided save_dir directory %s already exists."
-                   " Training will be resumed."
-                   % checkpoint)
+    c ckpo nt = os.path.jo n(self._save_d r, 'c ckpo nt')
+     f tf. o.gf le.ex sts(c ckpo nt):
+      logg ng. nfo("T  prov ded save_d r d rectory %s already ex sts."
+                   " Tra n ng w ll be resu d."
+                   % c ckpo nt)
 
-    self._maybe_restore_checkpoint = lambda: init_from_checkpoint(init_from_dir, init_map)
+    self._maybe_restore_c ckpo nt = lambda:  n _from_c ckpo nt( n _from_d r,  n _map)
 
-    if init_from_dir is not None and init_map is None:
-      raise ValueError("Need to provide init_map when init_from_dir is provided.")
+     f  n _from_d r  s not None and  n _map  s None:
+      ra se ValueError("Need to prov de  n _map w n  n _from_d r  s prov ded.")
 
-    if not tf.io.gfile.exists(self._save_dir):
-      # so tensorboard can point to a directory that exists
-      tf.io.gfile.mkdir(self._save_dir)
+     f not tf. o.gf le.ex sts(self._save_d r):
+      # so tensorboard can po nt to a d rectory that ex sts
+      tf. o.gf le.mkd r(self._save_d r)
 
-    self._estimator = tf.estimator.Estimator(
+    self._est mator = tf.est mator.Est mator(
       model_fn=self._model_fn,
       params=self._params,  # HParams
-      config=run_config,  # RunConfig
+      conf g=run_conf g,  # RunConf g
       warm_start_from=warm_start_from,
-      model_dir=self._save_dir,  # By this point it is same as run_config.model_dir
+      model_d r=self._save_d r,  # By t  po nt    s sa  as run_conf g.model_d r
     )
 
-    # Log parameters that are used to construct trainer. This allows people to see default values.
-    logging.info("Trainer constructed using the following parameters: ")
+    # Log para ters that are used to construct tra ner. T  allows people to see default values.
+    logg ng. nfo("Tra ner constructed us ng t  follow ng para ters: ")
     pp_params = pp.pformat(self._params.values())
-    logging.info(pp_params)
+    logg ng. nfo(pp_params)
 
     # Start TensorBoard
-    if self._params.get('disable_tensorboard', False):
-      logging.info("Skipping launching TensorBoard [--disable_tensorboard is set]")
-    elif "tensorboard_port" in self._params.values() and self._params.tensorboard_port is not None:
+     f self._params.get('d sable_tensorboard', False):
+      logg ng. nfo("Sk pp ng launch ng TensorBoard [--d sable_tensorboard  s set]")
+    el f "tensorboard_port"  n self._params.values() and self._params.tensorboard_port  s not None:
       self.start_tensorboard(self._params.tensorboard_port)
 
-    # Export gauge that will track whether a model was exported
-    self.stats_exporter = StatsExporter("twml.trainer")
-    self.export_gauge = AtomicGauge('export_model')
-    self.stats_exporter.register_metrics(self.export_gauge)
+    # Export gauge that w ll track w t r a model was exported
+    self.stats_exporter = StatsExporter("twml.tra ner")
+    self.export_gauge = Atom cGauge('export_model')
+    self.stats_exporter.reg ster_ tr cs(self.export_gauge)
 
-  def _hogwild_setup(self):
+  def _hogw ld_setup(self):
     """
-    Setup the parameters required for hogwild.
+    Setup t  para ters requ red for hogw ld.
     """
     self._num_workers = self._params.get('num_workers') or 1
-    logging.info("NUM_WORKERS: %d", self._num_workers)
-    if self._num_workers <= 1:
+    logg ng. nfo("NUM_WORKERS: %d", self._num_workers)
+     f self._num_workers <= 1:
       self._ports = None
       return
 
-    # a hogwild job is considered distributed
-    if 'distributed' in self._params:
-      self._params.set_hparam('distributed', True)
+    # a hogw ld job  s cons dered d str buted
+     f 'd str buted'  n self._params:
+      self._params.set_hparam('d str buted', True)
     else:
-      self._params.add_hparam('distributed', True)
+      self._params.add_hparam('d str buted', True)
 
-    ports = os.environ.get('TWML_HOGWILD_PORTS')
-    if ports:
-      self._ports = [int(port) for port in ports.strip().split(",")]
-      if (self._num_workers + 1!= len(self._ports)):
-        raise ValueError("Number of (workers + PS) and ports need to match")
+    ports = os.env ron.get('TWML_HOGW LD_PORTS')
+     f ports:
+      self._ports = [ nt(port) for port  n ports.str p().spl (",")]
+       f (self._num_workers + 1!= len(self._ports)):
+        ra se ValueError("Number of (workers + PS) and ports need to match")
     else:
-      if self._num_workers > 1:
-        raise ValueError("TWML_HOGWILD_PORTS needs to be set to use hogwild training")
+       f self._num_workers > 1:
+        ra se ValueError("TWML_HOGW LD_PORTS needs to be set to use hogw ld tra n ng")
 
-    # Split the number of data threads across multiple workers
+    # Spl  t  number of data threads across mult ple workers
     num_threads = self._params.get('num_threads')
-    num_threads_per_worker = int(math.ceil(float(num_threads) / self._num_workers))
+    num_threads_per_worker =  nt(math.ce l(float(num_threads) / self._num_workers))
     self._params.set_hparam('num_threads', num_threads_per_worker)
 
-    hogwild_task_type = os.environ.get('TWML_HOGWILD_TASK_TYPE')
-    hogwild_task_id = int(os.environ.get('TWML_HOGWILD_TASK_ID'))
-    os.environ['TF_CONFIG'] = self._get_cluster_config(hogwild_task_type, hogwild_task_id)
+    hogw ld_task_type = os.env ron.get('TWML_HOGW LD_TASK_TYPE')
+    hogw ld_task_ d =  nt(os.env ron.get('TWML_HOGW LD_TASK_ D'))
+    os.env ron['TF_CONF G'] = self._get_cluster_conf g(hogw ld_task_type, hogw ld_task_ d)
 
   def _tf_random_seed(self):
-    """ Returns user set seed and deal with Hogwild multiple seeds """
+    """ Returns user set seed and deal w h Hogw ld mult ple seeds """
     tf_random_seed = self._params.get('tf_random_seed', None)
-    if tf_random_seed is None:
+     f tf_random_seed  s None:
       return None
-    elif self.using_hogwild and os.environ.get('TWML_HOGWILD_TASK_TYPE') == 'worker':
-      # chief (tf_random_seed), worker_0 (tf_random_seed + 1), worker_1 (tf_random_seed + 2)...
-      return tf_random_seed + 1 + int(os.environ.get('TWML_HOGWILD_TASK_ID'))
+    el f self.us ng_hogw ld and os.env ron.get('TWML_HOGW LD_TASK_TYPE') == 'worker':
+      # ch ef (tf_random_seed), worker_0 (tf_random_seed + 1), worker_1 (tf_random_seed + 2)...
+      return tf_random_seed + 1 +  nt(os.env ron.get('TWML_HOGW LD_TASK_ D'))
     else:
       return tf_random_seed
 
-  def check_params(self):
-    """ Verify that params has the correct key,values """
+  def c ck_params(self):
+    """ Ver fy that params has t  correct key,values """
     param_values = self._params.values()
 
-    if 'train_batch_size' in param_values:
-      if not isinstance(self._params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
-      if self._params.train_batch_size <= 0:
-        raise ValueError("train_batch_size needs to be positive")
+     f 'tra n_batch_s ze'  n param_values:
+       f not  s nstance(self._params.tra n_batch_s ze,  nt):
+        ra se ValueError("Expect ng params.tra n_batch_s ze to be an  nteger.")
+       f self._params.tra n_batch_s ze <= 0:
+        ra se ValueError("tra n_batch_s ze needs to be pos  ve")
     else:
-      raise ValueError("train_batch_size needs to be present in params")
+      ra se ValueError("tra n_batch_s ze needs to be present  n params")
 
-    if 'eval_batch_size' in param_values:
-      if not isinstance(self._params.eval_batch_size, int):
-        raise ValueError("Expecting params.eval_batch_size to be an integer.")
-      if self._params.eval_batch_size <= 0:
-        raise ValueError("eval_batch_size needs to be positive.")
+     f 'eval_batch_s ze'  n param_values:
+       f not  s nstance(self._params.eval_batch_s ze,  nt):
+        ra se ValueError("Expect ng params.eval_batch_s ze to be an  nteger.")
+       f self._params.eval_batch_s ze <= 0:
+        ra se ValueError("eval_batch_s ze needs to be pos  ve.")
     else:
-      self._params.add_hparam('eval_batch_size', self._params.train_batch_size)
+      self._params.add_hparam('eval_batch_s ze', self._params.tra n_batch_s ze)
 
-    if (self._params.get('distributed_training_cleanup') and
-      not self._params.get('distributed')):
-      # we only need to support training discontinuation for distributed training
-      # bc we are still using TSDs on GKE for distributed training
-      raise ValueError(
-        "Expecting params.distributed to be set if "
-        "params.distributed_training_cleanup is set."
+     f (self._params.get('d str buted_tra n ng_cleanup') and
+      not self._params.get('d str buted')):
+      #   only need to support tra n ng d scont nuat on for d str buted tra n ng
+      # bc   are st ll us ng TSDs on GKE for d str buted tra n ng
+      ra se ValueError(
+        "Expect ng params.d str buted to be set  f "
+        "params.d str buted_tra n ng_cleanup  s set."
       )
 
-  def _get_cluster_config(self, name, index):
-    """Create a tensorflow cluster config from ports, name and index"""
+  def _get_cluster_conf g(self, na ,  ndex):
+    """Create a tensorflow cluster conf g from ports, na  and  ndex"""
     host = '"localhost:%d"'
     ps = host % self._ports[0]
-    chief = host % self._ports[1]
-    workers = ", ".join([host % port for port in self._ports[2:]])
-    config = _CLUSTER_TEMPLATE.substitute(
+    ch ef = host % self._ports[1]
+    workers = ", ".jo n([host % port for port  n self._ports[2:]])
+    conf g = _CLUSTER_TEMPLATE.subst ute(
       PS=ps,
-      CHIEF=chief,
+      CH EF=ch ef,
       WORKER=workers,
-      TYPE=name,
-      INDEX=index,
+      TYPE=na ,
+       NDEX= ndex,
     )
-    return config
+    return conf g
 
   @property
-  def current_estimator_spec(self):
+  def current_est mator_spec(self):
     """
-    returns the current estimator (warning: often reset)
+    returns t  current est mator (warn ng: often reset)
     """
-    return self._current_estimator_spec
+    return self._current_est mator_spec
 
   @property
-  def estimator(self):
-    """ returns estimator encapsulated by Trainer """
-    return self._estimator
+  def est mator(self):
+    """ returns est mator encapsulated by Tra ner """
+    return self._est mator
 
   @property
   def num_workers(self):
     """ returns number of workers """
-    return self._estimator.config.num_worker_replicas
+    return self._est mator.conf g.num_worker_repl cas
 
   @property
-  def worker_index(self):
+  def worker_ ndex(self):
     """
-    returns index of worker in the cluster
-    chief has index 0
-    non-chief workers have indices 1 through (num_workers - 1)
+    returns  ndex of worker  n t  cluster
+    ch ef has  ndex 0
+    non-ch ef workers have  nd ces 1 through (num_workers - 1)
     """
-    return self._estimator.config.global_id_in_cluster
+    return self._est mator.conf g.global_ d_ n_cluster
 
   @property
-  def using_hogwild(self):
-    """ returns a bool indicating whether hogwild is being used """
-    return self._using_hogwild
+  def us ng_hogw ld(self):
+    """ returns a bool  nd cat ng w t r hogw ld  s be ng used """
+    return self._us ng_hogw ld
 
-  def set_estimator(self, estimator):
-    """ sets the estimator used internally by Trainer """
-    if not isinstance(estimator, tf.estimator.Estimator):
-      raise ValueError("Expecting tf.estimator.Estimator")
-    self._estimator = estimator
-    self._params = self.estimator.params
+  def set_est mator(self, est mator):
+    """ sets t  est mator used  nternally by Tra ner """
+     f not  s nstance(est mator, tf.est mator.Est mator):
+      ra se ValueError("Expect ng tf.est mator.Est mator")
+    self._est mator = est mator
+    self._params = self.est mator.params
 
   @property
   def params(self):
     """
-    returns the hyper-parameters passed to the constructor.
+    returns t  hyper-para ters passed to t  constructor.
     """
     return self._params
 
-  @staticmethod
-  def add_parser_arguments():
+  @stat c thod
+  def add_parser_argu nts():
     """
-    Add common commandline args to parse for the Trainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    Add common commandl ne args to parse for t  Tra ner class.
+    Typ cally, t  user calls t  funct on and t n parses cmd-l ne argu nts
+     nto an argparse.Na space object wh ch  s t n passed to t  Tra ner constructor
+    v a t  params argu nt.
 
-    See the `code <_modules/twml/argument_parser.html#get_trainer_parser>`_
-    for a list and description of all cmd-line arguments.
+    See t  `code <_modules/twml/argu nt_parser.html#get_tra ner_parser>`_
+    for a l st and descr pt on of all cmd-l ne argu nts.
 
     Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+      argparse.Argu ntParser  nstance w h so  useful args already added.
     """
-    return twml.argument_parser.get_trainer_parser()
+    return twml.argu nt_parser.get_tra ner_parser()
 
-  @staticmethod
-  def get_train_op(params, loss):
+  @stat c thod
+  def get_tra n_op(params, loss):
     """
-    Return a training Op, that is, a `twml.optimizers.optimize_loss
-    <https://www.tensorflow.org/api_docs/python/tf/contrib/layers/optimize_loss>`_
-    instance given params and loss.
-    This method can be overwritten by passing the optimize_loss_fn to the Trainer
+    Return a tra n ng Op, that  s, a `twml.opt m zers.opt m ze_loss
+    <https://www.tensorflow.org/ap _docs/python/tf/contr b/layers/opt m ze_loss>`_
+     nstance g ven params and loss.
+    T   thod can be overwr ten by pass ng t  opt m ze_loss_fn to t  Tra ner
     constructor.
 
     Args:
       params:
-        tensorflow.contrib.training.HParams instance. Recognizes the optimizer, optimizer_summaries,
-        gradient_noise_scale, clip_gradients and learning_rate_decay (including
-        other learning rate decay arguments).
+        tensorflow.contr b.tra n ng.HParams  nstance. Recogn zes t  opt m zer, opt m zer_summar es,
+        grad ent_no se_scale, cl p_grad ents and learn ng_rate_decay ( nclud ng
+        ot r learn ng rate decay argu nts).
       loss:
-        scalar Op returned by the build_graph that specifies the training loss to
-        be minimized.
+        scalar Op returned by t  bu ld_graph that spec f es t  tra n ng loss to
+        be m n m zed.
     """
-    optimizer = params.get('optimizer')
+    opt m zer = params.get('opt m zer')
 
-    if not optimizer:
-      optimizer = 'SGD'
+     f not opt m zer:
+      opt m zer = 'SGD'
 
-    if optimizer == 'LazyAdam':
-      optimizer = LazyAdamOptimizer
+     f opt m zer == 'LazyAdam':
+      opt m zer = LazyAdamOpt m zer
 
-    if optimizer == 'DGC':
-      optimizer = DeepGradientCompressionOptimizer(
-          learning_rate=params.learning_rate,
-          use_locking=False,
-          name="Sparse",
-          density=params.get('dgc_density'),
-          density_decay=params.get('dgc_density_decay'),
-          density_decay_steps=params.get('dgc_density_decay_steps'),
-          density_decay_rate=params.get('dgc_density_decay_rate'),
-          min_density=params.get('dgc_min_density'),
-          accumulation=params.get('dgc_accumulation')
+     f opt m zer == 'DGC':
+      opt m zer = DeepGrad entCompress onOpt m zer(
+          learn ng_rate=params.learn ng_rate,
+          use_lock ng=False,
+          na ="Sparse",
+          dens y=params.get('dgc_dens y'),
+          dens y_decay=params.get('dgc_dens y_decay'),
+          dens y_decay_steps=params.get('dgc_dens y_decay_steps'),
+          dens y_decay_rate=params.get('dgc_dens y_decay_rate'),
+          m n_dens y=params.get('dgc_m n_dens y'),
+          accumulat on=params.get('dgc_accumulat on')
       )
 
-    summaries = ['loss']
-    if params.get('show_optimizer_summaries'):
-      summaries = OPTIMIZER_SUMMARIES
+    summar es = ['loss']
+     f params.get('show_opt m zer_summar es'):
+      summar es = OPT M ZER_SUMMAR ES
 
-    train_op = optimize_loss(
+    tra n_op = opt m ze_loss(
       loss=loss,
-      global_step=tf.train.get_global_step(),
-      optimizer=optimizer,
-      learning_rate=params.learning_rate,
-      summaries=summaries,
-      colocate_gradients_with_ops=True,
-      gradient_noise_scale=params.get('gradient_noise_scale'),
-      clip_gradients=params.get('clip_gradients'),
-      learning_rate_decay_fn=twml.learning_rate_decay.get_learning_rate_decay_fn(params)
+      global_step=tf.tra n.get_global_step(),
+      opt m zer=opt m zer,
+      learn ng_rate=params.learn ng_rate,
+      summar es=summar es,
+      colocate_grad ents_w h_ops=True,
+      grad ent_no se_scale=params.get('grad ent_no se_scale'),
+      cl p_grad ents=params.get('cl p_grad ents'),
+      learn ng_rate_decay_fn=twml.learn ng_rate_decay.get_learn ng_rate_decay_fn(params)
     )
-    return train_op
+    return tra n_op
 
   def export_model_effects(self, export_path, feature_spec=None, log_features=True):
 
     # DO NOT CHANGE THE ORDER.
-    # This needs to be done before registering the model.
-    if feature_spec:
-      if log_features:
+    # T  needs to be done before reg ster ng t  model.
+     f feature_spec:
+       f log_features:
         features = feature_spec['features']
-        feature_names = ['.'.join(features[fid]['featureName'].split('.')[1:]) for fid in features.keys()]
-        features_to_log = ','.join(feature_names)
+        feature_na s = ['.'.jo n(features[f d]['featureNa '].spl ('.')[1:]) for f d  n features.keys()]
+        features_to_log = ','.jo n(feature_na s)
         try:
-          model_hash = self.experiment_tracker.compute_model_hash(export_path)
-          metrics.log_usage('dbv2', 'export_model_effects', 'v1', custom_attrs=[model_hash, "feature config present", features_to_log])
+          model_hash = self.exper  nt_tracker.compute_model_hash(export_path)
+           tr cs.log_usage('dbv2', 'export_model_effects', 'v1', custom_attrs=[model_hash, "feature conf g present", features_to_log])
         except:  # noqa: T803
-          logging.info("Failed to log Feature Config features")
+          logg ng. nfo("Fa led to log Feature Conf g features")
 
-      twml.contrib.export.export_fn.export_feature_spec(export_path, feature_spec)
-      export_start_time = time.time()
-      self.experiment_tracker.export_feature_spec(feature_spec)
-      logging.info("Exported feature spec to ML Metastore in %s seconds.", time.time() - export_start_time)
+      twml.contr b.export.export_fn.export_feature_spec(export_path, feature_spec)
+      export_start_t   = t  .t  ()
+      self.exper  nt_tracker.export_feature_spec(feature_spec)
+      logg ng. nfo("Exported feature spec to ML  tastore  n %s seconds.", t  .t  () - export_start_t  )
 
-    self.experiment_tracker.register_model(str(export_path))
-    self.export_gauge.increment()
+    self.exper  nt_tracker.reg ster_model(str(export_path))
+    self.export_gauge. ncre nt()
 
   @property
-  def best_or_latest_checkpoint(self):
-    if self._is_early_stopping:
-      best_checkpoint_path = os.path.join(self._save_dir, "best_checkpoint")
-      checkpoint_path = tf.train.latest_checkpoint(best_checkpoint_path)
-      # Return best checkpoint if necessary
-      if checkpoint_path:
-        return checkpoint_path
+  def best_or_latest_c ckpo nt(self):
+     f self._ s_early_stopp ng:
+      best_c ckpo nt_path = os.path.jo n(self._save_d r, "best_c ckpo nt")
+      c ckpo nt_path = tf.tra n.latest_c ckpo nt(best_c ckpo nt_path)
+      # Return best c ckpo nt  f necessary
+       f c ckpo nt_path:
+        return c ckpo nt_path
       else:
-        raise ValueError("Best checkpoint not found at %s." % best_checkpoint_path)
-    else:  # Fallback to latest checkpoint from save directory
-      return self.latest_checkpoint
+        ra se ValueError("Best c ckpo nt not found at %s." % best_c ckpo nt_path)
+    else:  # Fallback to latest c ckpo nt from save d rectory
+      return self.latest_c ckpo nt
 
   @property
-  def latest_checkpoint(self):
-    return self.estimator.latest_checkpoint()
+  def latest_c ckpo nt(self):
+    return self.est mator.latest_c ckpo nt()
 
-  def export_model(self, serving_input_receiver_fn,
+  def export_model(self, serv ng_ nput_rece ver_fn,
                    export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
+                   export_d r=None, c ckpo nt_path=None,
                    feature_spec=None,
                    log_features=True):
     """
-    Export the model for prediction. Typically, the exported model
-    will later be run in production servers. This method is called
-    by the user to export the PREDICTgraph to disk.
+    Export t  model for pred ct on. Typ cally, t  exported model
+    w ll later be run  n product on servers. T   thod  s called
+    by t  user to export t  PRED CTgraph to d sk.
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+     nternally, t   thod calls `tf.est mator.Est mator.export_savedmodel
+    <https://www.tensorflow.org/ap _docs/python/tf/est mator/Est mator#export_savedmodel>`_.
 
-    Note that a valid self._export_output_fn is required.
-    If export_ouput_fn is provided, it is used to set the self._export_output_fn.
+    Note that a val d self._export_output_fn  s requ red.
+     f export_ouput_fn  s prov ded,    s used to set t  self._export_output_fn.
 
     Args:
-      serving_input_receiver_fn:
-        function preparing the model for inference requests.
-        This funtion returns the ``features`` dict passed to ``build_graph``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
-      checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
-        found within the model directory is chosen.
+      serv ng_ nput_rece ver_fn:
+        funct on prepar ng t  model for  nference requests.
+        T  funt on returns t  ``features`` d ct passed to ``bu ld_graph``.
+      export_d r:
+        d rectory to export a SavedModel for pred ct on servers.
+        Defaults to ``[save_d r]/exported_models``.
+      c ckpo nt_path:
+        t  c ckpo nt path to export.  f None (t  default), t  most recent c ckpo nt
+        found w h n t  model d rectory  s chosen.
       export_output_fn:
-        Function to export the graph_output (output of build_graph) for
-        prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
+        Funct on to export t  graph_output (output of bu ld_graph) for
+        pred ct on. Takes a graph_output d ct as sole argu nt and returns
+        t  export_output_fns d ct.
         Defaults to `twml.export_output_fns.default_output_fn`.
 
     Return:
-      returns a string path to exported directory.
+      returns a str ng path to exported d rectory.
 
-    # set the export output function
+    # set t  export output funct on
     """
-    if not self.is_chief():
-      logging.info("Trainer.export_model ignored due to the process not being chief.")
+     f not self. s_ch ef():
+      logg ng. nfo("Tra ner.export_model  gnored due to t  process not be ng ch ef.")
       return
 
     self._export_output_fn = export_output_fn or twml.export_output_fns.default_output_fn
 
-    if not callable(self._export_output_fn):
-      raise RuntimeError(
-        "Expecting export_output_fn function. Got %s."
-        % type(self._export_output_fn).__name__)
+     f not callable(self._export_output_fn):
+      ra se Runt  Error(
+        "Expect ng export_output_fn funct on. Got %s."
+        % type(self._export_output_fn).__na __)
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+     f export_d r:
+      export_d r = san  ze_hdfs_path(export_d r)
 
-    if checkpoint_path:
-      checkpoint_path = sanitize_hdfs_path(checkpoint_path)
+     f c ckpo nt_path:
+      c ckpo nt_path = san  ze_hdfs_path(c ckpo nt_path)
     else:
-      checkpoint_path = self.best_or_latest_checkpoint
+      c ckpo nt_path = self.best_or_latest_c ckpo nt
 
-    # actually export the model using the Estimator API
-    export_path = self._estimator.export_savedmodel(
-      export_dir_base=export_dir or os.path.join(self._save_dir, 'exported_models'),
-      serving_input_receiver_fn=serving_input_receiver_fn,
-      checkpoint_path=checkpoint_path)
+    # actually export t  model us ng t  Est mator AP 
+    export_path = self._est mator.export_savedmodel(
+      export_d r_base=export_d r or os.path.jo n(self._save_d r, 'exported_models'),
+      serv ng_ nput_rece ver_fn=serv ng_ nput_rece ver_fn,
+      c ckpo nt_path=c ckpo nt_path)
 
-    # export_path is bytes, need to convert to string for python3 to work.
-    logging.info("The exported model path is: " + str(export_path))
+    # export_path  s bytes, need to convert to str ng for python3 to work.
+    logg ng. nfo("T  exported model path  s: " + str(export_path))
 
     self.export_model_effects(export_path, feature_spec, log_features)
 
     return export_path
 
-  def _model_fn(self, features, labels, mode, params, config=None):
+  def _model_fn(self, features, labels, mode, params, conf g=None):
     """
-    returns tf.estimator.EstimatorSpec that can be used with tf.estimator.Estimators.
-    You would probably never need to modify this method.
-    Instead, you should override build_graph, which this method calls.
+    returns tf.est mator.Est matorSpec that can be used w h tf.est mator.Est mators.
+      would probably never need to mod fy t   thod.
+     nstead,   should overr de bu ld_graph, wh ch t   thod calls.
 
     Args:
       features:
-        Dict of input tensors.
+        D ct of  nput tensors.
       labels:
         Tensor of target labels.
       mode:
-        an instance of tf.estimator.ModeKeys.
-        Typically used to toggle TRAINing or EVALuation.
+        an  nstance of tf.est mator.ModeKeys.
+        Typ cally used to toggle TRA N ng or EVALuat on.
       params:
-        HParams object containing hyper-parameters.
+        HParams object conta n ng hyper-para ters.
     """
-    # pylint: disable=too-many-branches
-    if isinstance(features, dict):
-      weights = features.get('weights', None)
+    # pyl nt: d sable=too-many-branc s
+     f  s nstance(features, d ct):
+        ghts = features.get('  ghts', None)
     else:
-      weights = None
+        ghts = None
 
-    with tf.variable_scope(self._name + '/model'):
-      graph_output = self._build_graph_fn(features, labels, mode, params, config)
-      loss = graph_output['loss'] if 'loss' in graph_output else None
+    w h tf.var able_scope(self._na  + '/model'):
+      graph_output = self._bu ld_graph_fn(features, labels, mode, params, conf g)
+      loss = graph_output['loss']  f 'loss'  n graph_output else None
 
-    self._maybe_restore_checkpoint()
+    self._maybe_restore_c ckpo nt()
 
-    with tf.variable_scope(self._name + '/optim'):
-      train_op = None
-      if mode == tf.estimator.ModeKeys.TRAIN:
-        if 'train_op' in graph_output:
-          train_op = graph_output['train_op']
-          graph_output['train_op'] = None  # remove from preds to prevent error
-        elif loss is not None:
-          train_op = self._optimize_loss_fn(params, loss)
+    w h tf.var able_scope(self._na  + '/opt m'):
+      tra n_op = None
+       f mode == tf.est mator.ModeKeys.TRA N:
+         f 'tra n_op'  n graph_output:
+          tra n_op = graph_output['tra n_op']
+          graph_output['tra n_op'] = None  # remove from preds to prevent error
+        el f loss  s not None:
+          tra n_op = self._opt m ze_loss_fn(params, loss)
 
-        if params.get('train_log_metrics') and self._metric_fn:
-          metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
-          for metric_name in metric_ops:
+         f params.get('tra n_log_ tr cs') and self._ tr c_fn:
+           tr c_ops = self._ tr c_fn(graph_output=graph_output, labels=labels,   ghts=  ghts)
+          for  tr c_na   n  tr c_ops:
             tf.summary.scalar(
-              name="training_metric_" + metric_name,
-              tensor=metric_ops[metric_name][1])  # index 0 contains value_op, 1 contains update_op
+              na ="tra n ng_ tr c_" +  tr c_na ,
+              tensor= tr c_ops[ tr c_na ][1])  #  ndex 0 conta ns value_op, 1 conta ns update_op
 
-    if mode == tf.estimator.ModeKeys.PREDICT and self._export_output_fn is not None:
-      # note that this is ignored by the predict method.
-      # Estimator only uses export_output_fn for export_model.
+     f mode == tf.est mator.ModeKeys.PRED CT and self._export_output_fn  s not None:
+      # note that t   s  gnored by t  pred ct  thod.
+      # Est mator only uses export_output_fn for export_model.
       export_outputs = self._export_output_fn(graph_output)
     else:
       export_outputs = None
 
-    if mode == tf.estimator.ModeKeys.EVAL and self._metric_fn:
-      eval_metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
+     f mode == tf.est mator.ModeKeys.EVAL and self._ tr c_fn:
+      eval_ tr c_ops = self._ tr c_fn(graph_output=graph_output, labels=labels,   ghts=  ghts)
     else:
-      eval_metric_ops = None
+      eval_ tr c_ops = None
 
-    # None and loss (scalar, not sliceable by TFMA) should be removed from the graph_output
-    preds = {key: graph_output[key] for key in graph_output if (graph_output[key] is not None) and (key is not 'loss')}
+    # None and loss (scalar, not sl ceable by TFMA) should be removed from t  graph_output
+    preds = {key: graph_output[key] for key  n graph_output  f (graph_output[key]  s not None) and (key  s not 'loss')}
 
-    init_feed_dict = twml.contrib.initializers.get_init_feed_dict()
-    scaffold = tf.train.Scaffold(init_feed_dict=init_feed_dict)
+     n _feed_d ct = twml.contr b. n  al zers.get_ n _feed_d ct()
+    scaffold = tf.tra n.Scaffold( n _feed_d ct= n _feed_d ct)
 
-    # Clear the init feed collection to avoid serializing the initializers.
-    twml.contrib.initializers.clear_init_feed_collection()
+    # Clear t   n  feed collect on to avo d ser al z ng t   n  al zers.
+    twml.contr b. n  al zers.clear_ n _feed_collect on()
 
-    # save estimator for use by later methods and hooks (warning: often reset)
-    self._current_estimator_spec = tf.estimator.EstimatorSpec(
+    # save est mator for use by later  thods and hooks (warn ng: often reset)
+    self._current_est mator_spec = tf.est mator.Est matorSpec(
       mode=mode,
-      predictions=preds,
+      pred ct ons=preds,
       export_outputs=export_outputs,
       loss=loss,
-      train_op=train_op,
-      eval_metric_ops=eval_metric_ops,
+      tra n_op=tra n_op,
+      eval_ tr c_ops=eval_ tr c_ops,
       scaffold=scaffold,
     )
 
-    return self._current_estimator_spec
+    return self._current_est mator_spec
 
-  def get_train_hooks(self):
-    """Return SessionRunHooks used during training.
+  def get_tra n_hooks(self):
+    """Return Sess onRunHooks used dur ng tra n ng.
 
-    By default training uses one hooks `tf.train.StepCounterHook` for monitoring step speed.
+    By default tra n ng uses one hooks `tf.tra n.StepCounterHook` for mon or ng step speed.
 
-    If self._profiler_steps is set then we also use the ProfilerHook `tf.train.ProfilerHook`
-    for monitoring the profile.
+     f self._prof ler_steps  s set t n   also use t  Prof lerHook `tf.tra n.Prof lerHook`
+    for mon or ng t  prof le.
 
     """
-    # Instead of having every_n_steps be a constant number,
-    # change it dynamically based on batch size.
-    # Ideally we should be using every_n_secs, but that seems buggy as of 1.7.
-    # The every_n_steps = 20K / batch_size
-    every_n_steps = ((2048 * 100) // self._params.train_batch_size)
-    step_counter = tf.train.StepCounterHook(
-      every_n_steps=every_n_steps, output_dir=self._save_dir
+    #  nstead of hav ng every_n_steps be a constant number,
+    # change   dynam cally based on batch s ze.
+    #  deally   should be us ng every_n_secs, but that seems buggy as of 1.7.
+    # T  every_n_steps = 20K / batch_s ze
+    every_n_steps = ((2048 * 100) // self._params.tra n_batch_s ze)
+    step_counter = tf.tra n.StepCounterHook(
+      every_n_steps=every_n_steps, output_d r=self._save_d r
     )
-    train_hooks = [step_counter]
+    tra n_hooks = [step_counter]
 
-    if self._profiler_steps is not None:
-      if not self._params.get('distributed') or self._estimator.config.is_chief:
-        profiler = tf.train.ProfilerHook(
-          save_steps=self._profiler_steps,
-          output_dir=self._save_dir
+     f self._prof ler_steps  s not None:
+       f not self._params.get('d str buted') or self._est mator.conf g. s_ch ef:
+        prof ler = tf.tra n.Prof lerHook(
+          save_steps=self._prof ler_steps,
+          output_d r=self._save_d r
         )
-        train_hooks.append(profiler)
+        tra n_hooks.append(prof ler)
 
-    return train_hooks
+    return tra n_hooks
 
-  def is_task_type(self, name):
+  def  s_task_type(self, na ):
     """
-    Helper function to specify if the current process is of the given worker type.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+     lper funct on to spec fy  f t  current process  s of t  g ven worker type.
+    Note: T  an only be called *after* self._hogw ld_setup()  s called  n __ n __()
     """
-    if os.environ.get('TF_CONFIG'):
-      if self._estimator.config.task_type == name:
+     f os.env ron.get('TF_CONF G'):
+       f self._est mator.conf g.task_type == na :
         return True
       else:
         return False
     return True
 
-  def is_evaluator(self):
+  def  s_evaluator(self):
     """
-    Helper function to let you know if the worker is evaluator.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+     lper funct on to let   know  f t  worker  s evaluator.
+    Note: T  an only be called *after* self._hogw ld_setup()  s called  n __ n __()
     """
-    return self.is_task_type("evaluator")
+    return self. s_task_type("evaluator")
 
-  def is_chief(self):
+  def  s_ch ef(self):
     """
-    Helper function to let you know if the worker is chief.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+     lper funct on to let   know  f t  worker  s ch ef.
+    Note: T  an only be called *after* self._hogw ld_setup()  s called  n __ n __()
     """
-    return self.is_task_type("chief") or self.is_task_type("master")
+    return self. s_task_type("ch ef") or self. s_task_type("master")
 
-  def is_ps(self):
+  def  s_ps(self):
     """
-    Helper function to let you know if the task is parameter server.
+     lper funct on to let   know  f t  task  s para ter server.
     """
-    if os.environ.get('TF_CONFIG') and self._estimator.config.task_type == 'ps':
+     f os.env ron.get('TF_CONF G') and self._est mator.conf g.task_type == 'ps':
       return True
     return False
 
-  def _exit_ps_after_training_complete(self):
+  def _ex _ps_after_tra n ng_complete(self):
     """
-    Helper function to shutdown parameter server after training job complete (either succeed or failed).
+     lper funct on to shutdown para ter server after tra n ng job complete (e  r succeed or fa led).
     """
-    if not self.is_ps():
+     f not self. s_ps():
       return
 
-    # No need to exit ps if on the same machine
-    if os.environ.get('TWML_HOGWILD_PORTS'):
+    # No need to ex  ps  f on t  sa  mach ne
+     f os.env ron.get('TWML_HOGW LD_PORTS'):
       return
 
-    if self._params.get('disable_auto_ps_shutdown', False):
-      logging.info("Skip shutting down parameter server after training complete [--disable_auto_ps_shutdown is set]")
+     f self._params.get('d sable_auto_ps_shutdown', False):
+      logg ng. nfo("Sk p shutt ng down para ter server after tra n ng complete [--d sable_auto_ps_shutdown  s set]")
       return
 
-    # checking job status is different on gke vs aurora
-    if self._is_on_gke():
-      get_job_status = functools.partial(
-        k8s_status.get_training_job_status,
+    # c ck ng job status  s d fferent on gke vs aurora
+     f self._ s_on_gke():
+      get_job_status = functools.part al(
+        k8s_status.get_tra n ng_job_status,
         cluster=None,
-        namespace=os.environ['TWML_JOB_ROLE'],
-        environment=os.environ['TWML_JOB_ENV'],
-        job_name=os.environ['TWML_JOB_NAME'],
-        using_tsd=True)
+        na space=os.env ron['TWML_JOB_ROLE'],
+        env ron nt=os.env ron['TWML_JOB_ENV'],
+        job_na =os.env ron['TWML_JOB_NAME'],
+        us ng_tsd=True)
     else:
-      get_job_status = functools.partial(
-        get_distributed_training_job_path,
-        base_job_path=get_distributed_training_job_path()
+      get_job_status = functools.part al(
+        get_d str buted_tra n ng_job_path,
+        base_job_path=get_d str buted_tra n ng_job_path()
       )
 
-    def wait_complete_then_exit():
+    def wa _complete_t n_ex ():
       retry_max = 60
       retry = 0
-      while True:
+      wh le True:
         try:
-          training_status = get_job_status()
-          if training_status == TrainingJobStatus.FINISHED:
-            logging.info("Distributed training job succeed, shutting down parameter server.")
-            os._exit(0)
-          elif training_status == TrainingJobStatus.FAILED:
-            logging.info("Distributed training job failed, shutting down parameter server.")
-            os._exit(0)
-          elif training_status == TrainingJobStatus.NOT_FOUND:
-            raise Exception("Distributed training job status not found.")
+          tra n ng_status = get_job_status()
+           f tra n ng_status == Tra n ngJobStatus.F N SHED:
+            logg ng. nfo("D str buted tra n ng job succeed, shutt ng down para ter server.")
+            os._ex (0)
+          el f tra n ng_status == Tra n ngJobStatus.FA LED:
+            logg ng. nfo("D str buted tra n ng job fa led, shutt ng down para ter server.")
+            os._ex (0)
+          el f tra n ng_status == Tra n ngJobStatus.NOT_FOUND:
+            ra se Except on("D str buted tra n ng job status not found.")
           else:
-            poke_interval = random.randrange(60, 90)  # prevent spike QPS to aurora endpoint
-            time.sleep(poke_interval)
+            poke_ nterval = random.randrange(60, 90)  # prevent sp ke QPS to aurora endpo nt
+            t  .sleep(poke_ nterval)
             retry = 0
-        except Exception as e:
-          if retry >= retry_max:
-            raise e  # only exception in this thread, won't fail parameter server thread
+        except Except on as e:
+           f retry >= retry_max:
+            ra se e  # only except on  n t  thread, won't fa l para ter server thread
           retry += 1
-          poke_interval = random.randrange(60, 90) + retry * 10
-          logging.warn("Error getting distributed training job status, will retry after %s seconds." % poke_interval)
-          time.sleep(poke_interval)
-    Thread(target=wait_complete_then_exit).start()
+          poke_ nterval = random.randrange(60, 90) + retry * 10
+          logg ng.warn("Error gett ng d str buted tra n ng job status, w ll retry after %s seconds." % poke_ nterval)
+          t  .sleep(poke_ nterval)
+    Thread(target=wa _complete_t n_ex ).start()
 
-  def get_eval_hooks(self):  # pylint: disable=no-self-use
-    """ Return SessionRunHooks used during evaluation."""
+  def get_eval_hooks(self):  # pyl nt: d sable=no-self-use
+    """ Return Sess onRunHooks used dur ng evaluat on."""
     return None
 
-  def get_predict_hooks(self):
-    """ Return hooks used during prediction.
-    If profiler_steps is set in the constructor to the Trainer,
-    we pass a tf.Train.ProfilerHook to the estimator's predict function.
+  def get_pred ct_hooks(self):
+    """ Return hooks used dur ng pred ct on.
+     f prof ler_steps  s set  n t  constructor to t  Tra ner,
+      pass a tf.Tra n.Prof lerHook to t  est mator's pred ct funct on.
     """
     hooks = []
-    if self._profiler_steps is not None:
-      profiler = tf.train.ProfilerHook(
-        save_steps=self._profiler_steps,
-        output_dir=self._save_dir
+     f self._prof ler_steps  s not None:
+      prof ler = tf.tra n.Prof lerHook(
+        save_steps=self._prof ler_steps,
+        output_d r=self._save_d r
       )
-      hooks.append(profiler)
+      hooks.append(prof ler)
     return hooks
 
-  def learn(self, train_input_fn=None, eval_input_fn=None,
-            train_max_steps=None,
-            train_steps=None, eval_steps=None,
-            train_hooks=None, eval_hooks=None,
-            early_stop_metric=None, early_stop_patience=-1,
-            early_stop_minimize=True, early_stop_tolerance=0, start_epoch=0,
-            exporters=None, export_output_fn=None, max_duration=None):
+  def learn(self, tra n_ nput_fn=None, eval_ nput_fn=None,
+            tra n_max_steps=None,
+            tra n_steps=None, eval_steps=None,
+            tra n_hooks=None, eval_hooks=None,
+            early_stop_ tr c=None, early_stop_pat ence=-1,
+            early_stop_m n m ze=True, early_stop_tolerance=0, start_epoch=0,
+            exporters=None, export_output_fn=None, max_durat on=None):
     """
-    Train and evaluate the estimator for ``train_max_steps`` steps.
-    Each epoch involves ``train_steps`` training steps followed
-    by ``eval_steps`` evaluation steps. Note that each step
-    is a ``session.run()``, that is, each batch is a step.
+    Tra n and evaluate t  est mator for ``tra n_max_steps`` steps.
+    Each epoch  nvolves ``tra n_steps`` tra n ng steps follo d
+    by ``eval_steps`` evaluat on steps. Note that each step
+     s a ``sess on.run()``, that  s, each batch  s a step.
 
     Args:
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
-        None-values cause learn() to terminate after *one* call to train() and evaluate(),
-        which is usually useful when using train_steps=-1
-        Non-positive values trains indefinitely in a loop (use with caution),
-        which is usually useful when used with early stopping.
-      train_steps:
-        number of training steps per epoch. For example, 100 means each
-        training epoch will end after processing 100 batches.
-        Defaults to params.train_steps.
-        Non-positive values and None-values go through the entire training set each epoch.
+      tra n_max_steps:
+        max mum number of global steps of tra n ng to run.
+        Defaults to params.tra n_max_steps.
+        None-values cause learn() to term nate after *one* call to tra n() and evaluate(),
+        wh ch  s usually useful w n us ng tra n_steps=-1
+        Non-pos  ve values tra ns  ndef n ely  n a loop (use w h caut on),
+        wh ch  s usually useful w n used w h early stopp ng.
+      tra n_steps:
+        number of tra n ng steps per epoch. For example, 100  ans each
+        tra n ng epoch w ll end after process ng 100 batc s.
+        Defaults to params.tra n_steps.
+        Non-pos  ve values and None-values go through t  ent re tra n ng set each epoch.
       eval_steps:
-        number of evaluation steps per epoch.
+        number of evaluat on steps per epoch.
         Defaults to params.eval_steps.
-        Non-positive values and None-values go through the entire evaluation set each epoch.
-      train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
-      eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.evaluate.
-      train_hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
+        Non-pos  ve values and None-values go through t  ent re evaluat on set each epoch.
+      tra n_ nput_fn:
+        Funct on to  erate through tra n ng set.    s passed to est mator.tra n.
+      eval_ nput_fn:
+        Funct on to  erate through evaluat on set.    s passed to est mator.evaluate.
+      tra n_hooks:
+        L st of Sess onRunHooks uses for tra n ng. Defaults to self.get_tra n_hooks().
       eval_hooks:
-        List of SessionRunHooks uses for evaluation. Defaults to self.get_eval_hooks()
+        L st of Sess onRunHooks uses for evaluat on. Defaults to self.get_eval_hooks()
       start_epoch:
-        The epoch from which to start learn. If you want to do training and evaluation
-        for N epochs, you can call ``learn()`` in a loop as follows:
+        T  epoch from wh ch to start learn.  f   want to do tra n ng and evaluat on
+        for N epochs,   can call ``learn()``  n a loop as follows:
       exporters:
-        List of exporters called at the end of each evaluation run.
+        L st of exporters called at t  end of each evaluat on run.
         Defaults to none.
       export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+        T  output format to use for exported models.
+        Only used  f exporters  s not None.
 
         .. code-block:: python
 
-          for epoch in range(1,max_epoch):
-            trainer.learn(start_epoch=epoch)
+          for epoch  n range(1,max_epoch):
+            tra ner.learn(start_epoch=epoch)
 
-    Early-stopping arguments:
-      early_stop_metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-        Defaults to -1 (that is, no early-stopping).
-      early_stop_minimize:
-        Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
+    Early-stopp ng argu nts:
+      early_stop_ tr c:
+        Str ng spec fy ng t   tr c to early-stop on. Requ red w h pos  ve
+        ``early_stop_pat ence``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
+        T  str ng  s used to extract t  relevant tensor Op from t  d ct returned by
+        t  get_eval_ tr c_ops  thod. For `` tr cs`` pass to t  constructor,
+        t  str ng  s one of those. For mult -class (that  s, mult - tr c)
+         tr cs, t  str ng may be appended w h a ``_0``, ``_1``, etc. or one
+        of t  ``mult _ tr c_na s`` (one per class).
+      early_stop_pat ence:
+        Max mum number of epochs to wa  for an  mprove nt  n t  early_stop_ tr c
+        before break ng off tra n ng. For example, a pat ence of 10  ans that
+        tra n ng w ll have 10 epochs to  mprove t   tr c before    s k lled.
+        W never t   tr c  s  mproved before runn ng out of pat ence,
+        pat ence  s reset to ``early_stop_pat ence``.
+        Defaults to -1 (that  s, no early-stopp ng).
+      early_stop_m n m ze:
+        Set t  to True (t  default) for  tr cs that need to be m n m zed
+        (l ke ``loss``).  tr cs l ke ``accuracy`` that need to be max m zed
+        should set t  to False.
       early_stop_tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
+        A non-negat ve tolerance for compar ng early_stop_ tr c.
+        E.g. w n max m z ng t  cond  on  s current_ tr c > best_ tr c + tolerance.
         Defaults to 0.
-      max_duration:
-        A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+      max_durat on:
+        A float. W n t  argu nt  s def ned, t  job w ll automat cally term nate after
+        `max_durat on` seconds  f   has not already compeleted. 
 
     Returns:
-      The directory where the checkpoints were saved.
-      That is, save_dir.
-      You can point TensorBoard to this directory to get metrics,
-      or pass it to another Trainer via ``init_from_dir`` when doing
-      multi-phase training.
+      T  d rectory w re t  c ckpo nts  re saved.
+      That  s, save_d r.
+        can po nt TensorBoard to t  d rectory to get  tr cs,
+      or pass   to anot r Tra ner v a `` n _from_d r`` w n do ng
+      mult -phase tra n ng.
     """
-    # pylint: disable=too-many-branches
+    # pyl nt: d sable=too-many-branc s
 
-    if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
-    if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+     f not callable(tra n_ nput_fn):
+      ra se ValueError("Expect ng callable tra n_ nput_fn funct on")
+     f not callable(eval_ nput_fn):
+      ra se ValueError("Expect ng callable eval_ nput_fn funct on")
 
-    if os.environ.get('TF_CONFIG'):
-      raise ValueError("trainer.learn() can not be used with distributed / hogwild setups")
+     f os.env ron.get('TF_CONF G'):
+      ra se ValueError("tra ner.learn() can not be used w h d str buted / hogw ld setups")
 
-    if exporters and export_output_fn:
+     f exporters and export_output_fn:
       self._export_output_fn = export_output_fn
 
-    train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
-    eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
-    eval_hooks = [] if eval_hooks is None else eval_hooks
+    tra n_hooks = self.get_tra n_hooks()  f tra n_hooks  s None else tra n_hooks
+    eval_hooks = self.get_eval_hooks()  f eval_hooks  s None else eval_hooks
+    eval_hooks = []  f eval_hooks  s None else eval_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+     f tra n_max_steps  s None:
+      tra n_max_steps = self.params.get('tra n_max_steps')
 
-    if train_steps is None:
-      train_steps = self.params.train_steps
-    if train_steps <= 0:
-      train_steps = None
+     f tra n_steps  s None:
+      tra n_steps = self.params.tra n_steps
+     f tra n_steps <= 0:
+      tra n_steps = None
 
-    if eval_steps is None:
+     f eval_steps  s None:
       eval_steps = self.params.eval_steps
-    if eval_steps <= 0:
+     f eval_steps <= 0:
       eval_steps = None
 
-    if early_stop_patience > 0:
-      assert train_max_steps is not None, "Early stopping and max_steps=None are not compatible."
-      # prepare early stopping hook (which also handles logic here)
-      self._is_early_stopping = True
+     f early_stop_pat ence > 0:
+      assert tra n_max_steps  s not None, "Early stopp ng and max_steps=None are not compat ble."
+      # prepare early stopp ng hook (wh ch also handles log c  re)
+      self._ s_early_stopp ng = True
       early_stop_hook = twml.hooks.EarlyStopHook(
-        metric=early_stop_metric,
-        checkpoint_dir=self._save_dir,
-        patience=early_stop_patience,
-        minimize=early_stop_minimize,
+         tr c=early_stop_ tr c,
+        c ckpo nt_d r=self._save_d r,
+        pat ence=early_stop_pat ence,
+        m n m ze=early_stop_m n m ze,
         tolerance=early_stop_tolerance,
-        get_estimator_spec_fn=lambda: self.current_estimator_spec,
+        get_est mator_spec_fn=lambda: self.current_est mator_spec,
         start_epoch=start_epoch)
       # add early stop hook to eval hooks
       eval_hooks.append(early_stop_hook)
 
-    if max_duration is not None:
-      train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=True,
+     f max_durat on  s not None:
+      tra n_early_stop_durat on_hook = twml.hooks.EarlyStopDurat on(
+        max_durat on=max_durat on,
+        ex _on_end=False,
+        save_d r=self._save_d r,
+        overwr e=True,
       )
-      train_hooks.append(train_early_stop_duration_hook)
+      tra n_hooks.append(tra n_early_stop_durat on_hook)
 
-      eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=True,
+      eval_early_stop_durat on_hook = twml.hooks.EarlyStopDurat on(
+        max_durat on=max_durat on,
+        ex _on_end=False,
+        save_d r=self._save_d r,
+        overwr e=True,
       )
-      eval_hooks.append(eval_early_stop_duration_hook)
+      eval_hooks.append(eval_early_stop_durat on_hook)
 
-    if not self._is_early_stopping:
-      if (train_max_steps is not None) and (train_max_steps <= 0):
-        if ((max_duration is not None) and (max_duration < 0)) or (max_duration is None):
-          logging.warn("train.max_steps is non-positive, and no early or duration stopping is configured. "
-                      "Training job will loop forever.")
+     f not self._ s_early_stopp ng:
+       f (tra n_max_steps  s not None) and (tra n_max_steps <= 0):
+         f ((max_durat on  s not None) and (max_durat on < 0)) or (max_durat on  s None):
+          logg ng.warn("tra n.max_steps  s non-pos  ve, and no early or durat on stopp ng  s conf gured. "
+                      "Tra n ng job w ll loop forever.")
 
-    if train_max_steps is not None and train_max_steps > 0:
-      # we can't pass max_steps AND steps to estimator.train.
-      # so we pass steps to estimator.train and max_steps to this hook instead...
-      stop_at_step_hook = twml.hooks.StopAtStepHook(last_step=train_max_steps)
-      train_hooks.append(stop_at_step_hook)
+     f tra n_max_steps  s not None and tra n_max_steps > 0:
+      #   can't pass max_steps AND steps to est mator.tra n.
+      # so   pass steps to est mator.tra n and max_steps to t  hook  nstead...
+      stop_at_step_hook = twml.hooks.StopAtStepHook(last_step=tra n_max_steps)
+      tra n_hooks.append(stop_at_step_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks,
-                                                  lambda: self.current_estimator_spec):
-      # alternate training and evaluation epochs
+    w h self.exper  nt_tracker.track_exper  nt(eval_hooks,
+                                                  lambda: self.current_est mator_spec):
+      # alternate tra n ng and evaluat on epochs
       epoch = start_epoch
-      while True:
-        logging.info("Training epoch %d", epoch)
-        self._estimator.train(train_input_fn, steps=train_steps, hooks=train_hooks)
+      wh le True:
+        logg ng. nfo("Tra n ng epoch %d", epoch)
+        self._est mator.tra n(tra n_ nput_fn, steps=tra n_steps, hooks=tra n_hooks)
 
-        logging.info("Evaluating epoch %d", epoch)
-        eval_result = self._estimator.evaluate(
-          eval_input_fn, steps=eval_steps, hooks=eval_hooks)
+        logg ng. nfo("Evaluat ng epoch %d", epoch)
+        eval_result = self._est mator.evaluate(
+          eval_ nput_fn, steps=eval_steps, hooks=eval_hooks)
 
-        if exporters:
-          checkpoint_path = self.estimator.latest_checkpoint()
-          for exporter in exporters:
-            export_path = os.path.join(self._save_dir, "export", exporter.name)
+         f exporters:
+          c ckpo nt_path = self.est mator.latest_c ckpo nt()
+          for exporter  n exporters:
+            export_path = os.path.jo n(self._save_d r, "export", exporter.na )
             exporter.export(
-              estimator=self.estimator, export_path=export_path,
-              checkpoint_path=checkpoint_path, eval_result=eval_result,
-              is_the_final_export=False)
+              est mator=self.est mator, export_path=export_path,
+              c ckpo nt_path=c ckpo nt_path, eval_result=eval_result,
+               s_t _f nal_export=False)
 
-        # If train_max_step is none. Terminate after one loop.
-        if train_max_steps is None:
+        #  f tra n_max_step  s none. Term nate after one loop.
+         f tra n_max_steps  s None:
           break
 
-        # If stop_at_step_hook requested a stop, break
-        if train_max_steps > 0 and stop_at_step_hook.stop_requested:
+        #  f stop_at_step_hook requested a stop, break
+         f tra n_max_steps > 0 and stop_at_step_hook.stop_requested:
           break
 
-        # early-stopping logic is handled internally by the hook
-        if early_stop_patience > 0 and early_stop_hook.should_stop:
-          # but we still need to break here
+        # early-stopp ng log c  s handled  nternally by t  hook
+         f early_stop_pat ence > 0 and early_stop_hook.should_stop:
+          # but   st ll need to break  re
           break
         epoch += 1
 
-      self.write_state_to_disk(save_dir=self._save_dir, filename='_SUCCESS')
+      self.wr e_state_to_d sk(save_d r=self._save_d r, f lena ='_SUCCESS')
 
-    return self._save_dir
+    return self._save_d r
 
-  def get_train_spec(self, input_fn, max_steps=None, hooks=None):
-    """Get the TrainSpec used by ``tf.train.train_and_evaluate``."""
-    if not callable(input_fn):
-      raise ValueError("Expecting callable train_input_fn")
+  def get_tra n_spec(self,  nput_fn, max_steps=None, hooks=None):
+    """Get t  Tra nSpec used by ``tf.tra n.tra n_and_evaluate``."""
+     f not callable( nput_fn):
+      ra se ValueError("Expect ng callable tra n_ nput_fn")
 
-    if max_steps is None:
-      max_steps = self.params.train_max_steps
+     f max_steps  s None:
+      max_steps = self.params.tra n_max_steps
 
-    if max_steps is not None and max_steps <= 0:
+     f max_steps  s not None and max_steps <= 0:
       max_steps = None
 
-    hooks = self.get_train_hooks() if hooks is None else hooks
+    hooks = self.get_tra n_hooks()  f hooks  s None else hooks
 
-    return tf.estimator.TrainSpec(input_fn=input_fn,
+    return tf.est mator.Tra nSpec( nput_fn= nput_fn,
                                   max_steps=max_steps,
                                   hooks=hooks)
 
-  def get_eval_spec(self, input_fn, steps=None, delay=None, period=None,
+  def get_eval_spec(self,  nput_fn, steps=None, delay=None, per od=None,
                     hooks=None, exporters=None):
-    """Get the EvalSpec used by ``tf.train.train_and_evaluate``."""
-    if not callable(input_fn):
-      raise ValueError("Expecting callable eval_input_fn")
+    """Get t  EvalSpec used by ``tf.tra n.tra n_and_evaluate``."""
+     f not callable( nput_fn):
+      ra se ValueError("Expect ng callable eval_ nput_fn")
 
-    if steps is None:
+     f steps  s None:
       steps = self.params.eval_steps
 
-    if steps <= 0:
+     f steps <= 0:
       steps = None
 
-    if delay is None:
+     f delay  s None:
       delay = self.params.eval_delay
 
-    if period is None:
-      period = self.params.eval_period
+     f per od  s None:
+      per od = self.params.eval_per od
 
-    hooks = self.get_eval_hooks() if hooks is None else hooks
+    hooks = self.get_eval_hooks()  f hooks  s None else hooks
 
-    eval_name = self.params.get("eval_name", None)
+    eval_na  = self.params.get("eval_na ", None)
 
-    return tf.estimator.EvalSpec(input_fn=input_fn,
+    return tf.est mator.EvalSpec( nput_fn= nput_fn,
                                  steps=steps,
-                                 name=eval_name,
+                                 na =eval_na ,
                                  start_delay_secs=delay,
-                                 throttle_secs=period,
+                                 throttle_secs=per od,
                                  hooks=hooks,
                                  exporters=exporters)
 
-  def train_and_evaluate(self, train_input_fn=None, eval_input_fn=None,
-                         train_max_steps=None, eval_steps=None,
-                         eval_delay=None, eval_period=None,
-                         train_hooks=None, eval_hooks=None,
-                         early_stop_metric=None, early_stop_patience=-1,
-                         early_stop_minimize=True, early_stop_tolerance=0, exporters=None,
-                         export_output_fn=None, max_duration=None):
+  def tra n_and_evaluate(self, tra n_ nput_fn=None, eval_ nput_fn=None,
+                         tra n_max_steps=None, eval_steps=None,
+                         eval_delay=None, eval_per od=None,
+                         tra n_hooks=None, eval_hooks=None,
+                         early_stop_ tr c=None, early_stop_pat ence=-1,
+                         early_stop_m n m ze=True, early_stop_tolerance=0, exporters=None,
+                         export_output_fn=None, max_durat on=None):
     """
-    Train and evaluate the estimator for ``train_max_steps``
-    using ``tf.estimator.train_and_evaluate``.
-    With a cluster configuration provided in the ``TF_CONFIG`` environment variable, this method
-    can be used for distributed training (multi-node or multi-process).
-    Unlike the ``learn`` method, training is continuous with ``train_max_steps``.
-    For distributed use case, evaluation happens periodically.
-    That is, after ``eval_delay`` seconds, an evaluation epoch of ``eval_step`` steps
-    occurs every ``eval_period`` seconds. Evaluation happens on the most recent checkpoint.
-    TF defaults to saving checkpoints every 10 mins.
-    For local use case, training occurs for train_max_steps epochs followed by a
-    single evaluation. For local use case we therefore recommend using learn() instead
-    as it provides early-stopping and multiple evaluations.
+    Tra n and evaluate t  est mator for ``tra n_max_steps``
+    us ng ``tf.est mator.tra n_and_evaluate``.
+    W h a cluster conf gurat on prov ded  n t  ``TF_CONF G`` env ron nt var able, t   thod
+    can be used for d str buted tra n ng (mult -node or mult -process).
+    Unl ke t  ``learn``  thod, tra n ng  s cont nuous w h ``tra n_max_steps``.
+    For d str buted use case, evaluat on happens per od cally.
+    That  s, after ``eval_delay`` seconds, an evaluat on epoch of ``eval_step`` steps
+    occurs every ``eval_per od`` seconds. Evaluat on happens on t  most recent c ckpo nt.
+    TF defaults to sav ng c ckpo nts every 10 m ns.
+    For local use case, tra n ng occurs for tra n_max_steps epochs follo d by a
+    s ngle evaluat on. For local use case   t refore recom nd us ng learn()  nstead
+    as   prov des early-stopp ng and mult ple evaluat ons.
 
-    ``train_and_evaluate`` will evaluate for ``eval_steps`` every ``eval_period`` seconds.
-    It will stop after ``train_steps`` is reached.
+    ``tra n_and_evaluate`` w ll evaluate for ``eval_steps`` every ``eval_per od`` seconds.
+      w ll stop after ``tra n_steps``  s reac d.
 
-    You must ensure that all workers/servers are assigned the same `save_dir`.
+      must ensure that all workers/servers are ass gned t  sa  `save_d r`.
 
     .. Note::
 
-      If the TF_CONFIG environment variable is set, this function assumes its running a distribute job.
+       f t  TF_CONF G env ron nt var able  s set, t  funct on assu s  s runn ng a d str bute job.
 
     Args:
-      train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train_and_evalute
-      eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.train_and_evalute.
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
-        Non-positive values and None-values train indefinitely (use with caution).
+      tra n_ nput_fn:
+        Funct on to  erate through tra n ng set.    s passed to est mator.tra n_and_evalute
+      eval_ nput_fn:
+        Funct on to  erate through evaluat on set.    s passed to est mator.tra n_and_evalute.
+      tra n_max_steps:
+        max mum number of global steps of tra n ng to run.
+        Defaults to params.tra n_max_steps.
+        Non-pos  ve values and None-values tra n  ndef n ely (use w h caut on).
       eval_steps:
-        number of steps per evaluation.
+        number of steps per evaluat on.
         Defaults to params.eval_steps.
-        Non-positive values and None-values go through
-        the entire evaluation set for each evaluation.
-        Note that the number of eval_steps should be high enough to minimize noise.
-        This is especially true for early-stopping.
+        Non-pos  ve values and None-values go through
+        t  ent re evaluat on set for each evaluat on.
+        Note that t  number of eval_steps should be h gh enough to m n m ze no se.
+        T   s espec ally true for early-stopp ng.
       eval_delay:
-        Start the first evaluation after eval_delay. Defaults to params.eval_delay or 2*60s.
-      eval_period:
-        Run an evaluation every eval_period seconds. Defaults to params.eval_period or 10*60s.
+        Start t  f rst evaluat on after eval_delay. Defaults to params.eval_delay or 2*60s.
+      eval_per od:
+        Run an evaluat on every eval_per od seconds. Defaults to params.eval_per od or 10*60s.
       exporters:
-        List of exporters called at the end of each evaluation run.
+        L st of exporters called at t  end of each evaluat on run.
         Defaults to none.
       export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+        T  output format to use for exported models.
+        Only used  f exporters  s not None.
 
-    Early-stopping arguments:
-      early_stop_metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-        Defaults to -1 (that is, no early-stopping).
-      early_stop_minimize:
-        Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
+    Early-stopp ng argu nts:
+      early_stop_ tr c:
+        Str ng spec fy ng t   tr c to early-stop on. Requ red w h pos  ve
+        ``early_stop_pat ence``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
+        T  str ng  s used to extract t  relevant tensor Op from t  d ct returned by
+        t  get_eval_ tr c_ops  thod. For `` tr cs`` pass to t  constructor,
+        t  str ng  s one of those. For mult -class (that  s, mult - tr c)
+         tr cs, t  str ng may be appended w h a ``_0``, ``_1``, etc. or one
+        of t  ``mult _ tr c_na s`` (one per class).
+      early_stop_pat ence:
+        Max mum number of epochs to wa  for an  mprove nt  n t  early_stop_ tr c
+        before break ng off tra n ng. For example, a pat ence of 10  ans that
+        tra n ng w ll have 10 epochs to  mprove t   tr c before    s k lled.
+        W never t   tr c  s  mproved before runn ng out of pat ence,
+        pat ence  s reset to ``early_stop_pat ence``.
+        Defaults to -1 (that  s, no early-stopp ng).
+      early_stop_m n m ze:
+        Set t  to True (t  default) for  tr cs that need to be m n m zed
+        (l ke ``loss``).  tr cs l ke ``accuracy`` that need to be max m zed
+        should set t  to False.
       early_stop_tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
+        A non-negat ve tolerance for compar ng early_stop_ tr c.
+        E.g. w n max m z ng t  cond  on  s current_ tr c > best_ tr c + tolerance.
         Defaults to 0.
-      max_duration:
-        A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+      max_durat on:
+        A float. W n t  argu nt  s def ned, t  job w ll automat cally term nate after
+        `max_durat on` seconds  f   has not already compeleted. 
 
     Returns:
-      The directory where the checkpoints were saved.
+      T  d rectory w re t  c ckpo nts  re saved.
     """
 
-    logging.info("WARNING: Trainer.train_and_evaluate is an EXPERIMENTAL API.")
-    logging.info("Trainer.train_and_evaluate may change or be removed in future versions.")
+    logg ng. nfo("WARN NG: Tra ner.tra n_and_evaluate  s an EXPER MENTAL AP .")
+    logg ng. nfo("Tra ner.tra n_and_evaluate may change or be removed  n future vers ons.")
 
-    if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
-    if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+     f not callable(tra n_ nput_fn):
+      ra se ValueError("Expect ng callable tra n_ nput_fn funct on")
+     f not callable(eval_ nput_fn):
+      ra se ValueError("Expect ng callable eval_ nput_fn funct on")
 
-    self._exit_ps_after_training_complete()
+    self._ex _ps_after_tra n ng_complete()
 
-    # Maybe export in eval processes.
-    if self.is_evaluator():
-      if self.params.get("eval_name") is not None:
-        # Do not export if running special eval.
+    # Maybe export  n eval processes.
+     f self. s_evaluator():
+       f self.params.get("eval_na ")  s not None:
+        # Do not export  f runn ng spec al eval.
         exporters = None
         export_output_fn = None
-      elif exporters and export_output_fn:
+      el f exporters and export_output_fn:
         self._export_output_fn = export_output_fn
       else:
-        # Default option.
+        # Default opt on.
         self._export_output_fn = None
 
-    train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
-    train_hooks = [] if train_hooks is None else train_hooks
+    tra n_hooks = self.get_tra n_hooks()  f tra n_hooks  s None else tra n_hooks
+    tra n_hooks = []  f tra n_hooks  s None else tra n_hooks
 
-    eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
-    eval_hooks = [] if eval_hooks is None else eval_hooks
+    eval_hooks = self.get_eval_hooks()  f eval_hooks  s None else eval_hooks
+    eval_hooks = []  f eval_hooks  s None else eval_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+     f tra n_max_steps  s None:
+      tra n_max_steps = self.params.get('tra n_max_steps')
 
-    if eval_steps is None:
+     f eval_steps  s None:
       eval_steps = self.params.eval_steps
-    if eval_steps <= 0:
+     f eval_steps <= 0:
       eval_steps = None
 
-    if eval_delay is None:
+     f eval_delay  s None:
       eval_delay = self.params.eval_delay
-    if eval_period is None:
-      eval_period = self.params.eval_period
+     f eval_per od  s None:
+      eval_per od = self.params.eval_per od
 
-    if early_stop_patience > 0:
-      # when training hooks detect this file, they request a stop to training
-      early_stop_path = os.path.join(self._save_dir, 'earlystop_now.txt')
-      # prepare early stopping hook (which also handles logic here)
+     f early_stop_pat ence > 0:
+      # w n tra n ng hooks detect t  f le, t y request a stop to tra n ng
+      early_stop_path = os.path.jo n(self._save_d r, 'earlystop_now.txt')
+      # prepare early stopp ng hook (wh ch also handles log c  re)
 
-      self._is_early_stopping = True
+      self._ s_early_stopp ng = True
 
       eval_early_stop_hook = twml.hooks.EarlyStopHook(
-        metric=early_stop_metric,
-        checkpoint_dir=self._save_dir,
-        patience=early_stop_patience,
-        minimize=early_stop_minimize,
+         tr c=early_stop_ tr c,
+        c ckpo nt_d r=self._save_d r,
+        pat ence=early_stop_pat ence,
+        m n m ze=early_stop_m n m ze,
         tolerance=early_stop_tolerance,
-        get_estimator_spec_fn=lambda: self.current_estimator_spec,
-        file_path=early_stop_path,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None)  # only exit for distributed jobs
+        get_est mator_spec_fn=lambda: self.current_est mator_spec,
+        f le_path=early_stop_path,
+        ex _on_end=os.env ron.get('TF_CONF G')  s not None)  # only ex  for d str buted jobs
       # add early stop hook to eval hooks
       eval_hooks.append(eval_early_stop_hook)
 
-      # prepare the commensurate training hook
-      train_early_stop_hook = twml.hooks.StopIfExistsHook(early_stop_path)
-      train_hooks.append(train_early_stop_hook)
+      # prepare t  com nsurate tra n ng hook
+      tra n_early_stop_hook = twml.hooks.Stop fEx stsHook(early_stop_path)
+      tra n_hooks.append(tra n_early_stop_hook)
 
-    if max_duration is not None:
-      train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=self.is_chief()
+     f max_durat on  s not None:
+      tra n_early_stop_durat on_hook = twml.hooks.EarlyStopDurat on(
+        max_durat on=max_durat on,
+        ex _on_end=False,
+        save_d r=self._save_d r,
+        overwr e=self. s_ch ef()
       )
-      eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None,
-        save_dir=self._save_dir,
-        overwrite=False
-      )  # only exit for distributed jobs
+      eval_early_stop_durat on_hook = twml.hooks.EarlyStopDurat on(
+        max_durat on=max_durat on,
+        ex _on_end=os.env ron.get('TF_CONF G')  s not None,
+        save_d r=self._save_d r,
+        overwr e=False
+      )  # only ex  for d str buted jobs
 
-      train_hooks.append(train_early_stop_duration_hook)
-      eval_hooks.append(eval_early_stop_duration_hook)
+      tra n_hooks.append(tra n_early_stop_durat on_hook)
+      eval_hooks.append(eval_early_stop_durat on_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks, lambda: self.current_estimator_spec):
-      train_spec = self.get_train_spec(train_input_fn, train_max_steps, train_hooks)
-      eval_spec = self.get_eval_spec(eval_input_fn, eval_steps,
-                                     eval_delay, eval_period,
+    w h self.exper  nt_tracker.track_exper  nt(eval_hooks, lambda: self.current_est mator_spec):
+      tra n_spec = self.get_tra n_spec(tra n_ nput_fn, tra n_max_steps, tra n_hooks)
+      eval_spec = self.get_eval_spec(eval_ nput_fn, eval_steps,
+                                     eval_delay, eval_per od,
                                      eval_hooks, exporters)
-      self._train_and_evaluate(train_spec, eval_spec)
+      self._tra n_and_evaluate(tra n_spec, eval_spec)
 
-    if self.is_chief():
-      self.write_state_to_disk(save_dir=self._save_dir, filename='_SUCCESS')
+     f self. s_ch ef():
+      self.wr e_state_to_d sk(save_d r=self._save_d r, f lena ='_SUCCESS')
 
-    return self._save_dir
+    return self._save_d r
 
-  def _train_and_evaluate(self, train_spec, eval_spec):
+  def _tra n_and_evaluate(self, tra n_spec, eval_spec):
     """
-    Private method that calls
-    ``tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)``.
+    Pr vate  thod that calls
+    ``tf.est mator.tra n_and_evaluate(self._est mator, tra n_spec, eval_spec)``.
     """
     try:
-      tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)
+      tf.est mator.tra n_and_evaluate(self._est mator, tra n_spec, eval_spec)
     except twml.errors.EarlyStopError:
-      # Ignore the exception if on evaluator.
-      if self.is_evaluator():
+      #  gnore t  except on  f on evaluator.
+       f self. s_evaluator():
         pass
       else:
-        raise
+        ra se
 
-  def train(self, input_fn=None, steps=None, hooks=None):
+  def tra n(self,  nput_fn=None, steps=None, hooks=None):
     """
-    Train the estimator for `steps` training steps.
+    Tra n t  est mator for `steps` tra n ng steps.
 
     Args:
       steps:
-        number of steps for which to perform training. For example, 100 means each
-        evaluation will end after processing 100 batches.
-        Defaults to None. i.e. trains on the entire dataset a single time.
-        Non-positive values and None-values go through the entire training set each epoch.
-      input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
+        number of steps for wh ch to perform tra n ng. For example, 100  ans each
+        evaluat on w ll end after process ng 100 batc s.
+        Defaults to None.  .e. tra ns on t  ent re dataset a s ngle t  .
+        Non-pos  ve values and None-values go through t  ent re tra n ng set each epoch.
+       nput_fn:
+        Funct on to  erate through tra n ng set.    s passed to est mator.tra n.
       hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
+        L st of Sess onRunHooks uses for tra n ng. Defaults to self.get_tra n_hooks().
     """
-    if os.environ.get('TF_CONFIG') and "is_calibrating" not in self.params:
-      raise ValueError("trainer.train() can not be used with distributed / hogwild setups")
+     f os.env ron.get('TF_CONF G') and " s_cal brat ng" not  n self.params:
+      ra se ValueError("tra ner.tra n() can not be used w h d str buted / hogw ld setups")
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+     f not callable( nput_fn):
+      ra se ValueError("Expect ng callable  nput_fn funct on")
 
-    if self._is_early_stopping:
-      raise ValueError("Can not call train() after learn() when using early stopping.")
+     f self._ s_early_stopp ng:
+      ra se ValueError("Can not call tra n() after learn() w n us ng early stopp ng.")
 
-    hooks = self.get_train_hooks() if hooks is None else hooks
-    self._estimator.train(input_fn, steps=steps, hooks=hooks)
+    hooks = self.get_tra n_hooks()  f hooks  s None else hooks
+    self._est mator.tra n( nput_fn, steps=steps, hooks=hooks)
     return self
 
-  def evaluate(self, input_fn=None, steps=None, hooks=None, name=None):
+  def evaluate(self,  nput_fn=None, steps=None, hooks=None, na =None):
     """
-    Evaluate the estimator for `steps` evaluation steps.
+    Evaluate t  est mator for `steps` evaluat on steps.
 
     Args:
       steps:
-        number of steps for which to perform evaluation. For example, 100 means each
-        evaluation will end after processing 100 batches.
-        Defaults to None. i.e. evaluates on the entire dataset a single time.
-        Negative values and None-values go through the entire training set each epoch.
-      input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.evaluate.
+        number of steps for wh ch to perform evaluat on. For example, 100  ans each
+        evaluat on w ll end after process ng 100 batc s.
+        Defaults to None.  .e. evaluates on t  ent re dataset a s ngle t  .
+        Negat ve values and None-values go through t  ent re tra n ng set each epoch.
+       nput_fn:
+        Funct on to  erate through evaluat on set.    s passed to est mator.evaluate.
       hooks:
-        List of SessionRunHooks used for evaluation. Defaults to None.
-        Note that, unlike learn(), hooks defaults to None instead of self.get_eval_hooks()
-        as the latter may implement early-stopping, which isn't necessarilty the desired
-        behavior when calling evaluate() on its own.
-      name:
-        Name of the evaluation if user needs to run multiple evaluations on different data sets.
-        Metrics for different evaluations are saved in separate folders,
-        and appear separately in tensorboard.
+        L st of Sess onRunHooks used for evaluat on. Defaults to None.
+        Note that, unl ke learn(), hooks defaults to None  nstead of self.get_eval_hooks()
+        as t  latter may  mple nt early-stopp ng, wh ch  sn't necessar lty t  des red
+        behav or w n call ng evaluate() on  s own.
+      na :
+        Na  of t  evaluat on  f user needs to run mult ple evaluat ons on d fferent data sets.
+         tr cs for d fferent evaluat ons are saved  n separate folders,
+        and appear separately  n tensorboard.
 
     Returns:
-      If `is_evaluator()`, returns a dict containing the evaluation metrics specified
-      in `metric_fn` keyed by name, as well as an entry `global_step` that contains
-      the value of the global step for which this evaluation was performed.
-      Otherwise (i.e. `is_evaluator() == False`), returns None.
+       f ` s_evaluator()`, returns a d ct conta n ng t  evaluat on  tr cs spec f ed
+       n ` tr c_fn` keyed by na , as  ll as an entry `global_step` that conta ns
+      t  value of t  global step for wh ch t  evaluat on was perfor d.
+      Ot rw se ( .e. ` s_evaluator() == False`), returns None.
     """
-    if not self.is_evaluator():
+     f not self. s_evaluator():
       return None
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+     f not callable( nput_fn):
+      ra se ValueError("Expect ng callable  nput_fn funct on")
 
-    hooks = self.get_eval_hooks() if hooks is None else hooks
-    hooks = [] if hooks is None else hooks
+    hooks = self.get_eval_hooks()  f hooks  s None else hooks
+    hooks = []  f hooks  s None else hooks
 
-    # for consistency with train/learn
-    eval_steps = None if steps is not None and steps < 0 else steps
+    # for cons stency w h tra n/learn
+    eval_steps = None  f steps  s not None and steps < 0 else steps
 
-    with self.experiment_tracker.track_experiment(hooks, lambda: self.current_estimator_spec, name=name):
-      checkpoint = self.best_or_latest_checkpoint
-      computed_metrics = self._estimator.evaluate(
-        input_fn,
+    w h self.exper  nt_tracker.track_exper  nt(hooks, lambda: self.current_est mator_spec, na =na ):
+      c ckpo nt = self.best_or_latest_c ckpo nt
+      computed_ tr cs = self._est mator.evaluate(
+         nput_fn,
         steps=eval_steps,
         hooks=hooks,
-        checkpoint_path=checkpoint,
-        name=name
+        c ckpo nt_path=c ckpo nt,
+        na =na 
       )
 
-    return computed_metrics
+    return computed_ tr cs
 
   def start_tensorboard(self, port=None):
     """
-    Start tensorboard process to visualize logs in save_dir.
+    Start tensorboard process to v sual ze logs  n save_d r.
     """
-    logging.info("Starting tensorboard.")
-    if self._tensorboard_handle:
-      logging.warn("Tensorboard already running. Nothing done.")
+    logg ng. nfo("Start ng tensorboard.")
+     f self._tensorboard_handle:
+      logg ng.warn("Tensorboard already runn ng. Noth ng done.")
       return
 
-    if port is None:
-      if 'tensorboard_port' not in self.params.values():
-        raise ValueError('You must specify a port for tensorboard to run on.')
-      elif self.params.tensorboard_port is None:
+     f port  s None:
+       f 'tensorboard_port' not  n self.params.values():
+        ra se ValueError('  must spec fy a port for tensorboard to run on.')
+      el f self.params.tensorboard_port  s None:
         return
       else:
         port = self.params.tensorboard_port
 
-    mldash_path = 'experiments'
-    if self.experiment_tracker.path:
-      mldash_path += '/%s' % encode_url(self.experiment_tracker.experiment_id)
-    tensorboard_args = ['--logdir=%s' % self._save_dir, '--port=%d' % port]
+    mldash_path = 'exper  nts'
+     f self.exper  nt_tracker.path:
+      mldash_path += '/%s' % encode_url(self.exper  nt_tracker.exper  nt_ d)
+    tensorboard_args = ['--logd r=%s' % self._save_d r, '--port=%d' % port]
 
     try:
-      args = ['email_and_launch_tensorboard', mldash_path, '--'] + tensorboard_args
+      args = ['ema l_and_launch_tensorboard', mldash_path, '--'] + tensorboard_args
       self._tensorboard_handle = subprocess.Popen(args)
     except OSError:
       try:
         self._tensorboard_handle = subprocess.Popen(['tensorboard'] + tensorboard_args)
       except OSError:
         try:
-          # this will work with Twitter internal pants build when run locally
+          # t  w ll work w h Tw ter  nternal pants bu ld w n run locally
           args = ['./pants', 'run', 'twml:tensorboard', '--'] + tensorboard_args
           self._tensorboard_handle = subprocess.Popen(args)
         except OSError:
-          logging.error("No tensorboard installed, won't able to visualize training in tensorboard.")
+          logg ng.error("No tensorboard  nstalled, won't able to v sual ze tra n ng  n tensorboard.")
 
   def stop_tensorboard(self):
     """
-    Shutdown this Trainer's associated Tensorboard.
+    Shutdown t  Tra ner's assoc ated Tensorboard.
     """
-    if self._tensorboard_handle:
-      logging.info("Shutting down tensorboard.")
-      self._tensorboard_handle.kill()
+     f self._tensorboard_handle:
+      logg ng. nfo("Shutt ng down tensorboard.")
+      self._tensorboard_handle.k ll()
     else:
-      logging.warn("No known tensorboard process. Nothing done.")
+      logg ng.warn("No known tensorboard process. Noth ng done.")
 
-  def calibrate(self,
-                calibrator,
+  def cal brate(self,
+                cal brator,
                 steps=None,
-                input_fn=None,
-                save_calibrator=True,
+                 nput_fn=None,
+                save_cal brator=True,
                 hooks=None):
     """
-    Calibrate the calibrator for `steps` calibration steps using the estimator.train method.
-    The build_graph passed to the Trainer constructor should
-    call calibrator.accumulate using something like tf.py_func.
-    That way, when this method calls estimator.train the calibrator will
-    accumulate one epoch of samples. After which, this method calls calibrator.calibrate().
-    It is up to the user to then call calibrator.save() to save the calibrated Layer
-    and other information to disk for multi-phase training.
+    Cal brate t  cal brator for `steps` cal brat on steps us ng t  est mator.tra n  thod.
+    T  bu ld_graph passed to t  Tra ner constructor should
+    call cal brator.accumulate us ng so th ng l ke tf.py_func.
+    That way, w n t   thod calls est mator.tra n t  cal brator w ll
+    accumulate one epoch of samples. After wh ch, t   thod calls cal brator.cal brate().
+       s up to t  user to t n call cal brator.save() to save t  cal brated Layer
+    and ot r  nformat on to d sk for mult -phase tra n ng.
 
     Args:
-      calibrator:
-        a twml.Calibrator instance or a dict of the form {name(str): twml.Calibrator}.
+      cal brator:
+        a twml.Cal brator  nstance or a d ct of t  form {na (str): twml.Cal brator}.
       steps:
-        Maximum steps to accumulate examples for calibration. Optional.
-        If not specified, examples will be accumulated until all downsampled parts are processed.
-      input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
+        Max mum steps to accumulate examples for cal brat on. Opt onal.
+         f not spec f ed, examples w ll be accumulated unt l all downsampled parts are processed.
+       nput_fn:
+        Funct on to  erate through tra n ng set.    s passed to est mator.tra n.
       hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
-      save_calibrator:
-        Boolean (default: True). If set to True it will save the calibrator layer.
+        L st of Sess onRunHooks uses for tra n ng. Defaults to self.get_tra n_hooks().
+      save_cal brator:
+        Boolean (default: True).  f set to True   w ll save t  cal brator layer.
     """
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+     f not callable( nput_fn):
+      ra se ValueError("Expect ng callable  nput_fn funct on")
 
-    # making everything a dict to avoid multiple ifs
-    if isinstance(calibrator, twml.contrib.calibrators.Calibrator):
-      calibrator = {"default": calibrator}
+    # mak ng everyth ng a d ct to avo d mult ple  fs
+     f  s nstance(cal brator, twml.contr b.cal brators.Cal brator):
+      cal brator = {"default": cal brator}
 
-    # This is a dummy call to train, since we cannot predict without training
-    # from the Estimator API
-    self._estimator.train(input_fn, steps=1)
-    max_steps = steps if steps is not None else -1
-    for name, clbrt in sorted(calibrator.items(), key=itemgetter(0)):
+    # T   s a dum  call to tra n, s nce   cannot pred ct w hout tra n ng
+    # from t  Est mator AP 
+    self._est mator.tra n( nput_fn, steps=1)
+    max_steps = steps  f steps  s not None else -1
+    for na , clbrt  n sorted(cal brator. ems(), key= emgetter(0)):
       count = 0
-      for out in self._estimator.predict(input_fn, hooks=hooks, yield_single_examples=False):
-        if max_steps > 0 and count > max_steps:
+      for out  n self._est mator.pred ct( nput_fn, hooks=hooks, y eld_s ngle_examples=False):
+         f max_steps > 0 and count > max_steps:
           break
         clbrt.accumulate_feature(out)
         count += 1
-      clbrt.calibrate()
+      clbrt.cal brate()
 
-    # this step is done to allow us to keep the current phases event file for
-    # visualization on Tensorboard. It removes all files that
-    # are not event files. This piece of code should be deprecated when
-    # we deprecate the MDL calibrator (CX-12329)
-    for fname in tf.io.gfile.listdir(self._save_dir):
-      if not fname.startswith("events"):
-        tf.io.gfile.remove(os.path.join(self._save_dir, fname))
+    # t  step  s done to allow us to keep t  current phases event f le for
+    # v sual zat on on Tensorboard.   removes all f les that
+    # are not event f les. T  p ece of code should be deprecated w n
+    #   deprecate t  MDL cal brator (CX-12329)
+    for fna   n tf. o.gf le.l std r(self._save_d r):
+       f not fna .startsw h("events"):
+        tf. o.gf le.remove(os.path.jo n(self._save_d r, fna ))
 
-    if save_calibrator:
-      # If we only have one calibrator, the calibrator signature
-      # will be set to default
-      if len(calibrator) == 1:
-        calibrator = calibrator['default']
-        calibrator.save(
-          self.params.save_dir,
-          name=calibrator.name,
+     f save_cal brator:
+      #  f   only have one cal brator, t  cal brator s gnature
+      # w ll be set to default
+       f len(cal brator) == 1:
+        cal brator = cal brator['default']
+        cal brator.save(
+          self.params.save_d r,
+          na =cal brator.na ,
           verbose=True
         )
       else:
-        for name, clbrt in calibrator.items():
+        for na , clbrt  n cal brator. ems():
           clbrt.save(
-            self.params.save_dir,
-            name=clbrt.name + str(name),
+            self.params.save_d r,
+            na =clbrt.na  + str(na ),
             verbose=True
           )
 
-  def predict(self, *args, **kwargs):
+  def pred ct(self, *args, **kwargs):
     """
-    Wrapper over the tensorflow `Estimator.predict
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#predict>`_.
-    method. See that documentation for description of arguments accepted.
+    Wrapper over t  tensorflow `Est mator.pred ct
+    <https://www.tensorflow.org/ap _docs/python/tf/est mator/Est mator#pred ct>`_.
+     thod. See that docu ntat on for descr pt on of argu nts accepted.
 
-    If hooks is passed as an argument, the specified hooks are used.
-    Else when profiler_steps is specified in the constructor of the Trainer, a
-    tf.train.ProfilerHook is passed to the predict interface.
-    Otherwise, hooks is set to an empty list.
+     f hooks  s passed as an argu nt, t  spec f ed hooks are used.
+    Else w n prof ler_steps  s spec f ed  n t  constructor of t  Tra ner, a
+    tf.tra n.Prof lerHook  s passed to t  pred ct  nterface.
+    Ot rw se, hooks  s set to an empty l st.
     """
-    if 'hooks' not in kwargs and len(args) < 3:
-      # If hooks is not specified as a keyword argument, nor as a positional argument
-      # add hooks as a keyword argument.
-      kwargs['hooks'] = self.get_predict_hooks()
+     f 'hooks' not  n kwargs and len(args) < 3:
+      #  f hooks  s not spec f ed as a keyword argu nt, nor as a pos  onal argu nt
+      # add hooks as a keyword argu nt.
+      kwargs['hooks'] = self.get_pred ct_hooks()
 
-    return self.estimator.predict(*args, **kwargs)
+    return self.est mator.pred ct(*args, **kwargs)
 
   def hub_export(self,
-                 name,
-                 serving_input_receiver_fn,
-                 export_dir=None,
-                 checkpoint_path=None,
-                 export_task_type_overrider=None):
+                 na ,
+                 serv ng_ nput_rece ver_fn,
+                 export_d r=None,
+                 c ckpo nt_path=None,
+                 export_task_type_overr der=None):
     """
-    Exports registered modules into a save directory.
+    Exports reg stered modules  nto a save d rectory.
 
-    This method creates a directory under export_path with the save TF Hub.
-    One sub-directory (named export_name) per module registered via register_module_for_export.
+    T   thod creates a d rectory under export_path w h t  save TF Hub.
+    One sub-d rectory (na d export_na ) per module reg stered v a reg ster_module_for_export.
 
-    Arguments:
-      name:
-        unique name of the module to export.
-      serving_input_receiver_fn:
-        A function with no arguments that returns a ServingInputReceiver.
-        This is used with the estimator passed to export() to build the graph (in PREDICT mode)
-        that registers the modules for export. The model in that graph is never run,
-        so the actual data provided by this input fn does not matter.
-      export_dir:
-        A string containing a directory where to write the export directories.
-        Defaults to the save_dir.
-      checkpoint_path:
-        The checkpoint path to export. Defaults to the latest.
-      export_task_type_overrider:
-        Specifies the task type that will override the default task type used for export
-        (hogwild training defaults to evaluator, otherwise, defaults to chief)
+    Argu nts:
+      na :
+        un que na  of t  module to export.
+      serv ng_ nput_rece ver_fn:
+        A funct on w h no argu nts that returns a Serv ng nputRece ver.
+        T   s used w h t  est mator passed to export() to bu ld t  graph ( n PRED CT mode)
+        that reg sters t  modules for export. T  model  n that graph  s never run,
+        so t  actual data prov ded by t   nput fn does not matter.
+      export_d r:
+        A str ng conta n ng a d rectory w re to wr e t  export d rector es.
+        Defaults to t  save_d r.
+      c ckpo nt_path:
+        T  c ckpo nt path to export. Defaults to t  latest.
+      export_task_type_overr der:
+        Spec f es t  task type that w ll overr de t  default task type used for export
+        (hogw ld tra n ng defaults to evaluator, ot rw se, defaults to ch ef)
     """
-    if export_task_type_overrider:
-      if not self.is_task_type(export_task_type_overrider):
-        logging.info(
-          f"Trainer.hub_export ignored due to process not being {export_task_type_overrider}")
+     f export_task_type_overr der:
+       f not self. s_task_type(export_task_type_overr der):
+        logg ng. nfo(
+          f"Tra ner.hub_export  gnored due to process not be ng {export_task_type_overr der}")
         return
     else:
-      if self._using_hogwild:
-        if not self.is_evaluator():
-          logging.info("Trainer.hub_export ignored due to the process not being evaluator.")
+       f self._us ng_hogw ld:
+         f not self. s_evaluator():
+          logg ng. nfo("Tra ner.hub_export  gnored due to t  process not be ng evaluator.")
           return
       else:
-        if not self.is_chief():
-          logging.info("Trainer.hub_export ignored due to the process not being chief.")
+         f not self. s_ch ef():
+          logg ng. nfo("Tra ner.hub_export  gnored due to t  process not be ng ch ef.")
           return
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+     f export_d r:
+      export_d r = san  ze_hdfs_path(export_d r)
 
-    if checkpoint_path:
-      checkpoint_path = sanitize_hdfs_path(checkpoint_path)
+     f c ckpo nt_path:
+      c ckpo nt_path = san  ze_hdfs_path(c ckpo nt_path)
     else:
-      checkpoint_path = self.best_or_latest_checkpoint
+      c ckpo nt_path = self.best_or_latest_c ckpo nt
 
-    export_dir = export_dir if export_dir is not None else self._save_dir
-    exporter = hub.LatestModuleExporter(name, serving_input_receiver_fn)
-    # The path_exporter by default contains a timestamp directory in its path.
-    path_exporter = exporter.export(estimator=self.estimator,
-                                    export_path=export_dir,
-                                    checkpoint_path=checkpoint_path)
+    export_d r = export_d r  f export_d r  s not None else self._save_d r
+    exporter = hub.LatestModuleExporter(na , serv ng_ nput_rece ver_fn)
+    # T  path_exporter by default conta ns a t  stamp d rectory  n  s path.
+    path_exporter = exporter.export(est mator=self.est mator,
+                                    export_path=export_d r,
+                                    c ckpo nt_path=c ckpo nt_path)
 
-    # LatestModuleExporter.export() returns a binary string on Cloud ML Engine
-    # but tf.io.gfile.listdir() does not; this is an issue when joining paths
-    if isinstance(path_exporter, bytes):
+    # LatestModuleExporter.export() returns a b nary str ng on Cloud ML Eng ne
+    # but tf. o.gf le.l std r() does not; t   s an  ssue w n jo n ng paths
+     f  s nstance(path_exporter, bytes):
       path_exporter = path_exporter.decode()
 
-    # Copying the saved hub module to export_dir so we don't need to specify
-    # the timestamp when loading the module.
-    # This is a workaround due to the current implementation of hub.LatestModuleExporter.
-    # This works for multiple hub modules.
-    hub_exported_modules = tf.io.gfile.listdir(path_exporter)
+    # Copy ng t  saved hub module to export_d r so   don't need to spec fy
+    # t  t  stamp w n load ng t  module.
+    # T   s a workaround due to t  current  mple ntat on of hub.LatestModuleExporter.
+    # T  works for mult ple hub modules.
+    hub_exported_modules = tf. o.gf le.l std r(path_exporter)
 
-    backup_dir = os.path.join(export_dir, "backups",
-                              datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    backup_d r = os.path.jo n(export_d r, "backups",
+                              datet  .datet  .now().strft  ('%Y-%m-%d_%H-%M-%S'))
 
-    for folder in hub_exported_modules:
-      hub_module_oldpath = os.path.join(path_exporter, folder)
-      hub_module_newpath = os.path.join(export_dir, folder)
+    for folder  n hub_exported_modules:
+      hub_module_oldpath = os.path.jo n(path_exporter, folder)
+      hub_module_newpath = os.path.jo n(export_d r, folder)
 
-      # If the destination already exists, move to backup
-      if tf.io.gfile.exists(hub_module_newpath):
-        # Ensure backup_dir exists
-        tf.io.gfile.makedirs(backup_dir)
-        hub_module_backup = os.path.join(backup_dir, folder)
-        tf.io.gfile.rename(hub_module_newpath, hub_module_backup)
+      #  f t  dest nat on already ex sts, move to backup
+       f tf. o.gf le.ex sts(hub_module_newpath):
+        # Ensure backup_d r ex sts
+        tf. o.gf le.maked rs(backup_d r)
+        hub_module_backup = os.path.jo n(backup_d r, folder)
+        tf. o.gf le.rena (hub_module_newpath, hub_module_backup)
 
-      tf.io.gfile.rename(hub_module_oldpath, hub_module_newpath)
+      tf. o.gf le.rena (hub_module_oldpath, hub_module_newpath)
 
-    # Since the timestamped folder exists but is empty, we can delete it.
-    tf.io.gfile.rmtree(path_exporter)
+    # S nce t  t  stamped folder ex sts but  s empty,   can delete  .
+    tf. o.gf le.rmtree(path_exporter)
 
-  def _is_on_gke(self) -> bool:
-    """Returns True if running on gke."""
-    cluster = os.environ.get('TWML_JOB_CLUSTER')
-    if not cluster or cluster in {'smf1', 'atla'}:
+  def _ s_on_gke(self) -> bool:
+    """Returns True  f runn ng on gke."""
+    cluster = os.env ron.get('TWML_JOB_CLUSTER')
+     f not cluster or cluster  n {'smf1', 'atla'}:
       return False
     return True
 
-  def _maybe_del_tsd_exit(self, state_files) -> None:
-    """Handle potential early exit and TwitterSetDeployment deletion.
+  def _maybe_del_tsd_ex (self, state_f les) -> None:
+    """Handle potent al early ex  and Tw terSetDeploy nt delet on.
 
-      If:
-        - distributed training
-        - running GKE
-        - training is finished (all state_files exists)
-      we will exit early and not restart work
+       f:
+        - d str buted tra n ng
+        - runn ng GKE
+        - tra n ng  s f n s d (all state_f les ex sts)
+        w ll ex  early and not restart work
 
-      If --distributed_training_cleanup = True then we will also handle
-      cleaning up the TwitterSetDeployments.
+       f --d str buted_tra n ng_cleanup = True t n   w ll also handle
+      clean ng up t  Tw terSetDeploy nts.
 
       Args:
-        state_files: A python list indicate state files to determine the finish 
-        state of the job.
+        state_f les: A python l st  nd cate state f les to determ ne t  f n sh 
+        state of t  job.
     """
-    # job type that is responsible for experiment tracking will remain alive
-    # until it marks the experiment as finished.
-    if self.experiment_tracker._env_eligible_for_recording_experiment:
-      exp_status = self.experiment_tracker.get_run_status()
-      if exp_status and exp_status not in {'Success', 'Failed'}:
-        logging.info(
-          f"Not exiting early because experiment is still {exp_status}."
+    # job type that  s respons ble for exper  nt track ng w ll rema n al ve
+    # unt l   marks t  exper  nt as f n s d.
+     f self.exper  nt_tracker._env_el g ble_for_record ng_exper  nt:
+      exp_status = self.exper  nt_tracker.get_run_status()
+       f exp_status and exp_status not  n {'Success', 'Fa led'}:
+        logg ng. nfo(
+          f"Not ex  ng early because exper  nt  s st ll {exp_status}."
         )
         return
 
-    # do not bother if we are on prem
-    if not self._is_on_gke():
-      logging.info("No need to exit early because running on prem.")
+    # do not bot r  f   are on prem
+     f not self._ s_on_gke():
+      logg ng. nfo("No need to ex  early because runn ng on prem.")
       return
 
     states = [
-      twml.util.file_exist_in_dir(self._save_dir, state_file) for state_file in state_files]
-    do_not_restart = (self._params.get('distributed') and all(states))
-    if not do_not_restart:
+      twml.ut l.f le_ex st_ n_d r(self._save_d r, state_f le) for state_f le  n state_f les]
+    do_not_restart = (self._params.get('d str buted') and all(states))
+     f not do_not_restart:
       return
 
-    logging.info(
-      f"Exiting early because a _SUCCESS file already exists in {self._save_dir}")
-    if self._params.get('distributed_training_cleanup'):
-      resource_name = '-'.join([
-        os.environ['TWML_JOB_NAME'],
-        os.environ['TWML_DISTRIBUTED_JOB_TYPE'],
-        os.environ['TWML_JOB_ENV'],
+    logg ng. nfo(
+      f"Ex  ng early because a _SUCCESS f le already ex sts  n {self._save_d r}")
+     f self._params.get('d str buted_tra n ng_cleanup'):
+      res ce_na  = '-'.jo n([
+        os.env ron['TWML_JOB_NAME'],
+        os.env ron['TWML_D STR BUTED_JOB_TYPE'],
+        os.env ron['TWML_JOB_ENV'],
       ])
-      logging.info(f"Deleting TwitterSetDeployment {resource_name}")
-      # each job type will manage its own deletion so that deletion happens
-      # in the trainer init call for every job type
-      # otherwise we may kill another job type during an important
-      # process like experiment tracking management (handled by the evaluator
-      kubectl_delete_by_name(
+      logg ng. nfo(f"Delet ng Tw terSetDeploy nt {res ce_na }")
+      # each job type w ll manage  s own delet on so that delet on happens
+      #  n t  tra ner  n  call for every job type
+      # ot rw se   may k ll anot r job type dur ng an  mportant
+      # process l ke exper  nt track ng manage nt (handled by t  evaluator
+      kubectl_delete_by_na (
         zone=None,
-        namespace=os.environ['TWML_JOB_ROLE'],
-        resource_type=Resource.TWITTERSETDEPLOYMENTS.value,
-        resource_name=resource_name,
-        wait=False,
+        na space=os.env ron['TWML_JOB_ROLE'],
+        res ce_type=Res ce.TW TTERSETDEPLOYMENTS.value,
+        res ce_na =res ce_na ,
+        wa =False,
       )
-    sys.exit(0)
+    sys.ex (0)
 
-  def write_state_to_disk(self, save_dir, filename='_SUCCESS') -> None:
-    """Write state file to disk to indicate the state of training process. This is usually used 
-      to mark the state of training progress and determine the start when job restarts/resumes.
+  def wr e_state_to_d sk(self, save_d r, f lena ='_SUCCESS') -> None:
+    """Wr e state f le to d sk to  nd cate t  state of tra n ng process. T   s usually used 
+      to mark t  state of tra n ng progress and determ ne t  start w n job restarts/resu s.
     Args:
-      save_dir: A str of local/gcs/hdfs dir to write the state file.
-      file_name: A str indicate the state file. Default to `_SUCCESS`.
+      save_d r: A str of local/gcs/hdfs d r to wr e t  state f le.
+      f le_na : A str  nd cate t  state f le. Default to `_SUCCESS`.
     """
-    file_path = os.path.join(save_dir, filename)
-    if tf.io.gfile.exists(file_path):
-      tf.logging.warn(f'{file_path} already exist.')
+    f le_path = os.path.jo n(save_d r, f lena )
+     f tf. o.gf le.ex sts(f le_path):
+      tf.logg ng.warn(f'{f le_path} already ex st.')
       return
 
-    with tf.io.gfile.GFile(file_path, 'w') as f:
-      f.write('')
+    w h tf. o.gf le.GF le(f le_path, 'w') as f:
+      f.wr e('')

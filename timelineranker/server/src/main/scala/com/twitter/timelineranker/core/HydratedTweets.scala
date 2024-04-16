@@ -1,7 +1,7 @@
-package com.twitter.timelineranker.core
+package com.tw ter.t  l neranker.core
 
-import com.twitter.timelines.model.tweet.HydratedTweet
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
 
-case class HydratedTweets(
-  outerTweets: Seq[HydratedTweet],
-  innerTweets: Seq[HydratedTweet] = Seq.empty)
+case class HydratedT ets(
+  outerT ets: Seq[HydratedT et],
+   nnerT ets: Seq[HydratedT et] = Seq.empty)

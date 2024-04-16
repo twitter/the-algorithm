@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.in_network_tweets
+package com.tw ter.t  l neranker. n_network_t ets
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.model.Cand dateT etsResult
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.para ters. n_network_t ets. nNetworkT etParams
+ mport com.tw ter.ut l.Future
 
 /**
- * A repository of in-network tweet candidates.
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * A repos ory of  n-network t et cand dates.
+ * For now,   does not cac  any results t refore forwards all calls to t  underly ng s ce.
  */
-class InNetworkTweetRepository(
-  source: InNetworkTweetSource,
-  realtimeCGSource: InNetworkTweetSource) {
+class  nNetworkT etRepos ory(
+  s ce:  nNetworkT etS ce,
+  realt  CGS ce:  nNetworkT etS ce) {
 
-  private[this] val enableRealtimeCGProvider =
-    DependencyProvider.from(InNetworkTweetParams.EnableEarlybirdRealtimeCgMigrationParam)
+  pr vate[t ] val enableRealt  CGProv der =
+    DependencyProv der.from( nNetworkT etParams.EnableEarlyb rdRealt  CgM grat onParam)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    if (enableRealtimeCGProvider(query)) {
-      realtimeCGSource.get(query)
+  def get(query: RecapQuery): Future[Cand dateT etsResult] = {
+     f (enableRealt  CGProv der(query)) {
+      realt  CGS ce.get(query)
     } else {
-      source.get(query)
+      s ce.get(query)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(query => get(query)))
+  def get(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    Future.collect(quer es.map(query => get(query)))
   }
 }

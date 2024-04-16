@@ -1,86 +1,86 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.clients.ScopedCortexTweetQueryServiceClientFactory
-import com.twitter.timelines.clients.gizmoduck.ScopedGizmoduckClientFactory
-import com.twitter.timelines.clients.manhattan.ScopedUserMetadataClientFactory
-import com.twitter.timelines.clients.socialgraph.ScopedSocialGraphClientFactory
-import com.twitter.timelines.clients.strato.realgraph.ScopedRealGraphClientFactory
-import com.twitter.timelines.clients.tweetypie.AdditionalFieldConfig
-import com.twitter.timelines.clients.tweetypie.ScopedTweetyPieClientFactory
-import com.twitter.timelines.visibility.VisibilityEnforcerFactory
-import com.twitter.timelines.visibility.VisibilityProfileHydratorFactory
-import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t  l neranker.cl ents.ScopedCortexT etQueryServ ceCl entFactory
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.ScopedG zmoduckCl entFactory
+ mport com.tw ter.t  l nes.cl ents.manhattan.ScopedUser tadataCl entFactory
+ mport com.tw ter.t  l nes.cl ents.soc algraph.ScopedSoc alGraphCl entFactory
+ mport com.tw ter.t  l nes.cl ents.strato.realgraph.ScopedRealGraphCl entFactory
+ mport com.tw ter.t  l nes.cl ents.t etyp e.Add  onalF eldConf g
+ mport com.tw ter.t  l nes.cl ents.t etyp e.ScopedT etyP eCl entFactory
+ mport com.tw ter.t  l nes.v s b l y.V s b l yEnforcerFactory
+ mport com.tw ter.t  l nes.v s b l y.V s b l yProf leHydratorFactory
+ mport com.tw ter.t etyp e.thr ftscala.{T et => TT et}
 
-class ClientWrapperFactories(config: RuntimeConfiguration) {
-  private[this] val statsReceiver = config.statsReceiver
+class Cl entWrapperFactor es(conf g: Runt  Conf gurat on) {
+  pr vate[t ] val statsRece ver = conf g.statsRece ver
 
-  val cortexTweetQueryServiceClientFactory: ScopedCortexTweetQueryServiceClientFactory =
-    new ScopedCortexTweetQueryServiceClientFactory(
-      config.underlyingClients.cortexTweetQueryServiceClient,
-      statsReceiver = statsReceiver
+  val cortexT etQueryServ ceCl entFactory: ScopedCortexT etQueryServ ceCl entFactory =
+    new ScopedCortexT etQueryServ ceCl entFactory(
+      conf g.underly ngCl ents.cortexT etQueryServ ceCl ent,
+      statsRece ver = statsRece ver
     )
 
-  val gizmoduckClientFactory: ScopedGizmoduckClientFactory = new ScopedGizmoduckClientFactory(
-    config.underlyingClients.gizmoduckClient,
-    statsReceiver = statsReceiver
+  val g zmoduckCl entFactory: ScopedG zmoduckCl entFactory = new ScopedG zmoduckCl entFactory(
+    conf g.underly ngCl ents.g zmoduckCl ent,
+    statsRece ver = statsRece ver
   )
 
-  val socialGraphClientFactory: ScopedSocialGraphClientFactory = new ScopedSocialGraphClientFactory(
-    config.underlyingClients.sgsClient,
-    statsReceiver
+  val soc alGraphCl entFactory: ScopedSoc alGraphCl entFactory = new ScopedSoc alGraphCl entFactory(
+    conf g.underly ngCl ents.sgsCl ent,
+    statsRece ver
   )
 
-  val visibilityEnforcerFactory: VisibilityEnforcerFactory = new VisibilityEnforcerFactory(
-    gizmoduckClientFactory,
-    socialGraphClientFactory,
-    statsReceiver
+  val v s b l yEnforcerFactory: V s b l yEnforcerFactory = new V s b l yEnforcerFactory(
+    g zmoduckCl entFactory,
+    soc alGraphCl entFactory,
+    statsRece ver
   )
 
-  val tweetyPieAdditionalFieldsToDisable: Seq[Short] = Seq(
-    TTweet.MediaTagsField.id,
-    TTweet.SchedulingInfoField.id,
-    TTweet.EscherbirdEntityAnnotationsField.id,
-    TTweet.CardReferenceField.id,
-    TTweet.SelfPermalinkField.id,
-    TTweet.ExtendedTweetMetadataField.id,
-    TTweet.CommunitiesField.id,
-    TTweet.VisibleTextRangeField.id
+  val t etyP eAdd  onalF eldsToD sable: Seq[Short] = Seq(
+    TT et. d aTagsF eld. d,
+    TT et.Sc dul ng nfoF eld. d,
+    TT et.Esc rb rdEnt yAnnotat onsF eld. d,
+    TT et.CardReferenceF eld. d,
+    TT et.SelfPermal nkF eld. d,
+    TT et.ExtendedT et tadataF eld. d,
+    TT et.Commun  esF eld. d,
+    TT et.V s bleTextRangeF eld. d
   )
 
-  val tweetyPieHighQoSClientFactory: ScopedTweetyPieClientFactory =
-    new ScopedTweetyPieClientFactory(
-      tweetyPieClient = config.underlyingClients.tweetyPieHighQoSClient,
-      additionalFieldConfig = AdditionalFieldConfig(
-        fieldDisablingGates = tweetyPieAdditionalFieldsToDisable.map(_ -> Gate.False).toMap
+  val t etyP eH ghQoSCl entFactory: ScopedT etyP eCl entFactory =
+    new ScopedT etyP eCl entFactory(
+      t etyP eCl ent = conf g.underly ngCl ents.t etyP eH ghQoSCl ent,
+      add  onalF eldConf g = Add  onalF eldConf g(
+        f eldD sabl ngGates = t etyP eAdd  onalF eldsToD sable.map(_ -> Gate.False).toMap
       ),
-      includePartialResults = Gate.False,
-      statsReceiver = statsReceiver
+       ncludePart alResults = Gate.False,
+      statsRece ver = statsRece ver
     )
 
-  val tweetyPieLowQoSClientFactory: ScopedTweetyPieClientFactory = new ScopedTweetyPieClientFactory(
-    tweetyPieClient = config.underlyingClients.tweetyPieLowQoSClient,
-    additionalFieldConfig = AdditionalFieldConfig(
-      fieldDisablingGates = tweetyPieAdditionalFieldsToDisable.map(_ -> Gate.False).toMap
+  val t etyP eLowQoSCl entFactory: ScopedT etyP eCl entFactory = new ScopedT etyP eCl entFactory(
+    t etyP eCl ent = conf g.underly ngCl ents.t etyP eLowQoSCl ent,
+    add  onalF eldConf g = Add  onalF eldConf g(
+      f eldD sabl ngGates = t etyP eAdd  onalF eldsToD sable.map(_ -> Gate.False).toMap
     ),
-    includePartialResults = Gate.False,
-    statsReceiver = statsReceiver
+     ncludePart alResults = Gate.False,
+    statsRece ver = statsRece ver
   )
 
-  val userMetadataClientFactory: ScopedUserMetadataClientFactory =
-    new ScopedUserMetadataClientFactory(
-      config.underlyingClients.manhattanStarbuckClient,
-      TimelineRankerConstants.ManhattanStarbuckAppId,
-      statsReceiver
+  val user tadataCl entFactory: ScopedUser tadataCl entFactory =
+    new ScopedUser tadataCl entFactory(
+      conf g.underly ngCl ents.manhattanStarbuckCl ent,
+      T  l neRankerConstants.ManhattanStarbuckApp d,
+      statsRece ver
     )
 
-  val visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory =
-    new VisibilityProfileHydratorFactory(
-      gizmoduckClientFactory,
-      socialGraphClientFactory,
-      statsReceiver
+  val v s b l yProf leHydratorFactory: V s b l yProf leHydratorFactory =
+    new V s b l yProf leHydratorFactory(
+      g zmoduckCl entFactory,
+      soc alGraphCl entFactory,
+      statsRece ver
     )
 
-  val realGraphClientFactory =
-    new ScopedRealGraphClientFactory(config.underlyingClients.stratoClient, statsReceiver)
+  val realGraphCl entFactory =
+    new ScopedRealGraphCl entFactory(conf g.underly ngCl ents.stratoCl ent, statsRece ver)
 }

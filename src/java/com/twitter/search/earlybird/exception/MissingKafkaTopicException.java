@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-public class MissingKafkaTopicException extends Exception {
-  public MissingKafkaTopicException(String message) {
-    super(message);
+publ c class M ss ngKafkaTop cExcept on extends Except on {
+  publ c M ss ngKafkaTop cExcept on(Str ng  ssage) {
+    super( ssage);
   }
 
-  public MissingKafkaTopicException(String message, Throwable cause) {
-    super(message, cause);
+  publ c M ss ngKafkaTop cExcept on(Str ng  ssage, Throwable cause) {
+    super( ssage, cause);
   }
 }

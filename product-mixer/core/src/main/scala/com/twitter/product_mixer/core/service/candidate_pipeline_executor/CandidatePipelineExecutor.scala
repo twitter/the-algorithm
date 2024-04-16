@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.core.service.candidate_pipeline_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_p pel ne_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipeline
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.Cand dateP pel neResults
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neResult
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CandidatePipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class Cand dateP pel neExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor
-    with Logging {
+    w h Logg ng {
 
-  def arrow[Query <: PipelineQuery](
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
+  def arrow[Query <: P pel neQuery](
+    cand dateP pel nes: Seq[Cand dateP pel ne[Query]],
+    defaultFa lOpenPol cy: Fa lOpenPol cy,
+    fa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy],
+    qual yFactorObserverByP pel ne: Map[Component dent f er, Qual yFactorObserver],
     context: Executor.Context
-  ): Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] = {
+  ): Arrow[Cand dateP pel ne. nputs[Query], Cand dateP pel neExecutorResult] = {
 
-    // Get the `.arrow` of each Candidate Pipeline, and wrap it in a ResultObserver
-    val observedArrows: Seq[Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult]] =
-      candidatePipelines.map { pipeline =>
-        wrapPipelineWithExecutorBookkeeping(
+    // Get t  `.arrow` of each Cand date P pel ne, and wrap    n a ResultObserver
+    val observedArrows: Seq[Arrow[Cand dateP pel ne. nputs[Query], Cand dateP pel neResult]] =
+      cand dateP pel nes.map { p pel ne =>
+        wrapP pel neW hExecutorBookkeep ng(
           context = context,
-          currentComponentIdentifier = pipeline.identifier,
-          qualityFactorObserver = qualityFactorObserverByPipeline.get(pipeline.identifier),
-          failOpenPolicy = failOpenPolicies.getOrElse(pipeline.identifier, defaultFailOpenPolicy)
-        )(pipeline.arrow)
+          currentComponent dent f er = p pel ne. dent f er,
+          qual yFactorObserver = qual yFactorObserverByP pel ne.get(p pel ne. dent f er),
+          fa lOpenPol cy = fa lOpenPol c es.getOrElse(p pel ne. dent f er, defaultFa lOpenPol cy)
+        )(p pel ne.arrow)
       }
 
-    // Collect the results from all the candidate pipelines together
-    Arrow.zipWithArg(Arrow.collect(observedArrows)).map {
-      case (input: CandidatePipeline.Inputs[Query], results: Seq[CandidatePipelineResult]) =>
-        val candidateWithDetails = results.flatMap(_.result.getOrElse(Seq.empty))
-        val previousCandidateWithDetails = input.query.features
-          .map(_.getOrElse(CandidatePipelineResults, Seq.empty))
+    // Collect t  results from all t  cand date p pel nes toget r
+    Arrow.z pW hArg(Arrow.collect(observedArrows)).map {
+      case ( nput: Cand dateP pel ne. nputs[Query], results: Seq[Cand dateP pel neResult]) =>
+        val cand dateW hDeta ls = results.flatMap(_.result.getOrElse(Seq.empty))
+        val prev ousCand dateW hDeta ls =  nput.query.features
+          .map(_.getOrElse(Cand dateP pel neResults, Seq.empty))
           .getOrElse(Seq.empty)
 
-        val featureMapWithCandidates = FeatureMapBuilder()
-          .add(CandidatePipelineResults, previousCandidateWithDetails ++ candidateWithDetails)
-          .build()
+        val featureMapW hCand dates = FeatureMapBu lder()
+          .add(Cand dateP pel neResults, prev ousCand dateW hDeta ls ++ cand dateW hDeta ls)
+          .bu ld()
 
-        // Merge the query feature hydrator and candidate source query features back in. While this
-        // is done internally in the pipeline, we have to pass it back since we don't expose the
-        // updated pipeline query today.
+        //  rge t  query feature hydrator and cand date s ce query features back  n. Wh le t 
+        //  s done  nternally  n t  p pel ne,   have to pass   back s nce   don't expose t 
+        // updated p pel ne query today.
         val queryFeatureHydratorFeatureMaps =
           results
             .flatMap(result => Seq(result.queryFeatures, result.queryFeaturesPhase2))
-            .collect { case Some(result) => result.featureMap }
+            .collect { case So (result) => result.featureMap }
         val asyncFeatureHydratorFeatureMaps =
           results
-            .flatMap(_.asyncFeatureHydrationResults)
+            .flatMap(_.asyncFeatureHydrat onResults)
             .flatMap(_.featureMapsByStep.values)
 
-        val candidateSourceFeatureMaps =
+        val cand dateS ceFeatureMaps =
           results
-            .flatMap(_.candidateSourceResult)
-            .map(_.candidateSourceFeatureMap)
+            .flatMap(_.cand dateS ceResult)
+            .map(_.cand dateS ceFeatureMap)
 
         val featureMaps =
-          (featureMapWithCandidates +: queryFeatureHydratorFeatureMaps) ++ asyncFeatureHydratorFeatureMaps ++ candidateSourceFeatureMaps
-        val mergedFeatureMap = FeatureMap.merge(featureMaps)
-        CandidatePipelineExecutorResult(
-          candidatePipelineResults = results,
-          queryFeatureMap = mergedFeatureMap)
+          (featureMapW hCand dates +: queryFeatureHydratorFeatureMaps) ++ asyncFeatureHydratorFeatureMaps ++ cand dateS ceFeatureMaps
+        val  rgedFeatureMap = FeatureMap. rge(featureMaps)
+        Cand dateP pel neExecutorResult(
+          cand dateP pel neResults = results,
+          queryFeatureMap =  rgedFeatureMap)
     }
   }
 }

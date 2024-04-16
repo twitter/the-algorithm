@@ -1,43 +1,43 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.filter.VideoTweetFilter.FilterConfig
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.VideoTweetFilterParams
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.f lter.V deoT etF lter.F lterConf g
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.RelatedT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.RelatedV deoT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.param.V deoT etF lterParams
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-case class VideoTweetFilter() extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
+@S ngleton
+case class V deoT etF lter() extends F lterBase {
+  overr de val na : Str ng = t .getClass.getCanon calNa 
 
-  override type ConfigType = FilterConfig
+  overr de type Conf gType = F lterConf g
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    Future.value(candidates.map {
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    conf g: Conf gType
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    Future.value(cand dates.map {
       _.flatMap {
-        candidate =>
-          if (!config.enableVideoTweetFilter) {
-            Some(candidate)
+        cand date =>
+           f (!conf g.enableV deoT etF lter) {
+            So (cand date)
           } else {
-            // if hasVideo is true, hasImage, hasGif should be false
-            val hasVideo = checkTweetInfoAttribute(candidate.tweetInfo.hasVideo)
-            val isHighMediaResolution =
-              checkTweetInfoAttribute(candidate.tweetInfo.isHighMediaResolution)
-            val isQuoteTweet = checkTweetInfoAttribute(candidate.tweetInfo.isQuoteTweet)
-            val isReply = checkTweetInfoAttribute(candidate.tweetInfo.isReply)
-            val hasMultipleMedia = checkTweetInfoAttribute(candidate.tweetInfo.hasMultipleMedia)
-            val hasUrl = checkTweetInfoAttribute(candidate.tweetInfo.hasUrl)
+            //  f hasV deo  s true, has mage, hasG f should be false
+            val hasV deo = c ckT et nfoAttr bute(cand date.t et nfo.hasV deo)
+            val  sH gh d aResolut on =
+              c ckT et nfoAttr bute(cand date.t et nfo. sH gh d aResolut on)
+            val  sQuoteT et = c ckT et nfoAttr bute(cand date.t et nfo. sQuoteT et)
+            val  sReply = c ckT et nfoAttr bute(cand date.t et nfo. sReply)
+            val hasMult ple d a = c ckT et nfoAttr bute(cand date.t et nfo.hasMult ple d a)
+            val hasUrl = c ckT et nfoAttr bute(cand date.t et nfo.hasUrl)
 
-            if (hasVideo && isHighMediaResolution && !isQuoteTweet &&
-              !isReply && !hasMultipleMedia && !hasUrl) {
-              Some(candidate)
+             f (hasV deo &&  sH gh d aResolut on && ! sQuoteT et &&
+              ! sReply && !hasMult ple d a && !hasUrl) {
+              So (cand date)
             } else {
               None
             }
@@ -46,36 +46,36 @@ case class VideoTweetFilter() extends FilterBase {
     })
   }
 
-  def checkTweetInfoAttribute(attributeOpt: => Option[Boolean]): Boolean = {
-    if (attributeOpt.isDefined)
-      attributeOpt.get
+  def c ckT et nfoAttr bute(attr buteOpt: => Opt on[Boolean]): Boolean = {
+     f (attr buteOpt. sDef ned)
+      attr buteOpt.get
     else {
-      // takes Quoted Tweet (TweetInfo.isQuoteTweet) as an example,
-      // if the attributeOpt is None, we by default say it is not a quoted tweet
-      // similarly, if TweetInfo.hasVideo is a None,
-      // we say it does not have video.
+      // takes Quoted T et (T et nfo. sQuoteT et) as an example,
+      //  f t  attr buteOpt  s None,   by default say    s not a quoted t et
+      // s m larly,  f T et nfo.hasV deo  s a None,
+      //   say   does not have v deo.
       false
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     query: CGQueryType
-  ): FilterConfig = {
-    val enableVideoTweetFilter = query match {
-      case _: CrCandidateGeneratorQuery | _: RelatedTweetCandidateGeneratorQuery |
-          _: RelatedVideoTweetCandidateGeneratorQuery =>
-        query.params(VideoTweetFilterParams.EnableVideoTweetFilterParam)
-      case _ => false // e.g., GetRelatedTweets()
+  ): F lterConf g = {
+    val enableV deoT etF lter = query match {
+      case _: CrCand dateGeneratorQuery | _: RelatedT etCand dateGeneratorQuery |
+          _: RelatedV deoT etCand dateGeneratorQuery =>
+        query.params(V deoT etF lterParams.EnableV deoT etF lterParam)
+      case _ => false // e.g., GetRelatedT ets()
     }
-    FilterConfig(
-      enableVideoTweetFilter = enableVideoTweetFilter
+    F lterConf g(
+      enableV deoT etF lter = enableV deoT etF lter
     )
   }
 }
 
-object VideoTweetFilter {
-  // extend the filterConfig to add more flags if needed.
-  // now they are hardcoded according to the prod setting
-  case class FilterConfig(
-    enableVideoTweetFilter: Boolean)
+object V deoT etF lter {
+  // extend t  f lterConf g to add more flags  f needed.
+  // now t y are hardcoded accord ng to t  prod sett ng
+  case class F lterConf g(
+    enableV deoT etF lter: Boolean)
 }

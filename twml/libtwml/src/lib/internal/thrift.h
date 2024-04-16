@@ -1,69 +1,69 @@
-// For details of how to encode and decode thrift, check
-// https://github.com/apache/thrift/blob/master/doc/specs/thrift-binary-protocol.md
+// For deta ls of how to encode and decode thr ft, c ck
+// https://g hub.com/apac /thr ft/blob/master/doc/specs/thr ft-b nary-protocol.md
 
-// Definitions of the thrift binary format
+// Def n  ons of t  thr ft b nary format
 typedef enum {
   TTYPE_STOP   = 0,
-  TTYPE_VOID   = 1,
+  TTYPE_VO D   = 1,
   TTYPE_BOOL   = 2,
   TTYPE_BYTE   = 3,
   TTYPE_DOUBLE = 4,
-  TTYPE_I16    = 6,
-  TTYPE_I32    = 8,
-  TTYPE_I64    = 10,
-  TTYPE_STRING = 11,
+  TTYPE_ 16    = 6,
+  TTYPE_ 32    = 8,
+  TTYPE_ 64    = 10,
+  TTYPE_STR NG = 11,
   TTYPE_STRUCT = 12,
   TTYPE_MAP    = 13,
   TTYPE_SET    = 14,
-  TTYPE_LIST   = 15,
+  TTYPE_L ST   = 15,
   TTYPE_ENUM   = 16,
 } TTYPES;
 
-// Fields of a batch prediction response
+// F elds of a batch pred ct on response
 typedef enum {
   BPR_DUMMY ,
-  BPR_PREDICTIONS,
-} BPR_FIELDS;
+  BPR_PRED CT ONS,
+} BPR_F ELDS;
 
-// Fields of a datarecord
+// F elds of a datarecord
 typedef enum {
-  DR_CROSS             , // fake field for crosses
-  DR_BINARY            ,
-  DR_CONTINUOUS        ,
-  DR_DISCRETE          ,
-  DR_STRING            ,
-  DR_SPARSE_BINARY     ,
-  DR_SPARSE_CONTINUOUS ,
+  DR_CROSS             , // fake f eld for crosses
+  DR_B NARY            ,
+  DR_CONT NUOUS        ,
+  DR_D SCRETE          ,
+  DR_STR NG            ,
+  DR_SPARSE_B NARY     ,
+  DR_SPARSE_CONT NUOUS ,
   DR_BLOB              ,
   DR_GENERAL_TENSOR    ,
   DR_SPARSE_TENSOR     ,
-} DR_FIELDS;
+} DR_F ELDS;
 
-// Fields for General tensor
+// F elds for General tensor
 typedef enum {
-  GT_DUMMY  , // dummy field
+  GT_DUMMY  , // dum  f eld
   GT_RAW    ,
-  GT_STRING ,
-  GT_INT32  ,
-  GT_INT64  ,
+  GT_STR NG ,
+  GT_ NT32  ,
+  GT_ NT64  ,
   GT_FLOAT  ,
   GT_DOUBLE ,
   GT_BOOL   ,
-} GT_FIELDS;
+} GT_F ELDS;
 
 typedef enum {
-  SP_DUMMY  , // dummy field
+  SP_DUMMY  , // dum  f eld
   SP_COO    ,
-} SP_FIELDS;
+} SP_F ELDS;
 
-// Enum values from tensor.thrift
+// Enum values from tensor.thr ft
 typedef enum {
   DATA_TYPE_FLOAT  ,
   DATA_TYPE_DOUBLE ,
-  DATA_TYPE_INT32  ,
-  DATA_TYPE_INT64  ,
-  DATA_TYPE_UINT8  ,
-  DATA_TYPE_STRING ,
+  DATA_TYPE_ NT32  ,
+  DATA_TYPE_ NT64  ,
+  DATA_TYPE_U NT8  ,
+  DATA_TYPE_STR NG ,
   DATA_TYPE_BYTE   ,
   DATA_TYPE_BOOL   ,
 } DATA_TYPES;

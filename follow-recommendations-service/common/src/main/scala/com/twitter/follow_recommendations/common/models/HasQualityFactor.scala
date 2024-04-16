@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasQualityFactor {
-  def qualityFactor: Option[Double]
+tra  HasQual yFactor {
+  def qual yFactor: Opt on[Double]
 }

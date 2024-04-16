@@ -1,32 +1,32 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package core
 
-import com.twitter.tweetypie.thriftscala.CardReference
-import java.net.URI
+ mport com.tw ter.t etyp e.thr ftscala.CardReference
+ mport java.net.UR 
 
-sealed trait CardUri
-object Tombstone extends CardUri
-case class NonTombstone(uri: String) extends CardUri
+sealed tra  CardUr 
+object Tombstone extends CardUr 
+case class NonTombstone(ur : Str ng) extends CardUr 
 
-object CardReferenceUriExtractor {
+object CardReferenceUr Extractor {
 
-  private def parseAsUri(cardRef: CardReference) = Try(new URI(cardRef.cardUri)).toOption
-  private def isTombstone(uri: URI) = uri.getScheme == "tombstone"
+  pr vate def parseAsUr (cardRef: CardReference) = Try(new UR (cardRef.cardUr )).toOpt on
+  pr vate def  sTombstone(ur : UR ) = ur .getSc   == "tombstone"
 
   /**
-   * Parses a CardReference to return Option[CardUri] to differentiate among:
-   * - Some(NonTombstone): hydrate card2 with provided uri
-   * - Some(Tombstone): don't hydrate card2
-   * - None: fallback and attempt to use url entities uris
+   * Parses a CardReference to return Opt on[CardUr ] to d fferent ate among:
+   * - So (NonTombstone): hydrate card2 w h prov ded ur 
+   * - So (Tombstone): don't hydrate card2
+   * - None: fallback and attempt to use url ent  es ur s
    */
-  def unapply(cardRef: CardReference): Option[CardUri] =
-    parseAsUri(cardRef) match {
-      case Some(uri) if !isTombstone(uri) => Some(NonTombstone(uri.toString))
-      case Some(uri) => Some(Tombstone)
+  def unapply(cardRef: CardReference): Opt on[CardUr ] =
+    parseAsUr (cardRef) match {
+      case So (ur )  f ! sTombstone(ur ) => So (NonTombstone(ur .toStr ng))
+      case So (ur ) => So (Tombstone)
 
-      // If a cardReference is set, but does not parse as a URI, it's likely a https? URL with
-      // incorrectly encoded query params. Since these occur frequently in the wild, we'll
-      // attempt a card2 hydration with it
-      case None => Some(NonTombstone(cardRef.cardUri))
+      //  f a cardReference  s set, but does not parse as a UR ,  's l kely a https? URL w h
+      //  ncorrectly encoded query params. S nce t se occur frequently  n t  w ld,  'll
+      // attempt a card2 hydrat on w h  
+      case None => So (NonTombstone(cardRef.cardUr ))
     }
 }

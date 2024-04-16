@@ -1,65 +1,65 @@
-package com.twitter.ann.service.loadtest
+package com.tw ter.ann.serv ce.loadtest
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
-import com.twitter.util.logging.Logger
-import com.twitter.util.{Duration, Future}
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.ann.common.{Appendable, D stance, Ent yEmbedd ng, Queryable, Runt  Params}
+ mport com.tw ter.ut l.logg ng.Logger
+ mport com.tw ter.ut l.{Durat on, Future}
 
-class AnnIndexQueryLoadTest(
+class Ann ndexQueryLoadTest(
   worker: AnnLoadTestWorker = new AnnLoadTestWorker()) {
-  lazy val logger = Logger(getClass.getName)
+  lazy val logger = Logger(getClass.getNa )
 
-  def performQueries[T, P <: RuntimeParams, D <: Distance[D]](
+  def performQuer es[T, P <: Runt  Params, D <: D stance[D]](
     queryable: Queryable[T, P, D],
-    qps: Int,
-    duration: Duration,
-    queries: Seq[Query[T]],
-    concurrencyLevel: Int,
-    runtimeConfigurations: Seq[QueryTimeConfiguration[T, P]]
-  ): Future[Unit] = {
-    logger.info(s"Query set: ${queries.size}")
-    val res = Future.traverseSequentially(runtimeConfigurations) { config =>
-      logger.info(s"Run load test with runtime config $config")
-      worker.runWithQps(
+    qps:  nt,
+    durat on: Durat on,
+    quer es: Seq[Query[T]],
+    concurrencyLevel:  nt,
+    runt  Conf gurat ons: Seq[QueryT  Conf gurat on[T, P]]
+  ): Future[Un ] = {
+    logger. nfo(s"Query set: ${quer es.s ze}")
+    val res = Future.traverseSequent ally(runt  Conf gurat ons) { conf g =>
+      logger. nfo(s"Run load test w h runt   conf g $conf g")
+      worker.runW hQps(
         queryable,
-        queries,
+        quer es,
         qps,
-        duration,
-        config,
+        durat on,
+        conf g,
         concurrencyLevel
       )
     }
     res.onSuccess { _ =>
-      logger.info(s"Done loadtest with $qps for ${duration.inMilliseconds / 1000} sec")
+      logger. nfo(s"Done loadtest w h $qps for ${durat on. nM ll seconds / 1000} sec")
     }
-    res.unit
+    res.un 
   }
 }
 
 /**
- * @param embedding Embedding vector
- * @param trueNeighbours List of true neighbour ids. Empty in case true neighbours dataset not available
- * @tparam T Type of neighbour
+ * @param embedd ng Embedd ng vector
+ * @param trueNe ghb s L st of true ne ghb   ds. Empty  n case true ne ghb s dataset not ava lable
+ * @tparam T Type of ne ghb 
  */
-case class Query[T](embedding: EmbeddingVector, trueNeighbours: Seq[T] = Seq.empty)
+case class Query[T](embedd ng: Embedd ngVector, trueNe ghb s: Seq[T] = Seq.empty)
 
-class AnnIndexBuildLoadTest(
-  buildRecorder: LoadTestBuildRecorder,
-  embeddingIndexer: EmbeddingIndexer = new EmbeddingIndexer()) {
-  lazy val logger = Logger(getClass.getName)
-  def indexEmbeddings[T, P <: RuntimeParams, D <: Distance[D]](
+class Ann ndexBu ldLoadTest(
+  bu ldRecorder: LoadTestBu ldRecorder,
+  embedd ng ndexer: Embedd ng ndexer = new Embedd ng ndexer()) {
+  lazy val logger = Logger(getClass.getNa )
+  def  ndexEmbedd ngs[T, P <: Runt  Params, D <: D stance[D]](
     appendable: Appendable[T, P, D],
-    indexSet: Seq[EntityEmbedding[T]],
-    concurrencyLevel: Int
+     ndexSet: Seq[Ent yEmbedd ng[T]],
+    concurrencyLevel:  nt
   ): Future[Queryable[T, P, D]] = {
-    logger.info(s"Index set: ${indexSet.size}")
-    val queryable = embeddingIndexer
-      .indexEmbeddings(
+    logger. nfo(s" ndex set: ${ ndexSet.s ze}")
+    val queryable = embedd ng ndexer
+      . ndexEmbedd ngs(
         appendable,
-        buildRecorder,
-        indexSet,
+        bu ldRecorder,
+         ndexSet,
         concurrencyLevel
-      ).onSuccess(_ => logger.info(s"Done indexing.."))
+      ).onSuccess(_ => logger. nfo(s"Done  ndex ng.."))
 
     queryable
   }

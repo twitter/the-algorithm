@@ -1,27 +1,27 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames.NumberOfThreads
-import com.twitter.util.ExecutorServiceFuturePool
-import java.util.concurrent.Executors
-import javax.inject.Singleton
-object FuturePoolProvider extends TwitterModule {
-  flag[Int](
-    name = NumberOfThreads,
+ mport com.google. nject.Prov des
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.s mclustersann.common.FlagNa s.NumberOfThreads
+ mport com.tw ter.ut l.ExecutorServ ceFuturePool
+ mport java.ut l.concurrent.Executors
+ mport javax. nject.S ngleton
+object FuturePoolProv der extends Tw terModule {
+  flag[ nt](
+    na  = NumberOfThreads,
     default = 20,
-    help = "The number of threads in the future pool."
+     lp = "T  number of threads  n t  future pool."
   )
 
-  @Singleton
-  @Provides
-  def providesFuturePool(
-    @Flag(NumberOfThreads) numberOfThreads: Int
-  ): ExecutorServiceFuturePool = {
-    val threadPool = Executors.newFixedThreadPool(numberOfThreads)
-    new ExecutorServiceFuturePool(threadPool) {
-      override def toString: String = s"warmup-future-pool-$executor)"
+  @S ngleton
+  @Prov des
+  def prov desFuturePool(
+    @Flag(NumberOfThreads) numberOfThreads:  nt
+  ): ExecutorServ ceFuturePool = {
+    val threadPool = Executors.newF xedThreadPool(numberOfThreads)
+    new ExecutorServ ceFuturePool(threadPool) {
+      overr de def toStr ng: Str ng = s"warmup-future-pool-$executor)"
     }
   }
 }

@@ -1,70 +1,70 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters
 
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.hermit.model.Algorithm.UttProducerOfflineMbcgV1
-import com.twitter.hermit.model.Algorithm.UttProducerOnlineMbcgV1
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
+ mport com.tw ter.follow_recom ndat ons.common.models.UserCand dateS ceDeta ls
+ mport com.tw ter. rm .constants.Algor hmFeedbackTokens.Algor hmToFeedbackTokenMap
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. rm .model.Algor hm.Algor hm
+ mport com.tw ter. rm .model.Algor hm.UttProducerOffl neMbcgV1
+ mport com.tw ter. rm .model.Algor hm.UttProducerOnl neMbcgV1
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature.SparseB nary
+ mport com.tw ter.ml.ap .Feature.SparseCont nuous
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.ml.ap .ut l.FDsl._
 
-object CandidateAlgorithmAdapter
-    extends IRecordOneToOneAdapter[Option[UserCandidateSourceDetails]] {
+object Cand dateAlgor hmAdapter
+    extends  RecordOneToOneAdapter[Opt on[UserCand dateS ceDeta ls]] {
 
-  val CANDIDATE_ALGORITHMS: SparseBinary = new SparseBinary("candidate.source.algorithm_ids")
-  val CANDIDATE_SOURCE_SCORES: SparseContinuous =
-    new SparseContinuous("candidate.source.scores")
-  val CANDIDATE_SOURCE_RANKS: SparseContinuous =
-    new SparseContinuous("candidate.source.ranks")
+  val CAND DATE_ALGOR THMS: SparseB nary = new SparseB nary("cand date.s ce.algor hm_ ds")
+  val CAND DATE_SOURCE_SCORES: SparseCont nuous =
+    new SparseCont nuous("cand date.s ce.scores")
+  val CAND DATE_SOURCE_RANKS: SparseCont nuous =
+    new SparseCont nuous("cand date.s ce.ranks")
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    CANDIDATE_ALGORITHMS,
-    CANDIDATE_SOURCE_SCORES,
-    CANDIDATE_SOURCE_RANKS
+  overr de val getFeatureContext: FeatureContext = new FeatureContext(
+    CAND DATE_ALGOR THMS,
+    CAND DATE_SOURCE_SCORES,
+    CAND DATE_SOURCE_RANKS
   )
 
-  /** list of candidate source remaps to avoid creating different features for experimental sources.
-   *  the LHS should contain the experimental source, and the RHS should contain the prod source.
+  /** l st of cand date s ce remaps to avo d creat ng d fferent features for exper  ntal s ces.
+   *  t  LHS should conta n t  exper  ntal s ce, and t  RHS should conta n t  prod s ce.
    */
-  def remapCandidateSource(a: Algorithm): Algorithm = a match {
-    case UttProducerOnlineMbcgV1 => UttProducerOfflineMbcgV1
+  def remapCand dateS ce(a: Algor hm): Algor hm = a match {
+    case UttProducerOnl neMbcgV1 => UttProducerOffl neMbcgV1
     case _ => a
   }
 
-  // add the list of algorithm feedback tokens (integers) as a sparse binary feature
-  override def adaptToDataRecord(
-    userCandidateSourceDetailsOpt: Option[UserCandidateSourceDetails]
+  // add t  l st of algor hm feedback tokens ( ntegers) as a sparse b nary feature
+  overr de def adaptToDataRecord(
+    userCand dateS ceDeta lsOpt: Opt on[UserCand dateS ceDeta ls]
   ): DataRecord = {
     val dr = new DataRecord()
-    userCandidateSourceDetailsOpt.foreach { userCandidateSourceDetails =>
+    userCand dateS ceDeta lsOpt.foreach { userCand dateS ceDeta ls =>
       val scoreMap = for {
-        (source, scoreOpt) <- userCandidateSourceDetails.candidateSourceScores
+        (s ce, scoreOpt) <- userCand dateS ceDeta ls.cand dateS ceScores
         score <- scoreOpt
-        algo <- Algorithm.withNameOpt(source.name)
-        algoId <- AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-      } yield algoId.toString -> score
+        algo <- Algor hm.w hNa Opt(s ce.na )
+        algo d <- Algor hmToFeedbackTokenMap.get(remapCand dateS ce(algo))
+      } y eld algo d.toStr ng -> score
       val rankMap = for {
-        (source, rank) <- userCandidateSourceDetails.candidateSourceRanks
-        algo <- Algorithm.withNameOpt(source.name)
-        algoId <- AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-      } yield algoId.toString -> rank.toDouble
+        (s ce, rank) <- userCand dateS ceDeta ls.cand dateS ceRanks
+        algo <- Algor hm.w hNa Opt(s ce.na )
+        algo d <- Algor hmToFeedbackTokenMap.get(remapCand dateS ce(algo))
+      } y eld algo d.toStr ng -> rank.toDouble
 
-      val algoIds = scoreMap.keys.toSet ++ rankMap.keys.toSet
+      val algo ds = scoreMap.keys.toSet ++ rankMap.keys.toSet
 
-      // hydrate if not empty
-      if (rankMap.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_SOURCE_RANKS, rankMap)
+      // hydrate  f not empty
+       f (rankMap.nonEmpty) {
+        dr.setFeatureValue(CAND DATE_SOURCE_RANKS, rankMap)
       }
-      if (scoreMap.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_SOURCE_SCORES, scoreMap)
+       f (scoreMap.nonEmpty) {
+        dr.setFeatureValue(CAND DATE_SOURCE_SCORES, scoreMap)
       }
-      if (algoIds.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_ALGORITHMS, algoIds)
+       f (algo ds.nonEmpty) {
+        dr.setFeatureValue(CAND DATE_ALGOR THMS, algo ds)
       }
     }
     dr

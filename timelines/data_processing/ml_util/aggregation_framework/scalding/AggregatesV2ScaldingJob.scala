@@ -1,216 +1,216 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng
 
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.bijection.Codec
-import com.twitter.bijection.Injection
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Args
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.summingbird.batch.option.Reducers
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.batch.Timestamp
-import com.twitter.summingbird.option._
-import com.twitter.summingbird.scalding.Scalding
-import com.twitter.summingbird.scalding.batch.{BatchedStore => ScaldingBatchedStore}
-import com.twitter.summingbird.Options
-import com.twitter.summingbird.Producer
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits._
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.scalding.GenericRunner
-import com.twitter.summingbird_internal.runner.scalding.ScaldingConfig
-import com.twitter.summingbird_internal.runner.scalding.StatebirdState
-import com.twitter.summingbird_internal.dalv2.DAL
-import com.twitter.summingbird_internal.runner.store_config._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding.sources._
-import job.AggregatesV2Job
-import org.apache.hadoop.conf.Configuration
+ mport com.tw ter.b ject on.thr ft.CompactThr ftCodec
+ mport com.tw ter.b ject on.Codec
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures.T MESTAMP
+ mport com.tw ter.ml.ap .ut l.CompactDataRecordConverter
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanROConf g
+ mport com.tw ter.summ ngb rd.batch.opt on.Reducers
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.summ ngb rd.batch.Batc r
+ mport com.tw ter.summ ngb rd.batch.T  stamp
+ mport com.tw ter.summ ngb rd.opt on._
+ mport com.tw ter.summ ngb rd.scald ng.Scald ng
+ mport com.tw ter.summ ngb rd.scald ng.batch.{Batc dStore => Scald ngBatc dStore}
+ mport com.tw ter.summ ngb rd.Opt ons
+ mport com.tw ter.summ ngb rd.Producer
+ mport com.tw ter.summ ngb rd_ nternal.b ject on.BatchPa r mpl c s._
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.JobNa 
+ mport com.tw ter.summ ngb rd_ nternal.runner.scald ng.Gener cRunner
+ mport com.tw ter.summ ngb rd_ nternal.runner.scald ng.Scald ngConf g
+ mport com.tw ter.summ ngb rd_ nternal.runner.scald ng.Stateb rdState
+ mport com.tw ter.summ ngb rd_ nternal.dalv2.DAL
+ mport com.tw ter.summ ngb rd_ nternal.runner.store_conf g._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng.s ces._
+ mport job.AggregatesV2Job
+ mport org.apac .hadoop.conf.Conf gurat on
 /*
- * Offline scalding version of summingbird job to compute aggregates v2.
- * This is loosely based on the template created by sb-gen.
- * Extend this trait in your own scalding job, and override the val
- * "aggregatesToCompute" with your own desired set of aggregates.
+ * Offl ne scald ng vers on of summ ngb rd job to compute aggregates v2.
+ * T   s loosely based on t  template created by sb-gen.
+ * Extend t  tra   n y  own scald ng job, and overr de t  val
+ * "aggregatesToCompute" w h y  own des red set of aggregates.
  */
-trait AggregatesV2ScaldingJob {
+tra  AggregatesV2Scald ngJob {
   val aggregatesToCompute: Set[TypedAggregateGroup[_]]
 
-  implicit val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
+   mpl c  val aggregat onKey nject on:  nject on[Aggregat onKey, Array[Byte]] =
+    Aggregat onKey nject on
 
-  implicit val aggregationKeyOrdering: AggregationKeyOrdering.type = AggregationKeyOrdering
+   mpl c  val aggregat onKeyOrder ng: Aggregat onKeyOrder ng.type = Aggregat onKeyOrder ng
 
-  implicit val dataRecordCodec: Injection[DataRecord, Array[Byte]] = CompactThriftCodec[DataRecord]
+   mpl c  val dataRecordCodec:  nject on[DataRecord, Array[Byte]] = CompactThr ftCodec[DataRecord]
 
-  private implicit val compactDataRecordCodec: Injection[CompactDataRecord, Array[Byte]] =
-    CompactThriftCodec[CompactDataRecord]
+  pr vate  mpl c  val compactDataRecordCodec:  nject on[CompactDataRecord, Array[Byte]] =
+    CompactThr ftCodec[CompactDataRecord]
 
-  private val compactDataRecordConverter = new CompactDataRecordConverter()
+  pr vate val compactDataRecordConverter = new CompactDataRecordConverter()
 
-  def numReducers: Int = -1
+  def numReducers:  nt = -1
 
   /**
-   * Function that maps from a logical ''AggregateSource''
-   * to an underlying physical source. The physical source
-   * for the scalding platform is a ScaldingAggregateSource.
+   * Funct on that maps from a log cal ''AggregateS ce''
+   * to an underly ng phys cal s ce. T  phys cal s ce
+   * for t  scald ng platform  s a Scald ngAggregateS ce.
    */
-  def dataRecordSourceToScalding(
-    source: AggregateSource
-  ): Option[Producer[Scalding, DataRecord]] = {
-    source match {
-      case offlineSource: OfflineAggregateSource =>
-        Some(ScaldingAggregateSource(offlineSource).source)
+  def dataRecordS ceToScald ng(
+    s ce: AggregateS ce
+  ): Opt on[Producer[Scald ng, DataRecord]] = {
+    s ce match {
+      case offl neS ce: Offl neAggregateS ce =>
+        So (Scald ngAggregateS ce(offl neS ce).s ce)
       case _ => None
     }
   }
 
   /**
-   * Creates and returns a versioned store using the config parameters
-   * with a specific number of versions to keep, and which can read from
-   * the most recent available version on HDFS rather than a specific
-   * version number. The store applies a timestamp correction based on the
-   * number of days of aggregate data skipped over at read time to ensure
-   * that skipping data plays nicely with halfLife decay.
+   * Creates and returns a vers oned store us ng t  conf g para ters
+   * w h a spec f c number of vers ons to keep, and wh ch can read from
+   * t  most recent ava lable vers on on HDFS rat r than a spec f c
+   * vers on number. T  store appl es a t  stamp correct on based on t 
+   * number of days of aggregate data sk pped over at read t   to ensure
+   * that sk pp ng data plays n cely w h halfL fe decay.
    *
-   * @param config         specifying the Manhattan store parameters
-   * @param versionsToKeep number of old versions to keep
+   * @param conf g         spec fy ng t  Manhattan store para ters
+   * @param vers onsToKeep number of old vers ons to keep
    */
-  def getMostRecentLagCorrectingVersionedStoreWithRetention[
-    Key: Codec: Ordering,
-    ValInStore: Codec,
-    ValInMemory
+  def getMostRecentLagCorrect ngVers onedStoreW hRetent on[
+    Key: Codec: Order ng,
+    Val nStore: Codec,
+    Val n mory
   ](
-    config: OfflineStoreOnlyConfig[ManhattanROConfig],
-    versionsToKeep: Int,
-    lagCorrector: (ValInMemory, Long) => ValInMemory,
-    packer: ValInMemory => ValInStore,
-    unpacker: ValInStore => ValInMemory
-  ): ScaldingBatchedStore[Key, ValInMemory] = {
-    MostRecentLagCorrectingVersionedStore[Key, ValInStore, ValInMemory](
-      config.offline.hdfsPath.toString,
+    conf g: Offl neStoreOnlyConf g[ManhattanROConf g],
+    vers onsToKeep:  nt,
+    lagCorrector: (Val n mory, Long) => Val n mory,
+    packer: Val n mory => Val nStore,
+    unpacker: Val nStore => Val n mory
+  ): Scald ngBatc dStore[Key, Val n mory] = {
+    MostRecentLagCorrect ngVers onedStore[Key, Val nStore, Val n mory](
+      conf g.offl ne.hdfsPath.toStr ng,
       packer = packer,
       unpacker = unpacker,
-      versionsToKeep = versionsToKeep)(
-      Injection.connect[(Key, (BatchID, ValInStore)), (Array[Byte], Array[Byte])],
-      config.batcher,
-      implicitly[Ordering[Key]],
+      vers onsToKeep = vers onsToKeep)(
+       nject on.connect[(Key, (Batch D, Val nStore)), (Array[Byte], Array[Byte])],
+      conf g.batc r,
+       mpl c ly[Order ng[Key]],
       lagCorrector
-    ).withInitialBatch(config.batcher.batchOf(config.startTime.value))
+    ).w h n  alBatch(conf g.batc r.batchOf(conf g.startT  .value))
   }
 
-  def mutablyCorrectDataRecordTimestamp(
+  def mutablyCorrectDataRecordT  stamp(
     record: DataRecord,
-    lagToCorrectMillis: Long
+    lagToCorrectM ll s: Long
   ): DataRecord = {
-    val richRecord = SRichDataRecord(record)
-    if (richRecord.hasFeature(TIMESTAMP)) {
-      val timestamp = richRecord.getFeatureValue(TIMESTAMP).toLong
-      richRecord.setFeatureValue(TIMESTAMP, timestamp + lagToCorrectMillis)
+    val r chRecord = SR chDataRecord(record)
+     f (r chRecord.hasFeature(T MESTAMP)) {
+      val t  stamp = r chRecord.getFeatureValue(T MESTAMP).toLong
+      r chRecord.setFeatureValue(T MESTAMP, t  stamp + lagToCorrectM ll s)
     }
     record
   }
 
   /**
-   * Function that maps from a logical ''AggregateStore''
-   * to an underlying physical store. The physical store for
-   * scalding is a HDFS VersionedKeyValSource dataset.
+   * Funct on that maps from a log cal ''AggregateStore''
+   * to an underly ng phys cal store. T  phys cal store for
+   * scald ng  s a HDFS Vers onedKeyValS ce dataset.
    */
-  def aggregateStoreToScalding(
+  def aggregateStoreToScald ng(
     store: AggregateStore
-  ): Option[Scalding#Store[AggregationKey, DataRecord]] = {
+  ): Opt on[Scald ng#Store[Aggregat onKey, DataRecord]] = {
     store match {
-      case offlineStore: OfflineAggregateDataRecordStore =>
-        Some(
-          getMostRecentLagCorrectingVersionedStoreWithRetention[
-            AggregationKey,
+      case offl neStore: Offl neAggregateDataRecordStore =>
+        So (
+          getMostRecentLagCorrect ngVers onedStoreW hRetent on[
+            Aggregat onKey,
             DataRecord,
             DataRecord](
-            offlineStore,
-            versionsToKeep = offlineStore.batchesToKeep,
-            lagCorrector = mutablyCorrectDataRecordTimestamp,
-            packer = Injection.identity[DataRecord],
-            unpacker = Injection.identity[DataRecord]
+            offl neStore,
+            vers onsToKeep = offl neStore.batc sToKeep,
+            lagCorrector = mutablyCorrectDataRecordT  stamp,
+            packer =  nject on. dent y[DataRecord],
+            unpacker =  nject on. dent y[DataRecord]
           )
         )
-      case offlineStore: OfflineAggregateDataRecordStoreWithDAL =>
-        Some(
-          DAL.versionedKeyValStore[AggregationKey, DataRecord](
-            dataset = offlineStore.dalDataset,
-            pathLayout = D.Suffix(offlineStore.offline.hdfsPath.toString),
-            batcher = offlineStore.batcher,
-            maybeStartTime = Some(offlineStore.startTime),
-            maxErrors = offlineStore.maxKvSourceFailures
+      case offl neStore: Offl neAggregateDataRecordStoreW hDAL =>
+        So (
+          DAL.vers onedKeyValStore[Aggregat onKey, DataRecord](
+            dataset = offl neStore.dalDataset,
+            pathLa t = D.Suff x(offl neStore.offl ne.hdfsPath.toStr ng),
+            batc r = offl neStore.batc r,
+            maybeStartT   = So (offl neStore.startT  ),
+            maxErrors = offl neStore.maxKvS ceFa lures
           ))
       case _ => None
     }
   }
 
-  def generate(args: Args): ScaldingConfig = new ScaldingConfig {
-    val jobName = JobName(args("job_name"))
+  def generate(args: Args): Scald ngConf g = new Scald ngConf g {
+    val jobNa  = JobNa (args("job_na "))
 
     /*
-     * Add registrars for chill serialization for user-defined types.
-     * We use the default: an empty List().
+     * Add reg strars for ch ll ser al zat on for user-def ned types.
+     *   use t  default: an empty L st().
      */
-    override def registrars = List()
+    overr de def reg strars = L st()
 
-    /* Use transformConfig to set Hadoop options. */
-    override def transformConfig(config: Map[String, AnyRef]): Map[String, AnyRef] =
-      super.transformConfig(config) ++ Map(
-        "mapreduce.output.fileoutputformat.compress" -> "true",
-        "mapreduce.output.fileoutputformat.compress.codec" -> "com.hadoop.compression.lzo.LzoCodec",
-        "mapreduce.output.fileoutputformat.compress.type" -> "BLOCK"
+    /* Use transformConf g to set Hadoop opt ons. */
+    overr de def transformConf g(conf g: Map[Str ng, AnyRef]): Map[Str ng, AnyRef] =
+      super.transformConf g(conf g) ++ Map(
+        "mapreduce.output.f leoutputformat.compress" -> "true",
+        "mapreduce.output.f leoutputformat.compress.codec" -> "com.hadoop.compress on.lzo.LzoCodec",
+        "mapreduce.output.f leoutputformat.compress.type" -> "BLOCK"
       )
 
     /*
-     * Use getNamedOptions to set Summingbird runtime options
-     * The options we set are:
-     * 1) Set monoid to non-commutative to disable map-side
-     * aggregation and force all aggregation to reducers (provides a 20% speedup)
+     * Use getNa dOpt ons to set Summ ngb rd runt   opt ons
+     * T  opt ons   set are:
+     * 1) Set mono d to non-commutat ve to d sable map-s de
+     * aggregat on and force all aggregat on to reducers (prov des a 20% speedup)
      */
-    override def getNamedOptions: Map[String, Options] = Map(
-      "DEFAULT" -> Options()
-        .set(MonoidIsCommutative(false))
+    overr de def getNa dOpt ons: Map[Str ng, Opt ons] = Map(
+      "DEFAULT" -> Opt ons()
+        .set(Mono d sCommutat ve(false))
         .set(Reducers(numReducers))
     )
 
-    implicit val batcher: Batcher = Batcher.ofHours(24)
+     mpl c  val batc r: Batc r = Batc r.ofH s(24)
 
-    /* State implementation that uses Statebird (go/statebird) to track the batches processed. */
-    def getWaitingState(hadoopConfig: Configuration, startDate: Option[Timestamp], batches: Int) =
-      StatebirdState(
-        jobName,
+    /* State  mple ntat on that uses Stateb rd (go/stateb rd) to track t  batc s processed. */
+    def getWa  ngState(hadoopConf g: Conf gurat on, startDate: Opt on[T  stamp], batc s:  nt) =
+      Stateb rdState(
+        jobNa ,
         startDate,
-        batches,
-        args.optional("statebird_service_destination"),
-        args.optional("statebird_client_id_name")
-      )(batcher)
+        batc s,
+        args.opt onal("stateb rd_serv ce_dest nat on"),
+        args.opt onal("stateb rd_cl ent_ d_na ")
+      )(batc r)
 
-    val sourceNameFilter: Option[Set[String]] =
-      args.optional("input_sources").map(_.split(",").toSet)
-    val storeNameFilter: Option[Set[String]] =
-      args.optional("output_stores").map(_.split(",").toSet)
+    val s ceNa F lter: Opt on[Set[Str ng]] =
+      args.opt onal(" nput_s ces").map(_.spl (",").toSet)
+    val storeNa F lter: Opt on[Set[Str ng]] =
+      args.opt onal("output_stores").map(_.spl (",").toSet)
 
-    val filteredAggregates =
-      AggregatesV2Job.filterAggregates(
+    val f lteredAggregates =
+      AggregatesV2Job.f lterAggregates(
         aggregates = aggregatesToCompute,
-        sourceNames = sourceNameFilter,
-        storeNames = storeNameFilter
+        s ceNa s = s ceNa F lter,
+        storeNa s = storeNa F lter
       )
 
-    override val graph =
-      AggregatesV2Job.generateJobGraph[Scalding](
-        filteredAggregates,
-        dataRecordSourceToScalding,
-        aggregateStoreToScalding
-      )(DataRecordAggregationMonoid(filteredAggregates))
+    overr de val graph =
+      AggregatesV2Job.generateJobGraph[Scald ng](
+        f lteredAggregates,
+        dataRecordS ceToScald ng,
+        aggregateStoreToScald ng
+      )(DataRecordAggregat onMono d(f lteredAggregates))
   }
-  def main(args: Array[String]): Unit = {
-    GenericRunner(args, generate(_))
+  def ma n(args: Array[Str ng]): Un  = {
+    Gener cRunner(args, generate(_))
 
   }
 }

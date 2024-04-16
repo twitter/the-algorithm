@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Gr dCarousel tadata
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GridCarouselMetadataMarshaller @Inject() () {
+@S ngleton
+class Gr dCarousel tadataMarshaller @ nject() () {
 
-  def apply(gridCarouselMetadata: GridCarouselMetadata): urt.GridCarouselMetadata =
-    urt.GridCarouselMetadata(numRows = gridCarouselMetadata.numRows)
+  def apply(gr dCarousel tadata: Gr dCarousel tadata): urt.Gr dCarousel tadata =
+    urt.Gr dCarousel tadata(numRows = gr dCarousel tadata.numRows)
 }

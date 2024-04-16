@@ -1,37 +1,37 @@
-package com.twitter.tweetypie.core
+package com.tw ter.t etyp e.core
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Parent exception class for failures while talking to upstream services.  These will
- * be counted and then converted to servo.ServerError.DependencyError
+ * Parent except on class for fa lures wh le talk ng to upstream serv ces.  T se w ll
+ * be counted and t n converted to servo.ServerError.DependencyError
  */
-sealed abstract class UpstreamFailure(msg: String) extends Exception(msg) with NoStackTrace
+sealed abstract class UpstreamFa lure(msg: Str ng) extends Except on(msg) w h NoStackTrace
 
-object UpstreamFailure {
-  case class SnowflakeFailure(t: Throwable) extends UpstreamFailure(t.toString)
+object UpstreamFa lure {
+  case class SnowflakeFa lure(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 
-  case object UserProfileEmptyException extends UpstreamFailure("User.profile is empty")
+  case object UserProf leEmptyExcept on extends UpstreamFa lure("User.prof le  s empty")
 
-  case object UserViewEmptyException extends UpstreamFailure("User.view is empty")
+  case object UserV ewEmptyExcept on extends UpstreamFa lure("User.v ew  s empty")
 
-  case object UserSafetyEmptyException extends UpstreamFailure("User.safety is empty")
+  case object UserSafetyEmptyExcept on extends UpstreamFa lure("User.safety  s empty")
 
-  case class TweetLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case class T etLookupFa lure(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 
-  case class UserLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case class UserLookupFa lure(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 
-  case class DeviceSourceLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case class Dev ceS ceLookupFa lure(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 
-  case class TFlockLookupFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case class TFlockLookupFa lure(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 
-  case class UrlShorteningFailure(t: Throwable) extends UpstreamFailure(t.toString)
+  case class UrlShorten ngFa lure(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 
-  case object MediaShortenUrlMalformedFailure
-      extends UpstreamFailure("Media shortened url is malformed")
+  case object  d aShortenUrlMalfor dFa lure
+      extends UpstreamFa lure(" d a shortened url  s malfor d")
 
-  case object MediaExpandedUrlNotValidFailure
-      extends UpstreamFailure("Talon returns badInput on media expanded url")
+  case object  d aExpandedUrlNotVal dFa lure
+      extends UpstreamFa lure("Talon returns bad nput on  d a expanded url")
 
-  case class MediaServiceServerError(t: Throwable) extends UpstreamFailure(t.toString)
+  case class  d aServ ceServerError(t: Throwable) extends UpstreamFa lure(t.toStr ng)
 }

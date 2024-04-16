@@ -1,37 +1,37 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object RepeatedProfileVisitsParams {
+object RepeatedProf leV s sParams {
 
-  // If RepeatedProfileVisitsSource is run and there are recommended candidates for the target user, whether or not
-  // to actually include such candidates in our output recommendations. This FS will be used to control bucketing of
-  // users into control vs treatment buckets.
-  case object IncludeCandidates
-      extends FSParam[Boolean](name = "repeated_profile_visits_include_candidates", default = false)
+  //  f RepeatedProf leV s sS ce  s run and t re are recom nded cand dates for t  target user, w t r or not
+  // to actually  nclude such cand dates  n   output recom ndat ons. T  FS w ll be used to control bucket ng of
+  // users  nto control vs treat nt buckets.
+  case object  ncludeCand dates
+      extends FSParam[Boolean](na  = "repeated_prof le_v s s_ nclude_cand dates", default = false)
 
-  // The threshold at or above which we will consider a profile to have been visited "frequently enough" to recommend
-  // the profile to the target user.
-  case object RecommendationThreshold
-      extends FSBoundedParam[Int](
-        name = "repeated_profile_visits_recommendation_threshold",
+  // T  threshold at or above wh ch   w ll cons der a prof le to have been v s ed "frequently enough" to recom nd
+  // t  prof le to t  target user.
+  case object Recom ndat onThreshold
+      extends FSBoundedParam[ nt](
+        na  = "repeated_prof le_v s s_recom ndat on_threshold",
         default = 3,
-        min = 0,
-        max = Integer.MAX_VALUE)
+        m n = 0,
+        max =  nteger.MAX_VALUE)
 
-  // The threshold at or above which we will consider a profile to have been visited "frequently enough" to recommend
-  // the profile to the target user.
-  case object BucketingThreshold
-      extends FSBoundedParam[Int](
-        name = "repeated_profile_visits_bucketing_threshold",
+  // T  threshold at or above wh ch   w ll cons der a prof le to have been v s ed "frequently enough" to recom nd
+  // t  prof le to t  target user.
+  case object Bucket ngThreshold
+      extends FSBoundedParam[ nt](
+        na  = "repeated_prof le_v s s_bucket ng_threshold",
         default = 3,
-        min = 0,
-        max = Integer.MAX_VALUE)
+        m n = 0,
+        max =  nteger.MAX_VALUE)
 
-  // Whether or not to use the online dataset (which has repeated profile visits information updated to within minutes)
-  // instead of the offline dataset (updated via offline jobs, which can have delays of hours to days).
-  case object UseOnlineDataset
-      extends FSParam[Boolean](name = "repeated_profile_visits_use_online_dataset", default = true)
+  // W t r or not to use t  onl ne dataset (wh ch has repeated prof le v s s  nformat on updated to w h n m nutes)
+  //  nstead of t  offl ne dataset (updated v a offl ne jobs, wh ch can have delays of h s to days).
+  case object UseOnl neDataset
+      extends FSParam[Boolean](na  = "repeated_prof le_v s s_use_onl ne_dataset", default = true)
 
 }

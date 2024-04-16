@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.v s ors.DropAllProtectedOperatorV s or;
+ mport com.tw ter.ut l.Future;
 
-public class DropAllProtectedOperatorFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DropAllProtectedOperatorFilter.class);
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNTER =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
-  @VisibleForTesting
-  static final SearchCounter TOTAL_REQUESTS_COUNTER =
-      SearchCounter.export("drop_all_protected_operator_filter_total");
-  @VisibleForTesting
-  static final SearchCounter OPERATOR_DROPPED_REQUESTS_COUNTER =
-      SearchCounter.export("drop_all_protected_operator_filter_operator_dropped");
+publ c class DropAllProtectedOperatorF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(DropAllProtectedOperatorF lter.class);
+  pr vate stat c f nal SearchCounter QUERY_PARSER_FA LURE_COUNTER =
+      SearchCounter.export("protected_operator_f lter_query_parser_fa lure_count");
+  @V s bleForTest ng
+  stat c f nal SearchCounter TOTAL_REQUESTS_COUNTER =
+      SearchCounter.export("drop_all_protected_operator_f lter_total");
+  @V s bleForTest ng
+  stat c f nal SearchCounter OPERATOR_DROPPED_REQUESTS_COUNTER =
+      SearchCounter.export("drop_all_protected_operator_f lter_operator_dropped");
 
-  private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
+  pr vate f nal DropAllProtectedOperatorV s or dropProtectedOperatorV s or;
 
-  @Inject
-  public DropAllProtectedOperatorFilter(
-      DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor
+  @ nject
+  publ c DropAllProtectedOperatorF lter(
+      DropAllProtectedOperatorV s or dropProtectedOperatorV s or
   ) {
-    this.dropProtectedOperatorVisitor = dropProtectedOperatorVisitor;
+    t .dropProtectedOperatorV s or = dropProtectedOperatorV s or;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    TOTAL_REQUESTS_COUNTER.increment();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    TOTAL_REQUESTS_COUNTER. ncre nt();
     Query query = requestContext.getParsedQuery();
-    if (query == null) {
-      return service.apply(requestContext);
+     f (query == null) {
+      return serv ce.apply(requestContext);
     }
 
     Query processedQuery = query;
     try {
-      processedQuery = query.accept(dropProtectedOperatorVisitor);
-    } catch (QueryParserException e) {
-      // this should not happen since we already have a parsed query
-      QUERY_PARSER_FAILURE_COUNTER.increment();
+      processedQuery = query.accept(dropProtectedOperatorV s or);
+    } catch (QueryParserExcept on e) {
+      // t  should not happen s nce   already have a parsed query
+      QUERY_PARSER_FA LURE_COUNTER. ncre nt();
       LOG.warn(
-          "Failed to drop protected operator for serialized query: " + query.serialize(), e);
+          "Fa led to drop protected operator for ser al zed query: " + query.ser al ze(), e);
     }
 
-    if (processedQuery == query) {
-      return service.apply(requestContext);
+     f (processedQuery == query) {
+      return serv ce.apply(requestContext);
     } else {
-      OPERATOR_DROPPED_REQUESTS_COUNTER.increment();
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+      OPERATOR_DROPPED_REQUESTS_COUNTER. ncre nt();
+      Earlyb rdRequestContext clonedRequestContext =
+          Earlyb rdRequestContext.copyRequestContext(requestContext, processedQuery);
+      return serv ce.apply(clonedRequestContext);
     }
   }
 }

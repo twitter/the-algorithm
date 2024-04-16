@@ -1,157 +1,157 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.rewriter.PredicateQueryNodeDropper;
-import com.twitter.search.queryparser.visitors.TermExtractorVisitor;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.root.SearchRootModule;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.Term;
+ mport com.tw ter.search.queryparser.query.annotat on.Annotat on;
+ mport com.tw ter.search.queryparser.rewr er.Pred cateQueryNodeDropper;
+ mport com.tw ter.search.queryparser.v s ors.TermExtractorV s or;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Filter that rewrites the serialized query on EarlybirdRequest.
- * As of now, this filter performs the following rewrites:
- *   - Drop ":v annotated variants based on decider, if the query has enough term nodes.
+ * F lter that rewr es t  ser al zed query on Earlyb rdRequest.
+ * As of now, t  f lter performs t  follow ng rewr es:
+ *   - Drop ":v annotated var ants based on dec der,  f t  query has enough term nodes.
  */
-public class EarlybirdQueryRewriteFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+publ c class Earlyb rdQueryRewr eF lter extends
+    S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdQueryRewriteFilter.class);
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Earlyb rdQueryRewr eF lter.class);
 
-  private static final String DROP_PHRASE_VARIANT_FROM_QUERY_DECIDER_KEY_PATTERN =
-      "drop_variants_from_%s_%s_queries";
+  pr vate stat c f nal Str ng DROP_PHRASE_VAR ANT_FROM_QUERY_DEC DER_KEY_PATTERN =
+      "drop_var ants_from_%s_%s_quer es";
 
-  // only drop variants from queries with more than this number of terms.
-  private static final String MIN_TERM_COUNT_FOR_VARIANT_DROPPING_DECIDER_KEY_PATTERN =
-      "drop_variants_from_%s_%s_queries_term_count_threshold";
+  // only drop var ants from quer es w h more than t  number of terms.
+  pr vate stat c f nal Str ng M N_TERM_COUNT_FOR_VAR ANT_DROPP NG_DEC DER_KEY_PATTERN =
+      "drop_var ants_from_%s_%s_quer es_term_count_threshold";
 
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("query_rewrite_filter_query_parser_failure_count");
+  pr vate stat c f nal SearchCounter QUERY_PARSER_FA LURE_COUNT =
+      SearchCounter.export("query_rewr e_f lter_query_parser_fa lure_count");
 
-  // We currently add variants only to RECENCY and RELEVANCE requests, but it doesn't hurt to export
+  //   currently add var ants only to RECENCY and RELEVANCE requests, but   doesn't hurt to export
   // stats for all request types.
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter> DROP_VARIANTS_QUERY_COUNTS =
-    Maps.newEnumMap(EarlybirdRequestType.class);
-  static {
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      DROP_VARIANTS_QUERY_COUNTS.put(
+  @V s bleForTest ng
+  stat c f nal Map<Earlyb rdRequestType, SearchCounter> DROP_VAR ANTS_QUERY_COUNTS =
+    Maps.newEnumMap(Earlyb rdRequestType.class);
+  stat c {
+    for (Earlyb rdRequestType requestType : Earlyb rdRequestType.values()) {
+      DROP_VAR ANTS_QUERY_COUNTS.put(
           requestType,
-          SearchCounter.export(String.format("drop_%s_variants_query_count",
-                                             requestType.getNormalizedName())));
+          SearchCounter.export(Str ng.format("drop_%s_var ants_query_count",
+                                             requestType.getNormal zedNa ())));
     }
   }
 
-  private static final Predicate<Query> DROP_VARIANTS_PREDICATE =
-      q -> q.hasAnnotationType(Annotation.Type.VARIANT);
+  pr vate stat c f nal Pred cate<Query> DROP_VAR ANTS_PRED CATE =
+      q -> q.hasAnnotat onType(Annotat on.Type.VAR ANT);
 
-  private static final PredicateQueryNodeDropper DROP_VARIANTS_VISITOR =
-    new PredicateQueryNodeDropper(DROP_VARIANTS_PREDICATE);
+  pr vate stat c f nal Pred cateQueryNodeDropper DROP_VAR ANTS_V S TOR =
+    new Pred cateQueryNodeDropper(DROP_VAR ANTS_PRED CATE);
 
-  private final SearchDecider decider;
-  private final String normalizedSearchRootName;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Str ng normal zedSearchRootNa ;
 
-  @Inject
-  public EarlybirdQueryRewriteFilter(
-      SearchDecider decider,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName) {
-    this.decider = decider;
-    this.normalizedSearchRootName = normalizedSearchRootName;
+  @ nject
+  publ c Earlyb rdQueryRewr eF lter(
+      SearchDec der dec der,
+      @Na d(SearchRootModule.NAMED_NORMAL ZED_SEARCH_ROOT_NAME) Str ng normal zedSearchRootNa ) {
+    t .dec der = dec der;
+    t .normal zedSearchRootNa  = normal zedSearchRootNa ;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
     Query query = requestContext.getParsedQuery();
-    // If there's no serialized query, no rewrite is necessary.
-    if (query == null) {
-      return service.apply(requestContext);
+    //  f t re's no ser al zed query, no rewr e  s necessary.
+     f (query == null) {
+      return serv ce.apply(requestContext);
     } else {
       try {
-        Query variantsRemoved = maybeRemoveVariants(requestContext, query);
+        Query var antsRemoved = maybeRemoveVar ants(requestContext, query);
 
-        if (query == variantsRemoved) {
-          return service.apply(requestContext);
+         f (query == var antsRemoved) {
+          return serv ce.apply(requestContext);
         } else {
-          EarlybirdRequestContext clonedRequestContext =
-            EarlybirdRequestContext.copyRequestContext(requestContext, variantsRemoved);
+          Earlyb rdRequestContext clonedRequestContext =
+            Earlyb rdRequestContext.copyRequestContext(requestContext, var antsRemoved);
 
-          return service.apply(clonedRequestContext);
+          return serv ce.apply(clonedRequestContext);
         }
-      } catch (QueryParserException e) {
-        // It is not clear here that the QueryParserException is the client's fault, or our fault.
-        // At this point it is most likely not the client's since we have a legitimate parsed Query
-        // from the client's request, and it's the rewriting that failed.
-        // In this case we choose to send the query as is (without the rewrite), instead of
-        // failing the entire request.
-        QUERY_PARSER_FAILURE_COUNT.increment();
-        LOG.warn("Failed to rewrite serialized query: " + query.serialize(), e);
-        return service.apply(requestContext);
+      } catch (QueryParserExcept on e) {
+        //    s not clear  re that t  QueryParserExcept on  s t  cl ent's fault, or   fault.
+        // At t  po nt    s most l kely not t  cl ent's s nce   have a leg  mate parsed Query
+        // from t  cl ent's request, and  's t  rewr  ng that fa led.
+        //  n t  case   choose to send t  query as  s (w hout t  rewr e),  nstead of
+        // fa l ng t  ent re request.
+        QUERY_PARSER_FA LURE_COUNT. ncre nt();
+        LOG.warn("Fa led to rewr e ser al zed query: " + query.ser al ze(), e);
+        return serv ce.apply(requestContext);
       }
     }
   }
 
-  private Query maybeRemoveVariants(EarlybirdRequestContext requestContext, Query query)
-      throws QueryParserException {
+  pr vate Query maybeRemoveVar ants(Earlyb rdRequestContext requestContext, Query query)
+      throws QueryParserExcept on {
 
-    if (shouldDropVariants(requestContext, query)) {
-      Query rewrittenQuery = DROP_VARIANTS_VISITOR.apply(query);
-      if (!query.equals(rewrittenQuery)) {
-        DROP_VARIANTS_QUERY_COUNTS.get(requestContext.getEarlybirdRequestType()).increment();
-        return rewrittenQuery;
+     f (shouldDropVar ants(requestContext, query)) {
+      Query rewr tenQuery = DROP_VAR ANTS_V S TOR.apply(query);
+       f (!query.equals(rewr tenQuery)) {
+        DROP_VAR ANTS_QUERY_COUNTS.get(requestContext.getEarlyb rdRequestType()). ncre nt();
+        return rewr tenQuery;
       }
     }
     return query;
   }
 
-  private boolean shouldDropVariants(EarlybirdRequestContext requestContext, Query query)
-      throws QueryParserException {
-    TermExtractorVisitor termExtractorVisitor = new TermExtractorVisitor(false);
-    List<Term> terms = query.accept(termExtractorVisitor);
+  pr vate boolean shouldDropVar ants(Earlyb rdRequestContext requestContext, Query query)
+      throws QueryParserExcept on {
+    TermExtractorV s or termExtractorV s or = new TermExtractorV s or(false);
+    L st<Term> terms = query.accept(termExtractorV s or);
 
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+    Earlyb rdRequestType requestType = requestContext.getEarlyb rdRequestType();
 
-    boolean shouldDropVariants = decider.isAvailable(getDropPhaseVariantDeciderKey(requestType));
+    boolean shouldDropVar ants = dec der. sAva lable(getDropPhaseVar antDec derKey(requestType));
 
     return terms != null
-        && terms.size() >= decider.getAvailability(
-            getMinTermCountForVariantDroppingDeciderKey(requestType))
-        && shouldDropVariants;
+        && terms.s ze() >= dec der.getAva lab l y(
+            getM nTermCountForVar antDropp ngDec derKey(requestType))
+        && shouldDropVar ants;
   }
 
-  private String getDropPhaseVariantDeciderKey(EarlybirdRequestType requestType) {
-    return String.format(DROP_PHRASE_VARIANT_FROM_QUERY_DECIDER_KEY_PATTERN,
-                         normalizedSearchRootName,
-                         requestType.getNormalizedName());
+  pr vate Str ng getDropPhaseVar antDec derKey(Earlyb rdRequestType requestType) {
+    return Str ng.format(DROP_PHRASE_VAR ANT_FROM_QUERY_DEC DER_KEY_PATTERN,
+                         normal zedSearchRootNa ,
+                         requestType.getNormal zedNa ());
   }
 
-  private String getMinTermCountForVariantDroppingDeciderKey(EarlybirdRequestType requestType) {
-    return String.format(MIN_TERM_COUNT_FOR_VARIANT_DROPPING_DECIDER_KEY_PATTERN,
-                         normalizedSearchRootName,
-                         requestType.getNormalizedName());
+  pr vate Str ng getM nTermCountForVar antDropp ngDec derKey(Earlyb rdRequestType requestType) {
+    return Str ng.format(M N_TERM_COUNT_FOR_VAR ANT_DROPP NG_DEC DER_KEY_PATTERN,
+                         normal zedSearchRootNa ,
+                         requestType.getNormal zedNa ());
   }
 }

@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport javax. nject. nject
 
-@Singleton
-class PopGeohashSource @Inject() (
-  popGeoSource: PopGeoSource,
-  statsReceiver: StatsReceiver)
-    extends BasePopGeohashSource(
-      popGeoSource = popGeoSource,
-      statsReceiver = statsReceiver.scope("PopGeohashSource"),
+@S ngleton
+class PopGeohashS ce @ nject() (
+  popGeoS ce: PopGeoS ce,
+  statsRece ver: StatsRece ver)
+    extends BasePopGeohashS ce(
+      popGeoS ce = popGeoS ce,
+      statsRece ver = statsRece ver.scope("PopGeohashS ce"),
     ) {
-  override def candidateSourceEnabled(target: Target): Boolean = true
-  override val identifier: CandidateSourceIdentifier = PopGeohashSource.Identifier
-  override def minGeohashLength(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceGeoHashMinPrecision)
+  overr de def cand dateS ceEnabled(target: Target): Boolean = true
+  overr de val  dent f er: Cand dateS ce dent f er = PopGeohashS ce. dent f er
+  overr de def m nGeohashLength(target: Target):  nt = {
+    target.params(PopGeoS ceParams.PopGeoS ceGeoHashM nPrec s on)
   }
-  override def maxResults(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceMaxResultsPerPrecision)
+  overr de def maxResults(target: Target):  nt = {
+    target.params(PopGeoS ceParams.PopGeoS ceMaxResultsPerPrec s on)
   }
-  override def maxGeohashLength(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceGeoHashMaxPrecision)
+  overr de def maxGeohashLength(target: Target):  nt = {
+    target.params(PopGeoS ceParams.PopGeoS ceGeoHashMaxPrec s on)
   }
-  override def returnResultFromAllPrecision(target: Target): Boolean = {
-    target.params(PopGeoSourceParams.PopGeoSourceReturnFromAllPrecisions)
+  overr de def returnResultFromAllPrec s on(target: Target): Boolean = {
+    target.params(PopGeoS ceParams.PopGeoS ceReturnFromAllPrec s ons)
   }
 }
 
-object PopGeohashSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PopGeohash.toString)
+object PopGeohashS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.PopGeohash.toStr ng)
 }

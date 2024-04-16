@@ -1,171 +1,171 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.util.Date;
+ mport java.ut l.Date;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+ mport org.apac .commons.lang3.bu lder.ToStr ngBu lder;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.config.TierConfig;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.conf g.T erConf g;
 
-public class PartitionConfig {
-  // Which sub-cluster this host belongs to
-  private final String tierName;
+publ c class Part  onConf g {
+  // Wh ch sub-cluster t  host belongs to
+  pr vate f nal Str ng t erNa ;
 
-  // Which cluster this host belongs to
-  private final String clusterName;
+  // Wh ch cluster t  host belongs to
+  pr vate f nal Str ng clusterNa ;
 
-  public static final String DEFAULT_TIER_NAME = "all";
+  publ c stat c f nal Str ng DEFAULT_T ER_NAME = "all";
 
-  // the date range of the timeslices this tier will load. The start date is inclusive, while
-  // the end date is exclusive.
-  private final Date tierStartDate;
-  private final Date tierEndDate;
+  // t  date range of t  t  sl ces t  t er w ll load. T  start date  s  nclus ve, wh le
+  // t  end date  s exclus ve.
+  pr vate f nal Date t erStartDate;
+  pr vate f nal Date t erEndDate;
 
-  private final int indexingHashPartitionID; // Hash Partition ID assigned for this EB
-  private final int maxEnabledLocalSegments; // Number of segments to keep
-  // The position of this host in the ordered list of hosts serving this hash partition
-  private final int hostPositionWithinHashPartition;
-  private volatile int numReplicasInHashPartition;
+  pr vate f nal  nt  ndex ngHashPart  on D; // Hash Part  on  D ass gned for t  EB
+  pr vate f nal  nt maxEnabledLocalSeg nts; // Number of seg nts to keep
+  // T  pos  on of t  host  n t  ordered l st of hosts serv ng t  hash part  on
+  pr vate f nal  nt hostPos  onW h nHashPart  on;
+  pr vate volat le  nt numRepl cas nHashPart  on;
 
-  private final int numPartitions; // Total number of partitions in the current cluster
+  pr vate f nal  nt numPart  ons; // Total number of part  ons  n t  current cluster
 
-  public PartitionConfig(
-      int indexingHashPartitionID,
-      int maxEnabledLocalSegments,
-      int hostPositionWithinHashPartition,
-      int numReplicasInHashPartition,
-      int numPartitions) {
-    this(DEFAULT_TIER_NAME,
-        TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE,
-        indexingHashPartitionID,
-        maxEnabledLocalSegments,
-        hostPositionWithinHashPartition,
-        numReplicasInHashPartition,
-        numPartitions);
+  publ c Part  onConf g(
+       nt  ndex ngHashPart  on D,
+       nt maxEnabledLocalSeg nts,
+       nt hostPos  onW h nHashPart  on,
+       nt numRepl cas nHashPart  on,
+       nt numPart  ons) {
+    t (DEFAULT_T ER_NAME,
+        T erConf g.DEFAULT_T ER_START_DATE,
+        T erConf g.DEFAULT_T ER_END_DATE,
+         ndex ngHashPart  on D,
+        maxEnabledLocalSeg nts,
+        hostPos  onW h nHashPart  on,
+        numRepl cas nHashPart  on,
+        numPart  ons);
   }
 
-  public PartitionConfig(String tierName,
-                         Date tierStartDate,
-                         Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
-                         int hostPositionWithinHashPartition,
-                         int numReplicasInHashPartition,
-                         int numPartitions) {
-    this(tierName, tierStartDate, tierEndDate, indexingHashPartitionID, maxEnabledLocalSegments,
-        hostPositionWithinHashPartition, numReplicasInHashPartition, Config.getEnvironment(),
-        numPartitions);
+  publ c Part  onConf g(Str ng t erNa ,
+                         Date t erStartDate,
+                         Date t erEndDate,
+                          nt  ndex ngHashPart  on D,
+                          nt maxEnabledLocalSeg nts,
+                          nt hostPos  onW h nHashPart  on,
+                          nt numRepl cas nHashPart  on,
+                          nt numPart  ons) {
+    t (t erNa , t erStartDate, t erEndDate,  ndex ngHashPart  on D, maxEnabledLocalSeg nts,
+        hostPos  onW h nHashPart  on, numRepl cas nHashPart  on, Conf g.getEnv ron nt(),
+        numPart  ons);
   }
 
-  public PartitionConfig(String tierName,
-                         Date tierStartDate,
-                         Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
-                         int hostPositionWithinHashPartition,
-                         int numReplicasInHashPartition,
-                         String clusterName,
-                         int numPartitions) {
-    this.tierName = Preconditions.checkNotNull(tierName);
-    this.clusterName = Preconditions.checkNotNull(clusterName);
-    this.tierStartDate = Preconditions.checkNotNull(tierStartDate);
-    this.tierEndDate = Preconditions.checkNotNull(tierEndDate);
-    this.indexingHashPartitionID = indexingHashPartitionID;
-    this.maxEnabledLocalSegments = maxEnabledLocalSegments;
-    this.hostPositionWithinHashPartition = hostPositionWithinHashPartition;
-    this.numReplicasInHashPartition = numReplicasInHashPartition;
-    this.numPartitions = numPartitions;
+  publ c Part  onConf g(Str ng t erNa ,
+                         Date t erStartDate,
+                         Date t erEndDate,
+                          nt  ndex ngHashPart  on D,
+                          nt maxEnabledLocalSeg nts,
+                          nt hostPos  onW h nHashPart  on,
+                          nt numRepl cas nHashPart  on,
+                         Str ng clusterNa ,
+                          nt numPart  ons) {
+    t .t erNa  = Precond  ons.c ckNotNull(t erNa );
+    t .clusterNa  = Precond  ons.c ckNotNull(clusterNa );
+    t .t erStartDate = Precond  ons.c ckNotNull(t erStartDate);
+    t .t erEndDate = Precond  ons.c ckNotNull(t erEndDate);
+    t . ndex ngHashPart  on D =  ndex ngHashPart  on D;
+    t .maxEnabledLocalSeg nts = maxEnabledLocalSeg nts;
+    t .hostPos  onW h nHashPart  on = hostPos  onW h nHashPart  on;
+    t .numRepl cas nHashPart  on = numRepl cas nHashPart  on;
+    t .numPart  ons = numPart  ons;
   }
 
-  public String getTierName() {
-    return tierName;
+  publ c Str ng getT erNa () {
+    return t erNa ;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  publ c Str ng getClusterNa () {
+    return clusterNa ;
   }
 
-  public Date getTierStartDate() {
-    return tierStartDate;
+  publ c Date getT erStartDate() {
+    return t erStartDate;
   }
 
-  public Date getTierEndDate() {
-    return tierEndDate;
+  publ c Date getT erEndDate() {
+    return t erEndDate;
   }
 
-  public int getIndexingHashPartitionID() {
-    return indexingHashPartitionID;
+  publ c  nt get ndex ngHashPart  on D() {
+    return  ndex ngHashPart  on D;
   }
 
-  public int getMaxEnabledLocalSegments() {
-    return maxEnabledLocalSegments;
+  publ c  nt getMaxEnabledLocalSeg nts() {
+    return maxEnabledLocalSeg nts;
   }
 
-  public int getHostPositionWithinHashPartition() {
-    return hostPositionWithinHashPartition;
+  publ c  nt getHostPos  onW h nHashPart  on() {
+    return hostPos  onW h nHashPart  on;
   }
 
-  public int getNumReplicasInHashPartition() {
-    return numReplicasInHashPartition;
+  publ c  nt getNumRepl cas nHashPart  on() {
+    return numRepl cas nHashPart  on;
   }
 
   /**
-   * The number of ways the Tweet and/or user data is partitioned (or sharded) in this Earlybird, in
-   * this tier.
+   * T  number of ways t  T et and/or user data  s part  oned (or sharded)  n t  Earlyb rd,  n
+   * t  t er.
    */
-  public int getNumPartitions() {
-    return numPartitions;
+  publ c  nt getNumPart  ons() {
+    return numPart  ons;
   }
 
-  public String getPartitionConfigDescription() {
-    return ToStringBuilder.reflectionToString(this);
+  publ c Str ng getPart  onConf gDescr pt on() {
+    return ToStr ngBu lder.reflect onToStr ng(t );
   }
 
-  public void setNumReplicasInHashPartition(int numReplicas) {
-    numReplicasInHashPartition = numReplicas;
+  publ c vo d setNumRepl cas nHashPart  on( nt numRepl cas) {
+    numRepl cas nHashPart  on = numRepl cas;
   }
 
-  public static final int DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST = 18;
-  public static PartitionConfig getPartitionConfigForTests() {
-    return getPartitionConfigForTests(
-        TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE);
+  publ c stat c f nal  nt DEFAULT_NUM_SERV NG_T MESL CES_FOR_TEST = 18;
+  publ c stat c Part  onConf g getPart  onConf gForTests() {
+    return getPart  onConf gForTests(
+        T erConf g.DEFAULT_T ER_START_DATE,
+        T erConf g.DEFAULT_T ER_END_DATE);
   }
 
-  public static PartitionConfig getPartitionConfigForTests(Date tierStartDate, Date tierEndDate) {
-    return getPartitionConfigForTests(
-        DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST, tierStartDate, tierEndDate, 1);
+  publ c stat c Part  onConf g getPart  onConf gForTests(Date t erStartDate, Date t erEndDate) {
+    return getPart  onConf gForTests(
+        DEFAULT_NUM_SERV NG_T MESL CES_FOR_TEST, t erStartDate, t erEndDate, 1);
   }
 
   /**
-   * Returns a PartitionConfig instance configured for tests.
+   * Returns a Part  onConf g  nstance conf gured for tests.
    *
-   * @param numServingTimeslices The number of timeslices that should be served.
-   * @param tierStartDate The tier's start date. Used only in the full archive earlybirds.
-   * @param tierEndDate The tier's end date. Used only by in the full archive earlybirds.
-   * @param numReplicasInHashPartition The number of replicas for each partition.
-   * @return A PartitionConfig instance configured for tests.
+   * @param numServ ngT  sl ces T  number of t  sl ces that should be served.
+   * @param t erStartDate T  t er's start date. Used only  n t  full arch ve earlyb rds.
+   * @param t erEndDate T  t er's end date. Used only by  n t  full arch ve earlyb rds.
+   * @param numRepl cas nHashPart  on T  number of repl cas for each part  on.
+   * @return A Part  onConf g  nstance conf gured for tests.
    */
-  @VisibleForTesting
-  public static PartitionConfig getPartitionConfigForTests(
-      int numServingTimeslices,
-      Date tierStartDate,
-      Date tierEndDate,
-      int numReplicasInHashPartition) {
-    return new PartitionConfig(
-        EarlybirdConfig.getString("sub_tiers_for_tests", "test"),
-        tierStartDate,
-        tierEndDate,
-        EarlybirdConfig.getInt("hash_partition_for_tests", -1),
-        numServingTimeslices,
-        0, // hostPositionWithinHashPartition
-        numReplicasInHashPartition,
-        EarlybirdConfig.getInt("num_partitions_for_tests", -1)
+  @V s bleForTest ng
+  publ c stat c Part  onConf g getPart  onConf gForTests(
+       nt numServ ngT  sl ces,
+      Date t erStartDate,
+      Date t erEndDate,
+       nt numRepl cas nHashPart  on) {
+    return new Part  onConf g(
+        Earlyb rdConf g.getStr ng("sub_t ers_for_tests", "test"),
+        t erStartDate,
+        t erEndDate,
+        Earlyb rdConf g.get nt("hash_part  on_for_tests", -1),
+        numServ ngT  sl ces,
+        0, // hostPos  onW h nHashPart  on
+        numRepl cas nHashPart  on,
+        Earlyb rdConf g.get nt("num_part  ons_for_tests", -1)
     );
   }
 }

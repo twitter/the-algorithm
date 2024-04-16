@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.tw ter.product_m xer.core.funct onal_component.conf gap 
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.t  l nes.conf gap .FeatureValue
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-/** Singleton object for building [[Params]] to override */
-@Singleton
-class ParamsBuilder @Inject() (
-  config: Config,
-  requestContextBuilder: RequestContextBuilder,
-  statsReceiver: StatsReceiver) {
+/** S ngleton object for bu ld ng [[Params]] to overr de */
+@S ngleton
+class ParamsBu lder @ nject() (
+  conf g: Conf g,
+  requestContextBu lder: RequestContextBu lder,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver =
-    new MemoizingStatsReceiver(statsReceiver.scope("configapi"))
+  pr vate[t ] val scopedStatsRece ver =
+    new  mo z ngStatsRece ver(statsRece ver.scope("conf gap "))
 
-  def build(
-    clientContext: ClientContext,
+  def bu ld(
+    cl entContext: Cl entContext,
     product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any] = Map.empty
+    featureOverr des: Map[Str ng, FeatureValue],
+    fsCustomMap nput: Map[Str ng, Any] = Map.empty
   ): Params = {
     val requestContext =
-      requestContextBuilder.build(clientContext, product, featureOverrides, fsCustomMapInput)
+      requestContextBu lder.bu ld(cl entContext, product, featureOverr des, fsCustomMap nput)
 
-    config(requestContext, scopedStatsReceiver)
+    conf g(requestContext, scopedStatsRece ver)
   }
 }

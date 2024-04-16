@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * transform a or a list of candidate for target T
+ * transform a or a l st of cand date for target T
  *
  * @tparam T target type
- * @tparam C candidate type
+ * @tparam C cand date type
  */
-trait Transform[-T, C] {
+tra  Transform[-T, C] {
 
-  // you need to implement at least one of the two methods here.
-  def transformItem(target: T, item: C): Stitch[C] = {
-    transform(target, Seq(item)).map(_.head)
+  //   need to  mple nt at least one of t  two  thods  re.
+  def transform em(target: T,  em: C): St ch[C] = {
+    transform(target, Seq( em)).map(_. ad)
   }
 
-  def transform(target: T, items: Seq[C]): Stitch[Seq[C]]
+  def transform(target: T,  ems: Seq[C]): St ch[Seq[C]]
 
   def mapTarget[T2](mapper: T2 => T): Transform[T2, C] = {
-    val original = this
+    val or g nal = t 
     new Transform[T2, C] {
-      override def transformItem(target: T2, item: C): Stitch[C] = {
-        original.transformItem(mapper(target), item)
+      overr de def transform em(target: T2,  em: C): St ch[C] = {
+        or g nal.transform em(mapper(target),  em)
       }
-      override def transform(target: T2, items: Seq[C]): Stitch[Seq[C]] = {
-        original.transform(mapper(target), items)
+      overr de def transform(target: T2,  ems: Seq[C]): St ch[Seq[C]] = {
+        or g nal.transform(mapper(target),  ems)
       }
     }
   }
 
   /**
-   * sequential composition. we execute this' transform first, followed by the other's transform
+   * sequent al compos  on.   execute t ' transform f rst, follo d by t  ot r's transform
    */
-  def andThen[T1 <: T](other: Transform[T1, C]): Transform[T1, C] = {
-    val original = this
+  def andT n[T1 <: T](ot r: Transform[T1, C]): Transform[T1, C] = {
+    val or g nal = t 
     new Transform[T1, C] {
-      override def transformItem(target: T1, item: C): Stitch[C] =
-        original.transformItem(target, item).flatMap(other.transformItem(target, _))
-      override def transform(target: T1, items: Seq[C]): Stitch[Seq[C]] =
-        original.transform(target, items).flatMap(other.transform(target, _))
+      overr de def transform em(target: T1,  em: C): St ch[C] =
+        or g nal.transform em(target,  em).flatMap(ot r.transform em(target, _))
+      overr de def transform(target: T1,  ems: Seq[C]): St ch[Seq[C]] =
+        or g nal.transform(target,  ems).flatMap(ot r.transform(target, _))
     }
   }
 
-  def observe(statsReceiver: StatsReceiver): Transform[T, C] = {
-    val originalTransform = this
+  def observe(statsRece ver: StatsRece ver): Transform[T, C] = {
+    val or g nalTransform = t 
     new Transform[T, C] {
-      override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr(items.size)
-        statsReceiver.stat(Transform.InputCandidatesStat).add(items.size)
-        StatsUtil.profileStitchSeqResults(originalTransform.transform(target, items), statsReceiver)
+      overr de def transform(target: T,  ems: Seq[C]): St ch[Seq[C]] = {
+        statsRece ver.counter(Transform. nputCand datesCount). ncr( ems.s ze)
+        statsRece ver.stat(Transform. nputCand datesStat).add( ems.s ze)
+        StatsUt l.prof leSt chSeqResults(or g nalTransform.transform(target,  ems), statsRece ver)
       }
 
-      override def transformItem(target: T, item: C): Stitch[C] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr()
-        StatsUtil.profileStitch(originalTransform.transformItem(target, item), statsReceiver)
+      overr de def transform em(target: T,  em: C): St ch[C] = {
+        statsRece ver.counter(Transform. nputCand datesCount). ncr()
+        StatsUt l.prof leSt ch(or g nalTransform.transform em(target,  em), statsRece ver)
       }
     }
   }
 }
 
-trait GatedTransform[T <: HasParams, C] extends Transform[T, C] {
+tra  GatedTransform[T <: HasParams, C] extends Transform[T, C] {
   def gated(param: Param[Boolean]): Transform[T, C] = {
-    val original = this
-    (target: T, items: Seq[C]) => {
-      if (target.params(param)) {
-        original.transform(target, items)
+    val or g nal = t 
+    (target: T,  ems: Seq[C]) => {
+       f (target.params(param)) {
+        or g nal.transform(target,  ems)
       } else {
-        Stitch.value(items)
+        St ch.value( ems)
       }
     }
   }
 }
 
 object Transform {
-  val InputCandidatesCount = "input_candidates"
-  val InputCandidatesStat = "input_candidates_stat"
+  val  nputCand datesCount = " nput_cand dates"
+  val  nputCand datesStat = " nput_cand dates_stat"
 }
 
-class IdentityTransform[T, C] extends Transform[T, C] {
-  override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = Stitch.value(items)
+class  dent yTransform[T, C] extends Transform[T, C] {
+  overr de def transform(target: T,  ems: Seq[C]): St ch[Seq[C]] = St ch.value( ems)
 }

@@ -1,280 +1,280 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.memcached
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.cache.{Serializer => CacheSerializer, _}
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.handler.CacheBasedTweetCreationLock
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util._
-import com.twitter.util.Timer
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Backoff
+ mport com.tw ter.f nagle. mcac d
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.cac .{Ser al zer => Cac Ser al zer, _}
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.handler.Cac BasedT etCreat onLock
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.serverut l._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.ut l._
+ mport com.tw ter.ut l.T  r
 
 /**
- * Provides configured caches (most backed by memcached) wrapped with appropriate metrics and locks.
+ * Prov des conf gured cac s (most backed by  mcac d) wrapped w h appropr ate  tr cs and locks.
  *
- * All memcached-backed caches share:
- *     - one Finagle memcached client from backends.memcacheClient
- *     - one in memory caffeine cache
- *     - one Twemcache pool
+ * All  mcac d-backed cac s share:
+ *     - one F nagle  mcac d cl ent from backends. mcac Cl ent
+ *     - one  n  mory caffe ne cac 
+ *     - one T mcac  pool
  *
- * Each memcached-backed cache specialization provides its own:
- *     - key prefix or "namespace"
- *     - value serializer/deserializer
+ * Each  mcac d-backed cac  spec al zat on prov des  s own:
+ *     - key pref x or "na space"
+ *     - value ser al zer/deser al zer
  *     - stats scope
- *     - log name
+ *     - log na 
  */
-trait Caches {
-  val memcachedClientWithInProcessCaching: memcached.Client
-  val tweetCache: LockingCache[TweetKey, Cached[CachedTweet]]
-  val tweetResultCache: LockingCache[TweetId, Cached[TweetResult]]
-  val tweetDataCache: LockingCache[TweetId, Cached[TweetData]]
-  val tweetCreateLockerCache: Cache[TweetCreationLock.Key, TweetCreationLock.State]
-  val tweetCountsCache: LockingCache[TweetCountKey, Cached[Count]]
-  val deviceSourceInProcessCache: LockingCache[String, Cached[DeviceSource]]
-  val geoScrubCache: LockingCache[UserId, Cached[Time]]
+tra  Cac s {
+  val  mcac dCl entW h nProcessCach ng:  mcac d.Cl ent
+  val t etCac : Lock ngCac [T etKey, Cac d[Cac dT et]]
+  val t etResultCac : Lock ngCac [T et d, Cac d[T etResult]]
+  val t etDataCac : Lock ngCac [T et d, Cac d[T etData]]
+  val t etCreateLockerCac : Cac [T etCreat onLock.Key, T etCreat onLock.State]
+  val t etCountsCac : Lock ngCac [T etCountKey, Cac d[Count]]
+  val dev ceS ce nProcessCac : Lock ngCac [Str ng, Cac d[Dev ceS ce]]
+  val geoScrubCac : Lock ngCac [User d, Cac d[T  ]]
 }
 
-object Caches {
-  object NoCache extends Caches {
-    override val memcachedClientWithInProcessCaching: memcached.Client = new NullMemcacheClient()
-    private val toLockingCache: LockingCacheFactory = NonLockingCacheFactory
-    val tweetCache: LockingCache[TweetKey, Cached[CachedTweet]] =
-      toLockingCache(new NullCache)
-    val tweetResultCache: LockingCache[TweetId, Cached[TweetResult]] =
-      toLockingCache(new NullCache)
-    val tweetDataCache: LockingCache[TweetId, Cached[TweetData]] =
-      toLockingCache(new NullCache)
-    val tweetCreateLockerCache: Cache[TweetCreationLock.Key, TweetCreationLock.State] =
-      new NullCache
-    val tweetCountsCache: LockingCache[TweetCountKey, Cached[Count]] =
-      toLockingCache(new NullCache)
-    val deviceSourceInProcessCache: LockingCache[String, Cached[DeviceSource]] =
-      toLockingCache(new NullCache)
-    val geoScrubCache: LockingCache[UserId, Cached[Time]] =
-      toLockingCache(new NullCache)
+object Cac s {
+  object NoCac  extends Cac s {
+    overr de val  mcac dCl entW h nProcessCach ng:  mcac d.Cl ent = new Null mcac Cl ent()
+    pr vate val toLock ngCac : Lock ngCac Factory = NonLock ngCac Factory
+    val t etCac : Lock ngCac [T etKey, Cac d[Cac dT et]] =
+      toLock ngCac (new NullCac )
+    val t etResultCac : Lock ngCac [T et d, Cac d[T etResult]] =
+      toLock ngCac (new NullCac )
+    val t etDataCac : Lock ngCac [T et d, Cac d[T etData]] =
+      toLock ngCac (new NullCac )
+    val t etCreateLockerCac : Cac [T etCreat onLock.Key, T etCreat onLock.State] =
+      new NullCac 
+    val t etCountsCac : Lock ngCac [T etCountKey, Cac d[Count]] =
+      toLock ngCac (new NullCac )
+    val dev ceS ce nProcessCac : Lock ngCac [Str ng, Cac d[Dev ceS ce]] =
+      toLock ngCac (new NullCac )
+    val geoScrubCac : Lock ngCac [User d, Cac d[T  ]] =
+      toLock ngCac (new NullCac )
   }
 
   def apply(
-    settings: TweetServiceSettings,
-    stats: StatsReceiver,
-    timer: Timer,
-    clients: BackendClients,
-    tweetKeyFactory: TweetKeyFactory,
-    deciderGates: TweetypieDeciderGates,
-    clientIdHelper: ClientIdHelper,
-  ): Caches = {
-    val cachesStats = stats.scope("caches")
-    val cachesInprocessStats = cachesStats.scope("inprocess")
-    val cachesMemcacheStats = cachesStats.scope("memcache")
-    val cachesMemcacheObserver = new StatsReceiverCacheObserver(cachesStats, 10000, "memcache")
-    val cachesMemcacheTweetStats = cachesMemcacheStats.scope("tweet")
-    val cachesInprocessDeviceSourceStats = cachesInprocessStats.scope("device_source")
-    val cachesMemcacheCountStats = cachesMemcacheStats.scope("count")
-    val cachesMemcacheTweetCreateStats = cachesMemcacheStats.scope("tweet_create")
-    val cachesMemcacheGeoScrubStats = cachesMemcacheStats.scope("geo_scrub")
-    val memcacheClient = clients.memcacheClient
+    sett ngs: T etServ ceSett ngs,
+    stats: StatsRece ver,
+    t  r: T  r,
+    cl ents: BackendCl ents,
+    t etKeyFactory: T etKeyFactory,
+    dec derGates: T etyp eDec derGates,
+    cl ent d lper: Cl ent d lper,
+  ): Cac s = {
+    val cac sStats = stats.scope("cac s")
+    val cac s nprocessStats = cac sStats.scope(" nprocess")
+    val cac s mcac Stats = cac sStats.scope(" mcac ")
+    val cac s mcac Observer = new StatsRece verCac Observer(cac sStats, 10000, " mcac ")
+    val cac s mcac T etStats = cac s mcac Stats.scope("t et")
+    val cac s nprocessDev ceS ceStats = cac s nprocessStats.scope("dev ce_s ce")
+    val cac s mcac CountStats = cac s mcac Stats.scope("count")
+    val cac s mcac T etCreateStats = cac s mcac Stats.scope("t et_create")
+    val cac s mcac GeoScrubStats = cac s mcac Stats.scope("geo_scrub")
+    val  mcac Cl ent = cl ents. mcac Cl ent
 
-    val caffieneMemcachedClient = settings.inProcessCacheConfigOpt match {
-      case Some(inProcessCacheConfig) =>
-        new CaffeineMemcacheClient(
-          proxyClient = memcacheClient,
-          inProcessCacheConfig.maximumSize,
-          inProcessCacheConfig.ttl,
-          cachesMemcacheStats.scope("caffeine")
+    val caff ene mcac dCl ent = sett ngs. nProcessCac Conf gOpt match {
+      case So ( nProcessCac Conf g) =>
+        new Caffe ne mcac Cl ent(
+          proxyCl ent =  mcac Cl ent,
+           nProcessCac Conf g.max mumS ze,
+           nProcessCac Conf g.ttl,
+          cac s mcac Stats.scope("caffe ne")
         )
       case None =>
-        memcacheClient
+         mcac Cl ent
     }
 
-    val observedMemcacheWithCaffeineClient =
-      new ObservableMemcache(
-        new FinagleMemcache(
-          caffieneMemcachedClient
+    val observed mcac W hCaffe neCl ent =
+      new Observable mcac (
+        new F nagle mcac (
+          caff ene mcac dCl ent
         ),
-        cachesMemcacheObserver
+        cac s mcac Observer
       )
 
-    def observeCache[K, V](
-      cache: Cache[K, V],
-      stats: StatsReceiver,
-      logName: String,
-      windowSize: Int = 10000
+    def observeCac [K, V](
+      cac : Cac [K, V],
+      stats: StatsRece ver,
+      logNa : Str ng,
+      w ndowS ze:  nt = 10000
     ) =
-      ObservableCache(
-        cache,
+      ObservableCac (
+        cac ,
         stats,
-        windowSize,
-        // Need to use an old-school c.t.logging.Logger because that's what servo needs
-        com.twitter.logging.Logger(s"com.twitter.tweetypie.cache.$logName")
+        w ndowS ze,
+        // Need to use an old-school c.t.logg ng.Logger because that's what servo needs
+        com.tw ter.logg ng.Logger(s"com.tw ter.t etyp e.cac .$logNa ")
       )
 
-    def mkCache[K, V](
-      ttl: Duration,
-      serializer: CacheSerializer[V],
-      perCacheStats: StatsReceiver,
-      logName: String,
-      windowSize: Int = 10000
-    ): Cache[K, V] = {
-      observeCache(
-        new MemcacheCache[K, V](
-          observedMemcacheWithCaffeineClient,
+    def mkCac [K, V](
+      ttl: Durat on,
+      ser al zer: Cac Ser al zer[V],
+      perCac Stats: StatsRece ver,
+      logNa : Str ng,
+      w ndowS ze:  nt = 10000
+    ): Cac [K, V] = {
+      observeCac (
+        new  mcac Cac [K, V](
+          observed mcac W hCaffe neCl ent,
           ttl,
-          serializer
+          ser al zer
         ),
-        perCacheStats,
-        logName,
-        windowSize
+        perCac Stats,
+        logNa ,
+        w ndowS ze
       )
     }
 
-    def toLockingCache[K, V](
-      cache: Cache[K, V],
-      stats: StatsReceiver,
-      backoffs: Stream[Duration] = settings.lockingCacheBackoffs
-    ): LockingCache[K, V] =
-      new OptimisticLockingCache(
-        underlyingCache = cache,
+    def toLock ngCac [K, V](
+      cac : Cac [K, V],
+      stats: StatsRece ver,
+      backoffs: Stream[Durat on] = sett ngs.lock ngCac Backoffs
+    ): Lock ngCac [K, V] =
+      new Opt m st cLock ngCac (
+        underly ngCac  = cac ,
         backoffs = Backoff.fromStream(backoffs),
-        observer = new OptimisticLockingCacheObserver(stats),
-        timer = timer
+        observer = new Opt m st cLock ngCac Observer(stats),
+        t  r = t  r
       )
 
-    def mkLockingCache[K, V](
-      ttl: Duration,
-      serializer: CacheSerializer[V],
-      stats: StatsReceiver,
-      logName: String,
-      windowSize: Int = 10000,
-      backoffs: Stream[Duration] = settings.lockingCacheBackoffs
-    ): LockingCache[K, V] =
-      toLockingCache(
-        mkCache(ttl, serializer, stats, logName, windowSize),
+    def mkLock ngCac [K, V](
+      ttl: Durat on,
+      ser al zer: Cac Ser al zer[V],
+      stats: StatsRece ver,
+      logNa : Str ng,
+      w ndowS ze:  nt = 10000,
+      backoffs: Stream[Durat on] = sett ngs.lock ngCac Backoffs
+    ): Lock ngCac [K, V] =
+      toLock ngCac (
+        mkCac (ttl, ser al zer, stats, logNa , w ndowS ze),
         stats,
         backoffs
       )
 
-    def trackTimeInCache[K, V](
-      cache: Cache[K, Cached[V]],
-      stats: StatsReceiver
-    ): Cache[K, Cached[V]] =
-      new CacheWrapper[K, Cached[V]] {
-        val ageStat: Stat = stats.stat("time_in_cache_ms")
-        val underlyingCache: Cache[K, Cached[V]] = cache
+    def trackT   nCac [K, V](
+      cac : Cac [K, Cac d[V]],
+      stats: StatsRece ver
+    ): Cac [K, Cac d[V]] =
+      new Cac Wrapper[K, Cac d[V]] {
+        val ageStat: Stat = stats.stat("t  _ n_cac _ms")
+        val underly ngCac : Cac [K, Cac d[V]] = cac 
 
-        override def get(keys: Seq[K]): Future[KeyValueResult[K, Cached[V]]] =
-          underlyingCache.get(keys).onSuccess(record)
+        overr de def get(keys: Seq[K]): Future[KeyValueResult[K, Cac d[V]]] =
+          underly ngCac .get(keys).onSuccess(record)
 
-        private def record(res: KeyValueResult[K, Cached[V]]): Unit = {
-          val now = Time.now
+        pr vate def record(res: KeyValueResult[K, Cac d[V]]): Un  = {
+          val now = T  .now
           for (c <- res.found.values) {
-            ageStat.add(c.cachedAt.until(now).inMilliseconds)
+            ageStat.add(c.cac dAt.unt l(now). nM ll seconds)
           }
         }
       }
 
-    new Caches {
-      override val memcachedClientWithInProcessCaching: memcached.Client = caffieneMemcachedClient
+    new Cac s {
+      overr de val  mcac dCl entW h nProcessCach ng:  mcac d.Cl ent = caff ene mcac dCl ent
 
-      private val observingTweetCache: Cache[TweetKey, Cached[CachedTweet]] =
-        trackTimeInCache(
-          mkCache(
-            ttl = settings.tweetMemcacheTtl,
-            serializer = Serializer.CachedTweet.CachedCompact,
-            perCacheStats = cachesMemcacheTweetStats,
-            logName = "MemcacheTweetCache"
+      pr vate val observ ngT etCac : Cac [T etKey, Cac d[Cac dT et]] =
+        trackT   nCac (
+          mkCac (
+            ttl = sett ngs.t et mcac Ttl,
+            ser al zer = Ser al zer.Cac dT et.Cac dCompact,
+            perCac Stats = cac s mcac T etStats,
+            logNa  = " mcac T etCac "
           ),
-          cachesMemcacheTweetStats
+          cac s mcac T etStats
         )
 
-      // Wrap the tweet cache with a wrapper that will scribe the cache writes
-      // that happen to a fraction of tweets. This was added as part of the
-      // investigation into missing place ids and cache inconsistencies that
-      // were discovered by the additional fields hydrator.
-      private[this] val writeLoggingTweetCache =
-        new ScribeTweetCacheWrites(
-          underlyingCache = observingTweetCache,
-          logYoungTweetCacheWrites = deciderGates.logYoungTweetCacheWrites,
-          logTweetCacheWrites = deciderGates.logTweetCacheWrites
+      // Wrap t  t et cac  w h a wrapper that w ll scr be t  cac  wr es
+      // that happen to a fract on of t ets. T  was added as part of t 
+      //  nvest gat on  nto m ss ng place  ds and cac   ncons stenc es that
+      //  re d scovered by t  add  onal f elds hydrator.
+      pr vate[t ] val wr eLogg ngT etCac  =
+        new Scr beT etCac Wr es(
+          underly ngCac  = observ ngT etCac ,
+          log ngT etCac Wr es = dec derGates.log ngT etCac Wr es,
+          logT etCac Wr es = dec derGates.logT etCac Wr es
         )
 
-      val tweetCache: LockingCache[TweetKey, Cached[CachedTweet]] =
-        toLockingCache(
-          cache = writeLoggingTweetCache,
-          stats = cachesMemcacheTweetStats
+      val t etCac : Lock ngCac [T etKey, Cac d[Cac dT et]] =
+        toLock ngCac (
+          cac  = wr eLogg ngT etCac ,
+          stats = cac s mcac T etStats
         )
 
-      val tweetDataCache: LockingCache[TweetId, Cached[TweetData]] =
-        toLockingCache(
-          cache = TweetDataCache(tweetCache, tweetKeyFactory.fromId),
-          stats = cachesMemcacheTweetStats
+      val t etDataCac : Lock ngCac [T et d, Cac d[T etData]] =
+        toLock ngCac (
+          cac  = T etDataCac (t etCac , t etKeyFactory.from d),
+          stats = cac s mcac T etStats
         )
 
-      val tweetResultCache: LockingCache[TweetId, Cached[TweetResult]] =
-        toLockingCache(
-          cache = TweetResultCache(tweetDataCache),
-          stats = cachesMemcacheTweetStats
+      val t etResultCac : Lock ngCac [T et d, Cac d[T etResult]] =
+        toLock ngCac (
+          cac  = T etResultCac (t etDataCac ),
+          stats = cac s mcac T etStats
         )
 
-      val tweetCountsCache: LockingCache[TweetCountKey, Cached[Count]] =
-        mkLockingCache(
-          ttl = settings.tweetCountsMemcacheTtl,
-          serializer = Serializers.CachedLong.Compact,
-          stats = cachesMemcacheCountStats,
-          logName = "MemcacheTweetCountCache",
-          windowSize = 1000,
-          backoffs = Backoff.linear(0.millis, 2.millis).take(2).toStream
+      val t etCountsCac : Lock ngCac [T etCountKey, Cac d[Count]] =
+        mkLock ngCac (
+          ttl = sett ngs.t etCounts mcac Ttl,
+          ser al zer = Ser al zers.Cac dLong.Compact,
+          stats = cac s mcac CountStats,
+          logNa  = " mcac T etCountCac ",
+          w ndowS ze = 1000,
+          backoffs = Backoff.l near(0.m ll s, 2.m ll s).take(2).toStream
         )
 
-      val tweetCreateLockerCache: Cache[TweetCreationLock.Key, TweetCreationLock.State] =
-        observeCache(
-          new TtlCacheToCache(
-            underlyingCache = new KeyValueTransformingTtlCache(
-              underlyingCache = observedMemcacheWithCaffeineClient,
-              transformer = TweetCreationLock.State.Serializer,
-              underlyingKey = (_: TweetCreationLock.Key).toString
+      val t etCreateLockerCac : Cac [T etCreat onLock.Key, T etCreat onLock.State] =
+        observeCac (
+          new TtlCac ToCac (
+            underly ngCac  = new KeyValueTransform ngTtlCac (
+              underly ngCac  = observed mcac W hCaffe neCl ent,
+              transfor r = T etCreat onLock.State.Ser al zer,
+              underly ngKey = (_: T etCreat onLock.Key).toStr ng
             ),
-            ttl = CacheBasedTweetCreationLock.ttlChooser(
-              shortTtl = settings.tweetCreateLockingMemcacheTtl,
-              longTtl = settings.tweetCreateLockingMemcacheLongTtl
+            ttl = Cac BasedT etCreat onLock.ttlChooser(
+              shortTtl = sett ngs.t etCreateLock ng mcac Ttl,
+              longTtl = sett ngs.t etCreateLock ng mcac LongTtl
             )
           ),
-          stats = cachesMemcacheTweetCreateStats,
-          logName = "MemcacheTweetCreateLockingCache",
-          windowSize = 1000
+          stats = cac s mcac T etCreateStats,
+          logNa  = " mcac T etCreateLock ngCac ",
+          w ndowS ze = 1000
         )
 
-      val deviceSourceInProcessCache: LockingCache[String, Cached[DeviceSource]] =
-        toLockingCache(
-          observeCache(
-            new ExpiringLruCache(
-              ttl = settings.deviceSourceInProcessTtl,
-              maximumSize = settings.deviceSourceInProcessCacheMaxSize
+      val dev ceS ce nProcessCac : Lock ngCac [Str ng, Cac d[Dev ceS ce]] =
+        toLock ngCac (
+          observeCac (
+            new Exp r ngLruCac (
+              ttl = sett ngs.dev ceS ce nProcessTtl,
+              max mumS ze = sett ngs.dev ceS ce nProcessCac MaxS ze
             ),
-            stats = cachesInprocessDeviceSourceStats,
-            logName = "InprocessDeviceSourceCache"
+            stats = cac s nprocessDev ceS ceStats,
+            logNa  = " nprocessDev ceS ceCac "
           ),
-          stats = cachesInprocessDeviceSourceStats
+          stats = cac s nprocessDev ceS ceStats
         )
 
-      val geoScrubCache: LockingCache[UserId, Cached[Time]] =
-        toLockingCache[UserId, Cached[Time]](
-          new KeyTransformingCache(
-            mkCache[GeoScrubTimestampKey, Cached[Time]](
-              ttl = settings.geoScrubMemcacheTtl,
-              serializer = Serializer.toCached(CacheSerializer.Time),
-              perCacheStats = cachesMemcacheGeoScrubStats,
-              logName = "MemcacheGeoScrubCache"
+      val geoScrubCac : Lock ngCac [User d, Cac d[T  ]] =
+        toLock ngCac [User d, Cac d[T  ]](
+          new KeyTransform ngCac (
+            mkCac [GeoScrubT  stampKey, Cac d[T  ]](
+              ttl = sett ngs.geoScrub mcac Ttl,
+              ser al zer = Ser al zer.toCac d(Cac Ser al zer.T  ),
+              perCac Stats = cac s mcac GeoScrubStats,
+              logNa  = " mcac GeoScrubCac "
             ),
-            (userId: UserId) => GeoScrubTimestampKey(userId)
+            (user d: User d) => GeoScrubT  stampKey(user d)
           ),
-          cachesMemcacheGeoScrubStats
+          cac s mcac GeoScrubStats
         )
     }
   }

@@ -1,154 +1,154 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInFromProducerEmbeddings20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import scala.util.Random
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.TypedTsv
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.ProducerEmbedd ngS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocKeyValS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.DataS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.S mclustersV2 nterested nFromProducerEmbedd ngs20M145KUpdatedScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserAndNe ghborsF xedPathS ce
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserUserNormal zedGraphScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusterW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopS mClustersW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserTo nterested nClusterScores
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
+ mport scala.ut l.Random
 
 /**
- * This file implements the job for computing users' interestedIn vector from the producerEmbeddings data set.
+ * T  f le  mple nts t  job for comput ng users'  nterested n vector from t  producerEmbedd ngs data set.
  *
- * It reads the UserUserNormalizedGraphScalaDataset to get user-user follow + fav graph, and then
- * based on the producerEmbedding clusters of each followed/faved user, we calculate how much a user is
- * interestedIn a cluster. To compute the engagement and determine the clusters for the user, we reuse
- * the functions defined in InterestedInKnownFor.
+ *   reads t  UserUserNormal zedGraphScalaDataset to get user-user follow + fav graph, and t n
+ * based on t  producerEmbedd ng clusters of each follo d/faved user,   calculate how much a user  s
+ *  nterested n a cluster. To compute t  engage nt and determ ne t  clusters for t  user,   reuse
+ * t  funct ons def ned  n  nterested nKnownFor.
  *
- * Using producerEmbeddings instead of knownFor to obtain interestedIn increases the coverage (especially
- * for medium and light users) and also the density of the cluster embeddings for the user.
+ * Us ng producerEmbedd ngs  nstead of knownFor to obta n  nterested n  ncreases t  coverage (espec ally
+ * for  d um and l ght users) and also t  dens y of t  cluster embedd ngs for t  user.
  */
 /**
- * Adhoc job to generate the interestedIn from producer embeddings for the model version 20M145KUpdated
+ * Adhoc job to generate t   nterested n from producer embedd ngs for t  model vers on 20M145KUpdated
  *
- scalding remote run \
-  --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_from_producer_embeddings \
-  --main-class com.twitter.simclusters_v2.scalding.InterestedInFromProducerEmbeddingsAdhocApp \
-  --user cassowary --cluster bluebird-qus1 \
-  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
-  --principal service_acoount@TWITTER.BIZ \
+ scald ng remote run \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng: nterested_ n_from_producer_embedd ngs \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng. nterested nFromProducerEmbedd ngsAdhocApp \
+  --user cassowary --cluster blueb rd-qus1 \
+  --keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+  --pr nc pal serv ce_acoount@TW TTER.B Z \
   -- \
-  --outputDir /gcs/user/cassowary/adhoc/interested_in_from_prod_embeddings/ \
+  --outputD r /gcs/user/cassowary/adhoc/ nterested_ n_from_prod_embedd ngs/ \
   --date 2020-08-25 --typedTsv true
  */
-object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
-  override def runOnDateRange(
+object  nterested nFromProducerEmbedd ngsAdhocApp extends AdhocExecut onApp {
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val outputDir = args("outputDir")
-    val inputGraph = args.optional("graphInputDir") match {
-      case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+    val outputD r = args("outputD r")
+    val  nputGraph = args.opt onal("graph nputD r") match {
+      case So ( nputD r) => TypedP pe.from(UserAndNe ghborsF xedPathS ce( nputD r))
       case None =>
         DAL
-          .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-          .toTypedPipe
+          .readMostRecentSnapshotNoOlderThan(UserUserNormal zedGraphScalaDataset, Days(30))
+          .toTypedP pe
     }
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 50)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 25)
+    val soc alProofThreshold = args. nt("soc alProofThreshold", 2)
+    val maxClustersPerUserF nalResult = args. nt("max nterested nClustersPerUser", 50)
+    val maxClustersFromProducer = args. nt("maxClustersPerProducer", 25)
     val typedTsvTag = args.boolean("typedTsv")
 
-    val embeddingType =
-      EmbeddingType.ProducerFavBasedSemanticCoreEntity
-    val modelVersion = ModelVersions.Model20M145KUpdated
-    val producerEmbeddings = ProducerEmbeddingSources
-      .producerEmbeddingSourceLegacy(embeddingType, ModelVersions.toModelVersion(modelVersion))(
-        dateRange.embiggen(Days(7)))
+    val embedd ngType =
+      Embedd ngType.ProducerFavBasedSemant cCoreEnt y
+    val modelVers on = ModelVers ons.Model20M145KUpdated
+    val producerEmbedd ngs = ProducerEmbedd ngS ces
+      .producerEmbedd ngS ceLegacy(embedd ngType, ModelVers ons.toModelVers on(modelVers on))(
+        dateRange.emb ggen(Days(7)))
 
-    import InterestedInFromProducerEmbeddingsBatchApp._
+     mport  nterested nFromProducerEmbedd ngsBatchApp._
 
-    val numProducerMappings = Stat("num_producer_embeddings_total")
-    val numProducersWithLargeClusterMappings = Stat(
-      "num_producers_with_more_clusters_than_threshold")
-    val numProducersWithSmallClusterMappings = Stat(
-      "num_producers_with_clusters_less_than_threshold")
-    val totalClustersCoverageProducerEmbeddings = Stat("num_clusters_total_producer_embeddings")
+    val numProducerMapp ngs = Stat("num_producer_embedd ngs_total")
+    val numProducersW hLargeClusterMapp ngs = Stat(
+      "num_producers_w h_more_clusters_than_threshold")
+    val numProducersW hSmallClusterMapp ngs = Stat(
+      "num_producers_w h_clusters_less_than_threshold")
+    val totalClustersCoverageProducerEmbedd ngs = Stat("num_clusters_total_producer_embedd ngs")
 
-    val producerEmbeddingsWithScore = producerEmbeddings.map {
-      case (userId: Long, topSimClusters: TopSimClustersWithScore) =>
+    val producerEmbedd ngsW hScore = producerEmbedd ngs.map {
+      case (user d: Long, topS mClusters: TopS mClustersW hScore) =>
         (
-          userId,
-          topSimClusters.topClusters.toArray
+          user d,
+          topS mClusters.topClusters.toArray
             .map {
-              case (simCluster: SimClusterWithScore) =>
-                (simCluster.clusterId, simCluster.score.toFloat)
+              case (s mCluster: S mClusterW hScore) =>
+                (s mCluster.cluster d, s mCluster.score.toFloat)
             }
         )
     }
-    val producerEmbeddingsPruned = producerEmbeddingsWithScore.map {
-      case (producerId, clusterArray) =>
-        numProducerMappings.inc()
-        val clusterSize = clusterArray.size
-        totalClustersCoverageProducerEmbeddings.incBy(clusterSize)
-        val prunedList = if (clusterSize > maxClustersFromProducer) {
-          numProducersWithLargeClusterMappings.inc()
+    val producerEmbedd ngsPruned = producerEmbedd ngsW hScore.map {
+      case (producer d, clusterArray) =>
+        numProducerMapp ngs. nc()
+        val clusterS ze = clusterArray.s ze
+        totalClustersCoverageProducerEmbedd ngs. ncBy(clusterS ze)
+        val prunedL st =  f (clusterS ze > maxClustersFromProducer) {
+          numProducersW hLargeClusterMapp ngs. nc()
           clusterArray
             .sortBy {
               case (_, knownForScore) => -knownForScore
             }.take(maxClustersFromProducer)
         } else {
-          numProducersWithSmallClusterMappings.inc()
+          numProducersW hSmallClusterMapp ngs. nc()
           clusterArray
         }
-        (producerId, prunedList)
+        (producer d, prunedL st)
     }
 
-    val result = InterestedInFromKnownFor
+    val result =  nterested nFromKnownFor
       .run(
-        inputGraph,
-        producerEmbeddingsPruned,
-        socialProofThreshold,
-        maxClustersPerUserFinalResult,
-        modelVersion
+         nputGraph,
+        producerEmbedd ngsPruned,
+        soc alProofThreshold,
+        maxClustersPerUserF nalResult,
+        modelVers on
       )
 
-    val resultWithoutSocial = getInterestedInDiscardSocial(result)
+    val resultW houtSoc al = get nterested nD scardSoc al(result)
 
-    if (typedTsvTag) {
-      Util.printCounters(
-        resultWithoutSocial
+     f (typedTsvTag) {
+      Ut l.pr ntCounters(
+        resultW houtSoc al
           .map {
-            case (userId: Long, clusters: ClustersUserIsInterestedIn) =>
+            case (user d: Long, clusters: ClustersUser s nterested n) =>
               (
-                userId,
-                clusters.clusterIdToScores.keys.toString()
+                user d,
+                clusters.cluster dToScores.keys.toStr ng()
               )
           }
-          .writeExecution(
-            TypedTsv(outputDir)
+          .wr eExecut on(
+            TypedTsv(outputD r)
           )
       )
     } else {
-      Util.printCounters(
-        resultWithoutSocial
-          .writeExecution(
-            AdhocKeyValSources.interestedInSource(outputDir)
+      Ut l.pr ntCounters(
+        resultW houtSoc al
+          .wr eExecut on(
+            AdhocKeyValS ces. nterested nS ce(outputD r)
           )
       )
     }
@@ -156,135 +156,135 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
 }
 
 /**
- * Production job for computing interestedIn data set from the producer embeddings for the model version 20M145KUpdated.
- * It writes the data set in KeyVal format to produce a MH DAL data set.
+ * Product on job for comput ng  nterested n data set from t  producer embedd ngs for t  model vers on 20M145KUpdated.
+ *   wr es t  data set  n KeyVal format to produce a MH DAL data set.
  *
- * To deploy the job:
+ * To deploy t  job:
  *
- * capesospy-v2 update --build_locally --start_cron
- * --start_cron interested_in_from_producer_embeddings
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * capesospy-v2 update --bu ld_locally --start_cron
+ * --start_cron  nterested_ n_from_producer_embedd ngs
+ * src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2019-11-01")
+object  nterested nFromProducerEmbedd ngsBatchApp extends Sc duledExecut onApp {
+  overr de val f rstT  : R chDate = R chDate("2019-11-01")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  def getPrunedEmbeddings(
-    producerEmbeddings: TypedPipe[(Long, TopSimClustersWithScore)],
-    maxClustersFromProducer: Int
-  ): TypedPipe[(Long, TopSimClustersWithScore)] = {
-    producerEmbeddings.map {
-      case (producerId, producerClusters) =>
+  def getPrunedEmbedd ngs(
+    producerEmbedd ngs: TypedP pe[(Long, TopS mClustersW hScore)],
+    maxClustersFromProducer:  nt
+  ): TypedP pe[(Long, TopS mClustersW hScore)] = {
+    producerEmbedd ngs.map {
+      case (producer d, producerClusters) =>
         val prunedProducerClusters =
           producerClusters.topClusters
             .sortBy {
-              case simCluster => -simCluster.score.toFloat
+              case s mCluster => -s mCluster.score.toFloat
             }.take(maxClustersFromProducer)
-        (producerId, TopSimClustersWithScore(prunedProducerClusters, producerClusters.modelVersion))
+        (producer d, TopS mClustersW hScore(prunedProducerClusters, producerClusters.modelVers on))
     }
   }
 
-  def getInterestedInDiscardSocial(
-    interestedInFromProducersResult: TypedPipe[(UserId, ClustersUserIsInterestedIn)]
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    interestedInFromProducersResult.map {
-      case (srcId, fullClusterList) =>
-        val fullClusterListWithoutSocial = fullClusterList.clusterIdToScores.map {
-          case (clusterId, clusterDetails) =>
-            val clusterDetailsWithoutSocial = UserToInterestedInClusterScores(
-              followScore = clusterDetails.followScore,
-              followScoreClusterNormalizedOnly = clusterDetails.followScoreClusterNormalizedOnly,
-              followScoreProducerNormalizedOnly = clusterDetails.followScoreProducerNormalizedOnly,
-              followScoreClusterAndProducerNormalized =
-                clusterDetails.followScoreClusterAndProducerNormalized,
-              favScore = clusterDetails.favScore,
-              favScoreClusterNormalizedOnly = clusterDetails.favScoreClusterNormalizedOnly,
-              favScoreProducerNormalizedOnly = clusterDetails.favScoreProducerNormalizedOnly,
-              favScoreClusterAndProducerNormalized =
-                clusterDetails.favScoreClusterAndProducerNormalized,
-              // Social proof is currently not being used anywhere else, hence being discarded to reduce space for this dataset
-              usersBeingFollowed = None,
-              usersThatWereFaved = None,
-              numUsersInterestedInThisClusterUpperBound =
-                clusterDetails.numUsersInterestedInThisClusterUpperBound,
-              logFavScore = clusterDetails.logFavScore,
-              logFavScoreClusterNormalizedOnly = clusterDetails.logFavScoreClusterNormalizedOnly,
-              // Counts of the social proof are maintained
-              numUsersBeingFollowed = Some(clusterDetails.usersBeingFollowed.getOrElse(Nil).size),
-              numUsersThatWereFaved = Some(clusterDetails.usersThatWereFaved.getOrElse(Nil).size)
+  def get nterested nD scardSoc al(
+     nterested nFromProducersResult: TypedP pe[(User d, ClustersUser s nterested n)]
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
+     nterested nFromProducersResult.map {
+      case (src d, fullClusterL st) =>
+        val fullClusterL stW houtSoc al = fullClusterL st.cluster dToScores.map {
+          case (cluster d, clusterDeta ls) =>
+            val clusterDeta lsW houtSoc al = UserTo nterested nClusterScores(
+              followScore = clusterDeta ls.followScore,
+              followScoreClusterNormal zedOnly = clusterDeta ls.followScoreClusterNormal zedOnly,
+              followScoreProducerNormal zedOnly = clusterDeta ls.followScoreProducerNormal zedOnly,
+              followScoreClusterAndProducerNormal zed =
+                clusterDeta ls.followScoreClusterAndProducerNormal zed,
+              favScore = clusterDeta ls.favScore,
+              favScoreClusterNormal zedOnly = clusterDeta ls.favScoreClusterNormal zedOnly,
+              favScoreProducerNormal zedOnly = clusterDeta ls.favScoreProducerNormal zedOnly,
+              favScoreClusterAndProducerNormal zed =
+                clusterDeta ls.favScoreClusterAndProducerNormal zed,
+              // Soc al proof  s currently not be ng used anyw re else,  nce be ng d scarded to reduce space for t  dataset
+              usersBe ngFollo d = None,
+              usersThat reFaved = None,
+              numUsers nterested nT ClusterUpperBound =
+                clusterDeta ls.numUsers nterested nT ClusterUpperBound,
+              logFavScore = clusterDeta ls.logFavScore,
+              logFavScoreClusterNormal zedOnly = clusterDeta ls.logFavScoreClusterNormal zedOnly,
+              // Counts of t  soc al proof are ma nta ned
+              numUsersBe ngFollo d = So (clusterDeta ls.usersBe ngFollo d.getOrElse(N l).s ze),
+              numUsersThat reFaved = So (clusterDeta ls.usersThat reFaved.getOrElse(N l).s ze)
             )
-            (clusterId, clusterDetailsWithoutSocial)
+            (cluster d, clusterDeta lsW houtSoc al)
         }
         (
-          srcId,
-          ClustersUserIsInterestedIn(
-            fullClusterList.knownForModelVersion,
-            fullClusterListWithoutSocial))
+          src d,
+          ClustersUser s nterested n(
+            fullClusterL st.knownForModelVers on,
+            fullClusterL stW houtSoc al))
     }
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    //Input args for the run
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 25)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 50)
+    // nput args for t  run
+    val soc alProofThreshold = args. nt("soc alProofThreshold", 2)
+    val maxClustersFromProducer = args. nt("maxClustersPerProducer", 25)
+    val maxClustersPerUserF nalResult = args. nt("max nterested nClustersPerUser", 50)
 
-    //Path variables
-    val modelVersionUpdated = ModelVersions.toModelVersion(ModelVersions.Model20M145KUpdated)
-    val rootPath: String = s"/user/cassowary/manhattan_sequence_files"
-    val interestedInFromProducersPath =
-      rootPath + "/interested_in_from_producer_embeddings/" + modelVersionUpdated
+    //Path var ables
+    val modelVers onUpdated = ModelVers ons.toModelVers on(ModelVers ons.Model20M145KUpdated)
+    val rootPath: Str ng = s"/user/cassowary/manhattan_sequence_f les"
+    val  nterested nFromProducersPath =
+      rootPath + "/ nterested_ n_from_producer_embedd ngs/" + modelVers onUpdated
 
-    //Input adjacency list and producer embeddings
+    // nput adjacency l st and producer embedd ngs
     val userUserNormalGraph =
-      DataSources.userUserNormalizedGraphSource(dateRange.prepend(Days(7))).forceToDisk
-    val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-      SimclustersV2InterestedInFromProducerEmbeddings20M145KUpdatedScalaDataset
-    val producerEmbeddings = ProducerEmbeddingSources
-      .producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-        modelVersionUpdated)(dateRange.embiggen(Days(7)))
+      DataS ces.userUserNormal zedGraphS ce(dateRange.prepend(Days(7))).forceToD sk
+    val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]] =
+      S mclustersV2 nterested nFromProducerEmbedd ngs20M145KUpdatedScalaDataset
+    val producerEmbedd ngs = ProducerEmbedd ngS ces
+      .producerEmbedd ngS ceLegacy(
+        Embedd ngType.ProducerFavBasedSemant cCoreEnt y,
+        modelVers onUpdated)(dateRange.emb ggen(Days(7)))
 
-    val producerEmbeddingsPruned = getPrunedEmbeddings(producerEmbeddings, maxClustersFromProducer)
-    val producerEmbeddingsWithScore = producerEmbeddingsPruned.map {
-      case (userId: Long, topSimClusters: TopSimClustersWithScore) =>
+    val producerEmbedd ngsPruned = getPrunedEmbedd ngs(producerEmbedd ngs, maxClustersFromProducer)
+    val producerEmbedd ngsW hScore = producerEmbedd ngsPruned.map {
+      case (user d: Long, topS mClusters: TopS mClustersW hScore) =>
         (
-          userId,
-          topSimClusters.topClusters.toArray
+          user d,
+          topS mClusters.topClusters.toArray
             .map {
-              case (simCluster: SimClusterWithScore) =>
-                (simCluster.clusterId, simCluster.score.toFloat)
+              case (s mCluster: S mClusterW hScore) =>
+                (s mCluster.cluster d, s mCluster.score.toFloat)
             }
         )
     }
 
-    val interestedInFromProducersResult =
-      InterestedInFromKnownFor.run(
+    val  nterested nFromProducersResult =
+       nterested nFromKnownFor.run(
         userUserNormalGraph,
-        producerEmbeddingsWithScore,
-        socialProofThreshold,
-        maxClustersPerUserFinalResult,
-        modelVersionUpdated.toString
+        producerEmbedd ngsW hScore,
+        soc alProofThreshold,
+        maxClustersPerUserF nalResult,
+        modelVers onUpdated.toStr ng
       )
 
-    val interestedInFromProducersWithoutSocial =
-      getInterestedInDiscardSocial(interestedInFromProducersResult)
+    val  nterested nFromProducersW houtSoc al =
+      get nterested nD scardSoc al( nterested nFromProducersResult)
 
-    val writeKeyValResultExec = interestedInFromProducersWithoutSocial
-      .map { case (userId, clusters) => KeyVal(userId, clusters) }
-      .writeDALVersionedKeyValExecution(
+    val wr eKeyValResultExec =  nterested nFromProducersW houtSoc al
+      .map { case (user d, clusters) => KeyVal(user d, clusters) }
+      .wr eDALVers onedKeyValExecut on(
         outputKVDataset,
-        D.Suffix(interestedInFromProducersPath)
+        D.Suff x( nterested nFromProducersPath)
       )
-    writeKeyValResultExec
+    wr eKeyValResultExec
   }
 
 }

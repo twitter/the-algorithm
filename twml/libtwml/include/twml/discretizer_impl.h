@@ -1,22 +1,22 @@
 #pragma once
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+# nclude <twml/common.h>
+# nclude <twml/def nes.h>
+# nclude <twml/Tensor.h>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void discretizerInfer(
+# fdef __cplusplus
+na space twml {
+    TWMLAP  vo d d scret zer nfer(
         Tensor &output_keys,
         Tensor &output_vals,
-        const Tensor &input_ids,
-        const Tensor &input_vals,
-        const Tensor &bin_ids,
-        const Tensor &bin_vals,
+        const Tensor & nput_ ds,
+        const Tensor & nput_vals,
+        const Tensor &b n_ ds,
+        const Tensor &b n_vals,
         const Tensor &feature_offsets,
-        int output_bits,
-        const Map<int64_t, int64_t> &ID_to_index,
-        int start_compute,
-        int end_compute,
-        int output_start);
-}  // namespace twml
-#endif
+         nt output_b s,
+        const Map< nt64_t,  nt64_t> & D_to_ ndex,
+         nt start_compute,
+         nt end_compute,
+         nt output_start);
+}  // na space twml
+#end f

@@ -1,90 +1,90 @@
-package com.twitter.visibility.builder.media
+package com.tw ter.v s b l y.bu lder. d a
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.features.MediaSafetyLabels
-import com.twitter.visibility.models.MediaSafetyLabel
-import com.twitter.visibility.models.MediaSafetyLabelType
-import com.twitter.visibility.models.SafetyLabel
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. d aserv ces. d a_ut l.Gener c d aKey
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common. d aSafetyLabelMapS ce
+ mport com.tw ter.v s b l y.features. d aSafetyLabels
+ mport com.tw ter.v s b l y.models. d aSafetyLabel
+ mport com.tw ter.v s b l y.models. d aSafetyLabelType
+ mport com.tw ter.v s b l y.models.SafetyLabel
 
-class MediaFeatures(
-  mediaSafetyLabelMap: StratoMediaLabelMaps,
-  statsReceiver: StatsReceiver) {
+class  d aFeatures(
+   d aSafetyLabelMap: Strato d aLabelMaps,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("media_features")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope(" d a_features")
 
-  private[this] val requests =
-    scopedStatsReceiver
+  pr vate[t ] val requests =
+    scopedStatsRece ver
       .counter("requests")
 
-  private[this] val mediaSafetyLabelsStats =
-    scopedStatsReceiver
-      .scope(MediaSafetyLabels.name)
+  pr vate[t ] val  d aSafetyLabelsStats =
+    scopedStatsRece ver
+      .scope( d aSafetyLabels.na )
       .counter("requests")
 
-  private[this] val nonEmptyMediaStats = scopedStatsReceiver.scope("non_empty_media")
-  private[this] val nonEmptyMediaRequests = nonEmptyMediaStats.counter("requests")
-  private[this] val nonEmptyMediaKeysCount = nonEmptyMediaStats.counter("keys")
-  private[this] val nonEmptyMediaKeysLength = nonEmptyMediaStats.stat("keys_length")
+  pr vate[t ] val nonEmpty d aStats = scopedStatsRece ver.scope("non_empty_ d a")
+  pr vate[t ] val nonEmpty d aRequests = nonEmpty d aStats.counter("requests")
+  pr vate[t ] val nonEmpty d aKeysCount = nonEmpty d aStats.counter("keys")
+  pr vate[t ] val nonEmpty d aKeysLength = nonEmpty d aStats.stat("keys_length")
 
-  def forMediaKeys(
-    mediaKeys: Seq[GenericMediaKey],
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    nonEmptyMediaKeysCount.incr(mediaKeys.size)
-    mediaSafetyLabelsStats.incr()
+  def for d aKeys(
+     d aKeys: Seq[Gener c d aKey],
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    nonEmpty d aKeysCount. ncr( d aKeys.s ze)
+     d aSafetyLabelsStats. ncr()
 
-    if (mediaKeys.nonEmpty) {
-      nonEmptyMediaRequests.incr()
-      nonEmptyMediaKeysLength.add(mediaKeys.size)
+     f ( d aKeys.nonEmpty) {
+      nonEmpty d aRequests. ncr()
+      nonEmpty d aKeysLength.add( d aKeys.s ze)
     }
 
-    _.withFeature(MediaSafetyLabels, mediaSafetyLabelMap.forGenericMediaKeys(mediaKeys))
+    _.w hFeature( d aSafetyLabels,  d aSafetyLabelMap.forGener c d aKeys( d aKeys))
   }
 
-  def forGenericMediaKey(
-    genericMediaKey: GenericMediaKey
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    nonEmptyMediaKeysCount.incr()
-    mediaSafetyLabelsStats.incr()
-    nonEmptyMediaRequests.incr()
-    nonEmptyMediaKeysLength.add(1L)
+  def forGener c d aKey(
+    gener c d aKey: Gener c d aKey
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    nonEmpty d aKeysCount. ncr()
+     d aSafetyLabelsStats. ncr()
+    nonEmpty d aRequests. ncr()
+    nonEmpty d aKeysLength.add(1L)
 
-    _.withFeature(MediaSafetyLabels, mediaSafetyLabelMap.forGenericMediaKey(genericMediaKey))
+    _.w hFeature( d aSafetyLabels,  d aSafetyLabelMap.forGener c d aKey(gener c d aKey))
   }
 }
 
-class StratoMediaLabelMaps(source: MediaSafetyLabelMapSource) {
+class Strato d aLabelMaps(s ce:  d aSafetyLabelMapS ce) {
 
-  def forGenericMediaKeys(
-    mediaKeys: Seq[GenericMediaKey],
-  ): Stitch[Seq[MediaSafetyLabel]] = {
-    Stitch
+  def forGener c d aKeys(
+     d aKeys: Seq[Gener c d aKey],
+  ): St ch[Seq[ d aSafetyLabel]] = {
+    St ch
       .collect(
-        mediaKeys
-          .map(getFilteredSafetyLabels)
+         d aKeys
+          .map(getF lteredSafetyLabels)
       ).map(_.flatten)
   }
 
-  def forGenericMediaKey(
-    genericMediaKey: GenericMediaKey
-  ): Stitch[Seq[MediaSafetyLabel]] = {
-    getFilteredSafetyLabels(genericMediaKey)
+  def forGener c d aKey(
+    gener c d aKey: Gener c d aKey
+  ): St ch[Seq[ d aSafetyLabel]] = {
+    getF lteredSafetyLabels(gener c d aKey)
   }
 
-  private def getFilteredSafetyLabels(
-    genericMediaKey: GenericMediaKey,
-  ): Stitch[Seq[MediaSafetyLabel]] =
-    source
-      .fetch(genericMediaKey).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
+  pr vate def getF lteredSafetyLabels(
+    gener c d aKey: Gener c d aKey,
+  ): St ch[Seq[ d aSafetyLabel]] =
+    s ce
+      .fetch(gener c d aKey).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
         stratoSafetyLabelMap
           .map(label =>
-            MediaSafetyLabel(
-              MediaSafetyLabelType.fromThrift(label._1),
-              SafetyLabel.fromThrift(label._2)))
+             d aSafetyLabel(
+               d aSafetyLabelType.fromThr ft(label._1),
+              SafetyLabel.fromThr ft(label._2)))
       }).toSeq.flatten)
 }

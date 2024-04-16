@@ -1,13 +1,13 @@
-create_thrift_libraries(
-    base_name = "simclusters_v2-thrift",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "s mclusters_v2-thr ft",
+    s ces = ["*.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "src/thrift/com/twitter/algebird_internal",
+        "src/thr ft/com/tw ter/algeb rd_ nternal",
     ],
     export_roots = [
-        "src/thrift/com/twitter/algebird_internal:algebird_internal",
+        "src/thr ft/com/tw ter/algeb rd_ nternal:algeb rd_ nternal",
     ],
     generate_languages = [
         "go",
@@ -18,6 +18,6 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "simclusters_v2-thrift-java",
-    provides_scala_name = "simclusters_v2-thrift-scala",
+    prov des_java_na  = "s mclusters_v2-thr ft-java",
+    prov des_scala_na  = "s mclusters_v2-thr ft-scala",
 )

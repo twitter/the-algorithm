@@ -1,254 +1,254 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.seg nt.Seg ntDataProv der;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
+ mport com.tw ter.search.earlyb rd.ut l.OneTaskSc duledExecutorManager;
+ mport com.tw ter.search.earlyb rd.ut l.Per od cAct onParams;
+ mport com.tw ter.search.earlyb rd.ut l.ShutdownWa T  Params;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
 /**
- * PartitionManager is responsible for indexing data for a partition, including Tweets and Users.
+ * Part  onManager  s respons ble for  ndex ng data for a part  on,  nclud ng T ets and Users.
  */
-public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionManager.class);
+publ c abstract class Part  onManager extends OneTaskSc duledExecutorManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Part  onManager.class);
 
-  private static final SearchCounter IGNORED_EXCEPTIONS =
-      SearchCounter.export("partition_manager_ignored_exceptions");
+  pr vate stat c f nal SearchCounter  GNORED_EXCEPT ONS =
+      SearchCounter.export("part  on_manager_ gnored_except ons");
 
-  private static final String PARTITION_MANAGER_THREAD_NAME = "PartitionManager";
-  private static final boolean THREAD_IS_DAEMON = true;
-  protected static final String INDEX_CURRENT_SEGMENT = "indexing the current segment";
-  protected static final String SETUP_QUERY_CACHE = "setting up query cache";
+  pr vate stat c f nal Str ng PART T ON_MANAGER_THREAD_NAME = "Part  onManager";
+  pr vate stat c f nal boolean THREAD_ S_DAEMON = true;
+  protected stat c f nal Str ng  NDEX_CURRENT_SEGMENT = " ndex ng t  current seg nt";
+  protected stat c f nal Str ng SETUP_QUERY_CACHE = "sett ng up query cac ";
 
-  protected final SegmentManager segmentManager;
-  protected final QueryCacheManager queryCacheManager;
-  // Should be updated by info read from ZK
-  protected final DynamicPartitionConfig dynamicPartitionConfig;
+  protected f nal Seg ntManager seg ntManager;
+  protected f nal QueryCac Manager queryCac Manager;
+  // Should be updated by  nfo read from ZK
+  protected f nal Dynam cPart  onConf g dynam cPart  onConf g;
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
 
-  private boolean partitionManagerFirstLoop = true;
+  pr vate boolean part  onManagerF rstLoop = true;
 
-  public PartitionManager(QueryCacheManager queryCacheManager,
-                          SegmentManager segmentManager,
-                          DynamicPartitionConfig dynamicPartitionConfig,
-                          ScheduledExecutorServiceFactory executorServiceFactory,
-                          SearchIndexingMetricSet searchIndexingMetricSet,
-                          SearchStatsReceiver searchStatsReceiver,
-                          CriticalExceptionHandler criticalExceptionHandler) {
+  publ c Part  onManager(QueryCac Manager queryCac Manager,
+                          Seg ntManager seg ntManager,
+                          Dynam cPart  onConf g dynam cPart  onConf g,
+                          Sc duledExecutorServ ceFactory executorServ ceFactory,
+                          Search ndex ng tr cSet search ndex ng tr cSet,
+                          SearchStatsRece ver searchStatsRece ver,
+                          Cr  calExcept onHandler cr  calExcept onHandler) {
     super(
-        executorServiceFactory,
-        PARTITION_MANAGER_THREAD_NAME,
-        THREAD_IS_DAEMON,
-        PeriodicActionParams.withFixedDelay(
-          EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 500),
-          TimeUnit.MILLISECONDS),
-        ShutdownWaitTimeParams.indefinitely(),
-        searchStatsReceiver,
-        criticalExceptionHandler);
+        executorServ ceFactory,
+        PART T ON_MANAGER_THREAD_NAME,
+        THREAD_ S_DAEMON,
+        Per od cAct onParams.w hF xedDelay(
+          Earlyb rdConf g.get nt("t  _sl ce_roll_c ck_ nterval_ms", 500),
+          T  Un .M LL SECONDS),
+        ShutdownWa T  Params. ndef n ely(),
+        searchStatsRece ver,
+        cr  calExcept onHandler);
 
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    t .seg ntManager = seg ntManager;
+    t .queryCac Manager = queryCac Manager;
+    t .dynam cPart  onConf g = dynam cPart  onConf g;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
   }
 
   /**
-   * Runs the partition manager.
+   * Runs t  part  on manager.
    */
-  public final void runImpl() {
-    if (partitionManagerFirstLoop) {
+  publ c f nal vo d run mpl() {
+     f (part  onManagerF rstLoop) {
       try {
         testHookBeforeStartUp();
         startUp();
-        validateSegments();
-        segmentManager.logState("After startUp");
+        val dateSeg nts();
+        seg ntManager.logState("After startUp");
       } catch (Throwable t) {
-        criticalExceptionHandler.handle(this, t);
-        shutDownIndexing();
-        throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
+        cr  calExcept onHandler.handle(t , t);
+        shutDown ndex ng();
+        throw new Runt  Except on("Part  onManager unhandled except on, stopp ng sc duler", t);
       }
     }
 
     try {
       testHookAfterSleep();
-      indexingLoop(partitionManagerFirstLoop);
-    } catch (InterruptedException e) {
-      LOG.warn("PartitionManager thread interrupted, stoping scheduler", e);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager thread interrupted", e);
-    } catch (Exception e) {
-      LOG.error("Exception in indexing PartitionManager loop", e);
-      IGNORED_EXCEPTIONS.increment();
+       ndex ngLoop(part  onManagerF rstLoop);
+    } catch ( nterruptedExcept on e) {
+      LOG.warn("Part  onManager thread  nterrupted, stop ng sc duler", e);
+      shutDown ndex ng();
+      throw new Runt  Except on("Part  onManager thread  nterrupted", e);
+    } catch (Except on e) {
+      LOG.error("Except on  n  ndex ng Part  onManager loop", e);
+       GNORED_EXCEPT ONS. ncre nt();
     } catch (Throwable t) {
-      LOG.error("Unhandled exception in indexing PartitionManager loop", t);
-      criticalExceptionHandler.handle(this, t);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
-    } finally {
-      partitionManagerFirstLoop = false;
+      LOG.error("Unhandled except on  n  ndex ng Part  onManager loop", t);
+      cr  calExcept onHandler.handle(t , t);
+      shutDown ndex ng();
+      throw new Runt  Except on("Part  onManager unhandled except on, stopp ng sc duler", t);
+    } f nally {
+      part  onManagerF rstLoop = false;
     }
   }
 
   /**
-   * Returns the SegmentDataProvider instance that will be used to fetch the information for all
-   * segments.
+   * Returns t  Seg ntDataProv der  nstance that w ll be used to fetch t   nformat on for all
+   * seg nts.
    */
-  public abstract SegmentDataProvider getSegmentDataProvider();
+  publ c abstract Seg ntDataProv der getSeg ntDataProv der();
 
   /**
-   * Starts up this partition manager.
+   * Starts up t  part  on manager.
    */
-  protected abstract void startUp() throws Exception;
+  protected abstract vo d startUp() throws Except on;
 
   /**
-   * Runs one indexing iteration.
+   * Runs one  ndex ng  erat on.
    *
-   * @param firstLoop Determines if this is the first time the indexing loop is running.
+   * @param f rstLoop Determ nes  f t   s t  f rst t   t   ndex ng loop  s runn ng.
    */
-  protected abstract void indexingLoop(boolean firstLoop) throws Exception;
+  protected abstract vo d  ndex ngLoop(boolean f rstLoop) throws Except on;
 
   /**
-   * Shuts down all indexing.
+   * Shuts down all  ndex ng.
    */
-  protected abstract void shutDownIndexing();
+  protected abstract vo d shutDown ndex ng();
 
-  @Override
-  public void shutdownComponent() {
-    shutDownIndexing();
+  @Overr de
+  publ c vo d shutdownComponent() {
+    shutDown ndex ng();
   }
 
   /**
-   * Notifies all other threads that the partition manager has become current (ie. has indexed all
-   * available events).
+   * Not f es all ot r threads that t  part  on manager has beco  current ( e. has  ndexed all
+   * ava lable events).
    */
-  public void becomeCurrent() {
-    LOG.info("PartitionManager became current");
-    if (EarlybirdStatus.isStarting()) {
-      EarlybirdStatus.setStatus(EarlybirdStatusCode.CURRENT);
+  publ c vo d beco Current() {
+    LOG. nfo("Part  onManager beca  current");
+     f (Earlyb rdStatus. sStart ng()) {
+      Earlyb rdStatus.setStatus(Earlyb rdStatusCode.CURRENT);
     } else {
-      LOG.warn("Could not set statusCode to CURRENT from " + EarlybirdStatus.getStatusCode());
+      LOG.warn("Could not set statusCode to CURRENT from " + Earlyb rdStatus.getStatusCode());
     }
 
-    // Now that we're done starting up, set the query cache thread pool size to one.
-    queryCacheManager.setWorkerPoolSizeAfterStartup();
+    // Now that  're done start ng up, set t  query cac  thread pool s ze to one.
+    queryCac Manager.setWorkerPoolS zeAfterStartup();
   }
 
-  protected void setupQueryCacheIfNeeded() throws QueryParserException {
-    queryCacheManager.setupTasksIfNeeded(segmentManager);
+  protected vo d setupQueryCac  fNeeded() throws QueryParserExcept on {
+    queryCac Manager.setupTasks fNeeded(seg ntManager);
   }
 
-  // Only for tests, used for testing exception handling
-  private static TestHook testHookBeforeStartUp;
-  private static TestHook testHookAfterSleep;
+  // Only for tests, used for test ng except on handl ng
+  pr vate stat c TestHook testHookBeforeStartUp;
+  pr vate stat c TestHook testHookAfterSleep;
 
-  private static void testHookBeforeStartUp() throws Exception {
-    if (Config.environmentIsTest() && testHookBeforeStartUp != null) {
+  pr vate stat c vo d testHookBeforeStartUp() throws Except on {
+     f (Conf g.env ron nt sTest() && testHookBeforeStartUp != null) {
       testHookBeforeStartUp.run();
     }
   }
 
-  private static void testHookAfterSleep() throws Exception {
-    if (Config.environmentIsTest() && testHookAfterSleep != null) {
+  pr vate stat c vo d testHookAfterSleep() throws Except on {
+     f (Conf g.env ron nt sTest() && testHookAfterSleep != null) {
       testHookAfterSleep.run();
     }
   }
 
-  @Override
-  protected void runOneIteration() {
+  @Overr de
+  protected vo d runOne erat on() {
     try {
-      runImpl();
+      run mpl();
     } catch (Throwable t) {
-      LOG.error("Unhandled exception in PartitionManager loop", t);
-      throw new RuntimeException(t.getMessage());
+      LOG.error("Unhandled except on  n Part  onManager loop", t);
+      throw new Runt  Except on(t.get ssage());
     }
   }
 
-  public SearchIndexingMetricSet getSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  publ c Search ndex ng tr cSet getSearch ndex ng tr cSet() {
+    return search ndex ng tr cSet;
   }
 
   /**
-   * Allows tests to run code before the partition manager starts up.
+   * Allows tests to run code before t  part  on manager starts up.
    *
-   * @param testHook The code to run before the start up.
+   * @param testHook T  code to run before t  start up.
    */
-  @VisibleForTesting
-  public static void setTestHookBeforeStartUp(TestHook testHook) {
-    if (Config.environmentIsTest()) {
+  @V s bleForTest ng
+  publ c stat c vo d setTestHookBeforeStartUp(TestHook testHook) {
+     f (Conf g.env ron nt sTest()) {
       testHookBeforeStartUp = testHook;
     } else {
-      throw new RuntimeException("Trying to set startup test hook in non-test code!!");
+      throw new Runt  Except on("Try ng to set startup test hook  n non-test code!!");
     }
   }
 
   /**
-   * Allows tests to run code before the indexing loop.
+   * Allows tests to run code before t   ndex ng loop.
    *
-   * @param testHook The code to run before the indexing loop.
+   * @param testHook T  code to run before t   ndex ng loop.
    */
-  @VisibleForTesting
-  public static void setTestHookAfterSleep(TestHook testHook) {
-    if (Config.environmentIsTest()) {
+  @V s bleForTest ng
+  publ c stat c vo d setTestHookAfterSleep(TestHook testHook) {
+     f (Conf g.env ron nt sTest()) {
       testHookAfterSleep = testHook;
     } else {
-      throw new RuntimeException("Trying to set test hook in non-test code!!");
+      throw new Runt  Except on("Try ng to set test hook  n non-test code!!");
     }
   }
 
   /**
-   * An interface that allows tests to run code at various points in the PartitionManager's
+   * An  nterface that allows tests to run code at var ous po nts  n t  Part  onManager's
    * lyfecycle.
    */
-  @VisibleForTesting
-  public interface TestHook {
+  @V s bleForTest ng
+  publ c  nterface TestHook {
     /**
-     * Defines the code that should be run.
+     * Def nes t  code that should be run.
      */
-    void run() throws Exception;
+    vo d run() throws Except on;
   }
 
   /**
-   * Allows tests to determine if this partition manager is all caught up.
+   * Allows tests to determ ne  f t  part  on manager  s all caught up.
    *
-   * @return {@code true} if this partition manager is caught up, {@code false} otherwise.
+   * @return {@code true}  f t  part  on manager  s caught up, {@code false} ot rw se.
    */
-  @VisibleForTesting
-  public abstract boolean isCaughtUpForTests();
+  @V s bleForTest ng
+  publ c abstract boolean  sCaughtUpForTests();
 
-  @VisibleForTesting
-  protected void validateSegments() throws EarlybirdStartupException {
-    // This is necessary because many tests rely on starting partition manager but not indexing any
-    // tweets. However, we do not want Earlybirds to start in production if they are not serving any
-    // tweets. (SEARCH-24238)
-    if (Config.environmentIsTest()) {
+  @V s bleForTest ng
+  protected vo d val dateSeg nts() throws Earlyb rdStartupExcept on {
+    // T   s necessary because many tests rely on start ng part  on manager but not  ndex ng any
+    // t ets. Ho ver,   do not want Earlyb rds to start  n product on  f t y are not serv ng any
+    // t ets. (SEARCH-24238)
+     f (Conf g.env ron nt sTest()) {
       return;
     }
-    validateSegmentsForNonTest();
+    val dateSeg ntsForNonTest();
   }
 
-  @VisibleForTesting
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // Subclasses can override this and provide additional checks.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+  @V s bleForTest ng
+  protected vo d val dateSeg ntsForNonTest() throws Earlyb rdStartupExcept on {
+    // Subclasses can overr de t  and prov de add  onal c cks.
+     f (seg ntManager.getNum ndexedDocu nts() == 0) {
+      throw new Earlyb rdStartupExcept on("Earlyb rd has zero  ndexed docu nts.");
     }
   }
 }

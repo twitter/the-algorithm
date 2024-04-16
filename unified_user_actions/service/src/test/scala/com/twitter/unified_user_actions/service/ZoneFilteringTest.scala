@@ -1,46 +1,46 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.twitter.inject.Test
-import com.twitter.kafka.client.headers.ATLA
-import com.twitter.kafka.client.headers.Implicits._
-import com.twitter.kafka.client.headers.PDXA
-import com.twitter.kafka.client.headers.Zone
-import com.twitter.unified_user_actions.service.module.ZoneFiltering
-import com.twitter.util.mock.Mockito
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.junit.runner.RunWith
-import org.scalatestplus.junit.JUnitRunner
-import org.scalatest.prop.TableDrivenPropertyChecks
+ mport com.tw ter. nject.Test
+ mport com.tw ter.kafka.cl ent. aders.ATLA
+ mport com.tw ter.kafka.cl ent. aders. mpl c s._
+ mport com.tw ter.kafka.cl ent. aders.PDXA
+ mport com.tw ter.kafka.cl ent. aders.Zone
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.ZoneF lter ng
+ mport com.tw ter.ut l.mock.Mock o
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord
+ mport org.jun .runner.RunW h
+ mport org.scalatestplus.jun .JUn Runner
+ mport org.scalatest.prop.TableDr venPropertyC cks
 
-@RunWith(classOf[JUnitRunner])
-class ZoneFilteringTest extends Test with Mockito with TableDrivenPropertyChecks {
-  trait Fixture {
-    val consumerRecord =
-      new ConsumerRecord[Array[Byte], Array[Byte]]("topic", 0, 0l, Array(0), Array(0))
+@RunW h(classOf[JUn Runner])
+class ZoneF lter ngTest extends Test w h Mock o w h TableDr venPropertyC cks {
+  tra  F xture {
+    val consu rRecord =
+      new Consu rRecord[Array[Byte], Array[Byte]]("top c", 0, 0l, Array(0), Array(0))
   }
 
-  test("two DCs filter") {
+  test("two DCs f lter") {
     val zones = Table(
       "zone",
-      Some(ATLA),
-      Some(PDXA),
+      So (ATLA),
+      So (PDXA),
       None
     )
-    forEvery(zones) { localZoneOpt: Option[Zone] =>
-      forEvery(zones) { headerZoneOpt: Option[Zone] =>
+    forEvery(zones) { localZoneOpt: Opt on[Zone] =>
+      forEvery(zones) {  aderZoneOpt: Opt on[Zone] =>
         localZoneOpt.foreach { localZone =>
-          new Fixture {
-            headerZoneOpt match {
-              case Some(headerZone) =>
-                consumerRecord.headers().setZone(headerZone)
-                if (headerZone == ATLA && localZone == ATLA)
-                  ZoneFiltering.localDCFiltering(consumerRecord, localZone) shouldBe true
-                else if (headerZone == PDXA && localZone == PDXA)
-                  ZoneFiltering.localDCFiltering(consumerRecord, localZone) shouldBe true
+          new F xture {
+             aderZoneOpt match {
+              case So ( aderZone) =>
+                consu rRecord. aders().setZone( aderZone)
+                 f ( aderZone == ATLA && localZone == ATLA)
+                  ZoneF lter ng.localDCF lter ng(consu rRecord, localZone) shouldBe true
+                else  f ( aderZone == PDXA && localZone == PDXA)
+                  ZoneF lter ng.localDCF lter ng(consu rRecord, localZone) shouldBe true
                 else
-                  ZoneFiltering.localDCFiltering(consumerRecord, localZone) shouldBe false
+                  ZoneF lter ng.localDCF lter ng(consu rRecord, localZone) shouldBe false
               case _ =>
-                ZoneFiltering.localDCFiltering(consumerRecord, localZone) shouldBe true
+                ZoneF lter ng.localDCF lter ng(consu rRecord, localZone) shouldBe true
             }
           }
         }

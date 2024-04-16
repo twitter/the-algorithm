@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.feature.datarecord
+package com.tw ter.product_m xer.core.feature.datarecord
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.feature.Feature
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.core.feature.Feature
 
 /**
- * A DataRecord supported feature mixin for enabling conversions from Product Mixer Features
- * to DataRecords. When using Feature Store features, this is pre-configured for the customer
- * under the hood. For non-Feature Store features, customers must mix in either [[DataRecordFeature]]
- * for required features, or [[DataRecordOptionalFeature]] for optional features, as well as mixing
- * in a corresponding [[DataRecordCompatible]] for their feature type.
- * @tparam Entity The type of entity that this feature works with. This could be a User, Tweet,
+ * A DataRecord supported feature m x n for enabl ng convers ons from Product M xer Features
+ * to DataRecords. W n us ng Feature Store features, t   s pre-conf gured for t  custo r
+ * under t  hood. For non-Feature Store features, custo rs must m x  n e  r [[DataRecordFeature]]
+ * for requ red features, or [[DataRecordOpt onalFeature]] for opt onal features, as  ll as m x ng
+ *  n a correspond ng [[DataRecordCompat ble]] for t  r feature type.
+ * @tparam Ent y T  type of ent y that t  feature works w h. T  could be a User, T et,
  *                Query, etc.
- * @tparam Value The type of the value of this feature.
+ * @tparam Value T  type of t  value of t  feature.
  */
-sealed trait BaseDataRecordFeature[-Entity, Value] extends Feature[Entity, Value]
+sealed tra  BaseDataRecordFeature[-Ent y, Value] extends Feature[Ent y, Value]
 
-private[product_mixer] abstract class FeatureStoreDataRecordFeature[-Entity, Value]
-    extends BaseDataRecordFeature[Entity, Value]
+pr vate[product_m xer] abstract class FeatureStoreDataRecordFeature[-Ent y, Value]
+    extends BaseDataRecordFeature[Ent y, Value]
 
 /**
- * Feature in a DataRecord for a required feature value; the corresponding feature will always be
- * available in the built DataRecord.
+ * Feature  n a DataRecord for a requ red feature value; t  correspond ng feature w ll always be
+ * ava lable  n t  bu lt DataRecord.
  */
-trait DataRecordFeature[-Entity, Value] extends BaseDataRecordFeature[Entity, Value] {
-  self: DataRecordCompatible[Value] =>
+tra  DataRecordFeature[-Ent y, Value] extends BaseDataRecordFeature[Ent y, Value] {
+  self: DataRecordCompat ble[Value] =>
 }
 
 /**
- * Feature in a DataRecord for an optional feature value; the corresponding feature will only
- * ever be set in a DataRecord if the value in the feature map is defined (Some(V)).
+ * Feature  n a DataRecord for an opt onal feature value; t  correspond ng feature w ll only
+ * ever be set  n a DataRecord  f t  value  n t  feature map  s def ned (So (V)).
  */
-trait DataRecordOptionalFeature[-Entity, Value]
-    extends BaseDataRecordFeature[Entity, Option[Value]] {
-  self: DataRecordCompatible[Value] =>
+tra  DataRecordOpt onalFeature[-Ent y, Value]
+    extends BaseDataRecordFeature[Ent y, Opt on[Value]] {
+  self: DataRecordCompat ble[Value] =>
 }
 
 /**
- * An entire DataRecord as a feature. This is useful when there is an existing DataRecord that
- * should be used as a whole instead of as individual [[DataRecordFeature]]s for example.
+ * An ent re DataRecord as a feature. T   s useful w n t re  s an ex st ng DataRecord that
+ * should be used as a whole  nstead of as  nd v dual [[DataRecordFeature]]s for example.
  */
-trait DataRecordInAFeature[-Entity] extends BaseDataRecordFeature[Entity, DataRecord]
+tra  DataRecord nAFeature[-Ent y] extends BaseDataRecordFeature[Ent y, DataRecord]

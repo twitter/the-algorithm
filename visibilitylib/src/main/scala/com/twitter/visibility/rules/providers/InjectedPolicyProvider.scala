@@ -1,27 +1,27 @@
-package com.twitter.visibility.rules.providers
+package com.tw ter.v s b l y.rules.prov ders
 
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.MixedVisibilityPolicy
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.generators.TweetRuleGenerator
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.M xedV s b l yPol cy
+ mport com.tw ter.v s b l y.rules.RuleBase
+ mport com.tw ter.v s b l y.rules.generators.T etRuleGenerator
 
-class InjectedPolicyProvider(
-  visibilityDeciderGates: VisibilityDeciderGates,
-  tweetRuleGenerator: TweetRuleGenerator)
-    extends PolicyProvider {
+class  njectedPol cyProv der(
+  v s b l yDec derGates: V s b l yDec derGates,
+  t etRuleGenerator: T etRuleGenerator)
+    extends Pol cyProv der {
 
-  private[rules] val policiesForSurface: Map[SafetyLevel, MixedVisibilityPolicy] =
+  pr vate[rules] val pol c esForSurface: Map[SafetyLevel, M xedV s b l yPol cy] =
     RuleBase.RuleMap.map {
-      case (safetyLevel, policy) =>
+      case (safetyLevel, pol cy) =>
         (
           safetyLevel,
-          MixedVisibilityPolicy(
-            originalPolicy = policy,
-            additionalTweetRules = tweetRuleGenerator.rulesForSurface(safetyLevel)))
+          M xedV s b l yPol cy(
+            or g nalPol cy = pol cy,
+            add  onalT etRules = t etRuleGenerator.rulesForSurface(safetyLevel)))
     }
 
-  override def policyForSurface(safetyLevel: SafetyLevel): MixedVisibilityPolicy = {
-    policiesForSurface(safetyLevel)
+  overr de def pol cyForSurface(safetyLevel: SafetyLevel): M xedV s b l yPol cy = {
+    pol c esForSurface(safetyLevel)
   }
 }

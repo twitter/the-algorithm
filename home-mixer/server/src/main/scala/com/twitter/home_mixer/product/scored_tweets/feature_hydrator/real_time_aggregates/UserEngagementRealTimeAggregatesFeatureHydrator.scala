@@ -1,56 +1,56 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserEngage ntCac 
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.cac .ReadCac 
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  .T  l nesOnl neAggregat onFeaturesOnlyConf g._
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object UserEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object UserEngage ntRealT  AggregateFeature
+    extends DataRecord nAFeature[P pel neQuery]
+    w h FeatureW hDefaultOnFa lure[P pel neQuery, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class UserEngagementRealTimeAggregatesFeatureHydrator @Inject() (
-  @Named(UserEngagementCache) override val client: ReadCache[Long, DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateQueryFeatureHydrator[Long] {
+@S ngleton
+class UserEngage ntRealT  AggregatesFeatureHydrator @ nject() (
+  @Na d(UserEngage ntCac ) overr de val cl ent: ReadCac [Long, DataRecord],
+  overr de val statsRece ver: StatsRece ver)
+    extends BaseRealT  AggregateQueryFeatureHydrator[Long] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserEngagementRealTimeAggregates")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("UserEngage ntRealT  Aggregates")
 
-  override val outputFeature: DataRecordInAFeature[PipelineQuery] =
-    UserEngagementRealTimeAggregateFeature
+  overr de val outputFeature: DataRecord nAFeature[P pel neQuery] =
+    UserEngage ntRealT  AggregateFeature
 
   val aggregateGroups: Seq[AggregateGroup] = Seq(
-    userEngagementRealTimeAggregatesProd,
-    userShareEngagementsRealTimeAggregates,
-    userBCEDwellEngagementsRealTimeAggregates,
-    userEngagement48HourRealTimeAggregatesProd,
-    userNegativeEngagementAuthorUserState72HourRealTimeAggregates,
-    userNegativeEngagementAuthorUserStateRealTimeAggregates,
-    userProfileEngagementRealTimeAggregates,
+    userEngage ntRealT  AggregatesProd,
+    userShareEngage ntsRealT  Aggregates,
+    userBCED llEngage ntsRealT  Aggregates,
+    userEngage nt48H RealT  AggregatesProd,
+    userNegat veEngage ntAuthorUserState72H RealT  Aggregates,
+    userNegat veEngage ntAuthorUserStateRealT  Aggregates,
+    userProf leEngage ntRealT  Aggregates,
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    userShareEngagementsRealTimeAggregates -> "user.timelines.user_share_engagements_real_time_aggregates.",
-    userBCEDwellEngagementsRealTimeAggregates -> "user.timelines.user_bce_dwell_engagements_real_time_aggregates.",
-    userEngagement48HourRealTimeAggregatesProd -> "user.timelines.user_engagement_48_hour_real_time_aggregates.",
-    userNegativeEngagementAuthorUserState72HourRealTimeAggregates -> "user.timelines.user_negative_engagement_author_user_state_72_hour_real_time_aggregates.",
-    userProfileEngagementRealTimeAggregates -> "user.timelines.user_profile_engagement_real_time_aggregates."
+  overr de val aggregateGroupToPref x: Map[AggregateGroup, Str ng] = Map(
+    userShareEngage ntsRealT  Aggregates -> "user.t  l nes.user_share_engage nts_real_t  _aggregates.",
+    userBCED llEngage ntsRealT  Aggregates -> "user.t  l nes.user_bce_d ll_engage nts_real_t  _aggregates.",
+    userEngage nt48H RealT  AggregatesProd -> "user.t  l nes.user_engage nt_48_h _real_t  _aggregates.",
+    userNegat veEngage ntAuthorUserState72H RealT  Aggregates -> "user.t  l nes.user_negat ve_engage nt_author_user_state_72_h _real_t  _aggregates.",
+    userProf leEngage ntRealT  Aggregates -> "user.t  l nes.user_prof le_engage nt_real_t  _aggregates."
   )
 
-  override def keysFromQueryAndCandidates(query: PipelineQuery): Option[Long] = {
-    Some(query.getRequiredUserId)
+  overr de def keysFromQueryAndCand dates(query: P pel neQuery): Opt on[Long] = {
+    So (query.getRequ redUser d)
   }
 }

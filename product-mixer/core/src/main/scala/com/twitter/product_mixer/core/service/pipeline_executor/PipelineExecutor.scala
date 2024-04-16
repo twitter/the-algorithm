@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.core.service.pipeline_executor
+package com.tw ter.product_m xer.core.serv ce.p pel ne_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.InvalidPipelineSelected
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. nval dP pel neSelected
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * PipelineExecutor executes a single pipeline (of any type)
- * It does not currently support fail open/closed policies like CandidatePipelineExecutor does
- * In the future, maybe they can be merged.
+ * P pel neExecutor executes a s ngle p pel ne (of any type)
+ *   does not currently support fa l open/closed pol c es l ke Cand dateP pel neExecutor does
+ *  n t  future, maybe t y can be  rged.
  */
 
-case class PipelineExecutorRequest[Query](query: Query, pipelineIdentifier: ComponentIdentifier)
+case class P pel neExecutorRequest[Query](query: Query, p pel ne dent f er: Component dent f er)
 
-@Singleton
-class PipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class P pel neExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor
-    with Logging {
+    w h Logg ng {
 
   def arrow[Query, ResultType](
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, ResultType]],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
+    p pel neBy dent f er: Map[Component dent f er, P pel ne[Query, ResultType]],
+    qual yFactorObserverByP pel ne: Map[Component dent f er, Qual yFactorObserver],
     context: Executor.Context
-  ): Arrow[PipelineExecutorRequest[Query], PipelineExecutorResult[ResultType]] = {
+  ): Arrow[P pel neExecutorRequest[Query], P pel neExecutorResult[ResultType]] = {
 
-    val wrappedPipelineArrowsByIdentifier = pipelineByIdentifier.mapValues { pipeline =>
-      wrapPipelineWithExecutorBookkeeping(
+    val wrappedP pel neArrowsBy dent f er = p pel neBy dent f er.mapValues { p pel ne =>
+      wrapP pel neW hExecutorBookkeep ng(
         context,
-        pipeline.identifier,
-        qualityFactorObserverByPipeline.get(pipeline.identifier))(pipeline.arrow)
+        p pel ne. dent f er,
+        qual yFactorObserverByP pel ne.get(p pel ne. dent f er))(p pel ne.arrow)
     }
 
-    val appliedPipelineArrow = Arrow
-      .identity[PipelineExecutorRequest[Query]]
+    val appl edP pel neArrow = Arrow
+      . dent y[P pel neExecutorRequest[Query]]
       .map {
-        case PipelineExecutorRequest(query, pipelineIdentifier) =>
-          val pipeline = wrappedPipelineArrowsByIdentifier.getOrElse(
-            pipelineIdentifier,
-            // throwing instead of returning a `Throw(_)` and then `.lowerFromTry` because this is an exceptional case and we want to emphasize that by explicitly throwing
-            // this case should never happen since this is checked in the `PipelineSelectorExecutor` but we check it anyway
-            throw PipelineFailure(
-              InvalidPipelineSelected,
-              s"${context.componentStack.peek} attempted to execute $pipelineIdentifier",
-              // the `componentStack` includes the missing pipeline so it can show up in metrics easier
-              componentStack = Some(context.componentStack.push(pipelineIdentifier))
+        case P pel neExecutorRequest(query, p pel ne dent f er) =>
+          val p pel ne = wrappedP pel neArrowsBy dent f er.getOrElse(
+            p pel ne dent f er,
+            // throw ng  nstead of return ng a `Throw(_)` and t n `.lo rFromTry` because t   s an except onal case and   want to emphas ze that by expl c ly throw ng
+            // t  case should never happen s nce t   s c cked  n t  `P pel neSelectorExecutor` but   c ck   anyway
+            throw P pel neFa lure(
+               nval dP pel neSelected,
+              s"${context.componentStack.peek} attempted to execute $p pel ne dent f er",
+              // t  `componentStack`  ncludes t  m ss ng p pel ne so   can show up  n  tr cs eas er
+              componentStack = So (context.componentStack.push(p pel ne dent f er))
             )
           )
-          (pipeline, query)
+          (p pel ne, query)
       }
-      // less efficient than an `andThen` but since we dispatch this dynamically we need to use either `applyArrow` or `flatMap` and this is the better of those options
+      // less eff c ent than an `andT n` but s nce   d spatch t  dynam cally   need to use e  r `applyArrow` or `flatMap` and t   s t  better of those opt ons
       .applyArrow
-      .map(PipelineExecutorResult(_))
+      .map(P pel neExecutorResult(_))
 
-    // no additional error handling needed since we populate the component stack above already
-    appliedPipelineArrow
+    // no add  onal error handl ng needed s nce   populate t  component stack above already
+    appl edP pel neArrow
   }
 }

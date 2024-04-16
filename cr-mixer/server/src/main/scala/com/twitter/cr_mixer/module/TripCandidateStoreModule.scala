@@ -1,34 +1,34 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pT et
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pT ets
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pDoma n
+ mport javax. nject.Na d
 
-object TripCandidateStoreModule extends TwitterModule {
-  private val stratoColumn = "trends/trip/tripTweetsDataflowProd"
+object Tr pCand dateStoreModule extends Tw terModule {
+  pr vate val stratoColumn = "trends/tr p/tr pT etsDataflowProd"
 
-  @Provides
-  @Named(ModuleNames.TripCandidateStore)
-  def providesSimClustersTripCandidateStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient
-  ): ReadableStore[TripDomain, Seq[TripTweet]] = {
-    val tripCandidateStratoFetchableStore =
+  @Prov des
+  @Na d(ModuleNa s.Tr pCand dateStore)
+  def prov desS mClustersTr pCand dateStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent
+  ): ReadableStore[Tr pDoma n, Seq[Tr pT et]] = {
+    val tr pCand dateStratoFetchableStore =
       StratoFetchableStore
-        .withUnitView[TripDomain, TripTweets](stratoClient, stratoColumn)
-        .mapValues(_.tweets)
+        .w hUn V ew[Tr pDoma n, Tr pT ets](stratoCl ent, stratoColumn)
+        .mapValues(_.t ets)
 
     ObservedReadableStore(
-      tripCandidateStratoFetchableStore
-    )(statsReceiver.scope("simclusters_trip_candidate_store"))
+      tr pCand dateStratoFetchableStore
+    )(statsRece ver.scope("s mclusters_tr p_cand date_store"))
   }
 }

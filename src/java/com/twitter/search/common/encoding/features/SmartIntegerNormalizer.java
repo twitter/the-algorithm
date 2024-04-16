@@ -1,150 +1,150 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * A smart integer normalizer that converts an integer of a known range to a small integer up to
- * 8 bits long. This normalizer generates a boundary value array in the constructor as the buckets
- * for different values.
+ * A smart  nteger normal zer that converts an  nteger of a known range to a small  nteger up to
+ * 8 b s long. T  normal zer generates a boundary value array  n t  constructor as t  buckets
+ * for d fferent values.
  * <p/>
- * The normalized value has a nice properties:
- * 1) it maintains the order of original value: if a > b, then normalize(a) > normalize(b).
- * 2) the value 0 is always normalized to byte 0.
- * 3) the normalized values are (almost) evenly distributed on the log scale
- * 4) no waste in code space, all possible values representable by normalized bits are used,
- * each corresponding to a different value.
+ * T  normal zed value has a n ce propert es:
+ * 1)   ma nta ns t  order of or g nal value:  f a > b, t n normal ze(a) > normal ze(b).
+ * 2) t  value 0  s always normal zed to byte 0.
+ * 3) t  normal zed values are (almost) evenly d str buted on t  log scale
+ * 4) no waste  n code space, all poss ble values representable by normal zed b s are used,
+ * each correspond ng to a d fferent value.
  */
-public class SmartIntegerNormalizer extends ByteNormalizer {
-  // The max value we want to support in this normalizer. If the input is larger than this value,
-  // it's normalized as if it's the maxValue.
-  private final int maxValue;
-  // Number of bits used for normalized value, the largest normalized value
-  // would be (1 << numBits) - 1.
-  private final int numBits;
-  // The inclusive lower bounds of all buckets. A normalized value k corresponds to original values
-  // in the inclusive-exclusive range
+publ c class Smart ntegerNormal zer extends ByteNormal zer {
+  // T  max value   want to support  n t  normal zer.  f t   nput  s larger than t  value,
+  //  's normal zed as  f  's t  maxValue.
+  pr vate f nal  nt maxValue;
+  // Number of b s used for normal zed value, t  largest normal zed value
+  // would be (1 << numB s) - 1.
+  pr vate f nal  nt numB s;
+  // T   nclus ve lo r bounds of all buckets. A normal zed value k corresponds to or g nal values
+  //  n t   nclus ve-exclus ve range
   //   [ boundaryValues[k], boundaryValues[k+1] )
-  private final int[] boundaryValues;
-  // The length of the boundaryValues array, or the number of buckets.
-  private final int length;
+  pr vate f nal  nt[] boundaryValues;
+  // T  length of t  boundaryValues array, or t  number of buckets.
+  pr vate f nal  nt length;
 
   /**
-   * Construct a normalizer.
+   * Construct a normal zer.
    *
-   * @param maxValue max value it supports, must be larger than minValue. Anything larger than this
+   * @param maxValue max value   supports, must be larger than m nValue. Anyth ng larger than t 
    * would be treated as maxValue.
-   * @param numBits number of bits you want to use for this normalization, between 1 and 8.
-   * higher resolution for the lower numbers.
+   * @param numB s number of b s   want to use for t  normal zat on, bet en 1 and 8.
+   * h g r resolut on for t  lo r numbers.
    */
-  public SmartIntegerNormalizer(int maxValue, int numBits) {
-    Preconditions.checkArgument(maxValue > 0);
-    Preconditions.checkArgument(numBits > 0 && numBits <= 8);
+  publ c Smart ntegerNormal zer( nt maxValue,  nt numB s) {
+    Precond  ons.c ckArgu nt(maxValue > 0);
+    Precond  ons.c ckArgu nt(numB s > 0 && numB s <= 8);
 
-    this.maxValue = maxValue;
-    this.numBits = numBits;
+    t .maxValue = maxValue;
+    t .numB s = numB s;
 
-    this.length = 1 << numBits;
-    this.boundaryValues = new int[length];
+    t .length = 1 << numB s;
+    t .boundaryValues = new  nt[length];
 
 
-    int index;
-    for (index = length - 1; index >= 0; --index) {
-      // values are evenly distributed on the log scale
-      int boundary = (int) Math.pow(maxValue, (double) index / length);
-      // we have more byte slots left than we have possible boundary values (buckets),
-      // just give consecutive boundary values to all remaining slots, starting from 0.
-      if (boundary <= index) {
+     nt  ndex;
+    for ( ndex = length - 1;  ndex >= 0; -- ndex) {
+      // values are evenly d str buted on t  log scale
+       nt boundary = ( nt) Math.pow(maxValue, (double)  ndex / length);
+      //   have more byte slots left than   have poss ble boundary values (buckets),
+      // just g ve consecut ve boundary values to all rema n ng slots, start ng from 0.
+       f (boundary <=  ndex) {
         break;
       }
-      boundaryValues[index] = boundary;
+      boundaryValues[ ndex] = boundary;
     }
-    if (index >= 0) {
-      for (int i = 1; i <= index; ++i) {
-        boundaryValues[i] = i;
+     f ( ndex >= 0) {
+      for ( nt   = 1;   <=  ndex; ++ ) {
+        boundaryValues[ ] =  ;
       }
     }
-    boundaryValues[0] = 0;  // the first one is always 0.
+    boundaryValues[0] = 0;  // t  f rst one  s always 0.
   }
 
-  @Override
-  public byte normalize(double val) {
-    int intVal = (int) (val > maxValue ? maxValue : val);
-    return intToUnsignedByte(binarySearch(intVal, boundaryValues));
-  }
-
-  /**
-   * Return the lower bound of the bucket represent by norm. This simply returns the boundary
-   * value indexed by current norm.
-   */
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return boundaryValues[unsignedByteToInt(norm)];
+  @Overr de
+  publ c byte normal ze(double val) {
+     nt  ntVal = ( nt) (val > maxValue ? maxValue : val);
+    return  ntToUns gnedByte(b narySearch( ntVal, boundaryValues));
   }
 
   /**
-   * Return the upper bound of the bucket represent by norm. This returns the next boundary value
-   * minus 1. If norm represents the last bucket, it returns the maxValue.
+   * Return t  lo r bound of t  bucket represent by norm. T  s mply returns t  boundary
+   * value  ndexed by current norm.
    */
-  @Override
-  public double unnormUpperBound(byte norm) {
-    // if it's already the last possible normalized value, just return the corresponding last
+  @Overr de
+  publ c double unnormLo rBound(byte norm) {
+    return boundaryValues[uns gnedByteTo nt(norm)];
+  }
+
+  /**
+   * Return t  upper bound of t  bucket represent by norm. T  returns t  next boundary value
+   * m nus 1.  f norm represents t  last bucket,   returns t  maxValue.
+   */
+  @Overr de
+  publ c double unnormUpperBound(byte norm) {
+    //  f  's already t  last poss ble normal zed value, just return t  correspond ng last
     // boundary value.
-    int intNorm = unsignedByteToInt(norm);
-    if (intNorm == length - 1) {
+     nt  ntNorm = uns gnedByteTo nt(norm);
+     f ( ntNorm == length - 1) {
       return maxValue;
     }
-    return boundaryValues[intNorm + 1] - 1;
+    return boundaryValues[ ntNorm + 1] - 1;
   }
 
   /**
-   * Do a binary search on array and find the index of the item that's no bigger than value.
+   * Do a b nary search on array and f nd t   ndex of t   em that's no b gger than value.
    */
-  private static int binarySearch(int value, int[] array) {
+  pr vate stat c  nt b narySearch( nt value,  nt[] array) {
     // corner cases
-    if (value <= array[0]) {
+     f (value <= array[0]) {
       return 0;
-    } else if (value >= array[array.length - 1]) {
+    } else  f (value >= array[array.length - 1]) {
       return array.length - 1;
     }
-    int left = 0;
-    int right = array.length - 1;
-    int pivot = (left + right) >> 1;
+     nt left = 0;
+     nt r ght = array.length - 1;
+     nt p vot = (left + r ght) >> 1;
     do {
-      int midVal = array[pivot];
-      if (value == midVal) {
+       nt m dVal = array[p vot];
+       f (value == m dVal) {
         break;
-      } else if (value > midVal) {
-        left = pivot;
+      } else  f (value > m dVal) {
+        left = p vot;
       } else {
-        right = pivot;
+        r ght = p vot;
       }
-      pivot = (left + right) >> 1;
-    } while (pivot != left);
-    return pivot;
+      p vot = (left + r ght) >> 1;
+    } wh le (p vot != left);
+    return p vot;
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder(String.format(
-        "Smart Integer Normalizer (numBits = %d, max = %d)\n",
-        this.numBits, this.maxValue));
-    for (int i = 0; i < this.length; i++) {
-      sb.append(String.format(
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder sb = new Str ngBu lder(Str ng.format(
+        "Smart  nteger Normal zer (numB s = %d, max = %d)\n",
+        t .numB s, t .maxValue));
+    for ( nt   = 0;   < t .length;  ++) {
+      sb.append(Str ng.format(
           "[%2d] boundary = %6d, range [ %6d, %6d ), norm: %4d | %4d | %4d %s\n",
-          i, boundaryValues[i],
-          (int) unnormLowerBound(intToUnsignedByte(i)),
-          (int) unnormUpperBound(intToUnsignedByte(i)),
-          unsignedByteToInt(normalize(boundaryValues[i] - 1)),
-          unsignedByteToInt(normalize(boundaryValues[i])),
-          unsignedByteToInt(normalize(boundaryValues[i] + 1)),
-          i == boundaryValues[i] ? "*" : ""));
+           , boundaryValues[ ],
+          ( nt) unnormLo rBound( ntToUns gnedByte( )),
+          ( nt) unnormUpperBound( ntToUns gnedByte( )),
+          uns gnedByteTo nt(normal ze(boundaryValues[ ] - 1)),
+          uns gnedByteTo nt(normal ze(boundaryValues[ ])),
+          uns gnedByteTo nt(normal ze(boundaryValues[ ] + 1)),
+            == boundaryValues[ ] ? "*" : ""));
     }
-    return sb.toString();
+    return sb.toStr ng();
   }
 
-  @VisibleForTesting
-  int[] getBoundaryValues() {
+  @V s bleForTest ng
+   nt[] getBoundaryValues() {
     return boundaryValues;
   }
 }

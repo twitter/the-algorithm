@@ -1,161 +1,161 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.hermit.ml.models.Feature
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+ mport com.tw ter. rm .ml.models.Feature
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. rm .model.Algor hm.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
 
 /**
- * Used to keep track of a candidate's source not so much as a feature but for filtering candidate
- * from specific sources (eg. GizmoduckPredicate)
+ * Used to keep track of a cand date's s ce not so much as a feature but for f lter ng cand date
+ * from spec f c s ces (eg. G zmoduckPred cate)
  */
-trait HasUserCandidateSourceDetails { candidateUser: CandidateUser =>
-  def userCandidateSourceDetails: Option[UserCandidateSourceDetails]
+tra  HasUserCand dateS ceDeta ls { cand dateUser: Cand dateUser =>
+  def userCand dateS ceDeta ls: Opt on[UserCand dateS ceDeta ls]
 
-  def getAlgorithm: Algorithm = {
-    val algorithm = for {
-      details <- userCandidateSourceDetails
-      identifier <- details.primaryCandidateSource
-      algorithm <- Algorithm.withNameOpt(identifier.name)
-    } yield algorithm
+  def getAlgor hm: Algor hm = {
+    val algor hm = for {
+      deta ls <- userCand dateS ceDeta ls
+       dent f er <- deta ls.pr maryCand dateS ce
+      algor hm <- Algor hm.w hNa Opt( dent f er.na )
+    } y eld algor hm
 
-    algorithm.getOrElse(throw new Exception("Algorithm missing on candidate user!"))
+    algor hm.getOrElse(throw new Except on("Algor hm m ss ng on cand date user!"))
   }
 
-  def getAllAlgorithms: Seq[Algorithm] = {
-    getCandidateSources.keys
-      .flatMap(identifier => Algorithm.withNameOpt(identifier.name)).toSeq
+  def getAllAlgor hms: Seq[Algor hm] = {
+    getCand dateS ces.keys
+      .flatMap( dent f er => Algor hm.w hNa Opt( dent f er.na )).toSeq
   }
 
-  def getAddressBookMetadata: Option[AddressBookMetadata] = {
-    userCandidateSourceDetails.flatMap(_.addressBookMetadata)
+  def getAddressBook tadata: Opt on[AddressBook tadata] = {
+    userCand dateS ceDeta ls.flatMap(_.addressBook tadata)
   }
 
-  def getCandidateSources: Map[CandidateSourceIdentifier, Option[Double]] = {
-    userCandidateSourceDetails.map(_.candidateSourceScores).getOrElse(Map.empty)
+  def getCand dateS ces: Map[Cand dateS ce dent f er, Opt on[Double]] = {
+    userCand dateS ceDeta ls.map(_.cand dateS ceScores).getOrElse(Map.empty)
   }
 
-  def getCandidateRanks: Map[CandidateSourceIdentifier, Int] = {
-    userCandidateSourceDetails.map(_.candidateSourceRanks).getOrElse(Map.empty)
+  def getCand dateRanks: Map[Cand dateS ce dent f er,  nt] = {
+    userCand dateS ceDeta ls.map(_.cand dateS ceRanks).getOrElse(Map.empty)
   }
 
-  def getCandidateFeatures: Map[CandidateSourceIdentifier, Seq[Feature]] = {
-    userCandidateSourceDetails.map(_.candidateSourceFeatures).getOrElse(Map.empty)
+  def getCand dateFeatures: Map[Cand dateS ce dent f er, Seq[Feature]] = {
+    userCand dateS ceDeta ls.map(_.cand dateS ceFeatures).getOrElse(Map.empty)
   }
 
-  def getPrimaryCandidateSource: Option[CandidateSourceIdentifier] = {
-    userCandidateSourceDetails.flatMap(_.primaryCandidateSource)
+  def getPr maryCand dateS ce: Opt on[Cand dateS ce dent f er] = {
+    userCand dateS ceDeta ls.flatMap(_.pr maryCand dateS ce)
   }
 
-  def withCandidateSource(source: CandidateSourceIdentifier): CandidateUser = {
-    withCandidateSourceAndScore(source, candidateUser.score)
+  def w hCand dateS ce(s ce: Cand dateS ce dent f er): Cand dateUser = {
+    w hCand dateS ceAndScore(s ce, cand dateUser.score)
   }
 
-  def withCandidateSourceAndScore(
-    source: CandidateSourceIdentifier,
-    score: Option[Double]
-  ): CandidateUser = {
-    withCandidateSourceScoreAndFeatures(source, score, Nil)
+  def w hCand dateS ceAndScore(
+    s ce: Cand dateS ce dent f er,
+    score: Opt on[Double]
+  ): Cand dateUser = {
+    w hCand dateS ceScoreAndFeatures(s ce, score, N l)
   }
 
-  def withCandidateSourceAndFeatures(
-    source: CandidateSourceIdentifier,
+  def w hCand dateS ceAndFeatures(
+    s ce: Cand dateS ce dent f er,
     features: Seq[Feature]
-  ): CandidateUser = {
-    withCandidateSourceScoreAndFeatures(source, candidateUser.score, features)
+  ): Cand dateUser = {
+    w hCand dateS ceScoreAndFeatures(s ce, cand dateUser.score, features)
   }
 
-  def withCandidateSourceScoreAndFeatures(
-    source: CandidateSourceIdentifier,
-    score: Option[Double],
+  def w hCand dateS ceScoreAndFeatures(
+    s ce: Cand dateS ce dent f er,
+    score: Opt on[Double],
     features: Seq[Feature]
-  ): CandidateUser = {
-    val candidateSourceDetails =
-      candidateUser.userCandidateSourceDetails
-        .map { details =>
-          details.copy(
-            primaryCandidateSource = Some(source),
-            candidateSourceScores = details.candidateSourceScores + (source -> score),
-            candidateSourceFeatures = details.candidateSourceFeatures + (source -> features)
+  ): Cand dateUser = {
+    val cand dateS ceDeta ls =
+      cand dateUser.userCand dateS ceDeta ls
+        .map { deta ls =>
+          deta ls.copy(
+            pr maryCand dateS ce = So (s ce),
+            cand dateS ceScores = deta ls.cand dateS ceScores + (s ce -> score),
+            cand dateS ceFeatures = deta ls.cand dateS ceFeatures + (s ce -> features)
           )
         }.getOrElse(
-          UserCandidateSourceDetails(
-            Some(source),
-            Map(source -> score),
+          UserCand dateS ceDeta ls(
+            So (s ce),
+            Map(s ce -> score),
             Map.empty,
             None,
-            Map(source -> features)))
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(candidateSourceDetails)
+            Map(s ce -> features)))
+    cand dateUser.copy(
+      userCand dateS ceDeta ls = So (cand dateS ceDeta ls)
     )
   }
 
-  def addCandidateSourceScoresMap(
-    scoreMap: Map[CandidateSourceIdentifier, Option[Double]]
-  ): CandidateUser = {
-    val candidateSourceDetails = candidateUser.userCandidateSourceDetails
-      .map { details =>
-        details.copy(candidateSourceScores = details.candidateSourceScores ++ scoreMap)
-      }.getOrElse(UserCandidateSourceDetails(scoreMap.keys.headOption, scoreMap, Map.empty, None))
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(candidateSourceDetails)
+  def addCand dateS ceScoresMap(
+    scoreMap: Map[Cand dateS ce dent f er, Opt on[Double]]
+  ): Cand dateUser = {
+    val cand dateS ceDeta ls = cand dateUser.userCand dateS ceDeta ls
+      .map { deta ls =>
+        deta ls.copy(cand dateS ceScores = deta ls.cand dateS ceScores ++ scoreMap)
+      }.getOrElse(UserCand dateS ceDeta ls(scoreMap.keys. adOpt on, scoreMap, Map.empty, None))
+    cand dateUser.copy(
+      userCand dateS ceDeta ls = So (cand dateS ceDeta ls)
     )
   }
 
-  def addCandidateSourceRanksMap(
-    rankMap: Map[CandidateSourceIdentifier, Int]
-  ): CandidateUser = {
-    val candidateSourceDetails = candidateUser.userCandidateSourceDetails
-      .map { details =>
-        details.copy(candidateSourceRanks = details.candidateSourceRanks ++ rankMap)
-      }.getOrElse(UserCandidateSourceDetails(rankMap.keys.headOption, Map.empty, rankMap, None))
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(candidateSourceDetails)
+  def addCand dateS ceRanksMap(
+    rankMap: Map[Cand dateS ce dent f er,  nt]
+  ): Cand dateUser = {
+    val cand dateS ceDeta ls = cand dateUser.userCand dateS ceDeta ls
+      .map { deta ls =>
+        deta ls.copy(cand dateS ceRanks = deta ls.cand dateS ceRanks ++ rankMap)
+      }.getOrElse(UserCand dateS ceDeta ls(rankMap.keys. adOpt on, Map.empty, rankMap, None))
+    cand dateUser.copy(
+      userCand dateS ceDeta ls = So (cand dateS ceDeta ls)
     )
   }
 
-  def addInfoPerRankingStage(
-    rankingStage: String,
-    scores: Option[Scores],
-    rank: Int
-  ): CandidateUser = {
-    val scoresOpt: Option[Scores] = scores.orElse(candidateUser.scores)
-    val originalInfoPerRankingStage =
-      candidateUser.infoPerRankingStage.getOrElse(Map[String, RankingInfo]())
-    candidateUser.copy(
-      infoPerRankingStage =
-        Some(originalInfoPerRankingStage + (rankingStage -> RankingInfo(scoresOpt, Some(rank))))
+  def add nfoPerRank ngStage(
+    rank ngStage: Str ng,
+    scores: Opt on[Scores],
+    rank:  nt
+  ): Cand dateUser = {
+    val scoresOpt: Opt on[Scores] = scores.orElse(cand dateUser.scores)
+    val or g nal nfoPerRank ngStage =
+      cand dateUser. nfoPerRank ngStage.getOrElse(Map[Str ng, Rank ng nfo]())
+    cand dateUser.copy(
+       nfoPerRank ngStage =
+        So (or g nal nfoPerRank ngStage + (rank ngStage -> Rank ng nfo(scoresOpt, So (rank))))
     )
   }
 
-  def addAddressBookMetadataIfAvailable(
-    candidateSources: Seq[CandidateSourceIdentifier]
-  ): CandidateUser = {
+  def addAddressBook tadata fAva lable(
+    cand dateS ces: Seq[Cand dateS ce dent f er]
+  ): Cand dateUser = {
 
-    val addressBookMetadata = AddressBookMetadata(
-      inForwardPhoneBook =
-        candidateSources.contains(AddressBookMetadata.ForwardPhoneBookCandidateSource),
-      inReversePhoneBook =
-        candidateSources.contains(AddressBookMetadata.ReversePhoneBookCandidateSource),
-      inForwardEmailBook =
-        candidateSources.contains(AddressBookMetadata.ForwardEmailBookCandidateSource),
-      inReverseEmailBook =
-        candidateSources.contains(AddressBookMetadata.ReverseEmailBookCandidateSource)
+    val addressBook tadata = AddressBook tadata(
+       nForwardPhoneBook =
+        cand dateS ces.conta ns(AddressBook tadata.ForwardPhoneBookCand dateS ce),
+       nReversePhoneBook =
+        cand dateS ces.conta ns(AddressBook tadata.ReversePhoneBookCand dateS ce),
+       nForwardEma lBook =
+        cand dateS ces.conta ns(AddressBook tadata.ForwardEma lBookCand dateS ce),
+       nReverseEma lBook =
+        cand dateS ces.conta ns(AddressBook tadata.ReverseEma lBookCand dateS ce)
     )
 
-    val newCandidateSourceDetails = candidateUser.userCandidateSourceDetails
-      .map { details =>
-        details.copy(addressBookMetadata = Some(addressBookMetadata))
+    val newCand dateS ceDeta ls = cand dateUser.userCand dateS ceDeta ls
+      .map { deta ls =>
+        deta ls.copy(addressBook tadata = So (addressBook tadata))
       }.getOrElse(
-        UserCandidateSourceDetails(
+        UserCand dateS ceDeta ls(
           None,
           Map.empty,
           Map.empty,
-          Some(addressBookMetadata),
+          So (addressBook tadata),
           Map.empty))
 
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(newCandidateSourceDetails)
+    cand dateUser.copy(
+      userCand dateS ceDeta ls = So (newCand dateS ceDeta ls)
     )
   }
 

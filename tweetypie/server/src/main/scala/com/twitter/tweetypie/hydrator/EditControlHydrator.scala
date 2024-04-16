@@ -1,132 +1,132 @@
-package com.twitter.tweetypie.hydrator
+package com.tw ter.t etyp e.hydrator
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.tweetypie.Tweet
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.util.EditControlUtil
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditControlInitial
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditGetInitialEditControlException
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditInvalidEditControlException
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.StatsRece ver
+ mport com.tw ter.t etyp e.T et
+ mport com.tw ter.t etyp e.core.ValueState
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control n  al
+ mport com.tw ter.t etyp e.thr ftscala.F eldByPath
+ mport com.tw ter.t etyp e.ut l.T etEd Fa lure.T etEd Get n  alEd ControlExcept on
+ mport com.tw ter.t etyp e.ut l.T etEd Fa lure.T etEd  nval dEd ControlExcept on
 
 /**
- * EditControlHydrator is used to hydrate the EditControlEdit arm of the editControl field.
+ * Ed ControlHydrator  s used to hydrate t  Ed ControlEd  arm of t  ed Control f eld.
  *
- * For Tweets without edits and for initial Tweets with subsequent edit(s), this hydrator
- * passes through the existing editControl (either None or EditControlInitial).
+ * For T ets w hout ed s and for  n  al T ets w h subsequent ed (s), t  hydrator
+ * passes through t  ex st ng ed Control (e  r None or Ed Control n  al).
  *
- * For edit Tweets, it hydrates the initial Tweet's edit control, set as a field on
- * the edit control of the edit Tweet and returns the new edit control.
+ * For ed  T ets,   hydrates t   n  al T et's ed  control, set as a f eld on
+ * t  ed  control of t  ed  T et and returns t  new ed  control.
  */
-object EditControlHydrator {
-  type Type = ValueHydrator[Option[EditControl], TweetCtx]
+object Ed ControlHydrator {
+  type Type = ValueHydrator[Opt on[Ed Control], T etCtx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.EditControlField)
+  val hydratedF eld: F eldByPath = f eldByPath(T et.Ed ControlF eld)
 
   def apply(
-    repo: TweetRepository.Type,
-    setEditTimeWindowToSixtyMinutes: Gate[Unit],
-    stats: StatsReceiver
+    repo: T etRepos ory.Type,
+    setEd T  W ndowToS xtyM nutes: Gate[Un ],
+    stats: StatsRece ver
   ): Type = {
-    val exceptionCounter = ExceptionCounter(stats)
+    val except onCounter = Except onCounter(stats)
 
-    // Count hydration of edit control for tweets that were written before writing edit control initial.
-    val noEditControlHydration = stats.counter("noEditControlHydration")
-    // Count hydration of edit control edit tweets
-    val editControlEditHydration = stats.counter("editControlEditHydration")
-    // Count edit control edit hydration which successfully found an edit control initial
-    val editControlEditHydrationSuccessful = stats.counter("editControlEditHydration", "success")
-    // Count of initial tweets being hydrated.
-    val editControlInitialHydration = stats.counter("editControlInitialHydration")
-    // Count of edits loaded where the ID of edit is not present in the initial tweet
-    val editTweetIdsMissingAnEdit = stats.counter("editTweetIdsMissingAnEdit")
-    // Count hydrated tweets where edit control is set, but neither initial nor edit
-    val unknownUnionVariant = stats.counter("unknownEditControlUnionVariant")
+    // Count hydrat on of ed  control for t ets that  re wr ten before wr  ng ed  control  n  al.
+    val noEd ControlHydrat on = stats.counter("noEd ControlHydrat on")
+    // Count hydrat on of ed  control ed  t ets
+    val ed ControlEd Hydrat on = stats.counter("ed ControlEd Hydrat on")
+    // Count ed  control ed  hydrat on wh ch successfully found an ed  control  n  al
+    val ed ControlEd Hydrat onSuccessful = stats.counter("ed ControlEd Hydrat on", "success")
+    // Count of  n  al t ets be ng hydrated.
+    val ed Control n  alHydrat on = stats.counter("ed Control n  alHydrat on")
+    // Count of ed s loaded w re t   D of ed   s not present  n t   n  al t et
+    val ed T et dsM ss ngAnEd  = stats.counter("ed T et dsM ss ngAnEd ")
+    // Count hydrated t ets w re ed  control  s set, but ne  r  n  al nor ed 
+    val unknownUn onVar ant = stats.counter("unknownEd ControlUn onVar ant")
 
-    ValueHydrator[Option[EditControl], TweetCtx] { (curr, ctx) =>
+    ValueHydrator[Opt on[Ed Control], T etCtx] { (curr, ctx) =>
       curr match {
-        // Tweet was created before we write edit control - hydrate the value at read.
+        // T et was created before   wr e ed  control - hydrate t  value at read.
         case None =>
-          noEditControlHydration.incr()
-          val editControl = EditControlUtil.makeEditControlInitial(
-            ctx.tweetId,
+          noEd ControlHydrat on. ncr()
+          val ed Control = Ed ControlUt l.makeEd Control n  al(
+            ctx.t et d,
             ctx.createdAt,
-            setEditTimeWindowToSixtyMinutes)
-          Stitch.value(ValueState.delta(curr, Some(editControl)))
-        // Tweet is an initial tweet
-        case Some(EditControl.Initial(_)) =>
-          editControlInitialHydration.incr()
-          Stitch.value(ValueState.unmodified(curr))
+            setEd T  W ndowToS xtyM nutes)
+          St ch.value(ValueState.delta(curr, So (ed Control)))
+        // T et  s an  n  al t et
+        case So (Ed Control. n  al(_)) =>
+          ed Control n  alHydrat on. ncr()
+          St ch.value(ValueState.unmod f ed(curr))
 
-        // Tweet is an edited version
-        case Some(EditControl.Edit(edit)) =>
-          editControlEditHydration.incr()
-          getInitialTweet(repo, edit.initialTweetId, ctx)
-            .flatMap(getEditControlInitial(ctx))
-            .map { initial: Option[EditControlInitial] =>
-              editControlEditHydrationSuccessful.incr()
+        // T et  s an ed ed vers on
+        case So (Ed Control.Ed (ed )) =>
+          ed ControlEd Hydrat on. ncr()
+          get n  alT et(repo, ed . n  alT et d, ctx)
+            .flatMap(getEd Control n  al(ctx))
+            .map {  n  al: Opt on[Ed Control n  al] =>
+              ed ControlEd Hydrat onSuccessful. ncr()
 
-              initial.foreach { initialTweet =>
-                // We are able to fetch the initial tweet for this edit but this edit tweet is
-                // not present in the initial's editTweetIds list
-                if (!initialTweet.editTweetIds.contains(ctx.tweetId)) {
-                  editTweetIdsMissingAnEdit.incr()
+               n  al.foreach {  n  alT et =>
+                //   are able to fetch t   n  al t et for t  ed  but t  ed  t et  s
+                // not present  n t   n  al's ed T et ds l st
+                 f (! n  alT et.ed T et ds.conta ns(ctx.t et d)) {
+                  ed T et dsM ss ngAnEd . ncr()
                 }
               }
 
-              val updated = edit.copy(editControlInitial = initial)
-              ValueState.delta(curr, Some(EditControl.Edit(updated)))
+              val updated = ed .copy(ed Control n  al =  n  al)
+              ValueState.delta(curr, So (Ed Control.Ed (updated)))
             }
-            .onFailure(exceptionCounter(_))
-        case Some(_) => // Unknown union variant
-          unknownUnionVariant.incr()
-          Stitch.exception(TweetEditInvalidEditControlException)
+            .onFa lure(except onCounter(_))
+        case So (_) => // Unknown un on var ant
+          unknownUn onVar ant. ncr()
+          St ch.except on(T etEd  nval dEd ControlExcept on)
       }
-    }.onlyIf { (_, ctx) => ctx.opts.enableEditControlHydration }
+    }.only f { (_, ctx) => ctx.opts.enableEd ControlHydrat on }
   }
 
-  def getInitialTweet(
-    repo: TweetRepository.Type,
-    initialTweetId: Long,
-    ctx: TweetCtx,
-  ): Stitch[Tweet] = {
-    val options = TweetQuery.Options(
-      include = TweetQuery.Include(Set(Tweet.EditControlField.id)),
-      cacheControl = ctx.opts.cacheControl,
-      enforceVisibilityFiltering = false,
-      safetyLevel = SafetyLevel.FilterNone,
-      fetchStoredTweets = ctx.opts.fetchStoredTweets
+  def get n  alT et(
+    repo: T etRepos ory.Type,
+     n  alT et d: Long,
+    ctx: T etCtx,
+  ): St ch[T et] = {
+    val opt ons = T etQuery.Opt ons(
+       nclude = T etQuery. nclude(Set(T et.Ed ControlF eld. d)),
+      cac Control = ctx.opts.cac Control,
+      enforceV s b l yF lter ng = false,
+      safetyLevel = SafetyLevel.F lterNone,
+      fetchStoredT ets = ctx.opts.fetchStoredT ets
     )
-    repo(initialTweetId, options)
+    repo( n  alT et d, opt ons)
   }
 
-  def getEditControlInitial(ctx: TweetCtx): Tweet => Stitch[Option[EditControlInitial]] = {
-    initialTweet: Tweet =>
-      initialTweet.editControl match {
-        case Some(EditControl.Initial(initial)) =>
-          Stitch.value(
-            if (ctx.opts.cause.writing(ctx.tweetId)) {
-              // On the write path we hydrate edit control initial
-              // as if the initial tweet is already updated.
-              Some(EditControlUtil.plusEdit(initial, ctx.tweetId))
+  def getEd Control n  al(ctx: T etCtx): T et => St ch[Opt on[Ed Control n  al]] = {
+     n  alT et: T et =>
+       n  alT et.ed Control match {
+        case So (Ed Control. n  al( n  al)) =>
+          St ch.value(
+             f (ctx.opts.cause.wr  ng(ctx.t et d)) {
+              // On t  wr e path   hydrate ed  control  n  al
+              // as  f t   n  al t et  s already updated.
+              So (Ed ControlUt l.plusEd ( n  al, ctx.t et d))
             } else {
-              Some(initial)
+              So ( n  al)
             }
           )
-        case _ if ctx.opts.fetchStoredTweets =>
-          // If the fetchStoredTweets parameter is set to true, it means we're fetching
-          // and hydrating tweets regardless of state. In this case, if the initial tweet
-          // doesn't exist, we return None here to ensure we still hydrate and return the
-          // current edit tweet.
-          Stitch.None
-        case _ => Stitch.exception(TweetEditGetInitialEditControlException)
+        case _  f ctx.opts.fetchStoredT ets =>
+          //  f t  fetchStoredT ets para ter  s set to true,    ans  're fetch ng
+          // and hydrat ng t ets regardless of state.  n t  case,  f t   n  al t et
+          // doesn't ex st,   return None  re to ensure   st ll hydrate and return t 
+          // current ed  t et.
+          St ch.None
+        case _ => St ch.except on(T etEd Get n  alEd ControlExcept on)
       }
   }
 }

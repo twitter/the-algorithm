@@ -1,70 +1,70 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType.UserState
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.{DataRecord, Feature, FeatureContext, RichDataRecord}
-import com.twitter.ml.featurestore.catalog.entities.core.Author
-import com.twitter.ml.featurestore.catalog.features.magicrecs.UserActivity
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.feature.{BoundFeature, BoundFeatureSet}
-import com.twitter.ml.featurestore.lib.{UserId, Discrete => FSDiscrete}
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import java.lang.{Boolean => JBoolean}
-import java.util
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType.UserState
+ mport com.tw ter.ml.ap .Feature.B nary
+ mport com.tw ter.ml.ap .{DataRecord, Feature, FeatureContext, R chDataRecord}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.Author
+ mport com.tw ter.ml.featurestore.catalog.features.mag crecs.UserAct v y
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecord
+ mport com.tw ter.ml.featurestore.l b.feature.{BoundFeature, BoundFeatureSet}
+ mport com.tw ter.ml.featurestore.l b.{User d, D screte => FSD screte}
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesAdapterBase
+ mport java.lang.{Boolean => JBoolean}
+ mport java.ut l
+ mport scala.collect on.JavaConverters._
 
-object AuthorFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
-  val UserStateBoundFeature: BoundFeature[UserId, FSDiscrete] = UserActivity.UserState.bind(Author)
+object AuthorFeaturesAdapter extends T  l nesAdapterBase[Pred ct onRecord] {
+  val UserStateBoundFeature: BoundFeature[User d, FSD screte] = UserAct v y.UserState.b nd(Author)
   val UserFeaturesSet: BoundFeatureSet = BoundFeatureSet(UserStateBoundFeature)
 
   /**
-   * Boolean features about viewer's user state. 
+   * Boolean features about v e r's user state. 
    * enum UserState {
    *   NEW = 0,
    *   NEAR_ZERO = 1,
-   *   VERY_LIGHT = 2,
-   *   LIGHT = 3,
-   *   MEDIUM_TWEETER = 4,
-   *   MEDIUM_NON_TWEETER = 5,
+   *   VERY_L GHT = 2,
+   *   L GHT = 3,
+   *   MED UM_TWEETER = 4,
+   *   MED UM_NON_TWEETER = 5,
    *   HEAVY_NON_TWEETER = 6,
    *   HEAVY_TWEETER = 7
-   * }(persisted='true')
+   * }(pers sted='true')
    */
-  val IS_USER_NEW = new Binary("timelines.author.user_state.is_user_new", Set(UserState).asJava)
-  val IS_USER_LIGHT = new Binary("timelines.author.user_state.is_user_light", Set(UserState).asJava)
-  val IS_USER_MEDIUM_TWEETER =
-    new Binary("timelines.author.user_state.is_user_medium_tweeter", Set(UserState).asJava)
-  val IS_USER_MEDIUM_NON_TWEETER =
-    new Binary("timelines.author.user_state.is_user_medium_non_tweeter", Set(UserState).asJava)
-  val IS_USER_HEAVY_NON_TWEETER =
-    new Binary("timelines.author.user_state.is_user_heavy_non_tweeter", Set(UserState).asJava)
-  val IS_USER_HEAVY_TWEETER =
-    new Binary("timelines.author.user_state.is_user_heavy_tweeter", Set(UserState).asJava)
-  val userStateToFeatureMap: Map[Long, Binary] = Map(
-    0L -> IS_USER_NEW,
-    1L -> IS_USER_LIGHT,
-    2L -> IS_USER_LIGHT,
-    3L -> IS_USER_LIGHT,
-    4L -> IS_USER_MEDIUM_TWEETER,
-    5L -> IS_USER_MEDIUM_NON_TWEETER,
-    6L -> IS_USER_HEAVY_NON_TWEETER,
-    7L -> IS_USER_HEAVY_TWEETER
+  val  S_USER_NEW = new B nary("t  l nes.author.user_state. s_user_new", Set(UserState).asJava)
+  val  S_USER_L GHT = new B nary("t  l nes.author.user_state. s_user_l ght", Set(UserState).asJava)
+  val  S_USER_MED UM_TWEETER =
+    new B nary("t  l nes.author.user_state. s_user_ d um_t eter", Set(UserState).asJava)
+  val  S_USER_MED UM_NON_TWEETER =
+    new B nary("t  l nes.author.user_state. s_user_ d um_non_t eter", Set(UserState).asJava)
+  val  S_USER_HEAVY_NON_TWEETER =
+    new B nary("t  l nes.author.user_state. s_user_ avy_non_t eter", Set(UserState).asJava)
+  val  S_USER_HEAVY_TWEETER =
+    new B nary("t  l nes.author.user_state. s_user_ avy_t eter", Set(UserState).asJava)
+  val userStateToFeatureMap: Map[Long, B nary] = Map(
+    0L ->  S_USER_NEW,
+    1L ->  S_USER_L GHT,
+    2L ->  S_USER_L GHT,
+    3L ->  S_USER_L GHT,
+    4L ->  S_USER_MED UM_TWEETER,
+    5L ->  S_USER_MED UM_NON_TWEETER,
+    6L ->  S_USER_HEAVY_NON_TWEETER,
+    7L ->  S_USER_HEAVY_TWEETER
   )
 
   val UserStateBooleanFeatures: Set[Feature[_]] = userStateToFeatureMap.values.toSet
 
-  private val allFeatures: Seq[Feature[_]] = UserStateBooleanFeatures.toSeq
-  override def getFeatureContext: FeatureContext = new FeatureContext(allFeatures: _*)
-  override def commonFeatures: Set[Feature[_]] = Set.empty
+  pr vate val allFeatures: Seq[Feature[_]] = UserStateBooleanFeatures.toSeq
+  overr de def getFeatureContext: FeatureContext = new FeatureContext(allFeatures: _*)
+  overr de def commonFeatures: Set[Feature[_]] = Set.empty
 
-  override def adaptToDataRecords(record: PredictionRecord): util.List[DataRecord] = {
-    val newRecord = new RichDataRecord(new DataRecord)
+  overr de def adaptToDataRecords(record: Pred ct onRecord): ut l.L st[DataRecord] = {
+    val newRecord = new R chDataRecord(new DataRecord)
     record
       .getFeatureValue(UserStateBoundFeature)
       .flatMap { userState => userStateToFeatureMap.get(userState.value) }.foreach {
         booleanFeature => newRecord.setFeatureValue[JBoolean](booleanFeature, true)
       }
 
-    List(newRecord.getRecord).asJava
+    L st(newRecord.getRecord).asJava
   }
 }

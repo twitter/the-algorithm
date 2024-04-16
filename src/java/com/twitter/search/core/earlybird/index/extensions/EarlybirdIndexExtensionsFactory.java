@@ -1,19 +1,19 @@
-package com.twitter.search.core.earlybird.index.extensions;
+package com.tw ter.search.core.earlyb rd. ndex.extens ons;
 
 /**
- * Base class to implement factories that create realtime and Lucene index extensions.
+ * Base class to  mple nt factor es that create realt   and Lucene  ndex extens ons.
  *
- * The factory needs to be able to create instances for new segments, as well as load
- * index extensions of existing segments from disk.
+ * T  factory needs to be able to create  nstances for new seg nts, as  ll as load
+ *  ndex extens ons of ex st ng seg nts from d sk.
  */
-public abstract class EarlybirdIndexExtensionsFactory {
+publ c abstract class Earlyb rd ndexExtens onsFactory {
   /**
-   * Returns the {@link EarlybirdRealtimeIndexExtensionsData} instance to be used for a new segment.
+   * Returns t  {@l nk Earlyb rdRealt   ndexExtens onsData}  nstance to be used for a new seg nt.
    */
-  public abstract EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData();
+  publ c abstract Earlyb rdRealt   ndexExtens onsData newRealt   ndexExtens onsData();
 
   /**
-   * Returns the {@link EarlybirdIndexExtensionsData} instance to be used for a new Lucene segment.
+   * Returns t  {@l nk Earlyb rd ndexExtens onsData}  nstance to be used for a new Lucene seg nt.
    */
-  public abstract EarlybirdIndexExtensionsData newLuceneIndexExtensionsData();
+  publ c abstract Earlyb rd ndexExtens onsData newLucene ndexExtens onsData();
 }

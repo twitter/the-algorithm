@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine.TwhinCollabFilterView
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Twh nCollabF lterS m lar yEng ne.Twh nCollabF lterV ew
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
 
-object TwhinCollabFilterStratoStoreModule extends TwitterModule {
+object Twh nCollabF lterStratoStoreModule extends Tw terModule {
 
-  val stratoColumnPath: String = "cuad/twhin/getCollabFilterTweetCandidatesProd.User"
+  val stratoColumnPath: Str ng = "cuad/twh n/getCollabF lterT etCand datesProd.User"
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinCollabFilterStratoStoreForFollow)
-  def providesTwhinCollabFilterStratoStoreForFollow(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Twh nCollabF lterStratoStoreForFollow)
+  def prov desTwh nCollabF lterStratoStoreForFollow(
+    stratoCl ent: StratoCl ent
+  ): ReadableStore[Long, Seq[T et d]] = {
+    StratoFetchableStore.w hV ew[Long, Twh nCollabF lterV ew, Seq[T et d]](
+      stratoCl ent,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("follow_2022_03_10_c_500K")
+      v ew = Twh nCollabF lterV ew("follow_2022_03_10_c_500K")
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinCollabFilterStratoStoreForEngagement)
-  def providesTwhinCollabFilterStratoStoreForEngagement(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Twh nCollabF lterStratoStoreForEngage nt)
+  def prov desTwh nCollabF lterStratoStoreForEngage nt(
+    stratoCl ent: StratoCl ent
+  ): ReadableStore[Long, Seq[T et d]] = {
+    StratoFetchableStore.w hV ew[Long, Twh nCollabF lterV ew, Seq[T et d]](
+      stratoCl ent,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("engagement_2022_04_10_c_500K"))
+      v ew = Twh nCollabF lterV ew("engage nt_2022_04_10_c_500K"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinMultiClusterStratoStoreForFollow)
-  def providesTwhinMultiClusterStratoStoreForFollow(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Twh nMult ClusterStratoStoreForFollow)
+  def prov desTwh nMult ClusterStratoStoreForFollow(
+    stratoCl ent: StratoCl ent
+  ): ReadableStore[Long, Seq[T et d]] = {
+    StratoFetchableStore.w hV ew[Long, Twh nCollabF lterV ew, Seq[T et d]](
+      stratoCl ent,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("multiclusterFollow20220921")
+      v ew = Twh nCollabF lterV ew("mult clusterFollow20220921")
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinMultiClusterStratoStoreForEngagement)
-  def providesTwhinMultiClusterStratoStoreForEngagement(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Twh nMult ClusterStratoStoreForEngage nt)
+  def prov desTwh nMult ClusterStratoStoreForEngage nt(
+    stratoCl ent: StratoCl ent
+  ): ReadableStore[Long, Seq[T et d]] = {
+    StratoFetchableStore.w hV ew[Long, Twh nCollabF lterV ew, Seq[T et d]](
+      stratoCl ent,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("multiclusterEng20220921"))
+      v ew = Twh nCollabF lterV ew("mult clusterEng20220921"))
   }
 }

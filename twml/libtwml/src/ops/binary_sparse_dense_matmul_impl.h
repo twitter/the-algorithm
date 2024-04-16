@@ -1,145 +1,145 @@
-#ifndef TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
-#define TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
+# fndef TENSORFLOW_CORE_KERNELS_B NARY_SPARSE_TENSOR_DENSE_MATMUL_ MPL_H_
+#def ne TENSORFLOW_CORE_KERNELS_B NARY_SPARSE_TENSOR_DENSE_MATMUL_ MPL_H_
 
-#include <atomic>
+# nclude <atom c>
 
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/lib/core/blocking_counter.h"
-#include "tensorflow/core/lib/core/threadpool.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
+# nclude "tensorflow/core/l b/core/block ng_counter.h"
+# nclude "tensorflow/core/l b/core/threadpool.h"
 
-namespace tensorflow {
-namespace functor {
+na space tensorflow {
+na space functor {
 
-// `ConservativeShard` is adopted rather than `Shard` in tensorflow because the
-// original `Shard` may generate number of shards more than the number of
-// threads, which is not ideal for this case, as it may cause too much overhead.
-static void ConservativeShard(int max_parallelism, thread::ThreadPool *workers,
-                              int64 total, int64 cost_per_unit,
-                              std::function<void(int64, int64)> work) {
-  if (total == 0) {
+// `Conservat veShard`  s adopted rat r than `Shard`  n tensorflow because t 
+// or g nal `Shard` may generate number of shards more than t  number of
+// threads, wh ch  s not  deal for t  case, as   may cause too much over ad.
+stat c vo d Conservat veShard( nt max_parallel sm, thread::ThreadPool *workers,
+                               nt64 total,  nt64 cost_per_un ,
+                              std::funct on<vo d( nt64,  nt64)> work) {
+   f (total == 0) {
     return;
   }
-  max_parallelism = std::min(max_parallelism, workers->NumThreads());
-  if (max_parallelism <= 1) {
-    // Just inline the whole work since we only have 1 thread (core).
+  max_parallel sm = std::m n(max_parallel sm, workers->NumThreads());
+   f (max_parallel sm <= 1) {
+    // Just  nl ne t  whole work s nce   only have 1 thread (core).
     work(0, total);
     return;
   }
-  cost_per_unit = std::max(1LL, cost_per_unit);
-  // We shard [0, total) into "num_shards" shards.
+  cost_per_un  = std::max(1LL, cost_per_un );
+  //   shard [0, total)  nto "num_shards" shards.
   //   1 <= num_shards <= num worker threads
   //
-  // If total * cost_per_unit is small, it is not worth shard too
-  // much. Let us assume each cost unit is 1ns, kMinCostPerShard=10000
-  // is 10us.
-  static const int64 kMinCostPerShard = 10000;
-  const int num_shards =
-      std::max<int>(1, std::min(static_cast<int64>(max_parallelism),
-                                total * cost_per_unit / kMinCostPerShard));
+  //  f total * cost_per_un   s small,    s not worth shard too
+  // much. Let us assu  each cost un   s 1ns, kM nCostPerShard=10000
+  //  s 10us.
+  stat c const  nt64 kM nCostPerShard = 10000;
+  const  nt num_shards =
+      std::max< nt>(1, std::m n(stat c_cast< nt64>(max_parallel sm),
+                                total * cost_per_un  / kM nCostPerShard));
 
-  // Each shard contains up to "block_size" units. [0, total) is sharded
-  // into:
-  //   [0, block_size), [block_size, 2*block_size), ...
-  // The 1st shard is done by the caller thread and the other shards
-  // are dispatched to the worker threads. The last shard may be smaller than
-  // block_size.
-  const int64 block_size = (total + num_shards - 1) / num_shards;
-  if (block_size >= total) {
+  // Each shard conta ns up to "block_s ze" un s. [0, total)  s sharded
+  //  nto:
+  //   [0, block_s ze), [block_s ze, 2*block_s ze), ...
+  // T  1st shard  s done by t  caller thread and t  ot r shards
+  // are d spatc d to t  worker threads. T  last shard may be smaller than
+  // block_s ze.
+  const  nt64 block_s ze = (total + num_shards - 1) / num_shards;
+   f (block_s ze >= total) {
     work(0, total);
     return;
   }
-  const int num_shards_used = (total + block_size - 1) / block_size;
-  BlockingCounter counter(num_shards_used - 1);
-  for (int64 start = block_size; start < total; start += block_size) {
-    auto limit = std::min(start + block_size, total);
-    workers->Schedule([&work, &counter, start, limit]() {
-      work(start, limit);        // Compute the shard.
-      counter.DecrementCount();  // The shard is done.
+  const  nt num_shards_used = (total + block_s ze - 1) / block_s ze;
+  Block ngCounter counter(num_shards_used - 1);
+  for ( nt64 start = block_s ze; start < total; start += block_s ze) {
+    auto l m  = std::m n(start + block_s ze, total);
+    workers->Sc dule([&work, &counter, start, l m ]() {
+      work(start, l m );        // Compute t  shard.
+      counter.Decre ntCount();  // T  shard  s done.
     });
   }
 
-  // Inline execute the 1st shard.
-  work(0, std::min(block_size, total));
-  counter.Wait();
+  //  nl ne execute t  1st shard.
+  work(0, std::m n(block_s ze, total));
+  counter.Wa ();
 }
 
-static inline void VectorSum(float *a, const float *b, int n) {
-  for (int i = 0; i < n; ++i) {
-    a[i] += b[i];
+stat c  nl ne vo d VectorSum(float *a, const float *b,  nt n) {
+  for ( nt   = 0;   < n; ++ ) {
+    a[ ] += b[ ];
   }
 }
 
-// This func is to vectorize the computation of segment sum.
-template<typename Tindices>
-static void LookupAndSegmentSum(const Tindices *a_indices, const float *b,
-                                int nnz, int outer_right, float *output) {
-  for (std::size_t i = 0; i < nnz; ++i) {
-    const Tindices m = a_indices[i * 2];
-    const Tindices k = a_indices[i * 2 + 1];
-    auto output_row_m = output + m * outer_right;
-    auto b_row_k = b + k * outer_right;
-    VectorSum(output_row_m, b_row_k, outer_right);
+// T  func  s to vector ze t  computat on of seg nt sum.
+template<typena  T nd ces>
+stat c vo d LookupAndSeg ntSum(const T nd ces *a_ nd ces, const float *b,
+                                 nt nnz,  nt outer_r ght, float *output) {
+  for (std::s ze_t   = 0;   < nnz; ++ ) {
+    const T nd ces m = a_ nd ces[  * 2];
+    const T nd ces k = a_ nd ces[  * 2 + 1];
+    auto output_row_m = output + m * outer_r ght;
+    auto b_row_k = b + k * outer_r ght;
+    VectorSum(output_row_m, b_row_k, outer_r ght);
   }
 }
 
-// This func enables sharding and multithreading, it comes with an overhead of
-// duplicating output buffer to achieve lock free output. So there should not
+// T  func enables shard ng and mult hread ng,   co s w h an over ad of
+// dupl cat ng output buffer to ach eve lock free output. So t re should not
 // be too many threads.
-template<typename Tindices>
-static void ParallelLookupAndSegmentSum(OpKernelContext *ctx,
-                                        const Tindices *a_indices,
-                                        const float *b, int nnz, int outer_left,
-                                        int outer_right, float *output) {
-  auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
-  int out_size = outer_left * outer_right;
-  if (worker_threads.num_threads <= 1) {
-    memset(output, 0, out_size * sizeof(float));
-    LookupAndSegmentSum<Tindices>(a_indices, b, 
-                                  nnz, outer_right,
+template<typena  T nd ces>
+stat c vo d ParallelLookupAndSeg ntSum(OpKernelContext *ctx,
+                                        const T nd ces *a_ nd ces,
+                                        const float *b,  nt nnz,  nt outer_left,
+                                         nt outer_r ght, float *output) {
+  auto worker_threads = *(ctx->dev ce()->tensorflow_cpu_worker_threads());
+   nt out_s ze = outer_left * outer_r ght;
+   f (worker_threads.num_threads <= 1) {
+     mset(output, 0, out_s ze * s zeof(float));
+    LookupAndSeg ntSum<T nd ces>(a_ nd ces, b, 
+                                  nnz, outer_r ght,
                                   output);
     return;
   }
 
-  // this is to make buffer align with kAllocatorAlignment
-  int padded_out_size = (out_size + (Allocator::kAllocatorAlignment - 1)) &
-                        ~(Allocator::kAllocatorAlignment - 1);
-  std::size_t num_bytes =
-      (worker_threads.num_threads - 1) * padded_out_size * sizeof(float);
-  auto buffer = std::unique_ptr<float>(reinterpret_cast<float *>(
-      port::AlignedMalloc(num_bytes, Allocator::kAllocatorAlignment)));
+  // t   s to make buffer al gn w h kAllocatorAl gn nt
+   nt padded_out_s ze = (out_s ze + (Allocator::kAllocatorAl gn nt - 1)) &
+                        ~(Allocator::kAllocatorAl gn nt - 1);
+  std::s ze_t num_bytes =
+      (worker_threads.num_threads - 1) * padded_out_s ze * s zeof(float);
+  auto buffer = std::un que_ptr<float>(re nterpret_cast<float *>(
+      port::Al gnedMalloc(num_bytes, Allocator::kAllocatorAl gn nt)));
   float *temp_out = buffer.get();
 
-  std::atomic<int> thread_index(0);
+  std::atom c< nt> thread_ ndex(0);
 
-  auto task = [&](int64 start, int64 limit) {
-    int local_thread_index = thread_index++;
+  auto task = [&]( nt64 start,  nt64 l m ) {
+     nt local_thread_ ndex = thread_ ndex++;
     float *buf_ptr = nullptr;
-    if (local_thread_index == 0) {
+     f (local_thread_ ndex == 0) {
       buf_ptr = output;
     } else {
-      buf_ptr = temp_out + (local_thread_index - 1) * padded_out_size;
+      buf_ptr = temp_out + (local_thread_ ndex - 1) * padded_out_s ze;
     }
-    memset(buf_ptr, 0, out_size * sizeof(float));
+     mset(buf_ptr, 0, out_s ze * s zeof(float));
 
-    LookupAndSegmentSum<Tindices>(a_indices + start * 2, b, 
-                                  limit - start, outer_right,
+    LookupAndSeg ntSum<T nd ces>(a_ nd ces + start * 2, b, 
+                                  l m  - start, outer_r ght,
                                   buf_ptr);
   };
 
-  int cost_per_unit = outer_right;
+   nt cost_per_un  = outer_r ght;
 
-  // We don't use tensorflow shard func as tf may create more shards than
+  //   don't use tensorflow shard func as tf may create more shards than
   // number of threads.
-  ConservativeShard(worker_threads.num_threads, worker_threads.workers, nnz,
-                    static_cast<int64>(cost_per_unit), task);
+  Conservat veShard(worker_threads.num_threads, worker_threads.workers, nnz,
+                    stat c_cast< nt64>(cost_per_un ), task);
 
-  for (int i = 1; i < thread_index; ++i) {
-    VectorSum(output, temp_out + (i - 1) * padded_out_size, out_size);
+  for ( nt   = 1;   < thread_ ndex; ++ ) {
+    VectorSum(output, temp_out + (  - 1) * padded_out_s ze, out_s ze);
   }
 }
 
-}  // namespace functor
+}  // na space functor
 
-}  // namespace tensorflow
+}  // na space tensorflow
 
-#endif  // TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
+#end f  // TENSORFLOW_CORE_KERNELS_B NARY_SPARSE_TENSOR_DENSE_MATMUL_ MPL_H_

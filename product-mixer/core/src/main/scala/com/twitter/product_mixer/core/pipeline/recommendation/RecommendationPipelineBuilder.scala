@@ -1,151 +1,151 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.tw ter.product_m xer.core.p pel ne.recom ndat on
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipeline
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredDecorator
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipeline
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutorResult
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
-import com.twitter.stitch.Arrow
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseQueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emPresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne. nval dStepStateExcept on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.M sconf guredDecorator
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureClass f er
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ProductD sabled
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorStatus
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutor
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutorResults
+ mport com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor.Cand dateDecoratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor.Cand dateDecoratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.cand date_p pel ne_executor.Cand dateP pel neExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_p pel ne_executor.Cand dateP pel neExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.doma n_marshaller_executor.Doma nMarshallerExecutor
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutor
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutor
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.StoppedGateExcept on
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_result_s de_effect_executor.P pel neResultS deEffectExecutor
+ mport com.tw ter.product_m xer.core.serv ce.qual y_factor_executor.Qual yFactorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.scor ng_p pel ne_executor.Scor ngP pel neExecutor
+ mport com.tw ter.product_m xer.core.serv ce.scor ng_p pel ne_executor.Scor ngP pel neExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor.TransportMarshallerExecutor
+ mport com.tw ter.st ch.Arrow
 
 /**
- * RecommendationPipelineBuilder builds [[RecommendationPipeline]]s from [[RecommendationPipelineConfig]]s.
+ * Recom ndat onP pel neBu lder bu lds [[Recom ndat onP pel ne]]s from [[Recom ndat onP pel neConf g]]s.
  *
- * You should inject a [[RecommendationPipelineBuilderFactory]] and call `.get` to build these.
+ *   should  nject a [[Recom ndat onP pel neBu lderFactory]] and call `.get` to bu ld t se.
  *
- * @see [[RecommendationPipelineConfig]] for the description of the type parameters.
+ * @see [[Recom ndat onP pel neConf g]] for t  descr pt on of t  type para ters.
  *
- * @note Almost a mirror of MixerPipelineBuilder
+ * @note Almost a m rror of M xerP pel neBu lder
  */
 
-class RecommendationPipelineBuilder[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  DomainResultType <: HasMarshalling,
+class Recom ndat onP pel neBu lder[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
+  Doma nResultType <: HasMarshall ng,
   Result
 ](
-  candidatePipelineExecutor: CandidatePipelineExecutor,
+  cand dateP pel neExecutor: Cand dateP pel neExecutor,
   gateExecutor: GateExecutor,
   selectorExecutor: SelectorExecutor,
   queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
   asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  filterExecutor: FilterExecutor,
-  scoringPipelineExecutor: ScoringPipelineExecutor,
-  candidateDecoratorExecutor: CandidateDecoratorExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
+  cand dateFeatureHydratorExecutor: Cand dateFeatureHydratorExecutor,
+  f lterExecutor: F lterExecutor,
+  scor ngP pel neExecutor: Scor ngP pel neExecutor,
+  cand dateDecoratorExecutor: Cand dateDecoratorExecutor,
+  doma nMarshallerExecutor: Doma nMarshallerExecutor,
   transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  scoringPipelineBuilderFactory: ScoringPipelineBuilderFactory,
-  override val statsReceiver: StatsReceiver)
-    extends PipelineBuilder[Query]
-    with Logging {
+  p pel neResultS deEffectExecutor: P pel neResultS deEffectExecutor,
+  cand dateP pel neBu lderFactory: Cand dateP pel neBu lderFactory,
+  scor ngP pel neBu lderFactory: Scor ngP pel neBu lderFactory,
+  overr de val statsRece ver: StatsRece ver)
+    extends P pel neBu lder[Query]
+    w h Logg ng {
 
-  override type UnderlyingResultType = Result
-  override type PipelineResultType = RecommendationPipelineResult[Candidate, Result]
+  overr de type Underly ngResultType = Result
+  overr de type P pel neResultType = Recom ndat onP pel neResult[Cand date, Result]
 
-  def qualityFactorStep(
-    qualityFactorStatus: QualityFactorStatus
-  ): Step[Query, QualityFactorExecutorResult] =
-    new Step[Query, QualityFactorExecutorResult] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.qualityFactorStep
+  def qual yFactorStep(
+    qual yFactorStatus: Qual yFactorStatus
+  ): Step[Query, Qual yFactorExecutorResult] =
+    new Step[Query, Qual yFactorExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.qual yFactorStep
 
-      override def executorArrow: Arrow[Query, QualityFactorExecutorResult] =
+      overr de def executorArrow: Arrow[Query, Qual yFactorExecutorResult] =
         Arrow
-          .map[Query, QualityFactorExecutorResult] { _ =>
-            QualityFactorExecutorResult(
-              pipelineQualityFactors =
-                qualityFactorStatus.qualityFactorByPipeline.mapValues(_.currentValue)
+          .map[Query, Qual yFactorExecutorResult] { _ =>
+            Qual yFactorExecutorResult(
+              p pel neQual yFactors =
+                qual yFactorStatus.qual yFactorByP pel ne.mapValues(_.currentValue)
             )
           }
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
       ): Query = query
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: QualityFactorExecutorResult
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(qualityFactorResult = Some(executorResult))
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: Qual yFactorExecutorResult
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(qual yFactorResult = So (executorResult))
 
-      override def queryUpdater(
+      overr de def queryUpdater(
         query: Query,
-        executorResult: QualityFactorExecutorResult
+        executorResult: Qual yFactorExecutorResult
       ): Query = {
         query match {
-          case queryWithQualityFactor: HasQualityFactorStatus =>
-            queryWithQualityFactor
-              .withQualityFactorStatus(
-                queryWithQualityFactor.qualityFactorStatus.getOrElse(QualityFactorStatus.empty) ++
-                  qualityFactorStatus
-              ).asInstanceOf[Query]
+          case queryW hQual yFactor: HasQual yFactorStatus =>
+            queryW hQual yFactor
+              .w hQual yFactorStatus(
+                queryW hQual yFactor.qual yFactorStatus.getOrElse(Qual yFactorStatus.empty) ++
+                  qual yFactorStatus
+              ).as nstanceOf[Query]
           case _ =>
             query
         }
@@ -156,921 +156,921 @@ class RecommendationPipelineBuilder[
     gates: Seq[Gate[Query]],
     context: Executor.Context
   ): Step[Query, GateExecutorResult] = new Step[Query, GateExecutorResult] {
-    override def identifier: PipelineStepIdentifier = RecommendationPipelineConfig.gatesStep
+    overr de def  dent f er: P pel neStep dent f er = Recom ndat onP pel neConf g.gatesStep
 
-    override def executorArrow: Arrow[Query, GateExecutorResult] =
+    overr de def executorArrow: Arrow[Query, GateExecutorResult] =
       gateExecutor.arrow(gates, context)
 
-    override def inputAdaptor(
+    overr de def  nputAdaptor(
       query: Query,
-      previousResult: RecommendationPipelineResult[Candidate, Result]
+      prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
     ): Query =
       query
 
-    override def resultUpdater(
-      previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
+    overr de def resultUpdater(
+      prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
       executorResult: GateExecutorResult
-    ): RecommendationPipelineResult[Candidate, Result] =
-      previousPipelineResult.copy(gateResult = Some(executorResult))
+    ): Recom ndat onP pel neResult[Cand date, Result] =
+      prev ousP pel neResult.copy(gateResult = So (executorResult))
   }
 
   def fetchQueryFeaturesStep(
     queryFeatureHydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-    stepIdentifier: PipelineStepIdentifier,
+    step dent f er: P pel neStep dent f er,
     updater: ResultUpdater[
-      RecommendationPipelineResult[Candidate, Result],
+      Recom ndat onP pel neResult[Cand date, Result],
       QueryFeatureHydratorExecutor.Result
     ],
     context: Executor.Context
   ): Step[Query, QueryFeatureHydratorExecutor.Result] =
     new Step[Query, QueryFeatureHydratorExecutor.Result] {
-      override def identifier: PipelineStepIdentifier = stepIdentifier
+      overr de def  dent f er: P pel neStep dent f er = step dent f er
 
-      override def executorArrow: Arrow[Query, QueryFeatureHydratorExecutor.Result] =
+      overr de def executorArrow: Arrow[Query, QueryFeatureHydratorExecutor.Result] =
         queryFeatureHydratorExecutor.arrow(
           queryFeatureHydrators,
-          RecommendationPipelineConfig.stepsAsyncFeatureHydrationCanBeCompletedBy,
+          Recom ndat onP pel neConf g.stepsAsyncFeatureHydrat onCanBeCompletedBy,
           context)
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
       ): Query = query
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
         executorResult: QueryFeatureHydratorExecutor.Result
-      ): RecommendationPipelineResult[Candidate, Result] =
-        updater(previousPipelineResult, executorResult)
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        updater(prev ousP pel neResult, executorResult)
 
-      override def queryUpdater(
+      overr de def queryUpdater(
         query: Query,
         executorResult: QueryFeatureHydratorExecutor.Result
       ): Query =
         query
-          .withFeatureMap(
+          .w hFeatureMap(
             query.features
-              .getOrElse(FeatureMap.empty) ++ executorResult.featureMap).asInstanceOf[Query]
+              .getOrElse(FeatureMap.empty) ++ executorResult.featureMap).as nstanceOf[Query]
     }
 
   def asyncFeaturesStep(
-    stepToHydrateFor: PipelineStepIdentifier,
+    stepToHydrateFor: P pel neStep dent f er,
     context: Executor.Context
   ): Step[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
     new Step[AsyncFeatureMap, AsyncFeatureMapExecutorResults] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.asyncFeaturesStep(stepToHydrateFor)
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.asyncFeaturesStep(stepToHydrateFor)
 
-      override def executorArrow: Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
+      overr de def executorArrow: Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
         asyncFeatureMapExecutor.arrow(
           stepToHydrateFor,
-          identifier,
+           dent f er,
           context
         )
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
       ): AsyncFeatureMap =
-        previousResult.mergedAsyncQueryFeatures
+        prev ousResult. rgedAsyncQueryFeatures
           .getOrElse(
-            throw InvalidStepStateException(identifier, "MergedAsyncQueryFeatures")
+            throw  nval dStepStateExcept on( dent f er, " rgedAsyncQueryFeatures")
           )
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
         executorResult: AsyncFeatureMapExecutorResults
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(
-          asyncFeatureHydrationResults = previousPipelineResult.asyncFeatureHydrationResults match {
-            case Some(existingResults) => Some(existingResults ++ executorResult)
-            case None => Some(executorResult)
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(
+          asyncFeatureHydrat onResults = prev ousP pel neResult.asyncFeatureHydrat onResults match {
+            case So (ex st ngResults) => So (ex st ngResults ++ executorResult)
+            case None => So (executorResult)
           })
 
-      override def queryUpdater(
+      overr de def queryUpdater(
         query: Query,
         executorResult: AsyncFeatureMapExecutorResults
       ): Query =
-        if (executorResult.featureMapsByStep
-            .getOrElse(stepToHydrateFor, FeatureMap.empty).isEmpty) {
+         f (executorResult.featureMapsByStep
+            .getOrElse(stepToHydrateFor, FeatureMap.empty). sEmpty) {
           query
         } else {
           query
-            .withFeatureMap(
+            .w hFeatureMap(
               query.features
                 .getOrElse(FeatureMap.empty) ++ executorResult.featureMapsByStep(
-                stepToHydrateFor)).asInstanceOf[Query]
+                stepToHydrateFor)).as nstanceOf[Query]
         }
     }
 
-  def candidatePipelinesStep(
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
+  def cand dateP pel nesStep(
+    cand dateP pel nes: Seq[Cand dateP pel ne[Query]],
+    defaultFa lOpenPol cy: Fa lOpenPol cy,
+    fa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy],
+    qual yFactorObserverByP pel ne: Map[Component dent f er, Qual yFactorObserver],
     context: Executor.Context
-  ): Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] =
-    new Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.candidatePipelinesStep
+  ): Step[Cand dateP pel ne. nputs[Query], Cand dateP pel neExecutorResult] =
+    new Step[Cand dateP pel ne. nputs[Query], Cand dateP pel neExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.cand dateP pel nesStep
 
-      override def executorArrow: Arrow[CandidatePipeline.Inputs[
+      overr de def executorArrow: Arrow[Cand dateP pel ne. nputs[
         Query
-      ], CandidatePipelineExecutorResult] =
-        candidatePipelineExecutor
+      ], Cand dateP pel neExecutorResult] =
+        cand dateP pel neExecutor
           .arrow(
-            candidatePipelines,
-            defaultFailOpenPolicy,
-            failOpenPolicies,
-            qualityFactorObserverByPipeline,
+            cand dateP pel nes,
+            defaultFa lOpenPol cy,
+            fa lOpenPol c es,
+            qual yFactorObserverByP pel ne,
             context
           )
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): CandidatePipeline.Inputs[
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): Cand dateP pel ne. nputs[
         Query
-      ] = CandidatePipeline.Inputs(query, Seq.empty)
+      ] = Cand dateP pel ne. nputs(query, Seq.empty)
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: CandidatePipelineExecutorResult
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(candidatePipelineResults = Some(executorResult))
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: Cand dateP pel neExecutorResult
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(cand dateP pel neResults = So (executorResult))
 
-      override def queryUpdater(
+      overr de def queryUpdater(
         query: Query,
-        executorResult: CandidatePipelineExecutorResult
+        executorResult: Cand dateP pel neExecutorResult
       ): Query = {
         val updatedFeatureMap = query.features
           .getOrElse(FeatureMap.empty) ++ executorResult.queryFeatureMap
         query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query]
+          .w hFeatureMap(updatedFeatureMap).as nstanceOf[Query]
       }
     }
 
-  def dependentCandidatePipelinesStep(
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
+  def dependentCand dateP pel nesStep(
+    cand dateP pel nes: Seq[Cand dateP pel ne[Query]],
+    defaultFa lOpenPol cy: Fa lOpenPol cy,
+    fa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy],
+    qual yFactorObserverByP pel ne: Map[Component dent f er, Qual yFactorObserver],
     context: Executor.Context
-  ): Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] =
-    new Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.dependentCandidatePipelinesStep
+  ): Step[Cand dateP pel ne. nputs[Query], Cand dateP pel neExecutorResult] =
+    new Step[Cand dateP pel ne. nputs[Query], Cand dateP pel neExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.dependentCand dateP pel nesStep
 
-      override def executorArrow: Arrow[CandidatePipeline.Inputs[
+      overr de def executorArrow: Arrow[Cand dateP pel ne. nputs[
         Query
-      ], CandidatePipelineExecutorResult] =
-        candidatePipelineExecutor
+      ], Cand dateP pel neExecutorResult] =
+        cand dateP pel neExecutor
           .arrow(
-            candidatePipelines,
-            defaultFailOpenPolicy,
-            failOpenPolicies,
-            qualityFactorObserverByPipeline,
+            cand dateP pel nes,
+            defaultFa lOpenPol cy,
+            fa lOpenPol c es,
+            qual yFactorObserverByP pel ne,
             context
           )
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): CandidatePipeline.Inputs[
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): Cand dateP pel ne. nputs[
         Query
       ] = {
-        val previousCandidates = previousResult.candidatePipelineResults
+        val prev ousCand dates = prev ousResult.cand dateP pel neResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "Candidates")
-          }.candidatePipelineResults.flatMap(_.result.getOrElse(Seq.empty))
+            throw  nval dStepStateExcept on( dent f er, "Cand dates")
+          }.cand dateP pel neResults.flatMap(_.result.getOrElse(Seq.empty))
 
-        CandidatePipeline.Inputs(query, previousCandidates)
+        Cand dateP pel ne. nputs(query, prev ousCand dates)
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: CandidatePipelineExecutorResult
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(dependentCandidatePipelineResults = Some(executorResult))
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: Cand dateP pel neExecutorResult
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(dependentCand dateP pel neResults = So (executorResult))
 
-      override def queryUpdater(
+      overr de def queryUpdater(
         query: Query,
-        executorResult: CandidatePipelineExecutorResult
+        executorResult: Cand dateP pel neExecutorResult
       ): Query = {
         val updatedFeatureMap = query.features
           .getOrElse(FeatureMap.empty) ++ executorResult.queryFeatureMap
         query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query]
+          .w hFeatureMap(updatedFeatureMap).as nstanceOf[Query]
       }
     }
 
-  abstract class FilterStep(
-    filters: Seq[Filter[Query, Candidate]],
+  abstract class F lterStep(
+    f lters: Seq[F lter[Query, Cand date]],
     context: Executor.Context,
-    override val identifier: PipelineStepIdentifier)
+    overr de val  dent f er: P pel neStep dent f er)
       extends Step[
-        (Query, Seq[CandidateWithFeatures[Candidate]]),
-        FilterExecutorResult[Candidate]
+        (Query, Seq[Cand dateW hFeatures[Cand date]]),
+        F lterExecutorResult[Cand date]
       ] {
 
-    def itemCandidates(
-      previousResult: RecommendationPipelineResult[Candidate, Result]
-    ): Seq[CandidateWithDetails]
+    def  emCand dates(
+      prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+    ): Seq[Cand dateW hDeta ls]
 
-    override def executorArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorResult[Candidate]
+    overr de def executorArrow: Arrow[
+      (Query, Seq[Cand dateW hFeatures[Cand date]]),
+      F lterExecutorResult[Cand date]
     ] =
-      filterExecutor.arrow(filters, context)
+      f lterExecutor.arrow(f lters, context)
 
-    override def inputAdaptor(
+    overr de def  nputAdaptor(
       query: Query,
-      previousResult: RecommendationPipelineResult[Candidate, Result]
-    ): (Query, Seq[CandidateWithFeatures[Candidate]]) = {
+      prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+    ): (Query, Seq[Cand dateW hFeatures[Cand date]]) = {
 
-      val extractedItemCandidates = itemCandidates(previousResult).collect {
-        case itemCandidate: ItemCandidateWithDetails => itemCandidate
+      val extracted emCand dates =  emCand dates(prev ousResult).collect {
+        case  emCand date:  emCand dateW hDeta ls =>  emCand date
       }
 
-      (query, extractedItemCandidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+      (query, extracted emCand dates.as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]])
     }
   }
 
-  def postCandidatePipelinesSelectorStep(
+  def postCand dateP pel nesSelectorStep(
     selectors: Seq[Selector[Query]],
     context: Executor.Context
-  ): Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-    new Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.postCandidatePipelinesSelectorsStep
+  ): Step[SelectorExecutor. nputs[Query], SelectorExecutorResult] =
+    new Step[SelectorExecutor. nputs[Query], SelectorExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.postCand dateP pel nesSelectorsStep
 
-      override def executorArrow: Arrow[SelectorExecutor.Inputs[
+      overr de def executorArrow: Arrow[SelectorExecutor. nputs[
         Query
       ], SelectorExecutorResult] =
         selectorExecutor.arrow(selectors, context)
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): SelectorExecutor.Inputs[Query] = {
-        val candidatePipelineResults = previousResult.candidatePipelineResults
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): SelectorExecutor. nputs[Query] = {
+        val cand dateP pel neResults = prev ousResult.cand dateP pel neResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "CandidatePipelineResults")
-          }.candidatePipelineResults.flatMap(_.result.getOrElse(Seq.empty))
-        val dependentCandidatePipelineResults = previousResult.dependentCandidatePipelineResults
+            throw  nval dStepStateExcept on( dent f er, "Cand dateP pel neResults")
+          }.cand dateP pel neResults.flatMap(_.result.getOrElse(Seq.empty))
+        val dependentCand dateP pel neResults = prev ousResult.dependentCand dateP pel neResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "DependentCandidatePipelineResults")
-          }.candidatePipelineResults.flatMap(_.result.getOrElse(Seq.empty))
+            throw  nval dStepStateExcept on( dent f er, "DependentCand dateP pel neResults")
+          }.cand dateP pel neResults.flatMap(_.result.getOrElse(Seq.empty))
 
-        SelectorExecutor.Inputs(
+        SelectorExecutor. nputs(
           query = query,
-          candidatesWithDetails = candidatePipelineResults ++ dependentCandidatePipelineResults
+          cand datesW hDeta ls = cand dateP pel neResults ++ dependentCand dateP pel neResults
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
         executorResult: SelectorExecutorResult
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(postCandidatePipelinesSelectorResults = Some(executorResult))
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(postCand dateP pel nesSelectorResults = So (executorResult))
     }
 
-  def postCandidatePipelinesFeatureHydrationStep(
-    hydrators: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]],
+  def postCand dateP pel nesFeatureHydrat onStep(
+    hydrators: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]],
     context: Executor.Context
   ): Step[
-    CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-    CandidateFeatureHydratorExecutorResult[Candidate]
+    Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+    Cand dateFeatureHydratorExecutorResult[Cand date]
   ] = new Step[
-    CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-    CandidateFeatureHydratorExecutorResult[Candidate]
+    Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+    Cand dateFeatureHydratorExecutorResult[Cand date]
   ] {
-    override def identifier: PipelineStepIdentifier =
-      RecommendationPipelineConfig.postCandidatePipelinesFeatureHydrationStep
+    overr de def  dent f er: P pel neStep dent f er =
+      Recom ndat onP pel neConf g.postCand dateP pel nesFeatureHydrat onStep
 
-    override def executorArrow: Arrow[
-      CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-      CandidateFeatureHydratorExecutorResult[Candidate]
+    overr de def executorArrow: Arrow[
+      Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+      Cand dateFeatureHydratorExecutorResult[Cand date]
     ] =
-      candidateFeatureHydratorExecutor.arrow(hydrators, context)
+      cand dateFeatureHydratorExecutor.arrow(hydrators, context)
 
-    override def inputAdaptor(
+    overr de def  nputAdaptor(
       query: Query,
-      previousResult: RecommendationPipelineResult[Candidate, Result]
-    ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
-      val selectedCandidatesResult =
-        previousResult.postCandidatePipelinesSelectorResults.getOrElse {
-          throw InvalidStepStateException(identifier, "PostCandidatePipelinesSelectorResults")
-        }.selectedCandidates
+      prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+    ): Cand dateFeatureHydratorExecutor. nputs[Query, Cand date] = {
+      val selectedCand datesResult =
+        prev ousResult.postCand dateP pel nesSelectorResults.getOrElse {
+          throw  nval dStepStateExcept on( dent f er, "PostCand dateP pel nesSelectorResults")
+        }.selectedCand dates
 
-      CandidateFeatureHydratorExecutor.Inputs(
+      Cand dateFeatureHydratorExecutor. nputs(
         query,
-        selectedCandidatesResult.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+        selectedCand datesResult.as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]])
     }
 
-    override def resultUpdater(
-      previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-      executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-    ): RecommendationPipelineResult[Candidate, Result] = previousPipelineResult.copy(
-      postCandidatePipelinesFeatureHydrationResults = Some(executorResult)
+    overr de def resultUpdater(
+      prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+      executorResult: Cand dateFeatureHydratorExecutorResult[Cand date]
+    ): Recom ndat onP pel neResult[Cand date, Result] = prev ousP pel neResult.copy(
+      postCand dateP pel nesFeatureHydrat onResults = So (executorResult)
     )
   }
 
-  def globalFiltersStep(
-    filters: Seq[Filter[Query, Candidate]],
+  def globalF ltersStep(
+    f lters: Seq[F lter[Query, Cand date]],
     context: Executor.Context
-  ): Step[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] =
-    new FilterStep(filters, context, RecommendationPipelineConfig.globalFiltersStep) {
-      override def itemCandidates(
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): Seq[CandidateWithDetails] = {
-        val candidates = previousResult.postCandidatePipelinesSelectorResults
+  ): Step[(Query, Seq[Cand dateW hFeatures[Cand date]]), F lterExecutorResult[Cand date]] =
+    new F lterStep(f lters, context, Recom ndat onP pel neConf g.globalF ltersStep) {
+      overr de def  emCand dates(
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): Seq[Cand dateW hDeta ls] = {
+        val cand dates = prev ousResult.postCand dateP pel nesSelectorResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "PostCandidatePipelineSelectorResults")
-          }.selectedCandidates.collect {
-            case itemCandidate: ItemCandidateWithDetails => itemCandidate
+            throw  nval dStepStateExcept on( dent f er, "PostCand dateP pel neSelectorResults")
+          }.selectedCand dates.collect {
+            case  emCand date:  emCand dateW hDeta ls =>  emCand date
           }
 
-        val featureMaps = previousResult.postCandidatePipelinesFeatureHydrationResults
+        val featureMaps = prev ousResult.postCand dateP pel nesFeatureHydrat onResults
           .getOrElse {
-            throw InvalidStepStateException(
-              identifier,
-              "PostCandidatePipelineFeatureHydrationResults")
+            throw  nval dStepStateExcept on(
+               dent f er,
+              "PostCand dateP pel neFeatureHydrat onResults")
           }.results.map(_.features)
-        // If no hydrators were run, this list would be empty. Otherwise, order and cardinality is
+        //  f no hydrators  re run, t  l st would be empty. Ot rw se, order and card nal y  s
         // always ensured to match.
-        if (featureMaps.isEmpty) {
-          candidates
+         f (featureMaps. sEmpty) {
+          cand dates
         } else {
-          candidates.zip(featureMaps).map {
-            case (candidate, featureMap) =>
-              candidate.copy(features = candidate.features ++ featureMap)
+          cand dates.z p(featureMaps).map {
+            case (cand date, featureMap) =>
+              cand date.copy(features = cand date.features ++ featureMap)
           }
         }
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: FilterExecutorResult[Candidate]
-      ): RecommendationPipelineResult[Candidate, Result] = previousPipelineResult.copy(
-        globalFilterResults = Some(executorResult)
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: F lterExecutorResult[Cand date]
+      ): Recom ndat onP pel neResult[Cand date, Result] = prev ousP pel neResult.copy(
+        globalF lterResults = So (executorResult)
       )
     }
 
-  def scoringPipelinesStep(
-    scoringPipelines: Seq[ScoringPipeline[Query, Candidate]],
+  def scor ngP pel nesStep(
+    scor ngP pel nes: Seq[Scor ngP pel ne[Query, Cand date]],
     context: Executor.Context,
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver]
-  ): Step[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineExecutorResult[
-    Candidate
+    defaultFa lOpenPol cy: Fa lOpenPol cy,
+    fa lOpenPol c es: Map[Scor ngP pel ne dent f er, Fa lOpenPol cy],
+    qual yFactorObserverByP pel ne: Map[Component dent f er, Qual yFactorObserver]
+  ): Step[Scor ngP pel neExecutor. nputs[Query], Scor ngP pel neExecutorResult[
+    Cand date
   ]] =
-    new Step[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineExecutorResult[
-      Candidate
+    new Step[Scor ngP pel neExecutor. nputs[Query], Scor ngP pel neExecutorResult[
+      Cand date
     ]] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.scoringPipelinesStep
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.scor ngP pel nesStep
 
-      override def executorArrow: Arrow[
-        ScoringPipelineExecutor.Inputs[Query],
-        ScoringPipelineExecutorResult[Candidate]
-      ] = scoringPipelineExecutor.arrow(
-        scoringPipelines,
+      overr de def executorArrow: Arrow[
+        Scor ngP pel neExecutor. nputs[Query],
+        Scor ngP pel neExecutorResult[Cand date]
+      ] = scor ngP pel neExecutor.arrow(
+        scor ngP pel nes,
         context,
-        defaultFailOpenPolicy,
-        failOpenPolicies,
-        qualityFactorObserverByPipeline
+        defaultFa lOpenPol cy,
+        fa lOpenPol c es,
+        qual yFactorObserverByP pel ne
       )
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): ScoringPipelineExecutor.Inputs[Query] = {
-        val selectedCandidates =
-          previousResult.postCandidatePipelinesSelectorResults.getOrElse {
-            throw InvalidStepStateException(identifier, "PostCandidatePipelinesSelectorResults")
-          }.selectedCandidates
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): Scor ngP pel neExecutor. nputs[Query] = {
+        val selectedCand dates =
+          prev ousResult.postCand dateP pel nesSelectorResults.getOrElse {
+            throw  nval dStepStateExcept on( dent f er, "PostCand dateP pel nesSelectorResults")
+          }.selectedCand dates
 
-        val itemCandidates = selectedCandidates.collect {
-          case itemCandidate: ItemCandidateWithDetails => itemCandidate
+        val  emCand dates = selectedCand dates.collect {
+          case  emCand date:  emCand dateW hDeta ls =>  emCand date
         }
 
-        val featureMaps = previousResult.postCandidatePipelinesFeatureHydrationResults
+        val featureMaps = prev ousResult.postCand dateP pel nesFeatureHydrat onResults
           .getOrElse {
-            throw InvalidStepStateException(
-              identifier,
-              "PostCandidatePipelineFeatureHydrationResults")
+            throw  nval dStepStateExcept on(
+               dent f er,
+              "PostCand dateP pel neFeatureHydrat onResults")
           }.results.map(_.features)
-        // If no hydrators were run, this list would be empty. Otherwise, order and cardinality is
+        //  f no hydrators  re run, t  l st would be empty. Ot rw se, order and card nal y  s
         // always ensured to match.
-        val updatedCandidates = if (featureMaps.isEmpty) {
-          itemCandidates
+        val updatedCand dates =  f (featureMaps. sEmpty) {
+           emCand dates
         } else {
-          itemCandidates.zip(featureMaps).map {
-            case (candidate, featureMap) =>
-              candidate.copy(features = candidate.features ++ featureMap)
+           emCand dates.z p(featureMaps).map {
+            case (cand date, featureMap) =>
+              cand date.copy(features = cand date.features ++ featureMap)
           }
         }
 
-        // Filter the original list of candidates to keep only the ones that were kept from
-        // filtering
-        val filterResults: Set[Candidate] = previousResult.globalFilterResults
+        // F lter t  or g nal l st of cand dates to keep only t  ones that  re kept from
+        // f lter ng
+        val f lterResults: Set[Cand date] = prev ousResult.globalF lterResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "FilterResults")
+            throw  nval dStepStateExcept on( dent f er, "F lterResults")
           }.result.toSet
 
-        val filteredItemCandidates = updatedCandidates.filter { itemCandidate =>
-          filterResults.contains(itemCandidate.candidate.asInstanceOf[Candidate])
+        val f ltered emCand dates = updatedCand dates.f lter {  emCand date =>
+          f lterResults.conta ns( emCand date.cand date.as nstanceOf[Cand date])
         }
 
-        ScoringPipelineExecutor.Inputs(
+        Scor ngP pel neExecutor. nputs(
           query,
-          filteredItemCandidates
+          f ltered emCand dates
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: ScoringPipelineExecutorResult[Candidate]
-      ): RecommendationPipelineResult[Candidate, Result] = previousPipelineResult
-        .copy(scoringPipelineResults = Some(executorResult))
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: Scor ngP pel neExecutorResult[Cand date]
+      ): Recom ndat onP pel neResult[Cand date, Result] = prev ousP pel neResult
+        .copy(scor ngP pel neResults = So (executorResult))
     }
 
   def resultSelectorsStep(
     selectors: Seq[Selector[Query]],
     context: Executor.Context
-  ): Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-    new Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.resultSelectorsStep
+  ): Step[SelectorExecutor. nputs[Query], SelectorExecutorResult] =
+    new Step[SelectorExecutor. nputs[Query], SelectorExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.resultSelectorsStep
 
-      override def executorArrow: Arrow[SelectorExecutor.Inputs[
+      overr de def executorArrow: Arrow[SelectorExecutor. nputs[
         Query
       ], SelectorExecutorResult] =
         selectorExecutor.arrow(selectors, context)
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): SelectorExecutor.Inputs[Query] = {
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): SelectorExecutor. nputs[Query] = {
 
         /**
-         * See [[ScoringPipelineExecutor]], scoringPipelineResults contains the fully re-merged
-         * and updated FeatureMap so there's no need to do any recomposition. Scoring Pipeline Results
-         * has only candidates that were kept in previous filtering, with their final merged feature
+         * See [[Scor ngP pel neExecutor]], scor ngP pel neResults conta ns t  fully re- rged
+         * and updated FeatureMap so t re's no need to do any recompos  on. Scor ng P pel ne Results
+         * has only cand dates that  re kept  n prev ous f lter ng, w h t  r f nal  rged feature
          * map.
          */
-        val scorerResults = previousResult.scoringPipelineResults.getOrElse {
-          throw InvalidStepStateException(identifier, "Scores")
+        val scorerResults = prev ousResult.scor ngP pel neResults.getOrElse {
+          throw  nval dStepStateExcept on( dent f er, "Scores")
         }
 
-        SelectorExecutor.Inputs(
+        SelectorExecutor. nputs(
           query = query,
-          candidatesWithDetails = scorerResults.result
+          cand datesW hDeta ls = scorerResults.result
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
         executorResult: SelectorExecutorResult
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(resultSelectorResults = Some(executorResult))
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(resultSelectorResults = So (executorResult))
     }
 
-  def postSelectionFiltersStep(
-    filters: Seq[Filter[Query, Candidate]],
+  def postSelect onF ltersStep(
+    f lters: Seq[F lter[Query, Cand date]],
     context: Executor.Context
-  ): Step[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] =
-    new FilterStep(filters, context, RecommendationPipelineConfig.postSelectionFiltersStep) {
+  ): Step[(Query, Seq[Cand dateW hFeatures[Cand date]]), F lterExecutorResult[Cand date]] =
+    new F lterStep(f lters, context, Recom ndat onP pel neConf g.postSelect onF ltersStep) {
 
-      override def itemCandidates(
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): Seq[CandidateWithDetails] = {
-        previousResult.resultSelectorResults.getOrElse {
-          throw InvalidStepStateException(identifier, "Candidates")
-        }.selectedCandidates
+      overr de def  emCand dates(
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): Seq[Cand dateW hDeta ls] = {
+        prev ousResult.resultSelectorResults.getOrElse {
+          throw  nval dStepStateExcept on( dent f er, "Cand dates")
+        }.selectedCand dates
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: FilterExecutorResult[Candidate]
-      ): RecommendationPipelineResult[Candidate, Result] = {
-        previousPipelineResult.copy(postSelectionFilterResults = Some(executorResult))
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: F lterExecutorResult[Cand date]
+      ): Recom ndat onP pel neResult[Cand date, Result] = {
+        prev ousP pel neResult.copy(postSelect onF lterResults = So (executorResult))
       }
     }
 
   def decoratorStep(
-    decorator: Option[CandidateDecorator[Query, Candidate]],
+    decorator: Opt on[Cand dateDecorator[Query, Cand date]],
     context: Executor.Context
-  ): Step[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] =
-    new Step[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = RecommendationPipelineConfig.decoratorStep
+  ): Step[(Query, Seq[Cand dateW hFeatures[Cand date]]), Cand dateDecoratorExecutorResult] =
+    new Step[(Query, Seq[Cand dateW hFeatures[Cand date]]), Cand dateDecoratorExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er = Recom ndat onP pel neConf g.decoratorStep
 
-      override lazy val executorArrow: Arrow[
-        (Query, Seq[CandidateWithFeatures[Candidate]]),
-        CandidateDecoratorExecutorResult
+      overr de lazy val executorArrow: Arrow[
+        (Query, Seq[Cand dateW hFeatures[Cand date]]),
+        Cand dateDecoratorExecutorResult
       ] =
-        candidateDecoratorExecutor.arrow(decorator, context)
+        cand dateDecoratorExecutor.arrow(decorator, context)
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): (Query, Seq[CandidateWithFeatures[Candidate]]) = {
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): (Query, Seq[Cand dateW hFeatures[Cand date]]) = {
 
-        val selectorResults = previousResult.resultSelectorResults
+        val selectorResults = prev ousResult.resultSelectorResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "SelectorResults")
-          }.selectedCandidates
-          .collect { case candidate: ItemCandidateWithDetails => candidate }
+            throw  nval dStepStateExcept on( dent f er, "SelectorResults")
+          }.selectedCand dates
+          .collect { case cand date:  emCand dateW hDeta ls => cand date }
 
-        val filterResults = previousResult.postSelectionFilterResults
+        val f lterResults = prev ousResult.postSelect onF lterResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "PostSelectionFilterResults")
+            throw  nval dStepStateExcept on( dent f er, "PostSelect onF lterResults")
           }.result.toSet
 
-        val itemCandidateWithDetailsPostFiltering =
+        val  emCand dateW hDeta lsPostF lter ng =
           selectorResults
-            .filter(candidateWithDetails =>
-              filterResults.contains(
-                candidateWithDetails.candidate
-                  .asInstanceOf[Candidate]))
-            .asInstanceOf[Seq[CandidateWithFeatures[Candidate]]]
+            .f lter(cand dateW hDeta ls =>
+              f lterResults.conta ns(
+                cand dateW hDeta ls.cand date
+                  .as nstanceOf[Cand date]))
+            .as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]]
 
-        (query, itemCandidateWithDetailsPostFiltering)
+        (query,  emCand dateW hDeta lsPostF lter ng)
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: CandidateDecoratorExecutorResult
-      ): RecommendationPipelineResult[Candidate, Result] =
-        previousPipelineResult.copy(
-          candidateDecoratorResult = Some(executorResult)
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: Cand dateDecoratorExecutorResult
+      ): Recom ndat onP pel neResult[Cand date, Result] =
+        prev ousP pel neResult.copy(
+          cand dateDecoratorResult = So (executorResult)
         )
     }
 
-  def domainMarshallingStep(
-    domainMarshaller: DomainMarshaller[Query, DomainResultType],
+  def doma nMarshall ngStep(
+    doma nMarshaller: Doma nMarshaller[Query, Doma nResultType],
     context: Executor.Context
-  ): Step[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[
-    DomainResultType
+  ): Step[Doma nMarshallerExecutor. nputs[Query], Doma nMarshallerExecutor.Result[
+    Doma nResultType
   ]] =
-    new Step[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[
-      DomainResultType
+    new Step[Doma nMarshallerExecutor. nputs[Query], Doma nMarshallerExecutor.Result[
+      Doma nResultType
     ]] {
-      override def identifier: PipelineStepIdentifier =
-        RecommendationPipelineConfig.domainMarshallerStep
+      overr de def  dent f er: P pel neStep dent f er =
+        Recom ndat onP pel neConf g.doma nMarshallerStep
 
-      override def executorArrow: Arrow[
-        DomainMarshallerExecutor.Inputs[Query],
-        DomainMarshallerExecutor.Result[DomainResultType]
+      overr de def executorArrow: Arrow[
+        Doma nMarshallerExecutor. nputs[Query],
+        Doma nMarshallerExecutor.Result[Doma nResultType]
       ] =
-        domainMarshallerExecutor.arrow(domainMarshaller, context)
+        doma nMarshallerExecutor.arrow(doma nMarshaller, context)
 
-      override def inputAdaptor(
+      overr de def  nputAdaptor(
         query: Query,
-        previousResult: RecommendationPipelineResult[Candidate, Result]
-      ): DomainMarshallerExecutor.Inputs[Query] = {
-        val selectorResults = previousResult.resultSelectorResults.getOrElse {
-          throw InvalidStepStateException(identifier, "SelectorResults")
+        prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+      ): Doma nMarshallerExecutor. nputs[Query] = {
+        val selectorResults = prev ousResult.resultSelectorResults.getOrElse {
+          throw  nval dStepStateExcept on( dent f er, "SelectorResults")
         }
 
-        val filterResults = previousResult.postSelectionFilterResults
+        val f lterResults = prev ousResult.postSelect onF lterResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "PostSelectionFilterResults")
+            throw  nval dStepStateExcept on( dent f er, "PostSelect onF lterResults")
           }.result.toSet
 
-        val filteredResults = selectorResults.selectedCandidates.collect {
-          case candidate: ItemCandidateWithDetails
-              if filterResults.contains(candidate.candidate.asInstanceOf[Candidate]) =>
-            candidate
+        val f lteredResults = selectorResults.selectedCand dates.collect {
+          case cand date:  emCand dateW hDeta ls
+               f f lterResults.conta ns(cand date.cand date.as nstanceOf[Cand date]) =>
+            cand date
         }
 
-        val decoratorResults = previousResult.candidateDecoratorResult
-          .getOrElse(throw InvalidStepStateException(identifier, "DecoratorStep")).result.map {
-            decoration =>
-              decoration.candidate -> decoration.presentation
+        val decoratorResults = prev ousResult.cand dateDecoratorResult
+          .getOrElse(throw  nval dStepStateExcept on( dent f er, "DecoratorStep")).result.map {
+            decorat on =>
+              decorat on.cand date -> decorat on.presentat on
           }.toMap
 
-        val finalResults = filteredResults.map { itemWithDetails =>
-          decoratorResults.get(itemWithDetails.candidate) match {
-            case Some(presentation: ItemPresentation) =>
-              if (itemWithDetails.presentation.isDefined) {
-                throw PipelineFailure(
-                  category = MisconfiguredDecorator,
-                  reason = "Item Candidate already decorated",
-                  componentStack = Some(context.componentStack))
+        val f nalResults = f lteredResults.map {  emW hDeta ls =>
+          decoratorResults.get( emW hDeta ls.cand date) match {
+            case So (presentat on:  emPresentat on) =>
+               f ( emW hDeta ls.presentat on. sDef ned) {
+                throw P pel neFa lure(
+                  category = M sconf guredDecorator,
+                  reason = " em Cand date already decorated",
+                  componentStack = So (context.componentStack))
               } else {
-                itemWithDetails.copy(presentation = Some(presentation))
+                 emW hDeta ls.copy(presentat on = So (presentat on))
               }
-            case Some(_) =>
-              throw PipelineFailure(
-                category = MisconfiguredDecorator,
-                reason = "Item Candidate got back a non ItemPresentation from decorator",
-                componentStack = Some(context.componentStack))
-            case None => itemWithDetails
+            case So (_) =>
+              throw P pel neFa lure(
+                category = M sconf guredDecorator,
+                reason = " em Cand date got back a non  emPresentat on from decorator",
+                componentStack = So (context.componentStack))
+            case None =>  emW hDeta ls
           }
         }
-        DomainMarshallerExecutor.Inputs(
+        Doma nMarshallerExecutor. nputs(
           query = query,
-          candidatesWithDetails = finalResults
+          cand datesW hDeta ls = f nalResults
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-        executorResult: DomainMarshallerExecutor.Result[DomainResultType]
-      ): RecommendationPipelineResult[Candidate, Result] = previousPipelineResult.copy(
-        domainMarshallerResults = Some(executorResult)
+      overr de def resultUpdater(
+        prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+        executorResult: Doma nMarshallerExecutor.Result[Doma nResultType]
+      ): Recom ndat onP pel neResult[Cand date, Result] = prev ousP pel neResult.copy(
+        doma nMarshallerResults = So (executorResult)
       )
     }
 
-  def resultSideEffectsStep(
-    sideEffects: Seq[PipelineResultSideEffect[Query, DomainResultType]],
+  def resultS deEffectsStep(
+    s deEffects: Seq[P pel neResultS deEffect[Query, Doma nResultType]],
     context: Executor.Context
   ): Step[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
+    P pel neResultS deEffect. nputs[Query, Doma nResultType],
+    P pel neResultS deEffectExecutor.Result
   ] = new Step[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
+    P pel neResultS deEffect. nputs[Query, Doma nResultType],
+    P pel neResultS deEffectExecutor.Result
   ] {
-    override def identifier: PipelineStepIdentifier =
-      RecommendationPipelineConfig.resultSideEffectsStep
+    overr de def  dent f er: P pel neStep dent f er =
+      Recom ndat onP pel neConf g.resultS deEffectsStep
 
-    override def executorArrow: Arrow[
-      PipelineResultSideEffect.Inputs[Query, DomainResultType],
-      PipelineResultSideEffectExecutor.Result
-    ] = pipelineResultSideEffectExecutor.arrow(sideEffects, context)
+    overr de def executorArrow: Arrow[
+      P pel neResultS deEffect. nputs[Query, Doma nResultType],
+      P pel neResultS deEffectExecutor.Result
+    ] = p pel neResultS deEffectExecutor.arrow(s deEffects, context)
 
-    override def inputAdaptor(
+    overr de def  nputAdaptor(
       query: Query,
-      previousResult: RecommendationPipelineResult[Candidate, Result]
-    ): PipelineResultSideEffect.Inputs[Query, DomainResultType] = {
+      prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+    ): P pel neResultS deEffect. nputs[Query, Doma nResultType] = {
 
-      // Re-apply decorations to the selected results
+      // Re-apply decorat ons to t  selected results
       val resultSelectorResults = {
-        val decoratorResults = previousResult.candidateDecoratorResult
-          .getOrElse(throw InvalidStepStateException(identifier, "DecoratorStep")).result.map {
-            decoration =>
-              decoration.candidate -> decoration.presentation
+        val decoratorResults = prev ousResult.cand dateDecoratorResult
+          .getOrElse(throw  nval dStepStateExcept on( dent f er, "DecoratorStep")).result.map {
+            decorat on =>
+              decorat on.cand date -> decorat on.presentat on
           }.toMap
 
-        val previousSelectorResults = previousResult.resultSelectorResults.getOrElse {
-          throw InvalidStepStateException(identifier, "SelectorResults")
+        val prev ousSelectorResults = prev ousResult.resultSelectorResults.getOrElse {
+          throw  nval dStepStateExcept on( dent f er, "SelectorResults")
         }
 
-        val filterResults = previousResult.postSelectionFilterResults
+        val f lterResults = prev ousResult.postSelect onF lterResults
           .getOrElse {
-            throw InvalidStepStateException(identifier, "PostSelectionFilterResults")
+            throw  nval dStepStateExcept on( dent f er, "PostSelect onF lterResults")
           }.result.toSet
 
-        val filteredSelectorResults = previousSelectorResults.selectedCandidates.collect {
-          case candidate: ItemCandidateWithDetails
-              if filterResults.contains(candidate.candidate.asInstanceOf[Candidate]) =>
-            candidate
+        val f lteredSelectorResults = prev ousSelectorResults.selectedCand dates.collect {
+          case cand date:  emCand dateW hDeta ls
+               f f lterResults.conta ns(cand date.cand date.as nstanceOf[Cand date]) =>
+            cand date
         }
 
-        val decoratedSelectedResults = filteredSelectorResults.map {
-          case itemWithDetails: ItemCandidateWithDetails =>
-            decoratorResults.get(itemWithDetails.candidate) match {
-              case Some(presentation: ItemPresentation) =>
-                if (itemWithDetails.presentation.isDefined) {
-                  throw PipelineFailure(
-                    category = MisconfiguredDecorator,
-                    reason = "Item Candidate already decorated",
-                    componentStack = Some(context.componentStack))
+        val decoratedSelectedResults = f lteredSelectorResults.map {
+          case  emW hDeta ls:  emCand dateW hDeta ls =>
+            decoratorResults.get( emW hDeta ls.cand date) match {
+              case So (presentat on:  emPresentat on) =>
+                 f ( emW hDeta ls.presentat on. sDef ned) {
+                  throw P pel neFa lure(
+                    category = M sconf guredDecorator,
+                    reason = " em Cand date already decorated",
+                    componentStack = So (context.componentStack))
                 } else {
-                  itemWithDetails.copy(presentation = Some(presentation))
+                   emW hDeta ls.copy(presentat on = So (presentat on))
                 }
-              case Some(_) =>
-                throw PipelineFailure(
-                  category = MisconfiguredDecorator,
-                  reason = "Item Candidate got back a non ItemPresentation from decorator",
-                  componentStack = Some(context.componentStack))
-              case None => itemWithDetails
+              case So (_) =>
+                throw P pel neFa lure(
+                  category = M sconf guredDecorator,
+                  reason = " em Cand date got back a non  emPresentat on from decorator",
+                  componentStack = So (context.componentStack))
+              case None =>  emW hDeta ls
             }
-          case item =>
-            // This branch should be impossible to hit since we do a .collect on ItemCandidateWithDetails
-            // as part of executing the candidate pipelines.
-            throw PipelineFailure(
-              category = IllegalStateFailure,
+          case  em =>
+            // T  branch should be  mposs ble to h  s nce   do a .collect on  emCand dateW hDeta ls
+            // as part of execut ng t  cand date p pel nes.
+            throw P pel neFa lure(
+              category =  llegalStateFa lure,
               reason =
-                s"Only ItemCandidateWithDetails expected in pipeline, found: ${item.toString}",
-              componentStack = Some(context.componentStack)
+                s"Only  emCand dateW hDeta ls expected  n p pel ne, found: ${ em.toStr ng}",
+              componentStack = So (context.componentStack)
             )
         }
 
-        previousSelectorResults.copy(selectedCandidates = decoratedSelectedResults)
+        prev ousSelectorResults.copy(selectedCand dates = decoratedSelectedResults)
       }
 
-      val domainMarshallerResults = previousResult.domainMarshallerResults.getOrElse {
-        throw InvalidStepStateException(identifier, "DomainMarshallerResults")
+      val doma nMarshallerResults = prev ousResult.doma nMarshallerResults.getOrElse {
+        throw  nval dStepStateExcept on( dent f er, "Doma nMarshallerResults")
       }
 
-      PipelineResultSideEffect.Inputs[Query, DomainResultType](
+      P pel neResultS deEffect. nputs[Query, Doma nResultType](
         query = query,
-        selectedCandidates = resultSelectorResults.selectedCandidates,
-        remainingCandidates = resultSelectorResults.remainingCandidates,
-        droppedCandidates = resultSelectorResults.droppedCandidates,
-        response = domainMarshallerResults.result.asInstanceOf[DomainResultType]
+        selectedCand dates = resultSelectorResults.selectedCand dates,
+        rema n ngCand dates = resultSelectorResults.rema n ngCand dates,
+        droppedCand dates = resultSelectorResults.droppedCand dates,
+        response = doma nMarshallerResults.result.as nstanceOf[Doma nResultType]
       )
     }
 
-    override def resultUpdater(
-      previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
-      executorResult: PipelineResultSideEffectExecutor.Result
-    ): RecommendationPipelineResult[Candidate, Result] =
-      previousPipelineResult.copy(resultSideEffectResults = Some(executorResult))
+    overr de def resultUpdater(
+      prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
+      executorResult: P pel neResultS deEffectExecutor.Result
+    ): Recom ndat onP pel neResult[Cand date, Result] =
+      prev ousP pel neResult.copy(resultS deEffectResults = So (executorResult))
   }
 
-  def transportMarshallingStep(
-    transportMarshaller: TransportMarshaller[DomainResultType, Result],
+  def transportMarshall ngStep(
+    transportMarshaller: TransportMarshaller[Doma nResultType, Result],
     context: Executor.Context
   ): Step[
-    TransportMarshallerExecutor.Inputs[DomainResultType],
+    TransportMarshallerExecutor. nputs[Doma nResultType],
     TransportMarshallerExecutor.Result[Result]
-  ] = new Step[TransportMarshallerExecutor.Inputs[
-    DomainResultType
+  ] = new Step[TransportMarshallerExecutor. nputs[
+    Doma nResultType
   ], TransportMarshallerExecutor.Result[Result]] {
-    override def identifier: PipelineStepIdentifier =
-      RecommendationPipelineConfig.transportMarshallerStep
+    overr de def  dent f er: P pel neStep dent f er =
+      Recom ndat onP pel neConf g.transportMarshallerStep
 
-    override def executorArrow: Arrow[TransportMarshallerExecutor.Inputs[
-      DomainResultType
+    overr de def executorArrow: Arrow[TransportMarshallerExecutor. nputs[
+      Doma nResultType
     ], TransportMarshallerExecutor.Result[Result]] =
       transportMarshallerExecutor.arrow(transportMarshaller, context)
 
-    override def inputAdaptor(
+    overr de def  nputAdaptor(
       query: Query,
-      previousResult: RecommendationPipelineResult[Candidate, Result]
-    ): TransportMarshallerExecutor.Inputs[DomainResultType] = {
-      val domainMarshallingResults = previousResult.domainMarshallerResults.getOrElse {
-        throw InvalidStepStateException(identifier, "DomainMarshallerResults")
+      prev ousResult: Recom ndat onP pel neResult[Cand date, Result]
+    ): TransportMarshallerExecutor. nputs[Doma nResultType] = {
+      val doma nMarshall ngResults = prev ousResult.doma nMarshallerResults.getOrElse {
+        throw  nval dStepStateExcept on( dent f er, "Doma nMarshallerResults")
       }
 
-      // Since the PipelineResult just uses HasMarshalling
-      val domainResult = domainMarshallingResults.result.asInstanceOf[DomainResultType]
+      // S nce t  P pel neResult just uses HasMarshall ng
+      val doma nResult = doma nMarshall ngResults.result.as nstanceOf[Doma nResultType]
 
-      TransportMarshallerExecutor.Inputs(domainResult)
+      TransportMarshallerExecutor. nputs(doma nResult)
     }
 
-    override def resultUpdater(
-      previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
+    overr de def resultUpdater(
+      prev ousP pel neResult: Recom ndat onP pel neResult[Cand date, Result],
       executorResult: TransportMarshallerExecutor.Result[Result]
-    ): RecommendationPipelineResult[Candidate, Result] = previousPipelineResult.copy(
-      transportMarshallerResults = Some(executorResult),
-      result = Some(executorResult.result)
+    ): Recom ndat onP pel neResult[Cand date, Result] = prev ousP pel neResult.copy(
+      transportMarshallerResults = So (executorResult),
+      result = So (executorResult.result)
     )
   }
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: RecommendationPipelineConfig[
+  def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    conf g: Recom ndat onP pel neConf g[
       Query,
-      Candidate,
-      DomainResultType,
+      Cand date,
+      Doma nResultType,
       Result
     ]
-  ): RecommendationPipeline[Query, Candidate, Result] = {
-    val pipelineIdentifier = config.identifier
+  ): Recom ndat onP pel ne[Query, Cand date, Result] = {
+    val p pel ne dent f er = conf g. dent f er
 
     val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ProductDisabled))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+      P pel neFa lureClass f er(
+        conf g.fa lureClass f er.orElse(StoppedGateExcept on.class f er(ProductD sabled))),
+      parentComponent dent f erStack.push(p pel ne dent f er)
     )
 
-    val decorator = config.decorator.map(decorator =>
-      CandidateDecorator.copyWithUpdatedIdentifier(decorator, pipelineIdentifier))
+    val decorator = conf g.decorator.map(decorator =>
+      Cand dateDecorator.copyW hUpdated dent f er(decorator, p pel ne dent f er))
 
-    val qualityFactorStatus: QualityFactorStatus =
-      QualityFactorStatus.build(config.qualityFactorConfigs)
+    val qual yFactorStatus: Qual yFactorStatus =
+      Qual yFactorStatus.bu ld(conf g.qual yFactorConf gs)
 
-    val qualityFactorObserverByPipeline =
-      qualityFactorStatus.qualityFactorByPipeline.mapValues { qualityFactor =>
-        qualityFactor.buildObserver()
+    val qual yFactorObserverByP pel ne =
+      qual yFactorStatus.qual yFactorByP pel ne.mapValues { qual yFactor =>
+        qual yFactor.bu ldObserver()
       }
 
-    buildGaugesForQualityFactor(pipelineIdentifier, qualityFactorStatus, statsReceiver)
+    bu ldGaugesForQual yFactor(p pel ne dent f er, qual yFactorStatus, statsRece ver)
 
-    val candidatePipelines: Seq[CandidatePipeline[Query]] = config.candidatePipelines.map {
-      pipelineConfig: CandidatePipelineConfig[Query, _, _, _] =>
-        pipelineConfig.build(context.componentStack, candidatePipelineBuilderFactory)
+    val cand dateP pel nes: Seq[Cand dateP pel ne[Query]] = conf g.cand dateP pel nes.map {
+      p pel neConf g: Cand dateP pel neConf g[Query, _, _, _] =>
+        p pel neConf g.bu ld(context.componentStack, cand dateP pel neBu lderFactory)
     }
 
-    val dependentCandidatePipelines: Seq[CandidatePipeline[Query]] =
-      config.dependentCandidatePipelines.map {
-        pipelineConfig: DependentCandidatePipelineConfig[Query, _, _, _] =>
-          pipelineConfig.build(context.componentStack, candidatePipelineBuilderFactory)
+    val dependentCand dateP pel nes: Seq[Cand dateP pel ne[Query]] =
+      conf g.dependentCand dateP pel nes.map {
+        p pel neConf g: DependentCand dateP pel neConf g[Query, _, _, _] =>
+          p pel neConf g.bu ld(context.componentStack, cand dateP pel neBu lderFactory)
       }
 
-    val scoringPipelines: Seq[ScoringPipeline[Query, Candidate]] = config.scoringPipelines.map {
-      pipelineConfig: ScoringPipelineConfig[Query, Candidate] =>
-        pipelineConfig.build(context.componentStack, scoringPipelineBuilderFactory)
+    val scor ngP pel nes: Seq[Scor ngP pel ne[Query, Cand date]] = conf g.scor ngP pel nes.map {
+      p pel neConf g: Scor ngP pel neConf g[Query, Cand date] =>
+        p pel neConf g.bu ld(context.componentStack, scor ngP pel neBu lderFactory)
     }
 
-    val builtSteps = Seq(
-      qualityFactorStep(qualityFactorStatus),
-      gatesStep(config.gates, context),
+    val bu ltSteps = Seq(
+      qual yFactorStep(qual yFactorStatus),
+      gatesStep(conf g.gates, context),
       fetchQueryFeaturesStep(
-        config.fetchQueryFeatures,
-        RecommendationPipelineConfig.fetchQueryFeaturesStep,
-        (previousPipelineResult, executorResult) =>
-          previousPipelineResult.copy(queryFeatures = Some(executorResult)),
+        conf g.fetchQueryFeatures,
+        Recom ndat onP pel neConf g.fetchQueryFeaturesStep,
+        (prev ousP pel neResult, executorResult) =>
+          prev ousP pel neResult.copy(queryFeatures = So (executorResult)),
         context
       ),
       fetchQueryFeaturesStep(
-        config.fetchQueryFeaturesPhase2,
-        RecommendationPipelineConfig.fetchQueryFeaturesPhase2Step,
-        (previousPipelineResult, executorResult) =>
-          previousPipelineResult.copy(
-            queryFeaturesPhase2 = Some(executorResult),
-            mergedAsyncQueryFeatures = Some(
-              previousPipelineResult.queryFeatures
-                .getOrElse(throw InvalidStepStateException(
-                  RecommendationPipelineConfig.fetchQueryFeaturesPhase2Step,
+        conf g.fetchQueryFeaturesPhase2,
+        Recom ndat onP pel neConf g.fetchQueryFeaturesPhase2Step,
+        (prev ousP pel neResult, executorResult) =>
+          prev ousP pel neResult.copy(
+            queryFeaturesPhase2 = So (executorResult),
+             rgedAsyncQueryFeatures = So (
+              prev ousP pel neResult.queryFeatures
+                .getOrElse(throw  nval dStepStateExcept on(
+                  Recom ndat onP pel neConf g.fetchQueryFeaturesPhase2Step,
                   "QueryFeatures"))
                 .asyncFeatureMap ++ executorResult.asyncFeatureMap)
           ),
         context
       ),
-      asyncFeaturesStep(RecommendationPipelineConfig.candidatePipelinesStep, context),
-      candidatePipelinesStep(
-        candidatePipelines,
-        config.defaultFailOpenPolicy,
-        config.candidatePipelineFailOpenPolicies,
-        qualityFactorObserverByPipeline,
+      asyncFeaturesStep(Recom ndat onP pel neConf g.cand dateP pel nesStep, context),
+      cand dateP pel nesStep(
+        cand dateP pel nes,
+        conf g.defaultFa lOpenPol cy,
+        conf g.cand dateP pel neFa lOpenPol c es,
+        qual yFactorObserverByP pel ne,
         context),
-      asyncFeaturesStep(RecommendationPipelineConfig.dependentCandidatePipelinesStep, context),
-      dependentCandidatePipelinesStep(
-        dependentCandidatePipelines,
-        config.defaultFailOpenPolicy,
-        config.candidatePipelineFailOpenPolicies,
-        qualityFactorObserverByPipeline,
+      asyncFeaturesStep(Recom ndat onP pel neConf g.dependentCand dateP pel nesStep, context),
+      dependentCand dateP pel nesStep(
+        dependentCand dateP pel nes,
+        conf g.defaultFa lOpenPol cy,
+        conf g.cand dateP pel neFa lOpenPol c es,
+        qual yFactorObserverByP pel ne,
         context),
-      asyncFeaturesStep(RecommendationPipelineConfig.postCandidatePipelinesSelectorsStep, context),
-      postCandidatePipelinesSelectorStep(config.postCandidatePipelinesSelectors, context),
+      asyncFeaturesStep(Recom ndat onP pel neConf g.postCand dateP pel nesSelectorsStep, context),
+      postCand dateP pel nesSelectorStep(conf g.postCand dateP pel nesSelectors, context),
       asyncFeaturesStep(
-        RecommendationPipelineConfig.postCandidatePipelinesFeatureHydrationStep,
+        Recom ndat onP pel neConf g.postCand dateP pel nesFeatureHydrat onStep,
         context),
-      postCandidatePipelinesFeatureHydrationStep(
-        config.postCandidatePipelinesFeatureHydration,
+      postCand dateP pel nesFeatureHydrat onStep(
+        conf g.postCand dateP pel nesFeatureHydrat on,
         context),
-      asyncFeaturesStep(RecommendationPipelineConfig.globalFiltersStep, context),
-      globalFiltersStep(config.globalFilters, context),
-      asyncFeaturesStep(RecommendationPipelineConfig.scoringPipelinesStep, context),
-      scoringPipelinesStep(
-        scoringPipelines,
+      asyncFeaturesStep(Recom ndat onP pel neConf g.globalF ltersStep, context),
+      globalF ltersStep(conf g.globalF lters, context),
+      asyncFeaturesStep(Recom ndat onP pel neConf g.scor ngP pel nesStep, context),
+      scor ngP pel nesStep(
+        scor ngP pel nes,
         context,
-        config.defaultFailOpenPolicy,
-        config.scoringPipelineFailOpenPolicies,
-        qualityFactorObserverByPipeline
+        conf g.defaultFa lOpenPol cy,
+        conf g.scor ngP pel neFa lOpenPol c es,
+        qual yFactorObserverByP pel ne
       ),
-      asyncFeaturesStep(RecommendationPipelineConfig.resultSelectorsStep, context),
-      resultSelectorsStep(config.resultSelectors, context),
-      asyncFeaturesStep(RecommendationPipelineConfig.postSelectionFiltersStep, context),
-      postSelectionFiltersStep(config.postSelectionFilters, context),
-      asyncFeaturesStep(RecommendationPipelineConfig.decoratorStep, context),
+      asyncFeaturesStep(Recom ndat onP pel neConf g.resultSelectorsStep, context),
+      resultSelectorsStep(conf g.resultSelectors, context),
+      asyncFeaturesStep(Recom ndat onP pel neConf g.postSelect onF ltersStep, context),
+      postSelect onF ltersStep(conf g.postSelect onF lters, context),
+      asyncFeaturesStep(Recom ndat onP pel neConf g.decoratorStep, context),
       decoratorStep(decorator, context),
-      domainMarshallingStep(config.domainMarshaller, context),
-      asyncFeaturesStep(RecommendationPipelineConfig.resultSideEffectsStep, context),
-      resultSideEffectsStep(config.resultSideEffects, context),
-      transportMarshallingStep(config.transportMarshaller, context)
+      doma nMarshall ngStep(conf g.doma nMarshaller, context),
+      asyncFeaturesStep(Recom ndat onP pel neConf g.resultS deEffectsStep, context),
+      resultS deEffectsStep(conf g.resultS deEffects, context),
+      transportMarshall ngStep(conf g.transportMarshaller, context)
     )
 
-    val finalArrow = buildCombinedArrowFromSteps(
-      steps = builtSteps,
+    val f nalArrow = bu ldComb nedArrowFromSteps(
+      steps = bu ltSteps,
       context = context,
-      initialEmptyResult = RecommendationPipelineResult.empty,
-      stepsInOrderFromConfig = RecommendationPipelineConfig.stepsInOrder
+       n  alEmptyResult = Recom ndat onP pel neResult.empty,
+      steps nOrderFromConf g = Recom ndat onP pel neConf g.steps nOrder
     )
 
-    val configFromBuilder = config
-    new RecommendationPipeline[Query, Candidate, Result] {
-      override private[core] val config: RecommendationPipelineConfig[
+    val conf gFromBu lder = conf g
+    new Recom ndat onP pel ne[Query, Cand date, Result] {
+      overr de pr vate[core] val conf g: Recom ndat onP pel neConf g[
         Query,
-        Candidate,
+        Cand date,
         _,
         Result
       ] =
-        configFromBuilder
-      override val arrow: Arrow[Query, RecommendationPipelineResult[Candidate, Result]] =
-        finalArrow
-      override val identifier: RecommendationPipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val children: Seq[Component] =
-        config.gates ++
-          config.fetchQueryFeatures ++
-          candidatePipelines ++
-          dependentCandidatePipelines ++
-          config.postCandidatePipelinesFeatureHydration ++
-          config.globalFilters ++
-          scoringPipelines ++
-          config.postSelectionFilters ++
-          config.resultSideEffects ++
+        conf gFromBu lder
+      overr de val arrow: Arrow[Query, Recom ndat onP pel neResult[Cand date, Result]] =
+        f nalArrow
+      overr de val  dent f er: Recom ndat onP pel ne dent f er = p pel ne dent f er
+      overr de val alerts: Seq[Alert] = conf g.alerts
+      overr de val ch ldren: Seq[Component] =
+        conf g.gates ++
+          conf g.fetchQueryFeatures ++
+          cand dateP pel nes ++
+          dependentCand dateP pel nes ++
+          conf g.postCand dateP pel nesFeatureHydrat on ++
+          conf g.globalF lters ++
+          scor ngP pel nes ++
+          conf g.postSelect onF lters ++
+          conf g.resultS deEffects ++
           decorator.toSeq ++
-          Seq(config.domainMarshaller, config.transportMarshaller)
+          Seq(conf g.doma nMarshaller, conf g.transportMarshaller)
     }
   }
 }

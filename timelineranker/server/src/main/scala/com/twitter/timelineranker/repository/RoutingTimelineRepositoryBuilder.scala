@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.repository
+package com.tw ter.t  l neranker.repos ory
 
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
+ mport com.tw ter.t  l neranker.conf g.Runt  Conf gurat on
+ mport com.tw ter.t  l neranker.para ters.Conf gBu lder
 
-object RoutingTimelineRepositoryBuilder {
+object Rout ngT  l neRepos oryBu lder {
   def apply(
-    config: RuntimeConfiguration,
-    configBuilder: ConfigBuilder
-  ): RoutingTimelineRepository = {
+    conf g: Runt  Conf gurat on,
+    conf gBu lder: Conf gBu lder
+  ): Rout ngT  l neRepos ory = {
 
-    val reverseChronTimelineRepository =
-      new ReverseChronHomeTimelineRepositoryBuilder(config, configBuilder).apply
-    val rankedTimelineRepository = new RankedHomeTimelineRepository
+    val reverseChronT  l neRepos ory =
+      new ReverseChronHo T  l neRepos oryBu lder(conf g, conf gBu lder).apply
+    val rankedT  l neRepos ory = new RankedHo T  l neRepos ory
 
-    new RoutingTimelineRepository(reverseChronTimelineRepository, rankedTimelineRepository)
+    new Rout ngT  l neRepos ory(reverseChronT  l neRepos ory, rankedT  l neRepos ory)
   }
 }

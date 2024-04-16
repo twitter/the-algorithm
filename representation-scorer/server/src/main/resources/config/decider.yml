@@ -1,155 +1,155 @@
-enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore:
-  comment: "Enable to use the non-empty store for logFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore (from 0% to 100%). 0 means use EMPTY readable store for all requests."
-  default_availability: 0
+enableLogFavBasedApeEnt y20M145KUpdatedEmbedd ngCac dStore:
+  com nt: "Enable to use t  non-empty store for logFavBasedApeEnt y20M145KUpdatedEmbedd ngCac dStore (from 0% to 100%). 0  ans use EMPTY readable store for all requests."
+  default_ava lab l y: 0
 
-enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore:
-  comment: "Enable to use the non-empty store for logFavBasedApeEntity20M145K2020EmbeddingCachedStore (from 0% to 100%). 0 means use EMPTY readable store for all requests."
-  default_availability: 0
+enableLogFavBasedApeEnt y20M145K2020Embedd ngCac dStore:
+  com nt: "Enable to use t  non-empty store for logFavBasedApeEnt y20M145K2020Embedd ngCac dStore (from 0% to 100%). 0  ans use EMPTY readable store for all requests."
+  default_ava lab l y: 0
 
-representation-scorer_forward_dark_traffic:
-  comment: "Defines the percentage of traffic to forward to diffy-proxy. Set to 0 to disable dark traffic forwarding"
-  default_availability: 0
+representat on-scorer_forward_dark_traff c:
+  com nt: "Def nes t  percentage of traff c to forward to d ffy-proxy. Set to 0 to d sable dark traff c forward ng"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_non_prod_callers":
-  comment: "Discard traffic from all non-prod callers"
-  default_availability: 0
+"representat on-scorer_load_s d_non_prod_callers":
+  com nt: "D scard traff c from all non-prod callers"
+  default_ava lab l y: 0
 
-enable_log_fav_based_tweet_embedding_20m145k2020_timeouts:
-  comment: "If enabled, set a timeout on calls to the logFavBased20M145K2020TweetEmbeddingStore"
-  default_availability: 0
+enable_log_fav_based_t et_embedd ng_20m145k2020_t  outs:
+  com nt: " f enabled, set a t  out on calls to t  logFavBased20M145K2020T etEmbedd ngStore"
+  default_ava lab l y: 0
 
-log_fav_based_tweet_embedding_20m145k2020_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the logFavBased20M145K2020TweetEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_log_fav_based_tweet_embedding_20m145k2020_timeouts is true"
-  default_availability: 2000
+log_fav_based_t et_embedd ng_20m145k2020_t  out_value_m ll s:
+  com nt: "T  value of t  dec der def nes t  t  out ( n m ll seconds) to use on calls to t  logFavBased20M145K2020T etEmbedd ngStore,  .e. 1.50%  s 150ms. Only appl ed  f enable_log_fav_based_t et_embedd ng_20m145k2020_t  outs  s true"
+  default_ava lab l y: 2000
 
-enable_log_fav_based_tweet_embedding_20m145kUpdated_timeouts:
-  comment: "If enabled, set a timeout on calls to the logFavBased20M145KUpdatedTweetEmbeddingStore"
-  default_availability: 0
+enable_log_fav_based_t et_embedd ng_20m145kUpdated_t  outs:
+  com nt: " f enabled, set a t  out on calls to t  logFavBased20M145KUpdatedT etEmbedd ngStore"
+  default_ava lab l y: 0
 
-log_fav_based_tweet_embedding_20m145kUpdated_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the logFavBased20M145KUpdatedTweetEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_log_fav_based_tweet_embedding_20m145kUpdated_timeouts is true"
-  default_availability: 2000
+log_fav_based_t et_embedd ng_20m145kUpdated_t  out_value_m ll s:
+  com nt: "T  value of t  dec der def nes t  t  out ( n m ll seconds) to use on calls to t  logFavBased20M145KUpdatedT etEmbedd ngStore,  .e. 1.50%  s 150ms. Only appl ed  f enable_log_fav_based_t et_embedd ng_20m145kUpdated_t  outs  s true"
+  default_ava lab l y: 2000
 
-enable_cluster_tweet_index_store_timeouts:
-  comment: "If enabled, set a timeout on calls to the ClusterTweetIndexStore"
-  default_availability: 0
+enable_cluster_t et_ ndex_store_t  outs:
+  com nt: " f enabled, set a t  out on calls to t  ClusterT et ndexStore"
+  default_ava lab l y: 0
 
-cluster_tweet_index_store_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the ClusterTweetIndexStore, i.e. 1.50% is 150ms. Only applied if enable_cluster_tweet_index_store_timeouts is true"
-  default_availability: 2000
+cluster_t et_ ndex_store_t  out_value_m ll s:
+  com nt: "T  value of t  dec der def nes t  t  out ( n m ll seconds) to use on calls to t  ClusterT et ndexStore,  .e. 1.50%  s 150ms. Only appl ed  f enable_cluster_t et_ ndex_store_t  outs  s true"
+  default_ava lab l y: 2000
 
-representation_scorer_fetch_signal_share:
-  comment: "If enabled, fetches share signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_share:
+  com nt: " f enabled, fetc s share s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_reply:
-  comment: "If enabled, fetches reply signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_reply:
+  com nt: " f enabled, fetc s reply s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_original_tweet:
-  comment: "If enabled, fetches original tweet signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_or g nal_t et:
+  com nt: " f enabled, fetc s or g nal t et s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_video_playback:
-  comment: "If enabled, fetches video playback signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_v deo_playback:
+  com nt: " f enabled, fetc s v deo playback s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_block:
-  comment: "If enabled, fetches account block signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_block:
+  com nt: " f enabled, fetc s account block s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_mute:
-  comment: "If enabled, fetches account mute signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_mute:
+  com nt: " f enabled, fetc s account mute s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_report:
-  comment: "If enabled, fetches tweet report signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_report:
+  com nt: " f enabled, fetc s t et report s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_dont_like:
-  comment: "If enabled, fetches tweet don't like signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_dont_l ke:
+  com nt: " f enabled, fetc s t et don't l ke s gnals from USS"
+  default_ava lab l y: 0
 
-representation_scorer_fetch_signal_see_fewer:
-  comment: "If enabled, fetches tweet see fewer signals from USS"
-  default_availability: 0
+representat on_scorer_fetch_s gnal_see_fe r:
+  com nt: " f enabled, fetc s t et see fe r s gnals from USS"
+  default_ava lab l y: 0
 
-# To create a new decider, add here with the same format and caller's details : "representation-scorer_load_shed_by_caller_id_twtr:{{role}}:{{name}}:{{environment}}:{{cluster}}"
-# All the deciders below are generated by this script - ./strato/bin/fed deciders ./ --service-role=representation-scorer --service-name=representation-scorer
-# If you need to run the script and paste the output, add only the prod deciders here. Non-prod ones are being taken care of by representation-scorer_load_shed_non_prod_callers
+# To create a new dec der, add  re w h t  sa  format and caller's deta ls : "representat on-scorer_load_s d_by_caller_ d_twtr:{{role}}:{{na }}:{{env ron nt}}:{{cluster}}"
+# All t  dec ders below are generated by t  scr pt - ./strato/b n/fed dec ders ./ --serv ce-role=representat on-scorer --serv ce-na =representat on-scorer
+#  f   need to run t  scr pt and paste t  output, add only t  prod dec ders  re. Non-prod ones are be ng taken care of by representat on-scorer_load_s d_non_prod_callers
 
-"representation-scorer_load_shed_by_caller_id_all":
-  comment: "Reject all traffic from caller id: all"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_all":
+  com nt: "Reject all traff c from caller  d: all"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-canary:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce-canary:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce-canary:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-canary:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce-canary:prod:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce-canary:prod:pdxa"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-send:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-send:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce-send:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce-send:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce:prod:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce:prod:pdxa"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce:stag ng:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce:stag ng:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:fr gate:fr gate-pushserv ce:stag ng:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:fr gate:fr gate-pushserv ce:stag ng:pdxa"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:ho -scorer:ho -scorer:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:ho -scorer:ho -scorer:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:ho -scorer:ho -scorer:prod:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:ho -scorer:ho -scorer:prod:pdxa"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoapi:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoapi:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:stratostore:stratoap :prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:stratostore:stratoap :prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:stratostore:stratoserver:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:stratostore:stratoserver:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:stratostore:stratoserver:prod:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:stratostore:stratoserver:prod:pdxa"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:t  l nescorer:t  l nescorer:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:t  l nescorer:t  l nescorer:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:t  l nescorer:t  l nescorer:prod:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:t  l nescorer:t  l nescorer:prod:pdxa"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:atla"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:top c-soc al-proof:top c-soc al-proof:prod:atla":
+  com nt: "Reject all traff c from caller  d: twtr:svc:top c-soc al-proof:top c-soc al-proof:prod:atla"
+  default_ava lab l y: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:pdxa"
-  default_availability: 0
+"representat on-scorer_load_s d_by_caller_ d_twtr:svc:top c-soc al-proof:top c-soc al-proof:prod:pdxa":
+  com nt: "Reject all traff c from caller  d: twtr:svc:top c-soc al-proof:top c-soc al-proof:prod:pdxa"
+  default_ava lab l y: 0
 
-"enable_sim_clusters_embedding_store_timeouts":
-  comment: "If enabled, set a timeout on calls to the SimClustersEmbeddingStore"
-  default_availability: 10000
+"enable_s m_clusters_embedd ng_store_t  outs":
+  com nt: " f enabled, set a t  out on calls to t  S mClustersEmbedd ngStore"
+  default_ava lab l y: 10000
 
-sim_clusters_embedding_store_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the SimClustersEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_sim_clusters_embedding_store_timeouts is true"
-  default_availability: 2000
+s m_clusters_embedd ng_store_t  out_value_m ll s:
+  com nt: "T  value of t  dec der def nes t  t  out ( n m ll seconds) to use on calls to t  S mClustersEmbedd ngStore,  .e. 1.50%  s 150ms. Only appl ed  f enable_s m_clusters_embedd ng_store_t  outs  s true"
+  default_ava lab l y: 2000

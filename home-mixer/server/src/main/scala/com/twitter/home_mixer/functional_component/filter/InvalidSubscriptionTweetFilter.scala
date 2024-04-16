@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.tw ter.ho _m xer.funct onal_component.f lter
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.ho _m xer.model.Ho Features.Exclus veConversat onAuthor dFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.soc algraph.{thr ftscala => sg}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Exclude invalid subscription tweets - cases where the viewer is not subscribed to the author
+ * Exclude  nval d subscr pt on t ets - cases w re t  v e r  s not subscr bed to t  author
  *
- * If SGS hydration fails, `SGSInvalidSubscriptionTweetFeature` will be set to None for
- * subscription tweets, so we explicitly filter those tweets out.
+ *  f SGS hydrat on fa ls, `SGS nval dSubscr pt onT etFeature` w ll be set to None for
+ * subscr pt on t ets, so   expl c ly f lter those t ets out.
  */
-@Singleton
-case class InvalidSubscriptionTweetFilter @Inject() (
-  socialGraphClient: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends Filter[PipelineQuery, TweetCandidate]
-    with Logging {
+@S ngleton
+case class  nval dSubscr pt onT etF lter @ nject() (
+  soc alGraphCl ent: Soc alGraph,
+  statsRece ver: StatsRece ver)
+    extends F lter[P pel neQuery, T etCand date]
+    w h Logg ng {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("InvalidSubscriptionTweet")
+  overr de val  dent f er: F lter dent f er = F lter dent f er(" nval dSubscr pt onT et")
 
-  private val scopedStatsReceiver = statsReceiver.scope(identifier.toString)
-  private val validCounter = scopedStatsReceiver.counter("validExclusiveTweet")
-  private val invalidCounter = scopedStatsReceiver.counter("invalidExclusiveTweet")
+  pr vate val scopedStatsRece ver = statsRece ver.scope( dent f er.toStr ng)
+  pr vate val val dCounter = scopedStatsRece ver.counter("val dExclus veT et")
+  pr vate val  nval dCounter = scopedStatsRece ver.counter(" nval dExclus veT et")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = Stitch
-    .traverse(candidates) { candidate =>
-      val exclusiveAuthorId =
-        candidate.features.getOrElse(ExclusiveConversationAuthorIdFeature, None)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[F lterResult[T etCand date]] = St ch
+    .traverse(cand dates) { cand date =>
+      val exclus veAuthor d =
+        cand date.features.getOrElse(Exclus veConversat onAuthor dFeature, None)
 
-      if (exclusiveAuthorId.isDefined) {
-        val request = sg.ExistsRequest(
-          source = query.getRequiredUserId,
-          target = exclusiveAuthorId.get,
-          relationships =
-            Seq(sg.Relationship(sg.RelationshipType.TierOneSuperFollowing, hasRelationship = true)),
+       f (exclus veAuthor d. sDef ned) {
+        val request = sg.Ex stsRequest(
+          s ce = query.getRequ redUser d,
+          target = exclus veAuthor d.get,
+          relat onsh ps =
+            Seq(sg.Relat onsh p(sg.Relat onsh pType.T erOneSuperFollow ng, hasRelat onsh p = true)),
         )
-        socialGraphClient.exists(request).map(_.exists).map { valid =>
-          if (!valid) invalidCounter.incr() else validCounter.incr()
-          valid
+        soc alGraphCl ent.ex sts(request).map(_.ex sts).map { val d =>
+           f (!val d)  nval dCounter. ncr() else val dCounter. ncr()
+          val d
         }
-      } else Stitch.value(true)
-    }.map { validResults =>
-      val (kept, removed) = candidates
-        .map(_.candidate)
-        .zip(validResults)
-        .partition { case (candidate, valid) => valid }
+      } else St ch.value(true)
+    }.map { val dResults =>
+      val (kept, removed) = cand dates
+        .map(_.cand date)
+        .z p(val dResults)
+        .part  on { case (cand date, val d) => val d }
 
-      val keptCandidates = kept.map { case (candidate, _) => candidate }
-      val removedCandidates = removed.map { case (candidate, _) => candidate }
+      val keptCand dates = kept.map { case (cand date, _) => cand date }
+      val removedCand dates = removed.map { case (cand date, _) => cand date }
 
-      FilterResult(kept = keptCandidates, removed = removedCandidates)
+      F lterResult(kept = keptCand dates, removed = removedCand dates)
     }
 }

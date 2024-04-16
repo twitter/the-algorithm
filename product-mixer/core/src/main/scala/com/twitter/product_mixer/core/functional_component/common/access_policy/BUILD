@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotations",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotat ons",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common",
     ],
     exports = [
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotations",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
+        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotat ons",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common",
     ],
 )

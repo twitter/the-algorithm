@@ -1,146 +1,146 @@
-package com.twitter.timelineranker.entity_tweets
+package com.tw ter.t  l neranker.ent y_t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.common._
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.entity_tweets.EntityTweetsParams._
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoHydratedTweetsTransform
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoThriftTweetFeaturesTransform
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.common._
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l neranker.para ters.ent y_t ets.Ent yT etsParams._
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l neranker.ut l.CopyContentFeatures ntoHydratedT etsTransform
+ mport com.tw ter.t  l neranker.ut l.CopyContentFeatures ntoThr ftT etFeaturesTransform
+ mport com.tw ter.t  l neranker.ut l.T etF lters
+ mport com.tw ter.t  l neranker.v s b l y.FollowGraphDataProv der
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.G zmoduckCl ent
+ mport com.tw ter.t  l nes.cl ents.manhattan.User tadataCl ent
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.t etyp e.T etyP eCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.t  l nes.ut l.stats.RequestStatsRece ver
+ mport com.tw ter.t  l nes.v s b l y.V s b l yEnforcer
+ mport com.tw ter.ut l.Future
 
-class EntityTweetsSource(
-  gizmoduckClient: GizmoduckClient,
-  searchClient: SearchClient,
-  tweetyPieClient: TweetyPieClient,
-  userMetadataClient: UserMetadataClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  visibilityEnforcer: VisibilityEnforcer,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver) {
+class Ent yT etsS ce(
+  g zmoduckCl ent: G zmoduckCl ent,
+  searchCl ent: SearchCl ent,
+  t etyP eCl ent: T etyP eCl ent,
+  user tadataCl ent: User tadataCl ent,
+  followGraphDataProv der: FollowGraphDataProv der,
+  v s b l yEnforcer: V s b l yEnforcer,
+  contentFeaturesCac : Store[T et d, ContentFeatures],
+  statsRece ver: StatsRece ver) {
 
-  private[this] val baseScope = statsReceiver.scope("entityTweetsSource")
-  private[this] val requestStats = RequestStatsReceiver(baseScope)
+  pr vate[t ] val baseScope = statsRece ver.scope("ent yT etsS ce")
+  pr vate[t ] val requestStats = RequestStatsRece ver(baseScope)
 
-  private[this] val failOpenScope = baseScope.scope("failOpen")
-  private[this] val userProfileHandler = new FailOpenHandler(failOpenScope, "userProfileInfo")
-  private[this] val userLanguagesHandler = new FailOpenHandler(failOpenScope, "userLanguages")
+  pr vate[t ] val fa lOpenScope = baseScope.scope("fa lOpen")
+  pr vate[t ] val userProf leHandler = new Fa lOpenHandler(fa lOpenScope, "userProf le nfo")
+  pr vate[t ] val userLanguagesHandler = new Fa lOpenHandler(fa lOpenScope, "userLanguages")
 
-  private[this] val followGraphDataTransform = new FollowGraphDataTransform(
-    followGraphDataProvider = followGraphDataProvider,
-    maxFollowedUsersProvider = DependencyProvider.from(MaxFollowedUsersParam)
+  pr vate[t ] val followGraphDataTransform = new FollowGraphDataTransform(
+    followGraphDataProv der = followGraphDataProv der,
+    maxFollo dUsersProv der = DependencyProv der.from(MaxFollo dUsersParam)
   )
-  private[this] val fetchSearchResultsTransform = new EntityTweetsSearchResultsTransform(
-    searchClient = searchClient,
-    statsReceiver = baseScope
+  pr vate[t ] val fetchSearchResultsTransform = new Ent yT etsSearchResultsTransform(
+    searchCl ent = searchCl ent,
+    statsRece ver = baseScope
   )
-  private[this] val userProfileInfoTransform =
-    new UserProfileInfoTransform(userProfileHandler, gizmoduckClient)
-  private[this] val languagesTransform =
-    new UserLanguagesTransform(userLanguagesHandler, userMetadataClient)
+  pr vate[t ] val userProf le nfoTransform =
+    new UserProf le nfoTransform(userProf leHandler, g zmoduckCl ent)
+  pr vate[t ] val languagesTransform =
+    new UserLanguagesTransform(userLanguagesHandler, user tadataCl ent)
 
-  private[this] val visibilityEnforcingTransform = new VisibilityEnforcingTransform(
-    visibilityEnforcer
-  )
-
-  private[this] val filters = TweetFilters.ValueSet(
-    TweetFilters.DuplicateTweets,
-    TweetFilters.DuplicateRetweets
+  pr vate[t ] val v s b l yEnforc ngTransform = new V s b l yEnforc ngTransform(
+    v s b l yEnforcer
   )
 
-  private[this] val hydratedTweetsFilter = new HydratedTweetsFilterTransform(
-    outerFilters = filters,
-    innerFilters = TweetFilters.None,
+  pr vate[t ] val f lters = T etF lters.ValueSet(
+    T etF lters.Dupl cateT ets,
+    T etF lters.Dupl cateRet ets
+  )
+
+  pr vate[t ] val hydratedT etsF lter = new HydratedT etsF lterTransform(
+    outerF lters = f lters,
+     nnerF lters = T etF lters.None,
     useFollowGraphData = false,
-    useSourceTweets = false,
-    statsReceiver = baseScope,
-    numRetweetsAllowed = HydratedTweetsFilterTransform.NumDuplicateRetweetsAllowed
+    useS ceT ets = false,
+    statsRece ver = baseScope,
+    numRet etsAllo d = HydratedT etsF lterTransform.NumDupl cateRet etsAllo d
   )
 
-  private[this] val contentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransformBuilder(
-      tweetyPieClient = tweetyPieClient,
-      contentFeaturesCache = contentFeaturesCache,
-      enableContentFeaturesGate = RecapQuery.paramGate(EnableContentFeaturesHydrationParam),
-      enableTokensInContentFeaturesGate =
-        RecapQuery.paramGate(EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(EnableTweetTextInContentFeaturesHydrationParam),
-      enableConversationControlContentFeaturesGate =
-        RecapQuery.paramGate(EnableConversationControlInContentFeaturesHydrationParam),
-      enableTweetMediaHydrationGate = RecapQuery.paramGate(EnableTweetMediaHydrationParam),
-      hydrateInReplyToTweets = false,
-      statsReceiver = baseScope
-    ).build()
+  pr vate[t ] val contentFeaturesHydrat onTransform =
+    new ContentFeaturesHydrat onTransformBu lder(
+      t etyP eCl ent = t etyP eCl ent,
+      contentFeaturesCac  = contentFeaturesCac ,
+      enableContentFeaturesGate = RecapQuery.paramGate(EnableContentFeaturesHydrat onParam),
+      enableTokens nContentFeaturesGate =
+        RecapQuery.paramGate(EnableTokens nContentFeaturesHydrat onParam),
+      enableT etText nContentFeaturesGate =
+        RecapQuery.paramGate(EnableT etText nContentFeaturesHydrat onParam),
+      enableConversat onControlContentFeaturesGate =
+        RecapQuery.paramGate(EnableConversat onControl nContentFeaturesHydrat onParam),
+      enableT et d aHydrat onGate = RecapQuery.paramGate(EnableT et d aHydrat onParam),
+      hydrate nReplyToT ets = false,
+      statsRece ver = baseScope
+    ).bu ld()
 
-  private[this] def hydratesContentFeatures(
-    hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope
+  pr vate[t ] def hydratesContentFeatures(
+    hydratedEnvelope: HydratedCand datesAndFeaturesEnvelope
   ): Boolean =
-    hydratedEnvelope.candidateEnvelope.query.hydratesContentFeatures.getOrElse(true)
+    hydratedEnvelope.cand dateEnvelope.query.hydratesContentFeatures.getOrElse(true)
 
-  private[this] val contentFeaturesTransformer = FutureArrow.choose(
-    predicate = hydratesContentFeatures,
-    ifTrue = contentFeaturesHydrationTransform
-      .andThen(CopyContentFeaturesIntoThriftTweetFeaturesTransform)
-      .andThen(CopyContentFeaturesIntoHydratedTweetsTransform),
-    ifFalse = FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
-    ](Future.value) // empty transformer
+  pr vate[t ] val contentFeaturesTransfor r = FutureArrow.choose(
+    pred cate = hydratesContentFeatures,
+     fTrue = contentFeaturesHydrat onTransform
+      .andT n(CopyContentFeatures ntoThr ftT etFeaturesTransform)
+      .andT n(CopyContentFeatures ntoHydratedT etsTransform),
+     fFalse = FutureArrow[
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
+    ](Future.value) // empty transfor r
   )
 
-  private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
+  pr vate[t ] val cand dateGenerat onTransform = new Cand dateGenerat onTransform(baseScope)
 
-  private[this] val hydrationAndFilteringPipeline =
-    CreateCandidateEnvelopeTransform
-      .andThen(followGraphDataTransform) // Fetch follow graph data
-      .andThen(fetchSearchResultsTransform) // fetch search results
-      .andThen(SearchResultDedupAndSortingTransform) // dedup and order search results
-      .andThen(CandidateTweetHydrationTransform) // hydrate search results
-      .andThen(visibilityEnforcingTransform) // filter hydrated tweets to visible ones
-      .andThen(hydratedTweetsFilter) // filter hydrated tweets based on predefined filter
-      .andThen(
-        TrimToMatchHydratedTweetsTransform
-      ) // trim search result set to match filtered hydrated tweets (this needs to be accurate for feature hydration)
+  pr vate[t ] val hydrat onAndF lter ngP pel ne =
+    CreateCand dateEnvelopeTransform
+      .andT n(followGraphDataTransform) // Fetch follow graph data
+      .andT n(fetchSearchResultsTransform) // fetch search results
+      .andT n(SearchResultDedupAndSort ngTransform) // dedup and order search results
+      .andT n(Cand dateT etHydrat onTransform) // hydrate search results
+      .andT n(v s b l yEnforc ngTransform) // f lter hydrated t ets to v s ble ones
+      .andT n(hydratedT etsF lter) // f lter hydrated t ets based on predef ned f lter
+      .andT n(
+        Tr mToMatchHydratedT etsTransform
+      ) // tr m search result set to match f ltered hydrated t ets (t  needs to be accurate for feature hydrat on)
 
-  // runs the main pipeline in parallel with fetching user profile info and user languages
-  private[this] val featureHydrationDataTransform =
-    new FeatureHydrationDataTransform(
-      hydrationAndFilteringPipeline,
+  // runs t  ma n p pel ne  n parallel w h fetch ng user prof le  nfo and user languages
+  pr vate[t ] val featureHydrat onDataTransform =
+    new FeatureHydrat onDataTransform(
+      hydrat onAndF lter ngP pel ne,
       languagesTransform,
-      userProfileInfoTransform
+      userProf le nfoTransform
     )
 
-  private[this] val tweetFeaturesHydrationTransform =
-    OutOfNetworkTweetsSearchFeaturesHydrationTransform
-      .andThen(contentFeaturesTransformer)
+  pr vate[t ] val t etFeaturesHydrat onTransform =
+    OutOfNetworkT etsSearchFeaturesHydrat onTransform
+      .andT n(contentFeaturesTransfor r)
 
-  private[this] val featureHydrationPipeline =
-    featureHydrationDataTransform
-      .andThen(tweetFeaturesHydrationTransform)
-      .andThen(candidateGenerationTransform)
+  pr vate[t ] val featureHydrat onP pel ne =
+    featureHydrat onDataTransform
+      .andT n(t etFeaturesHydrat onTransform)
+      .andT n(cand dateGenerat onTransform)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
+  def get(query: RecapQuery): Future[Cand dateT etsResult] = {
     requestStats.addEventStats {
-      featureHydrationPipeline(query)
+      featureHydrat onP pel ne(query)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(get))
+  def get(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    Future.collect(quer es.map(get))
   }
 }

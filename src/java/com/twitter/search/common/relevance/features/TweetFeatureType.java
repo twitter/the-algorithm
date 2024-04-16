@@ -1,291 +1,291 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect. mmutableSet;
 
-import com.twitter.search.common.encoding.features.IntNormalizer;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
+ mport com.tw ter.search.common.encod ng.features. ntNormal zer;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
 
-import static com.twitter.search.common.relevance.features.IntNormalizers.BOOLEAN_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.LEGACY_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.PARUS_SCORE_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.SMART_INTEGER_NORMALIZER;
-import static com.twitter.search.common.relevance.features.IntNormalizers.TIMESTAMP_SEC_TO_HR_NORMALIZER;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+ mport stat c com.tw ter.search.common.relevance.features. ntNormal zers.BOOLEAN_NORMAL ZER;
+ mport stat c com.tw ter.search.common.relevance.features. ntNormal zers.LEGACY_NORMAL ZER;
+ mport stat c com.tw ter.search.common.relevance.features. ntNormal zers.PARUS_SCORE_NORMAL ZER;
+ mport stat c com.tw ter.search.common.relevance.features. ntNormal zers.SMART_ NTEGER_NORMAL ZER;
+ mport stat c com.tw ter.search.common.relevance.features. ntNormal zers.T MESTAMP_SEC_TO_HR_NORMAL ZER;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
 
 /**
- * An enum to represent all dynamic/realtime feature types we can update in the Signal Ingester.
- * It provides information for their normalization and their corresponding earlybird feature fields
- * and provides utils both producer (Signal Ingester) and consumer (Earlybird) side.
+ * An enum to represent all dynam c/realt   feature types   can update  n t  S gnal  ngester.
+ *   prov des  nformat on for t  r normal zat on and t  r correspond ng earlyb rd feature f elds
+ * and prov des ut ls both producer (S gnal  ngester) and consu r (Earlyb rd) s de.
  *
  */
-public enum TweetFeatureType {
-  RETWEET                         (true,  0,  LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.RETWEET_COUNT),
-  REPLY                           (true,  1,  LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.REPLY_COUNT),
-  FAVORITE                        (true,  4,  LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.FAVORITE_COUNT),
-  PARUS_SCORE                     (false, 3,  PARUS_SCORE_NORMALIZER,
-      EarlybirdFieldConstant.PARUS_SCORE),
-  EMBEDS_IMP_COUNT                (true,  10, LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT),
-  EMBEDS_URL_COUNT                (true,  11, LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_URL_COUNT),
-  VIDEO_VIEW                      (false, 12, LEGACY_NORMALIZER,
-      EarlybirdFieldConstant.VIDEO_VIEW_COUNT),
-  // v2 engagement counters, they will eventually replace v1 counters above
-  RETWEET_V2                      (true,  13, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.RETWEET_COUNT_V2),
-  REPLY_V2                        (true,  14, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.REPLY_COUNT_V2),
-  FAVORITE_V2                     (true,  15, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAVORITE_COUNT_V2),
-  EMBEDS_IMP_COUNT_V2             (true,  16, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2),
-  EMBEDS_URL_COUNT_V2             (true,  17, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2),
-  VIDEO_VIEW_V2                   (false, 18, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2),
-  // other new items
-  QUOTE                           (true,  19, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.QUOTE_COUNT),
-  // weighted engagement counters
-  WEIGHTED_RETWEET                (true,  20, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT),
-  WEIGHTED_REPLY                  (true,  21, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT),
-  WEIGHTED_FAVORITE               (true,  22, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT),
-  WEIGHTED_QUOTE                  (true,  23, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT),
+publ c enum T etFeatureType {
+  RETWEET                         (true,  0,  LEGACY_NORMAL ZER,
+      Earlyb rdF eldConstant.RETWEET_COUNT),
+  REPLY                           (true,  1,  LEGACY_NORMAL ZER,
+      Earlyb rdF eldConstant.REPLY_COUNT),
+  FAVOR TE                        (true,  4,  LEGACY_NORMAL ZER,
+      Earlyb rdF eldConstant.FAVOR TE_COUNT),
+  PARUS_SCORE                     (false, 3,  PARUS_SCORE_NORMAL ZER,
+      Earlyb rdF eldConstant.PARUS_SCORE),
+  EMBEDS_ MP_COUNT                (true,  10, LEGACY_NORMAL ZER,
+      Earlyb rdF eldConstant.EMBEDS_ MPRESS ON_COUNT),
+  EMBEDS_URL_COUNT                (true,  11, LEGACY_NORMAL ZER,
+      Earlyb rdF eldConstant.EMBEDS_URL_COUNT),
+  V DEO_V EW                      (false, 12, LEGACY_NORMAL ZER,
+      Earlyb rdF eldConstant.V DEO_V EW_COUNT),
+  // v2 engage nt counters, t y w ll eventually replace v1 counters above
+  RETWEET_V2                      (true,  13, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.RETWEET_COUNT_V2),
+  REPLY_V2                        (true,  14, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.REPLY_COUNT_V2),
+  FAVOR TE_V2                     (true,  15, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.FAVOR TE_COUNT_V2),
+  EMBEDS_ MP_COUNT_V2             (true,  16, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.EMBEDS_ MPRESS ON_COUNT_V2),
+  EMBEDS_URL_COUNT_V2             (true,  17, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.EMBEDS_URL_COUNT_V2),
+  V DEO_V EW_V2                   (false, 18, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.V DEO_V EW_COUNT_V2),
+  // ot r new  ems
+  QUOTE                           (true,  19, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.QUOTE_COUNT),
+  //   ghted engage nt counters
+  WE GHTED_RETWEET                (true,  20, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.WE GHTED_RETWEET_COUNT),
+  WE GHTED_REPLY                  (true,  21, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.WE GHTED_REPLY_COUNT),
+  WE GHTED_FAVOR TE               (true,  22, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.WE GHTED_FAVOR TE_COUNT),
+  WE GHTED_QUOTE                  (true,  23, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.WE GHTED_QUOTE_COUNT),
 
-  // tweet-level safety labels
-  LABEL_ABUSIVE                   (false, 24, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_ABUSIVE_FLAG),
-  LABEL_ABUSIVE_HI_RCL            (false, 25, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_ABUSIVE_HI_RCL_FLAG),
-  LABEL_DUP_CONTENT               (false, 26, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_DUP_CONTENT_FLAG),
-  LABEL_NSFW_HI_PRC               (false, 27, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_NSFW_HI_PRC_FLAG),
-  LABEL_NSFW_HI_RCL               (false, 28, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_NSFW_HI_RCL_FLAG),
-  LABEL_SPAM                      (false, 29, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_SPAM_FLAG),
-  LABEL_SPAM_HI_RCL               (false, 30, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.LABEL_SPAM_HI_RCL_FLAG),
+  // t et-level safety labels
+  LABEL_ABUS VE                   (false, 24, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_ABUS VE_FLAG),
+  LABEL_ABUS VE_H _RCL            (false, 25, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_ABUS VE_H _RCL_FLAG),
+  LABEL_DUP_CONTENT               (false, 26, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_DUP_CONTENT_FLAG),
+  LABEL_NSFW_H _PRC               (false, 27, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_NSFW_H _PRC_FLAG),
+  LABEL_NSFW_H _RCL               (false, 28, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_NSFW_H _RCL_FLAG),
+  LABEL_SPAM                      (false, 29, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_SPAM_FLAG),
+  LABEL_SPAM_H _RCL               (false, 30, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.LABEL_SPAM_H _RCL_FLAG),
 
-  PERISCOPE_EXISTS                (false, 32, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_EXISTS),
-  PERISCOPE_HAS_BEEN_FEATURED     (false, 33, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_HAS_BEEN_FEATURED),
-  PERISCOPE_IS_CURRENTLY_FEATURED (false, 34, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_IS_CURRENTLY_FEATURED),
-  PERISCOPE_IS_FROM_QUALITY_SOURCE(false, 35, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_IS_FROM_QUALITY_SOURCE),
-  PERISCOPE_IS_LIVE               (false, 36, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_IS_LIVE),
+  PER SCOPE_EX STS                (false, 32, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.PER SCOPE_EX STS),
+  PER SCOPE_HAS_BEEN_FEATURED     (false, 33, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.PER SCOPE_HAS_BEEN_FEATURED),
+  PER SCOPE_ S_CURRENTLY_FEATURED (false, 34, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.PER SCOPE_ S_CURRENTLY_FEATURED),
+  PER SCOPE_ S_FROM_QUAL TY_SOURCE(false, 35, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.PER SCOPE_ S_FROM_QUAL TY_SOURCE),
+  PER SCOPE_ S_L VE               (false, 36, BOOLEAN_NORMAL ZER,
+      Earlyb rdF eldConstant.PER SCOPE_ S_L VE),
 
-  // decayed engagement counters
-  DECAYED_RETWEET                 (true,  37, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_RETWEET_COUNT),
-  DECAYED_REPLY                   (true,  38, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_REPLY_COUNT),
-  DECAYED_FAVORITE                (true,  39, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_FAVORITE_COUNT),
-  DECAYED_QUOTE                   (true,  40, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.DECAYED_QUOTE_COUNT),
+  // decayed engage nt counters
+  DECAYED_RETWEET                 (true,  37, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.DECAYED_RETWEET_COUNT),
+  DECAYED_REPLY                   (true,  38, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.DECAYED_REPLY_COUNT),
+  DECAYED_FAVOR TE                (true,  39, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.DECAYED_FAVOR TE_COUNT),
+  DECAYED_QUOTE                   (true,  40, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.DECAYED_QUOTE_COUNT),
 
-  // timestamp of last engagement types
-  LAST_RETWEET_SINCE_CREATION_HR  (false, 41, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_RETWEET_SINCE_CREATION_HRS),
-  LAST_REPLY_SINCE_CREATION_HR    (false, 42, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_REPLY_SINCE_CREATION_HRS),
-  LAST_FAVORITE_SINCE_CREATION_HR (false, 43, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_FAVORITE_SINCE_CREATION_HRS),
-  LAST_QUOTE_SINCE_CREATION_HR    (false, 44, TIMESTAMP_SEC_TO_HR_NORMALIZER,
-      EarlybirdFieldConstant.LAST_QUOTE_SINCE_CREATION_HRS),
+  // t  stamp of last engage nt types
+  LAST_RETWEET_S NCE_CREAT ON_HR  (false, 41, T MESTAMP_SEC_TO_HR_NORMAL ZER,
+      Earlyb rdF eldConstant.LAST_RETWEET_S NCE_CREAT ON_HRS),
+  LAST_REPLY_S NCE_CREAT ON_HR    (false, 42, T MESTAMP_SEC_TO_HR_NORMAL ZER,
+      Earlyb rdF eldConstant.LAST_REPLY_S NCE_CREAT ON_HRS),
+  LAST_FAVOR TE_S NCE_CREAT ON_HR (false, 43, T MESTAMP_SEC_TO_HR_NORMAL ZER,
+      Earlyb rdF eldConstant.LAST_FAVOR TE_S NCE_CREAT ON_HRS),
+  LAST_QUOTE_S NCE_CREAT ON_HR    (false, 44, T MESTAMP_SEC_TO_HR_NORMAL ZER,
+      Earlyb rdF eldConstant.LAST_QUOTE_S NCE_CREAT ON_HRS),
 
-  // fake engagement counters
-  FAKE_RETWEET                    (true,  45, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_RETWEET_COUNT),
-  FAKE_REPLY                      (true,  46, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_REPLY_COUNT),
-  FAKE_FAVORITE                   (true,  47, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_FAVORITE_COUNT),
-  FAKE_QUOTE                      (true,  48, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAKE_QUOTE_COUNT),
+  // fake engage nt counters
+  FAKE_RETWEET                    (true,  45, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.FAKE_RETWEET_COUNT),
+  FAKE_REPLY                      (true,  46, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.FAKE_REPLY_COUNT),
+  FAKE_FAVOR TE                   (true,  47, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.FAKE_FAVOR TE_COUNT),
+  FAKE_QUOTE                      (true,  48, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.FAKE_QUOTE_COUNT),
 
-  // blink engagement counters
-  BLINK_RETWEET                   (true,  49, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_RETWEET_COUNT),
-  BLINK_REPLY                     (true,  50, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_REPLY_COUNT),
-  BLINK_FAVORITE                  (true,  51, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_FAVORITE_COUNT),
-  BLINK_QUOTE                     (true,  52, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.BLINK_QUOTE_COUNT),
+  // bl nk engage nt counters
+  BL NK_RETWEET                   (true,  49, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.BL NK_RETWEET_COUNT),
+  BL NK_REPLY                     (true,  50, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.BL NK_REPLY_COUNT),
+  BL NK_FAVOR TE                  (true,  51, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.BL NK_FAVOR TE_COUNT),
+  BL NK_QUOTE                     (true,  52, SMART_ NTEGER_NORMAL ZER,
+      Earlyb rdF eldConstant.BL NK_QUOTE_COUNT),
 
-  /* semicolon in a single line to avoid polluting git blame */;
+  /* sem colon  n a s ngle l ne to avo d pollut ng g  bla  */;
 
-  private static final Map<TweetFeatureType, TweetFeatureType> V2_COUNTER_MAP =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
+  pr vate stat c f nal Map<T etFeatureType, T etFeatureType> V2_COUNTER_MAP =
+       mmutableMap.<T etFeatureType, T etFeatureType>bu lder()
           .put(RETWEET,          RETWEET_V2)
           .put(REPLY,            REPLY_V2)
-          .put(FAVORITE,         FAVORITE_V2)
-          .put(EMBEDS_IMP_COUNT, EMBEDS_IMP_COUNT_V2)
+          .put(FAVOR TE,         FAVOR TE_V2)
+          .put(EMBEDS_ MP_COUNT, EMBEDS_ MP_COUNT_V2)
           .put(EMBEDS_URL_COUNT, EMBEDS_URL_COUNT_V2)
-          .put(VIDEO_VIEW,       VIDEO_VIEW_V2)
-      .build();
+          .put(V DEO_V EW,       V DEO_V EW_V2)
+      .bu ld();
 
-  private static final Map<TweetFeatureType, TweetFeatureType> WEIGHTED_COUNTER_MAP =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(RETWEET,          WEIGHTED_RETWEET)
-          .put(REPLY,            WEIGHTED_REPLY)
-          .put(FAVORITE,         WEIGHTED_FAVORITE)
-          .put(QUOTE,            WEIGHTED_QUOTE)
-          .build();
+  pr vate stat c f nal Map<T etFeatureType, T etFeatureType> WE GHTED_COUNTER_MAP =
+       mmutableMap.<T etFeatureType, T etFeatureType>bu lder()
+          .put(RETWEET,          WE GHTED_RETWEET)
+          .put(REPLY,            WE GHTED_REPLY)
+          .put(FAVOR TE,         WE GHTED_FAVOR TE)
+          .put(QUOTE,            WE GHTED_QUOTE)
+          .bu ld();
 
-  private static final Map<TweetFeatureType, TweetFeatureType> DECAYED_COUNTER_MAP =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
+  pr vate stat c f nal Map<T etFeatureType, T etFeatureType> DECAYED_COUNTER_MAP =
+       mmutableMap.<T etFeatureType, T etFeatureType>bu lder()
           .put(RETWEET,          DECAYED_RETWEET)
           .put(REPLY,            DECAYED_REPLY)
-          .put(FAVORITE,         DECAYED_FAVORITE)
+          .put(FAVOR TE,         DECAYED_FAVOR TE)
           .put(QUOTE,            DECAYED_QUOTE)
-          .build();
+          .bu ld();
 
-  private static final Map<TweetFeatureType, TweetFeatureType> DECAYED_COUNTER_TO_ELAPSED_TIME =
-      ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(DECAYED_RETWEET,  LAST_RETWEET_SINCE_CREATION_HR)
-          .put(DECAYED_REPLY,    LAST_REPLY_SINCE_CREATION_HR)
-          .put(DECAYED_FAVORITE, LAST_FAVORITE_SINCE_CREATION_HR)
-          .put(DECAYED_QUOTE,    LAST_QUOTE_SINCE_CREATION_HR)
-          .build();
+  pr vate stat c f nal Map<T etFeatureType, T etFeatureType> DECAYED_COUNTER_TO_ELAPSED_T ME =
+       mmutableMap.<T etFeatureType, T etFeatureType>bu lder()
+          .put(DECAYED_RETWEET,  LAST_RETWEET_S NCE_CREAT ON_HR)
+          .put(DECAYED_REPLY,    LAST_REPLY_S NCE_CREAT ON_HR)
+          .put(DECAYED_FAVOR TE, LAST_FAVOR TE_S NCE_CREAT ON_HR)
+          .put(DECAYED_QUOTE,    LAST_QUOTE_S NCE_CREAT ON_HR)
+          .bu ld();
 
-  private static final Set<TweetFeatureType> DECAYED_FEATURES =
-      ImmutableSet.of(DECAYED_RETWEET, DECAYED_REPLY, DECAYED_FAVORITE, DECAYED_QUOTE);
+  pr vate stat c f nal Set<T etFeatureType> DECAYED_FEATURES =
+       mmutableSet.of(DECAYED_RETWEET, DECAYED_REPLY, DECAYED_FAVOR TE, DECAYED_QUOTE);
 
-  private static final Set<TweetFeatureType> FAKE_ENGAGEMENT_FEATURES =
-      ImmutableSet.of(FAKE_RETWEET, FAKE_REPLY, FAKE_FAVORITE, FAKE_QUOTE);
+  pr vate stat c f nal Set<T etFeatureType> FAKE_ENGAGEMENT_FEATURES =
+       mmutableSet.of(FAKE_RETWEET, FAKE_REPLY, FAKE_FAVOR TE, FAKE_QUOTE);
 
-  private static final Set<TweetFeatureType> BLINK_ENGAGEMENT_FEATURES =
-      ImmutableSet.of(BLINK_RETWEET, BLINK_REPLY, BLINK_FAVORITE, BLINK_QUOTE);
+  pr vate stat c f nal Set<T etFeatureType> BL NK_ENGAGEMENT_FEATURES =
+       mmutableSet.of(BL NK_RETWEET, BL NK_REPLY, BL NK_FAVOR TE, BL NK_QUOTE);
 
   @Nullable
-  public TweetFeatureType getV2Type() {
-    return V2_COUNTER_MAP.get(this);
+  publ c T etFeatureType getV2Type() {
+    return V2_COUNTER_MAP.get(t );
   }
 
   @Nullable
-  public static TweetFeatureType getWeightedType(TweetFeatureType type) {
-    return WEIGHTED_COUNTER_MAP.get(type);
+  publ c stat c T etFeatureType get  ghtedType(T etFeatureType type) {
+    return WE GHTED_COUNTER_MAP.get(type);
   }
 
   @Nullable
-  public static TweetFeatureType getDecayedType(TweetFeatureType type) {
+  publ c stat c T etFeatureType getDecayedType(T etFeatureType type) {
     return DECAYED_COUNTER_MAP.get(type);
   }
 
-  // Whether this feature is incremental or direct value.
-  private final boolean incremental;
+  // W t r t  feature  s  ncre ntal or d rect value.
+  pr vate f nal boolean  ncre ntal;
 
-  // This normalizer is used to (1) normalize the output value in DLIndexEventOutputBolt,
-  // (2) check value change.
-  private final IntNormalizer normalizer;
+  // T  normal zer  s used to (1) normal ze t  output value  n DL ndexEventOutputBolt,
+  // (2) c ck value change.
+  pr vate f nal  ntNormal zer normal zer;
 
-  // value for composing cache key. It has to be unique and in increasing order.
-  private final int typeInt;
+  // value for compos ng cac  key.   has to be un que and  n  ncreas ng order.
+  pr vate f nal  nt type nt;
 
-  private final EarlybirdFieldConstants.EarlybirdFieldConstant earlybirdField;
+  pr vate f nal Earlyb rdF eldConstants.Earlyb rdF eldConstant earlyb rdF eld;
 
-  private final IncrementChecker incrementChecker;
+  pr vate f nal  ncre ntC cker  ncre ntC cker;
 
   /**
-   * Constructing an enum for a type. The earlybirdField can be null if it's not prepared, they
-   * can be here as placeholders but they can't be outputted.
-   * The normalizer is null for the timestamp features that do not require normalization
+   * Construct ng an enum for a type. T  earlyb rdF eld can be null  f  's not prepared, t y
+   * can be  re as placeholders but t y can't be outputted.
+   * T  normal zer  s null for t  t  stamp features that do not requ re normal zat on
    */
-  TweetFeatureType(boolean incremental,
-                   int typeInt,
-                   IntNormalizer normalizer,
-                   @Nullable EarlybirdFieldConstant earlybirdField) {
-    this.incremental = incremental;
-    this.typeInt = typeInt;
-    this.normalizer = normalizer;
-    this.earlybirdField = earlybirdField;
-    this.incrementChecker = new IncrementChecker(this);
+  T etFeatureType(boolean  ncre ntal,
+                    nt type nt,
+                    ntNormal zer normal zer,
+                   @Nullable Earlyb rdF eldConstant earlyb rdF eld) {
+    t . ncre ntal =  ncre ntal;
+    t .type nt = type nt;
+    t .normal zer = normal zer;
+    t .earlyb rdF eld = earlyb rdF eld;
+    t . ncre ntC cker = new  ncre ntC cker(t );
   }
 
-  public boolean isIncremental() {
-    return incremental;
+  publ c boolean  s ncre ntal() {
+    return  ncre ntal;
   }
 
-  public IntNormalizer getNormalizer() {
-    return normalizer;
+  publ c  ntNormal zer getNormal zer() {
+    return normal zer;
   }
 
-  public int getTypeInt() {
-    return typeInt;
+  publ c  nt getType nt() {
+    return type nt;
   }
 
-  public int normalize(double value) {
-    return normalizer.normalize(value);
+  publ c  nt normal ze(double value) {
+    return normal zer.normal ze(value);
   }
 
-  public IncrementChecker getIncrementChecker() {
-    return incrementChecker;
+  publ c  ncre ntC cker get ncre ntC cker() {
+    return  ncre ntC cker;
   }
 
-  public EarlybirdFieldConstant getEarlybirdField() {
-    return Preconditions.checkNotNull(earlybirdField);
+  publ c Earlyb rdF eldConstant getEarlyb rdF eld() {
+    return Precond  ons.c ckNotNull(earlyb rdF eld);
   }
 
-  public boolean hasEarlybirdField() {
-    return earlybirdField != null;
+  publ c boolean hasEarlyb rdF eld() {
+    return earlyb rdF eld != null;
   }
 
-  public boolean isDecayed() {
-    return DECAYED_FEATURES.contains(this);
+  publ c boolean  sDecayed() {
+    return DECAYED_FEATURES.conta ns(t );
   }
 
   @Nullable
-  public TweetFeatureType getElapsedTimeFeatureType() {
-    return DECAYED_COUNTER_TO_ELAPSED_TIME.get(this);
+  publ c T etFeatureType getElapsedT  FeatureType() {
+    return DECAYED_COUNTER_TO_ELAPSED_T ME.get(t );
   }
 
-  public boolean isFakeEngagement() {
-    return FAKE_ENGAGEMENT_FEATURES.contains(this);
+  publ c boolean  sFakeEngage nt() {
+    return FAKE_ENGAGEMENT_FEATURES.conta ns(t );
   }
 
-  public boolean isBlinkEngagement() {
-    return BLINK_ENGAGEMENT_FEATURES.contains(this);
+  publ c boolean  sBl nkEngage nt() {
+    return BL NK_ENGAGEMENT_FEATURES.conta ns(t );
   }
 
   /**
-   * Check if an increment is eligible for emitting
+   * C ck  f an  ncre nt  s el g ble for em t ng
    */
-  public static class IncrementChecker {
-    private final IntNormalizer normalizer;
+  publ c stat c class  ncre ntC cker {
+    pr vate f nal  ntNormal zer normal zer;
 
-    public IncrementChecker(IntNormalizer normalizer) {
-      this.normalizer = normalizer;
+    publ c  ncre ntC cker( ntNormal zer normal zer) {
+      t .normal zer = normal zer;
     }
 
-    IncrementChecker(TweetFeatureType type) {
-      this(type.getNormalizer());
+     ncre ntC cker(T etFeatureType type) {
+      t (type.getNormal zer());
     }
 
     /**
-     * Check if a value change is eligible for output
+     * C ck  f a value change  s el g ble for output
      */
-    public boolean eligibleForEmit(int oldValue, int newValue) {
-      return normalizer.normalize(oldValue) != normalizer.normalize(newValue);
+    publ c boolean el g bleForEm ( nt oldValue,  nt newValue) {
+      return normal zer.normal ze(oldValue) != normal zer.normal ze(newValue);
     }
   }
 }

@@ -1,56 +1,56 @@
-package com.twitter.frigate.pushservice.module
+package com.tw ter.fr gate.pushserv ce.module
 
-import com.twitter.app.Flag
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+ mport com.tw ter.app.Flag
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.convers ons.Durat onOps._
 
-object FlagName {
-  final val shardId = "service.shard"
-  final val numShards = "service.num_shards"
-  final val nackWarmupDuration = "service.nackWarmupDuration"
-  final val isInMemCacheOff = "service.isInMemCacheOff"
+object FlagNa  {
+  f nal val shard d = "serv ce.shard"
+  f nal val numShards = "serv ce.num_shards"
+  f nal val nackWarmupDurat on = "serv ce.nackWarmupDurat on"
+  f nal val  s n mCac Off = "serv ce. s n mCac Off"
 }
 
-object FlagModule extends TwitterModule {
+object FlagModule extends Tw terModule {
 
-  val shardId: Flag[Int] = flag[Int](
-    name = FlagName.shardId,
-    help = "Service shard id"
+  val shard d: Flag[ nt] = flag[ nt](
+    na  = FlagNa .shard d,
+     lp = "Serv ce shard  d"
   )
 
-  val numShards: Flag[Int] = flag[Int](
-    name = FlagName.numShards,
-    help = "Number of shards"
+  val numShards: Flag[ nt] = flag[ nt](
+    na  = FlagNa .numShards,
+     lp = "Number of shards"
   )
 
-  val mrLoggerIsTraceAll: Flag[Boolean] = flag[Boolean](
-    name = "service.isTraceAll",
-    help = "atraceflag",
+  val mrLogger sTraceAll: Flag[Boolean] = flag[Boolean](
+    na  = "serv ce. sTraceAll",
+     lp = "atraceflag",
     default = false
   )
 
   val mrLoggerNthLog: Flag[Boolean] = flag[Boolean](
-    name = "service.nthLog",
-    help = "nthlog",
+    na  = "serv ce.nthLog",
+     lp = "nthlog",
     default = false
   )
 
-  val inMemCacheOff: Flag[Boolean] = flag[Boolean](
-    name = FlagName.isInMemCacheOff,
-    help = "is inMemCache Off (currently only applies for user_health_model_score_store_cache)",
+  val  n mCac Off: Flag[Boolean] = flag[Boolean](
+    na  = FlagNa . s n mCac Off,
+     lp = " s  n mCac  Off (currently only appl es for user_ alth_model_score_store_cac )",
     default = false
   )
 
   val mrLoggerNthVal: Flag[Long] = flag[Long](
-    name = "service.nthVal",
-    help = "nthlogval",
+    na  = "serv ce.nthVal",
+     lp = "nthlogval",
     default = 0,
   )
 
-  val nackWarmupDuration: Flag[Duration] = flag[Duration](
-    name = FlagName.nackWarmupDuration,
-    help = "duration to nack at startup",
+  val nackWarmupDurat on: Flag[Durat on] = flag[Durat on](
+    na  = FlagNa .nackWarmupDurat on,
+     lp = "durat on to nack at startup",
     default = 0.seconds
   )
 }

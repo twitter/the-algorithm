@@ -1,119 +1,119 @@
-package com.twitter.product_mixer.component_library.model.candidate.trends_events
+package com.tw ter.product_m xer.component_l brary.model.cand date.trends_events
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.GroupedTrend
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event.EventSummaryD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.trend.GroupedTrend
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D sclosureType
 
 /**
- * An [[UnifiedTrendEventCandidate]] represents a piece of Event or Trend content.
- * The Event and Trend candidate are represented by different types of keys that Event has a Long
- * eventId while Trend has a String trendName.
+ * An [[Un f edTrendEventCand date]] represents a p ece of Event or Trend content.
+ * T  Event and Trend cand date are represented by d fferent types of keys that Event has a Long
+ * event d wh le Trend has a Str ng trendNa .
  */
-sealed trait UnifiedTrendEventCandidate[+T] extends UniversalNoun[T]
+sealed tra  Un f edTrendEventCand date[+T] extends Un versalNoun[T]
 
-final class UnifiedEventCandidate private (
-  override val id: Long)
-    extends UnifiedTrendEventCandidate[Long] {
+f nal class Un f edEventCand date pr vate (
+  overr de val  d: Long)
+    extends Un f edTrendEventCand date[Long] {
 
-  override def canEqual(that: Any): Boolean = this.isInstanceOf[UnifiedEventCandidate]
+  overr de def canEqual(that: Any): Boolean = t . s nstanceOf[Un f edEventCand date]
 
-  override def equals(that: Any): Boolean = {
+  overr de def equals(that: Any): Boolean = {
     that match {
-      case candidate: UnifiedEventCandidate =>
+      case cand date: Un f edEventCand date =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (t  eq cand date)
+            || ((hashCode == cand date.hashCode)
+              && ( d == cand date. d))
         )
       case _ => false
     }
   }
 
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object UnifiedEventCandidate {
-  def apply(id: Long): UnifiedEventCandidate = new UnifiedEventCandidate(id)
+object Un f edEventCand date {
+  def apply( d: Long): Un f edEventCand date = new Un f edEventCand date( d)
 }
 
 /**
- * Text description of an Event. Usually this is extracted from curated Event metadata
+ * Text descr pt on of an Event. Usually t   s extracted from curated Event  tadata
  */
-object EventTitleFeature extends Feature[UnifiedEventCandidate, String]
+object EventT leFeature extends Feature[Un f edEventCand date, Str ng]
 
 /**
- * Display type of an Event. This will be used for client to differentiate if this Event will be
- * displayed as a normal cell, a hero, etc.
+ * D splay type of an Event. T  w ll be used for cl ent to d fferent ate  f t  Event w ll be
+ * d splayed as a normal cell, a  ro, etc.
  */
-object EventDisplayType extends Feature[UnifiedEventCandidate, EventSummaryDisplayType]
+object EventD splayType extends Feature[Un f edEventCand date, EventSummaryD splayType]
 
 /**
- * URL that servces as the landing page of an Event
+ * URL that servces as t  land ng page of an Event
  */
-object EventUrl extends Feature[UnifiedEventCandidate, Url]
+object EventUrl extends Feature[Un f edEventCand date, Url]
 
 /**
- * Use to render an Event cell's editorial image
+ * Use to render an Event cell's ed or al  mage
  */
-object EventImage extends Feature[UnifiedEventCandidate, Option[ImageVariant]]
+object Event mage extends Feature[Un f edEventCand date, Opt on[ mageVar ant]]
 
 /**
- * Localized time string like "LIVE" or "Last Night" that is used to render the Event cell
+ * Local zed t   str ng l ke "L VE" or "Last N ght" that  s used to render t  Event cell
  */
-object EventTimeString extends Feature[UnifiedEventCandidate, Option[String]]
+object EventT  Str ng extends Feature[Un f edEventCand date, Opt on[Str ng]]
 
-final class UnifiedTrendCandidate private (
-  override val id: String)
-    extends UnifiedTrendEventCandidate[String] {
+f nal class Un f edTrendCand date pr vate (
+  overr de val  d: Str ng)
+    extends Un f edTrendEventCand date[Str ng] {
 
-  override def canEqual(that: Any): Boolean = this.isInstanceOf[UnifiedTrendCandidate]
+  overr de def canEqual(that: Any): Boolean = t . s nstanceOf[Un f edTrendCand date]
 
-  override def equals(that: Any): Boolean = {
+  overr de def equals(that: Any): Boolean = {
     that match {
-      case candidate: UnifiedTrendCandidate =>
+      case cand date: Un f edTrendCand date =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (t  eq cand date)
+            || ((hashCode == cand date.hashCode)
+              && ( d == cand date. d))
         )
       case _ => false
     }
   }
 
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object UnifiedTrendCandidate {
-  def apply(id: String): UnifiedTrendCandidate = new UnifiedTrendCandidate(id)
+object Un f edTrendCand date {
+  def apply( d: Str ng): Un f edTrendCand date = new Un f edTrendCand date( d)
 }
 
-object TrendNormalizedTrendName extends Feature[UnifiedTrendCandidate, String]
+object TrendNormal zedTrendNa  extends Feature[Un f edTrendCand date, Str ng]
 
-object TrendTrendName extends Feature[UnifiedTrendCandidate, String]
+object TrendTrendNa  extends Feature[Un f edTrendCand date, Str ng]
 
-object TrendUrl extends Feature[UnifiedTrendCandidate, Url]
+object TrendUrl extends Feature[Un f edTrendCand date, Url]
 
-object TrendDescription extends Feature[UnifiedTrendCandidate, Option[String]]
+object TrendDescr pt on extends Feature[Un f edTrendCand date, Opt on[Str ng]]
 
-object TrendTweetCount extends Feature[UnifiedTrendCandidate, Option[Int]]
+object TrendT etCount extends Feature[Un f edTrendCand date, Opt on[ nt]]
 
-object TrendDomainContext extends Feature[UnifiedTrendCandidate, Option[String]]
+object TrendDoma nContext extends Feature[Un f edTrendCand date, Opt on[Str ng]]
 
-object TrendGroupedTrends extends Feature[UnifiedTrendCandidate, Option[Seq[GroupedTrend]]]
+object TrendGroupedTrends extends Feature[Un f edTrendCand date, Opt on[Seq[GroupedTrend]]]
 
-object PromotedTrendNameFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object PromotedTrendNa Feature extends Feature[Un f edTrendCand date, Opt on[Str ng]]
 
-object PromotedTrendDescriptionFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object PromotedTrendDescr pt onFeature extends Feature[Un f edTrendCand date, Opt on[Str ng]]
 
-object PromotedTrendAdvertiserNameFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object PromotedTrendAdvert serNa Feature extends Feature[Un f edTrendCand date, Opt on[Str ng]]
 
-object PromotedTrendIdFeature extends Feature[UnifiedTrendCandidate, Option[Long]]
+object PromotedTrend dFeature extends Feature[Un f edTrendCand date, Opt on[Long]]
 
-object PromotedTrendDisclosureTypeFeature
-    extends Feature[UnifiedTrendCandidate, Option[DisclosureType]]
+object PromotedTrendD sclosureTypeFeature
+    extends Feature[Un f edTrendCand date, Opt on[D sclosureType]]
 
-object PromotedTrendImpressionIdFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+object PromotedTrend mpress on dFeature extends Feature[Un f edTrendCand date, Opt on[Str ng]]

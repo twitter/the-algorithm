@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.tw ter.product_m xer.core.model.marshall ng.response.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
 
-case class TopicPageHeaderFacepile(
-  userIds: Seq[Long],
-  facepileUrl: Option[Url] = None)
+case class Top cPage aderFacep le(
+  user ds: Seq[Long],
+  facep leUrl: Opt on[Url] = None)

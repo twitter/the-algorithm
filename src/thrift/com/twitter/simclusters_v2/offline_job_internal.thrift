@@ -1,63 +1,63 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.offline_job_internal
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.offl ne_job_ nternal
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+ nclude "com/tw ter/algeb rd_ nternal/algeb rd.thr ft"
 
-// For internal usage only. Mainly for offline_evaluation.
-// Deprecated. Please use 'online_store/ModelVersion'
-enum PersistedModelVersion {
+// For  nternal usage only. Ma nly for offl ne_evaluat on.
+// Deprecated. Please use 'onl ne_store/ModelVers on'
+enum Pers stedModelVers on {
   MODEL_20M_145K_dec11 = 1,
   MODEL_20M_145K_updated = 2,
   MODEL_20M_145K_2020 = 3,
   RESERVED_4 = 4,
   RESERVED_5 = 5
-}(persisted = 'true', hasPersonalData = 'false')
+}(pers sted = 'true', hasPersonalData = 'false')
 
-enum PersistedScoreType {
-  NORMALIZED_FAV_8_HR_HALF_LIFE = 1,
-  NORMALIZED_FOLLOW_8_HR_HALF_LIFE = 2,
-  NORMALIZED_LOG_FAV_8_HR_HALF_LIFE = 3,
+enum Pers stedScoreType {
+  NORMAL ZED_FAV_8_HR_HALF_L FE = 1,
+  NORMAL ZED_FOLLOW_8_HR_HALF_L FE = 2,
+  NORMAL ZED_LOG_FAV_8_HR_HALF_L FE = 3,
   RESERVED_4 = 4,
   RESERVED_5 = 5
-}(persisted = 'true', hasPersonalData = 'false')
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct PersistedScores {
-  1: optional algebird.DecayedValue score
-}(persisted = 'true', hasPersonalData = 'false')
+struct Pers stedScores {
+  1: opt onal algeb rd.DecayedValue score
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct TweetAndClusterScores {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required i32 clusterId(personalDataType = 'InferredInterests')
-  3: required PersistedModelVersion modelVersion
-  4: required PersistedScores scores(personalDataType = 'EngagementScore')
-  5: optional PersistedScoreType scoreType
-}(persisted="true", hasPersonalData = 'true')
+struct T etAndClusterScores {
+  1: requ red  64 t et d(personalDataType = 'T et d')
+  2: requ red  32 cluster d(personalDataType = ' nferred nterests')
+  3: requ red Pers stedModelVers on modelVers on
+  4: requ red Pers stedScores scores(personalDataType = 'Engage ntScore')
+  5: opt onal Pers stedScoreType scoreType
+}(pers sted="true", hasPersonalData = 'true')
 
-struct TweetTopKClustersWithScores {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i32, PersistedScores> topKClusters(personalDataTypeKey = 'InferredInterests')
-  4: optional PersistedScoreType scoreType
-}(persisted="true", hasPersonalData = 'true')
+struct T etTopKClustersW hScores {
+  1: requ red  64 t et d(personalDataType = 'T et d')
+  2: requ red Pers stedModelVers on modelVers on
+  3: requ red map< 32, Pers stedScores> topKClusters(personalDataTypeKey = ' nferred nterests')
+  4: opt onal Pers stedScoreType scoreType
+}(pers sted="true", hasPersonalData = 'true')
 
-struct ClusterTopKTweetsWithScores {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i64, PersistedScores> topKTweets(personalDataTypeKey = 'TweetId')
-  4: optional PersistedScoreType scoreType
-}(persisted = 'true', hasPersonalData = 'true')
+struct ClusterTopKT etsW hScores {
+  1: requ red  32 cluster d(personalDataType = ' nferred nterests')
+  2: requ red Pers stedModelVers on modelVers on
+  3: requ red map< 64, Pers stedScores> topKT ets(personalDataTypeKey = 'T et d')
+  4: opt onal Pers stedScoreType scoreType
+}(pers sted = 'true', hasPersonalData = 'true')
 
 struct QueryAndClusterScores {
-  1: required string query(personalDataType = 'SearchQuery')
-  2: required i32 clusterId
-  3: required PersistedModelVersion modelVersion
-  4: required PersistedScores scores
-}(persisted = 'true', hasPersonalData = 'true')
+  1: requ red str ng query(personalDataType = 'SearchQuery')
+  2: requ red  32 cluster d
+  3: requ red Pers stedModelVers on modelVers on
+  4: requ red Pers stedScores scores
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct QueryTopKClustersWithScores {
-  1: required string query(personalDataType = 'SearchQuery')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i32, PersistedScores> topKClusters
-}(persisted = 'true', hasPersonalData = 'true')
+struct QueryTopKClustersW hScores {
+  1: requ red str ng query(personalDataType = 'SearchQuery')
+  2: requ red Pers stedModelVers on modelVers on
+  3: requ red map< 32, Pers stedScores> topKClusters
+}(pers sted = 'true', hasPersonalData = 'true')

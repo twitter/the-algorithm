@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UrlMarshaller @Inject() (
+@S ngleton
+class UrlMarshaller @ nject() (
   urlTypeMarshaller: UrlTypeMarshaller,
-  urtEndpointOptionsMarshaller: UrtEndpointOptionsMarshaller) {
+  urtEndpo ntOpt onsMarshaller: UrtEndpo ntOpt onsMarshaller) {
 
   def apply(url: Url): urt.Url = urt.Url(
     urlType = urlTypeMarshaller(url.urlType),
     url = url.url,
-    urtEndpointOptions = url.urtEndpointOptions.map(urtEndpointOptionsMarshaller(_))
+    urtEndpo ntOpt ons = url.urtEndpo ntOpt ons.map(urtEndpo ntOpt onsMarshaller(_))
   )
 }

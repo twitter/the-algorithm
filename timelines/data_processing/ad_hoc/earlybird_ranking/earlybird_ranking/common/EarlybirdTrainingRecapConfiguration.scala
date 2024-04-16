@@ -1,17 +1,17 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
 
-class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration {
-  override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> RecapFeatures.IS_CLICKED,
-    "favorited" -> RecapFeatures.IS_FAVORITED,
-    "open_linked" -> RecapFeatures.IS_OPEN_LINKED,
-    "photo_expanded" -> RecapFeatures.IS_PHOTO_EXPANDED,
-    "profile_clicked" -> RecapFeatures.IS_PROFILE_CLICKED,
-    "replied" -> RecapFeatures.IS_REPLIED,
-    "retweeted" -> RecapFeatures.IS_RETWEETED,
-    "video_playback50" -> RecapFeatures.IS_VIDEO_PLAYBACK_50
+class Earlyb rdTra n ngRecapConf gurat on extends Earlyb rdTra n ngConf gurat on {
+  overr de val labels: Map[Str ng, Feature.B nary] = Map(
+    "deta l_expanded" -> RecapFeatures. S_CL CKED,
+    "favor ed" -> RecapFeatures. S_FAVOR TED,
+    "open_l nked" -> RecapFeatures. S_OPEN_L NKED,
+    "photo_expanded" -> RecapFeatures. S_PHOTO_EXPANDED,
+    "prof le_cl cked" -> RecapFeatures. S_PROF LE_CL CKED,
+    "repl ed" -> RecapFeatures. S_REPL ED,
+    "ret eted" -> RecapFeatures. S_RETWEETED,
+    "v deo_playback50" -> RecapFeatures. S_V DEO_PLAYBACK_50
   )
 }

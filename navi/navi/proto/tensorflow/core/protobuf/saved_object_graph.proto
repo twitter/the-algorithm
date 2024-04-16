@@ -2,250 +2,250 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/framework/variable.proto";
-import "tensorflow/core/framework/versions.proto";
-import "tensorflow/core/protobuf/struct.proto";
-import "tensorflow/core/protobuf/trackable_object_graph.proto";
+ mport "google/protobuf/any.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
+ mport "tensorflow/core/fra work/var able.proto";
+ mport "tensorflow/core/fra work/vers ons.proto";
+ mport "tensorflow/core/protobuf/struct.proto";
+ mport "tensorflow/core/protobuf/trackable_object_graph.proto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// A SavedObjectGraph is part of object-based SavedModels in TF 2.0. It
-// describes the directed graph of Python objects (or equivalent in other
-// languages) that make up a model, with nodes[0] at the root.
+// A SavedObjectGraph  s part of object-based SavedModels  n TF 2.0.  
+// descr bes t  d rected graph of Python objects (or equ valent  n ot r
+// languages) that make up a model, w h nodes[0] at t  root.
 
-// SavedObjectGraph shares some structure with TrackableObjectGraph, but
-// SavedObjectGraph belongs to the MetaGraph and contains pointers to functions
-// and type information, while TrackableObjectGraph lives in the checkpoint
-// and contains pointers only to variable values.
+// SavedObjectGraph shares so  structure w h TrackableObjectGraph, but
+// SavedObjectGraph belongs to t   taGraph and conta ns po nters to funct ons
+// and type  nformat on, wh le TrackableObjectGraph l ves  n t  c ckpo nt
+// and conta ns po nters only to var able values.
 
-message SavedObjectGraph {
-  // Flattened list of objects in the object graph.
+ ssage SavedObjectGraph {
+  // Flattened l st of objects  n t  object graph.
   //
-  // The position of the object in this list indicates its id.
-  // Nodes[0] is considered the root node.
+  // T  pos  on of t  object  n t  l st  nd cates  s  d.
+  // Nodes[0]  s cons dered t  root node.
   repeated SavedObject nodes = 1;
 
-  // Information about captures and output structures in concrete functions.
-  // Referenced from SavedBareConcreteFunction and SavedFunction.
-  map<string, SavedConcreteFunction> concrete_functions = 2;
+  //  nformat on about captures and output structures  n concrete funct ons.
+  // Referenced from SavedBareConcreteFunct on and SavedFunct on.
+  map<str ng, SavedConcreteFunct on> concrete_funct ons = 2;
 }
 
-message SavedObject {
-  // Objects which this object depends on: named edges in the dependency
+ ssage SavedObject {
+  // Objects wh ch t  object depends on: na d edges  n t  dependency
   // graph.
   //
-  // Note: All kinds of SavedObject may have children, except
+  // Note: All k nds of SavedObject may have ch ldren, except
   // "constant" and "captured_tensor".
-  repeated TrackableObjectGraph.TrackableObject.ObjectReference children = 1;
+  repeated TrackableObjectGraph.TrackableObject.ObjectReference ch ldren = 1;
 
-  // Ordered list of dependencies that must be loaded before this object.
-  // SavedModel loads with the bottom-up approach, by first creating all objects
-  // (in the order defined by the dependencies), then connecting the edges.
-  repeated TrackableObjectGraph.TrackableObject.ObjectReference dependencies =
+  // Ordered l st of dependenc es that must be loaded before t  object.
+  // SavedModel loads w h t  bottom-up approach, by f rst creat ng all objects
+  // ( n t  order def ned by t  dependenc es), t n connect ng t  edges.
+  repeated TrackableObjectGraph.TrackableObject.ObjectReference dependenc es =
       15;
 
-  // Removed when forking SavedObject from TrackableObjectGraph.
-  reserved "attributes";
+  // Removed w n fork ng SavedObject from TrackableObjectGraph.
+  reserved "attr butes";
   reserved 2;
 
-  // Slot variables owned by this object. This describes the three-way
-  // (optimizer, variable, slot variable) relationship; none of the three
-  // depend on the others directly.
+  // Slot var ables owned by t  object. T  descr bes t  three-way
+  // (opt m zer, var able, slot var able) relat onsh p; none of t  three
+  // depend on t  ot rs d rectly.
   //
-  // Note: currently only valid if kind == "user_object".
-  repeated TrackableObjectGraph.TrackableObject.SlotVariableReference
-      slot_variables = 3;
+  // Note: currently only val d  f k nd == "user_object".
+  repeated TrackableObjectGraph.TrackableObject.SlotVar ableReference
+      slot_var ables = 3;
 
-  oneof kind {
+  oneof k nd {
     SavedUserObject user_object = 4;
     SavedAsset asset = 5;
-    SavedFunction function = 6;
-    SavedVariable variable = 7;
-    SavedBareConcreteFunction bare_concrete_function = 8;
+    SavedFunct on funct on = 6;
+    SavedVar able var able = 7;
+    SavedBareConcreteFunct on bare_concrete_funct on = 8;
     SavedConstant constant = 9;
-    SavedResource resource = 10;
+    SavedRes ce res ce = 10;
     CapturedTensor captured_tensor = 12;
   }
 
-  // Stores the functions used to save and restore this object. At most one of
-  // `saveable_objects` or `registered_saver` is defined for each SavedObject.
-  // See the comment below for the difference between SaveableObject and
-  // registered savers.
-  map<string, SaveableObject> saveable_objects = 11;
+  // Stores t  funct ons used to save and restore t  object. At most one of
+  // `saveable_objects` or `reg stered_saver`  s def ned for each SavedObject.
+  // See t  com nt below for t  d fference bet en SaveableObject and
+  // reg stered savers.
+  map<str ng, SaveableObject> saveable_objects = 11;
 
-  // The fields below are filled when the user serializes a registered Trackable
-  // class or an object with a registered saver function.
+  // T  f elds below are f lled w n t  user ser al zes a reg stered Trackable
+  // class or an object w h a reg stered saver funct on.
   //
-  // Registered classes may save additional metadata and supersede the
-  // default loading process where nodes are recreated from the proto.
-  // If the registered class cannot be found, then the object will load as one
-  // one of the default trackable objects: Autotrackable (a class similar to
-  // tf.Module), tf.function, or tf.Variable.
+  // Reg stered classes may save add  onal  tadata and supersede t 
+  // default load ng process w re nodes are recreated from t  proto.
+  //  f t  reg stered class cannot be found, t n t  object w ll load as one
+  // one of t  default trackable objects: Autotrackable (a class s m lar to
+  // tf.Module), tf.funct on, or tf.Var able.
   //
-  // Unlike SaveableObjects, which store the functions for saving and restoring
-  // from tensors, registered savers allow Trackables to write checkpoint shards
-  // directly (e.g. for performance or coordination reasons).
-  // *All registered savers must be available when loading the SavedModel.*
+  // Unl ke SaveableObjects, wh ch store t  funct ons for sav ng and restor ng
+  // from tensors, reg stered savers allow Trackables to wr e c ckpo nt shards
+  // d rectly (e.g. for performance or coord nat on reasons).
+  // *All reg stered savers must be ava lable w n load ng t  SavedModel.*
 
-  // The name of the registered class of the form "{package}.{class_name}".
-  // This field is used to search for the registered class at loading time.
-  string registered_name = 13;
-  // The user-generated proto storing metadata for this object, to be passed to
-  // the registered classes's _deserialize_from_proto method when this object is
-  // loaded from the SavedModel.
-  google.protobuf.Any serialized_user_proto = 14;
+  // T  na  of t  reg stered class of t  form "{package}.{class_na }".
+  // T  f eld  s used to search for t  reg stered class at load ng t  .
+  str ng reg stered_na  = 13;
+  // T  user-generated proto stor ng  tadata for t  object, to be passed to
+  // t  reg stered classes's _deser al ze_from_proto  thod w n t  object  s
+  // loaded from t  SavedModel.
+  google.protobuf.Any ser al zed_user_proto = 14;
 
-  // String name of the registered saver. At most one of `saveable_objects` or
-  // `registered_saver` is defined for each SavedObject.
-  string registered_saver = 16;
+  // Str ng na  of t  reg stered saver. At most one of `saveable_objects` or
+  // `reg stered_saver`  s def ned for each SavedObject.
+  str ng reg stered_saver = 16;
 }
 
-// A SavedUserObject is an object (in the object-oriented language of the
-// TensorFlow program) of some user- or framework-defined class other than
-// those handled specifically by the other kinds of SavedObjects.
+// A SavedUserObject  s an object ( n t  object-or ented language of t 
+// TensorFlow program) of so  user- or fra work-def ned class ot r than
+// those handled spec f cally by t  ot r k nds of SavedObjects.
 //
-// This object cannot be evaluated as a tensor, and therefore cannot be bound
-// to an input of a function.
-message SavedUserObject {
-  // Corresponds to a registration of the type to use in the loading program.
-  string identifier = 1;
-  // Version information from the producer of this SavedUserObject.
-  VersionDef version = 2;
-  // Metadata for deserializing this object.
+// T  object cannot be evaluated as a tensor, and t refore cannot be bound
+// to an  nput of a funct on.
+ ssage SavedUserObject {
+  // Corresponds to a reg strat on of t  type to use  n t  load ng program.
+  str ng  dent f er = 1;
+  // Vers on  nformat on from t  producer of t  SavedUserObject.
+  Vers onDef vers on = 2;
+  //  tadata for deser al z ng t  object.
   //
-  // Deprecated! At the time of deprecation, Keras was the only user of this
-  // field, and its saving and loading code will be updated shortly.
-  // Please save your application-specific metadata to a separate file.
-  string metadata = 3 [deprecated = true];
+  // Deprecated! At t  t   of deprecat on, Keras was t  only user of t 
+  // f eld, and  s sav ng and load ng code w ll be updated shortly.
+  // Please save y  appl cat on-spec f c  tadata to a separate f le.
+  str ng  tadata = 3 [deprecated = true];
 }
 
-// A SavedAsset points to an asset in the MetaGraph.
+// A SavedAsset po nts to an asset  n t   taGraph.
 //
-// When bound to a function this object evaluates to a tensor with the absolute
-// filename. Users should not depend on a particular part of the filename to
-// remain stable (e.g. basename could be changed).
-message SavedAsset {
-  // Index into `MetaGraphDef.asset_file_def[]` that describes the Asset.
+// W n bound to a funct on t  object evaluates to a tensor w h t  absolute
+// f lena . Users should not depend on a part cular part of t  f lena  to
+// rema n stable (e.g. basena  could be changed).
+ ssage SavedAsset {
+  //  ndex  nto ` taGraphDef.asset_f le_def[]` that descr bes t  Asset.
   //
-  // Only the field `AssetFileDef.filename` is used. Other fields, such as
-  // `AssetFileDef.tensor_info`, MUST be ignored.
-  int32 asset_file_def_index = 1;
+  // Only t  f eld `AssetF leDef.f lena `  s used. Ot r f elds, such as
+  // `AssetF leDef.tensor_ nfo`, MUST be  gnored.
+   nt32 asset_f le_def_ ndex = 1;
 }
 
-// A function with multiple signatures, possibly with non-Tensor arguments.
-message SavedFunction {
-  repeated string concrete_functions = 1;
-  FunctionSpec function_spec = 2;
+// A funct on w h mult ple s gnatures, poss bly w h non-Tensor argu nts.
+ ssage SavedFunct on {
+  repeated str ng concrete_funct ons = 1;
+  Funct onSpec funct on_spec = 2;
 }
 
-message CapturedTensor {
-  // Name of captured tensor
-  string name = 1;
+ ssage CapturedTensor {
+  // Na  of captured tensor
+  str ng na  = 1;
 
-  // Name of concrete function which contains the computed graph tensor.
-  string concrete_function = 2;
+  // Na  of concrete funct on wh ch conta ns t  computed graph tensor.
+  str ng concrete_funct on = 2;
 }
 
-// Stores low-level information about a concrete function. Referenced in either
-// a SavedFunction or a SavedBareConcreteFunction.
-message SavedConcreteFunction {
-  repeated int32 bound_inputs = 2;
+// Stores low-level  nformat on about a concrete funct on. Referenced  n e  r
+// a SavedFunct on or a SavedBareConcreteFunct on.
+ ssage SavedConcreteFunct on {
+  repeated  nt32 bound_ nputs = 2;
 
-  // Input in canonicalized form that was received to create this concrete
-  // function.
-  StructuredValue canonicalized_input_signature = 3;
-  // Output that was the return value of this function after replacing all
-  // Tensors with TensorSpecs. This can be an arbitrary nested function and will
-  // be used to reconstruct the full structure from pure tensors.
-  StructuredValue output_signature = 4;
+  //  nput  n canon cal zed form that was rece ved to create t  concrete
+  // funct on.
+  StructuredValue canon cal zed_ nput_s gnature = 3;
+  // Output that was t  return value of t  funct on after replac ng all
+  // Tensors w h TensorSpecs. T  can be an arb rary nested funct on and w ll
+  // be used to reconstruct t  full structure from pure tensors.
+  StructuredValue output_s gnature = 4;
 }
 
-message SavedBareConcreteFunction {
-  // Identifies a SavedConcreteFunction.
-  string concrete_function_name = 1;
+ ssage SavedBareConcreteFunct on {
+  //  dent f es a SavedConcreteFunct on.
+  str ng concrete_funct on_na  = 1;
 
-  // A sequence of unique strings, one per Tensor argument.
-  repeated string argument_keywords = 2;
-  // The prefix of `argument_keywords` which may be identified by position.
-  int64 allowed_positional_arguments = 3;
-  // The spec of the function that this ConcreteFunction is traced from. This
-  // allows the ConcreteFunction to be called with nest structure inputs. This
-  // field may not be populated. If this field is absent, the concrete function
-  // can only be called with flat inputs.
-  // TODO(b/169361281): support calling saved ConcreteFunction with structured
-  // inputs in C++ SavedModel API.
-  FunctionSpec function_spec = 4;
+  // A sequence of un que str ngs, one per Tensor argu nt.
+  repeated str ng argu nt_keywords = 2;
+  // T  pref x of `argu nt_keywords` wh ch may be  dent f ed by pos  on.
+   nt64 allo d_pos  onal_argu nts = 3;
+  // T  spec of t  funct on that t  ConcreteFunct on  s traced from. T 
+  // allows t  ConcreteFunct on to be called w h nest structure  nputs. T 
+  // f eld may not be populated.  f t  f eld  s absent, t  concrete funct on
+  // can only be called w h flat  nputs.
+  // TODO(b/169361281): support call ng saved ConcreteFunct on w h structured
+  //  nputs  n C++ SavedModel AP .
+  Funct onSpec funct on_spec = 4;
 }
 
-message SavedConstant {
-  // An Operation name for a ConstantOp in this SavedObjectGraph's MetaGraph.
-  string operation = 1;
+ ssage SavedConstant {
+  // An Operat on na  for a ConstantOp  n t  SavedObjectGraph's  taGraph.
+  str ng operat on = 1;
 }
 
-// Represents a Variable that is initialized by loading the contents from the
-// checkpoint.
-message SavedVariable {
+// Represents a Var able that  s  n  al zed by load ng t  contents from t 
+// c ckpo nt.
+ ssage SavedVar able {
   DataType dtype = 1;
   TensorShapeProto shape = 2;
-  bool trainable = 3;
-  VariableSynchronization synchronization = 4;
-  VariableAggregation aggregation = 5;
-  string name = 6;
-  string device = 7;
-  // List of component variables for a distributed variable.
+  bool tra nable = 3;
+  Var ableSynchron zat on synchron zat on = 4;
+  Var ableAggregat on aggregat on = 5;
+  str ng na  = 6;
+  str ng dev ce = 7;
+  // L st of component var ables for a d str buted var able.
   //
-  // When this field is non-empty, the SavedVariable will be assumed
-  // to be a distributed variable defined by the components listed here.
+  // W n t  f eld  s non-empty, t  SavedVar able w ll be assu d
+  // to be a d str buted var able def ned by t  components l sted  re.
   //
-  // This is only supported by experimental loaders at the moment.
-  repeated SavedVariable experimental_distributed_variable_components = 8;
+  // T   s only supported by exper  ntal loaders at t  mo nt.
+  repeated SavedVar able exper  ntal_d str buted_var able_components = 8;
 }
 
-// Represents `FunctionSpec` used in `Function`. This represents a
-// function that has been wrapped as a TensorFlow `Function`.
-message FunctionSpec {
-  // Full arg spec from inspect.getfullargspec().
+// Represents `Funct onSpec` used  n `Funct on`. T  represents a
+// funct on that has been wrapped as a TensorFlow `Funct on`.
+ ssage Funct onSpec {
+  // Full arg spec from  nspect.getfullargspec().
   StructuredValue fullargspec = 1;
-  // Whether this represents a class method.
-  bool is_method = 2;
-  // The input signature, if specified.
-  StructuredValue input_signature = 5;
+  // W t r t  represents a class  thod.
+  bool  s_ thod = 2;
+  // T   nput s gnature,  f spec f ed.
+  StructuredValue  nput_s gnature = 5;
 
-  // Whether the function should be compiled by XLA.
+  // W t r t  funct on should be comp led by XLA.
   //
-  // The public interface to `tf.function` uses an optional boolean to
-  // represent three distinct states for this field.  Unfortunately, proto3
-  // removes the ability to explicitly check for the presence or absence of a
-  // field, so we instead map to an enum.
+  // T  publ c  nterface to `tf.funct on` uses an opt onal boolean to
+  // represent three d st nct states for t  f eld.  Unfortunately, proto3
+  // removes t  ab l y to expl c ly c ck for t  presence or absence of a
+  // f eld, so    nstead map to an enum.
   //
-  // See `tf.function` for details.
-  enum JitCompile {
+  // See `tf.funct on` for deta ls.
+  enum J Comp le {
     DEFAULT = 0;
     ON = 1;
     OFF = 2;
   }
-  JitCompile jit_compile = 6;
+  J Comp le j _comp le = 6;
 
   reserved 3, 4;
 }
 
-// A SavedResource represents a TF object that holds state during its lifetime.
-// An object of this type can have a reference to a:
-// create_resource() and an initialize() function.
-message SavedResource {
-  // A device specification indicating a required placement for the resource
-  // creation function, e.g. "CPU". An empty string allows the user to select a
-  // device.
-  string device = 1;
+// A SavedRes ce represents a TF object that holds state dur ng  s l fet  .
+// An object of t  type can have a reference to a:
+// create_res ce() and an  n  al ze() funct on.
+ ssage SavedRes ce {
+  // A dev ce spec f cat on  nd cat ng a requ red place nt for t  res ce
+  // creat on funct on, e.g. "CPU". An empty str ng allows t  user to select a
+  // dev ce.
+  str ng dev ce = 1;
 }
 
-message SaveableObject {
-  // Node ids of concrete functions for saving and loading from a checkpoint.
-  // These functions save and restore directly from tensors.
-  int32 save_function = 2;
-  int32 restore_function = 3;
+ ssage SaveableObject {
+  // Node  ds of concrete funct ons for sav ng and load ng from a c ckpo nt.
+  // T se funct ons save and restore d rectly from tensors.
+   nt32 save_funct on = 2;
+   nt32 restore_funct on = 3;
 }

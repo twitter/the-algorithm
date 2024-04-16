@@ -1,101 +1,101 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Set;
+ mport java.ut l.Set;
 
-import scala.Option;
+ mport scala.Opt on;
 
-import com.google.common.collect.ImmutableSet;
+ mport com.google.common.collect. mmutableSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntities;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.util.Future;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt  es;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt y;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Na dEnt yFetc r;
+ mport com.tw ter.search. ngester.p pel ne.ut l. ngesterStageT  r;
+ mport com.tw ter.strato.catalog.Fetch;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Handles the retrieval and population of named entities in TwitterMessages performed
- * by ingesters.
+ * Handles t  retr eval and populat on of na d ent  es  n Tw ter ssages perfor d
+ * by  ngesters.
  */
-class NamedEntityHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(NamedEntityHandler.class);
+class Na dEnt yHandler {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Na dEnt yHandler.class);
 
-  private static final String RETRIEVE_NAMED_ENTITIES_DECIDER_KEY =
-      "ingester_all_retrieve_named_entities_%s";
+  pr vate stat c f nal Str ng RETR EVE_NAMED_ENT T ES_DEC DER_KEY =
+      " ngester_all_retr eve_na d_ent  es_%s";
 
-  // Named entities are only extracted in English, Spanish, and Japanese
-  private static final Set<String> NAMED_ENTITY_LANGUAGES = ImmutableSet.of("en", "es", "ja");
+  // Na d ent  es are only extracted  n Engl sh, Span sh, and Japanese
+  pr vate stat c f nal Set<Str ng> NAMED_ENT TY_LANGUAGES =  mmutableSet.of("en", "es", "ja");
 
-  private final NamedEntityFetcher namedEntityFetcher;
-  private final Decider decider;
-  private final String deciderKey;
+  pr vate f nal Na dEnt yFetc r na dEnt yFetc r;
+  pr vate f nal Dec der dec der;
+  pr vate f nal Str ng dec derKey;
 
-  private SearchRateCounter lookupStat;
-  private SearchRateCounter successStat;
-  private SearchRateCounter namedEntityCountStat;
-  private SearchRateCounter errorStat;
-  private SearchRateCounter emptyResponseStat;
-  private SearchRateCounter deciderSkippedStat;
-  private IngesterStageTimer retrieveNamedEntitiesTimer;
+  pr vate SearchRateCounter lookupStat;
+  pr vate SearchRateCounter successStat;
+  pr vate SearchRateCounter na dEnt yCountStat;
+  pr vate SearchRateCounter errorStat;
+  pr vate SearchRateCounter emptyResponseStat;
+  pr vate SearchRateCounter dec derSk ppedStat;
+  pr vate  ngesterStageT  r retr eveNa dEnt  esT  r;
 
-  NamedEntityHandler(
-      NamedEntityFetcher namedEntityFetcher, Decider decider, String statsPrefix,
-      String deciderSuffix) {
-    this.namedEntityFetcher = namedEntityFetcher;
-    this.decider = decider;
-    this.deciderKey = String.format(RETRIEVE_NAMED_ENTITIES_DECIDER_KEY, deciderSuffix);
+  Na dEnt yHandler(
+      Na dEnt yFetc r na dEnt yFetc r, Dec der dec der, Str ng statsPref x,
+      Str ng dec derSuff x) {
+    t .na dEnt yFetc r = na dEnt yFetc r;
+    t .dec der = dec der;
+    t .dec derKey = Str ng.format(RETR EVE_NAMED_ENT T ES_DEC DER_KEY, dec derSuff x);
 
-    lookupStat = SearchRateCounter.export(statsPrefix + "_lookups");
-    successStat = SearchRateCounter.export(statsPrefix + "_success");
-    namedEntityCountStat = SearchRateCounter.export(statsPrefix + "_named_entity_count");
-    errorStat = SearchRateCounter.export(statsPrefix + "_error");
-    emptyResponseStat = SearchRateCounter.export(statsPrefix + "_empty_response");
-    deciderSkippedStat = SearchRateCounter.export(statsPrefix + "_decider_skipped");
-    retrieveNamedEntitiesTimer = new IngesterStageTimer(statsPrefix + "_request_timer");
+    lookupStat = SearchRateCounter.export(statsPref x + "_lookups");
+    successStat = SearchRateCounter.export(statsPref x + "_success");
+    na dEnt yCountStat = SearchRateCounter.export(statsPref x + "_na d_ent y_count");
+    errorStat = SearchRateCounter.export(statsPref x + "_error");
+    emptyResponseStat = SearchRateCounter.export(statsPref x + "_empty_response");
+    dec derSk ppedStat = SearchRateCounter.export(statsPref x + "_dec der_sk pped");
+    retr eveNa dEnt  esT  r = new  ngesterStageT  r(statsPref x + "_request_t  r");
   }
 
-  Future<Fetch.Result<NamedEntities>> retrieve(IngesterTwitterMessage message) {
-    lookupStat.increment();
-    return namedEntityFetcher.fetch(message.getTweetId());
+  Future<Fetch.Result<Na dEnt  es>> retr eve( ngesterTw ter ssage  ssage) {
+    lookupStat. ncre nt();
+    return na dEnt yFetc r.fetch( ssage.getT et d());
   }
 
-  void addEntitiesToMessage(IngesterTwitterMessage message, Fetch.Result<NamedEntities> result) {
-    retrieveNamedEntitiesTimer.start();
-    Option<NamedEntities> response = result.v();
-    if (response.isDefined()) {
-      successStat.increment();
-      for (NamedEntity namedEntity : response.get().getEntities()) {
-        namedEntityCountStat.increment();
-        message.addNamedEntity(namedEntity);
+  vo d addEnt  esTo ssage( ngesterTw ter ssage  ssage, Fetch.Result<Na dEnt  es> result) {
+    retr eveNa dEnt  esT  r.start();
+    Opt on<Na dEnt  es> response = result.v();
+     f (response. sDef ned()) {
+      successStat. ncre nt();
+      for (Na dEnt y na dEnt y : response.get().getEnt  es()) {
+        na dEnt yCountStat. ncre nt();
+         ssage.addNa dEnt y(na dEnt y);
       }
     } else {
-      emptyResponseStat.increment();
-      LOG.debug("Empty NERResponse for named entity query on tweet {}", message.getId());
+      emptyResponseStat. ncre nt();
+      LOG.debug("Empty NERResponse for na d ent y query on t et {}",  ssage.get d());
     }
-    retrieveNamedEntitiesTimer.stop();
+    retr eveNa dEnt  esT  r.stop();
   }
 
-  void incrementErrorCount() {
-    errorStat.increment();
+  vo d  ncre ntErrorCount() {
+    errorStat. ncre nt();
   }
 
-  boolean shouldRetrieve(IngesterTwitterMessage message) {
-    // Use decider to control retrieval of named entities. This allows us to shut off retrieval
-    // if it causes problems.
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-      deciderSkippedStat.increment();
+  boolean shouldRetr eve( ngesterTw ter ssage  ssage) {
+    // Use dec der to control retr eval of na d ent  es. T  allows us to shut off retr eval
+    //  f   causes problems.
+     f (!Dec derUt l. sAva lableForRandomRec p ent(dec der, dec derKey)) {
+      dec derSk ppedStat. ncre nt();
       return false;
     }
 
-    // Named entities are only extracted in certain languages, so we can skip tweets
-    // in other languages
-    return NAMED_ENTITY_LANGUAGES.contains(message.getLanguage());
+    // Na d ent  es are only extracted  n certa n languages, so   can sk p t ets
+    //  n ot r languages
+    return NAMED_ENT TY_LANGUAGES.conta ns( ssage.getLanguage());
   }
 }

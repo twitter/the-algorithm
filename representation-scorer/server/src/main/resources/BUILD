@@ -1,9 +1,9 @@
-resources(
-    sources = [
+res ces(
+    s ces = [
         "*.xml",
         "*.yml",
-        "com/twitter/slo/slo.json",
-        "config/*.yml",
+        "com/tw ter/slo/slo.json",
+        "conf g/*.yml",
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

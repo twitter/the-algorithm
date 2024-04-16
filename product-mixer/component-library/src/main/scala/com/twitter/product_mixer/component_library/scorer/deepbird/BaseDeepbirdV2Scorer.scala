@@ -1,87 +1,87 @@
-package com.twitter.product_mixer.component_library.scorer.deepbird
+package com.tw ter.product_m xer.component_l brary.scorer.deepb rd
 
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.ml.prediction_service.BatchPredictionRequest
-import com.twitter.ml.prediction_service.BatchPredictionResponse
-import com.twitter.cortex.deepbird.thriftjava.{ModelSelector => TModelSelector}
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordExtractor
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import scala.collection.JavaConverters._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
+ mport com.tw ter.product_m xer.core.feature.datarecord.BaseDataRecordFeature
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onRequest
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onResponse
+ mport com.tw ter.cortex.deepb rd.thr ftjava.{ModelSelector => TModelSelector}
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.ModelSelector
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.DataRecordConverter
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.DataRecordExtractor
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.FeaturesScope
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport scala.collect on.JavaConverters._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
 
-abstract class BaseDeepbirdV2Scorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
+abstract class BaseDeepb rdV2Scorer[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
   QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+  Cand dateFeatures <: BaseDataRecordFeature[Cand date, _],
+  ResultFeatures <: BaseDataRecordFeature[Cand date, _]
 ](
-  override val identifier: ScorerIdentifier,
-  modelIdSelector: ModelSelector[Query],
+  overr de val  dent f er: Scorer dent f er,
+  model dSelector: ModelSelector[Query],
   queryFeatures: FeaturesScope[QueryFeatures],
-  candidateFeatures: FeaturesScope[CandidateFeatures],
+  cand dateFeatures: FeaturesScope[Cand dateFeatures],
   resultFeatures: Set[ResultFeatures])
-    extends Scorer[Query, Candidate] {
+    extends Scorer[Query, Cand date] {
 
-  private val queryDataRecordConverter = new DataRecordConverter(queryFeatures)
-  private val candidateDataRecordConverter = new DataRecordConverter(candidateFeatures)
-  private val resultDataRecordExtractor = new DataRecordExtractor(resultFeatures)
+  pr vate val queryDataRecordConverter = new DataRecordConverter(queryFeatures)
+  pr vate val cand dateDataRecordConverter = new DataRecordConverter(cand dateFeatures)
+  pr vate val resultDataRecordExtractor = new DataRecordExtractor(resultFeatures)
 
-  require(resultFeatures.nonEmpty, "Result features cannot be empty")
-  override val features: Set[Feature[_, _]] = resultFeatures.asInstanceOf[Set[Feature[_, _]]]
-  def getBatchPredictions(
-    request: BatchPredictionRequest,
+  requ re(resultFeatures.nonEmpty, "Result features cannot be empty")
+  overr de val features: Set[Feature[_, _]] = resultFeatures.as nstanceOf[Set[Feature[_, _]]]
+  def getBatchPred ct ons(
+    request: BatchPred ct onRequest,
     modelSelector: TModelSelector
-  ): Future[BatchPredictionResponse]
+  ): Future[BatchPred ct onResponse]
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    // Convert all candidate feature maps to java datarecords then to scala datarecords.
-    val thriftCandidateDataRecords = candidates.map { candidate =>
-      candidateDataRecordConverter.toDataRecord(candidate.features)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    // Convert all cand date feature maps to java datarecords t n to scala datarecords.
+    val thr ftCand dateDataRecords = cand dates.map { cand date =>
+      cand dateDataRecordConverter.toDataRecord(cand date.features)
     }
 
-    val request = new BatchPredictionRequest(thriftCandidateDataRecords.asJava)
+    val request = new BatchPred ct onRequest(thr ftCand dateDataRecords.asJava)
 
-    // Convert the query feature map to data record if available.
+    // Convert t  query feature map to data record  f ava lable.
     query.features.foreach { featureMap =>
       request.setCommonFeatures(queryDataRecordConverter.toDataRecord(featureMap))
     }
 
-    val modelSelector = modelIdSelector
-      .apply(query).map { id =>
+    val modelSelector = model dSelector
+      .apply(query).map {  d =>
         val selector = new TModelSelector()
-        selector.setId(id)
+        selector.set d( d)
         selector
       }.orNull
 
-    Stitch.callFuture(getBatchPredictions(request, modelSelector)).map { response =>
-      val dataRecords = Option(response.predictions).map(_.asScala).getOrElse(Seq.empty)
-      buildResults(candidates, dataRecords)
+    St ch.callFuture(getBatchPred ct ons(request, modelSelector)).map { response =>
+      val dataRecords = Opt on(response.pred ct ons).map(_.asScala).getOrElse(Seq.empty)
+      bu ldResults(cand dates, dataRecords)
     }
   }
 
-  private def buildResults(
-    candidates: Seq[CandidateWithFeatures[Candidate]],
+  pr vate def bu ldResults(
+    cand dates: Seq[Cand dateW hFeatures[Cand date]],
     dataRecords: Seq[DataRecord]
   ): Seq[FeatureMap] = {
-    if (dataRecords.size != candidates.size) {
-      throw PipelineFailure(IllegalStateFailure, "Result Size mismatched candidates size")
+     f (dataRecords.s ze != cand dates.s ze) {
+      throw P pel neFa lure( llegalStateFa lure, "Result S ze m smatc d cand dates s ze")
     }
 
     dataRecords.map { resultDataRecord =>

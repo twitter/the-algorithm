@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-sealed trait Layout
+sealed tra  La t
 
-case class UserListLayout(
-  header: Option[HeaderConfig],
-  userListOptions: UserListOptions,
-  socialProofs: Option[Seq[SocialProof]],
-  footer: Option[FooterConfig])
-    extends Layout
+case class UserL stLa t(
+   ader: Opt on[ aderConf g],
+  userL stOpt ons: UserL stOpt ons,
+  soc alProofs: Opt on[Seq[Soc alProof]],
+  footer: Opt on[FooterConf g])
+    extends La t
 
-case class CarouselLayout(
-  header: Option[HeaderConfig],
-  carouselOptions: CarouselOptions,
-  socialProofs: Option[Seq[SocialProof]])
-    extends Layout
+case class CarouselLa t(
+   ader: Opt on[ aderConf g],
+  carouselOpt ons: CarouselOpt ons,
+  soc alProofs: Opt on[Seq[Soc alProof]])
+    extends La t

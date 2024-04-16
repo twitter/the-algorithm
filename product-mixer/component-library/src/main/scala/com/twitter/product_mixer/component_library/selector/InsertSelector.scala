@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport Cand dateScope.Part  onedCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
-private[selector] object InsertSelector {
+pr vate[selector] object  nsertSelector {
 
   /**
-   * Insert all candidates from a candidate pipeline at a 0-indexed fixed position. If the current
-   * results are a shorter length than the requested position, then the candidates will be appended
-   * to the results.
+   *  nsert all cand dates from a cand date p pel ne at a 0- ndexed f xed pos  on.  f t  current
+   * results are a shorter length than t  requested pos  on, t n t  cand dates w ll be appended
+   * to t  results.
    */
-  def insertIntoResultsAtPosition(
-    position: Int,
-    pipelineScope: CandidateScope,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  def  nsert ntoResultsAtPos  on(
+    pos  on:  nt,
+    p pel neScope: Cand dateScope,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    assert(position >= 0, "Position must be equal to or greater than zero")
+    assert(pos  on >= 0, "Pos  on must be equal to or greater than zero")
 
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    val Part  onedCand dates(selectedCand dates, ot rCand dates) =
+      p pel neScope.part  on(rema n ngCand dates)
 
-    val resultUpdated = if (selectedCandidates.nonEmpty) {
-      if (position < result.length) {
-        val (left, right) = result.splitAt(position)
-        left ++ selectedCandidates ++ right
+    val resultUpdated =  f (selectedCand dates.nonEmpty) {
+       f (pos  on < result.length) {
+        val (left, r ght) = result.spl At(pos  on)
+        left ++ selectedCand dates ++ r ght
       } else {
-        result ++ selectedCandidates
+        result ++ selectedCand dates
       }
     } else {
       result
     }
 
-    SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
+    SelectorResult(rema n ngCand dates = ot rCand dates, result = resultUpdated)
   }
 }

@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.LookupSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.LookupS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.S ngleton
 
 /**
- * In this example we build a [[StandardSimilarityEngine]] to wrap a dummy store
+ *  n t  example   bu ld a [[StandardS m lar yEng ne]] to wrap a dum  store
  */
-object SimpleSimilarityEngineModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesSimpleSimilarityEngine(
-    timeoutConfig: TimeoutConfig,
-    globalStats: StatsReceiver
-  ): StandardSimilarityEngine[UserId, (TweetId, Double)] = {
-    // Inject your readableStore implementation here
-    val dummyStore = ReadableStore.fromMap(
+object S mpleS m lar yEng neModule extends Tw terModule {
+  @Prov des
+  @S ngleton
+  def prov desS mpleS m lar yEng ne(
+    t  outConf g: T  outConf g,
+    globalStats: StatsRece ver
+  ): StandardS m lar yEng ne[User d, (T et d, Double)] = {
+    //  nject y  readableStore  mple ntat on  re
+    val dum Store = ReadableStore.fromMap(
       Map(
         1L -> Seq((100L, 1.0), (101L, 1.0)),
         2L -> Seq((200L, 2.0), (201L, 2.0)),
         3L -> Seq((300L, 3.0), (301L, 3.0))
       ))
 
-    new StandardSimilarityEngine[UserId, (TweetId, Double)](
-      implementingStore = dummyStore,
-      identifier = SimilarityEngineType.EnumUnknownSimilarityEngineType(9997),
+    new StandardS m lar yEng ne[User d, (T et d, Double)](
+       mple nt ngStore = dum Store,
+       dent f er = S m lar yEng neType.EnumUnknownS m lar yEng neType(9997),
       globalStats = globalStats,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       )
     )
@@ -48,40 +48,40 @@ object SimpleSimilarityEngineModule extends TwitterModule {
 }
 
 /**
- * In this example we build a [[LookupSimilarityEngine]] to wrap a dummy store with 2 versions
+ *  n t  example   bu ld a [[LookupS m lar yEng ne]] to wrap a dum  store w h 2 vers ons
  */
-object LookupSimilarityEngineModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesLookupSimilarityEngine(
-    timeoutConfig: TimeoutConfig,
-    globalStats: StatsReceiver
-  ): LookupSimilarityEngine[UserId, (TweetId, Double)] = {
-    // Inject your readableStore implementation here
-    val dummyStoreV1 = ReadableStore.fromMap(
+object LookupS m lar yEng neModule extends Tw terModule {
+  @Prov des
+  @S ngleton
+  def prov desLookupS m lar yEng ne(
+    t  outConf g: T  outConf g,
+    globalStats: StatsRece ver
+  ): LookupS m lar yEng ne[User d, (T et d, Double)] = {
+    //  nject y  readableStore  mple ntat on  re
+    val dum StoreV1 = ReadableStore.fromMap(
       Map(
         1L -> Seq((100L, 1.0), (101L, 1.0)),
         2L -> Seq((200L, 2.0), (201L, 2.0)),
       ))
 
-    val dummyStoreV2 = ReadableStore.fromMap(
+    val dum StoreV2 = ReadableStore.fromMap(
       Map(
         1L -> Seq((100L, 1.0), (101L, 1.0)),
         2L -> Seq((200L, 2.0), (201L, 2.0)),
       ))
 
-    new LookupSimilarityEngine[UserId, (TweetId, Double)](
-      versionedStoreMap = Map(
-        "V1" -> dummyStoreV1,
-        "V2" -> dummyStoreV2
+    new LookupS m lar yEng ne[User d, (T et d, Double)](
+      vers onedStoreMap = Map(
+        "V1" -> dum StoreV1,
+        "V2" -> dum StoreV2
       ),
-      identifier = SimilarityEngineType.EnumUnknownSimilarityEngineType(9998),
+       dent f er = S m lar yEng neType.EnumUnknownS m lar yEng neType(9998),
       globalStats = globalStats,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       )
     )

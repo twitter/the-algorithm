@@ -1,34 +1,34 @@
-## InteractionGraphLabels Dataflow Job
+##  nteract onGraphLabels Dataflow Job
 
-#### IntelliJ
+####  ntell J
 ```
-fastpass create --name rg_labels --intellij src/scala/com/twitter/interaction_graph/scio/ml/labels
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_graph_labels
+fastpass create --na  rg_labels -- ntell j src/scala/com/tw ter/ nteract on_graph/sc o/ml/labels
 ```
 
-#### Build Jar
+#### Comp le
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_graph_labels
+bazel bu ld src/scala/com/tw ter/ nteract on_graph/sc o/ml/labels: nteract on_graph_labels
 ```
 
-#### Run Scheduled Job
+#### Bu ld Jar
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-labels-dataflow
+bazel bundle src/scala/com/tw ter/ nteract on_graph/sc o/ml/labels: nteract on_graph_labels
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/ml/labels/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-05-15 \
-  --bind=profile.output_path=processed/interaction_graph/labels
+#### Run Sc duled Job
+```
+export PROJECT D=twttr-recos-ml-prod
+export REG ON=us-central1
+export JOB_NAME= nteract on-graph-labels-dataflow
+
+b n/d6w sc dule \
+  ${PROJECT D}/${REG ON}/${JOB_NAME} \
+  src/scala/com/tw ter/ nteract on_graph/sc o/ml/labels/conf g.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.project=${PROJECT D} \
+  --b nd=prof le.reg on=${REG ON} \
+  --b nd=prof le.job_na =${JOB_NAME} \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date=2022-05-15 \
+  --b nd=prof le.output_path=processed/ nteract on_graph/labels
 ```

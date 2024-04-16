@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport javax. nject.S ngleton
 
-object MHMtlsParamsModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesManhattanMtlsParams(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVClientMtlsParams = {
-    ManhattanKVClientMtlsParams(serviceIdentifier)
+object MHMtlsParamsModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desManhattanMtlsParams(
+    serv ce dent f er: Serv ce dent f er
+  ): ManhattanKVCl entMtlsParams = {
+    ManhattanKVCl entMtlsParams(serv ce dent f er)
   }
 }

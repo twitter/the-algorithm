@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et_composer
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer.T etComposer em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetComposerItemMarshaller @Inject() (
-  tweetComposerDisplayTypeMarshaller: TweetComposerDisplayTypeMarshaller,
+@S ngleton
+class T etComposer emMarshaller @ nject() (
+  t etComposerD splayTypeMarshaller: T etComposerD splayTypeMarshaller,
   urlMarshaller: UrlMarshaller) {
 
-  def apply(tweetComposer: TweetComposerItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.TweetComposer(
-      urt.TweetComposer(
-        displayType = tweetComposerDisplayTypeMarshaller(tweetComposer.displayType),
-        text = tweetComposer.text,
-        url = urlMarshaller(tweetComposer.url)
+  def apply(t etComposer: T etComposer em): urt.T  l ne emContent =
+    urt.T  l ne emContent.T etComposer(
+      urt.T etComposer(
+        d splayType = t etComposerD splayTypeMarshaller(t etComposer.d splayType),
+        text = t etComposer.text,
+        url = urlMarshaller(t etComposer.url)
       )
     )
 }

@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.tw ter.ho _m xer.funct onal_component.gate
 
-import com.twitter.gizmoduck.{thriftscala => t}
-import com.twitter.home_mixer.model.HomeFeatures.UserTypeFeature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.g zmoduck.{thr ftscala => t}
+ mport com.tw ter.ho _m xer.model.Ho Features.UserTypeFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A Soft User is a user who is in the gradual onboarding state. This gate can be
- * used to turn off certain functionality like ads for these users.
+ * A Soft User  s a user who  s  n t  gradual onboard ng state. T  gate can be
+ * used to turn off certa n funct onal y l ke ads for t se users.
  */
-object ExcludeSoftUserGate extends Gate[PipelineQuery] {
+object ExcludeSoftUserGate extends Gate[P pel neQuery] {
 
-  override val identifier: GateIdentifier = GateIdentifier("ExcludeSoftUser")
+  overr de val  dent f er: Gate dent f er = Gate dent f er("ExcludeSoftUser")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
+  overr de def shouldCont nue(query: P pel neQuery): St ch[Boolean] = {
     val softUser = query.features
-      .exists(_.getOrElse(UserTypeFeature, None).exists(_ == t.UserType.Soft))
-    Stitch.value(!softUser)
+      .ex sts(_.getOrElse(UserTypeFeature, None).ex sts(_ == t.UserType.Soft))
+    St ch.value(!softUser)
   }
 }

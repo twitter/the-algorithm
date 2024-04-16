@@ -1,138 +1,138 @@
-package com.twitter.search.earlybird.queryparser;
+package com.tw ter.search.earlyb rd.queryparser;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
 
-public class ProtectedOperatorQueryRewriter {
-  private static final String ERROR_MESSAGE = "Positive 'protected' operator must be in the root"
-      + " query node and the root query node must be a Conjunction.";
-  private static final Query EXCLUDE_PROTECTED_OPERATOR =
+publ c class ProtectedOperatorQueryRewr er {
+  pr vate stat c f nal Str ng ERROR_MESSAGE = "Pos  ve 'protected' operator must be  n t  root"
+      + " query node and t  root query node must be a Conjunct on.";
+  pr vate stat c f nal Query EXCLUDE_PROTECTED_OPERATOR =
       new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
 
   /**
-   * Rewrite a query with positive 'protected' operator into an equivalent query without the positive
-   * 'protected' operator. This method assumes the following preconditions hold:
-   *  1. 'followedUserIds' is not empty
-   *  2. the query's root node is of type Conjunction
-   *  3. the query's root node is not negated
-   *  4. there is one positive 'protected' operator in the root node
-   *  5. there is only one 'protected' operator in the whole query
+   * Rewr e a query w h pos  ve 'protected' operator  nto an equ valent query w hout t  pos  ve
+   * 'protected' operator. T   thod assu s t  follow ng precond  ons hold:
+   *  1. 'follo dUser ds'  s not empty
+   *  2. t  query's root node  s of type Conjunct on
+   *  3. t  query's root node  s not negated
+   *  4. t re  s one pos  ve 'protected' operator  n t  root node
+   *  5. t re  s only one 'protected' operator  n t  whole query
    *
-   *  Query with '[include protected]' operator is rewritten into a Disjunction of a query with
-   *  protected Tweets only and a query with public Tweets only.
+   *  Query w h '[ nclude protected]' operator  s rewr ten  nto a D sjunct on of a query w h
+   *  protected T ets only and a query w h publ c T ets only.
    *  For example,
-   *    Original query:
-   *      (* "cat" [include protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
-   *    Rewritten query:
+   *    Or g nal query:
+   *      (* "cat" [ nclude protected])
+   *        w h follo dUser ds=[1, 7, 12] w re 1 and 7 are protected users
+   *    Rewr ten query:
    *      (+
-   *        (* "cat" [multi_term_disjunction from_user_id 1 7])
+   *        (* "cat" [mult _term_d sjunct on from_user_ d 1 7])
    *        (* "cat" [exclude protected])
    *      )
    *
-   *  Query with '[filter protected]' operator is rewritten with multi_term_disjunction from_user_id
+   *  Query w h '[f lter protected]' operator  s rewr ten w h mult _term_d sjunct on from_user_ d
    *  operator.
    *  For example,
-   *    Original query:
-   *      (* "cat" [filter protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
-   *    Rewritten query:
-   *      (* "cat" [multi_term_disjunction from_user_id 1 7])
+   *    Or g nal query:
+   *      (* "cat" [f lter protected])
+   *        w h follo dUser ds=[1, 7, 12] w re 1 and 7 are protected users
+   *    Rewr ten query:
+   *      (* "cat" [mult _term_d sjunct on from_user_ d 1 7])
    */
-  public Query rewrite(Query parsedQuery, List<Long> followedUserIds, UserTable userTable) {
-    Preconditions.checkState(followedUserIds != null && !followedUserIds.isEmpty(),
-        "'followedUserIds' should not be empty when positive 'protected' operator exists.");
-    Preconditions.checkState(
-        parsedQuery.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.CONJUNCTION),
+  publ c Query rewr e(Query parsedQuery, L st<Long> follo dUser ds, UserTable userTable) {
+    Precond  ons.c ckState(follo dUser ds != null && !follo dUser ds. sEmpty(),
+        "'follo dUser ds' should not be empty w n pos  ve 'protected' operator ex sts.");
+    Precond  ons.c ckState(
+        parsedQuery. sTypeOf(com.tw ter.search.queryparser.query.Query.QueryType.CONJUNCT ON),
         ERROR_MESSAGE);
-    Conjunction parsedConjQuery = (Conjunction) parsedQuery;
-    List<Query> children = parsedConjQuery.getChildren();
-    int opIndex = findPositiveProtectedOperatorIndex(children);
-    Preconditions.checkState(opIndex >= 0, ERROR_MESSAGE);
-    SearchOperator protectedOp = (SearchOperator) children.get(opIndex);
+    Conjunct on parsedConjQuery = (Conjunct on) parsedQuery;
+    L st<Query> ch ldren = parsedConjQuery.getCh ldren();
+     nt op ndex = f ndPos  veProtectedOperator ndex(ch ldren);
+    Precond  ons.c ckState(op ndex >= 0, ERROR_MESSAGE);
+    SearchOperator protectedOp = (SearchOperator) ch ldren.get(op ndex);
 
-    ImmutableList.Builder<Query> otherChildrenBuilder = ImmutableList.builder();
-    otherChildrenBuilder.addAll(children.subList(0, opIndex));
-    if (opIndex + 1 < children.size()) {
-      otherChildrenBuilder.addAll(children.subList(opIndex + 1, children.size()));
+     mmutableL st.Bu lder<Query> ot rCh ldrenBu lder =  mmutableL st.bu lder();
+    ot rCh ldrenBu lder.addAll(ch ldren.subL st(0, op ndex));
+     f (op ndex + 1 < ch ldren.s ze()) {
+      ot rCh ldrenBu lder.addAll(ch ldren.subL st(op ndex + 1, ch ldren.s ze()));
     }
-    List<Query> otherChildren = otherChildrenBuilder.build();
+    L st<Query> ot rCh ldren = ot rCh ldrenBu lder.bu ld();
 
-    List<Long> protectedUserIds = getProtectedUserIds(followedUserIds, userTable);
-    if (protectedOp.getOperatorType() == SearchOperator.Type.FILTER) {
-      if (protectedUserIds.isEmpty()) {
+    L st<Long> protectedUser ds = getProtectedUser ds(follo dUser ds, userTable);
+     f (protectedOp.getOperatorType() == SearchOperator.Type.F LTER) {
+       f (protectedUser ds. sEmpty()) {
         // match none query
-        return Disjunction.EMPTY_DISJUNCTION;
+        return D sjunct on.EMPTY_D SJUNCT ON;
       } else {
-        return parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(createFromUserIdMultiTermDisjunctionQuery(protectedUserIds))
-            .build();
+        return parsedConjQuery.newBu lder()
+            .setCh ldren(ot rCh ldren)
+            .addCh ld(createFromUser dMult TermD sjunct onQuery(protectedUser ds))
+            .bu ld();
       }
     } else {
-      // 'include' or negated 'exclude' operator
-      // negated 'exclude' is considered the same as 'include' to be consistent with the logic in
-      // EarlybirdLuceneQueryVisitor
-      if (protectedUserIds.isEmpty()) {
-        // return public only query
-        return parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
-            .build();
+      // ' nclude' or negated 'exclude' operator
+      // negated 'exclude'  s cons dered t  sa  as ' nclude' to be cons stent w h t  log c  n
+      // Earlyb rdLuceneQueryV s or
+       f (protectedUser ds. sEmpty()) {
+        // return publ c only query
+        return parsedConjQuery.newBu lder()
+            .setCh ldren(ot rCh ldren)
+            .addCh ld(EXCLUDE_PROTECTED_OPERATOR)
+            .bu ld();
       } else {
-        // build a disjunction of protected only query and public only query
-        Query protectedOnlyQuery = parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(createFromUserIdMultiTermDisjunctionQuery(protectedUserIds))
-            .build();
-        Query publicOnlyQuery = parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
-            .build();
-        return new Disjunction(protectedOnlyQuery, publicOnlyQuery);
+        // bu ld a d sjunct on of protected only query and publ c only query
+        Query protectedOnlyQuery = parsedConjQuery.newBu lder()
+            .setCh ldren(ot rCh ldren)
+            .addCh ld(createFromUser dMult TermD sjunct onQuery(protectedUser ds))
+            .bu ld();
+        Query publ cOnlyQuery = parsedConjQuery.newBu lder()
+            .setCh ldren(ot rCh ldren)
+            .addCh ld(EXCLUDE_PROTECTED_OPERATOR)
+            .bu ld();
+        return new D sjunct on(protectedOnlyQuery, publ cOnlyQuery);
       }
     }
   }
 
-  private Query createFromUserIdMultiTermDisjunctionQuery(List<Long> userIds) {
-    ImmutableList.Builder<String> operandsBuilder = ImmutableList.builder();
-    operandsBuilder
-        .add(EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
-    for (Long userId : userIds) {
-      operandsBuilder.add(userId.toString());
+  pr vate Query createFromUser dMult TermD sjunct onQuery(L st<Long> user ds) {
+     mmutableL st.Bu lder<Str ng> operandsBu lder =  mmutableL st.bu lder();
+    operandsBu lder
+        .add(Earlyb rdF eldConstants.Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa ());
+    for (Long user d : user ds) {
+      operandsBu lder.add(user d.toStr ng());
     }
-    List<String> operands = operandsBuilder.build();
-    return new SearchOperator(SearchOperator.Type.MULTI_TERM_DISJUNCTION, operands);
+    L st<Str ng> operands = operandsBu lder.bu ld();
+    return new SearchOperator(SearchOperator.Type.MULT _TERM_D SJUNCT ON, operands);
   }
 
-  private List<Long> getProtectedUserIds(List<Long> followedUserIds, UserTable userTable) {
-    ImmutableList.Builder<Long> protectedUserIds = ImmutableList.builder();
-    for (Long userId : followedUserIds) {
-      if (userTable.isSet(userId, UserTable.IS_PROTECTED_BIT)) {
-        protectedUserIds.add(userId);
+  pr vate L st<Long> getProtectedUser ds(L st<Long> follo dUser ds, UserTable userTable) {
+     mmutableL st.Bu lder<Long> protectedUser ds =  mmutableL st.bu lder();
+    for (Long user d : follo dUser ds) {
+       f (userTable. sSet(user d, UserTable. S_PROTECTED_B T)) {
+        protectedUser ds.add(user d);
       }
     }
-    return protectedUserIds.build();
+    return protectedUser ds.bu ld();
   }
 
-  private int findPositiveProtectedOperatorIndex(List<Query> children) {
-    for (int i = 0; i < children.size(); i++) {
-      Query child = children.get(i);
-      if (child instanceof SearchOperator) {
-        SearchOperator searchOp = (SearchOperator) child;
-        if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())
-            && (isNegateExclude(searchOp) || isPositive(searchOp))) {
-          return i;
+  pr vate  nt f ndPos  veProtectedOperator ndex(L st<Query> ch ldren) {
+    for ( nt   = 0;   < ch ldren.s ze();  ++) {
+      Query ch ld = ch ldren.get( );
+       f (ch ld  nstanceof SearchOperator) {
+        SearchOperator searchOp = (SearchOperator) ch ld;
+         f (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())
+            && ( sNegateExclude(searchOp) ||  sPos  ve(searchOp))) {
+          return  ;
         }
       }
     }
@@ -140,14 +140,14 @@ public class ProtectedOperatorQueryRewriter {
     return -1;
   }
 
-  private boolean isNegateExclude(SearchOperator searchOp) {
+  pr vate boolean  sNegateExclude(SearchOperator searchOp) {
     return searchOp.mustNotOccur()
         && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
   }
 
-  private boolean isPositive(SearchOperator searchOp) {
+  pr vate boolean  sPos  ve(SearchOperator searchOp) {
     return !searchOp.mustNotOccur()
-        && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
-        || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
+        && (searchOp.getOperatorType() == SearchOperator.Type. NCLUDE
+        || searchOp.getOperatorType() == SearchOperator.Type.F LTER);
   }
 }

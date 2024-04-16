@@ -1,135 +1,135 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.lucene.index.PostingsEnum;
+ mport org.apac .lucene. ndex.Post ngsEnum;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
-public class MultiPostingLists extends OptimizedPostingLists {
+publ c class Mult Post ngL sts extends Opt m zedPost ngL sts {
 
-  @VisibleForTesting
-  public static final int DEFAULT_DF_THRESHOLD = 1000;
+  @V s bleForTest ng
+  publ c stat c f nal  nt DEFAULT_DF_THRESHOLD = 1000;
 
-  private final OptimizedPostingLists lowDF;
-  private final OptimizedPostingLists highDF;
+  pr vate f nal Opt m zedPost ngL sts lowDF;
+  pr vate f nal Opt m zedPost ngL sts h ghDF;
 
-  private final int dfThreshold;
+  pr vate f nal  nt dfThreshold;
 
   /**
-   * Given the number of postings in each term (in this field), sum up the number of postings in
-   * the low df fields.
-   * @param numPostingsPerTerm number of postings in each term in this field.
-   * @param dfThreshold the low/high df threshold.
+   * G ven t  number of post ngs  n each term ( n t  f eld), sum up t  number of post ngs  n
+   * t  low df f elds.
+   * @param numPost ngsPerTerm number of post ngs  n each term  n t  f eld.
+   * @param dfThreshold t  low/h gh df threshold.
    */
-  private static int numPostingsInLowDfTerms(int[] numPostingsPerTerm, int dfThreshold) {
-    int sumOfAllPostings = 0;
-    for (int numPostingsInATerm : numPostingsPerTerm) {
-      if (numPostingsInATerm < dfThreshold) {
-        sumOfAllPostings += numPostingsInATerm;
+  pr vate stat c  nt numPost ngs nLowDfTerms( nt[] numPost ngsPerTerm,  nt dfThreshold) {
+     nt sumOfAllPost ngs = 0;
+    for ( nt numPost ngs nATerm : numPost ngsPerTerm) {
+       f (numPost ngs nATerm < dfThreshold) {
+        sumOfAllPost ngs += numPost ngs nATerm;
       }
     }
-    return sumOfAllPostings;
+    return sumOfAllPost ngs;
   }
 
   /**
-   * Creates a new posting list delegating to either lowDF or highDF posting list.
-   * @param omitPositions whether positions should be omitted or not.
-   * @param numPostingsPerTerm number of postings in each term in this field.
-   * @param maxPosition the largest position used in all the postings for this field.
+   * Creates a new post ng l st delegat ng to e  r lowDF or h ghDF post ng l st.
+   * @param om Pos  ons w t r pos  ons should be om ted or not.
+   * @param numPost ngsPerTerm number of post ngs  n each term  n t  f eld.
+   * @param maxPos  on t  largest pos  on used  n all t  post ngs for t  f eld.
    */
-  public MultiPostingLists(
-      boolean omitPositions,
-      int[] numPostingsPerTerm,
-      int maxPosition) {
-    this(
-        new LowDFPackedIntsPostingLists(
-            omitPositions,
-            numPostingsInLowDfTerms(numPostingsPerTerm, DEFAULT_DF_THRESHOLD),
-            maxPosition),
-        new HighDFPackedIntsPostingLists(omitPositions),
+  publ c Mult Post ngL sts(
+      boolean om Pos  ons,
+       nt[] numPost ngsPerTerm,
+       nt maxPos  on) {
+    t (
+        new LowDFPacked ntsPost ngL sts(
+            om Pos  ons,
+            numPost ngs nLowDfTerms(numPost ngsPerTerm, DEFAULT_DF_THRESHOLD),
+            maxPos  on),
+        new H ghDFPacked ntsPost ngL sts(om Pos  ons),
         DEFAULT_DF_THRESHOLD);
   }
 
-  private MultiPostingLists(
-      OptimizedPostingLists lowDF,
-      OptimizedPostingLists highDF,
-      int dfThreshold) {
-    this.lowDF = lowDF;
-    this.highDF = highDF;
-    this.dfThreshold = dfThreshold;
+  pr vate Mult Post ngL sts(
+      Opt m zedPost ngL sts lowDF,
+      Opt m zedPost ngL sts h ghDF,
+       nt dfThreshold) {
+    t .lowDF = lowDF;
+    t .h ghDF = h ghDF;
+    t .dfThreshold = dfThreshold;
   }
 
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings)
-      throws IOException {
-    return numPostings < dfThreshold
-          ? lowDF.copyPostingList(postingsEnum, numPostings)
-          : highDF.copyPostingList(postingsEnum, numPostings);
+  @Overr de
+  publ c  nt copyPost ngL st(Post ngsEnum post ngsEnum,  nt numPost ngs)
+      throws  OExcept on {
+    return numPost ngs < dfThreshold
+          ? lowDF.copyPost ngL st(post ngsEnum, numPost ngs)
+          : h ghDF.copyPost ngL st(post ngsEnum, numPost ngs);
   }
 
-  @Override
-  public EarlybirdPostingsEnum postings(int postingsPointer, int numPostings, int flags)
-      throws IOException {
-    return numPostings < dfThreshold
-        ? lowDF.postings(postingsPointer, numPostings, flags)
-        : highDF.postings(postingsPointer, numPostings, flags);
+  @Overr de
+  publ c Earlyb rdPost ngsEnum post ngs( nt post ngsPo nter,  nt numPost ngs,  nt flags)
+      throws  OExcept on {
+    return numPost ngs < dfThreshold
+        ? lowDF.post ngs(post ngsPo nter, numPost ngs, flags)
+        : h ghDF.post ngs(post ngsPo nter, numPost ngs, flags);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getLowDfPostingsList() {
+  @V s bleForTest ng
+  Opt m zedPost ngL sts getLowDfPost ngsL st() {
     return lowDF;
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getHighDfPostingsList() {
-    return highDF;
+  @V s bleForTest ng
+  Opt m zedPost ngL sts getH ghDfPost ngsL st() {
+    return h ghDF;
   }
 
-  public static class FlushHandler extends Flushable.Handler<MultiPostingLists> {
-    private static final String DF_THRESHOLD_PROP_NAME = "dfThresHold";
+  publ c stat c class FlushHandler extends Flushable.Handler<Mult Post ngL sts> {
+    pr vate stat c f nal Str ng DF_THRESHOLD_PROP_NAME = "dfThresHold";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(MultiPostingLists objectToFlush) {
+    publ c FlushHandler(Mult Post ngL sts objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      MultiPostingLists objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(DF_THRESHOLD_PROP_NAME, objectToFlush.dfThreshold);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out)
+        throws  OExcept on {
+      Mult Post ngL sts objectToFlush = getObjectToFlush();
+      flush nfo.add ntProperty(DF_THRESHOLD_PROP_NAME, objectToFlush.dfThreshold);
       objectToFlush.lowDF.getFlushHandler().flush(
-              flushInfo.newSubProperties("lowDFPostinglists"), out);
-      objectToFlush.highDF.getFlushHandler().flush(
-              flushInfo.newSubProperties("highDFPostinglists"), out);
+              flush nfo.newSubPropert es("lowDFPost ngl sts"), out);
+      objectToFlush.h ghDF.getFlushHandler().flush(
+              flush nfo.newSubPropert es("h ghDFPost ngl sts"), out);
     }
 
-    @Override
-    protected MultiPostingLists doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      OptimizedPostingLists lowDF = new LowDFPackedIntsPostingLists.FlushHandler()
-            .load(flushInfo.getSubProperties("lowDFPostinglists"), in);
-      OptimizedPostingLists highDF = new HighDFPackedIntsPostingLists.FlushHandler()
-          .load(flushInfo.getSubProperties("highDFPostinglists"), in);
-      return new MultiPostingLists(
+    @Overr de
+    protected Mult Post ngL sts doLoad(Flush nfo flush nfo,
+        DataDeser al zer  n) throws  OExcept on {
+      Opt m zedPost ngL sts lowDF = new LowDFPacked ntsPost ngL sts.FlushHandler()
+            .load(flush nfo.getSubPropert es("lowDFPost ngl sts"),  n);
+      Opt m zedPost ngL sts h ghDF = new H ghDFPacked ntsPost ngL sts.FlushHandler()
+          .load(flush nfo.getSubPropert es("h ghDFPost ngl sts"),  n);
+      return new Mult Post ngL sts(
           lowDF,
-          highDF,
-          flushInfo.getIntProperty(DF_THRESHOLD_PROP_NAME));
+          h ghDF,
+          flush nfo.get ntProperty(DF_THRESHOLD_PROP_NAME));
     }
   }
 }

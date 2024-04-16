@@ -1,33 +1,33 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
 
-include "com/twitter/tweetypie/tweet.thrift"
+ nclude "com/tw ter/t etyp e/t et.thr ft"
 
 struct HardDeleted {
-  1: i64 soft_deleted_timestamp_msec
-  2: i64 timestamp_msec
+  1:  64 soft_deleted_t  stamp_msec
+  2:  64 t  stamp_msec
 }
 
 struct SoftDeleted {
-  1: i64 timestamp_msec
+  1:  64 t  stamp_msec
 }
 
 struct BounceDeleted {
-  1: i64 timestamp_msec
+  1:  64 t  stamp_msec
 }
 
 struct Undeleted {
-  1: i64 timestamp_msec
+  1:  64 t  stamp_msec
 }
 
 struct ForceAdded {
-  1: i64 timestamp_msec
+  1:  64 t  stamp_msec
 }
 
 struct NotFound {}
 
-union StoredTweetState {
+un on StoredT etState {
   1: HardDeleted hard_deleted
   2: SoftDeleted soft_deleted
   3: BounceDeleted bounce_deleted
@@ -36,17 +36,17 @@ union StoredTweetState {
   6: NotFound not_found
 }
 
-enum StoredTweetError {
+enum StoredT etError {
   CORRUPT                     = 1,
-  SCRUBBED_FIELDS_PRESENT     = 2,
-  FIELDS_MISSING_OR_INVALID   = 3,
+  SCRUBBED_F ELDS_PRESENT     = 2,
+  F ELDS_M SS NG_OR_ NVAL D   = 3,
   SHOULD_BE_HARD_DELETED      = 4,
-  FAILED_FETCH                = 5
+  FA LED_FETCH                = 5
 }
 
-struct StoredTweetInfo {
-  1: required i64 tweet_id
-  2: optional tweet.Tweet tweet
-  3: optional StoredTweetState stored_tweet_state
-  4: required list<StoredTweetError> errors = []
+struct StoredT et nfo {
+  1: requ red  64 t et_ d
+  2: opt onal t et.T et t et
+  3: opt onal StoredT etState stored_t et_state
+  4: requ red l st<StoredT etError> errors = []
 }

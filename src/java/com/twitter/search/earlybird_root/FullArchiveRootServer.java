@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.root.SearchRootServer;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
 
-public class FullArchiveRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+publ c class FullArch veRootServer extends SearchRootServer<Earlyb rdServ ce.Serv ce face> {
 
-  @Inject
-  public FullArchiveRootServer(FullArchiveRootService svc, Service<byte[], byte[]> byteSvc) {
+  @ nject
+  publ c FullArch veRootServer(FullArch veRootServ ce svc, Serv ce<byte[], byte[]> byteSvc) {
     super(svc, byteSvc);
   }
 

@@ -1,116 +1,116 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.tw ter.ho _m xer.cand date_p pel ne
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.InNetworkFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetypieFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.InvalidConversationModuleFilter
-import com.twitter.home_mixer.functional_component.filter.InvalidSubscriptionTweetFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetDeduplicationFilter
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSource
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSourceRequest
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.TweetWithConversationMetadata
-import com.twitter.product_mixer.component_library.filter.FeatureFilter
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.DependentCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator. nNetworkFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.Na sFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.T etyp eFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.f lter. nval dConversat onModuleF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter. nval dSubscr pt onT etF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.Ret etDedupl cat onF lter
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sHydratedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT etDroppedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t etconvosvc.Conversat onServ ceCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t etconvosvc.Conversat onServ ceCand dateS ceRequest
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t etconvosvc.T etW hConversat on tadata
+ mport com.tw ter.product_m xer.component_l brary.f lter.FeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.f lter.Pred cateFeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.DependentCand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
 
 /**
- * Candidate Pipeline Config that fetches tweets from the Conversation Service Candidate Source
+ * Cand date P pel ne Conf g that fetc s t ets from t  Conversat on Serv ce Cand date S ce
  */
-class ConversationServiceCandidatePipelineConfig[Query <: PipelineQuery](
-  conversationServiceCandidateSource: ConversationServiceCandidateSource,
-  tweetypieFeatureHydrator: TweetypieFeatureHydrator,
-  namesFeatureHydrator: NamesFeatureHydrator,
-  invalidSubscriptionTweetFilter: InvalidSubscriptionTweetFilter,
-  override val gates: Seq[BaseGate[Query]],
-  override val decorator: Option[CandidateDecorator[Query, TweetCandidate]])
-    extends DependentCandidatePipelineConfig[
+class Conversat onServ ceCand dateP pel neConf g[Query <: P pel neQuery](
+  conversat onServ ceCand dateS ce: Conversat onServ ceCand dateS ce,
+  t etyp eFeatureHydrator: T etyp eFeatureHydrator,
+  na sFeatureHydrator: Na sFeatureHydrator,
+   nval dSubscr pt onT etF lter:  nval dSubscr pt onT etF lter,
+  overr de val gates: Seq[BaseGate[Query]],
+  overr de val decorator: Opt on[Cand dateDecorator[Query, T etCand date]])
+    extends DependentCand dateP pel neConf g[
       Query,
-      ConversationServiceCandidateSourceRequest,
-      TweetWithConversationMetadata,
-      TweetCandidate
+      Conversat onServ ceCand dateS ceRequest,
+      T etW hConversat on tadata,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ConversationService")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("Conversat onServ ce")
 
-  private val TweetypieHydratedFilterId = "TweetypieHydrated"
-  private val QuotedTweetDroppedFilterId = "QuotedTweetDropped"
+  pr vate val T etyp eHydratedF lter d = "T etyp eHydrated"
+  pr vate val QuotedT etDroppedF lter d = "QuotedT etDropped"
 
-  override val candidateSource: BaseCandidateSource[
-    ConversationServiceCandidateSourceRequest,
-    TweetWithConversationMetadata
-  ] = conversationServiceCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[
+    Conversat onServ ceCand dateS ceRequest,
+    T etW hConversat on tadata
+  ] = conversat onServ ceCand dateS ce
 
-  override val queryTransformer: DependentCandidatePipelineQueryTransformer[
+  overr de val queryTransfor r: DependentCand dateP pel neQueryTransfor r[
     Query,
-    ConversationServiceCandidateSourceRequest
-  ] = { (_, candidates) =>
-    val tweetsWithConversationMetadata = candidates.map { candidate =>
-      TweetWithConversationMetadata(
-        tweetId = candidate.candidateIdLong,
-        userId = candidate.features.getOrElse(AuthorIdFeature, None),
-        sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None),
-        sourceUserId = candidate.features.getOrElse(SourceUserIdFeature, None),
-        inReplyToTweetId = candidate.features.getOrElse(InReplyToTweetIdFeature, None),
-        conversationId = None,
+    Conversat onServ ceCand dateS ceRequest
+  ] = { (_, cand dates) =>
+    val t etsW hConversat on tadata = cand dates.map { cand date =>
+      T etW hConversat on tadata(
+        t et d = cand date.cand date dLong,
+        user d = cand date.features.getOrElse(Author dFeature, None),
+        s ceT et d = cand date.features.getOrElse(S ceT et dFeature, None),
+        s ceUser d = cand date.features.getOrElse(S ceUser dFeature, None),
+         nReplyToT et d = cand date.features.getOrElse( nReplyToT et dFeature, None),
+        conversat on d = None,
         ancestors = Seq.empty
       )
     }
-    ConversationServiceCandidateSourceRequest(tweetsWithConversationMetadata)
+    Conversat onServ ceCand dateS ceRequest(t etsW hConversat on tadata)
   }
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[TweetWithConversationMetadata]
-  ] = Seq(ConversationServiceResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[T etW hConversat on tadata]
+  ] = Seq(Conversat onServ ceResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    TweetWithConversationMetadata,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    T etW hConversat on tadata,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult.t et d) }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[Query, TweetCandidate, _]
+  overr de val preF lterFeatureHydrat onPhase1: Seq[
+    BaseCand dateFeatureHydrator[Query, T etCand date, _]
   ] = Seq(
-    tweetypieFeatureHydrator,
-    InNetworkFeatureHydrator,
+    t etyp eFeatureHydrator,
+     nNetworkFeatureHydrator,
   )
 
-  override def filters: Seq[Filter[Query, TweetCandidate]] = Seq(
-    RetweetDeduplicationFilter,
-    FeatureFilter.fromFeature(FilterIdentifier(TweetypieHydratedFilterId), IsHydratedFeature),
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(QuotedTweetDroppedFilterId),
-      shouldKeepCandidate = { features => !features.getOrElse(QuotedTweetDroppedFeature, false) }
+  overr de def f lters: Seq[F lter[Query, T etCand date]] = Seq(
+    Ret etDedupl cat onF lter,
+    FeatureF lter.fromFeature(F lter dent f er(T etyp eHydratedF lter d),  sHydratedFeature),
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(QuotedT etDroppedF lter d),
+      shouldKeepCand date = { features => !features.getOrElse(QuotedT etDroppedFeature, false) }
     ),
-    invalidSubscriptionTweetFilter,
-    InvalidConversationModuleFilter
+     nval dSubscr pt onT etF lter,
+     nval dConversat onModuleF lter
   )
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[Query, TweetCandidate, _]
-  ] = Seq(namesFeatureHydrator)
+  overr de val postF lterFeatureHydrat on: Seq[
+    BaseCand dateFeatureHydrator[Query, T etCand date, _]
+  ] = Seq(na sFeatureHydrator)
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(),
+    Ho M xerAlertConf g.Bus nessH s.defaultEmptyResponseRateAlert()
   )
 }

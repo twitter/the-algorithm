@@ -1,48 +1,48 @@
-package com.twitter.recos.hose.common
+package com.tw ter.recos.hose.common
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.logging.Logger
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import java.util.concurrent.Semaphore
+ mport com.tw ter.f nagle.stats.{Stat, StatsRece ver}
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport java.ut l.concurrent.Semaphore
 
 /**
- * This class reads a buffer of edges from the concurrently linked queue
- * and inserts each edge into the recos graph.
- * If the queue is empty the thread will sleep for 100ms and attempt to read from the queue again.
+ * T  class reads a buffer of edges from t  concurrently l nked queue
+ * and  nserts each edge  nto t  recos graph.
+ *  f t  queue  s empty t  thread w ll sleep for 100ms and attempt to read from t  queue aga n.
  */
-case class BufferedEdgeWriter(
-  queue: java.util.Queue[Array[RecosHoseMessage]],
-  queuelimit: Semaphore,
+case class BufferedEdgeWr er(
+  queue: java.ut l.Queue[Array[RecosHose ssage]],
+  queuel m : Semaphore,
   edgeCollector: EdgeCollector,
-  statsReceiver: StatsReceiver,
-  isRunning: () => Boolean)
+  statsRece ver: StatsRece ver,
+   sRunn ng: () => Boolean)
     extends Runnable {
   val logger = Logger()
-  private val queueRemoveCounter = statsReceiver.counter("queueRemove")
-  private val queueSleepCounter = statsReceiver.counter("queueSleep")
+  pr vate val queueRemoveCounter = statsRece ver.counter("queueRemove")
+  pr vate val queueSleepCounter = statsRece ver.counter("queueSleep")
 
-  def running: Boolean = {
-    isRunning()
+  def runn ng: Boolean = {
+     sRunn ng()
   }
 
-  override def run(): Unit = {
-    while (running) {
+  overr de def run(): Un  = {
+    wh le (runn ng) {
       val currentBatch = queue.poll
-      if (currentBatch != null) {
-        queueRemoveCounter.incr()
-        queuelimit.release()
-        var i = 0
-        Stat.time(statsReceiver.stat("batchAddEdge")) {
-          while (i < currentBatch.length) {
-            edgeCollector.addEdge(currentBatch(i))
-            i = i + 1
+       f (currentBatch != null) {
+        queueRemoveCounter. ncr()
+        queuel m .release()
+        var   = 0
+        Stat.t  (statsRece ver.stat("batchAddEdge")) {
+          wh le (  < currentBatch.length) {
+            edgeCollector.addEdge(currentBatch( ))
+              =   + 1
           }
         }
       } else {
-        queueSleepCounter.incr()
+        queueSleepCounter. ncr()
         Thread.sleep(100L)
       }
     }
-    logger.info(this.getClass.getSimpleName + " is done")
+    logger. nfo(t .getClass.getS mpleNa  + "  s done")
   }
 }

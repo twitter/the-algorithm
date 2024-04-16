@@ -1,200 +1,200 @@
-package com.twitter.simclusters_v2.score
+package com.tw ter.s mclusters_v2.score
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbeddingId, ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng d, Score d => Thr ftScore d}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-object SimClustersEmbeddingPairScoreStore {
+object S mClustersEmbedd ngPa rScoreStore {
 
   /**
-   * Internal Instance of a SimClusters Embedding based Pair Score store.
+   *  nternal  nstance of a S mClusters Embedd ng based Pa r Score store.
    */
-  private case class SimClustersEmbeddingInternalPairScoreStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-    score: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]])
-      extends PairScoreStore[
-        SimClustersEmbeddingPairScoreId,
-        SimClustersEmbeddingId,
-        SimClustersEmbeddingId,
-        SimClustersEmbedding,
-        SimClustersEmbedding
+  pr vate case class S mClustersEmbedd ng nternalPa rScoreStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng],
+    score: (S mClustersEmbedd ng, S mClustersEmbedd ng) => Future[Opt on[Double]])
+      extends Pa rScoreStore[
+        S mClustersEmbedd ngPa rScore d,
+        S mClustersEmbedd ng d,
+        S mClustersEmbedd ng d,
+        S mClustersEmbedd ng,
+        S mClustersEmbedd ng
       ] {
 
-    override val compositeKey1: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId1
-    override val compositeKey2: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId2
+    overr de val compos eKey1: S mClustersEmbedd ngPa rScore d => S mClustersEmbedd ng d =
+      _.embedd ng d1
+    overr de val compos eKey2: S mClustersEmbedd ngPa rScore d => S mClustersEmbedd ng d =
+      _.embedd ng d2
 
-    override def underlyingStore1: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
-      simClustersEmbeddingStore
+    overr de def underly ngStore1: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] =
+      s mClustersEmbedd ngStore
 
-    override def underlyingStore2: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
-      simClustersEmbeddingStore
+    overr de def underly ngStore2: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] =
+      s mClustersEmbedd ngStore
 
-    override def fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId =
-      SimClustersEmbeddingPairScoreId.fromThriftScoreId
+    overr de def fromThr ftScore d: Thr ftScore d => S mClustersEmbedd ngPa rScore d =
+      S mClustersEmbedd ngPa rScore d.fromThr ftScore d
   }
 
-  def buildDotProductStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldDotProductStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def dotProduct: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.dotProduct(embedding2)))
+    def dotProduct: (S mClustersEmbedd ng, S mClustersEmbedd ng) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.dotProduct(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
       dotProduct
     )
   }
 
-  def buildCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldCos neS m lar yStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def cosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.cosineSimilarity(embedding2)))
+    def cos neS m lar y: (S mClustersEmbedd ng, S mClustersEmbedd ng) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.cos neS m lar y(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      cosineSimilarity
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
+      cos neS m lar y
     )
   }
 
-  def buildLogCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldLogCos neS m lar yStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def logNormCosineSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.logNormCosineSimilarity(embedding2)))
+    def logNormCos neS m lar y: (
+      S mClustersEmbedd ng,
+      S mClustersEmbedd ng
+    ) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.logNormCos neS m lar y(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      logNormCosineSimilarity
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
+      logNormCos neS m lar y
     )
   }
 
-  def buildExpScaledCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldExpScaledCos neS m lar yStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def expScaledCosineSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.expScaledCosineSimilarity(embedding2)))
+    def expScaledCos neS m lar y: (
+      S mClustersEmbedd ng,
+      S mClustersEmbedd ng
+    ) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.expScaledCos neS m lar y(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      expScaledCosineSimilarity
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
+      expScaledCos neS m lar y
     )
   }
 
-  def buildJaccardSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldJaccardS m lar yStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def jaccardSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.jaccardSimilarity(embedding2)))
+    def jaccardS m lar y: (
+      S mClustersEmbedd ng,
+      S mClustersEmbedd ng
+    ) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.jaccardS m lar y(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      jaccardSimilarity
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
+      jaccardS m lar y
     )
   }
 
-  def buildEuclideanDistanceStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldEucl deanD stanceStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def euclideanDistance: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.euclideanDistance(embedding2)))
+    def eucl deanD stance: (
+      S mClustersEmbedd ng,
+      S mClustersEmbedd ng
+    ) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.eucl deanD stance(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      euclideanDistance
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
+      eucl deanD stance
     )
   }
 
-  def buildManhattanDistanceStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def bu ldManhattanD stanceStore(
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+  ): Pa rScoreStore[
+    S mClustersEmbedd ngPa rScore d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ] = {
 
-    def manhattanDistance: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.manhattanDistance(embedding2)))
+    def manhattanD stance: (
+      S mClustersEmbedd ng,
+      S mClustersEmbedd ng
+    ) => Future[Opt on[Double]] = {
+      case (embedd ng1, embedd ng2) =>
+        Future.value(So (embedd ng1.manhattanD stance(embedd ng2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      manhattanDistance
+    S mClustersEmbedd ng nternalPa rScoreStore(
+      s mClustersEmbedd ngStore,
+      manhattanD stance
     )
   }
 

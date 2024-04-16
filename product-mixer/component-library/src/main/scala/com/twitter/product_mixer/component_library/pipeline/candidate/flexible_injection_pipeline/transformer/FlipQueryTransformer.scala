@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r
 
-import com.twitter.onboarding.task.service.thriftscala.PromptType
-import com.twitter.onboarding.task.service.{thriftscala => flip}
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.onboard ng.task.serv ce.thr ftscala.PromptType
+ mport com.tw ter.onboard ng.task.serv ce.{thr ftscala => fl p}
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object FlipQueryTransformer
-    extends CandidatePipelineQueryTransformer[
-      PipelineQuery with HasFlipInjectionParams,
-      flip.GetInjectionsRequest
+object Fl pQueryTransfor r
+    extends Cand dateP pel neQueryTransfor r[
+      P pel neQuery w h HasFl p nject onParams,
+      fl p.Get nject onsRequest
     ] {
 
   val SUPPORTED_PROMPT_TYPES: Set[PromptType] = Set(
-    PromptType.InlinePrompt,
+    PromptType. nl nePrompt,
     PromptType.FullCover,
     PromptType.HalfCover,
-    PromptType.TileCarousel,
+    PromptType.T leCarousel,
     PromptType.RelevancePrompt)
 
-  override def transform(
-    query: PipelineQuery with HasFlipInjectionParams
-  ): flip.GetInjectionsRequest = {
-    val clientContext = flip.ClientContext(
-      userId = query.clientContext.userId,
-      guestId = query.clientContext.guestId,
-      clientApplicationId = query.clientContext.appId,
-      deviceId = query.clientContext.deviceId,
-      countryCode = query.clientContext.countryCode,
-      languageCode = query.clientContext.languageCode,
-      userAgent = query.clientContext.userAgent,
-      guestIdMarketing = query.clientContext.guestIdMarketing,
-      guestIdAds = query.clientContext.guestIdAds,
-      isInternalOrTwoffice = query.clientContext.isTwoffice,
-      ipAddress = query.clientContext.ipAddress
+  overr de def transform(
+    query: P pel neQuery w h HasFl p nject onParams
+  ): fl p.Get nject onsRequest = {
+    val cl entContext = fl p.Cl entContext(
+      user d = query.cl entContext.user d,
+      guest d = query.cl entContext.guest d,
+      cl entAppl cat on d = query.cl entContext.app d,
+      dev ce d = query.cl entContext.dev ce d,
+      countryCode = query.cl entContext.countryCode,
+      languageCode = query.cl entContext.languageCode,
+      userAgent = query.cl entContext.userAgent,
+      guest dMarket ng = query.cl entContext.guest dMarket ng,
+      guest dAds = query.cl entContext.guest dAds,
+       s nternalOrTwoff ce = query.cl entContext. sTwoff ce,
+       pAddress = query.cl entContext. pAddress
     )
-    val displayContext: flip.DisplayContext =
-      flip.DisplayContext(
-        displayLocation = query.displayLocation,
-        timelineId = query.clientContext.userId
+    val d splayContext: fl p.D splayContext =
+      fl p.D splayContext(
+        d splayLocat on = query.d splayLocat on,
+        t  l ne d = query.cl entContext.user d
       )
 
-    val requestTargetingContext: flip.RequestTargetingContext =
-      flip.RequestTargetingContext(
-        rankingDisablerWithLatestControlsAvaliable =
-          query.rankingDisablerWithLatestControlsAvailable,
-        reactivePromptContext = None,
-        isEmptyState = query.isEmptyState,
-        isFirstRequestAfterSignup = query.isFirstRequestAfterSignup,
-        isEndOfTimeline = query.isEndOfTimeline
+    val requestTarget ngContext: fl p.RequestTarget ngContext =
+      fl p.RequestTarget ngContext(
+        rank ngD sablerW hLatestControlsAval able =
+          query.rank ngD sablerW hLatestControlsAva lable,
+        react vePromptContext = None,
+         sEmptyState = query. sEmptyState,
+         sF rstRequestAfterS gnup = query. sF rstRequestAfterS gnup,
+         sEndOfT  l ne = query. sEndOfT  l ne
       )
 
-    flip.GetInjectionsRequest(
-      clientContext = clientContext,
-      displayContext = displayContext,
-      requestTargetingContext = Some(requestTargetingContext),
-      userRoles = query.clientContext.userRoles,
-      timelineContext = None,
-      supportedPromptTypes = Some(SUPPORTED_PROMPT_TYPES)
+    fl p.Get nject onsRequest(
+      cl entContext = cl entContext,
+      d splayContext = d splayContext,
+      requestTarget ngContext = So (requestTarget ngContext),
+      userRoles = query.cl entContext.userRoles,
+      t  l neContext = None,
+      supportedPromptTypes = So (SUPPORTED_PROMPT_TYPES)
     )
   }
 }

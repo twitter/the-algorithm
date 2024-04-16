@@ -1,180 +1,180 @@
-package com.twitter.search.earlybird.config;
+package com.tw ter.search.earlyb rd.conf g;
 
-import java.util.Date;
+ mport java.ut l.Date;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
+ mport com.tw ter.common.ut l.Clock;
 
 /**
- * Properties of a single tier.
+ * Propert es of a s ngle t er.
  */
-public class TierInfo implements ServingRange {
-  // What I'm seeing historically is that this has been used when adding a new tier. First you
-  // add it and send dark traffic to it, then possibly grey and then you launch it by turning on
-  // light traffic.
-  public static enum RequestReadType {
-    // Light read: send request, wait for results, and results are returned
-    LIGHT,
-    // Dark read: send request, do not wait for results, and results are discarded
+publ c class T er nfo  mple nts Serv ngRange {
+  // What  'm see ng  tor cally  s that t  has been used w n add ng a new t er. F rst  
+  // add   and send dark traff c to  , t n poss bly grey and t n   launch   by turn ng on
+  // l ght traff c.
+  publ c stat c enum RequestReadType {
+    // L ght read: send request, wa  for results, and results are returned
+    L GHT,
+    // Dark read: send request, do not wa  for results, and results are d scarded
     DARK,
-    // Grey read: send request, wait for results, but discard after results come back.
-    // Same results as dark read; similar latency as light read.
+    // Grey read: send request, wa  for results, but d scard after results co  back.
+    // Sa  results as dark read; s m lar latency as l ght read.
     GREY,
   }
 
-  private final String tierName;
-  private final Date dataStartDate;
-  private final Date dataEndDate;
-  private final int numPartitions;
-  private final int maxTimeslices;
-  private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
-  private final TierServingBoundaryEndPoint servingRangeSinceOverride;
-  private final TierServingBoundaryEndPoint servingRangeMaxOverride;
+  pr vate f nal Str ng t erNa ;
+  pr vate f nal Date dataStartDate;
+  pr vate f nal Date dataEndDate;
+  pr vate f nal  nt numPart  ons;
+  pr vate f nal  nt maxT  sl ces;
+  pr vate f nal T erServ ngBoundaryEndPo nt serv ngRangeS nce;
+  pr vate f nal T erServ ngBoundaryEndPo nt serv ngRangeMax;
+  pr vate f nal T erServ ngBoundaryEndPo nt serv ngRangeS nceOverr de;
+  pr vate f nal T erServ ngBoundaryEndPo nt serv ngRangeMaxOverr de;
 
-  // These two properties are only used by clients of Earlybird (E.g. roots),
-  // but not by Earlybirds.
-  private final boolean enabled;
-  private final RequestReadType readType;
-  private final RequestReadType readTypeOverride;
+  // T se two propert es are only used by cl ents of Earlyb rd (E.g. roots),
+  // but not by Earlyb rds.
+  pr vate f nal boolean enabled;
+  pr vate f nal RequestReadType readType;
+  pr vate f nal RequestReadType readTypeOverr de;
 
-  public TierInfo(String tierName,
+  publ c T er nfo(Str ng t erNa ,
                   Date dataStartDate,
                   Date dataEndDate,
-                  int numPartitions,
-                  int maxTimeslices,
+                   nt numPart  ons,
+                   nt maxT  sl ces,
                   boolean enabled,
-                  String sinceIdString,
-                  String maxIdString,
-                  Date servingStartDateOverride,
-                  Date servingEndDateOverride,
+                  Str ng s nce dStr ng,
+                  Str ng max dStr ng,
+                  Date serv ngStartDateOverr de,
+                  Date serv ngEndDateOverr de,
                   RequestReadType readType,
-                  RequestReadType readTypeOverride,
+                  RequestReadType readTypeOverr de,
                   Clock clock) {
-    Preconditions.checkArgument(numPartitions > 0);
-    Preconditions.checkArgument(maxTimeslices > 0);
-    this.tierName = tierName;
-    this.dataStartDate = dataStartDate;
-    this.dataEndDate = dataEndDate;
-    this.numPartitions = numPartitions;
-    this.maxTimeslices = maxTimeslices;
-    this.enabled = enabled;
-    this.readType = readType;
-    this.readTypeOverride = readTypeOverride;
-    this.servingRangeSince = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(sinceIdString, dataStartDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdString, dataEndDate, clock);
-    if (servingStartDateOverride != null) {
-      this.servingRangeSinceOverride = TierServingBoundaryEndPoint.newTierServingBoundaryEndPoint(
-          TierServingBoundaryEndPoint.INFERRED_FROM_DATA_RANGE, servingStartDateOverride, clock);
+    Precond  ons.c ckArgu nt(numPart  ons > 0);
+    Precond  ons.c ckArgu nt(maxT  sl ces > 0);
+    t .t erNa  = t erNa ;
+    t .dataStartDate = dataStartDate;
+    t .dataEndDate = dataEndDate;
+    t .numPart  ons = numPart  ons;
+    t .maxT  sl ces = maxT  sl ces;
+    t .enabled = enabled;
+    t .readType = readType;
+    t .readTypeOverr de = readTypeOverr de;
+    t .serv ngRangeS nce = T erServ ngBoundaryEndPo nt
+        .newT erServ ngBoundaryEndPo nt(s nce dStr ng, dataStartDate, clock);
+    t .serv ngRangeMax = T erServ ngBoundaryEndPo nt
+        .newT erServ ngBoundaryEndPo nt(max dStr ng, dataEndDate, clock);
+     f (serv ngStartDateOverr de != null) {
+      t .serv ngRangeS nceOverr de = T erServ ngBoundaryEndPo nt.newT erServ ngBoundaryEndPo nt(
+          T erServ ngBoundaryEndPo nt. NFERRED_FROM_DATA_RANGE, serv ngStartDateOverr de, clock);
     } else {
-      this.servingRangeSinceOverride = servingRangeSince;
+      t .serv ngRangeS nceOverr de = serv ngRangeS nce;
     }
 
-    if (servingEndDateOverride != null) {
-      this.servingRangeMaxOverride = TierServingBoundaryEndPoint.newTierServingBoundaryEndPoint(
-          TierServingBoundaryEndPoint.INFERRED_FROM_DATA_RANGE, servingEndDateOverride, clock);
+     f (serv ngEndDateOverr de != null) {
+      t .serv ngRangeMaxOverr de = T erServ ngBoundaryEndPo nt.newT erServ ngBoundaryEndPo nt(
+          T erServ ngBoundaryEndPo nt. NFERRED_FROM_DATA_RANGE, serv ngEndDateOverr de, clock);
     } else {
-      this.servingRangeMaxOverride = servingRangeMax;
+      t .serv ngRangeMaxOverr de = serv ngRangeMax;
     }
   }
 
-  @VisibleForTesting
-  public TierInfo(String tierName,
+  @V s bleForTest ng
+  publ c T er nfo(Str ng t erNa ,
                   Date dataStartDate,
                   Date dataEndDate,
-                  int numPartitions,
-                  int maxTimeslices,
+                   nt numPart  ons,
+                   nt maxT  sl ces,
                   boolean enabled,
-                  String sinceIdString,
-                  String maxIdString,
+                  Str ng s nce dStr ng,
+                  Str ng max dStr ng,
                   RequestReadType readType,
                   Clock clock) {
-    // No overrides:
-    //   servingRangeSinceOverride == servingRangeSince
-    //   servingRangeMaxOverride == servingRangeMax
-    //   readTypeOverride == readType
-    this(tierName, dataStartDate, dataEndDate, numPartitions, maxTimeslices, enabled, sinceIdString,
-         maxIdString, null, null, readType, readType, clock);
+    // No overr des:
+    //   serv ngRangeS nceOverr de == serv ngRangeS nce
+    //   serv ngRangeMaxOverr de == serv ngRangeMax
+    //   readTypeOverr de == readType
+    t (t erNa , dataStartDate, dataEndDate, numPart  ons, maxT  sl ces, enabled, s nce dStr ng,
+         max dStr ng, null, null, readType, readType, clock);
   }
 
-  @Override
-  public String toString() {
-    return tierName;
+  @Overr de
+  publ c Str ng toStr ng() {
+    return t erNa ;
   }
 
-  public String getTierName() {
-    return tierName;
+  publ c Str ng getT erNa () {
+    return t erNa ;
   }
 
-  public Date getDataStartDate() {
+  publ c Date getDataStartDate() {
     return dataStartDate;
   }
 
-  public Date getDataEndDate() {
+  publ c Date getDataEndDate() {
     return dataEndDate;
   }
 
-  public int getNumPartitions() {
-    return numPartitions;
+  publ c  nt getNumPart  ons() {
+    return numPart  ons;
   }
 
-  public int getMaxTimeslices() {
-    return maxTimeslices;
+  publ c  nt getMaxT  sl ces() {
+    return maxT  sl ces;
   }
 
-  public TierConfig.ConfigSource getSource() {
-    return TierConfig.getTierConfigSource();
+  publ c T erConf g.Conf gS ce getS ce() {
+    return T erConf g.getT erConf gS ce();
   }
 
-  public boolean isEnabled() {
+  publ c boolean  sEnabled() {
     return enabled;
   }
 
-  public boolean isDarkRead() {
+  publ c boolean  sDarkRead() {
     return readType == RequestReadType.DARK;
   }
 
-  public RequestReadType getReadType() {
+  publ c RequestReadType getReadType() {
     return readType;
   }
 
-  public RequestReadType getReadTypeOverride() {
-    return readTypeOverride;
+  publ c RequestReadType getReadTypeOverr de() {
+    return readTypeOverr de;
   }
 
-  public long getServingRangeSinceId() {
-    return servingRangeSince.getBoundaryTweetId();
+  publ c long getServ ngRangeS nce d() {
+    return serv ngRangeS nce.getBoundaryT et d();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  publ c long getServ ngRangeMax d() {
+    return serv ngRangeMax.getBoundaryT et d();
   }
 
-  long getServingRangeOverrideSinceId() {
-    return servingRangeSinceOverride.getBoundaryTweetId();
+  long getServ ngRangeOverr deS nce d() {
+    return serv ngRangeS nceOverr de.getBoundaryT et d();
   }
 
-  long getServingRangeOverrideMaxId() {
-    return servingRangeMaxOverride.getBoundaryTweetId();
+  long getServ ngRangeOverr deMax d() {
+    return serv ngRangeMaxOverr de.getBoundaryT et d();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return servingRangeSince.getBoundaryTimeSecondsFromEpoch();
+  publ c long getServ ngRangeS nceT  SecondsFromEpoch() {
+    return serv ngRangeS nce.getBoundaryT  SecondsFromEpoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+  publ c long getServ ngRangeUnt lT  SecondsFromEpoch() {
+    return serv ngRangeMax.getBoundaryT  SecondsFromEpoch();
   }
 
-  long getServingRangeOverrideSinceTimeSecondsFromEpoch() {
-    return servingRangeSinceOverride.getBoundaryTimeSecondsFromEpoch();
+  long getServ ngRangeOverr deS nceT  SecondsFromEpoch() {
+    return serv ngRangeS nceOverr de.getBoundaryT  SecondsFromEpoch();
   }
 
-  long getServingRangeOverrideUntilTimeSecondsFromEpoch() {
-    return servingRangeMaxOverride.getBoundaryTimeSecondsFromEpoch();
+  long getServ ngRangeOverr deUnt lT  SecondsFromEpoch() {
+    return serv ngRangeMaxOverr de.getBoundaryT  SecondsFromEpoch();
   }
 }

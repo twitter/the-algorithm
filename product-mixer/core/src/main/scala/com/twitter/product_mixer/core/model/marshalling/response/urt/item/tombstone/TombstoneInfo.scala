@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-case class TombstoneInfo(
-  text: String,
-  richText: Option[RichText],
-  richRevealText: Option[RichText])
+case class Tombstone nfo(
+  text: Str ng,
+  r chText: Opt on[R chText],
+  r chRevealText: Opt on[R chText])

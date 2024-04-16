@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+package com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry
 
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.EnumParamWithFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.EnumSeqParamWithFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.ValueFeatureName
-import com.twitter.timelines.configapi.decider.HasDecider
-import com.twitter.timelines.configapi.Bounded
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l.Def nedFeatureNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l.EnumParamW hFeatureNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l.EnumSeqParamW hFeatureNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l.ValueFeatureNa 
+ mport com.tw ter.t  l nes.conf gap .dec der.HasDec der
+ mport com.tw ter.t  l nes.conf gap .Bounded
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Opt onalOverr de
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-/** ParamConfig is used to configure overrides for [[Param]]s of various types */
-trait ParamConfig {
+/** ParamConf g  s used to conf gure overr des for [[Param]]s of var ous types */
+tra  ParamConf g {
 
-  def booleanDeciderOverrides: Seq[Param[Boolean] with HasDecider] = Seq.empty
+  def booleanDec derOverr des: Seq[Param[Boolean] w h HasDec der] = Seq.empty
 
-  def booleanFSOverrides: Seq[Param[Boolean] with FSName] = Seq.empty
+  def booleanFSOverr des: Seq[Param[Boolean] w h FSNa ] = Seq.empty
 
-  def optionalBooleanOverrides: Seq[
-    (Param[Option[Boolean]], DefinedFeatureName, ValueFeatureName)
+  def opt onalBooleanOverr des: Seq[
+    (Param[Opt on[Boolean]], Def nedFeatureNa , ValueFeatureNa )
   ] = Seq.empty
 
-  def enumFSOverrides: Seq[EnumParamWithFeatureName[_ <: Enumeration]] = Seq.empty
+  def enumFSOverr des: Seq[EnumParamW hFeatureNa [_ <: Enu rat on]] = Seq.empty
 
-  def enumSeqFSOverrides: Seq[EnumSeqParamWithFeatureName[_ <: Enumeration]] = Seq.empty
+  def enumSeqFSOverr des: Seq[EnumSeqParamW hFeatureNa [_ <: Enu rat on]] = Seq.empty
 
   /**
-   * Support for non-Duration supplied FS overrides (e.g. `timeFromStringFSOverrides`,
-   * `timeFromNumberFSOverrides`, `getBoundedOptionalDurationFromMillisOverrides`) is not provided
-   * as Duration is preferred
+   * Support for non-Durat on suppl ed FS overr des (e.g. `t  FromStr ngFSOverr des`,
+   * `t  FromNumberFSOverr des`, `getBoundedOpt onalDurat onFromM ll sOverr des`)  s not prov ded
+   * as Durat on  s preferred
    */
-  def boundedDurationFSOverrides: Seq[
-    Param[Duration] with Bounded[Duration] with FSName with HasDurationConversion
+  def boundedDurat onFSOverr des: Seq[
+    Param[Durat on] w h Bounded[Durat on] w h FSNa  w h HasDurat onConvers on
   ] = Seq.empty
 
-  /** Support for unbounded numeric FS overrides is not provided as bounded is preferred */
-  def boundedIntFSOverrides: Seq[Param[Int] with Bounded[Int] with FSName] = Seq.empty
+  /** Support for unbounded nu r c FS overr des  s not prov ded as bounded  s preferred */
+  def bounded ntFSOverr des: Seq[Param[ nt] w h Bounded[ nt] w h FSNa ] = Seq.empty
 
-  def boundedOptionalIntOverrides: Seq[
-    (Param[Option[Int]] with Bounded[Option[Int]], DefinedFeatureName, ValueFeatureName)
+  def boundedOpt onal ntOverr des: Seq[
+    (Param[Opt on[ nt]] w h Bounded[Opt on[ nt]], Def nedFeatureNa , ValueFeatureNa )
   ] = Seq.empty
 
-  def intSeqFSOverrides: Seq[Param[Seq[Int]] with FSName] = Seq.empty
+  def  ntSeqFSOverr des: Seq[Param[Seq[ nt]] w h FSNa ] = Seq.empty
 
-  def boundedLongFSOverrides: Seq[Param[Long] with Bounded[Long] with FSName] = Seq.empty
+  def boundedLongFSOverr des: Seq[Param[Long] w h Bounded[Long] w h FSNa ] = Seq.empty
 
-  def boundedOptionalLongOverrides: Seq[
-    (Param[Option[Long]] with Bounded[Option[Long]], DefinedFeatureName, ValueFeatureName)
+  def boundedOpt onalLongOverr des: Seq[
+    (Param[Opt on[Long]] w h Bounded[Opt on[Long]], Def nedFeatureNa , ValueFeatureNa )
   ] = Seq.empty
 
-  def longSeqFSOverrides: Seq[Param[Seq[Long]] with FSName] = Seq.empty
+  def longSeqFSOverr des: Seq[Param[Seq[Long]] w h FSNa ] = Seq.empty
 
-  def longSetFSOverrides: Seq[Param[Set[Long]] with FSName] = Seq.empty
+  def longSetFSOverr des: Seq[Param[Set[Long]] w h FSNa ] = Seq.empty
 
-  def boundedDoubleFSOverrides: Seq[Param[Double] with Bounded[Double] with FSName] = Seq.empty
+  def boundedDoubleFSOverr des: Seq[Param[Double] w h Bounded[Double] w h FSNa ] = Seq.empty
 
-  def boundedOptionalDoubleOverrides: Seq[
-    (Param[Option[Double]] with Bounded[Option[Double]], DefinedFeatureName, ValueFeatureName)
+  def boundedOpt onalDoubleOverr des: Seq[
+    (Param[Opt on[Double]] w h Bounded[Opt on[Double]], Def nedFeatureNa , ValueFeatureNa )
   ] = Seq.empty
 
-  def doubleSeqFSOverrides: Seq[Param[Seq[Double]] with FSName] = Seq.empty
+  def doubleSeqFSOverr des: Seq[Param[Seq[Double]] w h FSNa ] = Seq.empty
 
-  def stringFSOverrides: Seq[Param[String] with FSName] = Seq.empty
+  def str ngFSOverr des: Seq[Param[Str ng] w h FSNa ] = Seq.empty
 
-  def stringSeqFSOverrides: Seq[Param[Seq[String]] with FSName] = Seq.empty
+  def str ngSeqFSOverr des: Seq[Param[Seq[Str ng]] w h FSNa ] = Seq.empty
 
-  def optionalStringOverrides: Seq[(Param[Option[String]], DefinedFeatureName, ValueFeatureName)] =
+  def opt onalStr ngOverr des: Seq[(Param[Opt on[Str ng]], Def nedFeatureNa , ValueFeatureNa )] =
     Seq.empty
 
-  def gatedOverrides: Map[String, Seq[OptionalOverride[_]]] = Map.empty
+  def gatedOverr des: Map[Str ng, Seq[Opt onalOverr de[_]]] = Map.empty
 }

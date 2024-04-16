@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne
 
-import com.twitter.onboarding.task.service.thriftscala.GetInjectionsRequest
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptModuleGrouping
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptUrtModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipCandidateFeatureTransformer
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipQueryTransformer
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.PromptResultsTransformer
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+ mport com.tw ter.onboard ng.task.serv ce.thr ftscala.Get nject onsRequest
+ mport com.tw ter.onboard ng.task.serv ce.{thr ftscala => serv cethr ft}
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.flex ble_ nject on_p pel ne. nter d atePrompt
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.flex ble_ nject on_p pel ne.PromptCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.Urt emCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.UrtMult pleModulesDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne.Fl pPromptCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne.Fl pPromptModuleGroup ng
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne.Fl pPromptUrtModuleBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BasePromptCand date
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.Fl pCand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.Fl pQueryTransfor r
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.HasFl p nject onParams
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.PromptResultsTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
 
 /**
- * A dependent candidate pipeline for Flexible Injection Pipeline Candidates.
- * Fetches prompts from FLIP (inside onboarding-task-service).
+ * A dependent cand date p pel ne for Flex ble  nject on P pel ne Cand dates.
+ * Fetc s prompts from FL P ( ns de onboard ng-task-serv ce).
  */
-class FlipPromptDependentCandidatePipelineConfig[
-  Query <: PipelineQuery with HasFlipInjectionParams
+class Fl pPromptDependentCand dateP pel neConf g[
+  Query <: P pel neQuery w h HasFl p nject onParams
 ](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  promptCandidateSource: PromptCandidateSource)
-    extends DependentCandidatePipelineConfig[
+  overr de val  dent f er: Cand dateP pel ne dent f er,
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]],
+  overr de val supportedCl entParam: Opt on[FSParam[Boolean]],
+  promptCand dateS ce: PromptCand dateS ce)
+    extends DependentCand dateP pel neConf g[
       Query,
-      servicethrift.GetInjectionsRequest,
-      IntermediatePrompt,
-      BasePromptCandidate[Any]
+      serv cethr ft.Get nject onsRequest,
+       nter d atePrompt,
+      BasePromptCand date[Any]
     ] {
 
-  override val candidateSource: CandidateSource[GetInjectionsRequest, IntermediatePrompt] =
-    promptCandidateSource
+  overr de val cand dateS ce: Cand dateS ce[Get nject onsRequest,  nter d atePrompt] =
+    promptCand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, GetInjectionsRequest] =
-    FlipQueryTransformer
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[Query, Get nject onsRequest] =
+    Fl pQueryTransfor r
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    IntermediatePrompt,
-    BasePromptCandidate[Any]
-  ] = PromptResultsTransformer
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+     nter d atePrompt,
+    BasePromptCand date[Any]
+  ] = PromptResultsTransfor r
 
-  override val decorator: Option[
-    CandidateDecorator[Query, BasePromptCandidate[Any]]
-  ] = Some(
-    UrtMultipleModulesDecorator(
-      urtItemCandidateDecorator = UrtItemCandidateDecorator(FlipPromptCandidateUrtItemBuilder()),
-      moduleBuilder = FlipPromptUrtModuleBuilder(),
-      groupByKey = FlipPromptModuleGrouping
+  overr de val decorator: Opt on[
+    Cand dateDecorator[Query, BasePromptCand date[Any]]
+  ] = So (
+    UrtMult pleModulesDecorator(
+      urt emCand dateDecorator = Urt emCand dateDecorator(Fl pPromptCand dateUrt emBu lder()),
+      moduleBu lder = Fl pPromptUrtModuleBu lder(),
+      groupByKey = Fl pPromptModuleGroup ng
     ))
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[IntermediatePrompt]
-  ] = Seq(FlipCandidateFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[ nter d atePrompt]
+  ] = Seq(Fl pCand dateFeatureTransfor r)
 }

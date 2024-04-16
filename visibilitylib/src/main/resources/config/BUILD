@@ -1,6 +1,6 @@
-resources(
-    sources = [
-        "com/twitter/visibility/*.csv",
-        "com/twitter/visibility/*.yml",
+res ces(
+    s ces = [
+        "com/tw ter/v s b l y/*.csv",
+        "com/tw ter/v s b l y/*.yml",
     ],
 )

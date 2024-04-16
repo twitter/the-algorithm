@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.utils
+package com.tw ter.follow_recom ndat ons.common.ut ls
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  outExcept on
 
-object RescueWithStatsUtils {
-  def rescueWithStats[T](
-    s: Stitch[Seq[T]],
-    stats: StatsReceiver,
-    source: String
-  ): Stitch[Seq[T]] = {
-    StatsUtil.profileStitchSeqResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.Nil
+object RescueW hStatsUt ls {
+  def rescueW hStats[T](
+    s: St ch[Seq[T]],
+    stats: StatsRece ver,
+    s ce: Str ng
+  ): St ch[Seq[T]] = {
+    StatsUt l.prof leSt chSeqResults(s, stats.scope(s ce)).rescue {
+      case _: Except on => St ch.N l
     }
   }
 
-  def rescueOptionalWithStats[T](
-    s: Stitch[Option[T]],
-    stats: StatsReceiver,
-    source: String
-  ): Stitch[Option[T]] = {
-    StatsUtil.profileStitchOptionalResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.None
+  def rescueOpt onalW hStats[T](
+    s: St ch[Opt on[T]],
+    stats: StatsRece ver,
+    s ce: Str ng
+  ): St ch[Opt on[T]] = {
+    StatsUt l.prof leSt chOpt onalResults(s, stats.scope(s ce)).rescue {
+      case _: Except on => St ch.None
     }
   }
 
-  def rescueWithStatsWithin[T](
-    s: Stitch[Seq[T]],
-    stats: StatsReceiver,
-    source: String,
-    timeout: Duration
-  ): Stitch[Seq[T]] = {
-    val hydratedScopeSource = stats.scope(source)
-    StatsUtil
-      .profileStitchSeqResults(
-        s.within(timeout)(com.twitter.finagle.util.DefaultTimer),
-        hydratedScopeSource)
+  def rescueW hStatsW h n[T](
+    s: St ch[Seq[T]],
+    stats: StatsRece ver,
+    s ce: Str ng,
+    t  out: Durat on
+  ): St ch[Seq[T]] = {
+    val hydratedScopeS ce = stats.scope(s ce)
+    StatsUt l
+      .prof leSt chSeqResults(
+        s.w h n(t  out)(com.tw ter.f nagle.ut l.DefaultT  r),
+        hydratedScopeS ce)
       .rescue {
-        case _: TimeoutException =>
-          hydratedScopeSource.counter("timeout").incr()
-          Stitch.Nil
-        case _: Exception =>
-          hydratedScopeSource.counter("exception").incr()
-          Stitch.Nil
+        case _: T  outExcept on =>
+          hydratedScopeS ce.counter("t  out"). ncr()
+          St ch.N l
+        case _: Except on =>
+          hydratedScopeS ce.counter("except on"). ncr()
+          St ch.N l
       }
   }
 }

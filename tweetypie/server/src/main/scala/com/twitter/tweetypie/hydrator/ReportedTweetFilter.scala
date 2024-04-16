@@ -1,25 +1,25 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object ReportedTweetFilter {
-  type Type = ValueHydrator[Unit, Ctx]
+object ReportedT etF lter {
+  type Type = ValueHydrator[Un , Ctx]
 
-  object MissingPerspectiveError
-      extends TweetHydrationError("Cannot determine reported state because perspective is missing")
+  object M ss ngPerspect veError
+      extends T etHydrat onError("Cannot determ ne reported state because perspect ve  s m ss ng")
 
-  case class Ctx(perspective: Option[StatusPerspective], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Ctx(perspect ve: Opt on[StatusPerspect ve], underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
   def apply(): Type =
-    ValueHydrator[Unit, Ctx] { (_, ctx) =>
-      ctx.perspective match {
-        case Some(p) if !p.reported => ValueState.StitchUnmodifiedUnit
-        case Some(_) => Stitch.exception(FilteredState.Unavailable.Reported)
-        case None => Stitch.exception(MissingPerspectiveError)
+    ValueHydrator[Un , Ctx] { (_, ctx) =>
+      ctx.perspect ve match {
+        case So (p)  f !p.reported => ValueState.St chUnmod f edUn 
+        case So (_) => St ch.except on(F lteredState.Unava lable.Reported)
+        case None => St ch.except on(M ss ngPerspect veError)
       }
-    }.onlyIf { (_, ctx) => ctx.opts.excludeReported && ctx.opts.forUserId.isDefined }
+    }.only f { (_, ctx) => ctx.opts.excludeReported && ctx.opts.forUser d. sDef ned }
 }

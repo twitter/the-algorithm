@@ -1,35 +1,35 @@
-package com.twitter.visibility.util
+package com.tw ter.v s b l y.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng._
 
-object LoggingUtil {
+object Logg ngUt l {
 
-  val ExperimentationLog: String = "vf_abdecider"
+  val Exper  ntat onLog: Str ng = "vf_abdec der"
 
-  def mkDefaultHandlerFactory(statsReceiver: StatsReceiver): () => Handler = {
-    QueueingHandler(
-      maxQueueSize = 10000,
-      handler = ScribeHandler(
-        category = "client_event",
+  def mkDefaultHandlerFactory(statsRece ver: StatsRece ver): () => Handler = {
+    Queue ngHandler(
+      maxQueueS ze = 10000,
+      handler = Scr beHandler(
+        category = "cl ent_event",
         formatter = BareFormatter,
-        statsReceiver = statsReceiver.scope("client_event_scribe"),
-        level = Some(Level.INFO)
+        statsRece ver = statsRece ver.scope("cl ent_event_scr be"),
+        level = So (Level. NFO)
       )
     )
   }
 
-  def mkDefaultLoggerFactory(statsReceiver: StatsReceiver): LoggerFactory = {
+  def mkDefaultLoggerFactory(statsRece ver: StatsRece ver): LoggerFactory = {
     LoggerFactory(
-      node = ExperimentationLog,
-      level = Some(Level.INFO),
+      node = Exper  ntat onLog,
+      level = So (Level. NFO),
       useParents = false,
-      handlers = List(mkDefaultHandlerFactory(statsReceiver))
+      handlers = L st(mkDefaultHandlerFactory(statsRece ver))
     )
   }
 
-  def mkDefaultLogger(statsReceiver: StatsReceiver): Logger = {
-    mkDefaultLoggerFactory(statsReceiver)()
+  def mkDefaultLogger(statsRece ver: StatsRece ver): Logger = {
+    mkDefaultLoggerFactory(statsRece ver)()
   }
 
 }

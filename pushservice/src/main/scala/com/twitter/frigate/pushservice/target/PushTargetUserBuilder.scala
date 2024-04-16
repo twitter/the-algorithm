@@ -1,476 +1,476 @@
-package com.twitter.frigate.pushservice.target
+package com.tw ter.fr gate.pushserv ce.target
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.discovery.common.configapi.ExperimentOverride
-import com.twitter.featureswitches.Recipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.history._
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.store.FeedbackRequest
-import com.twitter.frigate.common.store.PushRecItemsKey
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.interests.UserId
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.pushcap.thriftscala.PushcapInfo
-import com.twitter.frigate.pushcap.thriftscala.PushcapUserHistory
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.store.LabeledPushRecsStoreKey
-import com.twitter.frigate.pushservice.store.OnlineUserHistoryKey
-import com.twitter.frigate.pushservice.util.NsfwInfo
-import com.twitter.frigate.pushservice.util.NsfwPersonalizationUtil
-import com.twitter.frigate.pushservice.util.PushAppPermissionUtil
-import com.twitter.frigate.pushservice.util.PushCapUtil.getMinimumRestrictedPushcapInfo
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.frigate.pushservice.thriftscala.RequestSource
-import com.twitter.frigate.thriftscala.SecondaryAccountsByUserState
-import com.twitter.frigate.thriftscala.UserForPushTargeting
-import com.twitter.frigate.user_states.thriftscala.MRUserHmmState
-import com.twitter.frigate.user_states.thriftscala.{UserState => MrUserState}
-import com.twitter.frontpage.stream.util.SnowflakeUtil
-import com.twitter.geoduck.common.thriftscala.Place
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.model.user_state.UserState
-import com.twitter.hermit.model.user_state.UserState.UserState
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.ibis.thriftscala.ContentRecData
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.notificationservice.feedback.thriftscala.FeedbackInteraction
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStore
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStoreException
-import com.twitter.notificationservice.model.service.DismissMenuFeedbackAction
-import com.twitter.notificationservice.scribe.manhattan.GenericNotificationsFeedbackRequest
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.timelines.real_graph.thriftscala.{RealGraphFeatures => RealGraphFeaturesUnion}
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphFeatures
-import com.twitter.ubs.thriftscala.SellerApplicationState
-import com.twitter.ubs.thriftscala.SellerTrack
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.d scovery.common.conf gap .Conf gParamsBu lder
+ mport com.tw ter.d scovery.common.conf gap .Exper  ntOverr de
+ mport com.tw ter.featuresw c s.Rec p ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common. tory._
+ mport com.tw ter.fr gate.common.logger.MRLogger
+ mport com.tw ter.fr gate.common.store.FeedbackRequest
+ mport com.tw ter.fr gate.common.store.PushRec emsKey
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfo
+ mport com.tw ter.fr gate.common.store. nterests.User d
+ mport com.tw ter.fr gate.common.ut l._
+ mport com.tw ter.fr gate.data_p pel ne.features_common.MrRequestContextForFeatureStore
+ mport com.tw ter.fr gate.data_p pel ne.thr ftscala.User toryValue
+ mport com.tw ter.fr gate.dau_model.thr ftscala.DauProbab l y
+ mport com.tw ter.fr gate.pushcap.thr ftscala.Pushcap nfo
+ mport com.tw ter.fr gate.pushcap.thr ftscala.PushcapUser tory
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.ml.Hydrat onContextBu lder
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.store.LabeledPushRecsStoreKey
+ mport com.tw ter.fr gate.pushserv ce.store.Onl neUser toryKey
+ mport com.tw ter.fr gate.pushserv ce.ut l.Nsfw nfo
+ mport com.tw ter.fr gate.pushserv ce.ut l.NsfwPersonal zat onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushAppPerm ss onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushCapUt l.getM n mumRestr ctedPushcap nfo
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushContext
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.RequestS ce
+ mport com.tw ter.fr gate.thr ftscala.SecondaryAccountsByUserState
+ mport com.tw ter.fr gate.thr ftscala.UserForPushTarget ng
+ mport com.tw ter.fr gate.user_states.thr ftscala.MRUserHmmState
+ mport com.tw ter.fr gate.user_states.thr ftscala.{UserState => MrUserState}
+ mport com.tw ter.frontpage.stream.ut l.SnowflakeUt l
+ mport com.tw ter.geoduck.common.thr ftscala.Place
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .model.user_state.UserState
+ mport com.tw ter. rm .model.user_state.UserState.UserState
+ mport com.tw ter. rm .stp.thr ftscala.STPResult
+ mport com.tw ter. b s.thr ftscala.ContentRecData
+ mport com.tw ter. nterests.thr ftscala. nterest d
+ mport com.tw ter.not f cat onserv ce.feedback.thr ftscala.Feedback nteract on
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.FeedbackPromptValue
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.Gener cFeedbackStore
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.Gener cFeedbackStoreExcept on
+ mport com.tw ter.not f cat onserv ce.model.serv ce.D sm ss nuFeedbackAct on
+ mport com.tw ter.not f cat onserv ce.scr be.manhattan.Gener cNot f cat onsFeedbackRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.nrel. avyranker.FeatureHydrator
+ mport com.tw ter.nrel.hydrat on.push.Hydrat onContext
+ mport com.tw ter.perm ss ons_storage.thr ftscala.AppPerm ss on
+ mport com.tw ter.rux.common.strato.thr ftscala.UserTarget ngProperty
+ mport com.tw ter.sc o.nsfw_user_seg ntat on.thr ftscala.NSFWUserSeg ntat on
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.Locat on
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.UserLanguages
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.t  l nes.real_graph.thr ftscala.{RealGraphFeatures => RealGraphFeaturesUn on}
+ mport com.tw ter.t  l nes.real_graph.v1.thr ftscala.RealGraphFeatures
+ mport com.tw ter.ubs.thr ftscala.SellerAppl cat onState
+ mport com.tw ter.ubs.thr ftscala.SellerTrack
+ mport com.tw ter.user_sess on_store.thr ftscala.UserSess on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.wtf.scald ng.common.thr ftscala.UserFeatures
 
-case class PushTargetUserBuilder(
-  historyStore: PushServiceHistoryStore,
-  emailHistoryStore: PushServiceHistoryStore,
-  labeledPushRecsStore: ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue],
-  onlineUserHistoryStore: ReadableStore[OnlineUserHistoryKey, UserHistoryValue],
-  pushRecItemsStore: ReadableStore[PushRecItemsKey, RecItems],
+case class PushTargetUserBu lder(
+   toryStore: PushServ ce toryStore,
+  ema l toryStore: PushServ ce toryStore,
+  labeledPushRecsStore: ReadableStore[LabeledPushRecsStoreKey, User toryValue],
+  onl neUser toryStore: ReadableStore[Onl neUser toryKey, User toryValue],
+  pushRec emsStore: ReadableStore[PushRec emsKey, Rec ems],
   userStore: ReadableStore[Long, User],
-  pushInfoStore: ReadableStore[Long, UserForPushTargeting],
-  userCountryStore: ReadableStore[Long, Location],
-  userUtcOffsetStore: ReadableStore[Long, Duration],
-  dauProbabilityStore: ReadableStore[Long, DauProbability],
-  nsfwConsumerStore: ReadableStore[Long, NSFWUserSegmentation],
+  push nfoStore: ReadableStore[Long, UserForPushTarget ng],
+  userCountryStore: ReadableStore[Long, Locat on],
+  userUtcOffsetStore: ReadableStore[Long, Durat on],
+  dauProbab l yStore: ReadableStore[Long, DauProbab l y],
+  nsfwConsu rStore: ReadableStore[Long, NSFWUserSeg ntat on],
   userFeatureStore: ReadableStore[Long, UserFeatures],
-  userTargetingPropertyStore: ReadableStore[Long, UserTargetingProperty],
+  userTarget ngPropertyStore: ReadableStore[Long, UserTarget ngProperty],
   mrUserStateStore: ReadableStore[Long, MRUserHmmState],
-  tweetImpressionStore: ReadableStore[Long, Seq[Long]],
-  ntabCaretFeedbackStore: ReadableStore[GenericNotificationsFeedbackRequest, Seq[
-    CaretFeedbackDetails
+  t et mpress onStore: ReadableStore[Long, Seq[Long]],
+  ntabCaretFeedbackStore: ReadableStore[Gener cNot f cat onsFeedbackRequest, Seq[
+    CaretFeedbackDeta ls
   ]],
-  genericFeedbackStore: ReadableStore[FeedbackRequest, Seq[FeedbackPromptValue]],
-  genericNotificationFeedbackStore: GenericFeedbackStore,
-  timelinesUserSessionStore: ReadableStore[Long, UserSession],
-  cachedTweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  strongTiesStore: ReadableStore[Long, STPResult],
-  userHTLLastVisitStore: ReadableStore[Long, Seq[Long]],
+  gener cFeedbackStore: ReadableStore[FeedbackRequest, Seq[FeedbackPromptValue]],
+  gener cNot f cat onFeedbackStore: Gener cFeedbackStore,
+  t  l nesUserSess onStore: ReadableStore[Long, UserSess on],
+  cac dT etyP eStore: ReadableStore[Long, T etyP eResult],
+  strongT esStore: ReadableStore[Long, STPResult],
+  userHTLLastV s Store: ReadableStore[Long, Seq[Long]],
   userLanguagesStore: ReadableStore[Long, UserLanguages],
-  inputDecider: Decider,
-  inputAbDecider: LoggingABDecider,
-  realGraphScoresTop500InStore: ReadableStore[Long, Map[Long, Double]],
+   nputDec der: Dec der,
+   nputAbDec der: Logg ngABDec der,
+  realGraphScoresTop500 nStore: ReadableStore[Long, Map[Long, Double]],
   recentFollowsStore: ReadableStore[Long, Seq[Long]],
-  resurrectedUserStore: ReadableStore[Long, String],
-  configParamsBuilder: ConfigParamsBuilder,
-  optOutUserInterestsStore: ReadableStore[UserId, Seq[InterestId]],
-  deviceInfoStore: ReadableStore[Long, DeviceInfo],
-  pushcapDynamicPredictionStore: ReadableStore[Long, PushcapUserHistory],
-  appPermissionStore: ReadableStore[(Long, (String, String)), AppPermission],
+  resurrectedUserStore: ReadableStore[Long, Str ng],
+  conf gParamsBu lder: Conf gParamsBu lder,
+  optOutUser nterestsStore: ReadableStore[User d, Seq[ nterest d]],
+  dev ce nfoStore: ReadableStore[Long, Dev ce nfo],
+  pushcapDynam cPred ct onStore: ReadableStore[Long, PushcapUser tory],
+  appPerm ss onStore: ReadableStore[(Long, (Str ng, Str ng)), AppPerm ss on],
   optoutModelScorer: PushMLModelScorer,
-  inlineActionHistoryStore: ReadableStore[Long, Seq[(Long, String)]],
+   nl neAct on toryStore: ReadableStore[Long, Seq[(Long, Str ng)]],
   featureHydrator: FeatureHydrator,
   openAppUserStore: ReadableStore[Long, Boolean],
-  openedPushByHourAggregatedStore: ReadableStore[Long, Map[Int, Int]],
-  geoduckStoreV2: ReadableStore[Long, LocationResponse],
-  superFollowEligibilityUserStore: ReadableStore[Long, Boolean],
-  superFollowApplicationStatusStore: ReadableStore[(Long, SellerTrack), SellerApplicationState]
+  openedPushByH AggregatedStore: ReadableStore[Long, Map[ nt,  nt]],
+  geoduckStoreV2: ReadableStore[Long, Locat onResponse],
+  superFollowEl g b l yUserStore: ReadableStore[Long, Boolean],
+  superFollowAppl cat onStatusStore: ReadableStore[(Long, SellerTrack), SellerAppl cat onState]
 )(
-  globalStatsReceiver: StatsReceiver) {
+  globalStatsRece ver: StatsRece ver) {
 
-  implicit val statsReceiver: StatsReceiver = globalStatsReceiver
+   mpl c  val statsRece ver: StatsRece ver = globalStatsRece ver
 
-  private val log = MRLogger("PushTargetUserBuilder")
-  private val recentFollowscounter = statsReceiver.counter("query_recent_follows")
-  private val isModelTrainingDataCounter =
-    statsReceiver.scope("TargetUserBuilder").counter("is_model_training")
-  private val feedbackStoreGenerationErr = statsReceiver.counter("feedback_store_generation_error")
-  private val newSignUpUserStats = statsReceiver.counter("new_signup_user")
-  private val pushcapSelectionStat = statsReceiver.scope("pushcap_modeling")
-  private val dormantUserCount = statsReceiver.counter("dormant_user_counter")
-  private val optoutModelStat = statsReceiver.scope("optout_modeling")
-  private val placeFoundStat = statsReceiver.scope("geoduck_v2").stat("places_found")
-  private val placesNotFound = statsReceiver.scope("geoduck_v2").counter("places_not_found")
-  // Email history store stats
-  private val emailHistoryStats = statsReceiver.scope("email_tweet_history")
-  private val emptyEmailHistoryCounter = emailHistoryStats.counter("empty")
-  private val nonEmptyEmailHistoryCounter = emailHistoryStats.counter("non_empty")
+  pr vate val log = MRLogger("PushTargetUserBu lder")
+  pr vate val recentFollowscounter = statsRece ver.counter("query_recent_follows")
+  pr vate val  sModelTra n ngDataCounter =
+    statsRece ver.scope("TargetUserBu lder").counter(" s_model_tra n ng")
+  pr vate val feedbackStoreGenerat onErr = statsRece ver.counter("feedback_store_generat on_error")
+  pr vate val newS gnUpUserStats = statsRece ver.counter("new_s gnup_user")
+  pr vate val pushcapSelect onStat = statsRece ver.scope("pushcap_model ng")
+  pr vate val dormantUserCount = statsRece ver.counter("dormant_user_counter")
+  pr vate val optoutModelStat = statsRece ver.scope("optout_model ng")
+  pr vate val placeFoundStat = statsRece ver.scope("geoduck_v2").stat("places_found")
+  pr vate val placesNotFound = statsRece ver.scope("geoduck_v2").counter("places_not_found")
+  // Ema l  tory store stats
+  pr vate val ema l toryStats = statsRece ver.scope("ema l_t et_ tory")
+  pr vate val emptyEma l toryCounter = ema l toryStats.counter("empty")
+  pr vate val nonEmptyEma l toryCounter = ema l toryStats.counter("non_empty")
 
-  private val MagicRecsCategory = "MagicRecs"
-  private val MomentsViaMagicRecsCategory = "MomentsViaMagicRecs"
-  private val MomentsCategory = "Moments"
+  pr vate val Mag cRecsCategory = "Mag cRecs"
+  pr vate val Mo ntsV aMag cRecsCategory = "Mo ntsV aMag cRecs"
+  pr vate val Mo ntsCategory = "Mo nts"
 
-  def buildTarget(
-    userId: Long,
-    inputPushContext: Option[PushContext],
-    forcedFeatureValues: Option[Map[String, configapi.FeatureValue]] = None
+  def bu ldTarget(
+    user d: Long,
+     nputPushContext: Opt on[PushContext],
+    forcedFeatureValues: Opt on[Map[Str ng, conf gap .FeatureValue]] = None
   ): Future[Target] = {
-    val historyStoreKeyContext = HistoryStoreKeyContext(
-      userId,
-      inputPushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+    val  toryStoreKeyContext =  toryStoreKeyContext(
+      user d,
+       nputPushContext.flatMap(_.use mcac For tory).getOrElse(false)
     )
     Future
-      .join(
-        userStore.get(userId),
-        deviceInfoStore.get(userId),
-        pushInfoStore.get(userId),
-        historyStore.get(historyStoreKeyContext, Some(30.days)),
-        emailHistoryStore.get(
-          HistoryStoreKeyContext(userId, useStoreB = false),
-          Some(7.days) // we only keep 7 days of email tweet history
+      .jo n(
+        userStore.get(user d),
+        dev ce nfoStore.get(user d),
+        push nfoStore.get(user d),
+         toryStore.get( toryStoreKeyContext, So (30.days)),
+        ema l toryStore.get(
+           toryStoreKeyContext(user d, useStoreB = false),
+          So (7.days) //   only keep 7 days of ema l t et  tory
         )
       ).flatMap {
-        case (userOpt, deviceInfoOpt, userForPushTargetingInfoOpt, notifHistory, emailHistory) =>
-          getCustomFSFields(
-            userId,
+        case (userOpt, dev ce nfoOpt, userForPushTarget ng nfoOpt, not f tory, ema l tory) =>
+          getCustomFSF elds(
+            user d,
             userOpt,
-            deviceInfoOpt,
-            userForPushTargetingInfoOpt,
-            notifHistory,
-            inputPushContext.flatMap(_.requestSource)).map { customFSField =>
+            dev ce nfoOpt,
+            userForPushTarget ng nfoOpt,
+            not f tory,
+             nputPushContext.flatMap(_.requestS ce)).map { customFSF eld =>
             new Target {
 
-              override lazy val stats: StatsReceiver = statsReceiver
+              overr de lazy val stats: StatsRece ver = statsRece ver
 
-              override val targetId: Long = userId
+              overr de val target d: Long = user d
 
-              override val targetUser: Future[Option[User]] = Future.value(userOpt)
+              overr de val targetUser: Future[Opt on[User]] = Future.value(userOpt)
 
-              override val isEmailUser: Boolean =
-                inputPushContext.flatMap(_.requestSource) match {
-                  case Some(source) if source == RequestSource.Email => true
+              overr de val  sEma lUser: Boolean =
+                 nputPushContext.flatMap(_.requestS ce) match {
+                  case So (s ce)  f s ce == RequestS ce.Ema l => true
                   case _ => false
                 }
 
-              override val pushContext = inputPushContext
+              overr de val pushContext =  nputPushContext
 
-              override def globalStats: StatsReceiver = globalStatsReceiver
+              overr de def globalStats: StatsRece ver = globalStatsRece ver
 
-              override lazy val abDecider: ABDeciderWithOverride =
-                ABDeciderWithOverride(inputAbDecider, ddgOverrideOption)
+              overr de lazy val abDec der: ABDec derW hOverr de =
+                ABDec derW hOverr de( nputAbDec der, ddgOverr deOpt on)
 
-              override lazy val pushRecItems: Future[RecItems] =
-                pushRecItemsStore
-                  .get(PushRecItemsKey(historyStoreKeyContext, history))
-                  .map(_.getOrElse(RecItems.empty))
+              overr de lazy val pushRec ems: Future[Rec ems] =
+                pushRec emsStore
+                  .get(PushRec emsKey( toryStoreKeyContext,  tory))
+                  .map(_.getOrElse(Rec ems.empty))
 
-              // List of past tweet candidates sent in the past through email with timestamp
-              override lazy val emailRecItems: Future[Seq[(Time, Long)]] = {
+              // L st of past t et cand dates sent  n t  past through ema l w h t  stamp
+              overr de lazy val ema lRec ems: Future[Seq[(T  , Long)]] = {
                 Future.value {
-                  emailHistory.sortedEmailHistory.flatMap {
-                    case (timeStamp, notification) =>
-                      notification.contentRecsNotification
-                        .map { notification =>
-                          notification.recommendations.contentRecCollections.flatMap {
+                  ema l tory.sortedEma l tory.flatMap {
+                    case (t  Stamp, not f cat on) =>
+                      not f cat on.contentRecsNot f cat on
+                        .map { not f cat on =>
+                          not f cat on.recom ndat ons.contentRecCollect ons.flatMap {
                             contentRecs =>
                               contentRecs.contentRecModules.flatMap { contentRecModule =>
                                 contentRecModule.recData match {
-                                  case ContentRecData.TweetRec(tweetRec) =>
-                                    nonEmptyEmailHistoryCounter.incr()
-                                    Seq(tweetRec.tweetId)
+                                  case ContentRecData.T etRec(t etRec) =>
+                                    nonEmptyEma l toryCounter. ncr()
+                                    Seq(t etRec.t et d)
                                   case _ =>
-                                    emptyEmailHistoryCounter.incr()
-                                    Nil
+                                    emptyEma l toryCounter. ncr()
+                                    N l
                                 }
                               }
                           }
                         }.getOrElse {
-                          emptyEmailHistoryCounter.incr()
-                          Nil
-                        }.map(timeStamp -> _)
+                          emptyEma l toryCounter. ncr()
+                          N l
+                        }.map(t  Stamp -> _)
                   }
                 }
               }
 
-              override lazy val history: Future[History] = Future.value(notifHistory)
+              overr de lazy val  tory: Future[ tory] = Future.value(not f tory)
 
-              override lazy val pushTargeting: Future[Option[UserForPushTargeting]] =
-                Future.value(userForPushTargetingInfoOpt)
+              overr de lazy val pushTarget ng: Future[Opt on[UserForPushTarget ng]] =
+                Future.value(userForPushTarget ng nfoOpt)
 
-              override lazy val decider: Decider = inputDecider
+              overr de lazy val dec der: Dec der =  nputDec der
 
-              override lazy val location: Future[Option[Location]] =
-                userCountryStore.get(userId)
+              overr de lazy val locat on: Future[Opt on[Locat on]] =
+                userCountryStore.get(user d)
 
-              override lazy val deviceInfo: Future[Option[DeviceInfo]] =
-                Future.value(deviceInfoOpt)
+              overr de lazy val dev ce nfo: Future[Opt on[Dev ce nfo]] =
+                Future.value(dev ce nfoOpt)
 
-              override lazy val targetLanguage: Future[Option[String]] = targetUser map { userOpt =>
+              overr de lazy val targetLanguage: Future[Opt on[Str ng]] = targetUser map { userOpt =>
                 userOpt.flatMap(_.account.map(_.language))
               }
 
-              override lazy val targetAgeInYears: Future[Option[Int]] =
-                Future.value(customFSField.userAge)
+              overr de lazy val targetAge nYears: Future[Opt on[ nt]] =
+                Future.value(customFSF eld.userAge)
 
-              override lazy val metastoreLanguages: Future[Option[UserLanguages]] =
-                userLanguagesStore.get(targetId)
+              overr de lazy val  tastoreLanguages: Future[Opt on[UserLanguages]] =
+                userLanguagesStore.get(target d)
 
-              override lazy val utcOffset: Future[Option[Duration]] =
-                userUtcOffsetStore.get(targetId)
+              overr de lazy val utcOffset: Future[Opt on[Durat on]] =
+                userUtcOffsetStore.get(target d)
 
-              override lazy val userFeatures: Future[Option[UserFeatures]] =
-                userFeatureStore.get(targetId)
+              overr de lazy val userFeatures: Future[Opt on[UserFeatures]] =
+                userFeatureStore.get(target d)
 
-              override lazy val targetUserState: Future[Option[UserState]] =
+              overr de lazy val targetUserState: Future[Opt on[UserState]] =
                 Future.value(
-                  customFSField.userState
+                  customFSF eld.userState
                     .flatMap(userState => UserState.valueOf(userState)))
 
-              override lazy val targetMrUserState: Future[Option[MrUserState]] =
+              overr de lazy val targetMrUserState: Future[Opt on[MrUserState]] =
                 Future.value(
-                  customFSField.mrUserState
+                  customFSF eld.mrUserState
                     .flatMap(mrUserState => MrUserState.valueOf(mrUserState)))
 
-              override lazy val accountStateWithDeviceInfo: Future[
-                Option[SecondaryAccountsByUserState]
+              overr de lazy val accountStateW hDev ce nfo: Future[
+                Opt on[SecondaryAccountsByUserState]
               ] = Future.None
 
-              override lazy val dauProbability: Future[Option[DauProbability]] = {
-                dauProbabilityStore.get(targetId)
+              overr de lazy val dauProbab l y: Future[Opt on[DauProbab l y]] = {
+                dauProbab l yStore.get(target d)
               }
 
-              override lazy val labeledPushRecsHydrated: Future[Option[UserHistoryValue]] =
-                labeledPushRecsStore.get(LabeledPushRecsStoreKey(this, historyStoreKeyContext))
+              overr de lazy val labeledPushRecsHydrated: Future[Opt on[User toryValue]] =
+                labeledPushRecsStore.get(LabeledPushRecsStoreKey(t ,  toryStoreKeyContext))
 
-              override lazy val onlineLabeledPushRecs: Future[Option[UserHistoryValue]] =
+              overr de lazy val onl neLabeledPushRecs: Future[Opt on[User toryValue]] =
                 labeledPushRecsHydrated.flatMap { labeledPushRecs =>
-                  history.flatMap { history =>
-                    onlineUserHistoryStore.get(
-                      OnlineUserHistoryKey(targetId, labeledPushRecs, Some(history))
+                   tory.flatMap {  tory =>
+                    onl neUser toryStore.get(
+                      Onl neUser toryKey(target d, labeledPushRecs, So ( tory))
                     )
                   }
                 }
 
-              override lazy val tweetImpressionResults: Future[Seq[Long]] =
-                tweetImpressionStore.get(targetId).map {
-                  case Some(impressionList) =>
-                    impressionList
-                  case _ => Nil
+              overr de lazy val t et mpress onResults: Future[Seq[Long]] =
+                t et mpress onStore.get(target d).map {
+                  case So ( mpress onL st) =>
+                     mpress onL st
+                  case _ => N l
                 }
 
-              override lazy val realGraphFeatures: Future[Option[RealGraphFeatures]] =
-                timelinesUserSessionStore.get(targetId).map { userSessionOpt =>
-                  userSessionOpt.flatMap { userSession =>
-                    userSession.realGraphFeatures.collect {
-                      case RealGraphFeaturesUnion.V1(rGFeatures) =>
+              overr de lazy val realGraphFeatures: Future[Opt on[RealGraphFeatures]] =
+                t  l nesUserSess onStore.get(target d).map { userSess onOpt =>
+                  userSess onOpt.flatMap { userSess on =>
+                    userSess on.realGraphFeatures.collect {
+                      case RealGraphFeaturesUn on.V1(rGFeatures) =>
                         rGFeatures
                     }
                   }
                 }
 
-              override lazy val stpResult: Future[Option[STPResult]] =
-                strongTiesStore.get(targetId)
+              overr de lazy val stpResult: Future[Opt on[STPResult]] =
+                strongT esStore.get(target d)
 
-              override lazy val lastHTLVisitTimestamp: Future[Option[Long]] =
-                userHTLLastVisitStore.get(targetId).map {
-                  case Some(lastVisitTimestamps) if lastVisitTimestamps.nonEmpty =>
-                    Some(lastVisitTimestamps.max)
+              overr de lazy val lastHTLV s T  stamp: Future[Opt on[Long]] =
+                userHTLLastV s Store.get(target d).map {
+                  case So (lastV s T  stamps)  f lastV s T  stamps.nonEmpty =>
+                    So (lastV s T  stamps.max)
                   case _ => None
                 }
 
-              override lazy val caretFeedbacks: Future[Option[Seq[CaretFeedbackDetails]]] = {
-                val scribeHistoryLookbackPeriod = 365.days
-                val now = Time.now
-                val request = GenericNotificationsFeedbackRequest(
-                  userId = targetId,
-                  eventStartTimestamp = now - scribeHistoryLookbackPeriod,
-                  eventEndTimestamp = now,
-                  filterCategory =
-                    Some(Set(MagicRecsCategory, MomentsViaMagicRecsCategory, MomentsCategory)),
-                  filterFeedbackActionText =
-                    Some(Set(DismissMenuFeedbackAction.FeedbackActionTextSeeLessOften))
+              overr de lazy val caretFeedbacks: Future[Opt on[Seq[CaretFeedbackDeta ls]]] = {
+                val scr be toryLookbackPer od = 365.days
+                val now = T  .now
+                val request = Gener cNot f cat onsFeedbackRequest(
+                  user d = target d,
+                  eventStartT  stamp = now - scr be toryLookbackPer od,
+                  eventEndT  stamp = now,
+                  f lterCategory =
+                    So (Set(Mag cRecsCategory, Mo ntsV aMag cRecsCategory, Mo ntsCategory)),
+                  f lterFeedbackAct onText =
+                    So (Set(D sm ss nuFeedbackAct on.FeedbackAct onTextSeeLessOften))
                 )
                 ntabCaretFeedbackStore.get(request)
               }
 
-              override lazy val notificationFeedbacks: Future[
-                Option[Seq[FeedbackPromptValue]]
+              overr de lazy val not f cat onFeedbacks: Future[
+                Opt on[Seq[FeedbackPromptValue]]
               ] = {
-                val scribeHistoryLookbackPeriod = 30.days
-                val now = Time.now
+                val scr be toryLookbackPer od = 30.days
+                val now = T  .now
                 val request = FeedbackRequest(
-                  userId = targetId,
-                  oldestTimestamp = scribeHistoryLookbackPeriod.ago,
-                  newestTimestamp = Time.now,
-                  feedbackInteraction = FeedbackInteraction.Feedback
+                  user d = target d,
+                  oldestT  stamp = scr be toryLookbackPer od.ago,
+                  ne stT  stamp = T  .now,
+                  feedback nteract on = Feedback nteract on.Feedback
                 )
-                genericFeedbackStore.get(request)
+                gener cFeedbackStore.get(request)
               }
 
-              // DEPRECATED: Use notificationFeedbacks instead.
-              // This method will increase latency dramatically.
-              override lazy val promptFeedbacks: Stitch[Seq[FeedbackPromptValue]] = {
-                val scribeHistoryLookbackPeriod = 7.days
+              // DEPRECATED: Use not f cat onFeedbacks  nstead.
+              // T   thod w ll  ncrease latency dramat cally.
+              overr de lazy val promptFeedbacks: St ch[Seq[FeedbackPromptValue]] = {
+                val scr be toryLookbackPer od = 7.days
 
-                genericNotificationFeedbackStore
+                gener cNot f cat onFeedbackStore
                   .getAll(
-                    userId = targetId,
-                    oldestTimestamp = scribeHistoryLookbackPeriod.ago,
-                    newestTimestamp = Time.now,
-                    feedbackInteraction = FeedbackInteraction.Feedback
+                    user d = target d,
+                    oldestT  stamp = scr be toryLookbackPer od.ago,
+                    ne stT  stamp = T  .now,
+                    feedback nteract on = Feedback nteract on.Feedback
                   ).handle {
-                    case _: GenericFeedbackStoreException => {
-                      feedbackStoreGenerationErr.incr()
+                    case _: Gener cFeedbackStoreExcept on => {
+                      feedbackStoreGenerat onErr. ncr()
                       Seq.empty[FeedbackPromptValue]
                     }
                   }
               }
 
-              override lazy val optOutUserInterests: Future[Option[Seq[InterestId]]] = {
-                optOutUserInterestsStore.get(targetId)
+              overr de lazy val optOutUser nterests: Future[Opt on[Seq[ nterest d]]] = {
+                optOutUser nterestsStore.get(target d)
               }
 
-              private val experimentOverride = ddgOverrideOption.map {
-                case DDGOverride(Some(exp), Some(bucket)) =>
-                  Set(ExperimentOverride(exp, bucket))
-                case _ => Set.empty[ExperimentOverride]
+              pr vate val exper  ntOverr de = ddgOverr deOpt on.map {
+                case DDGOverr de(So (exp), So (bucket)) =>
+                  Set(Exper  ntOverr de(exp, bucket))
+                case _ => Set.empty[Exper  ntOverr de]
               }
 
-              override val signupCountryCode =
-                Future.value(userOpt.flatMap(_.safety.flatMap(_.signupCountryCode)))
+              overr de val s gnupCountryCode =
+                Future.value(userOpt.flatMap(_.safety.flatMap(_.s gnupCountryCode)))
 
-              override lazy val params: configapi.Params = {
-                val fsRecipient = Recipient(
-                  userId = Some(targetId),
+              overr de lazy val params: conf gap .Params = {
+                val fsRec p ent = Rec p ent(
+                  user d = So (target d),
                   userRoles = userOpt.flatMap(_.roles.map(_.roles.toSet)),
-                  clientApplicationId = deviceInfoOpt.flatMap(_.guessedPrimaryClientAppId),
-                  userAgent = deviceInfoOpt.flatMap(_.guessedPrimaryDeviceUserAgent),
+                  cl entAppl cat on d = dev ce nfoOpt.flatMap(_.guessedPr maryCl entApp d),
+                  userAgent = dev ce nfoOpt.flatMap(_.guessedPr maryDev ceUserAgent),
                   countryCode =
                     userOpt.flatMap(_.account.flatMap(_.countryCode.map(_.toUpperCase))),
-                  customFields = Some(customFSField.fsMap),
-                  signupCountryCode =
-                    userOpt.flatMap(_.safety.flatMap(_.signupCountryCode.map(_.toUpperCase))),
-                  languageCode = deviceInfoOpt.flatMap {
-                    _.deviceLanguages.flatMap(IbisAppPushDeviceSettingsUtil.inferredDeviceLanguage)
+                  customF elds = So (customFSF eld.fsMap),
+                  s gnupCountryCode =
+                    userOpt.flatMap(_.safety.flatMap(_.s gnupCountryCode.map(_.toUpperCase))),
+                  languageCode = dev ce nfoOpt.flatMap {
+                    _.dev ceLanguages.flatMap( b sAppPushDev ceSett ngsUt l. nferredDev ceLanguage)
                   }
                 )
 
-                configParamsBuilder.build(
-                  userId = Some(targetId),
-                  experimentOverrides = experimentOverride,
-                  featureRecipient = Some(fsRecipient),
+                conf gParamsBu lder.bu ld(
+                  user d = So (target d),
+                  exper  ntOverr des = exper  ntOverr de,
+                  featureRec p ent = So (fsRec p ent),
                   forcedFeatureValues = forcedFeatureValues.getOrElse(Map.empty),
                 )
               }
 
-              override lazy val mrRequestContextForFeatureStore =
-                MrRequestContextForFeatureStore(targetId, params, isModelTrainingData)
+              overr de lazy val mrRequestContextForFeatureStore =
+                MrRequestContextForFeatureStore(target d, params,  sModelTra n ngData)
 
-              override lazy val dynamicPushcap: Future[Option[PushcapInfo]] = {
-                // Get the pushcap from the pushcap model prediction store
-                if (params(PushParams.EnableModelBasedPushcapAssignments)) {
-                  val originalPushcapInfoFut =
-                    PushCapUtil.getPushcapFromUserHistory(
-                      userId,
-                      pushcapDynamicPredictionStore,
-                      params(FeatureSwitchParams.PushcapModelType),
-                      params(FeatureSwitchParams.PushcapModelPredictionVersion),
-                      pushcapSelectionStat
+              overr de lazy val dynam cPushcap: Future[Opt on[Pushcap nfo]] = {
+                // Get t  pushcap from t  pushcap model pred ct on store
+                 f (params(PushParams.EnableModelBasedPushcapAss gn nts)) {
+                  val or g nalPushcap nfoFut =
+                    PushCapUt l.getPushcapFromUser tory(
+                      user d,
+                      pushcapDynam cPred ct onStore,
+                      params(FeatureSw chParams.PushcapModelType),
+                      params(FeatureSw chParams.PushcapModelPred ct onVers on),
+                      pushcapSelect onStat
                     )
-                  // Modify the push cap info if there is a restricted min value for predicted push caps.
-                  val restrictedPushcap = params(PushFeatureSwitchParams.RestrictedMinModelPushcap)
-                  originalPushcapInfoFut.map {
-                    case Some(originalPushcapInfo) =>
-                      Some(
-                        getMinimumRestrictedPushcapInfo(
-                          restrictedPushcap,
-                          originalPushcapInfo,
-                          pushcapSelectionStat))
+                  // Mod fy t  push cap  nfo  f t re  s a restr cted m n value for pred cted push caps.
+                  val restr ctedPushcap = params(PushFeatureSw chParams.Restr ctedM nModelPushcap)
+                  or g nalPushcap nfoFut.map {
+                    case So (or g nalPushcap nfo) =>
+                      So (
+                        getM n mumRestr ctedPushcap nfo(
+                          restr ctedPushcap,
+                          or g nalPushcap nfo,
+                          pushcapSelect onStat))
                     case _ => None
                   }
                 } else Future.value(None)
               }
 
-              override lazy val targetHydrationContext: Future[HydrationContext] =
-                HydrationContextBuilder.build(this)
+              overr de lazy val targetHydrat onContext: Future[Hydrat onContext] =
+                Hydrat onContextBu lder.bu ld(t )
 
-              override lazy val featureMap: Future[FeatureMap] =
-                targetHydrationContext.flatMap { hydrationContext =>
+              overr de lazy val featureMap: Future[FeatureMap] =
+                targetHydrat onContext.flatMap { hydrat onContext =>
                   featureHydrator.hydrateTarget(
-                    hydrationContext,
-                    this.params,
-                    this.mrRequestContextForFeatureStore)
+                    hydrat onContext,
+                    t .params,
+                    t .mrRequestContextForFeatureStore)
                 }
 
-              override lazy val globalOptoutProbabilities: Seq[Future[Option[Double]]] = {
-                params(PushFeatureSwitchParams.GlobalOptoutModelParam).map { model_id =>
+              overr de lazy val globalOptoutProbab l  es: Seq[Future[Opt on[Double]]] = {
+                params(PushFeatureSw chParams.GlobalOptoutModelParam).map { model_ d =>
                   optoutModelScorer
-                    .singlePredictionForTargetLevel(model_id, targetId, featureMap)
+                    .s nglePred ct onForTargetLevel(model_ d, target d, featureMap)
                 }
               }
 
-              override lazy val bucketOptoutProbability: Future[Option[Double]] = {
+              overr de lazy val bucketOptoutProbab l y: Future[Opt on[Double]] = {
                 Future
-                  .collect(globalOptoutProbabilities).map {
-                    _.zip(params(PushFeatureSwitchParams.GlobalOptoutThresholdParam))
-                      .exists {
-                        case (Some(score), threshold) => score >= threshold
+                  .collect(globalOptoutProbab l  es).map {
+                    _.z p(params(PushFeatureSw chParams.GlobalOptoutThresholdParam))
+                      .ex sts {
+                        case (So (score), threshold) => score >= threshold
                         case _ => false
                       }
                   }.flatMap {
                     case true =>
-                      optoutModelScorer.singlePredictionForTargetLevel(
-                        params(PushFeatureSwitchParams.BucketOptoutModelParam),
-                        targetId,
+                      optoutModelScorer.s nglePred ct onForTargetLevel(
+                        params(PushFeatureSw chParams.BucketOptoutModelParam),
+                        target d,
                         featureMap)
                     case _ => Future.None
                   }
               }
 
-              override lazy val optoutAdjustedPushcap: Future[Option[Short]] = {
-                if (params(PushFeatureSwitchParams.EnableOptoutAdjustedPushcap)) {
-                  bucketOptoutProbability.map {
-                    case Some(score) =>
-                      val idx = params(PushFeatureSwitchParams.BucketOptoutSlotThresholdParam)
-                        .indexWhere(score <= _)
-                      if (idx >= 0) {
+              overr de lazy val optoutAdjustedPushcap: Future[Opt on[Short]] = {
+                 f (params(PushFeatureSw chParams.EnableOptoutAdjustedPushcap)) {
+                  bucketOptoutProbab l y.map {
+                    case So (score) =>
+                      val  dx = params(PushFeatureSw chParams.BucketOptoutSlotThresholdParam)
+                        . ndexW re(score <= _)
+                       f ( dx >= 0) {
                         val pushcap =
-                          params(PushFeatureSwitchParams.BucketOptoutSlotPushcapParam)(idx).toShort
-                        optoutModelStat.scope("adjusted_pushcap").counter(f"$pushcap").incr()
-                        if (pushcap >= 0) Some(pushcap)
+                          params(PushFeatureSw chParams.BucketOptoutSlotPushcapParam)( dx).toShort
+                        optoutModelStat.scope("adjusted_pushcap").counter(f"$pushcap"). ncr()
+                         f (pushcap >= 0) So (pushcap)
                         else None
                       } else None
                     case _ => None
@@ -478,216 +478,216 @@ case class PushTargetUserBuilder(
                 } else Future.None
               }
 
-              override lazy val seedsWithWeight: Future[Option[Map[Long, Double]]] = {
+              overr de lazy val seedsW h  ght: Future[Opt on[Map[Long, Double]]] = {
                 Future
-                  .join(
-                    realGraphScoresTop500InStore.get(userId),
+                  .jo n(
+                    realGraphScoresTop500 nStore.get(user d),
                     targetUserState,
                     targetUser
                   )
                   .flatMap {
-                    case (seedSetOpt, userState, gizmoduckUser) =>
+                    case (seedSetOpt, userState, g zmoduckUser) =>
                       val seedSet = seedSetOpt.getOrElse(Map.empty[Long, Double])
 
-                      //If new sign_up or New user, combine recent_follows with real graph seedset
-                      val isNewUserEnabled = {
-                        val isNewerThan7days = customFSField.daysSinceSignup <= 7
-                        val isNewUserState = userState.contains(UserState.New)
-                        isNewUserState || isNewSignup || isNewerThan7days
+                      // f new s gn_up or New user, comb ne recent_follows w h real graph seedset
+                      val  sNewUserEnabled = {
+                        val  sNe rThan7days = customFSF eld.daysS nceS gnup <= 7
+                        val  sNewUserState = userState.conta ns(UserState.New)
+                         sNewUserState ||  sNewS gnup ||  sNe rThan7days
                       }
 
-                      val nonSeedSetFollowsFut = gizmoduckUser match {
-                        case Some(user) if isNewUserEnabled =>
-                          recentFollowscounter.incr()
-                          recentFollowsStore.get(user.id)
+                      val nonSeedSetFollowsFut = g zmoduckUser match {
+                        case So (user)  f  sNewUserEnabled =>
+                          recentFollowscounter. ncr()
+                          recentFollowsStore.get(user. d)
 
-                        case Some(user) if this.isModelTrainingData =>
-                          recentFollowscounter.incr()
-                          isModelTrainingDataCounter.incr()
-                          recentFollowsStore.get(user.id)
+                        case So (user)  f t . sModelTra n ngData =>
+                          recentFollowscounter. ncr()
+                           sModelTra n ngDataCounter. ncr()
+                          recentFollowsStore.get(user. d)
 
                         case _ => Future.None
                       }
                       nonSeedSetFollowsFut.map { nonSeedSetFollows =>
-                        Some(
-                          SeedsetUtil.combineRecentFollowsWithWeightedSeedset(
+                        So (
+                          SeedsetUt l.comb neRecentFollowsW h  ghtedSeedset(
                             seedSet,
-                            nonSeedSetFollows.getOrElse(Nil)
+                            nonSeedSetFollows.getOrElse(N l)
                           )
                         )
                       }
                   }
               }
 
-              override def magicFanoutReasonHistory30Days: Future[MagicFanoutReasonHistory] =
-                history.map(history => MagicFanoutReasonHistory(history))
+              overr de def mag cFanoutReason tory30Days: Future[Mag cFanoutReason tory] =
+                 tory.map( tory => Mag cFanoutReason tory( tory))
 
-              override val isNewSignup: Boolean =
-                pushContext.flatMap(_.isFromNewUserLoopProcessor).getOrElse(false)
+              overr de val  sNewS gnup: Boolean =
+                pushContext.flatMap(_. sFromNewUserLoopProcessor).getOrElse(false)
 
-              override lazy val resurrectionDate: Future[Option[String]] =
-                Future.value(customFSField.reactivationDate)
+              overr de lazy val resurrect onDate: Future[Opt on[Str ng]] =
+                Future.value(customFSF eld.react vat onDate)
 
-              override lazy val isResurrectedUser: Boolean =
-                customFSField.daysSinceReactivation.isDefined
+              overr de lazy val  sResurrectedUser: Boolean =
+                customFSF eld.daysS nceReact vat on. sDef ned
 
-              override lazy val timeSinceResurrection: Option[Duration] =
-                customFSField.daysSinceReactivation.map(Duration.fromDays)
+              overr de lazy val t  S nceResurrect on: Opt on[Durat on] =
+                customFSF eld.daysS nceReact vat on.map(Durat on.fromDays)
 
-              override lazy val appPermissions: Future[Option[AppPermission]] =
-                PushAppPermissionUtil.getAppPermission(
-                  userId,
-                  PushAppPermissionUtil.AddressBookPermissionKey,
-                  deviceInfo,
-                  appPermissionStore)
+              overr de lazy val appPerm ss ons: Future[Opt on[AppPerm ss on]] =
+                PushAppPerm ss onUt l.getAppPerm ss on(
+                  user d,
+                  PushAppPerm ss onUt l.AddressBookPerm ss onKey,
+                  dev ce nfo,
+                  appPerm ss onStore)
 
-              override lazy val inlineActionHistory: Future[Seq[(Long, String)]] = {
-                inlineActionHistoryStore
-                  .get(userId).map {
-                    case Some(sortedInlineActionHistory) => sortedInlineActionHistory
+              overr de lazy val  nl neAct on tory: Future[Seq[(Long, Str ng)]] = {
+                 nl neAct on toryStore
+                  .get(user d).map {
+                    case So (sorted nl neAct on tory) => sorted nl neAct on tory
                     case _ => Seq.empty
                   }
               }
 
-              lazy val isOpenAppExperimentUser: Future[Boolean] =
-                openAppUserStore.get(userId).map(_.contains(true))
+              lazy val  sOpenAppExper  ntUser: Future[Boolean] =
+                openAppUserStore.get(user d).map(_.conta ns(true))
 
-              override lazy val openedPushByHourAggregated: Future[Option[Map[Int, Int]]] =
-                openedPushByHourAggregatedStore.get(userId)
+              overr de lazy val openedPushByH Aggregated: Future[Opt on[Map[ nt,  nt]]] =
+                openedPushByH AggregatedStore.get(user d)
 
-              override lazy val places: Future[Seq[Place]] = {
+              overr de lazy val places: Future[Seq[Place]] = {
                 geoduckStoreV2
-                  .get(targetId)
+                  .get(target d)
                   .map(_.flatMap(_.places))
                   .map {
-                    case Some(placeSeq) if placeSeq.nonEmpty =>
-                      placeFoundStat.add(placeSeq.size)
+                    case So (placeSeq)  f placeSeq.nonEmpty =>
+                      placeFoundStat.add(placeSeq.s ze)
                       placeSeq
                     case _ =>
-                      placesNotFound.incr()
+                      placesNotFound. ncr()
                       Seq.empty
                   }
               }
 
-              override val isBlueVerified: Future[Option[Boolean]] =
-                Future.value(userOpt.flatMap(_.safety.flatMap(_.isBlueVerified)))
+              overr de val  sBlueVer f ed: Future[Opt on[Boolean]] =
+                Future.value(userOpt.flatMap(_.safety.flatMap(_. sBlueVer f ed)))
 
-              override val isVerified: Future[Option[Boolean]] =
-                Future.value(userOpt.flatMap(_.safety.map(_.verified)))
+              overr de val  sVer f ed: Future[Opt on[Boolean]] =
+                Future.value(userOpt.flatMap(_.safety.map(_.ver f ed)))
 
-              override lazy val isSuperFollowCreator: Future[Option[Boolean]] =
-                superFollowEligibilityUserStore.get(targetId)
+              overr de lazy val  sSuperFollowCreator: Future[Opt on[Boolean]] =
+                superFollowEl g b l yUserStore.get(target d)
             }
           }
       }
   }
 
   /**
-   * Provide general way to add needed FS for target user, and package them in CustomFSFields.
-   * Custom Fields is a powerful feature that allows Feature Switch library users to define and
-   * match against any arbitrary fields.
+   * Prov de general way to add needed FS for target user, and package t m  n CustomFSF elds.
+   * Custom F elds  s a po rful feature that allows Feature Sw ch l brary users to def ne and
+   * match aga nst any arb rary f elds.
    **/
-  private def getCustomFSFields(
-    userId: Long,
-    userOpt: Option[User],
-    deviceInfo: Option[DeviceInfo],
-    userForPushTargetingInfo: Option[UserForPushTargeting],
-    notifHistory: History,
-    requestSource: Option[RequestSource]
-  ): Future[CustomFSFields] = {
-    val reactivationDateFutOpt: Future[Option[String]] = resurrectedUserStore.get(userId)
-    val reactivationTimeFutOpt: Future[Option[Time]] =
-      reactivationDateFutOpt.map(_.map(dateStr => DateUtil.dateStrToTime(dateStr)))
+  pr vate def getCustomFSF elds(
+    user d: Long,
+    userOpt: Opt on[User],
+    dev ce nfo: Opt on[Dev ce nfo],
+    userForPushTarget ng nfo: Opt on[UserForPushTarget ng],
+    not f tory:  tory,
+    requestS ce: Opt on[RequestS ce]
+  ): Future[CustomFSF elds] = {
+    val react vat onDateFutOpt: Future[Opt on[Str ng]] = resurrectedUserStore.get(user d)
+    val react vat onT  FutOpt: Future[Opt on[T  ]] =
+      react vat onDateFutOpt.map(_.map(dateStr => DateUt l.dateStrToT  (dateStr)))
 
-    val isReactivatedUserFut: Future[Boolean] = reactivationTimeFutOpt.map { timeOpt =>
-      timeOpt
-        .exists { time => Time.now - time < 30.days }
+    val  sReact vatedUserFut: Future[Boolean] = react vat onT  FutOpt.map { t  Opt =>
+      t  Opt
+        .ex sts { t   => T  .now - t   < 30.days }
     }
 
-    val daysSinceReactivationFut: Future[Option[Int]] =
-      reactivationTimeFutOpt.map(_.map(time => Time.now.since(time).inDays))
+    val daysS nceReact vat onFut: Future[Opt on[ nt]] =
+      react vat onT  FutOpt.map(_.map(t   => T  .now.s nce(t  ). nDays))
 
-    val daysSinceSignup: Int = (Time.now - SnowflakeUtil.timeFromId(userId)).inDays
-    if (daysSinceSignup < 14) newSignUpUserStats.incr()
+    val daysS nceS gnup:  nt = (T  .now - SnowflakeUt l.t  From d(user d)). nDays
+     f (daysS nceS gnup < 14) newS gnUpUserStats. ncr()
 
-    val targetAgeInYears = userOpt.flatMap(_.extendedProfile.flatMap(_.ageInYears))
+    val targetAge nYears = userOpt.flatMap(_.extendedProf le.flatMap(_.age nYears))
 
-    val lastLoginFut: Future[Option[Long]] =
-      userHTLLastVisitStore.get(userId).map {
-        case Some(lastHTLVisitTimes) =>
-          val latestHTLVisitTime = lastHTLVisitTimes.max
-          userForPushTargetingInfo.flatMap(
-            _.lastActiveOnAppTimestamp
-              .map(_.max(latestHTLVisitTime)).orElse(Some(latestHTLVisitTime)))
+    val lastLog nFut: Future[Opt on[Long]] =
+      userHTLLastV s Store.get(user d).map {
+        case So (lastHTLV s T  s) =>
+          val latestHTLV s T   = lastHTLV s T  s.max
+          userForPushTarget ng nfo.flatMap(
+            _.lastAct veOnAppT  stamp
+              .map(_.max(latestHTLV s T  )).orElse(So (latestHTLV s T  )))
         case None =>
-          userForPushTargetingInfo.flatMap(_.lastActiveOnAppTimestamp)
+          userForPushTarget ng nfo.flatMap(_.lastAct veOnAppT  stamp)
       }
 
-    val daysSinceLoginFut = lastLoginFut.map {
-      _.map { lastLoginTimestamp =>
-        val timeSinceLogin = Time.now - Time.fromMilliseconds(lastLoginTimestamp)
-        if (timeSinceLogin.inDays > 21) {
-          dormantUserCount.incr()
+    val daysS nceLog nFut = lastLog nFut.map {
+      _.map { lastLog nT  stamp =>
+        val t  S nceLog n = T  .now - T  .fromM ll seconds(lastLog nT  stamp)
+         f (t  S nceLog n. nDays > 21) {
+          dormantUserCount. ncr()
         }
-        timeSinceLogin.inDays
+        t  S nceLog n. nDays
       }
     }
 
-    /* Could add more custom FS here */
-    val userNSFWInfoFut: Future[Option[NsfwInfo]] =
-      nsfwConsumerStore
-        .get(userId).map(_.map(nsfwUserSegmentation => NsfwInfo(nsfwUserSegmentation)))
+    /* Could add more custom FS  re */
+    val userNSFW nfoFut: Future[Opt on[Nsfw nfo]] =
+      nsfwConsu rStore
+        .get(user d).map(_.map(nsfwUserSeg ntat on => Nsfw nfo(nsfwUserSeg ntat on)))
 
-    val userStateFut: Future[Option[String]] = userFeatureStore.get(userId).map { userFeaturesOpt =>
+    val userStateFut: Future[Opt on[Str ng]] = userFeatureStore.get(user d).map { userFeaturesOpt =>
       userFeaturesOpt.flatMap { uFeats =>
-        uFeats.userState.map(uState => uState.name)
+        uFeats.userState.map(uState => uState.na )
       }
     }
 
-    val mrUserStateFut: Future[Option[String]] =
-      mrUserStateStore.get(userId).map { mrUserStateOpt =>
+    val mrUserStateFut: Future[Opt on[Str ng]] =
+      mrUserStateStore.get(user d).map { mrUserStateOpt =>
         mrUserStateOpt.flatMap { mrUserState =>
-          mrUserState.userState.map(_.name)
+          mrUserState.userState.map(_.na )
         }
       }
 
     Future
-      .join(
-        reactivationDateFutOpt,
-        isReactivatedUserFut,
+      .jo n(
+        react vat onDateFutOpt,
+         sReact vatedUserFut,
         userStateFut,
         mrUserStateFut,
-        daysSinceLoginFut,
-        daysSinceReactivationFut,
-        userNSFWInfoFut
+        daysS nceLog nFut,
+        daysS nceReact vat onFut,
+        userNSFW nfoFut
       ).map {
         case (
-              reactivationDate,
-              isReactivatedUser,
+              react vat onDate,
+               sReact vatedUser,
               userState,
               mrUserState,
-              daysSinceLogin,
-              daysSinceReactivation,
-              userNSFWInfo) =>
-          val numDaysReceivedPushInLast30Days: Int =
-            notifHistory.history.keys.map(_.inDays).toSet.size
+              daysS nceLog n,
+              daysS nceReact vat on,
+              userNSFW nfo) =>
+          val numDaysRece vedPush nLast30Days:  nt =
+            not f tory. tory.keys.map(_. nDays).toSet.s ze
 
-          NsfwPersonalizationUtil.computeNsfwUserStats(userNSFWInfo)
+          NsfwPersonal zat onUt l.computeNsfwUserStats(userNSFW nfo)
 
-          CustomFSFields(
-            isReactivatedUser,
-            daysSinceSignup,
-            numDaysReceivedPushInLast30Days,
-            daysSinceLogin,
-            daysSinceReactivation,
+          CustomFSF elds(
+             sReact vatedUser,
+            daysS nceS gnup,
+            numDaysRece vedPush nLast30Days,
+            daysS nceLog n,
+            daysS nceReact vat on,
             userOpt,
             userState,
             mrUserState,
-            reactivationDate,
-            requestSource.map(_.name),
-            targetAgeInYears,
-            userNSFWInfo,
-            deviceInfo
+            react vat onDate,
+            requestS ce.map(_.na ),
+            targetAge nYears,
+            userNSFW nfo,
+            dev ce nfo
           )
       }
   }

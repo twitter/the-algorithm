@@ -1,175 +1,175 @@
-package com.twitter.visibility.interfaces.push_service
+package com.tw ter.v s b l y. nterfaces.push_serv ce
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.servo.util.Gate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.tweets.StratoTweetLabelMaps
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.interfaces.push_service.PushServiceVisibilityLibraryUtil._
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.t ets.T etFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.StratoT etLabelMaps
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.common._
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.features.T et s nnerQuotedT et
+ mport com.tw ter.v s b l y.features.T et sRet et
+ mport com.tw ter.v s b l y.features.T et sS ceT et
+ mport com.tw ter.v s b l y. nterfaces.push_serv ce.PushServ ceV s b l yL braryUt l._
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.V e rContext
 
-object TweetType extends Enumeration {
-  type TweetType = Value
-  val ORIGINAL, SOURCE, QUOTED = Value
+object T etType extends Enu rat on {
+  type T etType = Value
+  val OR G NAL, SOURCE, QUOTED = Value
 }
-import com.twitter.visibility.interfaces.push_service.TweetType._
+ mport com.tw ter.v s b l y. nterfaces.push_serv ce.T etType._
 
-object PushServiceVisibilityLibrary {
-  type Type = PushServiceVisibilityRequest => Stitch[PushServiceVisibilityResponse]
+object PushServ ceV s b l yL brary {
+  type Type = PushServ ceV s b l yRequest => St ch[PushServ ceV s b l yResponse]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    stratoClient: StratoClient,
-    enableParityTest: Gate[Unit] = Gate.False,
-    cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult] = ReadableStore.empty,
-    safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult] = ReadableStore.empty,
+    v s b l yL brary: V s b l yL brary,
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce,
+    stratoCl ent: StratoCl ent,
+    enablePar yTest: Gate[Un ] = Gate.False,
+    cac dT etyP eStoreV2: ReadableStore[Long, T etyP eResult] = ReadableStore.empty,
+    safeCac dT etyP eStoreV2: ReadableStore[Long, T etyP eResult] = ReadableStore.empty,
   )(
-    implicit statsReceiver: StatsReceiver
+     mpl c  statsRece ver: StatsRece ver
   ): Type = {
-    val stats = statsReceiver.scope("push_service_vf")
-    val candidateTweetCounter = stats.counter("request_cnt")
-    val allowedTweetCounter = stats.counter("allow_cnt")
-    val droppedTweetCounter = stats.counter("drop_cnt")
-    val failedTweetCounter = stats.counter("fail_cnt")
+    val stats = statsRece ver.scope("push_serv ce_vf")
+    val cand dateT etCounter = stats.counter("request_cnt")
+    val allo dT etCounter = stats.counter("allow_cnt")
+    val droppedT etCounter = stats.counter("drop_cnt")
+    val fa ledT etCounter = stats.counter("fa l_cnt")
     val authorLabelsEmptyCount = stats.counter("author_labels_empty_cnt")
     val authorLabelsCount = stats.counter("author_labels_cnt")
 
-    val tweetLabelMaps = new StratoTweetLabelMaps(
-      SafetyLabelMapSource.fromSafetyLabelMapFetcher(
-        PushServiceSafetyLabelMapFetcher(stratoClient, stats)))
+    val t etLabelMaps = new StratoT etLabelMaps(
+      SafetyLabelMapS ce.fromSafetyLabelMapFetc r(
+        PushServ ceSafetyLabelMapFetc r(stratoCl ent, stats)))
 
-    val viewerFeatures = new ViewerFeatures(UserSource.empty, stats)
-    val tweetFeatures = new TweetFeatures(tweetLabelMaps, stats)
-    val authorFeatures = new AuthorFeatures(userSource, stats)
-    val relationshipFeatures = new RelationshipFeatures(UserRelationshipSource.empty, stats)
+    val v e rFeatures = new V e rFeatures(UserS ce.empty, stats)
+    val t etFeatures = new T etFeatures(t etLabelMaps, stats)
+    val authorFeatures = new AuthorFeatures(userS ce, stats)
+    val relat onsh pFeatures = new Relat onsh pFeatures(UserRelat onsh pS ce.empty, stats)
 
-    val parityTester = new PushServiceVisibilityLibraryParity(
-      cachedTweetyPieStoreV2,
-      safeCachedTweetyPieStoreV2
-    )(statsReceiver)
+    val par yTester = new PushServ ceV s b l yL braryPar y(
+      cac dT etyP eStoreV2,
+      safeCac dT etyP eStoreV2
+    )(statsRece ver)
 
-    def buildFeatureMap(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
+    def bu ldFeatureMap(
+      request: PushServ ceV s b l yRequest,
+      t et: T et,
+      t etType: T etType,
+      author: Opt on[User] = None,
     ): FeatureMap = {
-      val authorId = author.map(_.id) orElse getAuthorId(tweet)
+      val author d = author.map(_. d) orElse getAuthor d(t et)
       (author.map(authorFeatures.forAuthor(_)) orElse
-        getAuthorId(tweet).map(authorFeatures.forAuthorId(_))) match {
-        case Some(authorVisibilityFeatures) =>
-          visibilityLibrary.featureMapBuilder(
+        getAuthor d(t et).map(authorFeatures.forAuthor d(_))) match {
+        case So (authorV s b l yFeatures) =>
+          v s b l yL brary.featureMapBu lder(
             Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
-              tweetFeatures.forTweet(tweet),
-              authorVisibilityFeatures,
-              relationshipFeatures.forAuthorId(authorId.get, None),
-              _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
-              _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-              _.withConstantFeature(TweetIsSourceTweet, tweetType == SOURCE)
+              v e rFeatures.forV e rContext(V e rContext.fromContextW hV e r dFallback(None)),
+              t etFeatures.forT et(t et),
+              authorV s b l yFeatures,
+              relat onsh pFeatures.forAuthor d(author d.get, None),
+              _.w hConstantFeature(T et s nnerQuotedT et, t etType == QUOTED),
+              _.w hConstantFeature(T et sRet et, request. sRet et),
+              _.w hConstantFeature(T et sS ceT et, t etType == SOURCE)
             )
           )
         case _ =>
-          visibilityLibrary.featureMapBuilder(
+          v s b l yL brary.featureMapBu lder(
             Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
-              tweetFeatures.forTweet(tweet),
-              _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
-              _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-              _.withConstantFeature(TweetIsSourceTweet, tweetType == SOURCE)
+              v e rFeatures.forV e rContext(V e rContext.fromContextW hV e r dFallback(None)),
+              t etFeatures.forT et(t et),
+              _.w hConstantFeature(T et s nnerQuotedT et, t etType == QUOTED),
+              _.w hConstantFeature(T et sRet et, request. sRet et),
+              _.w hConstantFeature(T et sS ceT et, t etType == SOURCE)
             )
           )
       }
     }
 
-    def runRuleEngineForTweet(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): Stitch[VisibilityResult] = {
-      val featureMap = buildFeatureMap(request, tweet, tweetType, author)
-      val contentId = ContentId.TweetId(tweet.id)
-      visibilityLibrary.runRuleEngine(
-        contentId,
+    def runRuleEng neForT et(
+      request: PushServ ceV s b l yRequest,
+      t et: T et,
+      t etType: T etType,
+      author: Opt on[User] = None,
+    ): St ch[V s b l yResult] = {
+      val featureMap = bu ldFeatureMap(request, t et, t etType, author)
+      val content d = Content d.T et d(t et. d)
+      v s b l yL brary.runRuleEng ne(
+        content d,
         featureMap,
-        request.viewerContext,
+        request.v e rContext,
         request.safetyLevel)
     }
 
-    def runRuleEngineForAuthor(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): Stitch[VisibilityResult] = {
-      val featureMap = buildFeatureMap(request, tweet, tweetType, author)
-      val authorId = author.map(_.id).getOrElse(getAuthorId(tweet).get)
-      val contentId = ContentId.UserId(authorId)
-      visibilityLibrary.runRuleEngine(
-        contentId,
+    def runRuleEng neForAuthor(
+      request: PushServ ceV s b l yRequest,
+      t et: T et,
+      t etType: T etType,
+      author: Opt on[User] = None,
+    ): St ch[V s b l yResult] = {
+      val featureMap = bu ldFeatureMap(request, t et, t etType, author)
+      val author d = author.map(_. d).getOrElse(getAuthor d(t et).get)
+      val content d = Content d.User d(author d)
+      v s b l yL brary.runRuleEng ne(
+        content d,
         featureMap,
-        request.viewerContext,
+        request.v e rContext,
         request.safetyLevel)
     }
 
-    def getAllVisibilityFilters(
-      request: PushServiceVisibilityRequest
-    ): Stitch[PushServiceVisibilityResponse] = {
-      val tweetResult =
-        runRuleEngineForTweet(request, request.tweet, ORIGINAL, Some(request.author))
+    def getAllV s b l yF lters(
+      request: PushServ ceV s b l yRequest
+    ): St ch[PushServ ceV s b l yResponse] = {
+      val t etResult =
+        runRuleEng neForT et(request, request.t et, OR G NAL, So (request.author))
       val authorResult =
-        runRuleEngineForAuthor(request, request.tweet, ORIGINAL, Some(request.author))
-      val sourceTweetResult = request.sourceTweet
-        .map(runRuleEngineForTweet(request, _, SOURCE).map(Some(_))).getOrElse(Stitch.None)
-      val quotedTweetResult = request.quotedTweet
-        .map(runRuleEngineForTweet(request, _, QUOTED).map(Some(_))).getOrElse(Stitch.None)
+        runRuleEng neForAuthor(request, request.t et, OR G NAL, So (request.author))
+      val s ceT etResult = request.s ceT et
+        .map(runRuleEng neForT et(request, _, SOURCE).map(So (_))).getOrElse(St ch.None)
+      val quotedT etResult = request.quotedT et
+        .map(runRuleEng neForT et(request, _, QUOTED).map(So (_))).getOrElse(St ch.None)
 
-      Stitch.join(tweetResult, authorResult, sourceTweetResult, quotedTweetResult).map {
-        case (tweetResult, authorResult, sourceTweetResult, quotedTweetResult) =>
-          PushServiceVisibilityResponse(
-            tweetResult,
+      St ch.jo n(t etResult, authorResult, s ceT etResult, quotedT etResult).map {
+        case (t etResult, authorResult, s ceT etResult, quotedT etResult) =>
+          PushServ ceV s b l yResponse(
+            t etResult,
             authorResult,
-            sourceTweetResult,
-            quotedTweetResult)
+            s ceT etResult,
+            quotedT etResult)
       }
     }
 
-    { request: PushServiceVisibilityRequest =>
-      candidateTweetCounter.incr()
+    { request: PushServ ceV s b l yRequest =>
+      cand dateT etCounter. ncr()
 
       request.author.labels match {
-        case Some(labels) if (!labels._1.isEmpty) => authorLabelsCount.incr()
-        case _ => authorLabelsEmptyCount.incr()
+        case So (labels)  f (!labels._1. sEmpty) => authorLabelsCount. ncr()
+        case _ => authorLabelsEmptyCount. ncr()
       }
 
-      val response = getAllVisibilityFilters(request)
+      val response = getAllV s b l yF lters(request)
         .onSuccess { response =>
-          if (response.shouldAllow) allowedTweetCounter.incr() else droppedTweetCounter.incr()
-        }.onFailure { _ => failedTweetCounter.incr() }
+           f (response.shouldAllow) allo dT etCounter. ncr() else droppedT etCounter. ncr()
+        }.onFa lure { _ => fa ledT etCounter. ncr() }
 
-      if (enableParityTest()) {
-        response.applyEffect { resp => Stitch.async(parityTester.runParityTest(request, resp)) }
+       f (enablePar yTest()) {
+        response.applyEffect { resp => St ch.async(par yTester.runPar yTest(request, resp)) }
       } else {
         response
       }

@@ -1,44 +1,44 @@
-package com.twitter.graph_feature_service.util
+package com.tw ter.graph_feature_serv ce.ut l
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
-import com.twitter.graph_feature_service.thriftscala.{FeatureType, PresetFeatureTypes}
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType._
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.{FeatureType, PresetFeatureTypes}
 
 object FeatureTypesCalculator {
 
-  final val DefaultTwoHop = Seq(
-    FeatureType(Following, FollowedBy),
-    FeatureType(Following, FavoritedBy),
-    FeatureType(Following, RetweetedBy),
-    FeatureType(Following, MentionedBy),
-    FeatureType(Following, MutualFollow),
-    FeatureType(Favorite, FollowedBy),
-    FeatureType(Favorite, FavoritedBy),
-    FeatureType(Favorite, RetweetedBy),
-    FeatureType(Favorite, MentionedBy),
-    FeatureType(Favorite, MutualFollow),
-    FeatureType(MutualFollow, FollowedBy),
-    FeatureType(MutualFollow, FavoritedBy),
-    FeatureType(MutualFollow, RetweetedBy),
-    FeatureType(MutualFollow, MentionedBy),
+  f nal val DefaultTwoHop = Seq(
+    FeatureType(Follow ng, Follo dBy),
+    FeatureType(Follow ng, Favor edBy),
+    FeatureType(Follow ng, Ret etedBy),
+    FeatureType(Follow ng,  nt onedBy),
+    FeatureType(Follow ng, MutualFollow),
+    FeatureType(Favor e, Follo dBy),
+    FeatureType(Favor e, Favor edBy),
+    FeatureType(Favor e, Ret etedBy),
+    FeatureType(Favor e,  nt onedBy),
+    FeatureType(Favor e, MutualFollow),
+    FeatureType(MutualFollow, Follo dBy),
+    FeatureType(MutualFollow, Favor edBy),
+    FeatureType(MutualFollow, Ret etedBy),
+    FeatureType(MutualFollow,  nt onedBy),
     FeatureType(MutualFollow, MutualFollow)
   )
 
-  final val SocialProofTwoHop = Seq(FeatureType(Following, FollowedBy))
+  f nal val Soc alProofTwoHop = Seq(FeatureType(Follow ng, Follo dBy))
 
-  final val HtlTwoHop = DefaultTwoHop
+  f nal val HtlTwoHop = DefaultTwoHop
 
-  final val WtfTwoHop = SocialProofTwoHop
+  f nal val WtfTwoHop = Soc alProofTwoHop
 
-  final val SqTwoHop = DefaultTwoHop
+  f nal val SqTwoHop = DefaultTwoHop
 
-  final val RuxTwoHop = DefaultTwoHop
+  f nal val RuxTwoHop = DefaultTwoHop
 
-  final val MRTwoHop = DefaultTwoHop
+  f nal val MRTwoHop = DefaultTwoHop
 
-  final val UserTypeaheadTwoHop = SocialProofTwoHop
+  f nal val UserTypea adTwoHop = Soc alProofTwoHop
 
-  final val presetFeatureTypes =
-    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RuxTwoHop ++ MRTwoHop ++ UserTypeaheadTwoHop).toSet
+  f nal val presetFeatureTypes =
+    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RuxTwoHop ++ MRTwoHop ++ UserTypea adTwoHop).toSet
 
   def getFeatureTypes(
     presetFeatureTypes: PresetFeatureTypes,
@@ -50,7 +50,7 @@ object FeatureTypesCalculator {
       case PresetFeatureTypes.SqTwoHop => SqTwoHop
       case PresetFeatureTypes.RuxTwoHop => RuxTwoHop
       case PresetFeatureTypes.MrTwoHop => MRTwoHop
-      case PresetFeatureTypes.UserTypeaheadTwoHop => UserTypeaheadTwoHop
+      case PresetFeatureTypes.UserTypea adTwoHop => UserTypea adTwoHop
       case _ => featureTypes
     }
   }

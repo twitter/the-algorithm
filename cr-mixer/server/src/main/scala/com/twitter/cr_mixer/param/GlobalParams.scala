@@ -1,106 +1,106 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
 /**
- * Instantiate Params that do not relate to a specific product.
- * The params in this file correspond to config repo file
- * [[https://sourcegraph.twitter.biz/config-git.twitter.biz/config/-/blob/features/cr-mixer/main/twistly_core.yml]]
+ *  nstant ate Params that do not relate to a spec f c product.
+ * T  params  n t  f le correspond to conf g repo f le
+ * [[https://s cegraph.tw ter.b z/conf g-g .tw ter.b z/conf g/-/blob/features/cr-m xer/ma n/tw stly_core.yml]]
  */
 object GlobalParams {
 
-  object MaxCandidatesPerRequestParam
-      extends FSBoundedParam[Int](
-        name = "twistly_core_max_candidates_per_request",
+  object MaxCand datesPerRequestParam
+      extends FSBoundedParam[ nt](
+        na  = "tw stly_core_max_cand dates_per_request",
         default = 100,
-        min = 0,
+        m n = 0,
         max = 9000
       )
 
-  object ModelVersionParam
-      extends FSEnumParam[ModelVersions.Enum.type](
-        name = "twistly_core_simclusters_model_version_id",
-        default = ModelVersions.Enum.Model20M145K2020,
-        enum = ModelVersions.Enum
+  object ModelVers onParam
+      extends FSEnumParam[ModelVers ons.Enum.type](
+        na  = "tw stly_core_s mclusters_model_vers on_ d",
+        default = ModelVers ons.Enum.Model20M145K2020,
+        enum = ModelVers ons.Enum
       )
 
-  object UnifiedMaxSourceKeyNum
-      extends FSBoundedParam[Int](
-        name = "twistly_core_unified_max_sourcekey_num",
+  object Un f edMaxS ceKeyNum
+      extends FSBoundedParam[ nt](
+        na  = "tw stly_core_un f ed_max_s cekey_num",
         default = 15,
-        min = 0,
+        m n = 0,
         max = 100
       )
 
-  object MaxCandidateNumPerSourceKeyParam
-      extends FSBoundedParam[Int](
-        name = "twistly_core_candidate_per_sourcekey_max_num",
+  object MaxCand dateNumPerS ceKeyParam
+      extends FSBoundedParam[ nt](
+        na  = "tw stly_core_cand date_per_s cekey_max_num",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 1000
       )
 
-  // 1 hours to 30 days
-  object MaxTweetAgeHoursParam
-      extends FSBoundedParam[Duration](
-        name = "twistly_core_max_tweet_age_hours",
-        default = 720.hours,
-        min = 1.hours,
-        max = 720.hours
+  // 1 h s to 30 days
+  object MaxT etAgeH sParam
+      extends FSBoundedParam[Durat on](
+        na  = "tw stly_core_max_t et_age_h s",
+        default = 720.h s,
+        m n = 1.h s,
+        max = 720.h s
       )
-      with HasDurationConversion {
+      w h HasDurat onConvers on {
 
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromH s
   }
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    MaxCandidatesPerRequestParam,
-    UnifiedMaxSourceKeyNum,
-    MaxCandidateNumPerSourceKeyParam,
-    ModelVersionParam,
-    MaxTweetAgeHoursParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    MaxCand datesPerRequestParam,
+    Un f edMaxS ceKeyNum,
+    MaxCand dateNumPerS ceKeyParam,
+    ModelVers onParam,
+    MaxT etAgeH sParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides()
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des()
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxCandidatesPerRequestParam,
-      UnifiedMaxSourceKeyNum,
-      MaxCandidateNumPerSourceKeyParam
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      MaxCand datesPerRequestParam,
+      Un f edMaxS ceKeyNum,
+      MaxCand dateNumPerS ceKeyParam
     )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      ModelVersionParam
+      ModelVers onParam
     )
 
-    val boundedDurationFSOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDurationFSOverrides(MaxTweetAgeHoursParam)
+    val boundedDurat onFSOverr des =
+      FeatureSw chOverr deUt l.getBoundedDurat onFSOverr des(MaxT etAgeH sParam)
 
-    val seqOverrides = FeatureSwitchOverrideUtil.getLongSeqFSOverrides()
+    val seqOverr des = FeatureSw chOverr deUt l.getLongSeqFSOverr des()
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(boundedDurationFSOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(seqOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(boundedDurat onFSOverr des: _*)
+      .set(enumOverr des: _*)
+      .set(seqOverr des: _*)
+      .bu ld()
   }
 }

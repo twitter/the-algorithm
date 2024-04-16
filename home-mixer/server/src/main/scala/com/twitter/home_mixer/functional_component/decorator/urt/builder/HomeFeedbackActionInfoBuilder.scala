@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.timelines.util.FeedbackMetadataSerializer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.EnableNahFeedback nfoParam
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => t}
+ mport com.tw ter.t  l nes.ut l.Feedback tadataSer al zer
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeFeedbackActionInfoBuilder @Inject() (
-  notInterestedTopicFeedbackActionBuilder: NotInterestedTopicFeedbackActionBuilder,
-  dontLikeFeedbackActionBuilder: DontLikeFeedbackActionBuilder)
-    extends BaseFeedbackActionInfoBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+class Ho FeedbackAct on nfoBu lder @ nject() (
+  not nterestedTop cFeedbackAct onBu lder: Not nterestedTop cFeedbackAct onBu lder,
+  dontL keFeedbackAct onBu lder: DontL keFeedbackAct onBu lder)
+    extends BaseFeedbackAct on nfoBu lder[P pel neQuery, T etCand date] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[FeedbackAct on nfo] = {
     val supportedProduct = query.product match {
-      case FollowingProduct => query.params(EnableNahFeedbackInfoParam)
-      case ForYouProduct => true
+      case Follow ngProduct => query.params(EnableNahFeedback nfoParam)
+      case For Product => true
       case _ => false
     }
-    val isAuthoredByViewer = CandidatesUtil.isAuthoredByViewer(query, candidateFeatures)
+    val  sAuthoredByV e r = Cand datesUt l. sAuthoredByV e r(query, cand dateFeatures)
 
-    if (supportedProduct && !isAuthoredByViewer) {
-      val feedbackActions = Seq(
-        notInterestedTopicFeedbackActionBuilder(candidateFeatures),
-        dontLikeFeedbackActionBuilder(query, candidate, candidateFeatures)
+     f (supportedProduct && ! sAuthoredByV e r) {
+      val feedbackAct ons = Seq(
+        not nterestedTop cFeedbackAct onBu lder(cand dateFeatures),
+        dontL keFeedbackAct onBu lder(query, cand date, cand dateFeatures)
       ).flatten
-      val feedbackMetadata = FeedbackMetadataSerializer.serialize(
-        t.FeedbackMetadata(injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)))
+      val feedback tadata = Feedback tadataSer al zer.ser al ze(
+        t.Feedback tadata( nject onType = cand dateFeatures.getOrElse(SuggestTypeFeature, None)))
 
-      Some(
-        FeedbackActionInfo(
-          feedbackActions = feedbackActions,
-          feedbackMetadata = Some(feedbackMetadata),
-          displayContext = None,
-          clientEventInfo = None
+      So (
+        FeedbackAct on nfo(
+          feedbackAct ons = feedbackAct ons,
+          feedback tadata = So (feedback tadata),
+          d splayContext = None,
+          cl entEvent nfo = None
         ))
     } else None
   }

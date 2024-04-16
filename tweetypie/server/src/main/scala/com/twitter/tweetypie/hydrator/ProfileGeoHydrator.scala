@@ -1,31 +1,31 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.dataproducts.enrichments.thriftscala.ProfileGeoEnrichment
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.ProfileGeoKey
-import com.twitter.tweetypie.repository.ProfileGeoRepository
-import com.twitter.tweetypie.thriftscala.FieldByPath
+ mport com.tw ter.dataproducts.enr ch nts.thr ftscala.Prof leGeoEnr ch nt
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory.Prof leGeoKey
+ mport com.tw ter.t etyp e.repos ory.Prof leGeoRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.F eldByPath
 
-object ProfileGeoHydrator {
-  type Type = ValueHydrator[Option[ProfileGeoEnrichment], TweetCtx]
+object Prof leGeoHydrator {
+  type Type = ValueHydrator[Opt on[Prof leGeoEnr ch nt], T etCtx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.ProfileGeoEnrichmentField)
+  val hydratedF eld: F eldByPath = f eldByPath(T et.Prof leGeoEnr ch ntF eld)
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
+  pr vate[t ] val part alResult = ValueState.part al(None, hydratedF eld)
 
-  def apply(repo: ProfileGeoRepository.Type): Type =
-    ValueHydrator[Option[ProfileGeoEnrichment], TweetCtx] { (curr, ctx) =>
+  def apply(repo: Prof leGeoRepos ory.Type): Type =
+    ValueHydrator[Opt on[Prof leGeoEnr ch nt], T etCtx] { (curr, ctx) =>
       val key =
-        ProfileGeoKey(
-          tweetId = ctx.tweetId,
-          userId = Some(ctx.userId),
-          coords = ctx.geoCoordinates
+        Prof leGeoKey(
+          t et d = ctx.t et d,
+          user d = So (ctx.user d),
+          coords = ctx.geoCoord nates
         )
-      repo(key).liftToTry.map {
-        case Return(enrichment) => ValueState.modified(Some(enrichment))
-        case Throw(_) => partialResult
+      repo(key).l ftToTry.map {
+        case Return(enr ch nt) => ValueState.mod f ed(So (enr ch nt))
+        case Throw(_) => part alResult
       }
-    }.onlyIf((curr, ctx) =>
-      curr.isEmpty && ctx.tweetFieldRequested(Tweet.ProfileGeoEnrichmentField))
+    }.only f((curr, ctx) =>
+      curr. sEmpty && ctx.t etF eldRequested(T et.Prof leGeoEnr ch ntF eld))
 }

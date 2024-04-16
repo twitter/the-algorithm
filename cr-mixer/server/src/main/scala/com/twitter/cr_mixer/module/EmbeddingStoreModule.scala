@@ -1,195 +1,195 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.{thriftscala => api}
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ml.ap .{thr ftscala => ap }
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cand dateT etsL st
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanRO
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanROConf g
+ mport com.tw ter.storehaus_ nternal.ut l.Appl cat on D
+ mport com.tw ter.storehaus_ nternal.ut l.DatasetNa 
+ mport com.tw ter.storehaus_ nternal.ut l.HDFSPath
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object EmbeddingStoreModule extends TwitterModule {
-  type UserId = Long
-  implicit val mbcgUserEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
-    CompactScalaCodec(api.Embedding)
-  implicit val tweetCandidatesInjection: Injection[CandidateTweetsList, Array[Byte]] =
-    CompactScalaCodec(CandidateTweetsList)
+object Embedd ngStoreModule extends Tw terModule {
+  type User d = Long
+   mpl c  val mbcgUserEmbedd ng nject on:  nject on[ap .Embedd ng, Array[Byte]] =
+    CompactScalaCodec(ap .Embedd ng)
+   mpl c  val t etCand dates nject on:  nject on[Cand dateT etsL st, Array[Byte]] =
+    CompactScalaCodec(Cand dateT etsL st)
 
-  final val TwHINEmbeddingRegularUpdateMhStoreName = "TwHINEmbeddingRegularUpdateMhStore"
-  @Provides
-  @Singleton
-  @Named(TwHINEmbeddingRegularUpdateMhStoreName)
-  def twHINEmbeddingRegularUpdateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[InternalId, api.Embedding] = {
-    val binaryEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
-      BinaryScalaCodec(api.Embedding)
+  f nal val TwH NEmbedd ngRegularUpdateMhStoreNa  = "TwH NEmbedd ngRegularUpdateMhStore"
+  @Prov des
+  @S ngleton
+  @Na d(TwH NEmbedd ngRegularUpdateMhStoreNa )
+  def twH NEmbedd ngRegularUpdateMhStore(
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    val b naryEmbedd ng nject on:  nject on[ap .Embedd ng, Array[Byte]] =
+      B naryScalaCodec(ap .Embedd ng)
 
-    val longCodec = implicitly[Injection[Long, Array[Byte]]]
+    val longCodec =  mpl c ly[ nject on[Long, Array[Byte]]]
 
     ManhattanRO
-      .getReadableStoreWithMtls[TweetId, api.Embedding](
-        ManhattanROConfig(
+      .getReadableStoreW hMtls[T et d, ap .Embedd ng](
+        ManhattanROConf g(
           HDFSPath(""), // not needed
-          ApplicationID("cr_mixer_apollo"),
-          DatasetName("twhin_regular_update_tweet_embedding_apollo"),
+          Appl cat on D("cr_m xer_apollo"),
+          DatasetNa ("twh n_regular_update_t et_embedd ng_apollo"),
           Apollo
         ),
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, binaryEmbeddingInjection).composeKeyMapping[InternalId] {
-        case InternalId.TweetId(tweetId) =>
-          tweetId
+        ManhattanKVCl entMtlsParams(serv ce dent f er)
+      )(longCodec, b naryEmbedd ng nject on).composeKeyMapp ng[ nternal d] {
+        case  nternal d.T et d(t et d) =>
+          t et d
         case _ =>
-          throw new UnsupportedOperationException("Invalid Internal Id")
+          throw new UnsupportedOperat onExcept on(" nval d  nternal  d")
       }
   }
 
-  final val ConsumerBasedTwHINEmbeddingRegularUpdateMhStoreName =
-    "ConsumerBasedTwHINEmbeddingRegularUpdateMhStore"
-  @Provides
-  @Singleton
-  @Named(ConsumerBasedTwHINEmbeddingRegularUpdateMhStoreName)
-  def consumerBasedTwHINEmbeddingRegularUpdateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[InternalId, api.Embedding] = {
-    val binaryEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
-      BinaryScalaCodec(api.Embedding)
+  f nal val Consu rBasedTwH NEmbedd ngRegularUpdateMhStoreNa  =
+    "Consu rBasedTwH NEmbedd ngRegularUpdateMhStore"
+  @Prov des
+  @S ngleton
+  @Na d(Consu rBasedTwH NEmbedd ngRegularUpdateMhStoreNa )
+  def consu rBasedTwH NEmbedd ngRegularUpdateMhStore(
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    val b naryEmbedd ng nject on:  nject on[ap .Embedd ng, Array[Byte]] =
+      B naryScalaCodec(ap .Embedd ng)
 
-    val longCodec = implicitly[Injection[Long, Array[Byte]]]
+    val longCodec =  mpl c ly[ nject on[Long, Array[Byte]]]
 
     ManhattanRO
-      .getReadableStoreWithMtls[UserId, api.Embedding](
-        ManhattanROConfig(
+      .getReadableStoreW hMtls[User d, ap .Embedd ng](
+        ManhattanROConf g(
           HDFSPath(""), // not needed
-          ApplicationID("cr_mixer_apollo"),
-          DatasetName("twhin_user_embedding_regular_update_apollo"),
+          Appl cat on D("cr_m xer_apollo"),
+          DatasetNa ("twh n_user_embedd ng_regular_update_apollo"),
           Apollo
         ),
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, binaryEmbeddingInjection).composeKeyMapping[InternalId] {
-        case InternalId.UserId(userId) =>
-          userId
+        ManhattanKVCl entMtlsParams(serv ce dent f er)
+      )(longCodec, b naryEmbedd ng nject on).composeKeyMapp ng[ nternal d] {
+        case  nternal d.User d(user d) =>
+          user d
         case _ =>
-          throw new UnsupportedOperationException("Invalid Internal Id")
+          throw new UnsupportedOperat onExcept on(" nval d  nternal  d")
       }
   }
 
-  final val TwoTowerFavConsumerEmbeddingMhStoreName = "TwoTowerFavConsumerEmbeddingMhStore"
-  @Provides
-  @Singleton
-  @Named(TwoTowerFavConsumerEmbeddingMhStoreName)
-  def twoTowerFavConsumerEmbeddingMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[InternalId, api.Embedding] = {
-    val binaryEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
-      BinaryScalaCodec(api.Embedding)
+  f nal val TwoTo rFavConsu rEmbedd ngMhStoreNa  = "TwoTo rFavConsu rEmbedd ngMhStore"
+  @Prov des
+  @S ngleton
+  @Na d(TwoTo rFavConsu rEmbedd ngMhStoreNa )
+  def twoTo rFavConsu rEmbedd ngMhStore(
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    val b naryEmbedd ng nject on:  nject on[ap .Embedd ng, Array[Byte]] =
+      B naryScalaCodec(ap .Embedd ng)
 
-    val longCodec = implicitly[Injection[Long, Array[Byte]]]
+    val longCodec =  mpl c ly[ nject on[Long, Array[Byte]]]
 
     ManhattanRO
-      .getReadableStoreWithMtls[UserId, api.Embedding](
-        ManhattanROConfig(
+      .getReadableStoreW hMtls[User d, ap .Embedd ng](
+        ManhattanROConf g(
           HDFSPath(""), // not needed
-          ApplicationID("cr_mixer_apollo"),
-          DatasetName("two_tower_fav_user_embedding_apollo"),
+          Appl cat on D("cr_m xer_apollo"),
+          DatasetNa ("two_to r_fav_user_embedd ng_apollo"),
           Apollo
         ),
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, binaryEmbeddingInjection).composeKeyMapping[InternalId] {
-        case InternalId.UserId(userId) =>
-          userId
+        ManhattanKVCl entMtlsParams(serv ce dent f er)
+      )(longCodec, b naryEmbedd ng nject on).composeKeyMapp ng[ nternal d] {
+        case  nternal d.User d(user d) =>
+          user d
         case _ =>
-          throw new UnsupportedOperationException("Invalid Internal Id")
+          throw new UnsupportedOperat onExcept on(" nval d  nternal  d")
       }
   }
 
-  final val DebuggerDemoUserEmbeddingMhStoreName = "DebuggerDemoUserEmbeddingMhStoreName"
-  @Provides
-  @Singleton
-  @Named(DebuggerDemoUserEmbeddingMhStoreName)
-  def debuggerDemoUserEmbeddingStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[InternalId, api.Embedding] = {
-    // This dataset is from src/scala/com/twitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalUserEmbeddingScalaDataset.sql
-    // Change the above sql if you want to use a diff embedding
-    val manhattanROConfig = ManhattanROConfig(
+  f nal val DebuggerDemoUserEmbedd ngMhStoreNa  = "DebuggerDemoUserEmbedd ngMhStoreNa "
+  @Prov des
+  @S ngleton
+  @Na d(DebuggerDemoUserEmbedd ngMhStoreNa )
+  def debuggerDemoUserEmbedd ngStore(
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    // T  dataset  s from src/scala/com/tw ter/wtf/beam/bq_embedd ng_export/sql/MlfExper  ntalUserEmbedd ngScalaDataset.sql
+    // Change t  above sql  f   want to use a d ff embedd ng
+    val manhattanROConf g = ManhattanROConf g(
       HDFSPath(""), // not needed
-      ApplicationID("cr_mixer_apollo"),
-      DatasetName("experimental_user_embedding"),
+      Appl cat on D("cr_m xer_apollo"),
+      DatasetNa ("exper  ntal_user_embedd ng"),
       Apollo
     )
-    buildUserEmbeddingStore(serviceIdentifier, manhattanROConfig)
+    bu ldUserEmbedd ngStore(serv ce dent f er, manhattanROConf g)
   }
 
-  final val DebuggerDemoTweetEmbeddingMhStoreName = "DebuggerDemoTweetEmbeddingMhStore"
-  @Provides
-  @Singleton
-  @Named(DebuggerDemoTweetEmbeddingMhStoreName)
-  def debuggerDemoTweetEmbeddingStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[InternalId, api.Embedding] = {
-    // This dataset is from src/scala/com/twitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalTweetEmbeddingScalaDataset.sql
-    // Change the above sql if you want to use a diff embedding
-    val manhattanROConfig = ManhattanROConfig(
+  f nal val DebuggerDemoT etEmbedd ngMhStoreNa  = "DebuggerDemoT etEmbedd ngMhStore"
+  @Prov des
+  @S ngleton
+  @Na d(DebuggerDemoT etEmbedd ngMhStoreNa )
+  def debuggerDemoT etEmbedd ngStore(
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    // T  dataset  s from src/scala/com/tw ter/wtf/beam/bq_embedd ng_export/sql/MlfExper  ntalT etEmbedd ngScalaDataset.sql
+    // Change t  above sql  f   want to use a d ff embedd ng
+    val manhattanROConf g = ManhattanROConf g(
       HDFSPath(""), // not needed
-      ApplicationID("cr_mixer_apollo"),
-      DatasetName("experimental_tweet_embedding"),
+      Appl cat on D("cr_m xer_apollo"),
+      DatasetNa ("exper  ntal_t et_embedd ng"),
       Apollo
     )
-    buildTweetEmbeddingStore(serviceIdentifier, manhattanROConfig)
+    bu ldT etEmbedd ngStore(serv ce dent f er, manhattanROConf g)
   }
 
-  private def buildUserEmbeddingStore(
-    serviceIdentifier: ServiceIdentifier,
-    manhattanROConfig: ManhattanROConfig
-  ): ReadableStore[InternalId, api.Embedding] = {
-    val binaryEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
-      BinaryScalaCodec(api.Embedding)
+  pr vate def bu ldUserEmbedd ngStore(
+    serv ce dent f er: Serv ce dent f er,
+    manhattanROConf g: ManhattanROConf g
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    val b naryEmbedd ng nject on:  nject on[ap .Embedd ng, Array[Byte]] =
+      B naryScalaCodec(ap .Embedd ng)
 
-    val longCodec = implicitly[Injection[Long, Array[Byte]]]
+    val longCodec =  mpl c ly[ nject on[Long, Array[Byte]]]
     ManhattanRO
-      .getReadableStoreWithMtls[UserId, api.Embedding](
-        manhattanROConfig,
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, binaryEmbeddingInjection).composeKeyMapping[InternalId] {
-        case InternalId.UserId(userId) =>
-          userId
+      .getReadableStoreW hMtls[User d, ap .Embedd ng](
+        manhattanROConf g,
+        ManhattanKVCl entMtlsParams(serv ce dent f er)
+      )(longCodec, b naryEmbedd ng nject on).composeKeyMapp ng[ nternal d] {
+        case  nternal d.User d(user d) =>
+          user d
         case _ =>
-          throw new UnsupportedOperationException("Invalid Internal Id")
+          throw new UnsupportedOperat onExcept on(" nval d  nternal  d")
       }
   }
 
-  private def buildTweetEmbeddingStore(
-    serviceIdentifier: ServiceIdentifier,
-    manhattanROConfig: ManhattanROConfig
-  ): ReadableStore[InternalId, api.Embedding] = {
-    val binaryEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
-      BinaryScalaCodec(api.Embedding)
+  pr vate def bu ldT etEmbedd ngStore(
+    serv ce dent f er: Serv ce dent f er,
+    manhattanROConf g: ManhattanROConf g
+  ): ReadableStore[ nternal d, ap .Embedd ng] = {
+    val b naryEmbedd ng nject on:  nject on[ap .Embedd ng, Array[Byte]] =
+      B naryScalaCodec(ap .Embedd ng)
 
-    val longCodec = implicitly[Injection[Long, Array[Byte]]]
+    val longCodec =  mpl c ly[ nject on[Long, Array[Byte]]]
 
     ManhattanRO
-      .getReadableStoreWithMtls[TweetId, api.Embedding](
-        manhattanROConfig,
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, binaryEmbeddingInjection).composeKeyMapping[InternalId] {
-        case InternalId.TweetId(tweetId) =>
-          tweetId
+      .getReadableStoreW hMtls[T et d, ap .Embedd ng](
+        manhattanROConf g,
+        ManhattanKVCl entMtlsParams(serv ce dent f er)
+      )(longCodec, b naryEmbedd ng nject on).composeKeyMapp ng[ nternal d] {
+        case  nternal d.T et d(t et d) =>
+          t et d
         case _ =>
-          throw new UnsupportedOperationException("Invalid Internal Id")
+          throw new UnsupportedOperat onExcept on(" nval d  nternal  d")
       }
   }
 }

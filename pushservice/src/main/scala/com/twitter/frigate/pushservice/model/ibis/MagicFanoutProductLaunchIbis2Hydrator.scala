@@ -1,54 +1,54 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.MagicFanoutProductLaunchCandidate
-import com.twitter.frigate.magic_events.thriftscala.ProductInfo
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Mag cFanoutProductLaunchCand date
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Product nfo
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l. rgeModelValues
+ mport com.tw ter.ut l.Future
 
-trait MagicFanoutProductLaunchIbis2Hydrator
-    extends CustomConfigurationMapForIbis
-    with Ibis2HydratorForCandidate {
-  self: PushCandidate with MagicFanoutProductLaunchCandidate =>
+tra  Mag cFanoutProductLaunch b s2Hydrator
+    extends CustomConf gurat onMapFor b s
+    w h  b s2HydratorForCand date {
+  self: PushCand date w h Mag cFanoutProductLaunchCand date =>
 
-  private def getProductInfoMap(productInfo: ProductInfo): Map[String, String] = {
-    val titleMap = productInfo.title
-      .map { title =>
-        Map("title" -> title)
+  pr vate def getProduct nfoMap(product nfo: Product nfo): Map[Str ng, Str ng] = {
+    val t leMap = product nfo.t le
+      .map { t le =>
+        Map("t le" -> t le)
       }.getOrElse(Map.empty)
-    val bodyMap = productInfo.body
+    val bodyMap = product nfo.body
       .map { body =>
         Map("body" -> body)
       }.getOrElse(Map.empty)
-    val deeplinkMap = productInfo.deeplink
-      .map { deeplink =>
-        Map("deeplink" -> deeplink)
+    val deepl nkMap = product nfo.deepl nk
+      .map { deepl nk =>
+        Map("deepl nk" -> deepl nk)
       }.getOrElse(Map.empty)
 
-    titleMap ++ bodyMap ++ deeplinkMap
+    t leMap ++ bodyMap ++ deepl nkMap
   }
 
-  private lazy val landingPage: Map[String, String] = {
-    val urlFromFS = target.params(PushFeatureSwitchParams.ProductLaunchLandingPageDeepLink)
+  pr vate lazy val land ngPage: Map[Str ng, Str ng] = {
+    val urlFromFS = target.params(PushFeatureSw chParams.ProductLaunchLand ngPageDeepL nk)
     Map("push_land_url" -> urlFromFS)
   }
 
-  private lazy val customProductLaunchPushDetails: Map[String, String] = {
-    frigateNotification.magicFanoutProductLaunchNotification match {
-      case Some(productLaunchNotif) =>
-        productLaunchNotif.productInfo match {
-          case Some(productInfo) =>
-            getProductInfoMap(productInfo)
+  pr vate lazy val customProductLaunchPushDeta ls: Map[Str ng, Str ng] = {
+    fr gateNot f cat on.mag cFanoutProductLaunchNot f cat on match {
+      case So (productLaunchNot f) =>
+        productLaunchNot f.product nfo match {
+          case So (product nfo) =>
+            getProduct nfoMap(product nfo)
           case _ => Map.empty
         }
       case _ => Map.empty
     }
   }
 
-  override lazy val customFieldsMapFut: Future[Map[String, String]] =
-    mergeModelValues(super.customFieldsMapFut, customProductLaunchPushDetails)
+  overr de lazy val customF eldsMapFut: Future[Map[Str ng, Str ng]] =
+     rgeModelValues(super.customF eldsMapFut, customProductLaunchPushDeta ls)
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeModelValues(super.modelValues, landingPage)
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+     rgeModelValues(super.modelValues, land ngPage)
 }

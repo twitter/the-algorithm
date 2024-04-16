@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.model.request
+package com.tw ter.ho _m xer.model.request
 
 /**
- * [[HasSeenTweetIds]] enables shared components to access the list of impressed tweet IDs
- * sent by clients across different Home Mixer query types (e.g. FollowingQuery, ForYouQuery)
+ * [[HasSeenT et ds]] enables shared components to access t  l st of  mpressed t et  Ds
+ * sent by cl ents across d fferent Ho  M xer query types (e.g. Follow ngQuery, For Query)
  */
-trait HasSeenTweetIds {
-  def seenTweetIds: Option[Seq[Long]]
+tra  HasSeenT et ds {
+  def seenT et ds: Opt on[Seq[Long]]
 }

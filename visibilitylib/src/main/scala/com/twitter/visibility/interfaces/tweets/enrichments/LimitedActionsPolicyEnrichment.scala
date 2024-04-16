@@ -1,173 +1,173 @@
-package com.twitter.visibility.interfaces.tweets.enrichments
+package com.tw ter.v s b l y. nterfaces.t ets.enr ch nts
 
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.LocalizedLimitedActionsSource
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionTypeConverter
-import com.twitter.visibility.common.actions.LimitedActionsPolicy
-import com.twitter.visibility.common.actions.LimitedActionType
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.EmergencyDynamicInterstitial
-import com.twitter.visibility.rules.InterstitialLimitedEngagements
-import com.twitter.visibility.rules.LimitedEngagements
+ mport com.tw ter.featuresw c s.FSRec p ent
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.common.Local zedL m edAct onsS ce
+ mport com.tw ter.v s b l y.common.act ons.converter.scala.L m edAct onTypeConverter
+ mport com.tw ter.v s b l y.common.act ons.L m edAct onsPol cy
+ mport com.tw ter.v s b l y.common.act ons.L m edAct onType
+ mport com.tw ter.v s b l y.common.act ons.L m edEngage ntReason
+ mport com.tw ter.v s b l y.rules.Act on
+ mport com.tw ter.v s b l y.rules.E rgencyDynam c nterst  al
+ mport com.tw ter.v s b l y.rules. nterst  alL m edEngage nts
+ mport com.tw ter.v s b l y.rules.L m edEngage nts
 
-case class PolicyFeatureSwitchResults(
-  limitedActionTypes: Option[Seq[LimitedActionType]],
-  copyNamespace: String,
-  promptType: String,
-  learnMoreUrl: Option[String])
+case class Pol cyFeatureSw chResults(
+  l m edAct onTypes: Opt on[Seq[L m edAct onType]],
+  copyNa space: Str ng,
+  promptType: Str ng,
+  learnMoreUrl: Opt on[Str ng])
 
-object LimitedActionsPolicyEnrichment {
-  object FeatureSwitchKeys {
-    val LimitedActionTypes = "limited_actions_policy_limited_actions"
-    val CopyNamespace = "limited_actions_policy_copy_namespace"
-    val PromptType = "limited_actions_policy_prompt_type"
-    val LearnMoreUrl = "limited_actions_policy_prompt_learn_more_url"
+object L m edAct onsPol cyEnr ch nt {
+  object FeatureSw chKeys {
+    val L m edAct onTypes = "l m ed_act ons_pol cy_l m ed_act ons"
+    val CopyNa space = "l m ed_act ons_pol cy_copy_na space"
+    val PromptType = "l m ed_act ons_pol cy_prompt_type"
+    val LearnMoreUrl = "l m ed_act ons_pol cy_prompt_learn_more_url"
   }
 
-  val DefaultCopyNameSpace = "Default"
-  val DefaultPromptType = "basic"
-  val LimitedActionsPolicyEnrichmentScope = "limited_actions_policy_enrichment"
-  val MissingLimitedActionTypesScope = "missing_limited_action_types"
+  val DefaultCopyNa Space = "Default"
+  val DefaultPromptType = "bas c"
+  val L m edAct onsPol cyEnr ch ntScope = "l m ed_act ons_pol cy_enr ch nt"
+  val M ss ngL m edAct onTypesScope = "m ss ng_l m ed_act on_types"
   val ExecutedScope = "executed"
 
   def apply(
-    result: VisibilityResult,
-    localizedLimitedActionSource: LocalizedLimitedActionsSource,
-    languageCode: String,
-    countryCode: Option[String],
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): VisibilityResult = {
-    val scopedStatsReceiver = statsReceiver.scope(LimitedActionsPolicyEnrichmentScope)
+    result: V s b l yResult,
+    local zedL m edAct onS ce: Local zedL m edAct onsS ce,
+    languageCode: Str ng,
+    countryCode: Opt on[Str ng],
+    featureSw c s: FeatureSw c s,
+    statsRece ver: StatsRece ver
+  ): V s b l yResult = {
+    val scopedStatsRece ver = statsRece ver.scope(L m edAct onsPol cyEnr ch ntScope)
 
-    val enrichVerdict_ = enrichVerdict(
-      _: Action,
-      localizedLimitedActionSource,
+    val enr chVerd ct_ = enr chVerd ct(
+      _: Act on,
+      local zedL m edAct onS ce,
       languageCode,
       countryCode,
-      featureSwitches,
-      scopedStatsReceiver
+      featureSw c s,
+      scopedStatsRece ver
     )
 
     result.copy(
-      verdict = enrichVerdict_(result.verdict),
-      secondaryVerdicts = result.secondaryVerdicts.map(enrichVerdict_)
+      verd ct = enr chVerd ct_(result.verd ct),
+      secondaryVerd cts = result.secondaryVerd cts.map(enr chVerd ct_)
     )
   }
 
-  private def enrichVerdict(
-    verdict: Action,
-    localizedLimitedActionsSource: LocalizedLimitedActionsSource,
-    languageCode: String,
-    countryCode: Option[String],
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): Action = {
-    val limitedActionsPolicyForReason_ = limitedActionsPolicyForReason(
-      _: LimitedEngagementReason,
-      localizedLimitedActionsSource,
+  pr vate def enr chVerd ct(
+    verd ct: Act on,
+    local zedL m edAct onsS ce: Local zedL m edAct onsS ce,
+    languageCode: Str ng,
+    countryCode: Opt on[Str ng],
+    featureSw c s: FeatureSw c s,
+    statsRece ver: StatsRece ver
+  ): Act on = {
+    val l m edAct onsPol cyForReason_ = l m edAct onsPol cyForReason(
+      _: L m edEngage ntReason,
+      local zedL m edAct onsS ce,
       languageCode,
       countryCode,
-      featureSwitches,
-      statsReceiver
+      featureSw c s,
+      statsRece ver
     )
-    val executedCounter = statsReceiver.scope(ExecutedScope)
+    val executedCounter = statsRece ver.scope(ExecutedScope)
 
-    verdict match {
-      case le: LimitedEngagements => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(le.name).incr()
+    verd ct match {
+      case le: L m edEngage nts => {
+        executedCounter.counter(""). ncr()
+        executedCounter.counter(le.na ). ncr()
         le.copy(
-          policy = limitedActionsPolicyForReason_(le.getLimitedEngagementReason)
+          pol cy = l m edAct onsPol cyForReason_(le.getL m edEngage ntReason)
         )
       }
-      case ile: InterstitialLimitedEngagements => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(ile.name).incr()
-        ile.copy(
-          policy = limitedActionsPolicyForReason_(
-            ile.getLimitedEngagementReason
+      case  le:  nterst  alL m edEngage nts => {
+        executedCounter.counter(""). ncr()
+        executedCounter.counter( le.na ). ncr()
+         le.copy(
+          pol cy = l m edAct onsPol cyForReason_(
+             le.getL m edEngage ntReason
           )
         )
       }
-      case edi: EmergencyDynamicInterstitial => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(edi.name).incr()
-        EmergencyDynamicInterstitial(
-          copy = edi.copy,
-          linkOpt = edi.linkOpt,
-          localizedMessage = edi.localizedMessage,
-          policy = limitedActionsPolicyForReason_(edi.getLimitedEngagementReason)
+      case ed : E rgencyDynam c nterst  al => {
+        executedCounter.counter(""). ncr()
+        executedCounter.counter(ed .na ). ncr()
+        E rgencyDynam c nterst  al(
+          copy = ed .copy,
+          l nkOpt = ed .l nkOpt,
+          local zed ssage = ed .local zed ssage,
+          pol cy = l m edAct onsPol cyForReason_(ed .getL m edEngage ntReason)
         )
       }
-      case _ => verdict
+      case _ => verd ct
     }
   }
 
-  private def limitedActionsPolicyForReason(
-    reason: LimitedEngagementReason,
-    localizedLimitedActionsSource: LocalizedLimitedActionsSource,
-    languageCode: String,
-    countryCode: Option[String],
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): Option[LimitedActionsPolicy] = {
-    val policyConfig = getPolicyFeatureSwitchResults(featureSwitches, reason)
+  pr vate def l m edAct onsPol cyForReason(
+    reason: L m edEngage ntReason,
+    local zedL m edAct onsS ce: Local zedL m edAct onsS ce,
+    languageCode: Str ng,
+    countryCode: Opt on[Str ng],
+    featureSw c s: FeatureSw c s,
+    statsRece ver: StatsRece ver
+  ): Opt on[L m edAct onsPol cy] = {
+    val pol cyConf g = getPol cyFeatureSw chResults(featureSw c s, reason)
 
-    policyConfig.limitedActionTypes match {
-      case Some(limitedActionTypes) if limitedActionTypes.nonEmpty =>
-        Some(
-          LimitedActionsPolicy(
-            limitedActionTypes.map(
-              localizedLimitedActionsSource.fetch(
+    pol cyConf g.l m edAct onTypes match {
+      case So (l m edAct onTypes)  f l m edAct onTypes.nonEmpty =>
+        So (
+          L m edAct onsPol cy(
+            l m edAct onTypes.map(
+              local zedL m edAct onsS ce.fetch(
                 _,
                 languageCode,
                 countryCode,
-                policyConfig.promptType,
-                policyConfig.copyNamespace,
-                policyConfig.learnMoreUrl
+                pol cyConf g.promptType,
+                pol cyConf g.copyNa space,
+                pol cyConf g.learnMoreUrl
               )
             )
           )
         )
       case _ => {
-        statsReceiver
-          .scope(MissingLimitedActionTypesScope).counter(reason.toLimitedActionsString).incr()
+        statsRece ver
+          .scope(M ss ngL m edAct onTypesScope).counter(reason.toL m edAct onsStr ng). ncr()
         None
       }
     }
   }
 
-  private def getPolicyFeatureSwitchResults(
-    featureSwitches: FeatureSwitches,
-    reason: LimitedEngagementReason
-  ): PolicyFeatureSwitchResults = {
-    val recipient = FSRecipient().withCustomFields(
-      ("LimitedEngagementReason", reason.toLimitedActionsString)
+  pr vate def getPol cyFeatureSw chResults(
+    featureSw c s: FeatureSw c s,
+    reason: L m edEngage ntReason
+  ): Pol cyFeatureSw chResults = {
+    val rec p ent = FSRec p ent().w hCustomF elds(
+      ("L m edEngage ntReason", reason.toL m edAct onsStr ng)
     )
-    val featureSwitchesResults = featureSwitches
-      .matchRecipient(recipient)
+    val featureSw c sResults = featureSw c s
+      .matchRec p ent(rec p ent)
 
-    val limitedActionTypes = featureSwitchesResults
-      .getStringArray(FeatureSwitchKeys.LimitedActionTypes)
-      .map(_.map(LimitedActionTypeConverter.fromString).flatten)
+    val l m edAct onTypes = featureSw c sResults
+      .getStr ngArray(FeatureSw chKeys.L m edAct onTypes)
+      .map(_.map(L m edAct onTypeConverter.fromStr ng).flatten)
 
-    val copyNamespace = featureSwitchesResults
-      .getString(FeatureSwitchKeys.CopyNamespace)
-      .getOrElse(DefaultCopyNameSpace)
+    val copyNa space = featureSw c sResults
+      .getStr ng(FeatureSw chKeys.CopyNa space)
+      .getOrElse(DefaultCopyNa Space)
 
-    val promptType = featureSwitchesResults
-      .getString(FeatureSwitchKeys.PromptType)
+    val promptType = featureSw c sResults
+      .getStr ng(FeatureSw chKeys.PromptType)
       .getOrElse(DefaultPromptType)
 
-    val learnMoreUrl = featureSwitchesResults
-      .getString(FeatureSwitchKeys.LearnMoreUrl)
-      .filter(_.nonEmpty)
+    val learnMoreUrl = featureSw c sResults
+      .getStr ng(FeatureSw chKeys.LearnMoreUrl)
+      .f lter(_.nonEmpty)
 
-    PolicyFeatureSwitchResults(limitedActionTypes, copyNamespace, promptType, learnMoreUrl)
+    Pol cyFeatureSw chResults(l m edAct onTypes, copyNa space, promptType, learnMoreUrl)
   }
 }

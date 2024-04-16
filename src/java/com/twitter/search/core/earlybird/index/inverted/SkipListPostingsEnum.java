@@ -1,114 +1,114 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntData;
 
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.INVALID_POSITION;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex. nverted.Sk pL stConta ner. NVAL D_POS T ON;
 
 /**
- * TermDocs enumerator used by {@link SkipListPostingList}.
+ * TermDocs enu rator used by {@l nk Sk pL stPost ngL st}.
  */
-public class SkipListPostingsEnum extends PostingsEnum {
-  /** Initialize cur doc ID and frequency. */
-  private int curDoc = TermsArray.INVALID;
-  private int curFreq = 0;
+publ c class Sk pL stPost ngsEnum extends Post ngsEnum {
+  /**  n  al ze cur doc  D and frequency. */
+  pr vate  nt curDoc = TermsArray. NVAL D;
+  pr vate  nt curFreq = 0;
 
-  private final int postingPointer;
+  pr vate f nal  nt post ngPo nter;
 
-  private final int cost;
-
-  /**
-   * maxPublishedPointer exists to prevent us from returning documents that are partially indexed.
-   * These pointers are safe to follow, but the documents should not be returned. See
-   * {@link EarlybirdRealtimeIndexSegmentData#getSyncData()} ()}.
-   */
-  private final int maxPublishedPointer;
-
-  /** Skip list info and search key */
-  private final SkipListContainer<SkipListPostingList.Key> skiplist;
-  private final SkipListPostingList.Key key = new SkipListPostingList.Key();
+  pr vate f nal  nt cost;
 
   /**
-   * Pointer/posting/docID of next posting in the skip list.
-   *  Notice the next here is relative to last posting with curDoc ID.
+   * maxPubl s dPo nter ex sts to prevent us from return ng docu nts that are part ally  ndexed.
+   * T se po nters are safe to follow, but t  docu nts should not be returned. See
+   * {@l nk Earlyb rdRealt   ndexSeg ntData#getSyncData()} ()}.
    */
-  private int nextPostingPointer;
-  private int nextPostingDocID;
+  pr vate f nal  nt maxPubl s dPo nter;
+
+  /** Sk p l st  nfo and search key */
+  pr vate f nal Sk pL stConta ner<Sk pL stPost ngL st.Key> sk pl st;
+  pr vate f nal Sk pL stPost ngL st.Key key = new Sk pL stPost ngL st.Key();
 
   /**
-   * We save the positionPointer because we must walk the posting list to obtain term frequency
-   * before we can start iterating through document positions. To do that walk, we increment
-   * postingsPointer until it points to the first posting for the next doc, so postingsPointer is no
-   * longer what we want to use as the start of the position list. The position pointer starts out
-   * pointing to the first posting with that doc ID value. There can be duplicate doc ID values with
-   * different positions. To find subsequent positions, we simply walk the posting list using this
-   * pointer.
+   * Po nter/post ng/doc D of next post ng  n t  sk p l st.
+   *  Not ce t  next  re  s relat ve to last post ng w h curDoc  D.
    */
-  private int positionPointer = -1;
+  pr vate  nt nextPost ngPo nter;
+  pr vate  nt nextPost ngDoc D;
 
   /**
-   * The payloadPointer should only be called after calling nextPosition, as it points to a payload
-   * for each position. It is not updated unless nextPosition is called.
+   *   save t  pos  onPo nter because   must walk t  post ng l st to obta n term frequency
+   * before   can start  erat ng through docu nt pos  ons. To do that walk,    ncre nt
+   * post ngsPo nter unt l   po nts to t  f rst post ng for t  next doc, so post ngsPo nter  s no
+   * longer what   want to use as t  start of t  pos  on l st. T  pos  on po nter starts out
+   * po nt ng to t  f rst post ng w h that doc  D value. T re can be dupl cate doc  D values w h
+   * d fferent pos  ons. To f nd subsequent pos  ons,   s mply walk t  post ng l st us ng t 
+   * po nter.
    */
-  private int payloadPointer = -1;
-
-  /** Search finger used in advance method. */
-  private final SkipListSearchFinger advanceSearchFinger;
+  pr vate  nt pos  onPo nter = -1;
 
   /**
-   * A new {@link PostingsEnum} for a real-time skip list-based posting list.
+   * T  payloadPo nter should only be called after call ng nextPos  on, as   po nts to a payload
+   * for each pos  on.    s not updated unless nextPos  on  s called.
    */
-  public SkipListPostingsEnum(
-      int postingPointer,
-      int docFreq,
-      int maxPublishedPointer,
-      SkipListContainer<SkipListPostingList.Key> skiplist) {
-    this.postingPointer = postingPointer;
-    this.skiplist = skiplist;
-    this.advanceSearchFinger = this.skiplist.buildSearchFinger();
-    this.maxPublishedPointer = maxPublishedPointer;
-    this.nextPostingPointer = postingPointer;
+  pr vate  nt payloadPo nter = -1;
 
-    // WARNING:
-    // docFreq is approximate and may not be the true document frequency of the posting list.
-    this.cost = docFreq;
+  /** Search f nger used  n advance  thod. */
+  pr vate f nal Sk pL stSearchF nger advanceSearchF nger;
 
-    if (postingPointer != -1) {
-      // Because the posting pointer is not negative 1, we know it's valid.
-      readNextPosting();
+  /**
+   * A new {@l nk Post ngsEnum} for a real-t   sk p l st-based post ng l st.
+   */
+  publ c Sk pL stPost ngsEnum(
+       nt post ngPo nter,
+       nt docFreq,
+       nt maxPubl s dPo nter,
+      Sk pL stConta ner<Sk pL stPost ngL st.Key> sk pl st) {
+    t .post ngPo nter = post ngPo nter;
+    t .sk pl st = sk pl st;
+    t .advanceSearchF nger = t .sk pl st.bu ldSearchF nger();
+    t .maxPubl s dPo nter = maxPubl s dPo nter;
+    t .nextPost ngPo nter = post ngPo nter;
+
+    // WARN NG:
+    // docFreq  s approx mate and may not be t  true docu nt frequency of t  post ng l st.
+    t .cost = docFreq;
+
+     f (post ngPo nter != -1) {
+      // Because t  post ng po nter  s not negat ve 1,   know  's val d.
+      readNextPost ng();
     }
 
-    advanceSearchFinger.reset();
+    advanceSearchF nger.reset();
   }
 
-  @Override
-  public final int nextDoc() {
-    // Notice if skip list is exhausted nextPostingPointer will point back to postingPointer since
-    // skip list is circle linked.
-    if (nextPostingPointer == postingPointer) {
-      // Skip list is exhausted.
+  @Overr de
+  publ c f nal  nt nextDoc() {
+    // Not ce  f sk p l st  s exhausted nextPost ngPo nter w ll po nt back to post ngPo nter s nce
+    // sk p l st  s c rcle l nked.
+     f (nextPost ngPo nter == post ngPo nter) {
+      // Sk p l st  s exhausted.
       curDoc = NO_MORE_DOCS;
       curFreq = 0;
     } else {
-      // Skip list is not exhausted.
-      curDoc = nextPostingDocID;
+      // Sk p l st  s not exhausted.
+      curDoc = nextPost ngDoc D;
       curFreq = 1;
-      positionPointer = nextPostingPointer;
+      pos  onPo nter = nextPost ngPo nter;
 
-      // Keep reading all the posting with the same doc ID.
-      // Notice:
-      //   - posting with the same doc ID will be stored consecutively
-      //     since the skip list is sorted.
-      //   - if skip list is exhausted, nextPostingPointer will become postingPointer
-      //     since skip list is circle linked.
-      readNextPosting();
-      while (nextPostingPointer != postingPointer && nextPostingDocID == curDoc) {
+      // Keep read ng all t  post ng w h t  sa  doc  D.
+      // Not ce:
+      //   - post ng w h t  sa  doc  D w ll be stored consecut vely
+      //     s nce t  sk p l st  s sorted.
+      //   -  f sk p l st  s exhausted, nextPost ngPo nter w ll beco  post ngPo nter
+      //     s nce sk p l st  s c rcle l nked.
+      readNextPost ng();
+      wh le (nextPost ngPo nter != post ngPo nter && nextPost ngDoc D == curDoc) {
         curFreq++;
-        readNextPosting();
+        readNextPost ng();
       }
     }
 
@@ -117,139 +117,139 @@ public class SkipListPostingsEnum extends PostingsEnum {
   }
 
   /**
-   * Moves the enumerator forward by one element, then reads the information at that position.
+   * Moves t  enu rator forward by one ele nt, t n reads t   nformat on at that pos  on.
    * */
-  private void readNextPosting() {
-    // Move search finger forward at lowest level.
-    advanceSearchFinger.setPointer(0, nextPostingPointer);
+  pr vate vo d readNextPost ng() {
+    // Move search f nger forward at lo st level.
+    advanceSearchF nger.setPo nter(0, nextPost ngPo nter);
 
-    // Read next posting pointer.
-    nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
+    // Read next post ng po nter.
+    nextPost ngPo nter = sk pl st.getNextPo nter(nextPost ngPo nter);
 
-    // Read the new posting positioned under nextPostingPointer into the nextPostingDocID.
-    readNextPostingInfo();
+    // Read t  new post ng pos  oned under nextPost ngPo nter  nto t  nextPost ngDoc D.
+    readNextPost ng nfo();
   }
 
-  private boolean isPointerPublished(int pointer) {
-    return pointer <= maxPublishedPointer;
+  pr vate boolean  sPo nterPubl s d( nt po nter) {
+    return po nter <= maxPubl s dPo nter;
   }
 
-  /** Read next posting and doc id encoded in next posting. */
-  private void readNextPostingInfo() {
-    // We need to skip over every pointer that has not been published to this Enum, otherwise the
-    // searcher will see unpublished documents. We also end termination if we reach
-    // nextPostingPointer == postingPointer, because that means we have reached the end of the
-    // skiplist.
-    while (!isPointerPublished(nextPostingPointer) && nextPostingPointer != postingPointer) {
-      // Move search finger forward at lowest level.
-      advanceSearchFinger.setPointer(0, nextPostingPointer);
+  /** Read next post ng and doc  d encoded  n next post ng. */
+  pr vate vo d readNextPost ng nfo() {
+    //   need to sk p over every po nter that has not been publ s d to t  Enum, ot rw se t 
+    // searc r w ll see unpubl s d docu nts.   also end term nat on  f   reach
+    // nextPost ngPo nter == post ngPo nter, because that  ans   have reac d t  end of t 
+    // sk pl st.
+    wh le (! sPo nterPubl s d(nextPost ngPo nter) && nextPost ngPo nter != post ngPo nter) {
+      // Move search f nger forward at lo st level.
+      advanceSearchF nger.setPo nter(0, nextPost ngPo nter);
 
-      // Read next posting pointer.
-      nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
+      // Read next post ng po nter.
+      nextPost ngPo nter = sk pl st.getNextPo nter(nextPost ngPo nter);
     }
 
-    // Notice if skip list is exhausted, nextPostingPointer will be postingPointer
-    // since skip list is circle linked.
-    if (nextPostingPointer != postingPointer) {
-      nextPostingDocID = skiplist.getValue(nextPostingPointer);
+    // Not ce  f sk p l st  s exhausted, nextPost ngPo nter w ll be post ngPo nter
+    // s nce sk p l st  s c rcle l nked.
+     f (nextPost ngPo nter != post ngPo nter) {
+      nextPost ngDoc D = sk pl st.getValue(nextPost ngPo nter);
     } else {
-      nextPostingDocID = NO_MORE_DOCS;
+      nextPost ngDoc D = NO_MORE_DOCS;
     }
   }
 
   /**
-   * Jump to the target, then use {@link #nextDoc()} to collect nextDoc info.
-   * Notice target might be smaller than curDoc or smallestDocID.
+   * Jump to t  target, t n use {@l nk #nextDoc()} to collect nextDoc  nfo.
+   * Not ce target m ght be smaller than curDoc or smallestDoc D.
    */
-  @Override
-  public final int advance(int target) {
-    if (target == NO_MORE_DOCS) {
-      // Exhaust the posting list, so that future calls to docID() always return NO_MORE_DOCS.
-      nextPostingPointer = postingPointer;
+  @Overr de
+  publ c f nal  nt advance( nt target) {
+     f (target == NO_MORE_DOCS) {
+      // Exhaust t  post ng l st, so that future calls to doc D() always return NO_MORE_DOCS.
+      nextPost ngPo nter = post ngPo nter;
     }
 
-    if (nextPostingPointer == postingPointer) {
-      // Call nextDoc to ensure that all values are updated and we don't have to duplicate that
-      // here.
+     f (nextPost ngPo nter == post ngPo nter) {
+      // Call nextDoc to ensure that all values are updated and   don't have to dupl cate that
+      //  re.
       return nextDoc();
     }
 
-    // Jump to target if target is bigger.
-    if (target >= curDoc && target >= nextPostingDocID) {
+    // Jump to target  f target  s b gger.
+     f (target >= curDoc && target >= nextPost ngDoc D) {
       jumpToTarget(target);
     }
 
-    // Retrieve next doc.
+    // Retr eve next doc.
     return nextDoc();
   }
 
   /**
-   * Set the next posting pointer (and info) to the first posting
-   * with doc ID equal to or larger than the target.
+   * Set t  next post ng po nter (and  nfo) to t  f rst post ng
+   * w h doc  D equal to or larger than t  target.
    *
-   * Notice this method does not set curDoc or curFreq.
+   * Not ce t   thod does not set curDoc or curFreq.
    */
-  private void jumpToTarget(int target) {
-    // Do a ceil search.
-    nextPostingPointer = skiplist.searchCeil(
-        key.withDocAndPosition(target, INVALID_POSITION), postingPointer, advanceSearchFinger);
+  pr vate vo d jumpToTarget( nt target) {
+    // Do a ce l search.
+    nextPost ngPo nter = sk pl st.searchCe l(
+        key.w hDocAndPos  on(target,  NVAL D_POS T ON), post ngPo nter, advanceSearchF nger);
 
-    // Read next posting information.
-    readNextPostingInfo();
+    // Read next post ng  nformat on.
+    readNextPost ng nfo();
   }
 
-  @Override
-  public int nextPosition() {
-    // If doc ID is equal to no more docs than we are past the end of the posting list. If doc ID
-    // is invalid, then we have not called nextDoc yet, and we should not return a real position.
-    // If the position pointer is past the current doc ID, then we should not return a position
-    // until nextDoc is called again (we don't want to return positions for a different doc).
-    if (docID() == NO_MORE_DOCS
-        || docID() == TermsArray.INVALID
-        || skiplist.getValue(positionPointer) != docID()) {
-      return INVALID_POSITION;
+  @Overr de
+  publ c  nt nextPos  on() {
+    //  f doc  D  s equal to no more docs than   are past t  end of t  post ng l st.  f doc  D
+    //  s  nval d, t n   have not called nextDoc yet, and   should not return a real pos  on.
+    //  f t  pos  on po nter  s past t  current doc  D, t n   should not return a pos  on
+    // unt l nextDoc  s called aga n (  don't want to return pos  ons for a d fferent doc).
+     f (doc D() == NO_MORE_DOCS
+        || doc D() == TermsArray. NVAL D
+        || sk pl st.getValue(pos  onPo nter) != doc D()) {
+      return  NVAL D_POS T ON;
     }
-    payloadPointer = positionPointer;
-    int position = skiplist.getPosition(positionPointer);
+    payloadPo nter = pos  onPo nter;
+     nt pos  on = sk pl st.getPos  on(pos  onPo nter);
     do {
-      positionPointer = skiplist.getNextPointer(positionPointer);
-    } while (!isPointerPublished(positionPointer) && positionPointer != postingPointer);
-    return position;
+      pos  onPo nter = sk pl st.getNextPo nter(pos  onPo nter);
+    } wh le (! sPo nterPubl s d(pos  onPo nter) && pos  onPo nter != post ngPo nter);
+    return pos  on;
   }
 
-  @Override
-  public BytesRef getPayload() {
-    if (skiplist.getHasPayloads() == SkipListContainer.HasPayloads.NO) {
+  @Overr de
+  publ c BytesRef getPayload() {
+     f (sk pl st.getHasPayloads() == Sk pL stConta ner.HasPayloads.NO) {
       return null;
     }
 
-    int pointer = skiplist.getPayloadPointer(this.payloadPointer);
-    Preconditions.checkState(pointer > 0);
-    return PayloadUtil.decodePayload(skiplist.getBlockPool(), pointer);
+     nt po nter = sk pl st.getPayloadPo nter(t .payloadPo nter);
+    Precond  ons.c ckState(po nter > 0);
+    return PayloadUt l.decodePayload(sk pl st.getBlockPool(), po nter);
   }
 
-  @Override
-  public int startOffset() {
+  @Overr de
+  publ c  nt startOffset() {
     return -1;
   }
 
-  @Override
-  public int endOffset() {
+  @Overr de
+  publ c  nt endOffset() {
     return -1;
   }
 
-  @Override
-  public final int docID() {
+  @Overr de
+  publ c f nal  nt doc D() {
     return curDoc;
   }
 
-  @Override
-  public final int freq() {
+  @Overr de
+  publ c f nal  nt freq() {
     return curFreq;
   }
 
-  @Override
-  public long cost() {
+  @Overr de
+  publ c long cost() {
     return cost;
   }
 }

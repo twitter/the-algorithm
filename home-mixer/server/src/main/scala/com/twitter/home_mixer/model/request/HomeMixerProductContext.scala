@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.model.request
+package com.tw ter.ho _m xer.model.request
 
-import com.twitter.dspbidder.commons.thriftscala.DspClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
+ mport com.tw ter.dspb dder.commons.thr ftscala.DspCl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.ProductContext
 
-case class FollowingProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  dspClientContext: Option[DspClientContext])
+case class Follow ngProductContext(
+  dev ceContext: Opt on[Dev ceContext],
+  seenT et ds: Opt on[Seq[Long]],
+  dspCl entContext: Opt on[DspCl entContext])
     extends ProductContext
 
-case class ForYouProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  dspClientContext: Option[DspClientContext],
-  pushToHomeTweetId: Option[Long])
+case class For ProductContext(
+  dev ceContext: Opt on[Dev ceContext],
+  seenT et ds: Opt on[Seq[Long]],
+  dspCl entContext: Opt on[DspCl entContext],
+  pushToHo T et d: Opt on[Long])
     extends ProductContext
 
-case class ScoredTweetsProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  servedTweetIds: Option[Seq[Long]],
-  backfillTweetIds: Option[Seq[Long]])
+case class ScoredT etsProductContext(
+  dev ceContext: Opt on[Dev ceContext],
+  seenT et ds: Opt on[Seq[Long]],
+  servedT et ds: Opt on[Seq[Long]],
+  backf llT et ds: Opt on[Seq[Long]])
     extends ProductContext
 
-case class ListTweetsProductContext(
-  listId: Long,
-  deviceContext: Option[DeviceContext],
-  dspClientContext: Option[DspClientContext])
+case class L stT etsProductContext(
+  l st d: Long,
+  dev ceContext: Opt on[Dev ceContext],
+  dspCl entContext: Opt on[DspCl entContext])
     extends ProductContext
 
-case class ListRecommendedUsersProductContext(
-  listId: Long,
-  selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]],
-  listName: Option[String])
+case class L stRecom ndedUsersProductContext(
+  l st d: Long,
+  selectedUser ds: Opt on[Seq[Long]],
+  excludedUser ds: Opt on[Seq[Long]],
+  l stNa : Opt on[Str ng])
     extends ProductContext
 
-case class SubscribedProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]])
+case class Subscr bedProductContext(
+  dev ceContext: Opt on[Dev ceContext],
+  seenT et ds: Opt on[Seq[Long]])
     extends ProductContext

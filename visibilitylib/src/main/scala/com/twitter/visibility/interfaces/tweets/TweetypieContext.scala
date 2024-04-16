@@ -1,57 +1,57 @@
-package com.twitter.visibility.interfaces.tweets
+package com.tw ter.v s b l y. nterfaces.t ets
 
-import com.twitter.finagle.context.Contexts
-import com.twitter.io.Buf
-import com.twitter.io.BufByteWriter
-import com.twitter.io.ByteReader
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.context.Contexts
+ mport com.tw ter. o.Buf
+ mport com.tw ter. o.BufByteWr er
+ mport com.tw ter. o.ByteReader
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
-case class TweetypieContext(
-  isQuotedTweet: Boolean,
-  isRetweet: Boolean,
-  hydrateConversationControl: Boolean)
+case class T etyp eContext(
+   sQuotedT et: Boolean,
+   sRet et: Boolean,
+  hydrateConversat onControl: Boolean)
 
-object TweetypieContext {
+object T etyp eContext {
 
-  def let[U](value: TweetypieContext)(f: => Future[U]): Future[U] =
-    Contexts.broadcast.let(TweetypieContextKey, value)(f)
+  def let[U](value: T etyp eContext)(f: => Future[U]): Future[U] =
+    Contexts.broadcast.let(T etyp eContextKey, value)(f)
 
-  def get(): Option[TweetypieContext] =
-    Contexts.broadcast.get(TweetypieContextKey)
+  def get(): Opt on[T etyp eContext] =
+    Contexts.broadcast.get(T etyp eContextKey)
 }
 
-object TweetypieContextKey
-    extends Contexts.broadcast.Key[TweetypieContext](
-      "com.twitter.visibility.interfaces.tweets.TweetypieContext"
+object T etyp eContextKey
+    extends Contexts.broadcast.Key[T etyp eContext](
+      "com.tw ter.v s b l y. nterfaces.t ets.T etyp eContext"
     ) {
 
-  override def marshal(value: TweetypieContext): Buf = {
-    val bw = BufByteWriter.fixed(1)
+  overr de def marshal(value: T etyp eContext): Buf = {
+    val bw = BufByteWr er.f xed(1)
     val byte =
-      ((if (value.isQuotedTweet) 1 else 0) << 0) |
-        ((if (value.isRetweet) 1 else 0) << 1) |
-        ((if (value.hydrateConversationControl) 1 else 0) << 2)
-    bw.writeByte(byte)
+      (( f (value. sQuotedT et) 1 else 0) << 0) |
+        (( f (value. sRet et) 1 else 0) << 1) |
+        (( f (value.hydrateConversat onControl) 1 else 0) << 2)
+    bw.wr eByte(byte)
     bw.owned()
   }
 
-  override def tryUnmarshal(buf: Buf): Try[TweetypieContext] = {
-    if (buf.length != 1) {
+  overr de def tryUnmarshal(buf: Buf): Try[T etyp eContext] = {
+     f (buf.length != 1) {
       Throw(
-        new IllegalArgumentException(
-          s"Could not extract Boolean from Buf. Length ${buf.length} but required 1"
+        new  llegalArgu ntExcept on(
+          s"Could not extract Boolean from Buf. Length ${buf.length} but requ red 1"
         )
       )
     } else {
       val byte: Byte = ByteReader(buf).readByte()
       Return(
-        TweetypieContext(
-          isQuotedTweet = ((byte & 1) == 1),
-          isRetweet = ((byte & 2) == 2),
-          hydrateConversationControl = ((byte & 4) == 4)
+        T etyp eContext(
+           sQuotedT et = ((byte & 1) == 1),
+           sRet et = ((byte & 2) == 2),
+          hydrateConversat onControl = ((byte & 4) == 4)
         )
       )
     }

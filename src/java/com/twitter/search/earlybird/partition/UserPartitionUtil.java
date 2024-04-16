@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import com.google.common.base.Predicate;
+ mport com.google.common.base.Pred cate;
 
-import com.twitter.search.common.util.hash.EarlybirdPartitioningFunction;
-import com.twitter.search.common.util.hash.GeneralEarlybirdPartitioningFunction;
+ mport com.tw ter.search.common.ut l.hash.Earlyb rdPart  on ngFunct on;
+ mport com.tw ter.search.common.ut l.hash.GeneralEarlyb rdPart  on ngFunct on;
 
-public final class UserPartitionUtil {
-  private UserPartitionUtil() {
+publ c f nal class UserPart  onUt l {
+  pr vate UserPart  onUt l() {
   }
 
   /**
-   * Filter out the users that are not present in this partition.
+   * F lter out t  users that are not present  n t  part  on.
    */
-  public static Predicate<Long> filterUsersByPartitionPredicate(final PartitionConfig config) {
-    return new Predicate<Long>() {
+  publ c stat c Pred cate<Long> f lterUsersByPart  onPred cate(f nal Part  onConf g conf g) {
+    return new Pred cate<Long>() {
 
-      private final int partitionID = config.getIndexingHashPartitionID();
-      private final int numPartitions = config.getNumPartitions();
-      private final EarlybirdPartitioningFunction partitioner =
-          new GeneralEarlybirdPartitioningFunction();
+      pr vate f nal  nt part  on D = conf g.get ndex ngHashPart  on D();
+      pr vate f nal  nt numPart  ons = conf g.getNumPart  ons();
+      pr vate f nal Earlyb rdPart  on ngFunct on part  oner =
+          new GeneralEarlyb rdPart  on ngFunct on();
 
-      @Override
-      public boolean apply(Long userId) {
+      @Overr de
+      publ c boolean apply(Long user d) {
         // See SEARCH-6675
-        // Right now if the partitioning logic changes in ArchivePartitioning this logic
+        // R ght now  f t  part  on ng log c changes  n Arch vePart  on ng t  log c
         // needs to be updated too.
-        return partitioner.getPartition(userId, numPartitions) == partitionID;
+        return part  oner.getPart  on(user d, numPart  ons) == part  on D;
       }
     };
   }

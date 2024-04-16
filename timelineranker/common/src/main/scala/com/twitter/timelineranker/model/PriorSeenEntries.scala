@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.model.T et d
 
-object PriorSeenEntries {
-  def fromThrift(entries: thrift.PriorSeenEntries): PriorSeenEntries = {
-    PriorSeenEntries(seenEntries = entries.seenEntries)
+object Pr orSeenEntr es {
+  def fromThr ft(entr es: thr ft.Pr orSeenEntr es): Pr orSeenEntr es = {
+    Pr orSeenEntr es(seenEntr es = entr es.seenEntr es)
   }
 }
 
-case class PriorSeenEntries(seenEntries: Seq[TweetId]) {
+case class Pr orSeenEntr es(seenEntr es: Seq[T et d]) {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def toThrift: thrift.PriorSeenEntries = {
-    thrift.PriorSeenEntries(seenEntries = seenEntries)
+  def toThr ft: thr ft.Pr orSeenEntr es = {
+    thr ft.Pr orSeenEntr es(seenEntr es = seenEntr es)
   }
 
-  def throwIfInvalid(): Unit = {
-    // No validation performed.
+  def throw f nval d(): Un  = {
+    // No val dat on perfor d.
   }
 }

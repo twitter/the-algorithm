@@ -1,43 +1,43 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.ConsumerBasedWalsParams
-import com.twitter.cr_mixer.similarity_engine.ConsumerBasedWalsSimilarityEngine.Query
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import io.grpc.ManagedChannel
-import tensorflow.serving.Predict.PredictRequest
-import tensorflow.serving.Predict.PredictResponse
-import tensorflow.serving.PredictionServiceGrpc
-import org.tensorflow.example.Feature
-import org.tensorflow.example.Int64List
-import org.tensorflow.example.FloatList
-import org.tensorflow.example.Features
-import org.tensorflow.example.Example
-import tensorflow.serving.Model
-import org.tensorflow.framework.TensorProto
-import org.tensorflow.framework.DataType
-import org.tensorflow.framework.TensorShapeProto
-import com.twitter.finagle.grpc.FutureConverters
-import java.util.ArrayList
-import java.lang
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import java.util.concurrent.ConcurrentHashMap
-import scala.jdk.CollectionConverters._
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.Consu rBasedWalsParams
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rBasedWalsS m lar yEng ne.Query
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport  o.grpc.ManagedChannel
+ mport tensorflow.serv ng.Pred ct.Pred ctRequest
+ mport tensorflow.serv ng.Pred ct.Pred ctResponse
+ mport tensorflow.serv ng.Pred ct onServ ceGrpc
+ mport org.tensorflow.example.Feature
+ mport org.tensorflow.example. nt64L st
+ mport org.tensorflow.example.FloatL st
+ mport org.tensorflow.example.Features
+ mport org.tensorflow.example.Example
+ mport tensorflow.serv ng.Model
+ mport org.tensorflow.fra work.TensorProto
+ mport org.tensorflow.fra work.DataType
+ mport org.tensorflow.fra work.TensorShapeProto
+ mport com.tw ter.f nagle.grpc.FutureConverters
+ mport java.ut l.ArrayL st
+ mport java.lang
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport scala.jdk.Collect onConverters._
 
-// Stats object maintain a set of stats that are specific to the Wals Engine.
-case class WalsStats(scope: String, scopedStats: StatsReceiver) {
+// Stats object ma nta n a set of stats that are spec f c to t  Wals Eng ne.
+case class WalsStats(scope: Str ng, scopedStats: StatsRece ver) {
 
   val requestStat = scopedStats.scope(scope)
-  val inputSignalSize = requestStat.stat("input_signal_size")
+  val  nputS gnalS ze = requestStat.stat(" nput_s gnal_s ze")
 
   val latency = requestStat.stat("latency_ms")
   val latencyOnError = requestStat.stat("error_latency_ms")
@@ -45,162 +45,162 @@ case class WalsStats(scope: String, scopedStats: StatsReceiver) {
 
   val requests = requestStat.counter("requests")
   val success = requestStat.counter("success")
-  val failures = requestStat.scope("failures")
+  val fa lures = requestStat.scope("fa lures")
 
-  def onFailure(t: Throwable, startTimeMs: Long) {
-    val duration = System.currentTimeMillis() - startTimeMs
-    latency.add(duration)
-    latencyOnError.add(duration)
-    failures.counter(t.getClass.getName).incr()
+  def onFa lure(t: Throwable, startT  Ms: Long) {
+    val durat on = System.currentT  M ll s() - startT  Ms
+    latency.add(durat on)
+    latencyOnError.add(durat on)
+    fa lures.counter(t.getClass.getNa ). ncr()
   }
 
-  def onSuccess(startTimeMs: Long) {
-    val duration = System.currentTimeMillis() - startTimeMs
-    latency.add(duration)
-    latencyOnSuccess.add(duration)
-    success.incr()
+  def onSuccess(startT  Ms: Long) {
+    val durat on = System.currentT  M ll s() - startT  Ms
+    latency.add(durat on)
+    latencyOnSuccess.add(durat on)
+    success. ncr()
   }
 }
 
-// StatsMap maintains a mapping from Model's input signature to a stats receiver
-// The Wals model suports multiple input signature which can run different graphs internally and
-// can have a different performance profile.
-// Invoking StatsReceiver.stat() on each request can create a new stat object and can be expensive
-// in performance critical paths.
+// StatsMap ma nta ns a mapp ng from Model's  nput s gnature to a stats rece ver
+// T  Wals model suports mult ple  nput s gnature wh ch can run d fferent graphs  nternally and
+// can have a d fferent performance prof le.
+//  nvok ng StatsRece ver.stat() on each request can create a new stat object and can be expens ve
+//  n performance cr  cal paths.
 object WalsStatsMap {
-  val mapping = new ConcurrentHashMap[String, WalsStats]()
+  val mapp ng = new ConcurrentHashMap[Str ng, WalsStats]()
 
-  def get(scope: String, scopedStats: StatsReceiver): WalsStats = {
-    mapping.computeIfAbsent(scope, (scope) => WalsStats(scope, scopedStats))
+  def get(scope: Str ng, scopedStats: StatsRece ver): WalsStats = {
+    mapp ng.compute fAbsent(scope, (scope) => WalsStats(scope, scopedStats))
   }
 }
 
-case class ConsumerBasedWalsSimilarityEngine(
-  homeNaviGRPCClient: ManagedChannel,
-  adsFavedNaviGRPCClient: ManagedChannel,
-  adsMonetizableNaviGRPCClient: ManagedChannel,
-  statsReceiver: StatsReceiver)
+case class Consu rBasedWalsS m lar yEng ne(
+  ho Nav GRPCCl ent: ManagedChannel,
+  adsFavedNav GRPCCl ent: ManagedChannel,
+  adsMonet zableNav GRPCCl ent: ManagedChannel,
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
       Query,
-      Seq[TweetWithScore]
+      Seq[T etW hScore]
     ] {
 
-  override def get(
-    query: ConsumerBasedWalsSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    val startTimeMs = System.currentTimeMillis()
+  overr de def get(
+    query: Consu rBasedWalsS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    val startT  Ms = System.currentT  M ll s()
     val stats =
       WalsStatsMap.get(
-        query.wilyNsName + "/" + query.modelSignatureName,
-        statsReceiver.scope("NaviPredictionService")
+        query.w lyNsNa  + "/" + query.modelS gnatureNa ,
+        statsRece ver.scope("Nav Pred ct onServ ce")
       )
-    stats.requests.incr()
-    stats.inputSignalSize.add(query.sourceIds.size)
+    stats.requests. ncr()
+    stats. nputS gnalS ze.add(query.s ce ds.s ze)
     try {
-      // avoid inference calls is source signals are empty
-      if (query.sourceIds.isEmpty) {
-        Future.value(Some(Seq.empty))
+      // avo d  nference calls  s s ce s gnals are empty
+       f (query.s ce ds. sEmpty) {
+        Future.value(So (Seq.empty))
       } else {
-        val grpcClient = query.wilyNsName match {
-          case "navi-wals-recommended-tweets-home-client" => homeNaviGRPCClient
-          case "navi-wals-ads-faved-tweets" => adsFavedNaviGRPCClient
-          case "navi-wals-ads-monetizable-tweets" => adsFavedNaviGRPCClient
-          // default to homeNaviGRPCClient
-          case _ => homeNaviGRPCClient
+        val grpcCl ent = query.w lyNsNa  match {
+          case "nav -wals-recom nded-t ets-ho -cl ent" => ho Nav GRPCCl ent
+          case "nav -wals-ads-faved-t ets" => adsFavedNav GRPCCl ent
+          case "nav -wals-ads-monet zable-t ets" => adsFavedNav GRPCCl ent
+          // default to ho Nav GRPCCl ent
+          case _ => ho Nav GRPCCl ent
         }
-        val stub = PredictionServiceGrpc.newFutureStub(grpcClient)
-        val inferRequest = getModelInput(query)
+        val stub = Pred ct onServ ceGrpc.newFutureStub(grpcCl ent)
+        val  nferRequest = getModel nput(query)
 
         FutureConverters
-          .RichListenableFuture(stub.predict(inferRequest)).toTwitter
+          .R chL stenableFuture(stub.pred ct( nferRequest)).toTw ter
           .transform {
             case Return(resp) =>
-              stats.onSuccess(startTimeMs)
-              Future.value(Some(getModelOutput(query, resp)))
+              stats.onSuccess(startT  Ms)
+              Future.value(So (getModelOutput(query, resp)))
             case Throw(e) =>
-              stats.onFailure(e, startTimeMs)
-              Future.exception(e)
+              stats.onFa lure(e, startT  Ms)
+              Future.except on(e)
           }
       }
     } catch {
-      case e: Throwable => Future.exception(e)
+      case e: Throwable => Future.except on(e)
     }
   }
 
-  def getFeaturesForRecommendations(query: ConsumerBasedWalsSimilarityEngine.Query): Example = {
-    val tweetIds = new ArrayList[lang.Long]()
-    val tweetFaveWeight = new ArrayList[lang.Float]()
+  def getFeaturesForRecom ndat ons(query: Consu rBasedWalsS m lar yEng ne.Query): Example = {
+    val t et ds = new ArrayL st[lang.Long]()
+    val t etFave  ght = new ArrayL st[lang.Float]()
 
-    query.sourceIds.foreach { sourceInfo =>
-      val weight = sourceInfo.sourceType match {
-        case SourceType.TweetFavorite | SourceType.Retweet => 1.0f
-        // currently no-op - as we do not get negative signals
-        case SourceType.TweetDontLike | SourceType.TweetReport | SourceType.AccountMute |
-            SourceType.AccountBlock =>
+    query.s ce ds.foreach { s ce nfo =>
+      val   ght = s ce nfo.s ceType match {
+        case S ceType.T etFavor e | S ceType.Ret et => 1.0f
+        // currently no-op - as   do not get negat ve s gnals
+        case S ceType.T etDontL ke | S ceType.T etReport | S ceType.AccountMute |
+            S ceType.AccountBlock =>
           0.0f
         case _ => 0.0f
       }
-      sourceInfo.internalId match {
-        case InternalId.TweetId(tweetId) =>
-          tweetIds.add(tweetId)
-          tweetFaveWeight.add(weight)
+      s ce nfo. nternal d match {
+        case  nternal d.T et d(t et d) =>
+          t et ds.add(t et d)
+          t etFave  ght.add(  ght)
         case _ =>
-          throw new IllegalArgumentException(
-            s"Invalid InternalID - does not contain TweetId for Source Signal: ${sourceInfo}")
+          throw new  llegalArgu ntExcept on(
+            s" nval d  nternal D - does not conta n T et d for S ce S gnal: ${s ce nfo}")
       }
     }
 
-    val tweetIdsFeature =
+    val t et dsFeature =
       Feature
-        .newBuilder().setInt64List(
-          Int64List
-            .newBuilder().addAllValue(tweetIds).build()
-        ).build()
+        .newBu lder().set nt64L st(
+           nt64L st
+            .newBu lder().addAllValue(t et ds).bu ld()
+        ).bu ld()
 
-    val tweetWeightsFeature = Feature
-      .newBuilder().setFloatList(
-        FloatList.newBuilder().addAllValue(tweetFaveWeight).build()).build()
+    val t et  ghtsFeature = Feature
+      .newBu lder().setFloatL st(
+        FloatL st.newBu lder().addAllValue(t etFave  ght).bu ld()).bu ld()
 
     val features = Features
-      .newBuilder()
-      .putFeature("tweet_ids", tweetIdsFeature)
-      .putFeature("tweet_weights", tweetWeightsFeature)
-      .build()
-    Example.newBuilder().setFeatures(features).build()
+      .newBu lder()
+      .putFeature("t et_ ds", t et dsFeature)
+      .putFeature("t et_  ghts", t et  ghtsFeature)
+      .bu ld()
+    Example.newBu lder().setFeatures(features).bu ld()
   }
 
-  def getModelInput(query: ConsumerBasedWalsSimilarityEngine.Query): PredictRequest = {
-    val tfExample = getFeaturesForRecommendations(query)
+  def getModel nput(query: Consu rBasedWalsS m lar yEng ne.Query): Pred ctRequest = {
+    val tfExample = getFeaturesForRecom ndat ons(query)
 
-    val inferenceRequest = PredictRequest
-      .newBuilder()
+    val  nferenceRequest = Pred ctRequest
+      .newBu lder()
       .setModelSpec(
         Model.ModelSpec
-          .newBuilder()
-          .setName(query.modelName)
-          .setSignatureName(query.modelSignatureName))
-      .putInputs(
-        query.modelInputName,
+          .newBu lder()
+          .setNa (query.modelNa )
+          .setS gnatureNa (query.modelS gnatureNa ))
+      .put nputs(
+        query.model nputNa ,
         TensorProto
-          .newBuilder()
-          .setDtype(DataType.DT_STRING)
+          .newBu lder()
+          .setDtype(DataType.DT_STR NG)
           .setTensorShape(TensorShapeProto
-            .newBuilder()
-            .addDim(TensorShapeProto.Dim.newBuilder().setSize(1)))
-          .addStringVal(tfExample.toByteString)
-          .build()
-      ).build()
-    inferenceRequest
+            .newBu lder()
+            .addD m(TensorShapeProto.D m.newBu lder().setS ze(1)))
+          .addStr ngVal(tfExample.toByteStr ng)
+          .bu ld()
+      ).bu ld()
+     nferenceRequest
   }
 
-  def getModelOutput(query: Query, response: PredictResponse): Seq[TweetWithScore] = {
-    val outputName = query.modelOutputName
-    if (response.containsOutputs(outputName)) {
-      val tweetList = response.getOutputsMap
-        .get(outputName)
-        .getInt64ValList.asScala
-      tweetList.zip(tweetList.size to 1 by -1).map { (tweetWithScore) =>
-        TweetWithScore(tweetWithScore._1, tweetWithScore._2.toLong)
+  def getModelOutput(query: Query, response: Pred ctResponse): Seq[T etW hScore] = {
+    val outputNa  = query.modelOutputNa 
+     f (response.conta nsOutputs(outputNa )) {
+      val t etL st = response.getOutputsMap
+        .get(outputNa )
+        .get nt64ValL st.asScala
+      t etL st.z p(t etL st.s ze to 1 by -1).map { (t etW hScore) =>
+        T etW hScore(t etW hScore._1, t etW hScore._2.toLong)
       }
     } else {
       Seq.empty
@@ -208,39 +208,39 @@ case class ConsumerBasedWalsSimilarityEngine(
   }
 }
 
-object ConsumerBasedWalsSimilarityEngine {
+object Consu rBasedWalsS m lar yEng ne {
   case class Query(
-    sourceIds: Seq[SourceInfo],
-    modelName: String,
-    modelInputName: String,
-    modelOutputName: String,
-    modelSignatureName: String,
-    wilyNsName: String,
+    s ce ds: Seq[S ce nfo],
+    modelNa : Str ng,
+    model nputNa : Str ng,
+    modelOutputNa : Str ng,
+    modelS gnatureNa : Str ng,
+    w lyNsNa : Str ng,
   )
 
   def fromParams(
-    sourceIds: Seq[SourceInfo],
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
+    s ce ds: Seq[S ce nfo],
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    Eng neQuery(
       Query(
-        sourceIds,
-        params(ConsumerBasedWalsParams.ModelNameParam),
-        params(ConsumerBasedWalsParams.ModelInputNameParam),
-        params(ConsumerBasedWalsParams.ModelOutputNameParam),
-        params(ConsumerBasedWalsParams.ModelSignatureNameParam),
-        params(ConsumerBasedWalsParams.WilyNsNameParam),
+        s ce ds,
+        params(Consu rBasedWalsParams.ModelNa Param),
+        params(Consu rBasedWalsParams.Model nputNa Param),
+        params(Consu rBasedWalsParams.ModelOutputNa Param),
+        params(Consu rBasedWalsParams.ModelS gnatureNa Param),
+        params(Consu rBasedWalsParams.W lyNsNa Param),
       ),
       params
     )
   }
 
-  def toSimilarityEngineInfo(
+  def toS m lar yEng ne nfo(
     score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.ConsumerBasedWalsANN,
-      modelId = None,
-      score = Some(score))
+  ): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.Consu rBasedWalsANN,
+      model d = None,
+      score = So (score))
   }
 }

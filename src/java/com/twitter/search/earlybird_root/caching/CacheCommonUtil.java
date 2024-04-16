@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
-public final class CacheCommonUtil {
-  public static final String NAMED_MAX_CACHE_RESULTS = "maxCacheResults";
+publ c f nal class Cac CommonUt l {
+  publ c stat c f nal Str ng NAMED_MAX_CACHE_RESULTS = "maxCac Results";
 
-  private CacheCommonUtil() {
+  pr vate Cac CommonUt l() {
   }
 
-  public static boolean hasResults(EarlybirdResponse response) {
-    return response.isSetSearchResults()
+  publ c stat c boolean hasResults(Earlyb rdResponse response) {
+    return response. sSetSearchResults()
       && (response.getSearchResults().getResults() != null)
-      && !response.getSearchResults().getResults().isEmpty();
+      && !response.getSearchResults().getResults(). sEmpty();
   }
 }

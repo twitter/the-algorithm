@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common
+package com.tw ter.s mclusters_v2.common
 
-import com.twitter.decider.Decider
-import com.twitter.servo.decider.{DeciderGateBuilder, DeciderKeyName}
-import com.twitter.servo.util.Gate
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.servo.dec der.{Dec derGateBu lder, Dec derKeyNa }
+ mport com.tw ter.servo.ut l.Gate
 
-class DeciderGateBuilderWithIdHashing(decider: Decider) extends DeciderGateBuilder(decider) {
+class Dec derGateBu lderW h dHash ng(dec der: Dec der) extends Dec derGateBu lder(dec der) {
 
-  def idGateWithHashing[T](key: DeciderKeyName): Gate[T] = {
+  def  dGateW hHash ng[T](key: Dec derKeyNa ): Gate[T] = {
     val feature = keyToFeature(key)
-    // Only if the decider is neither fully on / off is the object hashed
-    // This does require an additional call to get the decider availability but that is comparatively cheaper
+    // Only  f t  dec der  s ne  r fully on / off  s t  object has d
+    // T  does requ re an add  onal call to get t  dec der ava lab l y but that  s comparat vely c aper
     val convertToHash: T => Long = (obj: T) => {
-      val availability = feature.availability.getOrElse(0)
-      if (availability == 10000 || availability == 0) availability
+      val ava lab l y = feature.ava lab l y.getOrElse(0)
+       f (ava lab l y == 10000 || ava lab l y == 0) ava lab l y
       else obj.hashCode
     }
-    idGate(key).contramap[T](convertToHash)
+     dGate(key).contramap[T](convertToHash)
   }
 
 }

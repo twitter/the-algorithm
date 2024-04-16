@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.ConstantScoreScorer;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
 
 /**
- * A MatchAllDocsQuery implementation that does not assume that doc IDs are assigned sequentially.
- * Instead, it wraps the EarlybirdIndexSegmentAtomicReader into a RangeFilterDISI, and uses
- * this iterator to traverse only the valid doc IDs in this segment.
+ * A MatchAllDocsQuery  mple ntat on that does not assu  that doc  Ds are ass gned sequent ally.
+ *  nstead,   wraps t  Earlyb rd ndexSeg ntAtom cReader  nto a RangeF lterD S , and uses
+ * t   erator to traverse only t  val d doc  Ds  n t  seg nt.
  *
- * Note that org.apache.lucene.index.MatchAllDocsQuery is final, so we cannot extend it.
+ * Note that org.apac .lucene. ndex.MatchAllDocsQuery  s f nal, so   cannot extend  .
  */
-public class MatchAllDocsQuery extends Query {
-  private static class MatchAllDocsWeight extends Weight {
-    private final Weight luceneWeight;
+publ c class MatchAllDocsQuery extends Query {
+  pr vate stat c class MatchAllDocs  ght extends   ght {
+    pr vate f nal   ght lucene  ght;
 
-    public MatchAllDocsWeight(Query query, Weight luceneWeight) {
+    publ c MatchAllDocs  ght(Query query,   ght lucene  ght) {
       super(query);
-      this.luceneWeight = luceneWeight;
+      t .lucene  ght = lucene  ght;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      luceneWeight.extractTerms(terms);
+    @Overr de
+    publ c vo d extractTerms(Set<Term> terms) {
+      lucene  ght.extractTerms(terms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return luceneWeight.explain(context, doc);
+    @Overr de
+    publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
+      return lucene  ght.expla n(context, doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Preconditions.checkState(context.reader() instanceof EarlybirdIndexSegmentAtomicReader,
-                               "Expected an EarlybirdIndexSegmentAtomicReader, but got a "
-                               + context.reader().getClass().getName() + " instance.");
-      EarlybirdIndexSegmentAtomicReader reader =
-          (EarlybirdIndexSegmentAtomicReader) context.reader();
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+      Precond  ons.c ckState(context.reader()  nstanceof Earlyb rd ndexSeg ntAtom cReader,
+                               "Expected an Earlyb rd ndexSeg ntAtom cReader, but got a "
+                               + context.reader().getClass().getNa () + "  nstance.");
+      Earlyb rd ndexSeg ntAtom cReader reader =
+          (Earlyb rd ndexSeg ntAtom cReader) context.reader();
       return new ConstantScoreScorer(
-          this, 1.0f, ScoreMode.COMPLETE_NO_SCORES, new RangeFilterDISI(reader));
+          t , 1.0f, ScoreMode.COMPLETE_NO_SCORES, new RangeF lterD S (reader));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext ctx) {
+      return lucene  ght. sCac able(ctx);
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    org.apache.lucene.search.MatchAllDocsQuery luceneMatchAllDocsQuery =
-        new org.apache.lucene.search.MatchAllDocsQuery();
-    Weight luceneWeight = luceneMatchAllDocsQuery.createWeight(searcher, scoreMode, boost);
-    if (!(searcher instanceof EarlybirdSingleSegmentSearcher)) {
-      return luceneWeight;
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    org.apac .lucene.search.MatchAllDocsQuery luceneMatchAllDocsQuery =
+        new org.apac .lucene.search.MatchAllDocsQuery();
+      ght lucene  ght = luceneMatchAllDocsQuery.create  ght(searc r, scoreMode, boost);
+     f (!(searc r  nstanceof Earlyb rdS ngleSeg ntSearc r)) {
+      return lucene  ght;
     }
-    return new MatchAllDocsWeight(this, luceneWeight);
+    return new MatchAllDocs  ght(t , lucene  ght);
   }
 
-  @Override
-  public int hashCode() {
+  @Overr de
+  publ c  nt hashCode() {
     return 0;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof MatchAllDocsQuery;
+  @Overr de
+  publ c boolean equals(Object obj) {
+    return obj  nstanceof MatchAllDocsQuery;
   }
 
-  // Copied from org.apache.lucene.search.MatchAllDocsWeight
-  @Override
-  public String toString(String field) {
+  // Cop ed from org.apac .lucene.search.MatchAllDocs  ght
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
     return "*:*";
   }
 }

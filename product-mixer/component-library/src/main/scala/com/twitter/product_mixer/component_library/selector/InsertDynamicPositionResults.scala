@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector._
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object InsertDynamicPositionResults {
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    dynamicInsertionPosition: DynamicInsertionPosition[Query],
-  ): InsertDynamicPositionResults[Query] =
-    new InsertDynamicPositionResults(SpecificPipeline(candidatePipeline), dynamicInsertionPosition)
+object  nsertDynam cPos  onResults {
+  def apply[Query <: P pel neQuery](
+    cand dateP pel ne: Cand dateP pel ne dent f er,
+    dynam c nsert onPos  on: Dynam c nsert onPos  on[Query],
+  ):  nsertDynam cPos  onResults[Query] =
+    new  nsertDynam cPos  onResults(Spec f cP pel ne(cand dateP pel ne), dynam c nsert onPos  on)
 
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    dynamicInsertionPosition: DynamicInsertionPosition[Query]
-  ): InsertDynamicPositionResults[Query] =
-    new InsertDynamicPositionResults(
-      SpecificPipelines(candidatePipelines),
-      dynamicInsertionPosition)
+  def apply[Query <: P pel neQuery](
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er],
+    dynam c nsert onPos  on: Dynam c nsert onPos  on[Query]
+  ):  nsertDynam cPos  onResults[Query] =
+    new  nsertDynam cPos  onResults(
+      Spec f cP pel nes(cand dateP pel nes),
+      dynam c nsert onPos  on)
 }
 
 /**
- * Compute a position for inserting the candidates into result. If a `None` is returned, the
- * Selector using this would not insert the candidates into the result.
+ * Compute a pos  on for  nsert ng t  cand dates  nto result.  f a `None`  s returned, t 
+ * Selector us ng t  would not  nsert t  cand dates  nto t  result.
  */
-trait DynamicInsertionPosition[-Query <: PipelineQuery] {
+tra  Dynam c nsert onPos  on[-Query <: P pel neQuery] {
   def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Option[Int]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
+  ): Opt on[ nt]
 }
 
 /**
- * Insert all candidates in a pipeline scope at a 0-indexed dynamic position computed
- * using the provided [[DynamicInsertionPosition]] instance. If the current results are a shorter
- * length than the computed position, then the candidates will be appended to the results.
- * If the [[DynamicInsertionPosition]] returns a `None`, the candidates are not
- * added to the result.
+ *  nsert all cand dates  n a p pel ne scope at a 0- ndexed dynam c pos  on computed
+ * us ng t  prov ded [[Dynam c nsert onPos  on]]  nstance.  f t  current results are a shorter
+ * length than t  computed pos  on, t n t  cand dates w ll be appended to t  results.
+ *  f t  [[Dynam c nsert onPos  on]] returns a `None`, t  cand dates are not
+ * added to t  result.
  */
-case class InsertDynamicPositionResults[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  dynamicInsertionPosition: DynamicInsertionPosition[Query])
+case class  nsertDynam cPos  onResults[-Query <: P pel neQuery](
+  overr de val p pel neScope: Cand dateScope,
+  dynam c nsert onPos  on: Dynam c nsert onPos  on[Query])
     extends Selector[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    dynamicInsertionPosition(query, remainingCandidates, result) match {
-      case Some(position) =>
-        InsertSelector.insertIntoResultsAtPosition(
-          position = position,
-          pipelineScope = pipelineScope,
-          remainingCandidates = remainingCandidates,
+    dynam c nsert onPos  on(query, rema n ngCand dates, result) match {
+      case So (pos  on) =>
+         nsertSelector. nsert ntoResultsAtPos  on(
+          pos  on = pos  on,
+          p pel neScope = p pel neScope,
+          rema n ngCand dates = rema n ngCand dates,
           result = result)
       case None =>
-        // When a valid position is not provided, do not insert the candidates.
-        // Both the remainingCandidates and result are unchanged.
-        SelectorResult(remainingCandidates = remainingCandidates, result = result)
+        // W n a val d pos  on  s not prov ded, do not  nsert t  cand dates.
+        // Both t  rema n ngCand dates and result are unchanged.
+        SelectorResult(rema n ngCand dates = rema n ngCand dates, result = result)
     }
   }
 }

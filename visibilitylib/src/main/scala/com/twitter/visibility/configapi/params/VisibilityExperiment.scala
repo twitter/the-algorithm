@@ -1,19 +1,19 @@
-package com.twitter.visibility.configapi.params
+package com.tw ter.v s b l y.conf gap .params
 
-import com.twitter.timelines.configapi.BucketName
-import com.twitter.timelines.configapi.Experiment
-import com.twitter.timelines.configapi.UseFeatureContext
+ mport com.tw ter.t  l nes.conf gap .BucketNa 
+ mport com.tw ter.t  l nes.conf gap .Exper  nt
+ mport com.tw ter.t  l nes.conf gap .UseFeatureContext
 
-object VisibilityExperiment {
+object V s b l yExper  nt {
   val Control = "control"
-  val Treatment = "treatment"
+  val Treat nt = "treat nt"
 }
 
-abstract class VisibilityExperiment(experimentKey: String)
-    extends Experiment(experimentKey)
-    with UseFeatureContext {
-  val TreatmentBucket: String = VisibilityExperiment.Treatment
-  override def experimentBuckets: Set[BucketName] = Set(TreatmentBucket)
-  val ControlBucket: String = VisibilityExperiment.Control
-  override def controlBuckets: Set[BucketName] = Set(ControlBucket)
+abstract class V s b l yExper  nt(exper  ntKey: Str ng)
+    extends Exper  nt(exper  ntKey)
+    w h UseFeatureContext {
+  val Treat ntBucket: Str ng = V s b l yExper  nt.Treat nt
+  overr de def exper  ntBuckets: Set[BucketNa ] = Set(Treat ntBucket)
+  val ControlBucket: Str ng = V s b l yExper  nt.Control
+  overr de def controlBuckets: Set[BucketNa ] = Set(ControlBucket)
 }

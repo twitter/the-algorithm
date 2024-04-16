@@ -1,116 +1,116 @@
-package com.twitter.ann.scalding.offline
+package com.tw ter.ann.scald ng.offl ne
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cortex.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+ mport com.tw ter.core_workflows.user_model.thr ftscala.CondensedUserState
+ mport com.tw ter.cortex.ml.embedd ngs.common.{DataS ceManager, GraphEdge,  lpers, UserK nd}
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ent yembedd ngs.ne ghbors.thr ftscala.{Ent yKey, NearestNe ghbors}
+ mport com.tw ter.pluck.s ce.core_workflows.user_model.CondensedUserStateScalaDataset
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport com.tw ter.users ce.snapshot.flat.thr ftscala.FlatUser
 
-case class ConsumerAssoc(consumerId: UserId, assoc: List[String])
+case class Consu rAssoc(consu r d: User d, assoc: L st[Str ng])
 
 object KnnDebug {
 
-  def getConsumerAssociations(
-    graph: TypedPipe[GraphEdge[UserId, UserId]],
-    usernames: TypedPipe[(UserId, String)],
-    reducers: Int
-  ): TypedPipe[ConsumerAssoc] = {
+  def getConsu rAssoc at ons(
+    graph: TypedP pe[GraphEdge[User d, User d]],
+    userna s: TypedP pe[(User d, Str ng)],
+    reducers:  nt
+  ): TypedP pe[Consu rAssoc] = {
     graph
-      .groupBy(_.itemId)
-      .join(usernames).withReducers(reducers)
+      .groupBy(_. em d)
+      .jo n(userna s).w hReducers(reducers)
       .values
       .map {
-        case (edge: GraphEdge[UserId, UserId], producerScreenName: String) =>
-          ConsumerAssoc(consumerId = edge.consumerId, assoc = List(producerScreenName))
+        case (edge: GraphEdge[User d, User d], producerScreenNa : Str ng) =>
+          Consu rAssoc(consu r d = edge.consu r d, assoc = L st(producerScreenNa ))
       }
-      .groupBy(_.consumerId).withReducers(reducers)
-      .reduce[ConsumerAssoc] {
-        case (uFollow1: ConsumerAssoc, uFollow2: ConsumerAssoc) =>
-          ConsumerAssoc(consumerId = uFollow1.consumerId, assoc = uFollow1.assoc ++ uFollow2.assoc)
+      .groupBy(_.consu r d).w hReducers(reducers)
+      .reduce[Consu rAssoc] {
+        case (uFollow1: Consu rAssoc, uFollow2: Consu rAssoc) =>
+          Consu rAssoc(consu r d = uFollow1.consu r d, assoc = uFollow1.assoc ++ uFollow2.assoc)
       }
       .values
   }
 
   /**
-   * Write the neighbors and a set of follows to a tsv for easier analysis during debugging
-   * We take the set of users with between 25-50 follows and grab only those users
+   * Wr e t  ne ghbors and a set of follows to a tsv for eas er analys s dur ng debugg ng
+   *   take t  set of users w h bet en 25-50 follows and grab only those users
    *
-   * This returns 4 strings of the form:
-   * consumerId, state, followUserName<f>followUserName<f>followUserName, neighborName<n>neighborName<n>neighborName
+   * T  returns 4 str ngs of t  form:
+   * consu r d, state, followUserNa <f>followUserNa <f>followUserNa , ne ghborNa <n>ne ghborNa <n>ne ghborNa 
    */
   def getDebugTable(
-    neighborsPipe: TypedPipe[(EntityKey, NearestNeighbors)],
-    shards: Int,
-    reducers: Int,
-    limit: Int = 10000,
-    userDataset: Option[TypedPipe[FlatUser]] = None,
-    followDataset: Option[TypedPipe[GraphEdge[UserId, UserId]]] = None,
-    consumerStatesDataset: Option[TypedPipe[CondensedUserState]] = None,
-    minFollows: Int = 25,
-    maxFollows: Int = 50
+    ne ghborsP pe: TypedP pe[(Ent yKey, NearestNe ghbors)],
+    shards:  nt,
+    reducers:  nt,
+    l m :  nt = 10000,
+    userDataset: Opt on[TypedP pe[FlatUser]] = None,
+    followDataset: Opt on[TypedP pe[GraphEdge[User d, User d]]] = None,
+    consu rStatesDataset: Opt on[TypedP pe[CondensedUserState]] = None,
+    m nFollows:  nt = 25,
+    maxFollows:  nt = 50
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(String, String, String, String)] = {
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Str ng, Str ng, Str ng, Str ng)] = {
 
-    val usersourcePipe: TypedPipe[FlatUser] = userDataset
-      .getOrElse(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange).toTypedPipe)
+    val users ceP pe: TypedP pe[FlatUser] = userDataset
+      .getOrElse(DAL.readMostRecentSnapshot(Users ceFlatScalaDataset, dateRange).toTypedP pe)
 
-    val followGraph: TypedPipe[GraphEdge[UserId, UserId]] = followDataset
-      .getOrElse(new DataSourceManager().getFollowGraph())
+    val followGraph: TypedP pe[GraphEdge[User d, User d]] = followDataset
+      .getOrElse(new DataS ceManager().getFollowGraph())
 
-    val consumerStates: TypedPipe[CondensedUserState] = consumerStatesDataset
-      .getOrElse(DAL.read(CondensedUserStateScalaDataset).toTypedPipe)
+    val consu rStates: TypedP pe[CondensedUserState] = consu rStatesDataset
+      .getOrElse(DAL.read(CondensedUserStateScalaDataset).toTypedP pe)
 
-    val usernames: TypedPipe[(UserId, String)] = usersourcePipe.flatMap { flatUser =>
-      (flatUser.screenName, flatUser.id) match {
-        case (Some(name: String), Some(userId: Long)) => Some((UserId(userId), name))
+    val userna s: TypedP pe[(User d, Str ng)] = users ceP pe.flatMap { flatUser =>
+      (flatUser.screenNa , flatUser. d) match {
+        case (So (na : Str ng), So (user d: Long)) => So ((User d(user d), na ))
         case _ => None
       }
     }.fork
 
-    val consumerFollows: TypedPipe[ConsumerAssoc] =
-      getConsumerAssociations(followGraph, usernames, reducers)
-        .filter { uFollow => (uFollow.assoc.size > minFollows && uFollow.assoc.size < maxFollows) }
+    val consu rFollows: TypedP pe[Consu rAssoc] =
+      getConsu rAssoc at ons(followGraph, userna s, reducers)
+        .f lter { uFollow => (uFollow.assoc.s ze > m nFollows && uFollow.assoc.s ze < maxFollows) }
 
-    val neighborGraph: TypedPipe[GraphEdge[UserId, UserId]] = neighborsPipe
-      .limit(limit)
+    val ne ghborGraph: TypedP pe[GraphEdge[User d, User d]] = ne ghborsP pe
+      .l m (l m )
       .flatMap {
-        case (entityKey: EntityKey, neighbors: NearestNeighbors) =>
-          Helpers.optionalToLong(entityKey.id) match {
-            case Some(entityId: Long) =>
-              neighbors.neighbors.flatMap { neighbor =>
-                Helpers
-                  .optionalToLong(neighbor.neighbor.id)
-                  .map { neighborId =>
-                    GraphEdge[UserId, UserId](
-                      consumerId = UserId(entityId),
-                      itemId = UserId(neighborId),
-                      weight = 1.0F)
+        case (ent yKey: Ent yKey, ne ghbors: NearestNe ghbors) =>
+           lpers.opt onalToLong(ent yKey. d) match {
+            case So (ent y d: Long) =>
+              ne ghbors.ne ghbors.flatMap { ne ghbor =>
+                 lpers
+                  .opt onalToLong(ne ghbor.ne ghbor. d)
+                  .map { ne ghbor d =>
+                    GraphEdge[User d, User d](
+                      consu r d = User d(ent y d),
+                       em d = User d(ne ghbor d),
+                        ght = 1.0F)
                   }
               }
-            case None => List()
+            case None => L st()
           }
       }
-    val consumerNeighbors: TypedPipe[ConsumerAssoc] =
-      getConsumerAssociations(neighborGraph, usernames, reducers)
+    val consu rNe ghbors: TypedP pe[Consu rAssoc] =
+      getConsu rAssoc at ons(ne ghborGraph, userna s, reducers)
 
-    consumerFollows
-      .groupBy(_.consumerId)
-      .join(consumerStates.groupBy { consumer => UserId(consumer.uid) }).withReducers(reducers)
-      .join(consumerNeighbors.groupBy(_.consumerId)).withReducers(reducers)
+    consu rFollows
+      .groupBy(_.consu r d)
+      .jo n(consu rStates.groupBy { consu r => User d(consu r.u d) }).w hReducers(reducers)
+      .jo n(consu rNe ghbors.groupBy(_.consu r d)).w hReducers(reducers)
       .values
       .map {
-        case ((uFollow: ConsumerAssoc, state: CondensedUserState), uNeighbors: ConsumerAssoc) =>
+        case ((uFollow: Consu rAssoc, state: CondensedUserState), uNe ghbors: Consu rAssoc) =>
           (
-            UserKind.stringInjection(uFollow.consumerId),
-            state.state.toString,
-            uFollow.assoc mkString "<f>",
-            uNeighbors.assoc mkString "<n>")
+            UserK nd.str ng nject on(uFollow.consu r d),
+            state.state.toStr ng,
+            uFollow.assoc mkStr ng "<f>",
+            uNe ghbors.assoc mkStr ng "<n>")
       }
       .shard(shards)
   }

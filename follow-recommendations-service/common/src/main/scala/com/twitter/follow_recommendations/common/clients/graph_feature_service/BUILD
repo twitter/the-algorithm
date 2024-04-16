@@ -1,14 +1,14 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-thrift-client",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "graph-feature-service/src/main/thrift/com/twitter/graph_feature_service:graph_feature_service_thrift-scala",
-        "stitch/stitch-core",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra- nternal/mtls-thr ftmux/src/ma n/scala",
+        "f natra/ nject/ nject-thr ft-cl ent",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/cl ents/common",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models",
+        "graph-feature-serv ce/src/ma n/thr ft/com/tw ter/graph_feature_serv ce:graph_feature_serv ce_thr ft-scala",
+        "st ch/st ch-core",
     ],
 )

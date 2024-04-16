@@ -1,60 +1,60 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.ConstantScoreScorer;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * An abstract Weight implementation that can be used by all "filter" classes (Query instances that
- * should not contribute to the overall query score).
+ * An abstract   ght  mple ntat on that can be used by all "f lter" classes (Query  nstances that
+ * should not contr bute to t  overall query score).
  */
-public abstract class DefaultFilterWeight extends Weight {
-  public DefaultFilterWeight(Query query) {
+publ c abstract class DefaultF lter  ght extends   ght {
+  publ c DefaultF lter  ght(Query query) {
     super(query);
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
+  @Overr de
+  publ c vo d extractTerms(Set<Term> terms) {
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc) throws IOException {
+  @Overr de
+  publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
     Scorer scorer = scorer(context);
-    if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-      return Explanation.match(0f, "Match on id " + doc);
+     f ((scorer != null) && (scorer. erator().advance(doc) == doc)) {
+      return Explanat on.match(0f, "Match on  d " + doc);
     }
-    return Explanation.match(0f, "No match on id " + doc);
+    return Explanat on.match(0f, "No match on  d " + doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    DocIdSetIterator disi = getDocIdSetIterator(context);
-    if (disi == null) {
+  @Overr de
+  publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+    Doc dSet erator d s  = getDoc dSet erator(context);
+     f (d s  == null) {
       return null;
     }
 
-    return new ConstantScoreScorer(this, 0.0f, ScoreMode.COMPLETE_NO_SCORES, disi);
+    return new ConstantScoreScorer(t , 0.0f, ScoreMode.COMPLETE_NO_SCORES, d s );
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
+  @Overr de
+  publ c boolean  sCac able(LeafReaderContext ctx) {
     return false;
   }
 
   /**
-   * Returns the DocIdSetIterator over which the scorers created by this weight need to iterate.
+   * Returns t  Doc dSet erator over wh ch t  scorers created by t    ght need to  erate.
    *
-   * @param context The LeafReaderContext instance used to create the scorer.
+   * @param context T  LeafReaderContext  nstance used to create t  scorer.
    */
-  protected abstract DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-      throws IOException;
+  protected abstract Doc dSet erator getDoc dSet erator(LeafReaderContext context)
+      throws  OExcept on;
 }

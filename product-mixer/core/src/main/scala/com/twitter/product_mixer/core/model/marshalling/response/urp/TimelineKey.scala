@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.tw ter.product_m xer.core.model.marshall ng.response.urp
 
-sealed trait TimelineKey
+sealed tra  T  l neKey
 
-case class TopicsLandingTimeline(topicId: Option[String]) extends TimelineKey
+case class Top csLand ngT  l ne(top c d: Opt on[Str ng]) extends T  l neKey
 
-case class NoteworthyAccountsTimeline(topicId: Option[String]) extends TimelineKey
+case class NoteworthyAccountsT  l ne(top c d: Opt on[Str ng]) extends T  l neKey
 
-case class TopicsPickerTimeline(topicId: Option[String]) extends TimelineKey
+case class Top csP ckerT  l ne(top c d: Opt on[Str ng]) extends T  l neKey
 
-case class NotInterestedTopicsMeTimeline() extends TimelineKey
+case class Not nterestedTop cs T  l ne() extends T  l neKey
 
-case class FollowedTopicsMeTimeline() extends TimelineKey
+case class Follo dTop cs T  l ne() extends T  l neKey
 
-case class FollowedTopicsOtherTimeline(userId: Long) extends TimelineKey
+case class Follo dTop csOt rT  l ne(user d: Long) extends T  l neKey
 
-case class NuxUserRecommendationsTimeline() extends TimelineKey
+case class NuxUserRecom ndat onsT  l ne() extends T  l neKey
 
-case class NuxForYouCategoryUserRecommendationsTimeline() extends TimelineKey
+case class NuxFor CategoryUserRecom ndat onsT  l ne() extends T  l neKey
 
-case class NuxPymkCategoryUserRecommendationsTimeline() extends TimelineKey
+case class NuxPymkCategoryUserRecom ndat onsT  l ne() extends T  l neKey
 
-case class NuxGeoCategoryUserRecommendationsTimeline() extends TimelineKey
+case class NuxGeoCategoryUserRecom ndat onsT  l ne() extends T  l neKey
 
-case class NuxSingleInterestCategoryUserRecommendationsTimeline(topicId: Option[String])
-    extends TimelineKey
+case class NuxS ngle nterestCategoryUserRecom ndat onsT  l ne(top c d: Opt on[Str ng])
+    extends T  l neKey
 
-case class ShoppingHomeTimeline() extends TimelineKey
+case class Shopp ngHo T  l ne() extends T  l neKey
 
-case class ForYouExploreMixerTimeline() extends TimelineKey
+case class For ExploreM xerT  l ne() extends T  l neKey
 
-case class TrendingExploreMixerTimeline() extends TimelineKey
+case class Trend ngExploreM xerT  l ne() extends T  l neKey

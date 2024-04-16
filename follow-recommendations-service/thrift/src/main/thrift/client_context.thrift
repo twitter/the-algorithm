@@ -1,19 +1,19 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+na space java com.tw ter.follow_recom ndat ons.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons
 
-// Caller/Client level specific context (e.g, user id/guest id/app id).
-struct ClientContext {
-  1: optional i64 userId(personalDataType='UserId')
-  2: optional i64 guestId(personalDataType='GuestId')
-  3: optional i64 appId(personalDataType='AppId')
-  4: optional string ipAddress(personalDataType='IpAddress')
-  5: optional string userAgent(personalDataType='UserAgent')
-  6: optional string countryCode(personalDataType='InferredCountry')
-  7: optional string languageCode(personalDataType='InferredLanguage')
-  9: optional bool isTwoffice(personalDataType='InferredLocation')
-  10: optional set<string> userRoles
-  11: optional string deviceId(personalDataType='DeviceId')
-  12: optional i64 guestIdAds(personalDataType='GuestId')
-  13: optional i64 guestIdMarketing(personalDataType='GuestId')
+// Caller/Cl ent level spec f c context (e.g, user  d/guest  d/app  d).
+struct Cl entContext {
+  1: opt onal  64 user d(personalDataType='User d')
+  2: opt onal  64 guest d(personalDataType='Guest d')
+  3: opt onal  64 app d(personalDataType='App d')
+  4: opt onal str ng  pAddress(personalDataType=' pAddress')
+  5: opt onal str ng userAgent(personalDataType='UserAgent')
+  6: opt onal str ng countryCode(personalDataType=' nferredCountry')
+  7: opt onal str ng languageCode(personalDataType=' nferredLanguage')
+  9: opt onal bool  sTwoff ce(personalDataType=' nferredLocat on')
+  10: opt onal set<str ng> userRoles
+  11: opt onal str ng dev ce d(personalDataType='Dev ce d')
+  12: opt onal  64 guest dAds(personalDataType='Guest d')
+  13: opt onal  64 guest dMarket ng(personalDataType='Guest d')
 }(hasPersonalData='true')

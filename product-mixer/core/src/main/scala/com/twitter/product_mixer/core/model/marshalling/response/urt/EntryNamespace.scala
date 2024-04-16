@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-import scala.util.matching.Regex
+ mport scala.ut l.match ng.Regex
 
 /**
- * Entry Identifiers (commonly entry ids) are a type of identifier used in URT to identify
- * unique timeline entries - tweets, users, modules, etc.
+ * Entry  dent f ers (commonly entry  ds) are a type of  dent f er used  n URT to  dent fy
+ * un que t  l ne entr es - t ets, users, modules, etc.
  *
- * Entry Identifiers are formed from two parts - a namespace (EntryNamespace) and an underlying
- * id.
+ * Entry  dent f ers are for d from two parts - a na space (EntryNa space) and an underly ng
+ *  d.
  *
- * A Entry Namespace is restricted to:
+ * A Entry Na space  s restr cted to:
  * - 3 to 60 characters to ensure reasonable length
- * - a-z and dashes (kebab-case)
- * - Examples include "user" and "tweet"
+ * - a-z and das s (kebab-case)
+ * - Examples  nclude "user" and "t et"
  *
- * When specific entries identifiers are created, they will be appended with a dash and their
- * own id, like user-12 or tweet-20
+ * W n spec f c entr es  dent f ers are created, t y w ll be appended w h a dash and t  r
+ * own  d, l ke user-12 or t et-20
  */
 
-trait HasEntryNamespace {
-  val entryNamespace: EntryNamespace
+tra  HasEntryNa space {
+  val entryNa space: EntryNa space
 }
 
-// sealed abstract case class is basically a scala 2.12 opaque type -
-// you can only create them via the factory method on the companion
-// allowing us to enforce validation
-sealed abstract case class EntryNamespace(override val toString: String)
+// sealed abstract case class  s bas cally a scala 2.12 opaque type -
+//   can only create t m v a t  factory  thod on t  compan on
+// allow ng us to enforce val dat on
+sealed abstract case class EntryNa space(overr de val toStr ng: Str ng)
 
-object EntryNamespace {
-  val AllowedCharacters: Regex = "[a-z-]+".r // Allows for kebab-case
+object EntryNa space {
+  val Allo dCharacters: Regex = "[a-z-]+".r // Allows for kebab-case
 
-  def apply(str: String): EntryNamespace = {
-    val isValid = str match {
-      case n if n.length < 3 =>
+  def apply(str: Str ng): EntryNa space = {
+    val  sVal d = str match {
+      case n  f n.length < 3 =>
         false
-      case n if n.length > 60 =>
+      case n  f n.length > 60 =>
         false
-      case AllowedCharacters() =>
+      case Allo dCharacters() =>
         true
       case _ =>
         false
     }
 
-    if (isValid)
-      new EntryNamespace(str) {}
+     f ( sVal d)
+      new EntryNa space(str) {}
     else
-      throw new IllegalArgumentException(s"Illegal EntryNamespace: $str")
+      throw new  llegalArgu ntExcept on(s" llegal EntryNa space: $str")
   }
 }

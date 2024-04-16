@@ -1,8 +1,8 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-import com.twitter.context.TwitterContext
-package object repository {
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+ mport com.tw ter.context.Tw terContext
+package object repos ory {
+  // Br ng T etyp e perm ted Tw terContext  nto scope
+  val Tw terContext: Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 }

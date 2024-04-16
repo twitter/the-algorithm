@@ -1,34 +1,34 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.tw ter. nteract on_graph.sc o.agg_address_book
 
-import com.spotify.scio.ScioMetrics
-import org.apache.beam.sdk.metrics.Counter
+ mport com.spot fy.sc o.Sc o tr cs
+ mport org.apac .beam.sdk. tr cs.Counter
 
-trait InteractionGraphAddressBookCountersTrait {
-  val Namespace = "Interaction Graph Address Book"
+tra   nteract onGraphAddressBookCountersTra  {
+  val Na space = " nteract on Graph Address Book"
 
-  def emailFeatureInc(): Unit
+  def ema lFeature nc(): Un 
 
-  def phoneFeatureInc(): Unit
+  def phoneFeature nc(): Un 
 
-  def bothFeatureInc(): Unit
+  def bothFeature nc(): Un 
 }
 
 /**
- * SCIO counters are used to gather run time statistics
+ * SC O counters are used to gat r run t   stat st cs
  */
-case object InteractionGraphAddressBookCounters extends InteractionGraphAddressBookCountersTrait {
-  val emailFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Email Feature")
+case object  nteract onGraphAddressBookCounters extends  nteract onGraphAddressBookCountersTra  {
+  val ema lFeatureCounter: Counter =
+    Sc o tr cs.counter(Na space, "Ema l Feature")
 
   val phoneFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Phone Feature")
+    Sc o tr cs.counter(Na space, "Phone Feature")
 
   val bothFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Both Feature")
+    Sc o tr cs.counter(Na space, "Both Feature")
 
-  override def emailFeatureInc(): Unit = emailFeatureCounter.inc()
+  overr de def ema lFeature nc(): Un  = ema lFeatureCounter. nc()
 
-  override def phoneFeatureInc(): Unit = phoneFeatureCounter.inc()
+  overr de def phoneFeature nc(): Un  = phoneFeatureCounter. nc()
 
-  override def bothFeatureInc(): Unit = bothFeatureCounter.inc()
+  overr de def bothFeature nc(): Un  = bothFeatureCounter. nc()
 }

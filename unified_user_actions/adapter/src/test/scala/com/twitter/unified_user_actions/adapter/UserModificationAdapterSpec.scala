@@ -1,24 +1,24 @@
-package unified_user_actions.adapter.src.test.scala.com.twitter.unified_user_actions.adapter
+package un f ed_user_act ons.adapter.src.test.scala.com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.UserModificationEventFixture
-import com.twitter.unified_user_actions.adapter.user_modification.UserModificationAdapter
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.adapter.TestF xtures.UserMod f cat onEventF xture
+ mport com.tw ter.un f ed_user_act ons.adapter.user_mod f cat on.UserMod f cat onAdapter
+ mport com.tw ter.ut l.T  
+ mport org.scalatest.prop.TableDr venPropertyC cks
 
-class UserModificationAdapterSpec extends Test with TableDrivenPropertyChecks {
+class UserMod f cat onAdapterSpec extends Test w h TableDr venPropertyC cks {
   test("User Create") {
-    new UserModificationEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(UserModificationAdapter.adaptEvent(userCreate) === Seq(expectedUuaUserCreate))
+    new UserMod f cat onEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        assert(UserMod f cat onAdapter.adaptEvent(userCreate) === Seq(expectedUuaUserCreate))
       }
     }
   }
 
   test("User Update") {
-    new UserModificationEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(UserModificationAdapter.adaptEvent(userUpdate) === Seq(expectedUuaUserUpdate))
+    new UserMod f cat onEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        assert(UserMod f cat onAdapter.adaptEvent(userUpdate) === Seq(expectedUuaUserUpdate))
       }
     }
   }

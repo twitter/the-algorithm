@@ -1,246 +1,246 @@
-package com.twitter.timelines.prediction.features.engagement_features
+package com.tw ter.t  l nes.pred ct on.features.engage nt_features
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.logging.Logger
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.RichITransform
-import com.twitter.timelines.data_processing.ml_util.transforms.SparseBinaryUnion
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelineservice.suggests.features.engagement_features.thriftscala.{
-  EngagementFeatures => ThriftEngagementFeatures
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .Feature.SparseB nary
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.OneToSo Transform
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.R ch Transform
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.SparseB naryUn on
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport com.tw ter.t  l neserv ce.suggests.features.engage nt_features.thr ftscala.{
+  Engage ntFeatures => Thr ftEngage ntFeatures
 }
-import com.twitter.timelineservice.suggests.features.engagement_features.v1.thriftscala.{
-  EngagementFeatures => ThriftEngagementFeaturesV1
+ mport com.tw ter.t  l neserv ce.suggests.features.engage nt_features.v1.thr ftscala.{
+  Engage ntFeatures => Thr ftEngage ntFeaturesV1
 }
-import scala.collection.JavaConverters._
+ mport scala.collect on.JavaConverters._
 
-object EngagementFeatures {
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+object Engage ntFeatures {
+  pr vate[t ] val logger = Logger.get(getClass.getS mpleNa )
 
-  sealed trait EngagementFeature
-  case object Count extends EngagementFeature
-  case object RealGraphWeightAverage extends EngagementFeature
-  case object RealGraphWeightMax extends EngagementFeature
-  case object RealGraphWeightMin extends EngagementFeature
-  case object RealGraphWeightMissing extends EngagementFeature
-  case object RealGraphWeightVariance extends EngagementFeature
-  case object UserIds extends EngagementFeature
+  sealed tra  Engage ntFeature
+  case object Count extends Engage ntFeature
+  case object RealGraph  ghtAverage extends Engage ntFeature
+  case object RealGraph  ghtMax extends Engage ntFeature
+  case object RealGraph  ghtM n extends Engage ntFeature
+  case object RealGraph  ghtM ss ng extends Engage ntFeature
+  case object RealGraph  ghtVar ance extends Engage ntFeature
+  case object User ds extends Engage ntFeature
 
-  def fromThrift(thriftEngagementFeatures: ThriftEngagementFeatures): Option[EngagementFeatures] = {
-    thriftEngagementFeatures match {
-      case thriftEngagementFeaturesV1: ThriftEngagementFeatures.V1 =>
-        Some(
-          EngagementFeatures(
-            favoritedBy = thriftEngagementFeaturesV1.v1.favoritedBy,
-            retweetedBy = thriftEngagementFeaturesV1.v1.retweetedBy,
-            repliedBy = thriftEngagementFeaturesV1.v1.repliedBy,
+  def fromThr ft(thr ftEngage ntFeatures: Thr ftEngage ntFeatures): Opt on[Engage ntFeatures] = {
+    thr ftEngage ntFeatures match {
+      case thr ftEngage ntFeaturesV1: Thr ftEngage ntFeatures.V1 =>
+        So (
+          Engage ntFeatures(
+            favor edBy = thr ftEngage ntFeaturesV1.v1.favor edBy,
+            ret etedBy = thr ftEngage ntFeaturesV1.v1.ret etedBy,
+            repl edBy = thr ftEngage ntFeaturesV1.v1.repl edBy,
           )
         )
       case _ => {
-        logger.error("Unexpected EngagementFeatures version found.")
+        logger.error("Unexpected Engage ntFeatures vers on found.")
         None
       }
     }
   }
 
-  val empty: EngagementFeatures = EngagementFeatures()
+  val empty: Engage ntFeatures = Engage ntFeatures()
 }
 
 /**
- * Contains user IDs who have engaged with a target entity, such as a Tweet,
- * and any additional data needed for derived features.
+ * Conta ns user  Ds who have engaged w h a target ent y, such as a T et,
+ * and any add  onal data needed for der ved features.
  */
-case class EngagementFeatures(
-  favoritedBy: Seq[Long] = Nil,
-  retweetedBy: Seq[Long] = Nil,
-  repliedBy: Seq[Long] = Nil,
-  realGraphWeightByUser: Map[Long, Double] = Map.empty) {
-  def isEmpty: Boolean = favoritedBy.isEmpty && retweetedBy.isEmpty && repliedBy.isEmpty
-  def nonEmpty: Boolean = !isEmpty
-  def toLogThrift: ThriftEngagementFeatures.V1 =
-    ThriftEngagementFeatures.V1(
-      ThriftEngagementFeaturesV1(
-        favoritedBy = favoritedBy,
-        retweetedBy = retweetedBy,
-        repliedBy = repliedBy
+case class Engage ntFeatures(
+  favor edBy: Seq[Long] = N l,
+  ret etedBy: Seq[Long] = N l,
+  repl edBy: Seq[Long] = N l,
+  realGraph  ghtByUser: Map[Long, Double] = Map.empty) {
+  def  sEmpty: Boolean = favor edBy. sEmpty && ret etedBy. sEmpty && repl edBy. sEmpty
+  def nonEmpty: Boolean = ! sEmpty
+  def toLogThr ft: Thr ftEngage ntFeatures.V1 =
+    Thr ftEngage ntFeatures.V1(
+      Thr ftEngage ntFeaturesV1(
+        favor edBy = favor edBy,
+        ret etedBy = ret etedBy,
+        repl edBy = repl edBy
       )
     )
 }
 
 /**
- * Represents engagement features derived from the Real Graph weight.
+ * Represents engage nt features der ved from t  Real Graph   ght.
  *
- * These features are from the perspective of the source user, who is viewing their
- * timeline, to the destination users (or user), who created engagements.
+ * T se features are from t  perspect ve of t  s ce user, who  s v ew ng t  r
+ * t  l ne, to t  dest nat on users (or user), who created engage nts.
  *
- * @param count number of engagements present
- * @param max max score of the engaging users
- * @param mean average score of the engaging users
- * @param min minimum score of the engaging users
- * @param missing for engagements present, how many Real Graph scores were missing
- * @param variance variance of scores of the engaging users
+ * @param count number of engage nts present
+ * @param max max score of t  engag ng users
+ * @param  an average score of t  engag ng users
+ * @param m n m n mum score of t  engag ng users
+ * @param m ss ng for engage nts present, how many Real Graph scores  re m ss ng
+ * @param var ance var ance of scores of t  engag ng users
  */
-case class RealGraphDerivedEngagementFeatures(
-  count: Int,
+case class RealGraphDer vedEngage ntFeatures(
+  count:  nt,
   max: Double,
-  mean: Double,
-  min: Double,
-  missing: Int,
-  variance: Double)
+   an: Double,
+  m n: Double,
+  m ss ng:  nt,
+  var ance: Double)
 
-object EngagementDataRecordFeatures {
-  import EngagementFeatures._
+object Engage ntDataRecordFeatures {
+   mport Engage ntFeatures._
 
-  val FavoritedByUserIds = new SparseBinary(
-    "engagement_features.user_ids.favorited_by",
-    Set(UserId, PrivateLikes, PublicLikes).asJava)
-  val RetweetedByUserIds = new SparseBinary(
-    "engagement_features.user_ids.retweeted_by",
-    Set(UserId, PrivateRetweets, PublicRetweets).asJava)
-  val RepliedByUserIds = new SparseBinary(
-    "engagement_features.user_ids.replied_by",
-    Set(UserId, PrivateReplies, PublicReplies).asJava)
+  val Favor edByUser ds = new SparseB nary(
+    "engage nt_features.user_ ds.favor ed_by",
+    Set(User d, Pr vateL kes, Publ cL kes).asJava)
+  val Ret etedByUser ds = new SparseB nary(
+    "engage nt_features.user_ ds.ret eted_by",
+    Set(User d, Pr vateRet ets, Publ cRet ets).asJava)
+  val Repl edByUser ds = new SparseB nary(
+    "engage nt_features.user_ ds.repl ed_by",
+    Set(User d, Pr vateRepl es, Publ cRepl es).asJava)
 
-  val InNetworkFavoritesCount = new Continuous(
-    "engagement_features.in_network.favorites.count",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val InNetworkRetweetsCount = new Continuous(
-    "engagement_features.in_network.retweets.count",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val InNetworkRepliesCount = new Continuous(
-    "engagement_features.in_network.replies.count",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
+  val  nNetworkFavor esCount = new Cont nuous(
+    "engage nt_features. n_network.favor es.count",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava)
+  val  nNetworkRet etsCount = new Cont nuous(
+    "engage nt_features. n_network.ret ets.count",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava)
+  val  nNetworkRepl esCount = new Cont nuous(
+    "engage nt_features. n_network.repl es.count",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava)
 
-  // real graph derived features
-  val InNetworkFavoritesAvgRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.avg_weight",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  // real graph der ved features
+  val  nNetworkFavor esAvgRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.favor es.avg_  ght",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava
   )
-  val InNetworkFavoritesMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.max_weight",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  val  nNetworkFavor esMaxRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.favor es.max_  ght",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava
   )
-  val InNetworkFavoritesMinRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.min_weight",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  val  nNetworkFavor esM nRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.favor es.m n_  ght",
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava
   )
-  val InNetworkFavoritesRealGraphWeightMissing = new Continuous(
-    "engagement_features.real_graph.favorites.missing"
+  val  nNetworkFavor esRealGraph  ghtM ss ng = new Cont nuous(
+    "engage nt_features.real_graph.favor es.m ss ng"
   )
-  val InNetworkFavoritesRealGraphWeightVariance = new Continuous(
-    "engagement_features.real_graph.favorites.weight_variance"
-  )
-
-  val InNetworkRetweetsMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.max_weight",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val InNetworkRetweetsMinRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.min_weight",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val InNetworkRetweetsAvgRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.avg_weight",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val InNetworkRetweetsRealGraphWeightMissing = new Continuous(
-    "engagement_features.real_graph.retweets.missing"
-  )
-  val InNetworkRetweetsRealGraphWeightVariance = new Continuous(
-    "engagement_features.real_graph.retweets.weight_variance"
+  val  nNetworkFavor esRealGraph  ghtVar ance = new Cont nuous(
+    "engage nt_features.real_graph.favor es.  ght_var ance"
   )
 
-  val InNetworkRepliesMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.max_weight",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  val  nNetworkRet etsMaxRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.ret ets.max_  ght",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava
   )
-  val InNetworkRepliesMinRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.min_weight",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  val  nNetworkRet etsM nRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.ret ets.m n_  ght",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava
   )
-  val InNetworkRepliesAvgRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.avg_weight",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  val  nNetworkRet etsAvgRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.ret ets.avg_  ght",
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava
   )
-  val InNetworkRepliesRealGraphWeightMissing = new Continuous(
-    "engagement_features.real_graph.replies.missing"
+  val  nNetworkRet etsRealGraph  ghtM ss ng = new Cont nuous(
+    "engage nt_features.real_graph.ret ets.m ss ng"
   )
-  val InNetworkRepliesRealGraphWeightVariance = new Continuous(
-    "engagement_features.real_graph.replies.weight_variance"
+  val  nNetworkRet etsRealGraph  ghtVar ance = new Cont nuous(
+    "engage nt_features.real_graph.ret ets.  ght_var ance"
   )
 
-  sealed trait FeatureGroup {
-    def continuousFeatures: Map[EngagementFeature, Continuous]
-    def sparseBinaryFeatures: Map[EngagementFeature, SparseBinary]
+  val  nNetworkRepl esMaxRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.repl es.max_  ght",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava
+  )
+  val  nNetworkRepl esM nRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.repl es.m n_  ght",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava
+  )
+  val  nNetworkRepl esAvgRealGraph  ght = new Cont nuous(
+    "engage nt_features.real_graph.repl es.avg_  ght",
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava
+  )
+  val  nNetworkRepl esRealGraph  ghtM ss ng = new Cont nuous(
+    "engage nt_features.real_graph.repl es.m ss ng"
+  )
+  val  nNetworkRepl esRealGraph  ghtVar ance = new Cont nuous(
+    "engage nt_features.real_graph.repl es.  ght_var ance"
+  )
+
+  sealed tra  FeatureGroup {
+    def cont nuousFeatures: Map[Engage ntFeature, Cont nuous]
+    def sparseB naryFeatures: Map[Engage ntFeature, SparseB nary]
     def allFeatures: Seq[Feature[_]] =
-      (continuousFeatures.values ++ sparseBinaryFeatures.values).toSeq
+      (cont nuousFeatures.values ++ sparseB naryFeatures.values).toSeq
   }
 
-  case object Favorites extends FeatureGroup {
-    override val continuousFeatures: Map[EngagementFeature, Continuous] =
+  case object Favor es extends FeatureGroup {
+    overr de val cont nuousFeatures: Map[Engage ntFeature, Cont nuous] =
       Map(
-        Count -> InNetworkFavoritesCount,
-        RealGraphWeightAverage -> InNetworkFavoritesAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkFavoritesMaxRealGraphWeight,
-        RealGraphWeightMin -> InNetworkFavoritesMinRealGraphWeight,
-        RealGraphWeightMissing -> InNetworkFavoritesRealGraphWeightMissing,
-        RealGraphWeightVariance -> InNetworkFavoritesRealGraphWeightVariance
+        Count ->  nNetworkFavor esCount,
+        RealGraph  ghtAverage ->  nNetworkFavor esAvgRealGraph  ght,
+        RealGraph  ghtMax ->  nNetworkFavor esMaxRealGraph  ght,
+        RealGraph  ghtM n ->  nNetworkFavor esM nRealGraph  ght,
+        RealGraph  ghtM ss ng ->  nNetworkFavor esRealGraph  ghtM ss ng,
+        RealGraph  ghtVar ance ->  nNetworkFavor esRealGraph  ghtVar ance
       )
 
-    override val sparseBinaryFeatures: Map[EngagementFeature, SparseBinary] =
-      Map(UserIds -> FavoritedByUserIds)
+    overr de val sparseB naryFeatures: Map[Engage ntFeature, SparseB nary] =
+      Map(User ds -> Favor edByUser ds)
   }
 
-  case object Retweets extends FeatureGroup {
-    override val continuousFeatures: Map[EngagementFeature, Continuous] =
+  case object Ret ets extends FeatureGroup {
+    overr de val cont nuousFeatures: Map[Engage ntFeature, Cont nuous] =
       Map(
-        Count -> InNetworkRetweetsCount,
-        RealGraphWeightAverage -> InNetworkRetweetsAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkRetweetsMaxRealGraphWeight,
-        RealGraphWeightMin -> InNetworkRetweetsMinRealGraphWeight,
-        RealGraphWeightMissing -> InNetworkRetweetsRealGraphWeightMissing,
-        RealGraphWeightVariance -> InNetworkRetweetsRealGraphWeightVariance
+        Count ->  nNetworkRet etsCount,
+        RealGraph  ghtAverage ->  nNetworkRet etsAvgRealGraph  ght,
+        RealGraph  ghtMax ->  nNetworkRet etsMaxRealGraph  ght,
+        RealGraph  ghtM n ->  nNetworkRet etsM nRealGraph  ght,
+        RealGraph  ghtM ss ng ->  nNetworkRet etsRealGraph  ghtM ss ng,
+        RealGraph  ghtVar ance ->  nNetworkRet etsRealGraph  ghtVar ance
       )
 
-    override val sparseBinaryFeatures: Map[EngagementFeature, SparseBinary] =
-      Map(UserIds -> RetweetedByUserIds)
+    overr de val sparseB naryFeatures: Map[Engage ntFeature, SparseB nary] =
+      Map(User ds -> Ret etedByUser ds)
   }
 
-  case object Replies extends FeatureGroup {
-    override val continuousFeatures: Map[EngagementFeature, Continuous] =
+  case object Repl es extends FeatureGroup {
+    overr de val cont nuousFeatures: Map[Engage ntFeature, Cont nuous] =
       Map(
-        Count -> InNetworkRepliesCount,
-        RealGraphWeightAverage -> InNetworkRepliesAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkRepliesMaxRealGraphWeight,
-        RealGraphWeightMin -> InNetworkRepliesMinRealGraphWeight,
-        RealGraphWeightMissing -> InNetworkRepliesRealGraphWeightMissing,
-        RealGraphWeightVariance -> InNetworkRepliesRealGraphWeightVariance
+        Count ->  nNetworkRepl esCount,
+        RealGraph  ghtAverage ->  nNetworkRepl esAvgRealGraph  ght,
+        RealGraph  ghtMax ->  nNetworkRepl esMaxRealGraph  ght,
+        RealGraph  ghtM n ->  nNetworkRepl esM nRealGraph  ght,
+        RealGraph  ghtM ss ng ->  nNetworkRepl esRealGraph  ghtM ss ng,
+        RealGraph  ghtVar ance ->  nNetworkRepl esRealGraph  ghtVar ance
       )
 
-    override val sparseBinaryFeatures: Map[EngagementFeature, SparseBinary] =
-      Map(UserIds -> RepliedByUserIds)
+    overr de val sparseB naryFeatures: Map[Engage ntFeature, SparseB nary] =
+      Map(User ds -> Repl edByUser ds)
   }
 
-  val PublicEngagerSets = Set(FavoritedByUserIds, RetweetedByUserIds, RepliedByUserIds)
-  val PublicEngagementUserIds = new SparseBinary(
-    "engagement_features.user_ids.public",
-    Set(UserId, EngagementsPublic).asJava
+  val Publ cEngagerSets = Set(Favor edByUser ds, Ret etedByUser ds, Repl edByUser ds)
+  val Publ cEngage ntUser ds = new SparseB nary(
+    "engage nt_features.user_ ds.publ c",
+    Set(User d, Engage ntsPubl c).asJava
   )
-  val ENGAGER_ID = TypedAggregateGroup.sparseFeature(PublicEngagementUserIds)
+  val ENGAGER_ D = TypedAggregateGroup.sparseFeature(Publ cEngage ntUser ds)
 
-  val UnifyPublicEngagersTransform = SparseBinaryUnion(
-    featuresToUnify = PublicEngagerSets,
-    outputFeature = PublicEngagementUserIds
+  val Un fyPubl cEngagersTransform = SparseB naryUn on(
+    featuresToUn fy = Publ cEngagerSets,
+    outputFeature = Publ cEngage ntUser ds
   )
 
-  object RichUnifyPublicEngagersTransform extends OneToSomeTransform {
-    override def apply(dataRecord: DataRecord): Option[DataRecord] =
-      RichITransform(EngagementDataRecordFeatures.UnifyPublicEngagersTransform)(dataRecord)
-    override def featuresToTransform: Set[Feature[_]] =
-      EngagementDataRecordFeatures.UnifyPublicEngagersTransform.featuresToUnify.toSet
+  object R chUn fyPubl cEngagersTransform extends OneToSo Transform {
+    overr de def apply(dataRecord: DataRecord): Opt on[DataRecord] =
+      R ch Transform(Engage ntDataRecordFeatures.Un fyPubl cEngagersTransform)(dataRecord)
+    overr de def featuresToTransform: Set[Feature[_]] =
+      Engage ntDataRecordFeatures.Un fyPubl cEngagersTransform.featuresToUn fy.toSet
   }
 }

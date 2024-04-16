@@ -1,171 +1,171 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage_internal.thriftscala._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.TweetLenses
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala._
+ mport com.tw ter.scrooge.TF eldBlob
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e.storage_ nternal.thr ftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.ut l.T etLenses
 
-object StorageConversions {
-  private val tbTweetCompiledAdditionalFieldIds =
-    StoredTweet.metaData.fields.map(_.id).filter(AdditionalFields.isAdditionalFieldId)
+object StorageConvers ons {
+  pr vate val tbT etComp ledAdd  onalF eld ds =
+    StoredT et. taData.f elds.map(_. d).f lter(Add  onalF elds. sAdd  onalF eld d)
 
-  def toStoredReply(reply: Reply, conversationId: Option[TweetId]): StoredReply =
+  def toStoredReply(reply: Reply, conversat on d: Opt on[T et d]): StoredReply =
     StoredReply(
-      inReplyToStatusId = reply.inReplyToStatusId.getOrElse(0),
-      inReplyToUserId = reply.inReplyToUserId,
-      conversationId = conversationId
+       nReplyToStatus d = reply. nReplyToStatus d.getOrElse(0),
+       nReplyToUser d = reply. nReplyToUser d,
+      conversat on d = conversat on d
     )
 
   def toStoredShare(share: Share): StoredShare =
     StoredShare(
-      share.sourceStatusId,
-      share.sourceUserId,
-      share.parentStatusId
+      share.s ceStatus d,
+      share.s ceUser d,
+      share.parentStatus d
     )
 
-  def toStoredQuotedTweet(qt: QuotedTweet, text: String): Option[StoredQuotedTweet] =
-    qt.permalink
-      .filterNot { p =>
-        text.contains(p.shortUrl)
-      } // omit StoredQuotedTweet when url already in text
+  def toStoredQuotedT et(qt: QuotedT et, text: Str ng): Opt on[StoredQuotedT et] =
+    qt.permal nk
+      .f lterNot { p =>
+        text.conta ns(p.shortUrl)
+      } // om  StoredQuotedT et w n url already  n text
       .map { p =>
-        StoredQuotedTweet(
-          qt.tweetId,
-          qt.userId,
+        StoredQuotedT et(
+          qt.t et d,
+          qt.user d,
           p.shortUrl
         )
       }
 
-  def toStoredGeo(tweet: Tweet): Option[StoredGeo] =
-    TweetLenses.geoCoordinates.get(tweet) match {
+  def toStoredGeo(t et: T et): Opt on[StoredGeo] =
+    T etLenses.geoCoord nates.get(t et) match {
       case None =>
-        TweetLenses.placeId.get(tweet) match {
+        T etLenses.place d.get(t et) match {
           case None => None
-          case Some(placeId) =>
-            Some(
+          case So (place d) =>
+            So (
               StoredGeo(
-                latitude = 0.0,
-                longitude = 0.0,
-                geoPrecision = 0,
-                entityId = 0,
-                name = Some(placeId)
+                lat ude = 0.0,
+                long ude = 0.0,
+                geoPrec s on = 0,
+                ent y d = 0,
+                na  = So (place d)
               )
             )
         }
-      case Some(coords) =>
-        Some(
+      case So (coords) =>
+        So (
           StoredGeo(
-            latitude = coords.latitude,
-            longitude = coords.longitude,
-            geoPrecision = coords.geoPrecision,
-            entityId = if (coords.display) 2 else 0,
-            name = TweetLenses.placeId.get(tweet)
+            lat ude = coords.lat ude,
+            long ude = coords.long ude,
+            geoPrec s on = coords.geoPrec s on,
+            ent y d =  f (coords.d splay) 2 else 0,
+            na  = T etLenses.place d.get(t et)
           )
         )
     }
 
-  def toStoredMedia(mediaList: Seq[MediaEntity]): Seq[StoredMediaEntity] =
-    mediaList.filter(_.sourceStatusId.isEmpty).flatMap(toStoredMediaEntity)
+  def toStored d a( d aL st: Seq[ d aEnt y]): Seq[Stored d aEnt y] =
+     d aL st.f lter(_.s ceStatus d. sEmpty).flatMap(toStored d aEnt y)
 
-  def toStoredMediaEntity(media: MediaEntity): Option[StoredMediaEntity] =
-    media.sizes.find(_.sizeType == MediaSizeType.Orig).map { origSize =>
-      StoredMediaEntity(
-        id = media.mediaId,
-        mediaType = origSize.deprecatedContentType.value.toByte,
-        width = origSize.width.toShort,
-        height = origSize.height.toShort
+  def toStored d aEnt y( d a:  d aEnt y): Opt on[Stored d aEnt y] =
+     d a.s zes.f nd(_.s zeType ==  d aS zeType.Or g).map { or gS ze =>
+      Stored d aEnt y(
+         d =  d a. d a d,
+         d aType = or gS ze.deprecatedContentType.value.toByte,
+        w dth = or gS ze.w dth.toShort,
+          ght = or gS ze.  ght.toShort
       )
     }
 
-  // The language and ids fields are for compatibility with existing tweets stored in manhattan.
+  // T  language and  ds f elds are for compat b l y w h ex st ng t ets stored  n manhattan.
   def toStoredNarrowcast(narrowcast: Narrowcast): StoredNarrowcast =
     StoredNarrowcast(
-      language = Some(Seq.empty),
-      location = Some(narrowcast.location),
-      ids = Some(Seq.empty)
+      language = So (Seq.empty),
+      locat on = So (narrowcast.locat on),
+       ds = So (Seq.empty)
     )
 
-  def toStoredAdditionalFields(from: Seq[TFieldBlob], to: StoredTweet): StoredTweet =
-    from.foldLeft(to) { case (t, f) => t.setField(f) }
+  def toStoredAdd  onalF elds(from: Seq[TF eldBlob], to: StoredT et): StoredT et =
+    from.foldLeft(to) { case (t, f) => t.setF eld(f) }
 
-  def toStoredAdditionalFields(from: Tweet, to: StoredTweet): StoredTweet =
-    toStoredAdditionalFields(AdditionalFields.additionalFields(from), to)
+  def toStoredAdd  onalF elds(from: T et, to: StoredT et): StoredT et =
+    toStoredAdd  onalF elds(Add  onalF elds.add  onalF elds(from), to)
 
-  def toStoredTweet(tweet: Tweet): StoredTweet = {
-    val storedTweet =
-      StoredTweet(
-        id = tweet.id,
-        userId = Some(TweetLenses.userId(tweet)),
-        text = Some(TweetLenses.text(tweet)),
-        createdVia = Some(TweetLenses.createdVia(tweet)),
-        createdAtSec = Some(TweetLenses.createdAt(tweet)),
+  def toStoredT et(t et: T et): StoredT et = {
+    val storedT et =
+      StoredT et(
+         d = t et. d,
+        user d = So (T etLenses.user d(t et)),
+        text = So (T etLenses.text(t et)),
+        createdV a = So (T etLenses.createdV a(t et)),
+        createdAtSec = So (T etLenses.createdAt(t et)),
         reply =
-          TweetLenses.reply(tweet).map { r => toStoredReply(r, TweetLenses.conversationId(tweet)) },
-        share = TweetLenses.share(tweet).map(toStoredShare),
-        contributorId = tweet.contributor.map(_.userId),
-        geo = toStoredGeo(tweet),
-        hasTakedown = Some(TweetLenses.hasTakedown(tweet)),
-        nsfwUser = Some(TweetLenses.nsfwUser(tweet)),
-        nsfwAdmin = Some(TweetLenses.nsfwAdmin(tweet)),
-        media = tweet.media.map(toStoredMedia),
-        narrowcast = TweetLenses.narrowcast(tweet).map(toStoredNarrowcast),
-        nullcast = Some(TweetLenses.nullcast(tweet)),
-        trackingId = TweetLenses.trackingId(tweet),
-        quotedTweet = TweetLenses.quotedTweet(tweet).flatMap { qt =>
-          toStoredQuotedTweet(qt, TweetLenses.text(tweet))
+          T etLenses.reply(t et).map { r => toStoredReply(r, T etLenses.conversat on d(t et)) },
+        share = T etLenses.share(t et).map(toStoredShare),
+        contr butor d = t et.contr butor.map(_.user d),
+        geo = toStoredGeo(t et),
+        hasTakedown = So (T etLenses.hasTakedown(t et)),
+        nsfwUser = So (T etLenses.nsfwUser(t et)),
+        nsfwAdm n = So (T etLenses.nsfwAdm n(t et)),
+         d a = t et. d a.map(toStored d a),
+        narrowcast = T etLenses.narrowcast(t et).map(toStoredNarrowcast),
+        nullcast = So (T etLenses.nullcast(t et)),
+        track ng d = T etLenses.track ng d(t et),
+        quotedT et = T etLenses.quotedT et(t et).flatMap { qt =>
+          toStoredQuotedT et(qt, T etLenses.text(t et))
         }
       )
-    toStoredAdditionalFields(tweet, storedTweet)
+    toStoredAdd  onalF elds(t et, storedT et)
   }
 
   /**
-   * Does not need core data to be set. Constructs on disk tweet by avoiding the TweetLenses object
-   * and only extracting the specified fields.
+   * Does not need core data to be set. Constructs on d sk t et by avo d ng t  T etLenses object
+   * and only extract ng t  spec f ed f elds.
    *
-   * NOTE: Assumes that specified fields are set in the tweet.
+   * NOTE: Assu s that spec f ed f elds are set  n t  t et.
    *
-   * @param tpTweet Tweetypie Tweet to be converted
-   * @param fields the fields to be populated in the on disk Tweet
+   * @param tpT et T etyp e T et to be converted
+   * @param f elds t  f elds to be populated  n t  on d sk T et
    *
-   * @return an on disk Tweet which has only the specified fields set
+   * @return an on d sk T et wh ch has only t  spec f ed f elds set
    */
-  def toStoredTweetForFields(tpTweet: Tweet, fields: Set[Field]): StoredTweet = {
+  def toStoredT etForF elds(tpT et: T et, f elds: Set[F eld]): StoredT et = {
 
-    // Make sure all the passed in fields are known or additional fields
-    require(
-      (fields -- Field.AllUpdatableCompiledFields)
-        .forall(field => AdditionalFields.isAdditionalFieldId(field.id))
+    // Make sure all t  passed  n f elds are known or add  onal f elds
+    requ re(
+      (f elds -- F eld.AllUpdatableComp ledF elds)
+        .forall(f eld => Add  onalF elds. sAdd  onalF eld d(f eld. d))
     )
 
-    val storedTweet =
-      StoredTweet(
-        id = tpTweet.id,
-        geo = if (fields.contains(Field.Geo)) {
-          tpTweet.coreData.get.coordinates match {
+    val storedT et =
+      StoredT et(
+         d = tpT et. d,
+        geo =  f (f elds.conta ns(F eld.Geo)) {
+          tpT et.coreData.get.coord nates match {
             case None =>
-              tpTweet.coreData.get.placeId match {
+              tpT et.coreData.get.place d match {
                 case None => None
-                case Some(placeId) =>
-                  Some(
+                case So (place d) =>
+                  So (
                     StoredGeo(
-                      latitude = 0.0,
-                      longitude = 0.0,
-                      geoPrecision = 0,
-                      entityId = 0,
-                      name = Some(placeId)
+                      lat ude = 0.0,
+                      long ude = 0.0,
+                      geoPrec s on = 0,
+                      ent y d = 0,
+                      na  = So (place d)
                     )
                   )
               }
-            case Some(coords) =>
-              Some(
+            case So (coords) =>
+              So (
                 StoredGeo(
-                  latitude = coords.latitude,
-                  longitude = coords.longitude,
-                  geoPrecision = coords.geoPrecision,
-                  entityId = if (coords.display) 2 else 0,
-                  name = tpTweet.coreData.get.placeId
+                  lat ude = coords.lat ude,
+                  long ude = coords.long ude,
+                  geoPrec s on = coords.geoPrec s on,
+                  ent y d =  f (coords.d splay) 2 else 0,
+                  na  = tpT et.coreData.get.place d
                 )
               )
           }
@@ -173,174 +173,174 @@ object StorageConversions {
           None
         },
         hasTakedown =
-          if (fields.contains(Field.HasTakedown))
-            Some(tpTweet.coreData.get.hasTakedown)
+           f (f elds.conta ns(F eld.HasTakedown))
+            So (tpT et.coreData.get.hasTakedown)
           else
             None,
         nsfwUser =
-          if (fields.contains(Field.NsfwUser))
-            Some(tpTweet.coreData.get.nsfwUser)
+           f (f elds.conta ns(F eld.NsfwUser))
+            So (tpT et.coreData.get.nsfwUser)
           else
             None,
-        nsfwAdmin =
-          if (fields.contains(Field.NsfwAdmin))
-            Some(tpTweet.coreData.get.nsfwAdmin)
+        nsfwAdm n =
+           f (f elds.conta ns(F eld.NsfwAdm n))
+            So (tpT et.coreData.get.nsfwAdm n)
           else
             None
       )
 
-    if (fields.map(_.id).exists(AdditionalFields.isAdditionalFieldId))
-      toStoredAdditionalFields(tpTweet, storedTweet)
+     f (f elds.map(_. d).ex sts(Add  onalF elds. sAdd  onalF eld d))
+      toStoredAdd  onalF elds(tpT et, storedT et)
     else
-      storedTweet
+      storedT et
   }
 
   def fromStoredReply(reply: StoredReply): Reply =
     Reply(
-      Some(reply.inReplyToStatusId).filter(_ > 0),
-      reply.inReplyToUserId
+      So (reply. nReplyToStatus d).f lter(_ > 0),
+      reply. nReplyToUser d
     )
 
   def fromStoredShare(share: StoredShare): Share =
     Share(
-      share.sourceStatusId,
-      share.sourceUserId,
-      share.parentStatusId
+      share.s ceStatus d,
+      share.s ceUser d,
+      share.parentStatus d
     )
 
-  def fromStoredQuotedTweet(qt: StoredQuotedTweet): QuotedTweet =
-    QuotedTweet(
-      qt.tweetId,
-      qt.userId,
-      Some(
+  def fromStoredQuotedT et(qt: StoredQuotedT et): QuotedT et =
+    QuotedT et(
+      qt.t et d,
+      qt.user d,
+      So (
         ShortenedUrl(
           shortUrl = qt.shortUrl,
-          longUrl = "", // will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
-          displayText = "" //will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
+          longUrl = "", // w ll be hydrated later v a t etyp e's QuotedT etRefUrlsHydrator
+          d splayText = "" //w ll be hydrated later v a t etyp e's QuotedT etRefUrlsHydrator
         )
       )
     )
 
-  def fromStoredGeo(geo: StoredGeo): GeoCoordinates =
-    GeoCoordinates(
-      latitude = geo.latitude,
-      longitude = geo.longitude,
-      geoPrecision = geo.geoPrecision,
-      display = geo.entityId == 2
+  def fromStoredGeo(geo: StoredGeo): GeoCoord nates =
+    GeoCoord nates(
+      lat ude = geo.lat ude,
+      long ude = geo.long ude,
+      geoPrec s on = geo.geoPrec s on,
+      d splay = geo.ent y d == 2
     )
 
-  def fromStoredMediaEntity(media: StoredMediaEntity): MediaEntity =
-    MediaEntity(
-      fromIndex = -1, // will get filled in later
-      toIndex = -1, // will get filled in later
-      url = null, // will get filled in later
-      mediaPath = "", // field is obsolete
-      mediaUrl = null, // will get filled in later
-      mediaUrlHttps = null, // will get filled in later
-      displayUrl = null, // will get filled in later
-      expandedUrl = null, // will get filled in later
-      mediaId = media.id,
+  def fromStored d aEnt y( d a: Stored d aEnt y):  d aEnt y =
+     d aEnt y(
+      from ndex = -1, // w ll get f lled  n later
+      to ndex = -1, // w ll get f lled  n later
+      url = null, // w ll get f lled  n later
+       d aPath = "", // f eld  s obsolete
+       d aUrl = null, // w ll get f lled  n later
+       d aUrlHttps = null, // w ll get f lled  n later
+      d splayUrl = null, // w ll get f lled  n later
+      expandedUrl = null, // w ll get f lled  n later
+       d a d =  d a. d,
       nsfw = false,
-      sizes = Set(
-        MediaSize(
-          sizeType = MediaSizeType.Orig,
-          resizeMethod = MediaResizeMethod.Fit,
-          deprecatedContentType = MediaContentType(media.mediaType),
-          width = media.width,
-          height = media.height
+      s zes = Set(
+         d aS ze(
+          s zeType =  d aS zeType.Or g,
+          res ze thod =  d aRes ze thod.F ,
+          deprecatedContentType =  d aContentType( d a. d aType),
+          w dth =  d a.w dth,
+            ght =  d a.  ght
         )
       )
     )
 
   def fromStoredNarrowcast(narrowcast: StoredNarrowcast): Narrowcast =
     Narrowcast(
-      location = narrowcast.location.getOrElse(Seq())
+      locat on = narrowcast.locat on.getOrElse(Seq())
     )
 
-  def fromStoredTweet(storedTweet: StoredTweet): Tweet = {
+  def fromStoredT et(storedT et: StoredT et): T et = {
     val coreData =
-      TweetCoreData(
-        userId = storedTweet.userId.get,
-        text = storedTweet.text.get,
-        createdVia = storedTweet.createdVia.get,
-        createdAtSecs = storedTweet.createdAtSec.get,
-        reply = storedTweet.reply.map(fromStoredReply),
-        share = storedTweet.share.map(fromStoredShare),
-        hasTakedown = storedTweet.hasTakedown.getOrElse(false),
-        nsfwUser = storedTweet.nsfwUser.getOrElse(false),
-        nsfwAdmin = storedTweet.nsfwAdmin.getOrElse(false),
-        narrowcast = storedTweet.narrowcast.map(fromStoredNarrowcast),
-        nullcast = storedTweet.nullcast.getOrElse(false),
-        trackingId = storedTweet.trackingId,
-        conversationId = storedTweet.reply.flatMap(_.conversationId),
-        placeId = storedTweet.geo.flatMap(_.name),
-        coordinates = storedTweet.geo.map(fromStoredGeo),
-        hasMedia = if (storedTweet.media.exists(_.nonEmpty)) Some(true) else None
+      T etCoreData(
+        user d = storedT et.user d.get,
+        text = storedT et.text.get,
+        createdV a = storedT et.createdV a.get,
+        createdAtSecs = storedT et.createdAtSec.get,
+        reply = storedT et.reply.map(fromStoredReply),
+        share = storedT et.share.map(fromStoredShare),
+        hasTakedown = storedT et.hasTakedown.getOrElse(false),
+        nsfwUser = storedT et.nsfwUser.getOrElse(false),
+        nsfwAdm n = storedT et.nsfwAdm n.getOrElse(false),
+        narrowcast = storedT et.narrowcast.map(fromStoredNarrowcast),
+        nullcast = storedT et.nullcast.getOrElse(false),
+        track ng d = storedT et.track ng d,
+        conversat on d = storedT et.reply.flatMap(_.conversat on d),
+        place d = storedT et.geo.flatMap(_.na ),
+        coord nates = storedT et.geo.map(fromStoredGeo),
+        has d a =  f (storedT et. d a.ex sts(_.nonEmpty)) So (true) else None
       )
 
-    // retweets should never have their media, but some tweets incorrectly do.
-    val storedMedia = if (coreData.share.isDefined) Nil else storedTweet.media.toSeq
+    // ret ets should never have t  r  d a, but so  t ets  ncorrectly do.
+    val stored d a =  f (coreData.share. sDef ned) N l else storedT et. d a.toSeq
 
-    val tpTweet =
-      Tweet(
-        id = storedTweet.id,
-        coreData = Some(coreData),
-        contributor = storedTweet.contributorId.map(Contributor(_)),
-        media = Some(storedMedia.flatten.map(fromStoredMediaEntity)),
-        mentions = Some(Seq.empty),
-        urls = Some(Seq.empty),
-        cashtags = Some(Seq.empty),
-        hashtags = Some(Seq.empty),
-        quotedTweet = storedTweet.quotedTweet.map(fromStoredQuotedTweet)
+    val tpT et =
+      T et(
+         d = storedT et. d,
+        coreData = So (coreData),
+        contr butor = storedT et.contr butor d.map(Contr butor(_)),
+         d a = So (stored d a.flatten.map(fromStored d aEnt y)),
+         nt ons = So (Seq.empty),
+        urls = So (Seq.empty),
+        cashtags = So (Seq.empty),
+        hashtags = So (Seq.empty),
+        quotedT et = storedT et.quotedT et.map(fromStoredQuotedT et)
       )
-    fromStoredAdditionalFields(storedTweet, tpTweet)
+    fromStoredAdd  onalF elds(storedT et, tpT et)
   }
 
-  def fromStoredTweetAllowInvalid(storedTweet: StoredTweet): Tweet = {
-    fromStoredTweet(
-      storedTweet.copy(
-        userId = storedTweet.userId.orElse(Some(-1L)),
-        text = storedTweet.text.orElse(Some("")),
-        createdVia = storedTweet.createdVia.orElse(Some("")),
-        createdAtSec = storedTweet.createdAtSec.orElse(Some(-1L))
+  def fromStoredT etAllow nval d(storedT et: StoredT et): T et = {
+    fromStoredT et(
+      storedT et.copy(
+        user d = storedT et.user d.orElse(So (-1L)),
+        text = storedT et.text.orElse(So ("")),
+        createdV a = storedT et.createdV a.orElse(So ("")),
+        createdAtSec = storedT et.createdAtSec.orElse(So (-1L))
       ))
   }
 
-  def fromStoredAdditionalFields(from: StoredTweet, to: Tweet): Tweet = {
-    val passThroughAdditionalFields =
-      from._passthroughFields.filterKeys(AdditionalFields.isAdditionalFieldId)
-    val allAdditionalFields =
-      from.getFieldBlobs(tbTweetCompiledAdditionalFieldIds) ++ passThroughAdditionalFields
-    allAdditionalFields.values.foldLeft(to) { case (t, f) => t.setField(f) }
+  def fromStoredAdd  onalF elds(from: StoredT et, to: T et): T et = {
+    val passThroughAdd  onalF elds =
+      from._passthroughF elds.f lterKeys(Add  onalF elds. sAdd  onalF eld d)
+    val allAdd  onalF elds =
+      from.getF eldBlobs(tbT etComp ledAdd  onalF eld ds) ++ passThroughAdd  onalF elds
+    allAdd  onalF elds.values.foldLeft(to) { case (t, f) => t.setF eld(f) }
   }
 
-  def toDeletedTweet(storedTweet: StoredTweet): DeletedTweet = {
-    val noteTweetBlob = storedTweet.getFieldBlob(Tweet.NoteTweetField.id)
-    val noteTweetOption = noteTweetBlob.map(blob => NoteTweet.decode(blob.read))
-    DeletedTweet(
-      id = storedTweet.id,
-      userId = storedTweet.userId,
-      text = storedTweet.text,
-      createdAtSecs = storedTweet.createdAtSec,
-      share = storedTweet.share.map(toDeletedShare),
-      media = storedTweet.media.map(_.map(toDeletedMediaEntity)),
-      noteTweetId = noteTweetOption.map(_.id),
-      isExpandable = noteTweetOption.flatMap(_.isExpandable)
+  def toDeletedT et(storedT et: StoredT et): DeletedT et = {
+    val noteT etBlob = storedT et.getF eldBlob(T et.NoteT etF eld. d)
+    val noteT etOpt on = noteT etBlob.map(blob => NoteT et.decode(blob.read))
+    DeletedT et(
+       d = storedT et. d,
+      user d = storedT et.user d,
+      text = storedT et.text,
+      createdAtSecs = storedT et.createdAtSec,
+      share = storedT et.share.map(toDeletedShare),
+       d a = storedT et. d a.map(_.map(toDeleted d aEnt y)),
+      noteT et d = noteT etOpt on.map(_. d),
+       sExpandable = noteT etOpt on.flatMap(_. sExpandable)
     )
   }
 
-  def toDeletedShare(storedShare: StoredShare): DeletedTweetShare =
-    DeletedTweetShare(
-      sourceStatusId = storedShare.sourceStatusId,
-      sourceUserId = storedShare.sourceUserId,
-      parentStatusId = storedShare.parentStatusId
+  def toDeletedShare(storedShare: StoredShare): DeletedT etShare =
+    DeletedT etShare(
+      s ceStatus d = storedShare.s ceStatus d,
+      s ceUser d = storedShare.s ceUser d,
+      parentStatus d = storedShare.parentStatus d
     )
 
-  def toDeletedMediaEntity(storedMediaEntity: StoredMediaEntity): DeletedTweetMediaEntity =
-    DeletedTweetMediaEntity(
-      id = storedMediaEntity.id,
-      mediaType = storedMediaEntity.mediaType,
-      width = storedMediaEntity.width,
-      height = storedMediaEntity.height
+  def toDeleted d aEnt y(stored d aEnt y: Stored d aEnt y): DeletedT et d aEnt y =
+    DeletedT et d aEnt y(
+       d = stored d aEnt y. d,
+       d aType = stored d aEnt y. d aType,
+      w dth = stored d aEnt y.w dth,
+        ght = stored d aEnt y.  ght
     )
 }

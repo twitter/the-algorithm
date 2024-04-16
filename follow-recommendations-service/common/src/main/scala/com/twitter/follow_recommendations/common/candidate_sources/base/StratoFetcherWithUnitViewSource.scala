@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
 
-abstract class StratoFetcherWithUnitViewSource[K, V](
-  fetcher: Fetcher[K, Unit, V],
-  override val identifier: CandidateSourceIdentifier)
-    extends StratoFetcherSource[K, Unit, V](fetcher, Unit, identifier)
+abstract class StratoFetc rW hUn V ewS ce[K, V](
+  fetc r: Fetc r[K, Un , V],
+  overr de val  dent f er: Cand dateS ce dent f er)
+    extends StratoFetc rS ce[K, Un , V](fetc r, Un ,  dent f er)

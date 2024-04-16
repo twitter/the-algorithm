@@ -1,22 +1,22 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.twitter.kafka.client.headers.ATLA
-import com.twitter.kafka.client.headers.Implicits._
-import com.twitter.kafka.client.headers.PDXA
-import com.twitter.kafka.client.headers.Zone
-import org.apache.kafka.clients.consumer.ConsumerRecord
+ mport com.tw ter.kafka.cl ent. aders.ATLA
+ mport com.tw ter.kafka.cl ent. aders. mpl c s._
+ mport com.tw ter.kafka.cl ent. aders.PDXA
+ mport com.tw ter.kafka.cl ent. aders.Zone
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord
 
-object ZoneFiltering {
-  def zoneMapping(zone: String): Zone = zone.toLowerCase match {
+object ZoneF lter ng {
+  def zoneMapp ng(zone: Str ng): Zone = zone.toLo rCase match {
     case "atla" => ATLA
     case "pdxa" => PDXA
     case _ =>
-      throw new IllegalArgumentException(
-        s"zone must be provided and must be one of [atla,pdxa], provided $zone")
+      throw new  llegalArgu ntExcept on(
+        s"zone must be prov ded and must be one of [atla,pdxa], prov ded $zone")
   }
 
-  def localDCFiltering[K, V](event: ConsumerRecord[K, V], localZone: Zone): Boolean =
-    event.headers().isLocalZone(localZone)
+  def localDCF lter ng[K, V](event: Consu rRecord[K, V], localZone: Zone): Boolean =
+    event. aders(). sLocalZone(localZone)
 
-  def noFiltering[K, V](event: ConsumerRecord[K, V], localZone: Zone): Boolean = true
+  def noF lter ng[K, V](event: Consu rRecord[K, V], localZone: Zone): Boolean = true
 }

@@ -1,141 +1,141 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.TypedCountMetric
-import java.lang.{Double => JDouble}
-import scala.collection.JavaConverters._
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Aggregat on tr cCommon
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.TypedCount tr c
+ mport java.lang.{Double => JDouble}
+ mport scala.collect on.JavaConverters._
 
-case class CombinedFeatures(
+case class Comb nedFeatures(
   sum: Feature[JDouble],
   nonzero: Feature[JDouble],
-  mean: Feature[JDouble],
+   an: Feature[JDouble],
   topK: Seq[Feature[JDouble]])
 
-trait CombineCountsBase {
+tra  Comb neCountsBase {
   val SparseSum = "sparse_sum"
   val SparseNonzero = "sparse_nonzero"
-  val SparseMean = "sparse_mean"
+  val Sparse an = "sparse_ an"
   val SparseTop = "sparse_top"
 
-  def topK: Int
-  def hardLimit: Option[Int]
+  def topK:  nt
+  def hardL m : Opt on[ nt]
   def precomputedCountFeatures: Seq[Feature[_]]
 
-  lazy val precomputedFeaturesMap: Map[Feature[_], CombinedFeatures] =
+  lazy val precomputedFeaturesMap: Map[Feature[_], Comb nedFeatures] =
     precomputedCountFeatures.map { countFeature =>
-      val derivedPersonalDataTypes =
-        AggregationMetricCommon.derivePersonalDataTypes(Some(countFeature))
-      val sum = new Feature.Continuous(
-        countFeature.getDenseFeatureName + "." + SparseSum,
-        derivedPersonalDataTypes)
-      val nonzero = new Feature.Continuous(
-        countFeature.getDenseFeatureName + "." + SparseNonzero,
-        derivedPersonalDataTypes)
-      val mean = new Feature.Continuous(
-        countFeature.getDenseFeatureName + "." + SparseMean,
-        derivedPersonalDataTypes)
+      val der vedPersonalDataTypes =
+        Aggregat on tr cCommon.der vePersonalDataTypes(So (countFeature))
+      val sum = new Feature.Cont nuous(
+        countFeature.getDenseFeatureNa  + "." + SparseSum,
+        der vedPersonalDataTypes)
+      val nonzero = new Feature.Cont nuous(
+        countFeature.getDenseFeatureNa  + "." + SparseNonzero,
+        der vedPersonalDataTypes)
+      val  an = new Feature.Cont nuous(
+        countFeature.getDenseFeatureNa  + "." + Sparse an,
+        der vedPersonalDataTypes)
       val topKFeatures = (1 to topK).map { k =>
-        new Feature.Continuous(
-          countFeature.getDenseFeatureName + "." + SparseTop + k,
-          derivedPersonalDataTypes)
+        new Feature.Cont nuous(
+          countFeature.getDenseFeatureNa  + "." + SparseTop + k,
+          der vedPersonalDataTypes)
       }
-      (countFeature, CombinedFeatures(sum, nonzero, mean, topKFeatures))
+      (countFeature, Comb nedFeatures(sum, nonzero,  an, topKFeatures))
     }.toMap
 
-  lazy val outputFeaturesPostMerge: Set[Feature[JDouble]] =
-    precomputedFeaturesMap.values.flatMap { combinedFeatures: CombinedFeatures =>
+  lazy val outputFeaturesPost rge: Set[Feature[JDouble]] =
+    precomputedFeaturesMap.values.flatMap { comb nedFeatures: Comb nedFeatures =>
       Seq(
-        combinedFeatures.sum,
-        combinedFeatures.nonzero,
-        combinedFeatures.mean
-      ) ++ combinedFeatures.topK
+        comb nedFeatures.sum,
+        comb nedFeatures.nonzero,
+        comb nedFeatures. an
+      ) ++ comb nedFeatures.topK
     }.toSet
 
-  private case class ComputedStats(sum: Double, nonzero: Double, mean: Double)
+  pr vate case class ComputedStats(sum: Double, nonzero: Double,  an: Double)
 
-  private def preComputeStats(featureValues: Seq[Double]): ComputedStats = {
+  pr vate def preComputeStats(featureValues: Seq[Double]): ComputedStats = {
     val (sum, nonzero) = featureValues.foldLeft((0.0, 0.0)) {
       case ((accSum, accNonzero), value) =>
-        (accSum + value, if (value > 0.0) accNonzero + 1.0 else accNonzero)
+        (accSum + value,  f (value > 0.0) accNonzero + 1.0 else accNonzero)
     }
-    ComputedStats(sum, nonzero, if (nonzero > 0.0) sum / nonzero else 0.0)
+    ComputedStats(sum, nonzero,  f (nonzero > 0.0) sum / nonzero else 0.0)
   }
 
-  private def computeSortedFeatureValues(featureValues: List[Double]): List[Double] =
+  pr vate def computeSortedFeatureValues(featureValues: L st[Double]): L st[Double] =
     featureValues.sortBy(-_)
 
-  private def extractKth(sortedFeatureValues: Seq[Double], k: Int): Double =
+  pr vate def extractKth(sortedFeatureValues: Seq[Double], k:  nt): Double =
     sortedFeatureValues
-      .lift(k - 1)
+      .l ft(k - 1)
       .getOrElse(0.0)
 
-  private def setContinuousFeatureIfNonZero(
-    record: SRichDataRecord,
+  pr vate def setCont nuousFeature fNonZero(
+    record: SR chDataRecord,
     feature: Feature[JDouble],
     value: Double
-  ): Unit =
-    if (value != 0.0) {
+  ): Un  =
+     f (value != 0.0) {
       record.setFeatureValue(feature, value)
     }
 
   def hydrateCountFeatures(
-    richRecord: SRichDataRecord,
+    r chRecord: SR chDataRecord,
     features: Seq[Feature[_]],
-    featureValuesMap: Map[Feature[_], List[Double]]
-  ): Unit =
+    featureValuesMap: Map[Feature[_], L st[Double]]
+  ): Un  =
     for {
       feature <- features
       featureValues <- featureValuesMap.get(feature)
     } {
-      mergeRecordFromCountFeature(
+       rgeRecordFromCountFeature(
         countFeature = feature,
         featureValues = featureValues,
-        richInputRecord = richRecord
+        r ch nputRecord = r chRecord
       )
     }
 
-  def mergeRecordFromCountFeature(
-    richInputRecord: SRichDataRecord,
+  def  rgeRecordFromCountFeature(
+    r ch nputRecord: SR chDataRecord,
     countFeature: Feature[_],
-    featureValues: List[Double]
-  ): Unit = {
-    // In majority of calls to this method from timeline scorer
-    // the featureValues list is empty.
-    // While with empty list each operation will be not that expensive, these
-    // small things do add up. By adding early stop here we can avoid sorting
-    // empty list, allocating several options and making multiple function
-    // calls. In addition to that, we won't iterate over [1, topK].
-    if (featureValues.nonEmpty) {
-      val sortedFeatureValues = hardLimit
-        .map { limit =>
-          computeSortedFeatureValues(featureValues).take(limit)
-        }.getOrElse(computeSortedFeatureValues(featureValues)).toIndexedSeq
+    featureValues: L st[Double]
+  ): Un  = {
+    //  n major y of calls to t   thod from t  l ne scorer
+    // t  featureValues l st  s empty.
+    // Wh le w h empty l st each operat on w ll be not that expens ve, t se
+    // small th ngs do add up. By add ng early stop  re   can avo d sort ng
+    // empty l st, allocat ng several opt ons and mak ng mult ple funct on
+    // calls.  n add  on to that,   won't  erate over [1, topK].
+     f (featureValues.nonEmpty) {
+      val sortedFeatureValues = hardL m 
+        .map { l m  =>
+          computeSortedFeatureValues(featureValues).take(l m )
+        }.getOrElse(computeSortedFeatureValues(featureValues)).to ndexedSeq
       val computed = preComputeStats(sortedFeatureValues)
 
-      val combinedFeatures = precomputedFeaturesMap(countFeature)
-      setContinuousFeatureIfNonZero(
-        richInputRecord,
-        combinedFeatures.sum,
+      val comb nedFeatures = precomputedFeaturesMap(countFeature)
+      setCont nuousFeature fNonZero(
+        r ch nputRecord,
+        comb nedFeatures.sum,
         computed.sum
       )
-      setContinuousFeatureIfNonZero(
-        richInputRecord,
-        combinedFeatures.nonzero,
+      setCont nuousFeature fNonZero(
+        r ch nputRecord,
+        comb nedFeatures.nonzero,
         computed.nonzero
       )
-      setContinuousFeatureIfNonZero(
-        richInputRecord,
-        combinedFeatures.mean,
-        computed.mean
+      setCont nuousFeature fNonZero(
+        r ch nputRecord,
+        comb nedFeatures. an,
+        computed. an
       )
       (1 to topK).foreach { k =>
-        setContinuousFeatureIfNonZero(
-          richInputRecord,
-          combinedFeatures.topK(k - 1),
+        setCont nuousFeature fNonZero(
+          r ch nputRecord,
+          comb nedFeatures.topK(k - 1),
           extractKth(sortedFeatureValues, k)
         )
       }
@@ -143,81 +143,81 @@ trait CombineCountsBase {
   }
 }
 
-object CombineCountsPolicy {
+object Comb neCountsPol cy {
   def getCountFeatures(aggregateContext: FeatureContext): Seq[Feature[_]] =
     aggregateContext.getAllFeatures.asScala.toSeq
-      .filter { feature =>
-        feature.getFeatureType == FeatureType.CONTINUOUS &&
-        feature.getDenseFeatureName.endsWith(TypedCountMetric[JDouble]().operatorName)
+      .f lter { feature =>
+        feature.getFeatureType == FeatureType.CONT NUOUS &&
+        feature.getDenseFeatureNa .endsW h(TypedCount tr c[JDouble]().operatorNa )
       }
 
-  @VisibleForTesting
-  private[conversion] def getFeatureValues(
-    dataRecordsWithCounts: List[DataRecord],
+  @V s bleForTest ng
+  pr vate[convers on] def getFeatureValues(
+    dataRecordsW hCounts: L st[DataRecord],
     countFeature: Feature[_]
-  ): List[Double] =
-    dataRecordsWithCounts.map(new SRichDataRecord(_)).flatMap { record =>
-      Option(record.getFeatureValue(countFeature)).map(_.asInstanceOf[JDouble].toDouble)
+  ): L st[Double] =
+    dataRecordsW hCounts.map(new SR chDataRecord(_)).flatMap { record =>
+      Opt on(record.getFeatureValue(countFeature)).map(_.as nstanceOf[JDouble].toDouble)
     }
 }
 
 /**
- * A merge policy that works whenever all aggregate features are
- * counts (computed using CountMetric), and typically represent
- * either impressions or engagements. For each such input count
- * feature, the policy outputs the following (3+k) derived features
- * into the output data record:
+ * A  rge pol cy that works w never all aggregate features are
+ * counts (computed us ng Count tr c), and typ cally represent
+ * e  r  mpress ons or engage nts. For each such  nput count
+ * feature, t  pol cy outputs t  follow ng (3+k) der ved features
+ *  nto t  output data record:
  *
- * Sum of the feature's value across all aggregate records
- * Number of aggregate records that have the feature set to non-zero
- * Mean of the feature's value across all aggregate records
- * topK values of the feature across all aggregate records
+ * Sum of t  feature's value across all aggregate records
+ * Number of aggregate records that have t  feature set to non-zero
+ *  an of t  feature's value across all aggregate records
+ * topK values of t  feature across all aggregate records
  *
  * @param topK topK values to compute
- * @param hardLimit when set, records are sorted and only the top values will be used for aggregation if
- *                  the number of records are higher than this hard limit.
+ * @param hardL m  w n set, records are sorted and only t  top values w ll be used for aggregat on  f
+ *                  t  number of records are h g r than t  hard l m .
  */
-case class CombineCountsPolicy(
-  override val topK: Int,
+case class Comb neCountsPol cy(
+  overr de val topK:  nt,
   aggregateContextToPrecompute: FeatureContext,
-  override val hardLimit: Option[Int] = None)
-    extends SparseBinaryMergePolicy
-    with CombineCountsBase {
-  import CombineCountsPolicy._
-  override val precomputedCountFeatures: Seq[Feature[_]] = getCountFeatures(
+  overr de val hardL m : Opt on[ nt] = None)
+    extends SparseB nary rgePol cy
+    w h Comb neCountsBase {
+   mport Comb neCountsPol cy._
+  overr de val precomputedCountFeatures: Seq[Feature[_]] = getCountFeatures(
     aggregateContextToPrecompute)
 
-  override def mergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
+  overr de def  rgeRecord(
+    mutable nputRecord: DataRecord,
+    aggregateRecords: L st[DataRecord],
     aggregateContext: FeatureContext
-  ): Unit = {
-    // Assumes aggregateContext === aggregateContextToPrecompute
-    mergeRecordFromCountFeatures(mutableInputRecord, aggregateRecords, precomputedCountFeatures)
+  ): Un  = {
+    // Assu s aggregateContext === aggregateContextToPrecompute
+     rgeRecordFromCountFeatures(mutable nputRecord, aggregateRecords, precomputedCountFeatures)
   }
 
-  def defaultMergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord]
-  ): Unit = {
-    mergeRecordFromCountFeatures(mutableInputRecord, aggregateRecords, precomputedCountFeatures)
+  def default rgeRecord(
+    mutable nputRecord: DataRecord,
+    aggregateRecords: L st[DataRecord]
+  ): Un  = {
+     rgeRecordFromCountFeatures(mutable nputRecord, aggregateRecords, precomputedCountFeatures)
   }
 
-  def mergeRecordFromCountFeatures(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
+  def  rgeRecordFromCountFeatures(
+    mutable nputRecord: DataRecord,
+    aggregateRecords: L st[DataRecord],
     countFeatures: Seq[Feature[_]]
-  ): Unit = {
-    val richInputRecord = new SRichDataRecord(mutableInputRecord)
+  ): Un  = {
+    val r ch nputRecord = new SR chDataRecord(mutable nputRecord)
     countFeatures.foreach { countFeature =>
-      mergeRecordFromCountFeature(
-        richInputRecord = richInputRecord,
+       rgeRecordFromCountFeature(
+        r ch nputRecord = r ch nputRecord,
         countFeature = countFeature,
         featureValues = getFeatureValues(aggregateRecords, countFeature)
       )
     }
   }
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
-    outputFeaturesPostMerge.map(_.asInstanceOf[Feature[_]])
+  overr de def aggregateFeaturesPost rge(aggregateContext: FeatureContext): Set[Feature[_]] =
+    outputFeaturesPost rge.map(_.as nstanceOf[Feature[_]])
 }

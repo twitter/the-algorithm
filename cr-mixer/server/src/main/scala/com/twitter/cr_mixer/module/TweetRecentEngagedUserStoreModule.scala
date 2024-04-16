@@ -1,42 +1,42 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.app.Flag
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.tw stly.thr ftscala.T etRecentEngagedUsers
 
-object TweetRecentEngagedUserStoreModule extends TwitterModule {
+object T etRecentEngagedUserStoreModule extends Tw terModule {
 
-  private val tweetRecentEngagedUsersStoreDefaultVersion =
-    0 // DefaultVersion for tweetEngagedUsersStore, whose key = (tweetId, DefaultVersion)
-  private val tweetRecentEngagedUsersColumnPath: Flag[String] = flag[String](
-    name = "crMixer.tweetRecentEngagedUsersColumnPath",
-    default = "recommendations/twistly/tweetRecentEngagedUsers",
-    help = "Strato column path for TweetRecentEngagedUsersStore"
+  pr vate val t etRecentEngagedUsersStoreDefaultVers on =
+    0 // DefaultVers on for t etEngagedUsersStore, whose key = (t et d, DefaultVers on)
+  pr vate val t etRecentEngagedUsersColumnPath: Flag[Str ng] = flag[Str ng](
+    na  = "crM xer.t etRecentEngagedUsersColumnPath",
+    default = "recom ndat ons/tw stly/t etRecentEngagedUsers",
+     lp = "Strato column path for T etRecentEngagedUsersStore"
   )
-  private type Version = Long
+  pr vate type Vers on = Long
 
-  @Provides
-  @Singleton
-  def providesTweetRecentEngagedUserStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[TweetId, TweetRecentEngagedUsers] = {
-    val tweetRecentEngagedUsersStratoFetchableStore = StratoFetchableStore
-      .withUnitView[(TweetId, Version), TweetRecentEngagedUsers](
-        stratoClient,
-        tweetRecentEngagedUsersColumnPath()).composeKeyMapping[TweetId](tweetId =>
-        (tweetId, tweetRecentEngagedUsersStoreDefaultVersion))
+  @Prov des
+  @S ngleton
+  def prov desT etRecentEngagedUserStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[T et d, T etRecentEngagedUsers] = {
+    val t etRecentEngagedUsersStratoFetchableStore = StratoFetchableStore
+      .w hUn V ew[(T et d, Vers on), T etRecentEngagedUsers](
+        stratoCl ent,
+        t etRecentEngagedUsersColumnPath()).composeKeyMapp ng[T et d](t et d =>
+        (t et d, t etRecentEngagedUsersStoreDefaultVers on))
 
     ObservedReadableStore(
-      tweetRecentEngagedUsersStratoFetchableStore
-    )(statsReceiver.scope("tweet_recent_engaged_users_store"))
+      t etRecentEngagedUsersStratoFetchableStore
+    )(statsRece ver.scope("t et_recent_engaged_users_store"))
   }
 }

@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/gate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/quality_factor",
-        "src/scala/com/twitter/ml/featurestore/lib",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/query/ads",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/common",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/gate",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/qual y_factor",
+        "src/scala/com/tw ter/ml/featurestore/l b",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/common",
     ],
 )

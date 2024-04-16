@@ -1,226 +1,226 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.tw ter.search. ngester.p pel ne.w re;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport javax.annotat on.Nullable;
+ mport javax.nam ng.Context;
+ mport javax.nam ng. n  alContext;
+ mport javax.nam ng.Nam ngExcept on;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.Partitioner;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.thrift.TBase;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.cl ents.producer.Part  oner;
+ mport org.apac .kafka.common.ser al zat on.Deser al zer;
+ mport org.apac .kafka.common.ser al zat on.Ser al zer;
+ mport org.apac .thr ft.TBase;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.eventbus.cl ent.EventBusSubscr ber;
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er;
+ mport com.tw ter.f natra.kafka.producers.Block ngF nagleKafkaProducer;
+ mport com.tw ter.g zmoduck.thr ftjava.UserServ ce;
+ mport com.tw ter. tastore.cl ent_v2. tastoreCl ent;
+ mport com.tw ter.p nk_floyd.thr ft.Storer;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.common.relevance.class f ers.T etOffens veEvaluator;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Aud oSpaceCoreFetc r;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Aud oSpacePart c pantsFetc r;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Na dEnt yFetc r;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neExcept onHandler;
+ mport com.tw ter.storage.cl ent.manhattan.kv.JavaManhattanKVEndpo nt;
+ mport com.tw ter.t etyp e.thr ftjava.T etServ ce;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * An "injection module" that provides bindings for all ingester endpoints that we want to mock out
- * in tests.
+ * An " nject on module" that prov des b nd ngs for all  ngester endpo nts that   want to mock out
+ *  n tests.
  */
-public abstract class WireModule {
-  /** The JNDI property to which this module will be bound. */
-  private static final String WIRE_MODULE_NAME = "";
+publ c abstract class W reModule {
+  /** T  JND  property to wh ch t  module w ll be bound. */
+  pr vate stat c f nal Str ng W RE_MODULE_NAME = "";
 
-  /** The root name of all properties specified in the twitter-naming-production.*.xml files. */
-  public static final String JNDI_PIPELINE_ROOT = "";
+  /** T  root na  of all propert es spec f ed  n t  tw ter-nam ng-product on.*.xml f les. */
+  publ c stat c f nal Str ng JND _P PEL NE_ROOT = "";
 
   /**
-   * (Re)binds the given wire module in JNDI.
+   * (Re)b nds t  g ven w re module  n JND .
    *
-   * @param wireModule The wire module to bind in JNDI.
-   * @throws NamingException If the wire module cannot be bound in JNDI for some reason.
+   * @param w reModule T  w re module to b nd  n JND .
+   * @throws Nam ngExcept on  f t  w re module cannot be bound  n JND  for so  reason.
    */
-  public static void bindWireModule(WireModule wireModule) throws NamingException {
-    Context jndiContext = new InitialContext();
-    jndiContext.rebind(WIRE_MODULE_NAME, wireModule);
+  publ c stat c vo d b ndW reModule(W reModule w reModule) throws Nam ngExcept on {
+    Context jnd Context = new  n  alContext();
+    jnd Context.reb nd(W RE_MODULE_NAME, w reModule);
   }
 
   /**
-   * Returns the wire module bound in JNDI.
+   * Returns t  w re module bound  n JND .
    *
-   * @return The wire module bound in JNDI.
-   * @throws NamingException If there's no wire module bound in JNDI.
+   * @return T  w re module bound  n JND .
+   * @throws Nam ngExcept on  f t re's no w re module bound  n JND .
    */
-  public static WireModule getWireModule() throws NamingException {
-    Context jndiContext = new InitialContext();
-    return (WireModule) jndiContext.lookup(WIRE_MODULE_NAME);
+  publ c stat c W reModule getW reModule() throws Nam ngExcept on {
+    Context jnd Context = new  n  alContext();
+    return (W reModule) jnd Context.lookup(W RE_MODULE_NAME);
   }
 
   /**
-   * Retrieves the service identifier needed for making mtls requests.
-   * @return The service identifier for the current running service.
+   * Retr eves t  serv ce  dent f er needed for mak ng mtls requests.
+   * @return T  serv ce  dent f er for t  current runn ng serv ce.
    */
-  public abstract ServiceIdentifier getServiceIdentifier();
+  publ c abstract Serv ce dent f er getServ ce dent f er();
 
   /**
-   * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
+   * Creates a new {@code F nagleKafkaConsu r} w h a spec f ed consu r group  D.
    */
-  public abstract <T> KafkaConsumer<Long, T> newKafkaConsumer(
-      String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords);
+  publ c abstract <T> KafkaConsu r<Long, T> newKafkaConsu r(
+      Str ng kafkaClusterPath, Deser al zer<T> deser al zer, Str ng cl ent d, Str ng group d,
+       nt maxPollRecords);
 
   /**
-   * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
+   * Creates a new {@code F nagleKafkaConsu r} w h a spec f ed consu r group  D.
    */
-  public abstract <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
-      String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass);
+  publ c abstract <T> Block ngF nagleKafkaProducer<Long, T> newF nagleKafkaProducer(
+      Str ng kafkaClusterPath, Ser al zer<T> ser al zer, Str ng cl ent d,
+      @Nullable Class<? extends Part  oner> part  onerClass);
 
   /**
-   * Gets a TweetyPie client.
+   * Gets a T etyP e cl ent.
    *
-   * @param tweetypieClientId Use this string as the client id.
-   * @return A TweetyPie client
-   * @throws NamingException
+   * @param t etyp eCl ent d Use t  str ng as t  cl ent  d.
+   * @return A T etyP e cl ent
+   * @throws Nam ngExcept on
    */
-  public abstract TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException;
+  publ c abstract T etServ ce.Serv ceToCl ent getT etyP eCl ent(Str ng t etyp eCl ent d)
+      throws Nam ngExcept on;
 
   /**
-   * Gets a Gizmoduck client.
+   * Gets a G zmoduck cl ent.
    *
-   * @param clientId
-   * @throws NamingException
+   * @param cl ent d
+   * @throws Nam ngExcept on
    */
-  public abstract UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException;
+  publ c abstract UserServ ce.Serv ceToCl ent getG zmoduckCl ent(Str ng cl ent d)
+      throws Nam ngExcept on;
 
   /**
-   * Gets the ManhattanKVEndpoint that should be used for the ManhattanCodedLocationProvider
+   * Gets t  ManhattanKVEndpo nt that should be used for t  ManhattanCodedLocat onProv der
    *
-   * @return the JavaManhattanKVEndpoint that we need for the ManhattanCodedLocationProvider
-   * @throws NamingException
+   * @return t  JavaManhattanKVEndpo nt that   need for t  ManhattanCodedLocat onProv der
+   * @throws Nam ngExcept on
    */
-  public abstract JavaManhattanKVEndpoint getJavaManhattanKVEndpoint()
-      throws NamingException;
+  publ c abstract JavaManhattanKVEndpo nt getJavaManhattanKVEndpo nt()
+      throws Nam ngExcept on;
 
   /**
-   * Returns the decider to be used by all stages.
+   * Returns t  dec der to be used by all stages.
    *
-   * @return The decider to be used by all stages.
+   * @return T  dec der to be used by all stages.
    */
-  public abstract Decider getDecider();
+  publ c abstract Dec der getDec der();
 
   /**
-   * Returns the partition ID to be used by all stages.
+   * Returns t  part  on  D to be used by all stages.
    *
-   * @return The partition ID to be used by all stages.
+   * @return T  part  on  D to be used by all stages.
    */
-  public abstract int getPartition();
+  publ c abstract  nt getPart  on();
 
 
   /**
-   * Returns the PipelineExceptionHandler instance to be used by all stages.
+   * Returns t  P pel neExcept onHandler  nstance to be used by all stages.
    *
-   * @return The PipelineExceptionHandler instance to be used by all stages.
-   * @throws NamingException If building the PipelineExceptionHandler instance requires some
-   *                         parameters, and those parameters were not bound in JNDI.
+   * @return T  P pel neExcept onHandler  nstance to be used by all stages.
+   * @throws Nam ngExcept on  f bu ld ng t  P pel neExcept onHandler  nstance requ res so 
+   *                         para ters, and those para ters  re not bound  n JND .
    */
-  public abstract PipelineExceptionHandler getPipelineExceptionHandler();
+  publ c abstract P pel neExcept onHandler getP pel neExcept onHandler();
 
   /**
-   * Gets the PartitionMappingManager for the Kafka writer.
+   * Gets t  Part  onMapp ngManager for t  Kafka wr er.
    *
-   * @return a PartitionMappingManager
+   * @return a Part  onMapp ngManager
    */
-  public abstract PartitionMappingManager getPartitionMappingManager();
+  publ c abstract Part  onMapp ngManager getPart  onMapp ngManager();
 
   /**
-   * Returns the Metastore client used by the UserPropertiesManager.
+   * Returns t   tastore cl ent used by t  UserPropert esManager.
    *
-   * @return A Metastore client.
-   * @throws NamingException
+   * @return A  tastore cl ent.
+   * @throws Nam ngExcept on
    */
-  public abstract MetastoreClient getMetastoreClient() throws NamingException;
+  publ c abstract  tastoreCl ent get tastoreCl ent() throws Nam ngExcept on;
 
   /**
-   * Returns an ExecutorService potentially backed by the specified number of threads.
+   * Returns an ExecutorServ ce potent ally backed by t  spec f ed number of threads.
    *
-   * @param numThreads An advisory value with a suggestion for how large the threadpool should be.
-   * @return an ExecutorService that might be backed by some threads.
-   * @throws NamingException
+   * @param numThreads An adv sory value w h a suggest on for how large t  threadpool should be.
+   * @return an ExecutorServ ce that m ght be backed by so  threads.
+   * @throws Nam ngExcept on
    */
-  public abstract ExecutorService getThreadPool(int numThreads) throws NamingException;
+  publ c abstract ExecutorServ ce getThreadPool( nt numThreads) throws Nam ngExcept on;
 
   /**
-   * Returns the Storer interface to connect to Pink.
+   * Returns t  Storer  nterface to connect to P nk.
    *
-   * @param requestTimeout The request timeout for the Pink client.
-   * @param retries The number of Finagle retries.
-   * @return a Storer.ServiceIface to connect to pink.
+   * @param requestT  out T  request t  out for t  P nk cl ent.
+   * @param retr es T  number of F nagle retr es.
+   * @return a Storer.Serv ce face to connect to p nk.
    *
    */
-  public abstract Storer.ServiceIface getStorer(Duration requestTimeout, int retries)
-      throws NamingException;
+  publ c abstract Storer.Serv ce face getStorer(Durat on requestT  out,  nt retr es)
+      throws Nam ngExcept on;
 
   /**
-   * Returns an EventBusSubscriber
+   * Returns an EventBusSubscr ber
    */
-  public abstract <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
-      Function<T, Future<?>> process,
-      Class<T> thriftStructClass,
-      String eventBusSubscriberId,
-      int maxConcurrentEvents);
+  publ c abstract <T extends TBase<?, ?>> EventBusSubscr ber<T> createEventBusSubscr ber(
+      Funct on<T, Future<?>> process,
+      Class<T> thr ftStructClass,
+      Str ng eventBusSubscr ber d,
+       nt maxConcurrentEvents);
 
   /**
    * Returns a Clock.
    */
-  public abstract Clock getClock();
+  publ c abstract Clock getClock();
 
   /**
-   * Returns a TweetOffensiveEvaluator.
+   * Returns a T etOffens veEvaluator.
    */
-  public abstract TweetOffensiveEvaluator getTweetOffensiveEvaluator();
+  publ c abstract T etOffens veEvaluator getT etOffens veEvaluator();
 
   /**
-   * Returns the cluster.
+   * Returns t  cluster.
    */
-  public abstract EarlybirdCluster getEarlybirdCluster() throws NamingException;
+  publ c abstract Earlyb rdCluster getEarlyb rdCluster() throws Nam ngExcept on;
 
   /**
-   * Returns the current penguin version(s).
+   * Returns t  current pengu n vers on(s).
    */
-  public abstract List<PenguinVersion> getPenguinVersions() throws NamingException;
+  publ c abstract L st<Pengu nVers on> getPengu nVers ons() throws Nam ngExcept on;
 
   /**
-   * Returns updated penguin version(s) depending on decider availability.
+   * Returns updated pengu n vers on(s) depend ng on dec der ava lab l y.
    */
-  public abstract List<PenguinVersion> getCurrentlyEnabledPenguinVersions();
+  publ c abstract L st<Pengu nVers on> getCurrentlyEnabledPengu nVers ons();
 
   /**
-   * Returns a named entities strato column fetcher.
+   * Returns a na d ent  es strato column fetc r.
    */
-  public abstract NamedEntityFetcher getNamedEntityFetcher();
+  publ c abstract Na dEnt yFetc r getNa dEnt yFetc r();
 
   /**
-   * Returns audio space participants strato column fetcher.
+   * Returns aud o space part c pants strato column fetc r.
    */
-  public abstract AudioSpaceParticipantsFetcher getAudioSpaceParticipantsFetcher();
+  publ c abstract Aud oSpacePart c pantsFetc r getAud oSpacePart c pantsFetc r();
 
   /**
-   * Returns audio space core strato column fetcher.
+   * Returns aud o space core strato column fetc r.
    */
-  public abstract AudioSpaceCoreFetcher getAudioSpaceCoreFetcher();
+  publ c abstract Aud oSpaceCoreFetc r getAud oSpaceCoreFetc r();
 }

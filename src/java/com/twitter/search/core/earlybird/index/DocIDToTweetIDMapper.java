@@ -1,79 +1,79 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
 /**
- * An interface for mapping the doc IDs in our indexes to the corresponding tweet IDs.
+ * An  nterface for mapp ng t  doc  Ds  n    ndexes to t  correspond ng t et  Ds.
  */
-public interface DocIDToTweetIDMapper {
-  /** A constant indicating that a doc ID was not found in the mapper. */
-  int ID_NOT_FOUND = -1;
+publ c  nterface Doc DToT et DMapper {
+  /** A constant  nd cat ng that a doc  D was not found  n t  mapper. */
+   nt  D_NOT_FOUND = -1;
 
   /**
-   * Returns the tweet ID corresponding to the given doc ID.
+   * Returns t  t et  D correspond ng to t  g ven doc  D.
    *
-   * @param docID The doc ID stored in our indexes.
-   * @return The tweet ID corresponding to the given doc ID.
+   * @param doc D T  doc  D stored  n    ndexes.
+   * @return T  t et  D correspond ng to t  g ven doc  D.
    */
-  long getTweetID(int docID);
+  long getT et D( nt doc D);
 
   /**
-   * Returns the internal doc ID corresponding to the given tweet ID. Returns ID_NOT_FOUND if the
-   * given tweet ID cannot be found in the index.
+   * Returns t   nternal doc  D correspond ng to t  g ven t et  D. Returns  D_NOT_FOUND  f t 
+   * g ven t et  D cannot be found  n t   ndex.
    *
-   * @param tweetID The tweet ID.
-   * @return The doc ID corresponding to the given tweet ID.
+   * @param t et D T  t et  D.
+   * @return T  doc  D correspond ng to t  g ven t et  D.
    */
-  int getDocID(long tweetID) throws IOException;
+   nt getDoc D(long t et D) throws  OExcept on;
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND is returned.
+   * Returns t  smallest val d doc  D  n t  mapper that's str ctly h g r than t  g ven doc  D.
+   *  f no such doc  D ex sts,  D_NOT_FOUND  s returned.
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param doc D T  current doc  D.
+   * @return T  smallest val d doc  D  n t  mapper that's str ctly h g r than t  g ven doc  D,
+   *         or a negat ve number,  f no such doc  D ex sts.
    */
-  int getNextDocID(int docID);
+   nt getNextDoc D( nt doc D);
 
   /**
-   * Returns the largest valid doc ID in this mapper that's strictly smaller than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND is returned.
+   * Returns t  largest val d doc  D  n t  mapper that's str ctly smaller than t  g ven doc  D.
+   *  f no such doc  D ex sts,  D_NOT_FOUND  s returned.
    *
-   * @param docID The current doc ID.
-   * @return The largest valid doc ID in this mapper that's strictly smaller than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param doc D T  current doc  D.
+   * @return T  largest val d doc  D  n t  mapper that's str ctly smaller than t  g ven doc  D,
+   *         or a negat ve number,  f no such doc  D ex sts.
    */
-  int getPreviousDocID(int docID);
+   nt getPrev ousDoc D( nt doc D);
 
   /**
-   * Returns the total number of documents stored in this mapper.
+   * Returns t  total number of docu nts stored  n t  mapper.
    *
-   * @return The total number of documents stored in this mapper.
+   * @return T  total number of docu nts stored  n t  mapper.
    */
-  int getNumDocs();
+   nt getNumDocs();
 
   /**
-   * Adds a mapping for the given tweet ID. Returns the doc ID assigned to this tweet ID.
-   * This method does not check if the tweet ID is already present in the mapper. It always assigns
-   * a new doc ID to the given tweet.
+   * Adds a mapp ng for t  g ven t et  D. Returns t  doc  D ass gned to t  t et  D.
+   * T   thod does not c ck  f t  t et  D  s already present  n t  mapper.   always ass gns
+   * a new doc  D to t  g ven t et.
    *
-   * @param tweetID The tweet ID to be added to the mapper.
-   * @return The doc ID assigned to the given tweet ID, or ID_NOT_FOUND if a doc ID could not be
-   *         assigned to this tweet.
+   * @param t et D T  t et  D to be added to t  mapper.
+   * @return T  doc  D ass gned to t  g ven t et  D, or  D_NOT_FOUND  f a doc  D could not be
+   *         ass gned to t  t et.
    */
-  int addMapping(long tweetID);
+   nt addMapp ng(long t et D);
 
   /**
-   * Converts the current DocIDToTweetIDMapper to a DocIDToTweetIDMapper instance with the same
-   * tweet IDs. The tweet IDs in the original and optimized instances can be mapped to different
-   * doc IDs. However, we expect doc IDs to be assigned such that tweets created later have smaller
-   * have smaller doc IDs.
+   * Converts t  current Doc DToT et DMapper to a Doc DToT et DMapper  nstance w h t  sa 
+   * t et  Ds. T  t et  Ds  n t  or g nal and opt m zed  nstances can be mapped to d fferent
+   * doc  Ds. Ho ver,   expect doc  Ds to be ass gned such that t ets created later have smaller
+   * have smaller doc  Ds.
    *
-   * This method should be called when an earlybird segment is being optimized, right before
-   * flushing it to disk.
+   * T   thod should be called w n an earlyb rd seg nt  s be ng opt m zed, r ght before
+   * flush ng   to d sk.
    *
-   * @return An optimized DocIDToTweetIDMapper with the same tweet IDs.
+   * @return An opt m zed Doc DToT et DMapper w h t  sa  t et  Ds.
    */
-  DocIDToTweetIDMapper optimize() throws IOException;
+  Doc DToT et DMapper opt m ze() throws  OExcept on;
 }

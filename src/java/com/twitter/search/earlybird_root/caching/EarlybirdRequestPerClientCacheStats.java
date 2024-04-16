@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import com.twitter.search.common.caching.filter.PerClientCacheStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.cach ng.f lter.PerCl entCac Stats;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class EarlybirdRequestPerClientCacheStats
-    extends PerClientCacheStats<EarlybirdRequestContext> {
+publ c class Earlyb rdRequestPerCl entCac Stats
+    extends PerCl entCac Stats<Earlyb rdRequestContext> {
 
-  private String cacheOffByClientStatFormat;
-  private final Map<String, SearchRateCounter> cacheTurnedOffByClient;
+  pr vate Str ng cac OffByCl entStatFormat;
+  pr vate f nal Map<Str ng, SearchRateCounter> cac TurnedOffByCl ent;
 
-  private String cacheHitsByClientStatFormat;
-  private final Map<String, SearchRateCounter> cacheHitsByClient;
+  pr vate Str ng cac H sByCl entStatFormat;
+  pr vate f nal Map<Str ng, SearchRateCounter> cac H sByCl ent;
 
-  public EarlybirdRequestPerClientCacheStats(String cacheRequestType) {
-    this.cacheOffByClientStatFormat =
-        cacheRequestType + "_client_id_%s_cache_turned_off_in_request";
-    this.cacheTurnedOffByClient = new ConcurrentHashMap<>();
+  publ c Earlyb rdRequestPerCl entCac Stats(Str ng cac RequestType) {
+    t .cac OffByCl entStatFormat =
+        cac RequestType + "_cl ent_ d_%s_cac _turned_off_ n_request";
+    t .cac TurnedOffByCl ent = new ConcurrentHashMap<>();
 
-    this.cacheHitsByClientStatFormat = cacheRequestType + "_client_id_%s_cache_hit_total";
-    this.cacheHitsByClient = new ConcurrentHashMap<>();
+    t .cac H sByCl entStatFormat = cac RequestType + "_cl ent_ d_%s_cac _h _total";
+    t .cac H sByCl ent = new ConcurrentHashMap<>();
   }
 
-  @Override
-  public void recordRequest(EarlybirdRequestContext requestContext) {
-    if (!EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())) {
-      String client = requestContext.getRequest().getClientId();
-      SearchRateCounter counter = cacheTurnedOffByClient.computeIfAbsent(client,
-          cl -> SearchRateCounter.export(String.format(cacheOffByClientStatFormat, cl)));
-      counter.increment();
+  @Overr de
+  publ c vo d recordRequest(Earlyb rdRequestContext requestContext) {
+     f (!Earlyb rdRequestUt l. sCach ngAllo d(requestContext.getRequest())) {
+      Str ng cl ent = requestContext.getRequest().getCl ent d();
+      SearchRateCounter counter = cac TurnedOffByCl ent.compute fAbsent(cl ent,
+          cl -> SearchRateCounter.export(Str ng.format(cac OffByCl entStatFormat, cl)));
+      counter. ncre nt();
     }
   }
 
-  @Override
-  public void recordCacheHit(EarlybirdRequestContext requestContext) {
-    String client = requestContext.getRequest().getClientId();
-    SearchRateCounter counter = cacheHitsByClient.computeIfAbsent(client,
-        cl -> SearchRateCounter.export(String.format(cacheHitsByClientStatFormat, cl)));
-    counter.increment();
+  @Overr de
+  publ c vo d recordCac H (Earlyb rdRequestContext requestContext) {
+    Str ng cl ent = requestContext.getRequest().getCl ent d();
+    SearchRateCounter counter = cac H sByCl ent.compute fAbsent(cl ent,
+        cl -> SearchRateCounter.export(Str ng.format(cac H sByCl entStatFormat, cl)));
+    counter. ncre nt();
   }
 }

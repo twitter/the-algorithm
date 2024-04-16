@@ -1,51 +1,51 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+package com.tw ter. nteract on_graph.sc o.agg_d rect_ nteract ons
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.util.Duration
-import org.joda.time.Interval
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
-import twadoop_config.configuration.log_categories.group.tweetypie.TweetypieMediaTagEventsScalaDataset
-import tweetsource.common.UnhydratedFlatScalaDataset
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter.cde.sc o.dal_read.S ceUt l
+ mport com.tw ter.t  l neserv ce.thr ftscala.Contextual zedFavor eEvent
+ mport com.tw ter.twadoop.user.gen.thr ftscala.Comb nedUser
+ mport com.tw ter.t ets ce.common.thr ftscala.UnhydratedFlatT et
+ mport com.tw ter.t etyp e.thr ftscala.T et d aTagEvent
+ mport com.tw ter.users ce.snapshot.comb ned.Users ceScalaDataset
+ mport com.tw ter.ut l.Durat on
+ mport org.joda.t  . nterval
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t  l ne.T  l neServ ceFavor esScalaDataset
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t etyp e.T etyp e d aTagEventsScalaDataset
+ mport t ets ce.common.UnhydratedFlatScalaDataset
 
-case class InteractionGraphAggDirectInteractionsSource(
-  pipelineOptions: InteractionGraphAggDirectInteractionsOption
+case class  nteract onGraphAggD rect nteract onsS ce(
+  p pel neOpt ons:  nteract onGraphAggD rect nteract onsOpt on
 )(
-  implicit sc: ScioContext) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+   mpl c  sc: Sc oContext) {
+  val dalEnv ron nt: Str ng = p pel neOpt ons
+    .as(classOf[Serv ce dent f erOpt ons])
+    .getEnv ron nt()
 
-  def readFavorites(dateInterval: Interval): SCollection[ContextualizedFavoriteEvent] =
-    SourceUtil.readDALDataset[ContextualizedFavoriteEvent](
-      dataset = TimelineServiceFavoritesScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment
+  def readFavor es(date nterval:  nterval): SCollect on[Contextual zedFavor eEvent] =
+    S ceUt l.readDALDataset[Contextual zedFavor eEvent](
+      dataset = T  l neServ ceFavor esScalaDataset,
+       nterval = date nterval,
+      dalEnv ron nt = dalEnv ron nt
     )
 
-  def readPhotoTags(dateInterval: Interval): SCollection[TweetMediaTagEvent] =
-    SourceUtil.readDALDataset[TweetMediaTagEvent](
-      dataset = TweetypieMediaTagEventsScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+  def readPhotoTags(date nterval:  nterval): SCollect on[T et d aTagEvent] =
+    S ceUt l.readDALDataset[T et d aTagEvent](
+      dataset = T etyp e d aTagEventsScalaDataset,
+       nterval = date nterval,
+      dalEnv ron nt = dalEnv ron nt)
 
-  def readTweetSource(dateInterval: Interval): SCollection[UnhydratedFlatTweet] =
-    SourceUtil.readDALDataset[UnhydratedFlatTweet](
+  def readT etS ce(date nterval:  nterval): SCollect on[UnhydratedFlatT et] =
+    S ceUt l.readDALDataset[UnhydratedFlatT et](
       dataset = UnhydratedFlatScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+       nterval = date nterval,
+      dalEnv ron nt = dalEnv ron nt)
 
-  def readCombinedUsers(): SCollection[CombinedUser] =
-    SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
-      dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment
+  def readComb nedUsers(): SCollect on[Comb nedUser] =
+    S ceUt l.readMostRecentSnapshotNoOlderThanDALDataset[Comb nedUser](
+      dataset = Users ceScalaDataset,
+      noOlderThan = Durat on.fromDays(5),
+      dalEnv ron nt = dalEnv ron nt
     )
 }

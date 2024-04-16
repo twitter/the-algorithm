@@ -1,19 +1,19 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.EmailNotificationEventFixture
-import com.twitter.unified_user_actions.adapter.email_notification_event.EmailNotificationEventAdapter
-import com.twitter.util.Time
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.adapter.TestF xtures.Ema lNot f cat onEventF xture
+ mport com.tw ter.un f ed_user_act ons.adapter.ema l_not f cat on_event.Ema lNot f cat onEventAdapter
+ mport com.tw ter.ut l.T  
 
-class EmailNotificationEventAdapterSpec extends Test {
+class Ema lNot f cat onEventAdapterSpec extends Test {
 
-  test("Notifications with click event") {
-    new EmailNotificationEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = EmailNotificationEventAdapter.adaptEvent(notificationEvent)
-        assert(expectedUua == actual.head)
-        assert(EmailNotificationEventAdapter.adaptEvent(notificationEventWOTweetId).isEmpty)
-        assert(EmailNotificationEventAdapter.adaptEvent(notificationEventWOImpressionId).isEmpty)
+  test("Not f cat ons w h cl ck event") {
+    new Ema lNot f cat onEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = Ema lNot f cat onEventAdapter.adaptEvent(not f cat onEvent)
+        assert(expectedUua == actual. ad)
+        assert(Ema lNot f cat onEventAdapter.adaptEvent(not f cat onEventWOT et d). sEmpty)
+        assert(Ema lNot f cat onEventAdapter.adaptEvent(not f cat onEventWO mpress on d). sEmpty)
       }
     }
   }

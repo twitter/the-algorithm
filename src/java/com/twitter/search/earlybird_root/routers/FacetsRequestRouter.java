@@ -1,35 +1,35 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common. nject onNa s;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
+ mport com.tw ter.ut l.Future;
 
 /**
- * For Facets traffic SuperRoot forwards all traffic to the realtime cluster.
+ * For Facets traff c SuperRoot forwards all traff c to t  realt   cluster.
  */
-public class FacetsRequestRouter extends RequestRouter {
+publ c class FacetsRequestRouter extends RequestRouter {
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtime;
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ;
 
-  /** Creates a new FacetsRequestRouter instance to be used by the SuperRoot. */
-  @Inject
-  public FacetsRequestRouter(
-      @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(FacetsRequestRouterModule.TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter timeRangeFilter) {
+  /** Creates a new FacetsRequestRouter  nstance to be used by t  SuperRoot. */
+  @ nject
+  publ c FacetsRequestRouter(
+      @Na d( nject onNa s.REALT ME)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ,
+      @Na d(FacetsRequestRouterModule.T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter t  RangeF lter) {
 
-    this.realtime = timeRangeFilter.andThen(realtime);
+    t .realt   = t  RangeF lter.andT n(realt  );
   }
 
-  @Override
-  public Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext) {
-    return realtime.apply(requestContext);
+  @Overr de
+  publ c Future<Earlyb rdResponse> route(Earlyb rdRequestContext requestContext) {
+    return realt  .apply(requestContext);
   }
 }

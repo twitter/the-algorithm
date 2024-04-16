@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.audiospace
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.aud ospace
 
-import com.twitter.periscope.audio_space.thriftscala.CreatedSpacesView
-import com.twitter.periscope.audio_space.thriftscala.SpaceSlice
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherWithSourceFeaturesSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.periscope.CreatedSpacesSliceOnUserClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.per scope.aud o_space.thr ftscala.CreatedSpacesV ew
+ mport com.tw ter.per scope.aud o_space.thr ftscala.SpaceSl ce
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.NextCursorFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.Prev ousCursorFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ewFetc rW hS ceFeaturesS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.per scope.CreatedSpacesSl ceOnUserCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CreatedSpacesCandidateSource @Inject() (
-  column: CreatedSpacesSliceOnUserClientColumn)
-    extends StratoKeyViewFetcherWithSourceFeaturesSource[
+@S ngleton
+class CreatedSpacesCand dateS ce @ nject() (
+  column: CreatedSpacesSl ceOnUserCl entColumn)
+    extends StratoKeyV ewFetc rW hS ceFeaturesS ce[
       Long,
-      CreatedSpacesView,
-      SpaceSlice,
-      String
+      CreatedSpacesV ew,
+      SpaceSl ce,
+      Str ng
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("CreatedSpaces")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("CreatedSpaces")
 
-  override val fetcher: Fetcher[Long, CreatedSpacesView, SpaceSlice] = column.fetcher
+  overr de val fetc r: Fetc r[Long, CreatedSpacesV ew, SpaceSl ce] = column.fetc r
 
-  override def stratoResultTransformer(
+  overr de def stratoResultTransfor r(
     stratoKey: Long,
-    stratoResult: SpaceSlice
-  ): Seq[String] =
-    stratoResult.items
+    stratoResult: SpaceSl ce
+  ): Seq[Str ng] =
+    stratoResult. ems
 
-  override protected def extractFeaturesFromStratoResult(
+  overr de protected def extractFeaturesFromStratoResult(
     stratoKey: Long,
-    stratoResult: SpaceSlice
+    stratoResult: SpaceSl ce
   ): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    stratoResult.sliceInfo.previousCursor.foreach { cursor =>
-      featureMapBuilder.add(PreviousCursorFeature, cursor)
+    val featureMapBu lder = FeatureMapBu lder()
+    stratoResult.sl ce nfo.prev ousCursor.foreach { cursor =>
+      featureMapBu lder.add(Prev ousCursorFeature, cursor)
     }
-    stratoResult.sliceInfo.nextCursor.foreach { cursor =>
-      featureMapBuilder.add(NextCursorFeature, cursor)
+    stratoResult.sl ce nfo.nextCursor.foreach { cursor =>
+      featureMapBu lder.add(NextCursorFeature, cursor)
     }
-    featureMapBuilder.build()
+    featureMapBu lder.bu ld()
   }
 }

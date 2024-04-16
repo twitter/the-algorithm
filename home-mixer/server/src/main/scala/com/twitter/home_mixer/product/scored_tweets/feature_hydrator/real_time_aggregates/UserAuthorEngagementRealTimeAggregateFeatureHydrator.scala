@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserAuthorEngagementCache
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserAuthorEngage ntCac 
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.cac .ReadCac 
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  .T  l nesOnl neAggregat onFeaturesOnlyConf g._
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object UserAuthorEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object UserAuthorEngage ntRealT  AggregateFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class UserAuthorEngagementRealTimeAggregateFeatureHydrator @Inject() (
-  @Named(UserAuthorEngagementCache) override val client: ReadCache[(Long, Long), DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateBulkCandidateFeatureHydrator[(Long, Long)] {
+@S ngleton
+class UserAuthorEngage ntRealT  AggregateFeatureHydrator @ nject() (
+  @Na d(UserAuthorEngage ntCac ) overr de val cl ent: ReadCac [(Long, Long), DataRecord],
+  overr de val statsRece ver: StatsRece ver)
+    extends BaseRealT  AggregateBulkCand dateFeatureHydrator[(Long, Long)] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserAuthorEngagementRealTimeAggregate")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("UserAuthorEngage ntRealT  Aggregate")
 
-  override val outputFeature: DataRecordInAFeature[TweetCandidate] =
-    UserAuthorEngagementRealTimeAggregateFeature
+  overr de val outputFeature: DataRecord nAFeature[T etCand date] =
+    UserAuthorEngage ntRealT  AggregateFeature
 
-  override val aggregateGroups: Seq[AggregateGroup] = Seq(
-    userAuthorEngagementRealTimeAggregatesProd,
-    userAuthorShareEngagementsRealTimeAggregates
+  overr de val aggregateGroups: Seq[AggregateGroup] = Seq(
+    userAuthorEngage ntRealT  AggregatesProd,
+    userAuthorShareEngage ntsRealT  Aggregates
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    userAuthorEngagementRealTimeAggregatesProd -> "user-author.timelines.user_author_engagement_real_time_aggregates.",
-    userAuthorShareEngagementsRealTimeAggregates -> "user-author.timelines.user_author_share_engagements_real_time_aggregates."
+  overr de val aggregateGroupToPref x: Map[AggregateGroup, Str ng] = Map(
+    userAuthorEngage ntRealT  AggregatesProd -> "user-author.t  l nes.user_author_engage nt_real_t  _aggregates.",
+    userAuthorShareEngage ntsRealT  Aggregates -> "user-author.t  l nes.user_author_share_engage nts_real_t  _aggregates."
   )
 
-  override def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[(Long, Long)]] = {
-    val userId = query.getRequiredUserId
-    candidates.map { candidate =>
-      CandidatesUtil
-        .getOriginalAuthorId(candidate.features)
-        .map((userId, _))
+  overr de def keysFromQueryAndCand dates(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Seq[Opt on[(Long, Long)]] = {
+    val user d = query.getRequ redUser d
+    cand dates.map { cand date =>
+      Cand datesUt l
+        .getOr g nalAuthor d(cand date.features)
+        .map((user d, _))
     }
   }
 }

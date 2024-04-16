@@ -1,153 +1,153 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.tw ter.fr gate.pushserv ce.send_handler.generator
 
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.BaseballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.BasketballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.CricketMatchLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.NflFootballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SoccerMatchLiveUpdate
-import com.twitter.escherbird.common.thriftscala.Domains
-import com.twitter.escherbird.common.thriftscala.QualifiedId
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.frigate.common.base.BaseGameScore
-import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
-import com.twitter.frigate.common.base.TeamInfo
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.pushservice.exception.InvalidSportDomainException
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutSportsUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.MagicFanoutEventNotificationDetails
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.BaseballGa L veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.BasketballGa L veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.Cr cketMatchL veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.NflFootballGa L veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.SoccerMatchL veUpdate
+ mport com.tw ter.esc rb rd.common.thr ftscala.Doma ns
+ mport com.tw ter.esc rb rd.common.thr ftscala.Qual f ed d
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.fr gate.common.base.BaseGa Score
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsEventCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsScore nformat on
+ mport com.tw ter.fr gate.common.base.Team nfo
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.pushserv ce.except on. nval dSportDoma nExcept on
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutSportsUt l
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.Mag cFanoutEventNot f cat onDeta ls
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-object MagicFanoutSportsEventCandidateGenerator {
+object Mag cFanoutSportsEventCand dateGenerator {
 
-  final def getCandidate(
+  f nal def getCand date(
     targetUser: Target,
-    notification: FrigateNotification,
-    basketballGameScoreStore: ReadableStore[QualifiedId, BasketballGameLiveUpdate],
-    baseballGameScoreStore: ReadableStore[QualifiedId, BaseballGameLiveUpdate],
-    cricketMatchScoreStore: ReadableStore[QualifiedId, CricketMatchLiveUpdate],
-    soccerMatchScoreStore: ReadableStore[QualifiedId, SoccerMatchLiveUpdate],
-    nflGameScoreStore: ReadableStore[QualifiedId, NflFootballGameLiveUpdate],
-    semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
-  ): Future[RawCandidate] = {
+    not f cat on: Fr gateNot f cat on,
+    basketballGa ScoreStore: ReadableStore[Qual f ed d, BasketballGa L veUpdate],
+    baseballGa ScoreStore: ReadableStore[Qual f ed d, BaseballGa L veUpdate],
+    cr cketMatchScoreStore: ReadableStore[Qual f ed d, Cr cketMatchL veUpdate],
+    soccerMatchScoreStore: ReadableStore[Qual f ed d, SoccerMatchL veUpdate],
+    nflGa ScoreStore: ReadableStore[Qual f ed d, NflFootballGa L veUpdate],
+    semant cCore gadataStore: ReadableStore[Semant cEnt yForQuery, Ent y gadata],
+  ): Future[RawCand date] = {
 
     /**
-     * frigateNotification recommendation type should be [[CommonRecommendationType.MagicFanoutSportsEvent]]
-     * AND pushId field should be set
+     * fr gateNot f cat on recom ndat on type should be [[CommonRecom ndat onType.Mag cFanoutSportsEvent]]
+     * AND push d f eld should be set
      *
      * */
-    require(
-      notification.commonRecommendationType == CommonRecommendationType.MagicFanoutSportsEvent,
-      "MagicFanoutSports: unexpected CRT " + notification.commonRecommendationType
+    requ re(
+      not f cat on.commonRecom ndat onType == CommonRecom ndat onType.Mag cFanoutSportsEvent,
+      "Mag cFanoutSports: unexpected CRT " + not f cat on.commonRecom ndat onType
     )
 
-    require(
-      notification.magicFanoutEventNotification.exists(_.pushId.isDefined),
-      "MagicFanoutSportsEvent: pushId is not defined")
+    requ re(
+      not f cat on.mag cFanoutEventNot f cat on.ex sts(_.push d. sDef ned),
+      "Mag cFanoutSportsEvent: push d  s not def ned")
 
-    val magicFanoutEventNotification = notification.magicFanoutEventNotification.get
-    val eventId = magicFanoutEventNotification.eventId
-    val _isScoreUpdate = magicFanoutEventNotification.isScoreUpdate.getOrElse(false)
+    val mag cFanoutEventNot f cat on = not f cat on.mag cFanoutEventNot f cat on.get
+    val event d = mag cFanoutEventNot f cat on.event d
+    val _ sScoreUpdate = mag cFanoutEventNot f cat on. sScoreUpdate.getOrElse(false)
 
-    val gameScoresFut: Future[Option[BaseGameScore]] = {
-      if (_isScoreUpdate) {
-        semanticCoreMegadataStore
-          .get(SemanticEntityForQuery(PushConstants.SportsEventDomainId, eventId))
+    val ga ScoresFut: Future[Opt on[BaseGa Score]] = {
+       f (_ sScoreUpdate) {
+        semant cCore gadataStore
+          .get(Semant cEnt yForQuery(PushConstants.SportsEventDoma n d, event d))
           .flatMap {
-            case Some(megadata) =>
-              if (megadata.domains.contains(Domains.BasketballGame)) {
-                basketballGameScoreStore
-                  .get(QualifiedId(Domains.BasketballGame.value, eventId)).map {
-                    case Some(game) if game.status.isDefined =>
-                      val status = game.status.get
-                      MagicFanoutSportsUtil.transformToGameScore(game.score, status)
+            case So ( gadata) =>
+               f ( gadata.doma ns.conta ns(Doma ns.BasketballGa )) {
+                basketballGa ScoreStore
+                  .get(Qual f ed d(Doma ns.BasketballGa .value, event d)).map {
+                    case So (ga )  f ga .status. sDef ned =>
+                      val status = ga .status.get
+                      Mag cFanoutSportsUt l.transformToGa Score(ga .score, status)
                     case _ => None
                   }
-              } else if (megadata.domains.contains(Domains.BaseballGame)) {
-                baseballGameScoreStore
-                  .get(QualifiedId(Domains.BaseballGame.value, eventId)).map {
-                    case Some(game) if game.status.isDefined =>
-                      val status = game.status.get
-                      MagicFanoutSportsUtil.transformToGameScore(game.runs, status)
+              } else  f ( gadata.doma ns.conta ns(Doma ns.BaseballGa )) {
+                baseballGa ScoreStore
+                  .get(Qual f ed d(Doma ns.BaseballGa .value, event d)).map {
+                    case So (ga )  f ga .status. sDef ned =>
+                      val status = ga .status.get
+                      Mag cFanoutSportsUt l.transformToGa Score(ga .runs, status)
                     case _ => None
                   }
-              } else if (megadata.domains.contains(Domains.NflFootballGame)) {
-                nflGameScoreStore
-                  .get(QualifiedId(Domains.NflFootballGame.value, eventId)).map {
-                    case Some(game) if game.status.isDefined =>
-                      val nflScore = MagicFanoutSportsUtil.transformNFLGameScore(game)
+              } else  f ( gadata.doma ns.conta ns(Doma ns.NflFootballGa )) {
+                nflGa ScoreStore
+                  .get(Qual f ed d(Doma ns.NflFootballGa .value, event d)).map {
+                    case So (ga )  f ga .status. sDef ned =>
+                      val nflScore = Mag cFanoutSportsUt l.transformNFLGa Score(ga )
                       nflScore
                     case _ => None
                   }
-              } else if (megadata.domains.contains(Domains.SoccerMatch)) {
+              } else  f ( gadata.doma ns.conta ns(Doma ns.SoccerMatch)) {
                 soccerMatchScoreStore
-                  .get(QualifiedId(Domains.SoccerMatch.value, eventId)).map {
-                    case Some(game) if game.status.isDefined =>
-                      val soccerScore = MagicFanoutSportsUtil.transformSoccerGameScore(game)
+                  .get(Qual f ed d(Doma ns.SoccerMatch.value, event d)).map {
+                    case So (ga )  f ga .status. sDef ned =>
+                      val soccerScore = Mag cFanoutSportsUt l.transformSoccerGa Score(ga )
                       soccerScore
                     case _ => None
                   }
               } else {
-                // The domains are not in our list of supported sports
-                throw new InvalidSportDomainException(
-                  s"Domain for entity ${eventId} is not supported")
+                // T  doma ns are not  n   l st of supported sports
+                throw new  nval dSportDoma nExcept on(
+                  s"Doma n for ent y ${event d}  s not supported")
               }
             case _ => Future.None
           }
       } else Future.None
     }
 
-    val homeTeamInfoFut: Future[Option[TeamInfo]] = gameScoresFut.flatMap {
-      case Some(gameScore) =>
-        MagicFanoutSportsUtil.getTeamInfo(gameScore.home, semanticCoreMegadataStore)
+    val ho Team nfoFut: Future[Opt on[Team nfo]] = ga ScoresFut.flatMap {
+      case So (ga Score) =>
+        Mag cFanoutSportsUt l.getTeam nfo(ga Score.ho , semant cCore gadataStore)
       case _ => Future.None
     }
 
-    val awayTeamInfoFut: Future[Option[TeamInfo]] = gameScoresFut.flatMap {
-      case Some(gameScore) =>
-        MagicFanoutSportsUtil.getTeamInfo(gameScore.away, semanticCoreMegadataStore)
+    val awayTeam nfoFut: Future[Opt on[Team nfo]] = ga ScoresFut.flatMap {
+      case So (ga Score) =>
+        Mag cFanoutSportsUt l.getTeam nfo(ga Score.away, semant cCore gadataStore)
       case _ => Future.None
     }
 
-    val candidate = new RawCandidate
-      with MagicFanoutSportsEventCandidate
-      with MagicFanoutSportsScoreInformation {
+    val cand date = new RawCand date
+      w h Mag cFanoutSportsEventCand date
+      w h Mag cFanoutSportsScore nformat on {
 
-      override val target: Target = targetUser
+      overr de val target: Target = targetUser
 
-      override val eventId: Long = magicFanoutEventNotification.eventId
+      overr de val event d: Long = mag cFanoutEventNot f cat on.event d
 
-      override val pushId: Long = magicFanoutEventNotification.pushId.get
+      overr de val push d: Long = mag cFanoutEventNot f cat on.push d.get
 
-      override val candidateMagicEventsReasons: Seq[MagicEventsReason] =
-        magicFanoutEventNotification.eventReasons.getOrElse(Seq.empty)
+      overr de val cand dateMag cEventsReasons: Seq[Mag cEventsReason] =
+        mag cFanoutEventNot f cat on.eventReasons.getOrElse(Seq.empty)
 
-      override val momentId: Option[Long] = magicFanoutEventNotification.momentId
+      overr de val mo nt d: Opt on[Long] = mag cFanoutEventNot f cat on.mo nt d
 
-      override val eventLanguage: Option[String] = magicFanoutEventNotification.eventLanguage
+      overr de val eventLanguage: Opt on[Str ng] = mag cFanoutEventNot f cat on.eventLanguage
 
-      override val details: Option[MagicFanoutEventNotificationDetails] =
-        magicFanoutEventNotification.details
+      overr de val deta ls: Opt on[Mag cFanoutEventNot f cat onDeta ls] =
+        mag cFanoutEventNot f cat on.deta ls
 
-      override val frigateNotification: FrigateNotification = notification
+      overr de val fr gateNot f cat on: Fr gateNot f cat on = not f cat on
 
-      override val homeTeamInfo: Future[Option[TeamInfo]] = homeTeamInfoFut
+      overr de val ho Team nfo: Future[Opt on[Team nfo]] = ho Team nfoFut
 
-      override val awayTeamInfo: Future[Option[TeamInfo]] = awayTeamInfoFut
+      overr de val awayTeam nfo: Future[Opt on[Team nfo]] = awayTeam nfoFut
 
-      override val gameScores: Future[Option[BaseGameScore]] = gameScoresFut
+      overr de val ga Scores: Future[Opt on[BaseGa Score]] = ga ScoresFut
 
-      override val isScoreUpdate: Boolean = _isScoreUpdate
+      overr de val  sScoreUpdate: Boolean = _ sScoreUpdate
     }
 
-    Future.value(candidate)
+    Future.value(cand date)
 
   }
 }

@@ -1,176 +1,176 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.UserDefinedProductMetadata
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tco_util.TcoSlug
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.Offset
+ mport com.tw ter. d aserv ces.commons. d a nformat on.thr ftscala.UserDef nedProduct tadata
+ mport com.tw ter. d aserv ces.commons.thr ftscala. d aKey
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala._
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.tco_ut l.TcoSlug
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e. d a._
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.t ettext.Offset
 
-object CreateMediaTco {
-  import UpstreamFailure._
+object Create d aTco {
+   mport UpstreamFa lure._
 
   case class Request(
-    tweetId: TweetId,
-    userId: UserId,
-    userScreenName: String,
-    isProtected: Boolean,
-    createdAt: Time,
-    isVideo: Boolean,
+    t et d: T et d,
+    user d: User d,
+    userScreenNa : Str ng,
+     sProtected: Boolean,
+    createdAt: T  ,
+     sV deo: Boolean,
     dark: Boolean)
 
-  type Type = FutureArrow[Request, Media.MediaTco]
+  type Type = FutureArrow[Request,  d a. d aTco]
 
   def apply(urlShortener: UrlShortener.Type): Type =
-    FutureArrow[Request, Media.MediaTco] { req =>
-      val expandedUrl = MediaUrl.Permalink(req.userScreenName, req.tweetId, req.isVideo)
+    FutureArrow[Request,  d a. d aTco] { req =>
+      val expandedUrl =  d aUrl.Permal nk(req.userScreenNa , req.t et d, req. sV deo)
       val shortenCtx =
         UrlShortener.Context(
-          userId = req.userId,
-          userProtected = req.isProtected,
-          tweetId = req.tweetId,
+          user d = req.user d,
+          userProtected = req. sProtected,
+          t et d = req.t et d,
           createdAt = req.createdAt,
           dark = req.dark
         )
 
       urlShortener((expandedUrl, shortenCtx))
-        .flatMap { metadata =>
-          metadata.shortUrl match {
+        .flatMap {  tadata =>
+           tadata.shortUrl match {
             case TcoSlug(slug) =>
               Future.value(
-                Media.MediaTco(
+                 d a. d aTco(
                   expandedUrl,
-                  metadata.shortUrl,
-                  MediaUrl.Display.fromTcoSlug(slug)
+                   tadata.shortUrl,
+                   d aUrl.D splay.fromTcoSlug(slug)
                 )
               )
 
             case _ =>
-              // should never get here, since shortened urls from talon
-              // always start with "http://t.co/", just in case...
-              Future.exception(MediaShortenUrlMalformedFailure)
+              // should never get  re, s nce shortened urls from talon
+              // always start w h "http://t.co/", just  n case...
+              Future.except on( d aShortenUrlMalfor dFa lure)
           }
         }
         .rescue {
-          case UrlShortener.InvalidUrlError =>
-            // should never get here, since media expandedUrl should always be a valid
-            // input to talon.
-            Future.exception(MediaExpandedUrlNotValidFailure)
+          case UrlShortener. nval dUrlError =>
+            // should never get  re, s nce  d a expandedUrl should always be a val d
+            //  nput to talon.
+            Future.except on( d aExpandedUrlNotVal dFa lure)
         }
     }
 }
 
-object MediaBuilder {
-  private val log = Logger(getClass)
+object  d aBu lder {
+  pr vate val log = Logger(getClass)
 
   case class Request(
-    mediaUploadIds: Seq[MediaId],
-    text: String,
-    tweetId: TweetId,
-    userId: UserId,
-    userScreenName: String,
-    isProtected: Boolean,
-    createdAt: Time,
+     d aUpload ds: Seq[ d a d],
+    text: Str ng,
+    t et d: T et d,
+    user d: User d,
+    userScreenNa : Str ng,
+     sProtected: Boolean,
+    createdAt: T  ,
     dark: Boolean = false,
-    productMetadata: Option[Map[MediaId, UserDefinedProductMetadata]] = None)
+    product tadata: Opt on[Map[ d a d, UserDef nedProduct tadata]] = None)
 
-  case class Result(updatedText: String, mediaEntities: Seq[MediaEntity], mediaKeys: Seq[MediaKey])
+  case class Result(updatedText: Str ng,  d aEnt  es: Seq[ d aEnt y],  d aKeys: Seq[ d aKey])
 
   type Type = FutureArrow[Request, Result]
 
   def apply(
-    processMedia: MediaClient.ProcessMedia,
-    createMediaTco: CreateMediaTco.Type,
-    stats: StatsReceiver
+    process d a:  d aCl ent.Process d a,
+    create d aTco: Create d aTco.Type,
+    stats: StatsRece ver
   ): Type =
     FutureArrow[Request, Result] {
       case Request(
-            mediaUploadIds,
+             d aUpload ds,
             text,
-            tweetId,
-            userId,
-            screenName,
-            isProtected,
+            t et d,
+            user d,
+            screenNa ,
+             sProtected,
             createdAt,
             dark,
-            productMetadata
+            product tadata
           ) =>
         for {
-          mediaKeys <- processMedia(
-            ProcessMediaRequest(
-              mediaUploadIds,
-              userId,
-              tweetId,
-              isProtected,
-              productMetadata
+           d aKeys <- process d a(
+            Process d aRequest(
+               d aUpload ds,
+              user d,
+              t et d,
+               sProtected,
+              product tadata
             )
           )
-          mediaTco <- createMediaTco(
-            CreateMediaTco.Request(
-              tweetId,
-              userId,
-              screenName,
-              isProtected,
+           d aTco <- create d aTco(
+            Create d aTco.Request(
+              t et d,
+              user d,
+              screenNa ,
+               sProtected,
               createdAt,
-              mediaKeys.exists(MediaKeyClassifier.isVideo(_)),
+               d aKeys.ex sts( d aKeyClass f er. sV deo(_)),
               dark
             )
           )
-        } yield produceResult(text, mediaTco, isProtected, mediaKeys)
-    }.countExceptions(
-        ExceptionCounter(stats)
+        } y eld produceResult(text,  d aTco,  sProtected,  d aKeys)
+    }.countExcept ons(
+        Except onCounter(stats)
       )
-      .onFailure[Request] { (req, ex) => log.info(req.toString, ex) }
-      .translateExceptions {
-        case e: MediaExceptions.MediaClientException =>
-          TweetCreateFailure.State(TweetCreateState.InvalidMedia, Some(e.getMessage))
+      .onFa lure[Request] { (req, ex) => log. nfo(req.toStr ng, ex) }
+      .translateExcept ons {
+        case e:  d aExcept ons. d aCl entExcept on =>
+          T etCreateFa lure.State(T etCreateState. nval d d a, So (e.get ssage))
       }
 
   def produceResult(
-    text: String,
-    mediaTco: Media.MediaTco,
-    userIsProtected: Boolean,
-    mediaKeys: Seq[MediaKey]
+    text: Str ng,
+     d aTco:  d a. d aTco,
+    user sProtected: Boolean,
+     d aKeys: Seq[ d aKey]
   ): Result = {
 
     val newText =
-      if (text == "") mediaTco.url
-      else text + " " + mediaTco.url
+       f (text == "")  d aTco.url
+      else text + " " +  d aTco.url
 
-    val to = Offset.CodePoint.length(newText)
-    val from = to - Offset.CodePoint.length(mediaTco.url)
+    val to = Offset.CodePo nt.length(newText)
+    val from = to - Offset.CodePo nt.length( d aTco.url)
 
-    val mediaEntities =
-      mediaKeys.map { mediaKey =>
-        MediaEntity(
-          mediaKey = Some(mediaKey),
-          fromIndex = from.toShort,
-          toIndex = to.toShort,
-          url = mediaTco.url,
-          displayUrl = mediaTco.displayUrl,
-          expandedUrl = mediaTco.expandedUrl,
-          mediaId = mediaKey.mediaId,
-          mediaPath = "", // to be hydrated
-          mediaUrl = null, // to be hydrated
-          mediaUrlHttps = null, // to be hydrated
+    val  d aEnt  es =
+       d aKeys.map {  d aKey =>
+         d aEnt y(
+           d aKey = So ( d aKey),
+          from ndex = from.toShort,
+          to ndex = to.toShort,
+          url =  d aTco.url,
+          d splayUrl =  d aTco.d splayUrl,
+          expandedUrl =  d aTco.expandedUrl,
+           d a d =  d aKey. d a d,
+           d aPath = "", // to be hydrated
+           d aUrl = null, // to be hydrated
+           d aUrlHttps = null, // to be hydrated
           nsfw = false, // deprecated
-          sizes = Set(
-            MediaSize(
-              sizeType = MediaSizeType.Orig,
-              resizeMethod = MediaResizeMethod.Fit,
-              deprecatedContentType = MediaKeyUtil.contentType(mediaKey),
-              width = -1, // to be hydrated
-              height = -1 // to be hydrated
+          s zes = Set(
+             d aS ze(
+              s zeType =  d aS zeType.Or g,
+              res ze thod =  d aRes ze thod.F ,
+              deprecatedContentType =  d aKeyUt l.contentType( d aKey),
+              w dth = -1, // to be hydrated
+                ght = -1 // to be hydrated
             )
           )
         )
       }
 
-    Result(newText, mediaEntities, mediaKeys)
+    Result(newText,  d aEnt  es,  d aKeys)
   }
 }

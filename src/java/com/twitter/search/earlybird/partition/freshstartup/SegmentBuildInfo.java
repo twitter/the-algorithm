@@ -1,92 +1,92 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.partition.SegmentWriter;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntWr er;
 
-// Data collected and produced while building a segment.
-class SegmentBuildInfo {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuildInfo.class);
+// Data collected and produced wh le bu ld ng a seg nt.
+class Seg ntBu ld nfo {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntBu ld nfo.class);
 
-  // Inclusive boundaries. [start, end].
-  private final long tweetStartOffset;
-  private final long tweetEndOffset;
-  private final int index;
-  private final boolean lastSegment;
+  //  nclus ve boundar es. [start, end].
+  pr vate f nal long t etStartOffset;
+  pr vate f nal long t etEndOffset;
+  pr vate f nal  nt  ndex;
+  pr vate f nal boolean lastSeg nt;
 
-  private long startTweetId;
-  private long maxIndexedTweetId;
-  private KafkaOffsetPair updateKafkaOffsetPair;
-  private SegmentWriter segmentWriter;
+  pr vate long startT et d;
+  pr vate long max ndexedT et d;
+  pr vate KafkaOffsetPa r updateKafkaOffsetPa r;
+  pr vate Seg ntWr er seg ntWr er;
 
-  public SegmentBuildInfo(long tweetStartOffset,
-                          long tweetEndOffset,
-                          int index,
-                          boolean lastSegment) {
-    this.tweetStartOffset = tweetStartOffset;
-    this.tweetEndOffset = tweetEndOffset;
-    this.index = index;
-    this.lastSegment = lastSegment;
+  publ c Seg ntBu ld nfo(long t etStartOffset,
+                          long t etEndOffset,
+                           nt  ndex,
+                          boolean lastSeg nt) {
+    t .t etStartOffset = t etStartOffset;
+    t .t etEndOffset = t etEndOffset;
+    t . ndex =  ndex;
+    t .lastSeg nt = lastSeg nt;
 
-    this.startTweetId = -1;
-    this.updateKafkaOffsetPair = null;
-    this.maxIndexedTweetId = -1;
-    this.segmentWriter = null;
+    t .startT et d = -1;
+    t .updateKafkaOffsetPa r = null;
+    t .max ndexedT et d = -1;
+    t .seg ntWr er = null;
   }
 
-  public void setUpdateKafkaOffsetPair(KafkaOffsetPair updateKafkaOffsetPair) {
-    this.updateKafkaOffsetPair = updateKafkaOffsetPair;
+  publ c vo d setUpdateKafkaOffsetPa r(KafkaOffsetPa r updateKafkaOffsetPa r) {
+    t .updateKafkaOffsetPa r = updateKafkaOffsetPa r;
   }
 
-  public KafkaOffsetPair getUpdateKafkaOffsetPair() {
-    return updateKafkaOffsetPair;
+  publ c KafkaOffsetPa r getUpdateKafkaOffsetPa r() {
+    return updateKafkaOffsetPa r;
   }
 
-  public boolean isLastSegment() {
-    return lastSegment;
+  publ c boolean  sLastSeg nt() {
+    return lastSeg nt;
   }
 
-  public void setStartTweetId(long startTweetId) {
-    this.startTweetId = startTweetId;
+  publ c vo d setStartT et d(long startT et d) {
+    t .startT et d = startT et d;
   }
 
-  public long getTweetStartOffset() {
-    return tweetStartOffset;
+  publ c long getT etStartOffset() {
+    return t etStartOffset;
   }
 
-  public long getTweetEndOffset() {
-    return tweetEndOffset;
+  publ c long getT etEndOffset() {
+    return t etEndOffset;
   }
 
-  public long getStartTweetId() {
-    return startTweetId;
+  publ c long getStartT et d() {
+    return startT et d;
   }
 
-  public int getIndex() {
-    return index;
+  publ c  nt get ndex() {
+    return  ndex;
   }
 
-  public void setMaxIndexedTweetId(long maxIndexedTweetId) {
-    this.maxIndexedTweetId = maxIndexedTweetId;
+  publ c vo d setMax ndexedT et d(long max ndexedT et d) {
+    t .max ndexedT et d = max ndexedT et d;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  publ c long getMax ndexedT et d() {
+    return max ndexedT et d;
   }
 
-  public SegmentWriter getSegmentWriter() {
-    return segmentWriter;
+  publ c Seg ntWr er getSeg ntWr er() {
+    return seg ntWr er;
   }
 
-  public void setSegmentWriter(SegmentWriter segmentWriter) {
-    this.segmentWriter = segmentWriter;
+  publ c vo d setSeg ntWr er(Seg ntWr er seg ntWr er) {
+    t .seg ntWr er = seg ntWr er;
   }
 
-  public void logState() {
-    LOG.info("SegmentBuildInfo (index:{})", index);
-    LOG.info(String.format("  Start offset: %,d", tweetStartOffset));
-    LOG.info(String.format("  End offset: %,d", tweetEndOffset));
-    LOG.info(String.format("  Start tweet id: %d", startTweetId));
+  publ c vo d logState() {
+    LOG. nfo("Seg ntBu ld nfo ( ndex:{})",  ndex);
+    LOG. nfo(Str ng.format("  Start offset: %,d", t etStartOffset));
+    LOG. nfo(Str ng.format("  End offset: %,d", t etEndOffset));
+    LOG. nfo(Str ng.format("  Start t et  d: %d", startT et d));
   }
 }

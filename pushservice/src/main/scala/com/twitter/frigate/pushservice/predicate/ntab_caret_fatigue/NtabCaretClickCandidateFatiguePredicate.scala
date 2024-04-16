@@ -1,87 +1,87 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.frigate.common.base.Candidate
-import com.twitter.frigate.common.base.TargetInfo
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.base.{RecommendationType => BaseRecommendationType}
-import com.twitter.frigate.common.predicate.CandidateWithRecommendationTypeAndTargetInfoWithCaretFeedbackHistory
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate.TimeSeries
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.predicate.CaretFeedbackHistoryFilter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.fr gate.common.base.Cand date
+ mport com.tw ter.fr gate.common.base.Target nfo
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.common.base.{Recom ndat onType => BaseRecom ndat onType}
+ mport com.tw ter.fr gate.common.pred cate.Cand dateW hRecom ndat onTypeAndTarget nfoW hCaretFeedback tory
+ mport com.tw ter.fr gate.common.pred cate.Fr gate toryFat guePred cate.T  Ser es
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.pred cate.CaretFeedback toryF lter
 
-object NtabCaretClickContFnFatiguePredicate {
+object NtabCaretCl ckContFnFat guePred cate {
 
-  private val MagicRecsCategory = "MagicRecs"
+  pr vate val Mag cRecsCategory = "Mag cRecs"
 
-  def ntabCaretClickContFnFatiguePredicates(
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] =
-      CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes),
-    name: String = "NTabCaretClickFnCandidatePredicates"
+  def ntabCaretCl ckContFnFat guePred cates(
+    f lter tory: T  Ser es => T  Ser es =
+      Fat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: Target => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] =
+      CaretFeedback toryF lter.caretFeedback toryF lter(Seq(Mag cRecsCategory)),
+    f lter nl neFeedback tory: Seq[FeedbackModel] => Seq[FeedbackModel] =
+      NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(RecTypes.sharedNTabCaretFat gueTypes),
+    na : Str ng = "NTabCaretCl ckFnCand datePred cates"
   )(
-    implicit globalStats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    CRTBasedNtabCaretClickFatiguePredicates
-      .f1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-        Candidate with BaseRecommendationType with TargetInfo[
+     mpl c  globalStats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val scopedStats = globalStats.scope(na )
+    CRTBasedNtabCaretCl ckFat guePred cates
+      .f1Tr ggeredCRTBasedNtabCaretCl ckFnFat guePred cate[
+        Cand date w h BaseRecom ndat onType w h Target nfo[
           Target
         ]
       ](
-        filterHistory = filterHistory,
-        filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-        filterInlineFeedbackHistory = filterInlineFeedbackHistory
+        f lter tory = f lter tory,
+        f lterCaretFeedback tory = f lterCaretFeedback tory,
+        f lter nl neFeedback tory = f lter nl neFeedback tory
       )
-      .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory
-      .withName("f1_triggered_fn_seelessoften_fatigue")
-      .andThen(
-        CRTBasedNtabCaretClickFatiguePredicates
-          .nonF1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-            Candidate with BaseRecommendationType with TargetInfo[
+      .applyOnlyToCand dateW hRecom ndat onTypeAndTargetW hCaretFeedback tory
+      .w hNa ("f1_tr ggered_fn_seelessoften_fat gue")
+      .andT n(
+        CRTBasedNtabCaretCl ckFat guePred cates
+          .nonF1Tr ggeredCRTBasedNtabCaretCl ckFnFat guePred cate[
+            Cand date w h BaseRecom ndat onType w h Target nfo[
               Target
             ]
           ](
-            filterHistory = filterHistory,
-            filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-            filterInlineFeedbackHistory = filterInlineFeedbackHistory
+            f lter tory = f lter tory,
+            f lterCaretFeedback tory = f lterCaretFeedback tory,
+            f lter nl neFeedback tory = f lter nl neFeedback tory
           )
-          .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory)
-      .withName("nonf1_triggered_fn_seelessoften_fatigue")
-      .andThen(
-        CRTBasedNtabCaretClickFatiguePredicates
-          .tripHqTweetTriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-            Candidate with BaseRecommendationType with TargetInfo[
+          .applyOnlyToCand dateW hRecom ndat onTypeAndTargetW hCaretFeedback tory)
+      .w hNa ("nonf1_tr ggered_fn_seelessoften_fat gue")
+      .andT n(
+        CRTBasedNtabCaretCl ckFat guePred cates
+          .tr pHqT etTr ggeredCRTBasedNtabCaretCl ckFnFat guePred cate[
+            Cand date w h BaseRecom ndat onType w h Target nfo[
               Target
             ]
           ](
-            filterHistory = filterHistory,
-            filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-            filterInlineFeedbackHistory = filterInlineFeedbackHistory
+            f lter tory = f lter tory,
+            f lterCaretFeedback tory = f lterCaretFeedback tory,
+            f lter nl neFeedback tory = f lter nl neFeedback tory
           )
-          .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory)
-      .withName("trip_hq_tweet_triggered_fn_seelessoften_fatigue")
-      .andThen(
-        CRTBasedNtabCaretClickFatiguePredicates
-          .genericCRTBasedNtabCaretClickFnFatiguePredicate[
-            Candidate with BaseRecommendationType with TargetInfo[
+          .applyOnlyToCand dateW hRecom ndat onTypeAndTargetW hCaretFeedback tory)
+      .w hNa ("tr p_hq_t et_tr ggered_fn_seelessoften_fat gue")
+      .andT n(
+        CRTBasedNtabCaretCl ckFat guePred cates
+          .gener cCRTBasedNtabCaretCl ckFnFat guePred cate[
+            Cand date w h BaseRecom ndat onType w h Target nfo[
               Target
             ]
           ](
-            filterHistory = filterHistory,
-            filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-            filterInlineFeedbackHistory = filterInlineFeedbackHistory)
-          .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory
-          .withName("generic_fn_seelessoften_fatigue")
+            f lter tory = f lter tory,
+            f lterCaretFeedback tory = f lterCaretFeedback tory,
+            f lter nl neFeedback tory = f lter nl neFeedback tory)
+          .applyOnlyToCand dateW hRecom ndat onTypeAndTargetW hCaretFeedback tory
+          .w hNa ("gener c_fn_seelessoften_fat gue")
       )
   }
 }

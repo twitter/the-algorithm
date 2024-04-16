@@ -1,11 +1,11 @@
-package com.twitter.visibility.configapi.params
+package com.tw ter.v s b l y.conf gap .params
 
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .Param
 
-abstract class GlobalParam[T](override val default: T) extends Param(default) {
-  override val statName: String = s"GlobalParam/${this.getClass.getSimpleName}"
+abstract class GlobalParam[T](overr de val default: T) extends Param(default) {
+  overr de val statNa : Str ng = s"GlobalParam/${t .getClass.getS mpleNa }"
 }
 
-private[visibility] object GlobalParams {
-  object EnableFetchingLabelMap extends GlobalParam(false)
+pr vate[v s b l y] object GlobalParams {
+  object EnableFetch ngLabelMap extends GlobalParam(false)
 }

@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finagle/finagle-mux/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
-        "servo/util",
-        "stitch/stitch-core",
-        "util/util-core",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "f nagle/f nagle-mux/src/ma n/scala",
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/ dent f er",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne:query",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/p pel ne_fa lure",
+        "servo/ut l",
+        "st ch/st ch-core",
+        "ut l/ut l-core",
     ],
 )

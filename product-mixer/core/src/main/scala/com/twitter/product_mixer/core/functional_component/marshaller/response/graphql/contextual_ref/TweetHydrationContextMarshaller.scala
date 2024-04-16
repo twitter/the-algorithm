@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.T etHydrat onContext
+ mport com.tw ter.strato.graphql.contextual_refs.{thr ftscala => thr ft}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetHydrationContextMarshaller @Inject() (
+@S ngleton
+class T etHydrat onContextMarshaller @ nject() (
   safetyLevelMarshaller: SafetyLevelMarshaller,
-  outerTweetContextMarshaller: OuterTweetContextMarshaller) {
+  outerT etContextMarshaller: OuterT etContextMarshaller) {
 
-  def apply(tweetHydrationContext: TweetHydrationContext): thrift.TweetHydrationContext =
-    thrift.TweetHydrationContext(
-      safetyLevelOverride = tweetHydrationContext.safetyLevelOverride.map(safetyLevelMarshaller(_)),
-      outerTweetContext =
-        tweetHydrationContext.outerTweetContext.map(outerTweetContextMarshaller(_))
+  def apply(t etHydrat onContext: T etHydrat onContext): thr ft.T etHydrat onContext =
+    thr ft.T etHydrat onContext(
+      safetyLevelOverr de = t etHydrat onContext.safetyLevelOverr de.map(safetyLevelMarshaller(_)),
+      outerT etContext =
+        t etHydrat onContext.outerT etContext.map(outerT etContextMarshaller(_))
     )
 }

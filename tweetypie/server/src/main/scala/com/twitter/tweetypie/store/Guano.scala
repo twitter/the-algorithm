@@ -1,60 +1,60 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.guano.{thriftscala => guano}
-import com.twitter.servo.util.Scribe
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala.AuditDeleteTweet
+ mport com.tw ter.guano.{thr ftscala => guano}
+ mport com.tw ter.servo.ut l.Scr be
+ mport com.tw ter.takedown.ut l.TakedownReasons
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.t etyp e.thr ftscala.Aud DeleteT et
 
 object Guano {
   case class MalwareAttempt(
-    url: String,
-    userId: UserId,
-    clientAppId: Option[Long],
-    remoteHost: Option[String]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.MalwareAttempt,
-        malwareAttempt = Some(
+    url: Str ng,
+    user d: User d,
+    cl entApp d: Opt on[Long],
+    remoteHost: Opt on[Str ng]) {
+    def toScr be ssage: guano.Scr be ssage =
+      guano.Scr be ssage(
+        `type` = guano.Scr beType.MalwareAttempt,
+        malwareAttempt = So (
           guano.MalwareAttempt(
-            timestamp = Time.now.inSeconds,
+            t  stamp = T  .now. nSeconds,
             host = remoteHost,
-            userId = userId,
+            user d = user d,
             url = url,
             `type` = guano.MalwareAttemptType.Status,
-            clientAppId = clientAppId.map(_.toInt) // yikes!
+            cl entApp d = cl entApp d.map(_.to nt) // y kes!
           )
         )
       )
   }
 
-  case class DestroyTweet(
-    tweet: Tweet,
-    userId: UserId,
-    byUserId: UserId,
-    passthrough: Option[AuditDeleteTweet]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.DestroyStatus,
-        destroyStatus = Some(
+  case class DestroyT et(
+    t et: T et,
+    user d: User d,
+    byUser d: User d,
+    passthrough: Opt on[Aud DeleteT et]) {
+    def toScr be ssage: guano.Scr be ssage =
+      guano.Scr be ssage(
+        `type` = guano.Scr beType.DestroyStatus,
+        destroyStatus = So (
           guano.DestroyStatus(
-            `type` = Some(guano.DestroyStatusType.Status),
-            timestamp = Time.now.inSeconds,
-            userId = userId,
-            byUserId = byUserId,
-            statusId = tweet.id,
+            `type` = So (guano.DestroyStatusType.Status),
+            t  stamp = T  .now. nSeconds,
+            user d = user d,
+            byUser d = byUser d,
+            status d = t et. d,
             text = "",
             reason = passthrough
               .flatMap(_.reason)
-              .flatMap { r => guano.UserActionReason.valueOf(r.name) }
-              .orElse(Some(guano.UserActionReason.Other)),
-            done = passthrough.flatMap(_.done).orElse(Some(true)),
+              .flatMap { r => guano.UserAct onReason.valueOf(r.na ) }
+              .orElse(So (guano.UserAct onReason.Ot r)),
+            done = passthrough.flatMap(_.done).orElse(So (true)),
             host = passthrough.flatMap(_.host),
-            bulkId = passthrough.flatMap(_.bulkId),
+            bulk d = passthrough.flatMap(_.bulk d),
             note = passthrough.flatMap(_.note),
-            runId = passthrough.flatMap(_.runId),
-            clientApplicationId = passthrough.flatMap(_.clientApplicationId),
+            run d = passthrough.flatMap(_.run d),
+            cl entAppl cat on d = passthrough.flatMap(_.cl entAppl cat on d),
             userAgent = passthrough.flatMap(_.userAgent)
           )
         )
@@ -62,83 +62,83 @@ object Guano {
   }
 
   case class Takedown(
-    tweetId: TweetId,
-    userId: UserId,
+    t et d: T et d,
+    user d: User d,
     reason: TakedownReason,
     takendown: Boolean,
-    note: Option[String],
-    host: Option[String],
-    byUserId: Option[UserId]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.PctdAction,
-        pctdAction = Some(
-          guano.PctdAction(
-            `type` = guano.PctdActionType.Status,
-            timestamp = Time.now.inSeconds,
-            tweetId = Some(tweetId),
-            userId = userId,
+    note: Opt on[Str ng],
+    host: Opt on[Str ng],
+    byUser d: Opt on[User d]) {
+    def toScr be ssage: guano.Scr be ssage =
+      guano.Scr be ssage(
+        `type` = guano.Scr beType.PctdAct on,
+        pctdAct on = So (
+          guano.PctdAct on(
+            `type` = guano.PctdAct onType.Status,
+            t  stamp = T  .now. nSeconds,
+            t et d = So (t et d),
+            user d = user d,
             countryCode =
               TakedownReasons.reasonToCountryCode.applyOrElse(reason, (_: TakedownReason) => ""),
             takendown = takendown,
             note = note,
             host = host,
-            byUserId = byUserId.getOrElse(-1L),
-            reason = Some(reason)
+            byUser d = byUser d.getOrElse(-1L),
+            reason = So (reason)
           )
         )
       )
   }
 
-  case class UpdatePossiblySensitiveTweet(
-    tweetId: TweetId,
-    userId: UserId,
-    byUserId: UserId,
-    action: guano.NsfwTweetActionAction,
+  case class UpdatePoss blySens  veT et(
+    t et d: T et d,
+    user d: User d,
+    byUser d: User d,
+    act on: guano.NsfwT etAct onAct on,
     enabled: Boolean,
-    host: Option[String],
-    note: Option[String]) {
-    def toScribeMessage: guano.ScribeMessage =
-      guano.ScribeMessage(
-        `type` = guano.ScribeType.NsfwTweetAction,
-        nsfwTweetAction = Some(
-          guano.NsfwTweetAction(
-            timestamp = Time.now.inSeconds,
+    host: Opt on[Str ng],
+    note: Opt on[Str ng]) {
+    def toScr be ssage: guano.Scr be ssage =
+      guano.Scr be ssage(
+        `type` = guano.Scr beType.NsfwT etAct on,
+        nsfwT etAct on = So (
+          guano.NsfwT etAct on(
+            t  stamp = T  .now. nSeconds,
             host = host,
-            userId = userId,
-            byUserId = byUserId,
-            action = action,
+            user d = user d,
+            byUser d = byUser d,
+            act on = act on,
             enabled = enabled,
             note = note,
-            tweetId = tweetId
+            t et d = t et d
           )
         )
       )
   }
 
   def apply(
-    scribe: FutureEffect[guano.ScribeMessage] = Scribe(guano.ScribeMessage,
-      Scribe("trust_eng_audit"))
+    scr be: FutureEffect[guano.Scr be ssage] = Scr be(guano.Scr be ssage,
+      Scr be("trust_eng_aud "))
   ): Guano = {
     new Guano {
-      override val scribeMalwareAttempt: FutureEffect[MalwareAttempt] =
-        scribe.contramap[MalwareAttempt](_.toScribeMessage)
+      overr de val scr beMalwareAttempt: FutureEffect[MalwareAttempt] =
+        scr be.contramap[MalwareAttempt](_.toScr be ssage)
 
-      override val scribeDestroyTweet: FutureEffect[DestroyTweet] =
-        scribe.contramap[DestroyTweet](_.toScribeMessage)
+      overr de val scr beDestroyT et: FutureEffect[DestroyT et] =
+        scr be.contramap[DestroyT et](_.toScr be ssage)
 
-      override val scribeTakedown: FutureEffect[Takedown] =
-        scribe.contramap[Takedown](_.toScribeMessage)
+      overr de val scr beTakedown: FutureEffect[Takedown] =
+        scr be.contramap[Takedown](_.toScr be ssage)
 
-      override val scribeUpdatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet] =
-        scribe.contramap[UpdatePossiblySensitiveTweet](_.toScribeMessage)
+      overr de val scr beUpdatePoss blySens  veT et: FutureEffect[UpdatePoss blySens  veT et] =
+        scr be.contramap[UpdatePoss blySens  veT et](_.toScr be ssage)
     }
   }
 }
 
-trait Guano {
-  val scribeMalwareAttempt: FutureEffect[Guano.MalwareAttempt]
-  val scribeDestroyTweet: FutureEffect[Guano.DestroyTweet]
-  val scribeTakedown: FutureEffect[Guano.Takedown]
-  val scribeUpdatePossiblySensitiveTweet: FutureEffect[Guano.UpdatePossiblySensitiveTweet]
+tra  Guano {
+  val scr beMalwareAttempt: FutureEffect[Guano.MalwareAttempt]
+  val scr beDestroyT et: FutureEffect[Guano.DestroyT et]
+  val scr beTakedown: FutureEffect[Guano.Takedown]
+  val scr beUpdatePoss blySens  veT et: FutureEffect[Guano.UpdatePoss blySens  veT et]
 }

@@ -1,53 +1,53 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.featurestore.catalog.datasets.magicrecs.UserFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.geo.GeoUserLocationDataset
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.export.strato.FeatureStoreAppNames
-import com.twitter.ml.featurestore.lib.online.FeatureStoreClient
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.strato.client.{Client, Strato}
-import com.twitter.strato.opcontext.Attribution.ManhattanAppId
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.featurestore.catalog.datasets.mag crecs.UserFeaturesDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.geo.GeoUserLocat onDataset
+ mport com.tw ter.ml.featurestore.l b.dataset.DatasetParams
+ mport com.tw ter.ml.featurestore.l b.export.strato.FeatureStoreAppNa s
+ mport com.tw ter.ml.featurestore.l b.onl ne.FeatureStoreCl ent
+ mport com.tw ter.ml.featurestore.l b.params.FeatureStoreParams
+ mport com.tw ter.strato.cl ent.{Cl ent, Strato}
+ mport com.tw ter.strato.opcontext.Attr but on.ManhattanApp d
+ mport com.tw ter.ut l.Durat on
 
-private[real_time] object FeatureStoreUtils {
-  private def mkStratoClient(serviceIdentifier: ServiceIdentifier): Client =
-    Strato.client
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(Duration.fromMilliseconds(50))
-      .build()
+pr vate[real_t  ] object FeatureStoreUt ls {
+  pr vate def mkStratoCl ent(serv ce dent f er: Serv ce dent f er): Cl ent =
+    Strato.cl ent
+      .w hMutualTls(serv ce dent f er)
+      .w hRequestT  out(Durat on.fromM ll seconds(50))
+      .bu ld()
 
-  private val featureStoreParams: FeatureStoreParams =
+  pr vate val featureStoreParams: FeatureStoreParams =
     FeatureStoreParams(
       perDataset = Map(
-        UserFeaturesDataset.id ->
+        UserFeaturesDataset. d ->
           DatasetParams(
-            stratoSuffix = Some(FeatureStoreAppNames.Timelines),
-            attributions = Seq(ManhattanAppId("athena", "timelines_aggregates_v2_features_by_user"))
+            stratoSuff x = So (FeatureStoreAppNa s.T  l nes),
+            attr but ons = Seq(ManhattanApp d("at na", "t  l nes_aggregates_v2_features_by_user"))
           ),
-        GeoUserLocationDataset.id ->
+        GeoUserLocat onDataset. d ->
           DatasetParams(
-            attributions = Seq(ManhattanAppId("starbuck", "timelines_geo_features_by_user"))
+            attr but ons = Seq(ManhattanApp d("starbuck", "t  l nes_geo_features_by_user"))
           )
       )
     )
 
-  def mkFeatureStoreClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): FeatureStoreClient = {
-    com.twitter.server.Init() // necessary in order to use WilyNS path
+  def mkFeatureStoreCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): FeatureStoreCl ent = {
+    com.tw ter.server. n () // necessary  n order to use W lyNS path
 
-    val stratoClient: Client = mkStratoClient(serviceIdentifier)
-    val featureStoreClient: FeatureStoreClient = FeatureStoreClient(
+    val stratoCl ent: Cl ent = mkStratoCl ent(serv ce dent f er)
+    val featureStoreCl ent: FeatureStoreCl ent = FeatureStoreCl ent(
       featureSet =
-        UserFeaturesAdapter.UserFeaturesSet ++ AuthorFeaturesAdapter.UserFeaturesSet ++ TweetFeaturesAdapter.TweetFeaturesSet,
-      client = stratoClient,
-      statsReceiver = statsReceiver,
+        UserFeaturesAdapter.UserFeaturesSet ++ AuthorFeaturesAdapter.UserFeaturesSet ++ T etFeaturesAdapter.T etFeaturesSet,
+      cl ent = stratoCl ent,
+      statsRece ver = statsRece ver,
       featureStoreParams = featureStoreParams
     )
-    featureStoreClient
+    featureStoreCl ent
   }
 }

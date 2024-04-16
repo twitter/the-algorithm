@@ -1,33 +1,33 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
 object Stats {
-  // These two methods below (addWidthStat and updatePerFieldQpsCounters) are called per RPC call for most APIs,
-  // so we rely on the stats receiver that is passed in to the library to do memoization.
+  // T se two  thods below (addW dthStat and updatePerF eldQpsCounters) are called per RPC call for most AP s,
+  // so   rely on t  stats rece ver that  s passed  n to t  l brary to do  mo zat on.
 
-  private[storage] def addWidthStat(
-    rpcName: String,
-    paramName: String,
-    width: Int,
-    stats: StatsReceiver
-  ): Unit =
-    getStat(rpcName, paramName, stats).add(width)
+  pr vate[storage] def addW dthStat(
+    rpcNa : Str ng,
+    paramNa : Str ng,
+    w dth:  nt,
+    stats: StatsRece ver
+  ): Un  =
+    getStat(rpcNa , paramNa , stats).add(w dth)
 
-  // Updates the counters for each Additional field. The idea here is to expose the QPS for each
-  // additional field
-  private[storage] def updatePerFieldQpsCounters(
-    rpcName: String,
-    fieldIds: Seq[FieldId],
-    count: Int,
-    stats: StatsReceiver
-  ): Unit = {
-    fieldIds.foreach { fieldId => getCounter(rpcName, fieldId, stats).incr(count) }
+  // Updates t  counters for each Add  onal f eld. T   dea  re  s to expose t  QPS for each
+  // add  onal f eld
+  pr vate[storage] def updatePerF eldQpsCounters(
+    rpcNa : Str ng,
+    f eld ds: Seq[F eld d],
+    count:  nt,
+    stats: StatsRece ver
+  ): Un  = {
+    f eld ds.foreach { f eld d => getCounter(rpcNa , f eld d, stats). ncr(count) }
   }
 
-  private def getCounter(rpcName: String, fieldId: FieldId, stats: StatsReceiver) =
-    stats.scope(rpcName, "fields", fieldId.toString).counter("count")
+  pr vate def getCounter(rpcNa : Str ng, f eld d: F eld d, stats: StatsRece ver) =
+    stats.scope(rpcNa , "f elds", f eld d.toStr ng).counter("count")
 
-  private def getStat(rpcName: String, paramName: String, stats: StatsReceiver) =
-    stats.scope(rpcName, paramName).stat("width")
+  pr vate def getStat(rpcNa : Str ng, paramNa : Str ng, stats: StatsRece ver) =
+    stats.scope(rpcNa , paramNa ).stat("w dth")
 }

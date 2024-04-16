@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird.index.facets;
+package com.tw ter.search.earlyb rd. ndex.facets;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.HashSet;
+ mport java.ut l. erator;
+ mport java.ut l.Set;
 
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+ mport org.apac .lucene.analys s.TokenStream;
+ mport org.apac .lucene.analys s.tokenattr butes.CharTermAttr bute;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.TermQuery;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCountState;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermRequest;
 
-public abstract class FacetSkipList {
-  public static class SkipTokenStream extends TokenStream {
-    private CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+publ c abstract class FacetSk pL st {
+  publ c stat c class Sk pTokenStream extends TokenStream {
+    pr vate CharTermAttr bute termAtt = addAttr bute(CharTermAttr bute.class);
 
-    private Iterator<Schema.FieldInfo> iterator;
-    private Set<Schema.FieldInfo> facetFields = new HashSet<>();
+    pr vate  erator<Sc ma.F eld nfo>  erator;
+    pr vate Set<Sc ma.F eld nfo> facetF elds = new HashSet<>();
 
-    public void add(Schema.FieldInfo field) {
-      this.facetFields.add(field);
+    publ c vo d add(Sc ma.F eld nfo f eld) {
+      t .facetF elds.add(f eld);
     }
 
-    @Override
-    public final boolean incrementToken() throws IOException {
-      if (iterator == null) {
-        iterator = facetFields.iterator();
+    @Overr de
+    publ c f nal boolean  ncre ntToken() throws  OExcept on {
+       f ( erator == null) {
+         erator = facetF elds. erator();
       }
 
-      while (iterator.hasNext()) {
-        Schema.FieldInfo field = iterator.next();
-        if (field.getFieldType().isStoreFacetSkiplist()) {
+      wh le ( erator.hasNext()) {
+        Sc ma.F eld nfo f eld =  erator.next();
+         f (f eld.getF eldType(). sStoreFacetSk pl st()) {
           termAtt.setEmpty();
-          termAtt.append(EarlybirdFieldConstant.getFacetSkipFieldName(field.getName()));
+          termAtt.append(Earlyb rdF eldConstant.getFacetSk pF eldNa (f eld.getNa ()));
 
           return true;
         }
@@ -50,77 +50,77 @@ public abstract class FacetSkipList {
   }
 
   /**
-   * Returns a Term query to search in the given facet field.
+   * Returns a Term query to search  n t  g ven facet f eld.
    */
-  public static Term getSkipListTerm(Schema.FieldInfo facetField) {
-    if (facetField.getFieldType().isStoreFacetSkiplist()) {
-      return new Term(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-                      EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()));
+  publ c stat c Term getSk pL stTerm(Sc ma.F eld nfo facetF eld) {
+     f (facetF eld.getF eldType(). sStoreFacetSk pl st()) {
+      return new Term(Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+                      Earlyb rdF eldConstant.getFacetSk pF eldNa (facetF eld.getNa ()));
     }
     return null;
   }
 
   /**
-   * Returns a disjunction query that searches in all facet fields in the given facet count state.
+   * Returns a d sjunct on query that searc s  n all facet f elds  n t  g ven facet count state.
    */
-  public static Query getSkipListQuery(FacetCountState facetCountState) {
-    Set<Schema.FieldInfo> fieldsWithSkipLists =
-        facetCountState.getFacetFieldsToCountWithSkipLists();
+  publ c stat c Query getSk pL stQuery(FacetCountState facetCountState) {
+    Set<Sc ma.F eld nfo> f eldsW hSk pL sts =
+        facetCountState.getFacetF eldsToCountW hSk pL sts();
 
-    if (fieldsWithSkipLists == null || fieldsWithSkipLists.isEmpty()) {
+     f (f eldsW hSk pL sts == null || f eldsW hSk pL sts. sEmpty()) {
       return null;
     }
 
-    Query skipLists;
+    Query sk pL sts;
 
-    if (fieldsWithSkipLists.size() == 1) {
-      skipLists = new TermQuery(getSkipListTerm(fieldsWithSkipLists.iterator().next()));
+     f (f eldsW hSk pL sts.s ze() == 1) {
+      sk pL sts = new TermQuery(getSk pL stTerm(f eldsW hSk pL sts. erator().next()));
     } else {
-      BooleanQuery.Builder disjunctionBuilder = new BooleanQuery.Builder();
-      for (Schema.FieldInfo facetField : fieldsWithSkipLists) {
-        disjunctionBuilder.add(
+      BooleanQuery.Bu lder d sjunct onBu lder = new BooleanQuery.Bu lder();
+      for (Sc ma.F eld nfo facetF eld : f eldsW hSk pL sts) {
+        d sjunct onBu lder.add(
             new TermQuery(new Term(
-                EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-                EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()))),
+                Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+                Earlyb rdF eldConstant.getFacetSk pF eldNa (facetF eld.getNa ()))),
             BooleanClause.Occur.SHOULD);
       }
-      skipLists = disjunctionBuilder.build();
+      sk pL sts = d sjunct onBu lder.bu ld();
     }
 
-    return skipLists;
+    return sk pL sts;
   }
 
   /**
-   * Returns a term request that can be used to get term statistics for the skip list term
-   * associated with the provided facet. Returns null, if this FacetField is configured to not
-   * store a skiplist.
+   * Returns a term request that can be used to get term stat st cs for t  sk p l st term
+   * assoc ated w h t  prov ded facet. Returns null,  f t  FacetF eld  s conf gured to not
+   * store a sk pl st.
    */
-  public static ThriftTermRequest getSkipListTermRequest(Schema schema, String facetName) {
-    return getSkipListTermRequest(schema.getFacetFieldByFacetName(facetName));
+  publ c stat c Thr ftTermRequest getSk pL stTermRequest(Sc ma sc ma, Str ng facetNa ) {
+    return getSk pL stTermRequest(sc ma.getFacetF eldByFacetNa (facetNa ));
   }
 
   /**
-   * Returns a term request that can be used to get term statistics for the skip list term
-   * associated with the provided facet. Returns null, if this FacetField is configured to not
-   * store a skiplist.
+   * Returns a term request that can be used to get term stat st cs for t  sk p l st term
+   * assoc ated w h t  prov ded facet. Returns null,  f t  FacetF eld  s conf gured to not
+   * store a sk pl st.
    */
-  public static ThriftTermRequest getSkipListTermRequest(Schema.FieldInfo facetField) {
-    return facetField != null && facetField.getFieldType().isStoreFacetSkiplist()
-           ? new ThriftTermRequest(
-                EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()))
-             .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())
+  publ c stat c Thr ftTermRequest getSk pL stTermRequest(Sc ma.F eld nfo facetF eld) {
+    return facetF eld != null && facetF eld.getF eldType(). sStoreFacetSk pl st()
+           ? new Thr ftTermRequest(
+                Earlyb rdF eldConstant.getFacetSk pF eldNa (facetF eld.getNa ()))
+             .setF eldNa (Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa ())
            : null;
   }
 
   /**
-   * Returns a term request using the specified fieldName. This is only a temporary solution until
-   * Blender can access the Schema to pass the FacetIDMap into the method above.
+   * Returns a term request us ng t  spec f ed f eldNa . T   s only a temporary solut on unt l
+   * Blender can access t  Sc ma to pass t  Facet DMap  nto t   thod above.
    *
-   * @deprecated Temporary solution until Blender
+   * @deprecated Temporary solut on unt l Blender
    */
   @Deprecated
-  public static ThriftTermRequest getSkipListTermRequest(String fieldName) {
-    return new ThriftTermRequest(EarlybirdFieldConstant.getFacetSkipFieldName(fieldName))
-        .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
+  publ c stat c Thr ftTermRequest getSk pL stTermRequest(Str ng f eldNa ) {
+    return new Thr ftTermRequest(Earlyb rdF eldConstant.getFacetSk pF eldNa (f eldNa ))
+        .setF eldNa (Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa ());
   }
 }

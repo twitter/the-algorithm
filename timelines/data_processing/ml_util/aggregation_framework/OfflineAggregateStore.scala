@@ -1,128 +1,128 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.storehaus_internal.manhattan._
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird_internal.runner.store_config._
-import java.util.TimeZone
-import com.twitter.summingbird.batch.MillisecondBatcher
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.scald ng.DateParser
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.storehaus_ nternal.manhattan._
+ mport com.tw ter.storehaus_ nternal.ut l.Appl cat on D
+ mport com.tw ter.storehaus_ nternal.ut l.DatasetNa 
+ mport com.tw ter.storehaus_ nternal.ut l.HDFSPath
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.summ ngb rd.batch.Batc r
+ mport com.tw ter.summ ngb rd_ nternal.runner.store_conf g._
+ mport java.ut l.T  Zone
+ mport com.tw ter.summ ngb rd.batch.M ll secondBatc r
 
 /*
- * Configuration common to all offline aggregate stores
+ * Conf gurat on common to all offl ne aggregate stores
  *
- * @param outputHdfsPathPrefix HDFS prefix to store all output aggregate types offline
- * @param dummyAppId Dummy manhattan app id required by summingbird (unused)
- * @param dummyDatasetPrefix Dummy manhattan dataset prefix required by summingbird (unused)
- * @param startDate Start date for summingbird job to begin computing aggregates
+ * @param outputHdfsPathPref x HDFS pref x to store all output aggregate types offl ne
+ * @param dum App d Dum  manhattan app  d requ red by summ ngb rd (unused)
+ * @param dum DatasetPref x Dum  manhattan dataset pref x requ red by summ ngb rd (unused)
+ * @param startDate Start date for summ ngb rd job to beg n comput ng aggregates
  */
-case class OfflineAggregateStoreCommonConfig(
-  outputHdfsPathPrefix: String,
-  dummyAppId: String,
-  dummyDatasetPrefix: String,
-  startDate: String)
+case class Offl neAggregateStoreCommonConf g(
+  outputHdfsPathPref x: Str ng,
+  dum App d: Str ng,
+  dum DatasetPref x: Str ng,
+  startDate: Str ng)
 
 /**
- * A trait inherited by any object that defines
- * a HDFS prefix to write output data to. E.g. timelines has its own
- * output prefix to write aggregates_v2 results, your team can create
- * its own.
+ * A tra   n r ed by any object that def nes
+ * a HDFS pref x to wr e output data to. E.g. t  l nes has  s own
+ * output pref x to wr e aggregates_v2 results, y  team can create
+ *  s own.
  */
-trait OfflineStoreCommonConfig extends Serializable {
+tra  Offl neStoreCommonConf g extends Ser al zable {
   /*
-   * @param startDate Date to create config for
-   * @return OfflineAggregateStoreCommonConfig object with all config details for output populated
+   * @param startDate Date to create conf g for
+   * @return Offl neAggregateStoreCommonConf g object w h all conf g deta ls for output populated
    */
-  def apply(startDate: String): OfflineAggregateStoreCommonConfig
+  def apply(startDate: Str ng): Offl neAggregateStoreCommonConf g
 }
 
 /**
- * @param name Uniquely identifiable human-readable name for this output store
- * @param startDate Start date for this output store from which aggregates should be computed
- * @param commonConfig Provider of other common configuration details
- * @param batchesToKeep Retention policy on output (number of batches to keep)
+ * @param na  Un quely  dent f able human-readable na  for t  output store
+ * @param startDate Start date for t  output store from wh ch aggregates should be computed
+ * @param commonConf g Prov der of ot r common conf gurat on deta ls
+ * @param batc sToKeep Retent on pol cy on output (number of batc s to keep)
  */
-abstract class OfflineAggregateStoreBase
-    extends OfflineStoreOnlyConfig[ManhattanROConfig]
-    with AggregateStore {
+abstract class Offl neAggregateStoreBase
+    extends Offl neStoreOnlyConf g[ManhattanROConf g]
+    w h AggregateStore {
 
-  override def name: String
-  def startDate: String
-  def commonConfig: OfflineStoreCommonConfig
-  def batchesToKeep: Int
-  def maxKvSourceFailures: Int
+  overr de def na : Str ng
+  def startDate: Str ng
+  def commonConf g: Offl neStoreCommonConf g
+  def batc sToKeep:  nt
+  def maxKvS ceFa lures:  nt
 
-  val datedCommonConfig: OfflineAggregateStoreCommonConfig = commonConfig.apply(startDate)
-  val manhattan: ManhattanROConfig = ManhattanROConfig(
-    /* This is a sample config, will be replaced with production config later */
-    HDFSPath(s"${datedCommonConfig.outputHdfsPathPrefix}/${name}"),
-    ApplicationID(datedCommonConfig.dummyAppId),
-    DatasetName(s"${datedCommonConfig.dummyDatasetPrefix}_${name}_1"),
-    com.twitter.storehaus_internal.manhattan.Adama
+  val datedCommonConf g: Offl neAggregateStoreCommonConf g = commonConf g.apply(startDate)
+  val manhattan: ManhattanROConf g = ManhattanROConf g(
+    /* T   s a sample conf g, w ll be replaced w h product on conf g later */
+    HDFSPath(s"${datedCommonConf g.outputHdfsPathPref x}/${na }"),
+    Appl cat on D(datedCommonConf g.dum App d),
+    DatasetNa (s"${datedCommonConf g.dum DatasetPref x}_${na }_1"),
+    com.tw ter.storehaus_ nternal.manhattan.Adama
   )
 
-  val batcherSize = 24
-  val batcher: MillisecondBatcher = Batcher.ofHours(batcherSize)
+  val batc rS ze = 24
+  val batc r: M ll secondBatc r = Batc r.ofH s(batc rS ze)
 
-  val startTime: RichDate =
-    RichDate(datedCommonConfig.startDate)(TimeZone.getTimeZone("UTC"), DateParser.default)
+  val startT  : R chDate =
+    R chDate(datedCommonConf g.startDate)(T  Zone.getT  Zone("UTC"), DateParser.default)
 
-  val offline: ManhattanROConfig = manhattan
+  val offl ne: ManhattanROConf g = manhattan
 }
 
 /**
- * Defines an aggregates store which is composed of DataRecords
- * @param name Uniquely identifiable human-readable name for this output store
- * @param startDate Start date for this output store from which aggregates should be computed
- * @param commonConfig Provider of other common configuration details
- * @param batchesToKeep Retention policy on output (number of batches to keep)
+ * Def nes an aggregates store wh ch  s composed of DataRecords
+ * @param na  Un quely  dent f able human-readable na  for t  output store
+ * @param startDate Start date for t  output store from wh ch aggregates should be computed
+ * @param commonConf g Prov der of ot r common conf gurat on deta ls
+ * @param batc sToKeep Retent on pol cy on output (number of batc s to keep)
  */
-case class OfflineAggregateDataRecordStore(
-  override val name: String,
-  override val startDate: String,
-  override val commonConfig: OfflineStoreCommonConfig,
-  override val batchesToKeep: Int = 7,
-  override val maxKvSourceFailures: Int = 0)
-    extends OfflineAggregateStoreBase {
+case class Offl neAggregateDataRecordStore(
+  overr de val na : Str ng,
+  overr de val startDate: Str ng,
+  overr de val commonConf g: Offl neStoreCommonConf g,
+  overr de val batc sToKeep:  nt = 7,
+  overr de val maxKvS ceFa lures:  nt = 0)
+    extends Offl neAggregateStoreBase {
 
-  def toOfflineAggregateDataRecordStoreWithDAL(
-    dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]]
-  ): OfflineAggregateDataRecordStoreWithDAL =
-    OfflineAggregateDataRecordStoreWithDAL(
-      name = name,
+  def toOffl neAggregateDataRecordStoreW hDAL(
+    dalDataset: KeyValDALDataset[KeyVal[Aggregat onKey, (Batch D, DataRecord)]]
+  ): Offl neAggregateDataRecordStoreW hDAL =
+    Offl neAggregateDataRecordStoreW hDAL(
+      na  = na ,
       startDate = startDate,
-      commonConfig = commonConfig,
+      commonConf g = commonConf g,
       dalDataset = dalDataset,
-      maxKvSourceFailures = maxKvSourceFailures
+      maxKvS ceFa lures = maxKvS ceFa lures
     )
 }
 
-trait withDALDataset {
-  def dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]]
+tra  w hDALDataset {
+  def dalDataset: KeyValDALDataset[KeyVal[Aggregat onKey, (Batch D, DataRecord)]]
 }
 
 /**
- * Defines an aggregates store which is composed of DataRecords and writes using DAL.
- * @param name Uniquely identifiable human-readable name for this output store
- * @param startDate Start date for this output store from which aggregates should be computed
- * @param commonConfig Provider of other common configuration details
- * @param dalDataset The KeyValDALDataset for this output store
- * @param batchesToKeep Unused, kept for interface compatibility. You must define a separate Oxpecker
- *                      retention policy to maintain the desired number of versions.
+ * Def nes an aggregates store wh ch  s composed of DataRecords and wr es us ng DAL.
+ * @param na  Un quely  dent f able human-readable na  for t  output store
+ * @param startDate Start date for t  output store from wh ch aggregates should be computed
+ * @param commonConf g Prov der of ot r common conf gurat on deta ls
+ * @param dalDataset T  KeyValDALDataset for t  output store
+ * @param batc sToKeep Unused, kept for  nterface compat b l y.   must def ne a separate Oxpecker
+ *                      retent on pol cy to ma nta n t  des red number of vers ons.
  */
-case class OfflineAggregateDataRecordStoreWithDAL(
-  override val name: String,
-  override val startDate: String,
-  override val commonConfig: OfflineStoreCommonConfig,
-  override val dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]],
-  override val batchesToKeep: Int = -1,
-  override val maxKvSourceFailures: Int = 0)
-    extends OfflineAggregateStoreBase
-    with withDALDataset
+case class Offl neAggregateDataRecordStoreW hDAL(
+  overr de val na : Str ng,
+  overr de val startDate: Str ng,
+  overr de val commonConf g: Offl neStoreCommonConf g,
+  overr de val dalDataset: KeyValDALDataset[KeyVal[Aggregat onKey, (Batch D, DataRecord)]],
+  overr de val batc sToKeep:  nt = -1,
+  overr de val maxKvS ceFa lures:  nt = 0)
+    extends Offl neAggregateStoreBase
+    w h w hDALDataset

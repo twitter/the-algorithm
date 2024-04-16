@@ -1,41 +1,41 @@
-package com.twitter.follow_recommendations.controllers
+package com.tw ter.follow_recom ndat ons.controllers
 
-import com.twitter.finatra.thrift.Controller
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.services.ProductPipelineSelector
-import com.twitter.follow_recommendations.services.UserScoringService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService._
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
+ mport com.tw ter.f natra.thr ft.Controller
+ mport com.tw ter.follow_recom ndat ons.conf gap .ParamsFactory
+ mport com.tw ter.follow_recom ndat ons.serv ces.ProductP pel neSelector
+ mport com.tw ter.follow_recom ndat ons.serv ces.UserScor ngServ ce
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.FollowRecom ndat onsThr ftServ ce
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.FollowRecom ndat onsThr ftServ ce._
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
 
-class ThriftController @Inject() (
-  userScoringService: UserScoringService,
-  recommendationRequestBuilder: RecommendationRequestBuilder,
-  scoringUserRequestBuilder: ScoringUserRequestBuilder,
-  productPipelineSelector: ProductPipelineSelector,
+class Thr ftController @ nject() (
+  userScor ngServ ce: UserScor ngServ ce,
+  recom ndat onRequestBu lder: Recom ndat onRequestBu lder,
+  scor ngUserRequestBu lder: Scor ngUserRequestBu lder,
+  productP pel neSelector: ProductP pel neSelector,
   paramsFactory: ParamsFactory)
-    extends Controller(FollowRecommendationsThriftService) {
+    extends Controller(FollowRecom ndat onsThr ftServ ce) {
 
-  handle(GetRecommendations) { args: GetRecommendations.Args =>
-    val stitch = recommendationRequestBuilder.fromThrift(args.request).flatMap { request =>
+  handle(GetRecom ndat ons) { args: GetRecom ndat ons.Args =>
+    val st ch = recom ndat onRequestBu lder.fromThr ft(args.request).flatMap { request =>
       val params = paramsFactory(
-        request.clientContext,
-        request.displayLocation,
-        request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
-      productPipelineSelector.selectPipeline(request, params).map(_.toThrift)
+        request.cl entContext,
+        request.d splayLocat on,
+        request.debugParams.flatMap(_.featureOverr des).getOrElse(Map.empty))
+      productP pel neSelector.selectP pel ne(request, params).map(_.toThr ft)
     }
-    Stitch.run(stitch)
+    St ch.run(st ch)
   }
 
-  handle(ScoreUserCandidates) { args: ScoreUserCandidates.Args =>
-    val stitch = scoringUserRequestBuilder.fromThrift(args.request).flatMap { request =>
+  handle(ScoreUserCand dates) { args: ScoreUserCand dates.Args =>
+    val st ch = scor ngUserRequestBu lder.fromThr ft(args.request).flatMap { request =>
       val params = paramsFactory(
-        request.clientContext,
-        request.displayLocation,
-        request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
-      userScoringService.get(request.copy(params = params)).map(_.toThrift)
+        request.cl entContext,
+        request.d splayLocat on,
+        request.debugParams.flatMap(_.featureOverr des).getOrElse(Map.empty))
+      userScor ngServ ce.get(request.copy(params = params)).map(_.toThr ft)
     }
-    Stitch.run(stitch)
+    St ch.run(st ch)
   }
 }

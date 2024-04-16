@@ -1,55 +1,55 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.tw ter.fr gate.pushserv ce.send_handler.generator
 
-import com.twitter.frigate.common.base.ScheduledSpaceSubscriberCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Sc duledSpaceSubscr berCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.ut l.Future
 
-object ScheduledSpaceSubscriberCandidateGenerator extends CandidateGenerator {
+object Sc duledSpaceSubscr berCand dateGenerator extends Cand dateGenerator {
 
-  override def getCandidate(
+  overr de def getCand date(
     targetUser: Target,
-    notification: FrigateNotification
-  ): Future[RawCandidate] = {
+    not f cat on: Fr gateNot f cat on
+  ): Future[RawCand date] = {
 
     /**
-     * frigateNotification recommendation type should be [[CommonRecommendationType.ScheduledSpaceSubscriber]]
+     * fr gateNot f cat on recom ndat on type should be [[CommonRecom ndat onType.Sc duledSpaceSubscr ber]]
      *
      **/
-    require(
-      notification.commonRecommendationType == CommonRecommendationType.ScheduledSpaceSubscriber,
-      "ScheduledSpaceSubscriber: unexpected CRT " + notification.commonRecommendationType
+    requ re(
+      not f cat on.commonRecom ndat onType == CommonRecom ndat onType.Sc duledSpaceSubscr ber,
+      "Sc duledSpaceSubscr ber: unexpected CRT " + not f cat on.commonRecom ndat onType
     )
 
-    val spaceNotification = notification.spaceNotification.getOrElse(
-      throw new IllegalStateException("ScheduledSpaceSubscriber notification object not defined"))
+    val spaceNot f cat on = not f cat on.spaceNot f cat on.getOrElse(
+      throw new  llegalStateExcept on("Sc duledSpaceSubscr ber not f cat on object not def ned"))
 
-    require(
-      spaceNotification.hostUserId.isDefined,
-      "ScheduledSpaceSubscriber notification - hostUserId not defined"
+    requ re(
+      spaceNot f cat on.hostUser d. sDef ned,
+      "Sc duledSpaceSubscr ber not f cat on - hostUser d not def ned"
     )
 
-    val spaceHostId = spaceNotification.hostUserId
+    val spaceHost d = spaceNot f cat on.hostUser d
 
-    require(
-      spaceNotification.scheduledStartTime.isDefined,
-      "ScheduledSpaceSubscriber notification - scheduledStartTime not defined"
+    requ re(
+      spaceNot f cat on.sc duledStartT  . sDef ned,
+      "Sc duledSpaceSubscr ber not f cat on - sc duledStartT   not def ned"
     )
 
-    val scheduledStartTime = spaceNotification.scheduledStartTime.get
+    val sc duledStartT   = spaceNot f cat on.sc duledStartT  .get
 
-    val candidate = new RawCandidate with ScheduledSpaceSubscriberCandidate {
-      override val target: Target = targetUser
-      override val frigateNotification: FrigateNotification = notification
-      override val spaceId: String = spaceNotification.broadcastId
-      override val hostId: Option[Long] = spaceHostId
-      override val startTime: Long = scheduledStartTime
-      override val speakerIds: Option[Seq[Long]] = spaceNotification.speakers
-      override val listenerIds: Option[Seq[Long]] = spaceNotification.listeners
+    val cand date = new RawCand date w h Sc duledSpaceSubscr berCand date {
+      overr de val target: Target = targetUser
+      overr de val fr gateNot f cat on: Fr gateNot f cat on = not f cat on
+      overr de val space d: Str ng = spaceNot f cat on.broadcast d
+      overr de val host d: Opt on[Long] = spaceHost d
+      overr de val startT  : Long = sc duledStartT  
+      overr de val speaker ds: Opt on[Seq[Long]] = spaceNot f cat on.speakers
+      overr de val l stener ds: Opt on[Seq[Long]] = spaceNot f cat on.l steners
     }
 
-    Future.value(candidate)
+    Future.value(cand date)
   }
 }

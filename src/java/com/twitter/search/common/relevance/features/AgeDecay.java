@@ -1,88 +1,88 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * Utility to compute an age decay multiplier based on a sigmoid function.
+ * Ut l y to compute an age decay mult pl er based on a s gmo d funct on.
  */
-public class AgeDecay {
-  public static final double SLOPE_COEFF = 4.0;
-  public static final double LN_HALF = Math.log(0.5);
-  public final double halflife;
-  public final double maxBoost;
-  public final double base;
-  public final double slope;
+publ c class AgeDecay {
+  publ c stat c f nal double SLOPE_COEFF = 4.0;
+  publ c stat c f nal double LN_HALF = Math.log(0.5);
+  publ c f nal double halfl fe;
+  publ c f nal double maxBoost;
+  publ c f nal double base;
+  publ c f nal double slope;
 
-  /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double maxBoost, double halflife, double slope) {
-    this.maxBoost = maxBoost;
-    this.base = base;
-    this.halflife = halflife;
-    this.slope = slope;
+  /** Creates a new AgeDecay  nstance. */
+  publ c AgeDecay(double base, double maxBoost, double halfl fe, double slope) {
+    t .maxBoost = maxBoost;
+    t .base = base;
+    t .halfl fe = halfl fe;
+    t .slope = slope;
   }
 
-  /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double halflife, double slope) {
-    this(base, 1.0, halflife, slope);
+  /** Creates a new AgeDecay  nstance. */
+  publ c AgeDecay(double base, double halfl fe, double slope) {
+    t (base, 1.0, halfl fe, slope);
   }
 
   /**
-   * Compute the age decay, using the provided halflife.
+   * Compute t  age decay, us ng t  prov ded halfl fe.
    *
-   * @param tweetAge The tweet age.
-   * @param unit The unit of the tweetAge parameter.
+   * @param t etAge T  t et age.
+   * @param un  T  un  of t  t etAge para ter.
    */
-  public double getAgeDecayMultiplier(long tweetAge, TimeUnit unit) {
-    return getAgeDecayMultiplier(TimeUnit.SECONDS.convert(tweetAge, unit));
+  publ c double getAgeDecayMult pl er(long t etAge, T  Un  un ) {
+    return getAgeDecayMult pl er(T  Un .SECONDS.convert(t etAge, un ));
   }
 
   /**
-   * Compute the age decay, assuming the halflife in the constructor is in minutes.
-   * @param ageInSeconds the age in seconds
+   * Compute t  age decay, assum ng t  halfl fe  n t  constructor  s  n m nutes.
+   * @param age nSeconds t  age  n seconds
    */
-  public double getAgeDecayMultiplier(long ageInSeconds) {
-    long minutesSinceTweet = TimeUnit.MINUTES.convert(ageInSeconds, TimeUnit.SECONDS);
-    return compute(minutesSinceTweet);
+  publ c double getAgeDecayMult pl er(long age nSeconds) {
+    long m nutesS nceT et = T  Un .M NUTES.convert(age nSeconds, T  Un .SECONDS);
+    return compute(m nutesS nceT et);
   }
 
   /**
-   * Compute age decay given an age, the age has to be in the same unit as halflife, which you
-   * construct the object with.
+   * Compute age decay g ven an age, t  age has to be  n t  sa  un  as halfl fe, wh ch  
+   * construct t  object w h.
    */
-  public double compute(double age) {
-    return compute(base, maxBoost, halflife, slope, age);
+  publ c double compute(double age) {
+    return compute(base, maxBoost, halfl fe, slope, age);
   }
 
   /**
-   * Compute the age decay given all parameters. Use this if you don't need to reuse an AgeDecay
+   * Compute t  age decay g ven all para ters. Use t   f   don't need to reuse an AgeDecay
    * object.
    */
-  public static double compute(
-      double base, double maxBoost, double halflife, double slope, double age) {
-    return base + ((maxBoost - base) / (1 + Math.exp(slope * (age - halflife))));
+  publ c stat c double compute(
+      double base, double maxBoost, double halfl fe, double slope, double age) {
+    return base + ((maxBoost - base) / (1 + Math.exp(slope * (age - halfl fe))));
   }
 
-  public static double compute(
-      double base, double maxBoost, double halflife, double age) {
-    Preconditions.checkArgument(halflife != 0);
-    return compute(base, maxBoost, halflife, SLOPE_COEFF / halflife, age);
-  }
-
-  /**
-   * Another nicer exponential decay function. Returns a value in (0, 1]
-   */
-  public static double computeExponential(double halflife, double exp, double age) {
-    return Math.exp(LN_HALF * Math.pow(age, exp) / Math.pow(halflife, exp));
+  publ c stat c double compute(
+      double base, double maxBoost, double halfl fe, double age) {
+    Precond  ons.c ckArgu nt(halfl fe != 0);
+    return compute(base, maxBoost, halfl fe, SLOPE_COEFF / halfl fe, age);
   }
 
   /**
-   * Exponential decay with remapping of the value from (0,1] to (min,max]
+   * Anot r n cer exponent al decay funct on. Returns a value  n (0, 1]
    */
-  public static double computeExponential(double halflife, double exp, double age,
-                                          double minBoost, double maxBoost) {
-    double decay = computeExponential(halflife, exp, age);  // in (0, 1]
-    return (maxBoost - minBoost) * decay + minBoost;
+  publ c stat c double computeExponent al(double halfl fe, double exp, double age) {
+    return Math.exp(LN_HALF * Math.pow(age, exp) / Math.pow(halfl fe, exp));
+  }
+
+  /**
+   * Exponent al decay w h remapp ng of t  value from (0,1] to (m n,max]
+   */
+  publ c stat c double computeExponent al(double halfl fe, double exp, double age,
+                                          double m nBoost, double maxBoost) {
+    double decay = computeExponent al(halfl fe, exp, age);  //  n (0, 1]
+    return (maxBoost - m nBoost) * decay + m nBoost;
   }
 }

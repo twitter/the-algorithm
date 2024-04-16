@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-public final class EarlybirdMain {
-  private EarlybirdMain() {
+publ c f nal class Earlyb rdMa n {
+  pr vate Earlyb rdMa n() {
   }
 
-  public static void main(String[] args) {
-    new Earlybird().main(args);
+  publ c stat c vo d ma n(Str ng[] args) {
+    new Earlyb rd().ma n(args);
   }
 }

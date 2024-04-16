@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.core.TweetResult
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.T et d
+ mport com.tw ter.t etyp e.core.T etResult
 
-object TweetResultRepository {
-  type Type = (TweetId, TweetQuery.Options) => Stitch[TweetResult]
+object T etResultRepos ory {
+  type Type = (T et d, T etQuery.Opt ons) => St ch[T etResult]
 
   /**
-   * Short-circuits the request of invalid tweet ids (`<= 0`) by immediately throwing `NotFound`.
+   * Short-c rcu s t  request of  nval d t et  ds (`<= 0`) by  m d ately throw ng `NotFound`.
    */
-  def shortCircuitInvalidIds(repo: Type): Type = {
-    case (tweetId, _) if tweetId <= 0 => Stitch.NotFound
-    case (tweetId, options) => repo(tweetId, options)
+  def shortC rcu  nval d ds(repo: Type): Type = {
+    case (t et d, _)  f t et d <= 0 => St ch.NotFound
+    case (t et d, opt ons) => repo(t et d, opt ons)
   }
 }

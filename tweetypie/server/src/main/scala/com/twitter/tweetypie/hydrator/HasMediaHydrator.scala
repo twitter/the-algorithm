@@ -1,14 +1,14 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object HasMediaHydrator {
-  type Type = ValueHydrator[Option[Boolean], Tweet]
+object Has d aHydrator {
+  type Type = ValueHydrator[Opt on[Boolean], T et]
 
-  def apply(hasMedia: Tweet => Boolean): Type =
+  def apply(has d a: T et => Boolean): Type =
     ValueHydrator
-      .map[Option[Boolean], Tweet] { (_, tweet) => ValueState.modified(Some(hasMedia(tweet))) }
-      .onlyIf((curr, ctx) => curr.isEmpty)
+      .map[Opt on[Boolean], T et] { (_, t et) => ValueState.mod f ed(So (has d a(t et))) }
+      .only f((curr, ctx) => curr. sEmpty)
 }

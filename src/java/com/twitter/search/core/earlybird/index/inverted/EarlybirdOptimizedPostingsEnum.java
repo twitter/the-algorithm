@@ -1,178 +1,178 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene.ut l.BytesRef;
 
 /**
- * Extend {@link EarlybirdPostingsEnum} to add more functionalities for docs (and positions)
- * enumerator of {@link OptimizedPostingLists}.
+ * Extend {@l nk Earlyb rdPost ngsEnum} to add more funct onal  es for docs (and pos  ons)
+ * enu rator of {@l nk Opt m zedPost ngL sts}.
  */
-public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEnum {
-  /** Current doc and its frequency. */
-  private int currentDocID = -1;
-  private int currentFreq = 0;
+publ c abstract class Earlyb rdOpt m zedPost ngsEnum extends Earlyb rdPost ngsEnum {
+  /** Current doc and  s frequency. */
+  pr vate  nt currentDoc D = -1;
+  pr vate  nt currentFreq = 0;
 
   /**
-   * Next doc and its frequency.
-   * These values should be set at {@link #loadNextPosting()}.
+   * Next doc and  s frequency.
+   * T se values should be set at {@l nk #loadNextPost ng()}.
    */
-  protected int nextDocID;
-  protected int nextFreq;
+  protected  nt nextDoc D;
+  protected  nt nextFreq;
 
-  /** Pointer to the enumerated posting list. */
-  protected final int postingListPointer;
+  /** Po nter to t  enu rated post ng l st. */
+  protected f nal  nt post ngL stPo nter;
 
-  /** Total number of postings in the enumerated posting list. */
-  protected final int numPostingsTotal;
+  /** Total number of post ngs  n t  enu rated post ng l st. */
+  protected f nal  nt numPost ngsTotal;
 
   /** Query cost tracker. */
-  protected final QueryCostTracker queryCostTracker;
+  protected f nal QueryCostTracker queryCostTracker;
 
   /**
    * Sole constructor.
    *
-   * @param postingListPointer pointer to the posting list for which this enumerator is created
-   * @param numPostings number of postings in the posting list for which this enumerator is created
+   * @param post ngL stPo nter po nter to t  post ng l st for wh ch t  enu rator  s created
+   * @param numPost ngs number of post ngs  n t  post ng l st for wh ch t  enu rator  s created
    */
-  public EarlybirdOptimizedPostingsEnum(int postingListPointer, int numPostings) {
-    this.postingListPointer = postingListPointer;
-    this.numPostingsTotal = numPostings;
+  publ c Earlyb rdOpt m zedPost ngsEnum( nt post ngL stPo nter,  nt numPost ngs) {
+    t .post ngL stPo nter = post ngL stPo nter;
+    t .numPost ngsTotal = numPost ngs;
 
-    // Get the thread local query cost tracker.
-    this.queryCostTracker = QueryCostTracker.getTracker();
+    // Get t  thread local query cost tracker.
+    t .queryCostTracker = QueryCostTracker.getTracker();
   }
 
   /**
-   * Set {@link #currentDocID} and {@link #currentFreq} and load next posting.
-   * This method will de-dup if duplicate doc IDs are stored.
+   * Set {@l nk #currentDoc D} and {@l nk #currentFreq} and load next post ng.
+   * T   thod w ll de-dup  f dupl cate doc  Ds are stored.
    *
-   * @return {@link #currentDocID}
-   * @see {@link #nextDoc()}
+   * @return {@l nk #currentDoc D}
+   * @see {@l nk #nextDoc()}
    */
-  @Override
-  protected final int nextDocNoDel() throws IOException {
-    currentDocID = nextDocID;
+  @Overr de
+  protected f nal  nt nextDocNoDel() throws  OExcept on {
+    currentDoc D = nextDoc D;
 
-    // Return immediately if exhausted.
-    if (currentDocID == NO_MORE_DOCS) {
+    // Return  m d ately  f exhausted.
+     f (currentDoc D == NO_MORE_DOCS) {
       return NO_MORE_DOCS;
     }
 
     currentFreq = nextFreq;
-    loadNextPosting();
+    loadNextPost ng();
 
-    // In case duplicate doc ID is stored.
-    while (currentDocID == nextDocID) {
+    //  n case dupl cate doc  D  s stored.
+    wh le (currentDoc D == nextDoc D) {
       currentFreq += nextFreq;
-      loadNextPosting();
+      loadNextPost ng();
     }
 
     startCurrentDoc();
-    return currentDocID;
+    return currentDoc D;
   }
 
   /**
-   * Called when {@link #nextDocNoDel()} advances to a new docID.
-   * Subclasses can do extra accounting as needed.
+   * Called w n {@l nk #nextDocNoDel()} advances to a new doc D.
+   * Subclasses can do extra account ng as needed.
    */
-  protected void startCurrentDoc() {
-    // No-op in this class.
+  protected vo d startCurrentDoc() {
+    // No-op  n t  class.
   }
 
   /**
-   * Loads the next posting, setting the nextDocID and nextFreq.
+   * Loads t  next post ng, sett ng t  nextDoc D and nextFreq.
    *
    * @see #nextDocNoDel()
    */
-  protected abstract void loadNextPosting();
+  protected abstract vo d loadNextPost ng();
 
   /**
-   * Subclass should implement {@link #skipTo(int)}.
+   * Subclass should  mple nt {@l nk #sk pTo( nt)}.
    *
-   * @see org.apache.lucene.search.DocIdSetIterator#advance(int)
+   * @see org.apac .lucene.search.Doc dSet erator#advance( nt)
    */
-  @Override
-  public final int advance(int target) throws IOException {
-    // Skipping to NO_MORE_DOCS or beyond largest doc ID.
-    if (target == NO_MORE_DOCS || target > getLargestDocID()) {
-      currentDocID = nextDocID = NO_MORE_DOCS;
+  @Overr de
+  publ c f nal  nt advance( nt target) throws  OExcept on {
+    // Sk pp ng to NO_MORE_DOCS or beyond largest doc  D.
+     f (target == NO_MORE_DOCS || target > getLargestDoc D()) {
+      currentDoc D = nextDoc D = NO_MORE_DOCS;
       currentFreq = nextFreq = 0;
       return NO_MORE_DOCS;
     }
 
-    // Skip as close as possible.
-    skipTo(target);
+    // Sk p as close as poss ble.
+    sk pTo(target);
 
-    // Calling nextDoc to reach the target, or go beyond it if target does not exist.
-    int doc;
+    // Call ng nextDoc to reach t  target, or go beyond    f target does not ex st.
+     nt doc;
     do {
       doc = nextDoc();
-    } while (doc < target);
+    } wh le (doc < target);
 
     return doc;
   }
 
   /**
-   * Used in {@link #advance(int)}.
-   * This method should skip to the given target as close as possible, but NOT reach the target.
+   * Used  n {@l nk #advance( nt)}.
+   * T   thod should sk p to t  g ven target as close as poss ble, but NOT reach t  target.
    *
-   * @see #advance(int)
+   * @see #advance( nt)
    */
-  protected abstract void skipTo(int target);
+  protected abstract vo d sk pTo( nt target);
 
   /**
-   * Return loaded {@link #currentFreq}.
+   * Return loaded {@l nk #currentFreq}.
    *
-   * @see org.apache.lucene.index.PostingsEnum#freq()
+   * @see org.apac .lucene. ndex.Post ngsEnum#freq()
    * @see #nextDocNoDel()
    */
-  @Override
-  public final int freq() throws IOException {
+  @Overr de
+  publ c f nal  nt freq() throws  OExcept on {
     return currentFreq;
   }
 
   /**
-   * Return loaded {@link #currentDocID}.
+   * Return loaded {@l nk #currentDoc D}.
    *
-   * @see org.apache.lucene.index.PostingsEnum#docID() ()
+   * @see org.apac .lucene. ndex.Post ngsEnum#doc D() ()
    * @see #nextDocNoDel()
    */
-  @Override
-  public final int docID() {
-    return currentDocID;
+  @Overr de
+  publ c f nal  nt doc D() {
+    return currentDoc D;
   }
 
   /*********************************************
-   * Not Supported Information                 *
-   * @see org.apache.lucene.index.PostingsEnum *
+   * Not Supported  nformat on                 *
+   * @see org.apac .lucene. ndex.Post ngsEnum *
    *********************************************/
 
-  @Override
-  public int nextPosition() throws IOException {
+  @Overr de
+  publ c  nt nextPos  on() throws  OExcept on {
     return -1;
   }
 
-  @Override
-  public int startOffset() throws IOException {
+  @Overr de
+  publ c  nt startOffset() throws  OExcept on {
     return -1;
   }
 
-  @Override
-  public int endOffset() throws IOException {
+  @Overr de
+  publ c  nt endOffset() throws  OExcept on {
     return -1;
   }
 
-  @Override
-  public BytesRef getPayload() throws IOException {
+  @Overr de
+  publ c BytesRef getPayload() throws  OExcept on {
     return null;
   }
 
   /*********************************
-   * Helper methods for subclasses *
+   *  lper  thods for subclasses *
    *********************************/
 
-  protected int getCurrentFreq() {
+  protected  nt getCurrentFreq() {
     return currentFreq;
   }
 }

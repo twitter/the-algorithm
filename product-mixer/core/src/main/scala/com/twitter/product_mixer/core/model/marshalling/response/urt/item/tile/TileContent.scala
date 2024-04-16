@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t le
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.CtaButton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Badge
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-sealed trait TileContent
+sealed tra  T leContent
 
-case class StandardTileContent(
-  title: String,
-  supportingText: String,
-  badge: Option[Badge])
-    extends TileContent
+case class StandardT leContent(
+  t le: Str ng,
+  support ngText: Str ng,
+  badge: Opt on[Badge])
+    extends T leContent
 
-case class CallToActionTileContent(
-  text: String,
-  richText: Option[RichText],
-  ctaButton: Option[CtaButton])
-    extends TileContent
+case class CallToAct onT leContent(
+  text: Str ng,
+  r chText: Opt on[R chText],
+  ctaButton: Opt on[CtaButton])
+    extends T leContent
 
-//todo: Add other TileContent types later
+//todo: Add ot r T leContent types later

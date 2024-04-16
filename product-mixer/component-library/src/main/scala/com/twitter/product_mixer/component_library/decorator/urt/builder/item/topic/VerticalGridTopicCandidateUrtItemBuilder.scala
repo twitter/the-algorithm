@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.top c
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic.TopicCandidateUrtItemBuilder.TopicClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicTile
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.top c.Top cCand dateUrt emBu lder.Top cCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Top cCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseUrlBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d emT leStyle
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d emTop cFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d emTop cT le
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class VerticalGridTopicCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, TopicCandidate],
-  verticalGridItemTopicFunctionalityType: VerticalGridItemTopicFunctionalityType,
-  verticalGridItemTileStyle: VerticalGridItemTileStyle,
-  urlBuilder: Option[BaseUrlBuilder[Query, TopicCandidate]] = None,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, TopicCandidate]
+case class Vert calGr dTop cCand dateUrt emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Top cCand date],
+  vert calGr d emTop cFunct onal yType: Vert calGr d emTop cFunct onal yType,
+  vert calGr d emT leStyle: Vert calGr d emT leStyle,
+  urlBu lder: Opt on[BaseUrlBu lder[Query, Top cCand date]] = None,
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Top cCand date]
   ] = None)
-    extends CandidateUrtEntryBuilder[Query, TopicCandidate, VerticalGridItem] {
+    extends Cand dateUrtEntryBu lder[Query, Top cCand date, Vert calGr d em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    topicCandidate: TopicCandidate,
-    candidateFeatures: FeatureMap
-  ): VerticalGridItem = {
-    VerticalGridItemTopicTile(
-      id = topicCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
+    top cCand date: Top cCand date,
+    cand dateFeatures: FeatureMap
+  ): Vert calGr d em = {
+    Vert calGr d emTop cT le(
+       d = top cCand date. d,
+      sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query,
-        topicCandidate,
-        candidateFeatures,
-        Some(TopicClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      style = Some(verticalGridItemTileStyle),
-      functionalityType = Some(verticalGridItemTopicFunctionalityType),
-      url = urlBuilder.map(_.apply(query, topicCandidate, candidateFeatures))
+        top cCand date,
+        cand dateFeatures,
+        So (Top cCl entEvent nfoEle nt)),
+      feedbackAct on nfo =
+        feedbackAct on nfoBu lder.flatMap(_.apply(query, top cCand date, cand dateFeatures)),
+      style = So (vert calGr d emT leStyle),
+      funct onal yType = So (vert calGr d emTop cFunct onal yType),
+      url = urlBu lder.map(_.apply(query, top cCand date, cand dateFeatures))
     )
   }
 }

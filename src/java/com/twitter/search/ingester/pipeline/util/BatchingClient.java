@@ -1,68 +1,68 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java.ut l.HashSet;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Prom se;
 
 /**
- * Batches single requests of type RQ -> Future<RP> to an underlying client that supports batch
- * calls with multiple values of type RQ. Threadsafe.
+ * Batc s s ngle requests of type RQ -> Future<RP> to an underly ng cl ent that supports batch
+ * calls w h mult ple values of type RQ. Threadsafe.
  */
-public class BatchingClient<RQ, RP> {
-  @FunctionalInterface
-  public interface BatchClient<RQ, RP> {
+publ c class Batch ngCl ent<RQ, RP> {
+  @Funct onal nterface
+  publ c  nterface BatchCl ent<RQ, RP> {
     /**
-     * Issue a request to the underlying store which supports batches of requests.
+     *  ssue a request to t  underly ng store wh ch supports batc s of requests.
      */
     Future<Map<RQ, RP>> batchGet(Set<RQ> requests);
   }
 
   /**
-   * unsentRequests is not threadsafe, and so it must be externally synchronized.
+   * unsentRequests  s not threadsafe, and so   must be externally synchron zed.
    */
-  private final HashSet<RQ> unsentRequests = new HashSet<>();
+  pr vate f nal HashSet<RQ> unsentRequests = new HashSet<>();
 
-  private final ConcurrentHashMap<RQ, Promise<RP>> promises = new ConcurrentHashMap<>();
+  pr vate f nal ConcurrentHashMap<RQ, Prom se<RP>> prom ses = new ConcurrentHashMap<>();
 
-  private final BatchClient<RQ, RP> batchClient;
-  private final int batchSize;
+  pr vate f nal BatchCl ent<RQ, RP> batchCl ent;
+  pr vate f nal  nt batchS ze;
 
-  public BatchingClient(
-      BatchClient<RQ, RP> batchClient,
-      int batchSize
+  publ c Batch ngCl ent(
+      BatchCl ent<RQ, RP> batchCl ent,
+       nt batchS ze
   ) {
-    this.batchClient = batchClient;
-    this.batchSize = batchSize;
+    t .batchCl ent = batchCl ent;
+    t .batchS ze = batchS ze;
   }
 
   /**
-   * Send a request and receive a Future<RP>. The future will not be resolved until at there at
-   * least batchSize requests ready to send.
+   * Send a request and rece ve a Future<RP>. T  future w ll not be resolved unt l at t re at
+   * least batchS ze requests ready to send.
    */
-  public Future<RP> call(RQ request) {
-    Promise<RP> promise = promises.computeIfAbsent(request, r -> new Promise<>());
+  publ c Future<RP> call(RQ request) {
+    Prom se<RP> prom se = prom ses.compute fAbsent(request, r -> new Prom se<>());
 
     maybeBatchCall(request);
 
-    return promise;
+    return prom se;
   }
 
-  private void maybeBatchCall(RQ request) {
+  pr vate vo d maybeBatchCall(RQ request) {
     Set<RQ> frozenRequests;
-    synchronized (unsentRequests) {
+    synchron zed (unsentRequests) {
       unsentRequests.add(request);
-      if (unsentRequests.size() < batchSize) {
+       f (unsentRequests.s ze() < batchS ze) {
         return;
       }
 
-      // Make a copy of requests so we can modify it inside executeBatchCall without additional
-      // synchronization.
+      // Make a copy of requests so   can mod fy    ns de executeBatchCall w hout add  onal
+      // synchron zat on.
       frozenRequests = new HashSet<>(unsentRequests);
       unsentRequests.clear();
     }
@@ -70,31 +70,31 @@ public class BatchingClient<RQ, RP> {
     executeBatchCall(frozenRequests);
   }
 
-  private void executeBatchCall(Set<RQ> requests) {
-    batchClient.batchGet(requests)
+  pr vate vo d executeBatchCall(Set<RQ> requests) {
+    batchCl ent.batchGet(requests)
         .onSuccess(responseMap -> {
           for (Map.Entry<RQ, RP> entry : responseMap.entrySet()) {
-            Promise<RP> promise = promises.remove(entry.getKey());
-            if (promise != null) {
-              promise.become(Future.value(entry.getValue()));
+            Prom se<RP> prom se = prom ses.remove(entry.getKey());
+             f (prom se != null) {
+              prom se.beco (Future.value(entry.getValue()));
             }
           }
 
-          Set<RQ> outstandingRequests = Sets.difference(requests, responseMap.keySet());
-          for (RQ request : outstandingRequests) {
-            Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
-              promise.become(Future.exception(new ResponseNotReturnedException(request)));
+          Set<RQ> outstand ngRequests = Sets.d fference(requests, responseMap.keySet());
+          for (RQ request : outstand ngRequests) {
+            Prom se<RP> prom se = prom ses.remove(request);
+             f (prom se != null) {
+              prom se.beco (Future.except on(new ResponseNotReturnedExcept on(request)));
             }
           }
 
           return null;
         })
-        .onFailure(exception -> {
+        .onFa lure(except on -> {
           for (RQ request : requests) {
-            Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
-              promise.become(Future.exception(exception));
+            Prom se<RP> prom se = prom ses.remove(request);
+             f (prom se != null) {
+              prom se.beco (Future.except on(except on));
             }
           }
 

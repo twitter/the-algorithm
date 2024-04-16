@@ -1,21 +1,21 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "thr ft",
+    s ces = ["*.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "follow-recommendations-service/thrift/src/main/thrift/logging:thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/adserver:adserver_common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/suggests/controller_data",
+        "f natra- nternal/thr ft/src/ma n/thr ft",
+        "follow-recom ndat ons-serv ce/thr ft/src/ma n/thr ft/logg ng:thr ft",
+        "product-m xer/core/src/ma n/thr ft/com/tw ter/product_m xer/core:thr ft",
+        "src/thr ft/com/tw ter/ads/adserver:adserver_common",
+        "src/thr ft/com/tw ter/ml/ap :data",
+        "src/thr ft/com/tw ter/suggests/controller_data",
     ],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "follow-recommendations-java",
-    provides_scala_name = "follow-recommendations-scala",
+    prov des_java_na  = "follow-recom ndat ons-java",
+    prov des_scala_na  = "follow-recom ndat ons-scala",
 )

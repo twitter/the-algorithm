@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext
 
-case class RichTextEntity(
-  fromIndex: Int,
-  toIndex: Int,
-  ref: Option[ReferenceObject],
-  format: Option[RichTextFormat])
+case class R chTextEnt y(
+  from ndex:  nt,
+  to ndex:  nt,
+  ref: Opt on[ReferenceObject],
+  format: Opt on[R chTextFormat])

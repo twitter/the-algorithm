@@ -1,152 +1,152 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.TweetKey.LKey.ForceAddedStateKey
-import com.twitter.tweetypie.storage.TweetStorageClient.HardDeleteTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.HardDeleteTweet.Response._
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.storage.T etKey.LKey.ForceAddedStateKey
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.HardDeleteT et
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.HardDeleteT et.Response._
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
 
-object HardDeleteTweetHandler {
+object HardDeleteT etHandler {
 
   /**
-   * When a tweet is removed lkeys with these prefixes will be deleted permanently.
+   * W n a t et  s removed lkeys w h t se pref xes w ll be deleted permanently.
    */
-  private[storage] def isKeyToBeDeleted(key: TweetKey): Boolean =
+  pr vate[storage] def  sKeyToBeDeleted(key: T etKey): Boolean =
     key.lKey match {
-      case (TweetKey.LKey.CoreFieldsKey | TweetKey.LKey.InternalFieldsKey(_) |
-          TweetKey.LKey.AdditionalFieldsKey(_) | TweetKey.LKey.SoftDeletionStateKey |
-          TweetKey.LKey.BounceDeletionStateKey | TweetKey.LKey.UnDeletionStateKey |
-          TweetKey.LKey.ForceAddedStateKey) =>
+      case (T etKey.LKey.CoreF eldsKey | T etKey.LKey. nternalF eldsKey(_) |
+          T etKey.LKey.Add  onalF eldsKey(_) | T etKey.LKey.SoftDelet onStateKey |
+          T etKey.LKey.BounceDelet onStateKey | T etKey.LKey.UnDelet onStateKey |
+          T etKey.LKey.ForceAddedStateKey) =>
         true
       case _ => false
     }
 
   /**
-   * When hard deleting, there are two actions, writing the record and
-   * removing the tweet data. If we are performing any action, we will
-   * always try to remove the tweet data. If the tweet does not yet have a
-   * hard deletion record, then we will need to write one. This method
-   * returns the HardDeleted record if it needs to be written, and None
-   * if it has already been written.
+   * W n hard delet ng, t re are two act ons, wr  ng t  record and
+   * remov ng t  t et data.  f   are perform ng any act on,   w ll
+   * always try to remove t  t et data.  f t  t et does not yet have a
+   * hard delet on record, t n   w ll need to wr e one. T   thod
+   * returns t  HardDeleted record  f   needs to be wr ten, and None
+   *  f   has already been wr ten.
    *
-   * If the tweet is not in a deleted state we signal this with a
+   *  f t  t et  s not  n a deleted state   s gnal t  w h a
    * Throw(NotDeleted).
    */
-  private[storage] def getHardDeleteStateRecord(
-    tweetId: TweetId,
-    records: Seq[TweetManhattanRecord],
-    mhTimestamp: Time,
-    stats: StatsReceiver
-  ): Try[Option[TweetStateRecord.HardDeleted]] = {
-    val mostRecent = TweetStateRecord.mostRecent(records)
-    val currentStateStr = mostRecent.map(_.name).getOrElse("no_tweet_state_record")
-    stats.counter(currentStateStr).incr()
+  pr vate[storage] def getHardDeleteStateRecord(
+    t et d: T et d,
+    records: Seq[T etManhattanRecord],
+    mhT  stamp: T  ,
+    stats: StatsRece ver
+  ): Try[Opt on[T etStateRecord.HardDeleted]] = {
+    val mostRecent = T etStateRecord.mostRecent(records)
+    val currentStateStr = mostRecent.map(_.na ).getOrElse("no_t et_state_record")
+    stats.counter(currentStateStr). ncr()
 
     mostRecent match {
-      case Some(
-            record @ (TweetStateRecord.SoftDeleted(_, _) | TweetStateRecord.BounceDeleted(_, _))) =>
+      case So (
+            record @ (T etStateRecord.SoftDeleted(_, _) | T etStateRecord.BounceDeleted(_, _))) =>
         Return(
-          Some(
-            TweetStateRecord.HardDeleted(
-              tweetId = tweetId,
-              // createdAt is the hard deletion timestamp when dealing with hard deletes in Manhattan
-              createdAt = mhTimestamp.inMillis,
-              // deletedAt is the soft deletion timestamp when dealing with hard deletes in Manhattan
+          So (
+            T etStateRecord.HardDeleted(
+              t et d = t et d,
+              // createdAt  s t  hard delet on t  stamp w n deal ng w h hard deletes  n Manhattan
+              createdAt = mhT  stamp. nM ll s,
+              // deletedAt  s t  soft delet on t  stamp w n deal ng w h hard deletes  n Manhattan
               deletedAt = record.createdAt
             )
           )
         )
 
-      case Some(_: TweetStateRecord.HardDeleted) =>
+      case So (_: T etStateRecord.HardDeleted) =>
         Return(None)
 
-      case Some(_: TweetStateRecord.ForceAdded) =>
-        Throw(NotDeleted(tweetId, Some(ForceAddedStateKey)))
+      case So (_: T etStateRecord.ForceAdded) =>
+        Throw(NotDeleted(t et d, So (ForceAddedStateKey)))
 
-      case Some(_: TweetStateRecord.Undeleted) =>
-        Throw(NotDeleted(tweetId, Some(TweetKey.LKey.UnDeletionStateKey)))
+      case So (_: T etStateRecord.Undeleted) =>
+        Throw(NotDeleted(t et d, So (T etKey.LKey.UnDelet onStateKey)))
 
       case None =>
-        Throw(NotDeleted(tweetId, None))
+        Throw(NotDeleted(t et d, None))
     }
   }
 
   /**
-   * This handler returns HardDeleteTweet.Response.Deleted if data associated with the tweet is deleted,
-   * either as a result of this request or a previous one.
+   * T  handler returns HardDeleteT et.Response.Deleted  f data assoc ated w h t  t et  s deleted,
+   * e  r as a result of t  request or a prev ous one.
    *
-   * The most recently added record determines the tweet's state. This method will only delete data
-   * for tweets in the soft-delete or hard-delete state. (Calling hardDeleteTweet for tweets that have
-   * already been hard-deleted will remove any lkeys that may not have been deleted previously).
+   * T  most recently added record determ nes t  t et's state. T   thod w ll only delete data
+   * for t ets  n t  soft-delete or hard-delete state. (Call ng hardDeleteT et for t ets that have
+   * already been hard-deleted w ll remove any lkeys that may not have been deleted prev ously).
    */
   def apply(
-    read: ManhattanOperations.Read,
-    insert: ManhattanOperations.Insert,
-    delete: ManhattanOperations.Delete,
-    scribe: Scribe,
-    stats: StatsReceiver
-  ): TweetId => Stitch[HardDeleteTweet.Response] = {
-    val hardDeleteStats = stats.scope("hardDeleteTweet")
-    val hardDeleteTweetCancelled = hardDeleteStats.counter("cancelled")
+    read: ManhattanOperat ons.Read,
+     nsert: ManhattanOperat ons. nsert,
+    delete: ManhattanOperat ons.Delete,
+    scr be: Scr be,
+    stats: StatsRece ver
+  ): T et d => St ch[HardDeleteT et.Response] = {
+    val hardDeleteStats = stats.scope("hardDeleteT et")
+    val hardDeleteT etCancelled = hardDeleteStats.counter("cancelled")
     val beforeStateStats = hardDeleteStats.scope("before_state")
 
-    def removeRecords(keys: Seq[TweetKey], mhTimestamp: Time): Stitch[Unit] =
-      Stitch
-        .collect(keys.map(key => delete(key, Some(mhTimestamp)).liftToTry))
-        .map(collectWithRateLimitCheck)
-        .lowerFromTry
+    def removeRecords(keys: Seq[T etKey], mhT  stamp: T  ): St ch[Un ] =
+      St ch
+        .collect(keys.map(key => delete(key, So (mhT  stamp)).l ftToTry))
+        .map(collectW hRateL m C ck)
+        .lo rFromTry
 
-    def writeRecord(record: Option[TweetStateRecord.HardDeleted]): Stitch[Unit] =
+    def wr eRecord(record: Opt on[T etStateRecord.HardDeleted]): St ch[Un ] =
       record match {
-        case Some(r) =>
-          insert(r.toTweetMhRecord).onSuccess { _ =>
-            scribe.logRemoved(
-              r.tweetId,
-              Time.fromMilliseconds(r.createdAt),
-              isSoftDeleted = false
+        case So (r) =>
+           nsert(r.toT etMhRecord).onSuccess { _ =>
+            scr be.logRemoved(
+              r.t et d,
+              T  .fromM ll seconds(r.createdAt),
+               sSoftDeleted = false
             )
           }
-        case None => Stitch.Unit
+        case None => St ch.Un 
       }
 
-    tweetId =>
-      read(tweetId)
+    t et d =>
+      read(t et d)
         .flatMap { records =>
-          val hardDeletionTimestamp = Time.now
+          val hardDelet onT  stamp = T  .now
 
-          val keysToBeDeleted: Seq[TweetKey] = records.map(_.key).filter(isKeyToBeDeleted)
+          val keysToBeDeleted: Seq[T etKey] = records.map(_.key).f lter( sKeyToBeDeleted)
 
           getHardDeleteStateRecord(
-            tweetId,
+            t et d,
             records,
-            hardDeletionTimestamp,
+            hardDelet onT  stamp,
             beforeStateStats) match {
             case Return(record) =>
-              Stitch
-                .join(
-                  writeRecord(record),
-                  removeRecords(keysToBeDeleted, hardDeletionTimestamp)
+              St ch
+                .jo n(
+                  wr eRecord(record),
+                  removeRecords(keysToBeDeleted, hardDelet onT  stamp)
                 ).map(_ =>
-                  // If the tweetId is non-snowflake and has previously been hard deleted
-                  // there will be no coreData record to fall back on to get the tweet
-                  // creation time and createdAtMillis will be None.
+                  //  f t  t et d  s non-snowflake and has prev ously been hard deleted
+                  // t re w ll be no coreData record to fall back on to get t  t et
+                  // creat on t   and createdAtM ll s w ll be None.
                   Deleted(
-                    // deletedAtMillis: when the tweet was hard deleted
-                    deletedAtMillis = Some(hardDeletionTimestamp.inMillis),
-                    // createdAtMillis: when the tweet itself was created
-                    // (as opposed to when the deletion record was created)
-                    createdAtMillis =
-                      TweetUtils.creationTimeFromTweetIdOrMHRecords(tweetId, records)
+                    // deletedAtM ll s: w n t  t et was hard deleted
+                    deletedAtM ll s = So (hardDelet onT  stamp. nM ll s),
+                    // createdAtM ll s: w n t  t et  self was created
+                    // (as opposed to w n t  delet on record was created)
+                    createdAtM ll s =
+                      T etUt ls.creat onT  FromT et dOrMHRecords(t et d, records)
                   ))
             case Throw(notDeleted: NotDeleted) =>
-              hardDeleteTweetCancelled.incr()
-              Stitch.value(notDeleted)
-            case Throw(e) => Stitch.exception(e) // this should never happen
+              hardDeleteT etCancelled. ncr()
+              St ch.value(notDeleted)
+            case Throw(e) => St ch.except on(e) // t  should never happen
           }
         }
   }

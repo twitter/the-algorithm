@@ -1,37 +1,37 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-// Memoization with a twist
-// New epoch reuse K:V pairs from previous and recycle everything else
-class MemoizedInEpochs[K, V](f: K => Try[V]) extends Logging {
-  private var memoizedCalls: Map[K, V] = Map.empty
+//  mo zat on w h a tw st
+// New epoch reuse K:V pa rs from prev ous and recycle everyth ng else
+class  mo zed nEpochs[K, V](f: K => Try[V]) extends Logg ng {
+  pr vate var  mo zedCalls: Map[K, V] = Map.empty
 
   def epoch(keys: Seq[K]): Seq[V] = {
     val newSet = keys.toSet
-    val keysToBeComputed = newSet.diff(memoizedCalls.keySet)
+    val keysToBeComputed = newSet.d ff( mo zedCalls.keySet)
     val computedKeysAndValues = keysToBeComputed.map { key =>
-      info(s"Memoize ${key}")
+       nfo(s" mo ze ${key}")
       (key, f(key))
     }
-    val keysAndValuesAfterFilteringFailures = computedKeysAndValues
+    val keysAndValuesAfterF lter ngFa lures = computedKeysAndValues
       .flatMap {
-        case (key, Return(value)) => Some((key, value))
+        case (key, Return(value)) => So ((key, value))
         case (key, Throw(e)) =>
-          warn(s"Calling f for ${key} has failed", e)
+          warn(s"Call ng f for ${key} has fa led", e)
 
           None
       }
-    val keysReusedFromLastEpoch = memoizedCalls.filterKeys(newSet.contains)
-    memoizedCalls = keysReusedFromLastEpoch ++ keysAndValuesAfterFilteringFailures
+    val keysReusedFromLastEpoch =  mo zedCalls.f lterKeys(newSet.conta ns)
+     mo zedCalls = keysReusedFromLastEpoch ++ keysAndValuesAfterF lter ngFa lures
 
-    debug(s"Final memoization is ${memoizedCalls.keys.mkString(", ")}")
+    debug(s"F nal  mo zat on  s ${ mo zedCalls.keys.mkStr ng(", ")}")
 
-    keys.flatMap(memoizedCalls.get)
+    keys.flatMap( mo zedCalls.get)
   }
 
-  def currentEpochKeys: Set[K] = memoizedCalls.keySet
+  def currentEpochKeys: Set[K] =  mo zedCalls.keySet
 }

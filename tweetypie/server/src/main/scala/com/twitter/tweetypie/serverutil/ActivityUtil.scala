@@ -1,23 +1,23 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.twitter.util.Activity
-import com.twitter.util.Closable
-import com.twitter.util.Var
-import com.twitter.util.Witness
+ mport com.tw ter.ut l.Act v y
+ mport com.tw ter.ut l.Closable
+ mport com.tw ter.ut l.Var
+ mport com.tw ter.ut l.W ness
 
-object ActivityUtil {
+object Act v yUt l {
 
   /**
-   * Makes the composition strict up to the point where it is called.
-   * Compositions based on the returned activity will have
-   * the default lazy behavior.
+   * Makes t  compos  on str ct up to t  po nt w re    s called.
+   * Compos  ons based on t  returned act v y w ll have
+   * t  default lazy behav or.
    */
-  def strict[T](activity: Activity[T]): Activity[T] = {
-    val state = Var(Activity.Pending: Activity.State[T])
-    val event = activity.states
+  def str ct[T](act v y: Act v y[T]): Act v y[T] = {
+    val state = Var(Act v y.Pend ng: Act v y.State[T])
+    val event = act v y.states
 
-    Closable.closeOnCollect(event.register(Witness(state)), state)
+    Closable.closeOnCollect(event.reg ster(W ness(state)), state)
 
-    new Activity(state)
+    new Act v y(state)
   }
 }

@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.services
+package com.tw ter.follow_recom ndat ons.serv ces
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.stitch.Stitch
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableWhoToFollowProducts
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.models.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onRequest
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductReg stry
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductRequest
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.EnableWhoToFollowProducts
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ProductRecommenderService @Inject() (
-  productRegistry: ProductRegistry,
-  statsReceiver: StatsReceiver) {
+@S ngleton
+class ProductRecom nderServ ce @ nject() (
+  productReg stry: ProductReg stry,
+  statsRece ver: StatsRece ver) {
 
-  private val stats = statsReceiver.scope("ProductRecommenderService")
+  pr vate val stats = statsRece ver.scope("ProductRecom nderServ ce")
 
-  def getRecommendations(
-    request: RecommendationRequest,
+  def getRecom ndat ons(
+    request: Recom ndat onRequest,
     params: Params
-  ): Stitch[Seq[Recommendation]] = {
-    val displayLocation = request.displayLocation
-    val displayLocationStatName = displayLocation.toString
-    val locationStats = stats.scope(displayLocationStatName)
-    val loggedInOrOutStats = if (request.clientContext.userId.isDefined) {
-      stats.scope("logged_in").scope(displayLocationStatName)
+  ): St ch[Seq[Recom ndat on]] = {
+    val d splayLocat on = request.d splayLocat on
+    val d splayLocat onStatNa  = d splayLocat on.toStr ng
+    val locat onStats = stats.scope(d splayLocat onStatNa )
+    val logged nOrOutStats =  f (request.cl entContext.user d. sDef ned) {
+      stats.scope("logged_ n").scope(d splayLocat onStatNa )
     } else {
-      stats.scope("logged_out").scope(displayLocationStatName)
+      stats.scope("logged_out").scope(d splayLocat onStatNa )
     }
 
-    loggedInOrOutStats.counter("requests").incr()
-    val product = productRegistry.getProductByDisplayLocation(displayLocation)
+    logged nOrOutStats.counter("requests"). ncr()
+    val product = productReg stry.getProductByD splayLocat on(d splayLocat on)
     val productRequest = ProductRequest(request, params)
-    val productEnabledStitch =
-      StatsUtil.profileStitch(product.enabled(productRequest), locationStats.scope("enabled"))
-    productEnabledStitch.flatMap { productEnabled =>
-      if (productEnabled && params(EnableWhoToFollowProducts)) {
-        loggedInOrOutStats.counter("enabled").incr()
-        val stitch = for {
-          workflows <- StatsUtil.profileStitch(
+    val productEnabledSt ch =
+      StatsUt l.prof leSt ch(product.enabled(productRequest), locat onStats.scope("enabled"))
+    productEnabledSt ch.flatMap { productEnabled =>
+       f (productEnabled && params(EnableWhoToFollowProducts)) {
+        logged nOrOutStats.counter("enabled"). ncr()
+        val st ch = for {
+          workflows <- StatsUt l.prof leSt ch(
             product.selectWorkflows(productRequest),
-            locationStats.scope("select_workflows"))
-          workflowRecos <- StatsUtil.profileStitch(
-            Stitch.collect(
+            locat onStats.scope("select_workflows"))
+          workflowRecos <- StatsUt l.prof leSt ch(
+            St ch.collect(
               workflows.map(_.process(productRequest).map(_.result.getOrElse(Seq.empty)))),
-            locationStats.scope("execute_workflows")
+            locat onStats.scope("execute_workflows")
           )
-          blendedCandidates <- StatsUtil.profileStitch(
+          blendedCand dates <- StatsUt l.prof leSt ch(
             product.blender.transform(productRequest, workflowRecos.flatten),
-            locationStats.scope("blend_results"))
-          resultsTransformer <- StatsUtil.profileStitch(
-            product.resultsTransformer(productRequest),
-            locationStats.scope("results_transformer"))
-          transformedCandidates <- StatsUtil.profileStitch(
-            resultsTransformer.transform(productRequest, blendedCandidates),
-            locationStats.scope("execute_results_transformer"))
-        } yield {
-          transformedCandidates
+            locat onStats.scope("blend_results"))
+          resultsTransfor r <- StatsUt l.prof leSt ch(
+            product.resultsTransfor r(productRequest),
+            locat onStats.scope("results_transfor r"))
+          transfor dCand dates <- StatsUt l.prof leSt ch(
+            resultsTransfor r.transform(productRequest, blendedCand dates),
+            locat onStats.scope("execute_results_transfor r"))
+        } y eld {
+          transfor dCand dates
         }
-        StatsUtil.profileStitchResults[Seq[Recommendation]](stitch, locationStats, _.size)
+        StatsUt l.prof leSt chResults[Seq[Recom ndat on]](st ch, locat onStats, _.s ze)
       } else {
-        loggedInOrOutStats.counter("disabled").incr()
-        locationStats.counter("disabled_product").incr()
-        Stitch.Nil
+        logged nOrOutStats.counter("d sabled"). ncr()
+        locat onStats.counter("d sabled_product"). ncr()
+        St ch.N l
       }
     }
   }

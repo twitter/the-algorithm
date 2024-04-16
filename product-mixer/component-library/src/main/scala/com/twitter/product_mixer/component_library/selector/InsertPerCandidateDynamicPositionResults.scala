@@ -1,78 +1,78 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object InsertPerCandidateDynamicPositionResults {
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    candidatePositionInResults: CandidatePositionInResults[Query]
-  ): InsertPerCandidateDynamicPositionResults[Query] =
-    InsertPerCandidateDynamicPositionResults[Query](
-      SpecificPipeline(candidatePipeline),
-      candidatePositionInResults)
+object  nsertPerCand dateDynam cPos  onResults {
+  def apply[Query <: P pel neQuery](
+    cand dateP pel ne: Cand dateP pel ne dent f er,
+    cand datePos  on nResults: Cand datePos  on nResults[Query]
+  ):  nsertPerCand dateDynam cPos  onResults[Query] =
+     nsertPerCand dateDynam cPos  onResults[Query](
+      Spec f cP pel ne(cand dateP pel ne),
+      cand datePos  on nResults)
 
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    candidatePositionInResults: CandidatePositionInResults[Query]
-  ): InsertPerCandidateDynamicPositionResults[Query] =
-    InsertPerCandidateDynamicPositionResults[Query](
-      SpecificPipelines(candidatePipelines),
-      candidatePositionInResults)
+  def apply[Query <: P pel neQuery](
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er],
+    cand datePos  on nResults: Cand datePos  on nResults[Query]
+  ):  nsertPerCand dateDynam cPos  onResults[Query] =
+     nsertPerCand dateDynam cPos  onResults[Query](
+      Spec f cP pel nes(cand dateP pel nes),
+      cand datePos  on nResults)
 }
 
 /**
- * Insert each candidate in the [[CandidateScope]] at the index relative to the original candidate in the `result`
- * at that index using the provided [[CandidatePositionInResults]] instance. If the current results are shorter
- * length than the computed position, then the candidate will be appended to the results.
+ *  nsert each cand date  n t  [[Cand dateScope]] at t   ndex relat ve to t  or g nal cand date  n t  `result`
+ * at that  ndex us ng t  prov ded [[Cand datePos  on nResults]]  nstance.  f t  current results are shorter
+ * length than t  computed pos  on, t n t  cand date w ll be appended to t  results.
  *
- * When the [[CandidatePositionInResults]] returns a `None`, that candidate is not
- * added to the result. Negative position values are treated as 0 (front of the results).
+ * W n t  [[Cand datePos  on nResults]] returns a `None`, that cand date  s not
+ * added to t  result. Negat ve pos  on values are treated as 0 (front of t  results).
  *
- * @example if [[CandidatePositionInResults]] results in a candidate mapping from index to candidate of
- *          `{0 -> a, 0 -> b, 0 -> c, 1 -> e, 2 -> g, 2 -> h} ` with  original `results` = `[D, F]`,
- *          then the resulting output would look like `[a, b, c, D, e, F, g, h]`
+ * @example  f [[Cand datePos  on nResults]] results  n a cand date mapp ng from  ndex to cand date of
+ *          `{0 -> a, 0 -> b, 0 -> c, 1 -> e, 2 -> g, 2 -> h} ` w h  or g nal `results` = `[D, F]`,
+ *          t n t  result ng output would look l ke `[a, b, c, D, e, F, g, h]`
  */
-case class InsertPerCandidateDynamicPositionResults[-Query <: PipelineQuery](
-  pipelineScope: CandidateScope,
-  candidatePositionInResults: CandidatePositionInResults[Query])
+case class  nsertPerCand dateDynam cPos  onResults[-Query <: P pel neQuery](
+  p pel neScope: Cand dateScope,
+  cand datePos  on nResults: Cand datePos  on nResults[Query])
     extends Selector[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val (candidatesToInsert, otherRemainingCandidatesTuples) = remainingCandidates
-      .map { candidate: CandidateWithDetails =>
-        val position =
-          if (pipelineScope.contains(candidate))
-            candidatePositionInResults(query, candidate, result)
+    val (cand datesTo nsert, ot rRema n ngCand datesTuples) = rema n ngCand dates
+      .map { cand date: Cand dateW hDeta ls =>
+        val pos  on =
+           f (p pel neScope.conta ns(cand date))
+            cand datePos  on nResults(query, cand date, result)
           else
             None
-        (position, candidate)
-      }.partition { case (index, _) => index.isDefined }
+        (pos  on, cand date)
+      }.part  on { case ( ndex, _) =>  ndex. sDef ned }
 
-    val otherRemainingCandidates = otherRemainingCandidatesTuples.map {
-      case (_, candidate) => candidate
+    val ot rRema n ngCand dates = ot rRema n ngCand datesTuples.map {
+      case (_, cand date) => cand date
     }
 
-    val positionAndCandidateList = candidatesToInsert.collect {
-      case (Some(position), candidate) => (position, candidate)
+    val pos  onAndCand dateL st = cand datesTo nsert.collect {
+      case (So (pos  on), cand date) => (pos  on, cand date)
     }
 
-    val mergedResult = DynamicPositionSelector.mergeByIndexIntoResult(
-      positionAndCandidateList,
+    val  rgedResult = Dynam cPos  onSelector. rgeBy ndex ntoResult(
+      pos  onAndCand dateL st,
       result,
-      DynamicPositionSelector.RelativeIndices
+      Dynam cPos  onSelector.Relat ve nd ces
     )
 
-    SelectorResult(remainingCandidates = otherRemainingCandidates, result = mergedResult)
+    SelectorResult(rema n ngCand dates = ot rRema n ngCand dates, result =  rgedResult)
   }
 }

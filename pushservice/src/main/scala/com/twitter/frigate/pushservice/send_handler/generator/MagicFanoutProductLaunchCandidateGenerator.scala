@@ -1,54 +1,54 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.tw ter.fr gate.pushserv ce.send_handler.generator
 
-import com.twitter.frigate.common.base.MagicFanoutProductLaunchCandidate
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.magic_events.thriftscala.ProductType
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Mag cFanoutProductLaunchCand date
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.ProductType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.ut l.Future
 
-object MagicFanoutProductLaunchCandidateGenerator extends CandidateGenerator {
+object Mag cFanoutProductLaunchCand dateGenerator extends Cand dateGenerator {
 
-  override def getCandidate(
+  overr de def getCand date(
     targetUser: PushTypes.Target,
-    notification: FrigateNotification
-  ): Future[PushTypes.RawCandidate] = {
+    not f cat on: Fr gateNot f cat on
+  ): Future[PushTypes.RawCand date] = {
 
-    require(
-      notification.commonRecommendationType == CommonRecommendationType.MagicFanoutProductLaunch,
-      "MagicFanoutProductLaunch: unexpected CRT " + notification.commonRecommendationType
+    requ re(
+      not f cat on.commonRecom ndat onType == CommonRecom ndat onType.Mag cFanoutProductLaunch,
+      "Mag cFanoutProductLaunch: unexpected CRT " + not f cat on.commonRecom ndat onType
     )
-    require(
-      notification.magicFanoutProductLaunchNotification.isDefined,
-      "MagicFanoutProductLaunch: magicFanoutProductLaunchNotification is not defined")
-    require(
-      notification.magicFanoutProductLaunchNotification.exists(_.magicFanoutPushId.isDefined),
-      "MagicFanoutProductLaunch: magicFanoutPushId is not defined")
-    require(
-      notification.magicFanoutProductLaunchNotification.exists(_.fanoutReasons.isDefined),
-      "MagicFanoutProductLaunch: fanoutReasons is not defined")
+    requ re(
+      not f cat on.mag cFanoutProductLaunchNot f cat on. sDef ned,
+      "Mag cFanoutProductLaunch: mag cFanoutProductLaunchNot f cat on  s not def ned")
+    requ re(
+      not f cat on.mag cFanoutProductLaunchNot f cat on.ex sts(_.mag cFanoutPush d. sDef ned),
+      "Mag cFanoutProductLaunch: mag cFanoutPush d  s not def ned")
+    requ re(
+      not f cat on.mag cFanoutProductLaunchNot f cat on.ex sts(_.fanoutReasons. sDef ned),
+      "Mag cFanoutProductLaunch: fanoutReasons  s not def ned")
 
-    val magicFanoutProductLaunchNotification = notification.magicFanoutProductLaunchNotification.get
+    val mag cFanoutProductLaunchNot f cat on = not f cat on.mag cFanoutProductLaunchNot f cat on.get
 
-    val candidate = new RawCandidate with MagicFanoutProductLaunchCandidate {
+    val cand date = new RawCand date w h Mag cFanoutProductLaunchCand date {
 
-      override val target: Target = targetUser
+      overr de val target: Target = targetUser
 
-      override val pushId: Long =
-        magicFanoutProductLaunchNotification.magicFanoutPushId.get
+      overr de val push d: Long =
+        mag cFanoutProductLaunchNot f cat on.mag cFanoutPush d.get
 
-      override val candidateMagicEventsReasons: Seq[MagicEventsReason] =
-        magicFanoutProductLaunchNotification.fanoutReasons.get
+      overr de val cand dateMag cEventsReasons: Seq[Mag cEventsReason] =
+        mag cFanoutProductLaunchNot f cat on.fanoutReasons.get
 
-      override val productLaunchType: ProductType =
-        magicFanoutProductLaunchNotification.productLaunchType
+      overr de val productLaunchType: ProductType =
+        mag cFanoutProductLaunchNot f cat on.productLaunchType
 
-      override val frigateNotification: FrigateNotification = notification
+      overr de val fr gateNot f cat on: Fr gateNot f cat on = not f cat on
     }
 
-    Future.value(candidate)
+    Future.value(cand date)
   }
 }

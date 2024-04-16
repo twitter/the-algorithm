@@ -1,19 +1,19 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/operation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/scala/com/twitter/search/common/util/bloomfilter",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/sl ce",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/operat on",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
+        "src/scala/com/tw ter/search/common/ut l/bloomf lter",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/operation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/scala/com/twitter/search/common/util/bloomfilter",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/sl ce",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/operat on",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
+        "src/scala/com/tw ter/search/common/ut l/bloomf lter",
     ],
 )

@@ -1,34 +1,34 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.thriftscala._
-import scala.util.matching.Regex
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport scala.ut l.match ng.Regex
 
-object MediaIndexHelper {
+object  d a ndex lper {
 
   /**
-   * Which tweets should we treat as "media" tweets?
+   * Wh ch t ets should   treat as " d a" t ets?
    *
-   * Any tweet that is not a retweet and any of:
-   * - Is explicitly marked as a media tweet.
-   * - Has a media entity.
-   * - Includes a partner media URL.
+   * Any t et that  s not a ret et and any of:
+   * -  s expl c ly marked as a  d a t et.
+   * - Has a  d a ent y.
+   * -  ncludes a partner  d a URL.
    */
-  def apply(partnerMediaRegexes: Seq[Regex]): Tweet => Boolean = {
-    val isPartnerUrl = partnerUrlMatcher(partnerMediaRegexes)
+  def apply(partner d aRegexes: Seq[Regex]): T et => Boolean = {
+    val  sPartnerUrl = partnerUrlMatc r(partner d aRegexes)
 
-    tweet =>
-      getShare(tweet).isEmpty &&
-        (hasMediaFlagSet(tweet) ||
-          getMedia(tweet).nonEmpty ||
-          getUrls(tweet).exists(isPartnerUrl))
+    t et =>
+      getShare(t et). sEmpty &&
+        (has d aFlagSet(t et) ||
+          get d a(t et).nonEmpty ||
+          getUrls(t et).ex sts( sPartnerUrl))
   }
 
-  def partnerUrlMatcher(partnerMediaRegexes: Seq[Regex]): UrlEntity => Boolean =
-    _.expanded.exists { expandedUrl =>
-      partnerMediaRegexes.exists(_.findFirstIn(expandedUrl).isDefined)
+  def partnerUrlMatc r(partner d aRegexes: Seq[Regex]): UrlEnt y => Boolean =
+    _.expanded.ex sts { expandedUrl =>
+      partner d aRegexes.ex sts(_.f ndF rst n(expandedUrl). sDef ned)
     }
 
-  def hasMediaFlagSet(tweet: Tweet): Boolean =
-    tweet.coreData.flatMap(_.hasMedia).getOrElse(false)
+  def has d aFlagSet(t et: T et): Boolean =
+    t et.coreData.flatMap(_.has d a).getOrElse(false)
 }

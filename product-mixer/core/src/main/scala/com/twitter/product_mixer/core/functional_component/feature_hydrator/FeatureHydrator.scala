@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+package com.tw ter.product_m xer.core.funct onal_component.feature_hydrator
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common.Component
 
-/** Hydrates a [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]] for a given input */
-trait FeatureHydrator[FeatureType <: Feature[_, _]] extends Component {
+/** Hydrates a [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]] for a g ven  nput */
+tra  FeatureHydrator[FeatureType <: Feature[_, _]] extends Component {
   def features: Set[FeatureType]
 }

@@ -1,23 +1,23 @@
-package com.twitter.servo.request
+package com.tw ter.servo.request
 
 /**
- * A collection of RequestHandler factory functions.
+ * A collect on of RequestHandler factory funct ons.
  *
  * type RequestHandler[-A, +B] = FutureArrow[A, B]
  */
 object RequestHandler {
 
   /**
-   * Terminate a RequestFilter with a RequestHandler, producing a new handler.
+   * Term nate a RequestF lter w h a RequestHandler, produc ng a new handler.
    */
   def apply[A, B <: A, C](
-    filter: RequestFilter[A],
+    f lter: RequestF lter[A],
     handler: RequestHandler[B, C]
   ): RequestHandler[B, C] =
     new RequestHandler[B, C] {
-      override def apply(request: B) = {
-        filter(request: A) flatMap { filteredRequest =>
-          handler(filteredRequest.asInstanceOf[B])
+      overr de def apply(request: B) = {
+        f lter(request: A) flatMap { f lteredRequest =>
+          handler(f lteredRequest.as nstanceOf[B])
         }
       }
     }

@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne_t et_recs.conf gap 
 
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object HomeTimelineTweetRecsParams {
+object Ho T  l neT etRecsParams {
   object EnableProduct extends Param[Boolean](false)
 }

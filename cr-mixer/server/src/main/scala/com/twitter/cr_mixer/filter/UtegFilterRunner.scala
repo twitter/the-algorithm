@@ -1,95 +1,95 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /***
  *
- * Run filters sequentially for UTEG candidate generator. The structure is copied from PreRankFilterRunner.
+ * Run f lters sequent ally for UTEG cand date generator. T  structure  s cop ed from PreRankF lterRunner.
  */
-@Singleton
-class UtegFilterRunner @Inject() (
-  inNetworkFilter: InNetworkFilter,
-  utegHealthFilter: UtegHealthFilter,
-  retweetFilter: RetweetFilter,
-  globalStats: StatsReceiver) {
+@S ngleton
+class UtegF lterRunner @ nject() (
+   nNetworkF lter:  nNetworkF lter,
+  uteg althF lter: Uteg althF lter,
+  ret etF lter: Ret etF lter,
+  globalStats: StatsRece ver) {
 
-  private val scopedStats = globalStats.scope(this.getClass.getCanonicalName)
+  pr vate val scopedStats = globalStats.scope(t .getClass.getCanon calNa )
 
-  val orderedFilters: Seq[FilterBase] = Seq(
-    inNetworkFilter,
-    utegHealthFilter,
-    retweetFilter
+  val orderedF lters: Seq[F lterBase] = Seq(
+     nNetworkF lter,
+    uteg althF lter,
+    ret etF lter
   )
 
-  def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
+  def runSequent alF lters[CGQueryType <: Cand dateGeneratorQuery](
     request: CGQueryType,
-    candidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    UtegFilterRunner.runSequentialFilters(
+    cand dates: Seq[Seq[ n  alCand date]],
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    UtegF lterRunner.runSequent alF lters(
       request,
-      candidates,
-      orderedFilters,
+      cand dates,
+      orderedF lters,
       scopedStats
     )
   }
 
 }
 
-object UtegFilterRunner {
-  private def recordCandidateStatsBeforeFilter(
-    candidates: Seq[Seq[InitialCandidate]],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    statsReceiver
-      .counter("empty_sources", "before").incr(
-        candidates.count {
-          _.isEmpty
+object UtegF lterRunner {
+  pr vate def recordCand dateStatsBeforeF lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    statsRece ver: StatsRece ver
+  ): Un  = {
+    statsRece ver
+      .counter("empty_s ces", "before"). ncr(
+        cand dates.count {
+          _. sEmpty
         }
       )
-    candidates.foreach { candidate =>
-      statsReceiver.counter("candidates", "before").incr(candidate.size)
+    cand dates.foreach { cand date =>
+      statsRece ver.counter("cand dates", "before"). ncr(cand date.s ze)
     }
   }
 
-  private def recordCandidateStatsAfterFilter(
-    candidates: Seq[Seq[InitialCandidate]],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    statsReceiver
-      .counter("empty_sources", "after").incr(
-        candidates.count {
-          _.isEmpty
+  pr vate def recordCand dateStatsAfterF lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    statsRece ver: StatsRece ver
+  ): Un  = {
+    statsRece ver
+      .counter("empty_s ces", "after"). ncr(
+        cand dates.count {
+          _. sEmpty
         }
       )
-    candidates.foreach { candidate =>
-      statsReceiver.counter("candidates", "after").incr(candidate.size)
+    cand dates.foreach { cand date =>
+      statsRece ver.counter("cand dates", "after"). ncr(cand date.s ze)
     }
   }
 
   /*
-  Helper function for running some candidates through a sequence of filters
+   lper funct on for runn ng so  cand dates through a sequence of f lters
    */
-  private[filter] def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
+  pr vate[f lter] def runSequent alF lters[CGQueryType <: Cand dateGeneratorQuery](
     request: CGQueryType,
-    candidates: Seq[Seq[InitialCandidate]],
-    filters: Seq[FilterBase],
-    statsReceiver: StatsReceiver
-  ): Future[Seq[Seq[InitialCandidate]]] =
-    filters.foldLeft(Future.value(candidates)) {
-      case (candsFut, filter) =>
+    cand dates: Seq[Seq[ n  alCand date]],
+    f lters: Seq[F lterBase],
+    statsRece ver: StatsRece ver
+  ): Future[Seq[Seq[ n  alCand date]]] =
+    f lters.foldLeft(Future.value(cand dates)) {
+      case (candsFut, f lter) =>
         candsFut.flatMap { cands =>
-          recordCandidateStatsBeforeFilter(cands, statsReceiver.scope(filter.name))
-          filter
-            .filter(cands, filter.requestToConfig(request))
-            .map { filteredCands =>
-              recordCandidateStatsAfterFilter(filteredCands, statsReceiver.scope(filter.name))
-              filteredCands
+          recordCand dateStatsBeforeF lter(cands, statsRece ver.scope(f lter.na ))
+          f lter
+            .f lter(cands, f lter.requestToConf g(request))
+            .map { f lteredCands =>
+              recordCand dateStatsAfterF lter(f lteredCands, statsRece ver.scope(f lter.na ))
+              f lteredCands
             }
         }
     }

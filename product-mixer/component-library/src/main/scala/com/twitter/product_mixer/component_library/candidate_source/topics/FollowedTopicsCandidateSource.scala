@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.component_library.candidate_source.topics
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.top cs
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSeqSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.interests.FollowedTopicsGetterClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ewFetc rSeqS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent. nterests.Follo dTop csGetterCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class FollowedTopicsCandidateSource @Inject() (
-  column: FollowedTopicsGetterClientColumn)
-    extends StratoKeyViewFetcherSeqSource[
+@S ngleton
+class Follo dTop csCand dateS ce @ nject() (
+  column: Follo dTop csGetterCl entColumn)
+    extends StratoKeyV ewFetc rSeqS ce[
       Long,
-      Unit,
+      Un ,
       Long
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("FollowedTopics")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("Follo dTop cs")
 
-  override val fetcher: Fetcher[Long, Unit, Seq[Long]] = column.fetcher
+  overr de val fetc r: Fetc r[Long, Un , Seq[Long]] = column.fetc r
 }

@@ -1,28 +1,28 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Ne ghborW h  ghts
 
-class MedoidRepresentativeSelectionMethod[T](
-  producerProducerSimilarityFn: (T, T) => Double)
-    extends ClusterRepresentativeSelectionMethod[T] {
+class  do dRepresentat veSelect on thod[T](
+  producerProducerS m lar yFn: (T, T) => Double)
+    extends ClusterRepresentat veSelect on thod[T] {
 
   /**
-   * Identify the medoid of a cluster and return it.
+   *  dent fy t   do d of a cluster and return  .
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @param cluster A set of Ne ghborW h  ghts.
+   * @param embedd ngs A map of producer  D -> embedd ng.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T],
-  ): UserId = {
+  def selectClusterRepresentat ve(
+    cluster: Set[Ne ghborW h  ghts],
+    embedd ngs: Map[User d, T],
+  ): User d = {
     val key = cluster.maxBy {
-      id1 => // maxBy because we use similarity, which gets larger as we get closer.
-        val v = embeddings(id1.neighborId)
+       d1 => // maxBy because   use s m lar y, wh ch gets larger as   get closer.
+        val v = embedd ngs( d1.ne ghbor d)
         cluster
-          .map(id2 => producerProducerSimilarityFn(v, embeddings(id2.neighborId))).sum
+          .map( d2 => producerProducerS m lar yFn(v, embedd ngs( d2.ne ghbor d))).sum
     }
-    key.neighborId
+    key.ne ghbor d
   }
 }

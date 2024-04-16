@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "tweetypie/servo/util",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
-        "tco-util",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/tweettext",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/util",
-        "twitter-text/lib/java/src/main/java/com/twitter/twittertext",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "t etyp e/servo/ut l",
+        "t etyp e/common/src/thr ft/com/tw ter/t etyp e: d a-ent y-scala",
+        "t etyp e/common/src/thr ft/com/tw ter/t etyp e:t et-scala",
+        "tco-ut l",
+        "t etyp e/common/src/scala/com/tw ter/t etyp e/t ettext",
+        "t etyp e/common/src/scala/com/tw ter/t etyp e/ut l",
+        "tw ter-text/l b/java/src/ma n/java/com/tw ter/tw tertext",
     ],
 )

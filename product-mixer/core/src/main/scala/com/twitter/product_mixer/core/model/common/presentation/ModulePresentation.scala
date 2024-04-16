@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.tw ter.product_m xer.core.model.common.presentat on
 
-trait ModulePresentation extends UniversalPresentation
+tra  ModulePresentat on extends Un versalPresentat on

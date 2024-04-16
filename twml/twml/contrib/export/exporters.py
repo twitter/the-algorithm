@@ -1,145 +1,145 @@
 """
-Wrappers around tf.estimator.Exporters to export models and save checkpoints.
+Wrappers around tf.est mator.Exporters to export models and save c ckpo nts.
 """
-import os
+ mport os
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator import exporter
-import twml
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.est mator  mport exporter
+ mport twml
 
 
-class _AllSavedModelsExporter(tf.estimator.Exporter):
-  """Internal exporter class to be used for exporting models for different modes."""
+class _AllSavedModelsExporter(tf.est mator.Exporter):
+  """ nternal exporter class to be used for export ng models for d fferent modes."""
 
-  def __init__(self,
-               name,
-               input_receiver_fn_map,
-               backup_checkpoints,
+  def __ n __(self,
+               na ,
+                nput_rece ver_fn_map,
+               backup_c ckpo nts,
                assets_extra=None,
                as_text=False):
     """
     Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
-      assets_extra: Additional assets to be included in the exported model.
-      as_text: Specifies if the exported model should be in a human readable text format.
+      na : A un que na  to be used for t  exporter. T   s used  n t  export path.
+       nput_rece ver_fn_map: A map of tf.est mator.ModeKeys to  nput_rece ver_fns.
+      backup_c ckpo nts: A flag to spec fy  f backups of c ckpo nts need to be made.
+      assets_extra: Add  onal assets to be  ncluded  n t  exported model.
+      as_text: Spec f es  f t  exported model should be  n a human readable text format.
     """
-    self._name = name
-    self._input_receiver_fn_map = input_receiver_fn_map
-    self._backup_checkpoints = backup_checkpoints
+    self._na  = na 
+    self._ nput_rece ver_fn_map =  nput_rece ver_fn_map
+    self._backup_c ckpo nts = backup_c ckpo nts
     self._assets_extra = assets_extra
     self._as_text = as_text
 
   @property
-  def name(self):
-    return self._name
+  def na (self):
+    return self._na 
 
-  def export(self, estimator, export_path, checkpoint_path, eval_result,
-             is_the_final_export):
-    del is_the_final_export
+  def export(self, est mator, export_path, c ckpo nt_path, eval_result,
+              s_t _f nal_export):
+    del  s_t _f nal_export
 
-    export_path = twml.util.sanitize_hdfs_path(export_path)
-    checkpoint_path = twml.util.sanitize_hdfs_path(checkpoint_path)
+    export_path = twml.ut l.san  ze_hdfs_path(export_path)
+    c ckpo nt_path = twml.ut l.san  ze_hdfs_path(c ckpo nt_path)
 
-    if self._backup_checkpoints:
-      backup_path = os.path.join(export_path, "checkpoints")
-      # Ensure backup_path is created. makedirs passes if dir already exists.
-      tf.io.gfile.makedirs(backup_path)
-      twml.util.backup_checkpoint(checkpoint_path, backup_path, empty_backup=False)
+     f self._backup_c ckpo nts:
+      backup_path = os.path.jo n(export_path, "c ckpo nts")
+      # Ensure backup_path  s created. maked rs passes  f d r already ex sts.
+      tf. o.gf le.maked rs(backup_path)
+      twml.ut l.backup_c ckpo nt(c ckpo nt_path, backup_path, empty_backup=False)
 
-    export_result = estimator.experimental_export_all_saved_models(
+    export_result = est mator.exper  ntal_export_all_saved_models(
       export_path,
-      self._input_receiver_fn_map,
+      self._ nput_rece ver_fn_map,
       assets_extra=self._assets_extra,
       as_text=self._as_text,
-      checkpoint_path=checkpoint_path)
+      c ckpo nt_path=c ckpo nt_path)
 
     return export_result
 
 
-class BestExporter(tf.estimator.BestExporter):
+class BestExporter(tf.est mator.BestExporter):
   """
-  This class inherits from tf.estimator.BestExporter with the following differences:
-    - It also creates a backup of the best checkpoint.
-    - It can export the model for multiple modes.
+  T  class  n r s from tf.est mator.BestExporter w h t  follow ng d fferences:
+    -   also creates a backup of t  best c ckpo nt.
+    -   can export t  model for mult ple modes.
 
-  A backup / export is performed everytime the evaluated metric is better
-  than previous models.
+  A backup / export  s perfor d everyt   t  evaluated  tr c  s better
+  than prev ous models.
   """
 
-  def __init__(self,
-               name='best_exporter',
-               input_receiver_fn_map=None,
-               backup_checkpoints=True,
-               event_file_pattern='eval/*.tfevents.*',
+  def __ n __(self,
+               na ='best_exporter',
+                nput_rece ver_fn_map=None,
+               backup_c ckpo nts=True,
+               event_f le_pattern='eval/*.tfevents.*',
                compare_fn=exporter._loss_smaller,
                assets_extra=None,
                as_text=False,
                exports_to_keep=5):
     """
     Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
+      na : A un que na  to be used for t  exporter. T   s used  n t  export path.
+       nput_rece ver_fn_map: A map of tf.est mator.ModeKeys to  nput_rece ver_fns.
+      backup_c ckpo nts: A flag to spec fy  f backups of c ckpo nts need to be made.
 
     Note:
-      Check the following documentation for more information about the remaining args:
-      https://www.tensorflow.org/api_docs/python/tf/estimator/BestExporter
+      C ck t  follow ng docu ntat on for more  nformat on about t  rema n ng args:
+      https://www.tensorflow.org/ap _docs/python/tf/est mator/BestExporter
     """
-    serving_input_receiver_fn = input_receiver_fn_map.get(tf.estimator.ModeKeys.PREDICT)
+    serv ng_ nput_rece ver_fn =  nput_rece ver_fn_map.get(tf.est mator.ModeKeys.PRED CT)
 
-    super(BestExporter, self).__init__(
-      name, serving_input_receiver_fn, event_file_pattern, compare_fn,
+    super(BestExporter, self).__ n __(
+      na , serv ng_ nput_rece ver_fn, event_f le_pattern, compare_fn,
       assets_extra, as_text, exports_to_keep)
 
-    if not hasattr(self, "_saved_model_exporter"):
-      raise AttributeError(
-        "_saved_model_exporter needs to exist for this exporter to work."
-        " This is potentially broken because of an internal change in Tensorflow")
+     f not hasattr(self, "_saved_model_exporter"):
+      ra se Attr buteError(
+        "_saved_model_exporter needs to ex st for t  exporter to work."
+        " T   s potent ally broken because of an  nternal change  n Tensorflow")
 
-    # Override the saved_model_exporter with SaveAllmodelsexporter
+    # Overr de t  saved_model_exporter w h SaveAllmodelsexporter
     self._saved_model_exporter = _AllSavedModelsExporter(
-      name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
+      na ,  nput_rece ver_fn_map, backup_c ckpo nts, assets_extra, as_text)
 
 
-class LatestExporter(tf.estimator.LatestExporter):
+class LatestExporter(tf.est mator.LatestExporter):
   """
-  This class inherits from tf.estimator.LatestExporter with the following differences:
-    - It also creates a backup of the latest checkpoint.
-    - It can export the model for multiple modes.
+  T  class  n r s from tf.est mator.LatestExporter w h t  follow ng d fferences:
+    -   also creates a backup of t  latest c ckpo nt.
+    -   can export t  model for mult ple modes.
 
-  A backup / export is performed everytime the evaluated metric is better
-  than previous models.
+  A backup / export  s perfor d everyt   t  evaluated  tr c  s better
+  than prev ous models.
   """
 
-  def __init__(self,
-               name='latest_exporter',
-               input_receiver_fn_map=None,
-               backup_checkpoints=True,
+  def __ n __(self,
+               na ='latest_exporter',
+                nput_rece ver_fn_map=None,
+               backup_c ckpo nts=True,
                assets_extra=None,
                as_text=False,
                exports_to_keep=5):
     """
     Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
+      na : A un que na  to be used for t  exporter. T   s used  n t  export path.
+       nput_rece ver_fn_map: A map of tf.est mator.ModeKeys to  nput_rece ver_fns.
+      backup_c ckpo nts: A flag to spec fy  f backups of c ckpo nts need to be made.
 
     Note:
-      Check the following documentation for more information about the remaining args:
-      https://www.tensorflow.org/api_docs/python/tf/estimator/LatestExporter
+      C ck t  follow ng docu ntat on for more  nformat on about t  rema n ng args:
+      https://www.tensorflow.org/ap _docs/python/tf/est mator/LatestExporter
     """
-    serving_input_receiver_fn = input_receiver_fn_map.get(tf.estimator.ModeKeys.PREDICT)
+    serv ng_ nput_rece ver_fn =  nput_rece ver_fn_map.get(tf.est mator.ModeKeys.PRED CT)
 
-    super(LatestExporter, self).__init__(
-      name, serving_input_receiver_fn, assets_extra, as_text, exports_to_keep)
+    super(LatestExporter, self).__ n __(
+      na , serv ng_ nput_rece ver_fn, assets_extra, as_text, exports_to_keep)
 
-    if not hasattr(self, "_saved_model_exporter"):
-      raise AttributeError(
-        "_saved_model_exporter needs to exist for this exporter to work."
-        " This is potentially broken because of an internal change in Tensorflow")
+     f not hasattr(self, "_saved_model_exporter"):
+      ra se Attr buteError(
+        "_saved_model_exporter needs to ex st for t  exporter to work."
+        " T   s potent ally broken because of an  nternal change  n Tensorflow")
 
-    # Override the saved_model_exporter with SaveAllmodelsexporter
+    # Overr de t  saved_model_exporter w h SaveAllmodelsexporter
     self._saved_model_exporter = _AllSavedModelsExporter(
-      name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
+      na ,  nput_rece ver_fn_map, backup_c ckpo nts, assets_extra, as_text)

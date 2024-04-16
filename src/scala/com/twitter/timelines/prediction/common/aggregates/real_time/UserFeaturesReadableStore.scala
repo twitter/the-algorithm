@@ -1,37 +1,37 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecord
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.onl ne.{FeatureStoreCl ent, FeatureStoreRequest}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesAdapterBase
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.JavaConverters._
 
 class UserFeaturesReadableStore(
-  featureStoreClient: FeatureStoreClient,
-  userEntity: Entity[UserId],
-  userFeaturesAdapter: TimelinesAdapterBase[PredictionRecord])
+  featureStoreCl ent: FeatureStoreCl ent,
+  userEnt y: Ent y[User d],
+  userFeaturesAdapter: T  l nesAdapterBase[Pred ct onRecord])
     extends ReadableStore[Set[Long], DataRecord] {
 
-  override def multiGet[K <: Set[Long]](keys: Set[K]): Map[K, Future[Option[DataRecord]]] = {
+  overr de def mult Get[K <: Set[Long]](keys: Set[K]): Map[K, Future[Opt on[DataRecord]]] = {
     val orderedKeys = keys.toSeq
     val featureStoreRequests: Seq[FeatureStoreRequest] = orderedKeys.map { key: Set[Long] =>
       FeatureStoreRequest(
-        entityIds = key.map(userId => userEntity.withId(UserId(userId))).toSeq
+        ent y ds = key.map(user d => userEnt y.w h d(User d(user d))).toSeq
       )
     }
-    val predictionRecordsFut: Future[Seq[PredictionRecord]] = featureStoreClient(
+    val pred ct onRecordsFut: Future[Seq[Pred ct onRecord]] = featureStoreCl ent(
       featureStoreRequests)
 
-    orderedKeys.zipWithIndex.map {
-      case (userId, index) =>
-        val dataRecordFutOpt = predictionRecordsFut.map { predictionRecords =>
-          userFeaturesAdapter.adaptToDataRecords(predictionRecords(index)).asScala.headOption
+    orderedKeys.z pW h ndex.map {
+      case (user d,  ndex) =>
+        val dataRecordFutOpt = pred ct onRecordsFut.map { pred ct onRecords =>
+          userFeaturesAdapter.adaptToDataRecords(pred ct onRecords( ndex)).asScala. adOpt on
         }
-        (userId, dataRecordFutOpt)
+        (user d, dataRecordFutOpt)
     }.toMap
   }
 }

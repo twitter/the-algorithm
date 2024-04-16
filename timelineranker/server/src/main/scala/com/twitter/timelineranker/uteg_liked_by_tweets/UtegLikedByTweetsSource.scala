@@ -1,306 +1,306 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.common._
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.DependencyTransformer
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.monitoring.UsersSearchResultMonitoringTransform
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsParams
-import com.twitter.timelineranker.parameters.monitoring.MonitoringParams
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoHydratedTweetsTransform
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoThriftTweetFeaturesTransform
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.uteg_utils.UTEGRecommendationsFilterBuilder
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etRecom ndat on
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.common._
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.core.DependencyTransfor r
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.model.Cand dateT etsResult
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.mon or ng.UsersSearchResultMon or ngTransform
+ mport com.tw ter.t  l neranker.para ters.recap.RecapParams
+ mport com.tw ter.t  l neranker.para ters.uteg_l ked_by_t ets.UtegL kedByT etsParams
+ mport com.tw ter.t  l neranker.para ters.mon or ng.Mon or ngParams
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l neranker.ut l.CopyContentFeatures ntoHydratedT etsTransform
+ mport com.tw ter.t  l neranker.ut l.CopyContentFeatures ntoThr ftT etFeaturesTransform
+ mport com.tw ter.t  l neranker.v s b l y.FollowGraphDataProv der
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.G zmoduckCl ent
+ mport com.tw ter.t  l nes.cl ents.manhattan.User tadataCl ent
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.t etyp e.T etyP eCl ent
+ mport com.tw ter.t  l nes.cl ents.user_t et_ent y_graph.UserT etEnt yGraphCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.uteg_ut ls.UTEGRecom ndat onsF lterBu lder
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.t  l nes.ut l.stats.RequestStatsRece ver
+ mport com.tw ter.ut l.Future
 
-class UtegLikedByTweetsSource(
-  userTweetEntityGraphClient: UserTweetEntityGraphClient,
-  gizmoduckClient: GizmoduckClient,
-  searchClient: SearchClient,
-  tweetyPieClient: TweetyPieClient,
-  userMetadataClient: UserMetadataClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver) {
+class UtegL kedByT etsS ce(
+  userT etEnt yGraphCl ent: UserT etEnt yGraphCl ent,
+  g zmoduckCl ent: G zmoduckCl ent,
+  searchCl ent: SearchCl ent,
+  t etyP eCl ent: T etyP eCl ent,
+  user tadataCl ent: User tadataCl ent,
+  followGraphDataProv der: FollowGraphDataProv der,
+  contentFeaturesCac : Store[T et d, ContentFeatures],
+  statsRece ver: StatsRece ver) {
 
-  private[this] val socialProofTypes = Seq(SocialProofType.Favorite)
+  pr vate[t ] val soc alProofTypes = Seq(Soc alProofType.Favor e)
 
-  private[this] val baseScope = statsReceiver.scope("utegLikedByTweetsSource")
-  private[this] val requestStats = RequestStatsReceiver(baseScope)
+  pr vate[t ] val baseScope = statsRece ver.scope("utegL kedByT etsS ce")
+  pr vate[t ] val requestStats = RequestStatsRece ver(baseScope)
 
-  private[this] val failOpenScope = baseScope.scope("failOpen")
-  private[this] val userProfileHandler = new FailOpenHandler(failOpenScope, "userProfileInfo")
-  private[this] val userLanguagesHandler = new FailOpenHandler(failOpenScope, "userLanguages")
+  pr vate[t ] val fa lOpenScope = baseScope.scope("fa lOpen")
+  pr vate[t ] val userProf leHandler = new Fa lOpenHandler(fa lOpenScope, "userProf le nfo")
+  pr vate[t ] val userLanguagesHandler = new Fa lOpenHandler(fa lOpenScope, "userLanguages")
 
-  private[this] val debugAuthorsMonitoringProvider =
-    DependencyProvider.from(MonitoringParams.DebugAuthorsAllowListParam)
+  pr vate[t ] val debugAuthorsMon or ngProv der =
+    DependencyProv der.from(Mon or ngParams.DebugAuthorsAllowL stParam)
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.value(RecapParams.MaxFollowedUsers.default)
-  private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
+  pr vate[t ] val maxFollo dUsersProv der =
+    DependencyProv der.value(RecapParams.MaxFollo dUsers.default)
+  pr vate[t ] val followGraphDataTransform =
+    new FollowGraphDataTransform(followGraphDataProv der, maxFollo dUsersProv der)
 
-  private[this] val searchResultsTransform =
-    new UtegLikedByTweetsSearchResultsTransform(
-      searchClient = searchClient,
-      statsReceiver = baseScope,
-      relevanceSearchProvider =
-        DependencyProvider.from(UtegLikedByTweetsParams.EnableRelevanceSearchParam)
+  pr vate[t ] val searchResultsTransform =
+    new UtegL kedByT etsSearchResultsTransform(
+      searchCl ent = searchCl ent,
+      statsRece ver = baseScope,
+      relevanceSearchProv der =
+        DependencyProv der.from(UtegL kedByT etsParams.EnableRelevanceSearchParam)
     )
 
-  private[this] val userProfileInfoTransform =
-    new UserProfileInfoTransform(userProfileHandler, gizmoduckClient)
-  private[this] val languagesTransform =
-    new UserLanguagesTransform(userLanguagesHandler, userMetadataClient)
+  pr vate[t ] val userProf le nfoTransform =
+    new UserProf le nfoTransform(userProf leHandler, g zmoduckCl ent)
+  pr vate[t ] val languagesTransform =
+    new UserLanguagesTransform(userLanguagesHandler, user tadataCl ent)
 
-  private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
+  pr vate[t ] val cand dateGenerat onTransform = new Cand dateGenerat onTransform(baseScope)
 
-  private[this] val maxCandidatesToFetchFromUtegProvider = DependencyProvider { query =>
-    query.utegLikedByTweetsOptions
+  pr vate[t ] val maxCand datesToFetchFromUtegProv der = DependencyProv der { query =>
+    query.utegL kedByT etsOpt ons
       .map(_.utegCount).getOrElse(
-        query.utegLikedByTweetsOptions match {
-          case Some(opts) =>
-            if (opts.isInNetwork) query.params(UtegLikedByTweetsParams.DefaultUTEGInNetworkCount)
-            else query.params(UtegLikedByTweetsParams.DefaultUTEGOutOfNetworkCount)
+        query.utegL kedByT etsOpt ons match {
+          case So (opts) =>
+             f (opts. s nNetwork) query.params(UtegL kedByT etsParams.DefaultUTEG nNetworkCount)
+            else query.params(UtegL kedByT etsParams.DefaultUTEGOutOfNetworkCount)
           case None => 0
         }
       )
   }
 
-  private[this] def isInNetwork(envelope: CandidateEnvelope): Boolean =
-    isInNetwork(envelope.query)
+  pr vate[t ] def  s nNetwork(envelope: Cand dateEnvelope): Boolean =
+     s nNetwork(envelope.query)
 
-  private[this] def isInNetwork(query: RecapQuery): Boolean =
-    query.utegLikedByTweetsOptions.exists(_.isInNetwork)
+  pr vate[t ] def  s nNetwork(query: RecapQuery): Boolean =
+    query.utegL kedByT etsOpt ons.ex sts(_. s nNetwork)
 
-  private[this] def isInNetwork(hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope): Boolean =
-    isInNetwork(hydratedEnvelope.candidateEnvelope)
+  pr vate[t ] def  s nNetwork(hydratedEnvelope: HydratedCand datesAndFeaturesEnvelope): Boolean =
+     s nNetwork(hydratedEnvelope.cand dateEnvelope)
 
-  private[this] val recommendationsFilter =
-    DependencyTransformer.partition[Seq[TweetRecommendation], Seq[TweetRecommendation]](
-      gate = Gate[RecapQuery](f = (query: RecapQuery) => isInNetwork(query)),
-      ifTrue = DependencyTransformer.identity,
-      ifFalse = new UTEGRecommendationsFilterBuilder[RecapQuery](
-        enablingGate =
-          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.EnableParam),
-        excludeTweetGate =
-          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeTweetParam),
-        excludeRetweetGate = RecapQuery.paramGate(
-          UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRetweetParam),
+  pr vate[t ] val recom ndat onsF lter =
+    DependencyTransfor r.part  on[Seq[T etRecom ndat on], Seq[T etRecom ndat on]](
+      gate = Gate[RecapQuery](f = (query: RecapQuery) =>  s nNetwork(query)),
+       fTrue = DependencyTransfor r. dent y,
+       fFalse = new UTEGRecom ndat onsF lterBu lder[RecapQuery](
+        enabl ngGate =
+          RecapQuery.paramGate(UtegL kedByT etsParams.UTEGRecom ndat onsF lter.EnableParam),
+        excludeT etGate =
+          RecapQuery.paramGate(UtegL kedByT etsParams.UTEGRecom ndat onsF lter.ExcludeT etParam),
+        excludeRet etGate = RecapQuery.paramGate(
+          UtegL kedByT etsParams.UTEGRecom ndat onsF lter.ExcludeRet etParam),
         excludeReplyGate =
-          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeReplyParam),
+          RecapQuery.paramGate(UtegL kedByT etsParams.UTEGRecom ndat onsF lter.ExcludeReplyParam),
         excludeQuoteGate = RecapQuery.paramGate(
-          UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeQuoteTweetParam
+          UtegL kedByT etsParams.UTEGRecom ndat onsF lter.ExcludeQuoteT etParam
         ),
-        statsReceiver = baseScope
-      ).build
+        statsRece ver = baseScope
+      ).bu ld
     )
 
-  private[this] val utegResultsTransform = new UTEGResultsTransform(
-    userTweetEntityGraphClient,
-    maxCandidatesToFetchFromUtegProvider,
-    recommendationsFilter,
-    socialProofTypes
+  pr vate[t ] val utegResultsTransform = new UTEGResultsTransform(
+    userT etEnt yGraphCl ent,
+    maxCand datesToFetchFromUtegProv der,
+    recom ndat onsF lter,
+    soc alProofTypes
   )
 
-  private[this] val earlybirdScoreMultiplierProvider =
-    DependencyProvider.from(UtegLikedByTweetsParams.EarlybirdScoreMultiplierParam)
-  private[this] val maxCandidatesToReturnToCallerProvider = DependencyProvider { query =>
-    query.maxCount.getOrElse(query.params(UtegLikedByTweetsParams.DefaultMaxTweetCount))
+  pr vate[t ] val earlyb rdScoreMult pl erProv der =
+    DependencyProv der.from(UtegL kedByT etsParams.Earlyb rdScoreMult pl erParam)
+  pr vate[t ] val maxCand datesToReturnToCallerProv der = DependencyProv der { query =>
+    query.maxCount.getOrElse(query.params(UtegL kedByT etsParams.DefaultMaxT etCount))
   }
 
-  private[this] val minNumFavedByUserIdsProvider = DependencyProvider { query =>
-    query.params(UtegLikedByTweetsParams.MinNumFavoritedByUserIdsParam)
+  pr vate[t ] val m nNumFavedByUser dsProv der = DependencyProv der { query =>
+    query.params(UtegL kedByT etsParams.M nNumFavor edByUser dsParam)
   }
 
-  private[this] val removeTweetsAuthoredBySeedSetForOutOfNetworkPipeline =
-    FutureArrow.choose[CandidateEnvelope, CandidateEnvelope](
-      predicate = isInNetwork,
-      ifTrue = FutureArrow.identity,
-      ifFalse = new UsersSearchResultMonitoringTransform(
-        name = "RemoveCandidatesAuthoredByWeightedFollowingsTransform",
-        RemoveCandidatesAuthoredByWeightedFollowingsTransform,
+  pr vate[t ] val removeT etsAuthoredBySeedSetForOutOfNetworkP pel ne =
+    FutureArrow.choose[Cand dateEnvelope, Cand dateEnvelope](
+      pred cate =  s nNetwork,
+       fTrue = FutureArrow. dent y,
+       fFalse = new UsersSearchResultMon or ngTransform(
+        na  = "RemoveCand datesAuthoredBy  ghtedFollow ngsTransform",
+        RemoveCand datesAuthoredBy  ghtedFollow ngsTransform,
         baseScope,
-        debugAuthorsMonitoringProvider
+        debugAuthorsMon or ngProv der
       )
     )
 
-  private[this] val minNumFavoritedByUserIdsFilterTransform =
-    FutureArrow.choose[CandidateEnvelope, CandidateEnvelope](
-      predicate = isInNetwork,
-      ifTrue = FutureArrow.identity,
-      ifFalse = new UsersSearchResultMonitoringTransform(
-        name = "MinNumNonAuthorFavoritedByUserIdsFilterTransform",
-        new MinNumNonAuthorFavoritedByUserIdsFilterTransform(
-          minNumFavoritedByUserIdsProvider = minNumFavedByUserIdsProvider
+  pr vate[t ] val m nNumFavor edByUser dsF lterTransform =
+    FutureArrow.choose[Cand dateEnvelope, Cand dateEnvelope](
+      pred cate =  s nNetwork,
+       fTrue = FutureArrow. dent y,
+       fFalse = new UsersSearchResultMon or ngTransform(
+        na  = "M nNumNonAuthorFavor edByUser dsF lterTransform",
+        new M nNumNonAuthorFavor edByUser dsF lterTransform(
+          m nNumFavor edByUser dsProv der = m nNumFavedByUser dsProv der
         ),
         baseScope,
-        debugAuthorsMonitoringProvider
+        debugAuthorsMon or ngProv der
       )
     )
 
-  private[this] val includeRandomTweetProvider =
-    DependencyProvider.from(UtegLikedByTweetsParams.IncludeRandomTweetParam)
-  private[this] val includeSingleRandomTweetProvider =
-    DependencyProvider.from(UtegLikedByTweetsParams.IncludeSingleRandomTweetParam)
-  private[this] val probabilityRandomTweetProvider =
-    DependencyProvider.from(UtegLikedByTweetsParams.ProbabilityRandomTweetParam)
+  pr vate[t ] val  ncludeRandomT etProv der =
+    DependencyProv der.from(UtegL kedByT etsParams. ncludeRandomT etParam)
+  pr vate[t ] val  ncludeS ngleRandomT etProv der =
+    DependencyProv der.from(UtegL kedByT etsParams. ncludeS ngleRandomT etParam)
+  pr vate[t ] val probab l yRandomT etProv der =
+    DependencyProv der.from(UtegL kedByT etsParams.Probab l yRandomT etParam)
 
-  private[this] val markRandomTweetTransform = new MarkRandomTweetTransform(
-    includeRandomTweetProvider = includeRandomTweetProvider,
-    includeSingleRandomTweetProvider = includeSingleRandomTweetProvider,
-    probabilityRandomTweetProvider = probabilityRandomTweetProvider,
+  pr vate[t ] val markRandomT etTransform = new MarkRandomT etTransform(
+     ncludeRandomT etProv der =  ncludeRandomT etProv der,
+     ncludeS ngleRandomT etProv der =  ncludeS ngleRandomT etProv der,
+    probab l yRandomT etProv der = probab l yRandomT etProv der,
   )
 
-  private[this] val combinedScoreTruncateTransform =
-    FutureArrow.choose[CandidateEnvelope, CandidateEnvelope](
-      predicate = isInNetwork,
-      ifTrue = FutureArrow.identity,
-      ifFalse = new CombinedScoreAndTruncateTransform(
-        maxTweetCountProvider = maxCandidatesToReturnToCallerProvider,
-        earlybirdScoreMultiplierProvider = earlybirdScoreMultiplierProvider,
-        numAdditionalRepliesProvider =
-          DependencyProvider.from(UtegLikedByTweetsParams.NumAdditionalRepliesParam),
-        statsReceiver = baseScope
+  pr vate[t ] val comb nedScoreTruncateTransform =
+    FutureArrow.choose[Cand dateEnvelope, Cand dateEnvelope](
+      pred cate =  s nNetwork,
+       fTrue = FutureArrow. dent y,
+       fFalse = new Comb nedScoreAndTruncateTransform(
+        maxT etCountProv der = maxCand datesToReturnToCallerProv der,
+        earlyb rdScoreMult pl erProv der = earlyb rdScoreMult pl erProv der,
+        numAdd  onalRepl esProv der =
+          DependencyProv der.from(UtegL kedByT etsParams.NumAdd  onalRepl esParam),
+        statsRece ver = baseScope
       )
     )
 
-  private[this] val excludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
+  pr vate[t ] val excludeRecom ndedRepl esToNonFollo dUsersGate: Gate[RecapQuery] =
     RecapQuery.paramGate(
-      UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam)
+      UtegL kedByT etsParams.UTEGRecom ndat onsF lter.ExcludeRecom ndedRepl esToNonFollo dUsersParam)
 
-  private[this] def enableUseFollowGraphDataForRecommendedReplies(
-    envelope: CandidateEnvelope
+  pr vate[t ] def enableUseFollowGraphDataForRecom ndedRepl es(
+    envelope: Cand dateEnvelope
   ): Boolean =
-    excludeRecommendedRepliesToNonFollowedUsersGate(envelope.query)
+    excludeRecom ndedRepl esToNonFollo dUsersGate(envelope.query)
 
-  val dynamicHydratedTweetsFilter: FutureArrow[CandidateEnvelope, CandidateEnvelope] =
-    FutureArrow.choose[CandidateEnvelope, CandidateEnvelope](
-      predicate = enableUseFollowGraphDataForRecommendedReplies,
-      ifTrue = new TweetKindOptionHydratedTweetsFilterTransform(
+  val dynam cHydratedT etsF lter: FutureArrow[Cand dateEnvelope, Cand dateEnvelope] =
+    FutureArrow.choose[Cand dateEnvelope, Cand dateEnvelope](
+      pred cate = enableUseFollowGraphDataForRecom ndedRepl es,
+       fTrue = new T etK ndOpt onHydratedT etsF lterTransform(
         useFollowGraphData = true,
-        useSourceTweets = false,
-        statsReceiver = baseScope
+        useS ceT ets = false,
+        statsRece ver = baseScope
       ),
-      ifFalse = new TweetKindOptionHydratedTweetsFilterTransform(
+       fFalse = new T etK ndOpt onHydratedT etsF lterTransform(
         useFollowGraphData = false,
-        useSourceTweets = false,
-        statsReceiver = baseScope
+        useS ceT ets = false,
+        statsRece ver = baseScope
       )
     )
 
-  private[this] val trimToMatchSearchResultsTransform =
-    new UsersSearchResultMonitoringTransform(
-      name = "TrimToMatchSearchResultsTransform",
-      new TrimToMatchSearchResultsTransform(
-        hydrateReplyRootTweetProvider = DependencyProvider.False,
-        statsReceiver = baseScope
+  pr vate[t ] val tr mToMatchSearchResultsTransform =
+    new UsersSearchResultMon or ngTransform(
+      na  = "Tr mToMatchSearchResultsTransform",
+      new Tr mToMatchSearchResultsTransform(
+        hydrateReplyRootT etProv der = DependencyProv der.False,
+        statsRece ver = baseScope
       ),
       baseScope,
-      debugAuthorsMonitoringProvider
+      debugAuthorsMon or ngProv der
     )
 
-  // combine score and truncate tweet candidates immediately after
-  private[this] val hydrationAndFilteringPipeline =
-    CreateCandidateEnvelopeTransform
-      .andThen(followGraphDataTransform)
-      .andThen(utegResultsTransform)
-      .andThen(searchResultsTransform)
-      // For out of network tweets, remove tweets whose author is contained in the weighted following seed set passed into TLR
-      .andThen(removeTweetsAuthoredBySeedSetForOutOfNetworkPipeline)
-      .andThen(minNumFavoritedByUserIdsFilterTransform)
-      .andThen(CandidateTweetHydrationTransform)
-      .andThen(markRandomTweetTransform)
-      .andThen(dynamicHydratedTweetsFilter)
-      .andThen(TrimToMatchHydratedTweetsTransform)
-      .andThen(combinedScoreTruncateTransform)
-      .andThen(trimToMatchSearchResultsTransform)
+  // comb ne score and truncate t et cand dates  m d ately after
+  pr vate[t ] val hydrat onAndF lter ngP pel ne =
+    CreateCand dateEnvelopeTransform
+      .andT n(followGraphDataTransform)
+      .andT n(utegResultsTransform)
+      .andT n(searchResultsTransform)
+      // For out of network t ets, remove t ets whose author  s conta ned  n t    ghted follow ng seed set passed  nto TLR
+      .andT n(removeT etsAuthoredBySeedSetForOutOfNetworkP pel ne)
+      .andT n(m nNumFavor edByUser dsF lterTransform)
+      .andT n(Cand dateT etHydrat onTransform)
+      .andT n(markRandomT etTransform)
+      .andT n(dynam cHydratedT etsF lter)
+      .andT n(Tr mToMatchHydratedT etsTransform)
+      .andT n(comb nedScoreTruncateTransform)
+      .andT n(tr mToMatchSearchResultsTransform)
 
-  // runs the main pipeline in parallel with fetching user profile info and user languages
-  private[this] val featureHydrationDataTransform = new FeatureHydrationDataTransform(
-    hydrationAndFilteringPipeline,
+  // runs t  ma n p pel ne  n parallel w h fetch ng user prof le  nfo and user languages
+  pr vate[t ] val featureHydrat onDataTransform = new FeatureHydrat onDataTransform(
+    hydrat onAndF lter ngP pel ne,
     languagesTransform,
-    userProfileInfoTransform
+    userProf le nfoTransform
   )
 
-  private[this] val contentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransformBuilder(
-      tweetyPieClient,
-      contentFeaturesCache,
+  pr vate[t ] val contentFeaturesHydrat onTransform =
+    new ContentFeaturesHydrat onTransformBu lder(
+      t etyP eCl ent,
+      contentFeaturesCac ,
       enableContentFeaturesGate =
-        RecapQuery.paramGate(UtegLikedByTweetsParams.EnableContentFeaturesHydrationParam),
-      enableTokensInContentFeaturesGate =
-        RecapQuery.paramGate(UtegLikedByTweetsParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate = RecapQuery.paramGate(
-        UtegLikedByTweetsParams.EnableTweetTextInContentFeaturesHydrationParam),
-      enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
-        UtegLikedByTweetsParams.EnableConversationControlInContentFeaturesHydrationParam),
-      enableTweetMediaHydrationGate = RecapQuery.paramGate(
-        UtegLikedByTweetsParams.EnableTweetMediaHydrationParam
+        RecapQuery.paramGate(UtegL kedByT etsParams.EnableContentFeaturesHydrat onParam),
+      enableTokens nContentFeaturesGate =
+        RecapQuery.paramGate(UtegL kedByT etsParams.EnableTokens nContentFeaturesHydrat onParam),
+      enableT etText nContentFeaturesGate = RecapQuery.paramGate(
+        UtegL kedByT etsParams.EnableT etText nContentFeaturesHydrat onParam),
+      enableConversat onControlContentFeaturesGate = RecapQuery.paramGate(
+        UtegL kedByT etsParams.EnableConversat onControl nContentFeaturesHydrat onParam),
+      enableT et d aHydrat onGate = RecapQuery.paramGate(
+        UtegL kedByT etsParams.EnableT et d aHydrat onParam
       ),
-      hydrateInReplyToTweets = true,
-      statsReceiver = baseScope
-    ).build()
+      hydrate nReplyToT ets = true,
+      statsRece ver = baseScope
+    ).bu ld()
 
-  // use OutOfNetworkTweetsSearchFeaturesHydrationTransform for rectweets
-  private[this] val tweetsSearchFeaturesHydrationTransform =
+  // use OutOfNetworkT etsSearchFeaturesHydrat onTransform for rect ets
+  pr vate[t ] val t etsSearchFeaturesHydrat onTransform =
     FutureArrow
-      .choose[HydratedCandidatesAndFeaturesEnvelope, HydratedCandidatesAndFeaturesEnvelope](
-        predicate = isInNetwork,
-        ifTrue = InNetworkTweetsSearchFeaturesHydrationTransform,
-        ifFalse = OutOfNetworkTweetsSearchFeaturesHydrationTransform
+      .choose[HydratedCand datesAndFeaturesEnvelope, HydratedCand datesAndFeaturesEnvelope](
+        pred cate =  s nNetwork,
+         fTrue =  nNetworkT etsSearchFeaturesHydrat onTransform,
+         fFalse = OutOfNetworkT etsSearchFeaturesHydrat onTransform
       )
 
-  private[this] def hydratesContentFeatures(
-    hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope
+  pr vate[t ] def hydratesContentFeatures(
+    hydratedEnvelope: HydratedCand datesAndFeaturesEnvelope
   ): Boolean =
-    hydratedEnvelope.candidateEnvelope.query.hydratesContentFeatures.getOrElse(true)
+    hydratedEnvelope.cand dateEnvelope.query.hydratesContentFeatures.getOrElse(true)
 
-  private[this] val contentFeaturesTransformer = FutureArrow.choose(
-    predicate = hydratesContentFeatures,
-    ifTrue = contentFeaturesHydrationTransform
-      .andThen(CopyContentFeaturesIntoThriftTweetFeaturesTransform)
-      .andThen(CopyContentFeaturesIntoHydratedTweetsTransform),
-    ifFalse = FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
-    ](Future.value) // empty transformer
+  pr vate[t ] val contentFeaturesTransfor r = FutureArrow.choose(
+    pred cate = hydratesContentFeatures,
+     fTrue = contentFeaturesHydrat onTransform
+      .andT n(CopyContentFeatures ntoThr ftT etFeaturesTransform)
+      .andT n(CopyContentFeatures ntoHydratedT etsTransform),
+     fFalse = FutureArrow[
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
+    ](Future.value) // empty transfor r
   )
 
-  private[this] val featureHydrationPipeline =
-    featureHydrationDataTransform
-      .andThen(tweetsSearchFeaturesHydrationTransform)
-      .andThen(SocialProofAndUTEGScoreHydrationTransform)
-      .andThen(contentFeaturesTransformer)
-      .andThen(candidateGenerationTransform)
+  pr vate[t ] val featureHydrat onP pel ne =
+    featureHydrat onDataTransform
+      .andT n(t etsSearchFeaturesHydrat onTransform)
+      .andT n(Soc alProofAndUTEGScoreHydrat onTransform)
+      .andT n(contentFeaturesTransfor r)
+      .andT n(cand dateGenerat onTransform)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
+  def get(query: RecapQuery): Future[Cand dateT etsResult] = {
     requestStats.addEventStats {
-      featureHydrationPipeline(query)
+      featureHydrat onP pel ne(query)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(get))
+  def get(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    Future.collect(quer es.map(get))
   }
 
 }

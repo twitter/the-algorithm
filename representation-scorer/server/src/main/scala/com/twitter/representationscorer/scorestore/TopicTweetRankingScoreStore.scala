@@ -1,44 +1,44 @@
-package com.twitter.representationscorer.scorestore
+package com.tw ter.representat onscorer.scorestore
 
-import com.twitter.simclusters_v2.score.WeightedSumAggregatedScoreStore
-import com.twitter.simclusters_v2.score.WeightedSumAggregatedScoreStore.WeightedSumAggregatedScoreParameter
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType, ModelVersion, ScoringAlgorithm}
+ mport com.tw ter.s mclusters_v2.score.  ghtedSumAggregatedScoreStore
+ mport com.tw ter.s mclusters_v2.score.  ghtedSumAggregatedScoreStore.  ghtedSumAggregatedScorePara ter
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Embedd ngType, ModelVers on, Scor ngAlgor hm}
 
-object TopicTweetRankingScoreStore {
-  val producerEmbeddingScoreMultiplier = 1.0
-  val consumerEmbeddingScoreMultiplier = 1.0
+object Top cT etRank ngScoreStore {
+  val producerEmbedd ngScoreMult pl er = 1.0
+  val consu rEmbedd ngScoreMult pl er = 1.0
 
   /**
-   * Build the scoring store for TopicTweet Ranking based on Default Multipliers.
-   * If you want to compare the ranking between different multipliers, register a new
-   * ScoringAlgorithm and let the upstream uses different scoringAlgorithm by params.
+   * Bu ld t  scor ng store for Top cT et Rank ng based on Default Mult pl ers.
+   *  f   want to compare t  rank ng bet en d fferent mult pl ers, reg ster a new
+   * Scor ngAlgor hm and let t  upstream uses d fferent scor ngAlgor hm by params.
    */
-  def buildTopicTweetRankingStore(
-    consumerEmbeddingType: EmbeddingType,
-    producerEmbeddingType: EmbeddingType,
-    tweetEmbeddingType: EmbeddingType,
-    modelVersion: ModelVersion,
-    consumerEmbeddingMultiplier: Double = consumerEmbeddingScoreMultiplier,
-    producerEmbeddingMultiplier: Double = producerEmbeddingScoreMultiplier
-  ): WeightedSumAggregatedScoreStore = {
-    WeightedSumAggregatedScoreStore(
-      List(
-        WeightedSumAggregatedScoreParameter(
-          ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-          consumerEmbeddingMultiplier,
-          WeightedSumAggregatedScoreStore.genericPairScoreIdToSimClustersEmbeddingPairScoreId(
-            consumerEmbeddingType,
-            tweetEmbeddingType,
-            modelVersion
+  def bu ldTop cT etRank ngStore(
+    consu rEmbedd ngType: Embedd ngType,
+    producerEmbedd ngType: Embedd ngType,
+    t etEmbedd ngType: Embedd ngType,
+    modelVers on: ModelVers on,
+    consu rEmbedd ngMult pl er: Double = consu rEmbedd ngScoreMult pl er,
+    producerEmbedd ngMult pl er: Double = producerEmbedd ngScoreMult pl er
+  ):   ghtedSumAggregatedScoreStore = {
+      ghtedSumAggregatedScoreStore(
+      L st(
+          ghtedSumAggregatedScorePara ter(
+          Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+          consu rEmbedd ngMult pl er,
+            ghtedSumAggregatedScoreStore.gener cPa rScore dToS mClustersEmbedd ngPa rScore d(
+            consu rEmbedd ngType,
+            t etEmbedd ngType,
+            modelVers on
           )
         ),
-        WeightedSumAggregatedScoreParameter(
-          ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-          producerEmbeddingMultiplier,
-          WeightedSumAggregatedScoreStore.genericPairScoreIdToSimClustersEmbeddingPairScoreId(
-            producerEmbeddingType,
-            tweetEmbeddingType,
-            modelVersion
+          ghtedSumAggregatedScorePara ter(
+          Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+          producerEmbedd ngMult pl er,
+            ghtedSumAggregatedScoreStore.gener cPa rScore dToS mClustersEmbedd ngPa rScore d(
+            producerEmbedd ngType,
+            t etEmbedd ngType,
+            modelVers on
           )
         )
       )

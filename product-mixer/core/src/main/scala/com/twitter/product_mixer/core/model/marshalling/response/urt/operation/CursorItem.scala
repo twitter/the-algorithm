@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation.CursorEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on.CursorEntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
 /**
- * CursorItem should only be used for Module cursors
- * For timeline cursors, see
- * [[com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation]]
+ * Cursor em should only be used for Module cursors
+ * For t  l ne cursors, see
+ * [[com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on]]
  */
-case class CursorItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  value: String,
+case class Cursor em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  value: Str ng,
   cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment])
-    extends TimelineItem {
+  d splayTreat nt: Opt on[CursorD splayTreat nt])
+    extends T  l ne em {
 
-  override val entryNamespace: EntryNamespace = CursorEntryNamespace
+  overr de val entryNa space: EntryNa space = CursorEntryNa space
 
-  override lazy val entryIdentifier: String =
-    s"$entryNamespace-${cursorType.entryNamespace}-$id"
+  overr de lazy val entry dent f er: Str ng =
+    s"$entryNa space-${cursorType.entryNa space}-$ d"
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

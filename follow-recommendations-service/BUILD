@@ -1,48 +1,48 @@
-# Without this alias, library :follow-recommendations-service_lib would conflict with :bin
-alias(
-    name = "follow-recommendations-service",
-    target = ":follow-recommendations-service_lib",
+# W hout t  al as, l brary :follow-recom ndat ons-serv ce_l b would confl ct w h :b n
+al as(
+    na  = "follow-recom ndat ons-serv ce",
+    target = ":follow-recom ndat ons-serv ce_l b",
 )
 
 target(
-    name = "follow-recommendations-service_lib",
-    dependencies = [
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
+    na  = "follow-recom ndat ons-serv ce_l b",
+    dependenc es = [
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/models",
     ],
 )
 
-jvm_binary(
-    name = "bin",
-    basename = "follow-recommendations-service",
-    main = "com.twitter.follow_recommendations.FollowRecommendationsServiceThriftServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":follow-recommendations-service",
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+jvm_b nary(
+    na  = "b n",
+    basena  = "follow-recom ndat ons-serv ce",
+    ma n = "com.tw ter.follow_recom ndat ons.FollowRecom ndat onsServ ceThr ftServerMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":follow-recom ndat ons-serv ce",
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "f nagle/f nagle-z pk n-scr be/src/ma n/scala",
+        "f natra/ nject/ nject-logback/src/ma n/scala",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows bu ld phase convent on requ res a jvm_app na d w h ${project-na }-app
 jvm_app(
-    name = "follow-recommendations-service-app",
-    archive = "zip",
-    binary = ":bin",
+    na  = "follow-recom ndat ons-serv ce-app",
+    arch ve = "z p",
+    b nary = ":b n",
     bundles = [
         bundle(
-            fileset = [
-                "server/src/main/resources/*",
-                "server/src/main/resources/**/*",
+            f leset = [
+                "server/src/ma n/res ces/*",
+                "server/src/ma n/res ces/**/*",
             ],
-            owning_target = "follow-recommendations-service/server/src/main/resources:frs_resources",
-            relative_to = "server/src/main/resources",
+            own ng_target = "follow-recom ndat ons-serv ce/server/src/ma n/res ces:frs_res ces",
+            relat ve_to = "server/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

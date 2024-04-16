@@ -1,82 +1,82 @@
 #pragma once
-#include <twml/defines.h>
+# nclude <twml/def nes.h>
 
-#include <cstddef>
-#include <vector>
-#include <string>
+# nclude <cstddef>
+# nclude <vector>
+# nclude <str ng>
 
-#ifdef __cplusplus
+# fdef __cplusplus
 extern "C" {
-#endif
+#end f
 
   struct twml_tensor__;
   typedef twml_tensor__ * twml_tensor;
 
-#ifdef __cplusplus
+# fdef __cplusplus
 }
-#endif
+#end f
 
-#ifdef __cplusplus
-namespace twml {
+# fdef __cplusplus
+na space twml {
 
-class TWMLAPI Tensor
+class TWMLAP  Tensor
 {
-private:
+pr vate:
   twml_type m_type;
-  void *m_data;
-  std::vector<uint64_t> m_dims;
-  std::vector<uint64_t> m_strides;
+  vo d *m_data;
+  std::vector<u nt64_t> m_d ms;
+  std::vector<u nt64_t> m_str des;
 
-public:
+publ c:
   Tensor() {}
-  Tensor(void *data, int ndims, const uint64_t *dims, const uint64_t *strides, twml_type type);
-  Tensor(void *data, const std::vector<uint64_t> &dims, const std::vector<uint64_t> &strides, twml_type type);
+  Tensor(vo d *data,  nt nd ms, const u nt64_t *d ms, const u nt64_t *str des, twml_type type);
+  Tensor(vo d *data, const std::vector<u nt64_t> &d ms, const std::vector<u nt64_t> &str des, twml_type type);
 
-  const std::vector<uint64_t>& getDims() const {
-    return m_dims;
+  const std::vector<u nt64_t>& getD ms() const {
+    return m_d ms;
   }
 
-  int getNumDims() const;
-  uint64_t getDim(int dim) const;
-  uint64_t getStride(int dim) const;
-  uint64_t getNumElements() const;
+   nt getNumD ms() const;
+  u nt64_t getD m( nt d m) const;
+  u nt64_t getStr de( nt d m) const;
+  u nt64_t getNumEle nts() const;
   twml_type getType() const;
 
   twml_tensor getHandle();
   const twml_tensor getHandle() const;
 
-  template<typename T> T *getData();
-  template<typename T> const T *getData() const;
+  template<typena  T> T *getData();
+  template<typena  T> const T *getData() const;
 };
 
-TWMLAPI std::string getTypeName(twml_type type);
-TWMLAPI const Tensor *getConstTensor(const twml_tensor t);
-TWMLAPI Tensor *getTensor(twml_tensor t);
-TWMLAPI uint64_t getSizeOf(twml_type type);
+TWMLAP  std::str ng getTypeNa (twml_type type);
+TWMLAP  const Tensor *getConstTensor(const twml_tensor t);
+TWMLAP  Tensor *getTensor(twml_tensor t);
+TWMLAP  u nt64_t getS zeOf(twml_type type);
 
 }
-#endif
+#end f
 
-#ifdef __cplusplus
+# fdef __cplusplus
 extern "C" {
-#endif
-    TWMLAPI twml_err twml_tensor_create(twml_tensor *tensor, void *data,
-                                        int ndims, uint64_t *dims,
-                                        uint64_t *strides, twml_type type);
+#end f
+    TWMLAP  twml_err twml_tensor_create(twml_tensor *tensor, vo d *data,
+                                         nt nd ms, u nt64_t *d ms,
+                                        u nt64_t *str des, twml_type type);
 
-    TWMLAPI twml_err twml_tensor_delete(const twml_tensor tensor);
+    TWMLAP  twml_err twml_tensor_delete(const twml_tensor tensor);
 
-    TWMLAPI twml_err twml_tensor_get_type(twml_type *type, const twml_tensor tensor);
+    TWMLAP  twml_err twml_tensor_get_type(twml_type *type, const twml_tensor tensor);
 
-    TWMLAPI twml_err twml_tensor_get_data(void **data, const twml_tensor tensor);
+    TWMLAP  twml_err twml_tensor_get_data(vo d **data, const twml_tensor tensor);
 
-    TWMLAPI twml_err twml_tensor_get_dim(uint64_t *dim, const twml_tensor tensor, int id);
+    TWMLAP  twml_err twml_tensor_get_d m(u nt64_t *d m, const twml_tensor tensor,  nt  d);
 
-    TWMLAPI twml_err twml_tensor_get_num_dims(int *ndims, const twml_tensor tensor);
+    TWMLAP  twml_err twml_tensor_get_num_d ms( nt *nd ms, const twml_tensor tensor);
 
-    TWMLAPI twml_err twml_tensor_get_num_elements(uint64_t *nelements, const twml_tensor tensor);
+    TWMLAP  twml_err twml_tensor_get_num_ele nts(u nt64_t *nele nts, const twml_tensor tensor);
 
-    TWMLAPI twml_err twml_tensor_get_stride(uint64_t *stride, const twml_tensor tensor, int id);
-#ifdef __cplusplus
+    TWMLAP  twml_err twml_tensor_get_str de(u nt64_t *str de, const twml_tensor tensor,  nt  d);
+# fdef __cplusplus
 }
-#endif
+#end f

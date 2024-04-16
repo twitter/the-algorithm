@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorOperationMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.CursorOperat onMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neOperat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineOperationMarshaller @Inject() (
-  cursorOperationMarshaller: CursorOperationMarshaller) {
+@S ngleton
+class T  l neOperat onMarshaller @ nject() (
+  cursorOperat onMarshaller: CursorOperat onMarshaller) {
 
-  def apply(operation: TimelineOperation): urt.TimelineOperation = operation match {
-    case cursorOperation: CursorOperation => cursorOperationMarshaller(cursorOperation)
+  def apply(operat on: T  l neOperat on): urt.T  l neOperat on = operat on match {
+    case cursorOperat on: CursorOperat on => cursorOperat onMarshaller(cursorOperat on)
     case _ =>
-      throw new UnsupportedTimelineOperationException(operation)
+      throw new UnsupportedT  l neOperat onExcept on(operat on)
   }
 }
 
-class UnsupportedTimelineOperationException(operation: TimelineOperation)
-    extends UnsupportedOperationException(
-      "Unsupported timeline operation " + TransportMarshaller.getSimpleName(operation.getClass))
+class UnsupportedT  l neOperat onExcept on(operat on: T  l neOperat on)
+    extends UnsupportedOperat onExcept on(
+      "Unsupported t  l ne operat on " + TransportMarshaller.getS mpleNa (operat on.getClass))

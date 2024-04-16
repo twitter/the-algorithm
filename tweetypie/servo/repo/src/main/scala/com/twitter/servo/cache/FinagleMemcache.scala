@@ -1,149 +1,149 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.finagle.memcached.{CasResult, Client}
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.{Backoff, Memcached, TimeoutException, WriteException}
-import com.twitter.hashing.KeyHasher
-import com.twitter.io.Buf
-import com.twitter.logging.Logger
-import com.twitter.util._
+ mport com.tw ter.f nagle. mcac d.{CasResult, Cl ent}
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.{Backoff,  mcac d, T  outExcept on, Wr eExcept on}
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. o.Buf
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l._
 
-case class MemcacheRetryPolicy(
-  writeExceptionBackoffs: Backoff,
-  timeoutBackoffs: Backoff)
-    extends RetryPolicy[Try[Nothing]] {
-  override def apply(r: Try[Nothing]) = r match {
-    case Throw(_: WriteException) => onWriteException
-    case Throw(_: TimeoutException) => onTimeoutException
+case class  mcac RetryPol cy(
+  wr eExcept onBackoffs: Backoff,
+  t  outBackoffs: Backoff)
+    extends RetryPol cy[Try[Noth ng]] {
+  overr de def apply(r: Try[Noth ng]) = r match {
+    case Throw(_: Wr eExcept on) => onWr eExcept on
+    case Throw(_: T  outExcept on) => onT  outExcept on
     case _ => None
   }
 
-  private[this] def onTimeoutException = consume(timeoutBackoffs.toStream) { tail =>
-    copy(timeoutBackoffs = Backoff.fromStream(tail))
+  pr vate[t ] def onT  outExcept on = consu (t  outBackoffs.toStream) { ta l =>
+    copy(t  outBackoffs = Backoff.fromStream(ta l))
   }
 
-  private[this] def onWriteException = consume(writeExceptionBackoffs.toStream) { tail =>
-    copy(writeExceptionBackoffs = Backoff.fromStream(tail))
+  pr vate[t ] def onWr eExcept on = consu (wr eExcept onBackoffs.toStream) { ta l =>
+    copy(wr eExcept onBackoffs = Backoff.fromStream(ta l))
   }
 
-  private[this] def consume(s: Stream[Duration])(f: Stream[Duration] => MemcacheRetryPolicy) = {
-    s.headOption map { duration =>
-      (duration, f(s.tail))
+  pr vate[t ] def consu (s: Stream[Durat on])(f: Stream[Durat on] =>  mcac RetryPol cy) = {
+    s. adOpt on map { durat on =>
+      (durat on, f(s.ta l))
     }
   }
 }
 
-object FinagleMemcacheFactory {
-  val DefaultHashName = "fnv1-32"
+object F nagle mcac Factory {
+  val DefaultHashNa  = "fnv1-32"
 
-  def apply(client: Memcached.Client, dest: String, hashName: String = DefaultHashName) =
-    new FinagleMemcacheFactory(client, dest, hashName)
+  def apply(cl ent:  mcac d.Cl ent, dest: Str ng, hashNa : Str ng = DefaultHashNa ) =
+    new F nagle mcac Factory(cl ent, dest, hashNa )
 }
 
-class FinagleMemcacheFactory private[cache] (
-  client: Memcached.Client,
-  dest: String,
-  hashName: String)
-    extends MemcacheFactory {
+class F nagle mcac Factory pr vate[cac ] (
+  cl ent:  mcac d.Cl ent,
+  dest: Str ng,
+  hashNa : Str ng)
+    extends  mcac Factory {
 
-  def apply(): Memcache = {
-    val keyHasher = KeyHasher.byName(hashName)
-    new FinagleMemcache(client.withKeyHasher(keyHasher).newTwemcacheClient(dest), hashName)
+  def apply():  mcac  = {
+    val keyHas r = KeyHas r.byNa (hashNa )
+    new F nagle mcac (cl ent.w hKeyHas r(keyHas r).newT mcac Cl ent(dest), hashNa )
   }
 }
 
-object FinagleMemcache {
+object F nagle mcac  {
   val NoFlags = 0
   val logger = Logger(getClass)
 }
 
 /**
- * Adapter for a [[Memcache]] (type alias for [[TtlCache]]) from a Finagle Memcached
- * [[Client]].
+ * Adapter for a [[ mcac ]] (type al as for [[TtlCac ]]) from a F nagle  mcac d
+ * [[Cl ent]].
  */
-class FinagleMemcache(client: Client, hashName: String = FinagleMemcacheFactory.DefaultHashName)
-    extends Memcache {
+class F nagle mcac (cl ent: Cl ent, hashNa : Str ng = F nagle mcac Factory.DefaultHashNa )
+    extends  mcac  {
 
-  import FinagleMemcache.NoFlags
+   mport F nagle mcac .NoFlags
 
-  private[this] case class BufferChecksum(buffer: Buf) extends Checksum
+  pr vate[t ] case class BufferC cksum(buffer: Buf) extends C cksum
 
-  def release(): Unit = {
-    client.close()
+  def release(): Un  = {
+    cl ent.close()
   }
 
-  override def get(keys: Seq[String]): Future[KeyValueResult[String, Array[Byte]]] =
-    client.getResult(keys).transform {
+  overr de def get(keys: Seq[Str ng]): Future[KeyValueResult[Str ng, Array[Byte]]] =
+    cl ent.getResult(keys).transform {
       case Return(gr) =>
-        val found = gr.hits.map {
+        val found = gr.h s.map {
           case (key, v) =>
             val bytes = Buf.ByteArray.Owned.extract(v.value)
             key -> bytes
         }
-        Future.value(KeyValueResult(found, gr.misses, gr.failures))
+        Future.value(KeyValueResult(found, gr.m sses, gr.fa lures))
 
       case Throw(t) =>
-        Future.value(KeyValueResult(failed = keys.map(_ -> t).toMap))
+        Future.value(KeyValueResult(fa led = keys.map(_ -> t).toMap))
     }
 
-  override def getWithChecksum(keys: Seq[String]): Future[CsKeyValueResult[String, Array[Byte]]] =
-    client.getsResult(keys).transform {
+  overr de def getW hC cksum(keys: Seq[Str ng]): Future[CsKeyValueResult[Str ng, Array[Byte]]] =
+    cl ent.getsResult(keys).transform {
       case Return(gr) =>
         try {
-          val hits = gr.hits map {
+          val h s = gr.h s map {
             case (key, v) =>
               val bytes = Buf.ByteArray.Owned.extract(v.value)
-              key -> (Return(bytes), BufferChecksum(
-                v.casUnique.get
-              )) // TODO. what to do if missing?
+              key -> (Return(bytes), BufferC cksum(
+                v.casUn que.get
+              )) // TODO. what to do  f m ss ng?
           }
-          Future.value(KeyValueResult(hits, gr.misses, gr.failures))
+          Future.value(KeyValueResult(h s, gr.m sses, gr.fa lures))
         } catch {
           case t: Throwable =>
-            Future.value(KeyValueResult(failed = keys.map(_ -> t).toMap))
+            Future.value(KeyValueResult(fa led = keys.map(_ -> t).toMap))
         }
       case Throw(t) =>
-        Future.value(KeyValueResult(failed = keys.map(_ -> t).toMap))
+        Future.value(KeyValueResult(fa led = keys.map(_ -> t).toMap))
     }
 
-  private val jb2sb: java.lang.Boolean => Boolean = _.booleanValue
-  private val jl2sl: java.lang.Long => Long = _.longValue
+  pr vate val jb2sb: java.lang.Boolean => Boolean = _.booleanValue
+  pr vate val jl2sl: java.lang.Long => Long = _.longValue
 
-  override def add(key: String, value: Array[Byte], ttl: Duration): Future[Boolean] =
-    client.add(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value)) map jb2sb
+  overr de def add(key: Str ng, value: Array[Byte], ttl: Durat on): Future[Boolean] =
+    cl ent.add(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value)) map jb2sb
 
-  override def checkAndSet(
-    key: String,
+  overr de def c ckAndSet(
+    key: Str ng,
     value: Array[Byte],
-    checksum: Checksum,
-    ttl: Duration
+    c cksum: C cksum,
+    ttl: Durat on
   ): Future[Boolean] = {
-    checksum match {
-      case BufferChecksum(cs) =>
-        client.checkAndSet(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value), cs) map {
+    c cksum match {
+      case BufferC cksum(cs) =>
+        cl ent.c ckAndSet(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value), cs) map {
           res: CasResult =>
             res.replaced
         }
       case _ =>
-        Future.exception(new IllegalArgumentException("unrecognized checksum: " + checksum))
+        Future.except on(new  llegalArgu ntExcept on("unrecogn zed c cksum: " + c cksum))
     }
   }
 
-  override def set(key: String, value: Array[Byte], ttl: Duration): Future[Unit] =
-    client.set(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value))
+  overr de def set(key: Str ng, value: Array[Byte], ttl: Durat on): Future[Un ] =
+    cl ent.set(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value))
 
-  override def replace(key: String, value: Array[Byte], ttl: Duration): Future[Boolean] =
-    client.replace(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value)) map jb2sb
+  overr de def replace(key: Str ng, value: Array[Byte], ttl: Durat on): Future[Boolean] =
+    cl ent.replace(key, NoFlags, ttl.fromNow, Buf.ByteArray.Owned(value)) map jb2sb
 
-  override def delete(key: String): Future[Boolean] =
-    client.delete(key) map jb2sb
+  overr de def delete(key: Str ng): Future[Boolean] =
+    cl ent.delete(key) map jb2sb
 
-  def incr(key: String, delta: Long = 1): Future[Option[Long]] =
-    client.incr(key, delta) map { _ map jl2sl }
+  def  ncr(key: Str ng, delta: Long = 1): Future[Opt on[Long]] =
+    cl ent. ncr(key, delta) map { _ map jl2sl }
 
-  def decr(key: String, delta: Long = 1): Future[Option[Long]] =
-    client.decr(key, delta) map { _ map jl2sl }
+  def decr(key: Str ng, delta: Long = 1): Future[Opt on[Long]] =
+    cl ent.decr(key, delta) map { _ map jl2sl }
 
-  // NOTE: This is the only reason that hashName is passed as a param to FinagleMemcache.
-  override lazy val toString = "FinagleMemcache(%s)".format(hashName)
+  // NOTE: T   s t  only reason that hashNa   s passed as a param to F nagle mcac .
+  overr de lazy val toStr ng = "F nagle mcac (%s)".format(hashNa )
 }

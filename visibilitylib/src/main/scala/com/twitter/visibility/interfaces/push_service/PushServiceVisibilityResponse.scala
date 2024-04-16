@@ -1,52 +1,52 @@
-package com.twitter.visibility.interfaces.push_service
+package com.tw ter.v s b l y. nterfaces.push_serv ce
 
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleResult
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.rules.Act on
+ mport com.tw ter.v s b l y.rules.Allow
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules.Rule
+ mport com.tw ter.v s b l y.rules.RuleResult
 
-case class PushServiceVisibilityResponse(
-  tweetVisibilityResult: VisibilityResult,
-  authorVisibilityResult: VisibilityResult,
-  sourceTweetVisibilityResult: Option[VisibilityResult] = None,
-  quotedTweetVisibilityResult: Option[VisibilityResult] = None,
+case class PushServ ceV s b l yResponse(
+  t etV s b l yResult: V s b l yResult,
+  authorV s b l yResult: V s b l yResult,
+  s ceT etV s b l yResult: Opt on[V s b l yResult] = None,
+  quotedT etV s b l yResult: Opt on[V s b l yResult] = None,
 ) {
 
-  def allVisibilityResults: List[VisibilityResult] = {
-    List(
-      Some(tweetVisibilityResult),
-      Some(authorVisibilityResult),
-      sourceTweetVisibilityResult,
-      quotedTweetVisibilityResult,
-    ).collect { case Some(result) => result }
+  def allV s b l yResults: L st[V s b l yResult] = {
+    L st(
+      So (t etV s b l yResult),
+      So (authorV s b l yResult),
+      s ceT etV s b l yResult,
+      quotedT etV s b l yResult,
+    ).collect { case So (result) => result }
   }
 
-  val shouldAllow: Boolean = !allVisibilityResults.exists(isDrop(_))
+  val shouldAllow: Boolean = !allV s b l yResults.ex sts( sDrop(_))
 
-  def isDrop(response: VisibilityResult): Boolean = response.verdict match {
+  def  sDrop(response: V s b l yResult): Boolean = response.verd ct match {
     case _: Drop => true
     case Allow => false
     case _ => false
   }
-  def isDrop(response: Option[VisibilityResult]): Boolean = response.map(isDrop(_)).getOrElse(false)
+  def  sDrop(response: Opt on[V s b l yResult]): Boolean = response.map( sDrop(_)).getOrElse(false)
 
-  def getDropRules(visibilityResult: VisibilityResult): List[Rule] = {
-    val ruleResultMap = visibilityResult.ruleResultMap
-    val ruleResults = ruleResultMap.toList
+  def getDropRules(v s b l yResult: V s b l yResult): L st[Rule] = {
+    val ruleResultMap = v s b l yResult.ruleResultMap
+    val ruleResults = ruleResultMap.toL st
     val denyRules = ruleResults.collect { case (rule, RuleResult(Drop(_, _), _)) => rule }
     denyRules
   }
-  def getAuthorDropRules: List[Rule] = getDropRules(authorVisibilityResult)
-  def getTweetDropRules: List[Rule] = getDropRules(tweetVisibilityResult)
-  def getDropRules: List[Rule] = getAuthorDropRules ++ getTweetDropRules
-  def getVerdict: Action = {
-    if (isDrop(authorVisibilityResult)) authorVisibilityResult.verdict
-    else tweetVisibilityResult.verdict
+  def getAuthorDropRules: L st[Rule] = getDropRules(authorV s b l yResult)
+  def getT etDropRules: L st[Rule] = getDropRules(t etV s b l yResult)
+  def getDropRules: L st[Rule] = getAuthorDropRules ++ getT etDropRules
+  def getVerd ct: Act on = {
+     f ( sDrop(authorV s b l yResult)) authorV s b l yResult.verd ct
+    else t etV s b l yResult.verd ct
   }
 
-  def missingFeatures: Map[String, Int] = PushServiceVisibilityLibraryUtil.getMissingFeatureCounts(
-    Seq(tweetVisibilityResult, authorVisibilityResult))
+  def m ss ngFeatures: Map[Str ng,  nt] = PushServ ceV s b l yL braryUt l.getM ss ngFeatureCounts(
+    Seq(t etV s b l yResult, authorV s b l yResult))
 
 }

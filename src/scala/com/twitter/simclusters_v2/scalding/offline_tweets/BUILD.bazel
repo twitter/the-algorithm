@@ -1,27 +1,27 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
     platform = "java8",
     tags = ["bazel-only"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+    dependenc es = [
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "t ets ce/publ c_t ets/src/ma n/scala/com/tw ter/t ets ce/publ c_t ets:publ c_t ets-scala",
+        "users ce/snapshot/src/ma n/scala/com/tw ter/users ce/snapshot/flat:users ce_flat-scala",
     ],
 )
 
-hadoop_binary(
-    name = "offline_cluster_top_media_tweets_20M_145K_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_tweets.AdhocClusterTopTweetsJob",
+hadoop_b nary(
+    na  = "offl ne_cluster_top_ d a_t ets_20M_145K_2020-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.offl ne_t ets.AdhocClusterTopT etsJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":offline_tweets",
+    dependenc es = [
+        ":offl ne_t ets",
     ],
 )

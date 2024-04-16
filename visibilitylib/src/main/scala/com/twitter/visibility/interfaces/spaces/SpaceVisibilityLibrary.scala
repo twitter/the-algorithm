@@ -1,117 +1,117 @@
-package com.twitter.visibility.interfaces.spaces
+package com.tw ter.v s b l y. nterfaces.spaces
 
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.spaces.SpaceFeatures
-import com.twitter.visibility.builder.spaces.StratoSpaceLabelMaps
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.SpaceId
-import com.twitter.visibility.models.ContentId.SpacePlusUserId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.common.MutedKeywordFeatures
+ mport com.tw ter.v s b l y.bu lder.spaces.SpaceFeatures
+ mport com.tw ter.v s b l y.bu lder.spaces.StratoSpaceLabelMaps
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common._
+ mport com.tw ter.v s b l y.common.st ch.St ch lpers
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d.Space d
+ mport com.tw ter.v s b l y.models.Content d.SpacePlusUser d
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.prov ders.Prov dedEvaluat onContext
+ mport com.tw ter.v s b l y.rules.ut ls.Sh mUt ls
 
-object SpaceVisibilityLibrary {
-  type Type = SpaceVisibilityRequest => Stitch[VisibilityResult]
+object SpaceV s b l yL brary {
+  type Type = SpaceV s b l yRequest => St ch[V s b l yResult]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    enableVfFeatureHydrationSpaceShim: Gate[Unit] = Gate.False
+    v s b l yL brary: V s b l yL brary,
+    stratoCl ent: StratoCl ent,
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce,
+    enableVfFeatureHydrat onSpaceSh m: Gate[Un ] = Gate.False
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfLatencyStatsReceiver = visibilityLibrary.statsReceiver.scope("vf_latency")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val stratoCl entStatsRece ver = v s b l yL brary.statsRece ver.scope("strato")
+    val vfLatencyStatsRece ver = v s b l yL brary.statsRece ver.scope("vf_latency")
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
     val spaceLabelMaps = new StratoSpaceLabelMaps(
-      SpaceSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
-    val audioSpaceSource = AudioSpaceSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+      SpaceSafetyLabelMapS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver),
+      l braryStatsRece ver)
+    val aud oSpaceS ce = Aud oSpaceS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver)
 
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
+    val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+    val relat onsh pFeatures =
+      new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
     val mutedKeywordFeatures = new MutedKeywordFeatures(
-      userSource,
-      userRelationshipSource,
-      KeywordMatcher.matcher(libraryStatsReceiver),
-      libraryStatsReceiver,
+      userS ce,
+      userRelat onsh pS ce,
+      KeywordMatc r.matc r(l braryStatsRece ver),
+      l braryStatsRece ver,
       Gate.False
     )
     val spaceFeatures =
       new SpaceFeatures(
         spaceLabelMaps,
         authorFeatures,
-        relationshipFeatures,
+        relat onsh pFeatures,
         mutedKeywordFeatures,
-        audioSpaceSource)
+        aud oSpaceS ce)
 
-    { r: SpaceVisibilityRequest =>
-      vfEngineCounter.incr()
+    { r: SpaceV s b l yRequest =>
+      vfEng neCounter. ncr()
 
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydrationSpaceShim()
-      val viewerId = r.viewerContext.userId
-      val authorIds: Option[Seq[Long]] = r.spaceHostAndAdminUserIds
-      val contentId = {
-        (viewerId, authorIds) match {
-          case (Some(viewer), Some(authors)) if authors.contains(viewer) => SpaceId(r.spaceId)
-          case _ => SpacePlusUserId(r.spaceId)
+      val  sVfFeatureHydrat onEnabled = enableVfFeatureHydrat onSpaceSh m()
+      val v e r d = r.v e rContext.user d
+      val author ds: Opt on[Seq[Long]] = r.spaceHostAndAdm nUser ds
+      val content d = {
+        (v e r d, author ds) match {
+          case (So (v e r), So (authors))  f authors.conta ns(v e r) => Space d(r.space d)
+          case _ => SpacePlusUser d(r.space d)
         }
       }
 
       val featureMap =
-        visibilityLibrary.featureMapBuilder(
+        v s b l yL brary.featureMapBu lder(
           Seq(
-            spaceFeatures.forSpaceAndAuthorIds(r.spaceId, viewerId, authorIds),
-            viewerFeatures.forViewerContext(r.viewerContext),
+            spaceFeatures.forSpaceAndAuthor ds(r.space d, v e r d, author ds),
+            v e rFeatures.forV e rContext(r.v e rContext),
           )
         )
 
-      val resp = if (isVfFeatureHydrationEnabled) {
-        val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = EvaluationContext(
+      val resp =  f ( sVfFeatureHydrat onEnabled) {
+        val evaluat onContext = Prov dedEvaluat onContext. njectRunt  Rules ntoEvaluat onContext(
+          evaluat onContext = Evaluat onContext(
             r.safetyLevel,
-            visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
-            visibilityLibrary.statsReceiver)
+            v s b l yL brary.getParams(r.v e rContext, r.safetyLevel),
+            v s b l yL brary.statsRece ver)
         )
 
-        val preFilteredFeatureMap =
-          ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+        val preF lteredFeatureMap =
+          Sh mUt ls.preF lterFeatureMap(featureMap, r.safetyLevel, content d, evaluat onContext)
 
         FeatureMap
-          .resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-            visibilityLibrary
-              .runRuleEngine(
-                contentId,
+          .resolve(preF lteredFeatureMap, l braryStatsRece ver).flatMap { resolvedFeatureMap =>
+            v s b l yL brary
+              .runRuleEng ne(
+                content d,
                 resolvedFeatureMap,
-                r.viewerContext,
+                r.v e rContext,
                 r.safetyLevel
               )
           }
       } else {
-        visibilityLibrary
-          .runRuleEngine(
-            contentId,
+        v s b l yL brary
+          .runRuleEng ne(
+            content d,
             featureMap,
-            r.viewerContext,
+            r.v e rContext,
             r.safetyLevel
           )
       }
 
-      StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
+      St ch lpers.prof leSt ch(resp, Seq(vfLatencyStatsRece ver))
     }
   }
 }

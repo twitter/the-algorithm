@@ -1,22 +1,22 @@
-package com.twitter.visibility.util
+package com.tw ter.v s b l y.ut l
 
-import com.twitter.abdecider.ABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.abdec der.ABDec der
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.featuresw c s.v2.bu lder.FeatureSw c sBu lder
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
-object FeatureSwitchUtil {
-  private val LibraryFeaturesConfigPath = "/features/visibility/main"
-  private val LimitedActionsFeaturesConfigPath = "/features/visibility-limited-actions/main"
+object FeatureSw chUt l {
+  pr vate val L braryFeaturesConf gPath = "/features/v s b l y/ma n"
+  pr vate val L m edAct onsFeaturesConf gPath = "/features/v s b l y-l m ed-act ons/ma n"
 
-  def mkVisibilityLibraryFeatureSwitches(
-    abDecider: ABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches =
-    FeatureSwitchesBuilder
-      .createDefault(LibraryFeaturesConfigPath, abDecider, Some(statsReceiver)).build()
+  def mkV s b l yL braryFeatureSw c s(
+    abDec der: ABDec der,
+    statsRece ver: StatsRece ver
+  ): FeatureSw c s =
+    FeatureSw c sBu lder
+      .createDefault(L braryFeaturesConf gPath, abDec der, So (statsRece ver)).bu ld()
 
-  def mkLimitedActionsFeatureSwitches(statsReceiver: StatsReceiver): FeatureSwitches =
-    FeatureSwitchesBuilder
-      .createWithNoExperiments(LimitedActionsFeaturesConfigPath, Some(statsReceiver)).build()
+  def mkL m edAct onsFeatureSw c s(statsRece ver: StatsRece ver): FeatureSw c s =
+    FeatureSw c sBu lder
+      .createW hNoExper  nts(L m edAct onsFeaturesConf gPath, So (statsRece ver)).bu ld()
 }

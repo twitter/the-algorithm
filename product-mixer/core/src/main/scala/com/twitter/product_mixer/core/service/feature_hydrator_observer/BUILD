@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator/featurestorev1",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/feature_hydrator",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/feature_hydrator/featurestorev1",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/ dent f er",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/p pel ne_fa lure",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/serv ce",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator/featurestorev1",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/feature_hydrator",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/feature_hydrator/featurestorev1",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/ dent f er",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/serv ce",
     ],
 )

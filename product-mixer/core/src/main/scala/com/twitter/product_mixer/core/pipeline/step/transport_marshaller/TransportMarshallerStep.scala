@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.core.pipeline.step.transport_marshaller
+package com.tw ter.product_m xer.core.p pel ne.step.transport_marshaller
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasExecutorResults
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.doma n_marshaller_executor.Doma nMarshallerExecutor
+ mport com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor.TransportMarshallerExecutor
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A transport marshaller step, it takes domain marshalled result as input and returns trasnport
+ * A transport marshaller step,   takes doma n marshalled result as  nput and returns trasnport
  * ready marshalled object.
- * The [[State]] object is responsible for keeping a reference of the built marshalled response.
+ * T  [[State]] object  s respons ble for keep ng a reference of t  bu lt marshalled response.
  *
- * @param transportMarshallerExecutor Domain Marshaller executor.
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResponseType the domain marshalling type used as input
- * @tparam TransportResponseType the expected returned transport type
- * @tparam State The pipeline state domain model.
+ * @param transportMarshallerExecutor Doma n Marshaller executor.
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Doma nResponseType t  doma n marshall ng type used as  nput
+ * @tparam TransportResponseType t  expected returned transport type
+ * @tparam State T  p pel ne state doma n model.
  */
 case class TransportMarshallerStep[
-  DomainResponseType <: HasMarshalling,
+  Doma nResponseType <: HasMarshall ng,
   TransportResponseType,
-  State <: HasExecutorResults[State]] @Inject() (
+  State <: HasExecutorResults[State]] @ nject() (
   transportMarshallerExecutor: TransportMarshallerExecutor)
     extends Step[
       State,
-      TransportMarshallerConfig[DomainResponseType, TransportResponseType],
-      TransportMarshallerExecutor.Inputs[DomainResponseType],
+      TransportMarshallerConf g[Doma nResponseType, TransportResponseType],
+      TransportMarshallerExecutor. nputs[Doma nResponseType],
       TransportMarshallerExecutor.Result[TransportResponseType]
     ] {
 
-  override def isEmpty(
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
+  overr de def  sEmpty(
+    conf g: TransportMarshallerConf g[Doma nResponseType, TransportResponseType]
   ): Boolean = false
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): TransportMarshallerExecutor.Inputs[DomainResponseType] = {
-    val domainMarshallerResult = state.executorResultsByPipelineStep
+    conf g: TransportMarshallerConf g[Doma nResponseType, TransportResponseType]
+  ): TransportMarshallerExecutor. nputs[Doma nResponseType] = {
+    val doma nMarshallerResult = state.executorResultsByP pel neStep
       .getOrElse(
-        config.domainMarshallerStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Domain Marshaller in Transport Marshaller Step")).asInstanceOf[
-        DomainMarshallerExecutor.Result[DomainResponseType]]
-    TransportMarshallerExecutor.Inputs(domainMarshallerResult.result)
+        conf g.doma nMarshallerStep dent f er,
+        throw P pel neFa lure(
+           llegalStateFa lure,
+          "M ss ng Doma n Marshaller  n Transport Marshaller Step")).as nstanceOf[
+        Doma nMarshallerExecutor.Result[Doma nResponseType]]
+    TransportMarshallerExecutor. nputs(doma nMarshallerResult.result)
   }
 
   // Noop as platform updates executor result
-  override def updateState(
+  overr de def updateState(
     state: State,
     executorResult: TransportMarshallerExecutor.Result[TransportResponseType],
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
+    conf g: TransportMarshallerConf g[Doma nResponseType, TransportResponseType]
   ): State = state
 
-  override def arrow(
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType],
+  overr de def arrow(
+    conf g: TransportMarshallerConf g[Doma nResponseType, TransportResponseType],
     context: Executor.Context
-  ): Arrow[TransportMarshallerExecutor.Inputs[
-    DomainResponseType
+  ): Arrow[TransportMarshallerExecutor. nputs[
+    Doma nResponseType
   ], TransportMarshallerExecutor.Result[TransportResponseType]] =
-    transportMarshallerExecutor.arrow(config.transportMarshaller, context)
+    transportMarshallerExecutor.arrow(conf g.transportMarshaller, context)
 
 }
 
-case class TransportMarshallerConfig[DomainResponseType <: HasMarshalling, TransportResponseType](
-  transportMarshaller: TransportMarshaller[DomainResponseType, TransportResponseType],
-  domainMarshallerStepIdentifier: PipelineStepIdentifier)
+case class TransportMarshallerConf g[Doma nResponseType <: HasMarshall ng, TransportResponseType](
+  transportMarshaller: TransportMarshaller[Doma nResponseType, TransportResponseType],
+  doma nMarshallerStep dent f er: P pel neStep dent f er)

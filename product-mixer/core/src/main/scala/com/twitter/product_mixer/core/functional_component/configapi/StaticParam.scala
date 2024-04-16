@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.tw ter.product_m xer.core.funct onal_component.conf gap 
 
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .Param
 
-/** A [[Param]] used for constant values where we do not require backing by feature switches or deciders */
-case class StaticParam[ValueType](value: ValueType) extends Param[ValueType](value)
+/** A [[Param]] used for constant values w re   do not requ re back ng by feature sw c s or dec ders */
+case class Stat cParam[ValueType](value: ValueType) extends Param[ValueType](value)

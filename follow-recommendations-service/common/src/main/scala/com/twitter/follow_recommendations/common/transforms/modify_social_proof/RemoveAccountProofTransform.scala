@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.transforms.modify_social_proof
+package com.tw ter.follow_recom ndat ons.common.transforms.mod fy_soc al_proof
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.GatedTransform
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RemoveAccountProofTransform @Inject() (statsReceiver: StatsReceiver)
-    extends GatedTransform[HasClientContext with HasParams, CandidateUser] {
+@S ngleton
+class RemoveAccountProofTransform @ nject() (statsRece ver: StatsRece ver)
+    extends GatedTransform[HasCl entContext w h HasParams, Cand dateUser] {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val removedProofsCounter = stats.counter("num_removed_proofs")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val removedProofsCounter = stats.counter("num_removed_proofs")
 
-  override def transform(
-    target: HasClientContext with HasParams,
-    items: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] =
-    Stitch.value(items.map { candidate =>
-      removedProofsCounter.incr()
-      candidate.copy(reason = None)
+  overr de def transform(
+    target: HasCl entContext w h HasParams,
+     ems: Seq[Cand dateUser]
+  ): St ch[Seq[Cand dateUser]] =
+    St ch.value( ems.map { cand date =>
+      removedProofsCounter. ncr()
+      cand date.copy(reason = None)
     })
 }

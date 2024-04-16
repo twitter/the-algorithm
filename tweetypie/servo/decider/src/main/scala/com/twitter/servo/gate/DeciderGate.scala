@@ -1,34 +1,34 @@
-package com.twitter.servo.gate
+package com.tw ter.servo.gate
 
-import com.twitter.decider
-import com.twitter.servo.util.Gate
-import scala.annotation.tailrec
+ mport com.tw ter.dec der
+ mport com.tw ter.servo.ut l.Gate
+ mport scala.annotat on.ta lrec
 
-object DeciderGate {
-
-  /**
-   * Create a Gate[Unit] with a probability of returning true
-   * that increases linearly with the availability of feature.
-   */
-  def linear(feature: decider.Feature): Gate[Unit] =
-    Gate(_ => feature.isAvailable, "DeciderGate.linear(%s)".format(feature))
+object Dec derGate {
 
   /**
-   * Create a Gate[Unit] with a probability of returning true
-   * that increases exponentially with the availability of feature.
+   * Create a Gate[Un ] w h a probab l y of return ng true
+   * that  ncreases l nearly w h t  ava lab l y of feature.
    */
-  def exp(feature: decider.Feature, exponent: Int): Gate[Unit] = {
-    val gate = if (exponent >= 0) linear(feature) else !linear(feature)
+  def l near(feature: dec der.Feature): Gate[Un ] =
+    Gate(_ => feature. sAva lable, "Dec derGate.l near(%s)".format(feature))
 
-    @tailrec
-    def go(exp: Int): Boolean = if (exp == 0) true else (gate() && go(exp - 1))
+  /**
+   * Create a Gate[Un ] w h a probab l y of return ng true
+   * that  ncreases exponent ally w h t  ava lab l y of feature.
+   */
+  def exp(feature: dec der.Feature, exponent:  nt): Gate[Un ] = {
+    val gate =  f (exponent >= 0) l near(feature) else !l near(feature)
 
-    Gate(_ => go(math.abs(exponent)), "DeciderGate.exp(%s, %s)".format(feature, exponent))
+    @ta lrec
+    def go(exp:  nt): Boolean =  f (exp == 0) true else (gate() && go(exp - 1))
+
+    Gate(_ => go(math.abs(exponent)), "Dec derGate.exp(%s, %s)".format(feature, exponent))
   }
 
   /**
-   * Create a Gate[Long] that returns true if the given feature is available for an id.
+   * Create a Gate[Long] that returns true  f t  g ven feature  s ava lable for an  d.
    */
-  def byId(feature: decider.Feature): Gate[Long] =
-    Gate(id => feature.isAvailable(id), "DeciderGate.byId(%s)".format(feature))
+  def by d(feature: dec der.Feature): Gate[Long] =
+    Gate( d => feature. sAva lable( d), "Dec derGate.by d(%s)".format(feature))
 }

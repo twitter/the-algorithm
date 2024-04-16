@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.event
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-object EventSummaryItem {
-  val EventSummaryItemEntryNamespace = EntryNamespace("eventsummary")
+object EventSummary em {
+  val EventSummary emEntryNa space = EntryNa space("eventsummary")
 }
 
-case class EventSummaryItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  title: String,
-  displayType: EventSummaryDisplayType,
+case class EventSummary em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  t le: Str ng,
+  d splayType: EventSummaryD splayType,
   url: Url,
-  image: Option[ImageVariant],
-  timeString: Option[String])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace =
-    EventSummaryItem.EventSummaryItemEntryNamespace
+   mage: Opt on[ mageVar ant],
+  t  Str ng: Opt on[Str ng])
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space =
+    EventSummary em.EventSummary emEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

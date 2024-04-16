@@ -1,56 +1,56 @@
-package com.twitter.servo.database
+package com.tw ter.servo.database
 
-object Bitfield {
-  def multiValue(bits: Boolean*): Int = {
-    bits.foldLeft(0) { (accum, bit) =>
-      (accum << 1) | (if (bit) 1 else 0)
+object B f eld {
+  def mult Value(b s: Boolean*):  nt = {
+    b s.foldLeft(0) { (accum, b ) =>
+      (accum << 1) | ( f (b ) 1 else 0)
     }
   }
 
-  def multiValueLong(bits: Boolean*): Long = {
-    bits.foldLeft(0L) { (accum, bit) =>
-      (accum << 1) | (if (bit) 1L else 0L)
+  def mult ValueLong(b s: Boolean*): Long = {
+    b s.foldLeft(0L) { (accum, b ) =>
+      (accum << 1) | ( f (b ) 1L else 0L)
     }
   }
 }
 
 /**
- * A mixin for unpacking bitfields.
+ * A m x n for unpack ng b f elds.
  */
-trait Bitfield {
-  val bitfield: Int
+tra  B f eld {
+  val b f eld:  nt
 
   /**
-   * Tests that a given position is set to 1.
+   * Tests that a g ven pos  on  s set to 1.
    */
-  def isSet(position: Int): Boolean = {
-    (bitfield & (1 << position)) != 0
+  def  sSet(pos  on:  nt): Boolean = {
+    (b f eld & (1 << pos  on)) != 0
   }
 
   /**
-   * takes a sequence of booleans, from most to least significant
-   * and converts them to an integer.
+   * takes a sequence of booleans, from most to least s gn f cant
+   * and converts t m to an  nteger.
    *
-   * example: multiValue(true, false, true) yields 0b101 = 5
+   * example: mult Value(true, false, true) y elds 0b101 = 5
    */
-  def multiValue(bits: Boolean*): Int = Bitfield.multiValue(bits: _*)
+  def mult Value(b s: Boolean*):  nt = B f eld.mult Value(b s: _*)
 }
 
-trait LongBitfield {
-  val bitfield: Long
+tra  LongB f eld {
+  val b f eld: Long
 
   /**
-   * Tests that a given position is set to 1.
+   * Tests that a g ven pos  on  s set to 1.
    */
-  def isSet(position: Int): Boolean = {
-    (bitfield & (1L << position)) != 0
+  def  sSet(pos  on:  nt): Boolean = {
+    (b f eld & (1L << pos  on)) != 0
   }
 
   /**
-   * takes a sequence of booleans, from most to least significant
-   * and converts them to a long.
+   * takes a sequence of booleans, from most to least s gn f cant
+   * and converts t m to a long.
    *
-   * example: multiValue(true, false, true) yields 0b101 = 5L
+   * example: mult Value(true, false, true) y elds 0b101 = 5L
    */
-  def multiValue(bits: Boolean*): Long = Bitfield.multiValueLong(bits: _*)
+  def mult Value(b s: Boolean*): Long = B f eld.mult ValueLong(b s: _*)
 }

@@ -1,153 +1,153 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.util.Duration
-import scala.collection.mutable
+ mport com.tw ter.ut l.Durat on
+ mport scala.collect on.mutable
 
 /**
- * Used to produce differently-typed caches with the same configuration
- * and potentially with shared observation.
+ * Used to produce d fferently-typed cac s w h t  sa  conf gurat on
+ * and potent ally w h shared observat on.
  */
-trait CacheFactory {
-  def apply[K, V](serializer: Serializer[V], scopes: String*): Cache[K, V]
+tra  Cac Factory {
+  def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*): Cac [K, V]
 }
 
 /**
- * Builds an instance of NullCache.
+ * Bu lds an  nstance of NullCac .
  */
-object NullCacheFactory extends CacheFactory {
-  val cache = new NullCache[Nothing, Nothing]
+object NullCac Factory extends Cac Factory {
+  val cac  = new NullCac [Noth ng, Noth ng]
 
-  override def apply[K, V](serializer: Serializer[V], scopes: String*): Cache[K, V] =
-    cache.asInstanceOf[NullCache[K, V]]
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*): Cac [K, V] =
+    cac .as nstanceOf[NullCac [K, V]]
 }
 
 /**
- * Builds DeciderableCaches, which proxy to one of two caches built from the
- * argument CacheFactories depending on a decider value.
+ * Bu lds Dec derableCac s, wh ch proxy to one of two cac s bu lt from t 
+ * argu nt Cac Factor es depend ng on a dec der value.
  */
-case class DeciderableCacheFactory(
-  primaryCacheFactory: CacheFactory,
-  secondaryCacheFactory: CacheFactory,
-  isAvailable: () => Boolean)
-    extends CacheFactory {
-  override def apply[K, V](serializer: Serializer[V], scopes: String*) =
-    new DeciderableCache(
-      primaryCacheFactory(serializer, scopes: _*),
-      secondaryCacheFactory(serializer, scopes: _*),
-      isAvailable()
+case class Dec derableCac Factory(
+  pr maryCac Factory: Cac Factory,
+  secondaryCac Factory: Cac Factory,
+   sAva lable: () => Boolean)
+    extends Cac Factory {
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*) =
+    new Dec derableCac (
+      pr maryCac Factory(ser al zer, scopes: _*),
+      secondaryCac Factory(ser al zer, scopes: _*),
+       sAva lable()
     )
 }
 
 /**
- * Builds MigratingCaches, which support gradual migrations from one cache
- * to another. See MigratingCache.scala for details.
+ * Bu lds M grat ngCac s, wh ch support gradual m grat ons from one cac 
+ * to anot r. See M grat ngCac .scala for deta ls.
  */
-case class MigratingCacheFactory(cacheFactory: CacheFactory, darkCacheFactory: CacheFactory)
-    extends CacheFactory {
-  override def apply[K, V](serializer: Serializer[V], scopes: String*) =
-    new MigratingCache(
-      cacheFactory(serializer, scopes: _*),
-      darkCacheFactory(serializer, scopes: _*)
+case class M grat ngCac Factory(cac Factory: Cac Factory, darkCac Factory: Cac Factory)
+    extends Cac Factory {
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*) =
+    new M grat ngCac (
+      cac Factory(ser al zer, scopes: _*),
+      darkCac Factory(ser al zer, scopes: _*)
     )
 }
 
-case class ObservableCacheFactory(cacheFactory: CacheFactory, cacheObserver: CacheObserver)
-    extends CacheFactory {
-  override def apply[K, V](serializer: Serializer[V], scopes: String*) =
-    new ObservableCache(cacheFactory(serializer), cacheObserver.scope(scopes: _*))
+case class ObservableCac Factory(cac Factory: Cac Factory, cac Observer: Cac Observer)
+    extends Cac Factory {
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*) =
+    new ObservableCac (cac Factory(ser al zer), cac Observer.scope(scopes: _*))
 }
 
 /**
- * Builds in-memory caches with elements that never expire.
+ * Bu lds  n- mory cac s w h ele nts that never exp re.
  */
-case class MutableMapCacheFactory(
-  serialize: Boolean = false,
-  useSharedCache: Boolean = false,
-  keyTransformerFactory: KeyTransformerFactory = ToStringKeyTransformerFactory)
-    extends CacheFactory {
-  lazy val sharedCache = mkCache
+case class MutableMapCac Factory(
+  ser al ze: Boolean = false,
+  useSharedCac : Boolean = false,
+  keyTransfor rFactory: KeyTransfor rFactory = ToStr ngKeyTransfor rFactory)
+    extends Cac Factory {
+  lazy val sharedCac  = mkCac 
 
-  def mkCache = {
-    new MutableMapCache[Object, Object](new mutable.HashMap)
+  def mkCac  = {
+    new MutableMapCac [Object, Object](new mutable.HashMap)
   }
 
-  override def apply[K, V](serializer: Serializer[V], scopes: String*) = {
-    val cache = if (useSharedCache) sharedCache else mkCache
-    if (serialize) {
-      new KeyValueTransformingCache(
-        cache.asInstanceOf[Cache[String, Array[Byte]]],
-        serializer,
-        keyTransformerFactory()
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*) = {
+    val cac  =  f (useSharedCac ) sharedCac  else mkCac 
+     f (ser al ze) {
+      new KeyValueTransform ngCac (
+        cac .as nstanceOf[Cac [Str ng, Array[Byte]]],
+        ser al zer,
+        keyTransfor rFactory()
       )
     } else {
-      cache.asInstanceOf[Cache[K, V]]
+      cac .as nstanceOf[Cac [K, V]]
     }
   }
 }
 
 /**
- * Builds in-memory caches with TTL'd entries and LRU eviction policies.
+ * Bu lds  n- mory cac s w h TTL'd entr es and LRU ev ct on pol c es.
  */
-case class InProcessLruCacheFactory(
-  ttl: Duration,
-  lruSize: Int,
-  serialize: Boolean = false,
-  useSharedCache: Boolean = false,
-  keyTransformerFactory: KeyTransformerFactory = ToStringKeyTransformerFactory)
-    extends CacheFactory {
-  def mkCache = new ExpiringLruCache[Object, Object](ttl, lruSize)
-  lazy val sharedCache = mkCache
+case class  nProcessLruCac Factory(
+  ttl: Durat on,
+  lruS ze:  nt,
+  ser al ze: Boolean = false,
+  useSharedCac : Boolean = false,
+  keyTransfor rFactory: KeyTransfor rFactory = ToStr ngKeyTransfor rFactory)
+    extends Cac Factory {
+  def mkCac  = new Exp r ngLruCac [Object, Object](ttl, lruS ze)
+  lazy val sharedCac  = mkCac 
 
-  override def apply[K, V](serializer: Serializer[V], scopes: String*) = {
-    val cache = if (useSharedCache) sharedCache else mkCache
-    if (serialize) {
-      new KeyValueTransformingCache(
-        cache.asInstanceOf[Cache[String, Array[Byte]]],
-        serializer,
-        keyTransformerFactory()
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*) = {
+    val cac  =  f (useSharedCac ) sharedCac  else mkCac 
+     f (ser al ze) {
+      new KeyValueTransform ngCac (
+        cac .as nstanceOf[Cac [Str ng, Array[Byte]]],
+        ser al zer,
+        keyTransfor rFactory()
       )
     } else {
-      cache.asInstanceOf[Cache[K, V]]
+      cac .as nstanceOf[Cac [K, V]]
     }
   }
 }
 
 /**
- * Builds MemcacheCaches, which applies serialization, key-transformation,
- * and TTL mechanics to an underlying Memcache.
+ * Bu lds  mcac Cac s, wh ch appl es ser al zat on, key-transformat on,
+ * and TTL  chan cs to an underly ng  mcac .
  */
-case class MemcacheCacheFactory(
-  memcache: Memcache,
-  ttl: Duration,
-  keyTransformerFactory: KeyTransformerFactory = ToStringKeyTransformerFactory)
-    extends CacheFactory {
-  override def apply[K, V](serializer: Serializer[V], scopes: String*) =
-    new MemcacheCache(memcache, ttl, serializer, keyTransformerFactory[K]())
+case class  mcac Cac Factory(
+   mcac :  mcac ,
+  ttl: Durat on,
+  keyTransfor rFactory: KeyTransfor rFactory = ToStr ngKeyTransfor rFactory)
+    extends Cac Factory {
+  overr de def apply[K, V](ser al zer: Ser al zer[V], scopes: Str ng*) =
+    new  mcac Cac ( mcac , ttl, ser al zer, keyTransfor rFactory[K]())
 }
 
 /**
- * Builds KeyTransformers, which are required for constructing
- * KeyValueTransformingCaches.
+ * Bu lds KeyTransfor rs, wh ch are requ red for construct ng
+ * KeyValueTransform ngCac s.
  */
-trait KeyTransformerFactory {
-  def apply[K](): KeyTransformer[K]
+tra  KeyTransfor rFactory {
+  def apply[K](): KeyTransfor r[K]
 }
 
 /**
- * Builds KeyTransformers by simply call the keys' toString methods.
+ * Bu lds KeyTransfor rs by s mply call t  keys' toStr ng  thods.
  */
-object ToStringKeyTransformerFactory extends KeyTransformerFactory {
-  def apply[K]() = new ToStringKeyTransformer[K]()
+object ToStr ngKeyTransfor rFactory extends KeyTransfor rFactory {
+  def apply[K]() = new ToStr ngKeyTransfor r[K]()
 }
 
 /**
- * Builds KeyTransformers that prefix all keys generated by an underlying
- * transformer with a string.
+ * Bu lds KeyTransfor rs that pref x all keys generated by an underly ng
+ * transfor r w h a str ng.
  */
-case class PrefixKeyTransformerFactory(
-  prefix: String,
-  delimiter: String = constants.Colon,
-  underlying: KeyTransformerFactory = ToStringKeyTransformerFactory)
-    extends KeyTransformerFactory {
-  def apply[K]() = new PrefixKeyTransformer[K](prefix, delimiter, underlying[K]())
+case class Pref xKeyTransfor rFactory(
+  pref x: Str ng,
+  del m er: Str ng = constants.Colon,
+  underly ng: KeyTransfor rFactory = ToStr ngKeyTransfor rFactory)
+    extends KeyTransfor rFactory {
+  def apply[K]() = new Pref xKeyTransfor r[K](pref x, del m er, underly ng[K]())
 }

@@ -1,114 +1,114 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NavigableMap;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Comparator;
+ mport java.ut l.L st;
+ mport java.ut l.Nav gableMap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSortedMap;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect. mmutableSortedMap;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfo;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfoS ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.snowflake. d.Snowflake d;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FutureEventL stener;
 
 /**
- * A filter to count the tier to which the oldest tweet in the results belong.
+ * A f lter to count t  t er to wh ch t  oldest t et  n t  results belong.
  */
-@Singleton
-public class ResultTierCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+@S ngleton
+publ c class ResultT erCountF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  private static final String COUNTER_PREFIX = "result_tier_count";
-  private final long firstTweetTimeSinceEpochSec;
-  private final NavigableMap<Long, SearchCounter> tierBuckets;
-  private final SearchCounter allCounter = SearchCounter.export(COUNTER_PREFIX + "_all");
-  private final SearchCounter noResultsCounter =
-      SearchCounter.export(COUNTER_PREFIX + "_no_results");
+  pr vate stat c f nal Str ng COUNTER_PREF X = "result_t er_count";
+  pr vate f nal long f rstT etT  S nceEpochSec;
+  pr vate f nal Nav gableMap<Long, SearchCounter> t erBuckets;
+  pr vate f nal SearchCounter allCounter = SearchCounter.export(COUNTER_PREF X + "_all");
+  pr vate f nal SearchCounter noResultsCounter =
+      SearchCounter.export(COUNTER_PREF X + "_no_results");
 
-  @Inject
-  @SuppressWarnings("unused")
-  ResultTierCountFilter(TierInfoSource tierInfoSource) {
-    List<TierInfo> tierInfos = tierInfoSource.getTierInformation();
-    tierInfos.sort(Comparator.comparing(TierInfo::getDataStartDate));
+  @ nject
+  @SuppressWarn ngs("unused")
+  ResultT erCountF lter(T er nfoS ce t er nfoS ce) {
+    L st<T er nfo> t er nfos = t er nfoS ce.getT er nformat on();
+    t er nfos.sort(Comparator.compar ng(T er nfo::getDataStartDate));
 
-    firstTweetTimeSinceEpochSec = tierInfos.get(0).getServingRangeSinceTimeSecondsFromEpoch();
+    f rstT etT  S nceEpochSec = t er nfos.get(0).getServ ngRangeS nceT  SecondsFromEpoch();
 
-    ImmutableSortedMap.Builder<Long, SearchCounter> builder = ImmutableSortedMap.naturalOrder();
-    Collections.reverse(tierInfos);
+     mmutableSortedMap.Bu lder<Long, SearchCounter> bu lder =  mmutableSortedMap.naturalOrder();
+    Collect ons.reverse(t er nfos);
 
-    for (TierInfo tierInfo : tierInfos) {
+    for (T er nfo t er nfo : t er nfos) {
       SearchCounter searchCounter = SearchCounter.export(
-          String.format("%s_%s", COUNTER_PREFIX, tierInfo.getTierName()));
-      builder.put(tierInfo.getServingRangeSinceTimeSecondsFromEpoch(), searchCounter);
+          Str ng.format("%s_%s", COUNTER_PREF X, t er nfo.getT erNa ()));
+      bu lder.put(t er nfo.getServ ngRangeS nceT  SecondsFromEpoch(), searchCounter);
 
-      // export cumulative metrics to sum from the latest to a lower tier
-      Collection<SearchCounter> counters = builder.build().values();
+      // export cumulat ve  tr cs to sum from t  latest to a lo r t er
+      Collect on<SearchCounter> counters = bu lder.bu ld().values();
       SearchCustomGauge.export(
-          String.format("%s_down_to_%s", COUNTER_PREFIX, tierInfo.getTierName()),
+          Str ng.format("%s_down_to_%s", COUNTER_PREF X, t er nfo.getT erNa ()),
           () -> counters.stream()
               .mapToLong(SearchCounter::get)
               .sum());
     }
 
-    tierBuckets = builder.build();
+    t erBuckets = bu lder.bu ld();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext context,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(context).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
-          @Override
-          public void onFailure(Throwable cause) {
-            // do nothing
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext context,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    return serv ce.apply(context).addEventL stener(
+        new FutureEventL stener<Earlyb rdResponse>() {
+          @Overr de
+          publ c vo d onFa lure(Throwable cause) {
+            // do noth ng
           }
 
-          @Override
-          public void onSuccess(EarlybirdResponse response) {
+          @Overr de
+          publ c vo d onSuccess(Earlyb rdResponse response) {
             record(response);
           }
         });
   }
 
-  @VisibleForTesting
-  void record(EarlybirdResponse response) {
-    if (response.isSetSearchResults()) {
-      long minResultsStatusId = response.getSearchResults().getResults().stream()
-          .mapToLong(ThriftSearchResult::getId)
-          .min()
+  @V s bleForTest ng
+  vo d record(Earlyb rdResponse response) {
+     f (response. sSetSearchResults()) {
+      long m nResultsStatus d = response.getSearchResults().getResults().stream()
+          .mapToLong(Thr ftSearchResult::get d)
+          .m n()
           .orElse(-1);
-      getBucket(minResultsStatusId).increment();
+      getBucket(m nResultsStatus d). ncre nt();
     }
-    allCounter.increment();
+    allCounter. ncre nt();
   }
 
-  private SearchCounter getBucket(long statusId) {
-    if (statusId < 0) {
+  pr vate SearchCounter getBucket(long status d) {
+     f (status d < 0) {
       return noResultsCounter;
     }
 
-    // If non-negative statusId is not a SnowflakeId, the tweet must have been created before
-    // Twepoch (2010-11-04T01:42:54Z) and thus belongs to full1.
-    long timeSinceEpochSec = firstTweetTimeSinceEpochSec;
-    if (SnowflakeId.isSnowflakeId(statusId)) {
-      timeSinceEpochSec = SnowflakeId.timeFromId(statusId).inSeconds();
+    //  f non-negat ve status d  s not a Snowflake d, t  t et must have been created before
+    // T poch (2010-11-04T01:42:54Z) and thus belongs to full1.
+    long t  S nceEpochSec = f rstT etT  S nceEpochSec;
+     f (Snowflake d. sSnowflake d(status d)) {
+      t  S nceEpochSec = Snowflake d.t  From d(status d). nSeconds();
     }
 
-    return tierBuckets.floorEntry(timeSinceEpochSec).getValue();
+    return t erBuckets.floorEntry(t  S nceEpochSec).getValue();
   }
 }

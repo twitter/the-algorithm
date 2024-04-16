@@ -1,208 +1,208 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.KeywordMatch
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.FilteredState.Suppress
-import com.twitter.tweetypie.core.FilteredState.Unavailable
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.user_result.UserVisibilityResultHelper
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => vfthrift}
+ mport com.tw ter.spam.rtf.thr ftscala.F lteredReason
+ mport com.tw ter.spam.rtf.thr ftscala.KeywordMatch
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyResult
+ mport com.tw ter.t etyp e.core.F lteredState
+ mport com.tw ter.t etyp e.core.F lteredState.Suppress
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.common.user_result.UserV s b l yResult lper
+ mport com.tw ter.v s b l y.rules.Reason._
+ mport com.tw ter.v s b l y.rules._
+ mport com.tw ter.v s b l y.{thr ftscala => vfthr ft}
 
-object VisibilityResultToFilteredState {
-  def toFilteredStateUnavailable(
-    visibilityResult: VisibilityResult
-  ): Option[FilteredState.Unavailable] = {
-    val dropSafetyResult = Some(
-      Unavailable.Drop(FilteredReason.SafetyResult(visibilityResult.getSafetyResult))
+object V s b l yResultToF lteredState {
+  def toF lteredStateUnava lable(
+    v s b l yResult: V s b l yResult
+  ): Opt on[F lteredState.Unava lable] = {
+    val dropSafetyResult = So (
+      Unava lable.Drop(F lteredReason.SafetyResult(v s b l yResult.getSafetyResult))
     )
 
-    visibilityResult.verdict match {
-      case Drop(ExclusiveTweet, _) =>
+    v s b l yResult.verd ct match {
+      case Drop(Exclus veT et, _) =>
         dropSafetyResult
 
-      case Drop(NsfwViewerIsUnderage | NsfwViewerHasNoStatedAge | NsfwLoggedOut, _) =>
+      case Drop(NsfwV e r sUnderage | NsfwV e rHasNoStatedAge | NsfwLoggedOut, _) =>
         dropSafetyResult
 
-      case Drop(TrustedFriendsTweet, _) =>
+      case Drop(TrustedFr endsT et, _) =>
         dropSafetyResult
 
-      case _: LocalizedTombstone => dropSafetyResult
+      case _: Local zedTombstone => dropSafetyResult
 
-      case Drop(StaleTweet, _) => dropSafetyResult
+      case Drop(StaleT et, _) => dropSafetyResult
 
-      // legacy drop actions
-      case dropAction: Drop => unavailableFromDropAction(dropAction)
+      // legacy drop act ons
+      case dropAct on: Drop => unava lableFromDropAct on(dropAct on)
 
-      // not an unavailable state that can be mapped
+      // not an unava lable state that can be mapped
       case _ => None
     }
   }
 
-  def toFilteredState(
-    visibilityResult: VisibilityResult,
-    disableLegacyInterstitialFilteredReason: Boolean
-  ): Option[FilteredState] = {
-    val suppressSafetyResult = Some(
-      Suppress(FilteredReason.SafetyResult(visibilityResult.getSafetyResult))
+  def toF lteredState(
+    v s b l yResult: V s b l yResult,
+    d sableLegacy nterst  alF lteredReason: Boolean
+  ): Opt on[F lteredState] = {
+    val suppressSafetyResult = So (
+      Suppress(F lteredReason.SafetyResult(v s b l yResult.getSafetyResult))
     )
-    val dropSafetyResult = Some(
-      Unavailable.Drop(FilteredReason.SafetyResult(visibilityResult.getSafetyResult))
+    val dropSafetyResult = So (
+      Unava lable.Drop(F lteredReason.SafetyResult(v s b l yResult.getSafetyResult))
     )
 
-    visibilityResult.verdict match {
+    v s b l yResult.verd ct match {
       case _: Appealable => suppressSafetyResult
 
-      case _: Preview => suppressSafetyResult
+      case _: Prev ew => suppressSafetyResult
 
-      case _: InterstitialLimitedEngagements => suppressSafetyResult
+      case _:  nterst  alL m edEngage nts => suppressSafetyResult
 
-      case _: EmergencyDynamicInterstitial => suppressSafetyResult
+      case _: E rgencyDynam c nterst  al => suppressSafetyResult
 
-      case _: SoftIntervention => suppressSafetyResult
+      case _: Soft ntervent on => suppressSafetyResult
 
-      case _: LimitedEngagements => suppressSafetyResult
+      case _: L m edEngage nts => suppressSafetyResult
 
-      case _: TweetInterstitial => suppressSafetyResult
+      case _: T et nterst  al => suppressSafetyResult
 
-      case _: TweetVisibilityNudge => suppressSafetyResult
+      case _: T etV s b l yNudge => suppressSafetyResult
 
-      case Interstitial(
-            ViewerBlocksAuthor | ViewerReportedAuthor | ViewerReportedTweet | ViewerMutesAuthor |
-            ViewerHardMutedAuthor | MutedKeyword | InterstitialDevelopmentOnly | HatefulConduct |
-            AbusiveBehavior,
+      case  nterst  al(
+            V e rBlocksAuthor | V e rReportedAuthor | V e rReportedT et | V e rMutesAuthor |
+            V e rHardMutedAuthor | MutedKeyword |  nterst  alDevelop ntOnly | HatefulConduct |
+            Abus veBehav or,
             _,
-            _) if disableLegacyInterstitialFilteredReason =>
+            _)  f d sableLegacy nterst  alF lteredReason =>
         suppressSafetyResult
 
-      case Interstitial(
-            ViewerBlocksAuthor | ViewerReportedAuthor | ViewerReportedTweet |
-            InterstitialDevelopmentOnly,
+      case  nterst  al(
+            V e rBlocksAuthor | V e rReportedAuthor | V e rReportedT et |
+             nterst  alDevelop ntOnly,
             _,
             _) =>
         suppressSafetyResult
 
-      case _: ComplianceTweetNotice => suppressSafetyResult
+      case _: Compl anceT etNot ce => suppressSafetyResult
 
-      case Drop(ExclusiveTweet, _) =>
+      case Drop(Exclus veT et, _) =>
         dropSafetyResult
 
-      case Drop(NsfwViewerIsUnderage | NsfwViewerHasNoStatedAge | NsfwLoggedOut, _) =>
+      case Drop(NsfwV e r sUnderage | NsfwV e rHasNoStatedAge | NsfwLoggedOut, _) =>
         dropSafetyResult
 
-      case Drop(TrustedFriendsTweet, _) =>
+      case Drop(TrustedFr endsT et, _) =>
         dropSafetyResult
 
-      case Drop(StaleTweet, _) => dropSafetyResult
+      case Drop(StaleT et, _) => dropSafetyResult
 
-      case _: LocalizedTombstone => dropSafetyResult
+      case _: Local zedTombstone => dropSafetyResult
 
-      case _: Avoid => suppressSafetyResult
+      case _: Avo d => suppressSafetyResult
 
-      // legacy drop actions
-      case dropAction: Drop => unavailableFromDropAction(dropAction)
+      // legacy drop act ons
+      case dropAct on: Drop => unava lableFromDropAct on(dropAct on)
 
-      // legacy suppress actions
-      case action => suppressFromVisibilityAction(action, !disableLegacyInterstitialFilteredReason)
+      // legacy suppress act ons
+      case act on => suppressFromV s b l yAct on(act on, !d sableLegacy nterst  alF lteredReason)
     }
   }
 
-  def toFilteredState(
-    userVisibilityResult: Option[vfthrift.UserVisibilityResult]
-  ): FilteredState.Unavailable =
-    userVisibilityResult
+  def toF lteredState(
+    userV s b l yResult: Opt on[vfthr ft.UserV s b l yResult]
+  ): F lteredState.Unava lable =
+    userV s b l yResult
       .collect {
-        case blockedUser if UserVisibilityResultHelper.isDropAuthorBlocksViewer(blockedUser) =>
-          Unavailable.Drop(FilteredReason.AuthorBlockViewer(true))
+        case blockedUser  f UserV s b l yResult lper. sDropAuthorBlocksV e r(blockedUser) =>
+          Unava lable.Drop(F lteredReason.AuthorBlockV e r(true))
 
         /**
-         * Reuse states for author visibility issues from the [[UserRepository]] for consistency with
-         * other logic for handling the same types of author visibility filtering.
+         * Reuse states for author v s b l y  ssues from t  [[UserRepos ory]] for cons stency w h
+         * ot r log c for handl ng t  sa  types of author v s b l y f lter ng.
          */
-        case protectedUser if UserVisibilityResultHelper.isDropProtectedAuthor(protectedUser) =>
-          Unavailable.Author.Protected
-        case suspendedUser if UserVisibilityResultHelper.isDropSuspendedAuthor(suspendedUser) =>
-          Unavailable.Author.Suspended
-        case nsfwUser if UserVisibilityResultHelper.isDropNsfwAuthor(nsfwUser) =>
-          Unavailable.Drop(FilteredReason.ContainNsfwMedia(true))
-        case mutedByViewer if UserVisibilityResultHelper.isDropViewerMutesAuthor(mutedByViewer) =>
-          Unavailable.Drop(FilteredReason.ViewerMutesAuthor(true))
-        case blockedByViewer
-            if UserVisibilityResultHelper.isDropViewerBlocksAuthor(blockedByViewer) =>
-          Unavailable.Drop(
-            FilteredReason.SafetyResult(
+        case protectedUser  f UserV s b l yResult lper. sDropProtectedAuthor(protectedUser) =>
+          Unava lable.Author.Protected
+        case suspendedUser  f UserV s b l yResult lper. sDropSuspendedAuthor(suspendedUser) =>
+          Unava lable.Author.Suspended
+        case nsfwUser  f UserV s b l yResult lper. sDropNsfwAuthor(nsfwUser) =>
+          Unava lable.Drop(F lteredReason.Conta nNsfw d a(true))
+        case mutedByV e r  f UserV s b l yResult lper. sDropV e rMutesAuthor(mutedByV e r) =>
+          Unava lable.Drop(F lteredReason.V e rMutesAuthor(true))
+        case blockedByV e r
+             f UserV s b l yResult lper. sDropV e rBlocksAuthor(blockedByV e r) =>
+          Unava lable.Drop(
+            F lteredReason.SafetyResult(
               SafetyResult(
                 None,
-                vfthrift.Action.Drop(
-                  vfthrift.Drop(Some(vfthrift.DropReason.ViewerBlocksAuthor(true)))
+                vfthr ft.Act on.Drop(
+                  vfthr ft.Drop(So (vfthr ft.DropReason.V e rBlocksAuthor(true)))
                 ))))
       }
-      .getOrElse(FilteredState.Unavailable.Drop(FilteredReason.UnspecifiedReason(true)))
+      .getOrElse(F lteredState.Unava lable.Drop(F lteredReason.Unspec f edReason(true)))
 
-  private def unavailableFromDropAction(dropAction: Drop): Option[FilteredState.Unavailable] =
-    dropAction match {
-      case Drop(AuthorBlocksViewer, _) =>
-        Some(Unavailable.Drop(FilteredReason.AuthorBlockViewer(true)))
-      case Drop(Unspecified, _) =>
-        Some(Unavailable.Drop(FilteredReason.UnspecifiedReason(true)))
+  pr vate def unava lableFromDropAct on(dropAct on: Drop): Opt on[F lteredState.Unava lable] =
+    dropAct on match {
+      case Drop(AuthorBlocksV e r, _) =>
+        So (Unava lable.Drop(F lteredReason.AuthorBlockV e r(true)))
+      case Drop(Unspec f ed, _) =>
+        So (Unava lable.Drop(F lteredReason.Unspec f edReason(true)))
       case Drop(MutedKeyword, _) =>
-        Some(Unavailable.Drop(FilteredReason.TweetMatchesViewerMutedKeyword(KeywordMatch(""))))
-      case Drop(ViewerMutesAuthor, _) =>
-        Some(Unavailable.Drop(FilteredReason.ViewerMutesAuthor(true)))
+        So (Unava lable.Drop(F lteredReason.T etMatc sV e rMutedKeyword(KeywordMatch(""))))
+      case Drop(V e rMutesAuthor, _) =>
+        So (Unava lable.Drop(F lteredReason.V e rMutesAuthor(true)))
       case Drop(Nsfw, _) =>
-        Some(Unavailable.Drop(FilteredReason.ContainNsfwMedia(true)))
-      case Drop(NsfwMedia, _) =>
-        Some(Unavailable.Drop(FilteredReason.ContainNsfwMedia(true)))
-      case Drop(PossiblyUndesirable, _) =>
-        Some(Unavailable.Drop(FilteredReason.PossiblyUndesirable(true)))
+        So (Unava lable.Drop(F lteredReason.Conta nNsfw d a(true)))
+      case Drop(Nsfw d a, _) =>
+        So (Unava lable.Drop(F lteredReason.Conta nNsfw d a(true)))
+      case Drop(Poss blyUndes rable, _) =>
+        So (Unava lable.Drop(F lteredReason.Poss blyUndes rable(true)))
       case Drop(Bounce, _) =>
-        Some(Unavailable.Drop(FilteredReason.TweetIsBounced(true)))
+        So (Unava lable.Drop(F lteredReason.T et sBounced(true)))
 
       /**
-       * Reuse states for author visibility issues from the [[UserRepository]] for consistency with
-       * other logic for handling the same types of author visibility filtering.
+       * Reuse states for author v s b l y  ssues from t  [[UserRepos ory]] for cons stency w h
+       * ot r log c for handl ng t  sa  types of author v s b l y f lter ng.
        */
       case Drop(ProtectedAuthor, _) =>
-        Some(Unavailable.Author.Protected)
+        So (Unava lable.Author.Protected)
       case Drop(SuspendedAuthor, _) =>
-        Some(Unavailable.Author.Suspended)
+        So (Unava lable.Author.Suspended)
       case Drop(OffboardedAuthor, _) =>
-        Some(Unavailable.Author.Offboarded)
-      case Drop(DeactivatedAuthor, _) =>
-        Some(Unavailable.Author.Deactivated)
+        So (Unava lable.Author.Offboarded)
+      case Drop(Deact vatedAuthor, _) =>
+        So (Unava lable.Author.Deact vated)
       case Drop(ErasedAuthor, _) =>
-        Some(Unavailable.Author.Deactivated)
+        So (Unava lable.Author.Deact vated)
       case _: Drop =>
-        Some(Unavailable.Drop(FilteredReason.UnspecifiedReason(true)))
+        So (Unava lable.Drop(F lteredReason.Unspec f edReason(true)))
     }
 
-  private def suppressFromVisibilityAction(
-    action: Action,
-    enableLegacyFilteredReason: Boolean
-  ): Option[FilteredState.Suppress] =
-    action match {
-      case interstitial: Interstitial =>
-        interstitial.reason match {
-          case MutedKeyword if enableLegacyFilteredReason =>
-            Some(Suppress(FilteredReason.TweetMatchesViewerMutedKeyword(KeywordMatch(""))))
-          case ViewerMutesAuthor if enableLegacyFilteredReason =>
-            Some(Suppress(FilteredReason.ViewerMutesAuthor(true)))
-          case ViewerHardMutedAuthor if enableLegacyFilteredReason =>
-            Some(Suppress(FilteredReason.ViewerMutesAuthor(true)))
-          // Interstitial tweets are considered suppressed by Tweetypie. For
-          // legacy behavior reasons, these tweets should be dropped when
-          // appearing as a quoted tweet via a call to getTweets.
+  pr vate def suppressFromV s b l yAct on(
+    act on: Act on,
+    enableLegacyF lteredReason: Boolean
+  ): Opt on[F lteredState.Suppress] =
+    act on match {
+      case  nterst  al:  nterst  al =>
+         nterst  al.reason match {
+          case MutedKeyword  f enableLegacyF lteredReason =>
+            So (Suppress(F lteredReason.T etMatc sV e rMutedKeyword(KeywordMatch(""))))
+          case V e rMutesAuthor  f enableLegacyF lteredReason =>
+            So (Suppress(F lteredReason.V e rMutesAuthor(true)))
+          case V e rHardMutedAuthor  f enableLegacyF lteredReason =>
+            So (Suppress(F lteredReason.V e rMutesAuthor(true)))
+          //  nterst  al t ets are cons dered suppressed by T etyp e. For
+          // legacy behav or reasons, t se t ets should be dropped w n
+          // appear ng as a quoted t et v a a call to getT ets.
           case Nsfw =>
-            Some(Suppress(FilteredReason.ContainNsfwMedia(true)))
-          case NsfwMedia =>
-            Some(Suppress(FilteredReason.ContainNsfwMedia(true)))
-          case PossiblyUndesirable =>
-            Some(Suppress(FilteredReason.PossiblyUndesirable(true)))
+            So (Suppress(F lteredReason.Conta nNsfw d a(true)))
+          case Nsfw d a =>
+            So (Suppress(F lteredReason.Conta nNsfw d a(true)))
+          case Poss blyUndes rable =>
+            So (Suppress(F lteredReason.Poss blyUndes rable(true)))
           case _ =>
-            Some(Suppress(FilteredReason.PossiblyUndesirable(true)))
+            So (Suppress(F lteredReason.Poss blyUndes rable(true)))
         }
       case _ => None
     }

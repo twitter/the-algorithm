@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.common.base.Command;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.earlybird.archive.ArchiveHDFSUtils;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+ mport com.tw ter.common.base.Command;
+ mport com.tw ter.search.common.ut l.zktrylock.TryLock;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veHDFSUt ls;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
 
-public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
-  public SomeoneElseIsBuildingSegment(
-      SegmentInfo segmentInfo,
-      SegmentConfig segmentConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      int alreadyRetriedCount,
-      SegmentSyncConfig sync) {
+publ c class So oneElse sBu ld ngSeg nt extends Seg ntBu lderSeg nt {
+  publ c So oneElse sBu ld ngSeg nt(
+      Seg nt nfo seg nt nfo,
+      Seg ntConf g seg ntConf g,
+      Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+       nt alreadyRetr edCount,
+      Seg ntSyncConf g sync) {
 
-    super(segmentInfo, segmentConfig, earlybirdSegmentFactory, alreadyRetriedCount, sync);
+    super(seg nt nfo, seg ntConf g, earlyb rdSeg ntFactory, alreadyRetr edCount, sync);
   }
 
   /**
-   * This method refreshes local state of a segment.
-   * 1. Try to grab the ZK lock
-   *   2a. if got the lock, the segment is not being built; mark segment as NOT_BUILT_YET.
-   *   2b. otherwise, the segment is being built; keep the SOMEONE_ELSE_IS_BUILDING state
+   * T   thod refres s local state of a seg nt.
+   * 1. Try to grab t  ZK lock
+   *   2a.  f got t  lock, t  seg nt  s not be ng bu lt; mark seg nt as NOT_BU LT_YET.
+   *   2b. ot rw se, t  seg nt  s be ng bu lt; keep t  SOMEONE_ELSE_ S_BU LD NG state
    */
-  @Override
-  public SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException {
+  @Overr de
+  publ c Seg ntBu lderSeg nt handle()
+      throws Seg nt nfoConstruct onExcept on, Seg ntUpdaterExcept on {
 
     TryLock lock = getZooKeeperTryLock();
 
-    final AtomicBoolean alreadyBuilt = new AtomicBoolean(false);
-    boolean gotLock = lock.tryWithLock((Command) () -> {
-      // The segment might have already finished built by others
-      if (segmentExistsOnHdfs()) {
-        alreadyBuilt.set(true);
+    f nal Atom cBoolean alreadyBu lt = new Atom cBoolean(false);
+    boolean gotLock = lock.tryW hLock((Command) () -> {
+      // T  seg nt m ght have already f n s d bu lt by ot rs
+       f (seg ntEx stsOnHdfs()) {
+        alreadyBu lt.set(true);
       }
     });
 
-    if (!gotLock) {
-      return this;
+     f (!gotLock) {
+      return t ;
     }
 
-    if (alreadyBuilt.get()) {
-      return new BuiltAndFinalizedSegment(
-          segmentInfo, segmentConfig, earlybirdSegmentFactory, 0, sync);
+     f (alreadyBu lt.get()) {
+      return new Bu ltAndF nal zedSeg nt(
+          seg nt nfo, seg ntConf g, earlyb rdSeg ntFactory, 0, sync);
     } else {
-      // When a segment failed building, its state might not be clean. So, it is necessary to
-      // create a new SegmentInfo with a clean state
-      SegmentInfo newSegmentInfo = createNewSegmentInfo(segmentInfo);
-      return new NotYetBuiltSegment(
-          newSegmentInfo,
-          segmentConfig,
-          earlybirdSegmentFactory,
-          alreadyRetriedCount + 1,
+      // W n a seg nt fa led bu ld ng,  s state m ght not be clean. So,    s necessary to
+      // create a new Seg nt nfo w h a clean state
+      Seg nt nfo newSeg nt nfo = createNewSeg nt nfo(seg nt nfo);
+      return new NotYetBu ltSeg nt(
+          newSeg nt nfo,
+          seg ntConf g,
+          earlyb rdSeg ntFactory,
+          alreadyRetr edCount + 1,
           sync);
     }
   }
 
-  @VisibleForTesting
-  boolean segmentExistsOnHdfs() {
-    return ArchiveHDFSUtils.hasSegmentIndicesOnHDFS(sync, segmentInfo);
+  @V s bleForTest ng
+  boolean seg ntEx stsOnHdfs() {
+    return Arch veHDFSUt ls.hasSeg nt nd cesOnHDFS(sync, seg nt nfo);
   }
 }

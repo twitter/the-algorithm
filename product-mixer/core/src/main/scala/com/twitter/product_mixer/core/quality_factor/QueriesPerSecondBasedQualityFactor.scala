@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.util.Stopwatch
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.ut l.Stopwatch
 
-case class QueriesPerSecondBasedQualityFactor(
-  override val config: QueriesPerSecondBasedQualityFactorConfig)
-    extends QualityFactor[Int] {
+case class Quer esPerSecondBasedQual yFactor(
+  overr de val conf g: Quer esPerSecondBasedQual yFactorConf g)
+    extends Qual yFactor[ nt] {
 
-  @VisibleForTesting
-  private[quality_factor] val queryRateCounter: QueryRateCounter = QueryRateCounter(
-    config.queriesPerSecondSampleWindow)
+  @V s bleForTest ng
+  pr vate[qual y_factor] val queryRateCounter: QueryRateCounter = QueryRateCounter(
+    conf g.quer esPerSecondSampleW ndow)
 
-  private val delayedUntilInMillis = Stopwatch.timeMillis() + config.initialDelay.inMillis
+  pr vate val delayedUnt l nM ll s = Stopwatch.t  M ll s() + conf g. n  alDelay. nM ll s
 
-  private var state: Double = config.qualityFactorBounds.default
+  pr vate var state: Double = conf g.qual yFactorBounds.default
 
-  override def currentValue: Double = state
+  overr de def currentValue: Double = state
 
-  override def update(count: Int = 1): Unit = {
-    val queryRate = incrementAndGetQueryRateCount(count)
+  overr de def update(count:  nt = 1): Un  = {
+    val queryRate =  ncre ntAndGetQueryRateCount(count)
 
-    // Only update quality factor until the initial delay past.
-    // This allows query rate counter get warm up to reflect
-    // actual traffic load by the time initial delay expires.
-    if (Stopwatch.timeMillis() >= delayedUntilInMillis) {
-      if (queryRate > config.maxQueriesPerSecond) {
-        state = config.qualityFactorBounds.bounds(state - config.delta)
+    // Only update qual y factor unt l t   n  al delay past.
+    // T  allows query rate counter get warm up to reflect
+    // actual traff c load by t  t    n  al delay exp res.
+     f (Stopwatch.t  M ll s() >= delayedUnt l nM ll s) {
+       f (queryRate > conf g.maxQuer esPerSecond) {
+        state = conf g.qual yFactorBounds.bounds(state - conf g.delta)
       } else {
-        state = config.qualityFactorBounds.bounds(state + config.delta)
+        state = conf g.qual yFactorBounds.bounds(state + conf g.delta)
       }
     }
   }
 
-  private def incrementAndGetQueryRateCount(count: Int): Double = {
-    // Int.MaxValue is used as a special signal from [[QueriesPerSecondBasedQualityFactorObserver]]
-    // to indicate a component failure is observed.
-    // In this case, we do not update queryRateCounter and instead return Int.MaxValue.
-    // As the largest Int value, this should result in the threshold qps for quality factor being
-    // exceeded and directly decrementing quality factor.
-    if (count == Int.MaxValue) {
-      Int.MaxValue.toDouble
+  pr vate def  ncre ntAndGetQueryRateCount(count:  nt): Double = {
+    //  nt.MaxValue  s used as a spec al s gnal from [[Quer esPerSecondBasedQual yFactorObserver]]
+    // to  nd cate a component fa lure  s observed.
+    //  n t  case,   do not update queryRateCounter and  nstead return  nt.MaxValue.
+    // As t  largest  nt value, t  should result  n t  threshold qps for qual y factor be ng
+    // exceeded and d rectly decre nt ng qual y factor.
+     f (count ==  nt.MaxValue) {
+       nt.MaxValue.toDouble
     } else {
-      queryRateCounter.increment(count)
+      queryRateCounter. ncre nt(count)
       queryRateCounter.getRate()
     }
   }
 
-  override def buildObserver(): QualityFactorObserver =
-    QueriesPerSecondBasedQualityFactorObserver(this)
+  overr de def bu ldObserver(): Qual yFactorObserver =
+    Quer esPerSecondBasedQual yFactorObserver(t )
 }

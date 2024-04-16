@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird.document;
+package com.tw ter.search.earlyb rd.docu nt;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
 
 /**
- * Object to encapsulate {@link ThriftIndexingEvent} with a time slice ID.
+ * Object to encapsulate {@l nk Thr ft ndex ngEvent} w h a t   sl ce  D.
  */
-public class TimeSlicedThriftIndexingEvent {
-  private final long timeSliceID;
-  private final ThriftIndexingEvent thriftIndexingEvent;
+publ c class T  Sl cedThr ft ndex ngEvent {
+  pr vate f nal long t  Sl ce D;
+  pr vate f nal Thr ft ndex ngEvent thr ft ndex ngEvent;
 
-  public TimeSlicedThriftIndexingEvent(long timeSliceID, ThriftIndexingEvent thriftIndexingEvent) {
-    Preconditions.checkNotNull(thriftIndexingEvent);
+  publ c T  Sl cedThr ft ndex ngEvent(long t  Sl ce D, Thr ft ndex ngEvent thr ft ndex ngEvent) {
+    Precond  ons.c ckNotNull(thr ft ndex ngEvent);
 
-    this.timeSliceID = timeSliceID;
-    this.thriftIndexingEvent = thriftIndexingEvent;
+    t .t  Sl ce D = t  Sl ce D;
+    t .thr ft ndex ngEvent = thr ft ndex ngEvent;
   }
 
-  public long getStatusID() {
-    return thriftIndexingEvent.getUid();
+  publ c long getStatus D() {
+    return thr ft ndex ngEvent.getU d();
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  publ c long getT  Sl ce D() {
+    return t  Sl ce D;
   }
 
-  public ThriftIndexingEvent getThriftIndexingEvent() {
-    return thriftIndexingEvent;
+  publ c Thr ft ndex ngEvent getThr ft ndex ngEvent() {
+    return thr ft ndex ngEvent;
   }
 
-  @Override
-  public String toString() {
-    return "TimeSlicedThriftIndexingEvent{"
-        + "timeSliceID=" + timeSliceID
-        + ", thriftIndexingEvent=" + thriftIndexingEvent
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "T  Sl cedThr ft ndex ngEvent{"
+        + "t  Sl ce D=" + t  Sl ce D
+        + ", thr ft ndex ngEvent=" + thr ft ndex ngEvent
         + '}';
   }
 }

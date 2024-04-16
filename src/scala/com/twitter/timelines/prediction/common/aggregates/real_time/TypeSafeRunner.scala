@@ -1,7 +1,7 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.summingbird_internal.runner.storm.GenericRunner
+ mport com.tw ter.summ ngb rd_ nternal.runner.storm.Gener cRunner
 
 object TypeSafeRunner {
-  def main(args: Array[String]): Unit = GenericRunner(args, TimelinesRealTimeAggregatesJob(_))
+  def ma n(args: Array[Str ng]): Un  = Gener cRunner(args, T  l nesRealT  AggregatesJob(_))
 }

@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker
 
-import com.twitter.follow_recommendations.common.utils.RandomUtil
-import scala.util.Random
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RandomUt l
+ mport scala.ut l.Random
 
-sealed trait CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T]
+sealed tra  Cand dateShuffler[T] {
+  def shuffle(seed: Opt on[Long])( nput: Seq[T]): Seq[T]
 }
 
-class NoShuffle[T]() extends CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = input
+class NoShuffle[T]() extends Cand dateShuffler[T] {
+  def shuffle(seed: Opt on[Long])( nput: Seq[T]): Seq[T] =  nput
 }
 
-class RandomShuffler[T]() extends CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    seed.map(new Random(_)).getOrElse(Random).shuffle(input)
+class RandomShuffler[T]() extends Cand dateShuffler[T] {
+  def shuffle(seed: Opt on[Long])( nput: Seq[T]): Seq[T] = {
+    seed.map(new Random(_)).getOrElse(Random).shuffle( nput)
   }
 }
 
-trait RankWeightedRandomShuffler[T] extends CandidateShuffler[T] {
+tra  Rank  ghtedRandomShuffler[T] extends Cand dateShuffler[T] {
 
-  def rankToWeight(rank: Int): Double
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    val candWeights = input.zipWithIndex.map {
-      case (candidate, rank) => (candidate, rankToWeight(rank))
+  def rankTo  ght(rank:  nt): Double
+  def shuffle(seed: Opt on[Long])( nput: Seq[T]): Seq[T] = {
+    val cand  ghts =  nput.z pW h ndex.map {
+      case (cand date, rank) => (cand date, rankTo  ght(rank))
     }
-    RandomUtil.weightedRandomShuffle(candWeights, seed.map(new Random(_))).unzip._1
+    RandomUt l.  ghtedRandomShuffle(cand  ghts, seed.map(new Random(_))).unz p._1
   }
 }
 
-class ExponentialShuffler[T]() extends RankWeightedRandomShuffler[T] {
-  def rankToWeight(rank: Int): Double = {
+class Exponent alShuffler[T]() extends Rank  ghtedRandomShuffler[T] {
+  def rankTo  ght(rank:  nt): Double = {
     1 / math
-      .pow(rank.toDouble, 2.0) // this function was proved to be effective in previous DDGs
+      .pow(rank.toDouble, 2.0) // t  funct on was proved to be effect ve  n prev ous DDGs
   }
 }

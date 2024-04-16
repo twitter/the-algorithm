@@ -1,40 +1,40 @@
-package com.twitter.tweetypie.handler
+package com.tw ter.t etyp e.handler
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.TweetCreateState.CommunityProtectedUserCannotTweet
-import com.twitter.tweetypie.util.CommunityUtil
+ mport com.tw ter.featuresw c s.v2.FeatureSw chResults
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t etyp e.Future
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.thr ftscala.Commun  es
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState.Commun yProtectedUserCannotT et
+ mport com.tw ter.t etyp e.ut l.Commun yUt l
 
-object CommunitiesValidator {
+object Commun  esVal dator {
   case class Request(
-    matchedResults: Option[FeatureSwitchResults],
-    isProtected: Boolean,
-    community: Option[Communities])
+    matc dResults: Opt on[FeatureSw chResults],
+     sProtected: Boolean,
+    commun y: Opt on[Commun  es])
 
-  type Type = Request => Future[Unit]
+  type Type = Request => Future[Un ]
 
-  val CommunityProtectedCanCreateTweet = "communities_protected_community_tweet_creation_enabled"
+  val Commun yProtectedCanCreateT et = "commun  es_protected_commun y_t et_creat on_enabled"
 
-  val communityProtectedCanCreateTweetGate: Gate[Request] = Gate { request: Request =>
-    request.matchedResults
-      .flatMap(_.getBoolean(CommunityProtectedCanCreateTweet, shouldLogImpression = true))
-      .contains(false)
+  val commun yProtectedCanCreateT etGate: Gate[Request] = Gate { request: Request =>
+    request.matc dResults
+      .flatMap(_.getBoolean(Commun yProtectedCanCreateT et, shouldLog mpress on = true))
+      .conta ns(false)
   }
 
   def apply(): Type =
     (request: Request) => {
-      // Order is important: the feature-switch gate is checked only when the
-      // request is both protected & community so that the FS experiment measurements
-      // are based only on data from requests that are subject to rejection by this validator.
-      if (request.isProtected &&
-        CommunityUtil.hasCommunity(request.community) &&
-        communityProtectedCanCreateTweetGate(request)) {
-        Future.exception(TweetCreateFailure.State(CommunityProtectedUserCannotTweet))
+      // Order  s  mportant: t  feature-sw ch gate  s c cked only w n t 
+      // request  s both protected & commun y so that t  FS exper  nt  asure nts
+      // are based only on data from requests that are subject to reject on by t  val dator.
+       f (request. sProtected &&
+        Commun yUt l.hasCommun y(request.commun y) &&
+        commun yProtectedCanCreateT etGate(request)) {
+        Future.except on(T etCreateFa lure.State(Commun yProtectedUserCannotT et))
       } else {
-        Future.Unit
+        Future.Un 
       }
     }
 }

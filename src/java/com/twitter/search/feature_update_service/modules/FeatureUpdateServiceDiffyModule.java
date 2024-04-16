@@ -1,34 +1,34 @@
-package com.twitter.search.feature_update_service.modules;
+package com.tw ter.search.feature_update_serv ce.modules;
 
-import com.twitter.decider.Decider;
-import com.twitter.inject.Injector;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsJavaDarkTrafficFilterModule;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.util.Function;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter. nject. njector;
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsJavaDarkTraff cF lterModule;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.ut l.Funct on;
 
 
 /**
- * Provide a filter that sends dark traffic to diffy, if the diffy.dest command-line parameter
- * is non-empty. If diffy.dest is empty, just provide a no-op filter.
+ * Prov de a f lter that sends dark traff c to d ffy,  f t  d ffy.dest command-l ne para ter
+ *  s non-empty.  f d ffy.dest  s empty, just prov de a no-op f lter.
  */
-public class FeatureUpdateServiceDiffyModule extends MtlsJavaDarkTrafficFilterModule {
-  @Override
-  public String destFlagName() {
-    return "diffy.dest";
+publ c class FeatureUpdateServ ceD ffyModule extends MtlsJavaDarkTraff cF lterModule {
+  @Overr de
+  publ c Str ng destFlagNa () {
+    return "d ffy.dest";
   }
 
-  @Override
-  public String defaultClientId() {
-    return "feature_update_service.origin";
+  @Overr de
+  publ c Str ng defaultCl ent d() {
+    return "feature_update_serv ce.or g n";
   }
 
-  @Override
-  public Function<byte[], Object> enableSampling(Injector injector) {
-    Decider decider = injector.instance(Decider.class);
-    return new Function<byte[], Object>() {
-      @Override
-      public Object apply(byte[] v1) {
-        return DeciderUtil.isAvailableForRandomRecipient(decider, "dark_traffic_filter");
+  @Overr de
+  publ c Funct on<byte[], Object> enableSampl ng( njector  njector) {
+    Dec der dec der =  njector. nstance(Dec der.class);
+    return new Funct on<byte[], Object>() {
+      @Overr de
+      publ c Object apply(byte[] v1) {
+        return Dec derUt l. sAva lableForRandomRec p ent(dec der, "dark_traff c_f lter");
       }
     };
   }

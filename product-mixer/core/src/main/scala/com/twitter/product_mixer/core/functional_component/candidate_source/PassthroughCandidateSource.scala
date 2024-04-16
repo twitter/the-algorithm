@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.tw ter.product_m xer.core.funct onal_component.cand date_s ce
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Retrieve Candidates from the Query
+ * Retr eve Cand dates from t  Query
  */
-trait CandidateExtractor[-Request, +Candidate] {
+tra  Cand dateExtractor[-Request, +Cand date] {
 
-  def apply(query: Request): Seq[Candidate]
+  def apply(query: Request): Seq[Cand date]
 }
 
 /**
- * Identity extractor for returning the Request as a Seq of candidates
+ *  dent y extractor for return ng t  Request as a Seq of cand dates
  */
-case class IdentityCandidateExtractor[Request]() extends CandidateExtractor[Request, Request] {
+case class  dent yCand dateExtractor[Request]() extends Cand dateExtractor[Request, Request] {
 
-  def apply(candidate: Request): Seq[Request] = Seq(candidate)
+  def apply(cand date: Request): Seq[Request] = Seq(cand date)
 }
 
 /**
- * Retrieve Candidates from a [[Feature]] on the [[PipelineQuery]]'s FeatureMap. This extractor
- * supports a transform if the Feature value and the Seq of [[Candidate]] types do not match
+ * Retr eve Cand dates from a [[Feature]] on t  [[P pel neQuery]]'s FeatureMap. T  extractor
+ * supports a transform  f t  Feature value and t  Seq of [[Cand date]] types do not match
  */
-trait QueryFeatureCandidateExtractor[-Query <: PipelineQuery, FeatureValue, +Candidate]
-    extends CandidateExtractor[Query, Candidate] {
+tra  QueryFeatureCand dateExtractor[-Query <: P pel neQuery, FeatureValue, +Cand date]
+    extends Cand dateExtractor[Query, Cand date] {
 
   def feature: Feature[Query, FeatureValue]
 
-  override def apply(query: Query): Seq[Candidate] =
+  overr de def apply(query: Query): Seq[Cand date] =
     query.features.map(featureMap => transform(featureMap.get(feature))).getOrElse(Seq.empty)
 
-  def transform(featureValue: FeatureValue): Seq[Candidate]
+  def transform(featureValue: FeatureValue): Seq[Cand date]
 }
 
 /**
- * Retrieve Candidates from a [[Feature]] on the [[PipelineQuery]]'s FeatureMap. This extractor can
- * be used with a single [[Feature]] if the Feature value and the Seq of [[Candidate]] types match.
+ * Retr eve Cand dates from a [[Feature]] on t  [[P pel neQuery]]'s FeatureMap. T  extractor can
+ * be used w h a s ngle [[Feature]]  f t  Feature value and t  Seq of [[Cand date]] types match.
  */
-case class CandidateQueryFeatureCandidateExtractor[-Query <: PipelineQuery, Candidate](
-  override val feature: Feature[Query, Seq[Candidate]])
-    extends QueryFeatureCandidateExtractor[Query, Seq[Candidate], Candidate] {
+case class Cand dateQueryFeatureCand dateExtractor[-Query <: P pel neQuery, Cand date](
+  overr de val feature: Feature[Query, Seq[Cand date]])
+    extends QueryFeatureCand dateExtractor[Query, Seq[Cand date], Cand date] {
 
-  override def transform(featureValue: Seq[Candidate]): Seq[Candidate] = featureValue
+  overr de def transform(featureValue: Seq[Cand date]): Seq[Cand date] = featureValue
 }
 
 /**
- * A [[CandidateSource]] that retrieves candidates from the Request via a [[CandidateExtractor]]
+ * A [[Cand dateS ce]] that retr eves cand dates from t  Request v a a [[Cand dateExtractor]]
  */
-case class PassthroughCandidateSource[-Request, +Candidate](
-  override val identifier: CandidateSourceIdentifier,
-  candidateExtractor: CandidateExtractor[Request, Candidate])
-    extends CandidateSource[Request, Candidate] {
+case class PassthroughCand dateS ce[-Request, +Cand date](
+  overr de val  dent f er: Cand dateS ce dent f er,
+  cand dateExtractor: Cand dateExtractor[Request, Cand date])
+    extends Cand dateS ce[Request, Cand date] {
 
-  def apply(query: Request): Stitch[Seq[Candidate]] = Stitch.value(candidateExtractor(query))
+  def apply(query: Request): St ch[Seq[Cand date]] = St ch.value(cand dateExtractor(query))
 }

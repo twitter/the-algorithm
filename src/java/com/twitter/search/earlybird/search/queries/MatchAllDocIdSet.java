@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.RamUsageEstimator;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene.search.Doc dSet;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.B s;
+ mport org.apac .lucene.ut l.RamUsageEst mator;
 
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
 
-public final class MatchAllDocIdSet extends DocIdSet {
-  private final LeafReader reader;
+publ c f nal class MatchAllDoc dSet extends Doc dSet {
+  pr vate f nal LeafReader reader;
 
-  public MatchAllDocIdSet(LeafReader reader) {
-    this.reader = reader;
+  publ c MatchAllDoc dSet(LeafReader reader) {
+    t .reader = reader;
   }
 
-  @Override
-  public DocIdSetIterator iterator() throws IOException {
-    return new AllDocsIterator(reader);
+  @Overr de
+  publ c Doc dSet erator  erator() throws  OExcept on {
+    return new AllDocs erator(reader);
   }
 
-  @Override
-  public Bits bits() throws IOException {
-    return new Bits() {
-      @Override
-      public boolean get(int index) {
+  @Overr de
+  publ c B s b s() throws  OExcept on {
+    return new B s() {
+      @Overr de
+      publ c boolean get( nt  ndex) {
         return true;
       }
 
-      @Override
-      public int length() {
+      @Overr de
+      publ c  nt length() {
         return reader.maxDoc();
       }
     };
   }
 
-  @Override
-  public long ramBytesUsed() {
-    return RamUsageEstimator.shallowSizeOf(this);
+  @Overr de
+  publ c long ramBytesUsed() {
+    return RamUsageEst mator.shallowS zeOf(t );
   }
 }

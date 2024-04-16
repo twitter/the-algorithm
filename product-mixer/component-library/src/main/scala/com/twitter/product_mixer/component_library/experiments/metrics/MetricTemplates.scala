@@ -1,123 +1,123 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.tw ter.product_m xer.component_l brary.exper  nts. tr cs
 
-import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
-import reflect.ClassTag
-import scala.reflect.runtime.universe._
-import scala.util.matching.Regex
+ mport com.tw ter.product_m xer.component_l brary.exper  nts. tr cs.PlaceholderConf g.PlaceholdersMap
+ mport reflect.ClassTag
+ mport scala.reflect.runt  .un verse._
+ mport scala.ut l.match ng.Regex
 
-case class MatchedPlaceholder(outerKey: String, innerKey: Option[String] = None)
+case class Matc dPlaceholder(outerKey: Str ng,  nnerKey: Opt on[Str ng] = None)
 
-object MetricTemplates {
-  // Matches "${placeholder}" where `placeholder` is in a matched group
+object  tr cTemplates {
+  // Matc s "${placeholder}" w re `placeholder`  s  n a matc d group
   val PlaceholderPattern: Regex = "\\$\\{([^\\}]+)\\}".r.unanchored
-  // Matches "${placeholder[index]}" where `placeholder` and `index` are in different matched groups
-  val IndexedPlaceholderPattern: Regex = "\\$\\{([^\\[]+)\\[([^\\]]+)\\]\\}".r.unanchored
-  val DefaultFieldName = "name"
+  // Matc s "${placeholder[ ndex]}" w re `placeholder` and ` ndex` are  n d fferent matc d groups
+  val  ndexedPlaceholderPattern: Regex = "\\$\\{([^\\[]+)\\[([^\\]]+)\\]\\}".r.unanchored
+  val DefaultF eldNa  = "na "
 
-  def interpolate(inputTemplate: String, placeholders: PlaceholdersMap): Seq[String] = {
-    val matchedPlaceholders = getMatchedPlaceholders(inputTemplate)
-    val groupedPlaceholders = matchedPlaceholders.groupBy(_.outerKey)
+  def  nterpolate( nputTemplate: Str ng, placeholders: PlaceholdersMap): Seq[Str ng] = {
+    val matc dPlaceholders = getMatc dPlaceholders( nputTemplate)
+    val groupedPlaceholders = matc dPlaceholders.groupBy(_.outerKey)
     val placeholderKeyValues = getPlaceholderKeyValues(groupedPlaceholders, placeholders)
     val (keys, values) = (placeholderKeyValues.map(_._1), placeholderKeyValues.map(_._2))
-    val cross: Seq[List[Named]] = crossProduct(values)
-    val mirror = runtimeMirror(getClass.getClassLoader) // necessary for reflection
+    val cross: Seq[L st[Na d]] = crossProduct(values)
+    val m rror = runt  M rror(getClass.getClassLoader) // necessary for reflect on
     for {
-      interpolatables <- cross
-    } yield {
+       nterpolatables <- cross
+    } y eld {
       assert(
-        keys.length == interpolatables.length,
-        s"Unexpected length mismatch between $keys and $interpolatables")
-      var replacementStr = inputTemplate
-      keys.zip(interpolatables).foreach {
-        case (key, interpolatable) =>
-          val accessors = caseAccessors(mirror, interpolatable)
-          groupedPlaceholders(key).foreach { placeholder: MatchedPlaceholder =>
+        keys.length ==  nterpolatables.length,
+        s"Unexpected length m smatch bet en $keys and $ nterpolatables")
+      var replace ntStr =  nputTemplate
+      keys.z p( nterpolatables).foreach {
+        case (key,  nterpolatable) =>
+          val accessors = caseAccessors(m rror,  nterpolatable)
+          groupedPlaceholders(key).foreach { placeholder: Matc dPlaceholder =>
             val templateKey = generateTemplateKey(placeholder)
-            val fieldName = placeholder.innerKey.getOrElse(DefaultFieldName)
-            val fieldValue = getFieldValue(mirror, interpolatable, accessors, fieldName)
-            replacementStr = replacementStr.replaceAll(templateKey, fieldValue)
+            val f eldNa  = placeholder. nnerKey.getOrElse(DefaultF eldNa )
+            val f eldValue = getF eldValue(m rror,  nterpolatable, accessors, f eldNa )
+            replace ntStr = replace ntStr.replaceAll(templateKey, f eldValue)
           }
       }
-      replacementStr
+      replace ntStr
     }
   }
 
-  def getMatchedPlaceholders(inputTemplate: String): Seq[MatchedPlaceholder] = {
+  def getMatc dPlaceholders( nputTemplate: Str ng): Seq[Matc dPlaceholder] = {
     for {
-      matched <- PlaceholderPattern.findAllIn(inputTemplate).toSeq
-    } yield {
-      val matchedWithIndexOpt = IndexedPlaceholderPattern.findFirstMatchIn(matched)
-      val (outer, inner) = matchedWithIndexOpt
-        .map { matchedWithIndex =>
-          (matchedWithIndex.group(1), Some(matchedWithIndex.group(2)))
-        }.getOrElse((matched, None))
+      matc d <- PlaceholderPattern.f ndAll n( nputTemplate).toSeq
+    } y eld {
+      val matc dW h ndexOpt =  ndexedPlaceholderPattern.f ndF rstMatch n(matc d)
+      val (outer,  nner) = matc dW h ndexOpt
+        .map { matc dW h ndex =>
+          (matc dW h ndex.group(1), So (matc dW h ndex.group(2)))
+        }.getOrElse((matc d, None))
       val outerKey = unwrap(outer)
-      val innerKey = inner.map(unwrap(_))
-      MatchedPlaceholder(outerKey, innerKey)
+      val  nnerKey =  nner.map(unwrap(_))
+      Matc dPlaceholder(outerKey,  nnerKey)
     }
   }
 
-  def unwrap(str: String): String =
-    str.stripPrefix("${").stripSuffix("}")
+  def unwrap(str: Str ng): Str ng =
+    str.str pPref x("${").str pSuff x("}")
 
-  def wrap(str: String): String =
+  def wrap(str: Str ng): Str ng =
     "\\$\\{" + str + "\\}"
 
   def getPlaceholderKeyValues(
-    groupedPlaceholders: Map[String, Seq[MatchedPlaceholder]],
+    groupedPlaceholders: Map[Str ng, Seq[Matc dPlaceholder]],
     placeholders: PlaceholdersMap
-  ): Seq[(String, Seq[Named])] = {
+  ): Seq[(Str ng, Seq[Na d])] = {
     groupedPlaceholders.toSeq
       .map {
         case (outerKey, _) =>
           val placeholderValues = placeholders.getOrElse(
             outerKey,
-            throw new RuntimeException(s"Failed to find values of $outerKey in placeholders"))
+            throw new Runt  Except on(s"Fa led to f nd values of $outerKey  n placeholders"))
           outerKey -> placeholderValues
       }
   }
 
-  def crossProduct[T](seqOfSeqOfItems: Seq[Seq[T]]): Seq[List[T]] = {
-    if (seqOfSeqOfItems.isEmpty) {
-      List(Nil)
+  def crossProduct[T](seqOfSeqOf ems: Seq[Seq[T]]): Seq[L st[T]] = {
+     f (seqOfSeqOf ems. sEmpty) {
+      L st(N l)
     } else {
       for {
-        // for every item in the head list
-        item <- seqOfSeqOfItems.head
-        // for every result (List) based on the cross-product of tail
-        resultList <- crossProduct(seqOfSeqOfItems.tail)
-      } yield {
-        item :: resultList
+        // for every  em  n t   ad l st
+         em <- seqOfSeqOf ems. ad
+        // for every result (L st) based on t  cross-product of ta l
+        resultL st <- crossProduct(seqOfSeqOf ems.ta l)
+      } y eld {
+         em :: resultL st
       }
     }
   }
 
-  def generateTemplateKey(matched: MatchedPlaceholder): String = {
-    matched.innerKey match {
-      case None => wrap(matched.outerKey)
-      case Some(innerKeyString) => wrap(matched.outerKey + "\\[" + innerKeyString + "\\]")
+  def generateTemplateKey(matc d: Matc dPlaceholder): Str ng = {
+    matc d. nnerKey match {
+      case None => wrap(matc d.outerKey)
+      case So ( nnerKeyStr ng) => wrap(matc d.outerKey + "\\[" +  nnerKeyStr ng + "\\]")
     }
   }
 
-  // Given an instance and a field name, use reflection to get its value.
-  def getFieldValue[T: ClassTag](
-    mirror: Mirror,
+  // G ven an  nstance and a f eld na , use reflect on to get  s value.
+  def getF eldValue[T: ClassTag](
+    m rror: M rror,
     cls: T,
-    accessors: Map[String, MethodSymbol],
-    fieldName: String
-  ): String = {
-    val instance: InstanceMirror = mirror.reflect(cls)
+    accessors: Map[Str ng,  thodSymbol],
+    f eldNa : Str ng
+  ): Str ng = {
+    val  nstance:  nstanceM rror = m rror.reflect(cls)
     val accessor = accessors.getOrElse(
-      fieldName,
-      throw new RuntimeException(s"Failed to find value of $fieldName for $cls"))
-    instance.reflectField(accessor).get.toString // .get is safe due to check above
+      f eldNa ,
+      throw new Runt  Except on(s"Fa led to f nd value of $f eldNa  for $cls"))
+     nstance.reflectF eld(accessor).get.toStr ng // .get  s safe due to c ck above
   }
 
-  // Given an instance, use reflection to get a mapping for field name -> symbol
-  def caseAccessors[T: ClassTag](mirror: Mirror, cls: T): Map[String, MethodSymbol] = {
-    val classSymbol = mirror.classSymbol(cls.getClass)
-    classSymbol.toType.members.collect {
-      case m: MethodSymbol if m.isCaseAccessor => (m.name.toString -> m)
+  // G ven an  nstance, use reflect on to get a mapp ng for f eld na  -> symbol
+  def caseAccessors[T: ClassTag](m rror: M rror, cls: T): Map[Str ng,  thodSymbol] = {
+    val classSymbol = m rror.classSymbol(cls.getClass)
+    classSymbol.toType. mbers.collect {
+      case m:  thodSymbol  f m. sCaseAccessor => (m.na .toStr ng -> m)
     }.toMap
   }
 }

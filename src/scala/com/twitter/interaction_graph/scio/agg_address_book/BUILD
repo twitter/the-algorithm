@@ -1,62 +1,62 @@
-scala_library(
-    name = "agg_address_book",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    na  = "agg_address_book",
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":interaction_graph_agg_address_book_edge_snapshot-scala",
-        ":interaction_graph_agg_address_book_vertex_snapshot-scala",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "addressbook/jobs/src/main/scala/com/twitter/addressbook/jobs/simplematches:simple_user_matches-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
-        "src/scala/com/twitter/interaction_graph/scio/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ": nteract on_graph_agg_address_book_edge_snapshot-scala",
+        ": nteract on_graph_agg_address_book_vertex_snapshot-scala",
+        "3rdparty/jvm/com/tw ter/storehaus:algebra",
+        "addressbook/jobs/src/ma n/scala/com/tw ter/addressbook/jobs/s mplematc s:s mple_user_matc s-scala",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/job",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
+        "consu r-data-tools/src/ma n/scala/com/tw ter/cde/sc o/dal_read",
+        "src/scala/com/tw ter/ nteract on_graph/sc o/common",
     ],
 )
 
-jvm_binary(
-    name = "interaction_graph_address_book_scio",
-    main = "com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAddressBookJob",
+jvm_b nary(
+    na  = " nteract on_graph_address_book_sc o",
+    ma n = "com.tw ter. nteract on_graph.sc o.agg_address_book. nteract onGraphAddressBookJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":agg_address_book",
     ],
 )
 
 create_datasets(
-    base_name = "interaction_graph_agg_address_book_edge_snapshot",
-    description = "User-user directed edges with addressbook features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
+    base_na  = " nteract on_graph_agg_address_book_edge_snapshot",
+    descr pt on = "User-user d rected edges w h addressbook features",
+    java_sc ma = "com.tw ter. nteract on_graph.thr ftjava.Edge",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    scala_sc ma = "com.tw ter. nteract on_graph.thr ftscala.Edge",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-scala",
     ],
 )
 
 create_datasets(
-    base_name = "interaction_graph_agg_address_book_vertex_snapshot",
-    description = "User vertex with addressbook features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_na  = " nteract on_graph_agg_address_book_vertex_snapshot",
+    descr pt on = "User vertex w h addressbook features",
+    java_sc ma = "com.tw ter. nteract on_graph.thr ftjava.Vertex",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    scala_sc ma = "com.tw ter. nteract on_graph.thr ftscala.Vertex",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-scala",
     ],
 )

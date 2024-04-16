@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTwoTowerParams
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
+ mport com.tw ter.cr_m xer.param.Consu rEmbedd ngBasedTwoTo rParams
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.t  l nes.conf gap 
 
-object ConsumerEmbeddingBasedTwoTowerSimilarityEngine {
+object Consu rEmbedd ngBasedTwoTo rS m lar yEng ne {
   def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): HnswANNEngineQuery = {
-    HnswANNEngineQuery(
-      sourceId = sourceId,
-      modelId = params(ConsumerEmbeddingBasedTwoTowerParams.ModelIdParam),
+    s ce d:  nternal d,
+    params: conf gap .Params,
+  ): HnswANNEng neQuery = {
+    HnswANNEng neQuery(
+      s ce d = s ce d,
+      model d = params(Consu rEmbedd ngBasedTwoTo rParams.Model dParam),
       params = params
     )
   }

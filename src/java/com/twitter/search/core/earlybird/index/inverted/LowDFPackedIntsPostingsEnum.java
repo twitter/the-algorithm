@@ -1,112 +1,112 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import org.apache.lucene.util.packed.PackedInts;
+ mport org.apac .lucene.ut l.packed.Packed nts;
 
 /**
- * A PostingsEnum for iterating over LowDFPackedIntsPostingLists.
+ * A Post ngsEnum for  erat ng over LowDFPacked ntsPost ngL sts.
  *
- * Can be used with positions and without positions.
+ * Can be used w h pos  ons and w hout pos  ons.
  */
-public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum {
-  private static final int SKIP_INTERVAL = 128;
+publ c class LowDFPacked ntsPost ngsEnum extends Earlyb rdOpt m zedPost ngsEnum {
+  pr vate stat c f nal  nt SK P_ NTERVAL = 128;
 
-  private final PackedInts.Reader packedDocIds;
+  pr vate f nal Packed nts.Reader packedDoc ds;
   @Nullable
-  private final PackedInts.Reader packedPositions;
-  private final int lastPostingPointer;
-  private final int largestDocID;
-  private int currentPositionPointer;
+  pr vate f nal Packed nts.Reader packedPos  ons;
+  pr vate f nal  nt lastPost ngPo nter;
+  pr vate f nal  nt largestDoc D;
+  pr vate  nt currentPos  onPo nter;
 
-  /** Pointer to the next posting that will be loaded. */
-  private int nextPostingPointer;
+  /** Po nter to t  next post ng that w ll be loaded. */
+  pr vate  nt nextPost ngPo nter;
 
   /**
-   * Creates a new PostingsEnum for all postings in a given term.
+   * Creates a new Post ngsEnum for all post ngs  n a g ven term.
    */
-  public LowDFPackedIntsPostingsEnum(
-      PackedInts.Reader packedDocIds,
+  publ c LowDFPacked ntsPost ngsEnum(
+      Packed nts.Reader packedDoc ds,
       @Nullable
-      PackedInts.Reader packedPositions,
-      int postingListPointer,
-      int numPostings) {
-    super(postingListPointer, numPostings);
+      Packed nts.Reader packedPos  ons,
+       nt post ngL stPo nter,
+       nt numPost ngs) {
+    super(post ngL stPo nter, numPost ngs);
 
-    this.packedDocIds = packedDocIds;
-    this.packedPositions = packedPositions;
-    this.nextPostingPointer = postingListPointer;
+    t .packedDoc ds = packedDoc ds;
+    t .packedPos  ons = packedPos  ons;
+    t .nextPost ngPo nter = post ngL stPo nter;
 
-    this.lastPostingPointer = postingListPointer + numPostings - 1;
-    this.largestDocID = (int) packedDocIds.get(lastPostingPointer);
+    t .lastPost ngPo nter = post ngL stPo nter + numPost ngs - 1;
+    t .largestDoc D = ( nt) packedDoc ds.get(lastPost ngPo nter);
 
-    loadNextPosting();
+    loadNextPost ng();
 
-    // Treat each term as a single block load.
-    queryCostTracker.track(QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+    // Treat each term as a s ngle block load.
+    queryCostTracker.track(QueryCostTracker.CostType.LOAD_OPT M ZED_POST NG_BLOCK);
   }
 
-  @Override
-  protected void loadNextPosting() {
-    if (nextPostingPointer <= lastPostingPointer) {
-      nextDocID = (int) packedDocIds.get(nextPostingPointer);
+  @Overr de
+  protected vo d loadNextPost ng() {
+     f (nextPost ngPo nter <= lastPost ngPo nter) {
+      nextDoc D = ( nt) packedDoc ds.get(nextPost ngPo nter);
       nextFreq = 1;
     } else {
-      // all postings fully processed
-      nextDocID = NO_MORE_DOCS;
+      // all post ngs fully processed
+      nextDoc D = NO_MORE_DOCS;
       nextFreq = 0;
     }
-    nextPostingPointer++;
+    nextPost ngPo nter++;
   }
 
-  @Override
-  protected void startCurrentDoc() {
-    if (packedPositions != null) {
+  @Overr de
+  protected vo d startCurrentDoc() {
+     f (packedPos  ons != null) {
       /**
-       * Remember where we were at the beginning of this doc, so that we can iterate over the
-       * positions for this doc if needed.
-       * Adjust by `- 1 - getCurrentFreq()` because we already advanced beyond the last posting in
-       * the previous loadNextPosting() calls.
+       * Re mber w re    re at t  beg nn ng of t  doc, so that   can  erate over t 
+       * pos  ons for t  doc  f needed.
+       * Adjust by `- 1 - getCurrentFreq()` because   already advanced beyond t  last post ng  n
+       * t  prev ous loadNextPost ng() calls.
        * @see #nextDocNoDel()
        */
-      currentPositionPointer = nextPostingPointer - 1 - getCurrentFreq();
+      currentPos  onPo nter = nextPost ngPo nter - 1 - getCurrentFreq();
     }
   }
 
-  @Override
-  protected void skipTo(int target) {
-    assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
+  @Overr de
+  protected vo d sk pTo( nt target) {
+    assert target != NO_MORE_DOCS : "Should be handled  n parent class advance  thod";
 
-    // now we know there must be a doc in this block that we can return
-    int skipIndex = nextPostingPointer + SKIP_INTERVAL;
-    while (skipIndex <= lastPostingPointer && target > packedDocIds.get(skipIndex)) {
-      nextPostingPointer = skipIndex;
-      skipIndex += SKIP_INTERVAL;
+    // now   know t re must be a doc  n t  block that   can return
+     nt sk p ndex = nextPost ngPo nter + SK P_ NTERVAL;
+    wh le (sk p ndex <= lastPost ngPo nter && target > packedDoc ds.get(sk p ndex)) {
+      nextPost ngPo nter = sk p ndex;
+      sk p ndex += SK P_ NTERVAL;
     }
   }
 
-  @Override
-  public int nextPosition() throws IOException {
-    if (packedPositions == null) {
+  @Overr de
+  publ c  nt nextPos  on() throws  OExcept on {
+     f (packedPos  ons == null) {
       return -1;
-    } else if (currentPositionPointer < packedPositions.size()) {
-      return (int) packedPositions.get(currentPositionPointer++);
+    } else  f (currentPos  onPo nter < packedPos  ons.s ze()) {
+      return ( nt) packedPos  ons.get(currentPos  onPo nter++);
     } else {
       return -1;
     }
   }
 
-  @Override
-  public int getLargestDocID() throws IOException {
-    return largestDocID;
+  @Overr de
+  publ c  nt getLargestDoc D() throws  OExcept on {
+    return largestDoc D;
   }
 
-  @Override
-  public long cost() {
-    // cost would be -1 if this enum is exhausted.
-    final int cost = lastPostingPointer - nextPostingPointer + 1;
+  @Overr de
+  publ c long cost() {
+    // cost would be -1  f t  enum  s exhausted.
+    f nal  nt cost = lastPost ngPo nter - nextPost ngPo nter + 1;
     return cost < 0 ? 0 : cost;
   }
 }

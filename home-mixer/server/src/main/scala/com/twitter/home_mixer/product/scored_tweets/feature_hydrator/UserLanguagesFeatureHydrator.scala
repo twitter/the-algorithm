@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserLanguagesRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserLanguagesRepos ory
+ mport com.tw ter.ho _m xer.ut l.ObservedKeyValueResultHandler
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.search.common.constants.{thr ftscala => scc}
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object UserLanguagesFeature extends Feature[PipelineQuery, Seq[scc.ThriftLanguage]]
+object UserLanguagesFeature extends Feature[P pel neQuery, Seq[scc.Thr ftLanguage]]
 
-@Singleton
-case class UserLanguagesFeatureHydrator @Inject() (
-  @Named(UserLanguagesRepository) client: KeyValueRepository[Seq[Long], Long, Seq[
-    scc.ThriftLanguage
+@S ngleton
+case class UserLanguagesFeatureHydrator @ nject() (
+  @Na d(UserLanguagesRepos ory) cl ent: KeyValueRepos ory[Seq[Long], Long, Seq[
+    scc.Thr ftLanguage
   ]],
-  statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery]
-    with ObservedKeyValueResultHandler {
+  statsRece ver: StatsRece ver)
+    extends QueryFeatureHydrator[P pel neQuery]
+    w h ObservedKeyValueResultHandler {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("UserLanguages")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("UserLanguages")
 
-  override val features: Set[Feature[_, _]] = Set(UserLanguagesFeature)
+  overr de val features: Set[Feature[_, _]] = Set(UserLanguagesFeature)
 
-  override val statScope: String = identifier.toString
+  overr de val statScope: Str ng =  dent f er.toStr ng
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val key = query.getRequiredUserId
-    Stitch.callFuture(client(Seq(key))).map { result =>
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val key = query.getRequ redUser d
+    St ch.callFuture(cl ent(Seq(key))).map { result =>
       val feature =
-        observedGet(key = Some(key), keyValueResult = result).map(_.getOrElse(Seq.empty))
-      FeatureMapBuilder()
+        observedGet(key = So (key), keyValueResult = result).map(_.getOrElse(Seq.empty))
+      FeatureMapBu lder()
         .add(UserLanguagesFeature, feature)
-        .build()
+        .bu ld()
     }
   }
 }

@@ -1,166 +1,166 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.tw ter.ho _m xer.product.scored_t ets.scorer
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.Scoring.ModelWeights
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+ mport com.tw ter.dal.personal_data.{thr ftjava => pd}
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Scor ng.Model  ghts
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecordOpt onalFeature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DoubleDataRecordCompat ble
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
 
-sealed trait PredictedScoreFeature
-    extends DataRecordOptionalFeature[TweetCandidate, Double]
-    with DoubleDataRecordCompatible {
+sealed tra  Pred ctedScoreFeature
+    extends DataRecordOpt onalFeature[T etCand date, Double]
+    w h DoubleDataRecordCompat ble {
 
-  override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-  def statName: String
-  def modelWeightParam: FSBoundedParam[Double]
-  def extractScore: FeatureMap => Option[Double] = _.getOrElse(this, None)
+  overr de val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  def statNa : Str ng
+  def model  ghtParam: FSBoundedParam[Double]
+  def extractScore: FeatureMap => Opt on[Double] = _.getOrElse(t , None)
 }
 
-object PredictedFavoriteScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureName
-  override val statName = "fav"
-  override val modelWeightParam = ModelWeights.FavParam
+object Pred ctedFavor eScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_FAVOR TED.getFeatureNa 
+  overr de val statNa  = "fav"
+  overr de val model  ghtParam = Model  ghts.FavParam
 }
 
-object PredictedReplyScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_REPLIED.getFeatureName
-  override val statName = "reply"
-  override val modelWeightParam = ModelWeights.ReplyParam
+object Pred ctedReplyScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_REPL ED.getFeatureNa 
+  overr de val statNa  = "reply"
+  overr de val model  ghtParam = Model  ghts.ReplyParam
 }
 
-object PredictedRetweetScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureName
-  override val statName = "retweet"
-  override val modelWeightParam = ModelWeights.RetweetParam
+object Pred ctedRet etScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_RETWEETED.getFeatureNa 
+  overr de val statNa  = "ret et"
+  overr de val model  ghtParam = Model  ghts.Ret etParam
 }
 
-object PredictedReplyEngagedByAuthorScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureName
-  override val statName = "reply_engaged_by_author"
-  override val modelWeightParam = ModelWeights.ReplyEngagedByAuthorParam
+object Pred ctedReplyEngagedByAuthorScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_REPL ED_REPLY_ENGAGED_BY_AUTHOR.getFeatureNa 
+  overr de val statNa  = "reply_engaged_by_author"
+  overr de val model  ghtParam = Model  ghts.ReplyEngagedByAuthorParam
 }
 
-object PredictedGoodClickConvoDescFavoritedOrRepliedScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureName
-  override val statName = "good_click_convo_desc_favorited_or_replied"
-  override val modelWeightParam = ModelWeights.GoodClickParam
+object Pred ctedGoodCl ckConvoDescFavor edOrRepl edScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_GOOD_CL CKED_V1.getFeatureNa 
+  overr de val statNa  = "good_cl ck_convo_desc_favor ed_or_repl ed"
+  overr de val model  ghtParam = Model  ghts.GoodCl ckParam
 
-  override def extractScore: FeatureMap => Option[Double] = { featureMap =>
-    val goodClickV1Opt = featureMap.getOrElse(this, None)
-    val goodClickV2Opt = featureMap.getOrElse(PredictedGoodClickConvoDescUamGt2ScoreFeature, None)
+  overr de def extractScore: FeatureMap => Opt on[Double] = { featureMap =>
+    val goodCl ckV1Opt = featureMap.getOrElse(t , None)
+    val goodCl ckV2Opt = featureMap.getOrElse(Pred ctedGoodCl ckConvoDescUamGt2ScoreFeature, None)
 
-    (goodClickV1Opt, goodClickV2Opt) match {
-      case (Some(v1Score), Some(v2Score)) => Some(Math.max(v1Score, v2Score))
-      case _ => goodClickV1Opt.orElse(goodClickV2Opt)
+    (goodCl ckV1Opt, goodCl ckV2Opt) match {
+      case (So (v1Score), So (v2Score)) => So (Math.max(v1Score, v2Score))
+      case _ => goodCl ckV1Opt.orElse(goodCl ckV2Opt)
     }
   }
 }
 
-object PredictedGoodClickConvoDescUamGt2ScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureName
-  override val statName = "good_click_convo_desc_uam_gt_2"
-  override val modelWeightParam = ModelWeights.GoodClickV2Param
+object Pred ctedGoodCl ckConvoDescUamGt2ScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_GOOD_CL CKED_V2.getFeatureNa 
+  overr de val statNa  = "good_cl ck_convo_desc_uam_gt_2"
+  overr de val model  ghtParam = Model  ghts.GoodCl ckV2Param
 }
 
-object PredictedGoodProfileClickScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureName
-  override val statName = "good_profile_click"
-  override val modelWeightParam = ModelWeights.GoodProfileClickParam
+object Pred ctedGoodProf leCl ckScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_PROF LE_CL CKED_AND_PROF LE_ENGAGED.getFeatureNa 
+  overr de val statNa  = "good_prof le_cl ck"
+  overr de val model  ghtParam = Model  ghts.GoodProf leCl ckParam
 }
 
-object PredictedVideoPlayback50ScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_VIDEO_PLAYBACK_50.getFeatureName
-  override val statName = "video_playback_50"
-  override val modelWeightParam = ModelWeights.VideoPlayback50Param
+object Pred ctedV deoPlayback50ScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_V DEO_PLAYBACK_50.getFeatureNa 
+  overr de val statNa  = "v deo_playback_50"
+  overr de val model  ghtParam = Model  ghts.V deoPlayback50Param
 }
 
-object PredictedTweetDetailDwellScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_TWEET_DETAIL_DWELLED_15_SEC.getFeatureName
-  override val statName = "tweet_detail_dwell"
-  override val modelWeightParam = ModelWeights.TweetDetailDwellParam
+object Pred ctedT etDeta lD llScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_TWEET_DETA L_DWELLED_15_SEC.getFeatureNa 
+  overr de val statNa  = "t et_deta l_d ll"
+  overr de val model  ghtParam = Model  ghts.T etDeta lD llParam
 }
 
-object PredictedProfileDwelledScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_PROFILE_DWELLED_20_SEC.getFeatureName
-  override val statName = "profile_dwell"
-  override val modelWeightParam = ModelWeights.ProfileDwelledParam
+object Pred ctedProf leD lledScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_PROF LE_DWELLED_20_SEC.getFeatureNa 
+  overr de val statNa  = "prof le_d ll"
+  overr de val model  ghtParam = Model  ghts.Prof leD lledParam
 }
 
-object PredictedBookmarkScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_BOOKMARKED.getFeatureName
-  override val statName = "bookmark"
-  override val modelWeightParam = ModelWeights.BookmarkParam
+object Pred ctedBookmarkScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng = RecapFeatures.PRED CTED_ S_BOOKMARKED.getFeatureNa 
+  overr de val statNa  = "bookmark"
+  overr de val model  ghtParam = Model  ghts.BookmarkParam
 }
 
-object PredictedShareScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_SHARED.getFeatureName
-  override val statName = "share"
-  override val modelWeightParam = ModelWeights.ShareParam
+object Pred ctedShareScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_SHARED.getFeatureNa 
+  overr de val statNa  = "share"
+  overr de val model  ghtParam = Model  ghts.ShareParam
 }
 
-object PredictedShareMenuClickScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_SHARE_MENU_CLICKED.getFeatureName
-  override val statName = "share_menu_click"
-  override val modelWeightParam = ModelWeights.ShareMenuClickParam
+object Pred ctedShare nuCl ckScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_SHARE_MENU_CL CKED.getFeatureNa 
+  overr de val statNa  = "share_ nu_cl ck"
+  overr de val model  ghtParam = Model  ghts.Share nuCl ckParam
 }
 
-// Negative Engagements
-object PredictedNegativeFeedbackV2ScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureName
-  override val statName = "negative_feedback_v2"
-  override val modelWeightParam = ModelWeights.NegativeFeedbackV2Param
+// Negat ve Engage nts
+object Pred ctedNegat veFeedbackV2ScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_NEGAT VE_FEEDBACK_V2.getFeatureNa 
+  overr de val statNa  = "negat ve_feedback_v2"
+  overr de val model  ghtParam = Model  ghts.Negat veFeedbackV2Param
 }
 
-object PredictedReportedScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_REPORT_TWEET_CLICKED.getFeatureName
-  override val statName = "reported"
-  override val modelWeightParam = ModelWeights.ReportParam
+object Pred ctedReportedScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_REPORT_TWEET_CL CKED.getFeatureNa 
+  overr de val statNa  = "reported"
+  overr de val model  ghtParam = Model  ghts.ReportParam
 }
 
-object PredictedStrongNegativeFeedbackScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_STRONG_NEGATIVE_FEEDBACK.getFeatureName
-  override val statName = "strong_negative_feedback"
-  override val modelWeightParam = ModelWeights.StrongNegativeFeedbackParam
+object Pred ctedStrongNegat veFeedbackScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_STRONG_NEGAT VE_FEEDBACK.getFeatureNa 
+  overr de val statNa  = "strong_negat ve_feedback"
+  overr de val model  ghtParam = Model  ghts.StrongNegat veFeedbackParam
 }
 
-object PredictedWeakNegativeFeedbackScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_WEAK_NEGATIVE_FEEDBACK.getFeatureName
-  override val statName = "weak_negative_feedback"
-  override val modelWeightParam = ModelWeights.WeakNegativeFeedbackParam
+object Pred cted akNegat veFeedbackScoreFeature extends Pred ctedScoreFeature {
+  overr de val featureNa : Str ng =
+    RecapFeatures.PRED CTED_ S_WEAK_NEGAT VE_FEEDBACK.getFeatureNa 
+  overr de val statNa  = " ak_negat ve_feedback"
+  overr de val model  ghtParam = Model  ghts. akNegat veFeedbackParam
 }
 
-object PredictedScoreFeature {
-  val PredictedScoreFeatures: Set[PredictedScoreFeature] = Set(
-    PredictedFavoriteScoreFeature,
-    PredictedReplyScoreFeature,
-    PredictedRetweetScoreFeature,
-    PredictedReplyEngagedByAuthorScoreFeature,
-    PredictedGoodClickConvoDescFavoritedOrRepliedScoreFeature,
-    PredictedGoodClickConvoDescUamGt2ScoreFeature,
-    PredictedGoodProfileClickScoreFeature,
-    PredictedVideoPlayback50ScoreFeature,
-    PredictedTweetDetailDwellScoreFeature,
-    PredictedProfileDwelledScoreFeature,
-    PredictedBookmarkScoreFeature,
-    PredictedShareScoreFeature,
-    PredictedShareMenuClickScoreFeature,
-    // Negative Engagements
-    PredictedNegativeFeedbackV2ScoreFeature,
-    PredictedReportedScoreFeature,
-    PredictedStrongNegativeFeedbackScoreFeature,
-    PredictedWeakNegativeFeedbackScoreFeature,
+object Pred ctedScoreFeature {
+  val Pred ctedScoreFeatures: Set[Pred ctedScoreFeature] = Set(
+    Pred ctedFavor eScoreFeature,
+    Pred ctedReplyScoreFeature,
+    Pred ctedRet etScoreFeature,
+    Pred ctedReplyEngagedByAuthorScoreFeature,
+    Pred ctedGoodCl ckConvoDescFavor edOrRepl edScoreFeature,
+    Pred ctedGoodCl ckConvoDescUamGt2ScoreFeature,
+    Pred ctedGoodProf leCl ckScoreFeature,
+    Pred ctedV deoPlayback50ScoreFeature,
+    Pred ctedT etDeta lD llScoreFeature,
+    Pred ctedProf leD lledScoreFeature,
+    Pred ctedBookmarkScoreFeature,
+    Pred ctedShareScoreFeature,
+    Pred ctedShare nuCl ckScoreFeature,
+    // Negat ve Engage nts
+    Pred ctedNegat veFeedbackV2ScoreFeature,
+    Pred ctedReportedScoreFeature,
+    Pred ctedStrongNegat veFeedbackScoreFeature,
+    Pred cted akNegat veFeedbackScoreFeature,
   )
 }

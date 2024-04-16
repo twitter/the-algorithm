@@ -1,90 +1,90 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie
-import com.twitter.tweetypie.core.TweetData
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import org.apache.thrift.protocol.TField
+ mport com.tw ter.t etyp e
+ mport com.tw ter.t etyp e.core.T etData
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport org.apac .thr ft.protocol.TF eld
 
 /**
- * Encapsulates basic, immutable details about a tweet to be hydrated, along with the
- * `TweetQuery.Options`.  Only tweet data that are not affected by hydration should be
- * exposed here, as a single `TweetCtx` instance should be usable for the entire hydration
- * of a tweet.
+ * Encapsulates bas c,  mmutable deta ls about a t et to be hydrated, along w h t 
+ * `T etQuery.Opt ons`.  Only t et data that are not affected by hydrat on should be
+ * exposed  re, as a s ngle `T etCtx`  nstance should be usable for t  ent re hydrat on
+ * of a t et.
  */
-trait TweetCtx {
-  def opts: TweetQuery.Options
+tra  T etCtx {
+  def opts: T etQuery.Opt ons
 
-  def tweetId: TweetId
-  def userId: UserId
-  def text: String
-  def createdAt: Time
-  def createdVia: String
-  def isRetweet: Boolean
-  def isReply: Boolean
-  def isSelfReply: Boolean
-  def sourceUserId: Option[UserId]
-  def sourceTweetId: Option[TweetId]
-  def inReplyToTweetId: Option[TweetId]
-  def geoCoordinates: Option[GeoCoordinates]
-  def placeId: Option[String]
+  def t et d: T et d
+  def user d: User d
+  def text: Str ng
+  def createdAt: T  
+  def createdV a: Str ng
+  def  sRet et: Boolean
+  def  sReply: Boolean
+  def  sSelfReply: Boolean
+  def s ceUser d: Opt on[User d]
+  def s ceT et d: Opt on[T et d]
+  def  nReplyToT et d: Opt on[T et d]
+  def geoCoord nates: Opt on[GeoCoord nates]
+  def place d: Opt on[Str ng]
   def hasTakedown: Boolean
-  def quotedTweet: Option[QuotedTweet]
+  def quotedT et: Opt on[QuotedT et]
 
-  def completedHydrations: Set[HydrationType]
+  def completedHydrat ons: Set[Hydrat onType]
 
-  def isInitialInsert: Boolean = opts.cause.initialInsert(tweetId)
+  def  s n  al nsert: Boolean = opts.cause. n  al nsert(t et d)
 
-  def tweetFieldRequested(field: TField): Boolean = tweetFieldRequested(field.id)
-  def tweetFieldRequested(fieldId: FieldId): Boolean = opts.include.tweetFields.contains(fieldId)
+  def t etF eldRequested(f eld: TF eld): Boolean = t etF eldRequested(f eld. d)
+  def t etF eldRequested(f eld d: F eld d): Boolean = opts. nclude.t etF elds.conta ns(f eld d)
 
-  def mediaFieldRequested(field: TField): Boolean = mediaFieldRequested(field.id)
-  def mediaFieldRequested(fieldId: FieldId): Boolean = opts.include.mediaFields.contains(fieldId)
+  def  d aF eldRequested(f eld: TF eld): Boolean =  d aF eldRequested(f eld. d)
+  def  d aF eldRequested(f eld d: F eld d): Boolean = opts. nclude. d aF elds.conta ns(f eld d)
 }
 
-object TweetCtx {
-  def from(td: TweetData, opts: TweetQuery.Options): TweetCtx = FromTweetData(td, opts)
+object T etCtx {
+  def from(td: T etData, opts: T etQuery.Opt ons): T etCtx = FromT etData(td, opts)
 
-  trait Proxy extends TweetCtx {
-    protected def underlyingTweetCtx: TweetCtx
+  tra  Proxy extends T etCtx {
+    protected def underly ngT etCtx: T etCtx
 
-    def opts: TweetQuery.Options = underlyingTweetCtx.opts
-    def tweetId: TweetId = underlyingTweetCtx.tweetId
-    def userId: UserId = underlyingTweetCtx.userId
-    def text: String = underlyingTweetCtx.text
-    def createdAt: Time = underlyingTweetCtx.createdAt
-    def createdVia: String = underlyingTweetCtx.createdVia
-    def isRetweet: Boolean = underlyingTweetCtx.isRetweet
-    def isReply: Boolean = underlyingTweetCtx.isReply
-    def isSelfReply: Boolean = underlyingTweetCtx.isSelfReply
-    def sourceUserId: Option[UserId] = underlyingTweetCtx.sourceUserId
-    def sourceTweetId: Option[TweetId] = underlyingTweetCtx.sourceTweetId
-    def inReplyToTweetId: Option[TweetId] = underlyingTweetCtx.inReplyToTweetId
-    def geoCoordinates: Option[GeoCoordinates] = underlyingTweetCtx.geoCoordinates
-    def placeId: Option[String] = underlyingTweetCtx.placeId
-    def hasTakedown: Boolean = underlyingTweetCtx.hasTakedown
-    def completedHydrations: Set[HydrationType] = underlyingTweetCtx.completedHydrations
-    def quotedTweet: Option[QuotedTweet] = underlyingTweetCtx.quotedTweet
+    def opts: T etQuery.Opt ons = underly ngT etCtx.opts
+    def t et d: T et d = underly ngT etCtx.t et d
+    def user d: User d = underly ngT etCtx.user d
+    def text: Str ng = underly ngT etCtx.text
+    def createdAt: T   = underly ngT etCtx.createdAt
+    def createdV a: Str ng = underly ngT etCtx.createdV a
+    def  sRet et: Boolean = underly ngT etCtx. sRet et
+    def  sReply: Boolean = underly ngT etCtx. sReply
+    def  sSelfReply: Boolean = underly ngT etCtx. sSelfReply
+    def s ceUser d: Opt on[User d] = underly ngT etCtx.s ceUser d
+    def s ceT et d: Opt on[T et d] = underly ngT etCtx.s ceT et d
+    def  nReplyToT et d: Opt on[T et d] = underly ngT etCtx. nReplyToT et d
+    def geoCoord nates: Opt on[GeoCoord nates] = underly ngT etCtx.geoCoord nates
+    def place d: Opt on[Str ng] = underly ngT etCtx.place d
+    def hasTakedown: Boolean = underly ngT etCtx.hasTakedown
+    def completedHydrat ons: Set[Hydrat onType] = underly ngT etCtx.completedHydrat ons
+    def quotedT et: Opt on[QuotedT et] = underly ngT etCtx.quotedT et
   }
 
-  private case class FromTweetData(td: TweetData, opts: TweetQuery.Options) extends TweetCtx {
-    private val tweet = td.tweet
-    def tweetId: MediaId = tweet.id
-    def userId: UserId = getUserId(tweet)
-    def text: String = getText(tweet)
-    def createdAt: Time = getTimestamp(tweet)
-    def createdVia: String = TweetLenses.createdVia.get(tweet)
-    def isRetweet: Boolean = getShare(tweet).isDefined
-    def isSelfReply: Boolean = tweetypie.isSelfReply(tweet)
-    def isReply: Boolean = getReply(tweet).isDefined
-    def sourceUserId: Option[MediaId] = getShare(tweet).map(_.sourceUserId)
-    def sourceTweetId: Option[MediaId] = getShare(tweet).map(_.sourceStatusId)
-    def inReplyToTweetId: Option[MediaId] = getReply(tweet).flatMap(_.inReplyToStatusId)
-    def geoCoordinates: Option[GeoCoordinates] = TweetLenses.geoCoordinates.get(tweet)
-    def placeId: Option[String] = TweetLenses.placeId.get(tweet)
-    def hasTakedown: Boolean = TweetLenses.hasTakedown(tweet)
-    def completedHydrations: Set[HydrationType] = td.completedHydrations
-    def quotedTweet: Option[QuotedTweet] = getQuotedTweet(tweet)
+  pr vate case class FromT etData(td: T etData, opts: T etQuery.Opt ons) extends T etCtx {
+    pr vate val t et = td.t et
+    def t et d:  d a d = t et. d
+    def user d: User d = getUser d(t et)
+    def text: Str ng = getText(t et)
+    def createdAt: T   = getT  stamp(t et)
+    def createdV a: Str ng = T etLenses.createdV a.get(t et)
+    def  sRet et: Boolean = getShare(t et). sDef ned
+    def  sSelfReply: Boolean = t etyp e. sSelfReply(t et)
+    def  sReply: Boolean = getReply(t et). sDef ned
+    def s ceUser d: Opt on[ d a d] = getShare(t et).map(_.s ceUser d)
+    def s ceT et d: Opt on[ d a d] = getShare(t et).map(_.s ceStatus d)
+    def  nReplyToT et d: Opt on[ d a d] = getReply(t et).flatMap(_. nReplyToStatus d)
+    def geoCoord nates: Opt on[GeoCoord nates] = T etLenses.geoCoord nates.get(t et)
+    def place d: Opt on[Str ng] = T etLenses.place d.get(t et)
+    def hasTakedown: Boolean = T etLenses.hasTakedown(t et)
+    def completedHydrat ons: Set[Hydrat onType] = td.completedHydrat ons
+    def quotedT et: Opt on[QuotedT et] = getQuotedT et(t et)
   }
 }

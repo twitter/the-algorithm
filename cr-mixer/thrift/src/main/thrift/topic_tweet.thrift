@@ -1,28 +1,28 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "product.thrift"
-include "product_context.thrift"
-include "source_type.thrift"
+ nclude "com/tw ter/product_m xer/core/cl ent_context.thr ft"
+ nclude "product.thr ft"
+ nclude "product_context.thr ft"
+ nclude "s ce_type.thr ft"
 
 
-struct TopicTweetRequest {
-    1: required client_context.ClientContext clientContext
-    2: required product.Product product
-    3: required list<i64> topicIds
-    5: optional product_context.ProductContext productContext
-    6: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct Top cT etRequest {
+    1: requ red cl ent_context.Cl entContext cl entContext
+    2: requ red product.Product product
+    3: requ red l st< 64> top c ds
+    5: opt onal product_context.ProductContext productContext
+    6: opt onal l st< 64> excludedT et ds (personalDataType = 'T et d')
+} (pers sted='true', hasPersonalData='true')
 
-struct TopicTweet {
-    1: required i64 tweetId (personalDataType = 'TweetId')
-    2: required double score
-    3: required source_type.SimilarityEngineType similarityEngineType
-} (persisted='true', hasPersonalData = 'true')
+struct Top cT et {
+    1: requ red  64 t et d (personalDataType = 'T et d')
+    2: requ red double score
+    3: requ red s ce_type.S m lar yEng neType s m lar yEng neType
+} (pers sted='true', hasPersonalData = 'true')
 
-struct TopicTweetResponse {
-    1: required map<i64, list<TopicTweet>> tweets
-} (persisted='true')
+struct Top cT etResponse {
+    1: requ red map< 64, l st<Top cT et>> t ets
+} (pers sted='true')
 

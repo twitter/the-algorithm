@@ -1,46 +1,46 @@
-package com.twitter.tweetypie.core
+package com.tw ter.t etyp e.core
 
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.tw ter.spam.rtf.thr ftscala.F lteredReason
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
 /**
- * The data about a quoted tweet that needs to be carried forward to
- * Tweetypie clients.
+ * T  data about a quoted t et that needs to be carr ed forward to
+ * T etyp e cl ents.
  */
-sealed trait QuotedTweetResult {
-  def filteredReason: Option[FilteredReason]
-  def toOption: Option[TweetResult]
-  def map(f: TweetResult => TweetResult): QuotedTweetResult
+sealed tra  QuotedT etResult {
+  def f lteredReason: Opt on[F lteredReason]
+  def toOpt on: Opt on[T etResult]
+  def map(f: T etResult => T etResult): QuotedT etResult
 }
 
-object QuotedTweetResult {
-  case object NotFound extends QuotedTweetResult {
-    def filteredReason: None.type = None
-    def toOption: None.type = None
-    def map(f: TweetResult => TweetResult): NotFound.type = this
+object QuotedT etResult {
+  case object NotFound extends QuotedT etResult {
+    def f lteredReason: None.type = None
+    def toOpt on: None.type = None
+    def map(f: T etResult => T etResult): NotFound.type = t 
   }
-  case class Filtered(state: FilteredState.Unavailable) extends QuotedTweetResult {
-    def filteredReason: Option[FilteredReason] =
+  case class F ltered(state: F lteredState.Unava lable) extends QuotedT etResult {
+    def f lteredReason: Opt on[F lteredReason] =
       state match {
-        case st: FilteredState.HasFilteredReason => Some(st.filteredReason)
+        case st: F lteredState.HasF lteredReason => So (st.f lteredReason)
         case _ => None
       }
-    def toOption: None.type = None
-    def map(f: TweetResult => TweetResult): Filtered = this
+    def toOpt on: None.type = None
+    def map(f: T etResult => T etResult): F ltered = t 
   }
-  case class Found(result: TweetResult) extends QuotedTweetResult {
-    def filteredReason: Option[FilteredReason] = result.value.suppress.map(_.filteredReason)
-    def toOption: Option[TweetResult] = Some(result)
-    def map(f: TweetResult => TweetResult): QuotedTweetResult = Found(f(result))
+  case class Found(result: T etResult) extends QuotedT etResult {
+    def f lteredReason: Opt on[F lteredReason] = result.value.suppress.map(_.f lteredReason)
+    def toOpt on: Opt on[T etResult] = So (result)
+    def map(f: T etResult => T etResult): QuotedT etResult = Found(f(result))
   }
 
-  def fromTry(tryResult: Try[TweetResult]): Try[QuotedTweetResult] =
+  def fromTry(tryResult: Try[T etResult]): Try[QuotedT etResult] =
     tryResult match {
       case Return(result) => Return(Found(result))
-      case Throw(state: FilteredState.Unavailable) => Return(Filtered(state))
-      case Throw(com.twitter.stitch.NotFound) => Return(NotFound)
+      case Throw(state: F lteredState.Unava lable) => Return(F ltered(state))
+      case Throw(com.tw ter.st ch.NotFound) => Return(NotFound)
       case Throw(e) => Throw(e)
     }
 }

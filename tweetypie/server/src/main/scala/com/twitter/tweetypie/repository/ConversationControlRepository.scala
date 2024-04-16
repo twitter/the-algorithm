@@ -1,50 +1,50 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
-import com.twitter.tweetypie.thriftscala.ConversationControl
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.T etDeleted
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControl
 
 /**
- * This repository loads up the conversation control values for a tweet which controls who can reply
- * to a tweet. Because the conversation control values are stored on the root tweet of a conversation,
- * we need to make sure that the code is able to load the data from the root tweet. To ensure this,
- * no visibility filtering options are set on the query to load the root tweet fields.
+ * T  repos ory loads up t  conversat on control values for a t et wh ch controls who can reply
+ * to a t et. Because t  conversat on control values are stored on t  root t et of a conversat on,
+ *   need to make sure that t  code  s able to load t  data from t  root t et. To ensure t ,
+ * no v s b l y f lter ng opt ons are set on t  query to load t  root t et f elds.
  *
- * If visibility filtering was enabled, and the root tweet was filtered for the requesting user,
- * then the conversation control data would not be returned and enforcement would effectively be
- * side-stepped.
+ *  f v s b l y f lter ng was enabled, and t  root t et was f ltered for t  request ng user,
+ * t n t  conversat on control data would not be returned and enforce nt would effect vely be
+ * s de-stepped.
  */
-object ConversationControlRepository {
-  private[this] val log = Logger(getClass)
-  type Type = (TweetId, CacheControl) => Stitch[Option[ConversationControl]]
+object Conversat onControlRepos ory {
+  pr vate[t ] val log = Logger(getClass)
+  type Type = (T et d, Cac Control) => St ch[Opt on[Conversat onControl]]
 
-  def apply(repo: TweetRepository.Type, stats: StatsReceiver): Type =
-    (conversationId: TweetId, cacheControl: CacheControl) => {
-      val options = TweetQuery.Options(
-        include = TweetQuery.Include(Set(Tweet.ConversationControlField.id)),
-        // We want the root tweet of a conversation that we're looking up to be
-        // cached with the same policy as the tweet we're looking up.
-        cacheControl = cacheControl,
-        enforceVisibilityFiltering = false,
-        safetyLevel = SafetyLevel.FilterNone
+  def apply(repo: T etRepos ory.Type, stats: StatsRece ver): Type =
+    (conversat on d: T et d, cac Control: Cac Control) => {
+      val opt ons = T etQuery.Opt ons(
+         nclude = T etQuery. nclude(Set(T et.Conversat onControlF eld. d)),
+        //   want t  root t et of a conversat on that  're look ng up to be
+        // cac d w h t  sa  pol cy as t  t et  're look ng up.
+        cac Control = cac Control,
+        enforceV s b l yF lter ng = false,
+        safetyLevel = SafetyLevel.F lterNone
       )
 
-      repo(conversationId, options)
-        .map(rootTweet => rootTweet.conversationControl)
+      repo(conversat on d, opt ons)
+        .map(rootT et => rootT et.conversat onControl)
         .handle {
-          // We don't know of any case where tweets would return NotFound, but for
-          // for pragmatic reasons, we're opening the conversation for replies
-          // in case a bug causing tweets to be NotFound exists.
+          //   don't know of any case w re t ets would return NotFound, but for
+          // for pragmat c reasons,  're open ng t  conversat on for repl es
+          //  n case a bug caus ng t ets to be NotFound ex sts.
           case NotFound =>
-            stats.counter("tweet_not_found")
+            stats.counter("t et_not_found")
             None
-          // If no root tweet is found, the reply has no conversation controls
-          // this is by design, deleting the root tweet "opens" the conversation
-          case TweetDeleted =>
-            stats.counter("tweet_deleted")
+          //  f no root t et  s found, t  reply has no conversat on controls
+          // t   s by des gn, delet ng t  root t et "opens" t  conversat on
+          case T etDeleted =>
+            stats.counter("t et_deleted")
             None
         }
     }

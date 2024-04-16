@@ -1,194 +1,194 @@
-package com.twitter.ann.scalding.offline.indexbuilderfrombq
+package com.tw ter.ann.scald ng.offl ne. ndexbu lderfrombq
 
-import com.google.auth.oauth2.ServiceAccountCredentials
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib._
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.bigquery.BigQueryConfig
-import com.twitter.scalding_internal.bigquery.BigQuerySource
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.FuturePool
-import java.io.FileInputStream
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.concurrent.Executors
-import org.apache.avro.generic.GenericRecord
-import scala.collection.JavaConverters._
+ mport com.google.auth.oauth2.Serv ceAccountCredent als
+ mport com.google.cloud.b gquery.B gQueryOpt ons
+ mport com.google.cloud.b gquery.QueryJobConf gurat on
+ mport com.tw ter.ann.annoy.TypedAnnoy ndex
+ mport com.tw ter.ann.brute_force.Ser al zableBruteForce ndex
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.ann.common.ReadWr eFuturePool
+ mport com.tw ter.ann.hnsw.TypedHnsw ndex
+ mport com.tw ter.ann.ser al zat on.Pers stedEmbedd ng nject on
+ mport com.tw ter.ann.ser al zat on.Thr ft erator O
+ mport com.tw ter.ann.ser al zat on.thr ftscala.Pers stedEmbedd ng
+ mport com.tw ter.cortex.ml.embedd ngs.common._
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ml.featurestore.l b._
+ mport com.tw ter.ml.featurestore.l b.embedd ng.Embedd ngW hEnt y
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.b gquery.B gQueryConf g
+ mport com.tw ter.scald ng_ nternal.b gquery.B gQueryS ce
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.FuturePool
+ mport java. o.F le nputStream
+ mport java.t  .LocalDateT  
+ mport java.t  .ZoneOffset
+ mport java.ut l.concurrent.Executors
+ mport org.apac .avro.gener c.Gener cRecord
+ mport scala.collect on.JavaConverters._
 
 /**
- * Scalding execution app for building ANN index from embeddings present in BigQuery table.
- * The output index is written to a GCS file.
+ * Scald ng execut on app for bu ld ng ANN  ndex from embedd ngs present  n B gQuery table.
+ * T  output  ndex  s wr ten to a GCS f le.
  *
  * Note:
- * - Assumes input data has the fields entityId
- * - Assumes input data has the fields embedding
+ * - Assu s  nput data has t  f elds ent y d
+ * - Assu s  nput data has t  f elds embedd ng
  *
- * Command for running the app (from source repo root):
- * scalding remote run \
- *   --target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+ * Command for runn ng t  app (from s ce repo root):
+ * scald ng remote run \
+ *   --target ann/src/ma n/scala/com/tw ter/ann/scald ng/offl ne/ ndexbu lderfrombq:ann- ndex-bu lder-b nary
  */
-trait IndexBuilderFromBQExecutable {
-  // This method is used to cast the entityKind and the metric to have parameters.
-  def indexBuilderExecution[T <: EntityId, D <: Distance[D]](
+tra   ndexBu lderFromBQExecutable {
+  // T   thod  s used to cast t  ent yK nd and t   tr c to have para ters.
+  def  ndexBu lderExecut on[T <: Ent y d, D <: D stance[D]](
     args: Args
-  ): Execution[Unit] = {
-    // parse the arguments for this job
-    val uncastEntityKind = EntityKind.getEntityKind(args("entity_kind"))
-    val uncastMetric = Metric.fromString(args("metric"))
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    val injection = entityKind.byteInjection
-    val numDimensions = args.int("num_dimensions")
-    val embeddingLimit = args.optional("embedding_limit").map(_.toInt)
-    val concurrencyLevel = args.int("concurrency_level")
+  ): Execut on[Un ] = {
+    // parse t  argu nts for t  job
+    val uncastEnt yK nd = Ent yK nd.getEnt yK nd(args("ent y_k nd"))
+    val uncast tr c =  tr c.fromStr ng(args(" tr c"))
+    val ent yK nd = uncastEnt yK nd.as nstanceOf[Ent yK nd[T]]
+    val  tr c = uncast tr c.as nstanceOf[ tr c[D]]
+    val  nject on = ent yK nd.byte nject on
+    val numD  ns ons = args. nt("num_d  ns ons")
+    val embedd ngL m  = args.opt onal("embedd ng_l m ").map(_.to nt)
+    val concurrencyLevel = args. nt("concurrency_level")
 
-    val bigQuery =
-      BigQueryOptions
-        .newBuilder().setProjectId(args.required("bq_gcp_job_project")).setCredentials(
-          ServiceAccountCredentials.fromStream(
-            new FileInputStream(args.required("gcp_service_account_key_json")))).build().getService
+    val b gQuery =
+      B gQueryOpt ons
+        .newBu lder().setProject d(args.requ red("bq_gcp_job_project")).setCredent als(
+          Serv ceAccountCredent als.fromStream(
+            new F le nputStream(args.requ red("gcp_serv ce_account_key_json")))).bu ld().getServ ce
 
-    // Query to get the latest partition of the BigQuery table.
+    // Query to get t  latest part  on of t  B gQuery table.
     val query =
-      s"SELECT MAX(ts) AS RecentPartition FROM ${args.required("bq_gcp_table_project")}.${args
-        .required("bq_dataset")}.${args.required("bq_table")}"
-    val queryConfig = QueryJobConfiguration
-      .newBuilder(query)
+      s"SELECT MAX(ts) AS RecentPart  on FROM ${args.requ red("bq_gcp_table_project")}.${args
+        .requ red("bq_dataset")}.${args.requ red("bq_table")}"
+    val queryConf g = QueryJobConf gurat on
+      .newBu lder(query)
       .setUseLegacySql(false)
-      .build
-    val recentPartition =
-      bigQuery
-        .query(queryConfig).iterateAll().asScala.map(field => {
-          field.get(0).getStringValue
+      .bu ld
+    val recentPart  on =
+      b gQuery
+        .query(queryConf g). erateAll().asScala.map(f eld => {
+          f eld.get(0).getStr ngValue
         }).toArray.apply(0)
 
-    // Query to extract the embeddings from the latest partition of the BigQuery table
-    val bigQueryConfig = BigQueryConfig(
-      args.required("bq_gcp_table_project"),
+    // Query to extract t  embedd ngs from t  latest part  on of t  B gQuery table
+    val b gQueryConf g = B gQueryConf g(
+      args.requ red("bq_gcp_table_project"),
       args
-        .required("bq_dataset"),
-      args.required("bq_table"))
-      .withServiceAccountKey(args.required("gcp_service_account_key_json"))
+        .requ red("bq_dataset"),
+      args.requ red("bq_table"))
+      .w hServ ceAccountKey(args.requ red("gcp_serv ce_account_key_json"))
 
-    val bqFilter = Some(
-      s"ts >= '${recentPartition}' AND DATE(TIMESTAMP_MILLIS(createdAt)) >= DATE_SUB(DATE('${recentPartition}'), INTERVAL 1 DAY) AND DATE(TIMESTAMP_MILLIS(createdAt)) <= DATE('${recentPartition}')")
-    val withFilterBigQueryConfig = bqFilter
-      .map { filter: String =>
-        bigQueryConfig.withFilter(filter)
-      }.getOrElse(bigQueryConfig)
-    val source = new BigQuerySource(withFilterBigQueryConfig)
-      .andThen(avroMapper)
+    val bqF lter = So (
+      s"ts >= '${recentPart  on}' AND DATE(T MESTAMP_M LL S(createdAt)) >= DATE_SUB(DATE('${recentPart  on}'),  NTERVAL 1 DAY) AND DATE(T MESTAMP_M LL S(createdAt)) <= DATE('${recentPart  on}')")
+    val w hF lterB gQueryConf g = bqF lter
+      .map { f lter: Str ng =>
+        b gQueryConf g.w hF lter(f lter)
+      }.getOrElse(b gQueryConf g)
+    val s ce = new B gQueryS ce(w hF lterB gQueryConf g)
+      .andT n(avroMapper)
 
-    val sourcePipe = TypedPipe
-      .from(source)
-      .map(transform[T](entityKind))
+    val s ceP pe = TypedP pe
+      .from(s ce)
+      .map(transform[T](ent yK nd))
 
-    println(s"Job args: ${args.toString}")
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
+    pr ntln(s"Job args: ${args.toStr ng}")
+    val threadPool = Executors.newF xedThreadPool(concurrencyLevel)
 
-    val serialization = args("algo") match {
+    val ser al zat on = args("algo") match {
       case "brute_force" =>
-        val PersistedEmbeddingIO = new ThriftIteratorIO[PersistedEmbedding](PersistedEmbedding)
-        SerializableBruteForceIndex[T, D](
-          metric,
+        val Pers stedEmbedd ng O = new Thr ft erator O[Pers stedEmbedd ng](Pers stedEmbedd ng)
+        Ser al zableBruteForce ndex[T, D](
+           tr c,
           FuturePool.apply(threadPool),
-          new PersistedEmbeddingInjection[T](injection),
-          PersistedEmbeddingIO
+          new Pers stedEmbedd ng nject on[T]( nject on),
+          Pers stedEmbedd ng O
         )
       case "annoy" =>
-        TypedAnnoyIndex.indexBuilder[T, D](
-          numDimensions,
-          args.int("annoy_num_trees"),
-          metric,
-          injection,
+        TypedAnnoy ndex. ndexBu lder[T, D](
+          numD  ns ons,
+          args. nt("annoy_num_trees"),
+           tr c,
+           nject on,
           FuturePool.apply(threadPool)
         )
       case "hnsw" =>
-        val efConstruction = args.int("ef_construction")
-        val maxM = args.int("max_m")
-        val expectedElements = args.int("expected_elements")
-        TypedHnswIndex.serializableIndex[T, D](
-          numDimensions,
-          metric,
-          efConstruction,
+        val efConstruct on = args. nt("ef_construct on")
+        val maxM = args. nt("max_m")
+        val expectedEle nts = args. nt("expected_ele nts")
+        TypedHnsw ndex.ser al zable ndex[T, D](
+          numD  ns ons,
+           tr c,
+          efConstruct on,
           maxM,
-          expectedElements,
-          injection,
-          ReadWriteFuturePool(FuturePool.apply(threadPool))
+          expectedEle nts,
+           nject on,
+          ReadWr eFuturePool(FuturePool.apply(threadPool))
         )
     }
 
-    // Output directory for the ANN index. We place the index under a timestamped directory which
-    // will be used by the ANN service to read the latest index
-    val timestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-    val outputDirectory = FileUtils.getFileHandle(args("output_dir") + "/" + timestamp)
-    IndexBuilder
+    // Output d rectory for t  ANN  ndex.   place t   ndex under a t  stamped d rectory wh ch
+    // w ll be used by t  ANN serv ce to read t  latest  ndex
+    val t  stamp = LocalDateT  .now().toEpochSecond(ZoneOffset.UTC)
+    val outputD rectory = F leUt ls.getF leHandle(args("output_d r") + "/" + t  stamp)
+     ndexBu lder
       .run(
-        sourcePipe,
-        embeddingLimit,
-        serialization,
+        s ceP pe,
+        embedd ngL m ,
+        ser al zat on,
         concurrencyLevel,
-        outputDirectory,
-        numDimensions
+        outputD rectory,
+        numD  ns ons
       ).onComplete { _ =>
         threadPool.shutdown()
-        Unit
+        Un 
       }
 
   }
 
-  def avroMapper(row: GenericRecord): KeyVal[Long, java.util.List[Double]] = {
-    val entityId = row.get("entityId")
-    val embedding = row.get("embedding")
+  def avroMapper(row: Gener cRecord): KeyVal[Long, java.ut l.L st[Double]] = {
+    val ent y d = row.get("ent y d")
+    val embedd ng = row.get("embedd ng")
 
     KeyVal(
-      entityId.toString.toLong,
-      embedding.asInstanceOf[java.util.List[Double]]
+      ent y d.toStr ng.toLong,
+      embedd ng.as nstanceOf[java.ut l.L st[Double]]
     )
   }
 
-  def transform[T <: EntityId](
-    entityKind: EntityKind[T]
+  def transform[T <: Ent y d](
+    ent yK nd: Ent yK nd[T]
   )(
-    bqRecord: KeyVal[Long, java.util.List[Double]]
-  ): EmbeddingWithEntity[T] = {
-    val embeddingArray = bqRecord.value.asScala.map(_.floatValue()).toArray
-    val entity_id = entityKind match {
-      case UserKind => UserId(bqRecord.key).toThrift
-      case TweetKind => TweetId(bqRecord.key).toThrift
-      case TfwKind => TfwId(bqRecord.key).toThrift
-      case SemanticCoreKind => SemanticCoreId(bqRecord.key).toThrift
-      case _ => throw new IllegalArgumentException(s"Unsupported embedding kind: $entityKind")
+    bqRecord: KeyVal[Long, java.ut l.L st[Double]]
+  ): Embedd ngW hEnt y[T] = {
+    val embedd ngArray = bqRecord.value.asScala.map(_.floatValue()).toArray
+    val ent y_ d = ent yK nd match {
+      case UserK nd => User d(bqRecord.key).toThr ft
+      case T etK nd => T et d(bqRecord.key).toThr ft
+      case TfwK nd => Tfw d(bqRecord.key).toThr ft
+      case Semant cCoreK nd => Semant cCore d(bqRecord.key).toThr ft
+      case _ => throw new  llegalArgu ntExcept on(s"Unsupported embedd ng k nd: $ent yK nd")
     }
-    EmbeddingWithEntity[T](
-      EntityId.fromThrift(entity_id).asInstanceOf[T],
-      Embedding(embeddingArray))
+    Embedd ngW hEnt y[T](
+      Ent y d.fromThr ft(ent y_ d).as nstanceOf[T],
+      Embedd ng(embedd ngArray))
   }
 }
 
 /*
-scalding remote run \
---target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+scald ng remote run \
+--target ann/src/ma n/scala/com/tw ter/ann/scald ng/offl ne/ ndexbu lderfrombq:ann- ndex-bu lder-b nary
  */
-object IndexBuilderFromBQApp extends TwitterExecutionApp with IndexBuilderFromBQExecutable {
-  override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
-    indexBuilderExecution(args)
+object  ndexBu lderFromBQApp extends Tw terExecut onApp w h  ndexBu lderFromBQExecutable {
+  overr de def job: Execut on[Un ] = Execut on.getArgs.flatMap { args: Args =>
+     ndexBu lderExecut on(args)
   }
 }

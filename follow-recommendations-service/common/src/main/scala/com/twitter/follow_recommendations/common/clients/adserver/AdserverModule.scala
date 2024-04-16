@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.tw ter.follow_recom ndat ons.common.cl ents.adserver
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+ mport com.tw ter.adserver.thr ftscala.NewAdServer
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.common.BaseCl entModule
 
-object AdserverModule extends BaseClientModule[NewAdServer.MethodPerEndpoint] with MtlsClient {
-  override val label = "adserver"
-  override val dest = "/s/ads/adserver"
+object AdserverModule extends BaseCl entModule[NewAdServer. thodPerEndpo nt] w h MtlsCl ent {
+  overr de val label = "adserver"
+  overr de val dest = "/s/ads/adserver"
 
-  override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
-    client.withRequestTimeout(500.millis)
+  overr de def conf gureThr ftMuxCl ent(cl ent: Thr ftMux.Cl ent): Thr ftMux.Cl ent =
+    cl ent.w hRequestT  out(500.m ll s)
 }

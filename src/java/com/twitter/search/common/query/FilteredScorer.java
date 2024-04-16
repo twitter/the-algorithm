@@ -1,36 +1,36 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.  ght;
 
-public class FilteredScorer extends Scorer {
-  protected final Scorer inner;
+publ c class F lteredScorer extends Scorer {
+  protected f nal Scorer  nner;
 
-  public FilteredScorer(Weight weight, Scorer inner) {
-    super(weight);
-    this.inner = inner;
+  publ c F lteredScorer(  ght   ght, Scorer  nner) {
+    super(  ght);
+    t . nner =  nner;
   }
 
-  @Override
-  public float score() throws IOException {
-    return inner.score();
+  @Overr de
+  publ c float score() throws  OExcept on {
+    return  nner.score();
   }
 
-  @Override
-  public int docID() {
-    return inner.docID();
+  @Overr de
+  publ c  nt doc D() {
+    return  nner.doc D();
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    return inner.iterator();
+  @Overr de
+  publ c Doc dSet erator  erator() {
+    return  nner. erator();
   }
 
-  @Override
-  public float getMaxScore(int upTo) throws IOException {
-    return inner.getMaxScore(upTo);
+  @Overr de
+  publ c float getMaxScore( nt upTo) throws  OExcept on {
+    return  nner.getMaxScore(upTo);
   }
 }

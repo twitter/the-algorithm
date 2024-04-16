@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .Stat cParam
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Carousel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.CompactCarousel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Conversat onTree
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Gr dCarousel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert cal
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calConversat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calGr d
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calW hContextL ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object WhoToFollowModuleDisplayType extends Enumeration {
-  type ModuleDisplayType = Value
+object WhoToFollowModuleD splayType extends Enu rat on {
+  type ModuleD splayType = Value
 
   val Carousel = Value
   val CompactCarousel = Value
-  val ConversationTree = Value
-  val GridCarousel = Value
-  val Vertical = Value
-  val VerticalConversation = Value
-  val VerticalGrid = Value
-  val VerticalWithContextLine = Value
+  val Conversat onTree = Value
+  val Gr dCarousel = Value
+  val Vert cal = Value
+  val Vert calConversat on = Value
+  val Vert calGr d = Value
+  val Vert calW hContextL ne = Value
 }
 
-case class ParamWhoToFollowModuleDisplayTypeBuilder(
-  displayTypeParam: Param[WhoToFollowModuleDisplayType.Value] =
-    StaticParam(WhoToFollowModuleDisplayType.Vertical))
-    extends BaseModuleDisplayTypeBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class ParamWhoToFollowModuleD splayTypeBu lder(
+  d splayTypeParam: Param[WhoToFollowModuleD splayType.Value] =
+    Stat cParam(WhoToFollowModuleD splayType.Vert cal))
+    extends BaseModuleD splayTypeBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleDisplayType = {
-    val displayType = query.params(displayTypeParam)
-    displayType match {
-      case WhoToFollowModuleDisplayType.Carousel => Carousel
-      case WhoToFollowModuleDisplayType.CompactCarousel => CompactCarousel
-      case WhoToFollowModuleDisplayType.ConversationTree => ConversationTree
-      case WhoToFollowModuleDisplayType.GridCarousel => GridCarousel
-      case WhoToFollowModuleDisplayType.Vertical => Vertical
-      case WhoToFollowModuleDisplayType.VerticalConversation => VerticalConversation
-      case WhoToFollowModuleDisplayType.VerticalGrid => VerticalGrid
-      case WhoToFollowModuleDisplayType.VerticalWithContextLine => VerticalWithContextLine
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Un versalNoun[Any]]]
+  ): ModuleD splayType = {
+    val d splayType = query.params(d splayTypeParam)
+    d splayType match {
+      case WhoToFollowModuleD splayType.Carousel => Carousel
+      case WhoToFollowModuleD splayType.CompactCarousel => CompactCarousel
+      case WhoToFollowModuleD splayType.Conversat onTree => Conversat onTree
+      case WhoToFollowModuleD splayType.Gr dCarousel => Gr dCarousel
+      case WhoToFollowModuleD splayType.Vert cal => Vert cal
+      case WhoToFollowModuleD splayType.Vert calConversat on => Vert calConversat on
+      case WhoToFollowModuleD splayType.Vert calGr d => Vert calGr d
+      case WhoToFollowModuleD splayType.Vert calW hContextL ne => Vert calW hContextL ne
     }
   }
 }

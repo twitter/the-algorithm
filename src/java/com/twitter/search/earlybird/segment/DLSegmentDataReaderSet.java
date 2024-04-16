@@ -1,237 +1,237 @@
-package com.twitter.search.earlybird.segment;
+package com.tw ter.search.earlyb rd.seg nt;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Funct on;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .thr ft.TExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRequestStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.ReaderWithStatsFactory;
-import com.twitter.search.common.util.io.TransformingRecordReader;
-import com.twitter.search.common.util.io.dl.DLMultiStreamReader;
-import com.twitter.search.common.util.io.dl.DLReaderWriterFactory;
-import com.twitter.search.common.util.io.dl.DLTimestampedReaderFactory;
-import com.twitter.search.common.util.io.dl.SegmentDLUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReaderFactory;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchRequestStats;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdThr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.ut l. o.ReaderW hStatsFactory;
+ mport com.tw ter.search.common.ut l. o.Transform ngRecordReader;
+ mport com.tw ter.search.common.ut l. o.dl.DLMult StreamReader;
+ mport com.tw ter.search.common.ut l. o.dl.DLReaderWr erFactory;
+ mport com.tw ter.search.common.ut l. o.dl.DLT  stampedReaderFactory;
+ mport com.tw ter.search.common.ut l. o.dl.Seg ntDLUt l;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReaderFactory;
+ mport com.tw ter.search.common.ut l.thr ft.Thr ftUt ls;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.docu nt.Docu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
 
-public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
-  private static final Logger LOG = LoggerFactory.getLogger(DLSegmentDataReaderSet.class);
+publ c class DLSeg ntDataReaderSet  mple nts Seg ntDataReaderSet {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(DLSeg ntDataReaderSet.class);
 
-  public static final SearchRequestStats STATUS_DL_READ_STATS =
-      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, false);
-  private static final SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
-      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, false);
-  // The number of tweets not indexed because they failed deserialization.
-  private static final SearchCounter STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER =
-      SearchCounter.export("statuses_skipped_due_to_failed_deserialization");
+  publ c stat c f nal SearchRequestStats STATUS_DL_READ_STATS =
+      SearchRequestStats.export("status_dlreader", T  Un .M CROSECONDS, false);
+  pr vate stat c f nal SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
+      SearchRequestStats.export("update_events_dlreader", T  Un .M CROSECONDS, false);
+  // T  number of t ets not  ndexed because t y fa led deser al zat on.
+  pr vate stat c f nal SearchCounter STATUS_SK PPED_DUE_TO_FA LED_DESER AL ZAT ON_COUNTER =
+      SearchCounter.export("statuses_sk pped_due_to_fa led_deser al zat on");
 
-  @VisibleForTesting
-  public static final int FRESH_READ_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(1);
+  @V s bleForTest ng
+  publ c stat c f nal  nt FRESH_READ_THRESHOLD = ( nt) T  Un .M NUTES.toM ll s(1);
 
-  private final int documentReadFreshnessThreshold =
-      EarlybirdConfig.getInt("documents_reader_freshness_threshold_millis", 10000);
-  private final int updateReadFreshnessThreshold =
-      EarlybirdConfig.getInt("updates_freshness_threshold_millis", FRESH_READ_THRESHOLD);
-  private final int dlReaderVersion = EarlybirdConfig.getInt("dl_reader_version");
+  pr vate f nal  nt docu ntReadFreshnessThreshold =
+      Earlyb rdConf g.get nt("docu nts_reader_freshness_threshold_m ll s", 10000);
+  pr vate f nal  nt updateReadFreshnessThreshold =
+      Earlyb rdConf g.get nt("updates_freshness_threshold_m ll s", FRESH_READ_THRESHOLD);
+  pr vate f nal  nt dlReaderVers on = Earlyb rdConf g.get nt("dl_reader_vers on");
 
-  private final DLReaderWriterFactory dlFactory;
-  private final RecordReaderFactory<byte[]> dlUpdateEventsFactory;
-  private final EarlybirdIndexConfig indexConfig;
-  private final Clock clock;
+  pr vate f nal DLReaderWr erFactory dlFactory;
+  pr vate f nal RecordReaderFactory<byte[]> dlUpdateEventsFactory;
+  pr vate f nal Earlyb rd ndexConf g  ndexConf g;
+  pr vate f nal Clock clock;
 
-  private RecordReader<TweetDocument> documentReader;
+  pr vate RecordReader<T etDocu nt> docu ntReader;
 
-  // RecordReaders for update events that span all live segments.
-  private final RecordReader<ThriftVersionedEvents> updateEventsReader;
-  private final DLMultiStreamReader updateEventsMultiReader;
-  private final Map<Long, RecordReader<ThriftVersionedEvents>> updateEventReaders = new HashMap<>();
+  // RecordReaders for update events that span all l ve seg nts.
+  pr vate f nal RecordReader<Thr ftVers onedEvents> updateEventsReader;
+  pr vate f nal DLMult StreamReader updateEventsMult Reader;
+  pr vate f nal Map<Long, RecordReader<Thr ftVers onedEvents>> updateEventReaders = new HashMap<>();
 
-  DLSegmentDataReaderSet(
-      DLReaderWriterFactory dlFactory,
-      final EarlybirdIndexConfig indexConfig,
-      Clock clock) throws IOException {
-    this.dlFactory = dlFactory;
-    this.indexConfig = indexConfig;
-    this.clock = clock;
+  DLSeg ntDataReaderSet(
+      DLReaderWr erFactory dlFactory,
+      f nal Earlyb rd ndexConf g  ndexConf g,
+      Clock clock) throws  OExcept on {
+    t .dlFactory = dlFactory;
+    t . ndexConf g =  ndexConf g;
+    t .clock = clock;
 
-    this.dlUpdateEventsFactory = new ReaderWithStatsFactory(
-        new DLTimestampedReaderFactory(dlFactory, clock, updateReadFreshnessThreshold),
+    t .dlUpdateEventsFactory = new ReaderW hStatsFactory(
+        new DLT  stampedReaderFactory(dlFactory, clock, updateReadFreshnessThreshold),
         UPDATE_EVENT_DL_READ_STATS);
-    this.updateEventsMultiReader =
-        new DLMultiStreamReader("update_events", dlUpdateEventsFactory, true, clock);
-    this.updateEventsReader =
-        new TransformingRecordReader<>(updateEventsMultiReader, record ->
-            (record != null) ? deserializeTVE(record.getBytes()) : null);
+    t .updateEventsMult Reader =
+        new DLMult StreamReader("update_events", dlUpdateEventsFactory, true, clock);
+    t .updateEventsReader =
+        new Transform ngRecordReader<>(updateEventsMult Reader, record ->
+            (record != null) ? deser al zeTVE(record.getBytes()) : null);
 
-    SearchCustomGauge.export("open_dl_update_events_streams", updateEventReaders::size);
+    SearchCustomGauge.export("open_dl_update_events_streams", updateEventReaders::s ze);
   }
 
-  private ThriftVersionedEvents deserializeTVE(byte[] bytes) {
-    ThriftVersionedEvents event = new ThriftVersionedEvents();
+  pr vate Thr ftVers onedEvents deser al zeTVE(byte[] bytes) {
+    Thr ftVers onedEvents event = new Thr ftVers onedEvents();
     try {
-      ThriftUtils.fromCompactBinaryFormat(bytes, event);
+      Thr ftUt ls.fromCompactB naryFormat(bytes, event);
       return event;
-    } catch (TException e) {
-      LOG.error("error deserializing TVE", e);
+    } catch (TExcept on e) {
+      LOG.error("error deser al z ng TVE", e);
       return null;
     }
   }
 
-  @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException {
-    // Close any document reader left open before.
-    if (documentReader != null) {
-      LOG.warn("Previous documentReader not closed: {}", documentReader);
-      completeSegmentDocs(segmentInfo);
+  @Overr de
+  publ c vo d attachDocu ntReaders(Seg nt nfo seg nt nfo) throws  OExcept on {
+    // Close any docu nt reader left open before.
+     f (docu ntReader != null) {
+      LOG.warn("Prev ous docu ntReader not closed: {}", docu ntReader);
+      completeSeg ntDocs(seg nt nfo);
     }
-    documentReader = newDocumentReader(segmentInfo);
+    docu ntReader = newDocu ntReader(seg nt nfo);
   }
 
-  @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException {
-    if (updateEventsMultiReader == null) {
+  @Overr de
+  publ c vo d attachUpdateReaders(Seg nt nfo seg nt nfo) throws  OExcept on {
+     f (updateEventsMult Reader == null) {
       return;
     }
 
-    String segmentName = segmentInfo.getSegmentName();
-    if (getUpdateEventsReaderForSegment(segmentInfo) != null) {
-      LOG.info("Update events reader for segment {} is already attached.", segmentName);
+    Str ng seg ntNa  = seg nt nfo.getSeg ntNa ();
+     f (getUpdateEventsReaderForSeg nt(seg nt nfo) != null) {
+      LOG. nfo("Update events reader for seg nt {}  s already attac d.", seg ntNa );
       return;
     }
 
-    long updateEventStreamOffsetTimestamp = segmentInfo.getUpdatesStreamOffsetTimestamp();
-    LOG.info("Attaching update events reader for segment {} with timestamp: {}.",
-             segmentName, updateEventStreamOffsetTimestamp);
+    long updateEventStreamOffsetT  stamp = seg nt nfo.getUpdatesStreamOffsetT  stamp();
+    LOG. nfo("Attach ng update events reader for seg nt {} w h t  stamp: {}.",
+             seg ntNa , updateEventStreamOffsetT  stamp);
 
-    String topic = SegmentDLUtil.getDLTopicForUpdateEvents(segmentName, dlReaderVersion);
+    Str ng top c = Seg ntDLUt l.getDLTop cForUpdateEvents(seg ntNa , dlReaderVers on);
     RecordReader<byte[]> recordReader =
-        dlUpdateEventsFactory.newRecordReaderForTimestamp(topic, updateEventStreamOffsetTimestamp);
-    updateEventsMultiReader.addRecordReader(recordReader, topic);
-    updateEventReaders.put(segmentInfo.getTimeSliceID(),
-        new TransformingRecordReader<>(recordReader, this::deserializeTVE));
+        dlUpdateEventsFactory.newRecordReaderForT  stamp(top c, updateEventStreamOffsetT  stamp);
+    updateEventsMult Reader.addRecordReader(recordReader, top c);
+    updateEventReaders.put(seg nt nfo.getT  Sl ce D(),
+        new Transform ngRecordReader<>(recordReader, t ::deser al zeTVE));
   }
 
-  @Override
-  public void stopAll() {
-    if (documentReader != null) {
-      documentReader.close();
+  @Overr de
+  publ c vo d stopAll() {
+     f (docu ntReader != null) {
+      docu ntReader.close();
     }
-    if (updateEventsReader != null) {
+     f (updateEventsReader != null) {
       updateEventsReader.close();
     }
     try {
       dlFactory.close();
-    } catch (IOException e) {
-      LOG.error("Exception while closing DL factory", e);
+    } catch ( OExcept on e) {
+      LOG.error("Except on wh le clos ng DL factory", e);
     }
   }
 
-  @Override
-  public void completeSegmentDocs(SegmentInfo segmentInfo) {
-    if (documentReader != null) {
-      documentReader.close();
-      documentReader = null;
+  @Overr de
+  publ c vo d completeSeg ntDocs(Seg nt nfo seg nt nfo) {
+     f (docu ntReader != null) {
+      docu ntReader.close();
+      docu ntReader = null;
     }
   }
 
-  @Override
-  public void stopSegmentUpdates(SegmentInfo segmentInfo) {
-    if (updateEventsMultiReader != null) {
-      updateEventsMultiReader.removeStream(
-          SegmentDLUtil.getDLTopicForUpdateEvents(segmentInfo.getSegmentName(), dlReaderVersion));
-      updateEventReaders.remove(segmentInfo.getTimeSliceID());
+  @Overr de
+  publ c vo d stopSeg ntUpdates(Seg nt nfo seg nt nfo) {
+     f (updateEventsMult Reader != null) {
+      updateEventsMult Reader.removeStream(
+          Seg ntDLUt l.getDLTop cForUpdateEvents(seg nt nfo.getSeg ntNa (), dlReaderVers on));
+      updateEventReaders.remove(seg nt nfo.getT  Sl ce D());
     }
   }
 
-  @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws IOException {
-    String topic = SegmentDLUtil.getDLTopicForTweets(segmentInfo.getSegmentName(),
-        EarlybirdConfig.getPenguinVersion(), dlReaderVersion);
-    final long timeSliceId = segmentInfo.getTimeSliceID();
-    final DocumentFactory<ThriftIndexingEvent> docFactory = indexConfig.createDocumentFactory();
+  @Overr de
+  publ c RecordReader<T etDocu nt> newDocu ntReader(Seg nt nfo seg nt nfo) throws  OExcept on {
+    Str ng top c = Seg ntDLUt l.getDLTop cForT ets(seg nt nfo.getSeg ntNa (),
+        Earlyb rdConf g.getPengu nVers on(), dlReaderVers on);
+    f nal long t  Sl ce d = seg nt nfo.getT  Sl ce D();
+    f nal Docu ntFactory<Thr ft ndex ngEvent> docFactory =  ndexConf g.createDocu ntFactory();
 
-    // Create the underlying DLRecordReader wrapped with the tweet reader stats.
-    RecordReader<byte[]> dlReader = new ReaderWithStatsFactory(
-        new DLTimestampedReaderFactory(
+    // Create t  underly ng DLRecordReader wrapped w h t  t et reader stats.
+    RecordReader<byte[]> dlReader = new ReaderW hStatsFactory(
+        new DLT  stampedReaderFactory(
             dlFactory,
             clock,
-            documentReadFreshnessThreshold),
+            docu ntReadFreshnessThreshold),
         STATUS_DL_READ_STATS)
-        .newRecordReader(topic);
+        .newRecordReader(top c);
 
-    // Create the wrapped reader which transforms serialized byte[] to TweetDocument.
-    return new TransformingRecordReader<>(
+    // Create t  wrapped reader wh ch transforms ser al zed byte[] to T etDocu nt.
+    return new Transform ngRecordReader<>(
         dlReader,
-        new Function<byte[], TweetDocument>() {
-          @Override
-          public TweetDocument apply(byte[] input) {
-            ThriftIndexingEvent event = new ThriftIndexingEvent();
+        new Funct on<byte[], T etDocu nt>() {
+          @Overr de
+          publ c T etDocu nt apply(byte[]  nput) {
+            Thr ft ndex ngEvent event = new Thr ft ndex ngEvent();
             try {
-              ThriftUtils.fromCompactBinaryFormat(input, event);
-            } catch (TException e) {
-              LOG.error("Could not deserialize status document", e);
-              STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER.increment();
+              Thr ftUt ls.fromCompactB naryFormat( nput, event);
+            } catch (TExcept on e) {
+              LOG.error("Could not deser al ze status docu nt", e);
+              STATUS_SK PPED_DUE_TO_FA LED_DESER AL ZAT ON_COUNTER. ncre nt();
               return null;
             }
 
-            Preconditions.checkNotNull(event.getDocument());
-            return new TweetDocument(
-                docFactory.getStatusId(event),
-                timeSliceId,
-                EarlybirdThriftDocumentUtil.getCreatedAtMs(event.getDocument()),
-                docFactory.newDocument(event));
+            Precond  ons.c ckNotNull(event.getDocu nt());
+            return new T etDocu nt(
+                docFactory.getStatus d(event),
+                t  Sl ce d,
+                Earlyb rdThr ftDocu ntUt l.getCreatedAtMs(event.getDocu nt()),
+                docFactory.newDocu nt(event));
           }
         });
   }
 
-  @Override
-  public RecordReader<TweetDocument> getDocumentReader() {
-    return documentReader;
+  @Overr de
+  publ c RecordReader<T etDocu nt> getDocu ntReader() {
+    return docu ntReader;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReader() {
+  @Overr de
+  publ c RecordReader<Thr ftVers onedEvents> getUpdateEventsReader() {
     return updateEventsReader;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(
-      SegmentInfo segmentInfo) {
-    return updateEventReaders.get(segmentInfo.getTimeSliceID());
+  @Overr de
+  publ c RecordReader<Thr ftVers onedEvents> getUpdateEventsReaderForSeg nt(
+      Seg nt nfo seg nt nfo) {
+    return updateEventReaders.get(seg nt nfo.getT  Sl ce D());
   }
 
-  @Override
-  public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
-    String topic =
-        SegmentDLUtil.getDLTopicForUpdateEvents(segmentInfo.getSegmentName(), dlReaderVersion);
-    return updateEventsMultiReader.getUnderlyingOffsetForSegmentWithTopic(topic);
+  @Overr de
+  publ c Opt onal<Long> getUpdateEventsStreamOffsetForSeg nt(Seg nt nfo seg nt nfo) {
+    Str ng top c =
+        Seg ntDLUt l.getDLTop cForUpdateEvents(seg nt nfo.getSeg ntNa (), dlReaderVers on);
+    return updateEventsMult Reader.getUnderly ngOffsetForSeg ntW hTop c(top c);
   }
 
-  @Override
-  public boolean allCaughtUp() {
-    return ((getDocumentReader() == null) || getDocumentReader().isCaughtUp())
-        && ((getUpdateEventsReader() == null) || getUpdateEventsReader().isCaughtUp());
+  @Overr de
+  publ c boolean allCaughtUp() {
+    return ((getDocu ntReader() == null) || getDocu ntReader(). sCaughtUp())
+        && ((getUpdateEventsReader() == null) || getUpdateEventsReader(). sCaughtUp());
   }
 }

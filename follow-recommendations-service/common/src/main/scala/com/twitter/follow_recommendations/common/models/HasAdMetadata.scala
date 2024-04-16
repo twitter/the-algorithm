@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.adserver.{thriftscala => t}
+ mport com.tw ter.adserver.{thr ftscala => t}
 
-case class AdMetadata(
-  insertPosition: Int,
-  // use original ad impression info to avoid losing data in domain model translations
-  adImpression: t.AdImpression)
+case class Ad tadata(
+   nsertPos  on:  nt,
+  // use or g nal ad  mpress on  nfo to avo d los ng data  n doma n model translat ons
+  ad mpress on: t.Ad mpress on)
 
-trait HasAdMetadata {
+tra  HasAd tadata {
 
-  def adMetadata: Option[AdMetadata]
+  def ad tadata: Opt on[Ad tadata]
 
-  def adImpression: Option[t.AdImpression] = {
-    adMetadata.map(_.adImpression)
+  def ad mpress on: Opt on[t.Ad mpress on] = {
+    ad tadata.map(_.ad mpress on)
   }
 
-  def insertPosition: Option[Int] = {
-    adMetadata.map(_.insertPosition)
+  def  nsertPos  on: Opt on[ nt] = {
+    ad tadata.map(_. nsertPos  on)
   }
 
-  def isPromotedAccount: Boolean = adMetadata.isDefined
+  def  sPromotedAccount: Boolean = ad tadata. sDef ned
 }

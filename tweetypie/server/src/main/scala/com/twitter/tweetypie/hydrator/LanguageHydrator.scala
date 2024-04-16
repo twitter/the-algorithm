@@ -1,24 +1,24 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
 object LanguageHydrator {
-  type Type = ValueHydrator[Option[Language], TweetCtx]
+  type Type = ValueHydrator[Opt on[Language], T etCtx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.LanguageField)
+  val hydratedF eld: F eldByPath = f eldByPath(T et.LanguageF eld)
 
-  private[this] def isApplicable(curr: Option[Language], ctx: TweetCtx) =
-    ctx.tweetFieldRequested(Tweet.LanguageField) && !ctx.isRetweet && curr.isEmpty
+  pr vate[t ] def  sAppl cable(curr: Opt on[Language], ctx: T etCtx) =
+    ctx.t etF eldRequested(T et.LanguageF eld) && !ctx. sRet et && curr. sEmpty
 
-  def apply(repo: LanguageRepository.Type): Type =
-    ValueHydrator[Option[Language], TweetCtx] { (langOpt, ctx) =>
-      repo(ctx.text).liftToTry.map {
-        case Return(Some(l)) => ValueState.modified(Some(l))
-        case Return(None) => ValueState.unmodified(langOpt)
-        case Throw(_) => ValueState.partial(None, hydratedField)
+  def apply(repo: LanguageRepos ory.Type): Type =
+    ValueHydrator[Opt on[Language], T etCtx] { (langOpt, ctx) =>
+      repo(ctx.text).l ftToTry.map {
+        case Return(So (l)) => ValueState.mod f ed(So (l))
+        case Return(None) => ValueState.unmod f ed(langOpt)
+        case Throw(_) => ValueState.part al(None, hydratedF eld)
       }
-    }.onlyIf((curr, ctx) => isApplicable(curr, ctx))
+    }.only f((curr, ctx) =>  sAppl cable(curr, ctx))
 }

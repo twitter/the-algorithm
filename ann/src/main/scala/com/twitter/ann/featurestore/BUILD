@@ -1,10 +1,10 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "src/scala/com/twitter/ml/featurestore/lib",
-        "src/scala/com/twitter/ml/featurestore/lib/online",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "ann/src/ma n/scala/com/tw ter/ann/common",
+        "src/scala/com/tw ter/ml/featurestore/l b",
+        "src/scala/com/tw ter/ml/featurestore/l b/onl ne",
     ],
 )

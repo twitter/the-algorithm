@@ -1,189 +1,189 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions._
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptCarouselTileFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.onboard ng. nject ons.thr ftscala. nject on
+ mport com.tw ter.onboard ng. nject ons.{thr ftscala => onboard ngthr ft}
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne.Onboard ng nject onConvers ons._
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BasePromptCand date
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.Fl pPromptCarouselT leFeature
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.Fl pPrompt nject onsFeature
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.Fl pPromptOffset nModuleFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverFullCoverD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverHalfCoverD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.FullCover
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.FullCoverContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.HalfCover
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.HalfCoverContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ader magePrompt ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. nl nePrompt ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssagePrompt em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.Prompt em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEventDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.T  l nesDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object FlipPromptCandidateUrtItemBuilder {
-  val FlipPromptClientEventInfoElement: String = "flip-prompt-message"
+object Fl pPromptCand dateUrt emBu lder {
+  val Fl pPromptCl entEvent nfoEle nt: Str ng = "fl p-prompt- ssage"
 }
 
-case class FlipPromptCandidateUrtItemBuilder[-Query <: PipelineQuery]()
-    extends CandidateUrtEntryBuilder[Query, BasePromptCandidate[Any], TimelineItem] {
+case class Fl pPromptCand dateUrt emBu lder[-Query <: P pel neQuery]()
+    extends Cand dateUrtEntryBu lder[Query, BasePromptCand date[Any], T  l ne em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    promptCandidate: BasePromptCandidate[Any],
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    val injection = candidateFeatures.get(FlipPromptInjectionsFeature)
+    promptCand date: BasePromptCand date[Any],
+    cand dateFeatures: FeatureMap
+  ): T  l ne em = {
+    val  nject on = cand dateFeatures.get(Fl pPrompt nject onsFeature)
 
-    injection match {
-      case onboardingthrift.Injection.InlinePrompt(candidate) =>
-        MessagePromptItem(
-          id = promptCandidate.id.toString,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = buildClientEventInfo(injection),
-          feedbackActionInfo = candidate.feedbackInfo.map(convertFeedbackInfo),
-          isPinned = Some(candidate.isPinnedEntry),
-          content = getInlinePromptMessageContent(candidate),
-          impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+     nject on match {
+      case onboard ngthr ft. nject on. nl nePrompt(cand date) =>
+         ssagePrompt em(
+           d = promptCand date. d.toStr ng,
+          sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+          cl entEvent nfo = bu ldCl entEvent nfo( nject on),
+          feedbackAct on nfo = cand date.feedback nfo.map(convertFeedback nfo),
+           sP nned = So (cand date. sP nnedEntry),
+          content = get nl nePrompt ssageContent(cand date),
+           mpress onCallbacks = cand date. mpress onCallbacks.map(_.map(convertCallback).toL st)
         )
-      case onboardingthrift.Injection.FullCover(candidate) =>
+      case onboard ngthr ft. nject on.FullCover(cand date) =>
         FullCover(
-          id = promptCandidate.id.toString,
-          // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          content = getFullCoverContent(candidate)
+           d = promptCand date. d.toStr ng,
+          // Note that sort  ndex  s not used for Covers, as t y are not T  l neEntry and do not have entry d
+          sort ndex = None,
+          cl entEvent nfo =
+            So (Onboard ng nject onConvers ons.convertCl entEvent nfo(cand date.cl entEvent nfo)),
+          content = getFullCoverContent(cand date)
         )
-      case onboardingthrift.Injection.HalfCover(candidate) =>
+      case onboard ngthr ft. nject on.HalfCover(cand date) =>
         HalfCover(
-          id = promptCandidate.id.toString,
-          // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          content = getHalfCoverContent(candidate)
+           d = promptCand date. d.toStr ng,
+          // Note that sort  ndex  s not used for Covers, as t y are not T  l neEntry and do not have entry d
+          sort ndex = None,
+          cl entEvent nfo =
+            So (Onboard ng nject onConvers ons.convertCl entEvent nfo(cand date.cl entEvent nfo)),
+          content = getHalfCoverContent(cand date)
         )
-      case Injection.TilesCarousel(_) =>
-        val offsetInModuleOption =
-          candidateFeatures.get(FlipPromptOffsetInModuleFeature)
-        val offsetInModule =
-          offsetInModuleOption.getOrElse(throw FlipPromptOffsetInModuleMissing)
-        val tileOption =
-          candidateFeatures.get(FlipPromptCarouselTileFeature)
-        val tile = tileOption.getOrElse(throw FlipPromptCarouselTileMissing)
-        TilesCarouselConversions.convertTile(tile, offsetInModule)
-      case onboardingthrift.Injection.RelevancePrompt(candidate) =>
-        PromptItem(
-          id = promptCandidate.id.toString,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = buildClientEventInfo(injection),
-          content = RelevancePromptConversions.convertContent(candidate),
-          impressionCallbacks = Some(candidate.impressionCallbacks.map(convertCallback).toList)
+      case  nject on.T lesCarousel(_) =>
+        val offset nModuleOpt on =
+          cand dateFeatures.get(Fl pPromptOffset nModuleFeature)
+        val offset nModule =
+          offset nModuleOpt on.getOrElse(throw Fl pPromptOffset nModuleM ss ng)
+        val t leOpt on =
+          cand dateFeatures.get(Fl pPromptCarouselT leFeature)
+        val t le = t leOpt on.getOrElse(throw Fl pPromptCarouselT leM ss ng)
+        T lesCarouselConvers ons.convertT le(t le, offset nModule)
+      case onboard ngthr ft. nject on.RelevancePrompt(cand date) =>
+        Prompt em(
+           d = promptCand date. d.toStr ng,
+          sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+          cl entEvent nfo = bu ldCl entEvent nfo( nject on),
+          content = RelevancePromptConvers ons.convertContent(cand date),
+           mpress onCallbacks = So (cand date. mpress onCallbacks.map(convertCallback).toL st)
         )
-      case _ => throw new UnsupportedFlipPromptException(injection)
+      case _ => throw new UnsupportedFl pPromptExcept on( nject on)
     }
   }
 
-  private def getInlinePromptMessageContent(
-    candidate: onboardingthrift.InlinePrompt
-  ): MessageContent = {
-    candidate.image match {
-      case Some(image) =>
-        HeaderImagePromptMessageContent(
-          headerImage = convertImage(image),
-          headerText = Some(candidate.headerText.text),
-          bodyText = candidate.bodyText.map(_.text),
-          primaryButtonAction = candidate.primaryAction.map(convertButtonAction),
-          secondaryButtonAction = candidate.secondaryAction.map(convertButtonAction),
-          headerRichText = Some(convertRichText(candidate.headerText)),
-          bodyRichText = candidate.bodyText.map(convertRichText),
-          action =
+  pr vate def get nl nePrompt ssageContent(
+    cand date: onboard ngthr ft. nl nePrompt
+  ):  ssageContent = {
+    cand date. mage match {
+      case So ( mage) =>
+         ader magePrompt ssageContent(
+           ader mage = convert mage( mage),
+           aderText = So (cand date. aderText.text),
+          bodyText = cand date.bodyText.map(_.text),
+          pr maryButtonAct on = cand date.pr maryAct on.map(convertButtonAct on),
+          secondaryButtonAct on = cand date.secondaryAct on.map(convertButtonAct on),
+           aderR chText = So (convertR chText(cand date. aderText)),
+          bodyR chText = cand date.bodyText.map(convertR chText),
+          act on =
             None
         )
       case None =>
-        InlinePromptMessageContent(
-          headerText = candidate.headerText.text,
-          bodyText = candidate.bodyText.map(_.text),
-          primaryButtonAction = candidate.primaryAction.map(convertButtonAction),
-          secondaryButtonAction = candidate.secondaryAction.map(convertButtonAction),
-          headerRichText = Some(convertRichText(candidate.headerText)),
-          bodyRichText = candidate.bodyText.map(convertRichText),
-          socialContext = candidate.socialContext.map(convertSocialContext),
-          userFacepile = candidate.promptUserFacepile.map(convertUserFacePile)
+         nl nePrompt ssageContent(
+           aderText = cand date. aderText.text,
+          bodyText = cand date.bodyText.map(_.text),
+          pr maryButtonAct on = cand date.pr maryAct on.map(convertButtonAct on),
+          secondaryButtonAct on = cand date.secondaryAct on.map(convertButtonAct on),
+           aderR chText = So (convertR chText(cand date. aderText)),
+          bodyR chText = cand date.bodyText.map(convertR chText),
+          soc alContext = cand date.soc alContext.map(convertSoc alContext),
+          userFacep le = cand date.promptUserFacep le.map(convertUserFaceP le)
         )
     }
   }
 
-  private def getFullCoverContent(
-    candidate: onboardingthrift.FullCover
+  pr vate def getFullCoverContent(
+    cand date: onboard ngthr ft.FullCover
   ): FullCoverContent =
     FullCoverContent(
-      displayType = CoverFullCoverDisplayType,
-      primaryText = convertRichText(candidate.primaryText),
-      primaryCoverCta = convertCoverCta(candidate.primaryButtonAction),
-      secondaryCoverCta = candidate.secondaryButtonAction.map(convertCoverCta),
-      secondaryText = candidate.secondaryText.map(convertRichText),
-      imageVariant = candidate.image.map(img => convertImageVariant(img.image)),
-      details = candidate.detailText.map(convertRichText),
-      dismissInfo = candidate.dismissInfo.map(convertDismissInfo),
-      imageDisplayType = candidate.image.map(img => convertImageDisplayType(img.imageDisplayType)),
-      impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+      d splayType = CoverFullCoverD splayType,
+      pr maryText = convertR chText(cand date.pr maryText),
+      pr maryCoverCta = convertCoverCta(cand date.pr maryButtonAct on),
+      secondaryCoverCta = cand date.secondaryButtonAct on.map(convertCoverCta),
+      secondaryText = cand date.secondaryText.map(convertR chText),
+       mageVar ant = cand date. mage.map( mg => convert mageVar ant( mg. mage)),
+      deta ls = cand date.deta lText.map(convertR chText),
+      d sm ss nfo = cand date.d sm ss nfo.map(convertD sm ss nfo),
+       mageD splayType = cand date. mage.map( mg => convert mageD splayType( mg. mageD splayType)),
+       mpress onCallbacks = cand date. mpress onCallbacks.map(_.map(convertCallback).toL st)
     )
 
-  private def getHalfCoverContent(
-    candidate: onboardingthrift.HalfCover
+  pr vate def getHalfCoverContent(
+    cand date: onboard ngthr ft.HalfCover
   ): HalfCoverContent =
     HalfCoverContent(
-      displayType =
-        candidate.displayType.map(convertHalfCoverDisplayType).getOrElse(CoverHalfCoverDisplayType),
-      primaryText = convertRichText(candidate.primaryText),
-      primaryCoverCta = convertCoverCta(candidate.primaryButtonAction),
-      secondaryCoverCta = candidate.secondaryButtonAction.map(convertCoverCta),
-      secondaryText = candidate.secondaryText.map(convertRichText),
-      coverImage = candidate.image.map(convertCoverImage),
-      dismissible = candidate.dismissible,
-      dismissInfo = candidate.dismissInfo.map(convertDismissInfo),
-      impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+      d splayType =
+        cand date.d splayType.map(convertHalfCoverD splayType).getOrElse(CoverHalfCoverD splayType),
+      pr maryText = convertR chText(cand date.pr maryText),
+      pr maryCoverCta = convertCoverCta(cand date.pr maryButtonAct on),
+      secondaryCoverCta = cand date.secondaryButtonAct on.map(convertCoverCta),
+      secondaryText = cand date.secondaryText.map(convertR chText),
+      cover mage = cand date. mage.map(convertCover mage),
+      d sm ss ble = cand date.d sm ss ble,
+      d sm ss nfo = cand date.d sm ss nfo.map(convertD sm ss nfo),
+       mpress onCallbacks = cand date. mpress onCallbacks.map(_.map(convertCallback).toL st)
     )
 
-  private def buildClientEventInfo(
-    injection: Injection
-  ): Option[ClientEventInfo] = {
-    injection match {
-      //To keep parity between TimelineMixer and Product Mixer, inline prompt switches sets the prompt product identifier as the component and no element. Also includes clientEventDetails
-      case onboardingthrift.Injection.InlinePrompt(candidate) =>
-        val clientEventDetails: ClientEventDetails =
-          ClientEventDetails(
-            conversationDetails = None,
-            timelinesDetails = Some(TimelinesDetails(injectionType = Some("Message"), None, None)),
-            articleDetails = None,
-            liveEventDetails = None,
-            commerceDetails = None
+  pr vate def bu ldCl entEvent nfo(
+     nject on:  nject on
+  ): Opt on[Cl entEvent nfo] = {
+     nject on match {
+      //To keep par y bet en T  l neM xer and Product M xer,  nl ne prompt sw c s sets t  prompt product  dent f er as t  component and no ele nt. Also  ncludes cl entEventDeta ls
+      case onboard ngthr ft. nject on. nl nePrompt(cand date) =>
+        val cl entEventDeta ls: Cl entEventDeta ls =
+          Cl entEventDeta ls(
+            conversat onDeta ls = None,
+            t  l nesDeta ls = So (T  l nesDeta ls( nject onType = So (" ssage"), None, None)),
+            art cleDeta ls = None,
+            l veEventDeta ls = None,
+            com rceDeta ls = None
           )
-        Some(
-          ClientEventInfo(
-            component = candidate.injectionIdentifier,
-            element = None,
-            details = Some(clientEventDetails),
-            action = None,
-            entityToken = None))
-      // To keep parity between TLM and PM we swap component and elements.
-      case onboardingthrift.Injection.RelevancePrompt(candidate) =>
-        Some(
-          ClientEventInfo(
-            // Identifier is prefixed with onboarding per TLM
-            component = Some("onboarding_" + candidate.injectionIdentifier),
-            element = Some("relevance_prompt"),
-            details = None,
-            action = None,
-            entityToken = None
+        So (
+          Cl entEvent nfo(
+            component = cand date. nject on dent f er,
+            ele nt = None,
+            deta ls = So (cl entEventDeta ls),
+            act on = None,
+            ent yToken = None))
+      // To keep par y bet en TLM and PM   swap component and ele nts.
+      case onboard ngthr ft. nject on.RelevancePrompt(cand date) =>
+        So (
+          Cl entEvent nfo(
+            //  dent f er  s pref xed w h onboard ng per TLM
+            component = So ("onboard ng_" + cand date. nject on dent f er),
+            ele nt = So ("relevance_prompt"),
+            deta ls = None,
+            act on = None,
+            ent yToken = None
           ))
 
       case _ => None
@@ -192,14 +192,14 @@ case class FlipPromptCandidateUrtItemBuilder[-Query <: PipelineQuery]()
 
 }
 
-class UnsupportedFlipPromptException(injection: onboardingthrift.Injection)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item " + TransportMarshaller.getSimpleName(injection.getClass))
+class UnsupportedFl pPromptExcept on( nject on: onboard ngthr ft. nject on)
+    extends UnsupportedOperat onExcept on(
+      "Unsupported t  l ne  em " + TransportMarshaller.getS mpleNa ( nject on.getClass))
 
-object FlipPromptOffsetInModuleMissing
-    extends NoSuchElementException(
-      "FlipPromptOffsetInModuleFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+object Fl pPromptOffset nModuleM ss ng
+    extends NoSuchEle ntExcept on(
+      "Fl pPromptOffset nModuleFeature must be set for t  T lesCarousel FL P  nject on  n PromptCand dateS ce")
 
-object FlipPromptCarouselTileMissing
-    extends NoSuchElementException(
-      "FlipPromptCarouselTileFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+object Fl pPromptCarouselT leM ss ng
+    extends NoSuchEle ntExcept on(
+      "Fl pPromptCarouselT leFeature must be set for t  T lesCarousel FL P  nject on  n PromptCand dateS ce")

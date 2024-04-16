@@ -1,26 +1,26 @@
-package com.twitter.visibility.builder.users
+package com.tw ter.v s b l y.bu lder.users
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.context.thriftscala.SearchContext
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.context.thr ftscala.SearchContext
 
-class SearchFeatures(statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("search_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val rawQueryCounter =
-    scopedStatsReceiver.scope(RawQuery.name).counter("requests")
+class SearchFeatures(statsRece ver: StatsRece ver) {
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("search_features")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val rawQueryCounter =
+    scopedStatsRece ver.scope(RawQuery.na ).counter("requests")
 
   def forSearchContext(
-    searchContext: Option[SearchContext]
-  ): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+    searchContext: Opt on[SearchContext]
+  ): FeatureMapBu lder => FeatureMapBu lder = { bu lder =>
+    requests. ncr()
     searchContext match {
-      case Some(context: SearchContext) =>
-        rawQueryCounter.incr()
-        builder
-          .withConstantFeature(RawQuery, context.rawQuery)
-      case _ => builder
+      case So (context: SearchContext) =>
+        rawQueryCounter. ncr()
+        bu lder
+          .w hConstantFeature(RawQuery, context.rawQuery)
+      case _ => bu lder
     }
   }
 }

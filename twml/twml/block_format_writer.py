@@ -1,65 +1,65 @@
-"""Module containing wrapper class to write block format data"""
-import ctypes as ct
+"""Module conta n ng wrapper class to wr e block format data"""
+ mport ctypes as ct
 
-from libtwml import CLIB
+from l btwml  mport CL B
 
 
-class BlockFormatWriter(object):
+class BlockFormatWr er(object):
   """
-  Class to write block format file.
+  Class to wr e block format f le.
   """
 
-  def __init__(self, file_name, records_per_block=100):
-    file_name = file_name
-    if not isinstance(file_name, str):
-      raise ValueError("file_name has to be of type str")
+  def __ n __(self, f le_na , records_per_block=100):
+    f le_na  = f le_na 
+     f not  s nstance(f le_na , str):
+      ra se ValueError("f le_na  has to be of type str")
 
-    self.file_name = ct.c_char_p(file_name.encode())
-    self.records_per_block = ct.c_int(int(records_per_block))
-    handle = ct.c_void_p(0)
-    err = CLIB.block_format_writer_create(ct.pointer(handle),
-                                          self.file_name,
+    self.f le_na  = ct.c_char_p(f le_na .encode())
+    self.records_per_block = ct.c_ nt( nt(records_per_block))
+    handle = ct.c_vo d_p(0)
+    err = CL B.block_format_wr er_create(ct.po nter(handle),
+                                          self.f le_na ,
                                           self.records_per_block)
     self._handle = None
-    # 1000 means TWML_ERR_NONE
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    # 1000  ans TWML_ERR_NONE
+     f err != 1000:
+      ra se Runt  Error("Error from l btwml")
     self._handle = handle
 
   @property
   def handle(self):
     """
-    Return the handle
+    Return t  handle
     """
     return self._handle
 
-  def write(self, class_name, record):
+  def wr e(self, class_na , record):
     """
-    Write a record.
+    Wr e a record.
 
-    Note: `record` needs to be in a format that can be converted to ctypes.c_char_p.
+    Note: `record` needs to be  n a format that can be converted to ctypes.c_char_p.
     """
-    if not isinstance(class_name, str):
-      raise ValueError("class_name has to be of type str")
+     f not  s nstance(class_na , str):
+      ra se ValueError("class_na  has to be of type str")
 
     record_len = len(record)
-    class_name = ct.c_char_p(class_name.encode())
+    class_na  = ct.c_char_p(class_na .encode())
     record = ct.c_char_p(record)
-    err = CLIB.block_format_write(self._handle, class_name, record, record_len)
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    err = CL B.block_format_wr e(self._handle, class_na , record, record_len)
+     f err != 1000:
+      ra se Runt  Error("Error from l btwml")
 
   def flush(self):
     """
-    Flush records in buffer to outputfile.
+    Flush records  n buffer to outputf le.
     """
-    err = CLIB.block_format_flush(self._handle)
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    err = CL B.block_format_flush(self._handle)
+     f err != 1000:
+      ra se Runt  Error("Error from l btwml")
 
   def __del__(self):
     """
-    Delete the handle
+    Delete t  handle
     """
-    if self._handle:
-      CLIB.block_format_writer_delete(self._handle)
+     f self._handle:
+      CL B.block_format_wr er_delete(self._handle)

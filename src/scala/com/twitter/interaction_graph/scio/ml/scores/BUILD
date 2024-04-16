@@ -1,54 +1,54 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":real_graph_in_scores-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":real_graph_ n_scores-scala",
         ":real_graph_oon_scores-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/job",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
+        "tcdc/bq_blaster/src/ma n/scala/com/tw ter/tcdc/bqblaster/beam",
     ],
 )
 
-jvm_binary(
-    name = "interaction_graph_scores_scio",
-    main = "com.twitter.interaction_graph.scio.ml.scores.InteractionGraphScoreExportJob",
+jvm_b nary(
+    na  = " nteract on_graph_scores_sc o",
+    ma n = "com.tw ter. nteract on_graph.sc o.ml.scores. nteract onGraphScoreExportJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":scores",
     ],
 )
 
 create_datasets(
-    base_name = "real_graph_in_scores",
-    description = "Real Graph in network scores",
+    base_na  = "real_graph_ n_scores",
+    descr pt on = "Real Graph  n network scores",
     key_type = "Long",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.wtf.scalding.jobs.injection.CandidateSeqInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.wtf.candidate.thriftscala.CandidateSeq",
-    scala_dependencies = [
-        "src/scala/com/twitter/wtf/scalding/jobs/injection",
+    scala_sc ma = "com.tw ter.wtf.scald ng.jobs. nject on.Cand dateSeq nject on. nject on",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    val_type = "com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq",
+    scala_dependenc es = [
+        "src/scala/com/tw ter/wtf/scald ng/jobs/ nject on",
     ],
 )
 
 create_datasets(
-    base_name = "real_graph_oon_scores",
-    description = "Real Graph OON Scores",
+    base_na  = "real_graph_oon_scores",
+    descr pt on = "Real Graph OON Scores",
     key_type = "Long",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.wtf.scalding.jobs.injection.CandidateSeqInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.wtf.candidate.thriftscala.CandidateSeq",
-    scala_dependencies = [
-        "src/scala/com/twitter/wtf/scalding/jobs/injection",
+    scala_sc ma = "com.tw ter.wtf.scald ng.jobs. nject on.Cand dateSeq nject on. nject on",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    val_type = "com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq",
+    scala_dependenc es = [
+        "src/scala/com/tw ter/wtf/scald ng/jobs/ nject on",
     ],
 )

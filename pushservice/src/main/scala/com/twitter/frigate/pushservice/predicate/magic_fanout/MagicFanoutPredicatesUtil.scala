@@ -1,130 +1,130 @@
-package com.twitter.frigate.pushservice.predicate.magic_fanout
+package com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout
 
-import com.twitter.eventdetection.event_context.util.SimClustersUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.magic_events.thriftscala._
-import com.twitter.frigate.pushservice.model.MagicFanoutEventPushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutNewsEventPushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutProductLaunchPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.util.Future
+ mport com.tw ter.eventdetect on.event_context.ut l.S mClustersUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.mag c_events.thr ftscala._
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutNewsEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutProductLaunchPushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.ut l.Future
 
-object MagicFanoutPredicatesUtil {
+object Mag cFanoutPred catesUt l {
 
-  val UttDomain: Long = 0L
-  type DomainId = Long
-  type EntityId = Long
+  val UttDoma n: Long = 0L
+  type Doma n d = Long
+  type Ent y d = Long
   val BroadCategoryTag = "utt:broad_category"
-  val UgmMomentTag = "MMTS.isUGMMoment"
-  val TopKSimClustersCount = 50
+  val UgmMo ntTag = "MMTS. sUGMMo nt"
+  val TopKS mClustersCount = 50
 
-  case class SimClusterScores(simClusterScoreVector: Map[Int, Double]) {
-    def dotProduct(other: SimClusterScores): Double = {
-      simClusterScoreVector
+  case class S mClusterScores(s mClusterScoreVector: Map[ nt, Double]) {
+    def dotProduct(ot r: S mClusterScores): Double = {
+      s mClusterScoreVector
         .map {
-          case (clusterId, score) => other.simClusterScoreVector.getOrElse(clusterId, 0.0) * score
+          case (cluster d, score) => ot r.s mClusterScoreVector.getOrElse(cluster d, 0.0) * score
         }.foldLeft(0.0) { _ + _ }
     }
 
     def norm(): Double = {
-      val sumOfSquares: Double = simClusterScoreVector
+      val sumOfSquares: Double = s mClusterScoreVector
         .map {
-          case (clusterId, score) => score * score
+          case (cluster d, score) => score * score
         }.foldLeft(0.0)(_ + _)
       scala.math.sqrt(sumOfSquares)
     }
 
-    def normedDotProduct(other: SimClusterScores, normalizer: SimClusterScores): Double = {
-      val denominator = normalizer.norm()
-      val score = dotProduct(other)
-      if (denominator != 0.0) {
-        score / denominator
+    def nor dDotProduct(ot r: S mClusterScores, normal zer: S mClusterScores): Double = {
+      val denom nator = normal zer.norm()
+      val score = dotProduct(ot r)
+       f (denom nator != 0.0) {
+        score / denom nator
       } else {
         score
       }
     }
   }
 
-  private def isSemanticCoreEntityBroad(
-    semanticCoreEntityTags: Map[(DomainId, EntityId), Set[String]],
-    scEntityId: SemanticCoreID
+  pr vate def  sSemant cCoreEnt yBroad(
+    semant cCoreEnt yTags: Map[(Doma n d, Ent y d), Set[Str ng]],
+    scEnt y d: Semant cCore D
   ): Boolean = {
-    semanticCoreEntityTags
-      .getOrElse((scEntityId.domainId, scEntityId.entityId), Set.empty).contains(BroadCategoryTag)
+    semant cCoreEnt yTags
+      .getOrElse((scEnt y d.doma n d, scEnt y d.ent y d), Set.empty).conta ns(BroadCategoryTag)
   }
 
-  def isInCountryList(accountCountryCode: String, locales: Seq[String]): Boolean = {
-    locales.map(_.toLowerCase).contains(accountCountryCode.toLowerCase)
+  def  s nCountryL st(accountCountryCode: Str ng, locales: Seq[Str ng]): Boolean = {
+    locales.map(_.toLo rCase).conta ns(accountCountryCode.toLo rCase)
   }
 
   /**
-   * Boolean check of if a MagicFanout is high priority push
+   * Boolean c ck of  f a Mag cFanout  s h gh pr or y push
    */
-  def checkIfHighPriorityNewsEventForCandidate(
-    candidate: MagicFanoutNewsEventPushCandidate
+  def c ck fH ghPr or yNewsEventForCand date(
+    cand date: Mag cFanoutNewsEventPushCand date
   ): Future[Boolean] = {
-    candidate.isHighPriorityEvent.map { isHighPriority =>
-      isHighPriority && (candidate.target.params(PushFeatureSwitchParams.EnableHighPriorityPush))
+    cand date. sH ghPr or yEvent.map {  sH ghPr or y =>
+       sH ghPr or y && (cand date.target.params(PushFeatureSw chParams.EnableH ghPr or yPush))
     }
   }
 
   /**
-   * Boolean check of if a MagicFanout event is high priority push
+   * Boolean c ck of  f a Mag cFanout event  s h gh pr or y push
    */
-  def checkIfHighPriorityEventForCandidate(
-    candidate: MagicFanoutEventPushCandidate
+  def c ck fH ghPr or yEventForCand date(
+    cand date: Mag cFanoutEventPushCand date
   ): Future[Boolean] = {
-    candidate.isHighPriorityEvent.map { isHighPriority =>
-      candidate.commonRecType match {
-        case CommonRecommendationType.MagicFanoutSportsEvent =>
-          isHighPriority && (candidate.target.params(
-            PushFeatureSwitchParams.EnableHighPrioritySportsPush))
+    cand date. sH ghPr or yEvent.map {  sH ghPr or y =>
+      cand date.commonRecType match {
+        case CommonRecom ndat onType.Mag cFanoutSportsEvent =>
+           sH ghPr or y && (cand date.target.params(
+            PushFeatureSw chParams.EnableH ghPr or ySportsPush))
         case _ => false
       }
     }
   }
 
   /**
-   * Boolean check if to skip target blue verified
+   * Boolean c ck  f to sk p target blue ver f ed
    */
-  def shouldSkipBlueVerifiedCheckForCandidate(
-    candidate: MagicFanoutProductLaunchPushCandidate
+  def shouldSk pBlueVer f edC ckForCand date(
+    cand date: Mag cFanoutProductLaunchPushCand date
   ): Future[Boolean] =
     Future.value(
-      candidate.target.params(PushFeatureSwitchParams.DisableIsTargetBlueVerifiedPredicate))
+      cand date.target.params(PushFeatureSw chParams.D sable sTargetBlueVer f edPred cate))
 
   /**
-   * Boolean check if to skip target is legacy verified
+   * Boolean c ck  f to sk p target  s legacy ver f ed
    */
-  def shouldSkipLegacyVerifiedCheckForCandidate(
-    candidate: MagicFanoutProductLaunchPushCandidate
+  def shouldSk pLegacyVer f edC ckForCand date(
+    cand date: Mag cFanoutProductLaunchPushCand date
   ): Future[Boolean] =
     Future.value(
-      candidate.target.params(PushFeatureSwitchParams.DisableIsTargetLegacyVerifiedPredicate))
+      cand date.target.params(PushFeatureSw chParams.D sable sTargetLegacyVer f edPred cate))
 
-  def shouldSkipSuperFollowCreatorCheckForCandidate(
-    candidate: MagicFanoutProductLaunchPushCandidate
+  def shouldSk pSuperFollowCreatorC ckForCand date(
+    cand date: Mag cFanoutProductLaunchPushCand date
   ): Future[Boolean] =
     Future.value(
-      !candidate.target.params(PushFeatureSwitchParams.EnableIsTargetSuperFollowCreatorPredicate))
+      !cand date.target.params(PushFeatureSw chParams.Enable sTargetSuperFollowCreatorPred cate))
 
   /**
-   * Boolean check of if a reason of a MagicFanout is higher than the rank threshold of an event
+   * Boolean c ck of  f a reason of a Mag cFanout  s h g r than t  rank threshold of an event
    */
-  def checkIfErgScEntityReasonMeetsThreshold(
-    rankThreshold: Int,
-    reason: MagicEventsReason,
+  def c ck fErgScEnt yReason etsThreshold(
+    rankThreshold:  nt,
+    reason: Mag cEventsReason,
   ): Boolean = {
     reason.reason match {
-      case TargetID.SemanticCoreID(scEntityId: SemanticCoreID) =>
+      case Target D.Semant cCore D(scEnt y d: Semant cCore D) =>
         reason.rank match {
-          case Some(rank) => rank < rankThreshold
+          case So (rank) => rank < rankThreshold
           case _ => false
         }
       case _ => false
@@ -132,20 +132,20 @@ object MagicFanoutPredicatesUtil {
   }
 
   /**
-   * Check if MagicEventsReasons contains a reason that matches the thresholdw
+   * C ck  f Mag cEventsReasons conta ns a reason that matc s t  thresholdw
    */
-  def checkIfValidErgScEntityReasonExists(
-    magicEventsReasons: Option[Seq[MagicEventsReason]],
-    rankThreshold: Int
+  def c ck fVal dErgScEnt yReasonEx sts(
+    mag cEventsReasons: Opt on[Seq[Mag cEventsReason]],
+    rankThreshold:  nt
   )(
-    implicit stats: StatsReceiver
+     mpl c  stats: StatsRece ver
   ): Boolean = {
-    magicEventsReasons match {
-      case Some(reasons) if reasons.exists(_.isNewUser.contains(true)) => true
-      case Some(reasons) =>
-        reasons.exists { reason =>
-          reason.source.contains(ReasonSource.ErgShortTermInterestSemanticCore) &&
-          checkIfErgScEntityReasonMeetsThreshold(
+    mag cEventsReasons match {
+      case So (reasons)  f reasons.ex sts(_. sNewUser.conta ns(true)) => true
+      case So (reasons) =>
+        reasons.ex sts { reason =>
+          reason.s ce.conta ns(ReasonS ce.ErgShortTerm nterestSemant cCore) &&
+          c ck fErgScEnt yReason etsThreshold(
             rankThreshold,
             reason
           )
@@ -156,61 +156,61 @@ object MagicFanoutPredicatesUtil {
   }
 
   /**
-   * Get event simcluster vector from event context
+   * Get event s mcluster vector from event context
    */
-  def getEventSimClusterVector(
-    simClustersEmbeddingOption: Option[Map[SimClustersEmbeddingId, ThriftSimClustersEmbedding]],
-    embeddingMapKey: (ModelVersion, EmbeddingType),
-    topKSimClustersCount: Int
-  ): Option[SimClusterScores] = {
-    simClustersEmbeddingOption.map { thriftSimClustersEmbeddings =>
-      val simClustersEmbeddings: Map[SimClustersEmbeddingId, SimClustersEmbedding] =
-        thriftSimClustersEmbeddings.map {
-          case (simClustersEmbeddingId, simClustersEmbeddingValue) =>
-            (simClustersEmbeddingId, SimClustersEmbedding(simClustersEmbeddingValue))
+  def getEventS mClusterVector(
+    s mClustersEmbedd ngOpt on: Opt on[Map[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng]],
+    embedd ngMapKey: (ModelVers on, Embedd ngType),
+    topKS mClustersCount:  nt
+  ): Opt on[S mClusterScores] = {
+    s mClustersEmbedd ngOpt on.map { thr ftS mClustersEmbedd ngs =>
+      val s mClustersEmbedd ngs: Map[S mClustersEmbedd ng d, S mClustersEmbedd ng] =
+        thr ftS mClustersEmbedd ngs.map {
+          case (s mClustersEmbedd ng d, s mClustersEmbedd ngValue) =>
+            (s mClustersEmbedd ng d, S mClustersEmbedd ng(s mClustersEmbedd ngValue))
         }.toMap
-      val emptySeq = Seq[(Int, Double)]()
-      val simClusterScoreTuple: Map[(ModelVersion, EmbeddingType), Seq[(Int, Double)]] =
-        SimClustersUtil
-          .getMaxTopKTweetSimClusters(simClustersEmbeddings, topKSimClustersCount)
-      SimClusterScores(simClusterScoreTuple.getOrElse(embeddingMapKey, emptySeq).toMap)
+      val emptySeq = Seq[( nt, Double)]()
+      val s mClusterScoreTuple: Map[(ModelVers on, Embedd ngType), Seq[( nt, Double)]] =
+        S mClustersUt l
+          .getMaxTopKT etS mClusters(s mClustersEmbedd ngs, topKS mClustersCount)
+      S mClusterScores(s mClusterScoreTuple.getOrElse(embedd ngMapKey, emptySeq).toMap)
     }
   }
 
   /**
-   * Get user simcluster vector magic events reasons
+   * Get user s mcluster vector mag c events reasons
    */
-  def getUserSimClusterVector(
-    magicEventsReasonsOpt: Option[Seq[MagicEventsReason]]
-  ): Option[SimClusterScores] = {
-    magicEventsReasonsOpt.map { magicEventsReasons: Seq[MagicEventsReason] =>
-      val reasons: Seq[(Int, Double)] = magicEventsReasons.flatMap { reason =>
+  def getUserS mClusterVector(
+    mag cEventsReasonsOpt: Opt on[Seq[Mag cEventsReason]]
+  ): Opt on[S mClusterScores] = {
+    mag cEventsReasonsOpt.map { mag cEventsReasons: Seq[Mag cEventsReason] =>
+      val reasons: Seq[( nt, Double)] = mag cEventsReasons.flatMap { reason =>
         reason.reason match {
-          case TargetID.SimClusterID(simClusterId: SimClusterID) =>
-            Some((simClusterId.clusterId, reason.score.getOrElse(0.0)))
+          case Target D.S mCluster D(s mCluster d: S mCluster D) =>
+            So ((s mCluster d.cluster d, reason.score.getOrElse(0.0)))
           case _ =>
             None
         }
       }
-      SimClusterScores(reasons.toMap)
+      S mClusterScores(reasons.toMap)
     }
   }
 
-  def reasonsContainGeoTarget(reasons: Seq[MagicEventsReason]): Boolean = {
-    reasons.exists { reason =>
-      val isGeoGraphSource = reason.source.contains(ReasonSource.GeoGraph)
+  def reasonsConta nGeoTarget(reasons: Seq[Mag cEventsReason]): Boolean = {
+    reasons.ex sts { reason =>
+      val  sGeoGraphS ce = reason.s ce.conta ns(ReasonS ce.GeoGraph)
       reason.reason match {
-        case TargetID.PlaceID(_) if isGeoGraphSource => true
+        case Target D.Place D(_)  f  sGeoGraphS ce => true
         case _ => false
       }
     }
   }
 
-  def geoPlaceIdsFromReasons(reasons: Seq[MagicEventsReason]): Set[Long] = {
+  def geoPlace dsFromReasons(reasons: Seq[Mag cEventsReason]): Set[Long] = {
     reasons.flatMap { reason =>
-      val isGeoGraphSource = reason.source.contains(ReasonSource.GeoGraph)
+      val  sGeoGraphS ce = reason.s ce.conta ns(ReasonS ce.GeoGraph)
       reason.reason match {
-        case TargetID.PlaceID(PlaceID(id)) if isGeoGraphSource => Some(id)
+        case Target D.Place D(Place D( d))  f  sGeoGraphS ce => So ( d)
         case _ => None
       }
     }.toSet

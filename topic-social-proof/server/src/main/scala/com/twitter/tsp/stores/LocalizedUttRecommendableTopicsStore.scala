@@ -1,30 +1,30 @@
-package com.twitter.tsp.stores
+package com.tw ter.tsp.stores
 
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topiclisting.FollowableTopicProductId
-import com.twitter.topiclisting.ProductId
-import com.twitter.topiclisting.SemanticCoreEntityId
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.UttLocalization
-import com.twitter.util.Future
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.top cl st ng.FollowableTop cProduct d
+ mport com.tw ter.top cl st ng.Product d
+ mport com.tw ter.top cl st ng.Semant cCoreEnt y d
+ mport com.tw ter.top cl st ng.Top cL st ngV e rContext
+ mport com.tw ter.top cl st ng.utt.UttLocal zat on
+ mport com.tw ter.ut l.Future
 
-case class LocalizedUttTopicNameRequest(
-  productId: ProductId.Value,
-  viewerContext: TopicListingViewerContext,
-  enableInternationalTopics: Boolean)
+case class Local zedUttTop cNa Request(
+  product d: Product d.Value,
+  v e rContext: Top cL st ngV e rContext,
+  enable nternat onalTop cs: Boolean)
 
-class LocalizedUttRecommendableTopicsStore(uttLocalization: UttLocalization)
-    extends ReadableStore[LocalizedUttTopicNameRequest, Set[SemanticCoreEntityId]] {
+class Local zedUttRecom ndableTop csStore(uttLocal zat on: UttLocal zat on)
+    extends ReadableStore[Local zedUttTop cNa Request, Set[Semant cCoreEnt y d]] {
 
-  override def get(
-    request: LocalizedUttTopicNameRequest
-  ): Future[Option[Set[SemanticCoreEntityId]]] = {
-    uttLocalization
-      .getRecommendableTopics(
-        productId = request.productId,
-        viewerContext = request.viewerContext,
-        enableInternationalTopics = request.enableInternationalTopics,
-        followableTopicProductId = FollowableTopicProductId.AllFollowable
-      ).map { response => Some(response) }
+  overr de def get(
+    request: Local zedUttTop cNa Request
+  ): Future[Opt on[Set[Semant cCoreEnt y d]]] = {
+    uttLocal zat on
+      .getRecom ndableTop cs(
+        product d = request.product d,
+        v e rContext = request.v e rContext,
+        enable nternat onalTop cs = request.enable nternat onalTop cs,
+        followableTop cProduct d = FollowableTop cProduct d.AllFollowable
+      ).map { response => So (response) }
   }
 }

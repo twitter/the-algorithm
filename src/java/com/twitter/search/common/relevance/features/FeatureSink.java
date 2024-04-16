@@ -1,75 +1,75 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+ mport com.tw ter.search.common.encod ng.features. ntegerEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
 
 /**
- * FeatureSink is used to write features based on feature configuration or feature name.  After
- * all feature is written, the class can return the base field integer array values.
+ * FeatureS nk  s used to wr e features based on feature conf gurat on or feature na .  After
+ * all feature  s wr ten, t  class can return t  base f eld  nteger array values.
  *
- * This class is not thread-safe.
+ * T  class  s not thread-safe.
  */
-public class FeatureSink {
-  private ImmutableSchemaInterface schema;
-  private final Map<String, IntegerEncodedFeatures> encodedFeatureMap;
+publ c class FeatureS nk {
+  pr vate  mmutableSc ma nterface sc ma;
+  pr vate f nal Map<Str ng,  ntegerEncodedFeatures> encodedFeatureMap;
 
-  /** Creates a new FeatureSink instance. */
-  public FeatureSink(ImmutableSchemaInterface schema) {
-    this.schema = schema;
-    this.encodedFeatureMap = Maps.newHashMap();
+  /** Creates a new FeatureS nk  nstance. */
+  publ c FeatureS nk( mmutableSc ma nterface sc ma) {
+    t .sc ma = sc ma;
+    t .encodedFeatureMap = Maps.newHashMap();
   }
 
-  private IntegerEncodedFeatures getFeatures(String baseFieldName) {
-    IntegerEncodedFeatures features = encodedFeatureMap.get(baseFieldName);
-    if (features == null) {
-      features = EarlybirdEncodedFeatures.newEncodedTweetFeatures(schema, baseFieldName);
-      encodedFeatureMap.put(baseFieldName, features);
+  pr vate  ntegerEncodedFeatures getFeatures(Str ng baseF eldNa ) {
+     ntegerEncodedFeatures features = encodedFeatureMap.get(baseF eldNa );
+     f (features == null) {
+      features = Earlyb rdEncodedFeatures.newEncodedT etFeatures(sc ma, baseF eldNa );
+      encodedFeatureMap.put(baseF eldNa , features);
     }
     return features;
   }
 
-  /** Sets the given numeric value for the field. */
-  public FeatureSink setNumericValue(EarlybirdFieldConstant field, int value) {
-    return setNumericValue(field.getFieldName(), value);
+  /** Sets t  g ven nu r c value for t  f eld. */
+  publ c FeatureS nk setNu r cValue(Earlyb rdF eldConstant f eld,  nt value) {
+    return setNu r cValue(f eld.getF eldNa (), value);
   }
 
-  /** Sets the given numeric value for the feature with the given name. */
-  public FeatureSink setNumericValue(String featureName, int value) {
-    final FeatureConfiguration featureConfig = schema.getFeatureConfigurationByName(featureName);
-    if (featureConfig != null) {
-      getFeatures(featureConfig.getBaseField()).setFeatureValue(featureConfig, value);
+  /** Sets t  g ven nu r c value for t  feature w h t  g ven na . */
+  publ c FeatureS nk setNu r cValue(Str ng featureNa ,  nt value) {
+    f nal FeatureConf gurat on featureConf g = sc ma.getFeatureConf gurat onByNa (featureNa );
+     f (featureConf g != null) {
+      getFeatures(featureConf g.getBaseF eld()).setFeatureValue(featureConf g, value);
     }
-    return this;
+    return t ;
   }
 
-  /** Sets the given boolean value for the given field. */
-  public FeatureSink setBooleanValue(EarlybirdFieldConstant field, boolean value) {
-    return setBooleanValue(field.getFieldName(), value);
+  /** Sets t  g ven boolean value for t  g ven f eld. */
+  publ c FeatureS nk setBooleanValue(Earlyb rdF eldConstant f eld, boolean value) {
+    return setBooleanValue(f eld.getF eldNa (), value);
   }
 
-  /** Sets the given boolean value for the feature with the given name. */
-  public FeatureSink setBooleanValue(String featureName, boolean value) {
-    final FeatureConfiguration featureConfig = schema.getFeatureConfigurationByName(featureName);
-    if (featureConfig != null) {
-      getFeatures(featureConfig.getBaseField()).setFlagValue(featureConfig, value);
+  /** Sets t  g ven boolean value for t  feature w h t  g ven na . */
+  publ c FeatureS nk setBooleanValue(Str ng featureNa , boolean value) {
+    f nal FeatureConf gurat on featureConf g = sc ma.getFeatureConf gurat onByNa (featureNa );
+     f (featureConf g != null) {
+      getFeatures(featureConf g.getBaseF eld()).setFlagValue(featureConf g, value);
     }
-    return this;
+    return t ;
   }
 
-  /** Returns the features for the given base field. */
-  public IntegerEncodedFeatures getFeaturesForBaseField(EarlybirdFieldConstant baseField) {
-    return getFeaturesForBaseField(baseField.getFieldName());
+  /** Returns t  features for t  g ven base f eld. */
+  publ c  ntegerEncodedFeatures getFeaturesForBaseF eld(Earlyb rdF eldConstant baseF eld) {
+    return getFeaturesForBaseF eld(baseF eld.getF eldNa ());
   }
 
-  /** Returns the features for the given base field. */
-  public IntegerEncodedFeatures getFeaturesForBaseField(String baseFieldName) {
-    return encodedFeatureMap.get(baseFieldName);
+  /** Returns t  features for t  g ven base f eld. */
+  publ c  ntegerEncodedFeatures getFeaturesForBaseF eld(Str ng baseF eldNa ) {
+    return encodedFeatureMap.get(baseF eldNa );
   }
 }

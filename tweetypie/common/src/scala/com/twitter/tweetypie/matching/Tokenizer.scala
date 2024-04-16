@@ -1,156 +1,156 @@
-package com.twitter.tweetypie.matching
+package com.tw ter.t etyp e.match ng
 
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.common_internal.text.pipeline.TwitterTextNormalizer
-import com.twitter.common_internal.text.pipeline.TwitterTextTokenizer
-import com.twitter.common_internal.text.version.PenguinVersion
-import com.twitter.concurrent.Once
-import com.twitter.io.StreamIO
-import java.util.Locale
-import scala.collection.JavaConverters._
+ mport com.tw ter.common.text.language.LocaleUt l
+ mport com.tw ter.common_ nternal.text.p pel ne.Tw terTextNormal zer
+ mport com.tw ter.common_ nternal.text.p pel ne.Tw terTextToken zer
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on
+ mport com.tw ter.concurrent.Once
+ mport com.tw ter. o.Stream O
+ mport java.ut l.Locale
+ mport scala.collect on.JavaConverters._
 
 /**
- * Extract a sequence of normalized tokens from the input text. The
- * normalization and tokenization are properly configured for keyword
- * matching between texts.
+ * Extract a sequence of normal zed tokens from t   nput text. T 
+ * normal zat on and token zat on are properly conf gured for keyword
+ * match ng bet en texts.
  */
-trait Tokenizer {
-  def tokenize(input: String): TokenSequence
+tra  Token zer {
+  def token ze( nput: Str ng): TokenSequence
 }
 
-object Tokenizer {
+object Token zer {
 
   /**
-   * When a Penguin version is not explicitly specified, use this
-   * version of Penguin to perform normalization and tokenization. If
-   * you cache tokenized text, be sure to store the version as well, to
-   * avoid comparing text that was normalized with different algorithms.
+   * W n a Pengu n vers on  s not expl c ly spec f ed, use t 
+   * vers on of Pengu n to perform normal zat on and token zat on.  f
+   *   cac  token zed text, be sure to store t  vers on as  ll, to
+   * avo d compar ng text that was normal zed w h d fferent algor hms.
    */
-  val DefaultPenguinVersion: PenguinVersion = PenguinVersion.PENGUIN_6
+  val DefaultPengu nVers on: Pengu nVers on = Pengu nVers on.PENGU N_6
 
   /**
-   * If you already know the locale of the text that is being tokenized,
-   * use this method to get a tokenizer that is much more efficient than
-   * the Tweet or Query tokenizer, since it does not have to perform
-   * language detection.
+   *  f   already know t  locale of t  text that  s be ng token zed,
+   * use t   thod to get a token zer that  s much more eff c ent than
+   * t  T et or Query token zer, s nce   does not have to perform
+   * language detect on.
    */
-  def forLocale(locale: Locale): Tokenizer = get(locale, DefaultPenguinVersion)
+  def forLocale(locale: Locale): Token zer = get(locale, DefaultPengu nVers on)
 
   /**
-   * Obtain a `Tokenizer` that will tokenize the text for the given
-   * locale and version of the Penguin library.
+   * Obta n a `Token zer` that w ll token ze t  text for t  g ven
+   * locale and vers on of t  Pengu n l brary.
    */
-  def get(locale: Locale, version: PenguinVersion): Tokenizer =
-    TokenizerFactories(version).forLocale(locale)
+  def get(locale: Locale, vers on: Pengu nVers on): Token zer =
+    Token zerFactor es(vers on).forLocale(locale)
 
   /**
-   * Encapsulates the configuration and use of [[TwitterTextTokenizer]]
-   * and [[TwitterTextNormalizer]].
+   * Encapsulates t  conf gurat on and use of [[Tw terTextToken zer]]
+   * and [[Tw terTextNormal zer]].
    */
-  private[this] class TokenizerFactory(version: PenguinVersion) {
-    // The normalizer is thread-safe, so share one instance.
-    private[this] val normalizer =
-      (new TwitterTextNormalizer.Builder(version)).build()
+  pr vate[t ] class Token zerFactory(vers on: Pengu nVers on) {
+    // T  normal zer  s thread-safe, so share one  nstance.
+    pr vate[t ] val normal zer =
+      (new Tw terTextNormal zer.Bu lder(vers on)).bu ld()
 
-    // The TwitterTextTokenizer is relatively expensive to build,
-    // and is not thread safe, so keep instances of it in a
+    // T  Tw terTextToken zer  s relat vely expens ve to bu ld,
+    // and  s not thread safe, so keep  nstances of    n a
     // ThreadLocal.
-    private[this] val local =
-      new ThreadLocal[TwitterTextTokenizer] {
-        override def initialValue: TwitterTextTokenizer =
-          (new TwitterTextTokenizer.Builder(version)).build()
+    pr vate[t ] val local =
+      new ThreadLocal[Tw terTextToken zer] {
+        overr de def  n  alValue: Tw terTextToken zer =
+          (new Tw terTextToken zer.Bu lder(vers on)).bu ld()
       }
 
     /**
-     * Obtain a [[Tokenizer]] for this combination of [[PenguinVersion]]
+     * Obta n a [[Token zer]] for t  comb nat on of [[Pengu nVers on]]
      * and [[Locale]].
      */
-    def forLocale(locale: Locale): Tokenizer =
-      new Tokenizer {
-        override def tokenize(input: String): TokenSequence = {
-          val stream = local.get.getTwitterTokenStreamFor(locale)
-          stream.reset(normalizer.normalize(input, locale))
-          val builder = IndexedSeq.newBuilder[CharSequence]
-          while (stream.incrementToken) builder += stream.term()
-          TokenSequence(builder.result())
+    def forLocale(locale: Locale): Token zer =
+      new Token zer {
+        overr de def token ze( nput: Str ng): TokenSequence = {
+          val stream = local.get.getTw terTokenStreamFor(locale)
+          stream.reset(normal zer.normal ze( nput, locale))
+          val bu lder =  ndexedSeq.newBu lder[CharSequence]
+          wh le (stream. ncre ntToken) bu lder += stream.term()
+          TokenSequence(bu lder.result())
         }
       }
   }
 
   /**
-   * Since there are a small number of Penguin versions, eagerly
-   * initialize a TokenizerFactory for each version, to avoid managing
+   * S nce t re are a small number of Pengu n vers ons, eagerly
+   *  n  al ze a Token zerFactory for each vers on, to avo d manag ng
    * mutable state.
    */
-  private[this] val TokenizerFactories: PenguinVersion => TokenizerFactory =
-    PenguinVersion.values.map(v => v -> new TokenizerFactory(v)).toMap
+  pr vate[t ] val Token zerFactor es: Pengu nVers on => Token zerFactory =
+    Pengu nVers on.values.map(v => v -> new Token zerFactory(v)).toMap
 
   /**
-   * The set of locales used in warmup. These locales are mentioned in
-   * the logic of TwitterTextTokenizer and TwitterTextNormalizer.
+   * T  set of locales used  n warmup. T se locales are  nt oned  n
+   * t  log c of Tw terTextToken zer and Tw terTextNormal zer.
    */
-  private[this] val WarmUpLocales: Seq[Locale] =
+  pr vate[t ] val WarmUpLocales: Seq[Locale] =
     Seq
       .concat(
         Seq(
           Locale.JAPANESE,
           Locale.KOREAN,
-          LocaleUtil.UNKNOWN,
-          LocaleUtil.THAI,
-          LocaleUtil.ARABIC,
-          LocaleUtil.SWEDISH
+          LocaleUt l.UNKNOWN,
+          LocaleUt l.THA ,
+          LocaleUt l.ARAB C,
+          LocaleUt l.SWED SH
         ),
-        LocaleUtil.CHINESE_JAPANESE_LOCALES.asScala,
-        LocaleUtil.CJK_LOCALES.asScala
+        LocaleUt l.CH NESE_JAPANESE_LOCALES.asScala,
+        LocaleUt l.CJK_LOCALES.asScala
       )
       .toSet
       .toArray
       .toSeq
 
   /**
-   * Load the default inputs that are used for warming up this library.
+   * Load t  default  nputs that are used for warm ng up t  l brary.
    */
-  def warmUpCorpus(): Seq[String] = {
-    val stream = getClass.getResourceAsStream("warmup-text.txt")
+  def warmUpCorpus(): Seq[Str ng] = {
+    val stream = getClass.getRes ceAsStream("warmup-text.txt")
     val bytes =
-      try StreamIO.buffer(stream)
-      finally stream.close()
-    bytes.toString("UTF-8").linesIterator.toArray.toSeq
+      try Stream O.buffer(stream)
+      f nally stream.close()
+    bytes.toStr ng("UTF-8").l nes erator.toArray.toSeq
   }
 
   /**
-   * Exercise the functionality of this library on the specified
-   * strings. In general, prefer [[warmUp]] to this method.
+   * Exerc se t  funct onal y of t  l brary on t  spec f ed
+   * str ngs.  n general, prefer [[warmUp]] to t   thod.
    */
-  def warmUpWith(ver: PenguinVersion, texts: Iterable[String]): Unit =
+  def warmUpW h(ver: Pengu nVers on, texts:  erable[Str ng]): Un  =
     texts.foreach { txt =>
-      // Exercise each locale
+      // Exerc se each locale
       WarmUpLocales.foreach { loc =>
-        Tokenizer.get(loc, ver).tokenize(txt)
-        UserMutes.builder().withPenguinVersion(ver).withLocale(loc).validate(txt)
+        Token zer.get(loc, ver).token ze(txt)
+        UserMutes.bu lder().w hPengu nVers on(ver).w hLocale(loc).val date(txt)
       }
 
-      // Exercise language detection
-      TweetTokenizer.get(ver).tokenize(txt)
-      UserMutes.builder().withPenguinVersion(ver).validate(txt)
+      // Exerc se language detect on
+      T etToken zer.get(ver).token ze(txt)
+      UserMutes.bu lder().w hPengu nVers on(ver).val date(txt)
     }
 
-  private[this] val warmUpOnce = Once(warmUpWith(DefaultPenguinVersion, warmUpCorpus()))
+  pr vate[t ] val warmUpOnce = Once(warmUpW h(DefaultPengu nVers on, warmUpCorpus()))
 
   /**
-   * The creation of the first TwitterTextTokenizer is relatively
-   * expensive, and tokenizing some texts may cause significant
-   * initialization.
+   * T  creat on of t  f rst Tw terTextToken zer  s relat vely
+   * expens ve, and token z ng so  texts may cause s gn f cant
+   *  n  al zat on.
    *
-   * This method exercises the functionality of this library
-   * with a range of texts in order to perform as much initialization as
-   * possible before the library is used in a latency-sensitive way.
+   * T   thod exerc ses t  funct onal y of t  l brary
+   * w h a range of texts  n order to perform as much  n  al zat on as
+   * poss ble before t  l brary  s used  n a latency-sens  ve way.
    *
-   * The warmup routine will only run once. Subsequent invocations of
-   * `warmUp` will no do additional work, and will return once warmup is
+   * T  warmup rout ne w ll only run once. Subsequent  nvocat ons of
+   * `warmUp` w ll no do add  onal work, and w ll return once warmup  s
    * complete.
    *
-   * The warmup will take on the order of seconds.
+   * T  warmup w ll take on t  order of seconds.
    */
-  def warmUp(): Unit = warmUpOnce()
+  def warmUp(): Un  = warmUpOnce()
 }

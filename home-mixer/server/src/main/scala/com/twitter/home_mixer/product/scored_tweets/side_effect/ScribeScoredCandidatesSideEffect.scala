@@ -1,126 +1,126 @@
-package com.twitter.home_mixer.product.scored_tweets.side_effect
+package com.tw ter.ho _m xer.product.scored_t ets.s de_effect
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeScoredCandidatesFlag
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.EnableScribeScoredCandidatesParam
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.side_effect.ScribeLogEventSideEffect
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.timelines.timeline_logging.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.util.logging.Logging
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.ho _m xer.model.Ho Features.AncestorsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.D rectedAtUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Favor edByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Follo dByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.From nNetworkS ceFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.RequestJo n dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.param.Ho M xerFlagNa .Scr beScoredCand datesFlag
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsResponse
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.EnableScr beScoredCand datesParam
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.logp pel ne.cl ent.common.EventPubl s r
+ mport com.tw ter.product_m xer.component_l brary.s de_effect.Scr beLogEventS deEffect
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateP pel nes
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.ut l.logg ng.Logg ng
 
 /**
- * Side effect that logs scored candidates from scoring pipelines
+ * S de effect that logs scored cand dates from scor ng p pel nes
  */
-@Singleton
-class ScribeScoredCandidatesSideEffect @Inject() (
-  @Flag(ScribeScoredCandidatesFlag) enableScribeScoredCandidates: Boolean,
-  eventBusPublisher: EventPublisher[t.ScoredCandidate])
-    extends ScribeLogEventSideEffect[
-      t.ScoredCandidate,
-      ScoredTweetsQuery,
-      ScoredTweetsResponse
+@S ngleton
+class Scr beScoredCand datesS deEffect @ nject() (
+  @Flag(Scr beScoredCand datesFlag) enableScr beScoredCand dates: Boolean,
+  eventBusPubl s r: EventPubl s r[t.ScoredCand date])
+    extends Scr beLogEventS deEffect[
+      t.ScoredCand date,
+      ScoredT etsQuery,
+      ScoredT etsResponse
     ]
-    with PipelineResultSideEffect.Conditionally[
-      ScoredTweetsQuery,
-      ScoredTweetsResponse
+    w h P pel neResultS deEffect.Cond  onally[
+      ScoredT etsQuery,
+      ScoredT etsResponse
     ]
-    with Logging {
+    w h Logg ng {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("ScribeScoredCandidates")
+  overr de val  dent f er: S deEffect dent f er =
+    S deEffect dent f er("Scr beScoredCand dates")
 
-  override def onlyIf(
-    query: ScoredTweetsQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ScoredTweetsResponse
-  ): Boolean = enableScribeScoredCandidates && query.params(EnableScribeScoredCandidatesParam)
+  overr de def only f(
+    query: ScoredT etsQuery,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: ScoredT etsResponse
+  ): Boolean = enableScr beScoredCand dates && query.params(EnableScr beScoredCand datesParam)
 
   /**
-   * Build the log events from query, selections and response
+   * Bu ld t  log events from query, select ons and response
    *
-   * @param query               PipelineQuery
-   * @param selectedCandidates  Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates   Candidates dropped during selection
-   * @param response            Result after Unmarshalling
+   * @param query               P pel neQuery
+   * @param selectedCand dates  Result after Selectors are executed
+   * @param rema n ngCand dates Cand dates wh ch  re not selected
+   * @param droppedCand dates   Cand dates dropped dur ng select on
+   * @param response            Result after Unmarshall ng
    *
-   * @return LogEvent in thrift
+   * @return LogEvent  n thr ft
    */
-  override def buildLogEvents(
-    query: ScoredTweetsQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ScoredTweetsResponse
-  ): Seq[t.ScoredCandidate] = {
-    val returned = (selectedCandidates ++ remainingCandidates).map(toThrift(_, query, false))
-    val dropped = droppedCandidates.map(toThrift(_, query, true))
+  overr de def bu ldLogEvents(
+    query: ScoredT etsQuery,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: ScoredT etsResponse
+  ): Seq[t.ScoredCand date] = {
+    val returned = (selectedCand dates ++ rema n ngCand dates).map(toThr ft(_, query, false))
+    val dropped = droppedCand dates.map(toThr ft(_, query, true))
     returned ++ dropped
   }
 
-  private def toThrift(
-    candidate: CandidateWithDetails,
-    query: ScoredTweetsQuery,
-    isDropped: Boolean
-  ): t.ScoredCandidate = {
-    t.ScoredCandidate(
-      tweetId = candidate.candidateIdLong,
-      viewerId = query.getOptionalUserId,
-      authorId = candidate.features.getOrElse(AuthorIdFeature, None),
-      traceId = Some(Trace.id.traceId.toLong),
-      requestJoinId = query.features.flatMap(_.getOrElse(RequestJoinIdFeature, None)),
-      score = candidate.features.getOrElse(ScoreFeature, None),
-      suggestType = candidate.features.getOrElse(SuggestTypeFeature, None).map(_.name),
-      isInNetwork = candidate.features.getTry(FromInNetworkSourceFeature).toOption,
-      inReplyToTweetId = candidate.features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToUserId = candidate.features.getOrElse(InReplyToUserIdFeature, None),
-      quotedTweetId = candidate.features.getOrElse(QuotedTweetIdFeature, None),
-      quotedUserId = candidate.features.getOrElse(QuotedUserIdFeature, None),
-      directedAtUserId = candidate.features.getOrElse(DirectedAtUserIdFeature, None),
-      favoritedByUserIds = convertSeqFeature(candidate, FavoritedByUserIdsFeature),
-      followedByUserIds = convertSeqFeature(candidate, FollowedByUserIdsFeature),
-      ancestors = convertSeqFeature(candidate, AncestorsFeature),
-      requestTimeMs = Some(query.queryTime.inMilliseconds),
-      candidatePipelineIdentifier =
-        candidate.features.getTry(CandidatePipelines).toOption.map(_.head.name),
-      earlybirdScore = candidate.features.getOrElse(EarlybirdScoreFeature, None),
-      isDropped = Some(isDropped)
+  pr vate def toThr ft(
+    cand date: Cand dateW hDeta ls,
+    query: ScoredT etsQuery,
+     sDropped: Boolean
+  ): t.ScoredCand date = {
+    t.ScoredCand date(
+      t et d = cand date.cand date dLong,
+      v e r d = query.getOpt onalUser d,
+      author d = cand date.features.getOrElse(Author dFeature, None),
+      trace d = So (Trace. d.trace d.toLong),
+      requestJo n d = query.features.flatMap(_.getOrElse(RequestJo n dFeature, None)),
+      score = cand date.features.getOrElse(ScoreFeature, None),
+      suggestType = cand date.features.getOrElse(SuggestTypeFeature, None).map(_.na ),
+       s nNetwork = cand date.features.getTry(From nNetworkS ceFeature).toOpt on,
+       nReplyToT et d = cand date.features.getOrElse( nReplyToT et dFeature, None),
+       nReplyToUser d = cand date.features.getOrElse( nReplyToUser dFeature, None),
+      quotedT et d = cand date.features.getOrElse(QuotedT et dFeature, None),
+      quotedUser d = cand date.features.getOrElse(QuotedUser dFeature, None),
+      d rectedAtUser d = cand date.features.getOrElse(D rectedAtUser dFeature, None),
+      favor edByUser ds = convertSeqFeature(cand date, Favor edByUser dsFeature),
+      follo dByUser ds = convertSeqFeature(cand date, Follo dByUser dsFeature),
+      ancestors = convertSeqFeature(cand date, AncestorsFeature),
+      requestT  Ms = So (query.queryT  . nM ll seconds),
+      cand dateP pel ne dent f er =
+        cand date.features.getTry(Cand dateP pel nes).toOpt on.map(_. ad.na ),
+      earlyb rdScore = cand date.features.getOrElse(Earlyb rdScoreFeature, None),
+       sDropped = So ( sDropped)
     )
   }
 
-  private def convertSeqFeature[T](
-    candidateWithDetails: CandidateWithDetails,
+  pr vate def convertSeqFeature[T](
+    cand dateW hDeta ls: Cand dateW hDeta ls,
     feature: Feature[_, Seq[T]]
-  ): Option[Seq[T]] =
-    Option(
-      candidateWithDetails.features
-        .getOrElse(feature, Seq.empty)).filter(_.nonEmpty)
+  ): Opt on[Seq[T]] =
+    Opt on(
+      cand dateW hDeta ls.features
+        .getOrElse(feature, Seq.empty)).f lter(_.nonEmpty)
 
-  override val logPipelinePublisher: EventPublisher[t.ScoredCandidate] = eventBusPublisher
+  overr de val logP pel nePubl s r: EventPubl s r[t.ScoredCand date] = eventBusPubl s r
 }

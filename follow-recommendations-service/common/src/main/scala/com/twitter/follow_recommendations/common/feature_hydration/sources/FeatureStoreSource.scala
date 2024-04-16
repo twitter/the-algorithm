@@ -1,368 +1,368 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.MetricCenterUserCountingFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.timelines.AuthorFeaturesEntityDataset
-import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{AuthorTopic => AuthorTopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{CandidateUser => CandidateUserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{Topic => TopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{User => UserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{UserCandidate => UserCandidateEntity}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.UserWtfAlgorithmEntity
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
-import com.twitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.ml.featurestore.lib.dynamic._
-import com.twitter.ml.featurestore.lib.feature._
-import com.twitter.ml.featurestore.lib.online.DatasetValuesCache
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
-import com.twitter.ml.featurestore.lib.EdgeEntityId
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.TopicId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmId
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateAuthorTopicAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicEngagementRealTimeAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicEngagementUserStateRealTimeAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicNegativeEngagementUserStateRealTimeAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.FeatureStoreAdapter
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.g hub.benmanes.caffe ne.cac .Caffe ne
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.T  outExcept on
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters.Cand dateAlgor hmAdapter.remapCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce d
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces.Ut ls.adaptAdd  onalFeaturesToDataRecord
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces.Ut ls.random zedTTL
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter. rm .constants.Algor hmFeedbackTokens.Algor hmToFeedbackTokenMap
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.ml.featurestore.catalog.datasets.core.Users ceEnt yDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.mag crecs.Not f cat onSummar esEnt yDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.onboard ng. tr cCenterUserCount ngFeaturesDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.t  l nes.AuthorFeaturesEnt yDataset
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Author => AuthorEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{AuthorTop c => AuthorTop cEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Cand dateUser => Cand dateUserEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Top c => Top cEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{User => UserEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{UserCand date => UserCand dateEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.onboard ng.UserWtfAlgor hmEnt y
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecord
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecordAdapter
+ mport com.tw ter.ml.featurestore.l b.dataset.onl ne.Hydrator.Hydrat onResponse
+ mport com.tw ter.ml.featurestore.l b.dataset.onl ne.Onl neAccessDataset
+ mport com.tw ter.ml.featurestore.l b.dataset.Dataset d
+ mport com.tw ter.ml.featurestore.l b.dynam c._
+ mport com.tw ter.ml.featurestore.l b.feature._
+ mport com.tw ter.ml.featurestore.l b.onl ne.DatasetValuesCac 
+ mport com.tw ter.ml.featurestore.l b.onl ne.FeatureStoreRequest
+ mport com.tw ter.ml.featurestore.l b.onl ne.Onl neFeatureGenerat onStats
+ mport com.tw ter.ml.featurestore.l b.EdgeEnt y d
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.Top c d
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.WtfAlgor hm d
+ mport com.tw ter.onboard ng.relevance.adapters.features.featurestore.Cand dateAuthorTop cAggregatesAdapter
+ mport com.tw ter.onboard ng.relevance.adapters.features.featurestore.Cand dateTop cEngage ntRealT  AggregatesAdapter
+ mport com.tw ter.onboard ng.relevance.adapters.features.featurestore.Cand dateTop cEngage ntUserStateRealT  AggregatesAdapter
+ mport com.tw ter.onboard ng.relevance.adapters.features.featurestore.Cand dateTop cNegat veEngage ntUserStateRealT  AggregatesAdapter
+ mport com.tw ter.onboard ng.relevance.adapters.features.featurestore.FeatureStoreAdapter
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-import java.util.concurrent.TimeUnit
+ mport java.ut l.concurrent.T  Un 
 
-@Singleton
-class FeatureStoreSource @Inject() (
-  serviceIdentifier: ServiceIdentifier,
-  stats: StatsReceiver)
-    extends FeatureSource {
-  import FeatureStoreSource._
+@S ngleton
+class FeatureStoreS ce @ nject() (
+  serv ce dent f er: Serv ce dent f er,
+  stats: StatsRece ver)
+    extends FeatureS ce {
+   mport FeatureStoreS ce._
 
-  override val id: FeatureSourceId = FeatureSourceId.FeatureStoreSourceId
-  override val featureContext: FeatureContext = FeatureStoreSource.getFeatureContext
+  overr de val  d: FeatureS ce d = FeatureS ce d.FeatureStoreS ce d
+  overr de val featureContext: FeatureContext = FeatureStoreS ce.getFeatureContext
   val hydrateFeaturesStats = stats.scope("hydrate_features")
   val adapterStats = stats.scope("adapters")
-  val featureSet: BoundFeatureSet = BoundFeatureSet(FeatureStoreSource.allFeatures)
-  val clientConfig: ClientConfig[HasParams] = ClientConfig(
-    dynamicHydrationConfig = FeatureStoreSource.dynamicHydrationConfig,
-    featureStoreParamsConfig =
-      FeatureStoreParamsConfig(FeatureStoreParameters.featureStoreParams, Map.empty),
+  val featureSet: BoundFeatureSet = BoundFeatureSet(FeatureStoreS ce.allFeatures)
+  val cl entConf g: Cl entConf g[HasParams] = Cl entConf g(
+    dynam cHydrat onConf g = FeatureStoreS ce.dynam cHydrat onConf g,
+    featureStoreParamsConf g =
+      FeatureStoreParamsConf g(FeatureStorePara ters.featureStoreParams, Map.empty),
     /**
-     * The smaller one between `timeoutProvider` and `FeatureStoreSourceParams.GlobalFetchTimeout`
+     * T  smaller one bet en `t  outProv der` and `FeatureStoreS ceParams.GlobalFetchT  out`
      * used below takes effect.
      */
-    timeoutProvider = Function.const(800.millis),
-    serviceIdentifier = serviceIdentifier
+    t  outProv der = Funct on.const(800.m ll s),
+    serv ce dent f er = serv ce dent f er
   )
 
-  private val datasetsToCache = Set(
-    MetricCenterUserCountingFeaturesDataset,
-    UsersourceEntityDataset,
-    AuthorFeaturesEntityDataset,
-    NotificationSummariesEntityDataset
-  ).asInstanceOf[Set[OnlineAccessDataset[_ <: EntityId, _]]]
+  pr vate val datasetsToCac  = Set(
+     tr cCenterUserCount ngFeaturesDataset,
+    Users ceEnt yDataset,
+    AuthorFeaturesEnt yDataset,
+    Not f cat onSummar esEnt yDataset
+  ).as nstanceOf[Set[Onl neAccessDataset[_ <: Ent y d, _]]]
 
-  private val datasetValuesCache: DatasetValuesCache =
-    DatasetValuesCache(
-      Caffeine
-        .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
-        .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
+  pr vate val datasetValuesCac : DatasetValuesCac  =
+    DatasetValuesCac (
+      Caffe ne
+        .newBu lder()
+        .exp reAfterWr e(random zedTTL(12.h s. nSeconds), T  Un .SECONDS)
+        .max mumS ze(DefaultCac MaxKeys)
+        .bu ld[(_ <: Ent y d, Dataset d), St ch[Hydrat onResponse[_]]]
         .asMap,
-      datasetsToCache,
-      DatasetCacheScope
+      datasetsToCac ,
+      DatasetCac Scope
     )
 
-  private val dynamicFeatureStoreClient = DynamicFeatureStoreClient(
-    clientConfig,
+  pr vate val dynam cFeatureStoreCl ent = Dynam cFeatureStoreCl ent(
+    cl entConf g,
     stats,
-    Set(datasetValuesCache)
+    Set(datasetValuesCac )
   )
 
-  private val adapter: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(
+  pr vate val adapter:  RecordOneToOneAdapter[Pred ct onRecord] =
+    Pred ct onRecordAdapter.oneToOne(
       BoundFeatureSet(allFeatures),
-      OnlineFeatureGenerationStats(stats)
+      Onl neFeatureGenerat onStats(stats)
     )
 
-  override def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    target.getOptionalUserId
-      .map { targetUserId =>
-        val featureRequests = candidates.map { candidate =>
-          val userId = UserId(targetUserId)
-          val userEntityId = UserEntity.withId(userId)
-          val candidateEntityId = CandidateUserEntity.withId(UserId(candidate.id))
-          val userCandidateEdgeEntityId =
-            UserCandidateEntity.withId(EdgeEntityId(userId, UserId(candidate.id)))
-          val similarToUserId = target.similarToUserIds.map(id => AuthorEntity.withId(UserId(id)))
-          val topicProof = candidate.reason.flatMap(_.accountProof.flatMap(_.topicProof))
-          val topicEntities = if (topicProof.isDefined) {
-            hydrateFeaturesStats.counter("candidates_with_topic_proof").incr()
-            val topicId = topicProof.get.topicId
-            val topicEntityId = TopicEntity.withId(TopicId(topicId))
-            val authorTopicEntityId =
-              AuthorTopicEntity.withId(EdgeEntityId(UserId(candidate.id), TopicId(topicId)))
-            Seq(topicEntityId, authorTopicEntityId)
-          } else Nil
+  overr de def hydrateFeatures(
+    target: HasCl entContext
+      w h HasPreFetc dFeature
+      w h HasParams
+      w h HasS m larToContext
+      w h HasD splayLocat on,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Map[Cand dateUser, DataRecord]] = {
+    target.getOpt onalUser d
+      .map { targetUser d =>
+        val featureRequests = cand dates.map { cand date =>
+          val user d = User d(targetUser d)
+          val userEnt y d = UserEnt y.w h d(user d)
+          val cand dateEnt y d = Cand dateUserEnt y.w h d(User d(cand date. d))
+          val userCand dateEdgeEnt y d =
+            UserCand dateEnt y.w h d(EdgeEnt y d(user d, User d(cand date. d)))
+          val s m larToUser d = target.s m larToUser ds.map( d => AuthorEnt y.w h d(User d( d)))
+          val top cProof = cand date.reason.flatMap(_.accountProof.flatMap(_.top cProof))
+          val top cEnt  es =  f (top cProof. sDef ned) {
+            hydrateFeaturesStats.counter("cand dates_w h_top c_proof"). ncr()
+            val top c d = top cProof.get.top c d
+            val top cEnt y d = Top cEnt y.w h d(Top c d(top c d))
+            val authorTop cEnt y d =
+              AuthorTop cEnt y.w h d(EdgeEnt y d(User d(cand date. d), Top c d(top c d)))
+            Seq(top cEnt y d, authorTop cEnt y d)
+          } else N l
 
-          val candidateAlgorithmsWithScores = candidate.getAllAlgorithms
-          val userWtfAlgEdgeEntities =
-            candidateAlgorithmsWithScores.flatMap(algo => {
-              val algoId = AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-              algoId.map(id =>
-                UserWtfAlgorithmEntity.withId(EdgeEntityId(userId, WtfAlgorithmId(id))))
+          val cand dateAlgor hmsW hScores = cand date.getAllAlgor hms
+          val userWtfAlgEdgeEnt  es =
+            cand dateAlgor hmsW hScores.flatMap(algo => {
+              val algo d = Algor hmToFeedbackTokenMap.get(remapCand dateS ce(algo))
+              algo d.map( d =>
+                UserWtfAlgor hmEnt y.w h d(EdgeEnt y d(user d, WtfAlgor hm d( d))))
             })
 
-          val entities = Seq(
-            userEntityId,
-            candidateEntityId,
-            userCandidateEdgeEntityId) ++ similarToUserId ++ topicEntities ++ userWtfAlgEdgeEntities
-          FeatureStoreRequest(entities)
+          val ent  es = Seq(
+            userEnt y d,
+            cand dateEnt y d,
+            userCand dateEdgeEnt y d) ++ s m larToUser d ++ top cEnt  es ++ userWtfAlgEdgeEnt  es
+          FeatureStoreRequest(ent  es)
         }
 
-        val predictionRecordsFut = dynamicFeatureStoreClient(featureRequests, target)
-        val candidateFeatureMap = predictionRecordsFut.map { predictionRecords =>
-          // we can zip predictionRecords with candidates as the order is preserved in the client
-          candidates
-            .zip(predictionRecords).map {
-              case (candidate, predictionRecord) =>
-                candidate -> adaptAdditionalFeaturesToDataRecord(
-                  adapter.adaptToDataRecord(predictionRecord),
+        val pred ct onRecordsFut = dynam cFeatureStoreCl ent(featureRequests, target)
+        val cand dateFeatureMap = pred ct onRecordsFut.map { pred ct onRecords =>
+          //   can z p pred ct onRecords w h cand dates as t  order  s preserved  n t  cl ent
+          cand dates
+            .z p(pred ct onRecords).map {
+              case (cand date, pred ct onRecord) =>
+                cand date -> adaptAdd  onalFeaturesToDataRecord(
+                  adapter.adaptToDataRecord(pred ct onRecord),
                   adapterStats,
-                  FeatureStoreSource.featureAdapters)
+                  FeatureStoreS ce.featureAdapters)
             }.toMap
         }
-        Stitch
-          .callFuture(candidateFeatureMap)
-          .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
-            com.twitter.finagle.util.DefaultTimer)
+        St ch
+          .callFuture(cand dateFeatureMap)
+          .w h n(target.params(FeatureStoreS ceParams.GlobalFetchT  out))(
+            com.tw ter.f nagle.ut l.DefaultT  r)
           .rescue {
-            case _: TimeoutException =>
-              Stitch.value(Map.empty[CandidateUser, DataRecord])
+            case _: T  outExcept on =>
+              St ch.value(Map.empty[Cand dateUser, DataRecord])
           }
-      }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
+      }.getOrElse(St ch.value(Map.empty[Cand dateUser, DataRecord]))
   }
 }
 
-// list of features that we will be fetching, even if we are only scribing but not scoring with them
-object FeatureStoreSource {
+// l st of features that   w ll be fetch ng, even  f   are only scr b ng but not scor ng w h t m
+object FeatureStoreS ce {
 
-  private val DatasetCacheScope = "feature_store_local_cache"
-  private val DefaultCacheMaxKeys = 70000
+  pr vate val DatasetCac Scope = "feature_store_local_cac "
+  pr vate val DefaultCac MaxKeys = 70000
 
-  import FeatureStoreFeatures._
+   mport FeatureStoreFeatures._
 
   ///////////////////// ALL hydrated features /////////////////////
-  val allFeatures: Set[BoundFeature[_ <: EntityId, _]] =
+  val allFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
     //target user
     targetUserFeatures ++
-      targetUserUserAuthorUserStateRealTimeAggregatesFeature ++
-      targetUserResurrectionFeatures ++
-      targetUserWtfImpressionFeatures ++
+      targetUserUserAuthorUserStateRealT  AggregatesFeature ++
+      targetUserResurrect onFeatures ++
+      targetUserWtf mpress onFeatures ++
       targetUserStatusFeatures ++
-      targetUserMetricCountFeatures ++
-      //candidate user
-      candidateUserFeatures ++
-      candidateUserResurrectionFeatures ++
-      candidateUserAuthorRealTimeAggregateFeatures ++
-      candidateUserStatusFeatures ++
-      candidateUserMetricCountFeatures ++
-      candidateUserTimelinesAuthorAggregateFeatures ++
-      candidateUserClientFeatures ++
-      //similar to user
-      similarToUserFeatures ++
-      similarToUserStatusFeatures ++
-      similarToUserMetricCountFeatures ++
-      similarToUserTimelinesAuthorAggregateFeatures ++
-      //other
-      userCandidateEdgeFeatures ++
-      userCandidateWtfImpressionCandidateFeatures ++
-      topicFeatures ++
-      userWtfAlgorithmEdgeFeatures ++
-      targetUserClientFeatures
+      targetUser tr cCountFeatures ++
+      //cand date user
+      cand dateUserFeatures ++
+      cand dateUserResurrect onFeatures ++
+      cand dateUserAuthorRealT  AggregateFeatures ++
+      cand dateUserStatusFeatures ++
+      cand dateUser tr cCountFeatures ++
+      cand dateUserT  l nesAuthorAggregateFeatures ++
+      cand dateUserCl entFeatures ++
+      //s m lar to user
+      s m larToUserFeatures ++
+      s m larToUserStatusFeatures ++
+      s m larToUser tr cCountFeatures ++
+      s m larToUserT  l nesAuthorAggregateFeatures ++
+      //ot r
+      userCand dateEdgeFeatures ++
+      userCand dateWtf mpress onCand dateFeatures ++
+      top cFeatures ++
+      userWtfAlgor hmEdgeFeatures ++
+      targetUserCl entFeatures
 
-  val dynamicHydrationConfig: DynamicHydrationConfig[HasParams] =
-    DynamicHydrationConfig(
+  val dynam cHydrat onConf g: Dynam cHydrat onConf g[HasParams] =
+    Dynam cHydrat onConf g(
       Set(
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(topicAggregateFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTopicAggregateFeatures)
+          boundFeatureSet = BoundFeatureSet(top cAggregateFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableTop cAggregateFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(authorTopicFeatures),
+          boundFeatureSet = BoundFeatureSet(authorTop cFeatures),
           gate =
             HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableAuthorTopicAggregateFeatures)
+              .paramGate(FeatureStoreS ceParams.EnableSeparateCl entForT  l nesAuthors).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableAuthorTop cAggregateFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userTopicFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserTopicFeatures)
+          boundFeatureSet = BoundFeatureSet(userTop cFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableUserTop cFeatures)
         ),
         GatedFeatures(
           boundFeatureSet = BoundFeatureSet(targetUserFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableTargetUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserUserAuthorUserStateRealTimeAggregatesFeature),
+          boundFeatureSet = BoundFeatureSet(targetUserUserAuthorUserStateRealT  AggregatesFeature),
           gate = HasParams.paramGate(
-            FeatureStoreSourceParams.EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature)
+            FeatureStoreS ceParams.EnableTargetUserUserAuthorUserStateRealT  AggregatesFeature)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserResurrectionFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserResurrectionFeatures)
+          boundFeatureSet = BoundFeatureSet(targetUserResurrect onFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableTargetUserResurrect onFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserWtfImpressionFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserWtfImpressionFeatures)
+          boundFeatureSet = BoundFeatureSet(targetUserWtf mpress onFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableTargetUserWtf mpress onFeatures)
         ),
         GatedFeatures(
           boundFeatureSet = BoundFeatureSet(targetUserStatusFeatures),
           gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
+            HasParams.paramGate(FeatureStoreS ceParams.EnableSeparateCl entForG zmoduck).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableTargetUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserMetricCountFeatures),
+          boundFeatureSet = BoundFeatureSet(targetUser tr cCountFeatures),
           gate = HasParams
             .paramGate(
-              FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting).unary_! &
-            HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
+              FeatureStoreS ceParams.EnableSeparateCl entFor tr cCenterUserCount ng).unary_! &
+            HasParams.paramGate(FeatureStoreS ceParams.EnableTargetUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
+          boundFeatureSet = BoundFeatureSet(cand dateUserFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableCand dateUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserAuthorRealTimeAggregateFeatures),
+          boundFeatureSet = BoundFeatureSet(cand dateUserAuthorRealT  AggregateFeatures),
           gate = HasParams.paramGate(
-            FeatureStoreSourceParams.EnableCandidateUserAuthorRealTimeAggregateFeatures)
+            FeatureStoreS ceParams.EnableCand dateUserAuthorRealT  AggregateFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserResurrectionFeatures),
+          boundFeatureSet = BoundFeatureSet(cand dateUserResurrect onFeatures),
           gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserResurrectionFeatures)
+            HasParams.paramGate(FeatureStoreS ceParams.EnableCand dateUserResurrect onFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserStatusFeatures),
+          boundFeatureSet = BoundFeatureSet(cand dateUserStatusFeatures),
           gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
+            HasParams.paramGate(FeatureStoreS ceParams.EnableSeparateCl entForG zmoduck).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableCand dateUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserTimelinesAuthorAggregateFeatures),
+          boundFeatureSet = BoundFeatureSet(cand dateUserT  l nesAuthorAggregateFeatures),
           gate =
             HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors).unary_! &
+              .paramGate(FeatureStoreS ceParams.EnableSeparateCl entForT  l nesAuthors).unary_! &
               HasParams.paramGate(
-                FeatureStoreSourceParams.EnableCandidateUserTimelinesAuthorAggregateFeatures)
+                FeatureStoreS ceParams.EnableCand dateUserT  l nesAuthorAggregateFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserMetricCountFeatures),
+          boundFeatureSet = BoundFeatureSet(cand dateUser tr cCountFeatures),
           gate =
             HasParams
               .paramGate(
-                FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
+                FeatureStoreS ceParams.EnableSeparateCl entFor tr cCenterUserCount ng).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableCand dateUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userCandidateEdgeFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserCandidateEdgeFeatures)
+          boundFeatureSet = BoundFeatureSet(userCand dateEdgeFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableUserCand dateEdgeFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userCandidateWtfImpressionCandidateFeatures),
+          boundFeatureSet = BoundFeatureSet(userCand dateWtf mpress onCand dateFeatures),
           gate = HasParams.paramGate(
-            FeatureStoreSourceParams.EnableUserCandidateWtfImpressionCandidateFeatures)
+            FeatureStoreS ceParams.EnableUserCand dateWtf mpress onCand dateFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userWtfAlgorithmEdgeFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserWtfAlgEdgeFeatures)
+          boundFeatureSet = BoundFeatureSet(userWtfAlgor hmEdgeFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableUserWtfAlgEdgeFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+          boundFeatureSet = BoundFeatureSet(s m larToUserFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableS m larToUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserStatusFeatures),
+          boundFeatureSet = BoundFeatureSet(s m larToUserStatusFeatures),
           gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+            HasParams.paramGate(FeatureStoreS ceParams.EnableSeparateCl entForG zmoduck).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableS m larToUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserTimelinesAuthorAggregateFeatures),
+          boundFeatureSet = BoundFeatureSet(s m larToUserT  l nesAuthorAggregateFeatures),
           gate =
             HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+              .paramGate(FeatureStoreS ceParams.EnableSeparateCl entForT  l nesAuthors).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableS m larToUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserMetricCountFeatures),
+          boundFeatureSet = BoundFeatureSet(s m larToUser tr cCountFeatures),
           gate =
             HasParams
               .paramGate(
-                FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+                FeatureStoreS ceParams.EnableSeparateCl entFor tr cCenterUserCount ng).unary_! &
+              HasParams.paramGate(FeatureStoreS ceParams.EnableS m larToUserFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserClientFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateClientFeatures)
+          boundFeatureSet = BoundFeatureSet(cand dateUserCl entFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableCand dateCl entFeatures)
         ),
         GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserClientFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserClientFeatures)
+          boundFeatureSet = BoundFeatureSet(targetUserCl entFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableUserCl entFeatures)
         ),
       )
     )
-  // for calibrating features, e.g. add log transformed topic features
+  // for cal brat ng features, e.g. add log transfor d top c features
   val featureAdapters: Seq[FeatureStoreAdapter] = Seq(
-    CandidateTopicEngagementRealTimeAggregatesAdapter,
-    CandidateTopicNegativeEngagementUserStateRealTimeAggregatesAdapter,
-    CandidateTopicEngagementUserStateRealTimeAggregatesAdapter,
-    CandidateAuthorTopicAggregatesAdapter
+    Cand dateTop cEngage ntRealT  AggregatesAdapter,
+    Cand dateTop cNegat veEngage ntUserStateRealT  AggregatesAdapter,
+    Cand dateTop cEngage ntUserStateRealT  AggregatesAdapter,
+    Cand dateAuthorTop cAggregatesAdapter
   )
-  val additionalFeatureContext: FeatureContext = FeatureContext.merge(
+  val add  onalFeatureContext: FeatureContext = FeatureContext. rge(
     featureAdapters
-      .foldRight(new FeatureContext())((adapter, context) =>
+      .foldR ght(new FeatureContext())((adapter, context) =>
         context
           .addFeatures(adapter.getFeatureContext))
   )
   val getFeatureContext: FeatureContext =
     BoundFeatureSet(allFeatures).toFeatureContext
-      .addFeatures(additionalFeatureContext)
-      // The below are aggregated features that are aggregated for a second time over multiple keys.
+      .addFeatures(add  onalFeatureContext)
+      // T  below are aggregated features that are aggregated for a second t   over mult ple keys.
       .addFeatures(maxSumAvgAggregatedFeatureContext)
 }

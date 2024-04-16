@@ -1,6 +1,6 @@
-package com.twitter.ann.dataflow.offline
+package com.tw ter.ann.dataflow.offl ne
 
-trait BaseEmbeddingData {
-  val entityId: Option[Long]
-  val embedding: Seq[Double]
+tra  BaseEmbedd ngData {
+  val ent y d: Opt on[Long]
+  val embedd ng: Seq[Double]
 }

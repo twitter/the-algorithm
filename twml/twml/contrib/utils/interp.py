@@ -1,94 +1,94 @@
 """
-Interpolation functions
+ nterpolat on funct ons
 """
 
-import libtwml
-import tensorflow.compat.v1 as tf
-import twml
+ mport l btwml
+ mport tensorflow.compat.v1 as tf
+ mport twml
 
 
-def linear_interp1(inputs, ref_inputs, ref_outputs):
+def l near_ nterp1( nputs, ref_ nputs, ref_outputs):
   """
-  Perform 1D linear interpolation.
-  Arguments:
-    inputs:
-      The query input values.
-    ref_inputs:
-      Reference grid points used for interpolation.
+  Perform 1D l near  nterpolat on.
+  Argu nts:
+     nputs:
+      T  query  nput values.
+    ref_ nputs:
+      Reference gr d po nts used for  nterpolat on.
     ref_outputs:
-      Reference output values used for interpolation.
+      Reference output values used for  nterpolat on.
 
   Returns:
-    The interpolated outputs for the requested input values.
+    T   nterpolated outputs for t  requested  nput values.
   """
 
-  inputs = tf.convert_to_tensor(inputs)
-  ref_inputs = tf.convert_to_tensor(ref_inputs)
+   nputs = tf.convert_to_tensor( nputs)
+  ref_ nputs = tf.convert_to_tensor(ref_ nputs)
   ref_outputs = tf.convert_to_tensor(ref_outputs)
 
-  ndims = inputs.shape.ndims
-  ref_inputs_ndims = ref_inputs.shape.ndims
-  ref_outputs_ndims = ref_inputs.shape.ndims
+  nd ms =  nputs.shape.nd ms
+  ref_ nputs_nd ms = ref_ nputs.shape.nd ms
+  ref_outputs_nd ms = ref_ nputs.shape.nd ms
 
-  if (ref_inputs_ndims != ndims):
-    raise ValueError("Dimension mismatch. inputs: %d, ref_inputs: %d" % (ndims, ref_inputs_ndims))
+   f (ref_ nputs_nd ms != nd ms):
+    ra se ValueError("D  ns on m smatch.  nputs: %d, ref_ nputs: %d" % (nd ms, ref_ nputs_nd ms))
 
-  if (ref_outputs_ndims != ndims):
-    raise ValueError("Dimension mismatch. inputs: %d, ref_outputs: %d" % (ndims, ref_outputs_ndims))
+   f (ref_outputs_nd ms != nd ms):
+    ra se ValueError("D  ns on m smatch.  nputs: %d, ref_outputs: %d" % (nd ms, ref_outputs_nd ms))
 
-  if ndims > 2:
-    raise ValueError("Input dimensions should be < 2D. But got %d." % ndims)
+   f nd ms > 2:
+    ra se ValueError(" nput d  ns ons should be < 2D. But got %d." % nd ms)
 
-  original_input_shape = tf.shape(inputs)
-  # This is needed because isotonic_calibration expects:
-  # - inputs of size [num_samples, num_classes]
-  # - ref_inputs, ref_outputs of size [num_classes, num_bins]
-  inputs = tf.reshape(inputs, [-1, 1])
-  ref_inputs = tf.reshape(ref_inputs, [1, -1])
+  or g nal_ nput_shape = tf.shape( nputs)
+  # T   s needed because  soton c_cal brat on expects:
+  # -  nputs of s ze [num_samples, num_classes]
+  # - ref_ nputs, ref_outputs of s ze [num_classes, num_b ns]
+   nputs = tf.reshape( nputs, [-1, 1])
+  ref_ nputs = tf.reshape(ref_ nputs, [1, -1])
   ref_outputs = tf.reshape(ref_outputs, [1, -1])
 
-  # isotonic_calibration is simply doing linear interpolation.
-  # This needs to be renamed in the future to make it consistent.
-  outputs = libtwml.ops.isotonic_calibration(inputs, ref_inputs, ref_outputs)
-  return tf.reshape(outputs, original_input_shape)
+  #  soton c_cal brat on  s s mply do ng l near  nterpolat on.
+  # T  needs to be rena d  n t  future to make   cons stent.
+  outputs = l btwml.ops. soton c_cal brat on( nputs, ref_ nputs, ref_outputs)
+  return tf.reshape(outputs, or g nal_ nput_shape)
 
 
-def linear_interp1_by_class(inputs, input_classes, ref_inputs, ref_outputs):
+def l near_ nterp1_by_class( nputs,  nput_classes, ref_ nputs, ref_outputs):
   """
-  Perform 1D linear interpolation.
-  Arguments:
-    inputs:
-      The query input values.
-    input_classes:
-      The class index to use from the reference grid.
-    ref_inputs:
-      Reference 2D grid points used for interpolation.
-      Each row denotes the grid from a different class.
+  Perform 1D l near  nterpolat on.
+  Argu nts:
+     nputs:
+      T  query  nput values.
+     nput_classes:
+      T  class  ndex to use from t  reference gr d.
+    ref_ nputs:
+      Reference 2D gr d po nts used for  nterpolat on.
+      Each row denotes t  gr d from a d fferent class.
     ref_outputs:
-      Reference 2D output values used for interpolation.
-      Each row denotes the grid from a different class.
+      Reference 2D output values used for  nterpolat on.
+      Each row denotes t  gr d from a d fferent class.
 
   Returns:
-    The interpolated outputs for the requested input values.
+    T   nterpolated outputs for t  requested  nput values.
   """
 
-  inputs = tf.convert_to_tensor(inputs)
-  input_classes = tf.convert_to_tensor(input_classes)
-  ref_inputs = tf.convert_to_tensor(ref_inputs)
+   nputs = tf.convert_to_tensor( nputs)
+   nput_classes = tf.convert_to_tensor( nput_classes)
+  ref_ nputs = tf.convert_to_tensor(ref_ nputs)
   ref_outputs = tf.convert_to_tensor(ref_outputs)
 
-  original_input_shape = tf.shape(inputs)
+  or g nal_ nput_shape = tf.shape( nputs)
 
   # pass through
-  def in_func(x):
+  def  n_func(x):
     return x
 
-  # indexed function
-  def cond_func(i, fn):
-    idx = input_classes[i]
-    x = tf.expand_dims(fn(), axis=0)
-    return linear_interp1(x, ref_inputs[idx], ref_outputs[idx])
+  #  ndexed funct on
+  def cond_func( , fn):
+     dx =  nput_classes[ ]
+    x = tf.expand_d ms(fn(), ax s=0)
+    return l near_ nterp1(x, ref_ nputs[ dx], ref_outputs[ dx])
 
-  # Use while loop for now, needs to be replace by a custom C++ op later.
-  outputs = twml.util.batch_apply(in_func, inputs, cond_func=cond_func)
-  return tf.reshape(outputs, original_input_shape)
+  # Use wh le loop for now, needs to be replace by a custom C++ op later.
+  outputs = twml.ut l.batch_apply( n_func,  nputs, cond_func=cond_func)
+  return tf.reshape(outputs, or g nal_ nput_shape)

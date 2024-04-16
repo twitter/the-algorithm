@@ -1,137 +1,137 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.tw ter.ho _m xer.funct onal_component.selector
 
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeClientEventDetailsBuilder
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModule2DisplayedTweetsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleHasGapFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetAboveFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedInConversationModuleFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedSizeFeature
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho Cl entEventDeta lsBu lder
+ mport com.tw ter.ho _m xer.model.Ho Features.AncestorsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Conversat onModule2D splayedT etsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Conversat onModuleHasGapFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.HasRandomT etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRandomT etAboveFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRandomT etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Pos  onFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Served nConversat onModuleFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedS zeFeature
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Urt emPresentat on
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.UrtModulePresentat on
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Builds serialized tweet type metrics controller data and updates Client Event Details
- * and Candidate Presentations with this info.
+ * Bu lds ser al zed t et type  tr cs controller data and updates Cl ent Event Deta ls
+ * and Cand date Presentat ons w h t   nfo.
  *
- * Currently only updates presentation of Item Candidates. This needs to be updated
- * when modules are added.
+ * Currently only updates presentat on of  em Cand dates. T  needs to be updated
+ * w n modules are added.
  *
- * This is implemented as a Selector instead of a Decorator in the Candidate Pipeline
- * because we need to add controller data that looks at the final timeline as a whole
- * (e.g. served size, final candidate positions).
+ * T   s  mple nted as a Selector  nstead of a Decorator  n t  Cand date P pel ne
+ * because   need to add controller data that looks at t  f nal t  l ne as a whole
+ * (e.g. served s ze, f nal cand date pos  ons).
  *
- * @param candidatePipelines - only candidates from the specified pipeline will be updated
+ * @param cand dateP pel nes - only cand dates from t  spec f ed p pel ne w ll be updated
  */
-case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelineIdentifier])
-    extends Selector[PipelineQuery] {
+case class UpdateHo Cl entEventDeta ls(cand dateP pel nes: Set[Cand dateP pel ne dent f er])
+    extends Selector[P pel neQuery] {
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipelines)
+  overr de val p pel neScope: Cand dateScope = Spec f cP pel nes(cand dateP pel nes)
 
-  private val detailsBuilder = HomeClientEventDetailsBuilder()
+  pr vate val deta lsBu lder = Ho Cl entEventDeta lsBu lder()
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val selectedCandidates = result.filter(pipelineScope.contains)
+    val selectedCand dates = result.f lter(p pel neScope.conta ns)
 
-    val randomTweetsByPosition = result
-      .map(_.features.getOrElse(IsRandomTweetFeature, false))
-      .zipWithIndex.map(_.swap).toMap
+    val randomT etsByPos  on = result
+      .map(_.features.getOrElse( sRandomT etFeature, false))
+      .z pW h ndex.map(_.swap).toMap
 
-    val resultFeatures = FeatureMapBuilder()
-      .add(ServedSizeFeature, Some(selectedCandidates.size))
-      .add(HasRandomTweetFeature, randomTweetsByPosition.valuesIterator.contains(true))
-      .build()
+    val resultFeatures = FeatureMapBu lder()
+      .add(ServedS zeFeature, So (selectedCand dates.s ze))
+      .add(HasRandomT etFeature, randomT etsByPos  on.values erator.conta ns(true))
+      .bu ld()
 
-    val updatedResult = result.zipWithIndex.map {
-      case (item @ ItemCandidateWithDetails(candidate, _, _), position)
-          if pipelineScope.contains(item) =>
-        val resultCandidateFeatures = FeatureMapBuilder()
-          .add(PositionFeature, Some(position))
-          .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
-          .build()
+    val updatedResult = result.z pW h ndex.map {
+      case ( em @  emCand dateW hDeta ls(cand date, _, _), pos  on)
+           f p pel neScope.conta ns( em) =>
+        val resultCand dateFeatures = FeatureMapBu lder()
+          .add(Pos  onFeature, So (pos  on))
+          .add( sRandomT etAboveFeature, randomT etsByPos  on.getOrElse(pos  on - 1, false))
+          .bu ld()
 
-        updateItemPresentation(query, item, resultFeatures, resultCandidateFeatures)
+        update emPresentat on(query,  em, resultFeatures, resultCand dateFeatures)
 
-      case (module @ ModuleCandidateWithDetails(candidates, presentation, features), position)
-          if pipelineScope.contains(module) =>
-        val resultCandidateFeatures = FeatureMapBuilder()
-          .add(PositionFeature, Some(position))
-          .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
-          .add(ServedInConversationModuleFeature, true)
-          .add(ConversationModule2DisplayedTweetsFeature, module.candidates.size == 2)
+      case (module @ ModuleCand dateW hDeta ls(cand dates, presentat on, features), pos  on)
+           f p pel neScope.conta ns(module) =>
+        val resultCand dateFeatures = FeatureMapBu lder()
+          .add(Pos  onFeature, So (pos  on))
+          .add( sRandomT etAboveFeature, randomT etsByPos  on.getOrElse(pos  on - 1, false))
+          .add(Served nConversat onModuleFeature, true)
+          .add(Conversat onModule2D splayedT etsFeature, module.cand dates.s ze == 2)
           .add(
-            ConversationModuleHasGapFeature,
-            module.candidates.last.features.getOrElse(AncestorsFeature, Seq.empty).size > 2)
-          .build()
+            Conversat onModuleHasGapFeature,
+            module.cand dates.last.features.getOrElse(AncestorsFeature, Seq.empty).s ze > 2)
+          .bu ld()
 
-        val updatedItemCandidates =
-          candidates.map(updateItemPresentation(query, _, resultFeatures, resultCandidateFeatures))
+        val updated emCand dates =
+          cand dates.map(update emPresentat on(query, _, resultFeatures, resultCand dateFeatures))
 
-        val updatedCandidateFeatures = features ++ resultFeatures ++ resultCandidateFeatures
+        val updatedCand dateFeatures = features ++ resultFeatures ++ resultCand dateFeatures
 
-        val updatedPresentation = presentation.map {
-          case urtModule @ UrtModulePresentation(timelineModule) =>
-            val clientEventDetails =
-              detailsBuilder(
+        val updatedPresentat on = presentat on.map {
+          case urtModule @ UrtModulePresentat on(t  l neModule) =>
+            val cl entEventDeta ls =
+              deta lsBu lder(
                 query,
-                candidates.last.candidate,
-                query.features.get ++ updatedCandidateFeatures)
-            val updatedClientEventInfo =
-              timelineModule.clientEventInfo.map(_.copy(details = clientEventDetails))
-            val updatedTimelineModule =
-              timelineModule.copy(clientEventInfo = updatedClientEventInfo)
-            urtModule.copy(timelineModule = updatedTimelineModule)
+                cand dates.last.cand date,
+                query.features.get ++ updatedCand dateFeatures)
+            val updatedCl entEvent nfo =
+              t  l neModule.cl entEvent nfo.map(_.copy(deta ls = cl entEventDeta ls))
+            val updatedT  l neModule =
+              t  l neModule.copy(cl entEvent nfo = updatedCl entEvent nfo)
+            urtModule.copy(t  l neModule = updatedT  l neModule)
         }
 
         module.copy(
-          candidates = updatedItemCandidates,
-          presentation = updatedPresentation,
-          features = updatedCandidateFeatures
+          cand dates = updated emCand dates,
+          presentat on = updatedPresentat on,
+          features = updatedCand dateFeatures
         )
 
-      case (any, position) => any
+      case (any, pos  on) => any
     }
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = updatedResult)
+    SelectorResult(rema n ngCand dates = rema n ngCand dates, result = updatedResult)
   }
 
-  private def updateItemPresentation(
-    query: PipelineQuery,
-    item: ItemCandidateWithDetails,
-    resultCandidateFeatures: FeatureMap,
+  pr vate def update emPresentat on(
+    query: P pel neQuery,
+     em:  emCand dateW hDeta ls,
+    resultCand dateFeatures: FeatureMap,
     resultFeatures: FeatureMap,
-  ): ItemCandidateWithDetails = {
-    val updatedItemCandidateFeatures = item.features ++ resultFeatures ++ resultCandidateFeatures
+  ):  emCand dateW hDeta ls = {
+    val updated emCand dateFeatures =  em.features ++ resultFeatures ++ resultCand dateFeatures
 
-    val updatedPresentation = item.presentation.map {
-      case urtItem @ UrtItemPresentation(timelineItem: TweetItem, _) =>
-        val clientEventDetails =
-          detailsBuilder(query, item.candidate, query.features.get ++ updatedItemCandidateFeatures)
-        val updatedClientEventInfo =
-          timelineItem.clientEventInfo.map(_.copy(details = clientEventDetails))
-        val updatedTimelineItem = timelineItem.copy(clientEventInfo = updatedClientEventInfo)
-        urtItem.copy(timelineItem = updatedTimelineItem)
+    val updatedPresentat on =  em.presentat on.map {
+      case urt em @ Urt emPresentat on(t  l ne em: T et em, _) =>
+        val cl entEventDeta ls =
+          deta lsBu lder(query,  em.cand date, query.features.get ++ updated emCand dateFeatures)
+        val updatedCl entEvent nfo =
+          t  l ne em.cl entEvent nfo.map(_.copy(deta ls = cl entEventDeta ls))
+        val updatedT  l ne em = t  l ne em.copy(cl entEvent nfo = updatedCl entEvent nfo)
+        urt em.copy(t  l ne em = updatedT  l ne em)
       case any => any
     }
-    item.copy(presentation = updatedPresentation, features = updatedItemCandidateFeatures)
+     em.copy(presentat on = updatedPresentat on, features = updated emCand dateFeatures)
   }
 }

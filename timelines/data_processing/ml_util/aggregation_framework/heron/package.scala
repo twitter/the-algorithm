@@ -1,8 +1,8 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-package object heron {
-  // NOTE: please sort alphabetically
-  type AuthorId = Long
-  type UserId = Long
-  type TimestampMs = Long
+package object  ron {
+  // NOTE: please sort alphabet cally
+  type Author d = Long
+  type User d = Long
+  type T  stampMs = Long
 }

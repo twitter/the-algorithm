@@ -1,6 +1,6 @@
-package com.twitter.representationscorer
+package com.tw ter.representat onscorer
 
 package object common {
-  type UserId = Long
-  type TweetId = Long
+  type User d = Long
+  type T et d = Long
 }

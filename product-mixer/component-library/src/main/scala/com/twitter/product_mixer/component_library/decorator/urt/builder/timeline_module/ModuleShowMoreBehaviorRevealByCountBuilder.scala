@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleShowMoreBehaviorBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav orRevealByCount
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleShowMoreBehav orBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.t  l nes.conf gap .Param
 
-case class ModuleShowMoreBehaviorRevealByCountBuilder(
-  initialItemsCountParam: Param[Int],
-  showMoreItemsCountParam: Param[Int])
-    extends BaseModuleShowMoreBehaviorBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class ModuleShowMoreBehav orRevealByCountBu lder(
+   n  al emsCountParam: Param[ nt],
+  showMore emsCountParam: Param[ nt])
+    extends BaseModuleShowMoreBehav orBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleShowMoreBehavior = {
-    ModuleShowMoreBehaviorRevealByCount(
-      initialItemsCount = query.params(initialItemsCountParam),
-      showMoreItemsCount = query.params(showMoreItemsCountParam)
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Seq[Cand dateW hFeatures[Un versalNoun[Any]]]
+  ): ModuleShowMoreBehav or = {
+    ModuleShowMoreBehav orRevealByCount(
+       n  al emsCount = query.params( n  al emsCountParam),
+      showMore emsCount = query.params(showMore emsCountParam)
     )
   }
 }

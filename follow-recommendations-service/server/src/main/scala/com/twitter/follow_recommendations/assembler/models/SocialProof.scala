@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.stringcenter.client.core.ExternalString
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
 
-sealed trait SocialProof
+sealed tra  Soc alProof
 
-case class GeoContextProof(popularInCountryText: ExternalString) extends SocialProof
-case class FollowedByUsersProof(text1: ExternalString, text2: ExternalString, textN: ExternalString)
-    extends SocialProof
+case class GeoContextProof(popular nCountryText: ExternalStr ng) extends Soc alProof
+case class Follo dByUsersProof(text1: ExternalStr ng, text2: ExternalStr ng, textN: ExternalStr ng)
+    extends Soc alProof
 
-sealed trait SocialText {
-  def text: String
+sealed tra  Soc alText {
+  def text: Str ng
 }
 
-case class GeoSocialText(text: String) extends SocialText
-case class FollowedByUsersText(text: String) extends SocialText
+case class GeoSoc alText(text: Str ng) extends Soc alText
+case class Follo dByUsersText(text: Str ng) extends Soc alText

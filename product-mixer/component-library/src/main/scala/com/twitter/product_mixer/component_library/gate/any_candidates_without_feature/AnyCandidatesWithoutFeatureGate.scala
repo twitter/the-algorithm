@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.gate.any_candidates_without_feature
+package com.tw ter.product_m xer.component_l brary.gate.any_cand dates_w hout_feature
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.QueryAndCand dateGate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A gate that enables a component only if any candidates are missing a specific feature.
- * You can restrict which candidates to check with the scope parameter.
- * This is most commonly used to do backfill scoring, where you can have one Scoring Pipeline that
- * might return a score feature "FeatureA" and another sequential pipeline that you only want to run
- * if the previous scoring pipeline fails to hydrate for all candidates.
- * @param identifier Unique identifier for this gate. Typically, AnyCandidatesWithout{YourFeature}.
- * @param scope A [[CandidateScope]] to specify which candidates to check.
- * @param missingFeature The feature that should be missing for any of the candidates for this gate to continue
+ * A gate that enables a component only  f any cand dates are m ss ng a spec f c feature.
+ *   can restr ct wh ch cand dates to c ck w h t  scope para ter.
+ * T   s most commonly used to do backf ll scor ng, w re   can have one Scor ng P pel ne that
+ * m ght return a score feature "FeatureA" and anot r sequent al p pel ne that   only want to run
+ *  f t  prev ous scor ng p pel ne fa ls to hydrate for all cand dates.
+ * @param  dent f er Un que  dent f er for t  gate. Typ cally, AnyCand datesW hout{Y Feature}.
+ * @param scope A [[Cand dateScope]] to spec fy wh ch cand dates to c ck.
+ * @param m ss ngFeature T  feature that should be m ss ng for any of t  cand dates for t  gate to cont nue
  */
-case class AnyCandidatesWithoutFeatureGate(
-  override val identifier: GateIdentifier,
-  scope: CandidateScope,
-  missingFeature: Feature[_, _])
-    extends QueryAndCandidateGate[PipelineQuery] {
+case class AnyCand datesW houtFeatureGate(
+  overr de val  dent f er: Gate dent f er,
+  scope: Cand dateScope,
+  m ss ngFeature: Feature[_, _])
+    extends QueryAndCand dateGate[P pel neQuery] {
 
-  override def shouldContinue(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithDetails]
-  ): Stitch[Boolean] =
-    Stitch.value(scope.partition(candidates).candidatesInScope.exists { candidateWithDetails =>
-      !candidateWithDetails.features.getSuccessfulFeatures.contains(missingFeature)
+  overr de def shouldCont nue(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hDeta ls]
+  ): St ch[Boolean] =
+    St ch.value(scope.part  on(cand dates).cand dates nScope.ex sts { cand dateW hDeta ls =>
+      !cand dateW hDeta ls.features.getSuccessfulFeatures.conta ns(m ss ngFeature)
     })
 }

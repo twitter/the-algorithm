@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.aud o_space
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space.AudioSpaceCandidateUrtItemBuilder.AudioSpaceClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.aud o_space.Aud oSpaceCand dateUrt emBu lder.Aud oSpaceCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Aud oSpaceCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.aud o_space.Aud oSpace em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object AudioSpaceCandidateUrtItemBuilder {
-  val AudioSpaceClientEventInfoElement: String = "audiospace"
+object Aud oSpaceCand dateUrt emBu lder {
+  val Aud oSpaceCl entEvent nfoEle nt: Str ng = "aud ospace"
 }
 
-case class AudioSpaceCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UniversalNoun[Any]],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, UniversalNoun[Any]]
+case class Aud oSpaceCand dateUrt emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Un versalNoun[Any]],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Un versalNoun[Any]]
   ] = None)
-    extends CandidateUrtEntryBuilder[Query, AudioSpaceCandidate, AudioSpaceItem] {
+    extends Cand dateUrtEntryBu lder[Query, Aud oSpaceCand date, Aud oSpace em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    audioSpaceCandidate: AudioSpaceCandidate,
-    candidateFeatures: FeatureMap
-  ): AudioSpaceItem = AudioSpaceItem(
-    id = audioSpaceCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    aud oSpaceCand date: Aud oSpaceCand date,
+    cand dateFeatures: FeatureMap
+  ): Aud oSpace em = Aud oSpace em(
+     d = aud oSpaceCand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      audioSpaceCandidate,
-      candidateFeatures,
-      Some(AudioSpaceClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, audioSpaceCandidate, candidateFeatures))
+      aud oSpaceCand date,
+      cand dateFeatures,
+      So (Aud oSpaceCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, aud oSpaceCand date, cand dateFeatures))
   )
 }

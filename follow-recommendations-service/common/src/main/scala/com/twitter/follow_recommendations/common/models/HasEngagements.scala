@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasEngagements {
+tra  HasEngage nts {
 
-  def engagements: Seq[EngagementType]
+  def engage nts: Seq[Engage ntType]
 
 }

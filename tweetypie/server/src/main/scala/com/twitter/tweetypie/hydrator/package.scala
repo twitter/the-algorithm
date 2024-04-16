@@ -1,17 +1,17 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import org.apache.thrift.protocol.TField
-import com.twitter.context.TwitterContext
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.thr ftscala.F eldByPath
+ mport org.apac .thr ft.protocol.TF eld
+ mport com.tw ter.context.Tw terContext
 
 package object hydrator {
-  type TweetDataValueHydrator = ValueHydrator[TweetData, TweetQuery.Options]
-  type TweetDataEditHydrator = EditHydrator[TweetData, TweetQuery.Options]
+  type T etDataValueHydrator = ValueHydrator[T etData, T etQuery.Opt ons]
+  type T etDataEd Hydrator = Ed Hydrator[T etData, T etQuery.Opt ons]
 
-  def fieldByPath(fields: TField*): FieldByPath = FieldByPath(fields.map(_.id))
+  def f eldByPath(f elds: TF eld*): F eldByPath = F eldByPath(f elds.map(_. d))
 
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  val Tw terContext: Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 }

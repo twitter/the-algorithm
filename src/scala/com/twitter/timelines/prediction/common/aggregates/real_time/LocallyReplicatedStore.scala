@@ -1,78 +1,78 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReplicatedReadableStore
-import com.twitter.storehaus.Store
-import com.twitter.timelines.clients.memcache_common._
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.Repl catedReadableStore
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l nes.cl ents. mcac _common._
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.ut l.Future
 
-object ServedFeaturesMemcacheConfigBuilder {
-  def getTwCacheDestination(cluster: String, isProd: Boolean = false): String =
-    if (!isProd) {
-      s"/srv#/test/$cluster/cache//twemcache_timelines_served_features_cache"
+object ServedFeatures mcac Conf gBu lder {
+  def getTwCac Dest nat on(cluster: Str ng,  sProd: Boolean = false): Str ng =
+     f (! sProd) {
+      s"/srv#/test/$cluster/cac //t mcac _t  l nes_served_features_cac "
     } else {
-      s"/srv#/prod/$cluster/cache/timelines_served_features"
+      s"/srv#/prod/$cluster/cac /t  l nes_served_features"
     }
 
   /**
-   * @cluster The DC of the cache that this client will send requests to. This
-   *   can be different to the DC where the summingbird job is running in.
-   * @isProd  Define if this client is part of a production summingbird job as
-   *   different accesspoints will need to be chosen.
+   * @cluster T  DC of t  cac  that t  cl ent w ll send requests to. T 
+   *   can be d fferent to t  DC w re t  summ ngb rd job  s runn ng  n.
+   * @ sProd  Def ne  f t  cl ent  s part of a product on summ ngb rd job as
+   *   d fferent accesspo nts w ll need to be chosen.
    */
-  def build(cluster: String, isProd: Boolean = false): StorehausMemcacheConfig =
-    StorehausMemcacheConfig(
-      destName = getTwCacheDestination(cluster, isProd),
-      keyPrefix = "",
-      requestTimeout = 200.milliseconds,
-      numTries = 2,
-      globalTimeout = 400.milliseconds,
-      tcpConnectTimeout = 200.milliseconds,
-      connectionAcquisitionTimeout = 200.milliseconds,
-      numPendingRequests = 1000,
-      isReadOnly = false
+  def bu ld(cluster: Str ng,  sProd: Boolean = false): Storehaus mcac Conf g =
+    Storehaus mcac Conf g(
+      destNa  = getTwCac Dest nat on(cluster,  sProd),
+      keyPref x = "",
+      requestT  out = 200.m ll seconds,
+      numTr es = 2,
+      globalT  out = 400.m ll seconds,
+      tcpConnectT  out = 200.m ll seconds,
+      connect onAcqu s  onT  out = 200.m ll seconds,
+      numPend ngRequests = 1000,
+       sReadOnly = false
     )
 }
 
 /**
- * If lookup key does not exist locally, make a call to the replicated store(s).
- * If value exists remotely, write the first returned value to the local store
- * and return it. Map any exceptions to None so that the subsequent operations
+ *  f lookup key does not ex st locally, make a call to t  repl cated store(s).
+ *  f value ex sts remotely, wr e t  f rst returned value to t  local store
+ * and return  . Map any except ons to None so that t  subsequent operat ons
  * may proceed.
  */
-class LocallyReplicatedStore[-K, V](
+class LocallyRepl catedStore[-K, V](
   localStore: Store[K, V],
-  remoteStore: ReplicatedReadableStore[K, V],
-  scopedStatsReceiver: StatsReceiver)
+  remoteStore: Repl catedReadableStore[K, V],
+  scopedStatsRece ver: StatsRece ver)
     extends Store[K, V] {
-  private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver.scope("failOpen"))
-  private[this] val localFailsCounter = scopedStatsReceiver.counter("localFails")
-  private[this] val localWritesCounter = scopedStatsReceiver.counter("localWrites")
-  private[this] val remoteFailsCounter = scopedStatsReceiver.counter("remoteFails")
+  pr vate[t ] val fa lOpenHandler = new Fa lOpenHandler(scopedStatsRece ver.scope("fa lOpen"))
+  pr vate[t ] val localFa lsCounter = scopedStatsRece ver.counter("localFa ls")
+  pr vate[t ] val localWr esCounter = scopedStatsRece ver.counter("localWr es")
+  pr vate[t ] val remoteFa lsCounter = scopedStatsRece ver.counter("remoteFa ls")
 
-  override def get(k: K): Future[Option[V]] =
-    failOpenHandler {
+  overr de def get(k: K): Future[Opt on[V]] =
+    fa lOpenHandler {
       localStore
         .get(k)
         .flatMap {
-          case Some(v) => Future.value(Some(v))
+          case So (v) => Future.value(So (v))
           case _ => {
-            localFailsCounter.incr()
-            val replicatedOptFu = remoteStore.get(k)
-            // async write if result is not empty
-            replicatedOptFu.onSuccess {
-              case Some(v) => {
-                localWritesCounter.incr()
-                localStore.put((k, Some(v)))
+            localFa lsCounter. ncr()
+            val repl catedOptFu = remoteStore.get(k)
+            // async wr e  f result  s not empty
+            repl catedOptFu.onSuccess {
+              case So (v) => {
+                localWr esCounter. ncr()
+                localStore.put((k, So (v)))
               }
               case _ => {
-                remoteFailsCounter.incr()
-                Unit
+                remoteFa lsCounter. ncr()
+                Un 
               }
             }
-            replicatedOptFu
+            repl catedOptFu
           }
         }
     } { _: Throwable => Future.None }

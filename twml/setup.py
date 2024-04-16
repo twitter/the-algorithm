@@ -1,29 +1,29 @@
-import os
+ mport os
 
-from setuptools import find_packages, setup
+from setuptools  mport f nd_packages, setup
 
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-TWML_TEST_DATA_DIR = os.path.join(THIS_DIR, 'twml/tests/data')
+TH S_D R = os.path.d rna (os.path.realpath(__f le__))
+TWML_TEST_DATA_D R = os.path.jo n(TH S_D R, 'twml/tests/data')
 
-data_files = []
-for parent, children, files in os.walk(TWML_TEST_DATA_DIR):
-  data_files += [os.path.join(parent, f) for f in files]
+data_f les = []
+for parent, ch ldren, f les  n os.walk(TWML_TEST_DATA_D R):
+  data_f les += [os.path.jo n(parent, f) for f  n f les]
 
 setup(
-  name='twml',
-  version='2.0',
-  description="Tensorflow wrapper for twml",
-  packages=find_packages(exclude=["build"]),
-  install_requires=[
-    'thriftpy2',
+  na ='twml',
+  vers on='2.0',
+  descr pt on="Tensorflow wrapper for twml",
+  packages=f nd_packages(exclude=["bu ld"]),
+   nstall_requ res=[
+    'thr ftpy2',
     'numpy',
     'pyyaml',
     'future',
-    'scikit-learn',
-    'scipy'
+    'sc k -learn',
+    'sc py'
   ],
   package_data={
-    'twml': data_files,
+    'twml': data_f les,
   },
 )

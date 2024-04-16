@@ -1,47 +1,47 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Module
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tsp.stores.RepresentationScorerStore
+ mport com.google. nject.Module
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.app.Flag
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.tsp.stores.Representat onScorerStore
 
-object RepresentationScorerStoreModule extends TwitterModule {
-  override def modules: Seq[Module] = Seq(UnifiedCacheClient)
+object Representat onScorerStoreModule extends Tw terModule {
+  overr de def modules: Seq[Module] = Seq(Un f edCac Cl ent)
 
-  private val tspRepresentationScoringColumnPath: Flag[String] = flag[String](
-    name = "tsp.representationScoringColumnPath",
-    default = "recommendations/representation_scorer/score",
-    help = "Strato column path for Representation Scorer Store"
+  pr vate val tspRepresentat onScor ngColumnPath: Flag[Str ng] = flag[Str ng](
+    na  = "tsp.representat onScor ngColumnPath",
+    default = "recom ndat ons/representat on_scorer/score",
+     lp = "Strato column path for Representat on Scorer Store"
   )
 
-  @Provides
-  @Singleton
-  def providesRepresentationScorerStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-    tspUnifiedCacheClient: MemClient
-  ): ReadableStore[ScoreId, Score] = {
-    val underlyingStore =
-      RepresentationScorerStore(stratoClient, tspRepresentationScoringColumnPath(), statsReceiver)
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = tspUnifiedCacheClient,
-      ttl = 2.hours
+  @Prov des
+  @S ngleton
+  def prov desRepresentat onScorerStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+    tspUn f edCac Cl ent:  mCl ent
+  ): ReadableStore[Score d, Score] = {
+    val underly ngStore =
+      Representat onScorerStore(stratoCl ent, tspRepresentat onScor ngColumnPath(), statsRece ver)
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = underly ngStore,
+      cac Cl ent = tspUn f edCac Cl ent,
+      ttl = 2.h s
     )(
-      valueInjection = BinaryScalaCodec(Score),
-      statsReceiver = statsReceiver.scope("RepresentationScorerStore"),
-      keyToString = { k: ScoreId => s"rsx/$k" }
+      value nject on = B naryScalaCodec(Score),
+      statsRece ver = statsRece ver.scope("Representat onScorerStore"),
+      keyToStr ng = { k: Score d => s"rsx/$k" }
     )
   }
 }

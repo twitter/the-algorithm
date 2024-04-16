@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-import com.twitter.finagle.Failure;
-import com.twitter.util.AbstractMonitor;
+ mport com.tw ter.f nagle.Fa lure;
+ mport com.tw ter.ut l.AbstractMon or;
 
-public class EarlybirdFinagleServerMonitor extends AbstractMonitor {
-  private final CriticalExceptionHandler criticalExceptionHandler;
+publ c class Earlyb rdF nagleServerMon or extends AbstractMon or {
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
-  public EarlybirdFinagleServerMonitor(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  publ c Earlyb rdF nagleServerMon or(Cr  calExcept onHandler cr  calExcept onHandler) {
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
   }
 
-  @Override
-  public boolean handle(Throwable e) {
-    if (e instanceof Failure) {
-      // skip Finagle failure
+  @Overr de
+  publ c boolean handle(Throwable e) {
+     f (e  nstanceof Fa lure) {
+      // sk p F nagle fa lure
       return true;
     }
 
-    criticalExceptionHandler.handle(this, e);
+    cr  calExcept onHandler.handle(t , e);
 
-    // We return true here because we handle all exceptions.
+    //   return true  re because   handle all except ons.
     return true;
   }
 }

@@ -1,82 +1,82 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.IsExtendedReplyFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.ReplyFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RetweetSourceTweetFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.filter.RetweetSourceTweetRemovingFilter
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerInNetworkQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsInNetworkResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerInNetworkCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator. sExtendedReplyFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.ReplyFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.Ret etS ceT etFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.f lter.Ret etS ceT etRemov ngF lter
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cac dScoredT ets
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cand dateP pel ne
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.T  l neRanker nNetworkQueryTransfor r
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.ScoredT ets nNetworkResponseFeatureTransfor r
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_ranker.T  l neRanker nNetworkCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l neranker.{thr ftscala => t}
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config to fetch in-network tweets from Timeline Ranker's Recycled source
+ * Cand date P pel ne Conf g to fetch  n-network t ets from T  l ne Ranker's Recycled s ce
  */
-@Singleton
-class ScoredTweetsInNetworkCandidatePipelineConfig @Inject() (
-  timelineRankerInNetworkCandidateSource: TimelineRankerInNetworkCandidateSource,
+@S ngleton
+class ScoredT ets nNetworkCand dateP pel neConf g @ nject() (
+  t  l neRanker nNetworkCand dateS ce: T  l neRanker nNetworkCand dateS ce,
   replyFeatureHydrator: ReplyFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
       t.RecapQuery,
-      t.CandidateTweet,
-      TweetCandidate
+      t.Cand dateT et,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsInNetwork")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("ScoredT ets nNetwork")
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnableInNetworkParam)
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]] =
+    So (Cand dateP pel ne.Enable nNetworkParam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  overr de val gates: Seq[Gate[ScoredT etsQuery]] = Seq(
+    M nCac dT etsGate( dent f er, Cac dScoredT ets.M nCac dT etsParam)
   )
 
-  override val candidateSource: BaseCandidateSource[t.RecapQuery, t.CandidateTweet] =
-    timelineRankerInNetworkCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[t.RecapQuery, t.Cand dateT et] =
+    t  l neRanker nNetworkCand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
     t.RecapQuery
-  ] = TimelineRankerInNetworkQueryTransformer(identifier)
+  ] = T  l neRanker nNetworkQueryTransfor r( dent f er)
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[PipelineQuery, TweetCandidate, _]
-  ] = Seq(RetweetSourceTweetFeatureHydrator)
+  overr de val preF lterFeatureHydrat onPhase1: Seq[
+    BaseCand dateFeatureHydrator[P pel neQuery, T etCand date, _]
+  ] = Seq(Ret etS ceT etFeatureHydrator)
 
-  override def filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    RetweetSourceTweetRemovingFilter
+  overr de def f lters: Seq[F lter[ScoredT etsQuery, T etCand date]] = Seq(
+    Ret etS ceT etRemov ngF lter
   )
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[PipelineQuery, TweetCandidate, _]
-  ] = Seq(IsExtendedReplyFeatureHydrator, replyFeatureHydrator)
+  overr de val postF lterFeatureHydrat on: Seq[
+    BaseCand dateFeatureHydrator[P pel neQuery, T etCand date, _]
+  ] = Seq( sExtendedReplyFeatureHydrator, replyFeatureHydrator)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.CandidateTweet]
-  ] = Seq(ScoredTweetsInNetworkResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[t.Cand dateT et]
+  ] = Seq(ScoredT ets nNetworkResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.CandidateTweet,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweet.get.id) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    t.Cand dateT et,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult.t et.get. d) }
 }

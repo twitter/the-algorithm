@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+ mport com.tw ter.search.common.cach ng.Cac Ut l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.ut l. dT  Ranges;
 
-public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostProcessor {
+publ c class RecencyAndRelevanceCac PostProcessor extends Earlyb rdCac PostProcessor {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(RecencyAndRelevanceCachePostProcessor.class);
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(RecencyAndRelevanceCac PostProcessor.class);
 
-  protected Optional<EarlybirdResponse> postProcessCacheResponse(
-      EarlybirdRequest earlybirdRequest,
-      EarlybirdResponse earlybirdResponse, long sinceID, long maxID) {
-    return CacheUtil.postProcessCacheResult(
-        earlybirdRequest, earlybirdResponse, sinceID, maxID);
+  protected Opt onal<Earlyb rdResponse> postProcessCac Response(
+      Earlyb rdRequest earlyb rdRequest,
+      Earlyb rdResponse earlyb rdResponse, long s nce D, long max D) {
+    return Cac Ut l.postProcessCac Result(
+        earlyb rdRequest, earlyb rdResponse, s nce D, max D);
   }
 
-  @Override
-  public final Optional<EarlybirdResponse> processCacheResponse(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse cacheResponse) {
-    EarlybirdRequest originalRequest = requestContext.getRequest();
-    Preconditions.checkArgument(originalRequest.isSetSearchQuery());
+  @Overr de
+  publ c f nal Opt onal<Earlyb rdResponse> processCac Response(
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdResponse cac Response) {
+    Earlyb rdRequest or g nalRequest = requestContext.getRequest();
+    Precond  ons.c ckArgu nt(or g nalRequest. sSetSearchQuery());
 
-    IdTimeRanges ranges;
+     dT  Ranges ranges;
     Query query = requestContext.getParsedQuery();
-    if (query != null) {
+     f (query != null) {
       try {
-        ranges = IdTimeRanges.fromQuery(query);
-      } catch (QueryParserException e) {
+        ranges =  dT  Ranges.fromQuery(query);
+      } catch (QueryParserExcept on e) {
         LOG.error(
-            "Exception when parsing since and max IDs. Request: {} Response: {}",
-            originalRequest,
-            cacheResponse,
+            "Except on w n pars ng s nce and max  Ds. Request: {} Response: {}",
+            or g nalRequest,
+            cac Response,
             e);
-        return Optional.absent();
+        return Opt onal.absent();
       }
     } else {
       ranges = null;
     }
 
-    Optional<Long> sinceID;
-    Optional<Long> maxID;
-    if (ranges != null) {
-      sinceID = ranges.getSinceIDExclusive();
-      maxID = ranges.getMaxIDInclusive();
+    Opt onal<Long> s nce D;
+    Opt onal<Long> max D;
+     f (ranges != null) {
+      s nce D = ranges.getS nce DExclus ve();
+      max D = ranges.getMax D nclus ve();
     } else {
-      sinceID = Optional.absent();
-      maxID = Optional.absent();
+      s nce D = Opt onal.absent();
+      max D = Opt onal.absent();
     }
 
-    return postProcessCacheResponse(
-        originalRequest, cacheResponse, sinceID.or(0L), maxID.or(Long.MAX_VALUE));
+    return postProcessCac Response(
+        or g nalRequest, cac Response, s nce D.or(0L), max D.or(Long.MAX_VALUE));
   }
 }

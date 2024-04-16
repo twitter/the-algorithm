@@ -1,213 +1,213 @@
-package com.twitter.visibility.configapi.params
+package com.tw ter.v s b l y.conf gap .params
 
-import com.twitter.timelines.configapi.Bounded
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureName
-import com.twitter.timelines.configapi.HasTimeConversion
-import com.twitter.timelines.configapi.TimeConversion
-import com.twitter.util.Time
-import com.twitter.visibility.common.ModelScoreThresholds
+ mport com.tw ter.t  l nes.conf gap .Bounded
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureNa 
+ mport com.tw ter.t  l nes.conf gap .HasT  Convers on
+ mport com.tw ter.t  l nes.conf gap .T  Convers on
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v s b l y.common.ModelScoreThresholds
 
-private[visibility] object FeatureSwitchKey extends Enumeration {
-  type FeatureSwitchKey = String
+pr vate[v s b l y] object FeatureSw chKey extends Enu rat on {
+  type FeatureSw chKey = Str ng
 
-  final val HighSpammyTweetContentScoreSearchTopProdTweetLabelDropFuleThreshold =
-    "high_spammy_tweet_content_score_search_top_prod_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_search_latest_prod_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_trend_top_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_trend_latest_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThreshold =
-    "high_spammy_tweet_content_score_convos_downranking_abusive_quality_threshold"
+  f nal val H ghSpam T etContentScoreSearchTopProdT etLabelDropFuleThreshold =
+    "h gh_spam _t et_content_score_search_top_prod_t et_label_drop_rule_threshold"
+  f nal val H ghSpam T etContentScoreSearchLatestProdT etLabelDropRuleThreshold =
+    "h gh_spam _t et_content_score_search_latest_prod_t et_label_drop_rule_threshold"
+  f nal val H ghSpam T etContentScoreTrendTopT etLabelDropRuleThreshold =
+    "h gh_spam _t et_content_score_trend_top_t et_label_drop_rule_threshold"
+  f nal val H ghSpam T etContentScoreTrendLatestT etLabelDropRuleThreshold =
+    "h gh_spam _t et_content_score_trend_latest_t et_label_drop_rule_threshold"
+  f nal val H ghSpam T etContentScoreConvoDownrankAbus veQual yThreshold =
+    "h gh_spam _t et_content_score_convos_downrank ng_abus ve_qual y_threshold"
 
-  final val NsfwAgeBasedDropRulesHoldbackParam =
+  f nal val NsfwAgeBasedDropRulesHoldbackParam =
     "nsfw_age_based_drop_rules_holdback"
 
-  final val CommunityTweetDropRuleEnabled =
-    "community_tweet_drop_rule_enabled"
-  final val CommunityTweetDropProtectedRuleEnabled =
-    "community_tweet_drop_protected_rule_enabled"
-  final val CommunityTweetLimitedActionsRulesEnabled =
-    "community_tweet_limited_actions_rules_enabled"
-  final val CommunityTweetMemberRemovedLimitedActionsRulesEnabled =
-    "community_tweet_member_removed_limited_actions_rules_enabled"
-  final val CommunityTweetCommunityUnavailableLimitedActionsRulesEnabled =
-    "community_tweet_community_unavailable_limited_actions_rules_enabled"
-  final val CommunityTweetNonMemberLimitedActionsRuleEnabled =
-    "community_tweet_non_member_limited_actions_rule_enabled"
+  f nal val Commun yT etDropRuleEnabled =
+    "commun y_t et_drop_rule_enabled"
+  f nal val Commun yT etDropProtectedRuleEnabled =
+    "commun y_t et_drop_protected_rule_enabled"
+  f nal val Commun yT etL m edAct onsRulesEnabled =
+    "commun y_t et_l m ed_act ons_rules_enabled"
+  f nal val Commun yT et mberRemovedL m edAct onsRulesEnabled =
+    "commun y_t et_ mber_removed_l m ed_act ons_rules_enabled"
+  f nal val Commun yT etCommun yUnava lableL m edAct onsRulesEnabled =
+    "commun y_t et_commun y_unava lable_l m ed_act ons_rules_enabled"
+  f nal val Commun yT etNon mberL m edAct onsRuleEnabled =
+    "commun y_t et_non_ mber_l m ed_act ons_rule_enabled"
 
-  final val TrustedFriendsTweetLimitedEngagementsRuleEnabled =
-    "trusted_friends_tweet_limited_engagements_rule_enabled"
+  f nal val TrustedFr endsT etL m edEngage ntsRuleEnabled =
+    "trusted_fr ends_t et_l m ed_engage nts_rule_enabled"
 
-  final val CountrySpecificNsfwContentGatingCountries =
-    "country_specific_nsfw_content_gating_countries"
+  f nal val CountrySpec f cNsfwContentGat ngCountr es =
+    "country_spec f c_nsfw_content_gat ng_countr es"
 
-  final val AgeGatingAdultContentExperimentCountries =
-    "age_gating_adult_content_experiment_countries"
-  final val AgeGatingAdultContentExperimentEnabled =
-    "age_gating_adult_content_experiment_enabled"
+  f nal val AgeGat ngAdultContentExper  ntCountr es =
+    "age_gat ng_adult_content_exper  nt_countr es"
+  f nal val AgeGat ngAdultContentExper  ntEnabled =
+    "age_gat ng_adult_content_exper  nt_enabled"
 
-  final val HighToxicityModelScoreSpaceThreshold =
-    "high_toxicity_model_score_space_threshold"
+  f nal val H ghTox c yModelScoreSpaceThreshold =
+    "h gh_tox c y_model_score_space_threshold"
 
-  final val CardUriRootDomainDenyList = "card_uri_root_domain_deny_list"
+  f nal val CardUr RootDoma nDenyL st = "card_ur _root_doma n_deny_l st"
 
-  final val SkipTweetDetailLimitedEngagementsRuleEnabled =
-    "skip_tweet_detail_limited_engagements_rule_enabled"
+  f nal val Sk pT etDeta lL m edEngage ntsRuleEnabled =
+    "sk p_t et_deta l_l m ed_engage nts_rule_enabled"
 
-  final val AdAvoidanceHighToxicityModelScoreThreshold =
-    "ad_avoidance_model_thresholds_high_toxicity_model"
-  final val AdAvoidanceReportedTweetModelScoreThreshold =
-    "ad_avoidance_model_thresholds_reported_tweet_model"
+  f nal val AdAvo danceH ghTox c yModelScoreThreshold =
+    "ad_avo dance_model_thresholds_h gh_tox c y_model"
+  f nal val AdAvo danceReportedT etModelScoreThreshold =
+    "ad_avo dance_model_thresholds_reported_t et_model"
 
-  final val StaleTweetLimitedActionsRulesEnabled =
-    "stale_tweet_limited_actions_rules_enabled"
+  f nal val StaleT etL m edAct onsRulesEnabled =
+    "stale_t et_l m ed_act ons_rules_enabled"
 
-  final val FosnrFallbackDropRulesEnabled =
+  f nal val FosnrFallbackDropRulesEnabled =
     "freedom_of_speech_not_reach_fallback_drop_rules_enabled"
-  final val FosnrRulesEnabled =
+  f nal val FosnrRulesEnabled =
     "freedom_of_speech_not_reach_rules_enabled"
 }
 
-abstract class FSRuleParam[T](override val name: FeatureName, override val default: T)
+abstract class FSRuleParam[T](overr de val na : FeatureNa , overr de val default: T)
     extends RuleParam(default)
-    with FSName
+    w h FSNa 
 
 abstract class FSBoundedRuleParam[T](
-  override val name: FeatureName,
-  override val default: T,
-  override val min: T,
-  override val max: T
+  overr de val na : FeatureNa ,
+  overr de val default: T,
+  overr de val m n: T,
+  overr de val max: T
 )(
-  implicit override val ordering: Ordering[T])
+   mpl c  overr de val order ng: Order ng[T])
     extends RuleParam(default)
-    with Bounded[T]
-    with FSName
+    w h Bounded[T]
+    w h FSNa 
 
-abstract class FSTimeRuleParam[T](
-  override val name: FeatureName,
-  override val default: Time,
-  override val timeConversion: TimeConversion[T])
+abstract class FST  RuleParam[T](
+  overr de val na : FeatureNa ,
+  overr de val default: T  ,
+  overr de val t  Convers on: T  Convers on[T])
     extends RuleParam(default)
-    with HasTimeConversion[T]
-    with FSName
+    w h HasT  Convers on[T]
+    w h FSNa 
 
-abstract class FSEnumRuleParam[T <: Enumeration](
-  override val name: FeatureName,
-  override val default: T#Value,
-  override val enum: T)
+abstract class FSEnumRuleParam[T <: Enu rat on](
+  overr de val na : FeatureNa ,
+  overr de val default: T#Value,
+  overr de val enum: T)
     extends EnumRuleParam(default, enum)
-    with FSName
+    w h FSNa 
 
-private[visibility] object FSRuleParams {
-  object HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam
+pr vate[v s b l y] object FSRuleParams {
+  object H ghSpam T etContentScoreSearchTopProdT etLabelDropRuleThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreSearchTopProdTweetLabelDropFuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.H ghSpam T etContentScoreSearchTopProdT etLabelDropFuleThreshold,
+        default = ModelScoreThresholds.H ghSpam T etContentScoreDefaultThreshold,
+        m n = 0,
         max = 1)
-  object HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam
+  object H ghSpam T etContentScoreSearchLatestProdT etLabelDropRuleThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.H ghSpam T etContentScoreSearchLatestProdT etLabelDropRuleThreshold,
+        default = ModelScoreThresholds.H ghSpam T etContentScoreDefaultThreshold,
+        m n = 0,
         max = 1)
-  object HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam
+  object H ghSpam T etContentScoreTrendTopT etLabelDropRuleThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.H ghSpam T etContentScoreTrendTopT etLabelDropRuleThreshold,
+        default = ModelScoreThresholds.H ghSpam T etContentScoreDefaultThreshold,
+        m n = 0,
         max = 1)
-  object HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam
+  object H ghSpam T etContentScoreTrendLatestT etLabelDropRuleThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.H ghSpam T etContentScoreTrendLatestT etLabelDropRuleThreshold,
+        default = ModelScoreThresholds.H ghSpam T etContentScoreDefaultThreshold,
+        m n = 0,
         max = 1)
-  object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
+  object H ghSpam T etContentScoreConvoDownrankAbus veQual yThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.H ghSpam T etContentScoreConvoDownrankAbus veQual yThreshold,
+        default = ModelScoreThresholds.H ghSpam T etContentScoreDefaultThreshold,
+        m n = 0,
         max = 1)
 
-  object CommunityTweetDropRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetDropRuleEnabled, true)
+  object Commun yT etDropRuleEnabledParam
+      extends FSRuleParam(FeatureSw chKey.Commun yT etDropRuleEnabled, true)
 
-  object CommunityTweetDropProtectedRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetDropProtectedRuleEnabled, true)
+  object Commun yT etDropProtectedRuleEnabledParam
+      extends FSRuleParam(FeatureSw chKey.Commun yT etDropProtectedRuleEnabled, true)
 
-  object CommunityTweetLimitedActionsRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetLimitedActionsRulesEnabled, false)
+  object Commun yT etL m edAct onsRulesEnabledParam
+      extends FSRuleParam(FeatureSw chKey.Commun yT etL m edAct onsRulesEnabled, false)
 
-  object CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam
+  object Commun yT et mberRemovedL m edAct onsRulesEnabledParam
       extends FSRuleParam(
-        FeatureSwitchKey.CommunityTweetMemberRemovedLimitedActionsRulesEnabled,
+        FeatureSw chKey.Commun yT et mberRemovedL m edAct onsRulesEnabled,
         false)
 
-  object CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
+  object Commun yT etCommun yUnava lableL m edAct onsRulesEnabledParam
       extends FSRuleParam(
-        FeatureSwitchKey.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabled,
+        FeatureSw chKey.Commun yT etCommun yUnava lableL m edAct onsRulesEnabled,
         false)
 
-  object CommunityTweetNonMemberLimitedActionsRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetNonMemberLimitedActionsRuleEnabled, false)
+  object Commun yT etNon mberL m edAct onsRuleEnabledParam
+      extends FSRuleParam(FeatureSw chKey.Commun yT etNon mberL m edAct onsRuleEnabled, false)
 
-  object TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.TrustedFriendsTweetLimitedEngagementsRuleEnabled, false)
+  object TrustedFr endsT etL m edEngage ntsRuleEnabledParam
+      extends FSRuleParam(FeatureSw chKey.TrustedFr endsT etL m edEngage ntsRuleEnabled, false)
 
-  object SkipTweetDetailLimitedEngagementRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.SkipTweetDetailLimitedEngagementsRuleEnabled, false)
+  object Sk pT etDeta lL m edEngage ntRuleEnabledParam
+      extends FSRuleParam(FeatureSw chKey.Sk pT etDeta lL m edEngage ntsRuleEnabled, false)
 
 
   object NsfwAgeBasedDropRulesHoldbackParam
-      extends FSRuleParam(FeatureSwitchKey.NsfwAgeBasedDropRulesHoldbackParam, true)
+      extends FSRuleParam(FeatureSw chKey.NsfwAgeBasedDropRulesHoldbackParam, true)
 
-  object CountrySpecificNsfwContentGatingCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CountrySpecificNsfwContentGatingCountries,
+  object CountrySpec f cNsfwContentGat ngCountr esParam
+      extends FSRuleParam[Seq[Str ng]](
+        FeatureSw chKey.CountrySpec f cNsfwContentGat ngCountr es,
         default = Seq("au"))
 
-  object AgeGatingAdultContentExperimentCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.AgeGatingAdultContentExperimentCountries,
+  object AgeGat ngAdultContentExper  ntCountr esParam
+      extends FSRuleParam[Seq[Str ng]](
+        FeatureSw chKey.AgeGat ngAdultContentExper  ntCountr es,
         default = Seq.empty)
-  object AgeGatingAdultContentExperimentRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.AgeGatingAdultContentExperimentEnabled, default = false)
+  object AgeGat ngAdultContentExper  ntRuleEnabledParam
+      extends FSRuleParam(FeatureSw chKey.AgeGat ngAdultContentExper  ntEnabled, default = false)
 
-  object HighToxicityModelScoreSpaceThresholdParam
+  object H ghTox c yModelScoreSpaceThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.HighToxicityModelScoreSpaceThreshold,
-        default = ModelScoreThresholds.HighToxicityModelScoreSpaceDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.H ghTox c yModelScoreSpaceThreshold,
+        default = ModelScoreThresholds.H ghTox c yModelScoreSpaceDefaultThreshold,
+        m n = 0,
         max = 1)
 
-  object CardUriRootDomainDenyListParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CardUriRootDomainDenyList,
+  object CardUr RootDoma nDenyL stParam
+      extends FSRuleParam[Seq[Str ng]](
+        FeatureSw chKey.CardUr RootDoma nDenyL st,
         default = Seq.empty)
 
-  object AdAvoidanceHighToxicityModelScoreThresholdParam
+  object AdAvo danceH ghTox c yModelScoreThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.AdAvoidanceHighToxicityModelScoreThreshold,
-        default = ModelScoreThresholds.AdAvoidanceHighToxicityModelScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.AdAvo danceH ghTox c yModelScoreThreshold,
+        default = ModelScoreThresholds.AdAvo danceH ghTox c yModelScoreDefaultThreshold,
+        m n = 0,
         max = 1)
 
-  object AdAvoidanceReportedTweetModelScoreThresholdParam
+  object AdAvo danceReportedT etModelScoreThresholdParam
       extends FSBoundedParam(
-        FeatureSwitchKey.AdAvoidanceReportedTweetModelScoreThreshold,
-        default = ModelScoreThresholds.AdAvoidanceReportedTweetModelScoreDefaultThreshold,
-        min = 0,
+        FeatureSw chKey.AdAvo danceReportedT etModelScoreThreshold,
+        default = ModelScoreThresholds.AdAvo danceReportedT etModelScoreDefaultThreshold,
+        m n = 0,
         max = 1)
 
-  object StaleTweetLimitedActionsRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.StaleTweetLimitedActionsRulesEnabled, false)
+  object StaleT etL m edAct onsRulesEnabledParam
+      extends FSRuleParam(FeatureSw chKey.StaleT etL m edAct onsRulesEnabled, false)
 
   object FosnrFallbackDropRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.FosnrFallbackDropRulesEnabled, false)
-  object FosnrRulesEnabledParam extends FSRuleParam(FeatureSwitchKey.FosnrRulesEnabled, true)
+      extends FSRuleParam(FeatureSw chKey.FosnrFallbackDropRulesEnabled, false)
+  object FosnrRulesEnabledParam extends FSRuleParam(FeatureSw chKey.FosnrRulesEnabled, true)
 }

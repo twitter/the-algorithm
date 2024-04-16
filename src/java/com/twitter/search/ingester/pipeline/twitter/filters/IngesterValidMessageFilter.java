@@ -1,50 +1,50 @@
-package com.twitter.search.ingester.pipeline.twitter.filters;
+package com.tw ter.search. ngester.p pel ne.tw ter.f lters;
 
-import java.util.EnumSet;
-import java.util.Set;
+ mport java.ut l.EnumSet;
+ mport java.ut l.Set;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessageUtil;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssageUt l;
 
-public class IngesterValidMessageFilter {
-  public static final String KEEP_NULLCAST_DECIDER_KEY =
-      "ingester_all_keep_nullcasts";
-  public static final String STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFIX =
-      "valid_message_filter_strip_supplementary_emojis_";
+publ c class  ngesterVal d ssageF lter {
+  publ c stat c f nal Str ng KEEP_NULLCAST_DEC DER_KEY =
+      " ngester_all_keep_nullcasts";
+  publ c stat c f nal Str ng STR P_SUPPLEMENTARY_EMOJ S_DEC DER_KEY_PREF X =
+      "val d_ ssage_f lter_str p_supple ntary_emoj s_";
 
-  protected final Decider decider;
+  protected f nal Dec der dec der;
 
-  public IngesterValidMessageFilter(Decider decider) {
-    this.decider = decider;
+  publ c  ngesterVal d ssageF lter(Dec der dec der) {
+    t .dec der = dec der;
   }
 
   /**
-   * Evaluate a message to see if it matches the filter or not.
+   * Evaluate a  ssage to see  f   matc s t  f lter or not.
    *
-   * @param message to evaluate
-   * @return true if this message should be emitted.
+   * @param  ssage to evaluate
+   * @return true  f t   ssage should be em ted.
    */
-  public boolean accepts(TwitterMessage message) {
-    return TwitterMessageUtil.validateTwitterMessage(
-        message, getStripEmojisFields(), acceptNullcast());
+  publ c boolean accepts(Tw ter ssage  ssage) {
+    return Tw ter ssageUt l.val dateTw ter ssage(
+         ssage, getStr pEmoj sF elds(), acceptNullcast());
   }
 
-  private Set<TwitterMessageUtil.Field> getStripEmojisFields() {
-    Set<TwitterMessageUtil.Field> stripEmojisFields =
-        EnumSet.noneOf(TwitterMessageUtil.Field.class);
-    for (TwitterMessageUtil.Field field : TwitterMessageUtil.Field.values()) {
-      if (DeciderUtil.isAvailableForRandomRecipient(
-          decider,
-          STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFIX + field.getNameForStats())) {
-        stripEmojisFields.add(field);
+  pr vate Set<Tw ter ssageUt l.F eld> getStr pEmoj sF elds() {
+    Set<Tw ter ssageUt l.F eld> str pEmoj sF elds =
+        EnumSet.noneOf(Tw ter ssageUt l.F eld.class);
+    for (Tw ter ssageUt l.F eld f eld : Tw ter ssageUt l.F eld.values()) {
+       f (Dec derUt l. sAva lableForRandomRec p ent(
+          dec der,
+          STR P_SUPPLEMENTARY_EMOJ S_DEC DER_KEY_PREF X + f eld.getNa ForStats())) {
+        str pEmoj sF elds.add(f eld);
       }
     }
-    return stripEmojisFields;
+    return str pEmoj sF elds;
   }
 
-  protected final boolean acceptNullcast() {
-    return DeciderUtil.isAvailableForRandomRecipient(decider, KEEP_NULLCAST_DECIDER_KEY);
+  protected f nal boolean acceptNullcast() {
+    return Dec derUt l. sAva lableForRandomRec p ent(dec der, KEEP_NULLCAST_DEC DER_KEY);
   }
 }

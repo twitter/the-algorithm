@@ -1,16 +1,16 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
 /**
- * An interface for collecting all facets in an document.
+ * An  nterface for collect ng all facets  n an docu nt.
  */
-public interface FacetTermCollector {
+publ c  nterface FacetTermCollector {
   /**
    * Collect one facet term.
-   * @param docID The docID for which the facets are being collected.
-   * @param termID The termID for this facet item.
-   * @param fieldID The fieldID for this facet item.
-   * @return True if anything has actually been collected, false if this has been skipped.
-   *         Currently, this return value is not used.
+   * @param doc D T  doc D for wh ch t  facets are be ng collected.
+   * @param term D T  term D for t  facet  em.
+   * @param f eld D T  f eld D for t  facet  em.
+   * @return True  f anyth ng has actually been collected, false  f t  has been sk pped.
+   *         Currently, t  return value  s not used.
    */
-  boolean collect(int docID, long termID, int fieldID);
+  boolean collect( nt doc D, long term D,  nt f eld D);
 }

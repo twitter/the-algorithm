@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.service.scoring_pipeline_executor
+package com.tw ter.product_m xer.core.serv ce.scor ng_p pel ne_executor
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineResult
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neResult
 
-case class ScoringPipelineExecutorResult[Candidate <: UniversalNoun[Any]](
-  result: Seq[ItemCandidateWithDetails],
-  individualPipelineResults: Seq[ScoringPipelineResult[Candidate]])
+case class Scor ngP pel neExecutorResult[Cand date <: Un versalNoun[Any]](
+  result: Seq[ emCand dateW hDeta ls],
+   nd v dualP pel neResults: Seq[Scor ngP pel neResult[Cand date]])

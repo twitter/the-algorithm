@@ -1,187 +1,187 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.StorageUnitOps._
-import com.twitter.decider.Decider
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.domain.AckMode
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.KafkaTopic
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerConfig
-import com.twitter.finatra.kafka.producers.KafkaProducerConfig
-import com.twitter.finatra.kafka.producers.TwitterKafkaProducerConfig
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.finatra.kafkastreams.config.KafkaStreamsConfig
-import com.twitter.finatra.kafkastreams.config.SecureKafkaStreamsConfig
-import com.twitter.finatra.kafkastreams.dsl.FinatraDslToCluster
-import com.twitter.inject.TwitterModule
-import com.twitter.unified_user_actions.enricher.driver.EnrichmentDriver
-import com.twitter.unified_user_actions.enricher.hydrator.NoopHydrator
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.NotificationTweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.TweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType
-import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner
-import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner.NullKey
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.util.Await
-import com.twitter.util.Future
-import org.apache.kafka.common.record.CompressionType
-import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.scala.kstream.Consumed
-import org.apache.kafka.streams.scala.kstream.KStream
-import org.apache.kafka.streams.scala.kstream.Produced
-object EnrichmentPlannerServiceMain extends EnrichmentPlannerService {
-  val ApplicationId = "uua-enrichment-planner"
-  val InputTopic = "unified_user_actions"
-  val OutputPartitionedTopic = "unified_user_actions_keyed_dev"
-  val SamplingDecider = "EnrichmentPlannerSampling"
+ mport com.tw ter.app.Flag
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.StorageUn Ops._
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.S mpleRec p ent
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.kafka.doma n.AckMode
+ mport com.tw ter.f natra.kafka.doma n.KafkaGroup d
+ mport com.tw ter.f natra.kafka.doma n.KafkaTop c
+ mport com.tw ter.f natra.kafka.producers.F nagleKafkaProducerConf g
+ mport com.tw ter.f natra.kafka.producers.KafkaProducerConf g
+ mport com.tw ter.f natra.kafka.producers.Tw terKafkaProducerConf g
+ mport com.tw ter.f natra.kafka.serde.ScalaSerdes
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.f natra.kafka.serde.UnKeyedSerde
+ mport com.tw ter.f natra.kafkastreams.conf g.KafkaStreamsConf g
+ mport com.tw ter.f natra.kafkastreams.conf g.SecureKafkaStreamsConf g
+ mport com.tw ter.f natra.kafkastreams.dsl.F natraDslToCluster
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.un f ed_user_act ons.enr c r.dr ver.Enr ch ntDr ver
+ mport com.tw ter.un f ed_user_act ons.enr c r.hydrator.NoopHydrator
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on.Not f cat onT etEnr ch nt
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on.T etEnr ch nt
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntPlan
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStage
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageStatus
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageType
+ mport com.tw ter.un f ed_user_act ons.enr c r.part  oner.DefaultPart  oner
+ mport com.tw ter.un f ed_user_act ons.enr c r.part  oner.DefaultPart  oner.NullKey
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Future
+ mport org.apac .kafka.common.record.Compress onType
+ mport org.apac .kafka.streams.StreamsBu lder
+ mport org.apac .kafka.streams.scala.kstream.Consu d
+ mport org.apac .kafka.streams.scala.kstream.KStream
+ mport org.apac .kafka.streams.scala.kstream.Produced
+object Enr ch ntPlannerServ ceMa n extends Enr ch ntPlannerServ ce {
+  val Appl cat on d = "uua-enr ch nt-planner"
+  val  nputTop c = "un f ed_user_act ons"
+  val OutputPart  onedTop c = "un f ed_user_act ons_keyed_dev"
+  val Sampl ngDec der = "Enr ch ntPlannerSampl ng"
 }
 
 /**
- * This service is the first step (planner) of the UUA Enrichment process.
- * It does the following:
- * 1. Read Prod UUA topic unified_user_actions from the Prod cluster and write to (see below) either Prod cluster (prod) or Dev cluster (dev/staging)
- * 2. For the write, it optionally randomly downsample the events when publishing, controlled by a Decider
- * 3. The output's key would be the first step of the repartitioning, most likely the EnrichmentKey of the Tweet type.
+ * T  serv ce  s t  f rst step (planner) of t  UUA Enr ch nt process.
+ *   does t  follow ng:
+ * 1. Read Prod UUA top c un f ed_user_act ons from t  Prod cluster and wr e to (see below) e  r Prod cluster (prod) or Dev cluster (dev/stag ng)
+ * 2. For t  wr e,   opt onally randomly downsample t  events w n publ sh ng, controlled by a Dec der
+ * 3. T  output's key would be t  f rst step of t  repart  on ng, most l kely t  Enr ch ntKey of t  T et type.
  */
-class EnrichmentPlannerService extends FinatraDslToCluster with SecureKafkaStreamsConfig {
-  import EnrichmentPlannerServiceMain._
+class Enr ch ntPlannerServ ce extends F natraDslToCluster w h SecureKafkaStreamsConf g {
+   mport Enr ch ntPlannerServ ceMa n._
 
-  val kafkaOutputCluster: Flag[String] = flag(
-    name = "kafka.output.server",
+  val kafkaOutputCluster: Flag[Str ng] = flag(
+    na  = "kafka.output.server",
     default = "",
-    help =
-      """The output Kafka cluster.
-        |This is needed since we read from a cluster and potentially output to a different cluster.
-        |""".stripMargin
+     lp =
+      """T  output Kafka cluster.
+        |T   s needed s nce   read from a cluster and potent ally output to a d fferent cluster.
+        |""".str pMarg n
   )
 
   val kafkaOutputEnableTls: Flag[Boolean] = flag(
-    name = "kafka.output.enable.tls",
+    na  = "kafka.output.enable.tls",
     default = true,
-    help = ""
+     lp = ""
   )
 
-  override val modules: Seq[TwitterModule] = Seq(
-    DeciderModule
+  overr de val modules: Seq[Tw terModule] = Seq(
+    Dec derModule
   )
 
-  override protected def configureKafkaStreams(builder: StreamsBuilder): Unit = {
-    val decider = injector.instance[Decider]
-    val driver = new EnrichmentDriver(
-      finalOutputTopic = NoopHydrator.OutputTopic,
-      partitionedTopic = OutputPartitionedTopic,
+  overr de protected def conf gureKafkaStreams(bu lder: StreamsBu lder): Un  = {
+    val dec der =  njector. nstance[Dec der]
+    val dr ver = new Enr ch ntDr ver(
+      f nalOutputTop c = NoopHydrator.OutputTop c,
+      part  onedTop c = OutputPart  onedTop c,
       hydrator = new NoopHydrator,
-      partitioner = new DefaultPartitioner)
+      part  oner = new DefaultPart  oner)
 
-    val builderWithoutOutput = builder.asScala
-      .stream(InputTopic)(Consumed.`with`(UnKeyedSerde, ScalaSerdes.Thrift[UnifiedUserAction]))
-      // this maps and filters out the nil envelop before further processing
+    val bu lderW houtOutput = bu lder.asScala
+      .stream( nputTop c)(Consu d.`w h`(UnKeyedSerde, ScalaSerdes.Thr ft[Un f edUserAct on]))
+      // t  maps and f lters out t  n l envelop before furt r process ng
       .flatMapValues { uua =>
-        (uua.item match {
-          case Item.TweetInfo(_) =>
-            Some(EnrichmentEnvelop(
-              envelopId = uua.hashCode.toLong,
+        (uua. em match {
+          case  em.T et nfo(_) =>
+            So (Enr ch ntEnvelop(
+              envelop d = uua.hashCode.toLong,
               uua = uua,
-              plan = EnrichmentPlan(Seq(
-                EnrichmentStage(
-                  status = EnrichmentStageStatus.Initialized,
-                  stageType = EnrichmentStageType.Repartition,
-                  instructions = Seq(TweetEnrichment)
+              plan = Enr ch ntPlan(Seq(
+                Enr ch ntStage(
+                  status = Enr ch ntStageStatus. n  al zed,
+                  stageType = Enr ch ntStageType.Repart  on,
+                   nstruct ons = Seq(T etEnr ch nt)
                 ),
-                EnrichmentStage(
-                  status = EnrichmentStageStatus.Initialized,
-                  stageType = EnrichmentStageType.Hydration,
-                  instructions = Seq(TweetEnrichment)
+                Enr ch ntStage(
+                  status = Enr ch ntStageStatus. n  al zed,
+                  stageType = Enr ch ntStageType.Hydrat on,
+                   nstruct ons = Seq(T etEnr ch nt)
                 ),
               ))
             ))
-          case Item.NotificationInfo(_) =>
-            Some(EnrichmentEnvelop(
-              envelopId = uua.hashCode.toLong,
+          case  em.Not f cat on nfo(_) =>
+            So (Enr ch ntEnvelop(
+              envelop d = uua.hashCode.toLong,
               uua = uua,
-              plan = EnrichmentPlan(Seq(
-                EnrichmentStage(
-                  status = EnrichmentStageStatus.Initialized,
-                  stageType = EnrichmentStageType.Repartition,
-                  instructions = Seq(NotificationTweetEnrichment)
+              plan = Enr ch ntPlan(Seq(
+                Enr ch ntStage(
+                  status = Enr ch ntStageStatus. n  al zed,
+                  stageType = Enr ch ntStageType.Repart  on,
+                   nstruct ons = Seq(Not f cat onT etEnr ch nt)
                 ),
-                EnrichmentStage(
-                  status = EnrichmentStageStatus.Initialized,
-                  stageType = EnrichmentStageType.Hydration,
-                  instructions = Seq(NotificationTweetEnrichment)
+                Enr ch ntStage(
+                  status = Enr ch ntStageStatus. n  al zed,
+                  stageType = Enr ch ntStageType.Hydrat on,
+                   nstruct ons = Seq(Not f cat onT etEnr ch nt)
                 ),
               ))
             ))
           case _ => None
         }).seq
       }
-      // execute our driver logics
-      .flatMap((_: UnKeyed, envelop: EnrichmentEnvelop) => {
-        // flatMap and Await.result is used here because our driver interface allows for
-        // both synchronous (repartition logic) and async operations (hydration logic), but in here
-        // we purely just need to repartition synchronously, and thus the flatMap + Await.result
-        // is used to simplify and make testing much easier.
-        val (keyOpt, value) = Await.result(driver.execute(NullKey, Future.value(envelop)))
+      // execute   dr ver log cs
+      .flatMap((_: UnKeyed, envelop: Enr ch ntEnvelop) => {
+        // flatMap and Awa .result  s used  re because   dr ver  nterface allows for
+        // both synchronous (repart  on log c) and async operat ons (hydrat on log c), but  n  re
+        //   purely just need to repart  on synchronously, and thus t  flatMap + Awa .result
+        //  s used to s mpl fy and make test ng much eas er.
+        val (keyOpt, value) = Awa .result(dr ver.execute(NullKey, Future.value(envelop)))
         keyOpt.map(key => (key, value)).seq
       })
-      // then finally we sample based on the output keys
-      .filter((key, _) =>
-        decider.isAvailable(feature = SamplingDecider, Some(SimpleRecipient(key.id))))
+      // t n f nally   sample based on t  output keys
+      .f lter((key, _) =>
+        dec der. sAva lable(feature = Sampl ngDec der, So (S mpleRec p ent(key. d))))
 
-    configureOutput(builderWithoutOutput)
+    conf gureOutput(bu lderW houtOutput)
   }
 
-  private def configureOutput(kstream: KStream[EnrichmentKey, EnrichmentEnvelop]): Unit = {
-    if (kafkaOutputCluster().nonEmpty && kafkaOutputCluster() != bootstrapServer()) {
+  pr vate def conf gureOutput(kstream: KStream[Enr ch ntKey, Enr ch ntEnvelop]): Un  = {
+     f (kafkaOutputCluster().nonEmpty && kafkaOutputCluster() != bootstrapServer()) {
       kstream.toCluster(
         cluster = kafkaOutputCluster(),
-        topic = KafkaTopic(OutputPartitionedTopic),
-        clientId = s"$ApplicationId-output-producer",
-        kafkaProducerConfig =
-          if (kafkaOutputEnableTls())
-            FinagleKafkaProducerConfig[EnrichmentKey, EnrichmentEnvelop](kafkaProducerConfig =
-              KafkaProducerConfig(TwitterKafkaProducerConfig().requestTimeout(1.minute).configMap))
+        top c = KafkaTop c(OutputPart  onedTop c),
+        cl ent d = s"$Appl cat on d-output-producer",
+        kafkaProducerConf g =
+           f (kafkaOutputEnableTls())
+            F nagleKafkaProducerConf g[Enr ch ntKey, Enr ch ntEnvelop](kafkaProducerConf g =
+              KafkaProducerConf g(Tw terKafkaProducerConf g().requestT  out(1.m nute).conf gMap))
           else
-            FinagleKafkaProducerConfig[EnrichmentKey, EnrichmentEnvelop](
-              kafkaProducerConfig = KafkaProducerConfig()
-                .requestTimeout(1.minute)),
-        statsReceiver = statsReceiver,
-        commitInterval = 15.seconds
-      )(Produced.`with`(ScalaSerdes.Thrift[EnrichmentKey], ScalaSerdes.Thrift[EnrichmentEnvelop]))
+            F nagleKafkaProducerConf g[Enr ch ntKey, Enr ch ntEnvelop](
+              kafkaProducerConf g = KafkaProducerConf g()
+                .requestT  out(1.m nute)),
+        statsRece ver = statsRece ver,
+        comm  nterval = 15.seconds
+      )(Produced.`w h`(ScalaSerdes.Thr ft[Enr ch ntKey], ScalaSerdes.Thr ft[Enr ch ntEnvelop]))
     } else {
-      kstream.to(OutputPartitionedTopic)(
-        Produced.`with`(ScalaSerdes.Thrift[EnrichmentKey], ScalaSerdes.Thrift[EnrichmentEnvelop]))
+      kstream.to(OutputPart  onedTop c)(
+        Produced.`w h`(ScalaSerdes.Thr ft[Enr ch ntKey], ScalaSerdes.Thr ft[Enr ch ntEnvelop]))
     }
   }
 
-  override def streamsProperties(config: KafkaStreamsConfig): KafkaStreamsConfig = {
+  overr de def streamsPropert es(conf g: KafkaStreamsConf g): KafkaStreamsConf g = {
     super
-      .streamsProperties(config)
-      .consumer.groupId(KafkaGroupId(ApplicationId))
-      .consumer.clientId(s"$ApplicationId-consumer")
-      .consumer.requestTimeout(30.seconds)
-      .consumer.sessionTimeout(30.seconds)
-      .consumer.fetchMin(1.megabyte)
-      .consumer.fetchMax(5.megabyte)
-      .consumer.receiveBuffer(32.megabytes)
-      .consumer.maxPollInterval(1.minute)
-      .consumer.maxPollRecords(50000)
-      .producer.clientId(s"$ApplicationId-producer")
-      .producer.batchSize(16.kilobytes)
-      .producer.bufferMemorySize(256.megabyte)
-      .producer.requestTimeout(30.seconds)
-      .producer.compressionType(CompressionType.LZ4)
+      .streamsPropert es(conf g)
+      .consu r.group d(KafkaGroup d(Appl cat on d))
+      .consu r.cl ent d(s"$Appl cat on d-consu r")
+      .consu r.requestT  out(30.seconds)
+      .consu r.sess onT  out(30.seconds)
+      .consu r.fetchM n(1. gabyte)
+      .consu r.fetchMax(5. gabyte)
+      .consu r.rece veBuffer(32. gabytes)
+      .consu r.maxPoll nterval(1.m nute)
+      .consu r.maxPollRecords(50000)
+      .producer.cl ent d(s"$Appl cat on d-producer")
+      .producer.batchS ze(16.k lobytes)
+      .producer.buffer moryS ze(256. gabyte)
+      .producer.requestT  out(30.seconds)
+      .producer.compress onType(Compress onType.LZ4)
       .producer.ackMode(AckMode.ALL)
   }
 }

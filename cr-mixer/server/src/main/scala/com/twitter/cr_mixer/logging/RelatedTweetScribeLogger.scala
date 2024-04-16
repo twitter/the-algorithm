@@ -1,193 +1,193 @@
-package com.twitter.cr_mixer.logging
+package com.tw ter.cr_m xer.logg ng
 
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.GetRelatedTweetsScribe
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.PreRankFilterResult
-import com.twitter.cr_mixer.thriftscala.RelatedTweetRequest
-import com.twitter.cr_mixer.thriftscala.RelatedTweetResponse
-import com.twitter.cr_mixer.thriftscala.RelatedTweetResult
-import com.twitter.cr_mixer.thriftscala.RelatedTweetTopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.cr_mixer.util.CandidateGenerationKeyUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.RelatedT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.logg ng.Scr beLoggerUt ls._
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.thr ftscala.FetchCand datesResult
+ mport com.tw ter.cr_m xer.thr ftscala.GetRelatedT etsScr be
+ mport com.tw ter.cr_m xer.thr ftscala.Performance tr cs
+ mport com.tw ter.cr_m xer.thr ftscala.PreRankF lterResult
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT etResult
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT etTopLevelAp Result
+ mport com.tw ter.cr_m xer.thr ftscala.T etCand dateW h tadata
+ mport com.tw ter.cr_m xer.ut l.Cand dateGenerat onKeyUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Stopwatch
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-case class RelatedTweetScribeLogger @Inject() (
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver,
-  @Named(ModuleNames.RelatedTweetsLogger) relatedTweetsScribeLogger: Logger) {
+@S ngleton
+case class RelatedT etScr beLogger @ nject() (
+  dec der: CrM xerDec der,
+  statsRece ver: StatsRece ver,
+  @Na d(ModuleNa s.RelatedT etsLogger) relatedT etsScr beLogger: Logger) {
 
-  private val scopedStats = statsReceiver.scope("RelatedTweetsScribeLogger")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
-  private val topLevelApiNoUserIdStats = scopedStats.scope("TopLevelApiNoUserId")
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
-  private val upperFunnelsNoUserIdStats = scopedStats.scope("UpperFunnelsNoUserId")
+  pr vate val scopedStats = statsRece ver.scope("RelatedT etsScr beLogger")
+  pr vate val topLevelAp Stats = scopedStats.scope("TopLevelAp ")
+  pr vate val topLevelAp NoUser dStats = scopedStats.scope("TopLevelAp NoUser d")
+  pr vate val upperFunnelsStats = scopedStats.scope("UpperFunnels")
+  pr vate val upperFunnelsNoUser dStats = scopedStats.scope("UpperFunnelsNoUser d")
 
-  def scribeInitialCandidates(
-    query: RelatedTweetCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialCandidate]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    scribeResultsAndPerformanceMetrics(
-      RelatedTweetScribeMetadata.from(query),
+  def scr be n  alCand dates(
+    query: RelatedT etCand dateGeneratorQuery,
+    getResultFn: => Future[Seq[Seq[ n  alCand date]]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    scr beResultsAndPerformance tr cs(
+      RelatedT etScr be tadata.from(query),
       getResultFn,
-      convertToResultFn = convertFetchCandidatesResult
+      convertToResultFn = convertFetchCand datesResult
     )
   }
 
-  def scribePreRankFilterCandidates(
-    query: RelatedTweetCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialCandidate]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    scribeResultsAndPerformanceMetrics(
-      RelatedTweetScribeMetadata.from(query),
+  def scr bePreRankF lterCand dates(
+    query: RelatedT etCand dateGeneratorQuery,
+    getResultFn: => Future[Seq[Seq[ n  alCand date]]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    scr beResultsAndPerformance tr cs(
+      RelatedT etScr be tadata.from(query),
       getResultFn,
-      convertToResultFn = convertPreRankFilterResult
+      convertToResultFn = convertPreRankF lterResult
     )
   }
 
   /**
-   * Scribe Top Level API Request / Response and performance metrics
-   * for the getRelatedTweets endpoint.
+   * Scr be Top Level AP  Request / Response and performance  tr cs
+   * for t  getRelatedT ets endpo nt.
    */
-  def scribeGetRelatedTweets(
-    request: RelatedTweetRequest,
-    startTime: Long,
-    relatedTweetScribeMetadata: RelatedTweetScribeMetadata,
-    getResultFn: => Future[RelatedTweetResponse]
-  ): Future[RelatedTweetResponse] = {
-    val timer = Stopwatch.start()
+  def scr beGetRelatedT ets(
+    request: RelatedT etRequest,
+    startT  : Long,
+    relatedT etScr be tadata: RelatedT etScr be tadata,
+    getResultFn: => Future[RelatedT etResponse]
+  ): Future[RelatedT etResponse] = {
+    val t  r = Stopwatch.start()
     getResultFn.onSuccess { response =>
-      relatedTweetScribeMetadata.clientContext.userId match {
-        case Some(userId) =>
-          if (decider.isAvailableForId(userId, DeciderConstants.upperFunnelPerStepScribeRate)) {
-            topLevelApiStats.counter(relatedTweetScribeMetadata.product.originalName).incr()
-            val latencyMs = timer().inMilliseconds
-            val result = convertTopLevelAPIResult(request, response, startTime)
-            val traceId = Trace.id.traceId.toLong
-            val scribeMsg =
-              buildScribeMessage(result, relatedTweetScribeMetadata, latencyMs, traceId)
+      relatedT etScr be tadata.cl entContext.user d match {
+        case So (user d) =>
+           f (dec der. sAva lableFor d(user d, Dec derConstants.upperFunnelPerStepScr beRate)) {
+            topLevelAp Stats.counter(relatedT etScr be tadata.product.or g nalNa ). ncr()
+            val latencyMs = t  r(). nM ll seconds
+            val result = convertTopLevelAP Result(request, response, startT  )
+            val trace d = Trace. d.trace d.toLong
+            val scr beMsg =
+              bu ldScr be ssage(result, relatedT etScr be tadata, latencyMs, trace d)
 
-            scribeResult(scribeMsg)
+            scr beResult(scr beMsg)
           }
         case _ =>
-          topLevelApiNoUserIdStats.counter(relatedTweetScribeMetadata.product.originalName).incr()
+          topLevelAp NoUser dStats.counter(relatedT etScr be tadata.product.or g nalNa ). ncr()
       }
     }
   }
 
   /**
-   * Scribe Per-step intermediate results and performance metrics
-   * for each step: fetch candidates, filters.
+   * Scr be Per-step  nter d ate results and performance  tr cs
+   * for each step: fetch cand dates, f lters.
    */
-  private def scribeResultsAndPerformanceMetrics[T](
-    relatedTweetScribeMetadata: RelatedTweetScribeMetadata,
+  pr vate def scr beResultsAndPerformance tr cs[T](
+    relatedT etScr be tadata: RelatedT etScr be tadata,
     getResultFn: => Future[T],
-    convertToResultFn: (T, UserId) => RelatedTweetResult
+    convertToResultFn: (T, User d) => RelatedT etResult
   ): Future[T] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      relatedTweetScribeMetadata.clientContext.userId match {
-        case Some(userId) =>
-          if (decider.isAvailableForId(userId, DeciderConstants.upperFunnelPerStepScribeRate)) {
-            upperFunnelsStats.counter(relatedTweetScribeMetadata.product.originalName).incr()
-            val latencyMs = timer().inMilliseconds
-            val result = convertToResultFn(input, userId)
-            val traceId = Trace.id.traceId.toLong
-            val scribeMsg =
-              buildScribeMessage(result, relatedTweetScribeMetadata, latencyMs, traceId)
-            scribeResult(scribeMsg)
+    val t  r = Stopwatch.start()
+    getResultFn.onSuccess {  nput =>
+      relatedT etScr be tadata.cl entContext.user d match {
+        case So (user d) =>
+           f (dec der. sAva lableFor d(user d, Dec derConstants.upperFunnelPerStepScr beRate)) {
+            upperFunnelsStats.counter(relatedT etScr be tadata.product.or g nalNa ). ncr()
+            val latencyMs = t  r(). nM ll seconds
+            val result = convertToResultFn( nput, user d)
+            val trace d = Trace. d.trace d.toLong
+            val scr beMsg =
+              bu ldScr be ssage(result, relatedT etScr be tadata, latencyMs, trace d)
+            scr beResult(scr beMsg)
           }
         case _ =>
-          upperFunnelsNoUserIdStats.counter(relatedTweetScribeMetadata.product.originalName).incr()
+          upperFunnelsNoUser dStats.counter(relatedT etScr be tadata.product.or g nalNa ). ncr()
       }
     }
   }
 
-  private def convertTopLevelAPIResult(
-    request: RelatedTweetRequest,
-    response: RelatedTweetResponse,
-    startTime: Long
-  ): RelatedTweetResult = {
-    RelatedTweetResult.RelatedTweetTopLevelApiResult(
-      RelatedTweetTopLevelApiResult(
-        timestamp = startTime,
+  pr vate def convertTopLevelAP Result(
+    request: RelatedT etRequest,
+    response: RelatedT etResponse,
+    startT  : Long
+  ): RelatedT etResult = {
+    RelatedT etResult.RelatedT etTopLevelAp Result(
+      RelatedT etTopLevelAp Result(
+        t  stamp = startT  ,
         request = request,
         response = response
       ))
   }
 
-  private def convertFetchCandidatesResult(
-    candidatesSeq: Seq[Seq[InitialCandidate]],
-    requestUserId: UserId
-  ): RelatedTweetResult = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = None
-        ) // do not hydrate candidateGenerationKey to save cost
+  pr vate def convertFetchCand datesResult(
+    cand datesSeq: Seq[Seq[ n  alCand date]],
+    requestUser d: User d
+  ): RelatedT etResult = {
+    val t etCand datesW h tadata = cand datesSeq.flatMap { cand dates =>
+      cand dates.map { cand date =>
+        T etCand dateW h tadata(
+          t et d = cand date.t et d,
+          cand dateGenerat onKey = None
+        ) // do not hydrate cand dateGenerat onKey to save cost
       }
     }
-    RelatedTweetResult.FetchCandidatesResult(
-      FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    RelatedT etResult.FetchCand datesResult(
+      FetchCand datesResult(So (t etCand datesW h tadata)))
   }
 
-  private def convertPreRankFilterResult(
-    candidatesSeq: Seq[Seq[InitialCandidate]],
-    requestUserId: UserId
-  ): RelatedTweetResult = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        val candidateGenerationKey =
-          CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(candidateGenerationKey),
-          authorId = Some(candidate.tweetInfo.authorId),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None
+  pr vate def convertPreRankF lterResult(
+    cand datesSeq: Seq[Seq[ n  alCand date]],
+    requestUser d: User d
+  ): RelatedT etResult = {
+    val t etCand datesW h tadata = cand datesSeq.flatMap { cand dates =>
+      cand dates.map { cand date =>
+        val cand dateGenerat onKey =
+          Cand dateGenerat onKeyUt l.toThr ft(cand date.cand dateGenerat on nfo, requestUser d)
+        T etCand dateW h tadata(
+          t et d = cand date.t et d,
+          cand dateGenerat onKey = So (cand dateGenerat onKey),
+          author d = So (cand date.t et nfo.author d),
+          score = So (cand date.getS m lar yScore),
+          numCand dateGenerat onKeys = None
         )
       }
     }
-    RelatedTweetResult.PreRankFilterResult(PreRankFilterResult(Some(tweetCandidatesWithMetadata)))
+    RelatedT etResult.PreRankF lterResult(PreRankF lterResult(So (t etCand datesW h tadata)))
   }
 
-  private def buildScribeMessage(
-    relatedTweetResult: RelatedTweetResult,
-    relatedTweetScribeMetadata: RelatedTweetScribeMetadata,
+  pr vate def bu ldScr be ssage(
+    relatedT etResult: RelatedT etResult,
+    relatedT etScr be tadata: RelatedT etScr be tadata,
     latencyMs: Long,
-    traceId: Long
-  ): GetRelatedTweetsScribe = {
-    GetRelatedTweetsScribe(
-      uuid = relatedTweetScribeMetadata.requestUUID,
-      internalId = relatedTweetScribeMetadata.internalId,
-      relatedTweetResult = relatedTweetResult,
-      requesterId = relatedTweetScribeMetadata.clientContext.userId,
-      guestId = relatedTweetScribeMetadata.clientContext.guestId,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+    trace d: Long
+  ): GetRelatedT etsScr be = {
+    GetRelatedT etsScr be(
+      uu d = relatedT etScr be tadata.requestUU D,
+       nternal d = relatedT etScr be tadata. nternal d,
+      relatedT etResult = relatedT etResult,
+      requester d = relatedT etScr be tadata.cl entContext.user d,
+      guest d = relatedT etScr be tadata.cl entContext.guest d,
+      trace d = So (trace d),
+      performance tr cs = So (Performance tr cs(So (latencyMs))),
+       mpressedBuckets = get mpressedBuckets(scopedStats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetRelatedTweetsScribe
-  ): Unit = {
-    publish(logger = relatedTweetsScribeLogger, codec = GetRelatedTweetsScribe, message = scribeMsg)
+  pr vate def scr beResult(
+    scr beMsg: GetRelatedT etsScr be
+  ): Un  = {
+    publ sh(logger = relatedT etsScr beLogger, codec = GetRelatedT etsScr be,  ssage = scr beMsg)
   }
 }

@@ -1,12 +1,12 @@
-package com.twitter.search.feature_update_service;
+package com.tw ter.search.feature_update_serv ce;
 
-final class FeatureUpdateServiceThriftServerMain {
-  private FeatureUpdateServiceThriftServerMain() {
-    // Private constructor to satisfy checkstyle error:
-    // "Utility classes should not have a public or default constructor)."
+f nal class FeatureUpdateServ ceThr ftServerMa n {
+  pr vate FeatureUpdateServ ceThr ftServerMa n() {
+    // Pr vate constructor to sat sfy c ckstyle error:
+    // "Ut l y classes should not have a publ c or default constructor)."
   }
 
-  public static void main(String[] args) {
-    new FeatureUpdateServiceThriftServer(args).main(args);
+  publ c stat c vo d ma n(Str ng[] args) {
+    new FeatureUpdateServ ceThr ftServer(args).ma n(args);
   }
 }

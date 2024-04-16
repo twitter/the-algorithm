@@ -1,90 +1,90 @@
-package com.twitter.cr_mixer.blender
+package com.tw ter.cr_m xer.blender
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.BlenderParams
-import com.twitter.cr_mixer.util.CountWeightedInterleaveUtil
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.param.BlenderParams
+ mport com.tw ter.cr_m xer.ut l.Count  ghted nterleaveUt l
+ mport com.tw ter.cr_m xer.ut l. nterleaveUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * A weighted round robin interleaving algorithm.
- * The weight of each blending group based on the count of candidates in each blending group.
- * The more candidates under a blending group, the more candidates are selected from it during round
- * robin, which in effect prioritizes this group.
+ * A   ghted round rob n  nterleav ng algor hm.
+ * T    ght of each blend ng group based on t  count of cand dates  n each blend ng group.
+ * T  more cand dates under a blend ng group, t  more cand dates are selected from   dur ng round
+ * rob n, wh ch  n effect pr or  zes t  group.
  *
- * Weights sum up to 1. For example:
- * total candidates = 8
- *             Group                       Weight
+ *   ghts sum up to 1. For example:
+ * total cand dates = 8
+ *             Group                         ght
  *         [A1, A2, A3, A4]          4/8 = 0.5  // select 50% of results from group A
  *         [B1, B2]                  2/8 = 0.25 // 25% from group B
  *         [C1, C2]                  2/8 = 0.25 // 25% from group C
  *
  * Blended results = [A1, A2, B1, C1, A3, A4, B2, C2]
- * See @linht's go/weighted-interleave
+ * See @l nht's go/  ghted- nterleave
  */
-@Singleton
-case class CountWeightedInterleaveBlender @Inject() (globalStats: StatsReceiver) {
-  import CountWeightedInterleaveBlender._
+@S ngleton
+case class Count  ghted nterleaveBlender @ nject() (globalStats: StatsRece ver) {
+   mport Count  ghted nterleaveBlender._
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  pr vate val na : Str ng = t .getClass.getCanon calNa 
+  pr vate val stats: StatsRece ver = globalStats.scope(na )
 
   def blend(
-    query: CrCandidateGeneratorQuery,
-    inputCandidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[BlendedCandidate]] = {
-    val weightedBlenderQuery = CountWeightedInterleaveBlender.paramToQuery(query.params)
-    countWeightedInterleave(weightedBlenderQuery, inputCandidates)
+    query: CrCand dateGeneratorQuery,
+     nputCand dates: Seq[Seq[ n  alCand date]]
+  ): Future[Seq[BlendedCand date]] = {
+    val   ghtedBlenderQuery = Count  ghted nterleaveBlender.paramToQuery(query.params)
+    count  ghted nterleave(  ghtedBlenderQuery,  nputCand dates)
   }
 
-  private[blender] def countWeightedInterleave(
-    query: WeightedBlenderQuery,
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+  pr vate[blender] def count  ghted nterleave(
+    query:   ghtedBlenderQuery,
+     nputCand dates: Seq[Seq[ n  alCand date]],
+  ): Future[Seq[BlendedCand date]] = {
 
-    val candidatesAndWeightKeyByIndexId: Seq[(Seq[InitialCandidate], Double)] = {
-      CountWeightedInterleaveUtil.buildInitialCandidatesWithWeightKeyByFeature(
-        inputCandidates,
-        query.rankerWeightShrinkage)
+    val cand datesAnd  ghtKeyBy ndex d: Seq[(Seq[ n  alCand date], Double)] = {
+      Count  ghted nterleaveUt l.bu ld n  alCand datesW h  ghtKeyByFeature(
+         nputCand dates,
+        query.ranker  ghtShr nkage)
     }
 
-    val interleavedCandidates =
-      InterleaveUtil.weightedInterleave(candidatesAndWeightKeyByIndexId, query.maxWeightAdjustments)
+    val  nterleavedCand dates =
+       nterleaveUt l.  ghted nterleave(cand datesAnd  ghtKeyBy ndex d, query.max  ghtAdjust nts)
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("cand dates").add( nterleavedCand dates.s ze)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blendedCand dates = BlendedCand datesBu lder.bu ld( nputCand dates,  nterleavedCand dates)
+    Future.value(blendedCand dates)
   }
 }
 
-object CountWeightedInterleaveBlender {
+object Count  ghted nterleaveBlender {
 
   /**
-   * We pass two parameters to the weighted interleaver:
-   * @param rankerWeightShrinkage shrinkage parameter between [0, 1] that determines how close we
-   *                              stay to uniform sampling. The bigger the shrinkage the
-   *                              closer we are to uniform round robin
-   * @param maxWeightAdjustments max number of weighted sampling to do prior to defaulting to
-   *                             uniform. Set so that we avoid infinite loops (e.g. if weights are
+   *   pass two para ters to t    ghted  nterleaver:
+   * @param ranker  ghtShr nkage shr nkage para ter bet en [0, 1] that determ nes how close  
+   *                              stay to un form sampl ng. T  b gger t  shr nkage t 
+   *                              closer   are to un form round rob n
+   * @param max  ghtAdjust nts max number of   ghted sampl ng to do pr or to default ng to
+   *                             un form. Set so that   avo d  nf n e loops (e.g.  f   ghts are
    *                             0)
    */
-  case class WeightedBlenderQuery(
-    rankerWeightShrinkage: Double,
-    maxWeightAdjustments: Int)
+  case class   ghtedBlenderQuery(
+    ranker  ghtShr nkage: Double,
+    max  ghtAdjust nts:  nt)
 
-  def paramToQuery(params: Params): WeightedBlenderQuery = {
-    val rankerWeightShrinkage: Double =
-      params(BlenderParams.RankingInterleaveWeightShrinkageParam)
-    val maxWeightAdjustments: Int =
-      params(BlenderParams.RankingInterleaveMaxWeightAdjustments)
+  def paramToQuery(params: Params):   ghtedBlenderQuery = {
+    val ranker  ghtShr nkage: Double =
+      params(BlenderParams.Rank ng nterleave  ghtShr nkageParam)
+    val max  ghtAdjust nts:  nt =
+      params(BlenderParams.Rank ng nterleaveMax  ghtAdjust nts)
 
-    WeightedBlenderQuery(rankerWeightShrinkage, maxWeightAdjustments)
+      ghtedBlenderQuery(ranker  ghtShr nkage, max  ghtAdjust nts)
   }
 }

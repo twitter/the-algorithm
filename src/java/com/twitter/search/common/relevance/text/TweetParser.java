@@ -1,190 +1,190 @@
-package com.twitter.search.common.relevance.text;
+package com.tw ter.search.common.relevance.text;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Set;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Jo ner;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.common.text.util.CharSequenceUtils;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.Smileys;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
+ mport com.tw ter.common.text.ut l.CharSequenceUt ls;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.search.common.ut l.text.Normal zer lper;
+ mport com.tw ter.search.common.ut l.text.Sm leys;
+ mport com.tw ter.search.common.ut l.text.Token zer lper;
+ mport com.tw ter.search.common.ut l.text.Token zerResult;
 
 /**
- * A parser to extract very basic information from a tweet.
+ * A parser to extract very bas c  nformat on from a t et.
  */
-public class TweetParser {
-  private static final boolean DO_NOT_REMOVE_WWW = false;
+publ c class T etParser {
+  pr vate stat c f nal boolean DO_NOT_REMOVE_WWW = false;
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message) {
-    parseTweet(message, false, true);
+  /** Parses t  g ven Tw ter ssage. */
+  publ c vo d parseT et(Tw ter ssage  ssage) {
+    parseT et( ssage, false, true);
   }
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message,
-                         boolean useEntitiesFromTweetText,
+  /** Parses t  g ven Tw ter ssage. */
+  publ c vo d parseT et(Tw ter ssage  ssage,
+                         boolean useEnt  esFromT etText,
                          boolean parseUrls) {
-    for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-      parseTweet(message, useEntitiesFromTweetText, parseUrls, penguinVersion);
+    for (Pengu nVers on pengu nVers on :  ssage.getSupportedPengu nVers ons()) {
+      parseT et( ssage, useEnt  esFromT etText, parseUrls, pengu nVers on);
     }
   }
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message,
-                         boolean useEntitiesFromTweetText,
+  /** Parses t  g ven Tw ter ssage. */
+  publ c vo d parseT et(Tw ter ssage  ssage,
+                         boolean useEnt  esFromT etText,
                          boolean parseUrls,
-                         PenguinVersion penguinVersion) {
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    String rawText = message.getText();
-    Locale locale = message.getLocale();
+                         Pengu nVers on pengu nVers on) {
+    T etTextFeatures textFeatures =  ssage.getT etTextFeatures(pengu nVers on);
+    Str ng rawText =  ssage.getText();
+    Locale locale =  ssage.getLocale();
 
-    // don't lower case first.
-    String normalizedText = NormalizerHelper.normalizeKeepCase(rawText, locale, penguinVersion);
-    String lowercasedNormalizedText =
-      CharSequenceUtils.toLowerCase(normalizedText, locale).toString();
+    // don't lo r case f rst.
+    Str ng normal zedText = Normal zer lper.normal zeKeepCase(rawText, locale, pengu nVers on);
+    Str ng lo rcasedNormal zedText =
+      CharSequenceUt ls.toLo rCase(normal zedText, locale).toStr ng();
 
-    textFeatures.setNormalizedText(lowercasedNormalizedText);
+    textFeatures.setNormal zedText(lo rcasedNormal zedText);
 
-    TokenizerResult result = TokenizerHelper.tokenizeTweet(normalizedText, locale, penguinVersion);
-    List<String> tokens = new ArrayList<>(result.tokens);
+    Token zerResult result = Token zer lper.token zeT et(normal zedText, locale, pengu nVers on);
+    L st<Str ng> tokens = new ArrayL st<>(result.tokens);
     textFeatures.setTokens(tokens);
     textFeatures.setTokenSequence(result.tokenSequence);
 
-    if (parseUrls) {
-      parseUrls(message, textFeatures);
+     f (parseUrls) {
+      parseUrls( ssage, textFeatures);
     }
 
-    textFeatures.setStrippedTokens(result.strippedDownTokens);
-    textFeatures.setNormalizedStrippedText(Joiner.on(" ").skipNulls()
-                                                 .join(result.strippedDownTokens));
+    textFeatures.setStr ppedTokens(result.str ppedDownTokens);
+    textFeatures.setNormal zedStr ppedText(Jo ner.on(" ").sk pNulls()
+                                                 .jo n(result.str ppedDownTokens));
 
-    // Sanity checks, make sure there is no null token list.
-    if (textFeatures.getTokens() == null) {
-      textFeatures.setTokens(Collections.<String>emptyList());
+    // San y c cks, make sure t re  s no null token l st.
+     f (textFeatures.getTokens() == null) {
+      textFeatures.setTokens(Collect ons.<Str ng>emptyL st());
     }
-    if (textFeatures.getResolvedUrlTokens() == null) {
-      textFeatures.setResolvedUrlTokens(Collections.<String>emptyList());
+     f (textFeatures.getResolvedUrlTokens() == null) {
+      textFeatures.setResolvedUrlTokens(Collect ons.<Str ng>emptyL st());
     }
-    if (textFeatures.getStrippedTokens() == null) {
-      textFeatures.setStrippedTokens(Collections.<String>emptyList());
+     f (textFeatures.getStr ppedTokens() == null) {
+      textFeatures.setStr ppedTokens(Collect ons.<Str ng>emptyL st());
     }
 
-    setHashtagsAndMentions(message, textFeatures, penguinVersion);
-    textFeatures.setStocks(sanitizeTokenizerResults(result.stocks, '$'));
-    textFeatures.setHasQuestionMark(findQuestionMark(textFeatures));
+    setHashtagsAnd nt ons( ssage, textFeatures, pengu nVers on);
+    textFeatures.setStocks(san  zeToken zerResults(result.stocks, '$'));
+    textFeatures.setHasQuest onMark(f ndQuest onMark(textFeatures));
 
-    // Set smiley polarities.
-    textFeatures.setSmileys(result.smileys);
-    for (String smiley : textFeatures.getSmileys()) {
-      if (Smileys.isValidSmiley(smiley)) {
-        boolean polarity = Smileys.getPolarity(smiley);
-        if (polarity) {
-          textFeatures.setHasPositiveSmiley(true);
+    // Set sm ley polar  es.
+    textFeatures.setSm leys(result.sm leys);
+    for (Str ng sm ley : textFeatures.getSm leys()) {
+       f (Sm leys. sVal dSm ley(sm ley)) {
+        boolean polar y = Sm leys.getPolar y(sm ley);
+         f (polar y) {
+          textFeatures.setHasPos  veSm ley(true);
         } else {
-          textFeatures.setHasNegativeSmiley(true);
+          textFeatures.setHasNegat veSm ley(true);
         }
       }
     }
-    message.setTokenizedCharSequence(penguinVersion, result.rawSequence);
+     ssage.setToken zedCharSequence(pengu nVers on, result.rawSequence);
 
-    if (useEntitiesFromTweetText) {
-      takeEntities(message, textFeatures, result, penguinVersion);
+     f (useEnt  esFromT etText) {
+      takeEnt  es( ssage, textFeatures, result, pengu nVers on);
     }
   }
 
-  /** Parse the URLs in the given TwitterMessage. */
-  public void parseUrls(TwitterMessage message) {
-    for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-      parseUrls(message, message.getTweetTextFeatures(penguinVersion));
+  /** Parse t  URLs  n t  g ven Tw ter ssage. */
+  publ c vo d parseUrls(Tw ter ssage  ssage) {
+    for (Pengu nVers on pengu nVers on :  ssage.getSupportedPengu nVers ons()) {
+      parseUrls( ssage,  ssage.getT etTextFeatures(pengu nVers on));
     }
   }
 
-  /** Parse the URLs in the given TwitterMessage. */
-  public void parseUrls(TwitterMessage message, TweetTextFeatures textFeatures) {
-    if (message.getExpandedUrlMap() != null) {
-      Set<String> urlsToTokenize = Sets.newLinkedHashSet();
-      for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
-        if (url.isSetExpandedUrl()) {
-          urlsToTokenize.add(url.getExpandedUrl());
+  /** Parse t  URLs  n t  g ven Tw ter ssage. */
+  publ c vo d parseUrls(Tw ter ssage  ssage, T etTextFeatures textFeatures) {
+     f ( ssage.getExpandedUrlMap() != null) {
+      Set<Str ng> urlsToToken ze = Sets.newL nkedHashSet();
+      for (Thr ftExpandedUrl url :  ssage.getExpandedUrlMap().values()) {
+         f (url. sSetExpandedUrl()) {
+          urlsToToken ze.add(url.getExpandedUrl());
         }
-        if (url.isSetCanonicalLastHopUrl()) {
-          urlsToTokenize.add(url.getCanonicalLastHopUrl());
+         f (url. sSetCanon calLastHopUrl()) {
+          urlsToToken ze.add(url.getCanon calLastHopUrl());
         }
       }
-      TokenizerResult resolvedUrlResult =
-          TokenizerHelper.tokenizeUrls(urlsToTokenize, message.getLocale(), DO_NOT_REMOVE_WWW);
-      List<String> urlTokens = new ArrayList<>(resolvedUrlResult.tokens);
+      Token zerResult resolvedUrlResult =
+          Token zer lper.token zeUrls(urlsToToken ze,  ssage.getLocale(), DO_NOT_REMOVE_WWW);
+      L st<Str ng> urlTokens = new ArrayL st<>(resolvedUrlResult.tokens);
       textFeatures.setResolvedUrlTokens(urlTokens);
     }
   }
 
-  private void takeEntities(TwitterMessage message,
-                            TweetTextFeatures textFeatures,
-                            TokenizerResult result,
-                            PenguinVersion penguinVersion) {
-    if (message.getHashtags().isEmpty()) {
-      // add hashtags to TwitterMessage if it doens't already have them, from
-      // JSON entities, this happens when we do offline indexing
-      for (String hashtag : sanitizeTokenizerResults(result.hashtags, '#')) {
-        message.addHashtag(hashtag);
+  pr vate vo d takeEnt  es(Tw ter ssage  ssage,
+                            T etTextFeatures textFeatures,
+                            Token zerResult result,
+                            Pengu nVers on pengu nVers on) {
+     f ( ssage.getHashtags(). sEmpty()) {
+      // add hashtags to Tw ter ssage  f   doens't already have t m, from
+      // JSON ent  es, t  happens w n   do offl ne  ndex ng
+      for (Str ng hashtag : san  zeToken zerResults(result.hashtags, '#')) {
+         ssage.addHashtag(hashtag);
       }
     }
 
-    if (message.getMentions().isEmpty()) {
-      // add mentions to TwitterMessage if it doens't already have them, from
-      // JSON entities, this happens when we do offline indexing
-      for (String mention : sanitizeTokenizerResults(result.mentions, '@')) {
-        message.addMention(mention);
+     f ( ssage.get nt ons(). sEmpty()) {
+      // add  nt ons to Tw ter ssage  f   doens't already have t m, from
+      // JSON ent  es, t  happens w n   do offl ne  ndex ng
+      for (Str ng  nt on : san  zeToken zerResults(result. nt ons, '@')) {
+         ssage.add nt on( nt on);
       }
     }
 
-    setHashtagsAndMentions(message, textFeatures, penguinVersion);
+    setHashtagsAnd nt ons( ssage, textFeatures, pengu nVers on);
   }
 
-  private void setHashtagsAndMentions(TwitterMessage message,
-                                      TweetTextFeatures textFeatures,
-                                      PenguinVersion penguinVersion) {
-    textFeatures.setHashtags(message.getNormalizedHashtags(penguinVersion));
-    textFeatures.setMentions(message.getLowercasedMentions());
+  pr vate vo d setHashtagsAnd nt ons(Tw ter ssage  ssage,
+                                      T etTextFeatures textFeatures,
+                                      Pengu nVers on pengu nVers on) {
+    textFeatures.setHashtags( ssage.getNormal zedHashtags(pengu nVers on));
+    textFeatures.set nt ons( ssage.getLo rcased nt ons());
   }
 
-  // The strings in the mentions, hashtags and stocks lists in TokenizerResult should already have
-  // the leading characters ('@', '#' and '$') stripped. So in most cases, this sanitization is not
-  // needed. However, sometimes Penguin tokenizes hashtags, cashtags and mentions incorrectly
-  // (for example, when using the Korean tokenizer for tokens like ~@mention or ?#hashtag -- see
-  // SEARCHQUAL-11924 for more details). So we're doing this extra sanitization here to try to work
-  // around these tokenization issues.
-  private List<String> sanitizeTokenizerResults(List<String> tokens, char tokenSymbol) {
-    List<String> sanitizedTokens = new ArrayList<String>();
-    for (String token : tokens) {
-      int indexOfTokenSymbol = token.indexOf(tokenSymbol);
-      if (indexOfTokenSymbol < 0) {
-        sanitizedTokens.add(token);
+  // T  str ngs  n t   nt ons, hashtags and stocks l sts  n Token zerResult should already have
+  // t  lead ng characters ('@', '#' and '$') str pped. So  n most cases, t  san  zat on  s not
+  // needed. Ho ver, so t  s Pengu n token zes hashtags, cashtags and  nt ons  ncorrectly
+  // (for example, w n us ng t  Korean token zer for tokens l ke ~@ nt on or ?#hashtag -- see
+  // SEARCHQUAL-11924 for more deta ls). So  're do ng t  extra san  zat on  re to try to work
+  // around t se token zat on  ssues.
+  pr vate L st<Str ng> san  zeToken zerResults(L st<Str ng> tokens, char tokenSymbol) {
+    L st<Str ng> san  zedTokens = new ArrayL st<Str ng>();
+    for (Str ng token : tokens) {
+       nt  ndexOfTokenSymbol = token. ndexOf(tokenSymbol);
+       f ( ndexOfTokenSymbol < 0) {
+        san  zedTokens.add(token);
       } else {
-        String sanitizedToken = token.substring(indexOfTokenSymbol + 1);
-        if (!sanitizedToken.isEmpty()) {
-          sanitizedTokens.add(sanitizedToken);
+        Str ng san  zedToken = token.substr ng( ndexOfTokenSymbol + 1);
+         f (!san  zedToken. sEmpty()) {
+          san  zedTokens.add(san  zedToken);
         }
       }
     }
-    return sanitizedTokens;
+    return san  zedTokens;
   }
 
-  /** Determines if the normalized text of the given features contain a question mark. */
-  public static boolean findQuestionMark(TweetTextFeatures textFeatures) {
-    // t.co links don't contain ?'s, so it's not necessary to subtract ?'s occurring in Urls
-    // the tweet text always contains t.co, even if the display url is different
-    // all links on twitter are now wrapped into t.co
-    return textFeatures.getNormalizedText().contains("?");
+  /** Determ nes  f t  normal zed text of t  g ven features conta n a quest on mark. */
+  publ c stat c boolean f ndQuest onMark(T etTextFeatures textFeatures) {
+    // t.co l nks don't conta n ?'s, so  's not necessary to subtract ?'s occurr ng  n Urls
+    // t  t et text always conta ns t.co, even  f t  d splay url  s d fferent
+    // all l nks on tw ter are now wrapped  nto t.co
+    return textFeatures.getNormal zedText().conta ns("?");
   }
 }

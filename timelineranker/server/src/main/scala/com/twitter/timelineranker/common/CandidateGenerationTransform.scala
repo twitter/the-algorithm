@@ -1,40 +1,40 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.CandidateTweet
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.model.Cand dateT et
+ mport com.tw ter.t  l neranker.model.Cand dateT etsResult
+ mport com.tw ter.ut l.Future
 
-class CandidateGenerationTransform(statsReceiver: StatsReceiver)
-    extends FutureArrow[HydratedCandidatesAndFeaturesEnvelope, CandidateTweetsResult] {
-  private[this] val numCandidateTweetsStat = statsReceiver.stat("numCandidateTweets")
-  private[this] val numSourceTweetsStat = statsReceiver.stat("numSourceTweets")
+class Cand dateGenerat onTransform(statsRece ver: StatsRece ver)
+    extends FutureArrow[HydratedCand datesAndFeaturesEnvelope, Cand dateT etsResult] {
+  pr vate[t ] val numCand dateT etsStat = statsRece ver.stat("numCand dateT ets")
+  pr vate[t ] val numS ceT etsStat = statsRece ver.stat("numS ceT ets")
 
-  override def apply(
-    candidatesAndFeaturesEnvelope: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[CandidateTweetsResult] = {
-    val hydratedTweets = candidatesAndFeaturesEnvelope.candidateEnvelope.hydratedTweets.outerTweets
+  overr de def apply(
+    cand datesAndFeaturesEnvelope: HydratedCand datesAndFeaturesEnvelope
+  ): Future[Cand dateT etsResult] = {
+    val hydratedT ets = cand datesAndFeaturesEnvelope.cand dateEnvelope.hydratedT ets.outerT ets
 
-    if (hydratedTweets.nonEmpty) {
-      val candidates = hydratedTweets.map { hydratedTweet =>
-        CandidateTweet(hydratedTweet, candidatesAndFeaturesEnvelope.features(hydratedTweet.tweetId))
+     f (hydratedT ets.nonEmpty) {
+      val cand dates = hydratedT ets.map { hydratedT et =>
+        Cand dateT et(hydratedT et, cand datesAndFeaturesEnvelope.features(hydratedT et.t et d))
       }
-      numCandidateTweetsStat.add(candidates.size)
+      numCand dateT etsStat.add(cand dates.s ze)
 
-      val sourceTweets =
-        candidatesAndFeaturesEnvelope.candidateEnvelope.sourceHydratedTweets.outerTweets.map {
-          hydratedTweet =>
-            CandidateTweet(
-              hydratedTweet,
-              candidatesAndFeaturesEnvelope.features(hydratedTweet.tweetId))
+      val s ceT ets =
+        cand datesAndFeaturesEnvelope.cand dateEnvelope.s ceHydratedT ets.outerT ets.map {
+          hydratedT et =>
+            Cand dateT et(
+              hydratedT et,
+              cand datesAndFeaturesEnvelope.features(hydratedT et.t et d))
         }
-      numSourceTweetsStat.add(sourceTweets.size)
+      numS ceT etsStat.add(s ceT ets.s ze)
 
-      Future.value(CandidateTweetsResult(candidates, sourceTweets))
+      Future.value(Cand dateT etsResult(cand dates, s ceT ets))
     } else {
-      Future.value(CandidateTweetsResult.Empty)
+      Future.value(Cand dateT etsResult.Empty)
     }
   }
 }

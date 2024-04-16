@@ -1,98 +1,98 @@
-package com.twitter.recos.user_tweet_graph
+package com.tw ter.recos.user_t et_graph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.recos.decider.EndpointLoadShedder
-import com.twitter.recos.recos_common.thriftscala._
-import com.twitter.recos.user_tweet_graph.thriftscala._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import scala.concurrent.duration.MILLISECONDS
-import com.twitter.logging.Logger
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.TweetBasedRelatedTweetsHandler
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ProducerBasedRelatedTweetsHandler
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ConsumersBasedRelatedTweetsHandler
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.f nagle.trac ng.Trace d
+ mport com.tw ter.recos.dec der.Endpo ntLoadS dder
+ mport com.tw ter.recos.recos_common.thr ftscala._
+ mport com.tw ter.recos.user_t et_graph.thr ftscala._
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport scala.concurrent.durat on.M LL SECONDS
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos.user_t et_graph.relatedT etHandlers.T etBasedRelatedT etsHandler
+ mport com.tw ter.recos.user_t et_graph.relatedT etHandlers.ProducerBasedRelatedT etsHandler
+ mport com.tw ter.recos.user_t et_graph.relatedT etHandlers.Consu rsBasedRelatedT etsHandler
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
 
-object UserTweetGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+object UserT etGraph {
+  def trace d: Trace d = Trace. d
+  def cl ent d: Opt on[Cl ent d] = Cl ent d.current
 }
 
-class UserTweetGraph(
-  tweetBasedRelatedTweetsHandler: TweetBasedRelatedTweetsHandler,
-  producerBasedRelatedTweetsHandler: ProducerBasedRelatedTweetsHandler,
-  consumersBasedRelatedTweetsHandler: ConsumersBasedRelatedTweetsHandler,
-  endpointLoadShedder: EndpointLoadShedder
+class UserT etGraph(
+  t etBasedRelatedT etsHandler: T etBasedRelatedT etsHandler,
+  producerBasedRelatedT etsHandler: ProducerBasedRelatedT etsHandler,
+  consu rsBasedRelatedT etsHandler: Consu rsBasedRelatedT etsHandler,
+  endpo ntLoadS dder: Endpo ntLoadS dder
 )(
-  implicit timer: Timer)
-    extends thriftscala.UserTweetGraph.MethodPerEndpoint {
+   mpl c  t  r: T  r)
+    extends thr ftscala.UserT etGraph. thodPerEndpo nt {
 
-  private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
-  private val EmptyResponse = Future.value(RelatedTweetResponse())
-  private val EmptyFeatureResponse = Future.value(UserTweetFeatureResponse())
+  pr vate val defaultT  out: Durat on = Durat on(50, M LL SECONDS)
+  pr vate val EmptyResponse = Future.value(RelatedT etResponse())
+  pr vate val EmptyFeatureResponse = Future.value(UserT etFeatureResponse())
 
-  private val log = Logger()
+  pr vate val log = Logger()
 
-  override def recommendTweets(request: RecommendTweetRequest): Future[RecommendTweetResponse] =
-    Future.value(RecommendTweetResponse())
+  overr de def recom ndT ets(request: Recom ndT etRequest): Future[Recom ndT etResponse] =
+    Future.value(Recom ndT etResponse())
 
-  override def getLeftNodeEdges(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] =
+  overr de def getLeftNodeEdges(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] =
     Future.value(GetRecentEdgesResponse())
 
-  override def getRightNode(tweet: Long): Future[NodeInfo] = Future.value(NodeInfo())
+  overr de def getR ghtNode(t et: Long): Future[Node nfo] = Future.value(Node nfo())
 
   // deprecated
-  override def relatedTweets(request: RelatedTweetRequest): Future[RelatedTweetResponse] =
+  overr de def relatedT ets(request: RelatedT etRequest): Future[RelatedT etResponse] =
     EmptyResponse
 
-  override def tweetBasedRelatedTweets(
-    request: TweetBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("tweetBasedRelatedTweets") {
-      tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
+  overr de def t etBasedRelatedT ets(
+    request: T etBasedRelatedT etRequest
+  ): Future[RelatedT etResponse] =
+    endpo ntLoadS dder("t etBasedRelatedT ets") {
+      t etBasedRelatedT etsHandler(request).ra seW h n(defaultT  out)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case Endpo ntLoadS dder.LoadS dd ngExcept on =>
         EmptyResponse
       case e =>
-        log.info("user-tweet-graph_tweetBasedRelatedTweets" + e)
+        log. nfo("user-t et-graph_t etBasedRelatedT ets" + e)
         EmptyResponse
     }
 
-  override def producerBasedRelatedTweets(
-    request: ProducerBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("producerBasedRelatedTweets") {
-      producerBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
+  overr de def producerBasedRelatedT ets(
+    request: ProducerBasedRelatedT etRequest
+  ): Future[RelatedT etResponse] =
+    endpo ntLoadS dder("producerBasedRelatedT ets") {
+      producerBasedRelatedT etsHandler(request).ra seW h n(defaultT  out)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case Endpo ntLoadS dder.LoadS dd ngExcept on =>
         EmptyResponse
       case e =>
-        log.info("user-tweet-graph_producerBasedRelatedTweets" + e)
+        log. nfo("user-t et-graph_producerBasedRelatedT ets" + e)
         EmptyResponse
     }
 
-  override def consumersBasedRelatedTweets(
-    request: ConsumersBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("consumersBasedRelatedTweets") {
-      consumersBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
+  overr de def consu rsBasedRelatedT ets(
+    request: Consu rsBasedRelatedT etRequest
+  ): Future[RelatedT etResponse] =
+    endpo ntLoadS dder("consu rsBasedRelatedT ets") {
+      consu rsBasedRelatedT etsHandler(request).ra seW h n(defaultT  out)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case Endpo ntLoadS dder.LoadS dd ngExcept on =>
         EmptyResponse
       case e =>
-        log.info("user-tweet-graph_consumersBasedRelatedTweets" + e)
+        log. nfo("user-t et-graph_consu rsBasedRelatedT ets" + e)
         EmptyResponse
     }
 
   // deprecated
-  override def userTweetFeatures(
-    userId: UserId,
-    tweetId: TweetId
-  ): Future[UserTweetFeatureResponse] =
+  overr de def userT etFeatures(
+    user d: User d,
+    t et d: T et d
+  ): Future[UserT etFeatureResponse] =
     EmptyFeatureResponse
 
 }

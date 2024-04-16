@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasExecutorResults
 
 case class NewStepData[State <: HasExecutorResults[State]](
-  pipelineState: State,
-  pipelineFailure: Option[PipelineFailure] = None) {
+  p pel neState: State,
+  p pel neFa lure: Opt on[P pel neFa lure] = None) {
 
-  val stopExecuting = pipelineFailure.isDefined
-  def withFailure(failure: PipelineFailure): NewStepData[State] =
-    this.copy(pipelineFailure = Some(failure))
+  val stopExecut ng = p pel neFa lure. sDef ned
+  def w hFa lure(fa lure: P pel neFa lure): NewStepData[State] =
+    t .copy(p pel neFa lure = So (fa lure))
 }

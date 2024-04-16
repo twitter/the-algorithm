@@ -1,8 +1,8 @@
-create_thrift_libraries(
-    base_name = "interaction_graph",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = " nteract on_graph",
+    s ces = ["*.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
     ],
     generate_languages = [
@@ -10,6 +10,6 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "interaction_graph-thrift-java",
-    provides_scala_name = "interaction_graph-thrift-scala",
+    prov des_java_na  = " nteract on_graph-thr ft-java",
+    prov des_scala_na  = " nteract on_graph-thr ft-scala",
 )

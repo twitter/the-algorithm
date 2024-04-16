@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-import com.twitter.simclusters_v2.common.TweetId
+ mport com.tw ter.s mclusters_v2.common.T et d
 
 /***
- * Bind a tweetId with a raw score generated from one single Similarity Engine
+ * B nd a t et d w h a raw score generated from one s ngle S m lar y Eng ne
  */
-case class TweetWithScore(tweetId: TweetId, score: Double)
+case class T etW hScore(t et d: T et d, score: Double)

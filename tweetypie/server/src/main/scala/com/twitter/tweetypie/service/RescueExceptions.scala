@@ -1,63 +1,63 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.finagle.IndividualRequestTimeoutException
-import com.twitter.servo.exception.thriftscala._
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.core.RateLimited
-import com.twitter.tweetypie.core.TweetHydrationError
-import com.twitter.tweetypie.core.UpstreamFailure
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.TimeoutException
+ mport com.tw ter.f nagle. nd v dualRequestT  outExcept on
+ mport com.tw ter.servo.except on.thr ftscala._
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.core.RateL m ed
+ mport com.tw ter.t etyp e.core.T etHydrat onError
+ mport com.tw ter.t etyp e.core.UpstreamFa lure
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.T  outExcept on
 
-object RescueExceptions {
-  private val log = Logger("com.twitter.tweetypie.service.TweetService")
+object RescueExcept ons {
+  pr vate val log = Logger("com.tw ter.t etyp e.serv ce.T etServ ce")
 
   /**
-   * rescue to servo exceptions
+   * rescue to servo except ons
    */
-  def rescueToServoFailure(
-    name: String,
-    clientId: String
-  ): PartialFunction[Throwable, Future[Nothing]] = {
-    translateToServoFailure(formatError(name, clientId, _)).andThen(Future.exception)
+  def rescueToServoFa lure(
+    na : Str ng,
+    cl ent d: Str ng
+  ): Part alFunct on[Throwable, Future[Noth ng]] = {
+    translateToServoFa lure(formatError(na , cl ent d, _)).andT n(Future.except on)
   }
 
-  private def translateToServoFailure(
-    toMsg: String => String
-  ): PartialFunction[Throwable, Throwable] = {
-    case e: AccessDenied if suspendedOrDeactivated(e) =>
-      e.copy(message = toMsg(e.message))
-    case e: ClientError =>
-      e.copy(message = toMsg(e.message))
-    case e: UnauthorizedException =>
-      ClientError(ClientErrorCause.Unauthorized, toMsg(e.msg))
-    case e: AccessDenied =>
-      ClientError(ClientErrorCause.Unauthorized, toMsg(e.message))
-    case e: RateLimited =>
-      ClientError(ClientErrorCause.RateLimited, toMsg(e.message))
+  pr vate def translateToServoFa lure(
+    toMsg: Str ng => Str ng
+  ): Part alFunct on[Throwable, Throwable] = {
+    case e: AccessDen ed  f suspendedOrDeact vated(e) =>
+      e.copy( ssage = toMsg(e. ssage))
+    case e: Cl entError =>
+      e.copy( ssage = toMsg(e. ssage))
+    case e: Unauthor zedExcept on =>
+      Cl entError(Cl entErrorCause.Unauthor zed, toMsg(e.msg))
+    case e: AccessDen ed =>
+      Cl entError(Cl entErrorCause.Unauthor zed, toMsg(e. ssage))
+    case e: RateL m ed =>
+      Cl entError(Cl entErrorCause.RateL m ed, toMsg(e. ssage))
     case e: ServerError =>
-      e.copy(message = toMsg(e.message))
-    case e: TimeoutException =>
-      ServerError(ServerErrorCause.RequestTimeout, toMsg(e.toString))
-    case e: IndividualRequestTimeoutException =>
-      ServerError(ServerErrorCause.RequestTimeout, toMsg(e.toString))
-    case e: UpstreamFailure =>
-      ServerError(ServerErrorCause.DependencyError, toMsg(e.toString))
-    case e: OverCapacity =>
-      ServerError(ServerErrorCause.ServiceUnavailable, toMsg(e.message))
-    case e: TweetHydrationError =>
-      ServerError(ServerErrorCause.DependencyError, toMsg(e.toString))
+      e.copy( ssage = toMsg(e. ssage))
+    case e: T  outExcept on =>
+      ServerError(ServerErrorCause.RequestT  out, toMsg(e.toStr ng))
+    case e:  nd v dualRequestT  outExcept on =>
+      ServerError(ServerErrorCause.RequestT  out, toMsg(e.toStr ng))
+    case e: UpstreamFa lure =>
+      ServerError(ServerErrorCause.DependencyError, toMsg(e.toStr ng))
+    case e: OverCapac y =>
+      ServerError(ServerErrorCause.Serv ceUnava lable, toMsg(e. ssage))
+    case e: T etHydrat onError =>
+      ServerError(ServerErrorCause.DependencyError, toMsg(e.toStr ng))
     case e =>
-      log.warn("caught unexpected exception", e)
-      ServerError(ServerErrorCause.InternalServerError, toMsg(e.toString))
+      log.warn("caught unexpected except on", e)
+      ServerError(ServerErrorCause. nternalServerError, toMsg(e.toStr ng))
   }
 
-  private def suspendedOrDeactivated(e: AccessDenied): Boolean =
-    e.errorCause.exists { c =>
-      c == AccessDeniedCause.UserDeactivated || c == AccessDeniedCause.UserSuspended
+  pr vate def suspendedOrDeact vated(e: AccessDen ed): Boolean =
+    e.errorCause.ex sts { c =>
+      c == AccessDen edCause.UserDeact vated || c == AccessDen edCause.UserSuspended
     }
 
-  private def formatError(name: String, clientId: String, msg: String): String =
-    s"($clientId, $name) $msg"
+  pr vate def formatError(na : Str ng, cl ent d: Str ng, msg: Str ng): Str ng =
+    s"($cl ent d, $na ) $msg"
 }

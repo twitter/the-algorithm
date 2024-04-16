@@ -1,459 +1,459 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Optional;
+ mport java. o. OExcept on;
+ mport java.t  .Durat on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Opt onal;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableMap;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.cl ents.consu r.OffsetAndT  stamp;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.IndexingResultCounts;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentWriter;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rdKafkaConsu rsFactory;
+ mport com.tw ter.search.earlyb rd.part  on. ndex ngResultCounts;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntWr er;
 
 /**
- * Responsible for indexing the tweets and updates that need to be applied to a single segment
- * before it gets optimized and then optimizing the segment (except if it's the last one).
+ * Respons ble for  ndex ng t  t ets and updates that need to be appl ed to a s ngle seg nt
+ * before   gets opt m zed and t n opt m z ng t  seg nt (except  f  's t  last one).
  *
- * After that, no more tweets are added to the segment and the rest of the updates are added
- * in PostOptimizationUpdatesIndexer.
+ * After that, no more t ets are added to t  seg nt and t  rest of t  updates are added
+ *  n PostOpt m zat onUpdates ndexer.
  */
-class PreOptimizationSegmentIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(PreOptimizationSegmentIndexer.class);
+class PreOpt m zat onSeg nt ndexer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(PreOpt m zat onSeg nt ndexer.class);
 
-  private SegmentBuildInfo segmentBuildInfo;
-  private final ArrayList<SegmentBuildInfo> segmentBuildInfos;
-  private SegmentManager segmentManager;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final long lateTweetBuffer;
+  pr vate Seg ntBu ld nfo seg ntBu ld nfo;
+  pr vate f nal ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos;
+  pr vate Seg ntManager seg ntManager;
+  pr vate f nal Top cPart  on t etTop c;
+  pr vate f nal Top cPart  on updateTop c;
+  pr vate f nal Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory;
+  pr vate f nal long lateT etBuffer;
 
-  public PreOptimizationSegmentIndexer(
-      SegmentBuildInfo segmentBuildInfo,
-      ArrayList<SegmentBuildInfo> segmentBuildInfos,
-      SegmentManager segmentManager,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-      long lateTweetBuffer) {
-    this.segmentBuildInfo = segmentBuildInfo;
-    this.segmentBuildInfos = segmentBuildInfos;
-    this.segmentManager = segmentManager;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.lateTweetBuffer = lateTweetBuffer;
+  publ c PreOpt m zat onSeg nt ndexer(
+      Seg ntBu ld nfo seg ntBu ld nfo,
+      ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos,
+      Seg ntManager seg ntManager,
+      Top cPart  on t etTop c,
+      Top cPart  on updateTop c,
+      Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory,
+      long lateT etBuffer) {
+    t .seg ntBu ld nfo = seg ntBu ld nfo;
+    t .seg ntBu ld nfos = seg ntBu ld nfos;
+    t .seg ntManager = seg ntManager;
+    t .t etTop c = t etTop c;
+    t .updateTop c = updateTop c;
+    t .earlyb rdKafkaConsu rsFactory = earlyb rdKafkaConsu rsFactory;
+    t .lateT etBuffer = lateT etBuffer;
   }
 
-  SegmentInfo runIndexing() throws IOException {
-    LOG.info(String.format("Starting segment building for segment %d. "
-            + "Tweet offset range [ %,d, %,d ]",
-        segmentBuildInfo.getIndex(),
-        segmentBuildInfo.getTweetStartOffset(),
-        segmentBuildInfo.getTweetEndOffset()));
+  Seg nt nfo run ndex ng() throws  OExcept on {
+    LOG. nfo(Str ng.format("Start ng seg nt bu ld ng for seg nt %d. "
+            + "T et offset range [ %,d, %,d ]",
+        seg ntBu ld nfo.get ndex(),
+        seg ntBu ld nfo.getT etStartOffset(),
+        seg ntBu ld nfo.getT etEndOffset()));
 
-    Optional<Long> firstTweetIdInNextSegment = Optional.empty();
-    int index = segmentBuildInfo.getIndex();
-    if (index + 1 < segmentBuildInfos.size()) {
-      firstTweetIdInNextSegment = Optional.of(
-          segmentBuildInfos.get(index + 1).getStartTweetId());
+    Opt onal<Long> f rstT et d nNextSeg nt = Opt onal.empty();
+     nt  ndex = seg ntBu ld nfo.get ndex();
+     f ( ndex + 1 < seg ntBu ld nfos.s ze()) {
+      f rstT et d nNextSeg nt = Opt onal.of(
+          seg ntBu ld nfos.get( ndex + 1).getStartT et d());
     }
 
-    // Index tweets.
-    SegmentTweetsIndexingResult tweetIndexingResult = indexSegmentTweetsFromStream(
-        tweetTopic,
-        String.format("tweet_consumer_for_segment_%d", segmentBuildInfo.getIndex()),
-        firstTweetIdInNextSegment
+    //  ndex t ets.
+    Seg ntT ets ndex ngResult t et ndex ngResult =  ndexSeg ntT etsFromStream(
+        t etTop c,
+        Str ng.format("t et_consu r_for_seg nt_%d", seg ntBu ld nfo.get ndex()),
+        f rstT et d nNextSeg nt
     );
 
-    // Index updates.
-    KafkaOffsetPair updatesIndexingOffsets = findUpdateStreamOffsetRange(tweetIndexingResult);
+    //  ndex updates.
+    KafkaOffsetPa r updates ndex ngOffsets = f ndUpdateStreamOffsetRange(t et ndex ngResult);
 
-    String updatesConsumerClientId =
-        String.format("update_consumer_for_segment_%d", segmentBuildInfo.getIndex());
+    Str ng updatesConsu rCl ent d =
+        Str ng.format("update_consu r_for_seg nt_%d", seg ntBu ld nfo.get ndex());
 
-    LOG.info(String.format("Consumer: %s :: Tweets start time: %d, end time: %d ==> "
+    LOG. nfo(Str ng.format("Consu r: %s :: T ets start t  : %d, end t  : %d ==> "
             + "Updates start offset: %,d, end offset: %,d",
-        updatesConsumerClientId,
-        tweetIndexingResult.getMinRecordTimestampMs(),
-        tweetIndexingResult.getMaxRecordTimestampMs(),
-        updatesIndexingOffsets.getBeginOffset(),
-        updatesIndexingOffsets.getEndOffset()));
+        updatesConsu rCl ent d,
+        t et ndex ngResult.getM nRecordT  stampMs(),
+        t et ndex ngResult.getMaxRecordT  stampMs(),
+        updates ndex ngOffsets.getBeg nOffset(),
+        updates ndex ngOffsets.getEndOffset()));
 
-    indexUpdatesFromStream(
-        updateTopic,
-        updatesConsumerClientId,
-        updatesIndexingOffsets.getBeginOffset(),
-        updatesIndexingOffsets.getEndOffset(),
-        tweetIndexingResult.getSegmentWriter()
+     ndexUpdatesFromStream(
+        updateTop c,
+        updatesConsu rCl ent d,
+        updates ndex ngOffsets.getBeg nOffset(),
+        updates ndex ngOffsets.getEndOffset(),
+        t et ndex ngResult.getSeg ntWr er()
     );
 
-    if (segmentBuildInfo.isLastSegment()) {
+     f (seg ntBu ld nfo. sLastSeg nt()) {
       /*
-       * We don't optimize the last segment for a few reasons:
+       *   don't opt m ze t  last seg nt for a few reasons:
        *
-       * 1. We might have tweets coming next in the stream, which are supposed to end
-       *    up in this segment.
+       * 1.   m ght have t ets com ng next  n t  stream, wh ch are supposed to end
+       *    up  n t  seg nt.
        *
-       * 2. We might have updates coming next in the stream, which need to be applied to
-       *    this segment before it's optimized.
+       * 2.   m ght have updates com ng next  n t  stream, wh ch need to be appl ed to
+       *    t  seg nt before  's opt m zed.
        *
-       * So the segment is kept unoptimized and later we take care of setting up things
-       * so that PartitionWriter and the tweet create/update handlers can start correctly.
+       * So t  seg nt  s kept unopt m zed and later   take care of sett ng up th ngs
+       * so that Part  onWr er and t  t et create/update handlers can start correctly.
        */
-      LOG.info("Not optimizing the last segment ({})", segmentBuildInfo.getIndex());
+      LOG. nfo("Not opt m z ng t  last seg nt ({})", seg ntBu ld nfo.get ndex());
     } else {
-      Stopwatch optimizationStopwatch = Stopwatch.createStarted();
+      Stopwatch opt m zat onStopwatch = Stopwatch.createStarted();
       try {
-        LOG.info("Starting to optimize segment: {}", segmentBuildInfo.getIndex());
-        tweetIndexingResult.getSegmentWriter().getSegmentInfo()
-            .getIndexSegment().optimizeIndexes();
-      } finally {
-        LOG.info("Optimization of segment {} finished in {}.",
-            segmentBuildInfo.getIndex(), optimizationStopwatch);
+        LOG. nfo("Start ng to opt m ze seg nt: {}", seg ntBu ld nfo.get ndex());
+        t et ndex ngResult.getSeg ntWr er().getSeg nt nfo()
+            .get ndexSeg nt().opt m ze ndexes();
+      } f nally {
+        LOG. nfo("Opt m zat on of seg nt {} f n s d  n {}.",
+            seg ntBu ld nfo.get ndex(), opt m zat onStopwatch);
       }
     }
 
-    segmentBuildInfo.setUpdateKafkaOffsetPair(updatesIndexingOffsets);
-    segmentBuildInfo.setMaxIndexedTweetId(tweetIndexingResult.getMaxIndexedTweetId());
-    segmentBuildInfo.setSegmentWriter(tweetIndexingResult.getSegmentWriter());
+    seg ntBu ld nfo.setUpdateKafkaOffsetPa r(updates ndex ngOffsets);
+    seg ntBu ld nfo.setMax ndexedT et d(t et ndex ngResult.getMax ndexedT et d());
+    seg ntBu ld nfo.setSeg ntWr er(t et ndex ngResult.getSeg ntWr er());
 
-    return tweetIndexingResult.getSegmentWriter().getSegmentInfo();
+    return t et ndex ngResult.getSeg ntWr er().getSeg nt nfo();
   }
 
-  private SegmentTweetsIndexingResult indexSegmentTweetsFromStream(
-      TopicPartition topicPartition,
-      String consumerClientId,
-      Optional<Long> firstTweetIdInNextSegment) throws IOException {
-    long startOffset = segmentBuildInfo.getTweetStartOffset();
-    long endOffset = segmentBuildInfo.getTweetEndOffset();
-    long marginSize = lateTweetBuffer / 2;
+  pr vate Seg ntT ets ndex ngResult  ndexSeg ntT etsFromStream(
+      Top cPart  on top cPart  on,
+      Str ng consu rCl ent d,
+      Opt onal<Long> f rstT et d nNextSeg nt) throws  OExcept on {
+    long startOffset = seg ntBu ld nfo.getT etStartOffset();
+    long endOffset = seg ntBu ld nfo.getT etEndOffset();
+    long marg nS ze = lateT etBuffer / 2;
 
-    boolean isFirstSegment = segmentBuildInfo.getIndex() == 0;
+    boolean  sF rstSeg nt = seg ntBu ld nfo.get ndex() == 0;
 
-    long startReadingAtOffset = startOffset;
-    if (!isFirstSegment) {
-      startReadingAtOffset -= marginSize;
+    long startRead ngAtOffset = startOffset;
+     f (! sF rstSeg nt) {
+      startRead ngAtOffset -= marg nS ze;
     } else {
-      LOG.info("Not moving start offset backwards for segment {}.", segmentBuildInfo.getIndex());
+      LOG. nfo("Not mov ng start offset backwards for seg nt {}.", seg ntBu ld nfo.get ndex());
     }
 
-    long endReadingAtOffset = endOffset;
-    if (firstTweetIdInNextSegment.isPresent()) {
-      endReadingAtOffset += marginSize;
+    long endRead ngAtOffset = endOffset;
+     f (f rstT et d nNextSeg nt. sPresent()) {
+      endRead ngAtOffset += marg nS ze;
     } else {
-      LOG.info("Not moving end offset forwards for segment {}.", segmentBuildInfo.getIndex());
+      LOG. nfo("Not mov ng end offset forwards for seg nt {}.", seg ntBu ld nfo.get ndex());
     }
 
-    KafkaConsumer<Long, ThriftVersionedEvents> tweetsKafkaConsumer =
-        makeKafkaConsumerForIndexing(consumerClientId,
-            topicPartition, startReadingAtOffset);
+    KafkaConsu r<Long, Thr ftVers onedEvents> t etsKafkaConsu r =
+        makeKafkaConsu rFor ndex ng(consu rCl ent d,
+            top cPart  on, startRead ngAtOffset);
 
     boolean done = false;
-    long minIndexedTimestampMs = Long.MAX_VALUE;
-    long maxIndexedTimestampMs = Long.MIN_VALUE;
-    int indexedEvents = 0;
+    long m n ndexedT  stampMs = Long.MAX_VALUE;
+    long max ndexedT  stampMs = Long.M N_VALUE;
+     nt  ndexedEvents = 0;
 
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    LOG.info("Creating segment writer for timeslice ID {}.", segmentBuildInfo.getStartTweetId());
-    SegmentWriter segmentWriter = segmentManager.createSegmentWriter(
-        segmentBuildInfo.getStartTweetId());
+    LOG. nfo("Creat ng seg nt wr er for t  sl ce  D {}.", seg ntBu ld nfo.getStartT et d());
+    Seg ntWr er seg ntWr er = seg ntManager.createSeg ntWr er(
+        seg ntBu ld nfo.getStartT et d());
 
     /*
-     * We don't have a guarantee that tweets come in sorted order, so when we're building segment
-     * X', we try to pick some tweets from the previous and next ranges we're going to index.
+     *   don't have a guarantee that t ets co   n sorted order, so w n  're bu ld ng seg nt
+     * X',   try to p ck so  t ets from t  prev ous and next ranges  're go ng to  ndex.
      *
-     * We also ignore tweets in the beginning and the end of our tweets range, which are picked
-     * by the previous or following segment.
+     *   also  gnore t ets  n t  beg nn ng and t  end of   t ets range, wh ch are p cked
+     * by t  prev ous or follow ng seg nt.
      *
-     *   Segment X        Segment X'                              Segment X''
+     *   Seg nt X        Seg nt X'                              Seg nt X''
      * -------------- o ----------------------------------------- o ---------------
      *        [~~~~~] ^ [~~~~~]                           [~~~~~] | [~~~~~]
      *           |    |    |                                 |    |    |
-     *  front margin  |    front padding (size K)   back padding  |   back margin
+     *  front marg n  |    front padd ng (s ze K)   back padd ng  |   back marg n
      *                |                                           |
-     *                segment boundary at offset B' (1)           B''
+     *                seg nt boundary at offset B' (1)           B''
      *
-     * (1) This is at a predetermined tweet offset / tweet id.
+     * (1) T   s at a predeterm ned t et offset / t et  d.
      *
-     * For segment X', we start to read tweets at offset B'-K and finish reading
-     * tweets at offset B''+K. K is a constant.
+     * For seg nt X',   start to read t ets at offset B'-K and f n sh read ng
+     * t ets at offset B''+K. K  s a constant.
      *
-     * For middle segments X'
+     * For m ddle seg nts X'
      * ======================
-     * We move some tweets from the front margin and back margin into segment X'.
-     * Some tweets from the front and back padding are ignored, as they are moved
-     * into the previous and next segments.
+     *   move so  t ets from t  front marg n and back marg n  nto seg nt X'.
+     * So  t ets from t  front and back padd ng are  gnored, as t y are moved
+     *  nto t  prev ous and next seg nts.
      *
-     * For the first segment
+     * For t  f rst seg nt
      * =====================
-     * No front margin, no front padding. We just read from the beginning offset
-     * and insert everything.
+     * No front marg n, no front padd ng.   just read from t  beg nn ng offset
+     * and  nsert everyth ng.
      *
-     * For the last segment
+     * For t  last seg nt
      * ====================
-     * No back margin, no back padding. We just read until the end.
+     * No back marg n, no back padd ng.   just read unt l t  end.
      */
 
-    SkippedPickedCounter frontMargin = new SkippedPickedCounter("front margin");
-    SkippedPickedCounter backMargin = new SkippedPickedCounter("back margin");
-    SkippedPickedCounter frontPadding = new SkippedPickedCounter("front padding");
-    SkippedPickedCounter backPadding = new SkippedPickedCounter("back padding");
-    SkippedPickedCounter regular = new SkippedPickedCounter("regular");
-    int totalRead = 0;
-    long maxIndexedTweetId = -1;
+    Sk ppedP ckedCounter frontMarg n = new Sk ppedP ckedCounter("front marg n");
+    Sk ppedP ckedCounter backMarg n = new Sk ppedP ckedCounter("back marg n");
+    Sk ppedP ckedCounter frontPadd ng = new Sk ppedP ckedCounter("front padd ng");
+    Sk ppedP ckedCounter backPadd ng = new Sk ppedP ckedCounter("back padd ng");
+    Sk ppedP ckedCounter regular = new Sk ppedP ckedCounter("regular");
+     nt totalRead = 0;
+    long max ndexedT et d = -1;
 
-    Stopwatch pollTimer = Stopwatch.createUnstarted();
-    Stopwatch indexTimer = Stopwatch.createUnstarted();
+    Stopwatch pollT  r = Stopwatch.createUnstarted();
+    Stopwatch  ndexT  r = Stopwatch.createUnstarted();
 
     do {
-      // This can cause an exception, See P33896
-      pollTimer.start();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          tweetsKafkaConsumer.poll(Duration.ofSeconds(1));
-      pollTimer.stop();
+      // T  can cause an except on, See P33896
+      pollT  r.start();
+      Consu rRecords<Long, Thr ftVers onedEvents> records =
+          t etsKafkaConsu r.poll(Durat on.ofSeconds(1));
+      pollT  r.stop();
 
-      indexTimer.start();
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-        // Done reading?
-        if (record.offset() >= endReadingAtOffset) {
+       ndexT  r.start();
+      for (Consu rRecord<Long, Thr ftVers onedEvents> record : records) {
+        // Done read ng?
+         f (record.offset() >= endRead ngAtOffset) {
           done = true;
         }
 
-        ThriftVersionedEvents tve = record.value();
-        boolean indexTweet = false;
-        SkippedPickedCounter skippedPickedCounter;
+        Thr ftVers onedEvents tve = record.value();
+        boolean  ndexT et = false;
+        Sk ppedP ckedCounter sk ppedP ckedCounter;
 
-        if (record.offset() < segmentBuildInfo.getTweetStartOffset()) {
-          // Front margin.
-          skippedPickedCounter = frontMargin;
-          if (tve.getId() > segmentBuildInfo.getStartTweetId()) {
-            indexTweet = true;
+         f (record.offset() < seg ntBu ld nfo.getT etStartOffset()) {
+          // Front marg n.
+          sk ppedP ckedCounter = frontMarg n;
+           f (tve.get d() > seg ntBu ld nfo.getStartT et d()) {
+             ndexT et = true;
           }
-        } else if (record.offset() > segmentBuildInfo.getTweetEndOffset()) {
-          // Back margin.
-          skippedPickedCounter = backMargin;
-          if (firstTweetIdInNextSegment.isPresent()
-              && tve.getId() < firstTweetIdInNextSegment.get()) {
-            indexTweet = true;
+        } else  f (record.offset() > seg ntBu ld nfo.getT etEndOffset()) {
+          // Back marg n.
+          sk ppedP ckedCounter = backMarg n;
+           f (f rstT et d nNextSeg nt. sPresent()
+              && tve.get d() < f rstT et d nNextSeg nt.get()) {
+             ndexT et = true;
           }
-        } else if (record.offset() < segmentBuildInfo.getTweetStartOffset() + marginSize) {
-          // Front padding.
-          skippedPickedCounter = frontPadding;
-          if (tve.getId() >= segmentBuildInfo.getStartTweetId()) {
-            indexTweet = true;
+        } else  f (record.offset() < seg ntBu ld nfo.getT etStartOffset() + marg nS ze) {
+          // Front padd ng.
+          sk ppedP ckedCounter = frontPadd ng;
+           f (tve.get d() >= seg ntBu ld nfo.getStartT et d()) {
+             ndexT et = true;
           }
-        } else if (firstTweetIdInNextSegment.isPresent()
-            && record.offset() > segmentBuildInfo.getTweetEndOffset() - marginSize) {
-          // Back padding.
-          skippedPickedCounter = backPadding;
-          if (tve.getId() < firstTweetIdInNextSegment.get()) {
-            indexTweet = true;
+        } else  f (f rstT et d nNextSeg nt. sPresent()
+            && record.offset() > seg ntBu ld nfo.getT etEndOffset() - marg nS ze) {
+          // Back padd ng.
+          sk ppedP ckedCounter = backPadd ng;
+           f (tve.get d() < f rstT et d nNextSeg nt.get()) {
+             ndexT et = true;
           }
         } else {
-          skippedPickedCounter = regular;
-          // These we just pick. A tweet that came very late can end up in the wrong
-          // segment, but it's better for it to be present in a segment than dropped.
-          indexTweet = true;
+          sk ppedP ckedCounter = regular;
+          // T se   just p ck. A t et that ca  very late can end up  n t  wrong
+          // seg nt, but  's better for   to be present  n a seg nt than dropped.
+           ndexT et = true;
         }
 
-        if (indexTweet) {
-          skippedPickedCounter.incrementPicked();
-          segmentWriter.indexThriftVersionedEvents(tve);
-          maxIndexedTweetId = Math.max(maxIndexedTweetId, tve.getId());
-          indexedEvents++;
+         f ( ndexT et) {
+          sk ppedP ckedCounter. ncre ntP cked();
+          seg ntWr er. ndexThr ftVers onedEvents(tve);
+          max ndexedT et d = Math.max(max ndexedT et d, tve.get d());
+           ndexedEvents++;
 
-          // Note that records don't necessarily have increasing timestamps.
-          // Why? The timestamps whatever timestamp we picked when creating the record
-          // in ingesters and there are many ingesters.
-          minIndexedTimestampMs = Math.min(minIndexedTimestampMs, record.timestamp());
-          maxIndexedTimestampMs = Math.max(maxIndexedTimestampMs, record.timestamp());
+          // Note that records don't necessar ly have  ncreas ng t  stamps.
+          // Why? T  t  stamps whatever t  stamp   p cked w n creat ng t  record
+          //  n  ngesters and t re are many  ngesters.
+          m n ndexedT  stampMs = Math.m n(m n ndexedT  stampMs, record.t  stamp());
+          max ndexedT  stampMs = Math.max(max ndexedT  stampMs, record.t  stamp());
         } else {
-          skippedPickedCounter.incrementSkipped();
+          sk ppedP ckedCounter. ncre ntSk pped();
         }
         totalRead++;
 
-        if (record.offset() >= endReadingAtOffset) {
+         f (record.offset() >= endRead ngAtOffset) {
           break;
         }
       }
-      indexTimer.stop();
-    } while (!done);
+       ndexT  r.stop();
+    } wh le (!done);
 
-    tweetsKafkaConsumer.close();
+    t etsKafkaConsu r.close();
 
-    SegmentTweetsIndexingResult result = new SegmentTweetsIndexingResult(
-        minIndexedTimestampMs, maxIndexedTimestampMs, maxIndexedTweetId, segmentWriter);
+    Seg ntT ets ndex ngResult result = new Seg ntT ets ndex ngResult(
+        m n ndexedT  stampMs, max ndexedT  stampMs, max ndexedT et d, seg ntWr er);
 
-    LOG.info("Finished indexing {} tweets for {} in {}. Read {} tweets. Result: {}."
-            + " Time polling: {}, Time indexing: {}.",
-        indexedEvents, consumerClientId, stopwatch, totalRead, result,
-        pollTimer, indexTimer);
+    LOG. nfo("F n s d  ndex ng {} t ets for {}  n {}. Read {} t ets. Result: {}."
+            + " T   poll ng: {}, T    ndex ng: {}.",
+         ndexedEvents, consu rCl ent d, stopwatch, totalRead, result,
+        pollT  r,  ndexT  r);
 
-    // In normal conditions, expect to pick just a few in front and in the back.
-    LOG.info("SkippedPicked ({}) -- {}, {}, {}, {}, {}",
-        consumerClientId, frontMargin, frontPadding, backPadding, backMargin, regular);
+    //  n normal cond  ons, expect to p ck just a few  n front and  n t  back.
+    LOG. nfo("Sk ppedP cked ({}) -- {}, {}, {}, {}, {}",
+        consu rCl ent d, frontMarg n, frontPadd ng, backPadd ng, backMarg n, regular);
 
     return result;
   }
 
 
   /**
-   * After indexing all the tweets for a segment, index updates that need to be applied before
-   * the segment is optimized.
+   * After  ndex ng all t  t ets for a seg nt,  ndex updates that need to be appl ed before
+   * t  seg nt  s opt m zed.
    *
-   * This is required because some updates (URL updates, cards and Named Entities) can only be
-   * applied to an unoptimized segment. Luckily, all of these updates should arrive close to when
-   * the Tweet is created.
+   * T   s requ red because so  updates (URL updates, cards and Na d Ent  es) can only be
+   * appl ed to an unopt m zed seg nt. Luck ly, all of t se updates should arr ve close to w n
+   * t  T et  s created.
    */
-  private KafkaOffsetPair findUpdateStreamOffsetRange(
-      SegmentTweetsIndexingResult tweetsIndexingResult) {
-    KafkaConsumer<Long, ThriftVersionedEvents> offsetsConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer(
-            "consumer_for_update_offsets_" + segmentBuildInfo.getIndex());
+  pr vate KafkaOffsetPa r f ndUpdateStreamOffsetRange(
+      Seg ntT ets ndex ngResult t ets ndex ngResult) {
+    KafkaConsu r<Long, Thr ftVers onedEvents> offsetsConsu r =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r(
+            "consu r_for_update_offsets_" + seg ntBu ld nfo.get ndex());
 
-    // Start one minute before the first indexed tweet. One minute is excessive, but
-    // we need to start a bit earlier in case the first tweet we indexed came in
-    // later than some of its updates.
-    long updatesStartOffset = offsetForTime(offsetsConsumer, updateTopic,
-        tweetsIndexingResult.getMinRecordTimestampMs() - Duration.ofMinutes(1).toMillis());
+    // Start one m nute before t  f rst  ndexed t et. One m nute  s excess ve, but
+    //   need to start a b  earl er  n case t  f rst t et    ndexed ca   n
+    // later than so  of  s updates.
+    long updatesStartOffset = offsetForT  (offsetsConsu r, updateTop c,
+        t ets ndex ngResult.getM nRecordT  stampMs() - Durat on.ofM nutes(1).toM ll s());
 
     // Two cases:
     //
-    // 1. If we're not indexing the last segment, end 10 minutes after the last tweet. So for
-    //    example if we resolve an url in a tweet 3 minutes after the tweet is published,
-    //    we'll apply that update before the segment is optimized. 10 minutes is a bit too
-    //    much, but that doesn't matter a whole lot, since we're indexing about ~10 hours of
+    // 1.  f  're not  ndex ng t  last seg nt, end 10 m nutes after t  last t et. So for
+    //    example  f   resolve an url  n a t et 3 m nutes after t  t et  s publ s d,
+    //     'll apply that update before t  seg nt  s opt m zed. 10 m nutes  s a b  too
+    //    much, but that doesn't matter a whole lot, s nce  're  ndex ng about ~10 h s of
     //    updates.
     //
-    // 2. If we're indexing the last segment, end a bit before the last indexed tweet. We might
-    //    have incoming tweets that are a bit late. In fresh startup, we don't have a mechanism
-    //    to store these tweets to be applied when the tweet arrives, as in TweetUpdateHandler,
-    //    so just stop a bit earlier and let TweetCreateHandler and TweetUpdateHandler deal with
+    // 2.  f  're  ndex ng t  last seg nt, end a b  before t  last  ndexed t et.   m ght
+    //    have  ncom ng t ets that are a b  late.  n fresh startup,   don't have a  chan sm
+    //    to store t se t ets to be appl ed w n t  t et arr ves, as  n T etUpdateHandler,
+    //    so just stop a b  earl er and let T etCreateHandler and T etUpdateHandler deal w h
     //    that.
-    long millisAdjust;
-    if (segmentBuildInfo.getIndex() == segmentBuildInfos.size() - 1) {
-      millisAdjust = -Duration.ofMinutes(1).toMillis();
+    long m ll sAdjust;
+     f (seg ntBu ld nfo.get ndex() == seg ntBu ld nfos.s ze() - 1) {
+      m ll sAdjust = -Durat on.ofM nutes(1).toM ll s();
     } else {
-      millisAdjust = Duration.ofMinutes(10).toMillis();
+      m ll sAdjust = Durat on.ofM nutes(10).toM ll s();
     }
-    long updatesEndOffset = offsetForTime(offsetsConsumer, updateTopic,
-        tweetsIndexingResult.getMaxRecordTimestampMs() + millisAdjust);
+    long updatesEndOffset = offsetForT  (offsetsConsu r, updateTop c,
+        t ets ndex ngResult.getMaxRecordT  stampMs() + m ll sAdjust);
 
-    offsetsConsumer.close();
+    offsetsConsu r.close();
 
-    return new KafkaOffsetPair(updatesStartOffset, updatesEndOffset);
+    return new KafkaOffsetPa r(updatesStartOffset, updatesEndOffset);
   }
 
   /**
-   * Get the earliest offset with a timestamp >= $timestamp.
+   * Get t  earl est offset w h a t  stamp >= $t  stamp.
    *
-   * The guarantee we get is that if we start reading from here on, we will get
-   * every single message that came in with a timestamp >= $timestamp.
+   * T  guarantee   get  s that  f   start read ng from  re on,   w ll get
+   * every s ngle  ssage that ca   n w h a t  stamp >= $t  stamp.
    */
-  private long offsetForTime(KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer,
-                             TopicPartition partition,
-                             long timestamp) {
-    Preconditions.checkNotNull(kafkaConsumer);
-    Preconditions.checkNotNull(partition);
+  pr vate long offsetForT  (KafkaConsu r<Long, Thr ftVers onedEvents> kafkaConsu r,
+                             Top cPart  on part  on,
+                             long t  stamp) {
+    Precond  ons.c ckNotNull(kafkaConsu r);
+    Precond  ons.c ckNotNull(part  on);
 
-    OffsetAndTimestamp offsetAndTimestamp = kafkaConsumer
-        .offsetsForTimes(ImmutableMap.of(partition, timestamp))
-        .get(partition);
-    if (offsetAndTimestamp == null) {
+    OffsetAndT  stamp offsetAndT  stamp = kafkaConsu r
+        .offsetsForT  s( mmutableMap.of(part  on, t  stamp))
+        .get(part  on);
+     f (offsetAndT  stamp == null) {
       return -1;
     } else {
-      return offsetAndTimestamp.offset();
+      return offsetAndT  stamp.offset();
     }
   }
 
-  private void indexUpdatesFromStream(
-      TopicPartition topicPartition,
-      String consumerClientId,
+  pr vate vo d  ndexUpdatesFromStream(
+      Top cPart  on top cPart  on,
+      Str ng consu rCl ent d,
       long startOffset,
       long endOffset,
-      SegmentWriter segmentWriter) throws IOException {
-    KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
-        makeKafkaConsumerForIndexing(consumerClientId, topicPartition, startOffset);
+      Seg ntWr er seg ntWr er) throws  OExcept on {
+    KafkaConsu r<Long, Thr ftVers onedEvents> kafkaConsu r =
+        makeKafkaConsu rFor ndex ng(consu rCl ent d, top cPart  on, startOffset);
 
-    // Index TVEs.
+    //  ndex TVEs.
     boolean done = false;
 
-    Stopwatch pollTimer = Stopwatch.createUnstarted();
-    Stopwatch indexTimer = Stopwatch.createUnstarted();
+    Stopwatch pollT  r = Stopwatch.createUnstarted();
+    Stopwatch  ndexT  r = Stopwatch.createUnstarted();
 
-    SkippedPickedCounter updatesSkippedPicked = new SkippedPickedCounter("streamed_updates");
-    IndexingResultCounts indexingResultCounts = new IndexingResultCounts();
+    Sk ppedP ckedCounter updatesSk ppedP cked = new Sk ppedP ckedCounter("strea d_updates");
+     ndex ngResultCounts  ndex ngResultCounts = new  ndex ngResultCounts();
 
-    long segmentTimesliceId = segmentWriter.getSegmentInfo().getTimeSliceID();
+    long seg ntT  sl ce d = seg ntWr er.getSeg nt nfo().getT  Sl ce D();
 
-    Stopwatch totalTime = Stopwatch.createStarted();
+    Stopwatch totalT   = Stopwatch.createStarted();
 
     do {
-      pollTimer.start();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          kafkaConsumer.poll(Duration.ofSeconds(1));
-      pollTimer.stop();
+      pollT  r.start();
+      Consu rRecords<Long, Thr ftVers onedEvents> records =
+          kafkaConsu r.poll(Durat on.ofSeconds(1));
+      pollT  r.stop();
 
-      indexTimer.start();
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-        if (record.value().getId() < segmentTimesliceId) {
-          // Doesn't apply to this segment, can be skipped instead of skipping it
-          // inside the more costly segmentWriter.indexThriftVersionedEvents call.
-          updatesSkippedPicked.incrementSkipped();
+       ndexT  r.start();
+      for (Consu rRecord<Long, Thr ftVers onedEvents> record : records) {
+         f (record.value().get d() < seg ntT  sl ce d) {
+          // Doesn't apply to t  seg nt, can be sk pped  nstead of sk pp ng  
+          //  ns de t  more costly seg ntWr er. ndexThr ftVers onedEvents call.
+          updatesSk ppedP cked. ncre ntSk pped();
         } else {
-          if (record.offset() >= endOffset) {
+           f (record.offset() >= endOffset) {
             done = true;
           }
 
-          updatesSkippedPicked.incrementPicked();
-          indexingResultCounts.countResult(
-              segmentWriter.indexThriftVersionedEvents(record.value()));
+          updatesSk ppedP cked. ncre ntP cked();
+           ndex ngResultCounts.countResult(
+              seg ntWr er. ndexThr ftVers onedEvents(record.value()));
         }
 
-        if (record.offset() >= endOffset) {
+         f (record.offset() >= endOffset) {
           break;
         }
       }
-      indexTimer.stop();
-    } while (!done);
+       ndexT  r.stop();
+    } wh le (!done);
 
-    // Note that there'll be a decent amount of failed retryable updates. Since we index
-    // updates in a range that's a bit wider, they can't be applied here.
-    LOG.info("Client: {}, Finished indexing updates: {}. "
-            + "Times -- total: {}. polling: {}, indexing: {}. Indexing result counts: {}",
-        consumerClientId, updatesSkippedPicked,
-        totalTime, pollTimer, indexTimer, indexingResultCounts);
+    // Note that t re'll be a decent amount of fa led retryable updates. S nce    ndex
+    // updates  n a range that's a b  w der, t y can't be appl ed  re.
+    LOG. nfo("Cl ent: {}, F n s d  ndex ng updates: {}. "
+            + "T  s -- total: {}. poll ng: {},  ndex ng: {}.  ndex ng result counts: {}",
+        consu rCl ent d, updatesSk ppedP cked,
+        totalT  , pollT  r,  ndexT  r,  ndex ngResultCounts);
   }
 
   /**
-   * Make a consumer that reads from a single partition, starting at some offset.
+   * Make a consu r that reads from a s ngle part  on, start ng at so  offset.
    */
-  private KafkaConsumer<Long, ThriftVersionedEvents> makeKafkaConsumerForIndexing(
-      String consumerClientId,
-      TopicPartition topicPartition,
+  pr vate KafkaConsu r<Long, Thr ftVers onedEvents> makeKafkaConsu rFor ndex ng(
+      Str ng consu rCl ent d,
+      Top cPart  on top cPart  on,
       long offset) {
-    KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer(consumerClientId);
-    kafkaConsumer.assign(ImmutableList.of(topicPartition));
-    kafkaConsumer.seek(topicPartition, offset);
-    LOG.info("Indexing TVEs. Kafka consumer: {}", consumerClientId);
-    return kafkaConsumer;
+    KafkaConsu r<Long, Thr ftVers onedEvents> kafkaConsu r =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r(consu rCl ent d);
+    kafkaConsu r.ass gn( mmutableL st.of(top cPart  on));
+    kafkaConsu r.seek(top cPart  on, offset);
+    LOG. nfo(" ndex ng TVEs. Kafka consu r: {}", consu rCl ent d);
+    return kafkaConsu r;
   }
 }

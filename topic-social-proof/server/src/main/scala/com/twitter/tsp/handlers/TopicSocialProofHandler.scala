@@ -1,494 +1,494 @@
-package com.twitter.tsp.handlers
+package com.tw ter.tsp.handlers
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.strato.response.Err
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.topic_recos.common.Configs.ConsumerTopicEmbeddingType
-import com.twitter.topic_recos.common.Configs.DefaultModelVersion
-import com.twitter.topic_recos.common.Configs.ProducerTopicEmbeddingType
-import com.twitter.topic_recos.common.Configs.TweetEmbeddingType
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topic_recos.common.LocaleUtil
-import com.twitter.topiclisting.AnnotationRuleProvider
-import com.twitter.tsp.common.DeciderConstants
-import com.twitter.tsp.common.LoadShedder
-import com.twitter.tsp.common.RecTargetFactory
-import com.twitter.tsp.common.TopicSocialProofDecider
-import com.twitter.tsp.common.TopicSocialProofParams
-import com.twitter.tsp.stores.TopicSocialProofStore
-import com.twitter.tsp.stores.TopicSocialProofStore.TopicSocialProof
-import com.twitter.tsp.stores.UttTopicFilterStore
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
-import com.twitter.tsp.thriftscala.MetricTag
-import com.twitter.tsp.thriftscala.TopicFollowType
-import com.twitter.tsp.thriftscala.TopicListingSetting
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.tsp.thriftscala.TopicWithScore
-import com.twitter.tsp.thriftscala.TspTweetInfo
-import com.twitter.tsp.utils.HealthSignalsUtils
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.Semant cCoreEnt y d
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.strato.response.Err
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.top c_recos.common.Conf gs.Consu rTop cEmbedd ngType
+ mport com.tw ter.top c_recos.common.Conf gs.DefaultModelVers on
+ mport com.tw ter.top c_recos.common.Conf gs.ProducerTop cEmbedd ngType
+ mport com.tw ter.top c_recos.common.Conf gs.T etEmbedd ngType
+ mport com.tw ter.top cl st ng.Top cL st ngV e rContext
+ mport com.tw ter.top c_recos.common.LocaleUt l
+ mport com.tw ter.top cl st ng.Annotat onRuleProv der
+ mport com.tw ter.tsp.common.Dec derConstants
+ mport com.tw ter.tsp.common.LoadS dder
+ mport com.tw ter.tsp.common.RecTargetFactory
+ mport com.tw ter.tsp.common.Top cSoc alProofDec der
+ mport com.tw ter.tsp.common.Top cSoc alProofParams
+ mport com.tw ter.tsp.stores.Top cSoc alProofStore
+ mport com.tw ter.tsp.stores.Top cSoc alProofStore.Top cSoc alProof
+ mport com.tw ter.tsp.stores.UttTop cF lterStore
+ mport com.tw ter.tsp.stores.Top cT etsCos neS m lar yAggregateStore.ScoreKey
+ mport com.tw ter.tsp.thr ftscala. tr cTag
+ mport com.tw ter.tsp.thr ftscala.Top cFollowType
+ mport com.tw ter.tsp.thr ftscala.Top cL st ngSett ng
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofResponse
+ mport com.tw ter.tsp.thr ftscala.Top cW hScore
+ mport com.tw ter.tsp.thr ftscala.TspT et nfo
+ mport com.tw ter.tsp.ut ls. althS gnalsUt ls
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  outExcept on
 
-import scala.util.Random
+ mport scala.ut l.Random
 
-class TopicSocialProofHandler(
-  topicSocialProofStore: ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]],
-  tweetInfoStore: ReadableStore[TweetId, TspTweetInfo],
-  uttTopicFilterStore: UttTopicFilterStore,
+class Top cSoc alProofHandler(
+  top cSoc alProofStore: ReadableStore[Top cSoc alProofStore.Query, Seq[Top cSoc alProof]],
+  t et nfoStore: ReadableStore[T et d, TspT et nfo],
+  uttTop cF lterStore: UttTop cF lterStore,
   recTargetFactory: RecTargetFactory,
-  decider: TopicSocialProofDecider,
-  statsReceiver: StatsReceiver,
-  loadShedder: LoadShedder,
-  timer: Timer) {
+  dec der: Top cSoc alProofDec der,
+  statsRece ver: StatsRece ver,
+  loadS dder: LoadS dder,
+  t  r: T  r) {
 
-  import TopicSocialProofHandler._
+   mport Top cSoc alProofHandler._
 
-  def getTopicSocialProofResponse(
-    request: TopicSocialProofRequest
-  ): Future[TopicSocialProofResponse] = {
-    val scopedStats = statsReceiver.scope(request.displayLocation.toString)
-    scopedStats.counter("fanoutRequests").incr(request.tweetIds.size)
-    scopedStats.stat("numTweetsPerRequest").add(request.tweetIds.size)
-    StatsUtil.trackBlockStats(scopedStats) {
+  def getTop cSoc alProofResponse(
+    request: Top cSoc alProofRequest
+  ): Future[Top cSoc alProofResponse] = {
+    val scopedStats = statsRece ver.scope(request.d splayLocat on.toStr ng)
+    scopedStats.counter("fanoutRequests"). ncr(request.t et ds.s ze)
+    scopedStats.stat("numT etsPerRequest").add(request.t et ds.s ze)
+    StatsUt l.trackBlockStats(scopedStats) {
       recTargetFactory
-        .buildRecTopicSocialProofTarget(request).flatMap { target =>
-          val enableCosineSimilarityScoreCalculation =
-            decider.isAvailable(DeciderConstants.enableTopicSocialProofScore)
+        .bu ldRecTop cSoc alProofTarget(request).flatMap { target =>
+          val enableCos neS m lar yScoreCalculat on =
+            dec der. sAva lable(Dec derConstants.enableTop cSoc alProofScore)
 
-          val semanticCoreVersionId =
-            target.params(TopicSocialProofParams.TopicTweetsSemanticCoreVersionId)
+          val semant cCoreVers on d =
+            target.params(Top cSoc alProofParams.Top cT etsSemant cCoreVers on d)
 
-          val semanticCoreVersionIdsSet =
-            target.params(TopicSocialProofParams.TopicTweetsSemanticCoreVersionIdsSet)
+          val semant cCoreVers on dsSet =
+            target.params(Top cSoc alProofParams.Top cT etsSemant cCoreVers on dsSet)
 
-          val allowListWithTopicFollowTypeFut = uttTopicFilterStore
-            .getAllowListTopicsForUser(
-              request.userId,
-              request.topicListingSetting,
-              TopicListingViewerContext
-                .fromThrift(request.context).copy(languageCode =
-                  LocaleUtil.getStandardLanguageCode(request.context.languageCode)),
+          val allowL stW hTop cFollowTypeFut = uttTop cF lterStore
+            .getAllowL stTop csForUser(
+              request.user d,
+              request.top cL st ngSett ng,
+              Top cL st ngV e rContext
+                .fromThr ft(request.context).copy(languageCode =
+                  LocaleUt l.getStandardLanguageCode(request.context.languageCode)),
               request.bypassModes.map(_.toSet)
             ).rescue {
               case _ =>
-                scopedStats.counter("uttTopicFilterStoreFailure").incr()
-                Future.value(Map.empty[SemanticCoreEntityId, Option[TopicFollowType]])
+                scopedStats.counter("uttTop cF lterStoreFa lure"). ncr()
+                Future.value(Map.empty[Semant cCoreEnt y d, Opt on[Top cFollowType]])
             }
 
-          val tweetInfoMapFut: Future[Map[TweetId, Option[TspTweetInfo]]] = Future
+          val t et nfoMapFut: Future[Map[T et d, Opt on[TspT et nfo]]] = Future
             .collect(
-              tweetInfoStore.multiGet(request.tweetIds.toSet)
-            ).raiseWithin(TweetInfoStoreTimeout)(timer).rescue {
-              case _: TimeoutException =>
-                scopedStats.counter("tweetInfoStoreTimeout").incr()
-                Future.value(Map.empty[TweetId, Option[TspTweetInfo]])
+              t et nfoStore.mult Get(request.t et ds.toSet)
+            ).ra seW h n(T et nfoStoreT  out)(t  r).rescue {
+              case _: T  outExcept on =>
+                scopedStats.counter("t et nfoStoreT  out"). ncr()
+                Future.value(Map.empty[T et d, Opt on[TspT et nfo]])
               case _ =>
-                scopedStats.counter("tweetInfoStoreFailure").incr()
-                Future.value(Map.empty[TweetId, Option[TspTweetInfo]])
+                scopedStats.counter("t et nfoStoreFa lure"). ncr()
+                Future.value(Map.empty[T et d, Opt on[TspT et nfo]])
             }
 
-          val definedTweetInfoMapFut =
-            keepTweetsWithTweetInfoAndLanguage(tweetInfoMapFut, request.displayLocation.toString)
+          val def nedT et nfoMapFut =
+            keepT etsW hT et nfoAndLanguage(t et nfoMapFut, request.d splayLocat on.toStr ng)
 
           Future
-            .join(definedTweetInfoMapFut, allowListWithTopicFollowTypeFut).map {
-              case (tweetInfoMap, allowListWithTopicFollowType) =>
-                val tweetIdsToQuery = tweetInfoMap.keys.toSet
-                val topicProofQueries =
-                  tweetIdsToQuery.map { tweetId =>
-                    TopicSocialProofStore.Query(
-                      TopicSocialProofStore.CacheableQuery(
-                        tweetId = tweetId,
-                        tweetLanguage = LocaleUtil.getSupportedStandardLanguageCodeWithDefault(
-                          tweetInfoMap.getOrElse(tweetId, None).flatMap {
+            .jo n(def nedT et nfoMapFut, allowL stW hTop cFollowTypeFut).map {
+              case (t et nfoMap, allowL stW hTop cFollowType) =>
+                val t et dsToQuery = t et nfoMap.keys.toSet
+                val top cProofQuer es =
+                  t et dsToQuery.map { t et d =>
+                    Top cSoc alProofStore.Query(
+                      Top cSoc alProofStore.Cac ableQuery(
+                        t et d = t et d,
+                        t etLanguage = LocaleUt l.getSupportedStandardLanguageCodeW hDefault(
+                          t et nfoMap.getOrElse(t et d, None).flatMap {
                             _.language
                           }),
-                        enableCosineSimilarityScoreCalculation =
-                          enableCosineSimilarityScoreCalculation
+                        enableCos neS m lar yScoreCalculat on =
+                          enableCos neS m lar yScoreCalculat on
                       ),
-                      allowedSemanticCoreVersionIds = semanticCoreVersionIdsSet
+                      allo dSemant cCoreVers on ds = semant cCoreVers on dsSet
                     )
                   }
 
-                val topicSocialProofsFut: Future[Map[TweetId, Seq[TopicSocialProof]]] = {
+                val top cSoc alProofsFut: Future[Map[T et d, Seq[Top cSoc alProof]]] = {
                   Future
-                    .collect(topicSocialProofStore.multiGet(topicProofQueries)).map(_.map {
+                    .collect(top cSoc alProofStore.mult Get(top cProofQuer es)).map(_.map {
                       case (query, results) =>
-                        query.cacheableQuery.tweetId -> results.toSeq.flatten.filter(
-                          _.semanticCoreVersionId == semanticCoreVersionId)
+                        query.cac ableQuery.t et d -> results.toSeq.flatten.f lter(
+                          _.semant cCoreVers on d == semant cCoreVers on d)
                     })
-                }.raiseWithin(TopicSocialProofStoreTimeout)(timer).rescue {
-                  case _: TimeoutException =>
-                    scopedStats.counter("topicSocialProofStoreTimeout").incr()
-                    Future(Map.empty[TweetId, Seq[TopicSocialProof]])
+                }.ra seW h n(Top cSoc alProofStoreT  out)(t  r).rescue {
+                  case _: T  outExcept on =>
+                    scopedStats.counter("top cSoc alProofStoreT  out"). ncr()
+                    Future(Map.empty[T et d, Seq[Top cSoc alProof]])
                   case _ =>
-                    scopedStats.counter("topicSocialProofStoreFailure").incr()
-                    Future(Map.empty[TweetId, Seq[TopicSocialProof]])
+                    scopedStats.counter("top cSoc alProofStoreFa lure"). ncr()
+                    Future(Map.empty[T et d, Seq[Top cSoc alProof]])
                 }
 
-                val random = new Random(seed = request.userId.toInt)
+                val random = new Random(seed = request.user d.to nt)
 
-                topicSocialProofsFut.map { topicSocialProofs =>
-                  val filteredTopicSocialProofs = filterByAllowedList(
-                    topicSocialProofs,
-                    request.topicListingSetting,
-                    allowListWithTopicFollowType.keySet
+                top cSoc alProofsFut.map { top cSoc alProofs =>
+                  val f lteredTop cSoc alProofs = f lterByAllo dL st(
+                    top cSoc alProofs,
+                    request.top cL st ngSett ng,
+                    allowL stW hTop cFollowType.keySet
                   )
 
-                  val filteredTopicSocialProofsEmptyCount: Int =
-                    filteredTopicSocialProofs.count {
-                      case (_, topicSocialProofs: Seq[TopicSocialProof]) =>
-                        topicSocialProofs.isEmpty
+                  val f lteredTop cSoc alProofsEmptyCount:  nt =
+                    f lteredTop cSoc alProofs.count {
+                      case (_, top cSoc alProofs: Seq[Top cSoc alProof]) =>
+                        top cSoc alProofs. sEmpty
                     }
 
                   scopedStats
-                    .counter("filteredTopicSocialProofsCount").incr(filteredTopicSocialProofs.size)
+                    .counter("f lteredTop cSoc alProofsCount"). ncr(f lteredTop cSoc alProofs.s ze)
                   scopedStats
-                    .counter("filteredTopicSocialProofsEmptyCount").incr(
-                      filteredTopicSocialProofsEmptyCount)
+                    .counter("f lteredTop cSoc alProofsEmptyCount"). ncr(
+                      f lteredTop cSoc alProofsEmptyCount)
 
-                  if (isCrTopicTweets(request)) {
-                    val socialProofs = filteredTopicSocialProofs.mapValues(_.flatMap { topicProof =>
-                      val topicWithScores = buildTopicWithRandomScore(
-                        topicProof,
-                        allowListWithTopicFollowType,
+                   f ( sCrTop cT ets(request)) {
+                    val soc alProofs = f lteredTop cSoc alProofs.mapValues(_.flatMap { top cProof =>
+                      val top cW hScores = bu ldTop cW hRandomScore(
+                        top cProof,
+                        allowL stW hTop cFollowType,
                         random
                       )
-                      topicWithScores
+                      top cW hScores
                     })
-                    TopicSocialProofResponse(socialProofs)
+                    Top cSoc alProofResponse(soc alProofs)
                   } else {
-                    val socialProofs = filteredTopicSocialProofs.mapValues(_.flatMap { topicProof =>
-                      getTopicProofScore(
-                        topicProof = topicProof,
-                        allowListWithTopicFollowType = allowListWithTopicFollowType,
+                    val soc alProofs = f lteredTop cSoc alProofs.mapValues(_.flatMap { top cProof =>
+                      getTop cProofScore(
+                        top cProof = top cProof,
+                        allowL stW hTop cFollowType = allowL stW hTop cFollowType,
                         params = target.params,
                         random = random,
-                        statsReceiver = statsReceiver
+                        statsRece ver = statsRece ver
                       )
 
-                    }.sortBy(-_.score).take(MaxCandidates))
+                    }.sortBy(-_.score).take(MaxCand dates))
 
-                    val personalizedContextSocialProofs =
-                      if (target.params(TopicSocialProofParams.EnablePersonalizedContextTopics)) {
-                        val personalizedContextEligibility =
-                          checkPersonalizedContextsEligibility(
+                    val personal zedContextSoc alProofs =
+                       f (target.params(Top cSoc alProofParams.EnablePersonal zedContextTop cs)) {
+                        val personal zedContextEl g b l y =
+                          c ckPersonal zedContextsEl g b l y(
                             target.params,
-                            allowListWithTopicFollowType)
-                        val filteredTweets =
-                          filterPersonalizedContexts(socialProofs, tweetInfoMap, target.params)
-                        backfillPersonalizedContexts(
-                          allowListWithTopicFollowType,
-                          filteredTweets,
+                            allowL stW hTop cFollowType)
+                        val f lteredT ets =
+                          f lterPersonal zedContexts(soc alProofs, t et nfoMap, target.params)
+                        backf llPersonal zedContexts(
+                          allowL stW hTop cFollowType,
+                          f lteredT ets,
                           request.tags.getOrElse(Map.empty),
-                          personalizedContextEligibility)
+                          personal zedContextEl g b l y)
                       } else {
-                        Map.empty[TweetId, Seq[TopicWithScore]]
+                        Map.empty[T et d, Seq[Top cW hScore]]
                       }
 
-                    val mergedSocialProofs = socialProofs.map {
-                      case (tweetId, proofs) =>
+                    val  rgedSoc alProofs = soc alProofs.map {
+                      case (t et d, proofs) =>
                         (
-                          tweetId,
+                          t et d,
                           proofs
-                            ++ personalizedContextSocialProofs.getOrElse(tweetId, Seq.empty))
+                            ++ personal zedContextSoc alProofs.getOrElse(t et d, Seq.empty))
                     }
 
-                    // Note that we will NOT filter out tweets with no TSP in either case
-                    TopicSocialProofResponse(mergedSocialProofs)
+                    // Note that   w ll NOT f lter out t ets w h no TSP  n e  r case
+                    Top cSoc alProofResponse( rgedSoc alProofs)
                   }
                 }
             }
-        }.flatten.raiseWithin(Timeout)(timer).rescue {
-          case _: ClientDiscardedRequestException =>
-            scopedStats.counter("ClientDiscardedRequestException").incr()
+        }.flatten.ra seW h n(T  out)(t  r).rescue {
+          case _: Cl entD scardedRequestExcept on =>
+            scopedStats.counter("Cl entD scardedRequestExcept on"). ncr()
             Future.value(DefaultResponse)
-          case err: Err if err.code == Err.Cancelled =>
-            scopedStats.counter("CancelledErr").incr()
+          case err: Err  f err.code == Err.Cancelled =>
+            scopedStats.counter("CancelledErr"). ncr()
             Future.value(DefaultResponse)
           case _ =>
-            scopedStats.counter("FailedRequests").incr()
+            scopedStats.counter("Fa ledRequests"). ncr()
             Future.value(DefaultResponse)
         }
     }
   }
 
   /**
-   * Fetch the Score for each Topic Social Proof
+   * Fetch t  Score for each Top c Soc al Proof
    */
-  private def getTopicProofScore(
-    topicProof: TopicSocialProof,
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
+  pr vate def getTop cProofScore(
+    top cProof: Top cSoc alProof,
+    allowL stW hTop cFollowType: Map[Semant cCoreEnt y d, Opt on[Top cFollowType]],
     params: Params,
     random: Random,
-    statsReceiver: StatsReceiver
-  ): Option[TopicWithScore] = {
-    val scopedStats = statsReceiver.scope("getTopicProofScores")
-    val enableTweetToTopicScoreRanking =
-      params(TopicSocialProofParams.EnableTweetToTopicScoreRanking)
+    statsRece ver: StatsRece ver
+  ): Opt on[Top cW hScore] = {
+    val scopedStats = statsRece ver.scope("getTop cProofScores")
+    val enableT etToTop cScoreRank ng =
+      params(Top cSoc alProofParams.EnableT etToTop cScoreRank ng)
 
-    val minTweetToTopicCosineSimilarityThreshold =
-      params(TopicSocialProofParams.TweetToTopicCosineSimilarityThreshold)
+    val m nT etToTop cCos neS m lar yThreshold =
+      params(Top cSoc alProofParams.T etToTop cCos neS m lar yThreshold)
 
-    val topicWithScore =
-      if (enableTweetToTopicScoreRanking) {
-        scopedStats.counter("enableTweetToTopicScoreRanking").incr()
-        buildTopicWithValidScore(
-          topicProof,
-          TweetEmbeddingType,
-          Some(ConsumerTopicEmbeddingType),
-          Some(ProducerTopicEmbeddingType),
-          allowListWithTopicFollowType,
-          DefaultModelVersion,
-          minTweetToTopicCosineSimilarityThreshold
+    val top cW hScore =
+       f (enableT etToTop cScoreRank ng) {
+        scopedStats.counter("enableT etToTop cScoreRank ng"). ncr()
+        bu ldTop cW hVal dScore(
+          top cProof,
+          T etEmbedd ngType,
+          So (Consu rTop cEmbedd ngType),
+          So (ProducerTop cEmbedd ngType),
+          allowL stW hTop cFollowType,
+          DefaultModelVers on,
+          m nT etToTop cCos neS m lar yThreshold
         )
       } else {
-        scopedStats.counter("buildTopicWithRandomScore").incr()
-        buildTopicWithRandomScore(
-          topicProof,
-          allowListWithTopicFollowType,
+        scopedStats.counter("bu ldTop cW hRandomScore"). ncr()
+        bu ldTop cW hRandomScore(
+          top cProof,
+          allowL stW hTop cFollowType,
           random
         )
       }
-    topicWithScore
+    top cW hScore
 
   }
 
-  private[handlers] def isCrTopicTweets(
-    request: TopicSocialProofRequest
+  pr vate[handlers] def  sCrTop cT ets(
+    request: Top cSoc alProofRequest
   ): Boolean = {
-    // CrTopic (across a variety of DisplayLocations) is the only use case with TopicListingSetting.All
-    request.topicListingSetting == TopicListingSetting.All
+    // CrTop c (across a var ety of D splayLocat ons)  s t  only use case w h Top cL st ngSett ng.All
+    request.top cL st ngSett ng == Top cL st ngSett ng.All
   }
 
   /**
-   * Consolidate logics relevant to whether only quality topics should be enabled for Implicit Follows
+   * Consol date log cs relevant to w t r only qual y top cs should be enabled for  mpl c  Follows
    */
 
   /***
-   * Consolidate logics relevant to whether Personalized Contexts backfilling should be enabled
+   * Consol date log cs relevant to w t r Personal zed Contexts backf ll ng should be enabled
    */
-  private[handlers] def checkPersonalizedContextsEligibility(
+  pr vate[handlers] def c ckPersonal zedContextsEl g b l y(
     params: Params,
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]]
-  ): PersonalizedContextEligibility = {
-    val scopedStats = statsReceiver.scope("checkPersonalizedContextsEligibility")
-    val isRecentFavInAllowlist = allowListWithTopicFollowType
-      .contains(AnnotationRuleProvider.recentFavTopicId)
+    allowL stW hTop cFollowType: Map[Semant cCoreEnt y d, Opt on[Top cFollowType]]
+  ): Personal zedContextEl g b l y = {
+    val scopedStats = statsRece ver.scope("c ckPersonal zedContextsEl g b l y")
+    val  sRecentFav nAllowl st = allowL stW hTop cFollowType
+      .conta ns(Annotat onRuleProv der.recentFavTop c d)
 
-    val isRecentFavEligible =
-      isRecentFavInAllowlist && params(TopicSocialProofParams.EnableRecentEngagementsTopic)
-    if (isRecentFavEligible)
-      scopedStats.counter("isRecentFavEligible").incr()
+    val  sRecentFavEl g ble =
+       sRecentFav nAllowl st && params(Top cSoc alProofParams.EnableRecentEngage ntsTop c)
+     f ( sRecentFavEl g ble)
+      scopedStats.counter(" sRecentFavEl g ble"). ncr()
 
-    val isRecentRetweetInAllowlist = allowListWithTopicFollowType
-      .contains(AnnotationRuleProvider.recentRetweetTopicId)
+    val  sRecentRet et nAllowl st = allowL stW hTop cFollowType
+      .conta ns(Annotat onRuleProv der.recentRet etTop c d)
 
-    val isRecentRetweetEligible =
-      isRecentRetweetInAllowlist && params(TopicSocialProofParams.EnableRecentEngagementsTopic)
-    if (isRecentRetweetEligible)
-      scopedStats.counter("isRecentRetweetEligible").incr()
+    val  sRecentRet etEl g ble =
+       sRecentRet et nAllowl st && params(Top cSoc alProofParams.EnableRecentEngage ntsTop c)
+     f ( sRecentRet etEl g ble)
+      scopedStats.counter(" sRecentRet etEl g ble"). ncr()
 
-    val isYMLInAllowlist = allowListWithTopicFollowType
-      .contains(AnnotationRuleProvider.youMightLikeTopicId)
+    val  sYML nAllowl st = allowL stW hTop cFollowType
+      .conta ns(Annotat onRuleProv der. M ghtL keTop c d)
 
-    val isYMLEligible =
-      isYMLInAllowlist && params(TopicSocialProofParams.EnableYouMightLikeTopic)
-    if (isYMLEligible)
-      scopedStats.counter("isYMLEligible").incr()
+    val  sYMLEl g ble =
+       sYML nAllowl st && params(Top cSoc alProofParams.Enable M ghtL keTop c)
+     f ( sYMLEl g ble)
+      scopedStats.counter(" sYMLEl g ble"). ncr()
 
-    PersonalizedContextEligibility(isRecentFavEligible, isRecentRetweetEligible, isYMLEligible)
+    Personal zedContextEl g b l y( sRecentFavEl g ble,  sRecentRet etEl g ble,  sYMLEl g ble)
   }
 
-  private[handlers] def filterPersonalizedContexts(
-    socialProofs: Map[TweetId, Seq[TopicWithScore]],
-    tweetInfoMap: Map[TweetId, Option[TspTweetInfo]],
+  pr vate[handlers] def f lterPersonal zedContexts(
+    soc alProofs: Map[T et d, Seq[Top cW hScore]],
+    t et nfoMap: Map[T et d, Opt on[TspT et nfo]],
     params: Params
-  ): Map[TweetId, Seq[TopicWithScore]] = {
-    val filters: Seq[(Option[TspTweetInfo], Params) => Boolean] = Seq(
-      healthSignalsFilter,
-      tweetLanguageFilter
+  ): Map[T et d, Seq[Top cW hScore]] = {
+    val f lters: Seq[(Opt on[TspT et nfo], Params) => Boolean] = Seq(
+       althS gnalsF lter,
+      t etLanguageF lter
     )
-    applyFilters(socialProofs, tweetInfoMap, params, filters)
+    applyF lters(soc alProofs, t et nfoMap, params, f lters)
   }
 
   /** *
-   * filter tweets with None tweetInfo and undefined language
+   * f lter t ets w h None t et nfo and undef ned language
    */
-  private def keepTweetsWithTweetInfoAndLanguage(
-    tweetInfoMapFut: Future[Map[TweetId, Option[TspTweetInfo]]],
-    displayLocation: String
-  ): Future[Map[TweetId, Option[TspTweetInfo]]] = {
-    val scopedStats = statsReceiver.scope(displayLocation)
-    tweetInfoMapFut.map { tweetInfoMap =>
-      val filteredTweetInfoMap = tweetInfoMap.filter {
-        case (_, optTweetInfo: Option[TspTweetInfo]) =>
-          if (optTweetInfo.isEmpty) {
-            scopedStats.counter("undefinedTweetInfoCount").incr()
+  pr vate def keepT etsW hT et nfoAndLanguage(
+    t et nfoMapFut: Future[Map[T et d, Opt on[TspT et nfo]]],
+    d splayLocat on: Str ng
+  ): Future[Map[T et d, Opt on[TspT et nfo]]] = {
+    val scopedStats = statsRece ver.scope(d splayLocat on)
+    t et nfoMapFut.map { t et nfoMap =>
+      val f lteredT et nfoMap = t et nfoMap.f lter {
+        case (_, optT et nfo: Opt on[TspT et nfo]) =>
+           f (optT et nfo. sEmpty) {
+            scopedStats.counter("undef nedT et nfoCount"). ncr()
           }
 
-          optTweetInfo.exists { tweetInfo: TspTweetInfo =>
+          optT et nfo.ex sts { t et nfo: TspT et nfo =>
             {
-              if (tweetInfo.language.isEmpty) {
-                scopedStats.counter("undefinedLanguageCount").incr()
+               f (t et nfo.language. sEmpty) {
+                scopedStats.counter("undef nedLanguageCount"). ncr()
               }
-              tweetInfo.language.isDefined
+              t et nfo.language. sDef ned
             }
           }
 
       }
-      val undefinedTweetInfoOrLangCount = tweetInfoMap.size - filteredTweetInfoMap.size
-      scopedStats.counter("undefinedTweetInfoOrLangCount").incr(undefinedTweetInfoOrLangCount)
+      val undef nedT et nfoOrLangCount = t et nfoMap.s ze - f lteredT et nfoMap.s ze
+      scopedStats.counter("undef nedT et nfoOrLangCount"). ncr(undef nedT et nfoOrLangCount)
 
-      scopedStats.counter("TweetInfoCount").incr(tweetInfoMap.size)
+      scopedStats.counter("T et nfoCount"). ncr(t et nfoMap.s ze)
 
-      filteredTweetInfoMap
+      f lteredT et nfoMap
     }
   }
 
   /***
-   * filter tweets with NO evergreen topic social proofs by their health signal scores & tweet languages
-   * i.e., tweets that are possible to be converted into Personalized Context topic tweets
-   * TBD: whether we are going to apply filters to all topic tweet candidates
+   * f lter t ets w h NO evergreen top c soc al proofs by t  r  alth s gnal scores & t et languages
+   *  .e., t ets that are poss ble to be converted  nto Personal zed Context top c t ets
+   * TBD: w t r   are go ng to apply f lters to all top c t et cand dates
    */
-  private def applyFilters(
-    socialProofs: Map[TweetId, Seq[TopicWithScore]],
-    tweetInfoMap: Map[TweetId, Option[TspTweetInfo]],
+  pr vate def applyF lters(
+    soc alProofs: Map[T et d, Seq[Top cW hScore]],
+    t et nfoMap: Map[T et d, Opt on[TspT et nfo]],
     params: Params,
-    filters: Seq[(Option[TspTweetInfo], Params) => Boolean]
-  ): Map[TweetId, Seq[TopicWithScore]] = {
-    socialProofs.collect {
-      case (tweetId, socialProofs) if socialProofs.nonEmpty || filters.forall { filter =>
-            filter(tweetInfoMap.getOrElse(tweetId, None), params)
+    f lters: Seq[(Opt on[TspT et nfo], Params) => Boolean]
+  ): Map[T et d, Seq[Top cW hScore]] = {
+    soc alProofs.collect {
+      case (t et d, soc alProofs)  f soc alProofs.nonEmpty || f lters.forall { f lter =>
+            f lter(t et nfoMap.getOrElse(t et d, None), params)
           } =>
-        tweetId -> socialProofs
+        t et d -> soc alProofs
     }
   }
 
-  private def healthSignalsFilter(
-    tweetInfoOpt: Option[TspTweetInfo],
+  pr vate def  althS gnalsF lter(
+    t et nfoOpt: Opt on[TspT et nfo],
     params: Params
   ): Boolean = {
     !params(
-      TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContexts) || HealthSignalsUtils
-      .isHealthyTweet(tweetInfoOpt)
+      Top cSoc alProofParams.EnableTop cT et althF lterPersonal zedContexts) ||  althS gnalsUt ls
+      . s althyT et(t et nfoOpt)
   }
 
-  private def tweetLanguageFilter(
-    tweetInfoOpt: Option[TspTweetInfo],
+  pr vate def t etLanguageF lter(
+    t et nfoOpt: Opt on[TspT et nfo],
     params: Params
   ): Boolean = {
-    PersonalizedContextTopicsAllowedLanguageSet
-      .contains(tweetInfoOpt.flatMap(_.language).getOrElse(LocaleUtil.DefaultLanguage))
+    Personal zedContextTop csAllo dLanguageSet
+      .conta ns(t et nfoOpt.flatMap(_.language).getOrElse(LocaleUt l.DefaultLanguage))
   }
 
-  private[handlers] def backfillPersonalizedContexts(
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    socialProofs: Map[TweetId, Seq[TopicWithScore]],
-    metricTagsMap: scala.collection.Map[TweetId, scala.collection.Set[MetricTag]],
-    personalizedContextEligibility: PersonalizedContextEligibility
-  ): Map[TweetId, Seq[TopicWithScore]] = {
-    val scopedStats = statsReceiver.scope("backfillPersonalizedContexts")
-    socialProofs.map {
-      case (tweetId, topicWithScores) =>
-        if (topicWithScores.nonEmpty) {
-          tweetId -> Seq.empty
+  pr vate[handlers] def backf llPersonal zedContexts(
+    allowL stW hTop cFollowType: Map[Semant cCoreEnt y d, Opt on[Top cFollowType]],
+    soc alProofs: Map[T et d, Seq[Top cW hScore]],
+     tr cTagsMap: scala.collect on.Map[T et d, scala.collect on.Set[ tr cTag]],
+    personal zedContextEl g b l y: Personal zedContextEl g b l y
+  ): Map[T et d, Seq[Top cW hScore]] = {
+    val scopedStats = statsRece ver.scope("backf llPersonal zedContexts")
+    soc alProofs.map {
+      case (t et d, top cW hScores) =>
+         f (top cW hScores.nonEmpty) {
+          t et d -> Seq.empty
         } else {
-          val metricTagContainsTweetFav = metricTagsMap
-            .getOrElse(tweetId, Set.empty[MetricTag]).contains(MetricTag.TweetFavorite)
-          val backfillRecentFav =
-            personalizedContextEligibility.isRecentFavEligible && metricTagContainsTweetFav
-          if (metricTagContainsTweetFav)
-            scopedStats.counter("MetricTag.TweetFavorite").incr()
-          if (backfillRecentFav)
-            scopedStats.counter("backfillRecentFav").incr()
+          val  tr cTagConta nsT etFav =  tr cTagsMap
+            .getOrElse(t et d, Set.empty[ tr cTag]).conta ns( tr cTag.T etFavor e)
+          val backf llRecentFav =
+            personal zedContextEl g b l y. sRecentFavEl g ble &&  tr cTagConta nsT etFav
+           f ( tr cTagConta nsT etFav)
+            scopedStats.counter(" tr cTag.T etFavor e"). ncr()
+           f (backf llRecentFav)
+            scopedStats.counter("backf llRecentFav"). ncr()
 
-          val metricTagContainsRetweet = metricTagsMap
-            .getOrElse(tweetId, Set.empty[MetricTag]).contains(MetricTag.Retweet)
-          val backfillRecentRetweet =
-            personalizedContextEligibility.isRecentRetweetEligible && metricTagContainsRetweet
-          if (metricTagContainsRetweet)
-            scopedStats.counter("MetricTag.Retweet").incr()
-          if (backfillRecentRetweet)
-            scopedStats.counter("backfillRecentRetweet").incr()
+          val  tr cTagConta nsRet et =  tr cTagsMap
+            .getOrElse(t et d, Set.empty[ tr cTag]).conta ns( tr cTag.Ret et)
+          val backf llRecentRet et =
+            personal zedContextEl g b l y. sRecentRet etEl g ble &&  tr cTagConta nsRet et
+           f ( tr cTagConta nsRet et)
+            scopedStats.counter(" tr cTag.Ret et"). ncr()
+           f (backf llRecentRet et)
+            scopedStats.counter("backf llRecentRet et"). ncr()
 
-          val metricTagContainsRecentSearches = metricTagsMap
-            .getOrElse(tweetId, Set.empty[MetricTag]).contains(
-              MetricTag.InterestsRankerRecentSearches)
+          val  tr cTagConta nsRecentSearc s =  tr cTagsMap
+            .getOrElse(t et d, Set.empty[ tr cTag]).conta ns(
+               tr cTag. nterestsRankerRecentSearc s)
 
-          val backfillYML = personalizedContextEligibility.isYMLEligible
-          if (backfillYML)
-            scopedStats.counter("backfillYML").incr()
+          val backf llYML = personal zedContextEl g b l y. sYMLEl g ble
+           f (backf llYML)
+            scopedStats.counter("backf llYML"). ncr()
 
-          tweetId -> buildBackfillTopics(
-            allowListWithTopicFollowType,
-            backfillRecentFav,
-            backfillRecentRetweet,
-            backfillYML)
+          t et d -> bu ldBackf llTop cs(
+            allowL stW hTop cFollowType,
+            backf llRecentFav,
+            backf llRecentRet et,
+            backf llYML)
         }
     }
   }
 
-  private def buildBackfillTopics(
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    backfillRecentFav: Boolean,
-    backfillRecentRetweet: Boolean,
-    backfillYML: Boolean
-  ): Seq[TopicWithScore] = {
+  pr vate def bu ldBackf llTop cs(
+    allowL stW hTop cFollowType: Map[Semant cCoreEnt y d, Opt on[Top cFollowType]],
+    backf llRecentFav: Boolean,
+    backf llRecentRet et: Boolean,
+    backf llYML: Boolean
+  ): Seq[Top cW hScore] = {
     Seq(
-      if (backfillRecentFav) {
-        Some(
-          TopicWithScore(
-            topicId = AnnotationRuleProvider.recentFavTopicId,
+       f (backf llRecentFav) {
+        So (
+          Top cW hScore(
+            top c d = Annotat onRuleProv der.recentFavTop c d,
             score = 1.0,
-            topicFollowType = allowListWithTopicFollowType
-              .getOrElse(AnnotationRuleProvider.recentFavTopicId, None)
+            top cFollowType = allowL stW hTop cFollowType
+              .getOrElse(Annotat onRuleProv der.recentFavTop c d, None)
           ))
       } else { None },
-      if (backfillRecentRetweet) {
-        Some(
-          TopicWithScore(
-            topicId = AnnotationRuleProvider.recentRetweetTopicId,
+       f (backf llRecentRet et) {
+        So (
+          Top cW hScore(
+            top c d = Annotat onRuleProv der.recentRet etTop c d,
             score = 1.0,
-            topicFollowType = allowListWithTopicFollowType
-              .getOrElse(AnnotationRuleProvider.recentRetweetTopicId, None)
+            top cFollowType = allowL stW hTop cFollowType
+              .getOrElse(Annotat onRuleProv der.recentRet etTop c d, None)
           ))
       } else { None },
-      if (backfillYML) {
-        Some(
-          TopicWithScore(
-            topicId = AnnotationRuleProvider.youMightLikeTopicId,
+       f (backf llYML) {
+        So (
+          Top cW hScore(
+            top c d = Annotat onRuleProv der. M ghtL keTop c d,
             score = 1.0,
-            topicFollowType = allowListWithTopicFollowType
-              .getOrElse(AnnotationRuleProvider.youMightLikeTopicId, None)
+            top cFollowType = allowL stW hTop cFollowType
+              .getOrElse(Annotat onRuleProv der. M ghtL keTop c d, None)
           ))
       } else { None }
     ).flatten
   }
 
-  def toReadableStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse] = {
-    new ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse] {
-      override def get(k: TopicSocialProofRequest): Future[Option[TopicSocialProofResponse]] = {
-        val displayLocation = k.displayLocation.toString
-        loadShedder(displayLocation) {
-          getTopicSocialProofResponse(k).map(Some(_))
+  def toReadableStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse] = {
+    new ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse] {
+      overr de def get(k: Top cSoc alProofRequest): Future[Opt on[Top cSoc alProofResponse]] = {
+        val d splayLocat on = k.d splayLocat on.toStr ng
+        loadS dder(d splayLocat on) {
+          getTop cSoc alProofResponse(k).map(So (_))
         }.rescue {
-          case LoadShedder.LoadSheddingException =>
-            statsReceiver.scope(displayLocation).counter("LoadSheddingException").incr()
+          case LoadS dder.LoadS dd ngExcept on =>
+            statsRece ver.scope(d splayLocat on).counter("LoadS dd ngExcept on"). ncr()
             Future.None
           case _ =>
-            statsReceiver.scope(displayLocation).counter("Exception").incr()
+            statsRece ver.scope(d splayLocat on).counter("Except on"). ncr()
             Future.None
         }
       }
@@ -496,92 +496,92 @@ class TopicSocialProofHandler(
   }
 }
 
-object TopicSocialProofHandler {
+object Top cSoc alProofHandler {
 
-  private val MaxCandidates = 10
-  // Currently we do hardcode for the language check of PersonalizedContexts Topics
-  private val PersonalizedContextTopicsAllowedLanguageSet: Set[String] =
-    Set("pt", "ko", "es", "ja", "tr", "id", "en", "hi", "ar", "fr", "ru")
+  pr vate val MaxCand dates = 10
+  // Currently   do hardcode for t  language c ck of Personal zedContexts Top cs
+  pr vate val Personal zedContextTop csAllo dLanguageSet: Set[Str ng] =
+    Set("pt", "ko", "es", "ja", "tr", " d", "en", "h ", "ar", "fr", "ru")
 
-  private val Timeout: Duration = 200.milliseconds
-  private val TopicSocialProofStoreTimeout: Duration = 40.milliseconds
-  private val TweetInfoStoreTimeout: Duration = 60.milliseconds
-  private val DefaultResponse: TopicSocialProofResponse = TopicSocialProofResponse(Map.empty)
+  pr vate val T  out: Durat on = 200.m ll seconds
+  pr vate val Top cSoc alProofStoreT  out: Durat on = 40.m ll seconds
+  pr vate val T et nfoStoreT  out: Durat on = 60.m ll seconds
+  pr vate val DefaultResponse: Top cSoc alProofResponse = Top cSoc alProofResponse(Map.empty)
 
-  case class PersonalizedContextEligibility(
-    isRecentFavEligible: Boolean,
-    isRecentRetweetEligible: Boolean,
-    isYMLEligible: Boolean)
+  case class Personal zedContextEl g b l y(
+     sRecentFavEl g ble: Boolean,
+     sRecentRet etEl g ble: Boolean,
+     sYMLEl g ble: Boolean)
 
   /**
-   * Calculate the Topic Scores for each (tweet, topic), filter out topic proofs whose scores do not
-   * pass the minimum threshold
+   * Calculate t  Top c Scores for each (t et, top c), f lter out top c proofs whose scores do not
+   * pass t  m n mum threshold
    */
-  private[handlers] def buildTopicWithValidScore(
-    topicProof: TopicSocialProof,
-    tweetEmbeddingType: EmbeddingType,
-    maybeConsumerEmbeddingType: Option[EmbeddingType],
-    maybeProducerEmbeddingType: Option[EmbeddingType],
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    simClustersModelVersion: ModelVersion,
-    minTweetToTopicCosineSimilarityThreshold: Double
-  ): Option[TopicWithScore] = {
+  pr vate[handlers] def bu ldTop cW hVal dScore(
+    top cProof: Top cSoc alProof,
+    t etEmbedd ngType: Embedd ngType,
+    maybeConsu rEmbedd ngType: Opt on[Embedd ngType],
+    maybeProducerEmbedd ngType: Opt on[Embedd ngType],
+    allowL stW hTop cFollowType: Map[Semant cCoreEnt y d, Opt on[Top cFollowType]],
+    s mClustersModelVers on: ModelVers on,
+    m nT etToTop cCos neS m lar yThreshold: Double
+  ): Opt on[Top cW hScore] = {
 
-    val consumerScore = maybeConsumerEmbeddingType
-      .flatMap { consumerEmbeddingType =>
-        topicProof.scores.get(
-          ScoreKey(consumerEmbeddingType, tweetEmbeddingType, simClustersModelVersion))
+    val consu rScore = maybeConsu rEmbedd ngType
+      .flatMap { consu rEmbedd ngType =>
+        top cProof.scores.get(
+          ScoreKey(consu rEmbedd ngType, t etEmbedd ngType, s mClustersModelVers on))
       }.getOrElse(0.0)
 
-    val producerScore = maybeProducerEmbeddingType
-      .flatMap { producerEmbeddingType =>
-        topicProof.scores.get(
-          ScoreKey(producerEmbeddingType, tweetEmbeddingType, simClustersModelVersion))
+    val producerScore = maybeProducerEmbedd ngType
+      .flatMap { producerEmbedd ngType =>
+        top cProof.scores.get(
+          ScoreKey(producerEmbedd ngType, t etEmbedd ngType, s mClustersModelVers on))
       }.getOrElse(0.0)
 
-    val combinedScore = consumerScore + producerScore
-    if (combinedScore > minTweetToTopicCosineSimilarityThreshold || topicProof.ignoreSimClusterFiltering) {
-      Some(
-        TopicWithScore(
-          topicId = topicProof.topicId.entityId,
-          score = combinedScore,
-          topicFollowType =
-            allowListWithTopicFollowType.getOrElse(topicProof.topicId.entityId, None)))
+    val comb nedScore = consu rScore + producerScore
+     f (comb nedScore > m nT etToTop cCos neS m lar yThreshold || top cProof. gnoreS mClusterF lter ng) {
+      So (
+        Top cW hScore(
+          top c d = top cProof.top c d.ent y d,
+          score = comb nedScore,
+          top cFollowType =
+            allowL stW hTop cFollowType.getOrElse(top cProof.top c d.ent y d, None)))
     } else {
       None
     }
   }
 
-  private[handlers] def buildTopicWithRandomScore(
-    topicSocialProof: TopicSocialProof,
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
+  pr vate[handlers] def bu ldTop cW hRandomScore(
+    top cSoc alProof: Top cSoc alProof,
+    allowL stW hTop cFollowType: Map[Semant cCoreEnt y d, Opt on[Top cFollowType]],
     random: Random
-  ): Option[TopicWithScore] = {
+  ): Opt on[Top cW hScore] = {
 
-    Some(
-      TopicWithScore(
-        topicId = topicSocialProof.topicId.entityId,
+    So (
+      Top cW hScore(
+        top c d = top cSoc alProof.top c d.ent y d,
         score = random.nextDouble(),
-        topicFollowType =
-          allowListWithTopicFollowType.getOrElse(topicSocialProof.topicId.entityId, None)
+        top cFollowType =
+          allowL stW hTop cFollowType.getOrElse(top cSoc alProof.top c d.ent y d, None)
       ))
   }
 
   /**
-   * Filter all the non-qualified Topic Social Proof
+   * F lter all t  non-qual f ed Top c Soc al Proof
    */
-  private[handlers] def filterByAllowedList(
-    topicProofs: Map[TweetId, Seq[TopicSocialProof]],
-    setting: TopicListingSetting,
-    allowList: Set[SemanticCoreEntityId]
-  ): Map[TweetId, Seq[TopicSocialProof]] = {
-    setting match {
-      case TopicListingSetting.All =>
-        // Return all the topics
-        topicProofs
+  pr vate[handlers] def f lterByAllo dL st(
+    top cProofs: Map[T et d, Seq[Top cSoc alProof]],
+    sett ng: Top cL st ngSett ng,
+    allowL st: Set[Semant cCoreEnt y d]
+  ): Map[T et d, Seq[Top cSoc alProof]] = {
+    sett ng match {
+      case Top cL st ngSett ng.All =>
+        // Return all t  top cs
+        top cProofs
       case _ =>
-        topicProofs.mapValues(
-          _.filter(topicProof => allowList.contains(topicProof.topicId.entityId)))
+        top cProofs.mapValues(
+          _.f lter(top cProof => allowL st.conta ns(top cProof.top c d.ent y d)))
     }
   }
 }

@@ -1,69 +1,69 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.tw ter.s mclusters_v2.cand date_s ce
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.util.Future
-import com.twitter.storehaus.ReadableStore
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats
+ mport com.tw ter.s mclusters_v2.cand date_s ce.S mClustersANNCand dateS ce.S mClustersT etCand date
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ngPa rScore d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score d => Thr ftScore d}
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.storehaus.ReadableStore
 
-object HeavyRanker {
-  trait HeavyRanker {
+object  avyRanker {
+  tra   avyRanker {
     def rank(
-      scoringAlgorithm: ScoringAlgorithm,
-      sourceEmbeddingId: SimClustersEmbeddingId,
-      candidateEmbeddingType: EmbeddingType,
-      minScore: Double,
-      candidates: Seq[SimClustersTweetCandidate]
-    ): Future[Seq[SimClustersTweetCandidate]]
+      scor ngAlgor hm: Scor ngAlgor hm,
+      s ceEmbedd ng d: S mClustersEmbedd ng d,
+      cand dateEmbedd ngType: Embedd ngType,
+      m nScore: Double,
+      cand dates: Seq[S mClustersT etCand date]
+    ): Future[Seq[S mClustersT etCand date]]
   }
 
-  class UniformScoreStoreRanker(
-    uniformScoringStore: ReadableStore[ThriftScoreId, ThriftScore],
-    stats: StatsReceiver)
-      extends HeavyRanker {
-    val fetchCandidateEmbeddingsStat = stats.scope("fetchCandidateEmbeddings")
+  class Un formScoreStoreRanker(
+    un formScor ngStore: ReadableStore[Thr ftScore d, Thr ftScore],
+    stats: StatsRece ver)
+      extends  avyRanker {
+    val fetchCand dateEmbedd ngsStat = stats.scope("fetchCand dateEmbedd ngs")
 
     def rank(
-      scoringAlgorithm: ScoringAlgorithm,
-      sourceEmbeddingId: SimClustersEmbeddingId,
-      candidateEmbeddingType: EmbeddingType,
-      minScore: Double,
-      candidates: Seq[SimClustersTweetCandidate]
-    ): Future[Seq[SimClustersTweetCandidate]] = {
-      val pairScoreIds = candidates.map { candidate =>
-        ThriftScoreId(
-          scoringAlgorithm,
-          ScoreInternalId.SimClustersEmbeddingPairScoreId(
-            SimClustersEmbeddingPairScoreId(
-              sourceEmbeddingId,
-              SimClustersEmbeddingId(
-                candidateEmbeddingType,
-                sourceEmbeddingId.modelVersion,
-                InternalId.TweetId(candidate.tweetId)
+      scor ngAlgor hm: Scor ngAlgor hm,
+      s ceEmbedd ng d: S mClustersEmbedd ng d,
+      cand dateEmbedd ngType: Embedd ngType,
+      m nScore: Double,
+      cand dates: Seq[S mClustersT etCand date]
+    ): Future[Seq[S mClustersT etCand date]] = {
+      val pa rScore ds = cand dates.map { cand date =>
+        Thr ftScore d(
+          scor ngAlgor hm,
+          Score nternal d.S mClustersEmbedd ngPa rScore d(
+            S mClustersEmbedd ngPa rScore d(
+              s ceEmbedd ng d,
+              S mClustersEmbedd ng d(
+                cand dateEmbedd ngType,
+                s ceEmbedd ng d.modelVers on,
+                 nternal d.T et d(cand date.t et d)
               )
             ))
-        ) -> candidate.tweetId
+        ) -> cand date.t et d
       }.toMap
 
       Future
         .collect {
-          Stats.trackMap(fetchCandidateEmbeddingsStat) {
-            uniformScoringStore.multiGet(pairScoreIds.keySet)
+          Stats.trackMap(fetchCand dateEmbedd ngsStat) {
+            un formScor ngStore.mult Get(pa rScore ds.keySet)
           }
         }
-        .map { candidateScores =>
-          candidateScores.toSeq
+        .map { cand dateScores =>
+          cand dateScores.toSeq
             .collect {
-              case (pairScoreId, Some(score)) if score.score >= minScore =>
-                SimClustersTweetCandidate(pairScoreIds(pairScoreId), score.score, sourceEmbeddingId)
+              case (pa rScore d, So (score))  f score.score >= m nScore =>
+                S mClustersT etCand date(pa rScore ds(pa rScore d), score.score, s ceEmbedd ng d)
             }
         }
     }

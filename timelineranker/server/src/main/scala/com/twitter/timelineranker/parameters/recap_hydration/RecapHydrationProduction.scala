@@ -1,45 +1,45 @@
-package com.twitter.timelineranker.parameters.recap_hydration
+package com.tw ter.t  l neranker.para ters.recap_hydrat on
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.recap_hydration.RecapHydrationParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi._
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport com.tw ter.t  l neranker.dec der.Dec derKey
+ mport com.tw ter.t  l neranker.para ters.recap_hydrat on.RecapHydrat onParams._
+ mport com.tw ter.t  l neranker.para ters.ut l.Conf g lper
+ mport com.tw ter.t  l nes.conf gap ._
 
-object RecapHydrationProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyName] = Map[Param[_], DeciderKeyName](
-    EnableContentFeaturesHydrationParam -> DeciderKey.RecapHydrationEnableContentFeaturesHydration
+object RecapHydrat onProduct on {
+  val dec derByParam: Map[Param[_], Dec derKeyNa ] = Map[Param[_], Dec derKeyNa ](
+    EnableContentFeaturesHydrat onParam -> Dec derKey.RecapHydrat onEnableContentFeaturesHydrat on
   )
 
-  val booleanParams: Seq[EnableContentFeaturesHydrationParam.type] = Seq(
-    EnableContentFeaturesHydrationParam
+  val booleanParams: Seq[EnableContentFeaturesHydrat onParam.type] = Seq(
+    EnableContentFeaturesHydrat onParam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam
+  val booleanFeatureSw chParams: Seq[FSParam[Boolean]] = Seq(
+    EnableTokens nContentFeaturesHydrat onParam,
+    EnableT etText nContentFeaturesHydrat onParam,
+    EnableConversat onControl nContentFeaturesHydrat onParam,
+    EnableT et d aHydrat onParam
   )
 }
 
-class RecapHydrationProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val configHelper: ConfigHelper =
-    new ConfigHelper(RecapHydrationProduction.deciderByParam, deciderGateBuilder)
-  val booleanOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(RecapHydrationProduction.booleanParams)
+class RecapHydrat onProduct on(dec derGateBu lder: Dec derGateBu lder) {
+  val conf g lper: Conf g lper =
+    new Conf g lper(RecapHydrat onProduct on.dec derByParam, dec derGateBu lder)
+  val booleanOverr des: Seq[Opt onalOverr de[Boolean]] =
+    conf g lper.createDec derBasedBooleanOverr des(RecapHydrat onProduct on.booleanParams)
 
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      RecapHydrationProduction.booleanFeatureSwitchParams: _*
+  val booleanFeatureSw chOverr des: Seq[Opt onalOverr de[Boolean]] =
+    FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      RecapHydrat onProduct on.booleanFeatureSw chParams: _*
     )
 
-  val config: BaseConfig = new BaseConfigBuilder()
+  val conf g: BaseConf g = new BaseConf gBu lder()
     .set(
-      booleanOverrides: _*
+      booleanOverr des: _*
     ).set(
-      booleanFeatureSwitchOverrides: _*
+      booleanFeatureSw chOverr des: _*
     )
-    .build(RecapHydrationProduction.getClass.getSimpleName)
+    .bu ld(RecapHydrat onProduct on.getClass.getS mpleNa )
 }

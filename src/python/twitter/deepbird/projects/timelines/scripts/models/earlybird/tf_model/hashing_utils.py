@@ -1,29 +1,29 @@
-from twitter.deepbird.io.util import _get_feature_id
+from tw ter.deepb rd. o.ut l  mport _get_feature_ d
 
-import numpy as np
+ mport numpy as np
 
 
-def numpy_hashing_uniform(the_id, bin_idx, output_bits):
+def numpy_hash ng_un form(t _ d, b n_ dx, output_b s):
   """
-  integer_multiplicative_hashing
-  This is a reimplementation, for testing purposes, of the
-    c++ version found in hashing_discretizer_impl.cpp
+   nteger_mult pl cat ve_hash ng
+  T   s a re mple ntat on, for test ng purposes, of t 
+    c++ vers on found  n hash ng_d scret zer_ mpl.cpp
   """
-  hashing_constant = 2654435761
+  hash ng_constant = 2654435761
   N = 32
-  with np.errstate(over='ignore'):
-    the_id *= hashing_constant
-    the_id += bin_idx
-    the_id *= hashing_constant
-    the_id >>= N - output_bits
-    the_id &= (1 << output_bits) - 1
-  return the_id
+  w h np.errstate(over=' gnore'):
+    t _ d *= hash ng_constant
+    t _ d += b n_ dx
+    t _ d *= hash ng_constant
+    t _ d >>= N - output_b s
+    t _ d &= (1 << output_b s) - 1
+  return t _ d
 
 
-def make_feature_id(name, num_bits):
-  feature_id = _get_feature_id(name)
-  return np.int64(limit_bits(feature_id, num_bits))
+def make_feature_ d(na , num_b s):
+  feature_ d = _get_feature_ d(na )
+  return np. nt64(l m _b s(feature_ d, num_b s))
 
 
-def limit_bits(value, num_bits):
-  return value & ((2 ** num_bits) - 1)
+def l m _b s(value, num_b s):
+  return value & ((2 ** num_b s) - 1)

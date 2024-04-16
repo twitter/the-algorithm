@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.algebird.Monoid
-import com.twitter.summingbird._
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.summ ngb rd._
 
-object SummerWithSumValues {
+object Sum rW hSumValues {
   /*
-  A common pattern in heron is to use .sumByKeys to aggregate a value in a store, and then continue
-  processing with the aggregated value. Unfortunately, .sumByKeys returns the existing value from the
-  store and the delta separately, leaving you to manually combine them.
+  A common pattern  n  ron  s to use .sumByKeys to aggregate a value  n a store, and t n cont nue
+  process ng w h t  aggregated value. Unfortunately, .sumByKeys returns t  ex st ng value from t 
+  store and t  delta separately, leav ng   to manually comb ne t m.
 
-  Example without sumValues:
+  Example w hout sumValues:
 
-   someKeyedProducer
-    .sumByKeys(score)(monoid)
+   so KeyedProducer
+    .sumByKeys(score)(mono d)
     .map {
-      case (key, (existingValueOpt, delta)) =>
-        // if you want the value that was actually written to the store, you have to combine
-        // existingValueOpt and delta yourself
+      case (key, (ex st ngValueOpt, delta)) =>
+        //  f   want t  value that was actually wr ten to t  store,   have to comb ne
+        // ex st ngValueOpt and delta y self
     }
 
-  Example with sumValues:
+  Example w h sumValues:
 
-   someKeyedProducer
-    .sumByKeys(score)(monoid)
-    .sumValues(monoid)
+   so KeyedProducer
+    .sumByKeys(score)(mono d)
+    .sumValues(mono d)
     .map {
       case (key, value) =>
-        // `value` is the same as what was written to the store
+        // `value`  s t  sa  as what was wr ten to t  store
     }
    */
-  implicit class SummerWithSumValues[P <: Platform[P], K, V](
-    summer: Summer[P, K, V]) {
-    def sumValues(monoid: Monoid[V]): KeyedProducer[P, K, V] =
-      summer.mapValues {
-        case (Some(oldV), deltaV) => monoid.plus(oldV, deltaV)
+   mpl c  class Sum rW hSumValues[P <: Platform[P], K, V](
+    sum r: Sum r[P, K, V]) {
+    def sumValues(mono d: Mono d[V]): KeyedProducer[P, K, V] =
+      sum r.mapValues {
+        case (So (oldV), deltaV) => mono d.plus(oldV, deltaV)
         case (None, deltaV) => deltaV
       }
   }

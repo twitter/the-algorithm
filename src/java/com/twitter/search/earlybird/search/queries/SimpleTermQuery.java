@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.ConstantScoreScorer;
+ mport org.apac .lucene.search.ConstantScore  ght;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * A version of a term query that we can use when we already know the term id (in case where we
- * previously looked it up), and have a TermsEnum to get the actual postings.
+ * A vers on of a term query that   can use w n   already know t  term  d ( n case w re  
+ * prev ously looked   up), and have a TermsEnum to get t  actual post ngs.
  *
- * This is can be used for constant score queries, where only iterating on the postings is required.
+ * T   s can be used for constant score quer es, w re only  erat ng on t  post ngs  s requ red.
  */
-class SimpleTermQuery extends Query {
-  private final TermsEnum termsEnum;
-  private final long termId;
+class S mpleTermQuery extends Query {
+  pr vate f nal TermsEnum termsEnum;
+  pr vate f nal long term d;
 
-  public SimpleTermQuery(TermsEnum termsEnum, long termId) {
-    this.termsEnum = termsEnum;
-    this.termId = termId;
+  publ c S mpleTermQuery(TermsEnum termsEnum, long term d) {
+    t .termsEnum = termsEnum;
+    t .term d = term d;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new SimpleTermQueryWeight(scoreMode);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+    return new S mpleTermQuery  ght(scoreMode);
   }
 
-  @Override
-  public int hashCode() {
-    return (termsEnum == null ? 0 : termsEnum.hashCode()) * 13 + (int) termId;
+  @Overr de
+  publ c  nt hashCode() {
+    return (termsEnum == null ? 0 : termsEnum.hashCode()) * 13 + ( nt) term d;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SimpleTermQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof S mpleTermQuery)) {
       return false;
     }
 
-    SimpleTermQuery query = SimpleTermQuery.class.cast(obj);
+    S mpleTermQuery query = S mpleTermQuery.class.cast(obj);
     return (termsEnum == null ? query.termsEnum == null : termsEnum.equals(query.termsEnum))
-        && (termId == query.termId);
+        && (term d == query.term d);
   }
 
-  @Override
-  public String toString(String field) {
-    return "SimpleTermQuery(" + field + ":" + termId + ")";
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "S mpleTermQuery(" + f eld + ":" + term d + ")";
   }
 
-  private class SimpleTermQueryWeight extends ConstantScoreWeight {
-    private final ScoreMode scoreMode;
+  pr vate class S mpleTermQuery  ght extends ConstantScore  ght {
+    pr vate f nal ScoreMode scoreMode;
 
-    public SimpleTermQueryWeight(ScoreMode scoreMode) {
-      super(SimpleTermQuery.this, 1.0f);
-      this.scoreMode = scoreMode;
+    publ c S mpleTermQuery  ght(ScoreMode scoreMode) {
+      super(S mpleTermQuery.t , 1.0f);
+      t .scoreMode = scoreMode;
     }
 
-    @Override
-    public String toString() {
-      return "weight(" + SimpleTermQuery.this + ")";
+    @Overr de
+    publ c Str ng toStr ng() {
+      return "  ght(" + S mpleTermQuery.t  + ")";
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      termsEnum.seekExact(termId);
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+      termsEnum.seekExact(term d);
 
-      PostingsEnum docs = termsEnum.postings(
-          null, scoreMode.needsScores() ? PostingsEnum.FREQS : PostingsEnum.NONE);
+      Post ngsEnum docs = termsEnum.post ngs(
+          null, scoreMode.needsScores() ? Post ngsEnum.FREQS : Post ngsEnum.NONE);
       assert docs != null;
-      return new ConstantScoreScorer(this, 0, scoreMode, docs);
+      return new ConstantScoreScorer(t , 0, scoreMode, docs);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext ctx) {
       return true;
     }
   }

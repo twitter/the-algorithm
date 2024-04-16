@@ -1,333 +1,333 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+ mport java. o.F leNotFoundExcept on;
+ mport java. o. OExcept on;
+ mport java.ut l.Comparator;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.regex.Matc r;
+ mport java.ut l.regex.Pattern;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Funct on;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect.Compar sonCha n;
+ mport com.google.common.collect.L sts;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons. o. OUt ls;
+ mport org.apac .hadoop.fs.F leStatus;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.apac .hadoop.fs.PathF lter;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.common.util.io.EmptyRecordReader;
-import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
-import com.twitter.search.common.util.io.MergingSortedRecordReader;
-import com.twitter.search.common.util.io.TransformingRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.HdfsUtil;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdThr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.ut l.date.DateUt l;
+ mport com.tw ter.search.common.ut l. o.EmptyRecordReader;
+ mport com.tw ter.search.common.ut l. o.LzoThr ftBlockF leReader;
+ mport com.tw ter.search.common.ut l. o. rg ngSortedRecordReader;
+ mport com.tw ter.search.common.ut l. o.Transform ngRecordReader;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.docu nt.Docu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.part  on.HdfsUt l;
 
 /**
- * A batch of pre-processed tweets for a single hash partition from a particular day.
+ * A batch of pre-processed t ets for a s ngle hash part  on from a part cular day.
  */
-public class PartitionedBatch {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionedBatch.class);
-  private static final Date START_DATE_INCLUSIVE = DateUtil.toDate(2006, 03, 21);
-  private static final String STATUS_COUNT_FILE_PREFIX = "_status_count_";
-  private static final Pattern STATUS_COUNT_FILE_PATTERN =
-      Pattern.compile(STATUS_COUNT_FILE_PREFIX + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
-  private static final int MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS =
-      EarlybirdConfig.getInt("archive_max_out_of_order_tolerance_hours", 12);
-  private static final int READER_INIT_IOEXCEPTION_RETRIES = 20;
-  private static final PathFilter LZO_DATA_FILES_FILTER = file -> file.getName().endsWith(".lzo");
-  private static final PathFilter TXT_DATA_FILES_FILTER = file -> file.getName().endsWith(".txt");
+publ c class Part  onedBatch {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Part  onedBatch.class);
+  pr vate stat c f nal Date START_DATE_ NCLUS VE = DateUt l.toDate(2006, 03, 21);
+  pr vate stat c f nal Str ng STATUS_COUNT_F LE_PREF X = "_status_count_";
+  pr vate stat c f nal Pattern STATUS_COUNT_F LE_PATTERN =
+      Pattern.comp le(STATUS_COUNT_F LE_PREF X + "(\\d+)_m n d_(\\d+)_max d_(\\d+)");
+  pr vate stat c f nal  nt MAX MUM_OUT_OF_ORDER_TOLERANCE_HOURS =
+      Earlyb rdConf g.get nt("arch ve_max_out_of_order_tolerance_h s", 12);
+  pr vate stat c f nal  nt READER_ N T_ OEXCEPT ON_RETR ES = 20;
+  pr vate stat c f nal PathF lter LZO_DATA_F LES_F LTER = f le -> f le.getNa ().endsW h(".lzo");
+  pr vate stat c f nal PathF lter TXT_DATA_F LES_F LTER = f le -> f le.getNa ().endsW h(".txt");
 
-  private static final Comparator<ThriftIndexingEvent> DESC_THRIFT_INDEXING_EVENT_COMPARATOR =
-      (o1, o2) -> ComparisonChain.start()
-          .compare(o2.getSortId(), o1.getSortId())
-          .compare(o2.getUid(), o1.getUid())
+  pr vate stat c f nal Comparator<Thr ft ndex ngEvent> DESC_THR FT_ NDEX NG_EVENT_COMPARATOR =
+      (o1, o2) -> Compar sonCha n.start()
+          .compare(o2.getSort d(), o1.getSort d())
+          .compare(o2.getU d(), o1.getU d())
           .result();
 
-  // Number archive tweets skipped because they are too out-of-order.
-  private static final SearchCounter OUT_OF_ORDER_STATUSES_SKIPPED =
-      SearchCounter.export("out_of_order_archive_statuses_skipped");
+  // Number arch ve t ets sk pped because t y are too out-of-order.
+  pr vate stat c f nal SearchCounter OUT_OF_ORDER_STATUSES_SK PPED =
+      SearchCounter.export("out_of_order_arch ve_statuses_sk pped");
 
-  @VisibleForTesting
-  protected static final long MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS =
-      TimeUnit.HOURS.toMillis(MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS);
+  @V s bleForTest ng
+  protected stat c f nal long MAX MUM_OUT_OF_ORDER_TOLERANCE_M LL S =
+      T  Un .HOURS.toM ll s(MAX MUM_OUT_OF_ORDER_TOLERANCE_HOURS);
 
-  private final Date date;
-  private final Path path;
-  private int statusCount;
-  private long minStatusID;
-  private long maxStatusID;
-  private final int hashPartitionID;
-  private boolean hasStatusCountFile;
-  private final int numHashPartitions;
+  pr vate f nal Date date;
+  pr vate f nal Path path;
+  pr vate  nt statusCount;
+  pr vate long m nStatus D;
+  pr vate long maxStatus D;
+  pr vate f nal  nt hashPart  on D;
+  pr vate boolean hasStatusCountF le;
+  pr vate f nal  nt numHashPart  ons;
 
-  @VisibleForTesting
-  public PartitionedBatch(
+  @V s bleForTest ng
+  publ c Part  onedBatch(
       Path path,
-      int hashPartitionID,
-      int numHashPartitions,
+       nt hashPart  on D,
+       nt numHashPart  ons,
       Date date) {
-    this.path = path;
-    this.hashPartitionID = hashPartitionID;
-    this.numHashPartitions = numHashPartitions;
-    this.date = date;
+    t .path = path;
+    t .hashPart  on D = hashPart  on D;
+    t .numHashPart  ons = numHashPart  ons;
+    t .date = date;
   }
 
   /**
-   * Loads all the information (tweet count, etc.) for this partition and day from HDFS.
+   * Loads all t   nformat on (t et count, etc.) for t  part  on and day from HDFS.
    */
-  public void load(FileSystem hdfs) throws IOException {
-    FileStatus[] dailyBatchFiles = null;
+  publ c vo d load(F leSystem hdfs) throws  OExcept on {
+    F leStatus[] da lyBatchF les = null;
     try {
-      // listStatus() javadoc says it throws FileNotFoundException when path does not exist.
-      // However, the actual implementations return null or an empty array instead.
-      // We handle all 3 cases: null, empty array, or FileNotFoundException.
-      dailyBatchFiles = hdfs.listStatus(path);
-    } catch (FileNotFoundException e) {
-      // don't do anything here and the day will be handled as empty.
+      // l stStatus() javadoc says   throws F leNotFoundExcept on w n path does not ex st.
+      // Ho ver, t  actual  mple ntat ons return null or an empty array  nstead.
+      //   handle all 3 cases: null, empty array, or F leNotFoundExcept on.
+      da lyBatchF les = hdfs.l stStatus(path);
+    } catch (F leNotFoundExcept on e) {
+      // don't do anyth ng  re and t  day w ll be handled as empty.
     }
 
-    if (dailyBatchFiles != null && dailyBatchFiles.length > 0) {
-      for (FileStatus file : dailyBatchFiles) {
-        String fileName = file.getPath().getName();
-        if (fileName.equals(STATUS_COUNT_FILE_PREFIX)) {
-          // zero tweets in this partition - this can happen for early days in 2006
-          handleEmptyPartition();
+     f (da lyBatchF les != null && da lyBatchF les.length > 0) {
+      for (F leStatus f le : da lyBatchF les) {
+        Str ng f leNa  = f le.getPath().getNa ();
+         f (f leNa .equals(STATUS_COUNT_F LE_PREF X)) {
+          // zero t ets  n t  part  on - t  can happen for early days  n 2006
+          handleEmptyPart  on();
         } else {
-          Matcher matcher = STATUS_COUNT_FILE_PATTERN.matcher(fileName);
-          if (matcher.matches()) {
+          Matc r matc r = STATUS_COUNT_F LE_PATTERN.matc r(f leNa );
+           f (matc r.matc s()) {
             try {
-              statusCount = Integer.parseInt(matcher.group(1));
-              // Only adjustMinStatusId in production. For tests, this makes the tests harder to
+              statusCount =  nteger.parse nt(matc r.group(1));
+              // Only adjustM nStatus d  n product on. For tests, t  makes t  tests harder to
               // understand.
-              minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(2))
-                  : adjustMinStatusId(Long.parseLong(matcher.group(2)), date);
-              maxStatusID = Long.parseLong(matcher.group(3));
-              hasStatusCountFile = true;
-            } catch (NumberFormatException e) {
-              // invalid file - ignore
-              LOG.warn("Could not parse status count file name.", e);
+              m nStatus D = Conf g.env ron nt sTest() ? Long.parseLong(matc r.group(2))
+                  : adjustM nStatus d(Long.parseLong(matc r.group(2)), date);
+              maxStatus D = Long.parseLong(matc r.group(3));
+              hasStatusCountF le = true;
+            } catch (NumberFormatExcept on e) {
+              //  nval d f le -  gnore
+              LOG.warn("Could not parse status count f le na .", e);
             }
           }
         }
       }
     } else {
-      // Partition folder does not exist. This case can happen for early days of twitter
-      // where some partitions are empty. Set us to having a status count file, the validity of
-      // the parent DailyStatusBatch will still be determined by whether there was a _SUCCESS file
-      // in the day root.
-      handleEmptyPartition();
+      // Part  on folder does not ex st. T  case can happen for early days of tw ter
+      // w re so  part  ons are empty. Set us to hav ng a status count f le, t  val d y of
+      // t  parent Da lyStatusBatch w ll st ll be determ ned by w t r t re was a _SUCCESS f le
+      //  n t  day root.
+      handleEmptyPart  on();
 
-      if (date.after(getEarliestDenseDay())) {
-        LOG.error("Unexpected empty directory {} for {}", path, date);
+       f (date.after(getEarl estDenseDay())) {
+        LOG.error("Unexpected empty d rectory {} for {}", path, date);
       }
     }
   }
 
-  private void handleEmptyPartition() {
+  pr vate vo d handleEmptyPart  on() {
     statusCount = 0;
-    minStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    maxStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    hasStatusCountFile = true;
+    m nStatus D = Da lyStatusBatch.EMPTY_BATCH_STATUS_ D;
+    maxStatus D = Da lyStatusBatch.EMPTY_BATCH_STATUS_ D;
+    hasStatusCountF le = true;
   }
 
   /**
-   * Sometimes tweets are out-of-order (E.g. a tweet from Sep 2012 got into a
-   * batch in July 2013). See SEARCH-1750 for more details.
-   * This adjust the minStatusID if it is badly out-of-order.
+   * So t  s t ets are out-of-order (E.g. a t et from Sep 2012 got  nto a
+   * batch  n July 2013). See SEARCH-1750 for more deta ls.
+   * T  adjust t  m nStatus D  f    s badly out-of-order.
    */
-  @VisibleForTesting
-  protected static long adjustMinStatusId(long minStatusID, Date date) {
-    long dateTime = date.getTime();
-    // If the daily batch is for a day before we started using snow flake IDs. Never adjust.
-    if (!SnowflakeIdParser.isUsableSnowflakeTimestamp(dateTime)) {
-      return minStatusID;
+  @V s bleForTest ng
+  protected stat c long adjustM nStatus d(long m nStatus D, Date date) {
+    long dateT   = date.getT  ();
+    //  f t  da ly batch  s for a day before   started us ng snow flake  Ds. Never adjust.
+     f (!Snowflake dParser. sUsableSnowflakeT  stamp(dateT  )) {
+      return m nStatus D;
     }
 
-    long earliestStartTime = dateTime - MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS;
-    long minStatusTime = SnowflakeIdParser.getTimestampFromTweetId(minStatusID);
-    if (minStatusTime < earliestStartTime) {
-      long newMinId =  SnowflakeIdParser.generateValidStatusId(earliestStartTime, 0);
-      LOG.info("Daily batch for " + date + " has badly out of order tweet: " + minStatusID
-          + ". The minStatusID for the day this batch is adjusted to " + newMinId);
-      return newMinId;
+    long earl estStartT   = dateT   - MAX MUM_OUT_OF_ORDER_TOLERANCE_M LL S;
+    long m nStatusT   = Snowflake dParser.getT  stampFromT et d(m nStatus D);
+     f (m nStatusT   < earl estStartT  ) {
+      long newM n d =  Snowflake dParser.generateVal dStatus d(earl estStartT  , 0);
+      LOG. nfo("Da ly batch for " + date + " has badly out of order t et: " + m nStatus D
+          + ". T  m nStatus D for t  day t  batch  s adjusted to " + newM n d);
+      return newM n d;
     } else {
-      return minStatusID;
+      return m nStatus D;
     }
   }
 
   /**
-   * Returns a reader that reads tweets from the given directory.
+   * Returns a reader that reads t ets from t  g ven d rectory.
    *
-   * @param archiveSegment Determines the timeslice ID of all read tweets.
-   * @param tweetsPath The path to the directory where the tweets for this day are stored.
-   * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
+   * @param arch veSeg nt Determ nes t  t  sl ce  D of all read t ets.
+   * @param t etsPath T  path to t  d rectory w re t  t ets for t  day are stored.
+   * @param docu ntFactory T  Thr ft ndex ngEvent to T etDocu nt converter.
    */
-  public RecordReader<TweetDocument> getTweetReaders(
-      ArchiveSegment archiveSegment,
-      Path tweetsPath,
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    RecordReader<TweetDocument> tweetDocumentReader =
-        new TransformingRecordReader<>(
-            createTweetReader(tweetsPath), new Function<ThriftIndexingEvent, TweetDocument>() {
-          @Override
-          public TweetDocument apply(ThriftIndexingEvent event) {
-            return new TweetDocument(
-                event.getSortId(),
-                archiveSegment.getTimeSliceID(),
-                EarlybirdThriftDocumentUtil.getCreatedAtMs(event.getDocument()),
-                documentFactory.newDocument(event)
+  publ c RecordReader<T etDocu nt> getT etReaders(
+      Arch veSeg nt arch veSeg nt,
+      Path t etsPath,
+      Docu ntFactory<Thr ft ndex ngEvent> docu ntFactory) throws  OExcept on {
+    RecordReader<T etDocu nt> t etDocu ntReader =
+        new Transform ngRecordReader<>(
+            createT etReader(t etsPath), new Funct on<Thr ft ndex ngEvent, T etDocu nt>() {
+          @Overr de
+          publ c T etDocu nt apply(Thr ft ndex ngEvent event) {
+            return new T etDocu nt(
+                event.getSort d(),
+                arch veSeg nt.getT  Sl ce D(),
+                Earlyb rdThr ftDocu ntUt l.getCreatedAtMs(event.getDocu nt()),
+                docu ntFactory.newDocu nt(event)
             );
           }
         });
 
-    tweetDocumentReader.setExhaustStream(true);
-    return tweetDocumentReader;
+    t etDocu ntReader.setExhaustStream(true);
+    return t etDocu ntReader;
   }
 
-  private RecordReader<ThriftIndexingEvent> createTweetReader(Path tweetsPath) throws IOException {
-    if (date.before(START_DATE_INCLUSIVE)) {
+  pr vate RecordReader<Thr ft ndex ngEvent> createT etReader(Path t etsPath) throws  OExcept on {
+     f (date.before(START_DATE_ NCLUS VE)) {
       return new EmptyRecordReader<>();
     }
 
-    List<RecordReader<ThriftIndexingEvent>> readers = Lists.newArrayList();
-    FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
+    L st<RecordReader<Thr ft ndex ngEvent>> readers = L sts.newArrayL st();
+    F leSystem hdfs = HdfsUt l.getHdfsF leSystem();
     try {
-      Path dayPath = new Path(tweetsPath, ArchiveHDFSUtils.dateToPath(date, "/"));
-      Path partitionPath =
-          new Path(dayPath, String.format("p_%d_of_%d", hashPartitionID, numHashPartitions));
-      PathFilter pathFilter =
-          Config.environmentIsTest() ? TXT_DATA_FILES_FILTER : LZO_DATA_FILES_FILTER;
-      FileStatus[] files = hdfs.listStatus(partitionPath, pathFilter);
-      for (FileStatus fileStatus : files) {
-        String fileStatusPath = fileStatus.getPath().toString().replaceAll("file:/", "/");
-        RecordReader<ThriftIndexingEvent> reader = createRecordReaderWithRetries(fileStatusPath);
+      Path dayPath = new Path(t etsPath, Arch veHDFSUt ls.dateToPath(date, "/"));
+      Path part  onPath =
+          new Path(dayPath, Str ng.format("p_%d_of_%d", hashPart  on D, numHashPart  ons));
+      PathF lter pathF lter =
+          Conf g.env ron nt sTest() ? TXT_DATA_F LES_F LTER : LZO_DATA_F LES_F LTER;
+      F leStatus[] f les = hdfs.l stStatus(part  onPath, pathF lter);
+      for (F leStatus f leStatus : f les) {
+        Str ng f leStatusPath = f leStatus.getPath().toStr ng().replaceAll("f le:/", "/");
+        RecordReader<Thr ft ndex ngEvent> reader = createRecordReaderW hRetr es(f leStatusPath);
         readers.add(reader);
       }
-    } finally {
-      IOUtils.closeQuietly(hdfs);
+    } f nally {
+       OUt ls.closeQu etly(hdfs);
     }
 
-    if (readers.isEmpty()) {
+     f (readers. sEmpty()) {
       return new EmptyRecordReader<>();
     }
 
-    return new MergingSortedRecordReader<>(DESC_THRIFT_INDEXING_EVENT_COMPARATOR, readers);
+    return new  rg ngSortedRecordReader<>(DESC_THR FT_ NDEX NG_EVENT_COMPARATOR, readers);
   }
 
-  private RecordReader<ThriftIndexingEvent> createRecordReaderWithRetries(String filePath)
-      throws IOException {
-    Predicate<ThriftIndexingEvent> recordFilter = getRecordFilter();
-    int numTries = 0;
-    while (true) {
+  pr vate RecordReader<Thr ft ndex ngEvent> createRecordReaderW hRetr es(Str ng f lePath)
+      throws  OExcept on {
+    Pred cate<Thr ft ndex ngEvent> recordF lter = getRecordF lter();
+     nt numTr es = 0;
+    wh le (true) {
       try {
-        ++numTries;
-        return new LzoThriftBlockFileReader<>(filePath, ThriftIndexingEvent.class, recordFilter);
-      } catch (IOException e) {
-        if (numTries < READER_INIT_IOEXCEPTION_RETRIES) {
-          LOG.warn("Failed to open LzoThriftBlockFileReader for " + filePath + ". Will retry.", e);
+        ++numTr es;
+        return new LzoThr ftBlockF leReader<>(f lePath, Thr ft ndex ngEvent.class, recordF lter);
+      } catch ( OExcept on e) {
+         f (numTr es < READER_ N T_ OEXCEPT ON_RETR ES) {
+          LOG.warn("Fa led to open LzoThr ftBlockF leReader for " + f lePath + ". W ll retry.", e);
         } else {
-          LOG.error("Failed to open LzoThriftBlockFileReader for " + filePath
-              + " after too many retries.", e);
+          LOG.error("Fa led to open LzoThr ftBlockF leReader for " + f lePath
+              + " after too many retr es.", e);
           throw e;
         }
       }
     }
   }
 
-  private Predicate<ThriftIndexingEvent> getRecordFilter() {
-    return Config.environmentIsTest() ? null : input -> {
-      if (input == null) {
+  pr vate Pred cate<Thr ft ndex ngEvent> getRecordF lter() {
+    return Conf g.env ron nt sTest() ? null :  nput -> {
+       f ( nput == null) {
         return false;
       }
-      // We only guard against status IDs that are too small, because it is possible
-      // for a very old tweet to get into today's batch, but not possible for a very
-      // large ID (a future tweet ID that is not yet published) to get in today's
-      // batch, unless tweet ID generation messed up.
-      long statusId = input.getSortId();
-      boolean keep = statusId >= minStatusID;
-      if (!keep) {
-        LOG.debug("Out of order documentId: {} minStatusID: {} Date: {} Path: {}",
-            statusId, minStatusID, date, path);
-        OUT_OF_ORDER_STATUSES_SKIPPED.increment();
+      //   only guard aga nst status  Ds that are too small, because    s poss ble
+      // for a very old t et to get  nto today's batch, but not poss ble for a very
+      // large  D (a future t et  D that  s not yet publ s d) to get  n today's
+      // batch, unless t et  D generat on  ssed up.
+      long status d =  nput.getSort d();
+      boolean keep = status d >= m nStatus D;
+       f (!keep) {
+        LOG.debug("Out of order docu nt d: {} m nStatus D: {} Date: {} Path: {}",
+            status d, m nStatus D, date, path);
+        OUT_OF_ORDER_STATUSES_SK PPED. ncre nt();
       }
       return keep;
     };
   }
 
   /**
-   * Returns the number of statuses in this batch
+   * Returns t  number of statuses  n t  batch
    */
-  public int getStatusCount() {
+  publ c  nt getStatusCount() {
     return statusCount;
   }
 
   /**
-   * Was the _status_count file was found in this folder.
+   * Was t  _status_count f le was found  n t  folder.
    */
-  public boolean hasStatusCount() {
-    return hasStatusCountFile;
+  publ c boolean hasStatusCount() {
+    return hasStatusCountF le;
   }
 
-  public long getMinStatusID() {
-    return minStatusID;
+  publ c long getM nStatus D() {
+    return m nStatus D;
   }
 
-  public long getMaxStatusID() {
-    return maxStatusID;
+  publ c long getMaxStatus D() {
+    return maxStatus D;
   }
 
-  public Date getDate() {
+  publ c Date getDate() {
     return date;
   }
 
-  public Path getPath() {
+  publ c Path getPath() {
     return path;
   }
 
   /**
-   * Check whether the partition is
+   * C ck w t r t  part  on  s
    * . empty and
-   * . it is disallowed (empty partition can only happen before 2010)
-   * (Empty partition means that the directory is missing when scan happens.)
+   * .    s d sallo d (empty part  on can only happen before 2010)
+   * (Empty part  on  ans that t  d rectory  s m ss ng w n scan happens.)
    *
-   * @return true if the partition has no documents and it is not allowed.
+   * @return true  f t  part  on has no docu nts and    s not allo d.
    */
-  public boolean isDisallowedEmptyPartition() {
-    return hasStatusCountFile
+  publ c boolean  sD sallo dEmptyPart  on() {
+    return hasStatusCountF le
         && statusCount == 0
-        && minStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && maxStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && date.after(getEarliestDenseDay());
+        && m nStatus D == Da lyStatusBatch.EMPTY_BATCH_STATUS_ D
+        && maxStatus D == Da lyStatusBatch.EMPTY_BATCH_STATUS_ D
+        && date.after(getEarl estDenseDay());
   }
 
-  @Override
-  public String toString() {
-    return "PartitionedBatch[hashPartitionId=" + hashPartitionID
-        + ",numHashPartitions=" + numHashPartitions
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "Part  onedBatch[hashPart  on d=" + hashPart  on D
+        + ",numHashPart  ons=" + numHashPart  ons
         + ",date=" + date
         + ",path=" + path
-        + ",hasStatusCountFile=" + hasStatusCountFile
+        + ",hasStatusCountF le=" + hasStatusCountF le
         + ",statusCount=" + statusCount + "]";
   }
 
-  private Date getEarliestDenseDay() {
-    return EarlybirdConfig.getDate("archive_search_earliest_dense_day");
+  pr vate Date getEarl estDenseDay() {
+    return Earlyb rdConf g.getDate("arch ve_search_earl est_dense_day");
   }
 }

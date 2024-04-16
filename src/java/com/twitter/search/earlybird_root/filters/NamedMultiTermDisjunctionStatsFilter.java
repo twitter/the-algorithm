@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.ConcurrentMap;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.Percent le;
+ mport com.tw ter.search.common. tr cs.Percent leUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-public class NamedMultiTermDisjunctionStatsFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+publ c class Na dMult TermD sjunct onStatsF lter extends
+    S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
 
-    private static final String STAT_FORMAT = "named_disjunction_size_client_%s_key_%s";
-    // ClientID -> disjunction name -> operand count
-    private static final ConcurrentMap<String, ConcurrentMap<String, Percentile<Integer>>>
-        NAMED_MULTI_TERM_DISJUNCTION_IDS_COUNT = new ConcurrentHashMap<>();
+    pr vate stat c f nal Str ng STAT_FORMAT = "na d_d sjunct on_s ze_cl ent_%s_key_%s";
+    // Cl ent D -> d sjunct on na  -> operand count
+    pr vate stat c f nal ConcurrentMap<Str ng, ConcurrentMap<Str ng, Percent le< nteger>>>
+        NAMED_MULT _TERM_D SJUNCT ON_ DS_COUNT = new ConcurrentHashMap<>();
 
-    @Override
-    public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-        Service<EarlybirdRequest, EarlybirdResponse> service) {
+    @Overr de
+    publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+        Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
 
-        if (request.getSearchQuery().isSetNamedDisjunctionMap()) {
-            for (Map.Entry<String, List<Long>> entry
-                : request.getSearchQuery().getNamedDisjunctionMap().entrySet()) {
+         f (request.getSearchQuery(). sSetNa dD sjunct onMap()) {
+            for (Map.Entry<Str ng, L st<Long>> entry
+                : request.getSearchQuery().getNa dD sjunct onMap().entrySet()) {
 
-                Map<String, Percentile<Integer>> statsForClient =
-                    NAMED_MULTI_TERM_DISJUNCTION_IDS_COUNT.computeIfAbsent(
-                        request.getClientId(), clientId -> new ConcurrentHashMap<>());
-                Percentile<Integer> stats = statsForClient.computeIfAbsent(entry.getKey(),
-                    keyName -> PercentileUtil.createPercentile(
-                        String.format(STAT_FORMAT, request.getClientId(), keyName)));
+                Map<Str ng, Percent le< nteger>> statsForCl ent =
+                    NAMED_MULT _TERM_D SJUNCT ON_ DS_COUNT.compute fAbsent(
+                        request.getCl ent d(), cl ent d -> new ConcurrentHashMap<>());
+                Percent le< nteger> stats = statsForCl ent.compute fAbsent(entry.getKey(),
+                    keyNa  -> Percent leUt l.createPercent le(
+                        Str ng.format(STAT_FORMAT, request.getCl ent d(), keyNa )));
 
-                stats.record(entry.getValue().size());
+                stats.record(entry.getValue().s ze());
             }
         }
 
-        return service.apply(request);
+        return serv ce.apply(request);
     }
 }

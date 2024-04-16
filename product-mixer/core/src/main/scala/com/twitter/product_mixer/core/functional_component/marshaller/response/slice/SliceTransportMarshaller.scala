@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.sl ce
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.slice.Slice
-import com.twitter.strato.graphql.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.TransportMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce
+ mport com.tw ter.strato.graphql.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SliceTransportMarshaller @Inject() (sliceItemMarshaller: SliceItemMarshaller)
-    extends TransportMarshaller[Slice, t.SliceResult] {
+@S ngleton
+class Sl ceTransportMarshaller @ nject() (sl ce emMarshaller: Sl ce emMarshaller)
+    extends TransportMarshaller[Sl ce, t.Sl ceResult] {
 
-  override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("Slice")
+  overr de val  dent f er: TransportMarshaller dent f er = TransportMarshaller dent f er("Sl ce")
 
-  override def apply(slice: Slice): t.SliceResult = {
-    t.SliceResult.Slice(
-      t.Slice(
-        items = slice.items.map(sliceItemMarshaller(_)),
-        sliceInfo = t.SliceInfo(
-          previousCursor = slice.sliceInfo.previousCursor,
-          nextCursor = slice.sliceInfo.nextCursor
+  overr de def apply(sl ce: Sl ce): t.Sl ceResult = {
+    t.Sl ceResult.Sl ce(
+      t.Sl ce(
+         ems = sl ce. ems.map(sl ce emMarshaller(_)),
+        sl ce nfo = t.Sl ce nfo(
+          prev ousCursor = sl ce.sl ce nfo.prev ousCursor,
+          nextCursor = sl ce.sl ce nfo.nextCursor
         )
       ))
   }

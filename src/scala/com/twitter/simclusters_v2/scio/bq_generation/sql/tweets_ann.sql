@@ -1,63 +1,63 @@
--- (step 1) Read consumer embeddings
-WITH consumer_embeddings AS (
-    {CONSUMER_EMBEDDINGS_SQL}
+-- (step 1) Read consu r embedd ngs
+W TH consu r_embedd ngs AS (
+    {CONSUMER_EMBEDD NGS_SQL}
 ),
--- (step 1) Read tweet embeddings
-tweet_embeddings AS (
-    {TWEET_EMBEDDINGS_SQL}
+-- (step 1) Read t et embedd ngs
+t et_embedd ngs AS (
+    {TWEET_EMBEDD NGS_SQL}
 ),
--- (step 1) Compute tweet embeddings norms (we will use this to compute cosine sims later)
-tweet_embeddings_norm AS (
-    SELECT tweetId, SUM(tweetScore * tweetScore) AS norm
-    FROM tweet_embeddings
-    GROUP BY tweetId
-    HAVING norm > 0.0
+-- (step 1) Compute t et embedd ngs norms (  w ll use t  to compute cos ne s ms later)
+t et_embedd ngs_norm AS (
+    SELECT t et d, SUM(t etScore * t etScore) AS norm
+    FROM t et_embedd ngs
+    GROUP BY t et d
+    HAV NG norm > 0.0
 ),
--- (step 2) Get top N clusters for each consumer embedding. N = 25 in prod
-consumer_embeddings_top_n_clusters AS (
-    SELECT userId, ARRAY_AGG(STRUCT(clusterId, userScore) ORDER BY userScore DESC LIMIT {TOP_N_CLUSTER_PER_SOURCE_EMBEDDING}) AS topClustersWithScores
-    FROM consumer_embeddings
-    GROUP BY userId
+-- (step 2) Get top N clusters for each consu r embedd ng. N = 25  n prod
+consu r_embedd ngs_top_n_clusters AS (
+    SELECT user d, ARRAY_AGG(STRUCT(cluster d, userScore) ORDER BY userScore DESC L M T {TOP_N_CLUSTER_PER_SOURCE_EMBEDD NG}) AS topClustersW hScores
+    FROM consu r_embedd ngs
+    GROUP BY user d
 ),
--- (step 2) Get top M tweets for each cluster id. M = 100 in prod
-clusters_top_m_tweets AS (
-    SELECT clusterId, ARRAY_AGG(STRUCT(tweetId, tweetScore) ORDER BY tweetScore DESC LIMIT {TOP_M_TWEETS_PER_CLUSTER}) AS tweets
-    FROM tweet_embeddings
-    GROUP BY clusterId
+-- (step 2) Get top M t ets for each cluster  d. M = 100  n prod
+clusters_top_m_t ets AS (
+    SELECT cluster d, ARRAY_AGG(STRUCT(t et d, t etScore) ORDER BY t etScore DESC L M T {TOP_M_TWEETS_PER_CLUSTER}) AS t ets
+    FROM t et_embedd ngs
+    GROUP BY cluster d
 ),
--- (step 3) Join the results, get top M * N tweets for each user
-user_top_mn_tweets AS (
-    SELECT userId, consumer_embedding_cluster_score_pairs.userScore AS userScore, clusters_top_m_tweets.clusterId AS clusterId, clusters_top_m_tweets.tweets AS tweets
+-- (step 3) Jo n t  results, get top M * N t ets for each user
+user_top_mn_t ets AS (
+    SELECT user d, consu r_embedd ng_cluster_score_pa rs.userScore AS userScore, clusters_top_m_t ets.cluster d AS cluster d, clusters_top_m_t ets.t ets AS t ets
     FROM (
-        SELECT userId, clusterId, userScore
-        FROM consumer_embeddings_top_n_clusters, UNNEST(topClustersWithScores)
-    ) AS consumer_embedding_cluster_score_pairs
-    JOIN clusters_top_m_tweets ON consumer_embedding_cluster_score_pairs.clusterId = clusters_top_m_tweets.clusterId
+        SELECT user d, cluster d, userScore
+        FROM consu r_embedd ngs_top_n_clusters, UNNEST(topClustersW hScores)
+    ) AS consu r_embedd ng_cluster_score_pa rs
+    JO N clusters_top_m_t ets ON consu r_embedd ng_cluster_score_pa rs.cluster d = clusters_top_m_t ets.cluster d
 ),
--- (step 4) Compute the dot product between each user and tweet embedding pair
-user_tweet_embedding_dot_product AS (
-    SELECT  userId,
-            tweetId,
-            SUM(userScore * tweetScore) AS dotProductScore
-    FROM user_top_mn_tweets, UNNEST(tweets) AS tweets
-    GROUP BY userId, tweetId
+-- (step 4) Compute t  dot product bet en each user and t et embedd ng pa r
+user_t et_embedd ng_dot_product AS (
+    SELECT  user d,
+            t et d,
+            SUM(userScore * t etScore) AS dotProductScore
+    FROM user_top_mn_t ets, UNNEST(t ets) AS t ets
+    GROUP BY user d, t et d
 ),
--- (step 5) Compute similarity scores: dot product, cosine sim, log-cosine sim
-user_tweet_embedding_similarity_scores AS (
-    SELECT  userId,
-            user_tweet_embedding_dot_product.tweetId AS tweetId,
+-- (step 5) Compute s m lar y scores: dot product, cos ne s m, log-cos ne s m
+user_t et_embedd ng_s m lar y_scores AS (
+    SELECT  user d,
+            user_t et_embedd ng_dot_product.t et d AS t et d,
             dotProductScore,
-            SAFE_DIVIDE(dotProductScore, SQRT(tweet_embeddings_norm.norm)) AS cosineSimilarityScore,
-            SAFE_DIVIDE(dotProductScore, LN(1+tweet_embeddings_norm.norm)) AS logCosineSimilarityScore,
-    FROM user_tweet_embedding_dot_product
-    JOIN tweet_embeddings_norm ON user_tweet_embedding_dot_product.tweetId = tweet_embeddings_norm.tweetId
+            SAFE_D V DE(dotProductScore, SQRT(t et_embedd ngs_norm.norm)) AS cos neS m lar yScore,
+            SAFE_D V DE(dotProductScore, LN(1+t et_embedd ngs_norm.norm)) AS logCos neS m lar yScore,
+    FROM user_t et_embedd ng_dot_product
+    JO N t et_embedd ngs_norm ON user_t et_embedd ng_dot_product.t et d = t et_embedd ngs_norm.t et d
 ),
--- (step 6) Get final top K tweets per user. K = 150 in prod
+-- (step 6) Get f nal top K t ets per user. K = 150  n prod
 results AS (
-    SELECT userId, ARRAY_AGG(STRUCT(tweetId, dotProductScore, cosineSimilarityScore, logCosineSimilarityScore)
-                            ORDER BY logCosineSimilarityScore DESC LIMIT {TOP_K_TWEETS_PER_USER_REQUEST}) AS tweets
-    FROM user_tweet_embedding_similarity_scores
-    GROUP BY userId
+    SELECT user d, ARRAY_AGG(STRUCT(t et d, dotProductScore, cos neS m lar yScore, logCos neS m lar yScore)
+                            ORDER BY logCos neS m lar yScore DESC L M T {TOP_K_TWEETS_PER_USER_REQUEST}) AS t ets
+    FROM user_t et_embedd ng_s m lar y_scores
+    GROUP BY user d
 )
 
 SELECT *

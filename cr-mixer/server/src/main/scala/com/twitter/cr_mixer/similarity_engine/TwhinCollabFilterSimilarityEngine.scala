@@ -1,35 +1,35 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-case class TwhinCollabFilterSimilarityEngine(
-  twhinCandidatesStratoStore: ReadableStore[Long, Seq[TweetId]],
-  statsReceiver: StatsReceiver)
+@S ngleton
+case class Twh nCollabF lterS m lar yEng ne(
+  twh nCand datesStratoStore: ReadableStore[Long, Seq[T et d]],
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      TwhinCollabFilterSimilarityEngine.Query,
-      Seq[TweetWithScore]
+      Twh nCollabF lterS m lar yEng ne.Query,
+      Seq[T etW hScore]
     ] {
 
-  import TwhinCollabFilterSimilarityEngine._
-  override def get(
-    query: TwhinCollabFilterSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
+   mport Twh nCollabF lterS m lar yEng ne._
+  overr de def get(
+    query: Twh nCollabF lterS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
 
-    query.sourceId match {
-      case InternalId.UserId(userId) =>
-        twhinCandidatesStratoStore.get(userId).map {
+    query.s ce d match {
+      case  nternal d.User d(user d) =>
+        twh nCand datesStratoStore.get(user d).map {
           _.map {
-            _.map { tweetId => TweetWithScore(tweetId, defaultScore) }
+            _.map { t et d => T etW hScore(t et d, defaultScore) }
           }
         }
       case _ =>
@@ -38,34 +38,34 @@ case class TwhinCollabFilterSimilarityEngine(
   }
 }
 
-object TwhinCollabFilterSimilarityEngine {
+object Twh nCollabF lterS m lar yEng ne {
 
   val defaultScore: Double = 1.0
 
-  case class TwhinCollabFilterView(clusterVersion: String)
+  case class Twh nCollabF lterV ew(clusterVers on: Str ng)
 
   case class Query(
-    sourceId: InternalId,
+    s ce d:  nternal d,
   )
 
-  def toSimilarityEngineInfo(
-    query: LookupEngineQuery[Query],
+  def toS m lar yEng ne nfo(
+    query: LookupEng neQuery[Query],
     score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.TwhinCollabFilter,
-      modelId = Some(query.lookupKey),
-      score = Some(score))
+  ): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.Twh nCollabF lter,
+      model d = So (query.lookupKey),
+      score = So (score))
   }
 
   def fromParams(
-    sourceId: InternalId,
-    modelId: String,
-    params: configapi.Params,
-  ): LookupEngineQuery[Query] = {
-    LookupEngineQuery(
-      Query(sourceId = sourceId),
-      modelId,
+    s ce d:  nternal d,
+    model d: Str ng,
+    params: conf gap .Params,
+  ): LookupEng neQuery[Query] = {
+    LookupEng neQuery(
+      Query(s ce d = s ce d),
+      model d,
       params
     )
   }

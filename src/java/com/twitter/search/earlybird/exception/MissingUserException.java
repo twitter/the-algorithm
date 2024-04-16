@@ -1,4 +1,4 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-public class MissingUserException extends Exception {
+publ c class M ss ngUserExcept on extends Except on {
 }

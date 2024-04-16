@@ -1,26 +1,26 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.CommunityId
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.Commun y d
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
 
-object StratoCommunityAccessRepository {
-  type Type = CommunityId => Stitch[Option[CommunityAccess]]
+object StratoCommun yAccessRepos ory {
+  type Type = Commun y d => St ch[Opt on[Commun yAccess]]
 
-  sealed trait CommunityAccess
-  object CommunityAccess {
-    case object Public extends CommunityAccess
-    case object Closed extends CommunityAccess
-    case object Private extends CommunityAccess
+  sealed tra  Commun yAccess
+  object Commun yAccess {
+    case object Publ c extends Commun yAccess
+    case object Closed extends Commun yAccess
+    case object Pr vate extends Commun yAccess
   }
 
-  val column = "communities/access.Community"
+  val column = "commun  es/access.Commun y"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[CommunityId, Unit, CommunityAccess] =
-      client.fetcher[CommunityId, CommunityAccess](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[Commun y d, Un , Commun yAccess] =
+      cl ent.fetc r[Commun y d, Commun yAccess](column)
 
-    communityId => fetcher.fetch(communityId).map(_.v)
+    commun y d => fetc r.fetch(commun y d).map(_.v)
   }
 }

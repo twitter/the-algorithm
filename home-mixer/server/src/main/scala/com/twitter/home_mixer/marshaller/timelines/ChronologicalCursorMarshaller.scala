@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.tw ter.ho _m xer.marshaller.t  l nes
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelines.service.{thriftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.BottomCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => t}
 
-object ChronologicalCursorMarshaller {
+object Chronolog calCursorMarshaller {
 
-  def apply(cursor: UrtOrderedCursor): Option[t.ChronologicalCursor] = {
+  def apply(cursor: UrtOrderedCursor): Opt on[t.Chronolog calCursor] = {
     cursor.cursorType match {
-      case Some(TopCursor) => Some(t.ChronologicalCursor(bottom = cursor.id))
-      case Some(BottomCursor) => Some(t.ChronologicalCursor(top = cursor.id))
-      case Some(GapCursor) =>
-        Some(t.ChronologicalCursor(top = cursor.id, bottom = cursor.gapBoundaryId))
+      case So (TopCursor) => So (t.Chronolog calCursor(bottom = cursor. d))
+      case So (BottomCursor) => So (t.Chronolog calCursor(top = cursor. d))
+      case So (GapCursor) =>
+        So (t.Chronolog calCursor(top = cursor. d, bottom = cursor.gapBoundary d))
       case _ => None
     }
   }

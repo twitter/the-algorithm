@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import org.apache.thrift.protocol.TProtocolFactory;
+ mport org.apac .thr ft.protocol.TProtocolFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.util.thrift.ThriftToBytesFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.ut l.thr ft.Thr ftToBytesF lter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
 
-@Singleton
-public class EarlybirdThriftBackend extends EarlybirdService.ServiceToClient {
+@S ngleton
+publ c class Earlyb rdThr ftBackend extends Earlyb rdServ ce.Serv ceToCl ent {
 
   /**
-   * Wrapping the bytes svc back to a EarlybirdService.ServiceToClient, which
-   * is a EarlybirdService.ServiceIface again.
+   * Wrapp ng t  bytes svc back to a Earlyb rdServ ce.Serv ceToCl ent, wh ch
+   *  s a Earlyb rdServ ce.Serv ce face aga n.
    */
-  @Inject
-  public EarlybirdThriftBackend(
-      ThriftToBytesFilter thriftToBytesFilter,
-      Service<byte[], byte[]> byteService,
+  @ nject
+  publ c Earlyb rdThr ftBackend(
+      Thr ftToBytesF lter thr ftToBytesF lter,
+      Serv ce<byte[], byte[]> byteServ ce,
       TProtocolFactory protocolFactory) {
 
-    super(thriftToBytesFilter.andThen(byteService), protocolFactory);
+    super(thr ftToBytesF lter.andT n(byteServ ce), protocolFactory);
   }
 
 }

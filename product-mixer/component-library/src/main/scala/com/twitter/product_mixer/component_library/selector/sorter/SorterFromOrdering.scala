@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.tw ter.product_m xer.component_l brary.selector.sorter
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
-object SorterFromOrdering {
-  def apply(ordering: Ordering[CandidateWithDetails], sortOrder: SortOrder): SorterFromOrdering =
-    SorterFromOrdering(if (sortOrder == Descending) ordering.reverse else ordering)
+object SorterFromOrder ng {
+  def apply(order ng: Order ng[Cand dateW hDeta ls], sortOrder: SortOrder): SorterFromOrder ng =
+    SorterFromOrder ng( f (sortOrder == Descend ng) order ng.reverse else order ng)
 }
 
 /**
- * Sorts candidates based on the provided [[ordering]]
+ * Sorts cand dates based on t  prov ded [[order ng]]
  *
- * @note the [[Ordering]] must be transitive, so if `A < B` and `B < C` then `A < C`.
- * @note sorting randomly via `Ordering.by[CandidateWithDetails, Double](_ => Random.nextDouble())`
- *       is not safe and can fail at runtime since TimSort depends on stable sort values for
- *       pivoting. To sort randomly, use [[RandomShuffleSorter]] instead.
+ * @note t  [[Order ng]] must be trans  ve, so  f `A < B` and `B < C` t n `A < C`.
+ * @note sort ng randomly v a `Order ng.by[Cand dateW hDeta ls, Double](_ => Random.nextDouble())`
+ *        s not safe and can fa l at runt   s nce T mSort depends on stable sort values for
+ *       p vot ng. To sort randomly, use [[RandomShuffleSorter]]  nstead.
  */
-case class SorterFromOrdering(
-  ordering: Ordering[CandidateWithDetails])
-    extends SorterProvider
-    with Sorter {
+case class SorterFromOrder ng(
+  order ng: Order ng[Cand dateW hDeta ls])
+    extends SorterProv der
+    w h Sorter {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    candidates.sorted(ordering)
+  overr de def sort[Cand date <: Cand dateW hDeta ls](cand dates: Seq[Cand date]): Seq[Cand date] =
+    cand dates.sorted(order ng)
 }

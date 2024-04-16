@@ -1,231 +1,231 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.thrift.ThriftCodec
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EngagementsReceivedByAuthorCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicCountryEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetCountryEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwitterListEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserAuthorEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserTopicEngagementForNewUserCache
-import com.twitter.home_mixer.util.InjectionTransformerImplicits._
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.{api => ml}
-import com.twitter.servo.cache.KeyValueTransformingReadCache
-import com.twitter.servo.cache.Memcache
-import com.twitter.servo.cache.ReadCache
-import com.twitter.servo.util.Transformer
-import com.twitter.storehaus_internal.memcache.MemcacheHelper
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
+ mport com.google. nject.Prov des
+ mport com.google. nject.na .Na d
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.thr ft.Thr ftCodec
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Engage ntsRece vedByAuthorCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealT   nteract onGraphUserVertexCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealT   nteract onGraphUserVertexCl ent
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T  l nesRealT  AggregateCl ent
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Top cCountryEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Top cEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T etCountryEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T etEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Tw terL stEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserAuthorEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserEngage ntCac 
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserTop cEngage ntForNewUserCac 
+ mport com.tw ter.ho _m xer.ut l. nject onTransfor r mpl c s._
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.{ap  => ml}
+ mport com.tw ter.servo.cac .KeyValueTransform ngReadCac 
+ mport com.tw ter.servo.cac . mcac 
+ mport com.tw ter.servo.cac .ReadCac 
+ mport com.tw ter.servo.ut l.Transfor r
+ mport com.tw ter.storehaus_ nternal. mcac . mcac  lper
+ mport com.tw ter.summ ngb rd.batch.Batc r
+ mport com.tw ter.summ ngb rd_ nternal.b ject on.BatchPa r mpl c s
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey nject on
+ mport com.tw ter.wtf.real_t  _ nteract on_graph.{thr ftscala =>  g}
 
-import javax.inject.Singleton
+ mport javax. nject.S ngleton
 
-object RealtimeAggregateFeatureRepositoryModule
-    extends TwitterModule
-    with RealtimeAggregateHelpers {
+object Realt  AggregateFeatureRepos oryModule
+    extends Tw terModule
+    w h Realt  Aggregate lpers {
 
-  private val authorIdFeature = new Feature.Discrete("entities.source_author_id").getFeatureId
-  private val countryCodeFeature = new Feature.Text("geo.user_location.country_code").getFeatureId
-  private val listIdFeature = new Feature.Discrete("list.id").getFeatureId
-  private val userIdFeature = new Feature.Discrete("meta.user_id").getFeatureId
-  private val topicIdFeature = new Feature.Discrete("entities.topic_id").getFeatureId
-  private val tweetIdFeature = new Feature.Discrete("entities.source_tweet_id").getFeatureId
+  pr vate val author dFeature = new Feature.D screte("ent  es.s ce_author_ d").getFeature d
+  pr vate val countryCodeFeature = new Feature.Text("geo.user_locat on.country_code").getFeature d
+  pr vate val l st dFeature = new Feature.D screte("l st. d").getFeature d
+  pr vate val user dFeature = new Feature.D screte(" ta.user_ d").getFeature d
+  pr vate val top c dFeature = new Feature.D screte("ent  es.top c_ d").getFeature d
+  pr vate val t et dFeature = new Feature.D screte("ent  es.s ce_t et_ d").getFeature d
 
-  @Provides
-  @Singleton
-  @Named(UserTopicEngagementForNewUserCache)
-  def providesUserTopicEngagementForNewUserCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, Long), ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD2(userIdFeature, topicIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(UserTop cEngage ntForNewUserCac )
+  def prov desUserTop cEngage ntForNewUserCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [(Long, Long), ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD2(user dFeature, top c dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TwitterListEngagementCache)
-  def providesTwitterListEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(listIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(Tw terL stEngage ntCac )
+  def prov desTw terL stEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [Long, ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1(l st dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TopicEngagementCache)
-  def providesTopicEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(topicIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(Top cEngage ntCac )
+  def prov desTop cEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [Long, ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1(top c dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserAuthorEngagementCache)
-  def providesUserAuthorEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, Long), ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD2(userIdFeature, authorIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(UserAuthorEngage ntCac )
+  def prov desUserAuthorEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [(Long, Long), ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD2(user dFeature, author dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserEngagementCache)
-  def providesUserEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(userIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(UserEngage ntCac )
+  def prov desUserEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [Long, ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1(user dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TweetCountryEngagementCache)
-  def providesTweetCountryEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, String), ml.DataRecord] = {
+  @Prov des
+  @S ngleton
+  @Na d(T etCountryEngage ntCac )
+  def prov desT etCountryEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [(Long, Str ng), ml.DataRecord] = {
 
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1T1(tweetIdFeature, countryCodeFeature)
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1T1(t et dFeature, countryCodeFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TweetEngagementCache)
-  def providesTweetEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(tweetIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(T etEngage ntCac )
+  def prov desT etEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [Long, ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1(t et dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(EngagementsReceivedByAuthorCache)
-  def providesEngagementsReceivedByAuthorCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(authorIdFeature)
+  @Prov des
+  @S ngleton
+  @Na d(Engage ntsRece vedByAuthorCac )
+  def prov desEngage ntsRece vedByAuthorCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [Long, ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1(author dFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TopicCountryEngagementCache)
-  def providesTopicCountryEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, String), ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1T1(topicIdFeature, countryCodeFeature)
+  @Prov des
+  @S ngleton
+  @Na d(Top cCountryEngage ntCac )
+  def prov desTop cCountryEngage ntCac (
+    @Na d(T  l nesRealT  AggregateCl ent) cl ent:  mcac 
+  ): ReadCac [(Long, Str ng), ml.DataRecord] = {
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      dataRecordValueTransfor r,
+      keyTransformD1T1(top c dFeature, countryCodeFeature)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(RealTimeInteractionGraphUserVertexCache)
-  def providesRealTimeInteractionGraphUserVertexCache(
-    @Named(RealTimeInteractionGraphUserVertexClient) client: Memcache
-  ): ReadCache[Long, ig.UserVertex] = {
+  @Prov des
+  @S ngleton
+  @Na d(RealT   nteract onGraphUserVertexCac )
+  def prov desRealT   nteract onGraphUserVertexCac (
+    @Na d(RealT   nteract onGraphUserVertexCl ent) cl ent:  mcac 
+  ): ReadCac [Long,  g.UserVertex] = {
 
-    val valueTransformer = BinaryScalaCodec(ig.UserVertex).toByteArrayTransformer()
+    val valueTransfor r = B naryScalaCodec( g.UserVertex).toByteArrayTransfor r()
 
-    val underlyingKey: Long => String = {
-      val cacheKeyPrefix = "user_vertex"
-      val defaultBatchID = Batcher.unit.currentBatch
-      val batchPairInjection = BatchPairImplicits.keyInjection(Injection.connect[Long, Array[Byte]])
-      MemcacheHelper
-        .keyEncoder(cacheKeyPrefix)(batchPairInjection)
-        .compose((k: Long) => (k, defaultBatchID))
+    val underly ngKey: Long => Str ng = {
+      val cac KeyPref x = "user_vertex"
+      val defaultBatch D = Batc r.un .currentBatch
+      val batchPa r nject on = BatchPa r mpl c s.key nject on( nject on.connect[Long, Array[Byte]])
+       mcac  lper
+        .keyEncoder(cac KeyPref x)(batchPa r nject on)
+        .compose((k: Long) => (k, defaultBatch D))
     }
 
-    new KeyValueTransformingReadCache(
-      client,
-      valueTransformer,
-      underlyingKey
+    new KeyValueTransform ngReadCac (
+      cl ent,
+      valueTransfor r,
+      underly ngKey
     )
   }
 }
 
-trait RealtimeAggregateHelpers {
+tra  Realt  Aggregate lpers {
 
-  private def customKeyBuilder[K](prefix: String, f: K => Array[Byte]): K => String = {
-    // intentionally not implementing injection inverse because it is never used
+  pr vate def customKeyBu lder[K](pref x: Str ng, f: K => Array[Byte]): K => Str ng = {
+    //  ntent onally not  mple nt ng  nject on  nverse because    s never used
     def g(arr: Array[Byte]) = ???
 
-    MemcacheHelper.keyEncoder(prefix)(Injection.build(f)(g))
+     mcac  lper.keyEncoder(pref x)( nject on.bu ld(f)(g))
   }
 
-  private val keyEncoder: AggregationKey => String = {
-    val cacheKeyPrefix = ""
-    val defaultBatchID = Batcher.unit.currentBatch
+  pr vate val keyEncoder: Aggregat onKey => Str ng = {
+    val cac KeyPref x = ""
+    val defaultBatch D = Batc r.un .currentBatch
 
-    val batchPairInjection = BatchPairImplicits.keyInjection(AggregationKeyInjection)
-    customKeyBuilder(cacheKeyPrefix, batchPairInjection)
-      .compose((k: AggregationKey) => (k, defaultBatchID))
+    val batchPa r nject on = BatchPa r mpl c s.key nject on(Aggregat onKey nject on)
+    customKeyBu lder(cac KeyPref x, batchPa r nject on)
+      .compose((k: Aggregat onKey) => (k, defaultBatch D))
   }
 
-  protected def keyTransformD1(f1: Long)(key: Long): String = {
-    val aggregationKey = AggregationKey(Map(f1 -> key), Map.empty)
-    keyEncoder(aggregationKey)
+  protected def keyTransformD1(f1: Long)(key: Long): Str ng = {
+    val aggregat onKey = Aggregat onKey(Map(f1 -> key), Map.empty)
+    keyEncoder(aggregat onKey)
   }
 
-  protected def keyTransformD2(f1: Long, f2: Long)(keys: (Long, Long)): String = {
+  protected def keyTransformD2(f1: Long, f2: Long)(keys: (Long, Long)): Str ng = {
     val (k1, k2) = keys
-    val aggregationKey = AggregationKey(Map(f1 -> k1, f2 -> k2), Map.empty)
-    keyEncoder(aggregationKey)
+    val aggregat onKey = Aggregat onKey(Map(f1 -> k1, f2 -> k2), Map.empty)
+    keyEncoder(aggregat onKey)
   }
 
-  protected def keyTransformD1T1(f1: Long, f2: Long)(keys: (Long, String)): String = {
+  protected def keyTransformD1T1(f1: Long, f2: Long)(keys: (Long, Str ng)): Str ng = {
     val (k1, k2) = keys
-    val aggregationKey = AggregationKey(Map(f1 -> k1), Map(f2 -> k2))
-    keyEncoder(aggregationKey)
+    val aggregat onKey = Aggregat onKey(Map(f1 -> k1), Map(f2 -> k2))
+    keyEncoder(aggregat onKey)
   }
 
-  protected val dataRecordValueTransformer: Transformer[DataRecord, Array[Byte]] = ThriftCodec
+  protected val dataRecordValueTransfor r: Transfor r[DataRecord, Array[Byte]] = Thr ftCodec
     .toCompact[ml.DataRecord]
-    .toByteArrayTransformer()
+    .toByteArrayTransfor r()
 }

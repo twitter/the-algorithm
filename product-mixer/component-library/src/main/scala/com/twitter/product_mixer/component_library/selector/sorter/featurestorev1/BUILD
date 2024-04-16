@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector/sorter",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/featurestorev1",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featurestorev1",
+    scalac_plug ns = ["no-roomba"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/selector/sorter",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/feature/featuremap/featurestorev1",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/feature/featurestorev1",
     ],
     exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector/sorter",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/featurestorev1",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featurestorev1",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/selector/sorter",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/feature/featuremap/featurestorev1",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/feature/featurestorev1",
     ],
 )

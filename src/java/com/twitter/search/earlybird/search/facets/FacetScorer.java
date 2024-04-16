@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetAccumulator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetResultsCollector.Accumulator;
 
-public abstract class FacetScorer {
-  protected abstract void startSegment(EarlybirdIndexSegmentAtomicReader reader) throws IOException;
-
-  /**
-   * Increments facet counts for the given document.
-   */
-  public abstract void incrementCounts(Accumulator accumulator, int internalDocID)
-      throws IOException;
+publ c abstract class FacetScorer {
+  protected abstract vo d startSeg nt(Earlyb rd ndexSeg ntAtom cReader reader) throws  OExcept on;
 
   /**
-   * Returns a FacetAccumulator for counting facets. It will use the given FacetLabelProvider
-   * for facet result labeling.
+   *  ncre nts facet counts for t  g ven docu nt.
    */
-  public abstract FacetAccumulator<?> getFacetAccumulator(FacetLabelProvider labelProvider);
+  publ c abstract vo d  ncre ntCounts(Accumulator accumulator,  nt  nternalDoc D)
+      throws  OExcept on;
+
+  /**
+   * Returns a FacetAccumulator for count ng facets.   w ll use t  g ven FacetLabelProv der
+   * for facet result label ng.
+   */
+  publ c abstract FacetAccumulator<?> getFacetAccumulator(FacetLabelProv der labelProv der);
 }

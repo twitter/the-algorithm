@@ -1,41 +1,41 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Time
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ut l.T  
+ mport java.lang.{Long => JLong}
 
-case class TypedCountMetric[T](
-) extends TypedSumLikeMetric[T] {
-  import AggregationMetricCommon._
-  import ConversionUtils._
-  override val operatorName = "count"
+case class TypedCount tr c[T](
+) extends TypedSumL ke tr c[T] {
+   mport Aggregat on tr cCommon._
+   mport Convers onUt ls._
+  overr de val operatorNa  = "count"
 
-  override def getIncrementValue(
+  overr de def get ncre ntValue(
     record: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = {
-    val featureExists: Boolean = feature match {
-      case Some(f) => SRichDataRecord(record).hasFeature(f)
+    feature: Opt on[Feature[T]],
+    t  stampFeature: Feature[JLong]
+  ): T  dValue[Double] = {
+    val featureEx sts: Boolean = feature match {
+      case So (f) => SR chDataRecord(record).hasFeature(f)
       case None => true
     }
 
-    TimedValue[Double](
-      value = booleanToDouble(featureExists),
-      timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+    T  dValue[Double](
+      value = booleanToDouble(featureEx sts),
+      t  stamp = T  .fromM ll seconds(getT  stamp(record, t  stampFeature))
     )
   }
 }
 
 /**
- * Syntactic sugar for the count metric that works with
- * any feature type as opposed to being tied to a specific type.
- * See EasyMetric.scala for more details on why this is useful.
+ * Syntact c sugar for t  count  tr c that works w h
+ * any feature type as opposed to be ng t ed to a spec f c type.
+ * See Easy tr c.scala for more deta ls on why t   s useful.
  */
-object CountMetric extends EasyMetric {
-  override def forFeatureType[T](
+object Count tr c extends Easy tr c {
+  overr de def forFeatureType[T](
     featureType: FeatureType,
-  ): Option[AggregationMetric[T, _]] =
-    Some(TypedCountMetric[T]())
+  ): Opt on[Aggregat on tr c[T, _]] =
+    So (TypedCount tr c[T]())
 }

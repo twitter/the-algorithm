@@ -1,63 +1,63 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos njector.ut l.T etCreateEventDeta ls
+ mport com.tw ter.ut l.Future
 
 /**
- * Given a tweet creation event, parse for UserUserGraph edges. Specifically, when a new tweet is
- * created, extract the valid mentioned and mediatagged users in the tweet and create edges for them
+ * G ven a t et creat on event, parse for UserUserGraph edges. Spec f cally, w n a new t et  s
+ * created, extract t  val d  nt oned and  d atagged users  n t  t et and create edges for t m
  */
-class TweetEventToUserUserGraphBuilder(
+class T etEventToUserUserGraphBu lder(
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserUserEdge] {
-  private val tweetOrQuoteEventCounter = statsReceiver.counter("num_tweet_or_quote_event")
-  private val nonTweetOrQuoteEventCounter = statsReceiver.counter("num_non_tweet_or_quote_event")
-  private val mentionEdgeCounter = statsReceiver.counter("num_mention_edge")
-  private val mediatagEdgeCounter = statsReceiver.counter("num_mediatag_edge")
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventTo ssageBu lder[T etCreateEventDeta ls, UserUserEdge] {
+  pr vate val t etOrQuoteEventCounter = statsRece ver.counter("num_t et_or_quote_event")
+  pr vate val nonT etOrQuoteEventCounter = statsRece ver.counter("num_non_t et_or_quote_event")
+  pr vate val  nt onEdgeCounter = statsRece ver.counter("num_ nt on_edge")
+  pr vate val  d atagEdgeCounter = statsRece ver.counter("num_ d atag_edge")
 
-  override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    // For user interactions, only new tweets and quotes are considered (no replies or retweets)
-    event.userTweetEngagement.action match {
-      case Action.Tweet | Action.Quote =>
-        tweetOrQuoteEventCounter.incr()
+  overr de def shouldProcessEvent(event: T etCreateEventDeta ls): Future[Boolean] = {
+    // For user  nteract ons, only new t ets and quotes are cons dered (no repl es or ret ets)
+    event.userT etEngage nt.act on match {
+      case Act on.T et | Act on.Quote =>
+        t etOrQuoteEventCounter. ncr()
         Future(true)
       case _ =>
-        nonTweetOrQuoteEventCounter.incr()
+        nonT etOrQuoteEventCounter. ncr()
         Future(false)
     }
   }
 
-  override def buildEdges(event: TweetCreateEventDetails): Future[Seq[UserUserEdge]] = {
-    val mentionEdges = event.validMentionUserIds
-      .map(_.map { mentionUserId =>
+  overr de def bu ldEdges(event: T etCreateEventDeta ls): Future[Seq[UserUserEdge]] = {
+    val  nt onEdges = event.val d nt onUser ds
+      .map(_.map {  nt onUser d =>
         UserUserEdge(
-          sourceUser = event.userTweetEngagement.engageUserId,
-          targetUser = mentionUserId,
-          action = Action.Mention,
-          metadata = Some(System.currentTimeMillis())
+          s ceUser = event.userT etEngage nt.engageUser d,
+          targetUser =  nt onUser d,
+          act on = Act on. nt on,
+           tadata = So (System.currentT  M ll s())
         )
-      }).getOrElse(Nil)
+      }).getOrElse(N l)
 
-    val mediatagEdges = event.validMediatagUserIds
-      .map(_.map { mediatagUserId =>
+    val  d atagEdges = event.val d d atagUser ds
+      .map(_.map {  d atagUser d =>
         UserUserEdge(
-          sourceUser = event.userTweetEngagement.engageUserId,
-          targetUser = mediatagUserId,
-          action = Action.MediaTag,
-          metadata = Some(System.currentTimeMillis())
+          s ceUser = event.userT etEngage nt.engageUser d,
+          targetUser =  d atagUser d,
+          act on = Act on. d aTag,
+           tadata = So (System.currentT  M ll s())
         )
-      }).getOrElse(Nil)
+      }).getOrElse(N l)
 
-    mentionEdgeCounter.incr(mentionEdges.size)
-    mediatagEdgeCounter.incr(mediatagEdges.size)
-    Future(mentionEdges ++ mediatagEdges)
+     nt onEdgeCounter. ncr( nt onEdges.s ze)
+     d atagEdgeCounter. ncr( d atagEdges.s ze)
+    Future( nt onEdges ++  d atagEdges)
   }
 
-  override def filterEdges(
-    event: TweetCreateEventDetails,
+  overr de def f lterEdges(
+    event: T etCreateEventDeta ls,
     edges: Seq[UserUserEdge]
   ): Future[Seq[UserUserEdge]] = {
     Future(edges)

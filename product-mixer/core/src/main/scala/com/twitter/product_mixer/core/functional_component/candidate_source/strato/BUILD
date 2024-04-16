@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "strato/src/main/scala/com/twitter/strato/response",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/cand date_s ce",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/p pel ne_fa lure",
+        "st ch/st ch-core",
+        "strato/src/ma n/scala/com/tw ter/strato/catalog",
+        "strato/src/ma n/scala/com/tw ter/strato/cl ent",
+        "strato/src/ma n/scala/com/tw ter/strato/response",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/cand date_s ce",
+        "st ch/st ch-core",
+        "strato/src/ma n/scala/com/tw ter/strato/catalog",
+        "strato/src/ma n/scala/com/tw ter/strato/cl ent",
     ],
 )

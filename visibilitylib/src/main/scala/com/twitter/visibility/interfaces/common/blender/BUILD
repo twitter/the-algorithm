@@ -1,14 +1,14 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/search/blender/services/strato",
-        "src/thrift/com/twitter/search/common:constants-scala",
-        "stitch/stitch-core",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/search/blender/serv ces/strato",
+        "src/thr ft/com/tw ter/search/common:constants-scala",
+        "st ch/st ch-core",
     ],
 )

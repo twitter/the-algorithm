@@ -1,282 +1,282 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.context.thriftscala.FeatureContext
-import com.twitter.tweetypie.core.GeoSearchRequestId
-import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.context.thr ftscala.FeatureContext
+ mport com.tw ter.t etyp e.core.GeoSearchRequest d
+ mport com.tw ter.t etyp e.store.T etEventDataScrubber.scrub
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object InsertTweet extends TweetStore.SyncModule {
+object  nsertT et extends T etStore.SyncModule {
 
   case class Event(
-    tweet: Tweet,
+    t et: T et,
     user: User,
-    timestamp: Time,
-    _internalTweet: Option[CachedTweet] = None,
-    sourceTweet: Option[Tweet] = None,
-    sourceUser: Option[User] = None,
-    quotedTweet: Option[Tweet] = None,
-    quotedUser: Option[User] = None,
-    parentUserId: Option[UserId] = None,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None,
+    t  stamp: T  ,
+    _ nternalT et: Opt on[Cac dT et] = None,
+    s ceT et: Opt on[T et] = None,
+    s ceUser: Opt on[User] = None,
+    quotedT et: Opt on[T et] = None,
+    quotedUser: Opt on[User] = None,
+    parentUser d: Opt on[User d] = None,
+     n  alT etUpdateRequest: Opt on[ n  alT etUpdateRequest] = None,
     dark: Boolean = false,
-    hydrateOptions: WritePathHydrationOptions = WritePathHydrationOptions(),
-    featureContext: Option[FeatureContext] = None,
-    geoSearchRequestId: Option[GeoSearchRequestId] = None,
-    additionalContext: Option[collection.Map[TweetCreateContextKey, String]] = None,
-    transientContext: Option[TransientCreateContext] = None,
-    quoterHasAlreadyQuotedTweet: Boolean = false,
-    noteTweetMentionedUserIds: Option[Seq[Long]] = None)
-      extends SyncTweetStoreEvent("insert_tweet")
-      with QuotedTweetOps {
-    def internalTweet: CachedTweet =
-      _internalTweet.getOrElse(
-        throw new IllegalStateException(
-          s"internalTweet should have been set in WritePathHydration, ${this}"
+    hydrateOpt ons: Wr ePathHydrat onOpt ons = Wr ePathHydrat onOpt ons(),
+    featureContext: Opt on[FeatureContext] = None,
+    geoSearchRequest d: Opt on[GeoSearchRequest d] = None,
+    add  onalContext: Opt on[collect on.Map[T etCreateContextKey, Str ng]] = None,
+    trans entContext: Opt on[Trans entCreateContext] = None,
+    quoterHasAlreadyQuotedT et: Boolean = false,
+    noteT et nt onedUser ds: Opt on[Seq[Long]] = None)
+      extends SyncT etStoreEvent(" nsert_t et")
+      w h QuotedT etOps {
+    def  nternalT et: Cac dT et =
+      _ nternalT et.getOrElse(
+        throw new  llegalStateExcept on(
+          s" nternalT et should have been set  n Wr ePathHydrat on, ${t }"
         )
       )
 
     def toAsyncRequest(
       scrubUser: User => User,
-      scrubSourceTweet: Tweet => Tweet,
-      scrubSourceUser: User => User
-    ): AsyncInsertRequest =
-      AsyncInsertRequest(
-        tweet = tweet,
-        cachedTweet = internalTweet,
+      scrubS ceT et: T et => T et,
+      scrubS ceUser: User => User
+    ): Async nsertRequest =
+      Async nsertRequest(
+        t et = t et,
+        cac dT et =  nternalT et,
         user = scrubUser(user),
-        sourceTweet = sourceTweet.map(scrubSourceTweet),
-        sourceUser = sourceUser.map(scrubSourceUser),
-        quotedTweet = quotedTweet.map(scrubSourceTweet),
-        quotedUser = quotedUser.map(scrubSourceUser),
-        parentUserId = parentUserId,
+        s ceT et = s ceT et.map(scrubS ceT et),
+        s ceUser = s ceUser.map(scrubS ceUser),
+        quotedT et = quotedT et.map(scrubS ceT et),
+        quotedUser = quotedUser.map(scrubS ceUser),
+        parentUser d = parentUser d,
         featureContext = featureContext,
-        timestamp = timestamp.inMillis,
-        geoSearchRequestId = geoSearchRequestId.map(_.requestID),
-        additionalContext = additionalContext,
-        transientContext = transientContext,
-        quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet),
-        initialTweetUpdateRequest = initialTweetUpdateRequest,
-        noteTweetMentionedUserIds = noteTweetMentionedUserIds
+        t  stamp = t  stamp. nM ll s,
+        geoSearchRequest d = geoSearchRequest d.map(_.request D),
+        add  onalContext = add  onalContext,
+        trans entContext = trans entContext,
+        quoterHasAlreadyQuotedT et = So (quoterHasAlreadyQuotedT et),
+         n  alT etUpdateRequest =  n  alT etUpdateRequest,
+        noteT et nt onedUser ds = noteT et nt onedUser ds
       )
   }
 
-  trait Store {
-    val insertTweet: FutureEffect[Event]
+  tra  Store {
+    val  nsertT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val insertTweet: FutureEffect[Event] = wrap(underlying.insertTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val  nsertT et: FutureEffect[Event] = wrap(underly ng. nsertT et)
   }
 
   object Store {
     def apply(
       logLensStore: LogLensStore,
-      manhattanStore: ManhattanTweetStore,
-      tweetStatsStore: TweetStatsStore,
-      cachingTweetStore: CachingTweetStore,
-      limiterStore: LimiterStore,
+      manhattanStore: ManhattanT etStore,
+      t etStatsStore: T etStatsStore,
+      cach ngT etStore: Cach ngT etStore,
+      l m erStore: L m erStore,
       asyncEnqueueStore: AsyncEnqueueStore,
-      userCountsUpdatingStore: GizmoduckUserCountsUpdatingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
+      userCountsUpdat ngStore: G zmoduckUserCountsUpdat ngStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore
     ): Store =
       new Store {
-        override val insertTweet: FutureEffect[Event] =
-          FutureEffect.sequentially(
-            logLensStore.insertTweet,
-            manhattanStore.insertTweet,
-            tweetStatsStore.insertTweet,
-            FutureEffect.inParallel(
-              // allow write-through caching to fail without failing entire insert
-              cachingTweetStore.ignoreFailures.insertTweet,
-              limiterStore.ignoreFailures.insertTweet,
-              asyncEnqueueStore.insertTweet,
-              userCountsUpdatingStore.insertTweet,
-              tweetCountsUpdatingStore.insertTweet
+        overr de val  nsertT et: FutureEffect[Event] =
+          FutureEffect.sequent ally(
+            logLensStore. nsertT et,
+            manhattanStore. nsertT et,
+            t etStatsStore. nsertT et,
+            FutureEffect. nParallel(
+              // allow wr e-through cach ng to fa l w hout fa l ng ent re  nsert
+              cach ngT etStore. gnoreFa lures. nsertT et,
+              l m erStore. gnoreFa lures. nsertT et,
+              asyncEnqueueStore. nsertT et,
+              userCountsUpdat ngStore. nsertT et,
+              t etCountsUpdat ngStore. nsertT et
             )
           )
       }
   }
 }
 
-object AsyncInsertTweet extends TweetStore.AsyncModule {
+object Async nsertT et extends T etStore.AsyncModule {
 
-  private val log = Logger(getClass)
+  pr vate val log = Logger(getClass)
 
   object Event {
-    def fromAsyncRequest(request: AsyncInsertRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
+    def fromAsyncRequest(request: Async nsertRequest): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
         Event(
-          tweet = request.tweet,
-          cachedTweet = request.cachedTweet,
+          t et = request.t et,
+          cac dT et = request.cac dT et,
           user = request.user,
-          optUser = Some(request.user),
-          timestamp = Time.fromMilliseconds(request.timestamp),
-          sourceTweet = request.sourceTweet,
-          sourceUser = request.sourceUser,
-          parentUserId = request.parentUserId,
+          optUser = So (request.user),
+          t  stamp = T  .fromM ll seconds(request.t  stamp),
+          s ceT et = request.s ceT et,
+          s ceUser = request.s ceUser,
+          parentUser d = request.parentUser d,
           featureContext = request.featureContext,
-          quotedTweet = request.quotedTweet,
+          quotedT et = request.quotedT et,
           quotedUser = request.quotedUser,
-          geoSearchRequestId = request.geoSearchRequestId,
-          additionalContext = request.additionalContext,
-          transientContext = request.transientContext,
-          quoterHasAlreadyQuotedTweet = request.quoterHasAlreadyQuotedTweet.getOrElse(false),
-          initialTweetUpdateRequest = request.initialTweetUpdateRequest,
-          noteTweetMentionedUserIds = request.noteTweetMentionedUserIds
+          geoSearchRequest d = request.geoSearchRequest d,
+          add  onalContext = request.add  onalContext,
+          trans entContext = request.trans entContext,
+          quoterHasAlreadyQuotedT et = request.quoterHasAlreadyQuotedT et.getOrElse(false),
+           n  alT etUpdateRequest = request. n  alT etUpdateRequest,
+          noteT et nt onedUser ds = request.noteT et nt onedUser ds
         ),
-        request.retryAction,
+        request.retryAct on,
         RetryEvent
       )
   }
 
   case class Event(
-    tweet: Tweet,
-    cachedTweet: CachedTweet,
+    t et: T et,
+    cac dT et: Cac dT et,
     user: User,
-    optUser: Option[User],
-    timestamp: Time,
-    sourceTweet: Option[Tweet] = None,
-    sourceUser: Option[User] = None,
-    parentUserId: Option[UserId] = None,
-    featureContext: Option[FeatureContext] = None,
-    quotedTweet: Option[Tweet] = None,
-    quotedUser: Option[User] = None,
-    geoSearchRequestId: Option[String] = None,
-    additionalContext: Option[collection.Map[TweetCreateContextKey, String]] = None,
-    transientContext: Option[TransientCreateContext] = None,
-    quoterHasAlreadyQuotedTweet: Boolean = false,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None,
-    noteTweetMentionedUserIds: Option[Seq[Long]] = None)
-      extends AsyncTweetStoreEvent("async_insert_tweet")
-      with QuotedTweetOps
-      with TweetStoreTweetEvent {
+    optUser: Opt on[User],
+    t  stamp: T  ,
+    s ceT et: Opt on[T et] = None,
+    s ceUser: Opt on[User] = None,
+    parentUser d: Opt on[User d] = None,
+    featureContext: Opt on[FeatureContext] = None,
+    quotedT et: Opt on[T et] = None,
+    quotedUser: Opt on[User] = None,
+    geoSearchRequest d: Opt on[Str ng] = None,
+    add  onalContext: Opt on[collect on.Map[T etCreateContextKey, Str ng]] = None,
+    trans entContext: Opt on[Trans entCreateContext] = None,
+    quoterHasAlreadyQuotedT et: Boolean = false,
+     n  alT etUpdateRequest: Opt on[ n  alT etUpdateRequest] = None,
+    noteT et nt onedUser ds: Opt on[Seq[Long]] = None)
+      extends AsyncT etStoreEvent("async_ nsert_t et")
+      w h QuotedT etOps
+      w h T etStoreT etEvent {
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncInsertRequest =
-      AsyncInsertRequest(
-        tweet = tweet,
-        cachedTweet = cachedTweet,
+    def toAsyncRequest(act on: Opt on[AsyncWr eAct on] = None): Async nsertRequest =
+      Async nsertRequest(
+        t et = t et,
+        cac dT et = cac dT et,
         user = user,
-        sourceTweet = sourceTweet,
-        sourceUser = sourceUser,
-        parentUserId = parentUserId,
-        retryAction = action,
+        s ceT et = s ceT et,
+        s ceUser = s ceUser,
+        parentUser d = parentUser d,
+        retryAct on = act on,
         featureContext = featureContext,
-        timestamp = timestamp.inMillis,
-        quotedTweet = quotedTweet,
+        t  stamp = t  stamp. nM ll s,
+        quotedT et = quotedT et,
         quotedUser = quotedUser,
-        geoSearchRequestId = geoSearchRequestId,
-        additionalContext = additionalContext,
-        transientContext = transientContext,
-        quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet),
-        initialTweetUpdateRequest = initialTweetUpdateRequest,
-        noteTweetMentionedUserIds = noteTweetMentionedUserIds
+        geoSearchRequest d = geoSearchRequest d,
+        add  onalContext = add  onalContext,
+        trans entContext = trans entContext,
+        quoterHasAlreadyQuotedT et = So (quoterHasAlreadyQuotedT et),
+         n  alT etUpdateRequest =  n  alT etUpdateRequest,
+        noteT et nt onedUser ds = noteT et nt onedUser ds
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.TweetCreateEvent(
-          TweetCreateEvent(
-            tweet = scrub(tweet),
+        T etEventData.T etCreateEvent(
+          T etCreateEvent(
+            t et = scrub(t et),
             user = user,
-            sourceUser = sourceUser,
-            sourceTweet = sourceTweet.map(scrub),
-            retweetParentUserId = parentUserId,
-            quotedTweet = publicQuotedTweet.map(scrub),
-            quotedUser = publicQuotedUser,
-            additionalContext = additionalContext,
-            transientContext = transientContext,
-            quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet)
+            s ceUser = s ceUser,
+            s ceT et = s ceT et.map(scrub),
+            ret etParentUser d = parentUser d,
+            quotedT et = publ cQuotedT et.map(scrub),
+            quotedUser = publ cQuotedUser,
+            add  onalContext = add  onalContext,
+            trans entContext = trans entContext,
+            quoterHasAlreadyQuotedT et = So (quoterHasAlreadyQuotedT et)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncInsert(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.async nsert(toAsyncRequest(So (act on)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.Insert.type = AsyncWriteEventType.Insert
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    overr de val eventType: AsyncWr eEventType. nsert.type = AsyncWr eEventType. nsert
+    overr de val scr bedT etOnFa lure: Opt on[T et] = So (event.t et)
   }
 
-  trait Store {
-    val asyncInsertTweet: FutureEffect[Event]
-    val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]]
+  tra  Store {
+    val async nsertT et: FutureEffect[Event]
+    val retryAsync nsertT et: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncInsertTweet: FutureEffect[Event] = wrap(underlying.asyncInsertTweet)
-    override val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncInsertTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val async nsertT et: FutureEffect[Event] = wrap(underly ng.async nsertT et)
+    overr de val retryAsync nsertT et: FutureEffect[T etStoreRetryEvent[Event]] = wrap(
+      underly ng.retryAsync nsertT et)
   }
 
   object Store {
     def apply(
-      replicatingStore: ReplicatingTweetStore,
-      indexingStore: TweetIndexingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
-      timelineUpdatingStore: TlsTimelineUpdatingStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      fanoutServiceStore: FanoutServiceStore,
-      scribeMediaTagStore: ScribeMediaTagStore,
-      userGeotagUpdateStore: GizmoduckUserGeotagUpdateStore,
-      geoSearchRequestIDStore: GeoSearchRequestIDStore
+      repl cat ngStore: Repl cat ngT etStore,
+       ndex ngStore: T et ndex ngStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore,
+      t  l neUpdat ngStore: TlsT  l neUpdat ngStore,
+      eventBusEnqueueStore: T etEventBusStore,
+      fanoutServ ceStore: FanoutServ ceStore,
+      scr be d aTagStore: Scr be d aTagStore,
+      userGeotagUpdateStore: G zmoduckUserGeotagUpdateStore,
+      geoSearchRequest DStore: GeoSearchRequest DStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
-          replicatingStore,
-          indexingStore,
-          timelineUpdatingStore,
+          repl cat ngStore,
+           ndex ngStore,
+          t  l neUpdat ngStore,
           eventBusEnqueueStore,
-          fanoutServiceStore,
+          fanoutServ ceStore,
           userGeotagUpdateStore,
-          tweetCountsUpdatingStore,
-          scribeMediaTagStore,
-          geoSearchRequestIDStore
+          t etCountsUpdat ngStore,
+          scr be d aTagStore,
+          geoSearchRequest DStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncInsertTweet: FutureEffect[Event] = build(_.asyncInsertTweet)
-        override val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]] = build(
-          _.retryAsyncInsertTweet)
+        overr de val async nsertT et: FutureEffect[Event] = bu ld(_.async nsertT et)
+        overr de val retryAsync nsertT et: FutureEffect[T etStoreRetryEvent[Event]] = bu ld(
+          _.retryAsync nsertT et)
       }
     }
   }
 }
 
-object ReplicatedInsertTweet extends TweetStore.ReplicatedModule {
+object Repl cated nsertT et extends T etStore.Repl catedModule {
 
   case class Event(
-    tweet: Tweet,
-    cachedTweet: CachedTweet,
-    quoterHasAlreadyQuotedTweet: Boolean = false,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None)
-      extends ReplicatedTweetStoreEvent("replicated_insert_tweet")
+    t et: T et,
+    cac dT et: Cac dT et,
+    quoterHasAlreadyQuotedT et: Boolean = false,
+     n  alT etUpdateRequest: Opt on[ n  alT etUpdateRequest] = None)
+      extends Repl catedT etStoreEvent("repl cated_ nsert_t et")
 
-  trait Store {
-    val replicatedInsertTweet: FutureEffect[Event]
+  tra  Store {
+    val repl cated nsertT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedInsertTweet: FutureEffect[Event] = wrap(underlying.replicatedInsertTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl cated nsertT et: FutureEffect[Event] = wrap(underly ng.repl cated nsertT et)
   }
 
   object Store {
     def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
+      cach ngT etStore: Cach ngT etStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore
     ): Store = {
       new Store {
-        override val replicatedInsertTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.replicatedInsertTweet,
-            tweetCountsUpdatingStore.replicatedInsertTweet.ignoreFailures
+        overr de val repl cated nsertT et: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            cach ngT etStore.repl cated nsertT et,
+            t etCountsUpdat ngStore.repl cated nsertT et. gnoreFa lures
           )
       }
     }

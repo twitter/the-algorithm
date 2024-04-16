@@ -1,44 +1,44 @@
-package com.twitter.ann.faiss
+package com.tw ter.ann.fa ss
 
-import com.twitter.ann.common.thriftscala.FaissRuntimeParam
-import com.twitter.bijection.Injection
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.search.common.file.AbstractFile
+ mport com.tw ter.ann.common.thr ftscala.Fa ssRunt  Param
+ mport com.tw ter.b ject on. nject on
+ mport scala.ut l.Fa lure
+ mport scala.ut l.Success
+ mport scala.ut l.Try
+ mport com.tw ter.ann.common.thr ftscala.{Runt  Params => Serv ceRunt  Params}
+ mport com.tw ter.search.common.f le.AbstractF le
 
-object FaissCommon {
-  val RuntimeParamsInjection: Injection[FaissParams, ServiceRuntimeParams] =
-    new Injection[FaissParams, ServiceRuntimeParams] {
-      override def apply(scalaParams: FaissParams): ServiceRuntimeParams = {
-        ServiceRuntimeParams.FaissParam(
-          FaissRuntimeParam(
+object Fa ssCommon {
+  val Runt  Params nject on:  nject on[Fa ssParams, Serv ceRunt  Params] =
+    new  nject on[Fa ssParams, Serv ceRunt  Params] {
+      overr de def apply(scalaParams: Fa ssParams): Serv ceRunt  Params = {
+        Serv ceRunt  Params.Fa ssParam(
+          Fa ssRunt  Param(
             scalaParams.nprobe,
-            scalaParams.quantizerEf,
-            scalaParams.quantizerKFactorRF,
-            scalaParams.quantizerNprobe,
+            scalaParams.quant zerEf,
+            scalaParams.quant zerKFactorRF,
+            scalaParams.quant zerNprobe,
             scalaParams.ht)
         )
       }
 
-      override def invert(thriftParams: ServiceRuntimeParams): Try[FaissParams] =
-        thriftParams match {
-          case ServiceRuntimeParams.FaissParam(faissParam) =>
+      overr de def  nvert(thr ftParams: Serv ceRunt  Params): Try[Fa ssParams] =
+        thr ftParams match {
+          case Serv ceRunt  Params.Fa ssParam(fa ssParam) =>
             Success(
-              FaissParams(
-                faissParam.nprobe,
-                faissParam.quantizerEf,
-                faissParam.quantizerKfactorRf,
-                faissParam.quantizerNprobe,
-                faissParam.ht))
-          case p => Failure(new IllegalArgumentException(s"Expected FaissParams got $p"))
+              Fa ssParams(
+                fa ssParam.nprobe,
+                fa ssParam.quant zerEf,
+                fa ssParam.quant zerKfactorRf,
+                fa ssParam.quant zerNprobe,
+                fa ssParam.ht))
+          case p => Fa lure(new  llegalArgu ntExcept on(s"Expected Fa ssParams got $p"))
         }
     }
 
-  def isValidFaissIndex(path: AbstractFile): Boolean = {
-    path.isDirectory &&
-    path.hasSuccessFile &&
-    path.getChild("faiss.index").exists()
+  def  sVal dFa ss ndex(path: AbstractF le): Boolean = {
+    path. sD rectory &&
+    path.hasSuccessF le &&
+    path.getCh ld("fa ss. ndex").ex sts()
   }
 }

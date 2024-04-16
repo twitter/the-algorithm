@@ -1,202 +1,202 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.tw ter.product_m xer.core.p pel ne.scor ng
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate._
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.NewPipelineBuilder
-import com.twitter.product_mixer.core.pipeline.NewPipelineArrowBuilder
-import com.twitter.product_mixer.core.pipeline.NewPipelineResult
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.state.HasResult
-import com.twitter.product_mixer.core.pipeline.step.candidate_feature_hydrator.CandidateFeatureHydratorStep
-import com.twitter.product_mixer.core.pipeline.step.gate.GateStep
-import com.twitter.product_mixer.core.pipeline.step.scorer.ScorerStep
-import com.twitter.product_mixer.core.pipeline.step.selector.SelectorStep
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import scala.collection.immutable.ListMap
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.ScoredCand dateResult
+ mport com.tw ter.product_m xer.core.gate.ParamGate
+ mport com.tw ter.product_m xer.core.gate.ParamGate._
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.NewP pel neBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.NewP pel neArrowBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.NewP pel neResult
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ClosedGate
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureClass f er
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasExecutorResults
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasResult
+ mport com.tw ter.product_m xer.core.p pel ne.step.cand date_feature_hydrator.Cand dateFeatureHydratorStep
+ mport com.tw ter.product_m xer.core.p pel ne.step.gate.GateStep
+ mport com.tw ter.product_m xer.core.p pel ne.step.scorer.ScorerStep
+ mport com.tw ter.product_m xer.core.p pel ne.step.selector.SelectorStep
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.StoppedGateExcept on
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
+ mport scala.collect on. mmutable.L stMap
 
 /**
- * NewScoringPipelineBuilder builds [[ScoringPipeline]]s from [[ScoringPipelineConfig]]s.
- * New because it's meant to eventually replace [[ScoringPipelineBuilder]]
- * You should inject a [[ScoringPipelineBuilderFactory]] and call `.get` to build these.
+ * NewScor ngP pel neBu lder bu lds [[Scor ngP pel ne]]s from [[Scor ngP pel neConf g]]s.
+ * New because  's  ant to eventually replace [[Scor ngP pel neBu lder]]
+ *   should  nject a [[Scor ngP pel neBu lderFactory]] and call `.get` to bu ld t se.
  *
- * @see [[ScoringPipelineConfig]] for the description of the type parameters
- * @tparam Query the type of query these accept.
- * @tparam Candidate the domain model for the candidate being scored
+ * @see [[Scor ngP pel neConf g]] for t  descr pt on of t  type para ters
+ * @tparam Query t  type of query t se accept.
+ * @tparam Cand date t  doma n model for t  cand date be ng scored
  */
-class NewScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] @Inject() (
-  selectionStep: SelectorStep[Query, ScoringPipelineState[Query, Candidate]],
-  gateStep: GateStep[Query, ScoringPipelineState[Query, Candidate]],
-  candidateFeatureHydrationStep: CandidateFeatureHydratorStep[
+class NewScor ngP pel neBu lder[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]] @ nject() (
+  select onStep: SelectorStep[Query, Scor ngP pel neState[Query, Cand date]],
+  gateStep: GateStep[Query, Scor ngP pel neState[Query, Cand date]],
+  cand dateFeatureHydrat onStep: Cand dateFeatureHydratorStep[
     Query,
-    Candidate,
-    ScoringPipelineState[Query, Candidate]
+    Cand date,
+    Scor ngP pel neState[Query, Cand date]
   ],
-  scorerStep: ScorerStep[Query, Candidate, ScoringPipelineState[Query, Candidate]])
-    extends NewPipelineBuilder[ScoringPipelineConfig[Query, Candidate], Seq[
-      CandidateWithFeatures[Candidate]
-    ], ScoringPipelineState[Query, Candidate], ScoringPipeline[Query, Candidate]] {
+  scorerStep: ScorerStep[Query, Cand date, Scor ngP pel neState[Query, Cand date]])
+    extends NewP pel neBu lder[Scor ngP pel neConf g[Query, Cand date], Seq[
+      Cand dateW hFeatures[Cand date]
+    ], Scor ngP pel neState[Query, Cand date], Scor ngP pel ne[Query, Cand date]] {
 
-  override def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    arrowBuilder: NewPipelineArrowBuilder[ArrowResult, ArrowState],
-    scoringPipelineConfig: ScoringPipelineConfig[Query, Candidate]
-  ): ScoringPipeline[Query, Candidate] = {
-    val pipelineIdentifier = scoringPipelineConfig.identifier
+  overr de def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    arrowBu lder: NewP pel neArrowBu lder[ArrowResult, ArrowState],
+    scor ngP pel neConf g: Scor ngP pel neConf g[Query, Cand date]
+  ): Scor ngP pel ne[Query, Cand date] = {
+    val p pel ne dent f er = scor ngP pel neConf g. dent f er
 
     val context = Executor.Context(
-      PipelineFailureClassifier(
-        scoringPipelineConfig.failureClassifier.orElse(
-          StoppedGateException.classifier(ClosedGate))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+      P pel neFa lureClass f er(
+        scor ngP pel neConf g.fa lureClass f er.orElse(
+          StoppedGateExcept on.class f er(ClosedGate))),
+      parentComponent dent f erStack.push(p pel ne dent f er)
     )
 
-    val enabledGateOpt = scoringPipelineConfig.enabledDeciderParam.map { deciderParam =>
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, deciderParam)
+    val enabledGateOpt = scor ngP pel neConf g.enabledDec derParam.map { dec derParam =>
+      ParamGate(p pel ne dent f er + EnabledGateSuff x, dec derParam)
     }
-    val supportedClientGateOpt = scoringPipelineConfig.supportedClientParam.map { param =>
-      ParamGate(pipelineIdentifier + SupportedClientGateSuffix, param)
+    val supportedCl entGateOpt = scor ngP pel neConf g.supportedCl entParam.map { param =>
+      ParamGate(p pel ne dent f er + SupportedCl entGateSuff x, param)
     }
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * Evaluate enabled dec der gate f rst s nce  f  's off, t re  s no reason to proceed
+     * Next evaluate supported cl ent feature sw ch gate, follo d by custo r conf gured gates
      */
     val allGates =
-      enabledGateOpt.toSeq ++ supportedClientGateOpt.toSeq ++ scoringPipelineConfig.gates
+      enabledGateOpt.toSeq ++ supportedCl entGateOpt.toSeq ++ scor ngP pel neConf g.gates
 
-    val underlyingArrow = arrowBuilder
-      .add(ScoringPipelineConfig.gatesStep, gateStep, allGates)
-      .add(ScoringPipelineConfig.selectorsStep, selectionStep, scoringPipelineConfig.selectors)
+    val underly ngArrow = arrowBu lder
+      .add(Scor ngP pel neConf g.gatesStep, gateStep, allGates)
+      .add(Scor ngP pel neConf g.selectorsStep, select onStep, scor ngP pel neConf g.selectors)
       .add(
-        ScoringPipelineConfig.preScoringFeatureHydrationPhase1Step,
-        candidateFeatureHydrationStep,
-        scoringPipelineConfig.preScoringFeatureHydrationPhase1)
+        Scor ngP pel neConf g.preScor ngFeatureHydrat onPhase1Step,
+        cand dateFeatureHydrat onStep,
+        scor ngP pel neConf g.preScor ngFeatureHydrat onPhase1)
       .add(
-        ScoringPipelineConfig.preScoringFeatureHydrationPhase2Step,
-        candidateFeatureHydrationStep,
-        scoringPipelineConfig.preScoringFeatureHydrationPhase2)
-      .add(ScoringPipelineConfig.scorersStep, scorerStep, scoringPipelineConfig.scorers).buildArrow(
+        Scor ngP pel neConf g.preScor ngFeatureHydrat onPhase2Step,
+        cand dateFeatureHydrat onStep,
+        scor ngP pel neConf g.preScor ngFeatureHydrat onPhase2)
+      .add(Scor ngP pel neConf g.scorersStep, scorerStep, scor ngP pel neConf g.scorers).bu ldArrow(
         context)
 
-    val finalArrow = Arrow
-      .map { inputs: ScoringPipeline.Inputs[Query] =>
-        ScoringPipelineState[Query, Candidate](inputs.query, inputs.candidates, ListMap.empty)
-      }.andThen(underlyingArrow).map { pipelineResult =>
-        ScoringPipelineResult(
-          gateResults = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.gatesStep)
-            .map(_.asInstanceOf[GateExecutorResult]),
-          selectorResults = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.selectorsStep)
-            .map(_.asInstanceOf[SelectorExecutorResult]),
-          preScoringHydrationPhase1Result = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.preScoringFeatureHydrationPhase1Step)
-            .map(_.asInstanceOf[CandidateFeatureHydratorExecutorResult[Candidate]]),
-          preScoringHydrationPhase2Result = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.preScoringFeatureHydrationPhase2Step)
-            .map(_.asInstanceOf[CandidateFeatureHydratorExecutorResult[Candidate]]),
-          scorerResults = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.scorersStep)
-            .map(_.asInstanceOf[CandidateFeatureHydratorExecutorResult[Candidate]]),
-          failure = pipelineResult match {
-            case failure: NewPipelineResult.Failure =>
-              Some(failure.failure)
+    val f nalArrow = Arrow
+      .map {  nputs: Scor ngP pel ne. nputs[Query] =>
+        Scor ngP pel neState[Query, Cand date]( nputs.query,  nputs.cand dates, L stMap.empty)
+      }.andT n(underly ngArrow).map { p pel neResult =>
+        Scor ngP pel neResult(
+          gateResults = p pel neResult.executorResultsByP pel neStep
+            .get(Scor ngP pel neConf g.gatesStep)
+            .map(_.as nstanceOf[GateExecutorResult]),
+          selectorResults = p pel neResult.executorResultsByP pel neStep
+            .get(Scor ngP pel neConf g.selectorsStep)
+            .map(_.as nstanceOf[SelectorExecutorResult]),
+          preScor ngHydrat onPhase1Result = p pel neResult.executorResultsByP pel neStep
+            .get(Scor ngP pel neConf g.preScor ngFeatureHydrat onPhase1Step)
+            .map(_.as nstanceOf[Cand dateFeatureHydratorExecutorResult[Cand date]]),
+          preScor ngHydrat onPhase2Result = p pel neResult.executorResultsByP pel neStep
+            .get(Scor ngP pel neConf g.preScor ngFeatureHydrat onPhase2Step)
+            .map(_.as nstanceOf[Cand dateFeatureHydratorExecutorResult[Cand date]]),
+          scorerResults = p pel neResult.executorResultsByP pel neStep
+            .get(Scor ngP pel neConf g.scorersStep)
+            .map(_.as nstanceOf[Cand dateFeatureHydratorExecutorResult[Cand date]]),
+          fa lure = p pel neResult match {
+            case fa lure: NewP pel neResult.Fa lure =>
+              So (fa lure.fa lure)
             case _ => None
           },
-          result = pipelineResult match {
-            case result: NewPipelineResult.Success[Seq[CandidateWithFeatures[Candidate]]] =>
-              Some(result.result.map { candidateWithFeatures =>
-                ScoredCandidateResult(
-                  candidateWithFeatures.candidate,
-                  candidateWithFeatures.features)
+          result = p pel neResult match {
+            case result: NewP pel neResult.Success[Seq[Cand dateW hFeatures[Cand date]]] =>
+              So (result.result.map { cand dateW hFeatures =>
+                ScoredCand dateResult(
+                  cand dateW hFeatures.cand date,
+                  cand dateW hFeatures.features)
               })
             case _ => None
           }
         )
       }
 
-    new ScoringPipeline[Query, Candidate] {
-      override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]] =
-        finalArrow
+    new Scor ngP pel ne[Query, Cand date] {
+      overr de val arrow: Arrow[Scor ngP pel ne. nputs[Query], Scor ngP pel neResult[Cand date]] =
+        f nalArrow
 
-      override val identifier: ScoringPipelineIdentifier = scoringPipelineConfig.identifier
+      overr de val  dent f er: Scor ngP pel ne dent f er = scor ngP pel neConf g. dent f er
 
-      override val alerts: Seq[Alert] = scoringPipelineConfig.alerts
+      overr de val alerts: Seq[Alert] = scor ngP pel neConf g.alerts
 
-      override val children: Seq[Component] =
-        allGates ++ scoringPipelineConfig.preScoringFeatureHydrationPhase1 ++ scoringPipelineConfig.preScoringFeatureHydrationPhase2 ++ scoringPipelineConfig.scorers
+      overr de val ch ldren: Seq[Component] =
+        allGates ++ scor ngP pel neConf g.preScor ngFeatureHydrat onPhase1 ++ scor ngP pel neConf g.preScor ngFeatureHydrat onPhase2 ++ scor ngP pel neConf g.scorers
 
-      override private[core] val config = scoringPipelineConfig
+      overr de pr vate[core] val conf g = scor ngP pel neConf g
     }
   }
 }
 
-case class ScoringPipelineState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  override val query: Query,
-  candidates: Seq[ItemCandidateWithDetails],
-  override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-    extends HasQuery[Query, ScoringPipelineState[Query, Candidate]]
-    with HasCandidatesWithDetails[ScoringPipelineState[Query, Candidate]]
-    with HasCandidatesWithFeatures[Candidate, ScoringPipelineState[Query, Candidate]]
-    with HasExecutorResults[ScoringPipelineState[Query, Candidate]]
-    with HasResult[Seq[CandidateWithFeatures[Candidate]]] {
+case class Scor ngP pel neState[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+  overr de val query: Query,
+  cand dates: Seq[ emCand dateW hDeta ls],
+  overr de val executorResultsByP pel neStep: L stMap[P pel neStep dent f er, ExecutorResult])
+    extends HasQuery[Query, Scor ngP pel neState[Query, Cand date]]
+    w h HasCand datesW hDeta ls[Scor ngP pel neState[Query, Cand date]]
+    w h HasCand datesW hFeatures[Cand date, Scor ngP pel neState[Query, Cand date]]
+    w h HasExecutorResults[Scor ngP pel neState[Query, Cand date]]
+    w h HasResult[Seq[Cand dateW hFeatures[Cand date]]] {
 
-  override val candidatesWithDetails: Seq[CandidateWithDetails] = candidates
+  overr de val cand datesW hDeta ls: Seq[Cand dateW hDeta ls] = cand dates
 
-  override val candidatesWithFeatures: Seq[CandidateWithFeatures[Candidate]] =
-    candidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]]
+  overr de val cand datesW hFeatures: Seq[Cand dateW hFeatures[Cand date]] =
+    cand dates.as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]]
 
-  override val buildResult: Seq[CandidateWithFeatures[Candidate]] = candidatesWithFeatures
+  overr de val bu ldResult: Seq[Cand dateW hFeatures[Cand date]] = cand datesW hFeatures
 
-  override def updateCandidatesWithDetails(
-    newCandidates: Seq[CandidateWithDetails]
-  ): ScoringPipelineState[Query, Candidate] = {
-    this.copy(candidates = newCandidates.asInstanceOf[Seq[ItemCandidateWithDetails]])
+  overr de def updateCand datesW hDeta ls(
+    newCand dates: Seq[Cand dateW hDeta ls]
+  ): Scor ngP pel neState[Query, Cand date] = {
+    t .copy(cand dates = newCand dates.as nstanceOf[Seq[ emCand dateW hDeta ls]])
   }
 
-  override def updateQuery(newQuery: Query): ScoringPipelineState[Query, Candidate] =
-    this.copy(query = newQuery)
+  overr de def updateQuery(newQuery: Query): Scor ngP pel neState[Query, Cand date] =
+    t .copy(query = newQuery)
 
-  override def updateDecorations(
-    decoration: Seq[Decoration]
-  ): ScoringPipelineState[Query, Candidate] = ???
+  overr de def updateDecorat ons(
+    decorat on: Seq[Decorat on]
+  ): Scor ngP pel neState[Query, Cand date] = ???
 
-  override def updateCandidatesWithFeatures(
-    newCandidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ScoringPipelineState[Query, Candidate] = {
-    val updatedCandidates = candidates.zip(newCandidates).map {
-      case (itemCandidateWithDetails, newCandidate) =>
-        itemCandidateWithDetails.copy(features =
-          itemCandidateWithDetails.features ++ newCandidate.features)
+  overr de def updateCand datesW hFeatures(
+    newCand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Scor ngP pel neState[Query, Cand date] = {
+    val updatedCand dates = cand dates.z p(newCand dates).map {
+      case ( emCand dateW hDeta ls, newCand date) =>
+         emCand dateW hDeta ls.copy(features =
+           emCand dateW hDeta ls.features ++ newCand date.features)
     }
-    this.copy(query, updatedCandidates)
+    t .copy(query, updatedCand dates)
   }
 
-  override private[pipeline] def setExecutorResults(
-    newMap: ListMap[PipelineStepIdentifier, ExecutorResult]
-  ) = this.copy(executorResultsByPipelineStep = newMap)
+  overr de pr vate[p pel ne] def setExecutorResults(
+    newMap: L stMap[P pel neStep dent f er, ExecutorResult]
+  ) = t .copy(executorResultsByP pel neStep = newMap)
 }

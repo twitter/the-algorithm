@@ -1,42 +1,42 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.google.inject.Provides
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent.MtlsThr ftMuxCl entSyntax
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.thr ft.R chCl entParam
+ mport com.tw ter.graphql.thr ftscala.GraphqlExecut onServ ce
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
-object GraphqlClientProviderModule extends TwitterModule {
-  private def buildClient(serviceIdentifier: ServiceIdentifier, clientId: ClientId) =
-    ThriftMux.client
-      .withRequestTimeout(Duration.fromSeconds(5))
-      .withMutualTls(serviceIdentifier)
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .withClientId(clientId)
-      .newService("/s/graphql-service/graphql-api:thrift")
+object GraphqlCl entProv derModule extends Tw terModule {
+  pr vate def bu ldCl ent(serv ce dent f er: Serv ce dent f er, cl ent d: Cl ent d) =
+    Thr ftMux.cl ent
+      .w hRequestT  out(Durat on.fromSeconds(5))
+      .w hMutualTls(serv ce dent f er)
+      .w hOpportun st cTls(Opportun st cTls.Requ red)
+      .w hCl ent d(cl ent d)
+      .newServ ce("/s/graphql-serv ce/graphql-ap :thr ft")
 
-  def buildGraphQlClient(
-    serviceIdentifer: ServiceIdentifier,
-    clientId: ClientId
-  ): GraphqlExecutionService.FinagledClient = {
-    val client = buildClient(serviceIdentifer, clientId)
-    new GraphqlExecutionService.FinagledClient(client, RichClientParam())
+  def bu ldGraphQlCl ent(
+    serv ce dent fer: Serv ce dent f er,
+    cl ent d: Cl ent d
+  ): GraphqlExecut onServ ce.F nagledCl ent = {
+    val cl ent = bu ldCl ent(serv ce dent fer, cl ent d)
+    new GraphqlExecut onServ ce.F nagledCl ent(cl ent, R chCl entParam())
   }
 
-  @Provides
-  @Singleton
-  def providesGraphQlClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId
-  ): GraphqlExecutionService.FinagledClient =
-    buildGraphQlClient(
-      serviceIdentifier,
-      clientId
+  @Prov des
+  @S ngleton
+  def prov desGraphQlCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d
+  ): GraphqlExecut onServ ce.F nagledCl ent =
+    bu ldGraphQlCl ent(
+      serv ce dent f er,
+      cl ent d
     )
 }

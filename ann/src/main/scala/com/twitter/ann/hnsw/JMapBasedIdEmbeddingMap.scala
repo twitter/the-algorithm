@@ -1,87 +1,87 @@
-package com.twitter.ann.hnsw
+package com.tw ter.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import java.io.OutputStream
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.JavaConverters._
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport java. o.OutputStream
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport scala.collect on.JavaConverters._
 
-private[hnsw] object JMapBasedIdEmbeddingMap {
+pr vate[hnsw] object JMapBased dEmbedd ngMap {
 
   /**
-   * Creates in-memory concurrent hashmap based container that for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
+   * Creates  n- mory concurrent hashmap based conta ner that for stor ng  d embedd ng mapp ng.
+   * @param expectedEle nts: Expected num of ele nts for s z ng h nt, need not be exact.
    */
-  def applyInMemory[T](expectedElements: Int): IdEmbeddingMap[T] =
-    new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
-      Option.empty
+  def apply n mory[T](expectedEle nts:  nt):  dEmbedd ngMap[T] =
+    new JMapBased dEmbedd ngMap[T](
+      new ConcurrentHashMap[T, Embedd ngVector](expectedEle nts),
+      Opt on.empty
     )
 
   /**
-   * Creates in-memory concurrent hashmap based container that can be serialized to disk for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
-   * @param injection : Injection for typed Id T to Array[Byte]
+   * Creates  n- mory concurrent hashmap based conta ner that can be ser al zed to d sk for stor ng  d embedd ng mapp ng.
+   * @param expectedEle nts: Expected num of ele nts for s z ng h nt, need not be exact.
+   * @param  nject on :  nject on for typed  d T to Array[Byte]
    */
-  def applyInMemoryWithSerialization[T](
-    expectedElements: Int,
-    injection: Injection[T, Array[Byte]]
-  ): IdEmbeddingMap[T] =
-    new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
-      Some(injection)
+  def apply n moryW hSer al zat on[T](
+    expectedEle nts:  nt,
+     nject on:  nject on[T, Array[Byte]]
+  ):  dEmbedd ngMap[T] =
+    new JMapBased dEmbedd ngMap[T](
+      new ConcurrentHashMap[T, Embedd ngVector](expectedEle nts),
+      So ( nject on)
     )
 
   /**
-   * Loads id embedding mapping in in-memory concurrent hashmap.
-   * @param embeddingFile: Local/Hdfs file path for embeddings
-   * @param injection : Injection for typed Id T to Array[Byte]
-   * @param numElements: Expected num of elements for sizing hint, need not be exact
+   * Loads  d embedd ng mapp ng  n  n- mory concurrent hashmap.
+   * @param embedd ngF le: Local/Hdfs f le path for embedd ngs
+   * @param  nject on :  nject on for typed  d T to Array[Byte]
+   * @param numEle nts: Expected num of ele nts for s z ng h nt, need not be exact
    */
-  def loadInMemory[T](
-    embeddingFile: AbstractFile,
-    injection: Injection[T, Array[Byte]],
-    numElements: Option[Int] = Option.empty
-  ): IdEmbeddingMap[T] = {
-    val map = numElements match {
-      case Some(elements) => new ConcurrentHashMap[T, EmbeddingVector](elements)
-      case None => new ConcurrentHashMap[T, EmbeddingVector]()
+  def load n mory[T](
+    embedd ngF le: AbstractF le,
+     nject on:  nject on[T, Array[Byte]],
+    numEle nts: Opt on[ nt] = Opt on.empty
+  ):  dEmbedd ngMap[T] = {
+    val map = numEle nts match {
+      case So (ele nts) => new ConcurrentHashMap[T, Embedd ngVector](ele nts)
+      case None => new ConcurrentHashMap[T, Embedd ngVector]()
     }
-    HnswIOUtil.loadEmbeddings(
-      embeddingFile,
-      injection,
-      new JMapBasedIdEmbeddingMap(map, Some(injection))
+    Hnsw OUt l.loadEmbedd ngs(
+      embedd ngF le,
+       nject on,
+      new JMapBased dEmbedd ngMap(map, So ( nject on))
     )
   }
 }
 
-private[this] class JMapBasedIdEmbeddingMap[T](
-  map: java.util.concurrent.ConcurrentHashMap[T, EmbeddingVector],
-  injection: Option[Injection[T, Array[Byte]]])
-    extends IdEmbeddingMap[T] {
-  override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    map.putIfAbsent(id, embedding)
+pr vate[t ] class JMapBased dEmbedd ngMap[T](
+  map: java.ut l.concurrent.ConcurrentHashMap[T, Embedd ngVector],
+   nject on: Opt on[ nject on[T, Array[Byte]]])
+    extends  dEmbedd ngMap[T] {
+  overr de def put fAbsent( d: T, embedd ng: Embedd ngVector): Embedd ngVector = {
+    map.put fAbsent( d, embedd ng)
   }
 
-  override def put(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    map.put(id, embedding)
+  overr de def put( d: T, embedd ng: Embedd ngVector): Embedd ngVector = {
+    map.put( d, embedd ng)
   }
 
-  override def get(id: T): EmbeddingVector = {
-    map.get(id)
+  overr de def get( d: T): Embedd ngVector = {
+    map.get( d)
   }
 
-  override def iter(): Iterator[(T, EmbeddingVector)] =
+  overr de def  er():  erator[(T, Embedd ngVector)] =
     map
       .entrySet()
-      .iterator()
+      . erator()
       .asScala
       .map(e => (e.getKey, e.getValue))
 
-  override def size(): Int = map.size()
+  overr de def s ze():  nt = map.s ze()
 
-  override def toDirectory(embeddingFile: OutputStream): Unit = {
-    HnswIOUtil.saveEmbeddings(embeddingFile, injection.get, iter())
+  overr de def toD rectory(embedd ngF le: OutputStream): Un  = {
+    Hnsw OUt l.saveEmbedd ngs(embedd ngF le,  nject on.get,  er())
   }
 }

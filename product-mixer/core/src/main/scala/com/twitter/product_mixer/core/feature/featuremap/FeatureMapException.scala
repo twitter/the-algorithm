@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.feature.featuremap
+package com.tw ter.product_m xer.core.feature.featuremap
 
-import com.twitter.product_mixer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.Feature
 
-case class MissingFeatureException(feature: Feature[_, _])
-    extends Exception("Missing value for " + feature) {
-  override def toString: String = getMessage
+case class M ss ngFeatureExcept on(feature: Feature[_, _])
+    extends Except on("M ss ng value for " + feature) {
+  overr de def toStr ng: Str ng = get ssage
 }
 
-class InvalidPredictionRecordMergeException
-    extends Exception(
-      "Use FeatureMap.plusPlusOptimized instead of FeatureMap.++ when the FeatureMaps on both sides of the merge contain PredictionRecords")
+class  nval dPred ct onRecord rgeExcept on
+    extends Except on(
+      "Use FeatureMap.plusPlusOpt m zed  nstead of FeatureMap.++ w n t  FeatureMaps on both s des of t   rge conta n Pred ct onRecords")

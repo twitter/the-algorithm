@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.product.guice
+package com.tw ter.product_m xer.core.product.gu ce
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport javax. nject.S ngleton
 
 /**
- * Registers the @ProductScoped scope.
+ * Reg sters t  @ProductScoped scope.
  *
- * See https://github.com/google/guice/wiki/CustomScopes#registering-the-scope
+ * See https://g hub.com/google/gu ce/w k /CustomScopes#reg ster ng-t -scope
  */
-@Singleton
-class ProductScopeModule extends TwitterModule {
+@S ngleton
+class ProductScopeModule extends Tw terModule {
 
   val productScope: ProductScope = new ProductScope
 
-  override def configure(): Unit = {
-    bindScope(classOf[ProductScoped], productScope)
+  overr de def conf gure(): Un  = {
+    b ndScope(classOf[ProductScoped], productScope)
 
-    bind[Product].toProvider(SimpleScope.SEEDED_KEY_PROVIDER).in(classOf[ProductScoped])
+    b nd[Product].toProv der(S mpleScope.SEEDED_KEY_PROV DER). n(classOf[ProductScoped])
   }
 
-  @Provides
-  def providesProductScope(): ProductScope = productScope
+  @Prov des
+  def prov desProductScope(): ProductScope = productScope
 }

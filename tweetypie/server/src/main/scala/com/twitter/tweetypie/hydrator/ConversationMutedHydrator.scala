@@ -1,54 +1,54 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala.FieldByPath
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala.F eldByPath
 
 /**
- * Hydrates the `conversationMuted` field of Tweet. `conversationMuted`
- * will be true if the conversation that this tweet is part of has been
- * muted by the user. This field is perspectival, so the result of this
- * hydrator should never be cached.
+ * Hydrates t  `conversat onMuted` f eld of T et. `conversat onMuted`
+ * w ll be true  f t  conversat on that t  t et  s part of has been
+ * muted by t  user. T  f eld  s perspect val, so t  result of t 
+ * hydrator should never be cac d.
  */
-object ConversationMutedHydrator {
-  type Type = ValueHydrator[Option[Boolean], Ctx]
+object Conversat onMutedHydrator {
+  type Type = ValueHydrator[Opt on[Boolean], Ctx]
 
-  case class Ctx(conversationId: Option[TweetId], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Ctx(conversat on d: Opt on[T et d], underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.ConversationMutedField)
+  val hydratedF eld: F eldByPath = f eldByPath(T et.Conversat onMutedF eld)
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
-  private[this] val modifiedTrue = ValueState.modified(Some(true))
-  private[this] val modifiedFalse = ValueState.modified(Some(false))
+  pr vate[t ] val part alResult = ValueState.part al(None, hydratedF eld)
+  pr vate[t ] val mod f edTrue = ValueState.mod f ed(So (true))
+  pr vate[t ] val mod f edFalse = ValueState.mod f ed(So (false))
 
-  def apply(repo: ConversationMutedRepository.Type): Type = {
+  def apply(repo: Conversat onMutedRepos ory.Type): Type = {
 
-    ValueHydrator[Option[Boolean], Ctx] { (_, ctx) =>
-      (ctx.opts.forUserId, ctx.conversationId) match {
-        case (Some(userId), Some(convoId)) =>
-          repo(userId, convoId).liftToTry
+    ValueHydrator[Opt on[Boolean], Ctx] { (_, ctx) =>
+      (ctx.opts.forUser d, ctx.conversat on d) match {
+        case (So (user d), So (convo d)) =>
+          repo(user d, convo d).l ftToTry
             .map {
-              case Return(true) => modifiedTrue
-              case Return(false) => modifiedFalse
-              case Throw(_) => partialResult
+              case Return(true) => mod f edTrue
+              case Return(false) => mod f edFalse
+              case Throw(_) => part alResult
             }
         case _ =>
-          ValueState.StitchUnmodifiedNone
+          ValueState.St chUnmod f edNone
       }
-    }.onlyIf { (curr, ctx) =>
-      // It is unlikely that this field will already be set, but if, for
-      // some reason, this hydrator is run on a tweet that already has
-      // this value set, we will skip the work to check again.
-      curr.isEmpty &&
-      // We only hydrate this field if it is explicitly requested. At
-      // the time of this writing, this field is only used for
-      // displaying UI for toggling the muted state of the relevant
-      // conversation.
-      ctx.tweetFieldRequested(Tweet.ConversationMutedField) &&
-      // Retweets are not part of a conversation, so should not be muted.
-      !ctx.isRetweet
+    }.only f { (curr, ctx) =>
+      //    s unl kely that t  f eld w ll already be set, but  f, for
+      // so  reason, t  hydrator  s run on a t et that already has
+      // t  value set,   w ll sk p t  work to c ck aga n.
+      curr. sEmpty &&
+      //   only hydrate t  f eld  f    s expl c ly requested. At
+      // t  t   of t  wr  ng, t  f eld  s only used for
+      // d splay ng U  for toggl ng t  muted state of t  relevant
+      // conversat on.
+      ctx.t etF eldRequested(T et.Conversat onMutedF eld) &&
+      // Ret ets are not part of a conversat on, so should not be muted.
+      !ctx. sRet et
     }
   }
 }

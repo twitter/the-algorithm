@@ -1,11 +1,11 @@
-package com.twitter.visibility.features
+package com.tw ter.v s b l y.features
 
-import com.twitter.visibility.util.NamingUtils
+ mport com.tw ter.v s b l y.ut l.Nam ngUt ls
 
-abstract class Feature[T] protected ()(implicit val manifest: Manifest[T]) {
+abstract class Feature[T] protected ()( mpl c  val man fest: Man fest[T]) {
 
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+  lazy val na : Str ng = Nam ngUt ls.getFr endlyNa (t )
 
-  override lazy val toString: String =
-    "Feature[%s](name=%s)".format(manifest, getClass.getSimpleName)
+  overr de lazy val toStr ng: Str ng =
+    "Feature[%s](na =%s)".format(man fest, getClass.getS mpleNa )
 }

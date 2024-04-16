@@ -1,161 +1,161 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Arrays;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal nt;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Maps;
 
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.ut l.LogFormatUt l;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
+ mport  .un m .ds .fastut l. nts. ntArrayL st;
 
 /**
- * This implementation took MultiSegmentTermDictionaryWithMap and replaced some of the
- * data structures with fastutil equivalents and it also uses a more memory efficient way to
- * store the precomputed data.
+ * T   mple ntat on took Mult Seg ntTermD ct onaryW hMap and replaced so  of t 
+ * data structures w h fastut l equ valents and   also uses a more  mory eff c ent way to
+ * store t  precomputed data.
  *
- * This implementation has a requirement that each term per field needs to be present at
- * most once per document, since we only have space to index 2^24 terms and we have 2^23
- * documents as of now in realtime earlybirds.
+ * T   mple ntat on has a requ re nt that each term per f eld needs to be present at
+ * most once per docu nt, s nce   only have space to  ndex 2^24 terms and   have 2^23
+ * docu nts as of now  n realt   earlyb rds.
  *
- * See UserIdMultiSegmentQuery class comment for more information on how this is used.
+ * See User dMult Seg ntQuery class com nt for more  nformat on on how t   s used.
  */
-public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermDictionary {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      MultiSegmentTermDictionaryWithFastutil.class);
+publ c class Mult Seg ntTermD ct onaryW hFastut l  mple nts Mult Seg ntTermD ct onary {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(
+      Mult Seg ntTermD ct onaryW hFastut l.class);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_with_fastutil_creation",
-          TimeUnit.MILLISECONDS, false);
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats TERM_D CT ONARY_CREAT ON_STATS =
+      SearchT  rStats.export("mult _seg nt_term_d ct onary_w h_fastut l_creat on",
+          T  Un .M LL SECONDS, false);
 
-  private static final int MAX_TERM_ID_BITS = 24;
-  private static final int TERM_ID_MASK = (1 << MAX_TERM_ID_BITS) - 1; // First 24 bits.
-  private static final int MAX_SEGMENT_SIZE = 1 << (MAX_TERM_ID_BITS - 1);
+  pr vate stat c f nal  nt MAX_TERM_ D_B TS = 24;
+  pr vate stat c f nal  nt TERM_ D_MASK = (1 << MAX_TERM_ D_B TS) - 1; // F rst 24 b s.
+  pr vate stat c f nal  nt MAX_SEGMENT_S ZE = 1 << (MAX_TERM_ D_B TS - 1);
 
-  private final ImmutableList<OptimizedMemoryIndex> indexes;
+  pr vate f nal  mmutableL st<Opt m zed mory ndex>  ndexes;
 
-  // For each term, a list of (index id, term id) packed into an integer.
-  // The integer contains:
-  // byte 0: index (segment id). Since we have ~20 segments, this fits into a byte.
-  // bytes [1-3]: term id. The terms we're building this dictionary for are user ids
-  //   associated with a tweet - from_user_id and in_reply_to_user_id. Since we have
-  //   at most 2**23 tweets in realtime, we'll have at most 2**23 unique terms per
-  //   segments. The term ids post optimization are consecutive numbers, so they will
-  //   fit in 24 bits. We don't use the term dictionary in archive, which has more
-  //   tweets per segment.
+  // For each term, a l st of ( ndex  d, term  d) packed  nto an  nteger.
+  // T   nteger conta ns:
+  // byte 0:  ndex (seg nt  d). S nce   have ~20 seg nts, t  f s  nto a byte.
+  // bytes [1-3]: term  d. T  terms  're bu ld ng t  d ct onary for are user  ds
+  //   assoc ated w h a t et - from_user_ d and  n_reply_to_user_ d. S nce   have
+  //   at most 2**23 t ets  n realt  ,  'll have at most 2**23 un que terms per
+  //   seg nts. T  term  ds post opt m zat on are consecut ve numbers, so t y w ll
+  //   f   n 24 b s.   don't use t  term d ct onary  n arch ve, wh ch has more
+  //   t ets per seg nt.
   //
-  //   To verify the maximum amount of tweets in a segment, see max_segment_size in
-  //   earlybird-config.yml.
-  private final HashMap<BytesRef, IntArrayList> termsMap;
-  private final int numTerms;
-  private final int numTermEntries;
+  //   To ver fy t  max mum amount of t ets  n a seg nt, see max_seg nt_s ze  n
+  //   earlyb rd-conf g.yml.
+  pr vate f nal HashMap<BytesRef,  ntArrayL st> termsMap;
+  pr vate f nal  nt numTerms;
+  pr vate f nal  nt numTermEntr es;
 
-  int encodeIndexAndTermId(int indexId, int termId) {
-    // Push the index id to the left and use the other 24 bits for the term id.
-    return (indexId << MAX_TERM_ID_BITS) | termId;
+   nt encode ndexAndTerm d( nt  ndex d,  nt term d) {
+    // Push t   ndex  d to t  left and use t  ot r 24 b s for t  term  d.
+    return ( ndex d << MAX_TERM_ D_B TS) | term d;
   }
 
-  void decodeIndexAndTermId(int[] arr, int packed) {
-    arr[packed >> MAX_TERM_ID_BITS] = packed & TERM_ID_MASK;
+  vo d decode ndexAndTerm d( nt[] arr,  nt packed) {
+    arr[packed >> MAX_TERM_ D_B TS] = packed & TERM_ D_MASK;
   }
 
 
   /**
-   * Creates a new multi-segment term dictionary backed by a regular java map.
+   * Creates a new mult -seg nt term d ct onary backed by a regular java map.
    */
-  public MultiSegmentTermDictionaryWithFastutil(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
+  publ c Mult Seg ntTermD ct onaryW hFastut l(
+      Str ng f eld,
+      L st<Opt m zed mory ndex>  ndexes) {
 
-    this.indexes = ImmutableList.copyOf(indexes);
+    t . ndexes =  mmutableL st.copyOf( ndexes);
 
-    // Pre-size the map with estimate of max number of terms. It should be at least that big.
-    OptionalInt optionalMax = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).max();
-    int maxNumTerms = optionalMax.orElse(0);
-    this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
+    // Pre-s ze t  map w h est mate of max number of terms.   should be at least that b g.
+    Opt onal nt opt onalMax =  ndexes.stream().mapTo nt(Opt m zed mory ndex::getNumTerms).max();
+     nt maxNumTerms = opt onalMax.orElse(0);
+    t .termsMap = Maps.newHashMapW hExpectedS ze(maxNumTerms);
 
-    LOG.info("About to merge {} indexes for field {}, estimated {} terms",
-        indexes.size(), field, LogFormatUtil.formatInt(maxNumTerms));
+    LOG. nfo("About to  rge {}  ndexes for f eld {}, est mated {} terms",
+         ndexes.s ze(), f eld, LogFormatUt l.format nt(maxNumTerms));
     Stopwatch stopwatch = Stopwatch.createStarted();
 
     BytesRef termBytesRef = new BytesRef();
 
-    for (int indexId = 0; indexId < indexes.size(); indexId++) {
-      // The inverted index for this field.
-      OptimizedMemoryIndex index = indexes.get(indexId);
+    for ( nt  ndex d = 0;  ndex d <  ndexes.s ze();  ndex d++) {
+      // T   nverted  ndex for t  f eld.
+      Opt m zed mory ndex  ndex =  ndexes.get( ndex d);
 
-      int indexNumTerms = index.getNumTerms();
+       nt  ndexNumTerms =  ndex.getNumTerms();
 
-      if (indexNumTerms > MAX_SEGMENT_SIZE) {
-        throw new IllegalStateException("too many terms: " + indexNumTerms);
+       f ( ndexNumTerms > MAX_SEGMENT_S ZE) {
+        throw new  llegalStateExcept on("too many terms: " +  ndexNumTerms);
       }
 
-      for (int termId = 0; termId < indexNumTerms; termId++) {
-        index.getTerm(termId, termBytesRef);
+      for ( nt term d = 0; term d <  ndexNumTerms; term d++) {
+         ndex.getTerm(term d, termBytesRef);
 
-        IntArrayList indexTerms = termsMap.get(termBytesRef);
-        if (indexTerms == null) {
+         ntArrayL st  ndexTerms = termsMap.get(termBytesRef);
+         f ( ndexTerms == null) {
           BytesRef term = BytesRef.deepCopyOf(termBytesRef);
 
-          indexTerms = new IntArrayList();
-          termsMap.put(term, indexTerms);
+           ndexTerms = new  ntArrayL st();
+          termsMap.put(term,  ndexTerms);
         }
 
-        indexTerms.add(encodeIndexAndTermId(indexId, termId));
+         ndexTerms.add(encode ndexAndTerm d( ndex d, term d));
       }
     }
 
-    this.numTerms = termsMap.size();
-    this.numTermEntries = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).sum();
+    t .numTerms = termsMap.s ze();
+    t .numTermEntr es =  ndexes.stream().mapTo nt(Opt m zed mory ndex::getNumTerms).sum();
 
-    TERM_DICTIONARY_CREATION_STATS.timerIncrement(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-    LOG.info("Done merging {} segments for field {} in {} - "
-            + "num terms: {}, num term entries: {}.",
-        indexes.size(), field, stopwatch,
-        LogFormatUtil.formatInt(this.numTerms),
-        LogFormatUtil.formatInt(this.numTermEntries));
+    TERM_D CT ONARY_CREAT ON_STATS.t  r ncre nt(stopwatch.elapsed(T  Un .M LL SECONDS));
+    LOG. nfo("Done  rg ng {} seg nts for f eld {}  n {} - "
+            + "num terms: {}, num term entr es: {}.",
+         ndexes.s ze(), f eld, stopwatch,
+        LogFormatUt l.format nt(t .numTerms),
+        LogFormatUt l.format nt(t .numTermEntr es));
   }
 
-  @Override
-  public int[] lookupTermIds(BytesRef term) {
-    int[] termIds = new int[indexes.size()];
-    Arrays.fill(termIds, EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND);
+  @Overr de
+  publ c  nt[] lookupTerm ds(BytesRef term) {
+     nt[] term ds = new  nt[ ndexes.s ze()];
+    Arrays.f ll(term ds, Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND);
 
-    IntArrayList indexTerms = termsMap.get(term);
-    if (indexTerms != null) {
-      for (int i = 0; i < indexTerms.size(); i++) {
-        decodeIndexAndTermId(termIds, indexTerms.getInt(i));
+     ntArrayL st  ndexTerms = termsMap.get(term);
+     f ( ndexTerms != null) {
+      for ( nt   = 0;   <  ndexTerms.s ze();  ++) {
+        decode ndexAndTerm d(term ds,  ndexTerms.get nt( ));
       }
     }
 
-    return termIds;
+    return term ds;
   }
 
-  @Override
-  public ImmutableList<? extends InvertedIndex> getSegmentIndexes() {
-    return indexes;
+  @Overr de
+  publ c  mmutableL st<? extends  nverted ndex> getSeg nt ndexes() {
+    return  ndexes;
   }
 
-  @Override
-  public int getNumTerms() {
-    return this.numTerms;
+  @Overr de
+  publ c  nt getNumTerms() {
+    return t .numTerms;
   }
 
-  @Override
-  public int getNumTermEntries() {
-    return this.numTermEntries;
+  @Overr de
+  publ c  nt getNumTermEntr es() {
+    return t .numTermEntr es;
   }
 }

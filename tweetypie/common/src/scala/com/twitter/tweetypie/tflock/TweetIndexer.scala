@@ -1,30 +1,30 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
+/** Copyr ght 2010 Tw ter,  nc. */
+package com.tw ter.t etyp e
 package tflock
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Future
 
-trait TweetIndexer {
-
-  /**
-   * Called at tweet-creation time, this method should set up all relevant indices on the tweet.
-   */
-  def createIndex(tweet: Tweet): Future[Unit] = Future.Unit
+tra  T et ndexer {
 
   /**
-   * Called at tweet-undelete time (which isn't yet handled), this method should
-   * restore all relevant indices on the tweet.
+   * Called at t et-creat on t  , t   thod should set up all relevant  nd ces on t  t et.
    */
-  def undeleteIndex(tweet: Tweet): Future[Unit] = Future.Unit
+  def create ndex(t et: T et): Future[Un ] = Future.Un 
 
   /**
-   * Called at tweet-delete time, this method should archive all relevant indices on the tweet.
+   * Called at t et-undelete t   (wh ch  sn't yet handled), t   thod should
+   * restore all relevant  nd ces on t  t et.
    */
-  def deleteIndex(tweet: Tweet, isBounceDelete: Boolean): Future[Unit] = Future.Unit
+  def undelete ndex(t et: T et): Future[Un ] = Future.Un 
 
   /**
-   * This method should archive or unarchive the retweet edge in TFlock RetweetsGraph.
+   * Called at t et-delete t  , t   thod should arch ve all relevant  nd ces on t  t et.
    */
-  def setRetweetVisibility(retweetId: TweetId, visible: Boolean): Future[Unit] = Future.Unit
+  def delete ndex(t et: T et,  sBounceDelete: Boolean): Future[Un ] = Future.Un 
+
+  /**
+   * T   thod should arch ve or unarch ve t  ret et edge  n TFlock Ret etsGraph.
+   */
+  def setRet etV s b l y(ret et d: T et d, v s ble: Boolean): Future[Un ] = Future.Un 
 }

@@ -1,12 +1,12 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
 /**
- * Provide an accessor for a doc ID. This is useful for classes that iterate through doc IDs
- * and maintain a "last seen" doc ID.
+ * Prov de an accessor for a doc  D. T   s useful for classes that  erate through doc  Ds
+ * and ma nta n a "last seen" doc  D.
  */
-public interface DocIdTracker {
+publ c  nterface Doc dTracker {
   /**
-   * Retrieve current doc ID
+   * Retr eve current doc  D
    */
-  int getCurrentDocId();
+   nt getCurrentDoc d();
 }

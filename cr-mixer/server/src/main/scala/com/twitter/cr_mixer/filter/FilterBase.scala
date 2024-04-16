@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.ut l.Future
 
-trait FilterBase {
-  def name: String
+tra  F lterBase {
+  def na : Str ng
 
-  type ConfigType
+  type Conf gType
 
-  def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]]
+  def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    conf g: Conf gType
+  ): Future[Seq[Seq[ n  alCand date]]]
 
   /**
-   * Build the config params here. passing in param() into the filter is strongly discouraged
-   * because param() can be slow when called many times
+   * Bu ld t  conf g params  re. pass ng  n param()  nto t  f lter  s strongly d sc aged
+   * because param() can be slow w n called many t  s
    */
-  def requestToConfig[CGQueryType <: CandidateGeneratorQuery](request: CGQueryType): ConfigType
+  def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](request: CGQueryType): Conf gType
 }

@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlertInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ShowAlert
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ShowAlert nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class ShowAlertInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ShowAlertInstruction] {
+case class ShowAlert nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, ShowAlert nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ShowAlertInstruction] = {
-    if (includeInstruction(query, entries)) {
-      // Currently only one Alert is supported per response
-      entries.collectFirst {
-        case alertEntry: ShowAlert => ShowAlertInstruction(alertEntry)
+    entr es: Seq[T  l neEntry]
+  ): Seq[ShowAlert nstruct on] = {
+     f ( nclude nstruct on(query, entr es)) {
+      // Currently only one Alert  s supported per response
+      entr es.collectF rst {
+        case alertEntry: ShowAlert => ShowAlert nstruct on(alertEntry)
       }.toSeq
     } else Seq.empty
   }

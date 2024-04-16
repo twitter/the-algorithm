@@ -1,39 +1,39 @@
-package com.twitter.follow_recommendations.products.sidebar
+package com.tw ter.follow_recom ndat ons.products.s debar
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlow
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
-import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.sidebar.configapi.SidebarParams
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.base.BaseRecom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.flows.ads.PromotedAccountsFlow
+ mport com.tw ter.follow_recom ndat ons.flows.ads.PromotedAccountsFlowRequest
+ mport com.tw ter.follow_recom ndat ons.blenders.PromotedAccountsBlender
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlFlow
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlRequestBu lder
+ mport com.tw ter.follow_recom ndat ons.products.common.Product
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductRequest
+ mport com.tw ter.follow_recom ndat ons.products.s debar.conf gap .S debarParams
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SidebarProduct @Inject() (
+@S ngleton
+class S debarProduct @ nject() (
   postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
+  postNuxMlRequestBu lder: PostNuxMlRequestBu lder,
   promotedAccountsFlow: PromotedAccountsFlow,
   promotedAccountsBlender: PromotedAccountsBlender)
     extends Product {
-  override val name: String = "Sidebar"
+  overr de val na : Str ng = "S debar"
 
-  override val identifier: String = "sidebar"
+  overr de val  dent f er: Str ng = "s debar"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.Sidebar
+  overr de val d splayLocat on: D splayLocat on = D splayLocat on.S debar
 
-  override def selectWorkflows(
+  overr de def selectWorkflows(
     request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
+  ): St ch[Seq[BaseRecom ndat onFlow[ProductRequest, _ <: Recom ndat on]]] = {
+    postNuxMlRequestBu lder.bu ld(request).map { postNuxMlRequest =>
       Seq(
         postNuxMlFlow.mapKey({ _: ProductRequest => postNuxMlRequest }),
         promotedAccountsFlow.mapKey(mkPromotedAccountsRequest)
@@ -41,33 +41,33 @@ class SidebarProduct @Inject() (
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] = {
+  overr de val blender: Transform[ProductRequest, Recom ndat on] = {
     promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
   }
 
-  private[sidebar] def mkPromotedAccountsRequest(
+  pr vate[s debar] def mkPromotedAccountsRequest(
     req: ProductRequest
   ): PromotedAccountsFlowRequest = {
     PromotedAccountsFlowRequest(
-      req.recommendationRequest.clientContext,
+      req.recom ndat onRequest.cl entContext,
       req.params,
-      req.recommendationRequest.displayLocation,
+      req.recom ndat onRequest.d splayLocat on,
       None,
-      req.recommendationRequest.excludedIds.getOrElse(Nil)
+      req.recom ndat onRequest.excluded ds.getOrElse(N l)
     )
   }
 
-  private[sidebar] def getMaxResults(req: ProductRequest): Int = {
-    req.recommendationRequest.maxResults.getOrElse(
-      req.params(SidebarParams.DefaultMaxResults)
+  pr vate[s debar] def getMaxResults(req: ProductRequest):  nt = {
+    req.recom ndat onRequest.maxResults.getOrElse(
+      req.params(S debarParams.DefaultMaxResults)
     )
   }
 
-  override def resultsTransformer(
+  overr de def resultsTransfor r(
     request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ): St ch[Transform[ProductRequest, Recom ndat on]] =
+    St ch.value(new  dent yTransform[ProductRequest, Recom ndat on])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(SidebarParams.EnableProduct))
+  overr de def enabled(request: ProductRequest): St ch[Boolean] =
+    St ch.value(request.params(S debarParams.EnableProduct))
 }

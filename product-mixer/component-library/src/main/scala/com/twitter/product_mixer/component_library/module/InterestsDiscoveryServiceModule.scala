@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.interests_discovery.thriftscala.InterestsDiscoveryService
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+ mport com.tw ter. nterests_d scovery.thr ftscala. nterestsD scoveryServ ce
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.ut l.Durat on
 
-object InterestsDiscoveryServiceModule
-    extends ThriftMethodBuilderClientModule[
-      InterestsDiscoveryService.ServicePerEndpoint,
-      InterestsDiscoveryService.MethodPerEndpoint
+object  nterestsD scoveryServ ceModule
+    extends Thr ft thodBu lderCl entModule[
+       nterestsD scoveryServ ce.Serv cePerEndpo nt,
+       nterestsD scoveryServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label: String = "interests-discovery-service"
+  overr de val label: Str ng = " nterests-d scovery-serv ce"
 
-  override val dest: String = "/s/interests_discovery/interests_discovery"
+  overr de val dest: Str ng = "/s/ nterests_d scovery/ nterests_d scovery"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(500.millis)
-      .withTimeoutTotal(1000.millis)
-      .idempotent(5.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(500.m ll s)
+      .w hT  outTotal(1000.m ll s)
+      . dempotent(5.percent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

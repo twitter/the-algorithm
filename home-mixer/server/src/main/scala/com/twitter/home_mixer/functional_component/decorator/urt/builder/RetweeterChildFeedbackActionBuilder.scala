@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.service.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScreenNa sFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Ch ldFeedbackAct on
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class RetweeterChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@S ngleton
+case class Ret eterCh ldFeedbackAct onBu lder @ nject() (
+  @ProductScoped str ngCenter: Str ngCenter,
+  externalStr ngs: Ho M xerExternalStr ngs) {
 
-  def apply(candidateFeatures: FeatureMap): Option[ChildFeedbackAction] = {
-    val isRetweet = candidateFeatures.getOrElse(IsRetweetFeature, false)
+  def apply(cand dateFeatures: FeatureMap): Opt on[Ch ldFeedbackAct on] = {
+    val  sRet et = cand dateFeatures.getOrElse( sRet etFeature, false)
 
-    if (isRetweet) {
-      candidateFeatures.getOrElse(AuthorIdFeature, None).flatMap { retweeterId =>
-        FeedbackUtil.buildUserSeeFewerChildFeedbackAction(
-          userId = retweeterId,
-          namesByUserId = candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String]),
-          promptExternalString = externalStrings.showFewerRetweetsString,
-          confirmationExternalString = externalStrings.showFewerRetweetsConfirmationString,
-          engagementType = t.FeedbackEngagementType.Retweet,
-          stringCenter = stringCenter,
-          injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+     f ( sRet et) {
+      cand dateFeatures.getOrElse(Author dFeature, None).flatMap { ret eter d =>
+        FeedbackUt l.bu ldUserSeeFe rCh ldFeedbackAct on(
+          user d = ret eter d,
+          na sByUser d = cand dateFeatures.getOrElse(ScreenNa sFeature, Map.empty[Long, Str ng]),
+          promptExternalStr ng = externalStr ngs.showFe rRet etsStr ng,
+          conf rmat onExternalStr ng = externalStr ngs.showFe rRet etsConf rmat onStr ng,
+          engage ntType = t.FeedbackEngage ntType.Ret et,
+          str ngCenter = str ngCenter,
+           nject onType = cand dateFeatures.getOrElse(SuggestTypeFeature, None)
         )
       }
     } else None

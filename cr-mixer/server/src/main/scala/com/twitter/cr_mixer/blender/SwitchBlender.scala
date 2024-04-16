@@ -1,81 +1,81 @@
-package com.twitter.cr_mixer.blender
+package com.tw ter.cr_m xer.blender
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.BlenderParams
-import com.twitter.cr_mixer.param.BlenderParams.BlendingAlgorithmEnum
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.param.BlenderParams
+ mport com.tw ter.cr_m xer.param.BlenderParams.Blend ngAlgor hmEnum
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class SwitchBlender @Inject() (
-  defaultBlender: InterleaveBlender,
-  sourceTypeBackFillBlender: SourceTypeBackFillBlender,
+@S ngleton
+case class Sw chBlender @ nject() (
+  defaultBlender:  nterleaveBlender,
+  s ceTypeBackF llBlender: S ceTypeBackF llBlender,
   adsBlender: AdsBlender,
-  contentSignalBlender: ContentSignalBlender,
-  globalStats: StatsReceiver) {
+  contentS gnalBlender: ContentS gnalBlender,
+  globalStats: StatsRece ver) {
 
-  private val stats = globalStats.scope(this.getClass.getCanonicalName)
+  pr vate val stats = globalStats.scope(t .getClass.getCanon calNa )
 
   def blend(
     params: Params,
     userState: UserState,
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+     nputCand dates: Seq[Seq[ n  alCand date]],
+  ): Future[Seq[BlendedCand date]] = {
     // Take out empty seq
-    val nonEmptyCandidates = inputCandidates.collect {
-      case candidates if candidates.nonEmpty =>
-        candidates
+    val nonEmptyCand dates =  nputCand dates.collect {
+      case cand dates  f cand dates.nonEmpty =>
+        cand dates
     }
-    stats.stat("num_of_sequences").add(inputCandidates.size)
+    stats.stat("num_of_sequences").add( nputCand dates.s ze)
 
-    // Sort the seqs in an order
-    val innerSignalSorting = params(BlenderParams.SignalTypeSortingAlgorithmParam) match {
-      case BlenderParams.ContentBasedSortingAlgorithmEnum.SourceSignalRecency =>
-        SwitchBlender.TimestampOrder
-      case BlenderParams.ContentBasedSortingAlgorithmEnum.RandomSorting => SwitchBlender.RandomOrder
-      case _ => SwitchBlender.TimestampOrder
+    // Sort t  seqs  n an order
+    val  nnerS gnalSort ng = params(BlenderParams.S gnalTypeSort ngAlgor hmParam) match {
+      case BlenderParams.ContentBasedSort ngAlgor hmEnum.S ceS gnalRecency =>
+        Sw chBlender.T  stampOrder
+      case BlenderParams.ContentBasedSort ngAlgor hmEnum.RandomSort ng => Sw chBlender.RandomOrder
+      case _ => Sw chBlender.T  stampOrder
     }
 
-    val candidatesToBlend = nonEmptyCandidates.sortBy(_.head)(innerSignalSorting)
-    // Blend based on specified blender rules
-    params(BlenderParams.BlendingAlgorithmParam) match {
-      case BlendingAlgorithmEnum.RoundRobin =>
-        defaultBlender.blend(candidatesToBlend)
-      case BlendingAlgorithmEnum.SourceTypeBackFill =>
-        sourceTypeBackFillBlender.blend(params, candidatesToBlend)
-      case BlendingAlgorithmEnum.SourceSignalSorting =>
-        contentSignalBlender.blend(params, candidatesToBlend)
-      case _ => defaultBlender.blend(candidatesToBlend)
+    val cand datesToBlend = nonEmptyCand dates.sortBy(_. ad)( nnerS gnalSort ng)
+    // Blend based on spec f ed blender rules
+    params(BlenderParams.Blend ngAlgor hmParam) match {
+      case Blend ngAlgor hmEnum.RoundRob n =>
+        defaultBlender.blend(cand datesToBlend)
+      case Blend ngAlgor hmEnum.S ceTypeBackF ll =>
+        s ceTypeBackF llBlender.blend(params, cand datesToBlend)
+      case Blend ngAlgor hmEnum.S ceS gnalSort ng =>
+        contentS gnalBlender.blend(params, cand datesToBlend)
+      case _ => defaultBlender.blend(cand datesToBlend)
     }
   }
 }
 
-object SwitchBlender {
+object Sw chBlender {
 
   /**
-   * Prefers candidates generated from sources with the latest timestamps.
-   * The newer the source signal, the higher a candidate ranks.
-   * This ordering biases against consumer-based candidates because their timestamp defaults to 0
+   * Prefers cand dates generated from s ces w h t  latest t  stamps.
+   * T  ne r t  s ce s gnal, t  h g r a cand date ranks.
+   * T  order ng b ases aga nst consu r-based cand dates because t  r t  stamp defaults to 0
    *
-   * Within a Seq[Seq[Candidate]], all candidates within a inner Seq
-   * are guaranteed to have the same sourceInfo because they are grouped by (sourceInfo, SE model).
-   * Hence, we can pick .headOption to represent the whole list when filtering by the internalId of the sourceInfoOpt.
-   * But of course the similarityEngine score in a CGInfo could be different.
+   * W h n a Seq[Seq[Cand date]], all cand dates w h n a  nner Seq
+   * are guaranteed to have t  sa  s ce nfo because t y are grouped by (s ce nfo, SE model).
+   *  nce,   can p ck . adOpt on to represent t  whole l st w n f lter ng by t   nternal d of t  s ce nfoOpt.
+   * But of c se t  s m lar yEng ne score  n a CG nfo could be d fferent.
    */
-  val TimestampOrder: Ordering[InitialCandidate] =
-    math.Ordering
-      .by[InitialCandidate, Time](
-        _.candidateGenerationInfo.sourceInfoOpt
-          .flatMap(_.sourceEventTime)
-          .getOrElse(Time.fromMilliseconds(0L)))
+  val T  stampOrder: Order ng[ n  alCand date] =
+    math.Order ng
+      .by[ n  alCand date, T  ](
+        _.cand dateGenerat on nfo.s ce nfoOpt
+          .flatMap(_.s ceEventT  )
+          .getOrElse(T  .fromM ll seconds(0L)))
       .reverse
 
-  private val RandomOrder: Ordering[InitialCandidate] =
-    Ordering.by[InitialCandidate, Double](_ => scala.util.Random.nextDouble())
+  pr vate val RandomOrder: Order ng[ n  alCand date] =
+    Order ng.by[ n  alCand date, Double](_ => scala.ut l.Random.nextDouble())
 }

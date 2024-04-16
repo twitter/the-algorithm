@@ -1,274 +1,274 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.ad
 
-import com.twitter.ads.adserver.{thriftscala => ads}
-import com.twitter.adserver.{thriftscala => adserver}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.ClickTrackingInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerPolitical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.IndirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoSponsorshipSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.VideoVariant
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.util.AdMetadataContainerSerializer
-import com.twitter.timelines.util.PrerollMetadataSerializer
+ mport com.tw ter.ads.adserver.{thr ftscala => ads}
+ mport com.tw ter.adserver.{thr ftscala => adserver}
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.contextual_ref.ContextualT etRefBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t et.T etCand dateUrt emBu lder.T etCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsT etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T etD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Ad tadataConta ner
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Ampl fy
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.CallToAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Cl ckTrack ng nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.DcmUrlOverr deType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D rectSponsorsh pType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D scla  r ssue
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D scla  rPol  cal
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D scla  rType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D sclosureType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Dynam cPrerollType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Earned
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted. nd rectSponsorsh pType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted. ssue
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.L veTvEvent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Marketplace
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted. d a nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.NoD sclosure
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.NoSponsorsh pSponsorsh pType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Pol  cal
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Preroll
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Preroll tadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Promoted tadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.SkAdNetworkData
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Sponsorsh pType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.UnknownUrlOverr deType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.V deoVar ant
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.ut l.Ad tadataConta nerSer al zer
+ mport com.tw ter.t  l nes.ut l.Preroll tadataSer al zer
 
 /**
- * [[AdsCandidateUrtItemBuilder]] takes a [[AdsCandidate]] (with a [[Query]] as additional context)
- * and converts it into the Product Mixer URT representation, or throws an error.
+ * [[AdsCand dateUrt emBu lder]] takes a [[AdsCand date]] (w h a [[Query]] as add  onal context)
+ * and converts    nto t  Product M xer URT representat on, or throws an error.
  *
- * Currently, the only supported form for URT representation of the [[AdsCandidate]] is a [[Tweet]],
- * but in the future it could be expanded to handle other forms of ads.
+ * Currently, t  only supported form for URT representat on of t  [[AdsCand date]]  s a [[T et]],
+ * but  n t  future   could be expanded to handle ot r forms of ads.
  *
- * @param tweetClientEventInfoBuilder Optionally, provide a ClientEventInfoBuilder for Tweets
- *                                    that given an AdsTweetCandidate and element of "tweet".
- * @param tweetDisplayType Should be [[EmphasizedPromotedTweet]] on Profile timelines,
- *                         otherwise [[Tweet]]
+ * @param t etCl entEvent nfoBu lder Opt onally, prov de a Cl entEvent nfoBu lder for T ets
+ *                                    that g ven an AdsT etCand date and ele nt of "t et".
+ * @param t etD splayType Should be [[Emphas zedPromotedT et]] on Prof le t  l nes,
+ *                         ot rw se [[T et]]
  */
-case class AdsCandidateUrtItemBuilder[Query <: PipelineQuery](
-  tweetClientEventInfoBuilder: Option[BaseClientEventInfoBuilder[Query, AdsTweetCandidate]] = None,
-  contextualTweetRefBuilder: Option[ContextualTweetRefBuilder[AdsTweetCandidate]] = None,
-  tweetDisplayType: TweetDisplayType = Tweet)
-    extends CandidateUrtEntryBuilder[Query, AdsCandidate, TimelineItem] {
+case class AdsCand dateUrt emBu lder[Query <: P pel neQuery](
+  t etCl entEvent nfoBu lder: Opt on[BaseCl entEvent nfoBu lder[Query, AdsT etCand date]] = None,
+  contextualT etRefBu lder: Opt on[ContextualT etRefBu lder[AdsT etCand date]] = None,
+  t etD splayType: T etD splayType = T et)
+    extends Cand dateUrtEntryBu lder[Query, AdsCand date, T  l ne em] {
 
-  override def apply(
-    pipelineQuery: Query,
-    candidate: AdsCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    candidate match {
-      case tweetCandidate: AdsTweetCandidate =>
-        TweetItem(
-          id = tweetCandidate.id,
-          entryNamespace = TweetItem.PromotedTweetEntryNamespace,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = tweetClientEventInfoBuilder.flatMap(
+  overr de def apply(
+    p pel neQuery: Query,
+    cand date: AdsCand date,
+    cand dateFeatures: FeatureMap
+  ): T  l ne em = {
+    cand date match {
+      case t etCand date: AdsT etCand date =>
+        T et em(
+           d = t etCand date. d,
+          entryNa space = T et em.PromotedT etEntryNa space,
+          sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+          cl entEvent nfo = t etCl entEvent nfoBu lder.flatMap(
             _.apply(
-              pipelineQuery,
-              tweetCandidate,
-              candidateFeatures,
-              Some(TweetClientEventInfoElement))),
-          feedbackActionInfo = None,
-          isPinned = None,
-          entryIdToReplace = None,
-          socialContext = None,
-          highlights = None,
-          innerTombstoneInfo = None,
-          timelinesScoreInfo = None,
-          hasModeratedReplies = None,
-          forwardPivot = None,
-          innerForwardPivot = None,
-          conversationAnnotation = None,
-          promotedMetadata = Some(promotedMetadata(tweetCandidate.adImpression)),
-          displayType = tweetDisplayType,
-          contextualTweetRef = contextualTweetRefBuilder.flatMap(_.apply(tweetCandidate)),
-          prerollMetadata = prerollMetadata(tweetCandidate.adImpression),
+              p pel neQuery,
+              t etCand date,
+              cand dateFeatures,
+              So (T etCl entEvent nfoEle nt))),
+          feedbackAct on nfo = None,
+           sP nned = None,
+          entry dToReplace = None,
+          soc alContext = None,
+          h ghl ghts = None,
+           nnerTombstone nfo = None,
+          t  l nesScore nfo = None,
+          hasModeratedRepl es = None,
+          forwardP vot = None,
+           nnerForwardP vot = None,
+          conversat onAnnotat on = None,
+          promoted tadata = So (promoted tadata(t etCand date.ad mpress on)),
+          d splayType = t etD splayType,
+          contextualT etRef = contextualT etRefBu lder.flatMap(_.apply(t etCand date)),
+          preroll tadata = preroll tadata(t etCand date.ad mpress on),
           replyBadge = None,
-          destination = None
+          dest nat on = None
         )
     }
   }
 
-  private def promotedMetadata(impression: adserver.AdImpression) = {
-    PromotedMetadata(
-      advertiserId = impression.advertiserId,
-      impressionString = impression.impressionString,
-      disclosureType = impression.disclosureType.map(convertDisclosureType),
-      experimentValues = impression.experimentValues.map(_.toMap),
-      promotedTrendId = impression.promotedTrendId.map(_.toLong),
-      promotedTrendName = impression.promotedTrendName,
-      promotedTrendQueryTerm = impression.promotedTrendQueryTerm,
-      promotedTrendDescription = impression.promotedTrendDescription,
-      clickTrackingInfo = impression.clickTrackingInfo.map(convertClickTrackingInfo),
-      adMetadataContainer = adMetadataContainer(impression)
+  pr vate def promoted tadata( mpress on: adserver.Ad mpress on) = {
+    Promoted tadata(
+      advert ser d =  mpress on.advert ser d,
+       mpress onStr ng =  mpress on. mpress onStr ng,
+      d sclosureType =  mpress on.d sclosureType.map(convertD sclosureType),
+      exper  ntValues =  mpress on.exper  ntValues.map(_.toMap),
+      promotedTrend d =  mpress on.promotedTrend d.map(_.toLong),
+      promotedTrendNa  =  mpress on.promotedTrendNa ,
+      promotedTrendQueryTerm =  mpress on.promotedTrendQueryTerm,
+      promotedTrendDescr pt on =  mpress on.promotedTrendDescr pt on,
+      cl ckTrack ng nfo =  mpress on.cl ckTrack ng nfo.map(convertCl ckTrack ng nfo),
+      ad tadataConta ner = ad tadataConta ner( mpress on)
     )
   }
 
-  private def convertDisclosureType(
-    disclosureType: adserver.DisclosureType
-  ): DisclosureType = disclosureType match {
-    case adserver.DisclosureType.None => NoDisclosure
-    case adserver.DisclosureType.Political => Political
-    case adserver.DisclosureType.Earned => Earned
-    case adserver.DisclosureType.Issue => Issue
-    case _ => throw new UnsupportedDisclosureTypeException(disclosureType)
+  pr vate def convertD sclosureType(
+    d sclosureType: adserver.D sclosureType
+  ): D sclosureType = d sclosureType match {
+    case adserver.D sclosureType.None => NoD sclosure
+    case adserver.D sclosureType.Pol  cal => Pol  cal
+    case adserver.D sclosureType.Earned => Earned
+    case adserver.D sclosureType. ssue =>  ssue
+    case _ => throw new UnsupportedD sclosureTypeExcept on(d sclosureType)
   }
 
-  private def convertClickTrackingInfo(
-    clickTracking: adserver.ClickTrackingInfo
-  ): ClickTrackingInfo = ClickTrackingInfo(
-    urlParams = clickTracking.urlParams.getOrElse(Map.empty),
-    urlOverride = clickTracking.urlOverride,
-    urlOverrideType = clickTracking.urlOverrideType.map {
-      case adserver.UrlOverrideType.Unknown => UnknownUrlOverrideType
-      case adserver.UrlOverrideType.Dcm => DcmUrlOverrideType
-      case _ => throw new UnsupportedClickTrackingInfoException(clickTracking)
+  pr vate def convertCl ckTrack ng nfo(
+    cl ckTrack ng: adserver.Cl ckTrack ng nfo
+  ): Cl ckTrack ng nfo = Cl ckTrack ng nfo(
+    urlParams = cl ckTrack ng.urlParams.getOrElse(Map.empty),
+    urlOverr de = cl ckTrack ng.urlOverr de,
+    urlOverr deType = cl ckTrack ng.urlOverr deType.map {
+      case adserver.UrlOverr deType.Unknown => UnknownUrlOverr deType
+      case adserver.UrlOverr deType.Dcm => DcmUrlOverr deType
+      case _ => throw new UnsupportedCl ckTrack ng nfoExcept on(cl ckTrack ng)
     }
   )
 
-  private def prerollMetadata(adImpression: adserver.AdImpression): Option[PrerollMetadata] = {
-    adImpression.serializedPrerollMetadata
-      .flatMap(PrerollMetadataSerializer.deserialize).map { metadata =>
-        PrerollMetadata(
-          metadata.preroll.map(convertPreroll),
-          metadata.videoAnalyticsScribePassthrough
+  pr vate def preroll tadata(ad mpress on: adserver.Ad mpress on): Opt on[Preroll tadata] = {
+    ad mpress on.ser al zedPreroll tadata
+      .flatMap(Preroll tadataSer al zer.deser al ze).map {  tadata =>
+        Preroll tadata(
+           tadata.preroll.map(convertPreroll),
+           tadata.v deoAnalyt csScr bePassthrough
         )
       }
   }
 
-  private def adMetadataContainer(
-    adImpression: adserver.AdImpression
-  ): Option[AdMetadataContainer] = {
-    adImpression.serializedAdMetadataContainer
-      .flatMap(AdMetadataContainerSerializer.deserialize).map { container =>
-        AdMetadataContainer(
-          removePromotedAttributionForPreroll = container.removePromotedAttributionForPreroll,
-          sponsorshipCandidate = container.sponsorshipCandidate,
-          sponsorshipOrganization = container.sponsorshipOrganization,
-          sponsorshipOrganizationWebsite = container.sponsorshipOrganizationWebsite,
-          sponsorshipType = container.sponsorshipType.map(convertSponsorshipType),
-          disclaimerType = container.disclaimerType.map(convertDisclaimerType),
-          skAdNetworkDataList = container.skAdNetworkDataList.map(convertSkAdNetworkDataList),
-          unifiedCardOverride = container.unifiedCardOverride
+  pr vate def ad tadataConta ner(
+    ad mpress on: adserver.Ad mpress on
+  ): Opt on[Ad tadataConta ner] = {
+    ad mpress on.ser al zedAd tadataConta ner
+      .flatMap(Ad tadataConta nerSer al zer.deser al ze).map { conta ner =>
+        Ad tadataConta ner(
+          removePromotedAttr but onForPreroll = conta ner.removePromotedAttr but onForPreroll,
+          sponsorsh pCand date = conta ner.sponsorsh pCand date,
+          sponsorsh pOrgan zat on = conta ner.sponsorsh pOrgan zat on,
+          sponsorsh pOrgan zat on bs e = conta ner.sponsorsh pOrgan zat on bs e,
+          sponsorsh pType = conta ner.sponsorsh pType.map(convertSponsorsh pType),
+          d scla  rType = conta ner.d scla  rType.map(convertD scla  rType),
+          skAdNetworkDataL st = conta ner.skAdNetworkDataL st.map(convertSkAdNetworkDataL st),
+          un f edCardOverr de = conta ner.un f edCardOverr de
         )
       }
   }
 
-  private def convertSponsorshipType(
-    sponsorshipType: ads.SponsorshipType
-  ): SponsorshipType = sponsorshipType match {
-    case ads.SponsorshipType.Direct => DirectSponsorshipType
-    case ads.SponsorshipType.Indirect => IndirectSponsorshipType
-    case ads.SponsorshipType.NoSponsorship => NoSponsorshipSponsorshipType
-    // Thrift has extras (e.g. Sponsorship4) that are not used in practice
-    case _ => throw new UnsupportedSponsorshipTypeException(sponsorshipType)
+  pr vate def convertSponsorsh pType(
+    sponsorsh pType: ads.Sponsorsh pType
+  ): Sponsorsh pType = sponsorsh pType match {
+    case ads.Sponsorsh pType.D rect => D rectSponsorsh pType
+    case ads.Sponsorsh pType. nd rect =>  nd rectSponsorsh pType
+    case ads.Sponsorsh pType.NoSponsorsh p => NoSponsorsh pSponsorsh pType
+    // Thr ft has extras (e.g. Sponsorsh p4) that are not used  n pract ce
+    case _ => throw new UnsupportedSponsorsh pTypeExcept on(sponsorsh pType)
   }
 
-  private def convertDisclaimerType(
-    disclaimerType: ads.DisclaimerType
-  ): DisclaimerType = disclaimerType match {
-    case ads.DisclaimerType.Political => DisclaimerPolitical
-    case ads.DisclaimerType.Issue => DisclaimerIssue
-    case _ => throw new UnsupportedDisclaimerTypeException(disclaimerType)
+  pr vate def convertD scla  rType(
+    d scla  rType: ads.D scla  rType
+  ): D scla  rType = d scla  rType match {
+    case ads.D scla  rType.Pol  cal => D scla  rPol  cal
+    case ads.D scla  rType. ssue => D scla  r ssue
+    case _ => throw new UnsupportedD scla  rTypeExcept on(d scla  rType)
   }
 
-  private def convertDynamicPrerollType(
-    dynamicPrerollType: ads.DynamicPrerollType
-  ): DynamicPrerollType =
-    dynamicPrerollType match {
-      case ads.DynamicPrerollType.Amplify => Amplify
-      case ads.DynamicPrerollType.Marketplace => Marketplace
-      case ads.DynamicPrerollType.LiveTvEvent => LiveTvEvent
-      case _ => throw new UnsupportedDynamicPrerollTypeException(dynamicPrerollType)
+  pr vate def convertDynam cPrerollType(
+    dynam cPrerollType: ads.Dynam cPrerollType
+  ): Dynam cPrerollType =
+    dynam cPrerollType match {
+      case ads.Dynam cPrerollType.Ampl fy => Ampl fy
+      case ads.Dynam cPrerollType.Marketplace => Marketplace
+      case ads.Dynam cPrerollType.L veTvEvent => L veTvEvent
+      case _ => throw new UnsupportedDynam cPrerollTypeExcept on(dynam cPrerollType)
     }
 
-  private def convertMediaInfo(mediaInfo: ads.MediaInfo): MediaInfo = {
-    MediaInfo(
-      uuid = mediaInfo.uuid,
-      publisherId = mediaInfo.publisherId,
-      callToAction = mediaInfo.callToAction.map(convertCallToAction),
-      durationMillis = mediaInfo.durationMillis,
-      videoVariants = mediaInfo.videoVariants.map(convertVideoVariants),
-      advertiserName = mediaInfo.advertiserName,
-      renderAdByAdvertiserName = mediaInfo.renderAdByAdvertiserName,
-      advertiserProfileImageUrl = mediaInfo.advertiserProfileImageUrl
+  pr vate def convert d a nfo( d a nfo: ads. d a nfo):  d a nfo = {
+     d a nfo(
+      uu d =  d a nfo.uu d,
+      publ s r d =  d a nfo.publ s r d,
+      callToAct on =  d a nfo.callToAct on.map(convertCallToAct on),
+      durat onM ll s =  d a nfo.durat onM ll s,
+      v deoVar ants =  d a nfo.v deoVar ants.map(convertV deoVar ants),
+      advert serNa  =  d a nfo.advert serNa ,
+      renderAdByAdvert serNa  =  d a nfo.renderAdByAdvert serNa ,
+      advert serProf le mageUrl =  d a nfo.advert serProf le mageUrl
     )
   }
 
-  private def convertVideoVariants(videoVariants: Seq[ads.VideoVariant]): Seq[VideoVariant] = {
-    videoVariants.map(videoVariant =>
-      VideoVariant(
-        url = videoVariant.url,
-        contentType = videoVariant.contentType,
-        bitrate = videoVariant.bitrate
+  pr vate def convertV deoVar ants(v deoVar ants: Seq[ads.V deoVar ant]): Seq[V deoVar ant] = {
+    v deoVar ants.map(v deoVar ant =>
+      V deoVar ant(
+        url = v deoVar ant.url,
+        contentType = v deoVar ant.contentType,
+        b rate = v deoVar ant.b rate
       ))
   }
 
-  private def convertCallToAction(callToAction: ads.CallToAction): CallToAction = {
-    CallToAction(
-      callToActionType = callToAction.callToActionType,
-      url = callToAction.url
+  pr vate def convertCallToAct on(callToAct on: ads.CallToAct on): CallToAct on = {
+    CallToAct on(
+      callToAct onType = callToAct on.callToAct onType,
+      url = callToAct on.url
     )
   }
 
-  private def convertPreroll(
+  pr vate def convertPreroll(
     preroll: ads.Preroll
   ): Preroll = {
     Preroll(
-      preroll.prerollId,
-      preroll.dynamicPrerollType.map(convertDynamicPrerollType),
-      preroll.mediaInfo.map(convertMediaInfo)
+      preroll.preroll d,
+      preroll.dynam cPrerollType.map(convertDynam cPrerollType),
+      preroll. d a nfo.map(convert d a nfo)
     )
   }
 
-  private def convertSkAdNetworkDataList(
-    skAdNetworkDataList: Seq[ads.SkAdNetworkData]
-  ): Seq[SkAdNetworkData] = skAdNetworkDataList.map(sdAdNetwork =>
+  pr vate def convertSkAdNetworkDataL st(
+    skAdNetworkDataL st: Seq[ads.SkAdNetworkData]
+  ): Seq[SkAdNetworkData] = skAdNetworkDataL st.map(sdAdNetwork =>
     SkAdNetworkData(
-      version = sdAdNetwork.version,
-      srcAppId = sdAdNetwork.srcAppId,
-      dstAppId = sdAdNetwork.dstAppId,
-      adNetworkId = sdAdNetwork.adNetworkId,
-      campaignId = sdAdNetwork.campaignId,
-      impressionTimeInMillis = sdAdNetwork.impressionTimeInMillis,
+      vers on = sdAdNetwork.vers on,
+      srcApp d = sdAdNetwork.srcApp d,
+      dstApp d = sdAdNetwork.dstApp d,
+      adNetwork d = sdAdNetwork.adNetwork d,
+      campa gn d = sdAdNetwork.campa gn d,
+       mpress onT   nM ll s = sdAdNetwork. mpress onT   nM ll s,
       nonce = sdAdNetwork.nonce,
-      signature = sdAdNetwork.signature,
-      fidelityType = sdAdNetwork.fidelityType
+      s gnature = sdAdNetwork.s gnature,
+      f del yType = sdAdNetwork.f del yType
     ))
 }
 
-class UnsupportedClickTrackingInfoException(clickTrackingInfo: adserver.ClickTrackingInfo)
-    extends UnsupportedOperationException(
-      s"Unsupported ClickTrackingInfo: $clickTrackingInfo"
+class UnsupportedCl ckTrack ng nfoExcept on(cl ckTrack ng nfo: adserver.Cl ckTrack ng nfo)
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported Cl ckTrack ng nfo: $cl ckTrack ng nfo"
     )
 
-class UnsupportedDisclaimerTypeException(disclaimerType: ads.DisclaimerType)
-    extends UnsupportedOperationException(
-      s"Unsupported DisclaimerType: $disclaimerType"
+class UnsupportedD scla  rTypeExcept on(d scla  rType: ads.D scla  rType)
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported D scla  rType: $d scla  rType"
     )
 
-class UnsupportedDisclosureTypeException(disclosureType: adserver.DisclosureType)
-    extends UnsupportedOperationException(
-      s"Unsupported DisclosureType: $disclosureType"
+class UnsupportedD sclosureTypeExcept on(d sclosureType: adserver.D sclosureType)
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported D sclosureType: $d sclosureType"
     )
 
-class UnsupportedDynamicPrerollTypeException(dynamicPrerollType: ads.DynamicPrerollType)
-    extends UnsupportedOperationException(
-      s"Unsupported DynamicPrerollType: $dynamicPrerollType"
+class UnsupportedDynam cPrerollTypeExcept on(dynam cPrerollType: ads.Dynam cPrerollType)
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported Dynam cPrerollType: $dynam cPrerollType"
     )
 
-class UnsupportedSponsorshipTypeException(sponsorshipType: ads.SponsorshipType)
-    extends UnsupportedOperationException(
-      s"Unsupported SponsorshipType: $sponsorshipType"
+class UnsupportedSponsorsh pTypeExcept on(sponsorsh pType: ads.Sponsorsh pType)
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported Sponsorsh pType: $sponsorsh pType"
     )

@@ -1,15 +1,15 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "tweetypie/servo/repo",
-        "tweetypie/servo/util",
-        "snowflake:id",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/core",
-        "tweetypie/server/src/main/thrift:compiled-scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "t etyp e/servo/repo",
+        "t etyp e/servo/ut l",
+        "snowflake: d",
+        "t etyp e/server/src/ma n/scala/com/tw ter/t etyp e",
+        "t etyp e/server/src/ma n/scala/com/tw ter/t etyp e/core",
+        "t etyp e/server/src/ma n/thr ft:comp led-scala",
+        "ut l/ut l-slf4j-ap /src/ma n/scala/com/tw ter/ut l/logg ng",
     ],
 )

@@ -1,15 +1,15 @@
-package com.twitter.unified_user_actions.adapter.common
+package com.tw ter.un f ed_user_act ons.adapter.common
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.T  
 
-object AdapterUtils {
-  def currentTimestampMs: Long = Time.now.inMilliseconds
-  def getTimestampMsFromTweetId(tweetId: Long): Long = SnowflakeId.unixTimeMillisFromId(tweetId)
+object AdapterUt ls {
+  def currentT  stampMs: Long = T  .now. nM ll seconds
+  def getT  stampMsFromT et d(t et d: Long): Long = Snowflake d.un xT  M ll sFrom d(t et d)
 
-  // For now just make sure both language code and country code are in upper cases for consistency
-  // For language code, there are mixed lower and upper cases
-  // For country code, there are mixed lower and upper cases
-  def normalizeLanguageCode(inputLanguageCode: String): String = inputLanguageCode.toUpperCase
-  def normalizeCountryCode(inputCountryCode: String): String = inputCountryCode.toUpperCase
+  // For now just make sure both language code and country code are  n upper cases for cons stency
+  // For language code, t re are m xed lo r and upper cases
+  // For country code, t re are m xed lo r and upper cases
+  def normal zeLanguageCode( nputLanguageCode: Str ng): Str ng =  nputLanguageCode.toUpperCase
+  def normal zeCountryCode( nputCountryCode: Str ng): Str ng =  nputCountryCode.toUpperCase
 }

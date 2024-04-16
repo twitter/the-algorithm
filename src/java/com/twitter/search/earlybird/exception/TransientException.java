@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-public class TransientException extends Exception {
-  public TransientException(Throwable t) {
+publ c class Trans entExcept on extends Except on {
+  publ c Trans entExcept on(Throwable t) {
     super(t);
   }
 
-  public TransientException(String message, Throwable cause) {
-    super(message, cause);
+  publ c Trans entExcept on(Str ng  ssage, Throwable cause) {
+    super( ssage, cause);
   }
 
-  public TransientException(String message) {
-    super(message);
+  publ c Trans entExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

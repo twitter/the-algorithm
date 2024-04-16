@@ -1,7 +1,7 @@
-scala_library(
+scala_l brary(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "graph-feature-service/src/main/thrift/com/twitter/graph_feature_service:graph_feature_service_thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "graph-feature-serv ce/src/ma n/thr ft/com/tw ter/graph_feature_serv ce:graph_feature_serv ce_thr ft-scala",
     ],
 )

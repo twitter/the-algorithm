@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.tw ter.product_m xer.core.p pel ne.scor ng
 
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.ScoredCand dateResult
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.Arrow
 
 /**
- * A Scoring Pipeline
+ * A Scor ng P pel ne
  *
- * This is an abstract class, as we only construct these via the [[ScoringPipelineBuilder]].
+ * T   s an abstract class, as   only construct t se v a t  [[Scor ngP pel neBu lder]].
  *
- * A [[ScoringPipeline]] is capable of pre-filtering candidates for scoring, performing the scoring
- * then running selection heuristics (ranking, dropping, etc) based off of the score.
- * @tparam Query the domain model for the query or request
- * @tparam Candidate the domain model for the candidate being scored
+ * A [[Scor ngP pel ne]]  s capable of pre-f lter ng cand dates for scor ng, perform ng t  scor ng
+ * t n runn ng select on  ur st cs (rank ng, dropp ng, etc) based off of t  score.
+ * @tparam Query t  doma n model for t  query or request
+ * @tparam Cand date t  doma n model for t  cand date be ng scored
  */
-abstract class ScoringPipeline[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends Pipeline[ScoringPipeline.Inputs[Query], Seq[ScoredCandidateResult[Candidate]]] {
-  override private[core] val config: ScoringPipelineConfig[Query, Candidate]
-  override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]]
-  override val identifier: ScoringPipelineIdentifier
+abstract class Scor ngP pel ne[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]]
+    extends P pel ne[Scor ngP pel ne. nputs[Query], Seq[ScoredCand dateResult[Cand date]]] {
+  overr de pr vate[core] val conf g: Scor ngP pel neConf g[Query, Cand date]
+  overr de val arrow: Arrow[Scor ngP pel ne. nputs[Query], Scor ngP pel neResult[Cand date]]
+  overr de val  dent f er: Scor ngP pel ne dent f er
 }
 
-object ScoringPipeline {
-  case class Inputs[+Query <: PipelineQuery](
+object Scor ngP pel ne {
+  case class  nputs[+Query <: P pel neQuery](
     query: Query,
-    candidates: Seq[ItemCandidateWithDetails])
+    cand dates: Seq[ emCand dateW hDeta ls])
 }

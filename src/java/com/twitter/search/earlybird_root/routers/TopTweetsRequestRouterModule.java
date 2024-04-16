@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import com.google.inject.Provides;
+ mport com.google. nject.Prov des;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Realt  Serv ngRangeProv der;
+ mport com.tw ter.search.earlyb rd_root.f lters.Serv ngRangeProv der;
 
-public class TopTweetsRequestRouterModule extends TwitterModule {
-  public static final String TIME_RANGE_FILTER = "top_tweets_time_range_filter";
+publ c class TopT etsRequestRouterModule extends Tw terModule {
+  publ c stat c f nal Str ng T ME_RANGE_F LTER = "top_t ets_t  _range_f lter";
 
-  public static final String SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_top_tweets_serving_range_boundary_hours_ago";
+  publ c stat c f nal Str ng SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY =
+      "superroot_top_t ets_serv ng_range_boundary_h s_ago";
 
-  private ServingRangeProvider getServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(decider, SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  pr vate Serv ngRangeProv der getServ ngRangeProv der(f nal SearchDec der dec der)
+      throws Except on {
+    return new Realt  Serv ngRangeProv der(dec der, SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY);
   }
 
-  @Provides
-  @Singleton
-  @Named(TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesTimeRangeFilter(SearchDecider decider) throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getServingRangeProvider(decider));
+  @Prov des
+  @S ngleton
+  @Na d(T ME_RANGE_F LTER)
+  pr vate Earlyb rdT  RangeF lter prov desT  RangeF lter(SearchDec der dec der) throws Except on {
+    return Earlyb rdT  RangeF lter.newT  RangeF lterW houtQueryRewr er(
+        getServ ngRangeProv der(dec der));
   }
 }

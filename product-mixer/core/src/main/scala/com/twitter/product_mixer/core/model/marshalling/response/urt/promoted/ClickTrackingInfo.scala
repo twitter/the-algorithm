@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-import scala.collection.Map
+ mport scala.collect on.Map
 
-case class ClickTrackingInfo(
-  urlParams: Map[String, String],
-  urlOverride: Option[String],
-  urlOverrideType: Option[UrlOverrideType])
+case class Cl ckTrack ng nfo(
+  urlParams: Map[Str ng, Str ng],
+  urlOverr de: Opt on[Str ng],
+  urlOverr deType: Opt on[UrlOverr deType])

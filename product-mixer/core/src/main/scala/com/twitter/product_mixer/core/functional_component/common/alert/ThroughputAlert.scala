@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.ThroughputPred cate
 
 /**
- * [[ThroughputAlert]] triggers when the requests/sec for the component this is used
- * with is outside of the predicate set by a [[ThroughputPredicate]] for
- * the configured amount of time
+ * [[ThroughputAlert]] tr ggers w n t  requests/sec for t  component t   s used
+ * w h  s outs de of t  pred cate set by a [[ThroughputPred cate]] for
+ * t  conf gured amount of t  
  */
 case class ThroughputAlert(
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: ThroughputPredicate,
-  override val criticalPredicate: ThroughputPredicate,
-  override val runbookLink: Option[String] = None)
+  overr de val not f cat onGroup: Not f cat onGroup,
+  overr de val warnPred cate: ThroughputPred cate,
+  overr de val cr  calPred cate: ThroughputPred cate,
+  overr de val runbookL nk: Opt on[Str ng] = None)
     extends Alert
-    with IsObservableFromStrato {
-  override val alertType: AlertType = Throughput
-  require(
-    warnPredicate.threshold >= 0,
-    s"ThroughputAlert predicates must be >= 0 but got warnPredicate = ${warnPredicate.threshold}")
-  require(
-    criticalPredicate.threshold >= 0,
-    s"ThroughputAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}")
+    w h  sObservableFromStrato {
+  overr de val alertType: AlertType = Throughput
+  requ re(
+    warnPred cate.threshold >= 0,
+    s"ThroughputAlert pred cates must be >= 0 but got warnPred cate = ${warnPred cate.threshold}")
+  requ re(
+    cr  calPred cate.threshold >= 0,
+    s"ThroughputAlert pred cates must be >= 0 but got cr  calPred cate = ${cr  calPred cate.threshold}")
 }

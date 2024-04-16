@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/squareup/okhttp:okhttp3",
-        "finagle/finagle-mux/src/main/scala",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "src/thrift/com/twitter/search/common:constants-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-        "stitch/stitch-core",
-        "visibility/lib/src/main/scala/com/twitter/visibility/models",
-        "visibility/lib/src/main/scala/com/twitter/visibility/util",
+        "f nagle/f nagle-mux/src/ma n/scala",
+        "src/thr ft/com/tw ter/g zmoduck:user-thr ft-scala",
+        "src/thr ft/com/tw ter/search/common:constants-scala",
+        "src/thr ft/com/tw ter/t etyp e:t et-scala",
+        "st ch/st ch-core",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/models",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/ut l",
     ],
 )

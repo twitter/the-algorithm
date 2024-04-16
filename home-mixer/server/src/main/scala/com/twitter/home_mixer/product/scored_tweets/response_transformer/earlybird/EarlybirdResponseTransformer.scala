@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer.earlybird
+package com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.earlyb rd
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdSearchResultFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.util.tweetypie.content.TweetMediaFeaturesExtractor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.search.earlybird.{thriftscala => eb}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Cand dateS ce dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.D rectedAtUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdSearchResultFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Exclus veConversat onAuthor dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.From nNetworkS ceFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Has mageFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.HasV deoFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRandomT etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nt onScreenNa Feature
+ mport com.tw ter.ho _m xer.model.Ho Features. nt onUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.StreamToKafkaFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T etUrlsFeature
+ mport com.tw ter.ho _m xer.ut l.t etyp e.content.T et d aFeaturesExtractor
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
 
-object EarlybirdResponseTransformer {
+object Earlyb rdResponseTransfor r {
 
   val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    DirectedAtUserIdFeature,
-    EarlybirdScoreFeature,
-    EarlybirdSearchResultFeature,
-    ExclusiveConversationAuthorIdFeature,
-    FromInNetworkSourceFeature,
-    HasImageFeature,
-    HasVideoFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsRandomTweetFeature,
-    IsRetweetFeature,
-    MentionScreenNameFeature,
-    MentionUserIdFeature,
+    Author dFeature,
+    Cand dateS ce dFeature,
+    D rectedAtUser dFeature,
+    Earlyb rdScoreFeature,
+    Earlyb rdSearchResultFeature,
+    Exclus veConversat onAuthor dFeature,
+    From nNetworkS ceFeature,
+    Has mageFeature,
+    HasV deoFeature,
+     nReplyToT et dFeature,
+     nReplyToUser dFeature,
+     sRandomT etFeature,
+     sRet etFeature,
+     nt onScreenNa Feature,
+     nt onUser dFeature,
     StreamToKafkaFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+    QuotedT et dFeature,
+    QuotedUser dFeature,
+    S ceT et dFeature,
+    S ceUser dFeature,
     SuggestTypeFeature,
-    TweetUrlsFeature
+    T etUrlsFeature
   )
 
-  def transform(candidate: eb.ThriftSearchResult): FeatureMap = {
-    val tweet = candidate.tweetypieTweet
-    val quotedTweet = tweet.flatMap(_.quotedTweet)
-    val mentions = tweet.flatMap(_.mentions).getOrElse(Seq.empty)
-    val coreData = tweet.flatMap(_.coreData)
+  def transform(cand date: eb.Thr ftSearchResult): FeatureMap = {
+    val t et = cand date.t etyp eT et
+    val quotedT et = t et.flatMap(_.quotedT et)
+    val  nt ons = t et.flatMap(_. nt ons).getOrElse(Seq.empty)
+    val coreData = t et.flatMap(_.coreData)
     val share = coreData.flatMap(_.share)
     val reply = coreData.flatMap(_.reply)
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, coreData.map(_.userId))
-      .add(DirectedAtUserIdFeature, coreData.flatMap(_.directedAtUser.map(_.userId)))
-      .add(EarlybirdSearchResultFeature, Some(candidate))
-      .add(EarlybirdScoreFeature, candidate.metadata.flatMap(_.score))
+    FeatureMapBu lder()
+      .add(Author dFeature, coreData.map(_.user d))
+      .add(D rectedAtUser dFeature, coreData.flatMap(_.d rectedAtUser.map(_.user d)))
+      .add(Earlyb rdSearchResultFeature, So (cand date))
+      .add(Earlyb rdScoreFeature, cand date. tadata.flatMap(_.score))
       .add(
-        ExclusiveConversationAuthorIdFeature,
-        tweet.flatMap(_.exclusiveTweetControl.map(_.conversationAuthorId)))
-      .add(FromInNetworkSourceFeature, false)
-      .add(HasImageFeature, tweet.exists(TweetMediaFeaturesExtractor.hasImage))
-      .add(HasVideoFeature, tweet.exists(TweetMediaFeaturesExtractor.hasVideo))
-      .add(InReplyToTweetIdFeature, reply.flatMap(_.inReplyToStatusId))
-      .add(InReplyToUserIdFeature, reply.map(_.inReplyToUserId))
-      .add(IsRandomTweetFeature, candidate.tweetFeatures.exists(_.isRandomTweet.getOrElse(false)))
-      .add(IsRetweetFeature, share.isDefined)
-      .add(MentionScreenNameFeature, mentions.map(_.screenName))
-      .add(MentionUserIdFeature, mentions.flatMap(_.userId))
+        Exclus veConversat onAuthor dFeature,
+        t et.flatMap(_.exclus veT etControl.map(_.conversat onAuthor d)))
+      .add(From nNetworkS ceFeature, false)
+      .add(Has mageFeature, t et.ex sts(T et d aFeaturesExtractor.has mage))
+      .add(HasV deoFeature, t et.ex sts(T et d aFeaturesExtractor.hasV deo))
+      .add( nReplyToT et dFeature, reply.flatMap(_. nReplyToStatus d))
+      .add( nReplyToUser dFeature, reply.map(_. nReplyToUser d))
+      .add( sRandomT etFeature, cand date.t etFeatures.ex sts(_. sRandomT et.getOrElse(false)))
+      .add( sRet etFeature, share. sDef ned)
+      .add( nt onScreenNa Feature,  nt ons.map(_.screenNa ))
+      .add( nt onUser dFeature,  nt ons.flatMap(_.user d))
       .add(StreamToKafkaFeature, true)
-      .add(QuotedTweetIdFeature, quotedTweet.map(_.tweetId))
-      .add(QuotedUserIdFeature, quotedTweet.map(_.userId))
-      .add(SourceTweetIdFeature, share.map(_.sourceStatusId))
-      .add(SourceUserIdFeature, share.map(_.sourceUserId))
+      .add(QuotedT et dFeature, quotedT et.map(_.t et d))
+      .add(QuotedUser dFeature, quotedT et.map(_.user d))
+      .add(S ceT et dFeature, share.map(_.s ceStatus d))
+      .add(S ceUser dFeature, share.map(_.s ceUser d))
       .add(
-        TweetUrlsFeature,
-        candidate.metadata.flatMap(_.tweetUrls.map(_.map(_.originalUrl))).getOrElse(Seq.empty))
-      .build()
+        T etUrlsFeature,
+        cand date. tadata.flatMap(_.t etUrls.map(_.map(_.or g nalUrl))).getOrElse(Seq.empty))
+      .bu ld()
   }
 }

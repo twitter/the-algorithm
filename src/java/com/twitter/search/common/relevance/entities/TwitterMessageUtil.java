@@ -1,444 +1,444 @@
-package com.twitter.search.common.relevance.entities;
+package com.tw ter.search.common.relevance.ent  es;
 
-import java.text.Normalizer;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentMap;
+ mport java.text.Normal zer;
+ mport java.ut l.Map;
+ mport java.ut l.Nav gableMap;
+ mport java.ut l.Set;
+ mport java.ut l.TreeMap;
+ mport java.ut l.concurrent.ConcurrentMap;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.transformer.HTMLTagRemovalTransformer;
-import com.twitter.common_internal.text.extractor.EmojiExtractor;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+ mport com.tw ter.common.text.transfor r.HTMLTagRemovalTransfor r;
+ mport com.tw ter.common_ nternal.text.extractor.Emoj Extractor;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
 
-public final class TwitterMessageUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterMessageUtil.class);
+publ c f nal class Tw ter ssageUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Tw ter ssageUt l.class);
 
-  private TwitterMessageUtil() {
+  pr vate Tw ter ssageUt l() {
   }
 
-  @VisibleForTesting
-  static final ConcurrentMap<Field, Counters> COUNTERS_MAP = Maps.newConcurrentMap();
-  // We truncate the location string because we used to use a MySQL table to store the geocoding
-  // information.  In the MySQL table, the location string was fix width of 30 characters.
-  // We have migrated to Manhattan and the location string is no longer limited to 30 character.
-  // However, in order to correctly lookup location geocode from Manhattan, we still need to
-  // truncate the location just like we did before.
-  private static final int MAX_LOCATION_LEN = 30;
+  @V s bleForTest ng
+  stat c f nal ConcurrentMap<F eld, Counters> COUNTERS_MAP = Maps.newConcurrentMap();
+  //   truncate t  locat on str ng because   used to use a  SQL table to store t  geocod ng
+  //  nformat on.   n t   SQL table, t  locat on str ng was f x w dth of 30 characters.
+  //   have m grated to Manhattan and t  locat on str ng  s no longer l m ed to 30 character.
+  // Ho ver,  n order to correctly lookup locat on geocode from Manhattan,   st ll need to
+  // truncate t  locat on just l ke   d d before.
+  pr vate stat c f nal  nt MAX_LOCAT ON_LEN = 30;
 
-  // Note: we strip tags to index source, as typically source contains <a href=...> tags.
-  // Sometimes we get a source where stripping fails, as the URL in the tag was
-  // excessively long.  We drop these sources, as there is little reason to index them.
-  private static final int MAX_SOURCE_LEN = 64;
+  // Note:   str p tags to  ndex s ce, as typ cally s ce conta ns <a href=...> tags.
+  // So t  s   get a s ce w re str pp ng fa ls, as t  URL  n t  tag was
+  // excess vely long.    drop t se s ces, as t re  s l tle reason to  ndex t m.
+  pr vate stat c f nal  nt MAX_SOURCE_LEN = 64;
 
-  private static HTMLTagRemovalTransformer tagRemovalTransformer = new HTMLTagRemovalTransformer();
+  pr vate stat c HTMLTagRemovalTransfor r tagRemovalTransfor r = new HTMLTagRemovalTransfor r();
 
-  private static final String STAT_PREFIX = "twitter_message_";
+  pr vate stat c f nal Str ng STAT_PREF X = "tw ter_ ssage_";
 
-  public enum Field {
-    FROM_USER_DISPLAY_NAME,
-    NORMALIZED_LOCATION,
-    ORIG_LOCATION,
-    ORIG_SOURCE,
-    SHARED_USER_DISPLAY_NAME,
+  publ c enum F eld {
+    FROM_USER_D SPLAY_NAME,
+    NORMAL ZED_LOCAT ON,
+    OR G_LOCAT ON,
+    OR G_SOURCE,
+    SHARED_USER_D SPLAY_NAME,
     SOURCE,
     TEXT,
     TO_USER_SCREEN_NAME;
 
-    public String getNameForStats() {
-      return name().toLowerCase();
+    publ c Str ng getNa ForStats() {
+      return na ().toLo rCase();
     }
   }
 
-  @VisibleForTesting
-  static class Counters {
-    private final SearchRateCounter truncatedCounter;
-    private final SearchRateCounter tweetsWithStrippedSupplementaryCharsCounter;
-    private final SearchRateCounter strippedSupplementaryCharsCounter;
-    private final SearchRateCounter nonStrippedEmojiCharsCounter;
-    private final SearchRateCounter emojisAtTruncateBoundaryCounter;
+  @V s bleForTest ng
+  stat c class Counters {
+    pr vate f nal SearchRateCounter truncatedCounter;
+    pr vate f nal SearchRateCounter t etsW hStr ppedSupple ntaryCharsCounter;
+    pr vate f nal SearchRateCounter str ppedSupple ntaryCharsCounter;
+    pr vate f nal SearchRateCounter nonStr ppedEmoj CharsCounter;
+    pr vate f nal SearchRateCounter emoj sAtTruncateBoundaryCounter;
 
-    Counters(Field field) {
-      String fieldNameForStats = field.getNameForStats();
+    Counters(F eld f eld) {
+      Str ng f eldNa ForStats = f eld.getNa ForStats();
       truncatedCounter = SearchRateCounter.export(
-          STAT_PREFIX + "truncated_" + fieldNameForStats);
-      tweetsWithStrippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "tweets_with_stripped_supplementary_chars_" + fieldNameForStats);
-      strippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "stripped_supplementary_chars_" + fieldNameForStats);
-      nonStrippedEmojiCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "non_stripped_emoji_chars_" + fieldNameForStats);
-      emojisAtTruncateBoundaryCounter = SearchRateCounter.export(
-          STAT_PREFIX + "emojis_at_truncate_boundary_" + fieldNameForStats);
+          STAT_PREF X + "truncated_" + f eldNa ForStats);
+      t etsW hStr ppedSupple ntaryCharsCounter = SearchRateCounter.export(
+          STAT_PREF X + "t ets_w h_str pped_supple ntary_chars_" + f eldNa ForStats);
+      str ppedSupple ntaryCharsCounter = SearchRateCounter.export(
+          STAT_PREF X + "str pped_supple ntary_chars_" + f eldNa ForStats);
+      nonStr ppedEmoj CharsCounter = SearchRateCounter.export(
+          STAT_PREF X + "non_str pped_emoj _chars_" + f eldNa ForStats);
+      emoj sAtTruncateBoundaryCounter = SearchRateCounter.export(
+          STAT_PREF X + "emoj s_at_truncate_boundary_" + f eldNa ForStats);
     }
 
     SearchRateCounter getTruncatedCounter() {
       return truncatedCounter;
     }
 
-    SearchRateCounter getTweetsWithStrippedSupplementaryCharsCounter() {
-      return tweetsWithStrippedSupplementaryCharsCounter;
+    SearchRateCounter getT etsW hStr ppedSupple ntaryCharsCounter() {
+      return t etsW hStr ppedSupple ntaryCharsCounter;
     }
 
-    SearchRateCounter getStrippedSupplementaryCharsCounter() {
-      return strippedSupplementaryCharsCounter;
+    SearchRateCounter getStr ppedSupple ntaryCharsCounter() {
+      return str ppedSupple ntaryCharsCounter;
     }
 
-    SearchRateCounter getNonStrippedEmojiCharsCounter() {
-      return nonStrippedEmojiCharsCounter;
+    SearchRateCounter getNonStr ppedEmoj CharsCounter() {
+      return nonStr ppedEmoj CharsCounter;
     }
 
-    SearchRateCounter getEmojisAtTruncateBoundaryCounter() {
-      return emojisAtTruncateBoundaryCounter;
-    }
-  }
-
-  static {
-    for (Field field : Field.values()) {
-      COUNTERS_MAP.put(field, new Counters(field));
+    SearchRateCounter getEmoj sAtTruncateBoundaryCounter() {
+      return emoj sAtTruncateBoundaryCounter;
     }
   }
 
-  // Note: the monorail enforces a limit of 15 characters for screen names,
-  // but some users with up to 20 character names were grandfathered-in.  To allow
+  stat c {
+    for (F eld f eld : F eld.values()) {
+      COUNTERS_MAP.put(f eld, new Counters(f eld));
+    }
+  }
+
+  // Note: t  monora l enforces a l m  of 15 characters for screen na s,
+  // but so  users w h up to 20 character na s  re grandfat red- n.  To allow
   // those users to be searchable, support up to 20 chars.
-  private static final int MAX_SCREEN_NAME_LEN = 20;
+  pr vate stat c f nal  nt MAX_SCREEN_NAME_LEN = 20;
 
-  // Note: we expect the current limit to be 10K. Also, all supplementary unicode characters (with
-  // the exception of emojis, maybe) will be removed and not counted as total length. Added alert
-  // for text truncation rate as well. SEARCH-9512
-  private static final int MAX_TWEET_TEXT_LEN = 10000;
+  // Note:   expect t  current l m  to be 10K. Also, all supple ntary un code characters (w h
+  // t  except on of emoj s, maybe) w ll be removed and not counted as total length. Added alert
+  // for text truncat on rate as  ll. SEARCH-9512
+  pr vate stat c f nal  nt MAX_TWEET_TEXT_LEN = 10000;
 
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_STATUS_ID =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_status_id");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_FROM_USER =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_from_user");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_LONG_SCREEN_NAME =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_long_screen_name");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_TEXT =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_text");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_DATE =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_date");
-  @VisibleForTesting
-  static final SearchRateCounter NULLCAST_TWEET =
-      SearchRateCounter.export(STAT_PREFIX + "filter_nullcast_tweet");
-  @VisibleForTesting
-  static final SearchRateCounter NULLCAST_TWEET_ACCEPTED =
-      SearchRateCounter.export(STAT_PREFIX + "nullcast_tweet_accepted");
-  @VisibleForTesting
-  static final SearchRateCounter INCONSISTENT_TWEET_ID_AND_CREATED_AT =
-      SearchRateCounter.export(STAT_PREFIX + "inconsistent_tweet_id_and_created_at_ms");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter F LTERED_NO_STATUS_ D =
+      SearchRateCounter.export(STAT_PREF X + "f ltered_no_status_ d");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter F LTERED_NO_FROM_USER =
+      SearchRateCounter.export(STAT_PREF X + "f ltered_no_from_user");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter F LTERED_LONG_SCREEN_NAME =
+      SearchRateCounter.export(STAT_PREF X + "f ltered_long_screen_na ");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter F LTERED_NO_TEXT =
+      SearchRateCounter.export(STAT_PREF X + "f ltered_no_text");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter F LTERED_NO_DATE =
+      SearchRateCounter.export(STAT_PREF X + "f ltered_no_date");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter NULLCAST_TWEET =
+      SearchRateCounter.export(STAT_PREF X + "f lter_nullcast_t et");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter NULLCAST_TWEET_ACCEPTED =
+      SearchRateCounter.export(STAT_PREF X + "nullcast_t et_accepted");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter  NCONS STENT_TWEET_ D_AND_CREATED_AT =
+      SearchRateCounter.export(STAT_PREF X + " ncons stent_t et_ d_and_created_at_ms");
 
-  /** Strips the given source from the message with the given ID. */
-  private static String stripSource(String source, Long messageId) {
-    if (source == null) {
+  /** Str ps t  g ven s ce from t   ssage w h t  g ven  D. */
+  pr vate stat c Str ng str pS ce(Str ng s ce, Long  ssage d) {
+     f (s ce == null) {
       return null;
     }
-    // Always strip emojis from sources: they don't really make sense in this field.
-    String strippedSource = stripSupplementaryChars(
-        tagRemovalTransformer.transform(source).toString(), Field.SOURCE, true);
-    if (strippedSource.length() > MAX_SOURCE_LEN) {
-      LOG.warn("Message "
-          + messageId
-          + " contains stripped source that exceeds MAX_SOURCE_LEN. Removing: "
-          + strippedSource);
-      COUNTERS_MAP.get(Field.SOURCE).getTruncatedCounter().increment();
+    // Always str p emoj s from s ces: t y don't really make sense  n t  f eld.
+    Str ng str ppedS ce = str pSupple ntaryChars(
+        tagRemovalTransfor r.transform(s ce).toStr ng(), F eld.SOURCE, true);
+     f (str ppedS ce.length() > MAX_SOURCE_LEN) {
+      LOG.warn(" ssage "
+          +  ssage d
+          + " conta ns str pped s ce that exceeds MAX_SOURCE_LEN. Remov ng: "
+          + str ppedS ce);
+      COUNTERS_MAP.get(F eld.SOURCE).getTruncatedCounter(). ncre nt();
       return null;
     }
-    return strippedSource;
+    return str ppedS ce;
   }
 
   /**
-   * Strips and truncates the location of the message with the given ID.
+   * Str ps and truncates t  locat on of t   ssage w h t  g ven  D.
    *
    */
-  private static String stripAndTruncateLocation(String location) {
-    // Always strip emojis from locations: they don't really make sense in this field.
-    String strippedLocation = stripSupplementaryChars(location, Field.NORMALIZED_LOCATION, true);
-    return truncateString(strippedLocation, MAX_LOCATION_LEN, Field.NORMALIZED_LOCATION, true);
+  pr vate stat c Str ng str pAndTruncateLocat on(Str ng locat on) {
+    // Always str p emoj s from locat ons: t y don't really make sense  n t  f eld.
+    Str ng str ppedLocat on = str pSupple ntaryChars(locat on, F eld.NORMAL ZED_LOCAT ON, true);
+    return truncateStr ng(str ppedLocat on, MAX_LOCAT ON_LEN, F eld.NORMAL ZED_LOCAT ON, true);
   }
 
   /**
-   * Sets the origSource and strippedSource fields on a TwitterMessage
+   * Sets t  or gS ce and str ppedS ce f elds on a Tw ter ssage
    *
    */
-  public static void setSourceOnMessage(TwitterMessage message, String modifiedDeviceSource) {
-    // Always strip emojis from sources: they don't really make sense in this field.
-    message.setOrigSource(stripSupplementaryChars(modifiedDeviceSource, Field.ORIG_SOURCE, true));
-    message.setStrippedSource(stripSource(modifiedDeviceSource, message.getId()));
+  publ c stat c vo d setS ceOn ssage(Tw ter ssage  ssage, Str ng mod f edDev ceS ce) {
+    // Always str p emoj s from s ces: t y don't really make sense  n t  f eld.
+     ssage.setOr gS ce(str pSupple ntaryChars(mod f edDev ceS ce, F eld.OR G_SOURCE, true));
+     ssage.setStr ppedS ce(str pS ce(mod f edDev ceS ce,  ssage.get d()));
   }
 
   /**
-   * Sets the origLocation to the stripped location, and sets
-   * the truncatedNormalizedLocation to the truncated and normalized location.
+   * Sets t  or gLocat on to t  str pped locat on, and sets
+   * t  truncatedNormal zedLocat on to t  truncated and normal zed locat on.
    */
-  public static void setAndTruncateLocationOnMessage(
-      TwitterMessage message,
-      String newOrigLocation) {
-    // Always strip emojis from locations: they don't really make sense in this field.
-    message.setOrigLocation(stripSupplementaryChars(newOrigLocation, Field.ORIG_LOCATION, true));
+  publ c stat c vo d setAndTruncateLocat onOn ssage(
+      Tw ter ssage  ssage,
+      Str ng newOr gLocat on) {
+    // Always str p emoj s from locat ons: t y don't really make sense  n t  f eld.
+     ssage.setOr gLocat on(str pSupple ntaryChars(newOr gLocat on, F eld.OR G_LOCAT ON, true));
 
-    // Locations in the new locations table require additional normalization. It can also change
-    // the length of the string, so we must do this before truncation.
-    if (newOrigLocation != null) {
-      String normalized =
-          Normalizer.normalize(newOrigLocation, Normalizer.Form.NFKC).toLowerCase().trim();
-      message.setTruncatedNormalizedLocation(stripAndTruncateLocation(normalized));
+    // Locat ons  n t  new locat ons table requ re add  onal normal zat on.   can also change
+    // t  length of t  str ng, so   must do t  before truncat on.
+     f (newOr gLocat on != null) {
+      Str ng normal zed =
+          Normal zer.normal ze(newOr gLocat on, Normal zer.Form.NFKC).toLo rCase().tr m();
+       ssage.setTruncatedNormal zedLocat on(str pAndTruncateLocat on(normal zed));
     } else {
-      message.setTruncatedNormalizedLocation(null);
+       ssage.setTruncatedNormal zedLocat on(null);
     }
   }
 
   /**
-   * Validates the given TwitterMessage.
+   * Val dates t  g ven Tw ter ssage.
    *
-   * @param message The message to validate.
-   * @param stripEmojisForFields The set of fields for which emojis should be stripped.
-   * @param acceptNullcastMessage Determines if this message should be accepted, if it's a nullcast
-   *                              message.
-   * @return {@code true} if the given message is valid; {@code false} otherwise.
+   * @param  ssage T   ssage to val date.
+   * @param str pEmoj sForF elds T  set of f elds for wh ch emoj s should be str pped.
+   * @param acceptNullcast ssage Determ nes  f t   ssage should be accepted,  f  's a nullcast
+   *                               ssage.
+   * @return {@code true}  f t  g ven  ssage  s val d; {@code false} ot rw se.
    */
-  public static boolean validateTwitterMessage(
-      TwitterMessage message,
-      Set<Field> stripEmojisForFields,
-      boolean acceptNullcastMessage) {
-    if (message.getNullcast()) {
-      NULLCAST_TWEET.increment();
-      if (!acceptNullcastMessage) {
-        LOG.info("Dropping nullcasted message " + message.getId());
+  publ c stat c boolean val dateTw ter ssage(
+      Tw ter ssage  ssage,
+      Set<F eld> str pEmoj sForF elds,
+      boolean acceptNullcast ssage) {
+     f ( ssage.getNullcast()) {
+      NULLCAST_TWEET. ncre nt();
+       f (!acceptNullcast ssage) {
+        LOG. nfo("Dropp ng nullcasted  ssage " +  ssage.get d());
         return false;
       }
-      NULLCAST_TWEET_ACCEPTED.increment();
+      NULLCAST_TWEET_ACCEPTED. ncre nt();
     }
 
-    if (!message.getFromUserScreenName().isPresent()
-        || StringUtils.isBlank(message.getFromUserScreenName().get())) {
-      LOG.error("Message " + message.getId() + " contains no from user. Skipping.");
-      FILTERED_NO_FROM_USER.increment();
+     f (! ssage.getFromUserScreenNa (). sPresent()
+        || Str ngUt ls. sBlank( ssage.getFromUserScreenNa ().get())) {
+      LOG.error(" ssage " +  ssage.get d() + " conta ns no from user. Sk pp ng.");
+      F LTERED_NO_FROM_USER. ncre nt();
       return false;
     }
-    String fromUserScreenName = message.getFromUserScreenName().get();
+    Str ng fromUserScreenNa  =  ssage.getFromUserScreenNa ().get();
 
-    if (fromUserScreenName.length() > MAX_SCREEN_NAME_LEN) {
-      LOG.warn("Message " + message.getId() + " has a user screen name longer than "
-               + MAX_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
-               + ". Skipping.");
-      FILTERED_LONG_SCREEN_NAME.increment();
+     f (fromUserScreenNa .length() > MAX_SCREEN_NAME_LEN) {
+      LOG.warn(" ssage " +  ssage.get d() + " has a user screen na  longer than "
+               + MAX_SCREEN_NAME_LEN + " characters: " +  ssage.getFromUserScreenNa ()
+               + ". Sk pp ng.");
+      F LTERED_LONG_SCREEN_NAME. ncre nt();
       return false;
     }
 
-    // Remove supplementary characters and truncate these text fields.
-    if (message.getFromUserDisplayName().isPresent()) {
-      message.setFromUserDisplayName(stripSupplementaryChars(
-          message.getFromUserDisplayName().get(),
-          Field.FROM_USER_DISPLAY_NAME,
-          stripEmojisForFields.contains(Field.FROM_USER_DISPLAY_NAME)));
+    // Remove supple ntary characters and truncate t se text f elds.
+     f ( ssage.getFromUserD splayNa (). sPresent()) {
+       ssage.setFromUserD splayNa (str pSupple ntaryChars(
+           ssage.getFromUserD splayNa ().get(),
+          F eld.FROM_USER_D SPLAY_NAME,
+          str pEmoj sForF elds.conta ns(F eld.FROM_USER_D SPLAY_NAME)));
     }
-    if (message.getToUserScreenName().isPresent()) {
-      String strippedToUserScreenName = stripSupplementaryChars(
-          message.getToUserLowercasedScreenName().get(),
-          Field.TO_USER_SCREEN_NAME,
-          stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME));
-      message.setToUserScreenName(
-          truncateString(
-              strippedToUserScreenName,
+     f ( ssage.getToUserScreenNa (). sPresent()) {
+      Str ng str ppedToUserScreenNa  = str pSupple ntaryChars(
+           ssage.getToUserLo rcasedScreenNa ().get(),
+          F eld.TO_USER_SCREEN_NAME,
+          str pEmoj sForF elds.conta ns(F eld.TO_USER_SCREEN_NAME));
+       ssage.setToUserScreenNa (
+          truncateStr ng(
+              str ppedToUserScreenNa ,
               MAX_SCREEN_NAME_LEN,
-              Field.TO_USER_SCREEN_NAME,
-              stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME)));
+              F eld.TO_USER_SCREEN_NAME,
+              str pEmoj sForF elds.conta ns(F eld.TO_USER_SCREEN_NAME)));
     }
 
-    String strippedText = stripSupplementaryChars(
-        message.getText(),
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT));
-    message.setText(truncateString(
-        strippedText,
+    Str ng str ppedText = str pSupple ntaryChars(
+         ssage.getText(),
+        F eld.TEXT,
+        str pEmoj sForF elds.conta ns(F eld.TEXT));
+     ssage.setText(truncateStr ng(
+        str ppedText,
         MAX_TWEET_TEXT_LEN,
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT)));
+        F eld.TEXT,
+        str pEmoj sForF elds.conta ns(F eld.TEXT)));
 
-    if (StringUtils.isBlank(message.getText())) {
-      FILTERED_NO_TEXT.increment();
+     f (Str ngUt ls. sBlank( ssage.getText())) {
+      F LTERED_NO_TEXT. ncre nt();
       return false;
     }
 
-    if (message.getDate() == null) {
-      LOG.error("Message " + message.getId() + " contains no date. Skipping.");
-      FILTERED_NO_DATE.increment();
+     f ( ssage.getDate() == null) {
+      LOG.error(" ssage " +  ssage.get d() + " conta ns no date. Sk pp ng.");
+      F LTERED_NO_DATE. ncre nt();
       return false;
     }
 
-    if (message.isRetweet()) {
-      return validateRetweetMessage(message.getRetweetMessage(), stripEmojisForFields);
+     f ( ssage. sRet et()) {
+      return val dateRet et ssage( ssage.getRet et ssage(), str pEmoj sForF elds);
     }
 
-    // Track if both the snowflake ID and created at timestamp are consistent.
-    if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(message.getId(), message.getDate())) {
-      LOG.error("Found inconsistent tweet ID and created at timestamp: [messageID="
-                + message.getId() + "], [messageDate=" + message.getDate() + "].");
-      INCONSISTENT_TWEET_ID_AND_CREATED_AT.increment();
+    // Track  f both t  snowflake  D and created at t  stamp are cons stent.
+     f (!Snowflake dParser. sT et DAndCreatedAtCons stent( ssage.get d(),  ssage.getDate())) {
+      LOG.error("Found  ncons stent t et  D and created at t  stamp: [ ssage D="
+                +  ssage.get d() + "], [ ssageDate=" +  ssage.getDate() + "].");
+       NCONS STENT_TWEET_ D_AND_CREATED_AT. ncre nt();
     }
 
     return true;
   }
 
-  private static boolean validateRetweetMessage(
-      TwitterRetweetMessage message, Set<Field> stripEmojisForFields) {
-    if (message.getSharedId() == null || message.getRetweetId() == null) {
-      LOG.error("Retweet Message contains a null twitter id. Skipping.");
-      FILTERED_NO_STATUS_ID.increment();
+  pr vate stat c boolean val dateRet et ssage(
+      Tw terRet et ssage  ssage, Set<F eld> str pEmoj sForF elds) {
+     f ( ssage.getShared d() == null ||  ssage.getRet et d() == null) {
+      LOG.error("Ret et  ssage conta ns a null tw ter  d. Sk pp ng.");
+      F LTERED_NO_STATUS_ D. ncre nt();
       return false;
     }
 
-    if (message.getSharedDate() == null) {
-      LOG.error("Retweet Message " + message.getRetweetId() + " contains no date. Skipping.");
+     f ( ssage.getSharedDate() == null) {
+      LOG.error("Ret et  ssage " +  ssage.getRet et d() + " conta ns no date. Sk pp ng.");
       return false;
     }
 
-    // Remove supplementary characters from these text fields.
-    message.setSharedUserDisplayName(stripSupplementaryChars(
-        message.getSharedUserDisplayName(),
-        Field.SHARED_USER_DISPLAY_NAME,
-        stripEmojisForFields.contains(Field.SHARED_USER_DISPLAY_NAME)));
+    // Remove supple ntary characters from t se text f elds.
+     ssage.setSharedUserD splayNa (str pSupple ntaryChars(
+         ssage.getSharedUserD splayNa (),
+        F eld.SHARED_USER_D SPLAY_NAME,
+        str pEmoj sForF elds.conta ns(F eld.SHARED_USER_D SPLAY_NAME)));
 
     return true;
   }
 
   /**
-   * Strips non indexable chars from the text.
+   * Str ps non  ndexable chars from t  text.
    *
-   * Returns the resulting string, which may be the same object as the text argument when
-   * no stripping or truncation is necessary.
+   * Returns t  result ng str ng, wh ch may be t  sa  object as t  text argu nt w n
+   * no str pp ng or truncat on  s necessary.
    *
-   * Non-indexed characters are "supplementary unicode" that are not emojis. Note that
-   * supplementary unicode are still characters that seem worth indexing, as many characters
-   * in CJK languages are supplementary. However this would make the size of our index
-   * explode (~186k supplementary characters exist), so it's not feasible.
+   * Non- ndexed characters are "supple ntary un code" that are not emoj s. Note that
+   * supple ntary un code are st ll characters that seem worth  ndex ng, as many characters
+   *  n CJK languages are supple ntary. Ho ver t  would make t  s ze of    ndex
+   * explode (~186k supple ntary characters ex st), so  's not feas ble.
    *
-   * @param text The text to strip
-   * @param field The field this text is from
-   * @param stripSupplementaryEmojis Whether or not to strip supplementary emojis. Note that this
-   * parameter name isn't 100% accurate. This parameter is meant to replicate behavior prior to
-   * adding support for *not* stripping supplementary emojis. The prior behavior would turn an
-   * emoji such as a keycap "1\uFE0F\u20E3" (http://www.iemoji.com/view/emoji/295/symbols/keycap-1)
-   * into just '1'. So the keycap emoji is not completely stripped, only the portion after the '1'.
+   * @param text T  text to str p
+   * @param f eld T  f eld t  text  s from
+   * @param str pSupple ntaryEmoj s W t r or not to str p supple ntary emoj s. Note that t 
+   * para ter na   sn't 100% accurate. T  para ter  s  ant to repl cate behav or pr or to
+   * add ng support for *not* str pp ng supple ntary emoj s. T  pr or behav or would turn an
+   * emoj  such as a keycap "1\uFE0F\u20E3" (http://www. emoj .com/v ew/emoj /295/symbols/keycap-1)
+   *  nto just '1'. So t  keycap emoj   s not completely str pped, only t  port on after t  '1'.
    *
    */
-  @VisibleForTesting
-  public static String stripSupplementaryChars(
-      String text,
-      Field field,
-      boolean stripSupplementaryEmojis) {
-    if (text == null || text.isEmpty()) {
+  @V s bleForTest ng
+  publ c stat c Str ng str pSupple ntaryChars(
+      Str ng text,
+      F eld f eld,
+      boolean str pSupple ntaryEmoj s) {
+     f (text == null || text. sEmpty()) {
       return text;
     }
 
-    // Initialize an empty map so that if we choose not to strip emojis,
-    // then no emojipositions will be found and we don't need a null
-    // check before checking if an emoji is at a certain spot.
-    NavigableMap<Integer, Integer> emojiPositions = new TreeMap<>();
+    //  n  al ze an empty map so that  f   choose not to str p emoj s,
+    // t n no emoj pos  ons w ll be found and   don't need a null
+    // c ck before c ck ng  f an emoj   s at a certa n spot.
+    Nav gableMap< nteger,  nteger> emoj Pos  ons = new TreeMap<>();
 
-    if (!stripSupplementaryEmojis) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+     f (!str pSupple ntaryEmoj s) {
+      emoj Pos  ons = Emoj Extractor.getEmoj Pos  ons(text);
     }
 
-    StringBuilder strippedTextBuilder = new StringBuilder();
-    int sequenceStart = 0;
-    int i = 0;
-    while (i < text.length()) {
-      if (Character.isSupplementaryCodePoint(text.codePointAt(i))) {
-        // Check if this supplementary character is an emoji
-        if (!emojiPositions.containsKey(i)) {
-          // It's not an emoji, or we want to strip emojis, so strip it
+    Str ngBu lder str ppedTextBu lder = new Str ngBu lder();
+     nt sequenceStart = 0;
+     nt   = 0;
+    wh le (  < text.length()) {
+       f (Character. sSupple ntaryCodePo nt(text.codePo ntAt( ))) {
+        // C ck  f t  supple ntary character  s an emoj 
+         f (!emoj Pos  ons.conta nsKey( )) {
+          //  's not an emoj , or   want to str p emoj s, so str p  
 
-          // text[i] and text[i + 1] are part of a supplementary code point.
-          strippedTextBuilder.append(text.substring(sequenceStart, i));
-          sequenceStart = i + 2;  // skip 2 chars
-          i = sequenceStart;
-          COUNTERS_MAP.get(field).getStrippedSupplementaryCharsCounter().increment();
+          // text[ ] and text[  + 1] are part of a supple ntary code po nt.
+          str ppedTextBu lder.append(text.substr ng(sequenceStart,  ));
+          sequenceStart =   + 2;  // sk p 2 chars
+            = sequenceStart;
+          COUNTERS_MAP.get(f eld).getStr ppedSupple ntaryCharsCounter(). ncre nt();
         } else {
-          // It's an emoji, keep it
-          i += emojiPositions.get(i);
-          COUNTERS_MAP.get(field).getNonStrippedEmojiCharsCounter().increment();
+          //  's an emoj , keep  
+            += emoj Pos  ons.get( );
+          COUNTERS_MAP.get(f eld).getNonStr ppedEmoj CharsCounter(). ncre nt();
         }
       } else {
-        ++i;
+        ++ ;
       }
     }
-    if (sequenceStart < text.length()) {
-      strippedTextBuilder.append(text.substring(sequenceStart));
+     f (sequenceStart < text.length()) {
+      str ppedTextBu lder.append(text.substr ng(sequenceStart));
     }
 
-    String strippedText = strippedTextBuilder.toString();
-    if (strippedText.length() < text.length()) {
-      COUNTERS_MAP.get(field).getTweetsWithStrippedSupplementaryCharsCounter().increment();
+    Str ng str ppedText = str ppedTextBu lder.toStr ng();
+     f (str ppedText.length() < text.length()) {
+      COUNTERS_MAP.get(f eld).getT etsW hStr ppedSupple ntaryCharsCounter(). ncre nt();
     }
-    return strippedText;
+    return str ppedText;
   }
 
   /**
-   * Truncates the given string to the given length.
+   * Truncates t  g ven str ng to t  g ven length.
    *
-   * Note that we are truncating based on the # of UTF-16 characters a given emoji takes up.
-   * So if a single emoji takes up 4 UTF-16 characters, that counts as 4 for the truncation,
+   * Note that   are truncat ng based on t  # of UTF-16 characters a g ven emoj  takes up.
+   * So  f a s ngle emoj  takes up 4 UTF-16 characters, that counts as 4 for t  truncat on,
    * not just 1.
    *
-   * @param text The text to truncate
-   * @param maxLength The maximum length of the string after truncation
-   * @param field The field from which this string cames
-   * @param splitEmojisAtMaxLength If true, don't worry about emojis and just truncate at maxLength,
-   * potentially splitting them. If false, truncate before the emoji if truncating at maxLength
-   * would cause the emoji to be split.
+   * @param text T  text to truncate
+   * @param maxLength T  max mum length of t  str ng after truncat on
+   * @param f eld T  f eld from wh ch t  str ng ca s
+   * @param spl Emoj sAtMaxLength  f true, don't worry about emoj s and just truncate at maxLength,
+   * potent ally spl t ng t m.  f false, truncate before t  emoj   f truncat ng at maxLength
+   * would cause t  emoj  to be spl .
    */
-  @VisibleForTesting
-  static String truncateString(
-      String text,
-      int maxLength,
-      Field field,
-      boolean splitEmojisAtMaxLength) {
-    Preconditions.checkArgument(maxLength > 0);
+  @V s bleForTest ng
+  stat c Str ng truncateStr ng(
+      Str ng text,
+       nt maxLength,
+      F eld f eld,
+      boolean spl Emoj sAtMaxLength) {
+    Precond  ons.c ckArgu nt(maxLength > 0);
 
-    if ((text == null) || (text.length() <= maxLength)) {
+     f ((text == null) || (text.length() <= maxLength)) {
       return text;
     }
 
-    int truncatePoint = maxLength;
-    NavigableMap<Integer, Integer> emojiPositions;
-    // If we want to consider emojis we should not strip on an emoji boundary.
-    if (!splitEmojisAtMaxLength) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+     nt truncatePo nt = maxLength;
+    Nav gableMap< nteger,  nteger> emoj Pos  ons;
+    //  f   want to cons der emoj s   should not str p on an emoj  boundary.
+     f (!spl Emoj sAtMaxLength) {
+      emoj Pos  ons = Emoj Extractor.getEmoj Pos  ons(text);
 
-      // Get the last emoji before maxlength.
-      Map.Entry<Integer, Integer> lastEmojiBeforeMaxLengthEntry =
-          emojiPositions.lowerEntry(maxLength);
+      // Get t  last emoj  before maxlength.
+      Map.Entry< nteger,  nteger> lastEmoj BeforeMaxLengthEntry =
+          emoj Pos  ons.lo rEntry(maxLength);
 
-      if (lastEmojiBeforeMaxLengthEntry != null) {
-        int lowerEmojiEnd = lastEmojiBeforeMaxLengthEntry.getKey()
-            + lastEmojiBeforeMaxLengthEntry.getValue();
+       f (lastEmoj BeforeMaxLengthEntry != null) {
+         nt lo rEmoj End = lastEmoj BeforeMaxLengthEntry.getKey()
+            + lastEmoj BeforeMaxLengthEntry.getValue();
 
-        // If the last emoji would be truncated, truncate before the last emoji.
-        if (lowerEmojiEnd > truncatePoint) {
-          truncatePoint = lastEmojiBeforeMaxLengthEntry.getKey();
-          COUNTERS_MAP.get(field).getEmojisAtTruncateBoundaryCounter().increment();
+        //  f t  last emoj  would be truncated, truncate before t  last emoj .
+         f (lo rEmoj End > truncatePo nt) {
+          truncatePo nt = lastEmoj BeforeMaxLengthEntry.getKey();
+          COUNTERS_MAP.get(f eld).getEmoj sAtTruncateBoundaryCounter(). ncre nt();
         }
       }
     }
 
-    COUNTERS_MAP.get(field).getTruncatedCounter().increment();
-    return text.substring(0, truncatePoint);
+    COUNTERS_MAP.get(f eld).getTruncatedCounter(). ncre nt();
+    return text.substr ng(0, truncatePo nt);
   }
 }

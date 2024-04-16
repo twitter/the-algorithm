@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urp.Page
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.T  l neScr beConf gMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.TransportMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Page
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UrpTransportMarshaller @Inject() (
+@S ngleton
+class UrpTransportMarshaller @ nject() (
   pageBodyMarshaller: PageBodyMarshaller,
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller,
-  pageHeaderMarshaller: PageHeaderMarshaller,
+  t  l neScr beConf gMarshaller: T  l neScr beConf gMarshaller,
+  page aderMarshaller: Page aderMarshaller,
   pageNavBarMarshaller: PageNavBarMarshaller)
     extends TransportMarshaller[Page, urp.Page] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("UnifiedRichPage")
+  overr de val  dent f er: TransportMarshaller dent f er =
+    TransportMarshaller dent f er("Un f edR chPage")
 
-  override def apply(page: Page): urp.Page = urp.Page(
-    id = page.id,
+  overr de def apply(page: Page): urp.Page = urp.Page(
+     d = page. d,
     pageBody = pageBodyMarshaller(page.pageBody),
-    scribeConfig = page.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    pageHeader = page.pageHeader.map(pageHeaderMarshaller(_)),
+    scr beConf g = page.scr beConf g.map(t  l neScr beConf gMarshaller(_)),
+    page ader = page.page ader.map(page aderMarshaller(_)),
     pageNavBar = page.pageNavBar.map(pageNavBarMarshaller(_))
   )
 }

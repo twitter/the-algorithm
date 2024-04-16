@@ -1,8 +1,8 @@
-python3_library(
-    name = "libtwml-python",
-    sources = ["libtwml/**/*.py"],
+python3_l brary(
+    na  = "l btwml-python",
+    s ces = ["l btwml/**/*.py"],
     tags = [
-        "no-mypy",
-        "bazel-compatible",
+        "no- py",
+        "bazel-compat ble",
     ],
 )

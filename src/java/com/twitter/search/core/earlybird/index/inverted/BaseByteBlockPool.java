@@ -1,87 +1,87 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import java.util.Arrays;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
 
-import org.apache.lucene.store.DataInput;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.ByteBlockPool;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene.store.Data nput;
+ mport org.apac .lucene.store.DataOutput;
+ mport org.apac .lucene.ut l.ArrayUt l;
+ mport org.apac .lucene.ut l.ByteBlockPool;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+ mport stat c org.apac .lucene.ut l.RamUsageEst mator.NUM_BYTES_OBJECT_REF;
 
 /**
  * Base class for BlockPools backed by byte[] arrays.
  */
-public abstract class BaseByteBlockPool {
+publ c abstract class BaseByteBlockPool {
   /**
-   * The extra object with final array is necessary to guarantee visibility to
-   * other threads without synchronization/using volatile.
+   * T  extra object w h f nal array  s necessary to guarantee v s b l y to
+   * ot r threads w hout synchron zat on/us ng volat le.
    *
-   * From 'Java Concurrency in practice' by Brian Goetz, p. 349:
+   * From 'Java Concurrency  n pract ce' by Br an Goetz, p. 349:
    *
-   * "Initialization safety guarantees that for properly constructed objects, all
-   *  threads will see the correct values of final fields that were set by the con-
-   *  structor, regardless of how the object is published. Further, any variables
-   *  that can be reached through a final field of a properly constructed object
-   *  (such as the elements of a final array or the contents of a HashMap refer-
-   *  enced by a final field) are also guaranteed to be visible to other threads."
+   * " n  al zat on safety guarantees that for properly constructed objects, all
+   *  threads w ll see t  correct values of f nal f elds that  re set by t  con-
+   *  structor, regardless of how t  object  s publ s d. Furt r, any var ables
+   *  that can be reac d through a f nal f eld of a properly constructed object
+   *  (such as t  ele nts of a f nal array or t  contents of a HashMap refer-
+   *  enced by a f nal f eld) are also guaranteed to be v s ble to ot r threads."
    */
-  public static final class Pool {
-    public final byte[][] buffers;
+  publ c stat c f nal class Pool {
+    publ c f nal byte[][] buffers;
 
-    public Pool(byte[][] buffers) {
-      this.buffers = buffers;
+    publ c Pool(byte[][] buffers) {
+      t .buffers = buffers;
     }
 
-    public byte[][] getBlocks() {
+    publ c byte[][] getBlocks() {
       return buffers;
     }
   }
 
-  public Pool pool = new Pool(new byte[10][]);
-  // The index of the current buffer in pool.buffers.
-  public int bufferUpto = -1;
-  // The number of bytes that have been written in the current buffer.
-  public int byteUpto = ByteBlockPool.BYTE_BLOCK_SIZE;
-  // The current buffer, i.e. a reference to pool.buffers[bufferUpto]
-  public byte[] buffer;
-  // The total number of bytes that have been used up to now, excluding the current buffer.
-  public int byteOffset = -ByteBlockPool.BYTE_BLOCK_SIZE;
-  // The one and only WriteStream for this pool.
-  private WriteStream writeStream = new WriteStream();
+  publ c Pool pool = new Pool(new byte[10][]);
+  // T   ndex of t  current buffer  n pool.buffers.
+  publ c  nt bufferUpto = -1;
+  // T  number of bytes that have been wr ten  n t  current buffer.
+  publ c  nt byteUpto = ByteBlockPool.BYTE_BLOCK_S ZE;
+  // T  current buffer,  .e. a reference to pool.buffers[bufferUpto]
+  publ c byte[] buffer;
+  // T  total number of bytes that have been used up to now, exclud ng t  current buffer.
+  publ c  nt byteOffset = -ByteBlockPool.BYTE_BLOCK_S ZE;
+  // T  one and only Wr eStream for t  pool.
+  pr vate Wr eStream wr eStream = new Wr eStream();
 
   protected BaseByteBlockPool() { }
 
   /**
-   * Used for loading flushed pool.
+   * Used for load ng flus d pool.
    */
-  protected BaseByteBlockPool(Pool pool, int bufferUpto, int byteUpTo, int byteOffset) {
-    this.pool = pool;
-    this.bufferUpto = bufferUpto;
-    this.byteUpto = byteUpTo;
-    this.byteOffset = byteOffset;
-    if (bufferUpto >= 0) {
-      this.buffer = pool.buffers[bufferUpto];
+  protected BaseByteBlockPool(Pool pool,  nt bufferUpto,  nt byteUpTo,  nt byteOffset) {
+    t .pool = pool;
+    t .bufferUpto = bufferUpto;
+    t .byteUpto = byteUpTo;
+    t .byteOffset = byteOffset;
+     f (bufferUpto >= 0) {
+      t .buffer = pool.buffers[bufferUpto];
     }
   }
 
   /**
-   * Resets the index of the pool to 0 in the first buffer and resets the byte arrays of
-   * all previously allocated buffers to 0s.
+   * Resets t   ndex of t  pool to 0  n t  f rst buffer and resets t  byte arrays of
+   * all prev ously allocated buffers to 0s.
    */
-  public void reset() {
-    if (bufferUpto != -1) {
-      // We allocated at least one buffer
+  publ c vo d reset() {
+     f (bufferUpto != -1) {
+      //   allocated at least one buffer
 
-      for (int i = 0; i < bufferUpto; i++) {
-        // Fully zero fill buffers that we fully used
-        Arrays.fill(pool.buffers[i], (byte) 0);
+      for ( nt   = 0;   < bufferUpto;  ++) {
+        // Fully zero f ll buffers that   fully used
+        Arrays.f ll(pool.buffers[ ], (byte) 0);
       }
 
-      // Partial zero fill the final buffer
-      Arrays.fill(pool.buffers[bufferUpto], 0, byteUpto, (byte) 0);
+      // Part al zero f ll t  f nal buffer
+      Arrays.f ll(pool.buffers[bufferUpto], 0, byteUpto, (byte) 0);
 
       bufferUpto = 0;
       byteUpto = 0;
@@ -91,155 +91,155 @@ public abstract class BaseByteBlockPool {
   }
 
   /**
-   * Switches to the next buffer and positions the index at its beginning.
+   * Sw c s to t  next buffer and pos  ons t   ndex at  s beg nn ng.
    */
-  public void nextBuffer() {
-    if (1 + bufferUpto == pool.buffers.length) {
-      byte[][] newBuffers = new byte[ArrayUtil.oversize(pool.buffers.length + 1,
+  publ c vo d nextBuffer() {
+     f (1 + bufferUpto == pool.buffers.length) {
+      byte[][] newBuffers = new byte[ArrayUt l.overs ze(pool.buffers.length + 1,
                                                            NUM_BYTES_OBJECT_REF)][];
       System.arraycopy(pool.buffers, 0, newBuffers, 0, pool.buffers.length);
       pool = new Pool(newBuffers);
     }
-    buffer = pool.buffers[1 + bufferUpto] = new byte[ByteBlockPool.BYTE_BLOCK_SIZE];
+    buffer = pool.buffers[1 + bufferUpto] = new byte[ByteBlockPool.BYTE_BLOCK_S ZE];
     bufferUpto++;
 
     byteUpto = 0;
-    byteOffset += ByteBlockPool.BYTE_BLOCK_SIZE;
+    byteOffset += ByteBlockPool.BYTE_BLOCK_S ZE;
   }
 
   /**
-   * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-   * added using addBytes and avoidSplitting = true
+   * Returns t  start offset of t  next data that w ll be added to t  pool, UNLESS t  data  s
+   * added us ng addBytes and avo dSpl t ng = true
    */
-  public int getOffset() {
+  publ c  nt getOffset() {
     return byteOffset + byteUpto;
   }
 
   /**
-   * Returns the start offset of b in the pool
+   * Returns t  start offset of b  n t  pool
    * @param b byte to put
    */
-  public int addByte(byte b) {
-    int initOffset = byteOffset + byteUpto;
-    int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
-    // If the buffer is full, move on to the next one.
-    if (remainingBytesInBuffer <= 0) {
+  publ c  nt addByte(byte b) {
+     nt  n Offset = byteOffset + byteUpto;
+     nt rema n ngBytes nBuffer = ByteBlockPool.BYTE_BLOCK_S ZE - byteUpto;
+    //  f t  buffer  s full, move on to t  next one.
+     f (rema n ngBytes nBuffer <= 0) {
       nextBuffer();
     }
     buffer[byteUpto] = b;
     byteUpto++;
-    return initOffset;
+    return  n Offset;
   }
 
   /**
-   * Returns the start offset of the bytes in the pool.
-   *        If avoidSplitting is false, this is guaranteed to return the same value that would be
+   * Returns t  start offset of t  bytes  n t  pool.
+   *         f avo dSpl t ng  s false, t   s guaranteed to return t  sa  value that would be
    *        returned by getOffset()
-   * @param bytes source array
+   * @param bytes s ce array
    * @param length number of bytes to put
-   * @param avoidSplitting if possible (the length is less than ByteBlockPool.BYTE_BLOCK_SIZE),
-   *        the bytes will not be split across buffer boundaries. This is useful for small data
-   *        that will be read a lot (small amount of space wasted in return for avoiding copying
-   *        memory when calling getBytes).
+   * @param avo dSpl t ng  f poss ble (t  length  s less than ByteBlockPool.BYTE_BLOCK_S ZE),
+   *        t  bytes w ll not be spl  across buffer boundar es. T   s useful for small data
+   *        that w ll be read a lot (small amount of space wasted  n return for avo d ng copy ng
+   *         mory w n call ng getBytes).
    */
-  public int addBytes(byte[] bytes, int offset, int length, boolean avoidSplitting) {
-    // The first time this is called, there may not be an existing buffer yet.
-    if (buffer == null) {
+  publ c  nt addBytes(byte[] bytes,  nt offset,  nt length, boolean avo dSpl t ng) {
+    // T  f rst t   t   s called, t re may not be an ex st ng buffer yet.
+     f (buffer == null) {
       nextBuffer();
     }
 
-    int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
+     nt rema n ngBytes nBuffer = ByteBlockPool.BYTE_BLOCK_S ZE - byteUpto;
 
-    if (avoidSplitting && length < ByteBlockPool.BYTE_BLOCK_SIZE) {
-      if (remainingBytesInBuffer < length) {
+     f (avo dSpl t ng && length < ByteBlockPool.BYTE_BLOCK_S ZE) {
+       f (rema n ngBytes nBuffer < length) {
         nextBuffer();
       }
-      int initOffset = byteOffset + byteUpto;
+       nt  n Offset = byteOffset + byteUpto;
       System.arraycopy(bytes, offset, buffer, byteUpto, length);
       byteUpto += length;
-      return initOffset;
+      return  n Offset;
     } else {
-      int initOffset = byteOffset + byteUpto;
-      if (remainingBytesInBuffer < length) {
-        // Must split the bytes across buffers.
-        int remainingLength = length;
-        while (remainingLength > ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto) {
-          int lengthToCopy = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
-          System.arraycopy(bytes, length - remainingLength + offset,
+       nt  n Offset = byteOffset + byteUpto;
+       f (rema n ngBytes nBuffer < length) {
+        // Must spl  t  bytes across buffers.
+         nt rema n ngLength = length;
+        wh le (rema n ngLength > ByteBlockPool.BYTE_BLOCK_S ZE - byteUpto) {
+           nt lengthToCopy = ByteBlockPool.BYTE_BLOCK_S ZE - byteUpto;
+          System.arraycopy(bytes, length - rema n ngLength + offset,
                   buffer, byteUpto, lengthToCopy);
-          remainingLength -= lengthToCopy;
+          rema n ngLength -= lengthToCopy;
           nextBuffer();
         }
-        System.arraycopy(bytes, length - remainingLength + offset,
-                buffer, byteUpto, remainingLength);
-        byteUpto += remainingLength;
+        System.arraycopy(bytes, length - rema n ngLength + offset,
+                buffer, byteUpto, rema n ngLength);
+        byteUpto += rema n ngLength;
       } else {
-        // Just add all bytes to the current buffer.
+        // Just add all bytes to t  current buffer.
         System.arraycopy(bytes, offset, buffer, byteUpto, length);
         byteUpto += length;
       }
-      return initOffset;
+      return  n Offset;
     }
   }
 
   /**
-   * Default addBytes. Does not avoid splitting.
-   * @see #addBytes(byte[], int, boolean)
+   * Default addBytes. Does not avo d spl t ng.
+   * @see #addBytes(byte[],  nt, boolean)
    */
-  public int addBytes(byte[] bytes, int length) {
+  publ c  nt addBytes(byte[] bytes,  nt length) {
     return addBytes(bytes, 0, length, false);
   }
 
   /**
-   * Default addBytes. Does not avoid splitting.
-   * @see #addBytes(byte[], int, boolean)
+   * Default addBytes. Does not avo d spl t ng.
+   * @see #addBytes(byte[],  nt, boolean)
    */
-  public int addBytes(byte[] bytes, int offset, int length) {
+  publ c  nt addBytes(byte[] bytes,  nt offset,  nt length) {
     return addBytes(bytes, offset, length, false);
   }
 
   /**
-   * Reads one byte from the pool.
-   * @param offset location to read byte from
+   * Reads one byte from t  pool.
+   * @param offset locat on to read byte from
    */
-  public byte getByte(int offset) {
-    int bufferIndex = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-    int bufferOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-    return pool.buffers[bufferIndex][bufferOffset];
+  publ c byte getByte( nt offset) {
+     nt buffer ndex = offset >>> ByteBlockPool.BYTE_BLOCK_SH FT;
+     nt bufferOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
+    return pool.buffers[buffer ndex][bufferOffset];
   }
 
   /**
-   * Returns false if offset is invalid or there aren't these many bytes
-   * available in the pool.
-   * @param offset location to start reading bytes from
+   * Returns false  f offset  s  nval d or t re aren't t se many bytes
+   * ava lable  n t  pool.
+   * @param offset locat on to start read ng bytes from
    * @param length number of bytes to read
-   * @param output the object to write the output to. MUST be non null.
+   * @param output t  object to wr e t  output to. MUST be non null.
    */
-  public boolean getBytesToBytesRef(int offset, int length, BytesRef output) {
-    if (offset < 0 || offset + length > byteUpto + byteOffset) {
+  publ c boolean getBytesToBytesRef( nt offset,  nt length, BytesRef output) {
+     f (offset < 0 || offset + length > byteUpto + byteOffset) {
       return false;
     }
-    int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-    int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-    // If the requested bytes are split across pools, we have to make a new array of bytes
-    // to copy them into and return a ref to that.
-    if (currentOffset + length <= ByteBlockPool.BYTE_BLOCK_SIZE) {
+     nt currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SH FT;
+     nt currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
+    //  f t  requested bytes are spl  across pools,   have to make a new array of bytes
+    // to copy t m  nto and return a ref to that.
+     f (currentOffset + length <= ByteBlockPool.BYTE_BLOCK_S ZE) {
       output.bytes = pool.buffers[currentBuffer];
       output.offset = currentOffset;
       output.length = length;
     } else {
       byte[] bytes = new byte[length];
-      int remainingLength = length;
-      while (remainingLength > ByteBlockPool.BYTE_BLOCK_SIZE - currentOffset) {
-        int lengthToCopy = ByteBlockPool.BYTE_BLOCK_SIZE - currentOffset;
+       nt rema n ngLength = length;
+      wh le (rema n ngLength > ByteBlockPool.BYTE_BLOCK_S ZE - currentOffset) {
+         nt lengthToCopy = ByteBlockPool.BYTE_BLOCK_S ZE - currentOffset;
         System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes,
-                         length - remainingLength, lengthToCopy);
-        remainingLength -= lengthToCopy;
+                         length - rema n ngLength, lengthToCopy);
+        rema n ngLength -= lengthToCopy;
         currentBuffer++;
         currentOffset = 0;
       }
-      System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes, length - remainingLength,
-                       remainingLength);
+      System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes, length - rema n ngLength,
+                       rema n ngLength);
       output.bytes = bytes;
       output.length = bytes.length;
       output.offset = 0;
@@ -249,14 +249,14 @@ public abstract class BaseByteBlockPool {
   }
 
   /**
-   * Returns the read bytes, or null if offset is invalid or there aren't these many bytes
-   * available in the pool.
-   * @param offset location to start reading bytes from
+   * Returns t  read bytes, or null  f offset  s  nval d or t re aren't t se many bytes
+   * ava lable  n t  pool.
+   * @param offset locat on to start read ng bytes from
    * @param length number of bytes to read
    */
-  public BytesRef getBytes(int offset, int length) {
+  publ c BytesRef getBytes( nt offset,  nt length) {
     BytesRef result = new BytesRef();
-    if (getBytesToBytesRef(offset, length, result)) {
+     f (getBytesToBytesRef(offset, length, result)) {
       return result;
     } else {
       return null;
@@ -264,110 +264,110 @@ public abstract class BaseByteBlockPool {
   }
 
   /**
-   * get a new readStream at a given offset for this pool.
+   * get a new readStream at a g ven offset for t  pool.
    *
-   * Notice that individual ReadStreams are not threadsafe, but you can get as many ReadStreams as
-   * you want.
+   * Not ce that  nd v dual ReadStreams are not threadsafe, but   can get as many ReadStreams as
+   *   want.
    */
-  public ReadStream getReadStream(int offset) {
+  publ c ReadStream getReadStream( nt offset) {
     return new ReadStream(offset);
   }
 
   /**
-   * get the (one and only) WriteStream for this pool.
+   * get t  (one and only) Wr eStream for t  pool.
    *
-   * Notice that there is exactly one WriteStream per pool, and it is not threadsafe.
+   * Not ce that t re  s exactly one Wr eStream per pool, and    s not threadsafe.
    */
-  public WriteStream getWriteStream() {
-    return writeStream;
+  publ c Wr eStream getWr eStream() {
+    return wr eStream;
   }
 
   /**
-   * A DataOutput-like interface for writing "contiguous" data to a ByteBlockPool.
+   * A DataOutput-l ke  nterface for wr  ng "cont guous" data to a ByteBlockPool.
    *
-   * This is not threadsafe.
+   * T   s not threadsafe.
    */
-  public final class WriteStream extends DataOutput {
-    private WriteStream() { }
+  publ c f nal class Wr eStream extends DataOutput {
+    pr vate Wr eStream() { }
 
     /**
-     * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-     * added using addBytes and avoidSplitting = true
+     * Returns t  start offset of t  next data that w ll be added to t  pool, UNLESS t  data  s
+     * added us ng addBytes and avo dSpl t ng = true
      */
-    public int getOffset() {
-      return BaseByteBlockPool.this.getOffset();
+    publ c  nt getOffset() {
+      return BaseByteBlockPool.t .getOffset();
     }
 
     /**
-     * Write bytes to the pool.
-     * @param bytes  source array
-     * @param offset  offset in bytes of the data to write
+     * Wr e bytes to t  pool.
+     * @param bytes  s ce array
+     * @param offset  offset  n bytes of t  data to wr e
      * @param length  number of bytes to put
-     * @param avoidSplitting  same as {link ByteBlockPool.addBytes}
-     * @return  the start offset of the bytes in the pool
+     * @param avo dSpl t ng  sa  as {l nk ByteBlockPool.addBytes}
+     * @return  t  start offset of t  bytes  n t  pool
      */
-    public int writeBytes(byte[] bytes, int offset, int length, boolean avoidSplitting) {
-      return addBytes(bytes, offset, length, avoidSplitting);
+    publ c  nt wr eBytes(byte[] bytes,  nt offset,  nt length, boolean avo dSpl t ng) {
+      return addBytes(bytes, offset, length, avo dSpl t ng);
     }
 
-    @Override
-    public void writeBytes(byte[] b, int offset, int length) throws IOException {
+    @Overr de
+    publ c vo d wr eBytes(byte[] b,  nt offset,  nt length) throws  OExcept on {
       addBytes(b, offset, length);
     }
 
-    @Override
-    public void writeByte(byte b) {
+    @Overr de
+    publ c vo d wr eByte(byte b) {
       addByte(b);
     }
   }
 
   /**
-   * A DataInput-like interface for reading "contiguous" data from a ByteBlockPool.
+   * A Data nput-l ke  nterface for read ng "cont guous" data from a ByteBlockPool.
    *
-   * This is not threadsafe.
+   * T   s not threadsafe.
    *
-   * This does not fully implement the DataInput interface - its DataInput.readBytes method throws
-   * UnsupportedOperationException because this class provides a facility for no-copy reading.
+   * T  does not fully  mple nt t  Data nput  nterface -  s Data nput.readBytes  thod throws
+   * UnsupportedOperat onExcept on because t  class prov des a fac l y for no-copy read ng.
    */
-  public final class ReadStream extends DataInput {
-    private int offset;
+  publ c f nal class ReadStream extends Data nput {
+    pr vate  nt offset;
 
-    private ReadStream(int offset) {
-      this.offset = offset;
+    pr vate ReadStream( nt offset) {
+      t .offset = offset;
     }
 
-    public BytesRef readBytes(int n) {
+    publ c BytesRef readBytes( nt n) {
       return readBytes(n, false);
     }
 
     /**
-     * read n bytes that were written with a given value of avoidSplitting
+     * read n bytes that  re wr ten w h a g ven value of avo dSpl t ng
      * @param n  number of bytes to read.
-     * @param avoidSplitting  this should be the same that was used at writeBytes time.
-     * @return  a reference to the bytes read or null.
+     * @param avo dSpl t ng  t  should be t  sa  that was used at wr eBytes t  .
+     * @return  a reference to t  bytes read or null.
      */
-    public BytesRef readBytes(int n, boolean avoidSplitting) {
-      int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-      int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-      if (avoidSplitting && n < ByteBlockPool.BYTE_BLOCK_SIZE
-          && currentOffset + n > ByteBlockPool.BYTE_BLOCK_SIZE) {
+    publ c BytesRef readBytes( nt n, boolean avo dSpl t ng) {
+       nt currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SH FT;
+       nt currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
+       f (avo dSpl t ng && n < ByteBlockPool.BYTE_BLOCK_S ZE
+          && currentOffset + n > ByteBlockPool.BYTE_BLOCK_S ZE) {
         ++currentBuffer;
         currentOffset = 0;
-        offset = currentBuffer << ByteBlockPool.BYTE_BLOCK_SHIFT;
+        offset = currentBuffer << ByteBlockPool.BYTE_BLOCK_SH FT;
       }
       BytesRef result = getBytes(offset, n);
-      this.offset += n;
+      t .offset += n;
       return result;
     }
 
-    @Override
-    public byte readByte() {
+    @Overr de
+    publ c byte readByte() {
       return getByte(offset++);
     }
 
-    @Override
-    public void readBytes(byte[] b, int off, int len) throws IOException {
-      throw new UnsupportedOperationException("Use the no-copies version of ReadBytes instead.");
+    @Overr de
+    publ c vo d readBytes(byte[] b,  nt off,  nt len) throws  OExcept on {
+      throw new UnsupportedOperat onExcept on("Use t  no-cop es vers on of ReadBytes  nstead.");
     }
   }
 }

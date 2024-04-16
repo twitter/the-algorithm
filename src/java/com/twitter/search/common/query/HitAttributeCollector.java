@@ -1,101 +1,101 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.B Funct on;
+ mport java.ut l.funct on.Funct on;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.Query;
 
 /**
- * Not threadsafe, but should be reused across different queries unless the size of the existing
- * one is too small for a new huge serialized query.
+ * Not threadsafe, but should be reused across d fferent quer es unless t  s ze of t  ex st ng
+ * one  s too small for a new huge ser al zed query.
  */
-public class HitAttributeCollector {
-  private final List<FieldRankHitInfo> hitInfos = Lists.newArrayList();
-  private final BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier;
+publ c class H Attr buteCollector {
+  pr vate f nal L st<F eldRankH  nfo> h  nfos = L sts.newArrayL st();
+  pr vate f nal B Funct on< nteger,  nteger, F eldRankH  nfo> h  nfoSuppl er;
 
-  private int docBase = 0;
+  pr vate  nt docBase = 0;
 
-  public HitAttributeCollector() {
-    this.hitInfoSupplier = FieldRankHitInfo::new;
+  publ c H Attr buteCollector() {
+    t .h  nfoSuppl er = F eldRankH  nfo::new;
   }
 
   /**
-   * Constructs a new {@code HitAttributionCollector} with the specified {@code FieldRankHitInfo}
-   * supplier.
+   * Constructs a new {@code H Attr but onCollector} w h t  spec f ed {@code F eldRankH  nfo}
+   * suppl er.
    *
-   * @param hitInfoSupplier function to supply a {@code FieldRankHitInfo} instance
+   * @param h  nfoSuppl er funct on to supply a {@code F eldRankH  nfo}  nstance
    */
-  public HitAttributeCollector(BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier) {
-    this.hitInfoSupplier = hitInfoSupplier;
+  publ c H Attr buteCollector(B Funct on< nteger,  nteger, F eldRankH  nfo> h  nfoSuppl er) {
+    t .h  nfoSuppl er = h  nfoSuppl er;
   }
 
   /**
-   * Creates a new IdentifiableQuery for the given query, fieldId and rank, and "registers"
-   * the fieldId and the rank with this collector.
+   * Creates a new  dent f ableQuery for t  g ven query, f eld d and rank, and "reg sters"
+   * t  f eld d and t  rank w h t  collector.
    *
-   * @param query the query to be wrapped.
-   * @param fieldId the ID of the field to be searched.
-   * @param rank The rank of this query.
-   * @return A new IdentifiableQuery instance for the given query, fieldId and rank.
+   * @param query t  query to be wrapped.
+   * @param f eld d t   D of t  f eld to be searc d.
+   * @param rank T  rank of t  query.
+   * @return A new  dent f ableQuery  nstance for t  g ven query, f eld d and rank.
    */
-  public IdentifiableQuery newIdentifiableQuery(Query query, int fieldId, int rank) {
-    FieldRankHitInfo fieldRankHitInfo = hitInfoSupplier.apply(fieldId, rank);
-    hitInfos.add(fieldRankHitInfo);
-    return new IdentifiableQuery(query, fieldRankHitInfo, this);
+  publ c  dent f ableQuery new dent f ableQuery(Query query,  nt f eld d,  nt rank) {
+    F eldRankH  nfo f eldRankH  nfo = h  nfoSuppl er.apply(f eld d, rank);
+    h  nfos.add(f eldRankH  nfo);
+    return new  dent f ableQuery(query, f eldRankH  nfo, t );
   }
 
-  public void clearHitAttributions(LeafReaderContext ctx, FieldRankHitInfo hitInfo) {
+  publ c vo d clearH Attr but ons(LeafReaderContext ctx, F eldRankH  nfo h  nfo) {
     docBase = ctx.docBase;
-    hitInfo.resetDocId();
+    h  nfo.resetDoc d();
   }
 
-  public void collectScorerAttribution(int docId, FieldRankHitInfo hitInfo) {
-    hitInfo.setDocId(docId + docBase);
-  }
-
-  /**
-   * This method should be called when a global hit occurs.
-   * This method returns hit attribution summary for the whole query tree.
-   * This supports getting hit attribution for only the curDoc.
-   *
-   * @param docId docId passed in for checking against curDoc.
-   * @return Returns a map from node rank to a set of matching field IDs. This map does not contain
-   *         entries for ranks that did not hit at all.
-   */
-  public Map<Integer, List<Integer>> getHitAttribution(int docId) {
-    return getHitAttribution(docId, (fieldId) -> fieldId);
+  publ c vo d collectScorerAttr but on( nt doc d, F eldRankH  nfo h  nfo) {
+    h  nfo.setDoc d(doc d + docBase);
   }
 
   /**
-   * This method should be called when a global hit occurs.
-   * This method returns hit attribution summary for the whole query tree.
-   * This supports getting hit attribution for only the curDoc.
+   * T   thod should be called w n a global h  occurs.
+   * T   thod returns h  attr but on summary for t  whole query tree.
+   * T  supports gett ng h  attr but on for only t  curDoc.
    *
-   * @param docId docId passed in for checking against curDoc.
-   * @param fieldIdFunc The mapping of field IDs to objects of type T.
-   * @return Returns a map from node rank to a set of matching objects (usually field IDs or names).
-   *         This map does not contain entries for ranks that did not hit at all.
+   * @param doc d doc d passed  n for c ck ng aga nst curDoc.
+   * @return Returns a map from node rank to a set of match ng f eld  Ds. T  map does not conta n
+   *         entr es for ranks that d d not h  at all.
    */
-  public <T> Map<Integer, List<T>> getHitAttribution(int docId, Function<Integer, T> fieldIdFunc) {
-    int key = docId + docBase;
-    Map<Integer, List<T>> hitMap = Maps.newHashMap();
+  publ c Map< nteger, L st< nteger>> getH Attr but on( nt doc d) {
+    return getH Attr but on(doc d, (f eld d) -> f eld d);
+  }
 
-    // Manually iterate through all hitInfos elements. It's slightly faster than using an Iterator.
-    for (FieldRankHitInfo hitInfo : hitInfos) {
-      if (hitInfo.getDocId() == key) {
-        int rank = hitInfo.getRank();
-        List<T> rankHits = hitMap.computeIfAbsent(rank, k -> Lists.newArrayList());
-        T fieldDescription = fieldIdFunc.apply(hitInfo.getFieldId());
-        rankHits.add(fieldDescription);
+  /**
+   * T   thod should be called w n a global h  occurs.
+   * T   thod returns h  attr but on summary for t  whole query tree.
+   * T  supports gett ng h  attr but on for only t  curDoc.
+   *
+   * @param doc d doc d passed  n for c ck ng aga nst curDoc.
+   * @param f eld dFunc T  mapp ng of f eld  Ds to objects of type T.
+   * @return Returns a map from node rank to a set of match ng objects (usually f eld  Ds or na s).
+   *         T  map does not conta n entr es for ranks that d d not h  at all.
+   */
+  publ c <T> Map< nteger, L st<T>> getH Attr but on( nt doc d, Funct on< nteger, T> f eld dFunc) {
+     nt key = doc d + docBase;
+    Map< nteger, L st<T>> h Map = Maps.newHashMap();
+
+    // Manually  erate through all h  nfos ele nts.  's sl ghtly faster than us ng an  erator.
+    for (F eldRankH  nfo h  nfo : h  nfos) {
+       f (h  nfo.getDoc d() == key) {
+         nt rank = h  nfo.getRank();
+        L st<T> rankH s = h Map.compute fAbsent(rank, k -> L sts.newArrayL st());
+        T f eldDescr pt on = f eld dFunc.apply(h  nfo.getF eld d());
+        rankH s.add(f eldDescr pt on);
       }
     }
 
-    return hitMap;
+    return h Map;
   }
 }

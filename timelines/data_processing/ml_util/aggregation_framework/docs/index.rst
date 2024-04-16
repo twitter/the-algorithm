@@ -1,11 +1,11 @@
-.. markdowninclude:: ../README.md
+.. markdown nclude:: ../README.md
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
+   :h dden:
 
-   aggregation
+   aggregat on
    batch
-   real-time
-   joining
-   troubleshooting
+   real-t  
+   jo n ng
+   troubleshoot ng

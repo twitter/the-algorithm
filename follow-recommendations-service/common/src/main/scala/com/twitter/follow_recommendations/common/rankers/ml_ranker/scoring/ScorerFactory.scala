@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d.Ranker d
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScorerFactory @Inject() (
-  postnuxProdScorer: PostnuxDeepbirdProdScorer,
+@S ngleton
+class ScorerFactory @ nject() (
+  postnuxProdScorer: PostnuxDeepb rdProdScorer,
   randomScorer: RandomScorer,
-  stats: StatsReceiver) {
+  stats: StatsRece ver) {
 
-  private val scorerFactoryStats = stats.scope("scorer_factory")
-  private val scorerStat = scorerFactoryStats.scope("scorer")
+  pr vate val scorerFactoryStats = stats.scope("scorer_factory")
+  pr vate val scorerStat = scorerFactoryStats.scope("scorer")
 
   def getScorers(
-    rankerIds: Seq[RankerId]
+    ranker ds: Seq[Ranker d]
   ): Seq[Scorer] = {
-    rankerIds.map { scorerId =>
-      val scorer: Scorer = getScorerById(scorerId)
-      // count # of times a ranker has been requested
-      scorerStat.counter(scorer.id.toString).incr()
+    ranker ds.map { scorer d =>
+      val scorer: Scorer = getScorerBy d(scorer d)
+      // count # of t  s a ranker has been requested
+      scorerStat.counter(scorer. d.toStr ng). ncr()
       scorer
     }
   }
 
-  def getScorerById(scorerId: RankerId): Scorer = scorerId match {
-    case RankerId.PostNuxProdRanker =>
+  def getScorerBy d(scorer d: Ranker d): Scorer = scorer d match {
+    case Ranker d.PostNuxProdRanker =>
       postnuxProdScorer
-    case RankerId.RandomRanker =>
+    case Ranker d.RandomRanker =>
       randomScorer
     case _ =>
-      scorerStat.counter("invalid_scorer_type").incr()
-      throw new IllegalArgumentException("unknown_scorer_type")
+      scorerStat.counter(" nval d_scorer_type"). ncr()
+      throw new  llegalArgu ntExcept on("unknown_scorer_type")
   }
 }

@@ -1,27 +1,27 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
 
-public abstract class ScheduledExecutorTask implements Runnable {
-  private final SearchCounter counter;
-  protected final Clock clock;
+publ c abstract class Sc duledExecutorTask  mple nts Runnable {
+  pr vate f nal SearchCounter counter;
+  protected f nal Clock clock;
 
-  public ScheduledExecutorTask(SearchCounter counter, Clock clock) {
-    Preconditions.checkNotNull(counter);
-    this.counter = counter;
-    this.clock = clock;
+  publ c Sc duledExecutorTask(SearchCounter counter, Clock clock) {
+    Precond  ons.c ckNotNull(counter);
+    t .counter = counter;
+    t .clock = clock;
   }
 
-  @Override
-  public final void run() {
-    counter.increment();
-    runOneIteration();
+  @Overr de
+  publ c f nal vo d run() {
+    counter. ncre nt();
+    runOne erat on();
   }
 
-  @VisibleForTesting
-  protected abstract void runOneIteration();
+  @V s bleForTest ng
+  protected abstract vo d runOne erat on();
 }

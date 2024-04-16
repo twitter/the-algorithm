@@ -1,638 +1,638 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RecencyMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.query.thr ftjava.EarlyTerm nat on nfo;
+ mport com.tw ter.search.common.relevance.ut ls.ResultComparators;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.collectors.Recency rgeCollector;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.ALREADY_EARLY_TERMINATED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.FILTERED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.FILTERED_AND_TRUNCATED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.NOT_EARLY_TERMINATED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.TERMINATED_GOT_EXACT_NUM_RESULTS;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.TRUNCATED;
+ mport stat c com.tw ter.search.earlyb rd_root. rgers.RecencyResponse rger
+    .EarlyTerm nat onTr mm ngStats.Type.ALREADY_EARLY_TERM NATED;
+ mport stat c com.tw ter.search.earlyb rd_root. rgers.RecencyResponse rger
+    .EarlyTerm nat onTr mm ngStats.Type.F LTERED;
+ mport stat c com.tw ter.search.earlyb rd_root. rgers.RecencyResponse rger
+    .EarlyTerm nat onTr mm ngStats.Type.F LTERED_AND_TRUNCATED;
+ mport stat c com.tw ter.search.earlyb rd_root. rgers.RecencyResponse rger
+    .EarlyTerm nat onTr mm ngStats.Type.NOT_EARLY_TERM NATED;
+ mport stat c com.tw ter.search.earlyb rd_root. rgers.RecencyResponse rger
+    .EarlyTerm nat onTr mm ngStats.Type.TERM NATED_GOT_EXACT_NUM_RESULTS;
+ mport stat c com.tw ter.search.earlyb rd_root. rgers.RecencyResponse rger
+    .EarlyTerm nat onTr mm ngStats.Type.TRUNCATED;
 
 /**
- * Merger class to merge recency search EarlybirdResponse objects.
+ *  rger class to  rge recency search Earlyb rdResponse objects.
  */
-public class RecencyResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(RecencyResponseMerger.class);
+publ c class RecencyResponse rger extends Earlyb rdResponse rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(RecencyResponse rger.class);
 
-  private static final SearchTimerStats RECENCY_TIMER =
-      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, false, true);
+  pr vate stat c f nal SearchT  rStats RECENCY_T MER =
+      SearchT  rStats.export(" rge_recency", T  Un .NANOSECONDS, false, true);
 
-  @VisibleForTesting
-  static final String TERMINATED_COLLECTED_ENOUGH_RESULTS =
-      "terminated_collected_enough_results";
+  @V s bleForTest ng
+  stat c f nal Str ng TERM NATED_COLLECTED_ENOUGH_RESULTS =
+      "term nated_collected_enough_results";
 
-  // Allowed replication lag relative to all replicas.  Replication lag exceeding
-  // this amount may result in some tweets from the replica not returned in search.
-  private static final long ALLOWED_REPLICATION_LAG_MS = 10000;
+  // Allo d repl cat on lag relat ve to all repl cas.  Repl cat on lag exceed ng
+  // t  amount may result  n so  t ets from t  repl ca not returned  n search.
+  pr vate stat c f nal long ALLOWED_REPL CAT ON_LAG_MS = 10000;
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  pr vate stat c f nal double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
-  @VisibleForTesting
-  static final SearchCounter RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS =
-      SearchCounter.export("merger_recency_zero_result_count_after_filtering_max_min_ids");
+  @V s bleForTest ng
+  stat c f nal SearchCounter RECENCY_ZERO_RESULT_COUNT_AFTER_F LTER NG_MAX_M N_ DS =
+      SearchCounter.export(" rger_recency_zero_result_count_after_f lter ng_max_m n_ ds");
 
-  @VisibleForTesting
-  static final SearchCounter RECENCY_TRIMMED_TOO_MANY_RESULTS_COUNT =
-      SearchCounter.export("merger_recency_trimmed_too_many_results_count");
+  @V s bleForTest ng
+  stat c f nal SearchCounter RECENCY_TR MMED_TOO_MANY_RESULTS_COUNT =
+      SearchCounter.export(" rger_recency_tr m d_too_many_results_count");
 
-  private static final SearchCounter RECENCY_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_recency_tier_merge_early_terminated_with_not_enough_results");
+  pr vate stat c f nal SearchCounter RECENCY_T ER_MERGE_EARLY_TERM NATED_W TH_NOT_ENOUGH_RESULTS =
+      SearchCounter.export(" rger_recency_t er_ rge_early_term nated_w h_not_enough_results");
 
-  private static final SearchCounter RECENCY_CLEARED_EARLY_TERMINATION_COUNT =
-      SearchCounter.export("merger_recency_cleared_early_termination_count");
-
-  /**
-   * Results were truncated because merged results exceeded the requested numResults.
-   */
-  @VisibleForTesting
-  static final String MERGING_EARLY_TERMINATION_REASON_TRUNCATED =
-      "root_merging_truncated_results";
+  pr vate stat c f nal SearchCounter RECENCY_CLEARED_EARLY_TERM NAT ON_COUNT =
+      SearchCounter.export(" rger_recency_cleared_early_term nat on_count");
 
   /**
-   * Results that were were filtered smaller than merged minSearchedStatusId were filtered out.
+   * Results  re truncated because  rged results exceeded t  requested numResults.
    */
-  @VisibleForTesting
-  static final String MERGING_EARLY_TERMINATION_REASON_FILTERED =
-      "root_merging_filtered_results";
+  @V s bleForTest ng
+  stat c f nal Str ng MERG NG_EARLY_TERM NAT ON_REASON_TRUNCATED =
+      "root_ rg ng_truncated_results";
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("recency_partition_merging");
+  /**
+   * Results that  re  re f ltered smaller than  rged m nSearc dStatus d  re f ltered out.
+   */
+  @V s bleForTest ng
+  stat c f nal Str ng MERG NG_EARLY_TERM NAT ON_REASON_F LTERED =
+      "root_ rg ng_f ltered_results";
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("recency_tier_merging");
+  @V s bleForTest ng
+  stat c f nal EarlyTerm nat onTr mm ngStats PART T ON_MERG NG_EARLY_TERM NAT ON_TR MM NG_STATS =
+      new EarlyTerm nat onTr mm ngStats("recency_part  on_ rg ng");
 
-  @VisibleForTesting
-  static class EarlyTerminationTrimmingStats {
+  @V s bleForTest ng
+  stat c f nal EarlyTerm nat onTr mm ngStats T ER_MERG NG_EARLY_TERM NAT ON_TR MM NG_STATS =
+      new EarlyTerm nat onTr mm ngStats("recency_t er_ rg ng");
+
+  @V s bleForTest ng
+  stat c class EarlyTerm nat onTr mm ngStats {
 
     enum Type {
       /**
-       * The whole result was not terminated at all.
+       * T  whole result was not term nated at all.
        */
-      NOT_EARLY_TERMINATED,
+      NOT_EARLY_TERM NATED,
       /**
-       * Was terminated before we did any trimming.
+       * Was term nated before   d d any tr mm ng.
        */
-      ALREADY_EARLY_TERMINATED,
+      ALREADY_EARLY_TERM NATED,
       /**
-       * Was not terminated when merged, but results were filtered due to min/max ranges.
+       * Was not term nated w n  rged, but results  re f ltered due to m n/max ranges.
        */
-      FILTERED,
+      F LTERED,
       /**
-       * Was not terminated when merged, but results were truncated.
+       * Was not term nated w n  rged, but results  re truncated.
        */
       TRUNCATED,
       /**
-       * Was not terminated when merged, but results were filtered due to min/max ranges and
+       * Was not term nated w n  rged, but results  re f ltered due to m n/max ranges and
        * truncated.
        */
-      FILTERED_AND_TRUNCATED,
+      F LTERED_AND_TRUNCATED,
       /**
-       * When the search asks for X result, and we get exactly X results back, without trimming
-       * or truncating on the tail side (min_id side), we still mark the search as early terminated.
-       * This is because later tiers possibly has more results.
+       * W n t  search asks for X result, and   get exactly X results back, w hout tr mm ng
+       * or truncat ng on t  ta l s de (m n_ d s de),   st ll mark t  search as early term nated.
+       * T   s because later t ers poss bly has more results.
        */
-      TERMINATED_GOT_EXACT_NUM_RESULTS,
+      TERM NATED_GOT_EXACT_NUM_RESULTS,
     }
 
     /**
-     * A counter tracking merged responses for each {@link EarlyTerminationTrimmingStats.Type}
-     * define above.
+     * A counter track ng  rged responses for each {@l nk EarlyTerm nat onTr mm ngStats.Type}
+     * def ne above.
      */
-    private final ImmutableMap<Type, SearchCounter> searchCounterMap;
+    pr vate f nal  mmutableMap<Type, SearchCounter> searchCounterMap;
 
-    EarlyTerminationTrimmingStats(String prefix) {
+    EarlyTerm nat onTr mm ngStats(Str ng pref x) {
       Map<Type, SearchCounter> tempMap = Maps.newEnumMap(Type.class);
 
-      tempMap.put(NOT_EARLY_TERMINATED,
-          SearchCounter.export(prefix + "_not_early_terminated_after_merging"));
-      tempMap.put(ALREADY_EARLY_TERMINATED,
-          SearchCounter.export(prefix + "_early_terminated_before_merge_trimming"));
+      tempMap.put(NOT_EARLY_TERM NATED,
+          SearchCounter.export(pref x + "_not_early_term nated_after_ rg ng"));
+      tempMap.put(ALREADY_EARLY_TERM NATED,
+          SearchCounter.export(pref x + "_early_term nated_before_ rge_tr mm ng"));
       tempMap.put(TRUNCATED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_truncated"));
-      tempMap.put(FILTERED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_filtered"));
-      tempMap.put(FILTERED_AND_TRUNCATED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_filtered_and_truncated"));
-      tempMap.put(TERMINATED_GOT_EXACT_NUM_RESULTS,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_got_exact_num_results"));
+          SearchCounter.export(pref x + "_early_term nated_after_ rg ng_truncated"));
+      tempMap.put(F LTERED,
+          SearchCounter.export(pref x + "_early_term nated_after_ rg ng_f ltered"));
+      tempMap.put(F LTERED_AND_TRUNCATED,
+          SearchCounter.export(pref x + "_early_term nated_after_ rg ng_f ltered_and_truncated"));
+      tempMap.put(TERM NATED_GOT_EXACT_NUM_RESULTS,
+          SearchCounter.export(pref x + "_early_term nated_after_ rg ng_got_exact_num_results"));
 
-      searchCounterMap = Maps.immutableEnumMap(tempMap);
+      searchCounterMap = Maps. mmutableEnumMap(tempMap);
     }
 
-    public SearchCounter getCounterFor(Type type) {
+    publ c SearchCounter getCounterFor(Type type) {
       return searchCounterMap.get(type);
     }
   }
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  pr vate f nal Earlyb rdFeatureSc ma rger featureSc ma rger;
 
-  public RecencyResponseMerger(EarlybirdRequestContext requestContext,
-                               List<Future<EarlybirdResponse>> responses,
+  publ c RecencyResponse rger(Earlyb rdRequestContext requestContext,
+                               L st<Future<Earlyb rdResponse>> responses,
                                ResponseAccumulator mode,
-                               EarlybirdFeatureSchemaMerger featureSchemaMerger) {
+                               Earlyb rdFeatureSc ma rger featureSc ma rger) {
     super(requestContext, responses, mode);
-    this.featureSchemaMerger = featureSchemaMerger;
+    t .featureSc ma rger = featureSc ma rger;
   }
 
-  @Override
+  @Overr de
   protected double getDefaultSuccessResponseThreshold() {
     return SUCCESSFUL_RESPONSE_THRESHOLD;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return RECENCY_TIMER;
+  @Overr de
+  protected SearchT  rStats get rgedResponseT  r() {
+    return RECENCY_T MER;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    // The merged maxSearchedStatusId and minSearchedStatusId
-    long maxId = findMaxFullySearchedStatusID();
-    long minId = findMinFullySearchedStatusID();
+  @Overr de
+  protected Earlyb rdResponse  nternal rge(Earlyb rdResponse  rgedResponse) {
+    // T   rged maxSearc dStatus d and m nSearc dStatus d
+    long max d = f ndMaxFullySearc dStatus D();
+    long m n d = f ndM nFullySearc dStatus D();
 
-    RecencyMergeCollector collector = new RecencyMergeCollector(responses.size());
-    int totalResultSize = addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
+    Recency rgeCollector collector = new Recency rgeCollector(responses.s ze());
+     nt totalResultS ze = addResponsesToCollector(collector);
+    Thr ftSearchResults searchResults = collector.getAllSearchResults();
 
-    TrimStats trimStats = trimResults(searchResults, minId, maxId);
-    setMergedMaxSearchedStatusId(searchResults, maxId);
-    setMergedMinSearchedStatusId(
-        searchResults, minId, trimStats.getResultsTruncatedFromTailCount() > 0);
+    Tr mStats tr mStats = tr mResults(searchResults, m n d, max d);
+    set rgedMaxSearc dStatus d(searchResults, max d);
+    set rgedM nSearc dStatus d(
+        searchResults, m n d, tr mStats.getResultsTruncatedFromTa lCount() > 0);
 
-    mergedResponse.setSearchResults(searchResults);
+     rgedResponse.setSearchResults(searchResults);
 
-    // Override some components of the response as appropriate to real-time.
-    searchResults.setHitCounts(aggregateHitCountMap());
-    if (accumulatedResponses.isMergingPartitionsWithinATier()
-        && clearEarlyTerminationIfReachingTierBottom(mergedResponse)) {
-      RECENCY_CLEARED_EARLY_TERMINATION_COUNT.increment();
+    // Overr de so  components of t  response as appropr ate to real-t  .
+    searchResults.setH Counts(aggregateH CountMap());
+     f (accumulatedResponses. s rg ngPart  onsW h nAT er()
+        && clearEarlyTerm nat on fReach ngT erBottom( rgedResponse)) {
+      RECENCY_CLEARED_EARLY_TERM NAT ON_COUNT. ncre nt();
     } else {
-      setEarlyTerminationForTrimmedResults(mergedResponse, trimStats);
+      setEarlyTerm nat onForTr m dResults( rgedResponse, tr mStats);
     }
 
-    responseMessageBuilder.debugVerbose("Hits: %s %s", totalResultSize, trimStats);
-    responseMessageBuilder.debugVerbose(
-        "Hash Partitioned Earlybird call completed successfully: %s", mergedResponse);
+    response ssageBu lder.debugVerbose("H s: %s %s", totalResultS ze, tr mStats);
+    response ssageBu lder.debugVerbose(
+        "Hash Part  oned Earlyb rd call completed successfully: %s",  rgedResponse);
 
-    featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
+    featureSc ma rger.collectAndSetFeatureSc ma nResponse(
         searchResults,
         requestContext,
-        "merger_recency_tier",
+        " rger_recency_t er",
         accumulatedResponses.getSuccessResponses());
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 
   /**
-   * When we reached tier bottom, pagination can stop working even though we haven't got
+   * W n   reac d t er bottom, pag nat on can stop work ng even though   haven't got
    * all results. e.g.
-   * Results from partition 1:  [101 91 81], minSearchedStatusId is 81
-   * Results from Partition 2:  [102 92],  minSearchedStatusId is 92, not early terminated.
+   * Results from part  on 1:  [101 91 81], m nSearc dStatus d  s 81
+   * Results from Part  on 2:  [102 92],  m nSearc dStatus d  s 92, not early term nated.
    *
-   * After merge, we get [102, 101, 92], with minResultId == 92. Since results from
-   * partition 2 is not early terminated, 92 is the tier bottom here. Since results are
-   * filtered, early termination for merged result is set to true, so blender will call again,
-   * with maxDocId == 91. This time we get result:
-   * Results from partition 1: [91 81], minSearchedStatusId is 81
-   * Results from partition 2: [], minSearchedStatusId is still 92
-   * After merge we get [] and minSearchedStatusId is still 92. No progress can be made on
-   * pagination and clients get stuck.
+   * After  rge,   get [102, 101, 92], w h m nResult d == 92. S nce results from
+   * part  on 2  s not early term nated, 92  s t  t er bottom  re. S nce results are
+   * f ltered, early term nat on for  rged result  s set to true, so blender w ll call aga n,
+   * w h maxDoc d == 91. T  t     get result:
+   * Results from part  on 1: [91 81], m nSearc dStatus d  s 81
+   * Results from part  on 2: [], m nSearc dStatus d  s st ll 92
+   * After  rge   get [] and m nSearc dStatus d  s st ll 92. No progress can be made on
+   * pag nat on and cl ents get stuck.
    *
-   * So in this case, we clear the early termination flag to tell blender there is no more
-   * result in this tier. Tweets below tier bottom will be missed, but that also happens
-   * without this step, as the next pagination call will return empty results anyway.
-   * So even if there is NOT overlap between tiers, this is still better.
+   * So  n t  case,   clear t  early term nat on flag to tell blender t re  s no more
+   * result  n t  t er. T ets below t er bottom w ll be m ssed, but that also happens
+   * w hout t  step, as t  next pag nat on call w ll return empty results anyway.
+   * So even  f t re  s NOT overlap bet en t ers, t   s st ll better.
    *
-   * Return true if early termination is cleared due to this, otherwise return false.
-   * To be safe, we do nothing here to keep existing behavior and only override it in
-   * StrictRecencyResponseMerger.
+   * Return true  f early term nat on  s cleared due to t , ot rw se return false.
+   * To be safe,   do noth ng  re to keep ex st ng behav or and only overr de    n
+   * Str ctRecencyResponse rger.
    */
-  protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
+  protected boolean clearEarlyTerm nat on fReach ngT erBottom(Earlyb rdResponse  rgedResponse) {
     return false;
   }
 
   /**
-   * Determines if the merged response should be early-terminated when it has exactly as many
-   * trimmed results as requested, as is not early-terminated because of other reasons.
+   * Determ nes  f t   rged response should be early-term nated w n   has exactly as many
+   * tr m d results as requested, as  s not early-term nated because of ot r reasons.
    */
-  protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
+  protected boolean shouldEarlyTerm nateW nEnoughTr m dResults() {
     return true;
   }
 
   /**
-   * If the end results were trimmed in any way, reflect that in the response as a query that was
-   * early terminated. A response can be either (1) truncated because we merged more results than
-   * what was asked for with numResults, or (2) we filtered results that were smaller than the
-   * merged minSearchedStatusId.
+   *  f t  end results  re tr m d  n any way, reflect that  n t  response as a query that was
+   * early term nated. A response can be e  r (1) truncated because    rged more results than
+   * what was asked for w h numResults, or (2)   f ltered results that  re smaller than t 
+   *  rged m nSearc dStatus d.
    *
-   * @param mergedResponse the merged response.
-   * @param trimStats trim stats for this merge.
+   * @param  rgedResponse t   rged response.
+   * @param tr mStats tr m stats for t   rge.
    */
-  private void setEarlyTerminationForTrimmedResults(
-      EarlybirdResponse mergedResponse,
-      TrimStats trimStats) {
+  pr vate vo d setEarlyTerm nat onForTr m dResults(
+      Earlyb rdResponse  rgedResponse,
+      Tr mStats tr mStats) {
 
-    responseMessageBuilder.debugVerbose("Checking for merge trimming, trimStats %s", trimStats);
+    response ssageBu lder.debugVerbose("C ck ng for  rge tr mm ng, tr mStats %s", tr mStats);
 
-    EarlyTerminationTrimmingStats stats = getEarlyTerminationTrimmingStats();
+    EarlyTerm nat onTr mm ngStats stats = getEarlyTerm nat onTr mm ngStats();
 
-    EarlyTerminationInfo earlyTerminationInfo = mergedResponse.getEarlyTerminationInfo();
-    Preconditions.checkNotNull(earlyTerminationInfo);
+    EarlyTerm nat on nfo earlyTerm nat on nfo =  rgedResponse.getEarlyTerm nat on nfo();
+    Precond  ons.c ckNotNull(earlyTerm nat on nfo);
 
-    if (!earlyTerminationInfo.isEarlyTerminated()) {
-      if (trimStats.getMinIdFilterCount() > 0 || trimStats.getResultsTruncatedFromTailCount() > 0) {
-        responseMessageBuilder.debugVerbose("Setting early termination, trimStats: %s, results: %s",
-            trimStats, mergedResponse);
+     f (!earlyTerm nat on nfo. sEarlyTerm nated()) {
+       f (tr mStats.getM n dF lterCount() > 0 || tr mStats.getResultsTruncatedFromTa lCount() > 0) {
+        response ssageBu lder.debugVerbose("Sett ng early term nat on, tr mStats: %s, results: %s",
+            tr mStats,  rgedResponse);
 
-        earlyTerminationInfo.setEarlyTerminated(true);
-        addEarlyTerminationReasons(earlyTerminationInfo, trimStats);
+        earlyTerm nat on nfo.setEarlyTerm nated(true);
+        addEarlyTerm nat onReasons(earlyTerm nat on nfo, tr mStats);
 
-        if (trimStats.getMinIdFilterCount() > 0
-            && trimStats.getResultsTruncatedFromTailCount() > 0) {
-          stats.getCounterFor(FILTERED_AND_TRUNCATED).increment();
-        } else if (trimStats.getMinIdFilterCount() > 0) {
-          stats.getCounterFor(FILTERED).increment();
-        } else if (trimStats.getResultsTruncatedFromTailCount() > 0) {
-          stats.getCounterFor(TRUNCATED).increment();
+         f (tr mStats.getM n dF lterCount() > 0
+            && tr mStats.getResultsTruncatedFromTa lCount() > 0) {
+          stats.getCounterFor(F LTERED_AND_TRUNCATED). ncre nt();
+        } else  f (tr mStats.getM n dF lterCount() > 0) {
+          stats.getCounterFor(F LTERED). ncre nt();
+        } else  f (tr mStats.getResultsTruncatedFromTa lCount() > 0) {
+          stats.getCounterFor(TRUNCATED). ncre nt();
         } else {
-          Preconditions.checkState(false, "Invalid TrimStats: %s", trimStats);
+          Precond  ons.c ckState(false, " nval d Tr mStats: %s", tr mStats);
         }
-      } else if ((computeNumResultsToKeep() == mergedResponse.getSearchResults().getResultsSize())
-                 && shouldEarlyTerminateWhenEnoughTrimmedResults()) {
-        earlyTerminationInfo.setEarlyTerminated(true);
-        earlyTerminationInfo.addToMergedEarlyTerminationReasons(
-            TERMINATED_COLLECTED_ENOUGH_RESULTS);
-        stats.getCounterFor(TERMINATED_GOT_EXACT_NUM_RESULTS).increment();
+      } else  f ((computeNumResultsToKeep() ==  rgedResponse.getSearchResults().getResultsS ze())
+                 && shouldEarlyTerm nateW nEnoughTr m dResults()) {
+        earlyTerm nat on nfo.setEarlyTerm nated(true);
+        earlyTerm nat on nfo.addTo rgedEarlyTerm nat onReasons(
+            TERM NATED_COLLECTED_ENOUGH_RESULTS);
+        stats.getCounterFor(TERM NATED_GOT_EXACT_NUM_RESULTS). ncre nt();
       } else {
-        stats.getCounterFor(NOT_EARLY_TERMINATED).increment();
+        stats.getCounterFor(NOT_EARLY_TERM NATED). ncre nt();
       }
     } else {
-      stats.getCounterFor(ALREADY_EARLY_TERMINATED).increment();
-      // Even if the results were already marked as early terminated, we can add additional
-      // reasons for debugging (if the merged results were filtered or truncated).
-      addEarlyTerminationReasons(earlyTerminationInfo, trimStats);
+      stats.getCounterFor(ALREADY_EARLY_TERM NATED). ncre nt();
+      // Even  f t  results  re already marked as early term nated,   can add add  onal
+      // reasons for debugg ng ( f t   rged results  re f ltered or truncated).
+      addEarlyTerm nat onReasons(earlyTerm nat on nfo, tr mStats);
     }
   }
 
-  private void addEarlyTerminationReasons(
-      EarlyTerminationInfo earlyTerminationInfo,
-      TrimStats trimStats) {
+  pr vate vo d addEarlyTerm nat onReasons(
+      EarlyTerm nat on nfo earlyTerm nat on nfo,
+      Tr mStats tr mStats) {
 
-    if (trimStats.getMinIdFilterCount() > 0) {
-      earlyTerminationInfo.addToMergedEarlyTerminationReasons(
-          MERGING_EARLY_TERMINATION_REASON_FILTERED);
+     f (tr mStats.getM n dF lterCount() > 0) {
+      earlyTerm nat on nfo.addTo rgedEarlyTerm nat onReasons(
+          MERG NG_EARLY_TERM NAT ON_REASON_F LTERED);
     }
 
-    if (trimStats.getResultsTruncatedFromTailCount() > 0) {
-      earlyTerminationInfo.addToMergedEarlyTerminationReasons(
-          MERGING_EARLY_TERMINATION_REASON_TRUNCATED);
+     f (tr mStats.getResultsTruncatedFromTa lCount() > 0) {
+      earlyTerm nat on nfo.addTo rgedEarlyTerm nat onReasons(
+          MERG NG_EARLY_TERM NAT ON_REASON_TRUNCATED);
     }
   }
 
-  private EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStats() {
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      return getEarlyTerminationTrimmingStatsForPartitions();
+  pr vate EarlyTerm nat onTr mm ngStats getEarlyTerm nat onTr mm ngStats() {
+     f (accumulatedResponses. s rg ngPart  onsW h nAT er()) {
+      return getEarlyTerm nat onTr mm ngStatsForPart  ons();
     } else {
-      return getEarlyTerminationTrimmingStatsForTiers();
+      return getEarlyTerm nat onTr mm ngStatsForT ers();
     }
   }
 
-  protected EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForPartitions() {
-    return PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
+  protected EarlyTerm nat onTr mm ngStats getEarlyTerm nat onTr mm ngStatsForPart  ons() {
+    return PART T ON_MERG NG_EARLY_TERM NAT ON_TR MM NG_STATS;
   }
 
-  protected EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForTiers() {
-    return TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
+  protected EarlyTerm nat onTr mm ngStats getEarlyTerm nat onTr mm ngStatsForT ers() {
+    return T ER_MERG NG_EARLY_TERM NAT ON_TR MM NG_STATS;
   }
 
   /**
-   * If we get enough results, no need to go on.
-   * If one of the partitions early terminated, we can't go on or else there could be a gap.
+   *  f   get enough results, no need to go on.
+   *  f one of t  part  ons early term nated,   can't go on or else t re could be a gap.
    */
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
+  @Overr de
+  publ c boolean shouldEarlyTerm nateT er rge( nt totalResultsFromSuccessfulShards,
+                                                  boolean foundEarlyTerm nat on) {
 
 
-    int resultsRequested = computeNumResultsToKeep();
+     nt resultsRequested = computeNumResultsToKeep();
 
-    boolean shouldEarlyTerminate = foundEarlyTermination
+    boolean shouldEarlyTerm nate = foundEarlyTerm nat on
         || totalResultsFromSuccessfulShards >= resultsRequested;
 
-    if (shouldEarlyTerminate && totalResultsFromSuccessfulShards < resultsRequested) {
-      RECENCY_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
+     f (shouldEarlyTerm nate && totalResultsFromSuccessfulShards < resultsRequested) {
+      RECENCY_T ER_MERGE_EARLY_TERM NATED_W TH_NOT_ENOUGH_RESULTS. ncre nt();
     }
 
-    return shouldEarlyTerminate;
+    return shouldEarlyTerm nate;
   }
 
   /**
-   * Find the min status id that has been _completely_ searched across all partitions. The
-   * largest min status id across all partitions.
+   * F nd t  m n status  d that has been _completely_ searc d across all part  ons. T 
+   * largest m n status  d across all part  ons.
    *
-   * @return the min searched status id found
+   * @return t  m n searc d status  d found
    */
-  protected long findMinFullySearchedStatusID() {
-    List<Long> minIds = accumulatedResponses.getMinIds();
-    if (minIds.isEmpty()) {
-      return Long.MIN_VALUE;
+  protected long f ndM nFullySearc dStatus D() {
+    L st<Long> m n ds = accumulatedResponses.getM n ds();
+     f (m n ds. sEmpty()) {
+      return Long.M N_VALUE;
     }
 
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      // When merging partitions, the min ID should be the largest among the min IDs.
-      return Collections.max(accumulatedResponses.getMinIds());
+     f (accumulatedResponses. s rg ngPart  onsW h nAT er()) {
+      // W n  rg ng part  ons, t  m n  D should be t  largest among t  m n  Ds.
+      return Collect ons.max(accumulatedResponses.getM n ds());
     } else {
-      // When merging tiers, the min ID should be the smallest among the min IDs.
-      return Collections.min(accumulatedResponses.getMinIds());
+      // W n  rg ng t ers, t  m n  D should be t  smallest among t  m n  Ds.
+      return Collect ons.m n(accumulatedResponses.getM n ds());
     }
   }
 
   /**
-   * Find the max status id that has been _completely_ searched across all partitions. The
-   * smallest max status id across all partitions.
+   * F nd t  max status  d that has been _completely_ searc d across all part  ons. T 
+   * smallest max status  d across all part  ons.
    *
-   * This is where we reconcile replication lag by selecting the oldest maxid from the
-   * partitions searched.
+   * T   s w re   reconc le repl cat on lag by select ng t  oldest max d from t 
+   * part  ons searc d.
    *
-   * @return the max searched status id found
+   * @return t  max searc d status  d found
    */
-   protected long findMaxFullySearchedStatusID() {
-    List<Long> maxIDs = accumulatedResponses.getMaxIds();
-    if (maxIDs.isEmpty()) {
+   protected long f ndMaxFullySearc dStatus D() {
+    L st<Long> max Ds = accumulatedResponses.getMax ds();
+     f (max Ds. sEmpty()) {
       return Long.MAX_VALUE;
     }
-    Collections.sort(maxIDs);
+    Collect ons.sort(max Ds);
 
-    final long newest = maxIDs.get(maxIDs.size() - 1);
-    final long newestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(newest);
+    f nal long ne st = max Ds.get(max Ds.s ze() - 1);
+    f nal long ne stT  stamp = Snowflake dParser.getT  stampFromT et d(ne st);
 
-    for (int i = 0; i < maxIDs.size(); i++) {
-      long oldest = maxIDs.get(i);
-      long oldestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(oldest);
-      long deltaMs = newestTimestamp - oldestTimestamp;
+    for ( nt   = 0;   < max Ds.s ze();  ++) {
+      long oldest = max Ds.get( );
+      long oldestT  stamp = Snowflake dParser.getT  stampFromT et d(oldest);
+      long deltaMs = ne stT  stamp - oldestT  stamp;
 
-      if (i == 0) {
-        LOG.debug("Max delta is {}", deltaMs);
+       f (  == 0) {
+        LOG.debug("Max delta  s {}", deltaMs);
       }
 
-      if (deltaMs < ALLOWED_REPLICATION_LAG_MS) {
-        if (i != 0) {
-          LOG.debug("{} partition replicas lagging more than {} ms", i, ALLOWED_REPLICATION_LAG_MS);
+       f (deltaMs < ALLOWED_REPL CAT ON_LAG_MS) {
+         f (  != 0) {
+          LOG.debug("{} part  on repl cas lagg ng more than {} ms",  , ALLOWED_REPL CAT ON_LAG_MS);
         }
         return oldest;
       }
     }
 
-    // Can't get here - by this point oldest == newest, and delta is 0.
-    return newest;
+    // Can't get  re - by t  po nt oldest == ne st, and delta  s 0.
+    return ne st;
   }
 
   /**
-   * Trim the ThriftSearchResults if we have enough results, to return the first
+   * Tr m t  Thr ftSearchResults  f   have enough results, to return t  f rst
    * 'computeNumResultsToKeep()' number of results.
    *
-   * If we don't have enough results after trimming, this function will first try to back fill
-   * older results, then newer results
+   *  f   don't have enough results after tr mm ng, t  funct on w ll f rst try to back f ll
+   * older results, t n ne r results
    *
-   * @param searchResults ThriftSearchResults that hold the to be trimmed List<ThriftSearchResult>
-   * @return TrimStats containing statistics about how many results being removed
+   * @param searchResults Thr ftSearchResults that hold t  to be tr m d L st<Thr ftSearchResult>
+   * @return Tr mStats conta n ng stat st cs about how many results be ng removed
    */
-  protected TrimStats trimResults(
-      ThriftSearchResults searchResults,
-      long mergedMin,
-      long mergedMax) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
+  protected Tr mStats tr mResults(
+      Thr ftSearchResults searchResults,
+      long  rgedM n,
+      long  rgedMax) {
+     f (!searchResults. sSetResults() || searchResults.getResultsS ze() == 0) {
+      // no results, no tr mm ng needed
+      return Tr mStats.EMPTY_STATS;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
-      // Not a normal search, no trimming needed
-      return TrimStats.EMPTY_STATS;
+     f (requestContext.getRequest().getSearchQuery(). sSetSearchStatus ds()) {
+      // Not a normal search, no tr mm ng needed
+      return Tr mStats.EMPTY_STATS;
     }
 
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    Tr mStats tr mStats = new Tr mStats();
+    tr mExactDups(searchResults, tr mStats);
 
-    int numResultsRequested = computeNumResultsToKeep();
-    if (shouldSkipTrimmingWhenNotEnoughResults(searchResults, numResultsRequested)) {
+     nt numResultsRequested = computeNumResultsToKeep();
+     f (shouldSk pTr mm ngW nNotEnoughResults(searchResults, numResultsRequested)) {
       //////////////////////////////////////////////////////////
-      // We don't have enough results, let's not do trimming
+      //   don't have enough results, let's not do tr mm ng
       //////////////////////////////////////////////////////////
-      return trimStats;
+      return tr mStats;
     }
 
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      trimResultsBasedSearchedRange(
-          searchResults, trimStats, numResultsRequested, mergedMin, mergedMax);
+     f (accumulatedResponses. s rg ngPart  onsW h nAT er()) {
+      tr mResultsBasedSearc dRange(
+          searchResults, tr mStats, numResultsRequested,  rgedM n,  rgedMax);
     }
 
-    // Respect "computeNumResultsToKeep()" here, only keep "computeNumResultsToKeep()" results.
-    truncateResults(searchResults, trimStats);
+    // Respect "computeNumResultsToKeep()"  re, only keep "computeNumResultsToKeep()" results.
+    truncateResults(searchResults, tr mStats);
 
-    return trimStats;
+    return tr mStats;
   }
 
   /**
-   * When there's not enough results, we don't remove results based on the searched range.
-   * This has a tradeoff:  with this, we don't reduce our recall when we already don't have enough
-   * results. However, with this, we can lose results while paginating because we return results
-   * outside of the valid searched range.
+   * W n t re's not enough results,   don't remove results based on t  searc d range.
+   * T  has a tradeoff:  w h t ,   don't reduce   recall w n   already don't have enough
+   * results. Ho ver, w h t ,   can lose results wh le pag nat ng because   return results
+   * outs de of t  val d searc d range.
    */
-  protected boolean shouldSkipTrimmingWhenNotEnoughResults(
-      ThriftSearchResults searchResults, int numResultsRequested) {
-    return searchResults.getResultsSize() <= numResultsRequested;
+  protected boolean shouldSk pTr mm ngW nNotEnoughResults(
+      Thr ftSearchResults searchResults,  nt numResultsRequested) {
+    return searchResults.getResultsS ze() <= numResultsRequested;
   }
 
 
   /**
-   * Trim results based on search range. The search range [x, y] is determined by:
-   *   x is the maximun of the minimun search IDs;
-   *   y is the minimun of the maximum search IDs.
+   * Tr m results based on search range. T  search range [x, y]  s determ ned by:
+   *   x  s t  max mun of t  m n mun search  Ds;
+   *   y  s t  m n mun of t  max mum search  Ds.
    *
-   * Ids out side of this range are removed.
-   * If we do not get enough results after the removal, we add IDs back until we get enough results.
-   * We first add IDs back from the older side back. If there's still not enough results,
-   * we start adding IDs from the newer side back.
+   *  ds out s de of t  range are removed.
+   *  f   do not get enough results after t  removal,   add  Ds back unt l   get enough results.
+   *   f rst add  Ds back from t  older s de back.  f t re's st ll not enough results,
+   *   start add ng  Ds from t  ne r s de back.
    */
-  private void trimResultsBasedSearchedRange(ThriftSearchResults searchResults,
-                                             TrimStats trimStats,
-                                             int numResultsRequested,
-                                             long mergedMin,
-                                             long mergedMax) {
+  pr vate vo d tr mResultsBasedSearc dRange(Thr ftSearchResults searchResults,
+                                             Tr mStats tr mStats,
+                                              nt numResultsRequested,
+                                             long  rgedM n,
+                                             long  rgedMax) {
     ///////////////////////////////////////////////////////////////////
-    // we have more results than requested, let's do some trimming
+    //   have more results than requested, let's do so  tr mm ng
     ///////////////////////////////////////////////////////////////////
 
-    // Save the original results before trimming
-    List<ThriftSearchResult> originalResults = searchResults.getResults();
+    // Save t  or g nal results before tr mm ng
+    L st<Thr ftSearchResult> or g nalResults = searchResults.getResults();
 
-    filterResultsByMergedMinMaxIds(searchResults, mergedMax, mergedMin, trimStats);
+    f lterResultsBy rgedM nMax ds(searchResults,  rgedMax,  rgedM n, tr mStats);
 
-    // This does happen. It is hard to say what we should do here so we just return the original
-    // result here.
-    if (searchResults.getResultsSize() == 0) {
-      RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS.increment();
-      searchResults.setResults(originalResults);
+    // T  does happen.    s hard to say what   should do  re so   just return t  or g nal
+    // result  re.
+     f (searchResults.getResultsS ze() == 0) {
+      RECENCY_ZERO_RESULT_COUNT_AFTER_F LTER NG_MAX_M N_ DS. ncre nt();
+      searchResults.setResults(or g nalResults);
 
-      // Clean up min/mix filtered count, since we're bringing back whatever we just filtered.
-      trimStats.clearMaxIdFilterCount();
-      trimStats.clearMinIdFilterCount();
+      // Clean up m n/m x f ltered count, s nce  're br ng ng back whatever   just f ltered.
+      tr mStats.clearMax dF lterCount();
+      tr mStats.clearM n dF lterCount();
 
-      if (LOG.isDebugEnabled() || responseMessageBuilder.isDebugMode()) {
-        String errMsg = "No trimming is done as filtered results is empty. "
-            + "maxId=" + mergedMax + ",minId=" + mergedMin;
+       f (LOG. sDebugEnabled() || response ssageBu lder. sDebugMode()) {
+        Str ng errMsg = "No tr mm ng  s done as f ltered results  s empty. "
+            + "max d=" +  rgedMax + ",m n d=" +  rgedM n;
         LOG.debug(errMsg);
-        responseMessageBuilder.append(errMsg + "\n");
+        response ssageBu lder.append(errMsg + "\n");
       }
     } else {
-      // oops! we're trimming too many results. Let's put some back
-      if (searchResults.getResultsSize() < numResultsRequested) {
-        RECENCY_TRIMMED_TOO_MANY_RESULTS_COUNT.increment();
+      // oops!  're tr mm ng too many results. Let's put so  back
+       f (searchResults.getResultsS ze() < numResultsRequested) {
+        RECENCY_TR MMED_TOO_MANY_RESULTS_COUNT. ncre nt();
 
-        List<ThriftSearchResult> trimmedResults = searchResults.getResults();
-        long firstTrimmedResultId = trimmedResults.get(0).getId();
-        long lastTrimmedResultId = trimmedResults.get(trimmedResults.size() - 1).getId();
+        L st<Thr ftSearchResult> tr m dResults = searchResults.getResults();
+        long f rstTr m dResult d = tr m dResults.get(0).get d();
+        long lastTr m dResult d = tr m dResults.get(tr m dResults.s ze() - 1).get d();
 
-        // First, try to back fill with older results
-        int i = 0;
-        for (; i < originalResults.size(); ++i) {
-          ThriftSearchResult result = originalResults.get(i);
-          if (result.getId() < lastTrimmedResultId) {
-            trimmedResults.add(result);
-            trimStats.decreaseMinIdFilterCount();
-            if (trimmedResults.size() >= numResultsRequested) {
+        // F rst, try to back f ll w h older results
+         nt   = 0;
+        for (;   < or g nalResults.s ze(); ++ ) {
+          Thr ftSearchResult result = or g nalResults.get( );
+           f (result.get d() < lastTr m dResult d) {
+            tr m dResults.add(result);
+            tr mStats.decreaseM n dF lterCount();
+             f (tr m dResults.s ze() >= numResultsRequested) {
               break;
             }
           }
         }
 
-        // still not enough results? back fill with newer results
-        // find the oldest of the newer results
-        if (trimmedResults.size() < numResultsRequested) {
-          // still not enough results? back fill with newer results
-          // find the oldest of the newer results
-          for (i = originalResults.size() - 1; i >= 0; --i) {
-            ThriftSearchResult result = originalResults.get(i);
-            if (result.getId() > firstTrimmedResultId) {
-              trimmedResults.add(result);
-              trimStats.decreaseMaxIdFilterCount();
-              if (trimmedResults.size() >= numResultsRequested) {
+        // st ll not enough results? back f ll w h ne r results
+        // f nd t  oldest of t  ne r results
+         f (tr m dResults.s ze() < numResultsRequested) {
+          // st ll not enough results? back f ll w h ne r results
+          // f nd t  oldest of t  ne r results
+          for (  = or g nalResults.s ze() - 1;   >= 0; -- ) {
+            Thr ftSearchResult result = or g nalResults.get( );
+             f (result.get d() > f rstTr m dResult d) {
+              tr m dResults.add(result);
+              tr mStats.decreaseMax dF lterCount();
+               f (tr m dResults.s ze() >= numResultsRequested) {
                 break;
               }
             }
           }
 
-          // newer results were added to the back of the list, re-sort
-          Collections.sort(trimmedResults, ResultComparators.ID_COMPARATOR);
+          // ne r results  re added to t  back of t  l st, re-sort
+          Collect ons.sort(tr m dResults, ResultComparators. D_COMPARATOR);
         }
       }
     }
   }
 
-  protected void setMergedMinSearchedStatusId(
-      ThriftSearchResults searchResults,
-      long currentMergedMin,
-      boolean resultsWereTrimmed) {
-    if (accumulatedResponses.getMinIds().isEmpty()) {
+  protected vo d set rgedM nSearc dStatus d(
+      Thr ftSearchResults searchResults,
+      long current rgedM n,
+      boolean results reTr m d) {
+     f (accumulatedResponses.getM n ds(). sEmpty()) {
       return;
     }
 
-    long merged;
-    if (searchResults == null
-        || !searchResults.isSetResults()
-        || searchResults.getResultsSize() == 0) {
-      merged = currentMergedMin;
+    long  rged;
+     f (searchResults == null
+        || !searchResults. sSetResults()
+        || searchResults.getResultsS ze() == 0) {
+       rged = current rgedM n;
     } else {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      long firstResultId = results.get(0).getId();
-      long lastResultId = results.get(results.size() - 1).getId();
-      merged = Math.min(firstResultId, lastResultId);
-      if (!resultsWereTrimmed) {
-        // If the results were trimmed, we want to set minSearchedStatusID to the smallest
-        // tweet ID in the response. Otherwise, we want to take the min between that, and
-        // the current minSearchedStatusID.
-        merged = Math.min(merged, currentMergedMin);
+      L st<Thr ftSearchResult> results = searchResults.getResults();
+      long f rstResult d = results.get(0).get d();
+      long lastResult d = results.get(results.s ze() - 1).get d();
+       rged = Math.m n(f rstResult d, lastResult d);
+       f (!results reTr m d) {
+        //  f t  results  re tr m d,   want to set m nSearc dStatus D to t  smallest
+        // t et  D  n t  response. Ot rw se,   want to take t  m n bet en that, and
+        // t  current m nSearc dStatus D.
+         rged = Math.m n( rged, current rgedM n);
       }
     }
 
-    searchResults.setMinSearchedStatusID(merged);
+    searchResults.setM nSearc dStatus D( rged);
   }
 
-  private void setMergedMaxSearchedStatusId(
-      ThriftSearchResults searchResults,
-      long currentMergedMax) {
-    if (accumulatedResponses.getMaxIds().isEmpty()) {
+  pr vate vo d set rgedMaxSearc dStatus d(
+      Thr ftSearchResults searchResults,
+      long current rgedMax) {
+     f (accumulatedResponses.getMax ds(). sEmpty()) {
       return;
     }
 
-    long merged;
-    if (searchResults == null
-        || !searchResults.isSetResults()
-        || searchResults.getResultsSize() == 0) {
-      merged = currentMergedMax;
+    long  rged;
+     f (searchResults == null
+        || !searchResults. sSetResults()
+        || searchResults.getResultsS ze() == 0) {
+       rged = current rgedMax;
     } else {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      long firstResultId = results.get(0).getId();
-      long lastResultId = results.get(results.size() - 1).getId();
-      long maxResultId = Math.max(firstResultId, lastResultId);
-      merged = Math.max(maxResultId, currentMergedMax);
+      L st<Thr ftSearchResult> results = searchResults.getResults();
+      long f rstResult d = results.get(0).get d();
+      long lastResult d = results.get(results.s ze() - 1).get d();
+      long maxResult d = Math.max(f rstResult d, lastResult d);
+       rged = Math.max(maxResult d, current rgedMax);
     }
 
-    searchResults.setMaxSearchedStatusID(merged);
+    searchResults.setMaxSearc dStatus D( rged);
   }
 
-  protected static void filterResultsByMergedMinMaxIds(
-      ThriftSearchResults results, long maxStatusId, long minStatusId, TrimStats trimStats) {
-    List<ThriftSearchResult> trimedResults =
-        Lists.newArrayListWithCapacity(results.getResultsSize());
+  protected stat c vo d f lterResultsBy rgedM nMax ds(
+      Thr ftSearchResults results, long maxStatus d, long m nStatus d, Tr mStats tr mStats) {
+    L st<Thr ftSearchResult> tr  dResults =
+        L sts.newArrayL stW hCapac y(results.getResultsS ze());
 
-    for (ThriftSearchResult result : results.getResults()) {
-      long statusId = result.getId();
+    for (Thr ftSearchResult result : results.getResults()) {
+      long status d = result.get d();
 
-      if (statusId > maxStatusId) {
-        trimStats.increaseMaxIdFilterCount();
-      } else if (statusId < minStatusId) {
-        trimStats.increaseMinIdFilterCount();
+       f (status d > maxStatus d) {
+        tr mStats. ncreaseMax dF lterCount();
+      } else  f (status d < m nStatus d) {
+        tr mStats. ncreaseM n dF lterCount();
       } else {
-        trimedResults.add(result);
+        tr  dResults.add(result);
       }
     }
 
-    results.setResults(trimedResults);
+    results.setResults(tr  dResults);
   }
 }

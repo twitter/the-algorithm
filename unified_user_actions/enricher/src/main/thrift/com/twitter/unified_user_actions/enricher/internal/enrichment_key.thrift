@@ -1,41 +1,41 @@
-namespace java com.twitter.unified_user_actions.enricher.internal.thriftjava
-#@namespace scala com.twitter.unified_user_actions.enricher.internal.thriftscala
-#@namespace strato com.twitter.unified_user_actions.enricher.internal
+na space java com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons.enr c r. nternal
 
 /*
- * Internal key used for controling UUA enrichment & caching process. It contains very minimal
- * information to allow for efficient serde, fast data look-up and to drive the partioning logics.
+ *  nternal key used for control ng UUA enr ch nt & cach ng process.   conta ns very m n mal
+ *  nformat on to allow for eff c ent serde, fast data look-up and to dr ve t  part on ng log cs.
  *
- * NOTE: Don't depend on it in your application.
- * NOTE: This is used internally by UUA and may change at anytime. There's no guarantee for
- * backward / forward-compatibility.
- * NOTE: Don't add any other metadata unless it is needed for partitioning logic. Extra enrichment
- * metdata can go into the envelop.
+ * NOTE: Don't depend on    n y  appl cat on.
+ * NOTE: T   s used  nternally by UUA and may change at anyt  . T re's no guarantee for
+ * backward / forward-compat b l y.
+ * NOTE: Don't add any ot r  tadata unless    s needed for part  on ng log c. Extra enr ch nt
+ *  tdata can go  nto t  envelop.
  */
-struct EnrichmentKey {
+struct Enr ch ntKey {
    /*
-   * The internal type of the primary ID used for partitioning UUA data.
+   * T   nternal type of t  pr mary  D used for part  on ng UUA data.
    *
-   * Each type should directly correspond to an entity-level ID in UUA.
-   * For example, TweetInfo.actionTweetId & TweetNotification.tweetId are all tweet-entity level
-   * and should correspond to the same primary ID type.
+   * Each type should d rectly correspond to an ent y-level  D  n UUA.
+   * For example, T et nfo.act onT et d & T etNot f cat on.t et d are all t et-ent y level
+   * and should correspond to t  sa  pr mary  D type.
    **/
-   1: required EnrichmentIdType keyType
+   1: requ red Enr ch nt dType keyType
 
    /**
-   * The primary ID. This is usually a long, for other incompatible data type such as string or
-   * a bytes array, they can be converted into a long using their native hashCode() function.
+   * T  pr mary  D. T   s usually a long, for ot r  ncompat ble data type such as str ng or
+   * a bytes array, t y can be converted  nto a long us ng t  r nat ve hashCode() funct on.
    **/
-   2: required i64 id
-}(persisted='true', hasPersonalData='true')
+   2: requ red  64  d
+}(pers sted='true', hasPersonalData='true')
 
 /**
-* The type of the primary ID. For example, tweetId on a tweet & tweetId on a notification are
-* all TweetId type. Similarly, UserID of a viewer and AuthorID of a tweet are all UserID type.
+* T  type of t  pr mary  D. For example, t et d on a t et & t et d on a not f cat on are
+* all T et d type. S m larly, User D of a v e r and Author D of a t et are all User D type.
 *
-* The type here ensures that we will partition UUA data correctly across different entity-type
-* (user, tweets, notification, etc.)
+* T  type  re ensures that   w ll part  on UUA data correctly across d fferent ent y-type
+* (user, t ets, not f cat on, etc.)
 **/
-enum EnrichmentIdType {
-  TweetId = 0
+enum Enr ch nt dType {
+  T et d = 0
 }

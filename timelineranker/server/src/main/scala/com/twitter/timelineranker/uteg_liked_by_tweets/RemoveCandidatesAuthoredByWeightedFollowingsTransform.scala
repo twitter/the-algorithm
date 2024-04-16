@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.ut l.Future
 
-object RemoveCandidatesAuthoredByWeightedFollowingsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults = envelope.query.utegLikedByTweetsOptions match {
-      case Some(opts) =>
-        envelope.searchResults.filterNot(isAuthorInWeightedFollowings(_, opts.weightedFollowings))
+object RemoveCand datesAuthoredBy  ghtedFollow ngsTransform
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val f lteredSearchResults = envelope.query.utegL kedByT etsOpt ons match {
+      case So (opts) =>
+        envelope.searchResults.f lterNot( sAuthor n  ghtedFollow ngs(_, opts.  ghtedFollow ngs))
       case None => envelope.searchResults
     }
-    Future.value(envelope.copy(searchResults = filteredSearchResults))
+    Future.value(envelope.copy(searchResults = f lteredSearchResults))
   }
 
-  private def isAuthorInWeightedFollowings(
-    searchResult: ThriftSearchResult,
-    weightedFollowings: Map[UserId, Double]
+  pr vate def  sAuthor n  ghtedFollow ngs(
+    searchResult: Thr ftSearchResult,
+      ghtedFollow ngs: Map[User d, Double]
   ): Boolean = {
-    searchResult.metadata match {
-      case Some(metadata) => weightedFollowings.contains(metadata.fromUserId)
+    searchResult. tadata match {
+      case So ( tadata) =>   ghtedFollow ngs.conta ns( tadata.fromUser d)
       case None => false
     }
   }

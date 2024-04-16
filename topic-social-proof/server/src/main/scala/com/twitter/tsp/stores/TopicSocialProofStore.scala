@@ -1,67 +1,67 @@
-package com.twitter.tsp.stores
+package com.tw ter.tsp.stores
 
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.tsp.stores.SemanticCoreAnnotationStore._
-import com.twitter.tsp.stores.TopicSocialProofStore.TopicSocialProof
-import com.twitter.util.Future
+ mport com.tw ter.tsp.stores.Top cT etsCos neS m lar yAggregateStore.ScoreKey
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.tsp.stores.Semant cCoreAnnotat onStore._
+ mport com.tw ter.tsp.stores.Top cSoc alProofStore.Top cSoc alProof
+ mport com.tw ter.ut l.Future
 
 /**
- * Provides a session-less Topic Social Proof information which doesn't rely on any User Info.
- * This store is used by MemCache and In-Memory cache to achieve a higher performance.
- * One Consumer embedding and Producer embedding are used to calculate raw score.
+ * Prov des a sess on-less Top c Soc al Proof  nformat on wh ch doesn't rely on any User  nfo.
+ * T  store  s used by  mCac  and  n- mory cac  to ach eve a h g r performance.
+ * One Consu r embedd ng and Producer embedd ng are used to calculate raw score.
  */
-case class TopicSocialProofStore(
-  representationScorerStore: ReadableStore[ScoreId, Score],
-  semanticCoreAnnotationStore: ReadableStore[TweetId, Seq[TopicAnnotation]]
+case class Top cSoc alProofStore(
+  representat onScorerStore: ReadableStore[Score d, Score],
+  semant cCoreAnnotat onStore: ReadableStore[T et d, Seq[Top cAnnotat on]]
 )(
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]] {
-  import TopicSocialProofStore._
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[Top cSoc alProofStore.Query, Seq[Top cSoc alProof]] {
+   mport Top cSoc alProofStore._
 
-  // Fetches the tweet's topic annotations from SemanticCore's Annotation API
-  override def get(query: TopicSocialProofStore.Query): Future[Option[Seq[TopicSocialProof]]] = {
-    StatsUtil.trackOptionStats(statsReceiver) {
+  // Fetc s t  t et's top c annotat ons from Semant cCore's Annotat on AP 
+  overr de def get(query: Top cSoc alProofStore.Query): Future[Opt on[Seq[Top cSoc alProof]]] = {
+    StatsUt l.trackOpt onStats(statsRece ver) {
       for {
-        annotations <-
-          StatsUtil.trackItemsStats(statsReceiver.scope("semanticCoreAnnotationStore")) {
-            semanticCoreAnnotationStore.get(query.cacheableQuery.tweetId).map(_.getOrElse(Nil))
+        annotat ons <-
+          StatsUt l.track emsStats(statsRece ver.scope("semant cCoreAnnotat onStore")) {
+            semant cCoreAnnotat onStore.get(query.cac ableQuery.t et d).map(_.getOrElse(N l))
           }
 
-        filteredAnnotations = filterAnnotationsByAllowList(annotations, query)
+        f lteredAnnotat ons = f lterAnnotat onsByAllowL st(annotat ons, query)
 
-        scoredTopics <-
-          StatsUtil.trackItemMapStats(statsReceiver.scope("scoreTopicTweetsTweetLanguage")) {
-            // de-dup identical topicIds
-            val uniqueTopicIds = filteredAnnotations.map { annotation =>
-              TopicId(annotation.topicId, Some(query.cacheableQuery.tweetLanguage), country = None)
+        scoredTop cs <-
+          StatsUt l.track emMapStats(statsRece ver.scope("scoreTop cT etsT etLanguage")) {
+            // de-dup  dent cal top c ds
+            val un queTop c ds = f lteredAnnotat ons.map { annotat on =>
+              Top c d(annotat on.top c d, So (query.cac ableQuery.t etLanguage), country = None)
             }.toSet
 
-            if (query.cacheableQuery.enableCosineSimilarityScoreCalculation) {
-              scoreTopicTweets(query.cacheableQuery.tweetId, uniqueTopicIds)
+             f (query.cac ableQuery.enableCos neS m lar yScoreCalculat on) {
+              scoreTop cT ets(query.cac ableQuery.t et d, un queTop c ds)
             } else {
-              Future.value(uniqueTopicIds.map(id => id -> Map.empty[ScoreKey, Double]).toMap)
+              Future.value(un queTop c ds.map( d =>  d -> Map.empty[ScoreKey, Double]).toMap)
             }
           }
 
-      } yield {
-        if (scoredTopics.nonEmpty) {
-          val versionedTopicProofs = filteredAnnotations.map { annotation =>
-            val topicId =
-              TopicId(annotation.topicId, Some(query.cacheableQuery.tweetLanguage), country = None)
+      } y eld {
+         f (scoredTop cs.nonEmpty) {
+          val vers onedTop cProofs = f lteredAnnotat ons.map { annotat on =>
+            val top c d =
+              Top c d(annotat on.top c d, So (query.cac ableQuery.t etLanguage), country = None)
 
-            TopicSocialProof(
-              topicId,
-              scores = scoredTopics.getOrElse(topicId, Map.empty),
-              annotation.ignoreSimClustersFilter,
-              annotation.modelVersionId
+            Top cSoc alProof(
+              top c d,
+              scores = scoredTop cs.getOrElse(top c d, Map.empty),
+              annotat on. gnoreS mClustersF lter,
+              annotat on.modelVers on d
             )
           }
-          Some(versionedTopicProofs)
+          So (vers onedTop cProofs)
         } else {
           None
         }
@@ -70,58 +70,58 @@ case class TopicSocialProofStore(
   }
 
   /***
-   * When the allowList is not empty (e.g., TSP handler call, CrTopic handler call),
-   * the filter will be enabled and we will only keep annotations that have versionIds existing
-   * in the input allowedSemanticCoreVersionIds set.
-   * But when the allowList is empty (e.g., some debugger calls),
-   * we will not filter anything and pass.
-   * We limit the number of versionIds to be K = MaxNumberVersionIds
+   * W n t  allowL st  s not empty (e.g., TSP handler call, CrTop c handler call),
+   * t  f lter w ll be enabled and   w ll only keep annotat ons that have vers on ds ex st ng
+   *  n t   nput allo dSemant cCoreVers on ds set.
+   * But w n t  allowL st  s empty (e.g., so  debugger calls),
+   *   w ll not f lter anyth ng and pass.
+   *   l m  t  number of vers on ds to be K = MaxNumberVers on ds
    */
-  private def filterAnnotationsByAllowList(
-    annotations: Seq[TopicAnnotation],
-    query: TopicSocialProofStore.Query
-  ): Seq[TopicAnnotation] = {
+  pr vate def f lterAnnotat onsByAllowL st(
+    annotat ons: Seq[Top cAnnotat on],
+    query: Top cSoc alProofStore.Query
+  ): Seq[Top cAnnotat on] = {
 
-    val trimmedVersionIds = query.allowedSemanticCoreVersionIds.take(MaxNumberVersionIds)
-    annotations.filter { annotation =>
-      trimmedVersionIds.isEmpty || trimmedVersionIds.contains(annotation.modelVersionId)
+    val tr m dVers on ds = query.allo dSemant cCoreVers on ds.take(MaxNumberVers on ds)
+    annotat ons.f lter { annotat on =>
+      tr m dVers on ds. sEmpty || tr m dVers on ds.conta ns(annotat on.modelVers on d)
     }
   }
 
-  private def scoreTopicTweets(
-    tweetId: TweetId,
-    topicIds: Set[TopicId]
-  ): Future[Map[TopicId, Map[ScoreKey, Double]]] = {
+  pr vate def scoreTop cT ets(
+    t et d: T et d,
+    top c ds: Set[Top c d]
+  ): Future[Map[Top c d, Map[ScoreKey, Double]]] = {
     Future.collect {
-      topicIds.map { topicId =>
-        val scoresFut = TopicTweetsCosineSimilarityAggregateStore.getRawScoresMap(
-          topicId,
-          tweetId,
-          TopicTweetsCosineSimilarityAggregateStore.DefaultScoreKeys,
-          representationScorerStore
+      top c ds.map { top c d =>
+        val scoresFut = Top cT etsCos neS m lar yAggregateStore.getRawScoresMap(
+          top c d,
+          t et d,
+          Top cT etsCos neS m lar yAggregateStore.DefaultScoreKeys,
+          representat onScorerStore
         )
-        topicId -> scoresFut
+        top c d -> scoresFut
       }.toMap
     }
   }
 }
 
-object TopicSocialProofStore {
+object Top cSoc alProofStore {
 
-  private val MaxNumberVersionIds = 9
+  pr vate val MaxNumberVers on ds = 9
 
   case class Query(
-    cacheableQuery: CacheableQuery,
-    allowedSemanticCoreVersionIds: Set[Long] = Set.empty) // overridden by FS
+    cac ableQuery: Cac ableQuery,
+    allo dSemant cCoreVers on ds: Set[Long] = Set.empty) // overr dden by FS
 
-  case class CacheableQuery(
-    tweetId: TweetId,
-    tweetLanguage: String,
-    enableCosineSimilarityScoreCalculation: Boolean = true)
+  case class Cac ableQuery(
+    t et d: T et d,
+    t etLanguage: Str ng,
+    enableCos neS m lar yScoreCalculat on: Boolean = true)
 
-  case class TopicSocialProof(
-    topicId: TopicId,
+  case class Top cSoc alProof(
+    top c d: Top c d,
     scores: Map[ScoreKey, Double],
-    ignoreSimClusterFiltering: Boolean,
-    semanticCoreVersionId: Long)
+     gnoreS mClusterF lter ng: Boolean,
+    semant cCoreVers on d: Long)
 }

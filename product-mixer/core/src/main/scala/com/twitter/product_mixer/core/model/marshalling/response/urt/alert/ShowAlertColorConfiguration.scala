@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color.RosettaColor
 
-case class ShowAlertColorConfiguration(
+case class ShowAlertColorConf gurat on(
   background: RosettaColor,
   text: RosettaColor,
-  border: Option[RosettaColor],
+  border: Opt on[RosettaColor],
 )

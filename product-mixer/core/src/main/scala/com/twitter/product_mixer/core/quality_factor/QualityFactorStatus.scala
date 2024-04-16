@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredQualityFactor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.M sconf guredQual yFactor
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
 
-case class QualityFactorStatus(
-  qualityFactorByPipeline: Map[ComponentIdentifier, QualityFactor[_]]) {
+case class Qual yFactorStatus(
+  qual yFactorByP pel ne: Map[Component dent f er, Qual yFactor[_]]) {
 
   /**
-   * returns a new [[QualityFactorStatus]] with all the elements of current QualityFactorStatus and `other`.
-   * If a [[ComponentIdentifier]] exists in both maps, the Value from `other` takes precedence
+   * returns a new [[Qual yFactorStatus]] w h all t  ele nts of current Qual yFactorStatus and `ot r`.
+   *  f a [[Component dent f er]] ex sts  n both maps, t  Value from `ot r` takes precedence
    */
-  def ++(other: QualityFactorStatus): QualityFactorStatus = {
-    if (other.qualityFactorByPipeline.isEmpty) {
-      this
-    } else if (qualityFactorByPipeline.isEmpty) {
-      other
+  def ++(ot r: Qual yFactorStatus): Qual yFactorStatus = {
+     f (ot r.qual yFactorByP pel ne. sEmpty) {
+      t 
+    } else  f (qual yFactorByP pel ne. sEmpty) {
+      ot r
     } else {
-      QualityFactorStatus(qualityFactorByPipeline ++ other.qualityFactorByPipeline)
+      Qual yFactorStatus(qual yFactorByP pel ne ++ ot r.qual yFactorByP pel ne)
     }
   }
 }
 
-object QualityFactorStatus {
-  def build[Identifier <: ComponentIdentifier](
-    qualityFactorConfigs: Map[Identifier, QualityFactorConfig]
-  ): QualityFactorStatus = {
-    QualityFactorStatus(
-      qualityFactorConfigs.map {
-        case (key, config: LinearLatencyQualityFactorConfig) =>
-          key -> LinearLatencyQualityFactor(config)
-        case (key, config: QueriesPerSecondBasedQualityFactorConfig) =>
-          key -> QueriesPerSecondBasedQualityFactor(config)
+object Qual yFactorStatus {
+  def bu ld[ dent f er <: Component dent f er](
+    qual yFactorConf gs: Map[ dent f er, Qual yFactorConf g]
+  ): Qual yFactorStatus = {
+    Qual yFactorStatus(
+      qual yFactorConf gs.map {
+        case (key, conf g: L nearLatencyQual yFactorConf g) =>
+          key -> L nearLatencyQual yFactor(conf g)
+        case (key, conf g: Quer esPerSecondBasedQual yFactorConf g) =>
+          key -> Quer esPerSecondBasedQual yFactor(conf g)
       }
     )
   }
 
-  val empty: QualityFactorStatus = QualityFactorStatus(Map.empty)
+  val empty: Qual yFactorStatus = Qual yFactorStatus(Map.empty)
 }
 
-trait HasQualityFactorStatus {
-  def qualityFactorStatus: Option[QualityFactorStatus] = None
-  def withQualityFactorStatus(qualityFactorStatus: QualityFactorStatus): PipelineQuery
+tra  HasQual yFactorStatus {
+  def qual yFactorStatus: Opt on[Qual yFactorStatus] = None
+  def w hQual yFactorStatus(qual yFactorStatus: Qual yFactorStatus): P pel neQuery
 
-  def getQualityFactorCurrentValue(
-    identifier: ComponentIdentifier
-  ): Double = getQualityFactor(identifier).currentValue
+  def getQual yFactorCurrentValue(
+     dent f er: Component dent f er
+  ): Double = getQual yFactor( dent f er).currentValue
 
-  def getQualityFactor(
-    identifier: ComponentIdentifier
-  ): QualityFactor[_] = qualityFactorStatus
-    .flatMap(_.qualityFactorByPipeline.get(identifier))
+  def getQual yFactor(
+     dent f er: Component dent f er
+  ): Qual yFactor[_] = qual yFactorStatus
+    .flatMap(_.qual yFactorByP pel ne.get( dent f er))
     .getOrElse {
-      throw PipelineFailure(
-        MisconfiguredQualityFactor,
-        s"Quality factor not configured for $identifier")
+      throw P pel neFa lure(
+        M sconf guredQual yFactor,
+        s"Qual y factor not conf gured for $ dent f er")
     }
 }

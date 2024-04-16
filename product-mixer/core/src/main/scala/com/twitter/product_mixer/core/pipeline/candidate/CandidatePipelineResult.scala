@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.tw ter.product_m xer.core.p pel ne.cand date
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neResult
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutorResults
+ mport com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor.Cand dateDecoratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.cand date_s ce_executor.Cand dateS ceExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
 
-case class CandidatePipelineResult(
-  candidateSourceIdentifier: CandidateSourceIdentifier,
-  gateResult: Option[GateExecutorResult],
-  queryFeatures: Option[QueryFeatureHydratorExecutor.Result],
-  queryFeaturesPhase2: Option[QueryFeatureHydratorExecutor.Result],
-  mergedAsyncQueryFeatures: Option[AsyncFeatureMap],
-  candidateSourceResult: Option[CandidateSourceExecutorResult[UniversalNoun[Any]]],
-  preFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  preFilterHydrationResultPhase2: Option[
-    CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]
+case class Cand dateP pel neResult(
+  cand dateS ce dent f er: Cand dateS ce dent f er,
+  gateResult: Opt on[GateExecutorResult],
+  queryFeatures: Opt on[QueryFeatureHydratorExecutor.Result],
+  queryFeaturesPhase2: Opt on[QueryFeatureHydratorExecutor.Result],
+   rgedAsyncQueryFeatures: Opt on[AsyncFeatureMap],
+  cand dateS ceResult: Opt on[Cand dateS ceExecutorResult[Un versalNoun[Any]]],
+  preF lterHydrat onResult: Opt on[Cand dateFeatureHydratorExecutorResult[Un versalNoun[Any]]],
+  preF lterHydrat onResultPhase2: Opt on[
+    Cand dateFeatureHydratorExecutorResult[Un versalNoun[Any]]
   ],
-  filterResult: Option[FilterExecutorResult[UniversalNoun[Any]]],
-  postFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  candidateDecoratorResult: Option[CandidateDecoratorExecutorResult],
-  scorersResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
-  failure: Option[PipelineFailure],
-  result: Option[Seq[CandidateWithDetails]])
-    extends PipelineResult[Seq[CandidateWithDetails]] {
+  f lterResult: Opt on[F lterExecutorResult[Un versalNoun[Any]]],
+  postF lterHydrat onResult: Opt on[Cand dateFeatureHydratorExecutorResult[Un versalNoun[Any]]],
+  cand dateDecoratorResult: Opt on[Cand dateDecoratorExecutorResult],
+  scorersResult: Opt on[Cand dateFeatureHydratorExecutorResult[Un versalNoun[Any]]],
+  asyncFeatureHydrat onResults: Opt on[AsyncFeatureMapExecutorResults],
+  fa lure: Opt on[P pel neFa lure],
+  result: Opt on[Seq[Cand dateW hDeta ls]])
+    extends P pel neResult[Seq[Cand dateW hDeta ls]] {
 
-  override def withFailure(failure: PipelineFailure): CandidatePipelineResult =
-    copy(failure = Some(failure))
+  overr de def w hFa lure(fa lure: P pel neFa lure): Cand dateP pel neResult =
+    copy(fa lure = So (fa lure))
 
-  override def withResult(
-    result: Seq[CandidateWithDetails]
-  ): CandidatePipelineResult = copy(result = Some(result))
+  overr de def w hResult(
+    result: Seq[Cand dateW hDeta ls]
+  ): Cand dateP pel neResult = copy(result = So (result))
 
-  override val resultSize: Int = result.map(PipelineResult.resultSize).getOrElse(0)
+  overr de val resultS ze:  nt = result.map(P pel neResult.resultS ze).getOrElse(0)
 }
 
-private[candidate] object IntermediateCandidatePipelineResult {
-  def empty[Candidate <: UniversalNoun[Any]](
-    candidateSourceIdentifier: CandidateSourceIdentifier
-  ): IntermediateCandidatePipelineResult[Candidate] = {
-    IntermediateCandidatePipelineResult(
-      CandidatePipelineResult(
-        candidateSourceIdentifier = candidateSourceIdentifier,
+pr vate[cand date] object  nter d ateCand dateP pel neResult {
+  def empty[Cand date <: Un versalNoun[Any]](
+    cand dateS ce dent f er: Cand dateS ce dent f er
+  ):  nter d ateCand dateP pel neResult[Cand date] = {
+     nter d ateCand dateP pel neResult(
+      Cand dateP pel neResult(
+        cand dateS ce dent f er = cand dateS ce dent f er,
         None,
         None,
         None,
@@ -72,22 +72,22 @@ private[candidate] object IntermediateCandidatePipelineResult {
   }
 }
 
-private[candidate] case class IntermediateCandidatePipelineResult[Candidate <: UniversalNoun[Any]](
-  underlyingResult: CandidatePipelineResult,
-  featureMaps: Option[Map[Candidate, FeatureMap]])
-    extends PipelineResult[Seq[CandidateWithDetails]] {
-  override val failure: Option[PipelineFailure] = underlyingResult.failure
-  override val result: Option[Seq[CandidateWithDetails]] = underlyingResult.result
+pr vate[cand date] case class  nter d ateCand dateP pel neResult[Cand date <: Un versalNoun[Any]](
+  underly ngResult: Cand dateP pel neResult,
+  featureMaps: Opt on[Map[Cand date, FeatureMap]])
+    extends P pel neResult[Seq[Cand dateW hDeta ls]] {
+  overr de val fa lure: Opt on[P pel neFa lure] = underly ngResult.fa lure
+  overr de val result: Opt on[Seq[Cand dateW hDeta ls]] = underly ngResult.result
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): IntermediateCandidatePipelineResult[Candidate] =
-    copy(underlyingResult = underlyingResult.withFailure(failure))
+  overr de def w hFa lure(
+    fa lure: P pel neFa lure
+  ):  nter d ateCand dateP pel neResult[Cand date] =
+    copy(underly ngResult = underly ngResult.w hFa lure(fa lure))
 
-  override def withResult(
-    result: Seq[CandidateWithDetails]
-  ): IntermediateCandidatePipelineResult[Candidate] =
-    copy(underlyingResult = underlyingResult.withResult(result))
+  overr de def w hResult(
+    result: Seq[Cand dateW hDeta ls]
+  ):  nter d ateCand dateP pel neResult[Cand date] =
+    copy(underly ngResult = underly ngResult.w hResult(result))
 
-  override def resultSize(): Int = underlyingResult.resultSize
+  overr de def resultS ze():  nt = underly ngResult.resultS ze
 }

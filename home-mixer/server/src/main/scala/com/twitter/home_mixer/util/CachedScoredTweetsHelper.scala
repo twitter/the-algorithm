@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+ mport com.tw ter.ho _m xer.model.Ho Features.Cac dScoredT etsFeature
+ mport com.tw ter.ho _m xer.{thr ftscala => hmt}
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.T  
 
-object CachedScoredTweetsHelper {
+object Cac dScoredT ets lper {
 
-  def tweetImpressionsAndCachedScoredTweets(
+  def t et mpress onsAndCac dScoredT ets(
     features: FeatureMap,
-    candidatePipelineIdentifier: CandidatePipelineIdentifier
+    cand dateP pel ne dent f er: Cand dateP pel ne dent f er
   ): Seq[Long] = {
-    val tweetImpressions = TweetImpressionsHelper.tweetImpressions(features)
-    val cachedScoredTweets = features
-      .getOrElse(CachedScoredTweetsFeature, Seq.empty)
-      .filter { tweet =>
-        tweet.candidatePipelineIdentifier.exists(
-          CandidatePipelineIdentifier(_).equals(candidatePipelineIdentifier))
-      }.map(_.tweetId)
+    val t et mpress ons = T et mpress ons lper.t et mpress ons(features)
+    val cac dScoredT ets = features
+      .getOrElse(Cac dScoredT etsFeature, Seq.empty)
+      .f lter { t et =>
+        t et.cand dateP pel ne dent f er.ex sts(
+          Cand dateP pel ne dent f er(_).equals(cand dateP pel ne dent f er))
+      }.map(_.t et d)
 
-    (tweetImpressions ++ cachedScoredTweets).toSeq
+    (t et mpress ons ++ cac dScoredT ets).toSeq
   }
 
-  def tweetImpressionsAndCachedScoredTweetsInRange(
+  def t et mpress onsAndCac dScoredT ets nRange(
     features: FeatureMap,
-    candidatePipelineIdentifier: CandidatePipelineIdentifier,
-    maxNumImpressions: Int,
-    sinceTime: Time,
-    untilTime: Time
+    cand dateP pel ne dent f er: Cand dateP pel ne dent f er,
+    maxNum mpress ons:  nt,
+    s nceT  : T  ,
+    unt lT  : T  
   ): Seq[Long] =
-    tweetImpressionsAndCachedScoredTweets(features, candidatePipelineIdentifier)
-      .filter { tweetId => SnowflakeId.isSnowflakeId(tweetId) }
-      .filter { tweetId =>
-        val creationTime = SnowflakeId.timeFromId(tweetId)
-        sinceTime <= creationTime && untilTime >= creationTime
-      }.take(maxNumImpressions)
+    t et mpress onsAndCac dScoredT ets(features, cand dateP pel ne dent f er)
+      .f lter { t et d => Snowflake d. sSnowflake d(t et d) }
+      .f lter { t et d =>
+        val creat onT   = Snowflake d.t  From d(t et d)
+        s nceT   <= creat onT   && unt lT   >= creat onT  
+      }.take(maxNum mpress ons)
 
-  def unseenCachedScoredTweets(
+  def unseenCac dScoredT ets(
     features: FeatureMap
-  ): Seq[hmt.ScoredTweet] = {
-    val seenTweetIds = TweetImpressionsHelper.tweetImpressions(features)
+  ): Seq[hmt.ScoredT et] = {
+    val seenT et ds = T et mpress ons lper.t et mpress ons(features)
 
     features
-      .getOrElse(CachedScoredTweetsFeature, Seq.empty)
-      .filter(tweet => !seenTweetIds.contains(tweet.tweetId))
+      .getOrElse(Cac dScoredT etsFeature, Seq.empty)
+      .f lter(t et => !seenT et ds.conta ns(t et.t et d))
   }
 }

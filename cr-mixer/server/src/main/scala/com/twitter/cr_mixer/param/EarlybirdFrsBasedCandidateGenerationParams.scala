@@ -1,117 +1,117 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_ModelBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_RecencyBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_TensorflowBased
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType_ModelBased
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType_RecencyBased
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType_TensorflowBased
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object EarlybirdFrsBasedCandidateGenerationParams {
-  object CandidateGenerationEarlybirdSimilarityEngineType extends Enumeration {
-    protected case class SimilarityEngineType(rankingMode: EarlybirdSimilarityEngineType)
+object Earlyb rdFrsBasedCand dateGenerat onParams {
+  object Cand dateGenerat onEarlyb rdS m lar yEng neType extends Enu rat on {
+    protected case class S m lar yEng neType(rank ngMode: Earlyb rdS m lar yEng neType)
         extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToEarlybirdRankingMode(x: Value): SimilarityEngineType =
-      x.asInstanceOf[SimilarityEngineType]
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToEarlyb rdRank ngMode(x: Value): S m lar yEng neType =
+      x.as nstanceOf[S m lar yEng neType]
 
-    val EarlybirdRankingMode_RecencyBased: SimilarityEngineType = SimilarityEngineType(
-      EarlybirdSimilarityEngineType_RecencyBased)
-    val EarlybirdRankingMode_ModelBased: SimilarityEngineType = SimilarityEngineType(
-      EarlybirdSimilarityEngineType_ModelBased)
-    val EarlybirdRankingMode_TensorflowBased: SimilarityEngineType = SimilarityEngineType(
-      EarlybirdSimilarityEngineType_TensorflowBased)
+    val Earlyb rdRank ngMode_RecencyBased: S m lar yEng neType = S m lar yEng neType(
+      Earlyb rdS m lar yEng neType_RecencyBased)
+    val Earlyb rdRank ngMode_ModelBased: S m lar yEng neType = S m lar yEng neType(
+      Earlyb rdS m lar yEng neType_ModelBased)
+    val Earlyb rdRank ngMode_TensorflowBased: S m lar yEng neType = S m lar yEng neType(
+      Earlyb rdS m lar yEng neType_TensorflowBased)
   }
 
-  object FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam
-      extends FSEnumParam[CandidateGenerationEarlybirdSimilarityEngineType.type](
-        name = "frs_based_candidate_generation_earlybird_ranking_mode_id",
+  object FrsBasedCand dateGenerat onEarlyb rdS m lar yEng neTypeParam
+      extends FSEnumParam[Cand dateGenerat onEarlyb rdS m lar yEng neType.type](
+        na  = "frs_based_cand date_generat on_earlyb rd_rank ng_mode_ d",
         default =
-          CandidateGenerationEarlybirdSimilarityEngineType.EarlybirdRankingMode_RecencyBased,
-        enum = CandidateGenerationEarlybirdSimilarityEngineType
+          Cand dateGenerat onEarlyb rdS m lar yEng neType.Earlyb rdRank ngMode_RecencyBased,
+        enum = Cand dateGenerat onEarlyb rdS m lar yEng neType
       )
 
-  object FrsBasedCandidateGenerationRecencyBasedEarlybirdMaxTweetsPerUser
-      extends FSBoundedParam[Int](
-        name = "frs_based_candidate_generation_earlybird_max_tweets_per_user",
+  object FrsBasedCand dateGenerat onRecencyBasedEarlyb rdMaxT etsPerUser
+      extends FSBoundedParam[ nt](
+        na  = "frs_based_cand date_generat on_earlyb rd_max_t ets_per_user",
         default = 100,
-        min = 0,
+        m n = 0,
         /**
-         * Note max should be equal to EarlybirdRecencyBasedCandidateStoreModule.DefaultMaxNumTweetPerUser.
-         * Which is the size of the memcached result list.
+         * Note max should be equal to Earlyb rdRecencyBasedCand dateStoreModule.DefaultMaxNumT etPerUser.
+         * Wh ch  s t  s ze of t   mcac d result l st.
          */
         max = 100
       )
 
-  object FrsBasedCandidateGenerationEarlybirdMaxTweetAge
-      extends FSBoundedParam[Duration](
-        name = "frs_based_candidate_generation_earlybird_max_tweet_age_hours",
-        default = 24.hours,
-        min = 12.hours,
+  object FrsBasedCand dateGenerat onEarlyb rdMaxT etAge
+      extends FSBoundedParam[Durat on](
+        na  = "frs_based_cand date_generat on_earlyb rd_max_t et_age_h s",
+        default = 24.h s,
+        m n = 12.h s,
         /**
-         * Note max could be related to EarlybirdRecencyBasedCandidateStoreModule.DefaultMaxNumTweetPerUser.
-         * Which is the size of the memcached result list for recency based earlybird candidate source.
-         * E.g. if max = 720.hours, we may want to increase the DefaultMaxNumTweetPerUser.
+         * Note max could be related to Earlyb rdRecencyBasedCand dateStoreModule.DefaultMaxNumT etPerUser.
+         * Wh ch  s t  s ze of t   mcac d result l st for recency based earlyb rd cand date s ce.
+         * E.g.  f max = 720.h s,   may want to  ncrease t  DefaultMaxNumT etPerUser.
          */
-        max = 96.hours
+        max = 96.h s
       )
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromH s
   }
 
-  object FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies
+  object FrsBasedCand dateGenerat onEarlyb rdF lterOutRet etsAndRepl es
       extends FSParam[Boolean](
-        name = "frs_based_candidate_generation_earlybird_filter_out_retweets_and_replies",
+        na  = "frs_based_cand date_generat on_earlyb rd_f lter_out_ret ets_and_repl es",
         default = true
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam,
-    FrsBasedCandidateGenerationRecencyBasedEarlybirdMaxTweetsPerUser,
-    FrsBasedCandidateGenerationEarlybirdMaxTweetAge,
-    FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    FrsBasedCand dateGenerat onEarlyb rdS m lar yEng neTypeParam,
+    FrsBasedCand dateGenerat onRecencyBasedEarlyb rdMaxT etsPerUser,
+    FrsBasedCand dateGenerat onEarlyb rdMaxT etAge,
+    FrsBasedCand dateGenerat onEarlyb rdF lterOutRet etsAndRepl es,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies,
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      FrsBasedCand dateGenerat onEarlyb rdF lterOutRet etsAndRepl es,
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des()
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      FrsBasedCandidateGenerationRecencyBasedEarlybirdMaxTweetsPerUser
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      FrsBasedCand dateGenerat onRecencyBasedEarlyb rdMaxT etsPerUser
     )
 
-    val durationFSOverrides =
-      FeatureSwitchOverrideUtil.getDurationFSOverrides(
-        FrsBasedCandidateGenerationEarlybirdMaxTweetAge
+    val durat onFSOverr des =
+      FeatureSw chOverr deUt l.getDurat onFSOverr des(
+        FrsBasedCand dateGenerat onEarlyb rdMaxT etAge
       )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam,
+      FrsBasedCand dateGenerat onEarlyb rdS m lar yEng neTypeParam,
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(durationFSOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(enumOverr des: _*)
+      .set(durat onFSOverr des: _*)
+      .bu ld()
   }
 }

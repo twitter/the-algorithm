@@ -1,140 +1,140 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.util.io.dl.DLRecordTimestampUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.segment.SegmentDataReaderSet;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common.ut l. o.dl.DLRecordT  stampUt l;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.seg nt.Seg ntDataReaderSet;
 
 /**
- * Indexes all updates for a complete segment at startup.
+ *  ndexes all updates for a complete seg nt at startup.
  */
-public class SimpleUpdateIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(SimpleUpdateIndexer.class);
+publ c class S mpleUpdate ndexer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(S mpleUpdate ndexer.class);
 
-  private final SegmentDataReaderSet readerSet;
-  private final SearchIndexingMetricSet partitionIndexingMetricSet;
-  private final InstrumentedQueue<ThriftVersionedEvents> retryQueue;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Seg ntDataReaderSet readerSet;
+  pr vate f nal Search ndex ng tr cSet part  on ndex ng tr cSet;
+  pr vate f nal  nstru ntedQueue<Thr ftVers onedEvents> retryQueue;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
-  public SimpleUpdateIndexer(SegmentDataReaderSet readerSet,
-                             SearchIndexingMetricSet partitionIndexingMetricSet,
-                             InstrumentedQueue<ThriftVersionedEvents> retryQueue,
-                             CriticalExceptionHandler criticalExceptionHandler) {
-    this.readerSet = readerSet;
-    this.partitionIndexingMetricSet = partitionIndexingMetricSet;
-    this.retryQueue = retryQueue;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  publ c S mpleUpdate ndexer(Seg ntDataReaderSet readerSet,
+                             Search ndex ng tr cSet part  on ndex ng tr cSet,
+                              nstru ntedQueue<Thr ftVers onedEvents> retryQueue,
+                             Cr  calExcept onHandler cr  calExcept onHandler) {
+    t .readerSet = readerSet;
+    t .part  on ndex ng tr cSet = part  on ndex ng tr cSet;
+    t .retryQueue = retryQueue;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
   }
 
   /**
-   * Indexes all updates for the given segment.
+   *  ndexes all updates for t  g ven seg nt.
    */
-  public void indexAllUpdates(SegmentInfo segmentInfo) {
-    Preconditions.checkState(
-        segmentInfo.isEnabled() && segmentInfo.isComplete() && !segmentInfo.isIndexing());
+  publ c vo d  ndexAllUpdates(Seg nt nfo seg nt nfo) {
+    Precond  ons.c ckState(
+        seg nt nfo. sEnabled() && seg nt nfo. sComplete() && !seg nt nfo. s ndex ng());
 
     try {
-      readerSet.attachUpdateReaders(segmentInfo);
-    } catch (IOException e) {
-      throw new RuntimeException("Could not attach readers for segment: " + segmentInfo, e);
+      readerSet.attachUpdateReaders(seg nt nfo);
+    } catch ( OExcept on e) {
+      throw new Runt  Except on("Could not attach readers for seg nt: " + seg nt nfo, e);
     }
 
-    RecordReader<ThriftVersionedEvents> reader =
-        readerSet.getUpdateEventsReaderForSegment(segmentInfo);
-    if (reader == null) {
+    RecordReader<Thr ftVers onedEvents> reader =
+        readerSet.getUpdateEventsReaderForSeg nt(seg nt nfo);
+     f (reader == null) {
       return;
     }
 
-    LOG.info("Got updates reader (starting timestamp = {}) for segment {}: {}",
-             DLRecordTimestampUtil.recordIDToTimestamp(reader.getOffset()),
-             segmentInfo.getSegmentName(),
+    LOG. nfo("Got updates reader (start ng t  stamp = {}) for seg nt {}: {}",
+             DLRecordT  stampUt l.record DToT  stamp(reader.getOffset()),
+             seg nt nfo.getSeg ntNa (),
              reader);
 
-    // The segment is complete (we check this in indexAllUpdates()), so we can safely get
-    // the smallest and largest tweet IDs in this segment.
-    long lowestTweetId = segmentInfo.getIndexSegment().getLowestTweetId();
-    long highestTweetId = segmentInfo.getIndexSegment().getHighestTweetId();
-    Preconditions.checkArgument(
-        lowestTweetId > 0,
-        "Could not get the lowest tweet ID in segment " + segmentInfo.getSegmentName());
-    Preconditions.checkArgument(
-        highestTweetId > 0,
-        "Could not get the highest tweet ID in segment " + segmentInfo.getSegmentName());
+    // T  seg nt  s complete (  c ck t   n  ndexAllUpdates()), so   can safely get
+    // t  smallest and largest t et  Ds  n t  seg nt.
+    long lo stT et d = seg nt nfo.get ndexSeg nt().getLo stT et d();
+    long h g stT et d = seg nt nfo.get ndexSeg nt().getH g stT et d();
+    Precond  ons.c ckArgu nt(
+        lo stT et d > 0,
+        "Could not get t  lo st t et  D  n seg nt " + seg nt nfo.getSeg ntNa ());
+    Precond  ons.c ckArgu nt(
+        h g stT et d > 0,
+        "Could not get t  h g st t et  D  n seg nt " + seg nt nfo.getSeg ntNa ());
 
-    SegmentWriter segmentWriter =
-        new SegmentWriter(segmentInfo, partitionIndexingMetricSet.updateFreshness);
+    Seg ntWr er seg ntWr er =
+        new Seg ntWr er(seg nt nfo, part  on ndex ng tr cSet.updateFreshness);
 
-    LOG.info("Starting to index updates for segment: {}", segmentInfo.getSegmentName());
+    LOG. nfo("Start ng to  ndex updates for seg nt: {}", seg nt nfo.getSeg ntNa ());
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    while (!Thread.currentThread().isInterrupted() && !reader.isCaughtUp()) {
-      applyUpdate(segmentInfo, reader, segmentWriter, lowestTweetId, highestTweetId);
+    wh le (!Thread.currentThread(). s nterrupted() && !reader. sCaughtUp()) {
+      applyUpdate(seg nt nfo, reader, seg ntWr er, lo stT et d, h g stT et d);
     }
 
-    LOG.info("Finished indexing updates for segment {} in {} seconds.",
-             segmentInfo.getSegmentName(),
-             stopwatch.elapsed(TimeUnit.SECONDS));
+    LOG. nfo("F n s d  ndex ng updates for seg nt {}  n {} seconds.",
+             seg nt nfo.getSeg ntNa (),
+             stopwatch.elapsed(T  Un .SECONDS));
   }
 
-  private void applyUpdate(SegmentInfo segmentInfo,
-                           RecordReader<ThriftVersionedEvents> reader,
-                           SegmentWriter segmentWriter,
-                           long lowestTweetId,
-                           long highestTweetId) {
-    ThriftVersionedEvents update;
+  pr vate vo d applyUpdate(Seg nt nfo seg nt nfo,
+                           RecordReader<Thr ftVers onedEvents> reader,
+                           Seg ntWr er seg ntWr er,
+                           long lo stT et d,
+                           long h g stT et d) {
+    Thr ftVers onedEvents update;
     try {
       update = reader.readNext();
-    } catch (IOException e) {
-      LOG.error("Exception while reading update for segment: " + segmentInfo.getSegmentName(), e);
-      criticalExceptionHandler.handle(this, e);
+    } catch ( OExcept on e) {
+      LOG.error("Except on wh le read ng update for seg nt: " + seg nt nfo.getSeg ntNa (), e);
+      cr  calExcept onHandler.handle(t , e);
       return;
     }
-    if (update == null) {
-      LOG.warn("Update is not available but reader was not caught up. Segment: {}",
-               segmentInfo.getSegmentName());
+     f (update == null) {
+      LOG.warn("Update  s not ava lable but reader was not caught up. Seg nt: {}",
+               seg nt nfo.getSeg ntNa ());
       return;
     }
 
     try {
-      // If the indexer put this update in the wrong timeslice, add it to the retry queue, and
-      // let PartitionIndexer retry it (it has logic to apply it to the correct segment).
-      if ((update.getId() < lowestTweetId) || (update.getId() > highestTweetId)) {
+      //  f t   ndexer put t  update  n t  wrong t  sl ce, add   to t  retry queue, and
+      // let Part  on ndexer retry   (  has log c to apply   to t  correct seg nt).
+       f ((update.get d() < lo stT et d) || (update.get d() > h g stT et d)) {
         retryQueue.add(update);
         return;
       }
 
-      // At this point, we are updating a segment that has every tweet it will ever have,
-      // (the segment is complete), so there is no point queueing an update to retry it.
-      SearchTimer timer = partitionIndexingMetricSet.updateStats.startNewTimer();
-      segmentWriter.indexThriftVersionedEvents(update);
-      partitionIndexingMetricSet.updateStats.stopTimerAndIncrement(timer);
+      // At t  po nt,   are updat ng a seg nt that has every t et   w ll ever have,
+      // (t  seg nt  s complete), so t re  s no po nt queue ng an update to retry  .
+      SearchT  r t  r = part  on ndex ng tr cSet.updateStats.startNewT  r();
+      seg ntWr er. ndexThr ftVers onedEvents(update);
+      part  on ndex ng tr cSet.updateStats.stopT  rAnd ncre nt(t  r);
 
-      updateUpdatesStreamTimestamp(segmentInfo);
-    } catch (IOException e) {
-      LOG.error("Exception while indexing updates for segment: " + segmentInfo.getSegmentName(), e);
-      criticalExceptionHandler.handle(this, e);
+      updateUpdatesStreamT  stamp(seg nt nfo);
+    } catch ( OExcept on e) {
+      LOG.error("Except on wh le  ndex ng updates for seg nt: " + seg nt nfo.getSeg ntNa (), e);
+      cr  calExcept onHandler.handle(t , e);
     }
   }
 
-  private void updateUpdatesStreamTimestamp(SegmentInfo segmentInfo) {
-    Optional<Long> offset = readerSet.getUpdateEventsStreamOffsetForSegment(segmentInfo);
-    if (!offset.isPresent()) {
-      LOG.info("Unable to get updates stream offset for segment: {}", segmentInfo.getSegmentName());
+  pr vate vo d updateUpdatesStreamT  stamp(Seg nt nfo seg nt nfo) {
+    Opt onal<Long> offset = readerSet.getUpdateEventsStreamOffsetForSeg nt(seg nt nfo);
+     f (!offset. sPresent()) {
+      LOG. nfo("Unable to get updates stream offset for seg nt: {}", seg nt nfo.getSeg ntNa ());
     } else {
-      long offsetTimeMillis = DLRecordTimestampUtil.recordIDToTimestamp(offset.get());
-      segmentInfo.setUpdatesStreamOffsetTimestamp(offsetTimeMillis);
+      long offsetT  M ll s = DLRecordT  stampUt l.record DToT  stamp(offset.get());
+      seg nt nfo.setUpdatesStreamOffsetT  stamp(offsetT  M ll s);
     }
   }
 }

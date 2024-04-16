@@ -1,55 +1,55 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.limiter.thriftscala.FeatureRequest
-import com.twitter.limiter.thriftscala.Usage
-import com.twitter.limiter.{thriftscala => ls}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.l m er.thr ftscala.FeatureRequest
+ mport com.tw ter.l m er.thr ftscala.Usage
+ mport com.tw ter.l m er.{thr ftscala => ls}
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.ut l.RetryPol cyBu lder
 
-object LimiterBackend {
-  import Backend._
+object L m erBackend {
+   mport Backend._
 
-  type IncrementFeature = FutureArrow[(ls.FeatureRequest, Int), Unit]
+  type  ncre ntFeature = FutureArrow[(ls.FeatureRequest,  nt), Un ]
   type GetFeatureUsage = FutureArrow[ls.FeatureRequest, ls.Usage]
 
-  def fromClient(client: ls.LimitService.MethodPerEndpoint): LimiterBackend =
-    new LimiterBackend {
-      val incrementFeature: IncrementFeature =
+  def fromCl ent(cl ent: ls.L m Serv ce. thodPerEndpo nt): L m erBackend =
+    new L m erBackend {
+      val  ncre ntFeature:  ncre ntFeature =
         FutureArrow {
-          case (featureReq, amount) => client.incrementFeature(featureReq, amount).unit
+          case (featureReq, amount) => cl ent. ncre ntFeature(featureReq, amount).un 
         }
 
       val getFeatureUsage: GetFeatureUsage =
-        FutureArrow(featureReq => client.getLimitUsage(None, Some(featureReq)))
+        FutureArrow(featureReq => cl ent.getL m Usage(None, So (featureReq)))
     }
 
-  case class Config(requestTimeout: Duration, timeoutBackoffs: Stream[Duration]) {
+  case class Conf g(requestT  out: Durat on, t  outBackoffs: Stream[Durat on]) {
 
-    def apply(client: LimiterBackend, ctx: Backend.Context): LimiterBackend =
-      new LimiterBackend {
-        val incrementFeature: FutureArrow[(FeatureRequest, Int), Unit] =
-          policy("incrementFeature", requestTimeout, ctx)(client.incrementFeature)
+    def apply(cl ent: L m erBackend, ctx: Backend.Context): L m erBackend =
+      new L m erBackend {
+        val  ncre ntFeature: FutureArrow[(FeatureRequest,  nt), Un ] =
+          pol cy(" ncre ntFeature", requestT  out, ctx)(cl ent. ncre ntFeature)
         val getFeatureUsage: FutureArrow[FeatureRequest, Usage] =
-          policy("getFeatureUsage", requestTimeout, ctx)(client.getFeatureUsage)
+          pol cy("getFeatureUsage", requestT  out, ctx)(cl ent.getFeatureUsage)
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
+    pr vate[t ] def pol cy[A, B](
+      na : Str ng,
+      requestT  out: Durat on,
       ctx: Context
-    ): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    ): Bu lder[A, B] =
+      defaultPol cy(na , requestT  out, retryPol cy, ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)
+    pr vate[t ] def retryPol cy[B]: RetryPol cy[Try[B]] =
+      RetryPol cyBu lder.t  outs[Any](t  outBackoffs)
   }
 }
 
-trait LimiterBackend {
-  import LimiterBackend._
+tra  L m erBackend {
+   mport L m erBackend._
 
-  val incrementFeature: IncrementFeature
+  val  ncre ntFeature:  ncre ntFeature
   val getFeatureUsage: GetFeatureUsage
 }

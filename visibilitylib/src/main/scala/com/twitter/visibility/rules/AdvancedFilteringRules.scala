@@ -1,71 +1,71 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.gizmoduck.thriftscala.MentionFilter.Following
-import com.twitter.visibility.features.ViewerMentionFilter
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Unspecified
+ mport com.tw ter.g zmoduck.thr ftscala. nt onF lter.Follow ng
+ mport com.tw ter.v s b l y.features.V e r nt onF lter
+ mport com.tw ter.v s b l y.rules.Cond  on._
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
 
-object NoConfirmedEmailRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+object NoConf r dEma lRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNoConfirmedEmail,
-        Not(AuthorHasConfirmedEmail)
+        NonAuthorV e r,
+        Not(V e rDoesFollowAuthor),
+        V e rF ltersNoConf r dEma l,
+        Not(AuthorHasConf r dEma l)
       )
     )
 
-object NoConfirmedPhoneRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+object NoConf r dPhoneRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNoConfirmedPhone,
-        Not(AuthorHasVerifiedPhone)
+        NonAuthorV e r,
+        Not(V e rDoesFollowAuthor),
+        V e rF ltersNoConf r dPhone,
+        Not(AuthorHasVer f edPhone)
       )
     )
 
-object NoDefaultProfileImageRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+object NoDefaultProf le mageRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersDefaultProfileImage,
-        AuthorHasDefaultProfileImage
+        NonAuthorV e r,
+        Not(V e rDoesFollowAuthor),
+        V e rF ltersDefaultProf le mage,
+        AuthorHasDefaultProf le mage
       )
     )
 
 object NoNewUsersRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        AuthorIsNewAccount
+        NonAuthorV e r,
+        Not(V e rDoesFollowAuthor),
+        Author sNewAccount
       )
     )
 
-object NoNotFollowedByRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+object NoNotFollo dByRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNotFollowedBy,
-        Not(AuthorDoesFollowViewer)
+        NonAuthorV e r,
+        Not(V e rDoesFollowAuthor),
+        V e rF ltersNotFollo dBy,
+        Not(AuthorDoesFollowV e r)
       )
     )
 
-object OnlyPeopleIFollowRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+object OnlyPeople FollowRule
+    extends RuleW hConstantAct on(
+      Drop(Unspec f ed),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        Equals(ViewerMentionFilter, Following),
-        Not(NotificationIsOnCommunityTweet)
+        NonAuthorV e r,
+        Not(V e rDoesFollowAuthor),
+        Equals(V e r nt onF lter, Follow ng),
+        Not(Not f cat on sOnCommun yT et)
       )
     )

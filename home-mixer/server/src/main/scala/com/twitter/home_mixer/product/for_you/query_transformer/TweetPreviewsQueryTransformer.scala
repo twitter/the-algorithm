@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.product.for_you.query_transformer
+package com.tw ter.ho _m xer.product.for_ .query_transfor r
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.PreviewCreatorsFeature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.ranking.{thriftscala => scr}
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.search.queryparser.query.Conjunction
-import com.twitter.search.queryparser.query.Query
-import com.twitter.search.queryparser.query.search.SearchOperator
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.Prev ewCreatorsFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.search.common.rank ng.{thr ftscala => scr}
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
+ mport com.tw ter.search.queryparser.query.Conjunct on
+ mport com.tw ter.search.queryparser.query.Query
+ mport com.tw ter.search.queryparser.query.search.SearchOperator
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetPreviewsQueryTransformer @Inject() (clientId: ClientId)
-    extends CandidatePipelineQueryTransformer[PipelineQuery, t.EarlybirdRequest] {
+@S ngleton
+class T etPrev ewsQueryTransfor r @ nject() (cl ent d: Cl ent d)
+    extends Cand dateP pel neQueryTransfor r[P pel neQuery, t.Earlyb rdRequest] {
 
-  private val MaxPreviewTweets = 200
-  private val EarlybirdRelevanceTensorflowModel = "timelines_rectweet_replica"
-  private val SinceDuration = 7.days
+  pr vate val MaxPrev ewT ets = 200
+  pr vate val Earlyb rdRelevanceTensorflowModel = "t  l nes_rect et_repl ca"
+  pr vate val S nceDurat on = 7.days
 
-  val MetadataOptions = t.ThriftSearchResultMetadataOptions(
-    getReferencedTweetAuthorId = true,
-    getFromUserId = true
+  val  tadataOpt ons = t.Thr ftSearchResult tadataOpt ons(
+    getReferencedT etAuthor d = true,
+    getFromUser d = true
   )
 
-  override def transform(query: PipelineQuery): t.EarlybirdRequest = {
-    val candidatePreviewCreatorIds =
-      query.features.map(_.get(PreviewCreatorsFeature)).getOrElse(Seq.empty)
+  overr de def transform(query: P pel neQuery): t.Earlyb rdRequest = {
+    val cand datePrev ewCreator ds =
+      query.features.map(_.get(Prev ewCreatorsFeature)).getOrElse(Seq.empty)
 
-    val searchQuery = new Conjunction(
-      // Include subscriber only (aka exclusive) Tweets
-      new SearchOperator.Builder()
-        .setType(SearchOperator.Type.FILTER)
-        .addOperand(EarlybirdFieldConstant.EXCLUSIVE_FILTER_TERM)
-        .build(),
-      // Include only original Tweets
-      new SearchOperator.Builder()
-        .setType(SearchOperator.Type.FILTER)
-        .addOperand(EarlybirdFieldConstant.NATIVE_RETWEETS_FILTER_TERM)
+    val searchQuery = new Conjunct on(
+      //  nclude subscr ber only (aka exclus ve) T ets
+      new SearchOperator.Bu lder()
+        .setType(SearchOperator.Type.F LTER)
+        .addOperand(Earlyb rdF eldConstant.EXCLUS VE_F LTER_TERM)
+        .bu ld(),
+      //  nclude only or g nal T ets
+      new SearchOperator.Bu lder()
+        .setType(SearchOperator.Type.F LTER)
+        .addOperand(Earlyb rdF eldConstant.NAT VE_RETWEETS_F LTER_TERM)
         .setOccur(Query.Occur.MUST_NOT)
-        .build(),
-      new SearchOperator.Builder()
-        .setType(SearchOperator.Type.FILTER)
-        .addOperand(EarlybirdFieldConstant.REPLIES_FILTER_TERM)
+        .bu ld(),
+      new SearchOperator.Bu lder()
+        .setType(SearchOperator.Type.F LTER)
+        .addOperand(Earlyb rdF eldConstant.REPL ES_F LTER_TERM)
         .setOccur(Query.Occur.MUST_NOT)
-        .build(),
-      new SearchOperator.Builder()
-        .setType(SearchOperator.Type.FILTER)
-        .addOperand(EarlybirdFieldConstant.QUOTE_FILTER_TERM)
+        .bu ld(),
+      new SearchOperator.Bu lder()
+        .setType(SearchOperator.Type.F LTER)
+        .addOperand(Earlyb rdF eldConstant.QUOTE_F LTER_TERM)
         .setOccur(Query.Occur.MUST_NOT)
-        .build(),
-      new SearchOperator(SearchOperator.Type.SINCE_TIME, SinceDuration.ago.inSeconds.toString)
+        .bu ld(),
+      new SearchOperator(SearchOperator.Type.S NCE_T ME, S nceDurat on.ago. nSeconds.toStr ng)
     )
 
-    t.EarlybirdRequest(
-      searchQuery = t.ThriftSearchQuery(
-        serializedQuery = Some(searchQuery.serialize),
-        fromUserIDFilter64 = Some(candidatePreviewCreatorIds),
-        numResults = MaxPreviewTweets,
-        rankingMode = t.ThriftSearchRankingMode.Relevance,
-        relevanceOptions = Some(
-          t.ThriftSearchRelevanceOptions(
-            filterDups = true,
-            keepDupWithHigherScore = true,
-            proximityScoring = true,
-            maxConsecutiveSameUser = Some(5),
-            rankingParams = Some(
-              scr.ThriftRankingParams(
-                `type` = Some(scr.ThriftScoringFunctionType.TensorflowBased),
-                selectedTensorflowModel = Some(EarlybirdRelevanceTensorflowModel),
-                minScore = -1.0e100,
+    t.Earlyb rdRequest(
+      searchQuery = t.Thr ftSearchQuery(
+        ser al zedQuery = So (searchQuery.ser al ze),
+        fromUser DF lter64 = So (cand datePrev ewCreator ds),
+        numResults = MaxPrev ewT ets,
+        rank ngMode = t.Thr ftSearchRank ngMode.Relevance,
+        relevanceOpt ons = So (
+          t.Thr ftSearchRelevanceOpt ons(
+            f lterDups = true,
+            keepDupW hH g rScore = true,
+            prox m yScor ng = true,
+            maxConsecut veSa User = So (5),
+            rank ngParams = So (
+              scr.Thr ftRank ngParams(
+                `type` = So (scr.Thr ftScor ngFunct onType.TensorflowBased),
+                selectedTensorflowModel = So (Earlyb rdRelevanceTensorflowModel),
+                m nScore = -1.0e100,
                 applyBoosts = false,
               )
             ),
           ),
         ),
-        resultMetadataOptions = Some(MetadataOptions),
-        searcherId = query.getOptionalUserId,
+        result tadataOpt ons = So ( tadataOpt ons),
+        searc r d = query.getOpt onalUser d,
       ),
-      getOlderResults = Some(true), // needed for archive access to older tweets
-      clientRequestID = Some(s"${Trace.id.traceId}"),
-      followedUserIds = Some(candidatePreviewCreatorIds.toSeq),
-      numResultsToReturnAtRoot = Some(MaxPreviewTweets),
-      clientId = Some(clientId.name),
+      getOlderResults = So (true), // needed for arch ve access to older t ets
+      cl entRequest D = So (s"${Trace. d.trace d}"),
+      follo dUser ds = So (cand datePrev ewCreator ds.toSeq),
+      numResultsToReturnAtRoot = So (MaxPrev ewT ets),
+      cl ent d = So (cl ent d.na ),
     )
   }
 }

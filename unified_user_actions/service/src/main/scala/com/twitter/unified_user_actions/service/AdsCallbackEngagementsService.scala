@@ -1,25 +1,25 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.service.module.KafkaProcessorAdsCallbackEngagementsModule
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter. nject.server.Tw terServer
+ mport com.tw ter.kafka.cl ent.processor.AtLeastOnceProcessor
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorAdsCallbackEngage ntsModule
 
-object AdsCallbackEngagementsServiceMain extends AdsCallbackEngagementsService
+object AdsCallbackEngage ntsServ ceMa n extends AdsCallbackEngage ntsServ ce
 
-class AdsCallbackEngagementsService extends TwitterServer {
-  override val modules = Seq(
-    KafkaProcessorAdsCallbackEngagementsModule,
-    DeciderModule
+class AdsCallbackEngage ntsServ ce extends Tw terServer {
+  overr de val modules = Seq(
+    KafkaProcessorAdsCallbackEngage ntsModule,
+    Dec derModule
   )
 
-  override protected def setup(): Unit = {}
+  overr de protected def setup(): Un  = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, SpendServerEvent]]
-    closeOnExit(processor)
+  overr de protected def start(): Un  = {
+    val processor =  njector. nstance[AtLeastOnceProcessor[UnKeyed, SpendServerEvent]]
+    closeOnEx (processor)
     processor.start()
   }
 }

@@ -1,5 +1,5 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-object TimelinesOnlineAggregationSources {
-  val timelinesOnlineAggregateSource = new TimelinesStormAggregateSource
+object T  l nesOnl neAggregat onS ces {
+  val t  l nesOnl neAggregateS ce = new T  l nesStormAggregateS ce
 }

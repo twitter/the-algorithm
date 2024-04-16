@@ -1,13 +1,13 @@
-package com.twitter.representation_manager.modules
+package com.tw ter.representat on_manager.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Timer
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ut l.T  r
+ mport javax. nject.S ngleton
 
-object TimerModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesTimer: Timer = DefaultTimer
+object T  rModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desT  r: T  r = DefaultT  r
 }

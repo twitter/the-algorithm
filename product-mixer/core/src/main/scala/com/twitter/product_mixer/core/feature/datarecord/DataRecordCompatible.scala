@@ -1,316 +1,316 @@
-package com.twitter.product_mixer.core.feature.datarecord
+package com.tw ter.product_m xer.core.feature.datarecord
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.thriftscala.GeneralTensor
-import com.twitter.ml.api.thriftscala.StringTensor
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{GeneralTensor => JGeneralTensor}
-import com.twitter.ml.api.{RawTypedTensor => JRawTypedTensor}
-import com.twitter.ml.api.{Feature => MlFeature}
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.util.{Map => JMap}
-import java.util.{Set => JSet}
-import java.lang.{Long => JLong}
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .DataType
+ mport com.tw ter.ml.ap .thr ftscala.GeneralTensor
+ mport com.tw ter.ml.ap .thr ftscala.Str ngTensor
+ mport com.tw ter.ml.ap .ut l.ScalaToJavaDataRecordConvers ons
+ mport com.tw ter.ml.ap .{GeneralTensor => JGeneralTensor}
+ mport com.tw ter.ml.ap .{RawTypedTensor => JRawTypedTensor}
+ mport com.tw ter.ml.ap .{Feature => MlFeature}
+ mport java.n o.ByteBuffer
+ mport java.n o.ByteOrder
+ mport java.ut l.{Map => JMap}
+ mport java.ut l.{Set => JSet}
+ mport java.lang.{Long => JLong}
+ mport java.lang.{Boolean => JBoolean}
+ mport java.lang.{Double => JDouble}
+ mport scala.collect on.JavaConverters._
 
 /**
- * Defines a conversion function for customers to mix-in when constructing a DataRecord supported
- * feature. We do this because the ML Feature representation is written in Java and uses Java types.
- * Furthermore, allowing customers to construct their own ML Feature directly can leave room
- * for mistyping errors, such as using a Double ML Feature on a String Product Mixer feature.
- * This mix in enforces that the customer only uses the right types, while making it easier
- * to setup a DataRecord Feature with nothing but a feature name and personal data types.
- * @tparam FeatureValueType The type of the underlying Product Mixer feature value.
+ * Def nes a convers on funct on for custo rs to m x- n w n construct ng a DataRecord supported
+ * feature.   do t  because t  ML Feature representat on  s wr ten  n Java and uses Java types.
+ * Furt rmore, allow ng custo rs to construct t  r own ML Feature d rectly can leave room
+ * for m styp ng errors, such as us ng a Double ML Feature on a Str ng Product M xer feature.
+ * T  m x  n enforces that t  custo r only uses t  r ght types, wh le mak ng   eas er
+ * to setup a DataRecord Feature w h noth ng but a feature na  and personal data types.
+ * @tparam FeatureValueType T  type of t  underly ng Product M xer feature value.
  */
-sealed trait DataRecordCompatible[FeatureValueType] {
-  // The feature value type in ProMix.
-  final type FeatureType = FeatureValueType
-  // The underlying DataRecord value type, sometimes this differs from the Feature Store and ProMix type.
+sealed tra  DataRecordCompat ble[FeatureValueType] {
+  // T  feature value type  n ProM x.
+  f nal type FeatureType = FeatureValueType
+  // T  underly ng DataRecord value type, so t  s t  d ffers from t  Feature Store and ProM x type.
   type DataRecordType
 
-  def featureName: String
+  def featureNa : Str ng
   def personalDataTypes: Set[PersonalDataType]
 
-  private[product_mixer] def mlFeature: MlFeature[DataRecordType]
+  pr vate[product_m xer] def mlFeature: MlFeature[DataRecordType]
 
   /**
-   * To & from Data Record value converters. In most cases, this is one to one when the types match
-   * but in some cases, certain features are modeled as different types in Data Record. For example,
-   * some features that are Long (e.g, such as TweepCred) are sometimes stored as Doubles.
+   * To & from Data Record value converters.  n most cases, t   s one to one w n t  types match
+   * but  n so  cases, certa n features are modeled as d fferent types  n Data Record. For example,
+   * so  features that are Long (e.g, such as T epCred) are so t  s stored as Doubles.
    */
-  private[product_mixer] def toDataRecordFeatureValue(featureValue: FeatureType): DataRecordType
-  private[product_mixer] def fromDataRecordFeatureValue(featureValue: DataRecordType): FeatureType
+  pr vate[product_m xer] def toDataRecordFeatureValue(featureValue: FeatureType): DataRecordType
+  pr vate[product_m xer] def fromDataRecordFeatureValue(featureValue: DataRecordType): FeatureType
 
 }
 
 /**
- * Converter for going from String feature value to String ML Feature.
+ * Converter for go ng from Str ng feature value to Str ng ML Feature.
  */
-trait StringDataRecordCompatible extends DataRecordCompatible[String] {
-  override type DataRecordType = String
+tra  Str ngDataRecordCompat ble extends DataRecordCompat ble[Str ng] {
+  overr de type DataRecordType = Str ng
 
-  final override lazy val mlFeature: MlFeature[String] =
-    new MlFeature.Text(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[Str ng] =
+    new MlFeature.Text(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: String
-  ): String = featureValue
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
+    featureValue: Str ng
+  ): Str ng = featureValue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: String
-  ): String = featureValue
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
+    featureValue: Str ng
+  ): Str ng = featureValue
 }
 
 /**
- * Converter for going from Long feature value to Discrete/Long ML Feature.
+ * Converter for go ng from Long feature value to D screte/Long ML Feature.
  */
-trait LongDiscreteDataRecordCompatible extends DataRecordCompatible[Long] {
-  override type DataRecordType = JLong
+tra  LongD screteDataRecordCompat ble extends DataRecordCompat ble[Long] {
+  overr de type DataRecordType = JLong
 
-  final override lazy val mlFeature: MlFeature[JLong] =
-    new Feature.Discrete(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JLong] =
+    new Feature.D screte(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JLong
   ): Long = featureValue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: Long
   ): JLong = featureValue
 }
 
 /**
- * Converter for going from Long feature value to Continuous/Double ML Feature.
+ * Converter for go ng from Long feature value to Cont nuous/Double ML Feature.
  */
-trait LongContinuousDataRecordCompatible extends DataRecordCompatible[Long] {
-  override type DataRecordType = JDouble
+tra  LongCont nuousDataRecordCompat ble extends DataRecordCompat ble[Long] {
+  overr de type DataRecordType = JDouble
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new Feature.Continuous(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JDouble] =
+    new Feature.Cont nuous(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: FeatureType
   ): JDouble = featureValue.toDouble
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JDouble
   ): Long = featureValue.longValue()
 }
 
 /**
- * Converter for going from an Integer feature value to Long/Discrete ML Feature.
+ * Converter for go ng from an  nteger feature value to Long/D screte ML Feature.
  */
-trait IntDiscreteDataRecordCompatible extends DataRecordCompatible[Int] {
-  override type DataRecordType = JLong
+tra   ntD screteDataRecordCompat ble extends DataRecordCompat ble[ nt] {
+  overr de type DataRecordType = JLong
 
-  final override lazy val mlFeature: MlFeature[JLong] =
-    new MlFeature.Discrete(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JLong] =
+    new MlFeature.D screte(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JLong
-  ): Int = featureValue.toInt
+  ):  nt = featureValue.to nt
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Int
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
+    featureValue:  nt
   ): JLong = featureValue.toLong
 }
 
 /**
- * Converter for going from Integer feature value to Continuous/Double ML Feature.
+ * Converter for go ng from  nteger feature value to Cont nuous/Double ML Feature.
  */
-trait IntContinuousDataRecordCompatible extends DataRecordCompatible[Int] {
-  override type DataRecordType = JDouble
+tra   ntCont nuousDataRecordCompat ble extends DataRecordCompat ble[ nt] {
+  overr de type DataRecordType = JDouble
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new Feature.Continuous(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JDouble] =
+    new Feature.Cont nuous(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Int
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
+    featureValue:  nt
   ): JDouble = featureValue.toDouble
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JDouble
-  ): Int = featureValue.toInt
+  ):  nt = featureValue.to nt
 }
 
 /**
- * Converter for going from Double feature value to Continuous/Double ML Feature.
+ * Converter for go ng from Double feature value to Cont nuous/Double ML Feature.
  */
-trait DoubleDataRecordCompatible extends DataRecordCompatible[Double] {
-  override type DataRecordType = JDouble
+tra  DoubleDataRecordCompat ble extends DataRecordCompat ble[Double] {
+  overr de type DataRecordType = JDouble
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new MlFeature.Continuous(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JDouble] =
+    new MlFeature.Cont nuous(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JDouble
   ): Double = featureValue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: Double
   ): JDouble = featureValue
 }
 
 /**
- * Converter for going from Boolean feature value to Boolean ML Feature.
+ * Converter for go ng from Boolean feature value to Boolean ML Feature.
  */
-trait BoolDataRecordCompatible extends DataRecordCompatible[Boolean] {
-  override type DataRecordType = JBoolean
+tra  BoolDataRecordCompat ble extends DataRecordCompat ble[Boolean] {
+  overr de type DataRecordType = JBoolean
 
-  final override lazy val mlFeature: MlFeature[JBoolean] =
-    new MlFeature.Binary(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JBoolean] =
+    new MlFeature.B nary(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JBoolean
   ): Boolean = featureValue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: Boolean
   ): JBoolean = featureValue
 }
 
 /**
- * Converter for going from a ByteBuffer feature value to ByteBuffer ML Feature.
+ * Converter for go ng from a ByteBuffer feature value to ByteBuffer ML Feature.
  */
-trait BlobDataRecordCompatible extends DataRecordCompatible[ByteBuffer] {
-  override type DataRecordType = ByteBuffer
+tra  BlobDataRecordCompat ble extends DataRecordCompat ble[ByteBuffer] {
+  overr de type DataRecordType = ByteBuffer
 
-  final override lazy val mlFeature: MlFeature[ByteBuffer] =
-    new Feature.Blob(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[ByteBuffer] =
+    new Feature.Blob(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: ByteBuffer
   ): ByteBuffer = featureValue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: ByteBuffer
   ): ByteBuffer = featureValue
 }
 
 /**
- * Converter for going from a Map[String, Double] feature value to Sparse Double/Continious ML Feature.
+ * Converter for go ng from a Map[Str ng, Double] feature value to Sparse Double/Cont n ous ML Feature.
  */
-trait SparseContinuousDataRecordCompatible extends DataRecordCompatible[Map[String, Double]] {
-  override type DataRecordType = JMap[String, JDouble]
+tra  SparseCont nuousDataRecordCompat ble extends DataRecordCompat ble[Map[Str ng, Double]] {
+  overr de type DataRecordType = JMap[Str ng, JDouble]
 
-  final override lazy val mlFeature: MlFeature[JMap[String, JDouble]] =
-    new Feature.SparseContinuous(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JMap[Str ng, JDouble]] =
+    new Feature.SparseCont nuous(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Map[String, Double]
-  ): JMap[String, JDouble] =
-    featureValue.mapValues(_.asInstanceOf[JDouble]).asJava
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
+    featureValue: Map[Str ng, Double]
+  ): JMap[Str ng, JDouble] =
+    featureValue.mapValues(_.as nstanceOf[JDouble]).asJava
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JMap[String, JDouble]
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
+    featureValue: JMap[Str ng, JDouble]
   ) = featureValue.asScala.toMap.mapValues(_.doubleValue())
 }
 
 /**
- * Converter for going from a Set[String] feature value to SparseBinary/String Set ML Feature.
+ * Converter for go ng from a Set[Str ng] feature value to SparseB nary/Str ng Set ML Feature.
  */
-trait SparseBinaryDataRecordCompatible extends DataRecordCompatible[Set[String]] {
-  override type DataRecordType = JSet[String]
+tra  SparseB naryDataRecordCompat ble extends DataRecordCompat ble[Set[Str ng]] {
+  overr de type DataRecordType = JSet[Str ng]
 
-  final override lazy val mlFeature: MlFeature[JSet[String]] =
-    new Feature.SparseBinary(featureName, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JSet[Str ng]] =
+    new Feature.SparseB nary(featureNa , personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JSet[String]
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
+    featureValue: JSet[Str ng]
   ) = featureValue.asScala.toSet
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: FeatureType
-  ): JSet[String] = featureValue.asJava
+  ): JSet[Str ng] = featureValue.asJava
 }
 
 /**
- * Marker trait for any feature value to Tensor ML Feature. Not directly usable.
+ * Marker tra  for any feature value to Tensor ML Feature. Not d rectly usable.
  */
-sealed trait TensorDataRecordCompatible[FeatureV] extends DataRecordCompatible[FeatureV] {
-  override type DataRecordType = JGeneralTensor
-  override def mlFeature: MlFeature[JGeneralTensor]
+sealed tra  TensorDataRecordCompat ble[FeatureV] extends DataRecordCompat ble[FeatureV] {
+  overr de type DataRecordType = JGeneralTensor
+  overr de def mlFeature: MlFeature[JGeneralTensor]
 }
 
 /**
  * Converter for a double to a Tensor feature encoded as float encoded RawTypedTensor
  */
-trait RawTensorFloatDoubleDataRecordCompatible extends TensorDataRecordCompatible[Double] {
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
+tra  RawTensorFloatDoubleDataRecordCompat ble extends TensorDataRecordCompat ble[Double] {
+  f nal overr de lazy val mlFeature: MlFeature[JGeneralTensor] =
     new Feature.Tensor(
-      featureName,
+      featureNa ,
       DataType.FLOAT,
-      List.empty[JLong].asJava,
+      L st.empty[JLong].asJava,
       personalDataTypes.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: FeatureType
   ) = {
     val byteBuffer: ByteBuffer =
       ByteBuffer
-        .allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(featureValue.toFloat)
-    byteBuffer.flip()
+        .allocate(4).order(ByteOrder.L TTLE_END AN).putFloat(featureValue.toFloat)
+    byteBuffer.fl p()
     val tensor = new JGeneralTensor()
     tensor.setRawTypedTensor(new JRawTypedTensor(DataType.FLOAT, byteBuffer))
     tensor
   }
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JGeneralTensor
   ) = {
-    val tensor = Option(featureValue.getRawTypedTensor)
-      .getOrElse(throw new UnexpectedTensorException(featureValue))
-    tensor.content.order(ByteOrder.LITTLE_ENDIAN).getFloat().toDouble
+    val tensor = Opt on(featureValue.getRawTypedTensor)
+      .getOrElse(throw new UnexpectedTensorExcept on(featureValue))
+    tensor.content.order(ByteOrder.L TTLE_END AN).getFloat().toDouble
   }
 }
 
 /**
  *  Converter for a scala general tensor to java general tensor ML feature.
  */
-trait GeneralTensorDataRecordCompatible extends TensorDataRecordCompatible[GeneralTensor] {
+tra  GeneralTensorDataRecordCompat ble extends TensorDataRecordCompat ble[GeneralTensor] {
 
   def dataType: DataType
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(featureName, dataType, List.empty[JLong].asJava, personalDataTypes.asJava)
+  f nal overr de lazy val mlFeature: MlFeature[JGeneralTensor] =
+    new Feature.Tensor(featureNa , dataType, L st.empty[JLong].asJava, personalDataTypes.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: FeatureType
-  ) = ScalaToJavaDataRecordConversions.scalaTensor2Java(featureValue)
+  ) = ScalaToJavaDataRecordConvers ons.scalaTensor2Java(featureValue)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JGeneralTensor
-  ) = ScalaToJavaDataRecordConversions.javaTensor2Scala(featureValue)
+  ) = ScalaToJavaDataRecordConvers ons.javaTensor2Scala(featureValue)
 }
 
 /**
- *  Converter for a scala string tensor to java general tensor ML feature.
+ *  Converter for a scala str ng tensor to java general tensor ML feature.
  */
-trait StringTensorDataRecordCompatible extends TensorDataRecordCompatible[StringTensor] {
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
+tra  Str ngTensorDataRecordCompat ble extends TensorDataRecordCompat ble[Str ngTensor] {
+  f nal overr de lazy val mlFeature: MlFeature[JGeneralTensor] =
     new Feature.Tensor(
-      featureName,
-      DataType.STRING,
-      List.empty[JLong].asJava,
+      featureNa ,
+      DataType.STR NG,
+      L st.empty[JLong].asJava,
       personalDataTypes.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def fromDataRecordFeatureValue(
     featureValue: JGeneralTensor
   ) = {
-    ScalaToJavaDataRecordConversions.javaTensor2Scala(featureValue) match {
-      case GeneralTensor.StringTensor(stringTensor) => stringTensor
-      case _ => throw new UnexpectedTensorException(featureValue)
+    ScalaToJavaDataRecordConvers ons.javaTensor2Scala(featureValue) match {
+      case GeneralTensor.Str ngTensor(str ngTensor) => str ngTensor
+      case _ => throw new UnexpectedTensorExcept on(featureValue)
     }
   }
 
-  override private[product_mixer] def toDataRecordFeatureValue(
+  overr de pr vate[product_m xer] def toDataRecordFeatureValue(
     featureValue: FeatureType
-  ) = ScalaToJavaDataRecordConversions.scalaTensor2Java(GeneralTensor.StringTensor(featureValue))
+  ) = ScalaToJavaDataRecordConvers ons.scalaTensor2Java(GeneralTensor.Str ngTensor(featureValue))
 }
 
-class UnexpectedTensorException(tensor: JGeneralTensor)
-    extends Exception(s"Unexpected Tensor: $tensor")
+class UnexpectedTensorExcept on(tensor: JGeneralTensor)
+    extends Except on(s"Unexpected Tensor: $tensor")

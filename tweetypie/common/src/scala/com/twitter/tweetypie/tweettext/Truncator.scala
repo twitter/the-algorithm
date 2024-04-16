@@ -1,159 +1,159 @@
-package com.twitter.tweetypie.tweettext
+package com.tw ter.t etyp e.t ettext
 
-import com.twitter.tweetypie.tweettext.TweetText._
-import com.twitter.twittertext.Extractor
-import java.lang.Character
-import scala.annotation.tailrec
-import scala.collection.JavaConverters._
+ mport com.tw ter.t etyp e.t ettext.T etText._
+ mport com.tw ter.tw tertext.Extractor
+ mport java.lang.Character
+ mport scala.annotat on.ta lrec
+ mport scala.collect on.JavaConverters._
 
 object Truncator {
-  val Ellipsis = "\u2026"
+  val Ell ps s = "\u2026"
 
   /**
-   * Truncate tweet text for a retweet. If the text is longer than
-   * either of the length limits, code points are cut off from the end
-   * of the text and replaced with an ellipsis. We keep as much of the
-   * leading text as possible, subject to these constraints:
+   * Truncate t et text for a ret et.  f t  text  s longer than
+   * e  r of t  length l m s, code po nts are cut off from t  end
+   * of t  text and replaced w h an ell ps s.   keep as much of t 
+   * lead ng text as poss ble, subject to t se constra nts:
    *
-   * - There are no more than `MaxDisplayLength` characters.
+   * - T re are no more than `MaxD splayLength` characters.
    *
-   * - When converted to UTF-8, the result does not exceed `MaxByteLength`.
+   * - W n converted to UTF-8, t  result does not exceed `MaxByteLength`.
    *
-   * - We do not break within a single grapheme cluster.
+   * -   do not break w h n a s ngle grap   cluster.
    *
-   * The input is assumed to be partial HTML-encoded and may or may
-   * not be NFC normalized. The result will be partial HTML-encoded
-   * and will be NFC normalized.
+   * T   nput  s assu d to be part al HTML-encoded and may or may
+   * not be NFC normal zed. T  result w ll be part al HTML-encoded
+   * and w ll be NFC normal zed.
    */
-  def truncateForRetweet(input: String): String = truncateWithEllipsis(input, Ellipsis)
+  def truncateForRet et( nput: Str ng): Str ng = truncateW hEll ps s( nput, Ell ps s)
 
   /**
-   * Truncate to [[com.twitter.tweetypie.tweettext.TweetText#OrginalMaxDisplayLength]] display
-   * units, using "..." as an ellipsis. The resulting text is guaranteed to pass our tweet length
-   * check, but it is not guaranteed to fit in a SMS message.
+   * Truncate to [[com.tw ter.t etyp e.t ettext.T etText#Org nalMaxD splayLength]] d splay
+   * un s, us ng "..." as an ell ps s. T  result ng text  s guaranteed to pass   t et length
+   * c ck, but    s not guaranteed to f   n a SMS  ssage.
    */
-  def truncateForSms(input: String): String = truncateWithEllipsis(input, "...")
+  def truncateForSms( nput: Str ng): Str ng = truncateW hEll ps s( nput, "...")
 
   /**
-   * Check the length of the given text, and truncate it if it is longer
-   * than the allowed length for a Tweet. The result of this method will
+   * C ck t  length of t  g ven text, and truncate    f    s longer
+   * than t  allo d length for a T et. T  result of t   thod w ll
    * always have:
    *
-   * - Display length <= OriginalMaxDisplayLength.
-   * - Length when encoded as UTF-8 <= OriginalMaxUtf8Length.
+   * - D splay length <= Or g nalMaxD splayLength.
+   * - Length w n encoded as UTF-8 <= Or g nalMaxUtf8Length.
    *
-   * If the input would violate this, then the text will be
-   * truncated. When the text is truncated, it will be truncated such
+   *  f t   nput would v olate t , t n t  text w ll be
+   * truncated. W n t  text  s truncated,   w ll be truncated such
    * that:
    *
-   * - Grapheme clusters will not be split.
-   * - The last character before the ellipsis will not be a whitespace
+   * - Grap   clusters w ll not be spl .
+   * - T  last character before t  ell ps s w ll not be a wh espace
    *   character.
-   * - The ellipsis text will be appended to the end.
+   * - T  ell ps s text w ll be appended to t  end.
    */
-  private[this] def truncateWithEllipsis(input: String, ellipsis: String): String = {
-    val text = nfcNormalize(input)
+  pr vate[t ] def truncateW hEll ps s( nput: Str ng, ell ps s: Str ng): Str ng = {
+    val text = nfcNormal ze( nput)
     val truncateAt =
-      truncationPoint(text, OriginalMaxDisplayLength, OriginalMaxUtf8Length, Some(ellipsis))
-    if (truncateAt.codeUnitOffset.toInt == text.length) text
-    else text.take(truncateAt.codeUnitOffset.toInt) + ellipsis
+      truncat onPo nt(text, Or g nalMaxD splayLength, Or g nalMaxUtf8Length, So (ell ps s))
+     f (truncateAt.codeUn Offset.to nt == text.length) text
+    else text.take(truncateAt.codeUn Offset.to nt) + ell ps s
   }
 
   /**
-   * Indicates a potential TruncationPoint in piece of text.
+   *  nd cates a potent al Truncat onPo nt  n p ece of text.
    *
-   * @param charOffset the utf-16 character offset of the truncation point
-   * @param codePointOffset the offset in code points
+   * @param charOffset t  utf-16 character offset of t  truncat on po nt
+   * @param codePo ntOffset t  offset  n code po nts
    */
-  case class TruncationPoint(codeUnitOffset: Offset.CodeUnit, codePointOffset: Offset.CodePoint)
+  case class Truncat onPo nt(codeUn Offset: Offset.CodeUn , codePo ntOffset: Offset.CodePo nt)
 
   /**
-   * Computes a TruncationPoint for the given text and length constraints.  If `truncated` on
-   * the result is `false`, it means the text will fit within the given constraints without
-   * truncation.  Otherwise, the result indicates both the character and code-point offsets
-   * at which to perform the truncation, and the resulting display length and byte length of
-   * the truncated string.
+   * Computes a Truncat onPo nt for t  g ven text and length constra nts.   f `truncated` on
+   * t  result  s `false`,    ans t  text w ll f  w h n t  g ven constra nts w hout
+   * truncat on.  Ot rw se, t  result  nd cates both t  character and code-po nt offsets
+   * at wh ch to perform t  truncat on, and t  result ng d splay length and byte length of
+   * t  truncated str ng.
    *
-   * Text should be NFC normalized first for best results.
+   * Text should be NFC normal zed f rst for best results.
    *
-   * @param withEllipsis if true, then the truncation point will be computed so that there is space
-   * to append an ellipsis and to still remain within the limits.  The ellipsis is not counted
-   * in the returned display and byte lengths.
+   * @param w hEll ps s  f true, t n t  truncat on po nt w ll be computed so that t re  s space
+   * to append an ell ps s and to st ll rema n w h n t  l m s.  T  ell ps s  s not counted
+   *  n t  returned d splay and byte lengths.
    *
-   * @param atomicUnits may contain a list of ranges that should be treated as atomic unit and
-   * not split.  each tuple is half-open range in code points.
+   * @param atom cUn s may conta n a l st of ranges that should be treated as atom c un  and
+   * not spl .  each tuple  s half-open range  n code po nts.
    */
-  def truncationPoint(
-    text: String,
-    maxDisplayLength: Int = OriginalMaxDisplayLength,
-    maxByteLength: Int = OriginalMaxUtf8Length,
-    withEllipsis: Option[String] = None,
-    atomicUnits: Offset.Ranges[Offset.CodePoint] = Offset.Ranges.Empty
-  ): TruncationPoint = {
-    val breakPoints =
-      GraphemeIndexIterator
+  def truncat onPo nt(
+    text: Str ng,
+    maxD splayLength:  nt = Or g nalMaxD splayLength,
+    maxByteLength:  nt = Or g nalMaxUtf8Length,
+    w hEll ps s: Opt on[Str ng] = None,
+    atom cUn s: Offset.Ranges[Offset.CodePo nt] = Offset.Ranges.Empty
+  ): Truncat onPo nt = {
+    val breakPo nts =
+      Grap   ndex erator
         .ends(text)
-        .filterNot(Offset.Ranges.htmlEntities(text).contains)
+        .f lterNot(Offset.Ranges.htmlEnt  es(text).conta ns)
 
-    val ellipsisDisplayUnits =
-      withEllipsis.map(Offset.DisplayUnit.length).getOrElse(Offset.DisplayUnit(0))
-    val maxTruncatedDisplayLength = Offset.DisplayUnit(maxDisplayLength) - ellipsisDisplayUnits
+    val ell ps sD splayUn s =
+      w hEll ps s.map(Offset.D splayUn .length).getOrElse(Offset.D splayUn (0))
+    val maxTruncatedD splayLength = Offset.D splayUn (maxD splayLength) - ell ps sD splayUn s
 
-    val ellipsisByteLength = withEllipsis.map(Offset.Utf8.length).getOrElse(Offset.Utf8(0))
-    val maxTruncatedByteLength = Offset.Utf8(maxByteLength) - ellipsisByteLength
+    val ell ps sByteLength = w hEll ps s.map(Offset.Utf8.length).getOrElse(Offset.Utf8(0))
+    val maxTruncatedByteLength = Offset.Utf8(maxByteLength) - ell ps sByteLength
 
-    var codeUnit = Offset.CodeUnit(0)
-    var codePoint = Offset.CodePoint(0)
-    var displayLength = Offset.DisplayUnit(0)
+    var codeUn  = Offset.CodeUn (0)
+    var codePo nt = Offset.CodePo nt(0)
+    var d splayLength = Offset.D splayUn (0)
     var byteLength = Offset.Utf8(0)
-    var truncateCodeUnit = codeUnit
-    var truncateCodePoint = codePoint
+    var truncateCodeUn  = codeUn 
+    var truncateCodePo nt = codePo nt
 
-    @tailrec def go(): TruncationPoint =
-      if (displayLength.toInt > maxDisplayLength || byteLength.toInt > maxByteLength) {
-        TruncationPoint(truncateCodeUnit, truncateCodePoint)
-      } else if (codeUnit != truncateCodeUnit &&
-        displayLength <= maxTruncatedDisplayLength &&
+    @ta lrec def go(): Truncat onPo nt =
+       f (d splayLength.to nt > maxD splayLength || byteLength.to nt > maxByteLength) {
+        Truncat onPo nt(truncateCodeUn , truncateCodePo nt)
+      } else  f (codeUn  != truncateCodeUn  &&
+        d splayLength <= maxTruncatedD splayLength &&
         byteLength <= maxTruncatedByteLength &&
-        (codeUnit.toInt == 0 || !Character.isWhitespace(text.codePointBefore(codeUnit.toInt))) &&
-        !atomicUnits.contains(codePoint)) {
-        // we can advance the truncation point
-        truncateCodeUnit = codeUnit
-        truncateCodePoint = codePoint
+        (codeUn .to nt == 0 || !Character. sWh espace(text.codePo ntBefore(codeUn .to nt))) &&
+        !atom cUn s.conta ns(codePo nt)) {
+        //   can advance t  truncat on po nt
+        truncateCodeUn  = codeUn 
+        truncateCodePo nt = codePo nt
         go()
-      } else if (breakPoints.hasNext) {
-        // there are further truncation points to consider
-        val nextCodeUnit = breakPoints.next
-        codePoint += Offset.CodePoint.count(text, codeUnit, nextCodeUnit)
-        displayLength += Offset.DisplayUnit.count(text, codeUnit, nextCodeUnit)
-        byteLength += Offset.Utf8.count(text, codeUnit, nextCodeUnit)
-        codeUnit = nextCodeUnit
+      } else  f (breakPo nts.hasNext) {
+        // t re are furt r truncat on po nts to cons der
+        val nextCodeUn  = breakPo nts.next
+        codePo nt += Offset.CodePo nt.count(text, codeUn , nextCodeUn )
+        d splayLength += Offset.D splayUn .count(text, codeUn , nextCodeUn )
+        byteLength += Offset.Utf8.count(text, codeUn , nextCodeUn )
+        codeUn  = nextCodeUn 
         go()
       } else {
-        TruncationPoint(codeUnit, codePoint)
+        Truncat onPo nt(codeUn , codePo nt)
       }
 
     go()
   }
 
   /**
-   * Truncate the given text, avoiding chopping HTML entities and tweet
-   * entities. This should only be used for testing because it performs
-   * entity extraction, and so is very inefficient.
+   * Truncate t  g ven text, avo d ng chopp ng HTML ent  es and t et
+   * ent  es. T  should only be used for test ng because   performs
+   * ent y extract on, and so  s very  neff c ent.
    */
   def truncateForTests(
-    input: String,
-    maxDisplayLength: Int = OriginalMaxDisplayLength,
-    maxByteLength: Int = OriginalMaxUtf8Length
-  ): String = {
-    val text = nfcNormalize(input)
+     nput: Str ng,
+    maxD splayLength:  nt = Or g nalMaxD splayLength,
+    maxByteLength:  nt = Or g nalMaxUtf8Length
+  ): Str ng = {
+    val text = nfcNormal ze( nput)
     val extractor = new Extractor
-    val entities = extractor.extractEntitiesWithIndices(text)
-    extractor.modifyIndicesFromUTF16ToUnicode(text, entities)
-    val avoid = Offset.Ranges.fromCodePointPairs(
-      entities.asScala.map(e => (e.getStart().intValue, e.getEnd().intValue))
+    val ent  es = extractor.extractEnt  esW h nd ces(text)
+    extractor.mod fy nd cesFromUTF16ToUn code(text, ent  es)
+    val avo d = Offset.Ranges.fromCodePo ntPa rs(
+      ent  es.asScala.map(e => (e.getStart(). ntValue, e.getEnd(). ntValue))
     )
-    val truncateAt = truncationPoint(text, maxDisplayLength, maxByteLength, None, avoid)
-    text.take(truncateAt.codeUnitOffset.toInt)
+    val truncateAt = truncat onPo nt(text, maxD splayLength, maxByteLength, None, avo d)
+    text.take(truncateAt.codeUn Offset.to nt)
   }
 }

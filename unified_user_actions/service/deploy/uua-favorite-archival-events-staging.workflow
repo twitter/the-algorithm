@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-favorite-archival-events-staging",
-  "config-files": [
-    "uua-favorite-archival-events.aurora"
+  "role": "d scode",
+  "na ": "uua-favor e-arch val-events-stag ng",
+  "conf g-f les": [
+    "uua-favor e-arch val-events.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-favorite-archival-events"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-favor e-arch val-events"
       },
       {
         "type": "packer",
-        "name": "uua-favorite-archival-events-staging",
-        "artifact": "./dist/uua-favorite-archival-events.zip"
+        "na ": "uua-favor e-arch val-events-stag ng",
+        "art fact": "./d st/uua-favor e-arch val-events.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-favorite-archival-events-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-favorite-archival-events"
+          "na ": "uua-favor e-arch val-events-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-favor e-arch val-events"
         }
       ]
     }

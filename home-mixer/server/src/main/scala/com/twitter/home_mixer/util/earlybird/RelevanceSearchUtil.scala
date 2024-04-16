@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.util.earlybird
+package com.tw ter.ho _m xer.ut l.earlyb rd
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => eb}
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
 
-object RelevanceSearchUtil {
+object RelevanceSearchUt l {
 
-  val Mentions: String = EarlybirdFieldConstant.MENTIONS_FACET
-  val Hashtags: String = EarlybirdFieldConstant.HASHTAGS_FACET
-  val FacetsToFetch: Seq[String] = Seq(Mentions, Hashtags)
+  val  nt ons: Str ng = Earlyb rdF eldConstant.MENT ONS_FACET
+  val Hashtags: Str ng = Earlyb rdF eldConstant.HASHTAGS_FACET
+  val FacetsToFetch: Seq[Str ng] = Seq( nt ons, Hashtags)
 
-  val MetadataOptions: eb.ThriftSearchResultMetadataOptions = {
-    eb.ThriftSearchResultMetadataOptions(
-      getTweetUrls = true,
-      getResultLocation = false,
+  val  tadataOpt ons: eb.Thr ftSearchResult tadataOpt ons = {
+    eb.Thr ftSearchResult tadataOpt ons(
+      getT etUrls = true,
+      getResultLocat on = false,
       getLuceneScore = false,
-      getInReplyToStatusId = true,
-      getReferencedTweetAuthorId = true,
-      getMediaBits = true,
+      get nReplyToStatus d = true,
+      getReferencedT etAuthor d = true,
+      get d aB s = true,
       getAllFeatures = true,
       returnSearchResultFeatures = true,
-      // Set getExclusiveConversationAuthorId in order to retrieve Exclusive / SuperFollow tweets.
-      getExclusiveConversationAuthorId = true
+      // Set getExclus veConversat onAuthor d  n order to retr eve Exclus ve / SuperFollow t ets.
+      getExclus veConversat onAuthor d = true
     )
   }
 
-  val RelevanceOptions: eb.ThriftSearchRelevanceOptions = {
-    eb.ThriftSearchRelevanceOptions(
-      proximityScoring = true,
-      maxConsecutiveSameUser = Some(2),
-      rankingParams = None,
-      maxHitsToProcess = Some(500),
-      maxUserBlendCount = Some(3),
-      proximityPhraseWeight = 9.0,
-      returnAllResults = Some(true)
+  val RelevanceOpt ons: eb.Thr ftSearchRelevanceOpt ons = {
+    eb.Thr ftSearchRelevanceOpt ons(
+      prox m yScor ng = true,
+      maxConsecut veSa User = So (2),
+      rank ngParams = None,
+      maxH sToProcess = So (500),
+      maxUserBlendCount = So (3),
+      prox m yPhrase  ght = 9.0,
+      returnAllResults = So (true)
     )
   }
 }

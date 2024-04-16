@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.util.tweetypie.content
+package com.tw ter.ho _m xer.ut l.t etyp e.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tp}
+ mport com.tw ter.ho _m xer.model.ContentFeatures
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
 
-object FeatureExtractionHelper {
+object FeatureExtract on lper {
 
   def extractFeatures(
-    tweet: tp.Tweet
+    t et: tp.T et
   ): ContentFeatures = {
-    val contentFeaturesFromTweet = ContentFeatures.Empty.copy(
-      selfThreadMetadata = tweet.selfThreadMetadata
+    val contentFeaturesFromT et = ContentFeatures.Empty.copy(
+      selfThread tadata = t et.selfThread tadata
     )
 
-    val contentFeaturesWithText = TweetTextFeaturesExtractor.addTextFeaturesFromTweet(
-      contentFeaturesFromTweet,
-      tweet
+    val contentFeaturesW hText = T etTextFeaturesExtractor.addTextFeaturesFromT et(
+      contentFeaturesFromT et,
+      t et
     )
-    val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
-      contentFeaturesWithText,
-      tweet
+    val contentFeaturesW h d a = T et d aFeaturesExtractor.add d aFeaturesFromT et(
+      contentFeaturesW hText,
+      t et
     )
 
-    contentFeaturesWithMedia.copy(
-      conversationControl = tweet.conversationControl,
-      semanticCoreAnnotations = tweet.escherbirdEntityAnnotations.map(_.entityAnnotations)
+    contentFeaturesW h d a.copy(
+      conversat onControl = t et.conversat onControl,
+      semant cCoreAnnotat ons = t et.esc rb rdEnt yAnnotat ons.map(_.ent yAnnotat ons)
     )
   }
 }

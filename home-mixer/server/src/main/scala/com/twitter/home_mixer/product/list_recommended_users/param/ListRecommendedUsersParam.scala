@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+package com.tw ter.ho _m xer.product.l st_recom nded_users.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
 
-object ListRecommendedUsersParam {
-  val SupportedClientFSName = "list_recommended_users_supported_client"
+object L stRecom ndedUsersParam {
+  val SupportedCl entFSNa  = "l st_recom nded_users_supported_cl ent"
 
   object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "list_recommended_users_server_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "l st_recom nded_users_server_max_results",
         default = 10,
-        min = 1,
+        m n = 1,
         max = 500
       )
 
-  object ExcludedIdsMaxLengthParam
-      extends FSBoundedParam[Int](
-        name = "list_recommended_users_excluded_ids_max_length",
+  object Excluded dsMaxLengthParam
+      extends FSBoundedParam[ nt](
+        na  = "l st_recom nded_users_excluded_ ds_max_length",
         default = 2000,
-        min = 0,
+        m n = 0,
         max = 5000
       )
 }

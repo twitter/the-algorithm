@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle
 
-sealed trait ArticleDisplayType
+sealed tra  Art cleD splayType
 
-case object Default extends ArticleDisplayType
+case object Default extends Art cleD splayType

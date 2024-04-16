@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.timelinescorer.{thriftscala => t}
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.t  l nescorer.{thr ftscala => t}
+ mport com.tw ter.ut l.Durat on
 
-object TimelineScorerClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.TimelineScorer.ServicePerEndpoint,
-      t.TimelineScorer.MethodPerEndpoint
+object T  l neScorerCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      t.T  l neScorer.Serv cePerEndpo nt,
+      t.T  l neScorer. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "timeline-scorer"
-  override val dest = "/s/timelinescorer/timelinescorer"
+  overr de val label = "t  l ne-scorer"
+  overr de val dest = "/s/t  l nescorer/t  l nescorer"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(2000.millis)
-      .withTimeoutTotal(4000.millis)
-      .idempotent(1.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(2000.m ll s)
+      .w hT  outTotal(4000.m ll s)
+      . dempotent(1.percent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

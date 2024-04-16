@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "content-recommender/thrift/src/main/thrift:thrift-scala",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/recos:recos-common-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "conf gap /conf gap -core",
+        "content-recom nder/thr ft/src/ma n/thr ft:thr ft-scala",
+        "cr-m xer/thr ft/src/ma n/thr ft:thr ft-scala",
+        "product-m xer/core/src/ma n/thr ft/com/tw ter/product_m xer/core:thr ft-scala",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/thr ft/com/tw ter/core_workflows/user_model:user_model-scala",
+        "src/thr ft/com/tw ter/recos:recos-common-scala",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )

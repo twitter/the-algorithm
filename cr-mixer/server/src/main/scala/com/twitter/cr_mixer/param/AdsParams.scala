@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
 object AdsParams {
-  object AdsCandidateGenerationMaxCandidatesNumParam
-      extends FSBoundedParam[Int](
-        name = "ads_candidate_generation_max_candidates_num",
+  object AdsCand dateGenerat onMaxCand datesNumParam
+      extends FSBoundedParam[ nt](
+        na  = "ads_cand date_generat on_max_cand dates_num",
         default = 400,
-        min = 0,
+        m n = 0,
         max = 2000
       )
 
   object EnableScoreBoost
       extends FSParam[Boolean](
-        name = "ads_candidate_generation_enable_score_boost",
+        na  = "ads_cand date_generat on_enable_score_boost",
         default = false
       )
 
-  object AdsCandidateGenerationScoreBoostFactor
+  object AdsCand dateGenerat onScoreBoostFactor
       extends FSBoundedParam[Double](
-        name = "ads_candidate_generation_score_boost_factor",
+        na  = "ads_cand date_generat on_score_boost_factor",
         default = 10000.0,
-        min = 1.0,
+        m n = 1.0,
         max = 100000.0
       )
 
-  object EnableScribe
+  object EnableScr be
       extends FSParam[Boolean](
-        name = "ads_candidate_generation_enable_scribe",
+        na  = "ads_cand date_generat on_enable_scr be",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    AdsCandidateGenerationMaxCandidatesNumParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    AdsCand dateGenerat onMaxCand datesNumParam,
     EnableScoreBoost,
-    AdsCandidateGenerationScoreBoostFactor
+    AdsCand dateGenerat onScoreBoostFactor
   )
 
-  lazy val config: BaseConfig = {
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      AdsCandidateGenerationMaxCandidatesNumParam)
+  lazy val conf g: BaseConf g = {
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      AdsCand dateGenerat onMaxCand datesNumParam)
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
       EnableScoreBoost,
-      EnableScribe
+      EnableScr be
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(AdsCandidateGenerationScoreBoostFactor)
+    val doubleOverr des =
+      FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(AdsCand dateGenerat onScoreBoostFactor)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

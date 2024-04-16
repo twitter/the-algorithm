@@ -1,64 +1,64 @@
-namespace java com.twitter.search.earlybird.thrift
-#@namespace scala com.twitter.search.earlybird.thriftscala
-#@namespace strato com.twitter.search.earlybird
-namespace py gen.twitter.search.earlybird
+na space java com.tw ter.search.earlyb rd.thr ft
+#@na space scala com.tw ter.search.earlyb rd.thr ftscala
+#@na space strato com.tw ter.search.earlyb rd
+na space py gen.tw ter.search.earlyb rd
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "com/twitter/search/common/caching/caching.thrift"
-include "com/twitter/search/common/constants/query.thrift"
-include "com/twitter/search/common/constants/search_language.thrift"
-include "com/twitter/search/common/conversation/conversation.thrift"
-include "com/twitter/search/common/features/features.thrift"
-include "com/twitter/search/common/indexing/status.thrift"
-include "com/twitter/search/common/query/search.thrift"
-include "com/twitter/search/common/ranking/ranking.thrift"
-include "com/twitter/search/common/results/expansions.thrift"
-include "com/twitter/search/common/results/highlight.thrift"
-include "com/twitter/search/common/results/hit_attribution.thrift"
-include "com/twitter/search/common/results/hits.thrift"
-include "com/twitter/search/common/results/social.thrift"
-include "com/twitter/service/spiderduck/gen/metadata_store.thrift"
-include "com/twitter/tweetypie/deprecated.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/escherbird/tweet_annotation.thrift"
+ nclude "com/tw ter/ads/adserver/adserver_common.thr ft"
+ nclude "com/tw ter/search/common/cach ng/cach ng.thr ft"
+ nclude "com/tw ter/search/common/constants/query.thr ft"
+ nclude "com/tw ter/search/common/constants/search_language.thr ft"
+ nclude "com/tw ter/search/common/conversat on/conversat on.thr ft"
+ nclude "com/tw ter/search/common/features/features.thr ft"
+ nclude "com/tw ter/search/common/ ndex ng/status.thr ft"
+ nclude "com/tw ter/search/common/query/search.thr ft"
+ nclude "com/tw ter/search/common/rank ng/rank ng.thr ft"
+ nclude "com/tw ter/search/common/results/expans ons.thr ft"
+ nclude "com/tw ter/search/common/results/h ghl ght.thr ft"
+ nclude "com/tw ter/search/common/results/h _attr but on.thr ft"
+ nclude "com/tw ter/search/common/results/h s.thr ft"
+ nclude "com/tw ter/search/common/results/soc al.thr ft"
+ nclude "com/tw ter/serv ce/sp derduck/gen/ tadata_store.thr ft"
+ nclude "com/tw ter/t etyp e/deprecated.thr ft"
+ nclude "com/tw ter/t etyp e/t et.thr ft"
+ nclude "com/tw ter/esc rb rd/t et_annotat on.thr ft"
 
-enum ThriftSearchRankingMode {
-  // good old realtime search mode
+enum Thr ftSearchRank ngMode {
+  // good old realt   search mode
   RECENCY = 0,
-  // new super fancy relevance ranking
+  // new super fancy relevance rank ng
   RELEVANCE = 1,
-  DEPRECATED_DISCOVERY = 2,
-  // top tweets ranking mode
+  DEPRECATED_D SCOVERY = 2,
+  // top t ets rank ng mode
   TOPTWEETS = 3,
-  // results from accounts followed by the searcher
+  // results from accounts follo d by t  searc r
   FOLLOWS = 4,
 
   PLACE_HOLDER5 = 5,
   PLACE_HOLDER6 = 6,
 }
 
-enum ThriftSearchResultType {
-  // it's a time-ordered result.
+enum Thr ftSearchResultType {
+  //  's a t  -ordered result.
   RECENCY = 0,
-  // it's a highly relevant tweet (aka top tweet).
+  //  's a h ghly relevant t et (aka top t et).
   RELEVANCE = 1,
-  // top tweet result type
+  // top t et result type
   POPULAR = 2,
-  // promoted tweets (ads)
+  // promoted t ets (ads)
   PROMOTED = 3,
-  // relevance-ordered (as opposed to time-ordered) tweets generated from a variety of candidates
+  // relevance-ordered (as opposed to t  -ordered) t ets generated from a var ety of cand dates
   RELEVANCE_ORDERED = 4,
 
   PLACE_HOLDER5 = 5,
   PLACE_HOLDER6 = 6,
 }
 
-enum ThriftSocialFilterType {
-  // filter only users that the searcher is directly following.
+enum Thr ftSoc alF lterType {
+  // f lter only users that t  searc r  s d rectly follow ng.
   FOLLOWS = 0,
-  // filter only users that are in searcher's social circle of trust.
+  // f lter only users that are  n searc r's soc al c rcle of trust.
   TRUSTED = 1,
-  // filter both follows and trusted.
+  // f lter both follows and trusted.
   ALL = 2,
 
   PLACE_HOLDER3 = 3,
@@ -66,35 +66,35 @@ enum ThriftSocialFilterType {
 
 }
 
-enum ThriftTweetSource {
-  ///// enums set by Earlybird
-  REALTIME_CLUSTER = 1,
-  FULL_ARCHIVE_CLUSTER = 2,
-  REALTIME_PROTECTED_CLUSTER = 4,
+enum Thr ftT etS ce {
+  ///// enums set by Earlyb rd
+  REALT ME_CLUSTER = 1,
+  FULL_ARCH VE_CLUSTER = 2,
+  REALT ME_PROTECTED_CLUSTER = 4,
 
-  ///// enums set inside Blender
+  ///// enums set  ns de Blender
   ADSERVER = 0,
-  // from top news search, only used in universal search
+  // from top news search, only used  n un versal search
   TOP_NEWS = 3,
-  // special tweets included just for EventParrot.
-  FORCE_INCLUDED = 5,
-  // from Content Recommender
-  // from topic to Tweet path
-  CONTENT_RECS_TOPIC_TO_TWEET = 6,
-  // used for hydrating QIG Tweets (go/qig)
-  QIG = 8,
-  // used for TOPTWEETS ranking mode
+  // spec al t ets  ncluded just for EventParrot.
+  FORCE_ NCLUDED = 5,
+  // from Content Recom nder
+  // from top c to T et path
+  CONTENT_RECS_TOP C_TO_TWEET = 6,
+  // used for hydrat ng Q G T ets (go/q g)
+  Q G = 8,
+  // used for TOPTWEETS rank ng mode
   TOP_TWEET = 9,
-  // used for experimental candidate sources
-  EXPERIMENTAL = 7,
-  // from Scanr service
+  // used for exper  ntal cand date s ces
+  EXPER MENTAL = 7,
+  // from Scanr serv ce
   SCANR = 10,
 
   PLACE_HOLDER11 = 11,
   PLACE_HOLDER12 = 12
 }
 
-enum NamedEntitySource {
+enum Na dEnt yS ce {
   TEXT = 0,
   URL = 1,
 
@@ -103,14 +103,14 @@ enum NamedEntitySource {
   PLACE_HOLDER4 = 4,
 }
 
-enum ExperimentCluster {
-  EXP0 = 0, // Send requests to the earlybird-realtime-exp0 cluster
+enum Exper  ntCluster {
+  EXP0 = 0, // Send requests to t  earlyb rd-realt  -exp0 cluster
   PLACE_HOLDER1 = 1,
   PLACE_HOLDER2 = 2,
 }
 
-enum AudioSpaceState {
-   RUNNING = 0,
+enum Aud oSpaceState {
+   RUNN NG = 0,
    ENDED = 1,
 
    PLACE_HOLDER2 = 2,
@@ -119,770 +119,770 @@ enum AudioSpaceState {
    PLACE_HOLDER5 = 5,
 }
 
-// Contains all scoring and relevance-filtering related controls and options for Earlybird.
-struct ThriftSearchRelevanceOptions {
-  // Next available field ID: 31 and note that 45 and 50 have been used already
+// Conta ns all scor ng and relevance-f lter ng related controls and opt ons for Earlyb rd.
+struct Thr ftSearchRelevanceOpt ons {
+  // Next ava lable f eld  D: 31 and note that 45 and 50 have been used already
 
-  2: optional bool filterDups = 0         // filter out duplicate search results
-  26: optional bool keepDupWithHigherScore = 1 // keep the duplicate tweet with the higher score
+  2: opt onal bool f lterDups = 0         // f lter out dupl cate search results
+  26: opt onal bool keepDupW hH g rScore = 1 // keep t  dupl cate t et w h t  h g r score
 
-  3: optional bool proximityScoring = 0   // whether to do proximity scoring or not
-  4: optional i32 maxConsecutiveSameUser  // filter consecutive results from the same user
-  5: optional ranking.ThriftRankingParams rankingParams  // composed by blender
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  6: optional i32 maxHitsToProcess // when to early-terminate for relevance
-  7: optional string experimentName      // what relevance experiment is running
-  8: optional string experimentBucket    // what bucket the user is in; DDG defaults to hard-coded 'control'
-  9: optional bool interpretSinceId = 1   // whether to interpret since_id operator
+  3: opt onal bool prox m yScor ng = 0   // w t r to do prox m y scor ng or not
+  4: opt onal  32 maxConsecut veSa User  // f lter consecut ve results from t  sa  user
+  5: opt onal rank ng.Thr ftRank ngParams rank ngParams  // composed by blender
+  // deprecated  n favor of t  maxH sToProcess  n CollectorParams
+  6: opt onal  32 maxH sToProcess // w n to early-term nate for relevance
+  7: opt onal str ng exper  ntNa       // what relevance exper  nt  s runn ng
+  8: opt onal str ng exper  ntBucket    // what bucket t  user  s  n; DDG defaults to hard-coded 'control'
+  9: opt onal bool  nterpretS nce d = 1   // w t r to  nterpret s nce_ d operator
 
-  24: optional i32 maxHitsPerUser // Overrides ThriftSearchQuery.maxHitsPerUser
+  24: opt onal  32 maxH sPerUser // Overr des Thr ftSearchQuery.maxH sPerUser
 
-  // only used by discovery for capping direct follow tweets
-  10: optional i32 maxConsecutiveDirectFollows
+  // only used by d scovery for capp ng d rect follow t ets
+  10: opt onal  32 maxConsecut veD rectFollows
 
-  // Note - the orderByRelevance flag is critical to understanding how merging
-  // and trimming works in relevance mode in the search root.
+  // Note - t  orderByRelevance flag  s cr  cal to understand ng how  rg ng
+  // and tr mm ng works  n relevance mode  n t  search root.
   //
-  // When orderByRelevance is true, results are trimmed in score-order.  This means the
-  // client will get the top results from (maxHitsToProcess * numHashPartitions) hits,
+  // W n orderByRelevance  s true, results are tr m d  n score-order.  T   ans t 
+  // cl ent w ll get t  top results from (maxH sToProcess * numHashPart  ons) h s,
   // ordered by score.
   //
-  // When orderByRelevance is false, results are trimmed in id-order.  This means the
-  // client will get the top results from an approximation of maxHitsToProcess hits
-  // (across the entire corpus).  These results ordered by ID.
-  14: optional bool orderByRelevance = 0
+  // W n orderByRelevance  s false, results are tr m d  n  d-order.  T   ans t 
+  // cl ent w ll get t  top results from an approx mat on of maxH sToProcess h s
+  // (across t  ent re corpus).  T se results ordered by  D.
+  14: opt onal bool orderByRelevance = 0
 
-  // Max blending count for results returned due to from:user rewrites
-  16: optional i32 maxUserBlendCount
+  // Max blend ng count for results returned due to from:user rewr es
+  16: opt onal  32 maxUserBlendCount
 
-  // The weight for proximity phrases generated while translating the serialized query to the
+  // T    ght for prox m y phrases generated wh le translat ng t  ser al zed query to t 
   // lucene query.
-  19: optional double proximityPhraseWeight = 1.0
-  20: optional i32 proximityPhraseSlop = 255
+  19: opt onal double prox m yPhrase  ght = 1.0
+  20: opt onal  32 prox m yPhraseSlop = 255
 
-  // Override the weights of searchable fields.
-  // Negative weight means the the field is not enabled for search by default,
-  // but if it is (e.g., by annotation), the absolute value of the weight shall be
-  // used (if the annotation does not specify a weight).
-  21: optional map<string, double> fieldWeightMapOverride
+  // Overr de t    ghts of searchable f elds.
+  // Negat ve   ght  ans t  t  f eld  s not enabled for search by default,
+  // but  f    s (e.g., by annotat on), t  absolute value of t    ght shall be
+  // used ( f t  annotat on does not spec fy a   ght).
+  21: opt onal map<str ng, double> f eld  ghtMapOverr de
 
-  // whether disable the coordination in the rewritten disjunction query, term query and phrase query
-  // the details can be found in LuceneVisitor
-  22: optional bool deprecated_disableCoord = 0
+  // w t r d sable t  coord nat on  n t  rewr ten d sjunct on query, term query and phrase query
+  // t  deta ls can be found  n LuceneV s or
+  22: opt onal bool deprecated_d sableCoord = 0
 
-  // Root only. Returns all results seen by root to the client without trimming
-  // if set to true.
-  23: optional bool returnAllResults
+  // Root only. Returns all results seen by root to t  cl ent w hout tr mm ng
+  //  f set to true.
+  23: opt onal bool returnAllResults
 
-  // DEPRECATED: All v2 counters will be used explicitly in the scoring function and
-  // returned in their own field (in either metadata or feature map in response).
-  25: optional bool useEngagementCountersV2 = 0
+  // DEPRECATED: All v2 counters w ll be used expl c ly  n t  scor ng funct on and
+  // returned  n t  r own f eld ( n e  r  tadata or feature map  n response).
+  25: opt onal bool useEngage ntCountersV2 = 0
 
-  // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
-  // Take special care with these options when reasoning about caching.
+  // -------- PERSONAL ZAT ON-RELATED RELEVANCE OPT ONS --------
+  // Take spec al care w h t se opt ons w n reason ng about cach ng.
 
-  // Deprecated in SEARCH-8616.
-  45: optional map<i32, double> deprecated_topicIDWeights
+  // Deprecated  n SEARCH-8616.
+  45: opt onal map< 32, double> deprecated_top c D  ghts
 
-  // Collect hit attribution on queries and likedByUserIDFilter64-enhanced queries to
-  // get likedByUserIds list in metadata field.
-  // NOTE: this flag has no affect on fromUserIDFilter64.
-  50: optional bool collectFieldHitAttributions = 0
+  // Collect h  attr but on on quer es and l kedByUser DF lter64-enhanced quer es to
+  // get l kedByUser ds l st  n  tadata f eld.
+  // NOTE: t  flag has no affect on fromUser DF lter64.
+  50: opt onal bool collectF eldH Attr but ons = 0
 
-  // Whether to collect all hits regardless of their score with RelevanceAllCollector.
-  27: optional bool useRelevanceAllCollector = 0
+  // W t r to collect all h s regardless of t  r score w h RelevanceAllCollector.
+  27: opt onal bool useRelevanceAllCollector = 0
 
-  // Override features of specific tweets before the tweets are scored.  
-  28: optional map<i64, features.ThriftSearchResultFeatures> perTweetFeaturesOverride
+  // Overr de features of spec f c t ets before t  t ets are scored.  
+  28: opt onal map< 64, features.Thr ftSearchResultFeatures> perT etFeaturesOverr de
 
-  // Override features of all tweets from specific users before the tweets are scored. 
-  29: optional map<i64, features.ThriftSearchResultFeatures> perUserFeaturesOverride
+  // Overr de features of all t ets from spec f c users before t  t ets are scored. 
+  29: opt onal map< 64, features.Thr ftSearchResultFeatures> perUserFeaturesOverr de
 
-  // Override features of all tweets before the tweets are scored.
-  30: optional features.ThriftSearchResultFeatures globalFeaturesOverride
-}(persisted='true')
+  // Overr de features of all t ets before t  t ets are scored.
+  30: opt onal features.Thr ftSearchResultFeatures globalFeaturesOverr de
+}(pers sted='true')
 
-// Facets types that may have different ranking parameters.
-enum ThriftFacetType {
+// Facets types that may have d fferent rank ng para ters.
+enum Thr ftFacetType {
   DEFAULT = 0,
-  MENTIONS_FACET = 1,
+  MENT ONS_FACET = 1,
   HASHTAGS_FACET = 2,
-  // Deprecated in SEARCH-13708
-  DEPRECATED_NAMED_ENTITIES_FACET = 3,
+  // Deprecated  n SEARCH-13708
+  DEPRECATED_NAMED_ENT T ES_FACET = 3,
   STOCKS_FACET = 4,
-  VIDEOS_FACET = 5,
-  IMAGES_FACET = 6,
+  V DEOS_FACET = 5,
+   MAGES_FACET = 6,
   NEWS_FACET = 7,
   LANGUAGES_FACET = 8,
   SOURCES_FACET = 9,
-  TWIMG_FACET = 10,
-  FROM_USER_ID_FACET = 11,
-  DEPRECATED_TOPIC_IDS_FACET = 12,
+  TW MG_FACET = 10,
+  FROM_USER_ D_FACET = 11,
+  DEPRECATED_TOP C_ DS_FACET = 12,
   RETWEETS_FACET = 13,
-  LINKS_FACET = 14,
+  L NKS_FACET = 14,
 
   PLACE_HOLDER15 = 15,
   PLACE_HOLDER16 = 16,
 }
 
-struct ThriftSearchDebugOptions {
-  // Make earlybird only score and return tweets (specified by tweet id) here, regardless
-  // if they have a hit for the current query or not.
-  1: optional set<i64> statusIds;
+struct Thr ftSearchDebugOpt ons {
+  // Make earlyb rd only score and return t ets (spec f ed by t et  d)  re, regardless
+  //  f t y have a h  for t  current query or not.
+  1: opt onal set< 64> status ds;
 
-  // Assorted structures to pass in debug options.
-  2: optional map<string, string> stringMap;
-  3: optional map<string, double> valueMap;
-  4: optional list<double> valueList;
-}(persisted='true')
+  // Assorted structures to pass  n debug opt ons.
+  2: opt onal map<str ng, str ng> str ngMap;
+  3: opt onal map<str ng, double> valueMap;
+  4: opt onal l st<double> valueL st;
+}(pers sted='true')
 
-// These options control what metadata will be returned by earlybird for each search result
-// in the ThriftSearchResultMetadata struct.  These options are currently mostly supported by
-// AbstractRelevanceCollector and partially in SearchResultsCollector.  Most are true by default to
-// preserve backwards compatibility, but can be disabled as necessary to optimize searches returning
-// many results (such as discover).
-struct ThriftSearchResultMetadataOptions {
-  // If true, fills in the tweetUrls field in ThriftSearchResultMetadata.
+// T se opt ons control what  tadata w ll be returned by earlyb rd for each search result
+//  n t  Thr ftSearchResult tadata struct.  T se opt ons are currently mostly supported by
+// AbstractRelevanceCollector and part ally  n SearchResultsCollector.  Most are true by default to
+// preserve backwards compat b l y, but can be d sabled as necessary to opt m ze searc s return ng
+// many results (such as d scover).
+struct Thr ftSearchResult tadataOpt ons {
+  //  f true, f lls  n t  t etUrls f eld  n Thr ftSearchResult tadata.
   // Populated by AbstractRelevanceCollector.
-  1: optional bool getTweetUrls = 1
+  1: opt onal bool getT etUrls = 1
 
-  // If true, fills in the resultLocation field in ThriftSearchResultMetadata.
+  //  f true, f lls  n t  resultLocat on f eld  n Thr ftSearchResult tadata.
   // Populated by AbstractRelevanceCollector.
-  2: optional bool getResultLocation = 1
+  2: opt onal bool getResultLocat on = 1
   
-  // Deprecated in SEARCH-8616.
-  3: optional bool deprecated_getTopicIDs = 1
+  // Deprecated  n SEARCH-8616.
+  3: opt onal bool deprecated_getTop c Ds = 1
 
-  // If true, fills in the luceneScore field in ThriftSearchResultMetadata.
-  // Populated by LinearScoringFunction.
-  4: optional bool getLuceneScore = 0
+  //  f true, f lls  n t  luceneScore f eld  n Thr ftSearchResult tadata.
+  // Populated by L nearScor ngFunct on.
+  4: opt onal bool getLuceneScore = 0
 
-  // Deprecated but used to be for Offline feature values for static index
-  5: optional bool deprecated_getExpFeatureValues = 0
+  // Deprecated but used to be for Offl ne feature values for stat c  ndex
+  5: opt onal bool deprecated_getExpFeatureValues = 0
 
-  // If true, will omit all features derivable from packedFeatures, and set packedFeatures
-  // instead.
-  6: optional bool deprecated_usePackedFeatures = 0
+  //  f true, w ll om  all features der vable from packedFeatures, and set packedFeatures
+  //  nstead.
+  6: opt onal bool deprecated_usePackedFeatures = 0
 
-  // If true, fills sharedStatusId. For replies this is the in-reply-to status id and for
-  // retweets this is the retweet source status id.
-  // Also fills in the the isRetweet and isReply flags.
-  7: optional bool getInReplyToStatusId = 0
+  //  f true, f lls sharedStatus d. For repl es t   s t   n-reply-to status  d and for
+  // ret ets t   s t  ret et s ce status  d.
+  // Also f lls  n t  t   sRet et and  sReply flags.
+  7: opt onal bool get nReplyToStatus d = 0
 
-  // If true, fills referencedTweetAuthorId. Also fills in the the isRetweet and isReply flags.
-  8: optional bool getReferencedTweetAuthorId = 0
+  //  f true, f lls referencedT etAuthor d. Also f lls  n t  t   sRet et and  sReply flags.
+  8: opt onal bool getReferencedT etAuthor d = 0
 
-  // If true, fills media bits (video/vine/periscope/etc.)
-  9: optional bool getMediaBits = 0
+  //  f true, f lls  d a b s (v deo/v ne/per scope/etc.)
+  9: opt onal bool get d aB s = 0
 
-  // If true, will return all defined features in the packed features.  This flag does not cover
-  // the above defined features.
-  10: optional bool getAllFeatures = 0
+  //  f true, w ll return all def ned features  n t  packed features.  T  flag does not cover
+  // t  above def ned features.
+  10: opt onal bool getAllFeatures = 0
 
-  // If true, will return all features as ThriftSearchResultFeatures format.
-  11: optional bool returnSearchResultFeatures = 0
+  //  f true, w ll return all features as Thr ftSearchResultFeatures format.
+  11: opt onal bool returnSearchResultFeatures = 0
 
-  // If the client caches some features schemas, client can indicate its cache schemas through
-  // this field based on (version, checksum).
-  12: optional list<features.ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient
+  //  f t  cl ent cac s so  features sc mas, cl ent can  nd cate  s cac  sc mas through
+  // t  f eld based on (vers on, c cksum).
+  12: opt onal l st<features.Thr ftSearchFeatureSc maSpec f er> featureSc masAva lable nCl ent
 
-  // Specific feature IDs to return for recency requests. Populated in SearchResultFeatures.
-  // Values must be IDs of CSF fields from EarlybirdFieldConstants.
-  13: optional list<i32> requestedFeatureIDs
+  // Spec f c feature  Ds to return for recency requests. Populated  n SearchResultFeatures.
+  // Values must be  Ds of CSF f elds from Earlyb rdF eldConstants.
+  13: opt onal l st< 32> requestedFeature Ds
 
-  // If true, fills in the namedEntities field in ThriftSearchResultExtraMetadata
-  14: optional bool getNamedEntities = 0
+  //  f true, f lls  n t  na dEnt  es f eld  n Thr ftSearchResultExtra tadata
+  14: opt onal bool getNa dEnt  es = 0
 
-  // If true, fills in the entityAnnotations field in ThriftSearchResultExtraMetadata
-  15: optional bool getEntityAnnotations = 0
+  //  f true, f lls  n t  ent yAnnotat ons f eld  n Thr ftSearchResultExtra tadata
+  15: opt onal bool getEnt yAnnotat ons = 0
 
-  // If true, fills in the fromUserId field in the ThriftSearchResultExtraMetadata
-  16: optional bool getFromUserId = 0
+  //  f true, f lls  n t  fromUser d f eld  n t  Thr ftSearchResultExtra tadata
+  16: opt onal bool getFromUser d = 0
 
-  // If true, fills in the spaces field in the ThriftSearchResultExtraMetadata
-  17: optional bool getSpaces = 0
+  //  f true, f lls  n t  spaces f eld  n t  Thr ftSearchResultExtra tadata
+  17: opt onal bool getSpaces = 0
 
-  18: optional bool getExclusiveConversationAuthorId = 0
-}(persisted='true')
+  18: opt onal bool getExclus veConversat onAuthor d = 0
+}(pers sted='true')
 
 
-// ThriftSearchQuery describes an earlybird search request, which typically consists
-// of these parts:
-//  - a query to retrieve hits
-//  - relevance options to score hits
-//  - a collector to collect hits and process into search results
-// Note that this struct is used in both ThriftBlenderRequest and EarlybirdRequest.
-// Most fields are not set when this struct is embedded in ThriftBlenderRequest, and
-// are filled in by the blender before sending to earlybird.
-struct ThriftSearchQuery {
-  // Next available field ID: 42
+// Thr ftSearchQuery descr bes an earlyb rd search request, wh ch typ cally cons sts
+// of t se parts:
+//  - a query to retr eve h s
+//  - relevance opt ons to score h s
+//  - a collector to collect h s and process  nto search results
+// Note that t  struct  s used  n both Thr ftBlenderRequest and Earlyb rdRequest.
+// Most f elds are not set w n t  struct  s embedded  n Thr ftBlenderRequest, and
+// are f lled  n by t  blender before send ng to earlyb rd.
+struct Thr ftSearchQuery {
+  // Next ava lable f eld  D: 42
 
-  // -------- SECTION ZERO: THINGS USED ONLY BY THE BLENDER --------
+  // -------- SECT ON ZERO: TH NGS USED ONLY BY THE BLENDER --------
   // See SEARCHQUAL-2398
-  // These fields are used by the blender and clients of the blender, but not by earlybird.
+  // T se f elds are used by t  blender and cl ents of t  blender, but not by earlyb rd.
 
   // blender use only
-  // The raw un-parsed user search query.
-  6: optional string rawQuery(personalDataType = 'SearchQuery')
+  // T  raw un-parsed user search query.
+  6: opt onal str ng rawQuery(personalDataType = 'SearchQuery')
 
   // blender use only
-  // Language of the rawQuery.
-  18: optional string queryLang(personalDataType = 'InferredLanguage')
+  // Language of t  rawQuery.
+  18: opt onal str ng queryLang(personalDataType = ' nferredLanguage')
 
   // blender use only
-  // What page of results to return, indexed from 1.
-  7: optional i32 page = 1
+  // What page of results to return,  ndexed from 1.
+  7: opt onal  32 page = 1
 
   // blender use only
-  // Number of results to skip (for pagination).  Indexed from 0.
-  2: optional i32 deprecated_resultOffset = 0
+  // Number of results to sk p (for pag nat on).   ndexed from 0.
+  2: opt onal  32 deprecated_resultOffset = 0
 
 
-  // -------- SECTION ONE: RETRIEVAL OPTIONS --------
-  // These options control the query that will be used to retrieve documents / hits.
+  // -------- SECT ON ONE: RETR EVAL OPT ONS --------
+  // T se opt ons control t  query that w ll be used to retr eve docu nts / h s.
 
-  // The parsed query tree, serialized to a string.  Restricts the search results to
-  // tweets matching this query.
-  1: optional string serializedQuery(personalDataType = 'SearchQuery')
+  // T  parsed query tree, ser al zed to a str ng.  Restr cts t  search results to
+  // t ets match ng t  query.
+  1: opt onal str ng ser al zedQuery(personalDataType = 'SearchQuery')
 
-  // Restricts the search results to tweets having this minimum tweep cred, out of 100.
-  5: optional i32 minTweepCredFilter = -1
+  // Restr cts t  search results to t ets hav ng t  m n mum t ep cred, out of 100.
+  5: opt onal  32 m nT epCredF lter = -1
 
-  // Restricts the search results to tweets from these users.
-  34: optional list<i64> fromUserIDFilter64(personalDataType = 'PrivateAccountsFollowing, PublicAccountsFollowing')
-  // Restricts the search results to tweets liked by these users.
-  40: optional list<i64> likedByUserIDFilter64(personalDataType = 'PrivateAccountsFollowing, PublicAccountsFollowing')
+  // Restr cts t  search results to t ets from t se users.
+  34: opt onal l st< 64> fromUser DF lter64(personalDataType = 'Pr vateAccountsFollow ng, Publ cAccountsFollow ng')
+  // Restr cts t  search results to t ets l ked by t se users.
+  40: opt onal l st< 64> l kedByUser DF lter64(personalDataType = 'Pr vateAccountsFollow ng, Publ cAccountsFollow ng')
 
-  // If searchStatusIds are present, earlybird will ignore the serializedQuery completely
-  // and simply score each of searchStatusIds, also bypassing features like duplicate
-  // filtering and early termination.
-  // IMPORTANT: this means that it is possible to get scores equal to ScoringFunction.SKIP_HIT,
-  // for results skipped by the scoring function.
-  31: optional set<i64> searchStatusIds
+  //  f searchStatus ds are present, earlyb rd w ll  gnore t  ser al zedQuery completely
+  // and s mply score each of searchStatus ds, also bypass ng features l ke dupl cate
+  // f lter ng and early term nat on.
+  //  MPORTANT: t   ans that    s poss ble to get scores equal to Scor ngFunct on.SK P_H T,
+  // for results sk pped by t  scor ng funct on.
+  31: opt onal set< 64> searchStatus ds
 
-  35: optional set<i64> deprecated_eventClusterIdsFilter
+  35: opt onal set< 64> deprecated_eventCluster dsF lter
 
-  41: optional map<string, list<i64>> namedDisjunctionMap
+  41: opt onal map<str ng, l st< 64>> na dD sjunct onMap
 
-  // -------- SECTION TWO: HIT COLLECTOR OPTIONS --------
-  // These options control what hits will be collected by the hit collector.
-  // Whether we want to collect and return per-field hit attributions is set in RelevanceOptions.
+  // -------- SECT ON TWO: H T COLLECTOR OPT ONS --------
+  // T se opt ons control what h s w ll be collected by t  h  collector.
+  // W t r   want to collect and return per-f eld h  attr but ons  s set  n RelevanceOpt ons.
   // See SEARCH-2784
-  // Number of results to return (after offset/page correction).
-  // This is ignored when searchStatusIds is set.
-  3: required i32 numResults
+  // Number of results to return (after offset/page correct on).
+  // T   s  gnored w n searchStatus ds  s set.
+  3: requ red  32 numResults
 
-  // Maximum number of hits to process by the collector.
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  4: optional i32 maxHitsToProcess = 1000
+  // Max mum number of h s to process by t  collector.
+  // deprecated  n favor of t  maxH sToProcess  n CollectorParams
+  4: opt onal  32 maxH sToProcess = 1000
 
-  // Collect hit counts for these time periods (in milliseconds).
-  30: optional list<i64> hitCountBuckets
+  // Collect h  counts for t se t   per ods ( n m ll seconds).
+  30: opt onal l st< 64> h CountBuckets
 
-  // If set, earlybird will also return the facet labels of the specified facet fields
-  // in result tweets.
-  33: optional list<string> facetFieldNames
+  //  f set, earlyb rd w ll also return t  facet labels of t  spec f ed facet f elds
+  //  n result t ets.
+  33: opt onal l st<str ng> facetF eldNa s
 
-  // Options controlling which search result metadata is returned.
-  36: optional ThriftSearchResultMetadataOptions resultMetadataOptions
+  // Opt ons controll ng wh ch search result  tadata  s returned.
+  36: opt onal Thr ftSearchResult tadataOpt ons result tadataOpt ons
 
-  // Collection related Params
-  38: optional search.CollectorParams collectorParams
+  // Collect on related Params
+  38: opt onal search.CollectorParams collectorParams
 
-  // Whether to collect conversation IDs
-  39: optional bool collectConversationId = 0
+  // W t r to collect conversat on  Ds
+  39: opt onal bool collectConversat on d = 0
 
-  // -------- SECTION THREE: RELEVANCE OPTIONS --------
-  // These options control relevance scoring and anti-gaming.
+  // -------- SECT ON THREE: RELEVANCE OPT ONS --------
+  // T se opt ons control relevance scor ng and ant -gam ng.
 
-  // Ranking mode (RECENCY means time-ordered ranking with no relevance).
-  8: optional ThriftSearchRankingMode rankingMode = ThriftSearchRankingMode.RECENCY
+  // Rank ng mode (RECENCY  ans t  -ordered rank ng w h no relevance).
+  8: opt onal Thr ftSearchRank ngMode rank ngMode = Thr ftSearchRank ngMode.RECENCY
 
-  // Relevance scoring options.
-  9: optional ThriftSearchRelevanceOptions relevanceOptions
+  // Relevance scor ng opt ons.
+  9: opt onal Thr ftSearchRelevanceOpt ons relevanceOpt ons
 
-  // Limits the number of hits that can be contributed by the same user, for anti-gaming.
-  // Set to -1 to disable the anti-gaming filter.  This is ignored when searchStatusIds
-  // is set.
-  11: optional i32 maxHitsPerUser = 3
+  // L m s t  number of h s that can be contr buted by t  sa  user, for ant -gam ng.
+  // Set to -1 to d sable t  ant -gam ng f lter.  T   s  gnored w n searchStatus ds
+  //  s set.
+  11: opt onal  32 maxH sPerUser = 3
 
-  // Disables anti-gaming filter checks for any tweets that exceed this tweepcred.
-  12: optional i32 maxTweepcredForAntiGaming = 65
+  // D sables ant -gam ng f lter c cks for any t ets that exceed t  t epcred.
+  12: opt onal  32 maxT epcredForAnt Gam ng = 65
 
-  // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
-  // Take special care with these options when reasoning about caching.  All of these
-  // options, if set, will bypass the cache with the exception of uiLang which is the
-  // only form of personalization allowed for caching.
+  // -------- PERSONAL ZAT ON-RELATED RELEVANCE OPT ONS --------
+  // Take spec al care w h t se opt ons w n reason ng about cach ng.  All of t se
+  // opt ons,  f set, w ll bypass t  cac  w h t  except on of u Lang wh ch  s t 
+  // only form of personal zat on allo d for cach ng.
 
-  // User ID of searcher.  This is used for relevance, and will be used for retrieval
-  // by the protected tweets index.  If set, query will not be cached.
-  20: optional i64 searcherId(personalDataType = 'UserId')
+  // User  D of searc r.  T   s used for relevance, and w ll be used for retr eval
+  // by t  protected t ets  ndex.   f set, query w ll not be cac d.
+  20: opt onal  64 searc r d(personalDataType = 'User d')
 
-  // Bloom filter containing trusted user IDs.  If set, query will not be cached.
-  10: optional binary trustedFilter(personalDataType = 'UserId')
+  // Bloom f lter conta n ng trusted user  Ds.   f set, query w ll not be cac d.
+  10: opt onal b nary trustedF lter(personalDataType = 'User d')
 
-  // Bloom filter containing direct follow user IDs.  If set, query will not be cached.
-  16: optional binary directFollowFilter(personalDataType = 'UserId, PrivateAccountsFollowing, PublicAccountsFollowing')
+  // Bloom f lter conta n ng d rect follow user  Ds.   f set, query w ll not be cac d.
+  16: opt onal b nary d rectFollowF lter(personalDataType = 'User d, Pr vateAccountsFollow ng, Publ cAccountsFollow ng')
 
-  // UI language from the searcher's profile settings.
-  14: optional string uiLang(personalDataType = 'GeneralSettings')
+  // U  language from t  searc r's prof le sett ngs.
+  14: opt onal str ng u Lang(personalDataType = 'GeneralSett ngs')
 
-  // Confidence of the understandability of different languages for this user.
-  // uiLang field above is treated as a userlang with a confidence of 1.0.
-  28: optional map<search_language.ThriftLanguage, double> userLangs(personalDataTypeKey = 'InferredLanguage')
+  // Conf dence of t  understandab l y of d fferent languages for t  user.
+  // u Lang f eld above  s treated as a userlang w h a conf dence of 1.0.
+  28: opt onal map<search_language.Thr ftLanguage, double> userLangs(personalDataTypeKey = ' nferredLanguage')
 
-  // An alternative to fromUserIDFilter64 that relies on the relevance bloom filters
-  // for user filtering.  Not currently used in production.  Only supported for realtime
-  // searches.
-  // If set, earlybird expects both trustedFilter and directFollowFilter to also be set.
-  17: optional ThriftSocialFilterType socialFilterType
+  // An alternat ve to fromUser DF lter64 that rel es on t  relevance bloom f lters
+  // for user f lter ng.  Not currently used  n product on.  Only supported for realt  
+  // searc s.
+  //  f set, earlyb rd expects both trustedF lter and d rectFollowF lter to also be set.
+  17: opt onal Thr ftSoc alF lterType soc alF lterType
 
-  // -------- SECTION FOUR: DEBUG OPTIONS, FORGOTTEN FEATURES --------
+  // -------- SECT ON FOUR: DEBUG OPT ONS, FORGOTTEN FEATURES --------
 
-  // Earlybird search debug options.
-  19: optional ThriftSearchDebugOptions debugOptions
+  // Earlyb rd search debug opt ons.
+  19: opt onal Thr ftSearchDebugOpt ons debugOpt ons
 
-  // Overrides the query time for debugging.
-  29: optional i64 timestampMsecs = 0
+  // Overr des t  query t   for debugg ng.
+  29: opt onal  64 t  stampMsecs = 0
 
-  // Support for this feature has been removed and this field is left for backwards compatibility
-  // (and to detect improper usage by clients when it is set).
-  25: optional list<string> deprecated_iterativeQueries
+  // Support for t  feature has been removed and t  f eld  s left for backwards compat b l y
+  // (and to detect  mproper usage by cl ents w n    s set).
+  25: opt onal l st<str ng> deprecated_ erat veQuer es
 
-  // Specifies a lucene query that will only be used if serializedQuery is not set,
-  // for debugging.  Not currently used in production.
-  27: optional string luceneQuery(personalDataType = 'SearchQuery')
+  // Spec f es a lucene query that w ll only be used  f ser al zedQuery  s not set,
+  // for debugg ng.  Not currently used  n product on.
+  27: opt onal str ng luceneQuery(personalDataType = 'SearchQuery')
 
-  // This field is deprecated and is not used by earlybirds when processing the query.
-  21: optional i32 deprecated_minDocsToProcess = 0
-}(persisted='true', hasPersonalData = 'true')
+  // T  f eld  s deprecated and  s not used by earlyb rds w n process ng t  query.
+  21: opt onal  32 deprecated_m nDocsToProcess = 0
+}(pers sted='true', hasPersonalData = 'true')
 
 
-struct ThriftFacetLabel {
-  1: required string fieldName
-  2: required string label
-  // the number of times this facet has shown up in tweets with offensive words.
-  3: optional i32 offensiveCount = 0
+struct Thr ftFacetLabel {
+  1: requ red str ng f eldNa 
+  2: requ red str ng label
+  // t  number of t  s t  facet has shown up  n t ets w h offens ve words.
+  3: opt onal  32 offens veCount = 0
 
-  // only filled for TWIMG facets
-  4: optional string nativePhotoUrl
-}(persisted='true')
+  // only f lled for TW MG facets
+  4: opt onal str ng nat vePhotoUrl
+}(pers sted='true')
 
-struct ThriftSearchResultGeoLocation {
-  1: optional double latitude(personalDataType = 'GpsCoordinates')
-  2: optional double longitude(personalDataType = 'GpsCoordinates')
-  3: optional double distanceKm
-}(persisted='true', hasPersonalData = 'true')
+struct Thr ftSearchResultGeoLocat on {
+  1: opt onal double lat ude(personalDataType = 'GpsCoord nates')
+  2: opt onal double long ude(personalDataType = 'GpsCoord nates')
+  3: opt onal double d stanceKm
+}(pers sted='true', hasPersonalData = 'true')
 
-// Contains an expanded url and media type from the URL facet fields in earlybird.
-// Note: thrift copied from status.thrift with unused fields renamed.
-struct ThriftSearchResultUrl {
-  // Next available field ID: 6.  Fields 2-4 removed.
+// Conta ns an expanded url and  d a type from t  URL facet f elds  n earlyb rd.
+// Note: thr ft cop ed from status.thr ft w h unused f elds rena d.
+struct Thr ftSearchResultUrl {
+  // Next ava lable f eld  D: 6.  F elds 2-4 removed.
 
-  // Note: this is actually the expanded url.  Rename after deprecated fields are removed.
-  1: required string originalUrl
+  // Note: t   s actually t  expanded url.  Rena  after deprecated f elds are removed.
+  1: requ red str ng or g nalUrl
 
-  // Media type of the url.
-  5: optional metadata_store.MediaTypes mediaType
-}(persisted='true')
+  //  d a type of t  url.
+  5: opt onal  tadata_store. d aTypes  d aType
+}(pers sted='true')
 
-struct ThriftSearchResultNamedEntity {
-  1: required string canonicalName
-  2: required string entityType
-  3: required NamedEntitySource source
-}(persisted='true')
+struct Thr ftSearchResultNa dEnt y {
+  1: requ red str ng canon calNa 
+  2: requ red str ng ent yType
+  3: requ red Na dEnt yS ce s ce
+}(pers sted='true')
 
-struct ThriftSearchResultAudioSpace {
-  1: required string id
-  2: required AudioSpaceState state
-}(persisted='true')
+struct Thr ftSearchResultAud oSpace {
+  1: requ red str ng  d
+  2: requ red Aud oSpaceState state
+}(pers sted='true')
 
-// Even more metadata
-struct ThriftSearchResultExtraMetadata {
-  // Next available field ID: 49
+// Even more  tadata
+struct Thr ftSearchResultExtra tadata {
+  // Next ava lable f eld  D: 49
 
-  1: optional double userLangScore
-  2: optional bool hasDifferentLang
-  3: optional bool hasEnglishTweetAndDifferentUILang
-  4: optional bool hasEnglishUIAndDifferentTweetLang
-  5: optional i32 quotedCount
-  6: optional double querySpecificScore
-  7: optional bool hasQuote
-  29: optional i64 quotedTweetId
-  30: optional i64 quotedUserId
-  31: optional search_language.ThriftLanguage cardLang
-  8: optional i64 conversationId
-  9: optional bool isSensitiveContent
-  10: optional bool hasMultipleMediaFlag
-  11: optional bool profileIsEggFlag
-  12: optional bool isUserNewFlag
-  26: optional double authorSpecificScore
-  28: optional bool isComposerSourceCamera
+  1: opt onal double userLangScore
+  2: opt onal bool hasD fferentLang
+  3: opt onal bool hasEngl shT etAndD fferentU Lang
+  4: opt onal bool hasEngl shU AndD fferentT etLang
+  5: opt onal  32 quotedCount
+  6: opt onal double querySpec f cScore
+  7: opt onal bool hasQuote
+  29: opt onal  64 quotedT et d
+  30: opt onal  64 quotedUser d
+  31: opt onal search_language.Thr ftLanguage cardLang
+  8: opt onal  64 conversat on d
+  9: opt onal bool  sSens  veContent
+  10: opt onal bool hasMult ple d aFlag
+  11: opt onal bool prof le sEggFlag
+  12: opt onal bool  sUserNewFlag
+  26: opt onal double authorSpec f cScore
+  28: opt onal bool  sComposerS ceCa ra
 
-  // temporary V2 engagement counters, original ones in ThriftSearchResultMetadata has log()
-  // applied on them and then converted to int in Thrift, which is effectively a premature
-  // discretization. It doesn't affect the scoring inside Earlybird but for scoring and ML training
-  // outside earlybird, they were bad. These newly added ones stores a proper value of these
-  // counts. This also provides an easier transition to v2 counter when Earlybird is eventually
-  // ready to consume them from DL
+  // temporary V2 engage nt counters, or g nal ones  n Thr ftSearchResult tadata has log()
+  // appl ed on t m and t n converted to  nt  n Thr ft, wh ch  s effect vely a premature
+  // d scret zat on.   doesn't affect t  scor ng  ns de Earlyb rd but for scor ng and ML tra n ng
+  // outs de earlyb rd, t y  re bad. T se newly added ones stores a proper value of t se
+  // counts. T  also prov des an eas er trans  on to v2 counter w n Earlyb rd  s eventually
+  // ready to consu  t m from DL
   // See SEARCHQUAL-9536, SEARCH-11181
-  18: optional i32 retweetCountV2
-  19: optional i32 favCountV2
-  20: optional i32 replyCountV2
-  // Tweepcred weighted version of various engagement counts
-  22: optional i32 weightedRetweetCount
-  23: optional i32 weightedReplyCount
-  24: optional i32 weightedFavCount
-  25: optional i32 weightedQuoteCount
+  18: opt onal  32 ret etCountV2
+  19: opt onal  32 favCountV2
+  20: opt onal  32 replyCountV2
+  // T epcred   ghted vers on of var ous engage nt counts
+  22: opt onal  32   ghtedRet etCount
+  23: opt onal  32   ghtedReplyCount
+  24: opt onal  32   ghtedFavCount
+  25: opt onal  32   ghtedQuoteCount
 
-  // 2 bits - 0, 1, 2, 3+
-  13: optional i32 numMentions
-  14: optional i32 numHashtags
+  // 2 b s - 0, 1, 2, 3+
+  13: opt onal  32 num nt ons
+  14: opt onal  32 numHashtags
 
-  // 1 byte - 256 possible languages
-  15: optional i32 linkLanguage
-  // 6 bits - 64 possible values
-  16: optional i32 prevUserTweetEngagement
+  // 1 byte - 256 poss ble languages
+  15: opt onal  32 l nkLanguage
+  // 6 b s - 64 poss ble values
+  16: opt onal  32 prevUserT etEngage nt
 
-  17: optional features.ThriftSearchResultFeatures features
+  17: opt onal features.Thr ftSearchResultFeatures features
 
-  // If the ThriftSearchQuery.likedByUserIdFilter64 and ThriftSearchRelevanceOptions.collectFieldHitAttributions 
-  // fields are set, then this field will contain the list of all users in the query that liked this tweet.
-  // Otherwise, this field is not set.
-  27: optional list<i64> likedByUserIds
+  //  f t  Thr ftSearchQuery.l kedByUser dF lter64 and Thr ftSearchRelevanceOpt ons.collectF eldH Attr but ons 
+  // f elds are set, t n t  f eld w ll conta n t  l st of all users  n t  query that l ked t  t et.
+  // Ot rw se, t  f eld  s not set.
+  27: opt onal l st< 64> l kedByUser ds
 
 
   // Deprecated. See SEARCHQUAL-10321
-  21: optional double dopamineNonPersonalizedScore
+  21: opt onal double dopam neNonPersonal zedScore
 
-  32: optional list<ThriftSearchResultNamedEntity> namedEntities
-  33: optional list<tweet_annotation.TweetEntityAnnotation> entityAnnotations
+  32: opt onal l st<Thr ftSearchResultNa dEnt y> na dEnt  es
+  33: opt onal l st<t et_annotat on.T etEnt yAnnotat on> ent yAnnotat ons
 
-  // Health model scores from HML
-  34: optional double toxicityScore // (go/toxicity)
-  35: optional double pBlockScore // (go/pblock)
-  36: optional double experimentalHealthModelScore1
-  37: optional double experimentalHealthModelScore2
-  38: optional double experimentalHealthModelScore3
-  39: optional double experimentalHealthModelScore4
+  //  alth model scores from HML
+  34: opt onal double tox c yScore // (go/tox c y)
+  35: opt onal double pBlockScore // (go/pblock)
+  36: opt onal double exper  ntal althModelScore1
+  37: opt onal double exper  ntal althModelScore2
+  38: opt onal double exper  ntal althModelScore3
+  39: opt onal double exper  ntal althModelScore4
 
-  40: optional i64 directedAtUserId
+  40: opt onal  64 d rectedAtUser d
 
-  // Health model scores from HML (cont.)
-  41: optional double pSpammyTweetScore // (go/pspammytweet)
-  42: optional double pReportedTweetScore // (go/preportedtweet)
-  43: optional double spammyTweetContentScore // (go/spammy-tweet-content)
-  // it is populated by looking up user table and it is only available in archive earlybirds response
-  44: optional bool isUserProtected
-  45: optional list<ThriftSearchResultAudioSpace> spaces
+  //  alth model scores from HML (cont.)
+  41: opt onal double pSpam T etScore // (go/pspam t et)
+  42: opt onal double pReportedT etScore // (go/preportedt et)
+  43: opt onal double spam T etContentScore // (go/spam -t et-content)
+  //    s populated by look ng up user table and    s only ava lable  n arch ve earlyb rds response
+  44: opt onal bool  sUserProtected
+  45: opt onal l st<Thr ftSearchResultAud oSpace> spaces
 
-  46: optional i64 exclusiveConversationAuthorId
-  47: optional string cardUri
-  48: optional bool fromBlueVerifiedAccount(personalDataType = 'UserVerifiedFlag')
-}(persisted='true')
+  46: opt onal  64 exclus veConversat onAuthor d
+  47: opt onal str ng cardUr 
+  48: opt onal bool fromBlueVer f edAccount(personalDataType = 'UserVer f edFlag')
+}(pers sted='true')
 
-// Some basic metadata about a search result.  Useful for re-sorting, filtering, etc.
+// So  bas c  tadata about a search result.  Useful for re-sort ng, f lter ng, etc.
 //
-// NOTE: DO NOT ADD NEW FIELD!!
-// Stop adding new fields to this struct, all new fields should go to
-// ThriftSearchResultExtraMetadata (VM-1897), or there will be performance issues in production.
-struct ThriftSearchResultMetadata {
-  // Next available field ID: 86
+// NOTE: DO NOT ADD NEW F ELD!!
+// Stop add ng new f elds to t  struct, all new f elds should go to
+// Thr ftSearchResultExtra tadata (VM-1897), or t re w ll be performance  ssues  n product on.
+struct Thr ftSearchResult tadata {
+  // Next ava lable f eld  D: 86
 
-  // -------- BASIC SCORING METADATA --------
+  // -------- BAS C SCOR NG METADATA --------
 
-  // When resultType is RECENCY most scoring metadata will not be available.
-  1: required ThriftSearchResultType resultType
+  // W n resultType  s RECENCY most scor ng  tadata w ll not be ava lable.
+  1: requ red Thr ftSearchResultType resultType
 
-  // Relevance score computed for this result.
-  3: optional double score
+  // Relevance score computed for t  result.
+  3: opt onal double score
 
-  // True if the result was skipped by the scoring function.  Only set when the collect-all
-  // results collector was used - in other cases skipped results are not returned.
-  // The score will be ScoringFunction.SKIP_HIT when skipped is true.
-  43: optional bool skipped
+  // True  f t  result was sk pped by t  scor ng funct on.  Only set w n t  collect-all
+  // results collector was used -  n ot r cases sk pped results are not returned.
+  // T  score w ll be Scor ngFunct on.SK P_H T w n sk pped  s true.
+  43: opt onal bool sk pped
 
-  // optionally a Lucene-style explanation for this result
-  5: optional string explanation
+  // opt onally a Lucene-style explanat on for t  result
+  5: opt onal str ng explanat on
 
 
-  // -------- NETWORK-BASED SCORING METADATA --------
+  // -------- NETWORK-BASED SCOR NG METADATA --------
 
-  // Found the tweet in the trusted circle.
-  6: optional bool isTrusted
+  // Found t  t et  n t  trusted c rcle.
+  6: opt onal bool  sTrusted
 
-  // Found the tweet in the direct follows.
-  8: optional bool isFollow
+  // Found t  t et  n t  d rect follows.
+  8: opt onal bool  sFollow
 
-  // True if the fromUserId of this tweet was whitelisted by the dup / antigaming filter.
-  // This typically indicates the result was from a tweet that matched a fromUserId query.
-  9: optional bool dontFilterUser
+  // True  f t  fromUser d of t  t et was wh el sted by t  dup / ant gam ng f lter.
+  // T  typ cally  nd cates t  result was from a t et that matc d a fromUser d query.
+  9: opt onal bool dontF lterUser
 
 
   // -------- COMMON DOCUMENT METADATA --------
 
-  // User ID of the author.  When isRetweet is true, this is the user ID of the retweeter
-  // and NOT that of the original tweet.
-  7: optional i64 fromUserId = 0
+  // User  D of t  author.  W n  sRet et  s true, t   s t  user  D of t  ret eter
+  // and NOT that of t  or g nal t et.
+  7: opt onal  64 fromUser d = 0
 
-  // When isRetweet (or packed features equivalent) is true, this is the status id of the
-  // original tweet. When isReply and getReplySource are true, this is the status id of the
-  // original tweet. In all other circumstances this is 0.
-  40: optional i64 sharedStatusId = 0
+  // W n  sRet et (or packed features equ valent)  s true, t   s t  status  d of t 
+  // or g nal t et. W n  sReply and getReplyS ce are true, t   s t  status  d of t 
+  // or g nal t et.  n all ot r c rcumstances t   s 0.
+  40: opt onal  64 sharedStatus d = 0
 
-  // When hasCard (or packed features equivalent) is true, this is one of SearchCardType.
-  49: optional i8 cardType = 0
+  // W n hasCard (or packed features equ valent)  s true, t   s one of SearchCardType.
+  49: opt onal  8 cardType = 0
 
   // -------- EXTENDED DOCUMENT METADATA --------
-  // This is additional metadata from facet fields and column stride fields.
-  // Return of these fields is controlled by ThriftSearchResultMetadataOptions to
-  // allow for fine-grained control over when these fields are returned, as an
-  // optimization for searches returning a large quantity of results.
+  // T   s add  onal  tadata from facet f elds and column str de f elds.
+  // Return of t se f elds  s controlled by Thr ftSearchResult tadataOpt ons to
+  // allow for f ne-gra ned control over w n t se f elds are returned, as an
+  // opt m zat on for searc s return ng a large quant y of results.
 
-  // Lucene component of the relevance score.  Only returned when
-  // ThriftSearchResultMetadataOptions.getLuceneScore is true.
-  31: optional double luceneScore = 0.0
+  // Lucene component of t  relevance score.  Only returned w n
+  // Thr ftSearchResult tadataOpt ons.getLuceneScore  s true.
+  31: opt onal double luceneScore = 0.0
 
-  // Urls found in the tweet.  Only returned when
-  // ThriftSearchResultMetadataOptions.getTweetUrls is true.
-  18: optional list<ThriftSearchResultUrl> tweetUrls
+  // Urls found  n t  t et.  Only returned w n
+  // Thr ftSearchResult tadataOpt ons.getT etUrls  s true.
+  18: opt onal l st<Thr ftSearchResultUrl> t etUrls
 
-  // Deprecated in SEARCH-8616.
-  36: optional list<i32> deprecated_topicIDs
+  // Deprecated  n SEARCH-8616.
+  36: opt onal l st< 32> deprecated_top c Ds
 
-  // Facets available in this tweet, this will only be filled if
-  // ThriftSearchQuery.facetFieldNames is set in the request.
-  22: optional list<ThriftFacetLabel> facetLabels
+  // Facets ava lable  n t  t et, t  w ll only be f lled  f
+  // Thr ftSearchQuery.facetF eldNa s  s set  n t  request.
+  22: opt onal l st<Thr ftFacetLabel> facetLabels
 
-  // The location of the result, and the distance to it from the center of the query
-  // location.  Only returned when ThriftSearchResultMetadataOptions.getResultLocation is true.
-  35: optional ThriftSearchResultGeoLocation resultLocation
+  // T  locat on of t  result, and t  d stance to   from t  center of t  query
+  // locat on.  Only returned w n Thr ftSearchResult tadataOpt ons.getResultLocat on  s true.
+  35: opt onal Thr ftSearchResultGeoLocat on resultLocat on
 
-  // Per field hit attribution.
-  55: optional hit_attribution.FieldHitAttribution fieldHitAttribution
+  // Per f eld h  attr but on.
+  55: opt onal h _attr but on.F eldH Attr but on f eldH Attr but on
 
-  // whether this has geolocation_type:geotag hit
-  57: optional bool geotagHit = 0
+  // w t r t  has geolocat on_type:geotag h 
+  57: opt onal bool geotagH  = 0
 
-  // the user id of the author of the source/referenced tweet (the tweet one replied
-  // to, retweeted and possibly quoted, etc.) (SEARCH-8561)
-  // Only returned when ThriftSearchResultMetadataOptions.getReferencedTweetAuthorId is true.
-  60: optional i64 referencedTweetAuthorId = 0
+  // t  user  d of t  author of t  s ce/referenced t et (t  t et one repl ed
+  // to, ret eted and poss bly quoted, etc.) (SEARCH-8561)
+  // Only returned w n Thr ftSearchResult tadataOpt ons.getReferencedT etAuthor d  s true.
+  60: opt onal  64 referencedT etAuthor d = 0
 
-  // Whether this tweet has certain types of media.
-  // Only returned when ThriftSearchResultMetadataOptions.getMediaBits is true.
-  // "Native video" is either consumer, pro, vine, or periscope.
-  // "Native image" is an image hosted on pic.twitter.com.
-  62: optional bool hasConsumerVideo
-  63: optional bool hasProVideo
-  64: optional bool hasVine
-  65: optional bool hasPeriscope
-  66: optional bool hasNativeVideo
-  67: optional bool hasNativeImage
+  // W t r t  t et has certa n types of  d a.
+  // Only returned w n Thr ftSearchResult tadataOpt ons.get d aB s  s true.
+  // "Nat ve v deo"  s e  r consu r, pro, v ne, or per scope.
+  // "Nat ve  mage"  s an  mage hosted on p c.tw ter.com.
+  62: opt onal bool hasConsu rV deo
+  63: opt onal bool hasProV deo
+  64: opt onal bool hasV ne
+  65: opt onal bool hasPer scope
+  66: opt onal bool hasNat veV deo
+  67: opt onal bool hasNat ve mage
 
-  // Packed features for this result. This field is never populated.
-  50: optional status.PackedFeatures deprecated_packedFeatures
+  // Packed features for t  result. T  f eld  s never populated.
+  50: opt onal status.PackedFeatures deprecated_packedFeatures
 
-  // The features stored in earlybird
+  // T  features stored  n earlyb rd
 
-  // From integer 0 from EarlybirdFeatureConfiguration:
-  16: optional bool isRetweet
-  71: optional bool isSelfTweet
-  10: optional bool isOffensive
-  11: optional bool hasLink
-  12: optional bool hasTrend
-  13: optional bool isReply
-  14: optional bool hasMultipleHashtagsOrTrends
-  23: optional bool fromVerifiedAccount
-  // Static text quality score.  This is actually an int between 0 and 100.
-  30: optional double textScore
-  51: optional search_language.ThriftLanguage language
+  // From  nteger 0 from Earlyb rdFeatureConf gurat on:
+  16: opt onal bool  sRet et
+  71: opt onal bool  sSelfT et
+  10: opt onal bool  sOffens ve
+  11: opt onal bool hasL nk
+  12: opt onal bool hasTrend
+  13: opt onal bool  sReply
+  14: opt onal bool hasMult pleHashtagsOrTrends
+  23: opt onal bool fromVer f edAccount
+  // Stat c text qual y score.  T   s actually an  nt bet en 0 and 100.
+  30: opt onal double textScore
+  51: opt onal search_language.Thr ftLanguage language
 
-  // From integer 1 from EarlybirdFeatureConfiguration:
-  52: optional bool hasImage
-  53: optional bool hasVideo
-  28: optional bool hasNews
-  48: optional bool hasCard
-  61: optional bool hasVisibleLink
-  // Tweep cred aka user rep.  This is actually an int between 0 and 100.
-  32: optional double userRep
-  24: optional bool isUserSpam
-  25: optional bool isUserNSFW
-  26: optional bool isUserBot
-  54: optional bool isUserAntiSocial
+  // From  nteger 1 from Earlyb rdFeatureConf gurat on:
+  52: opt onal bool has mage
+  53: opt onal bool hasV deo
+  28: opt onal bool hasNews
+  48: opt onal bool hasCard
+  61: opt onal bool hasV s bleL nk
+  // T ep cred aka user rep.  T   s actually an  nt bet en 0 and 100.
+  32: opt onal double userRep
+  24: opt onal bool  sUserSpam
+  25: opt onal bool  sUserNSFW
+  26: opt onal bool  sUserBot
+  54: opt onal bool  sUserAnt Soc al
 
-  // From integer 2 from EarlybirdFeatureConfiguration:
+  // From  nteger 2 from Earlyb rdFeatureConf gurat on:
 
-  // Retweet, fav, reply, embeds counts, and video view counts are APPROXIMATE ONLY.
-  // Note that retweetCount, favCount and replyCount are not original unnormalized values,
-  // but after a log2() function for historical reason, this loses us some granularity.
-  // For more accurate counts, use {retweet, fav, reply}CountV2 in extraMetadata.
-  2: optional i32 retweetCount
-  33: optional i32 favCount
-  34: optional i32 replyCount
-  58: optional i32 embedsImpressionCount
-  59: optional i32 embedsUrlCount
-  68: optional i32 videoViewCount
+  // Ret et, fav, reply, embeds counts, and v deo v ew counts are APPROX MATE ONLY.
+  // Note that ret etCount, favCount and replyCount are not or g nal unnormal zed values,
+  // but after a log2() funct on for  tor cal reason, t  loses us so  granular y.
+  // For more accurate counts, use {ret et, fav, reply}CountV2  n extra tadata.
+  2: opt onal  32 ret etCount
+  33: opt onal  32 favCount
+  34: opt onal  32 replyCount
+  58: opt onal  32 embeds mpress onCount
+  59: opt onal  32 embedsUrlCount
+  68: opt onal  32 v deoV ewCount
 
-  // Parus score.  This is actually an int between 0 and 100.
-  29: optional double parusScore
+  // Parus score.  T   s actually an  nt bet en 0 and 100.
+  29: opt onal double parusScore
 
-  // Extra feature data, all new feature fields you want to return from Earlybird should go into
-  // this one, the outer one is always reaching its limit of the number of fields JVM can
+  // Extra feature data, all new feature f elds   want to return from Earlyb rd should go  nto
+  // t  one, t  outer one  s always reach ng  s l m  of t  number of f elds JVM can
   // comfortably support!!
-  86: optional ThriftSearchResultExtraMetadata extraMetadata
+  86: opt onal Thr ftSearchResultExtra tadata extra tadata
 
-  // Integer 3 is omitted, see expFeatureValues above for more details.
+  //  nteger 3  s om ted, see expFeatureValues above for more deta ls.
 
-  // From integer 4 from EarlybirdFeatureConfiguration:
-  // Signature, for duplicate detection and removal.
-  4: optional i32 signature
+  // From  nteger 4 from Earlyb rdFeatureConf gurat on:
+  // S gnature, for dupl cate detect on and removal.
+  4: opt onal  32 s gnature
 
-  // -------- THINGS USED ONLY BY THE BLENDER --------
+  // -------- TH NGS USED ONLY BY THE BLENDER --------
 
-  // Social proof of the tweet, for network discovery.
-  // Do not use these fields outside of network discovery.
-  41: optional list<i64> retweetedUserIDs64
-  42: optional list<i64> replyUserIDs64
+  // Soc al proof of t  t et, for network d scovery.
+  // Do not use t se f elds outs de of network d scovery.
+  41: opt onal l st< 64> ret etedUser Ds64
+  42: opt onal l st< 64> replyUser Ds64
 
-  // Social connection between the search user and this result.
-  19: optional social.ThriftSocialContext socialContext
+  // Soc al connect on bet en t  search user and t  result.
+  19: opt onal soc al.Thr ftSoc alContext soc alContext
 
-  // used by RelevanceTimelineSearchWorkflow, whether a tweet should be highlighted or not
-  46: optional bool highlightResult
+  // used by RelevanceT  l neSearchWorkflow, w t r a t et should be h ghl ghted or not
+  46: opt onal bool h ghl ghtResult
 
-  // used by RelevanceTimelineSearchWorkflow, the highlight context of the highlighted tweet
-  47: optional highlight.ThriftHighlightContext highlightContext
+  // used by RelevanceT  l neSearchWorkflow, t  h ghl ght context of t  h ghl ghted t et
+  47: opt onal h ghl ght.Thr ftH ghl ghtContext h ghl ghtContext
 
-  // the penguin version used to tokenize the tweets by the serving earlybird index as defined
-  // in com.twitter.common.text.version.PenguinVersion
-  56: optional i8 penguinVersion
+  // t  pengu n vers on used to token ze t  t ets by t  serv ng earlyb rd  ndex as def ned
+  //  n com.tw ter.common.text.vers on.Pengu nVers on
+  56: opt onal  8 pengu nVers on
 
-  69: optional bool isNullcast
+  69: opt onal bool  sNullcast
 
-  // This is the normalized ratio(0.00 to 1.00) of nth token(starting before 140) divided by
-  // numTokens and then normalized into 16 positions(4 bits) but on a scale of 0 to 100% as
-  // we unnormalize it for you
-  70: optional double tokenAt140DividedByNumTokensBucket
+  // T   s t  normal zed rat o(0.00 to 1.00) of nth token(start ng before 140) d v ded by
+  // numTokens and t n normal zed  nto 16 pos  ons(4 b s) but on a scale of 0 to 100% as
+  //   unnormal ze   for  
+  70: opt onal double tokenAt140D v dedByNumTokensBucket
 
-}(persisted='true')
+}(pers sted='true')
 
 // Query level result stats.
-// Next id: 20
-struct ThriftSearchResultsRelevanceStats {
-  1: optional i32 numScored = 0
-  // Skipped documents count, they were also scored but their scores got ignored (skipped), note that this is different
-  // from numResultsSkipped in the ThriftSearchResults.
-  2: optional i32 numSkipped = 0
-  3: optional i32 numSkippedForAntiGaming = 0
-  4: optional i32 numSkippedForLowReputation = 0
-  5: optional i32 numSkippedForLowTextScore = 0
-  6: optional i32 numSkippedForSocialFilter = 0
-  7: optional i32 numSkippedForLowFinalScore = 0
-  8: optional i32 oldestScoredTweetAgeInSeconds = 0
+// Next  d: 20
+struct Thr ftSearchResultsRelevanceStats {
+  1: opt onal  32 numScored = 0
+  // Sk pped docu nts count, t y  re also scored but t  r scores got  gnored (sk pped), note that t   s d fferent
+  // from numResultsSk pped  n t  Thr ftSearchResults.
+  2: opt onal  32 numSk pped = 0
+  3: opt onal  32 numSk ppedForAnt Gam ng = 0
+  4: opt onal  32 numSk ppedForLowReputat on = 0
+  5: opt onal  32 numSk ppedForLowTextScore = 0
+  6: opt onal  32 numSk ppedForSoc alF lter = 0
+  7: opt onal  32 numSk ppedForLowF nalScore = 0
+  8: opt onal  32 oldestScoredT etAge nSeconds = 0
 
-  // More counters for various features.
-  9:  optional i32 numFromDirectFollows = 0
-  10: optional i32 numFromTrustedCircle = 0
-  11: optional i32 numReplies = 0
-  12: optional i32 numRepliesTrusted = 0
-  13: optional i32 numRepliesOutOfNetwork = 0
-  14: optional i32 numSelfTweets = 0
-  15: optional i32 numWithMedia = 0
-  16: optional i32 numWithNews = 0
-  17: optional i32 numSpamUser = 0
-  18: optional i32 numOffensive = 0
-  19: optional i32 numBot = 0
-}(persisted='true')
+  // More counters for var ous features.
+  9:  opt onal  32 numFromD rectFollows = 0
+  10: opt onal  32 numFromTrustedC rcle = 0
+  11: opt onal  32 numRepl es = 0
+  12: opt onal  32 numRepl esTrusted = 0
+  13: opt onal  32 numRepl esOutOfNetwork = 0
+  14: opt onal  32 numSelfT ets = 0
+  15: opt onal  32 numW h d a = 0
+  16: opt onal  32 numW hNews = 0
+  17: opt onal  32 numSpamUser = 0
+  18: opt onal  32 numOffens ve = 0
+  19: opt onal  32 numBot = 0
+}(pers sted='true')
 
-// Per result debug info.
-struct ThriftSearchResultDebugInfo {
-  1: optional string hostname
-  2: optional string clusterName
-  3: optional i32 partitionId
-  4: optional string tiername
-}(persisted='true')
+// Per result debug  nfo.
+struct Thr ftSearchResultDebug nfo {
+  1: opt onal str ng hostna 
+  2: opt onal str ng clusterNa 
+  3: opt onal  32 part  on d
+  4: opt onal str ng t erna 
+}(pers sted='true')
 
-struct ThriftSearchResult {
-  // Next available field ID: 22
+struct Thr ftSearchResult {
+  // Next ava lable f eld  D: 22
 
-  // Result status id.
-  1: required i64 id
+  // Result status  d.
+  1: requ red  64  d
 
-  // TweetyPie status of the search result
-  7: optional deprecated.Status tweetypieStatus
-  19: optional tweet.Tweet tweetypieTweet  // v2 struct
+  // T etyP e status of t  search result
+  7: opt onal deprecated.Status t etyp eStatus
+  19: opt onal t et.T et t etyp eT et  // v2 struct
 
-  // If the search result is a retweet, this field contains the source TweetyPie status.
-  10: optional deprecated.Status sourceTweetypieStatus
-  20: optional tweet.Tweet sourceTweetypieTweet  // v2 struct
+  //  f t  search result  s a ret et, t  f eld conta ns t  s ce T etyP e status.
+  10: opt onal deprecated.Status s ceT etyp eStatus
+  20: opt onal t et.T et s ceT etyp eT et  // v2 struct
 
-  // If the search result is a quote tweet, this field contains the quoted TweetyPie status.
-  17: optional deprecated.Status quotedTweetypieStatus
-  21: optional tweet.Tweet quotedTweetypieTweet  // v2 struct
+  //  f t  search result  s a quote t et, t  f eld conta ns t  quoted T etyP e status.
+  17: opt onal deprecated.Status quotedT etyp eStatus
+  21: opt onal t et.T et quotedT etyp eT et  // v2 struct
 
-  // Additional metadata about a search result.
-  5: optional ThriftSearchResultMetadata metadata
+  // Add  onal  tadata about a search result.
+  5: opt onal Thr ftSearchResult tadata  tadata
 
-  // Hit highlights for various parts of this tweet
-  // for tweet text
-  6: optional list<hits.ThriftHits> hitHighlights
-  // for the title and description in the card expando.
-  12: optional list<hits.ThriftHits> cardTitleHitHighlights
-  13: optional list<hits.ThriftHits> cardDescriptionHitHighlights
+  // H  h ghl ghts for var ous parts of t  t et
+  // for t et text
+  6: opt onal l st<h s.Thr ftH s> h H ghl ghts
+  // for t  t le and descr pt on  n t  card expando.
+  12: opt onal l st<h s.Thr ftH s> cardT leH H ghl ghts
+  13: opt onal l st<h s.Thr ftH s> cardDescr pt onH H ghl ghts
 
-  // Expansion types, if expandResult == False, the expansions set should be ignored.
-  8: optional bool expandResult = 0
-  9: optional set<expansions.ThriftTweetExpansionType> expansions
+  // Expans on types,  f expandResult == False, t  expans ons set should be  gnored.
+  8: opt onal bool expandResult = 0
+  9: opt onal set<expans ons.Thr ftT etExpans onType> expans ons
 
-  // Only set if this is a promoted tweet
-  11: optional adserver_common.AdImpression adImpression
+  // Only set  f t   s a promoted t et
+  11: opt onal adserver_common.Ad mpress on ad mpress on
 
-  // where this tweet is from
-  // Since ThriftSearchResult used not only as an Earlybird response, but also an internal
-  // data transfer object of Blender, the value of this field is mutable in Blender, not
-  // necessarily reflecting Earlybird response.
-  14: optional ThriftTweetSource tweetSource
+  // w re t  t et  s from
+  // S nce Thr ftSearchResult used not only as an Earlyb rd response, but also an  nternal
+  // data transfer object of Blender, t  value of t  f eld  s mutable  n Blender, not
+  // necessar ly reflect ng Earlyb rd response.
+  14: opt onal Thr ftT etS ce t etS ce
 
-  // the features of a tweet used for relevance timeline
-  // this field is populated by blender in RelevanceTimelineSearchWorkflow
-  15: optional features.ThriftTweetFeatures tweetFeatures
+  // t  features of a t et used for relevance t  l ne
+  // t  f eld  s populated by blender  n RelevanceT  l neSearchWorkflow
+  15: opt onal features.Thr ftT etFeatures t etFeatures
 
-  // the conversation context of a tweet
-  16: optional conversation.ThriftConversationContext conversationContext
+  // t  conversat on context of a t et
+  16: opt onal conversat on.Thr ftConversat onContext conversat onContext
 
-  // per-result debugging info that's persisted across merges.
-  18: optional ThriftSearchResultDebugInfo debugInfo
-}(persisted='true')
+  // per-result debugg ng  nfo that's pers sted across  rges.
+  18: opt onal Thr ftSearchResultDebug nfo debug nfo
+}(pers sted='true')
 
-enum ThriftFacetRankingMode {
+enum Thr ftFacetRank ngMode {
   COUNT = 0,
-  FILTER_WITH_TERM_STATISTICS = 1,
+  F LTER_W TH_TERM_STAT ST CS = 1,
 }
 
-struct ThriftFacetFieldRequest {
-  // next available field ID: 4
-  1: required string fieldName
-  2: optional i32 numResults = 5
+struct Thr ftFacetF eldRequest {
+  // next ava lable f eld  D: 4
+  1: requ red str ng f eldNa 
+  2: opt onal  32 numResults = 5
 
-  // use facetRankingOptions in ThriftFacetRequest instead
-  3: optional ThriftFacetRankingMode rankingMode = ThriftFacetRankingMode.COUNT
-}(persisted='true')
+  // use facetRank ngOpt ons  n Thr ftFacetRequest  nstead
+  3: opt onal Thr ftFacetRank ngMode rank ngMode = Thr ftFacetRank ngMode.COUNT
+}(pers sted='true')
 
-struct ThriftFacetRequest {
-  // Next available field ID: 7
-  1: optional list<ThriftFacetFieldRequest> facetFields
-  5: optional ranking.ThriftFacetRankingOptions facetRankingOptions
-  6: optional bool usingQueryCache = 0
-}(persisted='true')
+struct Thr ftFacetRequest {
+  // Next ava lable f eld  D: 7
+  1: opt onal l st<Thr ftFacetF eldRequest> facetF elds
+  5: opt onal rank ng.Thr ftFacetRank ngOpt ons facetRank ngOpt ons
+  6: opt onal bool us ngQueryCac  = 0
+}(pers sted='true')
 
-struct ThriftTermRequest {
-  1: optional string fieldName = "text"
-  2: required string term
-}(persisted='true')
+struct Thr ftTermRequest {
+  1: opt onal str ng f eldNa  = "text"
+  2: requ red str ng term
+}(pers sted='true')
 
-enum ThriftHistogramGranularityType {
-  MINUTES = 0
+enum Thr ft togramGranular yType {
+  M NUTES = 0
   HOURS = 1,
   DAYS = 2,
   CUSTOM = 3,
@@ -891,526 +891,526 @@ enum ThriftHistogramGranularityType {
   PLACE_HOLDER5 = 5,
 }
 
-struct ThriftHistogramSettings {
-  1: required ThriftHistogramGranularityType granularity
-  2: optional i32 numBins = 60
-  3: optional i32 samplingRate = 1
-  4: optional i32 binSizeInSeconds   // the bin size, only used if granularity is set to CUSTOM.
-}(persisted='true')
+struct Thr ft togramSett ngs {
+  1: requ red Thr ft togramGranular yType granular y
+  2: opt onal  32 numB ns = 60
+  3: opt onal  32 sampl ngRate = 1
+  4: opt onal  32 b nS ze nSeconds   // t  b n s ze, only used  f granular y  s set to CUSTOM.
+}(pers sted='true')
 
-// next id is 4
-struct ThriftTermStatisticsRequest {
-  1: optional list<ThriftTermRequest> termRequests
-  2: optional ThriftHistogramSettings histogramSettings
-  // If this is set to true, even if there is no termRequests above, so long as the histogramSettings
-  // is set, Earlybird will return a null->ThriftTermResults entry in the termResults map, containing
-  // the global tweet count histogram for current query, which is the number of tweets matching this
-  // query in different minutes/hours/days.
-  3: optional bool includeGlobalCounts = 0
-  // When this is set, the background facets call does another search in order to find the best
-  // representative tweet for a given term request, the representative tweet is stored in the
-  // metadata of the termstats result
-  4: optional bool scoreTweetsForRepresentatives = 0
-}(persisted='true')
+// next  d  s 4
+struct Thr ftTermStat st csRequest {
+  1: opt onal l st<Thr ftTermRequest> termRequests
+  2: opt onal Thr ft togramSett ngs  togramSett ngs
+  //  f t   s set to true, even  f t re  s no termRequests above, so long as t   togramSett ngs
+  //  s set, Earlyb rd w ll return a null->Thr ftTermResults entry  n t  termResults map, conta n ng
+  // t  global t et count  togram for current query, wh ch  s t  number of t ets match ng t 
+  // query  n d fferent m nutes/h s/days.
+  3: opt onal bool  ncludeGlobalCounts = 0
+  // W n t   s set, t  background facets call does anot r search  n order to f nd t  best
+  // representat ve t et for a g ven term request, t  representat ve t et  s stored  n t 
+  //  tadata of t  termstats result
+  4: opt onal bool scoreT etsForRepresentat ves = 0
+}(pers sted='true')
 
-// Next id is 12
-struct ThriftFacetCountMetadata {
-  // this is the id of the first tweet in the index that contained this facet
-  1: optional i64 statusId = -1
+// Next  d  s 12
+struct Thr ftFacetCount tadata {
+  // t   s t   d of t  f rst t et  n t   ndex that conta ned t  facet
+  1: opt onal  64 status d = -1
 
-  // whether the tweet with the above statusId is NSFW, from an antisocial user,
-  // marked as sensitive content, etc.
-  10: optional bool statusPossiblySensitive
+  // w t r t  t et w h t  above status d  s NSFW, from an ant soc al user,
+  // marked as sens  ve content, etc.
+  10: opt onal bool statusPoss blySens  ve
 
-  // the id of the user who sent the tweet above - only returned if
-  // statusId is returned too
-  // NOTE: for native photos we may not be able to determine the user,
-  // even though the statusId can be returned. This is because the statusId
-  // can be determined from the url, but the user can't and the tweet may
-  // not be in the index anymore. In this case statusId would be set but
-  // twitterUserId would not.
-  2: optional i64 twitterUserId = -1
+  // t   d of t  user who sent t  t et above - only returned  f
+  // status d  s returned too
+  // NOTE: for nat ve photos   may not be able to determ ne t  user,
+  // even though t  status d can be returned. T   s because t  status d
+  // can be determ ned from t  url, but t  user can't and t  t et may
+  // not be  n t   ndex anymore.  n t  case status d would be set but
+  // tw terUser d would not.
+  2: opt onal  64 tw terUser d = -1
 
-  // the language of the tweet above.
-  8: optional search_language.ThriftLanguage statusLanguage
+  // t  language of t  t et above.
+  8: opt onal search_language.Thr ftLanguage statusLanguage
 
-  // optionally whitelist the fromUserId from dup/twitterUserId filtering
-  3: optional bool dontFilterUser = 0;
+  // opt onally wh el st t  fromUser d from dup/tw terUser d f lter ng
+  3: opt onal bool dontF lterUser = 0;
 
-  // if this facet is a native photo we return for convenience the
-  // twimg url
-  4: optional string nativePhotoUrl
+  //  f t  facet  s a nat ve photo   return for conven ence t 
+  // tw mg url
+  4: opt onal str ng nat vePhotoUrl
 
-  // optionally returns some debug information about this facet
-  5: optional string explanation
+  // opt onally returns so  debug  nformat on about t  facet
+  5: opt onal str ng explanat on
 
-  // the created_at value for the tweet from statusId - only returned
-  // if statusId is returned too
-  6: optional i64 created_at
+  // t  created_at value for t  t et from status d - only returned
+  //  f status d  s returned too
+  6: opt onal  64 created_at
 
-  // the maximum tweepcred of the hits that contained this facet
-  7: optional i32 maxTweepCred
+  // t  max mum t epcred of t  h s that conta ned t  facet
+  7: opt onal  32 maxT epCred
 
-  // Whether this facet result is force inserted, instead of organically returned from search.
-  // This field is only used in Blender to mark the force-inserted facet results
-  // (from recent tweets, etc).
-  11: optional bool forceInserted = 0
-}(persisted='true')
+  // W t r t  facet result  s force  nserted,  nstead of organ cally returned from search.
+  // T  f eld  s only used  n Blender to mark t  force- nserted facet results
+  // (from recent t ets, etc).
+  11: opt onal bool force nserted = 0
+}(pers sted='true')
 
-struct ThriftTermResults {
-  1: required i32 totalCount
-  2: optional list<i32> histogramBins
-  3: optional ThriftFacetCountMetadata metadata
-}(persisted='true')
+struct Thr ftTermResults {
+  1: requ red  32 totalCount
+  2: opt onal l st< 32>  togramB ns
+  3: opt onal Thr ftFacetCount tadata  tadata
+}(pers sted='true')
 
-struct ThriftTermStatisticsResults {
-  1: required map<ThriftTermRequest,ThriftTermResults> termResults
-  2: optional ThriftHistogramSettings histogramSettings
-  // If histogramSettings are set, this will have a list of ThriftHistogramSettings.numBins binIds,
-  // that the corresponding histogramBins in ThriftTermResults will have counts for.
-  // The binIds will correspond to the times of the hits matching the driving search query for this
-  // term statistics request.
-  // If there were no hits matching the search query, numBins binIds will be returned, but the
-  // values of the binIds will not meaningfully correspond to anything related to the query, and
-  // should not be used. Such cases can be identified by ThriftSearchResults.numHitsProcessed being
-  // set to 0 in the response, and the response not being early terminated.
-  3: optional list<i32> binIds
-  // If set, this id indicates the id of the minimum (oldest) bin that has been completely searched,
-  // even if the query was early terminated. If not set no bin was searched fully, or no histogram
+struct Thr ftTermStat st csResults {
+  1: requ red map<Thr ftTermRequest,Thr ftTermResults> termResults
+  2: opt onal Thr ft togramSett ngs  togramSett ngs
+  //  f  togramSett ngs are set, t  w ll have a l st of Thr ft togramSett ngs.numB ns b n ds,
+  // that t  correspond ng  togramB ns  n Thr ftTermResults w ll have counts for.
+  // T  b n ds w ll correspond to t  t  s of t  h s match ng t  dr v ng search query for t 
+  // term stat st cs request.
+  //  f t re  re no h s match ng t  search query, numB ns b n ds w ll be returned, but t 
+  // values of t  b n ds w ll not  an ngfully correspond to anyth ng related to t  query, and
+  // should not be used. Such cases can be  dent f ed by Thr ftSearchResults.numH sProcessed be ng
+  // set to 0  n t  response, and t  response not be ng early term nated.
+  3: opt onal l st< 32> b n ds
+  //  f set, t   d  nd cates t   d of t  m n mum (oldest) b n that has been completely searc d,
+  // even  f t  query was early term nated.  f not set no b n was searc d fully, or no  togram
   // was requested.
-  // Note that if e.g. a query only matches a bin partially (due to e.g. a since operator) the bin
-  // is still considered fully searched if the query did not early terminate.
-  4: optional i32 minCompleteBinId
-}(persisted='true')
+  // Note that  f e.g. a query only matc s a b n part ally (due to e.g. a s nce operator) t  b n
+  //  s st ll cons dered fully searc d  f t  query d d not early term nate.
+  4: opt onal  32 m nCompleteB n d
+}(pers sted='true')
 
-struct ThriftFacetCount {
-  // the text of the facet
-  1: required string facetLabel
+struct Thr ftFacetCount {
+  // t  text of t  facet
+  1: requ red str ng facetLabel
 
-  // deprecated; currently matches weightedCount for backwards-compatibility reasons
-  2: optional i32 facetCount
+  // deprecated; currently matc s   ghtedCount for backwards-compat b l y reasons
+  2: opt onal  32 facetCount
 
-  // the simple count of tweets that contained this facet, without any
-  // weighting applied
-  7: optional i32 simpleCount
+  // t  s mple count of t ets that conta ned t  facet, w hout any
+  //   ght ng appl ed
+  7: opt onal  32 s mpleCount
 
-  // a weighted version of the count, using signals like tweepcred, parus, etc.
-  8: optional i32 weightedCount
+  // a   ghted vers on of t  count, us ng s gnals l ke t epcred, parus, etc.
+  8: opt onal  32   ghtedCount
 
-  // the number of times this facet occurred in tweets matching the background query
-  // using the term statistics API - only set if FILTER_WITH_TERM_STATISTICS was used
-  3: optional i32 backgroundCount
+  // t  number of t  s t  facet occurred  n t ets match ng t  background query
+  // us ng t  term stat st cs AP  - only set  f F LTER_W TH_TERM_STAT ST CS was used
+  3: opt onal  32 backgroundCount
 
-  // the relevance score that was computed for this facet if FILTER_WITH_TERM_STATISTICS
+  // t  relevance score that was computed for t  facet  f F LTER_W TH_TERM_STAT ST CS
   // was used
-  4: optional double score
+  4: opt onal double score
 
-  // a counter for how often this facet was penalized
-  5: optional i32 penaltyCount
+  // a counter for how often t  facet was penal zed
+  5: opt onal  32 penaltyCount
 
-  6: optional ThriftFacetCountMetadata metadata
-}(persisted='true')
+  6: opt onal Thr ftFacetCount tadata  tadata
+}(pers sted='true')
 
-// List of facet labels and counts for a given facet field, the
-// total count for this field, and a quality score for this field
-struct ThriftFacetFieldResults {
-  1: required list<ThriftFacetCount> topFacets
-  2: required i32 totalCount
-  3: optional double scoreQuality
-  4: optional i32 totalScore
-  5: optional i32 totalPenalty
+// L st of facet labels and counts for a g ven facet f eld, t 
+// total count for t  f eld, and a qual y score for t  f eld
+struct Thr ftFacetF eldResults {
+  1: requ red l st<Thr ftFacetCount> topFacets
+  2: requ red  32 totalCount
+  3: opt onal double scoreQual y
+  4: opt onal  32 totalScore
+  5: opt onal  32 totalPenalty
 
-  // The ratio of the tweet language in the tweets with this facet field, a map from the language
-  // name to a number between (0.0, 1.0]. Only languages with ratio higher than 0.1 will be included.
-  6: optional map<search_language.ThriftLanguage, double> languageHistogram
+  // T  rat o of t  t et language  n t  t ets w h t  facet f eld, a map from t  language
+  // na  to a number bet en (0.0, 1.0]. Only languages w h rat o h g r than 0.1 w ll be  ncluded.
+  6: opt onal map<search_language.Thr ftLanguage, double> language togram
 }
 
-struct ThriftFacetResults {
-  1: required map<string, ThriftFacetFieldResults> facetFields
-  2: optional i32 backgroundNumHits
-  // returns optionally a list of user ids that should not get filtered
-  // out by things like antigaming filters, because these users were explicitly
-  // queried for
-  // Note that ThriftFacetCountMetadata returns already dontFilterUser
-  // for facet requests in which case this list is not needed. However, it
-  // is needed for subsequent term statistics queries, were user id lookups
-  // are performed, but a different background query is used.
-  3: optional set<i64> userIDWhitelist
+struct Thr ftFacetResults {
+  1: requ red map<str ng, Thr ftFacetF eldResults> facetF elds
+  2: opt onal  32 backgroundNumH s
+  // returns opt onally a l st of user  ds that should not get f ltered
+  // out by th ngs l ke ant gam ng f lters, because t se users  re expl c ly
+  // quer ed for
+  // Note that Thr ftFacetCount tadata returns already dontF lterUser
+  // for facet requests  n wh ch case t  l st  s not needed. Ho ver,  
+  //  s needed for subsequent term stat st cs quer es,  re user  d lookups
+  // are perfor d, but a d fferent background query  s used.
+  3: opt onal set< 64> user DWh el st
 }
 
-struct ThriftSearchResults {
-  // Next available field ID: 23
-  1: required list<ThriftSearchResult> results = []
+struct Thr ftSearchResults {
+  // Next ava lable f eld  D: 23
+  1: requ red l st<Thr ftSearchResult> results = []
 
-  // (SEARCH-11950): Now resultOffset is deprecated, so there is no use in numResultsSkipped too.
-  9: optional i32 deprecated_numResultsSkipped
+  // (SEARCH-11950): Now resultOffset  s deprecated, so t re  s no use  n numResultsSk pped too.
+  9: opt onal  32 deprecated_numResultsSk pped
 
-  // Number of docs that matched the query and were processed.
-  7: optional i32 numHitsProcessed
+  // Number of docs that matc d t  query and  re processed.
+  7: opt onal  32 numH sProcessed
 
-  // Range of status IDs searched, from max ID to min ID (both inclusive).
-  // These may be unset in case that the search query contained ID or time
-  // operators that were completely out of range for the given index.
-  10: optional i64 maxSearchedStatusID
-  11: optional i64 minSearchedStatusID
+  // Range of status  Ds searc d, from max  D to m n  D (both  nclus ve).
+  // T se may be unset  n case that t  search query conta ned  D or t  
+  // operators that  re completely out of range for t  g ven  ndex.
+  10: opt onal  64 maxSearc dStatus D
+  11: opt onal  64 m nSearc dStatus D
 
-  // Time range that was searched (both inclusive).
-  19: optional i32 maxSearchedTimeSinceEpoch
-  20: optional i32 minSearchedTimeSinceEpoch
+  // T   range that was searc d (both  nclus ve).
+  19: opt onal  32 maxSearc dT  S nceEpoch
+  20: opt onal  32 m nSearc dT  S nceEpoch
 
-  12: optional ThriftSearchResultsRelevanceStats relevanceStats
+  12: opt onal Thr ftSearchResultsRelevanceStats relevanceStats
 
-  // Overall quality of this search result set
-  13: optional double score = -1.0
-  18: optional double nsfwRatio = 0.0
+  // Overall qual y of t  search result set
+  13: opt onal double score = -1.0
+  18: opt onal double nsfwRat o = 0.0
 
-  // The count of hit documents in each language.
-  14: optional map<search_language.ThriftLanguage, i32> languageHistogram
+  // T  count of h  docu nts  n each language.
+  14: opt onal map<search_language.Thr ftLanguage,  32> language togram
 
-  // Hit counts per time period:
-  // The key is a time cutoff in milliseconds (e.g. 60000 msecs ago).
-  // The value is the number of hits that are more recent than the cutoff.
-  15: optional map<i64, i32> hitCounts
+  // H  counts per t   per od:
+  // T  key  s a t   cutoff  n m ll seconds (e.g. 60000 msecs ago).
+  // T  value  s t  number of h s that are more recent than t  cutoff.
+  15: opt onal map< 64,  32> h Counts
 
-  // the total cost for this query
-  16: optional double queryCost
+  // t  total cost for t  query
+  16: opt onal double queryCost
 
-  // Set to non-0 if this query was terminated early (either due to a timeout, or exceeded query cost)
-  // When getting this response from a single earlybird, this will be set to 1, if the query
-  // terminated early.
-  // When getting this response from a search root, this should be set to the number of individual
-  // earlybird requests that were terminated early.
-  17: optional i32 numPartitionsEarlyTerminated
+  // Set to non-0  f t  query was term nated early (e  r due to a t  out, or exceeded query cost)
+  // W n gett ng t  response from a s ngle earlyb rd, t  w ll be set to 1,  f t  query
+  // term nated early.
+  // W n gett ng t  response from a search root, t  should be set to t  number of  nd v dual
+  // earlyb rd requests that  re term nated early.
+  17: opt onal  32 numPart  onsEarlyTerm nated
 
-  // If ThriftSearchResults returns features in features.ThriftSearchResultFeature format, this
-  // field would define the schema of the features.
-  // If the earlybird schema is already in the client cached schemas indicated in the request, then
-  // searchFeatureSchema would only have (version, checksum) information.
+  //  f Thr ftSearchResults returns features  n features.Thr ftSearchResultFeature format, t 
+  // f eld would def ne t  sc ma of t  features.
+  //  f t  earlyb rd sc ma  s already  n t  cl ent cac d sc mas  nd cated  n t  request, t n
+  // searchFeatureSc ma would only have (vers on, c cksum)  nformat on.
   //
-  // Notice that earlybird root only sends one schema back to the superroot even though earlybird
-  // root might receive multiple version of schemas.
+  // Not ce that earlyb rd root only sends one sc ma back to t  superroot even though earlyb rd
+  // root m ght rece ve mult ple vers on of sc mas.
   //
-  // Earlybird roots' schema merge/choose logic when returning results to superroot:
-  // . pick the most occurred versioned schema and return the schema to the superroot
-  // . if the superroot already caches the schema, only send the version information back
+  // Earlyb rd roots' sc ma  rge/choose log c w n return ng results to superroot:
+  // . p ck t  most occurred vers oned sc ma and return t  sc ma to t  superroot
+  // .  f t  superroot already cac s t  sc ma, only send t  vers on  nformat on back
   //
-  // Superroots' schema merge/choose logic when returning results to clients:
-  // . pick the schema based on the order of: realtime > protected > archive
-  // . because of the above ordering, it is possible that archive earlybird schema with a new flush
-  //   version (with new bit features) might be lost to older realtime earlybird schema; this is
-  //   considered to to be rare and acceptable because one realtime earlybird deploy would fix it
-  21: optional features.ThriftSearchFeatureSchema featureSchema
+  // Superroots' sc ma  rge/choose log c w n return ng results to cl ents:
+  // . p ck t  sc ma based on t  order of: realt   > protected > arch ve
+  // . because of t  above order ng,    s poss ble that arch ve earlyb rd sc ma w h a new flush
+  //   vers on (w h new b  features) m ght be lost to older realt   earlyb rd sc ma; t   s
+  //   cons dered to to be rare and acceptable because one realt   earlyb rd deploy would f x  
+  21: opt onal features.Thr ftSearchFeatureSc ma featureSc ma
 
-  // How long it took to score the results in earlybird (in nanoseconds). The number of results
-  // that were scored should be set in numHitsProcessed.
-  // Expected to only be set for requests that actually do scoring (i.e. Relevance and TopTweets).
-  22: optional i64 scoringTimeNanos
+  // How long   took to score t  results  n earlyb rd ( n nanoseconds). T  number of results
+  // that  re scored should be set  n numH sProcessed.
+  // Expected to only be set for requests that actually do scor ng ( .e. Relevance and TopT ets).
+  22: opt onal  64 scor ngT  Nanos
 
-  8: optional i32 deprecated_numDocsProcessed
+  8: opt onal  32 deprecated_numDocsProcessed
 }
 
-// Note: Earlybird no longer respects this field, as it does not contain statuses.
-// Blender should respect it.
-enum EarlybirdReturnStatusType {
+// Note: Earlyb rd no longer respects t  f eld, as   does not conta n statuses.
+// Blender should respect  .
+enum Earlyb rdReturnStatusType {
   NO_STATUS = 0
   // deprecated
-  DEPRECATED_BASIC_STATUS = 1,
+  DEPRECATED_BAS C_STATUS = 1,
   // deprecated
   DEPRECATED_SEARCH_STATUS = 2,
-  TWEETYPIE_STATUS = 3,
+  TWEETYP E_STATUS = 3,
 
   PLACE_HOLDER4 = 4,
   PLACE_HOLDER5 = 5,
 }
 
 struct AdjustedRequestParams {
-  // Next available field ID: 4
+  // Next ava lable f eld  D: 4
 
-  // Adjusted value for EarlybirdRequest.searchQuery.numResults.
-  1: optional i32 numResults
+  // Adjusted value for Earlyb rdRequest.searchQuery.numResults.
+  1: opt onal  32 numResults
 
-  // Adjusted value for EarlybirdRequest.searchQuery.maxHitsToProcess and
-  // EarlybirdRequest.searchQuery.relevanceOptions.maxHitsToProcess.
-  2: optional i32 maxHitsToProcess
+  // Adjusted value for Earlyb rdRequest.searchQuery.maxH sToProcess and
+  // Earlyb rdRequest.searchQuery.relevanceOpt ons.maxH sToProcess.
+  2: opt onal  32 maxH sToProcess
 
-  // Adjusted value for EarlybirdRequest.searchQuery.relevanceOptions.returnAllResults
-  3: optional bool returnAllResults
+  // Adjusted value for Earlyb rdRequest.searchQuery.relevanceOpt ons.returnAllResults
+  3: opt onal bool returnAllResults
 }
 
-struct EarlybirdRequest {
-  // Next available field ID: 36
+struct Earlyb rdRequest {
+  // Next ava lable f eld  D: 36
 
-  // -------- COMMON REQUEST OPTIONS --------
-  // These fields contain options respected by all kinds of earlybird requests.
+  // -------- COMMON REQUEST OPT ONS --------
+  // T se f elds conta n opt ons respected by all k nds of earlyb rd requests.
 
-  // Search query containing general earlybird retrieval and hit collection options.
-  // Also contains the options specific to search requests.
-  1: required ThriftSearchQuery searchQuery
+  // Search query conta n ng general earlyb rd retr eval and h  collect on opt ons.
+  // Also conta ns t  opt ons spec f c to search requests.
+  1: requ red Thr ftSearchQuery searchQuery
 
-  // Common RPC information - client hostname and request ID.
-  12: optional string clientHost
-  13: optional string clientRequestID
+  // Common RPC  nformat on - cl ent hostna  and request  D.
+  12: opt onal str ng cl entHost
+  13: opt onal str ng cl entRequest D
 
-  // A string identifying the client that initiated the request.
-  // Ex: macaw-search.prod, webforall.prod, webforall.staging.
-  // The intention is to track the load we get from each client, and eventually enforce
-  // per-client QPS quotas, but this field could also be used to allow access to certain features
-  // only to certain clients, etc.
-  21: optional string clientId
+  // A str ng  dent fy ng t  cl ent that  n  ated t  request.
+  // Ex: macaw-search.prod,  bforall.prod,  bforall.stag ng.
+  // T   ntent on  s to track t  load   get from each cl ent, and eventually enforce
+  // per-cl ent QPS quotas, but t  f eld could also be used to allow access to certa n features
+  // only to certa n cl ents, etc.
+  21: opt onal str ng cl ent d
 
-  // The time (in millis since epoch) when the earlybird client issued this request.
-  // Can be used to estimate request timeout time, capturing in-transit time for the request.
-  23: optional i64 clientRequestTimeMs
+  // T  t   ( n m ll s s nce epoch) w n t  earlyb rd cl ent  ssued t  request.
+  // Can be used to est mate request t  out t  , captur ng  n-trans  t   for t  request.
+  23: opt onal  64 cl entRequestT  Ms
 
-  // Caching parameters used by earlybird roots.
-  24: optional caching.CachingParams cachingParams
-
-  // Deprecated. See SEARCH-2784
-  // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given timeout.  If timeout is <= 0 this early termination criteria is
-  // disabled.
-  17: optional i32 timeoutMs = -1
+  // Cach ng para ters used by earlyb rd roots.
+  24: opt onal cach ng.Cach ngParams cach ngParams
 
   // Deprecated. See SEARCH-2784
-  // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given query cost.  If maxQueryCost <= 0 this early termination criteria
-  // is disabled.
-  20: optional double maxQueryCost = -1
+  // Earlyb rd requests w ll be early term nated  n a best-effort way to prevent t m from
+  // exceed ng t  g ven t  out.   f t  out  s <= 0 t  early term nat on cr er a  s
+  // d sabled.
+  17: opt onal  32 t  outMs = -1
+
+  // Deprecated. See SEARCH-2784
+  // Earlyb rd requests w ll be early term nated  n a best-effort way to prevent t m from
+  // exceed ng t  g ven query cost.   f maxQueryCost <= 0 t  early term nat on cr er a
+  //  s d sabled.
+  20: opt onal double maxQueryCost = -1
 
 
-  // -------- REQUEST-TYPE SPECIFIC OPTIONS --------
-  // These fields contain options for one specific kind of request.  If one of these options
-  // is set the request will be considered to be the appropriate type of request.
+  // -------- REQUEST-TYPE SPEC F C OPT ONS --------
+  // T se f elds conta n opt ons for one spec f c k nd of request.   f one of t se opt ons
+  //  s set t  request w ll be cons dered to be t  appropr ate type of request.
 
-  // Options for facet counting requests.
-  11: optional ThriftFacetRequest facetRequest
+  // Opt ons for facet count ng requests.
+  11: opt onal Thr ftFacetRequest facetRequest
 
-  // Options for term statistics requests.
-  14: optional ThriftTermStatisticsRequest termStatisticsRequest
-
-
-  // -------- DEBUG OPTIONS --------
-  // Used for debugging only.
-
-  // Debug mode, 0 for no debug information.
-  15: optional i8 debugMode = 0
-
-  // Can be used to pass extra debug arguments to earlybird.
-  34: optional EarlybirdDebugOptions debugOptions
-
-  // Searches a specific segment by time slice id if set and segment id is > 0.
-  22: optional i64 searchSegmentId
-
-  // -------- THINGS USED ONLY BY THE BLENDER --------
-  // These fields are used by the blender and clients of the blender, but not by earlybird.
-
-  // Specifies what kind of status object to return, if any.
-  7: optional EarlybirdReturnStatusType returnStatusType
+  // Opt ons for term stat st cs requests.
+  14: opt onal Thr ftTermStat st csRequest termStat st csRequest
 
 
-  // -------- THINGS USED BY THE ROOTS --------
-  // These fields are not in use by earlybirds themselves, but are in use by earlybird roots
-  // (and their clients).
-  // These fields live here since we currently reuse the same thrift request and response structs
-  // for both earlybirds and earlybird roots, and could potentially be moved out if we were to
-  // introduce separate request / response structs specifically for the roots.
+  // -------- DEBUG OPT ONS --------
+  // Used for debugg ng only.
 
-  // We have a threshold for how many hash partition requests need to succeed at the root level
-  // in order for the earlybird root request to be considered successful.
-  // Each type or earlybird queries (e.g. relevance, or term statistics) has a predefined default
-  // threshold value (e.g. 90% or hash partitions need to succeed for a recency query).
-  // The client can optionally set the threshold value to be something other than the default,
-  // by setting this field to a value in the range of 0 (exclusive) to 1 (inclusive).
-  // If this value is set outside of the (0, 1] range, a CLIENT_ERROR EarlybirdResponseCode will
+  // Debug mode, 0 for no debug  nformat on.
+  15: opt onal  8 debugMode = 0
+
+  // Can be used to pass extra debug argu nts to earlyb rd.
+  34: opt onal Earlyb rdDebugOpt ons debugOpt ons
+
+  // Searc s a spec f c seg nt by t   sl ce  d  f set and seg nt  d  s > 0.
+  22: opt onal  64 searchSeg nt d
+
+  // -------- TH NGS USED ONLY BY THE BLENDER --------
+  // T se f elds are used by t  blender and cl ents of t  blender, but not by earlyb rd.
+
+  // Spec f es what k nd of status object to return,  f any.
+  7: opt onal Earlyb rdReturnStatusType returnStatusType
+
+
+  // -------- TH NGS USED BY THE ROOTS --------
+  // T se f elds are not  n use by earlyb rds t mselves, but are  n use by earlyb rd roots
+  // (and t  r cl ents).
+  // T se f elds l ve  re s nce   currently reuse t  sa  thr ft request and response structs
+  // for both earlyb rds and earlyb rd roots, and could potent ally be moved out  f    re to
+  //  ntroduce separate request / response structs spec f cally for t  roots.
+
+  //   have a threshold for how many hash part  on requests need to succeed at t  root level
+  //  n order for t  earlyb rd root request to be cons dered successful.
+  // Each type or earlyb rd quer es (e.g. relevance, or term stat st cs) has a predef ned default
+  // threshold value (e.g. 90% or hash part  ons need to succeed for a recency query).
+  // T  cl ent can opt onally set t  threshold value to be so th ng ot r than t  default,
+  // by sett ng t  f eld to a value  n t  range of 0 (exclus ve) to 1 ( nclus ve).
+  //  f t  value  s set outs de of t  (0, 1] range, a CL ENT_ERROR Earlyb rdResponseCode w ll
   // be returned.
-  25: optional double successfulResponseThreshold
+  25: opt onal double successfulResponseThreshold
 
-  // Where does the query come from?
-  26: optional query.ThriftQuerySource querySource
+  // W re does t  query co  from?
+  26: opt onal query.Thr ftQueryS ce queryS ce
 
-  // Whether to get archive results This flag is advisory. A request may still be restricted from
-  // getting reqults from the archive based on the requesting client, query source, requested
-  // time/id range, etc.
-  27: optional bool getOlderResults
+  // W t r to get arch ve results T  flag  s adv sory. A request may st ll be restr cted from
+  // gett ng reqults from t  arch ve based on t  request ng cl ent, query s ce, requested
+  // t  / d range, etc.
+  27: opt onal bool getOlderResults
 
-  // The list of users followed by the current user.
-  // Used to restrict the values in the fromUserIDFilter64 field when sending a request
-  // to the protectected cluster.
-  28: optional list<i64> followedUserIds
+  // T  l st of users follo d by t  current user.
+  // Used to restr ct t  values  n t  fromUser DF lter64 f eld w n send ng a request
+  // to t  protectected cluster.
+  28: opt onal l st< 64> follo dUser ds
 
-  // The adjusted parameters for the protected request.
-  29: optional AdjustedRequestParams adjustedProtectedRequestParams
+  // T  adjusted para ters for t  protected request.
+  29: opt onal AdjustedRequestParams adjustedProtectedRequestParams
 
-  // The adjusted parameters for the full archive request.
-  30: optional AdjustedRequestParams adjustedFullArchiveRequestParams
+  // T  adjusted para ters for t  full arch ve request.
+  30: opt onal AdjustedRequestParams adjustedFullArch veRequestParams
 
-  // Return only the protected tweets. This flag is used by the SuperRoot to return relevance
-  // results that contain only protected tweets.
-  31: optional bool getProtectedTweetsOnly
+  // Return only t  protected t ets. T  flag  s used by t  SuperRoot to return relevance
+  // results that conta n only protected t ets.
+  31: opt onal bool getProtectedT etsOnly
 
-  // Tokenize serialized queries with the appropriate Pengin version(s).
+  // Token ze ser al zed quer es w h t  appropr ate Peng n vers on(s).
   // Only has an effect on superroot.
-  32: optional bool retokenizeSerializedQuery
+  32: opt onal bool retoken zeSer al zedQuery
 
-  // Flag to ignore tweets that are very recent and could be incompletely indexed.
-  // If false, will allow queries to see results that may violate implicit streaming
-  // guarantees and will search Tweets that have been partially indexed.
-  // See go/indexing-latency for more details. When enabled, prevents seeing tweets
-  // that are less than 15 seconds old (or a similarly configured threshold).
-  // May be set to false unless explicitly set to true.
-  33: optional bool skipVeryRecentTweets = 1
+  // Flag to  gnore t ets that are very recent and could be  ncompletely  ndexed.
+  //  f false, w ll allow quer es to see results that may v olate  mpl c  stream ng
+  // guarantees and w ll search T ets that have been part ally  ndexed.
+  // See go/ ndex ng-latency for more deta ls. W n enabled, prevents see ng t ets
+  // that are less than 15 seconds old (or a s m larly conf gured threshold).
+  // May be set to false unless expl c ly set to true.
+  33: opt onal bool sk pVeryRecentT ets = 1
 
-  // Setting an experimental cluster will reroute traffic at the realtime root layer to an experimental
-  // Earlybird cluster. This will have no impact if set on requests to anywhere other than realtime root.
-  35: optional ExperimentCluster experimentClusterToUse
+  // Sett ng an exper  ntal cluster w ll reroute traff c at t  realt   root layer to an exper  ntal
+  // Earlyb rd cluster. T  w ll have no  mpact  f set on requests to anyw re ot r than realt   root.
+  35: opt onal Exper  ntCluster exper  ntClusterToUse
 
-  // Caps number of results returned by roots after merging results from different earlybird partitions/clusters. 
-  // If not set, ThriftSearchQuery.numResults or CollectorParams.numResultsToReturn will be used to cap results. 
-  // This parameter will be ignored if ThriftRelevanceOptions.returnAllResults is set to true.
-  36: optional i32 numResultsToReturnAtRoot
+  // Caps number of results returned by roots after  rg ng results from d fferent earlyb rd part  ons/clusters. 
+  //  f not set, Thr ftSearchQuery.numResults or CollectorParams.numResultsToReturn w ll be used to cap results. 
+  // T  para ter w ll be  gnored  f Thr ftRelevanceOpt ons.returnAllResults  s set to true.
+  36: opt onal  32 numResultsToReturnAtRoot
 }
 
-enum EarlybirdResponseCode {
+enum Earlyb rdResponseCode {
   SUCCESS = 0,
-  PARTITION_NOT_FOUND = 1,
-  PARTITION_DISABLED = 2,
-  TRANSIENT_ERROR = 3,
-  PERSISTENT_ERROR = 4,
-  CLIENT_ERROR = 5,
-  PARTITION_SKIPPED = 6,
-  // Request was queued up on the server for so long that it timed out, and was not
+  PART T ON_NOT_FOUND = 1,
+  PART T ON_D SABLED = 2,
+  TRANS ENT_ERROR = 3,
+  PERS STENT_ERROR = 4,
+  CL ENT_ERROR = 5,
+  PART T ON_SK PPED = 6,
+  // Request was queued up on t  server for so long that   t  d out, and was not
   // executed at all.
-  SERVER_TIMEOUT_ERROR = 7,
-  TIER_SKIPPED = 8,
-  // Not enough partitions returned a successful response. The merged response will have partition
-  // counts and early termination info set, but will not have search results.
-  TOO_MANY_PARTITIONS_FAILED_ERROR = 9,
-  // Client went over its quota, and the request was throttled.
+  SERVER_T MEOUT_ERROR = 7,
+  T ER_SK PPED = 8,
+  // Not enough part  ons returned a successful response. T   rged response w ll have part  on
+  // counts and early term nat on  nfo set, but w ll not have search results.
+  TOO_MANY_PART T ONS_FA LED_ERROR = 9,
+  // Cl ent  nt over  s quota, and t  request was throttled.
   QUOTA_EXCEEDED_ERROR = 10,
-  // Client's request is blocked based on Search Infra's policy. Search Infra can can block client's
-  // requests based on the query source of the request.
+  // Cl ent's request  s blocked based on Search  nfra's pol cy. Search  nfra can can block cl ent's
+  // requests based on t  query s ce of t  request.
   REQUEST_BLOCKED_ERROR = 11,
 
-  CLIENT_CANCEL_ERROR = 12,
+  CL ENT_CANCEL_ERROR = 12,
 
-  CLIENT_BLOCKED_BY_TIER_ERROR = 13,
+  CL ENT_BLOCKED_BY_T ER_ERROR = 13,
 
   PLACE_HOLDER_2015_09_21 = 14,
 }
 
 // A recorded request and response.
-struct EarlybirdRequestResponse {
-  // Where did we send this request to.
-  1: optional string sentTo;
-  2: optional EarlybirdRequest request;
-  // This can't be an EarlybirdResponse, because the thrift compiler for Python
-  // doesn't allow cyclic references and we have some Python utilities that will fail.
-  3: optional string response;
+struct Earlyb rdRequestResponse {
+  // W re d d   send t  request to.
+  1: opt onal str ng sentTo;
+  2: opt onal Earlyb rdRequest request;
+  // T  can't be an Earlyb rdResponse, because t  thr ft comp ler for Python
+  // doesn't allow cycl c references and   have so  Python ut l  es that w ll fa l.
+  3: opt onal str ng response;
 }
 
-struct EarlybirdDebugInfo {
-  1: optional string host
-  2: optional string parsedQuery
-  3: optional string luceneQuery
-  // Requests sent to dependent services. For example, superroot sends to realtime root,
-  // archive root, etc.
-  4: optional list<EarlybirdRequestResponse> sentRequests;
-  // segment level debug info (eg. hitsPerSegment, max/minSearchedTime etc.)
-  5: optional list<string> collectorDebugInfo
-  6: optional list<string> termStatisticsDebugInfo
+struct Earlyb rdDebug nfo {
+  1: opt onal str ng host
+  2: opt onal str ng parsedQuery
+  3: opt onal str ng luceneQuery
+  // Requests sent to dependent serv ces. For example, superroot sends to realt   root,
+  // arch ve root, etc.
+  4: opt onal l st<Earlyb rdRequestResponse> sentRequests;
+  // seg nt level debug  nfo (eg. h sPerSeg nt, max/m nSearc dT   etc.)
+  5: opt onal l st<str ng> collectorDebug nfo
+  6: opt onal l st<str ng> termStat st csDebug nfo
 }
 
-struct EarlybirdDebugOptions {
-  1: optional bool includeCollectorDebugInfo
+struct Earlyb rdDebugOpt ons {
+  1: opt onal bool  ncludeCollectorDebug nfo
 }
 
-struct TierResponse {
-  1: optional EarlybirdResponseCode tierResponseCode
-  2: optional i32 numPartitions
-  3: optional i32 numSuccessfulPartitions
+struct T erResponse {
+  1: opt onal Earlyb rdResponseCode t erResponseCode
+  2: opt onal  32 numPart  ons
+  3: opt onal  32 numSuccessfulPart  ons
 }
 
-struct EarlybirdServerStats {
-  // The hostname of the Earlybird that processed this request.
-  1: optional string hostname
+struct Earlyb rdServerStats {
+  // T  hostna  of t  Earlyb rd that processed t  request.
+  1: opt onal str ng hostna 
 
-  // The partition to which this earlybird belongs.
-  2: optional i32 partition
+  // T  part  on to wh ch t  earlyb rd belongs.
+  2: opt onal  32 part  on
 
-  // Current Earlybird QPS.
-  // Earlybirds should set this field at the end of a request (not at the start). This would give
-  // roots a more up-to-date view of the load on the earlybirds.
-  3: optional i64 currentQps
+  // Current Earlyb rd QPS.
+  // Earlyb rds should set t  f eld at t  end of a request (not at t  start). T  would g ve
+  // roots a more up-to-date v ew of t  load on t  earlyb rds.
+  3: opt onal  64 currentQps
 
-  // The time the request waited in the queue before Earlybird started processing it.
-  // This does not include the time spent in the finagle queue: it's the time between the moment
-  // earlybird received the request, and the moment it started processing the request.
-  4: optional i64 queueTimeMillis
+  // T  t   t  request wa ed  n t  queue before Earlyb rd started process ng  .
+  // T  does not  nclude t  t   spent  n t  f nagle queue:  's t  t   bet en t  mo nt
+  // earlyb rd rece ved t  request, and t  mo nt   started process ng t  request.
+  4: opt onal  64 queueT  M ll s
 
-  // The average request time in the queue before Earlybird started processing it.
-  // This does not include the time that requests spent in the finagle queue: it's the average time
-  // between the moment earlybird received its requests, and the moment it started processing them.
-  5: optional i64 averageQueueTimeMillis
+  // T  average request t    n t  queue before Earlyb rd started process ng  .
+  // T  does not  nclude t  t   that requests spent  n t  f nagle queue:  's t  average t  
+  // bet en t  mo nt earlyb rd rece ved  s requests, and t  mo nt   started process ng t m.
+  5: opt onal  64 averageQueueT  M ll s
 
-  // Current average per-request latency as perceived by Earlybird.
-  6: optional i64 averageLatencyMicros
+  // Current average per-request latency as perce ved by Earlyb rd.
+  6: opt onal  64 averageLatencyM cros
 
-  // The tier to which this earlybird belongs.
-  7: optional string tierName
+  // T  t er to wh ch t  earlyb rd belongs.
+  7: opt onal str ng t erNa 
 }
 
-struct EarlybirdResponse {
-  // Next available field ID: 17
-  1: optional ThriftSearchResults searchResults
-  5: optional ThriftFacetResults facetResults
-  6: optional ThriftTermStatisticsResults termStatisticsResults
-  2: required EarlybirdResponseCode responseCode
-  3: required i64 responseTime
-  7: optional i64 responseTimeMicros
-  // fields below will only be returned if debug > 1 in the request.
-  4: optional string debugString
-  8: optional EarlybirdDebugInfo debugInfo
+struct Earlyb rdResponse {
+  // Next ava lable f eld  D: 17
+  1: opt onal Thr ftSearchResults searchResults
+  5: opt onal Thr ftFacetResults facetResults
+  6: opt onal Thr ftTermStat st csResults termStat st csResults
+  2: requ red Earlyb rdResponseCode responseCode
+  3: requ red  64 responseT  
+  7: opt onal  64 responseT  M cros
+  // f elds below w ll only be returned  f debug > 1  n t  request.
+  4: opt onal str ng debugStr ng
+  8: opt onal Earlyb rdDebug nfo debug nfo
 
-  // Only exists for merged earlybird response.
-  10: optional i32 numPartitions
-  11: optional i32 numSuccessfulPartitions
-  // Only exists for merged earlybird response from multiple tiers.
-  13: optional list<TierResponse> perTierResponse
+  // Only ex sts for  rged earlyb rd response.
+  10: opt onal  32 numPart  ons
+  11: opt onal  32 numSuccessfulPart  ons
+  // Only ex sts for  rged earlyb rd response from mult ple t ers.
+  13: opt onal l st<T erResponse> perT erResponse
 
-  // Total number of segments that were searched. Partially searched segments are fully counted.
-  // e.g. if we searched 1 segment fully, and early terminated half way through the second
-  // segment, this field should be set to 2.
-  15: optional i32 numSearchedSegments
+  // Total number of seg nts that  re searc d. Part ally searc d seg nts are fully counted.
+  // e.g.  f   searc d 1 seg nt fully, and early term nated half way through t  second
+  // seg nt, t  f eld should be set to 2.
+  15: opt onal  32 numSearc dSeg nts
 
-  // Whether the request early terminated, if so, the termination reason.
-  12: optional search.EarlyTerminationInfo earlyTerminationInfo
+  // W t r t  request early term nated,  f so, t  term nat on reason.
+  12: opt onal search.EarlyTerm nat on nfo earlyTerm nat on nfo
 
-  // Whether this response is from cache.
-  14: optional bool cacheHit
+  // W t r t  response  s from cac .
+  14: opt onal bool cac H 
 
-  // Stats used by roots to determine if we should go into degraded mode.
-  16: optional EarlybirdServerStats earlybirdServerStats
+  // Stats used by roots to determ ne  f   should go  nto degraded mode.
+  16: opt onal Earlyb rdServerStats earlyb rdServerStats
 }
 
-enum EarlybirdStatusCode {
-  STARTING = 0,
+enum Earlyb rdStatusCode {
+  START NG = 0,
   CURRENT = 1,
-  STOPPING = 2,
+  STOPP NG = 2,
   UNHEALTHY = 3,
-  BLACKLISTED = 4,
+  BLACKL STED = 4,
 
   PLACE_HOLDER5 = 5,
   PLACE_HOLDER6 = 6,
 }
 
-struct EarlybirdStatusResponse {
-  1: required EarlybirdStatusCode code
-  2: required i64 aliveSince
-  3: optional string message
+struct Earlyb rdStatusResponse {
+  1: requ red Earlyb rdStatusCode code
+  2: requ red  64 al veS nce
+  3: opt onal str ng  ssage
 }
 
-service EarlybirdService {
-  string getName(),
-  EarlybirdStatusResponse getStatus(),
-  EarlybirdResponse search( 1: EarlybirdRequest request )
+serv ce Earlyb rdServ ce {
+  str ng getNa (),
+  Earlyb rdStatusResponse getStatus(),
+  Earlyb rdResponse search( 1: Earlyb rdRequest request )
 }

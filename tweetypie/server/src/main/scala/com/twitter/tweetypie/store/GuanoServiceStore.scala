@@ -1,120 +1,120 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.guano.thriftscala.NsfwTweetActionAction
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.guano.thr ftscala.NsfwT etAct onAct on
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait GuanoServiceStore
-    extends TweetStoreBase[GuanoServiceStore]
-    with AsyncDeleteTweet.Store
-    with AsyncTakedown.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): GuanoServiceStore =
-    new TweetStoreWrapper(w, this)
-      with GuanoServiceStore
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncTakedown.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
+tra  GuanoServ ceStore
+    extends T etStoreBase[GuanoServ ceStore]
+    w h AsyncDeleteT et.Store
+    w h AsyncTakedown.Store
+    w h AsyncUpdatePoss blySens  veT et.Store {
+  def wrap(w: T etStore.Wrap): GuanoServ ceStore =
+    new T etStoreWrapper(w, t )
+      w h GuanoServ ceStore
+      w h AsyncDeleteT et.StoreWrapper
+      w h AsyncTakedown.StoreWrapper
+      w h AsyncUpdatePoss blySens  veT et.StoreWrapper
 }
 
-object GuanoServiceStore {
-  val Action: AsyncWriteAction.GuanoScribe.type = AsyncWriteAction.GuanoScribe
+object GuanoServ ceStore {
+  val Act on: AsyncWr eAct on.GuanoScr be.type = AsyncWr eAct on.GuanoScr be
 
   val toGuanoTakedown: (AsyncTakedown.Event, TakedownReason, Boolean) => Guano.Takedown =
     (event: AsyncTakedown.Event, reason: TakedownReason, takendown: Boolean) =>
       Guano.Takedown(
-        tweetId = event.tweet.id,
-        userId = getUserId(event.tweet),
+        t et d = event.t et. d,
+        user d = getUser d(event.t et),
         reason = reason,
         takendown = takendown,
-        note = event.auditNote,
+        note = event.aud Note,
         host = event.host,
-        byUserId = event.byUserId
+        byUser d = event.byUser d
       )
 
-  val toGuanoUpdatePossiblySensitiveTweet: (
-    AsyncUpdatePossiblySensitiveTweet.Event,
+  val toGuanoUpdatePoss blySens  veT et: (
+    AsyncUpdatePoss blySens  veT et.Event,
     Boolean,
-    NsfwTweetActionAction
-  ) => Guano.UpdatePossiblySensitiveTweet =
+    NsfwT etAct onAct on
+  ) => Guano.UpdatePoss blySens  veT et =
     (
-      event: AsyncUpdatePossiblySensitiveTweet.Event,
+      event: AsyncUpdatePoss blySens  veT et.Event,
       updatedValue: Boolean,
-      action: NsfwTweetActionAction
+      act on: NsfwT etAct onAct on
     ) =>
-      Guano.UpdatePossiblySensitiveTweet(
-        tweetId = event.tweet.id,
-        host = event.host.orElse(Some("unknown")),
-        userId = event.user.id,
-        byUserId = event.byUserId,
-        action = action,
+      Guano.UpdatePoss blySens  veT et(
+        t et d = event.t et. d,
+        host = event.host.orElse(So ("unknown")),
+        user d = event.user. d,
+        byUser d = event.byUser d,
+        act on = act on,
         enabled = updatedValue,
         note = event.note
       )
 
-  def apply(guano: Guano, stats: StatsReceiver): GuanoServiceStore = {
-    val deleteByUserIdCounter = stats.counter("deletes_with_by_user_id")
-    val deleteScribeCounter = stats.counter("deletes_resulting_in_scribe")
+  def apply(guano: Guano, stats: StatsRece ver): GuanoServ ceStore = {
+    val deleteByUser dCounter = stats.counter("deletes_w h_by_user_ d")
+    val deleteScr beCounter = stats.counter("deletes_result ng_ n_scr be")
 
-    new GuanoServiceStore {
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { event =>
-          val tweet = event.tweet
+    new GuanoServ ceStore {
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        FutureEffect[AsyncDeleteT et.Event] { event =>
+          val t et = event.t et
 
-          event.byUserId.foreach(_ => deleteByUserIdCounter.incr())
+          event.byUser d.foreach(_ => deleteByUser dCounter. ncr())
 
-          // Guano the tweet deletion action not initiated from the RetweetsDeletionStore
-          event.byUserId match {
-            case Some(byUserId) =>
-              deleteScribeCounter.incr()
-              guano.scribeDestroyTweet(
-                Guano.DestroyTweet(
-                  tweet = tweet,
-                  userId = getUserId(tweet),
-                  byUserId = byUserId,
-                  passthrough = event.auditPassthrough
+          // Guano t  t et delet on act on not  n  ated from t  Ret etsDelet onStore
+          event.byUser d match {
+            case So (byUser d) =>
+              deleteScr beCounter. ncr()
+              guano.scr beDestroyT et(
+                Guano.DestroyT et(
+                  t et = t et,
+                  user d = getUser d(t et),
+                  byUser d = byUser d,
+                  passthrough = event.aud Passthrough
                 )
               )
             case _ =>
-              Future.Unit
+              Future.Un 
           }
-        }.onlyIf(_.cascadedFromTweetId.isEmpty)
+        }.only f(_.cascadedFromT et d. sEmpty)
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        T etStore.retry(Act on, asyncDeleteT et)
 
-      override val asyncTakedown: FutureEffect[AsyncTakedown.Event] =
+      overr de val asyncTakedown: FutureEffect[AsyncTakedown.Event] =
         FutureEffect[AsyncTakedown.Event] { event =>
-          val messages =
+          val  ssages =
             event.reasonsToAdd.map(toGuanoTakedown(event, _, true)) ++
               event.reasonsToRemove.map(toGuanoTakedown(event, _, false))
-          Future.join(messages.map(guano.scribeTakedown))
-        }.onlyIf(_.scribeForAudit)
+          Future.jo n( ssages.map(guano.scr beTakedown))
+        }.only f(_.scr beForAud )
 
-      override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
-        TweetStore.retry(Action, asyncTakedown)
+      overr de val retryAsyncTakedown: FutureEffect[T etStoreRetryEvent[AsyncTakedown.Event]] =
+        T etStore.retry(Act on, asyncTakedown)
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      overr de val asyncUpdatePoss blySens  veT et: FutureEffect[
+        AsyncUpdatePoss blySens  veT et.Event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event] { event =>
-          val messages =
-            event.nsfwAdminChange.map(
-              toGuanoUpdatePossiblySensitiveTweet(event, _, NsfwTweetActionAction.NsfwAdmin)
+        FutureEffect[AsyncUpdatePoss blySens  veT et.Event] { event =>
+          val  ssages =
+            event.nsfwAdm nChange.map(
+              toGuanoUpdatePoss blySens  veT et(event, _, NsfwT etAct onAct on.NsfwAdm n)
             ) ++
               event.nsfwUserChange.map(
-                toGuanoUpdatePossiblySensitiveTweet(event, _, NsfwTweetActionAction.NsfwUser)
+                toGuanoUpdatePoss blySens  veT et(event, _, NsfwT etAct onAct on.NsfwUser)
               )
-          Future.join(messages.toSeq.map(guano.scribeUpdatePossiblySensitiveTweet))
+          Future.jo n( ssages.toSeq.map(guano.scr beUpdatePoss blySens  veT et))
         }
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      overr de val retryAsyncUpdatePoss blySens  veT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUpdatePoss blySens  veT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        T etStore.retry(Act on, asyncUpdatePoss blySens  veT et)
     }
   }
 }

@@ -1,77 +1,77 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * Query implementation adds attribute collection support for an underlying query.
+ * Query  mple ntat on adds attr bute collect on support for an underly ng query.
  */
-public class IdentifiableQuery extends Query {
-  protected final Query inner;
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+publ c class  dent f ableQuery extends Query {
+  protected f nal Query  nner;
+  pr vate f nal F eldRankH  nfo query d;
+  pr vate f nal H Attr buteCollector attrCollector;
 
-  public IdentifiableQuery(Query inner, FieldRankHitInfo queryId,
-                           HitAttributeCollector attrCollector) {
-    this.inner = Preconditions.checkNotNull(inner);
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  publ c  dent f ableQuery(Query  nner, F eldRankH  nfo query d,
+                           H Attr buteCollector attrCollector) {
+    t . nner = Precond  ons.c ckNotNull( nner);
+    t .query d = query d;
+    t .attrCollector = Precond  ons.c ckNotNull(attrCollector);
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
-    return new IdentifiableQueryWeight(this, innerWeight, queryId, attrCollector);
+  @Overr de
+  publ c   ght create  ght(
+       ndexSearc r searc r, ScoreMode scoreMode, float boost) throws  OExcept on {
+      ght  nner  ght =  nner.create  ght(searc r, scoreMode, boost);
+    return new  dent f ableQuery  ght(t ,  nner  ght, query d, attrCollector);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = inner.rewrite(reader);
-    if (rewritten != inner) {
-      return new IdentifiableQuery(rewritten, queryId, attrCollector);
+  @Overr de
+  publ c Query rewr e( ndexReader reader) throws  OExcept on {
+    Query rewr ten =  nner.rewr e(reader);
+     f (rewr ten !=  nner) {
+      return new  dent f ableQuery(rewr ten, query d, attrCollector);
     }
-    return this;
+    return t ;
   }
 
-  @Override
-  public int hashCode() {
-    return inner.hashCode() * 13 + (queryId == null ? 0 : queryId.hashCode());
+  @Overr de
+  publ c  nt hashCode() {
+    return  nner.hashCode() * 13 + (query d == null ? 0 : query d.hashCode());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof IdentifiableQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof  dent f ableQuery)) {
       return false;
     }
 
-    IdentifiableQuery identifiableQuery = IdentifiableQuery.class.cast(obj);
-    return inner.equals(identifiableQuery.inner)
-        && (queryId == null
-            ? identifiableQuery.queryId == null
-            : queryId.equals(identifiableQuery.queryId));
+     dent f ableQuery  dent f ableQuery =  dent f ableQuery.class.cast(obj);
+    return  nner.equals( dent f ableQuery. nner)
+        && (query d == null
+            ?  dent f ableQuery.query d == null
+            : query d.equals( dent f ableQuery.query d));
   }
 
-  @Override
-  public String toString(String field) {
-    return inner.toString(field);
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return  nner.toStr ng(f eld);
   }
 
-  @VisibleForTesting
-  public Query getQueryForTest() {
-    return inner;
+  @V s bleForTest ng
+  publ c Query getQueryForTest() {
+    return  nner;
   }
 
-  @VisibleForTesting
-  public FieldRankHitInfo getQueryIdForTest() {
-    return queryId;
+  @V s bleForTest ng
+  publ c F eldRankH  nfo getQuery dForTest() {
+    return query d;
   }
 }

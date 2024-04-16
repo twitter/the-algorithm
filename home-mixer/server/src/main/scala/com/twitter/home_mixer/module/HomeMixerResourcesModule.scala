@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.twitter.inject.TwitterModule
+ mport com.tw ter. nject.Tw terModule
 
-object HomeMixerResourcesModule extends TwitterModule {}
+object Ho M xerRes cesModule extends Tw terModule {}

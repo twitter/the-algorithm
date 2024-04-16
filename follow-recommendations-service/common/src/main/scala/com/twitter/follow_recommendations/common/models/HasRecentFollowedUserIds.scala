@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasRecentFollowedUserIds {
-  // user ids that are recently followed by the target user
-  def recentFollowedUserIds: Option[Seq[Long]]
+tra  HasRecentFollo dUser ds {
+  // user  ds that are recently follo d by t  target user
+  def recentFollo dUser ds: Opt on[Seq[Long]]
 
-  // user ids that are recently followed by the target user in set data-structure
-  lazy val recentFollowedUserIdsSet: Option[Set[Long]] = recentFollowedUserIds match {
-    case Some(users) => Some(users.toSet)
-    case None => Some(Set.empty)
+  // user  ds that are recently follo d by t  target user  n set data-structure
+  lazy val recentFollo dUser dsSet: Opt on[Set[Long]] = recentFollo dUser ds match {
+    case So (users) => So (users.toSet)
+    case None => So (Set.empty)
   }
 
-  lazy val numRecentFollowedUserIds: Int = recentFollowedUserIds.map(_.size).getOrElse(0)
+  lazy val numRecentFollo dUser ds:  nt = recentFollo dUser ds.map(_.s ze).getOrElse(0)
 }

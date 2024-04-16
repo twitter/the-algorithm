@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport com.tw ter.ml.ap .thr ftscala.FloatTensor
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.ModelFeatureNa 
+ mport com.tw ter.product_m xer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.FeatureStoreV1Cand dateFeature
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-class QueryInferInputTensorBuilder[-Query <: PipelineQuery, +Value](
-  builder: InferInputTensorBuilder[Value],
-  features: Set[_ <: Feature[Query, _] with ModelFeatureName]) {
-  def apply(query: Query): Seq[InferInputTensor] = {
+class Query nfer nputTensorBu lder[-Query <: P pel neQuery, +Value](
+  bu lder:  nfer nputTensorBu lder[Value],
+  features: Set[_ <: Feature[Query, _] w h ModelFeatureNa ]) {
+  def apply(query: Query): Seq[ nfer nputTensor] = {
     val featureMap = query.features.getOrElse(FeatureMap.empty)
     features.flatMap { feature =>
       val queryFeatureValue: Value = feature match {
         case feature: FeatureStoreV1QueryFeature[Query, _, Value] =>
           featureMap.getFeatureStoreV1QueryFeature(feature)
-        case feature: FeatureStoreV1CandidateFeature[Query, _, _, Value] =>
-          throw new UnexpectedFeatureTypeException(feature)
-        case feature: FeatureWithDefaultOnFailure[Query, Value] =>
-          featureMap.getTry(feature).toOption.getOrElse(feature.defaultValue)
+        case feature: FeatureStoreV1Cand dateFeature[Query, _, _, Value] =>
+          throw new UnexpectedFeatureTypeExcept on(feature)
+        case feature: FeatureW hDefaultOnFa lure[Query, Value] =>
+          featureMap.getTry(feature).toOpt on.getOrElse(feature.defaultValue)
         case feature: Feature[Query, Value] =>
           featureMap.get(feature)
       }
-      builder.apply(feature.featureName, Seq(queryFeatureValue))
+      bu lder.apply(feature.featureNa , Seq(queryFeatureValue))
     }.toSeq
   }
 }
 
-case class QueryBooleanInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, Boolean] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, Boolean](BooleanInferInputTensorBuilder, features)
+case class QueryBoolean nfer nputTensorBu lder[-Query <: P pel neQuery](
+  features: Set[_ <: Feature[Query, Boolean] w h ModelFeatureNa ])
+    extends Query nfer nputTensorBu lder[Query, Boolean](Boolean nfer nputTensorBu lder, features)
 
-case class QueryBytesInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, String] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, String](BytesInferInputTensorBuilder, features)
+case class QueryBytes nfer nputTensorBu lder[-Query <: P pel neQuery](
+  features: Set[_ <: Feature[Query, Str ng] w h ModelFeatureNa ])
+    extends Query nfer nputTensorBu lder[Query, Str ng](Bytes nfer nputTensorBu lder, features)
 
-case class QueryFloat32InferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, _ <: AnyVal] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, AnyVal](Float32InferInputTensorBuilder, features)
+case class QueryFloat32 nfer nputTensorBu lder[-Query <: P pel neQuery](
+  features: Set[_ <: Feature[Query, _ <: AnyVal] w h ModelFeatureNa ])
+    extends Query nfer nputTensorBu lder[Query, AnyVal](Float32 nfer nputTensorBu lder, features)
 
-case class QueryFloatTensorInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, FloatTensor] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, FloatTensor](
-      FloatTensorInferInputTensorBuilder,
+case class QueryFloatTensor nfer nputTensorBu lder[-Query <: P pel neQuery](
+  features: Set[_ <: Feature[Query, FloatTensor] w h ModelFeatureNa ])
+    extends Query nfer nputTensorBu lder[Query, FloatTensor](
+      FloatTensor nfer nputTensorBu lder,
       features)
 
-case class QueryInt64InferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, _ <: AnyVal] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, AnyVal](Int64InferInputTensorBuilder, features)
+case class Query nt64 nfer nputTensorBu lder[-Query <: P pel neQuery](
+  features: Set[_ <: Feature[Query, _ <: AnyVal] w h ModelFeatureNa ])
+    extends Query nfer nputTensorBu lder[Query, AnyVal]( nt64 nfer nputTensorBu lder, features)
 
-case class QuerySparseMapInferInputTensorBuilder[-Query <: PipelineQuery](
-  features: Set[_ <: Feature[Query, Option[Map[Int, Double]]] with ModelFeatureName])
-    extends QueryInferInputTensorBuilder[Query, Option[Map[Int, Double]]](
-      SparseMapInferInputTensorBuilder,
+case class QuerySparseMap nfer nputTensorBu lder[-Query <: P pel neQuery](
+  features: Set[_ <: Feature[Query, Opt on[Map[ nt, Double]]] w h ModelFeatureNa ])
+    extends Query nfer nputTensorBu lder[Query, Opt on[Map[ nt, Double]]](
+      SparseMap nfer nputTensorBu lder,
       features)

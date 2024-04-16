@@ -1,51 +1,51 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * A normalizer that normalizes the prediction score from a machine learning classifier, which
- * ranges within [0.0, 1.0], to an integer value by multiplying by (10 ^ precision), and returns
- * the rounded value. The lower the precision, the less amount of bits it takes to encode the score.
- * @see #precision
+ * A normal zer that normal zes t  pred ct on score from a mach ne learn ng class f er, wh ch
+ * ranges w h n [0.0, 1.0], to an  nteger value by mult ply ng by (10 ^ prec s on), and returns
+ * t  rounded value. T  lo r t  prec s on, t  less amount of b s   takes to encode t  score.
+ * @see #prec s on
  *
- * This normalizer also could denormalize the normalized value from integer back to double using the
- * same precision.
+ * T  normal zer also could denormal ze t  normal zed value from  nteger back to double us ng t 
+ * sa  prec s on.
  */
-public class PredictionScoreNormalizer {
+publ c class Pred ct onScoreNormal zer {
 
-  private final int precision;
-  private final double normalizingBase;
+  pr vate f nal  nt prec s on;
+  pr vate f nal double normal z ngBase;
 
-  public PredictionScoreNormalizer(int precision) {
-    this.precision = precision;
-    this.normalizingBase = Math.pow(10, this.precision);
+  publ c Pred ct onScoreNormal zer( nt prec s on) {
+    t .prec s on = prec s on;
+    t .normal z ngBase = Math.pow(10, t .prec s on);
   }
 
   /**
-   * Returns the normalized int value for prediction score {@code score} by multiplying
-   * by {@code normalizingBase}, and round the result.
-   * @throws IllegalArgumentException when parameter {@code score} is not within [0.0, 1.0]
+   * Returns t  normal zed  nt value for pred ct on score {@code score} by mult ply ng
+   * by {@code normal z ngBase}, and round t  result.
+   * @throws  llegalArgu ntExcept on w n para ter {@code score}  s not w h n [0.0, 1.0]
    */
-  public int normalize(double score) {
-    Preconditions.checkArgument(isScoreWithinRange(score));
-    return (int) Math.round(score * this.normalizingBase);
+  publ c  nt normal ze(double score) {
+    Precond  ons.c ckArgu nt( sScoreW h nRange(score));
+    return ( nt) Math.round(score * t .normal z ngBase);
   }
 
   /**
-   * Converts the normalized int value back to a double score by dividing by {@code normalizingBase}
-   * @throws IllegalStateException when the denormalized value is not within [0.0, 1.0]
+   * Converts t  normal zed  nt value back to a double score by d v d ng by {@code normal z ngBase}
+   * @throws  llegalStateExcept on w n t  denormal zed value  s not w h n [0.0, 1.0]
    */
-  public double denormalize(int normalizedScore) {
-    double denormalizedValue = normalizedScore / this.normalizingBase;
-    if (!isScoreWithinRange(denormalizedValue)) {
-      throw new IllegalStateException(
-          String.format("The denormalized value %s is not within [0.0, 1.0]", denormalizedValue)
+  publ c double denormal ze( nt normal zedScore) {
+    double denormal zedValue = normal zedScore / t .normal z ngBase;
+     f (! sScoreW h nRange(denormal zedValue)) {
+      throw new  llegalStateExcept on(
+          Str ng.format("T  denormal zed value %s  s not w h n [0.0, 1.0]", denormal zedValue)
       );
     }
-    return denormalizedValue;
+    return denormal zedValue;
   }
 
-  private static boolean isScoreWithinRange(double score) {
+  pr vate stat c boolean  sScoreW h nRange(double score) {
     return 0.0 <= score && score <= 1.0;
   }
 }

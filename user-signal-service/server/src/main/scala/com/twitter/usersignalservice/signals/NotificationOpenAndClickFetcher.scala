@@ -1,81 +1,81 @@
-package com.twitter.usersignalservice.signals
+package com.tw ter.users gnalserv ce.s gnals
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.frigate.data_pipeline.candidate_generation.thriftscala.ClientEngagementEvent
-import com.twitter.frigate.data_pipeline.candidate_generation.thriftscala.LatestEvents
-import com.twitter.frigate.data_pipeline.candidate_generation.thriftscala.LatestNegativeEngagementEvents
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.twistly.common.TweetId
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.base.BaseSignalFetcher
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter.fr gate.data_p pel ne.cand date_generat on.thr ftscala.Cl entEngage ntEvent
+ mport com.tw ter.fr gate.data_p pel ne.cand date_generat on.thr ftscala.LatestEvents
+ mport com.tw ter.fr gate.data_p pel ne.cand date_generat on.thr ftscala.LatestNegat veEngage ntEvents
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.tw stly.common.T et d
+ mport com.tw ter.tw stly.common.User d
+ mport com.tw ter.users gnalserv ce.base.BaseS gnalFetc r
+ mport com.tw ter.users gnalserv ce.base.Query
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class NotificationOpenAndClickFetcher @Inject() (
-  stratoClient: Client,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends BaseSignalFetcher {
-  import NotificationOpenAndClickFetcher._
+@S ngleton
+case class Not f cat onOpenAndCl ckFetc r @ nject() (
+  stratoCl ent: Cl ent,
+  t  r: T  r,
+  stats: StatsRece ver)
+    extends BaseS gnalFetc r {
+   mport Not f cat onOpenAndCl ckFetc r._
 
-  override type RawSignalType = ClientEngagementEvent
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(this.name)
+  overr de type RawS gnalType = Cl entEngage ntEvent
+  overr de val na : Str ng = t .getClass.getCanon calNa 
+  overr de val statsRece ver: StatsRece ver = stats.scope(t .na )
 
-  private val latestEventsStore: ReadableStore[UserId, LatestEvents] = {
+  pr vate val latestEventsStore: ReadableStore[User d, LatestEvents] = {
     StratoFetchableStore
-      .withUnitView[UserId, LatestEvents](stratoClient, latestEventStoreColumn)
+      .w hUn V ew[User d, LatestEvents](stratoCl ent, latestEventStoreColumn)
   }
 
-  private val notificationNegativeEngagementStore: ReadableStore[UserId, Seq[
-    NotificationNegativeEngagement
+  pr vate val not f cat onNegat veEngage ntStore: ReadableStore[User d, Seq[
+    Not f cat onNegat veEngage nt
   ]] = {
     StratoFetchableStore
-      .withUnitView[UserId, LatestNegativeEngagementEvents](
-        stratoClient,
-        labeledPushRecsNegativeEngagementsColumn).mapValues(fromLatestNegativeEngagementEvents)
+      .w hUn V ew[User d, LatestNegat veEngage ntEvents](
+        stratoCl ent,
+        labeledPushRecsNegat veEngage ntsColumn).mapValues(fromLatestNegat veEngage ntEvents)
   }
 
-  override def getRawSignals(
-    userId: UserId
-  ): Future[Option[Seq[RawSignalType]]] = {
-    val notificationNegativeEngagementEventsFut =
-      notificationNegativeEngagementStore.get(userId)
-    val latestEventsFut = latestEventsStore.get(userId)
+  overr de def getRawS gnals(
+    user d: User d
+  ): Future[Opt on[Seq[RawS gnalType]]] = {
+    val not f cat onNegat veEngage ntEventsFut =
+      not f cat onNegat veEngage ntStore.get(user d)
+    val latestEventsFut = latestEventsStore.get(user d)
 
     Future
-      .join(latestEventsFut, notificationNegativeEngagementEventsFut).map {
-        case (latestEventsOpt, latestNegativeEngagementEventsOpt) =>
+      .jo n(latestEventsFut, not f cat onNegat veEngage ntEventsFut).map {
+        case (latestEventsOpt, latestNegat veEngage ntEventsOpt) =>
           latestEventsOpt.map { latestEvents =>
-            // Negative Engagement Events Filter
-            filterNegativeEngagementEvents(
-              latestEvents.engagementEvents,
-              latestNegativeEngagementEventsOpt.getOrElse(Seq.empty),
-              statsReceiver.scope("filterNegativeEngagementEvents"))
+            // Negat ve Engage nt Events F lter
+            f lterNegat veEngage ntEvents(
+              latestEvents.engage ntEvents,
+              latestNegat veEngage ntEventsOpt.getOrElse(Seq.empty),
+              statsRece ver.scope("f lterNegat veEngage ntEvents"))
           }
       }
   }
 
-  override def process(
+  overr de def process(
     query: Query,
-    rawSignals: Future[Option[Seq[RawSignalType]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map {
+    rawS gnals: Future[Opt on[Seq[RawS gnalType]]]
+  ): Future[Opt on[Seq[S gnal]]] = {
+    rawS gnals.map {
       _.map {
-        _.take(query.maxResults.getOrElse(Int.MaxValue)).map { clientEngagementEvent =>
-          Signal(
-            SignalType.NotificationOpenAndClickV1,
-            timestamp = clientEngagementEvent.timestampMillis,
-            targetInternalId = Some(InternalId.TweetId(clientEngagementEvent.tweetId))
+        _.take(query.maxResults.getOrElse( nt.MaxValue)).map { cl entEngage ntEvent =>
+          S gnal(
+            S gnalType.Not f cat onOpenAndCl ckV1,
+            t  stamp = cl entEngage ntEvent.t  stampM ll s,
+            target nternal d = So ( nternal d.T et d(cl entEngage ntEvent.t et d))
           )
         }
       }
@@ -83,63 +83,63 @@ case class NotificationOpenAndClickFetcher @Inject() (
   }
 }
 
-object NotificationOpenAndClickFetcher {
-  private val latestEventStoreColumn = "frigate/magicrecs/labeledPushRecsAggregated.User"
-  private val labeledPushRecsNegativeEngagementsColumn =
-    "frigate/magicrecs/labeledPushRecsNegativeEngagements.User"
+object Not f cat onOpenAndCl ckFetc r {
+  pr vate val latestEventStoreColumn = "fr gate/mag crecs/labeledPushRecsAggregated.User"
+  pr vate val labeledPushRecsNegat veEngage ntsColumn =
+    "fr gate/mag crecs/labeledPushRecsNegat veEngage nts.User"
 
-  case class NotificationNegativeEngagement(
-    tweetId: TweetId,
-    timestampMillis: Long,
-    isNtabDisliked: Boolean,
-    isReportTweetClicked: Boolean,
-    isReportTweetDone: Boolean,
-    isReportUserClicked: Boolean,
-    isReportUserDone: Boolean)
+  case class Not f cat onNegat veEngage nt(
+    t et d: T et d,
+    t  stampM ll s: Long,
+     sNtabD sl ked: Boolean,
+     sReportT etCl cked: Boolean,
+     sReportT etDone: Boolean,
+     sReportUserCl cked: Boolean,
+     sReportUserDone: Boolean)
 
-  def fromLatestNegativeEngagementEvents(
-    latestNegativeEngagementEvents: LatestNegativeEngagementEvents
-  ): Seq[NotificationNegativeEngagement] = {
-    latestNegativeEngagementEvents.negativeEngagementEvents.map { event =>
-      NotificationNegativeEngagement(
-        event.tweetId,
-        event.timestampMillis,
-        event.isNtabDisliked.getOrElse(false),
-        event.isReportTweetClicked.getOrElse(false),
-        event.isReportTweetDone.getOrElse(false),
-        event.isReportUserClicked.getOrElse(false),
-        event.isReportUserDone.getOrElse(false)
+  def fromLatestNegat veEngage ntEvents(
+    latestNegat veEngage ntEvents: LatestNegat veEngage ntEvents
+  ): Seq[Not f cat onNegat veEngage nt] = {
+    latestNegat veEngage ntEvents.negat veEngage ntEvents.map { event =>
+      Not f cat onNegat veEngage nt(
+        event.t et d,
+        event.t  stampM ll s,
+        event. sNtabD sl ked.getOrElse(false),
+        event. sReportT etCl cked.getOrElse(false),
+        event. sReportT etDone.getOrElse(false),
+        event. sReportUserCl cked.getOrElse(false),
+        event. sReportUserDone.getOrElse(false)
       )
     }
   }
 
-  private def filterNegativeEngagementEvents(
-    engagementEvents: Seq[ClientEngagementEvent],
-    negativeEvents: Seq[NotificationNegativeEngagement],
-    statsReceiver: StatsReceiver
-  ): Seq[ClientEngagementEvent] = {
-    if (negativeEvents.nonEmpty) {
-      statsReceiver.counter("filterNegativeEngagementEvents").incr()
-      statsReceiver.stat("eventSizeBeforeFilter").add(engagementEvents.size)
+  pr vate def f lterNegat veEngage ntEvents(
+    engage ntEvents: Seq[Cl entEngage ntEvent],
+    negat veEvents: Seq[Not f cat onNegat veEngage nt],
+    statsRece ver: StatsRece ver
+  ): Seq[Cl entEngage ntEvent] = {
+     f (negat veEvents.nonEmpty) {
+      statsRece ver.counter("f lterNegat veEngage ntEvents"). ncr()
+      statsRece ver.stat("eventS zeBeforeF lter").add(engage ntEvents.s ze)
 
-      val negativeEngagementIdSet =
-        negativeEvents.collect {
+      val negat veEngage nt dSet =
+        negat veEvents.collect {
           case event
-              if event.isNtabDisliked || event.isReportTweetClicked || event.isReportTweetDone || event.isReportUserClicked || event.isReportUserDone =>
-            event.tweetId
+               f event. sNtabD sl ked || event. sReportT etCl cked || event. sReportT etDone || event. sReportUserCl cked || event. sReportUserDone =>
+            event.t et d
         }.toSet
 
-      // negative event size
-      statsReceiver.stat("negativeEventsSize").add(negativeEngagementIdSet.size)
+      // negat ve event s ze
+      statsRece ver.stat("negat veEventsS ze").add(negat veEngage nt dSet.s ze)
 
-      // filter out negative engagement sources
-      val result = engagementEvents.filterNot { event =>
-        negativeEngagementIdSet.contains(event.tweetId)
+      // f lter out negat ve engage nt s ces
+      val result = engage ntEvents.f lterNot { event =>
+        negat veEngage nt dSet.conta ns(event.t et d)
       }
 
-      statsReceiver.stat("eventSizeAfterFilter").add(result.size)
+      statsRece ver.stat("eventS zeAfterF lter").add(result.s ze)
 
       result
-    } else engagementEvents
+    } else engage ntEvents
   }
 }

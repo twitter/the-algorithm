@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.soc al_context
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseModuleStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseModuleSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * This class works the same as [[GeneralSocialContextBuilder]] but passes a list of candidates
- * into [[BaseModuleStr]] when rendering the string.
+ * T  class works t  sa  as [[GeneralSoc alContextBu lder]] but passes a l st of cand dates
+ *  nto [[BaseModuleStr]] w n render ng t  str ng.
  */
-case class GeneralModuleSocialContextBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+case class GeneralModuleSoc alContextBu lder[
+  -Query <: P pel neQuery,
+  -Cand date <: Un versalNoun[Any]
 ](
-  textBuilder: BaseModuleStr[Query, Candidate],
+  textBu lder: BaseModuleStr[Query, Cand date],
   contextType: GeneralContextType,
-  url: Option[String] = None,
-  contextImageUrls: Option[List[String]] = None,
-  landingUrl: Option[Url] = None)
-    extends BaseModuleSocialContextBuilder[Query, Candidate] {
+  url: Opt on[Str ng] = None,
+  context mageUrls: Opt on[L st[Str ng]] = None,
+  land ngUrl: Opt on[Url] = None)
+    extends BaseModuleSoc alContextBu lder[Query, Cand date] {
 
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[GeneralContext] =
-    Some(
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Opt on[GeneralContext] =
+    So (
       GeneralContext(
-        text = textBuilder(query, candidates),
+        text = textBu lder(query, cand dates),
         contextType = contextType,
         url = url,
-        contextImageUrls = contextImageUrls,
-        landingUrl = landingUrl))
+        context mageUrls = context mageUrls,
+        land ngUrl = land ngUrl))
 }

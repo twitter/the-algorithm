@@ -1,137 +1,137 @@
-package com.twitter.graph_feature_service.server.handlers
+package com.tw ter.graph_feature_serv ce.server.handlers
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.server.handlers.ServerGetIntersectionHandler.GetIntersectionRequest
-import com.twitter.graph_feature_service.server.stores.FeatureTypesEncoder
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala.PresetFeatureTypes
-import com.twitter.graph_feature_service.thriftscala._
-import com.twitter.graph_feature_service.util.FeatureTypesCalculator
-import com.twitter.servo.request.RequestHandler
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Memoize
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graph_feature_serv ce.server.handlers.ServerGet ntersect onHandler.Get ntersect onRequest
+ mport com.tw ter.graph_feature_serv ce.server.stores.FeatureTypesEncoder
+ mport com.tw ter.graph_feature_serv ce.server.stores.Get ntersect onStore.Get ntersect onQuery
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.PresetFeatureTypes
+ mport com.tw ter.graph_feature_serv ce.thr ftscala._
+ mport com.tw ter.graph_feature_serv ce.ut l.FeatureTypesCalculator
+ mport com.tw ter.servo.request.RequestHandler
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l. mo ze
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-class ServerGetIntersectionHandler @Inject() (
-  @Named("ReadThroughGetIntersectionStore")
-  readThroughStore: ReadableStore[GetIntersectionQuery, CachedIntersectionResult],
-  @Named("BypassCacheGetIntersectionStore")
-  readOnlyStore: ReadableStore[GetIntersectionQuery, CachedIntersectionResult]
+@S ngleton
+class ServerGet ntersect onHandler @ nject() (
+  @Na d("ReadThroughGet ntersect onStore")
+  readThroughStore: ReadableStore[Get ntersect onQuery, Cac d ntersect onResult],
+  @Na d("BypassCac Get ntersect onStore")
+  readOnlyStore: ReadableStore[Get ntersect onQuery, Cac d ntersect onResult]
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends RequestHandler[GetIntersectionRequest, GfsIntersectionResponse] {
+   mpl c  statsRece ver: StatsRece ver)
+    extends RequestHandler[Get ntersect onRequest, Gfs ntersect onResponse] {
 
-  import ServerGetIntersectionHandler._
+   mport ServerGet ntersect onHandler._
 
-  // TODO: Track all the stats based on PresetFeatureType and update the dashboard
-  private val stats: StatsReceiver = statsReceiver.scope("srv").scope("get_intersection")
-  private val numCandidatesCount = stats.counter("total_num_candidates")
-  private val numCandidatesStat = stats.stat("num_candidates")
-  private val numFeaturesStat = stats.stat("num_features")
-  private val userEmptyCount = stats.counter("user_empty_count")
-  private val candidateEmptyRateStat = stats.stat("candidate_empty_rate")
-  private val candidateNumEmptyStat = stats.stat("candidate_num_empty")
-  private val missedRateStat = stats.stat("miss_rate")
-  private val numMissedStat = stats.stat("num_missed")
+  // TODO: Track all t  stats based on PresetFeatureType and update t  dashboard
+  pr vate val stats: StatsRece ver = statsRece ver.scope("srv").scope("get_ ntersect on")
+  pr vate val numCand datesCount = stats.counter("total_num_cand dates")
+  pr vate val numCand datesStat = stats.stat("num_cand dates")
+  pr vate val numFeaturesStat = stats.stat("num_features")
+  pr vate val userEmptyCount = stats.counter("user_empty_count")
+  pr vate val cand dateEmptyRateStat = stats.stat("cand date_empty_rate")
+  pr vate val cand dateNumEmptyStat = stats.stat("cand date_num_empty")
+  pr vate val m ssedRateStat = stats.stat("m ss_rate")
+  pr vate val numM ssedStat = stats.stat("num_m ssed")
 
-  // Assume the order from HTL doesn't change. Only log the HTL query now.
-  private val featureStatMap = FeatureTypesCalculator.presetFeatureTypes.map { feature =>
-    val featureString = s"${feature.leftEdgeType.name}_${feature.rightEdgeType.name}"
+  // Assu  t  order from HTL doesn't change. Only log t  HTL query now.
+  pr vate val featureStatMap = FeatureTypesCalculator.presetFeatureTypes.map { feature =>
+    val featureStr ng = s"${feature.leftEdgeType.na }_${feature.r ghtEdgeType.na }"
     feature -> Array(
-      stats.counter(s"feature_type_${featureString}_total"),
-      stats.counter(s"feature_type_${featureString}_count_zero"),
-      stats.counter(s"feature_type_${featureString}_left_zero"),
-      stats.counter(s"feature_type_${featureString}_right_zero")
+      stats.counter(s"feature_type_${featureStr ng}_total"),
+      stats.counter(s"feature_type_${featureStr ng}_count_zero"),
+      stats.counter(s"feature_type_${featureStr ng}_left_zero"),
+      stats.counter(s"feature_type_${featureStr ng}_r ght_zero")
     )
   }.toMap
 
-  private val sourceCandidateNumStats = Memoize[PresetFeatureTypes, Stat] { presetFeature =>
-    stats.stat(s"source_candidate_num_${presetFeature.name}")
+  pr vate val s ceCand dateNumStats =  mo ze[PresetFeatureTypes, Stat] { presetFeature =>
+    stats.stat(s"s ce_cand date_num_${presetFeature.na }")
   }
 
-  override def apply(request: GetIntersectionRequest): Future[GfsIntersectionResponse] = {
+  overr de def apply(request: Get ntersect onRequest): Future[Gfs ntersect onResponse] = {
     val featureTypes = request.calculatedFeatureTypes
-    val numCandidates = request.candidateUserIds.length
+    val numCand dates = request.cand dateUser ds.length
     val numFeatures = featureTypes.length
 
-    numCandidatesCount.incr(numCandidates)
-    numCandidatesStat.add(numCandidates)
+    numCand datesCount. ncr(numCand dates)
+    numCand datesStat.add(numCand dates)
     numFeaturesStat.add(numFeatures)
-    sourceCandidateNumStats(request.presetFeatureTypes).add(numCandidates)
+    s ceCand dateNumStats(request.presetFeatureTypes).add(numCand dates)
 
-    // Note: do not change the orders of features and candidates.
-    val candidateIds = request.candidateUserIds
+    // Note: do not change t  orders of features and cand dates.
+    val cand date ds = request.cand dateUser ds
 
-    if (featureTypes.isEmpty || candidateIds.isEmpty) {
-      Future.value(DefaultGfsIntersectionResponse)
+     f (featureTypes. sEmpty || cand date ds. sEmpty) {
+      Future.value(DefaultGfs ntersect onResponse)
     } else {
       Future
         .collect {
-          val getIntersectionStore = if (request.cacheable) readThroughStore else readOnlyStore
-          getIntersectionStore.multiGet(GetIntersectionQuery.buildQueries(request))
+          val get ntersect onStore =  f (request.cac able) readThroughStore else readOnlyStore
+          get ntersect onStore.mult Get(Get ntersect onQuery.bu ldQuer es(request))
         }.map { responses =>
           val results = responses.collect {
-            case (query, Some(result)) =>
-              query.candidateId -> GfsIntersectionResult(
-                query.candidateId,
-                query.calculatedFeatureTypes.zip(result.values).map {
+            case (query, So (result)) =>
+              query.cand date d -> Gfs ntersect onResult(
+                query.cand date d,
+                query.calculatedFeatureTypes.z p(result.values).map {
                   case (featureType, value) =>
-                    IntersectionValue(
+                     ntersect onValue(
                       featureType,
-                      Some(value.count),
-                      if (value.intersectionIds.isEmpty) None else Some(value.intersectionIds),
-                      Some(value.leftNodeDegree),
-                      Some(value.rightNodeDegree)
+                      So (value.count),
+                       f (value. ntersect on ds. sEmpty) None else So (value. ntersect on ds),
+                      So (value.leftNodeDegree),
+                      So (value.r ghtNodeDegree)
                     )
                 }
               )
           }
 
-          // Keep the response order same as input
-          val processedResults = candidateIds.map { candidateId =>
-            results.getOrElse(candidateId, GfsIntersectionResult(candidateId, List.empty))
+          // Keep t  response order sa  as  nput
+          val processedResults = cand date ds.map { cand date d =>
+            results.getOrElse(cand date d, Gfs ntersect onResult(cand date d, L st.empty))
           }
 
-          val candidateEmptyNum =
+          val cand dateEmptyNum =
             processedResults.count(
-              _.intersectionValues.exists(value => isZero(value.rightNodeDegree)))
+              _. ntersect onValues.ex sts(value =>  sZero(value.r ghtNodeDegree)))
 
-          val numMissed = processedResults.count(_.intersectionValues.size != numFeatures)
+          val numM ssed = processedResults.count(_. ntersect onValues.s ze != numFeatures)
 
-          if (processedResults.exists(
-              _.intersectionValues.forall(value => isZero(value.leftNodeDegree)))) {
-            userEmptyCount.incr()
+           f (processedResults.ex sts(
+              _. ntersect onValues.forall(value =>  sZero(value.leftNodeDegree)))) {
+            userEmptyCount. ncr()
           }
 
-          candidateNumEmptyStat.add(candidateEmptyNum)
-          candidateEmptyRateStat.add(candidateEmptyNum.toFloat / numCandidates)
-          numMissedStat.add(numMissed)
-          missedRateStat.add(numMissed.toFloat / numCandidates)
+          cand dateNumEmptyStat.add(cand dateEmptyNum)
+          cand dateEmptyRateStat.add(cand dateEmptyNum.toFloat / numCand dates)
+          numM ssedStat.add(numM ssed)
+          m ssedRateStat.add(numM ssed.toFloat / numCand dates)
 
           processedResults.foreach { result =>
-            result.intersectionValues.zip(featureTypes).foreach {
+            result. ntersect onValues.z p(featureTypes).foreach {
               case (value, featureType) =>
                 featureStatMap.get(featureType).foreach { statsArray =>
-                  statsArray(TotalIndex).incr()
-                  if (isZero(value.count)) {
-                    statsArray(CountIndex).incr()
+                  statsArray(Total ndex). ncr()
+                   f ( sZero(value.count)) {
+                    statsArray(Count ndex). ncr()
                   }
-                  if (isZero(value.leftNodeDegree)) {
-                    statsArray(LeftIndex).incr()
+                   f ( sZero(value.leftNodeDegree)) {
+                    statsArray(Left ndex). ncr()
                   }
-                  if (isZero(value.rightNodeDegree)) {
-                    statsArray(RightIndex).incr()
+                   f ( sZero(value.r ghtNodeDegree)) {
+                    statsArray(R ght ndex). ncr()
                   }
                 }
             }
           }
 
-          GfsIntersectionResponse(processedResults)
+          Gfs ntersect onResponse(processedResults)
         }
     }
 
@@ -139,60 +139,60 @@ class ServerGetIntersectionHandler @Inject() (
 
 }
 
-private[graph_feature_service] object ServerGetIntersectionHandler {
+pr vate[graph_feature_serv ce] object ServerGet ntersect onHandler {
 
-  case class GetIntersectionRequest(
-    userId: Long,
-    candidateUserIds: Seq[Long],
+  case class Get ntersect onRequest(
+    user d: Long,
+    cand dateUser ds: Seq[Long],
     featureTypes: Seq[FeatureType],
     presetFeatureTypes: PresetFeatureTypes,
-    intersectionIdLimit: Option[Int],
-    cacheable: Boolean) {
+     ntersect on dL m : Opt on[ nt],
+    cac able: Boolean) {
 
     lazy val calculatedFeatureTypes: Seq[FeatureType] =
       FeatureTypesCalculator.getFeatureTypes(presetFeatureTypes, featureTypes)
 
-    lazy val calculatedFeatureTypesString: String =
+    lazy val calculatedFeatureTypesStr ng: Str ng =
       FeatureTypesEncoder(calculatedFeatureTypes)
   }
 
-  object GetIntersectionRequest {
+  object Get ntersect onRequest {
 
-    def fromGfsIntersectionRequest(
-      request: GfsIntersectionRequest,
-      cacheable: Boolean
-    ): GetIntersectionRequest = {
-      GetIntersectionRequest(
-        request.userId,
-        request.candidateUserIds,
+    def fromGfs ntersect onRequest(
+      request: Gfs ntersect onRequest,
+      cac able: Boolean
+    ): Get ntersect onRequest = {
+      Get ntersect onRequest(
+        request.user d,
+        request.cand dateUser ds,
         request.featureTypes,
         PresetFeatureTypes.Empty,
-        request.intersectionIdLimit,
-        cacheable)
+        request. ntersect on dL m ,
+        cac able)
     }
 
-    def fromGfsPresetIntersectionRequest(
-      request: GfsPresetIntersectionRequest,
-      cacheable: Boolean
-    ): GetIntersectionRequest = {
-      GetIntersectionRequest(
-        request.userId,
-        request.candidateUserIds,
-        List.empty,
+    def fromGfsPreset ntersect onRequest(
+      request: GfsPreset ntersect onRequest,
+      cac able: Boolean
+    ): Get ntersect onRequest = {
+      Get ntersect onRequest(
+        request.user d,
+        request.cand dateUser ds,
+        L st.empty,
         request.presetFeatureTypes,
-        request.intersectionIdLimit,
-        cacheable)
+        request. ntersect on dL m ,
+        cac able)
     }
   }
 
-  private val DefaultGfsIntersectionResponse = GfsIntersectionResponse()
+  pr vate val DefaultGfs ntersect onResponse = Gfs ntersect onResponse()
 
-  private val TotalIndex = 0
-  private val CountIndex = 1
-  private val LeftIndex = 2
-  private val RightIndex = 3
+  pr vate val Total ndex = 0
+  pr vate val Count ndex = 1
+  pr vate val Left ndex = 2
+  pr vate val R ght ndex = 3
 
-  def isZero(opt: Option[Int]): Boolean = {
-    !opt.exists(_ != 0)
+  def  sZero(opt: Opt on[ nt]): Boolean = {
+    !opt.ex sts(_ != 0)
   }
 }

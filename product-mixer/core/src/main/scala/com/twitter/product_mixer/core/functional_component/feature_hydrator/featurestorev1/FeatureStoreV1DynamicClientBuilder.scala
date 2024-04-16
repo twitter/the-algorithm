@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+package com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1
 
-import com.twitter.ml.featurestore.lib.dynamic.BaseDynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.BaseGatedFeatures
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ml.featurestore.l b.dynam c.BaseDynam cHydrat onConf g
+ mport com.tw ter.ml.featurestore.l b.dynam c.BaseGatedFeatures
+ mport com.tw ter.ml.featurestore.l b.dynam c.Dynam cFeatureStoreCl ent
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait FeatureStoreV1DynamicClientBuilder {
-  def build[Query <: PipelineQuery](
-    dynamicHydrationConfig: BaseDynamicHydrationConfig[Query, _ <: BaseGatedFeatures[Query]]
-  ): DynamicFeatureStoreClient[Query]
+tra  FeatureStoreV1Dynam cCl entBu lder {
+  def bu ld[Query <: P pel neQuery](
+    dynam cHydrat onConf g: BaseDynam cHydrat onConf g[Query, _ <: BaseGatedFeatures[Query]]
+  ): Dynam cFeatureStoreCl ent[Query]
 }

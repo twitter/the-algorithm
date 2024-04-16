@@ -1,60 +1,60 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos njector.ut l.T etFavor eEventDeta ls
+ mport com.tw ter.ut l.Future
 
-class TimelineEventToUserTweetEntityGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+class T  l neEventToUserT etEnt yGraphBu lder(
+  userT etEnt yEdgeBu lder: UserT etEnt yEdgeBu lder
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventTo ssageBu lder[T etFavor eEventDeta ls, UserT etEnt yEdge] {
 
-  private val numFavEdgeCounter = statsReceiver.counter("num_favorite_edge")
-  private val numUnfavEdgeCounter = statsReceiver.counter("num_unfavorite_edge")
+  pr vate val numFavEdgeCounter = statsRece ver.counter("num_favor e_edge")
+  pr vate val numUnfavEdgeCounter = statsRece ver.counter("num_unfavor e_edge")
 
-  override def shouldProcessEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
+  overr de def shouldProcessEvent(event: T etFavor eEventDeta ls): Future[Boolean] = {
     Future(true)
   }
 
-  override def buildEdges(details: TweetFavoriteEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  overr de def bu ldEdges(deta ls: T etFavor eEventDeta ls): Future[Seq[UserT etEnt yEdge]] = {
+    val engage nt = deta ls.userT etEngage nt
+    val t etDeta ls = engage nt.t etDeta ls
 
-    val entitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-      tweetId = engagement.tweetId,
-      tweetDetails = tweetDetails
+    val ent  esMapFut = userT etEnt yEdgeBu lder.getEnt  esMapAndUpdateCac (
+      t et d = engage nt.t et d,
+      t etDeta ls = t etDeta ls
     )
 
-    entitiesMapFut
-      .map { entitiesMap =>
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = entitiesMap,
-          tweetDetails = tweetDetails
+    ent  esMapFut
+      .map { ent  esMap =>
+        UserT etEnt yEdge(
+          s ceUser = engage nt.engageUser d,
+          targetT et = engage nt.t et d,
+          act on = engage nt.act on,
+           tadata = engage nt.engage ntT  M ll s,
+          card nfo = engage nt.t etDeta ls.map(_.card nfo.toByte),
+          ent  esMap = ent  esMap,
+          t etDeta ls = t etDeta ls
         )
       }
       .map { edge =>
         edge match {
-          case fav if fav.action == Action.Favorite =>
-            numFavEdgeCounter.incr()
-          case unfav if unfav.action == Action.Unfavorite =>
-            numUnfavEdgeCounter.incr()
+          case fav  f fav.act on == Act on.Favor e =>
+            numFavEdgeCounter. ncr()
+          case unfav  f unfav.act on == Act on.Unfavor e =>
+            numUnfavEdgeCounter. ncr()
           case _ =>
         }
         Seq(edge)
       }
   }
 
-  override def filterEdges(
-    event: TweetFavoriteEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
+  overr de def f lterEdges(
+    event: T etFavor eEventDeta ls,
+    edges: Seq[UserT etEnt yEdge]
+  ): Future[Seq[UserT etEnt yEdge]] = {
     Future(edges)
   }
 }

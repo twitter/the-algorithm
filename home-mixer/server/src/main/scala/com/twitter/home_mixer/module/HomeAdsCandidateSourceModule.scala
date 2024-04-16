@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+ mport com.tw ter.adserver.thr ftscala.NewAdServer
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.ut l.Durat on
 
-object HomeAdsCandidateSourceModule
-    extends ThriftMethodBuilderClientModule[
-      NewAdServer.ServicePerEndpoint,
-      NewAdServer.MethodPerEndpoint
+object Ho AdsCand dateS ceModule
+    extends Thr ft thodBu lderCl entModule[
+      NewAdServer.Serv cePerEndpo nt,
+      NewAdServer. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "adserver"
-  override val dest = "/s/ads/adserver"
+  overr de val label = "adserver"
+  overr de val dest = "/s/ads/adserver"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(1200.milliseconds)
-      .withTimeoutTotal(1200.milliseconds)
-      .withMaxRetries(2)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(1200.m ll seconds)
+      .w hT  outTotal(1200.m ll seconds)
+      .w hMaxRetr es(2)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 150.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 150.m ll seconds
 }

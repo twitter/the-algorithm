@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.ButtonStyle
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Hor zon con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
 
 case class CoverCta(
-  text: String,
-  ctaBehavior: CoverCtaBehavior,
-  callbacks: Option[List[Callback]],
-  clientEventInfo: Option[ClientEventInfo],
-  icon: Option[HorizonIcon],
-  buttonStyle: Option[ButtonStyle])
+  text: Str ng,
+  ctaBehav or: CoverCtaBehav or,
+  callbacks: Opt on[L st[Callback]],
+  cl entEvent nfo: Opt on[Cl entEvent nfo],
+   con: Opt on[Hor zon con],
+  buttonStyle: Opt on[ButtonStyle])

@@ -1,124 +1,124 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.util.BitDocIdSet;
-import org.apache.lucene.util.BitSet;
-import org.apache.lucene.util.FixedBitSet;
-import org.apache.lucene.util.SparseFixedBitSet;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.ut l.B Doc dSet;
+ mport org.apac .lucene.ut l.B Set;
+ mport org.apac .lucene.ut l.F xedB Set;
+ mport org.apac .lucene.ut l.SparseF xedB Set;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
-import com.twitter.search.earlybird.RecentTweetRestriction;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.core.earlyb rd. ndex.QueryCac ResultForSeg nt;
+ mport com.tw ter.search.earlyb rd.RecentT etRestr ct on;
+ mport com.tw ter.search.earlyb rd.search.AbstractResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.SearchResults nfo;
+ mport com.tw ter.search.earlyb rd.search.quer es.S nceUnt lF lter;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
 
-import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
+ mport stat c org.apac .lucene.search.Doc dSet erator.NO_MORE_DOCS;
 
-import static com.twitter.search.core.earlybird.index.TimeMapper.ILLEGAL_TIME;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex.T  Mapper. LLEGAL_T ME;
 
 /**
- * Collector to update the query cache (one segment for a filter)
+ * Collector to update t  query cac  (one seg nt for a f lter)
  */
-public class QueryCacheResultCollector
-    extends AbstractResultsCollector<SearchRequestInfo, SearchResultsInfo> {
-  private static final int UNSET = -1;
+publ c class QueryCac ResultCollector
+    extends AbstractResultsCollector<SearchRequest nfo, SearchResults nfo> {
+  pr vate stat c f nal  nt UNSET = -1;
 
-  private final QueryCacheFilter queryCacheFilter;
-  private final Decider decider;
+  pr vate f nal QueryCac F lter queryCac F lter;
+  pr vate f nal Dec der dec der;
 
-  private BitSet bitSet;
-  private long cardinality = 0L;
-  private int startingDocID = UNSET;
+  pr vate B Set b Set;
+  pr vate long card nal y = 0L;
+  pr vate  nt start ngDoc D = UNSET;
 
-  public QueryCacheResultCollector(
-      ImmutableSchemaInterface schema,
-      QueryCacheFilter queryCacheFilter,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
+  publ c QueryCac ResultCollector(
+       mmutableSc ma nterface sc ma,
+      QueryCac F lter queryCac F lter,
+      Earlyb rdSearc rStats searc rStats,
+      Dec der dec der,
       Clock clock,
-      int requestDebugMode) {
-    super(schema,
-        queryCacheFilter.createSearchRequestInfo(),
+       nt requestDebugMode) {
+    super(sc ma,
+        queryCac F lter.createSearchRequest nfo(),
         clock,
-        searcherStats,
+        searc rStats,
         requestDebugMode);
-    this.queryCacheFilter = queryCacheFilter;
-    this.decider = decider;
+    t .queryCac F lter = queryCac F lter;
+    t .dec der = dec der;
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    // The doc IDs in the optimized segments are always in the 0 .. (segmentSize - 1) range, so we
-    // can use a dense bitset to collect the hits. However, unoptimized segments can use any int
-    // doc IDs, so we have to use a sparse bitset to collect the hits in those segments.
-    if (currTwitterReader.getSegmentData().isOptimized()) {
-      switch (queryCacheFilter.getResultSetType()) {
-        case FixedBitSet:
-          bitSet = new FixedBitSet(currTwitterReader.maxDoc());
+  @Overr de
+  publ c vo d startSeg nt() throws  OExcept on {
+    // T  doc  Ds  n t  opt m zed seg nts are always  n t  0 .. (seg ntS ze - 1) range, so  
+    // can use a dense b set to collect t  h s. Ho ver, unopt m zed seg nts can use any  nt
+    // doc  Ds, so   have to use a sparse b set to collect t  h s  n those seg nts.
+     f (currTw terReader.getSeg ntData(). sOpt m zed()) {
+      sw ch (queryCac F lter.getResultSetType()) {
+        case F xedB Set:
+          b Set = new F xedB Set(currTw terReader.maxDoc());
           break;
-        case SparseFixedBitSet:
-          bitSet = new SparseFixedBitSet(currTwitterReader.maxDoc());
+        case SparseF xedB Set:
+          b Set = new SparseF xedB Set(currTw terReader.maxDoc());
           break;
         default:
-          throw new IllegalStateException(
-              "Unknown ResultSetType: " + queryCacheFilter.getResultSetType().name());
+          throw new  llegalStateExcept on(
+              "Unknown ResultSetType: " + queryCac F lter.getResultSetType().na ());
       }
     } else {
-      bitSet = new SparseFixedBitSet(currTwitterReader.maxDoc());
+      b Set = new SparseF xedB Set(currTw terReader.maxDoc());
     }
 
-    startingDocID = findStartingDocID();
-    cardinality = 0;
+    start ngDoc D = f ndStart ngDoc D();
+    card nal y = 0;
   }
 
-  @Override
-  protected void doCollect(long tweetID)  {
-    bitSet.set(curDocId);
-    cardinality++;
+  @Overr de
+  protected vo d doCollect(long t et D)  {
+    b Set.set(curDoc d);
+    card nal y++;
   }
 
-  @Override
-  protected SearchResultsInfo doGetResults() {
-    return new SearchResultsInfo();
+  @Overr de
+  protected SearchResults nfo doGetResults() {
+    return new SearchResults nfo();
   }
 
-  public QueryCacheResultForSegment getCachedResult() {
-    // Note that BitSet.cardinality takes linear time in the size of the maxDoc, so we track
-    // cardinality separately.
-    return new QueryCacheResultForSegment(new BitDocIdSet(bitSet, cardinality),
-        cardinality, startingDocID);
+  publ c QueryCac ResultForSeg nt getCac dResult() {
+    // Note that B Set.card nal y takes l near t    n t  s ze of t  maxDoc, so   track
+    // card nal y separately.
+    return new QueryCac ResultForSeg nt(new B Doc dSet(b Set, card nal y),
+        card nal y, start ngDoc D);
   }
 
   /**
-   * We don't want to return results less than 15 seconds older than the most recently indexed tweet,
-   * as they might not be completely indexed.
-   * We can't simply use the first hit, as some cached filters might not have any hits,
-   * e.g. has_engagement in the protected cluster.
-   * We can't use a clock because streams can lag.
+   *   don't want to return results less than 15 seconds older than t  most recently  ndexed t et,
+   * as t y m ght not be completely  ndexed.
+   *   can't s mply use t  f rst h , as so  cac d f lters m ght not have any h s,
+   * e.g. has_engage nt  n t  protected cluster.
+   *   can't use a clock because streams can lag.
    */
-  private int findStartingDocID() throws IOException {
-    int lastTime = currTwitterReader.getSegmentData().getTimeMapper().getLastTime();
-    if (lastTime == ILLEGAL_TIME) {
+  pr vate  nt f ndStart ngDoc D() throws  OExcept on {
+     nt lastT   = currTw terReader.getSeg ntData().getT  Mapper().getLastT  ();
+     f (lastT   ==  LLEGAL_T ME) {
       return NO_MORE_DOCS;
     }
 
-    int untilTime = RecentTweetRestriction.queryCacheUntilTime(decider, lastTime);
-    if (untilTime == 0) {
-      return currTwitterReader.getSmallestDocID();
+     nt unt lT   = RecentT etRestr ct on.queryCac Unt lT  (dec der, lastT  );
+     f (unt lT   == 0) {
+      return currTw terReader.getSmallestDoc D();
     }
 
-    return SinceUntilFilter.getUntilQuery(untilTime)
-        .createWeight(new IndexSearcher(currTwitterReader), ScoreMode.COMPLETE_NO_SCORES, 1.0f)
-        .scorer(currTwitterReader.getContext())
-        .iterator()
+    return S nceUnt lF lter.getUnt lQuery(unt lT  )
+        .create  ght(new  ndexSearc r(currTw terReader), ScoreMode.COMPLETE_NO_SCORES, 1.0f)
+        .scorer(currTw terReader.getContext())
+        . erator()
         .nextDoc();
   }
 }

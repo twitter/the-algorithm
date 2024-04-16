@@ -1,609 +1,609 @@
-package com.twitter.search.common.relevance.entities;
+package com.tw ter.search.common.relevance.ent  es;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+ mport java.text.DateFormat;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Date;
+ mport java.ut l.HashSet;
+ mport java.ut l.L nkedHashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Set;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Compar sonCha n;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .commons.lang3.bu lder.EqualsBu lder;
+ mport org.apac .commons.lang3.bu lder.HashCodeBu lder;
+ mport org.apac .commons.lang3.bu lder.ToStr ngBu lder;
+ mport org.apac .lucene.analys s.TokenStream;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.relevance.features.TweetUserFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.tweetypie.thriftjava.ComposerSource;
-import com.twitter.util.TwitterDateFormat;
+ mport com.tw ter.common.text.language.LocaleUt l;
+ mport com.tw ter.common.text.p pel ne.Tw terLanguage dent f er;
+ mport com.tw ter.common.text.token.Token zedCharSequence;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt y;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common.relevance.features.T etFeatures;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.search.common.relevance.features.T etTextQual y;
+ mport com.tw ter.search.common.relevance.features.T etUserFeatures;
+ mport com.tw ter.search.common.ut l.text.Normal zer lper;
+ mport com.tw ter.serv ce.sp derduck.gen. d aTypes;
+ mport com.tw ter.t etyp e.thr ftjava.ComposerS ce;
+ mport com.tw ter.ut l.Tw terDateFormat;
 
 /**
- * A representation of tweets used as an intermediate object during ingestion. As we proceed
- * in ingestion, we fill this object with data. We then convert it to ThriftVersionedEvents (which
- * itself represents a single tweet too, in different penguin versions potentially).
+ * A representat on of t ets used as an  nter d ate object dur ng  ngest on. As   proceed
+ *  n  ngest on,   f ll t  object w h data.   t n convert   to Thr ftVers onedEvents (wh ch
+ *  self represents a s ngle t et too,  n d fferent pengu n vers ons potent ally).
  */
-public class TwitterMessage {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterMessage.class);
+publ c class Tw ter ssage {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Tw ter ssage.class);
 
-  public static class EscherbirdAnnotation implements Comparable<EscherbirdAnnotation> {
-    public final long groupId;
-    public final long domainId;
-    public final long entityId;
+  publ c stat c class Esc rb rdAnnotat on  mple nts Comparable<Esc rb rdAnnotat on> {
+    publ c f nal long group d;
+    publ c f nal long doma n d;
+    publ c f nal long ent y d;
 
-    public EscherbirdAnnotation(long groupId, long domainId, long entityId) {
-      this.groupId = groupId;
-      this.domainId = domainId;
-      this.entityId = entityId;
+    publ c Esc rb rdAnnotat on(long group d, long doma n d, long ent y d) {
+      t .group d = group d;
+      t .doma n d = doma n d;
+      t .ent y d = ent y d;
     }
 
-    @Override
-    public boolean equals(Object o2) {
-      if (o2 instanceof EscherbirdAnnotation) {
-        EscherbirdAnnotation a2 = (EscherbirdAnnotation) o2;
-        return groupId == a2.groupId && domainId == a2.domainId && entityId == a2.entityId;
+    @Overr de
+    publ c boolean equals(Object o2) {
+       f (o2  nstanceof Esc rb rdAnnotat on) {
+        Esc rb rdAnnotat on a2 = (Esc rb rdAnnotat on) o2;
+        return group d == a2.group d && doma n d == a2.doma n d && ent y d == a2.ent y d;
       }
       return false;
     }
 
-    @Override
-    public int hashCode() {
-      return new HashCodeBuilder()
-          .append(groupId)
-          .append(domainId)
-          .append(entityId)
+    @Overr de
+    publ c  nt hashCode() {
+      return new HashCodeBu lder()
+          .append(group d)
+          .append(doma n d)
+          .append(ent y d)
           .toHashCode();
     }
 
-    @Override
-    public int compareTo(EscherbirdAnnotation o) {
-      return ComparisonChain.start()
-          .compare(this.groupId, o.groupId)
-          .compare(this.domainId, o.domainId)
-          .compare(this.entityId, o.entityId)
+    @Overr de
+    publ c  nt compareTo(Esc rb rdAnnotat on o) {
+      return Compar sonCha n.start()
+          .compare(t .group d, o.group d)
+          .compare(t .doma n d, o.doma n d)
+          .compare(t .ent y d, o.ent y d)
           .result();
     }
   }
 
-  private final List<EscherbirdAnnotation> escherbirdAnnotations = Lists.newArrayList();
+  pr vate f nal L st<Esc rb rdAnnotat on> esc rb rdAnnotat ons = L sts.newArrayL st();
 
-  // tweet features for multiple penguin versions
-  private static class VersionedTweetFeatures {
-    // TweetFeatures populated by relevance classifiers, structure defined
-    // in src/main/thrift/classifier.thrift.
-    private TweetFeatures tweetFeatures = new TweetFeatures();
-    private TokenizedCharSequence tokenizedCharSequence = null;
-    private Set<String> normalizedHashtags = Sets.newHashSet();
+  // t et features for mult ple pengu n vers ons
+  pr vate stat c class Vers onedT etFeatures {
+    // T etFeatures populated by relevance class f ers, structure def ned
+    //  n src/ma n/thr ft/class f er.thr ft.
+    pr vate T etFeatures t etFeatures = new T etFeatures();
+    pr vate Token zedCharSequence token zedCharSequence = null;
+    pr vate Set<Str ng> normal zedHashtags = Sets.newHashSet();
 
-    public TweetFeatures getTweetFeatures() {
-      return this.tweetFeatures;
+    publ c T etFeatures getT etFeatures() {
+      return t .t etFeatures;
     }
 
-    public void setTweetFeatures(final TweetFeatures tweetFeatures) {
-      this.tweetFeatures = tweetFeatures;
+    publ c vo d setT etFeatures(f nal T etFeatures t etFeatures) {
+      t .t etFeatures = t etFeatures;
     }
 
-    public TweetTextQuality getTweetTextQuality() {
-      return this.tweetFeatures.getTweetTextQuality();
+    publ c T etTextQual y getT etTextQual y() {
+      return t .t etFeatures.getT etTextQual y();
     }
 
-    public TweetTextFeatures getTweetTextFeatures() {
-      return this.tweetFeatures.getTweetTextFeatures();
+    publ c T etTextFeatures getT etTextFeatures() {
+      return t .t etFeatures.getT etTextFeatures();
     }
 
-    public TweetUserFeatures getTweetUserFeatures() {
-      return this.tweetFeatures.getTweetUserFeatures();
+    publ c T etUserFeatures getT etUserFeatures() {
+      return t .t etFeatures.getT etUserFeatures();
     }
 
-    public TokenizedCharSequence getTokenizedCharSequence() {
-      return this.tokenizedCharSequence;
+    publ c Token zedCharSequence getToken zedCharSequence() {
+      return t .token zedCharSequence;
     }
 
-    public void setTokenizedCharSequence(TokenizedCharSequence sequence) {
-      this.tokenizedCharSequence = sequence;
+    publ c vo d setToken zedCharSequence(Token zedCharSequence sequence) {
+      t .token zedCharSequence = sequence;
     }
 
-    public Set<String> getNormalizedHashtags() {
-      return this.normalizedHashtags;
+    publ c Set<Str ng> getNormal zedHashtags() {
+      return t .normal zedHashtags;
     }
 
-    public void addNormalizedHashtags(String normalizedHashtag) {
-      this.normalizedHashtags.add(normalizedHashtag);
+    publ c vo d addNormal zedHashtags(Str ng normal zedHashtag) {
+      t .normal zedHashtags.add(normal zedHashtag);
     }
   }
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final long LONG_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1;
-  public static final int MAX_USER_REPUTATION = 100;
+  publ c stat c f nal  nt  NT_F ELD_NOT_PRESENT = -1;
+  publ c stat c f nal long LONG_F ELD_NOT_PRESENT = -1;
+  publ c stat c f nal double DOUBLE_F ELD_NOT_PRESENT = -1;
+  publ c stat c f nal  nt MAX_USER_REPUTAT ON = 100;
 
-  private final long tweetId;
+  pr vate f nal long t et d;
 
-  private String text;
+  pr vate Str ng text;
 
-  private Date date;
+  pr vate Date date;
   @Nonnull
-  private Optional<TwitterMessageUser> optionalFromUser = Optional.empty();
+  pr vate Opt onal<Tw ter ssageUser> opt onalFromUser = Opt onal.empty();
   @Nonnull
-  private Optional<TwitterMessageUser> optionalToUser = Optional.empty();
-  private Locale locale = null;
-  private Locale linkLocale = null;
+  pr vate Opt onal<Tw ter ssageUser> opt onalToUser = Opt onal.empty();
+  pr vate Locale locale = null;
+  pr vate Locale l nkLocale = null;
 
-  // Original source text.
-  private String origSource;
-  // Source with HTML tags removed and truncated.
-  private String strippedSource;
+  // Or g nal s ce text.
+  pr vate Str ng or gS ce;
+  // S ce w h HTML tags removed and truncated.
+  pr vate Str ng str ppedS ce;
 
-  // Original location text.
-  private String origLocation;
+  // Or g nal locat on text.
+  pr vate Str ng or gLocat on;
 
-  // Location truncated for mysql field-width reasons (see TwitterMessageUtil.java).
-  private String truncatedNormalizedLocation;
+  // Locat on truncated for  sql f eld-w dth reasons (see Tw ter ssageUt l.java).
+  pr vate Str ng truncatedNormal zedLocat on;
 
   // User's country
-  private String fromUserLocCountry;
+  pr vate Str ng fromUserLocCountry;
 
-  private Integer followersCount = INT_FIELD_NOT_PRESENT;
-  private boolean deleted = false;
+  pr vate  nteger follo rsCount =  NT_F ELD_NOT_PRESENT;
+  pr vate boolean deleted = false;
 
-  // Fields extracted from entities (in the JSON object)
-  private List<TwitterMessageUser> mentions = new ArrayList<>();
-  private Set<String> hashtags = Sets.newHashSet();
-  // Lat/lon and region accuracy tuples extracted from tweet text, or null.
-  private GeoObject geoLocation = null;
-  private boolean uncodeableLocation = false;
-  // This is set if the tweet is geotagged. (i.e. "geo" or "coordinate" section is present
-  // in the json)
-  // This field has only a getter but no setter --- it is filled in when the json is parsed.
-  private GeoObject geoTaggedLocation = null;
+  // F elds extracted from ent  es ( n t  JSON object)
+  pr vate L st<Tw ter ssageUser>  nt ons = new ArrayL st<>();
+  pr vate Set<Str ng> hashtags = Sets.newHashSet();
+  // Lat/lon and reg on accuracy tuples extracted from t et text, or null.
+  pr vate GeoObject geoLocat on = null;
+  pr vate boolean uncodeableLocat on = false;
+  // T   s set  f t  t et  s geotagged. ( .e. "geo" or "coord nate" sect on  s present
+  //  n t  json)
+  // T  f eld has only a getter but no setter ---    s f lled  n w n t  json  s parsed.
+  pr vate GeoObject geoTaggedLocat on = null;
 
-  private double userReputation = DOUBLE_FIELD_NOT_PRESENT;
-  private boolean geocodeRequired = false;
-  private boolean sensitiveContent = false;
-  private boolean userProtected;
-  private boolean userVerified;
-  private boolean userBlueVerified;
-  private TwitterRetweetMessage retweetMessage;
-  private TwitterQuotedMessage quotedMessage;
-  private List<String> places;
-  // maps from original url (the t.co url) to ThriftExpandedUrl, which contains the
-  // expanded url and the spiderduck response (canoicalLastHopUrl and mediatype)
-  private final Map<String, ThriftExpandedUrl> expandedUrls;
-  // maps the photo status id to the media url
-  private Map<Long, String> photoUrls;
-  private Optional<Long> inReplyToStatusId = Optional.empty();
-  private Optional<Long> directedAtUserId = Optional.empty();
+  pr vate double userReputat on = DOUBLE_F ELD_NOT_PRESENT;
+  pr vate boolean geocodeRequ red = false;
+  pr vate boolean sens  veContent = false;
+  pr vate boolean userProtected;
+  pr vate boolean userVer f ed;
+  pr vate boolean userBlueVer f ed;
+  pr vate Tw terRet et ssage ret et ssage;
+  pr vate Tw terQuoted ssage quoted ssage;
+  pr vate L st<Str ng> places;
+  // maps from or g nal url (t  t.co url) to Thr ftExpandedUrl, wh ch conta ns t 
+  // expanded url and t  sp derduck response (cano calLastHopUrl and  d atype)
+  pr vate f nal Map<Str ng, Thr ftExpandedUrl> expandedUrls;
+  // maps t  photo status  d to t   d a url
+  pr vate Map<Long, Str ng> photoUrls;
+  pr vate Opt onal<Long>  nReplyToStatus d = Opt onal.empty();
+  pr vate Opt onal<Long> d rectedAtUser d = Opt onal.empty();
 
-  private long conversationId = -1;
+  pr vate long conversat on d = -1;
 
-  // True if tweet is nullcasted.
-  private boolean nullcast = false;
+  // True  f t et  s nullcasted.
+  pr vate boolean nullcast = false;
 
-  // True if tweet is a self-threaded tweet
-  private boolean selfThread = false;
+  // True  f t et  s a self-threaded t et
+  pr vate boolean selfThread = false;
 
-  // If the tweet is a part of an exclusive conversation, the author who started
-  // that conversation.
-  private Optional<Long> exclusiveConversationAuthorId = Optional.empty();
+  //  f t  t et  s a part of an exclus ve conversat on, t  author who started
+  // that conversat on.
+  pr vate Opt onal<Long> exclus veConversat onAuthor d = Opt onal.empty();
 
-  // tweet features map for multiple versions of penguin
-  private Map<PenguinVersion, VersionedTweetFeatures> versionedTweetFeaturesMap;
+  // t et features map for mult ple vers ons of pengu n
+  pr vate Map<Pengu nVers on, Vers onedT etFeatures> vers onedT etFeaturesMap;
 
-  // Engagments count: favorites, retweets and replies
-  private int numFavorites = 0;
-  private int numRetweets = 0;
-  private int numReplies = 0;
+  // Engag nts count: favor es, ret ets and repl es
+  pr vate  nt numFavor es = 0;
+  pr vate  nt numRet ets = 0;
+  pr vate  nt numRepl es = 0;
 
-  // Card information
-  private String cardName;
-  private String cardDomain;
-  private String cardTitle;
-  private String cardDescription;
-  private String cardLang;
-  private String cardUrl;
+  // Card  nformat on
+  pr vate Str ng cardNa ;
+  pr vate Str ng cardDoma n;
+  pr vate Str ng cardT le;
+  pr vate Str ng cardDescr pt on;
+  pr vate Str ng cardLang;
+  pr vate Str ng cardUrl;
 
-  private String placeId;
-  private String placeFullName;
-  private String placeCountryCode;
+  pr vate Str ng place d;
+  pr vate Str ng placeFullNa ;
+  pr vate Str ng placeCountryCode;
 
-  private Set<NamedEntity> namedEntities = Sets.newHashSet();
+  pr vate Set<Na dEnt y> na dEnt  es = Sets.newHashSet();
 
   // Spaces data
-  private Set<String> spaceIds = Sets.newHashSet();
-  private Set<TwitterMessageUser> spaceAdmins = Sets.newHashSet();
-  private String spaceTitle;
+  pr vate Set<Str ng> space ds = Sets.newHashSet();
+  pr vate Set<Tw ter ssageUser> spaceAdm ns = Sets.newHashSet();
+  pr vate Str ng spaceT le;
 
-  private Optional<ComposerSource> composerSource = Optional.empty();
+  pr vate Opt onal<ComposerS ce> composerS ce = Opt onal.empty();
 
-  private final List<PotentialLocationObject> potentialLocations = Lists.newArrayList();
+  pr vate f nal L st<Potent alLocat onObject> potent alLocat ons = L sts.newArrayL st();
 
-  // one or two penguin versions supported by this system
-  private final List<PenguinVersion> supportedPenguinVersions;
+  // one or two pengu n vers ons supported by t  system
+  pr vate f nal L st<Pengu nVers on> supportedPengu nVers ons;
 
-  public TwitterMessage(Long tweetId, List<PenguinVersion> supportedPenguinVersions) {
-    this.tweetId = tweetId;
-    this.places = new ArrayList<>();
-    this.expandedUrls = new LinkedHashMap<>();
-    // make sure we support at least one, but no more than two versions of penguin
-    this.supportedPenguinVersions = supportedPenguinVersions;
-    this.versionedTweetFeaturesMap = getVersionedTweetFeaturesMap();
-    Preconditions.checkArgument(this.supportedPenguinVersions.size() <= 2
-        && this.supportedPenguinVersions.size() > 0);
+  publ c Tw ter ssage(Long t et d, L st<Pengu nVers on> supportedPengu nVers ons) {
+    t .t et d = t et d;
+    t .places = new ArrayL st<>();
+    t .expandedUrls = new L nkedHashMap<>();
+    // make sure   support at least one, but no more than two vers ons of pengu n
+    t .supportedPengu nVers ons = supportedPengu nVers ons;
+    t .vers onedT etFeaturesMap = getVers onedT etFeaturesMap();
+    Precond  ons.c ckArgu nt(t .supportedPengu nVers ons.s ze() <= 2
+        && t .supportedPengu nVers ons.s ze() > 0);
   }
 
   /**
-   * Replace to-user with in-reply-to user if needed.
+   * Replace to-user w h  n-reply-to user  f needed.
    */
-  public void replaceToUserWithInReplyToUserIfNeeded(
-      String inReplyToScreenName, long inReplyToUserId) {
-    if (shouldUseReplyUserAsToUser(optionalToUser, inReplyToUserId)) {
-      TwitterMessageUser replyUser =
-          TwitterMessageUser.createWithNamesAndId(inReplyToScreenName, "", inReplyToUserId);
-      optionalToUser = Optional.of(replyUser);
+  publ c vo d replaceToUserW h nReplyToUser fNeeded(
+      Str ng  nReplyToScreenNa , long  nReplyToUser d) {
+     f (shouldUseReplyUserAsToUser(opt onalToUser,  nReplyToUser d)) {
+      Tw ter ssageUser replyUser =
+          Tw ter ssageUser.createW hNa sAnd d( nReplyToScreenNa , "",  nReplyToUser d);
+      opt onalToUser = Opt onal.of(replyUser);
     }
   }
 
-  // To-user could have been inferred from the mention at the position 0.
-  // But if there is an explicit in-reply-to user, we might need to use it as to-user instead.
-  private static boolean shouldUseReplyUserAsToUser(
-      Optional<TwitterMessageUser> currentToUser,
-      long inReplyToUserId) {
-    if (!currentToUser.isPresent()) {
-      // There is no mention in the tweet that qualifies as to-user.
+  // To-user could have been  nferred from t   nt on at t  pos  on 0.
+  // But  f t re  s an expl c   n-reply-to user,   m ght need to use   as to-user  nstead.
+  pr vate stat c boolean shouldUseReplyUserAsToUser(
+      Opt onal<Tw ter ssageUser> currentToUser,
+      long  nReplyToUser d) {
+     f (!currentToUser. sPresent()) {
+      // T re  s no  nt on  n t  t et that qual f es as to-user.
       return true;
     }
 
-    // We already have a mention in the tweet that qualifies as to-user.
-    TwitterMessageUser toUser = currentToUser.get();
-    if (!toUser.getId().isPresent()) {
-      // The to-user from the mention is a stub.
+    //   already have a  nt on  n t  t et that qual f es as to-user.
+    Tw ter ssageUser toUser = currentToUser.get();
+     f (!toUser.get d(). sPresent()) {
+      // T  to-user from t   nt on  s a stub.
       return true;
     }
 
-    long toUserId = toUser.getId().get();
-    if (toUserId != inReplyToUserId) {
-      // The to-user from the mention is different that the in-reply-to user,
-      // use in-reply-to user instead.
+    long toUser d = toUser.get d().get();
+     f (toUser d !=  nReplyToUser d) {
+      // T  to-user from t   nt on  s d fferent that t   n-reply-to user,
+      // use  n-reply-to user  nstead.
       return true;
     }
 
     return false;
   }
 
-  public double getUserReputation() {
-    return userReputation;
+  publ c double getUserReputat on() {
+    return userReputat on;
   }
 
   /**
-   * Sets the user reputation.
+   * Sets t  user reputat on.
    */
-  public TwitterMessage setUserReputation(double newUserReputation) {
-    if (newUserReputation > MAX_USER_REPUTATION) {
-      LOG.warn("Out of bounds user reputation {} for status id {}", newUserReputation, tweetId);
-      this.userReputation = (float) MAX_USER_REPUTATION;
+  publ c Tw ter ssage setUserReputat on(double newUserReputat on) {
+     f (newUserReputat on > MAX_USER_REPUTAT ON) {
+      LOG.warn("Out of bounds user reputat on {} for status  d {}", newUserReputat on, t et d);
+      t .userReputat on = (float) MAX_USER_REPUTAT ON;
     } else {
-      this.userReputation = newUserReputation;
+      t .userReputat on = newUserReputat on;
     }
-    return this;
+    return t ;
   }
 
-  public String getText() {
+  publ c Str ng getText() {
     return text;
   }
 
-  public Optional<TwitterMessageUser> getOptionalToUser() {
-    return optionalToUser;
+  publ c Opt onal<Tw ter ssageUser> getOpt onalToUser() {
+    return opt onalToUser;
   }
 
-  public void setOptionalToUser(Optional<TwitterMessageUser> optionalToUser) {
-    this.optionalToUser = optionalToUser;
+  publ c vo d setOpt onalToUser(Opt onal<Tw ter ssageUser> opt onalToUser) {
+    t .opt onalToUser = opt onalToUser;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  publ c vo d setText(Str ng text) {
+    t .text = text;
   }
 
-  public Date getDate() {
+  publ c Date getDate() {
     return date;
   }
 
-  public void setDate(Date date) {
-    this.date = date;
+  publ c vo d setDate(Date date) {
+    t .date = date;
   }
 
-  public void setFromUser(@Nonnull TwitterMessageUser fromUser) {
-    Preconditions.checkNotNull(fromUser, "Don't set a null fromUser");
-    optionalFromUser = Optional.of(fromUser);
+  publ c vo d setFromUser(@Nonnull Tw ter ssageUser fromUser) {
+    Precond  ons.c ckNotNull(fromUser, "Don't set a null fromUser");
+    opt onalFromUser = Opt onal.of(fromUser);
   }
 
-  public Optional<String> getFromUserScreenName() {
-    return optionalFromUser.isPresent()
-        ? optionalFromUser.get().getScreenName()
-        : Optional.empty();
-  }
-
-  /**
-   * Sets the fromUserScreenName.
-   */
-  public void setFromUserScreenName(@Nonnull String fromUserScreenName) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithScreenName(fromUserScreenName)
-        : TwitterMessageUser.createWithScreenName(fromUserScreenName);
-
-    optionalFromUser = Optional.of(newFromUser);
-  }
-
-  public Optional<TokenStream> getTokenizedFromUserScreenName() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getTokenizedScreenName);
-  }
-
-  public Optional<String> getFromUserDisplayName() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getDisplayName);
+  publ c Opt onal<Str ng> getFromUserScreenNa () {
+    return opt onalFromUser. sPresent()
+        ? opt onalFromUser.get().getScreenNa ()
+        : Opt onal.empty();
   }
 
   /**
-   * Sets the fromUserDisplayName.
+   * Sets t  fromUserScreenNa .
    */
-  public void setFromUserDisplayName(@Nonnull String fromUserDisplayName) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithDisplayName(fromUserDisplayName)
-        : TwitterMessageUser.createWithDisplayName(fromUserDisplayName);
+  publ c vo d setFromUserScreenNa (@Nonnull Str ng fromUserScreenNa ) {
+    Tw ter ssageUser newFromUser = opt onalFromUser. sPresent()
+        ? opt onalFromUser.get().copyW hScreenNa (fromUserScreenNa )
+        : Tw ter ssageUser.createW hScreenNa (fromUserScreenNa );
 
-    optionalFromUser = Optional.of(newFromUser);
+    opt onalFromUser = Opt onal.of(newFromUser);
   }
 
-  public Optional<Long> getFromUserTwitterId() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getId);
+  publ c Opt onal<TokenStream> getToken zedFromUserScreenNa () {
+    return opt onalFromUser.flatMap(Tw ter ssageUser::getToken zedScreenNa );
+  }
+
+  publ c Opt onal<Str ng> getFromUserD splayNa () {
+    return opt onalFromUser.flatMap(Tw ter ssageUser::getD splayNa );
   }
 
   /**
-   * Sets the fromUserId.
+   * Sets t  fromUserD splayNa .
    */
-  public void setFromUserId(long fromUserId) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithId(fromUserId)
-        : TwitterMessageUser.createWithId(fromUserId);
+  publ c vo d setFromUserD splayNa (@Nonnull Str ng fromUserD splayNa ) {
+    Tw ter ssageUser newFromUser = opt onalFromUser. sPresent()
+        ? opt onalFromUser.get().copyW hD splayNa (fromUserD splayNa )
+        : Tw ter ssageUser.createW hD splayNa (fromUserD splayNa );
 
-    optionalFromUser = Optional.of(newFromUser);
+    opt onalFromUser = Opt onal.of(newFromUser);
   }
 
-  public long getConversationId() {
-    return conversationId;
-  }
-
-  public void setConversationId(long conversationId) {
-    this.conversationId = conversationId;
-  }
-
-  public boolean isUserProtected() {
-    return this.userProtected;
-  }
-
-  public void setUserProtected(boolean userProtected) {
-    this.userProtected = userProtected;
-  }
-
-  public boolean isUserVerified() {
-    return this.userVerified;
-  }
-
-  public void setUserVerified(boolean userVerified) {
-    this.userVerified = userVerified;
-  }
-
-  public boolean isUserBlueVerified() {
-    return this.userBlueVerified;
-  }
-
-  public void setUserBlueVerified(boolean userBlueVerified) {
-    this.userBlueVerified = userBlueVerified;
-  }
-
-  public void setIsSensitiveContent(boolean isSensitiveContent) {
-    this.sensitiveContent = isSensitiveContent;
-  }
-
-  public boolean isSensitiveContent() {
-    return this.sensitiveContent;
-  }
-
-  public Optional<TwitterMessageUser> getToUserObject() {
-    return optionalToUser;
-  }
-
-  public void setToUserObject(@Nonnull TwitterMessageUser user) {
-    Preconditions.checkNotNull(user, "Don't set a null to-user");
-    optionalToUser = Optional.of(user);
-  }
-
-  public Optional<Long> getToUserTwitterId() {
-    return optionalToUser.flatMap(TwitterMessageUser::getId);
+  publ c Opt onal<Long> getFromUserTw ter d() {
+    return opt onalFromUser.flatMap(Tw ter ssageUser::get d);
   }
 
   /**
-   * Sets toUserId.
+   * Sets t  fromUser d.
    */
-  public void setToUserTwitterId(long toUserId) {
-    TwitterMessageUser newToUser = optionalToUser.isPresent()
-        ? optionalToUser.get().copyWithId(toUserId)
-        : TwitterMessageUser.createWithId(toUserId);
+  publ c vo d setFromUser d(long fromUser d) {
+    Tw ter ssageUser newFromUser = opt onalFromUser. sPresent()
+        ? opt onalFromUser.get().copyW h d(fromUser d)
+        : Tw ter ssageUser.createW h d(fromUser d);
 
-    optionalToUser = Optional.of(newToUser);
+    opt onalFromUser = Opt onal.of(newFromUser);
   }
 
-  public Optional<String> getToUserLowercasedScreenName() {
-    return optionalToUser.flatMap(TwitterMessageUser::getScreenName).map(String::toLowerCase);
+  publ c long getConversat on d() {
+    return conversat on d;
   }
 
-  public Optional<String> getToUserScreenName() {
-    return optionalToUser.flatMap(TwitterMessageUser::getScreenName);
+  publ c vo d setConversat on d(long conversat on d) {
+    t .conversat on d = conversat on d;
+  }
+
+  publ c boolean  sUserProtected() {
+    return t .userProtected;
+  }
+
+  publ c vo d setUserProtected(boolean userProtected) {
+    t .userProtected = userProtected;
+  }
+
+  publ c boolean  sUserVer f ed() {
+    return t .userVer f ed;
+  }
+
+  publ c vo d setUserVer f ed(boolean userVer f ed) {
+    t .userVer f ed = userVer f ed;
+  }
+
+  publ c boolean  sUserBlueVer f ed() {
+    return t .userBlueVer f ed;
+  }
+
+  publ c vo d setUserBlueVer f ed(boolean userBlueVer f ed) {
+    t .userBlueVer f ed = userBlueVer f ed;
+  }
+
+  publ c vo d set sSens  veContent(boolean  sSens  veContent) {
+    t .sens  veContent =  sSens  veContent;
+  }
+
+  publ c boolean  sSens  veContent() {
+    return t .sens  veContent;
+  }
+
+  publ c Opt onal<Tw ter ssageUser> getToUserObject() {
+    return opt onalToUser;
+  }
+
+  publ c vo d setToUserObject(@Nonnull Tw ter ssageUser user) {
+    Precond  ons.c ckNotNull(user, "Don't set a null to-user");
+    opt onalToUser = Opt onal.of(user);
+  }
+
+  publ c Opt onal<Long> getToUserTw ter d() {
+    return opt onalToUser.flatMap(Tw ter ssageUser::get d);
   }
 
   /**
-   * Sets toUserScreenName.
+   * Sets toUser d.
    */
-  public void setToUserScreenName(@Nonnull String screenName) {
-    Preconditions.checkNotNull(screenName, "Don't set a null to-user screenname");
+  publ c vo d setToUserTw ter d(long toUser d) {
+    Tw ter ssageUser newToUser = opt onalToUser. sPresent()
+        ? opt onalToUser.get().copyW h d(toUser d)
+        : Tw ter ssageUser.createW h d(toUser d);
 
-    TwitterMessageUser newToUser = optionalToUser.isPresent()
-        ? optionalToUser.get().copyWithScreenName(screenName)
-        : TwitterMessageUser.createWithScreenName(screenName);
-
-    optionalToUser = Optional.of(newToUser);
+    opt onalToUser = Opt onal.of(newToUser);
   }
 
-  // to use from TweetEventParseHelper
-  public void setDirectedAtUserId(Optional<Long> directedAtUserId) {
-    this.directedAtUserId = directedAtUserId;
+  publ c Opt onal<Str ng> getToUserLo rcasedScreenNa () {
+    return opt onalToUser.flatMap(Tw ter ssageUser::getScreenNa ).map(Str ng::toLo rCase);
   }
 
-  @VisibleForTesting
-  public Optional<Long> getDirectedAtUserId() {
-    return directedAtUserId;
+  publ c Opt onal<Str ng> getToUserScreenNa () {
+    return opt onalToUser.flatMap(Tw ter ssageUser::getScreenNa );
   }
 
   /**
-   * Returns the referenceAuthorId.
+   * Sets toUserScreenNa .
    */
-  public Optional<Long> getReferenceAuthorId() {
-    // The semantics of reference-author-id:
-    // - if the tweet is a retweet, it should be the user id of the author of the original tweet
-    // - else, if the tweet is directed at a user, it should be the id of the user it's directed at.
-    // - else, if the tweet is a reply in a root self-thread, directed-at is not set, so it's
-    //   the id of the user who started the self-thread.
+  publ c vo d setToUserScreenNa (@Nonnull Str ng screenNa ) {
+    Precond  ons.c ckNotNull(screenNa , "Don't set a null to-user screenna ");
+
+    Tw ter ssageUser newToUser = opt onalToUser. sPresent()
+        ? opt onalToUser.get().copyW hScreenNa (screenNa )
+        : Tw ter ssageUser.createW hScreenNa (screenNa );
+
+    opt onalToUser = Opt onal.of(newToUser);
+  }
+
+  // to use from T etEventParse lper
+  publ c vo d setD rectedAtUser d(Opt onal<Long> d rectedAtUser d) {
+    t .d rectedAtUser d = d rectedAtUser d;
+  }
+
+  @V s bleForTest ng
+  publ c Opt onal<Long> getD rectedAtUser d() {
+    return d rectedAtUser d;
+  }
+
+  /**
+   * Returns t  referenceAuthor d.
+   */
+  publ c Opt onal<Long> getReferenceAuthor d() {
+    // T  semant cs of reference-author- d:
+    // -  f t  t et  s a ret et,   should be t  user  d of t  author of t  or g nal t et
+    // - else,  f t  t et  s d rected at a user,   should be t   d of t  user  's d rected at.
+    // - else,  f t  t et  s a reply  n a root self-thread, d rected-at  s not set, so  's
+    //   t   d of t  user who started t  self-thread.
     //
-    // For definitive info on replies and directed-at, take a look at go/replies. To view these
-    // for a certain tweet, use http://go/t.
+    // For def n  ve  nfo on repl es and d rected-at, take a look at go/repl es. To v ew t se
+    // for a certa n t et, use http://go/t.
     //
-    // Note that if directed-at is set, reply is always set.
-    // If reply is set, directed-at is not necessarily set.
-    if (isRetweet() && retweetMessage.hasSharedUserTwitterId()) {
-      long retweetedUserId = retweetMessage.getSharedUserTwitterId();
-      return Optional.of(retweetedUserId);
-    } else if (directedAtUserId.isPresent()) {
-      // Why not replace directedAtUserId with reply and make this function depend
-      // on the "reply" field of TweetCoreData?
-      // Well, verified by counters, it seems for ~1% of tweets, which contain both directed-at
-      // and reply, directed-at-user is different than the reply-to-user id. This happens in the
-      // following case:
+    // Note that  f d rected-at  s set, reply  s always set.
+    //  f reply  s set, d rected-at  s not necessar ly set.
+     f ( sRet et() && ret et ssage.hasSharedUserTw ter d()) {
+      long ret etedUser d = ret et ssage.getSharedUserTw ter d();
+      return Opt onal.of(ret etedUser d);
+    } else  f (d rectedAtUser d. sPresent()) {
+      // Why not replace d rectedAtUser d w h reply and make t  funct on depend
+      // on t  "reply" f eld of T etCoreData?
+      //  ll, ver f ed by counters,   seems for ~1% of t ets, wh ch conta n both d rected-at
+      // and reply, d rected-at-user  s d fferent than t  reply-to-user  d. T  happens  n t 
+      // follow ng case:
       //
-      //       author / reply-to / directed-at
+      //       author / reply-to / d rected-at
       //  T1   A        -          -
       //  T2   B        A          A
       //  T3   B        B          A
       //
-      //  T2 is a reply to T1, T3 is a reply to T2.
+      //  T2  s a reply to T1, T3  s a reply to T2.
       //
-      // It's up to us to decide who this tweet is "referencing", but with the current code,
-      // we choose that T3 is referencing user A.
-      return directedAtUserId;
+      //  's up to us to dec de who t  t et  s "referenc ng", but w h t  current code,
+      //   choose that T3  s referenc ng user A.
+      return d rectedAtUser d;
     } else {
-      // This is the case of a root self-thread reply. directed-at is not set.
-      Optional<Long> fromUserId = this.getFromUserTwitterId();
-      Optional<Long> toUserId = this.getToUserTwitterId();
+      // T   s t  case of a root self-thread reply. d rected-at  s not set.
+      Opt onal<Long> fromUser d = t .getFromUserTw ter d();
+      Opt onal<Long> toUser d = t .getToUserTw ter d();
 
-      if (fromUserId.isPresent() && fromUserId.equals(toUserId)) {
-        return fromUserId;
+       f (fromUser d. sPresent() && fromUser d.equals(toUser d)) {
+        return fromUser d;
       }
     }
-    return Optional.empty();
+    return Opt onal.empty();
   }
 
-  public void setNumFavorites(int numFavorites) {
-    this.numFavorites = numFavorites;
+  publ c vo d setNumFavor es( nt numFavor es) {
+    t .numFavor es = numFavor es;
   }
 
-  public void setNumRetweets(int numRetweets) {
-    this.numRetweets = numRetweets;
+  publ c vo d setNumRet ets( nt numRet ets) {
+    t .numRet ets = numRet ets;
   }
 
-  public void setNumReplies(int numRepliess) {
-    this.numReplies = numRepliess;
+  publ c vo d setNumRepl es( nt numRepl ess) {
+    t .numRepl es = numRepl ess;
   }
 
-  public void addEscherbirdAnnotation(EscherbirdAnnotation annotation) {
-    escherbirdAnnotations.add(annotation);
+  publ c vo d addEsc rb rdAnnotat on(Esc rb rdAnnotat on annotat on) {
+    esc rb rdAnnotat ons.add(annotat on);
   }
 
-  public List<EscherbirdAnnotation> getEscherbirdAnnotations() {
-    return escherbirdAnnotations;
+  publ c L st<Esc rb rdAnnotat on> getEsc rb rdAnnotat ons() {
+    return esc rb rdAnnotat ons;
   }
 
-  public List<PotentialLocationObject> getPotentialLocations() {
-    return potentialLocations;
+  publ c L st<Potent alLocat onObject> getPotent alLocat ons() {
+    return potent alLocat ons;
   }
 
-  public void setPotentialLocations(Collection<PotentialLocationObject> potentialLocations) {
-    this.potentialLocations.clear();
-    this.potentialLocations.addAll(potentialLocations);
+  publ c vo d setPotent alLocat ons(Collect on<Potent alLocat onObject> potent alLocat ons) {
+    t .potent alLocat ons.clear();
+    t .potent alLocat ons.addAll(potent alLocat ons);
   }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return ToStr ngBu lder.reflect onToStr ng(t );
   }
 
-  // Tweet language related getters and setters.
+  // T et language related getters and setters.
 
   /**
-   * Returns the locale.
+   * Returns t  locale.
    * <p>
-   * Note the getLocale() will never return null, this is for the convenience of text related
-   * processing in the ingester. If you want the real locale, you need to check isSetLocale()
-   * first to see if we really have any information about the locale of this tweet.
+   * Note t  getLocale() w ll never return null, t   s for t  conven ence of text related
+   * process ng  n t   ngester.  f   want t  real locale,   need to c ck  sSetLocale()
+   * f rst to see  f   really have any  nformat on about t  locale of t  t et.
    */
-  public Locale getLocale() {
-    if (locale == null) {
-      return TwitterLanguageIdentifier.UNKNOWN;
+  publ c Locale getLocale() {
+     f (locale == null) {
+      return Tw terLanguage dent f er.UNKNOWN;
     } else {
       return locale;
     }
   }
 
-  public void setLocale(Locale locale) {
-    this.locale = locale;
+  publ c vo d setLocale(Locale locale) {
+    t .locale = locale;
   }
 
   /**
-   * Determines if the locate is set.
+   * Determ nes  f t  locate  s set.
    */
-  public boolean isSetLocale() {
+  publ c boolean  sSetLocale() {
     return locale != null;
   }
 
   /**
-   * Returns the language of the locale. E.g. zh
+   * Returns t  language of t  locale. E.g. zh
    */
-  public String getLanguage() {
-    if (isSetLocale()) {
+  publ c Str ng getLanguage() {
+     f ( sSetLocale()) {
       return getLocale().getLanguage();
     } else {
       return null;
@@ -611,657 +611,657 @@ public class TwitterMessage {
   }
 
   /**
-   * Returns the IETF BCP 47 Language Tag of the locale. E.g. zh-CN
+   * Returns t   ETF BCP 47 Language Tag of t  locale. E.g. zh-CN
    */
-  public String getBCP47LanguageTag() {
-    if (isSetLocale()) {
+  publ c Str ng getBCP47LanguageTag() {
+     f ( sSetLocale()) {
       return getLocale().toLanguageTag();
     } else {
       return null;
     }
   }
 
-  public void setLanguage(String language) {
-    if (language != null) {
-      locale = LocaleUtil.getLocaleOf(language);
+  publ c vo d setLanguage(Str ng language) {
+     f (language != null) {
+      locale = LocaleUt l.getLocaleOf(language);
     }
   }
 
-  // Tweet link language related getters and setters.
-  public Locale getLinkLocale() {
-    return linkLocale;
+  // T et l nk language related getters and setters.
+  publ c Locale getL nkLocale() {
+    return l nkLocale;
   }
 
-  public void setLinkLocale(Locale linkLocale) {
-    this.linkLocale = linkLocale;
+  publ c vo d setL nkLocale(Locale l nkLocale) {
+    t .l nkLocale = l nkLocale;
   }
 
   /**
-   * Returns the language of the link locale.
+   * Returns t  language of t  l nk locale.
    */
-  public String getLinkLanguage() {
-    if (this.linkLocale == null) {
+  publ c Str ng getL nkLanguage() {
+     f (t .l nkLocale == null) {
       return null;
     } else {
-      return this.linkLocale.getLanguage();
+      return t .l nkLocale.getLanguage();
     }
   }
 
-  public String getOrigSource() {
-    return origSource;
+  publ c Str ng getOr gS ce() {
+    return or gS ce;
   }
 
-  public void setOrigSource(String origSource) {
-    this.origSource = origSource;
+  publ c vo d setOr gS ce(Str ng or gS ce) {
+    t .or gS ce = or gS ce;
   }
 
-  public String getStrippedSource() {
-    return strippedSource;
+  publ c Str ng getStr ppedS ce() {
+    return str ppedS ce;
   }
 
-  public void setStrippedSource(String strippedSource) {
-    this.strippedSource = strippedSource;
+  publ c vo d setStr ppedS ce(Str ng str ppedS ce) {
+    t .str ppedS ce = str ppedS ce;
   }
 
-  public String getOrigLocation() {
-    return origLocation;
+  publ c Str ng getOr gLocat on() {
+    return or gLocat on;
   }
 
-  public String getLocation() {
-    return truncatedNormalizedLocation;
+  publ c Str ng getLocat on() {
+    return truncatedNormal zedLocat on;
   }
 
-  public void setOrigLocation(String origLocation) {
-    this.origLocation = origLocation;
+  publ c vo d setOr gLocat on(Str ng or gLocat on) {
+    t .or gLocat on = or gLocat on;
   }
 
-  public void setTruncatedNormalizedLocation(String truncatedNormalizedLocation) {
-    this.truncatedNormalizedLocation = truncatedNormalizedLocation;
+  publ c vo d setTruncatedNormal zedLocat on(Str ng truncatedNormal zedLocat on) {
+    t .truncatedNormal zedLocat on = truncatedNormal zedLocat on;
   }
 
-  public boolean hasFromUserLocCountry() {
+  publ c boolean hasFromUserLocCountry() {
     return fromUserLocCountry != null;
   }
 
-  public String getFromUserLocCountry() {
+  publ c Str ng getFromUserLocCountry() {
     return fromUserLocCountry;
   }
 
-  public void setFromUserLocCountry(String fromUserLocCountry) {
-    this.fromUserLocCountry = fromUserLocCountry;
+  publ c vo d setFromUserLocCountry(Str ng fromUserLocCountry) {
+    t .fromUserLocCountry = fromUserLocCountry;
   }
 
-  public String getTruncatedNormalizedLocation() {
-    return truncatedNormalizedLocation;
+  publ c Str ng getTruncatedNormal zedLocat on() {
+    return truncatedNormal zedLocat on;
   }
 
-  public Integer getFollowersCount() {
-    return followersCount;
+  publ c  nteger getFollo rsCount() {
+    return follo rsCount;
   }
 
-  public void setFollowersCount(Integer followersCount) {
-    this.followersCount = followersCount;
+  publ c vo d setFollo rsCount( nteger follo rsCount) {
+    t .follo rsCount = follo rsCount;
   }
 
-  public boolean hasFollowersCount() {
-    return followersCount != INT_FIELD_NOT_PRESENT;
+  publ c boolean hasFollo rsCount() {
+    return follo rsCount !=  NT_F ELD_NOT_PRESENT;
   }
 
-  public boolean isDeleted() {
+  publ c boolean  sDeleted() {
     return deleted;
   }
 
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
+  publ c vo d setDeleted(boolean deleted) {
+    t .deleted = deleted;
   }
 
-  public boolean hasCard() {
-    return !StringUtils.isBlank(getCardName());
+  publ c boolean hasCard() {
+    return !Str ngUt ls. sBlank(getCardNa ());
   }
 
-  @Override
-  public int hashCode() {
-    return ((Long) getId()).hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return ((Long) get d()).hashCode();
   }
 
   /**
-   * Parses the given date using the TwitterDateFormat.
+   * Parses t  g ven date us ng t  Tw terDateFormat.
    */
-  public static Date parseDate(String date) {
-    DateFormat parser = TwitterDateFormat.apply("EEE MMM d HH:mm:ss Z yyyy");
+  publ c stat c Date parseDate(Str ng date) {
+    DateFormat parser = Tw terDateFormat.apply("EEE MMM d HH:mm:ss Z yyyy");
     try {
       return parser.parse(date);
-    } catch (Exception e) {
+    } catch (Except on e) {
       return null;
     }
   }
 
-  public boolean hasGeoLocation() {
-    return geoLocation != null;
+  publ c boolean hasGeoLocat on() {
+    return geoLocat on != null;
   }
 
-  public void setGeoLocation(GeoObject location) {
-    this.geoLocation = location;
+  publ c vo d setGeoLocat on(GeoObject locat on) {
+    t .geoLocat on = locat on;
   }
 
-  public GeoObject getGeoLocation() {
-    return geoLocation;
+  publ c GeoObject getGeoLocat on() {
+    return geoLocat on;
   }
 
-  public String getPlaceId() {
-    return placeId;
+  publ c Str ng getPlace d() {
+    return place d;
   }
 
-  public void setPlaceId(String placeId) {
-    this.placeId = placeId;
+  publ c vo d setPlace d(Str ng place d) {
+    t .place d = place d;
   }
 
-  public String getPlaceFullName() {
-    return placeFullName;
+  publ c Str ng getPlaceFullNa () {
+    return placeFullNa ;
   }
 
-  public void setPlaceFullName(String placeFullName) {
-    this.placeFullName = placeFullName;
+  publ c vo d setPlaceFullNa (Str ng placeFullNa ) {
+    t .placeFullNa  = placeFullNa ;
   }
 
-  public String getPlaceCountryCode() {
+  publ c Str ng getPlaceCountryCode() {
     return placeCountryCode;
   }
 
-  public void setPlaceCountryCode(String placeCountryCode) {
-    this.placeCountryCode = placeCountryCode;
+  publ c vo d setPlaceCountryCode(Str ng placeCountryCode) {
+    t .placeCountryCode = placeCountryCode;
   }
 
-  public void setGeoTaggedLocation(GeoObject geoTaggedLocation) {
-    this.geoTaggedLocation = geoTaggedLocation;
+  publ c vo d setGeoTaggedLocat on(GeoObject geoTaggedLocat on) {
+    t .geoTaggedLocat on = geoTaggedLocat on;
   }
 
-  public GeoObject getGeoTaggedLocation() {
-    return geoTaggedLocation;
+  publ c GeoObject getGeoTaggedLocat on() {
+    return geoTaggedLocat on;
   }
 
-  public void setLatLon(double latitude, double longitude) {
-    geoLocation = new GeoObject(latitude, longitude, null);
+  publ c vo d setLatLon(double lat ude, double long ude) {
+    geoLocat on = new GeoObject(lat ude, long ude, null);
   }
 
-  public Double getLatitude() {
-    return hasGeoLocation() ? geoLocation.getLatitude() : null;
+  publ c Double getLat ude() {
+    return hasGeoLocat on() ? geoLocat on.getLat ude() : null;
   }
 
-  public Double getLongitude() {
-    return hasGeoLocation() ? geoLocation.getLongitude() : null;
+  publ c Double getLong ude() {
+    return hasGeoLocat on() ? geoLocat on.getLong ude() : null;
   }
 
-  public boolean isUncodeableLocation() {
-    return uncodeableLocation;
+  publ c boolean  sUncodeableLocat on() {
+    return uncodeableLocat on;
   }
 
-  public void setUncodeableLocation() {
-    uncodeableLocation = true;
+  publ c vo d setUncodeableLocat on() {
+    uncodeableLocat on = true;
   }
 
-  public void setGeocodeRequired() {
-    this.geocodeRequired = true;
+  publ c vo d setGeocodeRequ red() {
+    t .geocodeRequ red = true;
   }
 
-  public boolean isGeocodeRequired() {
-    return geocodeRequired;
+  publ c boolean  sGeocodeRequ red() {
+    return geocodeRequ red;
   }
 
-  public Map<Long, String> getPhotoUrls() {
+  publ c Map<Long, Str ng> getPhotoUrls() {
     return photoUrls;
   }
 
   /**
-   * Associates the given mediaUrl with the given photoStatusId.
+   * Assoc ates t  g ven  d aUrl w h t  g ven photoStatus d.
    */
-  public void addPhotoUrl(long photoStatusId, String mediaUrl) {
-    if (photoUrls == null) {
-      photoUrls = new LinkedHashMap<>();
+  publ c vo d addPhotoUrl(long photoStatus d, Str ng  d aUrl) {
+     f (photoUrls == null) {
+      photoUrls = new L nkedHashMap<>();
     }
-    photoUrls.putIfAbsent(photoStatusId, mediaUrl);
+    photoUrls.put fAbsent(photoStatus d,  d aUrl);
   }
 
-  public Map<String, ThriftExpandedUrl> getExpandedUrlMap() {
+  publ c Map<Str ng, Thr ftExpandedUrl> getExpandedUrlMap() {
     return expandedUrls;
   }
 
-  public int getExpandedUrlMapSize() {
-    return expandedUrls.size();
+  publ c  nt getExpandedUrlMapS ze() {
+    return expandedUrls.s ze();
   }
 
   /**
-   * Associates the given originalUrl with the given expanderUrl.
+   * Assoc ates t  g ven or g nalUrl w h t  g ven expanderUrl.
    */
-  public void addExpandedUrl(String originalUrl, ThriftExpandedUrl expandedUrl) {
-    this.expandedUrls.put(originalUrl, expandedUrl);
+  publ c vo d addExpandedUrl(Str ng or g nalUrl, Thr ftExpandedUrl expandedUrl) {
+    t .expandedUrls.put(or g nalUrl, expandedUrl);
   }
 
   /**
-   * Replaces urls with resolved ones.
+   * Replaces urls w h resolved ones.
    */
-  public String getTextReplacedWithResolvedURLs() {
-    String retText = text;
-    for (Map.Entry<String, ThriftExpandedUrl> entry : expandedUrls.entrySet()) {
-      ThriftExpandedUrl urlInfo = entry.getValue();
-      String resolvedUrl;
-      String canonicalLastHopUrl = urlInfo.getCanonicalLastHopUrl();
-      String expandedUrl = urlInfo.getExpandedUrl();
-      if (canonicalLastHopUrl != null) {
-        resolvedUrl = canonicalLastHopUrl;
-        LOG.debug("{} has canonical last hop url set", urlInfo);
-      } else if (expandedUrl != null) {
-        LOG.debug("{} has no canonical last hop url set, using expanded url instead", urlInfo);
+  publ c Str ng getTextReplacedW hResolvedURLs() {
+    Str ng retText = text;
+    for (Map.Entry<Str ng, Thr ftExpandedUrl> entry : expandedUrls.entrySet()) {
+      Thr ftExpandedUrl url nfo = entry.getValue();
+      Str ng resolvedUrl;
+      Str ng canon calLastHopUrl = url nfo.getCanon calLastHopUrl();
+      Str ng expandedUrl = url nfo.getExpandedUrl();
+       f (canon calLastHopUrl != null) {
+        resolvedUrl = canon calLastHopUrl;
+        LOG.debug("{} has canon cal last hop url set", url nfo);
+      } else  f (expandedUrl != null) {
+        LOG.debug("{} has no canon cal last hop url set, us ng expanded url  nstead", url nfo);
         resolvedUrl = expandedUrl;
       } else {
-        LOG.debug("{} has no canonical last hop url or expanded url set, skipping", urlInfo);
-        continue;
+        LOG.debug("{} has no canon cal last hop url or expanded url set, sk pp ng", url nfo);
+        cont nue;
       }
       retText = retText.replace(entry.getKey(), resolvedUrl);
     }
     return retText;
   }
 
-  public long getId() {
-    return tweetId;
+  publ c long get d() {
+    return t et d;
   }
 
-  public boolean isRetweet() {
-    return retweetMessage != null;
+  publ c boolean  sRet et() {
+    return ret et ssage != null;
   }
 
-  public boolean hasQuote() {
-    return quotedMessage != null;
+  publ c boolean hasQuote() {
+    return quoted ssage != null;
   }
 
-  public boolean isReply() {
-    return getToUserScreenName().isPresent()
-        || getToUserTwitterId().isPresent()
-        || getInReplyToStatusId().isPresent();
+  publ c boolean  sReply() {
+    return getToUserScreenNa (). sPresent()
+        || getToUserTw ter d(). sPresent()
+        || get nReplyToStatus d(). sPresent();
   }
 
-  public boolean isReplyToTweet() {
-    return getInReplyToStatusId().isPresent();
+  publ c boolean  sReplyToT et() {
+    return get nReplyToStatus d(). sPresent();
   }
 
-  public TwitterRetweetMessage getRetweetMessage() {
-    return retweetMessage;
+  publ c Tw terRet et ssage getRet et ssage() {
+    return ret et ssage;
   }
 
-  public void setRetweetMessage(TwitterRetweetMessage retweetMessage) {
-    this.retweetMessage = retweetMessage;
+  publ c vo d setRet et ssage(Tw terRet et ssage ret et ssage) {
+    t .ret et ssage = ret et ssage;
   }
 
-  public TwitterQuotedMessage getQuotedMessage() {
-    return quotedMessage;
+  publ c Tw terQuoted ssage getQuoted ssage() {
+    return quoted ssage;
   }
 
-  public void setQuotedMessage(TwitterQuotedMessage quotedMessage) {
-    this.quotedMessage = quotedMessage;
+  publ c vo d setQuoted ssage(Tw terQuoted ssage quoted ssage) {
+    t .quoted ssage = quoted ssage;
   }
 
-  public List<String> getPlaces() {
+  publ c L st<Str ng> getPlaces() {
     return places;
   }
 
-  public void addPlace(String place) {
-    // Places are used for earlybird serialization
+  publ c vo d addPlace(Str ng place) {
+    // Places are used for earlyb rd ser al zat on
     places.add(place);
   }
 
-  public Optional<Long> getInReplyToStatusId() {
-    return inReplyToStatusId;
+  publ c Opt onal<Long> get nReplyToStatus d() {
+    return  nReplyToStatus d;
   }
 
-  public void setInReplyToStatusId(long inReplyToStatusId) {
-    Preconditions.checkArgument(inReplyToStatusId > 0, "In-reply-to status ID should be positive");
-    this.inReplyToStatusId = Optional.of(inReplyToStatusId);
+  publ c vo d set nReplyToStatus d(long  nReplyToStatus d) {
+    Precond  ons.c ckArgu nt( nReplyToStatus d > 0, " n-reply-to status  D should be pos  ve");
+    t . nReplyToStatus d = Opt onal.of( nReplyToStatus d);
   }
 
-  public boolean getNullcast() {
+  publ c boolean getNullcast() {
     return nullcast;
   }
 
-  public void setNullcast(boolean nullcast) {
-    this.nullcast = nullcast;
+  publ c vo d setNullcast(boolean nullcast) {
+    t .nullcast = nullcast;
   }
 
-  public List<PenguinVersion> getSupportedPenguinVersions() {
-    return supportedPenguinVersions;
+  publ c L st<Pengu nVers on> getSupportedPengu nVers ons() {
+    return supportedPengu nVers ons;
   }
 
-  private VersionedTweetFeatures getVersionedTweetFeatures(PenguinVersion penguinVersion) {
-    VersionedTweetFeatures versionedTweetFeatures = versionedTweetFeaturesMap.get(penguinVersion);
-    return Preconditions.checkNotNull(versionedTweetFeatures);
+  pr vate Vers onedT etFeatures getVers onedT etFeatures(Pengu nVers on pengu nVers on) {
+    Vers onedT etFeatures vers onedT etFeatures = vers onedT etFeaturesMap.get(pengu nVers on);
+    return Precond  ons.c ckNotNull(vers onedT etFeatures);
   }
 
-  public TweetFeatures getTweetFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetFeatures();
+  publ c T etFeatures getT etFeatures(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getT etFeatures();
   }
 
-  @VisibleForTesting
-  // only used in Tests
-  public void setTweetFeatures(PenguinVersion penguinVersion, TweetFeatures tweetFeatures) {
-    versionedTweetFeaturesMap.get(penguinVersion).setTweetFeatures(tweetFeatures);
+  @V s bleForTest ng
+  // only used  n Tests
+  publ c vo d setT etFeatures(Pengu nVers on pengu nVers on, T etFeatures t etFeatures) {
+    vers onedT etFeaturesMap.get(pengu nVers on).setT etFeatures(t etFeatures);
   }
 
-  public int getTweetSignature(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures().getSignature();
+  publ c  nt getT etS gnature(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getT etTextFeatures().getS gnature();
   }
 
-  public TweetTextQuality getTweetTextQuality(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextQuality();
+  publ c T etTextQual y getT etTextQual y(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getT etTextQual y();
   }
 
-  public TweetTextFeatures getTweetTextFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures();
+  publ c T etTextFeatures getT etTextFeatures(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getT etTextFeatures();
   }
 
-  public TweetUserFeatures getTweetUserFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetUserFeatures();
+  publ c T etUserFeatures getT etUserFeatures(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getT etUserFeatures();
   }
 
-  public TokenizedCharSequence getTokenizedCharSequence(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTokenizedCharSequence();
+  publ c Token zedCharSequence getToken zedCharSequence(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getToken zedCharSequence();
   }
 
-  public void setTokenizedCharSequence(PenguinVersion penguinVersion,
-                                       TokenizedCharSequence sequence) {
-    getVersionedTweetFeatures(penguinVersion).setTokenizedCharSequence(sequence);
+  publ c vo d setToken zedCharSequence(Pengu nVers on pengu nVers on,
+                                       Token zedCharSequence sequence) {
+    getVers onedT etFeatures(pengu nVers on).setToken zedCharSequence(sequence);
   }
 
-  // True if the features contain multiple hash tags or multiple trends.
-  // This is intended as an anti-trend-spam measure.
-  public static boolean hasMultipleHashtagsOrTrends(TweetTextFeatures textFeatures) {
+  // True  f t  features conta n mult ple hash tags or mult ple trends.
+  // T   s  ntended as an ant -trend-spam  asure.
+  publ c stat c boolean hasMult pleHashtagsOrTrends(T etTextFeatures textFeatures) {
     // Allow at most 1 trend and 2 hashtags.
-    return textFeatures.getTrendingTermsSize() > 1 || textFeatures.getHashtagsSize() > 2;
+    return textFeatures.getTrend ngTermsS ze() > 1 || textFeatures.getHashtagsS ze() > 2;
   }
 
   /**
-   * Returns the expanded URLs.
+   * Returns t  expanded URLs.
    */
-  public Collection<ThriftExpandedUrl> getExpandedUrls() {
+  publ c Collect on<Thr ftExpandedUrl> getExpandedUrls() {
     return expandedUrls.values();
   }
 
   /**
-   * Returns the canonical last hop URLs.
+   * Returns t  canon cal last hop URLs.
    */
-  public Set<String> getCanonicalLastHopUrls() {
-    Set<String> result = new HashSet<>(expandedUrls.size());
-    for (ThriftExpandedUrl url : expandedUrls.values()) {
-      result.add(url.getCanonicalLastHopUrl());
+  publ c Set<Str ng> getCanon calLastHopUrls() {
+    Set<Str ng> result = new HashSet<>(expandedUrls.s ze());
+    for (Thr ftExpandedUrl url : expandedUrls.values()) {
+      result.add(url.getCanon calLastHopUrl());
     }
     return result;
   }
 
-  public String getCardName() {
-    return cardName;
+  publ c Str ng getCardNa () {
+    return cardNa ;
   }
 
-  public void setCardName(String cardName) {
-    this.cardName = cardName;
+  publ c vo d setCardNa (Str ng cardNa ) {
+    t .cardNa  = cardNa ;
   }
 
-  public String getCardDomain() {
-    return cardDomain;
+  publ c Str ng getCardDoma n() {
+    return cardDoma n;
   }
 
-  public void setCardDomain(String cardDomain) {
-    this.cardDomain = cardDomain;
+  publ c vo d setCardDoma n(Str ng cardDoma n) {
+    t .cardDoma n = cardDoma n;
   }
 
-  public String getCardTitle() {
-    return cardTitle;
+  publ c Str ng getCardT le() {
+    return cardT le;
   }
 
-  public void setCardTitle(String cardTitle) {
-    this.cardTitle = cardTitle;
+  publ c vo d setCardT le(Str ng cardT le) {
+    t .cardT le = cardT le;
   }
 
-  public String getCardDescription() {
-    return cardDescription;
+  publ c Str ng getCardDescr pt on() {
+    return cardDescr pt on;
   }
 
-  public void setCardDescription(String cardDescription) {
-    this.cardDescription = cardDescription;
+  publ c vo d setCardDescr pt on(Str ng cardDescr pt on) {
+    t .cardDescr pt on = cardDescr pt on;
   }
 
-  public String getCardLang() {
+  publ c Str ng getCardLang() {
     return cardLang;
   }
 
-  public void setCardLang(String cardLang) {
-    this.cardLang = cardLang;
+  publ c vo d setCardLang(Str ng cardLang) {
+    t .cardLang = cardLang;
   }
 
-  public String getCardUrl() {
+  publ c Str ng getCardUrl() {
     return cardUrl;
   }
 
-  public void setCardUrl(String cardUrl) {
-    this.cardUrl = cardUrl;
+  publ c vo d setCardUrl(Str ng cardUrl) {
+    t .cardUrl = cardUrl;
   }
 
-  public List<TwitterMessageUser> getMentions() {
-    return this.mentions;
+  publ c L st<Tw ter ssageUser> get nt ons() {
+    return t . nt ons;
   }
 
-  public void setMentions(List<TwitterMessageUser> mentions) {
-    this.mentions = mentions;
+  publ c vo d set nt ons(L st<Tw ter ssageUser>  nt ons) {
+    t . nt ons =  nt ons;
   }
 
-  public List<String> getLowercasedMentions() {
-    return Lists.transform(getMentions(), user -> {
-      // This condition is also checked in addUserToMentions().
-      Preconditions.checkState(user.getScreenName().isPresent(), "Invalid mention");
-      return user.getScreenName().get().toLowerCase();
+  publ c L st<Str ng> getLo rcased nt ons() {
+    return L sts.transform(get nt ons(), user -> {
+      // T  cond  on  s also c cked  n addUserTo nt ons().
+      Precond  ons.c ckState(user.getScreenNa (). sPresent(), " nval d  nt on");
+      return user.getScreenNa ().get().toLo rCase();
     });
   }
 
-  public Set<String> getHashtags() {
-    return this.hashtags;
+  publ c Set<Str ng> getHashtags() {
+    return t .hashtags;
   }
 
-  public Set<String> getNormalizedHashtags(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getNormalizedHashtags();
+  publ c Set<Str ng> getNormal zedHashtags(Pengu nVers on pengu nVers on) {
+    return getVers onedT etFeatures(pengu nVers on).getNormal zedHashtags();
   }
 
-  public void addNormalizedHashtag(String normalizedHashtag, PenguinVersion penguinVersion) {
-    getVersionedTweetFeatures(penguinVersion).addNormalizedHashtags(normalizedHashtag);
+  publ c vo d addNormal zedHashtag(Str ng normal zedHashtag, Pengu nVers on pengu nVers on) {
+    getVers onedT etFeatures(pengu nVers on).addNormal zedHashtags(normal zedHashtag);
   }
 
-  public Optional<ComposerSource> getComposerSource() {
-    return composerSource;
+  publ c Opt onal<ComposerS ce> getComposerS ce() {
+    return composerS ce;
   }
 
-  public void setComposerSource(ComposerSource composerSource) {
-    Preconditions.checkNotNull(composerSource, "composerSource should not be null");
-    this.composerSource = Optional.of(composerSource);
+  publ c vo d setComposerS ce(ComposerS ce composerS ce) {
+    Precond  ons.c ckNotNull(composerS ce, "composerS ce should not be null");
+    t .composerS ce = Opt onal.of(composerS ce);
   }
 
-  public boolean isSelfThread() {
+  publ c boolean  sSelfThread() {
     return selfThread;
   }
 
-  public void setSelfThread(boolean selfThread) {
-    this.selfThread = selfThread;
+  publ c vo d setSelfThread(boolean selfThread) {
+    t .selfThread = selfThread;
   }
 
-  public boolean isExclusive() {
-    return exclusiveConversationAuthorId.isPresent();
+  publ c boolean  sExclus ve() {
+    return exclus veConversat onAuthor d. sPresent();
   }
 
-  public long getExclusiveConversationAuthorId() {
-    return exclusiveConversationAuthorId.get();
+  publ c long getExclus veConversat onAuthor d() {
+    return exclus veConversat onAuthor d.get();
   }
 
-  public void setExclusiveConversationAuthorId(long exclusiveConversationAuthorId) {
-    this.exclusiveConversationAuthorId = Optional.of(exclusiveConversationAuthorId);
+  publ c vo d setExclus veConversat onAuthor d(long exclus veConversat onAuthor d) {
+    t .exclus veConversat onAuthor d = Opt onal.of(exclus veConversat onAuthor d);
   }
 
   /**
-   * Adds an expanded media url based on the given parameters.
+   * Adds an expanded  d a url based on t  g ven para ters.
    */
-  public void addExpandedMediaUrl(String originalUrl,
-                                  String expandedUrl,
-                                  @Nullable MediaTypes mediaType) {
-    if (!StringUtils.isBlank(originalUrl) && !StringUtils.isBlank(expandedUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl();
-      if (mediaType != null) {
-        thriftExpandedUrl.setMediaType(mediaType);
+  publ c vo d addExpanded d aUrl(Str ng or g nalUrl,
+                                  Str ng expandedUrl,
+                                  @Nullable  d aTypes  d aType) {
+     f (!Str ngUt ls. sBlank(or g nalUrl) && !Str ngUt ls. sBlank(expandedUrl)) {
+      Thr ftExpandedUrl thr ftExpandedUrl = new Thr ftExpandedUrl();
+       f ( d aType != null) {
+        thr ftExpandedUrl.set d aType( d aType);
       }
-      thriftExpandedUrl.setOriginalUrl(originalUrl);
-      thriftExpandedUrl.setExpandedUrl(expandedUrl);  // This will be tokenized and indexed
-      // Note that the mediaURL is not indexed. We could also index it, but it is not indexed
+      thr ftExpandedUrl.setOr g nalUrl(or g nalUrl);
+      thr ftExpandedUrl.setExpandedUrl(expandedUrl);  // T  w ll be token zed and  ndexed
+      // Note that t   d aURL  s not  ndexed.   could also  ndex  , but    s not  ndexed
       // to reduce RAM usage.
-      thriftExpandedUrl.setCanonicalLastHopUrl(expandedUrl); // This will be tokenized and indexed
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(true);
+      thr ftExpandedUrl.setCanon calLastHopUrl(expandedUrl); // T  w ll be token zed and  ndexed
+      addExpandedUrl(or g nalUrl, thr ftExpandedUrl);
+      thr ftExpandedUrl.setConsu r d a(true);
     }
   }
 
   /**
-   * Adds an expanded non-media url based on the given parameters.
+   * Adds an expanded non- d a url based on t  g ven para ters.
    */
-  public void addExpandedNonMediaUrl(String originalUrl, String expandedUrl) {
-    if (!StringUtils.isBlank(originalUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl(originalUrl);
-      if (!StringUtils.isBlank(expandedUrl)) {
-        thriftExpandedUrl.setExpandedUrl(expandedUrl);
+  publ c vo d addExpandedNon d aUrl(Str ng or g nalUrl, Str ng expandedUrl) {
+     f (!Str ngUt ls. sBlank(or g nalUrl)) {
+      Thr ftExpandedUrl thr ftExpandedUrl = new Thr ftExpandedUrl(or g nalUrl);
+       f (!Str ngUt ls. sBlank(expandedUrl)) {
+        thr ftExpandedUrl.setExpandedUrl(expandedUrl);
       }
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(false);
+      addExpandedUrl(or g nalUrl, thr ftExpandedUrl);
+      thr ftExpandedUrl.setConsu r d a(false);
     }
   }
 
   /**
-   * Only used in tests.
+   * Only used  n tests.
    *
-   * Simulates resolving compressed URLs, which is usually done by ResolveCompressedUrlsStage.
+   * S mulates resolv ng compressed URLs, wh ch  s usually done by ResolveCompressedUrlsStage.
    */
-  @VisibleForTesting
-  public void replaceUrlsWithResolvedUrls(Map<String, String> resolvedUrls) {
-    for (Map.Entry<String, ThriftExpandedUrl> urlEntry : expandedUrls.entrySet()) {
-      String tcoUrl = urlEntry.getKey();
-      if (resolvedUrls.containsKey(tcoUrl)) {
-        ThriftExpandedUrl expandedUrl = urlEntry.getValue();
-        expandedUrl.setCanonicalLastHopUrl(resolvedUrls.get(tcoUrl));
+  @V s bleForTest ng
+  publ c vo d replaceUrlsW hResolvedUrls(Map<Str ng, Str ng> resolvedUrls) {
+    for (Map.Entry<Str ng, Thr ftExpandedUrl> urlEntry : expandedUrls.entrySet()) {
+      Str ng tcoUrl = urlEntry.getKey();
+       f (resolvedUrls.conta nsKey(tcoUrl)) {
+        Thr ftExpandedUrl expandedUrl = urlEntry.getValue();
+        expandedUrl.setCanon calLastHopUrl(resolvedUrls.get(tcoUrl));
       }
     }
   }
 
   /**
-   * Adds a mention for a user with the given screen name.
+   * Adds a  nt on for a user w h t  g ven screen na .
    */
-  public void addMention(String screenName) {
-    TwitterMessageUser user = TwitterMessageUser.createWithScreenName(screenName);
-    addUserToMentions(user);
+  publ c vo d add nt on(Str ng screenNa ) {
+    Tw ter ssageUser user = Tw ter ssageUser.createW hScreenNa (screenNa );
+    addUserTo nt ons(user);
   }
 
   /**
-   * Adds the given user to mentions.
+   * Adds t  g ven user to  nt ons.
    */
-  public void addUserToMentions(TwitterMessageUser user) {
-    Preconditions.checkArgument(user.getScreenName().isPresent(), "Don't add invalid mentions");
-    this.mentions.add(user);
+  publ c vo d addUserTo nt ons(Tw ter ssageUser user) {
+    Precond  ons.c ckArgu nt(user.getScreenNa (). sPresent(), "Don't add  nval d  nt ons");
+    t . nt ons.add(user);
   }
 
   /**
-   * Adds the given hashtag.
+   * Adds t  g ven hashtag.
    */
-  public void addHashtag(String hashtag) {
-    this.hashtags.add(hashtag);
-    for (PenguinVersion penguinVersion : supportedPenguinVersions) {
-      addNormalizedHashtag(NormalizerHelper.normalize(hashtag, getLocale(), penguinVersion),
-          penguinVersion);
+  publ c vo d addHashtag(Str ng hashtag) {
+    t .hashtags.add(hashtag);
+    for (Pengu nVers on pengu nVers on : supportedPengu nVers ons) {
+      addNormal zedHashtag(Normal zer lper.normal ze(hashtag, getLocale(), pengu nVers on),
+          pengu nVers on);
     }
   }
 
-  private Map<PenguinVersion, VersionedTweetFeatures> getVersionedTweetFeaturesMap() {
-    Map<PenguinVersion, VersionedTweetFeatures> versionedMap =
-        Maps.newEnumMap(PenguinVersion.class);
-    for (PenguinVersion penguinVersion : getSupportedPenguinVersions()) {
-      versionedMap.put(penguinVersion, new VersionedTweetFeatures());
+  pr vate Map<Pengu nVers on, Vers onedT etFeatures> getVers onedT etFeaturesMap() {
+    Map<Pengu nVers on, Vers onedT etFeatures> vers onedMap =
+        Maps.newEnumMap(Pengu nVers on.class);
+    for (Pengu nVers on pengu nVers on : getSupportedPengu nVers ons()) {
+      vers onedMap.put(pengu nVers on, new Vers onedT etFeatures());
     }
 
-    return versionedMap;
+    return vers onedMap;
   }
 
-  public int getNumFavorites() {
-    return numFavorites;
+  publ c  nt getNumFavor es() {
+    return numFavor es;
   }
 
-  public int getNumRetweets() {
-    return numRetweets;
+  publ c  nt getNumRet ets() {
+    return numRet ets;
   }
 
-  public int getNumReplies() {
-    return numReplies;
+  publ c  nt getNumRepl es() {
+    return numRepl es;
   }
 
-  public Set<NamedEntity> getNamedEntities() {
-    return namedEntities;
+  publ c Set<Na dEnt y> getNa dEnt  es() {
+    return na dEnt  es;
   }
 
-  public void addNamedEntity(NamedEntity namedEntity) {
-    namedEntities.add(namedEntity);
+  publ c vo d addNa dEnt y(Na dEnt y na dEnt y) {
+    na dEnt  es.add(na dEnt y);
   }
 
-  public Set<String> getSpaceIds() {
-    return spaceIds;
+  publ c Set<Str ng> getSpace ds() {
+    return space ds;
   }
 
-  public void setSpaceIds(Set<String> spaceIds) {
-    this.spaceIds = Sets.newHashSet(spaceIds);
+  publ c vo d setSpace ds(Set<Str ng> space ds) {
+    t .space ds = Sets.newHashSet(space ds);
   }
 
-  public Set<TwitterMessageUser> getSpaceAdmins() {
-    return spaceAdmins;
+  publ c Set<Tw ter ssageUser> getSpaceAdm ns() {
+    return spaceAdm ns;
   }
 
-  public void addSpaceAdmin(TwitterMessageUser admin) {
-    spaceAdmins.add(admin);
+  publ c vo d addSpaceAdm n(Tw ter ssageUser adm n) {
+    spaceAdm ns.add(adm n);
   }
 
-  public String getSpaceTitle() {
-    return spaceTitle;
+  publ c Str ng getSpaceT le() {
+    return spaceT le;
   }
 
-  public void setSpaceTitle(String spaceTitle) {
-    this.spaceTitle = spaceTitle;
+  publ c vo d setSpaceT le(Str ng spaceT le) {
+    t .spaceT le = spaceT le;
   }
 
-  private static boolean equals(List<EscherbirdAnnotation> l1, List<EscherbirdAnnotation> l2) {
-    EscherbirdAnnotation[] arr1 = l1.toArray(new EscherbirdAnnotation[l1.size()]);
+  pr vate stat c boolean equals(L st<Esc rb rdAnnotat on> l1, L st<Esc rb rdAnnotat on> l2) {
+    Esc rb rdAnnotat on[] arr1 = l1.toArray(new Esc rb rdAnnotat on[l1.s ze()]);
     Arrays.sort(arr1);
-    EscherbirdAnnotation[] arr2 = l1.toArray(new EscherbirdAnnotation[l2.size()]);
+    Esc rb rdAnnotat on[] arr2 = l1.toArray(new Esc rb rdAnnotat on[l2.s ze()]);
     Arrays.sort(arr2);
     return Arrays.equals(arr1, arr2);
   }
 
   /**
-   * Compares the given messages using reflection and determines if they're approximately equal.
+   * Compares t  g ven  ssages us ng reflect on and determ nes  f t y're approx mately equal.
    */
-  public static boolean reflectionApproxEquals(
-      TwitterMessage a,
-      TwitterMessage b,
-      List<String> additionalExcludeFields) {
-    List<String> excludeFields = Lists.newArrayList(
-        "versionedTweetFeaturesMap",
-        "geoLocation",
-        "geoTaggedLocation",
-        "escherbirdAnnotations"
+  publ c stat c boolean reflect onApproxEquals(
+      Tw ter ssage a,
+      Tw ter ssage b,
+      L st<Str ng> add  onalExcludeF elds) {
+    L st<Str ng> excludeF elds = L sts.newArrayL st(
+        "vers onedT etFeaturesMap",
+        "geoLocat on",
+        "geoTaggedLocat on",
+        "esc rb rdAnnotat ons"
     );
-    excludeFields.addAll(additionalExcludeFields);
+    excludeF elds.addAll(add  onalExcludeF elds);
 
-    return EqualsBuilder.reflectionEquals(a, b, excludeFields)
-        && GeoObject.approxEquals(a.getGeoLocation(), b.getGeoLocation())
-        && GeoObject.approxEquals(a.getGeoTaggedLocation(), b.getGeoTaggedLocation())
-        && equals(a.getEscherbirdAnnotations(), b.getEscherbirdAnnotations());
+    return EqualsBu lder.reflect onEquals(a, b, excludeF elds)
+        && GeoObject.approxEquals(a.getGeoLocat on(), b.getGeoLocat on())
+        && GeoObject.approxEquals(a.getGeoTaggedLocat on(), b.getGeoTaggedLocat on())
+        && equals(a.getEsc rb rdAnnotat ons(), b.getEsc rb rdAnnotat ons());
   }
 
-  public static boolean reflectionApproxEquals(TwitterMessage a, TwitterMessage b) {
-    return reflectionApproxEquals(a, b, Collections.emptyList());
+  publ c stat c boolean reflect onApproxEquals(Tw ter ssage a, Tw ter ssage b) {
+    return reflect onApproxEquals(a, b, Collect ons.emptyL st());
   }
 }

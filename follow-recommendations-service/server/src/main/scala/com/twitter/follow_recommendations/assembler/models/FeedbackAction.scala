@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-trait FeedbackAction {
-  def toThrift: t.FeedbackAction
+tra  FeedbackAct on {
+  def toThr ft: t.FeedbackAct on
 }
 
-case class DismissUserId() extends FeedbackAction {
-  override lazy val toThrift: t.FeedbackAction = {
-    t.FeedbackAction.DismissUserId(t.DismissUserId())
+case class D sm ssUser d() extends FeedbackAct on {
+  overr de lazy val toThr ft: t.FeedbackAct on = {
+    t.FeedbackAct on.D sm ssUser d(t.D sm ssUser d())
   }
 }

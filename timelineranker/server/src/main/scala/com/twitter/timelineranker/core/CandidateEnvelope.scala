@@ -1,24 +1,24 @@
-package com.twitter.timelineranker.core
+package com.tw ter.t  l neranker.core
 
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.model.TweetId
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etRecom ndat on
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l nes.model.T et d
 
-object CandidateEnvelope {
-  val EmptySearchResults: Seq[ThriftSearchResult] = Seq.empty[ThriftSearchResult]
-  val EmptyHydratedTweets: HydratedTweets = HydratedTweets(Seq.empty, Seq.empty)
-  val EmptyUtegResults: Map[TweetId, TweetRecommendation] = Map.empty[TweetId, TweetRecommendation]
+object Cand dateEnvelope {
+  val EmptySearchResults: Seq[Thr ftSearchResult] = Seq.empty[Thr ftSearchResult]
+  val EmptyHydratedT ets: HydratedT ets = HydratedT ets(Seq.empty, Seq.empty)
+  val EmptyUtegResults: Map[T et d, T etRecom ndat on] = Map.empty[T et d, T etRecom ndat on]
 }
 
-case class CandidateEnvelope(
+case class Cand dateEnvelope(
   query: RecapQuery,
-  searchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
-  utegResults: Map[TweetId, TweetRecommendation] = CandidateEnvelope.EmptyUtegResults,
-  hydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets,
+  searchResults: Seq[Thr ftSearchResult] = Cand dateEnvelope.EmptySearchResults,
+  utegResults: Map[T et d, T etRecom ndat on] = Cand dateEnvelope.EmptyUtegResults,
+  hydratedT ets: HydratedT ets = Cand dateEnvelope.EmptyHydratedT ets,
   followGraphData: FollowGraphDataFuture = FollowGraphDataFuture.EmptyFollowGraphDataFuture,
-  // The source tweets are
-  // - the retweeted tweet, for retweets
-  // - the inReplyTo tweet, for extended replies
-  sourceSearchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
-  sourceHydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets)
+  // T  s ce t ets are
+  // - t  ret eted t et, for ret ets
+  // - t   nReplyTo t et, for extended repl es
+  s ceSearchResults: Seq[Thr ftSearchResult] = Cand dateEnvelope.EmptySearchResults,
+  s ceHydratedT ets: HydratedT ets = Cand dateEnvelope.EmptyHydratedT ets)

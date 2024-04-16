@@ -1,38 +1,38 @@
-WITH
+W TH
   vars AS (
     SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date
+      T MESTAMP("{START_T ME}") AS start_date,
+      T MESTAMP("{END_T ME}") AS end_date
   ),
 
-  ads_engagement AS (
+  ads_engage nt AS (
     SELECT
-        userId64 as userId,
-        promotedTweetId as tweetId,
-        UNIX_MILLIS(timestamp) AS tsMillis,
-        lineItemId
-    FROM `twttr-rev-core-data-prod.core_served_impressions.spend`, vars
-    WHERE TIMESTAMP(_batchEnd) >= vars.start_date AND TIMESTAMP(_batchEnd) <= vars.end_date
+        user d64 as user d,
+        promotedT et d as t et d,
+        UN X_M LL S(t  stamp) AS tsM ll s,
+        l ne em d
+    FROM `twttr-rev-core-data-prod.core_served_ mpress ons.spend`, vars
+    WHERE T MESTAMP(_batchEnd) >= vars.start_date AND T MESTAMP(_batchEnd) <= vars.end_date
     AND
-      engagementType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-      AND lineItemObjective != 9 -- not pre-roll ads
+      engage ntType  N ({CONTR BUT NG_ACT ON_TYPES_STR})
+      AND l ne emObject ve != 9 -- not pre-roll ads
   ),
 
-  line_items AS (
+  l ne_ ems AS (
       SELECT
-        id AS lineItemId,
-        end_time.posixTime AS endTime
+         d AS l ne em d,
+        end_t  .pos xT   AS endT  
       FROM
-        `twttr-rev-core-data-prod.rev_ads_production.line_items`
+        `twttr-rev-core-data-prod.rev_ads_product on.l ne_ ems`
   )
 
 
 SELECT
-  userId,
-  tweetId,
-  tsMillis
-FROM ads_engagement JOIN line_items USING(lineItemId), vars
+  user d,
+  t et d,
+  tsM ll s
+FROM ads_engage nt JO N l ne_ ems US NG(l ne em d), vars
 WHERE
-  line_items.endTime IS NULL
-  OR TIMESTAMP_MILLIS(line_items.endTime) >= vars.end_date
+  l ne_ ems.endT    S NULL
+  OR T MESTAMP_M LL S(l ne_ ems.endT  ) >= vars.end_date
 

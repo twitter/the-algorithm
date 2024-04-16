@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
 
-sealed trait MediaEntity
+sealed tra   d aEnt y
 
-case class TweetMedia(
-  tweetId: Long,
-  momentId: Option[Long])
-    extends MediaEntity
+case class T et d a(
+  t et d: Long,
+  mo nt d: Opt on[Long])
+    extends  d aEnt y
 
-case class BroadcastId(id: String) extends MediaEntity
+case class Broadcast d( d: Str ng) extends  d aEnt y
 
-case class Image(image: ImageVariant) extends MediaEntity
+case class  mage( mage:  mageVar ant) extends  d aEnt y

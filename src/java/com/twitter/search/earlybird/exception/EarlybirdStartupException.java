@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
 /**
- * Thrown by code that is executed during startup and used to communicate to caller that startup
- * has failed. Generally results in shutting down of the server, but check on your own if you
+ * Thrown by code that  s executed dur ng startup and used to commun cate to caller that startup
+ * has fa led. Generally results  n shutt ng down of t  server, but c ck on y  own  f  
  * need to.
  */
-public class EarlybirdStartupException extends Exception {
-  public EarlybirdStartupException(Throwable cause) {
+publ c class Earlyb rdStartupExcept on extends Except on {
+  publ c Earlyb rdStartupExcept on(Throwable cause) {
     super(cause);
   }
 
-  public EarlybirdStartupException(String message) {
-    super(message);
+  publ c Earlyb rdStartupExcept on(Str ng  ssage) {
+    super( ssage);
   }
 
-  public EarlybirdStartupException(String message, Throwable cause) {
-    super(message, cause);
+  publ c Earlyb rdStartupExcept on(Str ng  ssage, Throwable cause) {
+    super( ssage, cause);
   }
 }

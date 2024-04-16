@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.list_tweets.param
+package com.tw ter.ho _m xer.product.l st_t ets.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object ListTweetsParam {
-  val SupportedClientFSName = "list_tweets_supported_client"
+object L stT etsParam {
+  val SupportedCl entFSNa  = "l st_t ets_supported_cl ent"
 
-  object EnableAdsCandidatePipelineParam
+  object EnableAdsCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "list_tweets_enable_ads",
+        na  = "l st_t ets_enable_ads",
         default = false
       )
 
   object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "list_tweets_server_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "l st_t ets_server_max_results",
         default = 100,
-        min = 1,
+        m n = 1,
         max = 500
       )
 }

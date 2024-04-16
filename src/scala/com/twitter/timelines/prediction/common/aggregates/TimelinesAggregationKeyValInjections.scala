@@ -1,48 +1,48 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.{
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.{
   AggregateStore,
-  AggregationKey,
-  OfflineAggregateInjections,
+  Aggregat onKey,
+  Offl neAggregate nject ons,
   TypedAggregateGroup
 }
 
-object TimelinesAggregationKeyValInjections extends TimelinesAggregationConfigTrait {
+object T  l nesAggregat onKeyVal nject ons extends T  l nesAggregat onConf gTra  {
 
-  import OfflineAggregateInjections.getInjection
+   mport Offl neAggregate nject ons.get nject on
 
-  type KVInjection = KeyValInjection[AggregationKey, (BatchID, DataRecord)]
+  type KV nject on = KeyVal nject on[Aggregat onKey, (Batch D, DataRecord)]
 
-  val AuthorTopic: KVInjection = getInjection(filter(AuthorTopicAggregateStore))
-  val UserTopic: KVInjection = getInjection(filter(UserTopicAggregateStore))
-  val UserInferredTopic: KVInjection = getInjection(filter(UserInferredTopicAggregateStore))
-  val User: KVInjection = getInjection(filter(UserAggregateStore))
-  val UserAuthor: KVInjection = getInjection(filter(UserAuthorAggregateStore))
-  val UserOriginalAuthor: KVInjection = getInjection(filter(UserOriginalAuthorAggregateStore))
-  val OriginalAuthor: KVInjection = getInjection(filter(OriginalAuthorAggregateStore))
-  val UserEngager: KVInjection = getInjection(filter(UserEngagerAggregateStore))
-  val UserMention: KVInjection = getInjection(filter(UserMentionAggregateStore))
-  val TwitterWideUser: KVInjection = getInjection(filter(TwitterWideUserAggregateStore))
-  val TwitterWideUserAuthor: KVInjection = getInjection(filter(TwitterWideUserAuthorAggregateStore))
-  val UserRequestHour: KVInjection = getInjection(filter(UserRequestHourAggregateStore))
-  val UserRequestDow: KVInjection = getInjection(filter(UserRequestDowAggregateStore))
-  val UserList: KVInjection = getInjection(filter(UserListAggregateStore))
-  val UserMediaUnderstandingAnnotation: KVInjection = getInjection(
-    filter(UserMediaUnderstandingAnnotationAggregateStore))
+  val AuthorTop c: KV nject on = get nject on(f lter(AuthorTop cAggregateStore))
+  val UserTop c: KV nject on = get nject on(f lter(UserTop cAggregateStore))
+  val User nferredTop c: KV nject on = get nject on(f lter(User nferredTop cAggregateStore))
+  val User: KV nject on = get nject on(f lter(UserAggregateStore))
+  val UserAuthor: KV nject on = get nject on(f lter(UserAuthorAggregateStore))
+  val UserOr g nalAuthor: KV nject on = get nject on(f lter(UserOr g nalAuthorAggregateStore))
+  val Or g nalAuthor: KV nject on = get nject on(f lter(Or g nalAuthorAggregateStore))
+  val UserEngager: KV nject on = get nject on(f lter(UserEngagerAggregateStore))
+  val User nt on: KV nject on = get nject on(f lter(User nt onAggregateStore))
+  val Tw terW deUser: KV nject on = get nject on(f lter(Tw terW deUserAggregateStore))
+  val Tw terW deUserAuthor: KV nject on = get nject on(f lter(Tw terW deUserAuthorAggregateStore))
+  val UserRequestH : KV nject on = get nject on(f lter(UserRequestH AggregateStore))
+  val UserRequestDow: KV nject on = get nject on(f lter(UserRequestDowAggregateStore))
+  val UserL st: KV nject on = get nject on(f lter(UserL stAggregateStore))
+  val User d aUnderstand ngAnnotat on: KV nject on = get nject on(
+    f lter(User d aUnderstand ngAnnotat onAggregateStore))
 
-  private def filter(storeName: String): Set[TypedAggregateGroup[_]] = {
-    val groups = aggregatesToCompute.filter(_.outputStore.name == storeName)
-    require(groups.nonEmpty)
+  pr vate def f lter(storeNa : Str ng): Set[TypedAggregateGroup[_]] = {
+    val groups = aggregatesToCompute.f lter(_.outputStore.na  == storeNa )
+    requ re(groups.nonEmpty)
     groups
   }
 
-  override def outputHdfsPath: String = "/user/timelines/processed/aggregates_v2"
+  overr de def outputHdfsPath: Str ng = "/user/t  l nes/processed/aggregates_v2"
 
-  // Since this object is not used to execute any online or offline aggregates job, but is meant
-  // to store all PDT enabled KeyValInjections, we do not need to construct a physical store.
-  // We use the identity operation as a default.
-  override def mkPhysicalStore(store: AggregateStore): AggregateStore = store
+  // S nce t  object  s not used to execute any onl ne or offl ne aggregates job, but  s  ant
+  // to store all PDT enabled KeyVal nject ons,   do not need to construct a phys cal store.
+  //   use t   dent y operat on as a default.
+  overr de def mkPhys calStore(store: AggregateStore): AggregateStore = store
 }

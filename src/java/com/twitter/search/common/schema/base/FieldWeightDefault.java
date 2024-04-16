@@ -1,110 +1,110 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+ mport java.ut l.L nkedHashMap;
+ mport java.ut l.Map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+ mport stat c com.google.common.base.Precond  ons.c ckNotNull;
 
 /**
- * Records whether a field's enabled for search by default and its default weight. Note that these
- * two are decoupled -- a field can have a default weight but not enabled for search by default.
- * In a query it can be enabled by an annotation that does not specify a weight (e.g., ":f:foo"),
- * which would then use the default weight.
+ * Records w t r a f eld's enabled for search by default and  s default   ght. Note that t se
+ * two are decoupled -- a f eld can have a default   ght but not enabled for search by default.
+ *  n a query   can be enabled by an annotat on that does not spec fy a   ght (e.g., ":f:foo"),
+ * wh ch would t n use t  default   ght.
  *
- * Instances are mutable.
+ *  nstances are mutable.
  */
-public class FieldWeightDefault {
-  private final boolean enabled;
-  private final float weight;
+publ c class F eld  ghtDefault {
+  pr vate f nal boolean enabled;
+  pr vate f nal float   ght;
 
-  public FieldWeightDefault(boolean enabled, float weight) {
-    this.enabled = enabled;
-    this.weight = weight;
+  publ c F eld  ghtDefault(boolean enabled, float   ght) {
+    t .enabled = enabled;
+    t .  ght =   ght;
   }
 
-  public static FieldWeightDefault fromSignedWeight(float signedValue) {
-    return new FieldWeightDefault(signedValue >= 0, Math.abs(signedValue));
+  publ c stat c F eld  ghtDefault fromS gned  ght(float s gnedValue) {
+    return new F eld  ghtDefault(s gnedValue >= 0, Math.abs(s gnedValue));
   }
 
   /**
-   * Returns an immutable map from field name to default field weights for only enabled fields.
-   * Fields that are not enabled for search by default will not be included.
+   * Returns an  mmutable map from f eld na  to default f eld   ghts for only enabled f elds.
+   * F elds that are not enabled for search by default w ll not be  ncluded.
    */
-  public static <T> ImmutableMap<T, Float> getOnlyEnabled(
-      Map<T, FieldWeightDefault> map) {
+  publ c stat c <T>  mmutableMap<T, Float> getOnlyEnabled(
+      Map<T, F eld  ghtDefault> map) {
 
-    ImmutableMap.Builder<T, Float> builder = ImmutableMap.builder();
-    for (Map.Entry<T, FieldWeightDefault> entry : map.entrySet()) {
-      if (entry.getValue().isEnabled()) {
-        builder.put(entry.getKey(), entry.getValue().getWeight());
+     mmutableMap.Bu lder<T, Float> bu lder =  mmutableMap.bu lder();
+    for (Map.Entry<T, F eld  ghtDefault> entry : map.entrySet()) {
+       f (entry.getValue(). sEnabled()) {
+        bu lder.put(entry.getKey(), entry.getValue().get  ght());
       }
     }
-    return builder.build();
+    return bu lder.bu ld();
   }
 
-  public boolean isEnabled() {
+  publ c boolean  sEnabled() {
     return enabled;
   }
 
-  public float getWeight() {
-    return weight;
+  publ c float get  ght() {
+    return   ght;
   }
 
   /**
-   * Overlays the base field-weight map with the given one. Since it is an overlay, a
-   * field that does not exist in the base map will never be added. Also, negative value means
-   * the field is not enabled for search by default, but if it is, the absolute value would serve as
-   * the default.
+   * Overlays t  base f eld-  ght map w h t  g ven one. S nce    s an overlay, a
+   * f eld that does not ex st  n t  base map w ll never be added. Also, negat ve value  ans
+   * t  f eld  s not enabled for search by default, but  f    s, t  absolute value would serve as
+   * t  default.
    */
-  public static ImmutableMap<String, FieldWeightDefault> overrideFieldWeightMap(
-      Map<String, FieldWeightDefault> base,
-      Map<String, Double> fieldWeightMapOverride) {
+  publ c stat c  mmutableMap<Str ng, F eld  ghtDefault> overr deF eld  ghtMap(
+      Map<Str ng, F eld  ghtDefault> base,
+      Map<Str ng, Double> f eld  ghtMapOverr de) {
 
-    checkNotNull(base);
-    if (fieldWeightMapOverride == null) {
-      return ImmutableMap.copyOf(base);
+    c ckNotNull(base);
+     f (f eld  ghtMapOverr de == null) {
+      return  mmutableMap.copyOf(base);
     }
 
-    LinkedHashMap<String, FieldWeightDefault> map = Maps.newLinkedHashMap(base);
-    for (Map.Entry<String, Double> entry : fieldWeightMapOverride.entrySet()) {
-      if (base.containsKey(entry.getKey())
+    L nkedHashMap<Str ng, F eld  ghtDefault> map = Maps.newL nkedHashMap(base);
+    for (Map.Entry<Str ng, Double> entry : f eld  ghtMapOverr de.entrySet()) {
+       f (base.conta nsKey(entry.getKey())
           && entry.getValue() >= -Float.MAX_VALUE
           && entry.getValue() <= Float.MAX_VALUE) {
 
         map.put(
             entry.getKey(),
-            FieldWeightDefault.fromSignedWeight(entry.getValue().floatValue()));
+            F eld  ghtDefault.fromS gned  ght(entry.getValue().floatValue()));
       }
     }
 
-    return ImmutableMap.copyOf(map);
+    return  mmutableMap.copyOf(map);
   }
 
   /**
-   * Creates a field-to-FieldWeightDefault map from the given field-to-weight map, where negative
-   * weight means the the field is not enabled for search by default, but if it is (e.g.,
-   * by annotation), the absolute value of the weight shall be used.
+   * Creates a f eld-to-F eld  ghtDefault map from t  g ven f eld-to-  ght map, w re negat ve
+   *   ght  ans t  t  f eld  s not enabled for search by default, but  f    s (e.g.,
+   * by annotat on), t  absolute value of t    ght shall be used.
    */
-  public static <T> ImmutableMap<T, FieldWeightDefault> fromSignedWeightMap(
-      Map<T, ? extends Number> signedWeightMap) {
+  publ c stat c <T>  mmutableMap<T, F eld  ghtDefault> fromS gned  ghtMap(
+      Map<T, ? extends Number> s gned  ghtMap) {
 
-    ImmutableMap.Builder<T, FieldWeightDefault> builder = ImmutableMap.builder();
-    for (Map.Entry<T, ? extends Number> entry : signedWeightMap.entrySet()) {
-      // If double to float conversion failed, we will get a float infinity.
+     mmutableMap.Bu lder<T, F eld  ghtDefault> bu lder =  mmutableMap.bu lder();
+    for (Map.Entry<T, ? extends Number> entry : s gned  ghtMap.entrySet()) {
+      //  f double to float convers on fa led,   w ll get a float  nf n y.
       // See http://stackoverflow.com/a/10075093/716468
       float floatValue = entry.getValue().floatValue();
-      if (floatValue != Float.NEGATIVE_INFINITY
-          && floatValue != Float.POSITIVE_INFINITY) {
+       f (floatValue != Float.NEGAT VE_ NF N TY
+          && floatValue != Float.POS T VE_ NF N TY) {
 
-        builder.put(
+        bu lder.put(
             entry.getKey(),
-            FieldWeightDefault.fromSignedWeight(floatValue));
+            F eld  ghtDefault.fromS gned  ght(floatValue));
       }
     }
 
-    return builder.build();
+    return bu lder.bu ld();
   }
 }

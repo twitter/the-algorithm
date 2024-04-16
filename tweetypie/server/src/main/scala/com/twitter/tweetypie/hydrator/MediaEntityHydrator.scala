@@ -1,67 +1,67 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter. d aserv ces.commons.thr ftscala. d aKey
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object MediaEntitiesHydrator {
-  object Cacheable {
-    type Ctx = MediaEntityHydrator.Cacheable.Ctx
-    type Type = ValueHydrator[Seq[MediaEntity], Ctx]
+object  d aEnt  esHydrator {
+  object Cac able {
+    type Ctx =  d aEnt yHydrator.Cac able.Ctx
+    type Type = ValueHydrator[Seq[ d aEnt y], Ctx]
 
-    def once(h: MediaEntityHydrator.Cacheable.Type): Type =
-      TweetHydration.completeOnlyOnce(
-        queryFilter = MediaEntityHydrator.queryFilter,
-        hydrationType = HydrationType.CacheableMedia,
-        dependsOn = Set(HydrationType.Urls),
-        hydrator = h.liftSeq
+    def once(h:  d aEnt yHydrator.Cac able.Type): Type =
+      T etHydrat on.completeOnlyOnce(
+        queryF lter =  d aEnt yHydrator.queryF lter,
+        hydrat onType = Hydrat onType.Cac able d a,
+        dependsOn = Set(Hydrat onType.Urls),
+        hydrator = h.l ftSeq
       )
   }
 
-  object Uncacheable {
-    type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-    type Type = ValueHydrator[Seq[MediaEntity], Ctx]
+  object Uncac able {
+    type Ctx =  d aEnt yHydrator.Uncac able.Ctx
+    type Type = ValueHydrator[Seq[ d aEnt y], Ctx]
   }
 }
 
-object MediaEntityHydrator {
-  val hydratedField: FieldByPath = fieldByPath(Tweet.MediaField)
+object  d aEnt yHydrator {
+  val hydratedF eld: F eldByPath = f eldByPath(T et. d aF eld)
 
-  object Cacheable {
-    type Type = ValueHydrator[MediaEntity, Ctx]
+  object Cac able {
+    type Type = ValueHydrator[ d aEnt y, Ctx]
 
-    case class Ctx(urlEntities: Seq[UrlEntity], underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+    case class Ctx(urlEnt  es: Seq[UrlEnt y], underly ngT etCtx: T etCtx) extends T etCtx.Proxy
 
     /**
-     * Builds a single media-hydrator out of finer-grained hydrators
-     * only with cacheable information.
+     * Bu lds a s ngle  d a-hydrator out of f ner-gra ned hydrators
+     * only w h cac able  nformat on.
      */
-    def apply(hydrateMediaUrls: Type, hydrateMediaIsProtected: Type): Type =
-      hydrateMediaUrls.andThen(hydrateMediaIsProtected)
+    def apply(hydrate d aUrls: Type, hydrate d a sProtected: Type): Type =
+      hydrate d aUrls.andT n(hydrate d a sProtected)
   }
 
-  object Uncacheable {
-    type Type = ValueHydrator[MediaEntity, Ctx]
+  object Uncac able {
+    type Type = ValueHydrator[ d aEnt y, Ctx]
 
-    case class Ctx(mediaKeys: Option[Seq[MediaKey]], underlyingTweetCtx: TweetCtx)
-        extends TweetCtx.Proxy {
+    case class Ctx( d aKeys: Opt on[Seq[ d aKey]], underly ngT etCtx: T etCtx)
+        extends T etCtx.Proxy {
 
-      def includeMediaEntities: Boolean = tweetFieldRequested(Tweet.MediaField)
-      def includeAdditionalMetadata: Boolean =
-        opts.include.mediaFields.contains(MediaEntity.AdditionalMetadataField.id)
+      def  nclude d aEnt  es: Boolean = t etF eldRequested(T et. d aF eld)
+      def  ncludeAdd  onal tadata: Boolean =
+        opts. nclude. d aF elds.conta ns( d aEnt y.Add  onal tadataF eld. d)
     }
 
     /**
-     * Builds a single media-hydrator out of finer-grained hydrators
-     * only with uncacheable information.
+     * Bu lds a s ngle  d a-hydrator out of f ner-gra ned hydrators
+     * only w h uncac able  nformat on.
      */
-    def apply(hydrateMediaKey: Type, hydrateMediaInfo: Type): Type =
-      (hydrateMediaKey
-        .andThen(hydrateMediaInfo))
-        .onlyIf((_, ctx) => ctx.includeMediaEntities)
+    def apply(hydrate d aKey: Type, hydrate d a nfo: Type): Type =
+      (hydrate d aKey
+        .andT n(hydrate d a nfo))
+        .only f((_, ctx) => ctx. nclude d aEnt  es)
   }
 
-  def queryFilter(opts: TweetQuery.Options): Boolean =
-    opts.include.tweetFields.contains(Tweet.MediaField.id)
+  def queryF lter(opts: T etQuery.Opt ons): Boolean =
+    opts. nclude.t etF elds.conta ns(T et. d aF eld. d)
 }

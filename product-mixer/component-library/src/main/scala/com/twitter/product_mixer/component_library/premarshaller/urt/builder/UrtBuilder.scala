@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.util.SortIndexBuilder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne nstruct on
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
+ mport com.tw ter.product_m xer.core.ut l.Sort ndexBu lder
 
-trait UrtBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
-  private val TimelineIdSuffix = "-Timeline"
+tra  UrtBu lder[-Query <: P pel neQuery, + nstruct on <: T  l ne nstruct on] {
+  pr vate val T  l ne dSuff x = "-T  l ne"
 
-  def instructionBuilders: Seq[UrtInstructionBuilder[Query, Instruction]]
+  def  nstruct onBu lders: Seq[Urt nstruct onBu lder[Query,  nstruct on]]
 
-  def cursorBuilders: Seq[UrtCursorBuilder[Query]]
+  def cursorBu lders: Seq[UrtCursorBu lder[Query]]
   def cursorUpdaters: Seq[UrtCursorUpdater[Query]]
 
-  def metadataBuilder: Option[BaseUrtMetadataBuilder[Query]]
+  def  tadataBu lder: Opt on[BaseUrt tadataBu lder[Query]]
 
-  // Timeline entry sort indexes will count down by this value. Values higher than 1 are useful to
-  // leave room in the sequence for dynamically injecting content in between existing entries.
-  def sortIndexStep: Int = 1
+  // T  l ne entry sort  ndexes w ll count down by t  value. Values h g r than 1 are useful to
+  // leave room  n t  sequence for dynam cally  nject ng content  n bet en ex st ng entr es.
+  def sort ndexStep:  nt = 1
 
-  final def buildTimeline(
+  f nal def bu ldT  l ne(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Timeline = {
-    val initialSortIndex = getInitialSortIndex(query)
+    entr es: Seq[T  l neEntry]
+  ): T  l ne = {
+    val  n  alSort ndex = get n  alSort ndex(query)
 
-    // Set the sort indexes of the entries before we pass them to the cursor builders, since many
-    // cursor implementations use the sort index of the first/last entry as part of the cursor value
-    val sortIndexedEntries = updateSortIndexes(initialSortIndex, entries)
+    // Set t  sort  ndexes of t  entr es before   pass t m to t  cursor bu lders, s nce many
+    // cursor  mple ntat ons use t  sort  ndex of t  f rst/last entry as part of t  cursor value
+    val sort ndexedEntr es = updateSort ndexes( n  alSort ndex, entr es)
 
-    // Iterate over the cursorUpdaters in the order they were defined. Note that each updater will
-    // be passed the timelineEntries updated by the previous cursorUpdater.
-    val updatedCursorEntries: Seq[TimelineEntry] =
-      cursorUpdaters.foldLeft(sortIndexedEntries) { (timelineEntries, cursorUpdater) =>
-        cursorUpdater.update(query, timelineEntries)
+    //  erate over t  cursorUpdaters  n t  order t y  re def ned. Note that each updater w ll
+    // be passed t  t  l neEntr es updated by t  prev ous cursorUpdater.
+    val updatedCursorEntr es: Seq[T  l neEntry] =
+      cursorUpdaters.foldLeft(sort ndexedEntr es) { (t  l neEntr es, cursorUpdater) =>
+        cursorUpdater.update(query, t  l neEntr es)
       }
 
-    val allCursoredEntries =
-      updatedCursorEntries ++ cursorBuilders.flatMap(_.build(query, updatedCursorEntries))
+    val allCursoredEntr es =
+      updatedCursorEntr es ++ cursorBu lders.flatMap(_.bu ld(query, updatedCursorEntr es))
 
-    val instructions: Seq[Instruction] =
-      instructionBuilders.flatMap(_.build(query, allCursoredEntries))
+    val  nstruct ons: Seq[ nstruct on] =
+       nstruct onBu lders.flatMap(_.bu ld(query, allCursoredEntr es))
 
-    val metadata = metadataBuilder.map(_.build(query, allCursoredEntries))
+    val  tadata =  tadataBu lder.map(_.bu ld(query, allCursoredEntr es))
 
-    Timeline(
-      id = query.product.identifier.toString + TimelineIdSuffix,
-      instructions = instructions,
-      metadata = metadata
+    T  l ne(
+       d = query.product. dent f er.toStr ng + T  l ne dSuff x,
+       nstruct ons =  nstruct ons,
+       tadata =  tadata
     )
   }
 
-  final def getInitialSortIndex(query: Query): Long =
+  f nal def get n  alSort ndex(query: Query): Long =
     query match {
-      case cursorQuery: HasPipelineCursor[_] =>
-        UrtPipelineCursor
-          .getCursorInitialSortIndex(cursorQuery)
-          .getOrElse(SortIndexBuilder.timeToId(query.queryTime))
-      case _ => SortIndexBuilder.timeToId(query.queryTime)
+      case cursorQuery: HasP pel neCursor[_] =>
+        UrtP pel neCursor
+          .getCursor n  alSort ndex(cursorQuery)
+          .getOrElse(Sort ndexBu lder.t  To d(query.queryT  ))
+      case _ => Sort ndexBu lder.t  To d(query.queryT  )
     }
 
   /**
-   * Updates the sort indexes in the timeline entries starting from the given initial sort index
-   * value and decreasing by the value defined in the sort index step field
+   * Updates t  sort  ndexes  n t  t  l ne entr es start ng from t  g ven  n  al sort  ndex
+   * value and decreas ng by t  value def ned  n t  sort  ndex step f eld
    *
-   * @param initialSortIndex The initial value of the sort index
-   * @param timelineEntries Timeline entries to update
+   * @param  n  alSort ndex T   n  al value of t  sort  ndex
+   * @param t  l neEntr es T  l ne entr es to update
    */
-  final def updateSortIndexes(
-    initialSortIndex: Long,
-    timelineEntries: Seq[TimelineEntry]
-  ): Seq[TimelineEntry] = {
-    val indexRange =
-      initialSortIndex to (initialSortIndex - (timelineEntries.size * sortIndexStep)) by -sortIndexStep
+  f nal def updateSort ndexes(
+     n  alSort ndex: Long,
+    t  l neEntr es: Seq[T  l neEntry]
+  ): Seq[T  l neEntry] = {
+    val  ndexRange =
+       n  alSort ndex to ( n  alSort ndex - (t  l neEntr es.s ze * sort ndexStep)) by -sort ndexStep
 
-    // Skip any existing cursors because their sort indexes will be managed by their cursor updater.
-    // If the cursors are not removed first, then the remaining entries would have a gap everywhere
-    // an existing cursor was present.
-    val (cursorEntries, nonCursorEntries) = timelineEntries.partition {
-      case _: CursorOperation => true
+    // Sk p any ex st ng cursors because t  r sort  ndexes w ll be managed by t  r cursor updater.
+    //  f t  cursors are not removed f rst, t n t  rema n ng entr es would have a gap everyw re
+    // an ex st ng cursor was present.
+    val (cursorEntr es, nonCursorEntr es) = t  l neEntr es.part  on {
+      case _: CursorOperat on => true
       case _ => false
     }
 
-    nonCursorEntries.zip(indexRange).map {
-      case (entry, index) =>
-        entry.withSortIndex(index)
-    } ++ cursorEntries
+    nonCursorEntr es.z p( ndexRange).map {
+      case (entry,  ndex) =>
+        entry.w hSort ndex( ndex)
+    } ++ cursorEntr es
   }
 }

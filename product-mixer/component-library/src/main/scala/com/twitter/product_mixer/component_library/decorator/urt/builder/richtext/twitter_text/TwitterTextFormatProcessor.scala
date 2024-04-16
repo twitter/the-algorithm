@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import scala.collection.mutable
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Pla n
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextFormat
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Strong
+ mport scala.collect on.mutable
 
-object TwitterTextFormatProcessor {
-  lazy val defaultFormatProcessor = TwitterTextFormatProcessor()
+object Tw terTextFormatProcessor {
+  lazy val defaultFormatProcessor = Tw terTextFormatProcessor()
 }
 
 /**
- * Add the corresponding [[RichTextFormat]] extraction logic into [[TwitterTextRenderer]].
- * The [[TwitterTextRenderer]] after being processed will extract the defined entities. 
+ * Add t  correspond ng [[R chTextFormat]] extract on log c  nto [[Tw terTextRenderer]].
+ * T  [[Tw terTextRenderer]] after be ng processed w ll extract t  def ned ent  es. 
  */
-case class TwitterTextFormatProcessor(
-  formats: Set[RichTextFormat] = Set(Plain, Strong),
-) extends TwitterTextRendererProcessor {
+case class Tw terTextFormatProcessor(
+  formats: Set[R chTextFormat] = Set(Pla n, Strong),
+) extends Tw terTextRendererProcessor {
 
-  private val formatMap = formats.map { format => format.name.toLowerCase -> format }.toMap
+  pr vate val formatMap = formats.map { format => format.na .toLo rCase -> format }.toMap
 
-  private[this] val formatMatcher = {
-    val formatNames = formatMap.keys.toSet
-    s"<(/?)(${formatNames.mkString("|")})>".r
+  pr vate[t ] val formatMatc r = {
+    val formatNa s = formatMap.keys.toSet
+    s"<(/?)(${formatNa s.mkStr ng("|")})>".r
   }
 
-  def renderText(text: String): RichText = {
-    process(TwitterTextRenderer(text)).build
+  def renderText(text: Str ng): R chText = {
+    process(Tw terTextRenderer(text)).bu ld
   }
 
-  def process(richTextBuilder: TwitterTextRenderer): TwitterTextRenderer = {
-    val text = richTextBuilder.text
-    val nodeStack = mutable.ArrayStack[(RichTextFormat, Int)]()
+  def process(r chTextBu lder: Tw terTextRenderer): Tw terTextRenderer = {
+    val text = r chTextBu lder.text
+    val nodeStack = mutable.ArrayStack[(R chTextFormat,  nt)]()
     var offset = 0
 
-    formatMatcher.findAllMatchIn(text).foreach { m =>
+    formatMatc r.f ndAllMatch n(text).foreach { m =>
       formatMap.get(m.group(2)) match {
-        case Some(format) => {
-          if (m.group(1).nonEmpty) {
-            if (!nodeStack.headOption.exists {
+        case So (format) => {
+           f (m.group(1).nonEmpty) {
+             f (!nodeStack. adOpt on.ex sts {
                 case (formatFromStack, _) => formatFromStack == format
               }) {
-              throw UnmatchedFormatTag(format)
+              throw Unmatc dFormatTag(format)
             }
-            val (_, startIndex) = nodeStack.pop
-            richTextBuilder.mergeFormat(startIndex, m.start + offset, format)
+            val (_, start ndex) = nodeStack.pop
+            r chTextBu lder. rgeFormat(start ndex, m.start + offset, format)
           } else {
             nodeStack.push((format, m.start + offset))
           }
-          richTextBuilder.remove(m.start + offset, m.end + offset)
+          r chTextBu lder.remove(m.start + offset, m.end + offset)
           offset -= m.end - m.start
         }
-        case _ => // if format is not found, skip this format
+        case _ => //  f format  s not found, sk p t  format
       }
     }
 
-    if (nodeStack.nonEmpty) {
-      throw UnmatchedFormatTag(nodeStack.head._1)
+     f (nodeStack.nonEmpty) {
+      throw Unmatc dFormatTag(nodeStack. ad._1)
     }
 
-    richTextBuilder
+    r chTextBu lder
   }
 }
 
-case class UnmatchedFormatTag(format: RichTextFormat)
-    extends Exception(s"Unmatched format start and end tags for $format")
+case class Unmatc dFormatTag(format: R chTextFormat)
+    extends Except on(s"Unmatc d format start and end tags for $format")

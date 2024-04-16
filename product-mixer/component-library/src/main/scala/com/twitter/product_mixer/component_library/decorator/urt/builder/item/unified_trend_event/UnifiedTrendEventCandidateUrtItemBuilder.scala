@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.unified_trend_event
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.un f ed_trend_event
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.event_summary.EventCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.trend.TrendCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.Un f edEventCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.Un f edTrendCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.Un f edTrendEventCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class UnifiedTrendEventCandidateUrtItemBuilder[Query <: PipelineQuery](
-  eventCandidateUrtItemBuilder: EventCandidateUrtItemBuilder[Query],
-  trendCandidateUrtItemBuilder: TrendCandidateUrtItemBuilder[Query])
-    extends CandidateUrtEntryBuilder[Query, UnifiedTrendEventCandidate[Any], TimelineItem] {
+case class Un f edTrendEventCand dateUrt emBu lder[Query <: P pel neQuery](
+  eventCand dateUrt emBu lder: EventCand dateUrt emBu lder[Query],
+  trendCand dateUrt emBu lder: TrendCand dateUrt emBu lder[Query])
+    extends Cand dateUrtEntryBu lder[Query, Un f edTrendEventCand date[Any], T  l ne em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: UnifiedTrendEventCandidate[Any],
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    candidate match {
-      case event: UnifiedEventCandidate =>
-        eventCandidateUrtItemBuilder(
+    cand date: Un f edTrendEventCand date[Any],
+    cand dateFeatures: FeatureMap
+  ): T  l ne em = {
+    cand date match {
+      case event: Un f edEventCand date =>
+        eventCand dateUrt emBu lder(
           query = query,
-          candidate = event,
-          candidateFeatures = candidateFeatures)
-      case trend: UnifiedTrendCandidate =>
-        trendCandidateUrtItemBuilder(
+          cand date = event,
+          cand dateFeatures = cand dateFeatures)
+      case trend: Un f edTrendCand date =>
+        trendCand dateUrt emBu lder(
           query = query,
-          candidate = trend,
-          candidateFeatures = candidateFeatures)
+          cand date = trend,
+          cand dateFeatures = cand dateFeatures)
     }
   }
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UrlOverrideType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.DcmUrlOverr deType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.UnknownUrlOverr deType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.UrlOverr deType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UrlOverrideTypeMarshaller @Inject() () {
+@S ngleton
+class UrlOverr deTypeMarshaller @ nject() () {
 
-  def apply(urlOverrideType: UrlOverrideType): urt.UrlOverrideType = urlOverrideType match {
-    case UnknownUrlOverrideType => urt.UrlOverrideType.Unknown
-    case DcmUrlOverrideType => urt.UrlOverrideType.Dcm
+  def apply(urlOverr deType: UrlOverr deType): urt.UrlOverr deType = urlOverr deType match {
+    case UnknownUrlOverr deType => urt.UrlOverr deType.Unknown
+    case DcmUrlOverr deType => urt.UrlOverr deType.Dcm
   }
 }

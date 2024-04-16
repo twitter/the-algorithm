@@ -1,116 +1,116 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MediaUnderstandingAnnotationIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RepliedByEngagerIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RetweetedByEngagerIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import scala.reflect.ClassTag
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Favor edByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Has mageFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. d aUnderstand ngAnnotat on dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Repl edByEngager dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Ret etedByEngager dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.CursorCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.UnexpectedCand dateResult
+ mport scala.reflect.ClassTag
 
-object CandidatesUtil {
-  def getItemCandidates(candidates: Seq[CandidateWithDetails]): Seq[ItemCandidateWithDetails] = {
-    candidates.collect {
-      case item: ItemCandidateWithDetails if !item.isCandidateType[CursorCandidate] => Seq(item)
-      case module: ModuleCandidateWithDetails => module.candidates
+object Cand datesUt l {
+  def get emCand dates(cand dates: Seq[Cand dateW hDeta ls]): Seq[ emCand dateW hDeta ls] = {
+    cand dates.collect {
+      case  em:  emCand dateW hDeta ls  f ! em. sCand dateType[CursorCand date] => Seq( em)
+      case module: ModuleCand dateW hDeta ls => module.cand dates
     }.flatten
   }
 
-  def getItemCandidatesWithOnlyModuleLast(
-    candidates: Seq[CandidateWithDetails]
-  ): Seq[ItemCandidateWithDetails] = {
-    candidates.collect {
-      case item: ItemCandidateWithDetails if !item.isCandidateType[CursorCandidate] => item
-      case module: ModuleCandidateWithDetails => module.candidates.last
+  def get emCand datesW hOnlyModuleLast(
+    cand dates: Seq[Cand dateW hDeta ls]
+  ): Seq[ emCand dateW hDeta ls] = {
+    cand dates.collect {
+      case  em:  emCand dateW hDeta ls  f ! em. sCand dateType[CursorCand date] =>  em
+      case module: ModuleCand dateW hDeta ls => module.cand dates.last
     }
   }
 
-  def containsType[CandidateType <: UniversalNoun[_]](
-    candidates: Seq[CandidateWithDetails]
+  def conta nsType[Cand dateType <: Un versalNoun[_]](
+    cand dates: Seq[Cand dateW hDeta ls]
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): Boolean = candidates.exists {
-    case ItemCandidateWithDetails(_: CandidateType, _, _) => true
-    case module: ModuleCandidateWithDetails =>
-      module.candidates.head.isCandidateType[CandidateType]()
+     mpl c  tag: ClassTag[Cand dateType]
+  ): Boolean = cand dates.ex sts {
+    case  emCand dateW hDeta ls(_: Cand dateType, _, _) => true
+    case module: ModuleCand dateW hDeta ls =>
+      module.cand dates. ad. sCand dateType[Cand dateType]()
     case _ => false
   }
 
-  def getOriginalTweetId(candidate: CandidateWithFeatures[TweetCandidate]): Long = {
-    if (candidate.features.getOrElse(IsRetweetFeature, false))
-      candidate.features.getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id)
+  def getOr g nalT et d(cand date: Cand dateW hFeatures[T etCand date]): Long = {
+     f (cand date.features.getOrElse( sRet etFeature, false))
+      cand date.features.getOrElse(S ceT et dFeature, None).getOrElse(cand date.cand date. d)
     else
-      candidate.candidate.id
+      cand date.cand date. d
   }
 
-  def getOriginalAuthorId(candidateFeatures: FeatureMap): Option[Long] =
-    if (candidateFeatures.getOrElse(IsRetweetFeature, false))
-      candidateFeatures.getOrElse(SourceUserIdFeature, None)
-    else candidateFeatures.getOrElse(AuthorIdFeature, None)
+  def getOr g nalAuthor d(cand dateFeatures: FeatureMap): Opt on[Long] =
+     f (cand dateFeatures.getOrElse( sRet etFeature, false))
+      cand dateFeatures.getOrElse(S ceUser dFeature, None)
+    else cand dateFeatures.getOrElse(Author dFeature, None)
 
-  def isOriginalTweet(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    !candidate.features.getOrElse(IsRetweetFeature, false) &&
-      candidate.features.getOrElse(InReplyToTweetIdFeature, None).isEmpty
+  def  sOr g nalT et(cand date: Cand dateW hFeatures[T etCand date]): Boolean =
+    !cand date.features.getOrElse( sRet etFeature, false) &&
+      cand date.features.getOrElse( nReplyToT et dFeature, None). sEmpty
 
-  def getEngagerUserIds(
-    candidateFeatures: FeatureMap
+  def getEngagerUser ds(
+    cand dateFeatures: FeatureMap
   ): Seq[Long] = {
-    candidateFeatures.getOrElse(FavoritedByUserIdsFeature, Seq.empty) ++
-      candidateFeatures.getOrElse(RetweetedByEngagerIdsFeature, Seq.empty) ++
-      candidateFeatures.getOrElse(RepliedByEngagerIdsFeature, Seq.empty)
+    cand dateFeatures.getOrElse(Favor edByUser dsFeature, Seq.empty) ++
+      cand dateFeatures.getOrElse(Ret etedByEngager dsFeature, Seq.empty) ++
+      cand dateFeatures.getOrElse(Repl edByEngager dsFeature, Seq.empty)
   }
 
-  def getMediaUnderstandingAnnotationIds(
-    candidateFeatures: FeatureMap
+  def get d aUnderstand ngAnnotat on ds(
+    cand dateFeatures: FeatureMap
   ): Seq[Long] = {
-    if (candidateFeatures.get(HasImageFeature))
-      candidateFeatures.getOrElse(MediaUnderstandingAnnotationIdsFeature, Seq.empty)
+     f (cand dateFeatures.get(Has mageFeature))
+      cand dateFeatures.getOrElse( d aUnderstand ngAnnotat on dsFeature, Seq.empty)
     else Seq.empty
   }
 
-  def getTweetIdAndSourceId(candidate: CandidateWithFeatures[TweetCandidate]): Seq[Long] =
-    Seq(candidate.candidate.id) ++ candidate.features.getOrElse(SourceTweetIdFeature, None)
+  def getT et dAndS ce d(cand date: Cand dateW hFeatures[T etCand date]): Seq[Long] =
+    Seq(cand date.cand date. d) ++ cand date.features.getOrElse(S ceT et dFeature, None)
 
-  def isAuthoredByViewer(query: PipelineQuery, candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures.getOrElse(AuthorIdFeature, None).contains(query.getRequiredUserId) ||
-      (candidateFeatures.getOrElse(IsRetweetFeature, false) &&
-        candidateFeatures.getOrElse(SourceUserIdFeature, None).contains(query.getRequiredUserId))
+  def  sAuthoredByV e r(query: P pel neQuery, cand dateFeatures: FeatureMap): Boolean =
+    cand dateFeatures.getOrElse(Author dFeature, None).conta ns(query.getRequ redUser d) ||
+      (cand dateFeatures.getOrElse( sRet etFeature, false) &&
+        cand dateFeatures.getOrElse(S ceUser dFeature, None).conta ns(query.getRequ redUser d))
 
-  val reverseChronTweetsOrdering: Ordering[CandidateWithDetails] =
-    Ordering.by[CandidateWithDetails, Long] {
-      case ItemCandidateWithDetails(candidate: TweetCandidate, _, _) => -candidate.id
-      case ModuleCandidateWithDetails(candidates, _, _) if candidates.nonEmpty =>
-        -candidates.last.candidateIdLong
-      case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
+  val reverseChronT etsOrder ng: Order ng[Cand dateW hDeta ls] =
+    Order ng.by[Cand dateW hDeta ls, Long] {
+      case  emCand dateW hDeta ls(cand date: T etCand date, _, _) => -cand date. d
+      case ModuleCand dateW hDeta ls(cand dates, _, _)  f cand dates.nonEmpty =>
+        -cand dates.last.cand date dLong
+      case _ => throw P pel neFa lure(UnexpectedCand dateResult, " nval d cand date type")
     }
 
-  val scoreOrdering: Ordering[CandidateWithDetails] = Ordering.by[CandidateWithDetails, Double] {
-    case ItemCandidateWithDetails(_, _, features) =>
+  val scoreOrder ng: Order ng[Cand dateW hDeta ls] = Order ng.by[Cand dateW hDeta ls, Double] {
+    case  emCand dateW hDeta ls(_, _, features) =>
       -features.getOrElse(ScoreFeature, None).getOrElse(0.0)
-    case ModuleCandidateWithDetails(candidates, _, _) =>
-      -candidates.last.features.getOrElse(ScoreFeature, None).getOrElse(0.0)
-    case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
+    case ModuleCand dateW hDeta ls(cand dates, _, _) =>
+      -cand dates.last.features.getOrElse(ScoreFeature, None).getOrElse(0.0)
+    case _ => throw P pel neFa lure(UnexpectedCand dateResult, " nval d cand date type")
   }
 
-  val conversationModuleTweetsOrdering: Ordering[CandidateWithDetails] =
-    Ordering.by[CandidateWithDetails, Long] {
-      case ItemCandidateWithDetails(candidate: TweetCandidate, _, _) => candidate.id
-      case _ => throw PipelineFailure(UnexpectedCandidateResult, "Only Item candidate expected")
+  val conversat onModuleT etsOrder ng: Order ng[Cand dateW hDeta ls] =
+    Order ng.by[Cand dateW hDeta ls, Long] {
+      case  emCand dateW hDeta ls(cand date: T etCand date, _, _) => cand date. d
+      case _ => throw P pel neFa lure(UnexpectedCand dateResult, "Only  em cand date expected")
     }
 }

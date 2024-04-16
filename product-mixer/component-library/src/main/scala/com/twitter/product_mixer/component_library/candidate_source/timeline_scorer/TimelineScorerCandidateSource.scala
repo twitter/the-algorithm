@@ -1,156 +1,156 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_scorer
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_scorer
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1
-import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1.Ancestor
-import com.twitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => ct}
-import com.twitter.timelinescorer.{thriftscala => t}
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.thriftscala.CandidateTweetSourceId
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nescorer.common.scoredt etcand date.thr ftscala.v1
+ mport com.tw ter.t  l nescorer.common.scoredt etcand date.thr ftscala.v1.Ancestor
+ mport com.tw ter.t  l nescorer.common.scoredt etcand date.{thr ftscala => ct}
+ mport com.tw ter.t  l nescorer.{thr ftscala => t}
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.cand date_t et_s ce_ d.thr ftscala.Cand dateT etS ce d
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case class ScoredTweetCandidateWithFocalTweet(
-  candidate: v1.ScoredTweetCandidate,
-  focalTweetIdOpt: Option[Long])
+case class ScoredT etCand dateW hFocalT et(
+  cand date: v1.ScoredT etCand date,
+  focalT et dOpt: Opt on[Long])
 
-case object TimelineScorerCandidateSourceSucceededFeature extends Feature[PipelineQuery, Boolean]
+case object T  l neScorerCand dateS ceSucceededFeature extends Feature[P pel neQuery, Boolean]
 
-@Singleton
-class TimelineScorerCandidateSource @Inject() (
-  timelineScorerClient: t.TimelineScorer.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      t.ScoredTweetsRequest,
-      ScoredTweetCandidateWithFocalTweet
+@S ngleton
+class T  l neScorerCand dateS ce @ nject() (
+  t  l neScorerCl ent: t.T  l neScorer. thodPerEndpo nt)
+    extends Cand dateS ceW hExtractedFeatures[
+      t.ScoredT etsRequest,
+      ScoredT etCand dateW hFocalT et
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineScorer")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("T  l neScorer")
 
-  private val MaxConversationAncestors = 2
+  pr vate val MaxConversat onAncestors = 2
 
-  override def apply(
-    request: t.ScoredTweetsRequest
-  ): Stitch[CandidatesWithSourceFeatures[ScoredTweetCandidateWithFocalTweet]] = {
-    Stitch
-      .callFuture(timelineScorerClient.getScoredTweets(request))
+  overr de def apply(
+    request: t.ScoredT etsRequest
+  ): St ch[Cand datesW hS ceFeatures[ScoredT etCand dateW hFocalT et]] = {
+    St ch
+      .callFuture(t  l neScorerCl ent.getScoredT ets(request))
       .map { response =>
-        val scoredTweetsOpt = response match {
-          case t.ScoredTweetsResponse.V1(v1) => v1.scoredTweets
-          case t.ScoredTweetsResponse.UnknownUnionField(field) =>
-            throw new UnsupportedOperationException(s"Unknown response type: ${field.field.name}")
+        val scoredT etsOpt = response match {
+          case t.ScoredT etsResponse.V1(v1) => v1.scoredT ets
+          case t.ScoredT etsResponse.UnknownUn onF eld(f eld) =>
+            throw new UnsupportedOperat onExcept on(s"Unknown response type: ${f eld.f eld.na }")
         }
-        val scoredTweets = scoredTweetsOpt.getOrElse(Seq.empty)
+        val scoredT ets = scoredT etsOpt.getOrElse(Seq.empty)
 
-        val allAncestors = scoredTweets.flatMap {
-          case ct.ScoredTweetCandidate.V1(v1) if isEligibleReply(v1) =>
-            v1.ancestors.get.map(_.tweetId)
+        val allAncestors = scoredT ets.flatMap {
+          case ct.ScoredT etCand date.V1(v1)  f  sEl g bleReply(v1) =>
+            v1.ancestors.get.map(_.t et d)
           case _ => Seq.empty
         }.toSet
 
-        // Remove tweets within ancestor list of other tweets to avoid serving duplicates
-        val keptTweets = scoredTweets.collect {
-          case ct.ScoredTweetCandidate.V1(v1) if !allAncestors.contains(originalTweetId(v1)) => v1
+        // Remove t ets w h n ancestor l st of ot r t ets to avo d serv ng dupl cates
+        val keptT ets = scoredT ets.collect {
+          case ct.ScoredT etCand date.V1(v1)  f !allAncestors.conta ns(or g nalT et d(v1)) => v1
         }
 
-        // Add parent and root tweet for eligible reply focal tweets
-        val candidates = keptTweets
+        // Add parent and root t et for el g ble reply focal t ets
+        val cand dates = keptT ets
           .flatMap {
-            case v1 if isEligibleReply(v1) =>
+            case v1  f  sEl g bleReply(v1) =>
               val ancestors = v1.ancestors.get
-              val focalTweetId = v1.tweetId
+              val focalT et d = v1.t et d
 
-              // Include root tweet if the conversation has atleast 2 ancestors
-              val optionallyIncludedRootTweet = if (ancestors.size >= MaxConversationAncestors) {
-                val rootTweet = toScoredTweetCandidateFromAncestor(
+              //  nclude root t et  f t  conversat on has atleast 2 ancestors
+              val opt onally ncludedRootT et =  f (ancestors.s ze >= MaxConversat onAncestors) {
+                val rootT et = toScoredT etCand dateFromAncestor(
                   ancestor = ancestors.last,
-                  inReplyToTweetId = None,
-                  conversationId = v1.conversationId,
+                   nReplyToT et d = None,
+                  conversat on d = v1.conversat on d,
                   ancestors = None,
-                  candidateTweetSourceId = v1.candidateTweetSourceId
+                  cand dateT etS ce d = v1.cand dateT etS ce d
                 )
-                Seq((rootTweet, Some(v1)))
+                Seq((rootT et, So (v1)))
               } else Seq.empty
 
               /**
-               * Setting the in-reply-to tweet id on the immediate parent, if one exists,
-               * helps ensure tweet type metrics correctly distinguish roots from non-roots.
+               * Sett ng t   n-reply-to t et  d on t   m d ate parent,  f one ex sts,
+               *  lps ensure t et type  tr cs correctly d st ngu sh roots from non-roots.
                */
-              val inReplyToTweetId = ancestors.tail.headOption.map(_.tweetId)
-              val parentAncestor = toScoredTweetCandidateFromAncestor(
-                ancestor = ancestors.head,
-                inReplyToTweetId = inReplyToTweetId,
-                conversationId = v1.conversationId,
-                ancestors = Some(ancestors.tail),
-                candidateTweetSourceId = v1.candidateTweetSourceId
+              val  nReplyToT et d = ancestors.ta l. adOpt on.map(_.t et d)
+              val parentAncestor = toScoredT etCand dateFromAncestor(
+                ancestor = ancestors. ad,
+                 nReplyToT et d =  nReplyToT et d,
+                conversat on d = v1.conversat on d,
+                ancestors = So (ancestors.ta l),
+                cand dateT etS ce d = v1.cand dateT etS ce d
               )
 
-              optionallyIncludedRootTweet ++
-                Seq((parentAncestor, Some(v1)), (v1, Some(v1)))
+              opt onally ncludedRootT et ++
+                Seq((parentAncestor, So (v1)), (v1, So (v1)))
 
-            case any => Seq((any, None)) // Set focalTweetId to None if not eligible for convo
+            case any => Seq((any, None)) // Set focalT et d to None  f not el g ble for convo
           }
 
         /**
-         * Dedup each tweet keeping the one with highest scored Focal Tweet
-         * Focal Tweet ID != the Conversation ID, which is set to the root of the conversation
-         * Focal Tweet ID will be defined for tweets with ancestors that should be
-         * in conversation modules and None for standalone tweets.
+         * Dedup each t et keep ng t  one w h h g st scored Focal T et
+         * Focal T et  D != t  Conversat on  D, wh ch  s set to t  root of t  conversat on
+         * Focal T et  D w ll be def ned for t ets w h ancestors that should be
+         *  n conversat on modules and None for standalone t ets.
          */
-        val sortedDedupedCandidates = candidates
-          .groupBy { case (v1, _) => v1.tweetId }
+        val sortedDedupedCand dates = cand dates
+          .groupBy { case (v1, _) => v1.t et d }
           .mapValues { group =>
-            val (candidate, focalTweetOpt) = group.maxBy {
-              case (_, Some(focal)) => focal.score
+            val (cand date, focalT etOpt) = group.maxBy {
+              case (_, So (focal)) => focal.score
               case (_, None) => 0
             }
-            ScoredTweetCandidateWithFocalTweet(candidate, focalTweetOpt.map(focal => focal.tweetId))
-          }.values.toSeq.sortBy(_.candidate.tweetId)
+            ScoredT etCand dateW hFocalT et(cand date, focalT etOpt.map(focal => focal.t et d))
+          }.values.toSeq.sortBy(_.cand date.t et d)
 
-        CandidatesWithSourceFeatures(
-          candidates = sortedDedupedCandidates,
-          features = FeatureMapBuilder()
-            .add(TimelineScorerCandidateSourceSucceededFeature, true)
-            .build()
+        Cand datesW hS ceFeatures(
+          cand dates = sortedDedupedCand dates,
+          features = FeatureMapBu lder()
+            .add(T  l neScorerCand dateS ceSucceededFeature, true)
+            .bu ld()
         )
       }
   }
 
-  private def isEligibleReply(candidate: ct.ScoredTweetCandidateAliases.V1Alias): Boolean = {
-    candidate.inReplyToTweetId.nonEmpty &&
-    !candidate.isRetweet.getOrElse(false) &&
-    candidate.ancestors.exists(_.nonEmpty)
+  pr vate def  sEl g bleReply(cand date: ct.ScoredT etCand dateAl ases.V1Al as): Boolean = {
+    cand date. nReplyToT et d.nonEmpty &&
+    !cand date. sRet et.getOrElse(false) &&
+    cand date.ancestors.ex sts(_.nonEmpty)
   }
 
   /**
-   * If we have a retweet, get the source tweet id.
-   * If it is not a retweet, get the regular tweet id.
+   *  f   have a ret et, get t  s ce t et  d.
+   *  f    s not a ret et, get t  regular t et  d.
    */
-  private def originalTweetId(candidate: ct.ScoredTweetCandidateAliases.V1Alias): Long = {
-    candidate.sourceTweetId.getOrElse(candidate.tweetId)
+  pr vate def or g nalT et d(cand date: ct.ScoredT etCand dateAl ases.V1Al as): Long = {
+    cand date.s ceT et d.getOrElse(cand date.t et d)
   }
 
-  private def toScoredTweetCandidateFromAncestor(
+  pr vate def toScoredT etCand dateFromAncestor(
     ancestor: Ancestor,
-    inReplyToTweetId: Option[Long],
-    conversationId: Option[Long],
-    ancestors: Option[Seq[Ancestor]],
-    candidateTweetSourceId: Option[CandidateTweetSourceId]
-  ): ct.ScoredTweetCandidateAliases.V1Alias = {
-    ct.v1.ScoredTweetCandidate(
-      tweetId = ancestor.tweetId,
-      authorId = ancestor.userId.getOrElse(0L),
+     nReplyToT et d: Opt on[Long],
+    conversat on d: Opt on[Long],
+    ancestors: Opt on[Seq[Ancestor]],
+    cand dateT etS ce d: Opt on[Cand dateT etS ce d]
+  ): ct.ScoredT etCand dateAl ases.V1Al as = {
+    ct.v1.ScoredT etCand date(
+      t et d = ancestor.t et d,
+      author d = ancestor.user d.getOrElse(0L),
       score = 0.0,
-      isAncestorCandidate = Some(true),
-      inReplyToTweetId = inReplyToTweetId,
-      conversationId = conversationId,
+       sAncestorCand date = So (true),
+       nReplyToT et d =  nReplyToT et d,
+      conversat on d = conversat on d,
       ancestors = ancestors,
-      candidateTweetSourceId = candidateTweetSourceId
+      cand dateT etS ce d = cand dateT etS ce d
     )
   }
 }

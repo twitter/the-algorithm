@@ -1,60 +1,60 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":data_sources",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":data_s ces",
+        "3rdparty/src/jvm/com/tw ter/scald ng:core",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/mult format/format",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce/lzo_scrooge",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
+        "src/thr ft/com/tw ter/wtf/ent y_real_graph:ent y_real_graph-thr ft-scala",
     ],
 )
 
-scala_library(
-    name = "data_sources",
-    sources = [],
-    description = "DAL datasets we wish to expose externally",
+scala_l brary(
+    na  = "data_s ces",
+    s ces = [],
+    descr pt on = "DAL datasets   w sh to expose externally",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":reverse_index_semantic_core_per_language_simclusters_embeddings_presto-scala",
-        ":semantic_core_per_language_simclusters_embeddings_presto-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-    ],
-)
-
-create_datasets(
-    base_name = "reverse_index_semantic_core_per_language_simclusters_embeddings_presto",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.InternalIdEmbeddingWithId",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":reverse_ ndex_semant c_core_per_language_s mclusters_embedd ngs_presto-scala",
+        ":semant c_core_per_language_s mclusters_embedd ngs_presto-scala",
+        "src/scala/com/tw ter/s mclusters_v2/common",
     ],
 )
 
 create_datasets(
-    base_name = "semantic_core_per_language_simclusters_embeddings_presto",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+    base_na  = "reverse_ ndex_semant c_core_per_language_s mclusters_embedd ngs_presto",
+    java_sc ma = "com.tw ter.s mclusters_v2.thr ftjava. nternal dEmbedd ngW h d",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    scala_sc ma = "com.tw ter.s mclusters_v2.thr ftscala. nternal dEmbedd ngW h d",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
+    ],
+)
+
+create_datasets(
+    base_na  = "semant c_core_per_language_s mclusters_embedd ngs_presto",
+    java_sc ma = "com.tw ter.s mclusters_v2.thr ftjava.S mClustersEmbedd ngW h d",
+    platform = "java8",
+    role = "cassowary",
+    scala_sc ma = "com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ngW h d",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-java",
+    ],
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )

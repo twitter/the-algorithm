@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.user_user_graph
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
 object UserUserGraphParams {
 
-  // max number of candidates to return in total, 50 is the default param used in MagicRecs
-  object MaxCandidatesToReturn extends Param[Int](default = 50)
+  // max number of cand dates to return  n total, 50  s t  default param used  n Mag cRecs
+  object MaxCand datesToReturn extends Param[ nt](default = 50)
 
-  // whether or not to include UserUserGraph candidate source in the weighted blending step
-  case object UserUserGraphCandidateSourceEnabledInWeightMap
-      extends FSParam[Boolean]("user_user_graph_candidate_source_enabled_in_weight_map", true)
+  // w t r or not to  nclude UserUserGraph cand date s ce  n t    ghted blend ng step
+  case object UserUserGraphCand dateS ceEnabled n  ghtMap
+      extends FSParam[Boolean]("user_user_graph_cand date_s ce_enabled_ n_  ght_map", true)
 
-  // whether or not to include UserUserGraph candidate source in the final transform step
-  case object UserUserGraphCandidateSourceEnabledInTransform
-      extends FSParam[Boolean]("user_user_graph_candidate_source_enabled_in_transform", true)
+  // w t r or not to  nclude UserUserGraph cand date s ce  n t  f nal transform step
+  case object UserUserGraphCand dateS ceEnabled nTransform
+      extends FSParam[Boolean]("user_user_graph_cand date_s ce_enabled_ n_transform", true)
 
 }

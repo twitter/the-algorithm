@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaCompactThrift
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.{
+  Long2B gEnd an,
+  ScalaCompactThr ft
 }
-import com.twitter.simclusters_v2.thriftscala._
+ mport com.tw ter.s mclusters_v2.thr ftscala._
 
-object KnownForInjection {
-  val injection = KeyValInjection(Long2BigEndian, ScalaCompactThrift(ClustersUserIsKnownFor))
+object KnownFor nject on {
+  val  nject on = KeyVal nject on(Long2B gEnd an, ScalaCompactThr ft(ClustersUser sKnownFor))
 }

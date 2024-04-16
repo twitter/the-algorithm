@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.request
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.request
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ClientContextUnmarshaller @Inject() () {
+@S ngleton
+class Cl entContextUnmarshaller @ nject() () {
 
-  def apply(clientContext: t.ClientContext): ClientContext = {
-    ClientContext(
-      userId = clientContext.userId,
-      guestId = clientContext.guestId,
-      guestIdAds = clientContext.guestIdAds,
-      guestIdMarketing = clientContext.guestIdMarketing,
-      appId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      userAgent = clientContext.userAgent,
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      isTwoffice = clientContext.isTwoffice,
-      userRoles = clientContext.userRoles.map(_.toSet),
-      deviceId = clientContext.deviceId,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      mobileDeviceAdId = clientContext.mobileDeviceAdId,
-      limitAdTracking = clientContext.limitAdTracking
+  def apply(cl entContext: t.Cl entContext): Cl entContext = {
+    Cl entContext(
+      user d = cl entContext.user d,
+      guest d = cl entContext.guest d,
+      guest dAds = cl entContext.guest dAds,
+      guest dMarket ng = cl entContext.guest dMarket ng,
+      app d = cl entContext.app d,
+       pAddress = cl entContext. pAddress,
+      userAgent = cl entContext.userAgent,
+      countryCode = cl entContext.countryCode,
+      languageCode = cl entContext.languageCode,
+       sTwoff ce = cl entContext. sTwoff ce,
+      userRoles = cl entContext.userRoles.map(_.toSet),
+      dev ce d = cl entContext.dev ce d,
+      mob leDev ce d = cl entContext.mob leDev ce d,
+      mob leDev ceAd d = cl entContext.mob leDev ceAd d,
+      l m AdTrack ng = cl entContext.l m AdTrack ng
     )
   }
 }

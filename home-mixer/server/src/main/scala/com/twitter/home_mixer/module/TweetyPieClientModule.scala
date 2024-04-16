@@ -1,63 +1,63 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.st ch.t etyp e.T etyP e
+ mport com.tw ter.t etyp e.thr ftscala.T etServ ce
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
 /**
- * Idempotent Tweetypie Thrift and Stitch client.
+ *  dempotent T etyp e Thr ft and St ch cl ent.
  */
-object TweetypieClientModule
-    extends ThriftMethodBuilderClientModule[
-      TweetService.ServicePerEndpoint,
-      TweetService.MethodPerEndpoint
+object T etyp eCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      T etServ ce.Serv cePerEndpo nt,
+      T etServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  private val TimeoutRequest = "tweetypie.timeout_request"
-  private val TimeoutTotal = "tweetypie.timeout_total"
+  pr vate val T  outRequest = "t etyp e.t  out_request"
+  pr vate val T  outTotal = "t etyp e.t  out_total"
 
-  flag[Duration](TimeoutRequest, 1000.millis, "Timeout per request")
-  flag[Duration](TimeoutTotal, 1000.millis, "Total timeout")
+  flag[Durat on](T  outRequest, 1000.m ll s, "T  out per request")
+  flag[Durat on](T  outTotal, 1000.m ll s, "Total t  out")
 
-  override val label: String = "tweetypie"
-  override val dest: String = "/s/tweetypie/tweetypie"
+  overr de val label: Str ng = "t etyp e"
+  overr de val dest: Str ng = "/s/t etyp e/t etyp e"
 
-  @Singleton
-  @Provides
-  def providesTweetypieStitchClient(tweetService: TweetService.MethodPerEndpoint): TweetyPie =
-    new TweetyPie(tweetService)
+  @S ngleton
+  @Prov des
+  def prov desT etyp eSt chCl ent(t etServ ce: T etServ ce. thodPerEndpo nt): T etyP e =
+    new T etyP e(t etServ ce)
 
   /**
-   * TweetyPie client id must be in the form of {service.env} or it will not be treated as an
-   * unauthorized client
+   * T etyP e cl ent  d must be  n t  form of {serv ce.env} or   w ll not be treated as an
+   * unauthor zed cl ent
    */
-  override protected def clientId(injector: Injector): ClientId = {
-    val serviceIdentifier = injector.instance[ServiceIdentifier]
-    ClientId(s"${serviceIdentifier.service}.${serviceIdentifier.environment}")
+  overr de protected def cl ent d( njector:  njector): Cl ent d = {
+    val serv ce dent f er =  njector. nstance[Serv ce dent f er]
+    Cl ent d(s"${serv ce dent f er.serv ce}.${serv ce dent f er.env ron nt}")
   }
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeoutRequest = injector.instance[Duration](Flags.named(TimeoutRequest))
-    val timeoutTotal = injector.instance[Duration](Flags.named(TimeoutTotal))
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+    val t  outRequest =  njector. nstance[Durat on](Flags.na d(T  outRequest))
+    val t  outTotal =  njector. nstance[Durat on](Flags.na d(T  outTotal))
 
-    methodBuilder
-      .withTimeoutPerRequest(timeoutRequest)
-      .withTimeoutTotal(timeoutTotal)
+     thodBu lder
+      .w hT  outPerRequest(t  outRequest)
+      .w hT  outTotal(t  outTotal)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.millis
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll s
 }

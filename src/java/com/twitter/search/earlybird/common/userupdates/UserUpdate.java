@@ -1,38 +1,38 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.tw ter.search.earlyb rd.common.userupdates;
 
-import java.util.Date;
+ mport java.ut l.Date;
 
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.UserUpdateType;
 
 /**
- * Contains an update for a user.
+ * Conta ns an update for a user.
  */
-public class UserUpdate {
-  public final long twitterUserID;
-  public final UserUpdateType updateType;
-  public final int updateValue;
-  private final Date updatedAt;
+publ c class UserUpdate {
+  publ c f nal long tw terUser D;
+  publ c f nal UserUpdateType updateType;
+  publ c f nal  nt updateValue;
+  pr vate f nal Date updatedAt;
 
-  public UserUpdate(long twitterUserID,
+  publ c UserUpdate(long tw terUser D,
                     UserUpdateType updateType,
-                    int updateValue,
+                     nt updateValue,
                     Date updatedAt) {
 
-    this.twitterUserID = twitterUserID;
-    this.updateType = updateType;
-    this.updateValue = updateValue;
-    this.updatedAt = (Date) updatedAt.clone();
+    t .tw terUser D = tw terUser D;
+    t .updateType = updateType;
+    t .updateValue = updateValue;
+    t .updatedAt = (Date) updatedAt.clone();
   }
 
-  @Override public String toString() {
-    return "UserInfoUpdate[userID=" + twitterUserID + ",updateType=" + updateType
+  @Overr de publ c Str ng toStr ng() {
+    return "User nfoUpdate[user D=" + tw terUser D + ",updateType=" + updateType
            + ",updateValue=" + updateValue + ",updatedAt=" + getUpdatedAt() + "]";
   }
 
   /**
-   * Returns a copy of the updated-at date.
+   * Returns a copy of t  updated-at date.
    */
-  public Date getUpdatedAt() {
+  publ c Date getUpdatedAt() {
     return (Date) updatedAt.clone();
   }
 }

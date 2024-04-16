@@ -1,232 +1,232 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.google.inject.Inject
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.CandidateAlgorithmTypeConstants
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmIdAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmTypeAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{WtfAlgorithm => OnboardingWtfAlgoId}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
-  WtfAlgorithmType => OnboardingWtfAlgoType
+ mport com.g hub.benmanes.caffe ne.cac .Caffe ne
+ mport com.google. nject. nject
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.T  outExcept on
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Cand dateAlgor hmTypeConstants
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters.Cand dateAlgor hmAdapter.remapCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters.PostNuxAlgor hm dAdapter
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters.PostNuxAlgor hmTypeAdapter
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce d
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces.Ut ls.adaptAdd  onalFeaturesToDataRecord
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces.Ut ls.random zedTTL
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter. rm .constants.Algor hmFeedbackTokens.Algor hmToFeedbackTokenMap
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataRecord rger
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.ml.featurestore.catalog.datasets.custo r_j ney.PostNuxAlgor hm dAggregateDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.custo r_j ney.PostNuxAlgor hmTypeAggregateDataset
+ mport com.tw ter.ml.featurestore.catalog.ent  es.onboard ng.{WtfAlgor hm => Onboard ngWtfAlgo d}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.onboard ng.{
+  WtfAlgor hmType => Onboard ngWtfAlgoType
 }
-import com.twitter.ml.featurestore.catalog.features.customer_journey.CombineAllFeaturesPolicy
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmType
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
-import com.twitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
-import com.twitter.ml.featurestore.lib.dynamic.ClientConfig
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.ml.featurestore.lib.dynamic.DynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.FeatureStoreParamsConfig
-import com.twitter.ml.featurestore.lib.dynamic.GatedFeatures
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.online.DatasetValuesCache
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import java.util.concurrent.TimeUnit
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.featurestore.catalog.features.custo r_j ney.Comb neAllFeaturesPol cy
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.WtfAlgor hm d
+ mport com.tw ter.ml.featurestore.l b.WtfAlgor hmType
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecord
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecordAdapter
+ mport com.tw ter.ml.featurestore.l b.dataset.Dataset d
+ mport com.tw ter.ml.featurestore.l b.dataset.onl ne.Hydrator.Hydrat onResponse
+ mport com.tw ter.ml.featurestore.l b.dataset.onl ne.Onl neAccessDataset
+ mport com.tw ter.ml.featurestore.l b.dynam c.Cl entConf g
+ mport com.tw ter.ml.featurestore.l b.dynam c.Dynam cFeatureStoreCl ent
+ mport com.tw ter.ml.featurestore.l b.dynam c.Dynam cHydrat onConf g
+ mport com.tw ter.ml.featurestore.l b.dynam c.FeatureStoreParamsConf g
+ mport com.tw ter.ml.featurestore.l b.dynam c.GatedFeatures
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeature
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeatureSet
+ mport com.tw ter.ml.featurestore.l b.onl ne.DatasetValuesCac 
+ mport com.tw ter.ml.featurestore.l b.onl ne.FeatureStoreRequest
+ mport com.tw ter.ml.featurestore.l b.onl ne.Onl neFeatureGenerat onStats
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport java.ut l.concurrent.T  Un 
+ mport scala.collect on.JavaConverters._
 
-class FeatureStorePostNuxAlgorithmSource @Inject() (
-  serviceIdentifier: ServiceIdentifier,
-  stats: StatsReceiver)
-    extends FeatureSource {
-  import FeatureStorePostNuxAlgorithmSource._
+class FeatureStorePostNuxAlgor hmS ce @ nject() (
+  serv ce dent f er: Serv ce dent f er,
+  stats: StatsRece ver)
+    extends FeatureS ce {
+   mport FeatureStorePostNuxAlgor hmS ce._
 
-  val backupSourceStats = stats.scope("feature_store_hydration_post_nux_algorithm")
-  val adapterStats = backupSourceStats.scope("adapters")
-  override def id: FeatureSourceId = FeatureSourceId.FeatureStorePostNuxAlgorithmSourceId
-  override def featureContext: FeatureContext = getFeatureContext
+  val backupS ceStats = stats.scope("feature_store_hydrat on_post_nux_algor hm")
+  val adapterStats = backupS ceStats.scope("adapters")
+  overr de def  d: FeatureS ce d = FeatureS ce d.FeatureStorePostNuxAlgor hmS ce d
+  overr de def featureContext: FeatureContext = getFeatureContext
 
-  private val dataRecordMerger = new DataRecordMerger
+  pr vate val dataRecord rger = new DataRecord rger
 
-  val clientConfig: ClientConfig[HasParams] = ClientConfig(
-    dynamicHydrationConfig = dynamicHydrationConfig,
-    featureStoreParamsConfig =
-      FeatureStoreParamsConfig(FeatureStoreParameters.featureStoreParams, Map.empty),
+  val cl entConf g: Cl entConf g[HasParams] = Cl entConf g(
+    dynam cHydrat onConf g = dynam cHydrat onConf g,
+    featureStoreParamsConf g =
+      FeatureStoreParamsConf g(FeatureStorePara ters.featureStoreParams, Map.empty),
     /**
-     * The smaller one between `timeoutProvider` and `FeatureStoreSourceParams.GlobalFetchTimeout`
+     * T  smaller one bet en `t  outProv der` and `FeatureStoreS ceParams.GlobalFetchT  out`
      * used below takes effect.
      */
-    timeoutProvider = Function.const(800.millis),
-    serviceIdentifier = serviceIdentifier
+    t  outProv der = Funct on.const(800.m ll s),
+    serv ce dent f er = serv ce dent f er
   )
 
-  private val datasetsToCache = Set(
-    PostNuxAlgorithmIdAggregateDataset,
-    PostNuxAlgorithmTypeAggregateDataset,
-  ).asInstanceOf[Set[OnlineAccessDataset[_ <: EntityId, _]]]
+  pr vate val datasetsToCac  = Set(
+    PostNuxAlgor hm dAggregateDataset,
+    PostNuxAlgor hmTypeAggregateDataset,
+  ).as nstanceOf[Set[Onl neAccessDataset[_ <: Ent y d, _]]]
 
-  private val datasetValuesCache: DatasetValuesCache =
-    DatasetValuesCache(
-      Caffeine
-        .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
-        .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
+  pr vate val datasetValuesCac : DatasetValuesCac  =
+    DatasetValuesCac (
+      Caffe ne
+        .newBu lder()
+        .exp reAfterWr e(random zedTTL(12.h s. nSeconds), T  Un .SECONDS)
+        .max mumS ze(DefaultCac MaxKeys)
+        .bu ld[(_ <: Ent y d, Dataset d), St ch[Hydrat onResponse[_]]]
         .asMap,
-      datasetsToCache,
-      DatasetCacheScope
+      datasetsToCac ,
+      DatasetCac Scope
     )
 
-  private val dynamicFeatureStoreClient = DynamicFeatureStoreClient(
-    clientConfig,
-    backupSourceStats,
-    Set(datasetValuesCache)
+  pr vate val dynam cFeatureStoreCl ent = Dynam cFeatureStoreCl ent(
+    cl entConf g,
+    backupS ceStats,
+    Set(datasetValuesCac )
   )
 
-  private val adapterToDataRecord: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(
+  pr vate val adapterToDataRecord:  RecordOneToOneAdapter[Pred ct onRecord] =
+    Pred ct onRecordAdapter.oneToOne(
       BoundFeatureSet(allFeatures),
-      OnlineFeatureGenerationStats(backupSourceStats)
+      Onl neFeatureGenerat onStats(backupS ceStats)
     )
 
-  // These two calculate the rate for each feature by dividing it by the number of impressions, then
-  // apply a log transformation.
-  private val transformAdapters = Seq(PostNuxAlgorithmIdAdapter, PostNuxAlgorithmTypeAdapter)
-  override def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    target.getOptionalUserId
+  // T se two calculate t  rate for each feature by d v d ng   by t  number of  mpress ons, t n
+  // apply a log transformat on.
+  pr vate val transformAdapters = Seq(PostNuxAlgor hm dAdapter, PostNuxAlgor hmTypeAdapter)
+  overr de def hydrateFeatures(
+    target: HasCl entContext
+      w h HasPreFetc dFeature
+      w h HasParams
+      w h HasS m larToContext
+      w h HasD splayLocat on,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Map[Cand dateUser, DataRecord]] = {
+    target.getOpt onalUser d
       .map { _: Long =>
-        val candidateAlgoIdEntities = candidates.map { candidate =>
-          candidate.id -> candidate.getAllAlgorithms
+        val cand dateAlgo dEnt  es = cand dates.map { cand date =>
+          cand date. d -> cand date.getAllAlgor hms
             .flatMap { algo =>
-              AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-            }.map(algoId => OnboardingWtfAlgoId.withId(WtfAlgorithmId(algoId)))
+              Algor hmToFeedbackTokenMap.get(remapCand dateS ce(algo))
+            }.map(algo d => Onboard ngWtfAlgo d.w h d(WtfAlgor hm d(algo d)))
         }.toMap
 
-        val candidateAlgoTypeEntities = candidateAlgoIdEntities.map {
-          case (candidateId, algoIdEntities) =>
-            candidateId -> algoIdEntities
-              .map(_.id.algoId)
-              .flatMap(algoId => CandidateAlgorithmTypeConstants.getAlgorithmTypes(algoId.toString))
-              .distinct
-              .map(algoType => OnboardingWtfAlgoType.withId(WtfAlgorithmType(algoType)))
+        val cand dateAlgoTypeEnt  es = cand dateAlgo dEnt  es.map {
+          case (cand date d, algo dEnt  es) =>
+            cand date d -> algo dEnt  es
+              .map(_. d.algo d)
+              .flatMap(algo d => Cand dateAlgor hmTypeConstants.getAlgor hmTypes(algo d.toStr ng))
+              .d st nct
+              .map(algoType => Onboard ngWtfAlgoType.w h d(WtfAlgor hmType(algoType)))
         }
 
-        val entities = {
-          candidateAlgoIdEntities.values.flatten ++ candidateAlgoTypeEntities.values.flatten
-        }.toSeq.distinct
-        val requests = entities.map(entity => FeatureStoreRequest(Seq(entity)))
+        val ent  es = {
+          cand dateAlgo dEnt  es.values.flatten ++ cand dateAlgoTypeEnt  es.values.flatten
+        }.toSeq.d st nct
+        val requests = ent  es.map(ent y => FeatureStoreRequest(Seq(ent y)))
 
-        val predictionRecordsFut = dynamicFeatureStoreClient(requests, target)
-        val candidateFeatureMap = predictionRecordsFut.map {
-          predictionRecords: Seq[PredictionRecord] =>
-            val entityFeatureMap: Map[EntityWithId[_], DataRecord] = entities
-              .zip(predictionRecords).map {
-                case (entity, predictionRecord) =>
-                  entity -> adaptAdditionalFeaturesToDataRecord(
-                    adapterToDataRecord.adaptToDataRecord(predictionRecord),
+        val pred ct onRecordsFut = dynam cFeatureStoreCl ent(requests, target)
+        val cand dateFeatureMap = pred ct onRecordsFut.map {
+          pred ct onRecords: Seq[Pred ct onRecord] =>
+            val ent yFeatureMap: Map[Ent yW h d[_], DataRecord] = ent  es
+              .z p(pred ct onRecords).map {
+                case (ent y, pred ct onRecord) =>
+                  ent y -> adaptAdd  onalFeaturesToDataRecord(
+                    adapterToDataRecord.adaptToDataRecord(pred ct onRecord),
                     adapterStats,
                     transformAdapters)
               }.toMap
 
-            // In case we have more than one algorithm ID, or type, for a candidate, we merge the
-            // resulting DataRecords using the two merging policies below.
-            val algoIdMergeFn =
-              CombineAllFeaturesPolicy(PostNuxAlgorithmIdAdapter.getFeatures).getMergeFn
-            val algoTypeMergeFn =
-              CombineAllFeaturesPolicy(PostNuxAlgorithmTypeAdapter.getFeatures).getMergeFn
+            //  n case   have more than one algor hm  D, or type, for a cand date,    rge t 
+            // result ng DataRecords us ng t  two  rg ng pol c es below.
+            val algo d rgeFn =
+              Comb neAllFeaturesPol cy(PostNuxAlgor hm dAdapter.getFeatures).get rgeFn
+            val algoType rgeFn =
+              Comb neAllFeaturesPol cy(PostNuxAlgor hmTypeAdapter.getFeatures).get rgeFn
 
-            val candidateAlgoIdFeaturesMap = candidateAlgoIdEntities.mapValues { entities =>
-              val features = entities.flatMap(e => Option(entityFeatureMap.getOrElse(e, null)))
-              algoIdMergeFn(features)
+            val cand dateAlgo dFeaturesMap = cand dateAlgo dEnt  es.mapValues { ent  es =>
+              val features = ent  es.flatMap(e => Opt on(ent yFeatureMap.getOrElse(e, null)))
+              algo d rgeFn(features)
             }
 
-            val candidateAlgoTypeFeaturesMap = candidateAlgoTypeEntities.mapValues { entities =>
-              val features = entities.flatMap(e => Option(entityFeatureMap.getOrElse(e, null)))
-              algoTypeMergeFn(features)
+            val cand dateAlgoTypeFeaturesMap = cand dateAlgoTypeEnt  es.mapValues { ent  es =>
+              val features = ent  es.flatMap(e => Opt on(ent yFeatureMap.getOrElse(e, null)))
+              algoType rgeFn(features)
             }
 
-            candidates.map { candidate =>
-              val idDrOpt = candidateAlgoIdFeaturesMap.getOrElse(candidate.id, None)
-              val typeDrOpt = candidateAlgoTypeFeaturesMap.getOrElse(candidate.id, None)
+            cand dates.map { cand date =>
+              val  dDrOpt = cand dateAlgo dFeaturesMap.getOrElse(cand date. d, None)
+              val typeDrOpt = cand dateAlgoTypeFeaturesMap.getOrElse(cand date. d, None)
 
-              val featureDr = (idDrOpt, typeDrOpt) match {
-                case (None, Some(typeDataRecord)) => typeDataRecord
-                case (Some(idDataRecord), None) => idDataRecord
+              val featureDr = ( dDrOpt, typeDrOpt) match {
+                case (None, So (typeDataRecord)) => typeDataRecord
+                case (So ( dDataRecord), None) =>  dDataRecord
                 case (None, None) => new DataRecord()
-                case (Some(idDataRecord), Some(typeDataRecord)) =>
-                  dataRecordMerger.merge(idDataRecord, typeDataRecord)
-                  idDataRecord
+                case (So ( dDataRecord), So (typeDataRecord)) =>
+                  dataRecord rger. rge( dDataRecord, typeDataRecord)
+                   dDataRecord
               }
-              candidate -> featureDr
+              cand date -> featureDr
             }.toMap
         }
-        Stitch
-          .callFuture(candidateFeatureMap)
-          .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
-            com.twitter.finagle.util.DefaultTimer)
+        St ch
+          .callFuture(cand dateFeatureMap)
+          .w h n(target.params(FeatureStoreS ceParams.GlobalFetchT  out))(
+            com.tw ter.f nagle.ut l.DefaultT  r)
           .rescue {
-            case _: TimeoutException =>
-              Stitch.value(Map.empty[CandidateUser, DataRecord])
+            case _: T  outExcept on =>
+              St ch.value(Map.empty[Cand dateUser, DataRecord])
           }
-      }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
+      }.getOrElse(St ch.value(Map.empty[Cand dateUser, DataRecord]))
   }
 }
 
-object FeatureStorePostNuxAlgorithmSource {
-  private val DatasetCacheScope = "feature_store_local_cache_post_nux_algorithm"
-  private val DefaultCacheMaxKeys = 1000 // Both of these datasets have <50 keys total.
+object FeatureStorePostNuxAlgor hmS ce {
+  pr vate val DatasetCac Scope = "feature_store_local_cac _post_nux_algor hm"
+  pr vate val DefaultCac MaxKeys = 1000 // Both of t se datasets have <50 keys total.
 
-  val allFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    FeatureStoreFeatures.postNuxAlgorithmIdAggregateFeatures ++
-      FeatureStoreFeatures.postNuxAlgorithmTypeAggregateFeatures
+  val allFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    FeatureStoreFeatures.postNuxAlgor hm dAggregateFeatures ++
+      FeatureStoreFeatures.postNuxAlgor hmTypeAggregateFeatures
 
-  val algoIdFinalFeatures = CombineAllFeaturesPolicy(
-    PostNuxAlgorithmIdAdapter.getFeatures).outputFeaturesPostMerge.toSeq
-  val algoTypeFinalFeatures = CombineAllFeaturesPolicy(
-    PostNuxAlgorithmTypeAdapter.getFeatures).outputFeaturesPostMerge.toSeq
+  val algo dF nalFeatures = Comb neAllFeaturesPol cy(
+    PostNuxAlgor hm dAdapter.getFeatures).outputFeaturesPost rge.toSeq
+  val algoTypeF nalFeatures = Comb neAllFeaturesPol cy(
+    PostNuxAlgor hmTypeAdapter.getFeatures).outputFeaturesPost rge.toSeq
 
   val getFeatureContext: FeatureContext =
-    new FeatureContext().addFeatures((algoIdFinalFeatures ++ algoTypeFinalFeatures).asJava)
+    new FeatureContext().addFeatures((algo dF nalFeatures ++ algoTypeF nalFeatures).asJava)
 
-  val dynamicHydrationConfig: DynamicHydrationConfig[HasParams] =
-    DynamicHydrationConfig(
+  val dynam cHydrat onConf g: Dynam cHydrat onConf g[HasParams] =
+    Dynam cHydrat onConf g(
       Set(
         GatedFeatures(
           boundFeatureSet =
-            BoundFeatureSet(FeatureStoreFeatures.postNuxAlgorithmIdAggregateFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableAlgorithmAggregateFeatures)
+            BoundFeatureSet(FeatureStoreFeatures.postNuxAlgor hm dAggregateFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableAlgor hmAggregateFeatures)
         ),
         GatedFeatures(
           boundFeatureSet =
-            BoundFeatureSet(FeatureStoreFeatures.postNuxAlgorithmTypeAggregateFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableAlgorithmAggregateFeatures)
+            BoundFeatureSet(FeatureStoreFeatures.postNuxAlgor hmTypeAggregateFeatures),
+          gate = HasParams.paramGate(FeatureStoreS ceParams.EnableAlgor hmAggregateFeatures)
         ),
       ))
 }

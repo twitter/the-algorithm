@@ -1,74 +1,74 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
+    dependenc es = [
+        "src/scala/com/tw ter/onboard ng/relevance/s ce:utt_account_recom ndat ons-scala",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "src/scala/com/tw ter/wtf/ent y_real_graph/common",
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_known_for-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesAdhocApp",
+hadoop_b nary(
+    na  = " nferred_ent  es_from_known_for-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferredKnownForSemant cCoreEnt  esAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    dependenc es = [
+        ": nferred_ent  es",
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_known_for",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesBatchApp",
+hadoop_b nary(
+    na  = " nferred_ent  es_from_known_for",
+    ma n = "com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferredKnownForSemant cCoreEnt  esBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    dependenc es = [
+        ": nferred_ent  es",
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_interested_in-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp",
+hadoop_b nary(
+    na  = " nferred_ent  es_from_ nterested_ n-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferred nterested nSemant cCoreEnt  esAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    dependenc es = [
+        ": nferred_ent  es",
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_interested_in",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesBatchApp",
+hadoop_b nary(
+    na  = " nferred_ent  es_from_ nterested_ n",
+    ma n = "com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferred nterested nSemant cCoreEnt  esBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    dependenc es = [
+        ": nferred_ent  es",
     ],
 )

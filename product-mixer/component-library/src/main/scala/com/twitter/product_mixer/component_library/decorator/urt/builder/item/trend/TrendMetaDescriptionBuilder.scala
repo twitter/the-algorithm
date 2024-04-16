@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.trend
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendAdvertiserNameFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.trends.trending_content.util.CompactingNumberLocalizer
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.str ngcenter.Str
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.PromotedTrendAdvert serNa Feature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendT etCount
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.trends.trend ng_content.ut l.Compact ngNumberLocal zer
 
-case class TrendMetaDescriptionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  promotedByMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],
-  tweetCountMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],
-  compactingNumberLocalizer: CompactingNumberLocalizer) {
+case class Trend taDescr pt onBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  promotedBy taDescr pt onStr: Str[P pel neQuery, Un versalNoun[Any]],
+  t etCount taDescr pt onStr: Str[P pel neQuery, Un versalNoun[Any]],
+  compact ngNumberLocal zer: Compact ngNumberLocal zer) {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[String] = {
-    val promotedMetaDescription =
-      candidateFeatures.getOrElse(PromotedTrendAdvertiserNameFeature, None).map { advertiserName =>
-        promotedByMetaDescriptionStr(query, candidate, candidateFeatures).format(advertiserName)
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Str ng] = {
+    val promoted taDescr pt on =
+      cand dateFeatures.getOrElse(PromotedTrendAdvert serNa Feature, None).map { advert serNa  =>
+        promotedBy taDescr pt onStr(query, cand date, cand dateFeatures).format(advert serNa )
       }
 
-    val organicMetaDescription = candidateFeatures.getOrElse(TrendTweetCount, None).map {
-      tweetCount =>
-        val compactedTweetCount = compactingNumberLocalizer.localizeAndCompact(
+    val organ c taDescr pt on = cand dateFeatures.getOrElse(TrendT etCount, None).map {
+      t etCount =>
+        val compactedT etCount = compact ngNumberLocal zer.local zeAndCompact(
           query.getLanguageCode
             .getOrElse("en"),
-          tweetCount)
-        tweetCountMetaDescriptionStr(query, candidate, candidateFeatures).format(
-          compactedTweetCount)
+          t etCount)
+        t etCount taDescr pt onStr(query, cand date, cand dateFeatures).format(
+          compactedT etCount)
     }
 
-    promotedMetaDescription.orElse(organicMetaDescription)
+    promoted taDescr pt on.orElse(organ c taDescr pt on)
   }
 }

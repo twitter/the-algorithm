@@ -1,433 +1,433 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.tw ter.product_m xer.component_l brary.model.cand date
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
 
-sealed trait BasePromptCandidate[+T] extends UniversalNoun[T]
+sealed tra  BasePromptCand date[+T] extends Un versalNoun[T]
 
 /**
- * Canonical InlinePromptCandidate model. Always prefer this version over all other variants.
+ * Canon cal  nl nePromptCand date model. Always prefer t  vers on over all ot r var ants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note Any add  onal f elds should be added as a [[com.tw ter.product_m xer.core.feature.Feature]]
+ *       on t  cand date's [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]].  f t 
+ *       features co  from t  cand date s ce  self (as opposed to hydrated v a a
+ *       [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator]]),
+ *       t n [[com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g.featuresFromCand dateS ceTransfor rs]]
+ *       can be used to extract features from t  cand date s ce response.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note T  class should always rema n `f nal`.  f for any reason t  `f nal` mod f er  s removed,
+ *       t  equals()  mple ntat on must be updated  n order to handle class  n r or equal y
+ *       (see note on t  equals  thod below)
  */
-final class InlinePromptCandidate private (
-  override val id: String)
-    extends BasePromptCandidate[String] {
+f nal class  nl nePromptCand date pr vate (
+  overr de val  d: Str ng)
+    extends BasePromptCand date[Str ng] {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[InlinePromptCandidate]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[ nl nePromptCand date]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case candidate: InlinePromptCandidate =>
-        ((this eq candidate)
-          || ((hashCode == candidate.hashCode) && (id == candidate.id)))
+      case cand date:  nl nePromptCand date =>
+        ((t  eq cand date)
+          || ((hashCode == cand date.hashCode) && ( d == cand date. d)))
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated cand date
+   *       ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       data structure), assum ng stable hashCode  mple ntat ons for t se objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object InlinePromptCandidate {
-  def apply(id: String): InlinePromptCandidate = new InlinePromptCandidate(id)
+object  nl nePromptCand date {
+  def apply( d: Str ng):  nl nePromptCand date = new  nl nePromptCand date( d)
 }
 
 /**
- * Canonical CompactPromptCandidate model. Always prefer this version over all other variants.
+ * Canon cal CompactPromptCand date model. Always prefer t  vers on over all ot r var ants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note Any add  onal f elds should be added as a [[com.tw ter.product_m xer.core.feature.Feature]]
+ *       on t  cand date's [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]].  f t 
+ *       features co  from t  cand date s ce  self (as opposed to hydrated v a a
+ *       [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator]]),
+ *       t n [[com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g.featuresFromCand dateS ceTransfor rs]]
+ *       can be used to extract features from t  cand date s ce response.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note T  class should always rema n `f nal`.  f for any reason t  `f nal` mod f er  s removed,
+ *       t  equals()  mple ntat on must be updated  n order to handle class  n r or equal y
+ *       (see note on t  equals  thod below)
  */
-final class CompactPromptCandidate private (
-  override val id: Long)
-    extends BasePromptCandidate[Long] {
+f nal class CompactPromptCand date pr vate (
+  overr de val  d: Long)
+    extends BasePromptCand date[Long] {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[CompactPromptCandidate]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[CompactPromptCand date]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case candidate: CompactPromptCandidate =>
+      case cand date: CompactPromptCand date =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode) && (id == candidate.id))
+          (t  eq cand date)
+            || ((hashCode == cand date.hashCode) && ( d == cand date. d))
         )
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated cand date
+   *         ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *         data structure), assum ng stable hashCode  mple ntat ons for t se objects
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object CompactPromptCandidate {
-  def apply(id: Long): CompactPromptCandidate = new CompactPromptCandidate(id)
+object CompactPromptCand date {
+  def apply( d: Long): CompactPromptCand date = new CompactPromptCand date( d)
 }
 
 /**
- * Canonical FullCoverPromptCandidate model. Always prefer this version over all other variants.
+ * Canon cal FullCoverPromptCand date model. Always prefer t  vers on over all ot r var ants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note Any add  onal f elds should be added as a [[com.tw ter.product_m xer.core.feature.Feature]]
+ *       on t  cand date's [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]].  f t 
+ *       features co  from t  cand date s ce  self (as opposed to hydrated v a a
+ *       [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator]]),
+ *       t n [[com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g.featuresFromCand dateS ceTransfor rs]]
+ *       can be used to extract features from t  cand date s ce response.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note T  class should always rema n `f nal`.  f for any reason t  `f nal` mod f er  s removed,
+ *       t  equals()  mple ntat on must be updated  n order to handle class  n r or equal y
+ *       (see note on t  equals  thod below)
  */
-final class FullCoverPromptCandidate private (
-  override val id: String)
-    extends BasePromptCandidate[String] {
+f nal class FullCoverPromptCand date pr vate (
+  overr de val  d: Str ng)
+    extends BasePromptCand date[Str ng] {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[FullCoverPromptCandidate]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[FullCoverPromptCand date]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case candidate: FullCoverPromptCandidate =>
-        ((this eq candidate)
-          || ((hashCode == candidate.hashCode) && (id == candidate.id)))
+      case cand date: FullCoverPromptCand date =>
+        ((t  eq cand date)
+          || ((hashCode == cand date.hashCode) && ( d == cand date. d)))
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated cand date
+   *         ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *         data structure), assum ng stable hashCode  mple ntat ons for t se objects
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object FullCoverPromptCandidate {
-  def apply(id: String): FullCoverPromptCandidate = new FullCoverPromptCandidate(id)
+object FullCoverPromptCand date {
+  def apply( d: Str ng): FullCoverPromptCand date = new FullCoverPromptCand date( d)
 }
 
 /**
- * Canonical HalfCoverPromptCandidate model. Always prefer this version over all other variants.
+ * Canon cal HalfCoverPromptCand date model. Always prefer t  vers on over all ot r var ants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note Any add  onal f elds should be added as a [[com.tw ter.product_m xer.core.feature.Feature]]
+ *       on t  cand date's [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]].  f t 
+ *       features co  from t  cand date s ce  self (as opposed to hydrated v a a
+ *       [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator]]),
+ *       t n [[com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g.featuresFromCand dateS ceTransfor rs]]
+ *       can be used to extract features from t  cand date s ce response.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note T  class should always rema n `f nal`.  f for any reason t  `f nal` mod f er  s removed,
+ *       t  equals()  mple ntat on must be updated  n order to handle class  n r or equal y
+ *       (see note on t  equals  thod below)
  */
-final class HalfCoverPromptCandidate private (
-  override val id: String)
-    extends BasePromptCandidate[String] {
+f nal class HalfCoverPromptCand date pr vate (
+  overr de val  d: Str ng)
+    extends BasePromptCand date[Str ng] {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[HalfCoverPromptCandidate]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[HalfCoverPromptCand date]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case candidate: HalfCoverPromptCandidate =>
+      case cand date: HalfCoverPromptCand date =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (t  eq cand date)
+            || ((hashCode == cand date.hashCode)
+              && ( d == cand date. d))
         )
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated cand date
+   *         ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *         data structure), assum ng stable hashCode  mple ntat ons for t se objects
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object HalfCoverPromptCandidate {
-  def apply(id: String): HalfCoverPromptCandidate = new HalfCoverPromptCandidate(id)
+object HalfCoverPromptCand date {
+  def apply( d: Str ng): HalfCoverPromptCand date = new HalfCoverPromptCand date( d)
 }
 
 /**
- * Canonical PromptCarouselTileCandidate model. Always prefer this version over all other variants.
+ * Canon cal PromptCarouselT leCand date model. Always prefer t  vers on over all ot r var ants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note Any add  onal f elds should be added as a [[com.tw ter.product_m xer.core.feature.Feature]]
+ *       on t  cand date's [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]].  f t 
+ *       features co  from t  cand date s ce  self (as opposed to hydrated v a a
+ *       [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator]]),
+ *       t n [[com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g.featuresFromCand dateS ceTransfor rs]]
+ *       can be used to extract features from t  cand date s ce response.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note T  class should always rema n `f nal`.  f for any reason t  `f nal` mod f er  s removed,
+ *       t  equals()  mple ntat on must be updated  n order to handle class  n r or equal y
+ *       (see note on t  equals  thod below)
  */
-final class PromptCarouselTileCandidate private (
-  override val id: Long)
-    extends BasePromptCandidate[Long] {
+f nal class PromptCarouselT leCand date pr vate (
+  overr de val  d: Long)
+    extends BasePromptCand date[Long] {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[PromptCarouselTileCandidate]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[PromptCarouselT leCand date]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case candidate: PromptCarouselTileCandidate =>
+      case cand date: PromptCarouselT leCand date =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (t  eq cand date)
+            || ((hashCode == cand date.hashCode)
+              && ( d == cand date. d))
         )
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated cand date
+   *         ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *         data structure), assum ng stable hashCode  mple ntat ons for t se objects
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int = id.##
+  overr de val hashCode:  nt =  d.##
 }
 
-object PromptCarouselTileCandidate {
-  def apply(id: Long): PromptCarouselTileCandidate = new PromptCarouselTileCandidate(id)
+object PromptCarouselT leCand date {
+  def apply( d: Long): PromptCarouselT leCand date = new PromptCarouselT leCand date( d)
 }
 
 /**
- * Canonical RelevancePromptCandidate model. Always prefer this version over all other variants.
+ * Canon cal RelevancePromptCand date model. Always prefer t  vers on over all ot r var ants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note Any add  onal f elds should be added as a [[com.tw ter.product_m xer.core.feature.Feature]]
+ *       on t  cand date's [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]].  f t 
+ *       features co  from t  cand date s ce  self (as opposed to hydrated v a a
+ *       [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator]]),
+ *       t n [[com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g.featuresFromCand dateS ceTransfor rs]]
+ *       can be used to extract features from t  cand date s ce response.
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note T  class should always rema n `f nal`.  f for any reason t  `f nal` mod f er  s removed,
+ *       t  equals()  mple ntat on must be updated  n order to handle class  n r or equal y
+ *       (see note on t  equals  thod below)
  */
-final class RelevancePromptCandidate private (
-  override val id: String,
-  val position: Option[Int])
-    extends BasePromptCandidate[String] {
+f nal class RelevancePromptCand date pr vate (
+  overr de val  d: Str ng,
+  val pos  on: Opt on[ nt])
+    extends BasePromptCand date[Str ng] {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[RelevancePromptCandidate]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[RelevancePromptCand date]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case candidate: RelevancePromptCandidate =>
+      case cand date: RelevancePromptCand date =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && position == candidate.position))
+          (t  eq cand date)
+            || ((hashCode == cand date.hashCode)
+              && ( d == cand date. d && pos  on == cand date.pos  on))
         )
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *         (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *         data structure), assuming stable hashCode implementations for these objects
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated cand date
+   *         ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *         data structure), assum ng stable hashCode  mple ntat ons for t se objects
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int =
+  overr de val hashCode:  nt =
     31 * (
-      id.##
-    ) + position.##
+       d.##
+    ) + pos  on.##
 }
 
-object RelevancePromptCandidate {
+object RelevancePromptCand date {
   def apply(
-    id: String,
-    position: Option[Int] = None
-  ): RelevancePromptCandidate =
-    new RelevancePromptCandidate(id, position)
+     d: Str ng,
+    pos  on: Opt on[ nt] = None
+  ): RelevancePromptCand date =
+    new RelevancePromptCand date( d, pos  on)
 }

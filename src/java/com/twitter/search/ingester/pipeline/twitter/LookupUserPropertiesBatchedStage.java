@@ -1,60 +1,60 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Collection;
-import javax.naming.NamingException;
+ mport java.ut l.Collect on;
+ mport javax.nam ng.Nam ngExcept on;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.UserPropertiesManager;
-import com.twitter.util.Future;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.Batc dEle nt;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.search. ngester.p pel ne.ut l.UserPropert esManager;
+ mport com.tw ter.ut l.Future;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c class LookupUserPropert esBatc dStage extends Tw terBatc dBaseStage
+    < ngesterTw ter ssage,  ngesterTw ter ssage> {
 
-  protected UserPropertiesManager userPropertiesManager;
+  protected UserPropert esManager userPropert esManager;
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @Overr de
+  protected Class< ngesterTw ter ssage> getQueueObjectType() {
+    return  ngesterTw ter ssage.class;
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
-    return userPropertiesManager.populateUserProperties(batchedElements);
+  @Overr de
+  protected Future<Collect on< ngesterTw ter ssage>>  nnerProcessBatch(Collect on<Batc dEle nt
+      < ngesterTw ter ssage,  ngesterTw ter ssage>> batch) {
+    Collect on< ngesterTw ter ssage> batc dEle nts = extractOnlyEle ntsFromBatch(batch);
+    return userPropert esManager.populateUserPropert es(batc dEle nts);
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage element) {
+  @Overr de
+  protected boolean needsToBeBatc d( ngesterTw ter ssage ele nt) {
     return true;
   }
 
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  @Overr de
+  protected  ngesterTw ter ssage transform( ngesterTw ter ssage ele nt) {
+    return ele nt;
   }
 
-  @Override
-  public synchronized void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Overr de
+  publ c synchron zed vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    super.do nnerPreprocess();
+    common nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    super. nnerSetup();
+    common nnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    userPropertiesManager = new UserPropertiesManager(wireModule.getMetastoreClient());
+  pr vate vo d common nnerSetup() throws Nam ngExcept on {
+    userPropert esManager = new UserPropert esManager(w reModule.get tastoreCl ent());
   }
 }

@@ -1,53 +1,53 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.scorers.TweetTextScorer;
-import com.twitter.search.common.relevance.text.TweetParser;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+ mport com.tw ter.search.common.relevance.class f ers.T etOffens veEvaluator;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.scorers.T etTextScorer;
+ mport com.tw ter.search.common.relevance.text.T etParser;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextUrlsFeatureExtractionStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private final TweetParser tweetParser = new TweetParser();
-  private TweetOffensiveEvaluator offensiveEvaluator;
-  private final TweetTextScorer tweetTextScorer = new TweetTextScorer(null);
+@Consu dTypes(Tw ter ssage.class)
+@ProducesConsu d
+publ c class TextUrlsFeatureExtract onStage extends Tw terBaseStage
+    < ngesterTw ter ssage,  ngesterTw ter ssage> {
+  pr vate f nal T etParser t etParser = new T etParser();
+  pr vate T etOffens veEvaluator offens veEvaluator;
+  pr vate f nal T etTextScorer t etTextScorer = new T etTextScorer(null);
 
-  @Override
-  protected void doInnerPreprocess()  {
-    innerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess()  {
+     nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    offensiveEvaluator = wireModule.getTweetOffensiveEvaluator();
+  @Overr de
+  protected vo d  nnerSetup() {
+    offens veEvaluator = w reModule.getT etOffens veEvaluator();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a TwitterMessage instance: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not a Tw ter ssage  nstance: " + obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    extract(message);
-    emitAndCount(message);
+     ngesterTw ter ssage  ssage =  ngesterTw ter ssage.class.cast(obj);
+    extract( ssage);
+    em AndCount( ssage);
   }
 
-  private void extract(IngesterTwitterMessage message) {
-    tweetParser.parseUrls(message);
-    offensiveEvaluator.evaluate(message);
-    tweetTextScorer.scoreTweet(message);
+  pr vate vo d extract( ngesterTw ter ssage  ssage) {
+    t etParser.parseUrls( ssage);
+    offens veEvaluator.evaluate( ssage);
+    t etTextScorer.scoreT et( ssage);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
-    extract(message);
-    return message;
+  @Overr de
+  protected  ngesterTw ter ssage  nnerRunStageV2( ngesterTw ter ssage  ssage) {
+    extract( ssage);
+    return  ssage;
   }
 }

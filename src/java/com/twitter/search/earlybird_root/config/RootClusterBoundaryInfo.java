@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird_root.config;
+package com.tw ter.search.earlyb rd_root.conf g;
 
-import java.util.Date;
+ mport java.ut l.Date;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.config.TierServingBoundaryEndPoint;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.earlyb rd.conf g.Serv ngRange;
+ mport com.tw ter.search.earlyb rd.conf g.T erServ ngBoundaryEndPo nt;
 
 /**
- * Time boundary information for a root cluster.
- * Used by EarlybirdTimeRangeFilter.
+ * T   boundary  nformat on for a root cluster.
+ * Used by Earlyb rdT  RangeF lter.
  */
-public class RootClusterBoundaryInfo implements ServingRange {
+publ c class RootClusterBoundary nfo  mple nts Serv ngRange {
 
-  private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
+  pr vate f nal T erServ ngBoundaryEndPo nt serv ngRangeS nce;
+  pr vate f nal T erServ ngBoundaryEndPo nt serv ngRangeMax;
 
   /**
-   * Build a time boundary information
+   * Bu ld a t   boundary  nformat on
    */
-  public RootClusterBoundaryInfo(
+  publ c RootClusterBoundary nfo(
       Date startDate,
       Date clusterEndDate,
-      String sinceIdBoundaryString,
-      String maxIdBoundaryString,
+      Str ng s nce dBoundaryStr ng,
+      Str ng max dBoundaryStr ng,
       Clock clock) {
-    this.servingRangeSince = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(sinceIdBoundaryString, startDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdBoundaryString, clusterEndDate, clock);
+    t .serv ngRangeS nce = T erServ ngBoundaryEndPo nt
+        .newT erServ ngBoundaryEndPo nt(s nce dBoundaryStr ng, startDate, clock);
+    t .serv ngRangeMax = T erServ ngBoundaryEndPo nt
+        .newT erServ ngBoundaryEndPo nt(max dBoundaryStr ng, clusterEndDate, clock);
   }
 
-  public long getServingRangeSinceId() {
-    return servingRangeSince.getBoundaryTweetId();
+  publ c long getServ ngRangeS nce d() {
+    return serv ngRangeS nce.getBoundaryT et d();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  publ c long getServ ngRangeMax d() {
+    return serv ngRangeMax.getBoundaryT et d();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return servingRangeSince.getBoundaryTimeSecondsFromEpoch();
+  publ c long getServ ngRangeS nceT  SecondsFromEpoch() {
+    return serv ngRangeS nce.getBoundaryT  SecondsFromEpoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+  publ c long getServ ngRangeUnt lT  SecondsFromEpoch() {
+    return serv ngRangeMax.getBoundaryT  SecondsFromEpoch();
   }
 }

@@ -1,68 +1,68 @@
-WITH
+W TH
   vars AS (
     SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date,
-      TIMESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS no_older_tweets_than_date
+      T MESTAMP("{START_T ME}") AS start_date,
+      T MESTAMP("{END_T ME}") AS end_date,
+      T MESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS no_older_t ets_than_date
   ),
 
-  -- Get raw user-tweet interaction events from UUA
-  actions_unioned AS (
+  -- Get raw user-t et  nteract on events from UUA
+  act ons_un oned AS (
     SELECT
-      userIdentifier.userId AS userId,
-      item.tweetInfo.actionTweetId AS tweetId,
-      eventMetadata.sourceTimestampMs AS tsMillis,
+      user dent f er.user d AS user d,
+       em.t et nfo.act onT et d AS t et d,
+      event tadata.s ceT  stampMs AS tsM ll s,
       CASE
-          WHEN actionType = "ServerTweetFav" THEN 1
-          WHEN actionType = "ServerTweetUnfav" THEN -1
-      END AS favAction,
+          WHEN act onType = "ServerT etFav" THEN 1
+          WHEN act onType = "ServerT etUnfav" THEN -1
+      END AS favAct on,
       CASE
-          WHEN actionType = "ServerTweetReply" THEN 1
-          WHEN actionType = "ServerTweetDelete" THEN -1
-      END AS replyAction,
+          WHEN act onType = "ServerT etReply" THEN 1
+          WHEN act onType = "ServerT etDelete" THEN -1
+      END AS replyAct on,
       CASE
-          WHEN actionType = "ServerTweetRetweet" THEN 1
-          WHEN actionType = "ServerTweetUnretweet" THEN -1
-      END AS retweetAction,
-      IF(actionType = "ClientTweetVideoPlayback50", 1, NULL) AS videoPlayback50Action
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date) 
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
-      AND (actionType = "ServerTweetReply"
-              OR actionType = "ServerTweetRetweet"
-              OR actionType = "ServerTweetFav"
-              OR actionType = "ServerTweetUnfav"
-              OR actionType = "ClientTweetVideoPlayback50"
+          WHEN act onType = "ServerT etRet et" THEN 1
+          WHEN act onType = "ServerT etUnret et" THEN -1
+      END AS ret etAct on,
+       F(act onType = "Cl entT etV deoPlayback50", 1, NULL) AS v deoPlayback50Act on
+    FROM `twttr-bql-un f ed-prod.un f ed_user_act ons_engage nts.stream ng_un f ed_user_act ons_engage nts`, vars
+    WHERE (DATE(dateH ) >= DATE(vars.start_date) AND DATE(dateH ) <= DATE(vars.end_date))
+      AND event tadata.s ceT  stampMs >= UN X_M LL S(vars.start_date) 
+      AND event tadata.s ceT  stampMs <= UN X_M LL S(vars.end_date)
+      AND (act onType = "ServerT etReply"
+              OR act onType = "ServerT etRet et"
+              OR act onType = "ServerT etFav"
+              OR act onType = "ServerT etUnfav"
+              OR act onType = "Cl entT etV deoPlayback50"
            )
   ),
 
-  user_tweet_action_pairs AS (
+  user_t et_act on_pa rs AS (
     SELECT
-      userId,
-      tweetId,
-      -- Get the most recent fav event
-      ARRAY_AGG(IF(favAction IS NOT NULL, STRUCT(favAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetFav,
-      -- Get the most recent reply / unreply event
-      ARRAY_AGG(IF(replyAction IS NOT NULL,STRUCT(replyAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetReply,
-      -- Get the most recent retweet / unretweet event
-      ARRAY_AGG(IF(retweetAction IS NOT NULL, STRUCT(retweetAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetRetweet,
-      -- Get the most recent video view event
-      ARRAY_AGG(IF(videoPlayback50Action IS NOT NULL, STRUCT(videoPlayback50Action AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ClientTweetVideoPlayback50
-    FROM actions_unioned
-    GROUP BY userId, tweetId
+      user d,
+      t et d,
+      -- Get t  most recent fav event
+      ARRAY_AGG( F(favAct on  S NOT NULL, STRUCT(favAct on AS engaged, tsM ll s), NULL)  GNORE NULLS ORDER BY tsM ll s DESC L M T 1)[OFFSET(0)] as ServerT etFav,
+      -- Get t  most recent reply / unreply event
+      ARRAY_AGG( F(replyAct on  S NOT NULL,STRUCT(replyAct on AS engaged, tsM ll s), NULL)  GNORE NULLS ORDER BY tsM ll s DESC L M T 1)[OFFSET(0)] as ServerT etReply,
+      -- Get t  most recent ret et / unret et event
+      ARRAY_AGG( F(ret etAct on  S NOT NULL, STRUCT(ret etAct on AS engaged, tsM ll s), NULL)  GNORE NULLS ORDER BY tsM ll s DESC L M T 1)[OFFSET(0)] as ServerT etRet et,
+      -- Get t  most recent v deo v ew event
+      ARRAY_AGG( F(v deoPlayback50Act on  S NOT NULL, STRUCT(v deoPlayback50Act on AS engaged, tsM ll s), NULL)  GNORE NULLS ORDER BY tsM ll s DESC L M T 1)[OFFSET(0)] as Cl entT etV deoPlayback50
+    FROM act ons_un oned
+    GROUP BY user d, t et d
   )
 
--- Combine signals
--- Apply age filter in this step
+-- Comb ne s gnals
+-- Apply age f lter  n t  step
 SELECT
-  userId,
-  tweetId,
-  CAST({CONTRIBUTING_ACTION_TYPE_STR}.tsMillis AS FLOAT64) AS tsMillis
-FROM user_tweet_action_pairs, vars
+  user d,
+  t et d,
+  CAST({CONTR BUT NG_ACT ON_TYPE_STR}.tsM ll s AS FLOAT64) AS tsM ll s
+FROM user_t et_act on_pa rs, vars
 WHERE
-    {CONTRIBUTING_ACTION_TYPE_STR}.engaged = 1
+    {CONTR BUT NG_ACT ON_TYPE_STR}.engaged = 1
    AND
-    ({SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR})
-   AND timestamp_millis((1288834974657 +
-            ((tweetId  & 9223372036850581504) >> 22))) >= vars.no_older_tweets_than_date
+    ({SUPPLEMENTAL_ACT ON_TYPES_ENGAGEMENT_STR})
+   AND t  stamp_m ll s((1288834974657 +
+            ((t et d  & 9223372036850581504) >> 22))) >= vars.no_older_t ets_than_date

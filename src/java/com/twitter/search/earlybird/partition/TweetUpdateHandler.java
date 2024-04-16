@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.SortedMap;
+ mport java.ut l.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
 
 /**
- * This class handles incoming updates to Tweets in the index.
+ * T  class handles  ncom ng updates to T ets  n t   ndex.
  *
- * Much of the logic deals with retries. It is very common to get an update before we have gotten
- * the Tweet that the update should be applied to. In this case, we queue the update for up to a
- * minute, so that we give the original Tweet the chance to be written to the index.
+ * Much of t  log c deals w h retr es.    s very common to get an update before   have gotten
+ * t  T et that t  update should be appl ed to.  n t  case,   queue t  update for up to a
+ * m nute, so that   g ve t  or g nal T et t  chance to be wr ten to t   ndex.
  */
-public class TweetUpdateHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetUpdateHandler.class);
-  private static final Logger UPDATES_ERRORS_LOG =
-          LoggerFactory.getLogger(TweetUpdateHandler.class.getName() + ".UpdatesErrors");
+publ c class T etUpdateHandler {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etUpdateHandler.class);
+  pr vate stat c f nal Logger UPDATES_ERRORS_LOG =
+          LoggerFactory.getLogger(T etUpdateHandler.class.getNa () + ".UpdatesErrors");
 
-  private static final String STATS_PREFIX = "tweet_update_handler_";
+  pr vate stat c f nal Str ng STATS_PREF X = "t et_update_handler_";
 
-  private IndexingResultCounts indexingResultCounts;
-  private static final SearchRateCounter INCOMING_EVENT =
-          SearchRateCounter.export(STATS_PREFIX + "incoming_event");
-  private static final SearchRateCounter QUEUED_FOR_RETRY =
-      SearchRateCounter.export(STATS_PREFIX + "queued_for_retry");
-  private static final SearchRateCounter DROPPED_OLD_EVENT =
-      SearchRateCounter.export(STATS_PREFIX + "dropped_old_event");
-  private static final SearchRateCounter DROPPED_INCOMING_EVENT =
-      SearchRateCounter.export(STATS_PREFIX + "dropped_incoming_event");
-  private static final SearchRateCounter DROPPED_CLEANUP_EVENT =
-      SearchRateCounter.export(STATS_PREFIX + "dropped_cleanup_event");
-  private static final SearchRateCounter DROPPED_NOT_RETRYABLE_EVENT =
-          SearchRateCounter.export(STATS_PREFIX + "dropped_not_retryable_event");
-  private static final SearchRateCounter PICKED_TO_RETRY =
-      SearchRateCounter.export(STATS_PREFIX + "picked_to_retry");
-  private static final SearchRateCounter INDEXED_EVENT =
-          SearchRateCounter.export(STATS_PREFIX + "indexed_event");
+  pr vate  ndex ngResultCounts  ndex ngResultCounts;
+  pr vate stat c f nal SearchRateCounter  NCOM NG_EVENT =
+          SearchRateCounter.export(STATS_PREF X + " ncom ng_event");
+  pr vate stat c f nal SearchRateCounter QUEUED_FOR_RETRY =
+      SearchRateCounter.export(STATS_PREF X + "queued_for_retry");
+  pr vate stat c f nal SearchRateCounter DROPPED_OLD_EVENT =
+      SearchRateCounter.export(STATS_PREF X + "dropped_old_event");
+  pr vate stat c f nal SearchRateCounter DROPPED_ NCOM NG_EVENT =
+      SearchRateCounter.export(STATS_PREF X + "dropped_ ncom ng_event");
+  pr vate stat c f nal SearchRateCounter DROPPED_CLEANUP_EVENT =
+      SearchRateCounter.export(STATS_PREF X + "dropped_cleanup_event");
+  pr vate stat c f nal SearchRateCounter DROPPED_NOT_RETRYABLE_EVENT =
+          SearchRateCounter.export(STATS_PREF X + "dropped_not_retryable_event");
+  pr vate stat c f nal SearchRateCounter P CKED_TO_RETRY =
+      SearchRateCounter.export(STATS_PREF X + "p cked_to_retry");
+  pr vate stat c f nal SearchRateCounter  NDEXED_EVENT =
+          SearchRateCounter.export(STATS_PREF X + " ndexed_event");
 
-  private static final long RETRY_TIME_THRESHOLD_MS = 60_000; // one minute.
+  pr vate stat c f nal long RETRY_T ME_THRESHOLD_MS = 60_000; // one m nute.
 
-  private final SortedMap<Long, List<ThriftVersionedEvents>> pendingUpdates = new TreeMap<>();
-  private final SegmentManager segmentManager;
-
-  /**
-   * At this time we cleaned all updates that are more than RETRY_TIME_THRESHOLD_MS old.
-   */
-  private long lastCleanedUpdatesTime = 0;
+  pr vate f nal SortedMap<Long, L st<Thr ftVers onedEvents>> pend ngUpdates = new TreeMap<>();
+  pr vate f nal Seg ntManager seg ntManager;
 
   /**
-   * The time of the most recent Tweet that we have applied an update for. We use this to
-   * determine when we should give up on retrying an update, instead of using the system clock,
-   * because we may be processing the stream from a long time ago if we are starting up or if
-   * there is lag in the Kafka topics and we want to let each update get a fair shot at being
-   * applied.
+   * At t  t     cleaned all updates that are more than RETRY_T ME_THRESHOLD_MS old.
    */
-  private long mostRecentUpdateTime = 0;
+  pr vate long lastCleanedUpdatesT   = 0;
 
-  public TweetUpdateHandler(SegmentManager segmentManager) {
-    this.segmentManager = segmentManager;
-    this.indexingResultCounts = new IndexingResultCounts();
+  /**
+   * T  t   of t  most recent T et that   have appl ed an update for.   use t  to
+   * determ ne w n   should g ve up on retry ng an update,  nstead of us ng t  system clock,
+   * because   may be process ng t  stream from a long t   ago  f   are start ng up or  f
+   * t re  s lag  n t  Kafka top cs and   want to let each update get a fa r shot at be ng
+   * appl ed.
+   */
+  pr vate long mostRecentUpdateT   = 0;
+
+  publ c T etUpdateHandler(Seg ntManager seg ntManager) {
+    t .seg ntManager = seg ntManager;
+    t . ndex ngResultCounts = new  ndex ngResultCounts();
   }
 
   /**
-   * Index an update to a Tweet.
+   *  ndex an update to a T et.
    */
-  public void handleTweetUpdate(ThriftVersionedEvents tve, boolean isRetry) throws IOException {
-    if (!isRetry) {
-      INCOMING_EVENT.increment();
+  publ c vo d handleT etUpdate(Thr ftVers onedEvents tve, boolean  sRetry) throws  OExcept on {
+     f (! sRetry) {
+       NCOM NG_EVENT. ncre nt();
     }
-    long id = tve.getId();
+    long  d = tve.get d();
 
-    mostRecentUpdateTime =
-        Math.max(SnowflakeIdParser.getTimestampFromTweetId(id), mostRecentUpdateTime);
+    mostRecentUpdateT   =
+        Math.max(Snowflake dParser.getT  stampFromT et d( d), mostRecentUpdateT  );
     cleanStaleUpdates();
 
-    ISegmentWriter writer = segmentManager.getSegmentWriterForID(id);
-    if (writer == null) {
-      if (segmentManager.getNumIndexedDocuments() == 0) {
-        // If we haven't indexed any tweets at all, then we shouldn't drop this update, because it
-        // might be applied to a Tweet we haven't indexed yet so queue it up for retry.
-        queueForRetry(id, tve);
+     Seg ntWr er wr er = seg ntManager.getSeg ntWr erFor D( d);
+     f (wr er == null) {
+       f (seg ntManager.getNum ndexedDocu nts() == 0) {
+        //  f   haven't  ndexed any t ets at all, t n   shouldn't drop t  update, because  
+        // m ght be appl ed to a T et   haven't  ndexed yet so queue   up for retry.
+        queueForRetry( d, tve);
       } else {
-        DROPPED_OLD_EVENT.increment();
+        DROPPED_OLD_EVENT. ncre nt();
       }
       return;
     }
 
-    SegmentWriter.Result result = writer.indexThriftVersionedEvents(tve);
-    indexingResultCounts.countResult(result);
+    Seg ntWr er.Result result = wr er. ndexThr ftVers onedEvents(tve);
+     ndex ngResultCounts.countResult(result);
 
-    if (result == ISegmentWriter.Result.FAILURE_RETRYABLE) {
-      // If the tweet hasn't arrived yet.
-      queueForRetry(id, tve);
-    } else if (result == ISegmentWriter.Result.FAILURE_NOT_RETRYABLE) {
-      DROPPED_NOT_RETRYABLE_EVENT.increment();
-      UPDATES_ERRORS_LOG.warn("Failed to apply update for tweetID {}: {}", id, tve);
-    } else if (result == ISegmentWriter.Result.SUCCESS) {
-      INDEXED_EVENT.increment();
+     f (result ==  Seg ntWr er.Result.FA LURE_RETRYABLE) {
+      //  f t  t et hasn't arr ved yet.
+      queueForRetry( d, tve);
+    } else  f (result ==  Seg ntWr er.Result.FA LURE_NOT_RETRYABLE) {
+      DROPPED_NOT_RETRYABLE_EVENT. ncre nt();
+      UPDATES_ERRORS_LOG.warn("Fa led to apply update for t et D {}: {}",  d, tve);
+    } else  f (result ==  Seg ntWr er.Result.SUCCESS) {
+       NDEXED_EVENT. ncre nt();
     }
   }
 
-  private void queueForRetry(long id, ThriftVersionedEvents tve) {
-    long ageMillis = mostRecentUpdateTime - SnowflakeIdParser.getTimestampFromTweetId(id);
-    if (ageMillis > RETRY_TIME_THRESHOLD_MS) {
-      DROPPED_INCOMING_EVENT.increment();
+  pr vate vo d queueForRetry(long  d, Thr ftVers onedEvents tve) {
+    long ageM ll s = mostRecentUpdateT   - Snowflake dParser.getT  stampFromT et d( d);
+     f (ageM ll s > RETRY_T ME_THRESHOLD_MS) {
+      DROPPED_ NCOM NG_EVENT. ncre nt();
       UPDATES_ERRORS_LOG.warn(
-              "Giving up retrying update for tweetID {}: {} because the retry time has elapsed",
-              id, tve);
+              "G v ng up retry ng update for t et D {}: {} because t  retry t   has elapsed",
+               d, tve);
       return;
     }
 
-    pendingUpdates.computeIfAbsent(id, i -> new ArrayList<>()).add(tve);
-    QUEUED_FOR_RETRY.increment();
+    pend ngUpdates.compute fAbsent( d,   -> new ArrayL st<>()).add(tve);
+    QUEUED_FOR_RETRY. ncre nt();
   }
 
-  // Every time we have processed a minute's worth of updates, remove all pending updates that are
-  // more than a minute old, relative to the most recent Tweet we have seen.
-  private void cleanStaleUpdates() {
-    long oldUpdatesThreshold = mostRecentUpdateTime - RETRY_TIME_THRESHOLD_MS;
-    if (lastCleanedUpdatesTime < oldUpdatesThreshold) {
-      SortedMap<Long, List<ThriftVersionedEvents>> droppedUpdates = pendingUpdates
-          .headMap(SnowflakeIdParser.generateValidStatusId(oldUpdatesThreshold, 0));
-      for (List<ThriftVersionedEvents> events : droppedUpdates.values()) {
-        for (ThriftVersionedEvents event : events) {
+  // Every t     have processed a m nute's worth of updates, remove all pend ng updates that are
+  // more than a m nute old, relat ve to t  most recent T et   have seen.
+  pr vate vo d cleanStaleUpdates() {
+    long oldUpdatesThreshold = mostRecentUpdateT   - RETRY_T ME_THRESHOLD_MS;
+     f (lastCleanedUpdatesT   < oldUpdatesThreshold) {
+      SortedMap<Long, L st<Thr ftVers onedEvents>> droppedUpdates = pend ngUpdates
+          . adMap(Snowflake dParser.generateVal dStatus d(oldUpdatesThreshold, 0));
+      for (L st<Thr ftVers onedEvents> events : droppedUpdates.values()) {
+        for (Thr ftVers onedEvents event : events) {
           UPDATES_ERRORS_LOG.warn(
-                  "Giving up retrying update for tweetID {}: {} because the retry time has elapsed",
-                  event.getId(), event);
+                  "G v ng up retry ng update for t et D {}: {} because t  retry t   has elapsed",
+                  event.get d(), event);
         }
-        DROPPED_CLEANUP_EVENT.increment(events.size());
+        DROPPED_CLEANUP_EVENT. ncre nt(events.s ze());
       }
       droppedUpdates.clear();
 
-      lastCleanedUpdatesTime = mostRecentUpdateTime;
+      lastCleanedUpdatesT   = mostRecentUpdateT  ;
     }
   }
 
   /**
-   * After we successfully indexed tweetID, if we have any pending updates for that tweetID, try to
-   * apply them again.
+   * After   successfully  ndexed t et D,  f   have any pend ng updates for that t et D, try to
+   * apply t m aga n.
    */
-  public void retryPendingUpdates(long tweetID) throws IOException {
-    if (pendingUpdates.containsKey(tweetID)) {
-      for (ThriftVersionedEvents update : pendingUpdates.remove(tweetID)) {
-        PICKED_TO_RETRY.increment();
-        handleTweetUpdate(update, true);
+  publ c vo d retryPend ngUpdates(long t et D) throws  OExcept on {
+     f (pend ngUpdates.conta nsKey(t et D)) {
+      for (Thr ftVers onedEvents update : pend ngUpdates.remove(t et D)) {
+        P CKED_TO_RETRY. ncre nt();
+        handleT etUpdate(update, true);
       }
     }
   }
 
-  void logState() {
-    LOG.info("TweetUpdateHandler:");
-    LOG.info(String.format("  tweets sent for indexing: %,d",
-        indexingResultCounts.getIndexingCalls()));
-    LOG.info(String.format("  non-retriable failure: %,d",
-        indexingResultCounts.getFailureNotRetriable()));
-    LOG.info(String.format("  retriable failure: %,d",
-        indexingResultCounts.getFailureRetriable()));
-    LOG.info(String.format("  successfully indexed: %,d",
-        indexingResultCounts.getIndexingSuccess()));
-    LOG.info(String.format("  queued for retry: %,d", QUEUED_FOR_RETRY.getCount()));
-    LOG.info(String.format("  dropped old events: %,d", DROPPED_OLD_EVENT.getCount()));
-    LOG.info(String.format("  dropped incoming events: %,d", DROPPED_INCOMING_EVENT.getCount()));
-    LOG.info(String.format("  dropped cleanup events: %,d", DROPPED_CLEANUP_EVENT.getCount()));
-    LOG.info(String.format("  picked events to retry: %,d", PICKED_TO_RETRY.getCount()));
+  vo d logState() {
+    LOG. nfo("T etUpdateHandler:");
+    LOG. nfo(Str ng.format("  t ets sent for  ndex ng: %,d",
+         ndex ngResultCounts.get ndex ngCalls()));
+    LOG. nfo(Str ng.format("  non-retr able fa lure: %,d",
+         ndex ngResultCounts.getFa lureNotRetr able()));
+    LOG. nfo(Str ng.format("  retr able fa lure: %,d",
+         ndex ngResultCounts.getFa lureRetr able()));
+    LOG. nfo(Str ng.format("  successfully  ndexed: %,d",
+         ndex ngResultCounts.get ndex ngSuccess()));
+    LOG. nfo(Str ng.format("  queued for retry: %,d", QUEUED_FOR_RETRY.getCount()));
+    LOG. nfo(Str ng.format("  dropped old events: %,d", DROPPED_OLD_EVENT.getCount()));
+    LOG. nfo(Str ng.format("  dropped  ncom ng events: %,d", DROPPED_ NCOM NG_EVENT.getCount()));
+    LOG. nfo(Str ng.format("  dropped cleanup events: %,d", DROPPED_CLEANUP_EVENT.getCount()));
+    LOG. nfo(Str ng.format("  p cked events to retry: %,d", P CKED_TO_RETRY.getCount()));
   }
 }

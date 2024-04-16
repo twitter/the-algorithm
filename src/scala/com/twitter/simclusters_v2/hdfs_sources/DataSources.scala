@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces
 
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import java.util.TimeZone
+ mport com.tw ter.scald ng.DateOps
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.s mclusters_v2.thr ftscala.NormsAndCounts
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserAndNe ghbors
+ mport java.ut l.T  Zone
 
-object DataSources {
+object DataS ces {
 
   /**
-   * Reads production normalized graph data from atla-proc
+   * Reads product on normal zed graph data from atla-proc
    */
-  def userUserNormalizedGraphSource(implicit dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
+  def userUserNormal zedGraphS ce( mpl c  dateRange: DateRange): TypedP pe[UserAndNe ghbors] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(14)(DateOps.UTC))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshotNoOlderThan(UserUserNormal zedGraphScalaDataset, Days(14)(DateOps.UTC))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 
   /**
-   * Reads production user norms and counts data from atla-proc
+   * Reads product on user norms and counts data from atla-proc
    */
   def userNormsAndCounts(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[NormsAndCounts] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[NormsAndCounts] = {
     DAL
       .readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset, dateRange.prepend(Days(14)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 
 }

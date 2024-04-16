@@ -1,114 +1,114 @@
-package com.twitter
+package com.tw ter
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.gizmoduck.thriftscala.QueryFields
+ mport com.tw ter. d aserv ces.commons.thr ftscala. d aKey
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.g zmoduck.thr ftscala.QueryF elds
 
-package object tweetypie {
-  // common imports that many classes need, will probably expand this list in the future.
-  type Logger = com.twitter.util.logging.Logger
-  val Logger: com.twitter.util.logging.Logger.type = com.twitter.util.logging.Logger
-  type StatsReceiver = com.twitter.finagle.stats.StatsReceiver
-  val TweetLenses: com.twitter.tweetypie.util.TweetLenses.type =
-    com.twitter.tweetypie.util.TweetLenses
+package object t etyp e {
+  // common  mports that many classes need, w ll probably expand t  l st  n t  future.
+  type Logger = com.tw ter.ut l.logg ng.Logger
+  val Logger: com.tw ter.ut l.logg ng.Logger.type = com.tw ter.ut l.logg ng.Logger
+  type StatsRece ver = com.tw ter.f nagle.stats.StatsRece ver
+  val T etLenses: com.tw ter.t etyp e.ut l.T etLenses.type =
+    com.tw ter.t etyp e.ut l.T etLenses
 
-  type Future[A] = com.twitter.util.Future[A]
-  val Future: com.twitter.util.Future.type = com.twitter.util.Future
+  type Future[A] = com.tw ter.ut l.Future[A]
+  val Future: com.tw ter.ut l.Future.type = com.tw ter.ut l.Future
 
-  type Duration = com.twitter.util.Duration
-  val Duration: com.twitter.util.Duration.type = com.twitter.util.Duration
+  type Durat on = com.tw ter.ut l.Durat on
+  val Durat on: com.tw ter.ut l.Durat on.type = com.tw ter.ut l.Durat on
 
-  type Time = com.twitter.util.Time
-  val Time: com.twitter.util.Time.type = com.twitter.util.Time
+  type T   = com.tw ter.ut l.T  
+  val T  : com.tw ter.ut l.T  .type = com.tw ter.ut l.T  
 
-  type Try[A] = com.twitter.util.Try[A]
-  val Try: com.twitter.util.Try.type = com.twitter.util.Try
+  type Try[A] = com.tw ter.ut l.Try[A]
+  val Try: com.tw ter.ut l.Try.type = com.tw ter.ut l.Try
 
-  type Throw[A] = com.twitter.util.Throw[A]
-  val Throw: com.twitter.util.Throw.type = com.twitter.util.Throw
+  type Throw[A] = com.tw ter.ut l.Throw[A]
+  val Throw: com.tw ter.ut l.Throw.type = com.tw ter.ut l.Throw
 
-  type Return[A] = com.twitter.util.Return[A]
-  val Return: com.twitter.util.Return.type = com.twitter.util.Return
+  type Return[A] = com.tw ter.ut l.Return[A]
+  val Return: com.tw ter.ut l.Return.type = com.tw ter.ut l.Return
 
-  type Gate[T] = com.twitter.servo.util.Gate[T]
-  val Gate: com.twitter.servo.util.Gate.type = com.twitter.servo.util.Gate
+  type Gate[T] = com.tw ter.servo.ut l.Gate[T]
+  val Gate: com.tw ter.servo.ut l.Gate.type = com.tw ter.servo.ut l.Gate
 
-  type Effect[A] = com.twitter.servo.util.Effect[A]
-  val Effect: com.twitter.servo.util.Effect.type = com.twitter.servo.util.Effect
+  type Effect[A] = com.tw ter.servo.ut l.Effect[A]
+  val Effect: com.tw ter.servo.ut l.Effect.type = com.tw ter.servo.ut l.Effect
 
-  type FutureArrow[A, B] = com.twitter.servo.util.FutureArrow[A, B]
-  val FutureArrow: com.twitter.servo.util.FutureArrow.type = com.twitter.servo.util.FutureArrow
+  type FutureArrow[A, B] = com.tw ter.servo.ut l.FutureArrow[A, B]
+  val FutureArrow: com.tw ter.servo.ut l.FutureArrow.type = com.tw ter.servo.ut l.FutureArrow
 
-  type FutureEffect[A] = com.twitter.servo.util.FutureEffect[A]
-  val FutureEffect: com.twitter.servo.util.FutureEffect.type = com.twitter.servo.util.FutureEffect
+  type FutureEffect[A] = com.tw ter.servo.ut l.FutureEffect[A]
+  val FutureEffect: com.tw ter.servo.ut l.FutureEffect.type = com.tw ter.servo.ut l.FutureEffect
 
-  type Lens[A, B] = com.twitter.servo.data.Lens[A, B]
-  val Lens: com.twitter.servo.data.Lens.type = com.twitter.servo.data.Lens
+  type Lens[A, B] = com.tw ter.servo.data.Lens[A, B]
+  val Lens: com.tw ter.servo.data.Lens.type = com.tw ter.servo.data.Lens
 
-  type Mutation[A] = com.twitter.servo.data.Mutation[A]
-  val Mutation: com.twitter.servo.data.Mutation.type = com.twitter.servo.data.Mutation
+  type Mutat on[A] = com.tw ter.servo.data.Mutat on[A]
+  val Mutat on: com.tw ter.servo.data.Mutat on.type = com.tw ter.servo.data.Mutat on
 
-  type User = com.twitter.gizmoduck.thriftscala.User
-  val User: com.twitter.gizmoduck.thriftscala.User.type = com.twitter.gizmoduck.thriftscala.User
-  type Safety = com.twitter.gizmoduck.thriftscala.Safety
-  val Safety: com.twitter.gizmoduck.thriftscala.Safety.type =
-    com.twitter.gizmoduck.thriftscala.Safety
-  type UserField = com.twitter.gizmoduck.thriftscala.QueryFields
-  val UserField: QueryFields.type = com.twitter.gizmoduck.thriftscala.QueryFields
+  type User = com.tw ter.g zmoduck.thr ftscala.User
+  val User: com.tw ter.g zmoduck.thr ftscala.User.type = com.tw ter.g zmoduck.thr ftscala.User
+  type Safety = com.tw ter.g zmoduck.thr ftscala.Safety
+  val Safety: com.tw ter.g zmoduck.thr ftscala.Safety.type =
+    com.tw ter.g zmoduck.thr ftscala.Safety
+  type UserF eld = com.tw ter.g zmoduck.thr ftscala.QueryF elds
+  val UserF eld: QueryF elds.type = com.tw ter.g zmoduck.thr ftscala.QueryF elds
 
-  type Tweet = thriftscala.Tweet
-  val Tweet: com.twitter.tweetypie.thriftscala.Tweet.type = thriftscala.Tweet
+  type T et = thr ftscala.T et
+  val T et: com.tw ter.t etyp e.thr ftscala.T et.type = thr ftscala.T et
 
-  type ThriftTweetService = TweetServiceInternal.MethodPerEndpoint
+  type Thr ftT etServ ce = T etServ ce nternal. thodPerEndpo nt
 
-  type TweetId = Long
-  type UserId = Long
-  type MediaId = Long
-  type AppId = Long
-  type KnownDeviceToken = String
-  type ConversationId = Long
-  type CommunityId = Long
-  type PlaceId = String
-  type FieldId = Short
+  type T et d = Long
+  type User d = Long
+  type  d a d = Long
+  type App d = Long
+  type KnownDev ceToken = Str ng
+  type Conversat on d = Long
+  type Commun y d = Long
+  type Place d = Str ng
+  type F eld d = Short
   type Count = Long
-  type CountryCode = String // ISO 3166-1-alpha-2
-  type CreativesContainerId = Long
+  type CountryCode = Str ng //  SO 3166-1-alpha-2
+  type Creat vesConta ner d = Long
 
-  def hasGeo(tweet: Tweet): Boolean =
-    TweetLenses.placeId.get(tweet).nonEmpty ||
-      TweetLenses.geoCoordinates.get(tweet).nonEmpty
+  def hasGeo(t et: T et): Boolean =
+    T etLenses.place d.get(t et).nonEmpty ||
+      T etLenses.geoCoord nates.get(t et).nonEmpty
 
-  def getUserId(tweet: Tweet): UserId = TweetLenses.userId.get(tweet)
-  def getText(tweet: Tweet): String = TweetLenses.text.get(tweet)
-  def getCreatedAt(tweet: Tweet): Long = TweetLenses.createdAt.get(tweet)
-  def getCreatedVia(tweet: Tweet): String = TweetLenses.createdVia.get(tweet)
-  def getReply(tweet: Tweet): Option[Reply] = TweetLenses.reply.get(tweet)
-  def getDirectedAtUser(tweet: Tweet): Option[DirectedAtUser] =
-    TweetLenses.directedAtUser.get(tweet)
-  def getShare(tweet: Tweet): Option[Share] = TweetLenses.share.get(tweet)
-  def getQuotedTweet(tweet: Tweet): Option[QuotedTweet] = TweetLenses.quotedTweet.get(tweet)
-  def getUrls(tweet: Tweet): Seq[UrlEntity] = TweetLenses.urls.get(tweet)
-  def getMedia(tweet: Tweet): Seq[MediaEntity] = TweetLenses.media.get(tweet)
-  def getMediaKeys(tweet: Tweet): Seq[MediaKey] = TweetLenses.mediaKeys.get(tweet)
-  def getMentions(tweet: Tweet): Seq[MentionEntity] = TweetLenses.mentions.get(tweet)
-  def getCashtags(tweet: Tweet): Seq[CashtagEntity] = TweetLenses.cashtags.get(tweet)
-  def getHashtags(tweet: Tweet): Seq[HashtagEntity] = TweetLenses.hashtags.get(tweet)
-  def getMediaTagMap(tweet: Tweet): Map[MediaId, Seq[MediaTag]] = TweetLenses.mediaTagMap.get(tweet)
-  def isRetweet(tweet: Tweet): Boolean = tweet.coreData.flatMap(_.share).nonEmpty
-  def isSelfReply(authorUserId: UserId, r: Reply): Boolean =
-    r.inReplyToStatusId.isDefined && (r.inReplyToUserId == authorUserId)
-  def isSelfReply(tweet: Tweet): Boolean = {
-    getReply(tweet).exists { r => isSelfReply(getUserId(tweet), r) }
+  def getUser d(t et: T et): User d = T etLenses.user d.get(t et)
+  def getText(t et: T et): Str ng = T etLenses.text.get(t et)
+  def getCreatedAt(t et: T et): Long = T etLenses.createdAt.get(t et)
+  def getCreatedV a(t et: T et): Str ng = T etLenses.createdV a.get(t et)
+  def getReply(t et: T et): Opt on[Reply] = T etLenses.reply.get(t et)
+  def getD rectedAtUser(t et: T et): Opt on[D rectedAtUser] =
+    T etLenses.d rectedAtUser.get(t et)
+  def getShare(t et: T et): Opt on[Share] = T etLenses.share.get(t et)
+  def getQuotedT et(t et: T et): Opt on[QuotedT et] = T etLenses.quotedT et.get(t et)
+  def getUrls(t et: T et): Seq[UrlEnt y] = T etLenses.urls.get(t et)
+  def get d a(t et: T et): Seq[ d aEnt y] = T etLenses. d a.get(t et)
+  def get d aKeys(t et: T et): Seq[ d aKey] = T etLenses. d aKeys.get(t et)
+  def get nt ons(t et: T et): Seq[ nt onEnt y] = T etLenses. nt ons.get(t et)
+  def getCashtags(t et: T et): Seq[CashtagEnt y] = T etLenses.cashtags.get(t et)
+  def getHashtags(t et: T et): Seq[HashtagEnt y] = T etLenses.hashtags.get(t et)
+  def get d aTagMap(t et: T et): Map[ d a d, Seq[ d aTag]] = T etLenses. d aTagMap.get(t et)
+  def  sRet et(t et: T et): Boolean = t et.coreData.flatMap(_.share).nonEmpty
+  def  sSelfReply(authorUser d: User d, r: Reply): Boolean =
+    r. nReplyToStatus d. sDef ned && (r. nReplyToUser d == authorUser d)
+  def  sSelfReply(t et: T et): Boolean = {
+    getReply(t et).ex sts { r =>  sSelfReply(getUser d(t et), r) }
   }
-  def getConversationId(tweet: Tweet): Option[TweetId] = TweetLenses.conversationId.get(tweet)
-  def getSelfThreadMetadata(tweet: Tweet): Option[SelfThreadMetadata] =
-    TweetLenses.selfThreadMetadata.get(tweet)
-  def getCardReference(tweet: Tweet): Option[CardReference] = TweetLenses.cardReference.get(tweet)
-  def getEscherbirdAnnotations(tweet: Tweet): Option[EscherbirdEntityAnnotations] =
-    TweetLenses.escherbirdEntityAnnotations.get(tweet)
-  def getCommunities(tweet: Tweet): Option[Communities] = TweetLenses.communities.get(tweet)
-  def getTimestamp(tweet: Tweet): Time =
-    if (SnowflakeId.isSnowflakeId(tweet.id)) SnowflakeId(tweet.id).time
-    else Time.fromSeconds(getCreatedAt(tweet).toInt)
+  def getConversat on d(t et: T et): Opt on[T et d] = T etLenses.conversat on d.get(t et)
+  def getSelfThread tadata(t et: T et): Opt on[SelfThread tadata] =
+    T etLenses.selfThread tadata.get(t et)
+  def getCardReference(t et: T et): Opt on[CardReference] = T etLenses.cardReference.get(t et)
+  def getEsc rb rdAnnotat ons(t et: T et): Opt on[Esc rb rdEnt yAnnotat ons] =
+    T etLenses.esc rb rdEnt yAnnotat ons.get(t et)
+  def getCommun  es(t et: T et): Opt on[Commun  es] = T etLenses.commun  es.get(t et)
+  def getT  stamp(t et: T et): T   =
+     f (Snowflake d. sSnowflake d(t et. d)) Snowflake d(t et. d).t  
+    else T  .fromSeconds(getCreatedAt(t et).to nt)
 }

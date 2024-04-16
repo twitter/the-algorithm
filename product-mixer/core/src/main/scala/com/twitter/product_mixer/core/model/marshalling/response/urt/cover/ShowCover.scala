@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover.FullCoverEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover.HalfCoverEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Cover
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.FullCover.FullCoverEntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.HalfCover.HalfCoverEntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
 
 object HalfCover {
-  val HalfCoverEntryNamespace = EntryNamespace("half-cover")
+  val HalfCoverEntryNa space = EntryNa space("half-cover")
 }
 case class HalfCover(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
   content: HalfCoverContent)
     extends Cover {
 
-  override val entryNamespace: EntryNamespace = HalfCoverEntryNamespace
+  overr de val entryNa space: EntryNa space = HalfCoverEntryNa space
 
-  // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // Note that sort  ndex  s not used for Covers, as t y are not T  l neEntry and do not have entry d
+  overr de def w hSort ndex(newSort ndex: Long): T  l neEntry =
+    copy(sort ndex = So (newSort ndex))
 
   // Not used for covers
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  overr de def feedbackAct on nfo: Opt on[FeedbackAct on nfo] = None
 }
 
 object FullCover {
-  val FullCoverEntryNamespace = EntryNamespace("full-cover")
+  val FullCoverEntryNa space = EntryNa space("full-cover")
 }
 case class FullCover(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
   content: FullCoverContent)
     extends Cover {
 
-  override val entryNamespace: EntryNamespace = FullCoverEntryNamespace
+  overr de val entryNa space: EntryNa space = FullCoverEntryNa space
 
-  // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // Note that sort  ndex  s not used for Covers, as t y are not T  l neEntry and do not have entry d
+  overr de def w hSort ndex(newSort ndex: Long): T  l neEntry =
+    copy(sort ndex = So (newSort ndex))
 
   // Not used for covers
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  overr de def feedbackAct on nfo: Opt on[FeedbackAct on nfo] = None
 }

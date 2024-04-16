@@ -1,702 +1,702 @@
-package com.twitter.search.common.schema.earlybird;
+package com.tw ter.search.common.sc ma.earlyb rd;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.AnalyzerFactory;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.ImmutableSchema;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.AnalyzerFactory;
+ mport com.tw ter.search.common.sc ma.Dynam cSc ma;
+ mport com.tw ter.search.common.sc ma. mmutableSc ma;
+ mport com.tw ter.search.common.sc ma.Sc maBu lder;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFeatureUpdateConstra nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftSc ma;
 
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.BLINK_FAVORITE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.BLINK_QUOTE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.BLINK_REPLY_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.BLINK_RETWEET_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.DECAYED_FAVORITE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.DECAYED_QUOTE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.DECAYED_REPLY_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.DECAYED_RETWEET_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_FEATURE_UNUSED_BITS_0_24_8;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_16;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_17;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_18;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_19;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_20;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_FAVORITE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_QUOTE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_REPLY_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_RETWEET_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAVORITE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAVORITE_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CARD_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_EXPANDO_CARD_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_LINK_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_MULTIPLE_MEDIA_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_NEWS_URL_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PERISCOPE_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_QUOTE_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_TREND_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VINE_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_NULLCAST_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_OFFENSIVE_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_REPLY_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_RETWEET_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_SENSITIVE_CONTENT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_TRENDING_NOW_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_USER_BOT_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_USER_NEW_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_USER_NSFW_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.IS_USER_SPAM_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_ABUSIVE_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_ABUSIVE_HI_RCL_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_DUP_CONTENT_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_NSFW_HI_PRC_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_NSFW_HI_RCL_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_SPAM_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LABEL_SPAM_HI_RCL_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LANGUAGE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LAST_FAVORITE_SINCE_CREATION_HRS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LAST_QUOTE_SINCE_CREATION_HRS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LAST_REPLY_SINCE_CREATION_HRS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LAST_RETWEET_SINCE_CREATION_HRS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.LINK_LANGUAGE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_HASHTAGS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_HASHTAGS_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_MENTIONS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_MENTIONS_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_STOCKS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PARUS_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PBLOCK_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_EXISTS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_HAS_BEEN_FEATURED;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_IS_CURRENTLY_FEATURED;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_IS_FROM_QUALITY_SOURCE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_IS_LIVE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PREV_USER_TWEET_ENGAGEMENT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PROFILE_IS_EGG_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.P_REPORTED_TWEET_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.P_SPAMMY_TWEET_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.QUOTE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REPLY_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REPLY_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TOXICITY_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TWEET_SIGNATURE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.USER_REPUTATION;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_VIEW_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.BL NK_FAVOR TE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.BL NK_QUOTE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.BL NK_REPLY_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.BL NK_RETWEET_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.COMPOSER_SOURCE_ S_CAMERA_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.DECAYED_FAVOR TE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.DECAYED_QUOTE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.DECAYED_REPLY_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.DECAYED_RETWEET_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EMBEDS_ MPRESS ON_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EMBEDS_ MPRESS ON_COUNT_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EMBEDS_URL_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EMBEDS_URL_COUNT_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_1;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_3;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_4;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_FEATURE_UNUSED_B TS_0_24_8;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_12_30_2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_13_30_2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_14_10_22;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_16;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_17;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_18;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_19;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_20;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_4_31_1;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.EXTENDED_TEST_FEATURE_UNUSED_B TS_7_6_26;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FAKE_FAVOR TE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FAKE_QUOTE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FAKE_REPLY_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FAKE_RETWEET_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FAVOR TE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FAVOR TE_COUNT_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FROM_BLUE_VER F ED_ACCOUNT_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.FROM_VER F ED_ACCOUNT_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_CARD_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_CONSUMER_V DEO_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_EXPANDO_CARD_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_L NK_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_MULT PLE_HASHTAGS_OR_TRENDS_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_MULT PLE_MED A_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_NAT VE_ MAGE_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_NEWS_URL_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_PER SCOPE_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_PRO_V DEO_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_QUOTE_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_TREND_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V DEO_URL_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V NE_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V S BLE_L NK_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_NULLCAST_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_OFFENS VE_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_REPLY_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_RETWEET_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_SENS T VE_CONTENT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_TREND NG_NOW_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_USER_BOT_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_USER_NEW_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_USER_NSFW_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_USER_SPAM_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_ABUS VE_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_ABUS VE_H _RCL_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_DUP_CONTENT_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_NSFW_H _PRC_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_NSFW_H _RCL_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_SPAM_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LABEL_SPAM_H _RCL_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LANGUAGE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LAST_FAVOR TE_S NCE_CREAT ON_HRS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LAST_QUOTE_S NCE_CREAT ON_HRS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LAST_REPLY_S NCE_CREAT ON_HRS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.LAST_RETWEET_S NCE_CREAT ON_HRS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.L NK_LANGUAGE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NORMAL ZED_FAVOR TE_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NORMAL ZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NORMAL ZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NUM_HASHTAGS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NUM_HASHTAGS_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NUM_MENT ONS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NUM_MENT ONS_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.NUM_STOCKS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PARUS_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PBLOCK_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PER SCOPE_EX STS;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PER SCOPE_HAS_BEEN_FEATURED;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PER SCOPE_ S_CURRENTLY_FEATURED;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PER SCOPE_ S_FROM_QUAL TY_SOURCE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PER SCOPE_ S_L VE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PREV_USER_TWEET_ENGAGEMENT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.PROF LE_ S_EGG_FLAG;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.P_REPORTED_TWEET_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.P_SPAMMY_TWEET_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.QUOTE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.REPLY_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.REPLY_COUNT_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.RETWEET_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.RETWEET_COUNT_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.SPAMMY_TWEET_CONTENT_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.TEXT_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.TOX C TY_SCORE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.TWEET_S GNATURE;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.USER_REPUTAT ON;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.V DEO_V EW_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.V DEO_V EW_COUNT_V2;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.V S BLE_TOKEN_RAT O;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.WE GHTED_FAVOR TE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.WE GHTED_QUOTE_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.WE GHTED_REPLY_COUNT;
+ mport stat c com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant.WE GHTED_RETWEET_COUNT;
 
 /**
- * Field configurations for Earlybird.
+ * F eld conf gurat ons for Earlyb rd.
  */
-public final class EarlybirdSchemaCreateTool {
-  // How many times a schema is built
-  private static final SearchCounter SCHEMA_BUILD_COUNT =
-      SearchCounter.export("schema_build_count");
+publ c f nal class Earlyb rdSc maCreateTool {
+  // How many t  s a sc ma  s bu lt
+  pr vate stat c f nal SearchCounter SCHEMA_BU LD_COUNT =
+      SearchCounter.export("sc ma_bu ld_count");
 
-  // Number of integers for the column of ENCODED_TWEET_FEATURES_FIELD.
-  @VisibleForTesting
-  public static final int NUMBER_OF_INTEGERS_FOR_FEATURES = 5;
+  // Number of  ntegers for t  column of ENCODED_TWEET_FEATURES_F ELD.
+  @V s bleForTest ng
+  publ c stat c f nal  nt NUMBER_OF_ NTEGERS_FOR_FEATURES = 5;
 
-  // Number of integers for the column of EXTENDED_ENCODED_TWEET_FEATURES_FIELD.
+  // Number of  ntegers for t  column of EXTENDED_ENCODED_TWEET_FEATURES_F ELD.
   // extra 80 bytes
-  // In realtime cluster, assuming 19 segments total, and 8388608 docs per segment
-  // this would amount to about 12.75GB of memory needed
+  //  n realt   cluster, assum ng 19 seg nts total, and 8388608 docs per seg nt
+  // t  would amount to about 12.75GB of  mory needed
   //
-  @VisibleForTesting
-  public static final int NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES = 20;
+  @V s bleForTest ng
+  publ c stat c f nal  nt NUMBER_OF_ NTEGERS_FOR_EXTENDED_FEATURES = 20;
 
-  @VisibleForTesting
-  public static final Map<String, FeatureConfiguration> FEATURE_CONFIGURATION_MAP
-      = Maps.newLinkedHashMap();
+  @V s bleForTest ng
+  publ c stat c f nal Map<Str ng, FeatureConf gurat on> FEATURE_CONF GURAT ON_MAP
+      = Maps.newL nkedHashMap();
 
-  public static final String BASE_FIELD_NAME =
-      EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName();
+  publ c stat c f nal Str ng BASE_F ELD_NAME =
+      Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD.getF eldNa ();
 
-  private static String getBaseFieldName(String fullName) {
-    int index = fullName.indexOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
-    Preconditions.checkArgument(index > 0);
-    return fullName.substring(0, index);
+  pr vate stat c Str ng getBaseF eldNa (Str ng fullNa ) {
+     nt  ndex = fullNa . ndexOf(Sc maBu lder.CSF_V EW_NAME_SEPARATOR);
+    Precond  ons.c ckArgu nt( ndex > 0);
+    return fullNa .substr ng(0,  ndex);
   }
 
-  private static String getBaseFieldName(EarlybirdFieldConstant fieldConstant) {
-    return getBaseFieldName(fieldConstant.getFieldName());
+  pr vate stat c Str ng getBaseF eldNa (Earlyb rdF eldConstant f eldConstant) {
+    return getBaseF eldNa (f eldConstant.getF eldNa ());
   }
 
-  private static String getFeatureNameInField(EarlybirdFieldConstant fieldConstant) {
-    int index = fieldConstant.getFieldName().indexOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
-    Preconditions.checkArgument(index > 0);
-    return fieldConstant.getFieldName().substring(index + 1);
+  pr vate stat c Str ng getFeatureNa  nF eld(Earlyb rdF eldConstant f eldConstant) {
+     nt  ndex = f eldConstant.getF eldNa (). ndexOf(Sc maBu lder.CSF_V EW_NAME_SEPARATOR);
+    Precond  ons.c ckArgu nt( ndex > 0);
+    return f eldConstant.getF eldNa ().substr ng( ndex + 1);
   }
 
-  // defining all features
-  static {
-    // Add individual tweet encoded features as views on top of
-    // EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD
+  // def n ng all features
+  stat c {
+    // Add  nd v dual t et encoded features as v ews on top of
+    // Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD
 
-    // int intIndex, int bitStartPos, int bitLength
-    newEarlybirdFeatureConfiguration(IS_RETWEET_FLAG, ThriftCSFType.BOOLEAN, 0, 0, 1);
-    newEarlybirdFeatureConfiguration(IS_OFFENSIVE_FLAG, ThriftCSFType.BOOLEAN, 0, 1, 1);
-    newEarlybirdFeatureConfiguration(HAS_LINK_FLAG, ThriftCSFType.BOOLEAN, 0, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_TREND_FLAG, ThriftCSFType.BOOLEAN, 0, 3, 1);
-    newEarlybirdFeatureConfiguration(IS_REPLY_FLAG, ThriftCSFType.BOOLEAN, 0, 4, 1);
-    newEarlybirdFeatureConfiguration(IS_SENSITIVE_CONTENT, ThriftCSFType.BOOLEAN, 0, 5, 1);
-    newEarlybirdFeatureConfiguration(HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-        ThriftCSFType.BOOLEAN, 0, 6, 1);
-    newEarlybirdFeatureConfiguration(FROM_VERIFIED_ACCOUNT_FLAG, ThriftCSFType.BOOLEAN, 0, 7, 1);
-    newEarlybirdFeatureConfiguration(TEXT_SCORE, ThriftCSFType.INT, 0, 8, 8);
-    newEarlybirdFeatureConfiguration(LANGUAGE, ThriftCSFType.INT, 0, 16, 8);
-    newEarlybirdFeatureConfiguration(LINK_LANGUAGE, ThriftCSFType.INT, 0, 24, 8);
+    //  nt  nt ndex,  nt b StartPos,  nt b Length
+    newEarlyb rdFeatureConf gurat on( S_RETWEET_FLAG, Thr ftCSFType.BOOLEAN, 0, 0, 1);
+    newEarlyb rdFeatureConf gurat on( S_OFFENS VE_FLAG, Thr ftCSFType.BOOLEAN, 0, 1, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_L NK_FLAG, Thr ftCSFType.BOOLEAN, 0, 2, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_TREND_FLAG, Thr ftCSFType.BOOLEAN, 0, 3, 1);
+    newEarlyb rdFeatureConf gurat on( S_REPLY_FLAG, Thr ftCSFType.BOOLEAN, 0, 4, 1);
+    newEarlyb rdFeatureConf gurat on( S_SENS T VE_CONTENT, Thr ftCSFType.BOOLEAN, 0, 5, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_MULT PLE_HASHTAGS_OR_TRENDS_FLAG,
+        Thr ftCSFType.BOOLEAN, 0, 6, 1);
+    newEarlyb rdFeatureConf gurat on(FROM_VER F ED_ACCOUNT_FLAG, Thr ftCSFType.BOOLEAN, 0, 7, 1);
+    newEarlyb rdFeatureConf gurat on(TEXT_SCORE, Thr ftCSFType. NT, 0, 8, 8);
+    newEarlyb rdFeatureConf gurat on(LANGUAGE, Thr ftCSFType. NT, 0, 16, 8);
+    newEarlyb rdFeatureConf gurat on(L NK_LANGUAGE, Thr ftCSFType. NT, 0, 24, 8);
 
-    newEarlybirdFeatureConfiguration(HAS_IMAGE_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 0, 1);
-    newEarlybirdFeatureConfiguration(HAS_VIDEO_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 1, 1);
-    newEarlybirdFeatureConfiguration(HAS_NEWS_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_EXPANDO_CARD_FLAG, ThriftCSFType.BOOLEAN, 1, 3, 1);
-    newEarlybirdFeatureConfiguration(HAS_MULTIPLE_MEDIA_FLAG, ThriftCSFType.BOOLEAN, 1, 4, 1);
-    newEarlybirdFeatureConfiguration(PROFILE_IS_EGG_FLAG, ThriftCSFType.BOOLEAN, 1, 5, 1);
-    newEarlybirdFeatureConfiguration(NUM_MENTIONS, ThriftCSFType.INT, 1, 6, 2);     // 0, 1, 2, 3+
-    newEarlybirdFeatureConfiguration(NUM_HASHTAGS, ThriftCSFType.INT, 1, 8, 2);     // 0, 1, 2, 3+
-    newEarlybirdFeatureConfiguration(HAS_CARD_FLAG, ThriftCSFType.BOOLEAN, 1, 10, 1);
-    newEarlybirdFeatureConfiguration(HAS_VISIBLE_LINK_FLAG, ThriftCSFType.BOOLEAN, 1, 11, 1);
-    newEarlybirdFeatureConfiguration(USER_REPUTATION, ThriftCSFType.INT, 1, 12, 8);
-    newEarlybirdFeatureConfiguration(IS_USER_SPAM_FLAG, ThriftCSFType.BOOLEAN, 1, 20, 1);
-    newEarlybirdFeatureConfiguration(IS_USER_NSFW_FLAG, ThriftCSFType.BOOLEAN, 1, 21, 1);
-    newEarlybirdFeatureConfiguration(IS_USER_BOT_FLAG, ThriftCSFType.BOOLEAN, 1, 22, 1);
-    newEarlybirdFeatureConfiguration(IS_USER_NEW_FLAG, ThriftCSFType.BOOLEAN, 1, 23, 1);
-    newEarlybirdFeatureConfiguration(PREV_USER_TWEET_ENGAGEMENT, ThriftCSFType.INT, 1, 24, 6);
-    newEarlybirdFeatureConfiguration(COMPOSER_SOURCE_IS_CAMERA_FLAG,
-        ThriftCSFType.BOOLEAN, 1, 30, 1);
-    newEarlybirdFeatureConfiguration(IS_NULLCAST_FLAG, ThriftCSFType.BOOLEAN, 1, 31, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_ MAGE_URL_FLAG, Thr ftCSFType.BOOLEAN, 1, 0, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_V DEO_URL_FLAG, Thr ftCSFType.BOOLEAN, 1, 1, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_NEWS_URL_FLAG, Thr ftCSFType.BOOLEAN, 1, 2, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_EXPANDO_CARD_FLAG, Thr ftCSFType.BOOLEAN, 1, 3, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_MULT PLE_MED A_FLAG, Thr ftCSFType.BOOLEAN, 1, 4, 1);
+    newEarlyb rdFeatureConf gurat on(PROF LE_ S_EGG_FLAG, Thr ftCSFType.BOOLEAN, 1, 5, 1);
+    newEarlyb rdFeatureConf gurat on(NUM_MENT ONS, Thr ftCSFType. NT, 1, 6, 2);     // 0, 1, 2, 3+
+    newEarlyb rdFeatureConf gurat on(NUM_HASHTAGS, Thr ftCSFType. NT, 1, 8, 2);     // 0, 1, 2, 3+
+    newEarlyb rdFeatureConf gurat on(HAS_CARD_FLAG, Thr ftCSFType.BOOLEAN, 1, 10, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_V S BLE_L NK_FLAG, Thr ftCSFType.BOOLEAN, 1, 11, 1);
+    newEarlyb rdFeatureConf gurat on(USER_REPUTAT ON, Thr ftCSFType. NT, 1, 12, 8);
+    newEarlyb rdFeatureConf gurat on( S_USER_SPAM_FLAG, Thr ftCSFType.BOOLEAN, 1, 20, 1);
+    newEarlyb rdFeatureConf gurat on( S_USER_NSFW_FLAG, Thr ftCSFType.BOOLEAN, 1, 21, 1);
+    newEarlyb rdFeatureConf gurat on( S_USER_BOT_FLAG, Thr ftCSFType.BOOLEAN, 1, 22, 1);
+    newEarlyb rdFeatureConf gurat on( S_USER_NEW_FLAG, Thr ftCSFType.BOOLEAN, 1, 23, 1);
+    newEarlyb rdFeatureConf gurat on(PREV_USER_TWEET_ENGAGEMENT, Thr ftCSFType. NT, 1, 24, 6);
+    newEarlyb rdFeatureConf gurat on(COMPOSER_SOURCE_ S_CAMERA_FLAG,
+        Thr ftCSFType.BOOLEAN, 1, 30, 1);
+    newEarlyb rdFeatureConf gurat on( S_NULLCAST_FLAG, Thr ftCSFType.BOOLEAN, 1, 31, 1);
 
-    newEarlybirdFeatureConfiguration(RETWEET_COUNT, ThriftCSFType.DOUBLE, 2, 0, 8,
-        ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(FAVORITE_COUNT, ThriftCSFType.DOUBLE, 2, 8, 8,
-        ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(REPLY_COUNT, ThriftCSFType.DOUBLE, 2, 16, 8,
-        ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(PARUS_SCORE, ThriftCSFType.DOUBLE, 2, 24, 8);
+    newEarlyb rdFeatureConf gurat on(RETWEET_COUNT, Thr ftCSFType.DOUBLE, 2, 0, 8,
+        Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(FAVOR TE_COUNT, Thr ftCSFType.DOUBLE, 2, 8, 8,
+        Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(REPLY_COUNT, Thr ftCSFType.DOUBLE, 2, 16, 8,
+        Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(PARUS_SCORE, Thr ftCSFType.DOUBLE, 2, 24, 8);
 
-    newEarlybirdFeatureConfiguration(HAS_CONSUMER_VIDEO_FLAG, ThriftCSFType.BOOLEAN, 3, 0, 1);
-    newEarlybirdFeatureConfiguration(HAS_PRO_VIDEO_FLAG, ThriftCSFType.BOOLEAN, 3, 1, 1);
-    newEarlybirdFeatureConfiguration(HAS_VINE_FLAG, ThriftCSFType.BOOLEAN, 3, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_PERISCOPE_FLAG, ThriftCSFType.BOOLEAN, 3, 3, 1);
-    newEarlybirdFeatureConfiguration(HAS_NATIVE_IMAGE_FLAG, ThriftCSFType.BOOLEAN, 3, 4, 1);
-    // NOTE: There are 3 bits left in the first byte of INT 3, if possible, please reserve them
-    // for future media types (SEARCH-9131)
-    // newEarlybirdFeatureConfiguration(FUTURE_MEDIA_BITS, ThriftCSFType.INT, 3, 5, 3);
+    newEarlyb rdFeatureConf gurat on(HAS_CONSUMER_V DEO_FLAG, Thr ftCSFType.BOOLEAN, 3, 0, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_PRO_V DEO_FLAG, Thr ftCSFType.BOOLEAN, 3, 1, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_V NE_FLAG, Thr ftCSFType.BOOLEAN, 3, 2, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_PER SCOPE_FLAG, Thr ftCSFType.BOOLEAN, 3, 3, 1);
+    newEarlyb rdFeatureConf gurat on(HAS_NAT VE_ MAGE_FLAG, Thr ftCSFType.BOOLEAN, 3, 4, 1);
+    // NOTE: T re are 3 b s left  n t  f rst byte of  NT 3,  f poss ble, please reserve t m
+    // for future  d a types (SEARCH-9131)
+    // newEarlyb rdFeatureConf gurat on(FUTURE_MED A_B TS, Thr ftCSFType. NT, 3, 5, 3);
 
-    newEarlybirdFeatureConfiguration(VISIBLE_TOKEN_RATIO, ThriftCSFType.INT, 3, 8, 4);
-    newEarlybirdFeatureConfiguration(HAS_QUOTE_FLAG, ThriftCSFType.BOOLEAN, 3, 12, 1);
-    newEarlybirdFeatureConfiguration(FROM_BLUE_VERIFIED_ACCOUNT_FLAG,
-        ThriftCSFType.BOOLEAN, 3, 13, 1);
-    // Unused bits from bit 14 to bit 31 (18 bits)
-    // newEarlybirdFeatureConfiguration(UNUSED_BITS, ThriftCSFType.INT, 3, 14, 18);
+    newEarlyb rdFeatureConf gurat on(V S BLE_TOKEN_RAT O, Thr ftCSFType. NT, 3, 8, 4);
+    newEarlyb rdFeatureConf gurat on(HAS_QUOTE_FLAG, Thr ftCSFType.BOOLEAN, 3, 12, 1);
+    newEarlyb rdFeatureConf gurat on(FROM_BLUE_VER F ED_ACCOUNT_FLAG,
+        Thr ftCSFType.BOOLEAN, 3, 13, 1);
+    // Unused b s from b  14 to b  31 (18 b s)
+    // newEarlyb rdFeatureConf gurat on(UNUSED_B TS, Thr ftCSFType. NT, 3, 14, 18);
 
-    newEarlybirdFeatureConfiguration(TWEET_SIGNATURE, ThriftCSFType.INT, 4, 0, 32);
+    newEarlyb rdFeatureConf gurat on(TWEET_S GNATURE, Thr ftCSFType. NT, 4, 0, 32);
 
-    newEarlybirdFeatureConfiguration(EMBEDS_IMPRESSION_COUNT,
-        ThriftCSFType.DOUBLE, 0, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(EMBEDS_URL_COUNT,
-        ThriftCSFType.DOUBLE, 0, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(VIDEO_VIEW_COUNT,
-        ThriftCSFType.DOUBLE, 0, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlyb rdFeatureConf gurat on(EMBEDS_ MPRESS ON_COUNT,
+        Thr ftCSFType.DOUBLE, 0, 0, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(EMBEDS_URL_COUNT,
+        Thr ftCSFType.DOUBLE, 0, 8, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(V DEO_V EW_COUNT,
+        Thr ftCSFType.DOUBLE, 0, 16, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
 
-    // Unused bits from bit 24 to bit 31 (8 bits).
-    // This used to be a feature that was decommissioned (SEARCHQUAL-10321)
-    newEarlybirdFeatureConfiguration(EXTENDED_FEATURE_UNUSED_BITS_0_24_8,
-        ThriftCSFType.INT, 0, 24, 8);
+    // Unused b s from b  24 to b  31 (8 b s).
+    // T  used to be a feature that was decomm ss oned (SEARCHQUAL-10321)
+    newEarlyb rdFeatureConf gurat on(EXTENDED_FEATURE_UNUSED_B TS_0_24_8,
+        Thr ftCSFType. NT, 0, 24, 8);
 
-    newEarlybirdFeatureConfiguration(REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT,
-        ThriftCSFType.INT, 1, 0, 32, ThriftFeatureUpdateConstraint.IMMUTABLE);
-    newEarlybirdFeatureConfiguration(REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT,
-        ThriftCSFType.INT, 2, 0, 32, ThriftFeatureUpdateConstraint.IMMUTABLE);
+    newEarlyb rdFeatureConf gurat on(REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT,
+        Thr ftCSFType. NT, 1, 0, 32, Thr ftFeatureUpdateConstra nt. MMUTABLE);
+    newEarlyb rdFeatureConf gurat on(REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT,
+        Thr ftCSFType. NT, 2, 0, 32, Thr ftFeatureUpdateConstra nt. MMUTABLE);
 
-    newEarlybirdFeatureConfiguration(RETWEET_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(FAVORITE_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(REPLY_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(EMBEDS_IMPRESSION_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlyb rdFeatureConf gurat on(RETWEET_COUNT_V2,
+        Thr ftCSFType.DOUBLE, 3, 0, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(FAVOR TE_COUNT_V2,
+        Thr ftCSFType.DOUBLE, 3, 8, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(REPLY_COUNT_V2,
+        Thr ftCSFType.DOUBLE, 3, 16, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(EMBEDS_ MPRESS ON_COUNT_V2,
+        Thr ftCSFType.DOUBLE, 3, 24, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
 
-    newEarlybirdFeatureConfiguration(EMBEDS_URL_COUNT_V2,
-        ThriftCSFType.DOUBLE, 4, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(VIDEO_VIEW_COUNT_V2,
-        ThriftCSFType.DOUBLE, 4, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 4, 16, 8);
+    newEarlyb rdFeatureConf gurat on(EMBEDS_URL_COUNT_V2,
+        Thr ftCSFType.DOUBLE, 4, 0, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(V DEO_V EW_COUNT_V2,
+        Thr ftCSFType.DOUBLE, 4, 8, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(QUOTE_COUNT,
+        Thr ftCSFType.DOUBLE, 4, 16, 8);
 
-    newEarlybirdFeatureConfiguration(LABEL_ABUSIVE_FLAG,        ThriftCSFType.BOOLEAN, 4, 24, 1);
-    newEarlybirdFeatureConfiguration(LABEL_ABUSIVE_HI_RCL_FLAG, ThriftCSFType.BOOLEAN, 4, 25, 1);
-    newEarlybirdFeatureConfiguration(LABEL_DUP_CONTENT_FLAG,    ThriftCSFType.BOOLEAN, 4, 26, 1);
-    newEarlybirdFeatureConfiguration(LABEL_NSFW_HI_PRC_FLAG,    ThriftCSFType.BOOLEAN, 4, 27, 1);
-    newEarlybirdFeatureConfiguration(LABEL_NSFW_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 4, 28, 1);
-    newEarlybirdFeatureConfiguration(LABEL_SPAM_FLAG,           ThriftCSFType.BOOLEAN, 4, 29, 1);
-    newEarlybirdFeatureConfiguration(LABEL_SPAM_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 4, 30, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_ABUS VE_FLAG,        Thr ftCSFType.BOOLEAN, 4, 24, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_ABUS VE_H _RCL_FLAG, Thr ftCSFType.BOOLEAN, 4, 25, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_DUP_CONTENT_FLAG,    Thr ftCSFType.BOOLEAN, 4, 26, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_NSFW_H _PRC_FLAG,    Thr ftCSFType.BOOLEAN, 4, 27, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_NSFW_H _RCL_FLAG,    Thr ftCSFType.BOOLEAN, 4, 28, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_SPAM_FLAG,           Thr ftCSFType.BOOLEAN, 4, 29, 1);
+    newEarlyb rdFeatureConf gurat on(LABEL_SPAM_H _RCL_FLAG,    Thr ftCSFType.BOOLEAN, 4, 30, 1);
 
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1,
-        ThriftCSFType.INT, 4, 31, 1);
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_4_31_1,
+        Thr ftCSFType. NT, 4, 31, 1);
 
-    newEarlybirdFeatureConfiguration(WEIGHTED_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 5, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(WEIGHTED_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 5, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(WEIGHTED_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 5, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(WEIGHTED_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 5, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlyb rdFeatureConf gurat on(WE GHTED_RETWEET_COUNT,
+        Thr ftCSFType.DOUBLE, 5, 0, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(WE GHTED_REPLY_COUNT,
+        Thr ftCSFType.DOUBLE, 5, 8, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(WE GHTED_FAVOR TE_COUNT,
+        Thr ftCSFType.DOUBLE, 5, 16, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(WE GHTED_QUOTE_COUNT,
+        Thr ftCSFType.DOUBLE, 5, 24, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
 
-    newEarlybirdFeatureConfiguration(PERISCOPE_EXISTS,
-        ThriftCSFType.BOOLEAN, 6, 0, 1);
-    newEarlybirdFeatureConfiguration(PERISCOPE_HAS_BEEN_FEATURED,
-        ThriftCSFType.BOOLEAN, 6, 1, 1);
-    newEarlybirdFeatureConfiguration(PERISCOPE_IS_CURRENTLY_FEATURED,
-        ThriftCSFType.BOOLEAN, 6, 2, 1);
-    newEarlybirdFeatureConfiguration(PERISCOPE_IS_FROM_QUALITY_SOURCE,
-        ThriftCSFType.BOOLEAN, 6, 3, 1);
-    newEarlybirdFeatureConfiguration(PERISCOPE_IS_LIVE,
-        ThriftCSFType.BOOLEAN, 6, 4, 1);
+    newEarlyb rdFeatureConf gurat on(PER SCOPE_EX STS,
+        Thr ftCSFType.BOOLEAN, 6, 0, 1);
+    newEarlyb rdFeatureConf gurat on(PER SCOPE_HAS_BEEN_FEATURED,
+        Thr ftCSFType.BOOLEAN, 6, 1, 1);
+    newEarlyb rdFeatureConf gurat on(PER SCOPE_ S_CURRENTLY_FEATURED,
+        Thr ftCSFType.BOOLEAN, 6, 2, 1);
+    newEarlyb rdFeatureConf gurat on(PER SCOPE_ S_FROM_QUAL TY_SOURCE,
+        Thr ftCSFType.BOOLEAN, 6, 3, 1);
+    newEarlyb rdFeatureConf gurat on(PER SCOPE_ S_L VE,
+        Thr ftCSFType.BOOLEAN, 6, 4, 1);
 
-    newEarlybirdFeatureConfiguration(IS_TRENDING_NOW_FLAG,
-        ThriftCSFType.BOOLEAN, 6, 5, 1);
+    newEarlyb rdFeatureConf gurat on( S_TREND NG_NOW_FLAG,
+        Thr ftCSFType.BOOLEAN, 6, 5, 1);
 
-    // remaining bits for integer 6
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26,
-        ThriftCSFType.INT, 6, 6, 26);
+    // rema n ng b s for  nteger 6
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_7_6_26,
+        Thr ftCSFType. NT, 6, 6, 26);
 
-    // The decaying counters can become smaller
-    newEarlybirdFeatureConfiguration(DECAYED_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 7, 0, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(DECAYED_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 7, 8, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(DECAYED_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 7, 16, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(DECAYED_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 7, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+    // T  decay ng counters can beco  smaller
+    newEarlyb rdFeatureConf gurat on(DECAYED_RETWEET_COUNT,
+        Thr ftCSFType.DOUBLE, 7, 0, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(DECAYED_REPLY_COUNT,
+        Thr ftCSFType.DOUBLE, 7, 8, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(DECAYED_FAVOR TE_COUNT,
+        Thr ftCSFType.DOUBLE, 7, 16, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(DECAYED_QUOTE_COUNT,
+        Thr ftCSFType.DOUBLE, 7, 24, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
 
-    // The fake engagement counters.
-    newEarlybirdFeatureConfiguration(FAKE_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 8, 0, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(FAKE_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 8, 8, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(FAKE_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 8, 16, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(FAKE_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 8, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+    // T  fake engage nt counters.
+    newEarlyb rdFeatureConf gurat on(FAKE_RETWEET_COUNT,
+        Thr ftCSFType.DOUBLE, 8, 0, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(FAKE_REPLY_COUNT,
+        Thr ftCSFType.DOUBLE, 8, 8, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(FAKE_FAVOR TE_COUNT,
+        Thr ftCSFType.DOUBLE, 8, 16, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(FAKE_QUOTE_COUNT,
+        Thr ftCSFType.DOUBLE, 8, 24, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
 
-    newEarlybirdFeatureConfiguration(LAST_RETWEET_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(LAST_REPLY_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(LAST_FAVORITE_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(LAST_QUOTE_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlyb rdFeatureConf gurat on(LAST_RETWEET_S NCE_CREAT ON_HRS,
+        Thr ftCSFType. NT, 9, 0, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(LAST_REPLY_S NCE_CREAT ON_HRS,
+        Thr ftCSFType. NT, 9, 8, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(LAST_FAVOR TE_S NCE_CREAT ON_HRS,
+        Thr ftCSFType. NT, 9, 16, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
+    newEarlyb rdFeatureConf gurat on(LAST_QUOTE_S NCE_CREAT ON_HRS,
+        Thr ftCSFType. NT, 9, 24, 8, Thr ftFeatureUpdateConstra nt. NC_ONLY);
 
-    newEarlybirdFeatureConfiguration(NUM_HASHTAGS_V2,
-        ThriftCSFType.INT, 10, 0, 4);
-    newEarlybirdFeatureConfiguration(NUM_MENTIONS_V2,
-        ThriftCSFType.INT, 10, 4, 4);
-    newEarlybirdFeatureConfiguration(NUM_STOCKS,
-        ThriftCSFType.INT, 10, 8, 4);
+    newEarlyb rdFeatureConf gurat on(NUM_HASHTAGS_V2,
+        Thr ftCSFType. NT, 10, 0, 4);
+    newEarlyb rdFeatureConf gurat on(NUM_MENT ONS_V2,
+        Thr ftCSFType. NT, 10, 4, 4);
+    newEarlyb rdFeatureConf gurat on(NUM_STOCKS,
+        Thr ftCSFType. NT, 10, 8, 4);
 
-    // Remaining bits for integer 10
-    // Production Toxicity and PBlock score from HML (go/toxicity, go/pblock)
-    newEarlybirdFeatureConfiguration(TOXICITY_SCORE,
-        ThriftCSFType.DOUBLE, 10, 12, 10);
-    newEarlybirdFeatureConfiguration(PBLOCK_SCORE,
-        ThriftCSFType.DOUBLE, 10, 22, 10);
+    // Rema n ng b s for  nteger 10
+    // Product on Tox c y and PBlock score from HML (go/tox c y, go/pblock)
+    newEarlyb rdFeatureConf gurat on(TOX C TY_SCORE,
+        Thr ftCSFType.DOUBLE, 10, 12, 10);
+    newEarlyb rdFeatureConf gurat on(PBLOCK_SCORE,
+        Thr ftCSFType.DOUBLE, 10, 22, 10);
 
-    // The blink engagement counters
-    newEarlybirdFeatureConfiguration(BLINK_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 11, 0, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(BLINK_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 11, 8, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(BLINK_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 11, 16, 8, ThriftFeatureUpdateConstraint.POSITIVE);
-    newEarlybirdFeatureConfiguration(BLINK_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 11, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+    // T  bl nk engage nt counters
+    newEarlyb rdFeatureConf gurat on(BL NK_RETWEET_COUNT,
+        Thr ftCSFType.DOUBLE, 11, 0, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(BL NK_REPLY_COUNT,
+        Thr ftCSFType.DOUBLE, 11, 8, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(BL NK_FAVOR TE_COUNT,
+        Thr ftCSFType.DOUBLE, 11, 16, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
+    newEarlyb rdFeatureConf gurat on(BL NK_QUOTE_COUNT,
+        Thr ftCSFType.DOUBLE, 11, 24, 8, Thr ftFeatureUpdateConstra nt.POS T VE);
 
-    // Experimental health model scores from HML
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_1,
-        ThriftCSFType.DOUBLE, 12, 0, 10);
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_2,
-        ThriftCSFType.DOUBLE, 12, 10, 10);
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_3,
-        ThriftCSFType.DOUBLE, 12, 20, 10);
-    // remaining bits for integer 12
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2,
-        ThriftCSFType.INT, 12, 30, 2);
+    // Exper  ntal  alth model scores from HML
+    newEarlyb rdFeatureConf gurat on(EXPER MENTAL_HEALTH_MODEL_SCORE_1,
+        Thr ftCSFType.DOUBLE, 12, 0, 10);
+    newEarlyb rdFeatureConf gurat on(EXPER MENTAL_HEALTH_MODEL_SCORE_2,
+        Thr ftCSFType.DOUBLE, 12, 10, 10);
+    newEarlyb rdFeatureConf gurat on(EXPER MENTAL_HEALTH_MODEL_SCORE_3,
+        Thr ftCSFType.DOUBLE, 12, 20, 10);
+    // rema n ng b s for  nteger 12
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_12_30_2,
+        Thr ftCSFType. NT, 12, 30, 2);
 
-    // Experimental health model scores from HML (cont.)
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_4,
-        ThriftCSFType.DOUBLE, 13, 0, 10);
-    // Production pSpammyTweet score from HML (go/pspammytweet)
-    newEarlybirdFeatureConfiguration(P_SPAMMY_TWEET_SCORE,
-        ThriftCSFType.DOUBLE, 13, 10, 10);
-    // Production pReportedTweet score from HML (go/preportedtweet)
-    newEarlybirdFeatureConfiguration(P_REPORTED_TWEET_SCORE,
-        ThriftCSFType.DOUBLE, 13, 20, 10);
-    // remaining bits for integer 13
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2,
-        ThriftCSFType.INT, 13, 30, 2);
+    // Exper  ntal  alth model scores from HML (cont.)
+    newEarlyb rdFeatureConf gurat on(EXPER MENTAL_HEALTH_MODEL_SCORE_4,
+        Thr ftCSFType.DOUBLE, 13, 0, 10);
+    // Product on pSpam T et score from HML (go/pspam t et)
+    newEarlyb rdFeatureConf gurat on(P_SPAMMY_TWEET_SCORE,
+        Thr ftCSFType.DOUBLE, 13, 10, 10);
+    // Product on pReportedT et score from HML (go/preportedt et)
+    newEarlyb rdFeatureConf gurat on(P_REPORTED_TWEET_SCORE,
+        Thr ftCSFType.DOUBLE, 13, 20, 10);
+    // rema n ng b s for  nteger 13
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_13_30_2,
+        Thr ftCSFType. NT, 13, 30, 2);
 
-    // Experimental health model scores from HML (cont.)
-    // Prod Spammy Tweet Content model score from Platform Manipulation (go/spammy-tweet-content)
-    newEarlybirdFeatureConfiguration(SPAMMY_TWEET_CONTENT_SCORE,
-        ThriftCSFType.DOUBLE, 14, 0, 10);
-    // remaining bits for integer 14
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22,
-        ThriftCSFType.INT, 14, 10, 22);
+    // Exper  ntal  alth model scores from HML (cont.)
+    // Prod Spam  T et Content model score from Platform Man pulat on (go/spam -t et-content)
+    newEarlyb rdFeatureConf gurat on(SPAMMY_TWEET_CONTENT_SCORE,
+        Thr ftCSFType.DOUBLE, 14, 0, 10);
+    // rema n ng b s for  nteger 14
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_14_10_22,
+        Thr ftCSFType. NT, 14, 10, 22);
 
-    // Note that the integer index below is 0-based, but the index j in UNUSED_BITS_{j} below
-    // is 1-based.
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_16,
-        ThriftCSFType.INT, 15, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_17,
-        ThriftCSFType.INT, 16, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_18,
-        ThriftCSFType.INT, 17, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_19,
-        ThriftCSFType.INT, 18, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_20,
-        ThriftCSFType.INT, 19, 0, 32);
+    // Note that t   nteger  ndex below  s 0-based, but t   ndex j  n UNUSED_B TS_{j} below
+    //  s 1-based.
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_16,
+        Thr ftCSFType. NT, 15, 0, 32);
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_17,
+        Thr ftCSFType. NT, 16, 0, 32);
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_18,
+        Thr ftCSFType. NT, 17, 0, 32);
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_19,
+        Thr ftCSFType. NT, 18, 0, 32);
+    newEarlyb rdFeatureConf gurat on(EXTENDED_TEST_FEATURE_UNUSED_B TS_20,
+        Thr ftCSFType. NT, 19, 0, 32);
   }
 
-  private EarlybirdSchemaCreateTool() { }
+  pr vate Earlyb rdSc maCreateTool() { }
 
   /**
-   * Get schema for the Earlybird.
+   * Get sc ma for t  Earlyb rd.
    */
-  public static DynamicSchema buildSchema(EarlybirdCluster cluster)
-      throws Schema.SchemaValidationException {
-    SCHEMA_BUILD_COUNT.increment();
-    return new DynamicSchema(new ImmutableSchema(buildThriftSchema(cluster),
+  publ c stat c Dynam cSc ma bu ldSc ma(Earlyb rdCluster cluster)
+      throws Sc ma.Sc maVal dat onExcept on {
+    SCHEMA_BU LD_COUNT. ncre nt();
+    return new Dynam cSc ma(new  mmutableSc ma(bu ldThr ftSc ma(cluster),
                                                  new AnalyzerFactory(),
-                                                 cluster.getNameForStats()));
+                                                 cluster.getNa ForStats()));
   }
 
   /**
-   * Get schema for the Earlybird, can throw runtime exception.  This is mostly for static schema
-   * usage, which does not care about schema updates.
+   * Get sc ma for t  Earlyb rd, can throw runt   except on.  T   s mostly for stat c sc ma
+   * usage, wh ch does not care about sc ma updates.
    */
-  @VisibleForTesting
-  public static DynamicSchema buildSchemaWithRuntimeException(EarlybirdCluster cluster) {
+  @V s bleForTest ng
+  publ c stat c Dynam cSc ma bu ldSc maW hRunt  Except on(Earlyb rdCluster cluster) {
     try {
-      return buildSchema(cluster);
-    } catch (Schema.SchemaValidationException e) {
-      throw new RuntimeException(e);
+      return bu ldSc ma(cluster);
+    } catch (Sc ma.Sc maVal dat onExcept on e) {
+      throw new Runt  Except on(e);
     }
   }
 
-  private static FeatureConfiguration newEarlybirdFeatureConfiguration(
-      EarlybirdFieldConstant fieldConstant,
-      ThriftCSFType type,
-      int intIndex, int bitStartPos, int bitLength,
-      ThriftFeatureUpdateConstraint... constraints) {
+  pr vate stat c FeatureConf gurat on newEarlyb rdFeatureConf gurat on(
+      Earlyb rdF eldConstant f eldConstant,
+      Thr ftCSFType type,
+       nt  nt ndex,  nt b StartPos,  nt b Length,
+      Thr ftFeatureUpdateConstra nt... constra nts) {
 
-    if (!fieldConstant.isFlagFeatureField() && type == ThriftCSFType.BOOLEAN) {
-      throw new IllegalArgumentException(
-          "Non-flag feature field configured with boolean Thrift type: " + fieldConstant);
+     f (!f eldConstant. sFlagFeatureF eld() && type == Thr ftCSFType.BOOLEAN) {
+      throw new  llegalArgu ntExcept on(
+          "Non-flag feature f eld conf gured w h boolean Thr ft type: " + f eldConstant);
     }
-    if (fieldConstant.isFlagFeatureField() && type != ThriftCSFType.BOOLEAN) {
-      throw new IllegalArgumentException(
-          "Flag feature field configured with non-boolean Thrift type: " + fieldConstant);
-    }
-
-    String baseFieldName = getBaseFieldName(fieldConstant);
-    String name = getFeatureNameInField(fieldConstant);
-    FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
-        .withName(name)
-        .withType(type)
-        .withBitRange(intIndex, bitStartPos, bitLength);
-    // remove the following line once we configure features purely by the schema
-    builder.withBaseField(baseFieldName);
-
-    if (!fieldConstant.isUnusedField()) {
-      builder.withOutputType(type);
-    }
-    if (fieldConstant.getFeatureNormalizationType() != null) {
-      builder.withFeatureNormalizationType(fieldConstant.getFeatureNormalizationType());
+     f (f eldConstant. sFlagFeatureF eld() && type != Thr ftCSFType.BOOLEAN) {
+      throw new  llegalArgu ntExcept on(
+          "Flag feature f eld conf gured w h non-boolean Thr ft type: " + f eldConstant);
     }
 
-    for (ThriftFeatureUpdateConstraint constraint : constraints) {
-      builder.withFeatureUpdateConstraint(constraint);
+    Str ng baseF eldNa  = getBaseF eldNa (f eldConstant);
+    Str ng na  = getFeatureNa  nF eld(f eldConstant);
+    FeatureConf gurat on.Bu lder bu lder = FeatureConf gurat on.bu lder()
+        .w hNa (na )
+        .w hType(type)
+        .w hB Range( nt ndex, b StartPos, b Length);
+    // remove t  follow ng l ne once   conf gure features purely by t  sc ma
+    bu lder.w hBaseF eld(baseF eldNa );
+
+     f (!f eldConstant. sUnusedF eld()) {
+      bu lder.w hOutputType(type);
     }
-    FeatureConfiguration featureConfiguration = builder.build();
-    FEATURE_CONFIGURATION_MAP.put(fieldConstant.getFieldName(), featureConfiguration);
-    return featureConfiguration;
+     f (f eldConstant.getFeatureNormal zat onType() != null) {
+      bu lder.w hFeatureNormal zat onType(f eldConstant.getFeatureNormal zat onType());
+    }
+
+    for (Thr ftFeatureUpdateConstra nt constra nt : constra nts) {
+      bu lder.w hFeatureUpdateConstra nt(constra nt);
+    }
+    FeatureConf gurat on featureConf gurat on = bu lder.bu ld();
+    FEATURE_CONF GURAT ON_MAP.put(f eldConstant.getF eldNa (), featureConf gurat on);
+    return featureConf gurat on;
   }
 
   /**
-   * Build ThriftSchema for the Earlybird. Note that the schema returned can be used
-   * all Earlybird clusters. However, some clusters may not use all the field configurations.
+   * Bu ld Thr ftSc ma for t  Earlyb rd. Note that t  sc ma returned can be used
+   * all Earlyb rd clusters. Ho ver, so  clusters may not use all t  f eld conf gurat ons.
    */
-  @VisibleForTesting
-  public static ThriftSchema buildThriftSchema(EarlybirdCluster cluster) {
-    EarlybirdSchemaBuilder builder = new EarlybirdSchemaBuilder(
-        new EarlybirdFieldConstants(), cluster, TokenStreamSerializer.Version.VERSION_2);
+  @V s bleForTest ng
+  publ c stat c Thr ftSc ma bu ldThr ftSc ma(Earlyb rdCluster cluster) {
+    Earlyb rdSc maBu lder bu lder = new Earlyb rdSc maBu lder(
+        new Earlyb rdF eldConstants(), cluster, TokenStreamSer al zer.Vers on.VERS ON_2);
 
-    builder.withSchemaVersion(
-        FlushVersion.CURRENT_FLUSH_VERSION.getVersionNumber(),
-        FlushVersion.CURRENT_FLUSH_VERSION.getMinorVersion(),
-        FlushVersion.CURRENT_FLUSH_VERSION.getDescription(),
-        FlushVersion.CURRENT_FLUSH_VERSION.isOfficial());
+    bu lder.w hSc maVers on(
+        FlushVers on.CURRENT_FLUSH_VERS ON.getVers onNumber(),
+        FlushVers on.CURRENT_FLUSH_VERS ON.getM norVers on(),
+        FlushVers on.CURRENT_FLUSH_VERS ON.getDescr pt on(),
+        FlushVers on.CURRENT_FLUSH_VERS ON. sOff c al());
 
-    // ID field, used for partitioning
-    builder.withPartitionFieldId(0)
-        .withSortableLongTermField(EarlybirdFieldConstant.ID_FIELD.getFieldName())
-        // Text Fields that are searched by default
-        .withTextField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), true)
-        .withSearchFieldByDefault(
-            EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), 0.1f)
-        .withPretokenizedTextField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), true)
-        .withSearchFieldByDefault(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), 1.0f);
-    builder.withTweetSpecificNormalization(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), true)
-        .withSearchFieldByDefault(
-            EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), 0.2f)
+    //  D f eld, used for part  on ng
+    bu lder.w hPart  onF eld d(0)
+        .w hSortableLongTermF eld(Earlyb rdF eldConstant. D_F ELD.getF eldNa ())
+        // Text F elds that are searc d by default
+        .w hTextF eld(Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa (), true)
+        .w hSearchF eldByDefault(
+            Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa (), 0.1f)
+        .w hPretoken zedTextF eld(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa (), true)
+        .w hSearchF eldByDefault(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa (), 1.0f);
+    bu lder.w hT etSpec f cNormal zat on(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa ())
+        .w hTextF eld(Earlyb rdF eldConstant.TOKEN ZED_FROM_USER_F ELD.getF eldNa (), true)
+        .w hSearchF eldByDefault(
+            Earlyb rdF eldConstant.TOKEN ZED_FROM_USER_F ELD.getF eldNa (), 0.2f)
 
-        // Text fields not searched by default
-        .withTextField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), false)
+        // Text f elds not searc d by default
+        .w hTextF eld(Earlyb rdF eldConstant.FROM_USER_F ELD.getF eldNa (), false)
+        .w hTextF eld(Earlyb rdF eldConstant.TO_USER_F ELD.getF eldNa (), false)
 
-        // cards are not searched by default, and have weight 0.
-        .withPretokenizedTextField(EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), false)
+        // cards are not searc d by default, and have   ght 0.
+        .w hPretoken zedTextF eld(Earlyb rdF eldConstant.CARD_T TLE_F ELD.getF eldNa (), false)
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.CARD_DESCR PT ON_F ELD.getF eldNa (), false)
+        .w hTextF eld(Earlyb rdF eldConstant.CARD_LANG.getF eldNa (), false)
 
-        // Out-of-order append fields
-        .withLongTermField(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName())
+        // Out-of-order append f elds
+        .w hLongTermF eld(Earlyb rdF eldConstant.L KED_BY_USER_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.RETWEETED_BY_USER_ D.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.REPL ED_TO_BY_USER_ D.getF eldNa ())
 
-        // No Position fields, sorted alphabetically
-        .withPretokenizedNoPositionField(EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName())
-        .withIntTermField(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(), false)
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.PLACE_COUNTRY_CODE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.PROFILE_GEO_COUNTRY_CODE_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(), false)
-        .withTermTextLookup(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())
-        .withTermTextLookup(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName())
-        .withPretokenizedNoPositionField(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD)
-        .withIndexedNotTokenizedField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.LINKS_FIELD.getFieldName())
-        .withIntTermField(EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.PLACE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName())
-        .withPretokenizedNoPositionField(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName())
-        .withIntTermField(NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName())
-        .withIntTermField(NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName())
-        .withIntTermField(NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName())
+        // No Pos  on f elds, sorted alphabet cally
+        .w hPretoken zedNoPos  onF eld(Earlyb rdF eldConstant.CARD_DOMA N_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.CARD_NAME_F ELD.getF eldNa ())
+        .w h ntTermF eld(Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.ENT TY_ D_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.GEO_HASH_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant. N_REPLY_TO_TWEET_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant. N_REPLY_TO_USER_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.RETWEET_SOURCE_TWEET_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.RETWEET_SOURCE_USER_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.CONVERSAT ON_ D_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.PLACE_ D_F ELD.getF eldNa ())
+        .w hTextF eld(Earlyb rdF eldConstant.PLACE_FULL_NAME_F ELD.getF eldNa (), false)
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.PLACE_COUNTRY_CODE_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.PROF LE_GEO_COUNTRY_CODE_F ELD.getF eldNa ())
+        .w hTextF eld(Earlyb rdF eldConstant.PROF LE_GEO_REG ON_F ELD.getF eldNa (), false)
+        .w hTextF eld(Earlyb rdF eldConstant.PROF LE_GEO_LOCAL TY_F ELD.getF eldNa (), false)
+        .w hTermTextLookup(Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa ())
+        .w hTermTextLookup(Earlyb rdF eldConstant. N_REPLY_TO_USER_ D_F ELD.getF eldNa ())
+        .w hPretoken zedNoPos  onF eld(Earlyb rdF eldConstant.HASHTAGS_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld( mmutableSc ma.HF_PHRASE_PA RS_F ELD)
+        .w h ndexedNotToken zedF eld( mmutableSc ma.HF_TERM_PA RS_F ELD)
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant. MAGE_L NKS_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant. SO_LANGUAGE_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.L NKS_F ELD.getF eldNa ())
+        .w h ntTermF eld(Earlyb rdF eldConstant.L NK_CATEGORY_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.MENT ONS_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.NEWS_L NKS_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.NORMAL ZED_SOURCE_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.PLACE_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.SOURCE_F ELD.getF eldNa ())
+        .w hPretoken zedNoPos  onF eld(Earlyb rdF eldConstant.STOCKS_F ELD.getF eldNa ())
+        .w h ndexedNotToken zedF eld(Earlyb rdF eldConstant.V DEO_L NKS_F ELD.getF eldNa ())
+        .w h ntTermF eld(NORMAL ZED_FAVOR TE_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD.getF eldNa ())
+        .w h ntTermF eld(NORMAL ZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD.getF eldNa ())
+        .w h ntTermF eld(NORMAL ZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD.getF eldNa ())
 
-        .withIntTermField(EarlybirdFieldConstant.COMPOSER_SOURCE.getFieldName())
+        .w h ntTermF eld(Earlyb rdF eldConstant.COMPOSER_SOURCE.getF eldNa ())
 
-        .withLongTermField(EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName())
-        .withLongTermField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName())
+        .w hLongTermF eld(Earlyb rdF eldConstant.QUOTED_TWEET_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.QUOTED_USER_ D_F ELD.getF eldNa ())
+        .w hLongTermF eld(Earlyb rdF eldConstant.D RECTED_AT_USER_ D_F ELD.getF eldNa ())
 
-        // Named entity fields
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD.getFieldName(), true)
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD.getFieldName(), true)
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(), true)
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(), true)
+        // Na d ent y f elds
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.NAMED_ENT TY_FROM_URL_F ELD.getF eldNa (), true)
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.NAMED_ENT TY_FROM_TEXT_F ELD.getF eldNa (), true)
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_URL_F ELD.getF eldNa (), true)
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_TEXT_F ELD.getF eldNa (), true)
 
-        // camelCase-tokenized user handles and tokenized user names, not searchable by default
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), false)
+        // ca lCase-token zed user handles and token zed user na s, not searchable by default
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.CAMELCASE_USER_HANDLE_F ELD.getF eldNa (), false)
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.TOKEN ZED_USER_NAME_F ELD.getF eldNa (), false)
 
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), true)
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.URL_DESCRIPTION_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
-            EarlybirdFieldConstant.URL_TITLE_FIELD.getFieldName(), false);
+        .w h ndexedNotToken zedF eld(
+            Earlyb rdF eldConstant.SPACE_ D_F ELD.getF eldNa ())
+        .w hTextF eld(Earlyb rdF eldConstant.SPACE_ADM N_F ELD.getF eldNa (), false)
+        .w hPretoken zedTextF eld(Earlyb rdF eldConstant.SPACE_T TLE_F ELD.getF eldNa (), false)
+        .w hTextF eld(Earlyb rdF eldConstant.TOKEN ZED_SPACE_ADM N_F ELD.getF eldNa (), true)
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.CAMELCASE_TOKEN ZED_SPACE_ADM N_F ELD.getF eldNa (), false)
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.TOKEN ZED_SPACE_ADM N_D SPLAY_NAME_F ELD.getF eldNa (), false)
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.URL_DESCR PT ON_F ELD.getF eldNa (), false)
+        .w hPretoken zedTextF eld(
+            Earlyb rdF eldConstant.URL_T TLE_F ELD.getF eldNa (), false);
 
-    builder
-        .withPhotoUrlFacetField(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName())
-        .withOutOfOrderEnabledForField(
-            EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName())
-        .withOutOfOrderEnabledForField(
-            EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName())
-        .withOutOfOrderEnabledForField(
-            EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName());
+    bu lder
+        .w hPhotoUrlFacetF eld(Earlyb rdF eldConstant.TW MG_L NKS_F ELD.getF eldNa ())
+        .w hOutOfOrderEnabledForF eld(
+            Earlyb rdF eldConstant.L KED_BY_USER_ D_F ELD.getF eldNa ())
+        .w hOutOfOrderEnabledForF eld(
+            Earlyb rdF eldConstant.RETWEETED_BY_USER_ D.getF eldNa ())
+        .w hOutOfOrderEnabledForF eld(
+            Earlyb rdF eldConstant.REPL ED_TO_BY_USER_ D.getF eldNa ());
 
-    // ColumnStrideFields.
-    boolean loadCSFIntoRAMDefault = cluster != EarlybirdCluster.FULL_ARCHIVE;
+    // ColumnStr deF elds.
+    boolean loadCSF ntoRAMDefault = cluster != Earlyb rdCluster.FULL_ARCH VE;
 
-    builder
-        .withColumnStrideField(EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME,
-                ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_FEATURES,
-                true, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, /* the full archive loads this field into RAM */ true)
-        .withColumnStrideField(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-                ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-                ThriftCSFType.BYTE, 1, false, loadCSFIntoRAMDefault)
-         // CSF Used by archive mappers
-        .withColumnStrideField(EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName(),
-            ThriftCSFType.INT, 1, false, /* the full archive loads this field into RAM */ true)
-        .withColumnStrideField(EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName(),
-            ThriftCSFType.LONG, 1, false, /* the full archive loads this field into RAM */ true)
-        .withColumnStrideField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.CONVERSATION_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.QUOTED_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(),
-            ThriftCSFType.INT, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.CARD_URI_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
-        .withColumnStrideField(
-            EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+    bu lder
+        .w hColumnStr deF eld(Earlyb rdF eldConstants.ENCODED_TWEET_FEATURES_F ELD_NAME,
+                Thr ftCSFType. NT, NUMBER_OF_ NTEGERS_FOR_FEATURES,
+                true, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.FROM_USER_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, /* t  full arch ve loads t  f eld  nto RAM */ true)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.SHARED_STATUS_ D_CSF.getF eldNa (),
+                Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.CARD_TYPE_CSF_F ELD.getF eldNa (),
+                Thr ftCSFType.BYTE, 1, false, loadCSF ntoRAMDefault)
+         // CSF Used by arch ve mappers
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.CREATED_AT_CSF_F ELD.getF eldNa (),
+            Thr ftCSFType. NT, 1, false, /* t  full arch ve loads t  f eld  nto RAM */ true)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant. D_CSF_F ELD.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, /* t  full arch ve loads t  f eld  nto RAM */ true)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.CONVERSAT ON_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.QUOTED_TWEET_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.QUOTED_USER_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.CARD_LANG_CSF.getF eldNa (),
+            Thr ftCSFType. NT, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.CARD_UR _CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.D RECTED_AT_USER_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
+        .w hColumnStr deF eld(
+            Earlyb rdF eldConstant.EXCLUS VE_CONVERSAT ON_AUTHOR_ D_CSF.getF eldNa (),
+            Thr ftCSFType.LONG, 1, false, loadCSF ntoRAMDefault)
 
-    /* Semicolon on separate line to preserve git blame. */;
+    /* Sem colon on separate l ne to preserve g  bla . */;
 
-    builder.withColumnStrideField(
-        EarlybirdFieldConstants.EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES,
-        true, loadCSFIntoRAMDefault);
+    bu lder.w hColumnStr deF eld(
+        Earlyb rdF eldConstants.EXTENDED_ENCODED_TWEET_FEATURES_F ELD_NAME,
+        Thr ftCSFType. NT, NUMBER_OF_ NTEGERS_FOR_EXTENDED_FEATURES,
+        true, loadCSF ntoRAMDefault);
 
-    for (Map.Entry<String, FeatureConfiguration> entry : FEATURE_CONFIGURATION_MAP.entrySet()) {
-      String fullName = entry.getKey();
-      String baseName = getBaseFieldName(fullName);
-      EarlybirdFieldConstant fieldConstant = EarlybirdFieldConstants.getFieldConstant(fullName);
-      if (fieldConstant.isValidFieldInCluster(cluster)) {
-        builder.withFeatureConfiguration(baseName, fullName, entry.getValue());
+    for (Map.Entry<Str ng, FeatureConf gurat on> entry : FEATURE_CONF GURAT ON_MAP.entrySet()) {
+      Str ng fullNa  = entry.getKey();
+      Str ng baseNa  = getBaseF eldNa (fullNa );
+      Earlyb rdF eldConstant f eldConstant = Earlyb rdF eldConstants.getF eldConstant(fullNa );
+       f (f eldConstant. sVal dF eld nCluster(cluster)) {
+        bu lder.w hFeatureConf gurat on(baseNa , fullNa , entry.getValue());
       }
     }
-    // Add facet settings for facet fields
-    // boolean args are respectively whether to use skiplist, whether offensive, whether to use CSF
-    builder
-        .withFacetConfigs(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.MENTIONS_FACET, true, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.HASHTAGS_FACET, true, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.STOCKS_FACET, true, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.IMAGES_FACET, true, true, false)
-        .withFacetConfigs(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.VIDEOS_FACET, true, true, false)
-        .withFacetConfigs(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.NEWS_FACET, true, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(),
-            EarlybirdFieldConstant.LANGUAGES_FACET, false, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(),
-            EarlybirdFieldConstant.SOURCES_FACET, false, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.TWIMG_FACET, true, true, false)
-        .withFacetConfigs(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-            EarlybirdFieldConstant.FROM_USER_ID_FACET, false, false, true /* facet on CSF */)
-        .withFacetConfigs(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-            EarlybirdFieldConstant.RETWEETS_FACET, false, false, true /* facet on CSF */)
-        .withFacetConfigs(EarlybirdFieldConstant.LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.LINKS_FACET, true, false, false)
-        .withFacetConfigs(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
+    // Add facet sett ngs for facet f elds
+    // boolean args are respect vely w t r to use sk pl st, w t r offens ve, w t r to use CSF
+    bu lder
+        .w hFacetConf gs(Earlyb rdF eldConstant.MENT ONS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.MENT ONS_FACET, true, false, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.HASHTAGS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.HASHTAGS_FACET, true, false, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.STOCKS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.STOCKS_FACET, true, false, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant. MAGE_L NKS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant. MAGES_FACET, true, true, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.V DEO_L NKS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.V DEOS_FACET, true, true, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.NEWS_L NKS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.NEWS_FACET, true, false, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant. SO_LANGUAGE_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.LANGUAGES_FACET, false, false, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.SOURCE_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.SOURCES_FACET, false, false, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.TW MG_L NKS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.TW MG_FACET, true, true, false)
+        .w hFacetConf gs(Earlyb rdF eldConstant.FROM_USER_ D_CSF.getF eldNa (),
+            Earlyb rdF eldConstant.FROM_USER_ D_FACET, false, false, true /* facet on CSF */)
+        .w hFacetConf gs(Earlyb rdF eldConstant.SHARED_STATUS_ D_CSF.getF eldNa (),
+            Earlyb rdF eldConstant.RETWEETS_FACET, false, false, true /* facet on CSF */)
+        .w hFacetConf gs(Earlyb rdF eldConstant.L NKS_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.L NKS_FACET, true, false, false)
+        .w hFacetConf gs(
+            Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_URL_F ELD.getF eldNa (),
             true, false, false)
-        .withFacetConfigs(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
+        .w hFacetConf gs(
+            Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_TEXT_F ELD.getF eldNa (),
             true, false, false)
-        .withFacetConfigs(
-            EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
+        .w hFacetConf gs(
+            Earlyb rdF eldConstant.ENT TY_ D_F ELD.getF eldNa (),
             true, false, false)
-        .withFacetConfigs(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName(),
-            EarlybirdFieldConstant.SPACES_FACET, true, false, false);
-    return builder.build();
+        .w hFacetConf gs(Earlyb rdF eldConstant.SPACE_ D_F ELD.getF eldNa (),
+            Earlyb rdF eldConstant.SPACES_FACET, true, false, false);
+    return bu lder.bu ld();
   }
 }

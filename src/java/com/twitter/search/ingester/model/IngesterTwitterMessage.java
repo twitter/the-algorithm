@@ -1,73 +1,73 @@
-package com.twitter.search.ingester.model;
+package com.tw ter.search. ngester.model;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.pr m  ves.Longs;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.partitioning.base.HashPartitionFunction;
-import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common.debug.thr ftjava.DebugEvents;
+ mport com.tw ter.search.common.part  on ng.base.HashPart  onFunct on;
+ mport com.tw ter.search.common.part  on ng.base.Part  onable;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
 
 /**
- * A Twitter "status" object (e.g. a message)
+ * A Tw ter "status" object (e.g. a  ssage)
  *
  */
-public class IngesterTwitterMessage extends TwitterMessage
-    implements Comparable<IndexerStatus>, IndexerStatus, Partitionable {
-  private final DebugEvents debugEvents;
+publ c class  ngesterTw ter ssage extends Tw ter ssage
+     mple nts Comparable< ndexerStatus>,  ndexerStatus, Part  onable {
+  pr vate f nal DebugEvents debugEvents;
 
-  public IngesterTwitterMessage(Long twitterId, List<PenguinVersion> supportedPenguinVersions) {
-    this(twitterId, supportedPenguinVersions, null);
+  publ c  ngesterTw ter ssage(Long tw ter d, L st<Pengu nVers on> supportedPengu nVers ons) {
+    t (tw ter d, supportedPengu nVers ons, null);
   }
 
-  public IngesterTwitterMessage(
-      Long twitterId,
-      List<PenguinVersion> penguinVersions,
+  publ c  ngesterTw ter ssage(
+      Long tw ter d,
+      L st<Pengu nVers on> pengu nVers ons,
       @Nullable DebugEvents debugEvents) {
-    super(twitterId, penguinVersions);
-    this.debugEvents = debugEvents == null ? new DebugEvents() : debugEvents.deepCopy();
+    super(tw ter d, pengu nVers ons);
+    t .debugEvents = debugEvents == null ? new DebugEvents() : debugEvents.deepCopy();
   }
 
-  @Override
-  public int compareTo(IndexerStatus o) {
-    return Longs.compare(getId(), o.getId());
+  @Overr de
+  publ c  nt compareTo( ndexerStatus o) {
+    return Longs.compare(get d(), o.get d());
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return (o instanceof IngesterTwitterMessage)
-        && compareTo((IngesterTwitterMessage) o) == 0;
+  @Overr de
+  publ c boolean equals(Object o) {
+    return (o  nstanceof  ngesterTw ter ssage)
+        && compareTo(( ngesterTw ter ssage) o) == 0;
   }
 
-  @Override
-  public int hashCode() {
-    return HashPartitionFunction.hashCode(getId());
+  @Overr de
+  publ c  nt hashCode() {
+    return HashPart  onFunct on.hashCode(get d());
   }
 
-  public boolean isIndexable(boolean indexProtectedTweets) {
-    return getFromUserScreenName().isPresent()
-        && getId() != INT_FIELD_NOT_PRESENT
-        && (indexProtectedTweets || !isUserProtected());
+  publ c boolean  s ndexable(boolean  ndexProtectedT ets) {
+    return getFromUserScreenNa (). sPresent()
+        && get d() !=  NT_F ELD_NOT_PRESENT
+        && ( ndexProtectedT ets || ! sUserProtected());
   }
 
-  @Override
-  public long getTweetId() {
-    return this.getId();
+  @Overr de
+  publ c long getT et d() {
+    return t .get d();
   }
 
-  @Override
-  public long getUserId() {
-    Preconditions.checkState(getFromUserTwitterId().isPresent(), "The author user ID is missing");
-    return getFromUserTwitterId().get();
+  @Overr de
+  publ c long getUser d() {
+    Precond  ons.c ckState(getFromUserTw ter d(). sPresent(), "T  author user  D  s m ss ng");
+    return getFromUserTw ter d().get();
   }
 
-  @Override
-  public DebugEvents getDebugEvents() {
+  @Overr de
+  publ c DebugEvents getDebugEvents() {
     return debugEvents;
   }
 }

@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.user_health.v1.{thriftscala => uhv1}
-import com.twitter.timelines.user_health.{thriftscala => uh}
-import com.twitter.user_session_store.ReadOnlyUserSessionStore
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.UserStateFeature
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.user_ alth.v1.{thr ftscala => uhv1}
+ mport com.tw ter.t  l nes.user_ alth.{thr ftscala => uh}
+ mport com.tw ter.user_sess on_store.ReadOnlyUserSess onStore
+ mport com.tw ter.user_sess on_store.ReadRequest
+ mport com.tw ter.user_sess on_store.UserSess onDataset
+ mport com.tw ter.user_sess on_store.UserSess onDataset.UserSess onDataset
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class UserStateQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadOnlyUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class UserStateQueryFeatureHydrator @ nject() (
+  userSess onStore: ReadOnlyUserSess onStore)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserState")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("UserState")
 
-  override val features: Set[Feature[_, _]] = Set(UserStateFeature)
+  overr de val features: Set[Feature[_, _]] = Set(UserStateFeature)
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.UserHealth)
+  pr vate val datasets: Set[UserSess onDataset] = Set(UserSess onDataset.User alth)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val userState = userSession.flatMap {
-          _.userHealth match {
-            case Some(uh.UserHealth.V1(uhv1.UserHealth(userState))) => userState
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    userSess onStore
+      .read(ReadRequest(query.getRequ redUser d, datasets))
+      .map { userSess on =>
+        val userState = userSess on.flatMap {
+          _.user alth match {
+            case So (uh.User alth.V1(uhv1.User alth(userState))) => userState
             case _ => None
           }
         }
 
-        FeatureMapBuilder()
+        FeatureMapBu lder()
           .add(UserStateFeature, userState)
-          .build()
+          .bu ld()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.9)
   )
 }

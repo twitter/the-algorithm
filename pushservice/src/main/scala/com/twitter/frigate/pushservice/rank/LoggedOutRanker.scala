@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.rank
+package com.tw ter.fr gate.pushserv ce.rank
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-class LoggedOutRanker(tweetyPieStore: ReadableStore[Long, TweetyPieResult], stats: StatsReceiver) {
-  private val statsReceiver = stats.scope(this.getClass.getSimpleName)
-  private val rankedCandidates = statsReceiver.counter("ranked_candidates_count")
+class LoggedOutRanker(t etyP eStore: ReadableStore[Long, T etyP eResult], stats: StatsRece ver) {
+  pr vate val statsRece ver = stats.scope(t .getClass.getS mpleNa )
+  pr vate val rankedCand dates = statsRece ver.counter("ranked_cand dates_count")
 
   def rank(
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val tweetIds = candidates.map { cand => cand.candidate.asInstanceOf[TweetCandidate].tweetId }
-    val results = tweetyPieStore.multiGet(tweetIds.toSet).values.toSeq
-    val futureOfResults = Future.traverseSequentially(results)(r => r)
-    val tweetsFut = futureOfResults.map { tweetyPieResults =>
-      tweetyPieResults.map(_.map(_.tweet))
+    cand dates: Seq[Cand dateDeta ls[PushCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    val t et ds = cand dates.map { cand => cand.cand date.as nstanceOf[T etCand date].t et d }
+    val results = t etyP eStore.mult Get(t et ds.toSet).values.toSeq
+    val futureOfResults = Future.traverseSequent ally(results)(r => r)
+    val t etsFut = futureOfResults.map { t etyP eResults =>
+      t etyP eResults.map(_.map(_.t et))
     }
-    val sortedTweetsFuture = tweetsFut.map { tweets =>
-      tweets
-        .map { tweet =>
-          if (tweet.isDefined && tweet.get.counts.isDefined) {
-            tweet.get.id -> tweet.get.counts.get.favoriteCount.getOrElse(0L)
+    val sortedT etsFuture = t etsFut.map { t ets =>
+      t ets
+        .map { t et =>
+           f (t et. sDef ned && t et.get.counts. sDef ned) {
+            t et.get. d -> t et.get.counts.get.favor eCount.getOrElse(0L)
           } else {
             0 -> 0L
           }
-        }.sortBy(_._2)(Ordering[Long].reverse)
+        }.sortBy(_._2)(Order ng[Long].reverse)
     }
-    val finalCandidates = sortedTweetsFuture.map { sortedTweets =>
-      sortedTweets
-        .map { tweet =>
-          candidates.find(_.candidate.asInstanceOf[TweetCandidate].tweetId == tweet._1).orNull
-        }.filter { cand => cand != null }
+    val f nalCand dates = sortedT etsFuture.map { sortedT ets =>
+      sortedT ets
+        .map { t et =>
+          cand dates.f nd(_.cand date.as nstanceOf[T etCand date].t et d == t et._1).orNull
+        }.f lter { cand => cand != null }
     }
-    finalCandidates.map { fc =>
-      rankedCandidates.incr(fc.size)
+    f nalCand dates.map { fc =>
+      rankedCand dates. ncr(fc.s ze)
     }
-    finalCandidates
+    f nalCand dates
   }
 }

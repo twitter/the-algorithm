@@ -1,9 +1,9 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
 /**
- * An enum to hold different types of query-specific features (these are not indexed in Earlybird)
+ * An enum to hold d fferent types of query-spec f c features (t se are not  ndexed  n Earlyb rd)
  */
-public enum QueryFeatureType {
-  SOCIAL_ENGAGEMENTS,
-  CLICKS
+publ c enum QueryFeatureType {
+  SOC AL_ENGAGEMENTS,
+  CL CKS
 }

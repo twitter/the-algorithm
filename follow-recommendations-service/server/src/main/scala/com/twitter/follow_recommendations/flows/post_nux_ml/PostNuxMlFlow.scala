@@ -1,304 +1,304 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource._
-import com.twitter.follow_recommendations.common.base._
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.dismiss.DismissedCandidatePredicate
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
-import com.twitter.follow_recommendations.common.transforms.ranker_id.RandomRankerIdTransform
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidTargetCandidateRelationshipTypesPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.RecentFollowingPredicate
-import com.twitter.follow_recommendations.common.predicates.CandidateParamPredicate
-import com.twitter.follow_recommendations.common.predicates.CandidateSourceParamPredicate
-import com.twitter.follow_recommendations.common.predicates.CuratedCompetitorListPredicate
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.predicates.InactivePredicate
-import com.twitter.follow_recommendations.common.predicates.PreviouslyRecommendedUserIdsPredicate
-import com.twitter.follow_recommendations.common.predicates.user_activity.NonNearZeroUserActivityPredicate
-import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProofTransform
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.follow_recommendations.common.transforms.weighted_sampling.SamplingTransform
-import com.twitter.follow_recommendations.configapi.candidates.CandidateUserParamsFactory
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableGFSSocialProofTransform
-import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Enr c dCand dateS ce._
+ mport com.tw ter.follow_recom ndat ons.common.base._
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.d sm ss.D sm ssedCand datePred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck.G zmoduckPred cate
+ mport com.tw ter.follow_recom ndat ons.common.transforms.ranker_ d.RandomRanker dTransform
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.sgs. nval dTargetCand dateRelat onsh pTypesPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.sgs.RecentFollow ngPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.Cand dateParamPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.Cand dateS ceParamPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.CuratedCompet orL stPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.ExcludedUser dPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates. nact vePred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.Prev ouslyRecom ndedUser dsPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.user_act v y.NonNearZeroUserAct v yPred cate
+ mport com.tw ter.follow_recom ndat ons.common.transforms.dedup.DedupTransform
+ mport com.tw ter.follow_recom ndat ons.common.transforms.mod fy_soc al_proof.Mod fySoc alProofTransform
+ mport com.tw ter.follow_recom ndat ons.common.transforms.track ng_token.Track ngTokenTransform
+ mport com.tw ter.follow_recom ndat ons.common.transforms.  ghted_sampl ng.Sampl ngTransform
+ mport com.tw ter.follow_recom ndat ons.conf gap .cand dates.Cand dateUserParamsFactory
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.EnableGFSSoc alProofTransform
+ mport com.tw ter.follow_recom ndat ons.ut ls.Cand dateS ceHoldbackUt l
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.RemoveAccountProofTransform
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.hss.HssPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.sgs. nval dRelat onsh pPred cate
+ mport com.tw ter.follow_recom ndat ons.common.transforms.mod fy_soc al_proof.RemoveAccountProofTransform
+ mport com.tw ter.follow_recom ndat ons.logg ng.FrsLogger
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onFlowData
+ mport com.tw ter.follow_recom ndat ons.ut ls.Recom ndat onFlowBaseS deEffectsUt l
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.qual y_factor.BoundsW hDefault
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactor
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactorConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactorObserver
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.st ch.St ch
 
 /**
- * We use this flow for all post-nux display locations that would use a machine-learning-based-ranker
- * eg HTL, Sidebar, etc
- * Note that the RankedPostNuxFlow is used primarily for scribing/data collection, and doesn't
- * incorporate all of the other components in a flow (candidate source generation, predicates etc)
+ *   use t  flow for all post-nux d splay locat ons that would use a mach ne-learn ng-based-ranker
+ * eg HTL, S debar, etc
+ * Note that t  RankedPostNuxFlow  s used pr mar ly for scr b ng/data collect on, and doesn't
+ *  ncorporate all of t  ot r components  n a flow (cand date s ce generat on, pred cates etc)
  */
-@Singleton
-class PostNuxMlFlow @Inject() (
-  postNuxMlCandidateSourceRegistry: PostNuxMlCandidateSourceRegistry,
-  postNuxMlCombinedRankerBuilder: PostNuxMlCombinedRankerBuilder[PostNuxMlRequest],
-  curatedCompetitorListPredicate: CuratedCompetitorListPredicate,
-  gizmoduckPredicate: GizmoduckPredicate,
-  sgsPredicate: InvalidTargetCandidateRelationshipTypesPredicate,
-  hssPredicate: HssPredicate,
-  invalidRelationshipPredicate: InvalidRelationshipPredicate,
-  recentFollowingPredicate: RecentFollowingPredicate,
-  nonNearZeroUserActivityPredicate: NonNearZeroUserActivityPredicate,
-  inactivePredicate: InactivePredicate,
-  dismissedCandidatePredicate: DismissedCandidatePredicate,
-  previouslyRecommendedUserIdsPredicate: PreviouslyRecommendedUserIdsPredicate,
-  modifySocialProofTransform: ModifySocialProofTransform,
+@S ngleton
+class PostNuxMlFlow @ nject() (
+  postNuxMlCand dateS ceReg stry: PostNuxMlCand dateS ceReg stry,
+  postNuxMlComb nedRankerBu lder: PostNuxMlComb nedRankerBu lder[PostNuxMlRequest],
+  curatedCompet orL stPred cate: CuratedCompet orL stPred cate,
+  g zmoduckPred cate: G zmoduckPred cate,
+  sgsPred cate:  nval dTargetCand dateRelat onsh pTypesPred cate,
+  hssPred cate: HssPred cate,
+   nval dRelat onsh pPred cate:  nval dRelat onsh pPred cate,
+  recentFollow ngPred cate: RecentFollow ngPred cate,
+  nonNearZeroUserAct v yPred cate: NonNearZeroUserAct v yPred cate,
+   nact vePred cate:  nact vePred cate,
+  d sm ssedCand datePred cate: D sm ssedCand datePred cate,
+  prev ouslyRecom ndedUser dsPred cate: Prev ouslyRecom ndedUser dsPred cate,
+  mod fySoc alProofTransform: Mod fySoc alProofTransform,
   removeAccountProofTransform: RemoveAccountProofTransform,
-  trackingTokenTransform: TrackingTokenTransform,
-  randomRankerIdTransform: RandomRankerIdTransform,
-  candidateParamsFactory: CandidateUserParamsFactory[PostNuxMlRequest],
-  samplingTransform: SamplingTransform,
+  track ngTokenTransform: Track ngTokenTransform,
+  randomRanker dTransform: RandomRanker dTransform,
+  cand dateParamsFactory: Cand dateUserParamsFactory[PostNuxMlRequest],
+  sampl ngTransform: Sampl ngTransform,
   frsLogger: FrsLogger,
-  baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[PostNuxMlRequest, CandidateUser]
-    with RecommendationFlowBaseSideEffectsUtil[PostNuxMlRequest, CandidateUser]
-    with CandidateSourceHoldbackUtil {
-  override protected val targetEligibility: Predicate[PostNuxMlRequest] =
-    new ParamPredicate[PostNuxMlRequest](PostNuxMlParams.TargetEligibility)
+  baseStatsRece ver: StatsRece ver)
+    extends Recom ndat onFlow[PostNuxMlRequest, Cand dateUser]
+    w h Recom ndat onFlowBaseS deEffectsUt l[PostNuxMlRequest, Cand dateUser]
+    w h Cand dateS ceHoldbackUt l {
+  overr de protected val targetEl g b l y: Pred cate[PostNuxMlRequest] =
+    new ParamPred cate[PostNuxMlRequest](PostNuxMlParams.TargetEl g b l y)
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("post_nux_ml_flow")
+  overr de val statsRece ver: StatsRece ver = baseStatsRece ver.scope("post_nux_ml_flow")
 
-  override val qualityFactorObserver: Option[QualityFactorObserver] = {
-    val config = LinearLatencyQualityFactorConfig(
-      qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
-      initialDelay = 60.seconds,
-      targetLatency = 700.milliseconds,
-      targetLatencyPercentile = 95.0,
+  overr de val qual yFactorObserver: Opt on[Qual yFactorObserver] = {
+    val conf g = L nearLatencyQual yFactorConf g(
+      qual yFactorBounds =
+        BoundsW hDefault(m n nclus ve = 0.1, max nclus ve = 1.0, default = 1.0),
+       n  alDelay = 60.seconds,
+      targetLatency = 700.m ll seconds,
+      targetLatencyPercent le = 95.0,
       delta = 0.001
     )
-    val qualityFactor = LinearLatencyQualityFactor(config)
-    val observer = LinearLatencyQualityFactorObserver(qualityFactor)
-    statsReceiver.provideGauge("quality_factor")(qualityFactor.currentValue.toFloat)
-    Some(observer)
+    val qual yFactor = L nearLatencyQual yFactor(conf g)
+    val observer = L nearLatencyQual yFactorObserver(qual yFactor)
+    statsRece ver.prov deGauge("qual y_factor")(qual yFactor.currentValue.toFloat)
+    So (observer)
   }
 
-  override protected def updateTarget(request: PostNuxMlRequest): Stitch[PostNuxMlRequest] = {
-    Stitch.value(
-      request.copy(qualityFactor = qualityFactorObserver.map(_.qualityFactor.currentValue))
+  overr de protected def updateTarget(request: PostNuxMlRequest): St ch[PostNuxMlRequest] = {
+    St ch.value(
+      request.copy(qual yFactor = qual yFactorObserver.map(_.qual yFactor.currentValue))
     )
   }
 
-  private[post_nux_ml] def getCandidateSourceIdentifiers(
+  pr vate[post_nux_ml] def getCand dateS ce dent f ers(
     params: Params
-  ): Set[CandidateSourceIdentifier] = {
-    PostNuxMlFlowCandidateSourceWeights.getWeights(params).keySet
+  ): Set[Cand dateS ce dent f er] = {
+    PostNuxMlFlowCand dateS ce  ghts.get  ghts(params).keySet
   }
 
-  override protected def candidateSources(
+  overr de protected def cand dateS ces(
     request: PostNuxMlRequest
-  ): Seq[CandidateSource[PostNuxMlRequest, CandidateUser]] = {
-    val identifiers = getCandidateSourceIdentifiers(request.params)
-    val selected: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] =
-      postNuxMlCandidateSourceRegistry.select(identifiers)
-    val budget: Duration = request.params(PostNuxMlParams.FetchCandidateSourceBudget)
-    filterCandidateSources(
+  ): Seq[Cand dateS ce[PostNuxMlRequest, Cand dateUser]] = {
+    val  dent f ers = getCand dateS ce dent f ers(request.params)
+    val selected: Set[Cand dateS ce[PostNuxMlRequest, Cand dateUser]] =
+      postNuxMlCand dateS ceReg stry.select( dent f ers)
+    val budget: Durat on = request.params(PostNuxMlParams.FetchCand dateS ceBudget)
+    f lterCand dateS ces(
       request,
-      selected.map(c => c.failOpenWithin(budget, statsReceiver)).toSeq)
+      selected.map(c => c.fa lOpenW h n(budget, statsRece ver)).toSeq)
   }
 
-  override protected val preRankerCandidateFilter: Predicate[(PostNuxMlRequest, CandidateUser)] = {
-    val stats = statsReceiver.scope("pre_ranker")
+  overr de protected val preRankerCand dateF lter: Pred cate[(PostNuxMlRequest, Cand dateUser)] = {
+    val stats = statsRece ver.scope("pre_ranker")
 
-    object excludeNearZeroUserPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          nonNearZeroUserActivityPredicate,
-          stats.scope("exclude_near_zero_predicate")
+    object excludeNearZeroUserPred cate
+        extends GatedPred cateBase[(PostNuxMlRequest, Cand dateUser)](
+          nonNearZeroUserAct v yPred cate,
+          stats.scope("exclude_near_zero_pred cate")
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.ExcludeNearZeroCandidates)
+      overr de def gate( em: (PostNuxMlRequest, Cand dateUser)): Boolean =
+         em._1.params(PostNuxMlParams.ExcludeNearZeroCand dates)
     }
 
-    object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          invalidRelationshipPredicate,
-          stats.scope("invalid_relationship_predicate")
+    object  nval dRelat onsh pGatedPred cate
+        extends GatedPred cateBase[(PostNuxMlRequest, Cand dateUser)](
+           nval dRelat onsh pPred cate,
+          stats.scope(" nval d_relat onsh p_pred cate")
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableInvalidRelationshipPredicate)
+      overr de def gate( em: (PostNuxMlRequest, Cand dateUser)): Boolean =
+         em._1.params(PostNuxMlParams.Enable nval dRelat onsh pPred cate)
     }
 
-    ExcludedUserIdPredicate
-      .observe(stats.scope("exclude_user_id_predicate"))
-      .andThen(
-        recentFollowingPredicate.observe(stats.scope("recent_following_predicate"))
+    ExcludedUser dPred cate
+      .observe(stats.scope("exclude_user_ d_pred cate"))
+      .andT n(
+        recentFollow ngPred cate.observe(stats.scope("recent_follow ng_pred cate"))
       )
-      .andThen(
-        dismissedCandidatePredicate.observe(stats.scope("dismissed_candidate_predicate"))
+      .andT n(
+        d sm ssedCand datePred cate.observe(stats.scope("d sm ssed_cand date_pred cate"))
       )
-      .andThen(
-        previouslyRecommendedUserIdsPredicate.observe(
-          stats.scope("previously_recommended_user_ids_predicate"))
+      .andT n(
+        prev ouslyRecom ndedUser dsPred cate.observe(
+          stats.scope("prev ously_recom nded_user_ ds_pred cate"))
       )
-      .andThen(
-        invalidRelationshipGatedPredicate.observe(stats.scope("invalid_relationship_predicate"))
+      .andT n(
+         nval dRelat onsh pGatedPred cate.observe(stats.scope(" nval d_relat onsh p_pred cate"))
       )
-      .andThen(
-        excludeNearZeroUserPredicate.observe(stats.scope("exclude_near_zero_user_state"))
+      .andT n(
+        excludeNearZeroUserPred cate.observe(stats.scope("exclude_near_zero_user_state"))
       )
-      .observe(stats.scope("overall_pre_ranker_candidate_filter"))
+      .observe(stats.scope("overall_pre_ranker_cand date_f lter"))
   }
 
-  override protected def selectRanker(
+  overr de protected def selectRanker(
     request: PostNuxMlRequest
-  ): Ranker[PostNuxMlRequest, CandidateUser] = {
-    postNuxMlCombinedRankerBuilder.build(
+  ): Ranker[PostNuxMlRequest, Cand dateUser] = {
+    postNuxMlComb nedRankerBu lder.bu ld(
       request,
-      PostNuxMlFlowCandidateSourceWeights.getWeights(request.params))
+      PostNuxMlFlowCand dateS ce  ghts.get  ghts(request.params))
   }
 
-  override protected val postRankerTransform: Transform[PostNuxMlRequest, CandidateUser] = {
-    new DedupTransform[PostNuxMlRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
-      .andThen(
-        samplingTransform
-          .gated(PostNuxMlParams.SamplingTransformEnabled)
-          .observe(statsReceiver.scope("samplingtransform")))
+  overr de protected val postRankerTransform: Transform[PostNuxMlRequest, Cand dateUser] = {
+    new DedupTransform[PostNuxMlRequest, Cand dateUser]
+      .observe(statsRece ver.scope("dedupp ng"))
+      .andT n(
+        sampl ngTransform
+          .gated(PostNuxMlParams.Sampl ngTransformEnabled)
+          .observe(statsRece ver.scope("sampl ngtransform")))
   }
 
-  override protected val validateCandidates: Predicate[(PostNuxMlRequest, CandidateUser)] = {
-    val stats = statsReceiver.scope("validate_candidates")
-    val competitorPredicate =
-      curatedCompetitorListPredicate.map[(PostNuxMlRequest, CandidateUser)](_._2)
+  overr de protected val val dateCand dates: Pred cate[(PostNuxMlRequest, Cand dateUser)] = {
+    val stats = statsRece ver.scope("val date_cand dates")
+    val compet orPred cate =
+      curatedCompet orL stPred cate.map[(PostNuxMlRequest, Cand dateUser)](_._2)
 
-    val producerHoldbackPredicate = new CandidateParamPredicate[CandidateUser](
-      GlobalParams.KeepUserCandidate,
-      FilterReason.CandidateSideHoldback
-    ).map[(PostNuxMlRequest, CandidateUser)] {
-      case (request, user) => candidateParamsFactory(user, request)
+    val producerHoldbackPred cate = new Cand dateParamPred cate[Cand dateUser](
+      GlobalParams.KeepUserCand date,
+      F lterReason.Cand dateS deHoldback
+    ).map[(PostNuxMlRequest, Cand dateUser)] {
+      case (request, user) => cand dateParamsFactory(user, request)
     }
-    val pymkProducerHoldbackPredicate = new CandidateSourceParamPredicate(
-      GlobalParams.KeepSocialUserCandidate,
-      FilterReason.CandidateSideHoldback,
-      CandidateSourceHoldbackUtil.SocialCandidateSourceIds
-    ).map[(PostNuxMlRequest, CandidateUser)] {
-      case (request, user) => candidateParamsFactory(user, request)
+    val pymkProducerHoldbackPred cate = new Cand dateS ceParamPred cate(
+      GlobalParams.KeepSoc alUserCand date,
+      F lterReason.Cand dateS deHoldback,
+      Cand dateS ceHoldbackUt l.Soc alCand dateS ce ds
+    ).map[(PostNuxMlRequest, Cand dateUser)] {
+      case (request, user) => cand dateParamsFactory(user, request)
     }
-    val sgsPredicateStats = stats.scope("sgs_predicate")
-    object sgsGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          sgsPredicate.observe(sgsPredicateStats),
-          sgsPredicateStats
+    val sgsPred cateStats = stats.scope("sgs_pred cate")
+    object sgsGatedPred cate
+        extends GatedPred cateBase[(PostNuxMlRequest, Cand dateUser)](
+          sgsPred cate.observe(sgsPred cateStats),
+          sgsPred cateStats
         ) {
 
       /**
-       * When SGS predicate is turned off, only query SGS exists API for (user, candidate, relationship)
-       * when the user's number of invalid relationships exceeds the threshold during request
-       * building step. This is to minimize load to SGS and underlying Flock DB.
+       * W n SGS pred cate  s turned off, only query SGS ex sts AP  for (user, cand date, relat onsh p)
+       * w n t  user's number of  nval d relat onsh ps exceeds t  threshold dur ng request
+       * bu ld ng step. T   s to m n m ze load to SGS and underly ng Flock DB.
        */
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableSGSPredicate) ||
-          SocialGraphClient.enablePostRankerSgsPredicate(
-            item._1.invalidRelationshipUserIds.getOrElse(Set.empty).size)
+      overr de def gate( em: (PostNuxMlRequest, Cand dateUser)): Boolean =
+         em._1.params(PostNuxMlParams.EnableSGSPred cate) ||
+          Soc alGraphCl ent.enablePostRankerSgsPred cate(
+             em._1. nval dRelat onsh pUser ds.getOrElse(Set.empty).s ze)
     }
 
-    val hssPredicateStats = stats.scope("hss_predicate")
-    object hssGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          hssPredicate.observe(hssPredicateStats),
-          hssPredicateStats
+    val hssPred cateStats = stats.scope("hss_pred cate")
+    object hssGatedPred cate
+        extends GatedPred cateBase[(PostNuxMlRequest, Cand dateUser)](
+          hssPred cate.observe(hssPred cateStats),
+          hssPred cateStats
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableHssPredicate)
+      overr de def gate( em: (PostNuxMlRequest, Cand dateUser)): Boolean =
+         em._1.params(PostNuxMlParams.EnableHssPred cate)
     }
 
-    Predicate
-      .andConcurrently[(PostNuxMlRequest, CandidateUser)](
+    Pred cate
+      .andConcurrently[(PostNuxMlRequest, Cand dateUser)](
         Seq(
-          competitorPredicate.observe(stats.scope("curated_competitor_predicate")),
-          gizmoduckPredicate.observe(stats.scope("gizmoduck_predicate")),
-          sgsGatedPredicate,
-          hssGatedPredicate,
-          inactivePredicate.observe(stats.scope("inactive_predicate")),
+          compet orPred cate.observe(stats.scope("curated_compet or_pred cate")),
+          g zmoduckPred cate.observe(stats.scope("g zmoduck_pred cate")),
+          sgsGatedPred cate,
+          hssGatedPred cate,
+           nact vePred cate.observe(stats.scope(" nact ve_pred cate")),
         )
       )
-      // to avoid dilutions, we need to apply the receiver holdback predicates at the very last step
-      .andThen(pymkProducerHoldbackPredicate.observe(stats.scope("pymk_receiver_side_holdback")))
-      .andThen(producerHoldbackPredicate.observe(stats.scope("receiver_side_holdback")))
-      .observe(stats.scope("overall_validate_candidates"))
+      // to avo d d lut ons,   need to apply t  rece ver holdback pred cates at t  very last step
+      .andT n(pymkProducerHoldbackPred cate.observe(stats.scope("pymk_rece ver_s de_holdback")))
+      .andT n(producerHoldbackPred cate.observe(stats.scope("rece ver_s de_holdback")))
+      .observe(stats.scope("overall_val date_cand dates"))
   }
 
-  override protected val transformResults: Transform[PostNuxMlRequest, CandidateUser] = {
-    modifySocialProofTransform
-      .gated(EnableGFSSocialProofTransform)
-      .andThen(trackingTokenTransform)
-      .andThen(randomRankerIdTransform.gated(PostNuxMlParams.LogRandomRankerId))
-      .andThen(removeAccountProofTransform.gated(PostNuxMlParams.EnableRemoveAccountProofTransform))
+  overr de protected val transformResults: Transform[PostNuxMlRequest, Cand dateUser] = {
+    mod fySoc alProofTransform
+      .gated(EnableGFSSoc alProofTransform)
+      .andT n(track ngTokenTransform)
+      .andT n(randomRanker dTransform.gated(PostNuxMlParams.LogRandomRanker d))
+      .andT n(removeAccountProofTransform.gated(PostNuxMlParams.EnableRemoveAccountProofTransform))
   }
 
-  override protected def resultsConfig(request: PostNuxMlRequest): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      request.maxResults.getOrElse(request.params(PostNuxMlParams.ResultSizeParam)),
-      request.params(PostNuxMlParams.BatchSizeParam)
+  overr de protected def resultsConf g(request: PostNuxMlRequest): Recom ndat onResultsConf g = {
+    Recom ndat onResultsConf g(
+      request.maxResults.getOrElse(request.params(PostNuxMlParams.ResultS zeParam)),
+      request.params(PostNuxMlParams.BatchS zeParam)
     )
   }
 
-  override def applySideEffects(
+  overr de def applyS deEffects(
     target: PostNuxMlRequest,
-    candidateSources: Seq[CandidateSource[PostNuxMlRequest, CandidateUser]],
-    candidatesFromCandidateSources: Seq[CandidateUser],
-    mergedCandidates: Seq[CandidateUser],
-    filteredCandidates: Seq[CandidateUser],
-    rankedCandidates: Seq[CandidateUser],
-    transformedCandidates: Seq[CandidateUser],
-    truncatedCandidates: Seq[CandidateUser],
-    results: Seq[CandidateUser]
-  ): Stitch[Unit] = {
-    frsLogger.logRecommendationFlowData[PostNuxMlRequest](
+    cand dateS ces: Seq[Cand dateS ce[PostNuxMlRequest, Cand dateUser]],
+    cand datesFromCand dateS ces: Seq[Cand dateUser],
+     rgedCand dates: Seq[Cand dateUser],
+    f lteredCand dates: Seq[Cand dateUser],
+    rankedCand dates: Seq[Cand dateUser],
+    transfor dCand dates: Seq[Cand dateUser],
+    truncatedCand dates: Seq[Cand dateUser],
+    results: Seq[Cand dateUser]
+  ): St ch[Un ] = {
+    frsLogger.logRecom ndat onFlowData[PostNuxMlRequest](
       target,
-      RecommendationFlowData[PostNuxMlRequest](
+      Recom ndat onFlowData[PostNuxMlRequest](
         target,
-        PostNuxMlFlow.identifier,
-        candidateSources,
-        candidatesFromCandidateSources,
-        mergedCandidates,
-        filteredCandidates,
-        rankedCandidates,
-        transformedCandidates,
-        truncatedCandidates,
+        PostNuxMlFlow. dent f er,
+        cand dateS ces,
+        cand datesFromCand dateS ces,
+         rgedCand dates,
+        f lteredCand dates,
+        rankedCand dates,
+        transfor dCand dates,
+        truncatedCand dates,
         results
       )
     )
-    super.applySideEffects(
+    super.applyS deEffects(
       target,
-      candidateSources,
-      candidatesFromCandidateSources,
-      mergedCandidates,
-      filteredCandidates,
-      rankedCandidates,
-      transformedCandidates,
-      truncatedCandidates,
+      cand dateS ces,
+      cand datesFromCand dateS ces,
+       rgedCand dates,
+      f lteredCand dates,
+      rankedCand dates,
+      transfor dCand dates,
+      truncatedCand dates,
       results
     )
   }
 }
 
 object PostNuxMlFlow {
-  val identifier = RecommendationPipelineIdentifier("PostNuxMlFlow")
+  val  dent f er = Recom ndat onP pel ne dent f er("PostNuxMlFlow")
 }

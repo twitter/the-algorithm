@@ -1,45 +1,45 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.SearchCandidateCount
-import com.twitter.visibility.features.SearchQueryHasUser
-import com.twitter.visibility.features.SearchQuerySource
-import com.twitter.visibility.features.SearchResultsPageNumber
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.common.constants.thr ftscala.Thr ftQueryS ce
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features.SearchCand dateCount
+ mport com.tw ter.v s b l y.features.SearchQueryHasUser
+ mport com.tw ter.v s b l y.features.SearchQueryS ce
+ mport com.tw ter.v s b l y.features.SearchResultsPageNumber
+ mport com.tw ter.v s b l y. nterfaces.common.blender.BlenderVFRequestContext
 
 @Deprecated
 class BlenderContextFeatures(
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("blender_context_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val searchResultsPageNumber =
-    scopedStatsReceiver.scope(SearchResultsPageNumber.name).counter("requests")
-  private[this] val searchCandidateCount =
-    scopedStatsReceiver.scope(SearchCandidateCount.name).counter("requests")
-  private[this] val searchQuerySource =
-    scopedStatsReceiver.scope(SearchQuerySource.name).counter("requests")
-  private[this] val searchQueryHasUser =
-    scopedStatsReceiver.scope(SearchQueryHasUser.name).counter("requests")
+  statsRece ver: StatsRece ver) {
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("blender_context_features")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val searchResultsPageNumber =
+    scopedStatsRece ver.scope(SearchResultsPageNumber.na ).counter("requests")
+  pr vate[t ] val searchCand dateCount =
+    scopedStatsRece ver.scope(SearchCand dateCount.na ).counter("requests")
+  pr vate[t ] val searchQueryS ce =
+    scopedStatsRece ver.scope(SearchQueryS ce.na ).counter("requests")
+  pr vate[t ] val searchQueryHasUser =
+    scopedStatsRece ver.scope(SearchQueryHasUser.na ).counter("requests")
 
   def forBlenderContext(
     blenderContext: BlenderVFRequestContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    searchResultsPageNumber.incr()
-    searchCandidateCount.incr()
-    searchQuerySource.incr()
-    searchQueryHasUser.incr()
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    searchResultsPageNumber. ncr()
+    searchCand dateCount. ncr()
+    searchQueryS ce. ncr()
+    searchQueryHasUser. ncr()
 
-    _.withConstantFeature(SearchResultsPageNumber, blenderContext.resultsPageNumber)
-      .withConstantFeature(SearchCandidateCount, blenderContext.candidateCount)
-      .withConstantFeature(
-        SearchQuerySource,
-        blenderContext.querySourceOption match {
-          case Some(querySource) => querySource
-          case _ => ThriftQuerySource.Unknown
+    _.w hConstantFeature(SearchResultsPageNumber, blenderContext.resultsPageNumber)
+      .w hConstantFeature(SearchCand dateCount, blenderContext.cand dateCount)
+      .w hConstantFeature(
+        SearchQueryS ce,
+        blenderContext.queryS ceOpt on match {
+          case So (queryS ce) => queryS ce
+          case _ => Thr ftQueryS ce.Unknown
         })
-      .withConstantFeature(SearchQueryHasUser, blenderContext.queryHasUser)
+      .w hConstantFeature(SearchQueryHasUser, blenderContext.queryHasUser)
   }
 }

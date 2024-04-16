@@ -1,49 +1,49 @@
-package com.twitter.follow_recommendations.common.utils
+package com.tw ter.follow_recom ndat ons.common.ut ls
 
-object MergeUtil {
+object  rgeUt l {
 
   /**
-   * Takes a seq of items which have weights. Returns an infinite stream of each item
-   * by their weights. All weights need to be greater than or equal to zero. In addition,
-   * the sum of weights should be greater than zero.
+   * Takes a seq of  ems wh ch have   ghts. Returns an  nf n e stream of each  em
+   * by t  r   ghts. All   ghts need to be greater than or equal to zero.  n add  on,
+   * t  sum of   ghts should be greater than zero.
    *
-   * Example usage of this function:
-   * Input weighted Item {{CS1, 3}, {CS2, 2}, {CS3, 5}}
+   * Example usage of t  funct on:
+   *  nput   ghted  em {{CS1, 3}, {CS2, 2}, {CS3, 5}}
    * Output stream: (CS1, CS1, CS1, CS2, CS2, CS3, CS3, CS3, CS3, CS3, CS1, CS1, CS1, CS2,...}
    *
-   * @param items    items
-   * @param weighted provides weights for items
-   * @tparam T type of item
+   * @param  ems     ems
+   * @param   ghted prov des   ghts for  ems
+   * @tparam T type of  em
    *
    * @return Stream of Ts
    */
-  def weightedRoundRobin[T](
-    items: Seq[T]
+  def   ghtedRoundRob n[T](
+     ems: Seq[T]
   )(
-    implicit weighted: Weighted[T]
+     mpl c    ghted:   ghted[T]
   ): Stream[T] = {
-    if (items.isEmpty) {
+     f ( ems. sEmpty) {
       Stream.empty
     } else {
-      val weights = items.map { i => weighted(i) }
+      val   ghts =  ems.map {   =>   ghted( ) }
       assert(
-        weights.forall {
+          ghts.forall {
           _ >= 0
         },
-        "Negative weight exists for sampling")
-      val cumulativeWeight = weights.scanLeft(0.0)(_ + _).tail
-      assert(cumulativeWeight.last > 0, "Sum of the sampling weights is not positive")
+        "Negat ve   ght ex sts for sampl ng")
+      val cumulat ve  ght =   ghts.scanLeft(0.0)(_ + _).ta l
+      assert(cumulat ve  ght.last > 0, "Sum of t  sampl ng   ghts  s not pos  ve")
 
-      var weightIdx = 0
-      var weight = 0
+      var   ght dx = 0
+      var   ght = 0
 
       def next(): Stream[T] = {
-        val tmpIdx = weightIdx
-        weight = weight + 1
-        weight = if (weight >= weights(weightIdx)) 0 else weight
-        weightIdx = if (weight == 0) weightIdx + 1 else weightIdx
-        weightIdx = if (weightIdx == weights.length) 0 else weightIdx
-        items(tmpIdx) #:: next()
+        val tmp dx =   ght dx
+          ght =   ght + 1
+          ght =  f (  ght >=   ghts(  ght dx)) 0 else   ght
+          ght dx =  f (  ght == 0)   ght dx + 1 else   ght dx
+          ght dx =  f (  ght dx ==   ghts.length) 0 else   ght dx
+         ems(tmp dx) #:: next()
       }
       next()
     }

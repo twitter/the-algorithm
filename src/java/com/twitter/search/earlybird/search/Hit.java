@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
 
 /**
- * Class that abstracts a document that matches a query we're processing in Earlybird.
+ * Class that abstracts a docu nt that matc s a query  're process ng  n Earlyb rd.
  */
-public class Hit implements Comparable<Hit> {
-  protected long timeSliceID;
-  protected long statusID;
-  private boolean hasExplanation;
+publ c class H   mple nts Comparable<H > {
+  protected long t  Sl ce D;
+  protected long status D;
+  pr vate boolean hasExplanat on;
 
   @Nullable
-  protected ThriftSearchResultMetadata metadata;
+  protected Thr ftSearchResult tadata  tadata;
 
-  public Hit(long timeSliceID, long statusID) {
-    this.timeSliceID = timeSliceID;
-    this.statusID = statusID;
-    this.metadata = null;
+  publ c H (long t  Sl ce D, long status D) {
+    t .t  Sl ce D = t  Sl ce D;
+    t .status D = status D;
+    t . tadata = null;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  publ c long getT  Sl ce D() {
+    return t  Sl ce D;
   }
 
-  public long getStatusID() {
-    return statusID;
+  publ c long getStatus D() {
+    return status D;
   }
 
   @Nullable
-  public ThriftSearchResultMetadata getMetadata() {
-    return metadata;
+  publ c Thr ftSearchResult tadata get tadata() {
+    return  tadata;
   }
 
-  public void setMetadata(ThriftSearchResultMetadata metadata) {
-    this.metadata = metadata;
+  publ c vo d set tadata(Thr ftSearchResult tadata  tadata) {
+    t . tadata =  tadata;
   }
 
-  @Override
-  public int compareTo(Hit other) {
-    return -Long.compare(this.statusID, other.statusID);
+  @Overr de
+  publ c  nt compareTo(H  ot r) {
+    return -Long.compare(t .status D, ot r.status D);
   }
 
-  @Override
-  public String toString() {
-    return "Hit[tweetID=" + statusID + ",timeSliceID=" + timeSliceID
-        + ",score=" + (metadata == null ? "null" : metadata.getScore()) + "]";
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "H [t et D=" + status D + ",t  Sl ce D=" + t  Sl ce D
+        + ",score=" + ( tadata == null ? "null" :  tadata.getScore()) + "]";
   }
 
-  public boolean isHasExplanation() {
-    return hasExplanation;
+  publ c boolean  sHasExplanat on() {
+    return hasExplanat on;
   }
 
-  public void setHasExplanation(boolean hasExplanation) {
-    this.hasExplanation = hasExplanation;
+  publ c vo d setHasExplanat on(boolean hasExplanat on) {
+    t .hasExplanat on = hasExplanat on;
   }
 }

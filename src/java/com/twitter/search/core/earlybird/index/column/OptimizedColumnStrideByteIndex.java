@@ -1,81 +1,81 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-public class OptimizedColumnStrideByteIndex extends ColumnStrideFieldIndex implements Flushable {
-  private final byte[] values;
+publ c class Opt m zedColumnStr deByte ndex extends ColumnStr deF eld ndex  mple nts Flushable {
+  pr vate f nal byte[] values;
 
-  public OptimizedColumnStrideByteIndex(String name, int maxSize) {
-    super(name);
-    values = new byte[maxSize];
+  publ c Opt m zedColumnStr deByte ndex(Str ng na ,  nt maxS ze) {
+    super(na );
+    values = new byte[maxS ze];
   }
 
-  public OptimizedColumnStrideByteIndex(
-      ColumnStrideByteIndex columnStrideByteIndex,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super(columnStrideByteIndex.getName());
-    int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    values = new byte[maxDocId + 1];
+  publ c Opt m zedColumnStr deByte ndex(
+      ColumnStr deByte ndex columnStr deByte ndex,
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+    super(columnStr deByte ndex.getNa ());
+     nt maxDoc d = opt m zedT et dMapper.getPrev ousDoc D( nteger.MAX_VALUE);
+    values = new byte[maxDoc d + 1];
 
-    int docId = optimizedTweetIdMapper.getNextDocID(Integer.MIN_VALUE);
-    while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
-      setValue(docId, columnStrideByteIndex.get(originalDocId));
-      docId = optimizedTweetIdMapper.getNextDocID(docId);
+     nt doc d = opt m zedT et dMapper.getNextDoc D( nteger.M N_VALUE);
+    wh le (doc d != Doc DToT et DMapper. D_NOT_FOUND) {
+       nt or g nalDoc d = or g nalT et dMapper.getDoc D(opt m zedT et dMapper.getT et D(doc d));
+      setValue(doc d, columnStr deByte ndex.get(or g nalDoc d));
+      doc d = opt m zedT et dMapper.getNextDoc D(doc d);
     }
   }
 
-  private OptimizedColumnStrideByteIndex(String name, byte[] values) {
-    super(name);
-    this.values = values;
+  pr vate Opt m zedColumnStr deByte ndex(Str ng na , byte[] values) {
+    super(na );
+    t .values = values;
   }
 
-  @Override
-  public void setValue(int docID, long value) {
-    this.values[docID] = (byte) value;
+  @Overr de
+  publ c vo d setValue( nt doc D, long value) {
+    t .values[doc D] = (byte) value;
   }
 
-  @Override
-  public long get(int docID) {
-    return values[docID];
+  @Overr de
+  publ c long get( nt doc D) {
+    return values[doc D];
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedColumnStrideByteIndex> {
-    private static final String NAME_PROP_NAME = "fieldName";
+  publ c stat c f nal class FlushHandler extends Flushable.Handler<Opt m zedColumnStr deByte ndex> {
+    pr vate stat c f nal Str ng NAME_PROP_NAME = "f eldNa ";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(OptimizedColumnStrideByteIndex objectToFlush) {
+    publ c FlushHandler(Opt m zedColumnStr deByte ndex objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedColumnStrideByteIndex columnStrideByteIndex = getObjectToFlush();
-      flushInfo.addStringProperty(NAME_PROP_NAME, columnStrideByteIndex.getName());
-      out.writeByteArray(columnStrideByteIndex.values);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      Opt m zedColumnStr deByte ndex columnStr deByte ndex = getObjectToFlush();
+      flush nfo.addStr ngProperty(NAME_PROP_NAME, columnStr deByte ndex.getNa ());
+      out.wr eByteArray(columnStr deByte ndex.values);
     }
 
-    @Override
-    protected OptimizedColumnStrideByteIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      byte[] values = in.readByteArray();
-      return new OptimizedColumnStrideByteIndex(
-          flushInfo.getStringProperty(NAME_PROP_NAME), values);
+    @Overr de
+    protected Opt m zedColumnStr deByte ndex doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+      byte[] values =  n.readByteArray();
+      return new Opt m zedColumnStr deByte ndex(
+          flush nfo.getStr ngProperty(NAME_PROP_NAME), values);
     }
   }
 }

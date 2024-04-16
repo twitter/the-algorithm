@@ -1,111 +1,111 @@
-package com.twitter.search.ingester.pipeline.app;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.tw ter.search. ngester.p pel ne.app;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.CompletableFuture;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport java.ut l.concurrent.SynchronousQueue;
+ mport java.ut l.concurrent.ThreadPoolExecutor;
+ mport java.ut l.concurrent.T  Un ;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage;
-import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaConsumerStage;
-import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage;
-import com.twitter.search.ingester.pipeline.util.PipelineV2CreationException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search. ngester.model. ngesterT etEvent;
+ mport com.tw ter.search. ngester.model.KafkaRawRecord;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.T etEventDeser al zerStage;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.kafka.KafkaConsu rStage;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.kafka.KafkaRawRecordConsu rStage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neV2Creat onExcept on;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
 
-public class RealtimeIngesterPipelineV2 {
-  private static final Logger LOG = LoggerFactory.getLogger(RealtimeIngesterPipelineV2.class);
-  private static final String PROD_ENV =  "prod";
-  private static final String STAGING_ENV = "staging";
-  private static final String STAGING1_ENV = "staging1";
-  private static final String REALTIME_CLUSTER = "realtime";
-  private static final String PROTECTED_CLUSTER = "protected";
-  private static final String REALTIME_CG_CLUSTER = "realtime_cg";
-  private static final String KAFKA_CLIENT_ID = "";
-  private static final String KAFKA_TOPIC_NAME = "";
-  private static final String KAFKA_CONSUMER_GROUP_ID = "";
-  private static final String KAFKA_CLUSTER_PATH = "";
-  private static final String KAFKA_DECIDER_KEY = "ingester_tweets_consume_from_kafka";
-  private static final String STATS_PREFIX = "realtimeingesterpipelinev2";
-  private SearchCounter kafkaErrorCount = SearchCounter.create(STATS_PREFIX
+publ c class Realt   ngesterP pel neV2 {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Realt   ngesterP pel neV2.class);
+  pr vate stat c f nal Str ng PROD_ENV =  "prod";
+  pr vate stat c f nal Str ng STAG NG_ENV = "stag ng";
+  pr vate stat c f nal Str ng STAG NG1_ENV = "stag ng1";
+  pr vate stat c f nal Str ng REALT ME_CLUSTER = "realt  ";
+  pr vate stat c f nal Str ng PROTECTED_CLUSTER = "protected";
+  pr vate stat c f nal Str ng REALT ME_CG_CLUSTER = "realt  _cg";
+  pr vate stat c f nal Str ng KAFKA_CL ENT_ D = "";
+  pr vate stat c f nal Str ng KAFKA_TOP C_NAME = "";
+  pr vate stat c f nal Str ng KAFKA_CONSUMER_GROUP_ D = "";
+  pr vate stat c f nal Str ng KAFKA_CLUSTER_PATH = "";
+  pr vate stat c f nal Str ng KAFKA_DEC DER_KEY = " ngester_t ets_consu _from_kafka";
+  pr vate stat c f nal Str ng STATS_PREF X = "realt   ngesterp pel nev2";
+  pr vate SearchCounter kafkaErrorCount = SearchCounter.create(STATS_PREF X
       + "_kafka_error_count");
-  private Boolean running;
-  private String environment;
-  private String cluster;
-  private ExecutorService threadPool;
-  private KafkaConsumerStage<KafkaRawRecord> kafkaConsumer;
-  private TweetEventDeserializerStage tweetEventDeserializerStage;
+  pr vate Boolean runn ng;
+  pr vate Str ng env ron nt;
+  pr vate Str ng cluster;
+  pr vate ExecutorServ ce threadPool;
+  pr vate KafkaConsu rStage<KafkaRawRecord> kafkaConsu r;
+  pr vate T etEventDeser al zerStage t etEventDeser al zerStage;
 
-  public RealtimeIngesterPipelineV2(String environment, String cluster, int threadsToSpawn) throws
-      PipelineV2CreationException, PipelineStageException {
-    if (!environment.equals(PROD_ENV) && !environment.equals(STAGING_ENV)
-        && !environment.equals(STAGING1_ENV)) {
-      throw new PipelineV2CreationException("invalid value for environment");
+  publ c Realt   ngesterP pel neV2(Str ng env ron nt, Str ng cluster,  nt threadsToSpawn) throws
+      P pel neV2Creat onExcept on, P pel neStageExcept on {
+     f (!env ron nt.equals(PROD_ENV) && !env ron nt.equals(STAG NG_ENV)
+        && !env ron nt.equals(STAG NG1_ENV)) {
+      throw new P pel neV2Creat onExcept on(" nval d value for env ron nt");
     }
 
-    if (!cluster.equals(REALTIME_CLUSTER)
-        && !cluster.equals(PROTECTED_CLUSTER) && !cluster.equals(REALTIME_CG_CLUSTER)) {
-      throw new PipelineV2CreationException("invalid value for cluster.");
+     f (!cluster.equals(REALT ME_CLUSTER)
+        && !cluster.equals(PROTECTED_CLUSTER) && !cluster.equals(REALT ME_CG_CLUSTER)) {
+      throw new P pel neV2Creat onExcept on(" nval d value for cluster.");
     }
 
-    int numberOfThreads = Math.max(1, threadsToSpawn);
-    this.environment = environment;
-    this.cluster = cluster;
-    this.threadPool = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L,
-        TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
-    initStages();
+     nt numberOfThreads = Math.max(1, threadsToSpawn);
+    t .env ron nt = env ron nt;
+    t .cluster = cluster;
+    t .threadPool = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L,
+        T  Un .M LL SECONDS, new SynchronousQueue<>(), new ThreadPoolExecutor.CallerRunsPol cy());
+     n Stages();
   }
 
-  private void initStages() throws PipelineStageException {
-    kafkaConsumer = new KafkaRawRecordConsumerStage(KAFKA_CLIENT_ID, KAFKA_TOPIC_NAME,
-        KAFKA_CONSUMER_GROUP_ID, KAFKA_CLUSTER_PATH, KAFKA_DECIDER_KEY);
-    kafkaConsumer.setupStageV2();
-    tweetEventDeserializerStage = new TweetEventDeserializerStage();
-    tweetEventDeserializerStage.setupStageV2();
+  pr vate vo d  n Stages() throws P pel neStageExcept on {
+    kafkaConsu r = new KafkaRawRecordConsu rStage(KAFKA_CL ENT_ D, KAFKA_TOP C_NAME,
+        KAFKA_CONSUMER_GROUP_ D, KAFKA_CLUSTER_PATH, KAFKA_DEC DER_KEY);
+    kafkaConsu r.setupStageV2();
+    t etEventDeser al zerStage = new T etEventDeser al zerStage();
+    t etEventDeser al zerStage.setupStageV2();
   }
 
   /***
-   * Starts the pipeline by starting the polling from Kafka and passing the events to the first
-   * stage of the pipeline.
+   * Starts t  p pel ne by start ng t  poll ng from Kafka and pass ng t  events to t  f rst
+   * stage of t  p pel ne.
    */
-  public void run() {
-    running = true;
-    while (running) {
-      pollFromKafkaAndSendToPipeline();
+  publ c vo d run() {
+    runn ng = true;
+    wh le (runn ng) {
+      pollFromKafkaAndSendToP pel ne();
     }
   }
 
-  private void pollFromKafkaAndSendToPipeline() {
+  pr vate vo d pollFromKafkaAndSendToP pel ne() {
     try  {
-      List<KafkaRawRecord> records = kafkaConsumer.pollFromTopic();
+      L st<KafkaRawRecord> records = kafkaConsu r.pollFromTop c();
       for (KafkaRawRecord record : records) {
         processKafkaRecord(record);
       }
-    } catch (PipelineStageException e) {
-      kafkaErrorCount.increment();
-      LOG.error("Error polling from Kafka", e);
+    } catch (P pel neStageExcept on e) {
+      kafkaErrorCount. ncre nt();
+      LOG.error("Error poll ng from Kafka", e);
     }
   }
 
-  private void processKafkaRecord(KafkaRawRecord record) {
+  pr vate vo d processKafkaRecord(KafkaRawRecord record) {
     CompletableFuture<KafkaRawRecord> stage1 = CompletableFuture.supplyAsync(() -> record,
         threadPool);
 
-    CompletableFuture<IngesterTweetEvent> stage2 = stage1.thenApplyAsync((KafkaRawRecord r) ->
-      tweetEventDeserializerStage.runStageV2(r), threadPool);
+    CompletableFuture< ngesterT etEvent> stage2 = stage1.t nApplyAsync((KafkaRawRecord r) ->
+      t etEventDeser al zerStage.runStageV2(r), threadPool);
 
   }
 
   /***
-   * Stop the pipeline from processing any further events.
+   * Stop t  p pel ne from process ng any furt r events.
    */
-  public void shutdown() {
-    running = false;
-    kafkaConsumer.cleanupStageV2();
-    tweetEventDeserializerStage.cleanupStageV2();
+  publ c vo d shutdown() {
+    runn ng = false;
+    kafkaConsu r.cleanupStageV2();
+    t etEventDeser al zerStage.cleanupStageV2();
   }
 }

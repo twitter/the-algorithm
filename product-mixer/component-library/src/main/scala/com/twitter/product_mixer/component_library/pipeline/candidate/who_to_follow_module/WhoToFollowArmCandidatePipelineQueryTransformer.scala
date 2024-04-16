@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.account_recom ndat ons_m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.request.Cl entContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object WhoToFollowArmCandidatePipelineQueryTransformer {
-  val HomeDisplayLocation = "timeline"
-  val HomeReverseChronDisplayLocation = "timeline_reverse_chron"
-  val ProfileDisplayLocation = "profile_timeline"
+object WhoToFollowArmCand dateP pel neQueryTransfor r {
+  val Ho D splayLocat on = "t  l ne"
+  val Ho ReverseChronD splayLocat on = "t  l ne_reverse_chron"
+  val Prof leD splayLocat on = "prof le_t  l ne"
 }
 
-case class WhoToFollowArmCandidatePipelineQueryTransformer[-Query <: PipelineQuery](
-  displayLocationParam: Param[String],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-  profileUserIdFeature: Option[Feature[PipelineQuery, Long]])
-    extends CandidatePipelineQueryTransformer[Query, t.AccountRecommendationsMixerRequest] {
+case class WhoToFollowArmCand dateP pel neQueryTransfor r[-Query <: P pel neQuery](
+  d splayLocat onParam: Param[Str ng],
+  excludedUser dsFeature: Opt on[Feature[P pel neQuery, Seq[Long]]],
+  prof leUser dFeature: Opt on[Feature[P pel neQuery, Long]])
+    extends Cand dateP pel neQueryTransfor r[Query, t.AccountRecom ndat onsM xerRequest] {
 
-  override def transform(input: Query): t.AccountRecommendationsMixerRequest = {
-    input.params(displayLocationParam) match {
-      case WhoToFollowArmCandidatePipelineQueryTransformer.HomeReverseChronDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.HomeReverseChronWhoToFollow,
-          productContext = Some(
-            t.ProductContext.HomeReverseChronWhoToFollowProductContext(
-              t.HomeReverseChronWhoToFollowProductContext(
-                wtfReactiveContext = Some(getWhoToFollowReactiveContext(input))
+  overr de def transform( nput: Query): t.AccountRecom ndat onsM xerRequest = {
+     nput.params(d splayLocat onParam) match {
+      case WhoToFollowArmCand dateP pel neQueryTransfor r.Ho ReverseChronD splayLocat on =>
+        t.AccountRecom ndat onsM xerRequest(
+          cl entContext = Cl entContextMarshaller( nput.cl entContext),
+          product = t.Product.Ho ReverseChronWhoToFollow,
+          productContext = So (
+            t.ProductContext.Ho ReverseChronWhoToFollowProductContext(
+              t.Ho ReverseChronWhoToFollowProductContext(
+                wtfReact veContext = So (getWhoToFollowReact veContext( nput))
               )))
         )
-      case WhoToFollowArmCandidatePipelineQueryTransformer.HomeDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.HomeWhoToFollow,
-          productContext = Some(
-            t.ProductContext.HomeWhoToFollowProductContext(
-              t.HomeWhoToFollowProductContext(
-                wtfReactiveContext = Some(getWhoToFollowReactiveContext(input))
+      case WhoToFollowArmCand dateP pel neQueryTransfor r.Ho D splayLocat on =>
+        t.AccountRecom ndat onsM xerRequest(
+          cl entContext = Cl entContextMarshaller( nput.cl entContext),
+          product = t.Product.Ho WhoToFollow,
+          productContext = So (
+            t.ProductContext.Ho WhoToFollowProductContext(
+              t.Ho WhoToFollowProductContext(
+                wtfReact veContext = So (getWhoToFollowReact veContext( nput))
               )))
         )
-      case WhoToFollowArmCandidatePipelineQueryTransformer.ProfileDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.ProfileWhoToFollow,
-          productContext = Some(
-            t.ProductContext.ProfileWhoToFollowProductContext(t.ProfileWhoToFollowProductContext(
-              wtfReactiveContext = Some(getWhoToFollowReactiveContext(input)),
-              profileUserId = profileUserIdFeature
-                .flatMap(feature => input.features.map(_.get(feature)))
-                .getOrElse(throw PipelineFailure(BadRequest, "profileUserId not provided")),
+      case WhoToFollowArmCand dateP pel neQueryTransfor r.Prof leD splayLocat on =>
+        t.AccountRecom ndat onsM xerRequest(
+          cl entContext = Cl entContextMarshaller( nput.cl entContext),
+          product = t.Product.Prof leWhoToFollow,
+          productContext = So (
+            t.ProductContext.Prof leWhoToFollowProductContext(t.Prof leWhoToFollowProductContext(
+              wtfReact veContext = So (getWhoToFollowReact veContext( nput)),
+              prof leUser d = prof leUser dFeature
+                .flatMap(feature =>  nput.features.map(_.get(feature)))
+                .getOrElse(throw P pel neFa lure(BadRequest, "prof leUser d not prov ded")),
             )))
         )
-      case displayLocation =>
-        throw PipelineFailure(BadRequest, s"display location $displayLocation not supported")
+      case d splayLocat on =>
+        throw P pel neFa lure(BadRequest, s"d splay locat on $d splayLocat on not supported")
     }
   }
 
-  private def getWhoToFollowReactiveContext(
-    input: Query
-  ): t.WhoToFollowReactiveContext = {
-    t.WhoToFollowReactiveContext(
-      excludedUserIds = excludedUserIdsFeature.flatMap(feature =>
-        input.features
+  pr vate def getWhoToFollowReact veContext(
+     nput: Query
+  ): t.WhoToFollowReact veContext = {
+    t.WhoToFollowReact veContext(
+      excludedUser ds = excludedUser dsFeature.flatMap(feature =>
+         nput.features
           .map(_.get(feature))),
     )
   }

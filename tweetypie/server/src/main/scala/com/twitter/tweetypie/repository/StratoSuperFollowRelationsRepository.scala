@@ -1,59 +1,59 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.audience_rewards.thriftscala.HasSuperFollowingRelationshipRequest
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+ mport com.tw ter.aud ence_rewards.thr ftscala.HasSuperFollow ngRelat onsh pRequest
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t etyp e.Future
+ mport com.tw ter.t etyp e.User d
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.thr ftscala.Exclus veT etControl
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
 
-object StratoSuperFollowRelationsRepository {
-  type Type = (UserId, UserId) => Stitch[Boolean]
+object StratoSuperFollowRelat onsRepos ory {
+  type Type = (User d, User d) => St ch[Boolean]
 
-  def apply(client: StratoClient): Type = {
+  def apply(cl ent: StratoCl ent): Type = {
 
-    val column = "audiencerewards/superFollows/hasSuperFollowingRelationshipV2"
+    val column = "aud encerewards/superFollows/hasSuperFollow ngRelat onsh pV2"
 
-    val fetcher: Fetcher[HasSuperFollowingRelationshipRequest, Unit, Boolean] =
-      client.fetcher[HasSuperFollowingRelationshipRequest, Boolean](column)
+    val fetc r: Fetc r[HasSuperFollow ngRelat onsh pRequest, Un , Boolean] =
+      cl ent.fetc r[HasSuperFollow ngRelat onsh pRequest, Boolean](column)
 
-    (authorId, viewerId) => {
-      // Owner of an exclusive tweet chain can respond to their own
-      // tweets / replies, despite not super following themselves
-      if (authorId == viewerId) {
-        Stitch.True
+    (author d, v e r d) => {
+      // Owner of an exclus ve t et cha n can respond to t  r own
+      // t ets / repl es, desp e not super follow ng t mselves
+       f (author d == v e r d) {
+        St ch.True
       } else {
-        val key = HasSuperFollowingRelationshipRequest(authorId, viewerId)
-        // The default relation for this column is "missing", aka None.
-        // This needs to be mapped to false since Super Follows are a sparse relation.
-        fetcher.fetch(key).map(_.v.getOrElse(false))
+        val key = HasSuperFollow ngRelat onsh pRequest(author d, v e r d)
+        // T  default relat on for t  column  s "m ss ng", aka None.
+        // T  needs to be mapped to false s nce Super Follows are a sparse relat on.
+        fetc r.fetch(key).map(_.v.getOrElse(false))
       }
     }
   }
 
-  object Validate {
+  object Val date {
     def apply(
-      exclusiveTweetControl: Option[ExclusiveTweetControl],
-      userId: UserId,
-      superFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type
-    ): Future[Unit] = {
-      Stitch
+      exclus veT etControl: Opt on[Exclus veT etControl],
+      user d: User d,
+      superFollowRelat onsRepo: StratoSuperFollowRelat onsRepos ory.Type
+    ): Future[Un ] = {
+      St ch
         .run {
-          exclusiveTweetControl.map(_.conversationAuthorId) match {
-            // Don't do exclusive tweet validation on non exclusive tweets.
+          exclus veT etControl.map(_.conversat onAuthor d) match {
+            // Don't do exclus ve t et val dat on on non exclus ve t ets.
             case None =>
-              Stitch.value(true)
+              St ch.value(true)
 
-            case Some(convoAuthorId) =>
-              superFollowRelationsRepo(userId, convoAuthorId)
+            case So (convoAuthor d) =>
+              superFollowRelat onsRepo(user d, convoAuthor d)
           }
         }.map {
-          case true => Future.Unit
+          case true => Future.Un 
           case false =>
-            Future.exception(TweetCreateFailure.State(TweetCreateState.SourceTweetNotFound))
+            Future.except on(T etCreateFa lure.State(T etCreateState.S ceT etNotFound))
         }.flatten
     }
   }

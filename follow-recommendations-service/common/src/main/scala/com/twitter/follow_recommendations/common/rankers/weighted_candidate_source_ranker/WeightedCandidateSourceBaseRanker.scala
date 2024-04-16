@@ -1,117 +1,117 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker
 
-import com.twitter.follow_recommendations.common.utils.RandomUtil
-import com.twitter.follow_recommendations.common.utils.MergeUtil
-import com.twitter.follow_recommendations.common.utils.Weighted
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightMethod._
-import scala.util.Random
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RandomUt l
+ mport com.tw ter.follow_recom ndat ons.common.ut ls. rgeUt l
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.  ghted
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.  ght thod._
+ mport scala.ut l.Random
 
 /**
- * This ranker selects the next candidate source to select a candidate from. It supports
- * two kinds of algorithm, WeightedRandomSampling or WeightedRoundRobin. WeightedRandomSampling
- * pick the next candidate source randomly, WeightedRoundRobin picked the next candidate source
- * sequentially based on the weight of the candidate source. It is default to WeightedRandomSampling
- * if no weight method is provided.
+ * T  ranker selects t  next cand date s ce to select a cand date from.   supports
+ * two k nds of algor hm,   ghtedRandomSampl ng or   ghtedRoundRob n.   ghtedRandomSampl ng
+ * p ck t  next cand date s ce randomly,   ghtedRoundRob n p cked t  next cand date s ce
+ * sequent ally based on t    ght of t  cand date s ce.    s default to   ghtedRandomSampl ng
+ *  f no   ght  thod  s prov ded.
  *
- * Example usage of this class:
+ * Example usage of t  class:
  *
- * When use WeightedRandomSampling:
- * Input candidate sources and their weights are: {{CS1: 3}, {CS2: 2}, {CS3: 5}}
- * Ranked candidates sequence is not determined because of random sampling.
- * One possible output candidate sequence is: (CS1_candidate1, CS2_candidate1, CS2_candidate2,
- * CS3_candidate1, CS3_candidates2, CS3_candidate3, CS1_candidate2, CS1_candidate3,
- * CS3_candidate4, CS3_candidate5, CS1_candidate4, CS1_candidate5, CS2_candidate6, CS2_candidate3,...)
+ * W n use   ghtedRandomSampl ng:
+ *  nput cand date s ces and t  r   ghts are: {{CS1: 3}, {CS2: 2}, {CS3: 5}}
+ * Ranked cand dates sequence  s not determ ned because of random sampl ng.
+ * One poss ble output cand date sequence  s: (CS1_cand date1, CS2_cand date1, CS2_cand date2,
+ * CS3_cand date1, CS3_cand dates2, CS3_cand date3, CS1_cand date2, CS1_cand date3,
+ * CS3_cand date4, CS3_cand date5, CS1_cand date4, CS1_cand date5, CS2_cand date6, CS2_cand date3,...)
  *
- * When use WeightedRoundRobin:
- * Input candidate sources and their weights are: {{CS1: 3}, {CS2: 2}, {CS3: 5}}
- * Output candidate sequence is: (CS1_candidate1, CS1_candidate2, CS1_candidate3,
- * CS2_candidate1, CS2_candidates2, CS3_candidate1, CS3_candidate2, CS3_candidate3,
- * CS3_candidate4, CS3_candidate5, CS1_candidate4, CS1_candidate5, CS1_candidate6, CS2_candidate3,...)
+ * W n use   ghtedRoundRob n:
+ *  nput cand date s ces and t  r   ghts are: {{CS1: 3}, {CS2: 2}, {CS3: 5}}
+ * Output cand date sequence  s: (CS1_cand date1, CS1_cand date2, CS1_cand date3,
+ * CS2_cand date1, CS2_cand dates2, CS3_cand date1, CS3_cand date2, CS3_cand date3,
+ * CS3_cand date4, CS3_cand date5, CS1_cand date4, CS1_cand date5, CS1_cand date6, CS2_cand date3,...)
  *
- * Note: CS1_candidate1 means the first candidate in CS1 candidate source.
+ * Note: CS1_cand date1  ans t  f rst cand date  n CS1 cand date s ce.
  *
- * @tparam A candidate source type
- * @tparam Rec Recommendation type
- * @param candidateSourceWeights relative weights for different candidate sources
+ * @tparam A cand date s ce type
+ * @tparam Rec Recom ndat on type
+ * @param cand dateS ce  ghts relat ve   ghts for d fferent cand date s ces
  */
-class WeightedCandidateSourceBaseRanker[A, Rec](
-  candidateSourceWeights: Map[A, Double],
-  weightMethod: WeightMethod = WeightedRandomSampling,
-  randomSeed: Option[Long]) {
+class   ghtedCand dateS ceBaseRanker[A, Rec](
+  cand dateS ce  ghts: Map[A, Double],
+    ght thod:   ght thod =   ghtedRandomSampl ng,
+  randomSeed: Opt on[Long]) {
 
   /**
-   * Creates a iterator over algorithms and calls next to return a Stream of candidates
+   * Creates a  erator over algor hms and calls next to return a Stream of cand dates
    *
    *
-   * @param candidateSources the set of candidate sources that are being sampled
-   * @param candidateSourceWeights map of candidate source to weight
-   * @param candidates the map of candidate source to the iterator of its results
-   * @param weightMethod a enum to indict which weight method to use. Two values are supported
-   * currently. When WeightedRandomSampling is set, the next candidate is picked from a candidate
-   * source that is randomly chosen. When WeightedRoundRobin is set, the next candidate is picked
-   * from current candidate source until the number of candidates reaches to the assigned weight of
-   * the candidate source. The next call of this function will return a candidate from the next
-   * candidate source which is after previous candidate source based on the order input
-   * candidate source sequence.
+   * @param cand dateS ces t  set of cand date s ces that are be ng sampled
+   * @param cand dateS ce  ghts map of cand date s ce to   ght
+   * @param cand dates t  map of cand date s ce to t   erator of  s results
+   * @param   ght thod a enum to  nd ct wh ch   ght  thod to use. Two values are supported
+   * currently. W n   ghtedRandomSampl ng  s set, t  next cand date  s p cked from a cand date
+   * s ce that  s randomly chosen. W n   ghtedRoundRob n  s set, t  next cand date  s p cked
+   * from current cand date s ce unt l t  number of cand dates reac s to t  ass gned   ght of
+   * t  cand date s ce. T  next call of t  funct on w ll return a cand date from t  next
+   * cand date s ce wh ch  s after prev ous cand date s ce based on t  order  nput
+   * cand date s ce sequence.
 
-   * @return stream of candidates
+   * @return stream of cand dates
    */
   def stream(
-    candidateSources: Set[A],
-    candidateSourceWeights: Map[A, Double],
-    candidates: Map[A, Iterator[Rec]],
-    weightMethod: WeightMethod = WeightedRandomSampling,
-    random: Option[Random] = None
+    cand dateS ces: Set[A],
+    cand dateS ce  ghts: Map[A, Double],
+    cand dates: Map[A,  erator[Rec]],
+      ght thod:   ght thod =   ghtedRandomSampl ng,
+    random: Opt on[Random] = None
   ): Stream[Rec] = {
-    val weightedCandidateSource: Weighted[A] = new Weighted[A] {
-      override def apply(a: A): Double = candidateSourceWeights.getOrElse(a, 0)
+    val   ghtedCand dateS ce:   ghted[A] = new   ghted[A] {
+      overr de def apply(a: A): Double = cand dateS ce  ghts.getOrElse(a, 0)
     }
 
     /**
-     * Generates a stream of candidates.
+     * Generates a stream of cand dates.
      *
-     * @param candidateSourceIter an iterator over candidate sources returned by the sampling procedure
-     * @return stream of candidates
+     * @param cand dateS ce er an  erator over cand date s ces returned by t  sampl ng procedure
+     * @return stream of cand dates
      */
-    def next(candidateSourceIter: Iterator[A]): Stream[Rec] = {
-      val source = candidateSourceIter.next()
-      val it = candidates(source)
-      if (it.hasNext) {
-        val currCand = it.next()
-        currCand #:: next(candidateSourceIter)
+    def next(cand dateS ce er:  erator[A]): Stream[Rec] = {
+      val s ce = cand dateS ce er.next()
+      val   = cand dates(s ce)
+       f ( .hasNext) {
+        val currCand =  .next()
+        currCand #:: next(cand dateS ce er)
       } else {
-        assert(candidateSources.contains(source), "Selected source is not in candidate sources")
-        // Remove the depleted candidate source and re-sample
-        stream(candidateSources - source, candidateSourceWeights, candidates, weightMethod, random)
+        assert(cand dateS ces.conta ns(s ce), "Selected s ce  s not  n cand date s ces")
+        // Remove t  depleted cand date s ce and re-sample
+        stream(cand dateS ces - s ce, cand dateS ce  ghts, cand dates,   ght thod, random)
       }
     }
-    if (candidateSources.isEmpty)
+     f (cand dateS ces. sEmpty)
       Stream.empty
     else {
-      val candidateSourceSeq = candidateSources.toSeq
-      val candidateSourceIter =
-        if (weightMethod == WeightMethod.WeightedRoundRobin) {
-          MergeUtil.weightedRoundRobin(candidateSourceSeq)(weightedCandidateSource).iterator
+      val cand dateS ceSeq = cand dateS ces.toSeq
+      val cand dateS ce er =
+         f (  ght thod ==   ght thod.  ghtedRoundRob n) {
+           rgeUt l.  ghtedRoundRob n(cand dateS ceSeq)(  ghtedCand dateS ce). erator
         } else {
-          //default to weighted random sampling if no other weight method is provided
-          RandomUtil
-            .weightedRandomSamplingWithReplacement(
-              candidateSourceSeq,
+          //default to   ghted random sampl ng  f no ot r   ght  thod  s prov ded
+          RandomUt l
+            .  ghtedRandomSampl ngW hReplace nt(
+              cand dateS ceSeq,
               random
-            )(weightedCandidateSource).iterator
+            )(  ghtedCand dateS ce). erator
         }
-      next(candidateSourceIter)
+      next(cand dateS ce er)
     }
   }
 
-  def apply(input: Map[A, TraversableOnce[Rec]]): Stream[Rec] = {
+  def apply( nput: Map[A, TraversableOnce[Rec]]): Stream[Rec] = {
     stream(
-      input.keySet,
-      candidateSourceWeights,
-      input.map {
-        case (k, v) => k -> v.toIterator
-      }, // cannot do mapValues here, as that only returns a view
-      weightMethod,
+       nput.keySet,
+      cand dateS ce  ghts,
+       nput.map {
+        case (k, v) => k -> v.to erator
+      }, // cannot do mapValues  re, as that only returns a v ew
+        ght thod,
       randomSeed.map(new Random(_))
     )
   }

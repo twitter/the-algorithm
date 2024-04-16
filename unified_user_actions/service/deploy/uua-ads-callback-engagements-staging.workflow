@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-ads-callback-engagements-staging",
-  "config-files": [
-    "uua-ads-callback-engagements.aurora"
+  "role": "d scode",
+  "na ": "uua-ads-callback-engage nts-stag ng",
+  "conf g-f les": [
+    "uua-ads-callback-engage nts.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-ads-callback-engagements"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-ads-callback-engage nts"
       },
       {
         "type": "packer",
-        "name": "uua-ads-callback-engagements-staging",
-        "artifact": "./dist/uua-ads-callback-engagements.zip"
+        "na ": "uua-ads-callback-engage nts-stag ng",
+        "art fact": "./d st/uua-ads-callback-engage nts.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-ads-callback-engagements-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-ads-callback-engagements"
+          "na ": "uua-ads-callback-engage nts-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-ads-callback-engage nts"
         }
       ]
     }

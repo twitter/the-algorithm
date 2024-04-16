@@ -1,94 +1,94 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object UtegTweetGlobalParams {
+object UtegT etGlobalParams {
 
-  object MaxUtegCandidatesToRequestParam
-      extends FSBoundedParam[Int](
-        name = "max_uteg_candidates_to_request",
+  object MaxUtegCand datesToRequestParam
+      extends FSBoundedParam[ nt](
+        na  = "max_uteg_cand dates_to_request",
         default = 800,
-        min = 10,
+        m n = 10,
         max = 200
       )
 
-  object CandidateRefreshSinceTimeOffsetHoursParam
-      extends FSBoundedParam[Duration](
-        name = "candidate_refresh_since_time_offset_hours",
-        default = 48.hours,
-        min = 1.hours,
-        max = 96.hours
+  object Cand dateRefreshS nceT  OffsetH sParam
+      extends FSBoundedParam[Durat on](
+        na  = "cand date_refresh_s nce_t  _offset_h s",
+        default = 48.h s,
+        m n = 1.h s,
+        max = 96.h s
       )
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromH s
   }
 
-  object EnableTLRHealthFilterParam
+  object EnableTLR althF lterParam
       extends FSParam[Boolean](
-        name = "enable_uteg_tlr_health_filter",
+        na  = "enable_uteg_tlr_ alth_f lter",
         default = true
       )
 
-  object EnableRepliesToNonFollowedUsersFilterParam
+  object EnableRepl esToNonFollo dUsersF lterParam
       extends FSParam[Boolean](
-        name = "enable_uteg_replies_to_non_followed_users_filter",
+        na  = "enable_uteg_repl es_to_non_follo d_users_f lter",
         default = false
       )
 
-  object EnableRetweetFilterParam
+  object EnableRet etF lterParam
       extends FSParam[Boolean](
-        name = "enable_uteg_retweet_filter",
+        na  = "enable_uteg_ret et_f lter",
         default = true
       )
 
-  object EnableInNetworkFilterParam
+  object Enable nNetworkF lterParam
       extends FSParam[Boolean](
-        name = "enable_uteg_in_network_filter",
+        na  = "enable_uteg_ n_network_f lter",
         default = true
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
+  val AllParams: Seq[Param[_] w h FSNa ] =
     Seq(
-      MaxUtegCandidatesToRequestParam,
-      CandidateRefreshSinceTimeOffsetHoursParam,
-      EnableTLRHealthFilterParam,
-      EnableRepliesToNonFollowedUsersFilterParam,
-      EnableRetweetFilterParam,
-      EnableInNetworkFilterParam
+      MaxUtegCand datesToRequestParam,
+      Cand dateRefreshS nceT  OffsetH sParam,
+      EnableTLR althF lterParam,
+      EnableRepl esToNonFollo dUsersF lterParam,
+      EnableRet etF lterParam,
+      Enable nNetworkF lterParam
     )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxUtegCandidatesToRequestParam
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      MaxUtegCand datesToRequestParam
     )
 
-    val durationFSOverrides =
-      FeatureSwitchOverrideUtil.getDurationFSOverrides(
-        CandidateRefreshSinceTimeOffsetHoursParam
+    val durat onFSOverr des =
+      FeatureSw chOverr deUt l.getDurat onFSOverr des(
+        Cand dateRefreshS nceT  OffsetH sParam
       )
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTLRHealthFilterParam,
-      EnableRepliesToNonFollowedUsersFilterParam,
-      EnableRetweetFilterParam,
-      EnableInNetworkFilterParam
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableTLR althF lterParam,
+      EnableRepl esToNonFollo dUsersF lterParam,
+      EnableRet etF lterParam,
+      Enable nNetworkF lterParam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(durationFSOverrides: _*)
-      .set(booleanOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(durat onFSOverr des: _*)
+      .set(booleanOverr des: _*)
+      .bu ld()
   }
 }

@@ -1,51 +1,51 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.SocialContextUserDetails
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetRetweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.TweetRetweetCandidateIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.TweetRetweetNTabRequestHydrator
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil.TweetWithSocialContextTraits
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Soc alContextAct on
+ mport com.tw ter.fr gate.common.base.Soc alContextUserDeta ls
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etRet etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.T etRet etCand date b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.T etRet etNTabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateHydrat onUt l.T etW hSoc alContextTra s
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.t etyp e.T etyP e
+ mport com.tw ter.ut l.Future
 
-class TweetRetweetPushCandidate(
-  candidate: RawCandidate with TweetWithSocialContextTraits,
-  socialContextUserMap: Future[Map[Long, Option[User]]],
-  author: Future[Option[User]],
-  copyIds: CopyIds
+class T etRet etPushCand date(
+  cand date: RawCand date w h T etW hSoc alContextTra s,
+  soc alContextUserMap: Future[Map[Long, Opt on[User]]],
+  author: Future[Opt on[User]],
+  copy ds: Copy ds
 )(
-  implicit stats: StatsReceiver,
+   mpl c  stats: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with TweetRetweetCandidate
-    with SocialContextUserDetails
-    with TweetAuthorDetails
-    with TweetRetweetNTabRequestHydrator
-    with TweetRetweetCandidateIbis2Hydrator {
-  override val statsReceiver: StatsReceiver = stats
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val tweetId: Long = candidate.tweetId
-  override val socialContextActions: Seq[SocialContextAction] =
-    candidate.socialContextActions
+    extends PushCand date
+    w h T etRet etCand date
+    w h Soc alContextUserDeta ls
+    w h T etAuthorDeta ls
+    w h T etRet etNTabRequestHydrator
+    w h T etRet etCand date b s2Hydrator {
+  overr de val statsRece ver: StatsRece ver = stats
+  overr de val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
+  overr de val t et d: Long = cand date.t et d
+  overr de val soc alContextAct ons: Seq[Soc alContextAct on] =
+    cand date.soc alContextAct ons
 
-  override val socialContextAllTypeActions: Seq[SocialContextAction] =
-    candidate.socialContextAllTypeActions
+  overr de val soc alContextAllTypeAct ons: Seq[Soc alContextAct on] =
+    cand date.soc alContextAllTypeAct ons
 
-  override lazy val scUserMap: Future[Map[Long, Option[User]]] = socialContextUserMap
-  override lazy val tweetAuthor: Future[Option[User]] = author
-  override lazy val commonRecType: CommonRecommendationType = candidate.commonRecType
-  override val target: PushTypes.Target = candidate.target
-  override lazy val tweetyPieResult: Option[TweetyPie.TweetyPieResult] = candidate.tweetyPieResult
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  overr de lazy val scUserMap: Future[Map[Long, Opt on[User]]] = soc alContextUserMap
+  overr de lazy val t etAuthor: Future[Opt on[User]] = author
+  overr de lazy val commonRecType: CommonRecom ndat onType = cand date.commonRecType
+  overr de val target: PushTypes.Target = cand date.target
+  overr de lazy val t etyP eResult: Opt on[T etyP e.T etyP eResult] = cand date.t etyP eResult
+  overr de val pushCopy d: Opt on[ nt] = copy ds.pushCopy d
+  overr de val ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
+  overr de val copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
 }

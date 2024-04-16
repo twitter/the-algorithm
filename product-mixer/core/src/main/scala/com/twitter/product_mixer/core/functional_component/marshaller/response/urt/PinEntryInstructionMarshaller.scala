@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.P nEntryT  l ne nstruct on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PinEntryInstructionMarshaller @Inject() (
-  timelineEntryMarshaller: TimelineEntryMarshaller) {
+@S ngleton
+class P nEntry nstruct onMarshaller @ nject() (
+  t  l neEntryMarshaller: T  l neEntryMarshaller) {
 
-  def apply(instruction: PinEntryTimelineInstruction): urt.PinEntry = {
-    urt.PinEntry(entry = timelineEntryMarshaller(instruction.entry))
+  def apply( nstruct on: P nEntryT  l ne nstruct on): urt.P nEntry = {
+    urt.P nEntry(entry = t  l neEntryMarshaller( nstruct on.entry))
   }
 }

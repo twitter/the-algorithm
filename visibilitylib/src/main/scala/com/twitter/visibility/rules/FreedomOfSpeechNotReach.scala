@@ -1,685 +1,685 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import com.twitter.util.Memoize
-import com.twitter.visibility.common.actions.AppealableReason
-import com.twitter.visibility.common.actions.AvoidReason.MightNotBeSuitableForAds
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.SoftInterventionDisplayType
-import com.twitter.visibility.common.actions.SoftInterventionReason
-import com.twitter.visibility.common.actions.LimitedActionsPolicy
-import com.twitter.visibility.common.actions.LimitedAction
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionTypeConverter
-import com.twitter.visibility.configapi.params.FSRuleParams.FosnrFallbackDropRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.FosnrRulesEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableFosnrRuleParam
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithInterstitialLimitedEngagements
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithSoftIntervention
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithAppealable
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithInterstitial
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.ViewerDoesNotFollowAuthorOfFosnrViolatingTweet
-import com.twitter.visibility.rules.Condition.ViewerFollowsAuthorOfFosnrViolatingTweet
-import com.twitter.visibility.rules.FreedomOfSpeechNotReach.DefaultViolationLevel
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.State.Evaluated
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyResultReason
+ mport com.tw ter.ut l. mo ze
+ mport com.tw ter.v s b l y.common.act ons.AppealableReason
+ mport com.tw ter.v s b l y.common.act ons.Avo dReason.M ghtNotBeSu ableForAds
+ mport com.tw ter.v s b l y.common.act ons.L m edEngage ntReason
+ mport com.tw ter.v s b l y.common.act ons.Soft ntervent onD splayType
+ mport com.tw ter.v s b l y.common.act ons.Soft ntervent onReason
+ mport com.tw ter.v s b l y.common.act ons.L m edAct onsPol cy
+ mport com.tw ter.v s b l y.common.act ons.L m edAct on
+ mport com.tw ter.v s b l y.common.act ons.converter.scala.L m edAct onTypeConverter
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.FosnrFallbackDropRulesEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.FosnrRulesEnabledParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableFosnrRuleParam
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.features.T etSafetyLabels
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
+ mport com.tw ter.v s b l y.models.T etSafetyLabelType
+ mport com.tw ter.v s b l y.models.V olat onLevel
+ mport com.tw ter.v s b l y.rules.ComposableAct ons.ComposableAct onsW h nterst  alL m edEngage nts
+ mport com.tw ter.v s b l y.rules.ComposableAct ons.ComposableAct onsW hSoft ntervent on
+ mport com.tw ter.v s b l y.rules.ComposableAct ons.ComposableAct onsW hAppealable
+ mport com.tw ter.v s b l y.rules.ComposableAct ons.ComposableAct onsW h nterst  al
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on.NonAuthorV e r
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.V e rDoesNotFollowAuthorOfFosnrV olat ngT et
+ mport com.tw ter.v s b l y.rules.Cond  on.V e rFollowsAuthorOfFosnrV olat ngT et
+ mport com.tw ter.v s b l y.rules.FreedomOfSpeechNotReach.DefaultV olat onLevel
+ mport com.tw ter.v s b l y.rules.Reason._
+ mport com.tw ter.v s b l y.rules.State.Evaluated
 
 object FreedomOfSpeechNotReach {
 
-  val DefaultViolationLevel = ViolationLevel.Level1
+  val DefaultV olat onLevel = V olat onLevel.Level1
 
   def reasonToSafetyResultReason(reason: Reason): SafetyResultReason =
     reason match {
       case HatefulConduct => SafetyResultReason.FosnrHatefulConduct
-      case AbusiveBehavior => SafetyResultReason.FosnrAbusiveBehavior
-      case _ => SafetyResultReason.FosnrUnspecified
+      case Abus veBehav or => SafetyResultReason.FosnrAbus veBehav or
+      case _ => SafetyResultReason.FosnrUnspec f ed
     }
 
   def reasonToSafetyResultReason(reason: AppealableReason): SafetyResultReason =
     reason match {
       case AppealableReason.HatefulConduct(_) => SafetyResultReason.FosnrHatefulConduct
-      case AppealableReason.AbusiveBehavior(_) => SafetyResultReason.FosnrAbusiveBehavior
-      case _ => SafetyResultReason.FosnrUnspecified
+      case AppealableReason.Abus veBehav or(_) => SafetyResultReason.FosnrAbus veBehav or
+      case _ => SafetyResultReason.FosnrUnspec f ed
     }
 
-  val EligibleTweetSafetyLabelTypes: Seq[TweetSafetyLabelType] =
-    Seq(ViolationLevel.Level4, ViolationLevel.Level3, ViolationLevel.Level2, ViolationLevel.Level1)
+  val El g bleT etSafetyLabelTypes: Seq[T etSafetyLabelType] =
+    Seq(V olat onLevel.Level4, V olat onLevel.Level3, V olat onLevel.Level2, V olat onLevel.Level1)
       .map {
-        ViolationLevel.violationLevelToSafetyLabels.get(_).getOrElse(Set()).toSeq
+        V olat onLevel.v olat onLevelToSafetyLabels.get(_).getOrElse(Set()).toSeq
       }.reduceLeft {
         _ ++ _
       }
 
-  private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
+  pr vate val El g bleT etSafetyLabelTypesSet = El g bleT etSafetyLabelTypes.toSet
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
-    val tweetSafetyLabels = featureMap(TweetSafetyLabels)
-      .asInstanceOf[Seq[TweetSafetyLabel]]
+  def extractT etSafetyLabel(featureMap: Map[Feature[_], _]): Opt on[T etSafetyLabel] = {
+    val t etSafetyLabels = featureMap(T etSafetyLabels)
+      .as nstanceOf[Seq[T etSafetyLabel]]
       .flatMap { tsl =>
-        if (FreedomOfSpeechNotReach.EligibleTweetSafetyLabelTypesSet.contains(tsl.labelType)) {
-          Some(tsl.labelType -> tsl)
+         f (FreedomOfSpeechNotReach.El g bleT etSafetyLabelTypesSet.conta ns(tsl.labelType)) {
+          So (tsl.labelType -> tsl)
         } else {
           None
         }
       }
       .toMap
 
-    FreedomOfSpeechNotReach.EligibleTweetSafetyLabelTypes.flatMap(tweetSafetyLabels.get).headOption
+    FreedomOfSpeechNotReach.El g bleT etSafetyLabelTypes.flatMap(t etSafetyLabels.get). adOpt on
   }
 
-  def eligibleTweetSafetyLabelTypesToAppealableReason(
-    labelType: TweetSafetyLabelType,
-    violationLevel: ViolationLevel
+  def el g bleT etSafetyLabelTypesToAppealableReason(
+    labelType: T etSafetyLabelType,
+    v olat onLevel: V olat onLevel
   ): AppealableReason = {
     labelType match {
-      case TweetSafetyLabelType.FosnrHatefulConduct =>
-        AppealableReason.HatefulConduct(violationLevel.level)
-      case TweetSafetyLabelType.FosnrHatefulConductLowSeveritySlur =>
-        AppealableReason.HatefulConduct(violationLevel.level)
+      case T etSafetyLabelType.FosnrHatefulConduct =>
+        AppealableReason.HatefulConduct(v olat onLevel.level)
+      case T etSafetyLabelType.FosnrHatefulConductLowSever ySlur =>
+        AppealableReason.HatefulConduct(v olat onLevel.level)
       case _ =>
-        AppealableReason.Unspecified(violationLevel.level)
+        AppealableReason.Unspec f ed(v olat onLevel.level)
     }
   }
 
-  def limitedActionConverter(
-    limitedActionStrings: Option[Seq[String]]
-  ): Option[LimitedActionsPolicy] = {
-    val limitedActions = limitedActionStrings.map { limitedActionString =>
-      limitedActionString
-        .map(action => LimitedActionTypeConverter.fromString(action)).map { action =>
-          action match {
-            case Some(a) => Some(LimitedAction(a, None))
+  def l m edAct onConverter(
+    l m edAct onStr ngs: Opt on[Seq[Str ng]]
+  ): Opt on[L m edAct onsPol cy] = {
+    val l m edAct ons = l m edAct onStr ngs.map { l m edAct onStr ng =>
+      l m edAct onStr ng
+        .map(act on => L m edAct onTypeConverter.fromStr ng(act on)).map { act on =>
+          act on match {
+            case So (a) => So (L m edAct on(a, None))
             case _ => None
           }
         }.flatten
     }
-    limitedActions.map(actions => LimitedActionsPolicy(actions))
+    l m edAct ons.map(act ons => L m edAct onsPol cy(act ons))
   }
 }
 
 object FreedomOfSpeechNotReachReason {
-  def unapply(softIntervention: SoftIntervention): Option[AppealableReason] = {
-    softIntervention.reason match {
-      case SoftInterventionReason.FosnrReason(appealableReason) => Some(appealableReason)
+  def unapply(soft ntervent on: Soft ntervent on): Opt on[AppealableReason] = {
+    soft ntervent on.reason match {
+      case Soft ntervent onReason.FosnrReason(appealableReason) => So (appealableReason)
       case _ => None
     }
   }
 
   def unapply(
-    interstitialLimitedEngagements: InterstitialLimitedEngagements
-  ): Option[AppealableReason] = {
-    interstitialLimitedEngagements.limitedEngagementReason match {
-      case Some(LimitedEngagementReason.FosnrReason(appealableReason)) => Some(appealableReason)
+     nterst  alL m edEngage nts:  nterst  alL m edEngage nts
+  ): Opt on[AppealableReason] = {
+     nterst  alL m edEngage nts.l m edEngage ntReason match {
+      case So (L m edEngage ntReason.FosnrReason(appealableReason)) => So (appealableReason)
       case _ => None
     }
   }
 
   def unapply(
-    interstitial: Interstitial
-  ): Option[AppealableReason] = {
-    interstitial.reason match {
-      case Reason.FosnrReason(appealableReason) => Some(appealableReason)
+     nterst  al:  nterst  al
+  ): Opt on[AppealableReason] = {
+     nterst  al.reason match {
+      case Reason.FosnrReason(appealableReason) => So (appealableReason)
       case _ => None
     }
   }
 
   def unapply(
     appealable: Appealable
-  ): Option[AppealableReason] = {
-    Reason.toAppealableReason(appealable.reason, appealable.violationLevel)
+  ): Opt on[AppealableReason] = {
+    Reason.toAppealableReason(appealable.reason, appealable.v olat onLevel)
   }
 
   def unapply(
-    action: Action
-  ): Option[AppealableReason] = {
-    action match {
-      case a: SoftIntervention =>
+    act on: Act on
+  ): Opt on[AppealableReason] = {
+    act on match {
+      case a: Soft ntervent on =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
+          case FreedomOfSpeechNotReachReason(r) => So (r)
           case _ => None
         }
-      case a: InterstitialLimitedEngagements =>
+      case a:  nterst  alL m edEngage nts =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
+          case FreedomOfSpeechNotReachReason(r) => So (r)
           case _ => None
         }
-      case a: Interstitial =>
+      case a:  nterst  al =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
+          case FreedomOfSpeechNotReachReason(r) => So (r)
           case _ => None
         }
       case a: Appealable =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
+          case FreedomOfSpeechNotReachReason(r) => So (r)
           case _ => None
         }
-      case ComposableActionsWithSoftIntervention(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithInterstitialLimitedEngagements(
+      case ComposableAct onsW hSoft ntervent on(FreedomOfSpeechNotReachReason(appealableReason)) =>
+        So (appealableReason)
+      case ComposableAct onsW h nterst  alL m edEngage nts(
             FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithInterstitial(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithAppealable(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
+        So (appealableReason)
+      case ComposableAct onsW h nterst  al(FreedomOfSpeechNotReachReason(appealableReason)) =>
+        So (appealableReason)
+      case ComposableAct onsW hAppealable(FreedomOfSpeechNotReachReason(appealableReason)) =>
+        So (appealableReason)
       case _ => None
     }
   }
 }
 
-object FreedomOfSpeechNotReachActions {
+object FreedomOfSpeechNotReachAct ons {
 
-  trait FreedomOfSpeechNotReachActionBuilder[T <: Action] extends ActionBuilder[T] {
-    def withViolationLevel(violationLevel: ViolationLevel): FreedomOfSpeechNotReachActionBuilder[T]
+  tra  FreedomOfSpeechNotReachAct onBu lder[T <: Act on] extends Act onBu lder[T] {
+    def w hV olat onLevel(v olat onLevel: V olat onLevel): FreedomOfSpeechNotReachAct onBu lder[T]
   }
 
-  case class DropAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Drop] {
+  case class DropAct on(v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[Drop] {
 
-    override def actionType: Class[_] = classOf[Drop]
+    overr de def act onType: Class[_] = classOf[Drop]
 
-    override val actionSeverity = 16
-    private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
+    overr de val act onSever y = 16
+    pr vate def toRuleResult: Reason => RuleResult =  mo ze { r => RuleResult(Drop(r), Evaluated) }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(Reason.fromAppealableReason(appealableReason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class AppealableAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case class AppealableAct on(v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[T et nterst  al] {
 
-    override def actionType: Class[_] = classOf[Appealable]
+    overr de def act onType: Class[_] = classOf[Appealable]
 
-    override val actionSeverity = 17
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
+    overr de val act onSever y = 17
+    pr vate def toRuleResult: Reason => RuleResult =  mo ze { r =>
       RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = None,
-          limitedEngagements = None,
+        T et nterst  al(
+           nterst  al = None,
+          soft ntervent on = None,
+          l m edEngage nts = None,
           downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None,
-          appealable = Some(Appealable(r, violationLevel = violationLevel))
+          avo d = So (Avo d(None)),
+           d a nterst  al = None,
+          t etV s b l yNudge = None,
+          abus veQual y = None,
+          appealable = So (Appealable(r, v olat onLevel = v olat onLevel))
         ),
         Evaluated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(Reason.fromAppealableReason(appealableReason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class AppealableAvoidLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[Appealable] {
+  case class AppealableAvo dL m edEngage ntsAct on(
+    v olat onLevel: V olat onLevel = DefaultV olat onLevel,
+    l m edAct onStr ngs: Opt on[Seq[Str ng]])
+      extends FreedomOfSpeechNotReachAct onBu lder[Appealable] {
 
-    override def actionType: Class[_] = classOf[AppealableAvoidLimitedEngagementsAction]
+    overr de def act onType: Class[_] = classOf[AppealableAvo dL m edEngage ntsAct on]
 
-    override val actionSeverity = 17
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
+    overr de val act onSever y = 17
+    pr vate def toRuleResult: Reason => RuleResult =  mo ze { r =>
       RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = None,
-          limitedEngagements = Some(
-            LimitedEngagements(
-              toLimitedEngagementReason(
+        T et nterst  al(
+           nterst  al = None,
+          soft ntervent on = None,
+          l m edEngage nts = So (
+            L m edEngage nts(
+              toL m edEngage ntReason(
                 Reason
-                  .toAppealableReason(r, violationLevel)
-                  .getOrElse(AppealableReason.Unspecified(violationLevel.level))),
-              FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings)
+                  .toAppealableReason(r, v olat onLevel)
+                  .getOrElse(AppealableReason.Unspec f ed(v olat onLevel.level))),
+              FreedomOfSpeechNotReach.l m edAct onConverter(l m edAct onStr ngs)
             )),
           downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None,
-          appealable = Some(Appealable(r, violationLevel = violationLevel))
+          avo d = So (Avo d(None)),
+           d a nterst  al = None,
+          t etV s b l yNudge = None,
+          abus veQual y = None,
+          appealable = So (Appealable(r, v olat onLevel = v olat onLevel))
         ),
         Evaluated
       )
     }
 
-    def build(
-      evaluationContext: EvaluationContext,
+    def bu ld(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(Reason.fromAppealableReason(appealableReason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class AvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Avoid] {
+  case class Avo dAct on(v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[Avo d] {
 
-    override def actionType: Class[_] = classOf[Avoid]
+    overr de def act onType: Class[_] = classOf[Avo d]
 
-    override val actionSeverity = 1
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(Avoid(None), Evaluated)
+    overr de val act onSever y = 1
+    pr vate def toRuleResult: Reason => RuleResult =  mo ze { r =>
+      RuleResult(Avo d(None), Evaluated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(Reason.fromAppealableReason(appealableReason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class LimitedEngagementsAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[LimitedEngagements] {
+  case class L m edEngage ntsAct on(v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[L m edEngage nts] {
 
-    override def actionType: Class[_] = classOf[LimitedEngagements]
+    overr de def act onType: Class[_] = classOf[L m edEngage nts]
 
-    override val actionSeverity = 6
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(LimitedEngagements(LimitedEngagementReason.NonCompliant, None), Evaluated)
+    overr de val act onSever y = 6
+    pr vate def toRuleResult: Reason => RuleResult =  mo ze { r =>
+      RuleResult(L m edEngage nts(L m edEngage ntReason.NonCompl ant, None), Evaluated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(Reason.fromAppealableReason(appealableReason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class InterstitialLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[InterstitialLimitedEngagements] {
+  case class  nterst  alL m edEngage ntsAct on(
+    v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[ nterst  alL m edEngage nts] {
 
-    override def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
+    overr de def act onType: Class[_] = classOf[ nterst  alL m edEngage nts]
 
-    override val actionSeverity = 11
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(InterstitialLimitedEngagements(r, None), Evaluated)
+    overr de val act onSever y = 11
+    pr vate def toRuleResult: Reason => RuleResult =  mo ze { r =>
+      RuleResult( nterst  alL m edEngage nts(r, None), Evaluated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(Reason.fromAppealableReason(appealableReason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class InterstitialLimitedEngagementsAvoidAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case class  nterst  alL m edEngage ntsAvo dAct on(
+    v olat onLevel: V olat onLevel = DefaultV olat onLevel,
+    l m edAct onStr ngs: Opt on[Seq[Str ng]])
+      extends FreedomOfSpeechNotReachAct onBu lder[T et nterst  al] {
 
-    override def actionType: Class[_] = classOf[InterstitialLimitedEngagementsAvoidAction]
+    overr de def act onType: Class[_] = classOf[ nterst  alL m edEngage ntsAvo dAct on]
 
-    override val actionSeverity = 14
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
+    overr de val act onSever y = 14
+    pr vate def toRuleResult: AppealableReason => RuleResult =  mo ze { r =>
       RuleResult(
-        TweetInterstitial(
-          interstitial = Some(
-            Interstitial(
+        T et nterst  al(
+           nterst  al = So (
+             nterst  al(
               reason = FosnrReason(r),
-              localizedMessage = None,
+              local zed ssage = None,
             )),
-          softIntervention = None,
-          limitedEngagements = Some(
-            LimitedEngagements(
-              reason = toLimitedEngagementReason(r),
-              policy = FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings))),
+          soft ntervent on = None,
+          l m edEngage nts = So (
+            L m edEngage nts(
+              reason = toL m edEngage ntReason(r),
+              pol cy = FreedomOfSpeechNotReach.l m edAct onConverter(l m edAct onStr ngs))),
           downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None
+          avo d = So (Avo d(None)),
+           d a nterst  al = None,
+          t etV s b l yNudge = None
         ),
         Evaluated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               labelType = label,
-              violationLevel = violationLevel)
+              v olat onLevel = v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(appealableReason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class SoftInterventionAvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case class Soft ntervent onAvo dAct on(v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[T et nterst  al] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidAction]
+    overr de def act onType: Class[_] = classOf[Soft ntervent onAvo dAct on]
 
-    override val actionSeverity = 8
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
+    overr de val act onSever y = 8
+    pr vate def toRuleResult: AppealableReason => RuleResult =  mo ze { r =>
       RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
+        T et nterst  al(
+           nterst  al = None,
+          soft ntervent on = So (
+            Soft ntervent on(
+              reason = toSoft ntervent onReason(r),
+              engage ntNudge = false,
               suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
+              warn ng = None,
+              deta lsUrl = None,
+              d splayType = So (Soft ntervent onD splayType.Fosnr)
             )),
-          limitedEngagements = None,
+          l m edEngage nts = None,
           downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None
+          avo d = So (Avo d(None)),
+           d a nterst  al = None,
+          t etV s b l yNudge = None,
+          abus veQual y = None
         ),
         Evaluated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(appealableReason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class SoftInterventionAvoidLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case class Soft ntervent onAvo dL m edEngage ntsAct on(
+    v olat onLevel: V olat onLevel = DefaultV olat onLevel,
+    l m edAct onStr ngs: Opt on[Seq[Str ng]])
+      extends FreedomOfSpeechNotReachAct onBu lder[T et nterst  al] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidLimitedEngagementsAction]
+    overr de def act onType: Class[_] = classOf[Soft ntervent onAvo dL m edEngage ntsAct on]
 
-    override val actionSeverity = 13
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
+    overr de val act onSever y = 13
+    pr vate def toRuleResult: AppealableReason => RuleResult =  mo ze { r =>
       RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
+        T et nterst  al(
+           nterst  al = None,
+          soft ntervent on = So (
+            Soft ntervent on(
+              reason = toSoft ntervent onReason(r),
+              engage ntNudge = false,
               suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
+              warn ng = None,
+              deta lsUrl = None,
+              d splayType = So (Soft ntervent onD splayType.Fosnr)
             )),
-          limitedEngagements = Some(
-            LimitedEngagements(
-              toLimitedEngagementReason(r),
-              FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings))),
+          l m edEngage nts = So (
+            L m edEngage nts(
+              toL m edEngage ntReason(r),
+              FreedomOfSpeechNotReach.l m edAct onConverter(l m edAct onStr ngs))),
           downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None
+          avo d = So (Avo d(None)),
+           d a nterst  al = None,
+          t etV s b l yNudge = None,
+          abus veQual y = None
         ),
         Evaluated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(appealableReason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 
-  case class SoftInterventionAvoidAbusiveQualityReplyAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case class Soft ntervent onAvo dAbus veQual yReplyAct on(
+    v olat onLevel: V olat onLevel = DefaultV olat onLevel)
+      extends FreedomOfSpeechNotReachAct onBu lder[T et nterst  al] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidAbusiveQualityReplyAction]
+    overr de def act onType: Class[_] = classOf[Soft ntervent onAvo dAbus veQual yReplyAct on]
 
-    override val actionSeverity = 13
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
+    overr de val act onSever y = 13
+    pr vate def toRuleResult: AppealableReason => RuleResult =  mo ze { r =>
       RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
+        T et nterst  al(
+           nterst  al = None,
+          soft ntervent on = So (
+            Soft ntervent on(
+              reason = toSoft ntervent onReason(r),
+              engage ntNudge = false,
               suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
+              warn ng = None,
+              deta lsUrl = None,
+              d splayType = So (Soft ntervent onD splayType.Fosnr)
             )),
-          limitedEngagements = None,
+          l m edEngage nts = None,
           downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = Some(ConversationSectionAbusiveQuality)
+          avo d = So (Avo d(None)),
+           d a nterst  al = None,
+          t etV s b l yNudge = None,
+          abus veQual y = So (Conversat onSect onAbus veQual y)
         ),
         Evaluated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
+        FreedomOfSpeechNotReach.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+          case So (label) =>
+            FreedomOfSpeechNotReach.el g bleT etSafetyLabelTypesToAppealableReason(
               label,
-              violationLevel)
+              v olat onLevel)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            AppealableReason.Unspec f ed(v olat onLevel.level)
         }
 
       toRuleResult(appealableReason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    overr de def w hV olat onLevel(v olat onLevel: V olat onLevel) = {
+      copy(v olat onLevel = v olat onLevel)
     }
   }
 }
 
 object FreedomOfSpeechNotReachRules {
 
-  abstract class OnlyWhenAuthorViewerRule(
-    actionBuilder: ActionBuilder[_ <: Action],
-    condition: Condition)
-      extends Rule(actionBuilder, And(Not(NonAuthorViewer), condition))
+  abstract class OnlyW nAuthorV e rRule(
+    act onBu lder: Act onBu lder[_ <: Act on],
+    cond  on: Cond  on)
+      extends Rule(act onBu lder, And(Not(NonAuthorV e r), cond  on))
 
-  abstract class OnlyWhenNonAuthorViewerRule(
-    actionBuilder: ActionBuilder[_ <: Action],
-    condition: Condition)
-      extends Rule(actionBuilder, And(NonAuthorViewer, condition))
+  abstract class OnlyW nNonAuthorV e rRule(
+    act onBu lder: Act onBu lder[_ <: Act on],
+    cond  on: Cond  on)
+      extends Rule(act onBu lder, And(NonAuthorV e r, cond  on))
 
-  case class ViewerIsAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenAuthorViewerRule(
-        actionBuilder,
-        Condition.TweetHasViolationOfLevel(violationLevel)
+  case class V e r sAuthorAndT etHasV olat onOfLevel(
+    v olat onLevel: V olat onLevel,
+    overr de val act onBu lder: Act onBu lder[_ <: Act on])
+      extends OnlyW nAuthorV e rRule(
+        act onBu lder,
+        Cond  on.T etHasV olat onOfLevel(v olat onLevel)
       ) {
-    override lazy val name: String = s"ViewerIsAuthorAndTweetHasViolationOf$violationLevel"
+    overr de lazy val na : Str ng = s"V e r sAuthorAndT etHasV olat onOf$v olat onLevel"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
+    overr de def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
   }
 
-  case class ViewerIsFollowerAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
+  case class V e r sFollo rAndT etHasV olat onOfLevel(
+    v olat onLevel: V olat onLevel,
+    overr de val act onBu lder: Act onBu lder[_ <: Act on])
+      extends OnlyW nNonAuthorV e rRule(
+        act onBu lder,
         And(
-          Condition.TweetHasViolationOfLevel(violationLevel),
-          ViewerFollowsAuthorOfFosnrViolatingTweet)
+          Cond  on.T etHasV olat onOfLevel(v olat onLevel),
+          V e rFollowsAuthorOfFosnrV olat ngT et)
       ) {
-    override lazy val name: String = s"ViewerIsFollowerAndTweetHasViolationOf$violationLevel"
+    overr de lazy val na : Str ng = s"V e r sFollo rAndT etHasV olat onOf$v olat onLevel"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
+    overr de def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
 
-    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+    overr de val fallbackAct onBu lder: Opt on[Act onBu lder[_ <: Act on]] = So (
+      new ConstantAct onBu lder(Avo d(So (M ghtNotBeSu ableForAds))))
   }
 
-  case class ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
+  case class V e r sNonFollo rNonAuthorAndT etHasV olat onOfLevel(
+    v olat onLevel: V olat onLevel,
+    overr de val act onBu lder: Act onBu lder[_ <: Act on])
+      extends OnlyW nNonAuthorV e rRule(
+        act onBu lder,
         And(
-          Condition.TweetHasViolationOfLevel(violationLevel),
-          ViewerDoesNotFollowAuthorOfFosnrViolatingTweet)
+          Cond  on.T etHasV olat onOfLevel(v olat onLevel),
+          V e rDoesNotFollowAuthorOfFosnrV olat ngT et)
       ) {
-    override lazy val name: String =
-      s"ViewerIsNonFollowerNonAuthorAndTweetHasViolationOf$violationLevel"
+    overr de lazy val na : Str ng =
+      s"V e r sNonFollo rNonAuthorAndT etHasV olat onOf$v olat onLevel"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
+    overr de def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
 
-    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+    overr de val fallbackAct onBu lder: Opt on[Act onBu lder[_ <: Act on]] = So (
+      new ConstantAct onBu lder(Avo d(So (M ghtNotBeSu ableForAds))))
   }
 
-  case class ViewerIsNonAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
-        Condition.TweetHasViolationOfLevel(violationLevel)
+  case class V e r sNonAuthorAndT etHasV olat onOfLevel(
+    v olat onLevel: V olat onLevel,
+    overr de val act onBu lder: Act onBu lder[_ <: Act on])
+      extends OnlyW nNonAuthorV e rRule(
+        act onBu lder,
+        Cond  on.T etHasV olat onOfLevel(v olat onLevel)
       ) {
-    override lazy val name: String =
-      s"ViewerIsNonAuthorAndTweetHasViolationOf$violationLevel"
+    overr de lazy val na : Str ng =
+      s"V e r sNonAuthorAndT etHasV olat onOf$v olat onLevel"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
+    overr de def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
 
-    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+    overr de val fallbackAct onBu lder: Opt on[Act onBu lder[_ <: Act on]] = So (
+      new ConstantAct onBu lder(Avo d(So (M ghtNotBeSu ableForAds))))
   }
 
-  case object TweetHasViolationOfAnyLevelFallbackDropRule
-      extends RuleWithConstantAction(
-        Drop(reason = NotSupportedOnDevice),
-        Condition.TweetHasViolationOfAnyLevel
+  case object T etHasV olat onOfAnyLevelFallbackDropRule
+      extends RuleW hConstantAct on(
+        Drop(reason = NotSupportedOnDev ce),
+        Cond  on.T etHasV olat onOfAnyLevel
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
+    overr de def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrFallbackDropRulesEnabledParam)
   }
 }

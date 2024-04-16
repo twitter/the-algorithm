@@ -1,61 +1,61 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.graph
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.graph
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
 struct DecayedSums {
-  // last time the decayed sum was updated, in millis. 
-  1: required i64 lastUpdatedTimestamp
+  // last t   t  decayed sum was updated,  n m ll s. 
+  1: requ red  64 lastUpdatedT  stamp
 
-  // a map from half life (specified in days) to the decayed sum
-  2: required map<i32, double> halfLifeInDaysToDecayedSums
-}(persisted = 'true', hasPersonalData = 'false')
+  // a map from half l fe (spec f ed  n days) to t  decayed sum
+  2: requ red map< 32, double> halfL fe nDaysToDecayedSums
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct EdgeWithDecayedWeights {
-  1: required i64 sourceId(personalDataType = 'UserId')
-  2: required i64 destinationId(personalDataType = 'UserId')
-  3: required DecayedSums weights
-}(persisted="true", hasPersonalData = "true")
+struct EdgeW hDecayed  ghts {
+  1: requ red  64 s ce d(personalDataType = 'User d')
+  2: requ red  64 dest nat on d(personalDataType = 'User d')
+  3: requ red DecayedSums   ghts
+}(pers sted="true", hasPersonalData = "true")
 
-struct NeighborWithWeights {
-  1: required i64 neighborId(personalDataType = 'UserId')
-  2: optional bool isFollowed(personalDataType = 'Follow')
-  3: optional double followScoreNormalizedByNeighborFollowersL2(personalDataType = 'EngagementsPublic')
-  4: optional double favScoreHalfLife100Days(personalDataType = 'EngagementsPublic')
-  5: optional double favScoreHalfLife100DaysNormalizedByNeighborFaversL2(personalDataType = 'EngagementsPublic')
+struct Ne ghborW h  ghts {
+  1: requ red  64 ne ghbor d(personalDataType = 'User d')
+  2: opt onal bool  sFollo d(personalDataType = 'Follow')
+  3: opt onal double followScoreNormal zedByNe ghborFollo rsL2(personalDataType = 'Engage ntsPubl c')
+  4: opt onal double favScoreHalfL fe100Days(personalDataType = 'Engage ntsPubl c')
+  5: opt onal double favScoreHalfL fe100DaysNormal zedByNe ghborFaversL2(personalDataType = 'Engage ntsPubl c')
 
-  // log(favScoreHalfLife100Days + 1)
-  6: optional double logFavScore(personalDataType = 'EngagementsPublic')
+  // log(favScoreHalfL fe100Days + 1)
+  6: opt onal double logFavScore(personalDataType = 'Engage ntsPubl c')
 
-  // log(favScoreHalfLife100Days + 1) normalized so that a user's incoming weights have unit l2 norm
-  7: optional double logFavScoreL2Normalized(personalDataType = 'EngagementsPublic')
+  // log(favScoreHalfL fe100Days + 1) normal zed so that a user's  ncom ng   ghts have un  l2 norm
+  7: opt onal double logFavScoreL2Normal zed(personalDataType = 'Engage ntsPubl c')
 
-}(persisted = 'true', hasPersonalData = 'true')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct UserAndNeighbors {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<NeighborWithWeights> neighbors
-}(persisted="true", hasPersonalData = 'true')
+struct UserAndNe ghbors {
+  1: requ red  64 user d(personalDataType = 'User d')
+  2: requ red l st<Ne ghborW h  ghts> ne ghbors
+}(pers sted="true", hasPersonalData = 'true')
 
 struct NormsAndCounts {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: optional double followerL2Norm(personalDataType = 'CountOfFollowersAndFollowees')
-  3: optional double faverL2Norm(personalDataType = 'EngagementsPublic')
-  4: optional i64 followerCount(personalDataType = 'CountOfFollowersAndFollowees')
-  5: optional i64 faverCount(personalDataType = 'EngagementsPublic')
+  1: requ red  64 user d(personalDataType = 'User d')
+  2: opt onal double follo rL2Norm(personalDataType = 'CountOfFollo rsAndFollo es')
+  3: opt onal double faverL2Norm(personalDataType = 'Engage ntsPubl c')
+  4: opt onal  64 follo rCount(personalDataType = 'CountOfFollo rsAndFollo es')
+  5: opt onal  64 faverCount(personalDataType = 'Engage ntsPubl c')
 
-  // sum of the weights on the incoming edges where someone fav'ed this producer
-  6: optional double favWeightsOnFavEdgesSum(personalDataType = 'EngagementsPublic')
+  // sum of t    ghts on t   ncom ng edges w re so one fav'ed t  producer
+  6: opt onal double fav  ghtsOnFavEdgesSum(personalDataType = 'Engage ntsPubl c')
 
-  // sum of the fav weights on all the followers of this producer
-  7: optional double favWeightsOnFollowEdgesSum(personalDataType = 'EngagementsPublic')
+  // sum of t  fav   ghts on all t  follo rs of t  producer
+  7: opt onal double fav  ghtsOnFollowEdgesSum(personalDataType = 'Engage ntsPubl c')
   // log(favScore + 1)
-  8: optional double logFavL2Norm(personalDataType = 'EngagementsPublic')
+  8: opt onal double logFavL2Norm(personalDataType = 'Engage ntsPubl c')
 
-  // sum of log(favScore + 1) on the incoming edges where someone fav'ed this producer
-  9: optional double logFavWeightsOnFavEdgesSum(personalDataType = 'EngagementsPublic')
+  // sum of log(favScore + 1) on t   ncom ng edges w re so one fav'ed t  producer
+  9: opt onal double logFav  ghtsOnFavEdgesSum(personalDataType = 'Engage ntsPubl c')
 
-  // sum of log(favScore + 1) on all the followers of this producer
-  10: optional double logFavWeightsOnFollowEdgesSum(personalDataType = 'EngagementsPublic')
+  // sum of log(favScore + 1) on all t  follo rs of t  producer
+  10: opt onal double logFav  ghtsOnFollowEdgesSum(personalDataType = 'Engage ntsPubl c')
 
-}(persisted="true", hasPersonalData = 'true')
+}(pers sted="true", hasPersonalData = 'true')

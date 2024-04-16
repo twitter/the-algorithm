@@ -1,149 +1,149 @@
-package com.twitter.visibility.interfaces.tweets
+package com.tw ter.v s b l y. nterfaces.t ets
 
-import com.twitter.decider.Decider
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.QuotedTweetFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.QuotedTweetRelationship
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Reason.AuthorBlocksViewer
-import com.twitter.visibility.rules.Reason.DeactivatedAuthor
-import com.twitter.visibility.rules.Reason.ErasedAuthor
-import com.twitter.visibility.rules.Reason.OffboardedAuthor
-import com.twitter.visibility.rules.Reason.ProtectedAuthor
-import com.twitter.visibility.rules.Reason.SuspendedAuthor
-import com.twitter.visibility.rules.Reason.ViewerBlocksAuthor
-import com.twitter.visibility.rules.Reason.ViewerHardMutedAuthor
-import com.twitter.visibility.rules.Reason.ViewerMutesAuthor
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.QuotedT etFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d.QuotedT etRelat onsh p
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.UserUnava lableStateEnum
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.Reason.AuthorBlocksV e r
+ mport com.tw ter.v s b l y.rules.Reason.Deact vatedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.ErasedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.OffboardedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.ProtectedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.SuspendedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.V e rBlocksAuthor
+ mport com.tw ter.v s b l y.rules.Reason.V e rHardMutedAuthor
+ mport com.tw ter.v s b l y.rules.Reason.V e rMutesAuthor
+ mport com.tw ter.v s b l y.rules.prov ders.Prov dedEvaluat onContext
+ mport com.tw ter.v s b l y.rules.ut ls.Sh mUt ls
 
-case class TweetAndAuthor(tweetId: Long, authorId: Long)
+case class T etAndAuthor(t et d: Long, author d: Long)
 
-case class QuotedTweetVisibilityRequest(
-  quotedTweet: TweetAndAuthor,
-  outerTweet: TweetAndAuthor,
-  viewerContext: ViewerContext,
+case class QuotedT etV s b l yRequest(
+  quotedT et: T etAndAuthor,
+  outerT et: T etAndAuthor,
+  v e rContext: V e rContext,
   safetyLevel: SafetyLevel)
 
-object QuotedTweetVisibilityLibrary {
+object QuotedT etV s b l yL brary {
 
-  type Type = QuotedTweetVisibilityRequest => Stitch[VisibilityResult]
+  type Type = QuotedT etV s b l yRequest => St ch[V s b l yResult]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    decider: Decider,
-    userStateVisibilityLibrary: UserUnavailableStateVisibilityLibrary.Type,
-    enableVfFeatureHydration: Gate[Unit] = Gate.False
+    v s b l yL brary: V s b l yL brary,
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce,
+    dec der: Dec der,
+    userStateV s b l yL brary: UserUnava lableStateV s b l yL brary.Type,
+    enableVfFeatureHydrat on: Gate[Un ] = Gate.False
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val v s b l yDec derGates = V s b l yDec derGates(dec der)
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
     {
-      case QuotedTweetVisibilityRequest(quotedTweet, outerTweet, viewerContext, safetyLevel) =>
-        vfEngineCounter.incr()
-        val contentId = QuotedTweetRelationship(
-          outer = outerTweet.tweetId,
-          inner = quotedTweet.tweetId
+      case QuotedT etV s b l yRequest(quotedT et, outerT et, v e rContext, safetyLevel) =>
+        vfEng neCounter. ncr()
+        val content d = QuotedT etRelat onsh p(
+          outer = outerT et.t et d,
+           nner = quotedT et.t et d
         )
 
-        val innerAuthorId = quotedTweet.authorId
-        val outerAuthorId = outerTweet.authorId
-        val viewerId = viewerContext.userId
-        val isFeatureHydrationInShimEnabled = enableVfFeatureHydration()
+        val  nnerAuthor d = quotedT et.author d
+        val outerAuthor d = outerT et.author d
+        val v e r d = v e rContext.user d
+        val  sFeatureHydrat on nSh mEnabled = enableVfFeatureHydrat on()
 
-        val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-        val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-        val relationshipFeatures =
-          new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-        val quotedTweetFeatures =
-          new QuotedTweetFeatures(relationshipFeatures, libraryStatsReceiver)
+        val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+        val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
+        val relat onsh pFeatures =
+          new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
+        val quotedT etFeatures =
+          new QuotedT etFeatures(relat onsh pFeatures, l braryStatsRece ver)
 
-        val featureMap = visibilityLibrary.featureMapBuilder(
+        val featureMap = v s b l yL brary.featureMapBu lder(
           Seq(
-            viewerFeatures.forViewerContext(viewerContext),
-            authorFeatures.forAuthorId(innerAuthorId),
-            relationshipFeatures.forAuthorId(innerAuthorId, viewerId),
-            quotedTweetFeatures.forOuterAuthor(outerAuthorId, innerAuthorId)
+            v e rFeatures.forV e rContext(v e rContext),
+            authorFeatures.forAuthor d( nnerAuthor d),
+            relat onsh pFeatures.forAuthor d( nnerAuthor d, v e r d),
+            quotedT etFeatures.forOuterAuthor(outerAuthor d,  nnerAuthor d)
           )
         )
 
-        val resp = if (isFeatureHydrationInShimEnabled) {
-          val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = EvaluationContext(
-              SafetyLevel.QuotedTweetRules,
-              visibilityLibrary.getParams(viewerContext, SafetyLevel.QuotedTweetRules),
-              visibilityLibrary.statsReceiver)
+        val resp =  f ( sFeatureHydrat on nSh mEnabled) {
+          val evaluat onContext = Prov dedEvaluat onContext. njectRunt  Rules ntoEvaluat onContext(
+            evaluat onContext = Evaluat onContext(
+              SafetyLevel.QuotedT etRules,
+              v s b l yL brary.getParams(v e rContext, SafetyLevel.QuotedT etRules),
+              v s b l yL brary.statsRece ver)
           )
 
-          val preFilteredFeatureMap =
-            ShimUtils.preFilterFeatureMap(
+          val preF lteredFeatureMap =
+            Sh mUt ls.preF lterFeatureMap(
               featureMap,
-              SafetyLevel.QuotedTweetRules,
-              contentId,
-              evaluationContext)
+              SafetyLevel.QuotedT etRules,
+              content d,
+              evaluat onContext)
 
-          FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
+          FeatureMap.resolve(preF lteredFeatureMap, l braryStatsRece ver).flatMap {
             resolvedFeatureMap =>
-              visibilityLibrary
-                .runRuleEngine(
-                  contentId,
+              v s b l yL brary
+                .runRuleEng ne(
+                  content d,
                   resolvedFeatureMap,
-                  viewerContext,
-                  SafetyLevel.QuotedTweetRules
+                  v e rContext,
+                  SafetyLevel.QuotedT etRules
                 )
           }
         } else {
-          visibilityLibrary
-            .runRuleEngine(
-              contentId,
+          v s b l yL brary
+            .runRuleEng ne(
+              content d,
               featureMap,
-              viewerContext,
-              SafetyLevel.QuotedTweetRules
+              v e rContext,
+              SafetyLevel.QuotedT etRules
             )
         }
 
-        resp.flatMap { visResult =>
-          val userStateOpt = visResult.verdict match {
-            case Drop(DeactivatedAuthor, _) => Some(UserUnavailableStateEnum.Deactivated)
-            case Drop(OffboardedAuthor, _) => Some(UserUnavailableStateEnum.Offboarded)
-            case Drop(ErasedAuthor, _) => Some(UserUnavailableStateEnum.Erased)
-            case Drop(ProtectedAuthor, _) => Some(UserUnavailableStateEnum.Protected)
-            case Drop(SuspendedAuthor, _) => Some(UserUnavailableStateEnum.Suspended)
-            case Drop(AuthorBlocksViewer, _) => Some(UserUnavailableStateEnum.AuthorBlocksViewer)
-            case Drop(ViewerBlocksAuthor, _) => Some(UserUnavailableStateEnum.ViewerBlocksAuthor)
-            case Drop(ViewerMutesAuthor, _) => Some(UserUnavailableStateEnum.ViewerMutesAuthor)
-            case Drop(ViewerHardMutedAuthor, _) => Some(UserUnavailableStateEnum.ViewerMutesAuthor)
+        resp.flatMap { v sResult =>
+          val userStateOpt = v sResult.verd ct match {
+            case Drop(Deact vatedAuthor, _) => So (UserUnava lableStateEnum.Deact vated)
+            case Drop(OffboardedAuthor, _) => So (UserUnava lableStateEnum.Offboarded)
+            case Drop(ErasedAuthor, _) => So (UserUnava lableStateEnum.Erased)
+            case Drop(ProtectedAuthor, _) => So (UserUnava lableStateEnum.Protected)
+            case Drop(SuspendedAuthor, _) => So (UserUnava lableStateEnum.Suspended)
+            case Drop(AuthorBlocksV e r, _) => So (UserUnava lableStateEnum.AuthorBlocksV e r)
+            case Drop(V e rBlocksAuthor, _) => So (UserUnava lableStateEnum.V e rBlocksAuthor)
+            case Drop(V e rMutesAuthor, _) => So (UserUnava lableStateEnum.V e rMutesAuthor)
+            case Drop(V e rHardMutedAuthor, _) => So (UserUnava lableStateEnum.V e rMutesAuthor)
             case _ => None
           }
 
           userStateOpt
             .map(userState =>
-              userStateVisibilityLibrary(
-                UserUnavailableStateVisibilityRequest(
+              userStateV s b l yL brary(
+                UserUnava lableStateV s b l yRequest(
                   safetyLevel,
-                  quotedTweet.tweetId,
-                  viewerContext,
+                  quotedT et.t et d,
+                  v e rContext,
                   userState,
-                  isRetweet = false,
-                  isInnerQuotedTweet = true,
-                ))).getOrElse(Stitch.value(visResult))
+                   sRet et = false,
+                   s nnerQuotedT et = true,
+                ))).getOrElse(St ch.value(v sResult))
         }
     }
   }

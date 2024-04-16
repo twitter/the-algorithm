@@ -1,531 +1,531 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.Arrays;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2LongMap;
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
+ mport  .un m .ds .fastut l. nts. nt2ByteOpenHashMap;
+ mport  .un m .ds .fastut l. nts. nt2LongMap;
+ mport  .un m .ds .fastut l. nts. nt2LongOpenHashMap;
 
 /**
- * A mapper that maps tweet IDs to doc IDs based on the tweet timestamps. This mapper guarantees
- * that if creationTime(A) > creationTime(B), then docId(A) < docId(B), no matter in which order
- * the tweets are added to this mapper. However, if creationTime(A) == creationTime(B), then there
- * is no guarantee on the order between docId(A) and docId(B).
+ * A mapper that maps t et  Ds to doc  Ds based on t  t et t  stamps. T  mapper guarantees
+ * that  f creat onT  (A) > creat onT  (B), t n doc d(A) < doc d(B), no matter  n wh ch order
+ * t  t ets are added to t  mapper. Ho ver,  f creat onT  (A) == creat onT  (B), t n t re
+ *  s no guarantee on t  order bet en doc d(A) and doc d(B).
  *
- * Essentially, this mapper guarantees that tweets with a later creation time are mapped to smaller
- * doc IDs, but it does not provide any ordering for tweets with the same timestamp (down to
- * millisecond granularity, which is what Snowflake provides). Our claim is that ordering tweets
- * with the same timestamp is not needed, because for the purposes of realtime search, the only
- * significant part of the tweet ID is the timestamp. So any such ordering would just be an ordering
- * for the Snowflake shards and/or sequence numbers, rather than a time based ordering for tweets.
+ * Essent ally, t  mapper guarantees that t ets w h a later creat on t   are mapped to smaller
+ * doc  Ds, but   does not prov de any order ng for t ets w h t  sa  t  stamp (down to
+ * m ll second granular y, wh ch  s what Snowflake prov des).   cla m  s that order ng t ets
+ * w h t  sa  t  stamp  s not needed, because for t  purposes of realt   search, t  only
+ * s gn f cant part of t  t et  D  s t  t  stamp. So any such order ng would just be an order ng
+ * for t  Snowflake shards and/or sequence numbers, rat r than a t   based order ng for t ets.
  *
- * The mapper uses the following scheme to assign docIDs to tweets:
+ * T  mapper uses t  follow ng sc   to ass gn doc Ds to t ets:
  *   +----------+-----------------------------+------------------------------+
- *   | Bit 0    | Bits 1 - 27                 | Bits 28 - 31                 |
+ *   | B  0    | B s 1 - 27                 | B s 28 - 31                 |
  *   + ---------+-----------------------------+------------------------------+
- *   | sign     | tweet ID timestamp -        | Allow 16 tweets to be posted |
- *   | always 0 | segment boundary timestamp  | on the same millisecond      |
+ *   | s gn     | t et  D t  stamp -        | Allow 16 t ets to be posted |
+ *   | always 0 | seg nt boundary t  stamp  | on t  sa  m ll second      |
  *   + ---------+-----------------------------+------------------------------+
  *
- * Important assumptions:
- *   * Snowflake IDs have millisecond granularity. Therefore, 27 bits is enough to represent a time
- *     period of 2^27 / (3600 * 100) = ~37 hours, which is more than enough to cover one realtime
- *     segment (our realtime segments currently span ~13 hours).
- *   * At peak times, the tweet posting rate is less than 10,000 tps. Given our current partitioning
- *     scheme (22 partitions), each realtime earlybird should expect to get less than 500 tweets per
- *     second, which comes down to less than 1 tweet per millisecond, assuming the partitioning hash
- *     function distributes the tweets fairly randomly independent of their timestamps. Therefore,
- *     providing space for 16 tweets (4 bits) in every millisecond should be more than enough to
- *     accommodate the current requirements, and any potential future changes (higher tweet rate,
- *     fewer partitions, etc.).
+ *  mportant assumpt ons:
+ *   * Snowflake  Ds have m ll second granular y. T refore, 27 b s  s enough to represent a t  
+ *     per od of 2^27 / (3600 * 100) = ~37 h s, wh ch  s more than enough to cover one realt  
+ *     seg nt (  realt   seg nts currently span ~13 h s).
+ *   * At peak t  s, t  t et post ng rate  s less than 10,000 tps. G ven   current part  on ng
+ *     sc   (22 part  ons), each realt   earlyb rd should expect to get less than 500 t ets per
+ *     second, wh ch co s down to less than 1 t et per m ll second, assum ng t  part  on ng hash
+ *     funct on d str butes t  t ets fa rly randomly  ndependent of t  r t  stamps. T refore,
+ *     prov d ng space for 16 t ets (4 b s)  n every m ll second should be more than enough to
+ *     accommodate t  current requ re nts, and any potent al future changes (h g r t et rate,
+ *     fe r part  ons, etc.).
  *
- * How the mapper works:
- *   * The tweetId -> docId conversion is implicit (using the tweet's timestamp).
- *   * We use a IntToByteMap to store the number of tweets for each timestamp, so that we can
- *     allocate different doc IDs to tweets posted on the same millisecond. The size of this map is:
- *         segmentSize * 2 (load factor) * 1 (size of byte) = 16MB
- *   * The docId -> tweetId mappings are stored in an IntToLongMap. The size of this map is:
- *         segmentSize * 2 (load factor) * 8 (size of long) = 128MB
- *   * The mapper takes the "segment boundary" (the timestamp of the timeslice ID) as a parameter.
- *     This segment boundary determines the earliest tweet that this mapper can correctly index
- *     (it is subtracted from the timestamp of all tweets added to the mapper). Therefore, in order
- *     to correctly handle late tweets, we move back this segment boundary by twelve hour.
- *   * Tweets created before (segment boundary - 12 hours) are stored as if their timestamp was the
- *     segment boundary.
- *   * The largest timestamp that the mapper can store is:
- *         LARGEST_RELATIVE_TIMESTAMP = (1 << TIMESTAMP_BITS) - LUCENE_TIMESTAMP_BUFFER.
- *     Tweets created after (segmentBoundaryTimestamp + LARGEST_RELATIVE_TIMESTAMP) are stored as if
- *     their timestamp was (segmentBoundaryTimestamp + LARGEST_RELATIVE_TIMESTAMP).
- *   * When a tweet is added, we compute its doc ID as:
- *         int relativeTimestamp = tweetTimestamp - segmentBoundaryTimestamp;
- *         int docIdTimestamp = LARGEST_RELATIVE_TIMESTAMP - relativeTimestamp;
- *         int numTweetsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
- *         int docId = (docIdTimestamp << DOC_ID_BITS)
- *             + MAX_DOCS_PER_TIMESTAMP - numTweetsForTimestamp - 1
+ * How t  mapper works:
+ *   * T  t et d -> doc d convers on  s  mpl c  (us ng t  t et's t  stamp).
+ *   *   use a  ntToByteMap to store t  number of t ets for each t  stamp, so that   can
+ *     allocate d fferent doc  Ds to t ets posted on t  sa  m ll second. T  s ze of t  map  s:
+ *         seg ntS ze * 2 (load factor) * 1 (s ze of byte) = 16MB
+ *   * T  doc d -> t et d mapp ngs are stored  n an  ntToLongMap. T  s ze of t  map  s:
+ *         seg ntS ze * 2 (load factor) * 8 (s ze of long) = 128MB
+ *   * T  mapper takes t  "seg nt boundary" (t  t  stamp of t  t  sl ce  D) as a para ter.
+ *     T  seg nt boundary determ nes t  earl est t et that t  mapper can correctly  ndex
+ *     (   s subtracted from t  t  stamp of all t ets added to t  mapper). T refore,  n order
+ *     to correctly handle late t ets,   move back t  seg nt boundary by t lve h .
+ *   * T ets created before (seg nt boundary - 12 h s) are stored as  f t  r t  stamp was t 
+ *     seg nt boundary.
+ *   * T  largest t  stamp that t  mapper can store  s:
+ *         LARGEST_RELAT VE_T MESTAMP = (1 << T MESTAMP_B TS) - LUCENE_T MESTAMP_BUFFER.
+ *     T ets created after (seg ntBoundaryT  stamp + LARGEST_RELAT VE_T MESTAMP) are stored as  f
+ *     t  r t  stamp was (seg ntBoundaryT  stamp + LARGEST_RELAT VE_T MESTAMP).
+ *   * W n a t et  s added,   compute  s doc  D as:
+ *          nt relat veT  stamp = t etT  stamp - seg ntBoundaryT  stamp;
+ *          nt doc dT  stamp = LARGEST_RELAT VE_T MESTAMP - relat veT  stamp;
+ *          nt numT etsForT  stamp = t etsPerT  stamp.get(doc dT  stamp);
+ *          nt doc d = (doc dT  stamp << DOC_ D_B TS)
+ *             + MAX_DOCS_PER_T MESTAMP - numT etsForT  stamp - 1
  *
- * This doc ID distribution scheme guarantees that tweets created later will be assigned smaller doc
- * IDs (as long as we don't have more than 16 tweets created in the same millisecond). However,
- * there is no ordering guarantee for tweets created at the same timestamp -- they are assigned doc
- * IDs in the order in which they're added to the mapper.
+ * T  doc  D d str but on sc   guarantees that t ets created later w ll be ass gned smaller doc
+ *  Ds (as long as   don't have more than 16 t ets created  n t  sa  m ll second). Ho ver,
+ * t re  s no order ng guarantee for t ets created at t  sa  t  stamp -- t y are ass gned doc
+ *  Ds  n t  order  n wh ch t y're added to t  mapper.
  *
- * If we have more than 16 tweets created at time T, the mapper will still gracefully handle that
- * case: the "extra" tweets will be assigned doc IDs from the pool of doc IDs for timestamp (T + 1).
- * However, the ordering guarantee might no longer hold for those "extra" tweets. Also, the "extra"
- * tweets might be missed by certain since_id/max_id queries (the findDocIdBound() method might not
- * be able to correctly work for these tweet IDs).
+ *  f   have more than 16 t ets created at t   T, t  mapper w ll st ll gracefully handle that
+ * case: t  "extra" t ets w ll be ass gned doc  Ds from t  pool of doc  Ds for t  stamp (T + 1).
+ * Ho ver, t  order ng guarantee m ght no longer hold for those "extra" t ets. Also, t  "extra"
+ * t ets m ght be m ssed by certa n s nce_ d/max_ d quer es (t  f ndDoc dBound()  thod m ght not
+ * be able to correctly work for t se t et  Ds).
  */
-public class OutOfOrderRealtimeTweetIDMapper extends TweetIDMapper {
-  private static final Logger LOG = LoggerFactory.getLogger(OutOfOrderRealtimeTweetIDMapper.class);
+publ c class OutOfOrderRealt  T et DMapper extends T et DMapper {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(OutOfOrderRealt  T et DMapper.class);
 
-  // The number of bits used to represent the tweet timestamp.
-  private static final int TIMESTAMP_BITS = 27;
+  // T  number of b s used to represent t  t et t  stamp.
+  pr vate stat c f nal  nt T MESTAMP_B TS = 27;
 
-  // The number of bits used to represent the number of tweets with a certain timestamp.
-  @VisibleForTesting
-  static final int DOC_ID_BITS = Integer.SIZE - TIMESTAMP_BITS - 1;
+  // T  number of b s used to represent t  number of t ets w h a certa n t  stamp.
+  @V s bleForTest ng
+  stat c f nal  nt DOC_ D_B TS =  nteger.S ZE - T MESTAMP_B TS - 1;
 
-  // The maximum number of tweets/docs that we can store per timestamp.
-  @VisibleForTesting
-  static final int MAX_DOCS_PER_TIMESTAMP = 1 << DOC_ID_BITS;
+  // T  max mum number of t ets/docs that   can store per t  stamp.
+  @V s bleForTest ng
+  stat c f nal  nt MAX_DOCS_PER_T MESTAMP = 1 << DOC_ D_B TS;
 
-  // Lucene has some logic that doesn't deal well with doc IDs close to Integer.MAX_VALUE.
-  // For example, BooleanScorer has a SIZE constant set to 2048, which gets added to the doc IDs
-  // inside the score() method. So when the doc IDs are close to Integer.MAX_VALUE, this causes an
-  // overflow, which can send Lucene into an infinite loop. Therefore, we need to make sure that
-  // we do not assign doc IDs close to Integer.MAX_VALUE.
-  private static final int LUCENE_TIMESTAMP_BUFFER = 1 << 16;
+  // Lucene has so  log c that doesn't deal  ll w h doc  Ds close to  nteger.MAX_VALUE.
+  // For example, BooleanScorer has a S ZE constant set to 2048, wh ch gets added to t  doc  Ds
+  //  ns de t  score()  thod. So w n t  doc  Ds are close to  nteger.MAX_VALUE, t  causes an
+  // overflow, wh ch can send Lucene  nto an  nf n e loop. T refore,   need to make sure that
+  //   do not ass gn doc  Ds close to  nteger.MAX_VALUE.
+  pr vate stat c f nal  nt LUCENE_T MESTAMP_BUFFER = 1 << 16;
 
-  @VisibleForTesting
-  public static final int LATE_TWEETS_TIME_BUFFER_MILLIS = 12 * 3600 * 1000;  // 12 hours
+  @V s bleForTest ng
+  publ c stat c f nal  nt LATE_TWEETS_T ME_BUFFER_M LL S = 12 * 3600 * 1000;  // 12 h s
 
-  // The largest relative timestamp that this mapper can store.
-  @VisibleForTesting
-  static final int LARGEST_RELATIVE_TIMESTAMP = (1 << TIMESTAMP_BITS) - LUCENE_TIMESTAMP_BUFFER;
+  // T  largest relat ve t  stamp that t  mapper can store.
+  @V s bleForTest ng
+  stat c f nal  nt LARGEST_RELAT VE_T MESTAMP = (1 << T MESTAMP_B TS) - LUCENE_T MESTAMP_BUFFER;
 
-  private final long segmentBoundaryTimestamp;
-  private final int segmentSize;
+  pr vate f nal long seg ntBoundaryT  stamp;
+  pr vate f nal  nt seg ntS ze;
 
-  private final Int2LongOpenHashMap tweetIds;
-  private final Int2ByteOpenHashMap tweetsPerTimestamp;
+  pr vate f nal  nt2LongOpenHashMap t et ds;
+  pr vate f nal  nt2ByteOpenHashMap t etsPerT  stamp;
 
-  private static final SearchRateCounter BAD_BUCKET_RATE =
-      SearchRateCounter.export("tweets_assigned_to_bad_timestamp_bucket");
-  private static final SearchRateCounter TWEETS_NOT_ASSIGNED_RATE =
-      SearchRateCounter.export("tweets_not_assigned");
-  private static final SearchRateCounter OLD_TWEETS_DROPPED =
-      SearchRateCounter.export("old_tweets_dropped");
+  pr vate stat c f nal SearchRateCounter BAD_BUCKET_RATE =
+      SearchRateCounter.export("t ets_ass gned_to_bad_t  stamp_bucket");
+  pr vate stat c f nal SearchRateCounter TWEETS_NOT_ASS GNED_RATE =
+      SearchRateCounter.export("t ets_not_ass gned");
+  pr vate stat c f nal SearchRateCounter OLD_TWEETS_DROPPED =
+      SearchRateCounter.export("old_t ets_dropped");
 
-  public OutOfOrderRealtimeTweetIDMapper(int segmentSize, long timesliceID) {
-    long firstTimestamp = SnowflakeIdParser.getTimestampFromTweetId(timesliceID);
-    // Leave a buffer so that we can handle tweets that are up to twelve hours late.
-    this.segmentBoundaryTimestamp = firstTimestamp - LATE_TWEETS_TIME_BUFFER_MILLIS;
-    this.segmentSize = segmentSize;
+  publ c OutOfOrderRealt  T et DMapper( nt seg ntS ze, long t  sl ce D) {
+    long f rstT  stamp = Snowflake dParser.getT  stampFromT et d(t  sl ce D);
+    // Leave a buffer so that   can handle t ets that are up to t lve h s late.
+    t .seg ntBoundaryT  stamp = f rstT  stamp - LATE_TWEETS_T ME_BUFFER_M LL S;
+    t .seg ntS ze = seg ntS ze;
 
-    tweetIds = new Int2LongOpenHashMap(segmentSize);
-    tweetIds.defaultReturnValue(ID_NOT_FOUND);
+    t et ds = new  nt2LongOpenHashMap(seg ntS ze);
+    t et ds.defaultReturnValue( D_NOT_FOUND);
 
-    tweetsPerTimestamp = new Int2ByteOpenHashMap(segmentSize);
-    tweetsPerTimestamp.defaultReturnValue((byte) ID_NOT_FOUND);
+    t etsPerT  stamp = new  nt2ByteOpenHashMap(seg ntS ze);
+    t etsPerT  stamp.defaultReturnValue((byte)  D_NOT_FOUND);
   }
 
-  @VisibleForTesting
-  int getDocIdTimestamp(long tweetId) {
-    long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(tweetId);
-    if (tweetTimestamp < segmentBoundaryTimestamp) {
-      return ID_NOT_FOUND;
+  @V s bleForTest ng
+   nt getDoc dT  stamp(long t et d) {
+    long t etT  stamp = Snowflake dParser.getT  stampFromT et d(t et d);
+     f (t etT  stamp < seg ntBoundaryT  stamp) {
+      return  D_NOT_FOUND;
     }
 
-    long relativeTimestamp = tweetTimestamp - segmentBoundaryTimestamp;
-    if (relativeTimestamp > LARGEST_RELATIVE_TIMESTAMP) {
-      relativeTimestamp = LARGEST_RELATIVE_TIMESTAMP;
+    long relat veT  stamp = t etT  stamp - seg ntBoundaryT  stamp;
+     f (relat veT  stamp > LARGEST_RELAT VE_T MESTAMP) {
+      relat veT  stamp = LARGEST_RELAT VE_T MESTAMP;
     }
 
-    return LARGEST_RELATIVE_TIMESTAMP - (int) relativeTimestamp;
+    return LARGEST_RELAT VE_T MESTAMP - ( nt) relat veT  stamp;
   }
 
-  private int getDocIdForTimestamp(int docIdTimestamp, byte docIndexInTimestamp) {
-    return (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - docIndexInTimestamp;
+  pr vate  nt getDoc dForT  stamp( nt doc dT  stamp, byte doc ndex nT  stamp) {
+    return (doc dT  stamp << DOC_ D_B TS) + MAX_DOCS_PER_T MESTAMP - doc ndex nT  stamp;
   }
 
-  @VisibleForTesting
-  long[] getTweetsForDocIdTimestamp(int docIdTimestamp) {
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
-    if (numDocsForTimestamp == ID_NOT_FOUND) {
-      // This should never happen in prod, but better to be safe.
+  @V s bleForTest ng
+  long[] getT etsForDoc dT  stamp( nt doc dT  stamp) {
+    byte numDocsForT  stamp = t etsPerT  stamp.get(doc dT  stamp);
+     f (numDocsForT  stamp ==  D_NOT_FOUND) {
+      // T  should never happen  n prod, but better to be safe.
       return new long[0];
     }
 
-    long[] tweetIdsInBucket = new long[numDocsForTimestamp];
-    int startingDocId = (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - 1;
-    for (int i = 0; i < numDocsForTimestamp; ++i) {
-      tweetIdsInBucket[i] = tweetIds.get(startingDocId - i);
+    long[] t et ds nBucket = new long[numDocsForT  stamp];
+     nt start ngDoc d = (doc dT  stamp << DOC_ D_B TS) + MAX_DOCS_PER_T MESTAMP - 1;
+    for ( nt   = 0;   < numDocsForT  stamp; ++ ) {
+      t et ds nBucket[ ] = t et ds.get(start ngDoc d -  );
     }
-    return tweetIdsInBucket;
+    return t et ds nBucket;
   }
 
-  private int newDocId(long tweetId) {
-    int expectedDocIdTimestamp = getDocIdTimestamp(tweetId);
-    if (expectedDocIdTimestamp == ID_NOT_FOUND) {
-      LOG.info("Dropping tweet {} because it is from before the segment boundary timestamp {}",
-          tweetId,
-          segmentBoundaryTimestamp);
-      OLD_TWEETS_DROPPED.increment();
-      return ID_NOT_FOUND;
+  pr vate  nt newDoc d(long t et d) {
+     nt expectedDoc dT  stamp = getDoc dT  stamp(t et d);
+     f (expectedDoc dT  stamp ==  D_NOT_FOUND) {
+      LOG. nfo("Dropp ng t et {} because    s from before t  seg nt boundary t  stamp {}",
+          t et d,
+          seg ntBoundaryT  stamp);
+      OLD_TWEETS_DROPPED. ncre nt();
+      return  D_NOT_FOUND;
     }
 
-    int docIdTimestamp = expectedDocIdTimestamp;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
+     nt doc dT  stamp = expectedDoc dT  stamp;
+    byte numDocsForT  stamp = t etsPerT  stamp.get(doc dT  stamp);
 
-    if (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP) {
-      BAD_BUCKET_RATE.increment();
+     f (numDocsForT  stamp == MAX_DOCS_PER_T MESTAMP) {
+      BAD_BUCKET_RATE. ncre nt();
     }
 
-    while ((docIdTimestamp > 0) && (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP)) {
-      --docIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
+    wh le ((doc dT  stamp > 0) && (numDocsForT  stamp == MAX_DOCS_PER_T MESTAMP)) {
+      --doc dT  stamp;
+      numDocsForT  stamp = t etsPerT  stamp.get(doc dT  stamp);
     }
 
-    if (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP) {
-      // The relative timestamp 0 already has MAX_DOCS_PER_TIMESTAMP. Can't add more docs.
-      LOG.error("Tweet {} could not be assigned a doc ID in any bucket, because the bucket for "
-          + "timestamp 0 is already full: {}",
-          tweetId, Arrays.toString(getTweetsForDocIdTimestamp(0)));
-      TWEETS_NOT_ASSIGNED_RATE.increment();
-      return ID_NOT_FOUND;
+     f (numDocsForT  stamp == MAX_DOCS_PER_T MESTAMP) {
+      // T  relat ve t  stamp 0 already has MAX_DOCS_PER_T MESTAMP. Can't add more docs.
+      LOG.error("T et {} could not be ass gned a doc  D  n any bucket, because t  bucket for "
+          + "t  stamp 0  s already full: {}",
+          t et d, Arrays.toStr ng(getT etsForDoc dT  stamp(0)));
+      TWEETS_NOT_ASS GNED_RATE. ncre nt();
+      return  D_NOT_FOUND;
     }
 
-    if (docIdTimestamp != expectedDocIdTimestamp) {
-      LOG.warn("Tweet {} could not be assigned a doc ID in the bucket for its timestamp {}, "
-               + "because this bucket is full. Instead, it was assigned a doc ID in the bucket for "
-               + "timestamp {}. The tweets in the correct bucket are: {}",
-               tweetId,
-               expectedDocIdTimestamp,
-               docIdTimestamp,
-               Arrays.toString(getTweetsForDocIdTimestamp(expectedDocIdTimestamp)));
+     f (doc dT  stamp != expectedDoc dT  stamp) {
+      LOG.warn("T et {} could not be ass gned a doc  D  n t  bucket for  s t  stamp {}, "
+               + "because t  bucket  s full.  nstead,   was ass gned a doc  D  n t  bucket for "
+               + "t  stamp {}. T  t ets  n t  correct bucket are: {}",
+               t et d,
+               expectedDoc dT  stamp,
+               doc dT  stamp,
+               Arrays.toStr ng(getT etsForDoc dT  stamp(expectedDoc dT  stamp)));
     }
 
-    if (numDocsForTimestamp == ID_NOT_FOUND) {
-      numDocsForTimestamp = 0;
+     f (numDocsForT  stamp ==  D_NOT_FOUND) {
+      numDocsForT  stamp = 0;
     }
-    ++numDocsForTimestamp;
-    tweetsPerTimestamp.put(docIdTimestamp, numDocsForTimestamp);
+    ++numDocsForT  stamp;
+    t etsPerT  stamp.put(doc dT  stamp, numDocsForT  stamp);
 
-    return getDocIdForTimestamp(docIdTimestamp, numDocsForTimestamp);
+    return getDoc dForT  stamp(doc dT  stamp, numDocsForT  stamp);
   }
 
-  @Override
-  public int getDocID(long tweetId) {
-    int docIdTimestamp = getDocIdTimestamp(tweetId);
-    while (docIdTimestamp >= 0) {
-      int numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
-      int startingDocId = (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - 1;
-      for (int docId = startingDocId; docId > startingDocId - numDocsForTimestamp; --docId) {
-        if (tweetIds.get(docId) == tweetId) {
-          return docId;
+  @Overr de
+  publ c  nt getDoc D(long t et d) {
+     nt doc dT  stamp = getDoc dT  stamp(t et d);
+    wh le (doc dT  stamp >= 0) {
+       nt numDocsForT  stamp = t etsPerT  stamp.get(doc dT  stamp);
+       nt start ngDoc d = (doc dT  stamp << DOC_ D_B TS) + MAX_DOCS_PER_T MESTAMP - 1;
+      for ( nt doc d = start ngDoc d; doc d > start ngDoc d - numDocsForT  stamp; --doc d) {
+         f (t et ds.get(doc d) == t et d) {
+          return doc d;
         }
       }
 
-      // If we have MAX_DOCS_PER_TIMESTAMP docs with this timestamp, then we might've mis-assigned
-      // a tweet to the previous docIdTimestamp bucket. In that case, we need to keep searching.
-      // Otherwise, the tweet is not in the index.
-      if (numDocsForTimestamp < MAX_DOCS_PER_TIMESTAMP) {
+      //  f   have MAX_DOCS_PER_T MESTAMP docs w h t  t  stamp, t n   m ght've m s-ass gned
+      // a t et to t  prev ous doc dT  stamp bucket.  n that case,   need to keep search ng.
+      // Ot rw se, t  t et  s not  n t   ndex.
+       f (numDocsForT  stamp < MAX_DOCS_PER_T MESTAMP) {
         break;
       }
 
-      --docIdTimestamp;
+      --doc dT  stamp;
     }
 
-    return ID_NOT_FOUND;
+    return  D_NOT_FOUND;
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docId) {
-    // Check if docId + 1 is an assigned doc ID in this mapper. This might be the case when we have
-    // multiple tweets posted on the same millisecond.
-    if (tweetIds.get(docId + 1) != ID_NOT_FOUND) {
-      return docId + 1;
+  @Overr de
+  protected  nt getNextDoc D nternal( nt doc d) {
+    // C ck  f doc d + 1  s an ass gned doc  D  n t  mapper. T  m ght be t  case w n   have
+    // mult ple t ets posted on t  sa  m ll second.
+     f (t et ds.get(doc d + 1) !=  D_NOT_FOUND) {
+      return doc d + 1;
     }
 
-    // If (docId + 1) is not assigned, then it means we do not have any more tweets posted at the
-    // timestamp corresponding to docId. We need to find the next relative timestamp for which this
-    // mapper has tweets, and return the first tweet for that timestamp. Note that iterating over
-    // the space of all possible timestamps is faster than iterating over the space of all possible
-    // doc IDs (it's MAX_DOCS_PER_TIMESTAMP times faster).
-    int nextDocIdTimestamp = (docId >> DOC_ID_BITS) + 1;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(nextDocIdTimestamp);
-    int maxDocIdTimestamp = getMaxDocID() >> DOC_ID_BITS;
-    while ((nextDocIdTimestamp <= maxDocIdTimestamp)
-           && (numDocsForTimestamp == ID_NOT_FOUND)) {
-      ++nextDocIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(nextDocIdTimestamp);
+    //  f (doc d + 1)  s not ass gned, t n    ans   do not have any more t ets posted at t 
+    // t  stamp correspond ng to doc d.   need to f nd t  next relat ve t  stamp for wh ch t 
+    // mapper has t ets, and return t  f rst t et for that t  stamp. Note that  erat ng over
+    // t  space of all poss ble t  stamps  s faster than  erat ng over t  space of all poss ble
+    // doc  Ds ( 's MAX_DOCS_PER_T MESTAMP t  s faster).
+     nt nextDoc dT  stamp = (doc d >> DOC_ D_B TS) + 1;
+    byte numDocsForT  stamp = t etsPerT  stamp.get(nextDoc dT  stamp);
+     nt maxDoc dT  stamp = getMaxDoc D() >> DOC_ D_B TS;
+    wh le ((nextDoc dT  stamp <= maxDoc dT  stamp)
+           && (numDocsForT  stamp ==  D_NOT_FOUND)) {
+      ++nextDoc dT  stamp;
+      numDocsForT  stamp = t etsPerT  stamp.get(nextDoc dT  stamp);
     }
 
-    if (numDocsForTimestamp != ID_NOT_FOUND) {
-      return getDocIdForTimestamp(nextDocIdTimestamp, numDocsForTimestamp);
+     f (numDocsForT  stamp !=  D_NOT_FOUND) {
+      return getDoc dForT  stamp(nextDoc dT  stamp, numDocsForT  stamp);
     }
 
-    return ID_NOT_FOUND;
+    return  D_NOT_FOUND;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docId) {
-    // Check if docId - 1 is an assigned doc ID in this mapper. This might be the case when we have
-    // multiple tweets posted on the same millisecond.
-    if (tweetIds.get(docId - 1) != ID_NOT_FOUND) {
-      return docId - 1;
+  @Overr de
+  protected  nt getPrev ousDoc D nternal( nt doc d) {
+    // C ck  f doc d - 1  s an ass gned doc  D  n t  mapper. T  m ght be t  case w n   have
+    // mult ple t ets posted on t  sa  m ll second.
+     f (t et ds.get(doc d - 1) !=  D_NOT_FOUND) {
+      return doc d - 1;
     }
 
-    // If (docId - 1) is not assigned, then it means we do not have any more tweets posted at the
-    // timestamp corresponding to docId. We need to find the previous relative timestamp for which
-    // this mapper has tweets, and return the first tweet for that timestamp. Note that iterating
-    // over the space of all possible timestamps is faster than iterating over the space of all
-    // possible doc IDs (it's MAX_DOCS_PER_TIMESTAMP times faster).
-    int previousDocIdTimestamp = (docId >> DOC_ID_BITS) - 1;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(previousDocIdTimestamp);
-    int minDocIdTimestamp = getMinDocID() >> DOC_ID_BITS;
-    while ((previousDocIdTimestamp >= minDocIdTimestamp)
-           && (numDocsForTimestamp == ID_NOT_FOUND)) {
-      --previousDocIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(previousDocIdTimestamp);
+    //  f (doc d - 1)  s not ass gned, t n    ans   do not have any more t ets posted at t 
+    // t  stamp correspond ng to doc d.   need to f nd t  prev ous relat ve t  stamp for wh ch
+    // t  mapper has t ets, and return t  f rst t et for that t  stamp. Note that  erat ng
+    // over t  space of all poss ble t  stamps  s faster than  erat ng over t  space of all
+    // poss ble doc  Ds ( 's MAX_DOCS_PER_T MESTAMP t  s faster).
+     nt prev ousDoc dT  stamp = (doc d >> DOC_ D_B TS) - 1;
+    byte numDocsForT  stamp = t etsPerT  stamp.get(prev ousDoc dT  stamp);
+     nt m nDoc dT  stamp = getM nDoc D() >> DOC_ D_B TS;
+    wh le ((prev ousDoc dT  stamp >= m nDoc dT  stamp)
+           && (numDocsForT  stamp ==  D_NOT_FOUND)) {
+      --prev ousDoc dT  stamp;
+      numDocsForT  stamp = t etsPerT  stamp.get(prev ousDoc dT  stamp);
     }
 
-    if (numDocsForTimestamp != ID_NOT_FOUND) {
-      return getDocIdForTimestamp(previousDocIdTimestamp, (byte) 1);
+     f (numDocsForT  stamp !=  D_NOT_FOUND) {
+      return getDoc dForT  stamp(prev ousDoc dT  stamp, (byte) 1);
     }
 
-    return ID_NOT_FOUND;
+    return  D_NOT_FOUND;
   }
 
-  @Override
-  public long getTweetID(int docId) {
-    return tweetIds.get(docId);
+  @Overr de
+  publ c long getT et D( nt doc d) {
+    return t et ds.get(doc d);
   }
 
-  @Override
-  protected int addMappingInternal(long tweetId) {
-    int docId = newDocId(tweetId);
-    if (docId == ID_NOT_FOUND) {
-      return ID_NOT_FOUND;
+  @Overr de
+  protected  nt addMapp ng nternal(long t et d) {
+     nt doc d = newDoc d(t et d);
+     f (doc d ==  D_NOT_FOUND) {
+      return  D_NOT_FOUND;
     }
 
-    tweetIds.put(docId, tweetId);
-    return docId;
+    t et ds.put(doc d, t et d);
+    return doc d;
   }
 
-  @Override
-  protected int findDocIDBoundInternal(long tweetId, boolean findMaxDocId) {
-    // Note that it would be incorrect to lookup the doc ID for the given tweet ID and return that
-    // doc ID, as we would skip over tweets created in the same millisecond but with a lower doc ID.
-    int docIdTimestamp = getDocIdTimestamp(tweetId);
+  @Overr de
+  protected  nt f ndDoc DBound nternal(long t et d, boolean f ndMaxDoc d) {
+    // Note that   would be  ncorrect to lookup t  doc  D for t  g ven t et  D and return that
+    // doc  D, as   would sk p over t ets created  n t  sa  m ll second but w h a lo r doc  D.
+     nt doc dT  stamp = getDoc dT  stamp(t et d);
 
-    // The docIdTimestamp is ID_NOT_FOUND only if the tweet is from before the segment boundary and
-    // this should never happen here because TweetIDMapper.findDocIdBound ensures that the tweet id
-    // passed into this method is >= minTweetID which means the tweet is from after the segment
+    // T  doc dT  stamp  s  D_NOT_FOUND only  f t  t et  s from before t  seg nt boundary and
+    // t  should never happen  re because T et DMapper.f ndDoc dBound ensures that t  t et  d
+    // passed  nto t   thod  s >= m nT et D wh ch  ans t  t et  s from after t  seg nt
     // boundary.
-    Preconditions.checkState(
-        docIdTimestamp != ID_NOT_FOUND,
-        "Tried to find doc id bound for tweet %d which is from before the segment boundary %d",
-        tweetId,
-        segmentBoundaryTimestamp);
+    Precond  ons.c ckState(
+        doc dT  stamp !=  D_NOT_FOUND,
+        "Tr ed to f nd doc  d bound for t et %d wh ch  s from before t  seg nt boundary %d",
+        t et d,
+        seg ntBoundaryT  stamp);
 
-    // It's OK to return a doc ID that doesn't correspond to any tweet ID in the index,
-    // as the doc ID is simply used as a starting point and ending point for range queries,
-    // not a source of truth.
-    if (findMaxDocId) {
-      // Return the largest possible doc ID for the timestamp.
-      return getDocIdForTimestamp(docIdTimestamp, (byte) 1);
+    //  's OK to return a doc  D that doesn't correspond to any t et  D  n t   ndex,
+    // as t  doc  D  s s mply used as a start ng po nt and end ng po nt for range quer es,
+    // not a s ce of truth.
+     f (f ndMaxDoc d) {
+      // Return t  largest poss ble doc  D for t  t  stamp.
+      return getDoc dForT  stamp(doc dT  stamp, (byte) 1);
     } else {
-      // Return the smallest possible doc ID for the timestamp.
-      byte tweetsInTimestamp = tweetsPerTimestamp.getOrDefault(docIdTimestamp, (byte) 0);
-      return getDocIdForTimestamp(docIdTimestamp, tweetsInTimestamp);
+      // Return t  smallest poss ble doc  D for t  t  stamp.
+      byte t ets nT  stamp = t etsPerT  stamp.getOrDefault(doc dT  stamp, (byte) 0);
+      return getDoc dForT  stamp(doc dT  stamp, t ets nT  stamp);
     }
   }
 
   /**
-   * Returns the array of all tweet IDs stored in this mapper in a sorted (descending) order.
-   * Essentially, this method remaps all tweet IDs stored in this mapper to a compressed doc ID
+   * Returns t  array of all t et  Ds stored  n t  mapper  n a sorted (descend ng) order.
+   * Essent ally, t   thod remaps all t et  Ds stored  n t  mapper to a compressed doc  D
    * space of [0, numDocs).
    *
-   * Note that this method is not thread safe, and it's meant to be called only at segment
-   * optimization time. If addMappingInternal() is called during the execution of this method,
-   * the behavior is undefined (it will most likely return bad results or throw an exception).
+   * Note that t   thod  s not thread safe, and  's  ant to be called only at seg nt
+   * opt m zat on t  .  f addMapp ng nternal()  s called dur ng t  execut on of t   thod,
+   * t  behav or  s undef ned (  w ll most l kely return bad results or throw an except on).
    *
-   * @return An array of all tweet IDs stored in this mapper, in a sorted (descending) order.
+   * @return An array of all t et  Ds stored  n t  mapper,  n a sorted (descend ng) order.
    */
-  public long[] sortTweetIds() {
-    int numDocs = getNumDocs();
-    if (numDocs == 0) {
+  publ c long[] sortT et ds() {
+     nt numDocs = getNumDocs();
+     f (numDocs == 0) {
       return new long[0];
     }
 
-    // Add all tweets stored in this mapper to sortTweetIds.
-    long[] sortedTweetIds = new long[numDocs];
-    int sortedTweetIdsIndex = 0;
-    for (int docId = getMinDocID(); docId != ID_NOT_FOUND; docId = getNextDocID(docId)) {
-      sortedTweetIds[sortedTweetIdsIndex++] = getTweetID(docId);
+    // Add all t ets stored  n t  mapper to sortT et ds.
+    long[] sortedT et ds = new long[numDocs];
+     nt sortedT et ds ndex = 0;
+    for ( nt doc d = getM nDoc D(); doc d !=  D_NOT_FOUND; doc d = getNextDoc D(doc d)) {
+      sortedT et ds[sortedT et ds ndex++] = getT et D(doc d);
     }
-    Preconditions.checkState(sortedTweetIdsIndex == numDocs,
-                             "Could not traverse all documents in the mapper. Expected to find "
-                             + numDocs + " docs, but found only " + sortedTweetIdsIndex);
+    Precond  ons.c ckState(sortedT et ds ndex == numDocs,
+                             "Could not traverse all docu nts  n t  mapper. Expected to f nd "
+                             + numDocs + " docs, but found only " + sortedT et ds ndex);
 
-    // Sort sortedTweetIdsIndex in descending order. There's no way to sort a primitive array in
-    // descending order, so we have to sort it in ascending order and then reverse it.
-    Arrays.sort(sortedTweetIds);
-    for (int i = 0; i < numDocs / 2; ++i) {
-      long tmp = sortedTweetIds[i];
-      sortedTweetIds[i] = sortedTweetIds[numDocs - 1 - i];
-      sortedTweetIds[numDocs - 1 - i] = tmp;
+    // Sort sortedT et ds ndex  n descend ng order. T re's no way to sort a pr m  ve array  n
+    // descend ng order, so   have to sort    n ascend ng order and t n reverse  .
+    Arrays.sort(sortedT et ds);
+    for ( nt   = 0;   < numDocs / 2; ++ ) {
+      long tmp = sortedT et ds[ ];
+      sortedT et ds[ ] = sortedT et ds[numDocs - 1 -  ];
+      sortedT et ds[numDocs - 1 -  ] = tmp;
     }
 
-    return sortedTweetIds;
+    return sortedT et ds;
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() throws IOException {
-    return new OptimizedTweetIDMapper(this);
+  @Overr de
+  publ c Doc DToT et DMapper opt m ze() throws  OExcept on {
+    return new Opt m zedT et DMapper(t );
   }
 
   /**
-   * Returns the largest Tweet ID that this doc ID mapper could handle. The returned Tweet ID
-   * would be safe to put into the mapper, but any larger ones would not be correctly handled.
+   * Returns t  largest T et  D that t  doc  D mapper could handle. T  returned T et  D
+   * would be safe to put  nto t  mapper, but any larger ones would not be correctly handled.
    */
-  public static long calculateMaxTweetID(long timesliceID) {
-    long numberOfUsableTimestamps = LARGEST_RELATIVE_TIMESTAMP - LATE_TWEETS_TIME_BUFFER_MILLIS;
-    long firstTimestamp = SnowflakeIdParser.getTimestampFromTweetId(timesliceID);
-    long lastTimestamp = firstTimestamp + numberOfUsableTimestamps;
-    return SnowflakeIdParser.generateValidStatusId(
-        lastTimestamp, SnowflakeIdParser.RESERVED_BITS_MASK);
+  publ c stat c long calculateMaxT et D(long t  sl ce D) {
+    long numberOfUsableT  stamps = LARGEST_RELAT VE_T MESTAMP - LATE_TWEETS_T ME_BUFFER_M LL S;
+    long f rstT  stamp = Snowflake dParser.getT  stampFromT et d(t  sl ce D);
+    long lastT  stamp = f rstT  stamp + numberOfUsableT  stamps;
+    return Snowflake dParser.generateVal dStatus d(
+        lastT  stamp, Snowflake dParser.RESERVED_B TS_MASK);
   }
 
   /**
-   * Evaluates whether two instances of OutOfOrderRealtimeTweetIDMapper are equal by value. It is
-   * slow because it has to check every tweet ID/doc ID in the map.
+   * Evaluates w t r two  nstances of OutOfOrderRealt  T et DMapper are equal by value.    s
+   * slow because   has to c ck every t et  D/doc  D  n t  map.
    */
-  @VisibleForTesting
-  boolean verySlowEqualsForTests(OutOfOrderRealtimeTweetIDMapper that) {
-    return getMinTweetID() == that.getMinTweetID()
-        && getMaxTweetID() == that.getMaxTweetID()
-        && getMinDocID() == that.getMinDocID()
-        && getMaxDocID() == that.getMaxDocID()
-        && segmentBoundaryTimestamp == that.segmentBoundaryTimestamp
-        && segmentSize == that.segmentSize
-        && tweetsPerTimestamp.equals(that.tweetsPerTimestamp)
-        && tweetIds.equals(that.tweetIds);
+  @V s bleForTest ng
+  boolean verySlowEqualsForTests(OutOfOrderRealt  T et DMapper that) {
+    return getM nT et D() == that.getM nT et D()
+        && getMaxT et D() == that.getMaxT et D()
+        && getM nDoc D() == that.getM nDoc D()
+        && getMaxDoc D() == that.getMaxDoc D()
+        && seg ntBoundaryT  stamp == that.seg ntBoundaryT  stamp
+        && seg ntS ze == that.seg ntS ze
+        && t etsPerT  stamp.equals(that.t etsPerT  stamp)
+        && t et ds.equals(that.t et ds);
   }
 
-  @Override
-  public OutOfOrderRealtimeTweetIDMapper.FlushHandler getFlushHandler() {
-    return new OutOfOrderRealtimeTweetIDMapper.FlushHandler(this);
+  @Overr de
+  publ c OutOfOrderRealt  T et DMapper.FlushHandler getFlushHandler() {
+    return new OutOfOrderRealt  T et DMapper.FlushHandler(t );
   }
 
-  private OutOfOrderRealtimeTweetIDMapper(
-    long minTweetID,
-    long maxTweetID,
-    int minDocID,
-    int maxDocID,
-    long segmentBoundaryTimestamp,
-    int segmentSize,
-    int[] docIDs,
-    long[] tweetIDList
+  pr vate OutOfOrderRealt  T et DMapper(
+    long m nT et D,
+    long maxT et D,
+     nt m nDoc D,
+     nt maxDoc D,
+    long seg ntBoundaryT  stamp,
+     nt seg ntS ze,
+     nt[] doc Ds,
+    long[] t et DL st
   ) {
-    super(minTweetID, maxTweetID, minDocID, maxDocID, docIDs.length);
+    super(m nT et D, maxT et D, m nDoc D, maxDoc D, doc Ds.length);
 
-    Preconditions.checkState(docIDs.length == tweetIDList.length);
+    Precond  ons.c ckState(doc Ds.length == t et DL st.length);
 
-    this.segmentBoundaryTimestamp = segmentBoundaryTimestamp;
-    this.segmentSize = segmentSize;
+    t .seg ntBoundaryT  stamp = seg ntBoundaryT  stamp;
+    t .seg ntS ze = seg ntS ze;
 
-    tweetIds = new Int2LongOpenHashMap(segmentSize);
-    tweetIds.defaultReturnValue(ID_NOT_FOUND);
+    t et ds = new  nt2LongOpenHashMap(seg ntS ze);
+    t et ds.defaultReturnValue( D_NOT_FOUND);
 
-    tweetsPerTimestamp = new Int2ByteOpenHashMap(segmentSize);
-    tweetsPerTimestamp.defaultReturnValue((byte) ID_NOT_FOUND);
+    t etsPerT  stamp = new  nt2ByteOpenHashMap(seg ntS ze);
+    t etsPerT  stamp.defaultReturnValue((byte)  D_NOT_FOUND);
 
-    for (int i = 0; i < docIDs.length; i++) {
-      int docID = docIDs[i];
-      long tweetID = tweetIDList[i];
-      tweetIds.put(docID, tweetID);
+    for ( nt   = 0;   < doc Ds.length;  ++) {
+       nt doc D = doc Ds[ ];
+      long t et D = t et DL st[ ];
+      t et ds.put(doc D, t et D);
 
-      int timestampBucket = docID >> DOC_ID_BITS;
-      if (tweetsPerTimestamp.containsKey(timestampBucket)) {
-        tweetsPerTimestamp.addTo(timestampBucket, (byte) 1);
+       nt t  stampBucket = doc D >> DOC_ D_B TS;
+       f (t etsPerT  stamp.conta nsKey(t  stampBucket)) {
+        t etsPerT  stamp.addTo(t  stampBucket, (byte) 1);
       } else {
-        tweetsPerTimestamp.put(timestampBucket, (byte) 1);
+        t etsPerT  stamp.put(t  stampBucket, (byte) 1);
       }
     }
   }
 
-  public static class FlushHandler extends Flushable.Handler<OutOfOrderRealtimeTweetIDMapper> {
-    private static final String MIN_TWEET_ID_PROP_NAME = "MinTweetID";
-    private static final String MAX_TWEET_ID_PROP_NAME = "MaxTweetID";
-    private static final String MIN_DOC_ID_PROP_NAME = "MinDocID";
-    private static final String MAX_DOC_ID_PROP_NAME = "MaxDocID";
-    private static final String SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME = "SegmentBoundaryTimestamp";
-    private static final String SEGMENT_SIZE_PROP_NAME = "SegmentSize";
+  publ c stat c class FlushHandler extends Flushable.Handler<OutOfOrderRealt  T et DMapper> {
+    pr vate stat c f nal Str ng M N_TWEET_ D_PROP_NAME = "M nT et D";
+    pr vate stat c f nal Str ng MAX_TWEET_ D_PROP_NAME = "MaxT et D";
+    pr vate stat c f nal Str ng M N_DOC_ D_PROP_NAME = "M nDoc D";
+    pr vate stat c f nal Str ng MAX_DOC_ D_PROP_NAME = "MaxDoc D";
+    pr vate stat c f nal Str ng SEGMENT_BOUNDARY_T MESTAMP_PROP_NAME = "Seg ntBoundaryT  stamp";
+    pr vate stat c f nal Str ng SEGMENT_S ZE_PROP_NAME = "Seg ntS ze";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(OutOfOrderRealtimeTweetIDMapper objectToFlush) {
+    publ c FlushHandler(OutOfOrderRealt  T et DMapper objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer serializer) throws IOException {
-      OutOfOrderRealtimeTweetIDMapper mapper = getObjectToFlush();
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer ser al zer) throws  OExcept on {
+      OutOfOrderRealt  T et DMapper mapper = getObjectToFlush();
 
-      flushInfo.addLongProperty(MIN_TWEET_ID_PROP_NAME, mapper.getMinTweetID());
-      flushInfo.addLongProperty(MAX_TWEET_ID_PROP_NAME, mapper.getMaxTweetID());
-      flushInfo.addIntProperty(MIN_DOC_ID_PROP_NAME, mapper.getMinDocID());
-      flushInfo.addIntProperty(MAX_DOC_ID_PROP_NAME, mapper.getMaxDocID());
-      flushInfo.addLongProperty(SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME,
-          mapper.segmentBoundaryTimestamp);
-      flushInfo.addIntProperty(SEGMENT_SIZE_PROP_NAME, mapper.segmentSize);
+      flush nfo.addLongProperty(M N_TWEET_ D_PROP_NAME, mapper.getM nT et D());
+      flush nfo.addLongProperty(MAX_TWEET_ D_PROP_NAME, mapper.getMaxT et D());
+      flush nfo.add ntProperty(M N_DOC_ D_PROP_NAME, mapper.getM nDoc D());
+      flush nfo.add ntProperty(MAX_DOC_ D_PROP_NAME, mapper.getMaxDoc D());
+      flush nfo.addLongProperty(SEGMENT_BOUNDARY_T MESTAMP_PROP_NAME,
+          mapper.seg ntBoundaryT  stamp);
+      flush nfo.add ntProperty(SEGMENT_S ZE_PROP_NAME, mapper.seg ntS ze);
 
-      serializer.writeInt(mapper.tweetIds.size());
-      for (Int2LongMap.Entry entry : mapper.tweetIds.int2LongEntrySet()) {
-        serializer.writeInt(entry.getIntKey());
-        serializer.writeLong(entry.getLongValue());
+      ser al zer.wr e nt(mapper.t et ds.s ze());
+      for ( nt2LongMap.Entry entry : mapper.t et ds. nt2LongEntrySet()) {
+        ser al zer.wr e nt(entry.get ntKey());
+        ser al zer.wr eLong(entry.getLongValue());
       }
     }
 
-    @Override
-    protected OutOfOrderRealtimeTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+    @Overr de
+    protected OutOfOrderRealt  T et DMapper doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
 
-      int size = in.readInt();
-      int[] docIds = new int[size];
-      long[] tweetIds = new long[size];
-      for (int i = 0; i < size; i++) {
-        docIds[i] = in.readInt();
-        tweetIds[i] = in.readLong();
+       nt s ze =  n.read nt();
+       nt[] doc ds = new  nt[s ze];
+      long[] t et ds = new long[s ze];
+      for ( nt   = 0;   < s ze;  ++) {
+        doc ds[ ] =  n.read nt();
+        t et ds[ ] =  n.readLong();
       }
 
-      return new OutOfOrderRealtimeTweetIDMapper(
-          flushInfo.getLongProperty(MIN_TWEET_ID_PROP_NAME),
-          flushInfo.getLongProperty(MAX_TWEET_ID_PROP_NAME),
-          flushInfo.getIntProperty(MIN_DOC_ID_PROP_NAME),
-          flushInfo.getIntProperty(MAX_DOC_ID_PROP_NAME),
-          flushInfo.getLongProperty(SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME),
-          flushInfo.getIntProperty(SEGMENT_SIZE_PROP_NAME),
-          docIds,
-          tweetIds);
+      return new OutOfOrderRealt  T et DMapper(
+          flush nfo.getLongProperty(M N_TWEET_ D_PROP_NAME),
+          flush nfo.getLongProperty(MAX_TWEET_ D_PROP_NAME),
+          flush nfo.get ntProperty(M N_DOC_ D_PROP_NAME),
+          flush nfo.get ntProperty(MAX_DOC_ D_PROP_NAME),
+          flush nfo.getLongProperty(SEGMENT_BOUNDARY_T MESTAMP_PROP_NAME),
+          flush nfo.get ntProperty(SEGMENT_S ZE_PROP_NAME),
+          doc ds,
+          t et ds);
     }
   }
 }

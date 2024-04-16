@@ -1,73 +1,73 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.producer
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{
-  AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.scald ng_ nternal.s ce.lzo_scrooge.F xedPathLzoScrooge
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{
+  AggregatableProducerS mclustersEmbedd ngsByFavScoreScalaDataset,
+  AggregatableProducerS mclustersEmbedd ngsByFavScoreThr ftScalaDataset,
+  AggregatableProducerS mclustersEmbedd ngsByFavScore2020ScalaDataset,
+  AggregatableProducerS mclustersEmbedd ngsByFavScore2020Thr ftScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.wtf.scald ng.jobs.common.{AdhocExecut onApp, Sc duledExecut onApp}
+ mport java.ut l.T  Zone
 
 /**
- * See AggregatableProducerEmbeddingsBaseApp for an explanation of this job.
+ * See AggregatableProducerEmbedd ngsBaseApp for an explanat on of t  job.
  *
- * Production job:
-capesospy-v2 update aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * Product on job:
+capesospy-v2 update aggregatable_producer_embedd ngs_by_fav_score src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object AggregatableFavBasedProducerEmbeddingsScheduledApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+object AggregatableFavBasedProducerEmbedd ngsSc duledApp
+    extends AggregatableFavBasedProducerEmbedd ngsBaseApp
+    w h Sc duledExecut onApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score"
+  overr de val modelVers on: ModelVers on = ModelVers on.Model20m145kUpdated
+  // Not us ng t  Embedd ngUt l.getHdfsPath to preserve t  prev ous funct onal y.
+  pr vate val outputPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/producer_s mclusters_aggregatable_embedd ngs_by_fav_score"
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  pr vate val outputPathThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = modelVers on,
+    pathSuff x = "producer_s mclusters_aggregatable_embedd ngs_by_fav_score_thr ft"
   )
 
-  override def firstTime: RichDate = RichDate("2020-05-11")
+  overr de def f rstT  : R chDate = R chDate("2020-05-11")
 
-  override def batchIncrement: Duration = Days(7)
+  overr de def batch ncre nt: Durat on = Days(7)
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  overr de def wr eToManhattan(
+    output: TypedP pe[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+      .wr eDALVers onedKeyValExecut on(
+        AggregatableProducerS mclustersEmbedd ngsByFavScoreScalaDataset,
+        D.Suff x(outputPath),
+        vers on = Expl c EndT  (dateRange.end)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  overr de def wr eToThr ft(
+    output: TypedP pe[S mClustersEmbedd ngW h d]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-        updateStep = D.Daily,
-        pathLayout = D.Suffix(outputPathThrift),
+      .wr eDALSnapshotExecut on(
+        dataset = AggregatableProducerS mclustersEmbedd ngsByFavScoreThr ftScalaDataset,
+        updateStep = D.Da ly,
+        pathLa t = D.Suff x(outputPathThr ft),
         fmt = D.Parquet,
         endDate = dateRange.end
       )
@@ -75,57 +75,57 @@ object AggregatableFavBasedProducerEmbeddingsScheduledApp
 }
 
 /**
- * Production job:
-capesospy-v2 update --build_locally --start_cron aggregatable_producer_embeddings_by_fav_score_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * Product on job:
+capesospy-v2 update --bu ld_locally --start_cron aggregatable_producer_embedd ngs_by_fav_score_2020 src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+object AggregatableFavBasedProducerEmbedd ngs2020Sc duledApp
+    extends AggregatableFavBasedProducerEmbedd ngsBaseApp
+    w h Sc duledExecut onApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score_20m145k2020"
+  overr de val modelVers on: ModelVers on = ModelVers on.Model20m145k2020
+  // Not us ng t  Embedd ngUt l.getHdfsPath to preserve t  prev ous funct onal y.
+  pr vate val outputPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/producer_s mclusters_aggregatable_embedd ngs_by_fav_score_20m145k2020"
 
-  // getHdfsPath appends model version str to the pathSuffix
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  // getHdfsPath appends model vers on str to t  pathSuff x
+  pr vate val outputPathThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = modelVers on,
+    pathSuff x = "producer_s mclusters_aggregatable_embedd ngs_by_fav_score_thr ft"
   )
 
-  override def firstTime: RichDate = RichDate("2021-03-04")
+  overr de def f rstT  : R chDate = R chDate("2021-03-04")
 
-  override def batchIncrement: Duration = Days(7)
+  overr de def batch ncre nt: Durat on = Days(7)
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  overr de def wr eToManhattan(
+    output: TypedP pe[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+      .wr eDALVers onedKeyValExecut on(
+        AggregatableProducerS mclustersEmbedd ngsByFavScore2020ScalaDataset,
+        D.Suff x(outputPath),
+        vers on = Expl c EndT  (dateRange.end)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  overr de def wr eToThr ft(
+    output: TypedP pe[S mClustersEmbedd ngW h d]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset,
-        updateStep = D.Daily,
-        pathLayout = D.Suffix(outputPathThrift),
+      .wr eDALSnapshotExecut on(
+        dataset = AggregatableProducerS mclustersEmbedd ngsByFavScore2020Thr ftScalaDataset,
+        updateStep = D.Da ly,
+        pathLa t = D.Suff x(outputPathThr ft),
         fmt = D.Parquet,
         endDate = dateRange.end
       )
@@ -135,144 +135,144 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
 /***
  * Adhoc job:
 
-scalding remote run --user recos-platform \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job-adhoc \
+scald ng remote run --user recos-platform \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.producer.AggregatableFavBasedProducerEmbedd ngsAdhocApp \
+--target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/producer:aggregatable_fav_based_producer_embedd ngs_job-adhoc \
 -- --date 2020-05-11
 
  */
-object AggregatableFavBasedProducerEmbeddingsAdhocApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+object AggregatableFavBasedProducerEmbedd ngsAdhocApp
+    extends AggregatableFavBasedProducerEmbedd ngsBaseApp
+    w h AdhocExecut onApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score"
+  overr de val modelVers on: ModelVers on = ModelVers on.Model20m145kUpdated
+  pr vate val outputPath: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = true,
+    modelVers on = modelVers on,
+    pathSuff x = "producer_s mclusters_aggregatable_embedd ngs_by_fav_score"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  pr vate val outputPathThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = modelVers on,
+    pathSuff x = "producer_s mclusters_aggregatable_embedd ngs_by_fav_score_thr ft"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  overr de def wr eToManhattan(
+    output: TypedP pe[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
       .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+        keyVal.value.embedd ng.map { s mClusterW hScore =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            keyVal.key.embedd ngType,
+            keyVal.key.modelVers on,
+            keyVal.key. nternal d,
+            s mClusterW hScore.cluster d,
+            s mClusterW hScore.score
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
+      .wr eExecut on(
+        // Wr e to TSV for eas er debugg ng of t  adhoc job.
         TypedTsv(outputPath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  overr de def wr eToThr ft(
+    output: TypedP pe[S mClustersEmbedd ngW h d]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+      .wr eExecut on(
+        new F xedPathLzoScrooge(outputPathThr ft, S mClustersEmbedd ngW h d)
       )
   }
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc
-scalding remote run \
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/producer:aggregatable_fav_based_producer_embedd ngs_job_2020-adhoc
+scald ng remote run \
 --user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020AdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc \
---hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+--keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+--pr nc pal serv ce_acoount@TW TTER.B Z \
+--cluster blueb rd-qus1 \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.producer.AggregatableFavBasedProducerEmbedd ngs2020AdhocApp \
+--target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/producer:aggregatable_fav_based_producer_embedd ngs_job_2020-adhoc \
+--hadoop-propert es "scald ng.w h.reducers.set.expl c ly=true mapreduce.job.reduces=4000" \
 -- --date 2020-06-28
  */
-object AggregatableFavBasedProducerEmbeddings2020AdhocApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+object AggregatableFavBasedProducerEmbedd ngs2020AdhocApp
+    extends AggregatableFavBasedProducerEmbedd ngsBaseApp
+    w h AdhocExecut onApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score"
+  overr de val modelVers on: ModelVers on = ModelVers on.Model20m145k2020
+  pr vate val outputPath: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = true,
+    modelVers on = modelVers on,
+    pathSuff x = "producer_s mclusters_aggregatable_embedd ngs_by_fav_score"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  pr vate val outputPathThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = modelVers on,
+    pathSuff x = "producer_s mclusters_aggregatable_embedd ngs_by_fav_score_thr ft"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  overr de def wr eToManhattan(
+    output: TypedP pe[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
       .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+        keyVal.value.embedd ng.map { s mClusterW hScore =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            keyVal.key.embedd ngType,
+            keyVal.key.modelVers on,
+            keyVal.key. nternal d,
+            s mClusterW hScore.cluster d,
+            s mClusterW hScore.score
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
+      .wr eExecut on(
+        // Wr e to TSV for eas er debugg ng of t  adhoc job.
         TypedTsv(outputPath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  overr de def wr eToThr ft(
+    output: TypedP pe[S mClustersEmbedd ngW h d]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+      .wr eExecut on(
+        new F xedPathLzoScrooge(outputPathThr ft, S mClustersEmbedd ngW h d)
       )
   }
 }
 
-trait AggregatableFavBasedProducerEmbeddingsBaseApp extends AggregatableProducerEmbeddingsBaseApp {
-  override val userToProducerScoringFn: NeighborWithWeights => Double =
-    _.favScoreHalfLife100Days.getOrElse(0.0)
-  override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =
+tra  AggregatableFavBasedProducerEmbedd ngsBaseApp extends AggregatableProducerEmbedd ngsBaseApp {
+  overr de val userToProducerScor ngFn: Ne ghborW h  ghts => Double =
+    _.favScoreHalfL fe100Days.getOrElse(0.0)
+  overr de val userToClusterScor ngFn: UserTo nterested nClusterScores => Double =
     _.favScore.getOrElse(0.0)
-  override val embeddingType: EmbeddingType = EmbeddingType.AggregatableFavBasedProducer
+  overr de val embedd ngType: Embedd ngType = Embedd ngType.AggregatableFavBasedProducer
 }

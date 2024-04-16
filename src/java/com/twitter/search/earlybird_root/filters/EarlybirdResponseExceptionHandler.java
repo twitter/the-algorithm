@@ -1,106 +1,106 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.HashMap;
-import java.util.Map;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.common.Cl entErrorExcept on;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-/** Converts exceptions into EarlybirdResponses with error codes. */
-public class EarlybirdResponseExceptionHandler {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdResponseExceptionHandler.class);
+/** Converts except ons  nto Earlyb rdResponses w h error codes. */
+publ c class Earlyb rdResponseExcept onHandler {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Earlyb rdResponseExcept onHandler.class);
 
-  private final Map<EarlybirdRequestType, SearchCounter> requestTypeToCancelledExceptions
+  pr vate f nal Map<Earlyb rdRequestType, SearchCounter> requestTypeToCancelledExcept ons
     = new HashMap<>();
-  private final Map<EarlybirdRequestType, SearchCounter> requestTypeToTimeoutExceptions
+  pr vate f nal Map<Earlyb rdRequestType, SearchCounter> requestTypeToT  outExcept ons
     = new HashMap<>();
-  private final Map<EarlybirdRequestType, SearchCounter> requestTypeToPersistentErrors
+  pr vate f nal Map<Earlyb rdRequestType, SearchCounter> requestTypeToPers stentErrors
     = new HashMap<>();
-  private final SearchCounter cancelledExceptions;
-  private final SearchCounter timeoutExceptions;
-  private final SearchCounter persistentErrors;
+  pr vate f nal SearchCounter cancelledExcept ons;
+  pr vate f nal SearchCounter t  outExcept ons;
+  pr vate f nal SearchCounter pers stentErrors;
 
   /**
-   * Creates a new top level filter for handling exceptions.
+   * Creates a new top level f lter for handl ng except ons.
    */
-  public EarlybirdResponseExceptionHandler(String statPrefix) {
-    this.cancelledExceptions = SearchCounter.export(
-        statPrefix + "_exception_handler_cancelled_exceptions");
-    this.timeoutExceptions = SearchCounter.export(
-        statPrefix + "_exception_handler_timeout_exceptions");
-    this.persistentErrors = SearchCounter.export(
-        statPrefix + "_exception_handler_persistent_errors");
+  publ c Earlyb rdResponseExcept onHandler(Str ng statPref x) {
+    t .cancelledExcept ons = SearchCounter.export(
+        statPref x + "_except on_handler_cancelled_except ons");
+    t .t  outExcept ons = SearchCounter.export(
+        statPref x + "_except on_handler_t  out_except ons");
+    t .pers stentErrors = SearchCounter.export(
+        statPref x + "_except on_handler_pers stent_errors");
 
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      String requestTypeNormalized = requestType.getNormalizedName();
-      requestTypeToCancelledExceptions.put(requestType,
+    for (Earlyb rdRequestType requestType : Earlyb rdRequestType.values()) {
+      Str ng requestTypeNormal zed = requestType.getNormal zedNa ();
+      requestTypeToCancelledExcept ons.put(requestType,
           SearchCounter.export(
-              statPrefix + "_exception_handler_cancelled_exceptions_"
-              + requestTypeNormalized));
-      requestTypeToTimeoutExceptions.put(requestType,
+              statPref x + "_except on_handler_cancelled_except ons_"
+              + requestTypeNormal zed));
+      requestTypeToT  outExcept ons.put(requestType,
           SearchCounter.export(
-              statPrefix + "_exception_handler_timeout_exceptions_"
-              + requestTypeNormalized));
-      requestTypeToPersistentErrors.put(requestType,
+              statPref x + "_except on_handler_t  out_except ons_"
+              + requestTypeNormal zed));
+      requestTypeToPers stentErrors.put(requestType,
           SearchCounter.export(
-              statPrefix + "_exception_handler_persistent_errors_"
-              + requestTypeNormalized));
+              statPref x + "_except on_handler_pers stent_errors_"
+              + requestTypeNormal zed));
     }
   }
 
   /**
-   * If {@code responseFuture} is wraps an exception, converts it to an EarlybirdResponse instance
-   * with an appropriate error code.
+   *  f {@code responseFuture}  s wraps an except on, converts   to an Earlyb rdResponse  nstance
+   * w h an appropr ate error code.
    *
-   * @param request The earlybird request.
-   * @param responseFuture The response future.
+   * @param request T  earlyb rd request.
+   * @param responseFuture T  response future.
    */
-  public Future<EarlybirdResponse> handleException(final EarlybirdRequest request,
-                                                   Future<EarlybirdResponse> responseFuture) {
+  publ c Future<Earlyb rdResponse> handleExcept on(f nal Earlyb rdRequest request,
+                                                   Future<Earlyb rdResponse> responseFuture) {
     return responseFuture.handle(
-        new Function<Throwable, EarlybirdResponse>() {
-          @Override
-          public EarlybirdResponse apply(Throwable t) {
-            if (t instanceof ClientErrorException) {
-              ClientErrorException clientExc = (ClientErrorException) t;
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.CLIENT_ERROR)
-                  .setDebugString(clientExc.getMessage());
-            } else if (FinagleUtil.isCancelException(t)) {
-              requestTypeToCancelledExceptions.get(EarlybirdRequestType.of(request))
-                  .increment();
-              cancelledExceptions.increment();
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.CLIENT_CANCEL_ERROR)
-                  .setDebugString(t.getMessage());
-            } else if (FinagleUtil.isTimeoutException(t)) {
-              requestTypeToTimeoutExceptions.get(EarlybirdRequestType.of(request))
-                  .increment();
-              timeoutExceptions.increment();
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR)
-                  .setDebugString(t.getMessage());
+        new Funct on<Throwable, Earlyb rdResponse>() {
+          @Overr de
+          publ c Earlyb rdResponse apply(Throwable t) {
+             f (t  nstanceof Cl entErrorExcept on) {
+              Cl entErrorExcept on cl entExc = (Cl entErrorExcept on) t;
+              return new Earlyb rdResponse()
+                  .setResponseCode(Earlyb rdResponseCode.CL ENT_ERROR)
+                  .setDebugStr ng(cl entExc.get ssage());
+            } else  f (F nagleUt l. sCancelExcept on(t)) {
+              requestTypeToCancelledExcept ons.get(Earlyb rdRequestType.of(request))
+                  . ncre nt();
+              cancelledExcept ons. ncre nt();
+              return new Earlyb rdResponse()
+                  .setResponseCode(Earlyb rdResponseCode.CL ENT_CANCEL_ERROR)
+                  .setDebugStr ng(t.get ssage());
+            } else  f (F nagleUt l. sT  outExcept on(t)) {
+              requestTypeToT  outExcept ons.get(Earlyb rdRequestType.of(request))
+                  . ncre nt();
+              t  outExcept ons. ncre nt();
+              return new Earlyb rdResponse()
+                  .setResponseCode(Earlyb rdResponseCode.SERVER_T MEOUT_ERROR)
+                  .setDebugStr ng(t.get ssage());
             } else {
-              // Unexpected exception: log it.
-              LOG.error("Caught unexpected exception.", t);
+              // Unexpected except on: log  .
+              LOG.error("Caught unexpected except on.", t);
 
-              requestTypeToPersistentErrors.get(EarlybirdRequestType.of(request))
-                  .increment();
-              persistentErrors.increment();
-              return new EarlybirdResponse()
-                  .setResponseCode(EarlybirdResponseCode.PERSISTENT_ERROR)
-                  .setDebugString(t.getMessage());
+              requestTypeToPers stentErrors.get(Earlyb rdRequestType.of(request))
+                  . ncre nt();
+              pers stentErrors. ncre nt();
+              return new Earlyb rdResponse()
+                  .setResponseCode(Earlyb rdResponseCode.PERS STENT_ERROR)
+                  .setDebugStr ng(t.get ssage());
             }
           }
         });

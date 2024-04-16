@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+package com.tw ter.product_m xer.core.funct onal_component.s de_effect
 
 /**
- * A modifier for any [[SideEffect]] so that the request waits for it to complete before being returned
+ * A mod f er for any [[S deEffect]] so that t  request wa s for   to complete before be ng returned
  *
- * @note this will make the [[SideEffect]]'s latency impact the overall request's latency
+ * @note t  w ll make t  [[S deEffect]]'s latency  mpact t  overall request's latency
  *
  * @example {{{
- * class MySideEffect extends PipelineResultSideEffect[T] with ExecuteSynchronously {...}
+ * class  S deEffect extends P pel neResultS deEffect[T] w h ExecuteSynchronously {...}
  * }}}
  *
  * @example {{{
- * class MySideEffect extends ScribeLogEventSideEffect[T] with ExecuteSynchronously {...}
+ * class  S deEffect extends Scr beLogEventS deEffect[T] w h ExecuteSynchronously {...}
  * }}}
  */
-trait ExecuteSynchronously { _: SideEffect[_] => }
+tra  ExecuteSynchronously { _: S deEffect[_] => }
 
 /**
- * A modifier for any [[ExecuteSynchronously]] [[SideEffect]] that makes it so failures will be
- * reported in the results but wont cause the request as a whole to fail.
+ * A mod f er for any [[ExecuteSynchronously]] [[S deEffect]] that makes   so fa lures w ll be
+ * reported  n t  results but wont cause t  request as a whole to fa l.
  */
-trait FailOpen { _: ExecuteSynchronously => }
+tra  Fa lOpen { _: ExecuteSynchronously => }

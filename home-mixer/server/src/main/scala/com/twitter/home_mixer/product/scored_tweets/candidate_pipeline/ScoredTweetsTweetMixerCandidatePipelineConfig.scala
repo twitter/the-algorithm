@@ -1,100 +1,100 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne
 
-import com.twitter.tweet_mixer.{thriftscala => t}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieStaticEntitiesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsTweetMixerResponseFeatureTransformer
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.component_library.candidate_source.tweet_mixer.TweetMixerCandidateSource
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.decider.DeciderParam
+ mport com.tw ter.t et_m xer.{thr ftscala => t}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.T etyp eStat cEnt  esFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cac dScoredT ets
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cand dateP pel ne
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.ScoredT etsT etM xerResponseFeatureTransfor r
+ mport com.tw ter.ho _m xer.ut l.Cac dScoredT ets lper
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t et_m xer.T etM xerCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.f lter.Pred cateFeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.request.Cl entContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config that fetches tweets from TweetMixer.
+ * Cand date P pel ne Conf g that fetc s t ets from T etM xer.
  */
-@Singleton
-class ScoredTweetsTweetMixerCandidatePipelineConfig @Inject() (
-  tweetMixerCandidateSource: TweetMixerCandidateSource,
-  tweetypieStaticEntitiesFeatureHydrator: TweetypieStaticEntitiesFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      t.TweetMixerRequest,
-      t.TweetResult,
-      TweetCandidate
+@S ngleton
+class ScoredT etsT etM xerCand dateP pel neConf g @ nject() (
+  t etM xerCand dateS ce: T etM xerCand dateS ce,
+  t etyp eStat cEnt  esFeatureHydrator: T etyp eStat cEnt  esFeatureHydrator)
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
+      t.T etM xerRequest,
+      t.T etResult,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsTweetMixer")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("ScoredT etsT etM xer")
 
-  val HasAuthorFilterId = "HasAuthor"
+  val HasAuthorF lter d = "HasAuthor"
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnableTweetMixerParam)
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]] =
+    So (Cand dateP pel ne.EnableT etM xerParam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam),
+  overr de val gates: Seq[Gate[ScoredT etsQuery]] = Seq(
+    M nCac dT etsGate( dent f er, Cac dScoredT ets.M nCac dT etsParam),
   )
 
-  override val candidateSource: BaseCandidateSource[t.TweetMixerRequest, t.TweetResult] =
-    tweetMixerCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[t.T etM xerRequest, t.T etResult] =
+    t etM xerCand dateS ce
 
-  private val MaxTweetsToFetch = 400
+  pr vate val MaxT etsToFetch = 400
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    t.TweetMixerRequest
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
+    t.T etM xerRequest
   ] = { query =>
-    val maxCount = (query.getQualityFactorCurrentValue(identifier) * MaxTweetsToFetch).toInt
+    val maxCount = (query.getQual yFactorCurrentValue( dent f er) * MaxT etsToFetch).to nt
 
-    val excludedTweetIds = query.features.map(
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweets(_, identifier))
+    val excludedT et ds = query.features.map(
+      Cac dScoredT ets lper.t et mpress onsAndCac dScoredT ets(_,  dent f er))
 
-    t.TweetMixerRequest(
-      clientContext = ClientContextMarshaller(query.clientContext),
-      product = t.Product.HomeRecommendedTweets,
-      productContext = Some(
-        t.ProductContext.HomeRecommendedTweetsProductContext(
-          t.HomeRecommendedTweetsProductContext(excludedTweetIds = excludedTweetIds.map(_.toSet)))),
-      maxResults = Some(maxCount)
+    t.T etM xerRequest(
+      cl entContext = Cl entContextMarshaller(query.cl entContext),
+      product = t.Product.Ho Recom ndedT ets,
+      productContext = So (
+        t.ProductContext.Ho Recom ndedT etsProductContext(
+          t.Ho Recom ndedT etsProductContext(excludedT et ds = excludedT et ds.map(_.toSet)))),
+      maxResults = So (maxCount)
     )
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(tweetypieStaticEntitiesFeatureHydrator)
+  overr de val preF lterFeatureHydrat onPhase1: Seq[
+    BaseCand dateFeatureHydrator[ScoredT etsQuery, T etCand date, _]
+  ] = Seq(t etyp eStat cEnt  esFeatureHydrator)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.TweetResult]
-  ] = Seq(ScoredTweetsTweetMixerResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[t.T etResult]
+  ] = Seq(ScoredT etsT etM xerResponseFeatureTransfor r)
 
-  override val filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(HasAuthorFilterId),
-      shouldKeepCandidate = _.getOrElse(AuthorIdFeature, None).isDefined
+  overr de val f lters: Seq[F lter[ScoredT etsQuery, T etCand date]] = Seq(
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(HasAuthorF lter d),
+      shouldKeepCand date = _.getOrElse(Author dFeature, None). sDef ned
     )
   )
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.TweetResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    t.T etResult,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult.t et d) }
 }

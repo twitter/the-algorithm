@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.service.pipeline_execution_logger
+package com.tw ter.product_m xer.core.serv ce.p pel ne_execut on_logger
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait PipelineExecutionLogger {
-  def apply(pipelineQuery: PipelineQuery, message: Any): Unit
+tra  P pel neExecut onLogger {
+  def apply(p pel neQuery: P pel neQuery,  ssage: Any): Un 
 }

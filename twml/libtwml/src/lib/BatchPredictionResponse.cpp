@@ -1,125 +1,125 @@
-#include "internal/endianutils.h"
-#include "internal/error.h"
-#include "internal/thrift.h"
+# nclude " nternal/end anut ls.h"
+# nclude " nternal/error.h"
+# nclude " nternal/thr ft.h"
 
-#include <twml/Tensor.h>
-#include <twml/BatchPredictionResponse.h>
-#include <twml/DataRecord.h>
-#include <twml/ThriftWriter.h>
-#include <twml/DataRecordWriter.h>
+# nclude <twml/Tensor.h>
+# nclude <twml/BatchPred ct onResponse.h>
+# nclude <twml/DataRecord.h>
+# nclude <twml/Thr ftWr er.h>
+# nclude <twml/DataRecordWr er.h>
 
-#include <inttypes.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
+# nclude < nttypes.h>
+# nclude <std nt.h>
+# nclude <un std.h>
+# nclude <str ng.h>
 
-#include <algorithm>
+# nclude <algor hm>
 
-// When the number of predictions is very high, as some cases that Ads wants, the generic thrift
-// encoder becomes super expensive because we have to deal with lua tables.
-// This function is a special operation to efficiently write a batch prediction responses based on
+// W n t  number of pred ct ons  s very h gh, as so  cases that Ads wants, t  gener c thr ft
+// encoder beco s super expens ve because   have to deal w h lua tables.
+// T  funct on  s a spec al operat on to eff c ently wr e a batch pred ct on responses based on
 // tensors.
-namespace twml {
+na space twml {
 
-BatchPredictionResponse::BatchPredictionResponse(
+BatchPred ct onResponse::BatchPred ct onResponse(
   const Tensor &keys, const Tensor &values,
   const Tensor &dense_keys, const std::vector<RawTensor> &dense_values
 ) : keys_(keys), values_(values), dense_keys_(dense_keys), dense_values_(dense_values) {
-  // determine batch size
-  if (values_.getNumDims() > 0) {
-    batch_size_ = values_.getDim(0);
-  } else if (dense_keys_.getNumElements() < 1) {
-    throw twml::Error(TWML_ERR_TYPE, "Continuous values and dense tensors are both empty");
-  } else if (dense_keys_.getNumElements() != dense_values_.size()) {
+  // determ ne batch s ze
+   f (values_.getNumD ms() > 0) {
+    batch_s ze_ = values_.getD m(0);
+  } else  f (dense_keys_.getNumEle nts() < 1) {
+    throw twml::Error(TWML_ERR_TYPE, "Cont nuous values and dense tensors are both empty");
+  } else  f (dense_keys_.getNumEle nts() != dense_values_.s ze()) {
     throw twml::Error(TWML_ERR_TYPE, "Number of tensors not equal to number of keys");
   } else {
-    // dim 0 for each tensor indexes batch elements
-    std::vector<uint64_t> batch_sizes;
-    batch_sizes.reserve(dense_values_.size());
+    // d m 0 for each tensor  ndexes batch ele nts
+    std::vector<u nt64_t> batch_s zes;
+    batch_s zes.reserve(dense_values_.s ze());
 
-    for (int i = 0; i < dense_values_.size(); i++)
-      batch_sizes.push_back(dense_values_.at(i).getDim(0));
+    for ( nt   = 0;   < dense_values_.s ze();  ++)
+      batch_s zes.push_back(dense_values_.at( ).getD m(0));
 
-    if (std::adjacent_find(
-          batch_sizes.begin(),
-          batch_sizes.end(),
-          std::not_equal_to<uint64_t>()) != batch_sizes.end())
-      throw twml::Error(TWML_ERR_TYPE, "Batch size (dim 0) for all tensors must be the same");
+     f (std::adjacent_f nd(
+          batch_s zes.beg n(),
+          batch_s zes.end(),
+          std::not_equal_to<u nt64_t>()) != batch_s zes.end())
+      throw twml::Error(TWML_ERR_TYPE, "Batch s ze (d m 0) for all tensors must be t  sa ");
 
-    batch_size_ = dense_values.at(0).getDim(0);
+    batch_s ze_ = dense_values.at(0).getD m(0);
   }
 }
 
-void BatchPredictionResponse::encode(twml::ThriftWriter &thrift_writer) {
-  if (hasContinuous()) {
-    switch (values_.getType()) {
+vo d BatchPred ct onResponse::encode(twml::Thr ftWr er &thr ft_wr er) {
+   f (hasCont nuous()) {
+    sw ch (values_.getType()) {
       case TWML_TYPE_FLOAT:
-        serializePredictions<float>(thrift_writer);
+        ser al zePred ct ons<float>(thr ft_wr er);
         break;
       case TWML_TYPE_DOUBLE:
-        serializePredictions<double>(thrift_writer);
+        ser al zePred ct ons<double>(thr ft_wr er);
         break;
       default:
-        throw twml::Error(TWML_ERR_TYPE, "Predictions must be float or double.");
+        throw twml::Error(TWML_ERR_TYPE, "Pred ct ons must be float or double.");
     }
   } else {
-    // dense tensor predictions
-    serializePredictions<double>(thrift_writer);
+    // dense tensor pred ct ons
+    ser al zePred ct ons<double>(thr ft_wr er);
   }
 }
 
-template <typename T>
-void BatchPredictionResponse::serializePredictions(twml::ThriftWriter &thrift_writer) {
-  twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
+template <typena  T>
+vo d BatchPred ct onResponse::ser al zePred ct ons(twml::Thr ftWr er &thr ft_wr er) {
+  twml::DataRecordWr er record_wr er = twml::DataRecordWr er(thr ft_wr er);
 
-  // start BatchPredictionResponse
-  thrift_writer.writeStructFieldHeader(TTYPE_LIST, BPR_PREDICTIONS);
-  thrift_writer.writeListHeader(TTYPE_STRUCT, getBatchSize());
+  // start BatchPred ct onResponse
+  thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, BPR_PRED CT ONS);
+  thr ft_wr er.wr eL st ader(TTYPE_STRUCT, getBatchS ze());
 
-  for (int i = 0; i < getBatchSize(); i++) {
+  for ( nt   = 0;   < getBatchS ze();  ++) {
     twml::DataRecord record = twml::DataRecord();
 
-    if (hasContinuous()) {
+     f (hasCont nuous()) {
       const T *values = values_.getData<T>();
-      const int64_t *local_keys = keys_.getData<int64_t>();
-      const T *local_values = values + (i * getPredictionSize());
-      record.addContinuous(local_keys, getPredictionSize(), local_values);
+      const  nt64_t *local_keys = keys_.getData< nt64_t>();
+      const T *local_values = values + (  * getPred ct onS ze());
+      record.addCont nuous(local_keys, getPred ct onS ze(), local_values);
     }
 
-    if (hasDenseTensors()) {
-      const int64_t *local_dense_keys = dense_keys_.getData<int64_t>();
+     f (hasDenseTensors()) {
+      const  nt64_t *local_dense_keys = dense_keys_.getData< nt64_t>();
 
-      for (int j = 0; j < dense_keys_.getNumElements(); j++) {
-        const RawTensor &dense_value = dense_values_.at(j).getSlice(i);
+      for ( nt j = 0; j < dense_keys_.getNumEle nts(); j++) {
+        const RawTensor &dense_value = dense_values_.at(j).getSl ce( );
         record.addRawTensor(local_dense_keys[j], dense_value);
       }
     }
 
-    record_writer.write(record);
+    record_wr er.wr e(record);
   }
 
-  // end BatchPredictionResponse
-  thrift_writer.writeStructStop();
+  // end BatchPred ct onResponse
+  thr ft_wr er.wr eStructStop();
 }
 
-// calculate expected binary Thrift size (no memory is copied)
-uint64_t BatchPredictionResponse::encodedSize() {
+// calculate expected b nary Thr ft s ze (no  mory  s cop ed)
+u nt64_t BatchPred ct onResponse::encodedS ze() {
   bool dry_mode = true;
-  twml::ThriftWriter dry_writer = twml::ThriftWriter(nullptr, 0, dry_mode);
-  encode(dry_writer);
-  return dry_writer.getBytesWritten();
+  twml::Thr ftWr er dry_wr er = twml::Thr ftWr er(nullptr, 0, dry_mode);
+  encode(dry_wr er);
+  return dry_wr er.getBytesWr ten();
 }
 
-void BatchPredictionResponse::write(Tensor &result) {
-  size_t result_size = result.getNumElements();
-  uint8_t *result_data = result.getData<uint8_t>();
+vo d BatchPred ct onResponse::wr e(Tensor &result) {
+  s ze_t result_s ze = result.getNumEle nts();
+  u nt8_t *result_data = result.getData<u nt8_t>();
 
-  if (result_size != this->encodedSize()) {
-    throw twml::Error(TWML_ERR_SIZE, "Sizes do not match");
+   f (result_s ze != t ->encodedS ze()) {
+    throw twml::Error(TWML_ERR_S ZE, "S zes do not match");
   }
 
-  twml::ThriftWriter writer = twml::ThriftWriter(result_data, result_size);
-  encode(writer);
+  twml::Thr ftWr er wr er = twml::Thr ftWr er(result_data, result_s ze);
+  encode(wr er);
 }
 
-}  // namespace twml
+}  // na space twml

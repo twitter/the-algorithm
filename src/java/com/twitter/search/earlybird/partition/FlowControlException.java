@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
 /**
- * Exception used to cause a ScheduledExecutorService to stop executing. Used when the
- * success condition of the class has been achieved.
+ * Except on used to cause a Sc duledExecutorServ ce to stop execut ng. Used w n t 
+ * success cond  on of t  class has been ach eved.
  */
-public class FlowControlException extends RuntimeException {
+publ c class FlowControlExcept on extends Runt  Except on {
 
-  public FlowControlException() {
+  publ c FlowControlExcept on() {
     super();
   }
 
-  public FlowControlException(String message) {
-    super(message);
+  publ c FlowControlExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

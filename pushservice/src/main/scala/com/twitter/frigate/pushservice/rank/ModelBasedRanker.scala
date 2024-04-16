@@ -1,201 +1,201 @@
-package com.twitter.frigate.pushservice.rank
+package com.tw ter.fr gate.pushserv ce.rank
 
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.ut l.Future
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.params.MrQualityUprankingPartialTypeEnum
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.params.PushConstants.OoncQualityCombinedScore
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.params.MrQual yUprank ngPart alTypeEnum
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants.OoncQual yComb nedScore
 
 object ModelBasedRanker {
 
-  def rankBySpecifiedScore(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    scoreExtractor: PushCandidate => Future[Option[Double]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  def rankBySpec f edScore(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]],
+    scoreExtractor: PushCand date => Future[Opt on[Double]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
-    val scoredCandidatesFutures = candidatesDetails.map { cand =>
-      scoreExtractor(cand.candidate).map { scoreOp => (cand, scoreOp.getOrElse(0.0)) }
+    val scoredCand datesFutures = cand datesDeta ls.map { cand =>
+      scoreExtractor(cand.cand date).map { scoreOp => (cand, scoreOp.getOrElse(0.0)) }
     }
 
-    Future.collect(scoredCandidatesFutures).map { scores =>
-      val sorted = scores.sortBy { candidateDetails => -1 * candidateDetails._2 }
+    Future.collect(scoredCand datesFutures).map { scores =>
+      val sorted = scores.sortBy { cand dateDeta ls => -1 * cand dateDeta ls._2 }
       sorted.map(_._1)
     }
   }
 
-  def populatePredictionScoreStats(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    scoreExtractor: PushCandidate => Future[Option[Double]],
-    predictionScoreStats: StatsReceiver
-  ): Unit = {
+  def populatePred ct onScoreStats(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]],
+    scoreExtractor: PushCand date => Future[Opt on[Double]],
+    pred ct onScoreStats: StatsRece ver
+  ): Un  = {
     val scoreScaleFactorForStat = 10000
-    val statName = "prediction_scores"
-    candidatesDetails.map {
-      case CandidateDetails(candidate, source) =>
-        val crt = candidate.commonRecType
-        scoreExtractor(candidate).map { scoreOp =>
+    val statNa  = "pred ct on_scores"
+    cand datesDeta ls.map {
+      case Cand dateDeta ls(cand date, s ce) =>
+        val crt = cand date.commonRecType
+        scoreExtractor(cand date).map { scoreOp =>
           val scaledScore = (scoreOp.getOrElse(0.0) * scoreScaleFactorForStat).toFloat
-          predictionScoreStats.scope("all_candidates").stat(statName).add(scaledScore)
-          predictionScoreStats.scope(crt.toString()).stat(statName).add(scaledScore)
+          pred ct onScoreStats.scope("all_cand dates").stat(statNa ).add(scaledScore)
+          pred ct onScoreStats.scope(crt.toStr ng()).stat(statNa ).add(scaledScore)
         }
     }
   }
 
-  def populateMrWeightedOpenOrNtabClickScoreStats(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    predictionScoreStats: StatsReceiver
-  ): Unit = {
-    populatePredictionScoreStats(
-      candidatesDetails,
-      candidate => candidate.mrWeightedOpenOrNtabClickRankingProbability,
-      predictionScoreStats
+  def populateMr  ghtedOpenOrNtabCl ckScoreStats(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]],
+    pred ct onScoreStats: StatsRece ver
+  ): Un  = {
+    populatePred ct onScoreStats(
+      cand datesDeta ls,
+      cand date => cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y,
+      pred ct onScoreStats
     )
   }
 
-  def populateMrQualityUprankingScoreStats(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    predictionScoreStats: StatsReceiver
-  ): Unit = {
-    populatePredictionScoreStats(
-      candidatesDetails,
-      candidate => candidate.mrQualityUprankingProbability,
-      predictionScoreStats
+  def populateMrQual yUprank ngScoreStats(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]],
+    pred ct onScoreStats: StatsRece ver
+  ): Un  = {
+    populatePred ct onScoreStats(
+      cand datesDeta ls,
+      cand date => cand date.mrQual yUprank ngProbab l y,
+      pred ct onScoreStats
     )
   }
 
-  def rankByMrWeightedOpenOrNtabClickScore(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  def rankByMr  ghtedOpenOrNtabCl ckScore(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
-    rankBySpecifiedScore(
-      candidatesDetails,
-      candidate => candidate.mrWeightedOpenOrNtabClickRankingProbability
+    rankBySpec f edScore(
+      cand datesDeta ls,
+      cand date => cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y
     )
   }
 
-  def transformSigmoid(
+  def transformS gmo d(
     score: Double,
-    weight: Double = 1.0,
-    bias: Double = 0.0
+      ght: Double = 1.0,
+    b as: Double = 0.0
   ): Double = {
-    val base = -1.0 * (weight * score + bias)
-    val cappedBase = math.max(math.min(base, 100.0), -100.0)
+    val base = -1.0 * (  ght * score + b as)
+    val cappedBase = math.max(math.m n(base, 100.0), -100.0)
     1.0 / (1.0 + math.exp(cappedBase))
   }
 
-  def transformLinear(
+  def transformL near(
     score: Double,
     bar: Double = 1.0
   ): Double = {
-    val positiveBar = math.abs(bar)
-    val cappedScore = math.max(math.min(score, positiveBar), -1.0 * positiveBar)
-    cappedScore / positiveBar
+    val pos  veBar = math.abs(bar)
+    val cappedScore = math.max(math.m n(score, pos  veBar), -1.0 * pos  veBar)
+    cappedScore / pos  veBar
   }
 
-  def transformIdentity(
+  def transform dent y(
     score: Double
   ): Double = score
 
-  def rankByQualityOoncCombinedScore(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    qualityScoreTransform: Double => Double,
-    qualityScoreBoost: Double = 1.0
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  def rankByQual yOoncComb nedScore(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]],
+    qual yScoreTransform: Double => Double,
+    qual yScoreBoost: Double = 1.0
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
-    rankBySpecifiedScore(
-      candidatesDetails,
-      candidate => {
-        val ooncScoreFutOpt: Future[Option[Double]] =
-          candidate.mrWeightedOpenOrNtabClickRankingProbability
-        val qualityScoreFutOpt: Future[Option[Double]] =
-          candidate.mrQualityUprankingProbability
+    rankBySpec f edScore(
+      cand datesDeta ls,
+      cand date => {
+        val ooncScoreFutOpt: Future[Opt on[Double]] =
+          cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y
+        val qual yScoreFutOpt: Future[Opt on[Double]] =
+          cand date.mrQual yUprank ngProbab l y
         Future
-          .join(
+          .jo n(
             ooncScoreFutOpt,
-            qualityScoreFutOpt
+            qual yScoreFutOpt
           ).map {
-            case (Some(ooncScore), Some(qualityScore)) =>
-              val transformedQualityScore = qualityScoreTransform(qualityScore)
-              val combinedScore = ooncScore * (1.0 + qualityScoreBoost * transformedQualityScore)
-              candidate
-                .cacheExternalScore(OoncQualityCombinedScore, Future.value(Some(combinedScore)))
-              Some(combinedScore)
+            case (So (ooncScore), So (qual yScore)) =>
+              val transfor dQual yScore = qual yScoreTransform(qual yScore)
+              val comb nedScore = ooncScore * (1.0 + qual yScoreBoost * transfor dQual yScore)
+              cand date
+                .cac ExternalScore(OoncQual yComb nedScore, Future.value(So (comb nedScore)))
+              So (comb nedScore)
             case _ => None
           }
       }
     )
   }
 
-  def rerankByProducerQualityOoncCombinedScore(
-    candidateDetails: Seq[CandidateDetails[PushCandidate]]
+  def rerankByProducerQual yOoncComb nedScore(
+    cand dateDeta ls: Seq[Cand dateDeta ls[PushCand date]]
   )(
-    implicit stat: StatsReceiver
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val scopedStat = stat.scope("producer_quality_reranking")
-    val oonCandidates = candidateDetails.filter {
-      case CandidateDetails(pushCandidate: PushCandidate, _) =>
-        tweetCandidateSelector(pushCandidate, MrQualityUprankingPartialTypeEnum.Oon)
+     mpl c  stat: StatsRece ver
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    val scopedStat = stat.scope("producer_qual y_rerank ng")
+    val oonCand dates = cand dateDeta ls.f lter {
+      case Cand dateDeta ls(pushCand date: PushCand date, _) =>
+        t etCand dateSelector(pushCand date, MrQual yUprank ngPart alTypeEnum.Oon)
     }
 
-    val rankedOonCandidatesFut = rankBySpecifiedScore(
-      oonCandidates,
-      candidate => {
-        val baseScoreFutureOpt: Future[Option[Double]] = {
-          val qualityCombinedScoreFutureOpt =
-            candidate.getExternalCachedScoreByName(OoncQualityCombinedScore)
-          val ooncScoreFutureOpt = candidate.mrWeightedOpenOrNtabClickRankingProbability
-          Future.join(qualityCombinedScoreFutureOpt, ooncScoreFutureOpt).map {
-            case (Some(qualityCombinedScore), _) =>
-              scopedStat.counter("quality_combined_score").incr()
-              Some(qualityCombinedScore)
+    val rankedOonCand datesFut = rankBySpec f edScore(
+      oonCand dates,
+      cand date => {
+        val baseScoreFutureOpt: Future[Opt on[Double]] = {
+          val qual yComb nedScoreFutureOpt =
+            cand date.getExternalCac dScoreByNa (OoncQual yComb nedScore)
+          val ooncScoreFutureOpt = cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y
+          Future.jo n(qual yComb nedScoreFutureOpt, ooncScoreFutureOpt).map {
+            case (So (qual yComb nedScore), _) =>
+              scopedStat.counter("qual y_comb ned_score"). ncr()
+              So (qual yComb nedScore)
             case (_, ooncScoreOpt) =>
-              scopedStat.counter("oonc_score").incr()
+              scopedStat.counter("oonc_score"). ncr()
               ooncScoreOpt
           }
         }
         baseScoreFutureOpt.map {
-          case Some(baseScore) =>
-            val boostRatio = candidate.mrProducerQualityUprankingBoost.getOrElse(1.0)
-            if (boostRatio > 1.0) scopedStat.counter("author_uprank").incr()
-            else if (boostRatio < 1.0) scopedStat.counter("author_downrank").incr()
-            else scopedStat.counter("author_noboost").incr()
-            Some(baseScore * boostRatio)
+          case So (baseScore) =>
+            val boostRat o = cand date.mrProducerQual yUprank ngBoost.getOrElse(1.0)
+             f (boostRat o > 1.0) scopedStat.counter("author_uprank"). ncr()
+            else  f (boostRat o < 1.0) scopedStat.counter("author_downrank"). ncr()
+            else scopedStat.counter("author_noboost"). ncr()
+            So (baseScore * boostRat o)
           case _ =>
-            scopedStat.counter("empty_score").incr()
+            scopedStat.counter("empty_score"). ncr()
             None
         }
       }
     )
 
-    rankedOonCandidatesFut.map { rankedOonCandidates =>
-      val sortedOonCandidateIterator = rankedOonCandidates.toIterator
-      candidateDetails.map { ooncRankedCandidate =>
-        val isOon = tweetCandidateSelector(
-          ooncRankedCandidate.candidate,
-          MrQualityUprankingPartialTypeEnum.Oon)
+    rankedOonCand datesFut.map { rankedOonCand dates =>
+      val sortedOonCand date erator = rankedOonCand dates.to erator
+      cand dateDeta ls.map { ooncRankedCand date =>
+        val  sOon = t etCand dateSelector(
+          ooncRankedCand date.cand date,
+          MrQual yUprank ngPart alTypeEnum.Oon)
 
-        if (sortedOonCandidateIterator.hasNext && isOon)
-          sortedOonCandidateIterator.next()
-        else ooncRankedCandidate
+         f (sortedOonCand date erator.hasNext &&  sOon)
+          sortedOonCand date erator.next()
+        else ooncRankedCand date
       }
     }
   }
 
-  def tweetCandidateSelector(
-    pushCandidate: PushCandidate,
-    selectedCandidateType: MrQualityUprankingPartialTypeEnum.Value
+  def t etCand dateSelector(
+    pushCand date: PushCand date,
+    selectedCand dateType: MrQual yUprank ngPart alTypeEnum.Value
   ): Boolean = {
-    pushCandidate match {
-      case candidate: PushCandidate with TweetCandidate =>
-        selectedCandidateType match {
-          case MrQualityUprankingPartialTypeEnum.Oon =>
-            val crt = candidate.commonRecType
-            RecTypes.isOutOfNetworkTweetRecType(crt) || RecTypes.outOfNetworkTopicTweetTypes
-              .contains(crt)
+    pushCand date match {
+      case cand date: PushCand date w h T etCand date =>
+        selectedCand dateType match {
+          case MrQual yUprank ngPart alTypeEnum.Oon =>
+            val crt = cand date.commonRecType
+            RecTypes. sOutOfNetworkT etRecType(crt) || RecTypes.outOfNetworkTop cT etTypes
+              .conta ns(crt)
           case _ => true
         }
       case _ => false

@@ -1,88 +1,88 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
+ mport com.tw ter.search.queryparser.query.BooleanQuery;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.Operator;
+ mport com.tw ter.search.queryparser.query.Phrase;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.QueryV s or;
+ mport com.tw ter.search.queryparser.query.Spec alTerm;
+ mport com.tw ter.search.queryparser.query.Term;
 
 /**
- * Collects the nodes with a specified query type in the given query.
+ * Collects t  nodes w h a spec f ed query type  n t  g ven query.
  */
-public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
+publ c class CollectQueryTypeV s or extends QueryV s or<Boolean> {
 
-  protected final Query.QueryType queryType;
+  protected f nal Query.QueryType queryType;
 
-  protected final Map<Query, Boolean> nodeToTypeMap = Maps.newIdentityHashMap();
+  protected f nal Map<Query, Boolean> nodeToTypeMap = Maps.new dent yHashMap();
 
-  public CollectQueryTypeVisitor(Query.QueryType queryType) {
-    this.queryType = queryType;
+  publ c CollectQueryTypeV s or(Query.QueryType queryType) {
+    t .queryType = queryType;
   }
 
-  @Override
-  public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    return visitBooleanQuery(disjunction);
+  @Overr de
+  publ c Boolean v s (D sjunct on d sjunct on) throws QueryParserExcept on {
+    return v s BooleanQuery(d sjunct on);
   }
 
-  @Override
-  public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    return visitBooleanQuery(conjunction);
+  @Overr de
+  publ c Boolean v s (Conjunct on conjunct on) throws QueryParserExcept on {
+    return v s BooleanQuery(conjunct on);
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return visitQuery(phrase);
+  @Overr de
+  publ c Boolean v s (Phrase phrase) throws QueryParserExcept on {
+    return v s Query(phrase);
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return visitQuery(term);
+  @Overr de
+  publ c Boolean v s (Term term) throws QueryParserExcept on {
+    return v s Query(term);
   }
 
-  @Override
-  public Boolean visit(Operator operator) throws QueryParserException {
-    return visitQuery(operator);
+  @Overr de
+  publ c Boolean v s (Operator operator) throws QueryParserExcept on {
+    return v s Query(operator);
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return visitQuery(special);
+  @Overr de
+  publ c Boolean v s (Spec alTerm spec al) throws QueryParserExcept on {
+    return v s Query(spec al);
   }
 
-  public Set<Query> getCollectedNodes() {
+  publ c Set<Query> getCollectedNodes() {
     return nodeToTypeMap.keySet();
   }
 
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.isTypeOf(queryType)) {
+  protected boolean v s Query(Query query) throws QueryParserExcept on {
+     f (query. sTypeOf(queryType)) {
       collectNode(query);
       return true;
     }
     return false;
   }
 
-  protected void collectNode(Query query) {
+  protected vo d collectNode(Query query) {
     nodeToTypeMap.put(query, true);
   }
 
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
+  protected boolean v s BooleanQuery(BooleanQuery query) throws QueryParserExcept on {
     boolean found = false;
-    if (query.isTypeOf(queryType)) {
+     f (query. sTypeOf(queryType)) {
       collectNode(query);
       found = true;
     }
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
+    for (Query ch ld : query.getCh ldren()) {
+      found |= ch ld.accept(t );
     }
     return found;
   }

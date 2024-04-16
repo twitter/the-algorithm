@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.trend
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.timelines.render.thriftscala.GroupedTrend
-import com.twitter.timelines.render.thriftscala.TrendMetadata
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Promoted tadataMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.trend.Trend em
+ mport com.tw ter.t  l nes.render.thr ftscala.GroupedTrend
+ mport com.tw ter.t  l nes.render.thr ftscala.Trend tadata
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class TrendItemMarshaller @Inject() (
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
+@S ngleton
+class Trend emMarshaller @ nject() (
+  promoted tadataMarshaller: Promoted tadataMarshaller,
   urlMarshaller: UrlMarshaller) {
 
-  def apply(trendItem: TrendItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Trend(
+  def apply(trend em: Trend em): urt.T  l ne emContent =
+    urt.T  l ne emContent.Trend(
       urt.Trend(
-        name = trendItem.trendName,
-        url = urlMarshaller(trendItem.url),
-        promotedMetadata = trendItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-        description = trendItem.description,
-        trendMetadata = Some(
-          TrendMetadata(
-            metaDescription = trendItem.metaDescription,
-            url = Some(urlMarshaller(trendItem.url)),
-            domainContext = trendItem.domainContext
+        na  = trend em.trendNa ,
+        url = urlMarshaller(trend em.url),
+        promoted tadata = trend em.promoted tadata.map(promoted tadataMarshaller(_)),
+        descr pt on = trend em.descr pt on,
+        trend tadata = So (
+          Trend tadata(
+             taDescr pt on = trend em. taDescr pt on,
+            url = So (urlMarshaller(trend em.url)),
+            doma nContext = trend em.doma nContext
           )),
-        groupedTrends = trendItem.groupedTrends.map { trends =>
+        groupedTrends = trend em.groupedTrends.map { trends =>
           trends.map { trend =>
-            GroupedTrend(name = trend.trendName, url = urlMarshaller(trend.url))
+            GroupedTrend(na  = trend.trendNa , url = urlMarshaller(trend.url))
           }
         }
       )

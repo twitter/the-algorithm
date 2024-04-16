@@ -1,474 +1,474 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.memcached.exp.localMemcachedPort
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.flockdb.client.thriftscala.Priority
-import com.twitter.servo.repository.CachedResult
-import com.twitter.servo.util.Availability
-import com.twitter.tweetypie.backends._
-import com.twitter.tweetypie.caching.SoftTtl
-import com.twitter.tweetypie.handler.DuplicateTweetFinder
-import com.twitter.tweetypie.repository.TombstoneTtl
-import com.twitter.tweetypie.service._
-import com.twitter.tweetypie.storage.ManhattanTweetStorageClient
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Backoff
+ mport com.tw ter.f nagle. mcac d.exp.local mcac dPort
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.flockdb.cl ent.thr ftscala.Pr or y
+ mport com.tw ter.servo.repos ory.Cac dResult
+ mport com.tw ter.servo.ut l.Ava lab l y
+ mport com.tw ter.t etyp e.backends._
+ mport com.tw ter.t etyp e.cach ng.SoftTtl
+ mport com.tw ter.t etyp e.handler.Dupl cateT etF nder
+ mport com.tw ter.t etyp e.repos ory.TombstoneTtl
+ mport com.tw ter.t etyp e.serv ce._
+ mport com.tw ter.t etyp e.storage.ManhattanT etStorageCl ent
+ mport com.tw ter.ut l.Durat on
 
-case class InProcessCacheConfig(ttl: Duration, maximumSize: Int)
+case class  nProcessCac Conf g(ttl: Durat on, max mumS ze:  nt)
 
-class TweetServiceSettings(val flags: TweetServiceFlags) {
+class T etServ ceSett ngs(val flags: T etServ ceFlags) {
 
   /**
-   * Convert a Boolean to an Option
-   * > optional(true, "my value")
-   * res: Some(my value)
+   * Convert a Boolean to an Opt on
+   * > opt onal(true, "  value")
+   * res: So (  value)
    *
-   * > optional(false, "my value")
+   * > opt onal(false, "  value")
    * res: None
    */
-  def optional[T](b: Boolean, a: => T): Option[T] = if (b) Some(a) else None
+  def opt onal[T](b: Boolean, a: => T): Opt on[T] =  f (b) So (a) else None
 
   /** atla, localhost, etc. */
-  val zone: String = flags.zone()
+  val zone: Str ng = flags.zone()
 
-  /** dc is less specific than zone, zone=atla, dc=atl */
-  val dc: String = zone.dropRight(1)
+  /** dc  s less spec f c than zone, zone=atla, dc=atl */
+  val dc: Str ng = zone.dropR ght(1)
 
-  /** one of: prod, staging, dev, testbox */
+  /** one of: prod, stag ng, dev, testbox */
   val env: Env.Value = flags.env()
 
-  /** instanceId of this aurora instance */
-  lazy val instanceId: Int = flags.instanceId()
+  /**  nstance d of t  aurora  nstance */
+  lazy val  nstance d:  nt = flags. nstance d()
 
-  /** total number of tweetypie aurora instances */
-  val instanceCount: Int = flags.instanceCount()
+  /** total number of t etyp e aurora  nstances */
+  val  nstanceCount:  nt = flags. nstanceCount()
 
-  /** The Name to resolve to find the memcached cluster */
-  val twemcacheDest: String =
-    // If twemcacheDest is explicitly set, always prefer that to
-    // localMemcachedPort.
-    flags.twemcacheDest.get
-    // Testbox uses this global flag to specify the location of the
-    // local memcached instance.
-      .orElse(localMemcachedPort().map("/$/inet/localhost/" + _))
-      // If no explicit Name is specified, use the default.
-      .getOrElse(flags.twemcacheDest())
+  /** T  Na  to resolve to f nd t   mcac d cluster */
+  val t mcac Dest: Str ng =
+    //  f t mcac Dest  s expl c ly set, always prefer that to
+    // local mcac dPort.
+    flags.t mcac Dest.get
+    // Testbox uses t  global flag to spec fy t  locat on of t 
+    // local  mcac d  nstance.
+      .orElse(local mcac dPort().map("/$/ net/localhost/" + _))
+      //  f no expl c  Na   s spec f ed, use t  default.
+      .getOrElse(flags.t mcac Dest())
 
-  /** Read/write data through Cache */
-  val withCache: Boolean = flags.withCache()
+  /** Read/wr e data through Cac  */
+  val w hCac : Boolean = flags.w hCac ()
 
   /**
-   * The TFlock queue to use for background indexing operations. For
-   * production, this should always be the low priority queue, to
-   * allow foreground operations to be processed first.
+   * T  TFlock queue to use for background  ndex ng operat ons. For
+   * product on, t  should always be t  low pr or y queue, to
+   * allow foreground operat ons to be processed f rst.
    */
-  val backgroundIndexingPriority: Priority = flags.backgroundIndexingPriority()
+  val background ndex ngPr or y: Pr or y = flags.background ndex ngPr or y()
 
-  /** Set certain decider gates to this overridden value */
-  val deciderOverrides: Map[String, Boolean] =
-    flags.deciderOverrides()
+  /** Set certa n dec der gates to t  overr dden value */
+  val dec derOverr des: Map[Str ng, Boolean] =
+    flags.dec derOverr des()
 
   /** use per host stats? */
-  val clientHostStats: Boolean =
-    flags.clientHostStats()
+  val cl entHostStats: Boolean =
+    flags.cl entHostStats()
 
-  val warmupRequestsSettings: Option[WarmupQueriesSettings] =
-    optional(flags.enableWarmupRequests(), WarmupQueriesSettings())
+  val warmupRequestsSett ngs: Opt on[WarmupQuer esSett ngs] =
+    opt onal(flags.enableWarmupRequests(), WarmupQuer esSett ngs())
 
-  /** enables request authorization via a allowlist */
-  val allowlistingRequired: Boolean =
-    flags.allowlist.get.getOrElse(env == Env.prod)
+  /** enables request author zat on v a a allowl st */
+  val allowl st ngRequ red: Boolean =
+    flags.allowl st.get.getOrElse(env == Env.prod)
 
-  /** read rate limit for unknown clients (when allowlistingRequired is enabled) */
-  val nonAllowListedClientRateLimitPerSec: Double =
-    flags.grayListRateLimit()
+  /** read rate l m  for unknown cl ents (w n allowl st ngRequ red  s enabled) */
+  val nonAllowL stedCl entRateL m PerSec: Double =
+    flags.grayL stRateL m ()
 
-  /** enables requests from production clients */
-  val allowProductionClients: Boolean =
+  /** enables requests from product on cl ents */
+  val allowProduct onCl ents: Boolean =
     env == Env.prod
 
-  /** enables replication via DRPC */
-  val enableReplication: Boolean = flags.enableReplication()
+  /** enables repl cat on v a DRPC */
+  val enableRepl cat on: Boolean = flags.enableRepl cat on()
 
-  /** enables forking of some traffic to configured target */
-  val trafficForkingEnabled: Boolean =
+  /** enables fork ng of so  traff c to conf gured target */
+  val traff cFork ngEnabled: Boolean =
     env == Env.prod
 
-  val scribeUniquenessIds: Boolean =
+  val scr beUn queness ds: Boolean =
     env == Env.prod
 
-  /** ClientId to send to backend services */
-  val thriftClientId: ClientId =
-    flags.clientId.get.map(ClientId(_)).getOrElse {
+  /** Cl ent d to send to backend serv ces */
+  val thr ftCl ent d: Cl ent d =
+    flags.cl ent d.get.map(Cl ent d(_)).getOrElse {
       env match {
-        case Env.dev | Env.staging => ClientId("tweetypie.staging")
-        case Env.prod => ClientId("tweetypie.prod")
+        case Env.dev | Env.stag ng => Cl ent d("t etyp e.stag ng")
+        case Env.prod => Cl ent d("t etyp e.prod")
       }
     }
 
   /**
-   * Instead of using DRPC for calling into the async code path, call back into the
-   * current instance. Used for development and test to ensure logic in the current
-   * instance is being tested.
+   *  nstead of us ng DRPC for call ng  nto t  async code path, call back  nto t 
+   * current  nstance. Used for develop nt and test to ensure log c  n t  current
+   *  nstance  s be ng tested.
    */
-  val simulateDeferredrpcCallbacks: Boolean = flags.simulateDeferredrpcCallbacks()
+  val s mulateDeferredrpcCallbacks: Boolean = flags.s mulateDeferredrpcCallbacks()
 
   /**
-   * ClientId to set in 'asynchronous' requests when simulateDeferredrpcCallbacks is
-   * true and Tweetypie ends up just calling itself synchronously.
+   * Cl ent d to set  n 'asynchronous' requests w n s mulateDeferredrpcCallbacks  s
+   * true and T etyp e ends up just call ng  self synchronously.
    */
-  val deferredrpcClientId: ClientId = ClientId("deferredrpc.prod")
+  val deferredrpcCl ent d: Cl ent d = Cl ent d("deferredrpc.prod")
 
   /**
-   * ServiceIdentifier used to enable mTLS
+   * Serv ce dent f er used to enable mTLS
    */
-  val serviceIdentifier: ServiceIdentifier = flags.serviceIdentifier()
+  val serv ce dent f er: Serv ce dent f er = flags.serv ce dent f er()
 
   /**
-   * Decider settings
+   * Dec der sett ngs
    */
-  val deciderBaseFilename: Option[String] = Option(flags.deciderBase())
-  val deciderOverlayFilename: Option[String] = Option(flags.deciderOverlay())
-  val vfDeciderOverlayFilename: Option[String] = flags.vfDeciderOverlay.get
+  val dec derBaseF lena : Opt on[Str ng] = Opt on(flags.dec derBase())
+  val dec derOverlayF lena : Opt on[Str ng] = Opt on(flags.dec derOverlay())
+  val vfDec derOverlayF lena : Opt on[Str ng] = flags.vfDec derOverlay.get
 
   /**
-   * Used to determine whether we should fail requests for Tweets that are likely too young
-   * to return a non-partial response. We return NotFound for Tweets that are deemed too young.
-   * Used by [[com.twitter.tweetypie.repository.ManhattanTweetRepository]].
+   * Used to determ ne w t r   should fa l requests for T ets that are l kely too  ng
+   * to return a non-part al response.   return NotFound for T ets that are dee d too  ng.
+   * Used by [[com.tw ter.t etyp e.repos ory.ManhattanT etRepos ory]].
    */
-  val shortCircuitLikelyPartialTweetReads: Gate[Duration] = {
-    // interpret the flag as a duration in milliseconds
-    val ageCeiling: Duration = flags.shortCircuitLikelyPartialTweetReadsMs().milliseconds
-    Gate(tweetAge => tweetAge < ageCeiling)
+  val shortC rcu L kelyPart alT etReads: Gate[Durat on] = {
+    //  nterpret t  flag as a durat on  n m ll seconds
+    val ageCe l ng: Durat on = flags.shortC rcu L kelyPart alT etReadsMs().m ll seconds
+    Gate(t etAge => t etAge < ageCe l ng)
   }
 
-  // tweet-service internal settings
+  // t et-serv ce  nternal sett ngs
 
-  val tweetKeyCacheVersion = 1
+  val t etKeyCac Vers on = 1
 
-  /** how often to flush aggregated count updates for tweet counts */
-  val aggregatedTweetCountsFlushInterval: Duration = 5.seconds
+  /** how often to flush aggregated count updates for t et counts */
+  val aggregatedT etCountsFlush nterval: Durat on = 5.seconds
 
-  /** maximum number of keys for which aggregated cached count updates may be cached */
-  val maxAggregatedCountsSize = 1000
+  /** max mum number of keys for wh ch aggregated cac d count updates may be cac d */
+  val maxAggregatedCountsS ze = 1000
 
-  /** ramp up period for decidering up forked traffic (if enabled) to the full decidered value */
-  val forkingRampUp: Duration = 3.minutes
+  /** ramp up per od for dec der ng up forked traff c ( f enabled) to t  full dec dered value */
+  val fork ngRampUp: Durat on = 3.m nutes
 
-  /** how long to wait after startup for serversets to resolve before giving up and moving on */
-  val waitForServerSetsTimeout: Duration = 120.seconds
+  /** how long to wa  after startup for serversets to resolve before g v ng up and mov ng on */
+  val wa ForServerSetsT  out: Durat on = 120.seconds
 
-  /** number of threads to use in thread pool for language identification */
-  val numPenguinThreads = 4
+  /** number of threads to use  n thread pool for language  dent f cat on */
+  val numPengu nThreads = 4
 
-  /** maximum number of tweets that clients can request per getTweets RPC call */
-  val maxGetTweetsRequestSize = 200
+  /** max mum number of t ets that cl ents can request per getT ets RPC call */
+  val maxGetT etsRequestS ze = 200
 
-  /** maximum batch size for any batched request (getTweets is exempt, it has its own limiting) */
-  val maxRequestSize = 200
+  /** max mum batch s ze for any batc d request (getT ets  s exempt,   has  s own l m  ng) */
+  val maxRequestS ze = 200
 
   /**
-   * maximum size to allow the thrift response buffer to grow before resetting it.  this is set to
-   * approximately the current value of `srv/thrift/response_payload_bytes.p999`, meaning roughly
-   * 1 out of 1000 requests will cause the buffer to be reset.
+   * max mum s ze to allow t  thr ft response buffer to grow before resett ng  .  t   s set to
+   * approx mately t  current value of `srv/thr ft/response_payload_bytes.p999`,  an ng roughly
+   * 1 out of 1000 requests w ll cause t  buffer to be reset.
    */
-  val maxThriftBufferSize: Int = 200 * 1024
+  val maxThr ftBufferS ze:  nt = 200 * 1024
 
-  // ********* timeouts and backoffs **********
+  // ********* t  outs and backoffs **********
 
-  /** backoffs for OptimisticLockingCache lockAndSet operations */
-  val lockingCacheBackoffs: Stream[Duration] =
-    Backoff.exponentialJittered(10.millisecond, 50.milliseconds).take(3).toStream
+  /** backoffs for Opt m st cLock ngCac  lockAndSet operat ons */
+  val lock ngCac Backoffs: Stream[Durat on] =
+    Backoff.exponent alJ tered(10.m ll second, 50.m ll seconds).take(3).toStream
 
-  /** retry once on timeout with no backoff */
-  val defaultTimeoutBackoffs: Stream[Duration] = Stream(0.milliseconds).toStream
+  /** retry once on t  out w h no backoff */
+  val defaultT  outBackoffs: Stream[Durat on] = Stream(0.m ll seconds).toStream
 
-  /** backoffs when user view is missing */
-  val gizmoduckMissingUserViewBackoffs: Stream[Duration] = Backoff.const(10.millis).take(3).toStream
+  /** backoffs w n user v ew  s m ss ng */
+  val g zmoduckM ss ngUserV ewBackoffs: Stream[Durat on] = Backoff.const(10.m ll s).take(3).toStream
 
-  /** backoffs for retrying failed async-write actions after first retry failure */
-  val asyncWriteRetryBackoffs: Stream[Duration] =
-    Backoff.exponential(10.milliseconds, 2).take(9).toStream.map(_ min 1.second)
+  /** backoffs for retry ng fa led async-wr e act ons after f rst retry fa lure */
+  val asyncWr eRetryBackoffs: Stream[Durat on] =
+    Backoff.exponent al(10.m ll seconds, 2).take(9).toStream.map(_ m n 1.second)
 
-  /** backoffs for retrying failed deferredrpc enqueues */
-  val deferredrpcBackoffs: Stream[Duration] =
-    Backoff.exponential(10.milliseconds, 2).take(3).toStream
+  /** backoffs for retry ng fa led deferredrpc enqueues */
+  val deferredrpcBackoffs: Stream[Durat on] =
+    Backoff.exponent al(10.m ll seconds, 2).take(3).toStream
 
-  /** backoffs for retrying failed cache updates for replicated events */
-  val replicatedEventCacheBackoffs: Stream[Duration] =
-    Backoff.exponential(100.milliseconds, 2).take(10).toStream
+  /** backoffs for retry ng fa led cac  updates for repl cated events */
+  val repl catedEventCac Backoffs: Stream[Durat on] =
+    Backoff.exponent al(100.m ll seconds, 2).take(10).toStream
 
-  val escherbirdConfig: Escherbird.Config =
-    Escherbird.Config(
-      requestTimeout = 200.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  val esc rb rdConf g: Esc rb rd.Conf g =
+    Esc rb rd.Conf g(
+      requestT  out = 200.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs
     )
 
-  val expandodoConfig: Expandodo.Config =
-    Expandodo.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      serverErrorBackoffs = Backoff.const(0.millis).take(3).toStream
+  val expandodoConf g: Expandodo.Conf g =
+    Expandodo.Conf g(
+      requestT  out = 300.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs,
+      serverErrorBackoffs = Backoff.const(0.m ll s).take(3).toStream
     )
 
-  val creativesContainerServiceConfig: CreativesContainerService.Config =
-    CreativesContainerService.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      serverErrorBackoffs = Backoff.const(0.millis).take(3).toStream
+  val creat vesConta nerServ ceConf g: Creat vesConta nerServ ce.Conf g =
+    Creat vesConta nerServ ce.Conf g(
+      requestT  out = 300.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs,
+      serverErrorBackoffs = Backoff.const(0.m ll s).take(3).toStream
     )
 
-  val geoScrubEventStoreConfig: GeoScrubEventStore.Config =
-    GeoScrubEventStore.Config(
-      read = GeoScrubEventStore.EndpointConfig(
-        requestTimeout = 200.milliseconds,
+  val geoScrubEventStoreConf g: GeoScrubEventStore.Conf g =
+    GeoScrubEventStore.Conf g(
+      read = GeoScrubEventStore.Endpo ntConf g(
+        requestT  out = 200.m ll seconds,
         maxRetryCount = 1
       ),
-      write = GeoScrubEventStore.EndpointConfig(
-        requestTimeout = 1.second,
+      wr e = GeoScrubEventStore.Endpo ntConf g(
+        requestT  out = 1.second,
         maxRetryCount = 1
       )
     )
 
-  val gizmoduckConfig: Gizmoduck.Config =
-    Gizmoduck.Config(
-      readTimeout = 300.milliseconds,
-      writeTimeout = 300.milliseconds,
-      // We bump the timeout value to 800ms because modifyAndGet is called only in async request path in GeoScrub daemon
-      // and we do not expect sync/realtime apps calling this thrift method
-      modifyAndGetTimeout = 800.milliseconds,
-      modifyAndGetTimeoutBackoffs = Backoff.const(0.millis).take(3).toStream,
-      defaultTimeoutBackoffs = defaultTimeoutBackoffs,
-      gizmoduckExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+  val g zmoduckConf g: G zmoduck.Conf g =
+    G zmoduck.Conf g(
+      readT  out = 300.m ll seconds,
+      wr eT  out = 300.m ll seconds,
+      //   bump t  t  out value to 800ms because mod fyAndGet  s called only  n async request path  n GeoScrub daemon
+      // and   do not expect sync/realt   apps call ng t  thr ft  thod
+      mod fyAndGetT  out = 800.m ll seconds,
+      mod fyAndGetT  outBackoffs = Backoff.const(0.m ll s).take(3).toStream,
+      defaultT  outBackoffs = defaultT  outBackoffs,
+      g zmoduckExcept onBackoffs = Backoff.const(0.m ll s).take(3).toStream
     )
 
-  val limiterBackendConfig: LimiterBackend.Config =
-    LimiterBackend.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  val l m erBackendConf g: L m erBackend.Conf g =
+    L m erBackend.Conf g(
+      requestT  out = 300.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs
     )
 
-  val mediaInfoServiceConfig: MediaInfoService.Config =
-    MediaInfoService.Config(
-      requestTimeout = 300.milliseconds,
-      totalTimeout = 500.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  val  d a nfoServ ceConf g:  d a nfoServ ce.Conf g =
+     d a nfoServ ce.Conf g(
+      requestT  out = 300.m ll seconds,
+      totalT  out = 500.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs
     )
 
-  val scarecrowConfig: Scarecrow.Config =
-    Scarecrow.Config(
-      readTimeout = 100.milliseconds,
-      writeTimeout = 400.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      scarecrowExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+  val scarecrowConf g: Scarecrow.Conf g =
+    Scarecrow.Conf g(
+      readT  out = 100.m ll seconds,
+      wr eT  out = 400.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs,
+      scarecrowExcept onBackoffs = Backoff.const(0.m ll s).take(3).toStream
     )
 
-  val socialGraphSeviceConfig: SocialGraphService.Config =
-    SocialGraphService.Config(
-      socialGraphTimeout = 250.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  val soc alGraphSev ceConf g: Soc alGraphServ ce.Conf g =
+    Soc alGraphServ ce.Conf g(
+      soc alGraphT  out = 250.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs
     )
 
-  val talonConfig: Talon.Config =
-    Talon.Config(
-      shortenTimeout = 500.milliseconds,
-      expandTimeout = 150.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      transientErrorBackoffs = Backoff.const(0.millis).take(3).toStream
+  val talonConf g: Talon.Conf g =
+    Talon.Conf g(
+      shortenT  out = 500.m ll seconds,
+      expandT  out = 150.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs,
+      trans entErrorBackoffs = Backoff.const(0.m ll s).take(3).toStream
     )
 
   /**
-   * page size when retrieving tflock pages for tweet deletion and undeletion
-   * tweet erasures have their own page size eraseUserTweetsPageSize
+   * page s ze w n retr ev ng tflock pages for t et delet on and undelet on
+   * t et erasures have t  r own page s ze eraseUserT etsPageS ze
    */
-  val tflockPageSize: Int = flags.tflockPageSize()
+  val tflockPageS ze:  nt = flags.tflockPageS ze()
 
-  val tflockReadConfig: TFlock.Config =
-    TFlock.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      flockExceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
-      overCapacityBackoffs = Stream.empty,
-      defaultPageSize = tflockPageSize
+  val tflockReadConf g: TFlock.Conf g =
+    TFlock.Conf g(
+      requestT  out = 300.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs,
+      flockExcept onBackoffs = Backoff.const(0.m ll s).take(3).toStream,
+      overCapac yBackoffs = Stream.empty,
+      defaultPageS ze = tflockPageS ze
     )
 
-  val tflockWriteConfig: TFlock.Config =
-    TFlock.Config(
-      requestTimeout = 400.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      flockExceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
-      overCapacityBackoffs = Backoff.exponential(10.millis, 2).take(3).toStream
+  val tflockWr eConf g: TFlock.Conf g =
+    TFlock.Conf g(
+      requestT  out = 400.m ll seconds,
+      t  outBackoffs = defaultT  outBackoffs,
+      flockExcept onBackoffs = Backoff.const(0.m ll s).take(3).toStream,
+      overCapac yBackoffs = Backoff.exponent al(10.m ll s, 2).take(3).toStream
     )
 
-  val timelineServiceConfig: TimelineService.Config = {
-    val tlsExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
-    TimelineService.Config(
-      writeRequestPolicy =
-        Backend.TimeoutPolicy(4.seconds) >>>
-          TimelineService.FailureBackoffsPolicy(
-            timeoutBackoffs = defaultTimeoutBackoffs,
-            tlsExceptionBackoffs = tlsExceptionBackoffs
+  val t  l neServ ceConf g: T  l neServ ce.Conf g = {
+    val tlsExcept onBackoffs = Backoff.const(0.m ll s).take(3).toStream
+    T  l neServ ce.Conf g(
+      wr eRequestPol cy =
+        Backend.T  outPol cy(4.seconds) >>>
+          T  l neServ ce.Fa lureBackoffsPol cy(
+            t  outBackoffs = defaultT  outBackoffs,
+            tlsExcept onBackoffs = tlsExcept onBackoffs
           ),
-      readRequestPolicy =
-        Backend.TimeoutPolicy(400.milliseconds) >>>
-          TimelineService.FailureBackoffsPolicy(
-            timeoutBackoffs = defaultTimeoutBackoffs,
-            tlsExceptionBackoffs = tlsExceptionBackoffs
+      readRequestPol cy =
+        Backend.T  outPol cy(400.m ll seconds) >>>
+          T  l neServ ce.Fa lureBackoffsPol cy(
+            t  outBackoffs = defaultT  outBackoffs,
+            tlsExcept onBackoffs = tlsExcept onBackoffs
           )
     )
   }
 
-  val tweetStorageConfig: ManhattanTweetStorageClient.Config = {
+  val t etStorageConf g: ManhattanT etStorageCl ent.Conf g = {
     val remoteZone = zone match {
       case "atla" => "pdxa"
       case "pdxa" => "atla"
       case "atla" | "localhost" => "atla"
       case _ =>
-        throw new IllegalArgumentException(s"Cannot configure remote DC for unknown zone '$zone'")
+        throw new  llegalArgu ntExcept on(s"Cannot conf gure remote DC for unknown zone '$zone'")
     }
-    ManhattanTweetStorageClient.Config(
-      applicationId = "tbird_mh",
-      localDestination = "/s/manhattan/cylon.native-thrift",
-      localTimeout = 290.milliseconds,
-      remoteDestination = s"/srv#/prod/$remoteZone/manhattan/cylon.native-thrift",
-      remoteTimeout = 1.second,
+    ManhattanT etStorageCl ent.Conf g(
+      appl cat on d = "tb rd_mh",
+      localDest nat on = "/s/manhattan/cylon.nat ve-thr ft",
+      localT  out = 290.m ll seconds,
+      remoteDest nat on = s"/srv#/prod/$remoteZone/manhattan/cylon.nat ve-thr ft",
+      remoteT  out = 1.second,
       maxRequestsPerBatch = 25,
-      serviceIdentifier = serviceIdentifier,
-      opportunisticTlsLevel = OpportunisticTls.Required
+      serv ce dent f er = serv ce dent f er,
+      opportun st cTlsLevel = Opportun st cTls.Requ red
     )
   }
 
-  val userImageServiceConfig: UserImageService.Config =
-    UserImageService.Config(
-      processTweetMediaTimeout = 5.seconds,
-      updateTweetMediaTimeout = 2.seconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  val user mageServ ceConf g: User mageServ ce.Conf g =
+    User mageServ ce.Conf g(
+      processT et d aT  out = 5.seconds,
+      updateT et d aT  out = 2.seconds,
+      t  outBackoffs = defaultT  outBackoffs
     )
 
-  val adsLoggingClientTopicName = env match {
-    case Env.prod => "ads_client_callback_prod"
-    case Env.dev | Env.staging => "ads_client_callback_staging"
+  val adsLogg ngCl entTop cNa  = env match {
+    case Env.prod => "ads_cl ent_callback_prod"
+    case Env.dev | Env.stag ng => "ads_cl ent_callback_stag ng"
   }
 
-  /** Delay between successive cascadedDeleteTweet calls when deleting retweets.  Applied via decider. */
-  val retweetDeletionDelay: Duration = 20.milliseconds
+  /** Delay bet en success ve cascadedDeleteT et calls w n delet ng ret ets.  Appl ed v a dec der. */
+  val ret etDelet onDelay: Durat on = 20.m ll seconds
 
   /**
-   * Delay to sleep before each tweet deletion of an eraseUserTweets request.
-   * This is a simple rate limiting mechanism. The long term solution is
-   * to move async endpoints like user erasures and retweet deletions out
-   * of the the main tweetypie cluster and into an async cluster with first class
-   * rate limiting support
+   * Delay to sleep before each t et delet on of an eraseUserT ets request.
+   * T   s a s mple rate l m  ng  chan sm. T  long term solut on  s
+   * to move async endpo nts l ke user erasures and ret et delet ons out
+   * of t  t  ma n t etyp e cluster and  nto an async cluster w h f rst class
+   * rate l m  ng support
    */
-  val eraseUserTweetsDelay: Duration = 100.milliseconds
+  val eraseUserT etsDelay: Durat on = 100.m ll seconds
 
-  val eraseUserTweetsPageSize = 100
+  val eraseUserT etsPageS ze = 100
 
-  val getStoredTweetsByUserPageSize = 20
-  val getStoredTweetsByUserMaxPages = 30
+  val getStoredT etsByUserPageS ze = 20
+  val getStoredT etsByUserMaxPages = 30
 
   // ********* ttls **********
 
-  // Unfortunately, this tombstone TTL applies equally to the case
-  // where the tweet was deleted and the case that the tweet does not
-  // exist or is unavailable. If we could differentiate between those
-  // cases, we'd cache deleted for a long time and not
-  // found/unavailable for a short time. We chose 100
-  // milliseconds for the minimum TTL because there are known cases in
-  // which a not found result can be erroneously written to cache on
-  // tweet creation. This minimum TTL is a trade-off between a
-  // thundering herd of database requests from clients that just got
-  // the fanned-out tweet and the window for which these inconsistent
-  // results will be available.
-  val tweetTombstoneTtl: CachedResult.CachedNotFound[TweetId] => Duration =
-    TombstoneTtl.linear(min = 100.milliseconds, max = 1.day, from = 5.minutes, to = 5.hours)
+  // Unfortunately, t  tombstone TTL appl es equally to t  case
+  // w re t  t et was deleted and t  case that t  t et does not
+  // ex st or  s unava lable.  f   could d fferent ate bet en those
+  // cases,  'd cac  deleted for a long t   and not
+  // found/unava lable for a short t  .   chose 100
+  // m ll seconds for t  m n mum TTL because t re are known cases  n
+  // wh ch a not found result can be erroneously wr ten to cac  on
+  // t et creat on. T  m n mum TTL  s a trade-off bet en a
+  // thunder ng  rd of database requests from cl ents that just got
+  // t  fanned-out t et and t  w ndow for wh ch t se  ncons stent
+  // results w ll be ava lable.
+  val t etTombstoneTtl: Cac dResult.Cac dNotFound[T et d] => Durat on =
+    TombstoneTtl.l near(m n = 100.m ll seconds, max = 1.day, from = 5.m nutes, to = 5.h s)
 
-  val tweetMemcacheTtl: Duration = 14.days
-  val urlMemcacheTtl: Duration = 1.hour
-  val urlMemcacheSoftTtl: Duration = 1.hour
-  val deviceSourceMemcacheTtl: Duration = 12.hours
-  val deviceSourceMemcacheSoftTtl: SoftTtl.ByAge[Nothing] =
-    SoftTtl.ByAge(softTtl = 1.hour, jitter = 1.minute)
-  val deviceSourceInProcessTtl: Duration = 8.hours
-  val deviceSourceInProcessSoftTtl: Duration = 30.minutes
-  val placeMemcacheTtl: Duration = 1.day
-  val placeMemcacheSoftTtl: SoftTtl.ByAge[Nothing] =
-    SoftTtl.ByAge(softTtl = 3.hours, jitter = 1.minute)
-  val cardMemcacheTtl: Duration = 20.minutes
-  val cardMemcacheSoftTtl: Duration = 30.seconds
-  val tweetCreateLockingMemcacheTtl: Duration = 10.seconds
-  val tweetCreateLockingMemcacheLongTtl: Duration = 12.hours
-  val geoScrubMemcacheTtl: Duration = 30.minutes
+  val t et mcac Ttl: Durat on = 14.days
+  val url mcac Ttl: Durat on = 1.h 
+  val url mcac SoftTtl: Durat on = 1.h 
+  val dev ceS ce mcac Ttl: Durat on = 12.h s
+  val dev ceS ce mcac SoftTtl: SoftTtl.ByAge[Noth ng] =
+    SoftTtl.ByAge(softTtl = 1.h , j ter = 1.m nute)
+  val dev ceS ce nProcessTtl: Durat on = 8.h s
+  val dev ceS ce nProcessSoftTtl: Durat on = 30.m nutes
+  val place mcac Ttl: Durat on = 1.day
+  val place mcac SoftTtl: SoftTtl.ByAge[Noth ng] =
+    SoftTtl.ByAge(softTtl = 3.h s, j ter = 1.m nute)
+  val card mcac Ttl: Durat on = 20.m nutes
+  val card mcac SoftTtl: Durat on = 30.seconds
+  val t etCreateLock ng mcac Ttl: Durat on = 10.seconds
+  val t etCreateLock ng mcac LongTtl: Durat on = 12.h s
+  val geoScrub mcac Ttl: Durat on = 30.m nutes
 
-  val tweetCountsMemcacheTtl: Duration = 24.hours
-  val tweetCountsMemcacheNonZeroSoftTtl: Duration = 3.hours
-  val tweetCountsMemcacheZeroSoftTtl: Duration = 7.hours
+  val t etCounts mcac Ttl: Durat on = 24.h s
+  val t etCounts mcac NonZeroSoftTtl: Durat on = 3.h s
+  val t etCounts mcac ZeroSoftTtl: Durat on = 7.h s
 
-  val cacheClientPendingRequestLimit: Int = flags.memcachePendingRequestLimit()
+  val cac Cl entPend ngRequestL m :  nt = flags. mcac Pend ngRequestL m ()
 
-  val deviceSourceInProcessCacheMaxSize = 10000
+  val dev ceS ce nProcessCac MaxS ze = 10000
 
-  val inProcessCacheConfigOpt: Option[InProcessCacheConfig] =
-    if (flags.enableInProcessCache()) {
-      Some(
-        InProcessCacheConfig(
-          ttl = flags.inProcessCacheTtlMs().milliseconds,
-          maximumSize = flags.inProcessCacheSize()
+  val  nProcessCac Conf gOpt: Opt on[ nProcessCac Conf g] =
+     f (flags.enable nProcessCac ()) {
+      So (
+         nProcessCac Conf g(
+          ttl = flags. nProcessCac TtlMs().m ll seconds,
+          max mumS ze = flags. nProcessCac S ze()
         )
       )
     } else {
       None
     }
 
-  // Begin returning OverCapacity for tweet repo when cache SR falls below 95%,
-  // Scale to rejecting 95% of requests when cache SR <= 80%
-  val tweetCacheAvailabilityFromSuccessRate: Double => Double =
-    Availability.linearlyScaled(0.95, 0.80, 0.05)
+  // Beg n return ng OverCapac y for t et repo w n cac  SR falls below 95%,
+  // Scale to reject ng 95% of requests w n cac  SR <= 80%
+  val t etCac Ava lab l yFromSuccessRate: Double => Double =
+    Ava lab l y.l nearlyScaled(0.95, 0.80, 0.05)
 
-  // ******* repository chunking size ********
+  // ******* repos ory chunk ng s ze ********
 
-  val tweetCountsRepoChunkSize = 6
-  // n times `tweetCountsRepoChunkSize`, so chunking at higher level does not
-  // generate small batches at lower level.
-  val tweetCountsCacheChunkSize = 18
+  val t etCountsRepoChunkS ze = 6
+  // n t  s `t etCountsRepoChunkS ze`, so chunk ng at h g r level does not
+  // generate small batc s at lo r level.
+  val t etCountsCac ChunkS ze = 18
 
-  val duplicateTweetFinderSettings: DuplicateTweetFinder.Settings =
-    DuplicateTweetFinder.Settings(numTweetsToCheck = 10, maxDuplicateAge = 12.hours)
+  val dupl cateT etF nderSett ngs: Dupl cateT etF nder.Sett ngs =
+    Dupl cateT etF nder.Sett ngs(numT etsToC ck = 10, maxDupl cateAge = 12.h s)
 
-  val backendWarmupSettings: Warmup.Settings =
-    Warmup.Settings(
-      // Try for twenty seconds to warm up the backends before giving
+  val backendWarmupSett ngs: Warmup.Sett ngs =
+    Warmup.Sett ngs(
+      // Try for t nty seconds to warm up t  backends before g v ng
       // up.
-      maxWarmupDuration = 20.seconds,
-      // Only allow up to 50 outstanding warmup requests of any kind
-      // to be outstanding at a time.
-      maxOutstandingRequests = 50,
-      // These timeouts are just over the p999 latency observed in ATLA
-      // for requests to these backends.
-      requestTimeouts = Map(
-        "expandodo" -> 120.milliseconds,
-        "geo_relevance" -> 50.milliseconds,
-        "gizmoduck" -> 200.milliseconds,
-        "memcache" -> 50.milliseconds,
-        "scarecrow" -> 120.milliseconds,
-        "socialgraphservice" -> 180.milliseconds,
-        "talon" -> 70.milliseconds,
-        "tflock" -> 320.milliseconds,
-        "timelineservice" -> 200.milliseconds,
-        "tweetstorage" -> 50.milliseconds
+      maxWarmupDurat on = 20.seconds,
+      // Only allow up to 50 outstand ng warmup requests of any k nd
+      // to be outstand ng at a t  .
+      maxOutstand ngRequests = 50,
+      // T se t  outs are just over t  p999 latency observed  n ATLA
+      // for requests to t se backends.
+      requestT  outs = Map(
+        "expandodo" -> 120.m ll seconds,
+        "geo_relevance" -> 50.m ll seconds,
+        "g zmoduck" -> 200.m ll seconds,
+        " mcac " -> 50.m ll seconds,
+        "scarecrow" -> 120.m ll seconds,
+        "soc algraphserv ce" -> 180.m ll seconds,
+        "talon" -> 70.m ll seconds,
+        "tflock" -> 320.m ll seconds,
+        "t  l neserv ce" -> 200.m ll seconds,
+        "t etstorage" -> 50.m ll seconds
       ),
-      reliability = Warmup.Reliably(
-        // Consider a backend warmed up if 99% of requests are succeeding.
-        reliabilityThreshold = 0.99,
-        // When performing warmup, use a maximum of 10 concurrent
+      rel ab l y = Warmup.Rel ably(
+        // Cons der a backend war d up  f 99% of requests are succeed ng.
+        rel ab l yThreshold = 0.99,
+        // W n perform ng warmup, use a max mum of 10 concurrent
         // requests to each backend.
         concurrency = 10,
-        // Do not allow more than this many attempts to perform the
-        // warmup action before giving up.
+        // Do not allow more than t  many attempts to perform t 
+        // warmup act on before g v ng up.
         maxAttempts = 1000
       )
     )

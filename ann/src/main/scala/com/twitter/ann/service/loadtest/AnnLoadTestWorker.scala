@@ -1,116 +1,116 @@
-package com.twitter.ann.service.loadtest
+package com.tw ter.ann.serv ce.loadtest
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.concurrent.AsyncMeter
-import com.twitter.concurrent.AsyncStream
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.logging.Logger
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.util.Timer
-import com.twitter.util.Try
-import java.util.concurrent.atomic.AtomicInteger
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common.Queryable
+ mport com.tw ter.ann.common.Runt  Params
+ mport com.tw ter.concurrent.Async ter
+ mport com.tw ter.concurrent.AsyncStream
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.Try
+ mport java.ut l.concurrent.atom c.Atom c nteger
 
-object QueryTimeConfiguration {
-  val ResultHeader =
-    "params\tnumNeighbors\trecall@1\trecall@10\trecall\tavgLatencyMicros\tp50LatencyMicros\tp90LatencyMicros\tp99LatencyMicros\tavgRPS"
+object QueryT  Conf gurat on {
+  val Result ader =
+    "params\tnumNe ghbors\trecall@1\trecall@10\trecall\tavgLatencyM cros\tp50LatencyM cros\tp90LatencyM cros\tp99LatencyM cros\tavgRPS"
 }
 
-case class QueryTimeConfiguration[T, P <: RuntimeParams](
+case class QueryT  Conf gurat on[T, P <: Runt  Params](
   recorder: LoadTestQueryRecorder[T],
   param: P,
-  numberOfNeighbors: Int,
-  private val results: InMemoryLoadTestQueryRecorder[T]) {
-  override def toString: String =
-    s"QueryTimeConfiguration(param = $param, numberOfNeighbors = $numberOfNeighbors)"
+  numberOfNe ghbors:  nt,
+  pr vate val results:  n moryLoadTestQueryRecorder[T]) {
+  overr de def toStr ng: Str ng =
+    s"QueryT  Conf gurat on(param = $param, numberOfNe ghbors = $numberOfNe ghbors)"
 
-  def printResults: String = {
+  def pr ntResults: Str ng = {
     val snapshot = results.computeSnapshot()
-    s"$param\t$numberOfNeighbors\t${results.top1Recall}\t${results.top10Recall}\t${results.recall}\t${snapshot.avgQueryLatencyMicros}\t${snapshot.p50QueryLatencyMicros}\t${snapshot.p90QueryLatencyMicros}\t${snapshot.p99QueryLatencyMicros}\t${results.avgRPS}"
+    s"$param\t$numberOfNe ghbors\t${results.top1Recall}\t${results.top10Recall}\t${results.recall}\t${snapshot.avgQueryLatencyM cros}\t${snapshot.p50QueryLatencyM cros}\t${snapshot.p90QueryLatencyM cros}\t${snapshot.p99QueryLatencyM cros}\t${results.avgRPS}"
   }
 }
 
 /**
- * Basic worker for ANN benchmark, send query with configured QPS and record results
+ * Bas c worker for ANN benchmark, send query w h conf gured QPS and record results
  */
 class AnnLoadTestWorker(
-  timer: Timer = DefaultTimer) {
-  private val logger = Logger()
+  t  r: T  r = DefaultT  r) {
+  pr vate val logger = Logger()
 
   /**
-   * @param queries List of tuple of query embedding and corresponding list of truth set of ids associated with the embedding
-   * @param qps the maximum number of request per second to send to the queryable. Note that if you
-   *            do not set the concurrency level high enough you may not be able to achieve this.
-   * @param duration         how long to perform the load test.
-   * @param configuration    Query configuration encapsulating runtime params and recorder.
-   * @param concurrencyLevel The maximum number of concurrent requests to the queryable at a time.
-   *                         Note that you may not be able to achieve this number of concurrent
-   *                         requests if you do not have the QPS set high enough.
+   * @param quer es L st of tuple of query embedd ng and correspond ng l st of truth set of  ds assoc ated w h t  embedd ng
+   * @param qps t  max mum number of request per second to send to t  queryable. Note that  f  
+   *            do not set t  concurrency level h gh enough   may not be able to ach eve t .
+   * @param durat on         how long to perform t  load test.
+   * @param conf gurat on    Query conf gurat on encapsulat ng runt   params and recorder.
+   * @param concurrencyLevel T  max mum number of concurrent requests to t  queryable at a t  .
+   *                         Note that   may not be able to ach eve t  number of concurrent
+   *                         requests  f   do not have t  QPS set h gh enough.
    *
-   * @return a Future that completes when the load test is over. It contains the number of requests
+   * @return a Future that completes w n t  load test  s over.   conta ns t  number of requests
    *         sent.
    */
-  def runWithQps[T, P <: RuntimeParams, D <: Distance[D]](
+  def runW hQps[T, P <: Runt  Params, D <: D stance[D]](
     queryable: Queryable[T, P, D],
-    queries: Seq[Query[T]],
-    qps: Int,
-    duration: Duration,
-    configuration: QueryTimeConfiguration[T, P],
-    concurrencyLevel: Int
-  ): Future[Int] = {
+    quer es: Seq[Query[T]],
+    qps:  nt,
+    durat on: Durat on,
+    conf gurat on: QueryT  Conf gurat on[T, P],
+    concurrencyLevel:  nt
+  ): Future[ nt] = {
     val elapsed = Stopwatch.start()
-    val atomicInteger = new AtomicInteger(0)
-    val fullStream = Stream.continually {
-      if (elapsed() <= duration) {
-        logger.ifDebug(s"running with config: $configuration")
-        Some(atomicInteger.getAndIncrement() % queries.size)
+    val atom c nteger = new Atom c nteger(0)
+    val fullStream = Stream.cont nually {
+       f (elapsed() <= durat on) {
+        logger. fDebug(s"runn ng w h conf g: $conf gurat on")
+        So (atom c nteger.getAnd ncre nt() % quer es.s ze)
       } else {
-        logger.ifDebug(s"stopping with config: $configuration")
+        logger. fDebug(s"stopp ng w h conf g: $conf gurat on")
         None
       }
     }
-    val limitedStream = fullStream.takeWhile(_.isDefined).flatten
-    // at most we will have concurrencyLevel concurrent requests. So we should never have more than
-    // concurrency level waiters.
-    val asyncMeter = AsyncMeter.perSecond(qps, concurrencyLevel)(timer)
+    val l m edStream = fullStream.takeWh le(_. sDef ned).flatten
+    // at most   w ll have concurrencyLevel concurrent requests. So   should never have more than
+    // concurrency level wa ers.
+    val async ter = Async ter.perSecond(qps, concurrencyLevel)(t  r)
 
-    Future.Unit.before {
+    Future.Un .before {
       AsyncStream
-        .fromSeq(limitedStream).mapConcurrent(concurrencyLevel) { index =>
-          asyncMeter.await(1).flatMap { _ =>
-            performQuery(configuration, queryable, queries(index))
+        .fromSeq(l m edStream).mapConcurrent(concurrencyLevel) {  ndex =>
+          async ter.awa (1).flatMap { _ =>
+            performQuery(conf gurat on, queryable, quer es( ndex))
           }
-        }.size
+        }.s ze
     }
   }
 
-  @VisibleForTesting
-  private[loadtest] def performQuery[T, P <: RuntimeParams, D <: Distance[D]](
-    configuration: QueryTimeConfiguration[T, P],
+  @V s bleForTest ng
+  pr vate[loadtest] def performQuery[T, P <: Runt  Params, D <: D stance[D]](
+    conf gurat on: QueryT  Conf gurat on[T, P],
     queryable: Queryable[T, P, D],
     query: Query[T]
-  ): Future[Try[Unit]] = {
+  ): Future[Try[Un ]] = {
     val elapsed = Stopwatch.start()
     queryable
-      .query(query.embedding, configuration.numberOfNeighbors, configuration.param)
-      .onSuccess { res: List[T] =>
-        // underneath LoadTestRecorder will record results for load test
-        // knnMap should be truncated to be same size as query result
-        configuration.recorder.recordQueryResult(
-          query.trueNeighbours,
+      .query(query.embedd ng, conf gurat on.numberOfNe ghbors, conf gurat on.param)
+      .onSuccess { res: L st[T] =>
+        // underneath LoadTestRecorder w ll record results for load test
+        // knnMap should be truncated to be sa  s ze as query result
+        conf gurat on.recorder.recordQueryResult(
+          query.trueNe ghb s,
           res,
           elapsed.apply()
         )
-        logger.ifDebug(s"Successful query for $query")
+        logger. fDebug(s"Successful query for $query")
       }
-      .onFailure { e =>
-        logger.error(s"Failed query for $query: " + e)
+      .onFa lure { e =>
+        logger.error(s"Fa led query for $query: " + e)
       }
-      .unit
-      .liftToTry
+      .un 
+      .l ftToTry
   }
 }

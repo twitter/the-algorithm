@@ -1,80 +1,80 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.HashMap;
-import java.util.Map;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.validators.FacetsResponseValidator;
-import com.twitter.search.earlybird_root.validators.PassThroughResponseValidator;
-import com.twitter.search.earlybird_root.validators.ServiceResponseValidator;
-import com.twitter.search.earlybird_root.validators.TermStatsResultsValidator;
-import com.twitter.search.earlybird_root.validators.TopTweetsResultsValidator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponse rgeUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.search.earlyb rd_root.val dators.FacetsResponseVal dator;
+ mport com.tw ter.search.earlyb rd_root.val dators.PassThroughResponseVal dator;
+ mport com.tw ter.search.earlyb rd_root.val dators.Serv ceResponseVal dator;
+ mport com.tw ter.search.earlyb rd_root.val dators.TermStatsResultsVal dator;
+ mport com.tw ter.search.earlyb rd_root.val dators.TopT etsResultsVal dator;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Filter responsible for handling invalid response returned by downstream services, and
- * translating them into EarlybirdResponseExceptions.
+ * F lter respons ble for handl ng  nval d response returned by downstream serv ces, and
+ * translat ng t m  nto Earlyb rdResponseExcept ons.
  */
-public class ServiceResponseValidationFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+publ c class Serv ceResponseVal dat onF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  private final Map<EarlybirdRequestType, ServiceResponseValidator<EarlybirdResponse>>
-      requestTypeToResponseValidators = new HashMap<>();
-  private final EarlybirdCluster cluster;
+  pr vate f nal Map<Earlyb rdRequestType, Serv ceResponseVal dator<Earlyb rdResponse>>
+      requestTypeToResponseVal dators = new HashMap<>();
+  pr vate f nal Earlyb rdCluster cluster;
 
   /**
-   * Creates a new filter for handling invalid response
+   * Creates a new f lter for handl ng  nval d response
    */
-  public ServiceResponseValidationFilter(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  publ c Serv ceResponseVal dat onF lter(Earlyb rdCluster cluster) {
+    t .cluster = cluster;
 
-    ServiceResponseValidator<EarlybirdResponse> passThroughValidator =
-        new PassThroughResponseValidator();
+    Serv ceResponseVal dator<Earlyb rdResponse> passThroughVal dator =
+        new PassThroughResponseVal dator();
 
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.FACETS, new FacetsResponseValidator(cluster));
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.RECENCY, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.RELEVANCE, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.STRICT_RECENCY, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.TERM_STATS, new TermStatsResultsValidator(cluster));
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.TOP_TWEETS, new TopTweetsResultsValidator(cluster));
+    requestTypeToResponseVal dators
+        .put(Earlyb rdRequestType.FACETS, new FacetsResponseVal dator(cluster));
+    requestTypeToResponseVal dators
+        .put(Earlyb rdRequestType.RECENCY, passThroughVal dator);
+    requestTypeToResponseVal dators
+        .put(Earlyb rdRequestType.RELEVANCE, passThroughVal dator);
+    requestTypeToResponseVal dators
+        .put(Earlyb rdRequestType.STR CT_RECENCY, passThroughVal dator);
+    requestTypeToResponseVal dators
+        .put(Earlyb rdRequestType.TERM_STATS, new TermStatsResultsVal dator(cluster));
+    requestTypeToResponseVal dators
+        .put(Earlyb rdRequestType.TOP_TWEETS, new TopT etsResultsVal dator(cluster));
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(requestContext).flatMap(
-        new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-          @Override
-          public Future<EarlybirdResponse> apply(EarlybirdResponse response) {
-            if (response == null) {
-              return Future.exception(new IllegalStateException(
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      f nal Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    return serv ce.apply(requestContext).flatMap(
+        new Funct on<Earlyb rdResponse, Future<Earlyb rdResponse>>() {
+          @Overr de
+          publ c Future<Earlyb rdResponse> apply(Earlyb rdResponse response) {
+             f (response == null) {
+              return Future.except on(new  llegalStateExcept on(
                                           cluster + " returned null response"));
             }
 
-            if (response.getResponseCode() == EarlybirdResponseCode.SUCCESS) {
-              return requestTypeToResponseValidators
-                .get(requestContext.getEarlybirdRequestType())
-                .validate(response);
+             f (response.getResponseCode() == Earlyb rdResponseCode.SUCCESS) {
+              return requestTypeToResponseVal dators
+                .get(requestContext.getEarlyb rdRequestType())
+                .val date(response);
             }
 
-            return Future.value(EarlybirdResponseMergeUtil.transformInvalidResponse(
+            return Future.value(Earlyb rdResponse rgeUt l.transform nval dResponse(
                 response,
-                String.format("Failure from %s (%s)", cluster, response.getResponseCode())));
+                Str ng.format("Fa lure from %s (%s)", cluster, response.getResponseCode())));
           }
         });
   }

@@ -1,520 +1,520 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
+# nclude "res ce_ut ls.h"
 
-#include <functional>
+# nclude <funct onal>
 
-REGISTER_OP("DecodeAndHashDataRecord")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("DecodeAndHashDataRecord")
+.Attr(" nputType: {u nt8, str ng}")
+. nput(" nput_bytes:  nputType")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Attr("label_features: l st( nt)")
+.Attr("  ght_features: l st( nt) = []")
+.Attr("decode_mode:  nt = 0")
+.Output("has d_data_record_handle: res ce")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that creates a handle for the hashed data record.
+A tensorflow OP that creates a handle for t  has d data record.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  keep_features: a l st of  nt  ds to keep.
+  keep_codes: t  r correspond ng code.
+  label_features: l st of feature  ds represent ng t  labels.
+    ght_features: l st of feature  ds represent ng t    ghts. Defaults to empty l st.
+  decode_mode:  nteger,  nd cates wh ch decod ng  thod to use. Let a sparse cont nuous
+    have a feature_na  and a d ct of {na : value}. 0  nd cates feature_ ds are computed
+    as hash(na ). 1  nd cates feature_ ds are computed as hash(feature_na , na )
+  shared_na : na  used by t  res ce handle  ns de t  res ce manager.
+  conta ner: na  used by t  conta ner of t  res ces.
 
-Input
-  input_bytes: Input tensor containing the serialized batch of HashedDataRecords.
+ nput
+   nput_bytes:  nput tensor conta n ng t  ser al zed batch of Has dDataRecords.
 
 Outputs
-  hashed_data_record_handle: A resource handle to batch of HashedDataRecords.
+  has d_data_record_handle: A res ce handle to batch of Has dDataRecords.
 )doc");
 
-template<typename InputType>
-class DecodeAndHashDataRecord : public OpKernel {
- public:
-  explicit DecodeAndHashDataRecord(OpKernelConstruction* context)
+template<typena   nputType>
+class DecodeAndHashDataRecord : publ c OpKernel {
+ publ c:
+  expl c  DecodeAndHashDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+    std::vector< nt64> keep_features;
+    std::vector< nt64> keep_codes;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    std::vector< nt64> label_features;
+    std::vector< nt64>   ght_features;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQU RES_OK(context, context->GetAttr("keep_features", &keep_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQU RES_OK(context, context->GetAttr("label_features", &label_features));
+    OP_REQU RES_OK(context, context->GetAttr("  ght_features", &  ght_features));
+    OP_REQU RES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_REQU RES(context, keep_features.s ze() == keep_codes.s ze(),
+                errors:: nval dArgu nt("keep keys and values must have sa  s ze."));
 
-#ifdef USE_DENSE_HASH
+# fdef USE_DENSE_HASH
     m_keep_map.set_empty_key(0);
     m_labels_map.set_empty_key(0);
-    m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+    m_  ghts_map.set_empty_key(0);
+#end f  // USE_DENSE_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (u nt64_t   = 0;   < keep_features.s ze();  ++) {
+      m_keep_map[keep_features[ ]] = keep_codes[ ];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    for (u nt64_t   = 0;   < label_features.s ze();  ++) {
+      m_labels_map[label_features[ ]] =  ;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    for (u nt64_t   = 0;   <   ght_features.s ze();  ++) {
+      m_  ghts_map[  ght_features[ ]] =  ;
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
-  int64 m_decode_mode;
+ pr vate:
+  twml::Map< nt64_t,  nt64_t> m_keep_map;
+  twml::Map< nt64_t,  nt64_t> m_labels_map;
+  twml::Map< nt64_t,  nt64_t> m_  ghts_map;
+   nt64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+      Has dDataRecordRes ce *res ce = nullptr;
+      OP_REQU RES_OK(context, makeRes ceHandle<Has dDataRecordRes ce>(context, 0, &res ce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      int batch_size = getBatchSize<InputType>(resource->input);
-      int num_labels = static_cast<int>(m_labels_map.size());
-      int num_weights = static_cast<int>(m_weights_map.size());
+      // Store t   nput bytes  n t  res ce so    snt freed before t  res ce.
+      // T   s necessary because   are not copy ng t  contents for tensors.
+      res ce-> nput = context-> nput(0);
+       nt batch_s ze = getBatchS ze< nputType>(res ce-> nput);
+       nt num_labels = stat c_cast< nt>(m_labels_map.s ze());
+       nt num_  ghts = stat c_cast< nt>(m_  ghts_map.s ze());
 
-      twml::HashedDataRecordReader reader;
+      twml::Has dDataRecordReader reader;
       reader.setKeepMap(&m_keep_map);
       reader.setLabelsMap(&m_labels_map);
       reader.setDecodeMode(m_decode_mode);
 
-      // Do not set weight map if it is empty. This will take a faster path.
-      if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+      // Do not set   ght map  f    s empty. T  w ll take a faster path.
+       f (num_  ghts != 0) {
+        reader.set  ghtsMap(&m_  ghts_map);
       }
 
-      resource->records.clear();
-      resource->records.reserve(batch_size);
+      res ce->records.clear();
+      res ce->records.reserve(batch_s ze);
 
-      int64 total_size = 0;
+       nt64 total_s ze = 0;
 
-      for (int id = 0; id < batch_size; id++) {
-        const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, id);
-        reader.setBuffer(input_bytes);
-        resource->records.emplace_back(num_labels, num_weights);
-        resource->records[id].decode(reader);
-        total_size += static_cast<int64>(resource->records[id].totalSize());
+      for ( nt  d = 0;  d < batch_s ze;  d++) {
+        const u nt8_t * nput_bytes = get nputBytes< nputType>(res ce-> nput,  d);
+        reader.setBuffer( nput_bytes);
+        res ce->records.emplace_back(num_labels, num_  ghts);
+        res ce->records[ d].decode(reader);
+        total_s ze += stat c_cast< nt64>(res ce->records[ d].totalS ze());
       }
 
-      resource->total_size = total_size;
-      resource->num_labels = num_labels;
-      resource->num_weights = num_weights;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      res ce->total_s ze = total_s ze;
+      res ce->num_labels = num_labels;
+      res ce->num_  ghts = num_  ghts;
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetIdsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("ids: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("Get dsFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output(" ds:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns unhashed ids from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns unhas d  ds from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
 )doc");
 
-// This Kernel is used for both training and serving once the resource is created.
-class GetIdsFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetIdsFromHashedDataRecord(OpKernelConstruction* context)
+// T  Kernel  s used for both tra n ng and serv ng once t  res ce  s created.
+class Get dsFromHas dDataRecord : publ c OpKernel {
+ publ c:
+  expl c  Get dsFromHas dDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<Has dDataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
-      const int64 common_size = static_cast<int64>(common.totalSize());
-      const int64 total_size = handle->total_size;
-      TensorShape shape = {total_size};
+      const  nt64 common_s ze = stat c_cast< nt64>(common.totalS ze());
+      const  nt64 total_s ze = handle->total_s ze;
+      TensorShape shape = {total_s ze};
 
-      Tensor *ids;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
+      Tensor * ds;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
 
-      int id = 0;
-      int64 offset = 0;
-      auto ids_flat = ids->flat<int64>();
+       nt  d = 0;
+       nt64 offset = 0;
+      auto  ds_flat =  ds->flat< nt64>();
       for (const auto &record : records) {
-        // Since common features are added to each input, add the common_size to the current size.
-        // For training common_size == 0, for serving it can be a non-zero value.
-        int64 curr_size = static_cast<int64>(record.totalSize()) + common_size;
-        std::fill(ids_flat.data() + offset, ids_flat.data() + offset + curr_size, id);
-        offset += curr_size;
-        id++;
+        // S nce common features are added to each  nput, add t  common_s ze to t  current s ze.
+        // For tra n ng common_s ze == 0, for serv ng   can be a non-zero value.
+         nt64 curr_s ze = stat c_cast< nt64>(record.totalS ze()) + common_s ze;
+        std::f ll( ds_flat.data() + offset,  ds_flat.data() + offset + curr_s ze,  d);
+        offset += curr_s ze;
+         d++;
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
 
-// OutType: Output Tensor Type. FieldType: The storage type used inside HashedDatarecord.
-template<typename OutType, typename FieldType>
-class GetOutputFromHashedDataRecord : public OpKernel {
+// OutType: Output Tensor Type. F eldType: T  storage type used  ns de Has dDatarecord.
+template<typena  OutType, typena  F eldType>
+class GetOutputFromHas dDataRecord : publ c OpKernel {
  protected:
-  using Getter = std::function<const std::vector<FieldType>&(const twml::HashedDataRecord &)>;
+  us ng Getter = std::funct on<const std::vector<F eldType>&(const twml::Has dDataRecord &)>;
   Getter getter;
 
- public:
-  explicit GetOutputFromHashedDataRecord(OpKernelConstruction* context)
+ publ c:
+  expl c  GetOutputFromHas dDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<Has dDataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
-      const int64 total_size = handle->total_size;
-      TensorShape shape = {total_size};
+      const  nt64 total_s ze = handle->total_s ze;
+      TensorShape shape = {total_s ze};
 
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &output));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, &output));
 
       const auto &common_output = getter(common);
 
       auto output_data = output->flat<OutType>().data();
       for (const auto &record : records) {
-        // This is does not copy anything during training as common_size == 0
-        // It will copy the relevant common features coming from a batch prediction request.
-        output_data = std::copy(common_output.begin(), common_output.end(), output_data);
+        // T   s does not copy anyth ng dur ng tra n ng as common_s ze == 0
+        //   w ll copy t  relevant common features com ng from a batch pred ct on request.
+        output_data = std::copy(common_output.beg n(), common_output.end(), output_data);
 
-        // Copy the current record to output.
+        // Copy t  current record to output.
         const auto& rec_output = getter(record);
-        output_data = std::copy(rec_output.begin(), rec_output.end(), output_data);
+        output_data = std::copy(rec_output.beg n(), rec_output.end(), output_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetUKeysFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("ukeys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetUKeysFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("ukeys:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns unhashed keys from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns unhas d keys from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ukeys: unhased keys / raw feature ids from the original request.
+  ukeys: unhased keys / raw feature  ds from t  or g nal request.
 )doc");
 
-class GetUKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
- public:
-  explicit GetUKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
+class GetUKeysFromHas dDataRecord : publ c GetOutputFromHas dDataRecord< nt64,  nt64_t> {
+ publ c:
+  expl c  GetUKeysFromHas dDataRecord(OpKernelConstruct on* context)
+      : GetOutputFromHas dDataRecord< nt64,  nt64_t>(context){
+    getter = [](const twml::Has dDataRecord &record) -> const std::vector< nt64_t> & {
       return record.keys();
     };
   }
 };
 
-REGISTER_OP("GetKeysFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("keys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetKeysFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("keys:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns keys from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns keys from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  keys: keys after raw feature ids are hashed with values (int64)
+  keys: keys after raw feature  ds are has d w h values ( nt64)
 )doc");
 
-class GetKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
- public:
-  explicit GetKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.transformed_keys();
+class GetKeysFromHas dDataRecord : publ c GetOutputFromHas dDataRecord< nt64,  nt64_t> {
+ publ c:
+  expl c  GetKeysFromHas dDataRecord(OpKernelConstruct on* context)
+      : GetOutputFromHas dDataRecord< nt64,  nt64_t>(context){
+    getter = [](const twml::Has dDataRecord &record) -> const std::vector< nt64_t> & {
+      return record.transfor d_keys();
     };
   }
 };
 
-REGISTER_OP("GetValuesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
+REG STER_OP("GetValuesFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns values from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns values from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
   values: feature values.
 )doc");
 
-class GetValuesFromHashedDataRecord : public GetOutputFromHashedDataRecord<float, double> {
- public:
-  explicit GetValuesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<float, double>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<double> & {
+class GetValuesFromHas dDataRecord : publ c GetOutputFromHas dDataRecord<float, double> {
+ publ c:
+  expl c  GetValuesFromHas dDataRecord(OpKernelConstruct on* context)
+      : GetOutputFromHas dDataRecord<float, double>(context){
+    getter = [](const twml::Has dDataRecord &record) -> const std::vector<double> & {
       return record.values();
     };
   }
 };
 
-REGISTER_OP("GetCodesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("codes: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetCodesFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("codes:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns codes from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns codes from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  codes: deepbird feature code, usually from A,B,C,D ... in the config.
+  codes: deepb rd feature code, usually from A,B,C,D ...  n t  conf g.
 )doc");
 
-class GetCodesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
- public:
-  explicit GetCodesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
+class GetCodesFromHas dDataRecord : publ c GetOutputFromHas dDataRecord< nt64,  nt64_t> {
+ publ c:
+  expl c  GetCodesFromHas dDataRecord(OpKernelConstruct on* context)
+      : GetOutputFromHas dDataRecord< nt64,  nt64_t>(context){
+    getter = [](const twml::Has dDataRecord &record) -> const std::vector< nt64_t> & {
       return record.codes();
     };
   }
 };
 
-REGISTER_OP("GetTypesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("types: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetTypesFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("types:  nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns types from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns types from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  types: feature types corresponding to BINARY, DISCRETE, etc.
+  types: feature types correspond ng to B NARY, D SCRETE, etc.
 )doc");
 
-class GetTypesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int8, uint8_t> {
- public:
-  explicit GetTypesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int8, uint8_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<uint8_t> & {
+class GetTypesFromHas dDataRecord : publ c GetOutputFromHas dDataRecord< nt8, u nt8_t> {
+ publ c:
+  expl c  GetTypesFromHas dDataRecord(OpKernelConstruct on* context)
+      : GetOutputFromHas dDataRecord< nt8, u nt8_t>(context){
+    getter = [](const twml::Has dDataRecord &record) -> const std::vector<u nt8_t> & {
       return record.types();
     };
   }
 };
 
-REGISTER_OP("GetBatchSizeFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("batch_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("GetBatchS zeFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("batch_s ze:  nt64")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that returns batch size from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns batch s ze from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  batch_size: Number of records held in the handle.
+  batch_s ze: Number of records  ld  n t  handle.
 )doc");
 
-class GetBatchSizeFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetBatchSizeFromHashedDataRecord(OpKernelConstruction* context)
+class GetBatchS zeFromHas dDataRecord : publ c OpKernel {
+ publ c:
+  expl c  GetBatchS zeFromHas dDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<Has dDataRecordRes ce>(context, 0);
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      OP_REQU RES_OK(context, context->allocate_output(0, TensorShape({}), &output));
+      output->scalar< nt64>()() = handle->records.s ze();
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetTotalSizeFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("total_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("GetTotalS zeFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("total_s ze:  nt64")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that returns total size from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns total s ze from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  total_size: Total number of keys / values in the batch.
+  total_s ze: Total number of keys / values  n t  batch.
 )doc");
 
-class GetTotalSizeFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetTotalSizeFromHashedDataRecord(OpKernelConstruction* context)
+class GetTotalS zeFromHas dDataRecord : publ c OpKernel {
+ publ c:
+  expl c  GetTotalS zeFromHas dDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<Has dDataRecordRes ce>(context, 0);
 
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      OP_REQU RES_OK(context, context->allocate_output(0, TensorShape({}), &output));
+      output->scalar< nt64>()() = handle->total_s ze;
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetLabelsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
+REG STER_OP("GetLabelsFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
 .Output("labels: float")
 .Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns labels from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns labels from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  labels: A 2D tensor of size [batch_size, num_labels] containing the label values.
+  labels: A 2D tensor of s ze [batch_s ze, num_labels] conta n ng t  label values.
 )doc");
 
-class GetLabelsFromHashedDataRecord : public OpKernel {
- private:
+class GetLabelsFromHas dDataRecord : publ c OpKernel {
+ pr vate:
   float default_label;
 
- public:
-  explicit GetLabelsFromHashedDataRecord(OpKernelConstruction* context)
+ publ c:
+  expl c  GetLabelsFromHas dDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+    OP_REQU RES_OK(context, context->GetAttr("default_label", &default_label));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<Has dDataRecordRes ce>(context, 0);
       const auto &records = handle->records;
-      const int num_labels = static_cast<int>(handle->num_labels);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
+      const  nt num_labels = stat c_cast< nt>(handle->num_labels);
+      TensorShape shape = {stat c_cast< nt64>(handle->records.s ze()), num_labels};
 
       Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, &labels));
 
-      // The default value of label is not present in data record is std::nanf
-      // For continuous labels, change that to a default_label or label.
-      auto func = [this](float label) -> float {
-        return std::isnan(label) ? default_label : label;
+      // T  default value of label  s not present  n data record  s std::nanf
+      // For cont nuous labels, change that to a default_label or label.
+      auto func = [t ](float label) -> float {
+        return std:: snan(label) ? default_label : label;
       };
 
       auto labels_data = labels->flat<float>().data();
       for (const auto &record : records) {
         const auto& rec_labels = record.labels();
-        labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
+        labels_data = std::transform(rec_labels.beg n(), rec_labels.end(), labels_data, func);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetWeightsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("Get  ghtsFromHas dDataRecord")
+. nput("has d_data_record_handle: res ce")
+.Output("  ghts: float")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns weights from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns   ghts from t  has d data record.
+ nput
+  has d_data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  weights: A 2D tensor of size [batch_size, num_weights] containing the weight values.
+    ghts: A 2D tensor of s ze [batch_s ze, num_  ghts] conta n ng t    ght values.
 )doc");
 
-class GetWeightsFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetWeightsFromHashedDataRecord(OpKernelConstruction* context)
+class Get  ghtsFromHas dDataRecord : publ c OpKernel {
+ publ c:
+  expl c  Get  ghtsFromHas dDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<Has dDataRecordRes ce>(context, 0);
       const auto &records = handle->records;
-      const int num_weights = static_cast<int>(handle->num_weights);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
+      const  nt num_  ghts = stat c_cast< nt>(handle->num_  ghts);
+      TensorShape shape = {stat c_cast< nt64>(handle->records.s ze()), num_  ghts};
 
-      Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      Tensor *  ghts;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, &  ghts));
 
-      auto weights_data = weights->flat<float>().data();
+      auto   ghts_data =   ghts->flat<float>().data();
       for (const auto &record : records) {
-        const auto& rec_weights = record.weights();
-        weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
+        const auto& rec_  ghts = record.  ghts();
+          ghts_data = std::copy(rec_  ghts.beg n(), rec_  ghts.end(),   ghts_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
 
-#define REGISTER_DECODE_AND_HASH(InputType)     \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("DecodeAndHashDataRecord")             \
-    .Device(DEVICE_CPU)                         \
-    .TypeConstraint<InputType>("InputType"),    \
-    DecodeAndHashDataRecord<InputType>);        \
+#def ne REG STER_DECODE_AND_HASH( nputType)     \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("DecodeAndHashDataRecord")             \
+    .Dev ce(DEV CE_CPU)                         \
+    .TypeConstra nt< nputType>(" nputType"),    \
+    DecodeAndHashDataRecord< nputType>);        \
 
-REGISTER_DECODE_AND_HASH(uint8)
-REGISTER_DECODE_AND_HASH(string)
+REG STER_DECODE_AND_HASH(u nt8)
+REG STER_DECODE_AND_HASH(str ng)
 
-#define REGISTER_GETTER(FIELD)                  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "FromHashedDataRecord")   \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##FromHashedDataRecord);          \
+#def ne REG STER_GETTER(F ELD)                  \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("Get" #F ELD "FromHas dDataRecord")   \
+    .Dev ce(DEV CE_CPU),                        \
+    Get##F ELD##FromHas dDataRecord);          \
 
-REGISTER_GETTER(Ids)
-REGISTER_GETTER(UKeys)
-REGISTER_GETTER(Keys)
-REGISTER_GETTER(Values)
-REGISTER_GETTER(Codes)
-REGISTER_GETTER(Types)
-REGISTER_GETTER(BatchSize)
-REGISTER_GETTER(TotalSize)
-REGISTER_GETTER(Labels)
-REGISTER_GETTER(Weights)
+REG STER_GETTER( ds)
+REG STER_GETTER(UKeys)
+REG STER_GETTER(Keys)
+REG STER_GETTER(Values)
+REG STER_GETTER(Codes)
+REG STER_GETTER(Types)
+REG STER_GETTER(BatchS ze)
+REG STER_GETTER(TotalS ze)
+REG STER_GETTER(Labels)
+REG STER_GETTER(  ghts)

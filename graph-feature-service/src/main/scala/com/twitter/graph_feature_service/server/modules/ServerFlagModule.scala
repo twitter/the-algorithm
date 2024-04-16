@@ -1,31 +1,31 @@
-package com.twitter.graph_feature_service.server.modules
+package com.tw ter.graph_feature_serv ce.server.modules
 
-import com.twitter.inject.TwitterModule
+ mport com.tw ter. nject.Tw terModule
 
-object ServerFlagNames {
-  final val NumWorkers = "service.num_workers"
-  final val ServiceRole = "service.role"
-  final val ServiceEnv = "service.env"
+object ServerFlagNa s {
+  f nal val NumWorkers = "serv ce.num_workers"
+  f nal val Serv ceRole = "serv ce.role"
+  f nal val Serv ceEnv = "serv ce.env"
 
-  final val MemCacheClientName = "service.mem_cache_client_name"
-  final val MemCachePath = "service.mem_cache_path"
+  f nal val  mCac Cl entNa  = "serv ce. m_cac _cl ent_na "
+  f nal val  mCac Path = "serv ce. m_cac _path"
 }
 
 /**
- * Initializes references to the flag values defined in the aurora.deploy file.
- * To check what the flag values are initialized in runtime, search FlagsModule in stdout
+ *  n  al zes references to t  flag values def ned  n t  aurora.deploy f le.
+ * To c ck what t  flag values are  n  al zed  n runt  , search FlagsModule  n stdout
  */
-object ServerFlagsModule extends TwitterModule {
+object ServerFlagsModule extends Tw terModule {
 
-  import ServerFlagNames._
+   mport ServerFlagNa s._
 
-  flag[Int](NumWorkers, "Num of workers")
+  flag[ nt](NumWorkers, "Num of workers")
 
-  flag[String](ServiceRole, "Service Role")
+  flag[Str ng](Serv ceRole, "Serv ce Role")
 
-  flag[String](ServiceEnv, "Service Env")
+  flag[Str ng](Serv ceEnv, "Serv ce Env")
 
-  flag[String](MemCacheClientName, "MemCache Client Name")
+  flag[Str ng]( mCac Cl entNa , " mCac  Cl ent Na ")
 
-  flag[String](MemCachePath, "MemCache Path")
+  flag[Str ng]( mCac Path, " mCac  Path")
 }

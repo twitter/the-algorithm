@@ -1,83 +1,83 @@
-package com.twitter.simclustersann.candidate_source
+package com.tw ter.s mclustersann.cand date_s ce
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.google.common.collect.Comparators
-import com.twitter.simclusters_v2.common.ClusterId
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclustersann.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNConf g
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport com.google.common.collect.Comparators
+ mport com.tw ter.s mclusters_v2.common.Cluster d
 
 /**
- * A modified version of OptimizedApproximateCosineSimilarity which uses more java streams to avoid
- * materializing intermediate collections. Its performance is still under investigation.
+ * A mod f ed vers on of Opt m zedApprox mateCos neS m lar y wh ch uses more java streams to avo d
+ * mater al z ng  nter d ate collect ons.  s performance  s st ll under  nvest gat on.
  */
-object ExperimentalApproximateCosineSimilarity extends ApproximateCosineSimilarity {
+object Exper  ntalApprox mateCos neS m lar y extends Approx mateCos neS m lar y {
 
-  final val InitialCandidateMapSize = 16384
+  f nal val  n  alCand dateMapS ze = 16384
   val MaxNumResultsUpperBound = 1000
-  final val MaxTweetCandidateAgeUpperBound = 175200
+  f nal val MaxT etCand dateAgeUpperBound = 175200
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
+  pr vate def parseT et d(embedd ng d: S mClustersEmbedd ng d): Opt on[T et d] = {
+    embedd ng d. nternal d match {
+      case  nternal d.T et d(t et d) =>
+        So (t et d)
       case _ =>
         None
     }
   }
-  private val CompareByScore: java.util.Comparator[(Long, Double)] =
-    new java.util.Comparator[(Long, Double)] {
-      override def compare(o1: (Long, Double), o2: (Long, Double)): Int = {
+  pr vate val CompareByScore: java.ut l.Comparator[(Long, Double)] =
+    new java.ut l.Comparator[(Long, Double)] {
+      overr de def compare(o1: (Long, Double), o2: (Long, Double)):  nt = {
         java.lang.Double.compare(o1._2, o2._2)
       }
     }
   class Scores(var score: Double, var norm: Double)
 
-  override def apply(
-    sourceEmbedding: SimClustersEmbedding,
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidateScoresStat: Int => Unit,
-    clusterTweetsMap: Map[ClusterId, Option[Seq[(TweetId, Double)]]] = Map.empty,
-    clusterTweetsMapArray: Map[ClusterId, Option[Array[(TweetId, Double)]]] = Map.empty
-  ): Seq[ScoredTweet] = {
-    val now = Time.now
-    val earliestTweetId =
-      if (config.maxTweetCandidateAgeHours >= MaxTweetCandidateAgeUpperBound)
-        0L // Disable max tweet age filter
+  overr de def apply(
+    s ceEmbedd ng: S mClustersEmbedd ng,
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    conf g: S mClustersANNConf g,
+    cand dateScoresStat:  nt => Un ,
+    clusterT etsMap: Map[Cluster d, Opt on[Seq[(T et d, Double)]]] = Map.empty,
+    clusterT etsMapArray: Map[Cluster d, Opt on[Array[(T et d, Double)]]] = Map.empty
+  ): Seq[ScoredT et] = {
+    val now = T  .now
+    val earl estT et d =
+       f (conf g.maxT etCand dateAgeH s >= MaxT etCand dateAgeUpperBound)
+        0L // D sable max t et age f lter
       else
-        SnowflakeId.firstIdFor(now - Duration.fromHours(config.maxTweetCandidateAgeHours))
-    val latestTweetId =
-      SnowflakeId.firstIdFor(now - Duration.fromHours(config.minTweetCandidateAgeHours))
+        Snowflake d.f rst dFor(now - Durat on.fromH s(conf g.maxT etCand dateAgeH s))
+    val latestT et d =
+      Snowflake d.f rst dFor(now - Durat on.fromH s(conf g.m nT etCand dateAgeH s))
 
-    val candidateScoresMap = new java.util.HashMap[Long, Scores](InitialCandidateMapSize)
-    val sourceTweetId = parseTweetId(sourceEmbeddingId).getOrElse(0L)
+    val cand dateScoresMap = new java.ut l.HashMap[Long, Scores]( n  alCand dateMapS ze)
+    val s ceT et d = parseT et d(s ceEmbedd ng d).getOrElse(0L)
 
-    clusterTweetsMap.foreach {
-      case (clusterId, Some(tweetScores)) =>
-        val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+    clusterT etsMap.foreach {
+      case (cluster d, So (t etScores)) =>
+        val s ceClusterScore = s ceEmbedd ng.getOrElse(cluster d)
 
-        for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-          val (tweetId, score) = tweetScores(i)
+        for (  <- 0 unt l Math.m n(t etScores.s ze, conf g.maxTopT etsPerCluster)) {
+          val (t et d, score) = t etScores( )
 
-          if (tweetId >= earliestTweetId &&
-            tweetId <= latestTweetId &&
-            tweetId != sourceTweetId) {
+           f (t et d >= earl estT et d &&
+            t et d <= latestT et d &&
+            t et d != s ceT et d) {
 
-            val scores = candidateScoresMap.get(tweetId)
-            if (scores == null) {
-              val scorePair = new Scores(
-                score = score * sourceClusterScore,
+            val scores = cand dateScoresMap.get(t et d)
+             f (scores == null) {
+              val scorePa r = new Scores(
+                score = score * s ceClusterScore,
                 norm = score * score
               )
-              candidateScoresMap.put(tweetId, scorePair)
+              cand dateScoresMap.put(t et d, scorePa r)
             } else {
-              scores.score = scores.score + (score * sourceClusterScore)
+              scores.score = scores.score + (score * s ceClusterScore)
               scores.norm = scores.norm + (score * score)
             }
           }
@@ -85,46 +85,46 @@ object ExperimentalApproximateCosineSimilarity extends ApproximateCosineSimilari
       case _ => ()
     }
 
-    candidateScoresStat(candidateScoresMap.size)
+    cand dateScoresStat(cand dateScoresMap.s ze)
 
-    val normFn: (Long, Scores) => (Long, Double) = config.annAlgorithm match {
-      case ScoringAlgorithm.LogCosineSimilarity =>
-        (candidateId: Long, score: Scores) =>
+    val normFn: (Long, Scores) => (Long, Double) = conf g.annAlgor hm match {
+      case Scor ngAlgor hm.LogCos neS m lar y =>
+        (cand date d: Long, score: Scores) =>
           (
-            candidateId,
-            score.score / sourceEmbedding.logNorm / math.log(1 + score.norm)
+            cand date d,
+            score.score / s ceEmbedd ng.logNorm / math.log(1 + score.norm)
           )
-      case ScoringAlgorithm.CosineSimilarity =>
-        (candidateId: Long, score: Scores) =>
+      case Scor ngAlgor hm.Cos neS m lar y =>
+        (cand date d: Long, score: Scores) =>
           (
-            candidateId,
-            score.score / sourceEmbedding.l2norm / math.sqrt(score.norm)
+            cand date d,
+            score.score / s ceEmbedd ng.l2norm / math.sqrt(score.norm)
           )
-      case ScoringAlgorithm.CosineSimilarityNoSourceEmbeddingNormalization =>
-        (candidateId: Long, score: Scores) =>
+      case Scor ngAlgor hm.Cos neS m lar yNoS ceEmbedd ngNormal zat on =>
+        (cand date d: Long, score: Scores) =>
           (
-            candidateId,
+            cand date d,
             score.score / math.sqrt(score.norm)
           )
-      case ScoringAlgorithm.DotProduct =>
-        (candidateId: Long, score: Scores) =>
+      case Scor ngAlgor hm.DotProduct =>
+        (cand date d: Long, score: Scores) =>
           (
-            candidateId,
+            cand date d,
             score.score
           )
     }
 
-    import scala.collection.JavaConverters._
+     mport scala.collect on.JavaConverters._
 
     val topKCollector = Comparators.greatest(
-      Math.min(config.maxNumResults, MaxNumResultsUpperBound),
+      Math.m n(conf g.maxNumResults, MaxNumResultsUpperBound),
       CompareByScore
     )
 
-    candidateScoresMap
+    cand dateScoresMap
       .entrySet().stream()
-      .map[(Long, Double)]((e: java.util.Map.Entry[Long, Scores]) => normFn(e.getKey, e.getValue))
-      .filter((s: (Long, Double)) => s._2 >= config.minScore)
+      .map[(Long, Double)]((e: java.ut l.Map.Entry[Long, Scores]) => normFn(e.getKey, e.getValue))
+      .f lter((s: (Long, Double)) => s._2 >= conf g.m nScore)
       .collect(topKCollector)
       .asScala
   }

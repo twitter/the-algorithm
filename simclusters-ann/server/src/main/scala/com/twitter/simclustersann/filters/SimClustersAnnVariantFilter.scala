@@ -1,53 +1,53 @@
-package com.twitter.simclustersann.filters
+package com.tw ter.s mclustersann.f lters
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.Service
-import com.twitter.finagle.SimpleFilter
-import com.twitter.relevance_platform.simclustersann.multicluster.ServiceNameMapper
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantException
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.S mpleF lter
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.Serv ceNa Mapper
+ mport com.tw ter.scrooge.Request
+ mport com.tw ter.scrooge.Response
+ mport com.tw ter.s mclustersann.except ons. nval dRequestForS mClustersAnnVar antExcept on
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNServ ce
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SimClustersAnnVariantFilter @Inject() (
-  serviceNameMapper: ServiceNameMapper,
-  serviceIdentifier: ServiceIdentifier,
-) extends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
-      SimClustersANNService.GetTweetCandidates.SuccessType
+@S ngleton
+class S mClustersAnnVar antF lter @ nject() (
+  serv ceNa Mapper: Serv ceNa Mapper,
+  serv ce dent f er: Serv ce dent f er,
+) extends S mpleF lter[Request[S mClustersANNServ ce.GetT etCand dates.Args], Response[
+      S mClustersANNServ ce.GetT etCand dates.SuccessType
     ]] {
-  override def apply(
-    request: Request[SimClustersANNService.GetTweetCandidates.Args],
-    service: Service[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
-      SimClustersANNService.GetTweetCandidates.SuccessType
+  overr de def apply(
+    request: Request[S mClustersANNServ ce.GetT etCand dates.Args],
+    serv ce: Serv ce[Request[S mClustersANNServ ce.GetT etCand dates.Args], Response[
+      S mClustersANNServ ce.GetT etCand dates.SuccessType
     ]]
-  ): Future[Response[SimClustersANNService.GetTweetCandidates.SuccessType]] = {
+  ): Future[Response[S mClustersANNServ ce.GetT etCand dates.SuccessType]] = {
 
-    validateRequest(request)
-    service(request)
+    val dateRequest(request)
+    serv ce(request)
   }
 
-  private def validateRequest(
-    request: Request[SimClustersANNService.GetTweetCandidates.Args]
-  ): Unit = {
-    val modelVersion = request.args.query.sourceEmbeddingId.modelVersion
-    val embeddingType = request.args.query.config.candidateEmbeddingType
+  pr vate def val dateRequest(
+    request: Request[S mClustersANNServ ce.GetT etCand dates.Args]
+  ): Un  = {
+    val modelVers on = request.args.query.s ceEmbedd ng d.modelVers on
+    val embedd ngType = request.args.query.conf g.cand dateEmbedd ngType
 
-    val actualServiceName = serviceIdentifier.service
+    val actualServ ceNa  = serv ce dent f er.serv ce
 
-    val expectedServiceName = serviceNameMapper.getServiceName(modelVersion, embeddingType)
+    val expectedServ ceNa  = serv ceNa Mapper.getServ ceNa (modelVers on, embedd ngType)
 
-    expectedServiceName match {
-      case Some(name) if name == actualServiceName => ()
+    expectedServ ceNa  match {
+      case So (na )  f na  == actualServ ceNa  => ()
       case _ =>
-        throw InvalidRequestForSimClustersAnnVariantException(
-          modelVersion,
-          embeddingType,
-          actualServiceName,
-          expectedServiceName)
+        throw  nval dRequestForS mClustersAnnVar antExcept on(
+          modelVers on,
+          embedd ngType,
+          actualServ ceNa ,
+          expectedServ ceNa )
     }
   }
 }

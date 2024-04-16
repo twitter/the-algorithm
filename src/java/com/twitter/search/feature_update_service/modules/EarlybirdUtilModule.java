@@ -1,13 +1,13 @@
-package com.twitter.search.feature_update_service.modules;
+package com.tw ter.search.feature_update_serv ce.modules;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.TwitterModule;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter. nject.Tw terModule;
 
-public class EarlybirdUtilModule extends TwitterModule {
-  public static final String PENGUIN_VERSIONS_FLAG = "penguin.versions";
+publ c class Earlyb rdUt lModule extends Tw terModule {
+  publ c stat c f nal Str ng PENGU N_VERS ONS_FLAG = "pengu n.vers ons";
 
-  public EarlybirdUtilModule() {
-    flag(PENGUIN_VERSIONS_FLAG, "penguin_6",
-        "Comma-separated list of supported Penguin versions.", Flaggable.ofString());
+  publ c Earlyb rdUt lModule() {
+    flag(PENGU N_VERS ONS_FLAG, "pengu n_6",
+        "Comma-separated l st of supported Pengu n vers ons.", Flaggable.ofStr ng());
   }
 }

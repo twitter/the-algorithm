@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-case object Float32InferInputTensorBuilder extends InferInputTensorBuilder[AnyVal] {
+case object Float32 nfer nputTensorBu lder extends  nfer nputTensorBu lder[AnyVal] {
 
-  private def toFloat(x: AnyVal): Float = {
+  pr vate def toFloat(x: AnyVal): Float = {
     x match {
       case y: Float => y
-      case y: Int => y.toFloat
+      case y:  nt => y.toFloat
       case y: Long => y.toFloat
       case y: Double => y.toFloat
-      case y => throw new UnexpectedDataTypeException(y, this)
+      case y => throw new UnexpectedDataTypeExcept on(y, t )
     }
   }
 
   def apply(
-    featureName: String,
+    featureNa : Str ng,
     featureValues: Seq[AnyVal]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildFloat32InferInputTensor(
-      featureName,
+  ): Seq[ nfer nputTensor] = {
+    val tensorShape = Seq(featureValues.s ze, 1)
+     nfer nputTensorBu lder.bu ldFloat32 nfer nputTensor(
+      featureNa ,
       featureValues.map(toFloat),
       tensorShape)
   }

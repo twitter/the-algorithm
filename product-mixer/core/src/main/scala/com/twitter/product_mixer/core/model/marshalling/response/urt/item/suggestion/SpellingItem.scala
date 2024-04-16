@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.suggest on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
 
-object SpellingItem {
-  val SpellingEntryNamespace = EntryNamespace("spelling")
+object Spell ng em {
+  val Spell ngEntryNa space = EntryNa space("spell ng")
 }
 
 /**
- * Represents a Spelling Suggestion URT item. This is primary used by Search timelines for
- * displaying Spelling correction information.
+ * Represents a Spell ng Suggest on URT  em. T   s pr mary used by Search t  l nes for
+ * d splay ng Spell ng correct on  nformat on.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/Spelling.html
+ * URT AP  Reference: https://docb rd.tw ter.b z/un f ed_r ch_t  l nes_urt/gen/com/tw ter/t  l nes/render/thr ftscala/Spell ng.html
  */
-case class SpellingItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
+case class Spell ng em(
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
   textResult: TextResult,
-  spellingActionType: Option[SpellingActionType],
-  originalQuery: Option[String])
-    extends TimelineItem {
+  spell ngAct onType: Opt on[Spell ngAct onType],
+  or g nalQuery: Opt on[Str ng])
+    extends T  l ne em {
 
-  override val entryNamespace: EntryNamespace = SpellingItem.SpellingEntryNamespace
+  overr de val entryNa space: EntryNa space = Spell ng em.Spell ngEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

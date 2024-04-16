@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.functional_component.filter
+package com.tw ter.product_m xer.core.funct onal_component.f lter
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter.SupportsConditionally
-import com.twitter.product_mixer.core.model.common
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter.SupportsCond  onally
+ mport com.tw ter.product_m xer.core.model.common
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Takes a sequence of candidates and can filter some out
+ * Takes a sequence of cand dates and can f lter so  out
  *
- * @note if you want to conditionally run a [[Filter]] you can use the mixin [[Filter.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use [[com.twitter.product_mixer.component_library.filter.ParamGatedFilter]]
+ * @note  f   want to cond  onally run a [[F lter]]   can use t  m x n [[F lter.Cond  onally]]
+ *       or to gate on a [[com.tw ter.t  l nes.conf gap .Param]]   can use [[com.tw ter.product_m xer.component_l brary.f lter.ParamGatedF lter]]
  *
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Cand date T  type of t  cand dates
  */
-trait Filter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
+tra  F lter[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]]
     extends Component
-    with SupportsConditionally[Query, Candidate] {
+    w h SupportsCond  onally[Query, Cand date] {
 
-  /** @see [[FilterIdentifier]] */
-  override val identifier: FilterIdentifier
+  /** @see [[F lter dent f er]] */
+  overr de val  dent f er: F lter dent f er
 
   /**
-   * Filter the list of candidates
+   * F lter t  l st of cand dates
    *
-   * @return a FilterResult including both the list of kept candidate and the list of removed candidates
+   * @return a F lterResult  nclud ng both t  l st of kept cand date and t  l st of removed cand dates
    */
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]]
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]]
 }
 
-object Filter {
+object F lter {
 
   /**
-   * Mixin for when you want to conditionally run a [[Filter]]
+   * M x n for w n   want to cond  onally run a [[F lter]]
    *
-   * This is a thin wrapper around [[common.Conditionally]] exposing a nicer API for the [[Filter]] specific use-case.
+   * T   s a th n wrapper around [[common.Cond  onally]] expos ng a n cer AP  for t  [[F lter]] spec f c use-case.
    */
-  trait Conditionally[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-      extends common.Conditionally[Input[Query, Candidate]] { _: Filter[Query, Candidate] =>
+  tra  Cond  onally[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]]
+      extends common.Cond  onally[ nput[Query, Cand date]] { _: F lter[Query, Cand date] =>
 
-    /** @see [[common.Conditionally.onlyIf]] */
-    def onlyIf(
+    /** @see [[common.Cond  onally.only f]] */
+    def only f(
       query: Query,
-      candidates: Seq[CandidateWithFeatures[Candidate]]
+      cand dates: Seq[Cand dateW hFeatures[Cand date]]
     ): Boolean
 
-    override final def onlyIf(input: Input[Query, Candidate]): Boolean =
-      onlyIf(input.query, input.candidates)
+    overr de f nal def only f( nput:  nput[Query, Cand date]): Boolean =
+      only f( nput.query,  nput.cand dates)
   }
 
-  /** Type alias to obscure [[Filter.Input]] from customers */
-  type SupportsConditionally[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] =
-    common.SupportsConditionally[Input[Query, Candidate]]
+  /** Type al as to obscure [[F lter. nput]] from custo rs */
+  type SupportsCond  onally[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]] =
+    common.SupportsCond  onally[ nput[Query, Cand date]]
 
-  /** A case class representing the input arguments to a [[Filter]], mostly for internal use */
-  case class Input[+Query <: PipelineQuery, +Candidate <: UniversalNoun[Any]](
+  /** A case class represent ng t   nput argu nts to a [[F lter]], mostly for  nternal use */
+  case class  nput[+Query <: P pel neQuery, +Cand date <: Un versalNoun[Any]](
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]])
+    cand dates: Seq[Cand dateW hFeatures[Cand date]])
 }

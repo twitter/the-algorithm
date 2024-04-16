@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.config;
+package com.tw ter.search.earlyb rd.conf g;
 
 /**
- * An interface for abstracting a tier's serving range.
+ * An  nterface for abstract ng a t er's serv ng range.
  */
-public interface ServingRange {
+publ c  nterface Serv ngRange {
   /**
-   * Returns the serving range's lowest tweet ID.
+   * Returns t  serv ng range's lo st t et  D.
    */
-  long getServingRangeSinceId();
+  long getServ ngRangeS nce d();
 
   /**
-   * Returns the serving range's highest tweet ID.
+   * Returns t  serv ng range's h g st t et  D.
    */
-  long getServingRangeMaxId();
+  long getServ ngRangeMax d();
 
   /**
-   * Returns the serving range's earliest time, in seconds since epoch.
+   * Returns t  serv ng range's earl est t  ,  n seconds s nce epoch.
    */
-  long getServingRangeSinceTimeSecondsFromEpoch();
+  long getServ ngRangeS nceT  SecondsFromEpoch();
 
   /**
-   * Returns the serving range's latest time, in seconds since epoch.
+   * Returns t  serv ng range's latest t  ,  n seconds s nce epoch.
    */
-  long getServingRangeUntilTimeSecondsFromEpoch();
+  long getServ ngRangeUnt lT  SecondsFromEpoch();
 }

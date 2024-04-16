@@ -1,170 +1,170 @@
-package com.twitter.search.earlybird.document;
+package com.tw ter.search.earlyb rd.docu nt;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTruthTableCounter;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchTruthTableCounter;
+ mport com.tw ter.search.common.sc ma.base.F eldNa To dMapp ng;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Thr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeaturesUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdThr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+ mport geo.google.datamodel.GeoAddressAccuracy;
 
 /**
- * Used to preprocess a ThriftDocument before indexing.
+ * Used to preprocess a Thr ftDocu nt before  ndex ng.
  */
-public final class ThriftDocumentPreprocessor {
-  private static final FieldNameToIdMapping ID_MAP = new EarlybirdFieldConstants();
-  private static final String FILTER_LINK_VALUE = EarlybirdThriftDocumentUtil.formatFilter(
-      EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
-  private static final String HAS_LINK_VALUE = EarlybirdFieldConstant.getFacetSkipFieldName(
-      EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
+publ c f nal class Thr ftDocu ntPreprocessor {
+  pr vate stat c f nal F eldNa To dMapp ng  D_MAP = new Earlyb rdF eldConstants();
+  pr vate stat c f nal Str ng F LTER_L NK_VALUE = Earlyb rdThr ftDocu ntUt l.formatF lter(
+      Earlyb rdF eldConstant.L NKS_F ELD.getF eldNa ());
+  pr vate stat c f nal Str ng HAS_L NK_VALUE = Earlyb rdF eldConstant.getFacetSk pF eldNa (
+      Earlyb rdF eldConstant.L NKS_F ELD.getF eldNa ());
 
-  private ThriftDocumentPreprocessor() {
+  pr vate Thr ftDocu ntPreprocessor() {
   }
 
   /**
-   * Processes the given document.
+   * Processes t  g ven docu nt.
    */
-  public static ThriftDocument preprocess(
-      ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema)
-      throws IOException {
-    patchArchiveThriftDocumentAccuracy(doc, cluster);
-    patchArchiveHasLinks(doc, cluster);
-    addAllMissingMinEngagementFields(doc, cluster, schema);
+  publ c stat c Thr ftDocu nt preprocess(
+      Thr ftDocu nt doc, Earlyb rdCluster cluster,  mmutableSc ma nterface sc ma)
+      throws  OExcept on {
+    patchArch veThr ftDocu ntAccuracy(doc, cluster);
+    patchArch veHasL nks(doc, cluster);
+    addAllM ss ngM nEngage ntF elds(doc, cluster, sc ma);
     return doc;
   }
 
-  private static final SearchCounter GEO_SCRUBBED_COUNT =
+  pr vate stat c f nal SearchCounter GEO_SCRUBBED_COUNT =
       SearchCounter.export("geo_scrubbed_count");
-  private static final SearchCounter GEO_ARCHIVE_PATCHED_ACCURACY_COUNT =
-      SearchCounter.export("geo_archive_patched_accuracy_count");
-  private static final SearchCounter GEO_MISSING_COORDINATE_COUNT =
-      SearchCounter.export("geo_missing_coordinate_count");
-  private static final SearchCounter ARCHIVED_LINKS_FIELD_PATCHED_COUNT =
-      SearchCounter.export("links_field_patched_count");
+  pr vate stat c f nal SearchCounter GEO_ARCH VE_PATCHED_ACCURACY_COUNT =
+      SearchCounter.export("geo_arch ve_patc d_accuracy_count");
+  pr vate stat c f nal SearchCounter GEO_M SS NG_COORD NATE_COUNT =
+      SearchCounter.export("geo_m ss ng_coord nate_count");
+  pr vate stat c f nal SearchCounter ARCH VED_L NKS_F ELD_PATCHED_COUNT =
+      SearchCounter.export("l nks_f eld_patc d_count");
 
   /**
-   * Counter for all the combinations of nullcast bit set and nullcast filter set.
+   * Counter for all t  comb nat ons of nullcast b  set and nullcast f lter set.
    *
-   * Sum over `ThriftDocumentPreprocessor_nullcast_doc_stats__nullcastBitSet_true_*` to get all docs
-   * with nullcast bit set to true.
+   * Sum over `Thr ftDocu ntPreprocessor_nullcast_doc_stats__nullcastB Set_true_*` to get all docs
+   * w h nullcast b  set to true.
    */
-  private static final SearchTruthTableCounter NULLCAST_DOC_STATS =
+  pr vate stat c f nal SearchTruthTableCounter NULLCAST_DOC_STATS =
       SearchTruthTableCounter.export(
-          "ThriftDocumentPreprocessor_nullcast_doc_stats",
-          "nullcastBitSet",
-          "nullcastFilterSet");
+          "Thr ftDocu ntPreprocessor_nullcast_doc_stats",
+          "nullcastB Set",
+          "nullcastF lterSet");
 
   /***
-   * See JIRA SEARCH-7329
+   * See J RA SEARCH-7329
    */
-  private static void patchArchiveThriftDocumentAccuracy(ThriftDocument doc,
-                                                         EarlybirdCluster cluster) {
-    ThriftField geoField = ThriftDocumentUtil.getField(
+  pr vate stat c vo d patchArch veThr ftDocu ntAccuracy(Thr ftDocu nt doc,
+                                                         Earlyb rdCluster cluster) {
+    Thr ftF eld geoF eld = Thr ftDocu ntUt l.getF eld(
         doc,
-        EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
-        ID_MAP);
-    if (geoField != null) {
-      if (!geoField.getFieldData().isSetGeoCoordinate()) {
-        GEO_MISSING_COORDINATE_COUNT.increment();
+        Earlyb rdF eldConstant.GEO_HASH_F ELD.getF eldNa (),
+         D_MAP);
+     f (geoF eld != null) {
+       f (!geoF eld.getF eldData(). sSetGeoCoord nate()) {
+        GEO_M SS NG_COORD NATE_COUNT. ncre nt();
         return;
       }
 
-      // -1 means that the data is geo scrubbed.
-      if (geoField.getFieldData().getGeoCoordinate().getAccuracy() == -1) {
-        doc.getFields().remove(geoField);
-        GEO_SCRUBBED_COUNT.increment();
-      } else if (EarlybirdCluster.isArchive(cluster)) {
-        // In archive indexing, we base precision on SearchArchiveStatus.getPrecision, which is not
-        // in the scale we want.  We always use POINT_LEVEL scale for now.
-        geoField.getFieldData().getGeoCoordinate().setAccuracy(
-            GeoAddressAccuracy.POINT_LEVEL.getCode());
-        GEO_ARCHIVE_PATCHED_ACCURACY_COUNT.increment();
+      // -1  ans that t  data  s geo scrubbed.
+       f (geoF eld.getF eldData().getGeoCoord nate().getAccuracy() == -1) {
+        doc.getF elds().remove(geoF eld);
+        GEO_SCRUBBED_COUNT. ncre nt();
+      } else  f (Earlyb rdCluster. sArch ve(cluster)) {
+        //  n arch ve  ndex ng,   base prec s on on SearchArch veStatus.getPrec s on, wh ch  s not
+        //  n t  scale   want.    always use PO NT_LEVEL scale for now.
+        geoF eld.getF eldData().getGeoCoord nate().setAccuracy(
+            GeoAddressAccuracy.PO NT_LEVEL.getCode());
+        GEO_ARCH VE_PATCHED_ACCURACY_COUNT. ncre nt();
       }
     }
   }
 
   /**
    * See SEARCH-9635
-   * This patch is used to replace
-   *   ("field":"internal","term":"__filter_links") with
-   *   ("field":"internal","term":"__has_links").
+   * T  patch  s used to replace
+   *   ("f eld":" nternal","term":"__f lter_l nks") w h
+   *   ("f eld":" nternal","term":"__has_l nks").
    */
-  private static void patchArchiveHasLinks(ThriftDocument doc, EarlybirdCluster cluster) {
-    if (!EarlybirdCluster.isArchive(cluster)) {
+  pr vate stat c vo d patchArch veHasL nks(Thr ftDocu nt doc, Earlyb rdCluster cluster) {
+     f (!Earlyb rdCluster. sArch ve(cluster)) {
       return;
     }
 
-    List<ThriftField> fieldList = ThriftDocumentUtil.getFields(doc,
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        ID_MAP);
-    for (ThriftField field : fieldList) {
-      if (field.getFieldData().getStringValue().equals(FILTER_LINK_VALUE)) {
-        field.getFieldData().setStringValue(HAS_LINK_VALUE);
-        ARCHIVED_LINKS_FIELD_PATCHED_COUNT.increment();
+    L st<Thr ftF eld> f eldL st = Thr ftDocu ntUt l.getF elds(doc,
+        Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+         D_MAP);
+    for (Thr ftF eld f eld : f eldL st) {
+       f (f eld.getF eldData().getStr ngValue().equals(F LTER_L NK_VALUE)) {
+        f eld.getF eldData().setStr ngValue(HAS_L NK_VALUE);
+        ARCH VED_L NKS_F ELD_PATCHED_COUNT. ncre nt();
         break;
       }
     }
   }
 
   /**
-   * Check whether the nullcast bit and nullcast filter are consistent in the given doc.
+   * C ck w t r t  nullcast b  and nullcast f lter are cons stent  n t  g ven doc.
    */
-  public static boolean isNullcastBitAndFilterConsistent(ThriftDocument doc,
-                                                         ImmutableSchemaInterface schema) {
-    return isNullcastBitAndFilterConsistent(doc, schema, NULLCAST_DOC_STATS);
+  publ c stat c boolean  sNullcastB AndF lterCons stent(Thr ftDocu nt doc,
+                                                          mmutableSc ma nterface sc ma) {
+    return  sNullcastB AndF lterCons stent(doc, sc ma, NULLCAST_DOC_STATS);
   }
 
-  @VisibleForTesting
-  static boolean isNullcastBitAndFilterConsistent(
-      ThriftDocument doc, ImmutableSchemaInterface schema, SearchTruthTableCounter nullCastStats) {
-    final boolean isNullcastBitSet = EarlybirdThriftDocumentUtil.isNullcastBitSet(schema, doc);
-    final boolean isNullcastFilterSet = EarlybirdThriftDocumentUtil.isNullcastFilterSet(doc);
+  @V s bleForTest ng
+  stat c boolean  sNullcastB AndF lterCons stent(
+      Thr ftDocu nt doc,  mmutableSc ma nterface sc ma, SearchTruthTableCounter nullCastStats) {
+    f nal boolean  sNullcastB Set = Earlyb rdThr ftDocu ntUt l. sNullcastB Set(sc ma, doc);
+    f nal boolean  sNullcastF lterSet = Earlyb rdThr ftDocu ntUt l. sNullcastF lterSet(doc);
 
     // Track stats.
-    nullCastStats.record(isNullcastBitSet, isNullcastFilterSet);
+    nullCastStats.record( sNullcastB Set,  sNullcastF lterSet);
 
-    return isNullcastBitSet == isNullcastFilterSet;
+    return  sNullcastB Set ==  sNullcastF lterSet;
   }
 
-  @VisibleForTesting
-  static void addAllMissingMinEngagementFields(
-      ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema
-  ) throws IOException {
-    if (!EarlybirdCluster.isArchive(cluster)) {
+  @V s bleForTest ng
+  stat c vo d addAllM ss ngM nEngage ntF elds(
+      Thr ftDocu nt doc, Earlyb rdCluster cluster,  mmutableSc ma nterface sc ma
+  ) throws  OExcept on {
+     f (!Earlyb rdCluster. sArch ve(cluster)) {
       return;
     }
-    EarlybirdFieldConstants.EarlybirdFieldConstant encodedFeatureFieldConstant =
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
-    byte[] encodedFeaturesBytes = ThriftDocumentUtil.getBytesValue(doc,
-        encodedFeatureFieldConstant.getFieldName(), ID_MAP);
-    if (encodedFeaturesBytes == null) {
+    Earlyb rdF eldConstants.Earlyb rdF eldConstant encodedFeatureF eldConstant =
+        Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD;
+    byte[] encodedFeaturesBytes = Thr ftDocu ntUt l.getBytesValue(doc,
+        encodedFeatureF eldConstant.getF eldNa (),  D_MAP);
+     f (encodedFeaturesBytes == null) {
       return;
     }
-    EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema,
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
+    Earlyb rdEncodedFeatures encodedFeatures = Earlyb rdEncodedFeaturesUt l.fromBytes(
+        sc ma,
+        Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD,
         encodedFeaturesBytes,
         0);
-    for (String field: EarlybirdFieldConstants.MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.keySet()) {
-      EarlybirdFieldConstant csfEngagementField = EarlybirdFieldConstants
-          .MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.get(field);
-      Preconditions.checkState(csfEngagementField != null);
-      int engagementCounter = encodedFeatures.getFeatureValue(csfEngagementField);
-      EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, field, engagementCounter);
+    for (Str ng f eld: Earlyb rdF eldConstants.M N_ENGAGEMENT_F ELD_TO_CSF_NAME_MAP.keySet()) {
+      Earlyb rdF eldConstant csfEngage ntF eld = Earlyb rdF eldConstants
+          .M N_ENGAGEMENT_F ELD_TO_CSF_NAME_MAP.get(f eld);
+      Precond  ons.c ckState(csfEngage ntF eld != null);
+       nt engage ntCounter = encodedFeatures.getFeatureValue(csfEngage ntF eld);
+      Earlyb rdThr ftDocu ntUt l.addNormal zedM nEngage ntF eld(doc, f eld, engage ntCounter);
     }
   }
 }

@@ -1,390 +1,390 @@
-jvm_binary(
-    name = "uua-tls-favs-bin",
-    basename = "uua-tls-favs-bin",
-    main = "com.twitter.unified_user_actions.service.TlsFavsServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:tls-favs",
+jvm_b nary(
+    na  = "uua-tls-favs-b n",
+    basena  = "uua-tls-favs-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.TlsFavsServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:tls-favs",
     ],
 )
 
 jvm_app(
-    name = "uua-tls-favs",
-    archive = "zip",
-    binary = ":uua-tls-favs-bin",
+    na  = "uua-tls-favs",
+    arch ve = "z p",
+    b nary = ":uua-tls-favs-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-client-event-bin",
-    basename = "uua-client-event-bin",
-    main = "com.twitter.unified_user_actions.service.ClientEventServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:client-event",
+jvm_b nary(
+    na  = "uua-cl ent-event-b n",
+    basena  = "uua-cl ent-event-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Cl entEventServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:cl ent-event",
     ],
 )
 
 jvm_app(
-    name = "uua-client-event",
-    archive = "zip",
-    binary = ":uua-client-event-bin",
+    na  = "uua-cl ent-event",
+    arch ve = "z p",
+    b nary = ":uua-cl ent-event-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
 
-jvm_binary(
-    name = "uua-tweetypie-event-bin",
-    basename = "uua-tweetypie-event-bin",
-    main = "com.twitter.unified_user_actions.service.TweetypieEventServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:tweetypie-event",
+jvm_b nary(
+    na  = "uua-t etyp e-event-b n",
+    basena  = "uua-t etyp e-event-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.T etyp eEventServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:t etyp e-event",
     ],
 )
 
 jvm_app(
-    name = "uua-tweetypie-event",
-    archive = "zip",
-    binary = ":uua-tweetypie-event-bin",
+    na  = "uua-t etyp e-event",
+    arch ve = "z p",
+    b nary = ":uua-t etyp e-event-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-social-graph-bin",
-    basename = "uua-social-graph-bin",
-    main = "com.twitter.unified_user_actions.service.SocialGraphServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:social-graph-event",
+jvm_b nary(
+    na  = "uua-soc al-graph-b n",
+    basena  = "uua-soc al-graph-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Soc alGraphServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:soc al-graph-event",
     ],
 )
 
 jvm_app(
-    name = "uua-social-graph",
-    archive = "zip",
-    binary = ":uua-social-graph-bin",
+    na  = "uua-soc al-graph",
+    arch ve = "z p",
+    b nary = ":uua-soc al-graph-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-email-notification-event-bin",
-    basename = "uua-email-notification-event-bin",
-    main = "com.twitter.unified_user_actions.service.EmailNotificationEventServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:email-notification-event",
+jvm_b nary(
+    na  = "uua-ema l-not f cat on-event-b n",
+    basena  = "uua-ema l-not f cat on-event-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Ema lNot f cat onEventServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:ema l-not f cat on-event",
     ],
 )
 
 jvm_app(
-    name = "uua-email-notification-event",
-    archive = "zip",
-    binary = ":uua-email-notification-event-bin",
+    na  = "uua-ema l-not f cat on-event",
+    arch ve = "z p",
+    b nary = ":uua-ema l-not f cat on-event-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-user-modification-bin",
-    basename = "uua-user-modification-bin",
-    main = "com.twitter.unified_user_actions.service.UserModificationServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:user-modification-event",
+jvm_b nary(
+    na  = "uua-user-mod f cat on-b n",
+    basena  = "uua-user-mod f cat on-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.UserMod f cat onServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:user-mod f cat on-event",
     ],
 )
 
 jvm_app(
-    name = "uua-user-modification",
-    archive = "zip",
-    binary = ":uua-user-modification-bin",
+    na  = "uua-user-mod f cat on",
+    arch ve = "z p",
+    b nary = ":uua-user-mod f cat on-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-ads-callback-engagements-bin",
-    basename = "uua-ads-callback-engagements-bin",
-    main = "com.twitter.unified_user_actions.service.AdsCallbackEngagementsServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:ads-callback-engagements",
+jvm_b nary(
+    na  = "uua-ads-callback-engage nts-b n",
+    basena  = "uua-ads-callback-engage nts-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.AdsCallbackEngage ntsServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:ads-callback-engage nts",
     ],
 )
 
 jvm_app(
-    name = "uua-ads-callback-engagements",
-    archive = "zip",
-    binary = ":uua-ads-callback-engagements-bin",
+    na  = "uua-ads-callback-engage nts",
+    arch ve = "z p",
+    b nary = ":uua-ads-callback-engage nts-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-favorite-archival-events-bin",
-    basename = "uua-favorite-archival-events-bin",
-    main = "com.twitter.unified_user_actions.service.FavoriteArchivalEventsServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:favorite-archival-events",
+jvm_b nary(
+    na  = "uua-favor e-arch val-events-b n",
+    basena  = "uua-favor e-arch val-events-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Favor eArch valEventsServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:favor e-arch val-events",
     ],
 )
 
 jvm_app(
-    name = "uua-favorite-archival-events",
-    archive = "zip",
-    binary = ":uua-favorite-archival-events-bin",
+    na  = "uua-favor e-arch val-events",
+    arch ve = "z p",
+    b nary = ":uua-favor e-arch val-events-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-retweet-archival-events-bin",
-    basename = "uua-retweet-archival-events-bin",
-    main = "com.twitter.unified_user_actions.service.RetweetArchivalEventsServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:retweet-archival-events",
+jvm_b nary(
+    na  = "uua-ret et-arch val-events-b n",
+    basena  = "uua-ret et-arch val-events-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Ret etArch valEventsServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:ret et-arch val-events",
     ],
 )
 
 jvm_app(
-    name = "uua-retweet-archival-events",
-    archive = "zip",
-    binary = ":uua-retweet-archival-events-bin",
+    na  = "uua-ret et-arch val-events",
+    arch ve = "z p",
+    b nary = ":uua-ret et-arch val-events-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "rekey-uua-bin",
-    basename = "rekey-uua-bin",
-    main = "com.twitter.unified_user_actions.service.RekeyUuaServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:rekey-uua",
+jvm_b nary(
+    na  = "rekey-uua-b n",
+    basena  = "rekey-uua-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.RekeyUuaServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:rekey-uua",
     ],
 )
 
 jvm_app(
-    name = "rekey-uua",
-    archive = "zip",
-    binary = ":rekey-uua-bin",
+    na  = "rekey-uua",
+    arch ve = "z p",
+    b nary = ":rekey-uua-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "rekey-uua-iesource-bin",
-    basename = "rekey-uua-iesource-bin",
-    main = "com.twitter.unified_user_actions.service.RekeyUuaIesourceServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:rekey-uua-iesource",
+jvm_b nary(
+    na  = "rekey-uua- es ce-b n",
+    basena  = "rekey-uua- es ce-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.RekeyUua es ceServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:rekey-uua- es ce",
     ],
 )
 
 jvm_app(
-    name = "rekey-uua-iesource",
-    archive = "zip",
-    binary = ":rekey-uua-iesource-bin",
+    na  = "rekey-uua- es ce",
+    arch ve = "z p",
+    b nary = ":rekey-uua- es ce-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-enrichment-planner-bin",
-    basename = "uua-enrichment-planner-bin",
-    main = "com.twitter.unified_user_actions.service.EnrichmentPlannerServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:enrichment-planner",
+jvm_b nary(
+    na  = "uua-enr ch nt-planner-b n",
+    basena  = "uua-enr ch nt-planner-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Enr ch ntPlannerServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:enr ch nt-planner",
     ],
 )
 
 jvm_app(
-    name = "uua-enrichment-planner",
-    archive = "zip",
-    binary = ":uua-enrichment-planner-bin",
+    na  = "uua-enr ch nt-planner",
+    arch ve = "z p",
+    b nary = ":uua-enr ch nt-planner-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-jvm_binary(
-    name = "uua-enricher-bin",
-    basename = "uua-enricher-bin",
-    main = "com.twitter.unified_user_actions.service.EnricherServiceMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
-        "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:enricher",
+jvm_b nary(
+    na  = "uua-enr c r-b n",
+    basena  = "uua-enr c r-b n",
+    ma n = "com.tw ter.un f ed_user_act ons.serv ce.Enr c rServ ceMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
+        "un f ed_user_act ons/serv ce/src/ma n/res ces",
+        "un f ed_user_act ons/serv ce/src/ma n/scala/com/tw ter/un f ed_user_act ons/serv ce:enr c r",
     ],
 )
 
 jvm_app(
-    name = "uua-enricher",
-    archive = "zip",
-    binary = ":uua-enricher-bin",
+    na  = "uua-enr c r",
+    arch ve = "z p",
+    b nary = ":uua-enr c r-b n",
     bundles = [
         bundle(
-            fileset = ["**/*"],
-            owning_target = "unified_user_actions/service/src/main/resources:files",
-            rel_path = "unified_user_actions/service/src/main/resources",
+            f leset = ["**/*"],
+            own ng_target = "un f ed_user_act ons/serv ce/src/ma n/res ces:f les",
+            rel_path = "un f ed_user_act ons/serv ce/src/ma n/res ces",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

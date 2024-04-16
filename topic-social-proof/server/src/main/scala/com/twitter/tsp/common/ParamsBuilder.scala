@@ -1,98 +1,98 @@
-package com.twitter.tsp.common
+package com.tw ter.tsp.common
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.UserRecipient
-import com.twitter.contentrecommender.thriftscala.DisplayLocation
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.Recipient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.interests.thriftscala.TopicListingViewerContext
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.configapi.RequestContext
-import com.twitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.abdec der.UserRec p ent
+ mport com.tw ter.contentrecom nder.thr ftscala.D splayLocat on
+ mport com.tw ter.d scovery.common.conf gap .FeatureContextBu lder
+ mport com.tw ter.featuresw c s.FSRec p ent
+ mport com.tw ter.featuresw c s.Rec p ent
+ mport com.tw ter.featuresw c s.UserAgent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nterests.thr ftscala.Top cL st ngV e rContext
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.t  l nes.conf gap .RequestContext
+ mport com.tw ter.t  l nes.conf gap .abdec der.Logg ngABDec derExper  ntContext
 
-case class ParamsBuilder(
-  featureContextBuilder: FeatureContextBuilder,
-  abDecider: LoggingABDecider,
-  overridesConfig: configapi.Config,
-  statsReceiver: StatsReceiver) {
+case class ParamsBu lder(
+  featureContextBu lder: FeatureContextBu lder,
+  abDec der: Logg ngABDec der,
+  overr desConf g: conf gap .Conf g,
+  statsRece ver: StatsRece ver) {
 
-  def buildFromTopicListingViewerContext(
-    topicListingViewerContext: Option[TopicListingViewerContext],
-    displayLocation: DisplayLocation,
-    userRoleOverride: Option[Set[String]] = None
+  def bu ldFromTop cL st ngV e rContext(
+    top cL st ngV e rContext: Opt on[Top cL st ngV e rContext],
+    d splayLocat on: D splayLocat on,
+    userRoleOverr de: Opt on[Set[Str ng]] = None
   ): Params = {
 
-    topicListingViewerContext.flatMap(_.userId) match {
-      case Some(userId) =>
-        val userRecipient = ParamsBuilder.toFeatureSwitchRecipientWithTopicContext(
-          userId,
-          userRoleOverride,
-          topicListingViewerContext,
-          Some(displayLocation)
+    top cL st ngV e rContext.flatMap(_.user d) match {
+      case So (user d) =>
+        val userRec p ent = ParamsBu lder.toFeatureSw chRec p entW hTop cContext(
+          user d,
+          userRoleOverr de,
+          top cL st ngV e rContext,
+          So (d splayLocat on)
         )
 
-        overridesConfig(
+        overr desConf g(
           requestContext = RequestContext(
-            userId = Some(userId),
-            experimentContext = LoggingABDeciderExperimentContext(
-              abDecider,
-              Some(UserRecipient(userId, Some(userId)))),
-            featureContext = featureContextBuilder(
-              Some(userId),
-              Some(userRecipient)
+            user d = So (user d),
+            exper  ntContext = Logg ngABDec derExper  ntContext(
+              abDec der,
+              So (UserRec p ent(user d, So (user d)))),
+            featureContext = featureContextBu lder(
+              So (user d),
+              So (userRec p ent)
             )
           ),
-          statsReceiver
+          statsRece ver
         )
       case _ =>
-        throw new IllegalArgumentException(
-          s"${this.getClass.getSimpleName} tried to build Param for a request without a userId"
+        throw new  llegalArgu ntExcept on(
+          s"${t .getClass.getS mpleNa } tr ed to bu ld Param for a request w hout a user d"
         )
     }
   }
 }
 
-object ParamsBuilder {
+object ParamsBu lder {
 
-  def toFeatureSwitchRecipientWithTopicContext(
-    userId: Long,
-    userRolesOverride: Option[Set[String]],
-    context: Option[TopicListingViewerContext],
-    displayLocationOpt: Option[DisplayLocation]
-  ): Recipient = {
-    val userRoles = userRolesOverride match {
-      case Some(overrides) => Some(overrides)
+  def toFeatureSw chRec p entW hTop cContext(
+    user d: Long,
+    userRolesOverr de: Opt on[Set[Str ng]],
+    context: Opt on[Top cL st ngV e rContext],
+    d splayLocat onOpt: Opt on[D splayLocat on]
+  ): Rec p ent = {
+    val userRoles = userRolesOverr de match {
+      case So (overr des) => So (overr des)
       case _ => context.flatMap(_.userRoles.map(_.toSet))
     }
 
-    val recipient = FSRecipient(
-      userId = Some(userId),
+    val rec p ent = FSRec p ent(
+      user d = So (user d),
       userRoles = userRoles,
-      deviceId = context.flatMap(_.deviceId),
-      guestId = context.flatMap(_.guestId),
+      dev ce d = context.flatMap(_.dev ce d),
+      guest d = context.flatMap(_.guest d),
       languageCode = context.flatMap(_.languageCode),
       countryCode = context.flatMap(_.countryCode),
       userAgent = context.flatMap(_.userAgent).flatMap(UserAgent(_)),
-      isVerified = None,
-      isTwoffice = None,
-      tooClient = None,
-      highWaterMark = None
+       sVer f ed = None,
+       sTwoff ce = None,
+      tooCl ent = None,
+      h ghWaterMark = None
     )
-    displayLocationOpt match {
-      case Some(displayLocation) =>
-        recipient.withCustomFields(displayLocationCustomFieldMap(displayLocation))
+    d splayLocat onOpt match {
+      case So (d splayLocat on) =>
+        rec p ent.w hCustomF elds(d splayLocat onCustomF eldMap(d splayLocat on))
       case None =>
-        recipient
+        rec p ent
     }
   }
 
-  private val DisplayLocationCustomField = "display_location"
+  pr vate val D splayLocat onCustomF eld = "d splay_locat on"
 
-  def displayLocationCustomFieldMap(displayLocation: DisplayLocation): (String, String) =
-    DisplayLocationCustomField -> displayLocation.toString
+  def d splayLocat onCustomF eldMap(d splayLocat on: D splayLocat on): (Str ng, Str ng) =
+    D splayLocat onCustomF eld -> d splayLocat on.toStr ng
 
 }

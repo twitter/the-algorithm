@@ -1,329 +1,329 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.Monoid
-import com.twitter.logging.Logger
-import com.twitter.scalding.{Execution, TypedPipe, TypedTsv}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import java.util
-import no.uib.cipr.matrix.Matrix
-import no.uib.cipr.matrix.sparse.{ArpackSym, LinkedSparseMatrix}
-import scala.collection.JavaConverters._
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.scald ng.{Execut on, TypedP pe, TypedTsv}
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocKeyValS ces
+ mport java.ut l
+ mport no.u b.c pr.matr x.Matr x
+ mport no.u b.c pr.matr x.sparse.{ArpackSym, L nkedSparseMatr x}
+ mport scala.collect on.JavaConverters._
 
-object EigenVectorsForSparseSymmetric {
+object E genVectorsForSparseSym tr c {
   val log: Logger = Logger()
 
   /**
-   * Construct matrix from the rows of the matrix, specified as a map. The outer map is indexed by rowId, and the inner maps are indexed by columnId.
-   * Note that the input matrix is intended to be symmetric.
+   * Construct matr x from t  rows of t  matr x, spec f ed as a map. T  outer map  s  ndexed by row d, and t   nner maps are  ndexed by column d.
+   * Note that t   nput matr x  s  ntended to be sym tr c.
    *
-   * @param map   A map specifying the rows of the matrix. The outer map is indexed by rowId, and the inner maps are indexed by columnId. Both rows and columns are zero-indexed.
-   * @param nRows number of rows in matrix
-   * @param nCols number of columns in matrix
+   * @param map   A map spec fy ng t  rows of t  matr x. T  outer map  s  ndexed by row d, and t   nner maps are  ndexed by column d. Both rows and columns are zero- ndexed.
+   * @param nRows number of rows  n matr x
+   * @param nCols number of columns  n matr x
    *
-   * @return the constructed matrix
+   * @return t  constructed matr x
    */
-  def getMatrix(map: Map[Int, Map[Int, Double]], nRows: Int, nCols: Int): Matrix = {
+  def getMatr x(map: Map[ nt, Map[ nt, Double]], nRows:  nt, nCols:  nt): Matr x = {
     val nonzeros = map.toSeq.flatMap {
-      case (i, subMap) =>
+      case ( , subMap) =>
         subMap.toSeq.map {
           case (j, value) =>
-            (i, j, value)
+            ( , j, value)
         }
     }
-    getMatrix(nonzeros, nRows, nCols)
+    getMatr x(nonzeros, nRows, nCols)
   }
 
   /**
-   * Construct matrix from iterable of the non-zero entries. Note that the input matrix is intended to be symmetric.
+   * Construct matr x from  erable of t  non-zero entr es. Note that t   nput matr x  s  ntended to be sym tr c.
    *
-   * @param nonzeros non-zeros in (i, j, v) format, where i is row, j is column, and v is value. Both rows and columns are zero-indexed.
-   * @param nRows    number of rows in matrix
-   * @param nCols    number of columns in matrix
+   * @param nonzeros non-zeros  n ( , j, v) format, w re    s row, j  s column, and v  s value. Both rows and columns are zero- ndexed.
+   * @param nRows    number of rows  n matr x
+   * @param nCols    number of columns  n matr x
    *
-   * @return the constructed matrix
+   * @return t  constructed matr x
    */
-  def getMatrix(nonzeros: Iterable[(Int, Int, Double)], nRows: Int, nCols: Int): Matrix = {
-    val matrix = new LinkedSparseMatrix(nRows, nCols)
-    var numEntries = 0
+  def getMatr x(nonzeros:  erable[( nt,  nt, Double)], nRows:  nt, nCols:  nt): Matr x = {
+    val matr x = new L nkedSparseMatr x(nRows, nCols)
+    var numEntr es = 0
     var maxRow = 0
     var maxCol = 0
 
     nonzeros.foreach {
-      case (i, j, v) =>
-        if (i > maxRow) {
-          maxRow = i
+      case ( , j, v) =>
+         f (  > maxRow) {
+          maxRow =  
         }
-        if (j > maxCol) {
+         f (j > maxCol) {
           maxCol = j
         }
-        numEntries += 1
-        matrix.set(i, j, v)
+        numEntr es += 1
+        matr x.set( , j, v)
     }
-    log.info(
-      "Finished building matrix with %d entries and maxRow %d and maxCol %d"
-        .format(numEntries, maxRow, maxCol))
+    log. nfo(
+      "F n s d bu ld ng matr x w h %d entr es and maxRow %d and maxCol %d"
+        .format(numEntr es, maxRow, maxCol))
 
-    matrix
+    matr x
   }
 
   /**
-   * Prints out various diagnostics about how much the given matrix differs from a perfect
-   * symmetric matrix. If (i,j) and (j,i) are different, it sets both of them to be the max of the two.
-   * Call this function before invoking EVD.
+   * Pr nts out var ous d agnost cs about how much t  g ven matr x d ffers from a perfect
+   * sym tr c matr x.  f ( ,j) and (j, ) are d fferent,   sets both of t m to be t  max of t  two.
+   * Call t  funct on before  nvok ng EVD.
    *
-   * @param matrix Matrix which is modified (if need be) in place.
+   * @param matr x Matr x wh ch  s mod f ed ( f need be)  n place.
    */
-  def ensureMatrixIsSymmetric(matrix: Matrix): Unit = {
-    var numUnequalEntries = 0
-    var numEntriesDifferentBy1Percent = 0
-    var numEqualEntries = 0
+  def ensureMatr x sSym tr c(matr x: Matr x): Un  = {
+    var numUnequalEntr es = 0
+    var numEntr esD fferentBy1Percent = 0
+    var numEqualEntr es = 0
     var numUnequalDueToZero = 0
     var maxUnequal = (0, 0, 0.0, 0.0)
-    matrix.iterator().asScala.foreach { entry =>
+    matr x. erator().asScala.foreach { entry =>
       val curr = entry.get()
-      val opp = matrix.get(entry.column(), entry.row())
-      if (curr == opp) {
-        numEqualEntries += 1
+      val opp = matr x.get(entry.column(), entry.row())
+       f (curr == opp) {
+        numEqualEntr es += 1
       } else {
-        numUnequalEntries += 1
-        if (opp == 0) {
+        numUnequalEntr es += 1
+         f (opp == 0) {
           numUnequalDueToZero += 1
         }
-        if (opp != 0 && (math.abs(curr - opp) / math.min(curr, opp)) > 0.01) {
-          numEntriesDifferentBy1Percent += 1
+         f (opp != 0 && (math.abs(curr - opp) / math.m n(curr, opp)) > 0.01) {
+          numEntr esD fferentBy1Percent += 1
         }
-        if (opp != 0 && math.abs(curr - opp) > maxUnequal._4) {
+         f (opp != 0 && math.abs(curr - opp) > maxUnequal._4) {
           maxUnequal = (entry.row(), entry.column(), curr, math.abs(curr - opp))
         }
         val max = math.max(curr, opp)
-        matrix.set(entry.column(), entry.row(), max)
-        matrix.set(entry.row(), entry.column(), max)
+        matr x.set(entry.column(), entry.row(), max)
+        matr x.set(entry.row(), entry.column(), max)
       }
     }
 
-    var numUnEqualPrinted = 0
-    matrix.iterator().asScala.foreach { entry =>
-      val opp = matrix.get(entry.column(), entry.row())
-      if (numUnEqualPrinted < 10 && entry.get() != opp) {
-        numUnEqualPrinted += 1
-        log.info(
-          "Entries for (%d, %d) are %s and %s"
+    var numUnEqualPr nted = 0
+    matr x. erator().asScala.foreach { entry =>
+      val opp = matr x.get(entry.column(), entry.row())
+       f (numUnEqualPr nted < 10 && entry.get() != opp) {
+        numUnEqualPr nted += 1
+        log. nfo(
+          "Entr es for (%d, %d) are %s and %s"
             .format(entry.row(), entry.column(), entry.get(), opp))
       }
     }
 
-    log.info(
-      "Num unequal entries: %d, num unequal due to zero: %d, num unequal by 1percent or more: %d, num equal entries: %d, maxUnequal: %s"
+    log. nfo(
+      "Num unequal entr es: %d, num unequal due to zero: %d, num unequal by 1percent or more: %d, num equal entr es: %d, maxUnequal: %s"
         .format(
-          numUnequalEntries,
+          numUnequalEntr es,
           numUnequalDueToZero,
-          numEntriesDifferentBy1Percent,
-          numEqualEntries,
+          numEntr esD fferentBy1Percent,
+          numEqualEntr es,
           maxUnequal))
   }
 
   /**
-   * Get the top-k eigenvalues (largest magnitude) and eigenvectors for an input matrix.
-   * Top eigenvalues means they're the largest in magnitude.
-   * Input matrix needs to be perfectly symmetric; if it's not, this function will fail.
+   * Get t  top-k e genvalues (largest magn ude) and e genvectors for an  nput matr x.
+   * Top e genvalues  ans t y're t  largest  n magn ude.
+   *  nput matr x needs to be perfectly sym tr c;  f  's not, t  funct on w ll fa l.
    *
-   * Many of the eigenvectors will have very small values along most of the dimensions. This method also
-   * only retains the bigger entries in an eigenvector.
+   * Many of t  e genvectors w ll have very small values along most of t  d  ns ons. T   thod also
+   * only reta ns t  b gger entr es  n an e genvector.
    *
-   * @param matrix               symmetric input matrix.
-   * @param k                    how many of the top eigenvectors to get.
-   * @param ratioToLargestCutoff An entry needs to be at least 1/ratioToLargestCutoff of the biggest entry in that vector to be retained.
+   * @param matr x               sym tr c  nput matr x.
+   * @param k                    how many of t  top e genvectors to get.
+   * @param rat oToLargestCutoff An entry needs to be at least 1/rat oToLargestCutoff of t  b ggest entry  n that vector to be reta ned.
    *
-   * @return seq of (eigenvalue, eigenvector) pairs.
+   * @return seq of (e genvalue, e genvector) pa rs.
    */
   def getTruncatedEVD(
-    matrix: Matrix,
-    k: Int,
-    ratioToLargestCutoff: Float
-  ): Seq[(Double, Seq[(Int, Double)])] = {
-    val solver = new ArpackSym(matrix)
-    val resultsMap = solver.solve(k, ArpackSym.Ritz.LM).asScala.toMap
-    val results = resultsMap.toIndexedSeq.sortBy { case (eigValue, _) => -eigValue }
-    results.zipWithIndex.map {
-      case ((eigValue, denseVectorJava), index) =>
-        val denseVector = new Array[Double](denseVectorJava.size())
-        denseVector.indices.foreach { index => denseVector(index) = denseVectorJava.get(index) }
+    matr x: Matr x,
+    k:  nt,
+    rat oToLargestCutoff: Float
+  ): Seq[(Double, Seq[( nt, Double)])] = {
+    val solver = new ArpackSym(matr x)
+    val resultsMap = solver.solve(k, ArpackSym.R z.LM).asScala.toMap
+    val results = resultsMap.to ndexedSeq.sortBy { case (e gValue, _) => -e gValue }
+    results.z pW h ndex.map {
+      case ((e gValue, denseVectorJava),  ndex) =>
+        val denseVector = new Array[Double](denseVectorJava.s ze())
+        denseVector. nd ces.foreach {  ndex => denseVector( ndex) = denseVectorJava.get( ndex) }
         val denseVectorMax = denseVector.maxBy { entry => math.abs(entry) }
-        val cutOff = math.abs(denseVectorMax) / ratioToLargestCutoff
-        val significantEntries = denseVector.zipWithIndex
-          .filter { case (vectorEntry, _) => math.abs(vectorEntry) >= cutOff }
+        val cutOff = math.abs(denseVectorMax) / rat oToLargestCutoff
+        val s gn f cantEntr es = denseVector.z pW h ndex
+          .f lter { case (vectorEntry, _) => math.abs(vectorEntry) >= cutOff }
           .sortBy { case (vectorEntry, _) => -1 * math.abs(vectorEntry) }
-        (eigValue.toDouble, significantEntries.toSeq.map(_.swap))
+        (e gValue.toDouble, s gn f cantEntr es.toSeq.map(_.swap))
     }
   }
 
   /**
-   * Compute U*Diag*Ut - where Diag is a diagonal matrix, and U is a sparse matrix.
-   * This is primarily for testing - to make sure that the computed eigenvectors can be used to
-   * reconstruct the original matrix up to some reasonable approximation.
+   * Compute U*D ag*Ut - w re D ag  s a d agonal matr x, and U  s a sparse matr x.
+   * T   s pr mar ly for test ng - to make sure that t  computed e genvectors can be used to
+   * reconstruct t  or g nal matr x up to so  reasonable approx mat on.
    *
-   * @param diagToUColumns seq of (diagonal entries, associated column in U)
-   * @param cutoff         cutoff for including a value in the result.
+   * @param d agToUColumns seq of (d agonal entr es, assoc ated column  n U)
+   * @param cutoff         cutoff for  nclud ng a value  n t  result.
    *
-   * @return result of multiplication, returned as a map of the rows in the results.
+   * @return result of mult pl cat on, returned as a map of t  rows  n t  results.
    */
-  def uTimesDiagTimesUT(
-    diagToUColumns: Seq[(Double, Seq[(Int, Double)])],
+  def uT  sD agT  sUT(
+    d agToUColumns: Seq[(Double, Seq[( nt, Double)])],
     cutoff: Double
-  ): Map[Int, Map[Int, Double]] = {
-    val result = new util.HashMap[Int, util.HashMap[Int, Double]]()
-    diagToUColumns.foreach {
-      case (diag, uColumn) =>
+  ): Map[ nt, Map[ nt, Double]] = {
+    val result = new ut l.HashMap[ nt, ut l.HashMap[ nt, Double]]()
+    d agToUColumns.foreach {
+      case (d ag, uColumn) =>
         uColumn.foreach {
-          case (i, iVal) =>
+          case ( ,  Val) =>
             uColumn.foreach {
               case (j, jVal) =>
-                val prod = diag * iVal * jVal
-                if (result.containsKey(i)) {
-                  val newVal = if (result.get(i).containsKey(j)) {
-                    result.get(i).get(j) + prod
+                val prod = d ag *  Val * jVal
+                 f (result.conta nsKey( )) {
+                  val newVal =  f (result.get( ).conta nsKey(j)) {
+                    result.get( ).get(j) + prod
                   } else prod
-                  result.get(i).put(j, newVal)
+                  result.get( ).put(j, newVal)
                 } else {
-                  result.put(i, new util.HashMap[Int, Double])
-                  result.get(i).put(j, prod)
+                  result.put( , new ut l.HashMap[ nt, Double])
+                  result.get( ).put(j, prod)
                 }
             }
         }
     }
-    val unfiltered = result.asScala.toMap.mapValues(_.asScala.toMap)
-    unfiltered
-      .mapValues { m => m.filter { case (_, value) => math.abs(value) >= cutoff } }
-      .filter { case (_, vector) => vector.nonEmpty }
+    val unf ltered = result.asScala.toMap.mapValues(_.asScala.toMap)
+    unf ltered
+      .mapValues { m => m.f lter { case (_, value) => math.abs(value) >= cutoff } }
+      .f lter { case (_, vector) => vector.nonEmpty }
   }
 
-  /** Note: This requires a full EVD to correctly compute the inverse! :-( */
-  def getInverseFromEVD(
-    evd: Seq[(Double, Seq[(Int, Double)])],
+  /** Note: T  requ res a full EVD to correctly compute t   nverse! :-( */
+  def get nverseFromEVD(
+    evd: Seq[(Double, Seq[( nt, Double)])],
     cutoff: Double
-  ): Map[Int, Map[Int, Double]] = {
-    val evdInverse = evd.map {
-      case (eigValue, eigVector) =>
-        (1.0 / eigValue, eigVector)
+  ): Map[ nt, Map[ nt, Double]] = {
+    val evd nverse = evd.map {
+      case (e gValue, e gVector) =>
+        (1.0 / e gValue, e gVector)
     }
-    uTimesDiagTimesUT(evdInverse, cutoff)
+    uT  sD agT  sUT(evd nverse, cutoff)
   }
 }
 
-object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
+object PCAProject onMatr xAdhoc extends Tw terExecut onApp {
   val log = Logger()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, _) =>
-        Execution.withId { _ =>
-          val args = config.getArgs
-          val k = args.int("k", 100)
-          val ratioToLargestEntryInVectorCutoff = args.int("ratioToLargestEntryInVectorCutoff", 100)
-          val minClusterFavers = args.int("minClusterFavers", 1000)
-          val input = TypedPipe.from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
-          val outputDir = args("outputDir")
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, _) =>
+        Execut on.w h d { _ =>
+          val args = conf g.getArgs
+          val k = args. nt("k", 100)
+          val rat oToLargestEntry nVectorCutoff = args. nt("rat oToLargestEntry nVectorCutoff", 100)
+          val m nClusterFavers = args. nt("m nClusterFavers", 1000)
+          val  nput = TypedP pe.from(AdhocKeyValS ces.clusterDeta lsS ce(args(" nputD r")))
+          val outputD r = args("outputD r")
 
-          val filteredClustersExec =
-            input
+          val f lteredClustersExec =
+             nput
               .collect {
-                case ((_, clusterId), details)
-                    if details.numUsersWithNonZeroFavScore > minClusterFavers =>
-                  clusterId
+                case ((_, cluster d), deta ls)
+                     f deta ls.numUsersW hNonZeroFavScore > m nClusterFavers =>
+                  cluster d
               }
-              .toIterableExecution
+              .to erableExecut on
               .map { fc =>
                 val fcSet = fc.toSet
-                log.info("Number of clusters with favers more than %d is %d"
-                  .format(minClusterFavers, fcSet.size))
+                log. nfo("Number of clusters w h favers more than %d  s %d"
+                  .format(m nClusterFavers, fcSet.s ze))
                 fcSet
               }
 
-          filteredClustersExec
-            .flatMap { filteredClusters =>
-              input.flatMap {
-                case ((_, clusterId), details) =>
-                  if (filteredClusters(clusterId)) {
-                    details.neighborClusters.getOrElse(Nil).collect {
-                      case neighbor
-                          if filteredClusters(
-                            neighbor.clusterId) && neighbor.favCosineSimilarity.isDefined =>
-                        (clusterId, neighbor.clusterId, neighbor.favCosineSimilarity.get)
+          f lteredClustersExec
+            .flatMap { f lteredClusters =>
+               nput.flatMap {
+                case ((_, cluster d), deta ls) =>
+                   f (f lteredClusters(cluster d)) {
+                    deta ls.ne ghborClusters.getOrElse(N l).collect {
+                      case ne ghbor
+                           f f lteredClusters(
+                            ne ghbor.cluster d) && ne ghbor.favCos neS m lar y. sDef ned =>
+                        (cluster d, ne ghbor.cluster d, ne ghbor.favCos neS m lar y.get)
                     }
-                  } else Nil
-              }.toIterableExecution
+                  } else N l
+              }.to erableExecut on
             }
-            .flatMap { edgesIter =>
-              val edges = edgesIter.toSeq
-              val oldIdToNewId = edges
-                .flatMap { case (i, j, _) => Seq(i, j) }
-                .distinct
-                .zipWithIndex
+            .flatMap { edges er =>
+              val edges = edges er.toSeq
+              val old dToNew d = edges
+                .flatMap { case ( , j, _) => Seq( , j) }
+                .d st nct
+                .z pW h ndex
                 .toMap
 
-              val mapString = oldIdToNewId.toList
+              val mapStr ng = old dToNew d.toL st
                 .take(5).map {
                   case (old, nw) =>
-                    Seq(old, nw).mkString(" ")
-                }.mkString("\n")
-              log.info("A few entries of OldId to NewId map is")
-              log.info(mapString)
+                    Seq(old, nw).mkStr ng(" ")
+                }.mkStr ng("\n")
+              log. nfo("A few entr es of Old d to New d map  s")
+              log. nfo(mapStr ng)
 
-              val newIdToOldId = oldIdToNewId.map(_.swap)
-              log.info(
-                "Num clusters after filtering out those with no neighbors with favers more than %d is %d"
-                  .format(minClusterFavers, oldIdToNewId.size))
+              val new dToOld d = old dToNew d.map(_.swap)
+              log. nfo(
+                "Num clusters after f lter ng out those w h no ne ghbors w h favers more than %d  s %d"
+                  .format(m nClusterFavers, old dToNew d.s ze))
               val newEdges = edges.map {
-                case (oldI, oldJ, value) =>
-                  (oldIdToNewId(oldI), oldIdToNewId(oldJ), value)
+                case (old , oldJ, value) =>
+                  (old dToNew d(old ), old dToNew d(oldJ), value)
               }
-              log.info("Going to build matrix")
-              val matrix = EigenVectorsForSparseSymmetric.getMatrix(
+              log. nfo("Go ng to bu ld matr x")
+              val matr x = E genVectorsForSparseSym tr c.getMatr x(
                 newEdges,
-                oldIdToNewId.size,
-                oldIdToNewId.size)
-              EigenVectorsForSparseSymmetric.ensureMatrixIsSymmetric(matrix)
+                old dToNew d.s ze,
+                old dToNew d.s ze)
+              E genVectorsForSparseSym tr c.ensureMatr x sSym tr c(matr x)
 
-              log.info("Going to solve now for %d eigenvalues".format(k))
-              val tic = System.currentTimeMillis()
-              val results = EigenVectorsForSparseSymmetric.getTruncatedEVD(
-                matrix,
+              log. nfo("Go ng to solve now for %d e genvalues".format(k))
+              val t c = System.currentT  M ll s()
+              val results = E genVectorsForSparseSym tr c.getTruncatedEVD(
+                matr x,
                 k,
-                ratioToLargestEntryInVectorCutoff)
-              val toc = System.currentTimeMillis()
-              log.info("Finished solving in %.2f minutes".format((toc - tic) / 1000 / 60.0))
+                rat oToLargestEntry nVectorCutoff)
+              val toc = System.currentT  M ll s()
+              log. nfo("F n s d solv ng  n %.2f m nutes".format((toc - t c) / 1000 / 60.0))
 
-              val eigValues = results.map(_._1).map { x => "%.3g".format(x) }.mkString(" ")
-              val eigValueNorm = math.sqrt(results.map(_._1).map(x => x * x).sum)
-              val matrixNorm = math.sqrt(matrix.iterator().asScala.map(_.get()).map(x => x * x).sum)
+              val e gValues = results.map(_._1).map { x => "%.3g".format(x) }.mkStr ng(" ")
+              val e gValueNorm = math.sqrt(results.map(_._1).map(x => x * x).sum)
+              val matr xNorm = math.sqrt(matr x. erator().asScala.map(_.get()).map(x => x * x).sum)
 
-              println(
-                "matrixNorm %s, eigValueNorm %s, explained fraction %s"
-                  .format(matrixNorm, eigValueNorm, eigValueNorm / matrixNorm))
+              pr ntln(
+                "matr xNorm %s, e gValueNorm %s, expla ned fract on %s"
+                  .format(matr xNorm, e gValueNorm, e gValueNorm / matr xNorm))
 
-              log.info("The eigenvalues are:")
-              log.info(eigValues)
+              log. nfo("T  e genvalues are:")
+              log. nfo(e gValues)
 
-              val nnzInEigenVectors = results.map(_._2.size).sum
-              log.info("Average nnz per eigenvector using ratioToLargestCutoff %d is %.2g"
-                .format(ratioToLargestEntryInVectorCutoff, nnzInEigenVectors * 1.0 / results.size))
-              val transposedRaw = results.zipWithIndex.flatMap {
-                case ((_, eigVector), eigIndex) =>
-                  eigVector.map {
-                    case (index, vectorEntry) =>
-                      val clusterId = newIdToOldId(index)
-                      Map(clusterId -> List((eigIndex, vectorEntry)))
+              val nnz nE genVectors = results.map(_._2.s ze).sum
+              log. nfo("Average nnz per e genvector us ng rat oToLargestCutoff %d  s %.2g"
+                .format(rat oToLargestEntry nVectorCutoff, nnz nE genVectors * 1.0 / results.s ze))
+              val transposedRaw = results.z pW h ndex.flatMap {
+                case ((_, e gVector), e g ndex) =>
+                  e gVector.map {
+                    case ( ndex, vectorEntry) =>
+                      val cluster d = new dToOld d( ndex)
+                      Map(cluster d -> L st((e g ndex, vectorEntry)))
                   }
               }
-              val transposed = Monoid.sum(transposedRaw).mapValues { rowForCluster =>
+              val transposed = Mono d.sum(transposedRaw).mapValues { rowForCluster =>
                 rowForCluster
                   .map {
-                    case (dimId, weight) =>
-                      "%d:%.2g".format(dimId, weight)
-                  }.mkString(" ")
+                    case (d m d,   ght) =>
+                      "%d:%.2g".format(d m d,   ght)
+                  }.mkStr ng(" ")
               }
-              TypedPipe.from(transposed.toSeq).writeExecution(TypedTsv(outputDir))
+              TypedP pe.from(transposed.toSeq).wr eExecut on(TypedTsv(outputD r))
             }
         }
     }

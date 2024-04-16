@@ -1,47 +1,47 @@
-package com.twitter.visibility.generators
+package com.tw ter.v s b l y.generators
 
-import com.twitter.visibility.common.actions.InterstitialReason
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialCopy
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialLink
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.Translator
+ mport com.tw ter.v s b l y.common.act ons. nterst  alReason
+ mport com.tw ter.v s b l y.common.act ons.Local zed ssage
+ mport com.tw ter.v s b l y.common.act ons. ssageL nk
+ mport com.tw ter.v s b l y.results.r chtext. nterst  alReasonToR chText
+ mport com.tw ter.v s b l y.results.r chtext. nterst  alReasonToR chText. nterst  alCopy
+ mport com.tw ter.v s b l y.results.r chtext. nterst  alReasonToR chText. nterst  alL nk
+ mport com.tw ter.v s b l y.results.translat on.LearnMoreL nk
+ mport com.tw ter.v s b l y.results.translat on.Res ce
+ mport com.tw ter.v s b l y.results.translat on.Translator
 
-object InterstitialReasonToLocalizedMessage {
+object  nterst  alReasonToLocal zed ssage {
   def apply(
-    reason: InterstitialReason,
-    languageTag: String,
-  ): Option[LocalizedMessage] = {
-    InterstitialReasonToRichText.reasonToCopy(reason).map { copy =>
+    reason:  nterst  alReason,
+    languageTag: Str ng,
+  ): Opt on[Local zed ssage] = {
+     nterst  alReasonToR chText.reasonToCopy(reason).map { copy =>
       val text = Translator.translate(
-        copy.resource,
+        copy.res ce,
         languageTag
       )
-      localizeWithCopyAndText(copy, languageTag, text)
+      local zeW hCopyAndText(copy, languageTag, text)
     }
   }
 
-  private def localizeWithCopyAndText(
-    copy: InterstitialCopy,
-    languageTag: String,
-    text: String
-  ): LocalizedMessage = {
-    val learnMore = Translator.translate(LearnMoreLink, languageTag)
+  pr vate def local zeW hCopyAndText(
+    copy:  nterst  alCopy,
+    languageTag: Str ng,
+    text: Str ng
+  ): Local zed ssage = {
+    val learnMore = Translator.translate(LearnMoreL nk, languageTag)
 
-    val learnMoreLinkOpt =
-      copy.link.map { link =>
-        MessageLink(key = Resource.LearnMorePlaceholder, displayText = learnMore, uri = link)
+    val learnMoreL nkOpt =
+      copy.l nk.map { l nk =>
+         ssageL nk(key = Res ce.LearnMorePlaceholder, d splayText = learnMore, ur  = l nk)
       }
-    val additionalLinks = copy.additionalLinks.map {
-      case InterstitialLink(placeholder, copyResource, link) =>
-        val copyText = Translator.translate(copyResource, languageTag)
-        MessageLink(key = placeholder, displayText = copyText, uri = link)
+    val add  onalL nks = copy.add  onalL nks.map {
+      case  nterst  alL nk(placeholder, copyRes ce, l nk) =>
+        val copyText = Translator.translate(copyRes ce, languageTag)
+         ssageL nk(key = placeholder, d splayText = copyText, ur  = l nk)
     }
 
-    val links = learnMoreLinkOpt.toSeq ++ additionalLinks
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    val l nks = learnMoreL nkOpt.toSeq ++ add  onalL nks
+    Local zed ssage( ssage = text, language = languageTag, l nks = l nks)
   }
 }

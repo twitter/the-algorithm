@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+package com.tw ter.product_m xer.component_l brary.decorator.urt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Urt emPresentat on
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.UrtModulePresentat on
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Decorator dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseT  l neModuleBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.st ch.St ch
 
 /**
- * Decorator that will apply the provided [[urtItemCandidateDecorator]] to all the `candidates` and apply
- * the same [[UrtModulePresentation]] from [[moduleBuilder]] to each Candidate.
+ * Decorator that w ll apply t  prov ded [[urt emCand dateDecorator]] to all t  `cand dates` and apply
+ * t  sa  [[UrtModulePresentat on]] from [[moduleBu lder]] to each Cand date.
  */
-case class UrtItemInModuleDecorator[
-  Query <: PipelineQuery,
-  BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineItem
+case class Urt em nModuleDecorator[
+  Query <: P pel neQuery,
+  Bu lder nput <: Un versalNoun[Any],
+  Bu lderOutput <: T  l ne em
 ](
-  urtItemCandidateDecorator: CandidateDecorator[Query, BuilderInput],
-  moduleBuilder: BaseTimelineModuleBuilder[Query, BuilderInput],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtItemInModule"))
-    extends CandidateDecorator[Query, BuilderInput] {
+  urt emCand dateDecorator: Cand dateDecorator[Query, Bu lder nput],
+  moduleBu lder: BaseT  l neModuleBu lder[Query, Bu lder nput],
+  overr de val  dent f er: Decorator dent f er = Decorator dent f er("Urt em nModule"))
+    extends Cand dateDecorator[Query, Bu lder nput] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[BuilderInput]]
-  ): Stitch[Seq[Decoration]] = {
-    if (candidates.nonEmpty) {
-      val urtItemCandidatesWithDecoration = urtItemCandidateDecorator(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Bu lder nput]]
+  ): St ch[Seq[Decorat on]] = {
+     f (cand dates.nonEmpty) {
+      val urt emCand datesW hDecorat on = urt emCand dateDecorator(query, cand dates)
 
-      // Pass candidates to support when the module is constructed dynamically based on the list
-      val modulePresentation =
-        UrtModulePresentation(moduleBuilder(query, candidates))
+      // Pass cand dates to support w n t  module  s constructed dynam cally based on t  l st
+      val modulePresentat on =
+        UrtModulePresentat on(moduleBu lder(query, cand dates))
 
-      urtItemCandidatesWithDecoration.map { candidates =>
-        candidates.collect {
-          case Decoration(candidate, urtItemPresentation: UrtItemPresentation) =>
-            Decoration(
-              candidate,
-              urtItemPresentation.copy(modulePresentation = Some(modulePresentation)))
+      urt emCand datesW hDecorat on.map { cand dates =>
+        cand dates.collect {
+          case Decorat on(cand date, urt emPresentat on: Urt emPresentat on) =>
+            Decorat on(
+              cand date,
+              urt emPresentat on.copy(modulePresentat on = So (modulePresentat on)))
         }
       }
     } else {
-      Stitch.Nil
+      St ch.N l
     }
   }
 }

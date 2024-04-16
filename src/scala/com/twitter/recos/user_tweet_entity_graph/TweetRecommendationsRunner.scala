@@ -1,51 +1,51 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.tw ter.recos.user_t et_ent y_graph
 
-import java.util.Random
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms._
-import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetType
-import com.twitter.recos.util.Stats.trackBlockStats
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import scala.collection.JavaConverters._
+ mport java.ut l.Random
+ mport com.tw ter.concurrent.AsyncQueue
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.algor hms._
+ mport com.tw ter.graphjet.algor hms.f lters._
+ mport com.tw ter.graphjet.algor hms.count ng.TopSecondDegreeByCountResponse
+ mport com.tw ter.graphjet.algor hms.count ng.t et.TopSecondDegreeByCountForT et
+ mport com.tw ter.graphjet.algor hms.count ng.t et.TopSecondDegreeByCountRequestForT et
+ mport com.tw ter.graphjet.b part e.Node tadataLeft ndexedMult Seg ntB part eGraph
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos.graph_common.F nagleStatsRece verWrapper
+ mport com.tw ter.recos.model.SalsaQueryRunner.SalsaRunnerConf g
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.Recom ndT etEnt yRequest
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etEnt yD splayLocat on
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etType
+ mport com.tw ter.recos.ut l.Stats.trackBlockStats
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.JavaT  r
+ mport com.tw ter.ut l.Try
+ mport  .un m .ds .fastut l.longs.Long2DoubleOpenHashMap
+ mport  .un m .ds .fastut l.longs.LongOpenHashSet
+ mport scala.collect on.JavaConverters._
 
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  RecommendationType => ThriftRecommendationType
+ mport com.tw ter.graphjet.algor hms.Recom ndat onType
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.{
+  Recom ndat onType => Thr ftRecom ndat onType
 }
-import scala.collection.Map
-import scala.collection.Set
+ mport scala.collect on.Map
+ mport scala.collect on.Set
 
-object TweetRecommendationsRunner {
-  private val DefaultTweetTypes: Seq[TweetType] =
-    Seq(TweetType.Regular, TweetType.Summary, TweetType.Photo, TweetType.Player)
-  private val DefaultF1ExactSocialProofSize = 1
-  private val DefaultRareTweetRecencyMillis: Long = 7.days.inMillis
+object T etRecom ndat onsRunner {
+  pr vate val DefaultT etTypes: Seq[T etType] =
+    Seq(T etType.Regular, T etType.Summary, T etType.Photo, T etType.Player)
+  pr vate val DefaultF1ExactSoc alProofS ze = 1
+  pr vate val DefaultRareT etRecencyM ll s: Long = 7.days. nM ll s
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof type unions in thrift, it will return an empty set by default.
+   * Map val d soc al proof types spec f ed by cl ents to an array of bytes.  f cl ents do not
+   * spec fy any soc al proof type un ons  n thr ft,   w ll return an empty set by default.
    */
-  private def getSocialProofTypeUnions(
-    socialProofTypeUnions: Option[Set[Seq[SocialProofType]]]
+  pr vate def getSoc alProofTypeUn ons(
+    soc alProofTypeUn ons: Opt on[Set[Seq[Soc alProofType]]]
   ): Set[Array[Byte]] = {
-    socialProofTypeUnions
+    soc alProofTypeUn ons
       .map {
         _.map {
           _.map {
@@ -56,33 +56,33 @@ object TweetRecommendationsRunner {
       .getOrElse(Set.empty)
   }
 
-  private def getRecommendationTypes(
-    recommendationTypes: Seq[ThriftRecommendationType]
-  ): Set[RecommendationType] = {
-    recommendationTypes.flatMap {
+  pr vate def getRecom ndat onTypes(
+    recom ndat onTypes: Seq[Thr ftRecom ndat onType]
+  ): Set[Recom ndat onType] = {
+    recom ndat onTypes.flatMap {
       _ match {
-        case ThriftRecommendationType.Tweet => Some(RecommendationType.TWEET)
-        case ThriftRecommendationType.Hashtag => Some(RecommendationType.HASHTAG)
-        case ThriftRecommendationType.Url => Some(RecommendationType.URL)
+        case Thr ftRecom ndat onType.T et => So (Recom ndat onType.TWEET)
+        case Thr ftRecom ndat onType.Hashtag => So (Recom ndat onType.HASHTAG)
+        case Thr ftRecom ndat onType.Url => So (Recom ndat onType.URL)
         case _ =>
-          throw new Exception("Unmatched Recommendation Type in getRecommendationTypes")
+          throw new Except on("Unmatc d Recom ndat on Type  n getRecom ndat onTypes")
       }
     }.toSet
   }
 
-  private def convertThriftEnumsToJavaEnums(
-    maxResults: Option[Map[ThriftRecommendationType, Int]]
-  ): Map[RecommendationType, Integer] = {
+  pr vate def convertThr ftEnumsToJavaEnums(
+    maxResults: Opt on[Map[Thr ftRecom ndat onType,  nt]]
+  ): Map[Recom ndat onType,  nteger] = {
     maxResults
       .map {
         _.flatMap {
           _ match {
-            case (ThriftRecommendationType.Tweet, v) => Some((RecommendationType.TWEET, v: Integer))
-            case (ThriftRecommendationType.Hashtag, v) =>
-              Some((RecommendationType.HASHTAG, v: Integer))
-            case (ThriftRecommendationType.Url, v) => Some((RecommendationType.URL, v: Integer))
+            case (Thr ftRecom ndat onType.T et, v) => So ((Recom ndat onType.TWEET, v:  nteger))
+            case (Thr ftRecom ndat onType.Hashtag, v) =>
+              So ((Recom ndat onType.HASHTAG, v:  nteger))
+            case (Thr ftRecom ndat onType.Url, v) => So ((Recom ndat onType.URL, v:  nteger))
             case _ =>
-              throw new Exception("Unmatched Recommendation Type in convertThriftEnumsToJavaEnums")
+              throw new Except on("Unmatc d Recom ndat on Type  n convertThr ftEnumsToJavaEnums")
           }
         }
       }
@@ -92,231 +92,231 @@ object TweetRecommendationsRunner {
 }
 
 /**
- * The MagicRecsRunner creates a queue of reader threads, MagicRecs, and each one reads from the
- * graph and computes recommendations.
+ * T  Mag cRecsRunner creates a queue of reader threads, Mag cRecs, and each one reads from t 
+ * graph and computes recom ndat ons.
  */
-class TweetRecommendationsRunner(
-  bipartiteGraph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  statsReceiverWrapper: FinagleStatsReceiverWrapper) {
+class T etRecom ndat onsRunner(
+  b part eGraph: Node tadataLeft ndexedMult Seg ntB part eGraph,
+  salsaRunnerConf g: SalsaRunnerConf g,
+  statsRece verWrapper: F nagleStatsRece verWrapper) {
 
-  import TweetRecommendationsRunner._
+   mport T etRecom ndat onsRunner._
 
-  private val log: Logger = Logger()
+  pr vate val log: Logger = Logger()
 
-  private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
-  private val magicRecsFailureCounter = stats.counter("failure")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
+  pr vate val stats = statsRece verWrapper.statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val mag cRecsFa lureCounter = stats.counter("fa lure")
+  pr vate val pollCounter = stats.counter("poll")
+  pr vate val pollT  outCounter = stats.counter("pollT  out")
+  pr vate val offerCounter = stats.counter("offer")
+  pr vate val pollLatencyStat = stats.stat("pollLatency")
 
-  private val magicRecsQueue = new AsyncQueue[TopSecondDegreeByCountForTweet]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-    magicRecsQueue.offer(
-      new TopSecondDegreeByCountForTweet(
-        bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
-        statsReceiverWrapper.scope(this.getClass.getSimpleName)
+  pr vate val mag cRecsQueue = new AsyncQueue[TopSecondDegreeByCountForT et]
+  (0 unt l salsaRunnerConf g.numSalsaRunners).foreach { _ =>
+    mag cRecsQueue.offer(
+      new TopSecondDegreeByCountForT et(
+        b part eGraph,
+        salsaRunnerConf g.expectedNodesToH  nSalsa,
+        statsRece verWrapper.scope(t .getClass.getS mpleNa )
       )
     )
   }
 
-  private implicit val timer: JavaTimer = new JavaTimer(true)
+  pr vate  mpl c  val t  r: JavaT  r = new JavaT  r(true)
 
-  private def getBaseFilters(
-    staleTweetDuration: Long,
-    tweetTypes: Seq[TweetType]
+  pr vate def getBaseF lters(
+    staleT etDurat on: Long,
+    t etTypes: Seq[T etType]
   ) = {
-    List(
-      // Keep RecentTweetFilter first since it's the cheapest
-      new RecentTweetFilter(staleTweetDuration, statsReceiverWrapper),
-      new TweetCardFilter(
-        tweetTypes.contains(TweetType.Regular),
-        tweetTypes.contains(TweetType.Summary),
-        tweetTypes.contains(TweetType.Photo),
-        tweetTypes.contains(TweetType.Player),
-        false, // no promoted tweets
-        statsReceiverWrapper
+    L st(
+      // Keep RecentT etF lter f rst s nce  's t  c apest
+      new RecentT etF lter(staleT etDurat on, statsRece verWrapper),
+      new T etCardF lter(
+        t etTypes.conta ns(T etType.Regular),
+        t etTypes.conta ns(T etType.Summary),
+        t etTypes.conta ns(T etType.Photo),
+        t etTypes.conta ns(T etType.Player),
+        false, // no promoted t ets
+        statsRece verWrapper
       ),
-      new DirectInteractionsFilter(bipartiteGraph, statsReceiverWrapper),
-      new RequestedSetFilter(statsReceiverWrapper),
-      new SocialProofTypesFilter(statsReceiverWrapper)
+      new D rect nteract onsF lter(b part eGraph, statsRece verWrapper),
+      new RequestedSetF lter(statsRece verWrapper),
+      new Soc alProofTypesF lter(statsRece verWrapper)
     )
   }
 
   /**
-   * Helper method to interpret the output of MagicRecs graph
+   *  lper  thod to  nterpret t  output of Mag cRecs graph
    *
-   * @param magicRecsResponse is the response from running MagicRecs
-   * @return a sequence of candidate ids, with score and list of social proofs
+   * @param mag cRecsResponse  s t  response from runn ng Mag cRecs
+   * @return a sequence of cand date  ds, w h score and l st of soc al proofs
    */
-  private def transformMagicRecsResponse(
-    magicRecsResponse: Option[TopSecondDegreeByCountResponse]
-  ): Seq[RecommendationInfo] = {
-    val responses = magicRecsResponse match {
-      case Some(response) => response.getRankedRecommendations.asScala.toSeq
-      case _ => Nil
+  pr vate def transformMag cRecsResponse(
+    mag cRecsResponse: Opt on[TopSecondDegreeByCountResponse]
+  ): Seq[Recom ndat on nfo] = {
+    val responses = mag cRecsResponse match {
+      case So (response) => response.getRankedRecom ndat ons.asScala.toSeq
+      case _ => N l
     }
     responses
   }
 
   /**
-   * Helper function to determine different post-process filtering logic in GraphJet,
-   * based on display locations
+   *  lper funct on to determ ne d fferent post-process f lter ng log c  n GraphJet,
+   * based on d splay locat ons
    */
-  private def getFiltersByDisplayLocations(
-    displayLocation: TweetEntityDisplayLocation,
-    whitelistAuthors: LongOpenHashSet,
-    blacklistAuthors: LongOpenHashSet,
-    validSocialProofs: Array[Byte]
+  pr vate def getF ltersByD splayLocat ons(
+    d splayLocat on: T etEnt yD splayLocat on,
+    wh el stAuthors: LongOpenHashSet,
+    blackl stAuthors: LongOpenHashSet,
+    val dSoc alProofs: Array[Byte]
   ) = {
-    displayLocation match {
-      case TweetEntityDisplayLocation.MagicRecsF1 =>
+    d splayLocat on match {
+      case T etEnt yD splayLocat on.Mag cRecsF1 =>
         Seq(
-          new ANDFilters(
-            List[ResultFilter](
-              new TweetAuthorFilter(
-                bipartiteGraph,
-                whitelistAuthors,
+          new ANDF lters(
+            L st[ResultF lter](
+              new T etAuthorF lter(
+                b part eGraph,
+                wh el stAuthors,
                 new LongOpenHashSet(),
-                statsReceiverWrapper),
-              new ExactUserSocialProofSizeFilter(
-                DefaultF1ExactSocialProofSize,
-                validSocialProofs,
-                statsReceiverWrapper
+                statsRece verWrapper),
+              new ExactUserSoc alProofS zeF lter(
+                DefaultF1ExactSoc alProofS ze,
+                val dSoc alProofs,
+                statsRece verWrapper
               )
             ).asJava,
-            statsReceiverWrapper
+            statsRece verWrapper
           ),
-          // Blacklist filter must be applied separately from F1's AND filter chain
-          new TweetAuthorFilter(
-            bipartiteGraph,
+          // Blackl st f lter must be appl ed separately from F1's AND f lter cha n
+          new T etAuthorF lter(
+            b part eGraph,
             new LongOpenHashSet(),
-            blacklistAuthors,
-            statsReceiverWrapper)
+            blackl stAuthors,
+            statsRece verWrapper)
         )
-      case TweetEntityDisplayLocation.MagicRecsRareTweet =>
+      case T etEnt yD splayLocat on.Mag cRecsRareT et =>
         Seq(
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            whitelistAuthors,
-            blacklistAuthors,
-            statsReceiverWrapper),
-          new RecentEdgeMetadataFilter(
-            DefaultRareTweetRecencyMillis,
-            UserTweetEdgeTypeMask.Tweet.id.toByte,
-            statsReceiverWrapper
+          new T etAuthorF lter(
+            b part eGraph,
+            wh el stAuthors,
+            blackl stAuthors,
+            statsRece verWrapper),
+          new RecentEdge tadataF lter(
+            DefaultRareT etRecencyM ll s,
+            UserT etEdgeTypeMask.T et. d.toByte,
+            statsRece verWrapper
           )
         )
       case _ =>
         Seq(
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            whitelistAuthors,
-            blacklistAuthors,
-            statsReceiverWrapper))
+          new T etAuthorF lter(
+            b part eGraph,
+            wh el stAuthors,
+            blackl stAuthors,
+            statsRece verWrapper))
     }
   }
 
   /**
-   * Helper method to run salsa computation and convert the results to Option
+   *  lper  thod to run salsa computat on and convert t  results to Opt on
    *
-   * @param magicRecs is magicRecs reader on bipartite graph
-   * @param magicRecsRequest is the magicRecs request
-   * @return is an option of MagicRecsResponse
+   * @param mag cRecs  s mag cRecs reader on b part e graph
+   * @param mag cRecsRequest  s t  mag cRecs request
+   * @return  s an opt on of Mag cRecsResponse
    */
-  private def getMagicRecsResponse(
-    magicRecs: TopSecondDegreeByCountForTweet,
-    magicRecsRequest: TopSecondDegreeByCountRequestForTweet
+  pr vate def getMag cRecsResponse(
+    mag cRecs: TopSecondDegreeByCountForT et,
+    mag cRecsRequest: TopSecondDegreeByCountRequestForT et
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[TopSecondDegreeByCountResponse] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): Opt on[TopSecondDegreeByCountResponse] = {
     trackBlockStats(stats) {
       val random = new Random()
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
-      val magicRecsAttempt =
-        Try(magicRecs.computeRecommendations(magicRecsRequest, random)).onFailure { e =>
-          magicRecsFailureCounter.incr()
-          log.error(e, "MagicRecs computation failed")
+      // compute recs -- need to catch and pr nt except ons  re ot rw se t y are swallo d
+      val mag cRecsAttempt =
+        Try(mag cRecs.computeRecom ndat ons(mag cRecsRequest, random)).onFa lure { e =>
+          mag cRecsFa lureCounter. ncr()
+          log.error(e, "Mag cRecs computat on fa led")
         }
-      magicRecsAttempt.toOption
+      mag cRecsAttempt.toOpt on
     }
   }
 
-  private def getMagicRecsRequest(
-    request: RecommendTweetEntityRequest
-  ): TopSecondDegreeByCountRequestForTweet = {
-    val requesterId = request.requesterId
+  pr vate def getMag cRecsRequest(
+    request: Recom ndT etEnt yRequest
+  ): TopSecondDegreeByCountRequestForT et = {
+    val requester d = request.requester d
     val leftSeedNodes = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+      request.seedsW h  ghts.keys.toArray,
+      request.seedsW h  ghts.values.toArray
     )
-    val tweetsToExcludeArray = new LongOpenHashSet(request.excludedTweetIds.getOrElse(Nil).toArray)
-    val staleTweetDuration = request.maxTweetAgeInMillis.getOrElse(RecosConfig.maxTweetAgeInMillis)
-    val staleEngagementDuration =
-      request.maxEngagementAgeInMillis.getOrElse(RecosConfig.maxEngagementAgeInMillis)
-    val tweetTypes = request.tweetTypes.getOrElse(DefaultTweetTypes)
-    val tweetAuthors = new LongOpenHashSet(request.tweetAuthors.getOrElse(Nil).toArray)
-    val excludedTweetAuthors = new LongOpenHashSet(
-      request.excludedTweetAuthors.getOrElse(Nil).toArray)
-    val validSocialProofs =
-      UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
+    val t etsToExcludeArray = new LongOpenHashSet(request.excludedT et ds.getOrElse(N l).toArray)
+    val staleT etDurat on = request.maxT etAge nM ll s.getOrElse(RecosConf g.maxT etAge nM ll s)
+    val staleEngage ntDurat on =
+      request.maxEngage ntAge nM ll s.getOrElse(RecosConf g.maxEngage ntAge nM ll s)
+    val t etTypes = request.t etTypes.getOrElse(DefaultT etTypes)
+    val t etAuthors = new LongOpenHashSet(request.t etAuthors.getOrElse(N l).toArray)
+    val excludedT etAuthors = new LongOpenHashSet(
+      request.excludedT etAuthors.getOrElse(N l).toArray)
+    val val dSoc alProofs =
+      UserT etEdgeTypeMask.getUserT etGraphSoc alProofTypes(request.soc alProofTypes)
 
-    val resultFilterChain = new ResultFilterChain(
+    val resultF lterCha n = new ResultF lterCha n(
       (
-        getBaseFilters(staleTweetDuration, tweetTypes) ++
-          getFiltersByDisplayLocations(
-            displayLocation = request.displayLocation,
-            whitelistAuthors = tweetAuthors,
-            blacklistAuthors = excludedTweetAuthors,
-            validSocialProofs = validSocialProofs
+        getBaseF lters(staleT etDurat on, t etTypes) ++
+          getF ltersByD splayLocat ons(
+            d splayLocat on = request.d splayLocat on,
+            wh el stAuthors = t etAuthors,
+            blackl stAuthors = excludedT etAuthors,
+            val dSoc alProofs = val dSoc alProofs
           )
       ).asJava
     )
 
-    new TopSecondDegreeByCountRequestForTweet(
-      requesterId,
+    new TopSecondDegreeByCountRequestForT et(
+      requester d,
       leftSeedNodes,
-      tweetsToExcludeArray,
-      getRecommendationTypes(request.recommendationTypes).asJava,
-      convertThriftEnumsToJavaEnums(request.maxResultsByType).asJava,
-      UserTweetEdgeTypeMask.SIZE,
-      request.maxUserSocialProofSize.getOrElse(RecosConfig.maxUserSocialProofSize),
-      request.maxTweetSocialProofSize.getOrElse(RecosConfig.maxTweetSocialProofSize),
-      convertThriftEnumsToJavaEnums(request.minUserSocialProofSizes).asJava,
-      validSocialProofs,
-      staleTweetDuration,
-      staleEngagementDuration,
-      resultFilterChain,
-      getSocialProofTypeUnions(request.socialProofTypeUnions).asJava
+      t etsToExcludeArray,
+      getRecom ndat onTypes(request.recom ndat onTypes).asJava,
+      convertThr ftEnumsToJavaEnums(request.maxResultsByType).asJava,
+      UserT etEdgeTypeMask.S ZE,
+      request.maxUserSoc alProofS ze.getOrElse(RecosConf g.maxUserSoc alProofS ze),
+      request.maxT etSoc alProofS ze.getOrElse(RecosConf g.maxT etSoc alProofS ze),
+      convertThr ftEnumsToJavaEnums(request.m nUserSoc alProofS zes).asJava,
+      val dSoc alProofs,
+      staleT etDurat on,
+      staleEngage ntDurat on,
+      resultF lterCha n,
+      getSoc alProofTypeUn ons(request.soc alProofTypeUn ons).asJava
     )
   }
 
-  def apply(request: RecommendTweetEntityRequest): Future[Seq[RecommendationInfo]] = {
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis
-    magicRecsQueue.poll().map { magicRecs =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val magicRecsResponse = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          val magicRecsRequest = getMagicRecsRequest(request)
-          transformMagicRecsResponse(
-            getMagicRecsResponse(magicRecs, magicRecsRequest)(statsReceiverWrapper.statsReceiver)
+  def apply(request: Recom ndT etEnt yRequest): Future[Seq[Recom ndat on nfo]] = {
+    pollCounter. ncr()
+    val t0 = System.currentT  M ll s
+    mag cRecsQueue.poll().map { mag cRecs =>
+      val pollT   = System.currentT  M ll s - t0
+      pollLatencyStat.add(pollT  )
+      val mag cRecsResponse = Try {
+         f (pollT   < salsaRunnerConf g.t  outSalsaRunner) {
+          val mag cRecsRequest = getMag cRecsRequest(request)
+          transformMag cRecsResponse(
+            getMag cRecsResponse(mag cRecs, mag cRecsRequest)(statsRece verWrapper.statsRece ver)
           )
         } else {
-          // if we did not get a magicRecs in time, then fail fast here and immediately put it back
-          log.warning("magicRecsQueue polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("magicRecs poll timeout")
-          Nil
+          //  f   d d not get a mag cRecs  n t  , t n fa l fast  re and  m d ately put   back
+          log.warn ng("mag cRecsQueue poll ng t  out")
+          pollT  outCounter. ncr()
+          throw new Runt  Except on("mag cRecs poll t  out")
+          N l
         }
       } ensure {
-        magicRecsQueue.offer(magicRecs)
-        offerCounter.incr()
+        mag cRecsQueue.offer(mag cRecs)
+        offerCounter. ncr()
       }
-      magicRecsResponse.toOption getOrElse Nil
+      mag cRecsResponse.toOpt on getOrElse N l
     }
   }
 }

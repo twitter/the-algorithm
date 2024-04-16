@@ -1,700 +1,700 @@
-package com.twitter.product_mixer.core.service
+package com.tw ter.product_m xer.core.serv ce
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Annotation
-import com.twitter.finagle.tracing.Record
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.finagle.tracing.TraceServiceName
-import com.twitter.finagle.tracing.Tracing.LocalBeginAnnotation
-import com.twitter.finagle.tracing.Tracing.LocalEndAnnotation
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.FeatureHydrationFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UncategorizedServerFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor.AlwaysFailOpenIncludingProgrammerErrors
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.core.service.Executor.TracingConfig
-import com.twitter.product_mixer.core.service.Executor.toPipelineFailureWithComponentIdentifierStack
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.Stitch.Letter
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.DefaultStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Annotat on
+ mport com.tw ter.f nagle.trac ng.Record
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.f nagle.trac ng.Trace d
+ mport com.tw ter.f nagle.trac ng.TraceServ ceNa 
+ mport com.tw ter.f nagle.trac ng.Trac ng.LocalBeg nAnnotat on
+ mport com.tw ter.f nagle.trac ng.Trac ng.LocalEndAnnotat on
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.ProductP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neResult
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.FeatureHydrat onFa led
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.M sconf guredFeatureMapFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureClass f er
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.Uncategor zedServerFa lure
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.product_m xer.core.serv ce.Executor.AlwaysFa lOpen nclud ngProgram rErrors
+ mport com.tw ter.product_m xer.core.serv ce.Executor.Context
+ mport com.tw ter.product_m xer.core.serv ce.Executor.Trac ngConf g
+ mport com.tw ter.product_m xer.core.serv ce.Executor.toP pel neFa lureW hComponent dent f erStack
+ mport com.tw ter.servo.ut l.CancelledExcept onExtractor
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.St ch.Letter
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
 
 /**
- * Base trait that all executors implement
+ * Base tra  that all executors  mple nt
  *
  * All executors should:
- *   - implement a `def arrow` or `def apply` with the relevant types for their use case
- *     and take in an implicit [[PipelineFailureClassifier]] and [[ComponentIdentifierStack]].
- *   - add a `@singleton` annotation to the class and `@inject` annotation to the argument list
- *   - take in a [[StatsReceiver]]
+ *   -  mple nt a `def arrow` or `def apply` w h t  relevant types for t  r use case
+ *     and take  n an  mpl c  [[P pel neFa lureClass f er]] and [[Component dent f erStack]].
+ *   - add a `@s ngleton` annotat on to t  class and `@ nject` annotat on to t  argu nt l st
+ *   - take  n a [[StatsRece ver]]
  *
  * @example {{{
- *   @Singleton class MyExecutor @Inject() (
- *     override val statsReceiver: StatsReceiver
+ *   @S ngleton class  Executor @ nject() (
+ *     overr de val statsRece ver: StatsRece ver
  *   ) extends Executor {
  *     def arrow(
- *       arg: MyArg,
+ *       arg:  Arg,
  *       ...,
  *       context: Context
- *     ): Arrow[In,Out] = ???
+ *     ): Arrow[ n,Out] = ???
  *   }
  * }}}
  */
-private[core] trait Executor {
-  val statsReceiver: StatsReceiver
+pr vate[core] tra  Executor {
+  val statsRece ver: StatsRece ver
 
   /**
-   * Applies the `pipelineFailureClassifier` to the output of the `arrow`
-   * and adds the `componentStack` to the [[PipelineFailure]]
+   * Appl es t  `p pel neFa lureClass f er` to t  output of t  `arrow`
+   * and adds t  `componentStack` to t  [[P pel neFa lure]]
    */
-  def wrapWithErrorHandling[In, Out](
+  def wrapW hErrorHandl ng[ n, Out](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+    currentComponent dent f er: Component dent f er
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    arrow.mapFailure(
-      toPipelineFailureWithComponentIdentifierStack(context, currentComponentIdentifier))
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    arrow.mapFa lure(
+      toP pel neFa lureW hComponent dent f erStack(context, currentComponent dent f er))
   }
 
   /**
-   * Chain a `Seq` of [[Arrow.Iso]], only passing successful results to the next [[Arrow.Iso]]
+   * Cha n a `Seq` of [[Arrow. so]], only pass ng successful results to t  next [[Arrow. so]]
    *
-   * @note the resulting [[Arrow]] runs the passed in [[Arrow]]s one after the other,
-   *       as an ordered execution, this means that each [[Arrow]] is dependent
-   *       on all previous [[Arrow]]s in the `Seq` so no `Stitch` batching can occur
-   *       between them.
+   * @note t  result ng [[Arrow]] runs t  passed  n [[Arrow]]s one after t  ot r,
+   *       as an ordered execut on, t   ans that each [[Arrow]]  s dependent
+   *       on all prev ous [[Arrow]]s  n t  `Seq` so no `St ch` batch ng can occur
+   *       bet en t m.
    */
-  def isoArrowsSequentially[T](arrows: Seq[Arrow.Iso[T]]): Arrow.Iso[T] = {
-    // avoid excess Arrow complexity when there is only a single Arrow
+  def  soArrowsSequent ally[T](arrows: Seq[Arrow. so[T]]): Arrow. so[T] = {
+    // avo d excess Arrow complex y w n t re  s only a s ngle Arrow
     arrows match {
-      case Seq() => Arrow.identity
+      case Seq() => Arrow. dent y
       case Seq(onlyOneArrow) => onlyOneArrow
-      case Seq(head, tail @ _*) =>
-        tail.foldLeft(head) {
-          case (combinedArrow, nextArrow) => combinedArrow.flatMapArrow(nextArrow)
+      case Seq( ad, ta l @ _*) =>
+        ta l.foldLeft( ad) {
+          case (comb nedArrow, nextArrow) => comb nedArrow.flatMapArrow(nextArrow)
         }
     }
   }
 
   /**
-   * Start running the [[Arrow]] in the background returning a [[Stitch.Ref]] which will complete
-   * when the background task is finished
+   * Start runn ng t  [[Arrow]]  n t  background return ng a [[St ch.Ref]] wh ch w ll complete
+   * w n t  background task  s f n s d
    */
-  def startArrowAsync[In, Out](arrow: Arrow[In, Out]): Arrow[In, Stitch[Out]] = {
+  def startArrowAsync[ n, Out](arrow: Arrow[ n, Out]): Arrow[ n, St ch[Out]] = {
     Arrow
-      .map { arg: In =>
-        // wrap in a `ref` so we only compute it's value once
-        Stitch.ref(arrow(arg))
+      .map { arg:  n =>
+        // wrap  n a `ref` so   only compute  's value once
+        St ch.ref(arrow(arg))
       }
-      .andThen(
-        Arrow.zipWithArg(
-          // satisfy the `ref` async
-          Arrow.async(Arrow.flatMap[Stitch[Out], Out](identity))))
+      .andT n(
+        Arrow.z pW hArg(
+          // sat sfy t  `ref` async
+          Arrow.async(Arrow.flatMap[St ch[Out], Out]( dent y))))
       .map { case (ref, _) => ref }
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which
-   * are executed per-candidate or which we don't want to record stats for.
-   * This performs Tracing but does not record Stats
+   * for [[com.tw ter.product_m xer.core.model.common.Component]]s wh ch
+   * are executed per-cand date or wh ch   don't want to record stats for.
+   * T  performs Trac ng but does not record Stats
    *
-   * @note This should be used around the computation that includes the execution of the
-   *       underlying Component over all the Candidates, not around each execution
-   *        of the component around each candidate for per-candidate Components.
+   * @note T  should be used around t  computat on that  ncludes t  execut on of t 
+   *       underly ng Component over all t  Cand dates, not around each execut on
+   *        of t  component around each cand date for per-cand date Components.
    *
-   * @note when using this you should only use [[wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing]]
-   *       for handling Stats.
+   * @note w n us ng t    should only use [[wrapPerCand dateComponentW hExecutorBookkeep ngW houtTrac ng]]
+   *       for handl ng Stats.
    */
-  def wrapComponentsWithTracingOnly[In, Out](
+  def wrapComponentsW hTrac ngOnly[ n, Out](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+    currentComponent dent f er: Component dent f er
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    Executor.wrapArrowWithLocalTracingSpan(
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    Executor.wrapArrowW hLocalTrac ngSpan(
       Arrow
-        .time(arrow)
+        .t  (arrow)
         .map {
           case (result, latency) =>
             Executor.recordTraceData(
               componentStack = context.componentStack,
-              componentIdentifier = currentComponentIdentifier,
+              component dent f er = currentComponent dent f er,
               result = result,
               latency = latency,
-              size = None)
+              s ze = None)
             result
-        }.lowerFromTry)
+        }.lo rFromTry)
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which
-   * are executed per-candidate. Records Stats but does not do Tracing.
+   * for [[com.tw ter.product_m xer.core.model.common.Component]]s wh ch
+   * are executed per-cand date. Records Stats but does not do Trac ng.
    *
-   * @note when using this you should only use [[wrapPerCandidateComponentsWithTracingOnly]]
-   *       for handling Tracing
+   * @note w n us ng t    should only use [[wrapPerCand dateComponentsW hTrac ngOnly]]
+   *       for handl ng Trac ng
    */
-  def wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing[In, Out](
+  def wrapPerCand dateComponentW hExecutorBookkeep ngW houtTrac ng[ n, Out](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+    currentComponent dent f er: Component dent f er
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    val observerS deEffect =
+      ExecutorObserver.executorObserver[Out](context, currentComponent dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out, Out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_),
-      tracingConfig = TracingConfig.NoTracing
+      currentComponent dent f er = currentComponent dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = Return(_),
+      trac ngConf g = Trac ngConf g.NoTrac ng
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.model.common.Component]]s */
-  def wrapComponentWithExecutorBookkeeping[In, Out](
+  /** for [[com.tw ter.product_m xer.core.model.common.Component]]s */
+  def wrapComponentW hExecutorBookkeep ng[ n, Out](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+    currentComponent dent f er: Component dent f er
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    val observerS deEffect =
+      ExecutorObserver.executorObserver[Out](context, currentComponent dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out, Out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_)
+      currentComponent dent f er = currentComponent dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = Return(_)
     )(arrow)
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which an `onSuccess`
-   * to add custom stats or logging of results
+   * for [[com.tw ter.product_m xer.core.model.common.Component]]s wh ch an `onSuccess`
+   * to add custom stats or logg ng of results
    */
-  def wrapComponentWithExecutorBookkeeping[In, Out](
+  def wrapComponentW hExecutorBookkeep ng[ n, Out](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    onSuccess: Out => Unit
+    currentComponent dent f er: Component dent f er,
+    onSuccess: Out => Un 
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    val observerS deEffect =
+      ExecutorObserver.executorObserver[Out](context, currentComponent dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out, Out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_),
-      onComplete = (transformed: Try[Out]) => transformed.onSuccess(onSuccess)
+      currentComponent dent f er = currentComponent dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = Return(_),
+      onComplete = (transfor d: Try[Out]) => transfor d.onSuccess(onSuccess)
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.Pipeline]]s */
-  def wrapPipelineWithExecutorBookkeeping[In, Out <: PipelineResult[_]](
+  /** for [[com.tw ter.product_m xer.core.p pel ne.P pel ne]]s */
+  def wrapP pel neW hExecutorBookkeep ng[ n, Out <: P pel neResult[_]](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    qualityFactorObserver: Option[QualityFactorObserver],
-    failOpenPolicy: FailOpenPolicy = FailOpenPolicy.Never
+    currentComponent dent f er: Component dent f er,
+    qual yFactorObserver: Opt on[Qual yFactorObserver],
+    fa lOpenPol cy: Fa lOpenPol cy = Fa lOpenPol cy.Never
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    val observerS deEffect =
       ExecutorObserver
-        .pipelineExecutorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+        .p pel neExecutorObserver[Out](context, currentComponent dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out, Out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = (result: Out) => result.toTry,
-      size = Some(_.resultSize()),
-      failOpenPolicy = failOpenPolicy,
-      qualityFactorObserver = qualityFactorObserver
+      currentComponent dent f er = currentComponent dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = (result: Out) => result.toTry,
+      s ze = So (_.resultS ze()),
+      fa lOpenPol cy = fa lOpenPol cy,
+      qual yFactorObserver = qual yFactorObserver
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]]s */
-  def wrapProductPipelineWithExecutorBookkeeping[In, Out <: PipelineResult[_]](
+  /** for [[com.tw ter.product_m xer.core.p pel ne.product.ProductP pel ne]]s */
+  def wrapProductP pel neW hExecutorBookkeep ng[ n, Out <: P pel neResult[_]](
     context: Context,
-    currentComponentIdentifier: ProductPipelineIdentifier
+    currentComponent dent f er: ProductP pel ne dent f er
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
 
-    val observerSideEffect =
+    val observerS deEffect =
       ExecutorObserver
-        .productPipelineExecutorObserver[Out](currentComponentIdentifier, statsReceiver)
+        .productP pel neExecutorObserver[Out](currentComponent dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out, Out](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = _.toTry,
-      size = Some(_.resultSize()),
-      failOpenPolicy =
-        // always save Failures in the Result object instead of failing the request
-        AlwaysFailOpenIncludingProgrammerErrors
+      currentComponent dent f er = currentComponent dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = _.toTry,
+      s ze = So (_.resultS ze()),
+      fa lOpenPol cy =
+        // always save Fa lures  n t  Result object  nstead of fa l ng t  request
+        AlwaysFa lOpen nclud ngProgram rErrors
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.model.common.Component]]s which need a result size stat */
-  def wrapComponentWithExecutorBookkeepingWithSize[In, Out](
+  /** for [[com.tw ter.product_m xer.core.model.common.Component]]s wh ch need a result s ze stat */
+  def wrapComponentW hExecutorBookkeep ngW hS ze[ n, Out](
     context: Context,
-    currentComponentIdentifier: CandidateSourceIdentifier,
-    size: Out => Int
+    currentComponent dent f er: Cand dateS ce dent f er,
+    s ze: Out =>  nt
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserverWithSize(context, currentComponentIdentifier, statsReceiver)
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
+    val observerS deEffect =
+      ExecutorObserver.executorObserverW hS ze(context, currentComponent dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Int](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out,  nt](
       context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = (out: Out) => Try(size(out)),
-      size = Some(identity)
+      currentComponent dent f er = currentComponent dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = (out: Out) => Try(s ze(out)),
+      s ze = So ( dent y)
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step]]s */
-  def wrapStepWithExecutorBookkeeping[In, Out](
+  /** for [[com.tw ter.product_m xer.core.p pel ne.P pel neBu lder.Step]]s */
+  def wrapStepW hExecutorBookkeep ng[ n, Out](
     context: Context,
-    identifier: PipelineStepIdentifier,
-    arrow: Arrow[In, Out],
-    transformer: Out => Try[Unit]
-  ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.stepExecutorObserver(context, identifier, statsReceiver)
+     dent f er: P pel neStep dent f er,
+    arrow: Arrow[ n, Out],
+    transfor r: Out => Try[Un ]
+  ): Arrow[ n, Out] = {
+    val observerS deEffect =
+      ExecutorObserver.stepExecutorObserver(context,  dent f er, statsRece ver)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Unit](
+    Executor.wrapW hExecutorBookkeep ng[ n, Out, Un ](
       context = context,
-      currentComponentIdentifier = identifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = transformer,
-      failOpenPolicy = AlwaysFailOpenIncludingProgrammerErrors
+      currentComponent dent f er =  dent f er,
+      executorResultS deEffect = observerS deEffect,
+      transfor r = transfor r,
+      fa lOpenPol cy = AlwaysFa lOpen nclud ngProgram rErrors
     )(arrow)
   }
 }
 
-private[core] object Executor {
+pr vate[core] object Executor {
 
-  private[service] object TracingConfig {
+  pr vate[serv ce] object Trac ngConf g {
 
-    /** Used to specify whether a wrapped Arrow should be Traced in [[wrapWithExecutorBookkeeping]] */
-    sealed trait TracingConfig
-    case object NoTracing extends TracingConfig
-    case object WrapWithSpanAndTracingData extends TracingConfig
+    /** Used to spec fy w t r a wrapped Arrow should be Traced  n [[wrapW hExecutorBookkeep ng]] */
+    sealed tra  Trac ngConf g
+    case object NoTrac ng extends Trac ngConf g
+    case object WrapW hSpanAndTrac ngData extends Trac ngConf g
   }
 
   /**
-   * Always fail-open and return the [[com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult]]
-   * containing the exception, this differs from [[FailOpenPolicy.Always]] in that this will still
-   * fail-open and return the overall result object even if the underlying failure is the result
-   * of programmer error.
+   * Always fa l-open and return t  [[com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neResult]]
+   * conta n ng t  except on, t  d ffers from [[Fa lOpenPol cy.Always]]  n that t  w ll st ll
+   * fa l-open and return t  overall result object even  f t  underly ng fa lure  s t  result
+   * of program r error.
    */
-  private val AlwaysFailOpenIncludingProgrammerErrors: FailOpenPolicy = _ => true
+  pr vate val AlwaysFa lOpen nclud ngProgram rErrors: Fa lOpenPol cy = _ => true
 
   /**
-   * Wraps an [[Arrow]] so that bookkeeping around the execution occurs uniformly.
+   * Wraps an [[Arrow]] so that bookkeep ng around t  execut on occurs un formly.
    *
-   * @note should __never__ be called directly!
+   * @note should __never__ be called d rectly!
    *
-   *   - For successful results, apply the `transformer`
-   *   - convert any exceptions to PipelineFailures
-   *   - record stats and update [[QualityFactorObserver]]
-   *   - wraps the execution in a Trace span and record Trace data (can be turned off by [[TracingConfig]])
-   *   - applies a trace span and records metadata to the provided `arrow`
-   *   - determine whether to fail-open based on `result.flatMap(transformer)`
-   *     - if failing-open, always return the original result
-   *     - if failing-closed and successful, return the original result
-   *     - otherwise, return the failure (from `result.flatMap(transformer)`)
+   *   - For successful results, apply t  `transfor r`
+   *   - convert any except ons to P pel neFa lures
+   *   - record stats and update [[Qual yFactorObserver]]
+   *   - wraps t  execut on  n a Trace span and record Trace data (can be turned off by [[Trac ngConf g]])
+   *   - appl es a trace span and records  tadata to t  prov ded `arrow`
+   *   - determ ne w t r to fa l-open based on `result.flatMap(transfor r)`
+   *     -  f fa l ng-open, always return t  or g nal result
+   *     -  f fa l ng-closed and successful, return t  or g nal result
+   *     - ot rw se, return t  fa lure (from `result.flatMap(transfor r)`)
    *
-   * @param context                    the [[Executor.Context]]
-   * @param currentComponentIdentifier the current component's [[ComponentIdentifier]]
-   * @param executorResultSideEffect   the [[ExecutorObserver]] used to record stats
-   * @param transformer                function to convert a successful result into possibly a failed result
-   * @param failOpenPolicy             [[FailOpenPolicy]] to apply to the results of `result.flatMap(transformer)`
-   * @param qualityFactorObserver      [[QualityFactorObserver]] to update based on the results of `result.flatMap(transformer)`
-   * @param tracingConfig              indicates whether the [[Arrow]] should be wrapped with Tracing
-   * @param onComplete                 runs the function for its side effects with the result of `result.flatMap(transformer)`
-   * @param arrow                      an input [[Arrow]] to wrap so that after it's execution, we perform all these operations
+   * @param context                    t  [[Executor.Context]]
+   * @param currentComponent dent f er t  current component's [[Component dent f er]]
+   * @param executorResultS deEffect   t  [[ExecutorObserver]] used to record stats
+   * @param transfor r                funct on to convert a successful result  nto poss bly a fa led result
+   * @param fa lOpenPol cy             [[Fa lOpenPol cy]] to apply to t  results of `result.flatMap(transfor r)`
+   * @param qual yFactorObserver      [[Qual yFactorObserver]] to update based on t  results of `result.flatMap(transfor r)`
+   * @param trac ngConf g               nd cates w t r t  [[Arrow]] should be wrapped w h Trac ng
+   * @param onComplete                 runs t  funct on for  s s de effects w h t  result of `result.flatMap(transfor r)`
+   * @param arrow                      an  nput [[Arrow]] to wrap so that after  's execut on,   perform all t se operat ons
    *
-   * @return the wrapped [[Arrow]]
+   * @return t  wrapped [[Arrow]]
    */
-  private[service] def wrapWithExecutorBookkeeping[In, Out, Transformed](
+  pr vate[serv ce] def wrapW hExecutorBookkeep ng[ n, Out, Transfor d](
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    executorResultSideEffect: ExecutorObserver[Transformed],
-    transformer: Out => Try[Transformed],
-    size: Option[Transformed => Int] = None,
-    failOpenPolicy: FailOpenPolicy = FailOpenPolicy.Never,
-    qualityFactorObserver: Option[QualityFactorObserver] = None,
-    tracingConfig: TracingConfig.TracingConfig = TracingConfig.WrapWithSpanAndTracingData,
-    onComplete: Try[Transformed] => Unit = { _: Try[Transformed] => () }
+    currentComponent dent f er: Component dent f er,
+    executorResultS deEffect: ExecutorObserver[Transfor d],
+    transfor r: Out => Try[Transfor d],
+    s ze: Opt on[Transfor d =>  nt] = None,
+    fa lOpenPol cy: Fa lOpenPol cy = Fa lOpenPol cy.Never,
+    qual yFactorObserver: Opt on[Qual yFactorObserver] = None,
+    trac ngConf g: Trac ngConf g.Trac ngConf g = Trac ngConf g.WrapW hSpanAndTrac ngData,
+    onComplete: Try[Transfor d] => Un  = { _: Try[Transfor d] => () }
   )(
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] = {
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] = {
 
-    val failureClassifier =
-      toPipelineFailureWithComponentIdentifierStack(context, currentComponentIdentifier)
+    val fa lureClass f er =
+      toP pel neFa lureW hComponent dent f erStack(context, currentComponent dent f er)
 
-    /** transform the results, mapping all exceptions to [[PipelineFailure]]s, and tuple with original result */
-    val transformResultAndClassifyFailures: Arrow[Out, (Out, Try[Transformed])] =
-      Arrow.join(
-        Arrow.mapFailure(failureClassifier),
+    /** transform t  results, mapp ng all except ons to [[P pel neFa lure]]s, and tuple w h or g nal result */
+    val transformResultAndClass fyFa lures: Arrow[Out, (Out, Try[Transfor d])] =
+      Arrow.jo n(
+        Arrow.mapFa lure(fa lureClass f er),
         Arrow
-          .transformTry[Out, Transformed](result =>
+          .transformTry[Out, Transfor d](result =>
             result
-              .flatMap(transformer)
-              .rescue { case t => Throw(failureClassifier(t)) })
-          .liftToTry
+              .flatMap(transfor r)
+              .rescue { case t => Throw(fa lureClass f er(t)) })
+          .l ftToTry
       )
 
-    /** Only record tracing data if [[TracingConfig.WrapWithSpanAndTracingData]] */
-    val maybeRecordTracingData: (Try[Transformed], Duration) => Unit = tracingConfig match {
-      case TracingConfig.NoTracing => (_, _) => ()
-      case TracingConfig.WrapWithSpanAndTracingData =>
-        (transformedAndClassifiedResult, latency) =>
+    /** Only record trac ng data  f [[Trac ngConf g.WrapW hSpanAndTrac ngData]] */
+    val maybeRecordTrac ngData: (Try[Transfor d], Durat on) => Un  = trac ngConf g match {
+      case Trac ngConf g.NoTrac ng => (_, _) => ()
+      case Trac ngConf g.WrapW hSpanAndTrac ngData =>
+        (transfor dAndClass f edResult, latency) =>
           recordTraceData(
             context.componentStack,
-            currentComponentIdentifier,
-            transformedAndClassifiedResult,
+            currentComponent dent f er,
+            transfor dAndClass f edResult,
             latency,
-            transformedAndClassifiedResult.toOption.flatMap(result => size.map(_.apply(result)))
+            transfor dAndClass f edResult.toOpt on.flatMap(result => s ze.map(_.apply(result)))
           )
     }
 
-    /** Will never be in a failed state so we can do a simple [[Arrow.map]] */
-    val recordStatsAndUpdateQualityFactor =
+    /** W ll never be  n a fa led state so   can do a s mple [[Arrow.map]] */
+    val recordStatsAndUpdateQual yFactor =
       Arrow
-        .map[(Try[(Out, Try[Transformed])], Duration), Unit] {
-          case (tryResultAndTryTransformed, latency) =>
-            val transformedAndClassifiedResult = tryResultAndTryTransformed.flatMap {
-              case (_, transformed) => transformed
+        .map[(Try[(Out, Try[Transfor d])], Durat on), Un ] {
+          case (tryResultAndTryTransfor d, latency) =>
+            val transfor dAndClass f edResult = tryResultAndTryTransfor d.flatMap {
+              case (_, transfor d) => transfor d
             }
-            executorResultSideEffect(transformedAndClassifiedResult, latency)
-            qualityFactorObserver.foreach(_.apply(transformedAndClassifiedResult, latency))
-            onComplete(transformedAndClassifiedResult)
-            maybeRecordTracingData(transformedAndClassifiedResult, latency)
-        }.unit
+            executorResultS deEffect(transfor dAndClass f edResult, latency)
+            qual yFactorObserver.foreach(_.apply(transfor dAndClass f edResult, latency))
+            onComplete(transfor dAndClass f edResult)
+            maybeRecordTrac ngData(transfor dAndClass f edResult, latency)
+        }.un 
 
     /**
-     * Applies the provided [[FailOpenPolicy]] based on the [[transformer]]'s results,
-     * returning the original result or an exception
+     * Appl es t  prov ded [[Fa lOpenPol cy]] based on t  [[transfor r]]'s results,
+     * return ng t  or g nal result or an except on
      */
-    val applyFailOpenPolicyBasedOnTransformedResult: Arrow[
-      (Try[(Out, Try[Transformed])], Duration),
+    val applyFa lOpenPol cyBasedOnTransfor dResult: Arrow[
+      (Try[(Out, Try[Transfor d])], Durat on),
       Out
     ] =
       Arrow
-        .map[(Try[(Out, Try[Transformed])], Duration), Try[(Out, Try[Transformed])]] {
-          case (tryResultAndTryTransformed, _) => tryResultAndTryTransformed
+        .map[(Try[(Out, Try[Transfor d])], Durat on), Try[(Out, Try[Transfor d])]] {
+          case (tryResultAndTryTransfor d, _) => tryResultAndTryTransfor d
         }
-        .lowerFromTry
+        .lo rFromTry
         .map {
-          case (result, Throw(pipelineFailure: PipelineFailure))
-              if failOpenPolicy(pipelineFailure.category) =>
+          case (result, Throw(p pel neFa lure: P pel neFa lure))
+               f fa lOpenPol cy(p pel neFa lure.category) =>
             Return(result)
-          case (_, t: Throw[_]) => t.asInstanceOf[Throw[Out]]
+          case (_, t: Throw[_]) => t.as nstanceOf[Throw[Out]]
           case (result, _) => Return(result)
-        }.lowerFromTry
+        }.lo rFromTry
 
-    /** The complete Arrow minus a Local span wrapping */
-    val arrowWithTimingExecutorSideEffects = Arrow
-      .time(arrow.andThen(transformResultAndClassifyFailures))
-      .applyEffect(recordStatsAndUpdateQualityFactor)
-      .andThen(applyFailOpenPolicyBasedOnTransformedResult)
+    /** T  complete Arrow m nus a Local span wrapp ng */
+    val arrowW hT m ngExecutorS deEffects = Arrow
+      .t  (arrow.andT n(transformResultAndClass fyFa lures))
+      .applyEffect(recordStatsAndUpdateQual yFactor)
+      .andT n(applyFa lOpenPol cyBasedOnTransfor dResult)
 
-    /** Dont wrap with a span if we are not tracing */
-    tracingConfig match {
-      case TracingConfig.WrapWithSpanAndTracingData =>
-        wrapArrowWithLocalTracingSpan(arrowWithTimingExecutorSideEffects)
-      case TracingConfig.NoTracing =>
-        arrowWithTimingExecutorSideEffects
+    /** Dont wrap w h a span  f   are not trac ng */
+    trac ngConf g match {
+      case Trac ngConf g.WrapW hSpanAndTrac ngData =>
+        wrapArrowW hLocalTrac ngSpan(arrowW hT m ngExecutorS deEffects)
+      case Trac ngConf g.NoTrac ng =>
+        arrowW hT m ngExecutorS deEffects
     }
   }
 
-  /** Let-scopes a [[TraceId]] around a computation */
-  private[this] object TracingLetter extends Letter[TraceId] {
-    override def let[S](traceId: TraceId)(s: => S): S = Trace.letId(traceId)(s)
+  /** Let-scopes a [[Trace d]] around a computat on */
+  pr vate[t ] object Trac ngLetter extends Letter[Trace d] {
+    overr de def let[S](trace d: Trace d)(s: => S): S = Trace.let d(trace d)(s)
   }
 
   /**
-   * Wraps the Arrow's execution in a new trace span as a child of the current parent span
+   * Wraps t  Arrow's execut on  n a new trace span as a ch ld of t  current parent span
    *
-   * @note Should __never__ be called directly!
+   * @note Should __never__ be called d rectly!
    *
-   * It's expected that the contained `arrow` will invoke [[recordTraceData]] exactly ONCE
-   * during it's execution.
+   *  's expected that t  conta ned `arrow` w ll  nvoke [[recordTraceData]] exactly ONCE
+   * dur ng  's execut on.
    *
-   * @note this does not record any data about the trace, it only sets the [[Trace]] Span
-   *       for the execution of `arrow`
+   * @note t  does not record any data about t  trace,   only sets t  [[Trace]] Span
+   *       for t  execut on of `arrow`
    */
-  private[service] def wrapArrowWithLocalTracingSpan[In, Out](
-    arrow: Arrow[In, Out]
-  ): Arrow[In, Out] =
-    Arrow.ifelse(
-      _ => Trace.isActivelyTracing,
-      Arrow.let(TracingLetter)(Trace.nextId)(arrow),
+  pr vate[serv ce] def wrapArrowW hLocalTrac ngSpan[ n, Out](
+    arrow: Arrow[ n, Out]
+  ): Arrow[ n, Out] =
+    Arrow. felse(
+      _ => Trace. sAct velyTrac ng,
+      Arrow.let(Trac ngLetter)(Trace.next d)(arrow),
       arrow
     )
 
-  private[this] object Tracing {
+  pr vate[t ] object Trac ng {
 
     /**
-     * Duplicate of [[com.twitter.finagle.tracing.Tracing]]'s `localSpans` which
-     * uses an un-scoped [[StatsReceiver]]
+     * Dupl cate of [[com.tw ter.f nagle.trac ng.Trac ng]]'s `localSpans` wh ch
+     * uses an un-scoped [[StatsRece ver]]
      *
-     * Since we needed to roll-our-own latency measurement we are unable to increment the
-     * `local_spans` metric automatically, this is important in the event a service is
-     * unexpectedly not recording spans or unexpectedly recording too many, so we manually
-     * increment it
+     * S nce   needed to roll- -own latency  asure nt   are unable to  ncre nt t 
+     * `local_spans`  tr c automat cally, t   s  mportant  n t  event a serv ce  s
+     * unexpectedly not record ng spans or unexpectedly record ng too many, so   manually
+     *  ncre nt  
      */
-    val localSpans: Counter = DefaultStatsReceiver.counter("tracing", "local_spans")
+    val localSpans: Counter = DefaultStatsRece ver.counter("trac ng", "local_spans")
 
-    /** Local Component field of a span in the UI */
+    /** Local Component f eld of a span  n t  U  */
     val localComponentTag = "lc"
-    val sizeTag = "product_mixer.result.size"
-    val successTag = "product_mixer.result.success"
+    val s zeTag = "product_m xer.result.s ze"
+    val successTag = "product_m xer.result.success"
     val successValue = "success"
-    val cancelledTag = "product_mixer.result.cancelled"
-    val failureTag = "product_mixer.result.failure"
+    val cancelledTag = "product_m xer.result.cancelled"
+    val fa lureTag = "product_m xer.result.fa lure"
   }
 
   /**
-   * Records metadata onto the current [[Trace]] Span
+   * Records  tadata onto t  current [[Trace]] Span
    *
-   * @note Should __never__ be called directly!
+   * @note Should __never__ be called d rectly!
    *
-   * This should be called exactly ONCE in the Arrow passed into [[wrapArrowWithLocalTracingSpan]]
-   * to record data for the Span.
+   * T  should be called exactly ONCE  n t  Arrow passed  nto [[wrapArrowW hLocalTrac ngSpan]]
+   * to record data for t  Span.
    */
-  private[service] def recordTraceData[T](
-    componentStack: ComponentIdentifierStack,
-    componentIdentifier: ComponentIdentifier,
+  pr vate[serv ce] def recordTraceData[T](
+    componentStack: Component dent f erStack,
+    component dent f er: Component dent f er,
     result: Try[T],
-    latency: Duration,
-    size: Option[Int] = None
-  ): Unit = {
-    if (Trace.isActivelyTracing) {
-      Tracing.localSpans.incr()
-      val traceId = Trace.id
-      val endTime = Time.nowNanoPrecision
+    latency: Durat on,
+    s ze: Opt on[ nt] = None
+  ): Un  = {
+     f (Trace. sAct velyTrac ng) {
+      Trac ng.localSpans. ncr()
+      val trace d = Trace. d
+      val endT   = T  .nowNanoPrec s on
 
-      // These annotations are needed for the Zipkin UI to display the span properly
-      TraceServiceName().foreach(Trace.recordServiceName)
-      Trace.recordRpc(componentIdentifier.snakeCase) // name of the span in the UI
-      Trace.recordBinary(
-        Tracing.localComponentTag,
-        componentStack.peek.toString + "/" + componentIdentifier.toString)
-      Trace.record(Record(traceId, endTime - latency, Annotation.Message(LocalBeginAnnotation)))
-      Trace.record(Record(traceId, endTime, Annotation.Message(LocalEndAnnotation)))
+      // T se annotat ons are needed for t  Z pk n U  to d splay t  span properly
+      TraceServ ceNa ().foreach(Trace.recordServ ceNa )
+      Trace.recordRpc(component dent f er.snakeCase) // na  of t  span  n t  U 
+      Trace.recordB nary(
+        Trac ng.localComponentTag,
+        componentStack.peek.toStr ng + "/" + component dent f er.toStr ng)
+      Trace.record(Record(trace d, endT   - latency, Annotat on. ssage(LocalBeg nAnnotat on)))
+      Trace.record(Record(trace d, endT  , Annotat on. ssage(LocalEndAnnotat on)))
 
-      // product mixer specific zipkin data
-      size.foreach(size => Trace.recordBinary(Tracing.sizeTag, size))
+      // product m xer spec f c z pk n data
+      s ze.foreach(s ze => Trace.recordB nary(Trac ng.s zeTag, s ze))
       result match {
         case Return(_) =>
-          Trace.recordBinary(Tracing.successTag, Tracing.successValue)
-        case Throw(CancelledExceptionExtractor(e)) =>
-          Trace.recordBinary(Tracing.cancelledTag, e)
+          Trace.recordB nary(Trac ng.successTag, Trac ng.successValue)
+        case Throw(CancelledExcept onExtractor(e)) =>
+          Trace.recordB nary(Trac ng.cancelledTag, e)
         case Throw(e) =>
-          Trace.recordBinary(Tracing.failureTag, e)
+          Trace.recordB nary(Trac ng.fa lureTag, e)
       }
     }
   }
 
   /**
-   * Returns a tuple of the stats scopes for the current component and the relative scope for
-   * the parent component and the current component together
+   * Returns a tuple of t  stats scopes for t  current component and t  relat ve scope for
+   * t  parent component and t  current component toget r
    *
-   * This is useful when recording stats for a component by itself as well as stats for calls to that component from it's parent.
+   * T   s useful w n record ng stats for a component by  self as  ll as stats for calls to that component from  's parent.
    *
-   * @example if the current component has a scope of "currentComponent" and the parent component has a scope of "parentComponent"
-   *          then this will return `(Seq("currentComponent"), Seq("parentComponent", "currentComponent"))`
+   * @example  f t  current component has a scope of "currentComponent" and t  parent component has a scope of "parentComponent"
+   *          t n t  w ll return `(Seq("currentComponent"), Seq("parentComponent", "currentComponent"))`
    */
-  def buildScopes(
+  def bu ldScopes(
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+    currentComponent dent f er: Component dent f er
   ): Executor.Scopes = {
     val parentScopes = context.componentStack.peek.toScopes
-    val componentScopes = currentComponentIdentifier.toScopes
-    val relativeScopes = parentScopes ++ componentScopes
-    Executor.Scopes(componentScopes, relativeScopes)
+    val componentScopes = currentComponent dent f er.toScopes
+    val relat veScopes = parentScopes ++ componentScopes
+    Executor.Scopes(componentScopes, relat veScopes)
   }
 
   /**
-   * Makes a [[BroadcastStatsReceiver]] that will broadcast stats to the correct
-   * current component's scope and to the scope relative to the parent.
+   * Makes a [[BroadcastStatsRece ver]] that w ll broadcast stats to t  correct
+   * current component's scope and to t  scope relat ve to t  parent.
    */
-  def broadcastStatsReceiver(
+  def broadcastStatsRece ver(
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): StatsReceiver = {
-    val Executor.Scopes(componentScopes, relativeScopes) =
-      Executor.buildScopes(context, currentComponentIdentifier)
+    currentComponent dent f er: Component dent f er,
+    statsRece ver: StatsRece ver
+  ): StatsRece ver = {
+    val Executor.Scopes(componentScopes, relat veScopes) =
+      Executor.bu ldScopes(context, currentComponent dent f er)
 
-    BroadcastStatsReceiver(
-      Seq(statsReceiver.scope(relativeScopes: _*), statsReceiver.scope(componentScopes: _*)))
+    BroadcastStatsRece ver(
+      Seq(statsRece ver.scope(relat veScopes: _*), statsRece ver.scope(componentScopes: _*)))
   }
 
   /**
-   * Returns a feature map containing all the [[com.twitter.product_mixer.core.feature.Feature]]s
-   * stored as failures using the exception provided with as the reason wrapped in a PipelineFailure.
-   * e.g, for features A & B that threw an ExampleException b, this will return:
-   * { A -> Throw(PipelineFailure(...)), B -> Throw(PipelineFailure(...)) }
+   * Returns a feature map conta n ng all t  [[com.tw ter.product_m xer.core.feature.Feature]]s
+   * stored as fa lures us ng t  except on prov ded w h as t  reason wrapped  n a P pel neFa lure.
+   * e.g, for features A & B that threw an ExampleExcept on b, t  w ll return:
+   * { A -> Throw(P pel neFa lure(...)), B -> Throw(P pel neFa lure(...)) }
    */
-  def featureMapWithFailuresForFeatures(
+  def featureMapW hFa luresForFeatures(
     features: Set[Feature[_, _]],
     error: Throwable,
     context: Executor.Context
   ): FeatureMap = {
-    val builder = FeatureMapBuilder()
+    val bu lder = FeatureMapBu lder()
     features.foreach { feature =>
-      val pipelineFailure = PipelineFailure(
-        FeatureHydrationFailed,
-        s"Feature hydration failed for ${feature.toString}",
-        Some(error),
-        Some(context.componentStack))
-      builder.addFailure(feature, pipelineFailure)
+      val p pel neFa lure = P pel neFa lure(
+        FeatureHydrat onFa led,
+        s"Feature hydrat on fa led for ${feature.toStr ng}",
+        So (error),
+        So (context.componentStack))
+      bu lder.addFa lure(feature, p pel neFa lure)
     }
-    builder.build()
+    bu lder.bu ld()
   }
 
   /**
-   * Validates and returns back the passed feature map if it passes validation. A feature map
-   * is considered valid if it contains only the passed `registeredFeatures` features in it,
-   * nothing else and nothing missing.
+   * Val dates and returns back t  passed feature map  f   passes val dat on. A feature map
+   *  s cons dered val d  f   conta ns only t  passed `reg steredFeatures` features  n  ,
+   * noth ng else and noth ng m ss ng.
    */
-  @throws(classOf[PipelineFailure])
-  def validateFeatureMap(
-    registeredFeatures: Set[Feature[_, _]],
+  @throws(classOf[P pel neFa lure])
+  def val dateFeatureMap(
+    reg steredFeatures: Set[Feature[_, _]],
     featureMap: FeatureMap,
     context: Executor.Context
   ): FeatureMap = {
     val hydratedFeatures = featureMap.getFeatures
-    if (hydratedFeatures == registeredFeatures) {
+     f (hydratedFeatures == reg steredFeatures) {
       featureMap
     } else {
-      val missingFeatures = registeredFeatures -- hydratedFeatures
-      val unregisteredFeatures = hydratedFeatures -- registeredFeatures
-      throw PipelineFailure(
-        MisconfiguredFeatureMapFailure,
-        s"Unregistered features $unregisteredFeatures and missing features $missingFeatures",
+      val m ss ngFeatures = reg steredFeatures -- hydratedFeatures
+      val unreg steredFeatures = hydratedFeatures -- reg steredFeatures
+      throw P pel neFa lure(
+        M sconf guredFeatureMapFa lure,
+        s"Unreg stered features $unreg steredFeatures and m ss ng features $m ss ngFeatures",
         None,
-        Some(context.componentStack)
+        So (context.componentStack)
       )
     }
   }
 
-  object NotAMisconfiguredFeatureMapFailure {
+  object NotAM sconf guredFeatureMapFa lure {
 
     /**
-     * Will return any exception that isn't a [[MisconfiguredFeatureMapFailure]] [[PipelineFailure]]
-     * Allows for easy [[Arrow.handle]]ing all exceptions that aren't [[MisconfiguredFeatureMapFailure]]s
+     * W ll return any except on that  sn't a [[M sconf guredFeatureMapFa lure]] [[P pel neFa lure]]
+     * Allows for easy [[Arrow.handle]] ng all except ons that aren't [[M sconf guredFeatureMapFa lure]]s
      */
-    def unapply(e: Throwable): Option[Throwable] = e match {
-      case pipelineFailure: PipelineFailure
-          if pipelineFailure.category == MisconfiguredFeatureMapFailure =>
+    def unapply(e: Throwable): Opt on[Throwable] = e match {
+      case p pel neFa lure: P pel neFa lure
+           f p pel neFa lure.category == M sconf guredFeatureMapFa lure =>
         None
-      case e => Some(e)
+      case e => So (e)
     }
   }
 
   /**
-   * contains the scopes for recording metrics for the component by itself and
-   * the relative scope of that component within it's parent component scope
+   * conta ns t  scopes for record ng  tr cs for t  component by  self and
+   * t  relat ve scope of that component w h n  's parent component scope
    *
-   * @see [[Executor.buildScopes]]
+   * @see [[Executor.bu ldScopes]]
    */
-  case class Scopes(componentScopes: Seq[String], relativeScope: Seq[String])
+  case class Scopes(componentScopes: Seq[Str ng], relat veScope: Seq[Str ng])
 
   /**
-   * Wrap the [[Throwable]] in a [[UncategorizedServerFailure]] [[PipelineFailure]] with the original
-   * [[Throwable]] as the cause, even if it's already a [[PipelineFailure]].
+   * Wrap t  [[Throwable]]  n a [[Uncategor zedServerFa lure]] [[P pel neFa lure]] w h t  or g nal
+   * [[Throwable]] as t  cause, even  f  's already a [[P pel neFa lure]].
    *
-   * This ensures that any access to the stored feature will result in a meaningful [[UncategorizedServerFailure]]
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory]] in stats which is more useful
-   * for customers components which access a failed [[Feature]] than the original [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory]].
+   * T  ensures that any access to t  stored feature w ll result  n a  an ngful [[Uncategor zedServerFa lure]]
+   * [[com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureCategory]]  n stats wh ch  s more useful
+   * for custo rs components wh ch access a fa led [[Feature]] than t  or g nal [[com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureCategory]].
    */
-  def uncategorizedServerFailure(
-    componentStack: ComponentIdentifierStack,
+  def uncategor zedServerFa lure(
+    componentStack: Component dent f erStack,
     throwable: Throwable
-  ): PipelineFailure = {
-    PipelineFailure(
-      UncategorizedServerFailure,
-      reason = "Unclassified Failure in Pipeline",
-      Some(throwable),
-      Some(componentStack)
+  ): P pel neFa lure = {
+    P pel neFa lure(
+      Uncategor zedServerFa lure,
+      reason = "Unclass f ed Fa lure  n P pel ne",
+      So (throwable),
+      So (componentStack)
     )
   }
 
   /**
-   * [[PartialFunction]] that converts any [[Throwable]] into a
-   * [[PipelineFailure]] based on the provided `failureClassifier`
+   * [[Part alFunct on]] that converts any [[Throwable]]  nto a
+   * [[P pel neFa lure]] based on t  prov ded `fa lureClass f er`
    */
-  def toPipelineFailureWithComponentIdentifierStack(
+  def toP pel neFa lureW hComponent dent f erStack(
     context: Context,
-    currentComponentIdentifier: ComponentIdentifier
-  ): PipelineFailureClassifier = {
-    // if given a `currentComponentIdentifier` then ensure we correctly handle `BasedOnParentComponent` identifier types
-    val contextWithCurrentComponentIdentifier =
-      context.pushToComponentStack(currentComponentIdentifier)
-    PipelineFailureClassifier(
-      contextWithCurrentComponentIdentifier.pipelineFailureClassifier
-        .orElse[Throwable, PipelineFailure] {
-          case CancelledExceptionExtractor(throwable) => throw throwable
-          case pipelineFailure: PipelineFailure => pipelineFailure
+    currentComponent dent f er: Component dent f er
+  ): P pel neFa lureClass f er = {
+    //  f g ven a `currentComponent dent f er` t n ensure   correctly handle `BasedOnParentComponent`  dent f er types
+    val contextW hCurrentComponent dent f er =
+      context.pushToComponentStack(currentComponent dent f er)
+    P pel neFa lureClass f er(
+      contextW hCurrentComponent dent f er.p pel neFa lureClass f er
+        .orElse[Throwable, P pel neFa lure] {
+          case CancelledExcept onExtractor(throwable) => throw throwable
+          case p pel neFa lure: P pel neFa lure => p pel neFa lure
           case throwable =>
-            uncategorizedServerFailure(
-              contextWithCurrentComponentIdentifier.componentStack,
+            uncategor zedServerFa lure(
+              contextW hCurrentComponent dent f er.componentStack,
               throwable)
-        }.andThen { pipelineFailure =>
-          pipelineFailure.componentStack match {
-            case _: Some[_] => pipelineFailure
+        }.andT n { p pel neFa lure =>
+          p pel neFa lure.componentStack match {
+            case _: So [_] => p pel neFa lure
             case None =>
-              pipelineFailure.copy(componentStack =
-                Some(contextWithCurrentComponentIdentifier.componentStack))
+              p pel neFa lure.copy(componentStack =
+                So (contextW hCurrentComponent dent f er.componentStack))
           }
         }
     )
   }
 
   /**
-   * information used by an [[Executor]] that provides context around execution
+   *  nformat on used by an [[Executor]] that prov des context around execut on
    */
   case class Context(
-    pipelineFailureClassifier: PipelineFailureClassifier,
-    componentStack: ComponentIdentifierStack) {
+    p pel neFa lureClass f er: P pel neFa lureClass f er,
+    componentStack: Component dent f erStack) {
 
-    def pushToComponentStack(newComponentIdentifier: ComponentIdentifier): Context =
-      copy(componentStack = componentStack.push(newComponentIdentifier))
+    def pushToComponentStack(newComponent dent f er: Component dent f er): Context =
+      copy(componentStack = componentStack.push(newComponent dent f er))
   }
 }

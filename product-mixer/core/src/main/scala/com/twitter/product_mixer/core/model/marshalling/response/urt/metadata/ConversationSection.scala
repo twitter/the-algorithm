@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-sealed trait ConversationSection
+sealed tra  Conversat onSect on
 
-case object HighQuality extends ConversationSection
-case object LowQuality extends ConversationSection
-case object AbusiveQuality extends ConversationSection
-case object RelatedTweet extends ConversationSection
+case object H ghQual y extends Conversat onSect on
+case object LowQual y extends Conversat onSect on
+case object Abus veQual y extends Conversat onSect on
+case object RelatedT et extends Conversat onSect on

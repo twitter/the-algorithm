@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et
 
-sealed trait TweetDisplayType
+sealed tra  T etD splayType
 
-case object Tweet extends TweetDisplayType
-case object TweetFollowOnly extends TweetDisplayType
-case object Media extends TweetDisplayType
-case object MomentTimelineTweet extends TweetDisplayType
-case object EmphasizedPromotedTweet extends TweetDisplayType
-case object QuotedTweet extends TweetDisplayType
-case object SelfThread extends TweetDisplayType
-case object CompactPromotedTweet extends TweetDisplayType
-case object TweetWithoutCard extends TweetDisplayType
-case object ReaderModeRoot extends TweetDisplayType
-case object ReaderMode extends TweetDisplayType
-case object CondensedTweet extends TweetDisplayType
+case object T et extends T etD splayType
+case object T etFollowOnly extends T etD splayType
+case object  d a extends T etD splayType
+case object Mo ntT  l neT et extends T etD splayType
+case object Emphas zedPromotedT et extends T etD splayType
+case object QuotedT et extends T etD splayType
+case object SelfThread extends T etD splayType
+case object CompactPromotedT et extends T etD splayType
+case object T etW houtCard extends T etD splayType
+case object ReaderModeRoot extends T etD splayType
+case object ReaderMode extends T etD splayType
+case object CondensedT et extends T etD splayType

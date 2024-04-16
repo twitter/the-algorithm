@@ -1,26 +1,26 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.tsp.stores.Top cT etsCos neS m lar yAggregateStore
+ mport com.tw ter.tsp.stores.Top cT etsCos neS m lar yAggregateStore.ScoreKey
 
-object TopicTweetCosineSimilarityAggregateStoreModule extends TwitterModule {
+object Top cT etCos neS m lar yAggregateStoreModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesTopicTweetCosineSimilarityAggregateStore(
-    representationScorerStore: ReadableStore[ScoreId, Score],
-    statsReceiver: StatsReceiver,
-  ): ReadableStore[(TopicId, TweetId, Seq[ScoreKey]), Map[ScoreKey, Double]] = {
-    TopicTweetsCosineSimilarityAggregateStore(representationScorerStore)(
-      statsReceiver.scope("topicTweetsCosineSimilarityAggregateStore"))
+  @Prov des
+  @S ngleton
+  def prov desTop cT etCos neS m lar yAggregateStore(
+    representat onScorerStore: ReadableStore[Score d, Score],
+    statsRece ver: StatsRece ver,
+  ): ReadableStore[(Top c d, T et d, Seq[ScoreKey]), Map[ScoreKey, Double]] = {
+    Top cT etsCos neS m lar yAggregateStore(representat onScorerStore)(
+      statsRece ver.scope("top cT etsCos neS m lar yAggregateStore"))
   }
 }

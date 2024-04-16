@@ -1,222 +1,222 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
 /**
- * Docs and frequencies enumerator for {@link HighDFPackedIntsPostingLists}.
+ * Docs and frequenc es enu rator for {@l nk H ghDFPacked ntsPost ngL sts}.
  */
-public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
+publ c class H ghDFPacked ntsDocsEnum extends Earlyb rdOpt m zedPost ngsEnum {
   /**
-   * Pre-computed shifts, masks for {@link #deltaFreqListsReader}.
-   * These pre-computed values should be read-only and shared across all reader threads.
+   * Pre-computed sh fts, masks for {@l nk #deltaFreqL stsReader}.
+   * T se pre-computed values should be read-only and shared across all reader threads.
    *
-   * Notice:
-   * - start int indices are NOT needed since there is not jumping within a slice.
+   * Not ce:
+   * - start  nt  nd ces are NOT needed s nce t re  s not jump ng w h n a sl ce.
    */
-  private static final PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
+  pr vate stat c f nal PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
       new PackedLongsReaderPreComputedValues(
-          HighDFPackedIntsPostingLists.MAX_DOC_ID_BIT
-              + HighDFPackedIntsPostingLists.MAX_FREQ_BIT,
-          HighDFPackedIntsPostingLists.NUM_BITS_PER_SLICE,
-          HighDFPackedIntsPostingLists.SLICE_SIZE,
+          H ghDFPacked ntsPost ngL sts.MAX_DOC_ D_B T
+              + H ghDFPacked ntsPost ngL sts.MAX_FREQ_B T,
+          H ghDFPacked ntsPost ngL sts.NUM_B TS_PER_SL CE,
+          H ghDFPacked ntsPost ngL sts.SL CE_S ZE,
           false);
 
-  /** Packed ints reader for delta-freq pairs. */
-  private final IntBlockPoolPackedLongsReader deltaFreqListsReader;
+  /** Packed  nts reader for delta-freq pa rs. */
+  pr vate f nal  ntBlockPoolPackedLongsReader deltaFreqL stsReader;
 
-  /** Skip list reader. */
-  protected final HighDFPackedIntsSkipListReader skipListReader;
+  /** Sk p l st reader. */
+  protected f nal H ghDFPacked ntsSk pL stReader sk pL stReader;
 
-  /** Number of remaining docs (delta-freq pairs) in a slice. */
-  private int numDocsRemaining;
-
-  /**
-   * Total number of docs (delta-freq pairs) in a slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
-   */
-  private int numDocsInSliceTotal;
+  /** Number of rema n ng docs (delta-freq pa rs)  n a sl ce. */
+  pr vate  nt numDocsRema n ng;
 
   /**
-   * Number of bits used for frequency in a delta-freq slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * Total number of docs (delta-freq pa rs)  n a sl ce.
+   * T  value  s set every t   a sl ce  s loaded  n {@l nk #loadNextDeltaFreqSl ce()}.
    */
-  private int bitsForFreq;
+  pr vate  nt numDocs nSl ceTotal;
 
   /**
-   * Frequency mask used to extract frequency from a delta-freq pair, in a delta-freq slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * Number of b s used for frequency  n a delta-freq sl ce.
+   * T  value  s set every t   a sl ce  s loaded  n {@l nk #loadNextDeltaFreqSl ce()}.
    */
-  private int freqMask;
-  private boolean freqBitsIsZero;
+  pr vate  nt b sForFreq;
+
+  /**
+   * Frequency mask used to extract frequency from a delta-freq pa r,  n a delta-freq sl ce.
+   * T  value  s set every t   a sl ce  s loaded  n {@l nk #loadNextDeltaFreqSl ce()}.
+   */
+  pr vate  nt freqMask;
+  pr vate boolean freqB s sZero;
 
   /**
    * Sole constructor.
    *
-   * @param skipLists skip lists int block pool
-   * @param deltaFreqLists delta-freq lists int block pool
-   * @param postingListPointer pointer to the posting list for which this enumerator is created
-   * @param numPostings number of postings in the posting list for which this enumerator is created
-   * @param omitPositions whether positions are omitted in the posting list of which this enumerator
-   *                      is created
+   * @param sk pL sts sk p l sts  nt block pool
+   * @param deltaFreqL sts delta-freq l sts  nt block pool
+   * @param post ngL stPo nter po nter to t  post ng l st for wh ch t  enu rator  s created
+   * @param numPost ngs number of post ngs  n t  post ng l st for wh ch t  enu rator  s created
+   * @param om Pos  ons w t r pos  ons are om ted  n t  post ng l st of wh ch t  enu rator
+   *                       s created
    */
-  public HighDFPackedIntsDocsEnum(
-      IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
-      int postingListPointer,
-      int numPostings,
-      boolean omitPositions) {
-    super(postingListPointer, numPostings);
+  publ c H ghDFPacked ntsDocsEnum(
+       ntBlockPool sk pL sts,
+       ntBlockPool deltaFreqL sts,
+       nt post ngL stPo nter,
+       nt numPost ngs,
+      boolean om Pos  ons) {
+    super(post ngL stPo nter, numPost ngs);
 
-    // Create skip list reader and get first skip entry.
-    this.skipListReader = new HighDFPackedIntsSkipListReader(
-        skipLists, postingListPointer, omitPositions);
-    this.skipListReader.getNextSkipEntry();
+    // Create sk p l st reader and get f rst sk p entry.
+    t .sk pL stReader = new H ghDFPacked ntsSk pL stReader(
+        sk pL sts, post ngL stPo nter, om Pos  ons);
+    t .sk pL stReader.getNextSk pEntry();
 
-    // Set number of remaining docs in this posting list.
-    this.numDocsRemaining = skipListReader.getNumDocsTotal();
+    // Set number of rema n ng docs  n t  post ng l st.
+    t .numDocsRema n ng = sk pL stReader.getNumDocsTotal();
 
-    // Create a delta-freq pair packed values reader.
-    this.deltaFreqListsReader = new IntBlockPoolPackedLongsReader(
-        deltaFreqLists,
+    // Create a delta-freq pa r packed values reader.
+    t .deltaFreqL stsReader = new  ntBlockPoolPackedLongsReader(
+        deltaFreqL sts,
         PRE_COMPUTED_VALUES,
         queryCostTracker,
-        QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+        QueryCostTracker.CostType.LOAD_OPT M ZED_POST NG_BLOCK);
 
-    loadNextDeltaFreqSlice();
-    loadNextPosting();
+    loadNextDeltaFreqSl ce();
+    loadNextPost ng();
   }
 
   /**
-   * Load next delta-freq slice, return false if all docs exhausted.
-   * Notice!! The caller of this method should make sure the current slice is all used up and
-   * {@link #numDocsRemaining} is updated accordingly.
+   * Load next delta-freq sl ce, return false  f all docs exhausted.
+   * Not ce!! T  caller of t   thod should make sure t  current sl ce  s all used up and
+   * {@l nk #numDocsRema n ng}  s updated accord ngly.
    *
-   * @return whether a slice is loaded.
-   * @see #loadNextPosting()
-   * @see #skipTo(int)
+   * @return w t r a sl ce  s loaded.
+   * @see #loadNextPost ng()
+   * @see #sk pTo( nt)
    */
-  private boolean loadNextDeltaFreqSlice() {
-    // Load nothing if no docs are remaining.
-    if (numDocsRemaining == 0) {
+  pr vate boolean loadNextDeltaFreqSl ce() {
+    // Load noth ng  f no docs are rema n ng.
+     f (numDocsRema n ng == 0) {
       return false;
     }
 
-    final int encodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
-    final int bitsForDelta = HighDFPackedIntsPostingLists.getNumBitsForDelta(encodedMetadata);
-    bitsForFreq = HighDFPackedIntsPostingLists.getNumBitsForFreq(encodedMetadata);
-    numDocsInSliceTotal = HighDFPackedIntsPostingLists.getNumDocsInSlice(encodedMetadata);
+    f nal  nt encoded tadata = sk pL stReader.getEncoded tadataCurrentSl ce();
+    f nal  nt b sForDelta = H ghDFPacked ntsPost ngL sts.getNumB sForDelta(encoded tadata);
+    b sForFreq = H ghDFPacked ntsPost ngL sts.getNumB sForFreq(encoded tadata);
+    numDocs nSl ceTotal = H ghDFPacked ntsPost ngL sts.getNumDocs nSl ce(encoded tadata);
 
-    freqMask = (1 << bitsForFreq) - 1;
-    freqBitsIsZero = bitsForFreq == 0;
+    freqMask = (1 << b sForFreq) - 1;
+    freqB s sZero = b sForFreq == 0;
 
-    // Locate and reset the reader for this slice.
-    final int bitsPerPackedValue = bitsForDelta + bitsForFreq;
-    deltaFreqListsReader.jumpToInt(
-        skipListReader.getDeltaFreqCurrentSlicePointer(), bitsPerPackedValue);
+    // Locate and reset t  reader for t  sl ce.
+    f nal  nt b sPerPackedValue = b sForDelta + b sForFreq;
+    deltaFreqL stsReader.jumpTo nt(
+        sk pL stReader.getDeltaFreqCurrentSl cePo nter(), b sPerPackedValue);
     return true;
   }
 
   /**
-   * Load next delta-freq pair from the current slice and set the computed
-   * {@link #nextDocID} and {@link #nextFreq}.
+   * Load next delta-freq pa r from t  current sl ce and set t  computed
+   * {@l nk #nextDoc D} and {@l nk #nextFreq}.
    */
-  @Override
-  protected final void loadNextPosting() {
-    assert numDocsRemaining >= (numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex())
-        : "numDocsRemaining should be equal to or greater than number of docs remaining in slice";
+  @Overr de
+  protected f nal vo d loadNextPost ng() {
+    assert numDocsRema n ng >= (numDocs nSl ceTotal - deltaFreqL stsReader.getPackedValue ndex())
+        : "numDocsRema n ng should be equal to or greater than number of docs rema n ng  n sl ce";
 
-    if (deltaFreqListsReader.getPackedValueIndex() < numDocsInSliceTotal) {
-      // Current slice is not exhausted.
-      final long nextDeltaFreqPair = deltaFreqListsReader.readPackedLong();
+     f (deltaFreqL stsReader.getPackedValue ndex() < numDocs nSl ceTotal) {
+      // Current sl ce  s not exhausted.
+      f nal long nextDeltaFreqPa r = deltaFreqL stsReader.readPackedLong();
 
       /**
-       * Optimization: No need to do shifts and masks if number of bits for frequency is 0.
-       * Also, the stored frequency is the actual frequency - 1.
+       * Opt m zat on: No need to do sh fts and masks  f number of b s for frequency  s 0.
+       * Also, t  stored frequency  s t  actual frequency - 1.
        * @see
-       * HighDFPackedIntsPostingLists#copyPostingList(org.apache.lucene.index.PostingsEnum, int)
+       * H ghDFPacked ntsPost ngL sts#copyPost ngL st(org.apac .lucene. ndex.Post ngsEnum,  nt)
        */
-      if (freqBitsIsZero) {
+       f (freqB s sZero) {
         nextFreq = 1;
-        nextDocID += (int) nextDeltaFreqPair;
+        nextDoc D += ( nt) nextDeltaFreqPa r;
       } else {
-        nextFreq = (int) ((nextDeltaFreqPair & freqMask) + 1);
-        nextDocID += (int) (nextDeltaFreqPair >>> bitsForFreq);
+        nextFreq = ( nt) ((nextDeltaFreqPa r & freqMask) + 1);
+        nextDoc D += ( nt) (nextDeltaFreqPa r >>> b sForFreq);
       }
 
-      numDocsRemaining--;
+      numDocsRema n ng--;
     } else {
-      // Current slice is exhausted, get next skip entry and load next slice.
-      skipListReader.getNextSkipEntry();
-      if (loadNextDeltaFreqSlice()) {
-        // Next slice is loaded, load next posting again.
-        loadNextPosting();
+      // Current sl ce  s exhausted, get next sk p entry and load next sl ce.
+      sk pL stReader.getNextSk pEntry();
+       f (loadNextDeltaFreqSl ce()) {
+        // Next sl ce  s loaded, load next post ng aga n.
+        loadNextPost ng();
       } else {
-        // All docs are exhausted, mark this enumerator as exhausted.
-        assert numDocsRemaining == 0;
-        nextDocID = NO_MORE_DOCS;
+        // All docs are exhausted, mark t  enu rator as exhausted.
+        assert numDocsRema n ng == 0;
+        nextDoc D = NO_MORE_DOCS;
         nextFreq = 0;
       }
     }
   }
 
   /**
-   * Skip over slices to approach the given target as close as possible.
+   * Sk p over sl ces to approach t  g ven target as close as poss ble.
    */
-  @Override
-  protected final void skipTo(int target) {
-    assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
+  @Overr de
+  protected f nal vo d sk pTo( nt target) {
+    assert target != NO_MORE_DOCS : "Should be handled  n parent class advance  thod";
 
-    int numSlicesToSkip = 0;
-    int numDocsToSkip = 0;
-    int numDocsRemainingInSlice = numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex();
+     nt numSl cesToSk p = 0;
+     nt numDocsToSk p = 0;
+     nt numDocsRema n ng nSl ce = numDocs nSl ceTotal - deltaFreqL stsReader.getPackedValue ndex();
 
-    // Skipping over slices.
-    while (skipListReader.peekPreviousDocIDNextSlice() < target) {
-      skipListReader.getNextSkipEntry();
-      nextDocID = skipListReader.getPreviousDocIDCurrentSlice();
-      numDocsToSkip += numDocsRemainingInSlice;
-      int header = skipListReader.getEncodedMetadataCurrentSlice();
-      numDocsRemainingInSlice = HighDFPackedIntsPostingLists.getNumDocsInSlice(header);
+    // Sk pp ng over sl ces.
+    wh le (sk pL stReader.peekPrev ousDoc DNextSl ce() < target) {
+      sk pL stReader.getNextSk pEntry();
+      nextDoc D = sk pL stReader.getPrev ousDoc DCurrentSl ce();
+      numDocsToSk p += numDocsRema n ng nSl ce;
+       nt  ader = sk pL stReader.getEncoded tadataCurrentSl ce();
+      numDocsRema n ng nSl ce = H ghDFPacked ntsPost ngL sts.getNumDocs nSl ce( ader);
 
-      numSlicesToSkip++;
+      numSl cesToSk p++;
     }
 
-    // If skipped any slices, load the new slice.
-    if (numSlicesToSkip > 0) {
-      numDocsRemaining -= numDocsToSkip;
-      final boolean hasNextSlice = loadNextDeltaFreqSlice();
-      assert hasNextSlice;
-      assert numDocsRemaining >= numDocsInSliceTotal && numDocsInSliceTotal > 0;
+    //  f sk pped any sl ces, load t  new sl ce.
+     f (numSl cesToSk p > 0) {
+      numDocsRema n ng -= numDocsToSk p;
+      f nal boolean hasNextSl ce = loadNextDeltaFreqSl ce();
+      assert hasNextSl ce;
+      assert numDocsRema n ng >= numDocs nSl ceTotal && numDocs nSl ceTotal > 0;
 
-      // Do additional skip for the delta freq slice that was just loaded.
-      doAdditionalSkip();
+      // Do add  onal sk p for t  delta freq sl ce that was just loaded.
+      doAdd  onalSk p();
 
-      loadNextPosting();
+      loadNextPost ng();
     }
   }
 
   /**
-   * Subclass should override this method if want to do additional skip on its data structure.
+   * Subclass should overr de t   thod  f want to do add  onal sk p on  s data structure.
    */
-  protected void doAdditionalSkip() {
-    // No-op in this class.
+  protected vo d doAdd  onalSk p() {
+    // No-op  n t  class.
   }
 
   /**
-   * Get the largest doc ID from {@link #skipListReader}.
+   * Get t  largest doc  D from {@l nk #sk pL stReader}.
    */
-  @Override
-  public int getLargestDocID() throws IOException {
-    return skipListReader.getLargestDocID();
+  @Overr de
+  publ c  nt getLargestDoc D() throws  OExcept on {
+    return sk pL stReader.getLargestDoc D();
   }
 
   /**
-   * Return {@link #numDocsRemaining} as a proxy of cost.
+   * Return {@l nk #numDocsRema n ng} as a proxy of cost.
    *
-   * @see org.apache.lucene.index.PostingsEnum#cost()
+   * @see org.apac .lucene. ndex.Post ngsEnum#cost()
    */
-  @Override
-  public long cost() {
-    return numDocsRemaining;
+  @Overr de
+  publ c long cost() {
+    return numDocsRema n ng;
   }
 }

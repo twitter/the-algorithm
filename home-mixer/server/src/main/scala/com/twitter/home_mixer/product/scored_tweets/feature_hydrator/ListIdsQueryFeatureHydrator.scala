@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.soc algraph.{thr ftscala => sg}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case object ListIdsFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-  override val defaultValue: Seq[Long] = Seq.empty
+case object L st dsFeature extends FeatureW hDefaultOnFa lure[P pel neQuery, Seq[Long]] {
+  overr de val defaultValue: Seq[Long] = Seq.empty
 }
 
-@Singleton
-class ListIdsQueryFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+class L st dsQueryFeatureHydrator @ nject() (soc alGraph: Soc alGraph)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("ListIds")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("L st ds")
 
-  override val features: Set[Feature[_, _]] = Set(ListIdsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(L st dsFeature)
 
-  private val MaxListsToFetch = 20
+  pr vate val MaxL stsToFetch = 20
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val user d = query.getRequ redUser d
 
-    val ownedSubscribedRequest = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(userId, sg.RelationshipType.ListIsSubscriber, hasRelationship = true),
-        sg.SrcRelationship(userId, sg.RelationshipType.ListOwning, hasRelationship = true)
+    val ownedSubscr bedRequest = sg. dsRequest(
+      relat onsh ps = Seq(
+        sg.SrcRelat onsh p(user d, sg.Relat onsh pType.L st sSubscr ber, hasRelat onsh p = true),
+        sg.SrcRelat onsh p(user d, sg.Relat onsh pType.L stOwn ng, hasRelat onsh p = true)
       ),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(false), count = Some(MaxListsToFetch))),
-      context = Some(
+      pageRequest = So (sg.PageRequest(selectAll = So (false), count = So (MaxL stsToFetch))),
+      context = So (
         sg.LookupContext(
-          includeInactive = false,
-          performUnion = Some(true),
-          includeAll = Some(false)
+           nclude nact ve = false,
+          performUn on = So (true),
+           ncludeAll = So (false)
         )
       )
     )
 
-    socialGraph.ids(ownedSubscribedRequest).map { response =>
-      FeatureMapBuilder().add(ListIdsFeature, response.ids).build()
+    soc alGraph. ds(ownedSubscr bedRequest).map { response =>
+      FeatureMapBu lder().add(L st dsFeature, response. ds).bu ld()
     }
   }
 }

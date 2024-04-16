@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift:controller",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/service",
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/controllers",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/debug_query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/urt",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft:controller",
+        "ho -m xer/server/src/ma n/scala/com/tw ter/ho _m xer/marshaller/request",
+        "ho -m xer/server/src/ma n/scala/com/tw ter/ho _m xer/serv ce",
+        "ho -m xer/thr ft/src/ma n/thr ft:thr ft-scala",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/controllers",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/conf gap ",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/serv ce/debug_query",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/serv ce/urt",
+        "snowflake/src/ma n/scala/com/tw ter/snowflake/ d",
     ],
 )

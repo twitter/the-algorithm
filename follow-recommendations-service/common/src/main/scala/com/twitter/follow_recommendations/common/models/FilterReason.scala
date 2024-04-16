@@ -1,133 +1,133 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-sealed trait FilterReason {
-  def reason: String
+sealed tra  F lterReason {
+  def reason: Str ng
 }
 
-object FilterReason {
+object F lterReason {
 
-  case object NoReason extends FilterReason {
-    override val reason: String = "no_reason"
+  case object NoReason extends F lterReason {
+    overr de val reason: Str ng = "no_reason"
   }
 
-  case class ParamReason(paramName: String) extends FilterReason {
-    override val reason: String = s"param_$paramName"
+  case class ParamReason(paramNa : Str ng) extends F lterReason {
+    overr de val reason: Str ng = s"param_$paramNa "
   }
 
-  case object ExcludedId extends FilterReason {
-    override val reason: String = "excluded_id_from_request"
+  case object Excluded d extends F lterReason {
+    overr de val reason: Str ng = "excluded_ d_from_request"
   }
 
-  case object ProfileSidebarBlacklist extends FilterReason {
-    override val reason: String = "profile_sidebar_blacklisted_id"
+  case object Prof leS debarBlackl st extends F lterReason {
+    overr de val reason: Str ng = "prof le_s debar_blackl sted_ d"
   }
 
-  case object CuratedAccountsCompetitorList extends FilterReason {
-    override val reason: String = "curated_blacklisted_id"
+  case object CuratedAccountsCompet orL st extends F lterReason {
+    overr de val reason: Str ng = "curated_blackl sted_ d"
   }
 
-  case class InvalidRelationshipTypes(relationshipTypes: String) extends FilterReason {
-    override val reason: String = s"invalid_relationship_types $relationshipTypes"
+  case class  nval dRelat onsh pTypes(relat onsh pTypes: Str ng) extends F lterReason {
+    overr de val reason: Str ng = s" nval d_relat onsh p_types $relat onsh pTypes"
   }
 
-  case object ProfileId extends FilterReason {
-    override val reason: String = "candidate_has_same_id_as_profile"
+  case object Prof le d extends F lterReason {
+    overr de val reason: Str ng = "cand date_has_sa _ d_as_prof le"
   }
 
-  case object DismissedId extends FilterReason {
-    override val reason: String = s"dismissed_candidate"
+  case object D sm ssed d extends F lterReason {
+    overr de val reason: Str ng = s"d sm ssed_cand date"
   }
 
-  case object OptedOutId extends FilterReason {
-    override val reason: String = s"candidate_opted_out_from_criteria_in_request"
+  case object OptedOut d extends F lterReason {
+    overr de val reason: Str ng = s"cand date_opted_out_from_cr er a_ n_request"
   }
 
-  // gizmoduck predicates
-  case object NoUser extends FilterReason {
-    override val reason: String = "no_user_result_from_gizmoduck"
+  // g zmoduck pred cates
+  case object NoUser extends F lterReason {
+    overr de val reason: Str ng = "no_user_result_from_g zmoduck"
   }
 
-  case object AddressBookUndiscoverable extends FilterReason {
-    override val reason: String = "not_discoverable_via_address_book"
+  case object AddressBookUnd scoverable extends F lterReason {
+    overr de val reason: Str ng = "not_d scoverable_v a_address_book"
   }
 
-  case object PhoneBookUndiscoverable extends FilterReason {
-    override val reason: String = "not_discoverable_via_phone_book"
+  case object PhoneBookUnd scoverable extends F lterReason {
+    overr de val reason: Str ng = "not_d scoverable_v a_phone_book"
   }
 
-  case object Deactivated extends FilterReason {
-    override val reason: String = "deactivated"
+  case object Deact vated extends F lterReason {
+    overr de val reason: Str ng = "deact vated"
   }
 
-  case object Suspended extends FilterReason {
-    override val reason: String = "suspended"
+  case object Suspended extends F lterReason {
+    overr de val reason: Str ng = "suspended"
   }
 
-  case object Restricted extends FilterReason {
-    override val reason: String = "restricted"
+  case object Restr cted extends F lterReason {
+    overr de val reason: Str ng = "restr cted"
   }
 
-  case object NsfwUser extends FilterReason {
-    override val reason: String = "nsfwUser"
+  case object NsfwUser extends F lterReason {
+    overr de val reason: Str ng = "nsfwUser"
   }
 
-  case object NsfwAdmin extends FilterReason {
-    override val reason: String = "nsfwAdmin"
+  case object NsfwAdm n extends F lterReason {
+    overr de val reason: Str ng = "nsfwAdm n"
   }
 
-  case object HssSignal extends FilterReason {
-    override val reason: String = "hssSignal"
+  case object HssS gnal extends F lterReason {
+    overr de val reason: Str ng = "hssS gnal"
   }
 
-  case object IsProtected extends FilterReason {
-    override val reason: String = "isProtected"
+  case object  sProtected extends F lterReason {
+    overr de val reason: Str ng = " sProtected"
   }
 
-  case class CountryTakedown(countryCode: String) extends FilterReason {
-    override val reason: String = s"takedown_in_$countryCode"
+  case class CountryTakedown(countryCode: Str ng) extends F lterReason {
+    overr de val reason: Str ng = s"takedown_ n_$countryCode"
   }
 
-  case object Blink extends FilterReason {
-    override val reason: String = "blink"
+  case object Bl nk extends F lterReason {
+    overr de val reason: Str ng = "bl nk"
   }
 
-  case object AlreadyFollowed extends FilterReason {
-    override val reason: String = "already_followed"
+  case object AlreadyFollo d extends F lterReason {
+    overr de val reason: Str ng = "already_follo d"
   }
 
-  case object InvalidRelationship extends FilterReason {
-    override val reason: String = "invalid_relationship"
+  case object  nval dRelat onsh p extends F lterReason {
+    overr de val reason: Str ng = " nval d_relat onsh p"
   }
 
-  case object NotFollowingTargetUser extends FilterReason {
-    override val reason: String = "not_following_target_user"
+  case object NotFollow ngTargetUser extends F lterReason {
+    overr de val reason: Str ng = "not_follow ng_target_user"
   }
 
-  case object CandidateSideHoldback extends FilterReason {
-    override val reason: String = "candidate_side_holdback"
+  case object Cand dateS deHoldback extends F lterReason {
+    overr de val reason: Str ng = "cand date_s de_holdback"
   }
 
-  case object Inactive extends FilterReason {
-    override val reason: String = "inactive"
+  case object  nact ve extends F lterReason {
+    overr de val reason: Str ng = " nact ve"
   }
 
-  case object MissingRecommendabilityData extends FilterReason {
-    override val reason: String = "missing_recommendability_data"
+  case object M ss ngRecom ndab l yData extends F lterReason {
+    overr de val reason: Str ng = "m ss ng_recom ndab l y_data"
   }
 
-  case object HighTweetVelocity extends FilterReason {
-    override val reason: String = "high_tweet_velocity"
+  case object H ghT etVeloc y extends F lterReason {
+    overr de val reason: Str ng = "h gh_t et_veloc y"
   }
 
-  case object AlreadyRecommended extends FilterReason {
-    override val reason: String = "already_recommended"
+  case object AlreadyRecom nded extends F lterReason {
+    overr de val reason: Str ng = "already_recom nded"
   }
 
-  case object MinStateNotMet extends FilterReason {
-    override val reason: String = "min_state_user_not_met"
+  case object M nStateNot t extends F lterReason {
+    overr de val reason: Str ng = "m n_state_user_not_ t"
   }
 
-  case object FailOpen extends FilterReason {
-    override val reason: String = "fail_open"
+  case object Fa lOpen extends F lterReason {
+    overr de val reason: Str ng = "fa l_open"
   }
 }

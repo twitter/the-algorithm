@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import java.util.Optional;
+ mport java.ut l.Opt onal;
 
-import com.twitter.common.optional.Optionals;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.strato.opcontext.Attribution;
-import com.twitter.strato.opcontext.HttpEndpoint;
+ mport com.tw ter.common.opt onal.Opt onals;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.strato.opcontext.Attr but on;
+ mport com.tw ter.strato.opcontext.HttpEndpo nt;
 
-public final class ClientIdUtil {
-  // Blenders should always set the EarlybirdRequest.clientId field. It should be set to the Finagle
-  // client ID of the client that caused the blender to send this request to the roots. If the
-  // Finagle ID of the blender's client cannot be determined, it will be set to "unknown" (see
-  // com.twitter.search.common.util.FinagleUtil.UNKNOWN_CLIENT_NAME). However, other services that
-  // send requests to roots might not set EarlybirdRequest.clientId.
+publ c f nal class Cl ent dUt l {
+  // Blenders should always set t  Earlyb rdRequest.cl ent d f eld.   should be set to t  F nagle
+  // cl ent  D of t  cl ent that caused t  blender to send t  request to t  roots.  f t 
+  // F nagle  D of t  blender's cl ent cannot be determ ned,   w ll be set to "unknown" (see
+  // com.tw ter.search.common.ut l.F nagleUt l.UNKNOWN_CL ENT_NAME). Ho ver, ot r serv ces that
+  // send requests to roots m ght not set Earlyb rdRequest.cl ent d.
   //
-  // So an "unset" clientId means: EarlybirdRequest.clientId was null.
-  // An "unknown" clientId means: the client that sent us the request
-  // tried setting EarlybirdRequest.clientId, but couldn't figure out a good value for it.
-  public static final String UNSET_CLIENT_ID = "unset";
+  // So an "unset" cl ent d  ans: Earlyb rdRequest.cl ent d was null.
+  // An "unknown" cl ent d  ans: t  cl ent that sent us t  request
+  // tr ed sett ng Earlyb rdRequest.cl ent d, but couldn't f gure out a good value for  .
+  publ c stat c f nal Str ng UNSET_CL ENT_ D = "unset";
 
-  private static final String CLIENT_ID_FOR_UNKNOWN_CLIENTS = "unknown_client_id";
+  pr vate stat c f nal Str ng CL ENT_ D_FOR_UNKNOWN_CL ENTS = "unknown_cl ent_ d";
 
-  private static final String CLIENT_ID_PREFIX = "client_id_";
+  pr vate stat c f nal Str ng CL ENT_ D_PREF X = "cl ent_ d_";
 
-  private static final String FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN =
-      "finagle_id_%s_and_client_id_%s";
+  pr vate stat c f nal Str ng F NAGLE_CL ENT_ D_AND_CL ENT_ D_PATTERN =
+      "f nagle_ d_%s_and_cl ent_ d_%s";
 
-  private static final String CLIENT_ID_AND_REQUEST_TYPE = "client_id_%s_and_type_%s";
+  pr vate stat c f nal Str ng CL ENT_ D_AND_REQUEST_TYPE = "cl ent_ d_%s_and_type_%s";
 
-  private ClientIdUtil() {
+  pr vate Cl ent dUt l() {
   }
 
-  /** Returns the ID of the client that initiated this request or UNSET_CLIENT_ID if not set. */
-  public static String getClientIdFromRequest(EarlybirdRequest request) {
-    return Optional
-        .ofNullable(request.getClientId())
-        .map(String::toLowerCase)
-        .orElse(UNSET_CLIENT_ID);
-  }
-
-  /**
-   * Returns the Strato http endpoint attribution as an Optional.
-   */
-  public static Optional<String> getClientIdFromHttpEndpointAttribution() {
-    return Optionals
-        .optional(Attribution.httpEndpoint())
-        .map(HttpEndpoint::name)
-        .map(String::toLowerCase);
-  }
-
-  /** Formats the given clientId into a string that can be used for stats. */
-  public static String formatClientId(String clientId) {
-    return CLIENT_ID_PREFIX + clientId;
+  /** Returns t   D of t  cl ent that  n  ated t  request or UNSET_CL ENT_ D  f not set. */
+  publ c stat c Str ng getCl ent dFromRequest(Earlyb rdRequest request) {
+    return Opt onal
+        .ofNullable(request.getCl ent d())
+        .map(Str ng::toLo rCase)
+        .orElse(UNSET_CL ENT_ D);
   }
 
   /**
-   * Formats the given Finagle clientId and the given clientId into a single string that can be used
-   * for stats, or other purposes where the two IDs need to be combined.
+   * Returns t  Strato http endpo nt attr but on as an Opt onal.
    */
-  public static String formatFinagleClientIdAndClientId(String finagleClientId, String clientId) {
-    return String.format(FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN, finagleClientId, clientId);
+  publ c stat c Opt onal<Str ng> getCl ent dFromHttpEndpo ntAttr but on() {
+    return Opt onals
+        .opt onal(Attr but on.httpEndpo nt())
+        .map(HttpEndpo nt::na )
+        .map(Str ng::toLo rCase);
+  }
+
+  /** Formats t  g ven cl ent d  nto a str ng that can be used for stats. */
+  publ c stat c Str ng formatCl ent d(Str ng cl ent d) {
+    return CL ENT_ D_PREF X + cl ent d;
   }
 
   /**
-   * Formats the given clientId and requestType into a single string that can be used
-   * for stats or other purposes.
+   * Formats t  g ven F nagle cl ent d and t  g ven cl ent d  nto a s ngle str ng that can be used
+   * for stats, or ot r purposes w re t  two  Ds need to be comb ned.
    */
-  public static String formatClientIdAndRequestType(
-      String clientId, String requestType) {
-    return String.format(CLIENT_ID_AND_REQUEST_TYPE, clientId, requestType);
+  publ c stat c Str ng formatF nagleCl ent dAndCl ent d(Str ng f nagleCl ent d, Str ng cl ent d) {
+    return Str ng.format(F NAGLE_CL ENT_ D_AND_CL ENT_ D_PATTERN, f nagleCl ent d, cl ent d);
   }
 
   /**
-   * Format the quota client id
+   * Formats t  g ven cl ent d and requestType  nto a s ngle str ng that can be used
+   * for stats or ot r purposes.
    */
-  public static String getQuotaClientId(String clientId) {
-    if (FinagleUtil.UNKNOWN_CLIENT_NAME.equals(clientId) || UNSET_CLIENT_ID.equals(clientId)) {
-      return CLIENT_ID_FOR_UNKNOWN_CLIENTS;
+  publ c stat c Str ng formatCl ent dAndRequestType(
+      Str ng cl ent d, Str ng requestType) {
+    return Str ng.format(CL ENT_ D_AND_REQUEST_TYPE, cl ent d, requestType);
+  }
+
+  /**
+   * Format t  quota cl ent  d
+   */
+  publ c stat c Str ng getQuotaCl ent d(Str ng cl ent d) {
+     f (F nagleUt l.UNKNOWN_CL ENT_NAME.equals(cl ent d) || UNSET_CL ENT_ D.equals(cl ent d)) {
+      return CL ENT_ D_FOR_UNKNOWN_CL ENTS;
     }
 
-    return clientId;
+    return cl ent d;
   }
 }

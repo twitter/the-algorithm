@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class CandidateUserDebugParams(paramsMap: Map[Long, Params])
+case class Cand dateUserDebugParams(paramsMap: Map[Long, Params])

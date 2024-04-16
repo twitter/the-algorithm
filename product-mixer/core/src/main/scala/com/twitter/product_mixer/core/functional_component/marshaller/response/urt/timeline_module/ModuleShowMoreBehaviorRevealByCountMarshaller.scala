@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav orRevealByCount
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleShowMoreBehaviorRevealByCountMarshaller @Inject() () {
+@S ngleton
+class ModuleShowMoreBehav orRevealByCountMarshaller @ nject() () {
 
   def apply(
-    moduleShowMoreBehaviorRevealByCount: ModuleShowMoreBehaviorRevealByCount
-  ): urt.ModuleShowMoreBehavior =
-    urt.ModuleShowMoreBehavior.RevealByCount(
-      urt.ModuleShowMoreBehaviorRevealByCount(
-        initialItemsCount = moduleShowMoreBehaviorRevealByCount.initialItemsCount,
-        showMoreItemsCount = moduleShowMoreBehaviorRevealByCount.showMoreItemsCount
+    moduleShowMoreBehav orRevealByCount: ModuleShowMoreBehav orRevealByCount
+  ): urt.ModuleShowMoreBehav or =
+    urt.ModuleShowMoreBehav or.RevealByCount(
+      urt.ModuleShowMoreBehav orRevealByCount(
+         n  al emsCount = moduleShowMoreBehav orRevealByCount. n  al emsCount,
+        showMore emsCount = moduleShowMoreBehav orRevealByCount.showMore emsCount
       )
     )
 }

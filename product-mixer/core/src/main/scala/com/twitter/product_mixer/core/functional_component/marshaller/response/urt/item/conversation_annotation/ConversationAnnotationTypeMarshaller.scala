@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.conversat on_annotat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.Large
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.Political
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.conversat on_annotat on.Conversat onAnnotat onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.conversat on_annotat on.Large
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.conversat on_annotat on.Pol  cal
 
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ConversationAnnotationTypeMarshaller @Inject() () {
+@S ngleton
+class Conversat onAnnotat onTypeMarshaller @ nject() () {
 
   def apply(
-    conversationAnnotationType: ConversationAnnotationType
-  ): urt.ConversationAnnotationType = conversationAnnotationType match {
-    case Large => urt.ConversationAnnotationType.Large
-    case Political => urt.ConversationAnnotationType.Political
+    conversat onAnnotat onType: Conversat onAnnotat onType
+  ): urt.Conversat onAnnotat onType = conversat onAnnotat onType match {
+    case Large => urt.Conversat onAnnotat onType.Large
+    case Pol  cal => urt.Conversat onAnnotat onType.Pol  cal
   }
 }

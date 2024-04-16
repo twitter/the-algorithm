@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.simclusters_v2.common.TweetId
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+ mport com.tw ter.cr_m xer.model.T etW hCand dateGenerat on nfo
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport scala.collect on.mutable
+ mport scala.collect on.mutable.ArrayBuffer
 
-object SimilaritySourceOrderingUtil {
+object S m lar yS ceOrder ngUt l {
   /**
-   * This function flatten and dedup input candidates according to the order in the input Seq
-   * [[candidate10, candidate11], [candidate20, candidate21]] => [candidate10, candidate11, candidate20, candidate21]
+   * T  funct on flatten and dedup  nput cand dates accord ng to t  order  n t   nput Seq
+   * [[cand date10, cand date11], [cand date20, cand date21]] => [cand date10, cand date11, cand date20, cand date21]
    */
-  def keepGivenOrder(
-    candidates: Seq[Seq[TweetWithCandidateGenerationInfo]],
-  ): Seq[TweetWithCandidateGenerationInfo] = {
+  def keepG venOrder(
+    cand dates: Seq[Seq[T etW hCand dateGenerat on nfo]],
+  ): Seq[T etW hCand dateGenerat on nfo] = {
 
-    val seen = mutable.Set[TweetId]()
-    val combinedCandidates = candidates.flatten
-    val result = ArrayBuffer[TweetWithCandidateGenerationInfo]()
+    val seen = mutable.Set[T et d]()
+    val comb nedCand dates = cand dates.flatten
+    val result = ArrayBuffer[T etW hCand dateGenerat on nfo]()
 
-    combinedCandidates.foreach { candidate =>
-      val candidateTweetId = candidate.tweetId
-      val seenCandidate = seen.contains(candidateTweetId) // de-dup
-      if (!seenCandidate) {
-        result += candidate
-        seen.add(candidate.tweetId)
+    comb nedCand dates.foreach { cand date =>
+      val cand dateT et d = cand date.t et d
+      val seenCand date = seen.conta ns(cand dateT et d) // de-dup
+       f (!seenCand date) {
+        result += cand date
+        seen.add(cand date.t et d)
       }
     }
-    //convert result to immutable seq
-    result.toList
+    //convert result to  mmutable seq
+    result.toL st
   }
 }

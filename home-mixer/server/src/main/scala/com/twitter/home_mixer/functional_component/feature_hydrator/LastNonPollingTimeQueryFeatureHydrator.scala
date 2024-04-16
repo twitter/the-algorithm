@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.LastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.NonPollingTimesFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import com.twitter.util.Time
+ mport com.tw ter.ho _m xer.model.Ho Features.Follow ngLastNonPoll ngT  Feature
+ mport com.tw ter.ho _m xer.model.Ho Features.LastNonPoll ngT  Feature
+ mport com.tw ter.ho _m xer.model.Ho Features.NonPoll ngT  sFeature
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.user_sess on_store.ReadRequest
+ mport com.tw ter.user_sess on_store.ReadWr eUserSess onStore
+ mport com.tw ter.user_sess on_store.UserSess onDataset
+ mport com.tw ter.user_sess on_store.UserSess onDataset.UserSess onDataset
+ mport com.tw ter.ut l.T  
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class LastNonPollingTimeQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadWriteUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class LastNonPoll ngT  QueryFeatureHydrator @ nject() (
+  userSess onStore: ReadWr eUserSess onStore)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("LastNonPollingTime")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("LastNonPoll ngT  ")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FollowingLastNonPollingTimeFeature,
-    LastNonPollingTimeFeature,
-    NonPollingTimesFeature
+  overr de val features: Set[Feature[_, _]] = Set(
+    Follow ngLastNonPoll ngT  Feature,
+    LastNonPoll ngT  Feature,
+    NonPoll ngT  sFeature
   )
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.NonPollingTimes)
+  pr vate val datasets: Set[UserSess onDataset] = Set(UserSess onDataset.NonPoll ngT  s)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val nonPollingTimestamps = userSession.flatMap(_.nonPollingTimestamps)
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    userSess onStore
+      .read(ReadRequest(query.getRequ redUser d, datasets))
+      .map { userSess on =>
+        val nonPoll ngT  stamps = userSess on.flatMap(_.nonPoll ngT  stamps)
 
-        val lastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.nonPollingTimestampsMs.headOption)
-          .map(Time.fromMilliseconds)
+        val lastNonPoll ngT   = nonPoll ngT  stamps
+          .flatMap(_.nonPoll ngT  stampsMs. adOpt on)
+          .map(T  .fromM ll seconds)
 
-        val followingLastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.mostRecentHomeLatestNonPollingTimestampMs)
-          .map(Time.fromMilliseconds)
+        val follow ngLastNonPoll ngT   = nonPoll ngT  stamps
+          .flatMap(_.mostRecentHo LatestNonPoll ngT  stampMs)
+          .map(T  .fromM ll seconds)
 
-        val nonPollingTimes = nonPollingTimestamps
-          .map(_.nonPollingTimestampsMs)
+        val nonPoll ngT  s = nonPoll ngT  stamps
+          .map(_.nonPoll ngT  stampsMs)
           .getOrElse(Seq.empty)
 
-        FeatureMapBuilder()
-          .add(FollowingLastNonPollingTimeFeature, followingLastNonPollingTime)
-          .add(LastNonPollingTimeFeature, lastNonPollingTime)
-          .add(NonPollingTimesFeature, nonPollingTimes)
-          .build()
+        FeatureMapBu lder()
+          .add(Follow ngLastNonPoll ngT  Feature, follow ngLastNonPoll ngT  )
+          .add(LastNonPoll ngT  Feature, lastNonPoll ngT  )
+          .add(NonPoll ngT  sFeature, nonPoll ngT  s)
+          .bu ld()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.9)
   )
 }

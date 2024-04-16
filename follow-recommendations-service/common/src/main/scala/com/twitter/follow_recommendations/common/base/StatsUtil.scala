@@ -1,272 +1,272 @@
-package com.twitter.follow_recommendations.common.base
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Stopwatch
-import java.util.concurrent.TimeUnit
-import scala.util.control.NonFatal
+package com.tw ter.follow_recom ndat ons.common.base
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Stopwatch
+ mport java.ut l.concurrent.T  Un 
+ mport scala.ut l.control.NonFatal
 
-object StatsUtil {
-  val LatencyName = "latency_ms"
-  val RequestName = "requests"
-  val SuccessName = "success"
-  val FailureName = "failures"
-  val ResultsName = "results"
+object StatsUt l {
+  val LatencyNa  = "latency_ms"
+  val RequestNa  = "requests"
+  val SuccessNa  = "success"
+  val Fa lureNa  = "fa lures"
+  val ResultsNa  = "results"
   val ResultsStat = "results_stat"
-  val EmptyResultsName = "empty"
-  val NonEmptyResultsName = "non_empty"
-  val ValidCount = "valid"
-  val InvalidCount = "invalid"
-  val InvalidHasReasons = "has_reasons"
+  val EmptyResultsNa  = "empty"
+  val NonEmptyResultsNa  = "non_empty"
+  val Val dCount = "val d"
+  val  nval dCount = " nval d"
+  val  nval dHasReasons = "has_reasons"
   val Reasons = "reasons"
-  val QualityFactorStat = "quality_factor_stat"
-  val QualityFactorCounts = "quality_factor_counts"
+  val Qual yFactorStat = "qual y_factor_stat"
+  val Qual yFactorCounts = "qual y_factor_counts"
 
   /**
-   * Helper function for timing a stitch, returning the original stitch.
+   *  lper funct on for t m ng a st ch, return ng t  or g nal st ch.
    */
-  def profileStitch[T](stitch: Stitch[T], stat: StatsReceiver): Stitch[T] = {
+  def prof leSt ch[T](st ch: St ch[T], stat: StatsRece ver): St ch[T] = {
 
-    Stitch
-      .time(stitch)
+    St ch
+      .t  (st ch)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter(RequestName).incr()
-          stat.stat(LatencyName).add(stitchRunDuration.inMilliseconds)
+        case (response, st chRunDurat on) =>
+          stat.counter(RequestNa ). ncr()
+          stat.stat(LatencyNa ).add(st chRunDurat on. nM ll seconds)
           response
-            .onSuccess { _ => stat.counter(SuccessName).incr() }
-            .onFailure { e =>
-              stat.counter(FailureName).incr()
-              stat.scope(FailureName).counter(getCleanClassName(e)).incr()
+            .onSuccess { _ => stat.counter(SuccessNa ). ncr() }
+            .onFa lure { e =>
+              stat.counter(Fa lureNa ). ncr()
+              stat.scope(Fa lureNa ).counter(getCleanClassNa (e)). ncr()
             }
       }
-      .lowerFromTry
+      .lo rFromTry
   }
 
   /**
-   * Helper function for timing an arrow, returning the original arrow.
+   *  lper funct on for t m ng an arrow, return ng t  or g nal arrow.
    */
-  def profileArrow[T, U](arrow: Arrow[T, U], stat: StatsReceiver): Arrow[T, U] = {
+  def prof leArrow[T, U](arrow: Arrow[T, U], stat: StatsRece ver): Arrow[T, U] = {
 
     Arrow
-      .time(arrow)
+      .t  (arrow)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter(RequestName).incr()
-          stat.stat(LatencyName).add(stitchRunDuration.inMilliseconds)
+        case (response, st chRunDurat on) =>
+          stat.counter(RequestNa ). ncr()
+          stat.stat(LatencyNa ).add(st chRunDurat on. nM ll seconds)
           response
-            .onSuccess { _ => stat.counter(SuccessName).incr() }
-            .onFailure { e =>
-              stat.counter(FailureName).incr()
-              stat.scope(FailureName).counter(getCleanClassName(e)).incr()
+            .onSuccess { _ => stat.counter(SuccessNa ). ncr() }
+            .onFa lure { e =>
+              stat.counter(Fa lureNa ). ncr()
+              stat.scope(Fa lureNa ).counter(getCleanClassNa (e)). ncr()
             }
       }
-      .lowerFromTry
+      .lo rFromTry
   }
 
   /**
-   * Helper function to count and track the distribution of results
+   *  lper funct on to count and track t  d str but on of results
    */
-  def profileResults[T](results: T, stat: StatsReceiver, size: T => Int): T = {
-    val numResults = size(results)
-    stat.counter(ResultsName).incr(numResults)
-    if (numResults == 0) {
-      stat.counter(EmptyResultsName).incr()
+  def prof leResults[T](results: T, stat: StatsRece ver, s ze: T =>  nt): T = {
+    val numResults = s ze(results)
+    stat.counter(ResultsNa ). ncr(numResults)
+     f (numResults == 0) {
+      stat.counter(EmptyResultsNa ). ncr()
       results
     } else {
       stat.stat(ResultsStat).add(numResults)
-      stat.counter(NonEmptyResultsName).incr()
+      stat.counter(NonEmptyResultsNa ). ncr()
       results
     }
   }
 
   /**
-   * Helper function to count and track the distribution of a list of results
+   *  lper funct on to count and track t  d str but on of a l st of results
    */
-  def profileSeqResults[T](results: Seq[T], stat: StatsReceiver): Seq[T] = {
-    profileResults[Seq[T]](results, stat, _.size)
+  def prof leSeqResults[T](results: Seq[T], stat: StatsRece ver): Seq[T] = {
+    prof leResults[Seq[T]](results, stat, _.s ze)
   }
 
   /**
-   * Helper function for timing a stitch and count the number of results, returning the original stitch.
+   *  lper funct on for t m ng a st ch and count t  number of results, return ng t  or g nal st ch.
    */
-  def profileStitchResults[T](stitch: Stitch[T], stat: StatsReceiver, size: T => Int): Stitch[T] = {
-    profileStitch(stitch, stat).onSuccess { results => profileResults(results, stat, size) }
+  def prof leSt chResults[T](st ch: St ch[T], stat: StatsRece ver, s ze: T =>  nt): St ch[T] = {
+    prof leSt ch(st ch, stat).onSuccess { results => prof leResults(results, stat, s ze) }
   }
 
   /**
-   * Helper function for timing an arrow and count the number of results, returning the original arrow.
+   *  lper funct on for t m ng an arrow and count t  number of results, return ng t  or g nal arrow.
    */
-  def profileArrowResults[T, U](
+  def prof leArrowResults[T, U](
     arrow: Arrow[T, U],
-    stat: StatsReceiver,
-    size: U => Int
+    stat: StatsRece ver,
+    s ze: U =>  nt
   ): Arrow[T, U] = {
-    profileArrow(arrow, stat).onSuccess { results => profileResults(results, stat, size) }
+    prof leArrow(arrow, stat).onSuccess { results => prof leResults(results, stat, s ze) }
   }
 
   /**
-   * Helper function for timing a stitch and count a seq of results, returning the original stitch.
+   *  lper funct on for t m ng a st ch and count a seq of results, return ng t  or g nal st ch.
    */
-  def profileStitchSeqResults[T](stitch: Stitch[Seq[T]], stat: StatsReceiver): Stitch[Seq[T]] = {
-    profileStitchResults[Seq[T]](stitch, stat, _.size)
+  def prof leSt chSeqResults[T](st ch: St ch[Seq[T]], stat: StatsRece ver): St ch[Seq[T]] = {
+    prof leSt chResults[Seq[T]](st ch, stat, _.s ze)
   }
 
   /**
-   * Helper function for timing a stitch and count optional results, returning the original stitch.
+   *  lper funct on for t m ng a st ch and count opt onal results, return ng t  or g nal st ch.
    */
-  def profileStitchOptionalResults[T](
-    stitch: Stitch[Option[T]],
-    stat: StatsReceiver
-  ): Stitch[Option[T]] = {
-    profileStitchResults[Option[T]](stitch, stat, _.size)
+  def prof leSt chOpt onalResults[T](
+    st ch: St ch[Opt on[T]],
+    stat: StatsRece ver
+  ): St ch[Opt on[T]] = {
+    prof leSt chResults[Opt on[T]](st ch, stat, _.s ze)
   }
 
   /**
-   * Helper function for timing a stitch and count a map of results, returning the original stitch.
+   *  lper funct on for t m ng a st ch and count a map of results, return ng t  or g nal st ch.
    */
-  def profileStitchMapResults[K, V](
-    stitch: Stitch[Map[K, V]],
-    stat: StatsReceiver
-  ): Stitch[Map[K, V]] = {
-    profileStitchResults[Map[K, V]](stitch, stat, _.size)
+  def prof leSt chMapResults[K, V](
+    st ch: St ch[Map[K, V]],
+    stat: StatsRece ver
+  ): St ch[Map[K, V]] = {
+    prof leSt chResults[Map[K, V]](st ch, stat, _.s ze)
   }
 
-  def getCleanClassName(obj: Object): String =
-    obj.getClass.getSimpleName.stripSuffix("$")
+  def getCleanClassNa (obj: Object): Str ng =
+    obj.getClass.getS mpleNa .str pSuff x("$")
 
   /**
-   * Helper function for timing a stitch and count a list of PredicateResult
+   *  lper funct on for t m ng a st ch and count a l st of Pred cateResult
    */
-  def profilePredicateResults(
-    predicateResult: Stitch[Seq[PredicateResult]],
-    statsReceiver: StatsReceiver
-  ): Stitch[Seq[PredicateResult]] = {
-    profileStitch[Seq[PredicateResult]](
-      predicateResult,
-      statsReceiver
+  def prof lePred cateResults(
+    pred cateResult: St ch[Seq[Pred cateResult]],
+    statsRece ver: StatsRece ver
+  ): St ch[Seq[Pred cateResult]] = {
+    prof leSt ch[Seq[Pred cateResult]](
+      pred cateResult,
+      statsRece ver
     ).onSuccess {
       _.map {
-        case PredicateResult.Valid =>
-          statsReceiver.counter(ValidCount).incr()
-        case PredicateResult.Invalid(reasons) =>
-          statsReceiver.counter(InvalidCount).incr()
-          reasons.map { filterReason =>
-            statsReceiver.counter(InvalidHasReasons).incr()
-            statsReceiver.scope(Reasons).counter(filterReason.reason).incr()
+        case Pred cateResult.Val d =>
+          statsRece ver.counter(Val dCount). ncr()
+        case Pred cateResult. nval d(reasons) =>
+          statsRece ver.counter( nval dCount). ncr()
+          reasons.map { f lterReason =>
+            statsRece ver.counter( nval dHasReasons). ncr()
+            statsRece ver.scope(Reasons).counter(f lterReason.reason). ncr()
           }
       }
     }
   }
 
   /**
-   * Helper function for timing a stitch and count individual PredicateResult
+   *  lper funct on for t m ng a st ch and count  nd v dual Pred cateResult
    */
-  def profilePredicateResult(
-    predicateResult: Stitch[PredicateResult],
-    statsReceiver: StatsReceiver
-  ): Stitch[PredicateResult] = {
-    profilePredicateResults(
-      predicateResult.map(Seq(_)),
-      statsReceiver
-    ).map(_.head)
+  def prof lePred cateResult(
+    pred cateResult: St ch[Pred cateResult],
+    statsRece ver: StatsRece ver
+  ): St ch[Pred cateResult] = {
+    prof lePred cateResults(
+      pred cateResult.map(Seq(_)),
+      statsRece ver
+    ).map(_. ad)
   }
 
   /**
-   * Helper function for timing an arrow and count a list of PredicateResult
+   *  lper funct on for t m ng an arrow and count a l st of Pred cateResult
    */
-  def profilePredicateResults[Q](
-    predicateResult: Arrow[Q, Seq[PredicateResult]],
-    statsReceiver: StatsReceiver
-  ): Arrow[Q, Seq[PredicateResult]] = {
-    profileArrow[Q, Seq[PredicateResult]](
-      predicateResult,
-      statsReceiver
+  def prof lePred cateResults[Q](
+    pred cateResult: Arrow[Q, Seq[Pred cateResult]],
+    statsRece ver: StatsRece ver
+  ): Arrow[Q, Seq[Pred cateResult]] = {
+    prof leArrow[Q, Seq[Pred cateResult]](
+      pred cateResult,
+      statsRece ver
     ).onSuccess {
       _.map {
-        case PredicateResult.Valid =>
-          statsReceiver.counter(ValidCount).incr()
-        case PredicateResult.Invalid(reasons) =>
-          statsReceiver.counter(InvalidCount).incr()
-          reasons.map { filterReason =>
-            statsReceiver.counter(InvalidHasReasons).incr()
-            statsReceiver.scope(Reasons).counter(filterReason.reason).incr()
+        case Pred cateResult.Val d =>
+          statsRece ver.counter(Val dCount). ncr()
+        case Pred cateResult. nval d(reasons) =>
+          statsRece ver.counter( nval dCount). ncr()
+          reasons.map { f lterReason =>
+            statsRece ver.counter( nval dHasReasons). ncr()
+            statsRece ver.scope(Reasons).counter(f lterReason.reason). ncr()
           }
       }
     }
   }
 
   /**
-   * Helper function for timing an arrow and count individual PredicateResult
+   *  lper funct on for t m ng an arrow and count  nd v dual Pred cateResult
    */
-  def profilePredicateResult[Q](
-    predicateResult: Arrow[Q, PredicateResult],
-    statsReceiver: StatsReceiver
-  ): Arrow[Q, PredicateResult] = {
-    profilePredicateResults(
-      predicateResult.map(Seq(_)),
-      statsReceiver
-    ).map(_.head)
+  def prof lePred cateResult[Q](
+    pred cateResult: Arrow[Q, Pred cateResult],
+    statsRece ver: StatsRece ver
+  ): Arrow[Q, Pred cateResult] = {
+    prof lePred cateResults(
+      pred cateResult.map(Seq(_)),
+      statsRece ver
+    ).map(_. ad)
   }
 
   /**
-   * Helper function for timing a stitch code block
+   *  lper funct on for t m ng a st ch code block
    */
-  def profileStitchSeqResults[T](
-    stats: StatsReceiver
+  def prof leSt chSeqResults[T](
+    stats: StatsRece ver
   )(
-    block: => Stitch[Seq[T]]
-  ): Stitch[Seq[T]] = {
-    stats.counter(RequestName).incr()
-    profileStitch(stats.stat(LatencyName), TimeUnit.MILLISECONDS) {
+    block: => St ch[Seq[T]]
+  ): St ch[Seq[T]] = {
+    stats.counter(RequestNa ). ncr()
+    prof leSt ch(stats.stat(LatencyNa ), T  Un .M LL SECONDS) {
       block onSuccess { r =>
-        if (r.isEmpty) stats.counter(EmptyResultsName).incr()
-        stats.stat(ResultsStat).add(r.size)
-      } onFailure { e =>
+         f (r. sEmpty) stats.counter(EmptyResultsNa ). ncr()
+        stats.stat(ResultsStat).add(r.s ze)
+      } onFa lure { e =>
         {
-          stats.counter(FailureName).incr()
-          stats.scope(FailureName).counter(e.getClass.getName).incr()
+          stats.counter(Fa lureNa ). ncr()
+          stats.scope(Fa lureNa ).counter(e.getClass.getNa ). ncr()
         }
       }
     }
   }
 
   /**
-   * Time a given asynchronous `f` using the given `unit`.
+   * T   a g ven asynchronous `f` us ng t  g ven `un `.
    */
-  def profileStitch[A](stat: Stat, unit: TimeUnit)(f: => Stitch[A]): Stitch[A] = {
-    val start = Stopwatch.timeNanos()
+  def prof leSt ch[A](stat: Stat, un : T  Un )(f: => St ch[A]): St ch[A] = {
+    val start = Stopwatch.t  Nanos()
     try {
-      f.respond { _ => stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS)) }
+      f.respond { _ => stat.add(un .convert(Stopwatch.t  Nanos() - start, T  Un .NANOSECONDS)) }
     } catch {
       case NonFatal(e) =>
-        stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS))
-        Stitch.exception(e)
+        stat.add(un .convert(Stopwatch.t  Nanos() - start, T  Un .NANOSECONDS))
+        St ch.except on(e)
     }
   }
 
-  def observeStitchQualityFactor[T](
-    stitch: Stitch[T],
-    qualityFactorObserverOption: Option[QualityFactorObserver],
-    statsReceiver: StatsReceiver
-  ): Stitch[T] = {
-    qualityFactorObserverOption
+  def observeSt chQual yFactor[T](
+    st ch: St ch[T],
+    qual yFactorObserverOpt on: Opt on[Qual yFactorObserver],
+    statsRece ver: StatsRece ver
+  ): St ch[T] = {
+    qual yFactorObserverOpt on
       .map { observer =>
-        Stitch
-          .time(stitch)
+        St ch
+          .t  (st ch)
           .map {
-            case (response, stitchRunDuration) =>
-              observer(response, stitchRunDuration)
-              val qfVal = observer.qualityFactor.currentValue.floatValue() * 10000
-              statsReceiver.counter(QualityFactorCounts).incr()
-              statsReceiver
-                .stat(QualityFactorStat)
+            case (response, st chRunDurat on) =>
+              observer(response, st chRunDurat on)
+              val qfVal = observer.qual yFactor.currentValue.floatValue() * 10000
+              statsRece ver.counter(Qual yFactorCounts). ncr()
+              statsRece ver
+                .stat(Qual yFactorStat)
                 .add(qfVal)
               response
           }
-          .lowerFromTry
-      }.getOrElse(stitch)
+          .lo rFromTry
+      }.getOrElse(st ch)
   }
 }

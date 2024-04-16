@@ -1,15 +1,15 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.copyselectionservice.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.copyselect onserv ce.thr ftscala._
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-class CopySelectionServiceStore(copySelectionServiceClient: CopySelectionService.FinagledClient)
-    extends ReadableStore[CopySelectionRequestV1, Copy] {
-  override def get(k: CopySelectionRequestV1): Future[Option[Copy]] =
-    copySelectionServiceClient.getSelectedCopy(CopySelectionRequest.V1(k)).map {
-      case CopySelectionResponse.V1(response) =>
-        Some(response.selectedCopy)
-      case _ => throw CopyServiceException(CopyServiceErrorCode.VersionNotFound)
+class CopySelect onServ ceStore(copySelect onServ ceCl ent: CopySelect onServ ce.F nagledCl ent)
+    extends ReadableStore[CopySelect onRequestV1, Copy] {
+  overr de def get(k: CopySelect onRequestV1): Future[Opt on[Copy]] =
+    copySelect onServ ceCl ent.getSelectedCopy(CopySelect onRequest.V1(k)).map {
+      case CopySelect onResponse.V1(response) =>
+        So (response.selectedCopy)
+      case _ => throw CopyServ ceExcept on(CopyServ ceErrorCode.Vers onNotFound)
     }
 }

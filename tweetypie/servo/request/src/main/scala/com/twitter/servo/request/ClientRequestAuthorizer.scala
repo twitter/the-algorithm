@@ -1,172 +1,172 @@
-package com.twitter.servo.request
+package com.tw ter.servo.request
 
-import com.twitter.servo.gate.RateLimitingGate
-import com.twitter.servo.util.Gate
-import com.twitter.util.Future
+ mport com.tw ter.servo.gate.RateL m  ngGate
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.ut l.Future
 
 /**
- * Collects per-request stats by method-name and client.
+ * Collects per-request stats by  thod-na  and cl ent.
  */
-trait ClientRequestAuthorizer extends ((String, Option[String]) => Future[Unit]) { self =>
+tra  Cl entRequestAuthor zer extends ((Str ng, Opt on[Str ng]) => Future[Un ]) { self =>
 
   /**
-   * @param methodName the name of the Service method being called
-   * @param clientIdStrOpt an Option of the string value of the originating
-   *   request's ClientId
+   * @param  thodNa  t  na  of t  Serv ce  thod be ng called
+   * @param cl ent dStrOpt an Opt on of t  str ng value of t  or g nat ng
+   *   request's Cl ent d
    */
-  def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit]
+  def apply( thodNa : Str ng, cl ent dStrOpt: Opt on[Str ng]): Future[Un ]
 
   /**
-   * Compose this authorizer with another so that one is applied after the other.
+   * Compose t  author zer w h anot r so that one  s appl ed after t  ot r.
    *
-   * The resultant authorizer requires both underlying authorizers to succeed in
-   * order to authorize a request.
+   * T  resultant author zer requ res both underly ng author zers to succeed  n
+   * order to author ze a request.
    */
-  def andThen(other: ClientRequestAuthorizer) = new ClientRequestAuthorizer {
-    override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
-      self.apply(methodName, clientIdStrOpt) flatMap { _ =>
-        other(methodName, clientIdStrOpt)
+  def andT n(ot r: Cl entRequestAuthor zer) = new Cl entRequestAuthor zer {
+    overr de def apply( thodNa : Str ng, cl ent dStrOpt: Opt on[Str ng]): Future[Un ] = {
+      self.apply( thodNa , cl ent dStrOpt) flatMap { _ =>
+        ot r( thodNa , cl ent dStrOpt)
       }
     }
   }
 }
 
-object ClientRequestAuthorizer {
-  case class UnauthorizedException(msg: String) extends Exception(msg)
+object Cl entRequestAuthor zer {
+  case class Unauthor zedExcept on(msg: Str ng) extends Except on(msg)
 
-  protected[this] val noClientIdException =
-    Future.exception(new UnauthorizedException("No ClientId specified"))
-  protected[this] val unauthorizedException =
-    new UnauthorizedException("Your ClientId is not authorized.")
-  protected[this] val overRateLimitException =
-    new UnauthorizedException("Your ClientId is over the allowed rate limit.")
+  protected[t ] val noCl ent dExcept on =
+    Future.except on(new Unauthor zedExcept on("No Cl ent d spec f ed"))
+  protected[t ] val unauthor zedExcept on =
+    new Unauthor zedExcept on("Y  Cl ent d  s not author zed.")
+  protected[t ] val overRateL m Except on =
+    new Unauthor zedExcept on("Y  Cl ent d  s over t  allo d rate l m .")
 
   /**
-   * Increment stats counters for this request.
+   *  ncre nt stats counters for t  request.
    *
-   * Note that ClientRequestAuthorizer.observed doesn't compose in the same fashion
-   * as other authorizers via `andThen`. In order to observe authorization results,
-   * pass in an underlying authorizer as an argument to observed.
+   * Note that Cl entRequestAuthor zer.observed doesn't compose  n t  sa  fash on
+   * as ot r author zers v a `andT n`.  n order to observe author zat on results,
+   * pass  n an underly ng author zer as an argu nt to observed.
    */
   def observed(
-    underlyingAuthorizer: ClientRequestAuthorizer,
-    observer: ClientRequestObserver
-  ) = new ClientRequestAuthorizer {
-    override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
-      val clientIdStr = clientIdStrOpt.getOrElse("no_client_id")
+    underly ngAuthor zer: Cl entRequestAuthor zer,
+    observer: Cl entRequestObserver
+  ) = new Cl entRequestAuthor zer {
+    overr de def apply( thodNa : Str ng, cl ent dStrOpt: Opt on[Str ng]): Future[Un ] = {
+      val cl ent dStr = cl ent dStrOpt.getOrElse("no_cl ent_ d")
 
-      observer(methodName, clientIdStrOpt map { Seq(_) })
+      observer( thodNa , cl ent dStrOpt map { Seq(_) })
 
-      underlyingAuthorizer(methodName, clientIdStrOpt) onFailure { _ =>
-        observer.unauthorized(methodName, clientIdStr)
+      underly ngAuthor zer( thodNa , cl ent dStrOpt) onFa lure { _ =>
+        observer.unauthor zed( thodNa , cl ent dStr)
       } onSuccess { _ =>
-        observer.authorized(methodName, clientIdStr)
+        observer.author zed( thodNa , cl ent dStr)
       }
     }
   }
 
-  def observed(observer: ClientRequestObserver): ClientRequestAuthorizer =
-    observed(ClientRequestAuthorizer.permissive, observer)
+  def observed(observer: Cl entRequestObserver): Cl entRequestAuthor zer =
+    observed(Cl entRequestAuthor zer.perm ss ve, observer)
 
   /**
    * Lets all requests through.
    */
-  def permissive = new ClientRequestAuthorizer {
-    override def apply(methodName: String, clientIdStrOpt: Option[String]) = Future.Done
+  def perm ss ve = new Cl entRequestAuthor zer {
+    overr de def apply( thodNa : Str ng, cl ent dStrOpt: Opt on[Str ng]) = Future.Done
   }
 
   /**
-   * A Generic Authorizer that allows you to pass in your own authorizer function (filter).
-   * The filter should take in methodName and clientId and return a Boolean decision
+   * A Gener c Author zer that allows   to pass  n y  own author zer funct on (f lter).
+   * T  f lter should take  n  thodNa  and cl ent d and return a Boolean dec s on
    *
-   * Note: Requires requests to have ClientIds.
-   * @param exception return this exception if the request does not pass the filter
+   * Note: Requ res requests to have Cl ent ds.
+   * @param except on return t  except on  f t  request does not pass t  f lter
    */
-  def filtered(
-    filter: (String, String) => Boolean,
-    exception: Exception = unauthorizedException
-  ): ClientRequestAuthorizer =
-    new ClientRequestAuthorizer {
-      val futureException = Future.exception(exception)
+  def f ltered(
+    f lter: (Str ng, Str ng) => Boolean,
+    except on: Except on = unauthor zedExcept on
+  ): Cl entRequestAuthor zer =
+    new Cl entRequestAuthor zer {
+      val futureExcept on = Future.except on(except on)
 
-      override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
-        clientIdStrOpt match {
-          case Some(clientIdStr) =>
-            if (filter(methodName, clientIdStr))
+      overr de def apply( thodNa : Str ng, cl ent dStrOpt: Opt on[Str ng]): Future[Un ] = {
+        cl ent dStrOpt match {
+          case So (cl ent dStr) =>
+             f (f lter( thodNa , cl ent dStr))
               Future.Done
             else
-              futureException
+              futureExcept on
           case None =>
-            noClientIdException
+            noCl ent dExcept on
         }
       }
     }
 
   /**
-   * Authorizes client requests based on a allowlist of ClientId strings.
+   * Author zes cl ent requests based on a allowl st of Cl ent d str ngs.
    */
-  def allowlisted(allowlist: Set[String]): ClientRequestAuthorizer =
-    filtered { (_, clientIdStr) =>
-      allowlist.contains(clientIdStr)
+  def allowl sted(allowl st: Set[Str ng]): Cl entRequestAuthor zer =
+    f ltered { (_, cl ent dStr) =>
+      allowl st.conta ns(cl ent dStr)
     }
 
   /**
-   * Authorizes requests if and only if they have an associated ClientId.
+   * Author zes requests  f and only  f t y have an assoc ated Cl ent d.
    */
-  def withClientId: ClientRequestAuthorizer = filtered { (_, _) =>
+  def w hCl ent d: Cl entRequestAuthor zer = f ltered { (_, _) =>
     true
   }
 
   /**
-   * Consult a (presumably) Decider-backed predicate to authorize requests by ClientId.
-   * @param exception return this exception if the request does not pass the filter
+   * Consult a (presumably) Dec der-backed pred cate to author ze requests by Cl ent d.
+   * @param except on return t  except on  f t  request does not pass t  f lter
    */
-  def deciderable(
-    isAvailable: String => Boolean,
-    exception: Exception = unauthorizedException
-  ): ClientRequestAuthorizer =
-    filtered(
-      { (_, clientIdStr) =>
-        isAvailable(clientIdStr)
+  def dec derable(
+     sAva lable: Str ng => Boolean,
+    except on: Except on = unauthor zedExcept on
+  ): Cl entRequestAuthor zer =
+    f ltered(
+      { (_, cl ent dStr) =>
+         sAva lable(cl ent dStr)
       },
-      exception
+      except on
     )
 
   /**
-   * Simple rate limiter for unknown client ids. Useful for letting new clients
-   * send some traffic without the risk of being overrun by requests.
+   * S mple rate l m er for unknown cl ent  ds. Useful for lett ng new cl ents
+   * send so  traff c w hout t  r sk of be ng overrun by requests.
    *
-   * @param limitPerSecond Number of calls per second we can tolerate
+   * @param l m PerSecond Number of calls per second   can tolerate
    */
-  def rateLimited(limitPerSecond: Double): ClientRequestAuthorizer = {
-    gated(RateLimitingGate.uniform(limitPerSecond), overRateLimitException)
+  def rateL m ed(l m PerSecond: Double): Cl entRequestAuthor zer = {
+    gated(RateL m  ngGate.un form(l m PerSecond), overRateL m Except on)
   }
 
   /**
-   * Simple Gate based authorizer, will authorize according to the result of the gate regardless
-   * of the client/method name
+   * S mple Gate based author zer, w ll author ze accord ng to t  result of t  gate regardless
+   * of t  cl ent/ thod na 
    */
   def gated(
-    gate: Gate[Unit],
-    exception: Exception = unauthorizedException
-  ): ClientRequestAuthorizer = {
-    deciderable(_ => gate(), exception)
+    gate: Gate[Un ],
+    except on: Except on = unauthor zedExcept on
+  ): Cl entRequestAuthor zer = {
+    dec derable(_ => gate(), except on)
   }
 
   /**
-   * @return A ClientRequestAuthorizer that switches between two provided
-   * ClientRequestAuthorizers depending on a decider.
+   * @return A Cl entRequestAuthor zer that sw c s bet en two prov ded
+   * Cl entRequestAuthor zers depend ng on a dec der.
    */
   def select(
-    decider: Gate[Unit],
-    ifTrue: ClientRequestAuthorizer,
-    ifFalse: ClientRequestAuthorizer
-  ): ClientRequestAuthorizer =
-    new ClientRequestAuthorizer {
-      override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] =
-        decider.pick(
-          ifTrue(methodName, clientIdStrOpt),
-          ifFalse(methodName, clientIdStrOpt)
+    dec der: Gate[Un ],
+     fTrue: Cl entRequestAuthor zer,
+     fFalse: Cl entRequestAuthor zer
+  ): Cl entRequestAuthor zer =
+    new Cl entRequestAuthor zer {
+      overr de def apply( thodNa : Str ng, cl ent dStrOpt: Opt on[Str ng]): Future[Un ] =
+        dec der.p ck(
+           fTrue( thodNa , cl ent dStrOpt),
+           fFalse( thodNa , cl ent dStrOpt)
         )
     }
 }

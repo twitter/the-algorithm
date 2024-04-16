@@ -1,47 +1,47 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * A two-way mapping between terms and their interned value (termID).
+ * A two-way mapp ng bet en terms and t  r  nterned value (term D).
  *
- * Implementation of this interface must guarantee that termIDs are dense, starting at 0;
- * so they are good to be used as indices in arrays.
+ *  mple ntat on of t   nterface must guarantee that term Ds are dense, start ng at 0;
+ * so t y are good to be used as  nd ces  n arrays.
  */
-public interface TermDictionary extends Flushable {
-  int TERM_NOT_FOUND = EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+publ c  nterface TermD ct onary extends Flushable {
+   nt TERM_NOT_FOUND = Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
 
   /**
-   * Returns the number of terms in this dictionary.
+   * Returns t  number of terms  n t  d ct onary.
    */
-  int getNumTerms();
+   nt getNumTerms();
 
   /**
-   * Create a TermsEnum object over this TermDictionary for a given index.
-   * @param index
+   * Create a TermsEnum object over t  TermD ct onary for a g ven  ndex.
+   * @param  ndex
    */
-  TermsEnum createTermsEnum(OptimizedMemoryIndex index);
+  TermsEnum createTermsEnum(Opt m zed mory ndex  ndex);
 
   /**
-   * Lookup a term in this dictionary.
-   * @param term  the term to lookup.
-   * @return  the term id for this term, or TERM_NOT_FOUND
-   * @throws IOException
+   * Lookup a term  n t  d ct onary.
+   * @param term  t  term to lookup.
+   * @return  t  term  d for t  term, or TERM_NOT_FOUND
+   * @throws  OExcept on
    */
-  int lookupTerm(BytesRef term) throws IOException;
+   nt lookupTerm(BytesRef term) throws  OExcept on;
 
   /**
-   * Get the term for given id and possibly its payload.
-   * @param termID  the term that we want to get.
-   * @param text  MUST be non-null. It will be filled with the term.
-   * @param termPayload  if non-null, it will be filled with the payload if the term has any.
-   * @return  Returns true, iff this term has a term payload.
+   * Get t  term for g ven  d and poss bly  s payload.
+   * @param term D  t  term that   want to get.
+   * @param text  MUST be non-null.   w ll be f lled w h t  term.
+   * @param termPayload   f non-null,   w ll be f lled w h t  payload  f t  term has any.
+   * @return  Returns true,  ff t  term has a term payload.
    */
-  boolean getTerm(int termID, BytesRef text, BytesRef termPayload);
+  boolean getTerm( nt term D, BytesRef text, BytesRef termPayload);
 }

@@ -1,94 +1,94 @@
-package com.twitter.ann.faiss
+package com.tw ter.ann.fa ss
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.MemoizedInEpochs
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.Task
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.concurrent.atomic.AtomicReference
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common. mo zed nEpochs
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.ann.common.Task
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java.ut l.concurrent.atom c.Atom cReference
 
-object HourlyShardedIndex {
-  def loadIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    directory: AbstractFile,
-    shardsToLoad: Int,
-    shardWatchInterval: Duration,
-    lookbackInterval: Int,
-    statsReceiver: StatsReceiver
-  ): HourlyShardedIndex[T, D] = {
-    new HourlyShardedIndex[T, D](
-      metric,
-      dimension,
-      directory,
+object H lySharded ndex {
+  def load ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+    d rectory: AbstractF le,
+    shardsToLoad:  nt,
+    shardWatch nterval: Durat on,
+    lookback nterval:  nt,
+    statsRece ver: StatsRece ver
+  ): H lySharded ndex[T, D] = {
+    new H lySharded ndex[T, D](
+       tr c,
+      d  ns on,
+      d rectory,
       shardsToLoad,
-      shardWatchInterval,
-      lookbackInterval,
-      statsReceiver)
+      shardWatch nterval,
+      lookback nterval,
+      statsRece ver)
   }
 }
 
-class HourlyShardedIndex[T, D <: Distance[D]](
-  outerMetric: Metric[D],
-  outerDimension: Int,
-  directory: AbstractFile,
-  shardsToLoad: Int,
-  shardWatchInterval: Duration,
-  lookbackInterval: Int,
-  override protected val statsReceiver: StatsReceiver)
-    extends QueryableIndexAdapter[T, D]
-    with Logging
-    with Task {
-  // QueryableIndexAdapter
-  protected val metric: Metric[D] = outerMetric
-  protected val dimension: Int = outerDimension
-  protected def index: Index = {
-    castedIndex.get()
+class H lySharded ndex[T, D <: D stance[D]](
+  outer tr c:  tr c[D],
+  outerD  ns on:  nt,
+  d rectory: AbstractF le,
+  shardsToLoad:  nt,
+  shardWatch nterval: Durat on,
+  lookback nterval:  nt,
+  overr de protected val statsRece ver: StatsRece ver)
+    extends Queryable ndexAdapter[T, D]
+    w h Logg ng
+    w h Task {
+  // Queryable ndexAdapter
+  protected val  tr c:  tr c[D] = outer tr c
+  protected val d  ns on:  nt = outerD  ns on
+  protected def  ndex:  ndex = {
+    casted ndex.get()
   }
 
-  // Task trait
-  protected def task(): Future[Unit] = Future.value(reloadShards())
-  protected def taskInterval: Duration = shardWatchInterval
+  // Task tra 
+  protected def task(): Future[Un ] = Future.value(reloadShards())
+  protected def task nterval: Durat on = shardWatch nterval
 
-  private def loadIndex(directory: AbstractFile): Try[Index] =
-    Try(QueryableIndexAdapter.loadJavaIndex(directory))
+  pr vate def load ndex(d rectory: AbstractF le): Try[ ndex] =
+    Try(Queryable ndexAdapter.loadJava ndex(d rectory))
 
-  private val shardsCache = new MemoizedInEpochs[AbstractFile, Index](loadIndex)
-  // Destroying original index invalidate casted index. Keep a reference to both.
-  private val originalIndex = new AtomicReference[IndexShards]()
-  private val castedIndex = new AtomicReference[Index]()
-  private def reloadShards(): Unit = {
-    val freshDirectories =
-      HourlyDirectoryWithSuccessFileListing.listHourlyIndexDirectories(
-        directory,
-        Time.now,
+  pr vate val shardsCac  = new  mo zed nEpochs[AbstractF le,  ndex](load ndex)
+  // Destroy ng or g nal  ndex  nval date casted  ndex. Keep a reference to both.
+  pr vate val or g nal ndex = new Atom cReference[ ndexShards]()
+  pr vate val casted ndex = new Atom cReference[ ndex]()
+  pr vate def reloadShards(): Un  = {
+    val freshD rector es =
+      H lyD rectoryW hSuccessF leL st ng.l stH ly ndexD rector es(
+        d rectory,
+        T  .now,
         shardsToLoad,
-        lookbackInterval)
+        lookback nterval)
 
-    if (shardsCache.currentEpochKeys == freshDirectories.toSet) {
-      info("Not reloading shards, as they're exactly same")
+     f (shardsCac .currentEpochKeys == freshD rector es.toSet) {
+       nfo("Not reload ng shards, as t y're exactly sa ")
     } else {
-      val shards = shardsCache.epoch(freshDirectories)
-      val indexShards = new IndexShards(dimension, false, false)
+      val shards = shardsCac .epoch(freshD rector es)
+      val  ndexShards = new  ndexShards(d  ns on, false, false)
       for (shard <- shards) {
-        indexShards.add_shard(shard)
+         ndexShards.add_shard(shard)
       }
 
-      replaceIndex(() => {
-        castedIndex.set(swigfaiss.upcast_IndexShards(indexShards))
-        originalIndex.set(indexShards)
+      replace ndex(() => {
+        casted ndex.set(sw gfa ss.upcast_ ndexShards( ndexShards))
+        or g nal ndex.set( ndexShards)
       })
 
-      // Potentially it's time to drop huge native index from memory, ask for GC
+      // Potent ally  's t   to drop huge nat ve  ndex from  mory, ask for GC
       System.gc()
     }
 
-    require(castedIndex.get() != null, "Failed to find any shards during startup")
+    requ re(casted ndex.get() != null, "Fa led to f nd any shards dur ng startup")
   }
 }

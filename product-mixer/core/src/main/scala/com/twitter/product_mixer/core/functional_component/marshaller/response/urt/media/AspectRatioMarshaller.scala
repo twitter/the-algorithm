@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.AspectRatio
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a.AspectRat o
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class AspectRatioMarshaller @Inject() () {
+@S ngleton
+class AspectRat oMarshaller @ nject() () {
 
-  def apply(aspectRatio: AspectRatio): urt.AspectRatio = urt.AspectRatio(
-    numerator = aspectRatio.numerator,
-    denominator = aspectRatio.denominator
+  def apply(aspectRat o: AspectRat o): urt.AspectRat o = urt.AspectRat o(
+    nu rator = aspectRat o.nu rator,
+    denom nator = aspectRat o.denom nator
   )
 }

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.tw ter.product_m xer.component_l brary.scorer.common
 
-import com.twitter.stitch.Stitch
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
+ mport com.tw ter.st ch.St ch
+ mport  nference.GrpcServ ce.Model nferRequest
+ mport  nference.GrpcServ ce.Model nferResponse
 
 /**
- * MLModelInferenceClient for calling different Inference Service such as ManagedModelClient or NaviModelClient.
+ * MLModel nferenceCl ent for call ng d fferent  nference Serv ce such as ManagedModelCl ent or Nav ModelCl ent.
  */
-trait MLModelInferenceClient {
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse]
+tra  MLModel nferenceCl ent {
+  def score(request: Model nferRequest): St ch[Model nferResponse]
 }

@@ -1,230 +1,230 @@
-package com.twitter.frigate.pushservice.config
+package com.tw ter.fr gate.pushserv ce.conf g
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.config.RateLimiterGenerator
-import com.twitter.frigate.common.filter.DynamicRequestMeterFilter
-import com.twitter.frigate.common.history.ManhattanHistoryStore
-import com.twitter.frigate.common.history.InvalidatingAfterWritesPushServiceHistoryStore
-import com.twitter.frigate.common.history.ManhattanKVHistoryStore
-import com.twitter.frigate.common.history.PushServiceHistoryStore
-import com.twitter.frigate.common.history.SimplePushServiceHistoryStore
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common.FeatureStoreUtil
-import com.twitter.frigate.data_pipeline.features_common.TargetLevelFeaturesConfig
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.DeciderKey
-import com.twitter.frigate.pushservice.params.PushQPSLimitConstants
-import com.twitter.frigate.pushservice.params.PushServiceTunableKeys
-import com.twitter.frigate.pushservice.params.ShardParams
-import com.twitter.frigate.pushservice.store.PushIbis2Store
-import com.twitter.frigate.pushservice.thriftscala.PushRequestScribe
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.ibis2.service.thriftscala.Ibis2Service
-import com.twitter.logging.Logger
-import com.twitter.notificationservice.api.thriftscala.DeleteCurrentTimelineForUserRequest
-import com.twitter.notificationservice.api.thriftscala.NotificationApi
-import com.twitter.notificationservice.api.thriftscala.NotificationApi$FinagleClient
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.notificationservice.thriftscala.DeleteGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.NotificationService
-import com.twitter.notificationservice.thriftscala.NotificationService$FinagleClient
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.util.tunable.TunableMap
-import com.twitter.util.Future
-import com.twitter.util.Timer
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.Base64Str ng
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.thr ft.R chCl entParam
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.fr gate.common.conf g.RateL m erGenerator
+ mport com.tw ter.fr gate.common.f lter.Dynam cRequest terF lter
+ mport com.tw ter.fr gate.common. tory.Manhattan toryStore
+ mport com.tw ter.fr gate.common. tory. nval dat ngAfterWr esPushServ ce toryStore
+ mport com.tw ter.fr gate.common. tory.ManhattanKV toryStore
+ mport com.tw ter.fr gate.common. tory.PushServ ce toryStore
+ mport com.tw ter.fr gate.common. tory.S mplePushServ ce toryStore
+ mport com.tw ter.fr gate.common.ut l._
+ mport com.tw ter.fr gate.data_p pel ne.features_common.FeatureStoreUt l
+ mport com.tw ter.fr gate.data_p pel ne.features_common.TargetLevelFeaturesConf g
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.Dec derKey
+ mport com.tw ter.fr gate.pushserv ce.params.PushQPSL m Constants
+ mport com.tw ter.fr gate.pushserv ce.params.PushServ ceTunableKeys
+ mport com.tw ter.fr gate.pushserv ce.params.ShardParams
+ mport com.tw ter.fr gate.pushserv ce.store.Push b s2Store
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushRequestScr be
+ mport com.tw ter.fr gate.scr be.thr ftscala.Not f cat onScr be
+ mport com.tw ter. b s2.serv ce.thr ftscala. b s2Serv ce
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.not f cat onserv ce.ap .thr ftscala.DeleteCurrentT  l neForUserRequest
+ mport com.tw ter.not f cat onserv ce.ap .thr ftscala.Not f cat onAp 
+ mport com.tw ter.not f cat onserv ce.ap .thr ftscala.Not f cat onAp $F nagleCl ent
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onResponse
+ mport com.tw ter.not f cat onserv ce.thr ftscala.DeleteGener cNot f cat onRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Not f cat onServ ce
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Not f cat onServ ce$F nagleCl ent
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.ut l.tunable.TunableMap
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
 
-case class ProdConfig(
-  override val isServiceLocal: Boolean,
-  override val localConfigRepoPath: String,
-  override val inMemCacheOff: Boolean,
-  override val decider: Decider,
-  override val abDecider: LoggingABDecider,
-  override val featureSwitches: FeatureSwitches,
-  override val shardParams: ShardParams,
-  override val serviceIdentifier: ServiceIdentifier,
-  override val tunableMap: TunableMap,
+case class ProdConf g(
+  overr de val  sServ ceLocal: Boolean,
+  overr de val localConf gRepoPath: Str ng,
+  overr de val  n mCac Off: Boolean,
+  overr de val dec der: Dec der,
+  overr de val abDec der: Logg ngABDec der,
+  overr de val featureSw c s: FeatureSw c s,
+  overr de val shardParams: ShardParams,
+  overr de val serv ce dent f er: Serv ce dent f er,
+  overr de val tunableMap: TunableMap,
 )(
-  implicit val statsReceiver: StatsReceiver)
+   mpl c  val statsRece ver: StatsRece ver)
     extends {
-  // Due to trait initialization logic in Scala, any abstract members declared in Config or
-  // DeployConfig should be declared in this block. Otherwise the abstract member might initialize to
-  // null if invoked before object creation finishing.
+  // Due to tra   n  al zat on log c  n Scala, any abstract  mbers declared  n Conf g or
+  // DeployConf g should be declared  n t  block. Ot rw se t  abstract  mber m ght  n  al ze to
+  // null  f  nvoked before object creat on f n sh ng.
 
-  val log = Logger("ProdConfig")
+  val log = Logger("ProdConf g")
 
-  // Deciders
-  val isPushserviceCanaryDeepbirdv2CanaryClusterEnabled = decider
-    .feature(DeciderKey.enablePushserviceDeepbirdv2CanaryClusterDeciderKey.toString).isAvailable
+  // Dec ders
+  val  sPushserv ceCanaryDeepb rdv2CanaryClusterEnabled = dec der
+    .feature(Dec derKey.enablePushserv ceDeepb rdv2CanaryClusterDec derKey.toStr ng). sAva lable
 
-  // Client ids
-  val notifierThriftClientId = ClientId("frigate-notifier.prod")
-  val loggedOutNotifierThriftClientId = ClientId("frigate-logged-out-notifier.prod")
-  val pushserviceThriftClientId: ClientId = ClientId("frigate-pushservice.prod")
+  // Cl ent  ds
+  val not f erThr ftCl ent d = Cl ent d("fr gate-not f er.prod")
+  val loggedOutNot f erThr ftCl ent d = Cl ent d("fr gate-logged-out-not f er.prod")
+  val pushserv ceThr ftCl ent d: Cl ent d = Cl ent d("fr gate-pushserv ce.prod")
 
   // Dests
-  val frigateHistoryCacheDest = "/s/cache/frigate_history"
-  val memcacheCASDest = "/s/cache/magic_recs_cas:twemcaches"
-  val historyStoreMemcacheDest =
-    "/srv#/prod/local/cache/magic_recs_history:twemcaches"
+  val fr gate toryCac Dest = "/s/cac /fr gate_ tory"
+  val  mcac CASDest = "/s/cac /mag c_recs_cas:t mcac s"
+  val  toryStore mcac Dest =
+    "/srv#/prod/local/cac /mag c_recs_ tory:t mcac s"
 
-  val deepbirdv2PredictionServiceDest =
-    if (serviceIdentifier.service.equals("frigate-pushservice-canary") &&
-      isPushserviceCanaryDeepbirdv2CanaryClusterEnabled)
-      "/s/frigate/deepbirdv2-magicrecs-canary"
-    else "/s/frigate/deepbirdv2-magicrecs"
+  val deepb rdv2Pred ct onServ ceDest =
+     f (serv ce dent f er.serv ce.equals("fr gate-pushserv ce-canary") &&
+       sPushserv ceCanaryDeepb rdv2CanaryClusterEnabled)
+      "/s/fr gate/deepb rdv2-mag crecs-canary"
+    else "/s/fr gate/deepb rdv2-mag crecs"
 
-  override val fanoutMetadataColumn = "frigate/magicfanout/prod/mh/fanoutMetadata"
+  overr de val fanout tadataColumn = "fr gate/mag cfanout/prod/mh/fanout tadata"
 
-  override val timer: Timer = DefaultTimer
-  override val featureStoreUtil = FeatureStoreUtil.withParams(Some(serviceIdentifier))
-  override val targetLevelFeaturesConfig = TargetLevelFeaturesConfig()
-  val pushServiceMHCacheDest = "/s/cache/pushservice_mh"
+  overr de val t  r: T  r = DefaultT  r
+  overr de val featureStoreUt l = FeatureStoreUt l.w hParams(So (serv ce dent f er))
+  overr de val targetLevelFeaturesConf g = TargetLevelFeaturesConf g()
+  val pushServ ceMHCac Dest = "/s/cac /pushserv ce_mh"
 
-  val pushServiceCoreSvcsCacheDest = "/srv#/prod/local/cache/pushservice_core_svcs"
+  val pushServ ceCoreSvcsCac Dest = "/srv#/prod/local/cac /pushserv ce_core_svcs"
 
-  val userTweetEntityGraphDest = "/s/cassowary/user_tweet_entity_graph"
+  val userT etEnt yGraphDest = "/s/cassowary/user_t et_ent y_graph"
   val userUserGraphDest = "/s/cassowary/user_user_graph"
-  val lexServiceDest = "/s/live-video/timeline-thrift"
-  val entityGraphCacheDest = "/s/cache/pushservice_entity_graph"
+  val lexServ ceDest = "/s/l ve-v deo/t  l ne-thr ft"
+  val ent yGraphCac Dest = "/s/cac /pushserv ce_ent y_graph"
 
-  override val pushIbisV2Store = {
-    val service = Finagle.readOnlyThriftService(
-      "ibis-v2-service",
-      "/s/ibis2/ibis2",
-      statsReceiver,
-      notifierThriftClientId,
-      requestTimeout = 3.seconds,
-      tries = 3,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  overr de val push b sV2Store = {
+    val serv ce = F nagle.readOnlyThr ftServ ce(
+      " b s-v2-serv ce",
+      "/s/ b s2/ b s2",
+      statsRece ver,
+      not f erThr ftCl ent d,
+      requestT  out = 3.seconds,
+      tr es = 3,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
 
-    // according to ibis team, it is safe to retry on timeout, write & channel closed exceptions.
-    val pushIbisClient = new Ibis2Service.FinagledClient(
-      new DynamicRequestMeterFilter(
-        tunableMap(PushServiceTunableKeys.IbisQpsLimitTunableKey),
-        RateLimiterGenerator.asTuple(_, shardParams.numShards, 20),
-        PushQPSLimitConstants.IbisOrNTabQPSForRFPH
-      )(timer).andThen(service),
-      RichClientParam(serviceName = "ibis-v2-service")
+    // accord ng to  b s team,    s safe to retry on t  out, wr e & channel closed except ons.
+    val push b sCl ent = new  b s2Serv ce.F nagledCl ent(
+      new Dynam cRequest terF lter(
+        tunableMap(PushServ ceTunableKeys. b sQpsL m TunableKey),
+        RateL m erGenerator.asTuple(_, shardParams.numShards, 20),
+        PushQPSL m Constants. b sOrNTabQPSForRFPH
+      )(t  r).andT n(serv ce),
+      R chCl entParam(serv ceNa  = " b s-v2-serv ce")
     )
 
-    PushIbis2Store(pushIbisClient)
+    Push b s2Store(push b sCl ent)
   }
 
-  val notificationServiceClient: NotificationService$FinagleClient = {
-    val service = Finagle.readWriteThriftService(
-      "notificationservice",
-      "/s/notificationservice/notificationservice",
-      statsReceiver,
-      pushserviceThriftClientId,
-      requestTimeout = 10.seconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val not f cat onServ ceCl ent: Not f cat onServ ce$F nagleCl ent = {
+    val serv ce = F nagle.readWr eThr ftServ ce(
+      "not f cat onserv ce",
+      "/s/not f cat onserv ce/not f cat onserv ce",
+      statsRece ver,
+      pushserv ceThr ftCl ent d,
+      requestT  out = 10.seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
 
-    new NotificationService.FinagledClient(
-      new DynamicRequestMeterFilter(
-        tunableMap(PushServiceTunableKeys.NtabQpsLimitTunableKey),
-        RateLimiterGenerator.asTuple(_, shardParams.numShards, 20),
-        PushQPSLimitConstants.IbisOrNTabQPSForRFPH)(timer).andThen(service),
-      RichClientParam(serviceName = "notificationservice")
-    )
-  }
-
-  val notificationServiceApiClient: NotificationApi$FinagleClient = {
-    val service = Finagle.readWriteThriftService(
-      "notificationservice-api",
-      "/s/notificationservice/notificationservice-api:thrift",
-      statsReceiver,
-      pushserviceThriftClientId,
-      requestTimeout = 10.seconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
-    )
-
-    new NotificationApi.FinagledClient(
-      new DynamicRequestMeterFilter(
-        tunableMap(PushServiceTunableKeys.NtabQpsLimitTunableKey),
-        RateLimiterGenerator.asTuple(_, shardParams.numShards, 20),
-        PushQPSLimitConstants.IbisOrNTabQPSForRFPH)(timer).andThen(service),
-      RichClientParam(serviceName = "notificationservice-api")
+    new Not f cat onServ ce.F nagledCl ent(
+      new Dynam cRequest terF lter(
+        tunableMap(PushServ ceTunableKeys.NtabQpsL m TunableKey),
+        RateL m erGenerator.asTuple(_, shardParams.numShards, 20),
+        PushQPSL m Constants. b sOrNTabQPSForRFPH)(t  r).andT n(serv ce),
+      R chCl entParam(serv ceNa  = "not f cat onserv ce")
     )
   }
 
-  val mrRequestScriberNode = "mr_request_scribe"
-  val loggedOutMrRequestScriberNode = "lo_mr_request_scribe"
+  val not f cat onServ ceAp Cl ent: Not f cat onAp $F nagleCl ent = {
+    val serv ce = F nagle.readWr eThr ftServ ce(
+      "not f cat onserv ce-ap ",
+      "/s/not f cat onserv ce/not f cat onserv ce-ap :thr ft",
+      statsRece ver,
+      pushserv ceThr ftCl ent d,
+      requestT  out = 10.seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
+    )
 
-  override val pushSendEventStreamName = "frigate_pushservice_send_event_prod"
-} with DeployConfig {
-  // Scribe
-  private val notificationScribeLog = Logger("notification_scribe")
-  private val notificationScribeInjection: Injection[NotificationScribe, String] = BinaryScalaCodec(
-    NotificationScribe
-  ) andThen Injection.connect[Array[Byte], Base64String, String]
-
-  override def notificationScribe(data: NotificationScribe): Unit = {
-    val logEntry: String = notificationScribeInjection(data)
-    notificationScribeLog.info(logEntry)
+    new Not f cat onAp .F nagledCl ent(
+      new Dynam cRequest terF lter(
+        tunableMap(PushServ ceTunableKeys.NtabQpsL m TunableKey),
+        RateL m erGenerator.asTuple(_, shardParams.numShards, 20),
+        PushQPSL m Constants. b sOrNTabQPSForRFPH)(t  r).andT n(serv ce),
+      R chCl entParam(serv ceNa  = "not f cat onserv ce-ap ")
+    )
   }
 
-  // History Store - Invalidates cached history after writes
-  override val historyStore = new InvalidatingAfterWritesPushServiceHistoryStore(
-    ManhattanHistoryStore(notificationHistoryStore, statsReceiver),
-    recentHistoryCacheClient,
-    new DeciderGateBuilder(decider)
-      .idGate(DeciderKey.enableInvalidatingCachedHistoryStoreAfterWrites)
+  val mrRequestScr berNode = "mr_request_scr be"
+  val loggedOutMrRequestScr berNode = "lo_mr_request_scr be"
+
+  overr de val pushSendEventStreamNa  = "fr gate_pushserv ce_send_event_prod"
+} w h DeployConf g {
+  // Scr be
+  pr vate val not f cat onScr beLog = Logger("not f cat on_scr be")
+  pr vate val not f cat onScr be nject on:  nject on[Not f cat onScr be, Str ng] = B naryScalaCodec(
+    Not f cat onScr be
+  ) andT n  nject on.connect[Array[Byte], Base64Str ng, Str ng]
+
+  overr de def not f cat onScr be(data: Not f cat onScr be): Un  = {
+    val logEntry: Str ng = not f cat onScr be nject on(data)
+    not f cat onScr beLog. nfo(logEntry)
+  }
+
+  //  tory Store -  nval dates cac d  tory after wr es
+  overr de val  toryStore = new  nval dat ngAfterWr esPushServ ce toryStore(
+    Manhattan toryStore(not f cat on toryStore, statsRece ver),
+    recent toryCac Cl ent,
+    new Dec derGateBu lder(dec der)
+      . dGate(Dec derKey.enable nval dat ngCac d toryStoreAfterWr es)
   )
 
-  override val emailHistoryStore: PushServiceHistoryStore = {
-    statsReceiver.scope("frigate_email_history").counter("request").incr()
-    new SimplePushServiceHistoryStore(emailNotificationHistoryStore)
+  overr de val ema l toryStore: PushServ ce toryStore = {
+    statsRece ver.scope("fr gate_ema l_ tory").counter("request"). ncr()
+    new S mplePushServ ce toryStore(ema lNot f cat on toryStore)
   }
 
-  override val loggedOutHistoryStore =
-    new InvalidatingAfterWritesPushServiceHistoryStore(
-      ManhattanKVHistoryStore(
-        manhattanKVLoggedOutHistoryStoreEndpoint,
-        "frigate_notification_logged_out_history"),
-      recentHistoryCacheClient,
-      new DeciderGateBuilder(decider)
-        .idGate(DeciderKey.enableInvalidatingCachedLoggedOutHistoryStoreAfterWrites)
+  overr de val loggedOut toryStore =
+    new  nval dat ngAfterWr esPushServ ce toryStore(
+      ManhattanKV toryStore(
+        manhattanKVLoggedOut toryStoreEndpo nt,
+        "fr gate_not f cat on_logged_out_ tory"),
+      recent toryCac Cl ent,
+      new Dec derGateBu lder(dec der)
+        . dGate(Dec derKey.enable nval dat ngCac dLoggedOut toryStoreAfterWr es)
     )
 
-  private val requestScribeLog = Logger("request_scribe")
-  private val requestScribeInjection: Injection[PushRequestScribe, String] = BinaryScalaCodec(
-    PushRequestScribe
-  ) andThen Injection.connect[Array[Byte], Base64String, String]
+  pr vate val requestScr beLog = Logger("request_scr be")
+  pr vate val requestScr be nject on:  nject on[PushRequestScr be, Str ng] = B naryScalaCodec(
+    PushRequestScr be
+  ) andT n  nject on.connect[Array[Byte], Base64Str ng, Str ng]
 
-  override def requestScribe(data: PushRequestScribe): Unit = {
-    val logEntry: String = requestScribeInjection(data)
-    requestScribeLog.info(logEntry)
+  overr de def requestScr be(data: PushRequestScr be): Un  = {
+    val logEntry: Str ng = requestScr be nject on(data)
+    requestScr beLog. nfo(logEntry)
   }
 
-  // generic notification server
-  override def notificationServiceSend(
+  // gener c not f cat on server
+  overr de def not f cat onServ ceSend(
     target: Target,
-    request: CreateGenericNotificationRequest
-  ): Future[CreateGenericNotificationResponse] =
-    notificationServiceClient.createGenericNotification(request)
+    request: CreateGener cNot f cat onRequest
+  ): Future[CreateGener cNot f cat onResponse] =
+    not f cat onServ ceCl ent.createGener cNot f cat on(request)
 
-  // generic notification server
-  override def notificationServiceDelete(
-    request: DeleteGenericNotificationRequest
-  ): Future[Unit] = notificationServiceClient.deleteGenericNotification(request)
+  // gener c not f cat on server
+  overr de def not f cat onServ ceDelete(
+    request: DeleteGener cNot f cat onRequest
+  ): Future[Un ] = not f cat onServ ceCl ent.deleteGener cNot f cat on(request)
 
-  // NTab-api
-  override def notificationServiceDeleteTimeline(
-    request: DeleteCurrentTimelineForUserRequest
-  ): Future[Unit] = notificationServiceApiClient.deleteCurrentTimelineForUser(request)
+  // NTab-ap 
+  overr de def not f cat onServ ceDeleteT  l ne(
+    request: DeleteCurrentT  l neForUserRequest
+  ): Future[Un ] = not f cat onServ ceAp Cl ent.deleteCurrentT  l neForUser(request)
 
 }

@@ -1,38 +1,38 @@
-package com.twitter.representationscorer
+package com.tw ter.representat onscorer
 
-import com.google.inject.Module
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.representationscorer.columns.ListScoreColumn
-import com.twitter.representationscorer.columns.ScoreColumn
-import com.twitter.representationscorer.columns.SimClustersRecentEngagementSimilarityColumn
-import com.twitter.representationscorer.columns.SimClustersRecentEngagementSimilarityUserTweetEdgeColumn
-import com.twitter.representationscorer.modules.CacheModule
-import com.twitter.representationscorer.modules.EmbeddingStoreModule
-import com.twitter.representationscorer.modules.RMSConfigModule
-import com.twitter.representationscorer.modules.TimerModule
-import com.twitter.representationscorer.twistlyfeatures.UserSignalServiceRecentEngagementsClientModule
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
+ mport com.google. nject.Module
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule
+ mport com.tw ter.representat onscorer.columns.L stScoreColumn
+ mport com.tw ter.representat onscorer.columns.ScoreColumn
+ mport com.tw ter.representat onscorer.columns.S mClustersRecentEngage ntS m lar yColumn
+ mport com.tw ter.representat onscorer.columns.S mClustersRecentEngage ntS m lar yUserT etEdgeColumn
+ mport com.tw ter.representat onscorer.modules.Cac Module
+ mport com.tw ter.representat onscorer.modules.Embedd ngStoreModule
+ mport com.tw ter.representat onscorer.modules.RMSConf gModule
+ mport com.tw ter.representat onscorer.modules.T  rModule
+ mport com.tw ter.representat onscorer.tw stlyfeatures.UserS gnalServ ceRecentEngage ntsCl entModule
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.fed.server._
 
-object RepresentationScorerFedServerMain extends RepresentationScorerFedServer
+object Representat onScorerFedServerMa n extends Representat onScorerFedServer
 
-trait RepresentationScorerFedServer extends StratoFedServer {
-  override def dest: String = "/s/representation-scorer/representation-scorer"
-  override val modules: Seq[Module] =
+tra  Representat onScorerFedServer extends StratoFedServer {
+  overr de def dest: Str ng = "/s/representat on-scorer/representat on-scorer"
+  overr de val modules: Seq[Module] =
     Seq(
-      CacheModule,
-      ThriftClientIdModule,
-      UserSignalServiceRecentEngagementsClientModule,
-      TimerModule,
-      RMSConfigModule,
-      EmbeddingStoreModule
+      Cac Module,
+      Thr ftCl ent dModule,
+      UserS gnalServ ceRecentEngage ntsCl entModule,
+      T  rModule,
+      RMSConf gModule,
+      Embedd ngStoreModule
     )
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
+  overr de def columns: Seq[Class[_ <: StratoFed.Column]] =
     Seq(
-      classOf[ListScoreColumn],
+      classOf[L stScoreColumn],
       classOf[ScoreColumn],
-      classOf[SimClustersRecentEngagementSimilarityUserTweetEdgeColumn],
-      classOf[SimClustersRecentEngagementSimilarityColumn]
+      classOf[S mClustersRecentEngage ntS m lar yUserT etEdgeColumn],
+      classOf[S mClustersRecentEngage ntS m lar yColumn]
     )
 }

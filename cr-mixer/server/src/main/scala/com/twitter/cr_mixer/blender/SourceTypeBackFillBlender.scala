@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.blender
+package com.tw ter.cr_m xer.blender
 
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypes
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypesWithVideo
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.BlenderParams
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import javax.inject.Inject
+ mport com.tw ter.cr_m xer.blender. mpl c S gnalBackF llBlender.BackF llS ceTypes
+ mport com.tw ter.cr_m xer.blender. mpl c S gnalBackF llBlender.BackF llS ceTypesW hV deo
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.param.BlenderParams
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.cr_m xer.ut l. nterleaveUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
 
-case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
+case class S ceTypeBackF llBlender @ nject() (globalStats: StatsRece ver) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  pr vate val na : Str ng = t .getClass.getCanon calNa 
+  pr vate val stats: StatsRece ver = globalStats.scope(na )
 
   /**
-   *  Partition the candidates based on source type
-   *  Interleave the two partitions of candidates separately
-   *  Then append the back fill candidates to the end
+   *  Part  on t  cand dates based on s ce type
+   *   nterleave t  two part  ons of cand dates separately
+   *  T n append t  back f ll cand dates to t  end
    */
   def blend(
     params: Params,
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+     nputCand dates: Seq[Seq[ n  alCand date]],
+  ): Future[Seq[BlendedCand date]] = {
 
-    // Filter out empty candidate sequence
-    val candidates = inputCandidates.filter(_.nonEmpty)
+    // F lter out empty cand date sequence
+    val cand dates =  nputCand dates.f lter(_.nonEmpty)
 
-    val backFillSourceTypes =
-      if (params(BlenderParams.SourceTypeBackFillEnableVideoBackFill)) BackFillSourceTypesWithVideo
-      else BackFillSourceTypes
-    // partition candidates based on their source types
-    val (backFillCandidates, regularCandidates) =
-      candidates.partition(
-        _.head.candidateGenerationInfo.sourceInfoOpt
-          .exists(sourceInfo => backFillSourceTypes.contains(sourceInfo.sourceType)))
+    val backF llS ceTypes =
+       f (params(BlenderParams.S ceTypeBackF llEnableV deoBackF ll)) BackF llS ceTypesW hV deo
+      else BackF llS ceTypes
+    // part  on cand dates based on t  r s ce types
+    val (backF llCand dates, regularCand dates) =
+      cand dates.part  on(
+        _. ad.cand dateGenerat on nfo.s ce nfoOpt
+          .ex sts(s ce nfo => backF llS ceTypes.conta ns(s ce nfo.s ceType)))
 
-    val interleavedRegularCandidates = InterleaveUtil.interleave(regularCandidates)
-    val interleavedBackFillCandidates =
-      InterleaveUtil.interleave(backFillCandidates)
-    stats.stat("backFillCandidates").add(interleavedBackFillCandidates.size)
-    // Append interleaved backfill candidates to the end
-    val interleavedCandidates = interleavedRegularCandidates ++ interleavedBackFillCandidates
+    val  nterleavedRegularCand dates =  nterleaveUt l. nterleave(regularCand dates)
+    val  nterleavedBackF llCand dates =
+       nterleaveUt l. nterleave(backF llCand dates)
+    stats.stat("backF llCand dates").add( nterleavedBackF llCand dates.s ze)
+    // Append  nterleaved backf ll cand dates to t  end
+    val  nterleavedCand dates =  nterleavedRegularCand dates ++  nterleavedBackF llCand dates
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("cand dates").add( nterleavedCand dates.s ze)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blendedCand dates = BlendedCand datesBu lder.bu ld( nputCand dates,  nterleavedCand dates)
+    Future.value(blendedCand dates)
   }
 
 }
 
-object ImplicitSignalBackFillBlender {
-  final val BackFillSourceTypesWithVideo: Set[SourceType] = Set(
-    SourceType.UserRepeatedProfileVisit,
-    SourceType.VideoTweetPlayback50,
-    SourceType.VideoTweetQualityView)
+object  mpl c S gnalBackF llBlender {
+  f nal val BackF llS ceTypesW hV deo: Set[S ceType] = Set(
+    S ceType.UserRepeatedProf leV s ,
+    S ceType.V deoT etPlayback50,
+    S ceType.V deoT etQual yV ew)
 
-  final val BackFillSourceTypes: Set[SourceType] = Set(SourceType.UserRepeatedProfileVisit)
+  f nal val BackF llS ceTypes: Set[S ceType] = Set(S ceType.UserRepeatedProf leV s )
 }

@@ -1,13 +1,13 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.tw ter.fr gate.pushserv ce.take.pred cates
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-trait BasicSendHandlerPredicates[C <: PushCandidate] {
+tra  Bas cSendHandlerPred cates[C <: PushCand date] {
 
-  // specific predicates per candidate type before basic SendHandler predicates
-  val preCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // spec f c pred cates per cand date type before bas c SendHandler pred cates
+  val preCand dateSpec f cPred cates: L st[Na dPred cate[C]] = L st.empty
 
-  // specific predicates per candidate type after basic SendHandler predicates, could be empty
-  val postCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // spec f c pred cates per cand date type after bas c SendHandler pred cates, could be empty
+  val postCand dateSpec f cPred cates: L st[Na dPred cate[C]] = L st.empty
 }

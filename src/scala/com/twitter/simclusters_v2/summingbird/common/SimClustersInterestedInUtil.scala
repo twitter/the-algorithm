@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{
-  ClustersUserIsInterestedIn,
-  ClustersWithScores,
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  ClustersUser s nterested n,
+  ClustersW hScores,
   Scores
 }
 
-object SimClustersInterestedInUtil {
+object S mClusters nterested nUt l {
 
-  private final val EmptyClustersWithScores = ClustersWithScores()
+  pr vate f nal val EmptyClustersW hScores = ClustersW hScores()
 
-  case class InterestedInScores(
+  case class  nterested nScores(
     favScore: Double,
-    clusterNormalizedFavScore: Double,
-    clusterNormalizedFollowScore: Double,
-    clusterNormalizedLogFavScore: Double)
+    clusterNormal zedFavScore: Double,
+    clusterNormal zedFollowScore: Double,
+    clusterNormal zedLogFavScore: Double)
 
-  def topClustersWithScores(
-    userInterests: ClustersUserIsInterestedIn
-  ): Seq[(ClusterId, InterestedInScores)] = {
-    userInterests.clusterIdToScores.toSeq.map {
-      case (clusterId, scores) =>
+  def topClustersW hScores(
+    user nterests: ClustersUser s nterested n
+  ): Seq[(Cluster d,  nterested nScores)] = {
+    user nterests.cluster dToScores.toSeq.map {
+      case (cluster d, scores) =>
         val favScore = scores.favScore.getOrElse(0.0)
-        val normalizedFavScore = scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
-        val normalizedFollowScore = scores.followScoreClusterNormalizedOnly.getOrElse(0.0)
-        val normalizedLogFavScore = scores.logFavScoreClusterNormalizedOnly.getOrElse(0.0)
+        val normal zedFavScore = scores.favScoreClusterNormal zedOnly.getOrElse(0.0)
+        val normal zedFollowScore = scores.followScoreClusterNormal zedOnly.getOrElse(0.0)
+        val normal zedLogFavScore = scores.logFavScoreClusterNormal zedOnly.getOrElse(0.0)
 
         (
-          clusterId,
-          InterestedInScores(
+          cluster d,
+           nterested nScores(
             favScore,
-            normalizedFavScore,
-            normalizedFollowScore,
-            normalizedLogFavScore))
+            normal zedFavScore,
+            normal zedFollowScore,
+            normal zedLogFavScore))
     }
   }
 
-  def buildClusterWithScores(
-    clusterScores: Seq[(ClusterId, InterestedInScores)],
-    timeInMs: Double,
-    favScoreThresholdForUserInterest: Double
+  def bu ldClusterW hScores(
+    clusterScores: Seq[(Cluster d,  nterested nScores)],
+    t   nMs: Double,
+    favScoreThresholdForUser nterest: Double
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid
-  ): ClustersWithScores = {
+     mpl c  thr ftDecayedValueMono d: Thr ftDecayedValueMono d
+  ): ClustersW hScores = {
     val scoresMap = clusterScores.collect {
       case (
-            clusterId,
-            InterestedInScores(
+            cluster d,
+             nterested nScores(
               favScore,
               _,
               _,
-              clusterNormalizedLogFavScore))
-          // NOTE: the threshold is on favScore, and the computation is on normalizedFavScore
-          // This threshold reduces the number of unique keys in the cache by 80%,
-          // based on offline analysis
-          if favScore >= favScoreThresholdForUserInterest =>
+              clusterNormal zedLogFavScore))
+          // NOTE: t  threshold  s on favScore, and t  computat on  s on normal zedFavScore
+          // T  threshold reduces t  number of un que keys  n t  cac  by 80%,
+          // based on offl ne analys s
+           f favScore >= favScoreThresholdForUser nterest =>
 
-        val favClusterNormalized8HrHalfLifeScoreOpt =
-            Some(thriftDecayedValueMonoid.build(clusterNormalizedLogFavScore, timeInMs))
+        val favClusterNormal zed8HrHalfL feScoreOpt =
+            So (thr ftDecayedValueMono d.bu ld(clusterNormal zedLogFavScore, t   nMs))
 
-        clusterId -> Scores(favClusterNormalized8HrHalfLifeScore = favClusterNormalized8HrHalfLifeScoreOpt)
+        cluster d -> Scores(favClusterNormal zed8HrHalfL feScore = favClusterNormal zed8HrHalfL feScoreOpt)
     }.toMap
 
-    if (scoresMap.nonEmpty) {
-      ClustersWithScores(Some(scoresMap))
+     f (scoresMap.nonEmpty) {
+      ClustersW hScores(So (scoresMap))
     } else {
-      EmptyClustersWithScores
+      EmptyClustersW hScores
     }
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftNu r cType;
 
-public class IndexedNumericFieldSettings {
-  private final ThriftNumericType numericType;
-  private final int numericPrecisionStep;
-  private final boolean useTwitterFormat;
-  private final boolean useSortableEncoding;
+publ c class  ndexedNu r cF eldSett ngs {
+  pr vate f nal Thr ftNu r cType nu r cType;
+  pr vate f nal  nt nu r cPrec s onStep;
+  pr vate f nal boolean useTw terFormat;
+  pr vate f nal boolean useSortableEncod ng;
 
   /**
-   * Create a IndexedNumericFieldSettings from a ThriftIndexedNumericFieldSettings
+   * Create a  ndexedNu r cF eldSett ngs from a Thr ft ndexedNu r cF eldSett ngs
    */
-  public IndexedNumericFieldSettings(ThriftIndexedNumericFieldSettings numericFieldSettings) {
-    this.numericType            = numericFieldSettings.getNumericType();
-    this.numericPrecisionStep   = numericFieldSettings.getNumericPrecisionStep();
-    this.useTwitterFormat       = numericFieldSettings.isUseTwitterFormat();
-    this.useSortableEncoding    = numericFieldSettings.isUseSortableEncoding();
+  publ c  ndexedNu r cF eldSett ngs(Thr ft ndexedNu r cF eldSett ngs nu r cF eldSett ngs) {
+    t .nu r cType            = nu r cF eldSett ngs.getNu r cType();
+    t .nu r cPrec s onStep   = nu r cF eldSett ngs.getNu r cPrec s onStep();
+    t .useTw terFormat       = nu r cF eldSett ngs. sUseTw terFormat();
+    t .useSortableEncod ng    = nu r cF eldSett ngs. sUseSortableEncod ng();
   }
 
-  public ThriftNumericType getNumericType() {
-    return numericType;
+  publ c Thr ftNu r cType getNu r cType() {
+    return nu r cType;
   }
 
-  public int getNumericPrecisionStep() {
-    return numericPrecisionStep;
+  publ c  nt getNu r cPrec s onStep() {
+    return nu r cPrec s onStep;
   }
 
-  public boolean isUseTwitterFormat() {
-    return useTwitterFormat;
+  publ c boolean  sUseTw terFormat() {
+    return useTw terFormat;
   }
 
-  public boolean isUseSortableEncoding() {
-    return useSortableEncoding;
+  publ c boolean  sUseSortableEncod ng() {
+    return useSortableEncod ng;
   }
 }

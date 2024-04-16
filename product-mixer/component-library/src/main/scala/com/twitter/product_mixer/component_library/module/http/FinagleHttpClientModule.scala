@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.tw ter.product_m xer.component_l brary.module.http
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Http
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.shared_l brary.http_cl ent.F nagleHttpCl entBu lder.bu ldF nagleHttpCl entMutualTls
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object FinagleHttpClientModule extends TwitterModule {
+object F nagleHttpCl entModule extends Tw terModule {
 
-  final val HttpClientRequestTimeout = "http_client.request_timeout"
-  final val HttpClientConnectTimeout = "http_client.connect_timeout"
-  final val HttpClientAcquisitionTimeout = "http_client.acquisition_timeout"
+  f nal val HttpCl entRequestT  out = "http_cl ent.request_t  out"
+  f nal val HttpCl entConnectT  out = "http_cl ent.connect_t  out"
+  f nal val HttpCl entAcqu s  onT  out = "http_cl ent.acqu s  on_t  out"
 
-  flag[Duration](
-    name = HttpClientRequestTimeout,
-    default = 200.milliseconds,
-    help = "HTTP client request timeout")
+  flag[Durat on](
+    na  = HttpCl entRequestT  out,
+    default = 200.m ll seconds,
+     lp = "HTTP cl ent request t  out")
 
-  flag[Duration](
-    name = HttpClientConnectTimeout,
-    default = 500.milliseconds,
-    help = "HTTP client transport connect timeout")
+  flag[Durat on](
+    na  = HttpCl entConnectT  out,
+    default = 500.m ll seconds,
+     lp = "HTTP cl ent transport connect t  out")
 
-  flag[Duration](
-    name = HttpClientAcquisitionTimeout,
-    default = 500.milliseconds,
-    help = "HTTP client session acquisition timeout")
+  flag[Durat on](
+    na  = HttpCl entAcqu s  onT  out,
+    default = 500.m ll seconds,
+     lp = "HTTP cl ent sess on acqu s  on t  out")
 
-  final val FinagleHttpClientModule = "FinagleHttpClientModule"
+  f nal val F nagleHttpCl entModule = "F nagleHttpCl entModule"
 
   /**
-   * Provides a Finagle HTTP client with S2S Auth / Mutual TLS
+   * Prov des a F nagle HTTP cl ent w h S2S Auth / Mutual TLS
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * Note that t  t  outs conf gured  n t  module are  ant to be a reasonable start ng po nt
+   * only. To furt r tun ng t  sett ngs, e  r overr de t  flags or create local copy of t  module.
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
+   * @param requestT  out     HTTP cl ent request t  out
+   * @param connectT  out     HTTP cl ent transport connect t  out
+   * @param acqu s  onT  out HTTP cl ent sess on acqu s  on t  out
+   * @param serv ce dent f er  Serv ce  D used to S2S Auth
+   * @param statsRece ver      Stats
    *
-   * @return Finagle HTTP Client with S2S Auth / Mutual TLS
+   * @return F nagle HTTP Cl ent w h S2S Auth / Mutual TLS
    */
-  @Provides
-  @Singleton
-  @Named(FinagleHttpClientModule)
-  def providesFinagleHttpClient(
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Http.Client =
-    buildFinagleHttpClientMutualTls(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(F nagleHttpCl entModule)
+  def prov desF nagleHttpCl ent(
+    @Flag(HttpCl entRequestT  out) requestT  out: Durat on,
+    @Flag(HttpCl entConnectT  out) connectT  out: Durat on,
+    @Flag(HttpCl entAcqu s  onT  out) acqu s  onT  out: Durat on,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): Http.Cl ent =
+    bu ldF nagleHttpCl entMutualTls(
+      requestT  out = requestT  out,
+      connectT  out = connectT  out,
+      acqu s  onT  out = acqu s  onT  out,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 }

@@ -1,200 +1,200 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Optional;
+ mport java. o. OExcept on;
+ mport java.ut l.Date;
+ mport java.ut l.Opt onal;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.DailyStatusBatches;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.util.Duration;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common.ut l.zktrylock.TryLock;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.arch ve.Da lyStatusBatc s;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.ut l.ScrubGenUt l;
+ mport com.tw ter.search.earlyb rd.part  on.HdfsUt l;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
+ mport com.tw ter.ut l.Durat on;
 
 /**
- * Coordinate between segment builders for scrubbing pipeline.
- * When segment builder is running, all of them will try to find a HDFS file indicating if data is
- * ready. If the file does not exist, only one of them will go through the files and see if
- * scrubbing pipeline has generated all data for this scrub gen.
+ * Coord nate bet en seg nt bu lders for scrubb ng p pel ne.
+ * W n seg nt bu lder  s runn ng, all of t m w ll try to f nd a HDFS f le  nd cat ng  f data  s
+ * ready.  f t  f le does not ex st, only one of t m w ll go through t  f les and see  f
+ * scrubb ng p pel ne has generated all data for t  scrub gen.
  *
- * If the instance that got the lock found all data, it still exists, because otherwise we will
- * have one single segmentbuilder instance trying to build all segments, which is not what we want.
- * But if it exists, then the next time all segmentbuilder instances are scheduled, they will all
- * find the file, and will start building segments.
+ *  f t   nstance that got t  lock found all data,   st ll ex sts, because ot rw se   w ll
+ * have one s ngle seg ntbu lder  nstance try ng to bu ld all seg nts, wh ch  s not what   want.
+ * But  f   ex sts, t n t  next t   all seg ntbu lder  nstances are sc duled, t y w ll all
+ * f nd t  f le, and w ll start bu ld ng seg nts.
  */
-class SegmentBuilderCoordinator {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderCoordinator.class);
+class Seg ntBu lderCoord nator {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntBu lderCoord nator.class);
 
-  private static final Amount<Long, Time> ZK_LOCK_EXPIRATION_MIN = Amount.of(5L, Time.MINUTES);
-  private static final String SEGMENT_BUILDER_SYNC_NODE = "scrub_gen_data_sync";
-  private static final String SEGMENT_BUILDER_SYNC_ZK_PATH =
-      EarlybirdProperty.ZK_APP_ROOT.get() + "/segment_builder_sync";
-  private static final String DATA_FULLY_BUILT_FILE = "_data_fully_built";
-  static final int FIRST_INSTANCE = 0;
+  pr vate stat c f nal Amount<Long, T  > ZK_LOCK_EXP RAT ON_M N = Amount.of(5L, T  .M NUTES);
+  pr vate stat c f nal Str ng SEGMENT_BU LDER_SYNC_NODE = "scrub_gen_data_sync";
+  pr vate stat c f nal Str ng SEGMENT_BU LDER_SYNC_ZK_PATH =
+      Earlyb rdProperty.ZK_APP_ROOT.get() + "/seg nt_bu lder_sync";
+  pr vate stat c f nal Str ng DATA_FULLY_BU LT_F LE = "_data_fully_bu lt";
+  stat c f nal  nt F RST_ NSTANCE = 0;
 
-  private static final long NON_FIRST_INSTANCE_SLEEP_BEFORE_RETRY_DURATION_MS =
-      Duration.fromHours(1).inMillis();
+  pr vate stat c f nal long NON_F RST_ NSTANCE_SLEEP_BEFORE_RETRY_DURAT ON_MS =
+      Durat on.fromH s(1). nM ll s();
 
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SegmentSyncConfig syncConfig;
-  private final Optional<Date> scrubGenDayOpt;
-  private final Optional<String> scrubGenOpt;
-  private final Clock clock;
+  pr vate f nal ZooKeeperTryLockFactory zkTryLockFactory;
+  pr vate f nal Seg ntSyncConf g syncConf g;
+  pr vate f nal Opt onal<Date> scrubGenDayOpt;
+  pr vate f nal Opt onal<Str ng> scrubGenOpt;
+  pr vate f nal Clock clock;
 
-  SegmentBuilderCoordinator(
-      ZooKeeperTryLockFactory zkTryLockFactory, SegmentSyncConfig syncConfig, Clock clock) {
-    this.zkTryLockFactory = zkTryLockFactory;
-    this.syncConfig = syncConfig;
-    this.scrubGenOpt = syncConfig.getScrubGen();
-    this.scrubGenDayOpt = scrubGenOpt.map(ScrubGenUtil::parseScrubGenToDate);
-    this.clock = clock;
+  Seg ntBu lderCoord nator(
+      ZooKeeperTryLockFactory zkTryLockFactory, Seg ntSyncConf g syncConf g, Clock clock) {
+    t .zkTryLockFactory = zkTryLockFactory;
+    t .syncConf g = syncConf g;
+    t .scrubGenOpt = syncConf g.getScrubGen();
+    t .scrubGenDayOpt = scrubGenOpt.map(ScrubGenUt l::parseScrubGenToDate);
+    t .clock = clock;
   }
 
 
-  public boolean isScrubGenDataFullyBuilt(int instanceNumber) {
-    // Only segment builder that takes scrub gen should use isPartitioningOutputReady to coordinate
-    Preconditions.checkArgument(scrubGenDayOpt.isPresent());
+  publ c boolean  sScrubGenDataFullyBu lt( nt  nstanceNumber) {
+    // Only seg nt bu lder that takes scrub gen should use  sPart  on ngOutputReady to coord nate
+    Precond  ons.c ckArgu nt(scrubGenDayOpt. sPresent());
 
-    final FileSystem hdfs;
+    f nal F leSystem hdfs;
     try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-    } catch (IOException e) {
-      LOG.error("Could not create HDFS file system.", e);
+      hdfs = HdfsUt l.getHdfsF leSystem();
+    } catch ( OExcept on e) {
+      LOG.error("Could not create HDFS f le system.", e);
       return false;
     }
 
-    return isScrubGenDataFullyBuilt(
-        instanceNumber,
+    return  sScrubGenDataFullyBu lt(
+         nstanceNumber,
         scrubGenDayOpt.get(),
-        NON_FIRST_INSTANCE_SLEEP_BEFORE_RETRY_DURATION_MS,
+        NON_F RST_ NSTANCE_SLEEP_BEFORE_RETRY_DURAT ON_MS,
         hdfs
     );
   }
 
-  @VisibleForTesting
-  boolean isScrubGenDataFullyBuilt(
-      int instanceNumber,
+  @V s bleForTest ng
+  boolean  sScrubGenDataFullyBu lt(
+       nt  nstanceNumber,
       Date scrubGenDay,
-      long nonFirstInstanceSleepBeforeRetryDuration,
-      FileSystem hdfs) {
-    // Check if the scrub gen has been fully built file exists.
-    if (checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs)) {
+      long nonF rst nstanceSleepBeforeRetryDurat on,
+      F leSystem hdfs) {
+    // C ck  f t  scrub gen has been fully bu lt f le ex sts.
+     f (c ckHaveScrubGenDataFullyBu ltF leOnHdfs(hdfs)) {
       return true;
     }
 
-    // If it doesn't exist, let first instance see if scrub gen has been fully built and create the
-    // file.
-    if (instanceNumber == FIRST_INSTANCE) {
-      // We were missing some data on HDFS for this scrub gen in previous run,
-      // but we might've gotten more data in the meantime, check again.
-      // Only allow instance 0 to do this mainly for 2 reasons:
-      // 1) Since instances are scheduled in batches, it's possible that a instance from latter
-      // batch find the fully built file in hdfs and start processing. We end up doing work with
-      // only partial instances.
-      // 2) If we sleep before we release lock, it's hard to estimate how long a instance will
-      // be scheduled.
-      // For deterministic reason, we simplify a bit and only allow instance 0 to check and write
-      // data is fully build file to hdfs.
+    //  f   doesn't ex st, let f rst  nstance see  f scrub gen has been fully bu lt and create t 
+    // f le.
+     f ( nstanceNumber == F RST_ NSTANCE) {
+      //    re m ss ng so  data on HDFS for t  scrub gen  n prev ous run,
+      // but   m ght've gotten more data  n t   ant  , c ck aga n.
+      // Only allow  nstance 0 to do t  ma nly for 2 reasons:
+      // 1) S nce  nstances are sc duled  n batc s,  's poss ble that a  nstance from latter
+      // batch f nd t  fully bu lt f le  n hdfs and start process ng.   end up do ng work w h
+      // only part al  nstances.
+      // 2)  f   sleep before   release lock,  's hard to est mate how long a  nstance w ll
+      // be sc duled.
+      // For determ n st c reason,   s mpl fy a b  and only allow  nstance 0 to c ck and wr e
+      // data  s fully bu ld f le to hdfs.
       try {
-        checkIfScrubGenDataIsFullyBuilt(hdfs, scrubGenDay);
-      } catch (IOException e) {
-        LOG.error("Failed to grab lock and check scrub gen data.", e);
+        c ck fScrubGenData sFullyBu lt(hdfs, scrubGenDay);
+      } catch ( OExcept on e) {
+        LOG.error("Fa led to grab lock and c ck scrub gen data.", e);
       }
     } else {
-      // for all other instances, sleep for a bit to give time for first instance to check if scrub
-      // gen has been fully built and create the file, then check again.
+      // for all ot r  nstances, sleep for a b  to g ve t   for f rst  nstance to c ck  f scrub
+      // gen has been fully bu lt and create t  f le, t n c ck aga n.
       try {
-        LOG.info(
-            "Sleeping for {} ms before re-checking if scrub gen has been fully built file exists",
-            nonFirstInstanceSleepBeforeRetryDuration);
-        clock.waitFor(nonFirstInstanceSleepBeforeRetryDuration);
-        return checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs);
-      } catch (InterruptedException e) {
-        LOG.warn("Interrupted when sleeping before re-checking if scrub gen has been fully built "
-            + "file exists", e);
+        LOG. nfo(
+            "Sleep ng for {} ms before re-c ck ng  f scrub gen has been fully bu lt f le ex sts",
+            nonF rst nstanceSleepBeforeRetryDurat on);
+        clock.wa For(nonF rst nstanceSleepBeforeRetryDurat on);
+        return c ckHaveScrubGenDataFullyBu ltF leOnHdfs(hdfs);
+      } catch ( nterruptedExcept on e) {
+        LOG.warn(" nterrupted w n sleep ng before re-c ck ng  f scrub gen has been fully bu lt "
+            + "f le ex sts", e);
       }
     }
 
-    // if hasSuccessFileToHdfs returns false, then should always return false in the end.
-    // next run will find success file for this scrub gen and move forward.
+    //  f hasSuccessF leToHdfs returns false, t n should always return false  n t  end.
+    // next run w ll f nd success f le for t  scrub gen and move forward.
     return false;
   }
 
-  private void checkIfScrubGenDataIsFullyBuilt(
-      FileSystem hdfs, Date scrubGenDay) throws IOException {
-    // Build the lock, try to acquire it, and check the data on HDFS
+  pr vate vo d c ck fScrubGenData sFullyBu lt(
+      F leSystem hdfs, Date scrubGenDay) throws  OExcept on {
+    // Bu ld t  lock, try to acqu re  , and c ck t  data on HDFS
     TryLock lock = zkTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        SEGMENT_BUILDER_SYNC_ZK_PATH,
-        SEGMENT_BUILDER_SYNC_NODE,
-        ZK_LOCK_EXPIRATION_MIN);
-    Preconditions.checkState(scrubGenOpt.isPresent());
-    String scrubGen = scrubGenOpt.get();
+        DatabaseConf g.getLocalHostna (),
+        SEGMENT_BU LDER_SYNC_ZK_PATH,
+        SEGMENT_BU LDER_SYNC_NODE,
+        ZK_LOCK_EXP RAT ON_M N);
+    Precond  ons.c ckState(scrubGenOpt. sPresent());
+    Str ng scrubGen = scrubGenOpt.get();
 
-    lock.tryWithLock(() -> {
-      LOG.info(String.format(
-          "Obtained ZK lock to check if data for scrub gen %s is ready.", scrubGen));
-      final DailyStatusBatches directory =
-          new DailyStatusBatches(zkTryLockFactory, scrubGenDay);
-      if (directory.isScrubGenDataFullyBuilt(hdfs)
-          && createScrubGenDataFullyBuiltFileOnHdfs(hdfs)) {
-        LOG.info(String.format("All data for scrub gen %s is ready.", scrubGen));
+    lock.tryW hLock(() -> {
+      LOG. nfo(Str ng.format(
+          "Obta ned ZK lock to c ck  f data for scrub gen %s  s ready.", scrubGen));
+      f nal Da lyStatusBatc s d rectory =
+          new Da lyStatusBatc s(zkTryLockFactory, scrubGenDay);
+       f (d rectory. sScrubGenDataFullyBu lt(hdfs)
+          && createScrubGenDataFullyBu ltF leOnHdfs(hdfs)) {
+        LOG. nfo(Str ng.format("All data for scrub gen %s  s ready.", scrubGen));
       } else {
-        LOG.info(String.format("Data for scrub gen %s is not ready yet.", scrubGen));
+        LOG. nfo(Str ng.format("Data for scrub gen %s  s not ready yet.", scrubGen));
       }
     });
   }
 
-  private boolean createScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
-    Path path = getScrubGenDataFullyBuiltFilePath();
+  pr vate boolean createScrubGenDataFullyBu ltF leOnHdfs(F leSystem fs) {
+    Path path = getScrubGenDataFullyBu ltF lePath();
     try {
-      fs.mkdirs(new Path(statusReadyHDFSPath()));
-      if (fs.createNewFile(path)) {
-        LOG.info("Successfully created file " + path + " on HDFS.");
+      fs.mkd rs(new Path(statusReadyHDFSPath()));
+       f (fs.createNewF le(path)) {
+        LOG. nfo("Successfully created f le " + path + " on HDFS.");
         return true;
       } else {
-        LOG.warn("Failed to create file " + path + " on HDFS.");
+        LOG.warn("Fa led to create f le " + path + " on HDFS.");
       }
-    } catch (IOException e) {
-      LOG.error("Failed to create file on HDFS " + path.toString(), e);
+    } catch ( OExcept on e) {
+      LOG.error("Fa led to create f le on HDFS " + path.toStr ng(), e);
     }
     return false;
   }
 
-  private boolean checkHaveScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
-    Path path = getScrubGenDataFullyBuiltFilePath();
+  pr vate boolean c ckHaveScrubGenDataFullyBu ltF leOnHdfs(F leSystem fs) {
+    Path path = getScrubGenDataFullyBu ltF lePath();
     try {
-      boolean ret = fs.exists(path);
-      LOG.info("Checking if file exists showing scrubgen is fully built.");
-      LOG.info("Path checked: {}, Exist check: {}", path, ret);
+      boolean ret = fs.ex sts(path);
+      LOG. nfo("C ck ng  f f le ex sts show ng scrubgen  s fully bu lt.");
+      LOG. nfo("Path c cked: {}, Ex st c ck: {}", path, ret);
       return ret;
-    } catch (IOException e) {
-      LOG.error("Failed to check file on HDFS " + path.toString(), e);
+    } catch ( OExcept on e) {
+      LOG.error("Fa led to c ck f le on HDFS " + path.toStr ng(), e);
       return false;
     }
   }
 
-  @VisibleForTesting
-  Path getScrubGenDataFullyBuiltFilePath() {
-    return new Path(statusReadyHDFSPath(), DATA_FULLY_BUILT_FILE);
+  @V s bleForTest ng
+  Path getScrubGenDataFullyBu ltF lePath() {
+    return new Path(statusReadyHDFSPath(), DATA_FULLY_BU LT_F LE);
   }
 
-  @VisibleForTesting
-  String statusReadyHDFSPath() {
-    return syncConfig.getHdfsSegmentSyncRootDir() + "/segment_builder_sync";
+  @V s bleForTest ng
+  Str ng statusReadyHDFSPath() {
+    return syncConf g.getHdfsSeg ntSyncRootD r() + "/seg nt_bu lder_sync";
   }
 }

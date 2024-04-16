@@ -1,35 +1,35 @@
-package com.twitter.servo
+package com.tw ter.servo
 
-import com.twitter.finagle.partitioning.PartitionNode
-import com.twitter.servo.util.Transformer
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.part  on ng.Part  onNode
+ mport com.tw ter.servo.ut l.Transfor r
+ mport com.tw ter.ut l.Try
 
-package object cache {
-  type CachedValue = thriftscala.CachedValue
-  val CachedValue = thriftscala.CachedValue
-  type CachedValueStatus = thriftscala.CachedValueStatus
-  val CachedValueStatus = thriftscala.CachedValueStatus
+package object cac  {
+  type Cac dValue = thr ftscala.Cac dValue
+  val Cac dValue = thr ftscala.Cac dValue
+  type Cac dValueStatus = thr ftscala.Cac dValueStatus
+  val Cac dValueStatus = thr ftscala.Cac dValueStatus
 
-  type KeyTransformer[K] = K => String
-  type CsKeyValueResult[K, V] = KeyValueResult[K, (Try[V], Checksum)]
+  type KeyTransfor r[K] = K => Str ng
+  type CsKeyValueResult[K, V] = KeyValueResult[K, (Try[V], C cksum)]
 
   type KeyValueResult[K, V] = keyvalue.KeyValueResult[K, V]
   val KeyValueResult = keyvalue.KeyValueResult
 
-  @deprecated("Use com.twitter.finagle.partitioning.PartitionNode instead", "1/7/2013")
-  type WeightedHost = PartitionNode
+  @deprecated("Use com.tw ter.f nagle.part  on ng.Part  onNode  nstead", "1/7/2013")
+  type   ghtedHost = Part  onNode
 
-  type Serializer[T] = Transformer[T, Array[Byte]]
+  type Ser al zer[T] = Transfor r[T, Array[Byte]]
 
   /**
-   * Like a companion object, but for a type alias!
+   * L ke a compan on object, but for a type al as!
    */
-  val Serializer = Serializers
+  val Ser al zer = Ser al zers
 
-  type MemcacheFactory = (() => Memcache)
+  type  mcac Factory = (() =>  mcac )
 }
 
-package cache {
+package cac  {
   package object constants {
     val Colon = ":"
   }

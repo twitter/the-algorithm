@@ -1,45 +1,45 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaBinaryThrift,
-  ScalaCompactThrift
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.{
+  Long2B gEnd an,
+  ScalaB naryThr ft,
+  ScalaCompactThr ft
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistedFullClusterId,
-  SimClustersEmbedding,
-  SimClustersEmbeddingId,
-  TopProducersWithScore,
-  TopSimClustersWithScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Pers stedFullCluster d,
+  S mClustersEmbedd ng,
+  S mClustersEmbedd ng d,
+  TopProducersW hScore,
+  TopS mClustersW hScore
 }
 
-object ProducerEmbeddingsInjections {
-  final val ProducerTopKSimClusterEmbeddingsInjection: KeyValInjection[
+object ProducerEmbedd ngs nject ons {
+  f nal val ProducerTopKS mClusterEmbedd ngs nject on: KeyVal nject on[
     Long,
-    TopSimClustersWithScore
+    TopS mClustersW hScore
   ] =
-    KeyValInjection(
-      keyCodec = Long2BigEndian,
-      valueCodec = ScalaCompactThrift(TopSimClustersWithScore))
+    KeyVal nject on(
+      keyCodec = Long2B gEnd an,
+      valueCodec = ScalaCompactThr ft(TopS mClustersW hScore))
 
-  final val SimClusterEmbeddingTopKProducersInjection: KeyValInjection[
-    PersistedFullClusterId,
-    TopProducersWithScore
+  f nal val S mClusterEmbedd ngTopKProducers nject on: KeyVal nject on[
+    Pers stedFullCluster d,
+    TopProducersW hScore
   ] =
-    KeyValInjection(
-      keyCodec = ScalaCompactThrift(PersistedFullClusterId),
-      valueCodec = ScalaCompactThrift(TopProducersWithScore))
+    KeyVal nject on(
+      keyCodec = ScalaCompactThr ft(Pers stedFullCluster d),
+      valueCodec = ScalaCompactThr ft(TopProducersW hScore))
 
-  final val SimilarUsersInjection: KeyValInjection[Long, Candidates] =
-    KeyValInjection(keyCodec = Long2BigEndian, valueCodec = ScalaCompactThrift(Candidates))
+  f nal val S m larUsers nject on: KeyVal nject on[Long, Cand dates] =
+    KeyVal nject on(keyCodec = Long2B gEnd an, valueCodec = ScalaCompactThr ft(Cand dates))
 
-  final val ProducerSimClustersEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  f nal val ProducerS mClustersEmbedd ng nject on: KeyVal nject on[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] =
-    KeyValInjection(
-      keyCodec = ScalaBinaryThrift(SimClustersEmbeddingId),
-      valueCodec = ScalaBinaryThrift(SimClustersEmbedding))
+    KeyVal nject on(
+      keyCodec = ScalaB naryThr ft(S mClustersEmbedd ng d),
+      valueCodec = ScalaB naryThr ft(S mClustersEmbedd ng))
 }

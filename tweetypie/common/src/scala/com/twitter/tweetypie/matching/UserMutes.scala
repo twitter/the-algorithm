@@ -1,128 +1,128 @@
-package com.twitter.tweetypie.matching
+package com.tw ter.t etyp e.match ng
 
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.common_internal.text.version.PenguinVersion
-import java.util.Locale
-import scala.collection.JavaConversions.asScalaBuffer
+ mport com.tw ter.common.text.p pel ne.Tw terLanguage dent f er
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on
+ mport java.ut l.Locale
+ mport scala.collect on.JavaConvers ons.asScalaBuffer
 
-object UserMutesBuilder {
-  private[matching] val Default =
-    new UserMutesBuilder(Tokenizer.DefaultPenguinVersion, None)
+object UserMutesBu lder {
+  pr vate[match ng] val Default =
+    new UserMutesBu lder(Token zer.DefaultPengu nVers on, None)
 
-  private val queryLangIdentifier =
-    (new TwitterLanguageIdentifier.Builder).buildForQuery()
+  pr vate val queryLang dent f er =
+    (new Tw terLanguage dent f er.Bu lder).bu ldForQuery()
 }
 
-class UserMutesBuilder private (penguinVersion: PenguinVersion, localeOpt: Option[Locale]) {
+class UserMutesBu lder pr vate (pengu nVers on: Pengu nVers on, localeOpt: Opt on[Locale]) {
 
   /**
-   * Use the specified Penguin version when tokenizing a keyword mute
-   * string. In general, use the default version, unless you need to
-   * specify a particular version for compatibility with another system
-   * that is using that version.
+   * Use t  spec f ed Pengu n vers on w n token z ng a keyword mute
+   * str ng.  n general, use t  default vers on, unless   need to
+   * spec fy a part cular vers on for compat b l y w h anot r system
+   * that  s us ng that vers on.
    */
-  def withPenguinVersion(ver: PenguinVersion): UserMutesBuilder =
-    if (ver == penguinVersion) this
-    else new UserMutesBuilder(ver, localeOpt)
+  def w hPengu nVers on(ver: Pengu nVers on): UserMutesBu lder =
+     f (ver == pengu nVers on) t 
+    else new UserMutesBu lder(ver, localeOpt)
 
   /**
-   * Use the specified locale when tokenizing a keyword mute string.
+   * Use t  spec f ed locale w n token z ng a keyword mute str ng.
    */
-  def withLocale(locale: Locale): UserMutesBuilder =
-    if (localeOpt.contains(locale)) this
-    else new UserMutesBuilder(penguinVersion, Some(locale))
+  def w hLocale(locale: Locale): UserMutesBu lder =
+     f (localeOpt.conta ns(locale)) t 
+    else new UserMutesBu lder(pengu nVers on, So (locale))
 
   /**
-   * When tokenizing a user mute list, detect the language of the
-   * text. This is significantly more expensive than using a predefined
-   * locale, but is appropriate when the locale is not yet known.
+   * W n token z ng a user mute l st, detect t  language of t 
+   * text. T   s s gn f cantly more expens ve than us ng a predef ned
+   * locale, but  s appropr ate w n t  locale  s not yet known.
    */
-  def detectLocale(): UserMutesBuilder =
-    if (localeOpt.isEmpty) this
-    else new UserMutesBuilder(penguinVersion, localeOpt)
+  def detectLocale(): UserMutesBu lder =
+     f (localeOpt. sEmpty) t 
+    else new UserMutesBu lder(pengu nVers on, localeOpt)
 
-  private[this] lazy val tokenizer =
+  pr vate[t ] lazy val token zer =
     localeOpt match {
       case None =>
-        // No locale was specified, so use a Tokenizer that performs
-        // language detection before tokenizing.
-        new Tokenizer {
-          override def tokenize(text: String): TokenSequence = {
-            val locale = UserMutesBuilder.queryLangIdentifier.identify(text).getLocale
-            Tokenizer.get(locale, penguinVersion).tokenize(text)
+        // No locale was spec f ed, so use a Token zer that performs
+        // language detect on before token z ng.
+        new Token zer {
+          overr de def token ze(text: Str ng): TokenSequence = {
+            val locale = UserMutesBu lder.queryLang dent f er. dent fy(text).getLocale
+            Token zer.get(locale, pengu nVers on).token ze(text)
           }
         }
 
-      case Some(locale) =>
-        Tokenizer.get(locale, penguinVersion)
+      case So (locale) =>
+        Token zer.get(locale, pengu nVers on)
     }
 
   /**
-   * Given a list of the user's raw keyword mutes, return a preprocessed
-   * set of mutes suitable for matching against tweet text. If the input
-   * contains any phrases that fail validation, then they will be
+   * G ven a l st of t  user's raw keyword mutes, return a preprocessed
+   * set of mutes su able for match ng aga nst t et text.  f t   nput
+   * conta ns any phrases that fa l val dat on, t n t y w ll be
    * dropped.
    */
-  def build(rawInput: Seq[String]): UserMutes =
-    UserMutes(rawInput.flatMap(validate(_).right.toOption))
+  def bu ld(raw nput: Seq[Str ng]): UserMutes =
+    UserMutes(raw nput.flatMap(val date(_).r ght.toOpt on))
 
   /**
-   * Java-friendly API for processing a user's list of raw keyword mutes
-   * into a preprocessed form suitable for matching against text.
+   * Java-fr endly AP  for process ng a user's l st of raw keyword mutes
+   *  nto a preprocessed form su able for match ng aga nst text.
    */
-  def fromJavaList(rawInput: java.util.List[String]): UserMutes =
-    build(asScalaBuffer(rawInput).toSeq)
+  def fromJavaL st(raw nput: java.ut l.L st[Str ng]): UserMutes =
+    bu ld(asScalaBuffer(raw nput).toSeq)
 
   /**
-   * Validate the raw user input muted phrase. Currently, the only
-   * inputs that are not valid for keyword muting are those inputs that
-   * do not contain any keywords, because those inputs would match all
-   * tweets.
+   * Val date t  raw user  nput muted phrase. Currently, t  only
+   *  nputs that are not val d for keyword mut ng are those  nputs that
+   * do not conta n any keywords, because those  nputs would match all
+   * t ets.
    */
-  def validate(mutedPhrase: String): Either[UserMutes.ValidationError, TokenSequence] = {
-    val keywords = tokenizer.tokenize(mutedPhrase)
-    if (keywords.isEmpty) UserMutes.EmptyPhraseError else Right(keywords)
+  def val date(mutedPhrase: Str ng): E  r[UserMutes.Val dat onError, TokenSequence] = {
+    val keywords = token zer.token ze(mutedPhrase)
+     f (keywords. sEmpty) UserMutes.EmptyPhraseError else R ght(keywords)
   }
 }
 
 object UserMutes {
-  sealed trait ValidationError
+  sealed tra  Val dat onError
 
   /**
-   * The phrase's tokenization did not produce any tokens
+   * T  phrase's token zat on d d not produce any tokens
    */
-  case object EmptyPhrase extends ValidationError
+  case object EmptyPhrase extends Val dat onError
 
-  private[matching] val EmptyPhraseError = Left(EmptyPhrase)
+  pr vate[match ng] val EmptyPhraseError = Left(EmptyPhrase)
 
   /**
-   * Get a [[UserMutesBuilder]] that uses the default Penguin version and
-   * performs language identification to choose a locale.
+   * Get a [[UserMutesBu lder]] that uses t  default Pengu n vers on and
+   * performs language  dent f cat on to choose a locale.
    */
-  def builder(): UserMutesBuilder = UserMutesBuilder.Default
+  def bu lder(): UserMutesBu lder = UserMutesBu lder.Default
 }
 
 /**
- * A user's muted keyword list, preprocessed into token sequences.
+ * A user's muted keyword l st, preprocessed  nto token sequences.
  */
-case class UserMutes private[matching] (toSeq: Seq[TokenSequence]) {
+case class UserMutes pr vate[match ng] (toSeq: Seq[TokenSequence]) {
 
   /**
-   * Do any of the users' muted keyword sequences occur within the
-   * supplied text?
+   * Do any of t  users' muted keyword sequences occur w h n t 
+   * suppl ed text?
    */
-  def matches(text: TokenSequence): Boolean =
-    toSeq.exists(text.containsKeywordSequence)
+  def matc s(text: TokenSequence): Boolean =
+    toSeq.ex sts(text.conta nsKeywordSequence)
 
   /**
-   * Find all positions of matching muted keyword from the user's
-   * muted keyword list
+   * F nd all pos  ons of match ng muted keyword from t  user's
+   * muted keyword l st
    */
-  def find(text: TokenSequence): Seq[Int] =
-    toSeq.zipWithIndex.collect {
-      case (token, index) if text.containsKeywordSequence(token) => index
+  def f nd(text: TokenSequence): Seq[ nt] =
+    toSeq.z pW h ndex.collect {
+      case (token,  ndex)  f text.conta nsKeywordSequence(token) =>  ndex
     }
 
-  def isEmpty: Boolean = toSeq.isEmpty
+  def  sEmpty: Boolean = toSeq. sEmpty
   def nonEmpty: Boolean = toSeq.nonEmpty
 }

@@ -1,8 +1,8 @@
-# pylint: disable=invalid-name
+# pyl nt: d sable= nval d-na 
 """
-This module implements the reader for BatchPredictionRequest.
+T  module  mple nts t  reader for BatchPred ct onRequest.
 """
 
-from twitter.deepbird.io.legacy.contrib.readers.batch_prediction_request import (
-  BatchPredictionRequest  # noqa: F401
+from tw ter.deepb rd. o.legacy.contr b.readers.batch_pred ct on_request  mport (
+  BatchPred ct onRequest  # noqa: F401
 )

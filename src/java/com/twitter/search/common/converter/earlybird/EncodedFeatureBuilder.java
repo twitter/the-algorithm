@@ -1,251 +1,251 @@
-package com.twitter.search.common.converter.earlybird;
+package com.tw ter.search.common.converter.earlyb rd;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+ mport java. o. OExcept on;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Set;
+ mport java.ut l.regex.Matc r;
+ mport java.ut l.regex.Pattern;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Jo ner;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.Place;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.indexing.thriftjava.ProfileGeoEnrichment;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.PotentialLocationObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.FeatureSink;
-import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.relevance.features.TweetUserFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.SourceNormalizer;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.search.common.util.url.LinkVisibilityUtils;
-import com.twitter.search.common.util.url.NativeVideoClassificationUtils;
-import com.twitter.search.ingester.model.VisibleTokenRatioUtil;
+ mport com.tw ter.common.text.token.Token zedCharSequence;
+ mport com.tw ter.common.text.token.Token zedCharSequenceStream;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Place;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Potent alLocat on;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Prof leGeoEnr ch nt;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Vers onedT etFeatures;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.relevance.ent  es.Potent alLocat onObject;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.features.FeatureS nk;
+ mport com.tw ter.search.common.relevance.features.MutableFeatureNormal zers;
+ mport com.tw ter.search.common.relevance.features.RelevanceS gnalConstants;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.search.common.relevance.features.T etTextQual y;
+ mport com.tw ter.search.common.relevance.features.T etUserFeatures;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.common.ut l.text.Language dent f er lper;
+ mport com.tw ter.search.common.ut l.text.Normal zer lper;
+ mport com.tw ter.search.common.ut l.text.S ceNormal zer;
+ mport com.tw ter.search.common.ut l.text.Token zer lper;
+ mport com.tw ter.search.common.ut l.text.Token zerResult;
+ mport com.tw ter.search.common.ut l.text.T etTokenStreamSer al zer;
+ mport com.tw ter.search.common.ut l.url.L nkV s b l yUt ls;
+ mport com.tw ter.search.common.ut l.url.Nat veV deoClass f cat onUt ls;
+ mport com.tw ter.search. ngester.model.V s bleTokenRat oUt l;
 
 /**
- * EncodedFeatureBuilder helps to build encoded features for TwitterMessage.
+ * EncodedFeatureBu lder  lps to bu ld encoded features for Tw ter ssage.
  *
- * This is stateful so should only be used one tweet at a time
+ * T   s stateful so should only be used one t et at a t  
  */
-public class EncodedFeatureBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EncodedFeatureBuilder.class);
+publ c class EncodedFeatureBu lder {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(EncodedFeatureBu lder.class);
 
-  private static final SearchCounter NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL =
-      SearchCounter.export("tweets_with_invalid_tweet_id_in_photo_url");
+  pr vate stat c f nal SearchCounter NUM_TWEETS_W TH_ NVAL D_TWEET_ D_ N_PHOTO_URL =
+      SearchCounter.export("t ets_w h_ nval d_t et_ d_ n_photo_url");
 
-  // TwitterTokenStream for converting TokenizedCharSequence into a stream for serialization
-  // This is stateful so should only be used one tweet at a time
-  private final TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
+  // Tw terTokenStream for convert ng Token zedCharSequence  nto a stream for ser al zat on
+  // T   s stateful so should only be used one t et at a t  
+  pr vate f nal Token zedCharSequenceStream tokenSeqStream = new Token zedCharSequenceStream();
 
-  // SUPPRESS CHECKSTYLE:OFF LineLength
-  private static final Pattern TWITTER_PHOTO_PERMA_LINK_PATTERN =
-          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:\\?[^#]+)?(?:#!?\\/?)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
+  // SUPPRESS CHECKSTYLE:OFF L neLength
+  pr vate stat c f nal Pattern TW TTER_PHOTO_PERMA_L NK_PATTERN =
+          Pattern.comp le("(? :^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?tw ter\\.com\\/(?:\\?[^#]+)?(?:#!?\\/?)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
 
-  private static final Pattern TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN =
-          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:#!?\\/)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
-  // SUPPRESS CHECKSTYLE:ON LineLength
+  pr vate stat c f nal Pattern TW TTER_PHOTO_COPY_PASTE_L NK_PATTERN =
+          Pattern.comp le("(? :^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?tw ter\\.com\\/(?:#!?\\/)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
+  // SUPPRESS CHECKSTYLE:ON L neLength
 
-  private static final VisibleTokenRatioUtil VISIBLE_TOKEN_RATIO = new VisibleTokenRatioUtil();
+  pr vate stat c f nal V s bleTokenRat oUt l V S BLE_TOKEN_RAT O = new V s bleTokenRat oUt l();
 
-  private static final Map<PenguinVersion, SearchCounter> SERIALIZE_FAILURE_COUNTERS_MAP =
-      Maps.newEnumMap(PenguinVersion.class);
-  static {
-    for (PenguinVersion penguinVersion : PenguinVersion.values()) {
-      SERIALIZE_FAILURE_COUNTERS_MAP.put(
-          penguinVersion,
+  pr vate stat c f nal Map<Pengu nVers on, SearchCounter> SER AL ZE_FA LURE_COUNTERS_MAP =
+      Maps.newEnumMap(Pengu nVers on.class);
+  stat c {
+    for (Pengu nVers on pengu nVers on : Pengu nVers on.values()) {
+      SER AL ZE_FA LURE_COUNTERS_MAP.put(
+          pengu nVers on,
           SearchCounter.export(
-              "tokenstream_serialization_failure_" + penguinVersion.name().toLowerCase()));
+              "tokenstream_ser al zat on_fa lure_" + pengu nVers on.na ().toLo rCase()));
     }
   }
 
-  public static class TweetFeatureWithEncodeFeatures {
-    public final VersionedTweetFeatures versionedFeatures;
-    public final EarlybirdEncodedFeatures encodedFeatures;
-    public final EarlybirdEncodedFeatures extendedEncodedFeatures;
+  publ c stat c class T etFeatureW hEncodeFeatures {
+    publ c f nal Vers onedT etFeatures vers onedFeatures;
+    publ c f nal Earlyb rdEncodedFeatures encodedFeatures;
+    publ c f nal Earlyb rdEncodedFeatures extendedEncodedFeatures;
 
-    public TweetFeatureWithEncodeFeatures(
-        VersionedTweetFeatures versionedFeatures,
-        EarlybirdEncodedFeatures encodedFeatures,
-        EarlybirdEncodedFeatures extendedEncodedFeatures) {
-      this.versionedFeatures = versionedFeatures;
-      this.encodedFeatures = encodedFeatures;
-      this.extendedEncodedFeatures = extendedEncodedFeatures;
+    publ c T etFeatureW hEncodeFeatures(
+        Vers onedT etFeatures vers onedFeatures,
+        Earlyb rdEncodedFeatures encodedFeatures,
+        Earlyb rdEncodedFeatures extendedEncodedFeatures) {
+      t .vers onedFeatures = vers onedFeatures;
+      t .encodedFeatures = encodedFeatures;
+      t .extendedEncodedFeatures = extendedEncodedFeatures;
     }
   }
 
   /**
-   * Create tweet text features and the encoded features.
+   * Create t et text features and t  encoded features.
    *
-   * @param message the tweet message
-   * @param penguinVersion the based penguin version to create the features
-   * @param schemaSnapshot the schema associated with the features
-   * @return the text features and the encoded features
+   * @param  ssage t  t et  ssage
+   * @param pengu nVers on t  based pengu n vers on to create t  features
+   * @param sc maSnapshot t  sc ma assoc ated w h t  features
+   * @return t  text features and t  encoded features
    */
-  public TweetFeatureWithEncodeFeatures createTweetFeaturesFromTwitterMessage(
-      TwitterMessage message,
-      PenguinVersion penguinVersion,
-      ImmutableSchemaInterface schemaSnapshot) {
-    VersionedTweetFeatures versionedTweetFeatures = new VersionedTweetFeatures();
+  publ c T etFeatureW hEncodeFeatures createT etFeaturesFromTw ter ssage(
+      Tw ter ssage  ssage,
+      Pengu nVers on pengu nVers on,
+       mmutableSc ma nterface sc maSnapshot) {
+    Vers onedT etFeatures vers onedT etFeatures = new Vers onedT etFeatures();
 
-    // Write extendedPackedFeatures.
-    EarlybirdEncodedFeatures extendedEncodedFeatures =
-        createExtendedEncodedFeaturesFromTwitterMessage(message, penguinVersion, schemaSnapshot);
-    if (extendedEncodedFeatures != null) {
+    // Wr e extendedPackedFeatures.
+    Earlyb rdEncodedFeatures extendedEncodedFeatures =
+        createExtendedEncodedFeaturesFromTw ter ssage( ssage, pengu nVers on, sc maSnapshot);
+     f (extendedEncodedFeatures != null) {
       extendedEncodedFeatures
-          .writeExtendedFeaturesToVersionedTweetFeatures(versionedTweetFeatures);
+          .wr eExtendedFeaturesToVers onedT etFeatures(vers onedT etFeatures);
     }
 
-    setSourceAndNormalizedSource(
-        message.getStrippedSource(), versionedTweetFeatures, penguinVersion);
+    setS ceAndNormal zedS ce(
+         ssage.getStr ppedS ce(), vers onedT etFeatures, pengu nVers on);
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-
-    ///////////////////////////////
-    // Add hashtags and mentions
-    textFeatures.getHashtags().forEach(versionedTweetFeatures::addToHashtags);
-    textFeatures.getMentions().forEach(versionedTweetFeatures::addToMentions);
+    T etTextFeatures textFeatures =  ssage.getT etTextFeatures(pengu nVers on);
 
     ///////////////////////////////
-    // Extract some extra information from the message text.
-    // Index stock symbols with $ prepended
+    // Add hashtags and  nt ons
+    textFeatures.getHashtags().forEach(vers onedT etFeatures::addToHashtags);
+    textFeatures.get nt ons().forEach(vers onedT etFeatures::addTo nt ons);
+
+    ///////////////////////////////
+    // Extract so  extra  nformat on from t   ssage text.
+    //  ndex stock symbols w h $ prepended
     textFeatures.getStocks().stream()
-        .filter(stock -> stock != null)
-        .forEach(stock -> versionedTweetFeatures.addToStocks(stock.toLowerCase()));
+        .f lter(stock -> stock != null)
+        .forEach(stock -> vers onedT etFeatures.addToStocks(stock.toLo rCase()));
 
-    // Question marks
-    versionedTweetFeatures.setHasQuestionMark(textFeatures.hasQuestionMark());
-    // Smileys
-    versionedTweetFeatures.setHasPositiveSmiley(textFeatures.hasPositiveSmiley());
-    versionedTweetFeatures.setHasNegativeSmiley(textFeatures.hasNegativeSmiley());
+    // Quest on marks
+    vers onedT etFeatures.setHasQuest onMark(textFeatures.hasQuest onMark());
+    // Sm leys
+    vers onedT etFeatures.setHasPos  veSm ley(textFeatures.hasPos  veSm ley());
+    vers onedT etFeatures.setHasNegat veSm ley(textFeatures.hasNegat veSm ley());
 
-    TokenStreamSerializer streamSerializer =
-        TweetTokenStreamSerializer.getTweetTokenStreamSerializer();
-    TokenizedCharSequence tokenSeq = textFeatures.getTokenSequence();
+    TokenStreamSer al zer streamSer al zer =
+        T etTokenStreamSer al zer.getT etTokenStreamSer al zer();
+    Token zedCharSequence tokenSeq = textFeatures.getTokenSequence();
     tokenSeqStream.reset(tokenSeq);
-    int tokenPercent = VISIBLE_TOKEN_RATIO.extractAndNormalizeTokenPercentage(tokenSeqStream);
+     nt tokenPercent = V S BLE_TOKEN_RAT O.extractAndNormal zeTokenPercentage(tokenSeqStream);
     tokenSeqStream.reset(tokenSeq);
 
-    // Write packedFeatures.
-    EarlybirdEncodedFeatures encodedFeatures = createEncodedFeaturesFromTwitterMessage(
-        message, penguinVersion, schemaSnapshot, tokenPercent);
-    encodedFeatures.writeFeaturesToVersionedTweetFeatures(versionedTweetFeatures);
+    // Wr e packedFeatures.
+    Earlyb rdEncodedFeatures encodedFeatures = createEncodedFeaturesFromTw ter ssage(
+         ssage, pengu nVers on, sc maSnapshot, tokenPercent);
+    encodedFeatures.wr eFeaturesToVers onedT etFeatures(vers onedT etFeatures);
 
     try {
-      versionedTweetFeatures.setTweetTokenStream(streamSerializer.serialize(tokenSeqStream));
-      versionedTweetFeatures.setTweetTokenStreamText(tokenSeq.toString());
-    } catch (IOException e) {
-      LOG.error("TwitterTokenStream serialization error! Could not serialize: "
-          + tokenSeq.toString());
-      SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
-      versionedTweetFeatures.unsetTweetTokenStream();
-      versionedTweetFeatures.unsetTweetTokenStreamText();
+      vers onedT etFeatures.setT etTokenStream(streamSer al zer.ser al ze(tokenSeqStream));
+      vers onedT etFeatures.setT etTokenStreamText(tokenSeq.toStr ng());
+    } catch ( OExcept on e) {
+      LOG.error("Tw terTokenStream ser al zat on error! Could not ser al ze: "
+          + tokenSeq.toStr ng());
+      SER AL ZE_FA LURE_COUNTERS_MAP.get(pengu nVers on). ncre nt();
+      vers onedT etFeatures.unsetT etTokenStream();
+      vers onedT etFeatures.unsetT etTokenStreamText();
     }
 
-    // User name features
-    if (message.getFromUserDisplayName().isPresent()) {
-      Locale locale = LanguageIdentifierHelper
-          .identifyLanguage(message.getFromUserDisplayName().get());
-      String normalizedDisplayName = NormalizerHelper.normalize(
-          message.getFromUserDisplayName().get(), locale, penguinVersion);
-      TokenizerResult result = TokenizerHelper
-          .tokenizeTweet(normalizedDisplayName, locale, penguinVersion);
+    // User na  features
+     f ( ssage.getFromUserD splayNa (). sPresent()) {
+      Locale locale = Language dent f er lper
+          . dent fyLanguage( ssage.getFromUserD splayNa ().get());
+      Str ng normal zedD splayNa  = Normal zer lper.normal ze(
+           ssage.getFromUserD splayNa ().get(), locale, pengu nVers on);
+      Token zerResult result = Token zer lper
+          .token zeT et(normal zedD splayNa , locale, pengu nVers on);
       tokenSeqStream.reset(result.tokenSequence);
       try {
-        versionedTweetFeatures.setUserDisplayNameTokenStream(
-            streamSerializer.serialize(tokenSeqStream));
-        versionedTweetFeatures.setUserDisplayNameTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize: "
-            + message.getFromUserDisplayName().get());
-        SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
-        versionedTweetFeatures.unsetUserDisplayNameTokenStream();
-        versionedTweetFeatures.unsetUserDisplayNameTokenStreamText();
+        vers onedT etFeatures.setUserD splayNa TokenStream(
+            streamSer al zer.ser al ze(tokenSeqStream));
+        vers onedT etFeatures.setUserD splayNa TokenStreamText(result.tokenSequence.toStr ng());
+      } catch ( OExcept on e) {
+        LOG.error("Tw terTokenStream ser al zat on error! Could not ser al ze: "
+            +  ssage.getFromUserD splayNa ().get());
+        SER AL ZE_FA LURE_COUNTERS_MAP.get(pengu nVers on). ncre nt();
+        vers onedT etFeatures.unsetUserD splayNa TokenStream();
+        vers onedT etFeatures.unsetUserD splayNa TokenStreamText();
       }
     }
 
-    String resolvedUrlsText = Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-    versionedTweetFeatures.setNormalizedResolvedUrlText(resolvedUrlsText);
+    Str ng resolvedUrlsText = Jo ner.on(" ").sk pNulls().jo n(textFeatures.getResolvedUrlTokens());
+    vers onedT etFeatures.setNormal zedResolvedUrlText(resolvedUrlsText);
 
-    addPlace(message, versionedTweetFeatures, penguinVersion);
-    addProfileGeoEnrichment(message, versionedTweetFeatures, penguinVersion);
+    addPlace( ssage, vers onedT etFeatures, pengu nVers on);
+    addProf leGeoEnr ch nt( ssage, vers onedT etFeatures, pengu nVers on);
 
-    versionedTweetFeatures.setTweetSignature(message.getTweetSignature(penguinVersion));
+    vers onedT etFeatures.setT etS gnature( ssage.getT etS gnature(pengu nVers on));
 
-    return new TweetFeatureWithEncodeFeatures(
-        versionedTweetFeatures, encodedFeatures, extendedEncodedFeatures);
+    return new T etFeatureW hEncodeFeatures(
+        vers onedT etFeatures, encodedFeatures, extendedEncodedFeatures);
   }
 
 
-  protected static void setSourceAndNormalizedSource(
-      String strippedSource,
-      VersionedTweetFeatures versionedTweetFeatures,
-      PenguinVersion penguinVersion) {
+  protected stat c vo d setS ceAndNormal zedS ce(
+      Str ng str ppedS ce,
+      Vers onedT etFeatures vers onedT etFeatures,
+      Pengu nVers on pengu nVers on) {
 
-    if (strippedSource != null && !strippedSource.isEmpty()) {
-      // normalize source for searchable field - replaces whitespace with underscores (???).
-      versionedTweetFeatures.setNormalizedSource(
-          SourceNormalizer.normalize(strippedSource, penguinVersion));
+     f (str ppedS ce != null && !str ppedS ce. sEmpty()) {
+      // normal ze s ce for searchable f eld - replaces wh espace w h underscores (???).
+      vers onedT etFeatures.setNormal zedS ce(
+          S ceNormal zer.normal ze(str ppedS ce, pengu nVers on));
 
-      // source facet has simpler normalization.
-      Locale locale = LanguageIdentifierHelper.identifyLanguage(strippedSource);
-      versionedTweetFeatures.setSource(NormalizerHelper.normalizeKeepCase(
-          strippedSource, locale, penguinVersion));
+      // s ce facet has s mpler normal zat on.
+      Locale locale = Language dent f er lper. dent fyLanguage(str ppedS ce);
+      vers onedT etFeatures.setS ce(Normal zer lper.normal zeKeepCase(
+          str ppedS ce, locale, pengu nVers on));
     }
   }
 
   /**
-   * Adds the given photo url to the thrift status if it is a twitter photo permalink.
-   * Returns true, if this was indeed a twitter photo, false otherwise.
+   * Adds t  g ven photo url to t  thr ft status  f    s a tw ter photo permal nk.
+   * Returns true,  f t  was  ndeed a tw ter photo, false ot rw se.
    */
-  public static boolean addPhotoUrl(TwitterMessage message, String photoPermalink) {
-    Matcher matcher = TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN.matcher(photoPermalink);
-    if (!matcher.matches() || matcher.groupCount() < 1) {
-      matcher = TWITTER_PHOTO_PERMA_LINK_PATTERN.matcher(photoPermalink);
+  publ c stat c boolean addPhotoUrl(Tw ter ssage  ssage, Str ng photoPermal nk) {
+    Matc r matc r = TW TTER_PHOTO_COPY_PASTE_L NK_PATTERN.matc r(photoPermal nk);
+     f (!matc r.matc s() || matc r.groupCount() < 1) {
+      matc r = TW TTER_PHOTO_PERMA_L NK_PATTERN.matc r(photoPermal nk);
     }
 
-    if (matcher.matches() && matcher.groupCount() == 1) {
-      // this is a native photo url which we need to store in a separate field
-      String idStr = matcher.group(1);
-      if (idStr != null) {
-        // idStr should be a valid tweet ID (and therefore, should fit into a Long), but we have
-        // tweets for which idStr is a long sequence of digits that does not fit into a Long.
+     f (matc r.matc s() && matc r.groupCount() == 1) {
+      // t   s a nat ve photo url wh ch   need to store  n a separate f eld
+      Str ng  dStr = matc r.group(1);
+       f ( dStr != null) {
+        //  dStr should be a val d t et  D (and t refore, should f   nto a Long), but   have
+        // t ets for wh ch  dStr  s a long sequence of d g s that does not f   nto a Long.
         try {
-          long photoStatusId = Long.parseLong(idStr);
-          message.addPhotoUrl(photoStatusId, null);
-        } catch (NumberFormatException e) {
-          LOG.warn("Found a tweet with a photo URL with an invalid tweet ID: " + message);
-          NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL.increment();
+          long photoStatus d = Long.parseLong( dStr);
+           ssage.addPhotoUrl(photoStatus d, null);
+        } catch (NumberFormatExcept on e) {
+          LOG.warn("Found a t et w h a photo URL w h an  nval d t et  D: " +  ssage);
+          NUM_TWEETS_W TH_ NVAL D_TWEET_ D_ N_PHOTO_URL. ncre nt();
         }
       }
       return true;
@@ -253,279 +253,279 @@ public class EncodedFeatureBuilder {
     return false;
   }
 
-  private void addPlace(TwitterMessage message,
-                        VersionedTweetFeatures versionedTweetFeatures,
-                        PenguinVersion penguinVersion) {
-    String placeId = message.getPlaceId();
-    if (placeId == null) {
+  pr vate vo d addPlace(Tw ter ssage  ssage,
+                        Vers onedT etFeatures vers onedT etFeatures,
+                        Pengu nVers on pengu nVers on) {
+    Str ng place d =  ssage.getPlace d();
+     f (place d == null) {
       return;
     }
 
-    // Tweet.Place.id and Tweet.Place.full_name are both required fields.
-    String placeFullName = message.getPlaceFullName();
-    Preconditions.checkNotNull(placeFullName, "Tweet.Place without full_name.");
+    // T et.Place. d and T et.Place.full_na  are both requ red f elds.
+    Str ng placeFullNa  =  ssage.getPlaceFullNa ();
+    Precond  ons.c ckNotNull(placeFullNa , "T et.Place w hout full_na .");
 
-    Locale placeFullNameLocale = LanguageIdentifierHelper.identifyLanguage(placeFullName);
-    String normalizedPlaceFullName =
-        NormalizerHelper.normalize(placeFullName, placeFullNameLocale, penguinVersion);
-    String tokenizedPlaceFullName = StringUtils.join(
-        TokenizerHelper.tokenizeQuery(normalizedPlaceFullName, placeFullNameLocale, penguinVersion),
+    Locale placeFullNa Locale = Language dent f er lper. dent fyLanguage(placeFullNa );
+    Str ng normal zedPlaceFullNa  =
+        Normal zer lper.normal ze(placeFullNa , placeFullNa Locale, pengu nVers on);
+    Str ng token zedPlaceFullNa  = Str ngUt ls.jo n(
+        Token zer lper.token zeQuery(normal zedPlaceFullNa , placeFullNa Locale, pengu nVers on),
         " ");
 
-    Place place = new Place(placeId, tokenizedPlaceFullName);
-    String placeCountryCode = message.getPlaceCountryCode();
-    if (placeCountryCode != null) {
-      Locale placeCountryCodeLocale = LanguageIdentifierHelper.identifyLanguage(placeCountryCode);
+    Place place = new Place(place d, token zedPlaceFullNa );
+    Str ng placeCountryCode =  ssage.getPlaceCountryCode();
+     f (placeCountryCode != null) {
+      Locale placeCountryCodeLocale = Language dent f er lper. dent fyLanguage(placeCountryCode);
       place.setCountryCode(
-          NormalizerHelper.normalize(placeCountryCode, placeCountryCodeLocale, penguinVersion));
+          Normal zer lper.normal ze(placeCountryCode, placeCountryCodeLocale, pengu nVers on));
     }
 
-    versionedTweetFeatures.setTokenizedPlace(place);
+    vers onedT etFeatures.setToken zedPlace(place);
   }
 
-  private void addProfileGeoEnrichment(TwitterMessage message,
-                                       VersionedTweetFeatures versionedTweetFeatures,
-                                       PenguinVersion penguinVersion) {
-    List<PotentialLocationObject> potentialLocations = message.getPotentialLocations();
-    if (potentialLocations.isEmpty()) {
+  pr vate vo d addProf leGeoEnr ch nt(Tw ter ssage  ssage,
+                                       Vers onedT etFeatures vers onedT etFeatures,
+                                       Pengu nVers on pengu nVers on) {
+    L st<Potent alLocat onObject> potent alLocat ons =  ssage.getPotent alLocat ons();
+     f (potent alLocat ons. sEmpty()) {
       return;
     }
 
-    List<PotentialLocation> thriftPotentialLocations = Lists.newArrayList();
-    for (PotentialLocationObject potentialLocation : potentialLocations) {
-      thriftPotentialLocations.add(potentialLocation.toThriftPotentialLocation(penguinVersion));
+    L st<Potent alLocat on> thr ftPotent alLocat ons = L sts.newArrayL st();
+    for (Potent alLocat onObject potent alLocat on : potent alLocat ons) {
+      thr ftPotent alLocat ons.add(potent alLocat on.toThr ftPotent alLocat on(pengu nVers on));
     }
-    versionedTweetFeatures.setTokenizedProfileGeoEnrichment(
-        new ProfileGeoEnrichment(thriftPotentialLocations));
+    vers onedT etFeatures.setToken zedProf leGeoEnr ch nt(
+        new Prof leGeoEnr ch nt(thr ftPotent alLocat ons));
   }
 
-  /** Returns the encoded features. */
-  public static EarlybirdEncodedFeatures createEncodedFeaturesFromTwitterMessage(
-      TwitterMessage message,
-      PenguinVersion penguinVersion,
-      ImmutableSchemaInterface schema,
-      int normalizedTokenPercentBucket) {
-    FeatureSink sink = new FeatureSink(schema);
+  /** Returns t  encoded features. */
+  publ c stat c Earlyb rdEncodedFeatures createEncodedFeaturesFromTw ter ssage(
+      Tw ter ssage  ssage,
+      Pengu nVers on pengu nVers on,
+       mmutableSc ma nterface sc ma,
+       nt normal zedTokenPercentBucket) {
+    FeatureS nk s nk = new FeatureS nk(sc ma);
 
-    // Static features
-    sink.setBooleanValue(EarlybirdFieldConstant.IS_RETWEET_FLAG, message.isRetweet())
-        .setBooleanValue(EarlybirdFieldConstant.IS_REPLY_FLAG, message.isReply())
+    // Stat c features
+    s nk.setBooleanValue(Earlyb rdF eldConstant. S_RETWEET_FLAG,  ssage. sRet et())
+        .setBooleanValue(Earlyb rdF eldConstant. S_REPLY_FLAG,  ssage. sReply())
         .setBooleanValue(
-            EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG, message.isUserVerified())
+            Earlyb rdF eldConstant.FROM_VER F ED_ACCOUNT_FLAG,  ssage. sUserVer f ed())
         .setBooleanValue(
-            EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG, message.isUserBlueVerified())
-        .setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, message.isSensitiveContent());
+            Earlyb rdF eldConstant.FROM_BLUE_VER F ED_ACCOUNT_FLAG,  ssage. sUserBlueVer f ed())
+        .setBooleanValue(Earlyb rdF eldConstant. S_SENS T VE_CONTENT,  ssage. sSens  veContent());
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    if (textFeatures != null) {
-      final FeatureConfiguration featureConfigNumHashtags = schema.getFeatureConfigurationByName(
-          EarlybirdFieldConstant.NUM_HASHTAGS.getFieldName());
-      final FeatureConfiguration featureConfigNumMentions = schema.getFeatureConfigurationByName(
-          EarlybirdFieldConstant.NUM_MENTIONS.getFieldName());
+    T etTextFeatures textFeatures =  ssage.getT etTextFeatures(pengu nVers on);
+     f (textFeatures != null) {
+      f nal FeatureConf gurat on featureConf gNumHashtags = sc ma.getFeatureConf gurat onByNa (
+          Earlyb rdF eldConstant.NUM_HASHTAGS.getF eldNa ());
+      f nal FeatureConf gurat on featureConf gNum nt ons = sc ma.getFeatureConf gurat onByNa (
+          Earlyb rdF eldConstant.NUM_MENT ONS.getF eldNa ());
 
-      sink.setNumericValue(
-              EarlybirdFieldConstant.NUM_HASHTAGS,
-              Math.min(textFeatures.getHashtagsSize(), featureConfigNumHashtags.getMaxValue()))
-          .setNumericValue(
-              EarlybirdFieldConstant.NUM_MENTIONS,
-              Math.min(textFeatures.getMentionsSize(), featureConfigNumMentions.getMaxValue()))
+      s nk.setNu r cValue(
+              Earlyb rdF eldConstant.NUM_HASHTAGS,
+              Math.m n(textFeatures.getHashtagsS ze(), featureConf gNumHashtags.getMaxValue()))
+          .setNu r cValue(
+              Earlyb rdF eldConstant.NUM_MENT ONS,
+              Math.m n(textFeatures.get nt onsS ze(), featureConf gNum nt ons.getMaxValue()))
           .setBooleanValue(
-              EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-              TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures))
+              Earlyb rdF eldConstant.HAS_MULT PLE_HASHTAGS_OR_TRENDS_FLAG,
+              Tw ter ssage.hasMult pleHashtagsOrTrends(textFeatures))
           .setBooleanValue(
-              EarlybirdFieldConstant.HAS_TREND_FLAG,
-              textFeatures.getTrendingTermsSize() > 0);
+              Earlyb rdF eldConstant.HAS_TREND_FLAG,
+              textFeatures.getTrend ngTermsS ze() > 0);
     }
 
-    TweetTextQuality textQuality = message.getTweetTextQuality(penguinVersion);
-    if (textQuality != null) {
-      sink.setNumericValue(EarlybirdFieldConstant.TEXT_SCORE, textQuality.getTextScore());
-      sink.setBooleanValue(
-          EarlybirdFieldConstant.IS_OFFENSIVE_FLAG,
-          textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE)
-              || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER)
-              // Note: if json message "possibly_sensitive" flag is set, we consider the tweet
-              // sensitive and is currently filtered out in safe search mode via a hacky setup:
-              // earlybird does not create _filter_sensitive_content field, only
-              // _is_offensive field is created, and used in filter:safe operator
-              || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE));
-      if (textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE)) {
-        sink.setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, true);
+    T etTextQual y textQual y =  ssage.getT etTextQual y(pengu nVers on);
+     f (textQual y != null) {
+      s nk.setNu r cValue(Earlyb rdF eldConstant.TEXT_SCORE, textQual y.getTextScore());
+      s nk.setBooleanValue(
+          Earlyb rdF eldConstant. S_OFFENS VE_FLAG,
+          textQual y.hasBoolQual y(T etTextQual y.BooleanQual yType.OFFENS VE)
+              || textQual y.hasBoolQual y(T etTextQual y.BooleanQual yType.OFFENS VE_USER)
+              // Note:  f json  ssage "poss bly_sens  ve" flag  s set,   cons der t  t et
+              // sens  ve and  s currently f ltered out  n safe search mode v a a hacky setup:
+              // earlyb rd does not create _f lter_sens  ve_content f eld, only
+              // _ s_offens ve f eld  s created, and used  n f lter:safe operator
+              || textQual y.hasBoolQual y(T etTextQual y.BooleanQual yType.SENS T VE));
+       f (textQual y.hasBoolQual y(T etTextQual y.BooleanQual yType.SENS T VE)) {
+        s nk.setBooleanValue(Earlyb rdF eldConstant. S_SENS T VE_CONTENT, true);
       }
     } else {
-      // we don't have text score, for whatever reason, set to sentinel value so we won't be
-      // skipped by scoring function
-      sink.setNumericValue(EarlybirdFieldConstant.TEXT_SCORE,
-          RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL);
+      //   don't have text score, for whatever reason, set to sent nel value so   won't be
+      // sk pped by scor ng funct on
+      s nk.setNu r cValue(Earlyb rdF eldConstant.TEXT_SCORE,
+          RelevanceS gnalConstants.UNSET_TEXT_SCORE_SENT NEL);
     }
 
-    if (message.isSetLocale()) {
-      sink.setNumericValue(EarlybirdFieldConstant.LANGUAGE,
-          ThriftLanguageUtil.getThriftLanguageOf(message.getLocale()).getValue());
+     f ( ssage. sSetLocale()) {
+      s nk.setNu r cValue(Earlyb rdF eldConstant.LANGUAGE,
+          Thr ftLanguageUt l.getThr ftLanguageOf( ssage.getLocale()).getValue());
     }
 
     // User features
-    TweetUserFeatures userFeatures = message.getTweetUserFeatures(penguinVersion);
-    if (userFeatures != null) {
-      sink.setBooleanValue(EarlybirdFieldConstant.IS_USER_SPAM_FLAG, userFeatures.isSpam())
-          .setBooleanValue(EarlybirdFieldConstant.IS_USER_NSFW_FLAG, userFeatures.isNsfw())
-          .setBooleanValue(EarlybirdFieldConstant.IS_USER_BOT_FLAG, userFeatures.isBot());
+    T etUserFeatures userFeatures =  ssage.getT etUserFeatures(pengu nVers on);
+     f (userFeatures != null) {
+      s nk.setBooleanValue(Earlyb rdF eldConstant. S_USER_SPAM_FLAG, userFeatures. sSpam())
+          .setBooleanValue(Earlyb rdF eldConstant. S_USER_NSFW_FLAG, userFeatures. sNsfw())
+          .setBooleanValue(Earlyb rdF eldConstant. S_USER_BOT_FLAG, userFeatures. sBot());
     }
-    if (message.getUserReputation() != TwitterMessage.DOUBLE_FIELD_NOT_PRESENT) {
-      sink.setNumericValue(EarlybirdFieldConstant.USER_REPUTATION,
-          (byte) message.getUserReputation());
+     f ( ssage.getUserReputat on() != Tw ter ssage.DOUBLE_F ELD_NOT_PRESENT) {
+      s nk.setNu r cValue(Earlyb rdF eldConstant.USER_REPUTAT ON,
+          (byte)  ssage.getUserReputat on());
     } else {
-      sink.setNumericValue(EarlybirdFieldConstant.USER_REPUTATION,
-          RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL);
+      s nk.setNu r cValue(Earlyb rdF eldConstant.USER_REPUTAT ON,
+          RelevanceS gnalConstants.UNSET_REPUTAT ON_SENT NEL);
     }
 
-    sink.setBooleanValue(EarlybirdFieldConstant.IS_NULLCAST_FLAG, message.getNullcast());
+    s nk.setBooleanValue(Earlyb rdF eldConstant. S_NULLCAST_FLAG,  ssage.getNullcast());
 
-    // Realtime Ingestion does not write engagement features. Updater does that.
-    if (message.getNumFavorites() > 0) {
-      sink.setNumericValue(EarlybirdFieldConstant.FAVORITE_COUNT,
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumFavorites()));
+    // Realt    ngest on does not wr e engage nt features. Updater does that.
+     f ( ssage.getNumFavor es() > 0) {
+      s nk.setNu r cValue(Earlyb rdF eldConstant.FAVOR TE_COUNT,
+          MutableFeatureNormal zers.BYTE_NORMAL ZER.normal ze( ssage.getNumFavor es()));
     }
-    if (message.getNumRetweets() > 0) {
-      sink.setNumericValue(EarlybirdFieldConstant.RETWEET_COUNT,
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumRetweets()));
+     f ( ssage.getNumRet ets() > 0) {
+      s nk.setNu r cValue(Earlyb rdF eldConstant.RETWEET_COUNT,
+          MutableFeatureNormal zers.BYTE_NORMAL ZER.normal ze( ssage.getNumRet ets()));
     }
-    if (message.getNumReplies() > 0) {
-      sink.setNumericValue(EarlybirdFieldConstant.REPLY_COUNT,
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumReplies()));
+     f ( ssage.getNumRepl es() > 0) {
+      s nk.setNu r cValue(Earlyb rdF eldConstant.REPLY_COUNT,
+          MutableFeatureNormal zers.BYTE_NORMAL ZER.normal ze( ssage.getNumRepl es()));
     }
 
-    sink.setNumericValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO, normalizedTokenPercentBucket);
+    s nk.setNu r cValue(Earlyb rdF eldConstant.V S BLE_TOKEN_RAT O, normal zedTokenPercentBucket);
 
-    EarlybirdEncodedFeatures encodedFeatures =
-        (EarlybirdEncodedFeatures) sink.getFeaturesForBaseField(
-            EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName());
-    updateLinkEncodedFeatures(encodedFeatures, message);
+    Earlyb rdEncodedFeatures encodedFeatures =
+        (Earlyb rdEncodedFeatures) s nk.getFeaturesForBaseF eld(
+            Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD.getF eldNa ());
+    updateL nkEncodedFeatures(encodedFeatures,  ssage);
     return encodedFeatures;
   }
 
   /**
-   * Returns the extended encoded features.
+   * Returns t  extended encoded features.
    */
-  public static EarlybirdEncodedFeatures createExtendedEncodedFeaturesFromTwitterMessage(
-    TwitterMessage message,
-    PenguinVersion penguinVersion,
-    ImmutableSchemaInterface schema) {
-    FeatureSink sink = new FeatureSink(schema);
+  publ c stat c Earlyb rdEncodedFeatures createExtendedEncodedFeaturesFromTw ter ssage(
+    Tw ter ssage  ssage,
+    Pengu nVers on pengu nVers on,
+     mmutableSc ma nterface sc ma) {
+    FeatureS nk s nk = new FeatureS nk(sc ma);
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
+    T etTextFeatures textFeatures =  ssage.getT etTextFeatures(pengu nVers on);
 
-    if (textFeatures != null) {
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_HASHTAGS_V2, textFeatures.getHashtagsSize());
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_MENTIONS_V2, textFeatures.getMentionsSize());
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_STOCKS, textFeatures.getStocksSize());
+     f (textFeatures != null) {
+      setExtendedEncodedFeature ntValue(s nk, sc ma,
+          Earlyb rdF eldConstant.NUM_HASHTAGS_V2, textFeatures.getHashtagsS ze());
+      setExtendedEncodedFeature ntValue(s nk, sc ma,
+          Earlyb rdF eldConstant.NUM_MENT ONS_V2, textFeatures.get nt onsS ze());
+      setExtendedEncodedFeature ntValue(s nk, sc ma,
+          Earlyb rdF eldConstant.NUM_STOCKS, textFeatures.getStocksS ze());
     }
 
-    Optional<Long> referenceAuthorId = message.getReferenceAuthorId();
-    if (referenceAuthorId.isPresent()) {
-      setEncodedReferenceAuthorId(sink, referenceAuthorId.get());
+    Opt onal<Long> referenceAuthor d =  ssage.getReferenceAuthor d();
+     f (referenceAuthor d. sPresent()) {
+      setEncodedReferenceAuthor d(s nk, referenceAuthor d.get());
     }
 
-    return (EarlybirdEncodedFeatures) sink.getFeaturesForBaseField(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName());
+    return (Earlyb rdEncodedFeatures) s nk.getFeaturesForBaseF eld(
+        Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD.getF eldNa ());
   }
 
   /**
-   * Updates all URL-related features, based on the values stored in the given message.
+   * Updates all URL-related features, based on t  values stored  n t  g ven  ssage.
    *
-   * @param encodedFeatures The features to be updated.
-   * @param message The message.
+   * @param encodedFeatures T  features to be updated.
+   * @param  ssage T   ssage.
    */
-  public static void updateLinkEncodedFeatures(
-      EarlybirdEncodedFeatures encodedFeatures, TwitterMessage message) {
-    if (message.getLinkLocale() != null) {
+  publ c stat c vo d updateL nkEncodedFeatures(
+      Earlyb rdEncodedFeatures encodedFeatures, Tw ter ssage  ssage) {
+     f ( ssage.getL nkLocale() != null) {
       encodedFeatures.setFeatureValue(
-          EarlybirdFieldConstant.LINK_LANGUAGE,
-          ThriftLanguageUtil.getThriftLanguageOf(message.getLinkLocale()).getValue());
+          Earlyb rdF eldConstant.L NK_LANGUAGE,
+          Thr ftLanguageUt l.getThr ftLanguageOf( ssage.getL nkLocale()).getValue());
     }
 
-    if (message.hasCard()) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CARD_FLAG);
+     f ( ssage.hasCard()) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_CARD_FLAG);
     }
 
-    // Set HAS_IMAGE HAS_NEWS HAS_VIDEO etc. flags for expanded urls.
-    if (message.getExpandedUrlMapSize() > 0) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
+    // Set HAS_ MAGE HAS_NEWS HAS_V DEO etc. flags for expanded urls.
+     f ( ssage.getExpandedUrlMapS ze() > 0) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_L NK_FLAG);
 
-      for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
-        if (url.isSetMediaType()) {
-          switch (url.getMediaType()) {
-            case NATIVE_IMAGE:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
+      for (Thr ftExpandedUrl url :  ssage.getExpandedUrlMap().values()) {
+         f (url. sSet d aType()) {
+          sw ch (url.get d aType()) {
+            case NAT VE_ MAGE:
+              encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG);
+              encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_NAT VE_ MAGE_FLAG);
               break;
-            case IMAGE:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
+            case  MAGE:
+              encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG);
               break;
-            case VIDEO:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
+            case V DEO:
+              encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_V DEO_URL_FLAG);
               break;
             case NEWS:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
+              encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_NEWS_URL_FLAG);
               break;
             case UNKNOWN:
               break;
             default:
-              throw new IllegalStateException("Unexpected enum value: " + url.getMediaType());
+              throw new  llegalStateExcept on("Unexpected enum value: " + url.get d aType());
           }
         }
       }
     }
 
-    Set<String> canonicalLastHopUrlsStrings = message.getCanonicalLastHopUrls();
-    Set<String> expandedUrlsStrings = message.getExpandedUrls()
+    Set<Str ng> canon calLastHopUrlsStr ngs =  ssage.getCanon calLastHopUrls();
+    Set<Str ng> expandedUrlsStr ngs =  ssage.getExpandedUrls()
         .stream()
-        .map(ThriftExpandedUrl::getExpandedUrl)
+        .map(Thr ftExpandedUrl::getExpandedUrl)
         .collect(Collectors.toSet());
-    Set<String> expandedAndLastHopUrlsStrings = new HashSet<>();
-    expandedAndLastHopUrlsStrings.addAll(expandedUrlsStrings);
-    expandedAndLastHopUrlsStrings.addAll(canonicalLastHopUrlsStrings);
-    // Check both expanded and last hop url for consumer videos as consumer video urls are
-    // sometimes redirected to the url of the tweets containing the videos (SEARCH-42612).
-    if (NativeVideoClassificationUtils.hasConsumerVideo(expandedAndLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
+    Set<Str ng> expandedAndLastHopUrlsStr ngs = new HashSet<>();
+    expandedAndLastHopUrlsStr ngs.addAll(expandedUrlsStr ngs);
+    expandedAndLastHopUrlsStr ngs.addAll(canon calLastHopUrlsStr ngs);
+    // C ck both expanded and last hop url for consu r v deos as consu r v deo urls are
+    // so t  s red rected to t  url of t  t ets conta n ng t  v deos (SEARCH-42612).
+     f (Nat veV deoClass f cat onUt ls.hasConsu rV deo(expandedAndLastHopUrlsStr ngs)) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_CONSUMER_V DEO_FLAG);
     }
-    if (NativeVideoClassificationUtils.hasProVideo(canonicalLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG);
+     f (Nat veV deoClass f cat onUt ls.hasProV deo(canon calLastHopUrlsStr ngs)) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_PRO_V DEO_FLAG);
     }
-    if (NativeVideoClassificationUtils.hasVine(canonicalLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VINE_FLAG);
+     f (Nat veV deoClass f cat onUt ls.hasV ne(canon calLastHopUrlsStr ngs)) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_V NE_FLAG);
     }
-    if (NativeVideoClassificationUtils.hasPeriscope(canonicalLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_PERISCOPE_FLAG);
+     f (Nat veV deoClass f cat onUt ls.hasPer scope(canon calLastHopUrlsStr ngs)) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_PER SCOPE_FLAG);
     }
-    if (LinkVisibilityUtils.hasVisibleLink(message.getExpandedUrls())) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG);
-    }
-  }
-
-  private static void setExtendedEncodedFeatureIntValue(
-      FeatureSink sink,
-      ImmutableSchemaInterface schema,
-      EarlybirdFieldConstant field,
-      int value) {
-    boolean fieldInSchema = schema.hasField(field.getFieldName());
-    if (fieldInSchema) {
-      FeatureConfiguration featureConfig =
-          schema.getFeatureConfigurationByName(field.getFieldName());
-      sink.setNumericValue(field, Math.min(value, featureConfig.getMaxValue()));
+     f (L nkV s b l yUt ls.hasV s bleL nk( ssage.getExpandedUrls())) {
+      encodedFeatures.setFlag(Earlyb rdF eldConstant.HAS_V S BLE_L NK_FLAG);
     }
   }
 
-  private static void setEncodedReferenceAuthorId(FeatureSink sink, long referenceAuthorId) {
-    LongIntConverter.IntegerRepresentation ints =
-        LongIntConverter.convertOneLongToTwoInt(referenceAuthorId);
-    sink.setNumericValue(
-        EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT, ints.leastSignificantInt);
-    sink.setNumericValue(
-        EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT, ints.mostSignificantInt);
+  pr vate stat c vo d setExtendedEncodedFeature ntValue(
+      FeatureS nk s nk,
+       mmutableSc ma nterface sc ma,
+      Earlyb rdF eldConstant f eld,
+       nt value) {
+    boolean f eld nSc ma = sc ma.hasF eld(f eld.getF eldNa ());
+     f (f eld nSc ma) {
+      FeatureConf gurat on featureConf g =
+          sc ma.getFeatureConf gurat onByNa (f eld.getF eldNa ());
+      s nk.setNu r cValue(f eld, Math.m n(value, featureConf g.getMaxValue()));
+    }
+  }
+
+  pr vate stat c vo d setEncodedReferenceAuthor d(FeatureS nk s nk, long referenceAuthor d) {
+    Long ntConverter. ntegerRepresentat on  nts =
+        Long ntConverter.convertOneLongToTwo nt(referenceAuthor d);
+    s nk.setNu r cValue(
+        Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT,  nts.leastS gn f cant nt);
+    s nk.setNu r cValue(
+        Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT,  nts.mostS gn f cant nt);
   }
 }

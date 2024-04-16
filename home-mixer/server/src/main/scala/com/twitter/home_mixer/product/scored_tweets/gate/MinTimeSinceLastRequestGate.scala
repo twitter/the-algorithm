@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.product.scored_tweets.gate
+package com.tw ter.ho _m xer.product.scored_t ets.gate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.LastNonPollingTimeFeature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.model.Ho Features.LastNonPoll ngT  Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Gate continues if the amount of time passed since the previous request is greater
- * than the configured amount or if the previous request time in not available
+ * Gate cont nues  f t  amount of t   passed s nce t  prev ous request  s greater
+ * than t  conf gured amount or  f t  prev ous request t    n not ava lable
  */
-object MinTimeSinceLastRequestGate extends Gate[PipelineQuery] {
+object M nT  S nceLastRequestGate extends Gate[P pel neQuery] {
 
-  override val identifier: GateIdentifier = GateIdentifier("TimeSinceLastRequest")
+  overr de val  dent f er: Gate dent f er = Gate dent f er("T  S nceLastRequest")
 
-  private val MinTimeSinceLastRequest = 24.hours
+  pr vate val M nT  S nceLastRequest = 24.h s
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = Stitch.value {
-    query.features.exists { features =>
+  overr de def shouldCont nue(query: P pel neQuery): St ch[Boolean] = St ch.value {
+    query.features.ex sts { features =>
       features
-        .getOrElse(LastNonPollingTimeFeature, None)
-        .forall(lnpt => (query.queryTime - lnpt) > MinTimeSinceLastRequest)
+        .getOrElse(LastNonPoll ngT  Feature, None)
+        .forall(lnpt => (query.queryT   - lnpt) > M nT  S nceLastRequest)
     }
   }
 }

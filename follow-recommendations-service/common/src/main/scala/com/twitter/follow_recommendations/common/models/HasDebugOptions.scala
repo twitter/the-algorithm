@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.thriftscala.DebugParams
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.DebugParams
 
-case class DebugOptions(
-  randomizationSeed: Option[Long] = None,
-  fetchDebugInfo: Boolean = false,
+case class DebugOpt ons(
+  random zat onSeed: Opt on[Long] = None,
+  fetchDebug nfo: Boolean = false,
   doNotLog: Boolean = false)
 
-object DebugOptions {
-  def fromDebugParamsThrift(debugParams: DebugParams): DebugOptions = {
-    DebugOptions(
-      debugParams.randomizationSeed,
-      debugParams.includeDebugInfoInResults.getOrElse(false),
+object DebugOpt ons {
+  def fromDebugParamsThr ft(debugParams: DebugParams): DebugOpt ons = {
+    DebugOpt ons(
+      debugParams.random zat onSeed,
+      debugParams. ncludeDebug nfo nResults.getOrElse(false),
       debugParams.doNotLog.getOrElse(false)
     )
   }
 }
 
-trait HasDebugOptions {
-  def debugOptions: Option[DebugOptions]
+tra  HasDebugOpt ons {
+  def debugOpt ons: Opt on[DebugOpt ons]
 
-  def getRandomizationSeed: Option[Long] = debugOptions.flatMap(_.randomizationSeed)
+  def getRandom zat onSeed: Opt on[Long] = debugOpt ons.flatMap(_.random zat onSeed)
 
-  def fetchDebugInfo: Option[Boolean] = debugOptions.map(_.fetchDebugInfo)
+  def fetchDebug nfo: Opt on[Boolean] = debugOpt ons.map(_.fetchDebug nfo)
 }
 
-trait HasFrsDebugOptions {
-  def frsDebugOptions: Option[DebugOptions]
+tra  HasFrsDebugOpt ons {
+  def frsDebugOpt ons: Opt on[DebugOpt ons]
 }

@@ -2,133 +2,133 @@ syntax = "proto3";
 
 package tensorflow.data.model;
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/model_go_proto";
+opt on cc_enable_arenas = true;
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/model_go_proto";
 
-// Class of a node in the performance model.
+// Class of a node  n t  performance model.
 enum NodeClass {
   UNKNOWN = 0;
-  INTERLEAVE_MANY = 1;
-  ASYNC_INTERLEAVE_MANY = 2;
-  KNOWN_RATIO = 3;
-  ASYNC_KNOWN_RATIO = 4;
-  UNKNOWN_RATIO = 5;
+   NTERLEAVE_MANY = 1;
+  ASYNC_ NTERLEAVE_MANY = 2;
+  KNOWN_RAT O = 3;
+  ASYNC_KNOWN_RAT O = 4;
+  UNKNOWN_RAT O = 5;
 }
 
-// Algorithm used for model autotuning optimization.
-enum AutotuneAlgorithm {
+// Algor hm used for model autotun ng opt m zat on.
+enum AutotuneAlgor hm {
   DEFAULT = 0;
-  HILL_CLIMB = 1;
-  GRADIENT_DESCENT = 2;
-  MAX_PARALLELISM = 3;
+  H LL_CL MB = 1;
+  GRAD ENT_DESCENT = 2;
+  MAX_PARALLEL SM = 3;
 }
 
-// Protocol buffer representing the data used by the autotuning modeling
-// framework.
-message ModelProto {
-  // General representation of a node in the model.
-  message Node {
-    // Unique node ID.
-    int64 id = 1;
+// Protocol buffer represent ng t  data used by t  autotun ng model ng
+// fra work.
+ ssage ModelProto {
+  // General representat on of a node  n t  model.
+   ssage Node {
+    // Un que node  D.
+     nt64  d = 1;
 
-    // Human-readable name of the node.
-    string name = 2;
+    // Human-readable na  of t  node.
+    str ng na  = 2;
 
-    // An indication whether autotuning is enabled for this node.
+    // An  nd cat on w t r autotun ng  s enabled for t  node.
     bool autotune = 3;
 
-    // The number of bytes stored in this node's buffer.
-    int64 buffered_bytes = 4;
+    // T  number of bytes stored  n t  node's buffer.
+     nt64 buffered_bytes = 4;
 
-    // The number of elements stored in this node's buffer.
-    int64 buffered_elements = 5;
+    // T  number of ele nts stored  n t  node's buffer.
+     nt64 buffered_ele nts = 5;
 
-    // The number of bytes consumed by the node.
-    int64 bytes_consumed = 6;
+    // T  number of bytes consu d by t  node.
+     nt64 bytes_consu d = 6;
 
-    // The number of bytes produced by the node.
-    int64 bytes_produced = 7;
+    // T  number of bytes produced by t  node.
+     nt64 bytes_produced = 7;
 
-    // The number of elements produced by the node.
-    int64 num_elements = 8;
+    // T  number of ele nts produced by t  node.
+     nt64 num_ele nts = 8;
 
-    // The aggregate processing time spent in this node.
-    int64 processing_time = 9;
+    // T  aggregate process ng t   spent  n t  node.
+     nt64 process ng_t   = 9;
 
-    // An indication whether this node records metrics about produced and
-    // consumed elements.
-    bool record_metrics = 10;
+    // An  nd cat on w t r t  node records  tr cs about produced and
+    // consu d ele nts.
+    bool record_ tr cs = 10;
 
-    // Represents a node parameter.
-    message Parameter {
-      // Human-readable name of the parameter.
-      string name = 1;
+    // Represents a node para ter.
+     ssage Para ter {
+      // Human-readable na  of t  para ter.
+      str ng na  = 1;
 
-      // Identifies the model value of the parameter. This can be different from
-      // the actual value (e.g. during optimization search).
+      //  dent f es t  model value of t  para ter. T  can be d fferent from
+      // t  actual value (e.g. dur ng opt m zat on search).
       double value = 2;
 
-      // The actual value of the parameter.
+      // T  actual value of t  para ter.
       double state_value = 3;
 
-      // Minimum value of the parameter.
-      double min = 4;
+      // M n mum value of t  para ter.
+      double m n = 4;
 
-      // Maximum value of the parameter.
+      // Max mum value of t  para ter.
       double max = 5;
 
-      // Identifies whether the parameter should participate in autotuning.
+      //  dent f es w t r t  para ter should part c pate  n autotun ng.
       bool tunable = 6;
     }
 
-    // Parameters of this node.
-    repeated Parameter parameters = 11;
+    // Para ters of t  node.
+    repeated Para ter para ters = 11;
 
-    // Statistic of inputs processing time history.
-    double input_processing_time_sum = 12;
-    int64 input_processing_time_count = 13;
+    // Stat st c of  nputs process ng t    tory.
+    double  nput_process ng_t  _sum = 12;
+     nt64  nput_process ng_t  _count = 13;
 
-    // IDs of inputs of this node.
-    repeated int64 inputs = 14;
+    //  Ds of  nputs of t  node.
+    repeated  nt64  nputs = 14;
 
-    // Class of this node.
+    // Class of t  node.
     NodeClass node_class = 15;
 
-    // Ratio of input to output elements. This is only used by KNOWN_RATIO and
-    // ASYNC_KNOWN_RATIO nodes.
-    double ratio = 16;
+    // Rat o of  nput to output ele nts. T   s only used by KNOWN_RAT O and
+    // ASYNC_KNOWN_RAT O nodes.
+    double rat o = 16;
 
-    // Ratio identifies how many parallelism calls are introduced by one
-    // buffered element. This is only used by ASYNC_KNOWN_RATIO nodes.
-    double memory_ratio = 17;
+    // Rat o  dent f es how many parallel sm calls are  ntroduced by one
+    // buffered ele nt. T   s only used by ASYNC_KNOWN_RAT O nodes.
+    double  mory_rat o = 17;
   }
 
-  // Map of node IDs to nodes of this model.
-  map<int64, Node> nodes = 1;
+  // Map of node  Ds to nodes of t  model.
+  map< nt64, Node> nodes = 1;
 
-  // ID of the output node of this model.
-  int64 output = 2;
+  //  D of t  output node of t  model.
+   nt64 output = 2;
 
-  // Counter for node IDs of this model.
-  int64 id_counter = 3;
+  // Counter for node  Ds of t  model.
+   nt64  d_counter = 3;
 
   reserved 4;
 
-  // Contains parameters of the model autotuning optimization.
-  message OptimizationParams {
-    // Algorithm used for autotuning optimization.
-    AutotuneAlgorithm algorithm = 1;
+  // Conta ns para ters of t  model autotun ng opt m zat on.
+   ssage Opt m zat onParams {
+    // Algor hm used for autotun ng opt m zat on.
+    AutotuneAlgor hm algor hm = 1;
 
-    // Number of available logical threads.
-    int64 cpu_budget = 2;
+    // Number of ava lable log cal threads.
+     nt64 cpu_budget = 2;
 
-    // Amount of available memory in bytes.
-    int64 ram_budget = 3;
+    // Amount of ava lable  mory  n bytes.
+     nt64 ram_budget = 3;
 
-    // Time between two consecutive `GetNext` calls to the iterator represented
-    // by the output node.
-    double model_input_time = 4;
+    // T   bet en two consecut ve `GetNext` calls to t   erator represented
+    // by t  output node.
+    double model_ nput_t   = 4;
   }
 
-  OptimizationParams optimization_params = 5;
+  Opt m zat onParams opt m zat on_params = 5;
 }

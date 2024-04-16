@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ClientEventInfoMarshaller @Inject() (
-  clientEventDetailsMarshaller: ClientEventDetailsMarshaller) {
+@S ngleton
+class Cl entEvent nfoMarshaller @ nject() (
+  cl entEventDeta lsMarshaller: Cl entEventDeta lsMarshaller) {
 
-  def apply(clientEventInfo: ClientEventInfo): urt.ClientEventInfo = {
-    urt.ClientEventInfo(
-      component = clientEventInfo.component,
-      element = clientEventInfo.element,
-      details = clientEventInfo.details.map(clientEventDetailsMarshaller(_)),
-      action = clientEventInfo.action,
-      entityToken = clientEventInfo.entityToken
+  def apply(cl entEvent nfo: Cl entEvent nfo): urt.Cl entEvent nfo = {
+    urt.Cl entEvent nfo(
+      component = cl entEvent nfo.component,
+      ele nt = cl entEvent nfo.ele nt,
+      deta ls = cl entEvent nfo.deta ls.map(cl entEventDeta lsMarshaller(_)),
+      act on = cl entEvent nfo.act on,
+      ent yToken = cl entEvent nfo.ent yToken
     )
   }
 }

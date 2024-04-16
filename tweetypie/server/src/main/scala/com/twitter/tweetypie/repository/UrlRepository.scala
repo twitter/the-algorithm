@@ -1,69 +1,69 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.service.talon.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Talon
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core.OverCapacity
+ mport com.tw ter.serv ce.talon.thr ftscala._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.backends.Talon
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.core.OverCapac y
 
-case class UrlSlug(text: String) extends AnyVal
-case class ExpandedUrl(text: String) extends AnyVal
+case class UrlSlug(text: Str ng) extends AnyVal
+case class ExpandedUrl(text: Str ng) extends AnyVal
 
-object UrlRepository {
-  type Type = UrlSlug => Stitch[ExpandedUrl]
+object UrlRepos ory {
+  type Type = UrlSlug => St ch[ExpandedUrl]
 
   /**
-   * Builds a UrlRepository from a Talon.Expand arrow.
+   * Bu lds a UrlRepos ory from a Talon.Expand arrow.
    */
   def apply(
     talonExpand: Talon.Expand,
-    tweetypieClientId: String,
-    statsReceiver: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
+    t etyp eCl ent d: Str ng,
+    statsRece ver: StatsRece ver,
+    cl ent d lper: Cl ent d lper,
   ): Type = {
     val observedTalonExpand: Talon.Expand =
       talonExpand
-        .trackOutcome(statsReceiver, _ => clientIdHelper.effectiveClientId.getOrElse("unknown"))
+        .trackOutco (statsRece ver, _ => cl ent d lper.effect veCl ent d.getOrElse("unknown"))
 
     val expandGroup = SeqGroup[ExpandRequest, Try[ExpandResponse]] { requests =>
-      LegacySeqGroup.liftToSeqTry(
-        Future.collect(requests.map(r => observedTalonExpand(r).liftToTry)))
+      LegacySeqGroup.l ftToSeqTry(
+        Future.collect(requests.map(r => observedTalonExpand(r).l ftToTry)))
     }
 
     slug =>
-      val request = toExpandRequest(slug, auditMessage(tweetypieClientId, clientIdHelper))
+      val request = toExpandRequest(slug, aud  ssage(t etyp eCl ent d, cl ent d lper))
 
-      Stitch
+      St ch
         .call(request, expandGroup)
-        .lowerFromTry
+        .lo rFromTry
         .flatMap(toExpandedUrl(slug, _))
   }
 
-  def auditMessage(tweetypieClientId: String, clientIdHelper: ClientIdHelper): String = {
-    tweetypieClientId + clientIdHelper.effectiveClientId.mkString(":", "", "")
+  def aud  ssage(t etyp eCl ent d: Str ng, cl ent d lper: Cl ent d lper): Str ng = {
+    t etyp eCl ent d + cl ent d lper.effect veCl ent d.mkStr ng(":", "", "")
   }
 
-  def toExpandRequest(slug: UrlSlug, auditMessage: String): ExpandRequest =
-    ExpandRequest(userId = 0, shortUrl = slug.text, fromUser = false, auditMsg = Some(auditMessage))
+  def toExpandRequest(slug: UrlSlug, aud  ssage: Str ng): ExpandRequest =
+    ExpandRequest(user d = 0, shortUrl = slug.text, fromUser = false, aud Msg = So (aud  ssage))
 
-  def toExpandedUrl(slug: UrlSlug, res: ExpandResponse): Stitch[ExpandedUrl] =
+  def toExpandedUrl(slug: UrlSlug, res: ExpandResponse): St ch[ExpandedUrl] =
     res.responseCode match {
       case ResponseCode.Ok =>
-        // use Option(res.longUrl) because res.longUrl can be null
-        Option(res.longUrl) match {
-          case None => Stitch.NotFound
-          case Some(longUrl) => Stitch.value(ExpandedUrl(longUrl))
+        // use Opt on(res.longUrl) because res.longUrl can be null
+        Opt on(res.longUrl) match {
+          case None => St ch.NotFound
+          case So (longUrl) => St ch.value(ExpandedUrl(longUrl))
         }
 
-      case ResponseCode.BadInput =>
-        Stitch.NotFound
+      case ResponseCode.Bad nput =>
+        St ch.NotFound
 
-      // we shouldn't see other ResponseCodes, because Talon.Expand translates them to
-      // exceptions, but we have this catch-all just in case.
+      //   shouldn't see ot r ResponseCodes, because Talon.Expand translates t m to
+      // except ons, but   have t  catch-all just  n case.
       case _ =>
-        Stitch.exception(OverCapacity("talon"))
+        St ch.except on(OverCapac y("talon"))
     }
 }

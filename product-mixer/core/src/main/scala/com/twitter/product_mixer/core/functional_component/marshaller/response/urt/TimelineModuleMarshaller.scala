@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleFooterMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleHeaderMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleShowMoreBehaviorMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Feedback nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module.ModuleD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module.ModuleFooterMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module.Module aderMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module.Module tadataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module.ModuleShowMoreBehav orMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineModuleMarshaller @Inject() (
-  moduleItemMarshaller: ModuleItemMarshaller,
-  moduleDisplayTypeMarshaller: ModuleDisplayTypeMarshaller,
-  moduleHeaderMarshaller: ModuleHeaderMarshaller,
+@S ngleton
+class T  l neModuleMarshaller @ nject() (
+  module emMarshaller: Module emMarshaller,
+  moduleD splayTypeMarshaller: ModuleD splayTypeMarshaller,
+  module aderMarshaller: Module aderMarshaller,
   moduleFooterMarshaller: ModuleFooterMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  feedbackInfoMarshaller: FeedbackInfoMarshaller,
-  moduleMetadataMarshaller: ModuleMetadataMarshaller,
-  moduleShowMoreBehaviorMarshaller: ModuleShowMoreBehaviorMarshaller) {
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller,
+  feedback nfoMarshaller: Feedback nfoMarshaller,
+  module tadataMarshaller: Module tadataMarshaller,
+  moduleShowMoreBehav orMarshaller: ModuleShowMoreBehav orMarshaller) {
 
-  def apply(timelineModule: TimelineModule): urt.TimelineModule = urt.TimelineModule(
-    items = timelineModule.items.map(moduleItemMarshaller(_, timelineModule.entryIdentifier)),
-    displayType = moduleDisplayTypeMarshaller(timelineModule.displayType),
-    header = timelineModule.header.map(moduleHeaderMarshaller(_)),
-    footer = timelineModule.footer.map(moduleFooterMarshaller(_)),
-    clientEventInfo = timelineModule.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    feedbackInfo = timelineModule.feedbackActionInfo.map(feedbackInfoMarshaller(_)),
-    metadata = timelineModule.metadata.map(moduleMetadataMarshaller(_)),
-    showMoreBehavior = timelineModule.showMoreBehavior.map(moduleShowMoreBehaviorMarshaller(_))
+  def apply(t  l neModule: T  l neModule): urt.T  l neModule = urt.T  l neModule(
+     ems = t  l neModule. ems.map(module emMarshaller(_, t  l neModule.entry dent f er)),
+    d splayType = moduleD splayTypeMarshaller(t  l neModule.d splayType),
+     ader = t  l neModule. ader.map(module aderMarshaller(_)),
+    footer = t  l neModule.footer.map(moduleFooterMarshaller(_)),
+    cl entEvent nfo = t  l neModule.cl entEvent nfo.map(cl entEvent nfoMarshaller(_)),
+    feedback nfo = t  l neModule.feedbackAct on nfo.map(feedback nfoMarshaller(_)),
+     tadata = t  l neModule. tadata.map(module tadataMarshaller(_)),
+    showMoreBehav or = t  l neModule.showMoreBehav or.map(moduleShowMoreBehav orMarshaller(_))
   )
 }

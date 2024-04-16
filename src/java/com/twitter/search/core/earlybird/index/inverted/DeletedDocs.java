@@ -1,241 +1,241 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.util.Bits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.ut l.B s;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+ mport  .un m .ds .fastut l. nts. nt2 ntOpenHashMap;
 
-public abstract class DeletedDocs implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(DeletedDocs.class);
+publ c abstract class DeletedDocs  mple nts Flushable {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(DeletedDocs.class);
 
   /**
-   * Deletes the given document.
+   * Deletes t  g ven docu nt.
    */
-  public abstract boolean deleteDoc(int docID);
+  publ c abstract boolean deleteDoc( nt doc D);
 
   /**
-   * Returns a point-in-time view of the deleted docs. Calling {@link #deleteDoc(int)} afterwards
-   * will not alter this View.
+   * Returns a po nt- n-t   v ew of t  deleted docs. Call ng {@l nk #deleteDoc( nt)} afterwards
+   * w ll not alter t  V ew.
    */
-  public abstract View getView();
+  publ c abstract V ew getV ew();
 
   /**
-   * Number of deletions.
+   * Number of delet ons.
    */
-  public abstract int numDeletions();
+  publ c abstract  nt numDelet ons();
 
   /**
-   * Returns a DeletedDocs instance that has the same deleted tweet IDs, but mapped to the doc IDs
-   * in the optimizedTweetIdMapper.
+   * Returns a DeletedDocs  nstance that has t  sa  deleted t et  Ds, but mapped to t  doc  Ds
+   *  n t  opt m zedT et dMapper.
    *
-   * @param originalTweetIdMapper The original DocIDToTweetIDMapper instance that was used to add
-   *                              doc IDs to this DeletedDocs instance.
-   * @param optimizedTweetIdMapper The new DocIDToTweetIDMapper instance.
-   * @return An DeletedDocs instance that has the same tweets deleted, but mapped to the doc IDs in
-   *         optimizedTweetIdMapper.
+   * @param or g nalT et dMapper T  or g nal Doc DToT et DMapper  nstance that was used to add
+   *                              doc  Ds to t  DeletedDocs  nstance.
+   * @param opt m zedT et dMapper T  new Doc DToT et DMapper  nstance.
+   * @return An DeletedDocs  nstance that has t  sa  t ets deleted, but mapped to t  doc  Ds  n
+   *         opt m zedT et dMapper.
    */
-  public abstract DeletedDocs optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+  publ c abstract DeletedDocs opt m ze(
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on;
 
-  public abstract class View {
+  publ c abstract class V ew {
     /**
-     * Returns true, if the given document was deleted.
+     * Returns true,  f t  g ven docu nt was deleted.
      */
-    public abstract boolean isDeleted(int docID);
-
-    /**
-     * Returns true, if there are any deleted documents in this View.
-     */
-    public abstract boolean hasDeletions();
+    publ c abstract boolean  sDeleted( nt doc D);
 
     /**
-     * Returns {@link Bits} where all deleted documents have their bit set to 0, and
-     * all non-deleted documents have their bits set to 1.
+     * Returns true,  f t re are any deleted docu nts  n t  V ew.
      */
-    public abstract Bits getLiveDocs();
+    publ c abstract boolean hasDelet ons();
+
+    /**
+     * Returns {@l nk B s} w re all deleted docu nts have t  r b  set to 0, and
+     * all non-deleted docu nts have t  r b s set to 1.
+     */
+    publ c abstract B s getL veDocs();
   }
 
-  public static class Default extends DeletedDocs {
-    private static final int KEY_NOT_FOUND = -1;
+  publ c stat c class Default extends DeletedDocs {
+    pr vate stat c f nal  nt KEY_NOT_FOUND = -1;
 
-    private final int size;
-    private final Int2IntOpenHashMap deletes;
+    pr vate f nal  nt s ze;
+    pr vate f nal  nt2 ntOpenHashMap deletes;
 
-    // Each delete is marked with a unique, consecutively-increasing sequence ID.
-    private int sequenceID = 0;
+    // Each delete  s marked w h a un que, consecut vely- ncreas ng sequence  D.
+    pr vate  nt sequence D = 0;
 
-    public Default(int size) {
-      this.size = size;
-      deletes = new Int2IntOpenHashMap(size);
+    publ c Default( nt s ze) {
+      t .s ze = s ze;
+      deletes = new  nt2 ntOpenHashMap(s ze);
       deletes.defaultReturnValue(KEY_NOT_FOUND);
     }
 
     /**
-     * Returns false, if this call was a noop, i.e. if the document was already deleted.
+     * Returns false,  f t  call was a noop,  .e.  f t  docu nt was already deleted.
      */
-    @Override
-    public boolean deleteDoc(int docID) {
-      if (deletes.putIfAbsent(docID, sequenceID) == KEY_NOT_FOUND) {
-        sequenceID++;
+    @Overr de
+    publ c boolean deleteDoc( nt doc D) {
+       f (deletes.put fAbsent(doc D, sequence D) == KEY_NOT_FOUND) {
+        sequence D++;
         return true;
       }
       return false;
     }
 
-    private boolean isDeleted(int internalID, int readerSequenceID) {
-      int deletedSequenceId = deletes.get(internalID);
-      return (deletedSequenceId >= 0) && (deletedSequenceId < readerSequenceID);
+    pr vate boolean  sDeleted( nt  nternal D,  nt readerSequence D) {
+       nt deletedSequence d = deletes.get( nternal D);
+      return (deletedSequence d >= 0) && (deletedSequence d < readerSequence D);
     }
 
-    private boolean hasDeletions(int readerSequenceID) {
-      return readerSequenceID > 0;
+    pr vate boolean hasDelet ons( nt readerSequence D) {
+      return readerSequence D > 0;
     }
 
-    @Override
-    public int numDeletions() {
-      return sequenceID;
+    @Overr de
+    publ c  nt numDelet ons() {
+      return sequence D;
     }
 
-    @Override
-    public View getView() {
-      return new View() {
-        private final int readerSequenceID = sequenceID;
+    @Overr de
+    publ c V ew getV ew() {
+      return new V ew() {
+        pr vate f nal  nt readerSequence D = sequence D;
 
-        // liveDocs bitset contains inverted (decreasing) docids.
-        public final Bits liveDocs = !hasDeletions() ? null : new Bits() {
-          @Override
-          public final boolean get(int docID) {
-            return !isDeleted(docID);
+        // l veDocs b set conta ns  nverted (decreas ng) doc ds.
+        publ c f nal B s l veDocs = !hasDelet ons() ? null : new B s() {
+          @Overr de
+          publ c f nal boolean get( nt doc D) {
+            return ! sDeleted(doc D);
           }
 
-          @Override
-          public final int length() {
-            return size;
+          @Overr de
+          publ c f nal  nt length() {
+            return s ze;
           }
         };
 
-        @Override
-        public Bits getLiveDocs() {
-          return liveDocs;
+        @Overr de
+        publ c B s getL veDocs() {
+          return l veDocs;
         }
 
 
-        // Operates on internal (increasing) docids.
-        @Override
-        public final boolean isDeleted(int internalID) {
-          return DeletedDocs.Default.this.isDeleted(internalID, readerSequenceID);
+        // Operates on  nternal ( ncreas ng) doc ds.
+        @Overr de
+        publ c f nal boolean  sDeleted( nt  nternal D) {
+          return DeletedDocs.Default.t . sDeleted( nternal D, readerSequence D);
         }
 
-        @Override
-        public final boolean hasDeletions() {
-          return DeletedDocs.Default.this.hasDeletions(readerSequenceID);
+        @Overr de
+        publ c f nal boolean hasDelet ons() {
+          return DeletedDocs.Default.t .hasDelet ons(readerSequence D);
         }
       };
     }
 
-    @Override
-    public DeletedDocs optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-      DeletedDocs optimizedDeletedDocs = new Default(size);
-      for (int deletedDocID : deletes.keySet()) {
-        long tweetID = originalTweetIdMapper.getTweetID(deletedDocID);
-        int optimizedDeletedDocID = optimizedTweetIdMapper.getDocID(tweetID);
-        optimizedDeletedDocs.deleteDoc(optimizedDeletedDocID);
+    @Overr de
+    publ c DeletedDocs opt m ze(Doc DToT et DMapper or g nalT et dMapper,
+                                Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+      DeletedDocs opt m zedDeletedDocs = new Default(s ze);
+      for ( nt deletedDoc D : deletes.keySet()) {
+        long t et D = or g nalT et dMapper.getT et D(deletedDoc D);
+         nt opt m zedDeletedDoc D = opt m zedT et dMapper.getDoc D(t et D);
+        opt m zedDeletedDocs.deleteDoc(opt m zedDeletedDoc D);
       }
-      return optimizedDeletedDocs;
+      return opt m zedDeletedDocs;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Default.FlushHandler getFlushHandler() {
-      return new Default.FlushHandler(this, size);
+    @SuppressWarn ngs("unc cked")
+    @Overr de
+    publ c Default.FlushHandler getFlushHandler() {
+      return new Default.FlushHandler(t , s ze);
     }
 
-    public static final class FlushHandler extends Flushable.Handler<Default> {
-      private final int size;
+    publ c stat c f nal class FlushHandler extends Flushable.Handler<Default> {
+      pr vate f nal  nt s ze;
 
-      public FlushHandler(Default objectToFlush, int size) {
+      publ c FlushHandler(Default objectToFlush,  nt s ze) {
         super(objectToFlush);
-        this.size = size;
+        t .s ze = s ze;
       }
 
-      public FlushHandler(int size) {
-        this.size = size;
+      publ c FlushHandler( nt s ze) {
+        t .s ze = s ze;
       }
 
-      @Override
-      protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-        long startTime = getClock().nowMillis();
+      @Overr de
+      protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+        long startT   = getClock().nowM ll s();
 
-        Int2IntOpenHashMap deletes = getObjectToFlush().deletes;
-        out.writeIntArray(deletes.keySet().toIntArray());
+         nt2 ntOpenHashMap deletes = getObjectToFlush().deletes;
+        out.wr e ntArray(deletes.keySet().to ntArray());
 
-        getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+        getFlushT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
       }
 
-      @Override
-      protected Default doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-        Default deletedDocs = new Default(size);
-        long startTime = getClock().nowMillis();
+      @Overr de
+      protected Default doLoad(Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+        Default deletedDocs = new Default(s ze);
+        long startT   = getClock().nowM ll s();
 
-        int[] deletedDocIDs = in.readIntArray();
-        for (int docID : deletedDocIDs) {
-          deletedDocs.deleteDoc(docID);
+         nt[] deletedDoc Ds =  n.read ntArray();
+        for ( nt doc D : deletedDoc Ds) {
+          deletedDocs.deleteDoc(doc D);
         }
 
-        getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+        getLoadT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
         return deletedDocs;
       }
     }
   }
 
-  public static final DeletedDocs NO_DELETES = new DeletedDocs() {
-    @Override
-    public <T extends Flushable> Handler<T> getFlushHandler() {
+  publ c stat c f nal DeletedDocs NO_DELETES = new DeletedDocs() {
+    @Overr de
+    publ c <T extends Flushable> Handler<T> getFlushHandler() {
       return null;
     }
 
-    @Override
-    public boolean deleteDoc(int docID) {
+    @Overr de
+    publ c boolean deleteDoc( nt doc D) {
       return false;
     }
 
-    @Override
-    public DeletedDocs optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                DocIDToTweetIDMapper optimizedTweetIdMapper) {
-      return this;
+    @Overr de
+    publ c DeletedDocs opt m ze(Doc DToT et DMapper or g nalT et dMapper,
+                                Doc DToT et DMapper opt m zedT et dMapper) {
+      return t ;
     }
 
-    @Override
-    public int numDeletions() {
+    @Overr de
+    publ c  nt numDelet ons() {
       return 0;
     }
 
-    @Override
-    public View getView() {
-      return new View() {
-        @Override
-        public boolean isDeleted(int docID) {
+    @Overr de
+    publ c V ew getV ew() {
+      return new V ew() {
+        @Overr de
+        publ c boolean  sDeleted( nt doc D) {
           return false;
         }
 
-        @Override
-        public boolean hasDeletions() {
+        @Overr de
+        publ c boolean hasDelet ons() {
           return false;
         }
 
-        @Override
-        public Bits getLiveDocs() {
+        @Overr de
+        publ c B s getL veDocs() {
           return null;
         }
 

@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.label
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.label._
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class LabelDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class LabelD splayTypeMarshaller @ nject() () {
 
-  def apply(labelDisplayType: LabelDisplayType): urt.LabelDisplayType = labelDisplayType match {
-    case InlineHeaderLabelDisplayType => urt.LabelDisplayType.InlineHeader
-    case OtherRepliesSectionHeaderLabelDisplayType => urt.LabelDisplayType.OtherRepliesSectionHeader
+  def apply(labelD splayType: LabelD splayType): urt.LabelD splayType = labelD splayType match {
+    case  nl ne aderLabelD splayType => urt.LabelD splayType. nl ne ader
+    case Ot rRepl esSect on aderLabelD splayType => urt.LabelD splayType.Ot rRepl esSect on ader
   }
 }

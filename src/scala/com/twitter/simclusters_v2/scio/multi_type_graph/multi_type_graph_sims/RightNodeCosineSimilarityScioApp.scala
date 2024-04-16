@@ -1,55 +1,55 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+package com.tw ter.s mclusters_v2.sc o
+package mult _type_graph.mult _type_graph_s ms
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.RightNodeCosineSimilarityScioScalaDataset
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.wtf.scalding.jobs.cosine_similarity.common.ApproximateMatrixSelfTransposeMultiplicationJob
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.R ghtNodeCos neS m lar ySc oScalaDataset
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNode
+ mport com.tw ter.s mclusters_v2.thr ftscala.S m larR ghtNodes
+ mport com.tw ter.wtf.scald ng.jobs.cos ne_s m lar y.common.Approx mateMatr xSelfTransposeMult pl cat onJob
 
 /**
-Build:
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-cosine-similarity-scio-adhoc-app
+Bu ld:
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/mult _type_graph_s ms:mult -type-graph-cos ne-s m lar y-sc o-adhoc-app
 
-To kick off an adhoc run:
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-cosine-similarity-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/cosine-similarity-scio-adhoc.d6w \
-  --jar dist/multi-type-graph-cosine-similarity-scio-adhoc-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2022-01-16" \
-  --bind=profile.machine="n2d-highmem-16" --ignore-existing
+To k ck off an adhoc run:
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/mult -type-graph-cos ne-s m lar y-sc o-adhoc-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/mult _type_graph_s ms/cos ne-s m lar y-sc o-adhoc.d6w \
+  --jar d st/mult -type-graph-cos ne-s m lar y-sc o-adhoc-app.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =${USER} \
+  --b nd=prof le.date="2022-01-16" \
+  --b nd=prof le.mach ne="n2d-h gh m-16" -- gnore-ex st ng
  */
 
-object RightNodeCosineSimilarityScioAdhocApp extends RightNodeCosineSimilarityScioBaseApp {
-  override val isAdhoc = true
-  override val cosineSimKeyValSnapshotDataset: KeyValDALDataset[
-    KeyVal[RightNode, SimilarRightNodes]
+object R ghtNodeCos neS m lar ySc oAdhocApp extends R ghtNodeCos neS m lar ySc oBaseApp {
+  overr de val  sAdhoc = true
+  overr de val cos neS mKeyValSnapshotDataset: KeyValDALDataset[
+    KeyVal[R ghtNode, S m larR ghtNodes]
   ] =
-    RightNodeCosineSimilarityScioAdhocScalaDataset
-  override val filterCandidateSimilarityPair: (Double, Double, Double) => Boolean =
-    ApproximateMatrixSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
+    R ghtNodeCos neS m lar ySc oAdhocScalaDataset
+  overr de val f lterCand dateS m lar yPa r: (Double, Double, Double) => Boolean =
+    Approx mateMatr xSelfTransposeMult pl cat onJob.f lterCand dateS m lar yPa r
 }
 
 /**
-To deploy the job:
+To deploy t  job:
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-cosine-similarity-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/cosine-similarity-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=recos-platform \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16"
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/mult -type-graph-cos ne-s m lar y-sc o-batch-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/mult _type_graph_s ms/cos ne-s m lar y-sc o-batch.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =recos-platform \
+  --b nd=prof le.date="2021-12-01" \
+  --b nd=prof le.mach ne="n2d-h gh m-16"
  */
-object RightNodeCosineSimilarityScioBatchApp extends RightNodeCosineSimilarityScioBaseApp {
-  override val isAdhoc = false
-  override val cosineSimKeyValSnapshotDataset: KeyValDALDataset[
-    KeyVal[RightNode, SimilarRightNodes]
+object R ghtNodeCos neS m lar ySc oBatchApp extends R ghtNodeCos neS m lar ySc oBaseApp {
+  overr de val  sAdhoc = false
+  overr de val cos neS mKeyValSnapshotDataset: KeyValDALDataset[
+    KeyVal[R ghtNode, S m larR ghtNodes]
   ] =
-    RightNodeCosineSimilarityScioScalaDataset
-  override val filterCandidateSimilarityPair: (Double, Double, Double) => Boolean =
-    ApproximateMatrixSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
+    R ghtNodeCos neS m lar ySc oScalaDataset
+  overr de val f lterCand dateS m lar yPa r: (Double, Double, Double) => Boolean =
+    Approx mateMatr xSelfTransposeMult pl cat onJob.f lterCand dateS m lar yPa r
 }

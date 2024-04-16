@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Center
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Natural
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextAl gn nt
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RichTextAlignmentMarshaller @Inject() () {
+@S ngleton
+class R chTextAl gn ntMarshaller @ nject() () {
 
-  def apply(alignment: RichTextAlignment): urt.RichTextAlignment = alignment match {
-    case Natural => urt.RichTextAlignment.Natural
-    case Center => urt.RichTextAlignment.Center
+  def apply(al gn nt: R chTextAl gn nt): urt.R chTextAl gn nt = al gn nt match {
+    case Natural => urt.R chTextAl gn nt.Natural
+    case Center => urt.R chTextAl gn nt.Center
   }
 }

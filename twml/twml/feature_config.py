@@ -1,30 +1,30 @@
 """
-Feature configuration for DeepBird jobs:
-- Which features to keep
-- Which features to blacklist
-- Which features are labels
-- Which feature is the weight
+Feature conf gurat on for DeepB rd jobs:
+- Wh ch features to keep
+- Wh ch features to blackl st
+- Wh ch features are labels
+- Wh ch feature  s t    ght
 """
 
-from twitter.deepbird.io.legacy import feature_config
+from tw ter.deepb rd. o.legacy  mport feature_conf g
 
 
-class FeatureConfig(feature_config.FeatureConfig):
+class FeatureConf g(feature_conf g.FeatureConf g):
   def get_feature_spec(self):
     """
-    Generates a serialization-friendly dict representing this FeatureConfig.
+    Generates a ser al zat on-fr endly d ct represent ng t  FeatureConf g.
     """
-    doc = super(FeatureConfig, self).get_feature_spec()
-    # Override the class in the spec.
-    doc["class"] = "twml.FeatureConfig"
+    doc = super(FeatureConf g, self).get_feature_spec()
+    # Overr de t  class  n t  spec.
+    doc["class"] = "twml.FeatureConf g"
     return doc
 
 
-class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
-  def build(self):
-    # Overwrite self.build() to return twml.FeatureConfig instead
+class FeatureConf gBu lder(feature_conf g.FeatureConf gBu lder):
+  def bu ld(self):
+    # Overwr e self.bu ld() to return twml.FeatureConf g  nstead
     """
-    Builds and returns FeatureConfig object.
+    Bu lds and returns FeatureConf g object.
     """
 
     (
@@ -32,23 +32,23 @@ class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
       tensor_types,
       sparse_tensor_types,
       feature_map,
-      feature_name_to_feature_parser,
-      feature_in_bq_name,
-    ) = self._build()
+      feature_na _to_feature_parser,
+      feature_ n_bq_na ,
+    ) = self._bu ld()
 
-    return FeatureConfig(
+    return FeatureConf g(
       features=features,
       labels=self._labels,
-      weight=self._weight,
-      filters=self._filter_features,
+        ght=self._  ght,
+      f lters=self._f lter_features,
       tensor_types=tensor_types,
       sparse_tensor_types=sparse_tensor_types,
       feature_types=feature_map,
       decode_mode=self._decode_mode,
       legacy_sparse=self._legacy_sparse,
-      feature_name_to_feature_parser=self._feature_name_to_feature_parser,
-      feature_in_bq_name=self._feature_in_bq_name,
+      feature_na _to_feature_parser=self._feature_na _to_feature_parser,
+      feature_ n_bq_na =self._feature_ n_bq_na ,
     )
 
 
-_name_to_id = feature_config._name_to_id
+_na _to_ d = feature_conf g._na _to_ d

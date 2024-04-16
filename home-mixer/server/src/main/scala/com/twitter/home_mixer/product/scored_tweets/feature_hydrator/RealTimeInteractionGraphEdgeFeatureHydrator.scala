@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.realtime_interaction_graph.RealTimeInteractionGraphFeaturesAdapter
-import com.twitter.timelines.prediction.features.realtime_interaction_graph.RealTimeInteractionGraphEdgeFeatures
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.pred ct on.adapters.realt  _ nteract on_graph.RealT   nteract onGraphFeaturesAdapter
+ mport com.tw ter.t  l nes.pred ct on.features.realt  _ nteract on_graph.RealT   nteract onGraphEdgeFeatures
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
-object RealTimeInteractionGraphEdgeFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object RealT   nteract onGraphEdgeFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class RealTimeInteractionGraphEdgeFeatureHydrator @Inject() ()
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class RealT   nteract onGraphEdgeFeatureHydrator @ nject() ()
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealTimeInteractionGraphEdge")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("RealT   nteract onGraphEdge")
 
-  override val features: Set[Feature[_, _]] = Set(RealTimeInteractionGraphEdgeFeature)
+  overr de val features: Set[Feature[_, _]] = Set(RealT   nteract onGraphEdgeFeature)
 
-  private val realTimeInteractionGraphFeaturesAdapter = new RealTimeInteractionGraphFeaturesAdapter
+  pr vate val realT   nteract onGraphFeaturesAdapter = new RealT   nteract onGraphFeaturesAdapter
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offload {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offload {
     val userVertex =
-      query.features.flatMap(_.getOrElse(RealTimeInteractionGraphUserVertexQueryFeature, None))
-    val realTimeInteractionGraphFeaturesMap =
-      userVertex.map(RealTimeInteractionGraphEdgeFeatures(_, Time.now))
+      query.features.flatMap(_.getOrElse(RealT   nteract onGraphUserVertexQueryFeature, None))
+    val realT   nteract onGraphFeaturesMap =
+      userVertex.map(RealT   nteract onGraphEdgeFeatures(_, T  .now))
 
-    candidates.map { candidate =>
-      val feature = candidate.features.getOrElse(AuthorIdFeature, None).flatMap { authorId =>
-        realTimeInteractionGraphFeaturesMap.flatMap(_.get(authorId))
+    cand dates.map { cand date =>
+      val feature = cand date.features.getOrElse(Author dFeature, None).flatMap { author d =>
+        realT   nteract onGraphFeaturesMap.flatMap(_.get(author d))
       }
 
       val dataRecordFeature =
-        realTimeInteractionGraphFeaturesAdapter.adaptToDataRecords(feature).asScala.head
+        realT   nteract onGraphFeaturesAdapter.adaptToDataRecords(feature).asScala. ad
 
-      FeatureMapBuilder().add(RealTimeInteractionGraphEdgeFeature, dataRecordFeature).build()
+      FeatureMapBu lder().add(RealT   nteract onGraphEdgeFeature, dataRecordFeature).bu ld()
     }
   }
 }

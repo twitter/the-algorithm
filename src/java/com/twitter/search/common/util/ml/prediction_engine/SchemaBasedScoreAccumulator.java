@@ -1,62 +1,62 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.modeling.common.TweetFeaturesUtils;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.model ng.common.T etFeaturesUt ls;
 
 /**
- * Score accumulator for schema-based features.
+ * Score accumulator for sc ma-based features.
  */
-public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSearchResultFeatures> {
+publ c class Sc maBasedScoreAccumulator extends BaseScoreAccumulator<Thr ftSearchResultFeatures> {
 
-  public SchemaBasedScoreAccumulator(LightweightLinearModel model) {
+  publ c Sc maBasedScoreAccumulator(L ght  ghtL nearModel model) {
     super(model);
-    Preconditions.checkState(model.isSchemaBased(),
-        "Cannot create SchemaBasedScoreAccumulator with a non-schema-based model: %s",
-        model.getName());
+    Precond  ons.c ckState(model. sSc maBased(),
+        "Cannot create Sc maBasedScoreAccumulator w h a non-sc ma-based model: %s",
+        model.getNa ());
   }
 
-  @Override
-  protected final void updateScoreWithFeatures(ThriftSearchResultFeatures featureData) {
-    // go through all features available and apply all those available in the model
-    addSchemaBooleanFeatures(featureData.getBoolValues());
-    addSchemaContinuousFeatures(featureData.getIntValues());
-    addSchemaContinuousFeatures(featureData.getLongValues());
-    addSchemaContinuousFeatures(featureData.getDoubleValues());
+  @Overr de
+  protected f nal vo d updateScoreW hFeatures(Thr ftSearchResultFeatures featureData) {
+    // go through all features ava lable and apply all those ava lable  n t  model
+    addSc maBooleanFeatures(featureData.getBoolValues());
+    addSc maCont nuousFeatures(featureData.get ntValues());
+    addSc maCont nuousFeatures(featureData.getLongValues());
+    addSc maCont nuousFeatures(featureData.getDoubleValues());
   }
 
-  private void addSchemaBooleanFeatures(Map<Integer, Boolean> booleanMap) {
-    if (booleanMap == null || booleanMap.isEmpty()) {
+  pr vate vo d addSc maBooleanFeatures(Map< nteger, Boolean> booleanMap) {
+     f (booleanMap == null || booleanMap. sEmpty()) {
       return;
     }
-    for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
-      if (entry.getValue()) {
-        score += model.binaryFeaturesById.getOrDefault(entry.getKey(), 0.0);
+    for (Map.Entry< nteger, Boolean> entry : booleanMap.entrySet()) {
+       f (entry.getValue()) {
+        score += model.b naryFeaturesBy d.getOrDefault(entry.getKey(), 0.0);
       }
     }
   }
 
-  private void addSchemaContinuousFeatures(Map<Integer, ? extends Number> valueMap) {
-    if (valueMap == null || valueMap.isEmpty()) {
+  pr vate vo d addSc maCont nuousFeatures(Map< nteger, ? extends Number> valueMap) {
+     f (valueMap == null || valueMap. sEmpty()) {
       return;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
-      Integer id = entry.getKey();
-      if (TweetFeaturesUtils.isFeatureDiscrete(id)) {
-        continue;  // we don't process any discrete features now
+    for (Map.Entry< nteger, ? extends Number> entry : valueMap.entrySet()) {
+       nteger  d = entry.getKey();
+       f (T etFeaturesUt ls. sFeatureD screte( d)) {
+        cont nue;  //   don't process any d screte features now
       }
-      Double weight = model.continuousFeaturesById.get(id);
-      if (weight != null) {
-        // found non-discretized entry
-        score += weight * entry.getValue().doubleValue();
+      Double   ght = model.cont nuousFeaturesBy d.get( d);
+       f (  ght != null) {
+        // found non-d scret zed entry
+        score +=   ght * entry.getValue().doubleValue();
       } else {
-        DiscretizedFeature discretizedFeature = model.discretizedFeaturesById.get(id);
-        if (discretizedFeature != null) {
-          // Use only the weight of the discretized feature (there's no need to multiply it)
-          score += discretizedFeature.getWeight(entry.getValue().doubleValue());
+        D scret zedFeature d scret zedFeature = model.d scret zedFeaturesBy d.get( d);
+         f (d scret zedFeature != null) {
+          // Use only t    ght of t  d scret zed feature (t re's no need to mult ply  )
+          score += d scret zedFeature.get  ght(entry.getValue().doubleValue());
         }
       }
     }

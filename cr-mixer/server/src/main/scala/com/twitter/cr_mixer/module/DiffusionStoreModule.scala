@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.thr ftscala.T etsW hScore
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanRO
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanROConf g
+ mport com.tw ter.storehaus_ nternal.ut l.Appl cat on D
+ mport com.tw ter.storehaus_ nternal.ut l.DatasetNa 
+ mport com.tw ter.storehaus_ nternal.ut l.HDFSPath
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object DiffusionStoreModule extends TwitterModule {
-  type UserId = Long
-  implicit val longCodec = implicitly[Injection[Long, Array[Byte]]]
-  implicit val tweetRecsInjection: Injection[TweetsWithScore, Array[Byte]] =
-    BinaryScalaCodec(TweetsWithScore)
+object D ffus onStoreModule extends Tw terModule {
+  type User d = Long
+   mpl c  val longCodec =  mpl c ly[ nject on[Long, Array[Byte]]]
+   mpl c  val t etRecs nject on:  nject on[T etsW hScore, Array[Byte]] =
+    B naryScalaCodec(T etsW hScore)
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RetweetBasedDiffusionRecsMhStore)
-  def retweetBasedDiffusionRecsMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[Long, TweetsWithScore] = {
-    val manhattanROConfig = ManhattanROConfig(
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Ret etBasedD ffus onRecsMhStore)
+  def ret etBasedD ffus onRecsMhStore(
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[Long, T etsW hScore] = {
+    val manhattanROConf g = ManhattanROConf g(
       HDFSPath(""), // not needed
-      ApplicationID("cr_mixer_apollo"),
-      DatasetName("diffusion_retweet_tweet_recs"),
+      Appl cat on D("cr_m xer_apollo"),
+      DatasetNa ("d ffus on_ret et_t et_recs"),
       Apollo
     )
 
-    buildTweetRecsStore(serviceIdentifier, manhattanROConfig)
+    bu ldT etRecsStore(serv ce dent f er, manhattanROConf g)
   }
 
-  private def buildTweetRecsStore(
-    serviceIdentifier: ServiceIdentifier,
-    manhattanROConfig: ManhattanROConfig
-  ): ReadableStore[Long, TweetsWithScore] = {
+  pr vate def bu ldT etRecsStore(
+    serv ce dent f er: Serv ce dent f er,
+    manhattanROConf g: ManhattanROConf g
+  ): ReadableStore[Long, T etsW hScore] = {
 
     ManhattanRO
-      .getReadableStoreWithMtls[Long, TweetsWithScore](
-        manhattanROConfig,
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, tweetRecsInjection)
+      .getReadableStoreW hMtls[Long, T etsW hScore](
+        manhattanROConf g,
+        ManhattanKVCl entMtlsParams(serv ce dent f er)
+      )(longCodec, t etRecs nject on)
   }
 }

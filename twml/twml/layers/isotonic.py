@@ -1,76 +1,76 @@
-# pylint: disable=no-member, invalid-name, attribute-defined-outside-init
+# pyl nt: d sable=no- mber,  nval d-na , attr bute-def ned-outs de- n 
 """
-Contains the Isotonic Layer
+Conta ns t   soton c Layer
 """
 
-from .layer import Layer
+from .layer  mport Layer
 
-import libtwml
-import numpy as np
+ mport l btwml
+ mport numpy as np
 
 
-class Isotonic(Layer):
+class  soton c(Layer):
   """
-  This layer is created by the IsotonicCalibrator.
-  Typically it is used intead of sigmoid activation on the output unit.
+  T  layer  s created by t   soton cCal brator.
+  Typ cally    s used  ntead of s gmo d act vat on on t  output un .
 
-  Arguments:
-    n_unit:
-      number of input units to the layer (same as number of output units).
-    n_bin:
-      number of bins used for isotonic calibration.
-      More bins means a more precise isotonic function.
-      Less bins means a more regularized isotonic function.
-    xs_input:
-      A tensor containing the boundaries of the bins.
-    ys_input:
-      A tensor containing calibrated values for the corresponding bins.
+  Argu nts:
+    n_un :
+      number of  nput un s to t  layer (sa  as number of output un s).
+    n_b n:
+      number of b ns used for  soton c cal brat on.
+      More b ns  ans a more prec se  soton c funct on.
+      Less b ns  ans a more regular zed  soton c funct on.
+    xs_ nput:
+      A tensor conta n ng t  boundar es of t  b ns.
+    ys_ nput:
+      A tensor conta n ng cal brated values for t  correspond ng b ns.
 
   Output:
       output:
-        A layer containing calibrated probabilities with same shape and size as input.
-  Expected Sizes:
-      xs_input, ys_input:
-        [n_unit, n_bin].
+        A layer conta n ng cal brated probab l  es w h sa  shape and s ze as  nput.
+  Expected S zes:
+      xs_ nput, ys_ nput:
+        [n_un , n_b n].
   Expected Types:
-      xs_input, ys_input:
-        same as input.
+      xs_ nput, ys_ nput:
+        sa  as  nput.
   """
 
-  def __init__(self, n_unit, n_bin, xs_input=None, ys_input=None, **kwargs):
-    super(Isotonic, self).__init__(**kwargs)
+  def __ n __(self, n_un , n_b n, xs_ nput=None, ys_ nput=None, **kwargs):
+    super( soton c, self).__ n __(**kwargs)
 
-    self._n_unit = n_unit
-    self._n_bin = n_bin
+    self._n_un  = n_un 
+    self._n_b n = n_b n
 
-    self.xs_input = np.empty([n_unit, n_bin], dtype=np.float32) if xs_input is None else xs_input
-    self.ys_input = np.empty([n_unit, n_bin], dtype=np.float32) if ys_input is None else ys_input
+    self.xs_ nput = np.empty([n_un , n_b n], dtype=np.float32)  f xs_ nput  s None else xs_ nput
+    self.ys_ nput = np.empty([n_un , n_b n], dtype=np.float32)  f ys_ nput  s None else ys_ nput
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raises NotImplementedError.
+    Ra ses Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the variables of the layer."""
+  def bu ld(self,  nput_shape):  # pyl nt: d sable=unused-argu nt
+    """Creates t  var ables of t  layer."""
 
-    self.built = True
+    self.bu lt = True
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  def call(self,  nputs, **kwargs):  # pyl nt: d sable=unused-argu nt
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
-      inputs: input tensor(s).
+    Argu nts:
+       nputs:  nput tensor(s).
 
     Returns:
-      The output from the layer
+      T  output from t  layer
     """
-    calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.xs_input, self.ys_input)
-    return calibrate_op
+    cal brate_op = l btwml.ops. soton c_cal brat on( nputs, self.xs_ nput, self.ys_ nput)
+    return cal brate_op

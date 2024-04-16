@@ -1,99 +1,99 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
+ mport com.tw ter.search.earlyb rd.search.quer es.S nceMax DF lter;
 
-public class SearchResultsInfo {
-  public static final long NO_ID = SinceMaxIDFilter.NO_FILTER;
-  public static final int NO_TIME = -1;
+publ c class SearchResults nfo {
+  publ c stat c f nal long NO_ D = S nceMax DF lter.NO_F LTER;
+  publ c stat c f nal  nt NO_T ME = -1;
 
-  private int numHitsProcessed = 0;
-  private int numSearchedSegments = 0;
+  pr vate  nt numH sProcessed = 0;
+  pr vate  nt numSearc dSeg nts = 0;
 
-  private boolean earlyTerminated = false;
-  private String earlyTerminationReason = null;
+  pr vate boolean earlyTerm nated = false;
+  pr vate Str ng earlyTerm nat onReason = null;
 
-  private long maxSearchedStatusID = NO_ID;
-  private long minSearchedStatusID = NO_ID;
+  pr vate long maxSearc dStatus D = NO_ D;
+  pr vate long m nSearc dStatus D = NO_ D;
 
-  private int maxSearchedTime = NO_TIME;
-  private int minSearchedTime = NO_TIME;
+  pr vate  nt maxSearc dT   = NO_T ME;
+  pr vate  nt m nSearc dT   = NO_T ME;
 
-  // Map from time thresholds (in milliseconds) to number of results more recent than this period.
-  protected final Map<Long, Integer> hitCounts = Maps.newHashMap();
+  // Map from t   thresholds ( n m ll seconds) to number of results more recent than t  per od.
+  protected f nal Map<Long,  nteger> h Counts = Maps.newHashMap();
 
-  public final int getNumHitsProcessed() {
-    return numHitsProcessed;
+  publ c f nal  nt getNumH sProcessed() {
+    return numH sProcessed;
   }
 
-  public final void setNumHitsProcessed(int numHitsProcessed) {
-    this.numHitsProcessed = numHitsProcessed;
+  publ c f nal vo d setNumH sProcessed( nt numH sProcessed) {
+    t .numH sProcessed = numH sProcessed;
   }
 
-  public final int getNumSearchedSegments() {
-    return numSearchedSegments;
+  publ c f nal  nt getNumSearc dSeg nts() {
+    return numSearc dSeg nts;
   }
 
-  public final void setNumSearchedSegments(int numSearchedSegments) {
-    this.numSearchedSegments = numSearchedSegments;
+  publ c f nal vo d setNumSearc dSeg nts( nt numSearc dSeg nts) {
+    t .numSearc dSeg nts = numSearc dSeg nts;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  publ c f nal long getMaxSearc dStatus D() {
+    return maxSearc dStatus D;
   }
 
-  public final long getMinSearchedStatusID() {
-    return minSearchedStatusID;
+  publ c f nal long getM nSearc dStatus D() {
+    return m nSearc dStatus D;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  publ c f nal  nt getMaxSearc dT  () {
+    return maxSearc dT  ;
   }
 
-  public final int getMinSearchedTime() {
-    return minSearchedTime;
+  publ c f nal  nt getM nSearc dT  () {
+    return m nSearc dT  ;
   }
 
-  public boolean isSetSearchedStatusIDs() {
-    return maxSearchedStatusID != NO_ID && minSearchedStatusID != NO_ID;
+  publ c boolean  sSetSearc dStatus Ds() {
+    return maxSearc dStatus D != NO_ D && m nSearc dStatus D != NO_ D;
   }
 
-  public boolean isSetSearchedTimes() {
-    return maxSearchedTime != NO_TIME && minSearchedTime != NO_TIME;
+  publ c boolean  sSetSearc dT  s() {
+    return maxSearc dT   != NO_T ME && m nSearc dT   != NO_T ME;
   }
 
-  public void setMaxSearchedStatusID(long maxSearchedStatusID) {
-    this.maxSearchedStatusID = maxSearchedStatusID;
+  publ c vo d setMaxSearc dStatus D(long maxSearc dStatus D) {
+    t .maxSearc dStatus D = maxSearc dStatus D;
   }
 
-  public void setMinSearchedStatusID(long minSearchedStatusID) {
-    this.minSearchedStatusID = minSearchedStatusID;
+  publ c vo d setM nSearc dStatus D(long m nSearc dStatus D) {
+    t .m nSearc dStatus D = m nSearc dStatus D;
   }
 
-  public void setMaxSearchedTime(int maxSearchedTime) {
-    this.maxSearchedTime = maxSearchedTime;
+  publ c vo d setMaxSearc dT  ( nt maxSearc dT  ) {
+    t .maxSearc dT   = maxSearc dT  ;
   }
 
-  public void setMinSearchedTime(int minSearchedTime) {
-    this.minSearchedTime = minSearchedTime;
+  publ c vo d setM nSearc dT  ( nt m nSearc dT  ) {
+    t .m nSearc dT   = m nSearc dT  ;
   }
 
-  public void setEarlyTerminated(boolean earlyTerminated) {
-    this.earlyTerminated = earlyTerminated;
+  publ c vo d setEarlyTerm nated(boolean earlyTerm nated) {
+    t .earlyTerm nated = earlyTerm nated;
   }
 
-  public boolean isEarlyTerminated() {
-    return earlyTerminated;
+  publ c boolean  sEarlyTerm nated() {
+    return earlyTerm nated;
   }
 
-  public String getEarlyTerminationReason() {
-    return earlyTerminationReason;
+  publ c Str ng getEarlyTerm nat onReason() {
+    return earlyTerm nat onReason;
   }
 
-  public void setEarlyTerminationReason(String earlyTerminationReason) {
-    this.earlyTerminationReason = earlyTerminationReason;
+  publ c vo d setEarlyTerm nat onReason(Str ng earlyTerm nat onReason) {
+    t .earlyTerm nat onReason = earlyTerm nat onReason;
   }
 }

@@ -2,192 +2,192 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/full_type.proto";
-import "tensorflow/core/framework/resource_handle.proto";
-import "tensorflow/core/framework/types.proto";
+ mport "tensorflow/core/fra work/attr_value.proto";
+ mport "tensorflow/core/fra work/full_type.proto";
+ mport "tensorflow/core/fra work/res ce_handle.proto";
+ mport "tensorflow/core/fra work/types.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "OpDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/op_def_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "OpDefProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/op_def_go_proto";
 
-// Defines an operation. A NodeDef in a GraphDef specifies an Op by
-// using the "op" field which should match the name of a OpDef.
-// LINT.IfChange
-message OpDef {
-  // Op names starting with an underscore are reserved for internal use.
-  // Names should be CamelCase and match the regexp "[A-Z][a-zA-Z0-9>_]*".
-  string name = 1;
+// Def nes an operat on. A NodeDef  n a GraphDef spec f es an Op by
+// us ng t  "op" f eld wh ch should match t  na  of a OpDef.
+// L NT. fChange
+ ssage OpDef {
+  // Op na s start ng w h an underscore are reserved for  nternal use.
+  // Na s should be Ca lCase and match t  regexp "[A-Z][a-zA-Z0-9>_]*".
+  str ng na  = 1;
 
-  // For describing inputs and outputs.
-  message ArgDef {
-    // Name for the input/output.  Should match the regexp "[a-z][a-z0-9_]*".
-    string name = 1;
+  // For descr b ng  nputs and outputs.
+   ssage ArgDef {
+    // Na  for t   nput/output.  Should match t  regexp "[a-z][a-z0-9_]*".
+    str ng na  = 1;
 
-    // Human readable description.
-    string description = 2;
+    // Human readable descr pt on.
+    str ng descr pt on = 2;
 
-    // Describes the type of one or more tensors that are accepted/produced
-    // by this input/output arg.  The only legal combinations are:
-    // * For a single tensor: either the "type" field is set or the
-    //   "type_attr" field is set to the name of an attr with type "type".
-    // * For a sequence of tensors with the same type: the "number_attr"
-    //   field will be set to the name of an attr with type "int", and
-    //   either the "type" or "type_attr" field will be set as for
-    //   single tensors.
-    // * For a sequence of tensors, the "type_list_attr" field will be set
-    //   to the name of an attr with type "list(type)".
+    // Descr bes t  type of one or more tensors that are accepted/produced
+    // by t   nput/output arg.  T  only legal comb nat ons are:
+    // * For a s ngle tensor: e  r t  "type" f eld  s set or t 
+    //   "type_attr" f eld  s set to t  na  of an attr w h type "type".
+    // * For a sequence of tensors w h t  sa  type: t  "number_attr"
+    //   f eld w ll be set to t  na  of an attr w h type " nt", and
+    //   e  r t  "type" or "type_attr" f eld w ll be set as for
+    //   s ngle tensors.
+    // * For a sequence of tensors, t  "type_l st_attr" f eld w ll be set
+    //   to t  na  of an attr w h type "l st(type)".
     DataType type = 3;
-    string type_attr = 4;    // if specified, attr must have type "type"
-    string number_attr = 5;  // if specified, attr must have type "int"
-    // If specified, attr must have type "list(type)", and none of
-    // type, type_attr, and number_attr may be specified.
-    string type_list_attr = 6;
+    str ng type_attr = 4;    //  f spec f ed, attr must have type "type"
+    str ng number_attr = 5;  //  f spec f ed, attr must have type " nt"
+    //  f spec f ed, attr must have type "l st(type)", and none of
+    // type, type_attr, and number_attr may be spec f ed.
+    str ng type_l st_attr = 6;
 
-    // The handle data for resource inputs.
-    repeated ResourceHandleProto.DtypeAndShape handle_data = 7;
+    // T  handle data for res ce  nputs.
+    repeated Res ceHandleProto.DtypeAndShape handle_data = 7;
 
-    // For inputs: if true, the inputs are required to be refs.
-    //   By default, inputs can be either refs or non-refs.
-    // For outputs: if true, outputs are refs, otherwise they are not.
-    bool is_ref = 16;
+    // For  nputs:  f true, t   nputs are requ red to be refs.
+    //   By default,  nputs can be e  r refs or non-refs.
+    // For outputs:  f true, outputs are refs, ot rw se t y are not.
+    bool  s_ref = 16;
 
-    // Experimental. Full type declaration for this argument.
-    // The full type specification combines type, type_attr, type_list_attr,
-    // etc. into a unified representation.
-    // This declaration may contain non-concrete types (for example,
-    // Tensor<TypeVar<'T'>> is a valid type declaration.
+    // Exper  ntal. Full type declarat on for t  argu nt.
+    // T  full type spec f cat on comb nes type, type_attr, type_l st_attr,
+    // etc.  nto a un f ed representat on.
+    // T  declarat on may conta n non-concrete types (for example,
+    // Tensor<TypeVar<'T'>>  s a val d type declarat on.
     //
-    // Note: this is a transient field. The long-term aim is to represent the
-    // entire OpDef as a single type: a callable. In that context, this field is
-    // just the type of a single argument.
-    FullTypeDef experimental_full_type = 17;
+    // Note: t   s a trans ent f eld. T  long-term a m  s to represent t 
+    // ent re OpDef as a s ngle type: a callable.  n that context, t  f eld  s
+    // just t  type of a s ngle argu nt.
+    FullTypeDef exper  ntal_full_type = 17;
   }
 
-  // Description of the input(s).
-  repeated ArgDef input_arg = 2;
+  // Descr pt on of t   nput(s).
+  repeated ArgDef  nput_arg = 2;
 
-  // Description of the output(s).
+  // Descr pt on of t  output(s).
   repeated ArgDef output_arg = 3;
 
-  // Named control outputs for this operation. Useful only for composite
-  // operations (i.e. functions) which want to name different control outputs.
-  repeated string control_output = 20;
+  // Na d control outputs for t  operat on. Useful only for compos e
+  // operat ons ( .e. funct ons) wh ch want to na  d fferent control outputs.
+  repeated str ng control_output = 20;
 
-  // Description of the graph-construction-time configuration of this
-  // Op.  That is to say, this describes the attr fields that will
-  // be specified in the NodeDef.
-  message AttrDef {
-    // A descriptive name for the argument.  May be used, e.g. by the
-    // Python client, as a keyword argument name, and so should match
-    // the regexp "[a-z][a-z0-9_]+".
-    string name = 1;
+  // Descr pt on of t  graph-construct on-t   conf gurat on of t 
+  // Op.  That  s to say, t  descr bes t  attr f elds that w ll
+  // be spec f ed  n t  NodeDef.
+   ssage AttrDef {
+    // A descr pt ve na  for t  argu nt.  May be used, e.g. by t 
+    // Python cl ent, as a keyword argu nt na , and so should match
+    // t  regexp "[a-z][a-z0-9_]+".
+    str ng na  = 1;
 
-    // One of the type names from attr_value.proto ("string", "list(string)",
-    // "int", etc.).
-    string type = 2;
+    // One of t  type na s from attr_value.proto ("str ng", "l st(str ng)",
+    // " nt", etc.).
+    str ng type = 2;
 
-    // A reasonable default for this attribute if the user does not supply
-    // a value.  If not specified, the user must supply a value.
+    // A reasonable default for t  attr bute  f t  user does not supply
+    // a value.   f not spec f ed, t  user must supply a value.
     AttrValue default_value = 3;
 
-    // Human-readable description.
-    string description = 4;
+    // Human-readable descr pt on.
+    str ng descr pt on = 4;
 
-    // TODO(josh11b): bool is_optional?
+    // TODO(josh11b): bool  s_opt onal?
 
-    // --- Constraints ---
-    // These constraints are only in effect if specified.  Default is no
-    // constraints.
+    // --- Constra nts ---
+    // T se constra nts are only  n effect  f spec f ed.  Default  s no
+    // constra nts.
 
-    // For type == "int", this is a minimum value.  For "list(___)"
-    // types, this is the minimum length.
-    bool has_minimum = 5;
-    int64 minimum = 6;
+    // For type == " nt", t   s a m n mum value.  For "l st(___)"
+    // types, t   s t  m n mum length.
+    bool has_m n mum = 5;
+     nt64 m n mum = 6;
 
-    // The set of allowed values.  Has type that is the "list" version
-    // of the "type" field above (uses the "list" field of AttrValue).
-    // If type == "type" or "list(type)" above, then the "type" field
-    // of "allowed_values.list" has the set of allowed DataTypes.
-    // If type == "string" or "list(string)", then the "s" field of
-    // "allowed_values.list" has the set of allowed strings.
-    AttrValue allowed_values = 7;
+    // T  set of allo d values.  Has type that  s t  "l st" vers on
+    // of t  "type" f eld above (uses t  "l st" f eld of AttrValue).
+    //  f type == "type" or "l st(type)" above, t n t  "type" f eld
+    // of "allo d_values.l st" has t  set of allo d DataTypes.
+    //  f type == "str ng" or "l st(str ng)", t n t  "s" f eld of
+    // "allo d_values.l st" has t  set of allo d str ngs.
+    AttrValue allo d_values = 7;
   }
   repeated AttrDef attr = 4;
 
-  // Optional deprecation based on GraphDef versions.
-  OpDeprecation deprecation = 8;
+  // Opt onal deprecat on based on GraphDef vers ons.
+  OpDeprecat on deprecat on = 8;
 
-  // One-line human-readable description of what the Op does.
-  string summary = 5;
+  // One-l ne human-readable descr pt on of what t  Op does.
+  str ng summary = 5;
 
-  // Additional, longer human-readable description of what the Op does.
-  string description = 6;
-
-  // -------------------------------------------------------------------------
-  // Which optimizations this operation can participate in.
-
-  // True if the operation is commutative ("op(a,b) == op(b,a)" for all inputs)
-  bool is_commutative = 18;
-
-  // If is_aggregate is true, then this operation accepts N >= 2
-  // inputs and produces 1 output all of the same type.  Should be
-  // associative and commutative, and produce output with the same
-  // shape as the input.  The optimizer may replace an aggregate op
-  // taking input from multiple devices with a tree of aggregate ops
-  // that aggregate locally within each device (and possibly within
-  // groups of nearby devices) before communicating.
-  // TODO(josh11b): Implement that optimization.
-  bool is_aggregate = 16;  // for things like add
-
-  // Other optimizations go here, like
-  //   can_alias_input, rewrite_when_output_unused, partitioning_strategy, etc.
+  // Add  onal, longer human-readable descr pt on of what t  Op does.
+  str ng descr pt on = 6;
 
   // -------------------------------------------------------------------------
-  // Optimization constraints.
+  // Wh ch opt m zat ons t  operat on can part c pate  n.
 
-  // Ops are marked as stateful if their behavior depends on some state beyond
-  // their input tensors (e.g. variable reading op) or if they have
-  // a side-effect (e.g. printing or asserting ops). Equivalently, stateless ops
-  // must always produce the same output for the same input and have
-  // no side-effects.
+  // True  f t  operat on  s commutat ve ("op(a,b) == op(b,a)" for all  nputs)
+  bool  s_commutat ve = 18;
+
+  //  f  s_aggregate  s true, t n t  operat on accepts N >= 2
+  //  nputs and produces 1 output all of t  sa  type.  Should be
+  // assoc at ve and commutat ve, and produce output w h t  sa 
+  // shape as t   nput.  T  opt m zer may replace an aggregate op
+  // tak ng  nput from mult ple dev ces w h a tree of aggregate ops
+  // that aggregate locally w h n each dev ce (and poss bly w h n
+  // groups of nearby dev ces) before commun cat ng.
+  // TODO(josh11b):  mple nt that opt m zat on.
+  bool  s_aggregate = 16;  // for th ngs l ke add
+
+  // Ot r opt m zat ons go  re, l ke
+  //   can_al as_ nput, rewr e_w n_output_unused, part  on ng_strategy, etc.
+
+  // -------------------------------------------------------------------------
+  // Opt m zat on constra nts.
+
+  // Ops are marked as stateful  f t  r behav or depends on so  state beyond
+  // t  r  nput tensors (e.g. var able read ng op) or  f t y have
+  // a s de-effect (e.g. pr nt ng or assert ng ops). Equ valently, stateless ops
+  // must always produce t  sa  output for t  sa   nput and have
+  // no s de-effects.
   //
-  // By default Ops may be moved between devices.  Stateful ops should
-  // either not be moved, or should only be moved if that state can also
-  // be moved (e.g. via some sort of save / restore).
-  // Stateful ops are guaranteed to never be optimized away by Common
-  // Subexpression Elimination (CSE).
-  bool is_stateful = 17;  // for things like variables, queue
+  // By default Ops may be moved bet en dev ces.  Stateful ops should
+  // e  r not be moved, or should only be moved  f that state can also
+  // be moved (e.g. v a so  sort of save / restore).
+  // Stateful ops are guaranteed to never be opt m zed away by Common
+  // Subexpress on El m nat on (CSE).
+  bool  s_stateful = 17;  // for th ngs l ke var ables, queue
 
   // -------------------------------------------------------------------------
-  // Non-standard options.
+  // Non-standard opt ons.
 
-  // By default, all inputs to an Op must be initialized Tensors.  Ops
-  // that may initialize tensors for the first time should set this
-  // field to true, to allow the Op to take an uninitialized Tensor as
-  // input.
-  bool allows_uninitialized_input = 19;  // for Assign, etc.
+  // By default, all  nputs to an Op must be  n  al zed Tensors.  Ops
+  // that may  n  al ze tensors for t  f rst t   should set t 
+  // f eld to true, to allow t  Op to take an un n  al zed Tensor as
+  //  nput.
+  bool allows_un n  al zed_ nput = 19;  // for Ass gn, etc.
 
-  // Indicates whether the op implementation uses distributed communication.
-  // If True, the op is allowed to return errors for network disconnection and
-  // trigger TF network failure handling logics.
-  bool is_distributed_communication = 21;
+  //  nd cates w t r t  op  mple ntat on uses d str buted commun cat on.
+  //  f True, t  op  s allo d to return errors for network d sconnect on and
+  // tr gger TF network fa lure handl ng log cs.
+  bool  s_d str buted_commun cat on = 21;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/core/framework/op_def_util.cc)
+// L NT.T nChange(
+//     https://www.tensorflow.org/code/tensorflow/core/fra work/op_def_ut l.cc)
 
-// Information about version-dependent deprecation of an op
-message OpDeprecation {
-  // First GraphDef version at which the op is disallowed.
-  int32 version = 1;
+//  nformat on about vers on-dependent deprecat on of an op
+ ssage OpDeprecat on {
+  // F rst GraphDef vers on at wh ch t  op  s d sallo d.
+   nt32 vers on = 1;
 
-  // Explanation of why it was deprecated and what to use instead.
-  string explanation = 2;
+  // Explanat on of why   was deprecated and what to use  nstead.
+  str ng explanat on = 2;
 }
 
-// A collection of OpDefs
-message OpList {
+// A collect on of OpDefs
+ ssage OpL st {
   repeated OpDef op = 1;
 }

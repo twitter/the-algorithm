@@ -1,90 +1,90 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.Condition.DeactivatedAuthor
-import com.twitter.visibility.rules.Condition.ErasedAuthor
-import com.twitter.visibility.rules.Condition.SuspendedAuthor
-import com.twitter.visibility.rules.Condition.DmEventInOneToOneConversationWithUnavailableUser
-import com.twitter.visibility.rules.Condition.DmEventIsBeforeLastClearedEvent
-import com.twitter.visibility.rules.Condition.DmEventIsBeforeJoinConversationEvent
-import com.twitter.visibility.rules.Condition.DmEventIsDeleted
-import com.twitter.visibility.rules.Condition.DmEventIsHidden
-import com.twitter.visibility.rules.Condition.LastMessageReadUpdateDmEvent
-import com.twitter.visibility.rules.Condition.MessageCreateDmEvent
-import com.twitter.visibility.rules.Condition.PerspectivalJoinConversationDmEvent
-import com.twitter.visibility.rules.Condition.ViewerIsDmEventInitiatingUser
-import com.twitter.visibility.rules.Condition.ViewerIsDmConversationParticipant
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.CsFeedbackDismissedDmEvent
-import com.twitter.visibility.rules.Condition.CsFeedbackSubmittedDmEvent
-import com.twitter.visibility.rules.Condition.JoinConversationDmEvent
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.TrustConversationDmEvent
-import com.twitter.visibility.rules.Condition.WelcomeMessageCreateDmEvent
-import com.twitter.visibility.rules.Condition.DmEventInOneToOneConversation
-import com.twitter.visibility.rules.Condition.ConversationCreateDmEvent
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
+ mport com.tw ter.v s b l y.rules.Cond  on.Deact vatedAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.ErasedAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.SuspendedAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.DmEvent nOneToOneConversat onW hUnava lableUser
+ mport com.tw ter.v s b l y.rules.Cond  on.DmEvent sBeforeLastClearedEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.DmEvent sBeforeJo nConversat onEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.DmEvent sDeleted
+ mport com.tw ter.v s b l y.rules.Cond  on.DmEvent sH dden
+ mport com.tw ter.v s b l y.rules.Cond  on.Last ssageReadUpdateDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on. ssageCreateDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.Perspect valJo nConversat onDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.V e r sDmEvent n  at ngUser
+ mport com.tw ter.v s b l y.rules.Cond  on.V e r sDmConversat onPart c pant
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on.CsFeedbackD sm ssedDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.CsFeedbackSubm tedDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.Jo nConversat onDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.Or
+ mport com.tw ter.v s b l y.rules.Cond  on.TrustConversat onDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on. lco  ssageCreateDmEvent
+ mport com.tw ter.v s b l y.rules.Cond  on.DmEvent nOneToOneConversat on
+ mport com.tw ter.v s b l y.rules.Cond  on.Conversat onCreateDmEvent
 
 object DmEventRules {
 
-  object MessageCreateEventWithUnavailableSenderDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
-        Or(SuspendedAuthor, DeactivatedAuthor, ErasedAuthor)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  object  ssageCreateEventW hUnava lableSenderDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
+        Or(SuspendedAuthor, Deact vatedAuthor, ErasedAuthor)) {
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 
-  object WelcomeMessageCreateEventOnlyVisibleToRecipientDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
-        And(ViewerIsDmEventInitiatingUser, WelcomeMessageCreateDmEvent)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  object  lco  ssageCreateEventOnlyV s bleToRec p entDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
+        And(V e r sDmEvent n  at ngUser,  lco  ssageCreateDmEvent)) {
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 
-  object InaccessibleDmEventDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
+  object  naccess bleDmEventDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
         Or(
-          Not(ViewerIsDmConversationParticipant),
-          DmEventIsBeforeLastClearedEvent,
-          DmEventIsBeforeJoinConversationEvent)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+          Not(V e r sDmConversat onPart c pant),
+          DmEvent sBeforeLastClearedEvent,
+          DmEvent sBeforeJo nConversat onEvent)) {
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 
-  object HiddenAndDeletedDmEventDropRule
-      extends RuleWithConstantAction(Drop(Unspecified), Or(DmEventIsDeleted, DmEventIsHidden)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  object H ddenAndDeletedDmEventDropRule
+      extends RuleW hConstantAct on(Drop(Unspec f ed), Or(DmEvent sDeleted, DmEvent sH dden)) {
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 
-  object NonPerspectivalDmEventDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
+  object NonPerspect valDmEventDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
         Or(
-          And(Not(PerspectivalJoinConversationDmEvent), JoinConversationDmEvent),
+          And(Not(Perspect valJo nConversat onDmEvent), Jo nConversat onDmEvent),
           And(
-            Not(ViewerIsDmEventInitiatingUser),
-            Or(TrustConversationDmEvent, CsFeedbackSubmittedDmEvent, CsFeedbackDismissedDmEvent))
+            Not(V e r sDmEvent n  at ngUser),
+            Or(TrustConversat onDmEvent, CsFeedbackSubm tedDmEvent, CsFeedbackD sm ssedDmEvent))
         )
       ) {
-    override def enableFailClosed = Seq(RuleParams.True)
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 
-  object DmEventInOneToOneConversationWithUnavailableUserDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
+  object DmEvent nOneToOneConversat onW hUnava lableUserDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
         And(
-          Or(MessageCreateDmEvent, LastMessageReadUpdateDmEvent),
-          DmEventInOneToOneConversationWithUnavailableUser)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+          Or( ssageCreateDmEvent, Last ssageReadUpdateDmEvent),
+          DmEvent nOneToOneConversat onW hUnava lableUser)) {
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 
-  object GroupEventInOneToOneConversationDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
+  object GroupEvent nOneToOneConversat onDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
         And(
-          Or(JoinConversationDmEvent, ConversationCreateDmEvent),
-          DmEventInOneToOneConversation)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+          Or(Jo nConversat onDmEvent, Conversat onCreateDmEvent),
+          DmEvent nOneToOneConversat on)) {
+    overr de def enableFa lClosed = Seq(RuleParams.True)
   }
 }

@@ -1,108 +1,108 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.bijection.Injection
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.io.Buf
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.Timestamp
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.FullBufKey
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan_kv.ManhattanEndpointStore
-import com.twitter.strato.catalog.Version
-import com.twitter.strato.config.MValEncoding
-import com.twitter.strato.config.NativeEncoding
-import com.twitter.strato.config.PkeyLkey2
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Type
-import com.twitter.strato.mh.ManhattanInjections
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. o.Buf
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.Pers stentT etEmbedd ngStore.T  stamp
+ mport com.tw ter.s mclusters_v2.thr ftscala.Pers stentS mClustersEmbedd ng
+ mport com.tw ter.storage.cl ent.manhattan.kv.Guarantee
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo ntBu lder
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.FullBufKey
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ValueDescr ptor
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan_kv.ManhattanEndpo ntStore
+ mport com.tw ter.strato.catalog.Vers on
+ mport com.tw ter.strato.conf g.MValEncod ng
+ mport com.tw ter.strato.conf g.Nat veEncod ng
+ mport com.tw ter.strato.conf g.PkeyLkey2
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Type
+ mport com.tw ter.strato.mh.Manhattan nject ons
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
 object ManhattanFromStratoStore {
-  /* This enables reading from a MH store where the data is written by Strato. Strato uses a unique
-  encoding (Conv) which needs to be reconstructed for each MH store based on the type of data that
-  is written to it. Once that encoding is generated on start-up, we can read from the store like
-  any other ReadableStore.
+  /* T  enables read ng from a MH store w re t  data  s wr ten by Strato. Strato uses a un que
+  encod ng (Conv) wh ch needs to be reconstructed for each MH store based on t  type of data that
+   s wr ten to  . Once that encod ng  s generated on start-up,   can read from t  store l ke
+  any ot r ReadableStore.
    */
-  def createPersistentTweetStore(
-    dataset: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): ReadableStore[(TweetId, Timestamp), PersistentSimClustersEmbedding] = {
-    val appId = "simclusters_embeddings_prod"
-    val dest = "/s/manhattan/omega.native-thrift"
+  def createPers stentT etStore(
+    dataset: Str ng,
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): ReadableStore[(T et d, T  stamp), Pers stentS mClustersEmbedd ng] = {
+    val app d = "s mclusters_embedd ngs_prod"
+    val dest = "/s/manhattan/o ga.nat ve-thr ft"
 
-    val endpoint = createMhEndpoint(
-      appId = appId,
+    val endpo nt = createMhEndpo nt(
+      app d = app d,
       dest = dest,
       mhMtlsParams = mhMtlsParams,
-      statsReceiver = statsReceiver)
+      statsRece ver = statsRece ver)
 
     val (
-      keyInj: Injection[(TweetId, Timestamp), FullBufKey],
-      valueDesc: ValueDescriptor.EmptyValue[PersistentSimClustersEmbedding]) =
-      injectionsFromPkeyLkeyValueStruct[TweetId, Timestamp, PersistentSimClustersEmbedding](
+      key nj:  nject on[(T et d, T  stamp), FullBufKey],
+      valueDesc: ValueDescr ptor.EmptyValue[Pers stentS mClustersEmbedd ng]) =
+       nject onsFromPkeyLkeyValueStruct[T et d, T  stamp, Pers stentS mClustersEmbedd ng](
         dataset = dataset,
         pkType = Type.Long,
         lkType = Type.Long)
 
-    ManhattanEndpointStore
-      .readable[(TweetId, Timestamp), PersistentSimClustersEmbedding, FullBufKey](
-        endpoint = endpoint,
-        keyDescBuilder = keyInj,
+    ManhattanEndpo ntStore
+      .readable[(T et d, T  stamp), Pers stentS mClustersEmbedd ng, FullBufKey](
+        endpo nt = endpo nt,
+        keyDescBu lder = key nj,
         emptyValDesc = valueDesc)
   }
 
-  private def createMhEndpoint(
-    appId: String,
-    dest: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    statsReceiver: StatsReceiver = NullStatsReceiver
+  pr vate def createMhEndpo nt(
+    app d: Str ng,
+    dest: Str ng,
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    statsRece ver: StatsRece ver = NullStatsRece ver
   ) = {
-    val mhc = ManhattanKVClient.memoizedByDest(
-      appId = appId,
+    val mhc = ManhattanKVCl ent. mo zedByDest(
+      app d = app d,
       dest = dest,
       mtlsParams = mhMtlsParams
     )
 
-    ManhattanKVEndpointBuilder(mhc)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .statsReceiver(statsReceiver)
-      .build()
+    ManhattanKVEndpo ntBu lder(mhc)
+      .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+      .statsRece ver(statsRece ver)
+      .bu ld()
   }
 
-  private def injectionsFromPkeyLkeyValueStruct[PK: Conv, LK: Conv, V <: ThriftStruct: Manifest](
-    dataset: String,
+  pr vate def  nject onsFromPkeyLkeyValueStruct[PK: Conv, LK: Conv, V <: Thr ftStruct: Man fest](
+    dataset: Str ng,
     pkType: Type,
     lkType: Type
-  ): (Injection[(PK, LK), FullBufKey], ValueDescriptor.EmptyValue[V]) = {
-    // Strato uses a unique encoding (Conv) so we need to rebuild that based on the pkey, lkey and
-    // value type before converting it to the Manhattan injections for key -> FullBufKey and
+  ): ( nject on[(PK, LK), FullBufKey], ValueDescr ptor.EmptyValue[V]) = {
+    // Strato uses a un que encod ng (Conv) so   need to rebu ld that based on t  pkey, lkey and
+    // value type before convert ng   to t  Manhattan  nject ons for key -> FullBufKey and
     // value -> Buf
     val valueConv: Conv[V] = ScroogeConv.fromStruct[V]
 
-    val mhEncodingMapping = PkeyLkey2(
+    val mhEncod ngMapp ng = PkeyLkey2(
       pkey = pkType,
       lkey = lkType,
       value = valueConv.t,
-      pkeyEncoding = NativeEncoding,
-      lkeyEncoding = NativeEncoding,
-      valueEncoding = MValEncoding()
+      pkeyEncod ng = Nat veEncod ng,
+      lkeyEncod ng = Nat veEncod ng,
+      valueEncod ng = MValEncod ng()
     )
 
-    val (keyInj: Injection[(PK, LK), FullBufKey], valueInj: Injection[V, Buf], _, _) =
-      ManhattanInjections.fromPkeyLkey[PK, LK, V](mhEncodingMapping, dataset, Version.Default)
+    val (key nj:  nject on[(PK, LK), FullBufKey], value nj:  nject on[V, Buf], _, _) =
+      Manhattan nject ons.fromPkeyLkey[PK, LK, V](mhEncod ngMapp ng, dataset, Vers on.Default)
 
-    val valDesc: ValueDescriptor.EmptyValue[V] = ValueDescriptor.EmptyValue(valueInj)
+    val valDesc: ValueDescr ptor.EmptyValue[V] = ValueDescr ptor.EmptyValue(value nj)
 
-    (keyInj, valDesc)
+    (key nj, valDesc)
   }
 }

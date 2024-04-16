@@ -1,38 +1,38 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelines.earlybird.common.utils.EarlybirdFeaturesHydrator
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l nes.earlyb rd.common.ut ls.Earlyb rdFeaturesHydrator
+ mport com.tw ter.ut l.Future
 
-object InNetworkTweetsSearchFeaturesHydrationTransform
+object  nNetworkT etsSearchFeaturesHydrat onTransform
     extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  overr de def apply(
+    request: HydratedCand datesAndFeaturesEnvelope
+  ): Future[HydratedCand datesAndFeaturesEnvelope] = {
     Future
-      .join(
-        request.candidateEnvelope.followGraphData.followedUserIdsFuture,
-        request.candidateEnvelope.followGraphData.mutuallyFollowingUserIdsFuture
+      .jo n(
+        request.cand dateEnvelope.followGraphData.follo dUser dsFuture,
+        request.cand dateEnvelope.followGraphData.mutuallyFollow ngUser dsFuture
       ).map {
-        case (followedIds, mutuallyFollowingIds) =>
-          val featuresByTweetId = EarlybirdFeaturesHydrator.hydrate(
-            searcherUserId = request.candidateEnvelope.query.userId,
-            searcherProfileInfo = request.userProfileInfo,
-            followedUserIds = followedIds,
-            mutuallyFollowingUserIds = mutuallyFollowingIds,
+        case (follo d ds, mutuallyFollow ng ds) =>
+          val featuresByT et d = Earlyb rdFeaturesHydrator.hydrate(
+            searc rUser d = request.cand dateEnvelope.query.user d,
+            searc rProf le nfo = request.userProf le nfo,
+            follo dUser ds = follo d ds,
+            mutuallyFollow ngUser ds = mutuallyFollow ng ds,
             userLanguages = request.userLanguages,
-            uiLanguageCode = request.candidateEnvelope.query.deviceContext.flatMap(_.languageCode),
-            searchResults = request.candidateEnvelope.searchResults,
-            sourceTweetSearchResults = request.candidateEnvelope.sourceSearchResults,
-            tweets = request.candidateEnvelope.hydratedTweets.outerTweets,
-            sourceTweets = request.candidateEnvelope.sourceHydratedTweets.outerTweets
+            u LanguageCode = request.cand dateEnvelope.query.dev ceContext.flatMap(_.languageCode),
+            searchResults = request.cand dateEnvelope.searchResults,
+            s ceT etSearchResults = request.cand dateEnvelope.s ceSearchResults,
+            t ets = request.cand dateEnvelope.hydratedT ets.outerT ets,
+            s ceT ets = request.cand dateEnvelope.s ceHydratedT ets.outerT ets
           )
 
-          request.copy(features = featuresByTweetId)
+          request.copy(features = featuresByT et d)
       }
   }
 }

@@ -1,63 +1,63 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.common.base.Function;
+ mport com.tw ter.common.base.Funct on;
 
 /**
- * Class to keep String-Double of term vectors
- * It can calculate magnitude, dot product, and cosine similarity
+ * Class to keep Str ng-Double of term vectors
+ *   can calculate magn ude, dot product, and cos ne s m lar y
  */
-public class TermVector {
-  private static final double MIN_MAGNITUDE = 0.00001;
-  private final double magnitude;
-  private final ImmutableMap<String, Double> termWeights;
+publ c class TermVector {
+  pr vate stat c f nal double M N_MAGN TUDE = 0.00001;
+  pr vate f nal double magn ude;
+  pr vate f nal  mmutableMap<Str ng, Double> term  ghts;
 
-  /** Creates a new TermVector instance. */
-  public TermVector(Map<String, Double> termWeights) {
-    this.termWeights = ImmutableMap.copyOf(termWeights);
+  /** Creates a new TermVector  nstance. */
+  publ c TermVector(Map<Str ng, Double> term  ghts) {
+    t .term  ghts =  mmutableMap.copyOf(term  ghts);
     double sum = 0.0;
-    for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
+    for (Map.Entry<Str ng, Double> entry : term  ghts.entrySet()) {
       double value = entry.getValue();
       sum += value * value;
     }
-    magnitude = Math.sqrt(sum);
+    magn ude = Math.sqrt(sum);
   }
 
-  public ImmutableMap<String, Double> getTermWeights() {
-    return termWeights;
+  publ c  mmutableMap<Str ng, Double> getTerm  ghts() {
+    return term  ghts;
   }
 
-  public double getMagnitude() {
-    return magnitude;
+  publ c double getMagn ude() {
+    return magn ude;
   }
 
   /**
-   * Normalize term vector into unit magnitude
-   * @return           the unit normalized TermVector with magnitude equals 1
-   *                   return null if magnitude is very low
+   * Normal ze term vector  nto un  magn ude
+   * @return           t  un  normal zed TermVector w h magn ude equals 1
+   *                   return null  f magn ude  s very low
    */
-  public TermVector getUnitNormalized() {
-    if (magnitude < MIN_MAGNITUDE) {
+  publ c TermVector getUn Normal zed() {
+     f (magn ude < M N_MAGN TUDE) {
       return null;
     }
     return new TermVector(
-        Maps.transformValues(termWeights, (Function<Double, Double>) weight -> weight / magnitude));
+        Maps.transformValues(term  ghts, (Funct on<Double, Double>)   ght ->   ght / magn ude));
   }
 
   /**
-   * Calculate the dot product with another term vector
-   * @param other      the other term vector
-   * @return           the dot product of the two vectors
+   * Calculate t  dot product w h anot r term vector
+   * @param ot r      t  ot r term vector
+   * @return           t  dot product of t  two vectors
    */
-  public double getDotProduct(TermVector other) {
+  publ c double getDotProduct(TermVector ot r) {
     double sum = 0.0;
-    for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
-      Double value2 = other.termWeights.get(entry.getKey());
-      if (value2 != null) {
+    for (Map.Entry<Str ng, Double> entry : term  ghts.entrySet()) {
+      Double value2 = ot r.term  ghts.get(entry.getKey());
+       f (value2 != null) {
         sum += entry.getValue() * value2;
       }
     }
@@ -65,15 +65,15 @@ public class TermVector {
   }
 
   /**
-   * Calculate the cosine similarity of with another term vector
-   * @param other     the other term vector
-   * @return          the cosine similarity.
-   *                  if either has very small magnitude, it returns 0 (dotProduct close to 0)
+   * Calculate t  cos ne s m lar y of w h anot r term vector
+   * @param ot r     t  ot r term vector
+   * @return          t  cos ne s m lar y.
+   *                   f e  r has very small magn ude,   returns 0 (dotProduct close to 0)
    */
-  public double getCosineSimilarity(TermVector other) {
-    if (magnitude < MIN_MAGNITUDE || other.magnitude < MIN_MAGNITUDE) {
+  publ c double getCos neS m lar y(TermVector ot r) {
+     f (magn ude < M N_MAGN TUDE || ot r.magn ude < M N_MAGN TUDE) {
       return 0;
     }
-    return getDotProduct(other) / (magnitude * other.magnitude);
+    return getDotProduct(ot r) / (magn ude * ot r.magn ude);
   }
 }

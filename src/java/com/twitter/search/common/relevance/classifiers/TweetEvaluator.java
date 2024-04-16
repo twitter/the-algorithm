@@ -1,37 +1,37 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.tw ter.search.common.relevance.class f ers;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
 
 /**
- * Interface to perform quality evaluation for a single @TwitterMessage
- * object or a group of them.
+ *  nterface to perform qual y evaluat on for a s ngle @Tw ter ssage
+ * object or a group of t m.
  *
  */
-public abstract class TweetEvaluator {
+publ c abstract class T etEvaluator {
   /**
-   * Passed in TwitterMessage is examined and any extractable
-   * features are stored in TweetFeatures field of TwitterMessage.
+   * Passed  n Tw ter ssage  s exam ned and any extractable
+   * features are stored  n T etFeatures f eld of Tw ter ssage.
    *
-   * @param tweet TwitterMessage to perform classification on.
+   * @param t et Tw ter ssage to perform class f cat on on.
    */
-  public abstract void evaluate(final TwitterMessage tweet);
+  publ c abstract vo d evaluate(f nal Tw ter ssage t et);
 
   /**
-   * Classify a group of TwitterMessages and store the features in their corresponding
-   * TweetFeatures fields.
+   * Class fy a group of Tw ter ssages and store t  features  n t  r correspond ng
+   * T etFeatures f elds.
    *
-   * This default implementation just iterates through the map and classifies each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
+   * T  default  mple ntat on just  erates through t  map and class f es each
+   *  nd v dual t et. Batch ng for better performance,  f appl cable, can be  mple nted by
    * concrete subclasses.
    *
-   * @param tweets TwitterMessages to perform classification on.
+   * @param t ets Tw ter ssages to perform class f cat on on.
    */
-   public void evaluate(final Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
-    for (TwitterMessage tweet: tweets) {
-      evaluate(tweet);
+   publ c vo d evaluate(f nal  erable<Tw ter ssage> t ets) {
+    Precond  ons.c ckNotNull(t ets);
+    for (Tw ter ssage t et: t ets) {
+      evaluate(t et);
     }
   }
 }

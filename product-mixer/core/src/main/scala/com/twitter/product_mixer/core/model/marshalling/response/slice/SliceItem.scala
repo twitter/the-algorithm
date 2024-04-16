@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.core.model.marshalling.response.slice
+package com.tw ter.product_m xer.core.model.marshall ng.response.sl ce
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
 
 /**
- * These are the Ad Types exposed on AdUnits
+ * T se are t  Ad Types exposed on AdUn s
  *
- * They are to be kept in sync with strato/config/src/thrift/com/twitter/strato/graphql/hubble.thrift
+ * T y are to be kept  n sync w h strato/conf g/src/thr ft/com/tw ter/strato/graphql/hubble.thr ft
  */
-sealed trait AdType
+sealed tra  AdType
 object AdType {
-  case object Tweet extends AdType
+  case object T et extends AdType
   case object Account extends AdType
-  case object InStreamVideo extends AdType
-  case object DisplayCreative extends AdType
+  case object  nStreamV deo extends AdType
+  case object D splayCreat ve extends AdType
   case object Trend extends AdType
-  case object Spotlight extends AdType
+  case object Spotl ght extends AdType
   case object Takeover extends AdType
 }
 
-trait SliceItem
-case class TweetItem(id: Long) extends SliceItem
-case class UserItem(id: Long) extends SliceItem
-case class TwitterListItem(id: Long) extends SliceItem
-case class DMConvoSearchItem(id: String, lastReadableEventId: Option[Long]) extends SliceItem
-case class DMEventItem(id: Long) extends SliceItem
-case class DMConvoItem(id: String, lastReadableEventId: Option[Long]) extends SliceItem
-case class DMMessageSearchItem(id: Long) extends SliceItem
-case class TopicItem(id: Long) extends SliceItem
-case class TypeaheadEventItem(eventId: Long, metadata: Option[TypeaheadMetadata]) extends SliceItem
-case class TypeaheadQuerySuggestionItem(query: String, metadata: Option[TypeaheadMetadata])
-    extends SliceItem
-case class TypeaheadUserItem(
-  userId: Long,
-  metadata: Option[TypeaheadMetadata],
+tra  Sl ce em
+case class T et em( d: Long) extends Sl ce em
+case class User em( d: Long) extends Sl ce em
+case class Tw terL st em( d: Long) extends Sl ce em
+case class DMConvoSearch em( d: Str ng, lastReadableEvent d: Opt on[Long]) extends Sl ce em
+case class DMEvent em( d: Long) extends Sl ce em
+case class DMConvo em( d: Str ng, lastReadableEvent d: Opt on[Long]) extends Sl ce em
+case class DM ssageSearch em( d: Long) extends Sl ce em
+case class Top c em( d: Long) extends Sl ce em
+case class Typea adEvent em(event d: Long,  tadata: Opt on[Typea ad tadata]) extends Sl ce em
+case class Typea adQuerySuggest on em(query: Str ng,  tadata: Opt on[Typea ad tadata])
+    extends Sl ce em
+case class Typea adUser em(
+  user d: Long,
+   tadata: Opt on[Typea ad tadata],
   badges: Seq[UserBadge])
-    extends SliceItem
-case class AdItem(adUnitId: Long, adAccountId: Long) extends SliceItem
-case class AdCreativeItem(creativeId: Long, adType: AdType, adAccountId: Long) extends SliceItem
-case class AdGroupItem(adGroupId: Long, adAccountId: Long) extends SliceItem
-case class CampaignItem(campaignId: Long, adAccountId: Long) extends SliceItem
-case class FundingSourceItem(fundingSourceId: Long, adAccountId: Long) extends SliceItem
+    extends Sl ce em
+case class Ad em(adUn  d: Long, adAccount d: Long) extends Sl ce em
+case class AdCreat ve em(creat ve d: Long, adType: AdType, adAccount d: Long) extends Sl ce em
+case class AdGroup em(adGroup d: Long, adAccount d: Long) extends Sl ce em
+case class Campa gn em(campa gn d: Long, adAccount d: Long) extends Sl ce em
+case class Fund ngS ce em(fund ngS ce d: Long, adAccount d: Long) extends Sl ce em
 
-sealed trait CursorType
-case object PreviousCursor extends CursorType
+sealed tra  CursorType
+case object Prev ousCursor extends CursorType
 case object NextCursor extends CursorType
 @deprecated(
-  "GapCursors are not supported by Product Mixer Slice marshallers, if you need support for these reach out to #product-mixer")
+  "GapCursors are not supported by Product M xer Sl ce marshallers,  f   need support for t se reach out to #product-m xer")
 case object GapCursor extends CursorType
 
-// CursorItem extends SliceItem to enable support for GapCursors
-case class CursorItem(value: String, cursorType: CursorType) extends SliceItem
+// Cursor em extends Sl ce em to enable support for GapCursors
+case class Cursor em(value: Str ng, cursorType: CursorType) extends Sl ce em
 
-case class SliceInfo(
-  previousCursor: Option[String],
-  nextCursor: Option[String])
+case class Sl ce nfo(
+  prev ousCursor: Opt on[Str ng],
+  nextCursor: Opt on[Str ng])
 
-case class Slice(
-  items: Seq[SliceItem],
-  sliceInfo: SliceInfo)
-    extends HasMarshalling
+case class Sl ce(
+   ems: Seq[Sl ce em],
+  sl ce nfo: Sl ce nfo)
+    extends HasMarshall ng
 
-sealed trait TypeaheadResultContextType
-case object You extends TypeaheadResultContextType
-case object Location extends TypeaheadResultContextType
-case object NumFollowers extends TypeaheadResultContextType
-case object FollowRelationship extends TypeaheadResultContextType
-case object Bio extends TypeaheadResultContextType
-case object NumTweets extends TypeaheadResultContextType
-case object Trending extends TypeaheadResultContextType
-case object HighlightedLabel extends TypeaheadResultContextType
+sealed tra  Typea adResultContextType
+case object   extends Typea adResultContextType
+case object Locat on extends Typea adResultContextType
+case object NumFollo rs extends Typea adResultContextType
+case object FollowRelat onsh p extends Typea adResultContextType
+case object B o extends Typea adResultContextType
+case object NumT ets extends Typea adResultContextType
+case object Trend ng extends Typea adResultContextType
+case object H ghl ghtedLabel extends Typea adResultContextType
 
-case class TypeaheadResultContext(
-  contextType: TypeaheadResultContextType,
-  displayString: String,
-  iconUrl: Option[String])
+case class Typea adResultContext(
+  contextType: Typea adResultContextType,
+  d splayStr ng: Str ng,
+   conUrl: Opt on[Str ng])
 
-case class TypeaheadMetadata(
+case class Typea ad tadata(
   score: Double,
-  source: Option[String],
-  context: Option[TypeaheadResultContext])
+  s ce: Opt on[Str ng],
+  context: Opt on[Typea adResultContext])
 
-// Used to render badges in Typeahead, such as Business-affiliated badges
-case class UserBadge(badgeType: String, badgeUrl: String, description: String)
+// Used to render badges  n Typea ad, such as Bus ness-aff l ated badges
+case class UserBadge(badgeType: Str ng, badgeUrl: Str ng, descr pt on: Str ng)

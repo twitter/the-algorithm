@@ -1,72 +1,72 @@
-.. _joining:
+.. _jo n ng:
 
-Joining aggregates features to records
+Jo n ng aggregates features to records
 ======================================
 
-After setting up either offline batch jobs or online real-time summingbird jobs to produce
-aggregate features and querying them, we are left with data records containing aggregate features.
-This page will go over how to join them with other data records to produce offline training data.
+After sett ng up e  r offl ne batch jobs or onl ne real-t   summ ngb rd jobs to produce
+aggregate features and query ng t m,   are left w h data records conta n ng aggregate features.
+T  page w ll go over how to jo n t m w h ot r data records to produce offl ne tra n ng data.
 
-(To discuss: joining aggregates to records online)
+(To d scuss: jo n ng aggregates to records onl ne)
 
-Joining Aggregates on Discrete/String Keys
+Jo n ng Aggregates on D screte/Str ng Keys
 ------------------------------------------
 
-Joining aggregate features keyed on discrete or text features to your training data is very easy -
-you can use the built in methods provided by `DataSetPipe`. For example, suppose you have aggregates
-keyed by `(USER_ID, AUTHOR_ID)`:
+Jo n ng aggregate features keyed on d screte or text features to y  tra n ng data  s very easy -
+  can use t  bu lt  n  thods prov ded by `DataSetP pe`. For example, suppose   have aggregates
+keyed by `(USER_ D, AUTHOR_ D)`:
 
 .. code-block:: scala
 
-  val userAuthorAggregates: DataSetPipe = AggregatesV2FeatureSource(
-      rootPath = “/path/to/my/aggregates”,
-      storeName = “user_author_aggregates”,
-      aggregates = MyConfig.aggregatesToCompute,
-      trimThreshold = 0
+  val userAuthorAggregates: DataSetP pe = AggregatesV2FeatureS ce(
+      rootPath = “/path/to/ /aggregates”,
+      storeNa  = “user_author_aggregates”,
+      aggregates =  Conf g.aggregatesToCompute,
+      tr mThreshold = 0
     )(dateRange).read
 
-Offline, you can then join with your training data set as follows:
+Offl ne,   can t n jo n w h y  tra n ng data set as follows:
 
 .. code-block:: scala
 
-  val myTrainingData: DataSetPipe = ...
-  val joinedData = myTrainingData.joinWithLarger((USER_ID, AUTHOR_ID), userAuthorAggregates)
+  val  Tra n ngData: DataSetP pe = ...
+  val jo nedData =  Tra n ngData.jo nW hLarger((USER_ D, AUTHOR_ D), userAuthorAggregates)
 
-You can read from `AggregatesV2MostRecentFeatureSourceBeforeDate` in order to read the most recent aggregates
-before a provided date `beforeDate`. Just note that `beforeDate` must be aligned with the date boundary so if
-you’re passing in a `dateRange`, use `dateRange.end`).
+  can read from `AggregatesV2MostRecentFeatureS ceBeforeDate`  n order to read t  most recent aggregates
+before a prov ded date `beforeDate`. Just note that `beforeDate` must be al gned w h t  date boundary so  f
+ ’re pass ng  n a `dateRange`, use `dateRange.end`).
 
-Joining Aggregates on Sparse Binary Keys
+Jo n ng Aggregates on Sparse B nary Keys
 ----------------------------------------
 
-When joining on sparse binary keys, there can be multiple aggregate records to join to each training record in
-your training data set. For example, suppose you have setup an aggregate group that is keyed on `(INTEREST_ID, AUTHOR_ID)`
-capturing engagement counts of users interested in a particular `INTEREST_ID` for specific authors provided by `AUTHOR_ID`.
+W n jo n ng on sparse b nary keys, t re can be mult ple aggregate records to jo n to each tra n ng record  n
+y  tra n ng data set. For example, suppose   have setup an aggregate group that  s keyed on `( NTEREST_ D, AUTHOR_ D)`
+captur ng engage nt counts of users  nterested  n a part cular ` NTEREST_ D` for spec f c authors prov ded by `AUTHOR_ D`.
 
-Suppose now that you have a training data record representing a specific user action. This training data record contains
-a sparse binary feature `INTEREST_IDS` representing all the "interests" of that user - e.g. music, sports, and so on. Each `interest_id`
-translates to a different set of counting features found in your aggregates data. Therefore we need a way to merge all of
-these different sets of counting features to produce a more compact, fixed-size set of features. 
+Suppose now that   have a tra n ng data record represent ng a spec f c user act on. T  tra n ng data record conta ns
+a sparse b nary feature ` NTEREST_ DS` represent ng all t  " nterests" of that user - e.g. mus c, sports, and so on. Each ` nterest_ d`
+translates to a d fferent set of count ng features found  n y  aggregates data. T refore   need a way to  rge all of
+t se d fferent sets of count ng features to produce a more compact, f xed-s ze set of features. 
 
-.. admonition:: Merge policies
+.. admon  on::  rge pol c es
 
-  To do this, the aggregate framework provides a trait `SparseBinaryMergePolicy <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/SparseBinaryMergePolicy.scala>`_. Classes overriding this trait define policies
-  that state how to merge the individual aggregate features from each sparse binary value (in this case, each `INTEREST_ID` for a user).
-  Furthermore, we provide `SparseBinaryMultipleAggregateJoin` which executes these policies to merge aggregates.
+  To do t , t  aggregate fra work prov des a tra  `SparseB nary rgePol cy <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/convers on/SparseB nary rgePol cy.scala>`_. Classes overr d ng t  tra  def ne pol c es
+  that state how to  rge t   nd v dual aggregate features from each sparse b nary value ( n t  case, each ` NTEREST_ D` for a user).
+  Furt rmore,   prov de `SparseB naryMult pleAggregateJo n` wh ch executes t se pol c es to  rge aggregates.
 
-A simple policy might simply average all the counts from the individual interests, or just take the max, or
-a specific quantile. More advanced policies might use custom criteria to decide which interest is most relevant and choose
-features from that interest to represent the user, or use some weighted combination of counts.
+A s mple pol cy m ght s mply average all t  counts from t   nd v dual  nterests, or just take t  max, or
+a spec f c quant le. More advanced pol c es m ght use custom cr er a to dec de wh ch  nterest  s most relevant and choose
+features from that  nterest to represent t  user, or use so    ghted comb nat on of counts.
 
-The framework provides two simple in-built policies (`PickTopCtrPolicy <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/PickTopCtrPolicy.scala>`_
-and `CombineCountsPolicy <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/CombineCountsPolicy.scala>`_, which keeps the topK counts per
-record) that you can get started with, though you likely want to implement your own policy based on domain knowledge to get
-the best results for your specific problem domain.
+T  fra work prov des two s mple  n-bu lt pol c es (`P ckTopCtrPol cy <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/convers on/P ckTopCtrPol cy.scala>`_
+and `Comb neCountsPol cy <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/convers on/Comb neCountsPol cy.scala>`_, wh ch keeps t  topK counts per
+record) that   can get started w h, though   l kely want to  mple nt y  own pol cy based on doma n knowledge to get
+t  best results for y  spec f c problem doma n.
 
-.. admonition:: Offline Code Example
+.. admon  on:: Offl ne Code Example
 
-  The scalding job `TrainingDataWithAggV2Generator <https://cgit.twitter.biz/source/tree/timelines/data_processing/ad_hoc/recap/training_data_generator/TrainingDataWithAggV2Generator.scala>`_ shows how multiple merge policies are defined and implemented to merge aggregates on sparse binary keys to the TQ's training data records.
+  T  scald ng job `Tra n ngDataW hAggV2Generator <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ad_hoc/recap/tra n ng_data_generator/Tra n ngDataW hAggV2Generator.scala>`_ shows how mult ple  rge pol c es are def ned and  mple nted to  rge aggregates on sparse b nary keys to t  TQ's tra n ng data records.
 
-.. admonition:: Online Code Example
+.. admon  on:: Onl ne Code Example
 
-  In our (non-FeatureStore enabled) online code path, we merge aggregates on sparse binary keys using the `CombineCountsPolicy <https://cgit.twitter.biz/source/tree/timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/recapbase/aggregates/UserFeaturesHydrator.scala#n201>`_.
+   n   (non-FeatureStore enabled) onl ne code path,    rge aggregates on sparse b nary keys us ng t  `Comb neCountsPol cy <https://cg .tw ter.b z/s ce/tree/t  l nem xer/server/src/ma n/scala/com/tw ter/t  l nem xer/ nject on/recapbase/aggregates/UserFeaturesHydrator.scala#n201>`_.

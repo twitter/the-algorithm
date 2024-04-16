@@ -1,132 +1,132 @@
-package com.twitter.timelineranker.parameters.in_network_tweets
+package com.tw ter.t  l neranker.para ters. n_network_t ets
 
-import com.twitter.timelineranker.parameters.recap.RecapQueryContext
-import com.twitter.timelines.configapi.decider._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l neranker.para ters.recap.RecapQueryContext
+ mport com.tw ter.t  l nes.conf gap .dec der._
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object InNetworkTweetParams {
-  import RecapQueryContext._
+object  nNetworkT etParams {
+   mport RecapQueryContext._
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * Controls l m  on t  number of follo d users fetc d from SGS.
    *
-   * The specific default value below is for blender-timelines parity.
+   * T  spec f c default value below  s for blender-t  l nes par y.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "recycled_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  object MaxFollo dUsersParam
+      extends FSBoundedParam[ nt](
+        na  = "recycled_max_follo d_users",
+        default = MaxFollo dUsers.default,
+        m n = MaxFollo dUsers.bounds.m n nclus ve,
+        max = MaxFollo dUsers.bounds.max nclus ve
       )
 
   /**
-   * Controls limit on the number of hits for Earlybird.
+   * Controls l m  on t  number of h s for Earlyb rd.
    *
    */
-  object RelevanceOptionsMaxHitsToProcessParam
-      extends FSBoundedParam[Int](
-        name = "recycled_relevance_options_max_hits_to_process",
+  object RelevanceOpt onsMaxH sToProcessParam
+      extends FSBoundedParam[ nt](
+        na  = "recycled_relevance_opt ons_max_h s_to_process",
         default = 500,
-        min = 100,
+        m n = 100,
         max = 20000
       )
 
   /**
-   * Fallback value for maximum number of search results, if not specified by query.maxCount
+   * Fallback value for max mum number of search results,  f not spec f ed by query.maxCount
    */
-  object DefaultMaxTweetCount extends Param(200)
+  object DefaultMaxT etCount extends Param(200)
 
   /**
-   * We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-   * candidates from search so that we are left with sufficient number of candidates after
-   * hydration and filtering.
+   *   mult ply maxCount (caller suppl ed value) by t  mult pl er and fetch those many
+   * cand dates from search so that   are left w h suff c ent number of cand dates after
+   * hydrat on and f lter ng.
    */
-  object MaxCountMultiplierParam
-      extends Param(MaxCountMultiplier.default)
-      with DeciderValueConverter[Double] {
-    override def convert: IntConverter[Double] =
-      OutputBoundIntConverter[Double](divideDeciderBy100 _, MaxCountMultiplier.bounds)
+  object MaxCountMult pl erParam
+      extends Param(MaxCountMult pl er.default)
+      w h Dec derValueConverter[Double] {
+    overr de def convert:  ntConverter[Double] =
+      OutputBound ntConverter[Double](d v deDec derBy100 _, MaxCountMult pl er.bounds)
   }
 
   /**
-   * Enable [[SearchQueryBuilder.createExcludedSourceTweetIdsQuery]]
+   * Enable [[SearchQueryBu lder.createExcludedS ceT et dsQuery]]
    */
-  object EnableExcludeSourceTweetIdsQueryParam
+  object EnableExcludeS ceT et dsQueryParam
       extends FSParam[Boolean](
-        name = "recycled_exclude_source_tweet_ids_query_enable",
+        na  = "recycled_exclude_s ce_t et_ ds_query_enable",
         default = false
       )
 
-  object EnableEarlybirdReturnAllResultsParam
+  object EnableEarlyb rdReturnAllResultsParam
       extends FSParam[Boolean](
-        name = "recycled_enable_earlybird_return_all_results",
+        na  = "recycled_enable_earlyb rd_return_all_results",
         default = true
       )
 
   /**
-   * FS-controlled param to enable anti-dilution transform for DDG-16198
+   * FS-controlled param to enable ant -d lut on transform for DDG-16198
    */
-  object RecycledMaxFollowedUsersEnableAntiDilutionParam
+  object RecycledMaxFollo dUsersEnableAnt D lut onParam
       extends FSParam[Boolean](
-        name = "recycled_max_followed_users_enable_anti_dilution",
+        na  = "recycled_max_follo d_users_enable_ant _d lut on",
         default = false
       )
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in recycled source.
+   * Enables semant c core, pengu n, and t etyp e content features  n recycled s ce.
    */
-  object EnableContentFeaturesHydrationParam extends Param(default = true)
+  object EnableContentFeaturesHydrat onParam extends Param(default = true)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * add  onally enables tokens w n hydrat ng content features.
    */
-  object EnableTokensInContentFeaturesHydrationParam
+  object EnableTokens nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "recycled_enable_tokens_in_content_features_hydration",
+        na  = "recycled_enable_tokens_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables t et text w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
+  object EnableT etText nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "recycled_enable_tweet_text_in_content_features_hydration",
+        na  = "recycled_enable_t et_text_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * Enables hydrating root tweet of in-network replies and extended replies
+   * Enables hydrat ng root t et of  n-network repl es and extended repl es
    */
-  object EnableReplyRootTweetHydrationParam
+  object EnableReplyRootT etHydrat onParam
       extends FSParam(
-        name = "recycled_enable_reply_root_tweet_hydration",
+        na  = "recycled_enable_reply_root_t et_hydrat on",
         default = true
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables conversat onControl w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
+  object EnableConversat onControl nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recycled_enable",
+        na  = "conversat on_control_ n_content_features_hydrat on_recycled_enable",
         default = false
       )
 
-  object EnableTweetMediaHydrationParam
+  object EnableT et d aHydrat onParam
       extends FSParam(
-        name = "tweet_media_hydration_recycled_enable",
+        na  = "t et_ d a_hydrat on_recycled_enable",
         default = false
       )
 
-  object EnableEarlybirdRealtimeCgMigrationParam
+  object EnableEarlyb rdRealt  CgM grat onParam
       extends FSParam(
-        name = "recycled_enable_earlybird_realtime_cg_migration",
+        na  = "recycled_enable_earlyb rd_realt  _cg_m grat on",
         default = false
       )
 

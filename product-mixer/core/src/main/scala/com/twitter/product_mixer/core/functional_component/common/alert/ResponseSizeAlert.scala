@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.ThroughputPred cate
 
 /**
- * [[ResponseSizeAlert]] triggers when the specified percentile of requests with empty responses (defined
- * as the number of items returned excluding cursors) is beyond the [[ThroughputPredicate]] threshold
- * for a configured amount of time.
+ * [[ResponseS zeAlert]] tr ggers w n t  spec f ed percent le of requests w h empty responses (def ned
+ * as t  number of  ems returned exclud ng cursors)  s beyond t  [[ThroughputPred cate]] threshold
+ * for a conf gured amount of t  .
  */
-case class ResponseSizeAlert(
-  override val notificationGroup: NotificationGroup,
-  percentile: Percentile,
-  override val warnPredicate: ThroughputPredicate,
-  override val criticalPredicate: ThroughputPredicate,
-  override val runbookLink: Option[String] = None)
+case class ResponseS zeAlert(
+  overr de val not f cat onGroup: Not f cat onGroup,
+  percent le: Percent le,
+  overr de val warnPred cate: ThroughputPred cate,
+  overr de val cr  calPred cate: ThroughputPred cate,
+  overr de val runbookL nk: Opt on[Str ng] = None)
     extends Alert {
-  override val metricSuffix: Option[String] = Some(percentile.metricSuffix)
-  override val alertType: AlertType = ResponseSize
-  require(
-    warnPredicate.threshold >= 0,
-    s"ResponseSizeAlert predicates must be >= 0 but got warnPredicate = ${warnPredicate.threshold}"
+  overr de val  tr cSuff x: Opt on[Str ng] = So (percent le. tr cSuff x)
+  overr de val alertType: AlertType = ResponseS ze
+  requ re(
+    warnPred cate.threshold >= 0,
+    s"ResponseS zeAlert pred cates must be >= 0 but got warnPred cate = ${warnPred cate.threshold}"
   )
-  require(
-    criticalPredicate.threshold >= 0,
-    s"ResponseSizeAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}"
+  requ re(
+    cr  calPred cate.threshold >= 0,
+    s"ResponseS zeAlert pred cates must be >= 0 but got cr  calPred cate = ${cr  calPred cate.threshold}"
   )
 }

@@ -1,34 +1,34 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.{
-  OnlineAggregationStoresTrait,
-  RealTimeAggregateStore
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron.{
+  Onl neAggregat onStoresTra ,
+  RealT  AggregateStore
 }
 
-object TimelinesOnlineAggregationConfig
-    extends TimelinesOnlineAggregationDefinitionsTrait
-    with OnlineAggregationStoresTrait {
+object T  l nesOnl neAggregat onConf g
+    extends T  l nesOnl neAggregat onDef n  onsTra 
+    w h Onl neAggregat onStoresTra  {
 
-  import TimelinesOnlineAggregationSources._
+   mport T  l nesOnl neAggregat onS ces._
 
-  override lazy val ProductionStore = RealTimeAggregateStore(
-    memcacheDataSet = "timelines_real_time_aggregates",
-    isProd = true,
-    cacheTTL = 5.days
+  overr de lazy val Product onStore = RealT  AggregateStore(
+     mcac DataSet = "t  l nes_real_t  _aggregates",
+     sProd = true,
+    cac TTL = 5.days
   )
 
-  override lazy val StagingStore = RealTimeAggregateStore(
-    memcacheDataSet = "twemcache_timelines_real_time_aggregates",
-    isProd = false,
-    cacheTTL = 5.days
+  overr de lazy val Stag ngStore = RealT  AggregateStore(
+     mcac DataSet = "t mcac _t  l nes_real_t  _aggregates",
+     sProd = false,
+    cac TTL = 5.days
   )
 
-  override lazy val inputSource = timelinesOnlineAggregateSource
+  overr de lazy val  nputS ce = t  l nesOnl neAggregateS ce
 
   /**
-   * AggregateToCompute: This defines the complete set of aggregates to be
-   *    computed by the aggregation job and to be stored in memcache.
+   * AggregateToCompute: T  def nes t  complete set of aggregates to be
+   *    computed by t  aggregat on job and to be stored  n  mcac .
    */
-  override lazy val AggregatesToCompute = ProdAggregates ++ StagingAggregates
+  overr de lazy val AggregatesToCompute = ProdAggregates ++ Stag ngAggregates
 }

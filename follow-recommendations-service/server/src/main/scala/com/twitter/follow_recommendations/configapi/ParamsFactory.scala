@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.configapi
+package com.tw ter.follow_recom ndat ons.conf gap 
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.t  l nes.conf gap .FeatureValue
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ParamsFactory @Inject() (
-  config: Config,
+@S ngleton
+class ParamsFactory @ nject() (
+  conf g: Conf g,
   requestContextFactory: RequestContextFactory,
-  statsReceiver: StatsReceiver) {
+  statsRece ver: StatsRece ver) {
 
-  private val stats = new MemoizingStatsReceiver(statsReceiver.scope("configapi"))
-  def apply(followRecommendationServiceRequestContext: RequestContext): Params =
-    config(followRecommendationServiceRequestContext, stats)
+  pr vate val stats = new  mo z ngStatsRece ver(statsRece ver.scope("conf gap "))
+  def apply(followRecom ndat onServ ceRequestContext: RequestContext): Params =
+    conf g(followRecom ndat onServ ceRequestContext, stats)
 
   def apply(
-    clientContext: ClientContext,
-    displayLocation: DisplayLocation,
-    featureOverrides: Map[String, FeatureValue]
+    cl entContext: Cl entContext,
+    d splayLocat on: D splayLocat on,
+    featureOverr des: Map[Str ng, FeatureValue]
   ): Params =
-    apply(requestContextFactory(clientContext, displayLocation, featureOverrides))
+    apply(requestContextFactory(cl entContext, d splayLocat on, featureOverr des))
 }

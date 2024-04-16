@@ -1,25 +1,25 @@
-package com.twitter.representation_manager.config
+package com.tw ter.representat on_manager.conf g
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
 
 /*
- * This is RMS client config class.
- * We only support setting up in memory cache params for now, but we expect to enable other
- * customisations in the near future e.g. request timeout
+ * T   s RMS cl ent conf g class.
+ *   only support sett ng up  n  mory cac  params for now, but   expect to enable ot r
+ * custom sat ons  n t  near future e.g. request t  out
  *
  * --------------------------------------------
  * PLEASE NOTE:
- * Having in-memory cache is not necessarily a free performance win, anyone considering it should
- * investigate rather than blindly enabling it
+ * Hav ng  n- mory cac   s not necessar ly a free performance w n, anyone cons der ng   should
+ *  nvest gate rat r than bl ndly enabl ng  
  * */
-class ClientConfig(inMemCacheParamsOverrides: Map[
-  (EmbeddingType, ModelVersion),
-  InMemoryCacheParams
+class Cl entConf g( n mCac ParamsOverr des: Map[
+  (Embedd ngType, ModelVers on),
+   n moryCac Params
 ] = Map.empty) {
-  // In memory cache config per embedding
-  val inMemCacheParams = DefaultInMemoryCacheConfig.cacheParamsMap ++ inMemCacheParamsOverrides
-  val inMemoryCacheConfig = new InMemoryCacheConfig(inMemCacheParams)
+  //  n  mory cac  conf g per embedd ng
+  val  n mCac Params = Default n moryCac Conf g.cac ParamsMap ++  n mCac ParamsOverr des
+  val  n moryCac Conf g = new  n moryCac Conf g( n mCac Params)
 }
 
-object DefaultClientConfig extends ClientConfig
+object DefaultCl entConf g extends Cl entConf g

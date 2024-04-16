@@ -1,195 +1,195 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.tw ter.s mclusters_v2.scald ng.embedd ng
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.ExplicitEndTime
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.InternalId.ClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
-import com.twitter.simclusters_v2.thriftscala.LanguageToClusters
-import java.util.TimeZone
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.dal.cl ent.dataset.SnapshotDALDataset
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.Expl c EndT  
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.Wr eExtens on
+ mport com.tw ter.scald ng_ nternal.job.Requ redB naryComparators.ordSer
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Country
+ mport com.tw ter.s mclusters_v2.common.Language
+ mport com.tw ter.s mclusters_v2.common.T  stamp
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nS ces
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d.Cluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserTo nterested nClusterScores
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.S mclustersV2GlobalLanguageEmbedd ngScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.S mclustersV2GlobalLanguageEmbedd ngThr ftScalaDataset
+ mport com.tw ter.s mclusters_v2.thr ftscala.LanguageToClusters
+ mport java.ut l.T  Zone
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron global_simclusters_language_embedding_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+  --start_cron global_s mclusters_language_embedd ng_job \
+  src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp {
+object GlobalS mClustersLanguageEmbedd ngBatchApp extends Sc duledExecut onApp {
 
-  override val firstTime: RichDate = RichDate("2023-03-07")
+  overr de val f rstT  : R chDate = R chDate("2023-03-07")
 
-  override val batchIncrement: Duration = Days(1)
+  overr de val batch ncre nt: Durat on = Days(1)
 
-  val outputHdfsDirectory =
-    "/user/cassowary/manhattan_sequence_files/global_simclusters_language_embeddings"
+  val outputHdfsD rectory =
+    "/user/cassowary/manhattan_sequence_f les/global_s mclusters_language_embedd ngs"
 
-  val outputThriftHdfsDirectory =
-    "/user/cassowary/processed/global_simclusters_language_embeddings"
+  val outputThr ftHdfsD rectory =
+    "/user/cassowary/processed/global_s mclusters_language_embedd ngs"
 
-  val globalLanguageEmbeddingsKeyValDataset: KeyValDALDataset[
-    KeyVal[String, ClustersUserIsInterestedIn]
-  ] = SimclustersV2GlobalLanguageEmbeddingScalaDataset
+  val globalLanguageEmbedd ngsKeyValDataset: KeyValDALDataset[
+    KeyVal[Str ng, ClustersUser s nterested n]
+  ] = S mclustersV2GlobalLanguageEmbedd ngScalaDataset
 
-  val globalLanguageEmbeddingsThriftDataset: SnapshotDALDataset[LanguageToClusters] =
-    SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
+  val globalLanguageEmbedd ngsThr ftDataset: SnapshotDALDataset[LanguageToClusters] =
+    S mclustersV2GlobalLanguageEmbedd ngThr ftScalaDataset
 
-  val numOfClustersPerLanguage: Int = 400
+  val numOfClustersPerLanguage:  nt = 400
 
-  def getInterestedInFn: (
+  def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested n2020S ce
 
-  def flattenAndFilterUserInterestedIn(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)]
-  ): TypedPipe[(UserId, (Int, Double))] = {
-    interestedIn
-    // Get (userId, Seq[(clusterId, scores)]
+  def flattenAndF lterUser nterested n(
+     nterested n: TypedP pe[(User d, ClustersUser s nterested n)]
+  ): TypedP pe[(User d, ( nt, Double))] = {
+     nterested n
+    // Get (user d, Seq[(cluster d, scores)]
       .map {
-        case (user, clusterUserIsInterestedIn) => {
-          (user, clusterUserIsInterestedIn.clusterIdToScores)
+        case (user, clusterUser s nterested n) => {
+          (user, clusterUser s nterested n.cluster dToScores)
         }
       }
-      // Flatten it into (UserId, ClusterId, LogFavScore)
+      // Flatten    nto (User d, Cluster d, LogFavScore)
       .flatMap {
-        case (userId, clusterUserIsInterestedIn) => {
-          clusterUserIsInterestedIn.toSeq.map {
-            case (clusterId, scores) => {
-              (userId, (clusterId, scores.logFavScore.getOrElse(0.0)))
+        case (user d, clusterUser s nterested n) => {
+          clusterUser s nterested n.toSeq.map {
+            case (cluster d, scores) => {
+              (user d, (cluster d, scores.logFavScore.getOrElse(0.0)))
             }
           }
         }
-      }.filter(_._2._2 > 0.0) // Filter out zero scores
+      }.f lter(_._2._2 > 0.0) // F lter out zero scores
   }
 
-  def getGlobalSimClustersEmbeddingPerLanguage(
-    interestedIn: TypedPipe[(UserId, (Int, Double))],
-    favEdges: TypedPipe[(UserId, TweetId, Timestamp)],
-    language: TypedPipe[(UserId, (Country, Language))]
-  ): TypedPipe[(Language, ClustersUserIsInterestedIn)] = {
-    // Engagement fav edges
-    val edges = favEdges.map { case (userId, tweetId, ts) => (userId, (tweetId, ts)) }
+  def getGlobalS mClustersEmbedd ngPerLanguage(
+     nterested n: TypedP pe[(User d, ( nt, Double))],
+    favEdges: TypedP pe[(User d, T et d, T  stamp)],
+    language: TypedP pe[(User d, (Country, Language))]
+  ): TypedP pe[(Language, ClustersUser s nterested n)] = {
+    // Engage nt fav edges
+    val edges = favEdges.map { case (user d, t et d, ts) => (user d, (t et d, ts)) }
 
-    // Language information for users
+    // Language  nformat on for users
     val userLanguage = language.map {
-      case (userId, (country, lang)) => (userId, lang)
+      case (user d, (country, lang)) => (user d, lang)
     }
     val numUsersPerLanguage = userLanguage.map {
       case (_, lang) => (lang, 1L)
     }.sumByKey
 
-    val embeddings =
-      interestedIn
-        .join(edges) // Join InterestedIn and user-tweet engagements
+    val embedd ngs =
+       nterested n
+        .jo n(edges) // Jo n  nterested n and user-t et engage nts
         .map {
-          case (userId, ((clusterId, score), (_, _))) => {
-            (userId, (clusterId, score))
+          case (user d, ((cluster d, score), (_, _))) => {
+            (user d, (cluster d, score))
           }
         }
-        .join(userLanguage) // Join and get cluster scores per language
+        .jo n(userLanguage) // Jo n and get cluster scores per language
         .map {
-          case (userId, ((clusterId, score), lang)) => {
-            ((lang, clusterId), score)
+          case (user d, ((cluster d, score), lang)) => {
+            ((lang, cluster d), score)
           }
         }
-        .sumByKey // Sum the user embeddings per language based on the engagements
-        .map { case ((lang, clusterId), score) => (lang, (clusterId, score)) }
-        .join(numUsersPerLanguage)
-        // We compute the average cluster scores per language
+        .sumByKey // Sum t  user embedd ngs per language based on t  engage nts
+        .map { case ((lang, cluster d), score) => (lang, (cluster d, score)) }
+        .jo n(numUsersPerLanguage)
+        //   compute t  average cluster scores per language
         .map {
-          case (lang, ((clusterId, score), count)) => (lang, (clusterId -> score / count))
+          case (lang, ((cluster d, score), count)) => (lang, (cluster d -> score / count))
         }
         .group
-        .sortedReverseTake(numOfClustersPerLanguage)(Ordering
+        .sortedReverseTake(numOfClustersPerLanguage)(Order ng
           .by(_._2)) // Take top 400 clusters per language
         .flatMap {
           case (lang, clusterScores) => {
             clusterScores.map {
-              case (clusterId, score) => (lang, (clusterId, score))
+              case (cluster d, score) => (lang, (cluster d, score))
             }
           }
-        }.mapValues { case (clusterId, score) => Map(clusterId -> score) }
+        }.mapValues { case (cluster d, score) => Map(cluster d -> score) }
 
-    // Build the final SimClusters embeddings per language
-    embeddings.sumByKey.map {
+    // Bu ld t  f nal S mClusters embedd ngs per language
+    embedd ngs.sumByKey.map {
       case (lang, clusterToScore) => {
         val clusterScores = clusterToScore.map {
-          case (clusterId, score) =>
-            clusterId -> UserToInterestedInClusterScores(logFavScore = Some(score))
+          case (cluster d, score) =>
+            cluster d -> UserTo nterested nClusterScores(logFavScore = So (score))
         }
-        (lang, ClustersUserIsInterestedIn(ModelVersion.Model20m145k2020.name, clusterScores))
+        (lang, ClustersUser s nterested n(ModelVers on.Model20m145k2020.na , clusterScores))
       }
     }
   }
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Read the most recent InterestedIn snapshot from the past 21 days
-    val interestedIn =
-      InterestedInSources
-        .simClustersInterestedIn2020Source(dateRange.prepend(Days(21)), timeZone).forceToDisk
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    // Read t  most recent  nterested n snapshot from t  past 21 days
+    val  nterested n =
+       nterested nS ces
+        .s mClusters nterested n2020S ce(dateRange.prepend(Days(21)), t  Zone).forceToD sk
 
-    // Get the user tweet fav engagement history from the past 2 days
-    val userTweetFavEdges = ExternalDataSources.userTweetFavoritesSource
+    // Get t  user t et fav engage nt  tory from t  past 2 days
+    val userT etFavEdges = ExternalDataS ces.userT etFavor esS ce
 
-    // Read user language from UserSource
-    val userLanguages = ExternalDataSources.userSource
+    // Read user language from UserS ce
+    val userLanguages = ExternalDataS ces.userS ce
 
-    val globalEmbeddings = getGlobalSimClustersEmbeddingPerLanguage(
-      flattenAndFilterUserInterestedIn(interestedIn),
-      userTweetFavEdges,
+    val globalEmbedd ngs = getGlobalS mClustersEmbedd ngPerLanguage(
+      flattenAndF lterUser nterested n( nterested n),
+      userT etFavEdges,
       userLanguages)
 
-    // Write results as a key-val dataset
-    globalEmbeddings
+    // Wr e results as a key-val dataset
+    globalEmbedd ngs
       .map {
-        case (lang, embeddings) =>
-          KeyVal(lang, embeddings)
+        case (lang, embedd ngs) =>
+          KeyVal(lang, embedd ngs)
       }
-      .writeDALVersionedKeyValExecution(
-        globalLanguageEmbeddingsKeyValDataset,
-        D.Suffix(outputHdfsDirectory)
+      .wr eDALVers onedKeyValExecut on(
+        globalLanguageEmbedd ngsKeyValDataset,
+        D.Suff x(outputHdfsD rectory)
       )
 
-    // Write results as a thrift dataset
-    globalEmbeddings
+    // Wr e results as a thr ft dataset
+    globalEmbedd ngs
       .map {
-        case (lang, clusterUserIsInterestedIn) =>
+        case (lang, clusterUser s nterested n) =>
           LanguageToClusters(
             lang,
-            clusterUserIsInterestedIn.knownForModelVersion,
-            clusterUserIsInterestedIn.clusterIdToScores
+            clusterUser s nterested n.knownForModelVers on,
+            clusterUser s nterested n.cluster dToScores
           )
       }
-      .writeDALSnapshotExecution(
-        globalLanguageEmbeddingsThriftDataset,
-        D.Daily,
-        D.Suffix(outputThriftHdfsDirectory),
+      .wr eDALSnapshotExecut on(
+        globalLanguageEmbedd ngsThr ftDataset,
+        D.Da ly,
+        D.Suff x(outputThr ftHdfsD rectory),
         D.Parquet,
         dateRange.`end`
       )

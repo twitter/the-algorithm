@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.predicate.quality_model_predicate
+package com.tw ter.fr gate.pushserv ce.pred cate.qual y_model_pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.QualityPredicateEnum
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.Qual yPred cateEnum
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-object QualityPredicateMap {
+object Qual yPred cateMap {
 
   def apply(
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Map[QualityPredicateEnum.Value, NamedPredicate[PushCandidate]] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): Map[Qual yPred cateEnum.Value, Na dPred cate[PushCand date]] = {
     Map(
-      QualityPredicateEnum.WeightedOpenOrNtabClick -> WeightedOpenOrNtabClickQualityPredicate(),
-      QualityPredicateEnum.ExplicitOpenOrNtabClickFilter -> ExplicitOONCFilterPredicate(),
-      QualityPredicateEnum.AlwaysTrue -> PredicatesForCandidate.alwaysTruePushCandidatePredicate,
+      Qual yPred cateEnum.  ghtedOpenOrNtabCl ck ->   ghtedOpenOrNtabCl ckQual yPred cate(),
+      Qual yPred cateEnum.Expl c OpenOrNtabCl ckF lter -> Expl c OONCF lterPred cate(),
+      Qual yPred cateEnum.AlwaysTrue -> Pred catesForCand date.alwaysTruePushCand datePred cate,
     )
   }
 }

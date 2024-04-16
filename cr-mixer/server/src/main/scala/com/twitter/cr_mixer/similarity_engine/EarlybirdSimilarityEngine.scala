@@ -1,30 +1,30 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.T etW hAuthor
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-class EarlybirdSimilarityEngine[
+class Earlyb rdS m lar yEng ne[
   Query,
-  EarlybirdSimilarityEngineStore <: ReadableStore[Query, Seq[TweetWithAuthor]]
+  Earlyb rdS m lar yEng neStore <: ReadableStore[Query, Seq[T etW hAuthor]]
 ](
-  implementingStore: EarlybirdSimilarityEngineStore,
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-) extends SimilarityEngine[EngineQuery[Query], TweetWithAuthor] {
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+   mple nt ngStore: Earlyb rdS m lar yEng neStore,
+  overr de val  dent f er: S m lar yEng neType,
+  globalStats: StatsRece ver,
+  eng neConf g: S m lar yEng neConf g,
+) extends S m lar yEng ne[Eng neQuery[Query], T etW hAuthor] {
+  pr vate val scopedStats = globalStats.scope("s m lar yEng ne",  dent f er.toStr ng)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  def getScopedStats: StatsRece ver = scopedStats
 
-  def getCandidates(query: EngineQuery[Query]): Future[Option[Seq[TweetWithAuthor]]] = {
-    SimilarityEngine.getFromFn(
-      implementingStore.get,
+  def getCand dates(query: Eng neQuery[Query]): Future[Opt on[Seq[T etW hAuthor]]] = {
+    S m lar yEng ne.getFromFn(
+       mple nt ngStore.get,
       query.storeQuery,
-      engineConfig,
+      eng neConf g,
       query.params,
       scopedStats
     )

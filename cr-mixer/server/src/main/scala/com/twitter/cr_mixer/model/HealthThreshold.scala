@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-object HealthThreshold {
-  object Enum extends Enumeration {
+object  althThreshold {
+  object Enum extends Enu rat on {
     val Off: Value = Value(1)
     val Moderate: Value = Value(2)
-    val Strict: Value = Value(3)
-    val Stricter: Value = Value(4)
-    val StricterPlus: Value = Value(5)
+    val Str ct: Value = Value(3)
+    val Str cter: Value = Value(4)
+    val Str cterPlus: Value = Value(5)
   }
 }

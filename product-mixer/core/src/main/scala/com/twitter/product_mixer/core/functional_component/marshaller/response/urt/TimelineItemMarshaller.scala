@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Feedback nfoMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineItemMarshaller @Inject() (
-  timelineItemContentMarshaller: TimelineItemContentMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  feedbackInfoMarshaller: FeedbackInfoMarshaller) {
+@S ngleton
+class T  l ne emMarshaller @ nject() (
+  t  l ne emContentMarshaller: T  l ne emContentMarshaller,
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller,
+  feedback nfoMarshaller: Feedback nfoMarshaller) {
 
-  def apply(item: TimelineItem): urt.TimelineItem = urt.TimelineItem(
-    content = timelineItemContentMarshaller(item),
-    clientEventInfo = item.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    feedbackInfo = item.feedbackActionInfo.map(feedbackInfoMarshaller(_)),
+  def apply( em: T  l ne em): urt.T  l ne em = urt.T  l ne em(
+    content = t  l ne emContentMarshaller( em),
+    cl entEvent nfo =  em.cl entEvent nfo.map(cl entEvent nfoMarshaller(_)),
+    feedback nfo =  em.feedbackAct on nfo.map(feedback nfoMarshaller(_)),
     prompt = None
   )
 }

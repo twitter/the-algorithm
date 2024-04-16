@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-memcached/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "servo/repo/src/main/scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle- mcac d/src/ma n/scala",
+        "f natra- nternal/mtls-http/src/ma n/scala",
+        "f natra- nternal/mtls-thr ftmux/src/ma n/scala",
+        "servo/repo/src/ma n/scala",
     ],
     exports = [
-        "finagle/finagle-memcached/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "servo/repo/src/main/scala",
+        "f nagle/f nagle- mcac d/src/ma n/scala",
+        "f natra- nternal/mtls-http/src/ma n/scala",
+        "f natra- nternal/mtls-thr ftmux/src/ma n/scala",
+        "servo/repo/src/ma n/scala",
     ],
 )

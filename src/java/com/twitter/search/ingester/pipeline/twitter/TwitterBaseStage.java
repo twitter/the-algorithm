@@ -1,360 +1,360 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.ConcurrentMap;
+ mport java.ut l.concurrent.T  Un ;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.stage. nstru ntedBaseStage;
 
-import com.twitter.common.metrics.Metrics;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
+ mport com.tw ter.common. tr cs. tr cs;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.debug.DebugEventAccumulator;
+ mport com.tw ter.search.common.debug.DebugEventUt l;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.Percent le;
+ mport com.tw ter.search.common. tr cs.Percent leUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
+ mport com.tw ter.search. ngester.p pel ne.w re.W reModule;
 
 /**
- * Common functionality for all stages.
+ * Common funct onal y for all stages.
  */
-public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
-  // Currently, all stages run in separate threads, so we could use simple maps here.
-  // However, it seems safer to use concurrent maps, in case we ever change our stage set up.
-  // The performance impact should be negligible.
-  private final ConcurrentMap<Optional<String>, SearchRateCounter> branchEmitObjectsRateCounters =
+publ c class Tw terBaseStage<T, R> extends  nstru ntedBaseStage {
+  // Currently, all stages run  n separate threads, so   could use s mple maps  re.
+  // Ho ver,   seems safer to use concurrent maps,  n case   ever change   stage set up.
+  // T  performance  mpact should be negl g ble.
+  pr vate f nal ConcurrentMap<Opt onal<Str ng>, SearchRateCounter> branchEm ObjectsRateCounters =
       Maps.newConcurrentMap();
-  private final ConcurrentMap<Optional<String>, SearchRateCounter>
-    branchEmitBatchObjectsRateCounters = Maps.newConcurrentMap();
+  pr vate f nal ConcurrentMap<Opt onal<Str ng>, SearchRateCounter>
+    branchEm BatchObjectsRateCounters = Maps.newConcurrentMap();
 
-  private String stageNamePrefix = null;
+  pr vate Str ng stageNa Pref x = null;
 
-  protected WireModule wireModule;
-  protected Decider decider;
+  protected W reModule w reModule;
+  protected Dec der dec der;
   protected Clock clock;
-  protected EarlybirdCluster earlybirdCluster;
+  protected Earlyb rdCluster earlyb rdCluster;
 
-  private String fullStageName = null;
-  private Percentile<Long> processPercentile = null;
-  private SearchTimerStats processTimerStats = null;
-  private SearchRateCounter droppedItems = null;
-  private SearchLongGauge stageExceptions = null;
+  pr vate Str ng fullStageNa  = null;
+  pr vate Percent le<Long> processPercent le = null;
+  pr vate SearchT  rStats processT  rStats = null;
+  pr vate SearchRateCounter dropped ems = null;
+  pr vate SearchLongGauge stageExcept ons = null;
 
-  private SearchRateCounter incomingBatchesRateCounter;
-  private SearchRateCounter incomingBatchObjectsRateCounter;
+  pr vate SearchRateCounter  ncom ngBatc sRateCounter;
+  pr vate SearchRateCounter  ncom ngBatchObjectsRateCounter;
 
-  private List<String> passThroughToBranches = Collections.emptyList();
-  private List<String> additionalEmitToBranches = Collections.emptyList();
+  pr vate L st<Str ng> passThroughToBranc s = Collect ons.emptyL st();
+  pr vate L st<Str ng> add  onalEm ToBranc s = Collect ons.emptyL st();
 
-  private boolean passThroughDownstream = false;
-  private boolean emitDownstream = true;
+  pr vate boolean passThroughDownstream = false;
+  pr vate boolean em Downstream = true;
 
-  private String dropItemsDeciderKey;
+  pr vate Str ng drop emsDec derKey;
 
-  // From XML config.
-  public void setPassThroughToBranches(String passThroughToBranchesString) {
-    // This is a comma-delimited string which is a list of branches to which we just
-    // pass through the incoming object without any processing/filtering.
-    this.passThroughToBranches = Arrays.asList(passThroughToBranchesString.split(","));
+  // From XML conf g.
+  publ c vo d setPassThroughToBranc s(Str ng passThroughToBranc sStr ng) {
+    // T   s a comma-del m ed str ng wh ch  s a l st of branc s to wh ch   just
+    // pass through t   ncom ng object w hout any process ng/f lter ng.
+    t .passThroughToBranc s = Arrays.asL st(passThroughToBranc sStr ng.spl (","));
   }
 
-  // From XML config.
-  public void setAdditionalEmitToBranches(String emitToBranchesString) {
-    // This is a comma-delimited string which is a list of branches to which we
-    // will emit when we call actuallyEmitAndCount(obj).
-    this.additionalEmitToBranches = Arrays.asList(emitToBranchesString.split(","));
+  // From XML conf g.
+  publ c vo d setAdd  onalEm ToBranc s(Str ng em ToBranc sStr ng) {
+    // T   s a comma-del m ed str ng wh ch  s a l st of branc s to wh ch  
+    // w ll em  w n   call actuallyEm AndCount(obj).
+    t .add  onalEm ToBranc s = Arrays.asL st(em ToBranc sStr ng.spl (","));
   }
 
-  // From XML config.
-  public void setPassThroughDownstream(boolean passThroughDownstream) {
-    // If true, we emit the raw object downstream
-    this.passThroughDownstream = passThroughDownstream;
+  // From XML conf g.
+  publ c vo d setPassThroughDownstream(boolean passThroughDownstream) {
+    //  f true,   em  t  raw object downstream
+    t .passThroughDownstream = passThroughDownstream;
   }
 
-  // From XML config.
-  public void setEmitDownstream(boolean emitDownstream) {
-    // If true, we emit the processed object downstream.
-    this.emitDownstream = emitDownstream;
+  // From XML conf g.
+  publ c vo d setEm Downstream(boolean em Downstream) {
+    //  f true,   em  t  processed object downstream.
+    t .em Downstream = em Downstream;
   }
 
-  @Override
-  public final void innerPreprocess() throws StageException {
+  @Overr de
+  publ c f nal vo d  nnerPreprocess() throws StageExcept on {
     try {
-      setupEssentialObjects();
-      doInnerPreprocess();
-    } catch (NamingException e) {
-      throw new StageException(this, "Failed to initialize stage.", e);
+      setupEssent alObjects();
+      do nnerPreprocess();
+    } catch (Nam ngExcept on e) {
+      throw new StageExcept on(t , "Fa led to  n  al ze stage.", e);
     }
   }
 
   /***
-   * Sets up all necessary objects for this stage of the Pipeline. Previously, this task was done
-   * by the preprocess() method provided by the ACP library.
-   * @throws PipelineStageException
+   * Sets up all necessary objects for t  stage of t  P pel ne. Prev ously, t  task was done
+   * by t  preprocess()  thod prov ded by t  ACP l brary.
+   * @throws P pel neStageExcept on
    */
-  public void setupStageV2() throws PipelineStageException {
+  publ c vo d setupStageV2() throws P pel neStageExcept on {
     try {
       setupCommonStats();
-      innerSetupStats();
-      setupEssentialObjects();
-      innerSetup();
-    } catch (NamingException e) {
-      throw new PipelineStageException(this, "Failed to initialize stage", e);
+       nnerSetupStats();
+      setupEssent alObjects();
+       nnerSetup();
+    } catch (Nam ngExcept on e) {
+      throw new P pel neStageExcept on(t , "Fa led to  n  al ze stage", e);
     }
   }
 
-  protected void innerSetup() throws PipelineStageException, NamingException { }
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on { }
 
   /***
-   * Takes in an argument of type T, processes it and returns an argument of Type R. This is the
-   * main method of a pipeline stage.
+   * Takes  n an argu nt of type T, processes   and returns an argu nt of Type R. T   s t 
+   * ma n  thod of a p pel ne stage.
    */
-  public R runStageV2(T arg) {
-    long startingTime = startProcessing();
-    R processed = innerRunStageV2(arg);
-    endProcessing(startingTime);
+  publ c R runStageV2(T arg) {
+    long start ngT   = startProcess ng();
+    R processed =  nnerRunStageV2(arg);
+    endProcess ng(start ngT  );
     return processed;
   }
 
   /***
-   * Takes in an argument of type T, processes it and pushes the processed element to some place.
-   * This method does not return anything as any time this method is called on a stage, it means
-   * there is no stage after this one. An example stage is any KafkaProducerStage.
+   * Takes  n an argu nt of type T, processes   and pus s t  processed ele nt to so  place.
+   * T   thod does not return anyth ng as any t   t   thod  s called on a stage,    ans
+   * t re  s no stage after t  one. An example stage  s any KafkaProducerStage.
    */
-  public void runFinalStageOfBranchV2(T arg) {
-    long startingTime = startProcessing();
-    innerRunFinalStageOfBranchV2(arg);
-    endProcessing(startingTime);
+  publ c vo d runF nalStageOfBranchV2(T arg) {
+    long start ngT   = startProcess ng();
+     nnerRunF nalStageOfBranchV2(arg);
+    endProcess ng(start ngT  );
   }
 
-  protected R innerRunStageV2(T arg) {
+  protected R  nnerRunStageV2(T arg) {
     return null;
   }
 
-  protected void innerRunFinalStageOfBranchV2(T arg) { }
+  protected vo d  nnerRunF nalStageOfBranchV2(T arg) { }
 
   /***
-   * called at the end of a pipeline. Cleans up all resources of the stage.
+   * called at t  end of a p pel ne. Cleans up all res ces of t  stage.
    */
-  public void cleanupStageV2() { }
+  publ c vo d cleanupStageV2() { }
 
-  private void setupEssentialObjects() throws NamingException {
-    wireModule = WireModule.getWireModule();
-    decider = wireModule.getDecider();
-    clock = wireModule.getClock();
-    earlybirdCluster = wireModule.getEarlybirdCluster();
-    dropItemsDeciderKey =
-          "drop_items_" + earlybirdCluster.getNameForStats() + "_" + fullStageName;
+  pr vate vo d setupEssent alObjects() throws Nam ngExcept on {
+    w reModule = W reModule.getW reModule();
+    dec der = w reModule.getDec der();
+    clock = w reModule.getClock();
+    earlyb rdCluster = w reModule.getEarlyb rdCluster();
+    drop emsDec derKey =
+          "drop_ ems_" + earlyb rdCluster.getNa ForStats() + "_" + fullStageNa ;
   }
 
-  protected void doInnerPreprocess() throws StageException, NamingException { }
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on { }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
     setupCommonStats();
-    // Export stage timers
-    SearchCustomGauge.export(stageNamePrefix + "_queue_size",
-        () -> Optional.ofNullable(getQueueSizeAverage()).orElse(0.0));
-    SearchCustomGauge.export(stageNamePrefix + "_queue_percentage_full",
-        () -> Optional.ofNullable(getQueuePercentFull()).orElse(0.0));
+    // Export stage t  rs
+    SearchCustomGauge.export(stageNa Pref x + "_queue_s ze",
+        () -> Opt onal.ofNullable(getQueueS zeAverage()).orElse(0.0));
+    SearchCustomGauge.export(stageNa Pref x + "_queue_percentage_full",
+        () -> Opt onal.ofNullable(getQueuePercentFull()).orElse(0.0));
 
-    // This only called once on startup
-    // In some unit tests, getQueueCapacity can return null. Hence this guard is added.
-    // getQueueCapacity() does not return null here in prod.
-    SearchLongGauge.export(stageNamePrefix + "_queue_capacity")
-        .set(getQueueCapacity() == null ? 0 : getQueueCapacity());
+    // T  only called once on startup
+    //  n so  un  tests, getQueueCapac y can return null.  nce t  guard  s added.
+    // getQueueCapac y() does not return null  re  n prod.
+    SearchLongGauge.export(stageNa Pref x + "_queue_capac y")
+        .set(getQueueCapac y() == null ? 0 : getQueueCapac y());
   }
 
-  private void setupCommonStats() {
-    // If the stage is instantiated only once, the class name is used for stats export
-    // If the stage is instantiated multiple times, the "stageName" specified in the
-    // pipeline definition xml file is also included.
-    if (StringUtils.isBlank(this.getStageName())) {
-      fullStageName = this.getClass().getSimpleName();
+  pr vate vo d setupCommonStats() {
+    //  f t  stage  s  nstant ated only once, t  class na   s used for stats export
+    //  f t  stage  s  nstant ated mult ple t  s, t  "stageNa " spec f ed  n t 
+    // p pel ne def n  on xml f le  s also  ncluded.
+     f (Str ngUt ls. sBlank(t .getStageNa ())) {
+      fullStageNa  = t .getClass().getS mpleNa ();
     } else {
-      fullStageName = String.format(
+      fullStageNa  = Str ng.format(
           "%s_%s",
-          this.getClass().getSimpleName(),
-          this.getStageName());
+          t .getClass().getS mpleNa (),
+          t .getStageNa ());
     }
 
-    stageNamePrefix = Metrics.normalizeName(fullStageName).toLowerCase();
+    stageNa Pref x =  tr cs.normal zeNa (fullStageNa ).toLo rCase();
 
-    droppedItems = SearchRateCounter.export(stageNamePrefix + "_dropped_messages");
-    stageExceptions = SearchLongGauge.export(stageNamePrefix + "_stage_exceptions");
+    dropped ems = SearchRateCounter.export(stageNa Pref x + "_dropped_ ssages");
+    stageExcept ons = SearchLongGauge.export(stageNa Pref x + "_stage_except ons");
 
-    processTimerStats = SearchTimerStats.export(stageNamePrefix, TimeUnit.NANOSECONDS,
+    processT  rStats = SearchT  rStats.export(stageNa Pref x, T  Un .NANOSECONDS,
         true);
-    processPercentile = PercentileUtil.createPercentile(stageNamePrefix);
+    processPercent le = Percent leUt l.createPercent le(stageNa Pref x);
 
-    incomingBatchesRateCounter = SearchRateCounter.export(stageNamePrefix + "_incoming_batches");
-    incomingBatchObjectsRateCounter =
-        SearchRateCounter.export(stageNamePrefix + "_incoming_batch_objects");
+     ncom ngBatc sRateCounter = SearchRateCounter.export(stageNa Pref x + "_ ncom ng_batc s");
+     ncom ngBatchObjectsRateCounter =
+        SearchRateCounter.export(stageNa Pref x + "_ ncom ng_batch_objects");
   }
 
-  protected void innerSetupStats() {
+  protected vo d  nnerSetupStats() {
 
   }
 
-  protected SearchCounter makeStageCounter(String counterName) {
-    return SearchCounter.export(getStageNamePrefix() + "_" + counterName);
+  protected SearchCounter makeStageCounter(Str ng counterNa ) {
+    return SearchCounter.export(getStageNa Pref x() + "_" + counterNa );
   }
 
-  private SearchRateCounter getEmitObjectsRateCounterFor(Optional<String> maybeBranch) {
-    return getRateCounterFor(maybeBranch, "emit_objects", branchEmitObjectsRateCounters);
+  pr vate SearchRateCounter getEm ObjectsRateCounterFor(Opt onal<Str ng> maybeBranch) {
+    return getRateCounterFor(maybeBranch, "em _objects", branchEm ObjectsRateCounters);
   }
 
-  private SearchRateCounter getEmitBatchObjectsRateCounterFor(Optional<String> maybeBranch) {
-    return getRateCounterFor(maybeBranch, "emit_batch_objects", branchEmitBatchObjectsRateCounters);
+  pr vate SearchRateCounter getEm BatchObjectsRateCounterFor(Opt onal<Str ng> maybeBranch) {
+    return getRateCounterFor(maybeBranch, "em _batch_objects", branchEm BatchObjectsRateCounters);
   }
 
-  private SearchRateCounter getRateCounterFor(
-      Optional<String> maybeBranch,
-      String statSuffix,
-      ConcurrentMap<Optional<String>, SearchRateCounter> rateCountersMap) {
+  pr vate SearchRateCounter getRateCounterFor(
+      Opt onal<Str ng> maybeBranch,
+      Str ng statSuff x,
+      ConcurrentMap<Opt onal<Str ng>, SearchRateCounter> rateCountersMap) {
     SearchRateCounter rateCounter = rateCountersMap.get(maybeBranch);
-    if (rateCounter == null) {
-      String branchSuffix = maybeBranch.map(b -> "_" + b.toLowerCase()).orElse("");
-      rateCounter = SearchRateCounter.export(stageNamePrefix + branchSuffix + "_" + statSuffix);
-      SearchRateCounter existingRateCounter = rateCountersMap.putIfAbsent(maybeBranch, rateCounter);
-      if (existingRateCounter != null) {
-        Preconditions.checkState(
-            existingRateCounter == rateCounter,
-            "SearchRateCounter.export() should always return the same stat instance.");
+     f (rateCounter == null) {
+      Str ng branchSuff x = maybeBranch.map(b -> "_" + b.toLo rCase()).orElse("");
+      rateCounter = SearchRateCounter.export(stageNa Pref x + branchSuff x + "_" + statSuff x);
+      SearchRateCounter ex st ngRateCounter = rateCountersMap.put fAbsent(maybeBranch, rateCounter);
+       f (ex st ngRateCounter != null) {
+        Precond  ons.c ckState(
+            ex st ngRateCounter == rateCounter,
+            "SearchRateCounter.export() should always return t  sa  stat  nstance.");
       }
     }
     return rateCounter;
   }
 
-  public String getStageNamePrefix() {
-    return stageNamePrefix;
+  publ c Str ng getStageNa Pref x() {
+    return stageNa Pref x;
   }
 
-  public String getFullStageName() {
-    return fullStageName;
+  publ c Str ng getFullStageNa () {
+    return fullStageNa ;
   }
 
-  @Override
-  public void process(Object obj) throws StageException {
-    long startTime = System.nanoTime();
+  @Overr de
+  publ c vo d process(Object obj) throws StageExcept on {
+    long startT   = System.nanoT  ();
     try {
-      // this needs to be updated before calling super.process() so that innerProcess can actually
-      // use the updated incoming rates
-      updateIncomingBatchStats(obj);
-      // Track timing events for when tweets enter each stage.
+      // t  needs to be updated before call ng super.process() so that  nnerProcess can actually
+      // use t  updated  ncom ng rates
+      update ncom ngBatchStats(obj);
+      // Track t m ng events for w n t ets enter each stage.
       captureStageDebugEvents(obj);
 
-      if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
-        droppedItems.increment();
+       f (Dec derUt l. sAva lableForRandomRec p ent(dec der, drop emsDec derKey)) {
+        dropped ems. ncre nt();
         return;
       }
 
       super.process(obj);
 
-      // Now emit the object raw to wherever we need to
-      emitToPassThroughBranches(obj);
-    } finally {
-      long processTime = System.nanoTime() - startTime;
-      processTimerStats.timerIncrement(processTime);
-      processPercentile.record(processTime);
-      stageExceptions.set(stats.getExceptionCount());
+      // Now em  t  object raw to w rever   need to
+      em ToPassThroughBranc s(obj);
+    } f nally {
+      long processT   = System.nanoT  () - startT  ;
+      processT  rStats.t  r ncre nt(processT  );
+      processPercent le.record(processT  );
+      stageExcept ons.set(stats.getExcept onCount());
     }
   }
 
-  protected long startProcessing() {
-    long startingTime = System.nanoTime();
-    checkIfObjectShouldBeEmittedOrThrowRuntimeException();
-    return startingTime;
+  protected long startProcess ng() {
+    long start ngT   = System.nanoT  ();
+    c ck fObjectShouldBeEm tedOrThrowRunt  Except on();
+    return start ngT  ;
   }
 
-  protected void endProcessing(long startingTime) {
-    long processTime = System.nanoTime() - startingTime;
-    processTimerStats.timerIncrement(processTime);
-    processPercentile.record(processTime);
+  protected vo d endProcess ng(long start ngT  ) {
+    long processT   = System.nanoT  () - start ngT  ;
+    processT  rStats.t  r ncre nt(processT  );
+    processPercent le.record(processT  );
   }
 
-  private void checkIfObjectShouldBeEmittedOrThrowRuntimeException() {
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
-      droppedItems.increment();
-      throw new PipelineStageRuntimeException("Object does not have to be processed and passed"
-          + " to the next stage");
+  pr vate vo d c ck fObjectShouldBeEm tedOrThrowRunt  Except on() {
+     f (Dec derUt l. sAva lableForRandomRec p ent(dec der, drop emsDec derKey)) {
+      dropped ems. ncre nt();
+      throw new P pel neStageRunt  Except on("Object does not have to be processed and passed"
+          + " to t  next stage");
     }
   }
 
-  private void emitToPassThroughBranches(Object obj) {
-    for (String branch : passThroughToBranches) {
-      actuallyEmitAndCount(Optional.of(branch), obj);
+  pr vate vo d em ToPassThroughBranc s(Object obj) {
+    for (Str ng branch : passThroughToBranc s) {
+      actuallyEm AndCount(Opt onal.of(branch), obj);
     }
-    if (passThroughDownstream) {
-      actuallyEmitAndCount(Optional.empty(), obj);
+     f (passThroughDownstream) {
+      actuallyEm AndCount(Opt onal.empty(), obj);
     }
   }
 
-  private void updateIncomingBatchStats(Object obj) {
-    incomingBatchesRateCounter.increment();
-    incomingBatchObjectsRateCounter.increment(getBatchSizeForStats(obj));
+  pr vate vo d update ncom ngBatchStats(Object obj) {
+     ncom ngBatc sRateCounter. ncre nt();
+     ncom ngBatchObjectsRateCounter. ncre nt(getBatchS zeForStats(obj));
   }
 
-  protected void captureStageDebugEvents(Object obj) {
-    if (obj instanceof DebugEventAccumulator) {
-      DebugEventUtil.addDebugEvent(
-          (DebugEventAccumulator) obj, getFullStageName(), clock.nowMillis());
-    } else if (obj instanceof Collection) {
-      DebugEventUtil.addDebugEventToCollection(
-          (Collection<?>) obj, getFullStageName(), clock.nowMillis());
+  protected vo d captureStageDebugEvents(Object obj) {
+     f (obj  nstanceof DebugEventAccumulator) {
+      DebugEventUt l.addDebugEvent(
+          (DebugEventAccumulator) obj, getFullStageNa (), clock.nowM ll s());
+    } else  f (obj  nstanceof Collect on) {
+      DebugEventUt l.addDebugEventToCollect on(
+          (Collect on<?>) obj, getFullStageNa (), clock.nowM ll s());
     } else {
       SearchCounter debugEventsNotSupportedCounter = SearchCounter.export(
-          stageNamePrefix + "_debug_events_not_supported_for_" + obj.getClass());
-      debugEventsNotSupportedCounter.increment();
+          stageNa Pref x + "_debug_events_not_supported_for_" + obj.getClass());
+      debugEventsNotSupportedCounter. ncre nt();
     }
   }
 
-  protected int getBatchSizeForStats(Object obj) {
-    return (obj instanceof Collection) ? ((Collection<?>) obj).size() : 1;
+  protected  nt getBatchS zeForStats(Object obj) {
+    return (obj  nstanceof Collect on) ? ((Collect on<?>) obj).s ze() : 1;
   }
 
-  protected void emitAndCount(Object obj) {
-    for (String branch : additionalEmitToBranches) {
-      actuallyEmitAndCount(Optional.of(branch), obj);
+  protected vo d em AndCount(Object obj) {
+    for (Str ng branch : add  onalEm ToBranc s) {
+      actuallyEm AndCount(Opt onal.of(branch), obj);
     }
-    if (emitDownstream) {
-      actuallyEmitAndCount(Optional.empty(), obj);
+     f (em Downstream) {
+      actuallyEm AndCount(Opt onal.empty(), obj);
     }
   }
 
-  protected void emitToBranchAndCount(String branch, Object obj) {
-    actuallyEmitAndCount(Optional.of(branch), obj);
+  protected vo d em ToBranchAndCount(Str ng branch, Object obj) {
+    actuallyEm AndCount(Opt onal.of(branch), obj);
   }
 
-  // If the branch is none, emit downstream
-  private void actuallyEmitAndCount(Optional<String> maybeBranch, Object obj) {
-    if (maybeBranch.isPresent()) {
-      emit(maybeBranch.get(), obj);
+  //  f t  branch  s none, em  downstream
+  pr vate vo d actuallyEm AndCount(Opt onal<Str ng> maybeBranch, Object obj) {
+     f (maybeBranch. sPresent()) {
+      em (maybeBranch.get(), obj);
     } else {
-      emit(obj);
+      em (obj);
     }
-    getEmitObjectsRateCounterFor(maybeBranch).increment();
-    getEmitBatchObjectsRateCounterFor(maybeBranch).increment(getBatchSizeForStats(obj));
+    getEm ObjectsRateCounterFor(maybeBranch). ncre nt();
+    getEm BatchObjectsRateCounterFor(maybeBranch). ncre nt(getBatchS zeForStats(obj));
   }
 }

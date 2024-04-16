@@ -1,37 +1,37 @@
-package com.twitter.unified_user_actions.client.config
+package com.tw ter.un f ed_user_act ons.cl ent.conf g
 
-import com.twitter.inject.Test
+ mport com.tw ter. nject.Test
 
-class KafkaConfigsSpec extends Test {
-  test("configs should be correct") {
+class KafkaConf gsSpec extends Test {
+  test("conf gs should be correct") {
     val states = Seq(
       (
-        KafkaConfigs.ProdUnifiedUserActions,
+        KafkaConf gs.ProdUn f edUserAct ons,
         Constants.UuaProdEnv,
-        Constants.UuaKafkaTopicName,
-        Constants.UuaKafkaProdClusterName),
+        Constants.UuaKafkaTop cNa ,
+        Constants.UuaKafkaProdClusterNa ),
       (
-        KafkaConfigs.ProdUnifiedUserActionsEngagementOnly,
+        KafkaConf gs.ProdUn f edUserAct onsEngage ntOnly,
         Constants.UuaProdEnv,
-        Constants.UuaEngagementOnlyKafkaTopicName,
-        Constants.UuaKafkaProdClusterName),
+        Constants.UuaEngage ntOnlyKafkaTop cNa ,
+        Constants.UuaKafkaProdClusterNa ),
       (
-        KafkaConfigs.StagingUnifiedUserActions,
-        Constants.UuaStagingEnv,
-        Constants.UuaKafkaTopicName,
-        Constants.UuaKafkaStagingClusterName),
+        KafkaConf gs.Stag ngUn f edUserAct ons,
+        Constants.UuaStag ngEnv,
+        Constants.UuaKafkaTop cNa ,
+        Constants.UuaKafkaStag ngClusterNa ),
       (
-        KafkaConfigs.StagingUnifiedUserActionsEngagementOnly,
-        Constants.UuaStagingEnv,
-        Constants.UuaEngagementOnlyKafkaTopicName,
-        Constants.UuaKafkaStagingClusterName)
+        KafkaConf gs.Stag ngUn f edUserAct onsEngage ntOnly,
+        Constants.UuaStag ngEnv,
+        Constants.UuaEngage ntOnlyKafkaTop cNa ,
+        Constants.UuaKafkaStag ngClusterNa )
     )
 
     states.foreach {
-      case (actual, expectedEnv, expectedTopic, expectedClusterName) =>
-        assert(expectedEnv == actual.environment.name, s"in $actual")
-        assert(expectedTopic == actual.topic, s"in $actual")
-        assert(expectedClusterName == actual.cluster.name, s"in $actual")
+      case (actual, expectedEnv, expectedTop c, expectedClusterNa ) =>
+        assert(expectedEnv == actual.env ron nt.na , s" n $actual")
+        assert(expectedTop c == actual.top c, s" n $actual")
+        assert(expectedClusterNa  == actual.cluster.na , s" n $actual")
       case _ =>
     }
   }

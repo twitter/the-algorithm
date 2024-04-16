@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object OfflineStpSourceParams {
-  // If enabled, we use the new, denser version of PMI matrix to generate OfflineSTP candidates.
-  case object UseDenserPmiMatrix
-      extends FSParam[Boolean]("offline_stp_source_use_denser_pmi_matrix", default = false)
+object Offl neStpS ceParams {
+  //  f enabled,   use t  new, denser vers on of PM  matr x to generate Offl neSTP cand dates.
+  case object UseDenserPm Matr x
+      extends FSParam[Boolean]("offl ne_stp_s ce_use_denser_pm _matr x", default = false)
 }

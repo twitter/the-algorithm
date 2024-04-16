@@ -1,203 +1,203 @@
 use arrayvec::ArrayVec;
-use itertools::Itertools;
-use log::info;
+use  ertools:: ertools;
+use log:: nfo;
 use std::sync::Arc;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
+use tok o::sync::oneshot::Sender;
+use tok o::t  :: nstant;
 
-use crate::bootstrap::{TensorInput, TensorInputEnum};
-use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::{Callback, MAX_NUM_INPUTS, PredictResult};
-use crate::metrics::{
-    BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
-    NUM_BATCH_PREDICTION, NUM_BATCH_PREDICTION_BY_MODEL, NUM_BATCHES_DROPPED,
-    NUM_BATCHES_DROPPED_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
+use crate::bootstrap::{Tensor nput, Tensor nputEnum};
+use crate::cl _args::{ARGS, MODEL_SPECS};
+use crate::{Callback, MAX_NUM_ NPUTS, Pred ctResult};
+use crate:: tr cs::{
+    BATCH_S ZE, BATCH_S ZE_BY_MODEL, BLOCK NG_REQUEST_NUM, MODEL_ NFERENCE_T ME_COLLECTOR,
+    NUM_BATCH_PRED CT ON, NUM_BATCH_PRED CT ON_BY_MODEL, NUM_BATCHES_DROPPED,
+    NUM_BATCHES_DROPPED_BY_MODEL, NUM_PRED CT ON_BY_MODEL, NUM_REQUESTS_DROPPED,
     NUM_REQUESTS_DROPPED_BY_MODEL,
 };
-use crate::predict_service::Model;
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice;
-use crate::tf_proto::tensorflow_serving::PredictRequest;
+use crate::pred ct_serv ce::Model;
+use crate::tf_proto::tensorflow_serv ng::model_spec::Vers onCho ce;
+use crate::tf_proto::tensorflow_serv ng::Pred ctRequest;
 use crate::tf_proto::DataType;
 
-#[derive(Debug)]
-pub struct BatchPredictor<T: Model> {
+#[der ve(Debug)]
+pub struct BatchPred ctor<T: Model> {
     pub model: Arc<T>,
-    pub input_tensors: Vec<Vec<TensorInput>>,
+    pub  nput_tensors: Vec<Vec<Tensor nput>>,
     pub callbacks: Vec<Callback>,
-    pub cur_batch_size: usize,
-    pub max_batch_size: usize,
-    pub batch_time_out_millis: u64,
-    pub queue_reset_ts: Instant,
-    pub queue_earliest_rq_ts: Instant,
+    pub cur_batch_s ze: us ze,
+    pub max_batch_s ze: us ze,
+    pub batch_t  _out_m ll s: u64,
+    pub queue_reset_ts:  nstant,
+    pub queue_earl est_rq_ts:  nstant,
 }
 
-impl PredictRequest {
-    #[inline(always)]
-    pub fn take_input_vals(
+ mpl Pred ctRequest {
+    #[ nl ne(always)]
+    pub fn take_ nput_vals(
         &mut self,
-        inputs: &ArrayVec<String, MAX_NUM_INPUTS>,
-    ) -> Vec<TensorInput> {
-        let mut model_inputs = Vec::<TensorInput>::new();
-        for input_name in inputs.as_slice() {
-            let input_tensor = self
-                .inputs
-                .get_mut(input_name)
-                .unwrap_or_else(|| panic!("can't find {:?}", input_name));
-            let dims = match &input_tensor.tensor_shape {
+         nputs: &ArrayVec<Str ng, MAX_NUM_ NPUTS>,
+    ) -> Vec<Tensor nput> {
+        let mut model_ nputs = Vec::<Tensor nput>::new();
+        for  nput_na   n  nputs.as_sl ce() {
+            let  nput_tensor = self
+                . nputs
+                .get_mut( nput_na )
+                .unwrap_or_else(|| pan c!("can't f nd {:?}",  nput_na ));
+            let d ms = match & nput_tensor.tensor_shape {
                 None => None,
-                Some(data) => Some(data.dim.iter().map(|d| d.size).collect_vec()),
+                So (data) => So (data.d m. er().map(|d| d.s ze).collect_vec()),
             };
-            match input_tensor.dtype() {
-                DataType::DtFloat => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Float(std::mem::take(&mut input_tensor.float_val)),
-                    input_name.to_string(),
-                    dims,
+            match  nput_tensor.dtype() {
+                DataType::DtFloat => model_ nputs.push(Tensor nput::new(
+                    Tensor nputEnum::Float(std:: m::take(&mut  nput_tensor.float_val)),
+                     nput_na .to_str ng(),
+                    d ms,
                 )),
-                DataType::DtDouble => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Double(std::mem::take(&mut input_tensor.double_val)),
-                    input_name.to_string(),
-                    dims,
+                DataType::DtDouble => model_ nputs.push(Tensor nput::new(
+                    Tensor nputEnum::Double(std:: m::take(&mut  nput_tensor.double_val)),
+                     nput_na .to_str ng(),
+                    d ms,
                 )),
-                DataType::DtInt32 => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Int(std::mem::take(&mut input_tensor.int_val)),
-                    input_name.to_string(),
-                    dims,
+                DataType::Dt nt32 => model_ nputs.push(Tensor nput::new(
+                    Tensor nputEnum:: nt(std:: m::take(&mut  nput_tensor. nt_val)),
+                     nput_na .to_str ng(),
+                    d ms,
                 )),
-                DataType::DtString => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::String(std::mem::take(&mut input_tensor.string_val)),
-                    input_name.to_string(),
-                    dims,
+                DataType::DtStr ng => model_ nputs.push(Tensor nput::new(
+                    Tensor nputEnum::Str ng(std:: m::take(&mut  nput_tensor.str ng_val)),
+                     nput_na .to_str ng(),
+                    d ms,
                 )),
-                DataType::DtInt64 => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Int64(std::mem::take(&mut input_tensor.int64_val)),
-                    input_name.to_string(),
-                    dims,
+                DataType::Dt nt64 => model_ nputs.push(Tensor nput::new(
+                    Tensor nputEnum:: nt64(std:: m::take(&mut  nput_tensor. nt64_val)),
+                     nput_na .to_str ng(),
+                    d ms,
                 )),
-                DataType::DtBool => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Boolean(std::mem::take(&mut input_tensor.bool_val)),
-                    input_name.to_string(),
-                    dims,
+                DataType::DtBool => model_ nputs.push(Tensor nput::new(
+                    Tensor nputEnum::Boolean(std:: m::take(&mut  nput_tensor.bool_val)),
+                     nput_na .to_str ng(),
+                    d ms,
                 )),
-                _ => panic!("unsupport input tensor type {:?}", input_tensor.dtype()),
+                _ => pan c!("unsupport  nput tensor type {:?}",  nput_tensor.dtype()),
             }
         }
-        model_inputs
+        model_ nputs
     }
-    #[inline(always)]
-    pub fn take_model_spec(&mut self) -> (String, Option<i64>) {
+    #[ nl ne(always)]
+    pub fn take_model_spec(&mut self) -> (Str ng, Opt on< 64>) {
         let model_spec = self.model_spec.as_mut().unwrap();
-        let version = model_spec
-            .version_choice
+        let vers on = model_spec
+            .vers on_cho ce
             .as_ref()
-            .and_then(|choice| match choice {
-                VersionChoice::Version(version) => Some(*version),
+            .and_t n(|cho ce| match cho ce {
+                Vers onCho ce::Vers on(vers on) => So (*vers on),
                 _ => None,
             });
-        (std::mem::take(&mut model_spec.name), version)
+        (std:: m::take(&mut model_spec.na ), vers on)
     }
 }
 
-impl<T: Model> Drop for BatchPredictor<T> {
+ mpl<T: Model> Drop for BatchPred ctor<T> {
     fn drop(&mut self) {
-        info!(
-            "drop old batch predictor for:{:}, queue:{}",
+         nfo!(
+            "drop old batch pred ctor for:{:}, queue:{}",
             self.model,
-            self.input_tensors.len()
+            self. nput_tensors.len()
         );
-        if !self.input_tensors.is_empty() {
-            info!("now flush old predictor queue:{}", self.input_tensors.len());
-            self.batch_predict();
+         f !self. nput_tensors. s_empty() {
+             nfo!("now flush old pred ctor queue:{}", self. nput_tensors.len());
+            self.batch_pred ct();
         }
     }
 }
 
-impl<T: Model> BatchPredictor<T> {
-    #[inline(always)]
-    pub fn push(&mut self, val: Vec<TensorInput>, resp: Sender<PredictResult>, ts: Instant) {
-        if self.input_tensors.is_empty() {
-            //only when queue is empty then we update ts to represent first request time
-            self.queue_reset_ts = Instant::now();
-            self.queue_earliest_rq_ts = ts;
+ mpl<T: Model> BatchPred ctor<T> {
+    #[ nl ne(always)]
+    pub fn push(&mut self, val: Vec<Tensor nput>, resp: Sender<Pred ctResult>, ts:  nstant) {
+         f self. nput_tensors. s_empty() {
+            //only w n queue  s empty t n   update ts to represent f rst request t  
+            self.queue_reset_ts =  nstant::now();
+            self.queue_earl est_rq_ts = ts;
         }
-        self.cur_batch_size += 1;
-        self.input_tensors.push(val);
-        self.callbacks.push(Callback(resp, self.cur_batch_size));
+        self.cur_batch_s ze += 1;
+        self. nput_tensors.push(val);
+        self.callbacks.push(Callback(resp, self.cur_batch_s ze));
     }
-    #[inline(always)]
-    pub fn batch_predict(&mut self) {
-        BATCH_SIZE_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .add(self.cur_batch_size as i64);
-        BATCH_SIZE.add(self.cur_batch_size as i64);
-        let mut batch_input_tensors = Vec::with_capacity(self.max_batch_size);
-        let mut batch_callbacks = Vec::with_capacity(self.max_batch_size);
-        let mut batch_size = 0;
-        //now we swap so we can take two queues to the blocking-send thread and reset current queues
-        std::mem::swap(&mut self.input_tensors, &mut batch_input_tensors);
-        std::mem::swap(&mut self.callbacks, &mut batch_callbacks);
-        std::mem::swap(&mut self.cur_batch_size, &mut batch_size);
+    #[ nl ne(always)]
+    pub fn batch_pred ct(&mut self) {
+        BATCH_S ZE_BY_MODEL
+            .w h_label_values(&[&MODEL_SPECS[self.model.model_ dx()]])
+            .add(self.cur_batch_s ze as  64);
+        BATCH_S ZE.add(self.cur_batch_s ze as  64);
+        let mut batch_ nput_tensors = Vec::w h_capac y(self.max_batch_s ze);
+        let mut batch_callbacks = Vec::w h_capac y(self.max_batch_s ze);
+        let mut batch_s ze = 0;
+        //now   swap so   can take two queues to t  block ng-send thread and reset current queues
+        std:: m::swap(&mut self. nput_tensors, &mut batch_ nput_tensors);
+        std:: m::swap(&mut self.callbacks, &mut batch_callbacks);
+        std:: m::swap(&mut self.cur_batch_s ze, &mut batch_s ze);
         let model = self.model.clone();
-        let batch_earliest_rq_ts = self.queue_earliest_rq_ts;
-        //info!("batch predict for model:{}, size:{}", self.tf_model.export_dir, vals0.len());
-        BLOCKING_REQUEST_NUM.inc();
-        tokio::task::spawn_blocking(move || {
-            //proactively drop stale batches, we drop the entire batch
-            //as long as one request in that batch is stale. We may drop more than we could this way
-            //but this should work fairly decently well
-            if (batch_earliest_rq_ts.elapsed().as_millis() as u64) < ARGS.batch_drop_millis {
-                let model_inference_time_start = Instant::now();
+        let batch_earl est_rq_ts = self.queue_earl est_rq_ts;
+        // nfo!("batch pred ct for model:{}, s ze:{}", self.tf_model.export_d r, vals0.len());
+        BLOCK NG_REQUEST_NUM. nc();
+        tok o::task::spawn_block ng(move || {
+            //proact vely drop stale batc s,   drop t  ent re batch
+            //as long as one request  n that batch  s stale.   may drop more than   could t  way
+            //but t  should work fa rly decently  ll
+             f (batch_earl est_rq_ts.elapsed().as_m ll s() as u64) < ARGS.batch_drop_m ll s {
+                let model_ nference_t  _start =  nstant::now();
                 let (tensor_outs, batch_ends) =
-                    model.do_predict(batch_input_tensors, batch_size as u64);
-                MODEL_INFERENCE_TIME_COLLECTOR
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
-                    .observe(model_inference_time_start.elapsed().as_millis() as f64);
+                    model.do_pred ct(batch_ nput_tensors, batch_s ze as u64);
+                MODEL_ NFERENCE_T ME_COLLECTOR
+                    .w h_label_values(&[&MODEL_SPECS[model.model_ dx()]])
+                    .observe(model_ nference_t  _start.elapsed().as_m ll s() as f64);
                 let mut batch_starts = vec![0; tensor_outs.len()];
-                for (i, Callback(resp, _)) in batch_callbacks.into_iter().enumerate() {
+                for ( , Callback(resp, _))  n batch_callbacks. nto_ er().enu rate() {
                     let mut tensors_send_back = vec![];
-                    for (j, tensor_out) in tensor_outs.iter().enumerate() {
-                        tensors_send_back.push(tensor_out.slice(batch_starts[j], batch_ends[j][i]));
-                        batch_starts[j] = batch_ends[j][i];
+                    for (j, tensor_out)  n tensor_outs. er().enu rate() {
+                        tensors_send_back.push(tensor_out.sl ce(batch_starts[j], batch_ends[j][ ]));
+                        batch_starts[j] = batch_ends[j][ ];
                     }
-                    if resp
-                        .send(PredictResult::Ok(tensors_send_back, model.version()))
-                        .is_err()
+                     f resp
+                        .send(Pred ctResult::Ok(tensors_send_back, model.vers on()))
+                        . s_err()
                     {
-                        //use dropped metrics here as this is expected under high load
-                        NUM_REQUESTS_DROPPED.inc();
+                        //use dropped  tr cs  re as t   s expected under h gh load
+                        NUM_REQUESTS_DROPPED. nc();
                         NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
-                            .inc();
+                            .w h_label_values(&[&MODEL_SPECS[model.model_ dx()]])
+                            . nc();
                     }
                 }
             } else {
-                for Callback(resp, _) in batch_callbacks.into_iter() {
-                    if resp.send(PredictResult::DropDueToOverload).is_err() {
-                        NUM_REQUESTS_DROPPED.inc();
+                for Callback(resp, _)  n batch_callbacks. nto_ er() {
+                     f resp.send(Pred ctResult::DropDueToOverload). s_err() {
+                        NUM_REQUESTS_DROPPED. nc();
                         NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
-                            .inc();
+                            .w h_label_values(&[&MODEL_SPECS[model.model_ dx()]])
+                            . nc();
                     }
                 }
-                NUM_BATCHES_DROPPED.inc();
+                NUM_BATCHES_DROPPED. nc();
                 NUM_BATCHES_DROPPED_BY_MODEL
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
-                    .inc();
+                    .w h_label_values(&[&MODEL_SPECS[model.model_ dx()]])
+                    . nc();
             }
-            BLOCKING_REQUEST_NUM.dec();
+            BLOCK NG_REQUEST_NUM.dec();
         });
-        NUM_BATCH_PREDICTION.inc();
-        NUM_BATCH_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .inc();
+        NUM_BATCH_PRED CT ON. nc();
+        NUM_BATCH_PRED CT ON_BY_MODEL
+            .w h_label_values(&[&MODEL_SPECS[self.model.model_ dx()]])
+            . nc();
         // Note:
-        //  self.cur_batch_size is swapped with batch_size above
-        //  Use the local variable batch_size here
-        NUM_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .inc_by(batch_size as u64);
+        //  self.cur_batch_s ze  s swapped w h batch_s ze above
+        //  Use t  local var able batch_s ze  re
+        NUM_PRED CT ON_BY_MODEL
+            .w h_label_values(&[&MODEL_SPECS[self.model.model_ dx()]])
+            . nc_by(batch_s ze as u64);
     }
-    #[inline(always)]
-    pub fn duration_past(&self, millis: u64) -> bool {
-        self.queue_reset_ts.elapsed().as_millis() as u64 >= millis
+    #[ nl ne(always)]
+    pub fn durat on_past(&self, m ll s: u64) -> bool {
+        self.queue_reset_ts.elapsed().as_m ll s() as u64 >= m ll s
     }
 }

@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-trait HasSortIndex { timelineEntry: TimelineEntry =>
-  def sortIndex: Option[Long]
+tra  HasSort ndex { t  l neEntry: T  l neEntry =>
+  def sort ndex: Opt on[Long]
 
-  def withSortIndex(sortIndex: Long): TimelineEntry
+  def w hSort ndex(sort ndex: Long): T  l neEntry
 }

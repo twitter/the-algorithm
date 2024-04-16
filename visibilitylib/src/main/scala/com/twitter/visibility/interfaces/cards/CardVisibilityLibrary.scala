@@ -1,183 +1,183 @@
-package com.twitter.visibility.interfaces.cards
+package com.tw ter.v s b l y. nterfaces.cards
 
-import com.twitter.appsec.sanitization.URLSafety
-import com.twitter.decider.Decider
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityTweetFeatures
-import com.twitter.visibility.builder.tweets.CommunityTweetFeaturesV2
-import com.twitter.visibility.builder.tweets.NilTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.CardIsPoll
-import com.twitter.visibility.features.CardUriHost
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.CardId
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.appsec.san  zat on.URLSafety
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.{thr ftscala => t etyp ethr ft}
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.t ets.Commun yT etFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.Commun yT etFeaturesV2
+ mport com.tw ter.v s b l y.bu lder.t ets.N lT etLabelMaps
+ mport com.tw ter.v s b l y.bu lder.t ets.T etFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common.Commun  esS ce
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.features.Card sPoll
+ mport com.tw ter.v s b l y.features.CardUr Host
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d.Card d
+ mport com.tw ter.v s b l y.models.V e rContext
 
-object CardVisibilityLibrary {
-  type Type = CardVisibilityRequest => Stitch[VisibilityResult]
+object CardV s b l yL brary {
+  type Type = CardV s b l yRequest => St ch[V s b l yResult]
 
-  private[this] def getAuthorFeatures(
-    authorIdOpt: Option[Long],
+  pr vate[t ] def getAuthorFeatures(
+    author dOpt: Opt on[Long],
     authorFeatures: AuthorFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    authorIdOpt match {
-      case Some(authorId) => authorFeatures.forAuthorId(authorId)
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    author dOpt match {
+      case So (author d) => authorFeatures.forAuthor d(author d)
       case _ => authorFeatures.forNoAuthor()
     }
   }
 
-  private[this] def getCardUriFeatures(
-    cardUri: String,
-    enableCardVisibilityLibraryCardUriParsing: Boolean,
-    trackCardUriHost: Option[String] => Unit
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    if (enableCardVisibilityLibraryCardUriParsing) {
-      val safeCardUriHost = URLSafety.getHostSafe(cardUri)
-      trackCardUriHost(safeCardUriHost)
+  pr vate[t ] def getCardUr Features(
+    cardUr : Str ng,
+    enableCardV s b l yL braryCardUr Pars ng: Boolean,
+    trackCardUr Host: Opt on[Str ng] => Un 
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+     f (enableCardV s b l yL braryCardUr Pars ng) {
+      val safeCardUr Host = URLSafety.getHostSafe(cardUr )
+      trackCardUr Host(safeCardUr Host)
 
-      _.withConstantFeature(CardUriHost, safeCardUriHost)
+      _.w hConstantFeature(CardUr Host, safeCardUr Host)
     } else {
-      identity
+       dent y
     }
   }
 
-  private[this] def getRelationshipFeatures(
-    authorIdOpt: Option[Long],
-    viewerIdOpt: Option[Long],
-    relationshipFeatures: RelationshipFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    authorIdOpt match {
-      case Some(authorId) => relationshipFeatures.forAuthorId(authorId, viewerIdOpt)
-      case _ => relationshipFeatures.forNoAuthor()
+  pr vate[t ] def getRelat onsh pFeatures(
+    author dOpt: Opt on[Long],
+    v e r dOpt: Opt on[Long],
+    relat onsh pFeatures: Relat onsh pFeatures
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    author dOpt match {
+      case So (author d) => relat onsh pFeatures.forAuthor d(author d, v e r dOpt)
+      case _ => relat onsh pFeatures.forNoAuthor()
     }
   }
 
-  private[this] def getTweetFeatures(
-    tweetOpt: Option[tweetypiethrift.Tweet],
-    tweetFeatures: TweetFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    tweetOpt match {
-      case Some(tweet) => tweetFeatures.forTweet(tweet)
-      case _ => identity
+  pr vate[t ] def getT etFeatures(
+    t etOpt: Opt on[t etyp ethr ft.T et],
+    t etFeatures: T etFeatures
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    t etOpt match {
+      case So (t et) => t etFeatures.forT et(t et)
+      case _ =>  dent y
     }
   }
 
-  private[this] def getCommunityFeatures(
-    tweetOpt: Option[tweetypiethrift.Tweet],
-    viewerContext: ViewerContext,
-    communityTweetFeatures: CommunityTweetFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    tweetOpt match {
-      case Some(tweet) => communityTweetFeatures.forTweet(tweet, viewerContext)
-      case _ => identity
+  pr vate[t ] def getCommun yFeatures(
+    t etOpt: Opt on[t etyp ethr ft.T et],
+    v e rContext: V e rContext,
+    commun yT etFeatures: Commun yT etFeatures
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    t etOpt match {
+      case So (t et) => commun yT etFeatures.forT et(t et, v e rContext)
+      case _ =>  dent y
     }
   }
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource = UserSource.empty,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    communitiesSource: CommunitiesSource = CommunitiesSource.empty,
-    enableVfParityTest: Gate[Unit] = Gate.False,
-    enableVfFeatureHydration: Gate[Unit] = Gate.False,
-    decider: Decider
+    v s b l yL brary: V s b l yL brary,
+    userS ce: UserS ce = UserS ce.empty,
+    userRelat onsh pS ce: UserRelat onsh pS ce = UserRelat onsh pS ce.empty,
+    commun  esS ce: Commun  esS ce = Commun  esS ce.empty,
+    enableVfPar yTest: Gate[Un ] = Gate.False,
+    enableVfFeatureHydrat on: Gate[Un ] = Gate.False,
+    dec der: Dec der
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
-    val cardUriStats = libraryStatsReceiver.scope("card_uri")
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val vfLatencyOverallStat = l braryStatsRece ver.stat("vf_latency_overall")
+    val vfLatencySt chBu ldStat = l braryStatsRece ver.stat("vf_latency_st ch_bu ld")
+    val vfLatencySt chRunStat = l braryStatsRece ver.stat("vf_latency_st ch_run")
+    val cardUr Stats = l braryStatsRece ver.scope("card_ur ")
+    val v s b l yDec derGates = V s b l yDec derGates(dec der)
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val tweetFeatures = new TweetFeatures(NilTweetLabelMaps, libraryStatsReceiver)
-    val communityTweetFeatures = new CommunityTweetFeaturesV2(
-      communitiesSource = communitiesSource,
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+    val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
+    val t etFeatures = new T etFeatures(N lT etLabelMaps, l braryStatsRece ver)
+    val commun yT etFeatures = new Commun yT etFeaturesV2(
+      commun  esS ce = commun  esS ce,
     )
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val parityTest = new CardVisibilityLibraryParityTest(libraryStatsReceiver)
+    val relat onsh pFeatures =
+      new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
+    val par yTest = new CardV s b l yL braryPar yTest(l braryStatsRece ver)
 
-    { r: CardVisibilityRequest =>
+    { r: CardV s b l yRequest =>
       val elapsed = Stopwatch.start()
-      var runStitchStartMs = 0L
+      var runSt chStartMs = 0L
 
-      val viewerId: Option[UserId] = r.viewerContext.userId
+      val v e r d: Opt on[User d] = r.v e rContext.user d
 
       val featureMap =
-        visibilityLibrary
-          .featureMapBuilder(
+        v s b l yL brary
+          .featureMapBu lder(
             Seq(
-              viewerFeatures.forViewerId(viewerId),
-              getAuthorFeatures(r.authorId, authorFeatures),
-              getCardUriFeatures(
-                cardUri = r.cardUri,
-                enableCardVisibilityLibraryCardUriParsing =
-                  visibilityDeciderGates.enableCardVisibilityLibraryCardUriParsing(),
-                trackCardUriHost = { safeCardUriHost: Option[String] =>
-                  if (safeCardUriHost.isEmpty) {
-                    cardUriStats.counter("empty").incr()
+              v e rFeatures.forV e r d(v e r d),
+              getAuthorFeatures(r.author d, authorFeatures),
+              getCardUr Features(
+                cardUr  = r.cardUr ,
+                enableCardV s b l yL braryCardUr Pars ng =
+                  v s b l yDec derGates.enableCardV s b l yL braryCardUr Pars ng(),
+                trackCardUr Host = { safeCardUr Host: Opt on[Str ng] =>
+                   f (safeCardUr Host. sEmpty) {
+                    cardUr Stats.counter("empty"). ncr()
                   }
                 }
               ),
-              getCommunityFeatures(r.tweetOpt, r.viewerContext, communityTweetFeatures),
-              getRelationshipFeatures(r.authorId, r.viewerContext.userId, relationshipFeatures),
-              getTweetFeatures(r.tweetOpt, tweetFeatures),
-              _.withConstantFeature(CardIsPoll, r.isPollCardType)
+              getCommun yFeatures(r.t etOpt, r.v e rContext, commun yT etFeatures),
+              getRelat onsh pFeatures(r.author d, r.v e rContext.user d, relat onsh pFeatures),
+              getT etFeatures(r.t etOpt, t etFeatures),
+              _.w hConstantFeature(Card sPoll, r. sPollCardType)
             )
           )
 
-      val response = visibilityLibrary
-        .runRuleEngine(
-          CardId(r.cardUri),
+      val response = v s b l yL brary
+        .runRuleEng ne(
+          Card d(r.cardUr ),
           featureMap,
-          r.viewerContext,
+          r.v e rContext,
           r.safetyLevel
         )
         .onSuccess(_ => {
-          val overallStatMs = elapsed().inMilliseconds
+          val overallStatMs = elapsed(). nM ll seconds
           vfLatencyOverallStat.add(overallStatMs)
-          val runStitchEndMs = elapsed().inMilliseconds
-          vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+          val runSt chEndMs = elapsed(). nM ll seconds
+          vfLatencySt chRunStat.add(runSt chEndMs - runSt chStartMs)
         })
 
-      runStitchStartMs = elapsed().inMilliseconds
-      val buildStitchStatMs = elapsed().inMilliseconds
-      vfLatencyStitchBuildStat.add(buildStitchStatMs)
+      runSt chStartMs = elapsed(). nM ll seconds
+      val bu ldSt chStatMs = elapsed(). nM ll seconds
+      vfLatencySt chBu ldStat.add(bu ldSt chStatMs)
 
-      lazy val hydratedFeatureResponse: Stitch[VisibilityResult] =
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            CardId(r.cardUri),
+      lazy val hydratedFeatureResponse: St ch[V s b l yResult] =
+        FeatureMap.resolve(featureMap, l braryStatsRece ver).flatMap { resolvedFeatureMap =>
+          v s b l yL brary.runRuleEng ne(
+            Card d(r.cardUr ),
             resolvedFeatureMap,
-            r.viewerContext,
+            r.v e rContext,
             r.safetyLevel
           )
         }
 
-      val isVfParityTestEnabled = enableVfParityTest()
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydration()
+      val  sVfPar yTestEnabled = enableVfPar yTest()
+      val  sVfFeatureHydrat onEnabled = enableVfFeatureHydrat on()
 
-      if (!isVfParityTestEnabled && !isVfFeatureHydrationEnabled) {
+       f (! sVfPar yTestEnabled && ! sVfFeatureHydrat onEnabled) {
         response
-      } else if (isVfParityTestEnabled && !isVfFeatureHydrationEnabled) {
+      } else  f ( sVfPar yTestEnabled && ! sVfFeatureHydrat onEnabled) {
         response.applyEffect { resp =>
-          Stitch.async(parityTest.runParityTest(hydratedFeatureResponse, resp))
+          St ch.async(par yTest.runPar yTest(hydratedFeatureResponse, resp))
         }
       } else {
         hydratedFeatureResponse

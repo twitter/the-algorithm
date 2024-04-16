@@ -1,238 +1,238 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.tw ter.fr gate.pushserv ce.refresh_handler
 
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes.isInNetworkTweetType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.TrendTweetPushCandidate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyExpansion
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil._
-import com.twitter.frigate.pushservice.util.MrUserStateUtil
-import com.twitter.frigate.pushservice.util.RelationshipUtil
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.channels.common.thr ftscala.Ap L st
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes. s nNetworkT etType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.TrendT etPushCand date
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.cross.Cand dateCopyExpans on
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateHydrat onUt l._
+ mport com.tw ter.fr gate.pushserv ce.ut l.MrUserStateUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Relat onsh pUt l
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class PushCandidateHydrator(
-  socialGraphServiceProcessStore: ReadableStore[RelationEdge, Boolean],
+case class PushCand dateHydrator(
+  soc alGraphServ ceProcessStore: ReadableStore[Relat onEdge, Boolean],
   safeUserStore: ReadableStore[Long, User],
-  apiListStore: ReadableStore[Long, ApiList],
-  candidateCopyCross: CandidateCopyExpansion
+  ap L stStore: ReadableStore[Long, Ap L st],
+  cand dateCopyCross: Cand dateCopyExpans on
 )(
-  implicit statsReceiver: StatsReceiver,
-  implicit val weightedOpenOrNtabClickModelScorer: PushMLModelScorer) {
+   mpl c  statsRece ver: StatsRece ver,
+   mpl c  val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer) {
 
-  lazy val candidateWithCopyNumStat = statsReceiver.stat("candidate_with_copy_num")
-  lazy val hydratedCandidateStat = statsReceiver.scope("hydrated_candidates")
-  lazy val mrUserStateStat = statsReceiver.scope("mr_user_state")
+  lazy val cand dateW hCopyNumStat = statsRece ver.stat("cand date_w h_copy_num")
+  lazy val hydratedCand dateStat = statsRece ver.scope("hydrated_cand dates")
+  lazy val mrUserStateStat = statsRece ver.scope("mr_user_state")
 
-  lazy val queryStep = statsReceiver.scope("query_step")
-  lazy val relationEdgeWithoutDuplicateInQueryStep =
-    queryStep.counter("number_of_relationEdge_without_duplicate_in_query_step")
-  lazy val relationEdgeWithoutDuplicateInQueryStepDistribution =
-    queryStep.stat("number_of_relationEdge_without_duplicate_in_query_step_distribution")
+  lazy val queryStep = statsRece ver.scope("query_step")
+  lazy val relat onEdgeW houtDupl cate nQueryStep =
+    queryStep.counter("number_of_relat onEdge_w hout_dupl cate_ n_query_step")
+  lazy val relat onEdgeW houtDupl cate nQueryStepD str but on =
+    queryStep.stat("number_of_relat onEdge_w hout_dupl cate_ n_query_step_d str but on")
 
-  case class Entities(
+  case class Ent  es(
     users: Set[Long] = Set.empty[Long],
-    relationshipEdges: Set[RelationEdge] = Set.empty[RelationEdge]) {
-    def merge(otherEntities: Entities): Entities = {
-      this.copy(
-        users = this.users ++ otherEntities.users,
-        relationshipEdges =
-          this.relationshipEdges ++ otherEntities.relationshipEdges
+    relat onsh pEdges: Set[Relat onEdge] = Set.empty[Relat onEdge]) {
+    def  rge(ot rEnt  es: Ent  es): Ent  es = {
+      t .copy(
+        users = t .users ++ ot rEnt  es.users,
+        relat onsh pEdges =
+          t .relat onsh pEdges ++ ot rEnt  es.relat onsh pEdges
       )
     }
   }
 
-  case class EntitiesMap(
+  case class Ent  esMap(
     userMap: Map[Long, User] = Map.empty[Long, User],
-    relationshipMap: Map[RelationEdge, Boolean] = Map.empty[RelationEdge, Boolean])
+    relat onsh pMap: Map[Relat onEdge, Boolean] = Map.empty[Relat onEdge, Boolean])
 
-  private def updateCandidateAndCrtStats(
-    candidate: RawCandidate,
-    candidateType: String,
-    numEntities: Int = 1
-  ): Unit = {
-    statsReceiver
-      .scope(candidateType).scope(candidate.commonRecType.name).stat(
-        "totalEntitiesPerCandidateTypePerCrt").add(numEntities)
-    statsReceiver.scope(candidateType).stat("totalEntitiesPerCandidateType").add(numEntities)
+  pr vate def updateCand dateAndCrtStats(
+    cand date: RawCand date,
+    cand dateType: Str ng,
+    numEnt  es:  nt = 1
+  ): Un  = {
+    statsRece ver
+      .scope(cand dateType).scope(cand date.commonRecType.na ).stat(
+        "totalEnt  esPerCand dateTypePerCrt").add(numEnt  es)
+    statsRece ver.scope(cand dateType).stat("totalEnt  esPerCand dateType").add(numEnt  es)
   }
 
-  private def collectEntities(
-    candidateDetailsSeq: Seq[CandidateDetails[RawCandidate]]
-  ): Entities = {
-    candidateDetailsSeq
-      .map { candidateDetails =>
-        val pushCandidate = candidateDetails.candidate
+  pr vate def collectEnt  es(
+    cand dateDeta lsSeq: Seq[Cand dateDeta ls[RawCand date]]
+  ): Ent  es = {
+    cand dateDeta lsSeq
+      .map { cand dateDeta ls =>
+        val pushCand date = cand dateDeta ls.cand date
 
-        val userEntities = pushCandidate match {
-          case tweetWithSocialContext: RawCandidate with TweetWithSocialContextTraits =>
-            val authorIdOpt = getAuthorIdFromTweetCandidate(tweetWithSocialContext)
-            val scUserIds = tweetWithSocialContext.socialContextUserIds.toSet
-            updateCandidateAndCrtStats(pushCandidate, "tweetWithSocialContext", scUserIds.size + 1)
-            Entities(users = scUserIds ++ authorIdOpt.toSet)
+        val userEnt  es = pushCand date match {
+          case t etW hSoc alContext: RawCand date w h T etW hSoc alContextTra s =>
+            val author dOpt = getAuthor dFromT etCand date(t etW hSoc alContext)
+            val scUser ds = t etW hSoc alContext.soc alContextUser ds.toSet
+            updateCand dateAndCrtStats(pushCand date, "t etW hSoc alContext", scUser ds.s ze + 1)
+            Ent  es(users = scUser ds ++ author dOpt.toSet)
 
-          case _ => Entities()
+          case _ => Ent  es()
         }
 
-        val relationEntities = {
-          if (isInNetworkTweetType(pushCandidate.commonRecType)) {
-            Entities(
-              relationshipEdges =
-                RelationshipUtil.getPreCandidateRelationshipsForInNetworkTweets(pushCandidate).toSet
+        val relat onEnt  es = {
+           f ( s nNetworkT etType(pushCand date.commonRecType)) {
+            Ent  es(
+              relat onsh pEdges =
+                Relat onsh pUt l.getPreCand dateRelat onsh psFor nNetworkT ets(pushCand date).toSet
             )
-          } else Entities()
+          } else Ent  es()
         }
 
-        userEntities.merge(relationEntities)
+        userEnt  es. rge(relat onEnt  es)
       }
-      .foldLeft(Entities()) { (e1, e2) => e1.merge(e2) }
+      .foldLeft(Ent  es()) { (e1, e2) => e1. rge(e2) }
 
   }
 
   /**
-   * This method calls Gizmoduck and Social Graph Service, keep the results in EntitiesMap
-   * and passed onto the update candidate phase in the hydration step
+   * T   thod calls G zmoduck and Soc al Graph Serv ce, keep t  results  n Ent  esMap
+   * and passed onto t  update cand date phase  n t  hydrat on step
    *
-   * @param entities contains all userIds and relationEdges for all candidates
-   * @return EntitiesMap contains userMap and relationshipMap
+   * @param ent  es conta ns all user ds and relat onEdges for all cand dates
+   * @return Ent  esMap conta ns userMap and relat onsh pMap
    */
-  private def queryEntities(entities: Entities): Future[EntitiesMap] = {
+  pr vate def queryEnt  es(ent  es: Ent  es): Future[Ent  esMap] = {
 
-    relationEdgeWithoutDuplicateInQueryStep.incr(entities.relationshipEdges.size)
-    relationEdgeWithoutDuplicateInQueryStepDistribution.add(entities.relationshipEdges.size)
+    relat onEdgeW houtDupl cate nQueryStep. ncr(ent  es.relat onsh pEdges.s ze)
+    relat onEdgeW houtDupl cate nQueryStepD str but on.add(ent  es.relat onsh pEdges.s ze)
 
-    val relationshipMapFuture = Future
-      .collect(socialGraphServiceProcessStore.multiGet(entities.relationshipEdges))
+    val relat onsh pMapFuture = Future
+      .collect(soc alGraphServ ceProcessStore.mult Get(ent  es.relat onsh pEdges))
       .map { resultMap =>
         resultMap.collect {
-          case (relationshipEdge, Some(res)) => relationshipEdge -> res
-          case (relationshipEdge, None) => relationshipEdge -> false
+          case (relat onsh pEdge, So (res)) => relat onsh pEdge -> res
+          case (relat onsh pEdge, None) => relat onsh pEdge -> false
         }
       }
 
     val userMapFuture = Future
-      .collect(safeUserStore.multiGet(entities.users))
+      .collect(safeUserStore.mult Get(ent  es.users))
       .map { userMap =>
         userMap.collect {
-          case (userId, Some(user)) =>
-            userId -> user
+          case (user d, So (user)) =>
+            user d -> user
         }
       }
 
-    Future.join(userMapFuture, relationshipMapFuture).map {
-      case (uMap, rMap) => EntitiesMap(userMap = uMap, relationshipMap = rMap)
+    Future.jo n(userMapFuture, relat onsh pMapFuture).map {
+      case (uMap, rMap) => Ent  esMap(userMap = uMap, relat onsh pMap = rMap)
     }
   }
 
   /**
-   * @param candidateDetails: recommendation candidates for a user
-   * @return sequence of candidates tagged with push and ntab copy id
+   * @param cand dateDeta ls: recom ndat on cand dates for a user
+   * @return sequence of cand dates tagged w h push and ntab copy  d
    */
-  private def expandCandidatesWithCopy(
-    candidateDetails: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[(CandidateDetails[RawCandidate], CopyIds)]] = {
-    candidateCopyCross.expandCandidatesWithCopyId(candidateDetails)
+  pr vate def expandCand datesW hCopy(
+    cand dateDeta ls: Seq[Cand dateDeta ls[RawCand date]]
+  ): Future[Seq[(Cand dateDeta ls[RawCand date], Copy ds)]] = {
+    cand dateCopyCross.expandCand datesW hCopy d(cand dateDeta ls)
   }
 
-  def updateCandidates(
-    candidateDetailsWithCopies: Seq[(CandidateDetails[RawCandidate], CopyIds)],
-    entitiesMaps: EntitiesMap
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    candidateDetailsWithCopies.map {
-      case (candidateDetail, copyIds) =>
-        val pushCandidate = candidateDetail.candidate
-        val userMap = entitiesMaps.userMap
-        val relationshipMap = entitiesMaps.relationshipMap
+  def updateCand dates(
+    cand dateDeta lsW hCop es: Seq[(Cand dateDeta ls[RawCand date], Copy ds)],
+    ent  esMaps: Ent  esMap
+  ): Seq[Cand dateDeta ls[PushCand date]] = {
+    cand dateDeta lsW hCop es.map {
+      case (cand dateDeta l, copy ds) =>
+        val pushCand date = cand dateDeta l.cand date
+        val userMap = ent  esMaps.userMap
+        val relat onsh pMap = ent  esMaps.relat onsh pMap
 
-        val hydratedCandidate = pushCandidate match {
+        val hydratedCand date = pushCand date match {
 
-          case f1TweetCandidate: F1FirstDegree =>
-            getHydratedCandidateForF1FirstDegreeTweet(
-              f1TweetCandidate,
+          case f1T etCand date: F1F rstDegree =>
+            getHydratedCand dateForF1F rstDegreeT et(
+              f1T etCand date,
               userMap,
-              relationshipMap,
-              copyIds)
+              relat onsh pMap,
+              copy ds)
 
-          case tweetRetweet: TweetRetweetCandidate =>
-            getHydratedCandidateForTweetRetweet(tweetRetweet, userMap, copyIds)
+          case t etRet et: T etRet etCand date =>
+            getHydratedCand dateForT etRet et(t etRet et, userMap, copy ds)
 
-          case tweetFavorite: TweetFavoriteCandidate =>
-            getHydratedCandidateForTweetFavorite(tweetFavorite, userMap, copyIds)
+          case t etFavor e: T etFavor eCand date =>
+            getHydratedCand dateForT etFavor e(t etFavor e, userMap, copy ds)
 
-          case tripTweetCandidate: OutOfNetworkTweetCandidate with TripCandidate =>
-            getHydratedCandidateForTripTweetCandidate(tripTweetCandidate, userMap, copyIds)
+          case tr pT etCand date: OutOfNetworkT etCand date w h Tr pCand date =>
+            getHydratedCand dateForTr pT etCand date(tr pT etCand date, userMap, copy ds)
 
-          case outOfNetworkTweetCandidate: OutOfNetworkTweetCandidate with TopicCandidate =>
-            getHydratedCandidateForOutOfNetworkTweetCandidate(
-              outOfNetworkTweetCandidate,
+          case outOfNetworkT etCand date: OutOfNetworkT etCand date w h Top cCand date =>
+            getHydratedCand dateForOutOfNetworkT etCand date(
+              outOfNetworkT etCand date,
               userMap,
-              copyIds)
+              copy ds)
 
-          case topicProofTweetCandidate: TopicProofTweetCandidate =>
-            getHydratedTopicProofTweetCandidate(topicProofTweetCandidate, userMap, copyIds)
+          case top cProofT etCand date: Top cProofT etCand date =>
+            getHydratedTop cProofT etCand date(top cProofT etCand date, userMap, copy ds)
 
-          case subscribedSearchTweetCandidate: SubscribedSearchTweetCandidate =>
-            getHydratedSubscribedSearchTweetCandidate(
-              subscribedSearchTweetCandidate,
+          case subscr bedSearchT etCand date: Subscr bedSearchT etCand date =>
+            getHydratedSubscr bedSearchT etCand date(
+              subscr bedSearchT etCand date,
               userMap,
-              copyIds)
+              copy ds)
 
-          case listRecommendation: ListPushCandidate =>
-            getHydratedListCandidate(apiListStore, listRecommendation, copyIds)
+          case l stRecom ndat on: L stPushCand date =>
+            getHydratedL stCand date(ap L stStore, l stRecom ndat on, copy ds)
 
-          case discoverTwitterCandidate: DiscoverTwitterCandidate =>
-            getHydratedCandidateForDiscoverTwitterCandidate(discoverTwitterCandidate, copyIds)
+          case d scoverTw terCand date: D scoverTw terCand date =>
+            getHydratedCand dateForD scoverTw terCand date(d scoverTw terCand date, copy ds)
 
-          case topTweetImpressionsCandidate: TopTweetImpressionsCandidate =>
-            getHydratedCandidateForTopTweetImpressionsCandidate(
-              topTweetImpressionsCandidate,
-              copyIds)
+          case topT et mpress onsCand date: TopT et mpress onsCand date =>
+            getHydratedCand dateForTopT et mpress onsCand date(
+              topT et mpress onsCand date,
+              copy ds)
 
-          case trendTweetCandidate: TrendTweetCandidate =>
-            new TrendTweetPushCandidate(
-              trendTweetCandidate,
-              trendTweetCandidate.authorId.flatMap(userMap.get),
-              copyIds)
+          case trendT etCand date: TrendT etCand date =>
+            new TrendT etPushCand date(
+              trendT etCand date,
+              trendT etCand date.author d.flatMap(userMap.get),
+              copy ds)
 
-          case unknownCandidate =>
-            throw new IllegalArgumentException(
-              s"Incorrect candidate for hydration: ${unknownCandidate.commonRecType}")
+          case unknownCand date =>
+            throw new  llegalArgu ntExcept on(
+              s" ncorrect cand date for hydrat on: ${unknownCand date.commonRecType}")
         }
 
-        CandidateDetails(
-          hydratedCandidate,
-          source = candidateDetail.source
+        Cand dateDeta ls(
+          hydratedCand date,
+          s ce = cand dateDeta l.s ce
         )
     }
   }
 
   def apply(
-    candidateDetails: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val isLoggedOutRequest =
-      candidateDetails.headOption.exists(_.candidate.target.isLoggedOutUser)
-    if (!isLoggedOutRequest) {
-      candidateDetails.headOption.map { cd =>
-        MrUserStateUtil.updateMrUserStateStats(cd.candidate.target)(mrUserStateStat)
+    cand dateDeta ls: Seq[Cand dateDeta ls[RawCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    val  sLoggedOutRequest =
+      cand dateDeta ls. adOpt on.ex sts(_.cand date.target. sLoggedOutUser)
+     f (! sLoggedOutRequest) {
+      cand dateDeta ls. adOpt on.map { cd =>
+        MrUserStateUt l.updateMrUserStateStats(cd.cand date.target)(mrUserStateStat)
       }
     }
 
-    expandCandidatesWithCopy(candidateDetails).flatMap { candidateDetailsWithCopy =>
-      candidateWithCopyNumStat.add(candidateDetailsWithCopy.size)
-      val entities = collectEntities(candidateDetailsWithCopy.map(_._1))
-      queryEntities(entities).flatMap { entitiesMap =>
-        val updatedCandidates = updateCandidates(candidateDetailsWithCopy, entitiesMap)
-        updatedCandidates.foreach { cand =>
-          hydratedCandidateStat.counter(cand.candidate.commonRecType.name).incr()
+    expandCand datesW hCopy(cand dateDeta ls).flatMap { cand dateDeta lsW hCopy =>
+      cand dateW hCopyNumStat.add(cand dateDeta lsW hCopy.s ze)
+      val ent  es = collectEnt  es(cand dateDeta lsW hCopy.map(_._1))
+      queryEnt  es(ent  es).flatMap { ent  esMap =>
+        val updatedCand dates = updateCand dates(cand dateDeta lsW hCopy, ent  esMap)
+        updatedCand dates.foreach { cand =>
+          hydratedCand dateStat.counter(cand.cand date.commonRecType.na ). ncr()
         }
-        Future.value(updatedCandidates)
+        Future.value(updatedCand dates)
       }
     }
   }

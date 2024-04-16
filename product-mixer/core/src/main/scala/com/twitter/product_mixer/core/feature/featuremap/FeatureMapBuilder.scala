@@ -1,110 +1,110 @@
-package com.twitter.product_mixer.core.feature.featuremap
+package com.tw ter.product_m xer.core.feature.featuremap
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import scala.collection.mutable
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport scala.collect on.mutable
 
 /**
- * [[FeatureMapBuilder]] is a typesafe way (it checks types vs the [[Feature]]s on `.add`) to build a [[FeatureMap]].
+ * [[FeatureMapBu lder]]  s a typesafe way (  c cks types vs t  [[Feature]]s on `.add`) to bu ld a [[FeatureMap]].
  *
- * Throws a [[DuplicateFeatureException]] if you try to add the same [[Feature]] more than once.
+ * Throws a [[Dupl cateFeatureExcept on]]  f   try to add t  sa  [[Feature]] more than once.
  *
- * These builders are __not__ reusable.
+ * T se bu lders are __not__ reusable.
  */
 
-class FeatureMapBuilder {
-  private val underlying = Map.newBuilder[Feature[_, _], Try[Any]]
-  private val keys = mutable.HashSet.empty[Feature[_, _]]
-  private var built = false
+class FeatureMapBu lder {
+  pr vate val underly ng = Map.newBu lder[Feature[_, _], Try[Any]]
+  pr vate val keys = mutable.HashSet.empty[Feature[_, _]]
+  pr vate var bu lt = false
 
   /**
-   * Add a [[Try]] of a [[Feature]] `value` to the map,
-   * handling both the [[Return]] and [[Throw]] cases.
+   * Add a [[Try]] of a [[Feature]] `value` to t  map,
+   * handl ng both t  [[Return]] and [[Throw]] cases.
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[Dupl cateFeatureExcept on]]  f  's already present.
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
-   *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+   * @note  f   have a [[Feature]] w h a non-opt onal value type `Feature[_, V]`
+   *       but have an `Opt on[V]`   can use [[Try.orThrow]] to convert t  [[Opt on]]
+   *       to a [[Try]], wh ch w ll store t  successful or fa led [[Feature]]  n t  map.
    */
-  def add[V](feature: Feature[_, V], value: Try[V]): FeatureMapBuilder = addTry(feature, value)
+  def add[V](feature: Feature[_, V], value: Try[V]): FeatureMapBu lder = addTry(feature, value)
 
   /**
-   * Add a successful [[Feature]] `value` to the map
+   * Add a successful [[Feature]] `value` to t  map
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[Dupl cateFeatureExcept on]]  f  's already present.
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Option.get]] or [[Option.getOrElse]]
-   *       to convert the [[Option]] to extract the underlying value,
-   *       which will throw immediately if it's [[None]] or add the successful [[Feature]] in the map.
+   * @note  f   have a [[Feature]] w h a non-opt onal value type `Feature[_, V]`
+   *       but have an `Opt on[V]`   can use [[Opt on.get]] or [[Opt on.getOrElse]]
+   *       to convert t  [[Opt on]] to extract t  underly ng value,
+   *       wh ch w ll throw  m d ately  f  's [[None]] or add t  successful [[Feature]]  n t  map.
    */
-  def add[V](feature: Feature[_, V], value: V): FeatureMapBuilder =
+  def add[V](feature: Feature[_, V], value: V): FeatureMapBu lder =
     addTry(feature, Return(value))
 
   /**
-   * Add a failed [[Feature]] `value` to the map
+   * Add a fa led [[Feature]] `value` to t  map
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[Dupl cateFeatureExcept on]]  f  's already present.
    */
-  def addFailure(feature: Feature[_, _], throwable: Throwable): FeatureMapBuilder =
+  def addFa lure(feature: Feature[_, _], throwable: Throwable): FeatureMapBu lder =
     addTry(feature, Throw(throwable))
 
   /**
-   * [[add]] but for when the [[Feature]] types aren't known
+   * [[add]] but for w n t  [[Feature]] types aren't known
    *
-   * Add a [[Try]] of a [[Feature]] `value` to the map,
-   * handling both the [[Return]] and [[Throw]] cases.
+   * Add a [[Try]] of a [[Feature]] `value` to t  map,
+   * handl ng both t  [[Return]] and [[Throw]] cases.
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[Dupl cateFeatureExcept on]]  f  's already present.
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
-   *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+   * @note  f   have a [[Feature]] w h a non-opt onal value type `Feature[_, V]`
+   *       but have an `Opt on[V]`   can use [[Try.orThrow]] to convert t  [[Opt on]]
+   *       to a [[Try]], wh ch w ll store t  successful or fa led [[Feature]]  n t  map.
    */
-  def addTry(feature: Feature[_, _], value: Try[_]): FeatureMapBuilder = {
-    if (keys.contains(feature)) {
-      throw new DuplicateFeatureException(feature)
+  def addTry(feature: Feature[_, _], value: Try[_]): FeatureMapBu lder = {
+     f (keys.conta ns(feature)) {
+      throw new Dupl cateFeatureExcept on(feature)
     }
-    addWithoutValidation(feature, value)
+    addW houtVal dat on(feature, value)
   }
 
   /**
-   * [[addTry]] but without a [[DuplicateFeatureException]] check
+   * [[addTry]] but w hout a [[Dupl cateFeatureExcept on]] c ck
    *
-   * @note Only for use internally within [[FeatureMap.merge]]
+   * @note Only for use  nternally w h n [[FeatureMap. rge]]
    */
-  private[featuremap] def addWithoutValidation(
+  pr vate[featuremap] def addW houtVal dat on(
     feature: Feature[_, _],
     value: Try[_]
-  ): FeatureMapBuilder = {
+  ): FeatureMapBu lder = {
     keys += feature
-    underlying += ((feature, value))
-    this
+    underly ng += ((feature, value))
+    t 
   }
 
-  /** Builds the FeatureMap */
-  def build(): FeatureMap = {
-    if (built) {
-      throw ReusedFeatureMapBuilderException
+  /** Bu lds t  FeatureMap */
+  def bu ld(): FeatureMap = {
+     f (bu lt) {
+      throw ReusedFeatureMapBu lderExcept on
     }
 
-    built = true
-    new FeatureMap(underlying.result())
+    bu lt = true
+    new FeatureMap(underly ng.result())
   }
 }
 
-object FeatureMapBuilder {
+object FeatureMapBu lder {
 
-  /** Returns a new [[FeatureMapBuilder]] for making [[FeatureMap]]s */
-  def apply(): FeatureMapBuilder = new FeatureMapBuilder
+  /** Returns a new [[FeatureMapBu lder]] for mak ng [[FeatureMap]]s */
+  def apply(): FeatureMapBu lder = new FeatureMapBu lder
 }
 
-class DuplicateFeatureException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Feature $feature already exists in FeatureMap")
+class Dupl cateFeatureExcept on(feature: Feature[_, _])
+    extends UnsupportedOperat onExcept on(s"Feature $feature already ex sts  n FeatureMap")
 
-object ReusedFeatureMapBuilderException
-    extends UnsupportedOperationException(
-      "build() cannot be called more than once since FeatureMapBuilders are not reusable")
+object ReusedFeatureMapBu lderExcept on
+    extends UnsupportedOperat onExcept on(
+      "bu ld() cannot be called more than once s nce FeatureMapBu lders are not reusable")

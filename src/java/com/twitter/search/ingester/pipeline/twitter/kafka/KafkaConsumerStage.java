@@ -1,245 +1,245 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.tw ter.search. ngester.p pel ne.tw ter.kafka;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+ mport java.t  .Durat on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.SaslAuthenticationException;
-import org.apache.kafka.common.errors.SerializationException;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
+ mport org.apac .commons.p pel ne.P pel ne;
+ mport org.apac .commons.p pel ne.StageDr ver;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.apac .kafka.common.errors.SaslAut nt cat onExcept on;
+ mport org.apac .kafka.common.errors.Ser al zat onExcept on;
+ mport org.apac .kafka.common.ser al zat on.Deser al zer;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.Tw terBaseStage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neUt l;
 
 /**
- * A stage to read Thrift payloads from a Kafka topic.
+ * A stage to read Thr ft payloads from a Kafka top c.
  */
-public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerStage.class);
-  private static final String SHUT_DOWN_ON_AUTH_FAIL = "shut_down_on_authentication_fail";
-  private String kafkaClientId;
-  private String kafkaTopicName;
-  private String kafkaConsumerGroupId;
-  private String kafkaClusterPath;
-  private int maxPollRecords = 1;
-  private int pollTimeoutMs = 1000;
-  private boolean partitioned;
-  private String deciderKey;
-  private final Deserializer<R> deserializer;
-  private SearchCounter pollCount;
-  private SearchCounter deserializationErrorCount;
-  private SearchRateCounter droppedMessages;
+publ c abstract class KafkaConsu rStage<R> extends Tw terBaseStage<Vo d, R> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(KafkaConsu rStage.class);
+  pr vate stat c f nal Str ng SHUT_DOWN_ON_AUTH_FA L = "shut_down_on_aut nt cat on_fa l";
+  pr vate Str ng kafkaCl ent d;
+  pr vate Str ng kafkaTop cNa ;
+  pr vate Str ng kafkaConsu rGroup d;
+  pr vate Str ng kafkaClusterPath;
+  pr vate  nt maxPollRecords = 1;
+  pr vate  nt pollT  outMs = 1000;
+  pr vate boolean part  oned;
+  pr vate Str ng dec derKey;
+  pr vate f nal Deser al zer<R> deser al zer;
+  pr vate SearchCounter pollCount;
+  pr vate SearchCounter deser al zat onErrorCount;
+  pr vate SearchRateCounter dropped ssages;
 
-  private KafkaConsumer<Long, R> kafkaConsumer;
+  pr vate KafkaConsu r<Long, R> kafkaConsu r;
 
-  protected KafkaConsumerStage(String kafkaClientId, String kafkaTopicName,
-                            String kafkaConsumerGroupId, String kafkaClusterPath,
-                               String deciderKey, Deserializer<R> deserializer) {
+  protected KafkaConsu rStage(Str ng kafkaCl ent d, Str ng kafkaTop cNa ,
+                            Str ng kafkaConsu rGroup d, Str ng kafkaClusterPath,
+                               Str ng dec derKey, Deser al zer<R> deser al zer) {
 
-    this.kafkaClientId = kafkaClientId;
-    this.kafkaTopicName = kafkaTopicName;
-    this.kafkaConsumerGroupId = kafkaConsumerGroupId;
-    this.kafkaClusterPath = kafkaClusterPath;
-    this.deciderKey = deciderKey;
-    this.deserializer = deserializer;
+    t .kafkaCl ent d = kafkaCl ent d;
+    t .kafkaTop cNa  = kafkaTop cNa ;
+    t .kafkaConsu rGroup d = kafkaConsu rGroup d;
+    t .kafkaClusterPath = kafkaClusterPath;
+    t .dec derKey = dec derKey;
+    t .deser al zer = deser al zer;
   }
 
-  protected KafkaConsumerStage(Deserializer<R> deserializer) {
-    this.deserializer = deserializer;
+  protected KafkaConsu rStage(Deser al zer<R> deser al zer) {
+    t .deser al zer = deser al zer;
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
+    common nnerSetupStats();
   }
 
-  private void commonInnerSetupStats() {
-    pollCount = SearchCounter.export(getStageNamePrefix() + "_poll_count");
-    deserializationErrorCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_error_count");
-    droppedMessages =
-        SearchRateCounter.export(getStageNamePrefix() + "_dropped_messages");
+  pr vate vo d common nnerSetupStats() {
+    pollCount = SearchCounter.export(getStageNa Pref x() + "_poll_count");
+    deser al zat onErrorCount =
+        SearchCounter.export(getStageNa Pref x() + "_deser al zat on_error_count");
+    dropped ssages =
+        SearchRateCounter.export(getStageNa Pref x() + "_dropped_ ssages");
   }
 
-  @Override
-  protected void innerSetupStats() {
-    commonInnerSetupStats();
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    common nnerSetupStats();
   }
 
-  @Override
-  protected void doInnerPreprocess() {
-    commonInnerSetup();
-    PipelineUtil.feedStartObjectToStage(this);
+  @Overr de
+  protected vo d do nnerPreprocess() {
+    common nnerSetup();
+    P pel neUt l.feedStartObjectToStage(t );
   }
 
-  private void commonInnerSetup() {
-    Preconditions.checkNotNull(kafkaClientId);
-    Preconditions.checkNotNull(kafkaClusterPath);
-    Preconditions.checkNotNull(kafkaTopicName);
+  pr vate vo d common nnerSetup() {
+    Precond  ons.c ckNotNull(kafkaCl ent d);
+    Precond  ons.c ckNotNull(kafkaClusterPath);
+    Precond  ons.c ckNotNull(kafkaTop cNa );
 
-    kafkaConsumer = wireModule.newKafkaConsumer(
+    kafkaConsu r = w reModule.newKafkaConsu r(
         kafkaClusterPath,
-        deserializer,
-        kafkaClientId,
-        kafkaConsumerGroupId,
+        deser al zer,
+        kafkaCl ent d,
+        kafkaConsu rGroup d,
         maxPollRecords);
-    if (partitioned) {
-      kafkaConsumer.assign(Collections.singletonList(
-          new TopicPartition(kafkaTopicName, wireModule.getPartition())));
+     f (part  oned) {
+      kafkaConsu r.ass gn(Collect ons.s ngletonL st(
+          new Top cPart  on(kafkaTop cNa , w reModule.getPart  on())));
     } else {
-      kafkaConsumer.subscribe(Collections.singleton(kafkaTopicName));
+      kafkaConsu r.subscr be(Collect ons.s ngleton(kafkaTop cNa ));
     }
   }
 
-  @Override
-  protected void innerSetup() {
-    commonInnerSetup();
+  @Overr de
+  protected vo d  nnerSetup() {
+    common nnerSetup();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
-    while (driver.getState() == StageDriver.State.RUNNING) {
-      pollAndEmit();
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+    StageDr ver dr ver = ((P pel ne) stageContext).getStageDr ver(t );
+    wh le (dr ver.getState() == StageDr ver.State.RUNN NG) {
+      pollAndEm ();
     }
 
-    LOG.info("StageDriver state is no longer RUNNING, closing Kafka consumer.");
-    closeKafkaConsumer();
+    LOG. nfo("StageDr ver state  s no longer RUNN NG, clos ng Kafka consu r.");
+    closeKafkaConsu r();
   }
 
-  @VisibleForTesting
-  void pollAndEmit() throws StageException {
+  @V s bleForTest ng
+  vo d pollAndEm () throws StageExcept on {
     try {
-      List<R> records = poll();
+      L st<R> records = poll();
       for (R record : records) {
-        emitAndCount(record);
+        em AndCount(record);
       }
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+    } catch (P pel neStageExcept on e) {
+      throw new StageExcept on(t , e);
     }
   }
 
   /***
-   * Poll Kafka and get the items from the topic. Record stats.
+   * Poll Kafka and get t   ems from t  top c. Record stats.
    * @return
-   * @throws PipelineStageException
+   * @throws P pel neStageExcept on
    */
-  public List<R> pollFromTopic() throws PipelineStageException {
-    long startingTime = startProcessing();
-    List<R> polledItems = poll();
-    endProcessing(startingTime);
-    return polledItems;
+  publ c L st<R> pollFromTop c() throws P pel neStageExcept on {
+    long start ngT   = startProcess ng();
+    L st<R> polled ems = poll();
+    endProcess ng(start ngT  );
+    return polled ems;
   }
 
-  private List<R> poll() throws PipelineStageException  {
-    List<R> recordsFromKafka = new ArrayList<>();
+  pr vate L st<R> poll() throws P pel neStageExcept on  {
+    L st<R> recordsFromKafka = new ArrayL st<>();
     try {
-      ConsumerRecords<Long, R> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeoutMs));
-      pollCount.increment();
-      records.iterator().forEachRemaining(record -> {
-        if (deciderKey == null || DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
+      Consu rRecords<Long, R> records = kafkaConsu r.poll(Durat on.ofM ll s(pollT  outMs));
+      pollCount. ncre nt();
+      records. erator().forEachRema n ng(record -> {
+         f (dec derKey == null || Dec derUt l. sAva lableForRandomRec p ent(dec der, dec derKey)) {
           recordsFromKafka.add(record.value());
         } else {
-          droppedMessages.increment();
+          dropped ssages. ncre nt();
         }
       });
 
-    } catch (SerializationException e) {
-      deserializationErrorCount.increment();
-      LOG.error("Failed to deserialize the value.", e);
-    } catch (SaslAuthenticationException e) {
-      if (DeciderUtil.isAvailableForRandomRecipient(decider, SHUT_DOWN_ON_AUTH_FAIL)) {
-        wireModule.getPipelineExceptionHandler()
-            .logAndShutdown("Authentication error connecting to Kafka broker: " + e);
+    } catch (Ser al zat onExcept on e) {
+      deser al zat onErrorCount. ncre nt();
+      LOG.error("Fa led to deser al ze t  value.", e);
+    } catch (SaslAut nt cat onExcept on e) {
+       f (Dec derUt l. sAva lableForRandomRec p ent(dec der, SHUT_DOWN_ON_AUTH_FA L)) {
+        w reModule.getP pel neExcept onHandler()
+            .logAndShutdown("Aut nt cat on error connect ng to Kafka broker: " + e);
       } else {
-        throw new PipelineStageException(this, "Kafka Authentication Error", e);
+        throw new P pel neStageExcept on(t , "Kafka Aut nt cat on Error", e);
       }
-    } catch (Exception e) {
-      throw new PipelineStageException(e);
+    } catch (Except on e) {
+      throw new P pel neStageExcept on(e);
     }
 
     return recordsFromKafka;
   }
 
-  @VisibleForTesting
-  void closeKafkaConsumer() {
+  @V s bleForTest ng
+  vo d closeKafkaConsu r() {
     try {
-      kafkaConsumer.close();
-      LOG.info("Kafka kafkaConsumer for {} was closed", getFullStageName());
-    } catch (Exception e) {
-      log.error("Failed to close Kafka kafkaConsumer", e);
+      kafkaConsu r.close();
+      LOG. nfo("Kafka kafkaConsu r for {} was closed", getFullStageNa ());
+    } catch (Except on e) {
+      log.error("Fa led to close Kafka kafkaConsu r", e);
     }
   }
 
-  @Override
-  public void release() {
-    closeKafkaConsumer();
+  @Overr de
+  publ c vo d release() {
+    closeKafkaConsu r();
     super.release();
   }
 
-  @Override
-  public void cleanupStageV2() {
-    closeKafkaConsumer();
+  @Overr de
+  publ c vo d cleanupStageV2() {
+    closeKafkaConsu r();
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClientId(String kafkaClientId) {
-    this.kafkaClientId = kafkaClientId;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaCl ent d(Str ng kafkaCl ent d) {
+    t .kafkaCl ent d = kafkaCl ent d;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaTopicName(String kafkaTopicName) {
-    this.kafkaTopicName = kafkaTopicName;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaTop cNa (Str ng kafkaTop cNa ) {
+    t .kafkaTop cNa  = kafkaTop cNa ;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaConsumerGroupId(String kafkaConsumerGroupId) {
-    this.kafkaConsumerGroupId = kafkaConsumerGroupId;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaConsu rGroup d(Str ng kafkaConsu rGroup d) {
+    t .kafkaConsu rGroup d = kafkaConsu rGroup d;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setMaxPollRecords(int maxPollRecords) {
-    this.maxPollRecords = maxPollRecords;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setMaxPollRecords( nt maxPollRecords) {
+    t .maxPollRecords = maxPollRecords;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setPollTimeoutMs(int pollTimeoutMs) {
-    this.pollTimeoutMs = pollTimeoutMs;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setPollT  outMs( nt pollT  outMs) {
+    t .pollT  outMs = pollT  outMs;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setPartitioned(boolean partitioned) {
-    this.partitioned = partitioned;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setPart  oned(boolean part  oned) {
+    t .part  oned = part  oned;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDeciderKey(String deciderKey) {
-    this.deciderKey = deciderKey;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setDec derKey(Str ng dec derKey) {
+    t .dec derKey = dec derKey;
   }
 
-  @VisibleForTesting
-  KafkaConsumer<Long, R> getKafkaConsumer() {
-    return kafkaConsumer;
+  @V s bleForTest ng
+  KafkaConsu r<Long, R> getKafkaConsu r() {
+    return kafkaConsu r;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClusterPath(String kafkaClusterPath) {
-    this.kafkaClusterPath = kafkaClusterPath;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaClusterPath(Str ng kafkaClusterPath) {
+    t .kafkaClusterPath = kafkaClusterPath;
   }
 }

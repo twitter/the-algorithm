@@ -1,91 +1,91 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
 /**
- * An authorizer for determining if a request to a
- * method should be rejected.
+ * An author zer for determ n ng  f a request to a
+ *  thod should be rejected.
  *
- * This class is in the spirit of servo.request.ClientRequestAuthorizer.
- * The difference is ClientRequestAuthorizer only operates
- * on two pieces of information, clientId and a method name.
+ * T  class  s  n t  sp r  of servo.request.Cl entRequestAuthor zer.
+ * T  d fference  s Cl entRequestAuthor zer only operates
+ * on two p eces of  nformat on, cl ent d and a  thod na .
  *
- * This class can be used to create a more complex authorizer that
- * operates on the specifics of a request. e.g, an
- * authorizer that disallows certain clients from passing
- * certain optional flags.
+ * T  class can be used to create a more complex author zer that
+ * operates on t  spec f cs of a request. e.g, an
+ * author zer that d sallows certa n cl ents from pass ng
+ * certa n opt onal flags.
  *
- * Note: With some work, ClientRequestAuthorizer could be
- * generalized to support cases like this. If we end up making
- * more method authorizers it might be worth it to
+ * Note: W h so  work, Cl entRequestAuthor zer could be
+ * general zed to support cases l ke t .  f   end up mak ng
+ * more  thod author zers   m ght be worth   to
  * go that route.
  */
-abstract class MethodAuthorizer[T]() {
-  def apply(request: T, clientId: String): Future[Unit]
+abstract class  thodAuthor zer[T]() {
+  def apply(request: T, cl ent d: Str ng): Future[Un ]
 
   /**
-   * Created decidered MethodAuthorizer
-   * if the decider is off it will execute
-   * MethodAuthorizer.unit, which always succeeds.
+   * Created dec dered  thodAuthor zer
+   *  f t  dec der  s off   w ll execute
+   *  thodAuthor zer.un , wh ch always succeeds.
    */
-  def enabledBy(decider: Gate[Unit]): MethodAuthorizer[T] =
-    MethodAuthorizer.select(decider, this, MethodAuthorizer.unit)
+  def enabledBy(dec der: Gate[Un ]):  thodAuthor zer[T] =
+     thodAuthor zer.select(dec der, t ,  thodAuthor zer.un )
 
   /**
-   * Transform this MethodAuthorizer[T] into a MethodAuthorizer[A]
-   * by providing a function from A => T
+   * Transform t   thodAuthor zer[T]  nto a  thodAuthor zer[A]
+   * by prov d ng a funct on from A => T
    */
-  def contramap[A](f: A => T): MethodAuthorizer[A] =
-    MethodAuthorizer[A] { (request, clientId) => this(f(request), clientId) }
+  def contramap[A](f: A => T):  thodAuthor zer[A] =
+     thodAuthor zer[A] { (request, cl ent d) => t (f(request), cl ent d) }
 }
 
-object MethodAuthorizer {
+object  thodAuthor zer {
 
   /**
-   * @param f an authorization function that returns
-   * Future.Unit if the request is authorized, and Future.exception()
-   * if the request is not authorized.
+   * @param f an author zat on funct on that returns
+   * Future.Un   f t  request  s author zed, and Future.except on()
+   *  f t  request  s not author zed.
    *
-   * @return An instance of MethodAuthorizer with an apply method
+   * @return An  nstance of  thodAuthor zer w h an apply  thod
    * that returns f
    */
-  def apply[T](f: (T, String) => Future[Unit]): MethodAuthorizer[T] =
-    new MethodAuthorizer[T]() {
-      def apply(request: T, clientId: String): Future[Unit] = f(request, clientId)
+  def apply[T](f: (T, Str ng) => Future[Un ]):  thodAuthor zer[T] =
+    new  thodAuthor zer[T]() {
+      def apply(request: T, cl ent d: Str ng): Future[Un ] = f(request, cl ent d)
     }
 
   /**
-   * @param authorizers A seq of MethodAuthorizers to be
-   * composed into one.
-   * @return A MethodAuthorizer that sequentially executes
-   * all of the authorizers
+   * @param author zers A seq of  thodAuthor zers to be
+   * composed  nto one.
+   * @return A  thodAuthor zer that sequent ally executes
+   * all of t  author zers
    */
-  def all[T](authorizers: Seq[MethodAuthorizer[T]]): MethodAuthorizer[T] =
-    MethodAuthorizer { (request, clientId) =>
-      authorizers.foldLeft(Future.Unit) {
-        case (f, authorize) => f.before(authorize(request, clientId))
+  def all[T](author zers: Seq[ thodAuthor zer[T]]):  thodAuthor zer[T] =
+     thodAuthor zer { (request, cl ent d) =>
+      author zers.foldLeft(Future.Un ) {
+        case (f, author ze) => f.before(author ze(request, cl ent d))
       }
     }
 
   /**
-   * @return A MethodAuthorizer that always returns Future.Unit
-   * Useful if you need to decider off your MethodAuthorizer
-   * and replace it with one that always passes.
+   * @return A  thodAuthor zer that always returns Future.Un 
+   * Useful  f   need to dec der off y   thodAuthor zer
+   * and replace   w h one that always passes.
    */
-  def unit[T]: MethodAuthorizer[T] = MethodAuthorizer { (request, client) => Future.Unit }
+  def un [T]:  thodAuthor zer[T] =  thodAuthor zer { (request, cl ent) => Future.Un  }
 
   /**
-   * @return A MethodAuthorizer that switches between two provided
-   * MethodAuthorizers depending on a decider.
+   * @return A  thodAuthor zer that sw c s bet en two prov ded
+   *  thodAuthor zers depend ng on a dec der.
    */
   def select[T](
-    decider: Gate[Unit],
-    ifTrue: MethodAuthorizer[T],
-    ifFalse: MethodAuthorizer[T]
-  ): MethodAuthorizer[T] =
-    MethodAuthorizer { (request, client) =>
-      decider.pick(
-        ifTrue(request, client),
-        ifFalse(request, client)
+    dec der: Gate[Un ],
+     fTrue:  thodAuthor zer[T],
+     fFalse:  thodAuthor zer[T]
+  ):  thodAuthor zer[T] =
+     thodAuthor zer { (request, cl ent) =>
+      dec der.p ck(
+         fTrue(request, cl ent),
+         fFalse(request, cl ent)
       )
     }
 }

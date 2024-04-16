@@ -1,17 +1,17 @@
-package com.twitter.timelineranker.repository
+package com.tw ter.t  l neranker.repos ory
 
-import com.twitter.timelines.visibility.model.VisibilityRule
+ mport com.tw ter.t  l nes.v s b l y.model.V s b l yRule
 
-object RepositoryBuilder {
-  val VisibilityRules: Set[VisibilityRule.Value] = Set(
-    VisibilityRule.Blocked,
-    VisibilityRule.BlockedBy,
-    VisibilityRule.Muted,
-    VisibilityRule.Protected,
-    VisibilityRule.AccountStatus
+object Repos oryBu lder {
+  val V s b l yRules: Set[V s b l yRule.Value] = Set(
+    V s b l yRule.Blocked,
+    V s b l yRule.BlockedBy,
+    V s b l yRule.Muted,
+    V s b l yRule.Protected,
+    V s b l yRule.AccountStatus
   )
 }
 
-trait RepositoryBuilder {
-  val VisibilityRules: Set[VisibilityRule.Value] = RepositoryBuilder.VisibilityRules
+tra  Repos oryBu lder {
+  val V s b l yRules: Set[V s b l yRule.Value] = Repos oryBu lder.V s b l yRules
 }

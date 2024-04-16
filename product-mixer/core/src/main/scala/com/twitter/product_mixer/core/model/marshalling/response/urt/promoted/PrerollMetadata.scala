@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-case class PrerollMetadata(
-  preroll: Option[Preroll],
-  videoAnalyticsScribePassthrough: Option[String])
+case class Preroll tadata(
+  preroll: Opt on[Preroll],
+  v deoAnalyt csScr bePassthrough: Opt on[Str ng])

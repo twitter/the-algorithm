@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.core.functional_component.decorator
+package com.tw ter.product_m xer.core.funct onal_component.decorator
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Decorator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * [[CandidateDecorator]] generates a [[com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation]]
- * for Candidates, which encapsulate information about how to present the candidate
+ * [[Cand dateDecorator]] generates a [[com.tw ter.product_m xer.core.model.common.presentat on.Un versalPresentat on]]
+ * for Cand dates, wh ch encapsulate  nformat on about how to present t  cand date
  *
- * @see [[https://docbird.twitter.biz/product-mixer/functional-components.html#candidate-decorator]]
- * @see [[com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation]]
+ * @see [[https://docb rd.tw ter.b z/product-m xer/funct onal-components.html#cand date-decorator]]
+ * @see [[com.tw ter.product_m xer.core.model.common.presentat on.Un versalPresentat on]]
  */
-trait CandidateDecorator[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]]
+tra  Cand dateDecorator[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]]
     extends Component {
 
-  override val identifier: DecoratorIdentifier = CandidateDecorator.DefaultCandidateDecoratorId
+  overr de val  dent f er: Decorator dent f er = Cand dateDecorator.DefaultCand dateDecorator d
 
   /**
-   * Given a Seq of `Candidate`, returns a [[Decoration]] for candidates which should be decorated
+   * G ven a Seq of `Cand date`, returns a [[Decorat on]] for cand dates wh ch should be decorated
    *
-   * `Candidate`s which aren't decorated can be omitted from the results
+   * `Cand date`s wh ch aren't decorated can be om ted from t  results
    */
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]]
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[Decorat on]]
 }
 
-object CandidateDecorator {
-  private[core] val DefaultCandidateDecoratorId: DecoratorIdentifier =
-    DecoratorIdentifier(ComponentIdentifier.BasedOnParentComponent)
+object Cand dateDecorator {
+  pr vate[core] val DefaultCand dateDecorator d: Decorator dent f er =
+    Decorator dent f er(Component dent f er.BasedOnParentComponent)
 
   /**
-   * For use when building a [[CandidateDecorator]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * For use w n bu ld ng a [[Cand dateDecorator]]  n a [[com.tw ter.product_m xer.core.p pel ne.P pel neBu lder]]
+   * to ensure that t   dent f er  s updated w h t  parent [[com.tw ter.product_m xer.core.p pel ne.P pel ne. dent f er]]
    */
-  private[core] def copyWithUpdatedIdentifier[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
+  pr vate[core] def copyW hUpdated dent f er[
+    Query <: P pel neQuery,
+    Cand date <: Un versalNoun[Any]
   ](
-    decorator: CandidateDecorator[Query, Candidate],
-    parentIdentifier: ComponentIdentifier
-  ): CandidateDecorator[Query, Candidate] = {
-    if (decorator.identifier == DefaultCandidateDecoratorId) {
-      new CandidateDecorator[Query, Candidate] {
-        override val identifier: DecoratorIdentifier = DecoratorIdentifier(parentIdentifier.name)
-        override def apply(
+    decorator: Cand dateDecorator[Query, Cand date],
+    parent dent f er: Component dent f er
+  ): Cand dateDecorator[Query, Cand date] = {
+     f (decorator. dent f er == DefaultCand dateDecorator d) {
+      new Cand dateDecorator[Query, Cand date] {
+        overr de val  dent f er: Decorator dent f er = Decorator dent f er(parent dent f er.na )
+        overr de def apply(
           query: Query,
-          candidates: Seq[CandidateWithFeatures[Candidate]]
-        ): Stitch[Seq[Decoration]] = decorator.apply(query, candidates)
+          cand dates: Seq[Cand dateW hFeatures[Cand date]]
+        ): St ch[Seq[Decorat on]] = decorator.apply(query, cand dates)
       }
     } else {
       decorator

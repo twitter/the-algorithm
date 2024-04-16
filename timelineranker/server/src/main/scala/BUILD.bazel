@@ -1,32 +1,32 @@
 target(
-    dependencies = [
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/repository",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/server",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/source",
+    dependenc es = [
+        "t  l neranker/server/src/ma n/scala/com/tw ter/t  l neranker/repos ory",
+        "t  l neranker/server/src/ma n/scala/com/tw ter/t  l neranker/server",
+        "t  l neranker/server/src/ma n/scala/com/tw ter/t  l neranker/s ce",
     ],
 )
 
-jvm_binary(
-    name = "bin",
-    basename = "timelineranker-server",
-    main = "com.twitter.timelineranker.server.Main",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
+jvm_b nary(
+    na  = "b n",
+    basena  = "t  l neranker-server",
+    ma n = "com.tw ter.t  l neranker.server.Ma n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":scala",
         "3rdparty/jvm/org/slf4j:jcl-over-slf4j",  # [1]
         "3rdparty/jvm/org/slf4j:log4j-over-slf4j",  # [1]
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",  # [2]
-        "strato/src/main/scala/com/twitter/strato/logging/logback",  # [2]
-        "timelineranker/server/src/main/resources",  # [2]
-        "twitter-server/logback-classic/src/main/scala",  #[2]
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",  # [2]
+        "strato/src/ma n/scala/com/tw ter/strato/logg ng/logback",  # [2]
+        "t  l neranker/server/src/ma n/res ces",  # [2]
+        "tw ter-server/logback-class c/src/ma n/scala",  #[2]
     ],
 )
 
-# [1] bridge other logging implementations to slf4j-api in addition to JUL
-#     https://docbird.twitter.biz/core_libraries_guide/logging/twitter_server.html
-#     without these, c.t.l.Logger become silent/null logger since no proper
-#     configuration can be found. This can be removed once there are no
-#     depdency from service to c.t.l.Logger
+# [1] br dge ot r logg ng  mple ntat ons to slf4j-ap   n add  on to JUL
+#     https://docb rd.tw ter.b z/core_l brar es_gu de/logg ng/tw ter_server.html
+#     w hout t se, c.t.l.Logger beco  s lent/null logger s nce no proper
+#     conf gurat on can be found. T  can be removed once t re are no
+#     depdency from serv ce to c.t.l.Logger
 #
-# [2] incur logback implementation
+# [2]  ncur logback  mple ntat on

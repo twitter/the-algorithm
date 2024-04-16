@@ -1,76 +1,76 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.tw ter.fr gate.pushserv ce.refresh_handler
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
 
-class RFPHStatsRecorder(implicit statsReceiver: StatsReceiver) {
+class RFPHStatsRecorder( mpl c  statsRece ver: StatsRece ver) {
 
-  private val selectedCandidateScoreStats: StatsReceiver =
-    statsReceiver.scope("score_of_sent_candidate_times_10000")
+  pr vate val selectedCand dateScoreStats: StatsRece ver =
+    statsRece ver.scope("score_of_sent_cand date_t  s_10000")
 
-  private val emptyScoreStats: StatsReceiver =
-    statsReceiver.scope("score_of_sent_candidate_empty")
+  pr vate val emptyScoreStats: StatsRece ver =
+    statsRece ver.scope("score_of_sent_cand date_empty")
 
-  def trackPredictionScoreStats(candidate: PushCandidate): Unit = {
-    candidate.mrWeightedOpenOrNtabClickRankingProbability.foreach {
-      case Some(s) =>
-        selectedCandidateScoreStats
-          .stat("weighted_open_or_ntab_click_ranking")
+  def trackPred ct onScoreStats(cand date: PushCand date): Un  = {
+    cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y.foreach {
+      case So (s) =>
+        selectedCand dateScoreStats
+          .stat("  ghted_open_or_ntab_cl ck_rank ng")
           .add((s * 10000).toFloat)
       case None =>
-        emptyScoreStats.counter("weighted_open_or_ntab_click_ranking").incr()
+        emptyScoreStats.counter("  ghted_open_or_ntab_cl ck_rank ng"). ncr()
     }
-    candidate.mrWeightedOpenOrNtabClickFilteringProbability.foreach {
-      case Some(s) =>
-        selectedCandidateScoreStats
-          .stat("weighted_open_or_ntab_click_filtering")
+    cand date.mr  ghtedOpenOrNtabCl ckF lter ngProbab l y.foreach {
+      case So (s) =>
+        selectedCand dateScoreStats
+          .stat("  ghted_open_or_ntab_cl ck_f lter ng")
           .add((s * 10000).toFloat)
       case None =>
-        emptyScoreStats.counter("weighted_open_or_ntab_click_filtering").incr()
+        emptyScoreStats.counter("  ghted_open_or_ntab_cl ck_f lter ng"). ncr()
     }
-    candidate.mrWeightedOpenOrNtabClickRankingProbability.foreach {
-      case Some(s) =>
-        selectedCandidateScoreStats
-          .scope(candidate.commonRecType.toString)
-          .stat("weighted_open_or_ntab_click_ranking")
+    cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y.foreach {
+      case So (s) =>
+        selectedCand dateScoreStats
+          .scope(cand date.commonRecType.toStr ng)
+          .stat("  ghted_open_or_ntab_cl ck_rank ng")
           .add((s * 10000).toFloat)
       case None =>
         emptyScoreStats
-          .scope(candidate.commonRecType.toString)
-          .counter("weighted_open_or_ntab_click_ranking")
-          .incr()
+          .scope(cand date.commonRecType.toStr ng)
+          .counter("  ghted_open_or_ntab_cl ck_rank ng")
+          . ncr()
     }
   }
 
-  def refreshRequestExceptionStats(
-    exception: Throwable,
-    bStats: StatsReceiver
-  ): Unit = {
-    bStats.counter("failures").incr()
-    bStats.scope("failures").counter(exception.getClass.getCanonicalName).incr()
+  def refreshRequestExcept onStats(
+    except on: Throwable,
+    bStats: StatsRece ver
+  ): Un  = {
+    bStats.counter("fa lures"). ncr()
+    bStats.scope("fa lures").counter(except on.getClass.getCanon calNa ). ncr()
   }
 
-  def loggedOutRequestExceptionStats(
-    exception: Throwable,
-    bStats: StatsReceiver
-  ): Unit = {
-    bStats.counter("logged_out_failures").incr()
-    bStats.scope("failures").counter(exception.getClass.getCanonicalName).incr()
+  def loggedOutRequestExcept onStats(
+    except on: Throwable,
+    bStats: StatsRece ver
+  ): Un  = {
+    bStats.counter("logged_out_fa lures"). ncr()
+    bStats.scope("fa lures").counter(except on.getClass.getCanon calNa ). ncr()
   }
 
-  def rankDistributionStats(
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    numRecsPerTypeStat: (CommonRecommendationType => Stat)
-  ): Unit = {
-    candidatesDetails
+  def rankD str but onStats(
+    cand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]],
+    numRecsPerTypeStat: (CommonRecom ndat onType => Stat)
+  ): Un  = {
+    cand datesDeta ls
       .groupBy { c =>
-        c.candidate.commonRecType
+        c.cand date.commonRecType
       }
       .mapValues { s =>
-        s.size
+        s.s ze
       }
       .foreach { case (crt, numRecs) => numRecsPerTypeStat(crt).add(numRecs) }
   }

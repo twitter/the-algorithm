@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.trend
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Promoted tadata
 
-object TrendItem {
-  val TrendItemEntryNamespace = EntryNamespace("trend")
+object Trend em {
+  val Trend emEntryNa space = EntryNa space("trend")
 }
 
-case class GroupedTrend(trendName: String, url: Url)
+case class GroupedTrend(trendNa : Str ng, url: Url)
 
-case class TrendItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  normalizedTrendName: String,
-  trendName: String,
+case class Trend em(
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  normal zedTrendNa : Str ng,
+  trendNa : Str ng,
   url: Url,
-  description: Option[String],
-  metaDescription: Option[String],
-  tweetCount: Option[Int],
-  domainContext: Option[String],
-  promotedMetadata: Option[PromotedMetadata],
-  groupedTrends: Option[Seq[GroupedTrend]])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TrendItem.TrendItemEntryNamespace
+  descr pt on: Opt on[Str ng],
+   taDescr pt on: Opt on[Str ng],
+  t etCount: Opt on[ nt],
+  doma nContext: Opt on[Str ng],
+  promoted tadata: Opt on[Promoted tadata],
+  groupedTrends: Opt on[Seq[GroupedTrend]])
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = Trend em.Trend emEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

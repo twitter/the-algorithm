@@ -1,96 +1,96 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.store
-import com.twitter.frigate.common.store.Fail
-import com.twitter.frigate.common.store.IbisRequestInfo
-import com.twitter.frigate.common.store.IbisResponse
-import com.twitter.frigate.common.store.Sent
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.ibis2.service.thriftscala.Flags
-import com.twitter.ibis2.service.thriftscala.FlowControl
-import com.twitter.ibis2.service.thriftscala.Ibis2Request
-import com.twitter.ibis2.service.thriftscala.Ibis2Response
-import com.twitter.ibis2.service.thriftscala.Ibis2ResponseStatus
-import com.twitter.ibis2.service.thriftscala.Ibis2Service
-import com.twitter.ibis2.service.thriftscala.NotificationNotSentCode
-import com.twitter.ibis2.service.thriftscala.TargetFanoutResult.NotSentReason
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.logger.MRLogger
+ mport com.tw ter.fr gate.common.store
+ mport com.tw ter.fr gate.common.store.Fa l
+ mport com.tw ter.fr gate.common.store. b sRequest nfo
+ mport com.tw ter.fr gate.common.store. b sResponse
+ mport com.tw ter.fr gate.common.store.Sent
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. b s2.serv ce.thr ftscala.Flags
+ mport com.tw ter. b s2.serv ce.thr ftscala.FlowControl
+ mport com.tw ter. b s2.serv ce.thr ftscala. b s2Request
+ mport com.tw ter. b s2.serv ce.thr ftscala. b s2Response
+ mport com.tw ter. b s2.serv ce.thr ftscala. b s2ResponseStatus
+ mport com.tw ter. b s2.serv ce.thr ftscala. b s2Serv ce
+ mport com.tw ter. b s2.serv ce.thr ftscala.Not f cat onNotSentCode
+ mport com.tw ter. b s2.serv ce.thr ftscala.TargetFanoutResult.NotSentReason
+ mport com.tw ter.ut l.Future
 
-trait Ibis2Store extends store.Ibis2Store {
-  def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse]
+tra   b s2Store extends store. b s2Store {
+  def send( b s2Request:  b s2Request, cand date: PushCand date): Future[ b sResponse]
 }
 
-case class PushIbis2Store(
-  ibisClient: Ibis2Service.MethodPerEndpoint
+case class Push b s2Store(
+   b sCl ent:  b s2Serv ce. thodPerEndpo nt
 )(
-  implicit val statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Ibis2Store {
-  private val log = MRLogger(this.getClass.getSimpleName)
-  private val stats = statsReceiver.scope("ibis_v2_store")
-  private val statsByCrt = stats.scope("byCrt")
-  private val requestsByCrt = statsByCrt.scope("requests")
-  private val failuresByCrt = statsByCrt.scope("failures")
-  private val successByCrt = statsByCrt.scope("success")
+   mpl c  val statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends  b s2Store {
+  pr vate val log = MRLogger(t .getClass.getS mpleNa )
+  pr vate val stats = statsRece ver.scope(" b s_v2_store")
+  pr vate val statsByCrt = stats.scope("byCrt")
+  pr vate val requestsByCrt = statsByCrt.scope("requests")
+  pr vate val fa luresByCrt = statsByCrt.scope("fa lures")
+  pr vate val successByCrt = statsByCrt.scope("success")
 
-  private val statsByIbisModel = stats.scope("byIbisModel")
-  private val requestsByIbisModel = statsByIbisModel.scope("requests")
-  private val failuresByIbisModel = statsByIbisModel.scope("failures")
-  private val successByIbisModel = statsByIbisModel.scope("success")
+  pr vate val statsBy b sModel = stats.scope("by b sModel")
+  pr vate val requestsBy b sModel = statsBy b sModel.scope("requests")
+  pr vate val fa luresBy b sModel = statsBy b sModel.scope("fa lures")
+  pr vate val successBy b sModel = statsBy b sModel.scope("success")
 
-  private[this] def ibisSend(
-    ibis2Request: Ibis2Request,
-    commonRecommendationType: CommonRecommendationType
-  ): Future[IbisResponse] = {
-    val ibisModel = ibis2Request.modelName
+  pr vate[t ] def  b sSend(
+     b s2Request:  b s2Request,
+    commonRecom ndat onType: CommonRecom ndat onType
+  ): Future[ b sResponse] = {
+    val  b sModel =  b s2Request.modelNa 
 
-    val bStats = if (ibis2Request.flags.getOrElse(Flags()).darkWrite.contains(true)) {
-      BroadcastStatsReceiver(
+    val bStats =  f ( b s2Request.flags.getOrElse(Flags()).darkWr e.conta ns(true)) {
+      BroadcastStatsRece ver(
         Seq(
           stats,
-          stats.scope("dark_write")
+          stats.scope("dark_wr e")
         )
       )
-    } else BroadcastStatsReceiver(Seq(stats))
+    } else BroadcastStatsRece ver(Seq(stats))
 
-    bStats.counter("requests").incr()
-    requestsByCrt.counter(commonRecommendationType.name).incr()
-    requestsByIbisModel.counter(ibisModel).incr()
+    bStats.counter("requests"). ncr()
+    requestsByCrt.counter(commonRecom ndat onType.na ). ncr()
+    requestsBy b sModel.counter( b sModel). ncr()
 
-    retry(ibisClient, ibis2Request, 3, bStats)
+    retry( b sCl ent,  b s2Request, 3, bStats)
       .map { response =>
-        bStats.counter(response.status.status.name).incr()
-        successByCrt.counter(response.status.status.name, commonRecommendationType.name).incr()
-        successByIbisModel.counter(response.status.status.name, ibisModel).incr()
+        bStats.counter(response.status.status.na ). ncr()
+        successByCrt.counter(response.status.status.na , commonRecom ndat onType.na ). ncr()
+        successBy b sModel.counter(response.status.status.na ,  b sModel). ncr()
         response.status.status match {
-          case Ibis2ResponseStatus.SuccessWithDeliveries |
-              Ibis2ResponseStatus.SuccessNoDeliveries =>
-            IbisResponse(Sent, Some(response))
+          case  b s2ResponseStatus.SuccessW hDel ver es |
+               b s2ResponseStatus.SuccessNoDel ver es =>
+             b sResponse(Sent, So (response))
           case _ =>
-            IbisResponse(Fail, Some(response))
+             b sResponse(Fa l, So (response))
         }
       }
-      .onFailure { ex =>
-        bStats.counter("failures").incr()
-        val exceptionName = ex.getClass.getCanonicalName
-        bStats.scope("failures").counter(exceptionName).incr()
-        failuresByCrt.counter(exceptionName, commonRecommendationType.name).incr()
-        failuresByIbisModel.counter(exceptionName, ibisModel).incr()
+      .onFa lure { ex =>
+        bStats.counter("fa lures"). ncr()
+        val except onNa  = ex.getClass.getCanon calNa 
+        bStats.scope("fa lures").counter(except onNa ). ncr()
+        fa luresByCrt.counter(except onNa , commonRecom ndat onType.na ). ncr()
+        fa luresBy b sModel.counter(except onNa ,  b sModel). ncr()
       }
   }
 
-  private def getNotifNotSentReason(
-    ibis2Response: Ibis2Response
-  ): Option[NotificationNotSentCode] = {
-    ibis2Response.status.fanoutResults match {
-      case Some(fanoutResult) =>
+  pr vate def getNot fNotSentReason(
+     b s2Response:  b s2Response
+  ): Opt on[Not f cat onNotSentCode] = {
+     b s2Response.status.fanoutResults match {
+      case So (fanoutResult) =>
         fanoutResult.pushResult.flatMap { pushResult =>
-          pushResult.results.headOption match {
-            case Some(NotSentReason(notSentInfo)) => Some(notSentInfo.notSentCode)
+          pushResult.results. adOpt on match {
+            case So (NotSentReason(notSent nfo)) => So (notSent nfo.notSentCode)
             case _ => None
           }
         }
@@ -98,93 +98,93 @@ case class PushIbis2Store(
     }
   }
 
-  def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse] = {
-    val requestWithIID = if (ibis2Request.flowControl.exists(_.externalIid.isDefined)) {
-      ibis2Request
+  def send( b s2Request:  b s2Request, cand date: PushCand date): Future[ b sResponse] = {
+    val requestW h  D =  f ( b s2Request.flowControl.ex sts(_.external  d. sDef ned)) {
+       b s2Request
     } else {
-      ibis2Request.copy(
-        flowControl = Some(
-          ibis2Request.flowControl
+       b s2Request.copy(
+        flowControl = So (
+           b s2Request.flowControl
             .getOrElse(FlowControl())
-            .copy(externalIid = Some(candidate.impressionId))
+            .copy(external  d = So (cand date. mpress on d))
         )
       )
     }
 
-    val commonRecommendationType = candidate.frigateNotification.commonRecommendationType
+    val commonRecom ndat onType = cand date.fr gateNot f cat on.commonRecom ndat onType
 
-    ibisSend(requestWithIID, commonRecommendationType)
+     b sSend(requestW h  D, commonRecom ndat onType)
       .onSuccess { response =>
-        response.ibis2Response.foreach { ibis2Response =>
-          getNotifNotSentReason(ibis2Response).foreach { notifNotSentCode =>
-            stats.scope(ibis2Response.status.status.name).counter(s"$notifNotSentCode").incr()
+        response. b s2Response.foreach {  b s2Response =>
+          getNot fNotSentReason( b s2Response).foreach { not fNotSentCode =>
+            stats.scope( b s2Response.status.status.na ).counter(s"$not fNotSentCode"). ncr()
           }
-          if (ibis2Response.status.status != Ibis2ResponseStatus.SuccessWithDeliveries) {
-            log.warning(
-              s"Request dropped on ibis for ${ibis2Request.recipientSelector.recipientId}: $ibis2Response")
+           f ( b s2Response.status.status !=  b s2ResponseStatus.SuccessW hDel ver es) {
+            log.warn ng(
+              s"Request dropped on  b s for ${ b s2Request.rec p entSelector.rec p ent d}: $ b s2Response")
           }
         }
       }
-      .onFailure { ex =>
-        log.warning(
-          s"Ibis Request failure: ${ex.getClass.getCanonicalName} \n For IbisRequest: $ibis2Request")
-        log.error(ex, ex.getMessage)
+      .onFa lure { ex =>
+        log.warn ng(
+          s" b s Request fa lure: ${ex.getClass.getCanon calNa } \n For  b sRequest: $ b s2Request")
+        log.error(ex, ex.get ssage)
       }
   }
 
-  // retry request when Ibis2ResponseStatus is PreFanoutError
+  // retry request w n  b s2ResponseStatus  s PreFanoutError
   def retry(
-    ibisClient: Ibis2Service.MethodPerEndpoint,
-    request: Ibis2Request,
-    retryCount: Int,
-    bStats: StatsReceiver
-  ): Future[Ibis2Response] = {
-    ibisClient.sendNotification(request).flatMap { response =>
+     b sCl ent:  b s2Serv ce. thodPerEndpo nt,
+    request:  b s2Request,
+    retryCount:  nt,
+    bStats: StatsRece ver
+  ): Future[ b s2Response] = {
+     b sCl ent.sendNot f cat on(request).flatMap { response =>
       response.status.status match {
-        case Ibis2ResponseStatus.PreFanoutError if retryCount > 0 =>
-          bStats.scope("requests").counter("retry").incr()
-          bStats.counter(response.status.status.name).incr()
-          retry(ibisClient, request, retryCount - 1, bStats)
+        case  b s2ResponseStatus.PreFanoutError  f retryCount > 0 =>
+          bStats.scope("requests").counter("retry"). ncr()
+          bStats.counter(response.status.status.na ). ncr()
+          retry( b sCl ent, request, retryCount - 1, bStats)
         case _ =>
           Future.value(response)
       }
     }
   }
 
-  override def send(
-    ibis2Request: Ibis2Request,
-    requestInfo: IbisRequestInfo
-  ): Future[IbisResponse] = {
-    ibisSend(ibis2Request, requestInfo.commonRecommendationType)
+  overr de def send(
+     b s2Request:  b s2Request,
+    request nfo:  b sRequest nfo
+  ): Future[ b sResponse] = {
+     b sSend( b s2Request, request nfo.commonRecom ndat onType)
   }
 }
 
-case class StagingIbis2Store(remoteIbis2Store: PushIbis2Store) extends Ibis2Store {
+case class Stag ng b s2Store(remote b s2Store: Push b s2Store) extends  b s2Store {
 
-  final def addDarkWriteFlagIbis2Request(
-    isTeamMember: Boolean,
-    ibis2Request: Ibis2Request
-  ): Ibis2Request = {
+  f nal def addDarkWr eFlag b s2Request(
+     sTeam mber: Boolean,
+     b s2Request:  b s2Request
+  ):  b s2Request = {
     val flags =
-      ibis2Request.flags.getOrElse(Flags())
-    val darkWrite: Boolean = !isTeamMember || flags.darkWrite.getOrElse(false)
-    ibis2Request.copy(flags = Some(flags.copy(darkWrite = Some(darkWrite))))
+       b s2Request.flags.getOrElse(Flags())
+    val darkWr e: Boolean = ! sTeam mber || flags.darkWr e.getOrElse(false)
+     b s2Request.copy(flags = So (flags.copy(darkWr e = So (darkWr e))))
   }
 
-  override def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse] = {
-    candidate.target.isTeamMember.flatMap { isTeamMember =>
-      val ibis2Req = addDarkWriteFlagIbis2Request(isTeamMember, ibis2Request)
-      remoteIbis2Store.send(ibis2Req, candidate)
+  overr de def send( b s2Request:  b s2Request, cand date: PushCand date): Future[ b sResponse] = {
+    cand date.target. sTeam mber.flatMap {  sTeam mber =>
+      val  b s2Req = addDarkWr eFlag b s2Request( sTeam mber,  b s2Request)
+      remote b s2Store.send( b s2Req, cand date)
     }
   }
 
-  override def send(
-    ibis2Request: Ibis2Request,
-    requestInfo: IbisRequestInfo
-  ): Future[IbisResponse] = {
-    requestInfo.isTeamMember.flatMap { isTeamMember =>
-      val ibis2Req = addDarkWriteFlagIbis2Request(isTeamMember, ibis2Request)
-      remoteIbis2Store.send(ibis2Req, requestInfo)
+  overr de def send(
+     b s2Request:  b s2Request,
+    request nfo:  b sRequest nfo
+  ): Future[ b sResponse] = {
+    request nfo. sTeam mber.flatMap {  sTeam mber =>
+      val  b s2Req = addDarkWr eFlag b s2Request( sTeam mber,  b s2Request)
+      remote b s2Store.send( b s2Req, request nfo)
     }
   }
 }

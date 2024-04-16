@@ -1,116 +1,116 @@
-package com.twitter.representationscorer.columns
+package com.tw ter.representat onscorer.columns
 
-import com.twitter.representationscorer.thriftscala.ListScoreId
-import com.twitter.representationscorer.thriftscala.ListScoreResponse
-import com.twitter.representationscorer.scorestore.ScoreStore
-import com.twitter.representationscorer.thriftscala.ScoreResult
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId.LongInternalId
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId.LongSimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
+ mport com.tw ter.representat onscorer.thr ftscala.L stScore d
+ mport com.tw ter.representat onscorer.thr ftscala.L stScoreResponse
+ mport com.tw ter.representat onscorer.scorestore.ScoreStore
+ mport com.tw ter.representat onscorer.thr ftscala.ScoreResult
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng d.Long nternal d
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng d.LongS mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ngPa rScore d
+ mport com.tw ter.st ch
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport javax. nject. nject
 
-class ListScoreColumn @Inject() (scoreStore: ScoreStore)
-    extends StratoFed.Column("recommendations/representation_scorer/listScore")
-    with StratoFed.Fetch.Stitch {
+class L stScoreColumn @ nject() (scoreStore: ScoreStore)
+    extends StratoFed.Column("recom ndat ons/representat on_scorer/l stScore")
+    w h StratoFed.Fetch.St ch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  overr de val pol cy: Pol cy = Common.rsxReadPol cy
 
-  override type Key = ListScoreId
-  override type View = Unit
-  override type Value = ListScoreResponse
+  overr de type Key = L stScore d
+  overr de type V ew = Un 
+  overr de type Value = L stScoreResponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[ListScoreId]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[ListScoreResponse]
+  overr de val keyConv: Conv[Key] = ScroogeConv.fromStruct[L stScore d]
+  overr de val v ewConv: Conv[V ew] = Conv.ofType
+  overr de val valueConv: Conv[Value] = ScroogeConv.fromStruct[L stScoreResponse]
 
-  override val contactInfo: ContactInfo = Info.contactInfo
+  overr de val contact nfo: Contact nfo =  nfo.contact nfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(
-      PlainText(
-        "Scoring for multiple candidate entities against a single target entity"
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (L fecycle.Product on),
+    descr pt on = So (
+      Pla nText(
+        "Scor ng for mult ple cand date ent  es aga nst a s ngle target ent y"
       ))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] = {
 
-    val target = SimClustersEmbeddingId(
-      embeddingType = key.targetEmbeddingType,
-      modelVersion = key.modelVersion,
-      internalId = key.targetId
+    val target = S mClustersEmbedd ng d(
+      embedd ngType = key.targetEmbedd ngType,
+      modelVers on = key.modelVers on,
+       nternal d = key.target d
     )
-    val scoreIds = key.candidateIds.map { candidateId =>
-      val candidate = SimClustersEmbeddingId(
-        embeddingType = key.candidateEmbeddingType,
-        modelVersion = key.modelVersion,
-        internalId = candidateId
+    val score ds = key.cand date ds.map { cand date d =>
+      val cand date = S mClustersEmbedd ng d(
+        embedd ngType = key.cand dateEmbedd ngType,
+        modelVers on = key.modelVers on,
+         nternal d = cand date d
       )
-      ScoreId(
-        algorithm = key.algorithm,
-        internalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingPairScoreId(target, candidate)
+      Score d(
+        algor hm = key.algor hm,
+         nternal d = Score nternal d.S mClustersEmbedd ngPa rScore d(
+          S mClustersEmbedd ngPa rScore d(target, cand date)
         )
       )
     }
 
-    Stitch
+    St ch
       .callFuture {
-        val (keys: Iterable[ScoreId], vals: Iterable[Future[Option[Score]]]) =
-          scoreStore.uniformScoringStore.multiGet(scoreIds.toSet).unzip
-        val results: Future[Iterable[Option[Score]]] = Future.collectToTry(vals.toSeq) map {
+        val (keys:  erable[Score d], vals:  erable[Future[Opt on[Score]]]) =
+          scoreStore.un formScor ngStore.mult Get(score ds.toSet).unz p
+        val results: Future[ erable[Opt on[Score]]] = Future.collectToTry(vals.toSeq) map {
           tryOptVals =>
             tryOptVals map {
-              case Return(Some(v)) => Some(v)
+              case Return(So (v)) => So (v)
               case Return(None) => None
               case Throw(_) => None
             }
         }
         val scoreMap: Future[Map[Long, Double]] = results.map { scores =>
           keys
-            .zip(scores).collect {
+            .z p(scores).collect {
               case (
-                    ScoreId(
+                    Score d(
                       _,
-                      ScoreInternalId.SimClustersEmbeddingPairScoreId(
-                        SimClustersEmbeddingPairScoreId(
+                      Score nternal d.S mClustersEmbedd ngPa rScore d(
+                        S mClustersEmbedd ngPa rScore d(
                           _,
-                          LongSimClustersEmbeddingId(candidateId)))),
-                    Some(score)) =>
-                (candidateId, score.score)
+                          LongS mClustersEmbedd ng d(cand date d)))),
+                    So (score)) =>
+                (cand date d, score.score)
             }.toMap
         }
         scoreMap
       }
       .map { (scores: Map[Long, Double]) =>
-        val orderedScores = key.candidateIds.collect {
-          case LongInternalId(id) => ScoreResult(scores.get(id))
+        val orderedScores = key.cand date ds.collect {
+          case Long nternal d( d) => ScoreResult(scores.get( d))
           case _ =>
-            // This will return None scores for candidates which don't have Long ids, but that's fine:
-            // at the moment we're only scoring for Tweets
+            // T  w ll return None scores for cand dates wh ch don't have Long  ds, but that's f ne:
+            // at t  mo nt  're only scor ng for T ets
             ScoreResult(None)
         }
-        found(ListScoreResponse(orderedScores))
+        found(L stScoreResponse(orderedScores))
       }
       .handle {
-        case stitch.NotFound => missing
+        case st ch.NotFound => m ss ng
       }
   }
 }

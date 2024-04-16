@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.CasLock
-import com.twitter.frigate.common.util.CasSuccess
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.CasLock
+ mport com.tw ter.fr gate.common.ut l.CasSuccess
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-object CasLockPredicate {
+object CasLockPred cate {
   def apply(
     casLock: CasLock,
-    expiryDuration: Duration
+    exp ryDurat on: Durat on
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val stats = statsReceiver.scope("predicate_addcaslock_for_candidate")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (candidate.target.pushContext.exists(_.darkWrite.exists(_ == true))) {
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val stats = statsRece ver.scope("pred cate_addcaslock_for_cand date")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+         f (cand date.target.pushContext.ex sts(_.darkWr e.ex sts(_ == true))) {
           Future.True
-        } else if (candidate.commonRecType == CommonRecommendationType.MagicFanoutSportsEvent) {
+        } else  f (cand date.commonRecType == CommonRecom ndat onType.Mag cFanoutSportsEvent) {
           Future.True
         } else {
-          candidate.target.history flatMap { h =>
-            val now = candidate.createdAt
-            val expiry = now + expiryDuration
-            val oldTimestamp = h.lastNotificationTime map {
-              _.inSeconds
+          cand date.target. tory flatMap { h =>
+            val now = cand date.createdAt
+            val exp ry = now + exp ryDurat on
+            val oldT  stamp = h.lastNot f cat onT   map {
+              _. nSeconds
             } getOrElse 0
-            casLock.cas(candidate.target.targetId, oldTimestamp, now.inSeconds, expiry) map {
+            casLock.cas(cand date.target.target d, oldT  stamp, now. nSeconds, exp ry) map {
               casResult =>
-                stats.counter(s"cas_$casResult").incr()
+                stats.counter(s"cas_$casResult"). ncr()
                 casResult == CasSuccess
             }
           }
         }
       }
-      .withStats(stats)
-      .withName("add_cas_lock")
+      .w hStats(stats)
+      .w hNa ("add_cas_lock")
   }
 }

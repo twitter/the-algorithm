@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
 
-@Singleton
-class PopCountryBackFillSource @Inject() (popGeoSource: PopGeoSource)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+@S ngleton
+class PopCountryBackF llS ce @ nject() (popGeoS ce: PopGeoS ce)
+    extends Cand dateS ce[HasCl entContext w h HasParams, Cand dateUser] {
 
-  override val identifier: CandidateSourceIdentifier = PopCountryBackFillSource.Identifier
+  overr de val  dent f er: Cand dateS ce dent f er = PopCountryBackF llS ce. dent f er
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId
+  overr de def apply(target: HasCl entContext w h HasParams): St ch[Seq[Cand dateUser]] = {
+    target.getOpt onalUser d
       .map(_ =>
-        popGeoSource(PopCountryBackFillSource.DefaultKey)
-          .map(_.take(PopCountryBackFillSource.MaxResults).map(_.withCandidateSource(identifier))))
-      .getOrElse(Stitch.Nil)
+        popGeoS ce(PopCountryBackF llS ce.DefaultKey)
+          .map(_.take(PopCountryBackF llS ce.MaxResults).map(_.w hCand dateS ce( dent f er))))
+      .getOrElse(St ch.N l)
   }
 }
 
-object PopCountryBackFillSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.PopCountryBackFill.toString)
+object PopCountryBackF llS ce {
+  val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er(Algor hm.PopCountryBackF ll.toStr ng)
   val MaxResults = 40
   val DefaultKey = "country_US"
 }

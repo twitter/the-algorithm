@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Preroll tadata
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PrerollMetadataMarshaller @Inject() (
+@S ngleton
+class Preroll tadataMarshaller @ nject() (
   prerollMarshaller: PrerollMarshaller) {
-  def apply(prerollMetadata: PrerollMetadata): urt.PrerollMetadata =
-    urt.PrerollMetadata(
-      preroll = prerollMetadata.preroll.map(prerollMarshaller(_)),
-      videoAnalyticsScribePassthrough = prerollMetadata.videoAnalyticsScribePassthrough
+  def apply(preroll tadata: Preroll tadata): urt.Preroll tadata =
+    urt.Preroll tadata(
+      preroll = preroll tadata.preroll.map(prerollMarshaller(_)),
+      v deoAnalyt csScr bePassthrough = preroll tadata.v deoAnalyt csScr bePassthrough
     )
 }

@@ -1,66 +1,66 @@
-package com.twitter.search.common.search.termination;
+package com.tw ter.search.common.search.term nat on;
 
-import java.io.IOException;
-import java.util.Arrays;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * Query implementation that can timeout and return non-exhaustive results.
+ * Query  mple ntat on that can t  out and return non-exhaust ve results.
  */
-public class TerminationQuery extends Query {
-  private final Query inner;
-  private final QueryTimeout timeout;
+publ c class Term nat onQuery extends Query {
+  pr vate f nal Query  nner;
+  pr vate f nal QueryT  out t  out;
 
-  public TerminationQuery(Query inner, QueryTimeout timeout) {
-    this.inner = Preconditions.checkNotNull(inner);
-    this.timeout = Preconditions.checkNotNull(timeout);
+  publ c Term nat onQuery(Query  nner, QueryT  out t  out) {
+    t . nner = Precond  ons.c ckNotNull( nner);
+    t .t  out = Precond  ons.c ckNotNull(t  out);
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
-    return new TerminationQueryWeight(this, innerWeight, timeout);
+  @Overr de
+  publ c   ght create  ght(
+       ndexSearc r searc r, ScoreMode scoreMode, float boost) throws  OExcept on {
+      ght  nner  ght =  nner.create  ght(searc r, scoreMode, boost);
+    return new Term nat onQuery  ght(t ,  nner  ght, t  out);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = inner.rewrite(reader);
-    if (rewritten != inner) {
-      return new TerminationQuery(rewritten, timeout);
+  @Overr de
+  publ c Query rewr e( ndexReader reader) throws  OExcept on {
+    Query rewr ten =  nner.rewr e(reader);
+     f (rewr ten !=  nner) {
+      return new Term nat onQuery(rewr ten, t  out);
     }
-    return this;
+    return t ;
   }
 
-  public QueryTimeout getTimeout() {
-    return timeout;
+  publ c QueryT  out getT  out() {
+    return t  out;
   }
 
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(new Object[] {inner, timeout});
+  @Overr de
+  publ c  nt hashCode() {
+    return Arrays.hashCode(new Object[] { nner, t  out});
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TerminationQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof Term nat onQuery)) {
       return false;
     }
 
-    TerminationQuery terminationQuery = TerminationQuery.class.cast(obj);
-    return Arrays.equals(new Object[] {inner, timeout},
-                         new Object[] {terminationQuery.inner, terminationQuery.timeout});
+    Term nat onQuery term nat onQuery = Term nat onQuery.class.cast(obj);
+    return Arrays.equals(new Object[] { nner, t  out},
+                         new Object[] {term nat onQuery. nner, term nat onQuery.t  out});
   }
 
-  @Override
-  public String toString(String field) {
-    return inner.toString(field);
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return  nner.toStr ng(f eld);
   }
 }

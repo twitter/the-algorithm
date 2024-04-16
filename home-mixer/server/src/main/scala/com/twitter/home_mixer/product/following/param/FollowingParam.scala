@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.product.following.param
+package com.tw ter.ho _m xer.product.follow ng.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.WhoToFollowModuleD splayType
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.ut l.Durat on
 
-object FollowingParam {
-  val SupportedClientFSName = "following_supported_client"
+object Follow ngParam {
+  val SupportedCl entFSNa  = "follow ng_supported_cl ent"
 
   object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "following_server_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "follow ng_server_max_results",
         default = 100,
-        min = 1,
+        m n = 1,
         max = 500
       )
 
-  object EnableWhoToFollowCandidatePipelineParam
+  object EnableWhoToFollowCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "following_enable_who_to_follow",
+        na  = "follow ng_enable_who_to_follow",
         default = true
       )
 
-  object EnableAdsCandidatePipelineParam
+  object EnableAdsCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "following_enable_ads",
+        na  = "follow ng_enable_ads",
         default = true
       )
 
-  object EnableFlipInjectionModuleCandidatePipelineParam
+  object EnableFl p nject onModuleCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "following_enable_flip_inline_injection_module",
+        na  = "follow ng_enable_fl p_ nl ne_ nject on_module",
         default = true
       )
 
-  object FlipInlineInjectionModulePosition
-      extends FSBoundedParam[Int](
-        name = "following_flip_inline_injection_module_position",
+  object Fl p nl ne nject onModulePos  on
+      extends FSBoundedParam[ nt](
+        na  = "follow ng_fl p_ nl ne_ nject on_module_pos  on",
         default = 0,
-        min = 0,
+        m n = 0,
         max = 1000
       )
 
-  object WhoToFollowPositionParam
-      extends FSBoundedParam[Int](
-        name = "following_who_to_follow_position",
+  object WhoToFollowPos  onParam
+      extends FSBoundedParam[ nt](
+        na  = "follow ng_who_to_follow_pos  on",
         default = 5,
-        min = 0,
+        m n = 0,
         max = 99
       )
 
-  object WhoToFollowMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "following_who_to_follow_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
-        max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+  object WhoToFollowM n nject on ntervalParam
+      extends FSBoundedParam[Durat on](
+        "follow ng_who_to_follow_m n_ nject on_ nterval_ n_m nutes",
+        default = 1800.m nutes,
+        m n = 0.m nutes,
+        max = 6000.m nutes)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromM nutes
   }
 
-  object WhoToFollowDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "following_enable_who_to_follow_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  object WhoToFollowD splayType dParam
+      extends FSEnumParam[WhoToFollowModuleD splayType.type](
+        na  = "follow ng_enable_who_to_follow_d splay_type_ d",
+        default = WhoToFollowModuleD splayType.Vert cal,
+        enum = WhoToFollowModuleD splayType
       )
 
-  object WhoToFollowDisplayLocationParam
-      extends FSParam[String](
-        name = "following_who_to_follow_display_location",
-        default = "timeline_reverse_chron"
+  object WhoToFollowD splayLocat onParam
+      extends FSParam[Str ng](
+        na  = "follow ng_who_to_follow_d splay_locat on",
+        default = "t  l ne_reverse_chron"
       )
 
   object EnableFastAds
       extends FSParam[Boolean](
-        name = "following_enable_fast_ads",
+        na  = "follow ng_enable_fast_ads",
         default = true
       )
 }

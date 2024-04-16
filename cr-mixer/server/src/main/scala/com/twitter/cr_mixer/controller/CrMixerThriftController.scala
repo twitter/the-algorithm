@@ -1,754 +1,754 @@
-package com.twitter.cr_mixer.controller
+package com.tw ter.cr_m xer.controller
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.candidate_generation.AdsCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.CrCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.FrsTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.RelatedTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.RelatedVideoTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.TopicTweetCandidateGenerator
-import com.twitter.cr_mixer.candidate_generation.UtegTweetCandidateGenerator
-import com.twitter.cr_mixer.featureswitch.ParamsBuilder
-import com.twitter.cr_mixer.logging.CrMixerScribeLogger
-import com.twitter.cr_mixer.logging.RelatedTweetScribeLogger
-import com.twitter.cr_mixer.logging.AdsRecommendationsScribeLogger
-import com.twitter.cr_mixer.logging.RelatedTweetScribeMetadata
-import com.twitter.cr_mixer.logging.ScribeMetadata
-import com.twitter.cr_mixer.logging.UtegTweetScribeLogger
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.FrsTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedAdsCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TopicTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.AdsParams
-import com.twitter.cr_mixer.param.FrsParams.FrsBasedCandidateGenerationMaxCandidatesNumParam
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.RelatedTweetGlobalParams
-import com.twitter.cr_mixer.param.RelatedVideoTweetGlobalParams
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.param.decider.EndpointLoadShedder
-import com.twitter.cr_mixer.thriftscala.AdTweetRecommendation
-import com.twitter.cr_mixer.thriftscala.AdsRequest
-import com.twitter.cr_mixer.thriftscala.AdsResponse
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.FrsTweetResponse
-import com.twitter.cr_mixer.thriftscala.RelatedTweet
-import com.twitter.cr_mixer.thriftscala.RelatedTweetRequest
-import com.twitter.cr_mixer.thriftscala.RelatedTweetResponse
-import com.twitter.cr_mixer.thriftscala.RelatedVideoTweet
-import com.twitter.cr_mixer.thriftscala.RelatedVideoTweetRequest
-import com.twitter.cr_mixer.thriftscala.RelatedVideoTweetResponse
-import com.twitter.cr_mixer.thriftscala.TopicTweet
-import com.twitter.cr_mixer.thriftscala.TopicTweetRequest
-import com.twitter.cr_mixer.thriftscala.TopicTweetResponse
-import com.twitter.cr_mixer.thriftscala.TweetRecommendation
-import com.twitter.cr_mixer.thriftscala.UtegTweet
-import com.twitter.cr_mixer.thriftscala.UtegTweetRequest
-import com.twitter.cr_mixer.thriftscala.UtegTweetResponse
-import com.twitter.cr_mixer.util.MetricTagUtil
-import com.twitter.cr_mixer.util.SignalTimestampStatsUtil
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
-import com.twitter.timelines.tracing.lensview.funnelseries.TweetScoreFunnelSeries
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.UUID
-import javax.inject.Inject
-import org.apache.commons.lang.exception.ExceptionUtils
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.cr_m xer.cand date_generat on.AdsCand dateGenerator
+ mport com.tw ter.cr_m xer.cand date_generat on.CrCand dateGenerator
+ mport com.tw ter.cr_m xer.cand date_generat on.FrsT etCand dateGenerator
+ mport com.tw ter.cr_m xer.cand date_generat on.RelatedT etCand dateGenerator
+ mport com.tw ter.cr_m xer.cand date_generat on.RelatedV deoT etCand dateGenerator
+ mport com.tw ter.cr_m xer.cand date_generat on.Top cT etCand dateGenerator
+ mport com.tw ter.cr_m xer.cand date_generat on.UtegT etCand dateGenerator
+ mport com.tw ter.cr_m xer.featuresw ch.ParamsBu lder
+ mport com.tw ter.cr_m xer.logg ng.CrM xerScr beLogger
+ mport com.tw ter.cr_m xer.logg ng.RelatedT etScr beLogger
+ mport com.tw ter.cr_m xer.logg ng.AdsRecom ndat onsScr beLogger
+ mport com.tw ter.cr_m xer.logg ng.RelatedT etScr be tadata
+ mport com.tw ter.cr_m xer.logg ng.Scr be tadata
+ mport com.tw ter.cr_m xer.logg ng.UtegT etScr beLogger
+ mport com.tw ter.cr_m xer.model.AdsCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.FrsT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.RankedAdsCand date
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.cr_m xer.model.RelatedT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.RelatedV deoT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.Top cT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.T etW hScoreAndSoc alProof
+ mport com.tw ter.cr_m xer.model.UtegT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.param.AdsParams
+ mport com.tw ter.cr_m xer.param.FrsParams.FrsBasedCand dateGenerat onMaxCand datesNumParam
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.param.RelatedT etGlobalParams
+ mport com.tw ter.cr_m xer.param.RelatedV deoT etGlobalParams
+ mport com.tw ter.cr_m xer.param.Top cT etParams
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.param.dec der.Endpo ntLoadS dder
+ mport com.tw ter.cr_m xer.thr ftscala.AdT etRecom ndat on
+ mport com.tw ter.cr_m xer.thr ftscala.AdsRequest
+ mport com.tw ter.cr_m xer.thr ftscala.AdsResponse
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xerT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xerT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.FrsT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.FrsT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT et
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedV deoT et
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedV deoT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.RelatedV deoT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.Top cT et
+ mport com.tw ter.cr_m xer.thr ftscala.Top cT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.Top cT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.T etRecom ndat on
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT et
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT etResponse
+ mport com.tw ter.cr_m xer.ut l. tr cTagUt l
+ mport com.tw ter.cr_m xer.ut l.S gnalT  stampStatsUt l
+ mport com.tw ter.cr_m xer.{thr ftscala => t}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.thr ft.Controller
+ mport com.tw ter. rm .store.common.ReadableWr ableStore
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => thr ftlog}
+ mport com.tw ter.t  l nes.trac ng.lensv ew.funnelser es.T etScoreFunnelSer es
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport java.ut l.UU D
+ mport javax. nject. nject
+ mport org.apac .commons.lang.except on.Except onUt ls
 
-class CrMixerThriftController @Inject() (
-  crCandidateGenerator: CrCandidateGenerator,
-  relatedTweetCandidateGenerator: RelatedTweetCandidateGenerator,
-  relatedVideoTweetCandidateGenerator: RelatedVideoTweetCandidateGenerator,
-  utegTweetCandidateGenerator: UtegTweetCandidateGenerator,
-  frsTweetCandidateGenerator: FrsTweetCandidateGenerator,
-  topicTweetCandidateGenerator: TopicTweetCandidateGenerator,
-  crMixerScribeLogger: CrMixerScribeLogger,
-  relatedTweetScribeLogger: RelatedTweetScribeLogger,
-  utegTweetScribeLogger: UtegTweetScribeLogger,
-  adsRecommendationsScribeLogger: AdsRecommendationsScribeLogger,
-  adsCandidateGenerator: AdsCandidateGenerator,
-  decider: CrMixerDecider,
-  paramsBuilder: ParamsBuilder,
-  endpointLoadShedder: EndpointLoadShedder,
-  signalTimestampStatsUtil: SignalTimestampStatsUtil,
-  tweetRecommendationResultsStore: ReadableWritableStore[UserId, CrMixerTweetResponse],
-  userStateStore: ReadableStore[UserId, UserState],
-  statsReceiver: StatsReceiver)
-    extends Controller(t.CrMixer) {
+class CrM xerThr ftController @ nject() (
+  crCand dateGenerator: CrCand dateGenerator,
+  relatedT etCand dateGenerator: RelatedT etCand dateGenerator,
+  relatedV deoT etCand dateGenerator: RelatedV deoT etCand dateGenerator,
+  utegT etCand dateGenerator: UtegT etCand dateGenerator,
+  frsT etCand dateGenerator: FrsT etCand dateGenerator,
+  top cT etCand dateGenerator: Top cT etCand dateGenerator,
+  crM xerScr beLogger: CrM xerScr beLogger,
+  relatedT etScr beLogger: RelatedT etScr beLogger,
+  utegT etScr beLogger: UtegT etScr beLogger,
+  adsRecom ndat onsScr beLogger: AdsRecom ndat onsScr beLogger,
+  adsCand dateGenerator: AdsCand dateGenerator,
+  dec der: CrM xerDec der,
+  paramsBu lder: ParamsBu lder,
+  endpo ntLoadS dder: Endpo ntLoadS dder,
+  s gnalT  stampStatsUt l: S gnalT  stampStatsUt l,
+  t etRecom ndat onResultsStore: ReadableWr ableStore[User d, CrM xerT etResponse],
+  userStateStore: ReadableStore[User d, UserState],
+  statsRece ver: StatsRece ver)
+    extends Controller(t.CrM xer) {
 
-  lazy private val tweetScoreFunnelSeries = new TweetScoreFunnelSeries(statsReceiver)
+  lazy pr vate val t etScoreFunnelSer es = new T etScoreFunnelSer es(statsRece ver)
 
-  private def logErrMessage(endpoint: String, e: Throwable): Unit = {
+  pr vate def logErr ssage(endpo nt: Str ng, e: Throwable): Un  = {
     val msg = Seq(
-      s"Failed endpoint $endpoint: ${e.getLocalizedMessage}",
-      ExceptionUtils.getStackTrace(e)
-    ).mkString("\n")
+      s"Fa led endpo nt $endpo nt: ${e.getLocal zed ssage}",
+      Except onUt ls.getStackTrace(e)
+    ).mkStr ng("\n")
 
     /** *
-     * We chose logger.info() here to print message instead of logger.error since that
-     * logger.error sometimes suppresses detailed stacktrace.
+     *   chose logger. nfo()  re to pr nt  ssage  nstead of logger.error s nce that
+     * logger.error so t  s suppresses deta led stacktrace.
      */
-    logger.info(msg)
+    logger. nfo(msg)
   }
 
-  private def generateRequestUUID(): Long = {
+  pr vate def generateRequestUU D(): Long = {
 
     /** *
-     * We generate unique UUID via bitwise operations. See the below link for more:
-     * https://stackoverflow.com/questions/15184820/how-to-generate-unique-positive-long-using-uuid
+     *   generate un que UU D v a b w se operat ons. See t  below l nk for more:
+     * https://stackoverflow.com/quest ons/15184820/how-to-generate-un que-pos  ve-long-us ng-uu d
      */
-    UUID.randomUUID().getMostSignificantBits & Long.MaxValue
+    UU D.randomUU D().getMostS gn f cantB s & Long.MaxValue
   }
 
-  handle(t.CrMixer.GetTweetRecommendations) { args: t.CrMixer.GetTweetRecommendations.Args =>
-    val endpointName = "getTweetRecommendations"
+  handle(t.CrM xer.GetT etRecom ndat ons) { args: t.CrM xer.GetT etRecom ndat ons.Args =>
+    val endpo ntNa  = "getT etRecom ndat ons"
 
-    val requestUUID = generateRequestUUID()
-    val startTime = Time.now.inMilliseconds
-    val userId = args.request.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
+    val requestUU D = generateRequestUU D()
+    val startT   = T  .now. nM ll seconds
+    val user d = args.request.cl entContext.user d.getOrElse(
+      throw new  llegalArgu ntExcept on("user d must be present  n t  Thr ft cl entContext")
     )
-    val queryFut = buildCrCandidateGeneratorQuery(args.request, requestUUID, userId)
+    val queryFut = bu ldCrCand dateGeneratorQuery(args.request, requestUU D, user d)
     queryFut.flatMap { query =>
-      val scribeMetadata = ScribeMetadata.from(query)
-      endpointLoadShedder(endpointName, query.product.originalName) {
+      val scr be tadata = Scr be tadata.from(query)
+      endpo ntLoadS dder(endpo ntNa , query.product.or g nalNa ) {
 
-        val response = crCandidateGenerator.get(query)
+        val response = crCand dateGenerator.get(query)
 
-        val blueVerifiedScribedResponse = response.flatMap { rankedCandidates =>
-          val hasBlueVerifiedCandidate = rankedCandidates.exists { tweet =>
-            tweet.tweetInfo.hasBlueVerifiedAnnotation.contains(true)
+        val blueVer f edScr bedResponse = response.flatMap { rankedCand dates =>
+          val hasBlueVer f edCand date = rankedCand dates.ex sts { t et =>
+            t et.t et nfo.hasBlueVer f edAnnotat on.conta ns(true)
           }
 
-          if (hasBlueVerifiedCandidate) {
-            crMixerScribeLogger.scribeGetTweetRecommendationsForBlueVerified(
-              scribeMetadata,
+           f (hasBlueVer f edCand date) {
+            crM xerScr beLogger.scr beGetT etRecom ndat onsForBlueVer f ed(
+              scr be tadata,
               response)
           } else {
             response
           }
         }
 
-        val thriftResponse = blueVerifiedScribedResponse.map { candidates =>
-          if (query.product == t.Product.Home) {
-            scribeTweetScoreFunnelSeries(candidates)
+        val thr ftResponse = blueVer f edScr bedResponse.map { cand dates =>
+           f (query.product == t.Product.Ho ) {
+            scr beT etScoreFunnelSer es(cand dates)
           }
-          buildThriftResponse(candidates)
+          bu ldThr ftResponse(cand dates)
         }
 
-        cacheTweetRecommendationResults(args.request, thriftResponse)
+        cac T etRecom ndat onResults(args.request, thr ftResponse)
 
-        crMixerScribeLogger.scribeGetTweetRecommendations(
+        crM xerScr beLogger.scr beGetT etRecom ndat ons(
           args.request,
-          startTime,
-          scribeMetadata,
-          thriftResponse)
+          startT  ,
+          scr be tadata,
+          thr ftResponse)
       }.rescue {
-        case EndpointLoadShedder.LoadSheddingException =>
-          Future(CrMixerTweetResponse(Seq.empty))
+        case Endpo ntLoadS dder.LoadS dd ngExcept on =>
+          Future(CrM xerT etResponse(Seq.empty))
         case e =>
-          logErrMessage(endpointName, e)
-          Future(CrMixerTweetResponse(Seq.empty))
+          logErr ssage(endpo ntNa , e)
+          Future(CrM xerT etResponse(Seq.empty))
       }
     }
 
   }
 
   /** *
-   * GetRelatedTweetsForQueryTweet and GetRelatedTweetsForQueryAuthor are essentially
-   * doing very similar things, except that one passes in TweetId which calls TweetBased engine,
-   * and the other passes in AuthorId which calls ProducerBased engine.
+   * GetRelatedT etsForQueryT et and GetRelatedT etsForQueryAuthor are essent ally
+   * do ng very s m lar th ngs, except that one passes  n T et d wh ch calls T etBased eng ne,
+   * and t  ot r passes  n Author d wh ch calls ProducerBased eng ne.
    */
-  handle(t.CrMixer.GetRelatedTweetsForQueryTweet) {
-    args: t.CrMixer.GetRelatedTweetsForQueryTweet.Args =>
-      val endpointName = "getRelatedTweetsForQueryTweet"
-      getRelatedTweets(endpointName, args.request)
+  handle(t.CrM xer.GetRelatedT etsForQueryT et) {
+    args: t.CrM xer.GetRelatedT etsForQueryT et.Args =>
+      val endpo ntNa  = "getRelatedT etsForQueryT et"
+      getRelatedT ets(endpo ntNa , args.request)
   }
 
-  handle(t.CrMixer.GetRelatedVideoTweetsForQueryTweet) {
-    args: t.CrMixer.GetRelatedVideoTweetsForQueryTweet.Args =>
-      val endpointName = "getRelatedVideoTweetsForQueryVideoTweet"
-      getRelatedVideoTweets(endpointName, args.request)
+  handle(t.CrM xer.GetRelatedV deoT etsForQueryT et) {
+    args: t.CrM xer.GetRelatedV deoT etsForQueryT et.Args =>
+      val endpo ntNa  = "getRelatedV deoT etsForQueryV deoT et"
+      getRelatedV deoT ets(endpo ntNa , args.request)
 
   }
 
-  handle(t.CrMixer.GetRelatedTweetsForQueryAuthor) {
-    args: t.CrMixer.GetRelatedTweetsForQueryAuthor.Args =>
-      val endpointName = "getRelatedTweetsForQueryAuthor"
-      getRelatedTweets(endpointName, args.request)
+  handle(t.CrM xer.GetRelatedT etsForQueryAuthor) {
+    args: t.CrM xer.GetRelatedT etsForQueryAuthor.Args =>
+      val endpo ntNa  = "getRelatedT etsForQueryAuthor"
+      getRelatedT ets(endpo ntNa , args.request)
   }
 
-  private def getRelatedTweets(
-    endpointName: String,
-    request: RelatedTweetRequest
-  ): Future[RelatedTweetResponse] = {
-    val requestUUID = generateRequestUUID()
-    val startTime = Time.now.inMilliseconds
-    val queryFut = buildRelatedTweetQuery(request, requestUUID)
+  pr vate def getRelatedT ets(
+    endpo ntNa : Str ng,
+    request: RelatedT etRequest
+  ): Future[RelatedT etResponse] = {
+    val requestUU D = generateRequestUU D()
+    val startT   = T  .now. nM ll seconds
+    val queryFut = bu ldRelatedT etQuery(request, requestUU D)
 
     queryFut.flatMap { query =>
-      val relatedTweetScribeMetadata = RelatedTweetScribeMetadata.from(query)
-      endpointLoadShedder(endpointName, query.product.originalName) {
-        relatedTweetScribeLogger.scribeGetRelatedTweets(
+      val relatedT etScr be tadata = RelatedT etScr be tadata.from(query)
+      endpo ntLoadS dder(endpo ntNa , query.product.or g nalNa ) {
+        relatedT etScr beLogger.scr beGetRelatedT ets(
           request,
-          startTime,
-          relatedTweetScribeMetadata,
-          relatedTweetCandidateGenerator
+          startT  ,
+          relatedT etScr be tadata,
+          relatedT etCand dateGenerator
             .get(query)
-            .map(buildRelatedTweetResponse))
+            .map(bu ldRelatedT etResponse))
       }.rescue {
-        case EndpointLoadShedder.LoadSheddingException =>
-          Future(RelatedTweetResponse(Seq.empty))
+        case Endpo ntLoadS dder.LoadS dd ngExcept on =>
+          Future(RelatedT etResponse(Seq.empty))
         case e =>
-          logErrMessage(endpointName, e)
-          Future(RelatedTweetResponse(Seq.empty))
+          logErr ssage(endpo ntNa , e)
+          Future(RelatedT etResponse(Seq.empty))
       }
     }
 
   }
 
-  private def getRelatedVideoTweets(
-    endpointName: String,
-    request: RelatedVideoTweetRequest
-  ): Future[RelatedVideoTweetResponse] = {
-    val requestUUID = generateRequestUUID()
-    val queryFut = buildRelatedVideoTweetQuery(request, requestUUID)
+  pr vate def getRelatedV deoT ets(
+    endpo ntNa : Str ng,
+    request: RelatedV deoT etRequest
+  ): Future[RelatedV deoT etResponse] = {
+    val requestUU D = generateRequestUU D()
+    val queryFut = bu ldRelatedV deoT etQuery(request, requestUU D)
 
     queryFut.flatMap { query =>
-      endpointLoadShedder(endpointName, query.product.originalName) {
-        relatedVideoTweetCandidateGenerator.get(query).map { initialCandidateSeq =>
-          buildRelatedVideoTweetResponse(initialCandidateSeq)
+      endpo ntLoadS dder(endpo ntNa , query.product.or g nalNa ) {
+        relatedV deoT etCand dateGenerator.get(query).map {  n  alCand dateSeq =>
+          bu ldRelatedV deoT etResponse( n  alCand dateSeq)
         }
       }.rescue {
-        case EndpointLoadShedder.LoadSheddingException =>
-          Future(RelatedVideoTweetResponse(Seq.empty))
+        case Endpo ntLoadS dder.LoadS dd ngExcept on =>
+          Future(RelatedV deoT etResponse(Seq.empty))
         case e =>
-          logErrMessage(endpointName, e)
-          Future(RelatedVideoTweetResponse(Seq.empty))
+          logErr ssage(endpo ntNa , e)
+          Future(RelatedV deoT etResponse(Seq.empty))
       }
     }
   }
 
-  handle(t.CrMixer.GetFrsBasedTweetRecommendations) {
-    args: t.CrMixer.GetFrsBasedTweetRecommendations.Args =>
-      val endpointName = "getFrsBasedTweetRecommendations"
+  handle(t.CrM xer.GetFrsBasedT etRecom ndat ons) {
+    args: t.CrM xer.GetFrsBasedT etRecom ndat ons.Args =>
+      val endpo ntNa  = "getFrsBasedT etRecom ndat ons"
 
-      val requestUUID = generateRequestUUID()
-      val queryFut = buildFrsBasedTweetQuery(args.request, requestUUID)
+      val requestUU D = generateRequestUU D()
+      val queryFut = bu ldFrsBasedT etQuery(args.request, requestUU D)
       queryFut.flatMap { query =>
-        endpointLoadShedder(endpointName, query.product.originalName) {
-          frsTweetCandidateGenerator.get(query).map(FrsTweetResponse(_))
+        endpo ntLoadS dder(endpo ntNa , query.product.or g nalNa ) {
+          frsT etCand dateGenerator.get(query).map(FrsT etResponse(_))
         }.rescue {
           case e =>
-            logErrMessage(endpointName, e)
-            Future(FrsTweetResponse(Seq.empty))
+            logErr ssage(endpo ntNa , e)
+            Future(FrsT etResponse(Seq.empty))
         }
       }
   }
 
-  handle(t.CrMixer.GetTopicTweetRecommendations) {
-    args: t.CrMixer.GetTopicTweetRecommendations.Args =>
-      val endpointName = "getTopicTweetRecommendations"
+  handle(t.CrM xer.GetTop cT etRecom ndat ons) {
+    args: t.CrM xer.GetTop cT etRecom ndat ons.Args =>
+      val endpo ntNa  = "getTop cT etRecom ndat ons"
 
-      val requestUUID = generateRequestUUID()
-      val query = buildTopicTweetQuery(args.request, requestUUID)
+      val requestUU D = generateRequestUU D()
+      val query = bu ldTop cT etQuery(args.request, requestUU D)
 
-      endpointLoadShedder(endpointName, query.product.originalName) {
-        topicTweetCandidateGenerator.get(query).map(TopicTweetResponse(_))
+      endpo ntLoadS dder(endpo ntNa , query.product.or g nalNa ) {
+        top cT etCand dateGenerator.get(query).map(Top cT etResponse(_))
       }.rescue {
         case e =>
-          logErrMessage(endpointName, e)
-          Future(TopicTweetResponse(Map.empty[Long, Seq[TopicTweet]]))
+          logErr ssage(endpo ntNa , e)
+          Future(Top cT etResponse(Map.empty[Long, Seq[Top cT et]]))
       }
   }
 
-  handle(t.CrMixer.GetUtegTweetRecommendations) {
-    args: t.CrMixer.GetUtegTweetRecommendations.Args =>
-      val endpointName = "getUtegTweetRecommendations"
+  handle(t.CrM xer.GetUtegT etRecom ndat ons) {
+    args: t.CrM xer.GetUtegT etRecom ndat ons.Args =>
+      val endpo ntNa  = "getUtegT etRecom ndat ons"
 
-      val requestUUID = generateRequestUUID()
-      val startTime = Time.now.inMilliseconds
-      val queryFut = buildUtegTweetQuery(args.request, requestUUID)
+      val requestUU D = generateRequestUU D()
+      val startT   = T  .now. nM ll seconds
+      val queryFut = bu ldUtegT etQuery(args.request, requestUU D)
       queryFut
         .flatMap { query =>
-          val scribeMetadata = ScribeMetadata.from(query)
-          endpointLoadShedder(endpointName, query.product.originalName) {
-            utegTweetScribeLogger.scribeGetUtegTweetRecommendations(
+          val scr be tadata = Scr be tadata.from(query)
+          endpo ntLoadS dder(endpo ntNa , query.product.or g nalNa ) {
+            utegT etScr beLogger.scr beGetUtegT etRecom ndat ons(
               args.request,
-              startTime,
-              scribeMetadata,
-              utegTweetCandidateGenerator
+              startT  ,
+              scr be tadata,
+              utegT etCand dateGenerator
                 .get(query)
-                .map(buildUtegTweetResponse)
+                .map(bu ldUtegT etResponse)
             )
           }.rescue {
             case e =>
-              logErrMessage(endpointName, e)
-              Future(UtegTweetResponse(Seq.empty))
+              logErr ssage(endpo ntNa , e)
+              Future(UtegT etResponse(Seq.empty))
           }
         }
   }
 
-  handle(t.CrMixer.GetAdsRecommendations) { args: t.CrMixer.GetAdsRecommendations.Args =>
-    val endpointName = "getAdsRecommendations"
-    val queryFut = buildAdsCandidateGeneratorQuery(args.request)
-    val startTime = Time.now.inMilliseconds
+  handle(t.CrM xer.GetAdsRecom ndat ons) { args: t.CrM xer.GetAdsRecom ndat ons.Args =>
+    val endpo ntNa  = "getAdsRecom ndat ons"
+    val queryFut = bu ldAdsCand dateGeneratorQuery(args.request)
+    val startT   = T  .now. nM ll seconds
     queryFut.flatMap { query =>
       {
-        val scribeMetadata = ScribeMetadata.from(query)
-        val response = adsCandidateGenerator
-          .get(query).map { candidates =>
-            buildAdsResponse(candidates)
+        val scr be tadata = Scr be tadata.from(query)
+        val response = adsCand dateGenerator
+          .get(query).map { cand dates =>
+            bu ldAdsResponse(cand dates)
           }
-        adsRecommendationsScribeLogger.scribeGetAdsRecommendations(
+        adsRecom ndat onsScr beLogger.scr beGetAdsRecom ndat ons(
           args.request,
-          startTime,
-          scribeMetadata,
+          startT  ,
+          scr be tadata,
           response,
-          query.params(AdsParams.EnableScribe)
+          query.params(AdsParams.EnableScr be)
         )
       }.rescue {
         case e =>
-          logErrMessage(endpointName, e)
+          logErr ssage(endpo ntNa , e)
           Future(AdsResponse(Seq.empty))
       }
     }
 
   }
 
-  private def buildCrCandidateGeneratorQuery(
-    thriftRequest: CrMixerTweetRequest,
-    requestUUID: Long,
-    userId: Long
-  ): Future[CrCandidateGeneratorQuery] = {
+  pr vate def bu ldCrCand dateGeneratorQuery(
+    thr ftRequest: CrM xerT etRequest,
+    requestUU D: Long,
+    user d: Long
+  ): Future[CrCand dateGeneratorQuery] = {
 
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("CrMixerTweetRequest")
+    val product = thr ftRequest.product
+    val productContext = thr ftRequest.productContext
+    val scopedStats = statsRece ver
+      .scope(product.toStr ng).scope("CrM xerT etRequest")
 
     userStateStore
-      .get(userId).map { userStateOpt =>
+      .get(user d).map { userStateOpt =>
         val userState = userStateOpt
           .getOrElse(UserState.EnumUnknownUserState(100))
-        scopedStats.scope("UserState").counter(userState.toString).incr()
+        scopedStats.scope("UserState").counter(userState.toStr ng). ncr()
 
         val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
+          paramsBu lder.bu ldFromCl entContext(
+            thr ftRequest.cl entContext,
+            thr ftRequest.product,
             userState
           )
 
-        // Specify product-specific behavior mapping here
+        // Spec fy product-spec f c behav or mapp ng  re
         val maxNumResults = (product, productContext) match {
-          case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
-            homeContext.maxResults.getOrElse(9999)
-          case (t.Product.Notifications, Some(t.ProductContext.NotificationsContext(cxt))) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
-          case (t.Product.Email, None) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
-          case (t.Product.ImmersiveMediaViewer, None) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
-          case (t.Product.VideoCarousel, None) =>
-            params(GlobalParams.MaxCandidatesPerRequestParam)
+          case (t.Product.Ho , So (t.ProductContext.Ho Context(ho Context))) =>
+            ho Context.maxResults.getOrElse(9999)
+          case (t.Product.Not f cat ons, So (t.ProductContext.Not f cat onsContext(cxt))) =>
+            params(GlobalParams.MaxCand datesPerRequestParam)
+          case (t.Product.Ema l, None) =>
+            params(GlobalParams.MaxCand datesPerRequestParam)
+          case (t.Product. m rs ve d aV e r, None) =>
+            params(GlobalParams.MaxCand datesPerRequestParam)
+          case (t.Product.V deoCarousel, None) =>
+            params(GlobalParams.MaxCand datesPerRequestParam)
           case _ =>
-            throw new IllegalArgumentException(
-              s"Product ${product} and ProductContext ${productContext} are not allowed in CrMixer"
+            throw new  llegalArgu ntExcept on(
+              s"Product ${product} and ProductContext ${productContext} are not allo d  n CrM xer"
             )
         }
 
-        CrCandidateGeneratorQuery(
-          userId = userId,
+        CrCand dateGeneratorQuery(
+          user d = user d,
           product = product,
           userState = userState,
           maxNumResults = maxNumResults,
-          impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
+           mpressedT etL st = thr ftRequest.excludedT et ds.getOrElse(N l).toSet,
           params = params,
-          requestUUID = requestUUID,
-          languageCode = thriftRequest.clientContext.languageCode
+          requestUU D = requestUU D,
+          languageCode = thr ftRequest.cl entContext.languageCode
         )
       }
   }
 
-  private def buildRelatedTweetQuery(
-    thriftRequest: RelatedTweetRequest,
-    requestUUID: Long
-  ): Future[RelatedTweetCandidateGeneratorQuery] = {
+  pr vate def bu ldRelatedT etQuery(
+    thr ftRequest: RelatedT etRequest,
+    requestUU D: Long
+  ): Future[RelatedT etCand dateGeneratorQuery] = {
 
-    val product = thriftRequest.product
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("RelatedTweetRequest")
-    val userStateFut: Future[UserState] = (thriftRequest.clientContext.userId match {
-      case Some(userId) => userStateStore.get(userId)
-      case None => Future.value(Some(UserState.EnumUnknownUserState(100)))
+    val product = thr ftRequest.product
+    val scopedStats = statsRece ver
+      .scope(product.toStr ng).scope("RelatedT etRequest")
+    val userStateFut: Future[UserState] = (thr ftRequest.cl entContext.user d match {
+      case So (user d) => userStateStore.get(user d)
+      case None => Future.value(So (UserState.EnumUnknownUserState(100)))
     }).map(_.getOrElse(UserState.EnumUnknownUserState(100)))
 
     userStateFut.map { userState =>
-      scopedStats.scope("UserState").counter(userState.toString).incr()
+      scopedStats.scope("UserState").counter(userState.toStr ng). ncr()
       val params =
-        paramsBuilder.buildFromClientContext(
-          thriftRequest.clientContext,
-          thriftRequest.product,
+        paramsBu lder.bu ldFromCl entContext(
+          thr ftRequest.cl entContext,
+          thr ftRequest.product,
           userState)
 
-      // Specify product-specific behavior mapping here
-      // Currently, Home takes 10, and RUX takes 100
-      val maxNumResults = params(RelatedTweetGlobalParams.MaxCandidatesPerRequestParam)
+      // Spec fy product-spec f c behav or mapp ng  re
+      // Currently, Ho  takes 10, and RUX takes 100
+      val maxNumResults = params(RelatedT etGlobalParams.MaxCand datesPerRequestParam)
 
-      RelatedTweetCandidateGeneratorQuery(
-        internalId = thriftRequest.internalId,
-        clientContext = thriftRequest.clientContext,
+      RelatedT etCand dateGeneratorQuery(
+         nternal d = thr ftRequest. nternal d,
+        cl entContext = thr ftRequest.cl entContext,
         product = product,
         maxNumResults = maxNumResults,
-        impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
+         mpressedT etL st = thr ftRequest.excludedT et ds.getOrElse(N l).toSet,
         params = params,
-        requestUUID = requestUUID
+        requestUU D = requestUU D
       )
     }
   }
 
-  private def buildAdsCandidateGeneratorQuery(
-    thriftRequest: AdsRequest
-  ): Future[AdsCandidateGeneratorQuery] = {
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
+  pr vate def bu ldAdsCand dateGeneratorQuery(
+    thr ftRequest: AdsRequest
+  ): Future[AdsCand dateGeneratorQuery] = {
+    val user d = thr ftRequest.cl entContext.user d.getOrElse(
+      throw new  llegalArgu ntExcept on("user d must be present  n t  Thr ft cl entContext")
     )
-    val product = thriftRequest.product
-    val requestUUID = generateRequestUUID()
+    val product = thr ftRequest.product
+    val requestUU D = generateRequestUU D()
     userStateStore
-      .get(userId).map { userStateOpt =>
+      .get(user d).map { userStateOpt =>
         val userState = userStateOpt
           .getOrElse(UserState.EnumUnknownUserState(100))
         val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
+          paramsBu lder.bu ldFromCl entContext(
+            thr ftRequest.cl entContext,
+            thr ftRequest.product,
             userState)
-        val maxNumResults = params(AdsParams.AdsCandidateGenerationMaxCandidatesNumParam)
-        AdsCandidateGeneratorQuery(
-          userId = userId,
+        val maxNumResults = params(AdsParams.AdsCand dateGenerat onMaxCand datesNumParam)
+        AdsCand dateGeneratorQuery(
+          user d = user d,
           product = product,
           userState = userState,
           params = params,
           maxNumResults = maxNumResults,
-          requestUUID = requestUUID
+          requestUU D = requestUU D
         )
       }
   }
 
-  private def buildRelatedVideoTweetQuery(
-    thriftRequest: RelatedVideoTweetRequest,
-    requestUUID: Long
-  ): Future[RelatedVideoTweetCandidateGeneratorQuery] = {
+  pr vate def bu ldRelatedV deoT etQuery(
+    thr ftRequest: RelatedV deoT etRequest,
+    requestUU D: Long
+  ): Future[RelatedV deoT etCand dateGeneratorQuery] = {
 
-    val product = thriftRequest.product
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("RelatedVideoTweetRequest")
-    val userStateFut: Future[UserState] = (thriftRequest.clientContext.userId match {
-      case Some(userId) => userStateStore.get(userId)
-      case None => Future.value(Some(UserState.EnumUnknownUserState(100)))
+    val product = thr ftRequest.product
+    val scopedStats = statsRece ver
+      .scope(product.toStr ng).scope("RelatedV deoT etRequest")
+    val userStateFut: Future[UserState] = (thr ftRequest.cl entContext.user d match {
+      case So (user d) => userStateStore.get(user d)
+      case None => Future.value(So (UserState.EnumUnknownUserState(100)))
     }).map(_.getOrElse(UserState.EnumUnknownUserState(100)))
 
     userStateFut.map { userState =>
-      scopedStats.scope("UserState").counter(userState.toString).incr()
+      scopedStats.scope("UserState").counter(userState.toStr ng). ncr()
       val params =
-        paramsBuilder.buildFromClientContext(
-          thriftRequest.clientContext,
-          thriftRequest.product,
+        paramsBu lder.bu ldFromCl entContext(
+          thr ftRequest.cl entContext,
+          thr ftRequest.product,
           userState)
 
-      val maxNumResults = params(RelatedVideoTweetGlobalParams.MaxCandidatesPerRequestParam)
+      val maxNumResults = params(RelatedV deoT etGlobalParams.MaxCand datesPerRequestParam)
 
-      RelatedVideoTweetCandidateGeneratorQuery(
-        internalId = thriftRequest.internalId,
-        clientContext = thriftRequest.clientContext,
+      RelatedV deoT etCand dateGeneratorQuery(
+         nternal d = thr ftRequest. nternal d,
+        cl entContext = thr ftRequest.cl entContext,
         product = product,
         maxNumResults = maxNumResults,
-        impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
+         mpressedT etL st = thr ftRequest.excludedT et ds.getOrElse(N l).toSet,
         params = params,
-        requestUUID = requestUUID
+        requestUU D = requestUU D
       )
     }
 
   }
 
-  private def buildUtegTweetQuery(
-    thriftRequest: UtegTweetRequest,
-    requestUUID: Long
-  ): Future[UtegTweetCandidateGeneratorQuery] = {
+  pr vate def bu ldUtegT etQuery(
+    thr ftRequest: UtegT etRequest,
+    requestUU D: Long
+  ): Future[UtegT etCand dateGeneratorQuery] = {
 
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
+    val user d = thr ftRequest.cl entContext.user d.getOrElse(
+      throw new  llegalArgu ntExcept on("user d must be present  n t  Thr ft cl entContext")
     )
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("UtegTweetRequest")
+    val product = thr ftRequest.product
+    val productContext = thr ftRequest.productContext
+    val scopedStats = statsRece ver
+      .scope(product.toStr ng).scope("UtegT etRequest")
 
     userStateStore
-      .get(userId).map { userStateOpt =>
+      .get(user d).map { userStateOpt =>
         val userState = userStateOpt
           .getOrElse(UserState.EnumUnknownUserState(100))
-        scopedStats.scope("UserState").counter(userState.toString).incr()
+        scopedStats.scope("UserState").counter(userState.toStr ng). ncr()
 
         val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
+          paramsBu lder.bu ldFromCl entContext(
+            thr ftRequest.cl entContext,
+            thr ftRequest.product,
             userState
           )
 
-        // Specify product-specific behavior mapping here
+        // Spec fy product-spec f c behav or mapp ng  re
         val maxNumResults = (product, productContext) match {
-          case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
-            homeContext.maxResults.getOrElse(9999)
+          case (t.Product.Ho , So (t.ProductContext.Ho Context(ho Context))) =>
+            ho Context.maxResults.getOrElse(9999)
           case _ =>
-            throw new IllegalArgumentException(
-              s"Product ${product} and ProductContext ${productContext} are not allowed in CrMixer"
+            throw new  llegalArgu ntExcept on(
+              s"Product ${product} and ProductContext ${productContext} are not allo d  n CrM xer"
             )
         }
 
-        UtegTweetCandidateGeneratorQuery(
-          userId = userId,
+        UtegT etCand dateGeneratorQuery(
+          user d = user d,
           product = product,
           userState = userState,
           maxNumResults = maxNumResults,
-          impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
+           mpressedT etL st = thr ftRequest.excludedT et ds.getOrElse(N l).toSet,
           params = params,
-          requestUUID = requestUUID
+          requestUU D = requestUU D
         )
       }
 
   }
 
-  private def buildTopicTweetQuery(
-    thriftRequest: TopicTweetRequest,
-    requestUUID: Long
-  ): TopicTweetCandidateGeneratorQuery = {
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException(
-        "userId must be present in the TopicTweetRequest clientContext")
+  pr vate def bu ldTop cT etQuery(
+    thr ftRequest: Top cT etRequest,
+    requestUU D: Long
+  ): Top cT etCand dateGeneratorQuery = {
+    val user d = thr ftRequest.cl entContext.user d.getOrElse(
+      throw new  llegalArgu ntExcept on(
+        "user d must be present  n t  Top cT etRequest cl entContext")
     )
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
+    val product = thr ftRequest.product
+    val productContext = thr ftRequest.productContext
 
-    // Specify product-specific behavior mapping here
-    val isVideoOnly = (product, productContext) match {
-      case (t.Product.ExploreTopics, Some(t.ProductContext.ExploreContext(context))) =>
-        context.isVideoOnly
-      case (t.Product.TopicLandingPage, None) =>
+    // Spec fy product-spec f c behav or mapp ng  re
+    val  sV deoOnly = (product, productContext) match {
+      case (t.Product.ExploreTop cs, So (t.ProductContext.ExploreContext(context))) =>
+        context. sV deoOnly
+      case (t.Product.Top cLand ngPage, None) =>
         false
-      case (t.Product.HomeTopicsBackfill, None) =>
+      case (t.Product.Ho Top csBackf ll, None) =>
         false
-      case (t.Product.TopicTweetsStrato, None) =>
+      case (t.Product.Top cT etsStrato, None) =>
         false
       case _ =>
-        throw new IllegalArgumentException(
-          s"Product ${product} and ProductContext ${productContext} are not allowed in CrMixer"
+        throw new  llegalArgu ntExcept on(
+          s"Product ${product} and ProductContext ${productContext} are not allo d  n CrM xer"
         )
     }
 
-    statsReceiver.scope(product.toString).counter(TopicTweetRequest.toString).incr()
+    statsRece ver.scope(product.toStr ng).counter(Top cT etRequest.toStr ng). ncr()
 
     val params =
-      paramsBuilder.buildFromClientContext(
-        thriftRequest.clientContext,
+      paramsBu lder.bu ldFromCl entContext(
+        thr ftRequest.cl entContext,
         product,
         UserState.EnumUnknownUserState(100)
       )
 
-    val topicIds = thriftRequest.topicIds.map { topicId =>
-      TopicId(
-        entityId = topicId,
-        language = thriftRequest.clientContext.languageCode,
+    val top c ds = thr ftRequest.top c ds.map { top c d =>
+      Top c d(
+        ent y d = top c d,
+        language = thr ftRequest.cl entContext.languageCode,
         country = None
       )
     }.toSet
 
-    TopicTweetCandidateGeneratorQuery(
-      userId = userId,
-      topicIds = topicIds,
+    Top cT etCand dateGeneratorQuery(
+      user d = user d,
+      top c ds = top c ds,
       product = product,
-      maxNumResults = params(TopicTweetParams.MaxTopicTweetCandidatesParam),
-      impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
+      maxNumResults = params(Top cT etParams.MaxTop cT etCand datesParam),
+       mpressedT etL st = thr ftRequest.excludedT et ds.getOrElse(N l).toSet,
       params = params,
-      requestUUID = requestUUID,
-      isVideoOnly = isVideoOnly
+      requestUU D = requestUU D,
+       sV deoOnly =  sV deoOnly
     )
   }
 
-  private def buildFrsBasedTweetQuery(
-    thriftRequest: FrsTweetRequest,
-    requestUUID: Long
-  ): Future[FrsTweetCandidateGeneratorQuery] = {
-    val userId = thriftRequest.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException(
-        "userId must be present in the FrsTweetRequest clientContext")
+  pr vate def bu ldFrsBasedT etQuery(
+    thr ftRequest: FrsT etRequest,
+    requestUU D: Long
+  ): Future[FrsT etCand dateGeneratorQuery] = {
+    val user d = thr ftRequest.cl entContext.user d.getOrElse(
+      throw new  llegalArgu ntExcept on(
+        "user d must be present  n t  FrsT etRequest cl entContext")
     )
-    val product = thriftRequest.product
-    val productContext = thriftRequest.productContext
+    val product = thr ftRequest.product
+    val productContext = thr ftRequest.productContext
 
-    val scopedStats = statsReceiver
-      .scope(product.toString).scope("FrsTweetRequest")
+    val scopedStats = statsRece ver
+      .scope(product.toStr ng).scope("FrsT etRequest")
 
     userStateStore
-      .get(userId).map { userStateOpt =>
+      .get(user d).map { userStateOpt =>
         val userState = userStateOpt
           .getOrElse(UserState.EnumUnknownUserState(100))
-        scopedStats.scope("UserState").counter(userState.toString).incr()
+        scopedStats.scope("UserState").counter(userState.toStr ng). ncr()
 
         val params =
-          paramsBuilder.buildFromClientContext(
-            thriftRequest.clientContext,
-            thriftRequest.product,
+          paramsBu lder.bu ldFromCl entContext(
+            thr ftRequest.cl entContext,
+            thr ftRequest.product,
             userState
           )
         val maxNumResults = (product, productContext) match {
-          case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
-            homeContext.maxResults.getOrElse(
-              params(FrsBasedCandidateGenerationMaxCandidatesNumParam))
+          case (t.Product.Ho , So (t.ProductContext.Ho Context(ho Context))) =>
+            ho Context.maxResults.getOrElse(
+              params(FrsBasedCand dateGenerat onMaxCand datesNumParam))
           case _ =>
-            params(FrsBasedCandidateGenerationMaxCandidatesNumParam)
+            params(FrsBasedCand dateGenerat onMaxCand datesNumParam)
         }
 
-        FrsTweetCandidateGeneratorQuery(
-          userId = userId,
+        FrsT etCand dateGeneratorQuery(
+          user d = user d,
           product = product,
           maxNumResults = maxNumResults,
-          impressedTweetList = thriftRequest.excludedTweetIds.getOrElse(Nil).toSet,
-          impressedUserList = thriftRequest.excludedUserIds.getOrElse(Nil).toSet,
+           mpressedT etL st = thr ftRequest.excludedT et ds.getOrElse(N l).toSet,
+           mpressedUserL st = thr ftRequest.excludedUser ds.getOrElse(N l).toSet,
           params = params,
-          languageCodeOpt = thriftRequest.clientContext.languageCode,
-          countryCodeOpt = thriftRequest.clientContext.countryCode,
-          requestUUID = requestUUID
+          languageCodeOpt = thr ftRequest.cl entContext.languageCode,
+          countryCodeOpt = thr ftRequest.cl entContext.countryCode,
+          requestUU D = requestUU D
         )
       }
   }
 
-  private def buildThriftResponse(
-    candidates: Seq[RankedCandidate]
-  ): CrMixerTweetResponse = {
+  pr vate def bu ldThr ftResponse(
+    cand dates: Seq[RankedCand date]
+  ): CrM xerT etResponse = {
 
-    val tweets = candidates.map { candidate =>
-      TweetRecommendation(
-        tweetId = candidate.tweetId,
-        score = candidate.predictionScore,
-        metricTags = Some(MetricTagUtil.buildMetricTags(candidate)),
-        latestSourceSignalTimestampInMillis =
-          SignalTimestampStatsUtil.buildLatestSourceSignalTimestamp(candidate)
+    val t ets = cand dates.map { cand date =>
+      T etRecom ndat on(
+        t et d = cand date.t et d,
+        score = cand date.pred ct onScore,
+         tr cTags = So ( tr cTagUt l.bu ld tr cTags(cand date)),
+        latestS ceS gnalT  stamp nM ll s =
+          S gnalT  stampStatsUt l.bu ldLatestS ceS gnalT  stamp(cand date)
       )
     }
-    signalTimestampStatsUtil.statsSignalTimestamp(tweets)
-    CrMixerTweetResponse(tweets)
+    s gnalT  stampStatsUt l.statsS gnalT  stamp(t ets)
+    CrM xerT etResponse(t ets)
   }
 
-  private def scribeTweetScoreFunnelSeries(
-    candidates: Seq[RankedCandidate]
-  ): Seq[RankedCandidate] = {
-    // 202210210901 is a random number for code search of Lensview
-    tweetScoreFunnelSeries.startNewSpan(
-      name = "GetTweetRecommendationsTopLevelTweetSimilarityEngineType",
+  pr vate def scr beT etScoreFunnelSer es(
+    cand dates: Seq[RankedCand date]
+  ): Seq[RankedCand date] = {
+    // 202210210901  s a random number for code search of Lensv ew
+    t etScoreFunnelSer es.startNewSpan(
+      na  = "GetT etRecom ndat onsTopLevelT etS m lar yEng neType",
       codePtr = 202210210901L) {
       (
-        candidates,
-        candidates.map { candidate =>
-          thriftlog.TweetDimensionMeasure(
-            dimension = Some(
-              thriftlog
-                .RequestTweetDimension(
-                  candidate.tweetId,
-                  candidate.reasonChosen.similarityEngineInfo.similarityEngineType.value)),
-            measure = Some(thriftlog.RequestTweetMeasure(candidate.predictionScore))
+        cand dates,
+        cand dates.map { cand date =>
+          thr ftlog.T etD  ns on asure(
+            d  ns on = So (
+              thr ftlog
+                .RequestT etD  ns on(
+                  cand date.t et d,
+                  cand date.reasonChosen.s m lar yEng ne nfo.s m lar yEng neType.value)),
+             asure = So (thr ftlog.RequestT et asure(cand date.pred ct onScore))
           )
         }
       )
     }
   }
 
-  private def buildRelatedTweetResponse(candidates: Seq[InitialCandidate]): RelatedTweetResponse = {
-    val tweets = candidates.map { candidate =>
-      RelatedTweet(
-        tweetId = candidate.tweetId,
-        score = Some(candidate.getSimilarityScore),
-        authorId = Some(candidate.tweetInfo.authorId)
+  pr vate def bu ldRelatedT etResponse(cand dates: Seq[ n  alCand date]): RelatedT etResponse = {
+    val t ets = cand dates.map { cand date =>
+      RelatedT et(
+        t et d = cand date.t et d,
+        score = So (cand date.getS m lar yScore),
+        author d = So (cand date.t et nfo.author d)
       )
     }
-    RelatedTweetResponse(tweets)
+    RelatedT etResponse(t ets)
   }
 
-  private def buildRelatedVideoTweetResponse(
-    candidates: Seq[InitialCandidate]
-  ): RelatedVideoTweetResponse = {
-    val tweets = candidates.map { candidate =>
-      RelatedVideoTweet(
-        tweetId = candidate.tweetId,
-        score = Some(candidate.getSimilarityScore)
+  pr vate def bu ldRelatedV deoT etResponse(
+    cand dates: Seq[ n  alCand date]
+  ): RelatedV deoT etResponse = {
+    val t ets = cand dates.map { cand date =>
+      RelatedV deoT et(
+        t et d = cand date.t et d,
+        score = So (cand date.getS m lar yScore)
       )
     }
-    RelatedVideoTweetResponse(tweets)
+    RelatedV deoT etResponse(t ets)
   }
 
-  private def buildUtegTweetResponse(
-    candidates: Seq[TweetWithScoreAndSocialProof]
-  ): UtegTweetResponse = {
-    val tweets = candidates.map { candidate =>
-      UtegTweet(
-        tweetId = candidate.tweetId,
-        score = candidate.score,
-        socialProofByType = candidate.socialProofByType
+  pr vate def bu ldUtegT etResponse(
+    cand dates: Seq[T etW hScoreAndSoc alProof]
+  ): UtegT etResponse = {
+    val t ets = cand dates.map { cand date =>
+      UtegT et(
+        t et d = cand date.t et d,
+        score = cand date.score,
+        soc alProofByType = cand date.soc alProofByType
       )
     }
-    UtegTweetResponse(tweets)
+    UtegT etResponse(t ets)
   }
 
-  private def buildAdsResponse(
-    candidates: Seq[RankedAdsCandidate]
+  pr vate def bu ldAdsResponse(
+    cand dates: Seq[RankedAdsCand date]
   ): AdsResponse = {
-    AdsResponse(ads = candidates.map { candidate =>
-      AdTweetRecommendation(
-        tweetId = candidate.tweetId,
-        score = candidate.predictionScore,
-        lineItems = Some(candidate.lineItemInfo))
+    AdsResponse(ads = cand dates.map { cand date =>
+      AdT etRecom ndat on(
+        t et d = cand date.t et d,
+        score = cand date.pred ct onScore,
+        l ne ems = So (cand date.l ne em nfo))
     })
   }
 
-  private def cacheTweetRecommendationResults(
-    request: CrMixerTweetRequest,
-    response: Future[CrMixerTweetResponse]
-  ): Unit = {
+  pr vate def cac T etRecom ndat onResults(
+    request: CrM xerT etRequest,
+    response: Future[CrM xerT etResponse]
+  ): Un  = {
 
-    val userId = request.clientContext.userId.getOrElse(
-      throw new IllegalArgumentException(
-        "userId must be present in getTweetRecommendations() Thrift clientContext"))
+    val user d = request.cl entContext.user d.getOrElse(
+      throw new  llegalArgu ntExcept on(
+        "user d must be present  n getT etRecom ndat ons() Thr ft cl entContext"))
 
-    if (decider.isAvailableForId(userId, DeciderConstants.getTweetRecommendationsCacheRate)) {
-      response.map { crMixerTweetResponse =>
+     f (dec der. sAva lableFor d(user d, Dec derConstants.getT etRecom ndat onsCac Rate)) {
+      response.map { crM xerT etResponse =>
         {
           (
             request.product,
-            request.clientContext.userId,
-            crMixerTweetResponse.tweets.nonEmpty) match {
-            case (t.Product.Home, Some(userId), true) =>
-              tweetRecommendationResultsStore.put((userId, crMixerTweetResponse))
-            case _ => Future.value(Unit)
+            request.cl entContext.user d,
+            crM xerT etResponse.t ets.nonEmpty) match {
+            case (t.Product.Ho , So (user d), true) =>
+              t etRecom ndat onResultsStore.put((user d, crM xerT etResponse))
+            case _ => Future.value(Un )
           }
         }
       }

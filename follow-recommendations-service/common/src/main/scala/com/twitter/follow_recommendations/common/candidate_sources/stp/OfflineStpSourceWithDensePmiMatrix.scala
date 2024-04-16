@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.hub.PpmiDenseMatrixCandidatesClientColumn
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.generated.cl ent.hub.Ppm DenseMatr xCand datesCl entColumn
+ mport javax. nject. nject
 
 /**
- * Main source for strong-tie-prediction candidates generated offline.
+ * Ma n s ce for strong-t e-pred ct on cand dates generated offl ne.
  */
-@Singleton
-class OfflineStpSourceWithDensePmiMatrix @Inject() (
-  stpColumn: PpmiDenseMatrixCandidatesClientColumn)
-    extends OfflineStrongTiePredictionBaseSource(stpColumn.fetcher) {
-  override val identifier: CandidateSourceIdentifier = OfflineStpSourceWithDensePmiMatrix.Identifier
+@S ngleton
+class Offl neStpS ceW hDensePm Matr x @ nject() (
+  stpColumn: Ppm DenseMatr xCand datesCl entColumn)
+    extends Offl neStrongT ePred ct onBaseS ce(stpColumn.fetc r) {
+  overr de val  dent f er: Cand dateS ce dent f er = Offl neStpS ceW hDensePm Matr x. dent f er
 }
 
-object OfflineStpSourceWithDensePmiMatrix {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+object Offl neStpS ceW hDensePm Matr x {
+  val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er(Algor hm.StrongT ePred ct onRec.toStr ng)
 }

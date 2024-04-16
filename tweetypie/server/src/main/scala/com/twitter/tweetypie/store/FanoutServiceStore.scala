@@ -1,38 +1,38 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.timelineservice.fanout.thriftscala.FanoutService
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.FanoutServ ce
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait FanoutServiceStore extends TweetStoreBase[FanoutServiceStore] with AsyncInsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): FanoutServiceStore =
-    new TweetStoreWrapper(w, this) with FanoutServiceStore with AsyncInsertTweet.StoreWrapper
+tra  FanoutServ ceStore extends T etStoreBase[FanoutServ ceStore] w h Async nsertT et.Store {
+  def wrap(w: T etStore.Wrap): FanoutServ ceStore =
+    new T etStoreWrapper(w, t ) w h FanoutServ ceStore w h Async nsertT et.StoreWrapper
 }
 
-object FanoutServiceStore {
-  val Action: AsyncWriteAction.FanoutDelivery.type = AsyncWriteAction.FanoutDelivery
+object FanoutServ ceStore {
+  val Act on: AsyncWr eAct on.FanoutDel very.type = AsyncWr eAct on.FanoutDel very
 
   def apply(
-    fanoutClient: FanoutService.MethodPerEndpoint,
-    stats: StatsReceiver
-  ): FanoutServiceStore =
-    new FanoutServiceStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        FutureEffect[AsyncInsertTweet.Event] { event =>
-          fanoutClient.tweetCreateEvent2(
-            TweetCreateEvent(
-              tweet = event.tweet,
+    fanoutCl ent: FanoutServ ce. thodPerEndpo nt,
+    stats: StatsRece ver
+  ): FanoutServ ceStore =
+    new FanoutServ ceStore {
+      overr de val async nsertT et: FutureEffect[Async nsertT et.Event] =
+        FutureEffect[Async nsertT et.Event] { event =>
+          fanoutCl ent.t etCreateEvent2(
+            T etCreateEvent(
+              t et = event.t et,
               user = event.user,
-              sourceTweet = event.sourceTweet,
-              sourceUser = event.sourceUser,
-              additionalContext = event.additionalContext,
-              transientContext = event.transientContext
+              s ceT et = event.s ceT et,
+              s ceUser = event.s ceUser,
+              add  onalContext = event.add  onalContext,
+              trans entContext = event.trans entContext
             )
           )
         }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
-      ] = TweetStore.retry(Action, asyncInsertTweet)
+      overr de val retryAsync nsertT et: FutureEffect[
+        T etStoreRetryEvent[Async nsertT et.Event]
+      ] = T etStore.retry(Act on, async nsertT et)
     }
 }

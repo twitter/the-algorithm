@@ -1,121 +1,121 @@
-package com.twitter.cr_mixer.param
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
-import scala.language.implicitConversions
+package com.tw ter.cr_m xer.param
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport scala.language. mpl c Convers ons
 
-object UnifiedUSSSignalParams {
+object Un f edUSSS gnalParams {
 
-  object TweetAggregationTypeParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
+  object T etAggregat onTypeParam extends Enu rat on {
+    protected case class S gnalTypeValue(s gnalType: S gnalType) extends super.Val
 
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+     mpl c  def valueToS gnalTypeValue(x: Value): S gnalTypeValue =
+      x.as nstanceOf[S gnalTypeValue]
 
-    val UniformAggregation = SignalTypeValue(SignalType.TweetBasedUnifiedUniformSignal)
-    val EngagementAggregation = SignalTypeValue(
-      SignalType.TweetBasedUnifiedEngagementWeightedSignal)
+    val Un formAggregat on = S gnalTypeValue(S gnalType.T etBasedUn f edUn formS gnal)
+    val Engage ntAggregat on = S gnalTypeValue(
+      S gnalType.T etBasedUn f edEngage nt  ghtedS gnal)
   }
 
-  object ProducerAggregationTypeParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
+  object ProducerAggregat onTypeParam extends Enu rat on {
+    protected case class S gnalTypeValue(s gnalType: S gnalType) extends super.Val
 
-    import scala.language.implicitConversions
+     mport scala.language. mpl c Convers ons
 
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+     mpl c  def valueToS gnalTypeValue(x: Value): S gnalTypeValue =
+      x.as nstanceOf[S gnalTypeValue]
 
-    val UniformAggregation = SignalTypeValue(SignalType.ProducerBasedUnifiedUniformSignal)
-    val EngagementAggregation = SignalTypeValue(
-      SignalType.ProducerBasedUnifiedEngagementWeightedSignal)
+    val Un formAggregat on = S gnalTypeValue(S gnalType.ProducerBasedUn f edUn formS gnal)
+    val Engage ntAggregat on = S gnalTypeValue(
+      S gnalType.ProducerBasedUn f edEngage nt  ghtedS gnal)
 
   }
 
-  object ReplaceIndividualUSSSourcesParam
+  object Replace nd v dualUSSS cesParam
       extends FSParam[Boolean](
-        name = "twistly_agg_replace_enable_source",
+        na  = "tw stly_agg_replace_enable_s ce",
         default = false
       )
 
-  object EnableTweetAggSourceParam
+  object EnableT etAggS ceParam
       extends FSParam[Boolean](
-        name = "twistly_agg_tweet_agg_enable_source",
+        na  = "tw stly_agg_t et_agg_enable_s ce",
         default = false
       )
 
-  object TweetAggTypeParam
-      extends FSEnumParam[TweetAggregationTypeParam.type](
-        name = "twistly_agg_tweet_agg_type_id",
-        default = TweetAggregationTypeParam.EngagementAggregation,
-        enum = TweetAggregationTypeParam
+  object T etAggTypeParam
+      extends FSEnumParam[T etAggregat onTypeParam.type](
+        na  = "tw stly_agg_t et_agg_type_ d",
+        default = T etAggregat onTypeParam.Engage ntAggregat on,
+        enum = T etAggregat onTypeParam
       )
 
-  object UnifiedTweetSourceNumberParam
-      extends FSBoundedParam[Int](
-        name = "twistly_agg_tweet_agg_source_number",
+  object Un f edT etS ceNumberParam
+      extends FSBoundedParam[ nt](
+        na  = "tw stly_agg_t et_agg_s ce_number",
         default = 0,
-        min = 0,
+        m n = 0,
         max = 100,
       )
 
-  object EnableProducerAggSourceParam
+  object EnableProducerAggS ceParam
       extends FSParam[Boolean](
-        name = "twistly_agg_producer_agg_enable_source",
+        na  = "tw stly_agg_producer_agg_enable_s ce",
         default = false
       )
 
   object ProducerAggTypeParam
-      extends FSEnumParam[ProducerAggregationTypeParam.type](
-        name = "twistly_agg_producer_agg_type_id",
-        default = ProducerAggregationTypeParam.EngagementAggregation,
-        enum = ProducerAggregationTypeParam
+      extends FSEnumParam[ProducerAggregat onTypeParam.type](
+        na  = "tw stly_agg_producer_agg_type_ d",
+        default = ProducerAggregat onTypeParam.Engage ntAggregat on,
+        enum = ProducerAggregat onTypeParam
       )
 
-  object UnifiedProducerSourceNumberParam
-      extends FSBoundedParam[Int](
-        name = "twistly_agg_producer_agg_source_number",
+  object Un f edProducerS ceNumberParam
+      extends FSBoundedParam[ nt](
+        na  = "tw stly_agg_producer_agg_s ce_number",
         default = 0,
-        min = 0,
+        m n = 0,
         max = 100,
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTweetAggSourceParam,
-    EnableProducerAggSourceParam,
-    TweetAggTypeParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableT etAggS ceParam,
+    EnableProducerAggS ceParam,
+    T etAggTypeParam,
     ProducerAggTypeParam,
-    UnifiedTweetSourceNumberParam,
-    UnifiedProducerSourceNumberParam,
-    ReplaceIndividualUSSSourcesParam
+    Un f edT etS ceNumberParam,
+    Un f edProducerS ceNumberParam,
+    Replace nd v dualUSSS cesParam
   )
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTweetAggSourceParam,
-      EnableProducerAggSourceParam,
-      ReplaceIndividualUSSSourcesParam,
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableT etAggS ceParam,
+      EnableProducerAggS ceParam,
+      Replace nd v dualUSSS cesParam,
     )
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      UnifiedProducerSourceNumberParam,
-      UnifiedTweetSourceNumberParam)
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      Un f edProducerS ceNumberParam,
+      Un f edT etS ceNumberParam)
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      TweetAggTypeParam,
+      T etAggTypeParam,
       ProducerAggTypeParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(enumOverr des: _*)
+      .bu ld()
   }
 }

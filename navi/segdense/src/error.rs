@@ -1,52 +1,52 @@
-use std::fmt::Display;
+use std::fmt::D splay;
 
 /**
  * Custom error
  */
-#[derive(Debug)]
+#[der ve(Debug)]
 pub enum SegDenseError {
-    IoError(std::io::Error),
+     oError(std:: o::Error),
     Json(serde_json::Error),
-    JsonMissingRoot,
-    JsonMissingObject,
-    JsonMissingArray,
-    JsonArraySize,
-    JsonMissingInputFeature,
+    JsonM ss ngRoot,
+    JsonM ss ngObject,
+    JsonM ss ngArray,
+    JsonArrayS ze,
+    JsonM ss ng nputFeature,
 }
 
-impl Display for SegDenseError {
+ mpl D splay for SegDenseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
-            SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
-            SegDenseError::JsonMissingRoot => {
-                write!(f, "{}", "SegDense JSON: Root Node note found!")
+            SegDenseError:: oError( o_error) => wr e!(f, "{}",  o_error),
+            SegDenseError::Json(serde_json) => wr e!(f, "{}", serde_json),
+            SegDenseError::JsonM ss ngRoot => {
+                wr e!(f, "{}", "SegDense JSON: Root Node note found!")
             }
-            SegDenseError::JsonMissingObject => {
-                write!(f, "{}", "SegDense JSON: Object note found!")
+            SegDenseError::JsonM ss ngObject => {
+                wr e!(f, "{}", "SegDense JSON: Object note found!")
             }
-            SegDenseError::JsonMissingArray => {
-                write!(f, "{}", "SegDense JSON: Array Node note found!")
+            SegDenseError::JsonM ss ngArray => {
+                wr e!(f, "{}", "SegDense JSON: Array Node note found!")
             }
-            SegDenseError::JsonArraySize => {
-                write!(f, "{}", "SegDense JSON: Array size not as expected!")
+            SegDenseError::JsonArrayS ze => {
+                wr e!(f, "{}", "SegDense JSON: Array s ze not as expected!")
             }
-            SegDenseError::JsonMissingInputFeature => {
-                write!(f, "{}", "SegDense JSON: Missing input feature!")
+            SegDenseError::JsonM ss ng nputFeature => {
+                wr e!(f, "{}", "SegDense JSON: M ss ng  nput feature!")
             }
         }
     }
 }
 
-impl std::error::Error for SegDenseError {}
+ mpl std::error::Error for SegDenseError {}
 
-impl From<std::io::Error> for SegDenseError {
-    fn from(err: std::io::Error) -> Self {
-        SegDenseError::IoError(err)
+ mpl From<std:: o::Error> for SegDenseError {
+    fn from(err: std:: o::Error) -> Self {
+        SegDenseError:: oError(err)
     }
 }
 
-impl From<serde_json::Error> for SegDenseError {
+ mpl From<serde_json::Error> for SegDenseError {
     fn from(err: serde_json::Error) -> Self {
         SegDenseError::Json(err)
     }

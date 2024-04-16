@@ -1,166 +1,166 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.SubtextForAndroidPushHeader
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.util.CopyUtil
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.frigate.pushservice.util.PushToHomeUtil
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeFutModelValues
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.common.base.T etDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.SubtextForAndro dPush ader
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FS}
+ mport com.tw ter.fr gate.pushserv ce.ut l.CopyUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Ema lLand ngPageExper  ntUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l. nl neAct onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushToHo Ut l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l. rgeFutModelValues
+ mport com.tw ter.ut l.Future
 
-trait TweetCandidateIbis2Hydrator
-    extends Ibis2HydratorForCandidate
-    with InlineActionIbis2Hydrator
-    with CustomConfigurationMapForIbis {
-  self: PushCandidate with TweetCandidate with TweetDetails with TweetAuthorDetails =>
+tra  T etCand date b s2Hydrator
+    extends  b s2HydratorForCand date
+    w h  nl neAct on b s2Hydrator
+    w h CustomConf gurat onMapFor b s {
+  self: PushCand date w h T etCand date w h T etDeta ls w h T etAuthorDeta ls =>
 
-  lazy val scopedStats: StatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  lazy val scopedStats: StatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
 
-  lazy val tweetIdModelValue: Map[String, String] =
+  lazy val t et dModelValue: Map[Str ng, Str ng] =
     Map(
-      "tweet" -> tweetId.toString
+      "t et" -> t et d.toStr ng
     )
 
-  lazy val authorModelValue: Map[String, String] = {
-    assert(authorId.isDefined)
+  lazy val authorModelValue: Map[Str ng, Str ng] = {
+    assert(author d. sDef ned)
     Map(
-      "author" -> authorId.getOrElse(0L).toString
+      "author" -> author d.getOrElse(0L).toStr ng
     )
   }
 
-  lazy val otherModelValues: Map[String, String] =
+  lazy val ot rModelValues: Map[Str ng, Str ng] =
     Map(
       "show_explanatory_text" -> "true",
-      "show_negative_feedback" -> "true"
+      "show_negat ve_feedback" -> "true"
     )
 
-  lazy val mediaModelValue: Map[String, String] =
+  lazy val  d aModelValue: Map[Str ng, Str ng] =
     Map(
-      "show_media" -> "true"
+      "show_ d a" -> "true"
     )
 
-  lazy val inlineVideoMediaMap: Map[String, String] = {
-    if (hasVideo) {
-      val isInlineVideoEnabled = target.params(FS.EnableInlineVideo)
-      val isAutoplayEnabled = target.params(FS.EnableAutoplayForInlineVideo)
+  lazy val  nl neV deo d aMap: Map[Str ng, Str ng] = {
+     f (hasV deo) {
+      val  s nl neV deoEnabled = target.params(FS.Enable nl neV deo)
+      val  sAutoplayEnabled = target.params(FS.EnableAutoplayFor nl neV deo)
       Map(
-        "enable_inline_video_for_ios" -> isInlineVideoEnabled.toString,
-        "enable_autoplay_for_inline_video_ios" -> isAutoplayEnabled.toString
+        "enable_ nl ne_v deo_for_ os" ->  s nl neV deoEnabled.toStr ng,
+        "enable_autoplay_for_ nl ne_v deo_ os" ->  sAutoplayEnabled.toStr ng
       )
     } else Map.empty
   }
 
-  lazy val landingPageModelValues: Future[Map[String, String]] = {
+  lazy val land ngPageModelValues: Future[Map[Str ng, Str ng]] = {
     for {
-      deviceInfoOpt <- target.deviceInfo
-    } yield {
-      PushToHomeUtil.getIbis2ModelValue(deviceInfoOpt, target, scopedStats) match {
-        case Some(pushToHomeModelValues) => pushToHomeModelValues
+      dev ce nfoOpt <- target.dev ce nfo
+    } y eld {
+      PushToHo Ut l.get b s2ModelValue(dev ce nfoOpt, target, scopedStats) match {
+        case So (pushToHo ModelValues) => pushToHo ModelValues
         case _ =>
-          EmailLandingPageExperimentUtil.getIbis2ModelValue(
-            deviceInfoOpt,
+          Ema lLand ngPageExper  ntUt l.get b s2ModelValue(
+            dev ce nfoOpt,
             target,
-            tweetId
+            t et d
           )
       }
     }
   }
 
-  lazy val tweetDynamicInlineActionsModelValues = {
-    if (target.params(PushFeatureSwitchParams.EnableTweetDynamicInlineActions)) {
-      val actions = target.params(PushFeatureSwitchParams.TweetDynamicInlineActionsList)
-      InlineActionUtil.getGeneratedTweetInlineActions(target, statsReceiver, actions)
-    } else Map.empty[String, String]
+  lazy val t etDynam c nl neAct onsModelValues = {
+     f (target.params(PushFeatureSw chParams.EnableT etDynam c nl neAct ons)) {
+      val act ons = target.params(PushFeatureSw chParams.T etDynam c nl neAct onsL st)
+       nl neAct onUt l.getGeneratedT et nl neAct ons(target, statsRece ver, act ons)
+    } else Map.empty[Str ng, Str ng]
   }
 
-  lazy val tweetDynamicInlineActionsModelValuesForWeb: Map[String, String] = {
-    if (target.isLoggedOutUser) {
-      Map.empty[String, String]
+  lazy val t etDynam c nl neAct onsModelValuesFor b: Map[Str ng, Str ng] = {
+     f (target. sLoggedOutUser) {
+      Map.empty[Str ng, Str ng]
     } else {
-      InlineActionUtil.getGeneratedTweetInlineActionsForWeb(
-        actions = target.params(PushFeatureSwitchParams.TweetDynamicInlineActionsListForWeb),
-        enableForDesktopWeb =
-          target.params(PushFeatureSwitchParams.EnableDynamicInlineActionsForDesktopWeb),
-        enableForMobileWeb =
-          target.params(PushFeatureSwitchParams.EnableDynamicInlineActionsForMobileWeb)
+       nl neAct onUt l.getGeneratedT et nl neAct onsFor b(
+        act ons = target.params(PushFeatureSw chParams.T etDynam c nl neAct onsL stFor b),
+        enableForDesktop b =
+          target.params(PushFeatureSw chParams.EnableDynam c nl neAct onsForDesktop b),
+        enableForMob le b =
+          target.params(PushFeatureSw chParams.EnableDynam c nl neAct onsForMob le b)
       )
     }
   }
 
-  lazy val copyFeaturesFut: Future[Map[String, String]] =
-    CopyUtil.getCopyFeatures(self, scopedStats)
+  lazy val copyFeaturesFut: Future[Map[Str ng, Str ng]] =
+    CopyUt l.getCopyFeatures(self, scopedStats)
 
-  private def getVerifiedSymbolModelValue: Future[Map[String, String]] = {
-    self.tweetAuthor.map {
-      case Some(author) =>
-        if (author.safety.exists(_.verified)) {
-          scopedStats.counter("is_verified").incr()
-          if (target.params(FS.EnablePushPresentationVerifiedSymbol)) {
-            scopedStats.counter("is_verified_and_add").incr()
-            Map("is_author_verified" -> "true")
+  pr vate def getVer f edSymbolModelValue: Future[Map[Str ng, Str ng]] = {
+    self.t etAuthor.map {
+      case So (author) =>
+         f (author.safety.ex sts(_.ver f ed)) {
+          scopedStats.counter(" s_ver f ed"). ncr()
+           f (target.params(FS.EnablePushPresentat onVer f edSymbol)) {
+            scopedStats.counter(" s_ver f ed_and_add"). ncr()
+            Map(" s_author_ver f ed" -> "true")
           } else {
-            scopedStats.counter("is_verified_and_NOT_add").incr()
+            scopedStats.counter(" s_ver f ed_and_NOT_add"). ncr()
             Map.empty
           }
         } else {
-          scopedStats.counter("is_NOT_verified").incr()
+          scopedStats.counter(" s_NOT_ver f ed"). ncr()
           Map.empty
         }
       case _ =>
-        scopedStats.counter("none_author").incr()
+        scopedStats.counter("none_author"). ncr()
         Map.empty
     }
   }
 
-  private def subtextAndroidPushHeader: Map[String, String] = {
-    self.target.params(PushFeatureSwitchParams.SubtextInAndroidPushHeaderParam) match {
-      case SubtextForAndroidPushHeader.None =>
+  pr vate def subtextAndro dPush ader: Map[Str ng, Str ng] = {
+    self.target.params(PushFeatureSw chParams.Subtext nAndro dPush aderParam) match {
+      case SubtextForAndro dPush ader.None =>
         Map.empty
-      case SubtextForAndroidPushHeader.TargetHandler =>
+      case SubtextForAndro dPush ader.TargetHandler =>
         Map("subtext_target_handler" -> "true")
-      case SubtextForAndroidPushHeader.TargetTagHandler =>
+      case SubtextForAndro dPush ader.TargetTagHandler =>
         Map("subtext_target_tag_handler" -> "true")
-      case SubtextForAndroidPushHeader.TargetName =>
-        Map("subtext_target_name" -> "true")
-      case SubtextForAndroidPushHeader.AuthorTagHandler =>
+      case SubtextForAndro dPush ader.TargetNa  =>
+        Map("subtext_target_na " -> "true")
+      case SubtextForAndro dPush ader.AuthorTagHandler =>
         Map("subtext_author_tag_handler" -> "true")
-      case SubtextForAndroidPushHeader.AuthorName =>
-        Map("subtext_author_name" -> "true")
+      case SubtextForAndro dPush ader.AuthorNa  =>
+        Map("subtext_author_na " -> "true")
       case _ =>
         Map.empty
     }
   }
 
-  lazy val bodyPushMap: Map[String, String] = {
-    if (self.target.params(PushFeatureSwitchParams.EnableEmptyBody)) {
+  lazy val bodyPushMap: Map[Str ng, Str ng] = {
+     f (self.target.params(PushFeatureSw chParams.EnableEmptyBody)) {
       Map("enable_empty_body" -> "true")
-    } else Map.empty[String, String]
+    } else Map.empty[Str ng, Str ng]
   }
 
-  override def customFieldsMapFut: Future[Map[String, String]] =
+  overr de def customF eldsMapFut: Future[Map[Str ng, Str ng]] =
     for {
-      superModelValues <- super.customFieldsMapFut
+      superModelValues <- super.customF eldsMapFut
       copyFeaturesModelValues <- copyFeaturesFut
-      verifiedSymbolModelValue <- getVerifiedSymbolModelValue
-    } yield {
+      ver f edSymbolModelValue <- getVer f edSymbolModelValue
+    } y eld {
       superModelValues ++ copyFeaturesModelValues ++
-        verifiedSymbolModelValue ++ subtextAndroidPushHeader ++ bodyPushMap
+        ver f edSymbolModelValue ++ subtextAndro dPush ader ++ bodyPushMap
     }
 
-  override lazy val senderId: Option[Long] = authorId
+  overr de lazy val sender d: Opt on[Long] = author d
 
-  def tweetModelValues: Future[Map[String, String]] =
-    landingPageModelValues.map { landingPageModelValues =>
-      tweetIdModelValue ++ authorModelValue ++ landingPageModelValues ++ tweetDynamicInlineActionsModelValues ++ tweetDynamicInlineActionsModelValuesForWeb
+  def t etModelValues: Future[Map[Str ng, Str ng]] =
+    land ngPageModelValues.map { land ngPageModelValues =>
+      t et dModelValue ++ authorModelValue ++ land ngPageModelValues ++ t etDynam c nl neAct onsModelValues ++ t etDynam c nl neAct onsModelValuesFor b
     }
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, tweetModelValues)
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+     rgeFutModelValues(super.modelValues, t etModelValues)
 }

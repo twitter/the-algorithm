@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Default
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Primary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Text
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.ButtonStyle
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Default
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Pr mary
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Secondary
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Text
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Destruct ve
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Neutral
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Destruct veSecondary
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Destruct veText
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ButtonStyleMarshaller @Inject() () {
+@S ngleton
+class ButtonStyleMarshaller @ nject() () {
   def apply(buttonStyle: ButtonStyle): urt.ButtonStyle =
     buttonStyle match {
       case Default => urt.ButtonStyle.Default
-      case Primary => urt.ButtonStyle.Primary
+      case Pr mary => urt.ButtonStyle.Pr mary
       case Secondary => urt.ButtonStyle.Secondary
       case Text => urt.ButtonStyle.Text
-      case Destructive => urt.ButtonStyle.Destructive
+      case Destruct ve => urt.ButtonStyle.Destruct ve
       case Neutral => urt.ButtonStyle.Neutral
-      case DestructiveSecondary => urt.ButtonStyle.DestructiveSecondary
-      case DestructiveText => urt.ButtonStyle.DestructiveText
+      case Destruct veSecondary => urt.ButtonStyle.Destruct veSecondary
+      case Destruct veText => urt.ButtonStyle.Destruct veText
     }
 }

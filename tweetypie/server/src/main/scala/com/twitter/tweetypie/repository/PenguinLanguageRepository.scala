@@ -1,53 +1,53 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.ibm.icu.util.ULocale
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.repository.LanguageRepository.Text
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.FuturePool
-import com.twitter.util.logging.Logger
+ mport com. bm. cu.ut l.ULocale
+ mport com.tw ter.common.text.p pel ne.Tw terLanguage dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.repos ory.LanguageRepos ory.Text
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.FuturePool
+ mport com.tw ter.ut l.logg ng.Logger
 
-object LanguageRepository {
-  type Type = Text => Stitch[Option[Language]]
-  type Text = String
+object LanguageRepos ory {
+  type Type = Text => St ch[Opt on[Language]]
+  type Text = Str ng
 }
 
-object PenguinLanguageRepository {
-  private val identifier = new TwitterLanguageIdentifier.Builder().buildForTweet()
-  private val log = Logger(getClass)
+object Pengu nLanguageRepos ory {
+  pr vate val  dent f er = new Tw terLanguage dent f er.Bu lder().bu ldForT et()
+  pr vate val log = Logger(getClass)
 
-  def isRightToLeft(lang: String): Boolean =
-    new ULocale(lang).getCharacterOrientation == "right-to-left"
+  def  sR ghtToLeft(lang: Str ng): Boolean =
+    new ULocale(lang).getCharacterOr entat on == "r ght-to-left"
 
-  def apply(futurePool: FuturePool): LanguageRepository.Type = {
-    val identifyOne =
-      FutureArrow[Text, Option[Language]] { text =>
+  def apply(futurePool: FuturePool): LanguageRepos ory.Type = {
+    val  dent fyOne =
+      FutureArrow[Text, Opt on[Language]] { text =>
         futurePool {
           try {
-            Some(identifier.identify(text))
+            So ( dent f er. dent fy(text))
           } catch {
-            case e: IllegalArgumentException =>
-              val userId = TwitterContext().map(_.userId)
-              val encodedText = com.twitter.util.Base64StringEncoder.encode(text.getBytes)
-              log.info(s"${e.getMessage} : USER ID - $userId : TEXT - $encodedText")
+            case e:  llegalArgu ntExcept on =>
+              val user d = Tw terContext().map(_.user d)
+              val encodedText = com.tw ter.ut l.Base64Str ngEncoder.encode(text.getBytes)
+              log. nfo(s"${e.get ssage} : USER  D - $user d : TEXT - $encodedText")
               None
           }
         }.map {
-          case Some(langWithScore) =>
-            val lang = langWithScore.getLocale.getLanguage
-            Some(
+          case So (langW hScore) =>
+            val lang = langW hScore.getLocale.getLanguage
+            So (
               Language(
                 language = lang,
-                rightToLeft = isRightToLeft(lang),
-                confidence = langWithScore.getScore
+                r ghtToLeft =  sR ghtToLeft(lang),
+                conf dence = langW hScore.getScore
               ))
           case None => None
         }
       }
 
-    text => Stitch.call(text, LegacySeqGroup(identifyOne.liftSeq))
+    text => St ch.call(text, LegacySeqGroup( dent fyOne.l ftSeq))
   }
 }

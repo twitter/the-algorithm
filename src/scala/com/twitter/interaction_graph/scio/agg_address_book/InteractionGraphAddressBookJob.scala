@@ -1,70 +1,70 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.tw ter. nteract on_graph.sc o.agg_address_book
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import java.time.Instant
-import org.joda.time.Interval
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.addressbook.matc s.thr ftscala.UserMatc sRecord
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.dal.DAL.D skFormat
+ mport com.tw ter.beam. o.dal.DAL.PathLa t
+ mport com.tw ter.beam. o.dal.DAL.Wr eOpt ons
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.stateb rd.v2.thr ftscala.Env ron nt
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport java.t  . nstant
+ mport org.joda.t  . nterval
 
-object InteractionGraphAddressBookJob extends ScioBeamJob[InteractionGraphAddressBookOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAddressBookOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
-    implicit lazy val addressBookCounters: InteractionGraphAddressBookCountersTrait =
-      InteractionGraphAddressBookCounters
+object  nteract onGraphAddressBookJob extends Sc oBeamJob[ nteract onGraphAddressBookOpt on] {
+  overr de protected def conf gureP pel ne(
+    sc oContext: Sc oContext,
+    p pel neOpt ons:  nteract onGraphAddressBookOpt on
+  ): Un  = {
+    @trans ent
+     mpl c  lazy val sc: Sc oContext = sc oContext
+     mpl c  lazy val date nterval:  nterval = p pel neOpt ons. nterval
+     mpl c  lazy val addressBookCounters:  nteract onGraphAddressBookCountersTra  =
+       nteract onGraphAddressBookCounters
 
-    val interactionGraphAddressBookSource = InteractionGraphAddressBookSource(pipelineOptions)
+    val  nteract onGraphAddressBookS ce =  nteract onGraphAddressBookS ce(p pel neOpt ons)
 
-    val addressBook: SCollection[UserMatchesRecord] =
-      interactionGraphAddressBookSource.readSimpleUserMatches(
-        dateInterval.withStart(dateInterval.getStart.minusDays(3))
+    val addressBook: SCollect on[UserMatc sRecord] =
+       nteract onGraphAddressBookS ce.readS mpleUserMatc s(
+        date nterval.w hStart(date nterval.getStart.m nusDays(3))
       )
-    val (vertex, edges) = InteractionGraphAddressBookUtil.process(addressBook)
+    val (vertex, edges) =  nteract onGraphAddressBookUt l.process(addressBook)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
+    val dalEnv ron nt: Str ng = p pel neOpt ons
+      .as(classOf[Serv ce dent f erOpt ons])
+      .getEnv ron nt()
+    val dalWr eEnv ron nt =  f (p pel neOpt ons.getDALWr eEnv ron nt != null) {
+      p pel neOpt ons.getDALWr eEnv ron nt
     } else {
-      dalEnvironment
+      dalEnv ron nt
     }
 
     vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        InteractionGraphAggAddressBookVertexSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/address_book_vertex_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 16.0).ceil.toInt))
+      "Wr e Vertex Records",
+      DAL.wr eSnapshot[Vertex](
+         nteract onGraphAggAddressBookVertexSnapshotScalaDataset,
+        PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/address_book_vertex_da ly"),
+         nstant.ofEpochM ll (date nterval.getEndM ll s),
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on =
+          Wr eOpt ons(numOfShards = So ((p pel neOpt ons.getNumberOfShards / 16.0).ce l.to nt))
       )
     )
 
     edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.writeSnapshot[Edge](
-        InteractionGraphAggAddressBookEdgeSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/address_book_edge_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+      "Wr e Edge Records",
+      DAL.wr eSnapshot[Edge](
+         nteract onGraphAggAddressBookEdgeSnapshotScalaDataset,
+        PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/address_book_edge_da ly"),
+         nstant.ofEpochM ll (date nterval.getEndM ll s),
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
   }

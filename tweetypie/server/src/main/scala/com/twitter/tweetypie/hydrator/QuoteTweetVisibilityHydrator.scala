@@ -1,93 +1,93 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala.QuotedTweet
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala.QuotedT et
 
 /**
- * Enforce that users are not shown quoted tweets where the author of the
- * inner quoted tweet blocks the author of the outer quote tweet or the author
- * of the inner quoted tweet is otherwise not visible to the outer author.
+ * Enforce that users are not shown quoted t ets w re t  author of t 
+ *  nner quoted t et blocks t  author of t  outer quote t et or t  author
+ * of t   nner quoted t et  s ot rw se not v s ble to t  outer author.
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @jack
+ *  n t  example below, QuoteT etV s b l yHydrator c cks  f @jack
  * blocks @trollmaster.
  *
  * {{{
- *   @viewer
+ *   @v e r
  *   +------------------------------+
  *   | @trollmaster                 | <-- OUTER QUOTE TWEET
- *   | lol u can't spell twitter    |
+ *   | lol u can't spell tw ter    |
  *   | +--------------------------+ |
- *   | | @jack                    | <---- INNER QUOTED TWEET
- *   | | just setting up my twttr | |
+ *   | | @jack                    | <----  NNER QUOTED TWEET
+ *   | | just sett ng up   twttr | |
  *   | +--------------------------+ |
  *   +------------------------------+
  * }}}
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @h4x0r can view
+ *  n t  example below, QuoteT etV s b l yHydrator c cks  f @h4x0r can v ew
  * user @protectedUser.
  *
  * {{{
- *   @viewer
+ *   @v e r
  *   +------------------------------+
  *   | @h4x0r                       | <-- OUTER QUOTE TWEET
- *   | lol nice password            |
+ *   | lol n ce password            |
  *   | +--------------------------+ |
- *   | | @protectedUser           | <---- INNER QUOTED TWEET
- *   | | my password is 1234      | |
+ *   | | @protectedUser           | <----  NNER QUOTED TWEET
+ *   | |   password  s 1234      | |
  *   | +--------------------------+ |
  *   +------------------------------+
  * }}}
  *
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @viewer blocks @jack:
+ *  n t  example below, QuoteT etV s b l yHydrator c cks  f @v e r blocks @jack:
  *
  * {{{
- *   @viewer
+ *   @v e r
  *   +------------------------------+
- *   | @sometweeter                 | <-- OUTER QUOTE TWEET
- *   | This is a historic tweet     |
+ *   | @so t eter                 | <-- OUTER QUOTE TWEET
+ *   | T   s a  tor c t et     |
  *   | +--------------------------+ |
- *   | | @jack                    | <---- INNER QUOTED TWEET
- *   | | just setting up my twttr | |
+ *   | | @jack                    | <----  NNER QUOTED TWEET
+ *   | | just sett ng up   twttr | |
  *   | +--------------------------+ |
  *   +------------------------------+
  * }}}
  *
  */
-object QuoteTweetVisibilityHydrator {
-  type Type = ValueHydrator[Option[FilteredState.Unavailable], TweetCtx]
+object QuoteT etV s b l yHydrator {
+  type Type = ValueHydrator[Opt on[F lteredState.Unava lable], T etCtx]
 
-  def apply(repo: QuotedTweetVisibilityRepository.Type): QuoteTweetVisibilityHydrator.Type =
-    ValueHydrator[Option[FilteredState.Unavailable], TweetCtx] { (_, ctx) =>
-      val innerTweet: QuotedTweet = ctx.quotedTweet.get
-      val request = QuotedTweetVisibilityRepository.Request(
-        outerTweetId = ctx.tweetId,
-        outerAuthorId = ctx.userId,
-        innerTweetId = innerTweet.tweetId,
-        innerAuthorId = innerTweet.userId,
-        viewerId = ctx.opts.forUserId,
+  def apply(repo: QuotedT etV s b l yRepos ory.Type): QuoteT etV s b l yHydrator.Type =
+    ValueHydrator[Opt on[F lteredState.Unava lable], T etCtx] { (_, ctx) =>
+      val  nnerT et: QuotedT et = ctx.quotedT et.get
+      val request = QuotedT etV s b l yRepos ory.Request(
+        outerT et d = ctx.t et d,
+        outerAuthor d = ctx.user d,
+         nnerT et d =  nnerT et.t et d,
+         nnerAuthor d =  nnerT et.user d,
+        v e r d = ctx.opts.forUser d,
         safetyLevel = ctx.opts.safetyLevel
       )
 
-      repo(request).liftToTry.map {
-        case Return(Some(f: FilteredState.Unavailable)) =>
-          ValueState.modified(Some(f))
+      repo(request).l ftToTry.map {
+        case Return(So (f: F lteredState.Unava lable)) =>
+          ValueState.mod f ed(So (f))
 
-        // For tweet::quotedTweet relationships, all other FilteredStates
-        // allow the quotedTweet to be hydrated and filtered independently
+        // For t et::quotedT et relat onsh ps, all ot r F lteredStates
+        // allow t  quotedT et to be hydrated and f ltered  ndependently
         case Return(_) =>
-          ValueState.UnmodifiedNone
+          ValueState.Unmod f edNone
 
-        // On VF failure, gracefully degrade to no filtering
+        // On VF fa lure, gracefully degrade to no f lter ng
         case Throw(_) =>
-          ValueState.UnmodifiedNone
+          ValueState.Unmod f edNone
       }
-    }.onlyIf { (_, ctx) =>
-      !ctx.isRetweet &&
-      ctx.tweetFieldRequested(Tweet.QuotedTweetField) &&
-      ctx.opts.enforceVisibilityFiltering &&
-      ctx.quotedTweet.isDefined
+    }.only f { (_, ctx) =>
+      !ctx. sRet et &&
+      ctx.t etF eldRequested(T et.QuotedT etF eld) &&
+      ctx.opts.enforceV s b l yF lter ng &&
+      ctx.quotedT et. sDef ned
     }
 }

@@ -1,40 +1,40 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensorflow.serv ng;
+opt on cc_enable_arenas = true;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow_serving/apis/model.proto";
+ mport "tensorflow/core/fra work/tensor.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
 
-// PredictRequest specifies which TensorFlow model to run, as well as
-// how inputs are mapped to tensors and how outputs are filtered before
-// returning to user.
-message PredictRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
+// Pred ctRequest spec f es wh ch TensorFlow model to run, as  ll as
+// how  nputs are mapped to tensors and how outputs are f ltered before
+// return ng to user.
+ ssage Pred ctRequest {
+  // Model Spec f cat on.  f vers on  s not spec f ed, w ll use t  latest
+  // (nu r cal) vers on.
   ModelSpec model_spec = 1;
 
-  // Input tensors.
-  // Names of input tensor are alias names. The mapping from aliases to real
-  // input tensor names is stored in the SavedModel export as a prediction
-  // SignatureDef under the 'inputs' field.
-  map<string, TensorProto> inputs = 2;
+  //  nput tensors.
+  // Na s of  nput tensor are al as na s. T  mapp ng from al ases to real
+  //  nput tensor na s  s stored  n t  SavedModel export as a pred ct on
+  // S gnatureDef under t  ' nputs' f eld.
+  map<str ng, TensorProto>  nputs = 2;
 
-  // Output filter.
-  // Names specified are alias names. The mapping from aliases to real output
-  // tensor names is stored in the SavedModel export as a prediction
-  // SignatureDef under the 'outputs' field.
-  // Only tensors specified here will be run/fetched and returned, with the
-  // exception that when none is specified, all tensors specified in the
-  // named signature will be run/fetched and returned.
-  repeated string output_filter = 3;
+  // Output f lter.
+  // Na s spec f ed are al as na s. T  mapp ng from al ases to real output
+  // tensor na s  s stored  n t  SavedModel export as a pred ct on
+  // S gnatureDef under t  'outputs' f eld.
+  // Only tensors spec f ed  re w ll be run/fetc d and returned, w h t 
+  // except on that w n none  s spec f ed, all tensors spec f ed  n t 
+  // na d s gnature w ll be run/fetc d and returned.
+  repeated str ng output_f lter = 3;
 }
 
-// Response for PredictRequest on successful run.
-message PredictResponse {
-  // Effective Model Specification used to process PredictRequest.
+// Response for Pred ctRequest on successful run.
+ ssage Pred ctResponse {
+  // Effect ve Model Spec f cat on used to process Pred ctRequest.
   ModelSpec model_spec = 2;
 
   // Output tensors.
-  map<string, TensorProto> outputs = 1;
+  map<str ng, TensorProto> outputs = 1;
 }

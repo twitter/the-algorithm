@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.MarkEntr esUnread nstruct on
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class MarkEntriesUnreadInstructionMarshaller @Inject() () {
+@S ngleton
+class MarkEntr esUnread nstruct onMarshaller @ nject() () {
 
-  def apply(instruction: MarkEntriesUnreadInstruction): urt.MarkEntriesUnread =
-    urt.MarkEntriesUnread(entryIds = instruction.entryIds)
+  def apply( nstruct on: MarkEntr esUnread nstruct on): urt.MarkEntr esUnread =
+    urt.MarkEntr esUnread(entry ds =  nstruct on.entry ds)
 }

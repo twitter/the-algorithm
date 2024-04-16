@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRanker
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.ut l.Durat on
 
-object ExploreRankerClientModule
-    extends ThriftMethodBuilderClientModule[
-      ExploreRanker.ServicePerEndpoint,
-      ExploreRanker.MethodPerEndpoint
+object ExploreRankerCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      ExploreRanker.Serv cePerEndpo nt,
+      ExploreRanker. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label: String = "explore-ranker"
-  override val dest: String = "/s/explore-ranker/explore-ranker"
+  overr de val label: Str ng = "explore-ranker"
+  overr de val dest: Str ng = "/s/explore-ranker/explore-ranker"
 
-  private final val ExploreRankerTimeoutTotal = "explore_ranker.timeout_total"
+  pr vate f nal val ExploreRankerT  outTotal = "explore_ranker.t  out_total"
 
-  flag[Duration](
-    name = ExploreRankerTimeoutTotal,
-    default = 800.milliseconds,
-    help = "Timeout total for ExploreRanker")
+  flag[Durat on](
+    na  = ExploreRankerT  outTotal,
+    default = 800.m ll seconds,
+     lp = "T  out total for ExploreRanker")
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeoutTotal: Duration = injector.instance[Duration](Flags.named(ExploreRankerTimeoutTotal))
-    methodBuilder
-      .withTimeoutTotal(timeoutTotal)
-      .nonIdempotent
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+    val t  outTotal: Durat on =  njector. nstance[Durat on](Flags.na d(ExploreRankerT  outTotal))
+     thodBu lder
+      .w hT  outTotal(t  outTotal)
+      .non dempotent
   }
 }

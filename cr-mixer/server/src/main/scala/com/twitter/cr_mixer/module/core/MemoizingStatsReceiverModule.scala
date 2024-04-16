@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.twitter.finagle.stats.LoadedStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.servo.util.MemoizingStatsReceiver
+ mport com.tw ter.f nagle.stats.LoadedStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
 
-object MemoizingStatsReceiverModule extends TwitterModule {
-  override def configure(): Unit = {
-    bind[StatsReceiver].toInstance(new MemoizingStatsReceiver(LoadedStatsReceiver))
+object  mo z ngStatsRece verModule extends Tw terModule {
+  overr de def conf gure(): Un  = {
+    b nd[StatsRece ver].to nstance(new  mo z ngStatsRece ver(LoadedStatsRece ver))
   }
 }

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
 
-case class Timeline(
-  id: String,
-  instructions: Seq[TimelineInstruction],
-  // responseObjects::feedbackActions actions are populated implicitly, see UrtTransportMarshaller
-  metadata: Option[TimelineMetadata] = None)
-    extends HasMarshalling
+case class T  l ne(
+   d: Str ng,
+   nstruct ons: Seq[T  l ne nstruct on],
+  // responseObjects::feedbackAct ons act ons are populated  mpl c ly, see UrtTransportMarshaller
+   tadata: Opt on[T  l ne tadata] = None)
+    extends HasMarshall ng

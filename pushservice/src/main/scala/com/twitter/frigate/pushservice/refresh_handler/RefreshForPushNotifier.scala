@@ -1,128 +1,128 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.tw ter.fr gate.pushserv ce.refresh_handler
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.config.CommonConstants
-import com.twitter.frigate.common.util.PushServiceUtil.FilteredRefreshResponseFut
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.take.CandidateNotifier
-import com.twitter.frigate.pushservice.util.ResponseStatsTrackUtils.trackStatsForResponseToRequest
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.frigate.pushservice.thriftscala.RefreshResponse
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats.track
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.conf g.CommonConstants
+ mport com.tw ter.fr gate.common.ut l.PushServ ceUt l.F lteredRefreshResponseFut
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.take.Cand dateNot f er
+ mport com.tw ter.fr gate.pushserv ce.ut l.ResponseStatsTrackUt ls.trackStatsForResponseToRequest
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushStatus
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.RefreshResponse
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.JavaT  r
+ mport com.tw ter.ut l.T  r
 
-class RefreshForPushNotifier(
+class RefreshForPushNot f er(
   rfphStatsRecorder: RFPHStatsRecorder,
-  candidateNotifier: CandidateNotifier
+  cand dateNot f er: Cand dateNot f er
 )(
-  globalStats: StatsReceiver) {
+  globalStats: StatsRece ver) {
 
-  private implicit val statsReceiver: StatsReceiver =
+  pr vate  mpl c  val statsRece ver: StatsRece ver =
     globalStats.scope("RefreshForPushHandler")
 
-  private val pushStats: StatsReceiver = statsReceiver.scope("push")
-  private val sendLatency: StatsReceiver = statsReceiver.scope("send_handler")
-  implicit private val timer: Timer = new JavaTimer(true)
+  pr vate val pushStats: StatsRece ver = statsRece ver.scope("push")
+  pr vate val sendLatency: StatsRece ver = statsRece ver.scope("send_handler")
+   mpl c  pr vate val t  r: T  r = new JavaT  r(true)
 
-  private def notify(
-    candidatesResult: CandidateResult[PushCandidate, Result],
+  pr vate def not fy(
+    cand datesResult: Cand dateResult[PushCand date, Result],
     target: Target,
-    receivers: Seq[StatsReceiver]
+    rece vers: Seq[StatsRece ver]
   ): Future[RefreshResponse] = {
 
-    val candidate = candidatesResult.candidate
+    val cand date = cand datesResult.cand date
 
-    val predsResult = candidatesResult.result
+    val predsResult = cand datesResult.result
 
-    if (predsResult != OK) {
-      val invalidResult = predsResult
-      invalidResult match {
-        case Invalid(Some(reason)) =>
-          Future.value(RefreshResponse(PushStatus.Filtered, Some(reason)))
+     f (predsResult != OK) {
+      val  nval dResult = predsResult
+       nval dResult match {
+        case  nval d(So (reason)) =>
+          Future.value(RefreshResponse(PushStatus.F ltered, So (reason)))
         case _ =>
-          Future.value(RefreshResponse(PushStatus.Filtered, None))
+          Future.value(RefreshResponse(PushStatus.F ltered, None))
       }
     } else {
-      rfphStatsRecorder.trackPredictionScoreStats(candidate)
+      rfphStatsRecorder.trackPred ct onScoreStats(cand date)
 
-      val isQualityUprankingCandidate = candidate.mrQualityUprankingBoost.isDefined
+      val  sQual yUprank ngCand date = cand date.mrQual yUprank ngBoost. sDef ned
       val commonRecTypeStats = Seq(
-        statsReceiver.scope(candidate.commonRecType.toString),
-        globalStats.scope(candidate.commonRecType.toString)
+        statsRece ver.scope(cand date.commonRecType.toStr ng),
+        globalStats.scope(cand date.commonRecType.toStr ng)
       )
-      val qualityUprankingStats = Seq(
-        statsReceiver.scope("QualityUprankingCandidates").scope(candidate.commonRecType.toString),
-        globalStats.scope("QualityUprankingCandidates").scope(candidate.commonRecType.toString)
+      val qual yUprank ngStats = Seq(
+        statsRece ver.scope("Qual yUprank ngCand dates").scope(cand date.commonRecType.toStr ng),
+        globalStats.scope("Qual yUprank ngCand dates").scope(cand date.commonRecType.toStr ng)
       )
 
-      val receiversWithRecTypeStats = {
-        if (isQualityUprankingCandidate) {
-          receivers ++ commonRecTypeStats ++ qualityUprankingStats
+      val rece versW hRecTypeStats = {
+         f ( sQual yUprank ngCand date) {
+          rece vers ++ commonRecTypeStats ++ qual yUprank ngStats
         } else {
-          receivers ++ commonRecTypeStats
+          rece vers ++ commonRecTypeStats
         }
       }
-      track(sendLatency)(candidateNotifier.notify(candidate).map { res =>
+      track(sendLatency)(cand dateNot f er.not fy(cand date).map { res =>
         trackStatsForResponseToRequest(
-          candidate.commonRecType,
-          candidate.target,
+          cand date.commonRecType,
+          cand date.target,
           res,
-          receiversWithRecTypeStats
+          rece versW hRecTypeStats
         )(globalStats)
         RefreshResponse(res.status)
       })
     }
   }
 
-  def checkResponseAndNotify(
-    response: Response[PushCandidate, Result],
+  def c ckResponseAndNot fy(
+    response: Response[PushCand date, Result],
     targetUserContext: Target
   ): Future[RefreshResponse] = {
-    val receivers = Seq(statsReceiver)
+    val rece vers = Seq(statsRece ver)
     val refreshResponse = response match {
-      case Response(OK, processedCandidates) =>
-        // valid rec candidates
-        val validCandidates = processedCandidates.filter(_.result == OK)
+      case Response(OK, processedCand dates) =>
+        // val d rec cand dates
+        val val dCand dates = processedCand dates.f lter(_.result == OK)
 
-        // top rec candidate
-        validCandidates.headOption match {
-          case Some(candidatesResult) =>
-            candidatesResult.result match {
+        // top rec cand date
+        val dCand dates. adOpt on match {
+          case So (cand datesResult) =>
+            cand datesResult.result match {
               case OK =>
-                notify(candidatesResult, targetUserContext, receivers)
+                not fy(cand datesResult, targetUserContext, rece vers)
                   .onSuccess { nr =>
-                    pushStats.scope("result").counter(nr.status.name).incr()
+                    pushStats.scope("result").counter(nr.status.na ). ncr()
                   }
               case _ =>
-                targetUserContext.isTeamMember.flatMap { isTeamMember =>
-                  FilteredRefreshResponseFut
+                targetUserContext. sTeam mber.flatMap {  sTeam mber =>
+                  F lteredRefreshResponseFut
                 }
             }
           case _ =>
-            FilteredRefreshResponseFut
+            F lteredRefreshResponseFut
         }
-      case Response(Invalid(reason), _) =>
-        // invalid target with known reason
-        FilteredRefreshResponseFut.map(_.copy(targetFilteredBy = reason))
+      case Response( nval d(reason), _) =>
+        //  nval d target w h known reason
+        F lteredRefreshResponseFut.map(_.copy(targetF lteredBy = reason))
       case _ =>
-        // invalid target
-        FilteredRefreshResponseFut
+        //  nval d target
+        F lteredRefreshResponseFut
     }
 
-    val bStats = BroadcastStatsReceiver(receivers)
+    val bStats = BroadcastStatsRece ver(rece vers)
     Stat
-      .timeFuture(bStats.stat("latency"))(
+      .t  Future(bStats.stat("latency"))(
         refreshResponse
-          .raiseWithin(CommonConstants.maxPushRequestDuration)
+          .ra seW h n(CommonConstants.maxPushRequestDurat on)
       )
-      .onFailure { exception =>
-        rfphStatsRecorder.refreshRequestExceptionStats(exception, bStats)
+      .onFa lure { except on =>
+        rfphStatsRecorder.refreshRequestExcept onStats(except on, bStats)
       }
   }
 }

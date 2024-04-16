@@ -1,13 +1,13 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.stitch.Stitch
+ mport com.tw ter.st ch.St ch
 
-object ConversationMutedRepository {
+object Conversat onMutedRepos ory {
 
   /**
-   * Same type as com.twitter.stitch.timelineservice.TimelineService.GetConversationMuted but
-   * without using Arrow.
+   * Sa  type as com.tw ter.st ch.t  l neserv ce.T  l neServ ce.GetConversat onMuted but
+   * w hout us ng Arrow.
    */
-  type Type = (UserId, TweetId) => Stitch[Boolean]
+  type Type = (User d, T et d) => St ch[Boolean]
 }

@@ -1,59 +1,59 @@
-WITH
-  cluster_top_tweets AS (
+W TH
+  cluster_top_t ets AS (
     {CLUSTER_TOP_TWEETS_SQL}
   ),
 
-  flatten_cluster_top_tweets AS (
+  flatten_cluster_top_t ets AS (
     SELECT
-      clusterId,
-      tweet.tweetId,
-      tweet.tweetScore,
-    FROM cluster_top_tweets, UNNEST(topKTweetsForClusterKey) AS tweet
+      cluster d,
+      t et.t et d,
+      t et.t etScore,
+    FROM cluster_top_t ets, UNNEST(topKT etsForClusterKey) AS t et
   ),
 
---- There might be delay or skip for the fav-based dataset.
---- This query retrieved the dateHour of the latest partition available.
-  latest_fav_cluster_to_tweet AS (
+--- T re m ght be delay or sk p for t  fav-based dataset.
+--- T  query retr eved t  dateH  of t  latest part  on ava lable.
+  latest_fav_cluster_to_t et AS (
     SELECT
-      MAX(dateHour) AS latestTimestamp
+      MAX(dateH ) AS latestT  stamp
     FROM
-      `twttr-bq-cassowary-prod.user.simclusters_fav_based_cluster_to_tweet_index`
+      `twttr-bq-cassowary-prod.user.s mclusters_fav_based_cluster_to_t et_ ndex`
     WHERE
-      TIMESTAMP(dateHour) >= TIMESTAMP("{START_TIME}")
-      AND TIMESTAMP(dateHour) <= TIMESTAMP("{END_TIME}")
+      T MESTAMP(dateH ) >= T MESTAMP("{START_T ME}")
+      AND T MESTAMP(dateH ) <= T MESTAMP("{END_T ME}")
   ),
 
-  flatten_fav_cluster_top_tweets AS (
+  flatten_fav_cluster_top_t ets AS (
     SELECT
-      clusterId.clusterId AS clusterId,
-      tweet.key AS tweetId
+      cluster d.cluster d AS cluster d,
+      t et.key AS t et d
     FROM
-      `twttr-bq-cassowary-prod.user.simclusters_fav_based_cluster_to_tweet_index`,
-      UNNEST(topKTweetsWithScores.topTweetsByFavClusterNormalizedScore) AS tweet,
-      latest_fav_cluster_to_tweet
+      `twttr-bq-cassowary-prod.user.s mclusters_fav_based_cluster_to_t et_ ndex`,
+      UNNEST(topKT etsW hScores.topT etsByFavClusterNormal zedScore) AS t et,
+      latest_fav_cluster_to_t et
     WHERE
-      dateHour=latest_fav_cluster_to_tweet.latestTimestamp
+      dateH =latest_fav_cluster_to_t et.latestT  stamp
   ),
 
-  flatten_cluster_top_tweets_intersection AS (
+  flatten_cluster_top_t ets_ ntersect on AS (
     SELECT
-      clusterId,
-      flatten_cluster_top_tweets.tweetId,
-      flatten_cluster_top_tweets.tweetScore
+      cluster d,
+      flatten_cluster_top_t ets.t et d,
+      flatten_cluster_top_t ets.t etScore
     FROM
-      flatten_cluster_top_tweets
-    INNER JOIN
-      flatten_fav_cluster_top_tweets
-    USING(clusterId, tweetId)
+      flatten_cluster_top_t ets
+     NNER JO N
+      flatten_fav_cluster_top_t ets
+    US NG(cluster d, t et d)
   ),
 
-  processed_cluster_top_tweets AS (
+  processed_cluster_top_t ets AS (
     SELECT
-      clusterId,
-      ARRAY_AGG(STRUCT(tweetId, tweetScore) ORDER BY tweetScore LIMIT {CLUSTER_TOP_K_TWEETS}) AS topKTweetsForClusterKey
-    FROM flatten_cluster_top_tweets_intersection
-    GROUP BY clusterId
+      cluster d,
+      ARRAY_AGG(STRUCT(t et d, t etScore) ORDER BY t etScore L M T {CLUSTER_TOP_K_TWEETS}) AS topKT etsForClusterKey
+    FROM flatten_cluster_top_t ets_ ntersect on
+    GROUP BY cluster d
   )
 
  SELECT *
- FROM processed_cluster_top_tweets
+ FROM processed_cluster_top_t ets

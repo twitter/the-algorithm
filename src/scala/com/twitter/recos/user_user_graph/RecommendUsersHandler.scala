@@ -1,221 +1,221 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
-import java.util.Random
-import com.google.common.collect.Lists
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser
-import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo
-import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata
-import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.recos.decider.UserUserGraphDecider
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import scala.collection.JavaConverters._
+ mport java.ut l.Random
+ mport com.google.common.collect.L sts
+ mport com.tw ter.concurrent.AsyncQueue
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.algor hms.count ng.TopSecondDegreeByCountResponse
+ mport com.tw ter.graphjet.algor hms.count ng.user.TopSecondDegreeByCountForUser
+ mport com.tw ter.graphjet.algor hms.count ng.user.TopSecondDegreeByCountRequestForUser
+ mport com.tw ter.graphjet.algor hms.count ng.user.UserRecom ndat on nfo
+ mport com.tw ter.graphjet.algor hms.Connect ngUsersW h tadata
+ mport com.tw ter.graphjet.algor hms.f lters._
+ mport com.tw ter.graphjet.b part e.Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos.dec der.UserUserGraphDec der
+ mport com.tw ter.recos.graph_common.F nagleStatsRece verWrapper
+ mport com.tw ter.recos.model.SalsaQueryRunner.SalsaRunnerConf g
+ mport com.tw ter.recos.recos_common.thr ftscala.UserSoc alProofType
+ mport com.tw ter.recos.user_user_graph.thr ftscala._
+ mport com.tw ter.recos.ut l.Stats._
+ mport com.tw ter.servo.request.RequestHandler
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Try
+ mport  .un m .ds .fastut l.longs.Long2DoubleOpenHashMap
+ mport  .un m .ds .fastut l.longs.LongOpenHashSet
+ mport scala.collect on.JavaConverters._
 
-trait RecommendUsersHandler extends RequestHandler[RecommendUserRequest, RecommendUserResponse]
+tra  Recom ndUsersHandler extends RequestHandler[Recom ndUserRequest, Recom ndUserResponse]
 
 /**
- * Computes user recommendations based on a RecommendUserRequest by using
- * TopSecondDegree algorithm in GraphJet.
+ * Computes user recom ndat ons based on a Recom ndUserRequest by us ng
+ * TopSecondDegree algor hm  n GraphJet.
  */
-case class RecommendUsersHandlerImpl(
-  bipartiteGraph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  decider: UserUserGraphDecider,
-  statsReceiverWrapper: FinagleStatsReceiverWrapper)
-    extends RecommendUsersHandler {
+case class Recom ndUsersHandler mpl(
+  b part eGraph: Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph,
+  salsaRunnerConf g: SalsaRunnerConf g,
+  dec der: UserUserGraphDec der,
+  statsRece verWrapper: F nagleStatsRece verWrapper)
+    extends Recom ndUsersHandler {
 
-  private val log: Logger = Logger(this.getClass.getSimpleName)
-  private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
-  private val failureCounter = stats.counter("failure")
-  private val recsStat = stats.stat("recs_count")
-  private val emptyCounter = stats.counter("empty")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
-  private val graphJetQueue = new AsyncQueue[TopSecondDegreeByCountForUser]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
+  pr vate val log: Logger = Logger(t .getClass.getS mpleNa )
+  pr vate val stats = statsRece verWrapper.statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val fa lureCounter = stats.counter("fa lure")
+  pr vate val recsStat = stats.stat("recs_count")
+  pr vate val emptyCounter = stats.counter("empty")
+  pr vate val pollCounter = stats.counter("poll")
+  pr vate val pollT  outCounter = stats.counter("pollT  out")
+  pr vate val offerCounter = stats.counter("offer")
+  pr vate val pollLatencyStat = stats.stat("pollLatency")
+  pr vate val graphJetQueue = new AsyncQueue[TopSecondDegreeByCountForUser]
+  (0 unt l salsaRunnerConf g.numSalsaRunners).foreach { _ =>
     graphJetQueue.offer(
       new TopSecondDegreeByCountForUser(
-        bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
-        statsReceiverWrapper.scope(this.getClass.getSimpleName)
+        b part eGraph,
+        salsaRunnerConf g.expectedNodesToH  nSalsa,
+        statsRece verWrapper.scope(t .getClass.getS mpleNa )
       )
     )
   }
 
   /**
-   * Given a user_user_graph request, make it conform to GraphJet's request format
+   * G ven a user_user_graph request, make   conform to GraphJet's request format
    */
-  private def convertRequestToJava(
-    request: RecommendUserRequest
+  pr vate def convertRequestToJava(
+    request: Recom ndUserRequest
   ): TopSecondDegreeByCountRequestForUser = {
-    val queryNode = request.requesterId
-    val leftSeedNodesWithWeight = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+    val queryNode = request.requester d
+    val leftSeedNodesW h  ght = new Long2DoubleOpenHashMap(
+      request.seedsW h  ghts.keys.toArray,
+      request.seedsW h  ghts.values.toArray
     )
-    val toBeFiltered = new LongOpenHashSet(request.excludedUserIds.getOrElse(Nil).toArray)
+    val toBeF ltered = new LongOpenHashSet(request.excludedUser ds.getOrElse(N l).toArray)
     val maxNumResults = request.maxNumResults.getOrElse(DefaultRequestParams.MaxNumResults)
-    val maxNumSocialProofs =
-      request.maxNumSocialProofs.getOrElse(DefaultRequestParams.MaxNumSocialProofs)
-    val minUserPerSocialProof = convertMinUserPerSocialProofToJava(request.minUserPerSocialProof)
-    val socialProofTypes =
-      UserEdgeTypeMask.getUserUserGraphSocialProofTypes(request.socialProofTypes)
-    val maxRightNodeAgeInMillis = DefaultRequestParams.MaxRightNodeAgeThreshold
-    val maxEdgeEngagementAgeInMillis =
-      request.maxEdgeEngagementAgeInMillis.getOrElse(DefaultRequestParams.MaxEdgeAgeThreshold)
-    val resultFilterChain = new ResultFilterChain(
-      Lists.newArrayList(
-        new SocialProofTypesFilter(statsReceiverWrapper),
-        new RequestedSetFilter(statsReceiverWrapper)
+    val maxNumSoc alProofs =
+      request.maxNumSoc alProofs.getOrElse(DefaultRequestParams.MaxNumSoc alProofs)
+    val m nUserPerSoc alProof = convertM nUserPerSoc alProofToJava(request.m nUserPerSoc alProof)
+    val soc alProofTypes =
+      UserEdgeTypeMask.getUserUserGraphSoc alProofTypes(request.soc alProofTypes)
+    val maxR ghtNodeAge nM ll s = DefaultRequestParams.MaxR ghtNodeAgeThreshold
+    val maxEdgeEngage ntAge nM ll s =
+      request.maxEdgeEngage ntAge nM ll s.getOrElse(DefaultRequestParams.MaxEdgeAgeThreshold)
+    val resultF lterCha n = new ResultF lterCha n(
+      L sts.newArrayL st(
+        new Soc alProofTypesF lter(statsRece verWrapper),
+        new RequestedSetF lter(statsRece verWrapper)
       )
     )
 
     new TopSecondDegreeByCountRequestForUser(
       queryNode,
-      leftSeedNodesWithWeight,
-      toBeFiltered,
+      leftSeedNodesW h  ght,
+      toBeF ltered,
       maxNumResults,
-      maxNumSocialProofs,
-      UserEdgeTypeMask.SIZE.toInt,
-      minUserPerSocialProof,
-      socialProofTypes,
-      maxRightNodeAgeInMillis,
-      maxEdgeEngagementAgeInMillis,
-      resultFilterChain
+      maxNumSoc alProofs,
+      UserEdgeTypeMask.S ZE.to nt,
+      m nUserPerSoc alProof,
+      soc alProofTypes,
+      maxR ghtNodeAge nM ll s,
+      maxEdgeEngage ntAge nM ll s,
+      resultF lterCha n
     )
   }
 
   /**
-   * Converts the thrift scala type to the Java equivalent
+   * Converts t  thr ft scala type to t  Java equ valent
    */
-  private def convertMinUserPerSocialProofToJava(
-    socialProofInScala: Option[scala.collection.Map[UserSocialProofType, Int]]
-  ): java.util.Map[java.lang.Byte, java.lang.Integer] = {
-    socialProofInScala
+  pr vate def convertM nUserPerSoc alProofToJava(
+    soc alProof nScala: Opt on[scala.collect on.Map[UserSoc alProofType,  nt]]
+  ): java.ut l.Map[java.lang.Byte, java.lang. nteger] = {
+    soc alProof nScala
       .map {
         _.map {
-          case (key: UserSocialProofType, value: Int) =>
-            (new java.lang.Byte(key.getValue.toByte), new java.lang.Integer(value))
+          case (key: UserSoc alProofType, value:  nt) =>
+            (new java.lang.Byte(key.getValue.toByte), new java.lang. nteger(value))
         }
       }
-      .getOrElse(Map.empty[java.lang.Byte, java.lang.Integer])
+      .getOrElse(Map.empty[java.lang.Byte, java.lang. nteger])
       .asJava
   }
 
   /**
-   * Converts a byte-array format of social proofs in Java to its Scala equivalent
+   * Converts a byte-array format of soc al proofs  n Java to  s Scala equ valent
    */
-  private def convertSocialProofsToScala(
-    socialProofs: java.util.Map[java.lang.Byte, ConnectingUsersWithMetadata]
-  ): scala.collection.mutable.Map[UserSocialProofType, scala.Seq[Long]] = {
-    socialProofs.asScala.map {
-      case (socialProofByte, socialProof) =>
-        val proofType = UserSocialProofType(socialProofByte.toByte)
-        val ids = socialProof.getConnectingUsers.asScala.map(_.toLong)
-        (proofType, ids)
+  pr vate def convertSoc alProofsToScala(
+    soc alProofs: java.ut l.Map[java.lang.Byte, Connect ngUsersW h tadata]
+  ): scala.collect on.mutable.Map[UserSoc alProofType, scala.Seq[Long]] = {
+    soc alProofs.asScala.map {
+      case (soc alProofByte, soc alProof) =>
+        val proofType = UserSoc alProofType(soc alProofByte.toByte)
+        val  ds = soc alProof.getConnect ngUsers.asScala.map(_.toLong)
+        (proofType,  ds)
     }
   }
 
   /**
-   * Converts Java recommendation results to its Scala equivalent
+   * Converts Java recom ndat on results to  s Scala equ valent
    */
-  private def convertResponseToScala(
-    responseOpt: Option[TopSecondDegreeByCountResponse]
-  ): RecommendUserResponse = {
+  pr vate def convertResponseToScala(
+    responseOpt: Opt on[TopSecondDegreeByCountResponse]
+  ): Recom ndUserResponse = {
     responseOpt match {
-      case Some(rawResponse) =>
-        val userSeq = rawResponse.getRankedRecommendations.asScala.toSeq.flatMap {
-          case userRecs: UserRecommendationInfo =>
-            Some(
-              RecommendedUser(
-                userRecs.getRecommendation,
-                userRecs.getWeight,
-                convertSocialProofsToScala(userRecs.getSocialProof)
+      case So (rawResponse) =>
+        val userSeq = rawResponse.getRankedRecom ndat ons.asScala.toSeq.flatMap {
+          case userRecs: UserRecom ndat on nfo =>
+            So (
+              Recom ndedUser(
+                userRecs.getRecom ndat on,
+                userRecs.get  ght,
+                convertSoc alProofsToScala(userRecs.getSoc alProof)
               )
             )
           case _ =>
             None
         }
-        recsStat.add(userSeq.size)
-        if (userSeq.isEmpty) {
-          emptyCounter.incr()
+        recsStat.add(userSeq.s ze)
+         f (userSeq. sEmpty) {
+          emptyCounter. ncr()
         }
-        RecommendUserResponse(userSeq)
+        Recom ndUserResponse(userSeq)
       case None =>
-        emptyCounter.incr()
-        RecommendUserResponse(Nil)
+        emptyCounter. ncr()
+        Recom ndUserResponse(N l)
     }
   }
 
-  private def getGraphJetResponse(
+  pr vate def getGraphJetResponse(
     graphJet: TopSecondDegreeByCountForUser,
     request: TopSecondDegreeByCountRequestForUser,
     random: Random
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[TopSecondDegreeByCountResponse] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): Opt on[TopSecondDegreeByCountResponse] = {
     trackBlockStats(stats) {
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
-      val recAttempt = Try(graphJet.computeRecommendations(request, random)).onFailure { e =>
-        failureCounter.incr()
-        log.error(e, "GraphJet computation failed")
+      // compute recs -- need to catch and pr nt except ons  re ot rw se t y are swallo d
+      val recAttempt = Try(graphJet.computeRecom ndat ons(request, random)).onFa lure { e =>
+        fa lureCounter. ncr()
+        log.error(e, "GraphJet computat on fa led")
       }
-      recAttempt.toOption
+      recAttempt.toOpt on
     }
   }
 
-  override def apply(request: RecommendUserRequest): Future[RecommendUserResponse] = {
+  overr de def apply(request: Recom ndUserRequest): Future[Recom ndUserResponse] = {
     val random = new Random()
     val graphJetRequest = convertRequestToJava(request)
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis
+    pollCounter. ncr()
+    val t0 = System.currentT  M ll s
     graphJetQueue.poll().map { graphJetRunner =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
+      val pollT   = System.currentT  M ll s - t0
+      pollLatencyStat.add(pollT  )
       val response = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
+         f (pollT   < salsaRunnerConf g.t  outSalsaRunner) {
           convertResponseToScala(
             getGraphJetResponse(
               graphJetRunner,
               graphJetRequest,
               random
-            )(statsReceiverWrapper.statsReceiver)
+            )(statsRece verWrapper.statsRece ver)
           )
         } else {
-          // if we did not get a runner in time, then fail fast here and immediately put it back
-          log.warning("GraphJet Queue polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("GraphJet poll timeout")
-          RecommendUserResponse(Nil)
+          //  f   d d not get a runner  n t  , t n fa l fast  re and  m d ately put   back
+          log.warn ng("GraphJet Queue poll ng t  out")
+          pollT  outCounter. ncr()
+          throw new Runt  Except on("GraphJet poll t  out")
+          Recom ndUserResponse(N l)
         }
       } ensure {
         graphJetQueue.offer(graphJetRunner)
-        offerCounter.incr()
+        offerCounter. ncr()
       }
-      response.toOption.getOrElse(RecommendUserResponse(Nil))
+      response.toOpt on.getOrElse(Recom ndUserResponse(N l))
     }
   }
 
   object DefaultRequestParams {
     val MaxNumResults = 100
-    val MaxNumSocialProofs = 100
-    val MaxRightNodeAgeThreshold: Long = Long.MaxValue
+    val MaxNumSoc alProofs = 100
+    val MaxR ghtNodeAgeThreshold: Long = Long.MaxValue
     val MaxEdgeAgeThreshold: Long = Long.MaxValue
   }
 }

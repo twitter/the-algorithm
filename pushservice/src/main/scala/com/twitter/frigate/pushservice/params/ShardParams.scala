@@ -1,3 +1,3 @@
-package com.twitter.frigate.pushservice.params
+package com.tw ter.fr gate.pushserv ce.params
 
-case class ShardParams(numShards: Int, shardId: Int)
+case class ShardParams(numShards:  nt, shard d:  nt)

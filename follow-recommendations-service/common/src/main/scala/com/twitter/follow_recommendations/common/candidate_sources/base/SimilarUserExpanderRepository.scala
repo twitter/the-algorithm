@@ -1,313 +1,313 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultEnableImplicitEngagedExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultExpansionInputCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultFinalCandidatesReturnedCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableNonDirectFollowExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableSimsExpandSeedAccountsSort
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultCandidateBuilder
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultScore
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.EngagementType
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderParams.DefaultEnable mpl c EngagedExpans on
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderParams.DefaultExpans on nputCount
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderParams.DefaultF nalCand datesReturnedCount
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderParams.EnableNonD rectFollowExpans on
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderParams.EnableS msExpandSeedAccountsSort
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderRepos ory.DefaultCand dateBu lder
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.S m larUserExpanderRepos ory.DefaultScore
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Engage ntType
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter.follow_recom ndat ons.common.models.S m larToProof
+ mport com.tw ter.follow_recom ndat ons.common.models.UserCand dateS ceDeta ls
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class SecondDegreeCandidate(userId: Long, score: Double, socialProof: Option[Seq[Long]])
+case class SecondDegreeCand date(user d: Long, score: Double, soc alProof: Opt on[Seq[Long]])
 
-abstract class SimilarUserExpanderRepository[-Request <: HasParams](
-  override val identifier: CandidateSourceIdentifier,
-  similarToCandidatesFetcher: Fetcher[
+abstract class S m larUserExpanderRepos ory[-Request <: HasParams](
+  overr de val  dent f er: Cand dateS ce dent f er,
+  s m larToCand datesFetc r: Fetc r[
     Long,
-    Unit,
-    Candidates
+    Un ,
+    Cand dates
   ],
-  expansionInputSizeParam: FSBoundedParam[Int] = DefaultExpansionInputCount,
-  candidatesReturnedSizeParam: FSBoundedParam[Int] = DefaultFinalCandidatesReturnedCount,
-  enableImplicitEngagedExpansion: FSParam[Boolean] = DefaultEnableImplicitEngagedExpansion,
-  thresholdToAvoidExpansion: Int = 30,
-  maxExpansionPerCandidate: Option[Int] = None,
-  includingOriginalCandidates: Boolean = false,
-  scorer: (Double, Double) => Double = SimilarUserExpanderRepository.DefaultScorer,
+  expans on nputS zeParam: FSBoundedParam[ nt] = DefaultExpans on nputCount,
+  cand datesReturnedS zeParam: FSBoundedParam[ nt] = DefaultF nalCand datesReturnedCount,
+  enable mpl c EngagedExpans on: FSParam[Boolean] = DefaultEnable mpl c EngagedExpans on,
+  thresholdToAvo dExpans on:  nt = 30,
+  maxExpans onPerCand date: Opt on[ nt] = None,
+   nclud ngOr g nalCand dates: Boolean = false,
+  scorer: (Double, Double) => Double = S m larUserExpanderRepos ory.DefaultScorer,
   aggregator: (Seq[Double]) => Double = ScoreAggregator.Max,
-  candidateBuilder: (Long, CandidateSourceIdentifier, Double, CandidateUser) => CandidateUser =
-    DefaultCandidateBuilder)
-    extends TwoHopExpansionCandidateSource[
+  cand dateBu lder: (Long, Cand dateS ce dent f er, Double, Cand dateUser) => Cand dateUser =
+    DefaultCand dateBu lder)
+    extends TwoHopExpans onCand dateS ce[
       Request,
-      CandidateUser,
-      SecondDegreeCandidate,
-      CandidateUser
+      Cand dateUser,
+      SecondDegreeCand date,
+      Cand dateUser
     ] {
 
-  val originalCandidateSource: CandidateSource[Request, CandidateUser]
-  val backupOriginalCandidateSource: Option[CandidateSource[Request, CandidateUser]] = None
+  val or g nalCand dateS ce: Cand dateS ce[Request, Cand dateUser]
+  val backupOr g nalCand dateS ce: Opt on[Cand dateS ce[Request, Cand dateUser]] = None
 
-  override def firstDegreeNodes(request: Request): Stitch[Seq[CandidateUser]] = {
+  overr de def f rstDegreeNodes(request: Request): St ch[Seq[Cand dateUser]] = {
 
-    val originalCandidatesStitch: Stitch[Seq[CandidateUser]] =
-      originalCandidateSource(request)
+    val or g nalCand datesSt ch: St ch[Seq[Cand dateUser]] =
+      or g nalCand dateS ce(request)
 
-    val backupCandidatesStitch: Stitch[Seq[CandidateUser]] =
-      if (request.params(EnableNonDirectFollowExpansion)) {
-        backupOriginalCandidateSource.map(_.apply(request)).getOrElse(Stitch.Nil)
+    val backupCand datesSt ch: St ch[Seq[Cand dateUser]] =
+       f (request.params(EnableNonD rectFollowExpans on)) {
+        backupOr g nalCand dateS ce.map(_.apply(request)).getOrElse(St ch.N l)
       } else {
-        Stitch.Nil
+        St ch.N l
       }
 
-    val firstDegreeCandidatesCombinedStitch: Stitch[Seq[CandidateUser]] =
-      Stitch
-        .join(originalCandidatesStitch, backupCandidatesStitch).map {
-          case (firstDegreeOrigCandidates, backupFirstDegreeCandidates) =>
-            if (request.params(EnableSimsExpandSeedAccountsSort)) {
-              firstDegreeOrigCandidates ++ backupFirstDegreeCandidates sortBy {
+    val f rstDegreeCand datesComb nedSt ch: St ch[Seq[Cand dateUser]] =
+      St ch
+        .jo n(or g nalCand datesSt ch, backupCand datesSt ch).map {
+          case (f rstDegreeOr gCand dates, backupF rstDegreeCand dates) =>
+             f (request.params(EnableS msExpandSeedAccountsSort)) {
+              f rstDegreeOr gCand dates ++ backupF rstDegreeCand dates sortBy {
                 -_.score.getOrElse(DefaultScore)
               }
             } else {
-              firstDegreeOrigCandidates ++ backupFirstDegreeCandidates
+              f rstDegreeOr gCand dates ++ backupF rstDegreeCand dates
             }
         }
 
-    val candidatesAfterImplicitEngagementsRemovalStitch: Stitch[Seq[CandidateUser]] =
-      getCandidatesAfterImplicitEngagementFiltering(
+    val cand datesAfter mpl c Engage ntsRemovalSt ch: St ch[Seq[Cand dateUser]] =
+      getCand datesAfter mpl c Engage ntF lter ng(
         request.params,
-        firstDegreeCandidatesCombinedStitch)
+        f rstDegreeCand datesComb nedSt ch)
 
-    val firstDegreeCandidatesCombinedTrimmed = candidatesAfterImplicitEngagementsRemovalStitch.map {
-      candidates: Seq[CandidateUser] =>
-        candidates.take(request.params(expansionInputSizeParam))
+    val f rstDegreeCand datesComb nedTr m d = cand datesAfter mpl c Engage ntsRemovalSt ch.map {
+      cand dates: Seq[Cand dateUser] =>
+        cand dates.take(request.params(expans on nputS zeParam))
     }
 
-    firstDegreeCandidatesCombinedTrimmed.map { firstDegreeResults: Seq[CandidateUser] =>
-      if (firstDegreeResults.nonEmpty && firstDegreeResults.size < thresholdToAvoidExpansion) {
-        firstDegreeResults
-          .groupBy(_.id).mapValues(
+    f rstDegreeCand datesComb nedTr m d.map { f rstDegreeResults: Seq[Cand dateUser] =>
+       f (f rstDegreeResults.nonEmpty && f rstDegreeResults.s ze < thresholdToAvo dExpans on) {
+        f rstDegreeResults
+          .groupBy(_. d).mapValues(
             _.maxBy(_.score)
           ).values.toSeq
       } else {
-        Nil
+        N l
       }
     }
 
   }
 
-  override def secondaryDegreeNodes(
+  overr de def secondaryDegreeNodes(
     request: Request,
-    firstDegreeCandidate: CandidateUser
-  ): Stitch[Seq[SecondDegreeCandidate]] = {
-    similarToCandidatesFetcher.fetch(firstDegreeCandidate.id).map(_.v).map { candidateListOption =>
-      candidateListOption
-        .map { candidatesList =>
-          candidatesList.candidates.map(candidate =>
-            SecondDegreeCandidate(candidate.userId, candidate.score, candidate.socialProof))
-        }.getOrElse(Nil)
+    f rstDegreeCand date: Cand dateUser
+  ): St ch[Seq[SecondDegreeCand date]] = {
+    s m larToCand datesFetc r.fetch(f rstDegreeCand date. d).map(_.v).map { cand dateL stOpt on =>
+      cand dateL stOpt on
+        .map { cand datesL st =>
+          cand datesL st.cand dates.map(cand date =>
+            SecondDegreeCand date(cand date.user d, cand date.score, cand date.soc alProof))
+        }.getOrElse(N l)
     }
 
   }
 
-  override def aggregateAndScore(
+  overr de def aggregateAndScore(
     req: Request,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SecondDegreeCandidate]]
-  ): Stitch[Seq[CandidateUser]] = {
+    f rstDegreeToSecondDegreeNodesMap: Map[Cand dateUser, Seq[SecondDegreeCand date]]
+  ): St ch[Seq[Cand dateUser]] = {
 
-    val similarExpanderResults = firstDegreeToSecondDegreeNodesMap.flatMap {
-      case (firstDegreeCandidate, seqOfSecondDegreeCandidates) =>
-        val sourceScore = firstDegreeCandidate.score.getOrElse(DefaultScore)
-        val results: Seq[CandidateUser] = seqOfSecondDegreeCandidates.map { secondDegreeCandidate =>
-          val score = scorer(sourceScore, secondDegreeCandidate.score)
-          candidateBuilder(secondDegreeCandidate.userId, identifier, score, firstDegreeCandidate)
+    val s m larExpanderResults = f rstDegreeToSecondDegreeNodesMap.flatMap {
+      case (f rstDegreeCand date, seqOfSecondDegreeCand dates) =>
+        val s ceScore = f rstDegreeCand date.score.getOrElse(DefaultScore)
+        val results: Seq[Cand dateUser] = seqOfSecondDegreeCand dates.map { secondDegreeCand date =>
+          val score = scorer(s ceScore, secondDegreeCand date.score)
+          cand dateBu lder(secondDegreeCand date.user d,  dent f er, score, f rstDegreeCand date)
         }
-        maxExpansionPerCandidate match {
+        maxExpans onPerCand date match {
           case None => results
-          case Some(limit) => results.sortBy(-_.score.getOrElse(DefaultScore)).take(limit)
+          case So (l m ) => results.sortBy(-_.score.getOrElse(DefaultScore)).take(l m )
         }
     }.toSeq
 
-    val allCandidates = {
-      if (includingOriginalCandidates)
-        firstDegreeToSecondDegreeNodesMap.keySet.toSeq
+    val allCand dates = {
+       f ( nclud ngOr g nalCand dates)
+        f rstDegreeToSecondDegreeNodesMap.keySet.toSeq
       else
-        Nil
-    } ++ similarExpanderResults
+        N l
+    } ++ s m larExpanderResults
 
-    val groupedCandidates: Seq[CandidateUser] = allCandidates
-      .groupBy(_.id)
+    val groupedCand dates: Seq[Cand dateUser] = allCand dates
+      .groupBy(_. d)
       .flatMap {
-        case (_, candidates) =>
-          val finalScore = aggregator(candidates.map(_.score.getOrElse(DefaultScore)))
-          val candidateSourceDetailsCombined = aggregateCandidateSourceDetails(candidates)
-          val accountSocialProofcombined = aggregateAccountSocialProof(candidates)
+        case (_, cand dates) =>
+          val f nalScore = aggregator(cand dates.map(_.score.getOrElse(DefaultScore)))
+          val cand dateS ceDeta lsComb ned = aggregateCand dateS ceDeta ls(cand dates)
+          val accountSoc alProofcomb ned = aggregateAccountSoc alProof(cand dates)
 
-          candidates.headOption.map(
+          cand dates. adOpt on.map(
             _.copy(
-              score = Some(finalScore),
-              reason = accountSocialProofcombined,
-              userCandidateSourceDetails = candidateSourceDetailsCombined)
-              .withCandidateSource(identifier))
+              score = So (f nalScore),
+              reason = accountSoc alProofcomb ned,
+              userCand dateS ceDeta ls = cand dateS ceDeta lsComb ned)
+              .w hCand dateS ce( dent f er))
       }
       .toSeq
 
-    Stitch.value(
-      groupedCandidates
-        .sortBy { -_.score.getOrElse(DefaultScore) }.take(req.params(candidatesReturnedSizeParam))
+    St ch.value(
+      groupedCand dates
+        .sortBy { -_.score.getOrElse(DefaultScore) }.take(req.params(cand datesReturnedS zeParam))
     )
   }
 
-  def aggregateCandidateSourceDetails(
-    candidates: Seq[CandidateUser]
-  ): Option[UserCandidateSourceDetails] = {
-    candidates
-      .map { candidate =>
-        candidate.userCandidateSourceDetails.map(_.candidateSourceScores).getOrElse(Map.empty)
-      }.reduceLeftOption { (scoreMap1, scoreMap2) =>
+  def aggregateCand dateS ceDeta ls(
+    cand dates: Seq[Cand dateUser]
+  ): Opt on[UserCand dateS ceDeta ls] = {
+    cand dates
+      .map { cand date =>
+        cand date.userCand dateS ceDeta ls.map(_.cand dateS ceScores).getOrElse(Map.empty)
+      }.reduceLeftOpt on { (scoreMap1, scoreMap2) =>
         scoreMap1 ++ scoreMap2
       }.map {
-        UserCandidateSourceDetails(primaryCandidateSource = None, _)
+        UserCand dateS ceDeta ls(pr maryCand dateS ce = None, _)
       }
 
   }
 
-  def aggregateAccountSocialProof(candidates: Seq[CandidateUser]): Option[Reason] = {
-    candidates
-      .map { candidate =>
+  def aggregateAccountSoc alProof(cand dates: Seq[Cand dateUser]): Opt on[Reason] = {
+    cand dates
+      .map { cand date =>
         (
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.similarToProof.map(_.similarTo))).getOrElse(Nil),
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.followProof.map(_.followedBy))).getOrElse(Nil),
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.followProof.map(_.numIds))).getOrElse(0)
+          cand date.reason
+            .flatMap(_.accountProof.flatMap(_.s m larToProof.map(_.s m larTo))).getOrElse(N l),
+          cand date.reason
+            .flatMap(_.accountProof.flatMap(_.followProof.map(_.follo dBy))).getOrElse(N l),
+          cand date.reason
+            .flatMap(_.accountProof.flatMap(_.followProof.map(_.num ds))).getOrElse(0)
         )
-      }.reduceLeftOption { (accountProofOne, accountProofTwo) =>
+      }.reduceLeftOpt on { (accountProofOne, accountProofTwo) =>
         (
-          // merge similarToIds
+          //  rge s m larTo ds
           accountProofOne._1 ++ accountProofTwo._1,
-          // merge followedByIds
+          //  rge follo dBy ds
           accountProofOne._2 ++ accountProofTwo._2,
-          // add numIds
+          // add num ds
           accountProofOne._3 + accountProofTwo._3)
       }.map { proofs =>
-        Reason(accountProof = Some(
+        Reason(accountProof = So (
           AccountProof(
-            similarToProof = Some(SimilarToProof(proofs._1)),
-            followProof = if (proofs._2.nonEmpty) Some(FollowProof(proofs._2, proofs._3)) else None
+            s m larToProof = So (S m larToProof(proofs._1)),
+            followProof =  f (proofs._2.nonEmpty) So (FollowProof(proofs._2, proofs._3)) else None
           )))
       }
   }
 
-  def getCandidatesAfterImplicitEngagementFiltering(
+  def getCand datesAfter mpl c Engage ntF lter ng(
     params: Params,
-    firstDegreeCandidatesStitch: Stitch[Seq[CandidateUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+    f rstDegreeCand datesSt ch: St ch[Seq[Cand dateUser]]
+  ): St ch[Seq[Cand dateUser]] = {
 
-    if (!params(enableImplicitEngagedExpansion)) {
+     f (!params(enable mpl c EngagedExpans on)) {
 
       /**
-       * Remove candidates whose engagement types only contain implicit engagements
-       * (e.g. Profile View, Tweet Click) and only expand those candidates who contain explicit
-       * engagements.
+       * Remove cand dates whose engage nt types only conta n  mpl c  engage nts
+       * (e.g. Prof le V ew, T et Cl ck) and only expand those cand dates who conta n expl c 
+       * engage nts.
        */
-      firstDegreeCandidatesStitch.map { candidates =>
-        candidates.filter { cand =>
-          cand.engagements.exists(engage =>
-            engage == EngagementType.Like || engage == EngagementType.Retweet || engage == EngagementType.Mention)
+      f rstDegreeCand datesSt ch.map { cand dates =>
+        cand dates.f lter { cand =>
+          cand.engage nts.ex sts(engage =>
+            engage == Engage ntType.L ke || engage == Engage ntType.Ret et || engage == Engage ntType. nt on)
         }
       }
     } else {
-      firstDegreeCandidatesStitch
+      f rstDegreeCand datesSt ch
     }
   }
 
 }
 
-object SimilarUserExpanderRepository {
-  val DefaultScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    similarScore
-  val MultiplyScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    sourceScore * similarScore
-  val SourceScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    sourceScore
+object S m larUserExpanderRepos ory {
+  val DefaultScorer: (Double, Double) => Double = (s ceScore: Double, s m larScore: Double) =>
+    s m larScore
+  val Mult plyScorer: (Double, Double) => Double = (s ceScore: Double, s m larScore: Double) =>
+    s ceScore * s m larScore
+  val S ceScorer: (Double, Double) => Double = (s ceScore: Double, s m larScore: Double) =>
+    s ceScore
 
   val DefaultScore = 0.0d
 
-  val DefaultCandidateBuilder: (
+  val DefaultCand dateBu lder: (
     Long,
-    CandidateSourceIdentifier,
+    Cand dateS ce dent f er,
     Double,
-    CandidateUser
-  ) => CandidateUser =
+    Cand dateUser
+  ) => Cand dateUser =
     (
-      userId: Long,
-      _: CandidateSourceIdentifier,
+      user d: Long,
+      _: Cand dateS ce dent f er,
       score: Double,
-      candidate: CandidateUser
+      cand date: Cand dateUser
     ) => {
-      val originalCandidateSourceDetails =
-        candidate.userCandidateSourceDetails.flatMap { candSourceDetails =>
-          candSourceDetails.primaryCandidateSource.map { primaryCandidateSource =>
-            UserCandidateSourceDetails(
-              primaryCandidateSource = None,
-              candidateSourceScores = Map(primaryCandidateSource -> candidate.score))
+      val or g nalCand dateS ceDeta ls =
+        cand date.userCand dateS ceDeta ls.flatMap { candS ceDeta ls =>
+          candS ceDeta ls.pr maryCand dateS ce.map { pr maryCand dateS ce =>
+            UserCand dateS ceDeta ls(
+              pr maryCand dateS ce = None,
+              cand dateS ceScores = Map(pr maryCand dateS ce -> cand date.score))
           }
         }
-      CandidateUser(
-        id = userId,
-        score = Some(score),
-        userCandidateSourceDetails = originalCandidateSourceDetails,
+      Cand dateUser(
+         d = user d,
+        score = So (score),
+        userCand dateS ceDeta ls = or g nalCand dateS ceDeta ls,
         reason =
-          Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(Seq(candidate.id)))))))
+          So (Reason(So (AccountProof(s m larToProof = So (S m larToProof(Seq(cand date. d)))))))
       )
     }
 
-  val FollowClusterCandidateBuilder: (
+  val FollowClusterCand dateBu lder: (
     Long,
-    CandidateSourceIdentifier,
+    Cand dateS ce dent f er,
     Double,
-    CandidateUser
-  ) => CandidateUser =
-    (userId: Long, _: CandidateSourceIdentifier, score: Double, candidate: CandidateUser) => {
-      val originalCandidateSourceDetails =
-        candidate.userCandidateSourceDetails.flatMap { candSourceDetails =>
-          candSourceDetails.primaryCandidateSource.map { primaryCandidateSource =>
-            UserCandidateSourceDetails(
-              primaryCandidateSource = None,
-              candidateSourceScores = Map(primaryCandidateSource -> candidate.score))
+    Cand dateUser
+  ) => Cand dateUser =
+    (user d: Long, _: Cand dateS ce dent f er, score: Double, cand date: Cand dateUser) => {
+      val or g nalCand dateS ceDeta ls =
+        cand date.userCand dateS ceDeta ls.flatMap { candS ceDeta ls =>
+          candS ceDeta ls.pr maryCand dateS ce.map { pr maryCand dateS ce =>
+            UserCand dateS ceDeta ls(
+              pr maryCand dateS ce = None,
+              cand dateS ceScores = Map(pr maryCand dateS ce -> cand date.score))
           }
         }
 
-      val originalFollowCluster = candidate.reason
-        .flatMap(_.accountProof.flatMap(_.followProof.map(_.followedBy)))
+      val or g nalFollowCluster = cand date.reason
+        .flatMap(_.accountProof.flatMap(_.followProof.map(_.follo dBy)))
 
-      CandidateUser(
-        id = userId,
-        score = Some(score),
-        userCandidateSourceDetails = originalCandidateSourceDetails,
-        reason = Some(
+      Cand dateUser(
+         d = user d,
+        score = So (score),
+        userCand dateS ceDeta ls = or g nalCand dateS ceDeta ls,
+        reason = So (
           Reason(
-            Some(
+            So (
               AccountProof(
-                similarToProof = Some(SimilarToProof(Seq(candidate.id))),
-                followProof = originalFollowCluster.map(follows =>
-                  FollowProof(follows, follows.size)))))
+                s m larToProof = So (S m larToProof(Seq(cand date. d))),
+                followProof = or g nalFollowCluster.map(follows =>
+                  FollowProof(follows, follows.s ze)))))
         )
       )
     }
 }
 
 object ScoreAggregator {
-  // aggregate the same candidates with same id by taking the one with largest score
-  val Max: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.max }
+  // aggregate t  sa  cand dates w h sa   d by tak ng t  one w h largest score
+  val Max: Seq[Double] => Double = (cand dateScores: Seq[Double]) => { cand dateScores.max }
 
-  // aggregate the same candidates with same id by taking the sum of the scores
-  val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.sum }
+  // aggregate t  sa  cand dates w h sa   d by tak ng t  sum of t  scores
+  val Sum: Seq[Double] => Double = (cand dateScores: Seq[Double]) => { cand dateScores.sum }
 }

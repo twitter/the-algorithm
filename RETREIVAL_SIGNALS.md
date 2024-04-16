@@ -1,51 +1,51 @@
-# Signals for Candidate Sources
+# S gnals for Cand date S ces
 
-## Overview
+## Overv ew
 
-The candidate sourcing stage within the Twitter Recommendation algorithm serves to significantly narrow down the item size from approximately 1 billion to just a few thousand. This process utilizes Twitter user behavior as the primary input for the algorithm. This document comprehensively enumerates all the signals during the candidate sourcing phase.
+T  cand date s c ng stage w h n t  Tw ter Recom ndat on algor hm serves to s gn f cantly narrow down t   em s ze from approx mately 1 b ll on to just a few thousand. T  process ut l zes Tw ter user behav or as t  pr mary  nput for t  algor hm. T  docu nt compre ns vely enu rates all t  s gnals dur ng t  cand date s c ng phase.
 
-| Signals               |  Description                                                          |
+| S gnals               |  Descr pt on                                                          |
 | :-------------------- | :-------------------------------------------------------------------- |
-| Author Follow         | The accounts which user explicit follows.                             |
-| Author Unfollow       | The accounts which user recently unfollows.                           |
-| Author Mute           | The accounts which user have muted.                                   |
-| Author Block          | The accounts which user have blocked                                  |
-| Tweet Favorite        | The tweets which user clicked the like botton.                        | 
-| Tweet Unfavorite      | The tweets which user clicked the unlike botton.                      |       
-| Retweet               | The tweets which user retweeted                                       |
-| Quote Tweet           | The tweets which user retweeted with comments.                        |
-| Tweet Reply           | The tweets which user replied.                                        |
-| Tweet Share           | The tweets which user clicked the share botton.                       |
-| Tweet Bookmark        | The tweets which user clicked the bookmark botton.                    |
-| Tweet Click           | The tweets which user clicked and viewed the tweet detail page.       |
-| Tweet Video Watch     | The video tweets which user watched certain seconds or percentage.    |
-| Tweet Don't like      | The tweets which user clicked "Not interested in this tweet" botton.  |
-| Tweet Report          | The tweets which user clicked "Report Tweet" botton.                  |
-| Notification Open     | The push notification tweets which user opened.                       |
-| Ntab click            | The tweets which user click on the Notifications page.                |               
-| User AddressBook      | The author accounts identifiers of the user's addressbook.            | 
+| Author Follow         | T  accounts wh ch user expl c  follows.                             |
+| Author Unfollow       | T  accounts wh ch user recently unfollows.                           |
+| Author Mute           | T  accounts wh ch user have muted.                                   |
+| Author Block          | T  accounts wh ch user have blocked                                  |
+| T et Favor e        | T  t ets wh ch user cl cked t  l ke botton.                        | 
+| T et Unfavor e      | T  t ets wh ch user cl cked t  unl ke botton.                      |       
+| Ret et               | T  t ets wh ch user ret eted                                       |
+| Quote T et           | T  t ets wh ch user ret eted w h com nts.                        |
+| T et Reply           | T  t ets wh ch user repl ed.                                        |
+| T et Share           | T  t ets wh ch user cl cked t  share botton.                       |
+| T et Bookmark        | T  t ets wh ch user cl cked t  bookmark botton.                    |
+| T et Cl ck           | T  t ets wh ch user cl cked and v e d t  t et deta l page.       |
+| T et V deo Watch     | T  v deo t ets wh ch user watc d certa n seconds or percentage.    |
+| T et Don't l ke      | T  t ets wh ch user cl cked "Not  nterested  n t  t et" botton.  |
+| T et Report          | T  t ets wh ch user cl cked "Report T et" botton.                  |
+| Not f cat on Open     | T  push not f cat on t ets wh ch user opened.                       |
+| Ntab cl ck            | T  t ets wh ch user cl ck on t  Not f cat ons page.                |               
+| User AddressBook      | T  author accounts  dent f ers of t  user's addressbook.            | 
 
-## Usage Details
+## Usage Deta ls
 
-Twitter uses these user signals as training labels and/or ML features in the each candidate sourcing algorithms. The following tables shows how they are used in the each components.
+Tw ter uses t se user s gnals as tra n ng labels and/or ML features  n t  each cand date s c ng algor hms. T  follow ng tables shows how t y are used  n t  each components.
 
-| Signals               | USS                | SimClusters        |  TwHin             |   UTEG             | FRS                |  Light Ranking     |
+| S gnals               | USS                | S mClusters        |  TwH n             |   UTEG             | FRS                |  L ght Rank ng     |
 | :-------------------- | :----------------- | :----------------- | :----------------- | :----------------- | :----------------- | :----------------- | 
 | Author Follow         | Features           | Features / Labels  | Features / Labels  | Features           | Features / Labels  | N/A                |
 | Author Unfollow       | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
 | Author Mute           | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
 | Author Block          | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
-| Tweet Favorite        | Features           | Features           | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
-| Tweet Unfavorite      | Features           | Features           | N/A                | N/A                | N/A                | N/A                |       
-| Retweet               | Features           | N/A                | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
-| Quote Tweet           | Features           | N/A                | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
-| Tweet Reply           | Features           | N/A                | Features           | Features           | Features / Labels  | Features           |
-| Tweet Share           | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
-| Tweet Bookmark        | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Tweet Click           | Features           | N/A                | N/A                | N/A                | Features           | Labels             |
-| Tweet Video Watch     | Features           | Features           | N/A                | N/A                | N/A                | Labels             |
-| Tweet Don't like      | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Tweet Report          | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
-| Notification Open     | Features           | Features           | Features           | N/A                | Features           | N/A                |                       
-| Ntab click            | Features           | Features           | Features           | N/A                | Features           | N/A                |
+| T et Favor e        | Features           | Features           | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
+| T et Unfavor e      | Features           | Features           | N/A                | N/A                | N/A                | N/A                |       
+| Ret et               | Features           | N/A                | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
+| Quote T et           | Features           | N/A                | Features / Labels  | Features           | Features / Labels  | Features / Labels  |
+| T et Reply           | Features           | N/A                | Features           | Features           | Features / Labels  | Features           |
+| T et Share           | Features           | N/A                | N/A                | N/A                | Features           | N/A                |
+| T et Bookmark        | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
+| T et Cl ck           | Features           | N/A                | N/A                | N/A                | Features           | Labels             |
+| T et V deo Watch     | Features           | Features           | N/A                | N/A                | N/A                | Labels             |
+| T et Don't l ke      | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
+| T et Report          | Features           | N/A                | N/A                | N/A                | N/A                | N/A                |
+| Not f cat on Open     | Features           | Features           | Features           | N/A                | Features           | N/A                |                       
+| Ntab cl ck            | Features           | Features           | Features           | N/A                | Features           | N/A                |
 | User AddressBook      | N/A                | N/A                | N/A                | N/A                | Features           | N/A                |

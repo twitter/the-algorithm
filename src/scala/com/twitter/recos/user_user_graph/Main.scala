@@ -1,255 +1,255 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux.transport.OpportunisticTls
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.frigate.common.util.ElfOwlFilter
-import com.twitter.frigate.common.util.ElfOwlFilter.ByLdapGroup
-import com.twitter.logging._
-import com.twitter.recos.decider.UserUserGraphDecider
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.model.Constants
-import com.twitter.recos.user_user_graph.KafkaConfig._
-import com.twitter.recos.user_user_graph.RecosConfig._
-import com.twitter.server.Deciderable
-import com.twitter.server.TwitterServer
-import com.twitter.server.logging.{Logging => JDK14Logging}
-import com.twitter.servo.request._
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.thriftwebforms._
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import java.net.InetSocketAddress
-import java.util.concurrent.TimeUnit
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringDeserializer
+ mport com.tw ter.abdec der.ABDec derFactory
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.app.Flag
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.http.HttpMuxer
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.server.MtlsStackServer._
+ mport com.tw ter.f nagle.mux.transport.Opportun st cTls
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.f natra.kafka.doma n.KafkaGroup d
+ mport com.tw ter.f natra.kafka.doma n.SeekStrategy
+ mport com.tw ter.f natra.kafka.serde.ScalaSerdes
+ mport com.tw ter.fr gate.common.ut l.ElfOwlF lter
+ mport com.tw ter.fr gate.common.ut l.ElfOwlF lter.ByLdapGroup
+ mport com.tw ter.logg ng._
+ mport com.tw ter.recos.dec der.UserUserGraphDec der
+ mport com.tw ter.recos.graph_common.F nagleStatsRece verWrapper
+ mport com.tw ter.recos.graph_common.Node tadataLeft ndexedPo rLawMult Seg ntB part eGraphBu lder
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport com.tw ter.recos.model.Constants
+ mport com.tw ter.recos.user_user_graph.KafkaConf g._
+ mport com.tw ter.recos.user_user_graph.RecosConf g._
+ mport com.tw ter.server.Dec derable
+ mport com.tw ter.server.Tw terServer
+ mport com.tw ter.server.logg ng.{Logg ng => JDK14Logg ng}
+ mport com.tw ter.servo.request._
+ mport com.tw ter.servo.ut l.Except onCounter
+ mport com.tw ter.thr ft bforms._
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Durat on
+ mport java.net. netSocketAddress
+ mport java.ut l.concurrent.T  Un 
+ mport org.apac .kafka.cl ents.CommonCl entConf gs
+ mport org.apac .kafka.common.conf g.SaslConf gs
+ mport org.apac .kafka.common.conf g.SslConf gs
+ mport org.apac .kafka.common.secur y.auth.Secur yProtocol
+ mport org.apac .kafka.common.ser al zat on.Str ngDeser al zer
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
-  profile =>
+object Ma n extends Tw terServer w h JDK14Logg ng w h Dec derable {
+  prof le =>
 
-  val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
-  val servicePort: Flag[InetSocketAddress] =
-    flag("service.port", new InetSocketAddress(10143), "Thrift service port")
-  val logDir: Flag[String] = flag("logdir", "recos", "Logging directory")
-  val hoseName: Flag[String] =
-    flag("hosename", "recos_injector_user_user", "the kafka stream used for incoming edges")
-  val maxNumSegments: Flag[Int] =
-    flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
-  val numShards: Flag[Int] = flag("numShards", 1, "Number of shards for this service")
-  val truststoreLocation: Flag[String] =
-    flag[String]("truststore_location", "", "Truststore file location")
+  val shard d: Flag[ nt] = flag("shard d", 0, "Shard  D")
+  val serv cePort: Flag[ netSocketAddress] =
+    flag("serv ce.port", new  netSocketAddress(10143), "Thr ft serv ce port")
+  val logD r: Flag[Str ng] = flag("logd r", "recos", "Logg ng d rectory")
+  val hoseNa : Flag[Str ng] =
+    flag("hosena ", "recos_ njector_user_user", "t  kafka stream used for  ncom ng edges")
+  val maxNumSeg nts: Flag[ nt] =
+    flag("maxNumSeg nts", graphBu lderConf g.maxNumSeg nts, "t  number of seg nts  n t  graph")
+  val numShards: Flag[ nt] = flag("numShards", 1, "Number of shards for t  serv ce")
+  val truststoreLocat on: Flag[Str ng] =
+    flag[Str ng]("truststore_locat on", "", "Truststore f le locat on")
 
-  val dataCenter: Flag[String] = flag("service.cluster", "atla", "Data Center")
-  val serviceRole: Flag[String] = flag("service.role", "Service Role")
-  val serviceEnv: Flag[String] = flag("service.env", "Service Env")
-  val serviceName: Flag[String] = flag("service.name", "Service Name")
+  val dataCenter: Flag[Str ng] = flag("serv ce.cluster", "atla", "Data Center")
+  val serv ceRole: Flag[Str ng] = flag("serv ce.role", "Serv ce Role")
+  val serv ceEnv: Flag[Str ng] = flag("serv ce.env", "Serv ce Env")
+  val serv ceNa : Flag[Str ng] = flag("serv ce.na ", "Serv ce Na ")
 
-  val statsReceiverWrapper: FinagleStatsReceiverWrapper = FinagleStatsReceiverWrapper(
-    statsReceiver
+  val statsRece verWrapper: F nagleStatsRece verWrapper = F nagleStatsRece verWrapper(
+    statsRece ver
   )
 
   /**
-   * A ClientRequestAuthorizer to be used in a request-authorization RequestFilter.
+   * A Cl entRequestAuthor zer to be used  n a request-author zat on RequestF lter.
    */
-  lazy val clientAuthorizer: ClientRequestAuthorizer =
-    ClientRequestAuthorizer.observed(
-      ClientRequestAuthorizer.permissive,
-      new ClientRequestObserver(statsReceiver)
+  lazy val cl entAuthor zer: Cl entRequestAuthor zer =
+    Cl entRequestAuthor zer.observed(
+      Cl entRequestAuthor zer.perm ss ve,
+      new Cl entRequestObserver(statsRece ver)
     )
 
-  lazy val clientId = ClientId("userusergraph.%s".format(serviceEnv().replace("devel", "dev")))
+  lazy val cl ent d = Cl ent d("userusergraph.%s".format(serv ceEnv().replace("devel", "dev")))
 
-  val shutdownTimeout: Flag[Duration] = flag(
-    "service.shutdownTimeout",
+  val shutdownT  out: Flag[Durat on] = flag(
+    "serv ce.shutdownT  out",
     5.seconds,
-    "Maximum amount of time to wait for pending requests to complete on shutdown"
+    "Max mum amount of t   to wa  for pend ng requests to complete on shutdown"
   )
 
   /**
-   * ExceptionCounter for tracking failures from RequestHandler(s).
+   * Except onCounter for track ng fa lures from RequestHandler(s).
    */
-  lazy val exceptionCounter = new ExceptionCounter(statsReceiver)
+  lazy val except onCounter = new Except onCounter(statsRece ver)
 
   /**
-   * Function for translating exceptions returned by a RequestHandler. Useful
-   * for cases where underlying exception types should be wrapped in those
-   * defined in the project's Thrift IDL.
+   * Funct on for translat ng except ons returned by a RequestHandler. Useful
+   * for cases w re underly ng except on types should be wrapped  n those
+   * def ned  n t  project's Thr ft  DL.
    */
-  lazy val translateExceptions: PartialFunction[Throwable, Throwable] = {
+  lazy val translateExcept ons: Part alFunct on[Throwable, Throwable] = {
     case t => t
   }
 
-  // ********* logging **********
+  // ********* logg ng **********
 
-  lazy val loggingLevel: Level = Level.INFO
-  lazy val recosLogPath: String = logDir() + "/recos.log"
-  lazy val graphLogPath: String = logDir() + "/graph.log"
-  lazy val accessLogPath: String = logDir() + "/access.log"
+  lazy val logg ngLevel: Level = Level. NFO
+  lazy val recosLogPath: Str ng = logD r() + "/recos.log"
+  lazy val graphLogPath: Str ng = logD r() + "/graph.log"
+  lazy val accessLogPath: Str ng = logD r() + "/access.log"
 
-  override def loggerFactories: List[LoggerFactory] =
-    List(
+  overr de def loggerFactor es: L st[LoggerFactory] =
+    L st(
       LoggerFactory(
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = recosLogPath,
-            level = Some(loggingLevel),
-            rollPolicy = Policy.Hourly,
+        level = So (logg ngLevel),
+        handlers = Queue ngHandler(
+          handler = F leHandler(
+            f lena  = recosLogPath,
+            level = So (logg ngLevel),
+            rollPol cy = Pol cy.H ly,
             rotateCount = 6,
             formatter = new Formatter
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
         node = "graph",
         useParents = false,
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = graphLogPath,
-            level = Some(loggingLevel),
-            rollPolicy = Policy.Hourly,
+        level = So (logg ngLevel),
+        handlers = Queue ngHandler(
+          handler = F leHandler(
+            f lena  = graphLogPath,
+            level = So (logg ngLevel),
+            rollPol cy = Pol cy.H ly,
             rotateCount = 6,
             formatter = new Formatter
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
         node = "access",
         useParents = false,
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = accessLogPath,
-            level = Some(loggingLevel),
-            rollPolicy = Policy.Hourly,
+        level = So (logg ngLevel),
+        handlers = Queue ngHandler(
+          handler = F leHandler(
+            f lena  = accessLogPath,
+            level = So (logg ngLevel),
+            rollPol cy = Pol cy.H ly,
             rotateCount = 6,
             formatter = new Formatter
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
-        node = "client_event",
-        level = Some(loggingLevel),
+        node = "cl ent_event",
+        level = So (logg ngLevel),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "client_event",
+        handlers = Queue ngHandler(
+          maxQueueS ze = 10000,
+          handler = Scr beHandler(
+            category = "cl ent_event",
             formatter = BareFormatter
           )
-        ) :: Nil
+        ) :: N l
       )
     )
-  // ******** Decider *************
+  // ******** Dec der *************
 
-  val recosDecider: UserUserGraphDecider = UserUserGraphDecider()
+  val recosDec der: UserUserGraphDec der = UserUserGraphDec der()
 
-  // ********* ABdecider **********
+  // ********* ABdec der **********
 
-  val abDeciderYmlPath: String = "/usr/local/config/abdecider/abdecider.yml"
+  val abDec derYmlPath: Str ng = "/usr/local/conf g/abdec der/abdec der.yml"
 
-  val scribeLogger: Option[Logger] = Some(Logger.get("client_event"))
+  val scr beLogger: Opt on[Logger] = So (Logger.get("cl ent_event"))
 
-  val abDecider: LoggingABDecider =
-    ABDeciderFactory(
-      abDeciderYmlPath = abDeciderYmlPath,
-      scribeLogger = scribeLogger,
-      environment = Some("production")
-    ).buildWithLogging()
+  val abDec der: Logg ngABDec der =
+    ABDec derFactory(
+      abDec derYmlPath = abDec derYmlPath,
+      scr beLogger = scr beLogger,
+      env ron nt = So ("product on")
+    ).bu ldW hLogg ng()
 
-  val ldapGroups = Seq("eng", "cassowary-group", "timeline-team")
+  val ldapGroups = Seq("eng", "cassowary-group", "t  l ne-team")
 
-  // ********* Recos service **********
+  // ********* Recos serv ce **********
 
-  def main(): Unit = {
-    log.info("building graph with maxNumSegments = " + profile.maxNumSegments())
-    log.info("Reading from: " + hoseName())
+  def ma n(): Un  = {
+    log. nfo("bu ld ng graph w h maxNumSeg nts = " + prof le.maxNumSeg nts())
+    log. nfo("Read ng from: " + hoseNa ())
 
-    val graph = NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder(
-      graphBuilderConfig.copy(maxNumSegments = profile.maxNumSegments()),
-      statsReceiverWrapper
+    val graph = Node tadataLeft ndexedPo rLawMult Seg ntB part eGraphBu lder(
+      graphBu lderConf g.copy(maxNumSeg nts = prof le.maxNumSeg nts()),
+      statsRece verWrapper
     )
 
-    val kafkaConfigBuilder = FinagleKafkaConsumerBuilder[String, RecosHoseMessage]()
-      .dest("/s/kafka/recommendations:kafka-tls")
-      .groupId(KafkaGroupId(f"user_user_graph-${shardId()}%06d"))
-      .keyDeserializer(new StringDeserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[RecosHoseMessage].deserializer)
-      .seekStrategy(SeekStrategy.REWIND)
-      .rewindDuration(24.hours)
-      .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-      .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation())
-      .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+    val kafkaConf gBu lder = F nagleKafkaConsu rBu lder[Str ng, RecosHose ssage]()
+      .dest("/s/kafka/recom ndat ons:kafka-tls")
+      .group d(KafkaGroup d(f"user_user_graph-${shard d()}%06d"))
+      .keyDeser al zer(new Str ngDeser al zer)
+      .valueDeser al zer(ScalaSerdes.Thr ft[RecosHose ssage].deser al zer)
+      .seekStrategy(SeekStrategy.REW ND)
+      .rew ndDurat on(24.h s)
+      .w hConf g(CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G, Secur yProtocol.SASL_SSL.toStr ng)
+      .w hConf g(SslConf gs.SSL_TRUSTSTORE_LOCAT ON_CONF G, truststoreLocat on())
+      .w hConf g(SaslConf gs.SASL_MECHAN SM, SaslConf gs.GSSAP _MECHAN SM)
+      .w hConf g(SaslConf gs.SASL_KERBEROS_SERV CE_NAME, "kafka")
+      .w hConf g(SaslConf gs.SASL_KERBEROS_SERVER_NAME, "kafka")
 
-    val graphWriter = UserUserGraphWriter(
-      shardId = shardId().toString,
-      env = serviceEnv(),
-      hosename = hoseName(),
-      bufferSize = bufferSize,
-      kafkaConsumerBuilder = kafkaConfigBuilder,
-      clientId = clientId.name,
-      statsReceiver = statsReceiver
+    val graphWr er = UserUserGraphWr er(
+      shard d = shard d().toStr ng,
+      env = serv ceEnv(),
+      hosena  = hoseNa (),
+      bufferS ze = bufferS ze,
+      kafkaConsu rBu lder = kafkaConf gBu lder,
+      cl ent d = cl ent d.na ,
+      statsRece ver = statsRece ver
     )
-    graphWriter.initHose(graph)
+    graphWr er. n Hose(graph)
 
-    val recommendUsersHandler = RecommendUsersHandlerImpl(
+    val recom ndUsersHandler = Recom ndUsersHandler mpl(
       graph,
-      Constants.salsaRunnerConfig,
-      recosDecider,
-      statsReceiverWrapper
+      Constants.salsaRunnerConf g,
+      recosDec der,
+      statsRece verWrapper
     )
 
-    val recos = new UserUserGraph(recommendUsersHandler) with LoggingUserUserGraph
+    val recos = new UserUserGraph(recom ndUsersHandler) w h Logg ngUserUserGraph
 
     // For MutualTLS
-    val serviceIdentifier = ServiceIdentifier(
-      role = serviceRole(),
-      service = serviceName(),
-      environment = serviceEnv(),
+    val serv ce dent f er = Serv ce dent f er(
+      role = serv ceRole(),
+      serv ce = serv ceNa (),
+      env ron nt = serv ceEnv(),
       zone = dataCenter()
     )
 
-    val thriftServer = ThriftMux.server
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .withMutualTls(serviceIdentifier)
-      .serveIface(servicePort(), recos)
+    val thr ftServer = Thr ftMux.server
+      .w hOpportun st cTls(Opportun st cTls.Requ red)
+      .w hMutualTls(serv ce dent f er)
+      .serve face(serv cePort(), recos)
 
-    this.addAdminRoute(ElfOwlFilter.getPostbackRoute())
+    t .addAdm nRoute(ElfOwlF lter.getPostbackRoute())
 
-    val elfowlFilter = ElfOwlFilter(
+    val elfowlF lter = ElfOwlF lter(
       ByLdapGroup(ldapGroups),
-      Duration.fromTimeUnit(5, TimeUnit.DAYS)
+      Durat on.fromT  Un (5, T  Un .DAYS)
     )
 
-    log.info(s"ServiceIdentifier = ${serviceIdentifier.toString}")
-    log.info("clientid: " + clientId.toString)
-    log.info("servicePort: " + servicePort().toString)
-    log.info("adding shutdown hook")
-    onExit {
-      graphWriter.shutdown()
-      thriftServer.close(shutdownTimeout().fromNow)
+    log. nfo(s"Serv ce dent f er = ${serv ce dent f er.toStr ng}")
+    log. nfo("cl ent d: " + cl ent d.toStr ng)
+    log. nfo("serv cePort: " + serv cePort().toStr ng)
+    log. nfo("add ng shutdown hook")
+    onEx  {
+      graphWr er.shutdown()
+      thr ftServer.close(shutdownT  out().fromNow)
     }
-    log.info("added shutdown hook")
-    // Wait on the thriftServer so that shutdownTimeout is respected.
-    Await.result(thriftServer)
+    log. nfo("added shutdown hook")
+    // Wa  on t  thr ftServer so that shutdownT  out  s respected.
+    Awa .result(thr ftServer)
   }
 }

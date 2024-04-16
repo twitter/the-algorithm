@@ -1,45 +1,45 @@
-package com.twitter.graph_feature_service.server.handlers
+package com.tw ter.graph_feature_serv ce.server.handlers
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FavoritedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FollowedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.Following
-import com.twitter.graph_feature_service.thriftscala.Server.GetIntersection
-import com.twitter.graph_feature_service.thriftscala.FeatureType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionRequest
-import com.twitter.inject.utils.Handler
-import com.twitter.scrooge.Request
-import com.twitter.util.logging.Logger
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.util.Random
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftWarmup
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType.Favor edBy
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType.Follo dBy
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType.Follow ng
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.Server.Get ntersect on
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.FeatureType
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.Gfs ntersect onRequest
+ mport com.tw ter. nject.ut ls.Handler
+ mport com.tw ter.scrooge.Request
+ mport com.tw ter.ut l.logg ng.Logger
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.ut l.Random
 
-@Singleton
-class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
+@S ngleton
+class ServerWarmupHandler @ nject() (warmup: Thr ftWarmup) extends Handler {
 
   val logger: Logger = Logger("WarmupHandler")
 
-  // TODO: Add the testing accounts to warm-up the service.
-  private val testingAccounts: Array[Long] = Seq.empty.toArray
+  // TODO: Add t  test ng accounts to warm-up t  serv ce.
+  pr vate val test ngAccounts: Array[Long] = Seq.empty.toArray
 
-  private def getRandomRequest: GfsIntersectionRequest = {
-    GfsIntersectionRequest(
-      testingAccounts(Random.nextInt(testingAccounts.length)),
-      testingAccounts,
-      Seq(FeatureType(Following, FollowedBy), FeatureType(Following, FavoritedBy))
+  pr vate def getRandomRequest: Gfs ntersect onRequest = {
+    Gfs ntersect onRequest(
+      test ngAccounts(Random.next nt(test ngAccounts.length)),
+      test ngAccounts,
+      Seq(FeatureType(Follow ng, Follo dBy), FeatureType(Follow ng, Favor edBy))
     )
   }
 
-  override def handle(): Unit = {
+  overr de def handle(): Un  = {
     warmup.sendRequest(
-      GetIntersection,
+      Get ntersect on,
       Request(
-        GetIntersection.Args(
+        Get ntersect on.Args(
           getRandomRequest
         )),
       10
     )()
 
-    logger.info("Warmup Done!")
+    logger. nfo("Warmup Done!")
   }
 }

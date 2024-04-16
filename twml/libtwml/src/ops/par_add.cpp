@@ -1,75 +1,75 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/util/work_sharder.h"
-#include "tensorflow/core/lib/core/threadpool.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/platform/mutex.h"
-#include "tensorflow/core/platform/logging.h"
-#include <iostream>
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
+# nclude "tensorflow/core/ut l/work_sharder.h"
+# nclude "tensorflow/core/l b/core/threadpool.h"
+# nclude "tensorflow/core/platform/env.h"
+# nclude "tensorflow/core/platform/mutex.h"
+# nclude "tensorflow/core/platform/logg ng.h"
+# nclude < ostream>
 
-#include <vector>
+# nclude <vector>
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("ParAdd")
-  .Input("input_a: float")
-  .Input("input_b: float")
+REG STER_OP("ParAdd")
+  . nput(" nput_a: float")
+  . nput(" nput_b: float")
   .Output("a_plus_b: float")
-  .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-      c->set_output(0, c->input(0));
+  .SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+      c->set_output(0, c-> nput(0));
       return Status::OK();
   });
 
 
-class ParAddOp : public OpKernel {
- public:
-  explicit ParAddOp(OpKernelConstruction* context) : OpKernel(context) {
+class ParAddOp : publ c OpKernel {
+ publ c:
+  expl c  ParAddOp(OpKernelConstruct on* context) : OpKernel(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor0 = context->input(0);
-    auto input_flat0 = input_tensor0.flat<float>();
-    const Tensor& input_tensor1 = context->input(1);
-    auto input_flat1 = input_tensor1.flat<float>();
+  vo d Compute(OpKernelContext* context) overr de {
+    // Grab t   nput tensor
+    const Tensor&  nput_tensor0 = context-> nput(0);
+    auto  nput_flat0 =  nput_tensor0.flat<float>();
+    const Tensor&  nput_tensor1 = context-> nput(1);
+    auto  nput_flat1 =  nput_tensor1.flat<float>();
 
-    OP_REQUIRES(context, input_tensor0.shape() == input_tensor1.shape(),
-                errors::InvalidArgument("Input tensors must be identical shape."));
+    OP_REQU RES(context,  nput_tensor0.shape() ==  nput_tensor1.shape(),
+                errors:: nval dArgu nt(" nput tensors must be  dent cal shape."));
 
     // Create an output tensor
     Tensor* output_tensor = NULL;
-    OP_REQUIRES_OK(context,
+    OP_REQU RES_OK(context,
                    context->allocate_output(0,
-                                            input_tensor0.shape(),
+                                             nput_tensor0.shape(),
                                             &output_tensor));
     auto output_flat = output_tensor->flat<float>();
 
     // PARALLEL ADD
-    const int N = input_flat0.size();
+    const  nt N =  nput_flat0.s ze();
 
-    // retrieve the thread pool from the op context
-    auto worker_threads = *(context->device()->tensorflow_cpu_worker_threads());
+    // retr eve t  thread pool from t  op context
+    auto worker_threads = *(context->dev ce()->tensorflow_cpu_worker_threads());
 
-    // Definition of the computation thread
-    auto task = [=, &input_flat0, &input_flat1, &output_flat](int64 start, int64 limit) {
-      for (; start < limit; ++start) {
-        output_flat(start) = input_flat0(start) + input_flat1(start);
+    // Def n  on of t  computat on thread
+    auto task = [=, & nput_flat0, & nput_flat1, &output_flat]( nt64 start,  nt64 l m ) {
+      for (; start < l m ; ++start) {
+        output_flat(start) =  nput_flat0(start) +  nput_flat1(start);
       }
     };
 
-    // this is a heuristic. high number is likely to be sharded into smaller pieces
-    int64 cost_per_unit = 1;
+    // t   s a  ur st c. h gh number  s l kely to be sharded  nto smaller p eces
+     nt64 cost_per_un  = 1;
 
-    // let Tensorflow split up the work as it sees fit
+    // let Tensorflow spl  up t  work as   sees f 
     Shard(worker_threads.num_threads,
           worker_threads.workers,
           N,
-          cost_per_unit,
+          cost_per_un ,
           task);
   }
 };
 
-REGISTER_KERNEL_BUILDER(Name("ParAdd").Device(DEVICE_CPU), ParAddOp);
+REG STER_KERNEL_BU LDER(Na ("ParAdd").Dev ce(DEV CE_CPU), ParAddOp);
 
 

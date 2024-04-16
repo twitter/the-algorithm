@@ -1,490 +1,490 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.tw ter.s mclusters_v2.scald ng.t et_s m lar y
 
-import com.twitter.ads.entities.db.thriftscala.PromotedTweet
-import com.twitter.dataproducts.estimation.ReservoirSampler
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{DateRange, Execution, TypedTsv}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, Proc3Atla, ProcAtla}
-import com.twitter.simclusters_v2.common.{SimClustersEmbedding, Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.{
-  TweetTopKTweetsWithScore,
-  TweetWithScore,
-  TweetsWithScore
+ mport com.tw ter.ads.ent  es.db.thr ftscala.PromotedT et
+ mport com.tw ter.dataproducts.est mat on.Reservo rSampler
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.{DateRange, Execut on, TypedTsv}
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, Proc3Atla, ProcAtla}
+ mport com.tw ter.s mclusters_v2.common.{S mClustersEmbedd ng, T  stamp, T et d, User d}
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  T etTopKT etsW hScore,
+  T etW hScore,
+  T etsW hScore
 }
-import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.{
-  InteractionDetails,
-  InteractionType,
-  TweetImpressionDetails
+ mport com.tw ter.t  l neserv ce.thr ftscala.{Contextual zedFavor eEvent, Favor eEventUn on}
+ mport com.tw ter.wtf.scald ng.cl ent_event_process ng.thr ftscala.{
+   nteract onDeta ls,
+   nteract onType,
+  T et mpress onDeta ls
 }
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import java.util.Random
-import scala.collection.mutable.ArrayBuffer
-import scala.util.control.Breaks._
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+ mport com.tw ter.wtf.scald ng.jobs.cl ent_event_process ng.User nteract onScalaDataset
+ mport java.ut l.Random
+ mport scala.collect on.mutable.ArrayBuffer
+ mport scala.ut l.control.Breaks._
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t  l ne.T  l neServ ceFavor esScalaDataset
 
-object TweetPairLabelCollectionUtil {
+object T etPa rLabelCollect onUt l {
 
-  case class FeaturedTweet(
-    tweet: TweetId,
-    timestamp: Timestamp, //engagement or impression time
-    author: Option[UserId],
-    embedding: Option[SimClustersEmbedding])
-      extends Ordered[FeaturedTweet] {
+  case class FeaturedT et(
+    t et: T et d,
+    t  stamp: T  stamp, //engage nt or  mpress on t  
+    author: Opt on[User d],
+    embedd ng: Opt on[S mClustersEmbedd ng])
+      extends Ordered[FeaturedT et] {
 
-    import scala.math.Ordered.orderingToOrdered
+     mport scala.math.Ordered.order ngToOrdered
 
-    def compare(that: FeaturedTweet): Int =
-      (this.tweet, this.timestamp, this.author) compare (that.tweet, that.timestamp, that.author)
+    def compare(that: FeaturedT et):  nt =
+      (t .t et, t .t  stamp, t .author) compare (that.t et, that.t  stamp, that.author)
   }
 
-  val MaxFavPerUser: Int = 100
+  val MaxFavPerUser:  nt = 100
 
   /**
-   * Get all fav events within the given dateRange and where all users' out-degree <= maxOutDegree
-   * from TimelineServiceFavoritesScalaDataset
+   * Get all fav events w h n t  g ven dateRange and w re all users' out-degree <= maxOutDegree
+   * from T  l neServ ceFavor esScalaDataset
    *
-   * @param dateRange         date of interest
-   * @param maxOutgoingDegree max #degrees for the users of interests
+   * @param dateRange         date of  nterest
+   * @param maxOutgo ngDegree max #degrees for t  users of  nterests
    *
-   * @return Filtered fav events, TypedPipe of (userid, tweetid, timestamp) tuples
+   * @return F ltered fav events, TypedP pe of (user d, t et d, t  stamp) tuples
    */
   def getFavEvents(
     dateRange: DateRange,
-    maxOutgoingDegree: Int
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    val fullTimelineFavData: TypedPipe[ContextualizedFavoriteEvent] =
+    maxOutgo ngDegree:  nt
+  ): TypedP pe[(User d, T et d, T  stamp)] = {
+    val fullT  l neFavData: TypedP pe[Contextual zedFavor eEvent] =
       DAL
-        .read(TimelineServiceFavoritesScalaDataset, dateRange)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe
+        .read(T  l neServ ceFavor esScalaDataset, dateRange)
+        .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+        .toTypedP pe
 
-    val userTweetTuples = fullTimelineFavData
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+    val userT etTuples = fullT  l neFavData
+      .flatMap { cfe: Contextual zedFavor eEvent =>
         cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some((fav.userId, (fav.tweetId, fav.eventTimeMs)))
+          case Favor eEventUn on.Favor e(fav) =>
+            So ((fav.user d, (fav.t et d, fav.eventT  Ms)))
           case _ =>
             None
         }
       }
-    //Get users with the out-degree <= maxOutDegree first
-    val usersWithValidOutDegree = userTweetTuples
+    //Get users w h t  out-degree <= maxOutDegree f rst
+    val usersW hVal dOutDegree = userT etTuples
       .groupBy(_._1)
-      .withReducers(1000)
-      .size
-      .filter(_._2 <= maxOutgoingDegree)
+      .w hReducers(1000)
+      .s ze
+      .f lter(_._2 <= maxOutgo ngDegree)
 
-    // Keep only usersWithValidOutDegree in the graph
-    userTweetTuples
-      .join(usersWithValidOutDegree).map {
-        case (userId, ((tweetId, eventTime), _)) => (userId, tweetId, eventTime)
-      }.forceToDisk
+    // Keep only usersW hVal dOutDegree  n t  graph
+    userT etTuples
+      .jo n(usersW hVal dOutDegree).map {
+        case (user d, ((t et d, eventT  ), _)) => (user d, t et d, eventT  )
+      }.forceToD sk
   }
 
   /**
-   * Get impression events where users stay at the tweets for more than one minute
+   * Get  mpress on events w re users stay at t  t ets for more than one m nute
    *
-   * @param dateRange time range of interest
+   * @param dateRange t   range of  nterest
    *
    * @return
    */
-  def getImpressionEvents(dateRange: DateRange): TypedPipe[(UserId, TweetId, Timestamp)] = {
+  def get mpress onEvents(dateRange: DateRange): TypedP pe[(User d, T et d, T  stamp)] = {
     DAL
-      .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+      .read(User nteract onScalaDataset, dateRange)
+      .w hRemoteReadPol cy(Expl c Locat on(Proc3Atla))
+      .toTypedP pe
       .flatMap {
-        case userInteraction
-            if userInteraction.interactionType == InteractionType.TweetImpressions =>
-          userInteraction.interactionDetails match {
-            case InteractionDetails.TweetImpressionDetails(
-                  TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= 1) =>
-              Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
+        case user nteract on
+             f user nteract on. nteract onType ==  nteract onType.T et mpress ons =>
+          user nteract on. nteract onDeta ls match {
+            case  nteract onDeta ls.T et mpress onDeta ls(
+                  T et mpress onDeta ls(t et d, _, d llT   nSecOpt))
+                 f d llT   nSecOpt.ex sts(_ >= 1) =>
+              So (user nteract on.user d, t et d, user nteract on.t  Stamp)
             case _ =>
               None
           }
         case _ => None
       }
-      .forceToDisk
+      .forceToD sk
   }
 
   /**
-   * Given an events dataset, return a filtered events limited to a given set of tweets
+   * G ven an events dataset, return a f ltered events l m ed to a g ven set of t ets
    *
-   * @param events user fav events, a TypedPipe of (userid, tweetid, timestamp) tuples
-   * @param tweets tweets of interest
+   * @param events user fav events, a TypedP pe of (user d, t et d, t  stamp) tuples
+   * @param t ets t ets of  nterest
    *
-   * @return Filtered fav events on the given tweets of interest only, TypedPipe of (userid, tweetid, timestamp) tuples
+   * @return F ltered fav events on t  g ven t ets of  nterest only, TypedP pe of (user d, t et d, t  stamp) tuples
    */
-  def getFilteredEvents(
-    events: TypedPipe[(UserId, TweetId, Timestamp)],
-    tweets: TypedPipe[TweetId]
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
+  def getF lteredEvents(
+    events: TypedP pe[(User d, T et d, T  stamp)],
+    t ets: TypedP pe[T et d]
+  ): TypedP pe[(User d, T et d, T  stamp)] = {
     events
       .map {
-        case (userId, tweetId, eventTime) => (tweetId, (userId, eventTime))
+        case (user d, t et d, eventT  ) => (t et d, (user d, eventT  ))
       }
-      .join(tweets.asKeys)
-      .withReducers(1000)
+      .jo n(t ets.asKeys)
+      .w hReducers(1000)
       .map {
-        case (tweetId, ((userId, eventTime), _)) => (userId, tweetId, eventTime)
+        case (t et d, ((user d, eventT  ), _)) => (user d, t et d, eventT  )
       }
   }
 
-  /** Get (tweetId, author userId) of a given dateRange
+  /** Get (t et d, author user d) of a g ven dateRange
    *
-   * @param dateRange time range of interest
+   * @param dateRange t   range of  nterest
    *
-   * @return TypedPipe of (tweetId, userId)
+   * @return TypedP pe of (t et d, user d)
    */
-  def getTweetAuthorPairs(dateRange: DateRange): TypedPipe[(TweetId, UserId)] = {
-    ExternalDataSources
-      .flatTweetsSource(dateRange)
+  def getT etAuthorPa rs(dateRange: DateRange): TypedP pe[(T et d, User d)] = {
+    ExternalDataS ces
+      .flatT etsS ce(dateRange)
       .collect {
-        // Exclude retweets and quoted tweets
-        case record if record.shareSourceTweetId.isEmpty && record.quotedTweetTweetId.isEmpty =>
-          (record.tweetId, record.userId)
+        // Exclude ret ets and quoted t ets
+        case record  f record.shareS ceT et d. sEmpty && record.quotedT etT et d. sEmpty =>
+          (record.t et d, record.user d)
       }
   }
 
-  /** Given a set of tweets, get all non-promoted tweets from the given set
+  /** G ven a set of t ets, get all non-promoted t ets from t  g ven set
    *
-   * @param promotedTweets TypedPipe of promoted tweets
-   * @param tweets         tweets of interest
+   * @param promotedT ets TypedP pe of promoted t ets
+   * @param t ets         t ets of  nterest
    *
-   * @return TypedPipe of tweetId
+   * @return TypedP pe of t et d
    */
-  def getNonPromotedTweets(
-    promotedTweets: TypedPipe[PromotedTweet],
-    tweets: TypedPipe[TweetId]
-  ): TypedPipe[TweetId] = {
-    promotedTweets
+  def getNonPromotedT ets(
+    promotedT ets: TypedP pe[PromotedT et],
+    t ets: TypedP pe[T et d]
+  ): TypedP pe[T et d] = {
+    promotedT ets
       .collect {
-        case promotedTweet if promotedTweet.tweetId.isDefined => promotedTweet.tweetId.get
+        case promotedT et  f promotedT et.t et d. sDef ned => promotedT et.t et d.get
       }
       .asKeys
-      .rightJoin(tweets.asKeys)
-      .withReducers(1000)
-      .filterNot(joined => joined._2._1.isDefined) //filter out those in promotedTweets
+      .r ghtJo n(t ets.asKeys)
+      .w hReducers(1000)
+      .f lterNot(jo ned => jo ned._2._1. sDef ned) //f lter out those  n promotedT ets
       .keys
   }
 
   /**
-   * Given a fav events dataset, return all distinct ordered tweet pairs, labelled by whether they are co-engaged or not
-   * Note we distinguish between (t1, t2) and (t2, t1) because o.w we introduce bias to training samples
+   * G ven a fav events dataset, return all d st nct ordered t et pa rs, labelled by w t r t y are co-engaged or not
+   * Note   d st ngu sh bet en (t1, t2) and (t2, t1) because o.w    ntroduce b as to tra n ng samples
    *
-   * @param events      user fav events, a TypedPipe of (userid, featuredTweet) tuples
-   * @param timeframe   two tweets will be considered co-engaged if they are fav-ed within coengagementTimeframe
-   * @param isCoengaged if pairs are co-engaged
+   * @param events      user fav events, a TypedP pe of (user d, featuredT et) tuples
+   * @param t  fra    two t ets w ll be cons dered co-engaged  f t y are fav-ed w h n coengage ntT  fra 
+   * @param  sCoengaged  f pa rs are co-engaged
    *
-   * @return labelled tweet pairs, TypedPipe of (userid, featuredTweet1, featuredTweet2, isCoengaged) tuples
+   * @return labelled t et pa rs, TypedP pe of (user d, featuredT et1, featuredT et2,  sCoengaged) tuples
    */
-  def getTweetPairs(
-    events: TypedPipe[(UserId, FeaturedTweet)],
-    timeframe: Long,
-    isCoengaged: Boolean
-  ): TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)] = {
+  def getT etPa rs(
+    events: TypedP pe[(User d, FeaturedT et)],
+    t  fra : Long,
+     sCoengaged: Boolean
+  ): TypedP pe[(User d, FeaturedT et, FeaturedT et, Boolean)] = {
     events
       .map {
-        case (userId, featuredTweet) => (userId, Seq(featuredTweet))
+        case (user d, featuredT et) => (user d, Seq(featuredT et))
       }
       .sumByKey
       .flatMap {
-        case (userId, featuredTweets) if featuredTweets.size > 1 =>
-          val sortedFeaturedTweet = featuredTweets.sortBy(_.timestamp)
-          // Get all distinct ordered pairs that happen within coengagementTimeframe
-          val distinctPairs = ArrayBuffer[(UserId, FeaturedTweet, FeaturedTweet, Boolean)]()
+        case (user d, featuredT ets)  f featuredT ets.s ze > 1 =>
+          val sortedFeaturedT et = featuredT ets.sortBy(_.t  stamp)
+          // Get all d st nct ordered pa rs that happen w h n coengage ntT  fra 
+          val d st nctPa rs = ArrayBuffer[(User d, FeaturedT et, FeaturedT et, Boolean)]()
           breakable {
-            for (i <- sortedFeaturedTweet.indices) {
-              for (j <- i + 1 until sortedFeaturedTweet.size) {
-                val featuredTweet1 = sortedFeaturedTweet(i)
-                val featuredTweet2 = sortedFeaturedTweet(j)
-                if (math.abs(featuredTweet1.timestamp - featuredTweet2.timestamp) <= timeframe)
-                  distinctPairs ++= Seq(
-                    (userId, featuredTweet1, featuredTweet2, isCoengaged),
-                    (userId, featuredTweet2, featuredTweet1, isCoengaged))
+            for (  <- sortedFeaturedT et. nd ces) {
+              for (j <-   + 1 unt l sortedFeaturedT et.s ze) {
+                val featuredT et1 = sortedFeaturedT et( )
+                val featuredT et2 = sortedFeaturedT et(j)
+                 f (math.abs(featuredT et1.t  stamp - featuredT et2.t  stamp) <= t  fra )
+                  d st nctPa rs ++= Seq(
+                    (user d, featuredT et1, featuredT et2,  sCoengaged),
+                    (user d, featuredT et2, featuredT et1,  sCoengaged))
                 else
                   break
               }
             }
           }
-          distinctPairs
-        case _ => Nil
+          d st nctPa rs
+        case _ => N l
       }
   }
 
   /**
-   * Get co-engaged tweet pairs
+   * Get co-engaged t et pa rs
    *
-   * @param favEvents             user fav events, TypedPipe of (userid, tweetid, timestamp)
-   * @param tweets                tweets to be considered
-   * @param coengagementTimeframe time window for two tweets to be considered as co-engaged
+   * @param favEvents             user fav events, TypedP pe of (user d, t et d, t  stamp)
+   * @param t ets                t ets to be cons dered
+   * @param coengage ntT  fra  t   w ndow for two t ets to be cons dered as co-engaged
    *
-   * @return TypedPipe of co-engaged tweet pairs
+   * @return TypedP pe of co-engaged t et pa rs
    */
-  def getCoengagedPairs(
-    favEvents: TypedPipe[(UserId, TweetId, Timestamp)],
-    tweets: TypedPipe[TweetId],
-    coengagementTimeframe: Long
-  ): TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val userFeaturedTweetPairs =
-      getFilteredEvents(favEvents, tweets)
+  def getCoengagedPa rs(
+    favEvents: TypedP pe[(User d, T et d, T  stamp)],
+    t ets: TypedP pe[T et d],
+    coengage ntT  fra : Long
+  ): TypedP pe[(User d, FeaturedT et, FeaturedT et, Boolean)] = {
+    val userFeaturedT etPa rs =
+      getF lteredEvents(favEvents, t ets)
         .map {
-          case (user, tweet, timestamp) => (user, FeaturedTweet(tweet, timestamp, None, None))
+          case (user, t et, t  stamp) => (user, FeaturedT et(t et, t  stamp, None, None))
         }
 
-    getTweetPairs(userFeaturedTweetPairs, coengagementTimeframe, isCoengaged = true)
+    getT etPa rs(userFeaturedT etPa rs, coengage ntT  fra ,  sCoengaged = true)
   }
 
   /**
-   * Get co-impressed tweet pairs
+   * Get co- mpressed t et pa rs
    *
-   * @param impressionEvents tweet impression events, TypedPipe of (userid, tweetid, timestamp)
-   * @param tweets           set of tweets considered to be part of co-impressed tweet pairs
-   * @param timeframe        time window for two tweets to be considered as co-impressed
+   * @param  mpress onEvents t et  mpress on events, TypedP pe of (user d, t et d, t  stamp)
+   * @param t ets           set of t ets cons dered to be part of co- mpressed t et pa rs
+   * @param t  fra         t   w ndow for two t ets to be cons dered as co- mpressed
    *
-   * @return TypedPipe of co-impressed tweet pairs
+   * @return TypedP pe of co- mpressed t et pa rs
    */
-  def getCoimpressedPairs(
-    impressionEvents: TypedPipe[(UserId, TweetId, Timestamp)],
-    tweets: TypedPipe[TweetId],
-    timeframe: Long
-  ): TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val userFeaturedTweetPairs = getFilteredEvents(impressionEvents, tweets)
+  def getCo mpressedPa rs(
+     mpress onEvents: TypedP pe[(User d, T et d, T  stamp)],
+    t ets: TypedP pe[T et d],
+    t  fra : Long
+  ): TypedP pe[(User d, FeaturedT et, FeaturedT et, Boolean)] = {
+    val userFeaturedT etPa rs = getF lteredEvents( mpress onEvents, t ets)
       .map {
-        case (user, tweet, timestamp) => (user, FeaturedTweet(tweet, timestamp, None, None))
+        case (user, t et, t  stamp) => (user, FeaturedT et(t et, t  stamp, None, None))
       }
 
-    getTweetPairs(userFeaturedTweetPairs, timeframe, isCoengaged = false)
+    getT etPa rs(userFeaturedT etPa rs, t  fra ,  sCoengaged = false)
   }
 
   /**
-   * Consolidate co-engaged pairs and co-impressed pairs, and compute all the labelled tweet pairs
-   * Given a pair:
-   * label = 1 if co-engaged (whether or not it's co-impressed)
-   * label = 0 if co-impressed and not co-engaged
+   * Consol date co-engaged pa rs and co- mpressed pa rs, and compute all t  labelled t et pa rs
+   * G ven a pa r:
+   * label = 1  f co-engaged (w t r or not  's co- mpressed)
+   * label = 0  f co- mpressed and not co-engaged
    *
-   * @param coengagedPairs   co-engaged tweet pairs, TypedPipe of (user, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param coimpressedPairs co-impressed tweet pairs, TypedPipe of (user, queryFeaturedTweet, candidateFeaturedTweet, label)
+   * @param coengagedPa rs   co-engaged t et pa rs, TypedP pe of (user, queryFeaturedT et, cand dateFeaturedT et, label)
+   * @param co mpressedPa rs co- mpressed t et pa rs, TypedP pe of (user, queryFeaturedT et, cand dateFeaturedT et, label)
    *
-   * @return labelled tweet pairs, TypedPipe of (queryFeaturedTweet, candidateFeaturedTweet, label) tuples
+   * @return labelled t et pa rs, TypedP pe of (queryFeaturedT et, cand dateFeaturedT et, label) tuples
    */
-  def computeLabelledTweetPairs(
-    coengagedPairs: TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)],
-    coimpressedPairs: TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    (coengagedPairs ++ coimpressedPairs)
+  def computeLabelledT etPa rs(
+    coengagedPa rs: TypedP pe[(User d, FeaturedT et, FeaturedT et, Boolean)],
+    co mpressedPa rs: TypedP pe[(User d, FeaturedT et, FeaturedT et, Boolean)]
+  ): TypedP pe[(FeaturedT et, FeaturedT et, Boolean)] = {
+    (coengagedPa rs ++ co mpressedPa rs)
       .groupBy {
-        case (userId, queryFeaturedTweet, candidateFeaturedTweet, _) =>
-          (userId, queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
+        case (user d, queryFeaturedT et, cand dateFeaturedT et, _) =>
+          (user d, queryFeaturedT et.t et, cand dateFeaturedT et.t et)
       }
-      // consolidate all the labelled pairs into one with the max label
-      // (label order: co-engagement = true > co-impression = false)
+      // consol date all t  labelled pa rs  nto one w h t  max label
+      // (label order: co-engage nt = true > co- mpress on = false)
       .maxBy {
         case (_, _, _, label) => label
       }
       .values
-      .map { case (_, queryTweet, candidateTweet, label) => (queryTweet, candidateTweet, label) }
+      .map { case (_, queryT et, cand dateT et, label) => (queryT et, cand dateT et, label) }
   }
 
   /**
-   * Get a balanced-class sampling of tweet pairs.
-   * For each query tweet, we make sure the numbers of positives and negatives are equal.
+   * Get a balanced-class sampl ng of t et pa rs.
+   * For each query t et,   make sure t  numbers of pos  ves and negat ves are equal.
    *
-   * @param labelledPairs      labelled tweet pairs, TypedPipe of (queryFeaturedTweet, candidateFeaturedTweet, label) tuples
+   * @param labelledPa rs      labelled t et pa rs, TypedP pe of (queryFeaturedT et, cand dateFeaturedT et, label) tuples
    * @param maxSamplesPerClass max number of samples per class
    *
-   * @return sampled labelled pairs after balanced-class sampling
+   * @return sampled labelled pa rs after balanced-class sampl ng
    */
-  def getQueryTweetBalancedClassPairs(
-    labelledPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    maxSamplesPerClass: Int
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val queryTweetToSampleCount = labelledPairs
+  def getQueryT etBalancedClassPa rs(
+    labelledPa rs: TypedP pe[(FeaturedT et, FeaturedT et, Boolean)],
+    maxSamplesPerClass:  nt
+  ): TypedP pe[(FeaturedT et, FeaturedT et, Boolean)] = {
+    val queryT etToSampleCount = labelledPa rs
       .map {
-        case (queryTweet, _, label) =>
-          if (label) (queryTweet.tweet, (1, 0)) else (queryTweet.tweet, (0, 1))
+        case (queryT et, _, label) =>
+           f (label) (queryT et.t et, (1, 0)) else (queryT et.t et, (0, 1))
       }
       .sumByKey
       .map {
-        case (queryTweet, (posCount, negCount)) =>
-          (queryTweet, Math.min(Math.min(posCount, negCount), maxSamplesPerClass))
+        case (queryT et, (posCount, negCount)) =>
+          (queryT et, Math.m n(Math.m n(posCount, negCount), maxSamplesPerClass))
       }
 
-    labelledPairs
-      .groupBy { case (queryTweet, _, _) => queryTweet.tweet }
-      .join(queryTweetToSampleCount)
+    labelledPa rs
+      .groupBy { case (queryT et, _, _) => queryT et.t et }
+      .jo n(queryT etToSampleCount)
       .values
       .map {
-        case ((queryTweet, candidateTweet, label), samplePerClass) =>
-          ((queryTweet.tweet, label, samplePerClass), (queryTweet, candidateTweet, label))
+        case ((queryT et, cand dateT et, label), samplePerClass) =>
+          ((queryT et.t et, label, samplePerClass), (queryT et, cand dateT et, label))
       }
       .group
       .mapGroup {
-        case ((_, _, samplePerClass), iter) =>
+        case ((_, _, samplePerClass),  er) =>
           val random = new Random(123L)
           val sampler =
-            new ReservoirSampler[(FeaturedTweet, FeaturedTweet, Boolean)](samplePerClass, random)
-          iter.foreach { pair => sampler.sampleItem(pair) }
-          sampler.sample.toIterator
+            new Reservo rSampler[(FeaturedT et, FeaturedT et, Boolean)](samplePerClass, random)
+           er.foreach { pa r => sampler.sample em(pa r) }
+          sampler.sample.to erator
       }
       .values
   }
 
   /**
-   * Given a user fav dataset, computes the similarity scores (based on engagers) between every tweet pairs
+   * G ven a user fav dataset, computes t  s m lar y scores (based on engagers) bet en every t et pa rs
    *
-   * @param events                user fav events, a TypedPipe of (userid, tweetid, timestamp) tuples
-   * @param minInDegree           min number of engagement count for the tweets
-   * @param coengagementTimeframe two tweets will be considered co-engaged if they are fav-ed within coengagementTimeframe
+   * @param events                user fav events, a TypedP pe of (user d, t et d, t  stamp) tuples
+   * @param m n nDegree           m n number of engage nt count for t  t ets
+   * @param coengage ntT  fra  two t ets w ll be cons dered co-engaged  f t y are fav-ed w h n coengage ntT  fra 
    *
-   * @return tweet similarity based on engagers, a TypedPipe of (tweet1, tweet2, similarity_score) tuples
+   * @return t et s m lar y based on engagers, a TypedP pe of (t et1, t et2, s m lar y_score) tuples
    **/
-  def getScoredCoengagedTweetPairs(
-    events: TypedPipe[(UserId, TweetId, Timestamp)],
-    minInDegree: Int,
-    coengagementTimeframe: Long
+  def getScoredCoengagedT etPa rs(
+    events: TypedP pe[(User d, T et d, T  stamp)],
+    m n nDegree:  nt,
+    coengage ntT  fra : Long
   )(
-  ): TypedPipe[(TweetId, TweetWithScore)] = {
+  ): TypedP pe[(T et d, T etW hScore)] = {
 
-    // compute tweet norms (based on engagers)
-    // only keep tweets whose indegree >= minInDegree
-    val tweetNorms = events
-      .map { case (_, tweetId, _) => (tweetId, 1.0) }
-      .sumByKey //the number of engagers per tweetId
-      .filter(_._2 >= minInDegree)
+    // compute t et norms (based on engagers)
+    // only keep t ets whose  ndegree >= m n nDegree
+    val t etNorms = events
+      .map { case (_, t et d, _) => (t et d, 1.0) }
+      .sumByKey //t  number of engagers per t et d
+      .f lter(_._2 >= m n nDegree)
       .mapValues(math.sqrt)
 
-    val edgesWithWeight = events
+    val edgesW h  ght = events
       .map {
-        case (userId, tweetId, eventTime) => (tweetId, (userId, eventTime))
+        case (user d, t et d, eventT  ) => (t et d, (user d, eventT  ))
       }
-      .join(tweetNorms)
+      .jo n(t etNorms)
       .map {
-        case (tweetId, ((userId, eventTime), norm)) =>
-          (userId, Seq((tweetId, eventTime, 1 / norm)))
+        case (t et d, ((user d, eventT  ), norm)) =>
+          (user d, Seq((t et d, eventT  , 1 / norm)))
       }
 
-    // get cosine similarity
-    val tweetPairsWithWeight = edgesWithWeight.sumByKey
+    // get cos ne s m lar y
+    val t etPa rsW h  ght = edgesW h  ght.sumByKey
       .flatMap {
-        case (_, tweets) if tweets.size > 1 =>
-          allUniquePairs(tweets).flatMap {
-            case ((tweetId1, eventTime1, weight1), (tweetId2, eventTime2, weight2)) =>
-              // consider only co-engagement happened within the given timeframe
-              if ((eventTime1 - eventTime2).abs <= coengagementTimeframe) {
-                if (tweetId1 > tweetId2) // each worker generate allUniquePairs in different orders, hence should standardize the pairs
-                  Some(((tweetId2, tweetId1), weight1 * weight2))
+        case (_, t ets)  f t ets.s ze > 1 =>
+          allUn quePa rs(t ets).flatMap {
+            case ((t et d1, eventT  1,   ght1), (t et d2, eventT  2,   ght2)) =>
+              // cons der only co-engage nt happened w h n t  g ven t  fra 
+               f ((eventT  1 - eventT  2).abs <= coengage ntT  fra ) {
+                 f (t et d1 > t et d2) // each worker generate allUn quePa rs  n d fferent orders,  nce should standard ze t  pa rs
+                  So (((t et d2, t et d1),   ght1 *   ght2))
                 else
-                  Some(((tweetId1, tweetId2), weight1 * weight2))
+                  So (((t et d1, t et d2),   ght1 *   ght2))
               } else {
                 None
               }
             case _ =>
               None
           }
-        case _ => Nil
+        case _ => N l
       }
-    tweetPairsWithWeight.sumByKey
+    t etPa rsW h  ght.sumByKey
       .flatMap {
-        case ((tweetId1, tweetId2), weight) =>
+        case ((t et d1, t et d2),   ght) =>
           Seq(
-            (tweetId1, TweetWithScore(tweetId2, weight)),
-            (tweetId2, TweetWithScore(tweetId1, weight))
+            (t et d1, T etW hScore(t et d2,   ght)),
+            (t et d2, T etW hScore(t et d1,   ght))
           )
-        case _ => Nil
+        case _ => N l
       }
   }
 
   /**
-   * Get the write exec for per-query stats
+   * Get t  wr e exec for per-query stats
    *
-   * @param tweetPairs input dataset
-   * @param outputPath output path for the per-query stats
-   * @param identifier identifier for the tweetPairs dataset
+   * @param t etPa rs  nput dataset
+   * @param outputPath output path for t  per-query stats
+   * @param  dent f er  dent f er for t  t etPa rs dataset
    *
-   * @return execution of the the writing exec
+   * @return execut on of t  t  wr  ng exec
    */
   def getPerQueryStatsExec(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    outputPath: String,
-    identifier: String
-  ): Execution[Unit] = {
-    val queryTweetsToCounts = tweetPairs
+    t etPa rs: TypedP pe[(FeaturedT et, FeaturedT et, Boolean)],
+    outputPath: Str ng,
+     dent f er: Str ng
+  ): Execut on[Un ] = {
+    val queryT etsToCounts = t etPa rs
       .map {
-        case (queryTweet, _, label) =>
-          if (label) (queryTweet.tweet, (1, 0)) else (queryTweet.tweet, (0, 1))
+        case (queryT et, _, label) =>
+           f (label) (queryT et.t et, (1, 0)) else (queryT et.t et, (0, 1))
       }
       .sumByKey
-      .map { case (queryTweet, (posCount, negCount)) => (queryTweet, posCount, negCount) }
+      .map { case (queryT et, (posCount, negCount)) => (queryT et, posCount, negCount) }
 
-    Execution
-      .zip(
-        queryTweetsToCounts.writeExecution(
-          TypedTsv[(TweetId, Int, Int)](s"${outputPath}_$identifier")),
-        Util.printSummaryOfNumericColumn(
-          queryTweetsToCounts
+    Execut on
+      .z p(
+        queryT etsToCounts.wr eExecut on(
+          TypedTsv[(T et d,  nt,  nt)](s"${outputPath}_$ dent f er")),
+        Ut l.pr ntSummaryOfNu r cColumn(
+          queryT etsToCounts
             .map { case (_, posCount, _) => posCount },
-          Some(s"Per-query Positive Count ($identifier)")),
-        Util.printSummaryOfNumericColumn(
-          queryTweetsToCounts
+          So (s"Per-query Pos  ve Count ($ dent f er)")),
+        Ut l.pr ntSummaryOfNu r cColumn(
+          queryT etsToCounts
             .map { case (_, _, negCount) => negCount },
-          Some(s"Per-query Negative Count ($identifier)"))
-      ).unit
+          So (s"Per-query Negat ve Count ($ dent f er)"))
+      ).un 
   }
 
   /**
-   * Get the top K similar tweets key-val dataset
+   * Get t  top K s m lar t ets key-val dataset
    *
-   * @param allTweetPairs all tweet pairs with their similarity scores
-   * @param k             the maximum number of top results for each user
+   * @param allT etPa rs all t et pa rs w h t  r s m lar y scores
+   * @param k             t  max mum number of top results for each user
    *
-   * @return key-val top K results for each tweet
+   * @return key-val top K results for each t et
    */
-  def getKeyValTopKSimilarTweets(
-    allTweetPairs: TypedPipe[(TweetId, TweetWithScore)],
-    k: Int
+  def getKeyValTopKS m larT ets(
+    allT etPa rs: TypedP pe[(T et d, T etW hScore)],
+    k:  nt
   )(
-  ): TypedPipe[(TweetId, TweetsWithScore)] = {
-    allTweetPairs.group
-      .sortedReverseTake(k)(Ordering.by(_.score))
-      .map { case (tweetId, tweetWithScoreSeq) => (tweetId, TweetsWithScore(tweetWithScoreSeq)) }
+  ): TypedP pe[(T et d, T etsW hScore)] = {
+    allT etPa rs.group
+      .sortedReverseTake(k)(Order ng.by(_.score))
+      .map { case (t et d, t etW hScoreSeq) => (t et d, T etsW hScore(t etW hScoreSeq)) }
   }
 
   /**
-   * Get the top K similar tweets dataset.
+   * Get t  top K s m lar t ets dataset.
    *
-   * @param allTweetPairs all tweet pairs with their similarity scores
-   * @param k             the maximum number of top results for each user
+   * @param allT etPa rs all t et pa rs w h t  r s m lar y scores
+   * @param k             t  max mum number of top results for each user
    *
-   * @return top K results for each tweet
+   * @return top K results for each t et
    */
-  def getTopKSimilarTweets(
-    allTweetPairs: TypedPipe[(TweetId, TweetWithScore)],
-    k: Int
+  def getTopKS m larT ets(
+    allT etPa rs: TypedP pe[(T et d, T etW hScore)],
+    k:  nt
   )(
-  ): TypedPipe[TweetTopKTweetsWithScore] = {
-    allTweetPairs.group
-      .sortedReverseTake(k)(Ordering.by(_.score))
+  ): TypedP pe[T etTopKT etsW hScore] = {
+    allT etPa rs.group
+      .sortedReverseTake(k)(Order ng.by(_.score))
       .map {
-        case (tweetId, tweetWithScoreSeq) =>
-          TweetTopKTweetsWithScore(tweetId, TweetsWithScore(tweetWithScoreSeq))
+        case (t et d, t etW hScoreSeq) =>
+          T etTopKT etsW hScore(t et d, T etsW hScore(t etW hScoreSeq))
       }
   }
 
   /**
-   * Given a input sequence, output all unique pairs in this sequence.
+   * G ven a  nput sequence, output all un que pa rs  n t  sequence.
    */
-  def allUniquePairs[T](input: Seq[T]): Stream[(T, T)] = {
-    input match {
-      case Nil => Stream.empty
+  def allUn quePa rs[T]( nput: Seq[T]): Stream[(T, T)] = {
+     nput match {
+      case N l => Stream.empty
       case seq =>
-        seq.tail.toStream.map(a => (seq.head, a)) #::: allUniquePairs(seq.tail)
+        seq.ta l.toStream.map(a => (seq. ad, a)) #::: allUn quePa rs(seq.ta l)
     }
   }
 }

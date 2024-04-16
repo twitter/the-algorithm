@@ -1,62 +1,62 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.util.Base64StringEncoder
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.scrooge.B naryThr ftStructSer al zer
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.ut l.Base64Str ngEncoder
 
 /**
- * used for attribution per target-candidate pair
- * @param sessionId         trace-id of the finagle request
- * @param controllerData    64-bit encoded binary attributes of our recommendation
- * @param algorithmId       id for identifying a candidate source. maintained for backwards compatibility
+ * used for attr but on per target-cand date pa r
+ * @param sess on d         trace- d of t  f nagle request
+ * @param controllerData    64-b  encoded b nary attr butes of   recom ndat on
+ * @param algor hm d        d for  dent fy ng a cand date s ce. ma nta ned for backwards compat b l y
  */
-case class TrackingToken(
-  sessionId: Long,
-  displayLocation: Option[DisplayLocation],
-  controllerData: Option[ControllerData],
-  algorithmId: Option[Int]) {
+case class Track ngToken(
+  sess on d: Long,
+  d splayLocat on: Opt on[D splayLocat on],
+  controllerData: Opt on[ControllerData],
+  algor hm d: Opt on[ nt]) {
 
-  def toThrift: t.TrackingToken = {
-    Trace.id.traceId.toLong
-    t.TrackingToken(
-      sessionId = sessionId,
-      displayLocation = displayLocation.map(_.toThrift),
+  def toThr ft: t.Track ngToken = {
+    Trace. d.trace d.toLong
+    t.Track ngToken(
+      sess on d = sess on d,
+      d splayLocat on = d splayLocat on.map(_.toThr ft),
       controllerData = controllerData,
-      algoId = algorithmId
+      algo d = algor hm d
     )
   }
 
-  def toOfflineThrift: offline.TrackingToken = {
-    offline.TrackingToken(
-      sessionId = sessionId,
-      displayLocation = displayLocation.map(_.toOfflineThrift),
+  def toOffl neThr ft: offl ne.Track ngToken = {
+    offl ne.Track ngToken(
+      sess on d = sess on d,
+      d splayLocat on = d splayLocat on.map(_.toOffl neThr ft),
       controllerData = controllerData,
-      algoId = algorithmId
+      algo d = algor hm d
     )
   }
 }
 
-object TrackingToken {
-  val binaryThriftSerializer = BinaryThriftStructSerializer[t.TrackingToken](t.TrackingToken)
-  def serialize(trackingToken: TrackingToken): String = {
-    Base64StringEncoder.encode(binaryThriftSerializer.toBytes(trackingToken.toThrift))
+object Track ngToken {
+  val b naryThr ftSer al zer = B naryThr ftStructSer al zer[t.Track ngToken](t.Track ngToken)
+  def ser al ze(track ngToken: Track ngToken): Str ng = {
+    Base64Str ngEncoder.encode(b naryThr ftSer al zer.toBytes(track ngToken.toThr ft))
   }
-  def deserialize(trackingTokenStr: String): TrackingToken = {
-    fromThrift(binaryThriftSerializer.fromBytes(Base64StringEncoder.decode(trackingTokenStr)))
+  def deser al ze(track ngTokenStr: Str ng): Track ngToken = {
+    fromThr ft(b naryThr ftSer al zer.fromBytes(Base64Str ngEncoder.decode(track ngTokenStr)))
   }
-  def fromThrift(token: t.TrackingToken): TrackingToken = {
-    TrackingToken(
-      sessionId = token.sessionId,
-      displayLocation = token.displayLocation.map(DisplayLocation.fromThrift),
+  def fromThr ft(token: t.Track ngToken): Track ngToken = {
+    Track ngToken(
+      sess on d = token.sess on d,
+      d splayLocat on = token.d splayLocat on.map(D splayLocat on.fromThr ft),
       controllerData = token.controllerData,
-      algorithmId = token.algoId
+      algor hm d = token.algo d
     )
   }
 }
 
-trait HasTrackingToken {
-  def trackingToken: Option[TrackingToken]
+tra  HasTrack ngToken {
+  def track ngToken: Opt on[Track ngToken]
 }

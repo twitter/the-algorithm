@@ -1,789 +1,789 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Arrays;
+ mport java.ut l.HashMap;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInvertState;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.index.IndexableFieldType;
-import org.apache.lucene.search.similarities.Similarity;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefHash;
-import org.apache.lucene.util.Version;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport org.apac .lucene.analys s.Analyzer;
+ mport org.apac .lucene.analys s.TokenStream;
+ mport org.apac .lucene.analys s.tokenattr butes.OffsetAttr bute;
+ mport org.apac .lucene.analys s.tokenattr butes.Pos  on ncre ntAttr bute;
+ mport org.apac .lucene.analys s.tokenattr butes.TermToBytesRefAttr bute;
+ mport org.apac .lucene.docu nt.Docu nt;
+ mport org.apac .lucene.docu nt.F eld;
+ mport org.apac .lucene.facet.FacetsConf g;
+ mport org.apac .lucene. ndex.DocValuesType;
+ mport org.apac .lucene. ndex.F eld nvertState;
+ mport org.apac .lucene. ndex. ndexOpt ons;
+ mport org.apac .lucene. ndex. ndexableF eld;
+ mport org.apac .lucene. ndex. ndexableF eldType;
+ mport org.apac .lucene.search.s m lar  es.S m lar y;
+ mport org.apac .lucene.store.D rectory;
+ mport org.apac .lucene.ut l.Attr buteS ce;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.apac .lucene.ut l.BytesRefHash;
+ mport org.apac .lucene.ut l.Vers on;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetUtil;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.inverted.EarlybirdCSFDocValuesProcessor;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndexWriter;
-import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount ngArrayWr er;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap.FacetF eld;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetUt l;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deByte ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rdRealt   ndexExtens onsData;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Earlyb rdCSFDocValuesProcessor;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nvertedRealt   ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nvertedRealt   ndexWr er;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.TermPo nterEncod ng;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
 
 /**
- * EarlybirdIndexWriter implementation that writes realtime in-memory segments.
- * Note that it is used by both Earlybirds and ExpertSearch.
+ * Earlyb rd ndexWr er  mple ntat on that wr es realt    n- mory seg nts.
+ * Note that    s used by both Earlyb rds and ExpertSearch.
  */
-public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSegmentWriter {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdRealtimeIndexSegmentWriter.class);
+publ c f nal class Earlyb rdRealt   ndexSeg ntWr er extends Earlyb rd ndexSeg ntWr er {
+  pr vate stat c f nal Logger LOG =
+    LoggerFactory.getLogger(Earlyb rdRealt   ndexSeg ntWr er.class);
   /**
-   * Maximum tweet length is 10k, setting maximum token position to 25k in case of weird unicode.
+   * Max mum t et length  s 10k, sett ng max mum token pos  on to 25k  n case of   rd un code.
    */
-  private static final int MAX_POSITION = 25000;
+  pr vate stat c f nal  nt MAX_POS T ON = 25000;
 
-  private static final String OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN =
-      "out_of_order_append_unsupported_for_field_%s";
-  private static final ConcurrentHashMap<String, SearchRateCounter>
+  pr vate stat c f nal Str ng OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN =
+      "out_of_order_append_unsupported_for_f eld_%s";
+  pr vate stat c f nal ConcurrentHashMap<Str ng, SearchRateCounter>
       UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP = new ConcurrentHashMap<>();
-  private static final SearchRateCounter NUM_TWEETS_DROPPED =
-      SearchRateCounter.export("EarlybirdRealtimeIndexSegmentWriter_num_tweets_dropped");
+  pr vate stat c f nal SearchRateCounter NUM_TWEETS_DROPPED =
+      SearchRateCounter.export("Earlyb rdRealt   ndexSeg ntWr er_num_t ets_dropped");
 
-  private long nextFieldGen;
+  pr vate long nextF eldGen;
 
-  private HashMap<String, PerField> fields = new HashMap<>();
-  private List<PerField> fieldsInDocument = new ArrayList<>();
+  pr vate HashMap<Str ng, PerF eld> f elds = new HashMap<>();
+  pr vate L st<PerF eld> f elds nDocu nt = new ArrayL st<>();
 
-  private final EarlybirdCSFDocValuesProcessor docValuesProcessor;
+  pr vate f nal Earlyb rdCSFDocValuesProcessor docValuesProcessor;
 
-  private Map<String, InvertedRealtimeIndexWriter> termHashSync = new HashMap<>();
-  private Set<String> appendedFields = new HashSet<>();
+  pr vate Map<Str ng,  nvertedRealt   ndexWr er> termHashSync = new HashMap<>();
+  pr vate Set<Str ng> appendedF elds = new HashSet<>();
 
-  private final Analyzer analyzer;
-  private final Similarity similarity;
+  pr vate f nal Analyzer analyzer;
+  pr vate f nal S m lar y s m lar y;
 
-  private final EarlybirdRealtimeIndexSegmentData segmentData;
+  pr vate f nal Earlyb rdRealt   ndexSeg ntData seg ntData;
 
-  private final Field allDocsField;
+  pr vate f nal F eld allDocsF eld;
 
   @Nullable
-  private final FacetCountingArrayWriter facetCountingArrayWriter;
+  pr vate f nal FacetCount ngArrayWr er facetCount ngArrayWr er;
 
   /**
-   * Creates a new writer for a real-time in-memory Earlybird segment.
+   * Creates a new wr er for a real-t    n- mory Earlyb rd seg nt.
    *
-   * Do not add public constructors to this class. EarlybirdRealtimeIndexSegmentWriter instances
-   * should be created only by calling
-   * EarlybirdRealtimeIndexSegmentData.createEarlybirdIndexSegmentWriter(), to make sure everything
-   * is set up properly (such as CSF readers).
+   * Do not add publ c constructors to t  class. Earlyb rdRealt   ndexSeg ntWr er  nstances
+   * should be created only by call ng
+   * Earlyb rdRealt   ndexSeg ntData.createEarlyb rd ndexSeg ntWr er(), to make sure everyth ng
+   *  s set up properly (such as CSF readers).
    */
-  EarlybirdRealtimeIndexSegmentWriter(
-      EarlybirdRealtimeIndexSegmentData segmentData,
+  Earlyb rdRealt   ndexSeg ntWr er(
+      Earlyb rdRealt   ndexSeg ntData seg ntData,
       Analyzer analyzer,
-      Similarity similarity) {
-    Preconditions.checkNotNull(segmentData);
-    this.segmentData = segmentData;
-    this.facetCountingArrayWriter = segmentData.createFacetCountingArrayWriter();
-    this.docValuesProcessor = new EarlybirdCSFDocValuesProcessor(segmentData.getDocValuesManager());
-    this.analyzer = analyzer;
-    this.similarity = similarity;
-    this.allDocsField = buildAllDocsField(segmentData);
+      S m lar y s m lar y) {
+    Precond  ons.c ckNotNull(seg ntData);
+    t .seg ntData = seg ntData;
+    t .facetCount ngArrayWr er = seg ntData.createFacetCount ngArrayWr er();
+    t .docValuesProcessor = new Earlyb rdCSFDocValuesProcessor(seg ntData.getDocValuesManager());
+    t .analyzer = analyzer;
+    t .s m lar y = s m lar y;
+    t .allDocsF eld = bu ldAllDocsF eld(seg ntData);
   }
 
-  @Override
-  public EarlybirdRealtimeIndexSegmentData getSegmentData() {
-    return segmentData;
+  @Overr de
+  publ c Earlyb rdRealt   ndexSeg ntData getSeg ntData() {
+    return seg ntData;
   }
 
-  @Override
-  public int numDocsNoDelete() {
-    return segmentData.getDocIDToTweetIDMapper().getNumDocs();
+  @Overr de
+  publ c  nt numDocsNoDelete() {
+    return seg ntData.getDoc DToT et DMapper().getNumDocs();
   }
 
-  @Override
-  public void addDocument(Document doc) throws IOException {
-    // This method should be called only from Expertsearch, not tweets Earlybirds.
-    DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
-    Preconditions.checkState(docIdToTweetIdMapper instanceof SequentialDocIDMapper);
+  @Overr de
+  publ c vo d addDocu nt(Docu nt doc) throws  OExcept on {
+    // T   thod should be called only from Expertsearch, not t ets Earlyb rds.
+    Doc DToT et DMapper doc dToT et dMapper = seg ntData.getDoc DToT et DMapper();
+    Precond  ons.c ckState(doc dToT et dMapper  nstanceof Sequent alDoc DMapper);
 
-    // Make sure we have space for a new doc in this segment.
-    Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
-                             "Cannot add a new document to the segment, because it's full.");
+    // Make sure   have space for a new doc  n t  seg nt.
+    Precond  ons.c ckState(doc dToT et dMapper.getNumDocs() < seg ntData.getMaxSeg ntS ze(),
+                             "Cannot add a new docu nt to t  seg nt, because  's full.");
 
-    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), false);
+    addDocu nt(doc, doc dToT et dMapper.addMapp ng(-1L), false);
   }
 
-  @Override
-  public void addTweet(Document doc, long tweetId, boolean docIsOffensive) throws IOException {
-    DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
-    Preconditions.checkState(!(docIdToTweetIdMapper instanceof SequentialDocIDMapper));
+  @Overr de
+  publ c vo d addT et(Docu nt doc, long t et d, boolean doc sOffens ve) throws  OExcept on {
+    Doc DToT et DMapper doc dToT et dMapper = seg ntData.getDoc DToT et DMapper();
+    Precond  ons.c ckState(!(doc dToT et dMapper  nstanceof Sequent alDoc DMapper));
 
-    // Make sure we have space for a new doc in this segment.
-    Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
-                             "Cannot add a new document to the segment, because it's full.");
+    // Make sure   have space for a new doc  n t  seg nt.
+    Precond  ons.c ckState(doc dToT et dMapper.getNumDocs() < seg ntData.getMaxSeg ntS ze(),
+                             "Cannot add a new docu nt to t  seg nt, because  's full.");
 
-    Preconditions.checkNotNull(doc.getField(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName()));
+    Precond  ons.c ckNotNull(doc.getF eld(
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa ()));
 
-    addAllDocsField(doc);
+    addAllDocsF eld(doc);
 
-    int docId = docIdToTweetIdMapper.addMapping(tweetId);
-    // Make sure we successfully assigned a doc ID to the new document/tweet before proceeding.
-    // If the docId is DocIDToTweetIDMapper.ID_NOT_FOUND then either:
-    //  1. the tweet is older than the  OutOfOrderRealtimeTweetIDMapper.segmentBoundaryTimestamp and
-    //    is too old for this segment
-    //  2. the OutOfOrderRealtimeTweetIDMapper does not have any available doc ids left
-    if (docId == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      LOG.info("Could not assign doc id for tweet. Dropping tweet id " + tweetId
-          + " for segment with timeslice: " + segmentData.getTimeSliceID());
-      NUM_TWEETS_DROPPED.increment();
+     nt doc d = doc dToT et dMapper.addMapp ng(t et d);
+    // Make sure   successfully ass gned a doc  D to t  new docu nt/t et before proceed ng.
+    //  f t  doc d  s Doc DToT et DMapper. D_NOT_FOUND t n e  r:
+    //  1. t  t et  s older than t   OutOfOrderRealt  T et DMapper.seg ntBoundaryT  stamp and
+    //     s too old for t  seg nt
+    //  2. t  OutOfOrderRealt  T et DMapper does not have any ava lable doc  ds left
+     f (doc d == Doc DToT et DMapper. D_NOT_FOUND) {
+      LOG. nfo("Could not ass gn doc  d for t et. Dropp ng t et  d " + t et d
+          + " for seg nt w h t  sl ce: " + seg ntData.getT  Sl ce D());
+      NUM_TWEETS_DROPPED. ncre nt();
       return;
     }
 
-    addDocument(doc, docId, docIsOffensive);
+    addDocu nt(doc, doc d, doc sOffens ve);
   }
 
-  private void addDocument(Document doc,
-                           int docId,
-                           boolean docIsOffensive) throws IOException {
-    fieldsInDocument.clear();
+  pr vate vo d addDocu nt(Docu nt doc,
+                            nt doc d,
+                           boolean doc sOffens ve) throws  OExcept on {
+    f elds nDocu nt.clear();
 
-    long fieldGen = nextFieldGen++;
+    long f eldGen = nextF eldGen++;
 
-    // NOTE: we need two passes here, in case there are
-    // multi-valued fields, because we must process all
-    // instances of a given field at once, since the
-    // analyzer is free to reuse TokenStream across fields
-    // (i.e., we cannot have more than one TokenStream
-    // running "at once"):
+    // NOTE:   need two passes  re,  n case t re are
+    // mult -valued f elds, because   must process all
+    //  nstances of a g ven f eld at once, s nce t 
+    // analyzer  s free to reuse TokenStream across f elds
+    // ( .e.,   cannot have more than one TokenStream
+    // runn ng "at once"):
 
     try {
-      for (IndexableField field : doc) {
-        if (!skipField(field.name())) {
-          processField(docId, field, fieldGen, docIsOffensive);
+      for ( ndexableF eld f eld : doc) {
+         f (!sk pF eld(f eld.na ())) {
+          processF eld(doc d, f eld, f eldGen, doc sOffens ve);
         }
       }
-    } finally {
-      // Finish each indexed field name seen in the document:
-      for (PerField field : fieldsInDocument) {
-        field.finish(docId);
+    } f nally {
+      // F n sh each  ndexed f eld na  seen  n t  docu nt:
+      for (PerF eld f eld : f elds nDocu nt) {
+        f eld.f n sh(doc d);
       }
 
-      // When indexing a dummy document for out-of-order updates into a loaded segment, that
-      // document gets docID set as maxSegment size. So we have to make sure that we never
-      // sync backwards in document order.
-      int smallestDocID = Math.min(docId, segmentData.getSyncData().getSmallestDocID());
-      segmentData.updateSmallestDocID(smallestDocID);
+      // W n  ndex ng a dum  docu nt for out-of-order updates  nto a loaded seg nt, that
+      // docu nt gets doc D set as maxSeg nt s ze. So   have to make sure that   never
+      // sync backwards  n docu nt order.
+       nt smallestDoc D = Math.m n(doc d, seg ntData.getSyncData().getSmallestDoc D());
+      seg ntData.updateSmallestDoc D(smallestDoc D);
     }
   }
 
-  @Override
-  protected void appendOutOfOrder(Document doc, int internalDocID) throws IOException {
-    Preconditions.checkNotNull(doc);
-    fieldsInDocument.clear();
+  @Overr de
+  protected vo d appendOutOfOrder(Docu nt doc,  nt  nternalDoc D) throws  OExcept on {
+    Precond  ons.c ckNotNull(doc);
+    f elds nDocu nt.clear();
 
-    long fieldGen = nextFieldGen++;
+    long f eldGen = nextF eldGen++;
 
     try {
-      for (IndexableField indexableField : doc) {
-        if (!skipField(indexableField.name())) {
-          Schema.FieldInfo fi = segmentData.getSchema().getFieldInfo(indexableField.name());
-          if (fi == null) {
-            LOG.error("FieldInfo for " + indexableField.name() + " is null!");
-            continue;
+      for ( ndexableF eld  ndexableF eld : doc) {
+         f (!sk pF eld( ndexableF eld.na ())) {
+          Sc ma.F eld nfo f  = seg ntData.getSc ma().getF eld nfo( ndexableF eld.na ());
+           f (f  == null) {
+            LOG.error("F eld nfo for " +  ndexableF eld.na () + "  s null!");
+            cont nue;
           }
-          if (segmentData.isOptimized() && fi.getFieldType().becomesImmutable()) {
-            UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP.computeIfAbsent(
-                indexableField.name(),
+           f (seg ntData. sOpt m zed() && f .getF eldType().beco s mmutable()) {
+            UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP.compute fAbsent(
+                 ndexableF eld.na (),
                 f -> SearchRateCounter.export(
-                    String.format(OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN, f))
-            ).increment();
-            continue;
+                    Str ng.format(OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN, f))
+            ). ncre nt();
+            cont nue;
           }
-          processField(internalDocID, indexableField, fieldGen, false);
-          appendedFields.add(indexableField.name());
+          processF eld( nternalDoc D,  ndexableF eld, f eldGen, false);
+          appendedF elds.add( ndexableF eld.na ());
         }
       }
-    } finally {
-      // Finish each indexed field name seen in the document:
-      for (PerField field : fieldsInDocument) {
-        field.finish(internalDocID);
+    } f nally {
+      // F n sh each  ndexed f eld na  seen  n t  docu nt:
+      for (PerF eld f eld : f elds nDocu nt) {
+        f eld.f n sh( nternalDoc D);
       }
       // force sync
-      segmentData.updateSmallestDocID(segmentData.getSyncData().getSmallestDocID());
+      seg ntData.updateSmallestDoc D(seg ntData.getSyncData().getSmallestDoc D());
     }
   }
 
-  @Override
-  public void addIndexes(Directory... dirs) {
-    throw new UnsupportedOperationException("In realtime mode addIndexes() is currently "
+  @Overr de
+  publ c vo d add ndexes(D rectory... d rs) {
+    throw new UnsupportedOperat onExcept on(" n realt   mode add ndexes()  s currently "
             + "not supported.");
   }
 
-  @Override
-  public void forceMerge() {
-    // we always have a single segment in realtime-mode
+  @Overr de
+  publ c vo d force rge() {
+    //   always have a s ngle seg nt  n realt  -mode
   }
 
-  @Override
-  public void close() {
-    // nothing to close
+  @Overr de
+  publ c vo d close() {
+    // noth ng to close
   }
 
-  private void processField(
-      int docId,
-      IndexableField field,
-      long fieldGen,
-      boolean currentDocIsOffensive) throws IOException {
-    String fieldName = field.name();
-    IndexableFieldType fieldType = field.fieldType();
+  pr vate vo d processF eld(
+       nt doc d,
+       ndexableF eld f eld,
+      long f eldGen,
+      boolean currentDoc sOffens ve) throws  OExcept on {
+    Str ng f eldNa  = f eld.na ();
+     ndexableF eldType f eldType = f eld.f eldType();
 
-    // Invert indexed fields:
-    if (fieldType.indexOptions() != IndexOptions.NONE) {
-      PerField perField = getOrAddField(fieldName, fieldType);
+    //  nvert  ndexed f elds:
+     f (f eldType. ndexOpt ons() !=  ndexOpt ons.NONE) {
+      PerF eld perF eld = getOrAddF eld(f eldNa , f eldType);
 
-      // Whether this is the first time we have seen this field in this document.
-      boolean first = perField.fieldGen != fieldGen;
-      perField.invert(field, docId, first, currentDocIsOffensive);
+      // W t r t   s t  f rst t     have seen t  f eld  n t  docu nt.
+      boolean f rst = perF eld.f eldGen != f eldGen;
+      perF eld. nvert(f eld, doc d, f rst, currentDoc sOffens ve);
 
-      if (first) {
-        fieldsInDocument.add(perField);
-        perField.fieldGen = fieldGen;
+       f (f rst) {
+        f elds nDocu nt.add(perF eld);
+        perF eld.f eldGen = f eldGen;
       }
     } else {
-      Schema.FieldInfo facetFieldInfo =
-              segmentData.getSchema().getFacetFieldByFieldName(fieldName);
-      FacetField facetField = facetFieldInfo != null
-              ? segmentData.getFacetIDMap().getFacetField(facetFieldInfo) : null;
-      EarlybirdFieldType facetFieldType = facetFieldInfo != null
-              ? facetFieldInfo.getFieldType() : null;
-      Preconditions.checkState(
-          facetFieldInfo == null || (facetField != null && facetFieldType != null));
-      if (facetField != null && facetFieldType.isUseCSFForFacetCounting()) {
-          segmentData.getFacetLabelProviders().put(
-              facetField.getFacetName(),
-              Preconditions.checkNotNull(
-                      FacetUtil.chooseFacetLabelProvider(facetFieldType, null)));
+      Sc ma.F eld nfo facetF eld nfo =
+              seg ntData.getSc ma().getFacetF eldByF eldNa (f eldNa );
+      FacetF eld facetF eld = facetF eld nfo != null
+              ? seg ntData.getFacet DMap().getFacetF eld(facetF eld nfo) : null;
+      Earlyb rdF eldType facetF eldType = facetF eld nfo != null
+              ? facetF eld nfo.getF eldType() : null;
+      Precond  ons.c ckState(
+          facetF eld nfo == null || (facetF eld != null && facetF eldType != null));
+       f (facetF eld != null && facetF eldType. sUseCSFForFacetCount ng()) {
+          seg ntData.getFacetLabelProv ders().put(
+              facetF eld.getFacetNa (),
+              Precond  ons.c ckNotNull(
+                      FacetUt l.chooseFacetLabelProv der(facetF eldType, null)));
        }
     }
 
-    if (fieldType.docValuesType() != DocValuesType.NONE) {
-      StoredFieldsConsumerBuilder consumerBuilder = new StoredFieldsConsumerBuilder(
-              fieldName, (EarlybirdFieldType) fieldType);
-      EarlybirdRealtimeIndexExtensionsData indexExtension = segmentData.getIndexExtensionsData();
-      if (indexExtension != null) {
-        indexExtension.createStoredFieldsConsumer(consumerBuilder);
+     f (f eldType.docValuesType() != DocValuesType.NONE) {
+      StoredF eldsConsu rBu lder consu rBu lder = new StoredF eldsConsu rBu lder(
+              f eldNa , (Earlyb rdF eldType) f eldType);
+      Earlyb rdRealt   ndexExtens onsData  ndexExtens on = seg ntData.get ndexExtens onsData();
+       f ( ndexExtens on != null) {
+         ndexExtens on.createStoredF eldsConsu r(consu rBu lder);
       }
-      if (consumerBuilder.isUseDefaultConsumer()) {
-        consumerBuilder.addConsumer(docValuesProcessor);
+       f (consu rBu lder. sUseDefaultConsu r()) {
+        consu rBu lder.addConsu r(docValuesProcessor);
       }
 
-      StoredFieldsConsumer storedFieldsConsumer = consumerBuilder.build();
-      if (storedFieldsConsumer != null) {
-        storedFieldsConsumer.addField(docId, field);
+      StoredF eldsConsu r storedF eldsConsu r = consu rBu lder.bu ld();
+       f (storedF eldsConsu r != null) {
+        storedF eldsConsu r.addF eld(doc d, f eld);
       }
     }
   }
 
-  /** Returns a previously created {@link PerField}, absorbing the type information from
-   * {@link org.apache.lucene.document.FieldType}, and creates a new {@link PerField} if this field
-   * name wasn't seen yet. */
-  private PerField getOrAddField(String name, IndexableFieldType fieldType) {
-    // Note that this could be a computeIfAbsent, but that allocates a closure in the hot path and
-    // slows down indexing.
-    PerField perField = fields.get(name);
-    if (perField == null) {
-      boolean omitNorms = fieldType.omitNorms() || fieldType.indexOptions() == IndexOptions.NONE;
-      perField = new PerField(this, name, fieldType.indexOptions(), omitNorms);
-      fields.put(name, perField);
+  /** Returns a prev ously created {@l nk PerF eld}, absorb ng t  type  nformat on from
+   * {@l nk org.apac .lucene.docu nt.F eldType}, and creates a new {@l nk PerF eld}  f t  f eld
+   * na  wasn't seen yet. */
+  pr vate PerF eld getOrAddF eld(Str ng na ,  ndexableF eldType f eldType) {
+    // Note that t  could be a compute fAbsent, but that allocates a closure  n t  hot path and
+    // slows down  ndex ng.
+    PerF eld perF eld = f elds.get(na );
+     f (perF eld == null) {
+      boolean om Norms = f eldType.om Norms() || f eldType. ndexOpt ons() ==  ndexOpt ons.NONE;
+      perF eld = new PerF eld(t , na , f eldType. ndexOpt ons(), om Norms);
+      f elds.put(na , perF eld);
     }
-    return perField;
+    return perF eld;
   }
 
-  /** NOTE: not static: accesses at least docState, termsHash. */
-  private static final class PerField implements Comparable<PerField> {
+  /** NOTE: not stat c: accesses at least docState, termsHash. */
+  pr vate stat c f nal class PerF eld  mple nts Comparable<PerF eld> {
 
-    private final EarlybirdRealtimeIndexSegmentWriter indexSegmentWriter;
+    pr vate f nal Earlyb rdRealt   ndexSeg ntWr er  ndexSeg ntWr er;
 
-    private final String fieldName;
-    private final IndexOptions indexOptions;
-    private final boolean omitNorms;
+    pr vate f nal Str ng f eldNa ;
+    pr vate f nal  ndexOpt ons  ndexOpt ons;
+    pr vate f nal boolean om Norms;
 
-    private InvertedRealtimeIndex invertedField;
-    private InvertedDocConsumer indexWriter;
+    pr vate  nvertedRealt   ndex  nvertedF eld;
+    pr vate  nvertedDocConsu r  ndexWr er;
 
-    /** We use this to know when a PerField is seen for the
-     *  first time in the current document. */
-    private long fieldGen = -1;
+    /**   use t  to know w n a PerF eld  s seen for t 
+     *  f rst t    n t  current docu nt. */
+    pr vate long f eldGen = -1;
 
     // reused
-    private TokenStream tokenStream;
+    pr vate TokenStream tokenStream;
 
-    private int currentPosition;
-    private int currentOffset;
-    private int currentLength;
-    private int currentOverlap;
-    private int lastStartOffset;
-    private int lastPosition;
+    pr vate  nt currentPos  on;
+    pr vate  nt currentOffset;
+    pr vate  nt currentLength;
+    pr vate  nt currentOverlap;
+    pr vate  nt lastStartOffset;
+    pr vate  nt lastPos  on;
 
-    public PerField(
-        EarlybirdRealtimeIndexSegmentWriter indexSegmentWriter,
-        String fieldName,
-        IndexOptions indexOptions,
-        boolean omitNorms) {
-      this.indexSegmentWriter = indexSegmentWriter;
-      this.fieldName = fieldName;
-      this.indexOptions = indexOptions;
-      this.omitNorms = omitNorms;
+    publ c PerF eld(
+        Earlyb rdRealt   ndexSeg ntWr er  ndexSeg ntWr er,
+        Str ng f eldNa ,
+         ndexOpt ons  ndexOpt ons,
+        boolean om Norms) {
+      t . ndexSeg ntWr er =  ndexSeg ntWr er;
+      t .f eldNa  = f eldNa ;
+      t . ndexOpt ons =  ndexOpt ons;
+      t .om Norms = om Norms;
 
-      initInvertState();
+       n  nvertState();
     }
 
-    void initInvertState() {
-      // it's okay if this is null - in that case TwitterTermHashPerField
-      // will not add it to the facet array
-      final Schema.FieldInfo facetFieldInfo
-          = indexSegmentWriter.segmentData.getSchema().getFacetFieldByFieldName(fieldName);
-      final FacetField facetField = facetFieldInfo != null
-              ? indexSegmentWriter.segmentData.getFacetIDMap().getFacetField(facetFieldInfo) : null;
-      final EarlybirdFieldType facetFieldType
-          = facetFieldInfo != null ? facetFieldInfo.getFieldType() : null;
-      Preconditions.checkState(
-          facetFieldInfo == null || (facetField != null && facetFieldType != null));
+    vo d  n  nvertState() {
+      //  's okay  f t   s null -  n that case Tw terTermHashPerF eld
+      // w ll not add   to t  facet array
+      f nal Sc ma.F eld nfo facetF eld nfo
+          =  ndexSeg ntWr er.seg ntData.getSc ma().getFacetF eldByF eldNa (f eldNa );
+      f nal FacetF eld facetF eld = facetF eld nfo != null
+              ?  ndexSeg ntWr er.seg ntData.getFacet DMap().getFacetF eld(facetF eld nfo) : null;
+      f nal Earlyb rdF eldType facetF eldType
+          = facetF eld nfo != null ? facetF eld nfo.getF eldType() : null;
+      Precond  ons.c ckState(
+          facetF eld nfo == null || (facetF eld != null && facetF eldType != null));
 
-      if (facetField != null && facetFieldType.isUseCSFForFacetCounting()) {
-        indexSegmentWriter.segmentData.getFacetLabelProviders().put(
-            facetField.getFacetName(),
-            Preconditions.checkNotNull(
-                FacetUtil.chooseFacetLabelProvider(facetFieldType, null)));
+       f (facetF eld != null && facetF eldType. sUseCSFForFacetCount ng()) {
+         ndexSeg ntWr er.seg ntData.getFacetLabelProv ders().put(
+            facetF eld.getFacetNa (),
+            Precond  ons.c ckNotNull(
+                FacetUt l.chooseFacetLabelProv der(facetF eldType, null)));
         return;
       }
 
-      Schema.FieldInfo fi = indexSegmentWriter.segmentData.getSchema().getFieldInfo(fieldName);
-      final EarlybirdFieldType fieldType = fi.getFieldType();
+      Sc ma.F eld nfo f  =  ndexSeg ntWr er.seg ntData.getSc ma().getF eld nfo(f eldNa );
+      f nal Earlyb rdF eldType f eldType = f .getF eldType();
 
-      InvertedDocConsumerBuilder consumerBuilder = new InvertedDocConsumerBuilder(
-          indexSegmentWriter.segmentData, fieldName, fieldType);
-      EarlybirdRealtimeIndexExtensionsData indexExtension =
-          indexSegmentWriter.segmentData.getIndexExtensionsData();
-      if (indexExtension != null) {
-        indexExtension.createInvertedDocConsumer(consumerBuilder);
+       nvertedDocConsu rBu lder consu rBu lder = new  nvertedDocConsu rBu lder(
+           ndexSeg ntWr er.seg ntData, f eldNa , f eldType);
+      Earlyb rdRealt   ndexExtens onsData  ndexExtens on =
+           ndexSeg ntWr er.seg ntData.get ndexExtens onsData();
+       f ( ndexExtens on != null) {
+         ndexExtens on.create nvertedDocConsu r(consu rBu lder);
       }
 
-      if (consumerBuilder.isUseDefaultConsumer()) {
-        if (indexSegmentWriter.segmentData.getPerFieldMap().containsKey(fieldName)) {
-          invertedField = (InvertedRealtimeIndex) indexSegmentWriter
-              .segmentData.getPerFieldMap().get(fieldName);
+       f (consu rBu lder. sUseDefaultConsu r()) {
+         f ( ndexSeg ntWr er.seg ntData.getPerF eldMap().conta nsKey(f eldNa )) {
+           nvertedF eld = ( nvertedRealt   ndex)  ndexSeg ntWr er
+              .seg ntData.getPerF eldMap().get(f eldNa );
         } else {
-          invertedField = new InvertedRealtimeIndex(
-              fieldType,
-              TermPointerEncoding.DEFAULT_ENCODING,
-              fieldName);
+           nvertedF eld = new  nvertedRealt   ndex(
+              f eldType,
+              TermPo nterEncod ng.DEFAULT_ENCOD NG,
+              f eldNa );
         }
 
-        InvertedRealtimeIndexWriter fieldWriter = new InvertedRealtimeIndexWriter(
-            invertedField, facetField, indexSegmentWriter.facetCountingArrayWriter);
+         nvertedRealt   ndexWr er f eldWr er = new  nvertedRealt   ndexWr er(
+             nvertedF eld, facetF eld,  ndexSeg ntWr er.facetCount ngArrayWr er);
 
-        if (facetField != null) {
-          Map<String, FacetLabelProvider> providerMap =
-              indexSegmentWriter.segmentData.getFacetLabelProviders();
-          if (!providerMap.containsKey(facetField.getFacetName())) {
-            providerMap.put(
-                facetField.getFacetName(),
-                Preconditions.checkNotNull(
-                    FacetUtil.chooseFacetLabelProvider(facetFieldType, invertedField)));
+         f (facetF eld != null) {
+          Map<Str ng, FacetLabelProv der> prov derMap =
+               ndexSeg ntWr er.seg ntData.getFacetLabelProv ders();
+           f (!prov derMap.conta nsKey(facetF eld.getFacetNa ())) {
+            prov derMap.put(
+                facetF eld.getFacetNa (),
+                Precond  ons.c ckNotNull(
+                    FacetUt l.chooseFacetLabelProv der(facetF eldType,  nvertedF eld)));
           }
         }
 
-        indexSegmentWriter.segmentData.addField(fieldName, invertedField);
+         ndexSeg ntWr er.seg ntData.addF eld(f eldNa ,  nvertedF eld);
 
-        if (indexSegmentWriter.appendedFields.contains(fieldName)) {
-          indexSegmentWriter.termHashSync.put(fieldName, fieldWriter);
+         f ( ndexSeg ntWr er.appendedF elds.conta ns(f eldNa )) {
+           ndexSeg ntWr er.termHashSync.put(f eldNa , f eldWr er);
         }
 
-        consumerBuilder.addConsumer(fieldWriter);
+        consu rBu lder.addConsu r(f eldWr er);
       }
 
-      indexWriter = consumerBuilder.build();
+       ndexWr er = consu rBu lder.bu ld();
     }
 
-    @Override
-    public int compareTo(PerField other) {
-      return this.fieldName.compareTo(other.fieldName);
+    @Overr de
+    publ c  nt compareTo(PerF eld ot r) {
+      return t .f eldNa .compareTo(ot r.f eldNa );
     }
 
-    @Override
-    public boolean equals(Object other) {
-      if (!(other instanceof PerField)) {
+    @Overr de
+    publ c boolean equals(Object ot r) {
+       f (!(ot r  nstanceof PerF eld)) {
         return false;
       }
 
-      return this.fieldName.equals(((PerField) other).fieldName);
+      return t .f eldNa .equals(((PerF eld) ot r).f eldNa );
     }
 
-    @Override
-    public int hashCode() {
-      return fieldName.hashCode();
+    @Overr de
+    publ c  nt hashCode() {
+      return f eldNa .hashCode();
     }
 
-    public void finish(int docId) {
-      if (indexWriter != null) {
-        indexWriter.finish();
+    publ c vo d f n sh( nt doc d) {
+       f ( ndexWr er != null) {
+         ndexWr er.f n sh();
       }
 
-      if (!omitNorms) {
-        FieldInvertState state = new FieldInvertState(
-            Version.LATEST.major,
-            fieldName,
-            indexOptions,
-            currentPosition,
+       f (!om Norms) {
+        F eld nvertState state = new F eld nvertState(
+            Vers on.LATEST.major,
+            f eldNa ,
+             ndexOpt ons,
+            currentPos  on,
             currentLength,
             currentOverlap,
             currentOffset,
             0,   // maxTermFrequency
-            0);  // uniqueTermCount
-        ColumnStrideByteIndex normsIndex =
-            indexSegmentWriter.segmentData.createNormIndex(fieldName);
-        if (normsIndex != null) {
-          normsIndex.setValue(docId, (byte) indexSegmentWriter.similarity.computeNorm(state));
+            0);  // un queTermCount
+        ColumnStr deByte ndex norms ndex =
+             ndexSeg ntWr er.seg ntData.createNorm ndex(f eldNa );
+         f (norms ndex != null) {
+          norms ndex.setValue(doc d, (byte)  ndexSeg ntWr er.s m lar y.computeNorm(state));
         }
       }
     }
 
-    /** Inverts one field for one document; first is true
-     *  if this is the first time we are seeing this field
-     *  name in this document. */
-    public void invert(IndexableField field,
-                       int docId,
-                       boolean first,
-                       boolean currentDocIsOffensive) throws IOException {
-      if (indexWriter == null) {
+    /**  nverts one f eld for one docu nt; f rst  s true
+     *   f t   s t  f rst t     are see ng t  f eld
+     *  na   n t  docu nt. */
+    publ c vo d  nvert( ndexableF eld f eld,
+                        nt doc d,
+                       boolean f rst,
+                       boolean currentDoc sOffens ve) throws  OExcept on {
+       f ( ndexWr er == null) {
         return;
       }
-      if (first) {
-        currentPosition = -1;
+       f (f rst) {
+        currentPos  on = -1;
         currentOffset = 0;
-        lastPosition = 0;
+        lastPos  on = 0;
         lastStartOffset = 0;
 
-        if (invertedField != null) {
-          invertedField.incrementNumDocs();
+         f ( nvertedF eld != null) {
+           nvertedF eld. ncre ntNumDocs();
         }
       }
 
-      IndexableFieldType fieldType = field.fieldType();
-      final boolean analyzed = fieldType.tokenized() && indexSegmentWriter.analyzer != null;
-      boolean succeededInProcessingField = false;
+       ndexableF eldType f eldType = f eld.f eldType();
+      f nal boolean analyzed = f eldType.token zed() &&  ndexSeg ntWr er.analyzer != null;
+      boolean succeeded nProcess ngF eld = false;
       try {
-        tokenStream = field.tokenStream(indexSegmentWriter.analyzer, tokenStream);
+        tokenStream = f eld.tokenStream( ndexSeg ntWr er.analyzer, tokenStream);
         tokenStream.reset();
 
-        PositionIncrementAttribute posIncrAttribute =
-            tokenStream.addAttribute(PositionIncrementAttribute.class);
-        OffsetAttribute offsetAttribute = tokenStream.addAttribute(OffsetAttribute.class);
-        TermToBytesRefAttribute termAtt = tokenStream.addAttribute(TermToBytesRefAttribute.class);
+        Pos  on ncre ntAttr bute pos ncrAttr bute =
+            tokenStream.addAttr bute(Pos  on ncre ntAttr bute.class);
+        OffsetAttr bute offsetAttr bute = tokenStream.addAttr bute(OffsetAttr bute.class);
+        TermToBytesRefAttr bute termAtt = tokenStream.addAttr bute(TermToBytesRefAttr bute.class);
 
         Set<BytesRef> seenTerms = new HashSet<>();
-        indexWriter.start(tokenStream, currentDocIsOffensive);
-        while (tokenStream.incrementToken()) {
-          // If we hit an exception in stream.next below
-          // (which is fairly common, e.g. if analyzer
-          // chokes on a given document), then it's
-          // non-aborting and (above) this one document
-          // will be marked as deleted, but still
-          // consume a docID
+         ndexWr er.start(tokenStream, currentDoc sOffens ve);
+        wh le (tokenStream. ncre ntToken()) {
+          //  f   h  an except on  n stream.next below
+          // (wh ch  s fa rly common, e.g.  f analyzer
+          // chokes on a g ven docu nt), t n  's
+          // non-abort ng and (above) t  one docu nt
+          // w ll be marked as deleted, but st ll
+          // consu  a doc D
 
-          int posIncr = posIncrAttribute.getPositionIncrement();
-          currentPosition += posIncr;
-          if (currentPosition < lastPosition) {
-            if (posIncr == 0) {
-              throw new IllegalArgumentException(
-                  "first position increment must be > 0 (got 0) for field '" + field.name() + "'");
-            } else if (posIncr < 0) {
-              throw new IllegalArgumentException(
-                  "position increments (and gaps) must be >= 0 (got " + posIncr + ") for field '"
-                  + field.name() + "'");
+           nt pos ncr = pos ncrAttr bute.getPos  on ncre nt();
+          currentPos  on += pos ncr;
+           f (currentPos  on < lastPos  on) {
+             f (pos ncr == 0) {
+              throw new  llegalArgu ntExcept on(
+                  "f rst pos  on  ncre nt must be > 0 (got 0) for f eld '" + f eld.na () + "'");
+            } else  f (pos ncr < 0) {
+              throw new  llegalArgu ntExcept on(
+                  "pos  on  ncre nts (and gaps) must be >= 0 (got " + pos ncr + ") for f eld '"
+                  + f eld.na () + "'");
             } else {
-              throw new IllegalArgumentException(
-                  "position overflowed Integer.MAX_VALUE (got posIncr=" + posIncr + " lastPosition="
-                  + lastPosition + " position=" + currentPosition + ") for field '" + field.name()
+              throw new  llegalArgu ntExcept on(
+                  "pos  on overflo d  nteger.MAX_VALUE (got pos ncr=" + pos ncr + " lastPos  on="
+                  + lastPos  on + " pos  on=" + currentPos  on + ") for f eld '" + f eld.na ()
                   + "'");
             }
-          } else if (currentPosition > MAX_POSITION) {
-            throw new IllegalArgumentException(
-                "position " + currentPosition + " is too large for field '" + field.name()
-                + "': max allowed position is " + MAX_POSITION);
+          } else  f (currentPos  on > MAX_POS T ON) {
+            throw new  llegalArgu ntExcept on(
+                "pos  on " + currentPos  on + "  s too large for f eld '" + f eld.na ()
+                + "': max allo d pos  on  s " + MAX_POS T ON);
           }
-          lastPosition = currentPosition;
-          if (posIncr == 0) {
+          lastPos  on = currentPos  on;
+           f (pos ncr == 0) {
             currentOverlap++;
           }
 
-          int startOffset = currentOffset + offsetAttribute.startOffset();
-          int endOffset = currentOffset + offsetAttribute.endOffset();
-          if (startOffset < lastStartOffset || endOffset < startOffset) {
-            throw new IllegalArgumentException(
-                "startOffset must be non-negative, and endOffset must be >= startOffset, and "
+           nt startOffset = currentOffset + offsetAttr bute.startOffset();
+           nt endOffset = currentOffset + offsetAttr bute.endOffset();
+           f (startOffset < lastStartOffset || endOffset < startOffset) {
+            throw new  llegalArgu ntExcept on(
+                "startOffset must be non-negat ve, and endOffset must be >= startOffset, and "
                 + "offsets must not go backwards startOffset=" + startOffset + ",endOffset="
-                + endOffset + ",lastStartOffset=" + lastStartOffset + " for field '" + field.name()
+                + endOffset + ",lastStartOffset=" + lastStartOffset + " for f eld '" + f eld.na ()
                 + "'");
           }
           lastStartOffset = startOffset;
-          indexWriter.add(docId, currentPosition);
+           ndexWr er.add(doc d, currentPos  on);
           currentLength++;
 
           BytesRef term = termAtt.getBytesRef();
-          if (seenTerms.add(term) && (invertedField != null)) {
-            invertedField.incrementSumTermDocFreq();
+           f (seenTerms.add(term) && ( nvertedF eld != null)) {
+             nvertedF eld. ncre ntSumTermDocFreq();
           }
         }
 
         tokenStream.end();
 
-        currentPosition += posIncrAttribute.getPositionIncrement();
-        currentOffset += offsetAttribute.endOffset();
-        succeededInProcessingField = true;
-      } catch (BytesRefHash.MaxBytesLengthExceededException e) {
-        byte[] prefix = new byte[30];
-        BytesRef bigTerm = tokenStream.getAttribute(TermToBytesRefAttribute.class).getBytesRef();
-        System.arraycopy(bigTerm.bytes, bigTerm.offset, prefix, 0, 30);
-        String msg = "Document contains at least one immense term in field=\"" + fieldName
-                + "\" (whose UTF8 encoding is longer than the max length), all of "
-                + "which were skipped." + "Please correct the analyzer to not produce such terms. "
-                + "The prefix of the first immense term is: '" + Arrays.toString(prefix)
-                + "...', original message: " + e.getMessage();
+        currentPos  on += pos ncrAttr bute.getPos  on ncre nt();
+        currentOffset += offsetAttr bute.endOffset();
+        succeeded nProcess ngF eld = true;
+      } catch (BytesRefHash.MaxBytesLengthExceededExcept on e) {
+        byte[] pref x = new byte[30];
+        BytesRef b gTerm = tokenStream.getAttr bute(TermToBytesRefAttr bute.class).getBytesRef();
+        System.arraycopy(b gTerm.bytes, b gTerm.offset, pref x, 0, 30);
+        Str ng msg = "Docu nt conta ns at least one  m nse term  n f eld=\"" + f eldNa 
+                + "\" (whose UTF8 encod ng  s longer than t  max length), all of "
+                + "wh ch  re sk pped." + "Please correct t  analyzer to not produce such terms. "
+                + "T  pref x of t  f rst  m nse term  s: '" + Arrays.toStr ng(pref x)
+                + "...', or g nal  ssage: " + e.get ssage();
         LOG.warn(msg);
-        // Document will be deleted above:
-        throw new IllegalArgumentException(msg, e);
-      } finally {
-        if (!succeededInProcessingField) {
-          LOG.warn("An exception was thrown while processing field " + fieldName);
+        // Docu nt w ll be deleted above:
+        throw new  llegalArgu ntExcept on(msg, e);
+      } f nally {
+         f (!succeeded nProcess ngF eld) {
+          LOG.warn("An except on was thrown wh le process ng f eld " + f eldNa );
         }
-        if (tokenStream != null) {
+         f (tokenStream != null) {
           try {
             tokenStream.close();
-          } catch (IOException e) {
-            if (succeededInProcessingField) {
-              // only throw this exception if no other exception already occurred above
+          } catch ( OExcept on e) {
+             f (succeeded nProcess ngF eld) {
+              // only throw t  except on  f no ot r except on already occurred above
               throw e;
             } else {
-              LOG.warn("Exception while trying to close TokenStream.", e);
+              LOG.warn("Except on wh le try ng to close TokenStream.", e);
             }
           }
         }
       }
 
-      if (analyzed) {
-        currentPosition += indexSegmentWriter.analyzer.getPositionIncrementGap(fieldName);
-        currentOffset += indexSegmentWriter.analyzer.getOffsetGap(fieldName);
+       f (analyzed) {
+        currentPos  on +=  ndexSeg ntWr er.analyzer.getPos  on ncre ntGap(f eldNa );
+        currentOffset +=  ndexSeg ntWr er.analyzer.getOffsetGap(f eldNa );
       }
     }
   }
 
-  @Override
-  public int numDocs() {
-    return segmentData.getDocIDToTweetIDMapper().getNumDocs();
+  @Overr de
+  publ c  nt numDocs() {
+    return seg ntData.getDoc DToT et DMapper().getNumDocs();
   }
 
-  public interface InvertedDocConsumer {
+  publ c  nterface  nvertedDocConsu r {
     /**
-     * Called for each document before inversion starts.
+     * Called for each docu nt before  nvers on starts.
      */
-    void start(AttributeSource attributeSource, boolean currentDocIsOffensive);
+    vo d start(Attr buteS ce attr buteS ce, boolean currentDoc sOffens ve);
 
     /**
-     * Called for each token in the current document.
-     * @param docID Document id.
-     * @param position Position in the token stream for this document.
+     * Called for each token  n t  current docu nt.
+     * @param doc D Docu nt  d.
+     * @param pos  on Pos  on  n t  token stream for t  docu nt.
      */
-    void add(int docID, int position) throws IOException;
+    vo d add( nt doc D,  nt pos  on) throws  OExcept on;
 
     /**
-     * Called after the last token was added and before the next document is processed.
+     * Called after t  last token was added and before t  next docu nt  s processed.
      */
-    void finish();
+    vo d f n sh();
   }
 
-  public interface StoredFieldsConsumer {
+  publ c  nterface StoredF eldsConsu r {
     /**
-     * Adds a new stored fields.
+     * Adds a new stored f elds.
      */
-    void addField(int docID, IndexableField field) throws IOException;
+    vo d addF eld( nt doc D,  ndexableF eld f eld) throws  OExcept on;
   }
 
   /**
-   * This Builder allows registering listeners for a particular field of an indexable document.
-   * For each field name any number of listeners can be added.
+   * T  Bu lder allows reg ster ng l steners for a part cular f eld of an  ndexable docu nt.
+   * For each f eld na  any number of l steners can be added.
    *
-   * Using {@link #useDefaultConsumer} it can be specified whether this index writer will use
-   * the default consumer in addition to any additionally registered consumers.
+   * Us ng {@l nk #useDefaultConsu r}   can be spec f ed w t r t   ndex wr er w ll use
+   * t  default consu r  n add  on to any add  onally reg stered consu rs.
    */
-  public abstract static class ConsumerBuilder<T> {
-    private boolean useDefaultConsumer;
-    private final List<T> consumers;
-    private final EarlybirdFieldType fieldType;
-    private final String fieldName;
+  publ c abstract stat c class Consu rBu lder<T> {
+    pr vate boolean useDefaultConsu r;
+    pr vate f nal L st<T> consu rs;
+    pr vate f nal Earlyb rdF eldType f eldType;
+    pr vate f nal Str ng f eldNa ;
 
-    private ConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      useDefaultConsumer = true;
-      consumers = Lists.newArrayList();
-      this.fieldName = fieldName;
-      this.fieldType = fieldType;
+    pr vate Consu rBu lder(Str ng f eldNa , Earlyb rdF eldType f eldType) {
+      useDefaultConsu r = true;
+      consu rs = L sts.newArrayL st();
+      t .f eldNa  = f eldNa ;
+      t .f eldType = f eldType;
     }
 
-    public String getFieldName() {
-      return fieldName;
+    publ c Str ng getF eldNa () {
+      return f eldNa ;
     }
 
-    public EarlybirdFieldType getFieldType() {
-      return fieldType;
-    }
-
-    /**
-     * If set to true, {@link EarlybirdRealtimeIndexSegmentWriter} will use the default consumer
-     * (e.g. build a default inverted index for an inverted field) in addition to any consumers
-     * added via {@link #addConsumer(Object)}.
-     */
-    public void setUseDefaultConsumer(boolean useDefaultConsumer) {
-      this.useDefaultConsumer = useDefaultConsumer;
-    }
-
-    public boolean isUseDefaultConsumer() {
-      return useDefaultConsumer;
+    publ c Earlyb rdF eldType getF eldType() {
+      return f eldType;
     }
 
     /**
-     * Allows registering any number of additional consumers for the field associated with this
-     * builder.
+     *  f set to true, {@l nk Earlyb rdRealt   ndexSeg ntWr er} w ll use t  default consu r
+     * (e.g. bu ld a default  nverted  ndex for an  nverted f eld)  n add  on to any consu rs
+     * added v a {@l nk #addConsu r(Object)}.
      */
-    public void addConsumer(T consumer) {
-      consumers.add(consumer);
+    publ c vo d setUseDefaultConsu r(boolean useDefaultConsu r) {
+      t .useDefaultConsu r = useDefaultConsu r;
     }
 
-    T build() {
-      if (consumers.isEmpty()) {
+    publ c boolean  sUseDefaultConsu r() {
+      return useDefaultConsu r;
+    }
+
+    /**
+     * Allows reg ster ng any number of add  onal consu rs for t  f eld assoc ated w h t 
+     * bu lder.
+     */
+    publ c vo d addConsu r(T consu r) {
+      consu rs.add(consu r);
+    }
+
+    T bu ld() {
+       f (consu rs. sEmpty()) {
         return null;
-      } else if (consumers.size() == 1) {
-        return consumers.get(0);
+      } else  f (consu rs.s ze() == 1) {
+        return consu rs.get(0);
       } else {
-        return build(consumers);
+        return bu ld(consu rs);
       }
     }
 
-    abstract T build(List<T> consumerList);
+    abstract T bu ld(L st<T> consu rL st);
   }
 
-  public static final class StoredFieldsConsumerBuilder
-          extends ConsumerBuilder<StoredFieldsConsumer> {
-    private StoredFieldsConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      super(fieldName, fieldType);
+  publ c stat c f nal class StoredF eldsConsu rBu lder
+          extends Consu rBu lder<StoredF eldsConsu r> {
+    pr vate StoredF eldsConsu rBu lder(Str ng f eldNa , Earlyb rdF eldType f eldType) {
+      super(f eldNa , f eldType);
     }
 
-    @Override
-    StoredFieldsConsumer build(final List<StoredFieldsConsumer> consumers) {
-      return (docID, field) -> {
-        for (StoredFieldsConsumer consumer : consumers) {
-          consumer.addField(docID, field);
+    @Overr de
+    StoredF eldsConsu r bu ld(f nal L st<StoredF eldsConsu r> consu rs) {
+      return (doc D, f eld) -> {
+        for (StoredF eldsConsu r consu r : consu rs) {
+          consu r.addF eld(doc D, f eld);
         }
       };
     }
   }
 
-  public static final class InvertedDocConsumerBuilder
-      extends ConsumerBuilder<InvertedDocConsumer> {
-    private final EarlybirdIndexSegmentData segmentData;
+  publ c stat c f nal class  nvertedDocConsu rBu lder
+      extends Consu rBu lder< nvertedDocConsu r> {
+    pr vate f nal Earlyb rd ndexSeg ntData seg ntData;
 
-    private InvertedDocConsumerBuilder(
-        EarlybirdIndexSegmentData segmentData, String fieldName, EarlybirdFieldType fieldType) {
-      super(fieldName, fieldType);
-      this.segmentData = segmentData;
+    pr vate  nvertedDocConsu rBu lder(
+        Earlyb rd ndexSeg ntData seg ntData, Str ng f eldNa , Earlyb rdF eldType f eldType) {
+      super(f eldNa , f eldType);
+      t .seg ntData = seg ntData;
     }
 
-    @Override
-    InvertedDocConsumer build(final List<InvertedDocConsumer> consumers) {
-      return new InvertedDocConsumer() {
-        @Override
-        public void start(AttributeSource attributeSource, boolean currentDocIsOffensive) {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.start(attributeSource, currentDocIsOffensive);
+    @Overr de
+     nvertedDocConsu r bu ld(f nal L st< nvertedDocConsu r> consu rs) {
+      return new  nvertedDocConsu r() {
+        @Overr de
+        publ c vo d start(Attr buteS ce attr buteS ce, boolean currentDoc sOffens ve) {
+          for ( nvertedDocConsu r consu r : consu rs) {
+            consu r.start(attr buteS ce, currentDoc sOffens ve);
           }
         }
 
-        @Override
-        public void finish() {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.finish();
+        @Overr de
+        publ c vo d f n sh() {
+          for ( nvertedDocConsu r consu r : consu rs) {
+            consu r.f n sh();
           }
         }
 
-        @Override
-        public void add(int docID, int position) throws IOException {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.add(docID, position);
+        @Overr de
+        publ c vo d add( nt doc D,  nt pos  on) throws  OExcept on {
+          for ( nvertedDocConsu r consu r : consu rs) {
+            consu r.add(doc D, pos  on);
           }
         }
       };
     }
 
-    public EarlybirdIndexSegmentData getSegmentData() {
-      return segmentData;
+    publ c Earlyb rd ndexSeg ntData getSeg ntData() {
+      return seg ntData;
     }
   }
 
   /**
-   * Returns true, if a field should not be indexed.
-   * @deprecated This writer should be able to process all fields in the future.
+   * Returns true,  f a f eld should not be  ndexed.
+   * @deprecated T  wr er should be able to process all f elds  n t  future.
    */
   @Deprecated
-  private static boolean skipField(String fieldName) {
-    // ignore lucene facet fields for realtime index, we are handling it differently for now.
-    return fieldName.startsWith(FacetsConfig.DEFAULT_INDEX_FIELD_NAME);
+  pr vate stat c boolean sk pF eld(Str ng f eldNa ) {
+    //  gnore lucene facet f elds for realt    ndex,   are handl ng   d fferently for now.
+    return f eldNa .startsW h(FacetsConf g.DEFAULT_ NDEX_F ELD_NAME);
   }
 
-  private static Field buildAllDocsField(EarlybirdRealtimeIndexSegmentData segmentData) {
-    String fieldName = EarlybirdFieldConstants.EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName();
-    if (segmentData.getSchema().hasField(fieldName)) {
-      Schema.FieldInfo fi = Preconditions.checkNotNull(
-          segmentData.getSchema().getFieldInfo(fieldName));
-      return new Field(fi.getName(), AllDocsIterator.ALL_DOCS_TERM, fi.getFieldType());
+  pr vate stat c F eld bu ldAllDocsF eld(Earlyb rdRealt   ndexSeg ntData seg ntData) {
+    Str ng f eldNa  = Earlyb rdF eldConstants.Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa ();
+     f (seg ntData.getSc ma().hasF eld(f eldNa )) {
+      Sc ma.F eld nfo f  = Precond  ons.c ckNotNull(
+          seg ntData.getSc ma().getF eld nfo(f eldNa ));
+      return new F eld(f .getNa (), AllDocs erator.ALL_DOCS_TERM, f .getF eldType());
     }
 
     return null;
   }
 
   /**
-   * Every document must have this field and term, so that we can safely iterate through documents
-   * using {@link AllDocsIterator}. This is to prevent the problem of adding a tweet to the doc ID
-   * mapper, and returning it for a match-all query when the rest of the document hasn't been
-   * published. This could lead to queries returning incorrect results for queries that are only
-   * negations.
+   * Every docu nt must have t  f eld and term, so that   can safely  erate through docu nts
+   * us ng {@l nk AllDocs erator}. T   s to prevent t  problem of add ng a t et to t  doc  D
+   * mapper, and return ng   for a match-all query w n t  rest of t  docu nt hasn't been
+   * publ s d. T  could lead to quer es return ng  ncorrect results for quer es that are only
+   * negat ons.
    * */
-  private void addAllDocsField(Document doc) {
-    if (allDocsField != null) {
-      doc.add(allDocsField);
+  pr vate vo d addAllDocsF eld(Docu nt doc) {
+     f (allDocsF eld != null) {
+      doc.add(allDocsF eld);
     }
   }
 }

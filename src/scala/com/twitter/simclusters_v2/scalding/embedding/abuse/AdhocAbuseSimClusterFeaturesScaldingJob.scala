@@ -1,40 +1,40 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.dataset.DAL.DALSourceBuilderExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.SearchContextFeature
-import com.twitter.search.tweet_ranking.scalding.datasets.TweetEngagementRawTrainingDataDailyJavaDataset
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocAbuseSimclusterFeaturesScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.CassowaryJob
-import java.util.TimeZone
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.dataset.DAL.DALS ceBu lderExtens on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossDC
+ mport com.tw ter.search.common.features.ExternalT etFeature
+ mport com.tw ter.search.common.features.SearchContextFeature
+ mport com.tw ter.search.t et_rank ng.scald ng.datasets.T etEngage ntRawTra n ngDataDa lyJavaDataset
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocAbuseS mclusterFeaturesScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.NumBlocksP95
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.getFlockBlocksSparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.getUser nterested nSparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.User d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.CassowaryJob
+ mport java.ut l.T  Zone
 
-object AdhocAbuseSimClusterFeatureKeys {
+object AdhocAbuseS mClusterFeatureKeys {
   val AbuseAuthorSearchKey = "abuseAuthorSearch"
   val AbuseUserSearchKey = "abuseUserSearch"
-  val ImpressionUserSearchKey = "impressionUserSearch"
-  val ImpressionAuthorSearchKey = "impressionAuthorSearch"
+  val  mpress onUserSearchKey = " mpress onUserSearch"
+  val  mpress onAuthorSearchKey = " mpress onAuthorSearch"
   val FlockBlocksAuthorKey = "blocksAuthorFlockDataset"
   val FlockBlocksUserKey = "blocksUserFlockDataset"
   val FavScoresAuthorKey = "favsAuthorFromFavGraph"
@@ -42,175 +42,175 @@ object AdhocAbuseSimClusterFeatureKeys {
 }
 
 /**
- * Adhoc job that is still in development. The job builds features that are meant to be useful for
+ * Adhoc job that  s st ll  n develop nt. T  job bu lds features that are  ant to be useful for
  * search.
  *
- * Features are built from existing SimCluster representations and the interaction graphs.
+ * Features are bu lt from ex st ng S mCluster representat ons and t   nteract on graphs.
  *
  * Example command:
- * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-adhoc \
- * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob \
- * --submitter  hadoopnest1.atla.twitter.com --user cassowary \
- * --hadoop-properties "mapreduce.job.user.classpath.first=true" -- \
- * --hdfs --date 2020/11/24 2020/12/14 --partitionName second_run --dalEnvironment Prod
+ * scald ng remote run \
+ * --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/abuse:abuse-adhoc \
+ * --ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.AdhocAbuseS mClusterFeaturesScald ngJob \
+ * --subm ter  hadoopnest1.atla.tw ter.com --user cassowary \
+ * --hadoop-propert es "mapreduce.job.user.classpath.f rst=true" -- \
+ * --hdfs --date 2020/11/24 2020/12/14 --part  onNa  second_run --dalEnv ron nt Prod
  */
-object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
-  override def jobName: String = "AdhocAbuseScaldingJob"
+object AdhocAbuseS mClusterFeaturesScald ngJob extends AdhocExecut onApp w h CassowaryJob {
+  overr de def jobNa : Str ng = "AdhocAbuseScald ngJob"
 
-  import AdhocAbuseSimClusterFeatureKeys._
+   mport AdhocAbuseS mClusterFeatureKeys._
 
-  val tweetAuthorFeature = new Feature.Discrete(ExternalTweetFeature.TWEET_AUTHOR_ID.getName)
-  val searcherIdFeature = new Feature.Discrete(SearchContextFeature.SEARCHER_ID.getName)
-  val isReportedFeature = new Feature.Binary(ExternalTweetFeature.IS_REPORTED.getName)
-  val HalfLifeInDaysForFavScore = 100
+  val t etAuthorFeature = new Feature.D screte(ExternalT etFeature.TWEET_AUTHOR_ D.getNa )
+  val searc r dFeature = new Feature.D screte(SearchContextFeature.SEARCHER_ D.getNa )
+  val  sReportedFeature = new Feature.B nary(ExternalT etFeature. S_REPORTED.getNa )
+  val HalfL fe nDaysForFavScore = 100
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_simcluster_features"
+  pr vate val outputPathThr ft: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = false,
+    modelVers on = ModelVers on.Model20m145kUpdated,
+    pathSuff x = "abuse_s mcluster_features"
   )
 
   def searchDataRecords(
   )(
-    implicit dateRange: DateRange,
+     mpl c  dateRange: DateRange,
     mode: Mode
   ) = {
     DAL
-      .read(TweetEngagementRawTrainingDataDailyJavaDataset)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toDataSetPipe
+      .read(T etEngage ntRawTra n ngDataDa lyJavaDataset)
+      .w hRemoteReadPol cy(AllowCrossDC)
+      .toDataSetP pe
       .records
   }
 
-  def abuseInteractionSearchGraph(
+  def abuse nteract onSearchGraph(
   )(
-    implicit dateRange: DateRange,
+     mpl c  dateRange: DateRange,
     mode: Mode
-  ): SparseMatrix[UserId, UserId, Double] = {
-    val abuseMatrixEntries = searchDataRecords()
+  ): SparseMatr x[User d, User d, Double] = {
+    val abuseMatr xEntr es = searchDataRecords()
       .flatMap { dataRecord =>
-        val sDataRecord = SRichDataRecord(dataRecord)
-        val authorIdOption = sDataRecord.getFeatureValueOpt(tweetAuthorFeature)
-        val userIdOption = sDataRecord.getFeatureValueOpt(searcherIdFeature)
-        val isReportedOption = sDataRecord.getFeatureValueOpt(isReportedFeature)
+        val sDataRecord = SR chDataRecord(dataRecord)
+        val author dOpt on = sDataRecord.getFeatureValueOpt(t etAuthorFeature)
+        val user dOpt on = sDataRecord.getFeatureValueOpt(searc r dFeature)
+        val  sReportedOpt on = sDataRecord.getFeatureValueOpt( sReportedFeature)
 
         for {
-          isReported <- isReportedOption if isReported
-          authorId <- authorIdOption if authorId != 0
-          userId <- userIdOption if userId != 0
-        } yield {
-          (userId: UserId, authorId: UserId, 1.0)
+           sReported <-  sReportedOpt on  f  sReported
+          author d <- author dOpt on  f author d != 0
+          user d <- user dOpt on  f user d != 0
+        } y eld {
+          (user d: User d, author d: User d, 1.0)
         }
       }
-    SparseMatrix.apply[UserId, UserId, Double](abuseMatrixEntries)
+    SparseMatr x.apply[User d, User d, Double](abuseMatr xEntr es)
   }
 
-  def impressionInteractionSearchGraph(
+  def  mpress on nteract onSearchGraph(
   )(
-    implicit dateRange: DateRange,
+     mpl c  dateRange: DateRange,
     mode: Mode
-  ): SparseMatrix[UserId, UserId, Double] = {
-    val impressionMatrixEntries = searchDataRecords
+  ): SparseMatr x[User d, User d, Double] = {
+    val  mpress onMatr xEntr es = searchDataRecords
       .flatMap { dataRecord =>
-        val sDataRecord = SRichDataRecord(dataRecord)
-        val authorIdOption = sDataRecord.getFeatureValueOpt(tweetAuthorFeature)
-        val userIdOption = sDataRecord.getFeatureValueOpt(searcherIdFeature)
+        val sDataRecord = SR chDataRecord(dataRecord)
+        val author dOpt on = sDataRecord.getFeatureValueOpt(t etAuthorFeature)
+        val user dOpt on = sDataRecord.getFeatureValueOpt(searc r dFeature)
 
         for {
-          authorId <- authorIdOption if authorId != 0
-          userId <- userIdOption if userId != 0
-        } yield {
-          (userId: UserId, authorId: UserId, 1.0)
+          author d <- author dOpt on  f author d != 0
+          user d <- user dOpt on  f user d != 0
+        } y eld {
+          (user d: User d, author d: User d, 1.0)
         }
       }
-    SparseMatrix.apply[UserId, UserId, Double](impressionMatrixEntries)
+    SparseMatr x.apply[User d, User d, Double]( mpress onMatr xEntr es)
   }
 
-  case class SingleSideScores(
-    unhealthyConsumerClusterScores: TypedPipe[(UserId, SimClustersEmbedding)],
-    unhealthyAuthorClusterScores: TypedPipe[(UserId, SimClustersEmbedding)],
-    healthyConsumerClusterScores: TypedPipe[(UserId, SimClustersEmbedding)],
-    healthyAuthorClusterScores: TypedPipe[(UserId, SimClustersEmbedding)])
+  case class S ngleS deScores(
+    un althyConsu rClusterScores: TypedP pe[(User d, S mClustersEmbedd ng)],
+    un althyAuthorClusterScores: TypedP pe[(User d, S mClustersEmbedd ng)],
+     althyConsu rClusterScores: TypedP pe[(User d, S mClustersEmbedd ng)],
+     althyAuthorClusterScores: TypedP pe[(User d, S mClustersEmbedd ng)])
 
-  def buildSearchAbuseScores(
-    normalizedSimClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    unhealthyGraph: SparseMatrix[UserId, UserId, Double],
-    healthyGraph: SparseMatrix[UserId, UserId, Double]
-  ): SingleSideScores = {
-    SingleSideScores(
-      unhealthyConsumerClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, unhealthyGraph),
-      unhealthyAuthorClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, unhealthyGraph.transpose),
-      healthyConsumerClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, healthyGraph),
-      healthyAuthorClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, healthyGraph.transpose)
+  def bu ldSearchAbuseScores(
+    normal zedS mClusterMatr x: SparseMatr x[User d, Cluster d, Double],
+    un althyGraph: SparseMatr x[User d, User d, Double],
+     althyGraph: SparseMatr x[User d, User d, Double]
+  ): S ngleS deScores = {
+    S ngleS deScores(
+      un althyConsu rClusterScores = S ngleS de nteract onTransformat on
+        .clusterScoresFromGraphs(normal zedS mClusterMatr x, un althyGraph),
+      un althyAuthorClusterScores = S ngleS de nteract onTransformat on
+        .clusterScoresFromGraphs(normal zedS mClusterMatr x, un althyGraph.transpose),
+       althyConsu rClusterScores = S ngleS de nteract onTransformat on
+        .clusterScoresFromGraphs(normal zedS mClusterMatr x,  althyGraph),
+       althyAuthorClusterScores = S ngleS de nteract onTransformat on
+        .clusterScoresFromGraphs(normal zedS mClusterMatr x,  althyGraph.transpose)
     )
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.getMode.flatMap { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    Execut on.getMode.flatMap {  mpl c  mode =>
+      val normal zedS mClusterMatr x = getUser nterested nSparseMatr x.rowL2Normal ze
 
-      val abuseSearchGraph = abuseInteractionSearchGraph()
-      val impressionSearchGraph = impressionInteractionSearchGraph()
+      val abuseSearchGraph = abuse nteract onSearchGraph()
+      val  mpress onSearchGraph =  mpress on nteract onSearchGraph()
 
-      val searchAbuseScores = buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
-        unhealthyGraph = abuseSearchGraph,
-        healthyGraph = impressionSearchGraph)
+      val searchAbuseScores = bu ldSearchAbuseScores(
+        normal zedS mClusterMatr x,
+        un althyGraph = abuseSearchGraph,
+         althyGraph =  mpress onSearchGraph)
 
-      // Step 2a: Read FlockBlocks for unhealthy interactions and user-user-fav for healthy interactions
+      // Step 2a: Read FlockBlocks for un althy  nteract ons and user-user-fav for  althy  nteract ons
       val flockBlocksSparseGraph =
-        getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+        getFlockBlocksSparseMatr x(NumBlocksP95, dateRange.prepend(Years(1)))
 
-      val favSparseGraph = SparseMatrix.apply[UserId, UserId, Double](
-        ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
+      val favSparseGraph = SparseMatr x.apply[User d, User d, Double](
+        ExternalDataS ces.getFavEdges(HalfL fe nDaysForFavScore))
 
-      val blocksAbuseScores = buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
-        unhealthyGraph = flockBlocksSparseGraph,
-        healthyGraph = favSparseGraph
+      val blocksAbuseScores = bu ldSearchAbuseScores(
+        normal zedS mClusterMatr x,
+        un althyGraph = flockBlocksSparseGraph,
+         althyGraph = favSparseGraph
       )
 
-      // Step 3. Combine all scores from different sources for users
-      val pairedScores = SingleSideInteractionTransformation.pairScores(
+      // Step 3. Comb ne all scores from d fferent s ces for users
+      val pa redScores = S ngleS de nteract onTransformat on.pa rScores(
         Map(
-          // User cluster scores built from the search abuse reports graph
-          AbuseUserSearchKey -> searchAbuseScores.unhealthyConsumerClusterScores,
-          // Author cluster scores built from the search abuse reports graph
-          AbuseAuthorSearchKey -> searchAbuseScores.unhealthyAuthorClusterScores,
-          // User cluster scores built from the search impression graph
-          ImpressionUserSearchKey -> searchAbuseScores.healthyConsumerClusterScores,
-          // Author cluster scores built from the search impression graph
-          ImpressionAuthorSearchKey -> searchAbuseScores.healthyAuthorClusterScores,
-          // User cluster scores built from flock blocks graph
-          FlockBlocksUserKey -> blocksAbuseScores.unhealthyConsumerClusterScores,
-          // Author cluster scores built from the flock blocks graph
-          FlockBlocksAuthorKey -> blocksAbuseScores.unhealthyAuthorClusterScores,
-          // User cluster scores built from the user-user fav graph
-          FavScoresUserKey -> blocksAbuseScores.healthyConsumerClusterScores,
-          // Author cluster scores built from the user-user fav graph
-          FavScoresAuthorKey -> blocksAbuseScores.healthyAuthorClusterScores
+          // User cluster scores bu lt from t  search abuse reports graph
+          AbuseUserSearchKey -> searchAbuseScores.un althyConsu rClusterScores,
+          // Author cluster scores bu lt from t  search abuse reports graph
+          AbuseAuthorSearchKey -> searchAbuseScores.un althyAuthorClusterScores,
+          // User cluster scores bu lt from t  search  mpress on graph
+           mpress onUserSearchKey -> searchAbuseScores. althyConsu rClusterScores,
+          // Author cluster scores bu lt from t  search  mpress on graph
+           mpress onAuthorSearchKey -> searchAbuseScores. althyAuthorClusterScores,
+          // User cluster scores bu lt from flock blocks graph
+          FlockBlocksUserKey -> blocksAbuseScores.un althyConsu rClusterScores,
+          // Author cluster scores bu lt from t  flock blocks graph
+          FlockBlocksAuthorKey -> blocksAbuseScores.un althyAuthorClusterScores,
+          // User cluster scores bu lt from t  user-user fav graph
+          FavScoresUserKey -> blocksAbuseScores. althyConsu rClusterScores,
+          // Author cluster scores bu lt from t  user-user fav graph
+          FavScoresAuthorKey -> blocksAbuseScores. althyAuthorClusterScores
         )
       )
 
-      pairedScores.writeDALSnapshotExecution(
-        AdhocAbuseSimclusterFeaturesScalaDataset,
-        D.Daily,
-        D.Suffix(outputPathThrift),
+      pa redScores.wr eDALSnapshotExecut on(
+        AdhocAbuseS mclusterFeaturesScalaDataset,
+        D.Da ly,
+        D.Suff x(outputPathThr ft),
         D.Parquet,
         dateRange.`end`,
-        partitions = Set(D.Partition("partition", args("partitionName"), D.PartitionType.String))
+        part  ons = Set(D.Part  on("part  on", args("part  onNa "), D.Part  onType.Str ng))
       )
     }
   }

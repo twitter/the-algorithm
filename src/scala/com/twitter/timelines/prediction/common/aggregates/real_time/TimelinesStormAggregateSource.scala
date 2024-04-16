@@ -1,184 +1,184 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.summingbird._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird_internal.sources.AppId
-import com.twitter.summingbird_internal.sources.storm.remote.ClientEventSourceScrooge2
-import com.twitter.timelines.data_processing.ad_hoc.suggests.common.AllScribeProcessor
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.RealTimeAggregatesJobConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.StormAggregateSource
-import com.twitter.timelines.prediction.adapters.client_log_event.ClientLogEventAdapter
-import com.twitter.timelines.prediction.adapters.client_log_event.ProfileClientLogEventAdapter
-import com.twitter.timelines.prediction.adapters.client_log_event.SearchClientLogEventAdapter
-import com.twitter.timelines.prediction.adapters.client_log_event.UuaEventAdapter
-import com.twitter.unified_user_actions.client.config.KafkaConfigs
-import com.twitter.unified_user_actions.client.summingbird.UnifiedUserActionsSourceScrooge
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import scala.collection.JavaConverters._
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.summ ngb rd._
+ mport com.tw ter.summ ngb rd.storm.Storm
+ mport com.tw ter.summ ngb rd_ nternal.s ces.App d
+ mport com.tw ter.summ ngb rd_ nternal.s ces.storm.remote.Cl entEventS ceScrooge2
+ mport com.tw ter.t  l nes.data_process ng.ad_hoc.suggests.common.AllScr beProcessor
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron.RealT  AggregatesJobConf g
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron.StormAggregateS ce
+ mport com.tw ter.t  l nes.pred ct on.adapters.cl ent_log_event.Cl entLogEventAdapter
+ mport com.tw ter.t  l nes.pred ct on.adapters.cl ent_log_event.Prof leCl entLogEventAdapter
+ mport com.tw ter.t  l nes.pred ct on.adapters.cl ent_log_event.SearchCl entLogEventAdapter
+ mport com.tw ter.t  l nes.pred ct on.adapters.cl ent_log_event.UuaEventAdapter
+ mport com.tw ter.un f ed_user_act ons.cl ent.conf g.KafkaConf gs
+ mport com.tw ter.un f ed_user_act ons.cl ent.summ ngb rd.Un f edUserAct onsS ceScrooge
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport scala.collect on.JavaConverters._
 
 /**
- * Storm Producer for client events generated on Home, Profile, and Search
+ * Storm Producer for cl ent events generated on Ho , Prof le, and Search
  */
-class TimelinesStormAggregateSource extends StormAggregateSource {
+class T  l nesStormAggregateS ce extends StormAggregateS ce {
 
-  override val name = "timelines_rta"
-  override val timestampFeature = SharedFeatures.TIMESTAMP
+  overr de val na  = "t  l nes_rta"
+  overr de val t  stampFeature = SharedFeatures.T MESTAMP
 
-  private lazy val TimelinesClientEventSourceName = "TL_EVENTS_SOURCE"
-  private lazy val ProfileClientEventSourceName = "PROFILE_EVENTS_SOURCE"
-  private lazy val SearchClientEventSourceName = "SEARCH_EVENTS_SOURCE"
-  private lazy val UuaEventSourceName = "UUA_EVENTS_SOURCE"
-  private lazy val CombinedProducerName = "COMBINED_PRODUCER"
-  private lazy val FeatureStoreProducerName = "FEATURE_STORE_PRODUCER"
+  pr vate lazy val T  l nesCl entEventS ceNa  = "TL_EVENTS_SOURCE"
+  pr vate lazy val Prof leCl entEventS ceNa  = "PROF LE_EVENTS_SOURCE"
+  pr vate lazy val SearchCl entEventS ceNa  = "SEARCH_EVENTS_SOURCE"
+  pr vate lazy val UuaEventS ceNa  = "UUA_EVENTS_SOURCE"
+  pr vate lazy val Comb nedProducerNa  = "COMB NED_PRODUCER"
+  pr vate lazy val FeatureStoreProducerNa  = "FEATURE_STORE_PRODUCER"
 
-  private def isNewUserEvent(event: LogEvent): Boolean = {
-    event.logBase.flatMap(_.userId).flatMap(SnowflakeId.timeFromIdOpt).exists(_.untilNow < 30.days)
+  pr vate def  sNewUserEvent(event: LogEvent): Boolean = {
+    event.logBase.flatMap(_.user d).flatMap(Snowflake d.t  From dOpt).ex sts(_.unt lNow < 30.days)
   }
 
-  private def mkDataRecords(event: LogEvent, dataRecordCounter: Counter): Seq[DataRecord] = {
+  pr vate def mkDataRecords(event: LogEvent, dataRecordCounter: Counter): Seq[DataRecord] = {
     val dataRecords: Seq[DataRecord] =
-      if (AllScribeProcessor.isValidSuggestTweetEvent(event)) {
-        ClientLogEventAdapter.adaptToDataRecords(event).asScala
+       f (AllScr beProcessor. sVal dSuggestT etEvent(event)) {
+        Cl entLogEventAdapter.adaptToDataRecords(event).asScala
       } else {
         Seq.empty[DataRecord]
       }
-    dataRecordCounter.incr(dataRecords.size)
+    dataRecordCounter. ncr(dataRecords.s ze)
     dataRecords
   }
 
-  private def mkProfileDataRecords(
+  pr vate def mkProf leDataRecords(
     event: LogEvent,
     dataRecordCounter: Counter
   ): Seq[DataRecord] = {
     val dataRecords: Seq[DataRecord] =
-      ProfileClientLogEventAdapter.adaptToDataRecords(event).asScala
-    dataRecordCounter.incr(dataRecords.size)
+      Prof leCl entLogEventAdapter.adaptToDataRecords(event).asScala
+    dataRecordCounter. ncr(dataRecords.s ze)
     dataRecords
   }
 
-  private def mkSearchDataRecords(
+  pr vate def mkSearchDataRecords(
     event: LogEvent,
     dataRecordCounter: Counter
   ): Seq[DataRecord] = {
     val dataRecords: Seq[DataRecord] =
-      SearchClientLogEventAdapter.adaptToDataRecords(event).asScala
-    dataRecordCounter.incr(dataRecords.size)
+      SearchCl entLogEventAdapter.adaptToDataRecords(event).asScala
+    dataRecordCounter. ncr(dataRecords.s ze)
     dataRecords
   }
 
-  private def mkUuaDataRecords(
-    event: UnifiedUserAction,
+  pr vate def mkUuaDataRecords(
+    event: Un f edUserAct on,
     dataRecordCounter: Counter
   ): Seq[DataRecord] = {
     val dataRecords: Seq[DataRecord] =
       UuaEventAdapter.adaptToDataRecords(event).asScala
-    dataRecordCounter.incr(dataRecords.size)
+    dataRecordCounter. ncr(dataRecords.s ze)
     dataRecords
   }
 
-  override def build(
-    statsReceiver: StatsReceiver,
-    jobConfig: RealTimeAggregatesJobConfig
+  overr de def bu ld(
+    statsRece ver: StatsRece ver,
+    jobConf g: RealT  AggregatesJobConf g
   ): Producer[Storm, DataRecord] = {
-    lazy val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-    lazy val dataRecordCounter = scopedStatsReceiver.counter("dataRecord")
+    lazy val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+    lazy val dataRecordCounter = scopedStatsRece ver.counter("dataRecord")
 
-    // Home Timeline Engagements
+    // Ho  T  l ne Engage nts
     // Step 1: => LogEvent
-    lazy val clientEventProducer: Producer[Storm, HomeEvent[LogEvent]] =
-      ClientEventSourceScrooge2(
-        appId = AppId(jobConfig.appId),
-        topic = "julep_client_event_suggests",
-        resumeAtLastReadOffset = false,
+    lazy val cl entEventProducer: Producer[Storm, Ho Event[LogEvent]] =
+      Cl entEventS ceScrooge2(
+        app d = App d(jobConf g.app d),
+        top c = "julep_cl ent_event_suggests",
+        resu AtLastReadOffset = false,
         enableTls = true
-      ).source.map(HomeEvent[LogEvent]).name(TimelinesClientEventSourceName)
+      ).s ce.map(Ho Event[LogEvent]).na (T  l nesCl entEventS ceNa )
 
-    // Profile Engagements
+    // Prof le Engage nts
     // Step 1: => LogEvent
-    lazy val profileClientEventProducer: Producer[Storm, ProfileEvent[LogEvent]] =
-      ClientEventSourceScrooge2(
-        appId = AppId(jobConfig.appId),
-        topic = "julep_client_event_profile_real_time_engagement_metrics",
-        resumeAtLastReadOffset = false,
+    lazy val prof leCl entEventProducer: Producer[Storm, Prof leEvent[LogEvent]] =
+      Cl entEventS ceScrooge2(
+        app d = App d(jobConf g.app d),
+        top c = "julep_cl ent_event_prof le_real_t  _engage nt_ tr cs",
+        resu AtLastReadOffset = false,
         enableTls = true
-      ).source
-        .map(ProfileEvent[LogEvent])
-        .name(ProfileClientEventSourceName)
+      ).s ce
+        .map(Prof leEvent[LogEvent])
+        .na (Prof leCl entEventS ceNa )
 
-    // Search Engagements
+    // Search Engage nts
     // Step 1: => LogEvent
-    // Only process events for all users to save resource
-    lazy val searchClientEventProducer: Producer[Storm, SearchEvent[LogEvent]] =
-      ClientEventSourceScrooge2(
-        appId = AppId(jobConfig.appId),
-        topic = "julep_client_event_search_real_time_engagement_metrics",
-        resumeAtLastReadOffset = false,
+    // Only process events for all users to save res ce
+    lazy val searchCl entEventProducer: Producer[Storm, SearchEvent[LogEvent]] =
+      Cl entEventS ceScrooge2(
+        app d = App d(jobConf g.app d),
+        top c = "julep_cl ent_event_search_real_t  _engage nt_ tr cs",
+        resu AtLastReadOffset = false,
         enableTls = true
-      ).source
+      ).s ce
         .map(SearchEvent[LogEvent])
-        .name(SearchClientEventSourceName)
+        .na (SearchCl entEventS ceNa )
 
-    // Unified User Actions (includes Home and other product surfaces)
-    lazy val uuaEventProducer: Producer[Storm, UuaEvent[UnifiedUserAction]] =
-      UnifiedUserActionsSourceScrooge(
-        appId = AppId(jobConfig.appId),
-        parallelism = 10,
-        kafkaConfig = KafkaConfigs.ProdUnifiedUserActionsEngagementOnly
-      ).source
-        .filter(StormAggregateSourceUtils.isUuaBCEEventsFromHome(_))
-        .map(UuaEvent[UnifiedUserAction])
-        .name(UuaEventSourceName)
+    // Un f ed User Act ons ( ncludes Ho  and ot r product surfaces)
+    lazy val uuaEventProducer: Producer[Storm, UuaEvent[Un f edUserAct on]] =
+      Un f edUserAct onsS ceScrooge(
+        app d = App d(jobConf g.app d),
+        parallel sm = 10,
+        kafkaConf g = KafkaConf gs.ProdUn f edUserAct onsEngage ntOnly
+      ).s ce
+        .f lter(StormAggregateS ceUt ls. sUuaBCEEventsFromHo (_))
+        .map(UuaEvent[Un f edUserAct on])
+        .na (UuaEventS ceNa )
 
-    // Combined
+    // Comb ned
     // Step 2:
-    // (a) Combine
+    // (a) Comb ne
     // (b) Transform LogEvent => Seq[DataRecord]
     // (c) Apply sampler
-    lazy val combinedClientEventDataRecordProducer: Producer[Storm, Event[DataRecord]] =
-      profileClientEventProducer // This becomes the bottom branch
-        .merge(clientEventProducer) // This becomes the middle branch
-        .merge(searchClientEventProducer)
-        .merge(uuaEventProducer) // This becomes the top
+    lazy val comb nedCl entEventDataRecordProducer: Producer[Storm, Event[DataRecord]] =
+      prof leCl entEventProducer // T  beco s t  bottom branch
+        . rge(cl entEventProducer) // T  beco s t  m ddle branch
+        . rge(searchCl entEventProducer)
+        . rge(uuaEventProducer) // T  beco s t  top
         .flatMap { // LogEvent => Seq[DataRecord]
-          case e: HomeEvent[LogEvent] =>
-            mkDataRecords(e.event, dataRecordCounter).map(HomeEvent[DataRecord])
-          case e: ProfileEvent[LogEvent] =>
-            mkProfileDataRecords(e.event, dataRecordCounter).map(ProfileEvent[DataRecord])
+          case e: Ho Event[LogEvent] =>
+            mkDataRecords(e.event, dataRecordCounter).map(Ho Event[DataRecord])
+          case e: Prof leEvent[LogEvent] =>
+            mkProf leDataRecords(e.event, dataRecordCounter).map(Prof leEvent[DataRecord])
           case e: SearchEvent[LogEvent] =>
             mkSearchDataRecords(e.event, dataRecordCounter).map(SearchEvent[DataRecord])
-          case e: UuaEvent[UnifiedUserAction] =>
+          case e: UuaEvent[Un f edUserAct on] =>
             mkUuaDataRecords(
               e.event,
               dataRecordCounter
             ).map(UuaEvent[DataRecord])
         }
         .flatMap { // Apply sampler
-          case e: HomeEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(HomeEvent[DataRecord])
-          case e: ProfileEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(ProfileEvent[DataRecord])
+          case e: Ho Event[DataRecord] =>
+            jobConf g.sequent allyTransform(e.event).map(Ho Event[DataRecord])
+          case e: Prof leEvent[DataRecord] =>
+            jobConf g.sequent allyTransform(e.event).map(Prof leEvent[DataRecord])
           case e: SearchEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(SearchEvent[DataRecord])
+            jobConf g.sequent allyTransform(e.event).map(SearchEvent[DataRecord])
           case e: UuaEvent[DataRecord] =>
-            jobConfig.sequentiallyTransform(e.event).map(UuaEvent[DataRecord])
+            jobConf g.sequent allyTransform(e.event).map(UuaEvent[DataRecord])
         }
-        .name(CombinedProducerName)
+        .na (Comb nedProducerNa )
 
-    // Step 3: Join with Feature Store features
+    // Step 3: Jo n w h Feature Store features
     lazy val featureStoreDataRecordProducer: Producer[Storm, DataRecord] =
-      StormAggregateSourceUtils
-        .wrapByFeatureStoreClient(
-          underlyingProducer = combinedClientEventDataRecordProducer,
-          jobConfig = jobConfig,
-          scopedStatsReceiver = scopedStatsReceiver
-        ).map(_.event).name(FeatureStoreProducerName)
+      StormAggregateS ceUt ls
+        .wrapByFeatureStoreCl ent(
+          underly ngProducer = comb nedCl entEventDataRecordProducer,
+          jobConf g = jobConf g,
+          scopedStatsRece ver = scopedStatsRece ver
+        ).map(_.event).na (FeatureStoreProducerNa )
 
     featureStoreDataRecordProducer
   }

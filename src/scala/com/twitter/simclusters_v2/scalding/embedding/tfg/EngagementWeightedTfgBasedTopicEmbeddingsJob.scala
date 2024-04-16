@@ -1,309 +1,309 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.tfg
 
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddings2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingParquetScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.dal.cl ent.dataset.SnapshotDALDatasetBase
+ mport com.tw ter.ml.ap .DataSetP pe
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.UnsortedGrouped
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.Wr eExtens on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Country
+ mport com.tw ter.s mclusters_v2.common.Language
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.FavTfgTop cEmbedd ngs2020ScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserTop c  ghtedEmbedd ngScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserTop c  ghtedEmbedd ngParquetScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on._
+ mport com.tw ter.t  l nes.pred ct on.common.aggregates.T  l nesAggregat onConf g
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.DateRangeExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * Jobs to generate Fav-based engagement weighted Topic-Follow-Graph (TFG) topic embeddings
- * The job uses fav based TFG embeddings and fav based engagement to produce a new embedding
+ * Jobs to generate Fav-based engage nt   ghted Top c-Follow-Graph (TFG) top c embedd ngs
+ * T  job uses fav based TFG embedd ngs and fav based engage nt to produce a new embedd ng
  */
 
 /**
  * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_adhoc_job --autoplay
+ * scald ng workflow upload --jobs src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tfg:fav_  ghted_user_top c_tfg_embedd ngs_adhoc_job --autoplay
  */
-object EngagementWeightedTfgBasedTopicEmbeddingsAdhocJob
-    extends AdhocExecutionApp
-    with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val outputByFav =
-    "/user/cassowary/adhoc/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
-  override val parquetOutputByFav =
-    "/user/cassowary/adhoc/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+object Engage nt  ghtedTfgBasedTop cEmbedd ngsAdhocJob
+    extends AdhocExecut onApp
+    w h Engage nt  ghtedTfgBasedTop cEmbedd ngsBaseJob {
+  overr de val outputByFav =
+    "/user/cassowary/adhoc/manhattan_sequence_f les/s mclusters_v2_embedd ng/user_tfgembedd ng/by_fav"
+  overr de val parquetOutputByFav =
+    "/user/cassowary/adhoc/processed/s mclusters_v2_embedd ng/user_tfgembedd ng/by_fav/snapshot"
 }
 
 /**
  * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_batch_job --autoplay
+ * scald ng workflow upload --jobs src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tfg:fav_  ghted_user_top c_tfg_embedd ngs_batch_job --autoplay
  */
-object EngagementWeightedTfgBasedTopicEmbeddingsScheduleJob
-    extends ScheduledExecutionApp
-    with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val firstTime: RichDate = RichDate("2021-10-03")
-  override val batchIncrement: Duration = Days(1)
-  override val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
-  override val parquetOutputByFav =
-    "/user/cassowary/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+object Engage nt  ghtedTfgBasedTop cEmbedd ngsSc duleJob
+    extends Sc duledExecut onApp
+    w h Engage nt  ghtedTfgBasedTop cEmbedd ngsBaseJob {
+  overr de val f rstT  : R chDate = R chDate("2021-10-03")
+  overr de val batch ncre nt: Durat on = Days(1)
+  overr de val outputByFav =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_embedd ng/user_tfgembedd ng/by_fav"
+  overr de val parquetOutputByFav =
+    "/user/cassowary/processed/s mclusters_v2_embedd ng/user_tfgembedd ng/by_fav/snapshot"
 }
 
-trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutionApp {
+tra  Engage nt  ghtedTfgBasedTop cEmbedd ngsBaseJob extends DateRangeExecut onApp {
 
-  val outputByFav: String
-  val parquetOutputByFav: String
+  val outputByFav: Str ng
+  val parquetOutputByFav: Str ng
 
   //root path to read aggregate data
-  private val aggregateFeatureRootPath =
-    "/atla/proc2/user/timelines/processed/aggregates_v2"
+  pr vate val aggregateFeatureRootPath =
+    "/atla/proc2/user/t  l nes/processed/aggregates_v2"
 
-  private val topKTopicsToKeep = 100
+  pr vate val topKTop csToKeep = 100
 
-  private val favContinuousFeature = new Continuous(
-    "user_topic_aggregate.pair.recap.engagement.is_favorited.any_feature.50.days.count")
+  pr vate val favCont nuousFeature = new Cont nuous(
+    "user_top c_aggregate.pa r.recap.engage nt. s_favor ed.any_feature.50.days.count")
 
-  private val parquetDataSource: SnapshotDALDatasetBase[UserTopicWeightedEmbedding] =
-    UserTopicWeightedEmbeddingParquetScalaDataset
+  pr vate val parquetDataS ce: SnapshotDALDatasetBase[UserTop c  ghtedEmbedd ng] =
+    UserTop c  ghtedEmbedd ngParquetScalaDataset
 
-  def sortedTake[K](m: Map[K, Double], keysToKeep: Int): Map[K, Double] = {
+  def sortedTake[K](m: Map[K, Double], keysToKeep:  nt): Map[K, Double] = {
     m.toSeq.sortBy { case (k, v) => -v }.take(keysToKeep).toMap
   }
 
-  case class UserTopicEngagement(
-    userId: Long,
-    topicId: Long,
-    language: String,
-    country: String, //field is not used
+  case class UserTop cEngage nt(
+    user d: Long,
+    top c d: Long,
+    language: Str ng,
+    country: Str ng, //f eld  s not used
     favCount: Double) {
-    val userLanguageGroup: (Long, String) = (userId, language)
+    val userLanguageGroup: (Long, Str ng) = (user d, language)
   }
 
-  def prepareUserToTopicEmbedding(
-    favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)],
-    userTopicEngagementCount: TypedPipe[UserTopicEngagement]
+  def prepareUserToTop cEmbedd ng(
+    favTfgTop cEmbedd ngs: TypedP pe[(Long, Str ng, S mClustersEmbedd ng)],
+    userTop cEngage ntCount: TypedP pe[UserTop cEngage nt]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((Long, String), Map[Int, Double])] = {
-    val userTfgEmbeddingsStat = Stat("User Tfg Embeddings Count")
-    val userTopicTopKEngagementStat = Stat("User Topic Top K engagement count")
-    val userEngagementStat = Stat("User engagement count")
-    val tfgEmbeddingsStat = Stat("TFG Embedding Map count")
+     mpl c  un que D: Un que D
+  ): TypedP pe[((Long, Str ng), Map[ nt, Double])] = {
+    val userTfgEmbedd ngsStat = Stat("User Tfg Embedd ngs Count")
+    val userTop cTopKEngage ntStat = Stat("User Top c Top K engage nt count")
+    val userEngage ntStat = Stat("User engage nt count")
+    val tfgEmbedd ngsStat = Stat("TFG Embedd ng Map count")
 
-    //get only top K topics
-    val userTopKTopicEngagementCount: TypedPipe[UserTopicEngagement] = userTopicEngagementCount
+    //get only top K top cs
+    val userTopKTop cEngage ntCount: TypedP pe[UserTop cEngage nt] = userTop cEngage ntCount
       .groupBy(_.userLanguageGroup)
-      .withReducers(499)
-      .withDescription("select topK topics")
-      .sortedReverseTake(topKTopicsToKeep)(Ordering.by(_.favCount))
+      .w hReducers(499)
+      .w hDescr pt on("select topK top cs")
+      .sortedReverseTake(topKTop csToKeep)(Order ng.by(_.favCount))
       .values
       .flatten
 
-    //(userId, language), totalCount
-    val userLanguageEngagementCount: UnsortedGrouped[(Long, String), Double] =
-      userTopKTopicEngagementCount
+    //(user d, language), totalCount
+    val userLanguageEngage ntCount: UnsortedGrouped[(Long, Str ng), Double] =
+      userTopKTop cEngage ntCount
         .collect {
-          case UserTopicEngagement(userId, topicId, language, country, favCount) =>
-            userTopicTopKEngagementStat.inc()
-            ((userId, language), favCount)
+          case UserTop cEngage nt(user d, top c d, language, country, favCount) =>
+            userTop cTopKEngage ntStat. nc()
+            ((user d, language), favCount)
         }.sumByKey
-        .withReducers(499)
-        .withDescription("fav count by user")
+        .w hReducers(499)
+        .w hDescr pt on("fav count by user")
 
-    //(topicId, language), (userId, favWeight)
-    val topicUserWithNormalizedWeights: TypedPipe[((Long, String), (Long, Double))] =
-      userTopKTopicEngagementCount
+    //(top c d, language), (user d, fav  ght)
+    val top cUserW hNormal zed  ghts: TypedP pe[((Long, Str ng), (Long, Double))] =
+      userTopKTop cEngage ntCount
         .groupBy(_.userLanguageGroup)
-        .join(userLanguageEngagementCount)
-        .withReducers(499)
-        .withDescription("join userTopic and user EngagementCount")
+        .jo n(userLanguageEngage ntCount)
+        .w hReducers(499)
+        .w hDescr pt on("jo n userTop c and user Engage ntCount")
         .collect {
-          case ((userId, language), (engagementData, totalCount)) =>
-            userEngagementStat.inc()
+          case ((user d, language), (engage ntData, totalCount)) =>
+            userEngage ntStat. nc()
             (
-              (engagementData.topicId, engagementData.language),
-              (userId, engagementData.favCount / totalCount)
+              (engage ntData.top c d, engage ntData.language),
+              (user d, engage ntData.favCount / totalCount)
             )
         }
 
-    // (topicId, language), embeddingMap
-    val tfgEmbeddingsMap: TypedPipe[((Long, String), Map[Int, Double])] = favTfgTopicEmbeddings
+    // (top c d, language), embedd ngMap
+    val tfgEmbedd ngsMap: TypedP pe[((Long, Str ng), Map[ nt, Double])] = favTfgTop cEmbedd ngs
       .map {
-        case (topicId, language, embedding) =>
-          tfgEmbeddingsStat.inc()
-          ((topicId, language), embedding.embedding.map(a => a.clusterId -> a.score).toMap)
+        case (top c d, language, embedd ng) =>
+          tfgEmbedd ngsStat. nc()
+          ((top c d, language), embedd ng.embedd ng.map(a => a.cluster d -> a.score).toMap)
       }
-      .withDescription("covert sim cluster embedding to map")
+      .w hDescr pt on("covert s m cluster embedd ng to map")
 
-    // (userId, language), clusters
-    val newUserTfgEmbedding = topicUserWithNormalizedWeights
-      .join(tfgEmbeddingsMap)
-      .withReducers(799)
-      .withDescription("join user | topic | favWeight * embedding")
+    // (user d, language), clusters
+    val newUserTfgEmbedd ng = top cUserW hNormal zed  ghts
+      .jo n(tfgEmbedd ngsMap)
+      .w hReducers(799)
+      .w hDescr pt on("jo n user | top c | fav  ght * embedd ng")
       .collect {
-        case ((topicId, language), ((userId, favWeight), embeddingMap)) =>
-          userTfgEmbeddingsStat.inc()
-          ((userId, language), embeddingMap.mapValues(_ * favWeight))
+        case ((top c d, language), ((user d, fav  ght), embedd ngMap)) =>
+          userTfgEmbedd ngsStat. nc()
+          ((user d, language), embedd ngMap.mapValues(_ * fav  ght))
       }
       .sumByKey
-      .withReducers(799)
-      .withDescription("aggregate embedding by user")
+      .w hReducers(799)
+      .w hDescr pt on("aggregate embedd ng by user")
 
-    newUserTfgEmbedding.toTypedPipe
+    newUserTfgEmbedd ng.toTypedP pe
   }
 
-  def writeOutput(
-    newUserTfgEmbedding: TypedPipe[((Long, String), Map[Int, Double])],
-    outputPath: String,
-    parquetOutputPath: String,
-    modelVersion: String
+  def wr eOutput(
+    newUserTfgEmbedd ng: TypedP pe[((Long, Str ng), Map[ nt, Double])],
+    outputPath: Str ng,
+    parquetOutputPath: Str ng,
+    modelVers on: Str ng
   )(
-    implicit uniqueID: UniqueID,
+     mpl c  un que D: Un que D,
     dateRange: DateRange
-  ): Execution[Unit] = {
+  ): Execut on[Un ] = {
     val outputRecordStat = Stat("output record count")
-    val output = newUserTfgEmbedding
+    val output = newUserTfgEmbedd ng
       .map {
-        //language has been purposely ignored because the entire logic is based on the fact that
-        //user is mapped to a language. In future if a user is mapped to multiple languages then
-        //the final output needs to be keyed on (userId, language)
-        case ((userId, language), embeddingMap) =>
-          outputRecordStat.inc()
-          val clusterScores = embeddingMap.map {
-            case (clusterId, score) =>
-              clusterId -> UserToInterestedInClusterScores(favScore = Some(score))
+        //language has been purposely  gnored because t  ent re log c  s based on t  fact that
+        //user  s mapped to a language.  n future  f a user  s mapped to mult ple languages t n
+        //t  f nal output needs to be keyed on (user d, language)
+        case ((user d, language), embedd ngMap) =>
+          outputRecordStat. nc()
+          val clusterScores = embedd ngMap.map {
+            case (cluster d, score) =>
+              cluster d -> UserTo nterested nClusterScores(favScore = So (score))
           }
-          KeyVal(userId, ClustersUserIsInterestedIn(modelVersion, clusterScores))
+          KeyVal(user d, ClustersUser s nterested n(modelVers on, clusterScores))
       }
 
     val keyValExec = output
-      .withDescription("write output keyval dataset")
-      .writeDALVersionedKeyValExecution(
-        UserTopicWeightedEmbeddingScalaDataset,
-        D.Suffix(outputPath))
+      .w hDescr pt on("wr e output keyval dataset")
+      .wr eDALVers onedKeyValExecut on(
+        UserTop c  ghtedEmbedd ngScalaDataset,
+        D.Suff x(outputPath))
 
-    val parquetExec = newUserTfgEmbedding
+    val parquetExec = newUserTfgEmbedd ng
       .map {
-        case ((userId, language), embeddingMap) =>
-          val clusterScores = embeddingMap.map {
-            case (clusterId, score) => ClustersScore(clusterId, score)
+        case ((user d, language), embedd ngMap) =>
+          val clusterScores = embedd ngMap.map {
+            case (cluster d, score) => ClustersScore(cluster d, score)
           }
-          UserTopicWeightedEmbedding(userId, clusterScores.toSeq)
+          UserTop c  ghtedEmbedd ng(user d, clusterScores.toSeq)
       }
-      .withDescription("write output parquet dataset")
-      .writeDALSnapshotExecution(
-        parquetDataSource,
-        D.Daily,
-        D.Suffix(parquetOutputPath),
+      .w hDescr pt on("wr e output parquet dataset")
+      .wr eDALSnapshotExecut on(
+        parquetDataS ce,
+        D.Da ly,
+        D.Suff x(parquetOutputPath),
         D.Parquet,
         dateRange.end
       )
-    Execution.zip(keyValExec, parquetExec).unit
+    Execut on.z p(keyValExec, parquetExec).un 
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
     val end = dateRange.start
     val start = end - Days(21)
-    val featureDateRange = DateRange(start, end - Millisecs(1))
+    val featureDateRange = DateRange(start, end - M ll secs(1))
     val outputPath = args.getOrElse("output_path", outputByFav)
     val parquetOutputPath = args.getOrElse("parquet_output_path", parquetOutputByFav)
-    val modelVersion = ModelVersions.Model20M145K2020
+    val modelVers on = ModelVers ons.Model20M145K2020
 
-    //define stats counter
-    val favTfgTopicEmbeddingsStat = Stat("FavTfgTopicEmbeddings")
-    val userTopicEngagementStat = Stat("UserTopicEngagement")
-    val userTopicsStat = Stat("UserTopics")
+    //def ne stats counter
+    val favTfgTop cEmbedd ngsStat = Stat("FavTfgTop cEmbedd ngs")
+    val userTop cEngage ntStat = Stat("UserTop cEngage nt")
+    val userTop csStat = Stat("UserTop cs")
     val userLangStat = Stat("UserLanguage")
 
-    //get fav based tfg embeddings
-    //topic can have different languages and the clusters will be different
-    //current logic is to filter based on user language
-    // topicId, lang, embedding
-    val favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)] = DAL
-      .readMostRecentSnapshot(FavTfgTopicEmbeddings2020ScalaDataset, featureDateRange)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+    //get fav based tfg embedd ngs
+    //top c can have d fferent languages and t  clusters w ll be d fferent
+    //current log c  s to f lter based on user language
+    // top c d, lang, embedd ng
+    val favTfgTop cEmbedd ngs: TypedP pe[(Long, Str ng, S mClustersEmbedd ng)] = DAL
+      .readMostRecentSnapshot(FavTfgTop cEmbedd ngs2020ScalaDataset, featureDateRange)
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .collect {
         case KeyVal(
-              SimClustersEmbeddingId(
+              S mClustersEmbedd ng d(
                 embedType,
-                modelVersion,
-                InternalId.LocaleEntityId(LocaleEntityId(entityId, language))),
-              embedding) =>
-          favTfgTopicEmbeddingsStat.inc()
-          (entityId, language, embedding)
+                modelVers on,
+                 nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, language))),
+              embedd ng) =>
+          favTfgTop cEmbedd ngsStat. nc()
+          (ent y d, language, embedd ng)
       }
 
     /*
-    Ideally, if the timeline aggregate framework provided data with breakdown by language,
-    it could have been joined with (topic, language) embedding. Since, it is not possible
-    we fetch the language of the user from other sources.
-    This returns language for the user so that it could be joined with (topic, language) embedding.
-    `userSource` returns 1 language per user
-    `inferredUserConsumedLanguageSource` returns multiple languages with confidence values
+     deally,  f t  t  l ne aggregate fra work prov ded data w h breakdown by language,
+      could have been jo ned w h (top c, language) embedd ng. S nce,    s not poss ble
+      fetch t  language of t  user from ot r s ces.
+    T  returns language for t  user so that   could be jo ned w h (top c, language) embedd ng.
+    `userS ce` returns 1 language per user
+    ` nferredUserConsu dLanguageS ce` returns mult ple languages w h conf dence values
      */
-    val userLangSource = ExternalDataSources.userSource
+    val userLangS ce = ExternalDataS ces.userS ce
       .map {
-        case (userId, (country, language)) =>
-          userLangStat.inc()
-          (userId, (language, country))
+        case (user d, (country, language)) =>
+          userLangStat. nc()
+          (user d, (language, country))
       }
 
-    //get userid, topicid, favcount as aggregated dataset
-    //currently there is no way to get language breakdown from the timeline aggregate framework.
-    val userTopicEngagementPipe: DataSetPipe = AggregatesV2MostRecentFeatureSource(
+    //get user d, top c d, favcount as aggregated dataset
+    //currently t re  s no way to get language breakdown from t  t  l ne aggregate fra work.
+    val userTop cEngage ntP pe: DataSetP pe = AggregatesV2MostRecentFeatureS ce(
       rootPath = aggregateFeatureRootPath,
-      storeName = "user_topic_aggregates",
+      storeNa  = "user_top c_aggregates",
       aggregates =
-        Set(TimelinesAggregationConfig.userTopicAggregates).flatMap(_.buildTypedAggregateGroups()),
+        Set(T  l nesAggregat onConf g.userTop cAggregates).flatMap(_.bu ldTypedAggregateGroups()),
     ).read
 
-    val userTopicEngagementCount = userTopicEngagementPipe.records
+    val userTop cEngage ntCount = userTop cEngage ntP pe.records
       .flatMap { record =>
-        val sRichDataRecord = SRichDataRecord(record)
-        val userId: Long = sRichDataRecord.getFeatureValue(SharedFeatures.USER_ID)
-        val topicId: Long = sRichDataRecord.getFeatureValue(TimelinesSharedFeatures.TOPIC_ID)
-        val favCount: Double = sRichDataRecord
-          .getFeatureValueOpt(favContinuousFeature).map(_.toDouble).getOrElse(0.0)
-        userTopicEngagementStat.inc()
-        if (favCount > 0) {
-          List((userId, (topicId, favCount)))
+        val sR chDataRecord = SR chDataRecord(record)
+        val user d: Long = sR chDataRecord.getFeatureValue(SharedFeatures.USER_ D)
+        val top c d: Long = sR chDataRecord.getFeatureValue(T  l nesSharedFeatures.TOP C_ D)
+        val favCount: Double = sR chDataRecord
+          .getFeatureValueOpt(favCont nuousFeature).map(_.toDouble).getOrElse(0.0)
+        userTop cEngage ntStat. nc()
+         f (favCount > 0) {
+          L st((user d, (top c d, favCount)))
         } else None
-      }.join(userLangSource)
+      }.jo n(userLangS ce)
       .collect {
-        case (userId, ((topicId, favCount), (language, country))) =>
-          userTopicsStat.inc()
-          UserTopicEngagement(userId, topicId, language, country, favCount)
+        case (user d, ((top c d, favCount), (language, country))) =>
+          userTop csStat. nc()
+          UserTop cEngage nt(user d, top c d, language, country, favCount)
       }
-      .withDescription("User Topic aggregated favcount")
+      .w hDescr pt on("User Top c aggregated favcount")
 
-    // combine user, topics, topic_embeddings
-    // and take weighted aggregate of the tfg embedding
-    val newUserTfgEmbedding =
-      prepareUserToTopicEmbedding(favTfgTopicEmbeddings, userTopicEngagementCount)
+    // comb ne user, top cs, top c_embedd ngs
+    // and take   ghted aggregate of t  tfg embedd ng
+    val newUserTfgEmbedd ng =
+      prepareUserToTop cEmbedd ng(favTfgTop cEmbedd ngs, userTop cEngage ntCount)
 
-    writeOutput(newUserTfgEmbedding, outputPath, parquetOutputPath, modelVersion)
+    wr eOutput(newUserTfgEmbedd ng, outputPath, parquetOutputPath, modelVers on)
 
   }
 

@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.notifications
+package com.tw ter.v s b l y. nterfaces.not f cat ons
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.Action
-import scala.collection.immutable.Set
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.rules.Act on
+ mport scala.collect on. mmutable.Set
 
-sealed trait NotificationsFilteringResponse
+sealed tra  Not f cat onsF lter ngResponse
 
-case object Allow extends NotificationsFilteringResponse
+case object Allow extends Not f cat onsF lter ngResponse
 
-case class Filtered(action: Action) extends NotificationsFilteringResponse
+case class F ltered(act on: Act on) extends Not f cat onsF lter ngResponse
 
-case class Failed(features: Set[Feature[_]]) extends NotificationsFilteringResponse
+case class Fa led(features: Set[Feature[_]]) extends Not f cat onsF lter ngResponse

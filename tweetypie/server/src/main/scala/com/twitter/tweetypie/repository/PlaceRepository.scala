@@ -1,13 +1,13 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Place
+ mport com.tw ter.servo.cac .ScopedCac Key
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.Place
 
-case class PlaceKey(placeId: PlaceId, language: String)
-    extends ScopedCacheKey("t", "geo", 1, placeId, language)
+case class PlaceKey(place d: Place d, language: Str ng)
+    extends ScopedCac Key("t", "geo", 1, place d, language)
 
-object PlaceRepository {
-  type Type = PlaceKey => Stitch[Place]
+object PlaceRepos ory {
+  type Type = PlaceKey => St ch[Place]
 }

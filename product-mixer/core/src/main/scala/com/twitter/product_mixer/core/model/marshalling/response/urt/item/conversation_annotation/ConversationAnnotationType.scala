@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.conversat on_annotat on
 
-sealed trait ConversationAnnotationType
+sealed tra  Conversat onAnnotat onType
 
-case object Political extends ConversationAnnotationType
-case object Large extends ConversationAnnotationType
+case object Pol  cal extends Conversat onAnnotat onType
+case object Large extends Conversat onAnnotat onType

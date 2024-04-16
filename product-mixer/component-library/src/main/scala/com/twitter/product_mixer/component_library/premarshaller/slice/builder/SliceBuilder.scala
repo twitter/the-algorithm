@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.NextCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.Slice
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceInfo
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateInMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Cursor em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.NextCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Prev ousCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.UnexpectedCand date nMarshaller
 
-trait SliceBuilder[-Query <: PipelineQuery] {
-  def cursorBuilders: Seq[SliceCursorBuilder[Query]]
-  def cursorUpdaters: Seq[SliceCursorUpdater[Query]]
+tra  Sl ceBu lder[-Query <: P pel neQuery] {
+  def cursorBu lders: Seq[Sl ceCursorBu lder[Query]]
+  def cursorUpdaters: Seq[Sl ceCursorUpdater[Query]]
 
-  private def containsGapCursor(items: Seq[SliceItem]): Boolean =
-    items.collectFirst { case CursorItem(_, GapCursor) => () }.nonEmpty
+  pr vate def conta nsGapCursor( ems: Seq[Sl ce em]): Boolean =
+     ems.collectF rst { case Cursor em(_, GapCursor) => () }.nonEmpty
 
-  final def buildSlice(query: Query, items: Seq[SliceItem]): Slice = {
-    val builtCursors = cursorBuilders.flatMap(_.build(query, items))
+  f nal def bu ldSl ce(query: Query,  ems: Seq[Sl ce em]): Sl ce = {
+    val bu ltCursors = cursorBu lders.flatMap(_.bu ld(query,  ems))
 
-    // Iterate over the cursorUpdaters in the order they were defined. Note that each updater will
-    // be passed the items updated by the previous cursorUpdater.
-    val updatedItems = cursorUpdaters.foldLeft(items) { (items, cursorUpdater) =>
-      cursorUpdater.update(query, items)
-    } ++ builtCursors
+    //  erate over t  cursorUpdaters  n t  order t y  re def ned. Note that each updater w ll
+    // be passed t   ems updated by t  prev ous cursorUpdater.
+    val updated ems = cursorUpdaters.foldLeft( ems) { ( ems, cursorUpdater) =>
+      cursorUpdater.update(query,  ems)
+    } ++ bu ltCursors
 
-    val (cursors, nonCursorItems) = updatedItems.partition(_.isInstanceOf[CursorItem])
-    val nextCursor = cursors.collectFirst {
-      case cursor @ CursorItem(_, NextCursor) => cursor.value
+    val (cursors, nonCursor ems) = updated ems.part  on(_. s nstanceOf[Cursor em])
+    val nextCursor = cursors.collectF rst {
+      case cursor @ Cursor em(_, NextCursor) => cursor.value
     }
-    val previousCursor = cursors.collectFirst {
-      case cursor @ CursorItem(_, PreviousCursor) => cursor.value
+    val prev ousCursor = cursors.collectF rst {
+      case cursor @ Cursor em(_, Prev ousCursor) => cursor.value
     }
 
     /**
-     * Identify whether a [[GapCursor]] is present and give as much detail to point to where it came from
-     * Since this is already a fatal error case for the request, its okay to be a little expensive to get
-     * the best error message possible for debug purposes.
+     *  dent fy w t r a [[GapCursor]]  s present and g ve as much deta l to po nt to w re   ca  from
+     * S nce t   s already a fatal error case for t  request,  s okay to be a l tle expens ve to get
+     * t  best error  ssage poss ble for debug purposes.
      */
-    if (containsGapCursor(cursors)) {
-      val errorDetails =
-        if (containsGapCursor(builtCursors)) {
-          "This means one of your `cursorBuilders` returned a GapCursor."
-        } else if (containsGapCursor(items)) {
-          "This means one of your `CandidateDecorator`s decorated a Candidate with a GapCursor."
+     f (conta nsGapCursor(cursors)) {
+      val errorDeta ls =
+         f (conta nsGapCursor(bu ltCursors)) {
+          "T   ans one of y  `cursorBu lders` returned a GapCursor."
+        } else  f (conta nsGapCursor( ems)) {
+          "T   ans one of y  `Cand dateDecorator`s decorated a Cand date w h a GapCursor."
         } else {
-          "This means one of your `cursorUpdaters` returned a GapCursor."
+          "T   ans one of y  `cursorUpdaters` returned a GapCursor."
         }
-      throw PipelineFailure(
-        UnexpectedCandidateInMarshaller,
-        s"SliceBuilder does not support GapCursors but one was given. $errorDetails"
+      throw P pel neFa lure(
+        UnexpectedCand date nMarshaller,
+        s"Sl ceBu lder does not support GapCursors but one was g ven. $errorDeta ls"
       )
     }
 
-    Slice(
-      items = nonCursorItems,
-      sliceInfo = SliceInfo(previousCursor = previousCursor, nextCursor = nextCursor))
+    Sl ce(
+       ems = nonCursor ems,
+      sl ce nfo = Sl ce nfo(prev ousCursor = prev ousCursor, nextCursor = nextCursor))
   }
 }

@@ -1,380 +1,380 @@
-# pylint: disable=no-member,arguments-differ, attribute-defined-outside-init
+# pyl nt: d sable=no- mber,argu nts-d ffer, attr bute-def ned-outs de- n 
 """
-Implementing Full Dense Layer
+ mple nt ng Full Dense Layer
 """
-from twml.layers import Layer
+from twml.layers  mport Layer
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.layers import core
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.layers  mport core
 
 
 class FullDense(Layer):
   """
-  Full-connected, Dense input layer class.
-  This layer implements the operation:
+  Full-connected, Dense  nput layer class.
+  T  layer  mple nts t  operat on:
 
   .. code-block:: python
 
-    outputs = activation(inputs.weight + bias)
+    outputs = act vat on( nputs.  ght + b as)
 
-  Where ``activation`` is the activation function passed as the ``activation``
-  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,
-  and ``bias`` is a bias vector created by the layer.
+  W re ``act vat on``  s t  act vat on funct on passed as t  ``act vat on``
+  argu nt ( f not ``None``), ``  ght``  s a   ghts matr x created by t  layer,
+  and ``b as``  s a b as vector created by t  layer.
 
-  However, this layer breaks up ``weight`` into ``num_partitions`` parts,
-  for the purpose of even disribution of weights across parameter servers
-  for distributed training.
+  Ho ver, t  layer breaks up ``  ght``  nto ``num_part  ons`` parts,
+  for t  purpose of even d sr but on of   ghts across para ter servers
+  for d str buted tra n ng.
 
-  Note - This layer is created to allow distributed training optimizations,
-  but can also be used for single node training (e.g. hogwild) without
-  code modification
+  Note - T  layer  s created to allow d str buted tra n ng opt m zat ons,
+  but can also be used for s ngle node tra n ng (e.g. hogw ld) w hout
+  code mod f cat on
 
-  Arguments:
-    output_size:
-      Integer or Long, dimensionality of the output space.
-    weight_initializer:
-      Initializer function for the weight matrix.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
-    bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
-    num_partitions:
-      Number of pieces to partition the weights into. This layer does
-      column partitioning of the weights, which is equivalent to
-      processing the input tensor with multiple fully connected layers
-      of smaller output size, and then concatenating these outputs
-    activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    use_bias:
-      Boolean whether to include a bias parameter in the layer
-    bias_initializer:
-      Initializer function for the bias.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
+  Argu nts:
+    output_s ze:
+       nteger or Long, d  ns onal y of t  output space.
+      ght_ n  al zer:
+       n  al zer funct on for t    ght matr x.
+      ght_regular zer:
+      Regular zer funct on for t    ght matr x.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+      ght_constra nt:
+      An opt onal project on funct on to be appl ed to t 
+        ght after be ng updated by an `Opt m zer` (e.g. used to  mple nt
+      norm constra nts or value constra nts for layer   ghts). T  funct on
+      must take as  nput t  unprojected var able and must return t 
+      projected var able (wh ch must have t  sa  shape). Constra nts are
+      not safe to use w n do ng asynchronous d str buted tra n ng.
+    b as_constra nt:
+      An opt onal project on funct on to be appl ed to t 
+      b as after be ng updated by an `Opt m zer`.
+    num_part  ons:
+      Number of p eces to part  on t    ghts  nto. T  layer does
+      column part  on ng of t    ghts, wh ch  s equ valent to
+      process ng t   nput tensor w h mult ple fully connected layers
+      of smaller output s ze, and t n concatenat ng t se outputs
+    act vat on:
+      Act vat on funct on (callable). Set   to None to ma nta n a l near act vat on.
+    use_b as:
+      Boolean w t r to  nclude a b as para ter  n t  layer
+    b as_ n  al zer:
+       n  al zer funct on for t  b as.
+    b as_regular zer:
+      Regular zer funct on for t  b as.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+    act v y_regular zer:
+      Regular zer funct on for t  output.
+    tra nable:
+      Boolean,  f `True` also add var ables to t  graph collect on
+      ``GraphKeys.TRA NABLE_VAR ABLES`` (see `tf.Var able
+      <https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/Var able>`_).
+    na :
+      Str ng, t  na  of t  layer. Layers w h t  sa  na  w ll
+      share   ghts, but to avo d m stakes   requ re ``reuse=True``  n such cases.
 
-  Properties:
-    output_size:
-      Python integer, dimensionality of the output space.
-    activation:
-      Activation function (callable).
-    weight_initializer:
-      Initializer instance (or name) for the weight matrix.
-    bias_initializer:
-      Initializer instance (or name) for the bias.
-    weights:
-      list of underlying weight and bias matrix components. no guarantee on order of elements
-    weight_regularizer:
-      Regularizer instance for the weight matrix (callable)
-    bias_regularizer:
-      Regularizer instance for the bias (callable).
-    activity_regularizer:
-      Regularizer instance for the output (callable)
-    weight_constraint:
-      Constraint function for the weight matrix.
-    bias_constraint:
-      Constraint function for the bias.
+  Propert es:
+    output_s ze:
+      Python  nteger, d  ns onal y of t  output space.
+    act vat on:
+      Act vat on funct on (callable).
+      ght_ n  al zer:
+       n  al zer  nstance (or na ) for t    ght matr x.
+    b as_ n  al zer:
+       n  al zer  nstance (or na ) for t  b as.
+      ghts:
+      l st of underly ng   ght and b as matr x components. no guarantee on order of ele nts
+      ght_regular zer:
+      Regular zer  nstance for t    ght matr x (callable)
+    b as_regular zer:
+      Regular zer  nstance for t  b as (callable).
+    act v y_regular zer:
+      Regular zer  nstance for t  output (callable)
+      ght_constra nt:
+      Constra nt funct on for t    ght matr x.
+    b as_constra nt:
+      Constra nt funct on for t  b as.
   """
 
-  def __init__(self, output_size,
-               weight_initializer=None,
-               weight_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
-               num_partitions=3,
-               activation=None,
-               use_bias=True,
-               bias_initializer=tf.zeros_initializer(),
-               bias_regularizer=None,
-               activity_regularizer=None,
-               trainable=True,
-               name=None,
+  def __ n __(self, output_s ze,
+                 ght_ n  al zer=None,
+                 ght_regular zer=None,
+                 ght_constra nt=None,
+               b as_constra nt=None,
+               num_part  ons=3,
+               act vat on=None,
+               use_b as=True,
+               b as_ n  al zer=tf.zeros_ n  al zer(),
+               b as_regular zer=None,
+               act v y_regular zer=None,
+               tra nable=True,
+               na =None,
                **kwargs):
-    super(FullDense, self).__init__(trainable=trainable, name=name, **kwargs)
-    self._output_sizes = self._get_output_partition_sizes(output_size, num_partitions)
-    self._units = output_size
-    self._activation = activation
-    self._weight_initializer = weight_initializer
-    self._bias_initializer = bias_initializer
-    self._weight_regularizer = weight_regularizer
-    self._bias_regularizer = bias_regularizer
-    self._weight_constraint = weight_constraint
-    self._bias_constraint = bias_constraint
-    self._use_bias = use_bias
-    # NOTE - many initializers depend on fan_in and fan_out
-    #      - as such, initialization here may be different than
-    #      - for a non-partitioned FullDense
-    self._parts = [core.Dense(units=out_size,
-                              activation=activation,
-                              use_bias=use_bias,
-                              kernel_initializer=weight_initializer,
-                              bias_initializer=bias_initializer,
-                              kernel_regularizer=weight_regularizer,
-                              bias_regularizer=bias_regularizer,
-                              activity_regularizer=activity_regularizer,
-                              kernel_constraint=weight_constraint,
-                              bias_constraint=bias_constraint,
-                              trainable=trainable,
-                              name=name,
-                              **kwargs) for out_size in self._output_sizes]
+    super(FullDense, self).__ n __(tra nable=tra nable, na =na , **kwargs)
+    self._output_s zes = self._get_output_part  on_s zes(output_s ze, num_part  ons)
+    self._un s = output_s ze
+    self._act vat on = act vat on
+    self._  ght_ n  al zer =   ght_ n  al zer
+    self._b as_ n  al zer = b as_ n  al zer
+    self._  ght_regular zer =   ght_regular zer
+    self._b as_regular zer = b as_regular zer
+    self._  ght_constra nt =   ght_constra nt
+    self._b as_constra nt = b as_constra nt
+    self._use_b as = use_b as
+    # NOTE - many  n  al zers depend on fan_ n and fan_out
+    #      - as such,  n  al zat on  re may be d fferent than
+    #      - for a non-part  oned FullDense
+    self._parts = [core.Dense(un s=out_s ze,
+                              act vat on=act vat on,
+                              use_b as=use_b as,
+                              kernel_ n  al zer=  ght_ n  al zer,
+                              b as_ n  al zer=b as_ n  al zer,
+                              kernel_regular zer=  ght_regular zer,
+                              b as_regular zer=b as_regular zer,
+                              act v y_regular zer=act v y_regular zer,
+                              kernel_constra nt=  ght_constra nt,
+                              b as_constra nt=b as_constra nt,
+                              tra nable=tra nable,
+                              na =na ,
+                              **kwargs) for out_s ze  n self._output_s zes]
 
-  @staticmethod
-  def _get_output_partition_sizes(out_size, num_parts):
-    """ Returns the appropriate output sizes of the partitions """
-    boundaries = [out_size * n // num_parts for n in range(num_parts + 1)]
-    return [k - j for j, k in zip(boundaries[:], boundaries[1:])]
+  @stat c thod
+  def _get_output_part  on_s zes(out_s ze, num_parts):
+    """ Returns t  appropr ate output s zes of t  part  ons """
+    boundar es = [out_s ze * n // num_parts for n  n range(num_parts + 1)]
+    return [k - j for j, k  n z p(boundar es[:], boundar es[1:])]
 
-  def build(self, input_shapes):
-    """ Create the appropriately sized weights and biases in each layer partition """
-    if isinstance(input_shapes, (list, tuple)):
-      input_shape = input_shapes[0]
-      is_compatible = True
-      for other_shape in input_shapes[1:]:
-        is_compatible &= input_shape.is_compatible_with(other_shape)
-      if not is_compatible:
-        raise ValueError("Input shapes %s are not compatible." % input_shapes)
+  def bu ld(self,  nput_shapes):
+    """ Create t  appropr ately s zed   ghts and b ases  n each layer part  on """
+     f  s nstance( nput_shapes, (l st, tuple)):
+       nput_shape =  nput_shapes[0]
+       s_compat ble = True
+      for ot r_shape  n  nput_shapes[1:]:
+         s_compat ble &=  nput_shape. s_compat ble_w h(ot r_shape)
+       f not  s_compat ble:
+        ra se ValueError(" nput shapes %s are not compat ble." %  nput_shapes)
     else:
-      input_shape = input_shapes
+       nput_shape =  nput_shapes
 
-    for part in self._parts:
-      part.build(input_shape)
+    for part  n self._parts:
+      part.bu ld( nput_shape)
 
-    self.built = True
-
-  @property
-  def units(self):
-    """ Returns the number of output units of the layer """
-    return self._units
+    self.bu lt = True
 
   @property
-  def output_size(self):
-    """ Returns the number of output units of the layer """
-    return self._units
+  def un s(self):
+    """ Returns t  number of output un s of t  layer """
+    return self._un s
 
   @property
-  def activation(self):
-    """ Returns the activation function """
-    return self._activation
+  def output_s ze(self):
+    """ Returns t  number of output un s of t  layer """
+    return self._un s
 
   @property
-  def weight_initializer(self):
-    """ Returns the weight_initializer """
-    return self._weight_initializer
+  def act vat on(self):
+    """ Returns t  act vat on funct on """
+    return self._act vat on
 
   @property
-  def weight_regularizer(self):
-    """ Returns the weight_regularizer """
-    return self._weight_regularizer
+  def   ght_ n  al zer(self):
+    """ Returns t    ght_ n  al zer """
+    return self._  ght_ n  al zer
 
   @property
-  def weight_constraint(self):
-    """ Returns the weight_constraint """
-    return self._weight_constraint
+  def   ght_regular zer(self):
+    """ Returns t    ght_regular zer """
+    return self._  ght_regular zer
 
   @property
-  def bias_initializer(self):
-    """ Returns the bias_initializer """
-    return self._bias_initializer
+  def   ght_constra nt(self):
+    """ Returns t    ght_constra nt """
+    return self._  ght_constra nt
 
   @property
-  def bias_regularizer(self):
-    """ Returns the bias_regularizer """
-    return self._bias_regularizer
+  def b as_ n  al zer(self):
+    """ Returns t  b as_ n  al zer """
+    return self._b as_ n  al zer
 
   @property
-  def bias_constraint(self):
-    """ Returns the bias_constraint """
-    return self._bias_constraint
+  def b as_regular zer(self):
+    """ Returns t  b as_regular zer """
+    return self._b as_regular zer
 
   @property
-  def use_bias(self):
-    """ Returns whether a bias is used in the layer """
-    return self._use_bias
+  def b as_constra nt(self):
+    """ Returns t  b as_constra nt """
+    return self._b as_constra nt
 
   @property
-  def trainable_variables(self):
-    """ Returns the trainable variables of the layer """
-    trainable_vars = []
-    for pt in self._parts:
-      trainable_vars += pt.trainable_variables
-    return trainable_vars
+  def use_b as(self):
+    """ Returns w t r a b as  s used  n t  layer """
+    return self._use_b as
 
   @property
-  def trainable_weights(self):
-    """ Returns the trainable variables of the layer """
-    return self.trainable_variables
+  def tra nable_var ables(self):
+    """ Returns t  tra nable var ables of t  layer """
+    tra nable_vars = []
+    for pt  n self._parts:
+      tra nable_vars += pt.tra nable_var ables
+    return tra nable_vars
 
   @property
-  def non_trainable_variables(self):
-    """ Returns the non-trainable variables of the layer """
-    non_trainable_vars = []
-    for pt in self._parts:
-      non_trainable_vars += pt.non_trainable_variables
-    return non_trainable_vars
+  def tra nable_  ghts(self):
+    """ Returns t  tra nable var ables of t  layer """
+    return self.tra nable_var ables
 
   @property
-  def non_trainable_weights(self):
-    """ Returns the non-trainable variables of the layer """
-    return self.non_trainable_variables
+  def non_tra nable_var ables(self):
+    """ Returns t  non-tra nable var ables of t  layer """
+    non_tra nable_vars = []
+    for pt  n self._parts:
+      non_tra nable_vars += pt.non_tra nable_var ables
+    return non_tra nable_vars
 
   @property
-  def variables(self):
-    """ Returns a list of all weights and biases in this layer """
+  def non_tra nable_  ghts(self):
+    """ Returns t  non-tra nable var ables of t  layer """
+    return self.non_tra nable_var ables
+
+  @property
+  def var ables(self):
+    """ Returns a l st of all   ghts and b ases  n t  layer """
     layer_vars = []
-    for pt in self._parts:
-      layer_vars += pt.weights
+    for pt  n self._parts:
+      layer_vars += pt.  ghts
     return layer_vars
 
   @property
-  def weights(self):
-    """ Returns a list of all weights and biases in this layer """
-    return self.variables
+  def   ghts(self):
+    """ Returns a l st of all   ghts and b ases  n t  layer """
+    return self.var ables
 
   @property
   def dtype(self):
-    """ Returns the dtype of the layers weights """
+    """ Returns t  dtype of t  layers   ghts """
     return self._parts[0].dtype
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  def call(self,  nputs, **kwargs):  # pyl nt: d sable=unused-argu nt
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
-      inputs:
-        A dense Tensor or a list of such.
-        If `inputs` is a list, all tensors must have same `dense_shape`.
+    Argu nts:
+       nputs:
+        A dense Tensor or a l st of such.
+         f ` nputs`  s a l st, all tensors must have sa  `dense_shape`.
 
     Returns:
-      - If `inputs` is `SparseTensor`, then returns `bias + inputs * dense_b`.
-      - If `inputs` is a `list[SparseTensor`, then returns
-       `bias + accumulate_n([sp_a * dense_b for sp_a in inputs])`.
+      -  f ` nputs`  s `SparseTensor`, t n returns `b as +  nputs * dense_b`.
+      -  f ` nputs`  s a `l st[SparseTensor`, t n returns
+       `b as + accumulate_n([sp_a * dense_b for sp_a  n  nputs])`.
     """
-    if not isinstance(inputs, (list, tuple)):
-      inputs = [inputs]
+     f not  s nstance( nputs, (l st, tuple)):
+       nputs = [ nputs]
 
     outputs = []
-    for inp in inputs:
-      part_outputs = [part(inp) for part in self._parts]
-      outputs.append(tf.concat(part_outputs, axis=-1))
+    for  np  n  nputs:
+      part_outputs = [part( np) for part  n self._parts]
+      outputs.append(tf.concat(part_outputs, ax s=-1))
 
     return tf.accumulate_n(outputs)
 
 
-def full_dense(inputs, output_size,
-               weight_initializer=None,
-               weight_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
-               num_partitions=3,
-               activation=None,
-               use_bias=True,
-               bias_initializer=tf.zeros_initializer(),
-               bias_regularizer=None,
-               activity_regularizer=None,
-               trainable=True,
-               name=None,
+def full_dense( nputs, output_s ze,
+                 ght_ n  al zer=None,
+                 ght_regular zer=None,
+                 ght_constra nt=None,
+               b as_constra nt=None,
+               num_part  ons=3,
+               act vat on=None,
+               use_b as=True,
+               b as_ n  al zer=tf.zeros_ n  al zer(),
+               b as_regular zer=None,
+               act v y_regular zer=None,
+               tra nable=True,
+               na =None,
                reuse=None,
                **kwargs):
-  """Functional interface for the fully-connected dense-input layer.
-  This layer implements the operation:
-  `outputs = activation(inputs.weight + bias)`
-  Where `activation` is the activation function passed as the `activation`
-  argument (if not `None`), `weight` is a weights matrix created by the layer,
-  and `bias` is a bias vector created by the layer
-  (only if `use_bias` is `True`).
+  """Funct onal  nterface for t  fully-connected dense- nput layer.
+  T  layer  mple nts t  operat on:
+  `outputs = act vat on( nputs.  ght + b as)`
+  W re `act vat on`  s t  act vat on funct on passed as t  `act vat on`
+  argu nt ( f not `None`), `  ght`  s a   ghts matr x created by t  layer,
+  and `b as`  s a b as vector created by t  layer
+  (only  f `use_b as`  s `True`).
 
-  However, this layer breaks up ``weight`` into ``num_partitions`` parts,
-  for the purpose of even disribution of weights across parameter servers
-  for distributed training.
+  Ho ver, t  layer breaks up ``  ght``  nto ``num_part  ons`` parts,
+  for t  purpose of even d sr but on of   ghts across para ter servers
+  for d str buted tra n ng.
 
-  Note - This layer is created to allow distributed training optimizations,
-  but can also be used for single node training (e.g. hogwild) without
-  code modification
+  Note - T  layer  s created to allow d str buted tra n ng opt m zat ons,
+  but can also be used for s ngle node tra n ng (e.g. hogw ld) w hout
+  code mod f cat on
 
-  Arguments:
-    inputs: Tensor input.
-    output_size: Integer or Long, dimensionality of the output space.
-    weight_initializer: Initializer function for the weight matrix.
-      If `None` (default), weights are initialized using the default
-      initializer used by `tf.get_variable`.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
-    bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
-    num_partitions:
-      Number of pieces to partition the weights into. This layer does
-      column partitioning of the weights, which is equivalent to
-      processing the input tensor with multiple fully connected layers
-      of smaller output size, and then concatenating these outputs
-    activation: Activation function (callable). Set it to None to maintain a
-      linear activation.
-    use_bias: Boolean, whether the layer uses a bias.
-    bias_initializer:
-      Initializer function for the bias.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      `GraphKeys.TRAINABLE_VARIABLES` (see `tf.Variable`).
-    name:
-      String, the name of the layer.
+  Argu nts:
+     nputs: Tensor  nput.
+    output_s ze:  nteger or Long, d  ns onal y of t  output space.
+      ght_ n  al zer:  n  al zer funct on for t    ght matr x.
+       f `None` (default),   ghts are  n  al zed us ng t  default
+       n  al zer used by `tf.get_var able`.
+      ght_regular zer:
+      Regular zer funct on for t    ght matr x.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+      ght_constra nt:
+      An opt onal project on funct on to be appl ed to t 
+        ght after be ng updated by an `Opt m zer` (e.g. used to  mple nt
+      norm constra nts or value constra nts for layer   ghts). T  funct on
+      must take as  nput t  unprojected var able and must return t 
+      projected var able (wh ch must have t  sa  shape). Constra nts are
+      not safe to use w n do ng asynchronous d str buted tra n ng.
+    b as_constra nt:
+      An opt onal project on funct on to be appl ed to t 
+      b as after be ng updated by an `Opt m zer`.
+    num_part  ons:
+      Number of p eces to part  on t    ghts  nto. T  layer does
+      column part  on ng of t    ghts, wh ch  s equ valent to
+      process ng t   nput tensor w h mult ple fully connected layers
+      of smaller output s ze, and t n concatenat ng t se outputs
+    act vat on: Act vat on funct on (callable). Set   to None to ma nta n a
+      l near act vat on.
+    use_b as: Boolean, w t r t  layer uses a b as.
+    b as_ n  al zer:
+       n  al zer funct on for t  b as.
+    b as_regular zer:
+      Regular zer funct on for t  b as.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+    act v y_regular zer:
+      Regular zer funct on for t  output.
+    tra nable:
+      Boolean,  f `True` also add var ables to t  graph collect on
+      `GraphKeys.TRA NABLE_VAR ABLES` (see `tf.Var able`).
+    na :
+      Str ng, t  na  of t  layer.
     reuse:
-      Boolean, whether to reuse the weights of a previous layer
-      by the same name.
+      Boolean, w t r to reuse t    ghts of a prev ous layer
+      by t  sa  na .
 
   Returns:
-    Output tensor with shape `inputs.shape[:-1] + [output_size]`.
+    Output tensor w h shape ` nputs.shape[:-1] + [output_s ze]`.
   """
-  if not isinstance(inputs, (list, tuple)):
-    inputs = [inputs]
+   f not  s nstance( nputs, (l st, tuple)):
+     nputs = [ nputs]
 
-  dtype = inputs[0].dtype.base_dtype
+  dtype =  nputs[0].dtype.base_dtype
 
-  layer = FullDense(output_size=output_size,
-                    weight_initializer=weight_initializer,
-                    weight_regularizer=weight_regularizer,
-                    weight_constraint=weight_constraint,
-                    bias_constraint=bias_constraint,
-                    num_partitions=num_partitions,
-                    activation=activation,
-                    use_bias=use_bias,
-                    bias_initializer=bias_initializer,
-                    bias_regularizer=bias_regularizer,
-                    activity_regularizer=activity_regularizer,
-                    trainable=trainable,
-                    name=name,
+  layer = FullDense(output_s ze=output_s ze,
+                      ght_ n  al zer=  ght_ n  al zer,
+                      ght_regular zer=  ght_regular zer,
+                      ght_constra nt=  ght_constra nt,
+                    b as_constra nt=b as_constra nt,
+                    num_part  ons=num_part  ons,
+                    act vat on=act vat on,
+                    use_b as=use_b as,
+                    b as_ n  al zer=b as_ n  al zer,
+                    b as_regular zer=b as_regular zer,
+                    act v y_regular zer=act v y_regular zer,
+                    tra nable=tra nable,
+                    na =na ,
                     dtype=dtype,
-                    _scope=name,
+                    _scope=na ,
                     _reuse=reuse,
                     **kwargs)
 
-  return layer(inputs)
+  return layer( nputs)

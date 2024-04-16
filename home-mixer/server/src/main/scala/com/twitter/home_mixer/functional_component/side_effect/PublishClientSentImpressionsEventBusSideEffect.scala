@@ -1,95 +1,95 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impressionstore.thriftscala.Impression
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import com.twitter.timelines.impressionstore.thriftscala.PublishedImpressionList
-import com.twitter.timelines.impressionstore.thriftscala.SurfaceArea
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.eventbus.cl ent.EventBusPubl s r
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProduct
+ mport com.tw ter.ho _m xer.model.request.HasSeenT et ds
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes. mpress onstore.thr ftscala. mpress on
+ mport com.tw ter.t  l nes. mpress onstore.thr ftscala. mpress onL st
+ mport com.tw ter.t  l nes. mpress onstore.thr ftscala.Publ s d mpress onL st
+ mport com.tw ter.t  l nes. mpress onstore.thr ftscala.SurfaceArea
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object PublishClientSentImpressionsEventBusSideEffect {
-  val HomeSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeTimeline))
-  val HomeLatestSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeLatestTimeline))
-  val HomeSubscribedSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeSubscribed))
+object Publ shCl entSent mpress onsEventBusS deEffect {
+  val Ho SurfaceArea: Opt on[Set[SurfaceArea]] = So (Set(SurfaceArea.Ho T  l ne))
+  val Ho LatestSurfaceArea: Opt on[Set[SurfaceArea]] = So (Set(SurfaceArea.Ho LatestT  l ne))
+  val Ho Subscr bedSurfaceArea: Opt on[Set[SurfaceArea]] = So (Set(SurfaceArea.Ho Subscr bed))
 }
 
 /**
- * Side effect that publishes seen tweet IDs sent from clients. The seen tweet IDs are sent to a
- * heron topology which writes to a memcache dataset.
+ * S de effect that publ s s seen t et  Ds sent from cl ents. T  seen t et  Ds are sent to a
+ *  ron topology wh ch wr es to a  mcac  dataset.
  */
-@Singleton
-class PublishClientSentImpressionsEventBusSideEffect @Inject() (
-  eventBusPublisher: EventBusPublisher[PublishedImpressionList])
-    extends PipelineResultSideEffect[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds,
-      HasMarshalling
+@S ngleton
+class Publ shCl entSent mpress onsEventBusS deEffect @ nject() (
+  eventBusPubl s r: EventBusPubl s r[Publ s d mpress onL st])
+    extends P pel neResultS deEffect[P pel neQuery w h HasSeenT et ds, HasMarshall ng]
+    w h P pel neResultS deEffect.Cond  onally[
+      P pel neQuery w h HasSeenT et ds,
+      HasMarshall ng
     ] {
-  import PublishClientSentImpressionsEventBusSideEffect._
+   mport Publ shCl entSent mpress onsEventBusS deEffect._
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("PublishClientSentImpressionsEventBus")
+  overr de val  dent f er: S deEffect dent f er =
+    S deEffect dent f er("Publ shCl entSent mpress onsEventBus")
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: HasMarshalling
-  ): Boolean = query.seenTweetIds.exists(_.nonEmpty)
+  overr de def only f(
+    query: P pel neQuery w h HasSeenT et ds,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: HasMarshall ng
+  ): Boolean = query.seenT et ds.ex sts(_.nonEmpty)
 
-  def buildEvents(
-    query: PipelineQuery with HasSeenTweetIds,
-    currentTime: Long
-  ): Option[Seq[Impression]] = {
+  def bu ldEvents(
+    query: P pel neQuery w h HasSeenT et ds,
+    currentT  : Long
+  ): Opt on[Seq[ mpress on]] = {
     val surfaceArea = query.product match {
-      case ForYouProduct => HomeSurfaceArea
-      case FollowingProduct => HomeLatestSurfaceArea
-      case SubscribedProduct => HomeSubscribedSurfaceArea
+      case For Product => Ho SurfaceArea
+      case Follow ngProduct => Ho LatestSurfaceArea
+      case Subscr bedProduct => Ho Subscr bedSurfaceArea
       case _ => None
     }
-    query.seenTweetIds.map { seenTweetIds =>
-      seenTweetIds.map { tweetId =>
-        Impression(
-          tweetId = tweetId,
-          impressionTime = Some(currentTime),
+    query.seenT et ds.map { seenT et ds =>
+      seenT et ds.map { t et d =>
+         mpress on(
+          t et d = t et d,
+           mpress onT   = So (currentT  ),
           surfaceAreas = surfaceArea
         )
       }
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-  ): Stitch[Unit] = {
-    val currentTime = Time.now.inMilliseconds
-    val impressions = buildEvents(inputs.query, currentTime)
+  f nal overr de def apply(
+     nputs: P pel neResultS deEffect. nputs[P pel neQuery w h HasSeenT et ds, HasMarshall ng]
+  ): St ch[Un ] = {
+    val currentT   = T  .now. nM ll seconds
+    val  mpress ons = bu ldEvents( nputs.query, currentT  )
 
-    Stitch.callFuture(
-      eventBusPublisher.publish(
-        PublishedImpressionList(
-          inputs.query.getRequiredUserId,
-          ImpressionList(impressions),
-          currentTime
+    St ch.callFuture(
+      eventBusPubl s r.publ sh(
+        Publ s d mpress onL st(
+           nputs.query.getRequ redUser d,
+           mpress onL st( mpress ons),
+          currentT  
         )
       )
     )
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.4)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.4)
   )
 }

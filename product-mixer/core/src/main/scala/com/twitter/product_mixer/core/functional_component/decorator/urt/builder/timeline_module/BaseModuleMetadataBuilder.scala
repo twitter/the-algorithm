@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseModuleMetadataBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+tra  BaseModule tadataBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]] {
 
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleMetadata
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Module tadata
 }

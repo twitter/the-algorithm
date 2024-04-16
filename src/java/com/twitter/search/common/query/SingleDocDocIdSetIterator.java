@@ -1,50 +1,50 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-public class SingleDocDocIdSetIterator extends DocIdSetIterator {
+publ c class S ngleDocDoc dSet erator extends Doc dSet erator {
 
-  // the only docid in the list
-  private final int doc;
+  // t  only doc d  n t  l st
+  pr vate f nal  nt doc;
 
-  private int docid = -1;
+  pr vate  nt doc d = -1;
 
-  public SingleDocDocIdSetIterator(int doc) {
-    this.doc = doc;
+  publ c S ngleDocDoc dSet erator( nt doc) {
+    t .doc = doc;
   }
 
-  @Override
-  public int docID() {
-    return docid;
+  @Overr de
+  publ c  nt doc D() {
+    return doc d;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    if (docid == -1) {
-      docid = doc;
+  @Overr de
+  publ c  nt nextDoc() throws  OExcept on {
+     f (doc d == -1) {
+      doc d = doc;
     } else {
-      docid = NO_MORE_DOCS;
+      doc d = NO_MORE_DOCS;
     }
-    return docid;
+    return doc d;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (docid == NO_MORE_DOCS) {
-      return docid;
-    } else if (doc < target) {
-      docid = NO_MORE_DOCS;
-      return docid;
+  @Overr de
+  publ c  nt advance( nt target) throws  OExcept on {
+     f (doc d == NO_MORE_DOCS) {
+      return doc d;
+    } else  f (doc < target) {
+      doc d = NO_MORE_DOCS;
+      return doc d;
     } else {
-      docid = doc;
+      doc d = doc;
     }
-    return docid;
+    return doc d;
   }
 
-  @Override
-  public long cost() {
+  @Overr de
+  publ c long cost() {
     return 1;
   }
 

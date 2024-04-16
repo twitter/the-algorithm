@@ -1,41 +1,41 @@
-package com.twitter.servo.decider
+package com.tw ter.servo.dec der
 
-import com.twitter.decider.{Decider, Feature}
-import com.twitter.servo.util.Gate
-import com.twitter.servo.gate.DeciderGate
+ mport com.tw ter.dec der.{Dec der, Feature}
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.servo.gate.Dec derGate
 
 /**
- * Convenience syntax for creating decider gates
+ * Conven ence syntax for creat ng dec der gates
  */
-class DeciderGateBuilder(decider: Decider) {
+class Dec derGateBu lder(dec der: Dec der) {
 
   /**
-   * idGate should be used when the result of the gate needs to be consistent between repeated
-   * invocations, with the condition that consistency is dependent up on passing identical
-   * parameter between the invocations.
+   *  dGate should be used w n t  result of t  gate needs to be cons stent bet en repeated
+   *  nvocat ons, w h t  cond  on that cons stency  s dependent up on pass ng  dent cal
+   * para ter bet en t   nvocat ons.
    */
-  def idGate(key: DeciderKeyName): Gate[Long] =
-    DeciderGate.byId(keyToFeature(key))
+  def  dGate(key: Dec derKeyNa ): Gate[Long] =
+    Dec derGate.by d(keyToFeature(key))
 
   /**
-   * linearGate should be used when the probability of the gate returning true needs to
-   * increase linearly with the availability of feature.
+   * l nearGate should be used w n t  probab l y of t  gate return ng true needs to
+   *  ncrease l nearly w h t  ava lab l y of feature.
    */
-  def linearGate(key: DeciderKeyName): Gate[Unit] =
-    DeciderGate.linear(keyToFeature(key))
+  def l nearGate(key: Dec derKeyNa ): Gate[Un ] =
+    Dec derGate.l near(keyToFeature(key))
 
   /**
-   * typedLinearGate is a linearGate that conforms to the gate of the specified type.
+   * typedL nearGate  s a l nearGate that conforms to t  gate of t  spec f ed type.
    */
-  def typedLinearGate[T](key: DeciderKeyName): Gate[T] =
-    linearGate(key).contramap[T] { _ => () }
+  def typedL nearGate[T](key: Dec derKeyNa ): Gate[T] =
+    l nearGate(key).contramap[T] { _ => () }
 
   /**
-   * expGate should be used when the probability of the gate returning true needs to
-   * increase exponentially with the availability of feature.
+   * expGate should be used w n t  probab l y of t  gate return ng true needs to
+   *  ncrease exponent ally w h t  ava lab l y of feature.
    */
-  def expGate(key: DeciderKeyName, exponent: Int): Gate[Unit] =
-    DeciderGate.exp(keyToFeature(key), exponent)
+  def expGate(key: Dec derKeyNa , exponent:  nt): Gate[Un ] =
+    Dec derGate.exp(keyToFeature(key), exponent)
 
-  def keyToFeature(key: DeciderKeyName): Feature = decider.feature(key.toString)
+  def keyToFeature(key: Dec derKeyNa ): Feature = dec der.feature(key.toStr ng)
 }

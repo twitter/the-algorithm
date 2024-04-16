@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fLatencyAbove
 
 /**
- * [[GenericClientLatencyAlert]] triggers when the Latency for the component this is used with
- * rises above the [[TriggerIfLatencyAbove]] threshold for the configured amount of time
+ * [[Gener cCl entLatencyAlert]] tr ggers w n t  Latency for t  component t   s used w h
+ * r ses above t  [[Tr gger fLatencyAbove]] threshold for t  conf gured amount of t  
  */
 case class LatencyAlert(
-  override val notificationGroup: NotificationGroup,
-  percentile: Percentile,
-  override val warnPredicate: TriggerIfLatencyAbove,
-  override val criticalPredicate: TriggerIfLatencyAbove,
-  override val runbookLink: Option[String] = None)
+  overr de val not f cat onGroup: Not f cat onGroup,
+  percent le: Percent le,
+  overr de val warnPred cate: Tr gger fLatencyAbove,
+  overr de val cr  calPred cate: Tr gger fLatencyAbove,
+  overr de val runbookL nk: Opt on[Str ng] = None)
     extends Alert
-    with IsObservableFromStrato {
-  override val alertType: AlertType = Latency
+    w h  sObservableFromStrato {
+  overr de val alertType: AlertType = Latency
 
-  override val metricSuffix: Option[String] = Some(percentile.metricSuffix)
+  overr de val  tr cSuff x: Opt on[Str ng] = So (percent le. tr cSuff x)
 }

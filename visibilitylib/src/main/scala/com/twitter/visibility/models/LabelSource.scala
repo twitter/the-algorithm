@@ -1,61 +1,61 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import java.util.regex.Pattern
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyResultReason
+ mport java.ut l.regex.Pattern
 
-sealed trait LabelSource {
-  val name: String
+sealed tra  LabelS ce {
+  val na : Str ng
 }
 
-object LabelSource {
-  val BotRulePrefix = "bot_id_"
-  val AbusePrefix = "Abuse"
-  val HSEPrefix = "hse"
-  val AgentSourceNames = Set(
-    SafetyResultReason.OneOff.name,
-    SafetyResultReason.VotingMisinformation.name,
-    SafetyResultReason.HackedMaterials.name,
-    SafetyResultReason.Scams.name,
-    SafetyResultReason.PlatformManipulation.name
+object LabelS ce {
+  val BotRulePref x = "bot_ d_"
+  val AbusePref x = "Abuse"
+  val HSEPref x = "hse"
+  val AgentS ceNa s = Set(
+    SafetyResultReason.OneOff.na ,
+    SafetyResultReason.Vot ngM s nformat on.na ,
+    SafetyResultReason.HackedMater als.na ,
+    SafetyResultReason.Scams.na ,
+    SafetyResultReason.PlatformMan pulat on.na 
   )
 
   val Regex = "\\|"
-  val pattern: Pattern = Pattern.compile(Regex)
+  val pattern: Pattern = Pattern.comp le(Regex)
 
-  def fromString(name: String): Option[LabelSource] = Some(name) collect {
-    case _ if name.startsWith(BotRulePrefix) =>
-      BotMakerRule(name.substring(BotRulePrefix.length).toLong)
-    case _ if name == "A" || name == "B" || name == "AB" =>
-      SmyteSource(name)
-    case _ if name.startsWith(AbusePrefix) =>
-      AbuseSource(name)
-    case _ if name.startsWith(HSEPrefix) =>
-      HSESource(name)
-    case _ if AgentSourceNames.contains(name) =>
-      AgentSource(name)
+  def fromStr ng(na : Str ng): Opt on[LabelS ce] = So (na ) collect {
+    case _  f na .startsW h(BotRulePref x) =>
+      BotMakerRule(na .substr ng(BotRulePref x.length).toLong)
+    case _  f na  == "A" || na  == "B" || na  == "AB" =>
+      S teS ce(na )
+    case _  f na .startsW h(AbusePref x) =>
+      AbuseS ce(na )
+    case _  f na .startsW h(HSEPref x) =>
+      HSES ce(na )
+    case _  f AgentS ceNa s.conta ns(na ) =>
+      AgentS ce(na )
     case _ =>
-      StringSource(name)
+      Str ngS ce(na )
   }
 
-  def parseStringSource(source: String): (String, Option[String]) = {
-    pattern.split(source, 2) match {
+  def parseStr ngS ce(s ce: Str ng): (Str ng, Opt on[Str ng]) = {
+    pattern.spl (s ce, 2) match {
       case Array(copy, "") => (copy, None)
-      case Array(copy, link) => (copy, Some(link))
+      case Array(copy, l nk) => (copy, So (l nk))
       case Array(copy) => (copy, None)
     }
   }
 
-  case class BotMakerRule(ruleId: Long) extends LabelSource {
-    override lazy val name: String = s"${BotRulePrefix}${ruleId}"
+  case class BotMakerRule(rule d: Long) extends LabelS ce {
+    overr de lazy val na : Str ng = s"${BotRulePref x}${rule d}"
   }
 
-  case class SmyteSource(name: String) extends LabelSource
+  case class S teS ce(na : Str ng) extends LabelS ce
 
-  case class AbuseSource(name: String) extends LabelSource
+  case class AbuseS ce(na : Str ng) extends LabelS ce
 
-  case class AgentSource(name: String) extends LabelSource
+  case class AgentS ce(na : Str ng) extends LabelS ce
 
-  case class HSESource(name: String) extends LabelSource
+  case class HSES ce(na : Str ng) extends LabelS ce
 
-  case class StringSource(name: String) extends LabelSource
+  case class Str ngS ce(na : Str ng) extends LabelS ce
 }

@@ -1,142 +1,142 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.google.inject.Provides
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.kafka.client.headers.Zone
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.adapter.client_event.ClientEventAdapter
-import com.twitter.unified_user_actions.kafka.CompressionTypeFlag
-import com.twitter.unified_user_actions.kafka.serde.NullableScalaSerdes
-import com.twitter.unified_user_actions.service.module.KafkaProcessorProvider.updateActionTypeCounters
-import com.twitter.unified_user_actions.service.module.KafkaProcessorProvider.updateProcessingTimeStats
-import com.twitter.unified_user_actions.service.module.KafkaProcessorProvider.updateProductSurfaceTypeCounters
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.StorageUnit
-import com.twitter.util.logging.Logging
-import javax.inject.Singleton
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.header.Headers
+ mport com.google. nject.Prov des
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.producers.Block ngF nagleKafkaProducer
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.f natra.kafka.serde.UnKeyedSerde
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.kafka.cl ent. aders.Zone
+ mport com.tw ter.kafka.cl ent.processor.AtLeastOnceProcessor
+ mport com.tw ter.un f ed_user_act ons.adapter.cl ent_event.Cl entEventAdapter
+ mport com.tw ter.un f ed_user_act ons.kafka.Compress onTypeFlag
+ mport com.tw ter.un f ed_user_act ons.kafka.serde.NullableScalaSerdes
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorProv der.updateAct onTypeCounters
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorProv der.updateProcess ngT  Stats
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorProv der.updateProductSurfaceTypeCounters
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.StorageUn 
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject.S ngleton
+ mport org.apac .kafka.cl ents.producer.ProducerRecord
+ mport org.apac .kafka.common. ader. aders
 
-object KafkaProcessorClientEventModule extends TwitterModule with Logging {
-  override def modules: Seq[FlagsModule.type] = Seq(FlagsModule)
+object KafkaProcessorCl entEventModule extends Tw terModule w h Logg ng {
+  overr de def modules: Seq[FlagsModule.type] = Seq(FlagsModule)
 
-  private val clientEventAdapter = new ClientEventAdapter
-  // NOTE: This is a shared processor name in order to simplify monviz stat computation.
-  private final val processorName = "uuaProcessor"
+  pr vate val cl entEventAdapter = new Cl entEventAdapter
+  // NOTE: T   s a shared processor na   n order to s mpl fy monv z stat computat on.
+  pr vate f nal val processorNa  = "uuaProcessor"
 
-  @Provides
-  @Singleton
-  def providesKafkaProcessor(
-    decider: Decider,
-    @Flag(FlagsModule.cluster) cluster: String,
-    @Flag(FlagsModule.kafkaSourceCluster) kafkaSourceCluster: String,
-    @Flag(FlagsModule.kafkaDestCluster) kafkaDestCluster: String,
-    @Flag(FlagsModule.kafkaSourceTopic) kafkaSourceTopic: String,
-    @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
-    @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
-    @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
-    @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
-    @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
-    @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
-    @Flag(FlagsModule.fetchMin) fetchMin: StorageUnit,
-    @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
-    @Flag(FlagsModule.linger) linger: Duration,
-    @Flag(FlagsModule.bufferMem) bufferMem: StorageUnit,
-    @Flag(FlagsModule.compressionType) compressionTypeFlag: CompressionTypeFlag,
-    @Flag(FlagsModule.retries) retries: Int,
-    @Flag(FlagsModule.retryBackoff) retryBackoff: Duration,
-    @Flag(FlagsModule.requestTimeout) requestTimeout: Duration,
+  @Prov des
+  @S ngleton
+  def prov desKafkaProcessor(
+    dec der: Dec der,
+    @Flag(FlagsModule.cluster) cluster: Str ng,
+    @Flag(FlagsModule.kafkaS ceCluster) kafkaS ceCluster: Str ng,
+    @Flag(FlagsModule.kafkaDestCluster) kafkaDestCluster: Str ng,
+    @Flag(FlagsModule.kafkaS ceTop c) kafkaS ceTop c: Str ng,
+    @Flag(FlagsModule.kafkaS nkTop cs) kafkaS nkTop cs: Seq[Str ng],
+    @Flag(FlagsModule.kafkaGroup d) kafkaGroup d: Str ng,
+    @Flag(FlagsModule.kafkaProducerCl ent d) kafkaProducerCl ent d: Str ng,
+    @Flag(FlagsModule.kafkaMaxPend ngRequests) kafkaMaxPend ngRequests:  nt,
+    @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads:  nt,
+    @Flag(FlagsModule.comm  nterval) comm  nterval: Durat on,
+    @Flag(FlagsModule.maxPollRecords) maxPollRecords:  nt,
+    @Flag(FlagsModule.maxPoll nterval) maxPoll nterval: Durat on,
+    @Flag(FlagsModule.sess onT  out) sess onT  out: Durat on,
+    @Flag(FlagsModule.fetchMax) fetchMax: StorageUn ,
+    @Flag(FlagsModule.fetchM n) fetchM n: StorageUn ,
+    @Flag(FlagsModule.batchS ze) batchS ze: StorageUn ,
+    @Flag(FlagsModule.l nger) l nger: Durat on,
+    @Flag(FlagsModule.buffer m) buffer m: StorageUn ,
+    @Flag(FlagsModule.compress onType) compress onTypeFlag: Compress onTypeFlag,
+    @Flag(FlagsModule.retr es) retr es:  nt,
+    @Flag(FlagsModule.retryBackoff) retryBackoff: Durat on,
+    @Flag(FlagsModule.requestT  out) requestT  out: Durat on,
     @Flag(FlagsModule.enableTrustStore) enableTrustStore: Boolean,
-    @Flag(FlagsModule.trustStoreLocation) trustStoreLocation: String,
-    statsReceiver: StatsReceiver,
+    @Flag(FlagsModule.trustStoreLocat on) trustStoreLocat on: Str ng,
+    statsRece ver: StatsRece ver,
   ): AtLeastOnceProcessor[UnKeyed, LogEvent] = {
-    KafkaProcessorProvider.provideDefaultAtLeastOnceProcessor(
-      name = processorName,
-      kafkaSourceCluster = kafkaSourceCluster,
-      kafkaGroupId = kafkaGroupId,
-      kafkaSourceTopic = kafkaSourceTopic,
-      sourceKeyDeserializer = UnKeyedSerde.deserializer,
-      sourceValueDeserializer = NullableScalaSerdes
-        .Thrift[LogEvent](statsReceiver.counter("deserializerErrors")).deserializer,
-      commitInterval = commitInterval,
+    KafkaProcessorProv der.prov deDefaultAtLeastOnceProcessor(
+      na  = processorNa ,
+      kafkaS ceCluster = kafkaS ceCluster,
+      kafkaGroup d = kafkaGroup d,
+      kafkaS ceTop c = kafkaS ceTop c,
+      s ceKeyDeser al zer = UnKeyedSerde.deser al zer,
+      s ceValueDeser al zer = NullableScalaSerdes
+        .Thr ft[LogEvent](statsRece ver.counter("deser al zerErrors")).deser al zer,
+      comm  nterval = comm  nterval,
       maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
-      sessionTimeout = sessionTimeout,
+      maxPoll nterval = maxPoll nterval,
+      sess onT  out = sess onT  out,
       fetchMax = fetchMax,
-      fetchMin = fetchMin,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
+      fetchM n = fetchM n,
+      processorMaxPend ngRequests = kafkaMaxPend ngRequests,
       processorWorkerThreads = kafkaWorkerThreads,
-      adapter = clientEventAdapter,
-      kafkaSinkTopics = kafkaSinkTopics,
+      adapter = cl entEventAdapter,
+      kafkaS nkTop cs = kafkaS nkTop cs,
       kafkaDestCluster = kafkaDestCluster,
-      kafkaProducerClientId = kafkaProducerClientId,
-      batchSize = batchSize,
-      linger = linger,
-      bufferMem = bufferMem,
-      compressionType = compressionTypeFlag.compressionType,
-      retries = retries,
+      kafkaProducerCl ent d = kafkaProducerCl ent d,
+      batchS ze = batchS ze,
+      l nger = l nger,
+      buffer m = buffer m,
+      compress onType = compress onTypeFlag.compress onType,
+      retr es = retr es,
       retryBackoff = retryBackoff,
-      requestTimeout = requestTimeout,
-      statsReceiver = statsReceiver,
-      produceOpt = Some(clientEventProducer),
-      trustStoreLocationOpt = if (enableTrustStore) Some(trustStoreLocation) else None,
-      decider = decider,
-      zone = ZoneFiltering.zoneMapping(cluster),
+      requestT  out = requestT  out,
+      statsRece ver = statsRece ver,
+      produceOpt = So (cl entEventProducer),
+      trustStoreLocat onOpt =  f (enableTrustStore) So (trustStoreLocat on) else None,
+      dec der = dec der,
+      zone = ZoneF lter ng.zoneMapp ng(cluster),
     )
   }
 
   /**
-   * ClientEvent producer is different from the defaultProducer.
-   * While the defaultProducer publishes every event to all sink topics, ClientEventProducer (this producer) requires
-   * exactly 2 sink topics: Topic with all events (impressions and engagements) and Topic with engagements only.
-   * And the publishing is based the action type.
+   * Cl entEvent producer  s d fferent from t  defaultProducer.
+   * Wh le t  defaultProducer publ s s every event to all s nk top cs, Cl entEventProducer (t  producer) requ res
+   * exactly 2 s nk top cs: Top c w h all events ( mpress ons and engage nts) and Top c w h engage nts only.
+   * And t  publ sh ng  s based t  act on type.
    */
-  def clientEventProducer(
-    producer: BlockingFinagleKafkaProducer[UnKeyed, UnifiedUserAction],
+  def cl entEventProducer(
+    producer: Block ngF nagleKafkaProducer[UnKeyed, Un f edUserAct on],
     k: UnKeyed,
-    v: UnifiedUserAction,
-    sinkTopic: String,
-    headers: Headers,
-    statsReceiver: StatsReceiver,
-    decider: Decider
-  ): Future[Unit] =
-    if (ClientEventDeciderUtils.shouldPublish(decider = decider, uua = v, sinkTopic = sinkTopic)) {
-      updateActionTypeCounters(statsReceiver, v, sinkTopic)
-      updateProductSurfaceTypeCounters(statsReceiver, v, sinkTopic)
-      updateProcessingTimeStats(statsReceiver, v)
+    v: Un f edUserAct on,
+    s nkTop c: Str ng,
+     aders:  aders,
+    statsRece ver: StatsRece ver,
+    dec der: Dec der
+  ): Future[Un ] =
+     f (Cl entEventDec derUt ls.shouldPubl sh(dec der = dec der, uua = v, s nkTop c = s nkTop c)) {
+      updateAct onTypeCounters(statsRece ver, v, s nkTop c)
+      updateProductSurfaceTypeCounters(statsRece ver, v, s nkTop c)
+      updateProcess ngT  Stats(statsRece ver, v)
 
-      // If we were to enable xDC replicator, then we can safely remove the Zone header since xDC
-      // replicator works in the following way:
-      //  - If the message does not have a header, the replicator will assume it is local and
-      //    set the header, copy the message
-      //  - If the message has a header that is the local zone, the replicator will copy the message
-      //  - If the message has a header for a different zone, the replicator will drop the message
+      //  f    re to enable xDC repl cator, t n   can safely remove t  Zone  ader s nce xDC
+      // repl cator works  n t  follow ng way:
+      //  -  f t   ssage does not have a  ader, t  repl cator w ll assu     s local and
+      //    set t   ader, copy t   ssage
+      //  -  f t   ssage has a  ader that  s t  local zone, t  repl cator w ll copy t   ssage
+      //  -  f t   ssage has a  ader for a d fferent zone, t  repl cator w ll drop t   ssage
       producer
         .send(
-          new ProducerRecord[UnKeyed, UnifiedUserAction](
-            sinkTopic,
+          new ProducerRecord[UnKeyed, Un f edUserAct on](
+            s nkTop c,
             null,
             k,
             v,
-            headers.remove(Zone.Key)))
-        .onSuccess { _ => statsReceiver.counter("publishSuccess", sinkTopic).incr() }
-        .onFailure { e: Throwable =>
-          statsReceiver.counter("publishFailure", sinkTopic).incr()
-          error(s"Publish error to topic $sinkTopic: $e")
-        }.unit
-    } else Future.Unit
+             aders.remove(Zone.Key)))
+        .onSuccess { _ => statsRece ver.counter("publ shSuccess", s nkTop c). ncr() }
+        .onFa lure { e: Throwable =>
+          statsRece ver.counter("publ shFa lure", s nkTop c). ncr()
+          error(s"Publ sh error to top c $s nkTop c: $e")
+        }.un 
+    } else Future.Un 
 }

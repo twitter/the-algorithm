@@ -1,8 +1,8 @@
-package com.twitter.tweetypie.thriftscala
+package com.tw ter.t etyp e.thr ftscala
 
-import com.twitter.finagle.service.FailedService
+ mport com.tw ter.f nagle.serv ce.Fa ledServ ce
 
-class NotImplementedTweetService
-    extends TweetService$FinagleClient(
-      new FailedService(new UnsupportedOperationException("not implemented"))
+class Not mple ntedT etServ ce
+    extends T etServ ce$F nagleCl ent(
+      new Fa ledServ ce(new UnsupportedOperat onExcept on("not  mple nted"))
     )

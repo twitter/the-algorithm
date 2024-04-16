@@ -1,219 +1,219 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.base.StatsUtil.profileSeqResults
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Scores
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.AdhocScorer
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.Scorer
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.ScorerFactory
-import com.twitter.follow_recommendations.common.utils.CollectionUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.logging.Logging
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l.prof leSeqResults
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasDebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.Scores
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ut ls.Ut ls
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng.AdhocScorer
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng.Scorer
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng.ScorerFactory
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.Collect onUt l
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.logg ng.Logg ng
 
 /**
- * This class has a rank function that will perform 4 steps:
- *   - choose which scorer to use for each candidate
- *   - score candidates given their respective features
- *   - add scoring information to the candidate
- *   - sort candidates by their respective scores
- *   The feature source and scorer will depend on the request's params
+ * T  class has a rank funct on that w ll perform 4 steps:
+ *   - choose wh ch scorer to use for each cand date
+ *   - score cand dates g ven t  r respect ve features
+ *   - add scor ng  nformat on to t  cand date
+ *   - sort cand dates by t  r respect ve scores
+ *   T  feature s ce and scorer w ll depend on t  request's params
  */
-@Singleton
+@S ngleton
 class MlRanker[
-  Target <: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions] @Inject() (
+  Target <: HasCl entContext w h HasParams w h HasD splayLocat on w h HasDebugOpt ons] @ nject() (
   scorerFactory: ScorerFactory,
-  statsReceiver: StatsReceiver)
-    extends Ranker[Target, CandidateUser]
-    with Logging {
+  statsRece ver: StatsRece ver)
+    extends Ranker[Target, Cand dateUser]
+    w h Logg ng {
 
-  private val stats: StatsReceiver = statsReceiver.scope("ml_ranker")
+  pr vate val stats: StatsRece ver = statsRece ver.scope("ml_ranker")
 
-  private val inputStat = stats.scope("1_input")
-  private val selectScorerStat = stats.scope("2_select_scorer")
-  private val scoreStat = stats.scope("3_score")
+  pr vate val  nputStat = stats.scope("1_ nput")
+  pr vate val selectScorerStat = stats.scope("2_select_scorer")
+  pr vate val scoreStat = stats.scope("3_score")
 
-  override def rank(
+  overr de def rank(
     target: Target,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    profileSeqResults(candidates, inputStat)
-    val requestRankerId = target.params(MlRankerParams.RequestScorerIdParam)
-    val rankerIds = chooseRankerByCandidate(candidates, requestRankerId)
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Seq[Cand dateUser]] = {
+    prof leSeqResults(cand dates,  nputStat)
+    val requestRanker d = target.params(MlRankerParams.RequestScorer dParam)
+    val ranker ds = chooseRankerByCand date(cand dates, requestRanker d)
 
-    val scoreStitch = score(candidates, rankerIds, requestRankerId).map { scoredCandidates =>
+    val scoreSt ch = score(cand dates, ranker ds, requestRanker d).map { scoredCand dates =>
       {
-        // sort the candidates by score
-        val sortedCandidates = sort(target, scoredCandidates)
-        // add scribe field to candidates (if applicable) and return candidates
-        scribeCandidates(target, sortedCandidates)
+        // sort t  cand dates by score
+        val sortedCand dates = sort(target, scoredCand dates)
+        // add scr be f eld to cand dates ( f appl cable) and return cand dates
+        scr beCand dates(target, sortedCand dates)
       }
     }
-    StatsUtil.profileStitch(scoreStitch, stats.scope("rank"))
+    StatsUt l.prof leSt ch(scoreSt ch, stats.scope("rank"))
   }
 
   /**
-   * @param target: The WTF request for a given consumer.
-   * @param candidates A list of candidates considered for recommendation.
-   * @return A map from each candidate to a tuple that includes:
-   *          (1) The selected scorer that should be used to rank this candidate
-   *          (2) a flag determining whether the candidate is in a producer-side experiment.
+   * @param target: T  WTF request for a g ven consu r.
+   * @param cand dates A l st of cand dates cons dered for recom ndat on.
+   * @return A map from each cand date to a tuple that  ncludes:
+   *          (1) T  selected scorer that should be used to rank t  cand date
+   *          (2) a flag determ n ng w t r t  cand date  s  n a producer-s de exper  nt.
    */
-  private[ranking] def chooseRankerByCandidate(
-    candidates: Seq[CandidateUser],
-    requestRankerId: RankerId
-  ): Map[CandidateUser, RankerId] = {
-    candidates.map { candidate =>
-      val selectedCandidateRankerId =
-        if (candidate.params == Params.Invalid || candidate.params == Params.Empty) {
-          selectScorerStat.counter("candidate_params_empty").incr()
-          requestRankerId
+  pr vate[rank ng] def chooseRankerByCand date(
+    cand dates: Seq[Cand dateUser],
+    requestRanker d: Ranker d
+  ): Map[Cand dateUser, Ranker d] = {
+    cand dates.map { cand date =>
+      val selectedCand dateRanker d =
+         f (cand date.params == Params. nval d || cand date.params == Params.Empty) {
+          selectScorerStat.counter("cand date_params_empty"). ncr()
+          requestRanker d
         } else {
-          val candidateRankerId = candidate.params(MlRankerParams.CandidateScorerIdParam)
-          if (candidateRankerId == RankerId.None) {
-            // This candidate is a not part of any producer-side experiment.
-            selectScorerStat.counter("default_to_request_ranker").incr()
-            requestRankerId
+          val cand dateRanker d = cand date.params(MlRankerParams.Cand dateScorer dParam)
+           f (cand dateRanker d == Ranker d.None) {
+            // T  cand date  s a not part of any producer-s de exper  nt.
+            selectScorerStat.counter("default_to_request_ranker"). ncr()
+            requestRanker d
           } else {
-            // This candidate is in a treatment bucket of a producer-side experiment.
-            selectScorerStat.counter("use_candidate_ranker").incr()
-            candidateRankerId
+            // T  cand date  s  n a treat nt bucket of a producer-s de exper  nt.
+            selectScorerStat.counter("use_cand date_ranker"). ncr()
+            cand dateRanker d
           }
         }
-      selectScorerStat.scope("selected").counter(selectedCandidateRankerId.toString).incr()
-      candidate -> selectedCandidateRankerId
+      selectScorerStat.scope("selected").counter(selectedCand dateRanker d.toStr ng). ncr()
+      cand date -> selectedCand dateRanker d
     }.toMap
   }
 
-  @VisibleForTesting
-  private[ranking] def score(
-    candidates: Seq[CandidateUser],
-    rankerIds: Map[CandidateUser, RankerId],
-    requestRankerId: RankerId
-  ): Stitch[Seq[CandidateUser]] = {
-    val features = candidates.map(_.dataRecord.flatMap(_.dataRecord))
+  @V s bleForTest ng
+  pr vate[rank ng] def score(
+    cand dates: Seq[Cand dateUser],
+    ranker ds: Map[Cand dateUser, Ranker d],
+    requestRanker d: Ranker d
+  ): St ch[Seq[Cand dateUser]] = {
+    val features = cand dates.map(_.dataRecord.flatMap(_.dataRecord))
 
-    require(features.forall(_.nonEmpty), "features are not hydrated for all the candidates")
+    requ re(features.forall(_.nonEmpty), "features are not hydrated for all t  cand dates")
 
-    val scorers = scorerFactory.getScorers(rankerIds.values.toSeq.sorted.distinct)
+    val scorers = scorerFactory.getScorers(ranker ds.values.toSeq.sorted.d st nct)
 
-    // Scorers are split into ML-based and Adhoc (defined as a scorer that does not need to call an
-    // ML prediction service and scores candidates using locally-available data).
-    val (adhocScorers, mlScorers) = scorers.partition {
+    // Scorers are spl   nto ML-based and Adhoc (def ned as a scorer that does not need to call an
+    // ML pred ct on serv ce and scores cand dates us ng locally-ava lable data).
+    val (adhocScorers, mlScorers) = scorers.part  on {
       case _: AdhocScorer => true
       case _ => false
     }
 
-    // score candidates
-    val scoresStitch = score(features.map(_.get), mlScorers)
-    val candidatesWithMlScoresStitch = scoresStitch.map { scoresSeq =>
-      candidates
-        .zip(scoresSeq).map { // copy datarecord and score into candidate object
-          case (candidate, scores) =>
-            val selectedRankerId = rankerIds(candidate)
+    // score cand dates
+    val scoresSt ch = score(features.map(_.get), mlScorers)
+    val cand datesW hMlScoresSt ch = scoresSt ch.map { scoresSeq =>
+      cand dates
+        .z p(scoresSeq).map { // copy datarecord and score  nto cand date object
+          case (cand date, scores) =>
+            val selectedRanker d = ranker ds(cand date)
             val useRequestRanker =
-              candidate.params == Params.Invalid ||
-                candidate.params == Params.Empty ||
-                candidate.params(MlRankerParams.CandidateScorerIdParam) == RankerId.None
-            candidate.copy(
-              score = scores.scores.find(_.rankerId.contains(requestRankerId)).map(_.value),
-              scores = if (scores.scores.nonEmpty) {
-                Some(
+              cand date.params == Params. nval d ||
+                cand date.params == Params.Empty ||
+                cand date.params(MlRankerParams.Cand dateScorer dParam) == Ranker d.None
+            cand date.copy(
+              score = scores.scores.f nd(_.ranker d.conta ns(requestRanker d)).map(_.value),
+              scores =  f (scores.scores.nonEmpty) {
+                So (
                   scores.copy(
                     scores = scores.scores,
-                    selectedRankerId = Some(selectedRankerId),
-                    isInProducerScoringExperiment = !useRequestRanker
+                    selectedRanker d = So (selectedRanker d),
+                     s nProducerScor ngExper  nt = !useRequestRanker
                   ))
               } else None
             )
         }
     }
 
-    candidatesWithMlScoresStitch.map { candidates =>
-      // The basis for adhoc scores are the "request-level" ML ranker. We add the base score here
-      // while adhoc scorers are applied in [[AdhocRanker]].
-      addMlBaseScoresForAdhocScorers(candidates, requestRankerId, adhocScorers)
+    cand datesW hMlScoresSt ch.map { cand dates =>
+      // T  bas s for adhoc scores are t  "request-level" ML ranker.   add t  base score  re
+      // wh le adhoc scorers are appl ed  n [[AdhocRanker]].
+      addMlBaseScoresForAdhocScorers(cand dates, requestRanker d, adhocScorers)
     }
   }
 
-  @VisibleForTesting
-  private[ranking] def addMlBaseScoresForAdhocScorers(
-    candidates: Seq[CandidateUser],
-    requestRankerId: RankerId,
+  @V s bleForTest ng
+  pr vate[rank ng] def addMlBaseScoresForAdhocScorers(
+    cand dates: Seq[Cand dateUser],
+    requestRanker d: Ranker d,
     adhocScorers: Seq[Scorer]
-  ): Seq[CandidateUser] = {
-    candidates.map { candidate =>
-      candidate.scores match {
-        case Some(oldScores) =>
-          // 1. We fetch the ML score that is the basis of adhoc scores:
-          val baseMlScoreOpt = Utils.getCandidateScoreByRankerId(candidate, requestRankerId)
+  ): Seq[Cand dateUser] = {
+    cand dates.map { cand date =>
+      cand date.scores match {
+        case So (oldScores) =>
+          // 1.   fetch t  ML score that  s t  bas s of adhoc scores:
+          val baseMlScoreOpt = Ut ls.getCand dateScoreByRanker d(cand date, requestRanker d)
 
-          // 2. For each adhoc scorer, we copy the ML score object, changing only the ID and type.
+          // 2. For each adhoc scorer,   copy t  ML score object, chang ng only t   D and type.
           val newScores = adhocScorers flatMap { adhocScorer =>
             baseMlScoreOpt.map(
-              _.copy(rankerId = Some(adhocScorer.id), scoreType = adhocScorer.scoreType))
+              _.copy(ranker d = So (adhocScorer. d), scoreType = adhocScorer.scoreType))
           }
 
-          // 3. We add the new adhoc score entries to the candidate.
-          candidate.copy(scores = Some(oldScores.copy(scores = oldScores.scores ++ newScores)))
+          // 3.   add t  new adhoc score entr es to t  cand date.
+          cand date.copy(scores = So (oldScores.copy(scores = oldScores.scores ++ newScores)))
         case _ =>
-          // Since there is no base ML score, there should be no adhoc score modification as well.
-          candidate
+          // S nce t re  s no base ML score, t re should be no adhoc score mod f cat on as  ll.
+          cand date
       }
     }
   }
 
-  private[this] def score(
+  pr vate[t ] def score(
     dataRecords: Seq[DataRecord],
     scorers: Seq[Scorer]
-  ): Stitch[Seq[Scores]] = {
+  ): St ch[Seq[Scores]] = {
     val scoredResponse = scorers.map { scorer =>
-      StatsUtil.profileStitch(scorer.score(dataRecords), scoreStat.scope(scorer.id.toString))
+      StatsUt l.prof leSt ch(scorer.score(dataRecords), scoreStat.scope(scorer. d.toStr ng))
     }
-    // If we could score a candidate with too many rankers, it is likely to blow up the whole system.
-    // and fail back to default production model
-    StatsUtil.profileStitch(Stitch.collect(scoredResponse), scoreStat).map { scoresByScorerId =>
-      CollectionUtil.transposeLazy(scoresByScorerId).map { scoresPerCandidate =>
-        Scores(scoresPerCandidate)
+    //  f   could score a cand date w h too many rankers,    s l kely to blow up t  whole system.
+    // and fa l back to default product on model
+    StatsUt l.prof leSt ch(St ch.collect(scoredResponse), scoreStat).map { scoresByScorer d =>
+      Collect onUt l.transposeLazy(scoresByScorer d).map { scoresPerCand date =>
+        Scores(scoresPerCand date)
       }
     }
   }
 
-  // sort candidates using score in descending order
-  private[this] def sort(
+  // sort cand dates us ng score  n descend ng order
+  pr vate[t ] def sort(
     target: Target,
-    candidates: Seq[CandidateUser]
-  ): Seq[CandidateUser] = {
-    candidates.sortBy(c => -c.score.getOrElse(MlRanker.DefaultScore))
+    cand dates: Seq[Cand dateUser]
+  ): Seq[Cand dateUser] = {
+    cand dates.sortBy(c => -c.score.getOrElse(MlRanker.DefaultScore))
   }
 
-  private[this] def scribeCandidates(
+  pr vate[t ] def scr beCand dates(
     target: Target,
-    candidates: Seq[CandidateUser]
-  ): Seq[CandidateUser] = {
-    val scribeRankingInfo: Boolean = target.params(MlRankerParams.ScribeRankingInfoInMlRanker)
-    scribeRankingInfo match {
-      case true => Utils.addRankingInfo(candidates, "MlRanker")
-      case false => candidates
+    cand dates: Seq[Cand dateUser]
+  ): Seq[Cand dateUser] = {
+    val scr beRank ng nfo: Boolean = target.params(MlRankerParams.Scr beRank ng nfo nMlRanker)
+    scr beRank ng nfo match {
+      case true => Ut ls.addRank ng nfo(cand dates, "MlRanker")
+      case false => cand dates
     }
   }
 }
 
 object MlRanker {
-  // this is to ensure candidates with absent scores are ranked the last
-  val DefaultScore: Double = Double.MinValue
+  // t   s to ensure cand dates w h absent scores are ranked t  last
+  val DefaultScore: Double = Double.M nValue
 }

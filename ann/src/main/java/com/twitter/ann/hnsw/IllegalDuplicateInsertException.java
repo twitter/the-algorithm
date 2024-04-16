@@ -1,7 +1,7 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-public class IllegalDuplicateInsertException extends Exception {
-  public IllegalDuplicateInsertException(String message) {
-    super(message);
+publ c class  llegalDupl cate nsertExcept on extends Except on {
+  publ c  llegalDupl cate nsertExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

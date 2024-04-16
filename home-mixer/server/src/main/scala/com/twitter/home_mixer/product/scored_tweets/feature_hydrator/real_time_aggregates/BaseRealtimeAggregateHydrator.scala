@@ -1,138 +1,138 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates.BaseRealtimeAggregateHydrator._
-import com.twitter.home_mixer.util.DataRecordUtil
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.{Feature => MLApiFeature}
-import com.twitter.servo.cache.ReadCache
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
-import java.lang.{Double => JDouble}
-import scala.collection.JavaConverters._
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates.BaseRealt  AggregateHydrator._
+ mport com.tw ter.ho _m xer.ut l.DataRecordUt l
+ mport com.tw ter.ho _m xer.ut l.ObservedKeyValueResultHandler
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataRecord rger
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.ap .{Feature => MLAp Feature}
+ mport com.tw ter.servo.cac .ReadCac 
+ mport com.tw ter.servo.keyvalue.KeyValueResult
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport java.lang.{Double => JDouble}
+ mport scala.collect on.JavaConverters._
 
-trait BaseRealtimeAggregateHydrator[K] extends ObservedKeyValueResultHandler {
+tra  BaseRealt  AggregateHydrator[K] extends ObservedKeyValueResultHandler {
 
-  val client: ReadCache[K, DataRecord]
+  val cl ent: ReadCac [K, DataRecord]
 
   val aggregateGroups: Seq[AggregateGroup]
 
-  val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map.empty
+  val aggregateGroupToPref x: Map[AggregateGroup, Str ng] = Map.empty
 
-  private lazy val typedAggregateGroupsList = aggregateGroups.map(_.buildTypedAggregateGroups())
+  pr vate lazy val typedAggregateGroupsL st = aggregateGroups.map(_.bu ldTypedAggregateGroups())
 
-  private lazy val featureContexts: Seq[FeatureContext] = typedAggregateGroupsList.map {
+  pr vate lazy val featureContexts: Seq[FeatureContext] = typedAggregateGroupsL st.map {
     typedAggregateGroups =>
       new FeatureContext(
-        (SharedFeatures.TIMESTAMP +: typedAggregateGroups.flatMap(_.allOutputFeatures)).asJava
+        (SharedFeatures.T MESTAMP +: typedAggregateGroups.flatMap(_.allOutputFeatures)).asJava
       )
   }
 
-  private lazy val aggregateFeaturesRenameMap: Map[MLApiFeature[_], MLApiFeature[_]] = {
-    val prefixes: Seq[Option[String]] = aggregateGroups.map(aggregateGroupToPrefix.get)
+  pr vate lazy val aggregateFeaturesRena Map: Map[MLAp Feature[_], MLAp Feature[_]] = {
+    val pref xes: Seq[Opt on[Str ng]] = aggregateGroups.map(aggregateGroupToPref x.get)
 
-    typedAggregateGroupsList
-      .zip(prefixes).map {
-        case (typedAggregateGroups, prefix) =>
-          if (prefix.nonEmpty)
+    typedAggregateGroupsL st
+      .z p(pref xes).map {
+        case (typedAggregateGroups, pref x) =>
+           f (pref x.nonEmpty)
             typedAggregateGroups
               .map {
-                _.outputFeaturesToRenamedOutputFeatures(prefix.get)
+                _.outputFeaturesToRena dOutputFeatures(pref x.get)
               }.reduce(_ ++ _)
           else
-            Map.empty[MLApiFeature[_], MLApiFeature[_]]
+            Map.empty[MLAp Feature[_], MLAp Feature[_]]
       }.reduce(_ ++ _)
   }
 
-  private lazy val renamedFeatureContexts: Seq[FeatureContext] =
-    typedAggregateGroupsList.map { typedAggregateGroups =>
-      val renamedAllOutputFeatures = typedAggregateGroups.flatMap(_.allOutputFeatures).map {
-        feature => aggregateFeaturesRenameMap.getOrElse(feature, feature)
+  pr vate lazy val rena dFeatureContexts: Seq[FeatureContext] =
+    typedAggregateGroupsL st.map { typedAggregateGroups =>
+      val rena dAllOutputFeatures = typedAggregateGroups.flatMap(_.allOutputFeatures).map {
+        feature => aggregateFeaturesRena Map.getOrElse(feature, feature)
       }
 
-      new FeatureContext(renamedAllOutputFeatures.asJava)
+      new FeatureContext(rena dAllOutputFeatures.asJava)
     }
 
-  private lazy val decays: Seq[TimeDecay] = typedAggregateGroupsList.map { typedAggregateGroups =>
-    RealTimeAggregateTimeDecay(
-      typedAggregateGroups.flatMap(_.continuousFeatureIdsToHalfLives).toMap)
+  pr vate lazy val decays: Seq[T  Decay] = typedAggregateGroupsL st.map { typedAggregateGroups =>
+    RealT  AggregateT  Decay(
+      typedAggregateGroups.flatMap(_.cont nuousFeature dsToHalfL ves).toMap)
       .apply(_, _)
   }
 
-  private val drMerger = new DataRecordMerger
+  pr vate val dr rger = new DataRecord rger
 
-  private def postTransformer(dataRecord: Try[Option[DataRecord]]): Try[DataRecord] = {
+  pr vate def postTransfor r(dataRecord: Try[Opt on[DataRecord]]): Try[DataRecord] = {
     dataRecord.map {
-      case Some(dr) =>
+      case So (dr) =>
         val newDr = new DataRecord()
-        featureContexts.zip(renamedFeatureContexts).zip(decays).foreach {
-          case ((featureContext, renamedFeatureContext), decay) =>
+        featureContexts.z p(rena dFeatureContexts).z p(decays).foreach {
+          case ((featureContext, rena dFeatureContext), decay) =>
             val decayedDr = applyDecay(dr, featureContext, decay)
-            val renamedDr = DataRecordUtil.applyRename(
+            val rena dDr = DataRecordUt l.applyRena (
               dataRecord = decayedDr,
               featureContext,
-              renamedFeatureContext,
-              aggregateFeaturesRenameMap)
-            drMerger.merge(newDr, renamedDr)
+              rena dFeatureContext,
+              aggregateFeaturesRena Map)
+            dr rger. rge(newDr, rena dDr)
         }
         newDr
       case _ => new DataRecord
     }
   }
 
-  def fetchAndConstructDataRecords(possiblyKeys: Seq[Option[K]]): Future[Seq[Try[DataRecord]]] = {
-    val keys = possiblyKeys.flatten
+  def fetchAndConstructDataRecords(poss blyKeys: Seq[Opt on[K]]): Future[Seq[Try[DataRecord]]] = {
+    val keys = poss blyKeys.flatten
 
     val response: Future[KeyValueResult[K, DataRecord]] =
-      if (keys.isEmpty) Future.value(KeyValueResult.empty)
+       f (keys. sEmpty) Future.value(KeyValueResult.empty)
       else {
         val batchResponses = keys
-          .grouped(RequestBatchSize)
-          .map(keyGroup => client.get(keyGroup))
+          .grouped(RequestBatchS ze)
+          .map(keyGroup => cl ent.get(keyGroup))
           .toSeq
 
         Future.collect(batchResponses).map(_.reduce(_ ++ _))
       }
 
     response.map { result =>
-      possiblyKeys.map { possiblyKey =>
-        val value = observedGet(key = possiblyKey, keyValueResult = result)
-        postTransformer(value)
+      poss blyKeys.map { poss blyKey =>
+        val value = observedGet(key = poss blyKey, keyValueResult = result)
+        postTransfor r(value)
       }
     }
   }
 }
 
-object BaseRealtimeAggregateHydrator {
-  private val RequestBatchSize = 5
+object BaseRealt  AggregateHydrator {
+  pr vate val RequestBatchS ze = 5
 
-  type TimeDecay = scala.Function2[com.twitter.ml.api.DataRecord, scala.Long, scala.Unit]
+  type T  Decay = scala.Funct on2[com.tw ter.ml.ap .DataRecord, scala.Long, scala.Un ]
 
-  private def applyDecay(
+  pr vate def applyDecay(
     dataRecord: DataRecord,
     featureContext: FeatureContext,
-    decay: TimeDecay
+    decay: T  Decay
   ): DataRecord = {
-    def time: Long = Time.now.inMillis
+    def t  : Long = T  .now. nM ll s
 
-    val richFullDr = new SRichDataRecord(dataRecord, featureContext)
-    val richNewDr = new SRichDataRecord(new DataRecord, featureContext)
-    val featureIterator = featureContext.iterator()
-    featureIterator.forEachRemaining { feature =>
-      if (richFullDr.hasFeature(feature)) {
-        val typedFeature = feature.asInstanceOf[MLApiFeature[JDouble]]
-        richNewDr.setFeatureValue(typedFeature, richFullDr.getFeatureValue(typedFeature))
+    val r chFullDr = new SR chDataRecord(dataRecord, featureContext)
+    val r chNewDr = new SR chDataRecord(new DataRecord, featureContext)
+    val feature erator = featureContext. erator()
+    feature erator.forEachRema n ng { feature =>
+       f (r chFullDr.hasFeature(feature)) {
+        val typedFeature = feature.as nstanceOf[MLAp Feature[JDouble]]
+        r chNewDr.setFeatureValue(typedFeature, r chFullDr.getFeatureValue(typedFeature))
       }
     }
-    val resultDr = richNewDr.getRecord
-    decay(resultDr, time)
+    val resultDr = r chNewDr.getRecord
+    decay(resultDr, t  )
     resultDr
   }
 }

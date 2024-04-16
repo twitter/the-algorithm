@@ -1,183 +1,183 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
-  private long minTweetID;
-  private long maxTweetID;
-  private int minDocID;
-  private int maxDocID;
-  private int numDocs;
+publ c abstract class T et DMapper  mple nts Doc DToT et DMapper, Flushable {
+  pr vate long m nT et D;
+  pr vate long maxT et D;
+  pr vate  nt m nDoc D;
+  pr vate  nt maxDoc D;
+  pr vate  nt numDocs;
 
-  protected TweetIDMapper() {
-    this(Long.MAX_VALUE, Long.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+  protected T et DMapper() {
+    t (Long.MAX_VALUE, Long.M N_VALUE,  nteger.MAX_VALUE,  nteger.M N_VALUE, 0);
   }
 
-  protected TweetIDMapper(
-      long minTweetID, long maxTweetID, int minDocID, int maxDocID, int numDocs) {
-    this.minTweetID = minTweetID;
-    this.maxTweetID = maxTweetID;
-    this.minDocID = minDocID;
-    this.maxDocID = maxDocID;
-    this.numDocs = numDocs;
+  protected T et DMapper(
+      long m nT et D, long maxT et D,  nt m nDoc D,  nt maxDoc D,  nt numDocs) {
+    t .m nT et D = m nT et D;
+    t .maxT et D = maxT et D;
+    t .m nDoc D = m nDoc D;
+    t .maxDoc D = maxDoc D;
+    t .numDocs = numDocs;
   }
 
-  // Realtime updates minTweetID and maxTweetID in addMapping.
-  // Archives updates minTweetID and maxTweetID in prepareToRead.
-  protected void setMinTweetID(long minTweetID) {
-    this.minTweetID = minTweetID;
+  // Realt   updates m nT et D and maxT et D  n addMapp ng.
+  // Arch ves updates m nT et D and maxT et D  n prepareToRead.
+  protected vo d setM nT et D(long m nT et D) {
+    t .m nT et D = m nT et D;
   }
 
-  protected void setMaxTweetID(long maxTweetID) {
-    this.maxTweetID = maxTweetID;
+  protected vo d setMaxT et D(long maxT et D) {
+    t .maxT et D = maxT et D;
   }
 
-  protected void setMinDocID(int minDocID) {
-    this.minDocID = minDocID;
+  protected vo d setM nDoc D( nt m nDoc D) {
+    t .m nDoc D = m nDoc D;
   }
 
-  protected void setMaxDocID(int maxDocID) {
-    this.maxDocID = maxDocID;
+  protected vo d setMaxDoc D( nt maxDoc D) {
+    t .maxDoc D = maxDoc D;
   }
 
-  protected void setNumDocs(int numDocs) {
-    this.numDocs = numDocs;
+  protected vo d setNumDocs( nt numDocs) {
+    t .numDocs = numDocs;
   }
 
-  public long getMinTweetID() {
-    return this.minTweetID;
+  publ c long getM nT et D() {
+    return t .m nT et D;
   }
 
-  public long getMaxTweetID() {
-    return this.maxTweetID;
+  publ c long getMaxT et D() {
+    return t .maxT et D;
   }
 
-  public int getMinDocID() {
-    return minDocID;
+  publ c  nt getM nDoc D() {
+    return m nDoc D;
   }
 
-  public int getMaxDocID() {
-    return maxDocID;
+  publ c  nt getMaxDoc D() {
+    return maxDoc D;
   }
 
-  @Override
-  public int getNumDocs() {
+  @Overr de
+  publ c  nt getNumDocs() {
     return numDocs;
   }
 
   /**
-   * Given a tweetId, find the corresponding doc ID to start, or end, a search.
+   * G ven a t et d, f nd t  correspond ng doc  D to start, or end, a search.
    *
-   * In the ordered, dense doc ID mappers, this returns either the doc ID assigned to the tweet ID,
-   * or doc ID of the next lowest tweet ID, if the tweet is not in the index. In this case
-   * findMaxDocID is ignored.
+   *  n t  ordered, dense doc  D mappers, t  returns e  r t  doc  D ass gned to t  t et  D,
+   * or doc  D of t  next lo st t et  D,  f t  t et  s not  n t   ndex.  n t  case
+   * f ndMaxDoc D  s  gnored.
    *
-   * In {@link OutOfOrderRealtimeTweetIDMapper}, doc IDs are not ordered within a millisecond, so we
-   * want to search the entire millisecond bucket for a filter. To accomplish this,
-   * if findMaxDocId is true we return the largest possible doc ID for that millisecond.
-   * If findMaxDocId is false, we return the smallest possible doc ID for that millisecond.
+   *  n {@l nk OutOfOrderRealt  T et DMapper}, doc  Ds are not ordered w h n a m ll second, so  
+   * want to search t  ent re m ll second bucket for a f lter. To accompl sh t ,
+   *  f f ndMaxDoc d  s true   return t  largest poss ble doc  D for that m ll second.
+   *  f f ndMaxDoc d  s false,   return t  smallest poss ble doc  D for that m ll second.
    *
-   * The returned doc ID will be between smallestDocID and largestDocID (inclusive).
-   * The returned doc ID may not be in the index.
+   * T  returned doc  D w ll be bet en smallestDoc D and largestDoc D ( nclus ve).
+   * T  returned doc  D may not be  n t   ndex.
    */
-  public int findDocIdBound(long tweetID,
-                            boolean findMaxDocID,
-                            int smallestDocID,
-                            int largestDocID) throws IOException {
-    if (tweetID > maxTweetID) {
-      return smallestDocID;
+  publ c  nt f ndDoc dBound(long t et D,
+                            boolean f ndMaxDoc D,
+                             nt smallestDoc D,
+                             nt largestDoc D) throws  OExcept on {
+     f (t et D > maxT et D) {
+      return smallestDoc D;
     }
-    if (tweetID < minTweetID) {
-      return largestDocID;
+     f (t et D < m nT et D) {
+      return largestDoc D;
     }
 
-    int internalID = findDocIDBoundInternal(tweetID, findMaxDocID);
+     nt  nternal D = f ndDoc DBound nternal(t et D, f ndMaxDoc D);
 
-    return Math.max(smallestDocID, Math.min(largestDocID, internalID));
+    return Math.max(smallestDoc D, Math.m n(largestDoc D,  nternal D));
   }
 
-  @Override
-  public final int getNextDocID(int docID) {
-    if (numDocs <= 0) {
-      return ID_NOT_FOUND;
+  @Overr de
+  publ c f nal  nt getNextDoc D( nt doc D) {
+     f (numDocs <= 0) {
+      return  D_NOT_FOUND;
     }
-    if (docID < minDocID) {
-      return minDocID;
+     f (doc D < m nDoc D) {
+      return m nDoc D;
     }
-    if (docID >= maxDocID) {
-      return ID_NOT_FOUND;
+     f (doc D >= maxDoc D) {
+      return  D_NOT_FOUND;
     }
-    return getNextDocIDInternal(docID);
+    return getNextDoc D nternal(doc D);
   }
 
-  @Override
-  public final int getPreviousDocID(int docID) {
-    if (numDocs <= 0) {
-      return ID_NOT_FOUND;
+  @Overr de
+  publ c f nal  nt getPrev ousDoc D( nt doc D) {
+     f (numDocs <= 0) {
+      return  D_NOT_FOUND;
     }
-    if (docID <= minDocID) {
-      return ID_NOT_FOUND;
+     f (doc D <= m nDoc D) {
+      return  D_NOT_FOUND;
     }
-    if (docID > maxDocID) {
-      return maxDocID;
+     f (doc D > maxDoc D) {
+      return maxDoc D;
     }
-    return getPreviousDocIDInternal(docID);
+    return getPrev ousDoc D nternal(doc D);
   }
 
-  @Override
-  public int addMapping(final long tweetID) {
-    int docId = addMappingInternal(tweetID);
-    if (docId != ID_NOT_FOUND) {
+  @Overr de
+  publ c  nt addMapp ng(f nal long t et D) {
+     nt doc d = addMapp ng nternal(t et D);
+     f (doc d !=  D_NOT_FOUND) {
       ++numDocs;
-      if (tweetID > maxTweetID) {
-        maxTweetID = tweetID;
+       f (t et D > maxT et D) {
+        maxT et D = t et D;
       }
-      if (tweetID < minTweetID) {
-        minTweetID = tweetID;
+       f (t et D < m nT et D) {
+        m nT et D = t et D;
       }
-      if (docId > maxDocID) {
-        maxDocID = docId;
+       f (doc d > maxDoc D) {
+        maxDoc D = doc d;
       }
-      if (docId < minDocID) {
-        minDocID = docId;
+       f (doc d < m nDoc D) {
+        m nDoc D = doc d;
       }
     }
 
-    return docId;
+    return doc d;
   }
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND must be returned.
+   * Returns t  smallest val d doc  D  n t  mapper that's str ctly h g r than t  g ven doc  D.
+   *  f no such doc  D ex sts,  D_NOT_FOUND must be returned.
    *
-   * The given docID is guaranteed to be in the range [minDocID, maxDocID).
+   * T  g ven doc D  s guaranteed to be  n t  range [m nDoc D, maxDoc D).
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param doc D T  current doc  D.
+   * @return T  smallest val d doc  D  n t  mapper that's str ctly h g r than t  g ven doc  D,
+   *         or a negat ve number,  f no such doc  D ex sts.
    */
-  protected abstract int getNextDocIDInternal(int docID);
+  protected abstract  nt getNextDoc D nternal( nt doc D);
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND must be returned.
+   * Returns t  smallest val d doc  D  n t  mapper that's str ctly h g r than t  g ven doc  D.
+   *  f no such doc  D ex sts,  D_NOT_FOUND must be returned.
    *
-   * The given docID is guaranteed to be in the range (minDocID, maxDocID].
+   * T  g ven doc D  s guaranteed to be  n t  range (m nDoc D, maxDoc D].
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param doc D T  current doc  D.
+   * @return T  smallest val d doc  D  n t  mapper that's str ctly h g r than t  g ven doc  D,
+   *         or a negat ve number,  f no such doc  D ex sts.
    */
-  protected abstract int getPreviousDocIDInternal(int docID);
+  protected abstract  nt getPrev ousDoc D nternal( nt doc D);
 
-  protected abstract int addMappingInternal(final long tweetID);
+  protected abstract  nt addMapp ng nternal(f nal long t et D);
 
   /**
-   * See {@link TweetIDMapper#findDocIdBound}.
+   * See {@l nk T et DMapper#f ndDoc dBound}.
    */
-  protected abstract int findDocIDBoundInternal(long tweetID,
-                                                boolean findMaxDocID) throws IOException;
+  protected abstract  nt f ndDoc DBound nternal(long t et D,
+                                                boolean f ndMaxDoc D) throws  OExcept on;
 }

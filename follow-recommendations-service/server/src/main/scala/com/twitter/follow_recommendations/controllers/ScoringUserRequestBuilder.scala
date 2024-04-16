@@ -1,51 +1,51 @@
-package com.twitter.follow_recommendations.controllers
+package com.tw ter.follow_recom ndat ons.controllers
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Cl entContextConverter
+ mport com.tw ter.follow_recom ndat ons.common.models.DebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.models.DebugParams
+ mport com.tw ter.follow_recom ndat ons.models.Scor ngUserRequest
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.g zmoduck.thr ftscala.UserType
+ mport com.tw ter.st ch.St ch
 
-@Singleton
-class ScoringUserRequestBuilder @Inject() (
-  requestBuilderUserFetcher: RequestBuilderUserFetcher,
-  candidateUserDebugParamsBuilder: CandidateUserDebugParamsBuilder,
-  statsReceiver: StatsReceiver) {
-  private val scopedStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val isSoftUserCounter = scopedStats.counter("is_soft_user")
+@S ngleton
+class Scor ngUserRequestBu lder @ nject() (
+  requestBu lderUserFetc r: RequestBu lderUserFetc r,
+  cand dateUserDebugParamsBu lder: Cand dateUserDebugParamsBu lder,
+  statsRece ver: StatsRece ver) {
+  pr vate val scopedStats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val  sSoftUserCounter = scopedStats.counter(" s_soft_user")
 
-  def fromThrift(req: t.ScoringUserRequest): Stitch[ScoringUserRequest] = {
-    requestBuilderUserFetcher.fetchUser(req.clientContext.userId).map { userOpt =>
-      val isSoftUser = userOpt.exists(_.userType == UserType.Soft)
-      if (isSoftUser) isSoftUserCounter.incr()
+  def fromThr ft(req: t.Scor ngUserRequest): St ch[Scor ngUserRequest] = {
+    requestBu lderUserFetc r.fetchUser(req.cl entContext.user d).map { userOpt =>
+      val  sSoftUser = userOpt.ex sts(_.userType == UserType.Soft)
+       f ( sSoftUser)  sSoftUserCounter. ncr()
 
-      val candidateUsersParamsMap = candidateUserDebugParamsBuilder.fromThrift(req)
-      val candidates = req.candidates.map { candidate =>
-        CandidateUser
-          .fromUserRecommendation(candidate).copy(params =
-            candidateUsersParamsMap.paramsMap.getOrElse(candidate.userId, Params.Invalid))
+      val cand dateUsersParamsMap = cand dateUserDebugParamsBu lder.fromThr ft(req)
+      val cand dates = req.cand dates.map { cand date =>
+        Cand dateUser
+          .fromUserRecom ndat on(cand date).copy(params =
+            cand dateUsersParamsMap.paramsMap.getOrElse(cand date.user d, Params. nval d))
       }
 
-      ScoringUserRequest(
-        clientContext = ClientContextConverter.fromThrift(req.clientContext),
-        displayLocation = DisplayLocation.fromThrift(req.displayLocation),
+      Scor ngUserRequest(
+        cl entContext = Cl entContextConverter.fromThr ft(req.cl entContext),
+        d splayLocat on = D splayLocat on.fromThr ft(req.d splayLocat on),
         params = Params.Empty,
-        debugOptions = req.debugParams.map(DebugOptions.fromDebugParamsThrift),
-        recentFollowedUserIds = None,
-        recentFollowedByUserIds = None,
-        wtfImpressions = None,
-        similarToUserIds = Nil,
-        candidates = candidates,
-        debugParams = req.debugParams.map(DebugParams.fromThrift),
-        isSoftUser = isSoftUser
+        debugOpt ons = req.debugParams.map(DebugOpt ons.fromDebugParamsThr ft),
+        recentFollo dUser ds = None,
+        recentFollo dByUser ds = None,
+        wtf mpress ons = None,
+        s m larToUser ds = N l,
+        cand dates = cand dates,
+        debugParams = req.debugParams.map(DebugParams.fromThr ft),
+         sSoftUser =  sSoftUser
       )
     }
   }

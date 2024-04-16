@@ -1,101 +1,101 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.soc al_context
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => t}
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => t}
 
 /**
- * Use this Builder to create Product Mixer [[SocialContext]] objects when you have a
- * Timeline Service Thrift [[SocialContext]] feature that you want to convert
+ * Use t  Bu lder to create Product M xer [[Soc alContext]] objects w n   have a
+ * T  l ne Serv ce Thr ft [[Soc alContext]] feature that   want to convert
  */
-case class FeatureSocialContextBuilder(
-  socialContextFeature: Feature[_, Option[t.SocialContext]])
-    extends BaseSocialContextBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class FeatureSoc alContextBu lder(
+  soc alContextFeature: Feature[_, Opt on[t.Soc alContext]])
+    extends BaseSoc alContextBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    candidateFeatures.getOrElse(socialContextFeature, None).map {
-      case t.SocialContext.GeneralContext(context) =>
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Un versalNoun[Any],
+    cand dateFeatures: FeatureMap
+  ): Opt on[Soc alContext] = {
+    cand dateFeatures.getOrElse(soc alContextFeature, None).map {
+      case t.Soc alContext.GeneralContext(context) =>
         val contextType = context.contextType match {
-          case t.ContextType.Like => LikeGeneralContextType
+          case t.ContextType.L ke => L keGeneralContextType
           case t.ContextType.Follow => FollowGeneralContextType
-          case t.ContextType.Moment => MomentGeneralContextType
+          case t.ContextType.Mo nt => Mo ntGeneralContextType
           case t.ContextType.Reply => ReplyGeneralContextType
-          case t.ContextType.Conversation => ConversationGeneralContextType
-          case t.ContextType.Pin => PinGeneralContextType
+          case t.ContextType.Conversat on => Conversat onGeneralContextType
+          case t.ContextType.P n => P nGeneralContextType
           case t.ContextType.TextOnly => TextOnlyGeneralContextType
-          case t.ContextType.Facepile => FacePileGeneralContextType
-          case t.ContextType.Megaphone => MegaPhoneGeneralContextType
-          case t.ContextType.Bird => BirdGeneralContextType
+          case t.ContextType.Facep le => FaceP leGeneralContextType
+          case t.ContextType. gaphone =>  gaPhoneGeneralContextType
+          case t.ContextType.B rd => B rdGeneralContextType
           case t.ContextType.Feedback => FeedbackGeneralContextType
-          case t.ContextType.Topic => TopicGeneralContextType
-          case t.ContextType.List => ListGeneralContextType
-          case t.ContextType.Retweet => RetweetGeneralContextType
-          case t.ContextType.Location => LocationGeneralContextType
-          case t.ContextType.Community => CommunityGeneralContextType
-          case t.ContextType.SmartBlockExpiration => SmartblockExpirationGeneralContextType
-          case t.ContextType.Trending => TrendingGeneralContextType
+          case t.ContextType.Top c => Top cGeneralContextType
+          case t.ContextType.L st => L stGeneralContextType
+          case t.ContextType.Ret et => Ret etGeneralContextType
+          case t.ContextType.Locat on => Locat onGeneralContextType
+          case t.ContextType.Commun y => Commun yGeneralContextType
+          case t.ContextType.SmartBlockExp rat on => SmartblockExp rat onGeneralContextType
+          case t.ContextType.Trend ng => Trend ngGeneralContextType
           case t.ContextType.Sparkle => SparkleGeneralContextType
           case t.ContextType.Spaces => SpacesGeneralContextType
-          case t.ContextType.ReplyPin => ReplyPinGeneralContextType
+          case t.ContextType.ReplyP n => ReplyP nGeneralContextType
           case t.ContextType.NewUser => NewUserGeneralContextType
-          case t.ContextType.EnumUnknownContextType(field) =>
-            throw new UnsupportedOperationException(s"Unknown context type: $field")
+          case t.ContextType.EnumUnknownContextType(f eld) =>
+            throw new UnsupportedOperat onExcept on(s"Unknown context type: $f eld")
         }
 
-        val landingUrl = context.landingUrl.map { url =>
-          val endpointOptions = url.urtEndpointOptions.map { options =>
-            UrtEndpointOptions(
-              requestParams = options.requestParams.map(_.toMap),
-              title = options.title,
-              cacheId = options.cacheId,
-              subtitle = options.subtitle
+        val land ngUrl = context.land ngUrl.map { url =>
+          val endpo ntOpt ons = url.urtEndpo ntOpt ons.map { opt ons =>
+            UrtEndpo ntOpt ons(
+              requestParams = opt ons.requestParams.map(_.toMap),
+              t le = opt ons.t le,
+              cac  d = opt ons.cac  d,
+              subt le = opt ons.subt le
             )
           }
 
           val urlType = url.urlType match {
             case t.UrlType.ExternalUrl => ExternalUrl
-            case t.UrlType.DeepLink => DeepLink
-            case t.UrlType.UrtEndpoint => UrtEndpoint
-            case t.UrlType.EnumUnknownUrlType(field) =>
-              throw new UnsupportedOperationException(s"Unknown url type: $field")
+            case t.UrlType.DeepL nk => DeepL nk
+            case t.UrlType.UrtEndpo nt => UrtEndpo nt
+            case t.UrlType.EnumUnknownUrlType(f eld) =>
+              throw new UnsupportedOperat onExcept on(s"Unknown url type: $f eld")
           }
 
-          Url(urlType = urlType, url = url.url, urtEndpointOptions = endpointOptions)
+          Url(urlType = urlType, url = url.url, urtEndpo ntOpt ons = endpo ntOpt ons)
         }
 
         GeneralContext(
           text = context.text,
           contextType = contextType,
           url = context.url,
-          contextImageUrls = context.contextImageUrls.map(_.toList),
-          landingUrl = landingUrl
+          context mageUrls = context.context mageUrls.map(_.toL st),
+          land ngUrl = land ngUrl
         )
-      case t.SocialContext.TopicContext(context) =>
-        val functionalityType = context.functionalityType match {
-          case t.TopicContextFunctionalityType.Basic =>
-            BasicTopicContextFunctionalityType
-          case t.TopicContextFunctionalityType.Recommendation =>
-            RecommendationTopicContextFunctionalityType
-          case t.TopicContextFunctionalityType.RecWithEducation =>
-            RecWithEducationTopicContextFunctionalityType
-          case t.TopicContextFunctionalityType.EnumUnknownTopicContextFunctionalityType(field) =>
-            throw new UnsupportedOperationException(s"Unknown functionality type: $field")
+      case t.Soc alContext.Top cContext(context) =>
+        val funct onal yType = context.funct onal yType match {
+          case t.Top cContextFunct onal yType.Bas c =>
+            Bas cTop cContextFunct onal yType
+          case t.Top cContextFunct onal yType.Recom ndat on =>
+            Recom ndat onTop cContextFunct onal yType
+          case t.Top cContextFunct onal yType.RecW hEducat on =>
+            RecW hEducat onTop cContextFunct onal yType
+          case t.Top cContextFunct onal yType.EnumUnknownTop cContextFunct onal yType(f eld) =>
+            throw new UnsupportedOperat onExcept on(s"Unknown funct onal y type: $f eld")
         }
 
-        TopicContext(
-          topicId = context.topicId,
-          functionalityType = Some(functionalityType)
+        Top cContext(
+          top c d = context.top c d,
+          funct onal yType = So (funct onal yType)
         )
-      case t.SocialContext.UnknownUnionField(field) =>
-        throw new UnsupportedOperationException(s"Unknown social context: $field")
+      case t.Soc alContext.UnknownUn onF eld(f eld) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown soc al context: $f eld")
     }
   }
 }

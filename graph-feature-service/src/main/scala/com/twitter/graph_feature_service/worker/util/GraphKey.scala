@@ -1,32 +1,32 @@
-package com.twitter.graph_feature_service.worker.util
+package com.tw ter.graph_feature_serv ce.worker.ut l
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType._
 
-sealed trait GraphKey {
+sealed tra  GraphKey {
 
   def edgeType: EdgeType
 }
 
-sealed trait PartialValueGraph extends GraphKey
+sealed tra  Part alValueGraph extends GraphKey
 
 /**
  * Follow Graphs
  */
-object FollowingPartialValueGraph extends PartialValueGraph {
+object Follow ngPart alValueGraph extends Part alValueGraph {
 
-  override def edgeType: EdgeType = Following
+  overr de def edgeType: EdgeType = Follow ng
 }
 
-object FollowedByPartialValueGraph extends PartialValueGraph {
+object Follo dByPart alValueGraph extends Part alValueGraph {
 
-  override def edgeType: EdgeType = FollowedBy
+  overr de def edgeType: EdgeType = Follo dBy
 }
 
 /**
  * Mutual Follow Graphs
  */
-object MutualFollowPartialValueGraph extends PartialValueGraph {
+object MutualFollowPart alValueGraph extends Part alValueGraph {
 
-  override def edgeType: EdgeType = MutualFollow
+  overr de def edgeType: EdgeType = MutualFollow
 }

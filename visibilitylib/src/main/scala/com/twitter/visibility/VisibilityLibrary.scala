@@ -1,387 +1,387 @@
-package com.twitter.visibility
+package com.tw ter.v s b l y
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.NullABDecider
-import com.twitter.decider.Decider
-import com.twitter.decider.NullDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.NullFeatureSwitches
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.logging.NullLogger
-import com.twitter.servo.util.Gate
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Try
-import com.twitter.visibility.builder._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.engine.DeciderableVisibilityRuleEngine
-import com.twitter.visibility.engine.VisibilityResultsMetricRecorder
-import com.twitter.visibility.engine.VisibilityRuleEngine
-import com.twitter.visibility.engine.VisibilityRulePreprocessor
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.generators.TweetRuleGenerator
-import com.twitter.visibility.rules.providers.InjectedPolicyProvider
-import com.twitter.visibility.util.DeciderUtil
-import com.twitter.visibility.util.FeatureSwitchUtil
-import com.twitter.visibility.util.LoggingUtil
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.abdec der.NullABDec der
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.NullDec der
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.featuresw c s.v2.NullFeatureSw c s
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.logg ng.NullLogger
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.v s b l y.bu lder._
+ mport com.tw ter.v s b l y.common.st ch.St ch lpers
+ mport com.tw ter.v s b l y.conf gap .V s b l yParams
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.eng ne.Dec derableV s b l yRuleEng ne
+ mport com.tw ter.v s b l y.eng ne.V s b l yResults tr cRecorder
+ mport com.tw ter.v s b l y.eng ne.V s b l yRuleEng ne
+ mport com.tw ter.v s b l y.eng ne.V s b l yRulePreprocessor
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.Rule
+ mport com.tw ter.v s b l y.rules.generators.T etRuleGenerator
+ mport com.tw ter.v s b l y.rules.prov ders. njectedPol cyProv der
+ mport com.tw ter.v s b l y.ut l.Dec derUt l
+ mport com.tw ter.v s b l y.ut l.FeatureSw chUt l
+ mport com.tw ter.v s b l y.ut l.Logg ngUt l
 
-object VisibilityLibrary {
+object V s b l yL brary {
 
-  object Builder {
+  object Bu lder {
 
-    def apply(log: Logger, statsReceiver: StatsReceiver): Builder = new Builder(
+    def apply(log: Logger, statsRece ver: StatsRece ver): Bu lder = new Bu lder(
       log,
-      new MemoizingStatsReceiver(statsReceiver)
+      new  mo z ngStatsRece ver(statsRece ver)
     )
   }
 
-  case class Builder(
+  case class Bu lder(
     log: Logger,
-    statsReceiver: StatsReceiver,
-    decider: Option[Decider] = None,
-    abDecider: Option[LoggingABDecider] = None,
-    featureSwitches: Option[FeatureSwitches] = None,
-    enableStitchProfiling: Gate[Unit] = Gate.False,
-    captureDebugStats: Gate[Unit] = Gate.False,
-    enableComposableActions: Gate[Unit] = Gate.False,
-    enableFailClosed: Gate[Unit] = Gate.False,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    memoizeSafetyLevelParams: Gate[Unit] = Gate.False) {
+    statsRece ver: StatsRece ver,
+    dec der: Opt on[Dec der] = None,
+    abDec der: Opt on[Logg ngABDec der] = None,
+    featureSw c s: Opt on[FeatureSw c s] = None,
+    enableSt chProf l ng: Gate[Un ] = Gate.False,
+    captureDebugStats: Gate[Un ] = Gate.False,
+    enableComposableAct ons: Gate[Un ] = Gate.False,
+    enableFa lClosed: Gate[Un ] = Gate.False,
+    enableShortC rcu  ng: Gate[Un ] = Gate.True,
+     mo zeSafetyLevelParams: Gate[Un ] = Gate.False) {
 
-    def withDecider(decider: Decider): Builder = copy(decider = Some(decider))
+    def w hDec der(dec der: Dec der): Bu lder = copy(dec der = So (dec der))
 
-    @deprecated("use .withDecider and pass in a decider that is properly configured per DC")
-    def withDefaultDecider(isLocal: Boolean, useLocalOverrides: Boolean = false): Builder = {
-      if (isLocal) {
-        withLocalDecider
+    @deprecated("use .w hDec der and pass  n a dec der that  s properly conf gured per DC")
+    def w hDefaultDec der( sLocal: Boolean, useLocalOverr des: Boolean = false): Bu lder = {
+       f ( sLocal) {
+        w hLocalDec der
       } else {
-        withDecider(
-          DeciderUtil.mkDecider(
-            useLocalDeciderOverrides = useLocalOverrides,
+        w hDec der(
+          Dec derUt l.mkDec der(
+            useLocalDec derOverr des = useLocalOverr des,
           ))
       }
     }
 
-    def withLocalDecider(): Builder = withDecider(DeciderUtil.mkLocalDecider)
+    def w hLocalDec der(): Bu lder = w hDec der(Dec derUt l.mkLocalDec der)
 
-    def withNullDecider(): Builder =
-      withDecider(new NullDecider(isAvail = true, availabilityDefined = true))
+    def w hNullDec der(): Bu lder =
+      w hDec der(new NullDec der( sAva l = true, ava lab l yDef ned = true))
 
-    def withABDecider(abDecider: LoggingABDecider, featureSwitches: FeatureSwitches): Builder =
-      abDecider match {
-        case abd: NullABDecider =>
-          copy(abDecider = Some(abd), featureSwitches = Some(NullFeatureSwitches))
+    def w hABDec der(abDec der: Logg ngABDec der, featureSw c s: FeatureSw c s): Bu lder =
+      abDec der match {
+        case abd: NullABDec der =>
+          copy(abDec der = So (abd), featureSw c s = So (NullFeatureSw c s))
         case _ =>
           copy(
-            abDecider = Some(abDecider),
-            featureSwitches = Some(featureSwitches)
+            abDec der = So (abDec der),
+            featureSw c s = So (featureSw c s)
           )
       }
 
-    def withABDecider(abDecider: LoggingABDecider): Builder = abDecider match {
-      case abd: NullABDecider =>
-        withABDecider(abDecider = abd, featureSwitches = NullFeatureSwitches)
+    def w hABDec der(abDec der: Logg ngABDec der): Bu lder = abDec der match {
+      case abd: NullABDec der =>
+        w hABDec der(abDec der = abd, featureSw c s = NullFeatureSw c s)
       case _ =>
-        withABDecider(
-          abDecider = abDecider,
-          featureSwitches =
-            FeatureSwitchUtil.mkVisibilityLibraryFeatureSwitches(abDecider, statsReceiver)
+        w hABDec der(
+          abDec der = abDec der,
+          featureSw c s =
+            FeatureSw chUt l.mkV s b l yL braryFeatureSw c s(abDec der, statsRece ver)
         )
     }
 
-    def withClientEventsLogger(clientEventsLogger: Logger): Builder =
-      withABDecider(DeciderUtil.mkABDecider(Some(clientEventsLogger)))
+    def w hCl entEventsLogger(cl entEventsLogger: Logger): Bu lder =
+      w hABDec der(Dec derUt l.mkABDec der(So (cl entEventsLogger)))
 
-    def withDefaultABDecider(isLocal: Boolean): Builder =
-      if (isLocal) {
-        withABDecider(NullABDecider)
+    def w hDefaultABDec der( sLocal: Boolean): Bu lder =
+       f ( sLocal) {
+        w hABDec der(NullABDec der)
       } else {
-        withClientEventsLogger(LoggingUtil.mkDefaultLogger(statsReceiver))
+        w hCl entEventsLogger(Logg ngUt l.mkDefaultLogger(statsRece ver))
       }
 
-    def withNullABDecider(): Builder = withABDecider(NullABDecider)
+    def w hNullABDec der(): Bu lder = w hABDec der(NullABDec der)
 
-    def withEnableStitchProfiling(gate: Gate[Unit]): Builder =
-      copy(enableStitchProfiling = gate)
+    def w hEnableSt chProf l ng(gate: Gate[Un ]): Bu lder =
+      copy(enableSt chProf l ng = gate)
 
-    def withCaptureDebugStats(gate: Gate[Unit]): Builder =
+    def w hCaptureDebugStats(gate: Gate[Un ]): Bu lder =
       copy(captureDebugStats = gate)
 
-    def withEnableComposableActions(gate: Gate[Unit]): Builder =
-      copy(enableComposableActions = gate)
+    def w hEnableComposableAct ons(gate: Gate[Un ]): Bu lder =
+      copy(enableComposableAct ons = gate)
 
-    def withEnableComposableActions(gateBoolean: Boolean): Builder = {
+    def w hEnableComposableAct ons(gateBoolean: Boolean): Bu lder = {
       val gate = Gate.const(gateBoolean)
-      copy(enableComposableActions = gate)
+      copy(enableComposableAct ons = gate)
     }
 
-    def withEnableFailClosed(gate: Gate[Unit]): Builder =
-      copy(enableFailClosed = gate)
+    def w hEnableFa lClosed(gate: Gate[Un ]): Bu lder =
+      copy(enableFa lClosed = gate)
 
-    def withEnableFailClosed(gateBoolean: Boolean): Builder = {
+    def w hEnableFa lClosed(gateBoolean: Boolean): Bu lder = {
       val gate = Gate.const(gateBoolean)
-      copy(enableFailClosed = gate)
+      copy(enableFa lClosed = gate)
     }
 
-    def withEnableShortCircuiting(gate: Gate[Unit]): Builder =
-      copy(enableShortCircuiting = gate)
+    def w hEnableShortC rcu  ng(gate: Gate[Un ]): Bu lder =
+      copy(enableShortC rcu  ng = gate)
 
-    def withEnableShortCircuiting(gateBoolean: Boolean): Builder = {
+    def w hEnableShortC rcu  ng(gateBoolean: Boolean): Bu lder = {
       val gate = Gate.const(gateBoolean)
-      copy(enableShortCircuiting = gate)
+      copy(enableShortC rcu  ng = gate)
     }
 
-    def memoizeSafetyLevelParams(gate: Gate[Unit]): Builder =
-      copy(memoizeSafetyLevelParams = gate)
+    def  mo zeSafetyLevelParams(gate: Gate[Un ]): Bu lder =
+      copy( mo zeSafetyLevelParams = gate)
 
-    def memoizeSafetyLevelParams(gateBoolean: Boolean): Builder = {
+    def  mo zeSafetyLevelParams(gateBoolean: Boolean): Bu lder = {
       val gate = Gate.const(gateBoolean)
-      copy(memoizeSafetyLevelParams = gate)
+      copy( mo zeSafetyLevelParams = gate)
     }
 
-    def build(): VisibilityLibrary = {
+    def bu ld(): V s b l yL brary = {
 
-      (decider, abDecider, featureSwitches) match {
+      (dec der, abDec der, featureSw c s) match {
         case (None, _, _) =>
-          throw new IllegalStateException(
-            "Decider is unset! If intentional, please call .withNullDecider()."
+          throw new  llegalStateExcept on(
+            "Dec der  s unset!  f  ntent onal, please call .w hNullDec der()."
           )
 
         case (_, None, _) =>
-          throw new IllegalStateException(
-            "ABDecider is unset! If intentional, please call .withNullABDecider()."
+          throw new  llegalStateExcept on(
+            "ABDec der  s unset!  f  ntent onal, please call .w hNullABDec der()."
           )
 
         case (_, _, None) =>
-          throw new IllegalStateException(
-            "FeatureSwitches is unset! This is a bug."
+          throw new  llegalStateExcept on(
+            "FeatureSw c s  s unset! T   s a bug."
           )
 
-        case (Some(d), Some(abd), Some(fs)) =>
-          new VisibilityLibrary(
-            statsReceiver,
+        case (So (d), So (abd), So (fs)) =>
+          new V s b l yL brary(
+            statsRece ver,
             d,
             abd,
-            VisibilityParams(log, statsReceiver, d, abd, fs),
-            enableStitchProfiling = enableStitchProfiling,
+            V s b l yParams(log, statsRece ver, d, abd, fs),
+            enableSt chProf l ng = enableSt chProf l ng,
             captureDebugStats = captureDebugStats,
-            enableComposableActions = enableComposableActions,
-            enableFailClosed = enableFailClosed,
-            enableShortCircuiting = enableShortCircuiting,
-            memoizeSafetyLevelParams = memoizeSafetyLevelParams)
+            enableComposableAct ons = enableComposableAct ons,
+            enableFa lClosed = enableFa lClosed,
+            enableShortC rcu  ng = enableShortC rcu  ng,
+             mo zeSafetyLevelParams =  mo zeSafetyLevelParams)
       }
     }
   }
 
-  val nullDecider = new NullDecider(true, true)
+  val nullDec der = new NullDec der(true, true)
 
-  lazy val NullLibrary: VisibilityLibrary = new VisibilityLibrary(
-    NullStatsReceiver,
-    nullDecider,
-    NullABDecider,
-    VisibilityParams(
+  lazy val NullL brary: V s b l yL brary = new V s b l yL brary(
+    NullStatsRece ver,
+    nullDec der,
+    NullABDec der,
+    V s b l yParams(
       NullLogger,
-      NullStatsReceiver,
-      nullDecider,
-      NullABDecider,
-      NullFeatureSwitches),
-    enableStitchProfiling = Gate.False,
+      NullStatsRece ver,
+      nullDec der,
+      NullABDec der,
+      NullFeatureSw c s),
+    enableSt chProf l ng = Gate.False,
     captureDebugStats = Gate.False,
-    enableComposableActions = Gate.False,
-    enableFailClosed = Gate.False,
-    enableShortCircuiting = Gate.True,
-    memoizeSafetyLevelParams = Gate.False
+    enableComposableAct ons = Gate.False,
+    enableFa lClosed = Gate.False,
+    enableShortC rcu  ng = Gate.True,
+     mo zeSafetyLevelParams = Gate.False
   )
 }
 
-class VisibilityLibrary private[VisibilityLibrary] (
-  baseStatsReceiver: StatsReceiver,
-  decider: Decider,
-  abDecider: LoggingABDecider,
-  visibilityParams: VisibilityParams,
-  enableStitchProfiling: Gate[Unit],
-  captureDebugStats: Gate[Unit],
-  enableComposableActions: Gate[Unit],
-  enableFailClosed: Gate[Unit],
-  enableShortCircuiting: Gate[Unit],
-  memoizeSafetyLevelParams: Gate[Unit]) {
+class V s b l yL brary pr vate[V s b l yL brary] (
+  baseStatsRece ver: StatsRece ver,
+  dec der: Dec der,
+  abDec der: Logg ngABDec der,
+  v s b l yParams: V s b l yParams,
+  enableSt chProf l ng: Gate[Un ],
+  captureDebugStats: Gate[Un ],
+  enableComposableAct ons: Gate[Un ],
+  enableFa lClosed: Gate[Un ],
+  enableShortC rcu  ng: Gate[Un ],
+   mo zeSafetyLevelParams: Gate[Un ]) {
 
-  val statsReceiver: StatsReceiver =
-    new MemoizingStatsReceiver(baseStatsReceiver.scope("visibility_library"))
+  val statsRece ver: StatsRece ver =
+    new  mo z ngStatsRece ver(baseStatsRece ver.scope("v s b l y_l brary"))
 
-  val metricsRecorder = VisibilityResultsMetricRecorder(statsReceiver, captureDebugStats)
+  val  tr csRecorder = V s b l yResults tr cRecorder(statsRece ver, captureDebugStats)
 
-  val visParams: VisibilityParams = visibilityParams
+  val v sParams: V s b l yParams = v s b l yParams
 
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  val v s b l yDec derGates = V s b l yDec derGates(dec der)
 
-  val profileStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("profiling"))
+  val prof leStats:  mo z ngStatsRece ver = new  mo z ngStatsRece ver(
+    statsRece ver.scope("prof l ng"))
 
-  val perSafetyLevelProfileStats: StatsReceiver = profileStats.scope("for_safety_level")
+  val perSafetyLevelProf leStats: StatsRece ver = prof leStats.scope("for_safety_level")
 
-  val featureMapBuilder: FeatureMapBuilder.Build =
-    FeatureMapBuilder(statsReceiver, enableStitchProfiling)
+  val featureMapBu lder: FeatureMapBu lder.Bu ld =
+    FeatureMapBu lder(statsRece ver, enableSt chProf l ng)
 
-  private lazy val tweetRuleGenerator = new TweetRuleGenerator()
-  lazy val policyProvider = new InjectedPolicyProvider(
-    visibilityDeciderGates = visibilityDeciderGates,
-    tweetRuleGenerator = tweetRuleGenerator)
+  pr vate lazy val t etRuleGenerator = new T etRuleGenerator()
+  lazy val pol cyProv der = new  njectedPol cyProv der(
+    v s b l yDec derGates = v s b l yDec derGates,
+    t etRuleGenerator = t etRuleGenerator)
 
-  val candidateVisibilityRulePreprocessor: VisibilityRulePreprocessor = VisibilityRulePreprocessor(
-    metricsRecorder,
-    policyProviderOpt = Some(policyProvider)
+  val cand dateV s b l yRulePreprocessor: V s b l yRulePreprocessor = V s b l yRulePreprocessor(
+     tr csRecorder,
+    pol cyProv derOpt = So (pol cyProv der)
   )
 
-  val fallbackVisibilityRulePreprocessor: VisibilityRulePreprocessor = VisibilityRulePreprocessor(
-    metricsRecorder)
+  val fallbackV s b l yRulePreprocessor: V s b l yRulePreprocessor = V s b l yRulePreprocessor(
+     tr csRecorder)
 
-  lazy val candidateVisibilityRuleEngine: VisibilityRuleEngine = VisibilityRuleEngine(
-    Some(candidateVisibilityRulePreprocessor),
-    metricsRecorder,
-    enableComposableActions,
-    enableFailClosed,
-    policyProviderOpt = Some(policyProvider)
+  lazy val cand dateV s b l yRuleEng ne: V s b l yRuleEng ne = V s b l yRuleEng ne(
+    So (cand dateV s b l yRulePreprocessor),
+     tr csRecorder,
+    enableComposableAct ons,
+    enableFa lClosed,
+    pol cyProv derOpt = So (pol cyProv der)
   )
 
-  lazy val fallbackVisibilityRuleEngine: VisibilityRuleEngine = VisibilityRuleEngine(
-    Some(fallbackVisibilityRulePreprocessor),
-    metricsRecorder,
-    enableComposableActions,
-    enableFailClosed)
+  lazy val fallbackV s b l yRuleEng ne: V s b l yRuleEng ne = V s b l yRuleEng ne(
+    So (fallbackV s b l yRulePreprocessor),
+     tr csRecorder,
+    enableComposableAct ons,
+    enableFa lClosed)
 
-  val ruleEngineVersionStatsReceiver = statsReceiver.scope("rule_engine_version")
-  def isReleaseCandidateEnabled: Boolean = visibilityDeciderGates.enableExperimentalRuleEngine()
+  val ruleEng neVers onStatsRece ver = statsRece ver.scope("rule_eng ne_vers on")
+  def  sReleaseCand dateEnabled: Boolean = v s b l yDec derGates.enableExper  ntalRuleEng ne()
 
-  private def visibilityRuleEngine: DeciderableVisibilityRuleEngine = {
-    if (isReleaseCandidateEnabled) {
-      ruleEngineVersionStatsReceiver.counter("release_candidate").incr()
-      candidateVisibilityRuleEngine
+  pr vate def v s b l yRuleEng ne: Dec derableV s b l yRuleEng ne = {
+     f ( sReleaseCand dateEnabled) {
+      ruleEng neVers onStatsRece ver.counter("release_cand date"). ncr()
+      cand dateV s b l yRuleEng ne
     } else {
-      ruleEngineVersionStatsReceiver.counter("fallback").incr()
-      fallbackVisibilityRuleEngine
+      ruleEng neVers onStatsRece ver.counter("fallback"). ncr()
+      fallbackV s b l yRuleEng ne
     }
   }
 
-  private def profileStitch[A](result: Stitch[A], safetyLevelName: String): Stitch[A] =
-    if (enableStitchProfiling()) {
-      StitchHelpers.profileStitch(
+  pr vate def prof leSt ch[A](result: St ch[A], safetyLevelNa : Str ng): St ch[A] =
+     f (enableSt chProf l ng()) {
+      St ch lpers.prof leSt ch(
         result,
-        Seq(profileStats, perSafetyLevelProfileStats.scope(safetyLevelName))
+        Seq(prof leStats, perSafetyLevelProf leStats.scope(safetyLevelNa ))
       )
     } else {
       result
     }
 
-  def getParams(viewerContext: ViewerContext, safetyLevel: SafetyLevel): Params = {
-    if (memoizeSafetyLevelParams()) {
-      visibilityParams.memoized(viewerContext, safetyLevel)
+  def getParams(v e rContext: V e rContext, safetyLevel: SafetyLevel): Params = {
+     f ( mo zeSafetyLevelParams()) {
+      v s b l yParams. mo zed(v e rContext, safetyLevel)
     } else {
-      visibilityParams(viewerContext, safetyLevel)
+      v s b l yParams(v e rContext, safetyLevel)
     }
   }
 
-  def evaluationContextBuilder(viewerContext: ViewerContext): EvaluationContext.Builder =
-    EvaluationContext
-      .Builder(statsReceiver, visibilityParams, viewerContext)
-      .withMemoizedParams(memoizeSafetyLevelParams)
+  def evaluat onContextBu lder(v e rContext: V e rContext): Evaluat onContext.Bu lder =
+    Evaluat onContext
+      .Bu lder(statsRece ver, v s b l yParams, v e rContext)
+      .w h mo zedParams( mo zeSafetyLevelParams)
 
-  def runRuleEngine(
-    contentId: ContentId,
+  def runRuleEng ne(
+    content d: Content d,
     featureMap: FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
+    evaluat onContextBu lder: Evaluat onContext.Bu lder,
     safetyLevel: SafetyLevel
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        evaluationContextBuilder.build(safetyLevel),
+  ): St ch[V s b l yResult] =
+    prof leSt ch(
+      v s b l yRuleEng ne(
+        evaluat onContextBu lder.bu ld(safetyLevel),
         safetyLevel,
-        new VisibilityResultBuilder(contentId, featureMap),
-        enableShortCircuiting
+        new V s b l yResultBu lder(content d, featureMap),
+        enableShortC rcu  ng
       ),
-      safetyLevel.name
+      safetyLevel.na 
     )
 
-  def runRuleEngine(
-    contentId: ContentId,
+  def runRuleEng ne(
+    content d: Content d,
     featureMap: FeatureMap,
-    viewerContext: ViewerContext,
+    v e rContext: V e rContext,
     safetyLevel: SafetyLevel
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
+  ): St ch[V s b l yResult] =
+    prof leSt ch(
+      v s b l yRuleEng ne(
+        Evaluat onContext(safetyLevel, getParams(v e rContext, safetyLevel), statsRece ver),
         safetyLevel,
-        new VisibilityResultBuilder(contentId, featureMap),
-        enableShortCircuiting
+        new V s b l yResultBu lder(content d, featureMap),
+        enableShortC rcu  ng
       ),
-      safetyLevel.name
+      safetyLevel.na 
     )
 
-  def runRuleEngine(
-    viewerContext: ViewerContext,
+  def runRuleEng ne(
+    v e rContext: V e rContext,
     safetyLevel: SafetyLevel,
-    preprocessedResultBuilder: VisibilityResultBuilder,
+    preprocessedResultBu lder: V s b l yResultBu lder,
     preprocessedRules: Seq[Rule]
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
+  ): St ch[V s b l yResult] =
+    prof leSt ch(
+      v s b l yRuleEng ne(
+        Evaluat onContext(safetyLevel, getParams(v e rContext, safetyLevel), statsRece ver),
         safetyLevel,
-        preprocessedResultBuilder,
-        enableShortCircuiting,
-        Some(preprocessedRules)
+        preprocessedResultBu lder,
+        enableShortC rcu  ng,
+        So (preprocessedRules)
       ),
-      safetyLevel.name
+      safetyLevel.na 
     )
 
-  def runRuleEngineBatch(
-    contentIds: Seq[ContentId],
-    featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    viewerContext: ViewerContext,
+  def runRuleEng neBatch(
+    content ds: Seq[Content d],
+    featureMapProv der: (Content d, SafetyLevel) => FeatureMap,
+    v e rContext: V e rContext,
     safetyLevel: SafetyLevel,
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val params = getParams(viewerContext, safetyLevel)
-    profileStitch(
-      Stitch.traverse(contentIds) { contentId =>
-        visibilityRuleEngine(
-          EvaluationContext(safetyLevel, params, NullStatsReceiver),
+  ): St ch[Seq[Try[V s b l yResult]]] = {
+    val params = getParams(v e rContext, safetyLevel)
+    prof leSt ch(
+      St ch.traverse(content ds) { content d =>
+        v s b l yRuleEng ne(
+          Evaluat onContext(safetyLevel, params, NullStatsRece ver),
           safetyLevel,
-          new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
-          enableShortCircuiting
-        ).liftToTry
+          new V s b l yResultBu lder(content d, featureMapProv der(content d, safetyLevel)),
+          enableShortC rcu  ng
+        ).l ftToTry
       },
-      safetyLevel.name
+      safetyLevel.na 
     )
   }
 
-  def runRuleEngineBatch(
-    contentIds: Seq[ContentId],
-    featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
+  def runRuleEng neBatch(
+    content ds: Seq[Content d],
+    featureMapProv der: (Content d, SafetyLevel) => FeatureMap,
+    evaluat onContextBu lder: Evaluat onContext.Bu lder,
     safetyLevel: SafetyLevel
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val evaluationContext = evaluationContextBuilder.build(safetyLevel)
-    profileStitch(
-      Stitch.traverse(contentIds) { contentId =>
-        visibilityRuleEngine(
-          evaluationContext,
+  ): St ch[Seq[Try[V s b l yResult]]] = {
+    val evaluat onContext = evaluat onContextBu lder.bu ld(safetyLevel)
+    prof leSt ch(
+      St ch.traverse(content ds) { content d =>
+        v s b l yRuleEng ne(
+          evaluat onContext,
           safetyLevel,
-          new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
-          enableShortCircuiting
-        ).liftToTry
+          new V s b l yResultBu lder(content d, featureMapProv der(content d, safetyLevel)),
+          enableShortC rcu  ng
+        ).l ftToTry
       },
-      safetyLevel.name
+      safetyLevel.na 
     )
   }
 }

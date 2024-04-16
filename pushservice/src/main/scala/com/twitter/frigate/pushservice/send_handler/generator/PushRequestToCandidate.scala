@@ -1,49 +1,49 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.tw ter.fr gate.pushserv ce.send_handler.generator
 
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.exception.UnsupportedCrtException
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.except on.UnsupportedCrtExcept on
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
+ mport com.tw ter.ut l.Future
 
-object PushRequestToCandidate {
-  final def generatePushCandidate(
-    frigateNotification: FrigateNotification,
+object PushRequestToCand date {
+  f nal def generatePushCand date(
+    fr gateNot f cat on: Fr gateNot f cat on,
     target: Target
   )(
-    implicit config: Config
-  ): Future[RawCandidate] = {
+     mpl c  conf g: Conf g
+  ): Future[RawCand date] = {
 
-    val candidateGenerator: (Target, FrigateNotification) => Future[RawCandidate] = {
-      frigateNotification.commonRecommendationType match {
-        case CRT.MagicFanoutNewsEvent => MagicFanoutNewsEventCandidateGenerator.getCandidate
-        case CRT.ScheduledSpaceSubscriber => ScheduledSpaceSubscriberCandidateGenerator.getCandidate
-        case CRT.ScheduledSpaceSpeaker => ScheduledSpaceSpeakerCandidateGenerator.getCandidate
-        case CRT.MagicFanoutSportsEvent =>
-          MagicFanoutSportsEventCandidateGenerator.getCandidate(
+    val cand dateGenerator: (Target, Fr gateNot f cat on) => Future[RawCand date] = {
+      fr gateNot f cat on.commonRecom ndat onType match {
+        case CRT.Mag cFanoutNewsEvent => Mag cFanoutNewsEventCand dateGenerator.getCand date
+        case CRT.Sc duledSpaceSubscr ber => Sc duledSpaceSubscr berCand dateGenerator.getCand date
+        case CRT.Sc duledSpaceSpeaker => Sc duledSpaceSpeakerCand dateGenerator.getCand date
+        case CRT.Mag cFanoutSportsEvent =>
+          Mag cFanoutSportsEventCand dateGenerator.getCand date(
             _,
             _,
-            config.basketballGameScoreStore,
-            config.baseballGameScoreStore,
-            config.cricketMatchScoreStore,
-            config.soccerMatchScoreStore,
-            config.nflGameScoreStore,
-            config.semanticCoreMegadataStore
+            conf g.basketballGa ScoreStore,
+            conf g.baseballGa ScoreStore,
+            conf g.cr cketMatchScoreStore,
+            conf g.soccerMatchScoreStore,
+            conf g.nflGa ScoreStore,
+            conf g.semant cCore gadataStore
           )
-        case CRT.MagicFanoutProductLaunch =>
-          MagicFanoutProductLaunchCandidateGenerator.getCandidate
+        case CRT.Mag cFanoutProductLaunch =>
+          Mag cFanoutProductLaunchCand dateGenerator.getCand date
         case CRT.NewCreator =>
-          MagicFanoutCreatorEventCandidateGenerator.getCandidate
-        case CRT.CreatorSubscriber =>
-          MagicFanoutCreatorEventCandidateGenerator.getCandidate
+          Mag cFanoutCreatorEventCand dateGenerator.getCand date
+        case CRT.CreatorSubscr ber =>
+          Mag cFanoutCreatorEventCand dateGenerator.getCand date
         case _ =>
-          throw new UnsupportedCrtException(
-            "UnsupportedCrtException for SendHandler: " + frigateNotification.commonRecommendationType)
+          throw new UnsupportedCrtExcept on(
+            "UnsupportedCrtExcept on for SendHandler: " + fr gateNot f cat on.commonRecom ndat onType)
       }
     }
 
-    candidateGenerator(target, frigateNotification)
+    cand dateGenerator(target, fr gateNot f cat on)
   }
 }

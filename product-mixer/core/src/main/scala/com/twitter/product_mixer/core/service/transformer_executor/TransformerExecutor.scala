@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.service.transformer_executor
+package com.tw ter.product_m xer.core.serv ce.transfor r_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.transformer.Transformer
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Transfor r
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.st ch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TransformerExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
-  def arrow[In, Out](
-    transformer: Transformer[In, Out],
+@S ngleton
+class Transfor rExecutor @ nject() (overr de val statsRece ver: StatsRece ver) extends Executor {
+  def arrow[ n, Out](
+    transfor r: Transfor r[ n, Out],
     context: Executor.Context
-  ): Arrow[In, Out] = {
-    wrapComponentWithExecutorBookkeeping(
+  ): Arrow[ n, Out] = {
+    wrapComponentW hExecutorBookkeep ng(
       context,
-      transformer.identifier
-    )(Arrow.map(transformer.transform))
+      transfor r. dent f er
+    )(Arrow.map(transfor r.transform))
   }
 }

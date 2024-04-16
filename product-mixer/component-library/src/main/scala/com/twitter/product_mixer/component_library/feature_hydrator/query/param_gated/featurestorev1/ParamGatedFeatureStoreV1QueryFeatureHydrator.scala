@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated.featurestorev1
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.query.param_gated.featurestorev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1DynamicClientBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1Dynam cCl entBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * A [[QueryFeatureHydrator]] with [[Conditionally]] based on a [[Param]]
+ * A [[QueryFeatureHydrator]] w h [[Cond  onally]] based on a [[Param]]
  *
- * @param enabledParam the param to turn this [[QueryFeatureHydrator]] on and off
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @param enabledParam t  param to turn t  [[QueryFeatureHydrator]] on and off
+ * @param queryFeatureHydrator t  underly ng [[QueryFeatureHydrator]] to run w n `enabledParam`  s true
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Result T  type of t  cand dates
  */
 case class ParamGatedFeatureStoreV1QueryFeatureHydrator[
-  Query <: PipelineQuery,
-  Result <: UniversalNoun[Any]
+  Query <: P pel neQuery,
+  Result <: Un versalNoun[Any]
 ](
   enabledParam: Param[Boolean],
   queryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query])
     extends FeatureStoreV1QueryFeatureHydrator[Query]
-    with Conditionally[Query] {
+    w h Cond  onally[Query] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "ParamGated" + queryFeatureHydrator.identifier.name)
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    "ParamGated" + queryFeatureHydrator. dent f er.na )
 
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
+  overr de val alerts: Seq[Alert] = queryFeatureHydrator.alerts
 
-  override val features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]] =
+  overr de val features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: Ent y d, _]] =
     queryFeatureHydrator.features
 
-  override val clientBuilder: FeatureStoreV1DynamicClientBuilder =
-    queryFeatureHydrator.clientBuilder
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, queryFeatureHydrator, query.params(enabledParam))
+  overr de val cl entBu lder: FeatureStoreV1Dynam cCl entBu lder =
+    queryFeatureHydrator.cl entBu lder
+  overr de def only f(query: Query): Boolean =
+    Cond  onally.and(query, queryFeatureHydrator, query.params(enabledParam))
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+  overr de def hydrate(query: Query): St ch[FeatureMap] = queryFeatureHydrator.hydrate(query)
 }

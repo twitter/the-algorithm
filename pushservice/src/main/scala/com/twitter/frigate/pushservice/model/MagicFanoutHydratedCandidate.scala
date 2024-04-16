@@ -1,147 +1,147 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.escherbird.common.thriftscala.QualifiedId
-import com.twitter.escherbird.metadata.thriftscala.BasicMetadata
-import com.twitter.escherbird.metadata.thriftscala.EntityIndexFields
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutCandidate
-import com.twitter.frigate.common.base.MagicFanoutEventCandidate
-import com.twitter.frigate.common.base.RichEventFutCandidate
-import com.twitter.frigate.magic_events.thriftscala
-import com.twitter.frigate.magic_events.thriftscala.AnnotationAlg
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.magic_events.thriftscala.SemanticCoreID
-import com.twitter.frigate.magic_events.thriftscala.SimClusterID
-import com.twitter.frigate.magic_events.thriftscala.TargetID
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.livevideo.timeline.domain.v2.Event
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.util.Future
+ mport com.tw ter.esc rb rd.common.thr ftscala.Qual f ed d
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Bas c tadata
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y ndexF elds
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Mag cFanoutCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutEventCand date
+ mport com.tw ter.fr gate.common.base.R chEventFutCand date
+ mport com.tw ter.fr gate.mag c_events.thr ftscala
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Annotat onAlg
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Semant cCore D
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.S mCluster D
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Target D
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.Event
+ mport com.tw ter.top cl st ng.utt.Local zedEnt y
+ mport com.tw ter.ut l.Future
 
-case class FanoutReasonEntities(
-  userIds: Set[Long],
-  placeIds: Set[Long],
-  semanticCoreIds: Set[SemanticCoreID],
-  simclusterIds: Set[SimClusterID]) {
-  val qualifiedIds: Set[QualifiedId] =
-    semanticCoreIds.map(e => QualifiedId(e.domainId, e.entityId))
+case class FanoutReasonEnt  es(
+  user ds: Set[Long],
+  place ds: Set[Long],
+  semant cCore ds: Set[Semant cCore D],
+  s mcluster ds: Set[S mCluster D]) {
+  val qual f ed ds: Set[Qual f ed d] =
+    semant cCore ds.map(e => Qual f ed d(e.doma n d, e.ent y d))
 }
 
-object FanoutReasonEntities {
-  val empty = FanoutReasonEntities(
-    userIds = Set.empty,
-    placeIds = Set.empty,
-    semanticCoreIds = Set.empty,
-    simclusterIds = Set.empty
+object FanoutReasonEnt  es {
+  val empty = FanoutReasonEnt  es(
+    user ds = Set.empty,
+    place ds = Set.empty,
+    semant cCore ds = Set.empty,
+    s mcluster ds = Set.empty
   )
 
-  def from(reasons: Seq[TargetID]): FanoutReasonEntities = {
-    val userIds: Set[Long] = reasons.collect {
-      case TargetID.UserID(userId) => userId.id
+  def from(reasons: Seq[Target D]): FanoutReasonEnt  es = {
+    val user ds: Set[Long] = reasons.collect {
+      case Target D.User D(user d) => user d. d
     }.toSet
-    val placeIds: Set[Long] = reasons.collect {
-      case TargetID.PlaceID(placeId) => placeId.id
+    val place ds: Set[Long] = reasons.collect {
+      case Target D.Place D(place d) => place d. d
     }.toSet
-    val semanticCoreIds: Set[SemanticCoreID] = reasons.collect {
-      case TargetID.SemanticCoreID(semanticCoreID) => semanticCoreID
+    val semant cCore ds: Set[Semant cCore D] = reasons.collect {
+      case Target D.Semant cCore D(semant cCore D) => semant cCore D
     }.toSet
-    val simclusterIds: Set[SimClusterID] = reasons.collect {
-      case TargetID.SimClusterID(simClusterID) => simClusterID
+    val s mcluster ds: Set[S mCluster D] = reasons.collect {
+      case Target D.S mCluster D(s mCluster D) => s mCluster D
     }.toSet
 
-    FanoutReasonEntities(
-      userIds = userIds,
-      placeIds,
-      semanticCoreIds = semanticCoreIds,
-      simclusterIds = simclusterIds
+    FanoutReasonEnt  es(
+      user ds = user ds,
+      place ds,
+      semant cCore ds = semant cCore ds,
+      s mcluster ds = s mcluster ds
     )
   }
 }
 
-trait MagicFanoutHydratedCandidate extends PushCandidate with MagicFanoutCandidate {
-  lazy val fanoutReasonEntities: FanoutReasonEntities =
-    FanoutReasonEntities.from(candidateMagicEventsReasons.map(_.reason))
+tra  Mag cFanoutHydratedCand date extends PushCand date w h Mag cFanoutCand date {
+  lazy val fanoutReasonEnt  es: FanoutReasonEnt  es =
+    FanoutReasonEnt  es.from(cand dateMag cEventsReasons.map(_.reason))
 }
 
-trait MagicFanoutEventHydratedCandidate
-    extends MagicFanoutHydratedCandidate
-    with MagicFanoutEventCandidate
-    with RichEventFutCandidate {
+tra  Mag cFanoutEventHydratedCand date
+    extends Mag cFanoutHydratedCand date
+    w h Mag cFanoutEventCand date
+    w h R chEventFutCand date {
 
   def target: PushTypes.Target
 
-  def stats: StatsReceiver
+  def stats: StatsRece ver
 
-  def fanoutEvent: Option[FanoutEvent]
+  def fanoutEvent: Opt on[FanoutEvent]
 
-  def eventFut: Future[Option[Event]]
+  def eventFut: Future[Opt on[Event]]
 
-  def semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]]
+  def semant cEnt yResults: Map[Semant cEnt yForQuery, Opt on[Ent y gadata]]
 
-  def effectiveMagicEventsReasons: Option[Seq[MagicEventsReason]]
+  def effect veMag cEventsReasons: Opt on[Seq[Mag cEventsReason]]
 
-  def followedTopicLocalizedEntities: Future[Set[LocalizedEntity]]
+  def follo dTop cLocal zedEnt  es: Future[Set[Local zedEnt y]]
 
-  def ergLocalizedEntities: Future[Set[LocalizedEntity]]
+  def ergLocal zedEnt  es: Future[Set[Local zedEnt y]]
 
-  lazy val entityAnnotationAlg: Map[TargetID, Set[AnnotationAlg]] =
+  lazy val ent yAnnotat onAlg: Map[Target D, Set[Annotat onAlg]] =
     fanoutEvent
-      .flatMap { metadata =>
-        metadata.eventAnnotationInfo.map { eventAnnotationInfo =>
-          eventAnnotationInfo.map {
-            case (target, annotationInfoSet) => target -> annotationInfoSet.map(_.alg).toSet
+      .flatMap {  tadata =>
+         tadata.eventAnnotat on nfo.map { eventAnnotat on nfo =>
+          eventAnnotat on nfo.map {
+            case (target, annotat on nfoSet) => target -> annotat on nfoSet.map(_.alg).toSet
           }.toMap
         }
       }.getOrElse(Map.empty)
 
-  lazy val eventSource: Option[String] = fanoutEvent.map { metadata =>
-    val source = metadata.eventSource.getOrElse("undefined")
-    stats.scope("eventSource").counter(source).incr()
-    source
+  lazy val eventS ce: Opt on[Str ng] = fanoutEvent.map {  tadata =>
+    val s ce =  tadata.eventS ce.getOrElse("undef ned")
+    stats.scope("eventS ce").counter(s ce). ncr()
+    s ce
   }
 
-  lazy val semanticCoreEntityTags: Map[(Long, Long), Set[String]] =
-    semanticEntityResults.flatMap {
-      case (semanticEntityForQuery, entityMegadataOpt: Option[EntityMegadata]) =>
+  lazy val semant cCoreEnt yTags: Map[(Long, Long), Set[Str ng]] =
+    semant cEnt yResults.flatMap {
+      case (semant cEnt yForQuery, ent y gadataOpt: Opt on[Ent y gadata]) =>
         for {
-          entityMegadata <- entityMegadataOpt
-          basicMetadata: BasicMetadata <- entityMegadata.basicMetadata
-          indexableFields: EntityIndexFields <- basicMetadata.indexableFields
-          tags <- indexableFields.tags
-        } yield {
-          ((semanticEntityForQuery.domainId, semanticEntityForQuery.entityId), tags.toSet)
+          ent y gadata <- ent y gadataOpt
+          bas c tadata: Bas c tadata <- ent y gadata.bas c tadata
+           ndexableF elds: Ent y ndexF elds <- bas c tadata. ndexableF elds
+          tags <-  ndexableF elds.tags
+        } y eld {
+          ((semant cEnt yForQuery.doma n d, semant cEnt yForQuery.ent y d), tags.toSet)
         }
     }
 
-  lazy val owningTwitterUserIds: Seq[Long] = semanticEntityResults.values.flatten
+  lazy val own ngTw terUser ds: Seq[Long] = semant cEnt yResults.values.flatten
     .flatMap {
-      _.basicMetadata.flatMap(_.twitter.flatMap(_.owningTwitterUserIds))
+      _.bas c tadata.flatMap(_.tw ter.flatMap(_.own ngTw terUser ds))
     }.flatten
     .toSeq
-    .distinct
+    .d st nct
 
-  lazy val eventFanoutReasonEntities: FanoutReasonEntities =
+  lazy val eventFanoutReasonEnt  es: FanoutReasonEnt  es =
     fanoutEvent match {
-      case Some(fanout) =>
+      case So (fanout) =>
         fanout.targets
-          .map { targets: Seq[thriftscala.Target] =>
-            FanoutReasonEntities.from(targets.flatMap(_.whitelist).flatten)
-          }.getOrElse(FanoutReasonEntities.empty)
-      case _ => FanoutReasonEntities.empty
+          .map { targets: Seq[thr ftscala.Target] =>
+            FanoutReasonEnt  es.from(targets.flatMap(_.wh el st).flatten)
+          }.getOrElse(FanoutReasonEnt  es.empty)
+      case _ => FanoutReasonEnt  es.empty
     }
 
-  override lazy val eventResultFut: Future[Event] = eventFut.map {
-    case Some(eventResult) => eventResult
+  overr de lazy val eventResultFut: Future[Event] = eventFut.map {
+    case So (eventResult) => eventResult
     case _ =>
-      throw new IllegalArgumentException("event is None for MagicFanoutEventHydratedCandidate")
+      throw new  llegalArgu ntExcept on("event  s None for Mag cFanoutEventHydratedCand date")
   }
-  override val rankScore: Option[Double] = None
-  override val predictionScore: Option[Double] = None
+  overr de val rankScore: Opt on[Double] = None
+  overr de val pred ct onScore: Opt on[Double] = None
 }
 
-case class MagicFanoutEventHydratedInfo(
-  fanoutEvent: Option[FanoutEvent],
-  semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]])
+case class Mag cFanoutEventHydrated nfo(
+  fanoutEvent: Opt on[FanoutEvent],
+  semant cEnt yResults: Map[Semant cEnt yForQuery, Opt on[Ent y gadata]])

@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.exception
+package com.tw ter.fr gate.pushserv ce.except on
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Throw exception if DisplayLocation is not supported
+ * Throw except on  f D splayLocat on  s not supported
  *
- * @param message Exception message
+ * @param  ssage Except on  ssage
  */
-class DisplayLocationNotSupportedException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+class D splayLocat onNotSupportedExcept on(pr vate val  ssage: Str ng)
+    extends Except on( ssage)
+    w h NoStackTrace

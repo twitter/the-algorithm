@@ -1,10 +1,10 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
-        "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "addressbook/thr ft/src/thr ft/com/tw ter/addressbook:thr ft-scala",
+        "addressbook/thr ft/src/thr ft/com/tw ter/addressbook/datatypes:thr ft-scala",
     ],
 )

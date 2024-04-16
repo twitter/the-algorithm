@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
 
-object ConsumerEmbeddingBasedTwHINParams {
-  object ModelIdParam
-      extends FSParam[String](
-        name = "consumer_embedding_based_twhin_model_id",
-        default = ModelConfig.ConsumerBasedTwHINRegularUpdateAll20221024,
-      ) // Note: this default value does not match with ModelIds yet. This FS is a placeholder
+object Consu rEmbedd ngBasedTwH NParams {
+  object Model dParam
+      extends FSParam[Str ng](
+        na  = "consu r_embedd ng_based_twh n_model_ d",
+        default = ModelConf g.Consu rBasedTwH NRegularUpdateAll20221024,
+      ) // Note: t  default value does not match w h Model ds yet. T  FS  s a placeholder
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    ModelIdParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    Model dParam
   )
 
-  lazy val config: BaseConfig = {
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        ModelIdParam
+  lazy val conf g: BaseConf g = {
+    val str ngFSOverr des =
+      FeatureSw chOverr deUt l.getStr ngFSOverr des(
+        Model dParam
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(str ngFSOverr des: _*)
+      .bu ld()
   }
 }

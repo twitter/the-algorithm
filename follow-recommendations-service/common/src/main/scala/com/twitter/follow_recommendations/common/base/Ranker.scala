@@ -1,67 +1,67 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  outExcept on
 
 /**
- * Ranker is a special kind of transform that would only change the order of a list of items.
- * If a single item is given, it "may" attach additional scoring information to the item.
+ * Ranker  s a spec al k nd of transform that would only change t  order of a l st of  ems.
+ *  f a s ngle  em  s g ven,   "may" attach add  onal scor ng  nformat on to t   em.
  *
- * @tparam Target target to recommend the candidates
- * @tparam Candidate candidate type to rank
+ * @tparam Target target to recom nd t  cand dates
+ * @tparam Cand date cand date type to rank
  */
-trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
+tra  Ranker[Target, Cand date] extends Transform[Target, Cand date] { ranker =>
 
-  def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]]
+  def rank(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]]
 
-  override def transform(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-    rank(target, candidates)
+  overr de def transform(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] = {
+    rank(target, cand dates)
   }
 
-  override def observe(statsReceiver: StatsReceiver): Ranker[Target, Candidate] = {
-    val originalRanker = this
-    new Ranker[Target, Candidate] {
-      override def rank(target: Target, items: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr(items.size)
-        statsReceiver.stat(Transform.InputCandidatesStat).add(items.size)
-        StatsUtil.profileStitchSeqResults(originalRanker.rank(target, items), statsReceiver)
+  overr de def observe(statsRece ver: StatsRece ver): Ranker[Target, Cand date] = {
+    val or g nalRanker = t 
+    new Ranker[Target, Cand date] {
+      overr de def rank(target: Target,  ems: Seq[Cand date]): St ch[Seq[Cand date]] = {
+        statsRece ver.counter(Transform. nputCand datesCount). ncr( ems.s ze)
+        statsRece ver.stat(Transform. nputCand datesStat).add( ems.s ze)
+        StatsUt l.prof leSt chSeqResults(or g nalRanker.rank(target,  ems), statsRece ver)
       }
     }
   }
 
-  def reverse: Ranker[Target, Candidate] = new Ranker[Target, Candidate] {
-    def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] =
-      ranker.rank(target, candidates).map(_.reverse)
+  def reverse: Ranker[Target, Cand date] = new Ranker[Target, Cand date] {
+    def rank(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] =
+      ranker.rank(target, cand dates).map(_.reverse)
   }
 
-  def andThen(other: Ranker[Target, Candidate]): Ranker[Target, Candidate] = {
-    val original = this
-    new Ranker[Target, Candidate] {
-      def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        original.rank(target, candidates).flatMap { results => other.rank(target, results) }
+  def andT n(ot r: Ranker[Target, Cand date]): Ranker[Target, Cand date] = {
+    val or g nal = t 
+    new Ranker[Target, Cand date] {
+      def rank(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] = {
+        or g nal.rank(target, cand dates).flatMap { results => ot r.rank(target, results) }
       }
     }
   }
 
   /**
-   * This method wraps the Ranker in a designated timeout.
-   * If the ranker timeouts, it would return the original candidates directly,
-   * instead of failing the whole recommendation flow
+   * T   thod wraps t  Ranker  n a des gnated t  out.
+   *  f t  ranker t  outs,   would return t  or g nal cand dates d rectly,
+   *  nstead of fa l ng t  whole recom ndat on flow
    */
-  def within(timeout: Duration, statsReceiver: StatsReceiver): Ranker[Target, Candidate] = {
-    val timeoutCounter = statsReceiver.counter("timeout")
-    val original = this
-    new Ranker[Target, Candidate] {
-      override def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        original
-          .rank(target, candidates)
-          .within(timeout)(com.twitter.finagle.util.DefaultTimer)
+  def w h n(t  out: Durat on, statsRece ver: StatsRece ver): Ranker[Target, Cand date] = {
+    val t  outCounter = statsRece ver.counter("t  out")
+    val or g nal = t 
+    new Ranker[Target, Cand date] {
+      overr de def rank(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] = {
+        or g nal
+          .rank(target, cand dates)
+          .w h n(t  out)(com.tw ter.f nagle.ut l.DefaultT  r)
           .rescue {
-            case _: TimeoutException =>
-              timeoutCounter.incr()
-              Stitch.value(candidates)
+            case _: T  outExcept on =>
+              t  outCounter. ncr()
+              St ch.value(cand dates)
           }
       }
     }
@@ -70,21 +70,21 @@ trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
 
 object Ranker {
 
-  def chain[Target, Candidate](
-    transformer: Transform[Target, Candidate],
-    ranker: Ranker[Target, Candidate]
-  ): Ranker[Target, Candidate] = {
-    new Ranker[Target, Candidate] {
-      def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-        transformer
-          .transform(target, candidates)
+  def cha n[Target, Cand date](
+    transfor r: Transform[Target, Cand date],
+    ranker: Ranker[Target, Cand date]
+  ): Ranker[Target, Cand date] = {
+    new Ranker[Target, Cand date] {
+      def rank(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] = {
+        transfor r
+          .transform(target, cand dates)
           .flatMap { results => ranker.rank(target, results) }
       }
     }
   }
 }
 
-class IdentityRanker[Target, Candidate] extends Ranker[Target, Candidate] {
-  def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] =
-    Stitch.value(candidates)
+class  dent yRanker[Target, Cand date] extends Ranker[Target, Cand date] {
+  def rank(target: Target, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] =
+    St ch.value(cand dates)
 }

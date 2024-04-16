@@ -1,93 +1,93 @@
-package com.twitter.simclustersann.candidate_source
+package com.tw ter.s mclustersann.cand date_s ce
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.simclustersann.thriftscala.SimClustersANNTweetCandidate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNConf g
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNT etCand date
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
 /**
- * This store looks for tweets whose similarity is close to a Source SimClustersEmbeddingId.
+ * T  store looks for t ets whose s m lar y  s close to a S ce S mClustersEmbedd ng d.
  *
- * Approximate cosine similarity is the core algorithm to drive this store.
+ * Approx mate cos ne s m lar y  s t  core algor hm to dr ve t  store.
  *
- * Step 1 - 4 are in "fetchCandidates" method.
- * 1. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
- * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
- * 3. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
- * 4. Take top M tweet candidates by the step 3's score
+ * Step 1 - 4 are  n "fetchCand dates"  thod.
+ * 1. Retr eve t  S mClusters Embedd ng by t  S mClustersEmbedd ng d
+ * 2. Fetch top N clusters' top t ets from t  clusterT etCand datesStore (TopT etsPerCluster  ndex).
+ * 3. Calculate all t  t et cand dates' dot-product or approx mate cos ne s m lar y to s ce t ets.
+ * 4. Take top M t et cand dates by t  step 3's score
  */
-case class SimClustersANNCandidateSource(
-  approximateCosineSimilarity: ApproximateCosineSimilarity,
-  clusterTweetCandidatesStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]],
-  simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getName)
-  private val fetchSourceEmbeddingStat = stats.scope("fetchSourceEmbedding")
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
-  private val candidateScoresStat = stats.stat("candidateScoresMap")
+case class S mClustersANNCand dateS ce(
+  approx mateCos neS m lar y: Approx mateCos neS m lar y,
+  clusterT etCand datesStore: ReadableStore[Cluster d, Seq[(T et d, Double)]],
+  s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng],
+  statsRece ver: StatsRece ver) {
+  pr vate val stats = statsRece ver.scope(t .getClass.getNa )
+  pr vate val fetchS ceEmbedd ngStat = stats.scope("fetchS ceEmbedd ng")
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
+  pr vate val cand dateScoresStat = stats.stat("cand dateScoresMap")
 
   def get(
-    query: SimClustersANNCandidateSource.Query
-  ): Future[Option[Seq[SimClustersANNTweetCandidate]]] = {
-    val sourceEmbeddingId = query.sourceEmbeddingId
-    val config = query.config
+    query: S mClustersANNCand dateS ce.Query
+  ): Future[Opt on[Seq[S mClustersANNT etCand date]]] = {
+    val s ceEmbedd ng d = query.s ceEmbedd ng d
+    val conf g = query.conf g
     for {
-      maybeSimClustersEmbedding <- Stats.track(fetchSourceEmbeddingStat) {
-        simClustersEmbeddingStore.get(query.sourceEmbeddingId)
+      maybeS mClustersEmbedd ng <- Stats.track(fetchS ceEmbedd ngStat) {
+        s mClustersEmbedd ngStore.get(query.s ceEmbedd ng d)
       }
-      maybeFilteredCandidates <- maybeSimClustersEmbedding match {
-        case Some(sourceEmbedding) =>
+      maybeF lteredCand dates <- maybeS mClustersEmbedd ng match {
+        case So (s ceEmbedd ng) =>
           for {
-            candidates <- Stats.trackSeq(fetchCandidatesStat) {
-              fetchCandidates(sourceEmbeddingId, sourceEmbedding, config)
+            cand dates <- Stats.trackSeq(fetchCand datesStat) {
+              fetchCand dates(s ceEmbedd ng d, s ceEmbedd ng, conf g)
             }
-          } yield {
-            fetchCandidatesStat
-              .stat(sourceEmbeddingId.embeddingType.name, sourceEmbeddingId.modelVersion.name).add(
-                candidates.size)
-            Some(candidates)
+          } y eld {
+            fetchCand datesStat
+              .stat(s ceEmbedd ng d.embedd ngType.na , s ceEmbedd ng d.modelVers on.na ).add(
+                cand dates.s ze)
+            So (cand dates)
           }
         case None =>
-          fetchCandidatesStat
-            .stat(sourceEmbeddingId.embeddingType.name, sourceEmbeddingId.modelVersion.name).add(0)
+          fetchCand datesStat
+            .stat(s ceEmbedd ng d.embedd ngType.na , s ceEmbedd ng d.modelVers on.na ).add(0)
           Future.None
       }
-    } yield {
-      maybeFilteredCandidates
+    } y eld {
+      maybeF lteredCand dates
     }
   }
 
-  private def fetchCandidates(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    sourceEmbedding: SimClustersEmbedding,
-    config: SimClustersANNConfig
-  ): Future[Seq[SimClustersANNTweetCandidate]] = {
+  pr vate def fetchCand dates(
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    s ceEmbedd ng: S mClustersEmbedd ng,
+    conf g: S mClustersANNConf g
+  ): Future[Seq[S mClustersANNT etCand date]] = {
 
-    val clusterIds =
-      sourceEmbedding
-        .truncate(config.maxScanClusters).getClusterIds()
+    val cluster ds =
+      s ceEmbedd ng
+        .truncate(conf g.maxScanClusters).getCluster ds()
         .toSet
 
     Future
       .collect {
-        clusterTweetCandidatesStore.multiGet(clusterIds)
-      }.map { clusterTweetsMap =>
-        approximateCosineSimilarity(
-          sourceEmbedding = sourceEmbedding,
-          sourceEmbeddingId = sourceEmbeddingId,
-          config = config,
-          candidateScoresStat = (i: Int) => candidateScoresStat.add(i),
-          clusterTweetsMap = clusterTweetsMap
+        clusterT etCand datesStore.mult Get(cluster ds)
+      }.map { clusterT etsMap =>
+        approx mateCos neS m lar y(
+          s ceEmbedd ng = s ceEmbedd ng,
+          s ceEmbedd ng d = s ceEmbedd ng d,
+          conf g = conf g,
+          cand dateScoresStat = ( :  nt) => cand dateScoresStat.add( ),
+          clusterT etsMap = clusterT etsMap
         ).map {
-          case (tweetId, score) =>
-            SimClustersANNTweetCandidate(
-              tweetId = tweetId,
+          case (t et d, score) =>
+            S mClustersANNT etCand date(
+              t et d = t et d,
               score = score
             )
         }
@@ -95,8 +95,8 @@ case class SimClustersANNCandidateSource(
   }
 }
 
-object SimClustersANNCandidateSource {
+object S mClustersANNCand dateS ce {
   case class Query(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig)
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    conf g: S mClustersANNConf g)
 }

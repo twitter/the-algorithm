@@ -1,77 +1,77 @@
-package com.twitter.search.feature_update_service.whitelist;
+package com.tw ter.search.feature_update_serv ce.wh el st;
 
-import java.io.InputStream;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+ mport java. o. nputStream;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport java.ut l.concurrent.atom c.Atom cReference;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ mport com.google.common.collect. mmutableSet;
+ mport com.google.common.ut l.concurrent.ThreadFactoryBu lder;
 
-import org.yaml.snakeyaml.Yaml;
+ mport org.yaml.snakeyaml.Yaml;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.thr ft.Cl ent d;
+ mport com.tw ter.search.common.ut l. o.per od c.Per od cF leLoader;
 
 /**
- * ClientIdWhitelist extends PeriodicFileLoader to load client whitelist
- * from configbus and checks to see if current clientId is allowed
+ * Cl ent dWh el st extends Per od cF leLoader to load cl ent wh el st
+ * from conf gbus and c cks to see  f current cl ent d  s allo d
  */
-public class ClientIdWhitelist extends PeriodicFileLoader {
+publ c class Cl ent dWh el st extends Per od cF leLoader {
 
-  private final AtomicReference<ImmutableSet<ClientId>> clientIdSet = new AtomicReference<>();
+  pr vate f nal Atom cReference< mmutableSet<Cl ent d>> cl ent dSet = new Atom cReference<>();
 
 
-  public ClientIdWhitelist(String clientIdWhitelistPath, ScheduledExecutorService executorService,
+  publ c Cl ent dWh el st(Str ng cl ent dWh el stPath, Sc duledExecutorServ ce executorServ ce,
                            Clock clock) {
-    super("ClientIdWhitelist", clientIdWhitelistPath, executorService, clock);
+    super("Cl ent dWh el st", cl ent dWh el stPath, executorServ ce, clock);
   }
 
   /**
-   * Creates the object that manages loads from the clientIdWhitelistpath in config.
-   * It periodically reloads the client whitelist file using the given executor service.
+   * Creates t  object that manages loads from t  cl ent dWh el stpath  n conf g.
+   *   per od cally reloads t  cl ent wh el st f le us ng t  g ven executor serv ce.
    */
-  public static ClientIdWhitelist initWhitelist(
-      String clientIdWhitelistPath, ScheduledExecutorService executorService,
-      Clock clock) throws Exception {
-    ClientIdWhitelist clientIdWhitelist = new ClientIdWhitelist(
-        clientIdWhitelistPath, executorService, clock);
-    clientIdWhitelist.init();
-    return clientIdWhitelist;
+  publ c stat c Cl ent dWh el st  n Wh el st(
+      Str ng cl ent dWh el stPath, Sc duledExecutorServ ce executorServ ce,
+      Clock clock) throws Except on {
+    Cl ent dWh el st cl ent dWh el st = new Cl ent dWh el st(
+        cl ent dWh el stPath, executorServ ce, clock);
+    cl ent dWh el st. n ();
+    return cl ent dWh el st;
   }
 
   /**
-   * Creates clock and executor service needed to create a periodic file loading object
-   * then returns object that accpets file.
-   * @param clientWhitelistPath
-   * @return ClientIdWhitelist
-   * @throws Exception
+   * Creates clock and executor serv ce needed to create a per od c f le load ng object
+   * t n returns object that accpets f le.
+   * @param cl entWh el stPath
+   * @return Cl ent dWh el st
+   * @throws Except on
    */
-  public static ClientIdWhitelist initWhitelist(String clientWhitelistPath) throws Exception {
+  publ c stat c Cl ent dWh el st  n Wh el st(Str ng cl entWh el stPath) throws Except on {
     Clock clock = Clock.SYSTEM_CLOCK;
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setNameFormat("client-whitelist-reloader")
+    Sc duledExecutorServ ce executorServ ce = Executors.newS ngleThreadSc duledExecutor(
+        new ThreadFactoryBu lder()
+            .setNa Format("cl ent-wh el st-reloader")
             .setDaemon(true)
-            .build());
+            .bu ld());
 
-    return initWhitelist(clientWhitelistPath, executorService, clock);
+    return  n Wh el st(cl entWh el stPath, executorServ ce, clock);
   }
-  @Override
-  protected void accept(InputStream fileStream) {
-    ImmutableSet.Builder<ClientId> clientIdBuilder = new ImmutableSet.Builder<>();
+  @Overr de
+  protected vo d accept( nputStream f leStream) {
+     mmutableSet.Bu lder<Cl ent d> cl ent dBu lder = new  mmutableSet.Bu lder<>();
     Yaml yaml = new Yaml();
-    Set<String> set = yaml.loadAs(fileStream, Set.class);
-    for (String id : set) {
-      clientIdBuilder.add(ClientId.apply(id));
+    Set<Str ng> set = yaml.loadAs(f leStream, Set.class);
+    for (Str ng  d : set) {
+      cl ent dBu lder.add(Cl ent d.apply( d));
     }
-    clientIdSet.set(clientIdBuilder.build());
+    cl ent dSet.set(cl ent dBu lder.bu ld());
   }
 
-  // checks to see if clientId is in set of whitelisted clients
-  public boolean isClientAllowed(ClientId clientId) {
-    return clientIdSet.get().contains(clientId);
+  // c cks to see  f cl ent d  s  n set of wh el sted cl ents
+  publ c boolean  sCl entAllo d(Cl ent d cl ent d) {
+    return cl ent dSet.get().conta ns(cl ent d);
   }
 }

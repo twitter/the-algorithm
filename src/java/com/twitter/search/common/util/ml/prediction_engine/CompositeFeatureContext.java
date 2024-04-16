@@ -1,35 +1,35 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
+ mport java.ut l.funct on.Suppl er;
+ mport javax.annotat on.Nullable;
 
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
+ mport com.tw ter.ml.ap .FeatureContext;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
 
 /**
- * An object to store feature context information to build models with.
+ * An object to store feature context  nformat on to bu ld models w h.
  */
-public class CompositeFeatureContext {
-  // legacy static feature context
-  private final FeatureContext legacyContext;
-  // a supplier for the context (well the schema itself) of the schema-based features
-  private final Supplier<ThriftSearchFeatureSchema> schemaSupplier;
+publ c class Compos eFeatureContext {
+  // legacy stat c feature context
+  pr vate f nal FeatureContext legacyContext;
+  // a suppl er for t  context ( ll t  sc ma  self) of t  sc ma-based features
+  pr vate f nal Suppl er<Thr ftSearchFeatureSc ma> sc maSuppl er;
 
-  public CompositeFeatureContext(
+  publ c Compos eFeatureContext(
       FeatureContext legacyContext,
-      @Nullable Supplier<ThriftSearchFeatureSchema> schemaSupplier) {
-    this.legacyContext = legacyContext;
-    this.schemaSupplier = schemaSupplier;
+      @Nullable Suppl er<Thr ftSearchFeatureSc ma> sc maSuppl er) {
+    t .legacyContext = legacyContext;
+    t .sc maSuppl er = sc maSuppl er;
   }
 
   FeatureContext getLegacyContext() {
     return legacyContext;
   }
 
-  ThriftSearchFeatureSchema getFeatureSchema() {
-    if (schemaSupplier == null) {
-      throw new UnsupportedOperationException("Feature schema was not initialized");
+  Thr ftSearchFeatureSc ma getFeatureSc ma() {
+     f (sc maSuppl er == null) {
+      throw new UnsupportedOperat onExcept on("Feature sc ma was not  n  al zed");
     }
-    return schemaSupplier.get();
+    return sc maSuppl er.get();
   }
 }

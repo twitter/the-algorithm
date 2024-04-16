@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.PeopleDiscoveryCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.people_d scovery.PeopleD scoveryCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .Stat cParam
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class WhoToFollowDependentCandidatePipelineConfigBuilder @Inject() (
-  whoToFollowCandidateSource: PeopleDiscoveryCandidateSource) {
+@S ngleton
+class WhoToFollowDependentCand dateP pel neConf gBu lder @ nject() (
+  whoToFollowCand dateS ce: PeopleD scoveryCand dateS ce) {
 
   /**
-   * Build a WhoToFollowDependentCandidatePipelineConfig
+   * Bu ld a WhoToFollowDependentCand dateP pel neConf g
    *
    *
-   * To create a regular CandidatePipelineConfig instead see [[WhoToFollowCandidatePipelineConfigBuilder]].
+   * To create a regular Cand dateP pel neConf g  nstead see [[WhoToFollowCand dateP pel neConf gBu lder]].
    *
-   * @note If injected classes are needed to populate parameters in this method, consider creating a
-   *       ProductWhoToFollowCandidatePipelineConfigBuilder with a single `def build()` method. That
-   *       product-specific builder class can then inject everything it needs (including this class),
-   *       and delegate to this class's build() method within its own build() method.
+   * @note  f  njected classes are needed to populate para ters  n t   thod, cons der creat ng a
+   *       ProductWhoToFollowCand dateP pel neConf gBu lder w h a s ngle `def bu ld()`  thod. That
+   *       product-spec f c bu lder class can t n  nject everyth ng   needs ( nclud ng t  class),
+   *       and delegate to t  class's bu ld()  thod w h n  s own bu ld()  thod.
    */
-  def build[Query <: PipelineQuery](
-    moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-    identifier: CandidatePipelineIdentifier = WhoToFollowCandidatePipelineConfig.identifier,
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
+  def bu ld[Query <: P pel neQuery](
+    moduleD splayTypeBu lder: BaseModuleD splayTypeBu lder[Query, UserCand date],
+     dent f er: Cand dateP pel ne dent f er = WhoToFollowCand dateP pel neConf g. dent f er,
+    enabledDec derParam: Opt on[Dec derParam[Boolean]] = None,
+    supportedCl entParam: Opt on[FSParam[Boolean]] = None,
     alerts: Seq[Alert] = Seq.empty,
     gates: Seq[BaseGate[Query]] = Seq.empty,
-    filters: Seq[Filter[Query, UserCandidate]] = Seq.empty,
-    feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[
-      PipelineQuery,
-      UserCandidate
+    f lters: Seq[F lter[Query, UserCand date]] = Seq.empty,
+    feedbackAct on nfoBu lder: Opt on[BaseFeedbackAct on nfoBu lder[
+      P pel neQuery,
+      UserCand date
     ]] = None,
-    displayLocationParam: Param[String] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.DisplayLocation),
-    supportedLayoutsParam: Param[Seq[String]] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.SupportedLayouts),
-    layoutVersionParam: Param[Int] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.LayoutVersion),
-    excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]] = None,
-  ): WhoToFollowDependentCandidatePipelineConfig[Query] =
-    new WhoToFollowDependentCandidatePipelineConfig(
-      identifier = identifier,
-      enabledDeciderParam = enabledDeciderParam,
-      supportedClientParam = supportedClientParam,
+    d splayLocat onParam: Param[Str ng] =
+      Stat cParam(WhoToFollowCand dateP pel neQueryTransfor r.D splayLocat on),
+    supportedLa tsParam: Param[Seq[Str ng]] =
+      Stat cParam(WhoToFollowCand dateP pel neQueryTransfor r.SupportedLa ts),
+    la tVers onParam: Param[ nt] =
+      Stat cParam(WhoToFollowCand dateP pel neQueryTransfor r.La tVers on),
+    excludedUser dsFeature: Opt on[Feature[P pel neQuery, Seq[Long]]] = None,
+  ): WhoToFollowDependentCand dateP pel neConf g[Query] =
+    new WhoToFollowDependentCand dateP pel neConf g(
+       dent f er =  dent f er,
+      enabledDec derParam = enabledDec derParam,
+      supportedCl entParam = supportedCl entParam,
       alerts = alerts,
       gates = gates,
-      whoToFollowCandidateSource = whoToFollowCandidateSource,
-      filters = filters,
-      moduleDisplayTypeBuilder = moduleDisplayTypeBuilder,
-      feedbackActionInfoBuilder = feedbackActionInfoBuilder,
-      displayLocationParam = displayLocationParam,
-      supportedLayoutsParam = supportedLayoutsParam,
-      layoutVersionParam = layoutVersionParam,
-      excludedUserIdsFeature = excludedUserIdsFeature
+      whoToFollowCand dateS ce = whoToFollowCand dateS ce,
+      f lters = f lters,
+      moduleD splayTypeBu lder = moduleD splayTypeBu lder,
+      feedbackAct on nfoBu lder = feedbackAct on nfoBu lder,
+      d splayLocat onParam = d splayLocat onParam,
+      supportedLa tsParam = supportedLa tsParam,
+      la tVers onParam = la tVers onParam,
+      excludedUser dsFeature = excludedUser dsFeature
     )
 }

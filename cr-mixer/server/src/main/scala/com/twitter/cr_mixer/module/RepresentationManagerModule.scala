@@ -1,107 +1,107 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.representat on_manager.thr ftscala.S mClustersEmbedd ngV ew
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport javax. nject.Na d
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
 
-object RepresentationManagerModule extends TwitterModule {
-  private val ColPathPrefix = "recommendations/representation_manager/"
-  private val SimclustersTweetColPath = ColPathPrefix + "simClustersEmbedding.Tweet"
-  private val SimclustersUserColPath = ColPathPrefix + "simClustersEmbedding.User"
+object Representat onManagerModule extends Tw terModule {
+  pr vate val ColPathPref x = "recom ndat ons/representat on_manager/"
+  pr vate val S mclustersT etColPath = ColPathPref x + "s mClustersEmbedd ng.T et"
+  pr vate val S mclustersUserColPath = ColPathPref x + "s mClustersEmbedd ng.User"
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsTweetLogFavLongestL2EmbeddingStore)
-  def providesRepresentationManagerTweetStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[TweetId, SimClustersEmbedding] = {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.RmsT etLogFavLongestL2Embedd ngStore)
+  def prov desRepresentat onManagerT etStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[T et d, S mClustersEmbedd ng] = {
     ObservedReadableStore(
       StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersTweetColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.LogFavLongestL2EmbeddingTweet,
-            ModelVersion.Model20m145k2020))
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_tweet_log_fav_longest_l2_store"))
+        .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+          stratoCl ent,
+          S mclustersT etColPath,
+          S mClustersEmbedd ngV ew(
+            Embedd ngType.LogFavLongestL2Embedd ngT et,
+            ModelVers on.Model20m145k2020))
+        .mapValues(S mClustersEmbedd ng(_)))(
+      statsRece ver.scope("rms_t et_log_fav_longest_l2_store"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsUserFavBasedProducerEmbeddingStore)
-  def providesRepresentationManagerUserFavBasedProducerEmbeddingStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, SimClustersEmbedding] = {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.RmsUserFavBasedProducerEmbedd ngStore)
+  def prov desRepresentat onManagerUserFavBasedProducerEmbedd ngStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[User d, S mClustersEmbedd ng] = {
     ObservedReadableStore(
       StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersUserColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.FavBasedProducer,
-            ModelVersion.Model20m145k2020
+        .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+          stratoCl ent,
+          S mclustersUserColPath,
+          S mClustersEmbedd ngV ew(
+            Embedd ngType.FavBasedProducer,
+            ModelVers on.Model20m145k2020
           )
         )
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_user_fav_based_producer_store"))
+        .mapValues(S mClustersEmbedd ng(_)))(
+      statsRece ver.scope("rms_user_fav_based_producer_store"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsUserLogFavInterestedInEmbeddingStore)
-  def providesRepresentationManagerUserLogFavConsumerEmbeddingStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, SimClustersEmbedding] = {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.RmsUserLogFav nterested nEmbedd ngStore)
+  def prov desRepresentat onManagerUserLogFavConsu rEmbedd ngStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[User d, S mClustersEmbedd ng] = {
     ObservedReadableStore(
       StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersUserColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.LogFavBasedUserInterestedIn,
-            ModelVersion.Model20m145k2020
+        .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+          stratoCl ent,
+          S mclustersUserColPath,
+          S mClustersEmbedd ngV ew(
+            Embedd ngType.LogFavBasedUser nterested n,
+            ModelVers on.Model20m145k2020
           )
         )
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_user_log_fav_interestedin_store"))
+        .mapValues(S mClustersEmbedd ng(_)))(
+      statsRece ver.scope("rms_user_log_fav_ nterested n_store"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsUserFollowInterestedInEmbeddingStore)
-  def providesRepresentationManagerUserFollowInterestedInEmbeddingStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, SimClustersEmbedding] = {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.RmsUserFollow nterested nEmbedd ngStore)
+  def prov desRepresentat onManagerUserFollow nterested nEmbedd ngStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[User d, S mClustersEmbedd ng] = {
     ObservedReadableStore(
       StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersUserColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.FollowBasedUserInterestedIn,
-            ModelVersion.Model20m145k2020
+        .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+          stratoCl ent,
+          S mclustersUserColPath,
+          S mClustersEmbedd ngV ew(
+            Embedd ngType.FollowBasedUser nterested n,
+            ModelVers on.Model20m145k2020
           )
         )
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_user_follow_interestedin_store"))
+        .mapValues(S mClustersEmbedd ng(_)))(
+      statsRece ver.scope("rms_user_follow_ nterested n_store"))
   }
 }

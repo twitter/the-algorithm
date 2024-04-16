@@ -1,76 +1,76 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.util.Arrays;
+ mport java.ut l.Arrays;
 
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene.search.Doc dSet erator;
 
 /**
- * DocIdSetIterator implementation from a sorted list of non-negative integers. If the given list of
- * doc IDs is not sorted or contains negative doc IDs, the results are undefined.
+ * Doc dSet erator  mple ntat on from a sorted l st of non-negat ve  ntegers.  f t  g ven l st of
+ * doc  Ds  s not sorted or conta ns negat ve doc  Ds, t  results are undef ned.
  */
-public class IntArrayDocIdSetIterator extends DocIdSetIterator {
-  private final int[] docIds;
-  private int docId;
-  private int cursor;
+publ c class  ntArrayDoc dSet erator extends Doc dSet erator {
+  pr vate f nal  nt[] doc ds;
+  pr vate  nt doc d;
+  pr vate  nt cursor;
 
-  public IntArrayDocIdSetIterator(int[] ids) {
-    docIds = ids;
+  publ c  ntArrayDoc dSet erator( nt[]  ds) {
+    doc ds =  ds;
     reset();
   }
 
-  /** Used for testing. */
-  public void reset() {
-    docId = -1;
+  /** Used for test ng. */
+  publ c vo d reset() {
+    doc d = -1;
     cursor = -1;
   }
 
-  @Override
-  public int docID() {
-    return docId;
+  @Overr de
+  publ c  nt doc D() {
+    return doc d;
   }
 
-  @Override
-  public int nextDoc() {
-    return advance(docId);
+  @Overr de
+  publ c  nt nextDoc() {
+    return advance(doc d);
   }
 
-  @Override
-  public int advance(int target) {
-    if (docId == NO_MORE_DOCS) {
-      return docId;
+  @Overr de
+  publ c  nt advance( nt target) {
+     f (doc d == NO_MORE_DOCS) {
+      return doc d;
     }
 
-    if (target < docId) {
-      return docId;
+     f (target < doc d) {
+      return doc d;
     }
 
-    if (cursor == docIds.length - 1) {
-      docId = NO_MORE_DOCS;
-      return docId;
+     f (cursor == doc ds.length - 1) {
+      doc d = NO_MORE_DOCS;
+      return doc d;
     }
 
-    if (target == docId) {
-      docId = docIds[++cursor];
-      return docId;
+     f (target == doc d) {
+      doc d = doc ds[++cursor];
+      return doc d;
     }
 
-    int toIndex = Math.min(cursor + (target - docId) + 1, docIds.length);
-    int targetIndex = Arrays.binarySearch(docIds, cursor + 1, toIndex, target);
-    if (targetIndex < 0) {
-      targetIndex = -targetIndex - 1;
+     nt to ndex = Math.m n(cursor + (target - doc d) + 1, doc ds.length);
+     nt target ndex = Arrays.b narySearch(doc ds, cursor + 1, to ndex, target);
+     f (target ndex < 0) {
+      target ndex = -target ndex - 1;
     }
 
-    if (targetIndex == docIds.length) {
-      docId = NO_MORE_DOCS;
+     f (target ndex == doc ds.length) {
+      doc d = NO_MORE_DOCS;
     } else {
-      cursor = targetIndex;
-      docId = docIds[cursor];
+      cursor = target ndex;
+      doc d = doc ds[cursor];
     }
-    return docId;
+    return doc d;
   }
 
-  @Override
-  public long cost() {
-    return docIds == null ? 0 : docIds.length;
+  @Overr de
+  publ c long cost() {
+    return doc ds == null ? 0 : doc ds.length;
   }
 }

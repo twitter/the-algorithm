@@ -1,47 +1,47 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * A byte normalizer that restricts the values to the given range before normalizing them.
+ * A byte normal zer that restr cts t  values to t  g ven range before normal z ng t m.
  */
-public class ClampByteNormalizer extends ByteNormalizer {
-  private final int minUnnormalizedValue;
-  private final int maxUnnormalizedValue;
+publ c class ClampByteNormal zer extends ByteNormal zer {
+  pr vate f nal  nt m nUnnormal zedValue;
+  pr vate f nal  nt maxUnnormal zedValue;
 
   /**
-   * Creates a new ClampByteNormalizer instance.
+   * Creates a new ClampByteNormal zer  nstance.
    *
-   * @param minValue The smallest allowed unnormalized value.
-   * @param maxValue The largest allowed unnormalized value.
+   * @param m nValue T  smallest allo d unnormal zed value.
+   * @param maxValue T  largest allo d unnormal zed value.
    */
-  public ClampByteNormalizer(int minUnnormalizedValue, int maxUnnormalizedValue) {
-    Preconditions.checkState(minUnnormalizedValue <= maxUnnormalizedValue);
-    Preconditions.checkState(minUnnormalizedValue >= 0);
-    Preconditions.checkState(maxUnnormalizedValue <= 255);
-    this.minUnnormalizedValue = minUnnormalizedValue;
-    this.maxUnnormalizedValue = maxUnnormalizedValue;
+  publ c ClampByteNormal zer( nt m nUnnormal zedValue,  nt maxUnnormal zedValue) {
+    Precond  ons.c ckState(m nUnnormal zedValue <= maxUnnormal zedValue);
+    Precond  ons.c ckState(m nUnnormal zedValue >= 0);
+    Precond  ons.c ckState(maxUnnormal zedValue <= 255);
+    t .m nUnnormal zedValue = m nUnnormal zedValue;
+    t .maxUnnormal zedValue = maxUnnormal zedValue;
   }
 
-  @Override
-  public byte normalize(double val) {
-    int adjustedValue = (int) val;
-    if (adjustedValue < minUnnormalizedValue) {
-      adjustedValue = minUnnormalizedValue;
+  @Overr de
+  publ c byte normal ze(double val) {
+     nt adjustedValue = ( nt) val;
+     f (adjustedValue < m nUnnormal zedValue) {
+      adjustedValue = m nUnnormal zedValue;
     }
-    if (adjustedValue > maxUnnormalizedValue) {
-      adjustedValue = maxUnnormalizedValue;
+     f (adjustedValue > maxUnnormal zedValue) {
+      adjustedValue = maxUnnormal zedValue;
     }
-    return ByteNormalizer.intToUnsignedByte(adjustedValue);
+    return ByteNormal zer. ntToUns gnedByte(adjustedValue);
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm);
+  @Overr de
+  publ c double unnormLo rBound(byte norm) {
+    return ByteNormal zer.uns gnedByteTo nt(norm);
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm) + 1;
+  @Overr de
+  publ c double unnormUpperBound(byte norm) {
+    return ByteNormal zer.uns gnedByteTo nt(norm) + 1;
   }
 }

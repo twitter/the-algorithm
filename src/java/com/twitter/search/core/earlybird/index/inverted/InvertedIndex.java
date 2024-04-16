@@ -1,144 +1,144 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * Inverted index for a single field.
+ *  nverted  ndex for a s ngle f eld.
  *
- * Example: The field is "hashtags", this index contains a mapping from all the hashtags
- * that we've seen to a list of postings.
+ * Example: T  f eld  s "hashtags", t   ndex conta ns a mapp ng from all t  hashtags
+ * that  've seen to a l st of post ngs.
  */
-public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
-  protected final EarlybirdFieldType fieldType;
+publ c abstract class  nverted ndex  mple nts FacetLabelProv der, Flushable {
+  protected f nal Earlyb rdF eldType f eldType;
 
-  public InvertedIndex(EarlybirdFieldType fieldType) {
-    this.fieldType = fieldType;
+  publ c  nverted ndex(Earlyb rdF eldType f eldType) {
+    t .f eldType = f eldType;
   }
 
-  public EarlybirdFieldType getFieldType() {
-    return fieldType;
-  }
-
-  /**
-   * Get the internal doc id of the oldest doc that includes term.
-   * @param term  the term to look for.
-   * @return  The internal docid, or TERM_NOT_FOUND.
-   */
-  public final int getLargestDocIDForTerm(BytesRef term) throws IOException {
-    final int termID = lookupTerm(term);
-    return getLargestDocIDForTerm(termID);
+  publ c Earlyb rdF eldType getF eldType() {
+    return f eldType;
   }
 
   /**
-   * Get the document frequency for this term.
-   * @param term  the term to look for.
-   * @return  The document frequency of this term in the index.
+   * Get t   nternal doc  d of t  oldest doc that  ncludes term.
+   * @param term  t  term to look for.
+   * @return  T   nternal doc d, or TERM_NOT_FOUND.
    */
-  public final int getDF(BytesRef term) throws IOException {
-    final int termID = lookupTerm(term);
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
+  publ c f nal  nt getLargestDoc DForTerm(BytesRef term) throws  OExcept on {
+    f nal  nt term D = lookupTerm(term);
+    return getLargestDoc DForTerm(term D);
+  }
+
+  /**
+   * Get t  docu nt frequency for t  term.
+   * @param term  t  term to look for.
+   * @return  T  docu nt frequency of t  term  n t   ndex.
+   */
+  publ c f nal  nt getDF(BytesRef term) throws  OExcept on {
+    f nal  nt term D = lookupTerm(term);
+     f (term D == Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND) {
       return 0;
     }
-    return getDF(termID);
+    return getDF(term D);
   }
 
-  public boolean hasMaxPublishedPointer() {
+  publ c boolean hasMaxPubl s dPo nter() {
     return false;
   }
 
-  public int getMaxPublishedPointer() {
+  publ c  nt getMaxPubl s dPo nter() {
     return -1;
   }
 
   /**
-   * Create the Lucene magic Terms accessor.
-   * @param maxPublishedPointer used by the skip list to enable atomic document updates.
+   * Create t  Lucene mag c Terms accessor.
+   * @param maxPubl s dPo nter used by t  sk p l st to enable atom c docu nt updates.
    * @return  a new Terms object.
    */
-  public abstract Terms createTerms(int maxPublishedPointer);
+  publ c abstract Terms createTerms( nt maxPubl s dPo nter);
 
   /**
-   * Create the Lucene magic TermsEnum accessor.
-   * @param maxPublishedPointer used by the skip list to enable atomic document updates.
+   * Create t  Lucene mag c TermsEnum accessor.
+   * @param maxPubl s dPo nter used by t  sk p l st to enable atom c docu nt updates.
    * @return  a new TermsEnum object.
    */
-  public abstract TermsEnum createTermsEnum(int maxPublishedPointer);
+  publ c abstract TermsEnum createTermsEnum( nt maxPubl s dPo nter);
 
   /**
-   * Returns the number of distinct terms in this inverted index.
-   * For example, if the indexed documents are:
-   *   "i love chocolate and i love cakes"
-   *   "i love cookies"
+   * Returns t  number of d st nct terms  n t   nverted  ndex.
+   * For example,  f t   ndexed docu nts are:
+   *   "  love chocolate and   love cakes"
+   *   "  love cook es"
    *
-   * then this method will return 6, because there are 6 distinct terms:
-   *   i, love, chocolate, and, cakes, cookies
+   * t n t   thod w ll return 6, because t re are 6 d st nct terms:
+   *    , love, chocolate, and, cakes, cook es
    */
-  public abstract int getNumTerms();
+  publ c abstract  nt getNumTerms();
 
   /**
-   * Returns the number of distinct documents in this index.
+   * Returns t  number of d st nct docu nts  n t   ndex.
    */
-  public abstract int getNumDocs();
+  publ c abstract  nt getNumDocs();
 
   /**
-   * Returns the total number of postings in this inverted index.
+   * Returns t  total number of post ngs  n t   nverted  ndex.
    *
-   * For example, if the indexed documents are:
-   *   "i love chocolate and i love cakes"
-   *   "i love cookies"
+   * For example,  f t   ndexed docu nts are:
+   *   "  love chocolate and   love cakes"
+   *   "  love cook es"
    *
-   * then this method will return 10, because there's a total of 10 words in these 2 documents.
+   * t n t   thod w ll return 10, because t re's a total of 10 words  n t se 2 docu nts.
    */
-  public abstract int getSumTotalTermFreq();
+  publ c abstract  nt getSumTotalTermFreq();
 
   /**
-   * Returns the sum of the number of documents for each term in this index.
+   * Returns t  sum of t  number of docu nts for each term  n t   ndex.
    *
-   * For example, if the indexed documents are:
-   *   "i love chocolate and i love cakes"
-   *   "i love cookies"
+   * For example,  f t   ndexed docu nts are:
+   *   "  love chocolate and   love cakes"
+   *   "  love cook es"
    *
-   * then this method will return 8, because there are:
-   *   2 documents for term "i" (it doesn't matter that the first document has the term "i" twice)
-   *   2 documents for term "love" (same reason)
-   *   1 document for terms "chocolate", "and", "cakes", "cookies"
+   * t n t   thod w ll return 8, because t re are:
+   *   2 docu nts for term " " (  doesn't matter that t  f rst docu nt has t  term " " tw ce)
+   *   2 docu nts for term "love" (sa  reason)
+   *   1 docu nt for terms "chocolate", "and", "cakes", "cook es"
    */
-  public abstract int getSumTermDocFreq();
+  publ c abstract  nt getSumTermDocFreq();
 
   /**
    * Lookup a term.
-   * @param term  the term to lookup.
-   * @return  the term ID for this term.
+   * @param term  t  term to lookup.
+   * @return  t  term  D for t  term.
    */
-  public abstract int lookupTerm(BytesRef term) throws IOException;
+  publ c abstract  nt lookupTerm(BytesRef term) throws  OExcept on;
 
   /**
-   * Get the text for a given termID.
-   * @param termID  the term id
-   * @param text  a BytesRef that will be modified to contain the text of this termid.
+   * Get t  text for a g ven term D.
+   * @param term D  t  term  d
+   * @param text  a BytesRef that w ll be mod f ed to conta n t  text of t  term d.
    */
-  public abstract void getTerm(int termID, BytesRef text);
+  publ c abstract vo d getTerm( nt term D, BytesRef text);
 
   /**
-   * Get the internal doc id of the oldest doc that includes this term.
-   * @param termID  The termID of the term.
-   * @return  The internal docid, or TERM_NOT_FOUND.
+   * Get t   nternal doc  d of t  oldest doc that  ncludes t  term.
+   * @param term D  T  term D of t  term.
+   * @return  T   nternal doc d, or TERM_NOT_FOUND.
    */
-  public abstract int getLargestDocIDForTerm(int termID) throws IOException;
+  publ c abstract  nt getLargestDoc DForTerm( nt term D) throws  OExcept on;
 
   /**
-   * Get the document frequency for a given termID
-   * @param termID  the term id
-   * @return  the document frequency of this term in this index.
+   * Get t  docu nt frequency for a g ven term D
+   * @param term D  t  term  d
+   * @return  t  docu nt frequency of t  term  n t   ndex.
    */
-  public abstract int getDF(int termID);
+  publ c abstract  nt getDF( nt term D);
 }

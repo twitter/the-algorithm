@@ -1,79 +1,79 @@
-package com.twitter.tweetypie.thriftscala
+package com.tw ter.t etyp e.thr ftscala
 
-import com.twitter.util.Future
+ mport com.tw ter.ut l.Future
 
 /**
- * A trait for TweetService implementations that wrap an underlying
- * TweetService and need to modify only some of the methods.
+ * A tra  for T etServ ce  mple ntat ons that wrap an underly ng
+ * T etServ ce and need to mod fy only so  of t   thods.
  */
-trait TweetServiceProxy extends TweetService.MethodPerEndpoint {
-  protected def underlying: TweetService.MethodPerEndpoint
+tra  T etServ ceProxy extends T etServ ce. thodPerEndpo nt {
+  protected def underly ng: T etServ ce. thodPerEndpo nt
 
   /**
-   * Default implementation simply passes through the Future but logic can be added to wrap each
-   * invocation to the underlying TweetService
+   * Default  mple ntat on s mply passes through t  Future but log c can be added to wrap each
+   *  nvocat on to t  underly ng T etServ ce
    */
   protected def wrap[A](f: => Future[A]): Future[A] =
     f
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] =
-    wrap(underlying.getTweets(request))
+  overr de def getT ets(request: GetT etsRequest): Future[Seq[GetT etResult]] =
+    wrap(underly ng.getT ets(request))
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] =
-    wrap(underlying.getTweetFields(request))
+  overr de def getT etF elds(request: GetT etF eldsRequest): Future[Seq[GetT etF eldsResult]] =
+    wrap(underly ng.getT etF elds(request))
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] =
-    wrap(underlying.getTweetCounts(request))
+  overr de def getT etCounts(request: GetT etCountsRequest): Future[Seq[GetT etCountsResult]] =
+    wrap(underly ng.getT etCounts(request))
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    wrap(underlying.setAdditionalFields(request))
+  overr de def setAdd  onalF elds(request: SetAdd  onalF eldsRequest): Future[Un ] =
+    wrap(underly ng.setAdd  onalF elds(request))
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
-    wrap(underlying.deleteAdditionalFields(request))
+  overr de def deleteAdd  onalF elds(request: DeleteAdd  onalF eldsRequest): Future[Un ] =
+    wrap(underly ng.deleteAdd  onalF elds(request))
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    wrap(underlying.postTweet(request))
+  overr de def postT et(request: PostT etRequest): Future[PostT etResult] =
+    wrap(underly ng.postT et(request))
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] =
-    wrap(underlying.postRetweet(request))
+  overr de def postRet et(request: Ret etRequest): Future[PostT etResult] =
+    wrap(underly ng.postRet et(request))
 
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] =
-    wrap(underlying.unretweet(request))
+  overr de def unret et(request: Unret etRequest): Future[Unret etResult] =
+    wrap(underly ng.unret et(request))
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] =
-    wrap(underlying.getDeletedTweets(request))
+  overr de def getDeletedT ets(
+    request: GetDeletedT etsRequest
+  ): Future[Seq[GetDeletedT etResult]] =
+    wrap(underly ng.getDeletedT ets(request))
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] =
-    wrap(underlying.deleteTweets(request))
+  overr de def deleteT ets(request: DeleteT etsRequest): Future[Seq[DeleteT etResult]] =
+    wrap(underly ng.deleteT ets(request))
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    wrap(underlying.updatePossiblySensitiveTweet(request))
+  overr de def updatePoss blySens  veT et(
+    request: UpdatePoss blySens  veT etRequest
+  ): Future[Un ] =
+    wrap(underly ng.updatePoss blySens  veT et(request))
 
-  override def undeleteTweet(request: UndeleteTweetRequest): Future[UndeleteTweetResponse] =
-    wrap(underlying.undeleteTweet(request))
+  overr de def undeleteT et(request: UndeleteT etRequest): Future[UndeleteT etResponse] =
+    wrap(underly ng.undeleteT et(request))
 
-  override def eraseUserTweets(request: EraseUserTweetsRequest): Future[Unit] =
-    wrap(underlying.eraseUserTweets(request))
+  overr de def eraseUserT ets(request: EraseUserT etsRequest): Future[Un ] =
+    wrap(underly ng.eraseUserT ets(request))
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    wrap(underlying.incrTweetFavCount(request))
+  overr de def  ncrT etFavCount(request:  ncrT etFavCountRequest): Future[Un ] =
+    wrap(underly ng. ncrT etFavCount(request))
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    wrap(underlying.deleteLocationData(request))
+  overr de def deleteLocat onData(request: DeleteLocat onDataRequest): Future[Un ] =
+    wrap(underly ng.deleteLocat onData(request))
 
-  override def scrubGeo(request: GeoScrub): Future[Unit] =
-    wrap(underlying.scrubGeo(request))
+  overr de def scrubGeo(request: GeoScrub): Future[Un ] =
+    wrap(underly ng.scrubGeo(request))
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
-    wrap(underlying.takedown(request))
+  overr de def takedown(request: TakedownRequest): Future[Un ] =
+    wrap(underly ng.takedown(request))
 
-  override def flush(request: FlushRequest): Future[Unit] =
-    wrap(underlying.flush(request))
+  overr de def flush(request: FlushRequest): Future[Un ] =
+    wrap(underly ng.flush(request))
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    wrap(underlying.incrTweetBookmarkCount(request))
+  overr de def  ncrT etBookmarkCount(request:  ncrT etBookmarkCountRequest): Future[Un ] =
+    wrap(underly ng. ncrT etBookmarkCount(request))
 }

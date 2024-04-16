@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.TweetMedia
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a.T et d a
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetMediaMarshaller @Inject() () {
+@S ngleton
+class T et d aMarshaller @ nject() () {
 
-  def apply(tweetMedia: TweetMedia): urt.TweetMedia = urt.TweetMedia(
-    tweetId = tweetMedia.tweetId,
-    momentId = tweetMedia.momentId
+  def apply(t et d a: T et d a): urt.T et d a = urt.T et d a(
+    t et d = t et d a.t et d,
+    mo nt d = t et d a.mo nt d
   )
 }

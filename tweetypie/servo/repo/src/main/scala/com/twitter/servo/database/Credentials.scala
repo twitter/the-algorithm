@@ -1,22 +1,22 @@
-package com.twitter.servo.database
+package com.tw ter.servo.database
 
-import com.twitter.util.security
-import java.io.File
+ mport com.tw ter.ut l.secur y
+ mport java. o.F le
 
-sealed trait Credentials {
-  def username: String
-  def password: String
+sealed tra  Credent als {
+  def userna : Str ng
+  def password: Str ng
 }
 
-case class InlineCredentials(username: String, password: String) extends Credentials
+case class  nl neCredent als(userna : Str ng, password: Str ng) extends Credent als
 
-case class FileCredentials(
-  path: String,
-  usernameField: String = "db_username",
-  passwordField: String = "db_password")
-    extends Credentials {
-  lazy val (username, password) = {
-    val credentials = security.Credentials(new File(path))
-    (credentials(usernameField), credentials(passwordField))
+case class F leCredent als(
+  path: Str ng,
+  userna F eld: Str ng = "db_userna ",
+  passwordF eld: Str ng = "db_password")
+    extends Credent als {
+  lazy val (userna , password) = {
+    val credent als = secur y.Credent als(new F le(path))
+    (credent als(userna F eld), credent als(passwordF eld))
   }
 }

@@ -1,36 +1,36 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.Media
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e. d a. d a
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object MediaIsProtectedHydrator {
-  type Ctx = MediaEntityHydrator.Cacheable.Ctx
-  type Type = MediaEntityHydrator.Cacheable.Type
+object  d a sProtectedHydrator {
+  type Ctx =  d aEnt yHydrator.Cac able.Ctx
+  type Type =  d aEnt yHydrator.Cac able.Type
 
-  val hydratedField: FieldByPath = MediaEntityHydrator.hydratedField
+  val hydratedF eld: F eldByPath =  d aEnt yHydrator.hydratedF eld
 
-  def apply(repo: UserProtectionRepository.Type): Type =
-    ValueHydrator[MediaEntity, Ctx] { (curr, ctx) =>
-      val request = UserKey(ctx.userId)
+  def apply(repo: UserProtect onRepos ory.Type): Type =
+    ValueHydrator[ d aEnt y, Ctx] { (curr, ctx) =>
+      val request = UserKey(ctx.user d)
 
-      repo(request).liftToTry.map {
-        case Return(p) => ValueState.modified(curr.copy(isProtected = Some(p)))
-        case Throw(NotFound) => ValueState.unmodified(curr)
-        case Throw(_) => ValueState.partial(curr, hydratedField)
+      repo(request).l ftToTry.map {
+        case Return(p) => ValueState.mod f ed(curr.copy( sProtected = So (p)))
+        case Throw(NotFound) => ValueState.unmod f ed(curr)
+        case Throw(_) => ValueState.part al(curr, hydratedF eld)
       }
-    }.onlyIf { (curr, ctx) =>
-      // We need to update isProtected for media entities that:
-      // 1. Do not already have it set.
-      // 2. Did not come from another tweet.
+    }.only f { (curr, ctx) =>
+      //   need to update  sProtected for  d a ent  es that:
+      // 1. Do not already have   set.
+      // 2. D d not co  from anot r t et.
       //
-      // If the entity does not have an expandedUrl, we can't be sure
-      // whether the media originated with this tweet.
-      curr.isProtected.isEmpty &&
-      Media.isOwnMedia(ctx.tweetId, curr) &&
+      //  f t  ent y does not have an expandedUrl,   can't be sure
+      // w t r t   d a or g nated w h t  t et.
+      curr. sProtected. sEmpty &&
+       d a. sOwn d a(ctx.t et d, curr) &&
       curr.expandedUrl != null
     }
 }

@@ -1,58 +1,58 @@
 #pragma once
 
-#include <twml/Tensor.h>
-#include <twml/RawTensor.h>
-#include <twml/ThriftWriter.h>
+# nclude <twml/Tensor.h>
+# nclude <twml/RawTensor.h>
+# nclude <twml/Thr ftWr er.h>
 
-namespace twml {
+na space twml {
 
-    // Encodes a batch of model predictions as a list of Thrift DataRecord
-    // objects inside a Thrift BatchPredictionResponse object. Prediction
-    // values are continousFeatures inside each DataRecord.
+    // Encodes a batch of model pred ct ons as a l st of Thr ft DataRecord
+    // objects  ns de a Thr ft BatchPred ct onResponse object. Pred ct on
+    // values are cont nousFeatures  ns de each DataRecord.
     //
-    // The BatchPredictionResponseWriter TensorFlow operator uses this class
-    // to determine the size of the output tensor to allocate. The operator
-    // then allocates memory for the output tensor and uses this class to
-    // write binary Thrift to the output tensor.
+    // T  BatchPred ct onResponseWr er TensorFlow operator uses t  class
+    // to determ ne t  s ze of t  output tensor to allocate. T  operator
+    // t n allocates  mory for t  output tensor and uses t  class to
+    // wr e b nary Thr ft to t  output tensor.
     //
-    class BatchPredictionResponse {
-    private:
-      uint64_t batch_size_;
+    class BatchPred ct onResponse {
+    pr vate:
+      u nt64_t batch_s ze_;
       const Tensor &keys_;
-      const Tensor &values_;  // prediction values (batch_size * num_keys)
+      const Tensor &values_;  // pred ct on values (batch_s ze * num_keys)
       const Tensor &dense_keys_;
       const std::vector<RawTensor> &dense_values_;
 
-      inline uint64_t getBatchSize() { return batch_size_; }
-      inline bool hasContinuous() { return keys_.getNumDims() > 0; }
-      inline bool hasDenseTensors() { return dense_keys_.getNumDims() > 0; }
+       nl ne u nt64_t getBatchS ze() { return batch_s ze_; }
+       nl ne bool hasCont nuous() { return keys_.getNumD ms() > 0; }
+       nl ne bool hasDenseTensors() { return dense_keys_.getNumD ms() > 0; }
 
-      inline uint64_t getPredictionSize() {
-        return values_.getNumDims() > 1 ? values_.getDim(1) : 1;
+       nl ne u nt64_t getPred ct onS ze() {
+        return values_.getNumD ms() > 1 ? values_.getD m(1) : 1;
       };
 
-      void encode(twml::ThriftWriter &thrift_writer);
+      vo d encode(twml::Thr ftWr er &thr ft_wr er);
 
-      template <typename T>
-      void serializePredictions(twml::ThriftWriter &thrift_writer);
+      template <typena  T>
+      vo d ser al zePred ct ons(twml::Thr ftWr er &thr ft_wr er);
 
-    public:
-      // keys:         'continuousFeatures' prediction keys
-      // values:       'continuousFeatures' prediction values (batch_size * num_keys)
-      // dense_keys:   'tensors' prediction keys
-      // dense_values: 'tensors' prediction values (batch_size * num_keys)
-      BatchPredictionResponse(
+    publ c:
+      // keys:         'cont nuousFeatures' pred ct on keys
+      // values:       'cont nuousFeatures' pred ct on values (batch_s ze * num_keys)
+      // dense_keys:   'tensors' pred ct on keys
+      // dense_values: 'tensors' pred ct on values (batch_s ze * num_keys)
+      BatchPred ct onResponse(
         const Tensor &keys, const Tensor &values,
         const Tensor &dense_keys, const std::vector<RawTensor> &dense_values);
 
-      // Calculate the size of the Thrift encoded output (but do not encode).
-      // The BatchPredictionResponseWriter TensorFlow operator uses this value
-      // to allocate the output tensor.
-      uint64_t encodedSize();
+      // Calculate t  s ze of t  Thr ft encoded output (but do not encode).
+      // T  BatchPred ct onResponseWr er TensorFlow operator uses t  value
+      // to allocate t  output tensor.
+      u nt64_t encodedS ze();
 
-      // Write the BatchPredictionResponse as binary Thrift. The
-      // BatchPredictionResponseWriter operator uses this method to populate
-      // the output tensor.
-      void write(Tensor &result);
+      // Wr e t  BatchPred ct onResponse as b nary Thr ft. T 
+      // BatchPred ct onResponseWr er operator uses t   thod to populate
+      // t  output tensor.
+      vo d wr e(Tensor &result);
     };
 }

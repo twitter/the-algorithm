@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasByfSeedUserIds {
-  def byfSeedUserIds: Option[Seq[Long]]
+tra  HasByfSeedUser ds {
+  def byfSeedUser ds: Opt on[Seq[Long]]
 }

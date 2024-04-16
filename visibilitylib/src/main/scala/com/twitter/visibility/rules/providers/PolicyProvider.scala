@@ -1,8 +1,8 @@
-package com.twitter.visibility.rules.providers
+package com.tw ter.v s b l y.rules.prov ders
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.VisibilityPolicy
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.V s b l yPol cy
 
-trait PolicyProvider {
-  def policyForSurface(safetyLevel: SafetyLevel): VisibilityPolicy
+tra  Pol cyProv der {
+  def pol cyForSurface(safetyLevel: SafetyLevel): V s b l yPol cy
 }

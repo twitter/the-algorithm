@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.List;
-import javax.inject.Inject;
+ mport java.ut l.L st;
+ mport javax. nject. nject;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maSpec f er;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
-public class EarlybirdFeatureSchemaAnnotateFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+publ c class Earlyb rdFeatureSc maAnnotateF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  private final EarlybirdFeatureSchemaMerger schemaMerger;
+  pr vate f nal Earlyb rdFeatureSc ma rger sc ma rger;
 
-  @Inject
-  public EarlybirdFeatureSchemaAnnotateFilter(EarlybirdFeatureSchemaMerger merger) {
-    this.schemaMerger = merger;
+  @ nject
+  publ c Earlyb rdFeatureSc maAnnotateF lter(Earlyb rdFeatureSc ma rger  rger) {
+    t .sc ma rger =  rger;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(annotateRequestContext(requestContext));
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    return serv ce.apply(annotateRequestContext(requestContext));
   }
 
   /**
-   * Annotate the request to indicate the available features schemas before sending to earlybird.
+   * Annotate t  request to  nd cate t  ava lable features sc mas before send ng to earlyb rd.
    *
-   * @param requestContext the earlybird request context
+   * @param requestContext t  earlyb rd request context
    */
-  private EarlybirdRequestContext annotateRequestContext(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetSearchQuery()
-        && request.getSearchQuery().isSetResultMetadataOptions()
-        && request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
-      // Remember the available client side cached features schema in the context and prepare to
-      // reset it something new.
-      List<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient =
-          request.getSearchQuery().getResultMetadataOptions().getFeatureSchemasAvailableInClient();
+  pr vate Earlyb rdRequestContext annotateRequestContext(Earlyb rdRequestContext requestContext) {
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (request. sSetSearchQuery()
+        && request.getSearchQuery(). sSetResult tadataOpt ons()
+        && request.getSearchQuery().getResult tadataOpt ons(). sReturnSearchResultFeatures()) {
+      // Re mber t  ava lable cl ent s de cac d features sc ma  n t  context and prepare to
+      // reset   so th ng new.
+      L st<Thr ftSearchFeatureSc maSpec f er> featureSc masAva lable nCl ent =
+          request.getSearchQuery().getResult tadataOpt ons().getFeatureSc masAva lable nCl ent();
 
-      return EarlybirdRequestContext.newContext(
+      return Earlyb rdRequestContext.newContext(
           request,
           requestContext,
-          schemaMerger.getAvailableSchemaList(),  // Set the available feature schemas based on
-                                                  // what is cached in the current root.
-          featureSchemasAvailableInClient);
+          sc ma rger.getAva lableSc maL st(),  // Set t  ava lable feature sc mas based on
+                                                  // what  s cac d  n t  current root.
+          featureSc masAva lable nCl ent);
     } else {
       return requestContext;
     }

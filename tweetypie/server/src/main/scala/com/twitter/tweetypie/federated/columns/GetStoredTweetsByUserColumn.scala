@@ -1,83 +1,83 @@
-package com.twitter.tweetypie.federated.columns
+package com.tw ter.t etyp e.federated.columns
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access.LdapGroup
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AnyOf
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.FromColumns
-import com.twitter.strato.config.Has
-import com.twitter.strato.config.Path
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.response.Err
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.thriftscala.federated.GetStoredTweetsByUserView
-import com.twitter.tweetypie.thriftscala.federated.GetStoredTweetsByUserResponse
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.util.Future
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.access.Access.LdapGroup
+ mport com.tw ter.strato.catalog.Fetch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.AnyOf
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.FromColumns
+ mport com.tw ter.strato.conf g.Has
+ mport com.tw ter.strato.conf g.Path
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle.Product on
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.response.Err
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.t etyp e.User d
+ mport com.tw ter.t etyp e.thr ftscala.federated.GetStoredT etsByUserV ew
+ mport com.tw ter.t etyp e.thr ftscala.federated.GetStoredT etsByUserResponse
+ mport com.tw ter.t etyp e.{thr ftscala => thr ft}
+ mport com.tw ter.ut l.Future
 
-class GetStoredTweetsByUserColumn(
-  handler: thrift.GetStoredTweetsByUserRequest => Future[thrift.GetStoredTweetsByUserResult])
-    extends StratoFed.Column(GetStoredTweetsByUserColumn.Path)
-    with StratoFed.Fetch.Stitch {
+class GetStoredT etsByUserColumn(
+  handler: thr ft.GetStoredT etsByUserRequest => Future[thr ft.GetStoredT etsByUserResult])
+    extends StratoFed.Column(GetStoredT etsByUserColumn.Path)
+    w h StratoFed.Fetch.St ch {
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Production),
-    description =
-      Some(PlainText("Fetches hydrated Tweets for a particular User regardless of Tweet state."))
+  overr de val contact nfo: Contact nfo = T etyp eContact nfo
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (Product on),
+    descr pt on =
+      So (Pla nText("Fetc s hydrated T ets for a part cular User regardless of T et state."))
   )
-  override val policy: Policy = AnyOf(
+  overr de val pol cy: Pol cy = AnyOf(
     Seq(
-      FromColumns(Set(Path("tweetypie/data-provider/storedTweets.User"))),
-      Has(LdapGroup("tweetypie-team"))
+      FromColumns(Set(Path("t etyp e/data-prov der/storedT ets.User"))),
+      Has(LdapGroup("t etyp e-team"))
     ))
 
-  override type Key = UserId
-  override type View = GetStoredTweetsByUserView
-  override type Value = GetStoredTweetsByUserResponse
+  overr de type Key = User d
+  overr de type V ew = GetStoredT etsByUserV ew
+  overr de type Value = GetStoredT etsByUserResponse
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[GetStoredTweetsByUserView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[GetStoredTweetsByUserResponse]
+  overr de val keyConv: Conv[Key] = Conv.ofType
+  overr de val v ewConv: Conv[V ew] = ScroogeConv.fromStruct[GetStoredT etsByUserV ew]
+  overr de val valueConv: Conv[Value] = ScroogeConv.fromStruct[GetStoredT etsByUserResponse]
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    val request = thrift.GetStoredTweetsByUserRequest(
-      userId = key,
-      options = Some(
-        thrift.GetStoredTweetsByUserOptions(
-          bypassVisibilityFiltering = view.bypassVisibilityFiltering,
-          setForUserId = view.setForUserId,
-          startTimeMsec = view.startTimeMsec,
-          endTimeMsec = view.endTimeMsec,
-          cursor = view.cursor,
-          startFromOldest = view.startFromOldest,
-          additionalFieldIds = view.additionalFieldIds
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] = {
+    val request = thr ft.GetStoredT etsByUserRequest(
+      user d = key,
+      opt ons = So (
+        thr ft.GetStoredT etsByUserOpt ons(
+          bypassV s b l yF lter ng = v ew.bypassV s b l yF lter ng,
+          setForUser d = v ew.setForUser d,
+          startT  Msec = v ew.startT  Msec,
+          endT  Msec = v ew.endT  Msec,
+          cursor = v ew.cursor,
+          startFromOldest = v ew.startFromOldest,
+          add  onalF eld ds = v ew.add  onalF eld ds
         ))
     )
 
-    Stitch
+    St ch
       .callFuture(handler(request))
       .map { result =>
         Fetch.Result.found(
-          GetStoredTweetsByUserResponse(
-            storedTweets = result.storedTweets,
+          GetStoredT etsByUserResponse(
+            storedT ets = result.storedT ets,
             cursor = result.cursor
           ))
       }
       .rescue {
-        case _ => Stitch.exception(Err(Err.Internal))
+        case _ => St ch.except on(Err(Err. nternal))
       }
   }
 
 }
 
-object GetStoredTweetsByUserColumn {
-  val Path = "tweetypie/internal/getStoredTweets.User"
+object GetStoredT etsByUserColumn {
+  val Path = "t etyp e/ nternal/getStoredT ets.User"
 }

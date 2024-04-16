@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/decorator",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/presentat on",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/sl ce",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/decorator",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/presentat on",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/sl ce",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
 )

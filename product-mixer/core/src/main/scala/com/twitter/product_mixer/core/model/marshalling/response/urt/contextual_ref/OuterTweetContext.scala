@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref
 
-sealed trait OuterTweetContext
+sealed tra  OuterT etContext
 
-case class QuoteTweetId(id: Long) extends OuterTweetContext
-case class RetweetId(id: Long) extends OuterTweetContext
+case class QuoteT et d( d: Long) extends OuterT etContext
+case class Ret et d( d: Long) extends OuterT etContext

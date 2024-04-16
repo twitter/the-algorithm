@@ -1,241 +1,241 @@
-#include "internal/linear_search.h"
-#include "internal/error.h"
-#include <twml/hashing_discretizer_impl.h>
-#include <twml/optim.h>
-#include <algorithm>
+# nclude " nternal/l near_search.h"
+# nclude " nternal/error.h"
+# nclude <twml/hash ng_d scret zer_ mpl.h>
+# nclude <twml/opt m.h>
+# nclude <algor hm>
 
-namespace twml {
-  template<typename Tx>
-  static int64_t lower_bound_search(const Tx *data, const Tx val, const int64_t buf_size) {
-    auto index_temp = std::lower_bound(data, data + buf_size, val);
-    return static_cast<int64_t>(index_temp - data);
+na space twml {
+  template<typena  Tx>
+  stat c  nt64_t lo r_bound_search(const Tx *data, const Tx val, const  nt64_t buf_s ze) {
+    auto  ndex_temp = std::lo r_bound(data, data + buf_s ze, val);
+    return stat c_cast< nt64_t>( ndex_temp - data);
   }
 
-  template<typename Tx>
-  static int64_t upper_bound_search(const Tx *data, const Tx val, const int64_t buf_size) {
-    auto index_temp = std::upper_bound(data, data + buf_size, val);
-    return static_cast<int64_t>(index_temp - data);
+  template<typena  Tx>
+  stat c  nt64_t upper_bound_search(const Tx *data, const Tx val, const  nt64_t buf_s ze) {
+    auto  ndex_temp = std::upper_bound(data, data + buf_s ze, val);
+    return stat c_cast< nt64_t>( ndex_temp - data);
   }
 
-  template<typename Tx>
-  using search_method = int64_t (*)(const Tx *, const Tx, const int64_t);
+  template<typena  Tx>
+  us ng search_ thod =  nt64_t (*)(const Tx *, const Tx, const  nt64_t);
 
-  typedef uint64_t (*hash_signature)(uint64_t, int64_t, uint64_t);
+  typedef u nt64_t (*hash_s gnature)(u nt64_t,  nt64_t, u nt64_t);
 
-  // uint64_t integer_multiplicative_hashing()
+  // u nt64_t  nteger_mult pl cat ve_hash ng()
   //
-  // A function to hash discretized feature_ids into one of 2**output_bits buckets.
-  // This function hashes the feature_ids to achieve a uniform distribution of
-  //   IDs, so the hashed IDs are with high probability far apart
-  // Then, bucket_indices can simply be added, resulting in unique new IDs with high probability
-  // We integer hash again to again spread out the new IDs
-  // Finally we take the upper
-  // Required args:
-  //   feature_id:
-  //     The feature id of the feature to be hashed.
-  //   bucket_index:
-  //     The bucket index of the discretized feature value
-  //   output_bits:
-  //     The number of bits of output space for the features to be hashed into.
+  // A funct on to hash d scret zed feature_ ds  nto one of 2**output_b s buckets.
+  // T  funct on has s t  feature_ ds to ach eve a un form d str but on of
+  //    Ds, so t  has d  Ds are w h h gh probab l y far apart
+  // T n, bucket_ nd ces can s mply be added, result ng  n un que new  Ds w h h gh probab l y
+  //    nteger hash aga n to aga n spread out t  new  Ds
+  // F nally   take t  upper
+  // Requ red args:
+  //   feature_ d:
+  //     T  feature  d of t  feature to be has d.
+  //   bucket_ ndex:
+  //     T  bucket  ndex of t  d scret zed feature value
+  //   output_b s:
+  //     T  number of b s of output space for t  features to be has d  nto.
   //
-  // Note - feature_ids may have arbitrary distribution within int32s
-  // Note - 64 bit feature_ids can be processed with this, but the upper
-  //          32 bits have no effect on the output
-  // e.g. all feature ids 0 through 255 exist in movie-lens.
-  // this hashing constant is good for 32 LSBs. will use N=32. (can use N<32 also)
-  // this hashing constant is co-prime with 2**32, therefore we have that
-  //   a != b, a and b in [0,2**32)
-  //    implies
-  //   f(a) != f(b) where f(x) = (hashing_constant * x) % (2**32)
-  // note that we are mostly ignoring the upper 32 bits, using modulo 2**32 arithmetic
-  uint64_t integer_multiplicative_hashing(uint64_t feature_id,
-                                          int64_t bucket_index,
-                                          uint64_t output_bits) {
-    // possibly use 14695981039346656037 for 64 bit unsigned??
+  // Note - feature_ ds may have arb rary d str but on w h n  nt32s
+  // Note - 64 b  feature_ ds can be processed w h t , but t  upper
+  //          32 b s have no effect on t  output
+  // e.g. all feature  ds 0 through 255 ex st  n mov e-lens.
+  // t  hash ng constant  s good for 32 LSBs. w ll use N=32. (can use N<32 also)
+  // t  hash ng constant  s co-pr   w h 2**32, t refore   have that
+  //   a != b, a and b  n [0,2**32)
+  //     mpl es
+  //   f(a) != f(b) w re f(x) = (hash ng_constant * x) % (2**32)
+  // note that   are mostly  gnor ng t  upper 32 b s, us ng modulo 2**32 ar h t c
+  u nt64_t  nteger_mult pl cat ve_hash ng(u nt64_t feature_ d,
+                                           nt64_t bucket_ ndex,
+                                          u nt64_t output_b s) {
+    // poss bly use 14695981039346656037 for 64 b  uns gned??
     //  = 20921 * 465383 * 1509404459
-    // alternatively, 14695981039346656039 is prime
-    // We would also need to use N = 64
-    const uint64_t hashing_constant = 2654435761;
-    const uint64_t N = 32;
-    // hash once to prevent problems from anomalous input id distributions
-    feature_id *= hashing_constant;
-    feature_id += bucket_index;
-    // this hash enables the following right shift operation
-    //  without losing the bucket information (lower bits)
-    feature_id *= hashing_constant;
-    // output size is a power of 2
-    feature_id >>= N - output_bits;
-    uint64_t mask = (1 << output_bits) - 1;
-    return mask & feature_id;
+    // alternat vely, 14695981039346656039  s pr  
+    //   would also need to use N = 64
+    const u nt64_t hash ng_constant = 2654435761;
+    const u nt64_t N = 32;
+    // hash once to prevent problems from anomalous  nput  d d str but ons
+    feature_ d *= hash ng_constant;
+    feature_ d += bucket_ ndex;
+    // t  hash enables t  follow ng r ght sh ft operat on
+    //  w hout los ng t  bucket  nformat on (lo r b s)
+    feature_ d *= hash ng_constant;
+    // output s ze  s a po r of 2
+    feature_ d >>= N - output_b s;
+    u nt64_t mask = (1 << output_b s) - 1;
+    return mask & feature_ d;
   }
 
-  uint64_t integer64_multiplicative_hashing(uint64_t feature_id,
-                                            int64_t bucket_index,
-                                            uint64_t output_bits) {
-    const uint64_t hashing_constant = 14695981039346656039UL;
-    const uint64_t N = 64;
-    // hash once to prevent problems from anomalous input id distributions
-    feature_id *= hashing_constant;
-    feature_id += bucket_index;
-    // this hash enables the following right shift operation
-    //  without losing the bucket information (lower bits)
-    feature_id *= hashing_constant;
-    // output size is a power of 2
-    feature_id >>= N - output_bits;
-    uint64_t mask = (1 << output_bits) - 1;
-    return mask & feature_id;
+  u nt64_t  nteger64_mult pl cat ve_hash ng(u nt64_t feature_ d,
+                                             nt64_t bucket_ ndex,
+                                            u nt64_t output_b s) {
+    const u nt64_t hash ng_constant = 14695981039346656039UL;
+    const u nt64_t N = 64;
+    // hash once to prevent problems from anomalous  nput  d d str but ons
+    feature_ d *= hash ng_constant;
+    feature_ d += bucket_ ndex;
+    // t  hash enables t  follow ng r ght sh ft operat on
+    //  w hout los ng t  bucket  nformat on (lo r b s)
+    feature_ d *= hash ng_constant;
+    // output s ze  s a po r of 2
+    feature_ d >>= N - output_b s;
+    u nt64_t mask = (1 << output_b s) - 1;
+    return mask & feature_ d;
   }
 
-  int64_t option_bits(int64_t options, int64_t high, int64_t low) {
-    options >>= low;
-    options &= (1 << (high - low + 1)) - 1;
-    return options;
+   nt64_t opt on_b s( nt64_t opt ons,  nt64_t h gh,  nt64_t low) {
+    opt ons >>= low;
+    opt ons &= (1 << (h gh - low + 1)) - 1;
+    return opt ons;
   }
 
-  // it is assumed that start_compute and end_compute are valid
-  template<typename T>
-  void hashDiscretizerInfer(Tensor &output_keys,
+  //    s assu d that start_compute and end_compute are val d
+  template<typena  T>
+  vo d hashD scret zer nfer(Tensor &output_keys,
                             Tensor &output_vals,
-                            const Tensor &input_ids,
-                            const Tensor &input_vals,
-                            const Tensor &bin_vals,
-                            int output_bits,
-                            const Map<int64_t, int64_t> &ID_to_index,
-                            int64_t start_compute,
-                            int64_t end_compute,
-                            int64_t n_bin,
-                            int64_t options) {
-    auto output_keys_data = output_keys.getData<int64_t>();
+                            const Tensor & nput_ ds,
+                            const Tensor & nput_vals,
+                            const Tensor &b n_vals,
+                             nt output_b s,
+                            const Map< nt64_t,  nt64_t> & D_to_ ndex,
+                             nt64_t start_compute,
+                             nt64_t end_compute,
+                             nt64_t n_b n,
+                             nt64_t opt ons) {
+    auto output_keys_data = output_keys.getData< nt64_t>();
     auto output_vals_data = output_vals.getData<T>();
 
-    auto input_ids_data = input_ids.getData<int64_t>();
-    auto input_vals_data = input_vals.getData<T>();
+    auto  nput_ ds_data =  nput_ ds.getData< nt64_t>();
+    auto  nput_vals_data =  nput_vals.getData<T>();
 
-    auto bin_vals_data = bin_vals.getData<T>();
+    auto b n_vals_data = b n_vals.getData<T>();
 
-    // The function pointer implementation removes the option_bits
-    // function call (might be inlined) and corresponding branch from
-    // the hot loop, but it prevents inlining these functions, so
-    // there will be function call overhead. Uncertain which would
-    // be faster, testing needed. Also, code optimizers do weird things...
-    hash_signature hash_fn = integer_multiplicative_hashing;
-    switch (option_bits(options, 4, 2)) {
+    // T  funct on po nter  mple ntat on removes t  opt on_b s
+    // funct on call (m ght be  nl ned) and correspond ng branch from
+    // t  hot loop, but   prevents  nl n ng t se funct ons, so
+    // t re w ll be funct on call over ad. Uncerta n wh ch would
+    // be faster, test ng needed. Also, code opt m zers do   rd th ngs...
+    hash_s gnature hash_fn =  nteger_mult pl cat ve_hash ng;
+    sw ch (opt on_b s(opt ons, 4, 2)) {
       case 0:
-      hash_fn = integer_multiplicative_hashing;
+      hash_fn =  nteger_mult pl cat ve_hash ng;
       break;
       case 1:
-      hash_fn = integer64_multiplicative_hashing;
+      hash_fn =  nteger64_mult pl cat ve_hash ng;
       break;
       default:
-      hash_fn = integer_multiplicative_hashing;
+      hash_fn =  nteger_mult pl cat ve_hash ng;
     }
 
-    search_method<T> search_fn = lower_bound_search;
-    switch (option_bits(options, 1, 0)) {
+    search_ thod<T> search_fn = lo r_bound_search;
+    sw ch (opt on_b s(opt ons, 1, 0)) {
       case 0:
-      search_fn = lower_bound_search<T>;
+      search_fn = lo r_bound_search<T>;
       break;
       case 1:
-      search_fn = linear_search<T>;
+      search_fn = l near_search<T>;
       break;
       case 2:
       search_fn = upper_bound_search<T>;
       break;
       default:
-      search_fn = lower_bound_search<T>;
+      search_fn = lo r_bound_search<T>;
     }
 
-    for (uint64_t i = start_compute; i < end_compute; i++) {
-      int64_t id = input_ids_data[i];
-      T val = input_vals_data[i];
+    for (u nt64_t   = start_compute;   < end_compute;  ++) {
+       nt64_t  d =  nput_ ds_data[ ];
+      T val =  nput_vals_data[ ];
 
-      auto iter = ID_to_index.find(id);
-      if (iter != ID_to_index.end()) {
-        int64_t feature_idx = iter->second;
-        const T *bin_vals_start = bin_vals_data + feature_idx * n_bin;
-        int64_t out_bin_idx = search_fn(bin_vals_start, val, n_bin);
-        output_keys_data[i] = hash_fn(id, out_bin_idx, output_bits);
-        output_vals_data[i] = 1;
+      auto  er =  D_to_ ndex.f nd( d);
+       f ( er !=  D_to_ ndex.end()) {
+         nt64_t feature_ dx =  er->second;
+        const T *b n_vals_start = b n_vals_data + feature_ dx * n_b n;
+         nt64_t out_b n_ dx = search_fn(b n_vals_start, val, n_b n);
+        output_keys_data[ ] = hash_fn( d, out_b n_ dx, output_b s);
+        output_vals_data[ ] = 1;
       } else {
-        // feature not calibrated
-        output_keys_data[i] = id & ((1 << output_bits) - 1);
-        output_vals_data[i] = val;
+        // feature not cal brated
+        output_keys_data[ ] =  d & ((1 << output_b s) - 1);
+        output_vals_data[ ] = val;
       }
     }
   }
 
-  void hashDiscretizerInfer(Tensor &output_keys,
+  vo d hashD scret zer nfer(Tensor &output_keys,
                             Tensor &output_vals,
-                            const Tensor &input_ids,
-                            const Tensor &input_vals,
-                            int n_bin,
-                            const Tensor &bin_vals,
-                            int output_bits,
-                            const Map<int64_t, int64_t> &ID_to_index,
-                            int start_compute,
-                            int end_compute,
-                            int64_t options) {
-    if (input_ids.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "input_ids must be a Long Tensor");
+                            const Tensor & nput_ ds,
+                            const Tensor & nput_vals,
+                             nt n_b n,
+                            const Tensor &b n_vals,
+                             nt output_b s,
+                            const Map< nt64_t,  nt64_t> & D_to_ ndex,
+                             nt start_compute,
+                             nt end_compute,
+                             nt64_t opt ons) {
+     f ( nput_ ds.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, " nput_ ds must be a Long Tensor");
     }
 
-    if (output_keys.getType() != TWML_TYPE_INT64) {
+     f (output_keys.getType() != TWML_TYPE_ NT64) {
       throw twml::Error(TWML_ERR_TYPE, "output_keys must be a Long Tensor");
     }
 
-    if (input_vals.getType() != bin_vals.getType()) {
+     f ( nput_vals.getType() != b n_vals.getType()) {
       throw twml::Error(TWML_ERR_TYPE,
-                "Data type of input_vals does not match type of bin_vals");
+                "Data type of  nput_vals does not match type of b n_vals");
     }
 
-    if (bin_vals.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_vals must be 1 Dimensional");
+     f (b n_vals.getNumD ms() != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "b n_vals must be 1 D  ns onal");
     }
 
-    uint64_t size = input_ids.getDim(0);
-    if (end_compute == -1) {
-      end_compute = size;
+    u nt64_t s ze =  nput_ ds.getD m(0);
+     f (end_compute == -1) {
+      end_compute = s ze;
     }
 
-    if (start_compute < 0 || start_compute >= size) {
-      throw twml::Error(TWML_ERR_SIZE,
+     f (start_compute < 0 || start_compute >= s ze) {
+      throw twml::Error(TWML_ERR_S ZE,
                 "start_compute out of range");
     }
 
-    if (end_compute < -1 || end_compute > size) {
-      throw twml::Error(TWML_ERR_SIZE,
+     f (end_compute < -1 || end_compute > s ze) {
+      throw twml::Error(TWML_ERR_S ZE,
                 "end_compute out of range");
     }
 
-    if (start_compute > end_compute && end_compute != -1) {
-      throw twml::Error(TWML_ERR_SIZE,
+     f (start_compute > end_compute && end_compute != -1) {
+      throw twml::Error(TWML_ERR_S ZE,
                 "must have start_compute <= end_compute, or end_compute==-1");
     }
 
-    if (output_keys.getStride(0) != 1 || output_vals.getStride(0) != 1 ||
-        input_ids.getStride(0) != 1 || input_vals.getStride(0) != 1 ||
-        bin_vals.getStride(0) != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "All Strides must be 1.");
+     f (output_keys.getStr de(0) != 1 || output_vals.getStr de(0) != 1 ||
+         nput_ ds.getStr de(0) != 1 ||  nput_vals.getStr de(0) != 1 ||
+        b n_vals.getStr de(0) != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "All Str des must be 1.");
     }
 
-    switch (input_vals.getType()) {
+    sw ch ( nput_vals.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::hashDiscretizerInfer<float>(output_keys, output_vals,
-                  input_ids, input_vals,
-                  bin_vals, output_bits, ID_to_index,
-                  start_compute, end_compute, n_bin, options);
+      twml::hashD scret zer nfer<float>(output_keys, output_vals,
+                   nput_ ds,  nput_vals,
+                  b n_vals, output_b s,  D_to_ ndex,
+                  start_compute, end_compute, n_b n, opt ons);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::hashDiscretizerInfer<double>(output_keys, output_vals,
-                   input_ids, input_vals,
-                   bin_vals, output_bits, ID_to_index,
-                   start_compute, end_compute, n_bin, options);
+      twml::hashD scret zer nfer<double>(output_keys, output_vals,
+                    nput_ ds,  nput_vals,
+                   b n_vals, output_b s,  D_to_ ndex,
+                   start_compute, end_compute, n_b n, opt ons);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for hashDiscretizerInfer");
+        "Unsupported datatype for hashD scret zer nfer");
     }
   }
-}  // namespace twml
+}  // na space twml

@@ -1,50 +1,50 @@
-package com.twitter.visibility.rules.providers
+package com.tw ter.v s b l y.rules.prov ders
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.VisibilityPolicy
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.V s b l yPol cy
 
-sealed abstract class ProvidedEvaluationContext(
-  visibilityPolicy: VisibilityPolicy,
+sealed abstract class Prov dedEvaluat onContext(
+  v s b l yPol cy: V s b l yPol cy,
   params: Params,
-  statsReceiver: StatsReceiver)
-    extends EvaluationContext(
-      visibilityPolicy = visibilityPolicy,
+  statsRece ver: StatsRece ver)
+    extends Evaluat onContext(
+      v s b l yPol cy = v s b l yPol cy,
       params = params,
-      statsReceiver = statsReceiver)
+      statsRece ver = statsRece ver)
 
-object ProvidedEvaluationContext {
+object Prov dedEvaluat onContext {
 
-  def injectRuntimeRulesIntoEvaluationContext(
-    evaluationContext: EvaluationContext,
-    safetyLevel: Option[SafetyLevel] = None,
-    policyProviderOpt: Option[PolicyProvider] = None
-  ): ProvidedEvaluationContext = {
-    (policyProviderOpt, safetyLevel) match {
-      case (Some(policyProvider), Some(safetyLevel)) =>
-        new InjectedEvaluationContext(
-          evaluationContext = evaluationContext,
+  def  njectRunt  Rules ntoEvaluat onContext(
+    evaluat onContext: Evaluat onContext,
+    safetyLevel: Opt on[SafetyLevel] = None,
+    pol cyProv derOpt: Opt on[Pol cyProv der] = None
+  ): Prov dedEvaluat onContext = {
+    (pol cyProv derOpt, safetyLevel) match {
+      case (So (pol cyProv der), So (safetyLevel)) =>
+        new  njectedEvaluat onContext(
+          evaluat onContext = evaluat onContext,
           safetyLevel = safetyLevel,
-          policyProvider = policyProvider)
-      case (_, _) => new StaticEvaluationContext(evaluationContext)
+          pol cyProv der = pol cyProv der)
+      case (_, _) => new Stat cEvaluat onContext(evaluat onContext)
     }
   }
 }
 
-private class StaticEvaluationContext(
-  evaluationContext: EvaluationContext)
-    extends ProvidedEvaluationContext(
-      visibilityPolicy = evaluationContext.visibilityPolicy,
-      params = evaluationContext.params,
-      statsReceiver = evaluationContext.statsReceiver)
+pr vate class Stat cEvaluat onContext(
+  evaluat onContext: Evaluat onContext)
+    extends Prov dedEvaluat onContext(
+      v s b l yPol cy = evaluat onContext.v s b l yPol cy,
+      params = evaluat onContext.params,
+      statsRece ver = evaluat onContext.statsRece ver)
 
-private class InjectedEvaluationContext(
-  evaluationContext: EvaluationContext,
+pr vate class  njectedEvaluat onContext(
+  evaluat onContext: Evaluat onContext,
   safetyLevel: SafetyLevel,
-  policyProvider: PolicyProvider)
-    extends ProvidedEvaluationContext(
-      visibilityPolicy = policyProvider.policyForSurface(safetyLevel),
-      params = evaluationContext.params,
-      statsReceiver = evaluationContext.statsReceiver)
+  pol cyProv der: Pol cyProv der)
+    extends Prov dedEvaluat onContext(
+      v s b l yPol cy = pol cyProv der.pol cyForSurface(safetyLevel),
+      params = evaluat onContext.params,
+      statsRece ver = evaluat onContext.statsRece ver)

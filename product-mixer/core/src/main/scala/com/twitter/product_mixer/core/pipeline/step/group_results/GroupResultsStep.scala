@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.step.group_results
+package com.tw ter.product_m xer.core.p pel ne.step.group_results
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorInput
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.group_results_executor.GroupResultsExecutor
+ mport com.tw ter.product_m xer.core.serv ce.group_results_executor.GroupResultsExecutor nput
+ mport com.tw ter.product_m xer.core.serv ce.group_results_executor.GroupResultsExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A group results step, it takes the input list of candidates and decorations, and assembles
- * properly decorated candidates with details.
+ * A group results step,   takes t   nput l st of cand dates and decorat ons, and assembles
+ * properly decorated cand dates w h deta ls.
  *
  * @param groupResultsExecutor Group results executor
- * @tparam Candidate Type of candidates
- * @tparam State The pipeline state domain model.
+ * @tparam Cand date Type of cand dates
+ * @tparam State T  p pel ne state doma n model.
  */
 case class GroupResultsStep[
-  Candidate <: UniversalNoun[Any],
-  State <: HasCandidatesWithDetails[State] with HasCandidatesWithFeatures[
-    Candidate,
+  Cand date <: Un versalNoun[Any],
+  State <: HasCand datesW hDeta ls[State] w h HasCand datesW hFeatures[
+    Cand date,
     State
-  ]] @Inject() (
+  ]] @ nject() (
   groupResultsExecutor: GroupResultsExecutor)
-    extends Step[State, CandidatePipelineContext, GroupResultsExecutorInput[
-      Candidate
+    extends Step[State, Cand dateP pel neContext, GroupResultsExecutor nput[
+      Cand date
     ], GroupResultsExecutorResult] {
 
-  override def isEmpty(config: CandidatePipelineContext): Boolean = false
-  override def adaptInput(
+  overr de def  sEmpty(conf g: Cand dateP pel neContext): Boolean = false
+  overr de def adapt nput(
     state: State,
-    config: CandidatePipelineContext
-  ): GroupResultsExecutorInput[Candidate] = {
-    val presentationMap = state.candidatesWithDetails.flatMap { candidateWithDetails =>
-      candidateWithDetails.presentation
-        .map { presentation =>
-          candidateWithDetails.getCandidate[UniversalNoun[Any]] -> presentation
+    conf g: Cand dateP pel neContext
+  ): GroupResultsExecutor nput[Cand date] = {
+    val presentat onMap = state.cand datesW hDeta ls.flatMap { cand dateW hDeta ls =>
+      cand dateW hDeta ls.presentat on
+        .map { presentat on =>
+          cand dateW hDeta ls.getCand date[Un versalNoun[Any]] -> presentat on
         }
     }.toMap
-    GroupResultsExecutorInput(state.candidatesWithFeatures, presentationMap)
+    GroupResultsExecutor nput(state.cand datesW hFeatures, presentat onMap)
   }
 
-  override def arrow(
-    config: CandidatePipelineContext,
+  overr de def arrow(
+    conf g: Cand dateP pel neContext,
     context: Executor.Context
-  ): Arrow[GroupResultsExecutorInput[Candidate], GroupResultsExecutorResult] =
+  ): Arrow[GroupResultsExecutor nput[Cand date], GroupResultsExecutorResult] =
     groupResultsExecutor.arrow(
-      config.candidatePipelineIdentifier,
-      config.candidateSourceIdentifier,
+      conf g.cand dateP pel ne dent f er,
+      conf g.cand dateS ce dent f er,
       context)
 
-  override def updateState(
+  overr de def updateState(
     state: State,
     executorResult: GroupResultsExecutorResult,
-    config: CandidatePipelineContext
-  ): State = state.updateCandidatesWithDetails(executorResult.candidatesWithDetails)
+    conf g: Cand dateP pel neContext
+  ): State = state.updateCand datesW hDeta ls(executorResult.cand datesW hDeta ls)
 }
 
-case class CandidatePipelineContext(
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  candidateSourceIdentifier: CandidateSourceIdentifier)
+case class Cand dateP pel neContext(
+  cand dateP pel ne dent f er: Cand dateP pel ne dent f er,
+  cand dateS ce dent f er: Cand dateS ce dent f er)

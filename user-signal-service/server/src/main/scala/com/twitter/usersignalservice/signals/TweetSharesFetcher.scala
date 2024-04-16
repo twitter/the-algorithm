@@ -1,77 +1,77 @@
-package com.twitter.usersignalservice.signals
+package com.tw ter.users gnalserv ce.s gnals
 
-import com.twitter.bijection.Codec
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.onboarding.relevance.tweet_engagement.thriftscala.EngagementIdentifier
-import com.twitter.onboarding.relevance.tweet_engagement.thriftscala.TweetEngagement
-import com.twitter.onboarding.relevance.tweet_engagement.thriftscala.TweetEngagements
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.base.ManhattanSignalFetcher
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.b ject on.Codec
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.onboard ng.relevance.t et_engage nt.thr ftscala.Engage nt dent f er
+ mport com.tw ter.onboard ng.relevance.t et_engage nt.thr ftscala.T etEngage nt
+ mport com.tw ter.onboard ng.relevance.t et_engage nt.thr ftscala.T etEngage nts
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanCluster
+ mport com.tw ter.tw stly.common.User d
+ mport com.tw ter.users gnalserv ce.base.ManhattanS gnalFetc r
+ mport com.tw ter.users gnalserv ce.base.Query
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class TweetSharesFetcher @Inject() (
-  manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends ManhattanSignalFetcher[Long, TweetEngagements] {
+@S ngleton
+case class T etSharesFetc r @ nject() (
+  manhattanKVCl entMtlsParams: ManhattanKVCl entMtlsParams,
+  t  r: T  r,
+  stats: StatsRece ver)
+    extends ManhattanS gnalFetc r[Long, T etEngage nts] {
 
-  import TweetSharesFetcher._
+   mport T etSharesFetc r._
 
-  override type RawSignalType = TweetEngagement
+  overr de type RawS gnalType = T etEngage nt
 
-  override def name: String = this.getClass.getCanonicalName
+  overr de def na : Str ng = t .getClass.getCanon calNa 
 
-  override def statsReceiver: StatsReceiver = stats.scope(name)
+  overr de def statsRece ver: StatsRece ver = stats.scope(na )
 
-  override protected def manhattanAppId: String = MHAppId
+  overr de protected def manhattanApp d: Str ng = MHApp d
 
-  override protected def manhattanDatasetName: String = MHDatasetName
+  overr de protected def manhattanDatasetNa : Str ng = MHDatasetNa 
 
-  override protected def manhattanClusterId: ManhattanCluster = Apollo
+  overr de protected def manhattanCluster d: ManhattanCluster = Apollo
 
-  override protected def manhattanKeyCodec: Codec[Long] = Long2BigEndian
+  overr de protected def manhattanKeyCodec: Codec[Long] = Long2B gEnd an
 
-  override protected def manhattanRawSignalCodec: Codec[TweetEngagements] = BinaryScalaCodec(
-    TweetEngagements)
+  overr de protected def manhattanRawS gnalCodec: Codec[T etEngage nts] = B naryScalaCodec(
+    T etEngage nts)
 
-  override protected def toManhattanKey(userId: UserId): Long = userId
+  overr de protected def toManhattanKey(user d: User d): Long = user d
 
-  override protected def toRawSignals(
-    manhattanValue: TweetEngagements
-  ): Seq[TweetEngagement] = manhattanValue.tweetEngagements
+  overr de protected def toRawS gnals(
+    manhattanValue: T etEngage nts
+  ): Seq[T etEngage nt] = manhattanValue.t etEngage nts
 
-  override def process(
+  overr de def process(
     query: Query,
-    rawSignals: Future[Option[Seq[TweetEngagement]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map {
+    rawS gnals: Future[Opt on[Seq[T etEngage nt]]]
+  ): Future[Opt on[Seq[S gnal]]] = {
+    rawS gnals.map {
       _.map {
         _.collect {
-          case tweetEngagement if (tweetEngagement.engagementType == EngagementIdentifier.Share) =>
-            Signal(
-              SignalType.TweetShareV1,
-              tweetEngagement.timestampMs,
-              Some(InternalId.TweetId(tweetEngagement.tweetId)))
-        }.sortBy(-_.timestamp).take(query.maxResults.getOrElse(Int.MaxValue))
+          case t etEngage nt  f (t etEngage nt.engage ntType == Engage nt dent f er.Share) =>
+            S gnal(
+              S gnalType.T etShareV1,
+              t etEngage nt.t  stampMs,
+              So ( nternal d.T et d(t etEngage nt.t et d)))
+        }.sortBy(-_.t  stamp).take(query.maxResults.getOrElse( nt.MaxValue))
       }
     }
   }
 }
 
-object TweetSharesFetcher {
-  private val MHAppId = "uss_prod_apollo"
-  private val MHDatasetName = "tweet_share_engagements"
+object T etSharesFetc r {
+  pr vate val MHApp d = "uss_prod_apollo"
+  pr vate val MHDatasetNa  = "t et_share_engage nts"
 }

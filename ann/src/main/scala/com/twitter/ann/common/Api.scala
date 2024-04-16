@@ -1,150 +1,150 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.ml.api.embedding.EmbeddingSerDe
-import com.twitter.util.Future
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ml.ap .embedd ng.Embedd ngMath
+ mport com.tw ter.ml.ap .embedd ng.Embedd ngSerDe
+ mport com.tw ter.ut l.Future
 
-object EmbeddingType {
-  type EmbeddingVector = Embedding[Float]
-  val embeddingSerDe = EmbeddingSerDe.apply[Float]
-  private[common] val math = EmbeddingMath.Float
+object Embedd ngType {
+  type Embedd ngVector = Embedd ng[Float]
+  val embedd ngSerDe = Embedd ngSerDe.apply[Float]
+  pr vate[common] val math = Embedd ngMath.Float
 }
 
 /**
- * Typed entity with an embedding associated with it.
- * @param id : Unique Id for an entity.
- * @param embedding : Embedding/Vector of an entity.
- * @tparam T: Type of id.
+ * Typed ent y w h an embedd ng assoc ated w h  .
+ * @param  d : Un que  d for an ent y.
+ * @param embedd ng : Embedd ng/Vector of an ent y.
+ * @tparam T: Type of  d.
  */
-case class EntityEmbedding[T](id: T, embedding: EmbeddingVector)
+case class Ent yEmbedd ng[T]( d: T, embedd ng: Embedd ngVector)
 
-// Query interface for ANN
-trait Queryable[T, P <: RuntimeParams, D <: Distance[D]] {
+// Query  nterface for ANN
+tra  Queryable[T, P <: Runt  Params, D <: D stance[D]] {
 
   /**
-   * ANN query for ids.
-   * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @return List of approximate nearest neighbour ids.
+   * ANN query for  ds.
+   * @param embedd ng: Embedd ng/Vector to be quer ed w h.
+   * @param numOfNe ghbors: Number of ne ghb s to be quer ed for.
+   * @param runt  Params: Runt   params assoc ated w h  ndex to control accuracy/latency etc.
+   * @return L st of approx mate nearest ne ghb   ds.
    */
   def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]]
+    embedd ng: Embedd ngVector,
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): Future[L st[T]]
 
   /**
-   * ANN query for ids with distance.
-   * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * ANN query for  ds w h d stance.
+   * @param embedd ng: Embedd ng/Vector to be quer ed w h.
+   * @param numOfNe ghbors: Number of ne ghb s to be quer ed for.
+   * @param runt  Params: Runt   params assoc ated w h  ndex to control accuracy/latency etc.
+   * @return L st of approx mate nearest ne ghb   ds w h d stance from t  query embedd ng.
    */
-  def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]]
+  def queryW hD stance(
+    embedd ng: Embedd ngVector,
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): Future[L st[Ne ghborW hD stance[T, D]]]
 }
 
-// Query interface for ANN over indexes that are grouped
-trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] extends Queryable[T, P, D] {
+// Query  nterface for ANN over  ndexes that are grouped
+tra  QueryableGrouped[T, P <: Runt  Params, D <: D stance[D]] extends Queryable[T, P, D] {
 
   /**
-   * ANN query for ids.
-   * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   * @return List of approximate nearest neighbour ids.
+   * ANN query for  ds.
+   * @param embedd ng: Embedd ng/Vector to be quer ed w h.
+   * @param numOfNe ghbors: Number of ne ghb s to be quer ed for.
+   * @param runt  Params: Runt   params assoc ated w h  ndex to control accuracy/latency etc.
+   * @param key: Opt onal key to lookup spec f c ANN  ndex and perform query t re
+   * @return L st of approx mate nearest ne ghb   ds.
    */
   def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P,
-    key: Option[String]
-  ): Future[List[T]]
+    embedd ng: Embedd ngVector,
+    numOfNe ghbors:  nt,
+    runt  Params: P,
+    key: Opt on[Str ng]
+  ): Future[L st[T]]
 
   /**
-   * ANN query for ids with distance.
-   * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * ANN query for  ds w h d stance.
+   * @param embedd ng: Embedd ng/Vector to be quer ed w h.
+   * @param numOfNe ghbors: Number of ne ghb s to be quer ed for.
+   * @param runt  Params: Runt   params assoc ated w h  ndex to control accuracy/latency etc.
+   * @param key: Opt onal key to lookup spec f c ANN  ndex and perform query t re
+   * @return L st of approx mate nearest ne ghb   ds w h d stance from t  query embedd ng.
    */
-  def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P,
-    key: Option[String]
-  ): Future[List[NeighborWithDistance[T, D]]]
+  def queryW hD stance(
+    embedd ng: Embedd ngVector,
+    numOfNe ghbors:  nt,
+    runt  Params: P,
+    key: Opt on[Str ng]
+  ): Future[L st[Ne ghborW hD stance[T, D]]]
 }
 
 /**
- * Runtime params associated with index to control accuracy/latency etc while querying.
+ * Runt   params assoc ated w h  ndex to control accuracy/latency etc wh le query ng.
  */
-trait RuntimeParams {}
+tra  Runt  Params {}
 
 /**
- * ANN query result with distance.
- * @param neighbor : Id of the neighbours
- * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
+ * ANN query result w h d stance.
+ * @param ne ghbor :  d of t  ne ghb s
+ * @param d stance: D stance of ne ghb  from query ex: D: Cos neD stance, L2D stance,  nnerProductD stance
  */
-case class NeighborWithDistance[T, D <: Distance[D]](neighbor: T, distance: D)
+case class Ne ghborW hD stance[T, D <: D stance[D]](ne ghbor: T, d stance: D)
 
 /**
- * ANN query result with seed entity for which this neighbor was provided.
- * @param seed: Seed Id for which ann query was called
- * @param neighbor : Id of the neighbours
+ * ANN query result w h seed ent y for wh ch t  ne ghbor was prov ded.
+ * @param seed: Seed  d for wh ch ann query was called
+ * @param ne ghbor :  d of t  ne ghb s
  */
-case class NeighborWithSeed[T1, T2](seed: T1, neighbor: T2)
+case class Ne ghborW hSeed[T1, T2](seed: T1, ne ghbor: T2)
 
 /**
- * ANN query result with distance with seed entity for which this neighbor was provided.
- * @param seed: Seed Id for which ann query was called
- * @param neighbor : Id of the neighbours
- * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
+ * ANN query result w h d stance w h seed ent y for wh ch t  ne ghbor was prov ded.
+ * @param seed: Seed  d for wh ch ann query was called
+ * @param ne ghbor :  d of t  ne ghb s
+ * @param d stance: D stance of ne ghb  from query ex: D: Cos neD stance, L2D stance,  nnerProductD stance
  */
-case class NeighborWithDistanceWithSeed[T1, T2, D <: Distance[D]](
+case class Ne ghborW hD stanceW hSeed[T1, T2, D <: D stance[D]](
   seed: T1,
-  neighbor: T2,
-  distance: D)
+  ne ghbor: T2,
+  d stance: D)
 
-trait RawAppendable[P <: RuntimeParams, D <: Distance[D]] {
+tra  RawAppendable[P <: Runt  Params, D <: D stance[D]] {
 
   /**
-   * Append an embedding in an index.
-   * @param embedding: Embedding/Vector
-   * @return Future of long id associated with embedding autogenerated.
+   * Append an embedd ng  n an  ndex.
+   * @param embedd ng: Embedd ng/Vector
+   * @return Future of long  d assoc ated w h embedd ng autogenerated.
    */
-  def append(embedding: EmbeddingVector): Future[Long]
+  def append(embedd ng: Embedd ngVector): Future[Long]
 
   /**
-   * Convert an Appendable to Queryable interface to query an index.
+   * Convert an Appendable to Queryable  nterface to query an  ndex.
    */
   def toQueryable: Queryable[Long, P, D]
 }
 
-// Index building interface for ANN.
-trait Appendable[T, P <: RuntimeParams, D <: Distance[D]] {
+//  ndex bu ld ng  nterface for ANN.
+tra  Appendable[T, P <: Runt  Params, D <: D stance[D]] {
 
   /**
-   *  Append an entity with embedding in an index.
-   * @param entity: Entity with its embedding
+   *  Append an ent y w h embedd ng  n an  ndex.
+   * @param ent y: Ent y w h  s embedd ng
    */
-  def append(entity: EntityEmbedding[T]): Future[Unit]
+  def append(ent y: Ent yEmbedd ng[T]): Future[Un ]
 
   /**
-   * Convert an Appendable to Queryable interface to query an index.
+   * Convert an Appendable to Queryable  nterface to query an  ndex.
    */
   def toQueryable: Queryable[T, P, D]
 }
 
-// Updatable index interface for ANN.
-trait Updatable[T] {
-  def update(entity: EntityEmbedding[T]): Future[Unit]
+// Updatable  ndex  nterface for ANN.
+tra  Updatable[T] {
+  def update(ent y: Ent yEmbedd ng[T]): Future[Un ]
 }

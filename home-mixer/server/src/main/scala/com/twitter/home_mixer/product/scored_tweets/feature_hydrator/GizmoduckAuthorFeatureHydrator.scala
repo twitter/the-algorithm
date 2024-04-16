@@ -1,82 +1,82 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ads.entities.db.{thriftscala => ae}
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsProtectedFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsSupportAccountReplyFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.snowflake.id.SnowflakeId
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ads.ent  es.db.{thr ftscala => ae}
+ mport com.tw ter.g zmoduck.{thr ftscala => gt}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sBlueVer f edFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sProtectedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.From nNetworkS ceFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sSupportAccountReplyFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GizmoduckAuthorFeatureHydrator @Inject() (gizmoduck: gt.UserService.MethodPerEndpoint)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class G zmoduckAuthorFeatureHydrator @ nject() (g zmoduck: gt.UserServ ce. thodPerEndpo nt)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("GizmoduckAuthor")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("G zmoduckAuthor")
 
-  override val features: Set[Feature[_, _]] =
-    Set(AuthorIsBlueVerifiedFeature, AuthorIsProtectedFeature, IsSupportAccountReplyFeature)
+  overr de val features: Set[Feature[_, _]] =
+    Set(Author sBlueVer f edFeature, Author sProtectedFeature,  sSupportAccountReplyFeature)
 
-  private val queryFields: Set[gt.QueryFields] =
-    Set(gt.QueryFields.AdvertiserAccount, gt.QueryFields.Profile, gt.QueryFields.Safety)
+  pr vate val queryF elds: Set[gt.QueryF elds] =
+    Set(gt.QueryF elds.Advert serAccount, gt.QueryF elds.Prof le, gt.QueryF elds.Safety)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val authorIds = candidates.flatMap(_.features.getOrElse(AuthorIdFeature, None))
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val author ds = cand dates.flatMap(_.features.getOrElse(Author dFeature, None))
 
-    val response = gizmoduck.get(
-      userIds = authorIds.distinct,
-      queryFields = queryFields,
+    val response = g zmoduck.get(
+      user ds = author ds.d st nct,
+      queryF elds = queryF elds,
       context = gt.LookupContext()
     )
 
     response.map { hydratedAuthors =>
-      val userMetadataMap = hydratedAuthors
+      val user tadataMap = hydratedAuthors
         .collect {
-          case userResult if userResult.user.isDefined =>
+          case userResult  f userResult.user. sDef ned =>
             val user = userResult.user.get
-            val blueVerified = user.safety.flatMap(_.isBlueVerified).getOrElse(false)
-            val isProtected = user.safety.exists(_.isProtected)
-            (user.id, (blueVerified, isProtected))
-        }.toMap.withDefaultValue((false, false))
+            val blueVer f ed = user.safety.flatMap(_. sBlueVer f ed).getOrElse(false)
+            val  sProtected = user.safety.ex sts(_. sProtected)
+            (user. d, (blueVer f ed,  sProtected))
+        }.toMap.w hDefaultValue((false, false))
 
-      candidates.map { candidate =>
-        val authorId = candidate.features.get(AuthorIdFeature).get
-        val (isBlueVerified, isProtected) = userMetadataMap(authorId)
+      cand dates.map { cand date =>
+        val author d = cand date.features.get(Author dFeature).get
+        val ( sBlueVer f ed,  sProtected) = user tadataMap(author d)
 
-        // Some accounts run promotions on Twitter and send replies automatically.
-        // We assume that a reply that took more than one minute is not an auto-reply.
-        // If time difference doesn't exist, this means that one of the tweets was
-        // not snowflake and therefore much older, and therefore OK as an extended reply.
-        val timeDifference = candidate.features.getOrElse(InReplyToTweetIdFeature, None).map {
-          SnowflakeId.timeFromId(candidate.candidate.id) - SnowflakeId.timeFromId(_)
+        // So  accounts run promot ons on Tw ter and send repl es automat cally.
+        //   assu  that a reply that took more than one m nute  s not an auto-reply.
+        //  f t   d fference doesn't ex st, t   ans that one of t  t ets was
+        // not snowflake and t refore much older, and t refore OK as an extended reply.
+        val t  D fference = cand date.features.getOrElse( nReplyToT et dFeature, None).map {
+          Snowflake d.t  From d(cand date.cand date. d) - Snowflake d.t  From d(_)
         }
-        val isAutoReply = timeDifference.exists(_ < 1.minute)
+        val  sAutoReply = t  D fference.ex sts(_ < 1.m nute)
 
-        FeatureMapBuilder()
-          .add(AuthorIsBlueVerifiedFeature, isBlueVerified)
-          .add(AuthorIsProtectedFeature, isProtected)
-          .add(IsSupportAccountReplyFeature, isAutoReply)
-          .build()
+        FeatureMapBu lder()
+          .add(Author sBlueVer f edFeature,  sBlueVer f ed)
+          .add(Author sProtectedFeature,  sProtected)
+          .add( sSupportAccountReplyFeature,  sAutoReply)
+          .bu ld()
       }
     }
   }

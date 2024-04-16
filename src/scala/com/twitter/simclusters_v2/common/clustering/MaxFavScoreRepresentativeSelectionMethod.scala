@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Ne ghborW h  ghts
 
-class MaxFavScoreRepresentativeSelectionMethod[T] extends ClusterRepresentativeSelectionMethod[T] {
+class MaxFavScoreRepresentat veSelect on thod[T] extends ClusterRepresentat veSelect on thod[T] {
 
   /**
-   * Identify the member with largest favScoreHalfLife100Days and return it.
+   *  dent fy t   mber w h largest favScoreHalfL fe100Days and return  .
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @param cluster A set of Ne ghborW h  ghts.
+   * @param embedd ngs A map of producer  D -> embedd ng.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T],
-  ): UserId = {
-    val key = cluster.maxBy { x: NeighborWithWeights => x.favScoreHalfLife100Days.getOrElse(0.0) }
-    key.neighborId
+  def selectClusterRepresentat ve(
+    cluster: Set[Ne ghborW h  ghts],
+    embedd ngs: Map[User d, T],
+  ): User d = {
+    val key = cluster.maxBy { x: Ne ghborW h  ghts => x.favScoreHalfL fe100Days.getOrElse(0.0) }
+    key.ne ghbor d
   }
 }

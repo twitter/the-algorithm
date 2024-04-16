@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/thrift/com/twitter/escherbird:tweet-annotation-scala",
-        "src/thrift/com/twitter/timelines/content_features:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/thr ft/com/tw ter/esc rb rd:t et-annotat on-scala",
+        "src/thr ft/com/tw ter/t  l nes/content_features:thr ft-scala",
+        "src/thr ft/com/tw ter/t etyp e: d a-ent y-scala",
+        "src/thr ft/com/tw ter/t etyp e:t et-scala",
     ],
     exports = [
-        "src/thrift/com/twitter/timelines/content_features:thrift-scala",
+        "src/thr ft/com/tw ter/t  l nes/content_features:thr ft-scala",
     ],
 )

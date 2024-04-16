@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
 /**
- * Represents what this language is associated with.
- * For example, "user" is one of the scopes and "event"
- * could be another scope.
+ * Represents what t  language  s assoc ated w h.
+ * For example, "user"  s one of t  scopes and "event"
+ * could be anot r scope.
  */
-object LanguageScope extends Enumeration {
+object LanguageScope extends Enu rat on {
 
-  // User scope means that the language is the user's language.
-  val User: Value = Value(thrift.LanguageScope.User.value)
+  // User scope  ans that t  language  s t  user's language.
+  val User: Value = Value(thr ft.LanguageScope.User.value)
 
-  // Event scope means that the language is the event's language.
-  val Event: Value = Value(thrift.LanguageScope.Event.value)
+  // Event scope  ans that t  language  s t  event's language.
+  val Event: Value = Value(thr ft.LanguageScope.Event.value)
 
-  // list of all LanguageScope values
+  // l st of all LanguageScope values
   val All: ValueSet = LanguageScope.ValueSet(User, Event)
 
-  def apply(scope: thrift.LanguageScope): LanguageScope.Value = {
+  def apply(scope: thr ft.LanguageScope): LanguageScope.Value = {
     scope match {
-      case thrift.LanguageScope.User =>
+      case thr ft.LanguageScope.User =>
         User
-      case thrift.LanguageScope.Event =>
+      case thr ft.LanguageScope.Event =>
         Event
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+        throw new  llegalArgu ntExcept on(s"Unsupported language scope: $scope")
     }
   }
 
-  def fromThrift(scope: thrift.LanguageScope): LanguageScope.Value = {
+  def fromThr ft(scope: thr ft.LanguageScope): LanguageScope.Value = {
     apply(scope)
   }
 
-  def toThrift(scope: LanguageScope.Value): thrift.LanguageScope = {
+  def toThr ft(scope: LanguageScope.Value): thr ft.LanguageScope = {
     scope match {
       case LanguageScope.User =>
-        thrift.LanguageScope.User
+        thr ft.LanguageScope.User
       case LanguageScope.Event =>
-        thrift.LanguageScope.Event
+        thr ft.LanguageScope.Event
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+        throw new  llegalArgu ntExcept on(s"Unsupported language scope: $scope")
     }
   }
 }

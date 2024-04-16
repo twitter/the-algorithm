@@ -1,30 +1,30 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
-case class ContinuousFunctionParam(
+case class Cont nuousFunct onParam(
   knobs: Seq[Double],
   knobValues: Seq[Double],
-  powers: Seq[Double],
-  weight: Double,
+  po rs: Seq[Double],
+    ght: Double,
   defaultValue: Double) {
 
-  def validateParams(): Boolean = {
-    knobs.size > 0 && knobs.size - 1 == powers.size && knobs.size == knobValues.size
+  def val dateParams(): Boolean = {
+    knobs.s ze > 0 && knobs.s ze - 1 == po rs.s ze && knobs.s ze == knobValues.s ze
   }
 }
 
-object ContinuousFunction {
+object Cont nuousFunct on {
 
   /**
-   * Evalutate the value for function f(x) = w(x - b)^power
-   * where w and b are decided by the start, startVal, end, endVal
+   * Evalutate t  value for funct on f(x) = w(x - b)^po r
+   * w re w and b are dec ded by t  start, startVal, end, endVal
    * such that
-   *         w(start - b) ^ power = startVal
-   *         w(end - b) ^ power = endVal
+   *         w(start - b) ^ po r = startVal
+   *         w(end - b) ^ po r = endVal
    *
-   * @param value the value at which we will evaluate the param
-   * @return weight * f(value)
+   * @param value t  value at wh ch   w ll evaluate t  param
+   * @return   ght * f(value)
    */
   def evaluateFn(
     value: Double,
@@ -32,70 +32,70 @@ object ContinuousFunction {
     startVal: Double,
     end: Double,
     endVal: Double,
-    power: Double,
-    weight: Double
+    po r: Double,
+      ght: Double
   ): Double = {
     val b =
-      (math.pow(startVal / endVal, 1 / power) * end - start) / (math.pow(
+      (math.pow(startVal / endVal, 1 / po r) * end - start) / (math.pow(
         startVal / endVal,
-        1 / power) - 1)
-    val w = startVal / math.pow(start - b, power)
-    weight * w * math.pow(value - b, power)
+        1 / po r) - 1)
+    val w = startVal / math.pow(start - b, po r)
+      ght * w * math.pow(value - b, po r)
   }
 
   /**
-   * Evaluate value for function f(x), and return weight * f(x)
+   * Evaluate value for funct on f(x), and return   ght * f(x)
    *
-   * f(x) is a piecewise function
-   * f(x) = w_i * (x - b_i)^powers[i] for knobs[i] <= x < knobs[i+1]
+   * f(x)  s a p ecew se funct on
+   * f(x) = w_  * (x - b_ )^po rs[ ] for knobs[ ] <= x < knobs[ +1]
    * such that
-   *         w(knobs[i] - b) ^ power = knobVals[i]
-   *         w(knobs[i+1] - b) ^ power = knobVals[i+1]
+   *         w(knobs[ ] - b) ^ po r = knobVals[ ]
+   *         w(knobs[ +1] - b) ^ po r = knobVals[ +1]
    *
-   * @return Evaluate value for weight * f(x), for the function described above. If the any of the input is invalid, returns defaultVal
+   * @return Evaluate value for   ght * f(x), for t  funct on descr bed above.  f t  any of t   nput  s  nval d, returns defaultVal
    */
   def safeEvaluateFn(
     value: Double,
     knobs: Seq[Double],
     knobVals: Seq[Double],
-    powers: Seq[Double],
-    weight: Double,
+    po rs: Seq[Double],
+      ght: Double,
     defaultVal: Double,
-    statsReceiver: StatsReceiver
+    statsRece ver: StatsRece ver
   ): Double = {
-    val totalStats = statsReceiver.counter("safe_evalfn_total")
-    val validStats =
-      statsReceiver.counter("safe_evalfn_valid")
-    val validEndCaseStats =
-      statsReceiver.counter("safe_evalfn_valid_endcase")
-    val invalidStats = statsReceiver.counter("safe_evalfn_invalid")
+    val totalStats = statsRece ver.counter("safe_evalfn_total")
+    val val dStats =
+      statsRece ver.counter("safe_evalfn_val d")
+    val val dEndCaseStats =
+      statsRece ver.counter("safe_evalfn_val d_endcase")
+    val  nval dStats = statsRece ver.counter("safe_evalfn_ nval d")
 
-    totalStats.incr()
-    if (knobs.size <= 0 || knobs.size - 1 != powers.size || knobs.size != knobVals.size) {
-      invalidStats.incr()
+    totalStats. ncr()
+     f (knobs.s ze <= 0 || knobs.s ze - 1 != po rs.s ze || knobs.s ze != knobVals.s ze) {
+       nval dStats. ncr()
       defaultVal
     } else {
-      val endIndex = knobs.indexWhere(knob => knob > value)
-      validStats.incr()
-      endIndex match {
+      val end ndex = knobs. ndexW re(knob => knob > value)
+      val dStats. ncr()
+      end ndex match {
         case -1 => {
-          validEndCaseStats.incr()
-          knobVals(knobVals.size - 1) * weight
+          val dEndCaseStats. ncr()
+          knobVals(knobVals.s ze - 1) *   ght
         }
         case 0 => {
-          validEndCaseStats.incr()
-          knobVals(0) * weight
+          val dEndCaseStats. ncr()
+          knobVals(0) *   ght
         }
         case _ => {
-          val startIndex = endIndex - 1
+          val start ndex = end ndex - 1
           evaluateFn(
             value,
-            knobs(startIndex),
-            knobVals(startIndex),
-            knobs(endIndex),
-            knobVals(endIndex),
-            powers(startIndex),
-            weight)
+            knobs(start ndex),
+            knobVals(start ndex),
+            knobs(end ndex),
+            knobVals(end ndex),
+            po rs(start ndex),
+              ght)
         }
       }
     }
@@ -103,45 +103,45 @@ object ContinuousFunction {
 
   def safeEvaluateFn(
     value: Double,
-    fnParams: ContinuousFunctionParam,
-    statsReceiver: StatsReceiver
+    fnParams: Cont nuousFunct onParam,
+    statsRece ver: StatsRece ver
   ): Double = {
-    val totalStats = statsReceiver.counter("safe_evalfn_total")
-    val validStats =
-      statsReceiver.counter("safe_evalfn_valid")
-    val validEndCaseStats =
-      statsReceiver.counter("safe_evalfn_valid_endcase")
-    val invalidStats = statsReceiver.counter("safe_evalfn_invalid")
+    val totalStats = statsRece ver.counter("safe_evalfn_total")
+    val val dStats =
+      statsRece ver.counter("safe_evalfn_val d")
+    val val dEndCaseStats =
+      statsRece ver.counter("safe_evalfn_val d_endcase")
+    val  nval dStats = statsRece ver.counter("safe_evalfn_ nval d")
 
-    totalStats.incr()
+    totalStats. ncr()
 
-    if (fnParams.validateParams()) {
-      val endIndex = fnParams.knobs.indexWhere(knob => knob > value)
-      validStats.incr()
-      endIndex match {
+     f (fnParams.val dateParams()) {
+      val end ndex = fnParams.knobs. ndexW re(knob => knob > value)
+      val dStats. ncr()
+      end ndex match {
         case -1 => {
-          validEndCaseStats.incr()
-          fnParams.knobValues(fnParams.knobValues.size - 1) * fnParams.weight
+          val dEndCaseStats. ncr()
+          fnParams.knobValues(fnParams.knobValues.s ze - 1) * fnParams.  ght
         }
         case 0 => {
-          validEndCaseStats.incr()
-          fnParams.knobValues(0) * fnParams.weight
+          val dEndCaseStats. ncr()
+          fnParams.knobValues(0) * fnParams.  ght
         }
         case _ => {
-          val startIndex = endIndex - 1
+          val start ndex = end ndex - 1
           evaluateFn(
             value,
-            fnParams.knobs(startIndex),
-            fnParams.knobValues(startIndex),
-            fnParams.knobs(endIndex),
-            fnParams.knobValues(endIndex),
-            fnParams.powers(startIndex),
-            fnParams.weight
+            fnParams.knobs(start ndex),
+            fnParams.knobValues(start ndex),
+            fnParams.knobs(end ndex),
+            fnParams.knobValues(end ndex),
+            fnParams.po rs(start ndex),
+            fnParams.  ght
           )
         }
       }
     } else {
-      invalidStats.incr()
+       nval dStats. ncr()
       fnParams.defaultValue
     }
   }

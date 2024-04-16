@@ -1,63 +1,63 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.servo.util.MemoizingStatsReceiver
+ mport com.tw ter.f nagle.stats.RollupStatsRece ver
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
 
 /**
- * Records some stats about inserted tweets.  Tweets are currently classified by three criteria:
+ * Records so  stats about  nserted t ets.  T ets are currently class f ed by three cr er a:
  *
- *     - tweet type: "tweet" or "retweet"
- *     - user type: "stresstest", "protected", "restricted", or "public"
- *     - fanout type: "nullcast", "narrowcast", or "usertimeline"
+ *     - t et type: "t et" or "ret et"
+ *     - user type: "stresstest", "protected", "restr cted", or "publ c"
+ *     - fanout type: "nullcast", "narrowcast", or "usert  l ne"
  *
- * A counter is incremented for a tweet using those three criteria in order.  Counters are
- * created with a RollupStatsReceiver, so counts are aggregated at each level.  Some
+ * A counter  s  ncre nted for a t et us ng those three cr er a  n order.  Counters are
+ * created w h a RollupStatsRece ver, so counts are aggregated at each level.  So 
  * example counters are:
  *
- *    ./insert
- *    ./insert/tweet
- *    ./insert/tweet/public
- *    ./insert/tweet/protected/usertimeline
- *    ./insert/retweet/stresstest
- *    ./insert/retweet/public/nullcast
+ *    ./ nsert
+ *    ./ nsert/t et
+ *    ./ nsert/t et/publ c
+ *    ./ nsert/t et/protected/usert  l ne
+ *    ./ nsert/ret et/stresstest
+ *    ./ nsert/ret et/publ c/nullcast
  */
-trait TweetStatsStore extends TweetStoreBase[TweetStatsStore] with InsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): TweetStatsStore =
-    new TweetStoreWrapper(w, this) with TweetStatsStore with InsertTweet.StoreWrapper
+tra  T etStatsStore extends T etStoreBase[T etStatsStore] w h  nsertT et.Store {
+  def wrap(w: T etStore.Wrap): T etStatsStore =
+    new T etStoreWrapper(w, t ) w h T etStatsStore w h  nsertT et.StoreWrapper
 }
 
-object TweetStatsStore {
-  def apply(stats: StatsReceiver): TweetStatsStore = {
-    val rollup = new MemoizingStatsReceiver(new RollupStatsReceiver(stats))
-    val inserts = rollup.scope("insert")
+object T etStatsStore {
+  def apply(stats: StatsRece ver): T etStatsStore = {
+    val rollup = new  mo z ngStatsRece ver(new RollupStatsRece ver(stats))
+    val  nserts = rollup.scope(" nsert")
 
-    def tweetType(tweet: Tweet) =
-      if (getShare(tweet).isDefined) "retweet" else "tweet"
+    def t etType(t et: T et) =
+       f (getShare(t et). sDef ned) "ret et" else "t et"
 
     def userType(user: User) =
-      if (user.roles.exists(_.roles.contains("stresstest"))) "stresstest"
-      else if (user.safety.exists(_.isProtected)) "protected"
-      else if (user.safety.exists(_.suspended)) "restricted"
-      else "public"
+       f (user.roles.ex sts(_.roles.conta ns("stresstest"))) "stresstest"
+      else  f (user.safety.ex sts(_. sProtected)) "protected"
+      else  f (user.safety.ex sts(_.suspended)) "restr cted"
+      else "publ c"
 
-    def fanoutType(tweet: Tweet) =
-      if (TweetLenses.nullcast(tweet)) "nullcast"
-      else if (TweetLenses.narrowcast(tweet).isDefined) "narrowcast"
-      else "usertimeline"
+    def fanoutType(t et: T et) =
+       f (T etLenses.nullcast(t et)) "nullcast"
+      else  f (T etLenses.narrowcast(t et). sDef ned) "narrowcast"
+      else "usert  l ne"
 
-    new TweetStatsStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event] { event =>
-          inserts
+    new T etStatsStore {
+      overr de val  nsertT et: FutureEffect[ nsertT et.Event] =
+        FutureEffect[ nsertT et.Event] { event =>
+           nserts
             .counter(
-              tweetType(event.tweet),
+              t etType(event.t et),
               userType(event.user),
-              fanoutType(event.tweet)
+              fanoutType(event.t et)
             )
-            .incr()
+            . ncr()
 
-          Future.Unit
+          Future.Un 
         }
     }
   }

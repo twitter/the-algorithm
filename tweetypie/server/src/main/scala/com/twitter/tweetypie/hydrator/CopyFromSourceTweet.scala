@@ -1,229 +1,229 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.tweettext.TweetText
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.t ettext.T etText
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object CopyFromSourceTweet {
+object CopyFromS ceT et {
 
   /**
-   * A `ValueHydrator` that copies and/or merges certain fields from a retweet's source
-   * tweet into the retweet.
+   * A `ValueHydrator` that cop es and/or  rges certa n f elds from a ret et's s ce
+   * t et  nto t  ret et.
    */
-  def hydrator: ValueHydrator[TweetData, TweetQuery.Options] =
+  def hydrator: ValueHydrator[T etData, T etQuery.Opt ons] =
     ValueHydrator.map { (td, _) =>
-      td.sourceTweetResult.map(_.value.tweet) match {
-        case None => ValueState.unmodified(td)
-        case Some(src) => ValueState.modified(td.copy(tweet = copy(src, td.tweet)))
+      td.s ceT etResult.map(_.value.t et) match {
+        case None => ValueState.unmod f ed(td)
+        case So (src) => ValueState.mod f ed(td.copy(t et = copy(src, td.t et)))
       }
     }
 
   /**
-   * Updates `dst` with fields from `src`. This is more complicated than you would think, because:
+   * Updates `dst` w h f elds from `src`. T   s more compl cated than   would th nk, because:
    *
-   *   - the tweet has an extra mention entity due to the "RT @user" prefix;
-   *   - the retweet text may be truncated at the end, and doesn't necessarily contain all of the
-   *     the text from the source tweet.  truncation may happen in the middle of entity.
-   *   - the text in the retweet may have a different unicode normalization, which affects
-   *     code point indices. this means entities aren't shifted by a fixed amount equal to
-   *     the RT prefix.
-   *   - url entities, when hydrated, may be converted to media entities; url entities may not
-   *     be hydrated in the retweet, so the source tweet may have a media entity that corresponds
-   *     to an unhydrated url entity in the retweet.
-   *   - there may be multiple media entities that map to a single url entity, because the tweet
-   *     may have multiple photos.
+   *   - t  t et has an extra  nt on ent y due to t  "RT @user" pref x;
+   *   - t  ret et text may be truncated at t  end, and doesn't necessar ly conta n all of t 
+   *     t  text from t  s ce t et.  truncat on may happen  n t  m ddle of ent y.
+   *   - t  text  n t  ret et may have a d fferent un code normal zat on, wh ch affects
+   *     code po nt  nd ces. t   ans ent  es aren't sh fted by a f xed amount equal to
+   *     t  RT pref x.
+   *   - url ent  es, w n hydrated, may be converted to  d a ent  es; url ent  es may not
+   *     be hydrated  n t  ret et, so t  s ce t et may have a  d a ent y that corresponds
+   *     to an unhydrated url ent y  n t  ret et.
+   *   - t re may be mult ple  d a ent  es that map to a s ngle url ent y, because t  t et
+   *     may have mult ple photos.
    */
-  def copy(src: Tweet, dst: Tweet): Tweet = {
+  def copy(src: T et, dst: T et): T et = {
     val srcCoreData = src.coreData.get
     val dstCoreData = dst.coreData.get
 
-    // get the code point index of the end of the text
-    val max = getText(dst).codePointCount(0, getText(dst).length).toShort
+    // get t  code po nt  ndex of t  end of t  text
+    val max = getText(dst).codePo ntCount(0, getText(dst).length).toShort
 
-    // get all entities from the source tweet, merged into a single list sorted by fromIndex.
-    val srcEntities = getWrappedEntities(src)
+    // get all ent  es from t  s ce t et,  rged  nto a s ngle l st sorted by from ndex.
+    val srcEnt  es = getWrappedEnt  es(src)
 
-    // same for the retweet, but drop first @mention, add back later
-    val dstEntities = getWrappedEntities(dst).drop(1)
+    // sa  for t  ret et, but drop f rst @ nt on, add back later
+    val dstEnt  es = getWrappedEnt  es(dst).drop(1)
 
-    // merge indices from dst into srcEntities. at the end, resort entities back
-    // to their original ordering.  for media entities, order matters to clients.
-    val mergedEntities = merge(srcEntities, dstEntities, max).sortBy(_.position)
+    //  rge  nd ces from dst  nto srcEnt  es. at t  end, resort ent  es back
+    // to t  r or g nal order ng.  for  d a ent  es, order matters to cl ents.
+    val  rgedEnt  es =  rge(srcEnt  es, dstEnt  es, max).sortBy(_.pos  on)
 
-    // extract entities back out by type
-    val mentions = mergedEntities.collect { case WrappedMentionEntity(e, _) => e }
-    val hashtags = mergedEntities.collect { case WrappedHashtagEntity(e, _) => e }
-    val cashtags = mergedEntities.collect { case WrappedCashtagEntity(e, _) => e }
-    val urls = mergedEntities.collect { case WrappedUrlEntity(e, _) => e }
-    val media = mergedEntities.collect { case WrappedMediaEntity(e, _) => e }
+    // extract ent  es back out by type
+    val  nt ons =  rgedEnt  es.collect { case Wrapped nt onEnt y(e, _) => e }
+    val hashtags =  rgedEnt  es.collect { case WrappedHashtagEnt y(e, _) => e }
+    val cashtags =  rgedEnt  es.collect { case WrappedCashtagEnt y(e, _) => e }
+    val urls =  rgedEnt  es.collect { case WrappedUrlEnt y(e, _) => e }
+    val  d a =  rgedEnt  es.collect { case Wrapped d aEnt y(e, _) => e }
 
-    // merge the updated entities back into the retweet, adding the RT @mention back in
+    //  rge t  updated ent  es back  nto t  ret et, add ng t  RT @ nt on back  n
     dst.copy(
-      coreData = Some(
+      coreData = So (
         dstCoreData.copy(
-          hasMedia = srcCoreData.hasMedia,
+          has d a = srcCoreData.has d a,
           hasTakedown = dstCoreData.hasTakedown || srcCoreData.hasTakedown
         )
       ),
-      mentions = Some(getMentions(dst).take(1) ++ mentions),
-      hashtags = Some(hashtags),
-      cashtags = Some(cashtags),
-      urls = Some(urls),
-      media = Some(media.map(updateSourceStatusId(src.id, getUserId(src)))),
-      quotedTweet = src.quotedTweet,
+       nt ons = So (get nt ons(dst).take(1) ++  nt ons),
+      hashtags = So (hashtags),
+      cashtags = So (cashtags),
+      urls = So (urls),
+       d a = So ( d a.map(updateS ceStatus d(src. d, getUser d(src)))),
+      quotedT et = src.quotedT et,
       card2 = src.card2,
       cards = src.cards,
       language = src.language,
-      mediaTags = src.mediaTags,
+       d aTags = src. d aTags,
       spamLabel = src.spamLabel,
       takedownCountryCodes =
-        mergeTakedowns(Seq(src, dst).map(TweetLenses.takedownCountryCodes.get): _*),
-      conversationControl = src.conversationControl,
-      exclusiveTweetControl = src.exclusiveTweetControl
+         rgeTakedowns(Seq(src, dst).map(T etLenses.takedownCountryCodes.get): _*),
+      conversat onControl = src.conversat onControl,
+      exclus veT etControl = src.exclus veT etControl
     )
   }
 
   /**
-   * Merges one or more optional lists of takedowns.  If no lists are defined, returns None.
+   *  rges one or more opt onal l sts of takedowns.   f no l sts are def ned, returns None.
    */
-  private def mergeTakedowns(takedowns: Option[Seq[CountryCode]]*): Option[Seq[CountryCode]] =
-    if (takedowns.exists(_.isDefined)) {
-      Some(takedowns.flatten.flatten.distinct.sorted)
+  pr vate def  rgeTakedowns(takedowns: Opt on[Seq[CountryCode]]*): Opt on[Seq[CountryCode]] =
+     f (takedowns.ex sts(_. sDef ned)) {
+      So (takedowns.flatten.flatten.d st nct.sorted)
     } else {
       None
     }
 
   /**
-   * A retweet should never have media without a source_status_id or source_user_id
+   * A ret et should never have  d a w hout a s ce_status_ d or s ce_user_ d
    */
-  private def updateSourceStatusId(
-    srcTweetId: TweetId,
-    srcUserId: UserId
-  ): MediaEntity => MediaEntity =
-    mediaEntity =>
-      if (mediaEntity.sourceStatusId.nonEmpty) {
-        // when sourceStatusId is set this indicates the media is "pasted media" so the values
-        // should already be correct (retweeting won't change sourceStatusId / sourceUserId)
-        mediaEntity
+  pr vate def updateS ceStatus d(
+    srcT et d: T et d,
+    srcUser d: User d
+  ):  d aEnt y =>  d aEnt y =
+     d aEnt y =>
+       f ( d aEnt y.s ceStatus d.nonEmpty) {
+        // w n s ceStatus d  s set t   nd cates t   d a  s "pasted  d a" so t  values
+        // should already be correct (ret et ng won't change s ceStatus d / s ceUser d)
+         d aEnt y
       } else {
-        mediaEntity.copy(
-          sourceStatusId = Some(srcTweetId),
-          sourceUserId = Some(mediaEntity.sourceUserId.getOrElse(srcUserId))
+         d aEnt y.copy(
+          s ceStatus d = So (srcT et d),
+          s ceUser d = So ( d aEnt y.s ceUser d.getOrElse(srcUser d))
         )
       }
 
   /**
-   * Attempts to match up entities from the source tweet with entities from the retweet,
-   * and to use the source tweet entities but shifted to the retweet entity indices.  If an entity
-   * got truncated at the end of the retweet text, we drop it and any following entities.
+   * Attempts to match up ent  es from t  s ce t et w h ent  es from t  ret et,
+   * and to use t  s ce t et ent  es but sh fted to t  ret et ent y  nd ces.   f an ent y
+   * got truncated at t  end of t  ret et text,   drop   and any follow ng ent  es.
    */
-  private def merge(
-    srcEntities: List[WrappedEntity],
-    rtEntities: List[WrappedEntity],
-    maxIndex: Short
-  ): List[WrappedEntity] = {
-    (srcEntities, rtEntities) match {
-      case (Nil, Nil) =>
-        // successfully matched all entities!
-        Nil
+  pr vate def  rge(
+    srcEnt  es: L st[WrappedEnt y],
+    rtEnt  es: L st[WrappedEnt y],
+    max ndex: Short
+  ): L st[WrappedEnt y] = {
+    (srcEnt  es, rtEnt  es) match {
+      case (N l, N l) =>
+        // successfully matc d all ent  es!
+        N l
 
-      case (Nil, _) =>
-        // no more source tweet entities, but we still have remaining retweet entities.
-        // this can happen if a a text truncation turns something invalid like #tag1#tag2 or
-        // @mention1@mention2 into a valid entity. just drop all the remaining retweet entities.
-        Nil
+      case (N l, _) =>
+        // no more s ce t et ent  es, but   st ll have rema n ng ret et ent  es.
+        // t  can happen  f a a text truncat on turns so th ng  nval d l ke #tag1#tag2 or
+        // @ nt on1@ nt on2  nto a val d ent y. just drop all t  rema n ng ret et ent  es.
+        N l
 
-      case (_, Nil) =>
-        // no more retweet entities, which means the remaining entities have been truncated.
-        Nil
+      case (_, N l) =>
+        // no more ret et ent  es, wh ch  ans t  rema n ng ent  es have been truncated.
+        N l
 
-      case (srcHead :: srcTail, rtHead :: rtTail) =>
-        // we have more entities from the source tweet and the retweet.  typically, we can
-        // match these entities because they have the same normalized text, but the retweet
-        // entity might be truncated, so we allow for a prefix match if the retweet entity
-        // ends at the end of the tweet.
-        val possiblyTruncated = rtHead.toIndex == maxIndex - 1
-        val exactMatch = srcHead.normalizedText == rtHead.normalizedText
+      case (src ad :: srcTa l, rt ad :: rtTa l) =>
+        //   have more ent  es from t  s ce t et and t  ret et.  typ cally,   can
+        // match t se ent  es because t y have t  sa  normal zed text, but t  ret et
+        // ent y m ght be truncated, so   allow for a pref x match  f t  ret et ent y
+        // ends at t  end of t  t et.
+        val poss blyTruncated = rt ad.to ndex == max ndex - 1
+        val exactMatch = src ad.normal zedText == rt ad.normal zedText
 
-        if (exactMatch) {
-          // there could be multiple media entities for the same t.co url, so we need to find
-          // contiguous groupings of entities that share the same fromIndex.
-          val rtTail = rtEntities.dropWhile(_.fromIndex == rtHead.fromIndex)
+         f (exactMatch) {
+          // t re could be mult ple  d a ent  es for t  sa  t.co url, so   need to f nd
+          // cont guous group ngs of ent  es that share t  sa  from ndex.
+          val rtTa l = rtEnt  es.dropWh le(_.from ndex == rt ad.from ndex)
           val srcGroup =
-            srcEntities
-              .takeWhile(_.fromIndex == srcHead.fromIndex)
-              .map(_.shift(rtHead.fromIndex, rtHead.toIndex))
-          val srcTail = srcEntities.drop(srcGroup.size)
+            srcEnt  es
+              .takeWh le(_.from ndex == src ad.from ndex)
+              .map(_.sh ft(rt ad.from ndex, rt ad.to ndex))
+          val srcTa l = srcEnt  es.drop(srcGroup.s ze)
 
-          srcGroup ++ merge(srcTail, rtTail, maxIndex)
+          srcGroup ++  rge(srcTa l, rtTa l, max ndex)
         } else {
-          // if we encounter a mismatch, it is most likely because of truncation,
-          // so we stop here.
-          Nil
+          //  f   encounter a m smatch,    s most l kely because of truncat on,
+          // so   stop  re.
+          N l
         }
     }
   }
 
   /**
-   * Wraps all the entities with the appropriate WrappedEntity subclasses, merges them into
-   * a single list, and sorts by fromIndex.
+   * Wraps all t  ent  es w h t  appropr ate WrappedEnt y subclasses,  rges t m  nto
+   * a s ngle l st, and sorts by from ndex.
    */
-  private def getWrappedEntities(tweet: Tweet): List[WrappedEntity] =
-    (getUrls(tweet).zipWithIndex.map { case (e, p) => WrappedUrlEntity(e, p) } ++
-      getMedia(tweet).zipWithIndex.map { case (e, p) => WrappedMediaEntity(e, p) } ++
-      getMentions(tweet).zipWithIndex.map { case (e, p) => WrappedMentionEntity(e, p) } ++
-      getHashtags(tweet).zipWithIndex.map { case (e, p) => WrappedHashtagEntity(e, p) } ++
-      getCashtags(tweet).zipWithIndex.map { case (e, p) => WrappedCashtagEntity(e, p) })
-      .sortBy(_.fromIndex)
-      .toList
+  pr vate def getWrappedEnt  es(t et: T et): L st[WrappedEnt y] =
+    (getUrls(t et).z pW h ndex.map { case (e, p) => WrappedUrlEnt y(e, p) } ++
+      get d a(t et).z pW h ndex.map { case (e, p) => Wrapped d aEnt y(e, p) } ++
+      get nt ons(t et).z pW h ndex.map { case (e, p) => Wrapped nt onEnt y(e, p) } ++
+      getHashtags(t et).z pW h ndex.map { case (e, p) => WrappedHashtagEnt y(e, p) } ++
+      getCashtags(t et).z pW h ndex.map { case (e, p) => WrappedCashtagEnt y(e, p) })
+      .sortBy(_.from ndex)
+      .toL st
 
   /**
-   * The thrift-entity classes don't share a common entity parent class, so we wrap
-   * them with a class that allows us to mix entities together into a single list, and
-   * to provide a generic interface for shifting indicies.
+   * T  thr ft-ent y classes don't share a common ent y parent class, so   wrap
+   * t m w h a class that allows us to m x ent  es toget r  nto a s ngle l st, and
+   * to prov de a gener c  nterface for sh ft ng  nd c es.
    */
-  private sealed abstract class WrappedEntity(
-    val fromIndex: Short,
-    val toIndex: Short,
-    val rawText: String) {
+  pr vate sealed abstract class WrappedEnt y(
+    val from ndex: Short,
+    val to ndex: Short,
+    val rawText: Str ng) {
 
-    /** the original position of the entity within the entity group */
-    val position: Int
+    /** t  or g nal pos  on of t  ent y w h n t  ent y group */
+    val pos  on:  nt
 
-    val normalizedText: String = TweetText.nfcNormalize(rawText).toLowerCase
+    val normal zedText: Str ng = T etText.nfcNormal ze(rawText).toLo rCase
 
-    def shift(fromIndex: Short, toIndex: Short): WrappedEntity
+    def sh ft(from ndex: Short, to ndex: Short): WrappedEnt y
   }
 
-  private case class WrappedUrlEntity(entity: UrlEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.url) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedUrlEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pr vate case class WrappedUrlEnt y(ent y: UrlEnt y, pos  on:  nt)
+      extends WrappedEnt y(ent y.from ndex, ent y.to ndex, ent y.url) {
+    overr de def sh ft(from ndex: Short, to ndex: Short): WrappedUrlEnt y =
+      copy(ent y.copy(from ndex = from ndex, to ndex = to ndex))
   }
 
-  private case class WrappedMediaEntity(entity: MediaEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.url) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedMediaEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pr vate case class Wrapped d aEnt y(ent y:  d aEnt y, pos  on:  nt)
+      extends WrappedEnt y(ent y.from ndex, ent y.to ndex, ent y.url) {
+    overr de def sh ft(from ndex: Short, to ndex: Short): Wrapped d aEnt y =
+      copy(ent y.copy(from ndex = from ndex, to ndex = to ndex))
   }
 
-  private case class WrappedMentionEntity(entity: MentionEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.screenName) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedMentionEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pr vate case class Wrapped nt onEnt y(ent y:  nt onEnt y, pos  on:  nt)
+      extends WrappedEnt y(ent y.from ndex, ent y.to ndex, ent y.screenNa ) {
+    overr de def sh ft(from ndex: Short, to ndex: Short): Wrapped nt onEnt y =
+      copy(ent y.copy(from ndex = from ndex, to ndex = to ndex))
   }
 
-  private case class WrappedHashtagEntity(entity: HashtagEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.text) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedHashtagEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pr vate case class WrappedHashtagEnt y(ent y: HashtagEnt y, pos  on:  nt)
+      extends WrappedEnt y(ent y.from ndex, ent y.to ndex, ent y.text) {
+    overr de def sh ft(from ndex: Short, to ndex: Short): WrappedHashtagEnt y =
+      copy(ent y.copy(from ndex = from ndex, to ndex = to ndex))
   }
 
-  private case class WrappedCashtagEntity(entity: CashtagEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.text) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedCashtagEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pr vate case class WrappedCashtagEnt y(ent y: CashtagEnt y, pos  on:  nt)
+      extends WrappedEnt y(ent y.from ndex, ent y.to ndex, ent y.text) {
+    overr de def sh ft(from ndex: Short, to ndex: Short): WrappedCashtagEnt y =
+      copy(ent y.copy(from ndex = from ndex, to ndex = to ndex))
   }
 }

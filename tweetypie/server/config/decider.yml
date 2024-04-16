@@ -1,313 +1,313 @@
-stratofed_forward_dark_traffic:
-  comment:
-    Forward Federated Strato traffic to DarkTrafficProxy (DTP).
-    Note, this decider is not overrideable via Tweetypie tooling,
-    as it is only used by the StratoFedServer frameworkDecider instance.
-    Note, you cannot use this decider as a TweetypieDeciderGates.
-  default_availability: 0
+stratofed_forward_dark_traff c:
+  com nt:
+    Forward Federated Strato traff c to DarkTraff cProxy (DTP).
+    Note, t  dec der  s not overr deable v a T etyp e tool ng,
+    as    s only used by t  StratoFedServer fra workDec der  nstance.
+    Note,   cannot use t  dec der as a T etyp eDec derGates.
+  default_ava lab l y: 0
 
-tweetypie_enable_community_tweet_creates:
-  comment: When enable, it allows the creation of community tweets
-  default_availability: 10000
+t etyp e_enable_commun y_t et_creates:
+  com nt: W n enable,   allows t  creat on of commun y t ets
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_scrub_engagements:
-  comment: Redact Tweet engagement related data (StatusCounts) from Interstital Public Interest (IPI) Tweets.
-  default_availability: 10000
+t etyp e_hydrate_scrub_engage nts:
+  com nt: Redact T et engage nt related data (StatusCounts) from  nterst al Publ c  nterest ( P ) T ets.
+  default_ava lab l y: 10000
 
-tweetypie_check_spam_on_retweet:
-  comment: Enable Scarecrow spam check during retweet creation
-  default_availability: 10000
+t etyp e_c ck_spam_on_ret et:
+  com nt: Enable Scarecrow spam c ck dur ng ret et creat on
+  default_ava lab l y: 10000
 
-tweetypie_check_spam_on_tweet:
-  comment: Enable Scarecrow spam check during tweet creation
-  default_availability: 10000
+t etyp e_c ck_spam_on_t et:
+  com nt: Enable Scarecrow spam c ck dur ng t et creat on
+  default_ava lab l y: 10000
 
-tweetypie_conversation_control_use_feature_switch_results:
-  comment:
-    Controls whether Tweetypie uses feature switch results during conversation control parameter validation. This decider supports migration of feature switches from macaw-tweets to tweetypie.
-  default_availability: 0
+t etyp e_conversat on_control_use_feature_sw ch_results:
+  com nt:
+    Controls w t r T etyp e uses feature sw ch results dur ng conversat on control para ter val dat on. T  dec der supports m grat on of feature sw c s from macaw-t ets to t etyp e.
+  default_ava lab l y: 0
 
-tweetypie_conversation_control_tweet_create_enabled:
-  comment:
-    Controls whether we will enforce conversation control policy on tweet create. http://go/dont-at-me-backend-tdd
-  default_availability: 0
+t etyp e_conversat on_control_t et_create_enabled:
+  com nt:
+    Controls w t r   w ll enforce conversat on control pol cy on t et create. http://go/dont-at- -backend-tdd
+  default_ava lab l y: 0
 
-tweetypie_enable_exclusive_tweet_control_validation:
-  comment:
-    Controls whether we will restrict the exclusiveTweetControlOptions parameter to only be usable by creators. http://go/superfollows
-  default_availability: 0
+t etyp e_enable_exclus ve_t et_control_val dat on:
+  com nt:
+    Controls w t r   w ll restr ct t  exclus veT etControlOpt ons para ter to only be usable by creators. http://go/superfollows
+  default_ava lab l y: 0
 
-tweetypie_delay_erase_user_tweets:
-  comment: sleep for a fixed number of seconds before deleting a page of tweets during user erasure. Used as a rate limiting mechanism.
-  default_availability: 5000
+t etyp e_delay_erase_user_t ets:
+  com nt: sleep for a f xed number of seconds before delet ng a page of t ets dur ng user erasure. Used as a rate l m  ng  chan sm.
+  default_ava lab l y: 5000
 
-tweetypie_deny_non_tweet_permalinks:
-  comment:
-    Right now we would create a quote-tweet which would contain a non-working permalink
-    whereas with latest QT + media changes we're blocking the tweet creation. If tweet
-    from permalink is not found, we would throw an exception if this decider is on else
+t etyp e_deny_non_t et_permal nks:
+  com nt:
+    R ght now   would create a quote-t et wh ch would conta n a non-work ng permal nk
+    w reas w h latest QT +  d a changes  're block ng t  t et creat on.  f t et
+    from permal nk  s not found,   would throw an except on  f t  dec der  s on else
     return a default pass-through response.
-  default_availability: 0
+  default_ava lab l y: 0
 
-tweetypie_enable_trusted_friends_control_validation:
-  comment: Controls whether we will enforce trusted friends control policy on replies
-  default_availability: 0
+t etyp e_enable_trusted_fr ends_control_val dat on:
+  com nt: Controls w t r   w ll enforce trusted fr ends control pol cy on repl es
+  default_ava lab l y: 0
 
-tweetypie_enforce_rate_limited_clients:
-  comment:
-    Controls whether we will rate-limit low-priority clients based on per-instance requests per sec.
-    We enable clients for rate-limiting by setting the rate_limit to true in clients.yml
-  default_availability: 10000
+t etyp e_enforce_rate_l m ed_cl ents:
+  com nt:
+    Controls w t r   w ll rate-l m  low-pr or y cl ents based on per- nstance requests per sec.
+      enable cl ents for rate-l m  ng by sett ng t  rate_l m  to true  n cl ents.yml
+  default_ava lab l y: 10000
 
-tweetypie_fail_closed_in_vf:
-  comment: Propagate failure from backends such as Strato when running Visibility Filtering
-  default_availability: 0
+t etyp e_fa l_closed_ n_vf:
+  com nt: Propagate fa lure from backends such as Strato w n runn ng V s b l y F lter ng
+  default_ava lab l y: 0
 
-tweetypie_fork_dark_traffic:
-  comment: Forks traffic to Darkhub
-  default_availability: 0
+t etyp e_fork_dark_traff c:
+  com nt: Forks traff c to Darkhub
+  default_ava lab l y: 0
 
-tweetypie_hydrate_conversation_muted:
-  comment: Hydrates the conversationMuted field if requested. This calls timelineservice.
-  default_availability: 10000
+t etyp e_hydrate_conversat on_muted:
+  com nt: Hydrates t  conversat onMuted f eld  f requested. T  calls t  l neserv ce.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_counts:
-  comment: Hydrate status counts, if asked for.  This calls TFlock.
-  default_availability: 10000
+t etyp e_hydrate_counts:
+  com nt: Hydrate status counts,  f asked for.  T  calls TFlock.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_previous_counts:
-  comment: Hydrate previous engagements on a tweet in an edit chain
-  default_availability: 0
+t etyp e_hydrate_prev ous_counts:
+  com nt: Hydrate prev ous engage nts on a t et  n an ed  cha n
+  default_ava lab l y: 0
 
-tweetypie_hydrate_device_sources:
-  comment: Hydrate device sources.  This reads from DBs.
-  default_availability: 10000
+t etyp e_hydrate_dev ce_s ces:
+  com nt: Hydrate dev ce s ces.  T  reads from DBs.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_escherbird_annotations:
-  comment: Hydrate the escherbirdEntityAnnotations additional field on tweet create.  This calls the Escherbird Annotation Service.
-  default_availability: 10000
+t etyp e_hydrate_esc rb rd_annotat ons:
+  com nt: Hydrate t  esc rb rdEnt yAnnotat ons add  onal f eld on t et create.  T  calls t  Esc rb rd Annotat on Serv ce.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_gnip_profile_geo_enrichment:
-  comment: Hydrates each tweet with the profile geo enrichment.
-  default_availability: 10000
+t etyp e_hydrate_gn p_prof le_geo_enr ch nt:
+  com nt: Hydrates each t et w h t  prof le geo enr ch nt.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_has_media:
-  comment: Hydrate the hasMedia field based on whether the tweet has a media entity, a media card, or a URL that matches partner media regexes
-  default_availability: 10000
+t etyp e_hydrate_has_ d a:
+  com nt: Hydrate t  has d a f eld based on w t r t  t et has a  d a ent y, a  d a card, or a URL that matc s partner  d a regexes
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_media:
-  comment: Hydrate media entities. This calls MediaInfo Service.
-  default_availability: 10000
+t etyp e_hydrate_ d a:
+  com nt: Hydrate  d a ent  es. T  calls  d a nfo Serv ce.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_media_refs:
-  comment: Hydrate MediaRefs. Calls Tweetypie for pasted media.
-  default_availability: 0
+t etyp e_hydrate_ d a_refs:
+  com nt: Hydrate  d aRefs. Calls T etyp e for pasted  d a.
+  default_ava lab l y: 0
 
-tweetypie_hydrate_media_tags:
-  comment: Hydrate media tags. This calls Gizmoduck for user view.
-  default_availability: 10000
+t etyp e_hydrate_ d a_tags:
+  com nt: Hydrate  d a tags. T  calls G zmoduck for user v ew.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_pasted_media:
-  comment: Copies media entities and media cards from tweets referenced by a media permalink url entity.
-  default_availability: 10000
+t etyp e_hydrate_pasted_ d a:
+  com nt: Cop es  d a ent  es and  d a cards from t ets referenced by a  d a permal nk url ent y.
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_perspectives:
-  comment: Hydrate perspectival attributes, if asked for.  This calls TLS, which may call TFlock if items are not in cache.
-  default_availability: 10000
+t etyp e_hydrate_perspect ves:
+  com nt: Hydrate perspect val attr butes,  f asked for.  T  calls TLS, wh ch may call TFlock  f  ems are not  n cac .
+  default_ava lab l y: 10000
 
-tweetypie_hydrate_perspectives_edits_for_timelines:
-  comment:
-    Hydrated perspectival attributes across versions of tweet edit,
-    for timelines safety levels if asked for.
-    This results in more TLS calls (one for each version of tweet).
-  default_availability: 0
+t etyp e_hydrate_perspect ves_ed s_for_t  l nes:
+  com nt:
+    Hydrated perspect val attr butes across vers ons of t et ed ,
+    for t  l nes safety levels  f asked for.
+    T  results  n more TLS calls (one for each vers on of t et).
+  default_ava lab l y: 0
 
-tweetypie_hydrate_perspectives_edits_for_tweet_details:
-  comment:
-    Hydrated perspectival attributes across versions of tweet edit,
-    for tweet detail safety levels if asked for.
-    This results in more TLS calls (one for each version of tweet).
-  default_availability: 0
+t etyp e_hydrate_perspect ves_ed s_for_t et_deta ls:
+  com nt:
+    Hydrated perspect val attr butes across vers ons of t et ed ,
+    for t et deta l safety levels  f asked for.
+    T  results  n more TLS calls (one for each vers on of t et).
+  default_ava lab l y: 0
 
-tweetypie_hydrate_perspectives_edits_for_other_levels:
-  comment:
-    Hydrated perspectival attributes across versions of tweet edit,
-    for safety levels not mentioned in other deciders, if asked for.
-    This results in more TLS calls (one for each version of tweet).
-  default_availability: 0
+t etyp e_hydrate_perspect ves_ed s_for_ot r_levels:
+  com nt:
+    Hydrated perspect val attr butes across vers ons of t et ed ,
+    for safety levels not  nt oned  n ot r dec ders,  f asked for.
+    T  results  n more TLS calls (one for each vers on of t et).
+  default_ava lab l y: 0
 
-tweetypie_hydrate_places:
-  comment: Hydrate place data, if asked for. This calls geoduck.
-  default_availability: 10000
+t etyp e_hydrate_places:
+  com nt: Hydrate place data,  f asked for. T  calls geoduck.
+  default_ava lab l y: 10000
 
-tweetypie_jiminy_dark_requests:
-  comment: Enables dark requests to the Jiminy backend for the specified % of traffic
-  default_availability: 0
+t etyp e_j m ny_dark_requests:
+  com nt: Enables dark requests to t  J m ny backend for t  spec f ed % of traff c
+  default_ava lab l y: 0
 
-tweetypie_log_cache_exceptions:
-  comment: Enables logging of cache exceptions to loglens.
-  default_availability: 0
+t etyp e_log_cac _except ons:
+  com nt: Enables logg ng of cac  except ons to loglens.
+  default_ava lab l y: 0
 
-tweetypie_log_reads:
-  comment: Enables logging of reads.
-  default_availability: 50
+t etyp e_log_reads:
+  com nt: Enables logg ng of reads.
+  default_ava lab l y: 50
 
-tweetypie_log_tweet_cache_writes:
-  comment: Scribe a record for each cache write for tweets that pass this decider.
-  default_availability: 0
+t etyp e_log_t et_cac _wr es:
+  com nt: Scr be a record for each cac  wr e for t ets that pass t  dec der.
+  default_ava lab l y: 0
 
-tweetypie_log_writes:
-  comment: Enables logging of status writes.
-  default_availability: 10000
+t etyp e_log_wr es:
+  com nt: Enables logg ng of status wr es.
+  default_ava lab l y: 10000
 
-tweetypie_log_young_tweet_cache_writes:
-  comment:
-    Scribe a record of cache writes for recently-created tweets that
-    pass this decider.
-  default_availability: 0
+t etyp e_log_ ng_t et_cac _wr es:
+  com nt:
+    Scr be a record of cac  wr es for recently-created t ets that
+    pass t  dec der.
+  default_ava lab l y: 0
 
-tweetypie_log_vf_dark_read_mismatches:
-  comment: Log mismatches from the tweetypie_dark_read_safety_labels_from_strato code path.
-  default_availability: 0
+t etyp e_log_vf_dark_read_m smatc s:
+  com nt: Log m smatc s from t  t etyp e_dark_read_safety_labels_from_strato code path.
+  default_ava lab l y: 0
 
-tweetypie_max_request_width_enabled:
-  comment:
-    Controls whether the max request width limit is enabled or not.
-    0 means the limit is disabled, 10000 means it is turned on and
-    request widths > maxSize will be rejected.
-  default_availability: 0
+t etyp e_max_request_w dth_enabled:
+  com nt:
+    Controls w t r t  max request w dth l m   s enabled or not.
+    0  ans t  l m   s d sabled, 10000  ans    s turned on and
+    request w dths > maxS ze w ll be rejected.
+  default_ava lab l y: 0
 
-tweetypie_media_refs_hydrator_include_pasted_media:
-  comment:
-    For debugging MediaRefsHydrator - determine if extra calls to pasted media are causing the GC issues.
-  default_availability: 0
+t etyp e_ d a_refs_hydrator_ nclude_pasted_ d a:
+  com nt:
+    For debugg ng  d aRefsHydrator - determ ne  f extra calls to pasted  d a are caus ng t  GC  ssues.
+  default_ava lab l y: 0
 
-tweetypie_prefer_forwarded_service_identifier_for_client_id:
-  comment: Effective client ID logic prefers forwarded service identifier to service identifier if available.
-  default_availability: 0
+t etyp e_prefer_forwarded_serv ce_ dent f er_for_cl ent_ d:
+  com nt: Effect ve cl ent  D log c prefers forwarded serv ce  dent f er to serv ce  dent f er  f ava lable.
+  default_ava lab l y: 0
 
-tweetypie_rate_limit_by_limiter_service:
-  comment:
-    Controls whether we will consult limiter service to see whether a
-    user is allowed to create more tweets.
-  default_availability: 10000
+t etyp e_rate_l m _by_l m er_serv ce:
+  com nt:
+    Controls w t r   w ll consult l m er serv ce to see w t r a
+    user  s allo d to create more t ets.
+  default_ava lab l y: 10000
 
-tweetypie_rate_limit_tweet_creation_failure:
-  comment:
-    Controls whether we rate limit tweet creation based on failed
-    attempts to create tweets via limiter service. This is separate
-    from the limit of created tweets. It is intended to prevent
-    unforeseen abuse by failing tweet creation attempts immediately if
-    the user has had too many recent tweet creation
-    failures. Disabling this decider will reduce traffic to limiter
-    service, but will remove the per-user abuse protection.
-  default_availability: 10000
+t etyp e_rate_l m _t et_creat on_fa lure:
+  com nt:
+    Controls w t r   rate l m  t et creat on based on fa led
+    attempts to create t ets v a l m er serv ce. T   s separate
+    from t  l m  of created t ets.    s  ntended to prevent
+    unforeseen abuse by fa l ng t et creat on attempts  m d ately  f
+    t  user has had too many recent t et creat on
+    fa lures. D sabl ng t  dec der w ll reduce traff c to l m er
+    serv ce, but w ll remove t  per-user abuse protect on.
+  default_ava lab l y: 10000
 
-tweetypie_replicate_reads_to_atla:
-  comment: Send reads to deferredrpc for replication to atla. We can use this to warm caches in atla.
-  default_availability: 0
+t etyp e_repl cate_reads_to_atla:
+  com nt: Send reads to deferredrpc for repl cat on to atla.   can use t  to warm cac s  n atla.
+  default_ava lab l y: 0
 
-tweetypie_replicate_reads_to_pdxa:
-  comment: Send reads to deferredrpc for replication to pdxa. We can use this to warm caches in pdxa.
-  default_availability: 0
+t etyp e_repl cate_reads_to_pdxa:
+  com nt: Send reads to deferredrpc for repl cat on to pdxa.   can use t  to warm cac s  n pdxa.
+  default_ava lab l y: 0
 
-tweetypie_disable_invite_via_mention:
-  comment:
-    Disables invite via mention field in the conversation control struct of
-    root tweets + reply tweets.
-  default_availability: 0
+t etyp e_d sable_ nv e_v a_ nt on:
+  com nt:
+    D sables  nv e v a  nt on f eld  n t  conversat on control struct of
+    root t ets + reply t ets.
+  default_ava lab l y: 0
 
-tweetypie_shed_read_traffic_voluntarily:
-  comment:
-    Preferred way to reject read requests during an incident from a subset of clients that have
-    volunteered to shed load.  These clients have load_shed_envs set in clients.yml, often for
-    staging environments.  Although this decider is available and clients have volunteered, should
-    still only be used in an emergency.
-  default_availability: 0
+t etyp e_s d_read_traff c_voluntar ly:
+  com nt:
+    Preferred way to reject read requests dur ng an  nc dent from a subset of cl ents that have
+    volunteered to s d load.  T se cl ents have load_s d_envs set  n cl ents.yml, often for
+    stag ng env ron nts.  Although t  dec der  s ava lable and cl ents have volunteered, should
+    st ll only be used  n an e rgency.
+  default_ava lab l y: 0
 
-tweetypie_validate_card_ref_attachment_android:
-  comment:
-    When enabled tweet creates from Android consider CardReference for the TooManyAttachmentTypes error when creating tweets with more than one attachment type.
-  default_availability: 0
+t etyp e_val date_card_ref_attach nt_andro d:
+  com nt:
+    W n enabled t et creates from Andro d cons der CardReference for t  TooManyAttach ntTypes error w n creat ng t ets w h more than one attach nt type.
+  default_ava lab l y: 0
 
-tweetypie_validate_card_ref_attachment_non_android:
-  comment:
-    When enabled tweet creates from non-Android consider CardReference for the TooManyAttachmentTypes error when creating tweets with more than one attachment type
-  default_availability: 0
+t etyp e_val date_card_ref_attach nt_non_andro d:
+  com nt:
+    W n enabled t et creates from non-Andro d cons der CardReference for t  TooManyAttach ntTypes error w n creat ng t ets w h more than one attach nt type
+  default_ava lab l y: 0
 
-# Additional Fields
+# Add  onal F elds
 
-tweetypie_short_circuit_likely_partial_tweet_reads_ms:
-  comment:
-    Specifies a number of milliseconds before which, we short circuit likely
-    partial reads from MH and return NotFound tweet response state.
-    After experimenting decided to go with 1500 ms.
-  default_availability: 0
+t etyp e_short_c rcu _l kely_part al_t et_reads_ms:
+  com nt:
+    Spec f es a number of m ll seconds before wh ch,   short c rcu  l kely
+    part al reads from MH and return NotFound t et response state.
+    After exper  nt ng dec ded to go w h 1500 ms.
+  default_ava lab l y: 0
 
-tweetypie_populate_quoted_tweet_results_as_contextual_tweet_ref:
-  comment:
-    CreateTweet and CreateReTweet column to return the 'quoted_tweet_results' PrefetchedItem as
-    ContextualTweetRef type instead of just tweetId.
-    This will be used during the quotedTweet.Tweet column migration (see http://go/qt-col-migration)
-    Post-migration, this will be removed.
-  default_availability: 0
-tweetypie_enable_unmentions_timeline_warmup:
-  comment:
-    When enabled, read-path calls execute an async call to the getUnmentionedUsersFromConverstion
-    strato column to warm the unmentioned NH/haplolite cache.
-    http://go/unmention-me-onepager
-  default_availability: 0
+t etyp e_populate_quoted_t et_results_as_contextual_t et_ref:
+  com nt:
+    CreateT et and CreateReT et column to return t  'quoted_t et_results' Prefetc d em as
+    ContextualT etRef type  nstead of just t et d.
+    T  w ll be used dur ng t  quotedT et.T et column m grat on (see http://go/qt-col-m grat on)
+    Post-m grat on, t  w ll be removed.
+  default_ava lab l y: 0
+t etyp e_enable_un nt ons_t  l ne_warmup:
+  com nt:
+    W n enabled, read-path calls execute an async call to t  getUn nt onedUsersFromConverst on
+    strato column to warm t  un nt oned NH/haplol e cac .
+    http://go/un nt on- -onepager
+  default_ava lab l y: 0
 
-tweetypie_tweet_visibility_library_enable_parity_test:
-  comment: measure TVL parity against VF federated service, for a fraction of traffic
-  default_availability: 0
+t etyp e_t et_v s b l y_l brary_enable_par y_test:
+  com nt:  asure TVL par y aga nst VF federated serv ce, for a fract on of traff c
+  default_ava lab l y: 0
 
-tweetypie_enable_vf_feature_hydration_in_quoted_tweet_visibility_library_shim:
-  comment: when enabled, all features are hydrated in QuotedTweetVisibilityLibrary shim
-  default_availability: 0
+t etyp e_enable_vf_feature_hydrat on_ n_quoted_t et_v s b l y_l brary_sh m:
+  com nt: w n enabled, all features are hydrated  n QuotedT etV s b l yL brary sh m
+  default_ava lab l y: 0
 
-tweetypie_enable_remove_unmentioned_implicit_mentions:
-  comment:
-    When enabled, implicit mentions are filtered based on users that have unmentioned themselves
-    from the tweet's conversation.  http://go/unmention-me-onepager
-  default_availability: 0
+t etyp e_enable_remove_un nt oned_ mpl c _ nt ons:
+  com nt:
+    W n enabled,  mpl c   nt ons are f ltered based on users that have un nt oned t mselves
+    from t  t et's conversat on.  http://go/un nt on- -onepager
+  default_ava lab l y: 0
 
-tweetypie_enable_stale_tweet_validation:
-  comment: Controls whether we will enforce stale tweet policy on replies and QT
-  default_availability: 0
+t etyp e_enable_stale_t et_val dat on:
+  com nt: Controls w t r   w ll enforce stale t et pol cy on repl es and QT
+  default_ava lab l y: 0
 
-tweetypie_disable_promoted_tweet_edit:
-  comment:
-    Controls whether we will disable edits on promoted tweets
-  default_availability: 0
+t etyp e_d sable_promoted_t et_ed :
+  com nt:
+    Controls w t r   w ll d sable ed s on promoted t ets
+  default_ava lab l y: 0
 
-tweetypie_should_materialize_containers:
-  comment:
-    When enabled, Creatives Container Service will be called to materialize container-backed tweets.
-    Otherwise, TP will not call CCS and return a StatusState of NotFound.
-  default_availability: 0
+t etyp e_should_mater al ze_conta ners:
+  com nt:
+    W n enabled, Creat ves Conta ner Serv ce w ll be called to mater al ze conta ner-backed t ets.
+    Ot rw se, TP w ll not call CCS and return a StatusState of NotFound.
+  default_ava lab l y: 0
 
-tweetypie_check_twitter_blue_subscription_for_edit:
-  comment:
-    Controls whether we check if the User is subscribed to Twitter Blue when editing a Tweet.
-  default_availability: 0
+t etyp e_c ck_tw ter_blue_subscr pt on_for_ed :
+  com nt:
+    Controls w t r   c ck  f t  User  s subscr bed to Tw ter Blue w n ed  ng a T et.
+  default_ava lab l y: 0
 
-tweetypie_hydrate_bookmarks_count:
-  comment:
-    Controls whether we hydrate bookmarks count for a Tweet
-  default_availability: 0
+t etyp e_hydrate_bookmarks_count:
+  com nt:
+    Controls w t r   hydrate bookmarks count for a T et
+  default_ava lab l y: 0
 
-tweetypie_hydrate_bookmarks_perspective:
-  comment:
-    Controls whether we request the Bookmarked perspective from TLS
-  default_availability: 0
+t etyp e_hydrate_bookmarks_perspect ve:
+  com nt:
+    Controls w t r   request t  Bookmarked perspect ve from TLS
+  default_ava lab l y: 0
 
-tweetypie_set_edit_time_window_to_sixty_minutes:
-  comment:
-    Set time window in which Tweets are editable to 60 minutes
-  default_availability: 0
+t etyp e_set_ed _t  _w ndow_to_s xty_m nutes:
+  com nt:
+    Set t   w ndow  n wh ch T ets are ed able to 60 m nutes
+  default_ava lab l y: 0
 
-tweetypie_enable_federated_column_dark_traffic:
-  comment:
-    Enable dark traffic for federated column.
-  default_availability: 0
+t etyp e_enable_federated_column_dark_traff c:
+  com nt:
+    Enable dark traff c for federated column.
+  default_ava lab l y: 0

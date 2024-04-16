@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "timelines/data_processing/ml_util/aggregation_framework/conversion:for-timelines",
-        "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/t  l nes/pred ct on/common/adapters:base",
+        "src/thr ft/com/tw ter/ml/ap :data-java",
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/convers on:for-t  l nes",
+        "t  l neserv ce/common/src/ma n/scala/com/tw ter/t  l neserv ce/model",
     ],
 )

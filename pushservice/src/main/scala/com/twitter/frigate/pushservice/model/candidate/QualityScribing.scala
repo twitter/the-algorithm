@@ -1,104 +1,104 @@
-package com.twitter.frigate.pushservice.model.candidate
+package com.tw ter.fr gate.pushserv ce.model.cand date
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.HighQualityScribingScores
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushMLModel
-import com.twitter.util.Future
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.concurrent.{Map => CMap}
-import scala.collection.convert.decorateAsScala._
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.H ghQual yScr b ngScores
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushMLModel
+ mport com.tw ter.ut l.Future
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport scala.collect on.concurrent.{Map => CMap}
+ mport scala.collect on.convert.decorateAsScala._
 
-trait QualityScribing {
-  self: PushCandidate with MLScores =>
+tra  Qual yScr b ng {
+  self: PushCand date w h MLScores =>
 
-  // Use to store other scores (to avoid duplicate queries to other services, e.g. HSS)
-  private val externalCachedScores: CMap[String, Future[Option[Double]]] =
-    new ConcurrentHashMap[String, Future[Option[Double]]]().asScala
+  // Use to store ot r scores (to avo d dupl cate quer es to ot r serv ces, e.g. HSS)
+  pr vate val externalCac dScores: CMap[Str ng, Future[Opt on[Double]]] =
+    new ConcurrentHashMap[Str ng, Future[Opt on[Double]]]().asScala
 
   /**
-   * Retrieves the model version as specified by the corresponding FS param.
-   * This model version will be used for getting the cached score or triggering
-   * a prediction request.
+   * Retr eves t  model vers on as spec f ed by t  correspond ng FS param.
+   * T  model vers on w ll be used for gett ng t  cac d score or tr gger ng
+   * a pred ct on request.
    *
-   * @param modelName The score we will like to scribe
+   * @param modelNa  T  score   w ll l ke to scr be
    */
-  private def getModelVersion(
-    modelName: HighQualityScribingScores.Name
-  ): String = {
-    modelName match {
-      case HighQualityScribingScores.HeavyRankingScore =>
-        target.params(PushFeatureSwitchParams.HighQualityCandidatesHeavyRankingModel)
-      case HighQualityScribingScores.NonPersonalizedQualityScoreUsingCnn =>
-        target.params(PushFeatureSwitchParams.HighQualityCandidatesNonPersonalizedQualityCnnModel)
-      case HighQualityScribingScores.BqmlNsfwScore =>
-        target.params(PushFeatureSwitchParams.HighQualityCandidatesBqmlNsfwModel)
-      case HighQualityScribingScores.BqmlReportScore =>
-        target.params(PushFeatureSwitchParams.HighQualityCandidatesBqmlReportModel)
+  pr vate def getModelVers on(
+    modelNa : H ghQual yScr b ngScores.Na 
+  ): Str ng = {
+    modelNa  match {
+      case H ghQual yScr b ngScores. avyRank ngScore =>
+        target.params(PushFeatureSw chParams.H ghQual yCand dates avyRank ngModel)
+      case H ghQual yScr b ngScores.NonPersonal zedQual yScoreUs ngCnn =>
+        target.params(PushFeatureSw chParams.H ghQual yCand datesNonPersonal zedQual yCnnModel)
+      case H ghQual yScr b ngScores.BqmlNsfwScore =>
+        target.params(PushFeatureSw chParams.H ghQual yCand datesBqmlNsfwModel)
+      case H ghQual yScr b ngScores.BqmlReportScore =>
+        target.params(PushFeatureSw chParams.H ghQual yCand datesBqmlReportModel)
     }
   }
 
   /**
-   * Retrieves the score for scribing either from a cached value or
-   * by generating a prediction request. This will increase model QPS
+   * Retr eves t  score for scr b ng e  r from a cac d value or
+   * by generat ng a pred ct on request. T  w ll  ncrease model QPS
    *
-   * @param pushMLModel This represents the prefix of the model name (i.e. [pushMLModel]_[version])
-   * @param scoreName   The name to be use when scribing this score
+   * @param pushMLModel T  represents t  pref x of t  model na  ( .e. [pushMLModel]_[vers on])
+   * @param scoreNa    T  na  to be use w n scr b ng t  score
    */
-  def getScribingScore(
+  def getScr b ngScore(
     pushMLModel: PushMLModel.Value,
-    scoreName: HighQualityScribingScores.Name
-  ): Future[(String, Option[Double])] = {
+    scoreNa : H ghQual yScr b ngScores.Na 
+  ): Future[(Str ng, Opt on[Double])] = {
     getMLModelScore(
       pushMLModel,
-      getModelVersion(scoreName)
+      getModelVers on(scoreNa )
     ).map { scoreOpt =>
-      scoreName.toString -> scoreOpt
+      scoreNa .toStr ng -> scoreOpt
     }
   }
 
   /**
-   * Retrieves the score for scribing if it has been computed/cached before otherwise
-   * it will return Future.None
+   * Retr eves t  score for scr b ng  f   has been computed/cac d before ot rw se
+   *   w ll return Future.None
    *
-   * @param pushMLModel This represents the prefix of the model name (i.e. [pushMLModel]_[version])
-   * @param scoreName   The name to be use when scribing this score
+   * @param pushMLModel T  represents t  pref x of t  model na  ( .e. [pushMLModel]_[vers on])
+   * @param scoreNa    T  na  to be use w n scr b ng t  score
    */
-  def getScribingScoreWithoutUpdate(
+  def getScr b ngScoreW houtUpdate(
     pushMLModel: PushMLModel.Value,
-    scoreName: HighQualityScribingScores.Name
-  ): Future[(String, Option[Double])] = {
-    getMLModelScoreWithoutUpdate(
+    scoreNa : H ghQual yScr b ngScores.Na 
+  ): Future[(Str ng, Opt on[Double])] = {
+    getMLModelScoreW houtUpdate(
       pushMLModel,
-      getModelVersion(scoreName)
+      getModelVers on(scoreNa )
     ).map { scoreOpt =>
-      scoreName.toString -> scoreOpt
+      scoreNa .toStr ng -> scoreOpt
     }
   }
 
   /**
-   * Caches the given score future
+   * Cac s t  g ven score future
    *
-   * @param scoreName The name to be use when scribing this score
-   * @param scoreFut Future mapping scoreName -> scoreOpt
+   * @param scoreNa  T  na  to be use w n scr b ng t  score
+   * @param scoreFut Future mapp ng scoreNa  -> scoreOpt
    */
-  def cacheExternalScore(scoreName: String, scoreFut: Future[Option[Double]]) = {
-    if (!externalCachedScores.contains(scoreName)) {
-      externalCachedScores += scoreName -> scoreFut
+  def cac ExternalScore(scoreNa : Str ng, scoreFut: Future[Opt on[Double]]) = {
+     f (!externalCac dScores.conta ns(scoreNa )) {
+      externalCac dScores += scoreNa  -> scoreFut
     }
   }
 
   /**
-   * Returns all external scores future cached as a sequence
+   * Returns all external scores future cac d as a sequence
    */
-  def getExternalCachedScores: Seq[Future[(String, Option[Double])]] = {
-    externalCachedScores.map {
-      case (modelName, scoreFut) =>
-        scoreFut.map { scoreOpt => modelName -> scoreOpt }
+  def getExternalCac dScores: Seq[Future[(Str ng, Opt on[Double])]] = {
+    externalCac dScores.map {
+      case (modelNa , scoreFut) =>
+        scoreFut.map { scoreOpt => modelNa  -> scoreOpt }
     }.toSeq
   }
 
-  def getExternalCachedScoreByName(name: String): Future[Option[Double]] = {
-    externalCachedScores.getOrElse(name, Future.None)
+  def getExternalCac dScoreByNa (na : Str ng): Future[Opt on[Double]] = {
+    externalCac dScores.getOrElse(na , Future.None)
   }
 }

@@ -1,273 +1,273 @@
-package com.twitter.visibility.rules.generators
+package com.tw ter.v s b l y.rules.generators
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevelGroup
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachActions
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachRules
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.generators.TweetRuleGenerator.violationLevelPolicies
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.SafetyLevelGroup
+ mport com.tw ter.v s b l y.models.V olat onLevel
+ mport com.tw ter.v s b l y.rules.FreedomOfSpeechNotReachAct ons
+ mport com.tw ter.v s b l y.rules.FreedomOfSpeechNotReachRules
+ mport com.tw ter.v s b l y.rules.Rule
+ mport com.tw ter.v s b l y.rules.generators.T etRuleGenerator.v olat onLevelPol c es
 
-object TweetRuleGenerator {
-  private val level3LimitedActions: Seq[String] = Seq(
-    "like",
+object T etRuleGenerator {
+  pr vate val level3L m edAct ons: Seq[Str ng] = Seq(
+    "l ke",
     "reply",
-    "retweet",
-    "quote_tweet",
-    "share_tweet_via",
+    "ret et",
+    "quote_t et",
+    "share_t et_v a",
     "add_to_bookmarks",
-    "pin_to_profile",
-    "copy_link",
-    "send_via_dm")
-  private val violationLevelPolicies: Map[
-    ViolationLevel,
-    Map[UserType, TweetVisibilityPolicy]
+    "p n_to_prof le",
+    "copy_l nk",
+    "send_v a_dm")
+  pr vate val v olat onLevelPol c es: Map[
+    V olat onLevel,
+    Map[UserType, T etV s b l yPol cy]
   ] = Map(
-    ViolationLevel.Level1 -> Map(
-      UserType.Follower -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.SoftInterventionAvoidAction())
+    V olat onLevel.Level1 -> Map(
+      UserType.Follo r -> T etV s b l yPol cy
+        .bu lder()
+        .addGlobalRule(FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dAct on())
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Notifications,
-          FreedomOfSpeechNotReachActions.DropAction())
+          SafetyLevelGroup.Not f cat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Recommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Search,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TopicRecommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineHomeRecommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelRule(
-          SafetyLevel.TrendsRepresentativeTweet,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .build,
-      UserType.Author -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.AppealableAction())
-        .build,
-      UserType.Other -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.SoftInterventionAvoidAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Notifications,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Recommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TimelineHome,
-          FreedomOfSpeechNotReachActions.DropAction())
+          SafetyLevelGroup.Recom ndat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelGroupRule(
           SafetyLevelGroup.Search,
-          FreedomOfSpeechNotReachActions.DropAction())
+          FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TopicRecommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
+          SafetyLevelGroup.Top cRecom ndat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelRule(
-          SafetyLevel.TrendsRepresentativeTweet,
-          FreedomOfSpeechNotReachActions.DropAction())
+          SafetyLevel.T  l neHo Recom ndat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelRule(
-          SafetyLevel.ConversationReply,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidAbusiveQualityReplyAction())
-        .build,
+          SafetyLevel.TrendsRepresentat veT et,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .bu ld,
+      UserType.Author -> T etV s b l yPol cy
+        .bu lder()
+        .addGlobalRule(FreedomOfSpeechNotReachAct ons.AppealableAct on())
+        .bu ld,
+      UserType.Ot r -> T etV s b l yPol cy
+        .bu lder()
+        .addGlobalRule(FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dAct on())
+        .addSafetyLevelGroupRule(
+          SafetyLevelGroup.Not f cat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .addSafetyLevelGroupRule(
+          SafetyLevelGroup.Recom ndat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .addSafetyLevelGroupRule(
+          SafetyLevelGroup.T  l neHo ,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .addSafetyLevelGroupRule(
+          SafetyLevelGroup.Search,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .addSafetyLevelGroupRule(
+          SafetyLevelGroup.Top cRecom ndat ons,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .addSafetyLevelRule(
+          SafetyLevel.TrendsRepresentat veT et,
+          FreedomOfSpeechNotReachAct ons.DropAct on())
+        .addSafetyLevelRule(
+          SafetyLevel.Conversat onReply,
+          FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dAbus veQual yReplyAct on())
+        .bu ld,
     ),
-    ViolationLevel.Level3 -> Map(
-      UserType.Follower -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.DropAction())
+    V olat onLevel.Level3 -> Map(
+      UserType.Follo r -> T etV s b l yPol cy
+        .bu lder()
+        .addGlobalRule(FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TimelineProfile,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+          SafetyLevelGroup.T  l neProf le,
+          FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dL m edEngage ntsAct on(
+            l m edAct onStr ngs = So (level3L m edAct ons))
         )
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TweetDetails,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+          SafetyLevelGroup.T etDeta ls,
+          FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dL m edEngage ntsAct on(
+            l m edAct onStr ngs = So (level3L m edAct ons))
         )
         .addSafetyLevelRule(
-          SafetyLevel.ConversationReply,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+          SafetyLevel.Conversat onReply,
+          FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dL m edEngage ntsAct on(
+            l m edAct onStr ngs = So (level3L m edAct ons))
         )
         .addSafetyLevelRule(
-          SafetyLevel.ConversationFocalTweet,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+          SafetyLevel.Conversat onFocalT et,
+          FreedomOfSpeechNotReachAct ons.Soft ntervent onAvo dL m edEngage ntsAct on(
+            l m edAct onStr ngs = So (level3L m edAct ons))
         )
-        .build,
-      UserType.Author -> TweetVisibilityPolicy
-        .builder()
+        .bu ld,
+      UserType.Author -> T etV s b l yPol cy
+        .bu lder()
         .addGlobalRule(
-          FreedomOfSpeechNotReachActions.AppealableAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+          FreedomOfSpeechNotReachAct ons.AppealableAvo dL m edEngage ntsAct on(
+            l m edAct onStr ngs = So (level3L m edAct ons))
         )
-        .build,
-      UserType.Other -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.DropAction())
+        .bu ld,
+      UserType.Ot r -> T etV s b l yPol cy
+        .bu lder()
+        .addGlobalRule(FreedomOfSpeechNotReachAct ons.DropAct on())
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TimelineProfile,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+          SafetyLevelGroup.T  l neProf le,
+          FreedomOfSpeechNotReachAct ons
+            . nterst  alL m edEngage ntsAvo dAct on(l m edAct onStr ngs =
+              So (level3L m edAct ons))
         )
         .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TweetDetails,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+          SafetyLevelGroup.T etDeta ls,
+          FreedomOfSpeechNotReachAct ons
+            . nterst  alL m edEngage ntsAvo dAct on(l m edAct onStr ngs =
+              So (level3L m edAct ons))
         )
         .addSafetyLevelRule(
-          SafetyLevel.ConversationReply,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+          SafetyLevel.Conversat onReply,
+          FreedomOfSpeechNotReachAct ons
+            . nterst  alL m edEngage ntsAvo dAct on(l m edAct onStr ngs =
+              So (level3L m edAct ons))
         )
         .addSafetyLevelRule(
-          SafetyLevel.ConversationFocalTweet,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+          SafetyLevel.Conversat onFocalT et,
+          FreedomOfSpeechNotReachAct ons
+            . nterst  alL m edEngage ntsAvo dAct on(l m edAct onStr ngs =
+              So (level3L m edAct ons))
         )
-        .build,
+        .bu ld,
     ),
   )
 }
-sealed trait UserType
+sealed tra  UserType
 object UserType {
   case object Author extends UserType
 
-  case object Follower extends UserType
+  case object Follo r extends UserType
 
-  case object Other extends UserType
+  case object Ot r extends UserType
 }
-class TweetRuleGenerator extends RuleGenerator {
+class T etRuleGenerator extends RuleGenerator {
 
-  private[rules] val tweetRulesForSurface: Map[SafetyLevel, Seq[Rule]] = generateTweetPolicies()
+  pr vate[rules] val t etRulesForSurface: Map[SafetyLevel, Seq[Rule]] = generateT etPol c es()
 
-  private[rules] def getViolationLevelPolicies = violationLevelPolicies
+  pr vate[rules] def getV olat onLevelPol c es = v olat onLevelPol c es
 
-  override def rulesForSurface(safetyLevel: SafetyLevel): Seq[Rule] =
-    tweetRulesForSurface.getOrElse(safetyLevel, Seq())
+  overr de def rulesForSurface(safetyLevel: SafetyLevel): Seq[Rule] =
+    t etRulesForSurface.getOrElse(safetyLevel, Seq())
 
-  private def generateRulesForPolicy(
-    violationLevel: ViolationLevel,
+  pr vate def generateRulesForPol cy(
+    v olat onLevel: V olat onLevel,
     userType: UserType,
-    tweetVisibilityPolicy: TweetVisibilityPolicy
+    t etV s b l yPol cy: T etV s b l yPol cy
   ): Seq[(SafetyLevel, Rule)] = {
-    tweetVisibilityPolicy
+    t etV s b l yPol cy
       .getRules()
       .map {
-        case (safetyLevel, actionBuilder) =>
+        case (safetyLevel, act onBu lder) =>
           safetyLevel -> (userType match {
             case UserType.Author =>
-              FreedomOfSpeechNotReachRules.ViewerIsAuthorAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = actionBuilder.withViolationLevel(violationLevel = violationLevel))
-            case UserType.Follower =>
-              FreedomOfSpeechNotReachRules.ViewerIsFollowerAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = actionBuilder.withViolationLevel(violationLevel = violationLevel))
-            case UserType.Other =>
-              FreedomOfSpeechNotReachRules.ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = actionBuilder.withViolationLevel(violationLevel = violationLevel))
+              FreedomOfSpeechNotReachRules.V e r sAuthorAndT etHasV olat onOfLevel(
+                v olat onLevel = v olat onLevel,
+                act onBu lder = act onBu lder.w hV olat onLevel(v olat onLevel = v olat onLevel))
+            case UserType.Follo r =>
+              FreedomOfSpeechNotReachRules.V e r sFollo rAndT etHasV olat onOfLevel(
+                v olat onLevel = v olat onLevel,
+                act onBu lder = act onBu lder.w hV olat onLevel(v olat onLevel = v olat onLevel))
+            case UserType.Ot r =>
+              FreedomOfSpeechNotReachRules.V e r sNonFollo rNonAuthorAndT etHasV olat onOfLevel(
+                v olat onLevel = v olat onLevel,
+                act onBu lder = act onBu lder.w hV olat onLevel(v olat onLevel = v olat onLevel))
           })
       }.toSeq
   }
 
-  private def generatePoliciesForViolationLevel(
-    violationLevel: ViolationLevel
+  pr vate def generatePol c esForV olat onLevel(
+    v olat onLevel: V olat onLevel
   ): Seq[(SafetyLevel, Rule)] = {
-    getViolationLevelPolicies
-      .get(violationLevel).map { policiesPerUserType =>
-        Seq(UserType.Author, UserType.Follower, UserType.Other).foldLeft(
-          List.empty[(UserType, SafetyLevel, Rule)]) {
+    getV olat onLevelPol c es
+      .get(v olat onLevel).map { pol c esPerUserType =>
+        Seq(UserType.Author, UserType.Follo r, UserType.Ot r).foldLeft(
+          L st.empty[(UserType, SafetyLevel, Rule)]) {
           case (rulesForAllUserTypes, userType) =>
-            rulesForAllUserTypes ++ generateRulesForPolicy(
-              violationLevel = violationLevel,
+            rulesForAllUserTypes ++ generateRulesForPol cy(
+              v olat onLevel = v olat onLevel,
               userType = userType,
-              tweetVisibilityPolicy = policiesPerUserType(userType)).map {
+              t etV s b l yPol cy = pol c esPerUserType(userType)).map {
               case (safetyLevel, rule) => (userType, safetyLevel, rule)
             }
         }
       }
-      .map(policy => optimizePolicy(policy = policy, violationLevel = violationLevel))
-      .getOrElse(List())
+      .map(pol cy => opt m zePol cy(pol cy = pol cy, v olat onLevel = v olat onLevel))
+      .getOrElse(L st())
   }
 
-  private def injectFallbackRule(rules: Seq[Rule]): Seq[Rule] = {
-    rules :+ FreedomOfSpeechNotReachRules.TweetHasViolationOfAnyLevelFallbackDropRule
+  pr vate def  njectFallbackRule(rules: Seq[Rule]): Seq[Rule] = {
+    rules :+ FreedomOfSpeechNotReachRules.T etHasV olat onOfAnyLevelFallbackDropRule
   }
 
-  private def optimizePolicy(
-    policy: Seq[(UserType, SafetyLevel, Rule)],
-    violationLevel: ViolationLevel
+  pr vate def opt m zePol cy(
+    pol cy: Seq[(UserType, SafetyLevel, Rule)],
+    v olat onLevel: V olat onLevel
   ): Seq[(SafetyLevel, Rule)] = {
-    val policiesByUserType = policy.groupBy { case (userType, _, _) => userType }.map {
+    val pol c esByUserType = pol cy.groupBy { case (userType, _, _) => userType }.map {
       case (userType, aggregated) =>
         (userType, aggregated.map { case (_, safetyLevel, rules) => (safetyLevel, rules) })
     }
-    val followerPolicies = aggregateRulesBySafetyLevel(
-      policiesByUserType.getOrElse(UserType.Follower, Seq()))
-    val otherPolicies = aggregateRulesBySafetyLevel(
-      policiesByUserType.getOrElse(UserType.Other, Seq()))
-    policiesByUserType(UserType.Author) ++
-      followerPolicies.collect {
-        case (safetyLevel, rule) if !otherPolicies.contains(safetyLevel) =>
+    val follo rPol c es = aggregateRulesBySafetyLevel(
+      pol c esByUserType.getOrElse(UserType.Follo r, Seq()))
+    val ot rPol c es = aggregateRulesBySafetyLevel(
+      pol c esByUserType.getOrElse(UserType.Ot r, Seq()))
+    pol c esByUserType(UserType.Author) ++
+      follo rPol c es.collect {
+        case (safetyLevel, rule)  f !ot rPol c es.conta ns(safetyLevel) =>
           (safetyLevel, rule)
       } ++
-      otherPolicies.collect {
-        case (safetyLevel, rule) if !followerPolicies.contains(safetyLevel) =>
+      ot rPol c es.collect {
+        case (safetyLevel, rule)  f !follo rPol c es.conta ns(safetyLevel) =>
           (safetyLevel, rule)
       } ++
-      followerPolicies.keySet
-        .intersect(otherPolicies.keySet).foldLeft(List.empty[(SafetyLevel, Rule)]) {
+      follo rPol c es.keySet
+        . ntersect(ot rPol c es.keySet).foldLeft(L st.empty[(SafetyLevel, Rule)]) {
           case (aggr, safetyLevel)
-              if followerPolicies(safetyLevel).actionBuilder == otherPolicies(
-                safetyLevel).actionBuilder =>
+               f follo rPol c es(safetyLevel).act onBu lder == ot rPol c es(
+                safetyLevel).act onBu lder =>
             (
               safetyLevel,
-              FreedomOfSpeechNotReachRules.ViewerIsNonAuthorAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = followerPolicies(safetyLevel).actionBuilder
+              FreedomOfSpeechNotReachRules.V e r sNonAuthorAndT etHasV olat onOfLevel(
+                v olat onLevel = v olat onLevel,
+                act onBu lder = follo rPol c es(safetyLevel).act onBu lder
               )) :: aggr
           case (aggr, safetyLevel) =>
-            (safetyLevel, followerPolicies(safetyLevel)) ::
-              (safetyLevel, otherPolicies(safetyLevel)) :: aggr
+            (safetyLevel, follo rPol c es(safetyLevel)) ::
+              (safetyLevel, ot rPol c es(safetyLevel)) :: aggr
         }
   }
 
-  private def aggregateRulesBySafetyLevel(
-    policy: Seq[(SafetyLevel, Rule)]
+  pr vate def aggregateRulesBySafetyLevel(
+    pol cy: Seq[(SafetyLevel, Rule)]
   ): Map[SafetyLevel, Rule] = {
-    policy
+    pol cy
       .groupBy {
         case (safetyLevel, _) => safetyLevel
       }.map {
         case (safetyLevel, Seq((_, rule))) =>
           (safetyLevel, rule)
-        case _ => throw new Exception("Policy optimization failure")
+        case _ => throw new Except on("Pol cy opt m zat on fa lure")
       }
   }
 
-  private def generateTweetPolicies(): Map[SafetyLevel, Seq[Rule]] = {
-    Seq(ViolationLevel.Level4, ViolationLevel.Level3, ViolationLevel.Level2, ViolationLevel.Level1)
-      .foldLeft(List.empty[(SafetyLevel, Rule)]) {
-        case (rulesForAllViolationLevels, violationLevel) =>
-          rulesForAllViolationLevels ++
-            generatePoliciesForViolationLevel(violationLevel)
+  pr vate def generateT etPol c es(): Map[SafetyLevel, Seq[Rule]] = {
+    Seq(V olat onLevel.Level4, V olat onLevel.Level3, V olat onLevel.Level2, V olat onLevel.Level1)
+      .foldLeft(L st.empty[(SafetyLevel, Rule)]) {
+        case (rulesForAllV olat onLevels, v olat onLevel) =>
+          rulesForAllV olat onLevels ++
+            generatePol c esForV olat onLevel(v olat onLevel)
       }
       .groupBy { case (safetyLevel, _) => safetyLevel }
       .map {
-        case (safetyLevel, list) =>
-          (safetyLevel, injectFallbackRule(list.map { case (_, rule) => rule }))
+        case (safetyLevel, l st) =>
+          (safetyLevel,  njectFallbackRule(l st.map { case (_, rule) => rule }))
       }
   }
 }

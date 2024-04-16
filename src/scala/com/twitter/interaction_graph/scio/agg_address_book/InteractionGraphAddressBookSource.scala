@@ -1,28 +1,28 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.tw ter. nteract on_graph.sc o.agg_address_book
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.jobs.simplematches.SimpleUserMatchesScalaDataset
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.cde.scio.dal_read.SourceUtil
-import org.joda.time.Interval
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.addressbook.jobs.s mplematc s.S mpleUserMatc sScalaDataset
+ mport com.tw ter.addressbook.matc s.thr ftscala.UserMatc sRecord
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter.cde.sc o.dal_read.S ceUt l
+ mport org.joda.t  . nterval
 
-case class InteractionGraphAddressBookSource(
-  pipelineOptions: InteractionGraphAddressBookOption
+case class  nteract onGraphAddressBookS ce(
+  p pel neOpt ons:  nteract onGraphAddressBookOpt on
 )(
-  implicit sc: ScioContext,
+   mpl c  sc: Sc oContext,
 ) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  val dalEnv ron nt: Str ng = p pel neOpt ons
+    .as(classOf[Serv ce dent f erOpt ons])
+    .getEnv ron nt()
 
-  def readSimpleUserMatches(
-    dateInterval: Interval
-  ): SCollection[UserMatchesRecord] = {
-    SourceUtil.readMostRecentSnapshotDALDataset[UserMatchesRecord](
-      SimpleUserMatchesScalaDataset,
-      dateInterval,
-      dalEnvironment)
+  def readS mpleUserMatc s(
+    date nterval:  nterval
+  ): SCollect on[UserMatc sRecord] = {
+    S ceUt l.readMostRecentSnapshotDALDataset[UserMatc sRecord](
+      S mpleUserMatc sScalaDataset,
+      date nterval,
+      dalEnv ron nt)
   }
 }

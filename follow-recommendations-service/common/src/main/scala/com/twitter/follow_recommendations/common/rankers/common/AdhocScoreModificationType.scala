@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.tw ter.follow_recom ndat ons.common.rankers.common
 
 /**
- * To manage the extent of adhoc score modifications, we set a hard limit that from each of the
- * types below *ONLY ONE* adhoc scorer can be applied to candidates' scores. More details about the
- * usage is available in [[AdhocRanker]]
+ * To manage t  extent of adhoc score mod f cat ons,   set a hard l m  that from each of t 
+ * types below *ONLY ONE* adhoc scorer can be appl ed to cand dates' scores. More deta ls about t 
+ * usage  s ava lable  n [[AdhocRanker]]
  */
 
-object AdhocScoreModificationType extends Enumeration {
-  type AdhocScoreModificationType = Value
+object AdhocScoreMod f cat onType extends Enu rat on {
+  type AdhocScoreMod f cat onType = Value
 
-  // This type of scorer increases the score of a subset of candidates through various policies.
-  val BoostingScorer: AdhocScoreModificationType = Value("boosting")
+  // T  type of scorer  ncreases t  score of a subset of cand dates through var ous pol c es.
+  val Boost ngScorer: AdhocScoreMod f cat onType = Value("boost ng")
 
-  // This type of scorer shuffles candidates randomly according to some distribution.
-  val WeightedRandomSamplingScorer: AdhocScoreModificationType = Value("weighted_random_sampling")
+  // T  type of scorer shuffles cand dates randomly accord ng to so  d str but on.
+  val   ghtedRandomSampl ngScorer: AdhocScoreMod f cat onType = Value("  ghted_random_sampl ng")
 
-  // This is added solely for testing purposes and should not be used in production.
-  val InvalidAdhocScorer: AdhocScoreModificationType = Value("invalid_adhoc_scorer")
+  // T   s added solely for test ng purposes and should not be used  n product on.
+  val  nval dAdhocScorer: AdhocScoreMod f cat onType = Value(" nval d_adhoc_scorer")
 }

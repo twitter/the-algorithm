@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.tw ter.follow_recom ndat ons.common.cl ents.adserver
 
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+ mport com.tw ter.adserver.{thr ftscala => t}
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
 
 case class AdRequest(
-  clientContext: ClientContext,
-  displayLocation: DisplayLocation,
-  isTest: Option[Boolean],
-  profileUserId: Option[Long]) {
-  def toThrift: t.AdRequestParams = {
+  cl entContext: Cl entContext,
+  d splayLocat on: D splayLocat on,
+   sTest: Opt on[Boolean],
+  prof leUser d: Opt on[Long]) {
+  def toThr ft: t.AdRequestParams = {
 
     val request = t.AdRequest(
-      displayLocation = displayLocation.toAdDisplayLocation.getOrElse(
-        throw new MissingAdDisplayLocation(displayLocation)),
-      isTest = isTest,
-      countImpressionsOnCallback = Some(true),
-      numOrganicItems = Some(AdRequest.DefaultNumOrganicItems.toShort),
-      profileUserId = profileUserId
+      d splayLocat on = d splayLocat on.toAdD splayLocat on.getOrElse(
+        throw new M ss ngAdD splayLocat on(d splayLocat on)),
+       sTest =  sTest,
+      count mpress onsOnCallback = So (true),
+      numOrgan c ems = So (AdRequest.DefaultNumOrgan c ems.toShort),
+      prof leUser d = prof leUser d
     )
 
-    val clientInfo = t.ClientInfo(
-      clientId = clientContext.appId.map(_.toInt),
-      userIp = clientContext.ipAddress,
-      userId64 = clientContext.userId,
-      guestId = clientContext.guestId,
-      userAgent = clientContext.userAgent,
+    val cl ent nfo = t.Cl ent nfo(
+      cl ent d = cl entContext.app d.map(_.to nt),
+      user p = cl entContext. pAddress,
+      user d64 = cl entContext.user d,
+      guest d = cl entContext.guest d,
+      userAgent = cl entContext.userAgent,
       referrer = None,
-      deviceId = clientContext.deviceId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode
+      dev ce d = cl entContext.dev ce d,
+      languageCode = cl entContext.languageCode,
+      countryCode = cl entContext.countryCode
     )
 
-    t.AdRequestParams(request, clientInfo)
+    t.AdRequestParams(request, cl ent nfo)
   }
 }
 
 object AdRequest {
-  val DefaultNumOrganicItems = 10
+  val DefaultNumOrgan c ems = 10
 }
 
-class MissingAdDisplayLocation(displayLocation: DisplayLocation)
-    extends Exception(
-      s"Display Location ${displayLocation.toString} has no mapped AdsDisplayLocation set.")
+class M ss ngAdD splayLocat on(d splayLocat on: D splayLocat on)
+    extends Except on(
+      s"D splay Locat on ${d splayLocat on.toStr ng} has no mapped AdsD splayLocat on set.")

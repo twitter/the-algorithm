@@ -1,131 +1,131 @@
-package com.twitter.home_mixer.product.following
+package com.tw ter.ho _m xer.product.follow ng
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.marshaller.timelines.ChronologicalCursorUnmarshaller
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.FollowingProductContext
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.home_mixer.product.following.param.FollowingParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.following.param.FollowingParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.service.HomeMixerAlertConfig.DefaultNotificationGroup
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.ThroughputAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.product_mixer.core.util.SortIndexBuilder
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.timelines.util.RequestCursorSerializer
-import com.twitter.util.Time
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.Chronolog calCursorUnmarshaller
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.Follow ngProductContext
+ mport com.tw ter.ho _m xer.model.request.Ho M xerRequest
+ mport com.tw ter.ho _m xer.product.follow ng.model.Follow ngQuery
+ mport com.tw ter.ho _m xer.product.follow ng.param.Follow ngParam.ServerMaxResultsParam
+ mport com.tw ter.ho _m xer.product.follow ng.param.Follow ngParamConf g
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAccessPol cy.DefaultHo M xerAccessPol cy
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g.DefaultNot f cat onGroup
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.EmptyResponseRateAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.LatencyAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.P99
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.SuccessRateAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.ThroughputAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fAbove
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fBelow
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fLatencyAbove
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.ProductP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.Malfor dCursor
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neConf g
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.product_m xer.core.ut l.Sort ndexBu lder
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport com.tw ter.t  l nes.ut l.RequestCursorSer al zer
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class FollowingProductPipelineConfig @Inject() (
-  followingMixerPipelineConfig: FollowingMixerPipelineConfig,
-  followingParamConfig: FollowingParamConfig)
-    extends ProductPipelineConfig[HomeMixerRequest, FollowingQuery, urt.TimelineResponse] {
+@S ngleton
+class Follow ngProductP pel neConf g @ nject() (
+  follow ngM xerP pel neConf g: Follow ngM xerP pel neConf g,
+  follow ngParamConf g: Follow ngParamConf g)
+    extends ProductP pel neConf g[Ho M xerRequest, Follow ngQuery, urt.T  l neResponse] {
 
-  override val identifier: ProductPipelineIdentifier = ProductPipelineIdentifier("Following")
+  overr de val  dent f er: ProductP pel ne dent f er = ProductP pel ne dent f er("Follow ng")
 
-  override val product: Product = FollowingProduct
-  override val paramConfig: ProductParamConfig = followingParamConfig
+  overr de val product: Product = Follow ngProduct
+  overr de val paramConf g: ProductParamConf g = follow ngParamConf g
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
+  overr de def p pel neQueryTransfor r(
+    request: Ho M xerRequest,
     params: Params
-  ): FollowingQuery = {
+  ): Follow ngQuery = {
     val context = request.productContext match {
-      case Some(context: FollowingProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "FollowingProductContext not found")
+      case So (context: Follow ngProductContext) => context
+      case _ => throw P pel neFa lure(BadRequest, "Follow ngProductContext not found")
     }
 
-    val debugOptions = request.debugParams.flatMap(_.debugOptions)
+    val debugOpt ons = request.debugParams.flatMap(_.debugOpt ons)
 
     /**
-     * Unlike other clients, newly created tweets on Android have the sort index set to the current
-     * time instead of the top sort index + 1, so these tweets get stuck at the top of the timeline
-     * if subsequent timeline responses use the sort index from the previous response instead of
-     * the current time.
+     * Unl ke ot r cl ents, newly created t ets on Andro d have t  sort  ndex set to t  current
+     * t    nstead of t  top sort  ndex + 1, so t se t ets get stuck at t  top of t  t  l ne
+     *  f subsequent t  l ne responses use t  sort  ndex from t  prev ous response  nstead of
+     * t  current t  .
      */
-    val pipelineCursor = request.serializedRequestCursor.flatMap { cursor =>
-      Try(UrtCursorSerializer.deserializeOrderedCursor(cursor))
-        .getOrElse(ChronologicalCursorUnmarshaller(RequestCursorSerializer.deserialize(cursor)))
+    val p pel neCursor = request.ser al zedRequestCursor.flatMap { cursor =>
+      Try(UrtCursorSer al zer.deser al zeOrderedCursor(cursor))
+        .getOrElse(Chronolog calCursorUnmarshaller(RequestCursorSer al zer.deser al ze(cursor)))
         .map {
-          case UrtOrderedCursor(_, id, Some(GapCursor), gapBoundaryId)
-              if id.isEmpty || gapBoundaryId.isEmpty =>
-            throw PipelineFailure(MalformedCursor, "Gap Cursor bounds not defined")
-          case topCursor @ UrtOrderedCursor(_, _, Some(TopCursor), _) =>
-            val queryTime = debugOptions.flatMap(_.requestTimeOverride).getOrElse(Time.now)
-            topCursor.copy(initialSortIndex = SortIndexBuilder.timeToId(queryTime))
+          case UrtOrderedCursor(_,  d, So (GapCursor), gapBoundary d)
+               f  d. sEmpty || gapBoundary d. sEmpty =>
+            throw P pel neFa lure(Malfor dCursor, "Gap Cursor bounds not def ned")
+          case topCursor @ UrtOrderedCursor(_, _, So (TopCursor), _) =>
+            val queryT   = debugOpt ons.flatMap(_.requestT  Overr de).getOrElse(T  .now)
+            topCursor.copy( n  alSort ndex = Sort ndexBu lder.t  To d(queryT  ))
           case cursor => cursor
         }
     }
 
-    FollowingQuery(
+    Follow ngQuery(
       params = params,
-      clientContext = request.clientContext,
+      cl entContext = request.cl entContext,
       features = None,
-      pipelineCursor = pipelineCursor,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = debugOptions,
-      deviceContext = context.deviceContext,
-      seenTweetIds = context.seenTweetIds,
-      dspClientContext = context.dspClientContext
+      p pel neCursor = p pel neCursor,
+      requestedMaxResults = So (params(ServerMaxResultsParam)),
+      debugOpt ons = debugOpt ons,
+      dev ceContext = context.dev ceContext,
+      seenT et ds = context.seenT et ds,
+      dspCl entContext = context.dspCl entContext
     )
   }
 
-  override val pipelines: Seq[PipelineConfig] = Seq(followingMixerPipelineConfig)
+  overr de val p pel nes: Seq[P pel neConf g] = Seq(follow ngM xerP pel neConf g)
 
-  override def pipelineSelector(
-    query: FollowingQuery
-  ): ComponentIdentifier = followingMixerPipelineConfig.identifier
+  overr de def p pel neSelector(
+    query: Follow ngQuery
+  ): Component dent f er = follow ngM xerP pel neConf g. dent f er
 
-  override val alerts: Seq[Alert] = Seq(
+  overr de val alerts: Seq[Alert] = Seq(
     SuccessRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfBelow(99.9, 20, 30),
-      criticalPredicate = TriggerIfBelow(99.9, 30, 30),
+      not f cat onGroup = DefaultNot f cat onGroup,
+      warnPred cate = Tr gger fBelow(99.9, 20, 30),
+      cr  calPred cate = Tr gger fBelow(99.9, 30, 30),
     ),
     LatencyAlert(
-      notificationGroup = DefaultNotificationGroup,
-      percentile = P99,
-      warnPredicate = TriggerIfLatencyAbove(1100.millis, 15, 30),
-      criticalPredicate = TriggerIfLatencyAbove(1200.millis, 15, 30)
+      not f cat onGroup = DefaultNot f cat onGroup,
+      percent le = P99,
+      warnPred cate = Tr gger fLatencyAbove(1100.m ll s, 15, 30),
+      cr  calPred cate = Tr gger fLatencyAbove(1200.m ll s, 15, 30)
     ),
     ThroughputAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfAbove(18000),
-      criticalPredicate = TriggerIfAbove(20000)
+      not f cat onGroup = DefaultNot f cat onGroup,
+      warnPred cate = Tr gger fAbove(18000),
+      cr  calPred cate = Tr gger fAbove(20000)
     ),
     EmptyResponseRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfAbove(65),
-      criticalPredicate = TriggerIfAbove(80)
+      not f cat onGroup = DefaultNot f cat onGroup,
+      warnPred cate = Tr gger fAbove(65),
+      cr  calPred cate = Tr gger fAbove(80)
     )
   )
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  overr de val debugAccessPol c es: Set[AccessPol cy] = DefaultHo M xerAccessPol cy
 }

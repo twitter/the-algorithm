@@ -1,134 +1,134 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ads.entities.db.thriftscala.LineItemObjective
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.LineItemInfo
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.GeneralTensor
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.manhattan.Revenue
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.util.Future
-import javax.inject.Named
-import scala.collection.JavaConverters._
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.b ject on.thr ft.CompactThr ftCodec
+ mport com.tw ter.ads.ent  es.db.thr ftscala.L ne emObject ve
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.thr ftscala.L ne em nfo
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.ObservedCac dReadableStore
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataType
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .GeneralTensor
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.relevance_platform.common. nject on.SeqObject nject on
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanRO
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanROConf g
+ mport com.tw ter.storehaus_ nternal.manhattan.Revenue
+ mport com.tw ter.storehaus_ nternal.ut l.Appl cat on D
+ mport com.tw ter.storehaus_ nternal.ut l.DatasetNa 
+ mport com.tw ter.storehaus_ nternal.ut l.HDFSPath
+ mport com.tw ter.ut l.Future
+ mport javax. nject.Na d
+ mport scala.collect on.JavaConverters._
 
-object ActivePromotedTweetStoreModule extends TwitterModule {
+object Act vePromotedT etStoreModule extends Tw terModule {
 
-  case class ActivePromotedTweetStore(
-    activePromotedTweetMHStore: ReadableStore[String, DataRecord],
-    statsReceiver: StatsReceiver)
-      extends ReadableStore[TweetId, Seq[LineItemInfo]] {
-    override def get(tweetId: TweetId): Future[Option[Seq[LineItemInfo]]] = {
-      activePromotedTweetMHStore.get(tweetId.toString).map {
+  case class Act vePromotedT etStore(
+    act vePromotedT etMHStore: ReadableStore[Str ng, DataRecord],
+    statsRece ver: StatsRece ver)
+      extends ReadableStore[T et d, Seq[L ne em nfo]] {
+    overr de def get(t et d: T et d): Future[Opt on[Seq[L ne em nfo]]] = {
+      act vePromotedT etMHStore.get(t et d.toStr ng).map {
         _.map { dataRecord =>
-          val richDataRecord = new RichDataRecord(dataRecord)
-          val lineItemIdsFeature: Feature[GeneralTensor] =
-            new Feature.Tensor("active_promoted_tweets.line_item_ids", DataType.INT64)
+          val r chDataRecord = new R chDataRecord(dataRecord)
+          val l ne em dsFeature: Feature[GeneralTensor] =
+            new Feature.Tensor("act ve_promoted_t ets.l ne_ em_ ds", DataType. NT64)
 
-          val lineItemObjectivesFeature: Feature[GeneralTensor] =
-            new Feature.Tensor("active_promoted_tweets.line_item_objectives", DataType.INT64)
+          val l ne emObject vesFeature: Feature[GeneralTensor] =
+            new Feature.Tensor("act ve_promoted_t ets.l ne_ em_object ves", DataType. NT64)
 
-          val lineItemIdsTensor: GeneralTensor = richDataRecord.getFeatureValue(lineItemIdsFeature)
-          val lineItemObjectivesTensor: GeneralTensor =
-            richDataRecord.getFeatureValue(lineItemObjectivesFeature)
+          val l ne em dsTensor: GeneralTensor = r chDataRecord.getFeatureValue(l ne em dsFeature)
+          val l ne emObject vesTensor: GeneralTensor =
+            r chDataRecord.getFeatureValue(l ne emObject vesFeature)
 
-          val lineItemIds: Seq[Long] =
-            if (lineItemIdsTensor.getSetField == GeneralTensor._Fields.INT64_TENSOR && lineItemIdsTensor.getInt64Tensor.isSetLongs) {
-              lineItemIdsTensor.getInt64Tensor.getLongs.asScala.map(_.toLong)
+          val l ne em ds: Seq[Long] =
+             f (l ne em dsTensor.getSetF eld == GeneralTensor._F elds. NT64_TENSOR && l ne em dsTensor.get nt64Tensor. sSetLongs) {
+              l ne em dsTensor.get nt64Tensor.getLongs.asScala.map(_.toLong)
             } else Seq.empty
 
-          val lineItemObjectives: Seq[LineItemObjective] =
-            if (lineItemObjectivesTensor.getSetField == GeneralTensor._Fields.INT64_TENSOR && lineItemObjectivesTensor.getInt64Tensor.isSetLongs) {
-              lineItemObjectivesTensor.getInt64Tensor.getLongs.asScala.map(objective =>
-                LineItemObjective(objective.toInt))
+          val l ne emObject ves: Seq[L ne emObject ve] =
+             f (l ne emObject vesTensor.getSetF eld == GeneralTensor._F elds. NT64_TENSOR && l ne emObject vesTensor.get nt64Tensor. sSetLongs) {
+              l ne emObject vesTensor.get nt64Tensor.getLongs.asScala.map(object ve =>
+                L ne emObject ve(object ve.to nt))
             } else Seq.empty
 
-          val lineItemInfo =
-            if (lineItemIds.size == lineItemObjectives.size) {
-              lineItemIds.zipWithIndex.map {
-                case (lineItemId, index) =>
-                  LineItemInfo(
-                    lineItemId = lineItemId,
-                    lineItemObjective = lineItemObjectives(index)
+          val l ne em nfo =
+             f (l ne em ds.s ze == l ne emObject ves.s ze) {
+              l ne em ds.z pW h ndex.map {
+                case (l ne em d,  ndex) =>
+                  L ne em nfo(
+                    l ne em d = l ne em d,
+                    l ne emObject ve = l ne emObject ves( ndex)
                   )
               }
             } else Seq.empty
 
-          lineItemInfo
+          l ne em nfo
         }
       }
     }
   }
 
-  @Provides
-  @Singleton
-  def providesActivePromotedTweetStore(
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    crMixerStatsReceiver: StatsReceiver
-  ): ReadableStore[TweetId, Seq[LineItemInfo]] = {
+  @Prov des
+  @S ngleton
+  def prov desAct vePromotedT etStore(
+    manhattanKVCl entMtlsParams: ManhattanKVCl entMtlsParams,
+    @Na d(ModuleNa s.Un f edCac ) crM xerUn f edCac Cl ent:  mcac dCl ent,
+    crM xerStatsRece ver: StatsRece ver
+  ): ReadableStore[T et d, Seq[L ne em nfo]] = {
 
-    val mhConfig = new ManhattanROConfig {
+    val mhConf g = new ManhattanROConf g {
       val hdfsPath = HDFSPath("")
-      val applicationID = ApplicationID("ads_bigquery_features")
-      val datasetName = DatasetName("active_promoted_tweets")
+      val appl cat on D = Appl cat on D("ads_b gquery_features")
+      val datasetNa  = DatasetNa ("act ve_promoted_t ets")
       val cluster = Revenue
 
-      override def statsReceiver: StatsReceiver =
-        crMixerStatsReceiver.scope("active_promoted_tweets_mh")
+      overr de def statsRece ver: StatsRece ver =
+        crM xerStatsRece ver.scope("act ve_promoted_t ets_mh")
     }
-    val mhStore: ReadableStore[String, DataRecord] =
+    val mhStore: ReadableStore[Str ng, DataRecord] =
       ManhattanRO
-        .getReadableStoreWithMtls[String, DataRecord](
-          mhConfig,
-          manhattanKVClientMtlsParams
+        .getReadableStoreW hMtls[Str ng, DataRecord](
+          mhConf g,
+          manhattanKVCl entMtlsParams
         )(
-          implicitly[Injection[String, Array[Byte]]],
-          CompactThriftCodec[DataRecord]
+           mpl c ly[ nject on[Str ng, Array[Byte]]],
+          CompactThr ftCodec[DataRecord]
         )
 
-    val underlyingStore =
-      ActivePromotedTweetStore(mhStore, crMixerStatsReceiver.scope("ActivePromotedTweetStore"))
-    val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = crMixerUnifiedCacheClient,
-      ttl = 60.minutes,
+    val underly ngStore =
+      Act vePromotedT etStore(mhStore, crM xerStatsRece ver.scope("Act vePromotedT etStore"))
+    val  mcac dStore = Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = underly ngStore,
+      cac Cl ent = crM xerUn f edCac Cl ent,
+      ttl = 60.m nutes,
       asyncUpdate = false
     )(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[LineItemInfo]()),
-      statsReceiver = crMixerStatsReceiver.scope("memCachedActivePromotedTweetStore"),
-      keyToString = { k: TweetId => s"apt/$k" }
+      value nject on = LZ4 nject on.compose(SeqObject nject on[L ne em nfo]()),
+      statsRece ver = crM xerStatsRece ver.scope(" mCac dAct vePromotedT etStore"),
+      keyToStr ng = { k: T et d => s"apt/$k" }
     )
 
-    ObservedCachedReadableStore.from(
-      memcachedStore,
-      ttl = 30.minutes,
-      maxKeys = 250000, // size of promoted tweet is around 200,000
-      windowSize = 10000L,
-      cacheName = "active_promoted_tweet_cache",
-      maxMultiGetSize = 20
-    )(crMixerStatsReceiver.scope("inMemoryCachedActivePromotedTweetStore"))
+    ObservedCac dReadableStore.from(
+       mcac dStore,
+      ttl = 30.m nutes,
+      maxKeys = 250000, // s ze of promoted t et  s around 200,000
+      w ndowS ze = 10000L,
+      cac Na  = "act ve_promoted_t et_cac ",
+      maxMult GetS ze = 20
+    )(crM xerStatsRece ver.scope(" n moryCac dAct vePromotedT etStore"))
 
   }
 

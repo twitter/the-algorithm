@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.com rce
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.com rce.Com rceProduct em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CommerceProductItemMarshaller @Inject() () {
+@S ngleton
+class Com rceProduct emMarshaller @ nject() () {
 
-  def apply(commerceProductItem: CommerceProductItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.CommerceProduct(urt.CommerceProduct(commerceProductItem.id))
+  def apply(com rceProduct em: Com rceProduct em): urt.T  l ne emContent =
+    urt.T  l ne emContent.Com rceProduct(urt.Com rceProduct(com rceProduct em. d))
 }

@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.card
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.card
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.card.CardCandidateUtrItemBuilder.CardClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CardCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.card.CardCand dateUtr emBu lder.CardCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.CardCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseUrlBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card.CardD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card.Card em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object CardCandidateUtrItemBuilder {
-  val CardClientEventInfoElement: String = "card"
+object CardCand dateUtr emBu lder {
+  val CardCl entEvent nfoEle nt: Str ng = "card"
 }
 
-case class CardCandidateUtrItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CardCandidate],
-  cardUrlBuilder: BaseStr[Query, CardCandidate],
-  textBuilder: Option[BaseStr[Query, CardCandidate]],
-  subtextBuilder: Option[BaseStr[Query, CardCandidate]],
-  urlBuilder: Option[BaseUrlBuilder[Query, CardCandidate]],
-  cardDisplayType: Option[CardDisplayType],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CardCandidate],
+case class CardCand dateUtr emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, CardCand date],
+  cardUrlBu lder: BaseStr[Query, CardCand date],
+  textBu lder: Opt on[BaseStr[Query, CardCand date]],
+  subtextBu lder: Opt on[BaseStr[Query, CardCand date]],
+  urlBu lder: Opt on[BaseUrlBu lder[Query, CardCand date]],
+  cardD splayType: Opt on[CardD splayType],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, CardCand date],
   ] = None)
-    extends CandidateUrtEntryBuilder[Query, CardCandidate, CardItem] {
+    extends Cand dateUrtEntryBu lder[Query, CardCand date, Card em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    cardCandidate: CardCandidate,
-    candidateFeatures: FeatureMap
-  ): CardItem = CardItem(
-    id = cardCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    cardCand date: CardCand date,
+    cand dateFeatures: FeatureMap
+  ): Card em = Card em(
+     d = cardCand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      cardCandidate,
-      candidateFeatures,
-      Some(CardClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, cardCandidate, candidateFeatures)),
-    cardUrl = cardUrlBuilder(query, cardCandidate, candidateFeatures),
-    text = textBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    subtext = textBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    url = urlBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    displayType = cardDisplayType
+      cardCand date,
+      cand dateFeatures,
+      So (CardCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, cardCand date, cand dateFeatures)),
+    cardUrl = cardUrlBu lder(query, cardCand date, cand dateFeatures),
+    text = textBu lder.map(_.apply(query, cardCand date, cand dateFeatures)),
+    subtext = textBu lder.map(_.apply(query, cardCand date, cand dateFeatures)),
+    url = urlBu lder.map(_.apply(query, cardCand date, cand dateFeatures)),
+    d splayType = cardD splayType
   )
 }

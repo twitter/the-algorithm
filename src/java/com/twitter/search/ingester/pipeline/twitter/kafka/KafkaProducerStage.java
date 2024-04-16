@@ -1,259 +1,259 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.tw ter.search. ngester.p pel ne.tw ter.kafka;
 
-import java.util.Collection;
-import java.util.Map;
+ mport java.ut l.Collect on;
+ mport java.ut l.Map;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .kafka.cl ents.producer.ProducerRecord;
+ mport org.apac .kafka.cl ents.producer.Record tadata;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.io.kafka.CompactThriftSerializer;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.wire.IngesterPartitioner;
-import com.twitter.util.Await;
-import com.twitter.util.Future;
+ mport com.tw ter.f natra.kafka.producers.Block ngF nagleKafkaProducer;
+ mport com.tw ter.search.common.debug.DebugEventUt l;
+ mport com.tw ter.search.common.debug.thr ftjava.DebugEvents;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.Percent le;
+ mport com.tw ter.search.common. tr cs.Percent leUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEventType;
+ mport com.tw ter.search.common.ut l. o.kafka.CompactThr ftSer al zer;
+ mport com.tw ter.search. ngester.model. ngesterThr ftVers onedEvents;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.Tw terBaseStage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.search. ngester.p pel ne.w re. ngesterPart  oner;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.Future;
 
-public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerStage.class);
+publ c class KafkaProducerStage<T> extends Tw terBaseStage<T, Vo d> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(KafkaProducerStage.class);
 
-  private static final Logger LATE_EVENTS_LOG = LoggerFactory.getLogger(
-      KafkaProducerStage.class.getName() + ".LateEvents");
+  pr vate stat c f nal Logger LATE_EVENTS_LOG = LoggerFactory.getLogger(
+      KafkaProducerStage.class.getNa () + ".LateEvents");
 
-  private final Map<ThriftIndexingEventType, Percentile<Long>> processingLatenciesStats =
-      Maps.newEnumMap(ThriftIndexingEventType.class);
+  pr vate f nal Map<Thr ft ndex ngEventType, Percent le<Long>> process ngLatenc esStats =
+      Maps.newEnumMap(Thr ft ndex ngEventType.class);
 
-  private String kafkaClientId;
-  private String kafkaTopicName;
-  private String kafkaClusterPath;
-  private SearchCounter sendCount;
-  private String perPartitionSendCountFormat;
-  private String deciderKey;
+  pr vate Str ng kafkaCl ent d;
+  pr vate Str ng kafkaTop cNa ;
+  pr vate Str ng kafkaClusterPath;
+  pr vate SearchCounter sendCount;
+  pr vate Str ng perPart  onSendCountFormat;
+  pr vate Str ng dec derKey;
 
-  protected BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
+  protected Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> kafkaProducer;
 
-  private int processingLatencyThresholdMillis = 10000;
+  pr vate  nt process ngLatencyThresholdM ll s = 10000;
 
-  public KafkaProducerStage() { }
+  publ c KafkaProducerStage() { }
 
-  public KafkaProducerStage(String topicName, String clientId, String clusterPath) {
-    this.kafkaTopicName = topicName;
-    this.kafkaClientId = clientId;
-    this.kafkaClusterPath = clusterPath;
+  publ c KafkaProducerStage(Str ng top cNa , Str ng cl ent d, Str ng clusterPath) {
+    t .kafkaTop cNa  = top cNa ;
+    t .kafkaCl ent d = cl ent d;
+    t .kafkaClusterPath = clusterPath;
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
     setupCommonStats();
   }
 
-  private void setupCommonStats() {
-    sendCount = SearchCounter.export(getStageNamePrefix() + "_send_count");
-    perPartitionSendCountFormat = getStageNamePrefix() + "_partition_%d_send_count";
-    for (ThriftIndexingEventType eventType : ThriftIndexingEventType.values()) {
-      processingLatenciesStats.put(
+  pr vate vo d setupCommonStats() {
+    sendCount = SearchCounter.export(getStageNa Pref x() + "_send_count");
+    perPart  onSendCountFormat = getStageNa Pref x() + "_part  on_%d_send_count";
+    for (Thr ft ndex ngEventType eventType : Thr ft ndex ngEventType.values()) {
+      process ngLatenc esStats.put(
           eventType,
-          PercentileUtil.createPercentile(
-              getStageNamePrefix() + "_" + eventType.name().toLowerCase()
-                  + "_processing_latency_ms"));
+          Percent leUt l.createPercent le(
+              getStageNa Pref x() + "_" + eventType.na ().toLo rCase()
+                  + "_process ng_latency_ms"));
     }
   }
 
-  @Override
-  protected void innerSetupStats() {
+  @Overr de
+  protected vo d  nnerSetupStats() {
    setupCommonStats();
   }
 
-  private boolean isEnabled() {
-    if (this.deciderKey != null) {
-      return DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey);
+  pr vate boolean  sEnabled() {
+     f (t .dec derKey != null) {
+      return Dec derUt l. sAva lableForRandomRec p ent(dec der, dec derKey);
     } else {
-      // No decider means it's enabled.
+      // No dec der  ans  's enabled.
       return true;
     }
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
     try {
-      innerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+       nnerSetup();
+    } catch (P pel neStageExcept on e) {
+      throw new StageExcept on(t , e);
     }
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    Preconditions.checkNotNull(kafkaClientId);
-    Preconditions.checkNotNull(kafkaClusterPath);
-    Preconditions.checkNotNull(kafkaTopicName);
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    Precond  ons.c ckNotNull(kafkaCl ent d);
+    Precond  ons.c ckNotNull(kafkaClusterPath);
+    Precond  ons.c ckNotNull(kafkaTop cNa );
 
-    kafkaProducer = wireModule.newFinagleKafkaProducer(
+    kafkaProducer = w reModule.newF nagleKafkaProducer(
         kafkaClusterPath,
-        new CompactThriftSerializer<ThriftVersionedEvents>(),
-        kafkaClientId,
-        IngesterPartitioner.class);
+        new CompactThr ftSer al zer<Thr ftVers onedEvents>(),
+        kafkaCl ent d,
+         ngesterPart  oner.class);
 
-    int numPartitions = wireModule.getPartitionMappingManager().getNumPartitions();
-    int numKafkaPartitions = kafkaProducer.partitionsFor(kafkaTopicName).size();
-    if (numPartitions != numKafkaPartitions) {
-      throw new PipelineStageException(String.format(
-          "Number of partitions for Kafka topic %s (%d) != number of expected partitions (%d)",
-          kafkaTopicName, numKafkaPartitions, numPartitions));
+     nt numPart  ons = w reModule.getPart  onMapp ngManager().getNumPart  ons();
+     nt numKafkaPart  ons = kafkaProducer.part  onsFor(kafkaTop cNa ).s ze();
+     f (numPart  ons != numKafkaPart  ons) {
+      throw new P pel neStageExcept on(Str ng.format(
+          "Number of part  ons for Kafka top c %s (%d) != number of expected part  ons (%d)",
+          kafkaTop cNa , numKafkaPart  ons, numPart  ons));
     }
   }
 
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterThriftVersionedEvents)) {
-      throw new StageException(this, "Object is not IngesterThriftVersionedEvents: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterThr ftVers onedEvents)) {
+      throw new StageExcept on(t , "Object  s not  ngesterThr ftVers onedEvents: " + obj);
     }
 
-    IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;
+     ngesterThr ftVers onedEvents events = ( ngesterThr ftVers onedEvents) obj;
     tryToSendEventsToKafka(events);
   }
 
-  protected void tryToSendEventsToKafka(IngesterThriftVersionedEvents events) {
-    if (!isEnabled()) {
+  protected vo d tryToSendEventsToKafka( ngesterThr ftVers onedEvents events) {
+     f (! sEnabled()) {
       return;
     }
 
     DebugEvents debugEvents = events.getDebugEvents();
-    // We don't propagate debug events to Kafka, because they take about 50%
-    // of the storage space.
+    //   don't propagate debug events to Kafka, because t y take about 50%
+    // of t  storage space.
     events.unsetDebugEvents();
 
-    ProducerRecord<Long, ThriftVersionedEvents> record = new ProducerRecord<>(
-        kafkaTopicName,
+    ProducerRecord<Long, Thr ftVers onedEvents> record = new ProducerRecord<>(
+        kafkaTop cNa ,
         null,
-        clock.nowMillis(),
+        clock.nowM ll s(),
         null,
         events);
 
     sendRecordToKafka(record).ensure(() -> {
-      updateEventProcessingLatencyStats(events, debugEvents);
+      updateEventProcess ngLatencyStats(events, debugEvents);
       return null;
     });
   }
 
-  private Future<RecordMetadata> sendRecordToKafka(
-      ProducerRecord<Long, ThriftVersionedEvents> record) {
-    Future<RecordMetadata> result;
+  pr vate Future<Record tadata> sendRecordToKafka(
+      ProducerRecord<Long, Thr ftVers onedEvents> record) {
+    Future<Record tadata> result;
     try {
       result = kafkaProducer.send(record);
-    } catch (Exception e) {
-      // Even though KafkaProducer.send() returns a Future, it can throw a synchronous exception,
-      // so we translate synchronous exceptions into a Future.exception so we handle all exceptions
-      // consistently.
-      result = Future.exception(e);
+    } catch (Except on e) {
+      // Even though KafkaProducer.send() returns a Future,   can throw a synchronous except on,
+      // so   translate synchronous except ons  nto a Future.except on so   handle all except ons
+      // cons stently.
+      result = Future.except on(e);
     }
 
-    return result.onSuccess(recordMetadata -> {
-      sendCount.increment();
+    return result.onSuccess(record tadata -> {
+      sendCount. ncre nt();
       SearchCounter.export(
-          String.format(perPartitionSendCountFormat, recordMetadata.partition())).increment();
-      return BoxedUnit.UNIT;
-    }).onFailure(e -> {
-      stats.incrementExceptions();
-      LOG.error("Sending a record failed.", e);
-      return BoxedUnit.UNIT;
+          Str ng.format(perPart  onSendCountFormat, record tadata.part  on())). ncre nt();
+      return BoxedUn .UN T;
+    }).onFa lure(e -> {
+      stats. ncre ntExcept ons();
+      LOG.error("Send ng a record fa led.", e);
+      return BoxedUn .UN T;
     });
   }
 
-  private void updateEventProcessingLatencyStats(IngesterThriftVersionedEvents events,
+  pr vate vo d updateEventProcess ngLatencyStats( ngesterThr ftVers onedEvents events,
                                                  DebugEvents debugEvents) {
-    if ((debugEvents != null) && debugEvents.isSetProcessingStartedAt()) {
-      // Get the one indexing event out of all events we're sending.
-      Collection<ThriftIndexingEvent> indexingEvents = events.getVersionedEvents().values();
-      Preconditions.checkState(!indexingEvents.isEmpty());
-      ThriftIndexingEventType eventType = indexingEvents.iterator().next().getEventType();
+     f ((debugEvents != null) && debugEvents. sSetProcess ngStartedAt()) {
+      // Get t  one  ndex ng event out of all events  're send ng.
+      Collect on<Thr ft ndex ngEvent>  ndex ngEvents = events.getVers onedEvents().values();
+      Precond  ons.c ckState(! ndex ngEvents. sEmpty());
+      Thr ft ndex ngEventType eventType =  ndex ngEvents. erator().next().getEventType();
 
-      // Check if the event took too much time to get to this current point.
-      long processingLatencyMillis =
-          clock.nowMillis() - debugEvents.getProcessingStartedAt().getEventTimestampMillis();
-      processingLatenciesStats.get(eventType).record(processingLatencyMillis);
+      // C ck  f t  event took too much t   to get to t  current po nt.
+      long process ngLatencyM ll s =
+          clock.nowM ll s() - debugEvents.getProcess ngStartedAt().getEventT  stampM ll s();
+      process ngLatenc esStats.get(eventType).record(process ngLatencyM ll s);
 
-      if (processingLatencyMillis >= processingLatencyThresholdMillis) {
-        LATE_EVENTS_LOG.warn("Event of type {} for tweet {} was processed in {}ms: {}",
-            eventType.name(),
-            events.getTweetId(),
-            processingLatencyMillis,
-            DebugEventUtil.debugEventsToString(debugEvents));
+       f (process ngLatencyM ll s >= process ngLatencyThresholdM ll s) {
+        LATE_EVENTS_LOG.warn("Event of type {} for t et {} was processed  n {}ms: {}",
+            eventType.na (),
+            events.getT et d(),
+            process ngLatencyM ll s,
+            DebugEventUt l.debugEventsToStr ng(debugEvents));
       }
     }
   }
 
-  public void setProcessingLatencyThresholdMillis(int processingLatencyThresholdMillis) {
-    this.processingLatencyThresholdMillis = processingLatencyThresholdMillis;
+  publ c vo d setProcess ngLatencyThresholdM ll s( nt process ngLatencyThresholdM ll s) {
+    t .process ngLatencyThresholdM ll s = process ngLatencyThresholdM ll s;
   }
 
-  @Override
-  public void innerPostprocess() throws StageException {
+  @Overr de
+  publ c vo d  nnerPostprocess() throws StageExcept on {
     try {
       commonCleanup();
-    } catch (Exception e) {
-      throw new StageException(this, e);
+    } catch (Except on e) {
+      throw new StageExcept on(t , e);
     }
   }
 
-  @Override
-  public void cleanupStageV2()  {
+  @Overr de
+  publ c vo d cleanupStageV2()  {
     try {
       commonCleanup();
-    } catch (Exception e) {
-      LOG.error("Error trying to clean up KafkaProducerStage.", e);
+    } catch (Except on e) {
+      LOG.error("Error try ng to clean up KafkaProducerStage.", e);
     }
   }
 
-  private void commonCleanup() throws Exception {
-    Await.result(kafkaProducer.close());
+  pr vate vo d commonCleanup() throws Except on {
+    Awa .result(kafkaProducer.close());
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClientId(String kafkaClientId) {
-    this.kafkaClientId = kafkaClientId;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaCl ent d(Str ng kafkaCl ent d) {
+    t .kafkaCl ent d = kafkaCl ent d;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaTopicName(String kafkaTopicName) {
-    this.kafkaTopicName = kafkaTopicName;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaTop cNa (Str ng kafkaTop cNa ) {
+    t .kafkaTop cNa  = kafkaTop cNa ;
   }
 
-  @VisibleForTesting
-  public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> getKafkaProducer() {
+  @V s bleForTest ng
+  publ c Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> getKafkaProducer() {
     return kafkaProducer;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDeciderKey(String deciderKey) {
-    this.deciderKey = deciderKey;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setDec derKey(Str ng dec derKey) {
+    t .dec derKey = dec derKey;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClusterPath(String kafkaClusterPath) {
-    this.kafkaClusterPath = kafkaClusterPath;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setKafkaClusterPath(Str ng kafkaClusterPath) {
+    t .kafkaClusterPath = kafkaClusterPath;
   }
 }

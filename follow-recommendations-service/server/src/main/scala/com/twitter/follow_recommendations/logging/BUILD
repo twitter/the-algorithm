@@ -1,18 +1,18 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/params",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "scribelib/marshallers/src/main/scala/com/twitter/scribelib/marshallers",
-        "util/util-slf4j-api/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/ nject:gu ce",
+        "3rdparty/jvm/com/google/ nject/extens ons:gu ce-ass sted nject",
+        "3rdparty/jvm/net/cod ng ll:scala-gu ce",
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/constants",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/conf gap /params",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/models",
+        "follow-recom ndat ons-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
+        "scr bel b/marshallers/src/ma n/scala/com/tw ter/scr bel b/marshallers",
+        "ut l/ut l-slf4j-ap /src/ma n/scala",
     ],
 )

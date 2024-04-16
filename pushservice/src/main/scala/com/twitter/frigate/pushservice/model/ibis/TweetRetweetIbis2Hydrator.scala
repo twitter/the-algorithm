@@ -1,32 +1,32 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetRetweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etRet etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l. rgeModelValues
 
-import com.twitter.util.Future
+ mport com.tw ter.ut l.Future
 
-trait TweetRetweetCandidateIbis2Hydrator
-    extends TweetCandidateIbis2Hydrator
-    with RankedSocialContextIbis2Hydrator {
-  self: PushCandidate with TweetRetweetCandidate with TweetAuthorDetails =>
+tra  T etRet etCand date b s2Hydrator
+    extends T etCand date b s2Hydrator
+    w h RankedSoc alContext b s2Hydrator {
+  self: PushCand date w h T etRet etCand date w h T etAuthorDeta ls =>
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
+  overr de lazy val t etModelValues: Future[Map[Str ng, Str ng]] =
     for {
-      socialContextModelValues <- socialContextModelValues
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ mediaModelValue ++ otherModelValues ++ socialContextModelValues ++ tweetInlineModelValues ++ inlineVideoMediaMap
+      soc alContextModelValues <- soc alContextModelValues
+      superModelValues <- super.t etModelValues
+      t et nl neModelValues <- t et nl neAct onModelValue
+    } y eld {
+      superModelValues ++  d aModelValue ++ ot rModelValues ++ soc alContextModelValues ++ t et nl neModelValues ++  nl neV deo d aMap
     }
 
-  lazy val socialContextForRetweetMap: Map[String, String] =
-    if (self.target.params(PushFeatureSwitchParams.EnableSocialContextForRetweet)) {
-      Map("enable_social_context_retweet" -> "true")
-    } else Map.empty[String, String]
+  lazy val soc alContextForRet etMap: Map[Str ng, Str ng] =
+     f (self.target.params(PushFeatureSw chParams.EnableSoc alContextForRet et)) {
+      Map("enable_soc al_context_ret et" -> "true")
+    } else Map.empty[Str ng, Str ng]
 
-  override lazy val customFieldsMapFut: Future[Map[String, String]] =
-    mergeModelValues(super.customFieldsMapFut, socialContextForRetweetMap)
+  overr de lazy val customF eldsMapFut: Future[Map[Str ng, Str ng]] =
+     rgeModelValues(super.customF eldsMapFut, soc alContextForRet etMap)
 }

@@ -2,83 +2,83 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VariableProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/variable_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Var ableProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/var able_go_proto";
 
-// Indicates when a distributed variable will be synced.
-enum VariableSynchronization {
-  // `AUTO`: Indicates that the synchronization will be determined by the
-  // current `DistributionStrategy` (eg. With `MirroredStrategy` this would be
-  // `ON_WRITE`).
-  VARIABLE_SYNCHRONIZATION_AUTO = 0;
-  // `NONE`: Indicates that there will only be one copy of the variable, so
-  // there is no need to sync.
-  VARIABLE_SYNCHRONIZATION_NONE = 1;
-  // `ON_WRITE`: Indicates that the variable will be updated across devices
-  // every time it is written.
-  VARIABLE_SYNCHRONIZATION_ON_WRITE = 2;
-  // `ON_READ`: Indicates that the variable will be aggregated across devices
-  // when it is read (eg. when checkpointing or when evaluating an op that uses
-  // the variable).
-  VARIABLE_SYNCHRONIZATION_ON_READ = 3;
+//  nd cates w n a d str buted var able w ll be synced.
+enum Var ableSynchron zat on {
+  // `AUTO`:  nd cates that t  synchron zat on w ll be determ ned by t 
+  // current `D str but onStrategy` (eg. W h `M rroredStrategy` t  would be
+  // `ON_WR TE`).
+  VAR ABLE_SYNCHRON ZAT ON_AUTO = 0;
+  // `NONE`:  nd cates that t re w ll only be one copy of t  var able, so
+  // t re  s no need to sync.
+  VAR ABLE_SYNCHRON ZAT ON_NONE = 1;
+  // `ON_WR TE`:  nd cates that t  var able w ll be updated across dev ces
+  // every t      s wr ten.
+  VAR ABLE_SYNCHRON ZAT ON_ON_WR TE = 2;
+  // `ON_READ`:  nd cates that t  var able w ll be aggregated across dev ces
+  // w n    s read (eg. w n c ckpo nt ng or w n evaluat ng an op that uses
+  // t  var able).
+  VAR ABLE_SYNCHRON ZAT ON_ON_READ = 3;
 }
 
-// Indicates how a distributed variable will be aggregated.
-enum VariableAggregation {
-  // `NONE`: This is the default, giving an error if you use a
-  // variable-update operation with multiple replicas.
-  VARIABLE_AGGREGATION_NONE = 0;
-  // `SUM`: Add the updates across replicas.
-  VARIABLE_AGGREGATION_SUM = 1;
-  // `MEAN`: Take the arithmetic mean ("average") of the updates across
-  // replicas.
-  VARIABLE_AGGREGATION_MEAN = 2;
-  // `ONLY_FIRST_REPLICA`: This is for when every replica is performing the same
-  // update, but we only want to perform the update once. Used, e.g., for the
+//  nd cates how a d str buted var able w ll be aggregated.
+enum Var ableAggregat on {
+  // `NONE`: T   s t  default, g v ng an error  f   use a
+  // var able-update operat on w h mult ple repl cas.
+  VAR ABLE_AGGREGAT ON_NONE = 0;
+  // `SUM`: Add t  updates across repl cas.
+  VAR ABLE_AGGREGAT ON_SUM = 1;
+  // `MEAN`: Take t  ar h t c  an ("average") of t  updates across
+  // repl cas.
+  VAR ABLE_AGGREGAT ON_MEAN = 2;
+  // `ONLY_F RST_REPL CA`: T   s for w n every repl ca  s perform ng t  sa 
+  // update, but   only want to perform t  update once. Used, e.g., for t 
   // global step counter.
-  VARIABLE_AGGREGATION_ONLY_FIRST_REPLICA = 3;
+  VAR ABLE_AGGREGAT ON_ONLY_F RST_REPL CA = 3;
 }
 
-// Protocol buffer representing a Variable.
-message VariableDef {
-  // Name of the variable tensor.
-  string variable_name = 1;
+// Protocol buffer represent ng a Var able.
+ ssage Var ableDef {
+  // Na  of t  var able tensor.
+  str ng var able_na  = 1;
 
-  // Name of the tensor holding the variable's initial value.
-  string initial_value_name = 6;
+  // Na  of t  tensor hold ng t  var able's  n  al value.
+  str ng  n  al_value_na  = 6;
 
-  // Name of the initializer op.
-  string initializer_name = 2;
+  // Na  of t   n  al zer op.
+  str ng  n  al zer_na  = 2;
 
-  // Name of the snapshot tensor.
-  string snapshot_name = 3;
+  // Na  of t  snapshot tensor.
+  str ng snapshot_na  = 3;
 
-  // Support for saving variables as slices of a larger variable.
-  SaveSliceInfoDef save_slice_info_def = 4;
+  // Support for sav ng var ables as sl ces of a larger var able.
+  SaveSl ce nfoDef save_sl ce_ nfo_def = 4;
 
-  // Whether to represent this as a ResourceVariable.
-  bool is_resource = 5;
+  // W t r to represent t  as a Res ceVar able.
+  bool  s_res ce = 5;
 
-  // Whether this variable should be trained.
-  bool trainable = 7;
+  // W t r t  var able should be tra ned.
+  bool tra nable = 7;
 
-  // Indicates when a distributed variable will be synced.
-  VariableSynchronization synchronization = 8;
+  //  nd cates w n a d str buted var able w ll be synced.
+  Var ableSynchron zat on synchron zat on = 8;
 
-  // Indicates how a distributed variable will be aggregated.
-  VariableAggregation aggregation = 9;
+  //  nd cates how a d str buted var able w ll be aggregated.
+  Var ableAggregat on aggregat on = 9;
 }
 
-message SaveSliceInfoDef {
-  // Name of the full variable of which this is a slice.
-  string full_name = 1;
-  // Shape of the full variable.
-  repeated int64 full_shape = 2;
-  // Offset of this variable into the full variable.
-  repeated int64 var_offset = 3;
-  // Shape of this variable.
-  repeated int64 var_shape = 4;
+ ssage SaveSl ce nfoDef {
+  // Na  of t  full var able of wh ch t   s a sl ce.
+  str ng full_na  = 1;
+  // Shape of t  full var able.
+  repeated  nt64 full_shape = 2;
+  // Offset of t  var able  nto t  full var able.
+  repeated  nt64 var_offset = 3;
+  // Shape of t  var able.
+  repeated  nt64 var_shape = 4;
 }

@@ -1,89 +1,89 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.servo.util.{ExceptionCounter, LogarithmicallyBucketedTimer}
-import com.twitter.util.{Future, Return, Throw, Try}
+ mport com.tw ter.f nagle.stats.{StatsRece ver, Stat}
+ mport com.tw ter.servo.ut l.{Except onCounter, Logar hm callyBucketedT  r}
+ mport com.tw ter.ut l.{Future, Return, Throw, Try}
 
-class RepositoryObserver(
-  statsReceiver: StatsReceiver,
-  bucketBySize: Boolean,
-  exceptionCounter: ExceptionCounter) {
-  protected[this] lazy val timer = new LogarithmicallyBucketedTimer(statsReceiver)
-  protected[this] val sizeStat = statsReceiver.stat("size")
-  protected[this] val foundStat = statsReceiver.counter("found")
-  protected[this] val notFoundStat = statsReceiver.counter("not_found")
-  protected[this] val total = statsReceiver.counter("total")
-  private[this] val timeStat = statsReceiver.stat(LogarithmicallyBucketedTimer.LatencyStatName)
+class Repos oryObserver(
+  statsRece ver: StatsRece ver,
+  bucketByS ze: Boolean,
+  except onCounter: Except onCounter) {
+  protected[t ] lazy val t  r = new Logar hm callyBucketedT  r(statsRece ver)
+  protected[t ] val s zeStat = statsRece ver.stat("s ze")
+  protected[t ] val foundStat = statsRece ver.counter("found")
+  protected[t ] val notFoundStat = statsRece ver.counter("not_found")
+  protected[t ] val total = statsRece ver.counter("total")
+  pr vate[t ] val t  Stat = statsRece ver.stat(Logar hm callyBucketedT  r.LatencyStatNa )
 
-  def this(statsReceiver: StatsReceiver, bucketBySize: Boolean = true) =
-    this(statsReceiver, bucketBySize, new ExceptionCounter(statsReceiver))
+  def t (statsRece ver: StatsRece ver, bucketByS ze: Boolean = true) =
+    t (statsRece ver, bucketByS ze, new Except onCounter(statsRece ver))
 
-  def time[T](size: Int = 1)(f: => Future[T]) = {
-    sizeStat.add(size)
-    if (bucketBySize)
-      timer(size)(f)
+  def t  [T](s ze:  nt = 1)(f: => Future[T]) = {
+    s zeStat.add(s ze)
+     f (bucketByS ze)
+      t  r(s ze)(f)
     else
-      Stat.timeFuture(timeStat)(f)
+      Stat.t  Future(t  Stat)(f)
   }
 
-  private[this] def total(size: Int = 1): Unit = total.incr(size)
+  pr vate[t ] def total(s ze:  nt = 1): Un  = total. ncr(s ze)
 
-  def found(size: Int = 1): Unit = {
-    foundStat.incr(size)
-    total(size)
+  def found(s ze:  nt = 1): Un  = {
+    foundStat. ncr(s ze)
+    total(s ze)
   }
 
-  def notFound(size: Int = 1): Unit = {
-    notFoundStat.incr(size)
-    total(size)
+  def notFound(s ze:  nt = 1): Un  = {
+    notFoundStat. ncr(s ze)
+    total(s ze)
   }
 
-  def exception(ts: Throwable*): Unit = {
-    exceptionCounter(ts)
-    total(ts.size)
+  def except on(ts: Throwable*): Un  = {
+    except onCounter(ts)
+    total(ts.s ze)
   }
 
-  def exceptions(ts: Seq[Throwable]): Unit = {
-    exception(ts: _*)
+  def except ons(ts: Seq[Throwable]): Un  = {
+    except on(ts: _*)
   }
 
-  def observeTry[V](tryObj: Try[V]): Unit = {
+  def observeTry[V](tryObj: Try[V]): Un  = {
     tryObj.respond {
       case Return(_) => found()
-      case Throw(t) => exception(t)
+      case Throw(t) => except on(t)
     }
   }
 
-  def observeOption[V](optionTry: Try[Option[V]]): Unit = {
-    optionTry.respond {
-      case Return(Some(_)) => found()
+  def observeOpt on[V](opt onTry: Try[Opt on[V]]): Un  = {
+    opt onTry.respond {
+      case Return(So (_)) => found()
       case Return(None) => notFound()
-      case Throw(t) => exception(t)
+      case Throw(t) => except on(t)
     }
   }
 
-  def observeKeyValueResult[K, V](resultTry: Try[KeyValueResult[K, V]]): Unit = {
+  def observeKeyValueResult[K, V](resultTry: Try[KeyValueResult[K, V]]): Un  = {
     resultTry.respond {
       case Return(result) =>
-        found(result.found.size)
-        notFound(result.notFound.size)
-        exceptions(result.failed.values.toSeq)
+        found(result.found.s ze)
+        notFound(result.notFound.s ze)
+        except ons(result.fa led.values.toSeq)
       case Throw(t) =>
-        exception(t)
+        except on(t)
     }
   }
 
   /**
-   * observeSeq observes the result of a fetch against a key-value repository
-   * when the returned value is a Seq of type V. When the fetch is completed,
-   * observes whether or not the returned Seq is empty, contains some number of
-   * items, or has failed in some way.
+   * observeSeq observes t  result of a fetch aga nst a key-value repos ory
+   * w n t  returned value  s a Seq of type V. W n t  fetch  s completed,
+   * observes w t r or not t  returned Seq  s empty, conta ns so  number of
+   *  ems, or has fa led  n so  way.
    */
-  def observeSeq[V](seqTry: Try[Seq[V]]): Unit = {
+  def observeSeq[V](seqTry: Try[Seq[V]]): Un  = {
     seqTry.respond {
-      case Return(seq) if seq.isEmpty => notFound()
+      case Return(seq)  f seq. sEmpty => notFound()
       case Return(seq) => found(seq.length)
-      case Throw(t) => exception(t)
+      case Throw(t) => except on(t)
     }
   }
 }

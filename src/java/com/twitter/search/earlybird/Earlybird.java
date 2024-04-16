@@ -1,267 +1,267 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java.net. netAddress;
+ mport java.net.UnknownHostExcept on;
+ mport java.ut l.Arrays;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.Pred cate;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.finagle.Http;
-import com.twitter.finagle.http.HttpMuxer;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.LoggerConfiguration;
-import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.Kerberos;
-import com.twitter.search.common.util.PlatformStatsExporter;
-import com.twitter.search.earlybird.admin.EarlybirdAdminManager;
-import com.twitter.search.earlybird.admin.EarlybirdHealthHandler;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.UncaughtExceptionHandler;
-import com.twitter.search.earlybird.factory.EarlybirdServerFactory;
-import com.twitter.search.earlybird.factory.EarlybirdWireModule;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
-import com.twitter.server.handler.DeciderHandler$;
-import com.twitter.server.AbstractTwitterServer;
-import com.twitter.thriftwebforms.DisplaySettingsConfig;
-import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.thriftwebforms.ThriftClientSettingsConfig;
-import com.twitter.thriftwebforms.ThriftMethodSettingsConfig;
-import com.twitter.thriftwebforms.ThriftServiceSettings;
-import com.twitter.thriftwebforms.ThriftWebFormsSettings;
-import com.twitter.thriftwebforms.TwitterServerThriftWebForms;
-import com.twitter.util.Await;
-import com.twitter.util.TimeoutException;
+ mport com.tw ter.app.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.f nagle.Http;
+ mport com.tw ter.f nagle.http.HttpMuxer;
+ mport com.tw ter.search.common.aurora.Aurora nstanceKey;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common.conf g.LoggerConf gurat on;
+ mport com.tw ter.search.common.constants.SearchThr ft bFormsAccess;
+ mport com.tw ter.search.common. tr cs.Bu ld nfoStats;
+ mport com.tw ter.search.common.ut l.Kerberos;
+ mport com.tw ter.search.common.ut l.PlatformStatsExporter;
+ mport com.tw ter.search.earlyb rd.adm n.Earlyb rdAdm nManager;
+ mport com.tw ter.search.earlyb rd.adm n.Earlyb rd althHandler;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
+ mport com.tw ter.search.earlyb rd.except on.UncaughtExcept onHandler;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rdServerFactory;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rdW reModule;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd.ut l.Earlyb rdDec der;
+ mport com.tw ter.server.handler.Dec derHandler$;
+ mport com.tw ter.server.AbstractTw terServer;
+ mport com.tw ter.thr ft bforms.D splaySett ngsConf g;
+ mport com.tw ter.thr ft bforms. thodOpt onsAccessConf g;
+ mport com.tw ter.thr ft bforms.Thr ftCl entSett ngsConf g;
+ mport com.tw ter.thr ft bforms.Thr ft thodSett ngsConf g;
+ mport com.tw ter.thr ft bforms.Thr ftServ ceSett ngs;
+ mport com.tw ter.thr ft bforms.Thr ft bFormsSett ngs;
+ mport com.tw ter.thr ft bforms.Tw terServerThr ft bForms;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.T  outExcept on;
 
-public class Earlybird extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(Earlybird.class);
+publ c class Earlyb rd extends AbstractTw terServer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rd.class);
 
-  // Flags defined here need to be processed before setting override values to EarlybirdConfig.
+  // Flags def ned  re need to be processed before sett ng overr de values to Earlyb rdConf g.
 
-  private final Flag<File> configFile = flag().create(
-      "config_file",
-      new File("earlybird-search.yml"),
-      "specify config file",
-      Flaggable.ofFile()
+  pr vate f nal Flag<F le> conf gF le = flag().create(
+      "conf g_f le",
+      new F le("earlyb rd-search.yml"),
+      "spec fy conf g f le",
+      Flaggable.ofF le()
   );
 
-  private final Flag<String> logDir = flag().create(
-      "earlybird_log_dir",
+  pr vate f nal Flag<Str ng> logD r = flag().create(
+      "earlyb rd_log_d r",
       "",
-      "override log dir from config file",
-      Flaggable.ofString()
+      "overr de log d r from conf g f le",
+      Flaggable.ofStr ng()
   );
 
-  private final Map<String, Flag<?>> flagMap = Arrays.stream(EarlybirdProperty.values())
+  pr vate f nal Map<Str ng, Flag<?>> flagMap = Arrays.stream(Earlyb rdProperty.values())
       .collect(Collectors.toMap(
-          property -> property.name(),
+          property -> property.na (),
           property -> property.createFlag(flag())));
 
-  private final UncaughtExceptionHandler uncaughtExceptionHandler =
-      new UncaughtExceptionHandler();
+  pr vate f nal UncaughtExcept onHandler uncaughtExcept onHandler =
+      new UncaughtExcept onHandler();
 
-  private EarlybirdServer earlybirdServer;
-  private EarlybirdAdminManager earlybirdAdminManager;
+  pr vate Earlyb rdServer earlyb rdServer;
+  pr vate Earlyb rdAdm nManager earlyb rdAdm nManager;
 
-  public Earlybird() {
-    // Default health handler is added inside Lifecycle trait.  To override that we need to set it
-    // in the constructor since HttpAdminServer is started before Earlybird.preMain() is called.
-    HttpMuxer.addHandler("/health", new EarlybirdHealthHandler());
+  publ c Earlyb rd() {
+    // Default  alth handler  s added  ns de L fecycle tra .  To overr de that   need to set  
+    //  n t  constructor s nce HttpAdm nServer  s started before Earlyb rd.preMa n()  s called.
+    HttpMuxer.addHandler("/ alth", new Earlyb rd althHandler());
   }
 
   /**
-   * Needs to be called from preMain and not from onInit() as flags / args parsing happens after
-   * onInit() is called.
+   * Needs to be called from preMa n and not from on n () as flags / args pars ng happens after
+   * on n ()  s called.
    */
-  @VisibleForTesting
-  void configureFromFlagsAndSetupLogging() {
-    // Makes sure the EarlybirdStats is injected with a variable repository.
-    EarlybirdConfig.init(configFile.getWithDefault().get().getName());
+  @V s bleForTest ng
+  vo d conf gureFromFlagsAndSetupLogg ng() {
+    // Makes sure t  Earlyb rdStats  s  njected w h a var able repos ory.
+    Earlyb rdConf g. n (conf gF le.getW hDefault().get().getNa ());
 
-    if (logDir.isDefined()) {
-      EarlybirdConfig.overrideLogDir(logDir.get().get());
+     f (logD r. sDef ned()) {
+      Earlyb rdConf g.overr deLogD r(logD r.get().get());
     }
-    new LoggerConfiguration(EarlybirdConfig.getLogPropertiesFile(),
-        EarlybirdConfig.getLogDir()).configure();
+    new LoggerConf gurat on(Earlyb rdConf g.getLogPropert esF le(),
+        Earlyb rdConf g.getLogD r()).conf gure();
 
-    String instanceKey = System.getProperty("aurora.instanceKey");
-    if (instanceKey != null) {
-      EarlybirdConfig.setAuroraInstanceKey(AuroraInstanceKey.fromInstanceKey(instanceKey));
-      LOG.info("Earlybird is running on Aurora");
-      checkRequiredProperties(EarlybirdProperty::isRequiredOnAurora, "Aurora");
+    Str ng  nstanceKey = System.getProperty("aurora. nstanceKey");
+     f ( nstanceKey != null) {
+      Earlyb rdConf g.setAurora nstanceKey(Aurora nstanceKey.from nstanceKey( nstanceKey));
+      LOG. nfo("Earlyb rd  s runn ng on Aurora");
+      c ckRequ redPropert es(Earlyb rdProperty:: sRequ redOnAurora, "Aurora");
     } else {
-      LOG.info("Earlybird is running on dedicated hardware");
-      checkRequiredProperties(EarlybirdProperty::isRequiredOnDedicated, "dedicated hardware");
+      LOG. nfo("Earlyb rd  s runn ng on ded cated hardware");
+      c ckRequ redPropert es(Earlyb rdProperty:: sRequ redOnDed cated, "ded cated hardware");
     }
-    LOG.info("Config environment: {}", Config.getEnvironment());
+    LOG. nfo("Conf g env ron nt: {}", Conf g.getEnv ron nt());
 
-    if (adminPort().isDefined() && adminPort().get().isDefined()) {
-      int adminPort = adminPort().get().get().getPort();
-      LOG.info("Admin port is {}", adminPort);
-      EarlybirdConfig.setAdminPort(adminPort);
+     f (adm nPort(). sDef ned() && adm nPort().get(). sDef ned()) {
+       nt adm nPort = adm nPort().get().get().getPort();
+      LOG. nfo("Adm n port  s {}", adm nPort);
+      Earlyb rdConf g.setAdm nPort(adm nPort);
     }
 
-    EarlybirdConfig.setOverrideValues(
+    Earlyb rdConf g.setOverr deValues(
         flagMap.values().stream()
-            .filter(Flag::isDefined)
-            .collect(Collectors.toMap(Flag::name, flag -> flag.get().get())));
+            .f lter(Flag:: sDef ned)
+            .collect(Collectors.toMap(Flag::na , flag -> flag.get().get())));
   }
 
-  private void checkRequiredProperties(
-      Predicate<EarlybirdProperty> propertyPredicate, String location) {
-    Arrays.stream(EarlybirdProperty.values())
-        .filter(propertyPredicate)
-        .map(property -> flagMap.get(property.name()))
+  pr vate vo d c ckRequ redPropert es(
+      Pred cate<Earlyb rdProperty> propertyPred cate, Str ng locat on) {
+    Arrays.stream(Earlyb rdProperty.values())
+        .f lter(propertyPred cate)
+        .map(property -> flagMap.get(property.na ()))
         .forEach(flag ->
-            Preconditions.checkState(flag.isDefined(),
-                "-%s is required on %s", flag.name(), location));
+            Precond  ons.c ckState(flag. sDef ned(),
+                "-%s  s requ red on %s", flag.na (), locat on));
   }
 
-  private void logEarlybirdInfo() {
+  pr vate vo d logEarlyb rd nfo() {
     try {
-      LOG.info("Hostname: {}", InetAddress.getLocalHost().getHostName());
-    } catch (UnknownHostException e) {
-      LOG.info("Unable to be get local host: {}", e.getMessage());
+      LOG. nfo("Hostna : {}",  netAddress.getLocalHost().getHostNa ());
+    } catch (UnknownHostExcept on e) {
+      LOG. nfo("Unable to be get local host: {}", e.get ssage());
     }
-    LOG.info("Earlybird info [Name: {}, Zone: {}, Env: {}]",
-            EarlybirdProperty.EARLYBIRD_NAME.get(),
-            EarlybirdProperty.ZONE.get(),
-            EarlybirdProperty.ENV.get());
-    LOG.info("Earlybird scrubgen from Aurora: {}]",
-        EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get());
-    LOG.info("Find final partition config by searching the log for \"Partition config info\"");
+    LOG. nfo("Earlyb rd  nfo [Na : {}, Zone: {}, Env: {}]",
+            Earlyb rdProperty.EARLYB RD_NAME.get(),
+            Earlyb rdProperty.ZONE.get(),
+            Earlyb rdProperty.ENV.get());
+    LOG. nfo("Earlyb rd scrubgen from Aurora: {}]",
+        Earlyb rdProperty.EARLYB RD_SCRUB_GEN.get());
+    LOG. nfo("F nd f nal part  on conf g by search ng t  log for \"Part  on conf g  nfo\"");
   }
 
-  private EarlybirdServer makeEarlybirdServer() {
-    EarlybirdWireModule earlybirdWireModule = new EarlybirdWireModule();
-    EarlybirdServerFactory earlybirdFactory = new EarlybirdServerFactory();
+  pr vate Earlyb rdServer makeEarlyb rdServer() {
+    Earlyb rdW reModule earlyb rdW reModule = new Earlyb rdW reModule();
+    Earlyb rdServerFactory earlyb rdFactory = new Earlyb rdServerFactory();
     try {
-      return earlybirdFactory.makeEarlybirdServer(earlybirdWireModule);
-    } catch (IOException e) {
-      LOG.error("Exception while constructing EarlybirdServer.", e);
-      throw new RuntimeException(e);
+      return earlyb rdFactory.makeEarlyb rdServer(earlyb rdW reModule);
+    } catch ( OExcept on e) {
+      LOG.error("Except on wh le construct ng Earlyb rdServer.", e);
+      throw new Runt  Except on(e);
     }
   }
 
-  private void setupThriftWebForms() {
-    TwitterServerThriftWebForms.addAdminRoutes(this, TwitterServerThriftWebForms.apply(
-        ThriftWebFormsSettings.apply(
-            DisplaySettingsConfig.DEFAULT,
-            ThriftServiceSettings.apply(
-                EarlybirdService.ServiceIface.class.getSimpleName(),
-                EarlybirdConfig.getThriftPort()),
-            ThriftClientSettingsConfig.makeCompactRequired(
-                EarlybirdProperty.getServiceIdentifier()),
-            ThriftMethodSettingsConfig.access(
-              MethodOptionsAccessConfig.byLdapGroup(
-                SearchThriftWebFormsAccess.READ_LDAP_GROUP))),
-        scala.reflect.ClassTag$.MODULE$.apply(EarlybirdService.ServiceIface.class)));
+  pr vate vo d setupThr ft bForms() {
+    Tw terServerThr ft bForms.addAdm nRoutes(t , Tw terServerThr ft bForms.apply(
+        Thr ft bFormsSett ngs.apply(
+            D splaySett ngsConf g.DEFAULT,
+            Thr ftServ ceSett ngs.apply(
+                Earlyb rdServ ce.Serv ce face.class.getS mpleNa (),
+                Earlyb rdConf g.getThr ftPort()),
+            Thr ftCl entSett ngsConf g.makeCompactRequ red(
+                Earlyb rdProperty.getServ ce dent f er()),
+            Thr ft thodSett ngsConf g.access(
+               thodOpt onsAccessConf g.byLdapGroup(
+                SearchThr ft bFormsAccess.READ_LDAP_GROUP))),
+        scala.reflect.ClassTag$.MODULE$.apply(Earlyb rdServ ce.Serv ce face.class)));
   }
 
-  private void setupDeciderWebForms() {
-    addAdminRoute(
-        DeciderHandler$.MODULE$.route(
-            "earlybird",
-            EarlybirdDecider.getMutableDecisionMaker(),
-            EarlybirdDecider.getDecider()));
+  pr vate vo d setupDec der bForms() {
+    addAdm nRoute(
+        Dec derHandler$.MODULE$.route(
+            "earlyb rd",
+            Earlyb rdDec der.getMutableDec s onMaker(),
+            Earlyb rdDec der.getDec der()));
   }
 
-  @Override
-  public Http.Server configureAdminHttpServer(Http.Server server) {
-    return server.withMonitor(uncaughtExceptionHandler);
+  @Overr de
+  publ c Http.Server conf gureAdm nHttpServer(Http.Server server) {
+    return server.w hMon or(uncaughtExcept onHandler);
   }
 
-  @Override
-  public void preMain() {
-    configureFromFlagsAndSetupLogging();
-    logEarlybirdInfo();
-    LOG.info("Starting preMain()");
+  @Overr de
+  publ c vo d preMa n() {
+    conf gureFromFlagsAndSetupLogg ng();
+    logEarlyb rd nfo();
+    LOG. nfo("Start ng preMa n()");
 
-    BuildInfoStats.export();
+    Bu ld nfoStats.export();
     PlatformStatsExporter.exportPlatformStats();
 
-    // Use our own exception handler to monitor all unhandled exceptions.
-    Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
-      LOG.error("Invoked default uncaught exception handler.");
-      uncaughtExceptionHandler.handle(e);
+    // Use   own except on handler to mon or all unhandled except ons.
+    Thread.setDefaultUncaughtExcept onHandler((thread, e) -> {
+      LOG.error(" nvoked default uncaught except on handler.");
+      uncaughtExcept onHandler.handle(e);
     });
-    LOG.info("Registered unhandled exception monitor.");
+    LOG. nfo("Reg stered unhandled except on mon or.");
 
-    Kerberos.kinit(
-        EarlybirdConfig.getString("kerberos_user", ""),
-        EarlybirdConfig.getString("kerberos_keytab_path", "")
+    Kerberos.k n (
+        Earlyb rdConf g.getStr ng("kerberos_user", ""),
+        Earlyb rdConf g.getStr ng("kerberos_keytab_path", "")
     );
 
-    LOG.info("Creating earlybird server.");
-    earlybirdServer = makeEarlybirdServer();
+    LOG. nfo("Creat ng earlyb rd server.");
+    earlyb rdServer = makeEarlyb rdServer();
 
-    uncaughtExceptionHandler.setShutdownHook(() -> {
-      earlybirdServer.shutdown();
-      this.close();
+    uncaughtExcept onHandler.setShutdownHook(() -> {
+      earlyb rdServer.shutdown();
+      t .close();
     });
 
-    earlybirdAdminManager = EarlybirdAdminManager.create(earlybirdServer);
-    earlybirdAdminManager.start();
-    LOG.info("Started admin interface.");
+    earlyb rdAdm nManager = Earlyb rdAdm nManager.create(earlyb rdServer);
+    earlyb rdAdm nManager.start();
+    LOG. nfo("Started adm n  nterface.");
 
-    setupThriftWebForms();
-    setupDeciderWebForms();
+    setupThr ft bForms();
+    setupDec der bForms();
 
-    LOG.info("Opened thrift serving form.");
+    LOG. nfo("Opened thr ft serv ng form.");
 
-    LOG.info("preMain() complete.");
+    LOG. nfo("preMa n() complete.");
   }
 
-  @Override
-  public void main() throws InterruptedException, TimeoutException, EarlybirdStartupException {
-    innerMain();
+  @Overr de
+  publ c vo d ma n() throws  nterruptedExcept on, T  outExcept on, Earlyb rdStartupExcept on {
+     nnerMa n();
   }
 
   /**
-   * Setting up an innerMain() so that tests can mock out the contents of main without interfering
-   * with reflection being done in App.scala looking for a method named "main".
+   * Sett ng up an  nnerMa n() so that tests can mock out t  contents of ma n w hout  nterfer ng
+   * w h reflect on be ng done  n App.scala look ng for a  thod na d "ma n".
    */
-  @VisibleForTesting
-  void innerMain() throws TimeoutException, InterruptedException, EarlybirdStartupException {
-    LOG.info("Starting main().");
+  @V s bleForTest ng
+  vo d  nnerMa n() throws T  outExcept on,  nterruptedExcept on, Earlyb rdStartupExcept on {
+    LOG. nfo("Start ng ma n().");
 
-    // If this method throws, TwitterServer will catch the exception and call close, so we don't
-    // catch it here.
+    //  f t   thod throws, Tw terServer w ll catch t  except on and call close, so   don't
+    // catch    re.
     try {
-      earlybirdServer.start();
+      earlyb rdServer.start();
     } catch (Throwable throwable) {
-      LOG.error("Exception while starting:", throwable);
+      LOG.error("Except on wh le start ng:", throwable);
       throw throwable;
     }
 
-    Await.ready(adminHttpServer());
-    LOG.info("main() complete.");
+    Awa .ready(adm nHttpServer());
+    LOG. nfo("ma n() complete.");
   }
 
-  @Override
-  public void onExit() {
-    LOG.info("Starting onExit()");
-    earlybirdServer.shutdown();
+  @Overr de
+  publ c vo d onEx () {
+    LOG. nfo("Start ng onEx ()");
+    earlyb rdServer.shutdown();
     try {
-      earlybirdAdminManager.doShutdown();
-    } catch (InterruptedException e) {
-      LOG.warn("earlybirdAdminManager shutdown was interrupted with " + e);
+      earlyb rdAdm nManager.doShutdown();
+    } catch ( nterruptedExcept on e) {
+      LOG.warn("earlyb rdAdm nManager shutdown was  nterrupted w h " + e);
     }
-    LOG.info("onExit() complete.");
+    LOG. nfo("onEx () complete.");
   }
 }

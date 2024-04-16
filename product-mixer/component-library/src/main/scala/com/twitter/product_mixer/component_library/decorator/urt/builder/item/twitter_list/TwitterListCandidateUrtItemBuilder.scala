@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.tw ter_l st
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list.TwitterListCandidateUrtItemBuilder.ListClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.tw ter_l st.Tw terL stCand dateUrt emBu lder.L stCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Tw terL stCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st.Tw terL stD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st.Tw terL st em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object TwitterListCandidateUrtItemBuilder {
-  val ListClientEventInfoElement: String = "list"
+object Tw terL stCand dateUrt emBu lder {
+  val L stCl entEvent nfoEle nt: Str ng = "l st"
 }
 
-case class TwitterListCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, TwitterListCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, TwitterListCandidate]
+case class Tw terL stCand dateUrt emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Tw terL stCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Tw terL stCand date]
   ] = None,
-  displayType: Option[TwitterListDisplayType] = None)
-    extends CandidateUrtEntryBuilder[Query, TwitterListCandidate, TwitterListItem] {
+  d splayType: Opt on[Tw terL stD splayType] = None)
+    extends Cand dateUrtEntryBu lder[Query, Tw terL stCand date, Tw terL st em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    twitterListCandidate: TwitterListCandidate,
-    candidateFeatures: FeatureMap
-  ): TwitterListItem = TwitterListItem(
-    id = twitterListCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    tw terL stCand date: Tw terL stCand date,
+    cand dateFeatures: FeatureMap
+  ): Tw terL st em = Tw terL st em(
+     d = tw terL stCand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      twitterListCandidate,
-      candidateFeatures,
-      Some(ListClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, twitterListCandidate, candidateFeatures)),
-    displayType = displayType
+      tw terL stCand date,
+      cand dateFeatures,
+      So (L stCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, tw terL stCand date, cand dateFeatures)),
+    d splayType = d splayType
   )
 }

@@ -1,194 +1,194 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.EnumSet;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.T  Un ;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.collect. mmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
-import com.twitter.search.queryparser.visitors.DetectVisitor;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.annotat on.Annotat on;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.queryparser.v s ors.DetectAnnotat onV s or;
+ mport com.tw ter.search.queryparser.v s ors.DetectV s or;
+ mport com.tw ter.ut l.Future;
 
 /**
- * For a given query, increments counters if that query has a number of search operators or
- * annotations applied to it. Used to detect unusual traffic patterns.
+ * For a g ven query,  ncre nts counters  f that query has a number of search operators or
+ * annotat ons appl ed to  . Used to detect unusual traff c patterns.
  */
-public class QueryOperatorStatFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryOperatorStatFilter.class);
+publ c class QueryOperatorStatF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(QueryOperatorStatF lter.class);
 
-  private final SearchCounter numQueryOperatorDetectionErrors =
-      SearchCounter.export("query_operator_detection_errors");
+  pr vate f nal SearchCounter numQueryOperatorDetect onErrors =
+      SearchCounter.export("query_operator_detect on_errors");
 
-  private final SearchCounter numQueryOperatorConsideredRequests =
-      SearchCounter.export("query_operator_requests_considered");
+  pr vate f nal SearchCounter numQueryOperatorCons deredRequests =
+      SearchCounter.export("query_operator_requests_cons dered");
 
-  private final ImmutableMap<String, SearchTimerStats> filterOperatorStats;
+  pr vate f nal  mmutableMap<Str ng, SearchT  rStats> f lterOperatorStats;
 
-  // Keeps track of the number of queries with a filter applied, whose type we don't care about.
-  private final SearchCounter numUnknownFilterOperatorRequests =
-      SearchCounter.export("query_operator_filter_unknown_requests");
+  // Keeps track of t  number of quer es w h a f lter appl ed, whose type   don't care about.
+  pr vate f nal SearchCounter numUnknownF lterOperatorRequests =
+      SearchCounter.export("query_operator_f lter_unknown_requests");
 
-  private final ImmutableMap<String, SearchTimerStats> includeOperatorStats;
+  pr vate f nal  mmutableMap<Str ng, SearchT  rStats>  ncludeOperatorStats;
 
-  // Keeps track of the number of queries with an include operator applied, whose type we don't
+  // Keeps track of t  number of quer es w h an  nclude operator appl ed, whose type   don't
   // know about.
-  private final SearchCounter numUnknownIncludeOperatorRequests =
-      SearchCounter.export("query_operator_include_unknown_requests");
+  pr vate f nal SearchCounter numUnknown ncludeOperatorRequests =
+      SearchCounter.export("query_operator_ nclude_unknown_requests");
 
-  private final ImmutableMap<SearchOperator.Type, SearchTimerStats> operatorTypeStats;
+  pr vate f nal  mmutableMap<SearchOperator.Type, SearchT  rStats> operatorTypeStats;
 
-  private final SearchCounter numVariantRequests =
-      SearchCounter.export("query_operator_variant_requests");
+  pr vate f nal SearchCounter numVar antRequests =
+      SearchCounter.export("query_operator_var ant_requests");
 
   /**
-   * Construct this QueryOperatorStatFilter by getting the complete set of possible filters a query
-   * might have and associating each with a counter.
+   * Construct t  QueryOperatorStatF lter by gett ng t  complete set of poss ble f lters a query
+   * m ght have and assoc at ng each w h a counter.
    */
-  public QueryOperatorStatFilter() {
+  publ c QueryOperatorStatF lter() {
 
-    ImmutableMap.Builder<String, SearchTimerStats> filterBuilder = new ImmutableMap.Builder<>();
-    for (String operand : SearchOperatorConstants.VALID_FILTER_OPERANDS) {
-      filterBuilder.put(
+     mmutableMap.Bu lder<Str ng, SearchT  rStats> f lterBu lder = new  mmutableMap.Bu lder<>();
+    for (Str ng operand : SearchOperatorConstants.VAL D_F LTER_OPERANDS) {
+      f lterBu lder.put(
           operand,
-          SearchTimerStats.export(
-              "query_operator_filter_" + operand + "_requests",
-              TimeUnit.MILLISECONDS,
+          SearchT  rStats.export(
+              "query_operator_f lter_" + operand + "_requests",
+              T  Un .M LL SECONDS,
               false,
               true));
     }
-    filterOperatorStats = filterBuilder.build();
+    f lterOperatorStats = f lterBu lder.bu ld();
 
-    ImmutableMap.Builder<String, SearchTimerStats> includeBuilder = new ImmutableMap.Builder<>();
-    for (String operand : SearchOperatorConstants.VALID_INCLUDE_OPERANDS) {
-      includeBuilder.put(
+     mmutableMap.Bu lder<Str ng, SearchT  rStats>  ncludeBu lder = new  mmutableMap.Bu lder<>();
+    for (Str ng operand : SearchOperatorConstants.VAL D_ NCLUDE_OPERANDS) {
+       ncludeBu lder.put(
           operand,
-          SearchTimerStats.export(
-              "query_operator_include_" + operand + "_requests",
-              TimeUnit.MILLISECONDS,
+          SearchT  rStats.export(
+              "query_operator_ nclude_" + operand + "_requests",
+              T  Un .M LL SECONDS,
               false,
               true));
     }
-    includeOperatorStats = includeBuilder.build();
+     ncludeOperatorStats =  ncludeBu lder.bu ld();
 
-    ImmutableMap.Builder<SearchOperator.Type, SearchTimerStats> operatorBuilder =
-        new ImmutableMap.Builder<>();
+     mmutableMap.Bu lder<SearchOperator.Type, SearchT  rStats> operatorBu lder =
+        new  mmutableMap.Bu lder<>();
     for (SearchOperator.Type operatorType : SearchOperator.Type.values()) {
-      operatorBuilder.put(
+      operatorBu lder.put(
           operatorType,
-          SearchTimerStats.export(
-              "query_operator_" + operatorType.name().toLowerCase() + "_requests",
-              TimeUnit.MILLISECONDS,
+          SearchT  rStats.export(
+              "query_operator_" + operatorType.na ().toLo rCase() + "_requests",
+              T  Un .M LL SECONDS,
               false,
               true
           ));
     }
-    operatorTypeStats = operatorBuilder.build();
+    operatorTypeStats = operatorBu lder.bu ld();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    numQueryOperatorConsideredRequests.increment();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    numQueryOperatorCons deredRequests. ncre nt();
     Query parsedQuery = requestContext.getParsedQuery();
 
-    if (parsedQuery == null) {
-      return service.apply(requestContext);
+     f (parsedQuery == null) {
+      return serv ce.apply(requestContext);
     }
 
-    SearchTimer timer = new SearchTimer();
-    timer.start();
+    SearchT  r t  r = new SearchT  r();
+    t  r.start();
 
-    return service.apply(requestContext).ensure(() -> {
-      timer.stop();
+    return serv ce.apply(requestContext).ensure(() -> {
+      t  r.stop();
 
       try {
-        updateTimersForOperatorsAndOperands(parsedQuery, timer);
-        updateCountersIfVariantAnnotation(parsedQuery);
-      } catch (QueryParserException e) {
-        LOG.warn("Unable to test if query has operators defined", e);
-        numQueryOperatorDetectionErrors.increment();
+        updateT  rsForOperatorsAndOperands(parsedQuery, t  r);
+        updateCounters fVar antAnnotat on(parsedQuery);
+      } catch (QueryParserExcept on e) {
+        LOG.warn("Unable to test  f query has operators def ned", e);
+        numQueryOperatorDetect onErrors. ncre nt();
       }
-      return BoxedUnit.UNIT;
+      return BoxedUn .UN T;
     });
   }
 
   /**
    * Tracks request stats for operators and operands.
    *
-   * @param parsedQuery the query to check.
+   * @param parsedQuery t  query to c ck.
    */
-  private void updateTimersForOperatorsAndOperands(Query parsedQuery, SearchTimer timer)
-      throws QueryParserException {
-    final DetectVisitor detectVisitor = new DetectVisitor(false, SearchOperator.Type.values());
-    parsedQuery.accept(detectVisitor);
+  pr vate vo d updateT  rsForOperatorsAndOperands(Query parsedQuery, SearchT  r t  r)
+      throws QueryParserExcept on {
+    f nal DetectV s or detectV s or = new DetectV s or(false, SearchOperator.Type.values());
+    parsedQuery.accept(detectV s or);
 
     Set<SearchOperator.Type> detectedOperatorTypes = EnumSet.noneOf(SearchOperator.Type.class);
-    for (Query query : detectVisitor.getDetectedQueries()) {
-      // This detectVisitor only matches on SearchOperators.
+    for (Query query : detectV s or.getDetectedQuer es()) {
+      // T  detectV s or only matc s on SearchOperators.
       SearchOperator operator = (SearchOperator) query;
       SearchOperator.Type operatorType = operator.getOperatorType();
       detectedOperatorTypes.add(operatorType);
 
-      if (operatorType == SearchOperator.Type.INCLUDE) {
+       f (operatorType == SearchOperator.Type. NCLUDE) {
         updateOperandStats(
             operator,
-            includeOperatorStats,
-            timer,
-            numUnknownIncludeOperatorRequests);
+             ncludeOperatorStats,
+            t  r,
+            numUnknown ncludeOperatorRequests);
       }
-      if (operatorType == SearchOperator.Type.FILTER) {
+       f (operatorType == SearchOperator.Type.F LTER) {
         updateOperandStats(
             operator,
-            filterOperatorStats,
-            timer,
-            numUnknownFilterOperatorRequests);
+            f lterOperatorStats,
+            t  r,
+            numUnknownF lterOperatorRequests);
       }
     }
 
     for (SearchOperator.Type type : detectedOperatorTypes) {
-      operatorTypeStats.get(type).stoppedTimerIncrement(timer);
+      operatorTypeStats.get(type).stoppedT  r ncre nt(t  r);
     }
   }
 
-  private void updateOperandStats(
+  pr vate vo d updateOperandStats(
       SearchOperator operator,
-      ImmutableMap<String, SearchTimerStats> operandRequestStats,
-      SearchTimer timer,
+       mmutableMap<Str ng, SearchT  rStats> operandRequestStats,
+      SearchT  r t  r,
       SearchCounter unknownOperandStat) {
-    String operand = operator.getOperand();
-    SearchTimerStats stats = operandRequestStats.get(operand);
+    Str ng operand = operator.getOperand();
+    SearchT  rStats stats = operandRequestStats.get(operand);
 
-    if (stats != null) {
-      stats.stoppedTimerIncrement(timer);
+     f (stats != null) {
+      stats.stoppedT  r ncre nt(t  r);
     } else {
-      unknownOperandStat.increment();
+      unknownOperandStat. ncre nt();
     }
   }
 
-  private void updateCountersIfVariantAnnotation(Query parsedQuery) throws QueryParserException {
-    DetectAnnotationVisitor visitor = new DetectAnnotationVisitor(Annotation.Type.VARIANT);
-    if (parsedQuery.accept(visitor)) {
-      numVariantRequests.increment();
+  pr vate vo d updateCounters fVar antAnnotat on(Query parsedQuery) throws QueryParserExcept on {
+    DetectAnnotat onV s or v s or = new DetectAnnotat onV s or(Annotat on.Type.VAR ANT);
+     f (parsedQuery.accept(v s or)) {
+      numVar antRequests. ncre nt();
     }
   }
 }

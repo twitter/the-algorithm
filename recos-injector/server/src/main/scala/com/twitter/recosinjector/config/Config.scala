@@ -1,41 +1,41 @@
-package com.twitter.recosinjector.config
+package com.tw ter.recos njector.conf g
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.UrlInfo
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.socialgraph.thriftscala.{IdsRequest, IdsResult}
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.fr gate.common.store.T etCreat onT  MHStore
+ mport com.tw ter.fr gate.common.ut l.Url nfo
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.recos njector.dec der.Recos njectorDec der
+ mport com.tw ter.soc algraph.thr ftscala.{ dsRequest,  dsResult}
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-trait Config { self =>
-  implicit def statsReceiver: StatsReceiver
+tra  Conf g { self =>
+   mpl c  def statsRece ver: StatsRece ver
 
   // ReadableStores
-  def tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+  def t etyP eStore: ReadableStore[Long, T etyP eResult]
 
   def userStore: ReadableStore[Long, User]
 
-  def socialGraphIdStore: ReadableStore[IdsRequest, IdsResult]
+  def soc alGraph dStore: ReadableStore[ dsRequest,  dsResult]
 
-  def urlInfoStore: ReadableStore[String, UrlInfo]
+  def url nfoStore: ReadableStore[Str ng, Url nfo]
 
   // Manhattan stores
-  def tweetCreationStore: TweetCreationTimeMHStore
+  def t etCreat onStore: T etCreat onT  MHStore
 
-  // Decider
-  def recosInjectorDecider: RecosInjectorDecider
+  // Dec der
+  def recos njectorDec der: Recos njectorDec der
 
   // Constants
-  def recosInjectorThriftClientId: ClientId
+  def recos njectorThr ftCl ent d: Cl ent d
 
-  def serviceIdentifier: ServiceIdentifier
+  def serv ce dent f er: Serv ce dent f er
 
-  def outputKafkaTopicPrefix: String
+  def outputKafkaTop cPref x: Str ng
 
-  def init(): Future[Unit] = Future.Done
+  def  n (): Future[Un ] = Future.Done
 }

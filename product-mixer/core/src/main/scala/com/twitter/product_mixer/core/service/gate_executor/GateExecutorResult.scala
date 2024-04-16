@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.tw ter.product_m xer.core.serv ce.gate_executor
 
-import com.twitter.product_mixer.core.service.ExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
 
 case class GateExecutorResult(
-  individualGateResults: Seq[ExecutedGateResult])
+   nd v dualGateResults: Seq[ExecutedGateResult])
     extends ExecutorResult

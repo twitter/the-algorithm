@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.core.functional_component.premarshaller
+package com.tw ter.product_m xer.core.funct onal_component.premarshaller
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Doma nMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModulePresentat on
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Un versalPresentat on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Transforms the `selections` into a [[DomainResponseType]] object (often URT, Slice, etc)
+ * Transforms t  `select ons`  nto a [[Doma nResponseType]] object (often URT, Sl ce, etc)
  *
- * [[DomainMarshaller]]s may contain business logic
+ * [[Doma nMarshaller]]s may conta n bus ness log c
  *
- * @note This is different from `com.twitter.product_mixer.core.marshaller`s
- *       which transforms into a wire-compatible type
+ * @note T   s d fferent from `com.tw ter.product_m xer.core.marshaller`s
+ *       wh ch transforms  nto a w re-compat ble type
  */
-trait DomainMarshaller[-Query <: PipelineQuery, DomainResponseType] extends Component {
+tra  Doma nMarshaller[-Query <: P pel neQuery, Doma nResponseType] extends Component {
 
-  override val identifier: DomainMarshallerIdentifier
+  overr de val  dent f er: Doma nMarshaller dent f er
 
-  /** Transforms the `selections` into a [[DomainResponseType]] object */
+  /** Transforms t  `select ons`  nto a [[Doma nResponseType]] object */
   def apply(
     query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): DomainResponseType
+    select ons: Seq[Cand dateW hDeta ls]
+  ): Doma nResponseType
 }
 
-class UnsupportedCandidateDomainMarshallerException(
-  candidate: Any,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support candidate ${TransportMarshaller.getSimpleName(
-        candidate.getClass)} from source $candidateSource")
+class UnsupportedCand dateDoma nMarshallerExcept on(
+  cand date: Any,
+  cand dateS ce: Component dent f er)
+    extends UnsupportedOperat onExcept on(
+      s"Doma n marshaller does not support cand date ${TransportMarshaller.getS mpleNa (
+        cand date.getClass)} from s ce $cand dateS ce")
 
-class UndecoratedCandidateDomainMarshallerException(
-  candidate: Any,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support undecorated candidate ${TransportMarshaller
-        .getSimpleName(candidate.getClass)} from source $candidateSource")
+class UndecoratedCand dateDoma nMarshallerExcept on(
+  cand date: Any,
+  cand dateS ce: Component dent f er)
+    extends UnsupportedOperat onExcept on(
+      s"Doma n marshaller does not support undecorated cand date ${TransportMarshaller
+        .getS mpleNa (cand date.getClass)} from s ce $cand dateS ce")
 
-class UnsupportedPresentationDomainMarshallerException(
-  candidate: Any,
-  presentation: UniversalPresentation,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support decorator presentation ${TransportMarshaller
-        .getSimpleName(presentation.getClass)} for candidate ${TransportMarshaller.getSimpleName(
-        candidate.getClass)} from source $candidateSource")
+class UnsupportedPresentat onDoma nMarshallerExcept on(
+  cand date: Any,
+  presentat on: Un versalPresentat on,
+  cand dateS ce: Component dent f er)
+    extends UnsupportedOperat onExcept on(
+      s"Doma n marshaller does not support decorator presentat on ${TransportMarshaller
+        .getS mpleNa (presentat on.getClass)} for cand date ${TransportMarshaller.getS mpleNa (
+        cand date.getClass)} from s ce $cand dateS ce")
 
-class UnsupportedModuleDomainMarshallerException(
-  presentation: Option[ModulePresentation],
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support module presentation ${presentation
+class UnsupportedModuleDoma nMarshallerExcept on(
+  presentat on: Opt on[ModulePresentat on],
+  cand dateS ce: Component dent f er)
+    extends UnsupportedOperat onExcept on(
+      s"Doma n marshaller does not support module presentat on ${presentat on
         .map(p =>
           TransportMarshaller
-            .getSimpleName(presentation.getClass)).getOrElse("")} but was given a module from source $candidateSource")
+            .getS mpleNa (presentat on.getClass)).getOrElse("")} but was g ven a module from s ce $cand dateS ce")
 
-class UndecoratedModuleDomainMarshallerException(
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support undecorated module from source $candidateSource")
+class UndecoratedModuleDoma nMarshallerExcept on(
+  cand dateS ce: Component dent f er)
+    extends UnsupportedOperat onExcept on(
+      s"Doma n marshaller does not support undecorated module from s ce $cand dateS ce")

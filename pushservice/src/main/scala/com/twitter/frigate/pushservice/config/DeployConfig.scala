@@ -1,2150 +1,2150 @@
-package com.twitter.frigate.pushservice.config
+package com.tw ter.fr gate.pushserv ce.conf g
 
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.audience_rewards.thriftscala.HasSuperFollowingRelationshipRequest
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.channels.common.thriftscala.ApiListDisplayLocation
-import com.twitter.channels.common.thriftscala.ApiListView
-import com.twitter.content_mixer.thriftscala.ContentMixer
-import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.cr_mixer.thriftscala.CrMixer
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.BaseballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.BasketballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.CricketMatchLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.NflFootballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SoccerMatchLiveUpdate
-import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.discovery.common.environment.{Environment => NotifEnvironment}
-import com.twitter.escherbird.common.thriftscala.Domains
-import com.twitter.escherbird.common.thriftscala.QualifiedId
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.escherbird.metadata.thriftscala.MetadataService
-import com.twitter.escherbird.util.metadatastitch.MetadataStitchClient
-import com.twitter.escherbird.util.uttclient
-import com.twitter.escherbird.util.uttclient.CacheConfigV2
-import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.escherbird.utt.strato.thriftscala.Environment
-import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.events.recos.thriftscala.EventsRecosService
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.client.BackupRequestFilter
-import com.twitter.finagle.client.ClientRegistry
-import com.twitter.finagle.loadbalancer.Balancers
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.mux.transport.OpportunisticTls
-import com.twitter.finagle.service.Retries
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.flockdb.client._
-import com.twitter.flockdb.client.thriftscala.FlockDB
-import com.twitter.frigate.common.base.RandomRanker
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.config.RateLimiterGenerator
-import com.twitter.frigate.common.entity_graph_client.RecommendedTweetEntitiesStore
-import com.twitter.frigate.common.filter.DynamicRequestMeterFilter
-import com.twitter.frigate.common.history._
-import com.twitter.frigate.common.ml.feature._
-import com.twitter.frigate.common.store._
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfoStore
-import com.twitter.frigate.common.store.deviceinfo.MobileSdkStore
-import com.twitter.frigate.common.store.interests._
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.frigate.common.store.strato.StratoScannableStore
-import com.twitter.frigate.common.util.Finagle.readOnlyThriftService
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common.FeatureStoreUtil
-import com.twitter.frigate.data_pipeline.features_common._
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryKey
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushcap.thriftscala.PushcapUserHistory
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.adaptor.LoggedOutPushCandidateSourceGenerator
-import com.twitter.frigate.pushservice.adaptor.PushCandidateSourceGenerator
-import com.twitter.frigate.pushservice.config.mlconfig.DeepbirdV2ModelConfig
-import com.twitter.frigate.pushservice.ml._
-import com.twitter.frigate.pushservice.params._
-import com.twitter.frigate.pushservice.rank.LoggedOutRanker
-import com.twitter.frigate.pushservice.rank.RFPHLightRanker
-import com.twitter.frigate.pushservice.rank.RFPHRanker
-import com.twitter.frigate.pushservice.rank.SubscriptionCreatorRanker
-import com.twitter.frigate.pushservice.refresh_handler._
-import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyExpansion
-import com.twitter.frigate.pushservice.send_handler.SendHandlerPushCandidateHydrator
-import com.twitter.frigate.pushservice.store._
-import com.twitter.frigate.pushservice.take.CandidateNotifier
-import com.twitter.frigate.pushservice.take.NotificationSender
-import com.twitter.frigate.pushservice.take.NotificationServiceRequest
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.frigate.pushservice.take.NtabOnlyChannelSelector
-import com.twitter.frigate.pushservice.take.history.EventBusWriter
-import com.twitter.frigate.pushservice.take.history.HistoryWriter
-import com.twitter.frigate.pushservice.take.sender.Ibis2Sender
-import com.twitter.frigate.pushservice.take.sender.NtabSender
-import com.twitter.frigate.pushservice.take.LoggedOutRefreshForPushNotifier
-import com.twitter.frigate.pushservice.util.RFPHTakeStepUtil
-import com.twitter.frigate.pushservice.util.SendHandlerPredicateUtil
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.frigate.thriftscala._
-import com.twitter.frigate.user_states.thriftscala.MRUserHmmState
-import com.twitter.geoduck.backend.hydration.thriftscala.Hydration
-import com.twitter.geoduck.common.thriftscala.PlaceQueryFields
-import com.twitter.geoduck.common.thriftscala.PlaceType
-import com.twitter.geoduck.common.thriftscala.{Location => GeoLocation}
-import com.twitter.geoduck.service.common.clientmodules.GeoduckUserLocate
-import com.twitter.geoduck.service.common.clientmodules.GeoduckUserLocateModule
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.geoduck.thriftscala.LocationService
-import com.twitter.gizmoduck.context.thriftscala.ReadConfig
-import com.twitter.gizmoduck.context.thriftscala.TestUserConfig
-import com.twitter.gizmoduck.testusers.client.TestUserClientBuilder
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.hermit.predicate.socialgraph.SocialGraphPredicate
-import com.twitter.hermit.predicate.tweetypie.PerspectiveReadableStore
-import com.twitter.hermit.store._
-import com.twitter.hermit.store.common._
-import com.twitter.hermit.store.gizmoduck.GizmoduckUserStore
-import com.twitter.hermit.store.metastore.UserCountryStore
-import com.twitter.hermit.store.metastore.UserLanguagesStore
-import com.twitter.hermit.store.scarecrow.ScarecrowCheckEventStore
-import com.twitter.hermit.store.semantic_core.MetaDataReadableStore
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.hermit.store.timezone.GizmoduckUserUtcOffsetStore
-import com.twitter.hermit.store.timezone.UtcOffsetStore
-import com.twitter.hermit.store.tweetypie.TweetyPieStore
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.hermit.store.user_htl_session_store.UserHTLLastVisitReadableStore
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.hss.api.thriftscala.UserHealthSignal
-import com.twitter.hss.api.thriftscala.UserHealthSignal._
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestsThriftService
-import com.twitter.interests.thriftscala.{UserInterests => Interests}
-import com.twitter.interests_discovery.thriftscala.InterestsDiscoveryService
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.kujaku.domain.thriftscala.MachineTranslationResponse
-import com.twitter.livevideo.timeline.client.v2.LiveVideoTimelineClient
-import com.twitter.livevideo.timeline.domain.v2.{Event => LiveEvent}
-import com.twitter.livevideo.timeline.thrift.thriftscala.TimelineService
-import com.twitter.logging.Logger
-import com.twitter.ml.api.thriftscala.{DataRecord => ThriftDataRecord}
-import com.twitter.ml.featurestore.catalog.entities.core.{Author => TweetAuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{User => TargetUserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{UserAuthor => UserAuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.magicrecs.{SocialContext => SocialContextEntity}
-import com.twitter.ml.featurestore.catalog.entities.magicrecs.{UserSocialContext => TargetUserSocialContextEntity}
-import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
-import com.twitter.notificationservice.api.thriftscala.DeleteCurrentTimelineForUserRequest
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStore
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStoreBuilder
-import com.twitter.notificationservice.scribe.manhattan.FeedbackSignalManhattanClient
-import com.twitter.notificationservice.scribe.manhattan.GenericNotificationsFeedbackRequest
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.notificationservice.thriftscala.DeleteGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.GenericNotificationOverrideKey
-import com.twitter.notificationservice.thriftscala.NotificationService$FinagleClient
-import com.twitter.nrel.heavyranker.CandidateFeatureHydrator
-import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.nrel.heavyranker.{PushPredictionServiceStore => RelevancePushPredictionServiceStore}
-import com.twitter.nrel.heavyranker.{TargetFeatureHydrator => RelevanceTargetFeatureHydrator}
-import com.twitter.nrel.lightranker.MagicRecsServeDataRecordLightRanker
-import com.twitter.nrel.lightranker.{Config => LightRankerConfig}
-import com.twitter.onboarding.task.service.thriftscala.FatigueFlowEnrollment
-import com.twitter.periscope.api.thriftscala.AudioSpacesLookupContext
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.recommendation.interests.discovery.core.config.{DeployConfig => InterestDeployConfig}
-import com.twitter.recommendation.interests.discovery.popgeo.deploy.PopGeoInterestProvider
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.recos.user_user_graph.thriftscala.UserUserGraph
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWProducer
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.service.gen.scarecrow.thriftscala.ScarecrowService
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.Athena
-import com.twitter.storehaus_internal.manhattan.Dataset
-import com.twitter.storehaus_internal.manhattan.ManhattanStore
-import com.twitter.storehaus_internal.manhattan.Nash
-import com.twitter.storehaus_internal.manhattan.Omega
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.UserId
-import com.twitter.strato.columns.frigate.logged_out_web_notifications.thriftscala.LOWebNotificationMetadata
-import com.twitter.strato.columns.notifications.thriftscala.SourceDestUserRequest
-import com.twitter.strato.generated.client.geo.user.FrequentSoftUserLocationClientColumn
-import com.twitter.strato.generated.client.ml.featureStore.TimelineScorerTweetScoresV1ClientColumn
-import com.twitter.strato.generated.client.notifications.space_device_follow_impl.SpaceDeviceFollowingClientColumn
-import com.twitter.strato.generated.client.periscope.CoreOnAudioSpaceClientColumn
-import com.twitter.strato.generated.client.periscope.ParticipantsOnAudioSpaceClientColumn
-import com.twitter.strato.generated.client.rux.TargetingPropertyOnUserClientColumn
-import com.twitter.strato.generated.client.socialgraph.graphs.creatorSubscriptionTimeline.{CountEdgesBySourceClientColumn => CreatorSubscriptionNumTweetsColumn}
-import com.twitter.strato.generated.client.translation.service.IsTweetTranslatableClientColumn
-import com.twitter.strato.generated.client.translation.service.platform.MachineTranslateTweetClientColumn
-import com.twitter.strato.generated.client.trends.trip.TripTweetsAirflowProdClientColumn
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.taxi.common.AppId
-import com.twitter.taxi.deploy.Cluster
-import com.twitter.taxi.deploy.Env
-import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.TopicListingBuilder
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.tweetypie.thriftscala.GetTweetOptions
-import com.twitter.tweetypie.thriftscala.Tweet.VisibleTextRangeField
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.ubs.thriftscala.Participants
-import com.twitter.ubs.thriftscala.SellerApplicationState
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import com.twitter.util.tunable.TunableMap
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
-import org.apache.thrift.protocol.TCompactProtocol
-import com.twitter.timelinescorer.thriftscala.v1.ScoredTweet
-import com.twitter.ubs.thriftscala.SellerTrack
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngRequest
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngResponse
+ mport com.tw ter.aud ence_rewards.thr ftscala.HasSuperFollow ngRelat onsh pRequest
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.channels.common.thr ftscala.Ap L st
+ mport com.tw ter.channels.common.thr ftscala.Ap L stD splayLocat on
+ mport com.tw ter.channels.common.thr ftscala.Ap L stV ew
+ mport com.tw ter.content_m xer.thr ftscala.ContentM xer
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cortex.deepb rd.thr ftjava.Deepb rdPred ct onServ ce
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xer
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.BaseballGa L veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.BasketballGa L veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.Cr cketMatchL veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.NflFootballGa L veUpdate
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala.SoccerMatchL veUpdate
+ mport com.tw ter.d scovery.common.conf gap .Conf gParamsBu lder
+ mport com.tw ter.d scovery.common.conf gap .FeatureContextBu lder
+ mport com.tw ter.d scovery.common.env ron nt.{Env ron nt => Not fEnv ron nt}
+ mport com.tw ter.esc rb rd.common.thr ftscala.Doma ns
+ mport com.tw ter.esc rb rd.common.thr ftscala.Qual f ed d
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.esc rb rd. tadata.thr ftscala. tadataServ ce
+ mport com.tw ter.esc rb rd.ut l. tadatast ch. tadataSt chCl ent
+ mport com.tw ter.esc rb rd.ut l.uttcl ent
+ mport com.tw ter.esc rb rd.ut l.uttcl ent.Cac Conf gV2
+ mport com.tw ter.esc rb rd.ut l.uttcl ent.Cac dUttCl entV2
+ mport com.tw ter.esc rb rd.utt.strato.thr ftscala.Env ron nt
+ mport com.tw ter.eventbus.cl ent.EventBusPubl s rBu lder
+ mport com.tw ter.events.recos.thr ftscala.EventsRecosServ ce
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRanker
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.f nagle. mcac d
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.cl ent.BackupRequestF lter
+ mport com.tw ter.f nagle.cl ent.Cl entReg stry
+ mport com.tw ter.f nagle.loadbalancer.Balancers
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.mux.transport.Opportun st cTls
+ mport com.tw ter.f nagle.serv ce.Retr es
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.thr ft.R chCl entParam
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.flockdb.cl ent.thr ftscala.FlockDB
+ mport com.tw ter.fr gate.common.base.RandomRanker
+ mport com.tw ter.fr gate.common.cand date._
+ mport com.tw ter.fr gate.common.conf g.RateL m erGenerator
+ mport com.tw ter.fr gate.common.ent y_graph_cl ent.Recom ndedT etEnt  esStore
+ mport com.tw ter.fr gate.common.f lter.Dynam cRequest terF lter
+ mport com.tw ter.fr gate.common. tory._
+ mport com.tw ter.fr gate.common.ml.feature._
+ mport com.tw ter.fr gate.common.store._
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfoStore
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Mob leSdkStore
+ mport com.tw ter.fr gate.common.store. nterests._
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter.fr gate.common.store.strato.StratoScannableStore
+ mport com.tw ter.fr gate.common.ut l.F nagle.readOnlyThr ftServ ce
+ mport com.tw ter.fr gate.common.ut l._
+ mport com.tw ter.fr gate.data_p pel ne.features_common.FeatureStoreUt l
+ mport com.tw ter.fr gate.data_p pel ne.features_common._
+ mport com.tw ter.fr gate.data_p pel ne.thr ftscala.User toryKey
+ mport com.tw ter.fr gate.data_p pel ne.thr ftscala.User toryValue
+ mport com.tw ter.fr gate.dau_model.thr ftscala.DauProbab l y
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.pushcap.thr ftscala.PushcapUser tory
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.adaptor.LoggedOutPushCand dateS ceGenerator
+ mport com.tw ter.fr gate.pushserv ce.adaptor.PushCand dateS ceGenerator
+ mport com.tw ter.fr gate.pushserv ce.conf g.mlconf g.Deepb rdV2ModelConf g
+ mport com.tw ter.fr gate.pushserv ce.ml._
+ mport com.tw ter.fr gate.pushserv ce.params._
+ mport com.tw ter.fr gate.pushserv ce.rank.LoggedOutRanker
+ mport com.tw ter.fr gate.pushserv ce.rank.RFPHL ghtRanker
+ mport com.tw ter.fr gate.pushserv ce.rank.RFPHRanker
+ mport com.tw ter.fr gate.pushserv ce.rank.Subscr pt onCreatorRanker
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler._
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.cross.Cand dateCopyExpans on
+ mport com.tw ter.fr gate.pushserv ce.send_handler.SendHandlerPushCand dateHydrator
+ mport com.tw ter.fr gate.pushserv ce.store._
+ mport com.tw ter.fr gate.pushserv ce.take.Cand dateNot f er
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onSender
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceRequest
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceSender
+ mport com.tw ter.fr gate.pushserv ce.take.NtabOnlyChannelSelector
+ mport com.tw ter.fr gate.pushserv ce.take. tory.EventBusWr er
+ mport com.tw ter.fr gate.pushserv ce.take. tory. toryWr er
+ mport com.tw ter.fr gate.pushserv ce.take.sender. b s2Sender
+ mport com.tw ter.fr gate.pushserv ce.take.sender.NtabSender
+ mport com.tw ter.fr gate.pushserv ce.take.LoggedOutRefreshForPushNot f er
+ mport com.tw ter.fr gate.pushserv ce.ut l.RFPHTakeStepUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.SendHandlerPred cateUt l
+ mport com.tw ter.fr gate.scr be.thr ftscala.Not f cat onScr be
+ mport com.tw ter.fr gate.thr ftscala._
+ mport com.tw ter.fr gate.user_states.thr ftscala.MRUserHmmState
+ mport com.tw ter.geoduck.backend.hydrat on.thr ftscala.Hydrat on
+ mport com.tw ter.geoduck.common.thr ftscala.PlaceQueryF elds
+ mport com.tw ter.geoduck.common.thr ftscala.PlaceType
+ mport com.tw ter.geoduck.common.thr ftscala.{Locat on => GeoLocat on}
+ mport com.tw ter.geoduck.serv ce.common.cl entmodules.GeoduckUserLocate
+ mport com.tw ter.geoduck.serv ce.common.cl entmodules.GeoduckUserLocateModule
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter.geoduck.thr ftscala.Locat onServ ce
+ mport com.tw ter.g zmoduck.context.thr ftscala.ReadConf g
+ mport com.tw ter.g zmoduck.context.thr ftscala.TestUserConf g
+ mport com.tw ter.g zmoduck.testusers.cl ent.TestUserCl entBu lder
+ mport com.tw ter.g zmoduck.thr ftscala.LookupContext
+ mport com.tw ter.g zmoduck.thr ftscala.QueryF elds
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.g zmoduck.thr ftscala.UserServ ce
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopT ets nPlace
+ mport com.tw ter. rm .pred cate.soc algraph.Soc alGraphPred cate
+ mport com.tw ter. rm .pred cate.t etyp e.Perspect veReadableStore
+ mport com.tw ter. rm .store._
+ mport com.tw ter. rm .store.common._
+ mport com.tw ter. rm .store.g zmoduck.G zmoduckUserStore
+ mport com.tw ter. rm .store. tastore.UserCountryStore
+ mport com.tw ter. rm .store. tastore.UserLanguagesStore
+ mport com.tw ter. rm .store.scarecrow.ScarecrowC ckEventStore
+ mport com.tw ter. rm .store.semant c_core. taDataReadableStore
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter. rm .store.t  zone.G zmoduckUserUtcOffsetStore
+ mport com.tw ter. rm .store.t  zone.UtcOffsetStore
+ mport com.tw ter. rm .store.t etyp e.T etyP eStore
+ mport com.tw ter. rm .store.t etyp e.UserT et
+ mport com.tw ter. rm .store.user_htl_sess on_store.UserHTLLastV s ReadableStore
+ mport com.tw ter. rm .stp.thr ftscala.STPResult
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnal
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnal._
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnalResponse
+ mport com.tw ter. nterests.thr ftscala. nterest d
+ mport com.tw ter. nterests.thr ftscala. nterestsThr ftServ ce
+ mport com.tw ter. nterests.thr ftscala.{User nterests =>  nterests}
+ mport com.tw ter. nterests_d scovery.thr ftscala. nterestsD scoveryServ ce
+ mport com.tw ter. nterests_d scovery.thr ftscala.NonPersonal zedRecom ndedL sts
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsRequest
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsResponse
+ mport com.tw ter.kujaku.doma n.thr ftscala.Mach neTranslat onResponse
+ mport com.tw ter.l vev deo.t  l ne.cl ent.v2.L veV deoT  l neCl ent
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.{Event => L veEvent}
+ mport com.tw ter.l vev deo.t  l ne.thr ft.thr ftscala.T  l neServ ce
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ml.ap .thr ftscala.{DataRecord => Thr ftDataRecord}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Author => T etAuthorEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{User => TargetUserEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{UserAuthor => UserAuthorEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.mag crecs.{Soc alContext => Soc alContextEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.mag crecs.{UserSoc alContext => TargetUserSoc alContextEnt y}
+ mport com.tw ter.ml.featurestore.t  l nes.thr ftscala.T  l neScorerScoreV ew
+ mport com.tw ter.not f cat onserv ce.ap .thr ftscala.DeleteCurrentT  l neForUserRequest
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.FeedbackPromptValue
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.Gener cFeedbackStore
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.Gener cFeedbackStoreBu lder
+ mport com.tw ter.not f cat onserv ce.scr be.manhattan.FeedbackS gnalManhattanCl ent
+ mport com.tw ter.not f cat onserv ce.scr be.manhattan.Gener cNot f cat onsFeedbackRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onResponse
+ mport com.tw ter.not f cat onserv ce.thr ftscala.DeleteGener cNot f cat onRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cNot f cat onOverr deKey
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Not f cat onServ ce$F nagleCl ent
+ mport com.tw ter.nrel. avyranker.Cand dateFeatureHydrator
+ mport com.tw ter.nrel. avyranker.FeatureHydrator
+ mport com.tw ter.nrel. avyranker.{PushPred ct onServ ceStore => RelevancePushPred ct onServ ceStore}
+ mport com.tw ter.nrel. avyranker.{TargetFeatureHydrator => RelevanceTargetFeatureHydrator}
+ mport com.tw ter.nrel.l ghtranker.Mag cRecsServeDataRecordL ghtRanker
+ mport com.tw ter.nrel.l ghtranker.{Conf g => L ghtRankerConf g}
+ mport com.tw ter.onboard ng.task.serv ce.thr ftscala.Fat gueFlowEnroll nt
+ mport com.tw ter.per scope.ap .thr ftscala.Aud oSpacesLookupContext
+ mport com.tw ter.perm ss ons_storage.thr ftscala.AppPerm ss on
+ mport com.tw ter.recom ndat on. nterests.d scovery.core.conf g.{DeployConf g =>  nterestDeployConf g}
+ mport com.tw ter.recom ndat on. nterests.d scovery.popgeo.deploy.PopGeo nterestProv der
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.UserT etEnt yGraph
+ mport com.tw ter.recos.user_user_graph.thr ftscala.UserUserGraph
+ mport com.tw ter.rux.common.strato.thr ftscala.UserTarget ngProperty
+ mport com.tw ter.sc o.nsfw_user_seg ntat on.thr ftscala.NSFWProducer
+ mport com.tw ter.sc o.nsfw_user_seg ntat on.thr ftscala.NSFWUserSeg ntat on
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdServ ce
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.ScarecrowServ ce
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.Locat on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.soc algraph.thr ftscala.Soc alGraphServ ce
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storage.cl ent.manhattan.kv.Guarantee
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo nt
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo ntBu lder
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.manhattan.At na
+ mport com.tw ter.storehaus_ nternal.manhattan.Dataset
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanStore
+ mport com.tw ter.storehaus_ nternal.manhattan.Nash
+ mport com.tw ter.storehaus_ nternal.manhattan.O ga
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.Cl entNa 
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
+ mport com.tw ter.strato.catalog.Scan.Sl ce
+ mport com.tw ter.strato.cl ent.Strato
+ mport com.tw ter.strato.cl ent.User d
+ mport com.tw ter.strato.columns.fr gate.logged_out_ b_not f cat ons.thr ftscala.LO bNot f cat on tadata
+ mport com.tw ter.strato.columns.not f cat ons.thr ftscala.S ceDestUserRequest
+ mport com.tw ter.strato.generated.cl ent.geo.user.FrequentSoftUserLocat onCl entColumn
+ mport com.tw ter.strato.generated.cl ent.ml.featureStore.T  l neScorerT etScoresV1Cl entColumn
+ mport com.tw ter.strato.generated.cl ent.not f cat ons.space_dev ce_follow_ mpl.SpaceDev ceFollow ngCl entColumn
+ mport com.tw ter.strato.generated.cl ent.per scope.CoreOnAud oSpaceCl entColumn
+ mport com.tw ter.strato.generated.cl ent.per scope.Part c pantsOnAud oSpaceCl entColumn
+ mport com.tw ter.strato.generated.cl ent.rux.Target ngPropertyOnUserCl entColumn
+ mport com.tw ter.strato.generated.cl ent.soc algraph.graphs.creatorSubscr pt onT  l ne.{CountEdgesByS ceCl entColumn => CreatorSubscr pt onNumT etsColumn}
+ mport com.tw ter.strato.generated.cl ent.translat on.serv ce. sT etTranslatableCl entColumn
+ mport com.tw ter.strato.generated.cl ent.translat on.serv ce.platform.Mach neTranslateT etCl entColumn
+ mport com.tw ter.strato.generated.cl ent.trends.tr p.Tr pT etsA rflowProdCl entColumn
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.tax .common.App d
+ mport com.tw ter.tax .deploy.Cluster
+ mport com.tw ter.tax .deploy.Env
+ mport com.tw ter.top cl st ng.Top cL st ng
+ mport com.tw ter.top cl st ng.Top cL st ngBu lder
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pDoma n
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pT ets
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofResponse
+ mport com.tw ter.t etyp e.thr ftscala.GetT etOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.T et.V s bleTextRangeF eld
+ mport com.tw ter.t etyp e.thr ftscala.T etServ ce
+ mport com.tw ter.ubs.thr ftscala.Aud oSpace
+ mport com.tw ter.ubs.thr ftscala.Part c pants
+ mport com.tw ter.ubs.thr ftscala.SellerAppl cat onState
+ mport com.tw ter.user_sess on_store.thr ftscala.UserSess on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.tunable.TunableMap
+ mport com.tw ter.wtf.scald ng.common.thr ftscala.UserFeatures
+ mport org.apac .thr ft.protocol.TCompactProtocol
+ mport com.tw ter.t  l nescorer.thr ftscala.v1.ScoredT et
+ mport com.tw ter.ubs.thr ftscala.SellerTrack
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
 
-trait DeployConfig extends Config {
-  // Any finagle clients should not be defined as lazy. If defined lazy,
-  // ClientRegistry.expAllRegisteredClientsResolved() call in init will not ensure that the clients
-  // are active before thrift endpoint is active. We want the clients to be active, because zookeeper
-  // resolution triggered by first request(s) might result in the request(s) failing.
+tra  DeployConf g extends Conf g {
+  // Any f nagle cl ents should not be def ned as lazy.  f def ned lazy,
+  // Cl entReg stry.expAllReg steredCl entsResolved() call  n  n  w ll not ensure that t  cl ents
+  // are act ve before thr ft endpo nt  s act ve.   want t  cl ents to be act ve, because zookeeper
+  // resolut on tr ggered by f rst request(s) m ght result  n t  request(s) fa l ng.
 
-  def serviceIdentifier: ServiceIdentifier
+  def serv ce dent f er: Serv ce dent f er
 
   def tunableMap: TunableMap
 
-  def featureSwitches: FeatureSwitches
+  def featureSw c s: FeatureSw c s
 
-  override val isProd: Boolean =
-    serviceIdentifier.environment == PushConstants.ServiceProdEnvironmentName
+  overr de val  sProd: Boolean =
+    serv ce dent f er.env ron nt == PushConstants.Serv ceProdEnv ron ntNa 
 
   def shardParams: ShardParams
 
   def log: Logger
 
-  implicit def statsReceiver: StatsReceiver
+   mpl c  def statsRece ver: StatsRece ver
 
-  implicit val timer: Timer = DefaultTimer
+   mpl c  val t  r: T  r = DefaultT  r
 
-  def notifierThriftClientId: ClientId
+  def not f erThr ftCl ent d: Cl ent d
 
-  def loggedOutNotifierThriftClientId: ClientId
+  def loggedOutNot f erThr ftCl ent d: Cl ent d
 
-  def pushserviceThriftClientId: ClientId
+  def pushserv ceThr ftCl ent d: Cl ent d
 
-  def deepbirdv2PredictionServiceDest: String
+  def deepb rdv2Pred ct onServ ceDest: Str ng
 
-  def featureStoreUtil: FeatureStoreUtil
+  def featureStoreUt l: FeatureStoreUt l
 
-  def targetLevelFeaturesConfig: PushFeaturesConfig
+  def targetLevelFeaturesConf g: PushFeaturesConf g
 
-  private val manhattanClientMtlsParams = ManhattanKVClientMtlsParams(
-    serviceIdentifier = serviceIdentifier,
-    opportunisticTls = OpportunisticTls.Required
+  pr vate val manhattanCl entMtlsParams = ManhattanKVCl entMtlsParams(
+    serv ce dent f er = serv ce dent f er,
+    opportun st cTls = Opportun st cTls.Requ red
   )
 
-  // Commonly used clients
-  val gizmoduckClient = {
+  // Commonly used cl ents
+  val g zmoduckCl ent = {
 
-    val client = ThriftMux.client
-      .withMutualTls(serviceIdentifier)
-      .withClientId(pushserviceThriftClientId)
-      .build[UserService.MethodPerEndpoint](
-        dest = "/s/gizmoduck/gizmoduck"
+    val cl ent = Thr ftMux.cl ent
+      .w hMutualTls(serv ce dent f er)
+      .w hCl ent d(pushserv ceThr ftCl ent d)
+      .bu ld[UserServ ce. thodPerEndpo nt](
+        dest = "/s/g zmoduck/g zmoduck"
       )
 
     /**
-     * RequestContext test user config to allow reading test user accounts on pushservice for load
-     * testing
+     * RequestContext test user conf g to allow read ng test user accounts on pushserv ce for load
+     * test ng
      */
-    val GizmoduckTestUserConfig = TestUserConfig(
-      clientId = Some(pushserviceThriftClientId.name),
-      readConfig = Some(ReadConfig(includeTestUsers = true))
+    val G zmoduckTestUserConf g = TestUserConf g(
+      cl ent d = So (pushserv ceThr ftCl ent d.na ),
+      readConf g = So (ReadConf g( ncludeTestUsers = true))
     )
 
-    TestUserClientBuilder[UserService.MethodPerEndpoint]
-      .withClient(client)
-      .withConfig(GizmoduckTestUserConfig)
-      .build()
+    TestUserCl entBu lder[UserServ ce. thodPerEndpo nt]
+      .w hCl ent(cl ent)
+      .w hConf g(G zmoduckTestUserConf g)
+      .bu ld()
   }
 
-  val sgsClient = {
-    val service = readOnlyThriftService(
+  val sgsCl ent = {
+    val serv ce = readOnlyThr ftServ ce(
       "",
-      "/s/socialgraph/socialgraph",
-      statsReceiver,
-      pushserviceThriftClientId,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+      "/s/soc algraph/soc algraph",
+      statsRece ver,
+      pushserv ceThr ftCl ent d,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
-    new SocialGraphService.FinagledClient(service)
+    new Soc alGraphServ ce.F nagledCl ent(serv ce)
   }
 
-  val tweetyPieClient = {
-    val service = readOnlyThriftService(
+  val t etyP eCl ent = {
+    val serv ce = readOnlyThr ftServ ce(
       "",
-      "/s/tweetypie/tweetypie",
-      statsReceiver,
-      notifierThriftClientId,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+      "/s/t etyp e/t etyp e",
+      statsRece ver,
+      not f erThr ftCl ent d,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
-    new TweetService.FinagledClient(service)
+    new T etServ ce.F nagledCl ent(serv ce)
   }
 
-  lazy val geoduckHydrationClient: Hydration.MethodPerEndpoint = {
-    val servicePerEndpoint = ThriftMux.client
-      .withLabel("geoduck_hydration")
-      .withClientId(pushserviceThriftClientId)
-      .withMutualTls(serviceIdentifier)
-      .methodBuilder("/s/geo/hydration")
-      .withTimeoutPerRequest(10.seconds)
-      .withTimeoutTotal(10.seconds)
-      .idempotent(maxExtraLoad = 0.0)
-      .servicePerEndpoint[Hydration.ServicePerEndpoint]
-    Hydration.MethodPerEndpoint(servicePerEndpoint)
+  lazy val geoduckHydrat onCl ent: Hydrat on. thodPerEndpo nt = {
+    val serv cePerEndpo nt = Thr ftMux.cl ent
+      .w hLabel("geoduck_hydrat on")
+      .w hCl ent d(pushserv ceThr ftCl ent d)
+      .w hMutualTls(serv ce dent f er)
+      . thodBu lder("/s/geo/hydrat on")
+      .w hT  outPerRequest(10.seconds)
+      .w hT  outTotal(10.seconds)
+      . dempotent(maxExtraLoad = 0.0)
+      .serv cePerEndpo nt[Hydrat on.Serv cePerEndpo nt]
+    Hydrat on. thodPerEndpo nt(serv cePerEndpo nt)
   }
 
-  lazy val geoduckLocationClient: LocationService.MethodPerEndpoint = {
-    val servicePerEndpoint = ThriftMux.client
-      .withLabel("geoduck_location")
-      .withClientId(pushserviceThriftClientId)
-      .withMutualTls(serviceIdentifier)
-      .methodBuilder("/s/geo/geoduck_locationservice")
-      .withTimeoutPerRequest(10.seconds)
-      .withTimeoutTotal(10.seconds)
-      .idempotent(maxExtraLoad = 0.0)
-      .servicePerEndpoint[LocationService.ServicePerEndpoint]
-    LocationService.MethodPerEndpoint(servicePerEndpoint)
+  lazy val geoduckLocat onCl ent: Locat onServ ce. thodPerEndpo nt = {
+    val serv cePerEndpo nt = Thr ftMux.cl ent
+      .w hLabel("geoduck_locat on")
+      .w hCl ent d(pushserv ceThr ftCl ent d)
+      .w hMutualTls(serv ce dent f er)
+      . thodBu lder("/s/geo/geoduck_locat onserv ce")
+      .w hT  outPerRequest(10.seconds)
+      .w hT  outTotal(10.seconds)
+      . dempotent(maxExtraLoad = 0.0)
+      .serv cePerEndpo nt[Locat onServ ce.Serv cePerEndpo nt]
+    Locat onServ ce. thodPerEndpo nt(serv cePerEndpo nt)
   }
 
-  override val geoDuckV2Store: ReadableStore[Long, LocationResponse] = {
-    val geoduckLocate: GeoduckUserLocate = GeoduckUserLocateModule.providesGeoduckUserLocate(
-      locationServiceClient = geoduckLocationClient,
-      hydrationClient = geoduckHydrationClient,
-      unscopedStatsReceiver = statsReceiver
+  overr de val geoDuckV2Store: ReadableStore[Long, Locat onResponse] = {
+    val geoduckLocate: GeoduckUserLocate = GeoduckUserLocateModule.prov desGeoduckUserLocate(
+      locat onServ ceCl ent = geoduckLocat onCl ent,
+      hydrat onCl ent = geoduckHydrat onCl ent,
+      unscopedStatsRece ver = statsRece ver
     )
 
-    val store: ReadableStore[Long, LocationResponse] = ReadableStore
-      .convert[GeoduckRequest, Long, LocationResponse, LocationResponse](
-        GeoduckStoreV2(geoduckLocate))({ userId: Long =>
+    val store: ReadableStore[Long, Locat onResponse] = ReadableStore
+      .convert[GeoduckRequest, Long, Locat onResponse, Locat onResponse](
+        GeoduckStoreV2(geoduckLocate))({ user d: Long =>
         GeoduckRequest(
-          userId,
+          user d,
           placeTypes = Set(
-            PlaceType.City,
-            PlaceType.Metro,
+            PlaceType.C y,
+            PlaceType. tro,
             PlaceType.Country,
-            PlaceType.ZipCode,
-            PlaceType.Admin0,
-            PlaceType.Admin1),
-          placeFields = Set(PlaceQueryFields.PlaceNames),
-          includeCountryCode = true
+            PlaceType.Z pCode,
+            PlaceType.Adm n0,
+            PlaceType.Adm n1),
+          placeF elds = Set(PlaceQueryF elds.PlaceNa s),
+           ncludeCountryCode = true
         )
-      })({ locationResponse: LocationResponse => Future.value(locationResponse) })
+      })({ locat onResponse: Locat onResponse => Future.value(locat onResponse) })
 
-    val _cacheName = "geoduckv2_in_memory_cache"
-    ObservedCachedReadableStore.from(
+    val _cac Na  = "geoduckv2_ n_ mory_cac "
+    ObservedCac dReadableStore.from(
       store,
       ttl = 20.seconds,
       maxKeys = 1000,
-      cacheName = _cacheName,
-      windowSize = 10000L
-    )(statsReceiver.scope(_cacheName))
+      cac Na  = _cac Na ,
+      w ndowS ze = 10000L
+    )(statsRece ver.scope(_cac Na ))
   }
 
-  private val deepbirdServiceBase = ThriftMux.client
-    .withClientId(pushserviceThriftClientId)
-    .withMutualTls(serviceIdentifier)
-    .withLoadBalancer(Balancers.p2c())
-    .newService(deepbirdv2PredictionServiceDest, "DeepbirdV2PredictionService")
-  val deepbirdPredictionServiceClient = new DeepbirdPredictionService.ServiceToClient(
-    Finagle
-      .retryReadFilter(
-        tries = 3,
-        statsReceiver = statsReceiver.scope("DeepbirdV2PredictionService"))
-      .andThen(Finagle.timeoutFilter(timeout = 10.seconds))
-      .andThen(deepbirdServiceBase),
-    RichClientParam(serviceName = "DeepbirdV2PredictionService", clientStats = statsReceiver)
+  pr vate val deepb rdServ ceBase = Thr ftMux.cl ent
+    .w hCl ent d(pushserv ceThr ftCl ent d)
+    .w hMutualTls(serv ce dent f er)
+    .w hLoadBalancer(Balancers.p2c())
+    .newServ ce(deepb rdv2Pred ct onServ ceDest, "Deepb rdV2Pred ct onServ ce")
+  val deepb rdPred ct onServ ceCl ent = new Deepb rdPred ct onServ ce.Serv ceToCl ent(
+    F nagle
+      .retryReadF lter(
+        tr es = 3,
+        statsRece ver = statsRece ver.scope("Deepb rdV2Pred ct onServ ce"))
+      .andT n(F nagle.t  outF lter(t  out = 10.seconds))
+      .andT n(deepb rdServ ceBase),
+    R chCl entParam(serv ceNa  = "Deepb rdV2Pred ct onServ ce", cl entStats = statsRece ver)
   )
 
-  val manhattanStarbuckAppId = "frigate_pushservice_starbuck"
-  val metastoreLocationAppId = "frigate_notifier_metastore_location"
-  val manhattanMetastoreAppId = "frigate_pushservice_penguin"
+  val manhattanStarbuckApp d = "fr gate_pushserv ce_starbuck"
+  val  tastoreLocat onApp d = "fr gate_not f er_ tastore_locat on"
+  val manhattan tastoreApp d = "fr gate_pushserv ce_pengu n"
 
-  def pushServiceMHCacheDest: String
-  def pushServiceCoreSvcsCacheDest: String
-  def poptartImpressionsCacheDest: String = "/srv#/prod/local/cache/poptart_impressions"
-  def entityGraphCacheDest: String
+  def pushServ ceMHCac Dest: Str ng
+  def pushServ ceCoreSvcsCac Dest: Str ng
+  def poptart mpress onsCac Dest: Str ng = "/srv#/prod/local/cac /poptart_ mpress ons"
+  def ent yGraphCac Dest: Str ng
 
-  val pushServiceCacheClient: Client = MemcacheStore.memcachedClient(
-    name = ClientName("memcache-pushservice"),
-    dest = ZkEndPoint(pushServiceMHCacheDest),
-    statsReceiver = statsReceiver,
-    timeout = 2.seconds,
-    serviceIdentifier = serviceIdentifier
+  val pushServ ceCac Cl ent: Cl ent =  mcac Store. mcac dCl ent(
+    na  = Cl entNa (" mcac -pushserv ce"),
+    dest = ZkEndPo nt(pushServ ceMHCac Dest),
+    statsRece ver = statsRece ver,
+    t  out = 2.seconds,
+    serv ce dent f er = serv ce dent f er
   )
 
-  val pushServiceCoreSvcsCacheClient: Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-pushservice-core-svcs"),
-      dest = ZkEndPoint(pushServiceCoreSvcsCacheDest),
-      statsReceiver = statsReceiver,
-      serviceIdentifier = serviceIdentifier,
-      timeout = 2.seconds,
+  val pushServ ceCoreSvcsCac Cl ent: Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac -pushserv ce-core-svcs"),
+      dest = ZkEndPo nt(pushServ ceCoreSvcsCac Dest),
+      statsRece ver = statsRece ver,
+      serv ce dent f er = serv ce dent f er,
+      t  out = 2.seconds,
     )
 
-  val poptartImpressionsCacheClient: Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-pushservice-poptart-impressions"),
-      dest = ZkEndPoint(poptartImpressionsCacheDest),
-      statsReceiver = statsReceiver,
-      serviceIdentifier = serviceIdentifier,
-      timeout = 2.seconds
+  val poptart mpress onsCac Cl ent: Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac -pushserv ce-poptart- mpress ons"),
+      dest = ZkEndPo nt(poptart mpress onsCac Dest),
+      statsRece ver = statsRece ver,
+      serv ce dent f er = serv ce dent f er,
+      t  out = 2.seconds
     )
 
-  val entityGraphCacheClient: Client = MemcacheStore.memcachedClient(
-    name = ClientName("memcache-pushservice-entity-graph"),
-    dest = ZkEndPoint(entityGraphCacheDest),
-    statsReceiver = statsReceiver,
-    serviceIdentifier = serviceIdentifier,
-    timeout = 2.seconds
+  val ent yGraphCac Cl ent: Cl ent =  mcac Store. mcac dCl ent(
+    na  = Cl entNa (" mcac -pushserv ce-ent y-graph"),
+    dest = ZkEndPo nt(ent yGraphCac Dest),
+    statsRece ver = statsRece ver,
+    serv ce dent f er = serv ce dent f er,
+    t  out = 2.seconds
   )
 
-  val stratoClient = {
-    val pushserviceThriftClient = ThriftMux.client.withClientId(pushserviceThriftClientId)
-    val baseBuilder = Strato
-      .Client(pushserviceThriftClient)
-      .withMutualTls(serviceIdentifier)
-    val finalBuilder = if (isServiceLocal) {
-      baseBuilder.withRequestTimeout(Duration.fromSeconds(15))
+  val stratoCl ent = {
+    val pushserv ceThr ftCl ent = Thr ftMux.cl ent.w hCl ent d(pushserv ceThr ftCl ent d)
+    val baseBu lder = Strato
+      .Cl ent(pushserv ceThr ftCl ent)
+      .w hMutualTls(serv ce dent f er)
+    val f nalBu lder =  f ( sServ ceLocal) {
+      baseBu lder.w hRequestT  out(Durat on.fromSeconds(15))
     } else {
-      baseBuilder.withRequestTimeout(Duration.fromSeconds(3))
+      baseBu lder.w hRequestT  out(Durat on.fromSeconds(3))
     }
-    finalBuilder.build()
+    f nalBu lder.bu ld()
   }
 
-  val interestThriftServiceClient = ThriftMux.client
-    .withClientId(pushserviceThriftClientId)
-    .withMutualTls(serviceIdentifier)
-    .withRequestTimeout(3.seconds)
-    .configured(Retries.Policy(RetryPolicy.tries(1)))
-    .configured(BackupRequestFilter.Configured(maxExtraLoad = 0.0, sendInterrupts = false))
-    .withStatsReceiver(statsReceiver)
-    .build[InterestsThriftService.MethodPerEndpoint](
-      dest = "/s/interests-thrift-service/interests-thrift-service",
-      label = "interests-lookup"
+  val  nterestThr ftServ ceCl ent = Thr ftMux.cl ent
+    .w hCl ent d(pushserv ceThr ftCl ent d)
+    .w hMutualTls(serv ce dent f er)
+    .w hRequestT  out(3.seconds)
+    .conf gured(Retr es.Pol cy(RetryPol cy.tr es(1)))
+    .conf gured(BackupRequestF lter.Conf gured(maxExtraLoad = 0.0, send nterrupts = false))
+    .w hStatsRece ver(statsRece ver)
+    .bu ld[ nterestsThr ftServ ce. thodPerEndpo nt](
+      dest = "/s/ nterests-thr ft-serv ce/ nterests-thr ft-serv ce",
+      label = " nterests-lookup"
     )
 
-  def memcacheCASDest: String
+  def  mcac CASDest: Str ng
 
-  override val casLock: CasLock = {
-    val magicrecsCasMemcacheClient = Memcached.client
-      .withMutualTls(serviceIdentifier)
-      .withLabel("mr-cas-memcache-client")
-      .withRequestTimeout(3.seconds)
-      .withStatsReceiver(statsReceiver)
-      .configured(Retries.Policy(RetryPolicy.tries(3)))
-      .newTwemcacheClient(memcacheCASDest)
-      .withStrings
+  overr de val casLock: CasLock = {
+    val mag crecsCas mcac Cl ent =  mcac d.cl ent
+      .w hMutualTls(serv ce dent f er)
+      .w hLabel("mr-cas- mcac -cl ent")
+      .w hRequestT  out(3.seconds)
+      .w hStatsRece ver(statsRece ver)
+      .conf gured(Retr es.Pol cy(RetryPol cy.tr es(3)))
+      .newT mcac Cl ent( mcac CASDest)
+      .w hStr ngs
 
-    MemcacheCasLock(magicrecsCasMemcacheClient)
+     mcac CasLock(mag crecsCas mcac Cl ent)
   }
 
-  override val pushInfoStore: ReadableStore[Long, UserForPushTargeting] = {
-    StratoFetchableStore.withUnitView[Long, UserForPushTargeting](
-      stratoClient,
-      "frigate/magicrecs/pushRecsTargeting.User")
+  overr de val push nfoStore: ReadableStore[Long, UserForPushTarget ng] = {
+    StratoFetchableStore.w hUn V ew[Long, UserForPushTarget ng](
+      stratoCl ent,
+      "fr gate/mag crecs/pushRecsTarget ng.User")
   }
 
-  override val loggedOutPushInfoStore: ReadableStore[Long, LOWebNotificationMetadata] = {
-    StratoFetchableStore.withUnitView[Long, LOWebNotificationMetadata](
-      stratoClient,
-      "frigate/magicrecs/web/loggedOutWebUserStoreMh"
+  overr de val loggedOutPush nfoStore: ReadableStore[Long, LO bNot f cat on tadata] = {
+    StratoFetchableStore.w hUn V ew[Long, LO bNot f cat on tadata](
+      stratoCl ent,
+      "fr gate/mag crecs/ b/loggedOut bUserStoreMh"
     )
   }
 
-  // Setting up model stores
-  override val dauProbabilityStore: ReadableStore[Long, DauProbability] = {
+  // Sett ng up model stores
+  overr de val dauProbab l yStore: ReadableStore[Long, DauProbab l y] = {
     StratoFetchableStore
-      .withUnitView[Long, DauProbability](stratoClient, "frigate/magicrecs/dauProbability.User")
+      .w hUn V ew[Long, DauProbab l y](stratoCl ent, "fr gate/mag crecs/dauProbab l y.User")
   }
 
-  override val nsfwConsumerStore = {
-    StratoFetchableStore.withUnitView[Long, NSFWUserSegmentation](
-      stratoClient,
-      "frigate/nsfw-user-segmentation/nsfwUserSegmentation.User")
+  overr de val nsfwConsu rStore = {
+    StratoFetchableStore.w hUn V ew[Long, NSFWUserSeg ntat on](
+      stratoCl ent,
+      "fr gate/nsfw-user-seg ntat on/nsfwUserSeg ntat on.User")
   }
 
-  override val nsfwProducerStore = {
-    StratoFetchableStore.withUnitView[Long, NSFWProducer](
-      stratoClient,
-      "frigate/nsfw-user-segmentation/nsfwProducer.User"
+  overr de val nsfwProducerStore = {
+    StratoFetchableStore.w hUn V ew[Long, NSFWProducer](
+      stratoCl ent,
+      "fr gate/nsfw-user-seg ntat on/nsfwProducer.User"
     )
   }
 
-  override val idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse] = {
-    val service = Finagle.readOnlyThriftService(
-      name = "interests-discovery-service",
-      dest = "/s/interests_discovery/interests_discovery",
-      statsReceiver,
-      pushserviceThriftClientId,
-      requestTimeout = 4.seconds,
-      tries = 2,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  overr de val  dsStore: ReadableStore[Recom ndedL stsRequest, Recom ndedL stsResponse] = {
+    val serv ce = F nagle.readOnlyThr ftServ ce(
+      na  = " nterests-d scovery-serv ce",
+      dest = "/s/ nterests_d scovery/ nterests_d scovery",
+      statsRece ver,
+      pushserv ceThr ftCl ent d,
+      requestT  out = 4.seconds,
+      tr es = 2,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
-    val client = new InterestsDiscoveryService.FinagledClient(
-      service = service,
-      RichClientParam(serviceName = "interests-discovery-service")
+    val cl ent = new  nterestsD scoveryServ ce.F nagledCl ent(
+      serv ce = serv ce,
+      R chCl entParam(serv ceNa  = " nterests-d scovery-serv ce")
     )
 
-    InterestDiscoveryStore(client)
+     nterestD scoveryStore(cl ent)
   }
 
-  override val popGeoLists = {
-    StratoFetchableStore.withUnitView[String, NonPersonalizedRecommendedLists](
-      stratoClient,
-      column = "recommendations/interests_discovery/recommendations_mh/OrganicPopgeoLists"
-    )
-  }
-
-  override val listAPIStore = {
-    val fetcher = stratoClient
-      .fetcher[Long, ApiListView, ApiList]("channels/hydration/apiList.List")
-    StratoFetchableStore.withView[Long, ApiListView, ApiList](
-      fetcher,
-      ApiListView(ApiListDisplayLocation.Recommendations)
+  overr de val popGeoL sts = {
+    StratoFetchableStore.w hUn V ew[Str ng, NonPersonal zedRecom ndedL sts](
+      stratoCl ent,
+      column = "recom ndat ons/ nterests_d scovery/recom ndat ons_mh/Organ cPopgeoL sts"
     )
   }
 
-  override val reactivatedUserInfoStore = {
+  overr de val l stAP Store = {
+    val fetc r = stratoCl ent
+      .fetc r[Long, Ap L stV ew, Ap L st]("channels/hydrat on/ap L st.L st")
+    StratoFetchableStore.w hV ew[Long, Ap L stV ew, Ap L st](
+      fetc r,
+      Ap L stV ew(Ap L stD splayLocat on.Recom ndat ons)
+    )
+  }
+
+  overr de val react vatedUser nfoStore = {
     val stratoFetchableStore = StratoFetchableStore
-      .withUnitView[Long, String](stratoClient, "ml/featureStore/recentReactivationTime.User")
+      .w hUn V ew[Long, Str ng](stratoCl ent, "ml/featureStore/recentReact vat onT  .User")
 
     ObservedReadableStore(
       stratoFetchableStore
-    )(statsReceiver.scope("RecentReactivationTime"))
+    )(statsRece ver.scope("RecentReact vat onT  "))
   }
 
-  override val openedPushByHourAggregatedStore: ReadableStore[Long, Map[Int, Int]] = {
+  overr de val openedPushByH AggregatedStore: ReadableStore[Long, Map[ nt,  nt]] = {
     StratoFetchableStore
-      .withUnitView[Long, Map[Int, Int]](
-        stratoClient,
-        "frigate/magicrecs/opendPushByHourAggregated.User")
+      .w hUn V ew[Long, Map[ nt,  nt]](
+        stratoCl ent,
+        "fr gate/mag crecs/opendPushByH Aggregated.User")
   }
 
-  private val lexClient: LiveVideoTimelineClient = {
-    val lexService =
-      new TimelineService.FinagledClient(
-        readOnlyThriftService(
-          name = "lex",
-          dest = lexServiceDest,
-          statsReceiver = statsReceiver.scope("lex-service"),
-          thriftClientId = pushserviceThriftClientId,
-          requestTimeout = 5.seconds,
-          mTLSServiceIdentifier = Some(serviceIdentifier)
+  pr vate val lexCl ent: L veV deoT  l neCl ent = {
+    val lexServ ce =
+      new T  l neServ ce.F nagledCl ent(
+        readOnlyThr ftServ ce(
+          na  = "lex",
+          dest = lexServ ceDest,
+          statsRece ver = statsRece ver.scope("lex-serv ce"),
+          thr ftCl ent d = pushserv ceThr ftCl ent d,
+          requestT  out = 5.seconds,
+          mTLSServ ce dent f er = So (serv ce dent f er)
         ),
-        clientParam = RichClientParam(serviceName = "lex")
+        cl entParam = R chCl entParam(serv ceNa  = "lex")
       )
-    new LiveVideoTimelineClient(lexService)
+    new L veV deoT  l neCl ent(lexServ ce)
   }
 
-  override val lexServiceStore = {
-    ObservedCachedReadableStore.from[EventRequest, LiveEvent](
-      buildStore(LexServiceStore(lexClient), "lexServiceStore"),
-      ttl = 1.hour,
+  overr de val lexServ ceStore = {
+    ObservedCac dReadableStore.from[EventRequest, L veEvent](
+      bu ldStore(LexServ ceStore(lexCl ent), "lexServ ceStore"),
+      ttl = 1.h ,
       maxKeys = 1000,
-      cacheName = "lexServiceStore_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("lexServiceStore_cache"))
+      cac Na  = "lexServ ceStore_cac ",
+      w ndowS ze = 10000L
+    )(statsRece ver.scope("lexServ ceStore_cac "))
   }
 
-  val inferredEntitiesFromInterestedInKeyedByClusterColumn =
-    "recommendations/simclusters_v2/inferred_entities/inferredEntitiesFromInterestedInKeyedByCluster"
-  override val simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities] = {
+  val  nferredEnt  esFrom nterested nKeyedByClusterColumn =
+    "recom ndat ons/s mclusters_v2/ nferred_ent  es/ nferredEnt  esFrom nterested nKeyedByCluster"
+  overr de val s mClusterToEnt yStore: ReadableStore[ nt, S mClusters nferredEnt  es] = {
     val store = StratoFetchableStore
-      .withUnitView[Int, SimClustersInferredEntities](
-        stratoClient,
-        inferredEntitiesFromInterestedInKeyedByClusterColumn)
-    ObservedCachedReadableStore.from[Int, SimClustersInferredEntities](
-      buildStore(store, "simcluster_entity_store_cache"),
-      ttl = 6.hours,
+      .w hUn V ew[ nt, S mClusters nferredEnt  es](
+        stratoCl ent,
+         nferredEnt  esFrom nterested nKeyedByClusterColumn)
+    ObservedCac dReadableStore.from[ nt, S mClusters nferredEnt  es](
+      bu ldStore(store, "s mcluster_ent y_store_cac "),
+      ttl = 6.h s,
       maxKeys = 1000,
-      cacheName = "simcluster_entity_store_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("simcluster_entity_store_cache"))
+      cac Na  = "s mcluster_ent y_store_cac ",
+      w ndowS ze = 10000L
+    )(statsRece ver.scope("s mcluster_ent y_store_cac "))
   }
 
-  def fanoutMetadataColumn: String
+  def fanout tadataColumn: Str ng
 
-  override val fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent] = {
+  overr de val fanout tadataStore: ReadableStore[(Long, Long), FanoutEvent] = {
     val store = StratoFetchableStore
-      .withUnitView[(Long, Long), FanoutEvent](stratoClient, fanoutMetadataColumn)
-    ObservedCachedReadableStore.from[(Long, Long), FanoutEvent](
-      buildStore(store, "fanoutMetadataStore"),
-      ttl = 10.minutes,
+      .w hUn V ew[(Long, Long), FanoutEvent](stratoCl ent, fanout tadataColumn)
+    ObservedCac dReadableStore.from[(Long, Long), FanoutEvent](
+      bu ldStore(store, "fanout tadataStore"),
+      ttl = 10.m nutes,
       maxKeys = 1000,
-      cacheName = "fanoutMetadataStore_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("fanoutMetadataStore_cache"))
+      cac Na  = "fanout tadataStore_cac ",
+      w ndowS ze = 10000L
+    )(statsRece ver.scope("fanout tadataStore_cac "))
   }
 
   /**
-   * PostRanking Feature Store Client
+   * PostRank ng Feature Store Cl ent
    */
-  override def postRankingFeatureStoreClient = {
-    val clientStats = statsReceiver.scope("post_ranking_feature_store_client")
-    val clientConfig =
-      FeatureStoreClientBuilder.getClientConfig(PostRankingFeaturesConfig(), featureStoreUtil)
+  overr de def postRank ngFeatureStoreCl ent = {
+    val cl entStats = statsRece ver.scope("post_rank ng_feature_store_cl ent")
+    val cl entConf g =
+      FeatureStoreCl entBu lder.getCl entConf g(PostRank ngFeaturesConf g(), featureStoreUt l)
 
-    FeatureStoreClientBuilder.getDynamicFeatureStoreClient(clientConfig, clientStats)
+    FeatureStoreCl entBu lder.getDynam cFeatureStoreCl ent(cl entConf g, cl entStats)
   }
 
   /**
-   * Interests lookup store
+   *  nterests lookup store
    */
-  override val interestsWithLookupContextStore = {
-    ObservedCachedReadableStore.from[InterestsLookupRequestWithContext, Interests](
-      buildStore(
-        new InterestsWithLookupContextStore(interestThriftServiceClient, statsReceiver),
-        "InterestsWithLookupContextStore"
+  overr de val  nterestsW hLookupContextStore = {
+    ObservedCac dReadableStore.from[ nterestsLookupRequestW hContext,  nterests](
+      bu ldStore(
+        new  nterestsW hLookupContextStore( nterestThr ftServ ceCl ent, statsRece ver),
+        " nterestsW hLookupContextStore"
       ),
-      ttl = 1.minute,
+      ttl = 1.m nute,
       maxKeys = 1000,
-      cacheName = "interestsWithLookupContextStore_cache",
-      windowSize = 10000L
+      cac Na  = " nterestsW hLookupContextStore_cac ",
+      w ndowS ze = 10000L
     )
   }
 
   /**
-   * OptOutInterestsStore
+   * OptOut nterestsStore
    */
-  override lazy val optOutUserInterestsStore: ReadableStore[Long, Seq[InterestId]] = {
-    buildStore(
-      InterestsOptOutwithLookUpContextStore(interestThriftServiceClient),
-      "InterestsOptOutStore"
+  overr de lazy val optOutUser nterestsStore: ReadableStore[Long, Seq[ nterest d]] = {
+    bu ldStore(
+       nterestsOptOutw hLookUpContextStore( nterestThr ftServ ceCl ent),
+      " nterestsOptOutStore"
     )
   }
 
-  override val topicListing: TopicListing =
-    if (isServiceLocal) {
-      new TopicListingBuilder(statsReceiver.scope("topiclisting"), Some(localConfigRepoPath)).build
+  overr de val top cL st ng: Top cL st ng =
+     f ( sServ ceLocal) {
+      new Top cL st ngBu lder(statsRece ver.scope("top cl st ng"), So (localConf gRepoPath)).bu ld
     } else {
-      new TopicListingBuilder(statsReceiver.scope("topiclisting"), None).build
+      new Top cL st ngBu lder(statsRece ver.scope("top cl st ng"), None).bu ld
     }
 
-  val cachedUttClient = {
-    val DefaultUttCacheConfig = CacheConfigV2(capacity = 100)
-    val uttClientCacheConfigs = uttclient.UttClientCacheConfigsV2(
-      DefaultUttCacheConfig,
-      DefaultUttCacheConfig,
-      DefaultUttCacheConfig,
-      DefaultUttCacheConfig
+  val cac dUttCl ent = {
+    val DefaultUttCac Conf g = Cac Conf gV2(capac y = 100)
+    val uttCl entCac Conf gs = uttcl ent.UttCl entCac Conf gsV2(
+      DefaultUttCac Conf g,
+      DefaultUttCac Conf g,
+      DefaultUttCac Conf g,
+      DefaultUttCac Conf g
     )
-    new CachedUttClientV2(stratoClient, Environment.Prod, uttClientCacheConfigs, statsReceiver)
+    new Cac dUttCl entV2(stratoCl ent, Env ron nt.Prod, uttCl entCac Conf gs, statsRece ver)
   }
 
-  override val uttEntityHydrationStore =
-    new UttEntityHydrationStore(cachedUttClient, statsReceiver, log)
+  overr de val uttEnt yHydrat onStore =
+    new UttEnt yHydrat onStore(cac dUttCl ent, statsRece ver, log)
 
-  private lazy val dbv2PredictionServiceScoreStore: RelevancePushPredictionServiceStore =
-    DeepbirdV2ModelConfig.buildPredictionServiceScoreStore(
-      deepbirdPredictionServiceClient,
-      "deepbirdv2_magicrecs"
+  pr vate lazy val dbv2Pred ct onServ ceScoreStore: RelevancePushPred ct onServ ceStore =
+    Deepb rdV2ModelConf g.bu ldPred ct onServ ceScoreStore(
+      deepb rdPred ct onServ ceCl ent,
+      "deepb rdv2_mag crecs"
     )
 
-  // Customized model to PredictionServiceStoreMap
-  // It is used to specify the predictionServiceStore for the models not in the default dbv2PredictionServiceScoreStore
-  private lazy val modelToPredictionServiceStoreMap: Map[
-    WeightedOpenOrNtabClickModel.ModelNameType,
-    RelevancePushPredictionServiceStore
+  // Custom zed model to Pred ct onServ ceStoreMap
+  //    s used to spec fy t  pred ct onServ ceStore for t  models not  n t  default dbv2Pred ct onServ ceScoreStore
+  pr vate lazy val modelToPred ct onServ ceStoreMap: Map[
+      ghtedOpenOrNtabCl ckModel.ModelNa Type,
+    RelevancePushPred ct onServ ceStore
   ] = Map()
 
-  override lazy val weightedOpenOrNtabClickModelScorer = new PushMLModelScorer(
-    PushMLModel.WeightedOpenOrNtabClickProbability,
-    modelToPredictionServiceStoreMap,
-    dbv2PredictionServiceScoreStore,
-    statsReceiver.scope("weighted_oonc_scoring")
+  overr de lazy val   ghtedOpenOrNtabCl ckModelScorer = new PushMLModelScorer(
+    PushMLModel.  ghtedOpenOrNtabCl ckProbab l y,
+    modelToPred ct onServ ceStoreMap,
+    dbv2Pred ct onServ ceScoreStore,
+    statsRece ver.scope("  ghted_oonc_scor ng")
   )
 
-  override lazy val optoutModelScorer = new PushMLModelScorer(
-    PushMLModel.OptoutProbability,
+  overr de lazy val optoutModelScorer = new PushMLModelScorer(
+    PushMLModel.OptoutProbab l y,
     Map.empty,
-    dbv2PredictionServiceScoreStore,
-    statsReceiver.scope("optout_scoring")
+    dbv2Pred ct onServ ceScoreStore,
+    statsRece ver.scope("optout_scor ng")
   )
 
-  override lazy val filteringModelScorer = new PushMLModelScorer(
-    PushMLModel.FilteringProbability,
+  overr de lazy val f lter ngModelScorer = new PushMLModelScorer(
+    PushMLModel.F lter ngProbab l y,
     Map.empty,
-    dbv2PredictionServiceScoreStore,
-    statsReceiver.scope("filtering_scoring")
+    dbv2Pred ct onServ ceScoreStore,
+    statsRece ver.scope("f lter ng_scor ng")
   )
 
-  private val queryFields: Set[QueryFields] = Set(
-    QueryFields.Profile,
-    QueryFields.Account,
-    QueryFields.Roles,
-    QueryFields.Discoverability,
-    QueryFields.Safety,
-    QueryFields.Takedowns,
-    QueryFields.Labels,
-    QueryFields.Counts,
-    QueryFields.ExtendedProfile
+  pr vate val queryF elds: Set[QueryF elds] = Set(
+    QueryF elds.Prof le,
+    QueryF elds.Account,
+    QueryF elds.Roles,
+    QueryF elds.D scoverab l y,
+    QueryF elds.Safety,
+    QueryF elds.Takedowns,
+    QueryF elds.Labels,
+    QueryF elds.Counts,
+    QueryF elds.ExtendedProf le
   )
 
-  // Setting up safeUserStore
-  override val safeUserStore =
-    // in-memory cache
-    ObservedCachedReadableStore.from[Long, User](
+  // Sett ng up safeUserStore
+  overr de val safeUserStore =
+    //  n- mory cac 
+    ObservedCac dReadableStore.from[Long, User](
       ObservedReadableStore(
-        GizmoduckUserStore.safeStore(
-          client = gizmoduckClient,
-          queryFields = queryFields,
-          safetyLevel = SafetyLevel.FilterNone,
-          statsReceiver = statsReceiver
+        G zmoduckUserStore.safeStore(
+          cl ent = g zmoduckCl ent,
+          queryF elds = queryF elds,
+          safetyLevel = SafetyLevel.F lterNone,
+          statsRece ver = statsRece ver
         )
-      )(statsReceiver.scope("SafeUserStore")),
-      ttl = 1.minute,
-      maxKeys = 5e4.toInt,
-      cacheName = "safeUserStore_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("safeUserStore_cache"))
+      )(statsRece ver.scope("SafeUserStore")),
+      ttl = 1.m nute,
+      maxKeys = 5e4.to nt,
+      cac Na  = "safeUserStore_cac ",
+      w ndowS ze = 10000L
+    )(statsRece ver.scope("safeUserStore_cac "))
 
-  val mobileSdkStore = MobileSdkStore(
-    "frigate_mobile_sdk_version_apollo",
-    "mobile_sdk_versions_scalding",
-    manhattanClientMtlsParams,
+  val mob leSdkStore = Mob leSdkStore(
+    "fr gate_mob le_sdk_vers on_apollo",
+    "mob le_sdk_vers ons_scald ng",
+    manhattanCl entMtlsParams,
     Apollo
   )
 
-  val deviceUserStore = ObservedReadableStore(
-    GizmoduckUserStore(
-      client = gizmoduckClient,
-      queryFields = Set(QueryFields.Devices),
-      context = LookupContext(includeSoftUsers = true),
-      statsReceiver = statsReceiver
+  val dev ceUserStore = ObservedReadableStore(
+    G zmoduckUserStore(
+      cl ent = g zmoduckCl ent,
+      queryF elds = Set(QueryF elds.Dev ces),
+      context = LookupContext( ncludeSoftUsers = true),
+      statsRece ver = statsRece ver
     )
-  )(statsReceiver.scope("devicesUserStore"))
+  )(statsRece ver.scope("dev cesUserStore"))
 
-  override val deviceInfoStore = DeviceInfoStore(
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = ObservedReadableStore(
-        mobileSdkStore
-      )(statsReceiver.scope("uncachedMobileSdkVersionsStore")),
-      cacheClient = pushServiceCacheClient,
-      ttl = 12.hours
+  overr de val dev ce nfoStore = Dev ce nfoStore(
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = ObservedReadableStore(
+        mob leSdkStore
+      )(statsRece ver.scope("uncac dMob leSdkVers onsStore")),
+      cac Cl ent = pushServ ceCac Cl ent,
+      ttl = 12.h s
     )(
-      valueInjection = BinaryScalaCodec(SdkVersionValue),
-      statsReceiver = statsReceiver.scope("MobileSdkVersionsStore"),
-      keyToString = {
-        case SdkVersionKey(Some(userId), Some(clientId)) =>
-          s"DeviceInfoStore/$userId/$clientId"
-        case SdkVersionKey(Some(userId), None) => s"DeviceInfoStore/$userId/_"
-        case SdkVersionKey(None, Some(clientId)) =>
-          s"DeviceInfoStore/_/$clientId"
-        case SdkVersionKey(None, None) => s"DeviceInfoStore/_"
+      value nject on = B naryScalaCodec(SdkVers onValue),
+      statsRece ver = statsRece ver.scope("Mob leSdkVers onsStore"),
+      keyToStr ng = {
+        case SdkVers onKey(So (user d), So (cl ent d)) =>
+          s"Dev ce nfoStore/$user d/$cl ent d"
+        case SdkVers onKey(So (user d), None) => s"Dev ce nfoStore/$user d/_"
+        case SdkVers onKey(None, So (cl ent d)) =>
+          s"Dev ce nfoStore/_/$cl ent d"
+        case SdkVers onKey(None, None) => s"Dev ce nfoStore/_"
       }
     ),
-    deviceUserStore
+    dev ceUserStore
   )
 
-  // Setting up edgeStore
-  override val edgeStore = SocialGraphPredicate.buildEdgeStore(sgsClient)
+  // Sett ng up edgeStore
+  overr de val edgeStore = Soc alGraphPred cate.bu ldEdgeStore(sgsCl ent)
 
-  override val socialGraphServiceProcessStore = SocialGraphServiceProcessStore(edgeStore)
+  overr de val soc alGraphServ ceProcessStore = Soc alGraphServ ceProcessStore(edgeStore)
 
-  def userTweetEntityGraphDest: String
-  def userUserGraphDest: String
-  def lexServiceDest: String
+  def userT etEnt yGraphDest: Str ng
+  def userUserGraphDest: Str ng
+  def lexServ ceDest: Str ng
 
-  // Setting up the history store
-  def frigateHistoryCacheDest: String
+  // Sett ng up t   tory store
+  def fr gate toryCac Dest: Str ng
 
-  val notificationHistoryStore: NotificationHistoryStore = {
+  val not f cat on toryStore: Not f cat on toryStore = {
 
-    val manhattanStackBasedClient = ThriftMux.client
-      .withClientId(notifierThriftClientId)
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .withMutualTls(
-        serviceIdentifier
+    val manhattanStackBasedCl ent = Thr ftMux.cl ent
+      .w hCl ent d(not f erThr ftCl ent d)
+      .w hOpportun st cTls(Opportun st cTls.Requ red)
+      .w hMutualTls(
+        serv ce dent f er
       )
 
-    val manhattanHistoryMethodBuilder = manhattanStackBasedClient
-      .withLabel("manhattan_history_v2")
-      .withRequestTimeout(10.seconds)
-      .withStatsReceiver(statsReceiver)
-      .methodBuilder(Omega.wilyName)
-      .withMaxRetries(3)
+    val manhattan tory thodBu lder = manhattanStackBasedCl ent
+      .w hLabel("manhattan_ tory_v2")
+      .w hRequestT  out(10.seconds)
+      .w hStatsRece ver(statsRece ver)
+      . thodBu lder(O ga.w lyNa )
+      .w hMaxRetr es(3)
 
-    NotificationHistoryStore.build(
-      "frigate_notifier",
-      "frigate_notifications_v2",
-      manhattanHistoryMethodBuilder,
+    Not f cat on toryStore.bu ld(
+      "fr gate_not f er",
+      "fr gate_not f cat ons_v2",
+      manhattan tory thodBu lder,
       maxRetryCount = 3
     )
   }
 
-  val emailNotificationHistoryStore: ReadOnlyHistoryStore = {
-    val client = ManhattanKVClient(
-      appId = "frigate_email_history",
-      dest = "/s/manhattan/omega.native-thrift",
-      mtlsParams = ManhattanKVClientMtlsParams(
-        serviceIdentifier = serviceIdentifier,
-        opportunisticTls = OpportunisticTls.Required
+  val ema lNot f cat on toryStore: ReadOnly toryStore = {
+    val cl ent = ManhattanKVCl ent(
+      app d = "fr gate_ema l_ tory",
+      dest = "/s/manhattan/o ga.nat ve-thr ft",
+      mtlsParams = ManhattanKVCl entMtlsParams(
+        serv ce dent f er = serv ce dent f er,
+        opportun st cTls = Opportun st cTls.Requ red
       )
     )
-    val endpoint = ManhattanKVEndpointBuilder(client)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .statsReceiver(statsReceiver)
-      .build()
+    val endpo nt = ManhattanKVEndpo ntBu lder(cl ent)
+      .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+      .statsRece ver(statsRece ver)
+      .bu ld()
 
-    ReadOnlyHistoryStore(ManhattanKVHistoryStore(endpoint, dataset = "frigate_email_history"))(
-      statsReceiver)
+    ReadOnly toryStore(ManhattanKV toryStore(endpo nt, dataset = "fr gate_ema l_ tory"))(
+      statsRece ver)
   }
 
-  val manhattanKVLoggedOutHistoryStoreEndpoint: ManhattanKVEndpoint = {
-    val mhClient = ManhattanKVClient(
-      "frigate_notification_logged_out_history",
-      Nash.wilyName,
-      manhattanClientMtlsParams)
-    ManhattanKVEndpointBuilder(mhClient)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(5.seconds)
+  val manhattanKVLoggedOut toryStoreEndpo nt: ManhattanKVEndpo nt = {
+    val mhCl ent = ManhattanKVCl ent(
+      "fr gate_not f cat on_logged_out_ tory",
+      Nash.w lyNa ,
+      manhattanCl entMtlsParams)
+    ManhattanKVEndpo ntBu lder(mhCl ent)
+      .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+      .defaultMaxT  out(5.seconds)
       .maxRetryCount(3)
-      .statsReceiver(statsReceiver)
-      .build()
+      .statsRece ver(statsRece ver)
+      .bu ld()
   }
 
-  val manhattanKVNtabHistoryStoreEndpoint: ManhattanKVEndpoint = {
-    val mhClient = ManhattanKVClient("frigate_ntab", Omega.wilyName, manhattanClientMtlsParams)
-    ManhattanKVEndpointBuilder(mhClient)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(5.seconds)
+  val manhattanKVNtab toryStoreEndpo nt: ManhattanKVEndpo nt = {
+    val mhCl ent = ManhattanKVCl ent("fr gate_ntab", O ga.w lyNa , manhattanCl entMtlsParams)
+    ManhattanKVEndpo ntBu lder(mhCl ent)
+      .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+      .defaultMaxT  out(5.seconds)
       .maxRetryCount(3)
-      .statsReceiver(statsReceiver)
-      .build()
+      .statsRece ver(statsRece ver)
+      .bu ld()
   }
 
-  val nTabHistoryStore: ReadableWritableStore[(Long, String), GenericNotificationOverrideKey] = {
-    ObservedReadableWritableStore(
-      NTabHistoryStore(manhattanKVNtabHistoryStoreEndpoint, "frigate_ntab_generic_notif_history")
-    )(statsReceiver.scope("NTabHistoryStore"))
+  val nTab toryStore: ReadableWr ableStore[(Long, Str ng), Gener cNot f cat onOverr deKey] = {
+    ObservedReadableWr ableStore(
+      NTab toryStore(manhattanKVNtab toryStoreEndpo nt, "fr gate_ntab_gener c_not f_ tory")
+    )(statsRece ver.scope("NTab toryStore"))
   }
 
-  override lazy val ocfFatigueStore: ReadableStore[OCFHistoryStoreKey, FatigueFlowEnrollment] =
-    new OCFPromptHistoryStore(
-      manhattanAppId = "frigate_pushservice_ocf_fatigue_store",
-      dataset = "fatigue_v1",
-      manhattanClientMtlsParams
+  overr de lazy val ocfFat gueStore: ReadableStore[OCF toryStoreKey, Fat gueFlowEnroll nt] =
+    new OCFPrompt toryStore(
+      manhattanApp d = "fr gate_pushserv ce_ocf_fat gue_store",
+      dataset = "fat gue_v1",
+      manhattanCl entMtlsParams
     )
 
-  def historyStore: PushServiceHistoryStore
+  def  toryStore: PushServ ce toryStore
 
-  def emailHistoryStore: PushServiceHistoryStore
+  def ema l toryStore: PushServ ce toryStore
 
-  def loggedOutHistoryStore: PushServiceHistoryStore
+  def loggedOut toryStore: PushServ ce toryStore
 
-  override val hydratedLabeledPushRecsStore: ReadableStore[UserHistoryKey, UserHistoryValue] = {
-    val labeledHistoryMemcacheClient = {
-      MemcacheStore.memcachedClient(
-        name = ClientName("history-memcache"),
-        dest = ZkEndPoint(frigateHistoryCacheDest),
-        statsReceiver = statsReceiver,
-        timeout = 2.seconds,
-        serviceIdentifier = serviceIdentifier
+  overr de val hydratedLabeledPushRecsStore: ReadableStore[User toryKey, User toryValue] = {
+    val labeled tory mcac Cl ent = {
+       mcac Store. mcac dCl ent(
+        na  = Cl entNa (" tory- mcac "),
+        dest = ZkEndPo nt(fr gate toryCac Dest),
+        statsRece ver = statsRece ver,
+        t  out = 2.seconds,
+        serv ce dent f er = serv ce dent f er
       )
     }
 
-    implicit val keyCodec = CompactScalaCodec(UserHistoryKey)
-    implicit val valueCodec = CompactScalaCodec(UserHistoryValue)
-    val dataset: Dataset[UserHistoryKey, UserHistoryValue] =
+     mpl c  val keyCodec = CompactScalaCodec(User toryKey)
+     mpl c  val valueCodec = CompactScalaCodec(User toryValue)
+    val dataset: Dataset[User toryKey, User toryValue] =
       Dataset(
         "",
-        "frigate_data_pipeline_pushservice",
+        "fr gate_data_p pel ne_pushserv ce",
         "labeled_push_recs_aggregated_hydrated",
-        Athena
+        At na
       )
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = ObservedReadableStore(buildManhattanStore(dataset))(
-        statsReceiver.scope("UncachedHydratedLabeledPushRecsStore")
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = ObservedReadableStore(bu ldManhattanStore(dataset))(
+        statsRece ver.scope("Uncac dHydratedLabeledPushRecsStore")
       ),
-      cacheClient = labeledHistoryMemcacheClient,
-      ttl = 6.hours
+      cac Cl ent = labeled tory mcac Cl ent,
+      ttl = 6.h s
     )(
-      valueInjection = valueCodec,
-      statsReceiver = statsReceiver.scope("HydratedLabeledPushRecsStore"),
-      keyToString = {
-        case UserHistoryKey.UserId(userId) => s"HLPRS/$userId"
+      value nject on = valueCodec,
+      statsRece ver = statsRece ver.scope("HydratedLabeledPushRecsStore"),
+      keyToStr ng = {
+        case User toryKey.User d(user d) => s"HLPRS/$user d"
         case unknownKey =>
-          throw new IllegalArgumentException(s"Unknown userHistoryStore cache key $unknownKey")
+          throw new  llegalArgu ntExcept on(s"Unknown user toryStore cac  key $unknownKey")
       }
     )
   }
 
-  override val realTimeClientEventStore: RealTimeClientEventStore = {
-    val client = ManhattanKVClient(
-      "frigate_eventstream",
-      "/s/manhattan/omega.native-thrift",
-      manhattanClientMtlsParams
+  overr de val realT  Cl entEventStore: RealT  Cl entEventStore = {
+    val cl ent = ManhattanKVCl ent(
+      "fr gate_eventstream",
+      "/s/manhattan/o ga.nat ve-thr ft",
+      manhattanCl entMtlsParams
     )
-    val endpoint =
-      ManhattanKVEndpointBuilder(client)
-        .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-        .defaultMaxTimeout(3.seconds)
-        .statsReceiver(statsReceiver)
-        .build()
+    val endpo nt =
+      ManhattanKVEndpo ntBu lder(cl ent)
+        .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+        .defaultMaxT  out(3.seconds)
+        .statsRece ver(statsRece ver)
+        .bu ld()
 
-    ManhattanRealTimeClientEventStore(endpoint, "realtime_client_events", statsReceiver, None)
+    ManhattanRealT  Cl entEventStore(endpo nt, "realt  _cl ent_events", statsRece ver, None)
   }
 
-  override val onlineUserHistoryStore: ReadableStore[OnlineUserHistoryKey, UserHistoryValue] = {
-    OnlineUserHistoryStore(realTimeClientEventStore)
+  overr de val onl neUser toryStore: ReadableStore[Onl neUser toryKey, User toryValue] = {
+    Onl neUser toryStore(realT  Cl entEventStore)
   }
 
-  override val userMediaRepresentationStore = UserMediaRepresentationStore(
-    "user_media_representation",
-    "user_media_representation_dataset",
-    manhattanClientMtlsParams
+  overr de val user d aRepresentat onStore = User d aRepresentat onStore(
+    "user_ d a_representat on",
+    "user_ d a_representat on_dataset",
+    manhattanCl entMtlsParams
   )
 
-  override val producerMediaRepresentationStore = ObservedMemcachedReadableStore.fromCacheClient(
-    backingStore = UserMediaRepresentationStore(
-      "user_media_representation",
-      "producer_media_representation_dataset",
-      manhattanClientMtlsParams
-    )(statsReceiver.scope("UncachedProducerMediaRepStore")),
-    cacheClient = pushServiceCacheClient,
-    ttl = 4.hours
+  overr de val producer d aRepresentat onStore = Observed mcac dReadableStore.fromCac Cl ent(
+    back ngStore = User d aRepresentat onStore(
+      "user_ d a_representat on",
+      "producer_ d a_representat on_dataset",
+      manhattanCl entMtlsParams
+    )(statsRece ver.scope("Uncac dProducer d aRepStore")),
+    cac Cl ent = pushServ ceCac Cl ent,
+    ttl = 4.h s
   )(
-    valueInjection = BinaryScalaCodec(UserMediaRepresentation),
-    keyToString = { k: Long => s"ProducerMediaRepStore/$k" },
-    statsReceiver.scope("ProducerMediaRepStore")
+    value nject on = B naryScalaCodec(User d aRepresentat on),
+    keyToStr ng = { k: Long => s"Producer d aRepStore/$k" },
+    statsRece ver.scope("Producer d aRepStore")
   )
 
-  override val mrUserStatePredictionStore = {
-    StratoFetchableStore.withUnitView[Long, MRUserHmmState](
-      stratoClient,
-      "frigate/magicrecs/mrUserStatePrediction.User")
+  overr de val mrUserStatePred ct onStore = {
+    StratoFetchableStore.w hUn V ew[Long, MRUserHmmState](
+      stratoCl ent,
+      "fr gate/mag crecs/mrUserStatePred ct on.User")
   }
 
-  override val userHTLLastVisitStore =
-    UserHTLLastVisitReadableStore(
-      "pushservice_htl_user_session",
-      "tls_user_session_store",
-      statsReceiver.scope("userHTLLastVisitStore"),
-      manhattanClientMtlsParams
+  overr de val userHTLLastV s Store =
+    UserHTLLastV s ReadableStore(
+      "pushserv ce_htl_user_sess on",
+      "tls_user_sess on_store",
+      statsRece ver.scope("userHTLLastV s Store"),
+      manhattanCl entMtlsParams
     )
 
-  val crMixerClient: CrMixer.MethodPerEndpoint = new CrMixer.FinagledClient(
-    readOnlyThriftService(
-      "cr-mixer",
-      "/s/cr-mixer/cr-mixer-plus",
-      statsReceiver,
-      pushserviceThriftClientId,
-      requestTimeout = 5.seconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val crM xerCl ent: CrM xer. thodPerEndpo nt = new CrM xer.F nagledCl ent(
+    readOnlyThr ftServ ce(
+      "cr-m xer",
+      "/s/cr-m xer/cr-m xer-plus",
+      statsRece ver,
+      pushserv ceThr ftCl ent d,
+      requestT  out = 5.seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     ),
-    clientParam = RichClientParam(serviceName = "cr-mixer")
+    cl entParam = R chCl entParam(serv ceNa  = "cr-m xer")
   )
 
-  val crMixerStore = CrMixerTweetStore(crMixerClient)(statsReceiver.scope("CrMixerTweetStore"))
+  val crM xerStore = CrM xerT etStore(crM xerCl ent)(statsRece ver.scope("CrM xerT etStore"))
 
-  val contentMixerClient: ContentMixer.MethodPerEndpoint = new ContentMixer.FinagledClient(
-    readOnlyThriftService(
-      "content-mixer",
-      "/s/corgi-shared/content-mixer",
-      statsReceiver,
-      pushserviceThriftClientId,
-      requestTimeout = 5.seconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val contentM xerCl ent: ContentM xer. thodPerEndpo nt = new ContentM xer.F nagledCl ent(
+    readOnlyThr ftServ ce(
+      "content-m xer",
+      "/s/corg -shared/content-m xer",
+      statsRece ver,
+      pushserv ceThr ftCl ent d,
+      requestT  out = 5.seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     ),
-    clientParam = RichClientParam(serviceName = "content-mixer")
+    cl entParam = R chCl entParam(serv ceNa  = "content-m xer")
   )
 
-  val exploreRankerClient: ExploreRanker.MethodPerEndpoint =
-    new ExploreRanker.FinagledClient(
-      readOnlyThriftService(
+  val exploreRankerCl ent: ExploreRanker. thodPerEndpo nt =
+    new ExploreRanker.F nagledCl ent(
+      readOnlyThr ftServ ce(
         "explore-ranker",
         "/s/explore-ranker/explore-ranker",
-        statsReceiver,
-        pushserviceThriftClientId,
-        requestTimeout = 5.seconds,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+        statsRece ver,
+        pushserv ceThr ftCl ent d,
+        requestT  out = 5.seconds,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       ),
-      clientParam = RichClientParam(serviceName = "explore-ranker")
+      cl entParam = R chCl entParam(serv ceNa  = "explore-ranker")
     )
 
-  val contentMixerStore = {
-    ObservedReadableStore(ContentMixerStore(contentMixerClient))(
-      statsReceiver.scope("ContentMixerStore"))
+  val contentM xerStore = {
+    ObservedReadableStore(ContentM xerStore(contentM xerCl ent))(
+      statsRece ver.scope("ContentM xerStore"))
   }
 
   val exploreRankerStore = {
-    ObservedReadableStore(ExploreRankerStore(exploreRankerClient))(
-      statsReceiver.scope("ExploreRankerStore")
+    ObservedReadableStore(ExploreRankerStore(exploreRankerCl ent))(
+      statsRece ver.scope("ExploreRankerStore")
     )
   }
 
-  val gizmoduckUtcOffsetStore = ObservedReadableStore(
-    GizmoduckUserUtcOffsetStore.fromUserStore(safeUserStore)
-  )(statsReceiver.scope("GizmoUserUtcOffsetStore"))
+  val g zmoduckUtcOffsetStore = ObservedReadableStore(
+    G zmoduckUserUtcOffsetStore.fromUserStore(safeUserStore)
+  )(statsRece ver.scope("G zmoUserUtcOffsetStore"))
 
-  override val userUtcOffsetStore =
+  overr de val userUtcOffsetStore =
     UtcOffsetStore
-      .makeMemcachedUtcOffsetStore(
-        gizmoduckUtcOffsetStore,
-        pushServiceCoreSvcsCacheClient,
+      .make mcac dUtcOffsetStore(
+        g zmoduckUtcOffsetStore,
+        pushServ ceCoreSvcsCac Cl ent,
         ReadableStore.empty,
-        manhattanStarbuckAppId,
-        manhattanClientMtlsParams
-      )(statsReceiver)
-      .mapValues(Duration.fromSeconds)
+        manhattanStarbuckApp d,
+        manhattanCl entMtlsParams
+      )(statsRece ver)
+      .mapValues(Durat on.fromSeconds)
 
-  override val cachedTweetyPieStoreV2 = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        safetyLevel = Some(SafetyLevel.MagicRecsV2),
-        includeRetweetCount = true,
-        includeReplyCount = true,
-        includeFavoriteCount = true,
-        includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+  overr de val cac dT etyP eStoreV2 = {
+    val getT etOpt ons = So (
+      GetT etOpt ons(
+        safetyLevel = So (SafetyLevel.Mag cRecsV2),
+         ncludeRet etCount = true,
+         ncludeReplyCount = true,
+         ncludeFavor eCount = true,
+         ncludeQuotedT et = true,
+        add  onalF eld ds = Seq(V s bleTextRangeF eld. d)
       )
     )
-    buildCachedTweetyPieStore(getTweetOptions, "tp_v2")
+    bu ldCac dT etyP eStore(getT etOpt ons, "tp_v2")
   }
 
-  override val cachedTweetyPieStoreV2NoVF = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        safetyLevel = Some(SafetyLevel.FilterDefault),
-        includeRetweetCount = true,
-        includeReplyCount = true,
-        includeFavoriteCount = true,
-        includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id),
+  overr de val cac dT etyP eStoreV2NoVF = {
+    val getT etOpt ons = So (
+      GetT etOpt ons(
+        safetyLevel = So (SafetyLevel.F lterDefault),
+         ncludeRet etCount = true,
+         ncludeReplyCount = true,
+         ncludeFavor eCount = true,
+         ncludeQuotedT et = true,
+        add  onalF eld ds = Seq(V s bleTextRangeF eld. d),
       )
     )
-    buildCachedTweetyPieStore(getTweetOptions, "tp_v2_noVF")
+    bu ldCac dT etyP eStore(getT etOpt ons, "tp_v2_noVF")
   }
 
-  override val safeCachedTweetyPieStoreV2 = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        safetyLevel = Some(SafetyLevel.MagicRecsAggressiveV2),
-        includeRetweetCount = true,
-        includeReplyCount = true,
-        includeFavoriteCount = true,
-        includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+  overr de val safeCac dT etyP eStoreV2 = {
+    val getT etOpt ons = So (
+      GetT etOpt ons(
+        safetyLevel = So (SafetyLevel.Mag cRecsAggress veV2),
+         ncludeRet etCount = true,
+         ncludeReplyCount = true,
+         ncludeFavor eCount = true,
+         ncludeQuotedT et = true,
+        add  onalF eld ds = Seq(V s bleTextRangeF eld. d)
       )
     )
-    buildCachedTweetyPieStore(getTweetOptions, "sftp_v2")
+    bu ldCac dT etyP eStore(getT etOpt ons, "sftp_v2")
   }
 
-  override val userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult] = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        safetyLevel = Some(SafetyLevel.MagicRecsV2),
-        includeRetweetCount = true,
-        includeReplyCount = true,
-        includeFavoriteCount = true,
-        includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+  overr de val userT etT etyP eStore: ReadableStore[UserT et, T etyP eResult] = {
+    val getT etOpt ons = So (
+      GetT etOpt ons(
+        safetyLevel = So (SafetyLevel.Mag cRecsV2),
+         ncludeRet etCount = true,
+         ncludeReplyCount = true,
+         ncludeFavor eCount = true,
+         ncludeQuotedT et = true,
+        add  onalF eld ds = Seq(V s bleTextRangeF eld. d)
       )
     )
-    TweetyPieStore.buildUserTweetStore(
-      client = tweetyPieClient,
-      options = getTweetOptions
-    )
-  }
-
-  override val safeUserTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult] = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        safetyLevel = Some(SafetyLevel.MagicRecsAggressiveV2),
-        includeRetweetCount = true,
-        includeReplyCount = true,
-        includeFavoriteCount = true,
-        includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
-      )
-    )
-    TweetyPieStore.buildUserTweetStore(
-      client = tweetyPieClient,
-      options = getTweetOptions
+    T etyP eStore.bu ldUserT etStore(
+      cl ent = t etyP eCl ent,
+      opt ons = getT etOpt ons
     )
   }
 
-  override val tweetContentFeatureCacheStore: ReadableStore[Long, ThriftDataRecord] = {
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = TweetContentFeatureReadableStore(stratoClient),
-      cacheClient = poptartImpressionsCacheClient,
-      ttl = 12.hours
+  overr de val safeUserT etT etyP eStore: ReadableStore[UserT et, T etyP eResult] = {
+    val getT etOpt ons = So (
+      GetT etOpt ons(
+        safetyLevel = So (SafetyLevel.Mag cRecsAggress veV2),
+         ncludeRet etCount = true,
+         ncludeReplyCount = true,
+         ncludeFavor eCount = true,
+         ncludeQuotedT et = true,
+        add  onalF eld ds = Seq(V s bleTextRangeF eld. d)
+      )
+    )
+    T etyP eStore.bu ldUserT etStore(
+      cl ent = t etyP eCl ent,
+      opt ons = getT etOpt ons
+    )
+  }
+
+  overr de val t etContentFeatureCac Store: ReadableStore[Long, Thr ftDataRecord] = {
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = T etContentFeatureReadableStore(stratoCl ent),
+      cac Cl ent = poptart mpress onsCac Cl ent,
+      ttl = 12.h s
     )(
-      valueInjection = BinaryScalaCodec(ThriftDataRecord),
-      statsReceiver = statsReceiver.scope("TweetContentFeaturesCacheStore"),
-      keyToString = { k: Long => s"tcf/$k" }
+      value nject on = B naryScalaCodec(Thr ftDataRecord),
+      statsRece ver = statsRece ver.scope("T etContentFeaturesCac Store"),
+      keyToStr ng = { k: Long => s"tcf/$k" }
     )
   }
 
-  lazy val tweetTranslationStore: ReadableStore[
-    TweetTranslationStore.Key,
-    TweetTranslationStore.Value
+  lazy val t etTranslat onStore: ReadableStore[
+    T etTranslat onStore.Key,
+    T etTranslat onStore.Value
   ] = {
-    val isTweetTranslatableStore =
+    val  sT etTranslatableStore =
       StratoFetchableStore
-        .withUnitView[IsTweetTranslatableClientColumn.Key, Boolean](
-          fetcher = new IsTweetTranslatableClientColumn(stratoClient).fetcher
+        .w hUn V ew[ sT etTranslatableCl entColumn.Key, Boolean](
+          fetc r = new  sT etTranslatableCl entColumn(stratoCl ent).fetc r
         )
 
-    val translateTweetStore =
+    val translateT etStore =
       StratoFetchableStore
-        .withUnitView[MachineTranslateTweetClientColumn.Key, MachineTranslationResponse](
-          fetcher = new MachineTranslateTweetClientColumn(stratoClient).fetcher
+        .w hUn V ew[Mach neTranslateT etCl entColumn.Key, Mach neTranslat onResponse](
+          fetc r = new Mach neTranslateT etCl entColumn(stratoCl ent).fetc r
         )
 
     ObservedReadableStore(
-      TweetTranslationStore(translateTweetStore, isTweetTranslatableStore, statsReceiver)
-    )(statsReceiver.scope("tweetTranslationStore"))
+      T etTranslat onStore(translateT etStore,  sT etTranslatableStore, statsRece ver)
+    )(statsRece ver.scope("t etTranslat onStore"))
   }
 
-  val scarecrowClient = new ScarecrowService.FinagledClient(
-    readOnlyThriftService(
+  val scarecrowCl ent = new ScarecrowServ ce.F nagledCl ent(
+    readOnlyThr ftServ ce(
       "",
       "/s/abuse/scarecrow",
-      statsReceiver,
-      notifierThriftClientId,
-      requestTimeout = 5.second,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+      statsRece ver,
+      not f erThr ftCl ent d,
+      requestT  out = 5.second,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     ),
-    clientParam = RichClientParam(serviceName = "")
+    cl entParam = R chCl entParam(serv ceNa  = "")
   )
 
-  // Setting up scarecrow store
-  override val scarecrowCheckEventStore = {
-    ScarecrowCheckEventStore(scarecrowClient)
+  // Sett ng up scarecrow store
+  overr de val scarecrowC ckEventStore = {
+    ScarecrowC ckEventStore(scarecrowCl ent)
   }
 
-  // setting up the perspective store
-  override val userTweetPerspectiveStore = {
-    val service = new DynamicRequestMeterFilter(
-      tunableMap(PushServiceTunableKeys.TweetPerspectiveStoreQpsLimit),
-      RateLimiterGenerator.asTuple(_, shardParams.numShards, 40),
-      PushQPSLimitConstants.PerspectiveStoreQPS)(timer)
-      .andThen(
-        readOnlyThriftService(
-          "tweetypie_perspective_service",
-          "/s/tweetypie/tweetypie",
-          statsReceiver,
-          notifierThriftClientId,
-          mTLSServiceIdentifier = Some(serviceIdentifier)
+  // sett ng up t  perspect ve store
+  overr de val userT etPerspect veStore = {
+    val serv ce = new Dynam cRequest terF lter(
+      tunableMap(PushServ ceTunableKeys.T etPerspect veStoreQpsL m ),
+      RateL m erGenerator.asTuple(_, shardParams.numShards, 40),
+      PushQPSL m Constants.Perspect veStoreQPS)(t  r)
+      .andT n(
+        readOnlyThr ftServ ce(
+          "t etyp e_perspect ve_serv ce",
+          "/s/t etyp e/t etyp e",
+          statsRece ver,
+          not f erThr ftCl ent d,
+          mTLSServ ce dent f er = So (serv ce dent f er)
         )
       )
 
-    val client = new TweetService.FinagledClient(
-      service,
-      clientParam = RichClientParam(serviceName = "tweetypie_perspective_client"))
+    val cl ent = new T etServ ce.F nagledCl ent(
+      serv ce,
+      cl entParam = R chCl entParam(serv ceNa  = "t etyp e_perspect ve_cl ent"))
     ObservedReadableStore(
-      PerspectiveReadableStore(client)
-    )(statsReceiver.scope("TweetPerspectiveStore"))
+      Perspect veReadableStore(cl ent)
+    )(statsRece ver.scope("T etPerspect veStore"))
   }
 
-  //user country code store, used in RecsWithheldContentPredicate - wrapped by memcache based cache
-  override val userCountryStore =
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = ObservedReadableStore(
-        UserCountryStore(metastoreLocationAppId, manhattanClientMtlsParams)
-      )(statsReceiver.scope("userCountryStore")),
-      cacheClient = pushServiceCacheClient,
-      ttl = 12.hours
+  //user country code store, used  n RecsW h ldContentPred cate - wrapped by  mcac  based cac 
+  overr de val userCountryStore =
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = ObservedReadableStore(
+        UserCountryStore( tastoreLocat onApp d, manhattanCl entMtlsParams)
+      )(statsRece ver.scope("userCountryStore")),
+      cac Cl ent = pushServ ceCac Cl ent,
+      ttl = 12.h s
     )(
-      valueInjection = BinaryScalaCodec(Location),
-      statsReceiver = statsReceiver.scope("UserCountryStore"),
-      keyToString = { k: Long => s"UserCountryStore/$k" }
+      value nject on = B naryScalaCodec(Locat on),
+      statsRece ver = statsRece ver.scope("UserCountryStore"),
+      keyToStr ng = { k: Long => s"UserCountryStore/$k" }
     )
 
-  override val audioSpaceParticipantsStore: ReadableStore[String, Participants] = {
+  overr de val aud oSpacePart c pantsStore: ReadableStore[Str ng, Part c pants] = {
     val store = StratoFetchableStore
       .DefaultStratoFetchableStore(
-        fetcher = new ParticipantsOnAudioSpaceClientColumn(stratoClient).fetcher
-      ).composeKeyMapping[String](broadcastId =>
-        (broadcastId, AudioSpacesLookupContext(forUserId = None)))
+        fetc r = new Part c pantsOnAud oSpaceCl entColumn(stratoCl ent).fetc r
+      ).composeKeyMapp ng[Str ng](broadcast d =>
+        (broadcast d, Aud oSpacesLookupContext(forUser d = None)))
 
-    ObservedCachedReadableStore
+    ObservedCac dReadableStore
       .from(
-        store = buildStore(store, "AudioSpaceParticipantsStore"),
+        store = bu ldStore(store, "Aud oSpacePart c pantsStore"),
         ttl = 20.seconds,
         maxKeys = 200,
-        cacheName = "AudioSpaceParticipantsStore",
-        windowSize = 200
+        cac Na  = "Aud oSpacePart c pantsStore",
+        w ndowS ze = 200
       )
 
   }
 
-  override val topicSocialProofServiceStore: ReadableStore[
-    TopicSocialProofRequest,
-    TopicSocialProofResponse
+  overr de val top cSoc alProofServ ceStore: ReadableStore[
+    Top cSoc alProofRequest,
+    Top cSoc alProofResponse
   ] = {
-    StratoFetchableStore.withUnitView[TopicSocialProofRequest, TopicSocialProofResponse](
-      stratoClient,
-      "topic-signals/tsp/topic-social-proof")
+    StratoFetchableStore.w hUn V ew[Top cSoc alProofRequest, Top cSoc alProofResponse](
+      stratoCl ent,
+      "top c-s gnals/tsp/top c-soc al-proof")
   }
 
-  override val spaceDeviceFollowStore: ReadableStore[SourceDestUserRequest, Boolean] = {
-    StratoFetchableStore.withUnitView(
-      fetcher = new SpaceDeviceFollowingClientColumn(stratoClient).fetcher
+  overr de val spaceDev ceFollowStore: ReadableStore[S ceDestUserRequest, Boolean] = {
+    StratoFetchableStore.w hUn V ew(
+      fetc r = new SpaceDev ceFollow ngCl entColumn(stratoCl ent).fetc r
     )
   }
 
-  override val audioSpaceStore: ReadableStore[String, AudioSpace] = {
+  overr de val aud oSpaceStore: ReadableStore[Str ng, Aud oSpace] = {
     val store = StratoFetchableStore
       .DefaultStratoFetchableStore(
-        fetcher = new CoreOnAudioSpaceClientColumn(stratoClient).fetcher
-      ).composeKeyMapping[String] { broadcastId =>
-        (broadcastId, AudioSpacesLookupContext(forUserId = None))
+        fetc r = new CoreOnAud oSpaceCl entColumn(stratoCl ent).fetc r
+      ).composeKeyMapp ng[Str ng] { broadcast d =>
+        (broadcast d, Aud oSpacesLookupContext(forUser d = None))
       }
 
-    ObservedCachedReadableStore
+    ObservedCac dReadableStore
       .from(
-        store = buildStore(store, "AudioSpaceVisibilityStore"),
-        ttl = 1.minute,
+        store = bu ldStore(store, "Aud oSpaceV s b l yStore"),
+        ttl = 1.m nute,
         maxKeys = 5000,
-        cacheName = "AudioSpaceVisibilityStore",
-        windowSize = 10000L)
+        cac Na  = "Aud oSpaceV s b l yStore",
+        w ndowS ze = 10000L)
   }
 
-  override val userLanguagesStore = UserLanguagesStore(
-    manhattanMetastoreAppId,
-    manhattanClientMtlsParams,
-    statsReceiver.scope("user_languages_store")
+  overr de val userLanguagesStore = UserLanguagesStore(
+    manhattan tastoreApp d,
+    manhattanCl entMtlsParams,
+    statsRece ver.scope("user_languages_store")
   )
 
-  val tflockClient: TFlockClient = new TFlockClient(
-    new FlockDB.FinagledClient(
-      readOnlyThriftService(
-        "tflockClient",
+  val tflockCl ent: TFlockCl ent = new TFlockCl ent(
+    new FlockDB.F nagledCl ent(
+      readOnlyThr ftServ ce(
+        "tflockCl ent",
         "/s/tflock/tflock",
-        statsReceiver,
-        pushserviceThriftClientId,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+        statsRece ver,
+        pushserv ceThr ftCl ent d,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       ),
-      serviceName = "tflock",
-      stats = statsReceiver
+      serv ceNa  = "tflock",
+      stats = statsRece ver
     ),
-    defaultPageSize = 1000
+    defaultPageS ze = 1000
   )
 
-  val rawFlockClient = ThriftMux.client
-    .withClientId(pushserviceThriftClientId)
-    .withMutualTls(serviceIdentifier)
-    .build[FlockDB.MethodPerEndpoint]("/s/flock/flock")
+  val rawFlockCl ent = Thr ftMux.cl ent
+    .w hCl ent d(pushserv ceThr ftCl ent d)
+    .w hMutualTls(serv ce dent f er)
+    .bu ld[FlockDB. thodPerEndpo nt]("/s/flock/flock")
 
-  val flockClient: FlockClient = new FlockClient(
-    rawFlockClient,
-    defaultPageSize = 100
+  val flockCl ent: FlockCl ent = new FlockCl ent(
+    rawFlockCl ent,
+    defaultPageS ze = 100
   )
 
-  override val recentFollowsStore: FlockFollowStore = {
-    val dStats = statsReceiver.scope("FlockRecentFollowsStore")
-    FlockFollowStore(flockClient, dStats)
+  overr de val recentFollowsStore: FlockFollowStore = {
+    val dStats = statsRece ver.scope("FlockRecentFollowsStore")
+    FlockFollowStore(flockCl ent, dStats)
   }
 
-  def notificationServiceClient: NotificationService$FinagleClient
+  def not f cat onServ ceCl ent: Not f cat onServ ce$F nagleCl ent
 
-  def notificationServiceSend(
+  def not f cat onServ ceSend(
     target: Target,
-    request: CreateGenericNotificationRequest
-  ): Future[CreateGenericNotificationResponse]
+    request: CreateGener cNot f cat onRequest
+  ): Future[CreateGener cNot f cat onResponse]
 
-  def notificationServiceDelete(
-    request: DeleteGenericNotificationRequest
-  ): Future[Unit]
+  def not f cat onServ ceDelete(
+    request: DeleteGener cNot f cat onRequest
+  ): Future[Un ]
 
-  def notificationServiceDeleteTimeline(
-    request: DeleteCurrentTimelineForUserRequest
-  ): Future[Unit]
+  def not f cat onServ ceDeleteT  l ne(
+    request: DeleteCurrentT  l neForUserRequest
+  ): Future[Un ]
 
-  override val notificationServiceSender: ReadableStore[
-    NotificationServiceRequest,
-    CreateGenericNotificationResponse
+  overr de val not f cat onServ ceSender: ReadableStore[
+    Not f cat onServ ceRequest,
+    CreateGener cNot f cat onResponse
   ] = {
-    new NotificationServiceSender(
-      notificationServiceSend,
-      PushParams.EnableWritesToNotificationServiceParam,
-      PushParams.EnableWritesToNotificationServiceForAllEmployeesParam,
-      PushParams.EnableWritesToNotificationServiceForEveryoneParam
+    new Not f cat onServ ceSender(
+      not f cat onServ ceSend,
+      PushParams.EnableWr esToNot f cat onServ ceParam,
+      PushParams.EnableWr esToNot f cat onServ ceForAllEmployeesParam,
+      PushParams.EnableWr esToNot f cat onServ ceForEveryoneParam
     )
   }
 
-  val eventRecosServiceClient = {
-    val dest = "/s/events-recos/events-recos-service"
-    new EventsRecosService.FinagledClient(
-      readOnlyThriftService(
-        "EventRecosService",
+  val eventRecosServ ceCl ent = {
+    val dest = "/s/events-recos/events-recos-serv ce"
+    new EventsRecosServ ce.F nagledCl ent(
+      readOnlyThr ftServ ce(
+        "EventRecosServ ce",
         dest,
-        statsReceiver,
-        pushserviceThriftClientId,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+        statsRece ver,
+        pushserv ceThr ftCl ent d,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       ),
-      clientParam = RichClientParam(serviceName = "EventRecosService")
+      cl entParam = R chCl entParam(serv ceNa  = "EventRecosServ ce")
     )
   }
 
-  lazy val recommendedTrendsCandidateSource = RecommendedTrendsCandidateSource(
-    TrendsRecommendationStore(eventRecosServiceClient, statsReceiver))
+  lazy val recom ndedTrendsCand dateS ce = Recom ndedTrendsCand dateS ce(
+    TrendsRecom ndat onStore(eventRecosServ ceCl ent, statsRece ver))
 
-  override val softUserGeoLocationStore: ReadableStore[Long, GeoLocation] =
-    StratoFetchableStore.withUnitView[Long, GeoLocation](fetcher =
-      new FrequentSoftUserLocationClientColumn(stratoClient).fetcher)
+  overr de val softUserGeoLocat onStore: ReadableStore[Long, GeoLocat on] =
+    StratoFetchableStore.w hUn V ew[Long, GeoLocat on](fetc r =
+      new FrequentSoftUserLocat onCl entColumn(stratoCl ent).fetc r)
 
-  lazy val candidateSourceGenerator = new PushCandidateSourceGenerator(
-    earlybirdCandidateSource,
-    userTweetEntityGraphCandidates,
-    cachedTweetyPieStoreV2,
-    safeCachedTweetyPieStoreV2,
-    userTweetTweetyPieStore,
-    safeUserTweetTweetyPieStore,
-    cachedTweetyPieStoreV2NoVF,
+  lazy val cand dateS ceGenerator = new PushCand dateS ceGenerator(
+    earlyb rdCand dateS ce,
+    userT etEnt yGraphCand dates,
+    cac dT etyP eStoreV2,
+    safeCac dT etyP eStoreV2,
+    userT etT etyP eStore,
+    safeUserT etT etyP eStore,
+    cac dT etyP eStoreV2NoVF,
     edgeStore,
-    interestsWithLookupContextStore,
-    uttEntityHydrationStore,
+     nterestsW hLookupContextStore,
+    uttEnt yHydrat onStore,
     geoDuckV2Store,
-    topTweetsByGeoStore,
-    topTweetsByGeoV2VersionedStore,
-    ruxTweetImpressionsStore,
-    recommendedTrendsCandidateSource,
-    recentTweetsByAuthorsStore,
-    topicSocialProofServiceStore,
-    crMixerStore,
-    contentMixerStore,
+    topT etsByGeoStore,
+    topT etsByGeoV2Vers onedStore,
+    ruxT et mpress onsStore,
+    recom ndedTrendsCand dateS ce,
+    recentT etsByAuthorsStore,
+    top cSoc alProofServ ceStore,
+    crM xerStore,
+    contentM xerStore,
     exploreRankerStore,
-    softUserGeoLocationStore,
-    tripTweetCandidateStore,
-    popGeoLists,
-    idsStore
+    softUserGeoLocat onStore,
+    tr pT etCand dateStore,
+    popGeoL sts,
+     dsStore
   )
 
-  lazy val loCandidateSourceGenerator = new LoggedOutPushCandidateSourceGenerator(
-    tripTweetCandidateStore,
+  lazy val loCand dateS ceGenerator = new LoggedOutPushCand dateS ceGenerator(
+    tr pT etCand dateStore,
     geoDuckV2Store,
-    safeCachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
-    cachedTweetyPieStoreV2,
-    contentMixerStore,
-    softUserGeoLocationStore,
-    topTweetsByGeoStore,
-    topTweetsByGeoV2VersionedStore
+    safeCac dT etyP eStoreV2,
+    cac dT etyP eStoreV2NoVF,
+    cac dT etyP eStoreV2,
+    contentM xerStore,
+    softUserGeoLocat onStore,
+    topT etsByGeoStore,
+    topT etsByGeoV2Vers onedStore
   )
 
   lazy val rfphStatsRecorder = new RFPHStatsRecorder()
 
-  lazy val rfphRestrictStep = new RFPHRestrictStep()
+  lazy val rfphRestr ctStep = new RFPHRestr ctStep()
 
-  lazy val rfphTakeStepUtil = new RFPHTakeStepUtil()(statsReceiver)
+  lazy val rfphTakeStepUt l = new RFPHTakeStepUt l()(statsRece ver)
 
-  lazy val rfphPrerankFilter = new RFPHPrerankFilter()(statsReceiver)
+  lazy val rfphPrerankF lter = new RFPHPrerankF lter()(statsRece ver)
 
-  lazy val rfphLightRanker = new RFPHLightRanker(lightRanker, statsReceiver)
+  lazy val rfphL ghtRanker = new RFPHL ghtRanker(l ghtRanker, statsRece ver)
 
-  lazy val sendHandlerPredicateUtil = new SendHandlerPredicateUtil()(statsReceiver)
+  lazy val sendHandlerPred cateUt l = new SendHandlerPred cateUt l()(statsRece ver)
 
   lazy val ntabSender =
     new NtabSender(
-      notificationServiceSender,
-      nTabHistoryStore,
-      notificationServiceDelete,
-      notificationServiceDeleteTimeline
+      not f cat onServ ceSender,
+      nTab toryStore,
+      not f cat onServ ceDelete,
+      not f cat onServ ceDeleteT  l ne
     )
 
-  lazy val ibis2Sender = new Ibis2Sender(pushIbisV2Store, tweetTranslationStore, statsReceiver)
+  lazy val  b s2Sender = new  b s2Sender(push b sV2Store, t etTranslat onStore, statsRece ver)
 
-  lazy val historyWriter = new HistoryWriter(historyStore, statsReceiver)
+  lazy val  toryWr er = new  toryWr er( toryStore, statsRece ver)
 
-  lazy val loggedOutHistoryWriter = new HistoryWriter(loggedOutHistoryStore, statsReceiver)
+  lazy val loggedOut toryWr er = new  toryWr er(loggedOut toryStore, statsRece ver)
 
-  lazy val eventBusWriter = new EventBusWriter(pushSendEventBusPublisher, statsReceiver)
+  lazy val eventBusWr er = new EventBusWr er(pushSendEventBusPubl s r, statsRece ver)
 
   lazy val ntabOnlyChannelSelector = new NtabOnlyChannelSelector
 
-  lazy val notificationSender =
-    new NotificationSender(
-      ibis2Sender,
+  lazy val not f cat onSender =
+    new Not f cat onSender(
+       b s2Sender,
       ntabSender,
-      statsReceiver,
-      notificationScribe
+      statsRece ver,
+      not f cat onScr be
     )
 
-  lazy val candidateNotifier =
-    new CandidateNotifier(
-      notificationSender,
+  lazy val cand dateNot f er =
+    new Cand dateNot f er(
+      not f cat onSender,
       casLock = casLock,
-      historyWriter = historyWriter,
-      eventBusWriter = eventBusWriter,
+       toryWr er =  toryWr er,
+      eventBusWr er = eventBusWr er,
       ntabOnlyChannelSelector = ntabOnlyChannelSelector
-    )(statsReceiver)
+    )(statsRece ver)
 
-  lazy val loggedOutCandidateNotifier = new CandidateNotifier(
-    notificationSender,
+  lazy val loggedOutCand dateNot f er = new Cand dateNot f er(
+    not f cat onSender,
     casLock = casLock,
-    historyWriter = loggedOutHistoryWriter,
-    eventBusWriter = null,
+     toryWr er = loggedOut toryWr er,
+    eventBusWr er = null,
     ntabOnlyChannelSelector = ntabOnlyChannelSelector
-  )(statsReceiver)
+  )(statsRece ver)
 
-  lazy val rfphNotifier =
-    new RefreshForPushNotifier(rfphStatsRecorder, candidateNotifier)(statsReceiver)
+  lazy val rfphNot f er =
+    new RefreshForPushNot f er(rfphStatsRecorder, cand dateNot f er)(statsRece ver)
 
-  lazy val loRfphNotifier =
-    new LoggedOutRefreshForPushNotifier(rfphStatsRecorder, loggedOutCandidateNotifier)(
-      statsReceiver)
+  lazy val loRfphNot f er =
+    new LoggedOutRefreshForPushNot f er(rfphStatsRecorder, loggedOutCand dateNot f er)(
+      statsRece ver)
 
   lazy val rfphRanker = {
-    val randomRanker = RandomRanker[Target, PushCandidate]()
-    val subscriptionCreatorRanker =
-      new SubscriptionCreatorRanker(superFollowEligibilityUserStore, statsReceiver)
+    val randomRanker = RandomRanker[Target, PushCand date]()
+    val subscr pt onCreatorRanker =
+      new Subscr pt onCreatorRanker(superFollowEl g b l yUserStore, statsRece ver)
     new RFPHRanker(
       randomRanker,
-      weightedOpenOrNtabClickModelScorer,
-      subscriptionCreatorRanker,
-      userHealthSignalStore,
-      producerMediaRepresentationStore,
-      statsReceiver
+        ghtedOpenOrNtabCl ckModelScorer,
+      subscr pt onCreatorRanker,
+      user althS gnalStore,
+      producer d aRepresentat onStore,
+      statsRece ver
     )
   }
 
   lazy val rfphFeatureHydrator = new RFPHFeatureHydrator(featureHydrator)
-  lazy val loggedOutRFPHRanker = new LoggedOutRanker(cachedTweetyPieStoreV2, statsReceiver)
+  lazy val loggedOutRFPHRanker = new LoggedOutRanker(cac dT etyP eStoreV2, statsRece ver)
 
-  override val userFeaturesStore: ReadableStore[Long, UserFeatures] = {
-    implicit val valueCodec = new BinaryScalaCodec(UserFeatures)
+  overr de val userFeaturesStore: ReadableStore[Long, UserFeatures] = {
+     mpl c  val valueCodec = new B naryScalaCodec(UserFeatures)
     val dataset: Dataset[Long, UserFeatures] =
       Dataset(
         "",
-        "user_features_pushservice_apollo",
-        "recommendations_user_features_apollo",
+        "user_features_pushserv ce_apollo",
+        "recom ndat ons_user_features_apollo",
         Apollo)
 
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = ObservedReadableStore(buildManhattanStore(dataset))(
-        statsReceiver.scope("UncachedUserFeaturesStore")
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = ObservedReadableStore(bu ldManhattanStore(dataset))(
+        statsRece ver.scope("Uncac dUserFeaturesStore")
       ),
-      cacheClient = pushServiceCacheClient,
-      ttl = 24.hours
+      cac Cl ent = pushServ ceCac Cl ent,
+      ttl = 24.h s
     )(
-      valueInjection = valueCodec,
-      statsReceiver = statsReceiver.scope("UserFeaturesStore"),
-      keyToString = { k: Long => s"ufts/$k" }
+      value nject on = valueCodec,
+      statsRece ver = statsRece ver.scope("UserFeaturesStore"),
+      keyToStr ng = { k: Long => s"ufts/$k" }
     )
   }
 
-  override def htlScoreStore(userId: Long): ReadableStore[Long, ScoredTweet] = {
-    val fetcher = new TimelineScorerTweetScoresV1ClientColumn(stratoClient).fetcher
-    val htlStore = buildStore(
-      StratoFetchableStore.withView[Long, TimelineScorerScoreView, ScoredTweet](
-        fetcher,
-        TimelineScorerScoreView(Some(userId))
+  overr de def htlScoreStore(user d: Long): ReadableStore[Long, ScoredT et] = {
+    val fetc r = new T  l neScorerT etScoresV1Cl entColumn(stratoCl ent).fetc r
+    val htlStore = bu ldStore(
+      StratoFetchableStore.w hV ew[Long, T  l neScorerScoreV ew, ScoredT et](
+        fetc r,
+        T  l neScorerScoreV ew(So (user d))
       ),
       "htlScoreStore"
     )
     htlStore
   }
 
-  override val userTargetingPropertyStore: ReadableStore[Long, UserTargetingProperty] = {
-    val name = "userTargetingPropertyStore"
+  overr de val userTarget ngPropertyStore: ReadableStore[Long, UserTarget ngProperty] = {
+    val na  = "userTarget ngPropertyStore"
     val store = StratoFetchableStore
-      .withUnitView(new TargetingPropertyOnUserClientColumn(stratoClient).fetcher)
-    buildStore(store, name)
+      .w hUn V ew(new Target ngPropertyOnUserCl entColumn(stratoCl ent).fetc r)
+    bu ldStore(store, na )
   }
 
-  override val timelinesUserSessionStore: ReadableStore[Long, UserSession] = {
-    implicit val valueCodec = new CompactScalaCodec(UserSession)
-    val dataset: Dataset[Long, UserSession] = Dataset[Long, UserSession](
+  overr de val t  l nesUserSess onStore: ReadableStore[Long, UserSess on] = {
+     mpl c  val valueCodec = new CompactScalaCodec(UserSess on)
+    val dataset: Dataset[Long, UserSess on] = Dataset[Long, UserSess on](
       "",
-      "frigate_realgraph",
+      "fr gate_realgraph",
       "real_graph_user_features",
       Apollo
     )
 
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = ObservedReadableStore(buildManhattanStore(dataset))(
-        statsReceiver.scope("UncachedTimelinesUserSessionStore")
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = ObservedReadableStore(bu ldManhattanStore(dataset))(
+        statsRece ver.scope("Uncac dT  l nesUserSess onStore")
       ),
-      cacheClient = pushServiceCacheClient,
-      ttl = 6.hours
+      cac Cl ent = pushServ ceCac Cl ent,
+      ttl = 6.h s
     )(
-      valueInjection = valueCodec,
-      statsReceiver = statsReceiver.scope("timelinesUserSessionStore"),
-      keyToString = { k: Long => s"tluss/$k" }
+      value nject on = valueCodec,
+      statsRece ver = statsRece ver.scope("t  l nesUserSess onStore"),
+      keyToStr ng = { k: Long => s"tluss/$k" }
     )
   }
 
-  lazy val recentTweetsFromTflockStore: ReadableStore[Long, Seq[Long]] =
+  lazy val recentT etsFromTflockStore: ReadableStore[Long, Seq[Long]] =
     ObservedReadableStore(
-      RecentTweetsByAuthorsStore.usingRecentTweetsConfig(
-        tflockClient,
-        RecentTweetsConfig(maxResults = 1, maxAge = 3.days)
+      RecentT etsByAuthorsStore.us ngRecentT etsConf g(
+        tflockCl ent,
+        RecentT etsConf g(maxResults = 1, maxAge = 3.days)
       )
-    )(statsReceiver.scope("RecentTweetsFromTflockStore"))
+    )(statsRece ver.scope("RecentT etsFromTflockStore"))
 
-  lazy val recentTweetsByAuthorsStore: ReadableStore[RecentTweetsQuery, Seq[Seq[Long]]] =
+  lazy val recentT etsByAuthorsStore: ReadableStore[RecentT etsQuery, Seq[Seq[Long]]] =
     ObservedReadableStore(
-      RecentTweetsByAuthorsStore(tflockClient)
-    )(statsReceiver.scope("RecentTweetsByAuthorsStore"))
+      RecentT etsByAuthorsStore(tflockCl ent)
+    )(statsRece ver.scope("RecentT etsByAuthorsStore"))
 
-  val jobConfig = PopGeoInterestProvider
-    .getPopularTweetsJobConfig(
-      InterestDeployConfig(
-        AppId("PopularTweetsByInterestProd"),
+  val jobConf g = PopGeo nterestProv der
+    .getPopularT etsJobConf g(
+       nterestDeployConf g(
+        App d("PopularT etsBy nterestProd"),
         Cluster.ATLA,
         Env.Prod,
-        serviceIdentifier,
-        manhattanClientMtlsParams
+        serv ce dent f er,
+        manhattanCl entMtlsParams
       ))
-    .withManhattanAppId("frigate_pop_by_geo_tweets")
+    .w hManhattanApp d("fr gate_pop_by_geo_t ets")
 
-  override val topTweetsByGeoStore = TopTweetsStore.withMemCache(
-    jobConfig,
-    pushServiceCacheClient,
+  overr de val topT etsByGeoStore = TopT etsStore.w h mCac (
+    jobConf g,
+    pushServ ceCac Cl ent,
     10.seconds
-  )(statsReceiver)
+  )(statsRece ver)
 
-  override val topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace] = {
-    StratoFetchableStore.withUnitView[String, PopTweetsInPlace](
-      stratoClient,
-      "recommendations/popgeo/popGeoTweetsVersioned")
+  overr de val topT etsByGeoV2Vers onedStore: ReadableStore[Str ng, PopT ets nPlace] = {
+    StratoFetchableStore.w hUn V ew[Str ng, PopT ets nPlace](
+      stratoCl ent,
+      "recom ndat ons/popgeo/popGeoT etsVers oned")
   }
 
-  override lazy val pushcapDynamicPredictionStore: ReadableStore[Long, PushcapUserHistory] = {
-    StratoFetchableStore.withUnitView[Long, PushcapUserHistory](
-      stratoClient,
-      "frigate/magicrecs/pushcapDynamicPrediction.User")
+  overr de lazy val pushcapDynam cPred ct onStore: ReadableStore[Long, PushcapUser tory] = {
+    StratoFetchableStore.w hUn V ew[Long, PushcapUser tory](
+      stratoCl ent,
+      "fr gate/mag crecs/pushcapDynam cPred ct on.User")
   }
 
-  override val tweetAuthorLocationFeatureBuilder =
-    UserLocationFeatureBuilder(Some("TweetAuthor"))
-      .withStats()
+  overr de val t etAuthorLocat onFeatureBu lder =
+    UserLocat onFeatureBu lder(So ("T etAuthor"))
+      .w hStats()
 
-  override val tweetAuthorLocationFeatureBuilderById =
-    UserLocationFeatureBuilderById(
+  overr de val t etAuthorLocat onFeatureBu lderBy d =
+    UserLocat onFeatureBu lderBy d(
       userCountryStore,
-      tweetAuthorLocationFeatureBuilder
-    ).withStats()
+      t etAuthorLocat onFeatureBu lder
+    ).w hStats()
 
-  override val socialContextActionsFeatureBuilder =
-    SocialContextActionsFeatureBuilder().withStats()
+  overr de val soc alContextAct onsFeatureBu lder =
+    Soc alContextAct onsFeatureBu lder().w hStats()
 
-  override val tweetContentFeatureBuilder =
-    TweetContentFeatureBuilder(tweetContentFeatureCacheStore).withStats()
+  overr de val t etContentFeatureBu lder =
+    T etContentFeatureBu lder(t etContentFeatureCac Store).w hStats()
 
-  override val tweetAuthorRecentRealGraphFeatureBuilder =
-    RecentRealGraphFeatureBuilder(
-      stratoClient,
-      UserAuthorEntity,
-      TargetUserEntity,
-      TweetAuthorEntity,
-      TweetAuthorRecentRealGraphFeatures(statsReceiver.scope("TweetAuthorRecentRealGraphFeatures"))
-    ).withStats()
+  overr de val t etAuthorRecentRealGraphFeatureBu lder =
+    RecentRealGraphFeatureBu lder(
+      stratoCl ent,
+      UserAuthorEnt y,
+      TargetUserEnt y,
+      T etAuthorEnt y,
+      T etAuthorRecentRealGraphFeatures(statsRece ver.scope("T etAuthorRecentRealGraphFeatures"))
+    ).w hStats()
 
-  override val socialContextRecentRealGraphFeatureBuilder =
-    SocialContextRecentRealGraphFeatureBuilder(
-      RecentRealGraphFeatureBuilder(
-        stratoClient,
-        TargetUserSocialContextEntity,
-        TargetUserEntity,
-        SocialContextEntity,
-        SocialContextRecentRealGraphFeatures(
-          statsReceiver.scope("SocialContextRecentRealGraphFeatures"))
-      )(statsReceiver
-        .scope("SocialContextRecentRealGraphFeatureBuilder").scope("RecentRealGraphFeatureBuilder"))
-    ).withStats()
+  overr de val soc alContextRecentRealGraphFeatureBu lder =
+    Soc alContextRecentRealGraphFeatureBu lder(
+      RecentRealGraphFeatureBu lder(
+        stratoCl ent,
+        TargetUserSoc alContextEnt y,
+        TargetUserEnt y,
+        Soc alContextEnt y,
+        Soc alContextRecentRealGraphFeatures(
+          statsRece ver.scope("Soc alContextRecentRealGraphFeatures"))
+      )(statsRece ver
+        .scope("Soc alContextRecentRealGraphFeatureBu lder").scope("RecentRealGraphFeatureBu lder"))
+    ).w hStats()
 
-  override val tweetSocialProofFeatureBuilder =
-    TweetSocialProofFeatureBuilder(Some("TargetUser")).withStats()
+  overr de val t etSoc alProofFeatureBu lder =
+    T etSoc alProofFeatureBu lder(So ("TargetUser")).w hStats()
 
-  override val targetUserFullRealGraphFeatureBuilder =
-    TargetFullRealGraphFeatureBuilder(Some("TargetUser")).withStats()
+  overr de val targetUserFullRealGraphFeatureBu lder =
+    TargetFullRealGraphFeatureBu lder(So ("TargetUser")).w hStats()
 
-  override val postProcessingFeatureBuilder: PostProcessingFeatureBuilder =
-    PostProcessingFeatureBuilder()
+  overr de val postProcess ngFeatureBu lder: PostProcess ngFeatureBu lder =
+    PostProcess ngFeatureBu lder()
 
-  override val mrOfflineUserCandidateSparseAggregatesFeatureBuilder =
-    MrOfflineUserCandidateSparseAggregatesFeatureBuilder(stratoClient, featureStoreUtil).withStats()
+  overr de val mrOffl neUserCand dateSparseAggregatesFeatureBu lder =
+    MrOffl neUserCand dateSparseAggregatesFeatureBu lder(stratoCl ent, featureStoreUt l).w hStats()
 
-  override val mrOfflineUserAggregatesFeatureBuilder =
-    MrOfflineUserAggregatesFeatureBuilder(stratoClient, featureStoreUtil).withStats()
+  overr de val mrOffl neUserAggregatesFeatureBu lder =
+    MrOffl neUserAggregatesFeatureBu lder(stratoCl ent, featureStoreUt l).w hStats()
 
-  override val mrOfflineUserCandidateAggregatesFeatureBuilder =
-    MrOfflineUserCandidateAggregatesFeatureBuilder(stratoClient, featureStoreUtil).withStats()
+  overr de val mrOffl neUserCand dateAggregatesFeatureBu lder =
+    MrOffl neUserCand dateAggregatesFeatureBu lder(stratoCl ent, featureStoreUt l).w hStats()
 
-  override val tweetAnnotationsFeatureBuilder =
-    TweetAnnotationsFeatureBuilder(stratoClient).withStats()
+  overr de val t etAnnotat onsFeatureBu lder =
+    T etAnnotat onsFeatureBu lder(stratoCl ent).w hStats()
 
-  override val targetUserMediaRepresentationFeatureBuilder =
-    UserMediaRepresentationFeatureBuilder(userMediaRepresentationStore).withStats()
+  overr de val targetUser d aRepresentat onFeatureBu lder =
+    User d aRepresentat onFeatureBu lder(user d aRepresentat onStore).w hStats()
 
-  override val targetLevelFeatureBuilder =
-    TargetLevelFeatureBuilder(featureStoreUtil, targetLevelFeaturesConfig).withStats()
+  overr de val targetLevelFeatureBu lder =
+    TargetLevelFeatureBu lder(featureStoreUt l, targetLevelFeaturesConf g).w hStats()
 
-  override val candidateLevelFeatureBuilder =
-    CandidateLevelFeatureBuilder(featureStoreUtil).withStats()
+  overr de val cand dateLevelFeatureBu lder =
+    Cand dateLevelFeatureBu lder(featureStoreUt l).w hStats()
 
-  override lazy val targetFeatureHydrator = RelevanceTargetFeatureHydrator(
-    targetUserFullRealGraphFeatureBuilder,
-    postProcessingFeatureBuilder,
-    targetUserMediaRepresentationFeatureBuilder,
-    targetLevelFeatureBuilder
+  overr de lazy val targetFeatureHydrator = RelevanceTargetFeatureHydrator(
+    targetUserFullRealGraphFeatureBu lder,
+    postProcess ngFeatureBu lder,
+    targetUser d aRepresentat onFeatureBu lder,
+    targetLevelFeatureBu lder
   )
 
-  override lazy val featureHydrator =
-    FeatureHydrator(targetFeatureHydrator, candidateFeatureHydrator)
+  overr de lazy val featureHydrator =
+    FeatureHydrator(targetFeatureHydrator, cand dateFeatureHydrator)
 
-  val pushServiceLightRankerConfig: LightRankerConfig = new LightRankerConfig(
-    pushserviceThriftClientId,
-    serviceIdentifier,
-    statsReceiver.scope("lightRanker"),
-    deepbirdv2PredictionServiceDest,
-    "DeepbirdV2PredictionService"
+  val pushServ ceL ghtRankerConf g: L ghtRankerConf g = new L ghtRankerConf g(
+    pushserv ceThr ftCl ent d,
+    serv ce dent f er,
+    statsRece ver.scope("l ghtRanker"),
+    deepb rdv2Pred ct onServ ceDest,
+    "Deepb rdV2Pred ct onServ ce"
   )
-  val lightRanker: MagicRecsServeDataRecordLightRanker =
-    pushServiceLightRankerConfig.lightRanker
+  val l ghtRanker: Mag cRecsServeDataRecordL ghtRanker =
+    pushServ ceL ghtRankerConf g.l ghtRanker
 
-  override val tweetImpressionStore: ReadableStore[Long, Seq[Long]] = {
-    val name = "htl_impression_store"
-    val store = buildStore(
-      HtlTweetImpressionStore.createStoreWithTweetIds(
-        requestTimeout = 6.seconds,
-        label = "htl_tweet_impressions",
-        serviceIdentifier = serviceIdentifier,
-        statsReceiver = statsReceiver
+  overr de val t et mpress onStore: ReadableStore[Long, Seq[Long]] = {
+    val na  = "htl_ mpress on_store"
+    val store = bu ldStore(
+      HtlT et mpress onStore.createStoreW hT et ds(
+        requestT  out = 6.seconds,
+        label = "htl_t et_ mpress ons",
+        serv ce dent f er = serv ce dent f er,
+        statsRece ver = statsRece ver
       ),
-      name
+      na 
     )
-    val numTweetsReturned =
-      statsReceiver.scope(name).stat("num_tweets_returned_per_user")
-    new TransformedReadableStore(store)((userId: Long, tweetIds: Seq[Long]) => {
-      numTweetsReturned.add(tweetIds.size)
-      Future.value(Some(tweetIds))
+    val numT etsReturned =
+      statsRece ver.scope(na ).stat("num_t ets_returned_per_user")
+    new Transfor dReadableStore(store)((user d: Long, t et ds: Seq[Long]) => {
+      numT etsReturned.add(t et ds.s ze)
+      Future.value(So (t et ds))
     })
   }
 
-  val ruxTweetImpressionsStore = new TweetImpressionsStore(stratoClient)
+  val ruxT et mpress onsStore = new T et mpress onsStore(stratoCl ent)
 
-  override val strongTiesStore: ReadableStore[Long, STPResult] = {
-    implicit val valueCodec = new BinaryScalaCodec(STPResult)
-    val strongTieScoringDataset: Dataset[Long, STPResult] =
-      Dataset("", "frigate_stp", "stp_result_rerank", Athena)
-    buildManhattanStore(strongTieScoringDataset)
+  overr de val strongT esStore: ReadableStore[Long, STPResult] = {
+     mpl c  val valueCodec = new B naryScalaCodec(STPResult)
+    val strongT eScor ngDataset: Dataset[Long, STPResult] =
+      Dataset("", "fr gate_stp", "stp_result_rerank", At na)
+    bu ldManhattanStore(strongT eScor ngDataset)
   }
 
-  override lazy val earlybirdFeatureStore = ObservedReadableStore(
-    EarlybirdFeatureStore(
-      clientId = pushserviceThriftClientId.name,
-      earlybirdSearchStore = earlybirdSearchStore
+  overr de lazy val earlyb rdFeatureStore = ObservedReadableStore(
+    Earlyb rdFeatureStore(
+      cl ent d = pushserv ceThr ftCl ent d.na ,
+      earlyb rdSearchStore = earlyb rdSearchStore
     )
-  )(statsReceiver.scope("EarlybirdFeatureStore"))
+  )(statsRece ver.scope("Earlyb rdFeatureStore"))
 
-  override lazy val earlybirdFeatureBuilder = EarlybirdFeatureBuilder(earlybirdFeatureStore)
+  overr de lazy val earlyb rdFeatureBu lder = Earlyb rdFeatureBu lder(earlyb rdFeatureStore)
 
-  override lazy val earlybirdSearchStore = {
-    val earlybirdClientName: String = "earlybird"
-    val earlybirdSearchStoreName: String = "EarlybirdSearchStore"
+  overr de lazy val earlyb rdSearchStore = {
+    val earlyb rdCl entNa : Str ng = "earlyb rd"
+    val earlyb rdSearchStoreNa : Str ng = "Earlyb rdSearchStore"
 
-    val earlybirdClient = new EarlybirdService.FinagledClient(
-      readOnlyThriftService(
-        earlybirdClientName,
-        earlybirdSearchDest,
-        statsReceiver,
-        pushserviceThriftClientId,
-        tries = 1,
-        requestTimeout = 3.seconds,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+    val earlyb rdCl ent = new Earlyb rdServ ce.F nagledCl ent(
+      readOnlyThr ftServ ce(
+        earlyb rdCl entNa ,
+        earlyb rdSearchDest,
+        statsRece ver,
+        pushserv ceThr ftCl ent d,
+        tr es = 1,
+        requestT  out = 3.seconds,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       ),
-      clientParam = RichClientParam(protocolFactory = new TCompactProtocol.Factory)
+      cl entParam = R chCl entParam(protocolFactory = new TCompactProtocol.Factory)
     )
 
     ObservedReadableStore(
-      EarlybirdSearchStore(earlybirdClient)(statsReceiver.scope(earlybirdSearchStoreName))
-    )(statsReceiver.scope(earlybirdSearchStoreName))
+      Earlyb rdSearchStore(earlyb rdCl ent)(statsRece ver.scope(earlyb rdSearchStoreNa ))
+    )(statsRece ver.scope(earlyb rdSearchStoreNa ))
   }
 
-  override lazy val earlybirdCandidateSource: EarlybirdCandidateSource = EarlybirdCandidateSource(
-    clientId = pushserviceThriftClientId.name,
-    earlybirdSearchStore = earlybirdSearchStore
+  overr de lazy val earlyb rdCand dateS ce: Earlyb rdCand dateS ce = Earlyb rdCand dateS ce(
+    cl ent d = pushserv ceThr ftCl ent d.na ,
+    earlyb rdSearchStore = earlyb rdSearchStore
   )
 
-  override val realGraphScoresTop500InStore: RealGraphScoresTop500InStore = {
-    val stratoRealGraphInStore =
+  overr de val realGraphScoresTop500 nStore: RealGraphScoresTop500 nStore = {
+    val stratoRealGraph nStore =
       StratoFetchableStore
-        .withUnitView[Long, CandidateSeq](
-          stratoClient,
-          "frigate/magicrecs/fanoutCoi500pRealGraphV2")
+        .w hUn V ew[Long, Cand dateSeq](
+          stratoCl ent,
+          "fr gate/mag crecs/fanoutCo 500pRealGraphV2")
 
-    RealGraphScoresTop500InStore(
-      ObservedMemcachedReadableStore.fromCacheClient(
-        backingStore = stratoRealGraphInStore,
-        cacheClient = entityGraphCacheClient,
-        ttl = 24.hours
+    RealGraphScoresTop500 nStore(
+      Observed mcac dReadableStore.fromCac Cl ent(
+        back ngStore = stratoRealGraph nStore,
+        cac Cl ent = ent yGraphCac Cl ent,
+        ttl = 24.h s
       )(
-        valueInjection = BinaryScalaCodec(CandidateSeq),
-        statsReceiver = statsReceiver.scope("CachedRealGraphScoresTop500InStore"),
-        keyToString = { k: Long => s"500p_test/$k" }
+        value nject on = B naryScalaCodec(Cand dateSeq),
+        statsRece ver = statsRece ver.scope("Cac dRealGraphScoresTop500 nStore"),
+        keyToStr ng = { k: Long => s"500p_test/$k" }
       )
     )
   }
 
-  override val tweetEntityGraphStore = {
-    val tweetEntityGraphClient = new UserTweetEntityGraph.FinagledClient(
-      Finagle.readOnlyThriftService(
-        "user_tweet_entity_graph",
-        userTweetEntityGraphDest,
-        statsReceiver,
-        pushserviceThriftClientId,
-        requestTimeout = 5.seconds,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+  overr de val t etEnt yGraphStore = {
+    val t etEnt yGraphCl ent = new UserT etEnt yGraph.F nagledCl ent(
+      F nagle.readOnlyThr ftServ ce(
+        "user_t et_ent y_graph",
+        userT etEnt yGraphDest,
+        statsRece ver,
+        pushserv ceThr ftCl ent d,
+        requestT  out = 5.seconds,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       )
     )
     ObservedReadableStore(
-      RecommendedTweetEntitiesStore(
-        tweetEntityGraphClient,
-        statsReceiver.scope("RecommendedTweetEntitiesStore")
+      Recom ndedT etEnt  esStore(
+        t etEnt yGraphCl ent,
+        statsRece ver.scope("Recom ndedT etEnt  esStore")
       )
-    )(statsReceiver.scope("RecommendedTweetEntitiesStore"))
+    )(statsRece ver.scope("Recom ndedT etEnt  esStore"))
   }
 
-  override val userUserGraphStore = {
-    val userUserGraphClient = new UserUserGraph.FinagledClient(
-      Finagle.readOnlyThriftService(
+  overr de val userUserGraphStore = {
+    val userUserGraphCl ent = new UserUserGraph.F nagledCl ent(
+      F nagle.readOnlyThr ftServ ce(
         "user_user_graph",
         userUserGraphDest,
-        statsReceiver,
-        pushserviceThriftClientId,
-        requestTimeout = 5.seconds,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+        statsRece ver,
+        pushserv ceThr ftCl ent d,
+        requestT  out = 5.seconds,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       ),
-      clientParam = RichClientParam(serviceName = "user_user_graph")
+      cl entParam = R chCl entParam(serv ceNa  = "user_user_graph")
     )
     ObservedReadableStore(
-      UserUserGraphStore(userUserGraphClient, statsReceiver.scope("UserUserGraphStore"))
-    )(statsReceiver.scope("UserUserGraphStore"))
+      UserUserGraphStore(userUserGraphCl ent, statsRece ver.scope("UserUserGraphStore"))
+    )(statsRece ver.scope("UserUserGraphStore"))
   }
 
-  override val ntabCaretFeedbackStore: ReadableStore[GenericNotificationsFeedbackRequest, Seq[
-    CaretFeedbackDetails
+  overr de val ntabCaretFeedbackStore: ReadableStore[Gener cNot f cat onsFeedbackRequest, Seq[
+    CaretFeedbackDeta ls
   ]] = {
-    val client = ManhattanKVClient(
-      "pushservice_ntab_caret_feedback_omega",
-      Omega.wilyName,
-      manhattanClientMtlsParams
+    val cl ent = ManhattanKVCl ent(
+      "pushserv ce_ntab_caret_feedback_o ga",
+      O ga.w lyNa ,
+      manhattanCl entMtlsParams
     )
-    val endpoint = ManhattanKVEndpointBuilder(client)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(3.seconds)
+    val endpo nt = ManhattanKVEndpo ntBu lder(cl ent)
+      .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+      .defaultMaxT  out(3.seconds)
       .maxRetryCount(2)
-      .statsReceiver(statsReceiver)
-      .build()
+      .statsRece ver(statsRece ver)
+      .bu ld()
 
-    val feedbackSignalManhattanClient =
-      FeedbackSignalManhattanClient(endpoint, statsReceiver.scope("FeedbackSignalManhattanClient"))
-    NtabCaretFeedbackStore(feedbackSignalManhattanClient)
+    val feedbackS gnalManhattanCl ent =
+      FeedbackS gnalManhattanCl ent(endpo nt, statsRece ver.scope("FeedbackS gnalManhattanCl ent"))
+    NtabCaretFeedbackStore(feedbackS gnalManhattanCl ent)
   }
 
-  override val genericFeedbackStore: ReadableStore[FeedbackRequest, Seq[
+  overr de val gener cFeedbackStore: ReadableStore[FeedbackRequest, Seq[
     FeedbackPromptValue
   ]] = {
     FeedbackStore(
-      GenericFeedbackStoreBuilder.build(
-        manhattanKVClientAppId = "frigate_pushservice_ntabfeedback_prompt",
-        environment = NotifEnvironment.apply(serviceIdentifier.environment),
-        svcIdentifier = serviceIdentifier,
-        statsReceiver = statsReceiver
+      Gener cFeedbackStoreBu lder.bu ld(
+        manhattanKVCl entApp d = "fr gate_pushserv ce_ntabfeedback_prompt",
+        env ron nt = Not fEnv ron nt.apply(serv ce dent f er.env ron nt),
+        svc dent f er = serv ce dent f er,
+        statsRece ver = statsRece ver
       ))
   }
 
-  override val genericNotificationFeedbackStore: GenericFeedbackStore = {
+  overr de val gener cNot f cat onFeedbackStore: Gener cFeedbackStore = {
 
-    GenericFeedbackStoreBuilder.build(
-      manhattanKVClientAppId = "frigate_pushservice_ntabfeedback_prompt",
-      environment = NotifEnvironment.apply(serviceIdentifier.environment),
-      svcIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+    Gener cFeedbackStoreBu lder.bu ld(
+      manhattanKVCl entApp d = "fr gate_pushserv ce_ntabfeedback_prompt",
+      env ron nt = Not fEnv ron nt.apply(serv ce dent f er.env ron nt),
+      svc dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
   }
 
-  override val earlybirdSearchDest = "/s/earlybird-root-superroot/root-superroot"
+  overr de val earlyb rdSearchDest = "/s/earlyb rd-root-superroot/root-superroot"
 
-  // low latency as compared to default `semanticCoreMetadataClient`
-  private val lowLatencySemanticCoreMetadataClient: MetadataService.MethodPerEndpoint =
-    new MetadataService.FinagledClient(
-      Finagle.readOnlyThriftService(
-        name = "semantic_core_metadata_service",
-        dest = "/s/escherbird/metadataservice",
-        statsReceiver = statsReceiver,
-        thriftClientId = pushserviceThriftClientId,
-        tries = 2, // total number of tries. number of retries = tries - 1
-        requestTimeout = 2.seconds,
-        mTLSServiceIdentifier = Some(serviceIdentifier)
+  // low latency as compared to default `semant cCore tadataCl ent`
+  pr vate val lowLatencySemant cCore tadataCl ent:  tadataServ ce. thodPerEndpo nt =
+    new  tadataServ ce.F nagledCl ent(
+      F nagle.readOnlyThr ftServ ce(
+        na  = "semant c_core_ tadata_serv ce",
+        dest = "/s/esc rb rd/ tadataserv ce",
+        statsRece ver = statsRece ver,
+        thr ftCl ent d = pushserv ceThr ftCl ent d,
+        tr es = 2, // total number of tr es. number of retr es = tr es - 1
+        requestT  out = 2.seconds,
+        mTLSServ ce dent f er = So (serv ce dent f er)
       )
     )
 
-  private val semanticCoreMetadataStitchClient = new MetadataStitchClient(
-    lowLatencySemanticCoreMetadataClient
+  pr vate val semant cCore tadataSt chCl ent = new  tadataSt chCl ent(
+    lowLatencySemant cCore tadataCl ent
   )
 
-  override val semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata] = {
-    val name = "semantic_core_megadata_store_cached"
-    val store = MetaDataReadableStore.getMegadataReadableStore(
-      metadataStitchClient = semanticCoreMetadataStitchClient,
-      typedMetadataDomains = Some(Set(Domains.EventsEntityService))
+  overr de val semant cCore gadataStore: ReadableStore[Semant cEnt yForQuery, Ent y gadata] = {
+    val na  = "semant c_core_ gadata_store_cac d"
+    val store =  taDataReadableStore.get gadataReadableStore(
+       tadataSt chCl ent = semant cCore tadataSt chCl ent,
+      typed tadataDoma ns = So (Set(Doma ns.EventsEnt yServ ce))
     )
-    ObservedCachedReadableStore
+    ObservedCac dReadableStore
       .from(
         store = ObservedReadableStore(store)(
-          statsReceiver
+          statsRece ver
             .scope("store")
-            .scope("semantic_core_megadata_store")
+            .scope("semant c_core_ gadata_store")
         ),
-        ttl = 1.hour,
+        ttl = 1.h ,
         maxKeys = 1000,
-        cacheName = "semantic_core_megadata_cache",
-        windowSize = 10000L
-      )(statsReceiver.scope("store", name))
+        cac Na  = "semant c_core_ gadata_cac ",
+        w ndowS ze = 10000L
+      )(statsRece ver.scope("store", na ))
   }
 
-  override val basketballGameScoreStore: ReadableStore[QualifiedId, BasketballGameLiveUpdate] = {
-    StratoFetchableStore.withUnitView[QualifiedId, BasketballGameLiveUpdate](
-      stratoClient,
-      "semanticCore/basketballGameScore.Entity")
+  overr de val basketballGa ScoreStore: ReadableStore[Qual f ed d, BasketballGa L veUpdate] = {
+    StratoFetchableStore.w hUn V ew[Qual f ed d, BasketballGa L veUpdate](
+      stratoCl ent,
+      "semant cCore/basketballGa Score.Ent y")
   }
 
-  override val baseballGameScoreStore: ReadableStore[QualifiedId, BaseballGameLiveUpdate] = {
-    StratoFetchableStore.withUnitView[QualifiedId, BaseballGameLiveUpdate](
-      stratoClient,
-      "semanticCore/baseballGameScore.Entity")
+  overr de val baseballGa ScoreStore: ReadableStore[Qual f ed d, BaseballGa L veUpdate] = {
+    StratoFetchableStore.w hUn V ew[Qual f ed d, BaseballGa L veUpdate](
+      stratoCl ent,
+      "semant cCore/baseballGa Score.Ent y")
   }
 
-  override val cricketMatchScoreStore: ReadableStore[QualifiedId, CricketMatchLiveUpdate] = {
-    StratoFetchableStore.withUnitView[QualifiedId, CricketMatchLiveUpdate](
-      stratoClient,
-      "semanticCore/cricketMatchScore.Entity")
+  overr de val cr cketMatchScoreStore: ReadableStore[Qual f ed d, Cr cketMatchL veUpdate] = {
+    StratoFetchableStore.w hUn V ew[Qual f ed d, Cr cketMatchL veUpdate](
+      stratoCl ent,
+      "semant cCore/cr cketMatchScore.Ent y")
   }
 
-  override val soccerMatchScoreStore: ReadableStore[QualifiedId, SoccerMatchLiveUpdate] = {
-    ObservedCachedReadableStore
+  overr de val soccerMatchScoreStore: ReadableStore[Qual f ed d, SoccerMatchL veUpdate] = {
+    ObservedCac dReadableStore
       .from(
-        store = StratoFetchableStore.withUnitView[QualifiedId, SoccerMatchLiveUpdate](
-          stratoClient,
-          "semanticCore/soccerMatchScore.Entity"),
+        store = StratoFetchableStore.w hUn V ew[Qual f ed d, SoccerMatchL veUpdate](
+          stratoCl ent,
+          "semant cCore/soccerMatchScore.Ent y"),
         ttl = 10.seconds,
         maxKeys = 100,
-        cacheName = "SoccerMatchCachedStore",
-        windowSize = 100L
-      )(statsReceiver.scope("SoccerMatchCachedStore"))
+        cac Na  = "SoccerMatchCac dStore",
+        w ndowS ze = 100L
+      )(statsRece ver.scope("SoccerMatchCac dStore"))
 
   }
 
-  override val nflGameScoreStore: ReadableStore[QualifiedId, NflFootballGameLiveUpdate] = {
-    ObservedCachedReadableStore
+  overr de val nflGa ScoreStore: ReadableStore[Qual f ed d, NflFootballGa L veUpdate] = {
+    ObservedCac dReadableStore
       .from(
-        store = StratoFetchableStore.withUnitView[QualifiedId, NflFootballGameLiveUpdate](
-          stratoClient,
-          "semanticCore/nflFootballGameScore.Entity"),
+        store = StratoFetchableStore.w hUn V ew[Qual f ed d, NflFootballGa L veUpdate](
+          stratoCl ent,
+          "semant cCore/nflFootballGa Score.Ent y"),
         ttl = 10.seconds,
         maxKeys = 100,
-        cacheName = "NFLMatchCachedStore",
-        windowSize = 100L
-      )(statsReceiver.scope("NFLMatchCachedStore"))
+        cac Na  = "NFLMatchCac dStore",
+        w ndowS ze = 100L
+      )(statsRece ver.scope("NFLMatchCac dStore"))
 
   }
 
-  override val userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse] = {
-    val userHealthSignalFetcher =
-      stratoClient.fetcher[Long, Seq[UserHealthSignal], UserHealthSignalResponse](
-        "hss/user_signals/api/healthSignals.User"
+  overr de val user althS gnalStore: ReadableStore[Long, User althS gnalResponse] = {
+    val user althS gnalFetc r =
+      stratoCl ent.fetc r[Long, Seq[User althS gnal], User althS gnalResponse](
+        "hss/user_s gnals/ap / althS gnals.User"
       )
 
-    val store = buildStore(
-      StratoFetchableStore.withView[Long, Seq[UserHealthSignal], UserHealthSignalResponse](
-        userHealthSignalFetcher,
+    val store = bu ldStore(
+      StratoFetchableStore.w hV ew[Long, Seq[User althS gnal], User althS gnalResponse](
+        user althS gnalFetc r,
         Seq(
-          AgathaRecentAbuseStrikeDouble,
-          AgathaCalibratedNsfwDouble,
+          AgathaRecentAbuseStr keDouble,
+          AgathaCal bratedNsfwDouble,
           AgathaCseDouble,
           NsfwTextUserScoreDouble,
-          NsfwConsumerScoreDouble)),
-      "UserHealthSignalFetcher"
+          NsfwConsu rScoreDouble)),
+      "User althS gnalFetc r"
     )
-    if (!inMemCacheOff) {
-      ObservedCachedReadableStore
+     f (! n mCac Off) {
+      ObservedCac dReadableStore
         .from(
           store = ObservedReadableStore(store)(
-            statsReceiver.scope("store").scope("user_health_model_score_store")),
-          ttl = 12.hours,
+            statsRece ver.scope("store").scope("user_ alth_model_score_store")),
+          ttl = 12.h s,
           maxKeys = 16777215,
-          cacheName = "user_health_model_score_store_cache",
-          windowSize = 10000L
-        )(statsReceiver.scope("store", "user_health_model_score_store_cached"))
+          cac Na  = "user_ alth_model_score_store_cac ",
+          w ndowS ze = 10000L
+        )(statsRece ver.scope("store", "user_ alth_model_score_store_cac d"))
     } else {
       store
     }
   }
 
-  override val tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse] = {
-    val tweetHealthScoreFetcher =
-      stratoClient.fetcher[TweetScoringRequest, Unit, TweetScoringResponse](
-        "abuse/detection/tweetHealthModelScore"
+  overr de val t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse] = {
+    val t et althScoreFetc r =
+      stratoCl ent.fetc r[T etScor ngRequest, Un , T etScor ngResponse](
+        "abuse/detect on/t et althModelScore"
       )
 
-    val store = buildStore(
-      StratoFetchableStore.withUnitView(tweetHealthScoreFetcher),
-      "TweetHealthScoreFetcher"
+    val store = bu ldStore(
+      StratoFetchableStore.w hUn V ew(t et althScoreFetc r),
+      "T et althScoreFetc r"
     )
 
-    ObservedCachedReadableStore
+    ObservedCac dReadableStore
       .from(
         store = ObservedReadableStore(store)(
-          statsReceiver.scope("store").scope("tweet_health_model_score_store")),
-        ttl = 30.minutes,
+          statsRece ver.scope("store").scope("t et_ alth_model_score_store")),
+        ttl = 30.m nutes,
         maxKeys = 1000,
-        cacheName = "tweet_health_model_score_store_cache",
-        windowSize = 10000L
-      )(statsReceiver.scope("store", "tweet_health_model_score_store_cached"))
+        cac Na  = "t et_ alth_model_score_store_cac ",
+        w ndowS ze = 10000L
+      )(statsRece ver.scope("store", "t et_ alth_model_score_store_cac d"))
   }
 
-  override val appPermissionStore: ReadableStore[(Long, (String, String)), AppPermission] = {
+  overr de val appPerm ss onStore: ReadableStore[(Long, (Str ng, Str ng)), AppPerm ss on] = {
     val store = StratoFetchableStore
-      .withUnitView[(Long, (String, String)), AppPermission](
-        stratoClient,
-        "clients/permissionsState")
-    ObservedCachedReadableStore.from[(Long, (String, String)), AppPermission](
-      buildStore(store, "mr_app_permission_store"),
-      ttl = 30.minutes,
+      .w hUn V ew[(Long, (Str ng, Str ng)), AppPerm ss on](
+        stratoCl ent,
+        "cl ents/perm ss onsState")
+    ObservedCac dReadableStore.from[(Long, (Str ng, Str ng)), AppPerm ss on](
+      bu ldStore(store, "mr_app_perm ss on_store"),
+      ttl = 30.m nutes,
       maxKeys = 1000,
-      cacheName = "mr_app_permission_store_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("mr_app_permission_store_cached"))
+      cac Na  = "mr_app_perm ss on_store_cac ",
+      w ndowS ze = 10000L
+    )(statsRece ver.scope("mr_app_perm ss on_store_cac d"))
   }
 
-  def pushSendEventStreamName: String
+  def pushSendEventStreamNa : Str ng
 
-  override val pushSendEventBusPublisher = EventBusPublisherBuilder()
-    .clientId("frigate_pushservice")
-    .streamName(pushSendEventStreamName)
-    .thriftStruct(NotificationScribe)
-    .statsReceiver(statsReceiver.scope("push_send_eventbus"))
-    .build()
+  overr de val pushSendEventBusPubl s r = EventBusPubl s rBu lder()
+    .cl ent d("fr gate_pushserv ce")
+    .streamNa (pushSendEventStreamNa )
+    .thr ftStruct(Not f cat onScr be)
+    .statsRece ver(statsRece ver.scope("push_send_eventbus"))
+    .bu ld()
 
-  override lazy val candidateFeatureHydrator: CandidateFeatureHydrator =
-    CandidateFeatureHydrator(
-      socialContextActionsFeatureBuilder = Some(socialContextActionsFeatureBuilder),
-      tweetSocialProofFeatureBuilder = Some(tweetSocialProofFeatureBuilder),
-      earlybirdFeatureBuilder = Some(earlybirdFeatureBuilder),
-      tweetContentFeatureBuilder = Some(tweetContentFeatureBuilder),
-      tweetAuthorRecentRealGraphFeatureBuilder = Some(tweetAuthorRecentRealGraphFeatureBuilder),
-      socialContextRecentRealGraphFeatureBuilder = Some(socialContextRecentRealGraphFeatureBuilder),
-      tweetAnnotationsFeatureBuilder = Some(tweetAnnotationsFeatureBuilder),
-      mrOfflineUserCandidateSparseAggregatesFeatureBuilder =
-        Some(mrOfflineUserCandidateSparseAggregatesFeatureBuilder),
-      candidateLevelFeatureBuilder = Some(candidateLevelFeatureBuilder)
-    )(statsReceiver.scope("push_feature_hydrator"))
+  overr de lazy val cand dateFeatureHydrator: Cand dateFeatureHydrator =
+    Cand dateFeatureHydrator(
+      soc alContextAct onsFeatureBu lder = So (soc alContextAct onsFeatureBu lder),
+      t etSoc alProofFeatureBu lder = So (t etSoc alProofFeatureBu lder),
+      earlyb rdFeatureBu lder = So (earlyb rdFeatureBu lder),
+      t etContentFeatureBu lder = So (t etContentFeatureBu lder),
+      t etAuthorRecentRealGraphFeatureBu lder = So (t etAuthorRecentRealGraphFeatureBu lder),
+      soc alContextRecentRealGraphFeatureBu lder = So (soc alContextRecentRealGraphFeatureBu lder),
+      t etAnnotat onsFeatureBu lder = So (t etAnnotat onsFeatureBu lder),
+      mrOffl neUserCand dateSparseAggregatesFeatureBu lder =
+        So (mrOffl neUserCand dateSparseAggregatesFeatureBu lder),
+      cand dateLevelFeatureBu lder = So (cand dateLevelFeatureBu lder)
+    )(statsRece ver.scope("push_feature_hydrator"))
 
-  private val candidateCopyCross =
-    new CandidateCopyExpansion(statsReceiver.scope("refresh_handler/cross"))
+  pr vate val cand dateCopyCross =
+    new Cand dateCopyExpans on(statsRece ver.scope("refresh_handler/cross"))
 
-  override lazy val candidateHydrator: PushCandidateHydrator =
-    PushCandidateHydrator(
-      this.socialGraphServiceProcessStore,
+  overr de lazy val cand dateHydrator: PushCand dateHydrator =
+    PushCand dateHydrator(
+      t .soc alGraphServ ceProcessStore,
       safeUserStore,
-      listAPIStore,
-      candidateCopyCross)(
-      statsReceiver.scope("push_candidate_hydrator"),
-      weightedOpenOrNtabClickModelScorer)
+      l stAP Store,
+      cand dateCopyCross)(
+      statsRece ver.scope("push_cand date_hydrator"),
+        ghtedOpenOrNtabCl ckModelScorer)
 
-  override lazy val sendHandlerCandidateHydrator: SendHandlerPushCandidateHydrator =
-    SendHandlerPushCandidateHydrator(
-      lexServiceStore,
-      fanoutMetadataStore,
-      semanticCoreMegadataStore,
+  overr de lazy val sendHandlerCand dateHydrator: SendHandlerPushCand dateHydrator =
+    SendHandlerPushCand dateHydrator(
+      lexServ ceStore,
+      fanout tadataStore,
+      semant cCore gadataStore,
       safeUserStore,
-      simClusterToEntityStore,
-      audioSpaceStore,
-      interestsWithLookupContextStore,
-      uttEntityHydrationStore,
-      superFollowCreatorTweetCountStore
+      s mClusterToEnt yStore,
+      aud oSpaceStore,
+       nterestsW hLookupContextStore,
+      uttEnt yHydrat onStore,
+      superFollowCreatorT etCountStore
     )(
-      statsReceiver.scope("push_candidate_hydrator"),
-      weightedOpenOrNtabClickModelScorer
+      statsRece ver.scope("push_cand date_hydrator"),
+        ghtedOpenOrNtabCl ckModelScorer
     )
 
-  def mrRequestScriberNode: String
-  def loggedOutMrRequestScriberNode: String
+  def mrRequestScr berNode: Str ng
+  def loggedOutMrRequestScr berNode: Str ng
 
-  override lazy val configParamsBuilder: ConfigParamsBuilder = ConfigParamsBuilder(
-    config = overridesConfig,
-    featureContextBuilder = FeatureContextBuilder(featureSwitches),
-    statsReceiver = statsReceiver
+  overr de lazy val conf gParamsBu lder: Conf gParamsBu lder = Conf gParamsBu lder(
+    conf g = overr desConf g,
+    featureContextBu lder = FeatureContextBu lder(featureSw c s),
+    statsRece ver = statsRece ver
   )
 
-  def buildStore[K, V](store: ReadableStore[K, V], name: String): ReadableStore[K, V] = {
-    ObservedReadableStore(store)(statsReceiver.scope("store").scope(name))
+  def bu ldStore[K, V](store: ReadableStore[K, V], na : Str ng): ReadableStore[K, V] = {
+    ObservedReadableStore(store)(statsRece ver.scope("store").scope(na ))
   }
 
-  def buildManhattanStore[K, V](dataset: Dataset[K, V]): ReadableStore[K, V] = {
-    val manhattanKVClientParams = ManhattanKVClientMtlsParams(
-      serviceIdentifier = serviceIdentifier,
-      opportunisticTls = OpportunisticTls.Required
+  def bu ldManhattanStore[K, V](dataset: Dataset[K, V]): ReadableStore[K, V] = {
+    val manhattanKVCl entParams = ManhattanKVCl entMtlsParams(
+      serv ce dent f er = serv ce dent f er,
+      opportun st cTls = Opportun st cTls.Requ red
     )
     ManhattanStore
-      .fromDatasetWithMtls[K, V](
+      .fromDatasetW hMtls[K, V](
         dataset,
-        mtlsParams = manhattanKVClientParams,
-        statsReceiver = statsReceiver.scope(dataset.datasetName))
+        mtlsParams = manhattanKVCl entParams,
+        statsRece ver = statsRece ver.scope(dataset.datasetNa ))
   }
 
-  def buildCachedTweetyPieStore(
-    getTweetOptions: Option[GetTweetOptions],
-    keyPrefix: String
-  ): ReadableStore[Long, TweetyPieResult] = {
-    def discardAdditionalMediaInfo(tweetypieResult: TweetyPieResult) = {
-      val updatedMedia = tweetypieResult.tweet.media.map { mediaSeq =>
-        mediaSeq.map { media => media.copy(additionalMetadata = None, sizes = Nil.toSet) }
+  def bu ldCac dT etyP eStore(
+    getT etOpt ons: Opt on[GetT etOpt ons],
+    keyPref x: Str ng
+  ): ReadableStore[Long, T etyP eResult] = {
+    def d scardAdd  onal d a nfo(t etyp eResult: T etyP eResult) = {
+      val updated d a = t etyp eResult.t et. d a.map {  d aSeq =>
+         d aSeq.map {  d a =>  d a.copy(add  onal tadata = None, s zes = N l.toSet) }
       }
-      val updatedTweet = tweetypieResult.tweet.copy(media = updatedMedia)
-      tweetypieResult.copy(tweet = updatedTweet)
+      val updatedT et = t etyp eResult.t et.copy( d a = updated d a)
+      t etyp eResult.copy(t et = updatedT et)
     }
 
-    val tweetypieStoreWithoutAdditionalMediaInfo = TweetyPieStore(
-      tweetyPieClient,
-      getTweetOptions,
-      transformTweetypieResult = discardAdditionalMediaInfo
-    )(statsReceiver.scope("tweetypie_without_additional_media_info"))
+    val t etyp eStoreW houtAdd  onal d a nfo = T etyP eStore(
+      t etyP eCl ent,
+      getT etOpt ons,
+      transformT etyp eResult = d scardAdd  onal d a nfo
+    )(statsRece ver.scope("t etyp e_w hout_add  onal_ d a_ nfo"))
 
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = tweetypieStoreWithoutAdditionalMediaInfo,
-      cacheClient = pushServiceCoreSvcsCacheClient,
-      ttl = 12.hours
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = t etyp eStoreW houtAdd  onal d a nfo,
+      cac Cl ent = pushServ ceCoreSvcsCac Cl ent,
+      ttl = 12.h s
     )(
-      valueInjection = TweetyPieResultInjection,
-      statsReceiver = statsReceiver.scope("TweetyPieStore"),
-      keyToString = { k: Long => s"$keyPrefix/$k" }
+      value nject on = T etyP eResult nject on,
+      statsRece ver = statsRece ver.scope("T etyP eStore"),
+      keyToStr ng = { k: Long => s"$keyPref x/$k" }
     )
   }
 
-  override def init(): Future[Unit] =
-    ClientRegistry.expAllRegisteredClientsResolved().map { clients =>
-      log.info("Done resolving clients: " + clients.mkString("[", ", ", "]"))
+  overr de def  n (): Future[Un ] =
+    Cl entReg stry.expAllReg steredCl entsResolved().map { cl ents =>
+      log. nfo("Done resolv ng cl ents: " + cl ents.mkStr ng("[", ", ", "]"))
     }
 
-  val InlineActionsMhColumn =
-    "frigate/magicrecs/inlineActionsMh"
+  val  nl neAct onsMhColumn =
+    "fr gate/mag crecs/ nl neAct onsMh"
 
-  override val inlineActionHistoryStore: ReadableStore[Long, Seq[(Long, String)]] =
+  overr de val  nl neAct on toryStore: ReadableStore[Long, Seq[(Long, Str ng)]] =
     StratoScannableStore
-      .withUnitView[(Long, Slice[Long]), (Long, Long), String](stratoClient, InlineActionsMhColumn)
-      .composeKeyMapping[Long] { userId =>
-        (userId, Slice[Long](from = None, to = None, limit = None))
+      .w hUn V ew[(Long, Sl ce[Long]), (Long, Long), Str ng](stratoCl ent,  nl neAct onsMhColumn)
+      .composeKeyMapp ng[Long] { user d =>
+        (user d, Sl ce[Long](from = None, to = None, l m  = None))
       }.mapValues { response =>
         response.map {
           case (key, value) => (key._2, value)
         }
       }
 
-  override val tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets] = {
+  overr de val tr pT etCand dateStore: ReadableStore[Tr pDoma n, Tr pT ets] = {
     StratoFetchableStore
-      .withUnitView[TripDomain, TripTweets](
-        new TripTweetsAirflowProdClientColumn(stratoClient).fetcher)
+      .w hUn V ew[Tr pDoma n, Tr pT ets](
+        new Tr pT etsA rflowProdCl entColumn(stratoCl ent).fetc r)
   }
 
-  override val softUserFollowingStore: ReadableStore[User, Seq[Long]] = new SoftUserFollowingStore(
-    stratoClient)
+  overr de val softUserFollow ngStore: ReadableStore[User, Seq[Long]] = new SoftUserFollow ngStore(
+    stratoCl ent)
 
-  override val superFollowEligibilityUserStore: ReadableStore[Long, Boolean] = {
-    StratoFetchableStore.withUnitView[Long, Boolean](
-      stratoClient,
-      "audiencerewards/audienceRewardsService/getSuperFollowEligibility.User")
+  overr de val superFollowEl g b l yUserStore: ReadableStore[Long, Boolean] = {
+    StratoFetchableStore.w hUn V ew[Long, Boolean](
+      stratoCl ent,
+      "aud encerewards/aud enceRewardsServ ce/getSuperFollowEl g b l y.User")
   }
 
-  override val superFollowCreatorTweetCountStore: ReadableStore[UserId, Int] = {
-    ObservedCachedReadableStore
+  overr de val superFollowCreatorT etCountStore: ReadableStore[User d,  nt] = {
+    ObservedCac dReadableStore
       .from(
         store = StratoFetchableStore
-          .withUnitView[UserId, Int](new CreatorSubscriptionNumTweetsColumn(stratoClient).fetcher),
-        ttl = 5.minutes,
+          .w hUn V ew[User d,  nt](new CreatorSubscr pt onNumT etsColumn(stratoCl ent).fetc r),
+        ttl = 5.m nutes,
         maxKeys = 1000,
-        cacheName = "SuperFollowCreatorTweetCountStore",
-        windowSize = 10000L
-      )(statsReceiver.scope("SuperFollowCreatorTweetCountStore"))
+        cac Na  = "SuperFollowCreatorT etCountStore",
+        w ndowS ze = 10000L
+      )(statsRece ver.scope("SuperFollowCreatorT etCountStore"))
 
   }
 
-  override val hasSuperFollowingRelationshipStore: ReadableStore[
-    HasSuperFollowingRelationshipRequest,
+  overr de val hasSuperFollow ngRelat onsh pStore: ReadableStore[
+    HasSuperFollow ngRelat onsh pRequest,
     Boolean
   ] = {
-    StratoFetchableStore.withUnitView[HasSuperFollowingRelationshipRequest, Boolean](
-      stratoClient,
-      "audiencerewards/superFollows/hasSuperFollowingRelationshipV2")
+    StratoFetchableStore.w hUn V ew[HasSuperFollow ngRelat onsh pRequest, Boolean](
+      stratoCl ent,
+      "aud encerewards/superFollows/hasSuperFollow ngRelat onsh pV2")
   }
 
-  override val superFollowApplicationStatusStore: ReadableStore[
+  overr de val superFollowAppl cat onStatusStore: ReadableStore[
     (Long, SellerTrack),
-    SellerApplicationState
+    SellerAppl cat onState
   ] = {
-    StratoFetchableStore.withUnitView[(Long, SellerTrack), SellerApplicationState](
-      stratoClient,
-      "periscope/eligibility/applicationStatus")
+    StratoFetchableStore.w hUn V ew[(Long, SellerTrack), SellerAppl cat onState](
+      stratoCl ent,
+      "per scope/el g b l y/appl cat onStatus")
   }
 
-  def historyStoreMemcacheDest: String
+  def  toryStore mcac Dest: Str ng
 
-  override lazy val recentHistoryCacheClient = {
-    RecentHistoryCacheClient.build(historyStoreMemcacheDest, serviceIdentifier, statsReceiver)
+  overr de lazy val recent toryCac Cl ent = {
+    Recent toryCac Cl ent.bu ld( toryStore mcac Dest, serv ce dent f er, statsRece ver)
   }
 
-  override val openAppUserStore: ReadableStore[Long, Boolean] = {
-    buildStore(OpenAppUserStore(stratoClient), "OpenAppUserStore")
+  overr de val openAppUserStore: ReadableStore[Long, Boolean] = {
+    bu ldStore(OpenAppUserStore(stratoCl ent), "OpenAppUserStore")
   }
 }

@@ -1,241 +1,241 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_t etyp e
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.thriftscala.TweetVisibilityPolicy
-import com.twitter.tweetypie.{thriftscala => TP}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.{T etyP e => T etyp eSt chCl ent}
+ mport com.tw ter.t etyp e.thr ftscala.T etV s b l yPol cy
+ mport com.tw ter.t etyp e.{thr ftscala => TP}
 
-// Candidate Features
-object IsCommunityTweetFeature extends Feature[TweetCandidate, Boolean]
+// Cand date Features
+object  sCommun yT etFeature extends Feature[T etCand date, Boolean]
 
-// Tweetypie VF Features
-object HasTakedownFeature extends Feature[TweetCandidate, Boolean]
-object HasTakedownForLocaleFeature extends Feature[TweetCandidate, Boolean]
-object IsHydratedFeature extends Feature[TweetCandidate, Boolean]
-object IsNarrowcastFeature extends Feature[TweetCandidate, Boolean]
-object IsNsfwAdminFeature extends Feature[TweetCandidate, Boolean]
-object IsNsfwFeature extends Feature[TweetCandidate, Boolean]
-object IsNsfwUserFeature extends Feature[TweetCandidate, Boolean]
-object IsNullcastFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetDroppedFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetHasTakedownFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetHasTakedownForLocaleFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-object SourceTweetHasTakedownFeature extends Feature[TweetCandidate, Boolean]
-object SourceTweetHasTakedownForLocaleFeature extends Feature[TweetCandidate, Boolean]
-object TakedownCountryCodesFeature extends Feature[TweetCandidate, Set[String]]
-object IsReplyFeature extends Feature[TweetCandidate, Boolean]
-object InReplyToFeature extends Feature[TweetCandidate, Option[Long]]
-object IsRetweetFeature extends Feature[TweetCandidate, Boolean]
+// T etyp e VF Features
+object HasTakedownFeature extends Feature[T etCand date, Boolean]
+object HasTakedownForLocaleFeature extends Feature[T etCand date, Boolean]
+object  sHydratedFeature extends Feature[T etCand date, Boolean]
+object  sNarrowcastFeature extends Feature[T etCand date, Boolean]
+object  sNsfwAdm nFeature extends Feature[T etCand date, Boolean]
+object  sNsfwFeature extends Feature[T etCand date, Boolean]
+object  sNsfwUserFeature extends Feature[T etCand date, Boolean]
+object  sNullcastFeature extends Feature[T etCand date, Boolean]
+object QuotedT etDroppedFeature extends Feature[T etCand date, Boolean]
+object QuotedT etHasTakedownFeature extends Feature[T etCand date, Boolean]
+object QuotedT etHasTakedownForLocaleFeature extends Feature[T etCand date, Boolean]
+object QuotedT et dFeature extends Feature[T etCand date, Opt on[Long]]
+object S ceT etHasTakedownFeature extends Feature[T etCand date, Boolean]
+object S ceT etHasTakedownForLocaleFeature extends Feature[T etCand date, Boolean]
+object TakedownCountryCodesFeature extends Feature[T etCand date, Set[Str ng]]
+object  sReplyFeature extends Feature[T etCand date, Boolean]
+object  nReplyToFeature extends Feature[T etCand date, Opt on[Long]]
+object  sRet etFeature extends Feature[T etCand date, Boolean]
 
-object TweetTweetypieCandidateFeatureHydrator {
-  val CoreTweetFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.CoreDataField.id)
+object T etT etyp eCand dateFeatureHydrator {
+  val CoreT etF elds: Set[TP.T et nclude] = Set[TP.T et nclude](
+    TP.T et nclude.T etF eld d(TP.T et. dF eld. d),
+    TP.T et nclude.T etF eld d(TP.T et.CoreDataF eld. d)
   )
 
-  val NsfwLabelFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    // Tweet fields containing NSFW related attributes, in addition to what exists in coreData.
-    TP.TweetInclude.TweetFieldId(TP.Tweet.NsfwHighRecallLabelField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.NsfwHighPrecisionLabelField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.NsfaHighRecallLabelField.id)
+  val NsfwLabelF elds: Set[TP.T et nclude] = Set[TP.T et nclude](
+    // T et f elds conta n ng NSFW related attr butes,  n add  on to what ex sts  n coreData.
+    TP.T et nclude.T etF eld d(TP.T et.NsfwH ghRecallLabelF eld. d),
+    TP.T et nclude.T etF eld d(TP.T et.NsfwH ghPrec s onLabelF eld. d),
+    TP.T et nclude.T etF eld d(TP.T et.NsfaH ghRecallLabelF eld. d)
   )
 
-  val SafetyLabelFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    // Tweet fields containing RTF labels for abuse and spam.
-    TP.TweetInclude.TweetFieldId(TP.Tweet.SpamLabelField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.AbusiveLabelField.id)
+  val SafetyLabelF elds: Set[TP.T et nclude] = Set[TP.T et nclude](
+    // T et f elds conta n ng RTF labels for abuse and spam.
+    TP.T et nclude.T etF eld d(TP.T et.SpamLabelF eld. d),
+    TP.T et nclude.T etF eld d(TP.T et.Abus veLabelF eld. d)
   )
 
-  val OrganicTweetTPHydrationFields: Set[TP.TweetInclude] = CoreTweetFields ++
-    NsfwLabelFields ++
-    SafetyLabelFields ++
+  val Organ cT etTPHydrat onF elds: Set[TP.T et nclude] = CoreT etF elds ++
+    NsfwLabelF elds ++
+    SafetyLabelF elds ++
     Set(
-      TP.TweetInclude.TweetFieldId(TP.Tweet.TakedownCountryCodesField.id),
-      // QTs imply a TweetyPie -> SGS request dependency
-      TP.TweetInclude.TweetFieldId(TP.Tweet.QuotedTweetField.id),
-      TP.TweetInclude.TweetFieldId(TP.Tweet.EscherbirdEntityAnnotationsField.id),
-      TP.TweetInclude.TweetFieldId(TP.Tweet.CommunitiesField.id),
-      // Field required for determining if a Tweet was created via News Camera.
-      TP.TweetInclude.TweetFieldId(TP.Tweet.ComposerSourceField.id)
+      TP.T et nclude.T etF eld d(TP.T et.TakedownCountryCodesF eld. d),
+      // QTs  mply a T etyP e -> SGS request dependency
+      TP.T et nclude.T etF eld d(TP.T et.QuotedT etF eld. d),
+      TP.T et nclude.T etF eld d(TP.T et.Esc rb rdEnt yAnnotat onsF eld. d),
+      TP.T et nclude.T etF eld d(TP.T et.Commun  esF eld. d),
+      // F eld requ red for determ n ng  f a T et was created v a News Ca ra.
+      TP.T et nclude.T etF eld d(TP.T et.ComposerS ceF eld. d)
     )
 
-  val InjectedTweetTPHydrationFields: Set[TP.TweetInclude] =
-    OrganicTweetTPHydrationFields ++ Set(
-      // Mentions imply a TweetyPie -> Gizmoduck request dependency
-      TP.TweetInclude.TweetFieldId(TP.Tweet.MentionsField.id),
-      TP.TweetInclude.TweetFieldId(TP.Tweet.HashtagsField.id)
+  val  njectedT etTPHydrat onF elds: Set[TP.T et nclude] =
+    Organ cT etTPHydrat onF elds ++ Set(
+      //  nt ons  mply a T etyP e -> G zmoduck request dependency
+      TP.T et nclude.T etF eld d(TP.T et. nt onsF eld. d),
+      TP.T et nclude.T etF eld d(TP.T et.HashtagsF eld. d)
     )
 
-  val DefaultFeatureMap = FeatureMapBuilder()
-    .add(IsNsfwAdminFeature, false)
-    .add(IsNsfwUserFeature, false)
-    .add(IsNsfwFeature, false)
-    .add(IsNullcastFeature, false)
-    .add(IsNarrowcastFeature, false)
+  val DefaultFeatureMap = FeatureMapBu lder()
+    .add( sNsfwAdm nFeature, false)
+    .add( sNsfwUserFeature, false)
+    .add( sNsfwFeature, false)
+    .add( sNullcastFeature, false)
+    .add( sNarrowcastFeature, false)
     .add(HasTakedownFeature, false)
-    .add(IsCommunityTweetFeature, false)
-    .add(TakedownCountryCodesFeature, Set.empty: Set[String])
-    .add(IsHydratedFeature, false)
+    .add( sCommun yT etFeature, false)
+    .add(TakedownCountryCodesFeature, Set.empty: Set[Str ng])
+    .add( sHydratedFeature, false)
     .add(HasTakedownForLocaleFeature, false)
-    .add(QuotedTweetDroppedFeature, false)
-    .add(SourceTweetHasTakedownFeature, false)
-    .add(QuotedTweetHasTakedownFeature, false)
-    .add(SourceTweetHasTakedownForLocaleFeature, false)
-    .add(QuotedTweetHasTakedownForLocaleFeature, false)
-    .add(IsReplyFeature, false)
-    .add(InReplyToFeature, None)
-    .add(IsRetweetFeature, false)
-    .build()
+    .add(QuotedT etDroppedFeature, false)
+    .add(S ceT etHasTakedownFeature, false)
+    .add(QuotedT etHasTakedownFeature, false)
+    .add(S ceT etHasTakedownForLocaleFeature, false)
+    .add(QuotedT etHasTakedownForLocaleFeature, false)
+    .add( sReplyFeature, false)
+    .add( nReplyToFeature, None)
+    .add( sRet etFeature, false)
+    .bu ld()
 }
 
-class TweetTweetypieCandidateFeatureHydrator(
-  tweetypieStitchClient: TweetypieStitchClient,
-  safetyLevelPredicate: PipelineQuery => SafetyLevel)
-    extends CandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate] {
+class T etT etyp eCand dateFeatureHydrator(
+  t etyp eSt chCl ent: T etyp eSt chCl ent,
+  safetyLevelPred cate: P pel neQuery => SafetyLevel)
+    extends Cand dateFeatureHydrator[P pel neQuery, BaseT etCand date] {
 
-  import TweetTweetypieCandidateFeatureHydrator._
+   mport T etT etyp eCand dateFeatureHydrator._
 
-  override val features: Set[Feature[_, _]] =
+  overr de val features: Set[Feature[_, _]] =
     Set(
-      IsNsfwFeature,
-      IsNsfwAdminFeature,
-      IsNsfwUserFeature,
-      IsNullcastFeature,
-      IsNarrowcastFeature,
+       sNsfwFeature,
+       sNsfwAdm nFeature,
+       sNsfwUserFeature,
+       sNullcastFeature,
+       sNarrowcastFeature,
       HasTakedownFeature,
-      IsCommunityTweetFeature,
+       sCommun yT etFeature,
       TakedownCountryCodesFeature,
-      IsHydratedFeature,
+       sHydratedFeature,
       HasTakedownForLocaleFeature,
-      QuotedTweetDroppedFeature,
-      SourceTweetHasTakedownFeature,
-      QuotedTweetHasTakedownFeature,
-      SourceTweetHasTakedownForLocaleFeature,
-      QuotedTweetHasTakedownForLocaleFeature,
-      IsReplyFeature,
-      InReplyToFeature,
-      IsRetweetFeature
+      QuotedT etDroppedFeature,
+      S ceT etHasTakedownFeature,
+      QuotedT etHasTakedownFeature,
+      S ceT etHasTakedownForLocaleFeature,
+      QuotedT etHasTakedownForLocaleFeature,
+       sReplyFeature,
+       nReplyToFeature,
+       sRet etFeature
     )
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetTweetypie")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("T etT etyp e")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: BaseT etCand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = {
     val countryCode = query.getCountryCode.getOrElse("")
 
-    tweetypieStitchClient
-      .getTweetFields(
-        tweetId = candidate.id,
-        options = TP.GetTweetFieldsOptions(
-          tweetIncludes = OrganicTweetTPHydrationFields,
-          includeRetweetedTweet = true,
-          includeQuotedTweet = true,
-          visibilityPolicy = TweetVisibilityPolicy.UserVisible,
-          safetyLevel = Some(safetyLevelPredicate(query))
+    t etyp eSt chCl ent
+      .getT etF elds(
+        t et d = cand date. d,
+        opt ons = TP.GetT etF eldsOpt ons(
+          t et ncludes = Organ cT etTPHydrat onF elds,
+           ncludeRet etedT et = true,
+           ncludeQuotedT et = true,
+          v s b l yPol cy = T etV s b l yPol cy.UserV s ble,
+          safetyLevel = So (safetyLevelPred cate(query))
         )
       ).map {
-        case TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-          val coreData = found.tweet.coreData
-          val isNsfwAdmin = coreData.exists(_.nsfwAdmin)
-          val isNsfwUser = coreData.exists(_.nsfwUser)
-          val hasTakedown = coreData.exists(_.hasTakedown)
-          val isReply = coreData.exists(_.reply.nonEmpty)
-          val ancestorId = coreData.flatMap(_.reply).flatMap(_.inReplyToStatusId)
-          val isRetweet = coreData.exists(_.share.nonEmpty)
+        case TP.GetT etF eldsResult(_, TP.T etF eldsResultState.Found(found), quoteOpt, _) =>
+          val coreData = found.t et.coreData
+          val  sNsfwAdm n = coreData.ex sts(_.nsfwAdm n)
+          val  sNsfwUser = coreData.ex sts(_.nsfwUser)
+          val hasTakedown = coreData.ex sts(_.hasTakedown)
+          val  sReply = coreData.ex sts(_.reply.nonEmpty)
+          val ancestor d = coreData.flatMap(_.reply).flatMap(_. nReplyToStatus d)
+          val  sRet et = coreData.ex sts(_.share.nonEmpty)
           val takedownCountryCodes =
-            found.tweet.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLowerCase).toSet
+            found.t et.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLo rCase).toSet
 
-          val quotedTweetDropped = quoteOpt.exists {
-            case _: TP.TweetFieldsResultState.Filtered =>
+          val quotedT etDropped = quoteOpt.ex sts {
+            case _: TP.T etF eldsResultState.F ltered =>
               true
-            case _: TP.TweetFieldsResultState.NotFound =>
+            case _: TP.T etF eldsResultState.NotFound =>
               true
             case _ => false
           }
-          val quotedTweetIsNsfw = quoteOpt.exists {
-            case quoteTweet: TP.TweetFieldsResultState.Found =>
-              quoteTweet.found.tweet.coreData.exists(data => data.nsfwAdmin || data.nsfwUser)
+          val quotedT et sNsfw = quoteOpt.ex sts {
+            case quoteT et: TP.T etF eldsResultState.Found =>
+              quoteT et.found.t et.coreData.ex sts(data => data.nsfwAdm n || data.nsfwUser)
             case _ => false
           }
-          val quotedTweetHasTakedown = quoteOpt.exists {
-            case quoteTweet: TP.TweetFieldsResultState.Found =>
-              quoteTweet.found.tweet.coreData.exists(_.hasTakedown)
+          val quotedT etHasTakedown = quoteOpt.ex sts {
+            case quoteT et: TP.T etF eldsResultState.Found =>
+              quoteT et.found.t et.coreData.ex sts(_.hasTakedown)
             case _ => false
           }
-          val quotedTweetTakedownCountryCodes = quoteOpt
+          val quotedT etTakedownCountryCodes = quoteOpt
             .collect {
-              case quoteTweet: TP.TweetFieldsResultState.Found =>
-                quoteTweet.found.tweet.takedownCountryCodes
-                  .getOrElse(Seq.empty).map(_.toLowerCase).toSet
-            }.getOrElse(Set.empty[String])
+              case quoteT et: TP.T etF eldsResultState.Found =>
+                quoteT et.found.t et.takedownCountryCodes
+                  .getOrElse(Seq.empty).map(_.toLo rCase).toSet
+            }.getOrElse(Set.empty[Str ng])
 
-          val sourceTweetIsNsfw =
-            found.retweetedTweet.exists(_.coreData.exists(data => data.nsfwAdmin || data.nsfwUser))
-          val sourceTweetHasTakedown =
-            found.retweetedTweet.exists(_.coreData.exists(_.hasTakedown))
-          val sourceTweetTakedownCountryCodes = found.retweetedTweet
-            .map { sourceTweet: TP.Tweet =>
-              sourceTweet.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLowerCase).toSet
+          val s ceT et sNsfw =
+            found.ret etedT et.ex sts(_.coreData.ex sts(data => data.nsfwAdm n || data.nsfwUser))
+          val s ceT etHasTakedown =
+            found.ret etedT et.ex sts(_.coreData.ex sts(_.hasTakedown))
+          val s ceT etTakedownCountryCodes = found.ret etedT et
+            .map { s ceT et: TP.T et =>
+              s ceT et.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLo rCase).toSet
             }.getOrElse(Set.empty)
 
-          FeatureMapBuilder()
-            .add(IsNsfwAdminFeature, isNsfwAdmin)
-            .add(IsNsfwUserFeature, isNsfwUser)
-            .add(IsNsfwFeature, isNsfwAdmin || isNsfwUser || sourceTweetIsNsfw || quotedTweetIsNsfw)
-            .add(IsNullcastFeature, coreData.exists(_.nullcast))
-            .add(IsNarrowcastFeature, coreData.exists(_.narrowcast.nonEmpty))
+          FeatureMapBu lder()
+            .add( sNsfwAdm nFeature,  sNsfwAdm n)
+            .add( sNsfwUserFeature,  sNsfwUser)
+            .add( sNsfwFeature,  sNsfwAdm n ||  sNsfwUser || s ceT et sNsfw || quotedT et sNsfw)
+            .add( sNullcastFeature, coreData.ex sts(_.nullcast))
+            .add( sNarrowcastFeature, coreData.ex sts(_.narrowcast.nonEmpty))
             .add(HasTakedownFeature, hasTakedown)
             .add(
               HasTakedownForLocaleFeature,
               hasTakedownForLocale(hasTakedown, countryCode, takedownCountryCodes))
-            .add(QuotedTweetDroppedFeature, quotedTweetDropped)
-            .add(SourceTweetHasTakedownFeature, sourceTweetHasTakedown)
-            .add(QuotedTweetHasTakedownFeature, quotedTweetHasTakedown)
+            .add(QuotedT etDroppedFeature, quotedT etDropped)
+            .add(S ceT etHasTakedownFeature, s ceT etHasTakedown)
+            .add(QuotedT etHasTakedownFeature, quotedT etHasTakedown)
             .add(
-              SourceTweetHasTakedownForLocaleFeature,
+              S ceT etHasTakedownForLocaleFeature,
               hasTakedownForLocale(
-                sourceTweetHasTakedown,
+                s ceT etHasTakedown,
                 countryCode,
-                sourceTweetTakedownCountryCodes))
+                s ceT etTakedownCountryCodes))
             .add(
-              QuotedTweetHasTakedownForLocaleFeature,
+              QuotedT etHasTakedownForLocaleFeature,
               hasTakedownForLocale(
-                quotedTweetHasTakedown,
+                quotedT etHasTakedown,
                 countryCode,
-                quotedTweetTakedownCountryCodes))
-            .add(IsCommunityTweetFeature, found.tweet.communities.exists(_.communityIds.nonEmpty))
+                quotedT etTakedownCountryCodes))
+            .add( sCommun yT etFeature, found.t et.commun  es.ex sts(_.commun y ds.nonEmpty))
             .add(
               TakedownCountryCodesFeature,
-              found.tweet.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLowerCase).toSet)
-            .add(IsHydratedFeature, true)
-            .add(IsReplyFeature, isReply)
-            .add(InReplyToFeature, ancestorId)
-            .add(IsRetweetFeature, isRetweet)
-            .build()
+              found.t et.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLo rCase).toSet)
+            .add( sHydratedFeature, true)
+            .add( sReplyFeature,  sReply)
+            .add( nReplyToFeature, ancestor d)
+            .add( sRet etFeature,  sRet et)
+            .bu ld()
 
-        // If no tweet result found, return default features
+        //  f no t et result found, return default features
         case _ =>
           DefaultFeatureMap
       }
   }
 
-  private def hasTakedownForLocale(
+  pr vate def hasTakedownForLocale(
     hasTakedown: Boolean,
-    countryCode: String,
-    takedownCountryCodes: Set[String]
-  ) = hasTakedown && takedownCountryCodes.contains(countryCode)
+    countryCode: Str ng,
+    takedownCountryCodes: Set[Str ng]
+  ) = hasTakedown && takedownCountryCodes.conta ns(countryCode)
 }

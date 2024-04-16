@@ -1,65 +1,65 @@
-package com.twitter.search.common.search.termination;
+package com.tw ter.search.common.search.term nat on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.search.DocIdTracker;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.search.TerminationTracker;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.search.Doc dTracker;
+ mport com.tw ter.search.common.search.EarlyTerm nat onState;
+ mport com.tw ter.search.common.search.Term nat onTracker;
 
 /**
- * QueryTimeoutImpl provides a method for early termination of queries based on time.
+ * QueryT  out mpl prov des a  thod for early term nat on of quer es based on t  .
  */
-public class QueryTimeoutImpl implements QueryTimeout {
-  private final String clientId;
-  private final TerminationTracker tracker;
-  private final Clock clock;
+publ c class QueryT  out mpl  mple nts QueryT  out {
+  pr vate f nal Str ng cl ent d;
+  pr vate f nal Term nat onTracker tracker;
+  pr vate f nal Clock clock;
 
-  private final SearchRateCounter shouldTerminateCounter;
+  pr vate f nal SearchRateCounter shouldTerm nateCounter;
 
-  public QueryTimeoutImpl(String clientId, TerminationTracker tracker, Clock clock) {
-    this.clientId = Preconditions.checkNotNull(clientId);
-    this.tracker = Preconditions.checkNotNull(tracker);
-    this.clock = Preconditions.checkNotNull(clock);
-    shouldTerminateCounter =
-        SearchRateCounter.export("query_timeout_should_terminate_" + clientId);
+  publ c QueryT  out mpl(Str ng cl ent d, Term nat onTracker tracker, Clock clock) {
+    t .cl ent d = Precond  ons.c ckNotNull(cl ent d);
+    t .tracker = Precond  ons.c ckNotNull(tracker);
+    t .clock = Precond  ons.c ckNotNull(clock);
+    shouldTerm nateCounter =
+        SearchRateCounter.export("query_t  out_should_term nate_" + cl ent d);
   }
 
   /**
-   * Returns true when the clock's time has met or exceeded the tracker's timeout end.
+   * Returns true w n t  clock's t   has  t or exceeded t  tracker's t  out end.
    */
-  public boolean shouldExit() {
-    if (clock.nowMillis() >= tracker.getTimeoutEndTimeWithReservation()) {
-      tracker.setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
-      shouldTerminateCounter.increment();
+  publ c boolean shouldEx () {
+     f (clock.nowM ll s() >= tracker.getT  outEndT  W hReservat on()) {
+      tracker.setEarlyTerm nat onState(EarlyTerm nat onState.TERM NATED_T ME_OUT_EXCEEDED);
+      shouldTerm nateCounter. ncre nt();
       return true;
     }
     return false;
   }
 
-  @Override
-  public void registerDocIdTracker(DocIdTracker docIdTracker) {
-    tracker.addDocIdTracker(docIdTracker);
+  @Overr de
+  publ c vo d reg sterDoc dTracker(Doc dTracker doc dTracker) {
+    tracker.addDoc dTracker(doc dTracker);
   }
 
-  @Override
-  public String getClientId() {
-    return clientId;
+  @Overr de
+  publ c Str ng getCl ent d() {
+    return cl ent d;
   }
 
-  @Override
-  public int hashCode() {
-    return clientId.hashCode() * 13 + tracker.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return cl ent d.hashCode() * 13 + tracker.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof QueryTimeoutImpl)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof QueryT  out mpl)) {
       return false;
     }
 
-    QueryTimeoutImpl queryTimeout = QueryTimeoutImpl.class.cast(obj);
-    return clientId.equals(queryTimeout.clientId) && tracker.equals(queryTimeout.tracker);
+    QueryT  out mpl queryT  out = QueryT  out mpl.class.cast(obj);
+    return cl ent d.equals(queryT  out.cl ent d) && tracker.equals(queryT  out.tracker);
   }
 }

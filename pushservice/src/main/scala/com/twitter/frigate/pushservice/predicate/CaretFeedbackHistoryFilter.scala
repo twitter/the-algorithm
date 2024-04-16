@@ -1,99 +1,99 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.CaretFeedbackHistory
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.notificationservice.thriftscala.GenericNotificationMetadata
-import com.twitter.notificationservice.thriftscala.GenericType
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.cand date.CaretFeedback tory
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common.ut l.MrNtabCopyObjects
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cNot f cat on tadata
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cType
 
-object CaretFeedbackHistoryFilter {
+object CaretFeedback toryF lter {
 
-  def caretFeedbackHistoryFilter(
-    categories: Seq[String]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      caretFeedbackDetails.genericNotificationMetadata match {
-        case Some(genericNotificationMetadata) =>
-          isFeedbackSupportedGenericType(genericNotificationMetadata)
+  def caretFeedback toryF lter(
+    categor es: Seq[Str ng]
+  ): TargetUser w h TargetABDec der w h CaretFeedback tory => Seq[CaretFeedbackDeta ls] => Seq[
+    CaretFeedbackDeta ls
+  ] = { target => caretFeedbackDeta lsSeq =>
+    caretFeedbackDeta lsSeq.f lter { caretFeedbackDeta ls =>
+      caretFeedbackDeta ls.gener cNot f cat on tadata match {
+        case So (gener cNot f cat on tadata) =>
+           sFeedbackSupportedGener cType(gener cNot f cat on tadata)
         case None => false
       }
     }
   }
 
-  private def filterCriteria(
-    caretFeedbackDetails: CaretFeedbackDetails,
-    genericTypes: Seq[GenericType]
+  pr vate def f lterCr er a(
+    caretFeedbackDeta ls: CaretFeedbackDeta ls,
+    gener cTypes: Seq[Gener cType]
   ): Boolean = {
-    caretFeedbackDetails.genericNotificationMetadata match {
-      case Some(genericNotificationMetadata) =>
-        genericTypes.contains(genericNotificationMetadata.genericType)
+    caretFeedbackDeta ls.gener cNot f cat on tadata match {
+      case So (gener cNot f cat on tadata) =>
+        gener cTypes.conta ns(gener cNot f cat on tadata.gener cType)
       case None => false
     }
   }
 
-  def caretFeedbackHistoryFilterByGenericType(
-    genericTypes: Seq[GenericType]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      filterCriteria(caretFeedbackDetails, genericTypes)
+  def caretFeedback toryF lterByGener cType(
+    gener cTypes: Seq[Gener cType]
+  ): TargetUser w h TargetABDec der w h CaretFeedback tory => Seq[CaretFeedbackDeta ls] => Seq[
+    CaretFeedbackDeta ls
+  ] = { target => caretFeedbackDeta lsSeq =>
+    caretFeedbackDeta lsSeq.f lter { caretFeedbackDeta ls =>
+      f lterCr er a(caretFeedbackDeta ls, gener cTypes)
     }
   }
 
-  def caretFeedbackHistoryFilterByGenericTypeDenyList(
-    genericTypes: Seq[GenericType]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filterNot { caretFeedbackDetails =>
-      filterCriteria(caretFeedbackDetails, genericTypes)
+  def caretFeedback toryF lterByGener cTypeDenyL st(
+    gener cTypes: Seq[Gener cType]
+  ): TargetUser w h TargetABDec der w h CaretFeedback tory => Seq[CaretFeedbackDeta ls] => Seq[
+    CaretFeedbackDeta ls
+  ] = { target => caretFeedbackDeta lsSeq =>
+    caretFeedbackDeta lsSeq.f lterNot { caretFeedbackDeta ls =>
+      f lterCr er a(caretFeedbackDeta ls, gener cTypes)
     }
   }
 
-  def caretFeedbackHistoryFilterByRefreshableType(
-    refreshableTypes: Set[Option[String]]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      caretFeedbackDetails.genericNotificationMetadata match {
-        case Some(genericNotificationMetadata) =>
-          refreshableTypes.contains(genericNotificationMetadata.refreshableType)
+  def caretFeedback toryF lterByRefreshableType(
+    refreshableTypes: Set[Opt on[Str ng]]
+  ): TargetUser w h TargetABDec der w h CaretFeedback tory => Seq[CaretFeedbackDeta ls] => Seq[
+    CaretFeedbackDeta ls
+  ] = { target => caretFeedbackDeta lsSeq =>
+    caretFeedbackDeta lsSeq.f lter { caretFeedbackDeta ls =>
+      caretFeedbackDeta ls.gener cNot f cat on tadata match {
+        case So (gener cNot f cat on tadata) =>
+          refreshableTypes.conta ns(gener cNot f cat on tadata.refreshableType)
         case None => false
       }
     }
   }
 
-  def caretFeedbackHistoryFilterByRefreshableTypeDenyList(
-    refreshableTypes: Set[Option[String]]
-  ): TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[CaretFeedbackDetails] => Seq[
-    CaretFeedbackDetails
-  ] = { target => caretFeedbackDetailsSeq =>
-    caretFeedbackDetailsSeq.filter { caretFeedbackDetails =>
-      caretFeedbackDetails.genericNotificationMetadata match {
-        case Some(genericNotificationMetadata) =>
-          !refreshableTypes.contains(genericNotificationMetadata.refreshableType)
+  def caretFeedback toryF lterByRefreshableTypeDenyL st(
+    refreshableTypes: Set[Opt on[Str ng]]
+  ): TargetUser w h TargetABDec der w h CaretFeedback tory => Seq[CaretFeedbackDeta ls] => Seq[
+    CaretFeedbackDeta ls
+  ] = { target => caretFeedbackDeta lsSeq =>
+    caretFeedbackDeta lsSeq.f lter { caretFeedbackDeta ls =>
+      caretFeedbackDeta ls.gener cNot f cat on tadata match {
+        case So (gener cNot f cat on tadata) =>
+          !refreshableTypes.conta ns(gener cNot f cat on tadata.refreshableType)
         case None => true
       }
     }
   }
 
-  private def isFeedbackSupportedGenericType(
-    notificationMetadata: GenericNotificationMetadata
+  pr vate def  sFeedbackSupportedGener cType(
+    not f cat on tadata: Gener cNot f cat on tadata
   ): Boolean = {
-    val genericNotificationTypeName =
-      (notificationMetadata.genericType, notificationMetadata.refreshableType) match {
-        case (GenericType.RefreshableNotification, Some(refreshableType)) => refreshableType
-        case _ => notificationMetadata.genericType.name
+    val gener cNot f cat onTypeNa  =
+      (not f cat on tadata.gener cType, not f cat on tadata.refreshableType) match {
+        case (Gener cType.RefreshableNot f cat on, So (refreshableType)) => refreshableType
+        case _ => not f cat on tadata.gener cType.na 
       }
 
     MrNtabCopyObjects.AllNtabCopyTypes
       .flatMap(_.refreshableType)
-      .contains(genericNotificationTypeName)
+      .conta ns(gener cNot f cat onTypeNa )
   }
 }

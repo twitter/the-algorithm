@@ -1,71 +1,71 @@
-package com.twitter.ann.file_store
+package com.tw ter.ann.f le_store
 
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.thriftscala.FileBasedIndexIdStore
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.storehaus.Store
-import com.twitter.util.Future
-import java.util.concurrent.{ConcurrentHashMap => JConcurrentHashMap}
-import scala.collection.JavaConverters._
+ mport com.tw ter.ann.common. ndexOutputF le
+ mport com.tw ter.ann.common.thr ftscala.F leBased ndex dStore
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec
+ mport com.tw ter. d aserv ces.commons.codec.Thr ftByteBufferCodec
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.ut l.Future
+ mport java.ut l.concurrent.{ConcurrentHashMap => JConcurrentHashMap}
+ mport scala.collect on.JavaConverters._
 
-object WritableIndexIdFileStore {
+object Wr able ndex dF leStore {
 
   /**
-   * @param injection: Injection to convert typed Id to bytes.
-   * @tparam V: Type of Id
-   * @return File based Writable Store
+   * @param  nject on:  nject on to convert typed  d to bytes.
+   * @tparam V: Type of  d
+   * @return F le based Wr able Store
    */
   def apply[V](
-    injection: Injection[V, Array[Byte]]
-  ): WritableIndexIdFileStore[V] = {
-    new WritableIndexIdFileStore[V](
-      new JConcurrentHashMap[Long, Option[V]],
-      injection
+     nject on:  nject on[V, Array[Byte]]
+  ): Wr able ndex dF leStore[V] = {
+    new Wr able ndex dF leStore[V](
+      new JConcurrentHashMap[Long, Opt on[V]],
+       nject on
     )
   }
 }
 
-class WritableIndexIdFileStore[V] private (
-  map: JConcurrentHashMap[Long, Option[V]],
-  injection: Injection[V, Array[Byte]])
+class Wr able ndex dF leStore[V] pr vate (
+  map: JConcurrentHashMap[Long, Opt on[V]],
+   nject on:  nject on[V, Array[Byte]])
     extends Store[Long, V] {
 
-  private[this] val store = Store.fromJMap(map)
+  pr vate[t ] val store = Store.fromJMap(map)
 
-  override def get(k: Long): Future[Option[V]] = {
+  overr de def get(k: Long): Future[Opt on[V]] = {
     store.get(k)
   }
 
-  override def put(kv: (Long, Option[V])): Future[Unit] = {
+  overr de def put(kv: (Long, Opt on[V])): Future[Un ] = {
     store.put(kv)
   }
 
   /**
-   * Serialize and store the mapping in thrift format
-   * @param file : File path to store serialized long indexId <-> Id mapping
+   * Ser al ze and store t  mapp ng  n thr ft format
+   * @param f le : F le path to store ser al zed long  ndex d <->  d mapp ng
    */
-  def save(file: IndexOutputFile): Unit = {
-    saveThrift(toThrift(), file)
+  def save(f le:  ndexOutputF le): Un  = {
+    saveThr ft(toThr ft(), f le)
   }
 
-  def getInjection: Injection[V, Array[Byte]] = injection
+  def get nject on:  nject on[V, Array[Byte]] =  nject on
 
-  private[this] def toThrift(): FileBasedIndexIdStore = {
-    val indexIdMap = map.asScala
+  pr vate[t ] def toThr ft(): F leBased ndex dStore = {
+    val  ndex dMap = map.asScala
       .collect {
-        case (key, Some(value)) => (key, ArrayByteBufferCodec.encode(injection.apply(value)))
+        case (key, So (value)) => (key, ArrayByteBufferCodec.encode( nject on.apply(value)))
       }
 
-    FileBasedIndexIdStore(Some(indexIdMap))
+    F leBased ndex dStore(So ( ndex dMap))
   }
 
-  private[this] def saveThrift(thriftObj: FileBasedIndexIdStore, file: IndexOutputFile): Unit = {
-    val codec = new ThriftByteBufferCodec(FileBasedIndexIdStore)
-    val bytes = ArrayByteBufferCodec.decode(codec.encode(thriftObj))
-    val outputStream = file.getOutputStream()
-    outputStream.write(bytes)
+  pr vate[t ] def saveThr ft(thr ftObj: F leBased ndex dStore, f le:  ndexOutputF le): Un  = {
+    val codec = new Thr ftByteBufferCodec(F leBased ndex dStore)
+    val bytes = ArrayByteBufferCodec.decode(codec.encode(thr ftObj))
+    val outputStream = f le.getOutputStream()
+    outputStream.wr e(bytes)
     outputStream.close()
   }
 }

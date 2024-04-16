@@ -1,20 +1,20 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.features.AuthorMutesViewer
-import com.twitter.visibility.rules.Condition.BooleanFeatureCondition
-import com.twitter.visibility.rules.Condition.ProtectedViewer
-import com.twitter.visibility.rules.Reason.Unspecified
+ mport com.tw ter.v s b l y.features.AuthorMutesV e r
+ mport com.tw ter.v s b l y.rules.Cond  on.BooleanFeatureCond  on
+ mport com.tw ter.v s b l y.rules.Cond  on.ProtectedV e r
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
 
-object FollowerRelations {
+object Follo rRelat ons {
 
-  case object AuthorMutesViewerFeature extends BooleanFeatureCondition(AuthorMutesViewer)
+  case object AuthorMutesV e rFeature extends BooleanFeatureCond  on(AuthorMutesV e r)
 
-  object AuthorMutesViewerRule
-      extends OnlyWhenNotAuthorViewerRule(
-        action = Drop(Unspecified),
-        condition = AuthorMutesViewerFeature)
+  object AuthorMutesV e rRule
+      extends OnlyW nNotAuthorV e rRule(
+        act on = Drop(Unspec f ed),
+        cond  on = AuthorMutesV e rFeature)
 
-  object ProtectedViewerRule
-      extends OnlyWhenNotAuthorViewerRule(action = Drop(Unspecified), condition = ProtectedViewer)
+  object ProtectedV e rRule
+      extends OnlyW nNotAuthorV e rRule(act on = Drop(Unspec f ed), cond  on = ProtectedV e r)
 
 }

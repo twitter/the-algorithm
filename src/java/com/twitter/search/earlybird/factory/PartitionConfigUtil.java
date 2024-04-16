@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.factory;
+package com.tw ter.search.earlyb rd.factory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.partition.PartitionConfig;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.conf g.T erConf g;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
 
-public final class PartitionConfigUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionConfigUtil.class);
+publ c f nal class Part  onConf gUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Part  onConf gUt l.class);
 
-  private PartitionConfigUtil() {
+  pr vate Part  onConf gUt l() {
   }
 
   /**
-   * Initiate PartitionConfig for earlybirds running on Aurora
+   *  n  ate Part  onConf g for earlyb rds runn ng on Aurora
    */
-  public static PartitionConfig initPartitionConfigForAurora(int numOfInstances) {
-    String tier = EarlybirdProperty.EARLYBIRD_TIER.get();
-    int partitionId = EarlybirdProperty.PARTITION_ID.get();
-    int replicaId = EarlybirdProperty.REPLICA_ID.get();
-    if (tier.equals(PartitionConfig.DEFAULT_TIER_NAME)) {
-      // realtime or protected earlybird
-      return new PartitionConfig(
-          partitionId,
-          EarlybirdProperty.SERVING_TIMESLICES.get(),
-          replicaId,
-          numOfInstances,
-          EarlybirdProperty.NUM_PARTITIONS.get());
+  publ c stat c Part  onConf g  n Part  onConf gForAurora( nt numOf nstances) {
+    Str ng t er = Earlyb rdProperty.EARLYB RD_T ER.get();
+     nt part  on d = Earlyb rdProperty.PART T ON_ D.get();
+     nt repl ca d = Earlyb rdProperty.REPL CA_ D.get();
+     f (t er.equals(Part  onConf g.DEFAULT_T ER_NAME)) {
+      // realt   or protected earlyb rd
+      return new Part  onConf g(
+          part  on d,
+          Earlyb rdProperty.SERV NG_T MESL CES.get(),
+          repl ca d,
+          numOf nstances,
+          Earlyb rdProperty.NUM_PART T ONS.get());
     } else {
-      // archive earlybird
-      TierInfo tierInfo = TierConfig.getTierInfo(tier);
-      return new PartitionConfig(tier, tierInfo.getDataStartDate(), tierInfo.getDataEndDate(),
-          partitionId, tierInfo.getMaxTimeslices(), replicaId, numOfInstances,
-          tierInfo.getNumPartitions());
+      // arch ve earlyb rd
+      T er nfo t er nfo = T erConf g.getT er nfo(t er);
+      return new Part  onConf g(t er, t er nfo.getDataStartDate(), t er nfo.getDataEndDate(),
+          part  on d, t er nfo.getMaxT  sl ces(), repl ca d, numOf nstances,
+          t er nfo.getNumPart  ons());
     }
   }
 
   /**
-   * Tries to create a new PartitionConfig instance based on the Aurora flags
+   * Tr es to create a new Part  onConf g  nstance based on t  Aurora flags
    */
-  public static PartitionConfig initPartitionConfig() {
-    return initPartitionConfigForAurora(EarlybirdProperty.NUM_INSTANCES.get());
+  publ c stat c Part  onConf g  n Part  onConf g() {
+    return  n Part  onConf gForAurora(Earlyb rdProperty.NUM_ NSTANCES.get());
   }
 }

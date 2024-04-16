@@ -1,15 +1,15 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.twitter.ann.common.thriftscala.BadRequest
-import com.twitter.mediaservices.commons._
+ mport com.tw ter.ann.common.thr ftscala.BadRequest
+ mport com.tw ter. d aserv ces.commons._
 
-object RuntimeExceptionTransform extends ExceptionTransformer {
-  override def transform = {
+object Runt  Except onTransform extends Except onTransfor r {
+  overr de def transform = {
     case e: BadRequest =>
-      MisuseExceptionInfo(e)
+      M suseExcept on nfo(e)
   }
 
-  override def getStatName: PartialFunction[Exception, String] = {
-    case e: BadRequest => exceptionName(e, e.code.name)
+  overr de def getStatNa : Part alFunct on[Except on, Str ng] = {
+    case e: BadRequest => except onNa (e, e.code.na )
   }
 }

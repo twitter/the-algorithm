@@ -1,249 +1,249 @@
-package com.twitter.frigate.pushservice.send_handler
+package com.tw ter.fr gate.pushserv ce.send_handler
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateFilteringOnlyFlow
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Response
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.config.CommonConstants
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.InvalidRequestException
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams.EnableMagicFanoutNewsForYouNtabCopy
-import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
-import com.twitter.frigate.pushservice.send_handler.generator.PushRequestToCandidate
-import com.twitter.frigate.pushservice.take.SendHandlerNotifier
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPostCandidateValidator
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPreCandidateValidator
-import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
-import com.twitter.frigate.pushservice.util.ResponseStatsTrackUtils.trackStatsForResponseToRequest
-import com.twitter.frigate.pushservice.util.SendHandlerPredicateUtil
-import com.twitter.frigate.pushservice.thriftscala.PushRequest
-import com.twitter.frigate.pushservice.thriftscala.PushRequestScribe
-import com.twitter.frigate.pushservice.thriftscala.PushResponse
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.util._
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.Cand dateF lter ngOnlyFlow
+ mport com.tw ter.fr gate.common.base.Cand dateResult
+ mport com.tw ter.fr gate.common.base.FeatureMap
+ mport com.tw ter.fr gate.common.base.OK
+ mport com.tw ter.fr gate.common.base.Response
+ mport com.tw ter.fr gate.common.base.Result
+ mport com.tw ter.fr gate.common.base.Stats.track
+ mport com.tw ter.fr gate.common.conf g.CommonConstants
+ mport com.tw ter.fr gate.common.logger.MRLogger
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.common.ut l. nval dRequestExcept on
+ mport com.tw ter.fr gate.common.ut l.MrNtabCopyObjects
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.Hydrat onContextBu lder
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams.EnableMag cFanoutNewsFor NtabCopy
+ mport com.tw ter.fr gate.pushserv ce.scr ber.MrRequestScr beHandler
+ mport com.tw ter.fr gate.pushserv ce.send_handler.generator.PushRequestToCand date
+ mport com.tw ter.fr gate.pushserv ce.take.SendHandlerNot f er
+ mport com.tw ter.fr gate.pushserv ce.take.cand date_val dator.SendHandlerPostCand dateVal dator
+ mport com.tw ter.fr gate.pushserv ce.take.cand date_val dator.SendHandlerPreCand dateVal dator
+ mport com.tw ter.fr gate.pushserv ce.target.PushTargetUserBu lder
+ mport com.tw ter.fr gate.pushserv ce.ut l.ResponseStatsTrackUt ls.trackStatsForResponseToRequest
+ mport com.tw ter.fr gate.pushserv ce.ut l.SendHandlerPred cateUt l
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushRequest
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushRequestScr be
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushResponse
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.nrel. avyranker.FeatureHydrator
+ mport com.tw ter.ut l._
 
 /**
- * A handler for sending PushRequests
+ * A handler for send ng PushRequests
  */
 class SendHandler(
-  pushTargetUserBuilder: PushTargetUserBuilder,
-  preCandidateValidator: SendHandlerPreCandidateValidator,
-  postCandidateValidator: SendHandlerPostCandidateValidator,
-  sendHandlerNotifier: SendHandlerNotifier,
-  candidateHydrator: SendHandlerPushCandidateHydrator,
+  pushTargetUserBu lder: PushTargetUserBu lder,
+  preCand dateVal dator: SendHandlerPreCand dateVal dator,
+  postCand dateVal dator: SendHandlerPostCand dateVal dator,
+  sendHandlerNot f er: SendHandlerNot f er,
+  cand dateHydrator: SendHandlerPushCand dateHydrator,
   featureHydrator: FeatureHydrator,
-  sendHandlerPredicateUtil: SendHandlerPredicateUtil,
-  mrRequestScriberNode: String
+  sendHandlerPred cateUt l: SendHandlerPred cateUt l,
+  mrRequestScr berNode: Str ng
 )(
-  implicit val statsReceiver: StatsReceiver,
-  implicit val config: Config)
-    extends CandidateFilteringOnlyFlow[Target, RawCandidate, PushCandidate] {
+   mpl c  val statsRece ver: StatsRece ver,
+   mpl c  val conf g: Conf g)
+    extends Cand dateF lter ngOnlyFlow[Target, RawCand date, PushCand date] {
 
-  implicit private val timer: Timer = new JavaTimer(true)
-  val stats = statsReceiver.scope("SendHandler")
+   mpl c  pr vate val t  r: T  r = new JavaT  r(true)
+  val stats = statsRece ver.scope("SendHandler")
   val log = MRLogger("SendHandler")
 
-  private val buildTargetStats = stats.scope("build_target")
+  pr vate val bu ldTargetStats = stats.scope("bu ld_target")
 
-  private val candidateHydrationLatency: Stat =
-    stats.stat("candidateHydrationLatency")
+  pr vate val cand dateHydrat onLatency: Stat =
+    stats.stat("cand dateHydrat onLatency")
 
-  private val candidatePreValidatorLatency: Stat =
-    stats.stat("candidatePreValidatorLatency")
+  pr vate val cand datePreVal datorLatency: Stat =
+    stats.stat("cand datePreVal datorLatency")
 
-  private val candidatePostValidatorLatency: Stat =
-    stats.stat("candidatePostValidatorLatency")
+  pr vate val cand datePostVal datorLatency: Stat =
+    stats.stat("cand datePostVal datorLatency")
 
-  private val featureHydrationLatency: StatsReceiver =
-    stats.scope("featureHydrationLatency")
+  pr vate val featureHydrat onLatency: StatsRece ver =
+    stats.scope("featureHydrat onLatency")
 
-  private val mrRequestScribeHandler =
-    new MrRequestScribeHandler(mrRequestScriberNode, stats.scope("mr_request_scribe"))
+  pr vate val mrRequestScr beHandler =
+    new MrRequestScr beHandler(mrRequestScr berNode, stats.scope("mr_request_scr be"))
 
   def apply(request: PushRequest): Future[PushResponse] = {
-    val receivers = Seq(
+    val rece vers = Seq(
       stats,
-      stats.scope(request.notification.commonRecommendationType.toString)
+      stats.scope(request.not f cat on.commonRecom ndat onType.toStr ng)
     )
-    val bStats = BroadcastStatsReceiver(receivers)
-    bStats.counter("requests").incr()
+    val bStats = BroadcastStatsRece ver(rece vers)
+    bStats.counter("requests"). ncr()
     Stat
-      .timeFuture(bStats.stat("latency"))(
-        process(request).raiseWithin(CommonConstants.maxPushRequestDuration))
+      .t  Future(bStats.stat("latency"))(
+        process(request).ra seW h n(CommonConstants.maxPushRequestDurat on))
       .onSuccess {
-        case (pushResp, rawCandidate) =>
+        case (pushResp, rawCand date) =>
           trackStatsForResponseToRequest(
-            rawCandidate.commonRecType,
-            rawCandidate.target,
+            rawCand date.commonRecType,
+            rawCand date.target,
             pushResp,
-            receivers)(statsReceiver)
-          if (!request.context.exists(_.darkWrite.contains(true))) {
-            config.requestScribe(PushRequestScribe(request, pushResp))
+            rece vers)(statsRece ver)
+           f (!request.context.ex sts(_.darkWr e.conta ns(true))) {
+            conf g.requestScr be(PushRequestScr be(request, pushResp))
           }
       }
-      .onFailure { ex =>
-        bStats.counter("failures").incr()
-        bStats.scope("failures").counter(ex.getClass.getCanonicalName).incr()
+      .onFa lure { ex =>
+        bStats.counter("fa lures"). ncr()
+        bStats.scope("fa lures").counter(ex.getClass.getCanon calNa ). ncr()
       }
       .map {
         case (pushResp, _) => pushResp
       }
   }
 
-  private def process(request: PushRequest): Future[(PushResponse, RawCandidate)] = {
-    val recType = request.notification.commonRecommendationType
+  pr vate def process(request: PushRequest): Future[(PushResponse, RawCand date)] = {
+    val recType = request.not f cat on.commonRecom ndat onType
 
-    track(buildTargetStats)(
-      pushTargetUserBuilder
-        .buildTarget(
-          request.userId,
+    track(bu ldTargetStats)(
+      pushTargetUserBu lder
+        .bu ldTarget(
+          request.user d,
           request.context
         )
     ).flatMap { targetUser =>
-      val responseWithScribedInfo = request.context.exists { context =>
-        context.responseWithScribedInfo.contains(true)
+      val responseW hScr bed nfo = request.context.ex sts { context =>
+        context.responseW hScr bed nfo.conta ns(true)
       }
       val newRequest =
-        if (request.notification.commonRecommendationType == CommonRecommendationType.MagicFanoutNewsEvent &&
-          targetUser.params(EnableMagicFanoutNewsForYouNtabCopy)) {
-          val newNotification = request.notification.copy(ntabCopyId =
-            Some(MrNtabCopyObjects.MagicFanoutNewsForYouCopy.copyId))
-          request.copy(notification = newNotification)
+         f (request.not f cat on.commonRecom ndat onType == CommonRecom ndat onType.Mag cFanoutNewsEvent &&
+          targetUser.params(EnableMag cFanoutNewsFor NtabCopy)) {
+          val newNot f cat on = request.not f cat on.copy(ntabCopy d =
+            So (MrNtabCopyObjects.Mag cFanoutNewsFor Copy.copy d))
+          request.copy(not f cat on = newNot f cat on)
         } else request
 
-      if (RecTypes.isSendHandlerType(recType) || newRequest.context.exists(
-          _.allowCRT.contains(true))) {
+       f (RecTypes. sSendHandlerType(recType) || newRequest.context.ex sts(
+          _.allowCRT.conta ns(true))) {
 
-        val rawCandidateFut = PushRequestToCandidate.generatePushCandidate(
-          newRequest.notification,
+        val rawCand dateFut = PushRequestToCand date.generatePushCand date(
+          newRequest.not f cat on,
           targetUser
         )
 
-        rawCandidateFut.flatMap { rawCandidate =>
-          val pushResponse = process(targetUser, Seq(rawCandidate)).flatMap {
-            sendHandlerNotifier.checkResponseAndNotify(_, responseWithScribedInfo)
+        rawCand dateFut.flatMap { rawCand date =>
+          val pushResponse = process(targetUser, Seq(rawCand date)).flatMap {
+            sendHandlerNot f er.c ckResponseAndNot fy(_, responseW hScr bed nfo)
           }
 
           pushResponse.map { pushResponse =>
-            (pushResponse, rawCandidate)
+            (pushResponse, rawCand date)
           }
         }
       } else {
-        Future.exception(InvalidRequestException(s"${recType.name} not supported in SendHandler"))
+        Future.except on( nval dRequestExcept on(s"${recType.na } not supported  n SendHandler"))
       }
     }
   }
 
-  private def hydrateFeatures(
-    candidateDetails: Seq[CandidateDetails[PushCandidate]],
+  pr vate def hydrateFeatures(
+    cand dateDeta ls: Seq[Cand dateDeta ls[PushCand date]],
     target: Target,
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
-    candidateDetails.headOption match {
-      case Some(candidateDetail)
-          if RecTypes.notEligibleForModelScoreTracking(candidateDetail.candidate.commonRecType) =>
-        Future.value(candidateDetails)
+    cand dateDeta ls. adOpt on match {
+      case So (cand dateDeta l)
+           f RecTypes.notEl g bleForModelScoreTrack ng(cand dateDeta l.cand date.commonRecType) =>
+        Future.value(cand dateDeta ls)
 
-      case Some(candidateDetail) =>
-        val hydrationContextFut = HydrationContextBuilder.build(candidateDetail.candidate)
-        hydrationContextFut.flatMap { hc =>
+      case So (cand dateDeta l) =>
+        val hydrat onContextFut = Hydrat onContextBu lder.bu ld(cand dateDeta l.cand date)
+        hydrat onContextFut.flatMap { hc =>
           featureHydrator
-            .hydrateCandidate(Seq(hc), target.mrRequestContextForFeatureStore)
-            .map { hydrationResult =>
-              val features = hydrationResult.getOrElse(hc, FeatureMap())
-              candidateDetail.candidate.mergeFeatures(features)
-              candidateDetails
+            .hydrateCand date(Seq(hc), target.mrRequestContextForFeatureStore)
+            .map { hydrat onResult =>
+              val features = hydrat onResult.getOrElse(hc, FeatureMap())
+              cand dateDeta l.cand date. rgeFeatures(features)
+              cand dateDeta ls
             }
         }
-      case _ => Future.Nil
+      case _ => Future.N l
     }
   }
 
-  override def process(
+  overr de def process(
     target: Target,
-    externalCandidates: Seq[RawCandidate]
-  ): Future[Response[PushCandidate, Result]] = {
-    val candidate = externalCandidates.map(CandidateDetails(_, "realtime"))
+    externalCand dates: Seq[RawCand date]
+  ): Future[Response[PushCand date, Result]] = {
+    val cand date = externalCand dates.map(Cand dateDeta ls(_, "realt  "))
 
     for {
-      hydratedCandidatesWithCopy <- hydrateCandidates(candidate)
+      hydratedCand datesW hCopy <- hydrateCand dates(cand date)
 
-      (candidates, preHydrationFilteredCandidates) <- track(filterStats)(
-        filter(target, hydratedCandidatesWithCopy)
+      (cand dates, preHydrat onF lteredCand dates) <- track(f lterStats)(
+        f lter(target, hydratedCand datesW hCopy)
       )
 
-      featureHydratedCandidates <-
-        track(featureHydrationLatency)(hydrateFeatures(candidates, target))
+      featureHydratedCand dates <-
+        track(featureHydrat onLatency)(hydrateFeatures(cand dates, target))
 
-      allTakeCandidateResults <- track(takeStats)(
-        take(target, featureHydratedCandidates, desiredCandidateCount(target))
+      allTakeCand dateResults <- track(takeStats)(
+        take(target, featureHydratedCand dates, des redCand dateCount(target))
       )
 
-      _ <- mrRequestScribeHandler.scribeForCandidateFiltering(
+      _ <- mrRequestScr beHandler.scr beForCand dateF lter ng(
         target = target,
-        hydratedCandidates = hydratedCandidatesWithCopy,
-        preRankingFilteredCandidates = preHydrationFilteredCandidates,
-        rankedCandidates = featureHydratedCandidates,
-        rerankedCandidates = Seq.empty,
-        restrictFilteredCandidates = Seq.empty, // no restrict step
-        allTakeCandidateResults = allTakeCandidateResults
+        hydratedCand dates = hydratedCand datesW hCopy,
+        preRank ngF lteredCand dates = preHydrat onF lteredCand dates,
+        rankedCand dates = featureHydratedCand dates,
+        rerankedCand dates = Seq.empty,
+        restr ctF lteredCand dates = Seq.empty, // no restr ct step
+        allTakeCand dateResults = allTakeCand dateResults
       )
-    } yield {
+    } y eld {
 
       /**
-       * We combine the results for all filtering steps and pass on in sequence to next step
+       *   comb ne t  results for all f lter ng steps and pass on  n sequence to next step
        *
-       * This is done to ensure the filtering reason for the candidate from multiple levels of
-       * filtering is carried all the way until [[PushResponse]] is built and returned from
-       * frigate-pushservice-send
+       * T   s done to ensure t  f lter ng reason for t  cand date from mult ple levels of
+       * f lter ng  s carr ed all t  way unt l [[PushResponse]]  s bu lt and returned from
+       * fr gate-pushserv ce-send
        */
-      Response(OK, allTakeCandidateResults ++ preHydrationFilteredCandidates)
+      Response(OK, allTakeCand dateResults ++ preHydrat onF lteredCand dates)
     }
   }
 
-  override def hydrateCandidates(
-    candidates: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    Stat.timeFuture(candidateHydrationLatency)(candidateHydrator(candidates))
+  overr de def hydrateCand dates(
+    cand dates: Seq[Cand dateDeta ls[RawCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    Stat.t  Future(cand dateHydrat onLatency)(cand dateHydrator(cand dates))
   }
 
-  // Filter Step - pre-predicates and app specific predicates
-  override def filter(
+  // F lter Step - pre-pred cates and app spec f c pred cates
+  overr de def f lter(
     target: Target,
-    hydratedCandidatesDetails: Seq[CandidateDetails[PushCandidate]]
+    hydratedCand datesDeta ls: Seq[Cand dateDeta ls[PushCand date]]
   ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
+    (Seq[Cand dateDeta ls[PushCand date]], Seq[Cand dateResult[PushCand date, Result]])
   ] = {
-    Stat.timeFuture(candidatePreValidatorLatency)(
-      sendHandlerPredicateUtil.preValidationForCandidate(
-        hydratedCandidatesDetails,
-        preCandidateValidator
+    Stat.t  Future(cand datePreVal datorLatency)(
+      sendHandlerPred cateUt l.preVal dat onForCand date(
+        hydratedCand datesDeta ls,
+        preCand dateVal dator
       ))
   }
 
-  // Post Validation - Take step
-  override def validCandidates(
+  // Post Val dat on - Take step
+  overr de def val dCand dates(
     target: Target,
-    candidates: Seq[PushCandidate]
+    cand dates: Seq[PushCand date]
   ): Future[Seq[Result]] = {
-    Stat.timeFuture(candidatePostValidatorLatency)(Future.collect(candidates.map { candidate =>
-      sendHandlerPredicateUtil
-        .postValidationForCandidate(candidate, postCandidateValidator)
+    Stat.t  Future(cand datePostVal datorLatency)(Future.collect(cand dates.map { cand date =>
+      sendHandlerPred cateUt l
+        .postVal dat onForCand date(cand date, postCand dateVal dator)
         .map(res => res.result)
     }))
   }

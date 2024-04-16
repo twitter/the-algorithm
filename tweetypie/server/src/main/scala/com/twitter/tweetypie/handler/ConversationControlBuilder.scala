@@ -1,271 +1,271 @@
-package com.twitter.tweetypie.handler
+package com.tw ter.t etyp e.handler
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie._
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.UserIdentityRepository
-import com.twitter.tweetypie.repository.UserKey
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetCreateConversationControl
-import com.twitter.tweetypie.thriftscala.TweetCreateState.ConversationControlNotAllowed
-import com.twitter.tweetypie.thriftscala.TweetCreateState.InvalidConversationControl
-import com.twitter.tweetypie.util.ConversationControls
-import com.twitter.util.logging.Logging
+ mport com.tw ter.featuresw c s.v2.FeatureSw chResults
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.User d
+ mport com.tw ter.t etyp e._
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.repos ory.User dent yRepos ory
+ mport com.tw ter.t etyp e.repos ory.UserKey
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControl
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateConversat onControl
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState.Conversat onControlNotAllo d
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState. nval dConversat onControl
+ mport com.tw ter.t etyp e.ut l.Conversat onControls
+ mport com.tw ter.ut l.logg ng.Logg ng
 
 /**
- * Process request parameters into a ConversationControl value.
+ * Process request para ters  nto a Conversat onControl value.
  */
-object ConversationControlBuilder extends Logging {
-  type Type = Request => Stitch[Option[ConversationControl]]
+object Conversat onControlBu lder extends Logg ng {
+  type Type = Request => St ch[Opt on[Conversat onControl]]
 
-  type ScreenName = String
+  type ScreenNa  = Str ng
 
   /**
-   * The fields necessary to create a [[ConversationControl]].
+   * T  f elds necessary to create a [[Conversat onControl]].
    *
-   * This is a trait rather than a case class to avoid running the
-   * code to extract the mentions in the cases where handling the
-   * request doesn't need to use them (the common case where
-   * tweetCreateConversationControl is None).
+   * T   s a tra  rat r than a case class to avo d runn ng t 
+   * code to extract t   nt ons  n t  cases w re handl ng t 
+   * request doesn't need to use t m (t  common case w re
+   * t etCreateConversat onControl  s None).
    */
-  trait Request {
-    def tweetCreateConversationControl: Option[TweetCreateConversationControl]
-    def tweetAuthorId: UserId
-    def mentionedUserScreenNames: Set[String]
+  tra  Request {
+    def t etCreateConversat onControl: Opt on[T etCreateConversat onControl]
+    def t etAuthor d: User d
+    def  nt onedUserScreenNa s: Set[Str ng]
 
-    def noteTweetMentionedUserIds: Option[Set[Long]]
+    def noteT et nt onedUser ds: Opt on[Set[Long]]
   }
 
   object Request {
 
     /**
-     * Extract the data necessary to create a [[ConversationControl]]
-     * for a new [[Tweet]]. This is intended for use when creating
-     * Tweets. It must be called after the Tweet has had its entities
+     * Extract t  data necessary to create a [[Conversat onControl]]
+     * for a new [[T et]]. T   s  ntended for use w n creat ng
+     * T ets.   must be called after t  T et has had  s ent  es
      * extracted.
      */
-    def fromTweet(
-      tweet: Tweet,
-      tweetCreateConversationControl: Option[TweetCreateConversationControl],
-      noteTweetMentionedUserIdsList: Option[Seq[Long]]
+    def fromT et(
+      t et: T et,
+      t etCreateConversat onControl: Opt on[T etCreateConversat onControl],
+      noteT et nt onedUser dsL st: Opt on[Seq[Long]]
     ): Request = {
-      val cctl = tweetCreateConversationControl
+      val cctl = t etCreateConversat onControl
       new Request {
-        def tweetCreateConversationControl: Option[TweetCreateConversationControl] = cctl
-        def mentionedUserScreenNames: Set[ScreenName] =
-          tweet.mentions
-          // Enforce that the Tweet's mentions have already been
-          // extracted from the text. (Mentions will be None if they
+        def t etCreateConversat onControl: Opt on[T etCreateConversat onControl] = cctl
+        def  nt onedUserScreenNa s: Set[ScreenNa ] =
+          t et. nt ons
+          // Enforce that t  T et's  nt ons have already been
+          // extracted from t  text. ( nt ons w ll be None  f t y
           // have not yet been extracted.)
             .getOrElse(
-              throw new RuntimeException(
-                "Mentions must be extracted before applying ConversationControls"))
-            .map(_.screenName)
+              throw new Runt  Except on(
+                " nt ons must be extracted before apply ng Conversat onControls"))
+            .map(_.screenNa )
             .toSet
 
-        def tweetAuthorId: UserId = tweet.coreData.get.userId
-        def noteTweetMentionedUserIds: Option[Set[Long]] =
-          noteTweetMentionedUserIdsList.map(_.toSet)
+        def t etAuthor d: User d = t et.coreData.get.user d
+        def noteT et nt onedUser ds: Opt on[Set[Long]] =
+          noteT et nt onedUser dsL st.map(_.toSet)
       }
     }
   }
 
   /**
-   * Create a ConversationControlBuilder that looks up user ids for
-   * screen names using the specified UserIdentityRepository.
+   * Create a Conversat onControlBu lder that looks up user  ds for
+   * screen na s us ng t  spec f ed User dent yRepos ory.
    */
-  def fromUserIdentityRepo(
-    statsReceiver: StatsReceiver,
-    userIdentityRepo: UserIdentityRepository.Type
-  ): Request => Stitch[Option[ConversationControl]] =
-    ConversationControlBuilder(
-      getUserId = screenName => userIdentityRepo(UserKey.byScreenName(screenName)).map(_.id),
-      statsReceiver = statsReceiver
+  def fromUser dent yRepo(
+    statsRece ver: StatsRece ver,
+    user dent yRepo: User dent yRepos ory.Type
+  ): Request => St ch[Opt on[Conversat onControl]] =
+    Conversat onControlBu lder(
+      getUser d = screenNa  => user dent yRepo(UserKey.byScreenNa (screenNa )).map(_. d),
+      statsRece ver = statsRece ver
     )
 
   /**
-   * Extract the inviteViaMention value which does not exist on the TweetCreateConversationControl
-   * itself but does exist on the structures it unions.
+   * Extract t   nv eV a nt on value wh ch does not ex st on t  T etCreateConversat onControl
+   *  self but does ex st on t  structures   un ons.
    */
-  def inviteViaMention(tccc: TweetCreateConversationControl): Boolean =
+  def  nv eV a nt on(tccc: T etCreateConversat onControl): Boolean =
     tccc match {
-      case TweetCreateConversationControl.ByInvitation(c) => c.inviteViaMention.contains(true)
-      case TweetCreateConversationControl.Community(c) => c.inviteViaMention.contains(true)
-      case TweetCreateConversationControl.Followers(c) => c.inviteViaMention.contains(true)
+      case T etCreateConversat onControl.By nv at on(c) => c. nv eV a nt on.conta ns(true)
+      case T etCreateConversat onControl.Commun y(c) => c. nv eV a nt on.conta ns(true)
+      case T etCreateConversat onControl.Follo rs(c) => c. nv eV a nt on.conta ns(true)
       case _ => false
     }
 
   /**
-   * Translates the TweetCreateConversationControl into
-   * ConversationControl using the context from the rest of the tweet
-   * creation. For the most part, this is just a direct translation,
-   * plus filling in the contextual user ids (mentioned users and tweet
+   * Translates t  T etCreateConversat onControl  nto
+   * Conversat onControl us ng t  context from t  rest of t  t et
+   * creat on. For t  most part, t   s just a d rect translat on,
+   * plus f ll ng  n t  contextual user  ds ( nt oned users and t et
    * author).
    */
   def apply(
-    statsReceiver: StatsReceiver,
-    getUserId: ScreenName => Stitch[UserId]
-  ): Request => Stitch[Option[ConversationControl]] = {
-    val userIdLookupsCounter = statsReceiver.counter("user_id_lookups")
-    val conversationControlPresentCounter = statsReceiver.counter("conversation_control_present")
-    val conversationControlInviteViaMentionPresentCounter =
-      statsReceiver.counter("conversation_control_invite_via_mention_present")
-    val failureCounter = statsReceiver.counter("failures")
+    statsRece ver: StatsRece ver,
+    getUser d: ScreenNa  => St ch[User d]
+  ): Request => St ch[Opt on[Conversat onControl]] = {
+    val user dLookupsCounter = statsRece ver.counter("user_ d_lookups")
+    val conversat onControlPresentCounter = statsRece ver.counter("conversat on_control_present")
+    val conversat onControl nv eV a nt onPresentCounter =
+      statsRece ver.counter("conversat on_control_ nv e_v a_ nt on_present")
+    val fa lureCounter = statsRece ver.counter("fa lures")
 
-    // Get the user ids for these screen names. Any users who do not
-    // exist will be silently dropped.
-    def getExistingUserIds(
-      screenNames: Set[ScreenName],
-      mentionedUserIds: Option[Set[Long]]
-    ): Stitch[Set[UserId]] = {
-      mentionedUserIds match {
-        case Some(userIds) => Stitch.value(userIds)
+    // Get t  user  ds for t se screen na s. Any users who do not
+    // ex st w ll be s lently dropped.
+    def getEx st ngUser ds(
+      screenNa s: Set[ScreenNa ],
+       nt onedUser ds: Opt on[Set[Long]]
+    ): St ch[Set[User d]] = {
+       nt onedUser ds match {
+        case So (user ds) => St ch.value(user ds)
         case _ =>
-          Stitch
-            .traverse(screenNames.toSeq) { screenName =>
-              getUserId(screenName).liftNotFoundToOption
-                .ensure(userIdLookupsCounter.incr())
+          St ch
+            .traverse(screenNa s.toSeq) { screenNa  =>
+              getUser d(screenNa ).l ftNotFoundToOpt on
+                .ensure(user dLookupsCounter. ncr())
             }
-            .map(userIdOptions => userIdOptions.flatten.toSet)
+            .map(user dOpt ons => user dOpt ons.flatten.toSet)
       }
     }
 
-    // This is broken out just to make it syntactically nicer to add
-    // the stats handling
-    def process(request: Request): Stitch[Option[ConversationControl]] =
-      request.tweetCreateConversationControl match {
-        case None => Stitch.None
-        case Some(cctl) =>
+    // T   s broken out just to make   syntact cally n cer to add
+    // t  stats handl ng
+    def process(request: Request): St ch[Opt on[Conversat onControl]] =
+      request.t etCreateConversat onControl match {
+        case None => St ch.None
+        case So (cctl) =>
           cctl match {
-            case TweetCreateConversationControl.ByInvitation(byInvitationControl) =>
+            case T etCreateConversat onControl.By nv at on(by nv at onControl) =>
               for {
-                invitedUserIds <- getExistingUserIds(
-                  request.mentionedUserScreenNames,
-                  request.noteTweetMentionedUserIds)
-              } yield Some(
-                ConversationControls.byInvitation(
-                  invitedUserIds = invitedUserIds.toSeq.filterNot(_ == request.tweetAuthorId),
-                  conversationTweetAuthorId = request.tweetAuthorId,
-                  byInvitationControl.inviteViaMention
+                 nv edUser ds <- getEx st ngUser ds(
+                  request. nt onedUserScreenNa s,
+                  request.noteT et nt onedUser ds)
+              } y eld So (
+                Conversat onControls.by nv at on(
+                   nv edUser ds =  nv edUser ds.toSeq.f lterNot(_ == request.t etAuthor d),
+                  conversat onT etAuthor d = request.t etAuthor d,
+                  by nv at onControl. nv eV a nt on
                 )
               )
 
-            case TweetCreateConversationControl.Community(communityControl) =>
+            case T etCreateConversat onControl.Commun y(commun yControl) =>
               for {
-                invitedUserIds <- getExistingUserIds(
-                  request.mentionedUserScreenNames,
-                  request.noteTweetMentionedUserIds)
-              } yield Some(
-                ConversationControls.community(
-                  invitedUserIds = invitedUserIds.toSeq.filterNot(_ == request.tweetAuthorId),
-                  conversationTweetAuthorId = request.tweetAuthorId,
-                  communityControl.inviteViaMention
+                 nv edUser ds <- getEx st ngUser ds(
+                  request. nt onedUserScreenNa s,
+                  request.noteT et nt onedUser ds)
+              } y eld So (
+                Conversat onControls.commun y(
+                   nv edUser ds =  nv edUser ds.toSeq.f lterNot(_ == request.t etAuthor d),
+                  conversat onT etAuthor d = request.t etAuthor d,
+                  commun yControl. nv eV a nt on
                 )
               )
-            case TweetCreateConversationControl.Followers(followersControl) =>
+            case T etCreateConversat onControl.Follo rs(follo rsControl) =>
               for {
-                invitedUserIds <- getExistingUserIds(
-                  request.mentionedUserScreenNames,
-                  request.noteTweetMentionedUserIds)
-              } yield Some(
-                ConversationControls.followers(
-                  invitedUserIds = invitedUserIds.toSeq.filterNot(_ == request.tweetAuthorId),
-                  conversationTweetAuthorId = request.tweetAuthorId,
-                  followersControl.inviteViaMention
+                 nv edUser ds <- getEx st ngUser ds(
+                  request. nt onedUserScreenNa s,
+                  request.noteT et nt onedUser ds)
+              } y eld So (
+                Conversat onControls.follo rs(
+                   nv edUser ds =  nv edUser ds.toSeq.f lterNot(_ == request.t etAuthor d),
+                  conversat onT etAuthor d = request.t etAuthor d,
+                  follo rsControl. nv eV a nt on
                 )
               )
-            // This should only ever happen if a new value is added to the
-            // union and we don't update this code.
-            case TweetCreateConversationControl.UnknownUnionField(fld) =>
-              throw new RuntimeException(s"Unexpected TweetCreateConversationControl: $fld")
+            // T  should only ever happen  f a new value  s added to t 
+            // un on and   don't update t  code.
+            case T etCreateConversat onControl.UnknownUn onF eld(fld) =>
+              throw new Runt  Except on(s"Unexpected T etCreateConversat onControl: $fld")
           }
       }
 
     (request: Request) => {
-      // Wrap in Stitch to encapsulate any exceptions that happen
-      // before making a Stitch call inside of process.
-      Stitch(process(request)).flatten.respond { response =>
-        // If we count this before doing the work, and the stats are
-        // collected before the RPC completes, then any failures
-        // will get counted in a different minute than the request
-        // that caused it.
-        request.tweetCreateConversationControl.foreach { cc =>
-          conversationControlPresentCounter.incr()
-          if (inviteViaMention(cc)) conversationControlInviteViaMentionPresentCounter.incr()
+      // Wrap  n St ch to encapsulate any except ons that happen
+      // before mak ng a St ch call  ns de of process.
+      St ch(process(request)).flatten.respond { response =>
+        //  f   count t  before do ng t  work, and t  stats are
+        // collected before t  RPC completes, t n any fa lures
+        // w ll get counted  n a d fferent m nute than t  request
+        // that caused  .
+        request.t etCreateConversat onControl.foreach { cc =>
+          conversat onControlPresentCounter. ncr()
+           f ( nv eV a nt on(cc)) conversat onControl nv eV a nt onPresentCounter. ncr()
         }
 
-        response.onFailure { e =>
-          error(message = "Failed to create conversation control", cause = e)
-          // Don't bother counting individual exceptions, because
-          // the cost of keeping those stats is probably not worth
-          // the convenience of not having to look in the logs.
-          failureCounter.incr()
+        response.onFa lure { e =>
+          error( ssage = "Fa led to create conversat on control", cause = e)
+          // Don't bot r count ng  nd v dual except ons, because
+          // t  cost of keep ng those stats  s probably not worth
+          // t  conven ence of not hav ng to look  n t  logs.
+          fa lureCounter. ncr()
         }
       }
     }
   }
 
   /**
-   * Validates if a conversation control request is allowed by feature switches
-   * and is only requested on a root tweet.
+   * Val dates  f a conversat on control request  s allo d by feature sw c s
+   * and  s only requested on a root t et.
    */
-  object Validate {
+  object Val date {
     case class Request(
-      matchedResults: Option[FeatureSwitchResults],
-      conversationControl: Option[TweetCreateConversationControl],
-      inReplyToTweetId: Option[TweetId])
+      matc dResults: Opt on[FeatureSw chResults],
+      conversat onControl: Opt on[T etCreateConversat onControl],
+       nReplyToT et d: Opt on[T et d])
 
     type Type = FutureEffect[Request]
 
-    val ExInvalidConversationControl = TweetCreateFailure.State(InvalidConversationControl)
-    val ExConversationControlNotAllowed = TweetCreateFailure.State(ConversationControlNotAllowed)
-    val ConversationControlStatusUpdateEnabledKey = "conversation_control_status_update_enabled"
-    val ConversationControlFollowersEnabledKey = "conversation_control_my_followers_enabled"
+    val Ex nval dConversat onControl = T etCreateFa lure.State( nval dConversat onControl)
+    val ExConversat onControlNotAllo d = T etCreateFa lure.State(Conversat onControlNotAllo d)
+    val Conversat onControlStatusUpdateEnabledKey = "conversat on_control_status_update_enabled"
+    val Conversat onControlFollo rsEnabledKey = "conversat on_control_ _follo rs_enabled"
 
     def apply(
-      useFeatureSwitchResults: Gate[Unit],
-      statsReceiver: StatsReceiver
+      useFeatureSw chResults: Gate[Un ],
+      statsRece ver: StatsRece ver
     ): Type = request => {
-      def fsDenied(fsKey: String): Boolean = {
-        val featureEnabledOpt: Option[Boolean] =
-          // Do not log impressions, which would interfere with shared client experiment data.
-          request.matchedResults.flatMap(_.getBoolean(fsKey, shouldLogImpression = false))
-        val fsEnabled = featureEnabledOpt.contains(true)
-        if (!fsEnabled) {
-          statsReceiver.counter(s"check_conversation_control/unauthorized/fs/$fsKey").incr()
+      def fsDen ed(fsKey: Str ng): Boolean = {
+        val featureEnabledOpt: Opt on[Boolean] =
+          // Do not log  mpress ons, wh ch would  nterfere w h shared cl ent exper  nt data.
+          request.matc dResults.flatMap(_.getBoolean(fsKey, shouldLog mpress on = false))
+        val fsEnabled = featureEnabledOpt.conta ns(true)
+         f (!fsEnabled) {
+          statsRece ver.counter(s"c ck_conversat on_control/unauthor zed/fs/$fsKey"). ncr()
         }
         !fsEnabled
       }
 
-      val isCcRequest: Boolean = request.conversationControl.isDefined
+      val  sCcRequest: Boolean = request.conversat onControl. sDef ned
 
-      val isCcInvalidParams = isCcRequest && {
-        val isRootTweet = request.inReplyToTweetId.isEmpty
-        if (!isRootTweet) {
-          statsReceiver.counter("check_conversation_control/invalid").incr()
+      val  sCc nval dParams =  sCcRequest && {
+        val  sRootT et = request. nReplyToT et d. sEmpty
+         f (! sRootT et) {
+          statsRece ver.counter("c ck_conversat on_control/ nval d"). ncr()
         }
-        !isRootTweet
+        ! sRootT et
       }
 
-      val isCcDeniedByFs = isCcRequest && {
-        val isFollower = request.conversationControl.exists {
-          case _: TweetCreateConversationControl.Followers => true
+      val  sCcDen edByFs =  sCcRequest && {
+        val  sFollo r = request.conversat onControl.ex sts {
+          case _: T etCreateConversat onControl.Follo rs => true
           case _ => false
         }
 
-        fsDenied(ConversationControlStatusUpdateEnabledKey) ||
-        (isFollower && fsDenied(ConversationControlFollowersEnabledKey))
+        fsDen ed(Conversat onControlStatusUpdateEnabledKey) ||
+        ( sFollo r && fsDen ed(Conversat onControlFollo rsEnabledKey))
       }
 
-      if (isCcDeniedByFs && useFeatureSwitchResults()) {
-        Future.exception(ExConversationControlNotAllowed)
-      } else if (isCcInvalidParams) {
-        Future.exception(ExInvalidConversationControl)
+       f ( sCcDen edByFs && useFeatureSw chResults()) {
+        Future.except on(ExConversat onControlNotAllo d)
+      } else  f ( sCc nval dParams) {
+        Future.except on(Ex nval dConversat onControl)
       } else {
-        Future.Unit
+        Future.Un 
       }
     }
   }

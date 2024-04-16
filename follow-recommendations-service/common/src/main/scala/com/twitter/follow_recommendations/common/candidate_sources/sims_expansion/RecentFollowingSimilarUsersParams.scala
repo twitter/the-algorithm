@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object RecentFollowingSimilarUsersParams {
-  case object MaxFirstDegreeNodes
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_first_degree_nodes",
+object RecentFollow ngS m larUsersParams {
+  case object MaxF rstDegreeNodes
+      extends FSBoundedParam[ nt](
+        na  = "s ms_expans on_recent_follow ng_max_f rst_degree_nodes",
         default = 10,
-        min = 0,
+        m n = 0,
         max = 200)
-  case object MaxSecondaryDegreeExpansionPerNode
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_secondary_degree_nodes",
+  case object MaxSecondaryDegreeExpans onPerNode
+      extends FSBoundedParam[ nt](
+        na  = "s ms_expans on_recent_follow ng_max_secondary_degree_nodes",
         default = 40,
-        min = 0,
+        m n = 0,
         max = 200)
   case object MaxResults
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "s ms_expans on_recent_follow ng_max_results",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 200)
-  case object TimestampIntegrated
+  case object T  stamp ntegrated
       extends FSParam[Boolean](
-        name = "sims_expansion_recent_following_integ_timestamp",
+        na  = "s ms_expans on_recent_follow ng_ nteg_t  stamp",
         default = false)
 }

@@ -1,108 +1,108 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendationType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityRecommendationUnion.TweetRec
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScoreAndSoc alProof
+ mport com.tw ter.cr_m xer.param.UtegT etGlobalParams
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etEnt yD splayLocat on
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.UserT etEnt yGraph
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.Recom ndT etEnt yRequest
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.Recom ndat onType
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.UserT etEnt yRecom ndat onUn on.T etRec
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-case class UserTweetEntityGraphSimilarityEngine(
-  userTweetEntityGraph: UserTweetEntityGraph.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
+@S ngleton
+case class UserT etEnt yGraphS m lar yEng ne(
+  userT etEnt yGraph: UserT etEnt yGraph. thodPerEndpo nt,
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      UserTweetEntityGraphSimilarityEngine.Query,
-      Seq[TweetWithScoreAndSocialProof]
+      UserT etEnt yGraphS m lar yEng ne.Query,
+      Seq[T etW hScoreAndSoc alProof]
     ] {
 
-  override def get(
-    query: UserTweetEntityGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScoreAndSocialProof]]] = {
-    val recommendTweetEntityRequest =
-      RecommendTweetEntityRequest(
-        requesterId = query.userId,
-        displayLocation = TweetEntityDisplayLocation.HomeTimeline,
-        recommendationTypes = Seq(RecommendationType.Tweet),
-        seedsWithWeights = query.seedsWithWeights,
-        maxResultsByType = Some(Map(RecommendationType.Tweet -> query.maxUtegCandidates)),
-        maxTweetAgeInMillis = Some(query.maxTweetAge.inMilliseconds),
-        excludedTweetIds = query.excludedTweetIds,
-        maxUserSocialProofSize = Some(UserTweetEntityGraphSimilarityEngine.MaxUserSocialProofSize),
-        maxTweetSocialProofSize =
-          Some(UserTweetEntityGraphSimilarityEngine.MaxTweetSocialProofSize),
-        minUserSocialProofSizes = Some(Map(RecommendationType.Tweet -> 1)),
-        tweetTypes = None,
-        socialProofTypes = query.socialProofTypes,
-        socialProofTypeUnions = None,
-        tweetAuthors = None,
-        maxEngagementAgeInMillis = None,
-        excludedTweetAuthors = None,
+  overr de def get(
+    query: UserT etEnt yGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScoreAndSoc alProof]]] = {
+    val recom ndT etEnt yRequest =
+      Recom ndT etEnt yRequest(
+        requester d = query.user d,
+        d splayLocat on = T etEnt yD splayLocat on.Ho T  l ne,
+        recom ndat onTypes = Seq(Recom ndat onType.T et),
+        seedsW h  ghts = query.seedsW h  ghts,
+        maxResultsByType = So (Map(Recom ndat onType.T et -> query.maxUtegCand dates)),
+        maxT etAge nM ll s = So (query.maxT etAge. nM ll seconds),
+        excludedT et ds = query.excludedT et ds,
+        maxUserSoc alProofS ze = So (UserT etEnt yGraphS m lar yEng ne.MaxUserSoc alProofS ze),
+        maxT etSoc alProofS ze =
+          So (UserT etEnt yGraphS m lar yEng ne.MaxT etSoc alProofS ze),
+        m nUserSoc alProofS zes = So (Map(Recom ndat onType.T et -> 1)),
+        t etTypes = None,
+        soc alProofTypes = query.soc alProofTypes,
+        soc alProofTypeUn ons = None,
+        t etAuthors = None,
+        maxEngage ntAge nM ll s = None,
+        excludedT etAuthors = None,
       )
 
-    userTweetEntityGraph
-      .recommendTweets(recommendTweetEntityRequest)
-      .map { recommendTweetsResponse =>
-        val candidates = recommendTweetsResponse.recommendations.flatMap {
-          case TweetRec(recommendation) =>
-            Some(
-              TweetWithScoreAndSocialProof(
-                recommendation.tweetId,
-                recommendation.score,
-                recommendation.socialProofByType.toMap))
+    userT etEnt yGraph
+      .recom ndT ets(recom ndT etEnt yRequest)
+      .map { recom ndT etsResponse =>
+        val cand dates = recom ndT etsResponse.recom ndat ons.flatMap {
+          case T etRec(recom ndat on) =>
+            So (
+              T etW hScoreAndSoc alProof(
+                recom ndat on.t et d,
+                recom ndat on.score,
+                recom ndat on.soc alProofByType.toMap))
           case _ => None
         }
-        Some(candidates)
+        So (cand dates)
       }
   }
 }
 
-object UserTweetEntityGraphSimilarityEngine {
+object UserT etEnt yGraphS m lar yEng ne {
 
-  private val MaxUserSocialProofSize = 10
-  private val MaxTweetSocialProofSize = 10
+  pr vate val MaxUserSoc alProofS ze = 10
+  pr vate val MaxT etSoc alProofS ze = 10
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.Uteg,
-      modelId = None,
-      score = Some(score))
+  def toS m lar yEng ne nfo(score: Double): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.Uteg,
+      model d = None,
+      score = So (score))
   }
 
   case class Query(
-    userId: UserId,
-    seedsWithWeights: Map[UserId, Double],
-    excludedTweetIds: Option[Seq[Long]] = None,
-    maxUtegCandidates: Int,
-    maxTweetAge: Duration,
-    socialProofTypes: Option[Seq[SocialProofType]])
+    user d: User d,
+    seedsW h  ghts: Map[User d, Double],
+    excludedT et ds: Opt on[Seq[Long]] = None,
+    maxUtegCand dates:  nt,
+    maxT etAge: Durat on,
+    soc alProofTypes: Opt on[Seq[Soc alProofType]])
 
   def fromParams(
-    userId: UserId,
-    seedsWithWeights: Map[UserId, Double],
-    excludedTweetIds: Option[Seq[TweetId]] = None,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
+    user d: User d,
+    seedsW h  ghts: Map[User d, Double],
+    excludedT et ds: Opt on[Seq[T et d]] = None,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    Eng neQuery(
       Query(
-        userId = userId,
-        seedsWithWeights = seedsWithWeights,
-        excludedTweetIds = excludedTweetIds,
-        maxUtegCandidates = params(UtegTweetGlobalParams.MaxUtegCandidatesToRequestParam),
-        maxTweetAge = params(UtegTweetGlobalParams.CandidateRefreshSinceTimeOffsetHoursParam),
-        socialProofTypes = Some(Seq(SocialProofType.Favorite))
+        user d = user d,
+        seedsW h  ghts = seedsW h  ghts,
+        excludedT et ds = excludedT et ds,
+        maxUtegCand dates = params(UtegT etGlobalParams.MaxUtegCand datesToRequestParam),
+        maxT etAge = params(UtegT etGlobalParams.Cand dateRefreshS nceT  OffsetH sParam),
+        soc alProofTypes = So (Seq(Soc alProofType.Favor e))
       ),
       params
     )

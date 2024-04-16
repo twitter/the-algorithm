@@ -1,116 +1,116 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.tweetypie.thriftscala.Reply
-import com.twitter.tweetypie.thriftscala.SelfThreadMetadata
-import org.apache.thrift.protocol.TField
+ mport com.tw ter.t etyp e.thr ftscala.Reply
+ mport com.tw ter.t etyp e.thr ftscala.SelfThread tadata
+ mport org.apac .thr ft.protocol.TF eld
 
-trait SelfThreadBuilder {
-  def requiredReplySourceFields: Set[TField] =
+tra  SelfThreadBu lder {
+  def requ redReplyS ceF elds: Set[TF eld] =
     Set(
-      Tweet.CoreDataField, // for Reply and ConversationId
-      Tweet.SelfThreadMetadataField // for continuing existing self-threads
+      T et.CoreDataF eld, // for Reply and Conversat on d
+      T et.SelfThread tadataF eld // for cont nu ng ex st ng self-threads
     )
 
-  def build(authorUserId: UserId, replySourceTweet: Tweet): Option[SelfThreadMetadata]
+  def bu ld(authorUser d: User d, replyS ceT et: T et): Opt on[SelfThread tadata]
 }
 
 /**
- * SelfThreadBuilder is used to build metadata for self-threads (tweetstorms).
+ * SelfThreadBu lder  s used to bu ld  tadata for self-threads (t etstorms).
  *
- * This builder is invoked from ReplyBuilder on tweets that pass in a inReplyToStatusId and create
- * a Reply.  The invocation is done inside ReplyBuilder as ReplyBuilder has already loaded the
- * "reply source tweet" which has all the information needed to determine the self-thread metadata.
+ * T  bu lder  s  nvoked from ReplyBu lder on t ets that pass  n a  nReplyToStatus d and create
+ * a Reply.  T   nvocat on  s done  ns de ReplyBu lder as ReplyBu lder has already loaded t 
+ * "reply s ce t et" wh ch has all t   nformat on needed to determ ne t  self-thread  tadata.
  *
- * Note that Tweet.SelfThreadMetadata schema supports representing two types of self-threads:
- * 1. root self-thread : self-thread that begins alone and does not start with replying to another
- *                       tweet.  This self-thread has a self-thread ID equal to the conversation ID.
- * 2. reply self-thread : self-thread that begins as a reply to another user's tweet.
- *                        This self-thread has a self-thread ID equal to the first tweet in the
- *                        current self-reply chain which will not equal the conversation ID.
+ * Note that T et.SelfThread tadata sc ma supports represent ng two types of self-threads:
+ * 1. root self-thread : self-thread that beg ns alone and does not start w h reply ng to anot r
+ *                       t et.  T  self-thread has a self-thread  D equal to t  conversat on  D.
+ * 2. reply self-thread : self-thread that beg ns as a reply to anot r user's t et.
+ *                        T  self-thread has a self-thread  D equal to t  f rst t et  n t 
+ *                        current self-reply cha n wh ch w ll not equal t  conversat on  D.
  *
- * Currently only type #1 "root self-thread" is handled.
+ * Currently only type #1 "root self-thread"  s handled.
  */
-object SelfThreadBuilder {
+object SelfThreadBu lder {
 
-  def apply(stats: StatsReceiver): SelfThreadBuilder = {
-    // We want to keep open the possibility for differentiation between root
-    // self-threads (current functionality) and reply self-threads (possible
-    // future functionality).
+  def apply(stats: StatsRece ver): SelfThreadBu lder = {
+    //   want to keep open t  poss b l y for d fferent at on bet en root
+    // self-threads (current funct onal y) and reply self-threads (poss ble
+    // future funct onal y).
     val rootThreadStats = stats.scope("root_thread")
 
-    // A tweet becomes a root of a self-thread only after the first self-reply
-    // is created. root_thread/start is incr()d during the write-path of the
-    // self-reply tweet, when it is known that the first/root tweet has not
-    // yet been assigned a SelfThreadMetadata. The write-path of the second
-    // tweet does not add the SelfThreadMetadata to the first tweet - that
-    // happens asynchronously by the SelfThreadDaemon.
+    // A t et beco s a root of a self-thread only after t  f rst self-reply
+    //  s created. root_thread/start  s  ncr()d dur ng t  wr e-path of t 
+    // self-reply t et, w n    s known that t  f rst/root t et has not
+    // yet been ass gned a SelfThread tadata. T  wr e-path of t  second
+    // t et does not add t  SelfThread tadata to t  f rst t et - that
+    // happens asynchronously by t  SelfThreadDaemon.
     val rootThreadStartCounter = rootThreadStats.counter("start")
 
-    // root_thread/continue provides visibility into the frequency of
-    // continuation tweets off leaf tweets in a tweet storm. Also incr()d in
-    // the special case of a reply to the root tweet, which does not yet have a
-    // SelfThreadMetadata(isLeaf=true).
-    val rootThreadContinueCounter = rootThreadStats.counter("continue")
+    // root_thread/cont nue prov des v s b l y  nto t  frequency of
+    // cont nuat on t ets off leaf t ets  n a t et storm. Also  ncr()d  n
+    // t  spec al case of a reply to t  root t et, wh ch does not yet have a
+    // SelfThread tadata( sLeaf=true).
+    val rootThreadCont nueCounter = rootThreadStats.counter("cont nue")
 
-    // root_thread/branch provides visibility into how frequently self-threads
-    // get branched - that is, when the author self-replies to a non-leaf tweet
-    // in an existing thread. Knowing the frequency of branching will help us
-    // determine the priority of accounting for branching in various
-    // tweet-delete use cases. Currently we do not fix up the root tweet's
-    // SelfThreadMetadata when its reply tweets are deleted.
+    // root_thread/branch prov des v s b l y  nto how frequently self-threads
+    // get branc d - that  s, w n t  author self-repl es to a non-leaf t et
+    //  n an ex st ng thread. Know ng t  frequency of branch ng w ll  lp us
+    // determ ne t  pr or y of account ng for branch ng  n var ous
+    // t et-delete use cases. Currently   do not f x up t  root t et's
+    // SelfThread tadata w n  s reply t ets are deleted.
     val rootThreadBranchCounter = rootThreadStats.counter("branch")
 
-    def observeSelfThreadMetrics(replySourceSTM: Option[SelfThreadMetadata]): Unit = {
-      replySourceSTM match {
-        case Some(SelfThreadMetadata(_, isLeaf)) =>
-          if (isLeaf) rootThreadContinueCounter.incr()
-          else rootThreadBranchCounter.incr()
+    def observeSelfThread tr cs(replyS ceSTM: Opt on[SelfThread tadata]): Un  = {
+      replyS ceSTM match {
+        case So (SelfThread tadata(_,  sLeaf)) =>
+           f ( sLeaf) rootThreadCont nueCounter. ncr()
+          else rootThreadBranchCounter. ncr()
         case None =>
-          rootThreadStartCounter.incr()
+          rootThreadStartCounter. ncr()
       }
     }
 
-    new SelfThreadBuilder {
+    new SelfThreadBu lder {
 
-      override def build(
-        authorUserId: UserId,
-        replySourceTweet: Tweet
-      ): Option[SelfThreadMetadata] = {
-        // the "reply source tweet"'s author must match the current author
-        if (getUserId(replySourceTweet) == authorUserId) {
-          val replySourceSTM = getSelfThreadMetadata(replySourceTweet)
+      overr de def bu ld(
+        authorUser d: User d,
+        replyS ceT et: T et
+      ): Opt on[SelfThread tadata] = {
+        // t  "reply s ce t et"'s author must match t  current author
+         f (getUser d(replyS ceT et) == authorUser d) {
+          val replyS ceSTM = getSelfThread tadata(replyS ceT et)
 
-          observeSelfThreadMetrics(replySourceSTM)
+          observeSelfThread tr cs(replyS ceSTM)
 
-          // determine if replySourceTweet stands alone (non-reply)
-          getReply(replySourceTweet) match {
-            case None | Some(Reply(None, _, _)) =>
-              // 'replySourceTweet' started a new self-thread that stands alone
-              // which happens when there's no Reply or the Reply does not have
-              // inReplyToStatusId (directed-at user)
+          // determ ne  f replyS ceT et stands alone (non-reply)
+          getReply(replyS ceT et) match {
+            case None | So (Reply(None, _, _)) =>
+              // 'replyS ceT et' started a new self-thread that stands alone
+              // wh ch happens w n t re's no Reply or t  Reply does not have
+              //  nReplyToStatus d (d rected-at user)
 
-              // requiredReplySourceFields requires coreData and conversationId
-              // is required so this would have previously thrown an exception
-              // in ReplyBuilder if the read was partial
-              val convoId = replySourceTweet.coreData.get.conversationId.get
-              Some(SelfThreadMetadata(id = convoId, isLeaf = true))
+              // requ redReplyS ceF elds requ res coreData and conversat on d
+              //  s requ red so t  would have prev ously thrown an except on
+              //  n ReplyBu lder  f t  read was part al
+              val convo d = replyS ceT et.coreData.get.conversat on d.get
+              So (SelfThread tadata( d = convo d,  sLeaf = true))
 
             case _ =>
-              // 'replySourceTweet' was also a reply-to-tweet, so continue any
-              // self-thread by inheriting any SelfThreadMetadata it has
-              // (though always setting isLeaf to true)
-              replySourceSTM.map(_.copy(isLeaf = true))
+              // 'replyS ceT et' was also a reply-to-t et, so cont nue any
+              // self-thread by  n r  ng any SelfThread tadata   has
+              // (though always sett ng  sLeaf to true)
+              replyS ceSTM.map(_.copy( sLeaf = true))
           }
         } else {
-          // Replying to a different user currently never creates a self-thread
-          // as all self-threads must start at the root (and match conversation
-          // ID).
+          // Reply ng to a d fferent user currently never creates a self-thread
+          // as all self-threads must start at t  root (and match conversat on
+          //  D).
           //
-          // In the future replying to a different user *might* be part of a
-          // self-thread but we wouldn't mark it as such until the *next* tweet
-          // is created (at which time the self_thread daemon goes back and
-          // marks the first tweet as in the self-thread.
+          //  n t  future reply ng to a d fferent user *m ght* be part of a
+          // self-thread but   wouldn't mark   as such unt l t  *next* t et
+          //  s created (at wh ch t   t  self_thread daemon goes back and
+          // marks t  f rst t et as  n t  self-thread.
           None
         }
       }

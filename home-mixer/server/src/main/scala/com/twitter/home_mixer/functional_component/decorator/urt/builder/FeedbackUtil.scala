@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.timelineservice.{thriftscala => tlst}
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Ch ldFeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.SeeFe r
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
+ mport com.tw ter.t  l nes.common.{thr ftscala => tlc}
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => t}
+ mport com.tw ter.t  l neserv ce.model.Feedback nfo
+ mport com.tw ter.t  l neserv ce.model.Feedback tadata
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tlst}
 
-object FeedbackUtil {
+object FeedbackUt l {
 
   val FeedbackTtl = 30.days
 
-  def buildUserSeeFewerChildFeedbackAction(
-    userId: Long,
-    namesByUserId: Map[Long, String],
-    promptExternalString: ExternalString,
-    confirmationExternalString: ExternalString,
-    engagementType: t.FeedbackEngagementType,
-    stringCenter: StringCenter,
-    injectionType: Option[st.SuggestType]
-  ): Option[ChildFeedbackAction] = {
-    namesByUserId.get(userId).map { userScreenName =>
-      val prompt = stringCenter.prepare(
-        promptExternalString,
-        Map("user" -> userScreenName)
+  def bu ldUserSeeFe rCh ldFeedbackAct on(
+    user d: Long,
+    na sByUser d: Map[Long, Str ng],
+    promptExternalStr ng: ExternalStr ng,
+    conf rmat onExternalStr ng: ExternalStr ng,
+    engage ntType: t.FeedbackEngage ntType,
+    str ngCenter: Str ngCenter,
+     nject onType: Opt on[st.SuggestType]
+  ): Opt on[Ch ldFeedbackAct on] = {
+    na sByUser d.get(user d).map { userScreenNa  =>
+      val prompt = str ngCenter.prepare(
+        promptExternalStr ng,
+        Map("user" -> userScreenNa )
       )
-      val confirmation = stringCenter.prepare(
-        confirmationExternalString,
-        Map("user" -> userScreenName)
+      val conf rmat on = str ngCenter.prepare(
+        conf rmat onExternalStr ng,
+        Map("user" -> userScreenNa )
       )
-      val feedbackMetadata = FeedbackMetadata(
-        engagementType = Some(engagementType),
-        entityIds = Seq(tlc.FeedbackEntity.UserId(userId)),
-        ttl = Some(FeedbackTtl))
-      val feedbackUrl = FeedbackInfo.feedbackUrl(
-        feedbackType = tlst.FeedbackType.SeeFewer,
-        feedbackMetadata = feedbackMetadata,
-        injectionType = injectionType
+      val feedback tadata = Feedback tadata(
+        engage ntType = So (engage ntType),
+        ent y ds = Seq(tlc.FeedbackEnt y.User d(user d)),
+        ttl = So (FeedbackTtl))
+      val feedbackUrl = Feedback nfo.feedbackUrl(
+        feedbackType = tlst.FeedbackType.SeeFe r,
+        feedback tadata = feedback tadata,
+         nject onType =  nject onType
       )
 
-      ChildFeedbackAction(
-        feedbackType = SeeFewer,
-        prompt = Some(prompt),
-        confirmation = Some(confirmation),
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = None,
-        richBehavior = None,
+      Ch ldFeedbackAct on(
+        feedbackType = SeeFe r,
+        prompt = So (prompt),
+        conf rmat on = So (conf rmat on),
+        feedbackUrl = So (feedbackUrl),
+        hasUndoAct on = So (true),
+        conf rmat onD splayType = None,
+        cl entEvent nfo = None,
+         con = None,
+        r chBehav or = None,
         subprompt = None
       )
     }

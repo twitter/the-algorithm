@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-package tensorflow.distributed_runtime;
+package tensorflow.d str buted_runt  ;
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Used to serialize and transmit tensorflow::Status payloads through
-// grpc::Status `error_details` since grpc::Status lacks payload API.
-// TODO(b/204231601): Use GRPC API once supported.
-message GrpcPayloadContainer {
-  map<string, bytes> payloads = 1;
+// Used to ser al ze and transm  tensorflow::Status payloads through
+// grpc::Status `error_deta ls` s nce grpc::Status lacks payload AP .
+// TODO(b/204231601): Use GRPC AP  once supported.
+ ssage GrpcPayloadConta ner {
+  map<str ng, bytes> payloads = 1;
 }
 
-// If included as a payload, this message flags the Status to have lost payloads
-// during the GRPC transmission.
-// URI: "type.googleapis.com/tensorflow.distributed_runtime.GrpcPayloadsLost"
-message GrpcPayloadsLost {}
+//  f  ncluded as a payload, t   ssage flags t  Status to have lost payloads
+// dur ng t  GRPC transm ss on.
+// UR : "type.googleap s.com/tensorflow.d str buted_runt  .GrpcPayloadsLost"
+ ssage GrpcPayloadsLost {}
 
-// If included as a payload, this message flags the Status to be a possible
-// outcome of a worker restart.
-// URI:
-// "type.googleapis.com/tensorflow.distributed_runtime.WorkerPossiblyRestarted"
-message WorkerPossiblyRestarted {}
+//  f  ncluded as a payload, t   ssage flags t  Status to be a poss ble
+// outco  of a worker restart.
+// UR :
+// "type.googleap s.com/tensorflow.d str buted_runt  .WorkerPoss blyRestarted"
+ ssage WorkerPoss blyRestarted {}

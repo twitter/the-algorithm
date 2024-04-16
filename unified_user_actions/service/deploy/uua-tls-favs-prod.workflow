@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-tls-favs-prod",
-  "config-files": [
+  "role": "d scode",
+  "na ": "uua-tls-favs-prod",
+  "conf g-f les": [
     "uua-tls-favs.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tls-favs"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-tls-favs"
       },
       {
         "type": "packer",
-        "name": "uua-tls-favs",
-        "artifact": "./dist/uua-tls-favs.zip"
+        "na ": "uua-tls-favs",
+        "art fact": "./d st/uua-tls-favs.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "uua-tls-favs-prod-atla",
-          "key": "atla/discode/prod/uua-tls-favs"
+          "na ": "uua-tls-favs-prod-atla",
+          "key": "atla/d scode/prod/uua-tls-favs"
         },
         {
-          "name": "uua-tls-favs-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-tls-favs"
+          "na ": "uua-tls-favs-prod-pdxa",
+          "key": "pdxa/d scode/prod/uua-tls-favs"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
     {
       "type": "SLACK",
-      "recipients": [
+      "rec p ents": [
         {
-          "to": "discode-oncall"
+          "to": "d scode-oncall"
         }
       ],
       "events": ["WORKFLOW_SUCCESS"]
     },
     {
       "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
+      "rec p ents": [{
+        "to": "d scode-oncall"
       }],
-      "events": ["*FAILED"]
+      "events": ["*FA LED"]
     }
   ]
 }

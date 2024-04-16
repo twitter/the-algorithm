@@ -1,13 +1,13 @@
-package com.twitter.ann.hnsw
+package com.tw ter.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType._
-import java.io.OutputStream
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport java. o.OutputStream
 
-trait IdEmbeddingMap[T] {
-  def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector
-  def put(id: T, embedding: EmbeddingVector): EmbeddingVector
-  def get(id: T): EmbeddingVector
-  def iter(): Iterator[(T, EmbeddingVector)]
-  def size(): Int
-  def toDirectory(embeddingFileOutputStream: OutputStream): Unit
+tra   dEmbedd ngMap[T] {
+  def put fAbsent( d: T, embedd ng: Embedd ngVector): Embedd ngVector
+  def put( d: T, embedd ng: Embedd ngVector): Embedd ngVector
+  def get( d: T): Embedd ngVector
+  def  er():  erator[(T, Embedd ngVector)]
+  def s ze():  nt
+  def toD rectory(embedd ngF leOutputStream: OutputStream): Un 
 }

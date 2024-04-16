@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-sealed trait ImageAnimationType
+sealed tra   mageAn mat onType
 
-case object Bounce extends ImageAnimationType
+case object Bounce extends  mageAn mat onType

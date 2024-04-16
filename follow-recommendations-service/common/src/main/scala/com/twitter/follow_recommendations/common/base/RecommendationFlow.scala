@@ -1,250 +1,250 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.recom ndat on.Recom ndat onP pel neResult
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.st ch.St ch
 
 /**
- * configs for results generated from the recommendation flow
+ * conf gs for results generated from t  recom ndat on flow
  *
- * @param desiredCandidateCount num of desired candidates to return
- * @param batchForCandidatesCheck batch size for candidates check
+ * @param des redCand dateCount num of des red cand dates to return
+ * @param batchForCand datesC ck batch s ze for cand dates c ck
  */
-case class RecommendationResultsConfig(desiredCandidateCount: Int, batchForCandidatesCheck: Int)
+case class Recom ndat onResultsConf g(des redCand dateCount:  nt, batchForCand datesC ck:  nt)
 
-trait BaseRecommendationFlow[Target, Candidate <: UniversalNoun[Long]] {
-  val identifier = RecommendationPipelineIdentifier("RecommendationFlow")
+tra  BaseRecom ndat onFlow[Target, Cand date <: Un versalNoun[Long]] {
+  val  dent f er = Recom ndat onP pel ne dent f er("Recom ndat onFlow")
 
   def process(
-    pipelineRequest: Target
-  ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]]
+    p pel neRequest: Target
+  ): St ch[Recom ndat onP pel neResult[Cand date, Seq[Cand date]]]
 
-  def mapKey[Target2](fn: Target2 => Target): BaseRecommendationFlow[Target2, Candidate] = {
-    val original = this
-    new BaseRecommendationFlow[Target2, Candidate] {
-      override def process(
-        pipelineRequest: Target2
-      ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]] =
-        original.process(fn(pipelineRequest))
+  def mapKey[Target2](fn: Target2 => Target): BaseRecom ndat onFlow[Target2, Cand date] = {
+    val or g nal = t 
+    new BaseRecom ndat onFlow[Target2, Cand date] {
+      overr de def process(
+        p pel neRequest: Target2
+      ): St ch[Recom ndat onP pel neResult[Cand date, Seq[Cand date]]] =
+        or g nal.process(fn(p pel neRequest))
     }
   }
 }
 
 /**
- * Defines a typical recommendation flow to fetch, filter, rank and transform candidates.
+ * Def nes a typ cal recom ndat on flow to fetch, f lter, rank and transform cand dates.
  *
- * 1. targetEligibility: determine the eligibility of target request
- * 2. candidateSources: fetch candidates from candidate sources based on target type
- * 3. preRankerCandidateFilter: light filtering of candidates
- * 4. ranker: ranking of candidates (could be composed of multiple stages, light ranking, heavy ranking and etc)
- * 5. postRankerTransform: deduping, grouping, rule based promotion / demotions and etc
- * 6. validateCandidates: heavy filters to determine the eligibility of the candidates.
- *    will only be applied to candidates that we expect to return.
- * 7. transformResults: transform the individual candidates into desired format (e.g. hydrate social proof)
+ * 1. targetEl g b l y: determ ne t  el g b l y of target request
+ * 2. cand dateS ces: fetch cand dates from cand date s ces based on target type
+ * 3. preRankerCand dateF lter: l ght f lter ng of cand dates
+ * 4. ranker: rank ng of cand dates (could be composed of mult ple stages, l ght rank ng,  avy rank ng and etc)
+ * 5. postRankerTransform: dedup ng, group ng, rule based promot on / demot ons and etc
+ * 6. val dateCand dates:  avy f lters to determ ne t  el g b l y of t  cand dates.
+ *    w ll only be appl ed to cand dates that   expect to return.
+ * 7. transformResults: transform t   nd v dual cand dates  nto des red format (e.g. hydrate soc al proof)
  *
- * Note that the actual implementations may not need to implement all the steps if not needed
- * (could just leave to IdentityRanker if ranking is not needed).
+ * Note that t  actual  mple ntat ons may not need to  mple nt all t  steps  f not needed
+ * (could just leave to  dent yRanker  f rank ng  s not needed).
  *
- * Theoretically, the actual implementation could override the above flow to add
- * more steps (e.g. add a transform step before ranking).
- * But it is recommended to add the additional steps into this base flow if the step proves
- * to have significant justification, or merge it into an existing step if it is a minor change.
+ * T oret cally, t  actual  mple ntat on could overr de t  above flow to add
+ * more steps (e.g. add a transform step before rank ng).
+ * But    s recom nded to add t  add  onal steps  nto t  base flow  f t  step proves
+ * to have s gn f cant just f cat on, or  rge    nto an ex st ng step  f    s a m nor change.
  *
  * @tparam Target type of target request
- * @tparam Candidate type of candidate to return
+ * @tparam Cand date type of cand date to return
  */
-trait RecommendationFlow[Target, Candidate <: UniversalNoun[Long]]
-    extends BaseRecommendationFlow[Target, Candidate]
-    with SideEffectsUtil[Target, Candidate] {
+tra  Recom ndat onFlow[Target, Cand date <: Un versalNoun[Long]]
+    extends BaseRecom ndat onFlow[Target, Cand date]
+    w h S deEffectsUt l[Target, Cand date] {
 
   /**
-   * optionally update or enrich the request before executing the flows
+   * opt onally update or enr ch t  request before execut ng t  flows
    */
-  protected def updateTarget(target: Target): Stitch[Target] = Stitch.value(target)
+  protected def updateTarget(target: Target): St ch[Target] = St ch.value(target)
 
   /**
-   *  check if the target is eligible for the flow
+   *  c ck  f t  target  s el g ble for t  flow
    */
-  protected def targetEligibility: Predicate[Target]
+  protected def targetEl g b l y: Pred cate[Target]
 
   /**
-   *  define the candidate sources that should be used for the given target
+   *  def ne t  cand date s ces that should be used for t  g ven target
    */
-  protected def candidateSources(target: Target): Seq[CandidateSource[Target, Candidate]]
+  protected def cand dateS ces(target: Target): Seq[Cand dateS ce[Target, Cand date]]
 
   /**
-   *  filter invalid candidates before the ranking phase.
+   *  f lter  nval d cand dates before t  rank ng phase.
    */
-  protected def preRankerCandidateFilter: Predicate[(Target, Candidate)]
+  protected def preRankerCand dateF lter: Pred cate[(Target, Cand date)]
 
   /**
-   * rank the candidates
+   * rank t  cand dates
    */
-  protected def selectRanker(target: Target): Ranker[Target, Candidate]
+  protected def selectRanker(target: Target): Ranker[Target, Cand date]
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * transform t  cand dates after rank ng (e.g. dedupp ng, group ng and etc)
    */
-  protected def postRankerTransform: Transform[Target, Candidate]
+  protected def postRankerTransform: Transform[Target, Cand date]
 
   /**
-   *  filter invalid candidates before returning the results.
+   *  f lter  nval d cand dates before return ng t  results.
    *
-   *  Some heavy filters e.g. SGS filter could be applied in this step
+   *  So   avy f lters e.g. SGS f lter could be appl ed  n t  step
    */
-  protected def validateCandidates: Predicate[(Target, Candidate)]
+  protected def val dateCand dates: Pred cate[(Target, Cand date)]
 
   /**
-   * transform the candidates into results and return
+   * transform t  cand dates  nto results and return
    */
-  protected def transformResults: Transform[Target, Candidate]
+  protected def transformResults: Transform[Target, Cand date]
 
   /**
-   *  configuration for recommendation results
+   *  conf gurat on for recom ndat on results
    */
-  protected def resultsConfig(target: Target): RecommendationResultsConfig
+  protected def resultsConf g(target: Target): Recom ndat onResultsConf g
 
   /**
-   * track the quality factor the recommendation pipeline
+   * track t  qual y factor t  recom ndat on p pel ne
    */
-  protected def qualityFactorObserver: Option[QualityFactorObserver] = None
+  protected def qual yFactorObserver: Opt on[Qual yFactorObserver] = None
 
-  def statsReceiver: StatsReceiver
+  def statsRece ver: StatsRece ver
 
   /**
-   * high level monitoring for the whole flow
-   * (make sure to add monitoring for each individual component by yourself)
+   * h gh level mon or ng for t  whole flow
+   * (make sure to add mon or ng for each  nd v dual component by y self)
    *
-   * additional candidates: count, stats, non_empty_count
-   * target eligibility: latency, success, failures, request, count, valid_count, invalid_count, invalid_reasons
-   * candidate generation: latency, success, failures, request, count, non_empty_count, results_stat
-   * pre ranker filter: latency, success, failures, request, count, non_empty_count, results_stat
-   * ranker: latency, success, failures, request, count, non_empty_count, results_stat
-   * post ranker: latency, success, failures, request, count, non_empty_count, results_stat
-   * filter and take: latency, success, failures, request, count, non_empty_count, results_stat, batch count
-   * transform results: latency, success, failures, request, count, non_empty_count, results_stat
+   * add  onal cand dates: count, stats, non_empty_count
+   * target el g b l y: latency, success, fa lures, request, count, val d_count,  nval d_count,  nval d_reasons
+   * cand date generat on: latency, success, fa lures, request, count, non_empty_count, results_stat
+   * pre ranker f lter: latency, success, fa lures, request, count, non_empty_count, results_stat
+   * ranker: latency, success, fa lures, request, count, non_empty_count, results_stat
+   * post ranker: latency, success, fa lures, request, count, non_empty_count, results_stat
+   * f lter and take: latency, success, fa lures, request, count, non_empty_count, results_stat, batch count
+   * transform results: latency, success, fa lures, request, count, non_empty_count, results_stat
    */
-  import RecommendationFlow._
-  lazy val additionalCandidatesStats = statsReceiver.scope(AdditionalCandidatesStats)
-  lazy val targetEligibilityStats = statsReceiver.scope(TargetEligibilityStats)
-  lazy val candidateGenerationStats = statsReceiver.scope(CandidateGenerationStats)
-  lazy val preRankerFilterStats = statsReceiver.scope(PreRankerFilterStats)
-  lazy val rankerStats = statsReceiver.scope(RankerStats)
-  lazy val postRankerTransformStats = statsReceiver.scope(PostRankerTransformStats)
-  lazy val filterAndTakeStats = statsReceiver.scope(FilterAndTakeStats)
-  lazy val transformResultsStats = statsReceiver.scope(TransformResultsStats)
+   mport Recom ndat onFlow._
+  lazy val add  onalCand datesStats = statsRece ver.scope(Add  onalCand datesStats)
+  lazy val targetEl g b l yStats = statsRece ver.scope(TargetEl g b l yStats)
+  lazy val cand dateGenerat onStats = statsRece ver.scope(Cand dateGenerat onStats)
+  lazy val preRankerF lterStats = statsRece ver.scope(PreRankerF lterStats)
+  lazy val rankerStats = statsRece ver.scope(RankerStats)
+  lazy val postRankerTransformStats = statsRece ver.scope(PostRankerTransformStats)
+  lazy val f lterAndTakeStats = statsRece ver.scope(F lterAndTakeStats)
+  lazy val transformResultsStats = statsRece ver.scope(TransformResultsStats)
 
-  lazy val overallStats = statsReceiver.scope(OverallStats)
+  lazy val overallStats = statsRece ver.scope(OverallStats)
 
-  import StatsUtil._
+   mport StatsUt l._
 
-  override def process(
-    pipelineRequest: Target
-  ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]] = {
+  overr de def process(
+    p pel neRequest: Target
+  ): St ch[Recom ndat onP pel neResult[Cand date, Seq[Cand date]]] = {
 
-    observeStitchQualityFactor(
-      profileStitchSeqResults(
-        updateTarget(pipelineRequest).flatMap { target =>
-          profilePredicateResult(targetEligibility(target), targetEligibilityStats).flatMap {
-            case PredicateResult.Valid => processValidTarget(target, Seq.empty)
-            case PredicateResult.Invalid(_) => Stitch.Nil
+    observeSt chQual yFactor(
+      prof leSt chSeqResults(
+        updateTarget(p pel neRequest).flatMap { target =>
+          prof lePred cateResult(targetEl g b l y(target), targetEl g b l yStats).flatMap {
+            case Pred cateResult.Val d => processVal dTarget(target, Seq.empty)
+            case Pred cateResult. nval d(_) => St ch.N l
           }
         },
         overallStats
-      ).map { candidates =>
-        RecommendationPipelineResult.empty.withResult(candidates)
+      ).map { cand dates =>
+        Recom ndat onP pel neResult.empty.w hResult(cand dates)
       },
-      qualityFactorObserver,
+      qual yFactorObserver,
       overallStats
     )
   }
 
-  protected def processValidTarget(
+  protected def processVal dTarget(
     target: Target,
-    additionalCandidates: Seq[Candidate]
-  ): Stitch[Seq[Candidate]] = {
+    add  onalCand dates: Seq[Cand date]
+  ): St ch[Seq[Cand date]] = {
 
     /**
-     * A basic recommendation flow looks like this:
+     * A bas c recom ndat on flow looks l ke t :
      *
-     * 1. fetch candidates from candidate sources
-     * 2. blend candidates with existing candidates
-     * 3. filter the candidates (light filters) before ranking
-     * 4. ranking
-     * 5. filter and truncate the candidates using postRankerCandidateFilter
-     * 6. transform the candidates based on product requirement
+     * 1. fetch cand dates from cand date s ces
+     * 2. blend cand dates w h ex st ng cand dates
+     * 3. f lter t  cand dates (l ght f lters) before rank ng
+     * 4. rank ng
+     * 5. f lter and truncate t  cand dates us ng postRankerCand dateF lter
+     * 6. transform t  cand dates based on product requ re nt
      */
-    val candidateSourcesToFetch = candidateSources(target)
+    val cand dateS cesToFetch = cand dateS ces(target)
     for {
-      candidates <- profileStitchSeqResults(
-        Stitch.traverse(candidateSourcesToFetch)(_(target)).map(_.flatten),
-        candidateGenerationStats
+      cand dates <- prof leSt chSeqResults(
+        St ch.traverse(cand dateS cesToFetch)(_(target)).map(_.flatten),
+        cand dateGenerat onStats
       )
-      mergedCandidates =
-        profileSeqResults(additionalCandidates, additionalCandidatesStats) ++
-          candidates
-      filteredCandidates <- profileStitchSeqResults(
-        Predicate.filter(target, mergedCandidates, preRankerCandidateFilter),
-        preRankerFilterStats
+       rgedCand dates =
+        prof leSeqResults(add  onalCand dates, add  onalCand datesStats) ++
+          cand dates
+      f lteredCand dates <- prof leSt chSeqResults(
+        Pred cate.f lter(target,  rgedCand dates, preRankerCand dateF lter),
+        preRankerF lterStats
       )
-      rankedCandidates <- profileStitchSeqResults(
-        selectRanker(target).rank(target, filteredCandidates),
+      rankedCand dates <- prof leSt chSeqResults(
+        selectRanker(target).rank(target, f lteredCand dates),
         rankerStats
       )
-      transformed <- profileStitchSeqResults(
-        postRankerTransform.transform(target, rankedCandidates),
+      transfor d <- prof leSt chSeqResults(
+        postRankerTransform.transform(target, rankedCand dates),
         postRankerTransformStats
       )
-      truncated <- profileStitchSeqResults(
-        take(target, transformed, resultsConfig(target)),
-        filterAndTakeStats
+      truncated <- prof leSt chSeqResults(
+        take(target, transfor d, resultsConf g(target)),
+        f lterAndTakeStats
       )
-      results <- profileStitchSeqResults(
+      results <- prof leSt chSeqResults(
         transformResults.transform(target, truncated),
         transformResultsStats
       )
-      _ <- applySideEffects(
+      _ <- applyS deEffects(
         target,
-        candidateSourcesToFetch,
-        candidates,
-        mergedCandidates,
-        filteredCandidates,
-        rankedCandidates,
-        transformed,
+        cand dateS cesToFetch,
+        cand dates,
+         rgedCand dates,
+        f lteredCand dates,
+        rankedCand dates,
+        transfor d,
         truncated,
         results)
-    } yield results
+    } y eld results
   }
 
-  private[this] def take(
+  pr vate[t ] def take(
     target: Target,
-    candidates: Seq[Candidate],
-    config: RecommendationResultsConfig
-  ): Stitch[Seq[Candidate]] = {
-    Predicate
-      .batchFilterTake(
-        candidates.map(c => (target, c)),
-        validateCandidates,
-        config.batchForCandidatesCheck,
-        config.desiredCandidateCount,
-        statsReceiver
+    cand dates: Seq[Cand date],
+    conf g: Recom ndat onResultsConf g
+  ): St ch[Seq[Cand date]] = {
+    Pred cate
+      .batchF lterTake(
+        cand dates.map(c => (target, c)),
+        val dateCand dates,
+        conf g.batchForCand datesC ck,
+        conf g.des redCand dateCount,
+        statsRece ver
       ).map(_.map(_._2))
   }
 }
 
-object RecommendationFlow {
+object Recom ndat onFlow {
 
-  val AdditionalCandidatesStats = "additional_candidates"
-  val TargetEligibilityStats = "target_eligibility"
-  val CandidateGenerationStats = "candidate_generation"
-  val PreRankerFilterStats = "pre_ranker_filter"
+  val Add  onalCand datesStats = "add  onal_cand dates"
+  val TargetEl g b l yStats = "target_el g b l y"
+  val Cand dateGenerat onStats = "cand date_generat on"
+  val PreRankerF lterStats = "pre_ranker_f lter"
   val RankerStats = "ranker"
   val PostRankerTransformStats = "post_ranker_transform"
-  val FilterAndTakeStats = "filter_and_take"
+  val F lterAndTakeStats = "f lter_and_take"
   val TransformResultsStats = "transform_results"
   val OverallStats = "overall"
 }

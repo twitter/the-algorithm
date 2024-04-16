@@ -1,37 +1,37 @@
-package com.twitter.frigate.pushservice.target
+package com.tw ter.fr gate.pushserv ce.target
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.TargetPromptFeedbackFatiguePredicate
-import com.twitter.frigate.common.predicate.TargetUserPredicates
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.predicate.TargetNtabCaretClickFatiguePredicate
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.TargetPromptFeedbackFat guePred cate
+ mport com.tw ter.fr gate.common.pred cate.TargetUserPred cates
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TargetNtabCaretCl ckFat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TargetPred cates
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-class RFPHTargetPredicateGenerator(implicit statsReceiver: StatsReceiver) {
-  val predicates: List[NamedPredicate[Target]] = List(
-    TargetPredicates.magicRecsMinDurationSinceSent(),
-    TargetPredicates.targetHTLVisitPredicate(),
-    TargetPredicates.inlineActionFatiguePredicate(),
-    TargetPredicates.targetFatiguePredicate(),
-    TargetUserPredicates.secondaryDormantAccountPredicate(),
-    TargetPredicates.targetValidMobileSDKPredicate,
-    TargetPredicates.targetPushBitEnabledPredicate,
-    TargetUserPredicates.targetUserExists(),
-    TargetPredicates.paramPredicate(PushFeatureSwitchParams.EnablePushRecommendationsParam),
-    TargetPromptFeedbackFatiguePredicate.responseNoPredicate(
-      PushParams.EnablePromptFeedbackFatigueResponseNoPredicate,
-      PushConstants.AcceptableTimeSinceLastNegativeResponse),
-    TargetPredicates.teamExceptedPredicate(TargetNtabCaretClickFatiguePredicate.apply()),
-    TargetPredicates.optoutProbPredicate(),
-    TargetPredicates.webNotifsHoldback()
+class RFPHTargetPred cateGenerator( mpl c  statsRece ver: StatsRece ver) {
+  val pred cates: L st[Na dPred cate[Target]] = L st(
+    TargetPred cates.mag cRecsM nDurat onS nceSent(),
+    TargetPred cates.targetHTLV s Pred cate(),
+    TargetPred cates. nl neAct onFat guePred cate(),
+    TargetPred cates.targetFat guePred cate(),
+    TargetUserPred cates.secondaryDormantAccountPred cate(),
+    TargetPred cates.targetVal dMob leSDKPred cate,
+    TargetPred cates.targetPushB EnabledPred cate,
+    TargetUserPred cates.targetUserEx sts(),
+    TargetPred cates.paramPred cate(PushFeatureSw chParams.EnablePushRecom ndat onsParam),
+    TargetPromptFeedbackFat guePred cate.responseNoPred cate(
+      PushParams.EnablePromptFeedbackFat gueResponseNoPred cate,
+      PushConstants.AcceptableT  S nceLastNegat veResponse),
+    TargetPred cates.teamExceptedPred cate(TargetNtabCaretCl ckFat guePred cate.apply()),
+    TargetPred cates.optoutProbPred cate(),
+    TargetPred cates. bNot fsHoldback()
   )
 }
 
-object RFPHTargetPredicates {
-  def apply(implicit statsReceiver: StatsReceiver): List[NamedPredicate[Target]] =
-    new RFPHTargetPredicateGenerator().predicates
+object RFPHTargetPred cates {
+  def apply( mpl c  statsRece ver: StatsRece ver): L st[Na dPred cate[Target]] =
+    new RFPHTargetPred cateGenerator().pred cates
 }

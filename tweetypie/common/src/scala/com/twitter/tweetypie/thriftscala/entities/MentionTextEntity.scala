@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.tw ter.t etyp e.thr ftscala.ent  es
 
-import com.twitter.tweetypie.thriftscala.MentionEntity
-import com.twitter.tweetypie.tweettext.TextEntity
+ mport com.tw ter.t etyp e.thr ftscala. nt onEnt y
+ mport com.tw ter.t etyp e.t ettext.TextEnt y
 
-object MentionTextEntity extends TextEntity[MentionEntity] {
-  override def fromIndex(entity: MentionEntity): Short = entity.fromIndex
-  override def toIndex(entity: MentionEntity): Short = entity.toIndex
-  override def move(entity: MentionEntity, fromIndex: Short, toIndex: Short): MentionEntity =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+object  nt onTextEnt y extends TextEnt y[ nt onEnt y] {
+  overr de def from ndex(ent y:  nt onEnt y): Short = ent y.from ndex
+  overr de def to ndex(ent y:  nt onEnt y): Short = ent y.to ndex
+  overr de def move(ent y:  nt onEnt y, from ndex: Short, to ndex: Short):  nt onEnt y =
+    ent y.copy(from ndex = from ndex, to ndex = to ndex)
 }

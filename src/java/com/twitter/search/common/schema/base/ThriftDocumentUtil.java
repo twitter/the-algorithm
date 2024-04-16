@@ -1,31 +1,31 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
 
 /**
- * Utility APIs for ThriftDocument.
+ * Ut l y AP s for Thr ftDocu nt.
  */
-public final class ThriftDocumentUtil {
-  private ThriftDocumentUtil() {
+publ c f nal class Thr ftDocu ntUt l {
+  pr vate Thr ftDocu ntUt l() {
   }
 
   /**
-   * Get ThriftField out of a ThriftDocument.
+   * Get Thr ftF eld out of a Thr ftDocu nt.
    */
-  public static ThriftField getField(ThriftDocument thriftDoc,
-                                     String fieldName,
-                                     FieldNameToIdMapping idMap) {
-    int id = idMap.getFieldID(fieldName);
-    for (ThriftField field : thriftDoc.getFields()) {
-      int fieldId = field.getFieldConfigId();
-      if (fieldId == id) {
-        return field;
+  publ c stat c Thr ftF eld getF eld(Thr ftDocu nt thr ftDoc,
+                                     Str ng f eldNa ,
+                                     F eldNa To dMapp ng  dMap) {
+     nt  d =  dMap.getF eld D(f eldNa );
+    for (Thr ftF eld f eld : thr ftDoc.getF elds()) {
+       nt f eld d = f eld.getF eldConf g d();
+       f (f eld d ==  d) {
+        return f eld;
       }
     }
 
@@ -33,18 +33,18 @@ public final class ThriftDocumentUtil {
   }
 
   /**
-   * Get all fields out of a ThriftDocument that match the given field name.
+   * Get all f elds out of a Thr ftDocu nt that match t  g ven f eld na .
    */
-  public static List<ThriftField> getFields(
-      ThriftDocument thriftDoc, String fieldName, FieldNameToIdMapping idMap) {
+  publ c stat c L st<Thr ftF eld> getF elds(
+      Thr ftDocu nt thr ftDoc, Str ng f eldNa , F eldNa To dMapp ng  dMap) {
 
-    int id = idMap.getFieldID(fieldName);
-    List<ThriftField> result = new ArrayList<>();
+     nt  d =  dMap.getF eld D(f eldNa );
+    L st<Thr ftF eld> result = new ArrayL st<>();
 
-    for (ThriftField field : thriftDoc.getFields()) {
-      int fieldId = field.getFieldConfigId();
-      if (fieldId == id) {
-        result.add(field);
+    for (Thr ftF eld f eld : thr ftDoc.getF elds()) {
+       nt f eld d = f eld.getF eldConf g d();
+       f (f eld d ==  d) {
+        result.add(f eld);
       }
     }
 
@@ -53,78 +53,78 @@ public final class ThriftDocumentUtil {
 
 
   /**
-   * Retrieve the long value from a thrift field
+   * Retr eve t  long value from a thr ft f eld
    */
-  public static long getLongValue(ThriftDocument thriftDoc,
-                                  String fieldName,
-                                  FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0L : f.getFieldData().getLongValue();
+  publ c stat c long getLongValue(Thr ftDocu nt thr ftDoc,
+                                  Str ng f eldNa ,
+                                  F eldNa To dMapp ng  dMap) {
+    Thr ftF eld f = getF eld(thr ftDoc, f eldNa ,  dMap);
+    return f == null ? 0L : f.getF eldData().getLongValue();
   }
 
   /**
-   * Retrieve the byte value from a thrift field
+   * Retr eve t  byte value from a thr ft f eld
    */
-  public static byte getByteValue(ThriftDocument thriftDoc,
-                                  String fieldName,
-                                  FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? (byte) 0 : f.getFieldData().getByteValue();
+  publ c stat c byte getByteValue(Thr ftDocu nt thr ftDoc,
+                                  Str ng f eldNa ,
+                                  F eldNa To dMapp ng  dMap) {
+    Thr ftF eld f = getF eld(thr ftDoc, f eldNa ,  dMap);
+    return f == null ? (byte) 0 : f.getF eldData().getByteValue();
   }
 
   /**
-   * Retrieve the bytes value from a thrift field
+   * Retr eve t  bytes value from a thr ft f eld
    */
-  public static byte[] getBytesValue(ThriftDocument thriftDoc,
-                                     String fieldName,
-                                     FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? null : f.getFieldData().getBytesValue();
+  publ c stat c byte[] getBytesValue(Thr ftDocu nt thr ftDoc,
+                                     Str ng f eldNa ,
+                                     F eldNa To dMapp ng  dMap) {
+    Thr ftF eld f = getF eld(thr ftDoc, f eldNa ,  dMap);
+    return f == null ? null : f.getF eldData().getBytesValue();
   }
 
   /**
-   * Retrieve the int value from a thrift field
+   * Retr eve t   nt value from a thr ft f eld
    */
-  public static int getIntValue(ThriftDocument thriftDoc,
-                                String fieldName,
-                                FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0 : f.getFieldData().getIntValue();
+  publ c stat c  nt get ntValue(Thr ftDocu nt thr ftDoc,
+                                Str ng f eldNa ,
+                                F eldNa To dMapp ng  dMap) {
+    Thr ftF eld f = getF eld(thr ftDoc, f eldNa ,  dMap);
+    return f == null ? 0 : f.getF eldData().get ntValue();
   }
 
   /**
-   * Retrieve the string value from a thrift field
+   * Retr eve t  str ng value from a thr ft f eld
    */
-  public static String getStringValue(ThriftDocument thriftDoc,
-                                      String fieldName,
-                                      FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? null : f.getFieldData().getStringValue();
+  publ c stat c Str ng getStr ngValue(Thr ftDocu nt thr ftDoc,
+                                      Str ng f eldNa ,
+                                      F eldNa To dMapp ng  dMap) {
+    Thr ftF eld f = getF eld(thr ftDoc, f eldNa ,  dMap);
+    return f == null ? null : f.getF eldData().getStr ngValue();
   }
 
   /**
-   * Retrieve the string values from all thrift fields with the given fieldName.
+   * Retr eve t  str ng values from all thr ft f elds w h t  g ven f eldNa .
    */
-  public static List<String> getStringValues(
-      ThriftDocument thriftDoc,
-      String fieldName,
-      FieldNameToIdMapping idMap) {
-    List<ThriftField> fields = getFields(thriftDoc, fieldName, idMap);
-    List<String> fieldStrings = new ArrayList<>();
+  publ c stat c L st<Str ng> getStr ngValues(
+      Thr ftDocu nt thr ftDoc,
+      Str ng f eldNa ,
+      F eldNa To dMapp ng  dMap) {
+    L st<Thr ftF eld> f elds = getF elds(thr ftDoc, f eldNa ,  dMap);
+    L st<Str ng> f eldStr ngs = new ArrayL st<>();
 
-    for (ThriftField field : fields) {
-      fieldStrings.add(field.getFieldData().getStringValue());
+    for (Thr ftF eld f eld : f elds) {
+      f eldStr ngs.add(f eld.getF eldData().getStr ngValue());
     }
-    return fieldStrings;
+    return f eldStr ngs;
   }
 
   /**
-   * Returns whether the specified document has duplicate fields.
+   * Returns w t r t  spec f ed docu nt has dupl cate f elds.
    */
-  public static boolean hasDuplicateFields(ThriftDocument thriftDoc) {
-    Set<Integer> seen = new HashSet<>();
-    for (ThriftField field : thriftDoc.getFields()) {
-      if (!seen.add(field.getFieldConfigId())) {
+  publ c stat c boolean hasDupl cateF elds(Thr ftDocu nt thr ftDoc) {
+    Set< nteger> seen = new HashSet<>();
+    for (Thr ftF eld f eld : thr ftDoc.getF elds()) {
+       f (!seen.add(f eld.getF eldConf g d())) {
         return true;
       }
     }
@@ -132,12 +132,12 @@ public final class ThriftDocumentUtil {
   }
 
   /**
-   * Get ThriftField out of a ThriftDocument.
+   * Get Thr ftF eld out of a Thr ftDocu nt.
    */
-  public static ThriftField getField(ThriftDocument thriftDoc, int fieldId) {
-    for (ThriftField field : thriftDoc.getFields()) {
-      if (field.getFieldConfigId() == fieldId) {
-        return field;
+  publ c stat c Thr ftF eld getF eld(Thr ftDocu nt thr ftDoc,  nt f eld d) {
+    for (Thr ftF eld f eld : thr ftDoc.getF elds()) {
+       f (f eld.getF eldConf g d() == f eld d) {
+        return f eld;
       }
     }
 

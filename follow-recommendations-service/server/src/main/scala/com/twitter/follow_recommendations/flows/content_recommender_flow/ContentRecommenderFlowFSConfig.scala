@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ContentRecommenderFlowFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
+@S ngleton
+class ContentRecom nderFlowFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] =
     Seq(
-      ContentRecommenderParams.IncludeActivityBasedCandidateSource,
-      ContentRecommenderParams.IncludeSocialBasedCandidateSource,
-      ContentRecommenderParams.IncludeGeoBasedCandidateSource,
-      ContentRecommenderParams.IncludeHomeTimelineTweetRecsCandidateSource,
-      ContentRecommenderParams.IncludeSocialProofEnforcedCandidateSource,
-      ContentRecommenderParams.EnableRecentFollowingPredicate,
-      ContentRecommenderParams.EnableGizmoduckPredicate,
-      ContentRecommenderParams.EnableInactivePredicate,
-      ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate,
-      ContentRecommenderParams.IncludeNewFollowingNewFollowingExpansionCandidateSource,
-      ContentRecommenderParams.IncludeMoreGeoBasedCandidateSource,
-      ContentRecommenderParams.TargetEligibility,
-      ContentRecommenderParams.GetFollowersFromSgs,
-      ContentRecommenderParams.EnableInvalidRelationshipPredicate,
+      ContentRecom nderParams. ncludeAct v yBasedCand dateS ce,
+      ContentRecom nderParams. ncludeSoc alBasedCand dateS ce,
+      ContentRecom nderParams. ncludeGeoBasedCand dateS ce,
+      ContentRecom nderParams. ncludeHo T  l neT etRecsCand dateS ce,
+      ContentRecom nderParams. ncludeSoc alProofEnforcedCand dateS ce,
+      ContentRecom nderParams.EnableRecentFollow ngPred cate,
+      ContentRecom nderParams.EnableG zmoduckPred cate,
+      ContentRecom nderParams.Enable nact vePred cate,
+      ContentRecom nderParams.Enable nval dTargetCand dateRelat onsh pPred cate,
+      ContentRecom nderParams. ncludeNewFollow ngNewFollow ngExpans onCand dateS ce,
+      ContentRecom nderParams. ncludeMoreGeoBasedCand dateS ce,
+      ContentRecom nderParams.TargetEl g b l y,
+      ContentRecom nderParams.GetFollo rsFromSgs,
+      ContentRecom nderParams.Enable nval dRelat onsh pPred cate,
     )
 
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
+  overr de val  ntFSParams: Seq[FSBoundedParam[ nt]] =
     Seq(
-      ContentRecommenderParams.ResultSizeParam,
-      ContentRecommenderParams.BatchSizeParam,
-      ContentRecommenderParams.FetchCandidateSourceBudgetInMillisecond,
-      ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond,
+      ContentRecom nderParams.ResultS zeParam,
+      ContentRecom nderParams.BatchS zeParam,
+      ContentRecom nderParams.FetchCand dateS ceBudget nM ll second,
+      ContentRecom nderParams.RecentFollow ngPred cateBudget nM ll second,
     )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] =
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] =
     Seq(
-      ContentRecommenderFlowCandidateSourceWeightsParams.ForwardPhoneBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ForwardEmailBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ReversePhoneBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ReverseEmailBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.OfflineStrongTiePredictionSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.TriangularLoopsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.UserUserGraphSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingExpansionSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingSimilarUserSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RecentEngagementSimilarUserSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RepeatedProfileVisitsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RealGraphOonSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopCountrySourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopGeohashSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopCountryBackfillSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PPMILocaleFollowSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.TopOrganicFollowsAccountsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.CrowdSearchAccountSourceWeight,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.ForwardPhoneBookS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.ForwardEma lBookS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.ReversePhoneBookS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.ReverseEma lBookS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.Offl neStrongT ePred ct onS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.Tr angularLoopsS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.UserUserGraphS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.NewFollow ngNewFollow ngExpans onS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.NewFollow ngS m larUserS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.RecentEngage ntS m larUserS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.RepeatedProf leV s sS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.RealGraphOonS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.PopCountryS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.PopGeohashS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.PopCountryBackf llS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.PPM LocaleFollowS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.TopOrgan cFollowsAccountsS ce  ght,
+      ContentRecom nderFlowCand dateS ce  ghtsParams.CrowdSearchAccountS ce  ght,
     )
 }

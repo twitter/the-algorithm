@@ -1,20 +1,20 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
 object BounceDeleteHandler {
   def apply(
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe
-  ): TweetStorageClient.BounceDelete =
-    tweetId => {
-      val mhTimestamp = Time.now
-      val bounceDeleteRecord = TweetStateRecord
-        .BounceDeleted(tweetId, mhTimestamp.inMillis)
-        .toTweetMhRecord
+     nsert: ManhattanOperat ons. nsert,
+    scr be: Scr be
+  ): T etStorageCl ent.BounceDelete =
+    t et d => {
+      val mhT  stamp = T  .now
+      val bounceDeleteRecord = T etStateRecord
+        .BounceDeleted(t et d, mhT  stamp. nM ll s)
+        .toT etMhRecord
 
-      insert(bounceDeleteRecord).onSuccess { _ =>
-        scribe.logRemoved(tweetId, mhTimestamp, isSoftDeleted = true)
+       nsert(bounceDeleteRecord).onSuccess { _ =>
+        scr be.logRemoved(t et d, mhT  stamp,  sSoftDeleted = true)
       }
     }
 }

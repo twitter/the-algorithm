@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.servo.repository.Repository
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import scala.util.Random
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.servo.repos ory.Repos ory
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport scala.ut l.Random
 
-// Inject an artificial delay into an underlying repository's response to match the provided p50
-// and max latencies.
-class LatentRepository[Q, R](
-  underlying: Repository[Q, R],
-  p50: Duration,
-  max: Duration,
+//  nject an art f c al delay  nto an underly ng repos ory's response to match t  prov ded p50
+// and max latenc es.
+class LatentRepos ory[Q, R](
+  underly ng: Repos ory[Q, R],
+  p50: Durat on,
+  max: Durat on,
   random: Random = new Random,
-  timer: Timer = DefaultTimer)
-    extends Repository[Q, R] {
-  import scala.math.ceil
-  import scala.math.pow
+  t  r: T  r = DefaultT  r)
+    extends Repos ory[Q, R] {
+   mport scala.math.ce l
+   mport scala.math.pow
 
-  val p50Millis: Long = p50.inMilliseconds
-  val maxMillis: Long = max.inMilliseconds
-  require(p50Millis > 0 && maxMillis > 0 && maxMillis > p50Millis)
+  val p50M ll s: Long = p50. nM ll seconds
+  val maxM ll s: Long = max. nM ll seconds
+  requ re(p50M ll s > 0 && maxM ll s > 0 && maxM ll s > p50M ll s)
 
-  override def apply(query: Q): Future[R] = {
+  overr de def apply(query: Q): Future[R] = {
     val x = random.nextDouble()
-    val sleepTime = ceil(pow(p50Millis, 2 * (1 - x)) / pow(maxMillis, 1 - 2 * x)).toInt
-    Future.sleep(Duration.fromMilliseconds(sleepTime))(timer).flatMap { _ => underlying(query) }
+    val sleepT   = ce l(pow(p50M ll s, 2 * (1 - x)) / pow(maxM ll s, 1 - 2 * x)).to nt
+    Future.sleep(Durat on.fromM ll seconds(sleepT  ))(t  r).flatMap { _ => underly ng(query) }
   }
 }

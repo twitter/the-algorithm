@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.decorator
+package com.tw ter.product_m xer.core.funct onal_component.decorator
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Un versalPresentat on
 
 /**
- * Decoration associates specific [[UniversalPresentation]] with a candidate
+ * Decorat on assoc ates spec f c [[Un versalPresentat on]] w h a cand date
  */
-case class Decoration(
-  candidate: UniversalNoun[Any],
-  presentation: UniversalPresentation)
+case class Decorat on(
+  cand date: Un versalNoun[Any],
+  presentat on: Un versalPresentat on)

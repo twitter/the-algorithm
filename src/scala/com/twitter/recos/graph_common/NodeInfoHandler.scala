@@ -1,43 +1,43 @@
-package com.twitter.recos.graph_common
+package com.tw ter.recos.graph_common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.recos_common.thriftscala.{
-  SocialProofType,
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.recos_common.thr ftscala.{
+  Soc alProofType,
   GetRecentEdgesRequest,
   GetRecentEdgesResponse,
-  NodeInfo,
+  Node nfo,
   RecentEdge
 }
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Future
+ mport com.tw ter.recos.ut l.Stats._
+ mport com.tw ter.servo.request._
+ mport com.tw ter.ut l.Future
 
 /**
- * Implementation of the Thrift-defined service interface.
+ *  mple ntat on of t  Thr ft-def ned serv ce  nterface.
  */
-class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
+class LeftNodeEdgesHandler(graph lper: B part eGraph lper, statsRece ver: StatsRece ver)
     extends RequestHandler[GetRecentEdgesRequest, GetRecentEdgesResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  private val CLICK = 0
-  private val FAVORITE = 1
-  private val RETWEET = 2
-  private val REPLY = 3
-  private val TWEET = 4
+  pr vate val CL CK = 0
+  pr vate val FAVOR TE = 1
+  pr vate val RETWEET = 2
+  pr vate val REPLY = 3
+  pr vate val TWEET = 4
 
-  override def apply(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] = {
+  overr de def apply(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] = {
     trackFutureBlockStats(stats) {
-      val recentEdges = graphHelper.getLeftNodeEdges(request.requestId).flatMap {
-        case (node, engagementType) if engagementType == CLICK =>
-          Some(RecentEdge(node, SocialProofType.Click))
-        case (node, engagementType) if engagementType == FAVORITE =>
-          Some(RecentEdge(node, SocialProofType.Favorite))
-        case (node, engagementType) if engagementType == RETWEET =>
-          Some(RecentEdge(node, SocialProofType.Retweet))
-        case (node, engagementType) if engagementType == REPLY =>
-          Some(RecentEdge(node, SocialProofType.Reply))
-        case (node, engagementType) if engagementType == TWEET =>
-          Some(RecentEdge(node, SocialProofType.Tweet))
+      val recentEdges = graph lper.getLeftNodeEdges(request.request d).flatMap {
+        case (node, engage ntType)  f engage ntType == CL CK =>
+          So (RecentEdge(node, Soc alProofType.Cl ck))
+        case (node, engage ntType)  f engage ntType == FAVOR TE =>
+          So (RecentEdge(node, Soc alProofType.Favor e))
+        case (node, engage ntType)  f engage ntType == RETWEET =>
+          So (RecentEdge(node, Soc alProofType.Ret et))
+        case (node, engage ntType)  f engage ntType == REPLY =>
+          So (RecentEdge(node, Soc alProofType.Reply))
+        case (node, engage ntType)  f engage ntType == TWEET =>
+          So (RecentEdge(node, Soc alProofType.T et))
         case _ =>
           None
       }
@@ -46,14 +46,14 @@ class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: Sta
   }
 }
 
-class RightNodeInfoHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[Long, NodeInfo] {
-  private[this] val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class R ghtNode nfoHandler(graph lper: B part eGraph lper, statsRece ver: StatsRece ver)
+    extends RequestHandler[Long, Node nfo] {
+  pr vate[t ] val stats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  override def apply(rightNode: Long): Future[NodeInfo] = {
+  overr de def apply(r ghtNode: Long): Future[Node nfo] = {
     trackFutureBlockStats(stats) {
-      val edges = graphHelper.getRightNodeEdges(rightNode)
-      Future.value(NodeInfo(edges = edges))
+      val edges = graph lper.getR ghtNodeEdges(r ghtNode)
+      Future.value(Node nfo(edges = edges))
     }
   }
 }

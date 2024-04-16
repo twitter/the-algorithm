@@ -1,19 +1,19 @@
-package com.twitter.tsp.common
+package com.tw ter.tsp.common
 
-import com.twitter.servo.decider.DeciderKeyEnum
+ mport com.tw ter.servo.dec der.Dec derKeyEnum
 
-object DeciderConstants {
-  val enableTopicSocialProofScore = "enable_topic_social_proof_score"
-  val enableHealthSignalsScoreDeciderKey = "enable_tweet_health_score"
-  val enableUserAgathaScoreDeciderKey = "enable_user_agatha_score"
+object Dec derConstants {
+  val enableTop cSoc alProofScore = "enable_top c_soc al_proof_score"
+  val enable althS gnalsScoreDec derKey = "enable_t et_ alth_score"
+  val enableUserAgathaScoreDec derKey = "enable_user_agatha_score"
 }
 
-object DeciderKey extends DeciderKeyEnum {
+object Dec derKey extends Dec derKeyEnum {
 
-  val enableHealthSignalsScoreDeciderKey: Value = Value(
-    DeciderConstants.enableHealthSignalsScoreDeciderKey
+  val enable althS gnalsScoreDec derKey: Value = Value(
+    Dec derConstants.enable althS gnalsScoreDec derKey
   )
-  val enableUserAgathaScoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserAgathaScoreDeciderKey
+  val enableUserAgathaScoreDec derKey: Value = Value(
+    Dec derConstants.enableUserAgathaScoreDec derKey
   )
 }

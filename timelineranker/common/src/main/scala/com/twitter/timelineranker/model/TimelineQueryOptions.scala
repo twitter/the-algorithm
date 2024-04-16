@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
-object TimelineQueryOptions {
-  def fromThrift(options: thrift.TimelineQueryOptions): TimelineQueryOptions = {
-    options match {
-      case thrift.TimelineQueryOptions.RankedTimelineQueryOptions(r) =>
-        RankedTimelineQueryOptions.fromThrift(r)
-      case thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(r) =>
-        ReverseChronTimelineQueryOptions.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $options")
+object T  l neQueryOpt ons {
+  def fromThr ft(opt ons: thr ft.T  l neQueryOpt ons): T  l neQueryOpt ons = {
+    opt ons match {
+      case thr ft.T  l neQueryOpt ons.RankedT  l neQueryOpt ons(r) =>
+        RankedT  l neQueryOpt ons.fromThr ft(r)
+      case thr ft.T  l neQueryOpt ons.ReverseChronT  l neQueryOpt ons(r) =>
+        ReverseChronT  l neQueryOpt ons.fromThr ft(r)
+      case _ => throw new  llegalArgu ntExcept on(s"Unsupported type: $opt ons")
     }
   }
 }
 
-trait TimelineQueryOptions {
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions
-  def throwIfInvalid(): Unit
+tra  T  l neQueryOpt ons {
+  def toT  l neQueryOpt onsThr ft: thr ft.T  l neQueryOpt ons
+  def throw f nval d(): Un 
 }

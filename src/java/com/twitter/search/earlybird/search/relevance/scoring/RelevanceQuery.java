@@ -1,164 +1,164 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Objects;
+ mport java.ut l.Set;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH Attr but on;
 
 /**
- * A wrapper for a Lucene query which first computes Lucene's query score
- * and then delegates to a {@link ScoringFunction} for final score computation.
+ * A wrapper for a Lucene query wh ch f rst computes Lucene's query score
+ * and t n delegates to a {@l nk Scor ngFunct on} for f nal score computat on.
  */
-public class RelevanceQuery extends Query {
-  private static final Logger LOG = LoggerFactory.getLogger(RelevanceQuery.class.getName());
+publ c class RelevanceQuery extends Query {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(RelevanceQuery.class.getNa ());
 
-  protected final Query luceneQuery;
-  protected final ScoringFunction scoringFunction;
+  protected f nal Query luceneQuery;
+  protected f nal Scor ngFunct on scor ngFunct on;
 
-  // True when the lucene query's score should be ignored for debug explanations.
-  protected final boolean ignoreLuceneQueryScoreExplanation;
+  // True w n t  lucene query's score should be  gnored for debug explanat ons.
+  protected f nal boolean  gnoreLuceneQueryScoreExplanat on;
 
-  public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
-    this(luceneQuery, scoringFunction, false);
+  publ c RelevanceQuery(Query luceneQuery, Scor ngFunct on scor ngFunct on) {
+    t (luceneQuery, scor ngFunct on, false);
   }
 
-  public RelevanceQuery(Query luceneQuery,
-                        ScoringFunction scoringFunction,
-                        boolean ignoreLuceneQueryScoreExplanation) {
-    this.luceneQuery = luceneQuery;
-    this.scoringFunction = scoringFunction;
-    this.ignoreLuceneQueryScoreExplanation = ignoreLuceneQueryScoreExplanation;
+  publ c RelevanceQuery(Query luceneQuery,
+                        Scor ngFunct on scor ngFunct on,
+                        boolean  gnoreLuceneQueryScoreExplanat on) {
+    t .luceneQuery = luceneQuery;
+    t .scor ngFunct on = scor ngFunct on;
+    t . gnoreLuceneQueryScoreExplanat on =  gnoreLuceneQueryScoreExplanat on;
   }
 
-  public ScoringFunction getScoringFunction() {
-    return scoringFunction;
+  publ c Scor ngFunct on getScor ngFunct on() {
+    return scor ngFunct on;
   }
 
-  public Query getLuceneQuery() {
+  publ c Query getLuceneQuery() {
     return luceneQuery;
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = luceneQuery.rewrite(reader);
-    if (rewritten == luceneQuery) {
-      return this;
+  @Overr de
+  publ c Query rewr e( ndexReader reader) throws  OExcept on {
+    Query rewr ten = luceneQuery.rewr e(reader);
+     f (rewr ten == luceneQuery) {
+      return t ;
     }
-    return new RelevanceQuery(rewritten, scoringFunction, ignoreLuceneQueryScoreExplanation);
+    return new RelevanceQuery(rewr ten, scor ngFunct on,  gnoreLuceneQueryScoreExplanat on);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight luceneWeight = luceneQuery.createWeight(searcher, scoreMode, boost);
-    if (luceneWeight == null) {
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+      ght lucene  ght = luceneQuery.create  ght(searc r, scoreMode, boost);
+     f (lucene  ght == null) {
       return null;
     }
-    return new RelevanceWeight(searcher, luceneWeight);
+    return new Relevance  ght(searc r, lucene  ght);
   }
 
-  public class RelevanceWeight extends Weight {
-    private final Weight luceneWeight;
+  publ c class Relevance  ght extends   ght {
+    pr vate f nal   ght lucene  ght;
 
-    public RelevanceWeight(IndexSearcher searcher, Weight luceneWeight) {
-      super(RelevanceQuery.this);
-      this.luceneWeight = luceneWeight;
+    publ c Relevance  ght( ndexSearc r searc r,   ght lucene  ght) {
+      super(RelevanceQuery.t );
+      t .lucene  ght = lucene  ght;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      this.luceneWeight.extractTerms(terms);
+    @Overr de
+    publ c vo d extractTerms(Set<Term> terms) {
+      t .lucene  ght.extractTerms(terms);
     }
 
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return explain(context, doc, null);
+    @Overr de
+    publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
+      return expla n(context, doc, null);
     }
 
     /**
-     * Returns an explanation of the scoring for the given document.
+     * Returns an explanat on of t  scor ng for t  g ven docu nt.
      *
-     * @param context The context of the reader that returned this document.
-     * @param doc The document.
-     * @param fieldHitAttribution Per-hit field attribution information.
-     * @return An explanation of the scoring for the given document.
+     * @param context T  context of t  reader that returned t  docu nt.
+     * @param doc T  docu nt.
+     * @param f eldH Attr but on Per-h  f eld attr but on  nformat on.
+     * @return An explanat on of t  scor ng for t  g ven docu nt.
      */
-    public Explanation explain(LeafReaderContext context, int doc,
-        @Nullable FieldHitAttribution fieldHitAttribution) throws IOException {
+    publ c Explanat on expla n(LeafReaderContext context,  nt doc,
+        @Nullable F eldH Attr but on f eldH Attr but on) throws  OExcept on {
 
-      Explanation luceneExplanation = Explanation.noMatch("LuceneQuery explain skipped");
-      if (!ignoreLuceneQueryScoreExplanation) {
+      Explanat on luceneExplanat on = Explanat on.noMatch("LuceneQuery expla n sk pped");
+       f (! gnoreLuceneQueryScoreExplanat on) {
         // get Lucene score
         try {
-          luceneExplanation = luceneWeight.explain(context, doc);
-        } catch (Exception e) {
-          // We sometimes see exceptions resulting from term queries that do not store
-          // utf8-text, which TermQuery.toString() assumes.  Catch here and allow at least
-          // scoring function explanations to be returned.
-          LOG.error("Exception in explain", e);
-          luceneExplanation = Explanation.noMatch("LuceneQuery explain failed");
+          luceneExplanat on = lucene  ght.expla n(context, doc);
+        } catch (Except on e) {
+          //   so t  s see except ons result ng from term quer es that do not store
+          // utf8-text, wh ch TermQuery.toStr ng() assu s.  Catch  re and allow at least
+          // scor ng funct on explanat ons to be returned.
+          LOG.error("Except on  n expla n", e);
+          luceneExplanat on = Explanat on.noMatch("LuceneQuery expla n fa led");
         }
       }
 
-      Explanation scoringFunctionExplanation;
-      scoringFunction.setFieldHitAttribution(fieldHitAttribution);
-      scoringFunctionExplanation = scoringFunction.explain(
-          context.reader(), doc, luceneExplanation.getValue().floatValue());
+      Explanat on scor ngFunct onExplanat on;
+      scor ngFunct on.setF eldH Attr but on(f eldH Attr but on);
+      scor ngFunct onExplanat on = scor ngFunct on.expla n(
+          context.reader(), doc, luceneExplanat on.getValue().floatValue());
 
-      // just add a wrapper for a better structure of the final explanation
-      Explanation luceneExplanationWrapper = Explanation.match(
-          luceneExplanation.getValue(), "LuceneQuery", luceneExplanation);
+      // just add a wrapper for a better structure of t  f nal explanat on
+      Explanat on luceneExplanat onWrapper = Explanat on.match(
+          luceneExplanat on.getValue(), "LuceneQuery", luceneExplanat on);
 
-      return Explanation.match(scoringFunctionExplanation.getValue(), "RelevanceQuery",
-              scoringFunctionExplanation, luceneExplanationWrapper);
+      return Explanat on.match(scor ngFunct onExplanat on.getValue(), "RelevanceQuery",
+              scor ngFunct onExplanat on, luceneExplanat onWrapper);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      return luceneWeight.scorer(context);
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+      return lucene  ght.scorer(context);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext ctx) {
+      return lucene  ght. sCac able(ctx);
     }
   }
 
-  @Override
-  public int hashCode() {
+  @Overr de
+  publ c  nt hashCode() {
     return (luceneQuery == null ? 0 : luceneQuery.hashCode())
-        + (scoringFunction == null ? 0 : scoringFunction.hashCode()) * 13;
+        + (scor ngFunct on == null ? 0 : scor ngFunct on.hashCode()) * 13;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RelevanceQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof RelevanceQuery)) {
       return false;
     }
 
     RelevanceQuery query = RelevanceQuery.class.cast(obj);
     return Objects.equals(luceneQuery, query.luceneQuery)
-        && Objects.equals(scoringFunction, query.scoringFunction);
+        && Objects.equals(scor ngFunct on, query.scor ngFunct on);
   }
 
-  @Override
-  public String toString(String field) {
-    return "RelevanceQuery[q=" + luceneQuery.toString(field) + "]";
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "RelevanceQuery[q=" + luceneQuery.toStr ng(f eld) + "]";
   }
 }

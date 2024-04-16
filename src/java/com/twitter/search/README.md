@@ -1,50 +1,50 @@
-# Tweet Search System (Earlybird)
-> **TL;DR** Tweet Search System (Earlybird) find tweets from people you follow, rank them, and serve the tweets to Home.
+# T et Search System (Earlyb rd)
+> **TL;DR** T et Search System (Earlyb rd) f nd t ets from people   follow, rank t m, and serve t  t ets to Ho .
 
-## What is Tweet Search System (Earlybird)? 
-[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads.
+## What  s T et Search System (Earlyb rd)? 
+[Earlyb rd](http://notes.step nhol day.com/Earlyb rd.pdf)  s a **real-t   search system** based on [Apac  Lucene](https://lucene.apac .org/) to support t  h gh volu  of quer es and content updates. T  major use cases are Relevance Search (spec f cally, Text search) and T  l ne  n-network T et retr eval (or User D based search).    s des gned to enable t  eff c ent  ndex ng and query ng of b ll ons of t ets, and to prov de low-latency search results, even w h  avy query loads.
 
-## How it is related to the Home Timeline Recommendation Algorithm
+## How    s related to t  Ho  T  l ne Recom ndat on Algor hm
 
-![in-network](img/in-network.png)
+![ n-network]( mg/ n-network.png)
 
-At Twitter, we use Tweet Search System (Earlybird) to do Home Timeline In-network Tweet retrieval: given a list of following users, find their recently posted tweets. Earlybird (Search Index) is the major candidate source for in-network tweets across Following tab and For You tab.
-
-
-## High-level architecture
-We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 7 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago. 
-
-Earlybird addresses the challenges of scaling real-time search by splitting each cluster across multiple **partitions**, each responsible for a portion of the index. The architecture uses a distributed *inverted index* that is sharded and replicated. This design allows for efficient index updates and query processing. 
-
-The system also employs an incremental indexing approach, enabling it to process and index new tweets in real-time as they arrive. With single writer, multiple reader structure, Earlybird can handle a large number of real-time updates and queries concurrently while maintaining low query latency. The system can achieve high query throughput and low query latency while maintaining a high degree of index freshness. 
+At Tw ter,   use T et Search System (Earlyb rd) to do Ho  T  l ne  n-network T et retr eval: g ven a l st of follow ng users, f nd t  r recently posted t ets. Earlyb rd (Search  ndex)  s t  major cand date s ce for  n-network t ets across Follow ng tab and For   tab.
 
 
-### Indexing 
-* Ingesters read tweets and user modifications from kafka topics, extract fields and features from them and write the extracted data to intermediate kafka topics for Earlybirds to consume, index and serve.
-* Feature Update Service feeds feature updates such as up-to-date engagement (like, retweets, replies) counts to Earlybird.
-![indexing](img/indexing.png)
+## H gh-level arch ecture
+  spl    ent re t et search  ndex  nto three clusters: a **realt  ** cluster  ndex ng all publ c t ets posted  n about t  last 7 days, a **protected** cluster  ndex ng all protected t ets for t  sa  t  fra ; and an **arch ve** cluster  ndex ng all t ets ever posted, up to about two days ago. 
 
-### Serving
-Earlybird roots fanout requests to different Earlybird clusters or partitions. Upon receiving responses from the clusters or partitions, roots merge the responses before finally returning the merged response to the client. 
-![serving](img/serving.png)
+Earlyb rd addresses t  challenges of scal ng real-t   search by spl t ng each cluster across mult ple **part  ons**, each respons ble for a port on of t   ndex. T  arch ecture uses a d str buted * nverted  ndex* that  s sharded and repl cated. T  des gn allows for eff c ent  ndex updates and query process ng. 
+
+T  system also employs an  ncre ntal  ndex ng approach, enabl ng   to process and  ndex new t ets  n real-t   as t y arr ve. W h s ngle wr er, mult ple reader structure, Earlyb rd can handle a large number of real-t   updates and quer es concurrently wh le ma nta n ng low query latency. T  system can ach eve h gh query throughput and low query latency wh le ma nta n ng a h gh degree of  ndex freshness. 
+
+
+###  ndex ng 
+*  ngesters read t ets and user mod f cat ons from kafka top cs, extract f elds and features from t m and wr e t  extracted data to  nter d ate kafka top cs for Earlyb rds to consu ,  ndex and serve.
+* Feature Update Serv ce feeds feature updates such as up-to-date engage nt (l ke, ret ets, repl es) counts to Earlyb rd.
+![ ndex ng]( mg/ ndex ng.png)
+
+### Serv ng
+Earlyb rd roots fanout requests to d fferent Earlyb rd clusters or part  ons. Upon rece v ng responses from t  clusters or part  ons, roots  rge t  responses before f nally return ng t   rged response to t  cl ent. 
+![serv ng]( mg/serv ng.png)
 
 ## Use cases
 
-1. Tweet Search
+1. T et Search
   * Top search
   * Latest search
 
-![top](img/top-search.png)
+![top]( mg/top-search.png)
 
-2. Candidate generation
-  * Timeline (For You Tab, Following Tab)
-  * Notifications
+2. Cand date generat on
+  * T  l ne (For   Tab, Follow ng Tab)
+  * Not f cat ons
 
-![home](img/foryou.png)
+![ho ]( mg/for .png)
 
 ## References
-* "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
-* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+* "Earlyb rd: Real-T   Search at Tw ter" (http://notes.step nhol day.com/Earlyb rd.pdf)
+* "Reduc ng search  ndex ng latency to one second" (https://blog.tw ter.com/eng neer ng/en_us/top cs/ nfrastructure/2020/reduc ng-search- ndex ng-latency-to-one-second)
+* "Omn search  ndex formats" (https://blog.tw ter.com/eng neer ng/en_us/top cs/ nfrastructure/2016/omn search- ndex-formats)
 
 

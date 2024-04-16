@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.CallbackMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageAct on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MessageActionMarshaller @Inject() (
+@S ngleton
+class  ssageAct onMarshaller @ nject() (
   callbackMarshaller: CallbackMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller) {
 
-  def apply(messageAction: MessageAction): urt.MessageAction = {
+  def apply( ssageAct on:  ssageAct on): urt. ssageAct on = {
 
-    urt.MessageAction(
-      dismissOnClick = messageAction.dismissOnClick,
-      url = messageAction.url,
-      clientEventInfo = messageAction.clientEventInfo.map(clientEventInfoMarshaller(_)),
-      onClickCallbacks =
-        messageAction.onClickCallbacks.map(callbackList => callbackList.map(callbackMarshaller(_)))
+    urt. ssageAct on(
+      d sm ssOnCl ck =  ssageAct on.d sm ssOnCl ck,
+      url =  ssageAct on.url,
+      cl entEvent nfo =  ssageAct on.cl entEvent nfo.map(cl entEvent nfoMarshaller(_)),
+      onCl ckCallbacks =
+         ssageAct on.onCl ckCallbacks.map(callbackL st => callbackL st.map(callbackMarshaller(_)))
     )
   }
 }

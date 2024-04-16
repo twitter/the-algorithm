@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.tw ter.ho _m xer.product.scored_t ets.f lter
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features.AncestorsFeature
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Remove any candidate that is in the ancestor list of any reply, including retweets of ancestors.
+ * Remove any cand date that  s  n t  ancestor l st of any reply,  nclud ng ret ets of ancestors.
  *
- * E.g. if B replied to A and D was a retweet of A, we would prefer to drop D since otherwise
- * we may end up serving the same tweet twice in the timeline (e.g. serving both A->B and D).
+ * E.g.  f B repl ed to A and D was a ret et of A,   would prefer to drop D s nce ot rw se
+ *   may end up serv ng t  sa  t et tw ce  n t  t  l ne (e.g. serv ng both A->B and D).
  */
-object DuplicateConversationTweetsFilter extends Filter[PipelineQuery, TweetCandidate] {
+object Dupl cateConversat onT etsF lter extends F lter[P pel neQuery, T etCand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("DuplicateConversationTweets")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Dupl cateConversat onT ets")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val allAncestors = candidates
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[F lterResult[T etCand date]] = {
+    val allAncestors = cand dates
       .flatMap(_.features.getOrElse(AncestorsFeature, Seq.empty))
-      .map(_.tweetId).toSet
+      .map(_.t et d).toSet
 
-    val (kept, removed) = candidates.partition { candidate =>
-      !allAncestors.contains(CandidatesUtil.getOriginalTweetId(candidate))
+    val (kept, removed) = cand dates.part  on { cand date =>
+      !allAncestors.conta ns(Cand datesUt l.getOr g nalT et d(cand date))
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    St ch.value(F lterResult(kept = kept.map(_.cand date), removed = removed.map(_.cand date)))
   }
 }

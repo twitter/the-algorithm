@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasDismissedUserIds {
-  // user ids that are recently followed by the target user
-  def dismissedUserIds: Option[Seq[Long]]
+tra  HasD sm ssedUser ds {
+  // user  ds that are recently follo d by t  target user
+  def d sm ssedUser ds: Opt on[Seq[Long]]
 }

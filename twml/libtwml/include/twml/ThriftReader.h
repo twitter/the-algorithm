@@ -1,56 +1,56 @@
 #pragma once
 
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/defines.h>
-#include <cstdint>
-#include <cstddef>
-#include <cstring>
+# nclude <twml/def nes.h>
+# nclude <cstd nt>
+# nclude <cstddef>
+# nclude <cstr ng>
 
-namespace twml {
+na space twml {
 
-class ThriftReader {
+class Thr ftReader {
  protected:
-  const uint8_t *m_buffer;
+  const u nt8_t *m_buffer;
 
- public:
+ publ c:
 
-  ThriftReader(const uint8_t *buffer): m_buffer(buffer) {}
+  Thr ftReader(const u nt8_t *buffer): m_buffer(buffer) {}
 
-  const uint8_t *getBuffer() { return m_buffer; }
+  const u nt8_t *getBuffer() { return m_buffer; }
 
-  void setBuffer(const uint8_t *buffer) { m_buffer = buffer; }
+  vo d setBuffer(const u nt8_t *buffer) { m_buffer = buffer; }
 
-  template<typename T> T readDirect() {
+  template<typena  T> T readD rect() {
     T val;
-    memcpy(&val, m_buffer, sizeof(T));
-    m_buffer += sizeof(T);
+     mcpy(&val, m_buffer, s zeof(T));
+    m_buffer += s zeof(T);
     return val;
   }
 
-  template<typename T> void skip() {
-    m_buffer += sizeof(T);
+  template<typena  T> vo d sk p() {
+    m_buffer += s zeof(T);
   }
 
-  void skipLength(size_t length) {
+  vo d sk pLength(s ze_t length) {
     m_buffer += length;
   }
 
-  uint8_t readByte();
-  int16_t readInt16();
-  int32_t readInt32();
-  int64_t readInt64();
+  u nt8_t readByte();
+   nt16_t read nt16();
+   nt32_t read nt32();
+   nt64_t read nt64();
   double readDouble();
 
-  template<typename T> inline
-  int32_t getRawBuffer(const uint8_t **begin) {
-    int32_t length = readInt32();
-    *begin = m_buffer;
-    skipLength(length * sizeof(T));
+  template<typena  T>  nl ne
+   nt32_t getRawBuffer(const u nt8_t **beg n) {
+     nt32_t length = read nt32();
+    *beg n = m_buffer;
+    sk pLength(length * s zeof(T));
     return length;
   }
 
 };
 
 }
-#endif
+#end f

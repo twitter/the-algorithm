@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.common.text.language.LocaleUt l;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
  * Export stats for query languages.
  */
-@Singleton
-public class QueryLangStatFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+@S ngleton
+publ c class QueryLangStatF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  public static class Config {
-    // We put a limit here in case an error in the client are sending us random lang codes.
-    private int maxNumberOfLangs;
+  publ c stat c class Conf g {
+    //   put a l m   re  n case an error  n t  cl ent are send ng us random lang codes.
+    pr vate  nt maxNumberOfLangs;
 
-    public Config(int maxNumberOfLangs) {
-      this.maxNumberOfLangs = maxNumberOfLangs;
+    publ c Conf g( nt maxNumberOfLangs) {
+      t .maxNumberOfLangs = maxNumberOfLangs;
     }
 
-    public int getMaxNumberOfLangs() {
+    publ c  nt getMaxNumberOfLangs() {
       return maxNumberOfLangs;
     }
   }
 
-  @VisibleForTesting
-  protected static final String LANG_STATS_PREFIX = "num_queries_in_lang_";
+  @V s bleForTest ng
+  protected stat c f nal Str ng LANG_STATS_PREF X = "num_quer es_ n_lang_";
 
-  private final Config config;
-  private final SearchCounter allCountsForLangsOverMaxNumLang =
-      SearchCounter.export(LANG_STATS_PREFIX + "overflow");
+  pr vate f nal Conf g conf g;
+  pr vate f nal SearchCounter allCountsForLangsOverMaxNumLang =
+      SearchCounter.export(LANG_STATS_PREF X + "overflow");
 
-  private final ConcurrentHashMap<String, SearchCounter> langCounters =
+  pr vate f nal ConcurrentHashMap<Str ng, SearchCounter> langCounters =
       new ConcurrentHashMap<>();
 
-  @Inject
-  public QueryLangStatFilter(Config config) {
-    this.config = config;
+  @ nject
+  publ c QueryLangStatF lter(Conf g conf g) {
+    t .conf g = conf g;
   }
 
-  private SearchCounter getCounter(String lang) {
-    Preconditions.checkNotNull(lang);
+  pr vate SearchCounter getCounter(Str ng lang) {
+    Precond  ons.c ckNotNull(lang);
 
     SearchCounter counter = langCounters.get(lang);
-    if (counter == null) {
-      if (langCounters.size() >= config.getMaxNumberOfLangs()) {
+     f (counter == null) {
+       f (langCounters.s ze() >= conf g.getMaxNumberOfLangs()) {
         return allCountsForLangsOverMaxNumLang;
       }
-      synchronized (langCounters) { // This double-checked locking is safe,
-                                    // since we're using a ConcurrentHashMap
+      synchron zed (langCounters) { // T  double-c cked lock ng  s safe,
+                                    // s nce  're us ng a ConcurrentHashMap
         counter = langCounters.get(lang);
-        if (counter == null) {
-          counter = SearchCounter.export(LANG_STATS_PREFIX + lang);
+         f (counter == null) {
+          counter = SearchCounter.export(LANG_STATS_PREF X + lang);
           langCounters.put(lang, counter);
         }
       }
@@ -75,40 +75,40 @@ public class QueryLangStatFilter
     return counter;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
-    String lang = null;
+    Str ng lang = null;
 
-    ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+    Thr ftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
 
     lang = searchQuery.getQueryLang();
 
-    if (lang == null) {
-      // fallback to ui lang
-      lang = searchQuery.getUiLang();
+     f (lang == null) {
+      // fallback to u  lang
+      lang = searchQuery.getU Lang();
     }
 
-    if (lang == null && searchQuery.isSetUserLangs()) {
-      // fallback to the user lang with the highest confidence
-      double maxConfidence = Double.MIN_VALUE;
+     f (lang == null && searchQuery. sSetUserLangs()) {
+      // fallback to t  user lang w h t  h g st conf dence
+      double maxConf dence = Double.M N_VALUE;
 
-      for (Map.Entry<ThriftLanguage, Double> entry : searchQuery.getUserLangs().entrySet()) {
-        if (entry.getValue() > maxConfidence) {
-          lang = ThriftLanguageUtil.getLanguageCodeOf(entry.getKey());
-          maxConfidence = entry.getValue();
+      for (Map.Entry<Thr ftLanguage, Double> entry : searchQuery.getUserLangs().entrySet()) {
+         f (entry.getValue() > maxConf dence) {
+          lang = Thr ftLanguageUt l.getLanguageCodeOf(entry.getKey());
+          maxConf dence = entry.getValue();
         }
       }
     }
 
-    if (lang == null) {
-      lang = LocaleUtil.UNDETERMINED_LANGUAGE;
+     f (lang == null) {
+      lang = LocaleUt l.UNDETERM NED_LANGUAGE;
     }
 
-    getCounter(lang).increment();
+    getCounter(lang). ncre nt();
 
-    return service.apply(requestContext);
+    return serv ce.apply(requestContext);
   }
 }

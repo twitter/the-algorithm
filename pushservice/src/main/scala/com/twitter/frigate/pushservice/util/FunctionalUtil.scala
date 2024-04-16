@@ -1,11 +1,11 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.Counter
+ mport com.tw ter.f nagle.stats.Counter
 
-object FunctionalUtil {
-  def incr[T](counter: Counter): T => T = { x =>
+object Funct onalUt l {
+  def  ncr[T](counter: Counter): T => T = { x =>
     {
-      counter.incr()
+      counter. ncr()
       x
     }
   }

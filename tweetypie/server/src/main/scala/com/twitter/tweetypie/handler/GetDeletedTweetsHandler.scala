@@ -1,81 +1,81 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.InternalServerError
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.storage.Response.TweetResponseCode
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.DeleteState
-import com.twitter.tweetypie.storage.DeletedTweetResponse
-import com.twitter.tweetypie.storage.RateLimited
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core. nternalServerError
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.storage.Response.T etResponseCode
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetT et
+ mport com.tw ter.t etyp e.storage.DeleteState
+ mport com.tw ter.t etyp e.storage.DeletedT etResponse
+ mport com.tw ter.t etyp e.storage.RateL m ed
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent
+ mport com.tw ter.t etyp e.thr ftscala._
 
 /**
- * Allow access to raw, unhydrated deleted tweet fields from storage backends (currently Manhattan)
+ * Allow access to raw, unhydrated deleted t et f elds from storage backends (currently Manhattan)
  */
-object GetDeletedTweetsHandler {
+object GetDeletedT etsHandler {
 
-  type Type = FutureArrow[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
-  type TweetsExist = Seq[TweetId] => Stitch[Set[TweetId]]
+  type Type = FutureArrow[GetDeletedT etsRequest, Seq[GetDeletedT etResult]]
+  type T etsEx st = Seq[T et d] => St ch[Set[T et d]]
 
-  def processTweetResponse(response: Try[GetTweet.Response]): Stitch[Option[Tweet]] = {
-    import GetTweet.Response._
+  def processT etResponse(response: Try[GetT et.Response]): St ch[Opt on[T et]] = {
+     mport GetT et.Response._
 
     response match {
-      case Return(Found(tweet)) => Stitch.value(Some(tweet))
-      case Return(Deleted | NotFound | BounceDeleted(_)) => Stitch.None
-      case Throw(_: RateLimited) => Stitch.exception(OverCapacity("manhattan"))
-      case Throw(exception) => Stitch.exception(exception)
+      case Return(Found(t et)) => St ch.value(So (t et))
+      case Return(Deleted | NotFound | BounceDeleted(_)) => St ch.None
+      case Throw(_: RateL m ed) => St ch.except on(OverCapac y("manhattan"))
+      case Throw(except on) => St ch.except on(except on)
     }
   }
 
-  def convertDeletedTweetResponse(
-    r: DeletedTweetResponse,
-    extantIds: Set[TweetId]
-  ): GetDeletedTweetResult = {
-    val id = r.tweetId
-    if (extantIds.contains(id) || r.deleteState == DeleteState.NotDeleted) {
-      GetDeletedTweetResult(id, DeletedTweetState.NotDeleted)
+  def convertDeletedT etResponse(
+    r: DeletedT etResponse,
+    extant ds: Set[T et d]
+  ): GetDeletedT etResult = {
+    val  d = r.t et d
+     f (extant ds.conta ns( d) || r.deleteState == DeleteState.NotDeleted) {
+      GetDeletedT etResult( d, DeletedT etState.NotDeleted)
     } else {
       r.overallResponse match {
-        case TweetResponseCode.Success =>
-          GetDeletedTweetResult(id, convertState(r.deleteState), r.tweet)
-        case TweetResponseCode.OverCapacity => throw OverCapacity("manhattan")
+        case T etResponseCode.Success =>
+          GetDeletedT etResult( d, convertState(r.deleteState), r.t et)
+        case T etResponseCode.OverCapac y => throw OverCapac y("manhattan")
         case _ =>
-          throw InternalServerError(
-            s"Unhandled response ${r.overallResponse} from getDeletedTweets for tweet $id"
+          throw  nternalServerError(
+            s"Unhandled response ${r.overallResponse} from getDeletedT ets for t et $ d"
           )
       }
     }
   }
 
-  def convertState(d: DeleteState): DeletedTweetState = d match {
-    case DeleteState.NotFound => DeletedTweetState.NotFound
-    case DeleteState.NotDeleted => DeletedTweetState.NotDeleted
-    case DeleteState.SoftDeleted => DeletedTweetState.SoftDeleted
-    // Callers of this endpoint treat BounceDeleted tweets the same as SoftDeleted
-    case DeleteState.BounceDeleted => DeletedTweetState.SoftDeleted
-    case DeleteState.HardDeleted => DeletedTweetState.HardDeleted
+  def convertState(d: DeleteState): DeletedT etState = d match {
+    case DeleteState.NotFound => DeletedT etState.NotFound
+    case DeleteState.NotDeleted => DeletedT etState.NotDeleted
+    case DeleteState.SoftDeleted => DeletedT etState.SoftDeleted
+    // Callers of t  endpo nt treat BounceDeleted t ets t  sa  as SoftDeleted
+    case DeleteState.BounceDeleted => DeletedT etState.SoftDeleted
+    case DeleteState.HardDeleted => DeletedT etState.HardDeleted
   }
 
   /**
-   * Converts [[TweetStorageClient.GetTweet]] into a FutureArrow that returns extant tweet ids from
-   * the original list. This method is used to check underlying storage againt cache, preferring
-   * cache if a tweet exists there.
+   * Converts [[T etStorageCl ent.GetT et]]  nto a FutureArrow that returns extant t et  ds from
+   * t  or g nal l st. T   thod  s used to c ck underly ng storage aga nt cac , preferr ng
+   * cac   f a t et ex sts t re.
    */
-  def tweetsExist(getTweet: TweetStorageClient.GetTweet): TweetsExist =
-    (tweetIds: Seq[TweetId]) =>
+  def t etsEx st(getT et: T etStorageCl ent.GetT et): T etsEx st =
+    (t et ds: Seq[T et d]) =>
       for {
-        response <- Stitch.traverse(tweetIds) { tweetId => getTweet(tweetId).liftToTry }
-        tweets <- Stitch.collect(response.map(processTweetResponse))
-      } yield tweets.flatten.map(_.id).toSet.filter(tweetIds.contains)
+        response <- St ch.traverse(t et ds) { t et d => getT et(t et d).l ftToTry }
+        t ets <- St ch.collect(response.map(processT etResponse))
+      } y eld t ets.flatten.map(_. d).toSet.f lter(t et ds.conta ns)
 
   def apply(
-    getDeletedTweets: TweetStorageClient.GetDeletedTweets,
-    tweetsExist: TweetsExist,
-    stats: StatsReceiver
+    getDeletedT ets: T etStorageCl ent.GetDeletedT ets,
+    t etsEx st: T etsEx st,
+    stats: StatsRece ver
   ): Type = {
 
     val notFound = stats.counter("not_found")
@@ -84,34 +84,34 @@ object GetDeletedTweetsHandler {
     val hardDeleted = stats.counter("hard_deleted")
     val unknown = stats.counter("unknown")
 
-    def trackState(results: Seq[GetDeletedTweetResult]): Unit =
+    def trackState(results: Seq[GetDeletedT etResult]): Un  =
       results.foreach { r =>
         r.state match {
-          case DeletedTweetState.NotFound => notFound.incr()
-          case DeletedTweetState.NotDeleted => notDeleted.incr()
-          case DeletedTweetState.SoftDeleted => softDeleted.incr()
-          case DeletedTweetState.HardDeleted => hardDeleted.incr()
-          case _ => unknown.incr()
+          case DeletedT etState.NotFound => notFound. ncr()
+          case DeletedT etState.NotDeleted => notDeleted. ncr()
+          case DeletedT etState.SoftDeleted => softDeleted. ncr()
+          case DeletedT etState.HardDeleted => hardDeleted. ncr()
+          case _ => unknown. ncr()
         }
       }
 
     FutureArrow { request =>
-      Stitch.run {
-        Stitch
-          .join(
-            getDeletedTweets(request.tweetIds),
-            tweetsExist(request.tweetIds)
+      St ch.run {
+        St ch
+          .jo n(
+            getDeletedT ets(request.t et ds),
+            t etsEx st(request.t et ds)
           )
           .map {
-            case (deletedTweetResponses, extantIds) =>
-              val responseIds = deletedTweetResponses.map(_.tweetId)
+            case (deletedT etResponses, extant ds) =>
+              val response ds = deletedT etResponses.map(_.t et d)
               assert(
-                responseIds == request.tweetIds,
-                s"getDeletedTweets response does not match order of request: Request ids " +
-                  s"(${request.tweetIds.mkString(", ")}) != response ids (${responseIds
-                    .mkString(", ")})"
+                response ds == request.t et ds,
+                s"getDeletedT ets response does not match order of request: Request  ds " +
+                  s"(${request.t et ds.mkStr ng(", ")}) != response  ds (${response ds
+                    .mkStr ng(", ")})"
               )
-              deletedTweetResponses.map { r => convertDeletedTweetResponse(r, extantIds) }
+              deletedT etResponses.map { r => convertDeletedT etResponse(r, extant ds) }
           }
       }
     }

@@ -1,36 +1,36 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.tw ter.fr gate.pushserv ce.take.pred cates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.predicate.CrtDeciderPredicate
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.ScarecrowPredicate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicate
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.pred cate.CrtDec derPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ScarecrowPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue.NtabCaretCl ckFat guePred cate
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-trait TakeCommonPredicates {
-  def config: Config
+tra  TakeCommonPred cates {
+  def conf g: Conf g
 
-  implicit def statsReceiver: StatsReceiver
+   mpl c  def statsRece ver: StatsRece ver
 
-  lazy val rfphPrePredicates: List[NamedPredicate[PushCandidate]] = List(
-    CrtDeciderPredicate(config.decider),
-    PredicatesForCandidate.isChannelValidPredicate,
+  lazy val rfphPrePred cates: L st[Na dPred cate[PushCand date]] = L st(
+    CrtDec derPred cate(conf g.dec der),
+    Pred catesForCand date. sChannelVal dPred cate,
   )
 
-  lazy val sendHandlerPrePredicates: List[NamedPredicate[PushCandidate]] = List(
-    CrtDeciderPredicate(config.decider),
-    PredicatesForCandidate.enableSendHandlerCandidates,
-    PredicatesForCandidate.mrWebHoldbackPredicate,
-    PredicatesForCandidate.targetUserExists,
-    PredicatesForCandidate.authorInSocialContext,
-    PredicatesForCandidate.recommendedTweetIsAuthoredBySelf,
-    PredicatesForCandidate.selfInSocialContext,
-    NtabCaretClickFatiguePredicate()
+  lazy val sendHandlerPrePred cates: L st[Na dPred cate[PushCand date]] = L st(
+    CrtDec derPred cate(conf g.dec der),
+    Pred catesForCand date.enableSendHandlerCand dates,
+    Pred catesForCand date.mr bHoldbackPred cate,
+    Pred catesForCand date.targetUserEx sts,
+    Pred catesForCand date.author nSoc alContext,
+    Pred catesForCand date.recom ndedT et sAuthoredBySelf,
+    Pred catesForCand date.self nSoc alContext,
+    NtabCaretCl ckFat guePred cate()
   )
 
-  lazy val postPredicates: List[NamedPredicate[PushCandidate]] = List(
-    ScarecrowPredicate(config.scarecrowCheckEventStore)
+  lazy val postPred cates: L st[Na dPred cate[PushCand date]] = L st(
+    ScarecrowPred cate(conf g.scarecrowC ckEventStore)
   )
 }

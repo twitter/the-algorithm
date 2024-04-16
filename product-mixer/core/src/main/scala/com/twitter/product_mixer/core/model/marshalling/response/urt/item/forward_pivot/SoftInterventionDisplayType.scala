@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot
 
-sealed trait SoftInterventionDisplayType
+sealed tra  Soft ntervent onD splayType
 
-case object GetTheLatest extends SoftInterventionDisplayType
-case object StayInformed extends SoftInterventionDisplayType
-case object Misleading extends SoftInterventionDisplayType
-case object GovernmentRequested extends SoftInterventionDisplayType
+case object GetT Latest extends Soft ntervent onD splayType
+case object Stay nfor d extends Soft ntervent onD splayType
+case object M slead ng extends Soft ntervent onD splayType
+case object Govern ntRequested extends Soft ntervent onD splayType

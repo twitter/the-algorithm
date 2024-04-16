@@ -1,6 +1,6 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
-images: ['gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
+- na : 'gcr. o/cloud-bu lders/docker'
+  args: ['bu ld', '-t', 'gcr. o/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7', '.']
+- na : 'gcr. o/cloud-bu lders/docker'
+  args: ['push', 'gcr. o/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
+ mages: ['gcr. o/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']

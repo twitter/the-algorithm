@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.FollowAll ssageAct onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageAct onType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MessageActionTypeMarshaller @Inject() () {
+@S ngleton
+class  ssageAct onTypeMarshaller @ nject() () {
 
-  def apply(messageActionType: MessageActionType): urt.MessageActionType = messageActionType match {
-    case FollowAllMessageActionType => urt.MessageActionType.FollowAll
+  def apply( ssageAct onType:  ssageAct onType): urt. ssageAct onType =  ssageAct onType match {
+    case FollowAll ssageAct onType => urt. ssageAct onType.FollowAll
   }
 }

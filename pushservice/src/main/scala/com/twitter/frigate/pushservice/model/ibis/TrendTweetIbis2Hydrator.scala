@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.TrendTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
+ mport com.tw ter.fr gate.common.base.TrendT etCand date
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
 
-trait TrendTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
-  self: PushCandidate with TrendTweetCandidate with TweetAuthorDetails =>
+tra  TrendT et b s2Hydrator extends T etCand date b s2Hydrator {
+  self: PushCand date w h TrendT etCand date w h T etAuthorDeta ls =>
 
-  lazy val trendNameModelValue = Map("trend_name" -> trendName)
+  lazy val trendNa ModelValue = Map("trend_na " -> trendNa )
 
-  override lazy val tweetModelValues = for {
-    tweetValues <- super.tweetModelValues
-    inlineActionValues <- tweetInlineActionModelValue
-  } yield tweetValues ++ inlineActionValues ++ trendNameModelValue
+  overr de lazy val t etModelValues = for {
+    t etValues <- super.t etModelValues
+     nl neAct onValues <- t et nl neAct onModelValue
+  } y eld t etValues ++  nl neAct onValues ++ trendNa ModelValue
 }

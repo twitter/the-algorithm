@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
+ mport org.apac .lucene.facet.Facets;
+ mport org.apac .lucene.facet.FacetsCollector;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.FacetsFactory;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.facets.CountFacetSearchParam;
+ mport com.tw ter.search.common.facets.FacetSearchParam;
+ mport com.tw ter.search.common.facets.FacetsFactory;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * Factory for EarlybirdFacets
+ * Factory for Earlyb rdFacets
  */
-public class EarlybirdFacetsFactory implements FacetsFactory {
-  private final EarlybirdIndexSegmentAtomicReader reader;
+publ c class Earlyb rdFacetsFactory  mple nts FacetsFactory {
+  pr vate f nal Earlyb rd ndexSeg ntAtom cReader reader;
 
-  public EarlybirdFacetsFactory(EarlybirdIndexSegmentAtomicReader reader) {
-    this.reader = reader;
+  publ c Earlyb rdFacetsFactory(Earlyb rd ndexSeg ntAtom cReader reader) {
+    t .reader = reader;
   }
 
-  @Override
-  public Facets create(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+  @Overr de
+  publ c Facets create(
+      L st<FacetSearchParam> facetSearchParams,
+      FacetsCollector facetsCollector) throws  OExcept on {
 
-    return new EarlybirdFacets(facetSearchParams, facetsCollector, reader);
+    return new Earlyb rdFacets(facetSearchParams, facetsCollector, reader);
   }
 
-  @Override
-  public boolean accept(FacetSearchParam facetSearchParam) {
-    if (!(facetSearchParam instanceof CountFacetSearchParam)
-        || (facetSearchParam.getFacetFieldRequest().getPath() != null
-            && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty())) {
+  @Overr de
+  publ c boolean accept(FacetSearchParam facetSearchParam) {
+     f (!(facetSearchParam  nstanceof CountFacetSearchParam)
+        || (facetSearchParam.getFacetF eldRequest().getPath() != null
+            && !facetSearchParam.getFacetF eldRequest().getPath(). sEmpty())) {
       return false;
     }
 
-    String field = facetSearchParam.getFacetFieldRequest().getField();
-    Schema.FieldInfo facetInfo = reader.getSegmentData().getSchema()
-            .getFacetFieldByFacetName(field);
+    Str ng f eld = facetSearchParam.getFacetF eldRequest().getF eld();
+    Sc ma.F eld nfo facet nfo = reader.getSeg ntData().getSc ma()
+            .getFacetF eldByFacetNa (f eld);
 
-    return facetInfo != null
-        && reader.getSegmentData().getPerFieldMap().containsKey(facetInfo.getName());
+    return facet nfo != null
+        && reader.getSeg ntData().getPerF eldMap().conta nsKey(facet nfo.getNa ());
   }
 }

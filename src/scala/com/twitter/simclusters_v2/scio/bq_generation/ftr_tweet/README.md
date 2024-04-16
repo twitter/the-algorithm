@@ -1,212 +1,212 @@
-# FTR Tweet embeddings 
+# FTR T et embedd ngs 
 
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
-## Running Adhoc jobs
+## Runn ng Adhoc jobs
 ### Base ftrat5 
 ```
-rm dist/ftr-tweet-adhoc-job-bundle/ftr-tweet-adhoc-job.jar
-./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-adhoc-job && \
-bin/d6w create \
-${GCP_PROJECT_NAME}/us-central1/ftr-tweets-ann-adhoc-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-tweets-ann-adhoc-job.d6w \
---jar dist/ftr-tweet-adhoc-job-bundle/ftr-tweet-adhoc-job.jar \
---bind=profile.project=
+rm d st/ftr-t et-adhoc-job-bundle/ftr-t et-adhoc-job.jar
+./bazel bundle  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et-adhoc-job && \
+b n/d6w create \
+${GCP_PROJECT_NAME}/us-central1/ftr-t ets-ann-adhoc-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-t ets-ann-adhoc-job.d6w \
+--jar d st/ftr-t et-adhoc-job-bundle/ftr-t et-adhoc-job.jar \
+--b nd=prof le.project=
 ${GCP_PROJECT_NAME} \
---bind=profile.user_name=your_ldap \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-adhoc-job" \
---bind=profile.date="2022-08-26T12" \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="ftr-tweets-ann-adhoc-job" --ignore-existing
+--b nd=prof le.user_na =y _ldap \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et- ndex-generat on-adhoc-job" \
+--b nd=prof le.date="2022-08-26T12" \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.job_na ="ftr-t ets-ann-adhoc-job" -- gnore-ex st ng
 ```
-### ClusterToTweet Index with base ftrat5
+### ClusterToT et  ndex w h base ftrat5
 ```
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
-rm dist/ftr-tweet-index-generation-adhoc-job-bundle/ftr-tweet-index-generation-adhoc-job.jar
-./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-adhoc-job && \
-bin/d6w create \
-${GCP_PROJECT_NAME}/us-central1/ftr-tweet-index-generation-adhoc-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---jar dist/ftr-tweet-index-generation-adhoc-job-bundle/ftr-tweet-index-generation-adhoc-job.jar \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=your_ldap \
---bind=profile.date="2022-08-27T12" \
---bind=profile.machine="n2-standard-2" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-adhoc-job" \
---bind=profile.job_name="ftr-tweet-index-generation-adhoc-job" --ignore-existing
+rm d st/ftr-t et- ndex-generat on-adhoc-job-bundle/ftr-t et- ndex-generat on-adhoc-job.jar
+./bazel bundle  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et- ndex-generat on-adhoc-job && \
+b n/d6w create \
+${GCP_PROJECT_NAME}/us-central1/ftr-t et- ndex-generat on-adhoc-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-based-s mclusters- ndex-generat on-job.d6w \
+--jar d st/ftr-t et- ndex-generat on-adhoc-job-bundle/ftr-t et- ndex-generat on-adhoc-job.jar \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =y _ldap \
+--b nd=prof le.date="2022-08-27T12" \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et- ndex-generat on-adhoc-job" \
+--b nd=prof le.job_na ="ftr-t et- ndex-generat on-adhoc-job" -- gnore-ex st ng
 ```
 
 ### OON ftrat5
 ```
-rm dist/oon-ftr-tweet-index-generation-adhoc-job-bundle/oon-ftr-tweet-index-generation-adhoc-job.jar
-./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-adhoc-job && \
-bin/d6w create \
+rm d st/oon-ftr-t et- ndex-generat on-adhoc-job-bundle/oon-ftr-t et- ndex-generat on-adhoc-job.jar
+./bazel bundle  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:oon-ftr-t et- ndex-generat on-adhoc-job && \
+b n/d6w create \
 ${GCP_PROJECT_NAME}/us-central1/oon-ftr-ann-adhoc-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---jar dist/oon-ftr-tweet-index-generation-adhoc-job-bundle/oon-ftr-tweet-index-generation-adhoc-job.jar \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${USER} \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-adhoc-job" \
---bind=profile.date="2022-09-21T12" \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="oon-ftr-ann-adhoc-job" --ignore-existing
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-based-s mclusters- ndex-generat on-job.d6w \
+--jar d st/oon-ftr-t et- ndex-generat on-adhoc-job-bundle/oon-ftr-t et- ndex-generat on-adhoc-job.jar \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${USER} \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:oon-ftr-t et- ndex-generat on-adhoc-job" \
+--b nd=prof le.date="2022-09-21T12" \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.job_na ="oon-ftr-ann-adhoc-job" -- gnore-ex st ng
 ```
 
 
-## Scheduling jobs
+## Sc dul ng jobs
 ### decayed_sum_job
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-07-24T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/iikf2020-decayed-sum-ann-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-decayed-sum-ann-batch-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-highmem-4" \
---bind=profile.job_name="iikf2020-decayed-sum-ann-batch-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/  kf2020-decayed-sum-ann-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/  kf2020-decayed-sum-ann-batch-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-h gh m-4" \
+--b nd=prof le.job_na ="  kf2020-decayed-sum-ann-batch-job" \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
 ### ftrat5 pop1000
 
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-07-24T17'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/iikf2020-ftrat5-pop1000-ann-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-ftrat5-pop1000-ann-batch-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-highmem-4" \
---bind=profile.job_name="iikf2020-ftrat5-pop1000-ann-batch-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/  kf2020-ftrat5-pop1000-ann-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/  kf2020-ftrat5-pop1000-ann-batch-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-h gh m-4" \
+--b nd=prof le.job_na ="  kf2020-ftrat5-pop1000-ann-batch-job" \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
 
 ### ftrat5 pop10000
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-07-24T18'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/iikf2020-ftrat5-pop10000-ann-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-ftrat5-pop10000-ann-batch-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-highmem-4" \
---bind=profile.job_name="iikf2020-ftrat5-pop10000-ann-batch-job"  \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/  kf2020-ftrat5-pop10000-ann-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/  kf2020-ftrat5-pop10000-ann-batch-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-h gh m-4" \
+--b nd=prof le.job_na ="  kf2020-ftrat5-pop10000-ann-batch-job"  \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
-### Deschedule
+### Desc dule
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-decayed-sum-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop1000-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop10000-ann-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-  kf2020-decayed-sum-ann-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-  kf2020-ftrat5-pop1000-ann-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-  kf2020-ftrat5-pop10000-ann-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-decayed-sum-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop1000-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop10000-ann-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-  kf2020-decayed-sum-ann-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-  kf2020-ftrat5-pop1000-ann-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-  kf2020-ftrat5-pop10000-ann-batch-job
 ```
 
 ### pop1000-rnkdecay11
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-08-27T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-pop1000-rnkdecay11-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/ftr-pop1000-rnkdecay11-t et- ndex-generat on-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-based-s mclusters- ndex-generat on-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.job_na ="ftr-pop1000-rnkdecay11-t et- ndex-generat on-batch-job" \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et- ndex-generat on-pop1000-rnkdecay11-job" \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
 ### pop10000-rnkdecay11
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-08-27T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-pop10000-rnkdecay11-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/ftr-pop10000-rnkdecay11-t et- ndex-generat on-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-based-s mclusters- ndex-generat on-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.job_na ="ftr-pop10000-rnkdecay11-t et- ndex-generat on-batch-job" \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et- ndex-generat on-pop10000-rnkdecay11-job" \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
 ### decayed_sum
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-09-05T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/decayed-sum-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="decayed-sum-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-decayed-sum-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/decayed-sum-t et- ndex-generat on-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-based-s mclusters- ndex-generat on-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.job_na ="decayed-sum-t et- ndex-generat on-batch-job" \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:ftr-t et- ndex-generat on-decayed-sum-job" \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
 
 ### OON ftrat5
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 export PROJECT_DATE='2022-09-21T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-pop1000-rnkdecay-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+b n/d6w sc dule \
+${GCP_PROJECT_NAME}/us-central1/oon-ftr-pop1000-rnkdecay-t et- ndex-generat on-batch-job \
+src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/ftr-based-s mclusters- ndex-generat on-job.d6w \
+--b nd=prof le.project=${GCP_PROJECT_NAME} \
+--b nd=prof le.user_na =${SERV CE_ACCOUNT} \
+--b nd=prof le.mach ne="n2-standard-2" \
+--b nd=prof le.job_na ="oon-ftr-pop1000-rnkdecay-t et- ndex-generat on-batch-job" \
+--b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et:oon-ftr-t et- ndex-generat on-pop1000-rnkdecay-job" \
+--b nd=prof le.date=${PROJECT_DATE} \
+--b nd=prof le.env ron nt=prod
 ```
 
-### Deschedule
+### Desc dule
 ```
-export SERVICE_ACCOUNT='cassowary'
+export SERV CE_ACCOUNT='cassowary'
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop1000-rnkdecay11-t et- ndex-generat on-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop1000-rnkdecay11-t et- ndex-generat on-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop10000-rnkdecay11-t et- ndex-generat on-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop10000-rnkdecay11-t et- ndex-generat on-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-decayed-sum-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-decayed-sum-tweet-index-generation-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-decayed-sum-t et- ndex-generat on-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-decayed-sum-t et- ndex-generat on-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-t et- ndex-generat on-batch-job
+aurora cron desc dule atla/${SERV CE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-t et- ndex-generat on-batch-job
 ```

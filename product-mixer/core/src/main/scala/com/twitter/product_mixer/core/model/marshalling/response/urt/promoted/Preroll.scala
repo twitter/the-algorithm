@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
 case class Preroll(
-  prerollId: Option[String],
-  dynamicPrerollType: Option[DynamicPrerollType],
-  mediaInfo: Option[MediaInfo])
+  preroll d: Opt on[Str ng],
+  dynam cPrerollType: Opt on[Dynam cPrerollType],
+   d a nfo: Opt on[ d a nfo])

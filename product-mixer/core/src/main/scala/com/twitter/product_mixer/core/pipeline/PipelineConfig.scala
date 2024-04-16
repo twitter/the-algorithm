@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
+ mport com.tw ter.product_m xer.core.model.common. dent f er.HasComponent dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
 
-trait PipelineConfig extends HasComponentIdentifier
+tra  P pel neConf g extends HasComponent dent f er
 
-trait PipelineConfigCompanion {
+tra  P pel neConf gCompan on {
 
-  /** used to generate `AsyncFeaturesFor` [[PipelineStepIdentifier]]s for the internal Async Features Step */
-  private[core] def asyncFeaturesStep(
-    stepToHydrateFor: PipelineStepIdentifier
-  ): PipelineStepIdentifier =
-    PipelineStepIdentifier("AsyncFeaturesFor" + stepToHydrateFor.name)
+  /** used to generate `AsyncFeaturesFor` [[P pel neStep dent f er]]s for t   nternal Async Features Step */
+  pr vate[core] def asyncFeaturesStep(
+    stepToHydrateFor: P pel neStep dent f er
+  ): P pel neStep dent f er =
+    P pel neStep dent f er("AsyncFeaturesFor" + stepToHydrateFor.na )
 
-  /** All the Steps which are executed by a [[Pipeline]] in the order in which they are run */
-  val stepsInOrder: Seq[PipelineStepIdentifier]
+  /** All t  Steps wh ch are executed by a [[P pel ne]]  n t  order  n wh ch t y are run */
+  val steps nOrder: Seq[P pel neStep dent f er]
 
-  val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set.empty
+  val stepsAsyncFeatureHydrat onCanBeCompletedBy: Set[P pel neStep dent f er] = Set.empty
 }

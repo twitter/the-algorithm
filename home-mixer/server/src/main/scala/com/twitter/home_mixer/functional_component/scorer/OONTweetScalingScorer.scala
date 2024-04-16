@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.scorer
+package com.tw ter.ho _m xer.funct onal_component.scorer
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Scales scores of each out-of-network tweet by the specified scale factor
+ * Scales scores of each out-of-network t et by t  spec f ed scale factor
  */
-object OONTweetScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
+object OONT etScal ngScorer extends Scorer[P pel neQuery, T etCand date] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("OONTweetScaling")
+  overr de val  dent f er: Scorer dent f er = Scorer dent f er("OONT etScal ng")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  overr de val features: Set[Feature[_, _]] = Set(ScoreFeature)
 
-  private val ScaleFactor = 0.75
+  pr vate val ScaleFactor = 0.75
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch.value {
-      candidates.map { candidate =>
-        val score = candidate.features.getOrElse(ScoreFeature, None)
-        val updatedScore = if (selector(candidate)) score.map(_ * ScaleFactor) else score
-        FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    St ch.value {
+      cand dates.map { cand date =>
+        val score = cand date.features.getOrElse(ScoreFeature, None)
+        val updatedScore =  f (selector(cand date)) score.map(_ * ScaleFactor) else score
+        FeatureMapBu lder().add(ScoreFeature, updatedScore).bu ld()
       }
     }
   }
 
   /**
-   * We should only be applying this multiplier to Out-Of-Network tweets.
-   * In-Network Retweets of Out-Of-Network tweets should not have this multiplier applied
+   *   should only be apply ng t  mult pl er to Out-Of-Network t ets.
+   *  n-Network Ret ets of Out-Of-Network t ets should not have t  mult pl er appl ed
    */
-  private def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, false) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+  pr vate def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean = {
+    !cand date.features.getOrElse( nNetworkFeature, false) &&
+    !cand date.features.getOrElse( sRet etFeature, false)
   }
 }

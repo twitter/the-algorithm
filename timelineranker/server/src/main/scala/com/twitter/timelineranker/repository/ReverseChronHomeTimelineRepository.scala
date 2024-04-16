@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.repository
+package com.tw ter.t  l neranker.repos ory
 
-import com.twitter.timelineranker.model.ReverseChronTimelineQuery
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
-import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.model.ReverseChronT  l neQuery
+ mport com.tw ter.t  l neranker.model.T  l ne
+ mport com.tw ter.t  l neranker.para ters.revchron.ReverseChronT  l neQueryContextBu lder
+ mport com.tw ter.t  l neranker.s ce.ReverseChronHo T  l neS ce
+ mport com.tw ter.ut l.Future
 
 /**
- * A repository of reverse-chron home timelines.
+ * A repos ory of reverse-chron ho  t  l nes.
  *
- * It does not cache any results therefore forwards all calls to the underlying source.
+ *   does not cac  any results t refore forwards all calls to t  underly ng s ce.
  */
-class ReverseChronHomeTimelineRepository(
-  source: ReverseChronHomeTimelineSource,
-  contextBuilder: ReverseChronTimelineQueryContextBuilder) {
-  def get(query: ReverseChronTimelineQuery): Future[Timeline] = {
-    contextBuilder(query).flatMap(source.get)
+class ReverseChronHo T  l neRepos ory(
+  s ce: ReverseChronHo T  l neS ce,
+  contextBu lder: ReverseChronT  l neQueryContextBu lder) {
+  def get(query: ReverseChronT  l neQuery): Future[T  l ne] = {
+    contextBu lder(query).flatMap(s ce.get)
   }
 }

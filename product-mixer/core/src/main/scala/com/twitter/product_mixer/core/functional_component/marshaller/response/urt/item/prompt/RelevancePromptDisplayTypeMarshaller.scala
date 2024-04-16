@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt._
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject.S ngleton
 
-@Singleton
-class RelevancePromptDisplayTypeMarshaller {
+@S ngleton
+class RelevancePromptD splayTypeMarshaller {
 
   def apply(
-    relevancePromptDisplayType: RelevancePromptDisplayType
-  ): urt.RelevancePromptDisplayType = relevancePromptDisplayType match {
-    case Normal => urt.RelevancePromptDisplayType.Normal
-    case Compact => urt.RelevancePromptDisplayType.Compact
-    case Large => urt.RelevancePromptDisplayType.Large
-    case ThumbsUpAndDown => urt.RelevancePromptDisplayType.ThumbsUpAndDown
+    relevancePromptD splayType: RelevancePromptD splayType
+  ): urt.RelevancePromptD splayType = relevancePromptD splayType match {
+    case Normal => urt.RelevancePromptD splayType.Normal
+    case Compact => urt.RelevancePromptD splayType.Compact
+    case Large => urt.RelevancePromptD splayType.Large
+    case ThumbsUpAndDown => urt.RelevancePromptD splayType.ThumbsUpAndDown
   }
 }

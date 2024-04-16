@@ -1,86 +1,86 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.deletedtweet
-namespace rb TweetyPie
-namespace go tweetypie
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space py gen.tw ter.t etyp e.deletedt et
+na space rb T etyP e
+na space go t etyp e
 
-// Structs used for response from getDeletedTweets
+// Structs used for response from getDeletedT ets
 
-struct DeletedTweetMediaEntity {
-  1: required i64 id
-  2: required i8 mediaType
-  3: required i16 width
-  4: required i16 height
-} (persisted = 'true')
+struct DeletedT et d aEnt y {
+  1: requ red  64  d
+  2: requ red  8  d aType
+  3: requ red  16 w dth
+  4: requ red  16   ght
+} (pers sted = 'true')
 
-struct DeletedTweetShare {
-  1: required i64 sourceStatusId
-  2: required i64 sourceUserId
-  3: required i64 parentStatusId
-} (persisted = 'true')
+struct DeletedT etShare {
+  1: requ red  64 s ceStatus d
+  2: requ red  64 s ceUser d
+  3: requ red  64 parentStatus d
+} (pers sted = 'true')
 
 /**
- * A tweet that has been soft- or hard-deleted.
+ * A t et that has been soft- or hard-deleted.
  *
- * Originally DeletedTweet used the same field ids as tbird.Status.
- * This is no longer the case.
+ * Or g nally DeletedT et used t  sa  f eld  ds as tb rd.Status.
+ * T   s no longer t  case.
  */
-struct DeletedTweet {
-  // Uses the same field ids as tbird.thrift so we can easily map and add fields later
-  1: required i64 id
+struct DeletedT et {
+  // Uses t  sa  f eld  ds as tb rd.thr ft so   can eas ly map and add f elds later
+  1: requ red  64  d
 
   /**
-   * User who created the tweet. Only available for soft-deleted tweets.
+   * User who created t  t et. Only ava lable for soft-deleted t ets.
    */
-  2: optional i64 userId
+  2: opt onal  64 user d
 
   /**
-   * Content of the tweet. Only available for soft-deleted tweets.
+   * Content of t  t et. Only ava lable for soft-deleted t ets.
    */
-  3: optional string text
+  3: opt onal str ng text
 
   /**
-   * When the tweet was created. Only available for soft-deleted tweets.
+   * W n t  t et was created. Only ava lable for soft-deleted t ets.
    */
-  5: optional i64 createdAtSecs
+  5: opt onal  64 createdAtSecs
 
   /**
-   * Retweet information if the deleted tweet was a retweet. Only available
-   * for soft-deleted tweets.
+   * Ret et  nformat on  f t  deleted t et was a ret et. Only ava lable
+   * for soft-deleted t ets.
    */
-  7: optional DeletedTweetShare share
+  7: opt onal DeletedT etShare share
 
   /**
-   * Media metadata if the deleted tweet included media. Only available for
-   * soft-deleted tweets.
+   *  d a  tadata  f t  deleted t et  ncluded  d a. Only ava lable for
+   * soft-deleted t ets.
    */
-  14: optional list<DeletedTweetMediaEntity> media
+  14: opt onal l st<DeletedT et d aEnt y>  d a
 
   /**
-   * The time when this tweet was deleted by a user, in epoch milliseconds, either normally (aka
-   * "softDelete") or via a bouncer flow (aka "bounceDelete").
+   * T  t   w n t  t et was deleted by a user,  n epoch m ll seconds, e  r normally (aka
+   * "softDelete") or v a a bouncer flow (aka "bounceDelete").
    *
-   * This data is not available for all deleted tweets.
+   * T  data  s not ava lable for all deleted t ets.
    */
-  18: optional i64 deletedAtMsec
+  18: opt onal  64 deletedAtMsec
 
   /**
-   * The time when this tweet was permanently deleted, in epoch milliseconds.
+   * T  t   w n t  t et was permanently deleted,  n epoch m ll seconds.
    *
-   * This data is not available for all deleted tweets.
+   * T  data  s not ava lable for all deleted t ets.
    */
-  19: optional i64 hardDeletedAtMsec
+  19: opt onal  64 hardDeletedAtMsec
 
   /**
-  * The ID of the NoteTweet associated with this Tweet if one exists. This is used by safety tools
-  * to fetch the NoteTweet content when viewing soft deleted Tweets.
+  * T   D of t  NoteT et assoc ated w h t  T et  f one ex sts. T   s used by safety tools
+  * to fetch t  NoteT et content w n v ew ng soft deleted T ets.
   */
-  20: optional i64 noteTweetId
+  20: opt onal  64 noteT et d
 
   /**
-  * Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text. Can
-  * be used to distinguish between Longer Tweets and RichText Tweets.
+  * Spec f es  f t  T et can be expanded  nto t  NoteT et, or  f t y have t  sa  text. Can
+  * be used to d st ngu sh bet en Longer T ets and R chText T ets.
   */
-  21: optional bool isExpandable
-} (persisted = 'true')
+  21: opt onal bool  sExpandable
+} (pers sted = 'true')

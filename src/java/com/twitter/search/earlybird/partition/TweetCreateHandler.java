@@ -1,526 +1,526 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.Iterator;
+ mport java. o. OExcept on;
+ mport java.ut l. erator;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.base.Ver fy;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.util.Await;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.ut l.GCUt l;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.CaughtUpMon or;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd. ndex.OutOfOrderRealt  T et DMapper;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct on nterface;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.T  outExcept on;
 
 /**
- * This class handles incoming new Tweets. It is responsible for creating segments for the incoming
- * Tweets when necessary, triggering optimization on those segments, and writing Tweets to the
- * correct segment.
+ * T  class handles  ncom ng new T ets.    s respons ble for creat ng seg nts for t   ncom ng
+ * T ets w n necessary, tr gger ng opt m zat on on those seg nts, and wr  ng T ets to t 
+ * correct seg nt.
  */
-public class TweetCreateHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetCreateHandler.class);
+publ c class T etCreateHandler {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etCreateHandler.class);
 
-  public static final long LATE_TWEET_TIME_BUFFER_MS = Duration.fromMinutes(1).inMilliseconds();
+  publ c stat c f nal long LATE_TWEET_T ME_BUFFER_MS = Durat on.fromM nutes(1). nM ll seconds();
 
-  private static final String STATS_PREFIX = "tweet_create_handler_";
+  pr vate stat c f nal Str ng STATS_PREF X = "t et_create_handler_";
 
-  // To get a better idea of which of these succeeded and so on, see stats in SegmentManager.
-  private IndexingResultCounts indexingResultCounts;
-  private static final SearchRateCounter TWEETS_IN_WRONG_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "tweets_in_wrong_segment");
-  private static final SearchRateCounter SEGMENTS_CLOSED_EARLY =
-      SearchRateCounter.export(STATS_PREFIX + "segments_closed_early");
-  private static final SearchRateCounter INSERTED_IN_CURRENT_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_current_segment");
-  private static final SearchRateCounter INSERTED_IN_PREVIOUS_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_previous_segment");
-  private static final NewSegmentStats NEW_SEGMENT_STATS = new NewSegmentStats();
-  private static final SearchCounter CREATED_SEGMENTS =
-      SearchCounter.export(STATS_PREFIX + "created_segments");
-  private static final SearchRateCounter INCOMING_TWEETS =
-          SearchRateCounter.export(STATS_PREFIX + "incoming_tweets");
-  private static final SearchRateCounter INDEXING_SUCCESS =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_success");
-  private static final SearchRateCounter INDEXING_FAILURE =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_failure");
+  // To get a better  dea of wh ch of t se succeeded and so on, see stats  n Seg ntManager.
+  pr vate  ndex ngResultCounts  ndex ngResultCounts;
+  pr vate stat c f nal SearchRateCounter TWEETS_ N_WRONG_SEGMENT =
+      SearchRateCounter.export(STATS_PREF X + "t ets_ n_wrong_seg nt");
+  pr vate stat c f nal SearchRateCounter SEGMENTS_CLOSED_EARLY =
+      SearchRateCounter.export(STATS_PREF X + "seg nts_closed_early");
+  pr vate stat c f nal SearchRateCounter  NSERTED_ N_CURRENT_SEGMENT =
+      SearchRateCounter.export(STATS_PREF X + " nserted_ n_current_seg nt");
+  pr vate stat c f nal SearchRateCounter  NSERTED_ N_PREV OUS_SEGMENT =
+      SearchRateCounter.export(STATS_PREF X + " nserted_ n_prev ous_seg nt");
+  pr vate stat c f nal NewSeg ntStats NEW_SEGMENT_STATS = new NewSeg ntStats();
+  pr vate stat c f nal SearchCounter CREATED_SEGMENTS =
+      SearchCounter.export(STATS_PREF X + "created_seg nts");
+  pr vate stat c f nal SearchRateCounter  NCOM NG_TWEETS =
+          SearchRateCounter.export(STATS_PREF X + " ncom ng_t ets");
+  pr vate stat c f nal SearchRateCounter  NDEX NG_SUCCESS =
+          SearchRateCounter.export(STATS_PREF X + " ndex ng_success");
+  pr vate stat c f nal SearchRateCounter  NDEX NG_FA LURE =
+          SearchRateCounter.export(STATS_PREF X + " ndex ng_fa lure");
 
-  // Various stats and logging around creation of new segments, put in this
-  // class so that the code is not watered down too much by this.
-  private static class NewSegmentStats {
-    private static final String NEW_SEGMENT_STATS_PREFIX =
-      STATS_PREFIX + "new_segment_";
+  // Var ous stats and logg ng around creat on of new seg nts, put  n t 
+  // class so that t  code  s not watered down too much by t .
+  pr vate stat c class NewSeg ntStats {
+    pr vate stat c f nal Str ng NEW_SEGMENT_STATS_PREF X =
+      STATS_PREF X + "new_seg nt_";
 
-    private static final SearchCounter START_NEW_AFTER_REACHING_LIMIT =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_reaching_limit");
-    private static final SearchCounter START_NEW_AFTER_EXCEEDING_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_exceeding_max_id");
-    private static final SearchCounter TIMESLICE_SET_TO_CURRENT_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_current_id");
-    private static final SearchCounter TIMESLICE_SET_TO_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_max_id");
-    private static final SearchLongGauge TIMESPAN_BETWEEN_MAX_AND_CURRENT =
-        SearchLongGauge.export(NEW_SEGMENT_STATS_PREFIX + "timespan_between_id_and_max");
+    pr vate stat c f nal SearchCounter START_NEW_AFTER_REACH NG_L M T =
+        SearchCounter.export(NEW_SEGMENT_STATS_PREF X + "start_after_reach ng_l m ");
+    pr vate stat c f nal SearchCounter START_NEW_AFTER_EXCEED NG_MAX_ D =
+        SearchCounter.export(NEW_SEGMENT_STATS_PREF X + "start_after_exceed ng_max_ d");
+    pr vate stat c f nal SearchCounter T MESL CE_SET_TO_CURRENT_ D =
+        SearchCounter.export(NEW_SEGMENT_STATS_PREF X + "t  sl ce_set_to_current_ d");
+    pr vate stat c f nal SearchCounter T MESL CE_SET_TO_MAX_ D =
+        SearchCounter.export(NEW_SEGMENT_STATS_PREF X + "t  sl ce_set_to_max_ d");
+    pr vate stat c f nal SearchLongGauge T MESPAN_BETWEEN_MAX_AND_CURRENT =
+        SearchLongGauge.export(NEW_SEGMENT_STATS_PREF X + "t  span_bet en_ d_and_max");
 
-    void recordCreateNewSegment() {
-      CREATED_SEGMENTS.increment();
+    vo d recordCreateNewSeg nt() {
+      CREATED_SEGMENTS. ncre nt();
     }
 
-    void recordStartAfterReachingTweetsLimit(int numDocs, int numDocsCutoff,
-                                             int maxSegmentSize, int lateTweetBuffer) {
-      START_NEW_AFTER_REACHING_LIMIT.increment();
-      LOG.info(String.format(
-          "Will create new segment: numDocs=%,d, numDocsCutoff=%,d"
-              + " | maxSegmentSize=%,d, lateTweetBuffer=%,d",
-          numDocs, numDocsCutoff, maxSegmentSize, lateTweetBuffer));
+    vo d recordStartAfterReach ngT etsL m ( nt numDocs,  nt numDocsCutoff,
+                                              nt maxSeg ntS ze,  nt lateT etBuffer) {
+      START_NEW_AFTER_REACH NG_L M T. ncre nt();
+      LOG. nfo(Str ng.format(
+          "W ll create new seg nt: numDocs=%,d, numDocsCutoff=%,d"
+              + " | maxSeg ntS ze=%,d, lateT etBuffer=%,d",
+          numDocs, numDocsCutoff, maxSeg ntS ze, lateT etBuffer));
     }
 
-    void recordStartAfterExceedingLargestValidTweetId(long tweetId, long largestValidTweetId) {
-      START_NEW_AFTER_EXCEEDING_MAX_ID.increment();
-      LOG.info(String.format(
-          "Will create new segment: tweetDd=%,d, largestValidTweetID for segment=%,d",
-          tweetId, largestValidTweetId));
+    vo d recordStartAfterExceed ngLargestVal dT et d(long t et d, long largestVal dT et d) {
+      START_NEW_AFTER_EXCEED NG_MAX_ D. ncre nt();
+      LOG. nfo(Str ng.format(
+          "W ll create new seg nt: t etDd=%,d, largestVal dT et D for seg nt=%,d",
+          t et d, largestVal dT et d));
     }
 
-    void recordSettingTimesliceToCurrentTweet(long tweetID) {
-      TIMESLICE_SET_TO_CURRENT_ID.increment();
-      LOG.info("Creating new segment: tweet that triggered it has the largest id we've seen. "
-          + " id={}", tweetID);
+    vo d recordSett ngT  sl ceToCurrentT et(long t et D) {
+      T MESL CE_SET_TO_CURRENT_ D. ncre nt();
+      LOG. nfo("Creat ng new seg nt: t et that tr ggered   has t  largest  d  've seen. "
+          + "  d={}", t et D);
     }
 
-    void recordSettingTimesliceToMaxTweetId(long tweetID, long maxTweetID) {
-      TIMESLICE_SET_TO_MAX_ID.increment();
-      LOG.info("Creating new segment: tweet that triggered it doesn't have the largest id"
-          + " we've seen. tweetId={}, maxTweetId={}",
-          tweetID, maxTweetID);
-      long timeDifference =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(maxTweetID, tweetID);
-      LOG.info("Time difference between max seen and last seen: {} ms", timeDifference);
-      TIMESPAN_BETWEEN_MAX_AND_CURRENT.set(timeDifference);
+    vo d recordSett ngT  sl ceToMaxT et d(long t et D, long maxT et D) {
+      T MESL CE_SET_TO_MAX_ D. ncre nt();
+      LOG. nfo("Creat ng new seg nt: t et that tr ggered   doesn't have t  largest  d"
+          + "  've seen. t et d={}, maxT et d={}",
+          t et D, maxT et D);
+      long t  D fference =
+          Snowflake dParser.getT  D fferenceBet enT et Ds(maxT et D, t et D);
+      LOG. nfo("T   d fference bet en max seen and last seen: {} ms", t  D fference);
+      T MESPAN_BETWEEN_MAX_AND_CURRENT.set(t  D fference);
     }
 
-    void wrapNewSegmentCreation(long tweetID, long maxTweetID,
-                                long currentSegmentTimesliceBoundary,
-                                long largestValidTweetIDForCurrentSegment) {
-      long timeDifferenceStartToMax = SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(
-          largestValidTweetIDForCurrentSegment,
-          currentSegmentTimesliceBoundary);
-      LOG.info("Time between timeslice boundary and largest valid tweet id: {} ms",
-          timeDifferenceStartToMax);
+    vo d wrapNewSeg ntCreat on(long t et D, long maxT et D,
+                                long currentSeg ntT  sl ceBoundary,
+                                long largestVal dT et DForCurrentSeg nt) {
+      long t  D fferenceStartToMax = Snowflake dParser.getT  D fferenceBet enT et Ds(
+          largestVal dT et DForCurrentSeg nt,
+          currentSeg ntT  sl ceBoundary);
+      LOG. nfo("T   bet en t  sl ce boundary and largest val d t et  d: {} ms",
+          t  D fferenceStartToMax);
 
-      LOG.info("Created new segment: (tweetId={}, maxTweetId={}, maxTweetId-tweetId={} "
-              + " | currentSegmentTimesliceBoundary={}, largestValidTweetIDForSegment={})",
-          tweetID, maxTweetID, maxTweetID - tweetID, currentSegmentTimesliceBoundary,
-          largestValidTweetIDForCurrentSegment);
+      LOG. nfo("Created new seg nt: (t et d={}, maxT et d={}, maxT et d-t et d={} "
+              + " | currentSeg ntT  sl ceBoundary={}, largestVal dT et DForSeg nt={})",
+          t et D, maxT et D, maxT et D - t et D, currentSeg ntT  sl ceBoundary,
+          largestVal dT et DForCurrentSeg nt);
     }
   }
 
 
-  private final SegmentManager segmentManager;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final int maxSegmentSize;
-  private final int lateTweetBuffer;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager;
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate f nal  nt lateT etBuffer;
 
-  private long maxTweetID = Long.MIN_VALUE;
+  pr vate long maxT et D = Long.M N_VALUE;
 
-  private long largestValidTweetIDForCurrentSegment;
-  private long currentSegmentTimesliceBoundary;
-  private OptimizingSegmentWriter currentSegment;
-  private OptimizingSegmentWriter previousSegment;
-  private final QueryCacheManager queryCacheManager;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction;
-  private final CoordinatedEarlybirdActionInterface gcAction;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
+  pr vate long largestVal dT et DForCurrentSeg nt;
+  pr vate long currentSeg ntT  sl ceBoundary;
+  pr vate Opt m z ngSeg ntWr er currentSeg nt;
+  pr vate Opt m z ngSeg ntWr er prev ousSeg nt;
+  pr vate f nal QueryCac Manager queryCac Manager;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal Coord natedEarlyb rdAct on nterface postOpt m zat onRebu ldsAct on;
+  pr vate f nal Coord natedEarlyb rdAct on nterface gcAct on;
+  pr vate f nal CaughtUpMon or  ndexCaughtUpMon or;
+  pr vate f nal Opt m zat onAndFlush ngCoord nat onLock opt m zat onAndFlush ngCoord nat onLock;
 
-  public TweetCreateHandler(
-      SegmentManager segmentManager,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryCacheManager queryCacheManager,
-      CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction,
-      CoordinatedEarlybirdActionInterface gcAction,
-      int lateTweetBuffer,
-      int maxSegmentSize,
-      CaughtUpMonitor indexCaughtUpMonitor,
-      OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
+  publ c T etCreateHandler(
+      Seg ntManager seg ntManager,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+      QueryCac Manager queryCac Manager,
+      Coord natedEarlyb rdAct on nterface postOpt m zat onRebu ldsAct on,
+      Coord natedEarlyb rdAct on nterface gcAct on,
+       nt lateT etBuffer,
+       nt maxSeg ntS ze,
+      CaughtUpMon or  ndexCaughtUpMon or,
+      Opt m zat onAndFlush ngCoord nat onLock opt m zat onAndFlush ngCoord nat onLock
   ) {
-    this.segmentManager = segmentManager;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.queryCacheManager = queryCacheManager;
-    this.indexingResultCounts = new IndexingResultCounts();
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.postOptimizationRebuildsAction = postOptimizationRebuildsAction;
-    this.gcAction = gcAction;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    t .seg ntManager = seg ntManager;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .mult Seg ntTermD ct onaryManager = mult Seg ntTermD ct onaryManager;
+    t .queryCac Manager = queryCac Manager;
+    t . ndex ngResultCounts = new  ndex ngResultCounts();
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .postOpt m zat onRebu ldsAct on = postOpt m zat onRebu ldsAct on;
+    t .gcAct on = gcAct on;
+    t . ndexCaughtUpMon or =  ndexCaughtUpMon or;
 
-    Preconditions.checkState(lateTweetBuffer < maxSegmentSize);
-    this.lateTweetBuffer = lateTweetBuffer;
-    this.maxSegmentSize = maxSegmentSize;
-    this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
+    Precond  ons.c ckState(lateT etBuffer < maxSeg ntS ze);
+    t .lateT etBuffer = lateT etBuffer;
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    t .opt m zat onAndFlush ngCoord nat onLock = opt m zat onAndFlush ngCoord nat onLock;
   }
 
-  void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    LOG.info("Preparing after starting with an index.");
+  vo d prepareAfterStart ngW h ndex(long max ndexedT et d) {
+    LOG. nfo("Prepar ng after start ng w h an  ndex.");
 
-    Iterator<SegmentInfo> segmentInfosIterator =
-        segmentManager
-            .getSegmentInfos(SegmentManager.Filter.All, SegmentManager.Order.NEW_TO_OLD)
-            .iterator();
+     erator<Seg nt nfo> seg nt nfos erator =
+        seg ntManager
+            .getSeg nt nfos(Seg ntManager.F lter.All, Seg ntManager.Order.NEW_TO_OLD)
+            . erator();
 
-    // Setup the last segment.
-    Verify.verify(segmentInfosIterator.hasNext(), "at least one segment expected");
-    ISegmentWriter lastWriter = segmentManager.getSegmentWriterForID(
-        segmentInfosIterator.next().getTimeSliceID());
-    Verify.verify(lastWriter != null);
+    // Setup t  last seg nt.
+    Ver fy.ver fy(seg nt nfos erator.hasNext(), "at least one seg nt expected");
+     Seg ntWr er lastWr er = seg ntManager.getSeg ntWr erFor D(
+        seg nt nfos erator.next().getT  Sl ce D());
+    Ver fy.ver fy(lastWr er != null);
 
-    LOG.info("TweetCreateHandler found last writer: {}", lastWriter.getSegmentInfo().toString());
-    this.currentSegmentTimesliceBoundary = lastWriter.getSegmentInfo().getTimeSliceID();
-    this.largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
-    this.currentSegment = (OptimizingSegmentWriter) lastWriter;
+    LOG. nfo("T etCreateHandler found last wr er: {}", lastWr er.getSeg nt nfo().toStr ng());
+    t .currentSeg ntT  sl ceBoundary = lastWr er.getSeg nt nfo().getT  Sl ce D();
+    t .largestVal dT et DForCurrentSeg nt =
+        OutOfOrderRealt  T et DMapper.calculateMaxT et D(currentSeg ntT  sl ceBoundary);
+    t .currentSeg nt = (Opt m z ngSeg ntWr er) lastWr er;
 
-    if (maxIndexedTweetId == -1) {
-      maxTweetID = lastWriter.getSegmentInfo().getIndexSegment().getMaxTweetId();
-      LOG.info("Max tweet id = {}", maxTweetID);
+     f (max ndexedT et d == -1) {
+      maxT et D = lastWr er.getSeg nt nfo().get ndexSeg nt().getMaxT et d();
+      LOG. nfo("Max t et  d = {}", maxT et D);
     } else {
       // See SEARCH-31032
-      maxTweetID = maxIndexedTweetId;
+      maxT et D = max ndexedT et d;
     }
 
-    // If we have a previous segment that's not optimized, set it up too, we still need to pick
-    // it up for optimization and we might still be able to add tweets to it.
-    if (segmentInfosIterator.hasNext()) {
-      SegmentInfo previousSegmentInfo = segmentInfosIterator.next();
-      if (!previousSegmentInfo.isOptimized()) {
-        ISegmentWriter previousSegmentWriter = segmentManager.getSegmentWriterForID(
-            previousSegmentInfo.getTimeSliceID());
+    //  f   have a prev ous seg nt that's not opt m zed, set   up too,   st ll need to p ck
+    //   up for opt m zat on and   m ght st ll be able to add t ets to  .
+     f (seg nt nfos erator.hasNext()) {
+      Seg nt nfo prev ousSeg nt nfo = seg nt nfos erator.next();
+       f (!prev ousSeg nt nfo. sOpt m zed()) {
+         Seg ntWr er prev ousSeg ntWr er = seg ntManager.getSeg ntWr erFor D(
+            prev ousSeg nt nfo.getT  Sl ce D());
 
-        if (previousSegmentWriter != null) {
-          LOG.info("Picked previous segment");
-          this.previousSegment = (OptimizingSegmentWriter) previousSegmentWriter;
+         f (prev ousSeg ntWr er != null) {
+          LOG. nfo("P cked prev ous seg nt");
+          t .prev ousSeg nt = (Opt m z ngSeg ntWr er) prev ousSeg ntWr er;
         } else {
           // Should not happen.
-          LOG.error("Not found previous segment writer");
+          LOG.error("Not found prev ous seg nt wr er");
         }
       } else {
-        LOG.info("Previous segment info is optimized");
+        LOG. nfo("Prev ous seg nt  nfo  s opt m zed");
       }
     } else {
-      LOG.info("Previous segment info not found, we only have one segment");
+      LOG. nfo("Prev ous seg nt  nfo not found,   only have one seg nt");
     }
   }
 
-  private void updateIndexFreshness() {
-    searchIndexingMetricSet.highestStatusId.set(maxTweetID);
+  pr vate vo d update ndexFreshness() {
+    search ndex ng tr cSet.h g stStatus d.set(maxT et D);
 
-    long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(
-        searchIndexingMetricSet.highestStatusId.get());
-    searchIndexingMetricSet.freshestTweetTimeMillis.set(tweetTimestamp);
-  }
-
-  /**
-   * Index a new TVE representing a Tweet create event.
-   */
-  public void handleTweetCreate(ThriftVersionedEvents tve) throws IOException {
-    INCOMING_TWEETS.increment();
-    long id = tve.getId();
-    maxTweetID = Math.max(id, maxTweetID);
-
-    updateIndexFreshness();
-
-    boolean shouldCreateNewSegment = false;
-
-    if (currentSegment == null) {
-      shouldCreateNewSegment = true;
-      LOG.info("Will create new segment: current segment is null");
-    } else {
-      int numDocs = currentSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      int numDocsCutoff = maxSegmentSize - lateTweetBuffer;
-      if (numDocs >= numDocsCutoff) {
-        NEW_SEGMENT_STATS.recordStartAfterReachingTweetsLimit(numDocs, numDocsCutoff,
-            maxSegmentSize, lateTweetBuffer);
-        shouldCreateNewSegment = true;
-      } else if (id > largestValidTweetIDForCurrentSegment) {
-        NEW_SEGMENT_STATS.recordStartAfterExceedingLargestValidTweetId(id,
-            largestValidTweetIDForCurrentSegment);
-        shouldCreateNewSegment = true;
-      }
-    }
-
-    if (shouldCreateNewSegment) {
-      createNewSegment(id);
-    }
-
-    if (previousSegment != null) {
-      // Inserts and some updates can't be applied to an optimized segment, so we want to wait at
-      // least LATE_TWEET_TIME_BUFFER between when we created the new segment and when we optimize
-      // the previous segment, in case there are late tweets.
-      // We leave a large (150k, typically) buffer in the segment so that we don't have to close
-      // the previousSegment before LATE_TWEET_TIME_BUFFER has passed, but if we index
-      // lateTweetBuffer Tweets before optimizing, then we must optimize,
-      // so that we don't insert more than max segment size tweets into the previous segment.
-      long relativeTweetAgeMs =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(id, currentSegmentTimesliceBoundary);
-
-      boolean needToOptimize = false;
-      int numDocs = previousSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      String previousSegmentName = previousSegment.getSegmentInfo().getSegmentName();
-      if (numDocs >= maxSegmentSize) {
-        LOG.info(String.format("Previous segment (%s) reached maxSegmentSize, need to optimize it."
-            + " numDocs=%,d, maxSegmentSize=%,d", previousSegmentName, numDocs, maxSegmentSize));
-        needToOptimize = true;
-      } else if (relativeTweetAgeMs > LATE_TWEET_TIME_BUFFER_MS) {
-        LOG.info(String.format("Previous segment (%s) is old enough, we can optimize it."
-            + " Got tweet past time buffer of %,d ms by: %,d ms", previousSegmentName,
-            LATE_TWEET_TIME_BUFFER_MS, relativeTweetAgeMs - LATE_TWEET_TIME_BUFFER_MS));
-        needToOptimize = true;
-      }
-
-      if (needToOptimize) {
-        optimizePreviousSegment();
-      }
-    }
-
-    ISegmentWriter segmentWriter;
-    if (id >= currentSegmentTimesliceBoundary) {
-      INSERTED_IN_CURRENT_SEGMENT.increment();
-      segmentWriter = currentSegment;
-    } else if (previousSegment != null) {
-      INSERTED_IN_PREVIOUS_SEGMENT.increment();
-      segmentWriter = previousSegment;
-    } else {
-      TWEETS_IN_WRONG_SEGMENT.increment();
-      LOG.info("Inserting TVE ({}) into the current segment ({}) even though it should have gone "
-          + "in a previous segment.", id, currentSegmentTimesliceBoundary);
-      segmentWriter = currentSegment;
-    }
-
-    SearchTimer timer = searchIndexingMetricSet.statusStats.startNewTimer();
-    ISegmentWriter.Result result = segmentWriter.indexThriftVersionedEvents(tve);
-    searchIndexingMetricSet.statusStats.stopTimerAndIncrement(timer);
-
-    if (result == ISegmentWriter.Result.SUCCESS) {
-      INDEXING_SUCCESS.increment();
-    } else {
-      INDEXING_FAILURE.increment();
-    }
-
-    indexingResultCounts.countResult(result);
+    long t etT  stamp = Snowflake dParser.getT  stampFromT et d(
+        search ndex ng tr cSet.h g stStatus d.get());
+    search ndex ng tr cSet.fres stT etT  M ll s.set(t etT  stamp);
   }
 
   /**
-   * Many tests need to verify behavior with segments optimized & unoptimized, so we need to expose
-   * this.
+   *  ndex a new TVE represent ng a T et create event.
    */
-  @VisibleForTesting
-  public Future<SegmentInfo> optimizePreviousSegment() {
-    String segmentName = previousSegment.getSegmentInfo().getSegmentName();
-    previousSegment.getSegmentInfo().setIndexing(false);
-    LOG.info("Optimizing previous segment: {}", segmentName);
-    segmentManager.logState("Starting optimization for segment: " + segmentName);
+  publ c vo d handleT etCreate(Thr ftVers onedEvents tve) throws  OExcept on {
+     NCOM NG_TWEETS. ncre nt();
+    long  d = tve.get d();
+    maxT et D = Math.max( d, maxT et D);
 
-    Future<SegmentInfo> future = previousSegment
-        .startOptimization(gcAction, optimizationAndFlushingCoordinationLock)
-        .map(this::postOptimizationSteps)
-        .onFailure(t -> {
-          criticalExceptionHandler.handle(this, t);
-          return BoxedUnit.UNIT;
+    update ndexFreshness();
+
+    boolean shouldCreateNewSeg nt = false;
+
+     f (currentSeg nt == null) {
+      shouldCreateNewSeg nt = true;
+      LOG. nfo("W ll create new seg nt: current seg nt  s null");
+    } else {
+       nt numDocs = currentSeg nt.getSeg nt nfo().get ndexSeg nt().getNumDocs();
+       nt numDocsCutoff = maxSeg ntS ze - lateT etBuffer;
+       f (numDocs >= numDocsCutoff) {
+        NEW_SEGMENT_STATS.recordStartAfterReach ngT etsL m (numDocs, numDocsCutoff,
+            maxSeg ntS ze, lateT etBuffer);
+        shouldCreateNewSeg nt = true;
+      } else  f ( d > largestVal dT et DForCurrentSeg nt) {
+        NEW_SEGMENT_STATS.recordStartAfterExceed ngLargestVal dT et d( d,
+            largestVal dT et DForCurrentSeg nt);
+        shouldCreateNewSeg nt = true;
+      }
+    }
+
+     f (shouldCreateNewSeg nt) {
+      createNewSeg nt( d);
+    }
+
+     f (prev ousSeg nt != null) {
+      //  nserts and so  updates can't be appl ed to an opt m zed seg nt, so   want to wa  at
+      // least LATE_TWEET_T ME_BUFFER bet en w n   created t  new seg nt and w n   opt m ze
+      // t  prev ous seg nt,  n case t re are late t ets.
+      //   leave a large (150k, typ cally) buffer  n t  seg nt so that   don't have to close
+      // t  prev ousSeg nt before LATE_TWEET_T ME_BUFFER has passed, but  f    ndex
+      // lateT etBuffer T ets before opt m z ng, t n   must opt m ze,
+      // so that   don't  nsert more than max seg nt s ze t ets  nto t  prev ous seg nt.
+      long relat veT etAgeMs =
+          Snowflake dParser.getT  D fferenceBet enT et Ds( d, currentSeg ntT  sl ceBoundary);
+
+      boolean needToOpt m ze = false;
+       nt numDocs = prev ousSeg nt.getSeg nt nfo().get ndexSeg nt().getNumDocs();
+      Str ng prev ousSeg ntNa  = prev ousSeg nt.getSeg nt nfo().getSeg ntNa ();
+       f (numDocs >= maxSeg ntS ze) {
+        LOG. nfo(Str ng.format("Prev ous seg nt (%s) reac d maxSeg ntS ze, need to opt m ze  ."
+            + " numDocs=%,d, maxSeg ntS ze=%,d", prev ousSeg ntNa , numDocs, maxSeg ntS ze));
+        needToOpt m ze = true;
+      } else  f (relat veT etAgeMs > LATE_TWEET_T ME_BUFFER_MS) {
+        LOG. nfo(Str ng.format("Prev ous seg nt (%s)  s old enough,   can opt m ze  ."
+            + " Got t et past t   buffer of %,d ms by: %,d ms", prev ousSeg ntNa ,
+            LATE_TWEET_T ME_BUFFER_MS, relat veT etAgeMs - LATE_TWEET_T ME_BUFFER_MS));
+        needToOpt m ze = true;
+      }
+
+       f (needToOpt m ze) {
+        opt m zePrev ousSeg nt();
+      }
+    }
+
+     Seg ntWr er seg ntWr er;
+     f ( d >= currentSeg ntT  sl ceBoundary) {
+       NSERTED_ N_CURRENT_SEGMENT. ncre nt();
+      seg ntWr er = currentSeg nt;
+    } else  f (prev ousSeg nt != null) {
+       NSERTED_ N_PREV OUS_SEGMENT. ncre nt();
+      seg ntWr er = prev ousSeg nt;
+    } else {
+      TWEETS_ N_WRONG_SEGMENT. ncre nt();
+      LOG. nfo(" nsert ng TVE ({})  nto t  current seg nt ({}) even though   should have gone "
+          + " n a prev ous seg nt.",  d, currentSeg ntT  sl ceBoundary);
+      seg ntWr er = currentSeg nt;
+    }
+
+    SearchT  r t  r = search ndex ng tr cSet.statusStats.startNewT  r();
+     Seg ntWr er.Result result = seg ntWr er. ndexThr ftVers onedEvents(tve);
+    search ndex ng tr cSet.statusStats.stopT  rAnd ncre nt(t  r);
+
+     f (result ==  Seg ntWr er.Result.SUCCESS) {
+       NDEX NG_SUCCESS. ncre nt();
+    } else {
+       NDEX NG_FA LURE. ncre nt();
+    }
+
+     ndex ngResultCounts.countResult(result);
+  }
+
+  /**
+   * Many tests need to ver fy behav or w h seg nts opt m zed & unopt m zed, so   need to expose
+   * t .
+   */
+  @V s bleForTest ng
+  publ c Future<Seg nt nfo> opt m zePrev ousSeg nt() {
+    Str ng seg ntNa  = prev ousSeg nt.getSeg nt nfo().getSeg ntNa ();
+    prev ousSeg nt.getSeg nt nfo().set ndex ng(false);
+    LOG. nfo("Opt m z ng prev ous seg nt: {}", seg ntNa );
+    seg ntManager.logState("Start ng opt m zat on for seg nt: " + seg ntNa );
+
+    Future<Seg nt nfo> future = prev ousSeg nt
+        .startOpt m zat on(gcAct on, opt m zat onAndFlush ngCoord nat onLock)
+        .map(t ::postOpt m zat onSteps)
+        .onFa lure(t -> {
+          cr  calExcept onHandler.handle(t , t);
+          return BoxedUn .UN T;
         });
 
-    waitForOptimizationIfInTest(future);
+    wa ForOpt m zat on f nTest(future);
 
-    previousSegment = null;
+    prev ousSeg nt = null;
     return future;
   }
 
   /**
-   * In tests, it's easier if when a segment starts optimizing, we know that it will finish
-   * optimizing. This way we have no race condition where we're surprised that something that
-   * started optimizing is not ready.
+   *  n tests,  's eas er  f w n a seg nt starts opt m z ng,   know that   w ll f n sh
+   * opt m z ng. T  way   have no race cond  on w re  're surpr sed that so th ng that
+   * started opt m z ng  s not ready.
    *
-   * In prod we don't have this problem. Segments run for 10 hours and optimization is 20 minutes
-   * so there's no need for extra synchronization.
+   *  n prod   don't have t  problem. Seg nts run for 10 h s and opt m zat on  s 20 m nutes
+   * so t re's no need for extra synchron zat on.
    */
-  private void waitForOptimizationIfInTest(Future<SegmentInfo> future) {
-    if (Config.environmentIsTest()) {
+  pr vate vo d wa ForOpt m zat on f nTest(Future<Seg nt nfo> future) {
+     f (Conf g.env ron nt sTest()) {
       try {
-        Await.ready(future);
-        LOG.info("Optimizing is done");
-      } catch (InterruptedException | TimeoutException ex) {
-        LOG.info("Exception while optimizing", ex);
+        Awa .ready(future);
+        LOG. nfo("Opt m z ng  s done");
+      } catch ( nterruptedExcept on | T  outExcept on ex) {
+        LOG. nfo("Except on wh le opt m z ng", ex);
       }
     }
   }
 
-  private SegmentInfo postOptimizationSteps(SegmentInfo optimizedSegmentInfo) {
-    segmentManager.updateStats();
+  pr vate Seg nt nfo postOpt m zat onSteps(Seg nt nfo opt m zedSeg nt nfo) {
+    seg ntManager.updateStats();
     // See SEARCH-32175
-    optimizedSegmentInfo.setComplete(true);
+    opt m zedSeg nt nfo.setComplete(true);
 
-    String segmentName = optimizedSegmentInfo.getSegmentName();
-    LOG.info("Finished optimization for segment: " + segmentName);
-    segmentManager.logState(
-            "Finished optimization for segment: " + segmentName);
+    Str ng seg ntNa  = opt m zedSeg nt nfo.getSeg ntNa ();
+    LOG. nfo("F n s d opt m zat on for seg nt: " + seg ntNa );
+    seg ntManager.logState(
+            "F n s d opt m zat on for seg nt: " + seg ntNa );
 
     /*
-     * Building the multi segment term dictionary causes GC pauses. The reason for this is because
-     * it's pretty big (possible ~15GB). When it's allocated, we have to copy a lot of data from
-     * survivor space to old gen. That causes several GC pauses. See SEARCH-33544
+     * Bu ld ng t  mult  seg nt term d ct onary causes GC pauses. T  reason for t   s because
+     *  's pretty b g (poss ble ~15GB). W n  's allocated,   have to copy a lot of data from
+     * surv vor space to old gen. That causes several GC pauses. See SEARCH-33544
      *
-     * GC pauses are in general not fatal, but since all instances finish a segment at roughly the
-     * same time, they might happen at the same time and then it's a problem.
+     * GC pauses are  n general not fatal, but s nce all  nstances f n sh a seg nt at roughly t 
+     * sa  t  , t y m ght happen at t  sa  t   and t n  's a problem.
      *
-     * Some possible solutions to this problem would be to build this dictionary in some data
-     * structures that are pre-allocated or to build only the part for the last segment, as
-     * everything else doesn't change. These solutions are a bit difficult to implement and this
-     * here is an easy workaround.
+     * So  poss ble solut ons to t  problem would be to bu ld t  d ct onary  n so  data
+     * structures that are pre-allocated or to bu ld only t  part for t  last seg nt, as
+     * everyth ng else doesn't change. T se solut ons are a b  d ff cult to  mple nt and t 
+     *  re  s an easy workaround.
      *
-     * Note that we might finish optimizing a segment and then it might take ~60+ minutes until it's
-     * a particular Earlybird's turn to run this code. The effect of this is going to be that we
-     * are not going to use the multi segment dictionary for the last two segments, one of which is
-     * still pretty small. That's not terrible, since right before optimization we're not using
-     * the dictionary for the last segment anyways, since it's still not optimized.
+     * Note that   m ght f n sh opt m z ng a seg nt and t n   m ght take ~60+ m nutes unt l  's
+     * a part cular Earlyb rd's turn to run t  code. T  effect of t   s go ng to be that  
+     * are not go ng to use t  mult  seg nt d ct onary for t  last two seg nts, one of wh ch  s
+     * st ll pretty small. That's not terr ble, s nce r ght before opt m zat on  're not us ng
+     * t  d ct onary for t  last seg nt anyways, s nce  's st ll not opt m zed.
      */
     try {
-      LOG.info("Acquire coordination lock before beginning post_optimization_rebuilds action.");
-      optimizationAndFlushingCoordinationLock.lock();
-      LOG.info("Successfully acquired coordination lock for post_optimization_rebuilds action.");
-      postOptimizationRebuildsAction.retryActionUntilRan(
-          "post optimization rebuilds", () -> {
+      LOG. nfo("Acqu re coord nat on lock before beg nn ng post_opt m zat on_rebu lds act on.");
+      opt m zat onAndFlush ngCoord nat onLock.lock();
+      LOG. nfo("Successfully acqu red coord nat on lock for post_opt m zat on_rebu lds act on.");
+      postOpt m zat onRebu ldsAct on.retryAct onUnt lRan(
+          "post opt m zat on rebu lds", () -> {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            LOG.info("Starting to build multi term dictionary for {}", segmentName);
-            boolean result = multiSegmentTermDictionaryManager.buildDictionary();
-            LOG.info("Done building multi term dictionary for {} in {}, result: {}",
-                segmentName, stopwatch, result);
-            queryCacheManager.rebuildQueryCachesAfterSegmentOptimization(
-                optimizedSegmentInfo);
+            LOG. nfo("Start ng to bu ld mult  term d ct onary for {}", seg ntNa );
+            boolean result = mult Seg ntTermD ct onaryManager.bu ldD ct onary();
+            LOG. nfo("Done bu ld ng mult  term d ct onary for {}  n {}, result: {}",
+                seg ntNa , stopwatch, result);
+            queryCac Manager.rebu ldQueryCac sAfterSeg ntOpt m zat on(
+                opt m zedSeg nt nfo);
 
-            // This is a serial full GC and it defragments the memory so things can run smoothly
-            // until the next segment rolls. What we have observed is that if we don't do that
-            // later on some earlybirds can have promotion failures on an old gen that hasn't
-            // reached the initiating occupancy limit and these promotions failures can trigger a
-            // long (1.5 min) full GC. That usually happens because of fragmentation issues.
-            GCUtil.runGC();
-            // Wait for indexing to catch up before rejoining the serverset. We only need to do
-            // this if the host has already finished startup.
-            if (EarlybirdStatus.hasStarted()) {
-              indexCaughtUpMonitor.resetAndWaitUntilCaughtUp();
+            // T   s a ser al full GC and   defrag nts t   mory so th ngs can run smoothly
+            // unt l t  next seg nt rolls. What   have observed  s that  f   don't do that
+            // later on so  earlyb rds can have promot on fa lures on an old gen that hasn't
+            // reac d t   n  at ng occupancy l m  and t se promot ons fa lures can tr gger a
+            // long (1.5 m n) full GC. That usually happens because of frag ntat on  ssues.
+            GCUt l.runGC();
+            // Wa  for  ndex ng to catch up before rejo n ng t  serverset.   only need to do
+            // t   f t  host has already f n s d startup.
+             f (Earlyb rdStatus.hasStarted()) {
+               ndexCaughtUpMon or.resetAndWa Unt lCaughtUp();
             }
           });
-    } finally {
-      LOG.info("Finished post_optimization_rebuilds action. Releasing coordination lock.");
-      optimizationAndFlushingCoordinationLock.unlock();
+    } f nally {
+      LOG. nfo("F n s d post_opt m zat on_rebu lds act on. Releas ng coord nat on lock.");
+      opt m zat onAndFlush ngCoord nat onLock.unlock();
     }
 
-    return optimizedSegmentInfo;
+    return opt m zedSeg nt nfo;
   }
 
   /**
-   * Many tests rely on precise segment boundaries, so we expose this to allow them to create a
-   * particular segment.
+   * Many tests rely on prec se seg nt boundar es, so   expose t  to allow t m to create a
+   * part cular seg nt.
    */
-  @VisibleForTesting
-  public void createNewSegment(long tweetID) throws IOException {
-    NEW_SEGMENT_STATS.recordCreateNewSegment();
+  @V s bleForTest ng
+  publ c vo d createNewSeg nt(long t et D) throws  OExcept on {
+    NEW_SEGMENT_STATS.recordCreateNewSeg nt();
 
-    if (previousSegment != null) {
-      // We shouldn't have more than one unoptimized segment, so if we get to this point and the
-      // previousSegment has not been optimized and set to null, start optimizing it before
-      // creating the next one. Note that this is a weird case and would only happen if we get
-      // Tweets with drastically different IDs than we expect, or there is a large amount of time
-      // where no Tweets are created in this partition.
-      LOG.error("Creating new segment for Tweet {} when the previous segment {} was not sealed. "
-          + "Current segment: {}. Documents: {}. largestValidTweetIDForSegment: {}.",
-          tweetID,
-          previousSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getIndexSegment().getNumDocs(),
-          largestValidTweetIDForCurrentSegment);
-      optimizePreviousSegment();
-      SEGMENTS_CLOSED_EARLY.increment();
+     f (prev ousSeg nt != null) {
+      //   shouldn't have more than one unopt m zed seg nt, so  f   get to t  po nt and t 
+      // prev ousSeg nt has not been opt m zed and set to null, start opt m z ng   before
+      // creat ng t  next one. Note that t   s a   rd case and would only happen  f   get
+      // T ets w h drast cally d fferent  Ds than   expect, or t re  s a large amount of t  
+      // w re no T ets are created  n t  part  on.
+      LOG.error("Creat ng new seg nt for T et {} w n t  prev ous seg nt {} was not sealed. "
+          + "Current seg nt: {}. Docu nts: {}. largestVal dT et DForSeg nt: {}.",
+          t et D,
+          prev ousSeg nt.getSeg nt nfo().getT  Sl ce D(),
+          currentSeg nt.getSeg nt nfo().getT  Sl ce D(),
+          currentSeg nt.getSeg nt nfo().get ndexSeg nt().getNumDocs(),
+          largestVal dT et DForCurrentSeg nt);
+      opt m zePrev ousSeg nt();
+      SEGMENTS_CLOSED_EARLY. ncre nt();
     }
 
-    previousSegment = currentSegment;
+    prev ousSeg nt = currentSeg nt;
 
-    // We have two cases:
+    //   have two cases:
     //
     // Case 1:
-    // If the greatest Tweet ID we have seen is tweetID, then when we want to create a new segment
-    // with that ID, so the Tweet being processed goes into the new segment.
+    //  f t  greatest T et  D   have seen  s t et D, t n w n   want to create a new seg nt
+    // w h that  D, so t  T et be ng processed goes  nto t  new seg nt.
     //
     // Case 2:
-    // If the tweetID is bigger than the max tweetID, then this method is being called directly from
-    // tests, so we didn't update the maxTweetID, so we can create a new segment with the new
-    // Tweet ID.
+    //  f t  t et D  s b gger than t  max t et D, t n t   thod  s be ng called d rectly from
+    // tests, so   d dn't update t  maxT et D, so   can create a new seg nt w h t  new
+    // T et  D.
     //
     // Case 3:
-    // If it's not the greatest Tweet ID we have seen, then we don't want to create a
-    // segment boundary that is lower than any Tweet IDs in the current segment, because then
-    // some tweets from the previous segment would be in the wrong segment, so create a segment
-    // that has a greater ID than any Tweets that we have seen.
+    //  f  's not t  greatest T et  D   have seen, t n   don't want to create a
+    // seg nt boundary that  s lo r than any T et  Ds  n t  current seg nt, because t n
+    // so  t ets from t  prev ous seg nt would be  n t  wrong seg nt, so create a seg nt
+    // that has a greater  D than any T ets that   have seen.
     //
     //   Example:
-    //     - We have seen tweets 3, 10, 5, 6.
-    //     - We now see tweet 7 and we decide it's time to create a new segment.
-    //     - The new segment will start at tweet 11. It can't start at tweet 7, because
-    //       tweet 10 will be in the wrong segment.
-    //     - Tweet 7 that we just saw will end up in the previous segment.
-    if (maxTweetID <= tweetID) {
-      currentSegmentTimesliceBoundary = tweetID;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToCurrentTweet(tweetID);
+    //     -   have seen t ets 3, 10, 5, 6.
+    //     -   now see t et 7 and   dec de  's t   to create a new seg nt.
+    //     - T  new seg nt w ll start at t et 11.   can't start at t et 7, because
+    //       t et 10 w ll be  n t  wrong seg nt.
+    //     - T et 7 that   just saw w ll end up  n t  prev ous seg nt.
+     f (maxT et D <= t et D) {
+      currentSeg ntT  sl ceBoundary = t et D;
+      NEW_SEGMENT_STATS.recordSett ngT  sl ceToCurrentT et(t et D);
     } else {
-      currentSegmentTimesliceBoundary = maxTweetID + 1;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToMaxTweetId(tweetID, maxTweetID);
+      currentSeg ntT  sl ceBoundary = maxT et D + 1;
+      NEW_SEGMENT_STATS.recordSett ngT  sl ceToMaxT et d(t et D, maxT et D);
     }
-    currentSegment = segmentManager.createAndPutOptimizingSegmentWriter(
-        currentSegmentTimesliceBoundary);
+    currentSeg nt = seg ntManager.createAndPutOpt m z ngSeg ntWr er(
+        currentSeg ntT  sl ceBoundary);
 
-    currentSegment.getSegmentInfo().setIndexing(true);
+    currentSeg nt.getSeg nt nfo().set ndex ng(true);
 
-    largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
+    largestVal dT et DForCurrentSeg nt =
+        OutOfOrderRealt  T et DMapper.calculateMaxT et D(currentSeg ntT  sl ceBoundary);
 
-    NEW_SEGMENT_STATS.wrapNewSegmentCreation(tweetID, maxTweetID,
-        currentSegmentTimesliceBoundary, largestValidTweetIDForCurrentSegment);
+    NEW_SEGMENT_STATS.wrapNewSeg ntCreat on(t et D, maxT et D,
+        currentSeg ntT  sl ceBoundary, largestVal dT et DForCurrentSeg nt);
 
-    segmentManager.removeExcessSegments();
+    seg ntManager.removeExcessSeg nts();
   }
 
-  void logState() {
-    LOG.info("TweetCreateHandler:");
-    LOG.info(String.format("  tweets sent for indexing: %,d",
-        indexingResultCounts.getIndexingCalls()));
-    LOG.info(String.format("  non-retriable failure: %,d",
-        indexingResultCounts.getFailureNotRetriable()));
-    LOG.info(String.format("  retriable failure: %,d",
-        indexingResultCounts.getFailureRetriable()));
-    LOG.info(String.format("  successfully indexed: %,d",
-        indexingResultCounts.getIndexingSuccess()));
-    LOG.info(String.format("  tweets in wrong segment: %,d", TWEETS_IN_WRONG_SEGMENT.getCount()));
-    LOG.info(String.format("  segments closed early: %,d", SEGMENTS_CLOSED_EARLY.getCount()));
+  vo d logState() {
+    LOG. nfo("T etCreateHandler:");
+    LOG. nfo(Str ng.format("  t ets sent for  ndex ng: %,d",
+         ndex ngResultCounts.get ndex ngCalls()));
+    LOG. nfo(Str ng.format("  non-retr able fa lure: %,d",
+         ndex ngResultCounts.getFa lureNotRetr able()));
+    LOG. nfo(Str ng.format("  retr able fa lure: %,d",
+         ndex ngResultCounts.getFa lureRetr able()));
+    LOG. nfo(Str ng.format("  successfully  ndexed: %,d",
+         ndex ngResultCounts.get ndex ngSuccess()));
+    LOG. nfo(Str ng.format("  t ets  n wrong seg nt: %,d", TWEETS_ N_WRONG_SEGMENT.getCount()));
+    LOG. nfo(Str ng.format("  seg nts closed early: %,d", SEGMENTS_CLOSED_EARLY.getCount()));
   }
 }

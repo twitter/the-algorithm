@@ -1,26 +1,26 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.PostingsEnum;
+ mport org.apac .lucene. ndex.Post ngsEnum;
 
 /**
- * Extension of Lucene's PostingsEnum interface that adds additional funcionality.
+ * Extens on of Lucene's Post ngsEnum  nterface that adds add  onal func onal y.
  */
-public abstract class EarlybirdPostingsEnum extends PostingsEnum {
-  @Override
-  public final int nextDoc() throws IOException {
+publ c abstract class Earlyb rdPost ngsEnum extends Post ngsEnum {
+  @Overr de
+  publ c f nal  nt nextDoc() throws  OExcept on {
     // SEARCH-7008
     return nextDocNoDel();
   }
 
   /**
-   * Advances to the next doc without paying attention to liveDocs.
+   * Advances to t  next doc w hout pay ng attent on to l veDocs.
    */
-  protected abstract int nextDocNoDel() throws IOException;
+  protected abstract  nt nextDocNoDel() throws  OExcept on;
 
   /**
-   * Returns the largest docID contained in this posting list.
+   * Returns t  largest doc D conta ned  n t  post ng l st.
    */
-  public abstract int getLargestDocID() throws IOException;
+  publ c abstract  nt getLargestDoc D() throws  OExcept on;
 }

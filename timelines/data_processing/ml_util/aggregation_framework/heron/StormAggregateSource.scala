@@ -1,27 +1,27 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.summingbird._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
-import java.lang.{Long => JLong}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.summ ngb rd._
+ mport com.tw ter.summ ngb rd.storm.Storm
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateS ce
+ mport java.lang.{Long => JLong}
 
 /**
- * Use this trait to implement online summingbird producer that subscribes to
+ * Use t  tra  to  mple nt onl ne summ ngb rd producer that subscr bes to
  * spouts and generates a data record.
  */
-trait StormAggregateSource extends AggregateSource {
-  def name: String
+tra  StormAggregateS ce extends AggregateS ce {
+  def na : Str ng
 
-  def timestampFeature: Feature[JLong]
+  def t  stampFeature: Feature[JLong]
 
   /**
-   * Constructs the storm Producer with the implemented topology at runtime.
+   * Constructs t  storm Producer w h t   mple nted topology at runt  .
    */
-  def build(
-    statsReceiver: StatsReceiver,
-    jobConfig: RealTimeAggregatesJobConfig
+  def bu ld(
+    statsRece ver: StatsRece ver,
+    jobConf g: RealT  AggregatesJobConf g
   ): Producer[Storm, DataRecord]
 }

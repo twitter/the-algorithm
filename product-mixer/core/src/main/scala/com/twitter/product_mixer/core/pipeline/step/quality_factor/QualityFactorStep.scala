@@ -1,72 +1,72 @@
-package com.twitter.product_mixer.core.pipeline.step.quality_factor
+package com.tw ter.product_m xer.core.p pel ne.step.qual y_factor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorStatus
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * Quality Factor building step that builds up the state snapshot for a map of configs.
+ * Qual y Factor bu ld ng step that bu lds up t  state snapshot for a map of conf gs.
  *
- * @param statsReceiver Stats Receiver used to build finagle gauges for QF State
+ * @param statsRece ver Stats Rece ver used to bu ld f nagle gauges for QF State
  *
- * @tparam Query Pipeline query model with quality factor status
- * @tparam State The pipeline state domain model.
+ * @tparam Query P pel ne query model w h qual y factor status
+ * @tparam State T  p pel ne state doma n model.
  */
-case class QualityFactorStep[
-  Query <: PipelineQuery with HasQualityFactorStatus,
-  State <: HasQuery[Query, State]] @Inject() (
-  statsReceiver: StatsReceiver)
+case class Qual yFactorStep[
+  Query <: P pel neQuery w h HasQual yFactorStatus,
+  State <: HasQuery[Query, State]] @ nject() (
+  statsRece ver: StatsRece ver)
     extends Step[
       State,
-      QualityFactorStepConfig,
+      Qual yFactorStepConf g,
       Any,
-      QualityFactorStepResult
+      Qual yFactorStepResult
     ] {
-  override def isEmpty(config: QualityFactorStepConfig): Boolean =
-    config.qualityFactorStatus.qualityFactorByPipeline.isEmpty
+  overr de def  sEmpty(conf g: Qual yFactorStepConf g): Boolean =
+    conf g.qual yFactorStatus.qual yFactorByP pel ne. sEmpty
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: QualityFactorStepConfig
+    conf g: Qual yFactorStepConf g
   ): Any = ()
 
-  override def arrow(
-    config: QualityFactorStepConfig,
+  overr de def arrow(
+    conf g: Qual yFactorStepConf g,
     context: Executor.Context
-  ): Arrow[Any, QualityFactorStepResult] = {
-    // We use provideGauge so these gauges live forever even without a reference.
-    val currentValues = config.qualityFactorStatus.qualityFactorByPipeline.map {
-      case (identifier, qualityFactor) =>
-        // QF is a relative stat (since the parent pipeline is monitoring a child pipeline)
-        val scopes = config.pipelineIdentifier.toScopes ++ identifier.toScopes :+ "QualityFactor"
-        val currentValue = qualityFactor.currentValue.toFloat
-        statsReceiver.provideGauge(scopes: _*) {
+  ): Arrow[Any, Qual yFactorStepResult] = {
+    //   use prov deGauge so t se gauges l ve forever even w hout a reference.
+    val currentValues = conf g.qual yFactorStatus.qual yFactorByP pel ne.map {
+      case ( dent f er, qual yFactor) =>
+        // QF  s a relat ve stat (s nce t  parent p pel ne  s mon or ng a ch ld p pel ne)
+        val scopes = conf g.p pel ne dent f er.toScopes ++  dent f er.toScopes :+ "Qual yFactor"
+        val currentValue = qual yFactor.currentValue.toFloat
+        statsRece ver.prov deGauge(scopes: _*) {
           currentValue
         }
-        identifier -> currentValue
+         dent f er -> currentValue
     }
-    Arrow.value(QualityFactorStepResult(currentValues))
+    Arrow.value(Qual yFactorStepResult(currentValues))
   }
 
-  override def updateState(
+  overr de def updateState(
     state: State,
-    executorResult: QualityFactorStepResult,
-    config: QualityFactorStepConfig
+    executorResult: Qual yFactorStepResult,
+    conf g: Qual yFactorStepConf g
   ): State = state.updateQuery(
-    state.query.withQualityFactorStatus(config.qualityFactorStatus).asInstanceOf[Query])
+    state.query.w hQual yFactorStatus(conf g.qual yFactorStatus).as nstanceOf[Query])
 }
 
-case class QualityFactorStepConfig(
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorStatus: QualityFactorStatus)
+case class Qual yFactorStepConf g(
+  p pel ne dent f er: Component dent f er,
+  qual yFactorStatus: Qual yFactorStatus)
 
-case class QualityFactorStepResult(currentValues: Map[ComponentIdentifier, Float])
+case class Qual yFactorStepResult(currentValues: Map[Component dent f er, Float])
     extends ExecutorResult

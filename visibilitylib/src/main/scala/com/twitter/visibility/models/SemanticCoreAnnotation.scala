@@ -1,3 +1,3 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-case class SemanticCoreAnnotation(groupId: Long, domainId: Long, entityId: Long)
+case class Semant cCoreAnnotat on(group d: Long, doma n d: Long, ent y d: Long)

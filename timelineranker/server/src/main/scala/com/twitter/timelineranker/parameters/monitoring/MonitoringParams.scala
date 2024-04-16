@@ -1,12 +1,12 @@
-package com.twitter.timelineranker.parameters.monitoring
+package com.tw ter.t  l neranker.para ters.mon or ng
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object MonitoringParams {
+object Mon or ngParams {
 
-  object DebugAuthorsAllowListParam
+  object DebugAuthorsAllowL stParam
       extends FSParam[Seq[Long]](
-        name = "monitoring_debug_authors_allow_list",
+        na  = "mon or ng_debug_authors_allow_l st",
         default = Seq.empty[Long]
       )
 

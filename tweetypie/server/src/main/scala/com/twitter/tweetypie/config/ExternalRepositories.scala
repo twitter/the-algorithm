@@ -1,182 +1,182 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.flockdb.client.StatusGraph
-import com.twitter.servo.util.FutureArrow
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.repository.DeviceSourceRepository.Type
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil._
-import com.twitter.visibility.common.tflock.UserIsInvitedToConversationRepository
+ mport com.tw ter.flockdb.cl ent.StatusGraph
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce.GetPerspect ves
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.repos ory.Dev ceS ceRepos ory.Type
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.serverut l._
+ mport com.tw ter.v s b l y.common.tflock.User s nv edToConversat onRepos ory
 
 /**
- * Tweetypie's read path composes results from many data sources. This
- * trait is a collection of repositories for external data access.
- * These repositories should not have (within-Tweetypie) caches,
- * deciders, etc. applied to them, since that is done when the
- * repositories are composed together. They should be the minimal
- * wrapping of the external clients in order to expose an Arrow-based
- * interface.
+ * T etyp e's read path composes results from many data s ces. T 
+ * tra   s a collect on of repos or es for external data access.
+ * T se repos or es should not have (w h n-T etyp e) cac s,
+ * dec ders, etc. appl ed to t m, s nce that  s done w n t 
+ * repos or es are composed toget r. T y should be t  m n mal
+ * wrapp ng of t  external cl ents  n order to expose an Arrow-based
+ *  nterface.
  */
-trait ExternalRepositories {
-  def card2Repo: Card2Repository.Type
-  def cardRepo: CardRepository.Type
-  def cardUsersRepo: CardUsersRepository.Type
-  def conversationIdRepo: ConversationIdRepository.Type
-  def containerAsTweetRepo: CreativesContainerMaterializationRepository.GetTweetType
-  def containerAsTweetFieldsRepo: CreativesContainerMaterializationRepository.GetTweetFieldsType
-  def deviceSourceRepo: DeviceSourceRepository.Type
-  def escherbirdAnnotationRepo: EscherbirdAnnotationRepository.Type
-  def stratoSafetyLabelsRepo: StratoSafetyLabelsRepository.Type
-  def stratoCommunityMembershipRepo: StratoCommunityMembershipRepository.Type
-  def stratoCommunityAccessRepo: StratoCommunityAccessRepository.Type
-  def stratoPromotedTweetRepo: StratoPromotedTweetRepository.Type
-  def stratoSuperFollowEligibleRepo: StratoSuperFollowEligibleRepository.Type
-  def stratoSuperFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type
-  def stratoSubscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type
-  def unmentionedEntitiesRepo: UnmentionedEntitiesRepository.Type
-  def geoScrubTimestampRepo: GeoScrubTimestampRepository.Type
-  def mediaMetadataRepo: MediaMetadataRepository.Type
-  def perspectiveRepo: PerspectiveRepository.Type
-  def placeRepo: PlaceRepository.Type
-  def profileGeoRepo: ProfileGeoRepository.Type
-  def quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepository.Type
-  def lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type
-  def relationshipRepo: RelationshipRepository.Type
-  def retweetSpamCheckRepo: RetweetSpamCheckRepository.Type
-  def tweetCountsRepo: TweetCountsRepository.Type
-  def tweetResultRepo: TweetResultRepository.Type
-  def tweetSpamCheckRepo: TweetSpamCheckRepository.Type
-  def urlRepo: UrlRepository.Type
-  def userIsInvitedToConversationRepo: UserIsInvitedToConversationRepository.Type
-  def userRepo: UserRepository.Type
+tra  ExternalRepos or es {
+  def card2Repo: Card2Repos ory.Type
+  def cardRepo: CardRepos ory.Type
+  def cardUsersRepo: CardUsersRepos ory.Type
+  def conversat on dRepo: Conversat on dRepos ory.Type
+  def conta nerAsT etRepo: Creat vesConta nerMater al zat onRepos ory.GetT etType
+  def conta nerAsT etF eldsRepo: Creat vesConta nerMater al zat onRepos ory.GetT etF eldsType
+  def dev ceS ceRepo: Dev ceS ceRepos ory.Type
+  def esc rb rdAnnotat onRepo: Esc rb rdAnnotat onRepos ory.Type
+  def stratoSafetyLabelsRepo: StratoSafetyLabelsRepos ory.Type
+  def stratoCommun y mbersh pRepo: StratoCommun y mbersh pRepos ory.Type
+  def stratoCommun yAccessRepo: StratoCommun yAccessRepos ory.Type
+  def stratoPromotedT etRepo: StratoPromotedT etRepos ory.Type
+  def stratoSuperFollowEl g bleRepo: StratoSuperFollowEl g bleRepos ory.Type
+  def stratoSuperFollowRelat onsRepo: StratoSuperFollowRelat onsRepos ory.Type
+  def stratoSubscr pt onVer f cat onRepo: StratoSubscr pt onVer f cat onRepos ory.Type
+  def un nt onedEnt  esRepo: Un nt onedEnt  esRepos ory.Type
+  def geoScrubT  stampRepo: GeoScrubT  stampRepos ory.Type
+  def  d a tadataRepo:  d a tadataRepos ory.Type
+  def perspect veRepo: Perspect veRepos ory.Type
+  def placeRepo: PlaceRepos ory.Type
+  def prof leGeoRepo: Prof leGeoRepos ory.Type
+  def quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepos ory.Type
+  def lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepos ory.Type
+  def relat onsh pRepo: Relat onsh pRepos ory.Type
+  def ret etSpamC ckRepo: Ret etSpamC ckRepos ory.Type
+  def t etCountsRepo: T etCountsRepos ory.Type
+  def t etResultRepo: T etResultRepos ory.Type
+  def t etSpamC ckRepo: T etSpamC ckRepos ory.Type
+  def urlRepo: UrlRepos ory.Type
+  def user s nv edToConversat onRepo: User s nv edToConversat onRepos ory.Type
+  def userRepo: UserRepos ory.Type
 }
 
-class ExternalServiceRepositories(
-  clients: BackendClients,
-  statsReceiver: StatsReceiver,
-  settings: TweetServiceSettings,
-  clientIdHelper: ClientIdHelper)
-    extends ExternalRepositories {
+class ExternalServ ceRepos or es(
+  cl ents: BackendCl ents,
+  statsRece ver: StatsRece ver,
+  sett ngs: T etServ ceSett ngs,
+  cl ent d lper: Cl ent d lper)
+    extends ExternalRepos or es {
 
-  lazy val card2Repo: Card2Repository.Type =
-    Card2Repository(clients.expandodo.getCards2, maxRequestSize = 5)
+  lazy val card2Repo: Card2Repos ory.Type =
+    Card2Repos ory(cl ents.expandodo.getCards2, maxRequestS ze = 5)
 
-  lazy val cardRepo: CardRepository.Type =
-    CardRepository(clients.expandodo.getCards, maxRequestSize = 5)
+  lazy val cardRepo: CardRepos ory.Type =
+    CardRepos ory(cl ents.expandodo.getCards, maxRequestS ze = 5)
 
-  lazy val cardUsersRepo: CardUsersRepository.Type =
-    CardUsersRepository(clients.expandodo.getCardUsers)
+  lazy val cardUsersRepo: CardUsersRepos ory.Type =
+    CardUsersRepos ory(cl ents.expandodo.getCardUsers)
 
-  lazy val conversationIdRepo: ConversationIdRepository.Type =
-    ConversationIdRepository(clients.tflockReadClient.multiSelectOne)
+  lazy val conversat on dRepo: Conversat on dRepos ory.Type =
+    Conversat on dRepos ory(cl ents.tflockReadCl ent.mult SelectOne)
 
-  lazy val containerAsTweetRepo: CreativesContainerMaterializationRepository.GetTweetType =
-    CreativesContainerMaterializationRepository(
-      clients.creativesContainerService.materializeAsTweet)
+  lazy val conta nerAsT etRepo: Creat vesConta nerMater al zat onRepos ory.GetT etType =
+    Creat vesConta nerMater al zat onRepos ory(
+      cl ents.creat vesConta nerServ ce.mater al zeAsT et)
 
-  lazy val containerAsTweetFieldsRepo: CreativesContainerMaterializationRepository.GetTweetFieldsType =
-    CreativesContainerMaterializationRepository.materializeAsTweetFields(
-      clients.creativesContainerService.materializeAsTweetFields)
+  lazy val conta nerAsT etF eldsRepo: Creat vesConta nerMater al zat onRepos ory.GetT etF eldsType =
+    Creat vesConta nerMater al zat onRepos ory.mater al zeAsT etF elds(
+      cl ents.creat vesConta nerServ ce.mater al zeAsT etF elds)
 
-  lazy val deviceSourceRepo: Type = {
-    DeviceSourceRepository(
-      DeviceSourceParser.parseAppId,
-      FutureArrow(clients.passbirdClient.getClientApplications(_))
+  lazy val dev ceS ceRepo: Type = {
+    Dev ceS ceRepos ory(
+      Dev ceS ceParser.parseApp d,
+      FutureArrow(cl ents.passb rdCl ent.getCl entAppl cat ons(_))
     )
   }
 
-  lazy val escherbirdAnnotationRepo: EscherbirdAnnotationRepository.Type =
-    EscherbirdAnnotationRepository(clients.escherbird.annotate)
+  lazy val esc rb rdAnnotat onRepo: Esc rb rdAnnotat onRepos ory.Type =
+    Esc rb rdAnnotat onRepos ory(cl ents.esc rb rd.annotate)
 
-  lazy val quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepository.Type =
-    QuoterHasAlreadyQuotedRepository(clients.tflockReadClient)
+  lazy val quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepos ory.Type =
+    QuoterHasAlreadyQuotedRepos ory(cl ents.tflockReadCl ent)
 
-  lazy val lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type =
-    LastQuoteOfQuoterRepository(clients.tflockReadClient)
+  lazy val lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepos ory.Type =
+    LastQuoteOfQuoterRepos ory(cl ents.tflockReadCl ent)
 
-  lazy val stratoSafetyLabelsRepo: StratoSafetyLabelsRepository.Type =
-    StratoSafetyLabelsRepository(clients.stratoserverClient)
+  lazy val stratoSafetyLabelsRepo: StratoSafetyLabelsRepos ory.Type =
+    StratoSafetyLabelsRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val stratoCommunityMembershipRepo: StratoCommunityMembershipRepository.Type =
-    StratoCommunityMembershipRepository(clients.stratoserverClient)
+  lazy val stratoCommun y mbersh pRepo: StratoCommun y mbersh pRepos ory.Type =
+    StratoCommun y mbersh pRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val stratoCommunityAccessRepo: StratoCommunityAccessRepository.Type =
-    StratoCommunityAccessRepository(clients.stratoserverClient)
+  lazy val stratoCommun yAccessRepo: StratoCommun yAccessRepos ory.Type =
+    StratoCommun yAccessRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val stratoSuperFollowEligibleRepo: StratoSuperFollowEligibleRepository.Type =
-    StratoSuperFollowEligibleRepository(clients.stratoserverClient)
+  lazy val stratoSuperFollowEl g bleRepo: StratoSuperFollowEl g bleRepos ory.Type =
+    StratoSuperFollowEl g bleRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val stratoSuperFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type =
-    StratoSuperFollowRelationsRepository(clients.stratoserverClient)
+  lazy val stratoSuperFollowRelat onsRepo: StratoSuperFollowRelat onsRepos ory.Type =
+    StratoSuperFollowRelat onsRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val stratoPromotedTweetRepo: StratoPromotedTweetRepository.Type =
-    StratoPromotedTweetRepository(clients.stratoserverClient)
+  lazy val stratoPromotedT etRepo: StratoPromotedT etRepos ory.Type =
+    StratoPromotedT etRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val stratoSubscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type =
-    StratoSubscriptionVerificationRepository(clients.stratoserverClient)
+  lazy val stratoSubscr pt onVer f cat onRepo: StratoSubscr pt onVer f cat onRepos ory.Type =
+    StratoSubscr pt onVer f cat onRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val geoScrubTimestampRepo: GeoScrubTimestampRepository.Type =
-    GeoScrubTimestampRepository(clients.geoScrubEventStore.getGeoScrubTimestamp)
+  lazy val geoScrubT  stampRepo: GeoScrubT  stampRepos ory.Type =
+    GeoScrubT  stampRepos ory(cl ents.geoScrubEventStore.getGeoScrubT  stamp)
 
-  lazy val mediaMetadataRepo: MediaMetadataRepository.Type =
-    MediaMetadataRepository(clients.mediaClient.getMediaMetadata)
+  lazy val  d a tadataRepo:  d a tadataRepos ory.Type =
+     d a tadataRepos ory(cl ents. d aCl ent.get d a tadata)
 
-  lazy val perspectiveRepo: GetPerspectives =
-    GetPerspectives(clients.timelineService.getPerspectives)
+  lazy val perspect veRepo: GetPerspect ves =
+    GetPerspect ves(cl ents.t  l neServ ce.getPerspect ves)
 
-  lazy val placeRepo: PlaceRepository.Type =
-    GeoduckPlaceRepository(clients.geoHydrationLocate)
+  lazy val placeRepo: PlaceRepos ory.Type =
+    GeoduckPlaceRepos ory(cl ents.geoHydrat onLocate)
 
-  lazy val profileGeoRepo: ProfileGeoRepository.Type =
-    ProfileGeoRepository(clients.gnipEnricherator.hydrateProfileGeo)
+  lazy val prof leGeoRepo: Prof leGeoRepos ory.Type =
+    Prof leGeoRepos ory(cl ents.gn pEnr c rator.hydrateProf leGeo)
 
-  lazy val relationshipRepo: RelationshipRepository.Type =
-    RelationshipRepository(clients.socialGraphService.exists, maxRequestSize = 6)
+  lazy val relat onsh pRepo: Relat onsh pRepos ory.Type =
+    Relat onsh pRepos ory(cl ents.soc alGraphServ ce.ex sts, maxRequestS ze = 6)
 
-  lazy val retweetSpamCheckRepo: RetweetSpamCheckRepository.Type =
-    RetweetSpamCheckRepository(clients.scarecrow.checkRetweet)
+  lazy val ret etSpamC ckRepo: Ret etSpamC ckRepos ory.Type =
+    Ret etSpamC ckRepos ory(cl ents.scarecrow.c ckRet et)
 
-  lazy val tweetCountsRepo: TweetCountsRepository.Type =
-    TweetCountsRepository(
-      clients.tflockReadClient,
-      maxRequestSize = settings.tweetCountsRepoChunkSize
+  lazy val t etCountsRepo: T etCountsRepos ory.Type =
+    T etCountsRepos ory(
+      cl ents.tflockReadCl ent,
+      maxRequestS ze = sett ngs.t etCountsRepoChunkS ze
     )
 
-  lazy val tweetResultRepo: TweetResultRepository.Type =
-    ManhattanTweetRepository(
-      clients.tweetStorageClient.getTweet,
-      clients.tweetStorageClient.getStoredTweet,
-      settings.shortCircuitLikelyPartialTweetReads,
-      statsReceiver.scope("manhattan_tweet_repo"),
-      clientIdHelper,
+  lazy val t etResultRepo: T etResultRepos ory.Type =
+    ManhattanT etRepos ory(
+      cl ents.t etStorageCl ent.getT et,
+      cl ents.t etStorageCl ent.getStoredT et,
+      sett ngs.shortC rcu L kelyPart alT etReads,
+      statsRece ver.scope("manhattan_t et_repo"),
+      cl ent d lper,
     )
 
-  lazy val tweetSpamCheckRepo: TweetSpamCheckRepository.Type =
-    TweetSpamCheckRepository(clients.scarecrow.checkTweet2)
+  lazy val t etSpamC ckRepo: T etSpamC ckRepos ory.Type =
+    T etSpamC ckRepos ory(cl ents.scarecrow.c ckT et2)
 
-  lazy val unmentionedEntitiesRepo: UnmentionedEntitiesRepository.Type =
-    UnmentionedEntitiesRepository(clients.stratoserverClient)
+  lazy val un nt onedEnt  esRepo: Un nt onedEnt  esRepos ory.Type =
+    Un nt onedEnt  esRepos ory(cl ents.stratoserverCl ent)
 
-  lazy val urlRepo: UrlRepository.Type =
-    UrlRepository(
-      clients.talon.expand,
-      settings.thriftClientId.name,
-      statsReceiver.scope("talon_url_repo"),
-      clientIdHelper,
+  lazy val urlRepo: UrlRepos ory.Type =
+    UrlRepos ory(
+      cl ents.talon.expand,
+      sett ngs.thr ftCl ent d.na ,
+      statsRece ver.scope("talon_url_repo"),
+      cl ent d lper,
     )
 
-  lazy val userRepo: UserRepository.Type =
-    GizmoduckUserRepository(
-      clients.gizmoduck.getById,
-      clients.gizmoduck.getByScreenName,
-      maxRequestSize = 100
+  lazy val userRepo: UserRepos ory.Type =
+    G zmoduckUserRepos ory(
+      cl ents.g zmoduck.getBy d,
+      cl ents.g zmoduck.getByScreenNa ,
+      maxRequestS ze = 100
     )
 
-  lazy val userIsInvitedToConversationRepo: UserIsInvitedToConversationRepository.Type =
-    UserIsInvitedToConversationRepository(
-      FutureArrow(clients.tflockReadClient.multiSelectOne(_)),
-      FutureArrow((clients.tflockReadClient.contains(_: StatusGraph, _: Long, _: Long)).tupled))
+  lazy val user s nv edToConversat onRepo: User s nv edToConversat onRepos ory.Type =
+    User s nv edToConversat onRepos ory(
+      FutureArrow(cl ents.tflockReadCl ent.mult SelectOne(_)),
+      FutureArrow((cl ents.tflockReadCl ent.conta ns(_: StatusGraph, _: Long, _: Long)).tupled))
 
 }

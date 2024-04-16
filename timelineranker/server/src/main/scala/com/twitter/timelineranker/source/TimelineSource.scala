@@ -1,16 +1,16 @@
-package com.twitter.timelineranker.source
+package com.tw ter.t  l neranker.s ce
 
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.model.T  l ne
+ mport com.tw ter.t  l neranker.model.T  l neQuery
+ mport com.tw ter.ut l.Future
 
-trait TimelineSource {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]]
-  def get(query: TimelineQuery): Future[Timeline] = get(Seq(query)).head
+tra  T  l neS ce {
+  def get(quer es: Seq[T  l neQuery]): Seq[Future[T  l ne]]
+  def get(query: T  l neQuery): Future[T  l ne] = get(Seq(query)). ad
 }
 
-class EmptyTimelineSource extends TimelineSource {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map(q => Future.value(Timeline.empty(q.id)))
+class EmptyT  l neS ce extends T  l neS ce {
+  def get(quer es: Seq[T  l neQuery]): Seq[Future[T  l ne]] = {
+    quer es.map(q => Future.value(T  l ne.empty(q. d)))
   }
 }

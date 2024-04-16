@@ -1,177 +1,177 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.{DateOps, DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import java.util.TimeZone
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng.{DateOps, DateRange, Days, TypedP pe}
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, ProcAtla}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport java.ut l.T  Zone
 
-object InterestedInSources {
+object  nterested nS ces {
 
-  private val ModelVersionInterestedInDatasetMap: Map[ModelVersion, KeyValDALDataset[
-    KeyVal[UserId, ClustersUserIsInterestedIn]
+  pr vate val ModelVers on nterested nDatasetMap: Map[ModelVers on, KeyValDALDataset[
+    KeyVal[User d, ClustersUser s nterested n]
   ]] = Map(
-    ModelVersion.Model20m145kDec11 -> SimclustersV2InterestedInScalaDataset,
-    ModelVersion.Model20m145kUpdated -> SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-    ModelVersion.Model20m145k2020 -> SimclustersV2InterestedIn20M145K2020ScalaDataset
+    ModelVers on.Model20m145kDec11 -> S mclustersV2 nterested nScalaDataset,
+    ModelVers on.Model20m145kUpdated -> S mclustersV2 nterested n20M145KUpdatedScalaDataset,
+    ModelVers on.Model20m145k2020 -> S mclustersV2 nterested n20M145K2020ScalaDataset
   )
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   *  nternal vers on, not PDP compl ant, not to be used outs de s mclusters_v2
+   * Reads 20M145KDec11 product on  nterested n data from atla-proc, w h a 14-day extended w ndow
    */
-  private[simclusters_v2] def simClustersRawInterestedInDec11Source(
+  pr vate[s mclusters_v2] def s mClustersRaw nterested nDec11S ce(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
 
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KDec11ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        S mclustersV2Raw nterested n20M145KDec11ScalaDataset,
+        dateRange.prepend(Days(14)(t  Zone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   *  nternal vers on, not PDP compl ant, not to be used outs de s mclusters_v2
+   * Reads 20M145KUpdated  nterested n data from atla-proc, w h a 14-day extended w ndow
    */
-  private[simclusters_v2] def simClustersRawInterestedInUpdatedSource(
+  pr vate[s mclusters_v2] def s mClustersRaw nterested nUpdatedS ce(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        S mclustersV2Raw nterested n20M145KUpdatedScalaDataset,
+        dateRange.prepend(Days(14)(t  Zone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   *  nternal vers on, not PDP compl ant, not to be used outs de s mclusters_v2
+   * Reads 20M145K2020  nterested n data from atla-proc, w h a 14-day extended w ndow
    */
-  private[simclusters_v2] def simClustersRawInterestedIn2020Source(
+  pr vate[s mclusters_v2] def s mClustersRaw nterested n2020S ce(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        S mclustersV2Raw nterested n20M145K2020ScalaDataset,
+        dateRange.prepend(Days(14)(t  Zone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 
-  private[simclusters_v2] def simClustersRawInterestedInLite2020Source(
+  pr vate[s mclusters_v2] def s mClustersRaw nterested nL e2020S ce(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-        dateRange.extend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
-      }
-  }
-
-  /**
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
-   */
-  def simClustersInterestedInDec11Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedInScalaDataset,
-        dateRange.prepend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+        S mclustersV2Raw nterested nL e20M145K2020ScalaDataset,
+        dateRange.extend(Days(14)(t  Zone)))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 
   /**
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145KDec11 product on  nterested n data from atla-proc, w h a 14-day extended w ndow
    */
-  def simClustersInterestedInUpdatedSource(
+  def s mClusters nterested nDec11S ce(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
+
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        S mclustersV2 nterested nScalaDataset,
+        dateRange.prepend(Days(14)(t  Zone)))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
+      }
+  }
+
+  /**
+   * Reads 20M145KUpdated  nterested n data from atla-proc, w h a 14-day extended w ndow
+   */
+  def s mClusters nterested nUpdatedS ce(
+    dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
+    DAL
+      .readMostRecentSnapshot(
+        S mclustersV2 nterested n20M145KUpdatedScalaDataset,
+        dateRange.prepend(Days(14)(t  Zone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 
   /**
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145K2020  nterested n data from atla-proc, w h a 14-day extended w ndow
    */
-  def simClustersInterestedIn2020Source(
+  def s mClusters nterested n2020S ce(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        S mclustersV2 nterested n20M145K2020ScalaDataset,
+        dateRange.prepend(Days(14)(t  Zone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 
   /**
-   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 14-day extended window
+   * Reads  nterested n data based on ModelVers on from atla-proc, w h a 14-day extended w ndow
    */
-  def simClustersInterestedInSource(
-    modelVersion: ModelVersion,
+  def s mClusters nterested nS ce(
+    modelVers on: ModelVers on,
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
 
     DAL
       .readMostRecentSnapshot(
-        ModelVersionInterestedInDatasetMap(modelVersion),
-        dateRange.prepend(Days(14)(timeZone))
+        ModelVers on nterested nDatasetMap(modelVers on),
+        dateRange.prepend(Days(14)(t  Zone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe.map {
+        case KeyVal(user d, clustersUser s nterested n) =>
+          (user d, clustersUser s nterested n)
       }
   }
 

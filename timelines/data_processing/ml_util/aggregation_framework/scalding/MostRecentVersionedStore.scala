@@ -1,98 +1,98 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng
 
-import com.twitter.bijection.Injection
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.{Hdfs => HdfsMode}
-import com.twitter.summingbird.batch.store.HDFSMetadata
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.batch.OrderedFromOrderingExt
-import com.twitter.summingbird.batch.PrunedSpace
-import com.twitter.summingbird.scalding._
-import com.twitter.summingbird.scalding.store.VersionedBatchStore
-import org.slf4j.LoggerFactory
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.scald ng.commons.s ce.Vers onedKeyValS ce
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng.{Hdfs => HdfsMode}
+ mport com.tw ter.summ ngb rd.batch.store.HDFS tadata
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.summ ngb rd.batch.Batc r
+ mport com.tw ter.summ ngb rd.batch.OrderedFromOrder ngExt
+ mport com.tw ter.summ ngb rd.batch.PrunedSpace
+ mport com.tw ter.summ ngb rd.scald ng._
+ mport com.tw ter.summ ngb rd.scald ng.store.Vers onedBatchStore
+ mport org.slf4j.LoggerFactory
 
-object MostRecentLagCorrectingVersionedStore {
-  def apply[Key, ValInStore, ValInMemory](
-    rootPath: String,
-    packer: ValInMemory => ValInStore,
-    unpacker: ValInStore => ValInMemory,
-    versionsToKeep: Int = VersionedKeyValSource.defaultVersionsToKeep,
-    prunedSpace: PrunedSpace[(Key, ValInMemory)] = PrunedSpace.neverPruned
+object MostRecentLagCorrect ngVers onedStore {
+  def apply[Key, Val nStore, Val n mory](
+    rootPath: Str ng,
+    packer: Val n mory => Val nStore,
+    unpacker: Val nStore => Val n mory,
+    vers onsToKeep:  nt = Vers onedKeyValS ce.defaultVers onsToKeep,
+    prunedSpace: PrunedSpace[(Key, Val n mory)] = PrunedSpace.neverPruned
   )(
-    implicit injection: Injection[(Key, (BatchID, ValInStore)), (Array[Byte], Array[Byte])],
-    batcher: Batcher,
-    ord: Ordering[Key],
-    lagCorrector: (ValInMemory, Long) => ValInMemory
-  ): MostRecentLagCorrectingVersionedBatchStore[Key, ValInMemory, Key, (BatchID, ValInStore)] = {
-    new MostRecentLagCorrectingVersionedBatchStore[Key, ValInMemory, Key, (BatchID, ValInStore)](
+     mpl c   nject on:  nject on[(Key, (Batch D, Val nStore)), (Array[Byte], Array[Byte])],
+    batc r: Batc r,
+    ord: Order ng[Key],
+    lagCorrector: (Val n mory, Long) => Val n mory
+  ): MostRecentLagCorrect ngVers onedBatchStore[Key, Val n mory, Key, (Batch D, Val nStore)] = {
+    new MostRecentLagCorrect ngVers onedBatchStore[Key, Val n mory, Key, (Batch D, Val nStore)](
       rootPath,
-      versionsToKeep,
-      batcher
-    )(lagCorrector)({ case (batchID, (k, v)) => (k, (batchID.next, packer(v))) })({
+      vers onsToKeep,
+      batc r
+    )(lagCorrector)({ case (batch D, (k, v)) => (k, (batch D.next, packer(v))) })({
       case (k, (_, v)) => (k, unpacker(v))
     }) {
-      override def select(b: List[BatchID]) = List(b.last)
-      override def pruning: PrunedSpace[(Key, ValInMemory)] = prunedSpace
+      overr de def select(b: L st[Batch D]) = L st(b.last)
+      overr de def prun ng: PrunedSpace[(Key, Val n mory)] = prunedSpace
     }
   }
 }
 
 /**
- * @param lagCorrector lagCorrector allows one to take data from one batch and pretend as if it
- *                     came from a different batch.
- * @param pack Converts the in-memory tuples to the type used by the underlying key-val store.
- * @param unpack Converts the key-val tuples from the store in the form used by the calling object.
+ * @param lagCorrector lagCorrector allows one to take data from one batch and pretend as  f  
+ *                     ca  from a d fferent batch.
+ * @param pack Converts t   n- mory tuples to t  type used by t  underly ng key-val store.
+ * @param unpack Converts t  key-val tuples from t  store  n t  form used by t  call ng object.
  */
-class MostRecentLagCorrectingVersionedBatchStore[KeyInMemory, ValInMemory, KeyInStore, ValInStore](
-  rootPath: String,
-  versionsToKeep: Int,
-  override val batcher: Batcher
+class MostRecentLagCorrect ngVers onedBatchStore[Key n mory, Val n mory, Key nStore, Val nStore](
+  rootPath: Str ng,
+  vers onsToKeep:  nt,
+  overr de val batc r: Batc r
 )(
-  lagCorrector: (ValInMemory, Long) => ValInMemory
+  lagCorrector: (Val n mory, Long) => Val n mory
 )(
-  pack: (BatchID, (KeyInMemory, ValInMemory)) => (KeyInStore, ValInStore)
+  pack: (Batch D, (Key n mory, Val n mory)) => (Key nStore, Val nStore)
 )(
-  unpack: ((KeyInStore, ValInStore)) => (KeyInMemory, ValInMemory)
+  unpack: ((Key nStore, Val nStore)) => (Key n mory, Val n mory)
 )(
-  implicit @transient injection: Injection[(KeyInStore, ValInStore), (Array[Byte], Array[Byte])],
-  override val ordering: Ordering[KeyInMemory])
-    extends VersionedBatchStore[KeyInMemory, ValInMemory, KeyInStore, ValInStore](
+   mpl c  @trans ent  nject on:  nject on[(Key nStore, Val nStore), (Array[Byte], Array[Byte])],
+  overr de val order ng: Order ng[Key n mory])
+    extends Vers onedBatchStore[Key n mory, Val n mory, Key nStore, Val nStore](
       rootPath,
-      versionsToKeep,
-      batcher)(pack)(unpack)(injection, ordering) {
+      vers onsToKeep,
+      batc r)(pack)(unpack)( nject on, order ng) {
 
-  import OrderedFromOrderingExt._
+   mport OrderedFromOrder ngExt._
 
-  @transient private val logger =
-    LoggerFactory.getLogger(classOf[MostRecentLagCorrectingVersionedBatchStore[_, _, _, _]])
+  @trans ent pr vate val logger =
+    LoggerFactory.getLogger(classOf[MostRecentLagCorrect ngVers onedBatchStore[_, _, _, _]])
 
-  override protected def lastBatch(
-    exclusiveUB: BatchID,
+  overr de protected def lastBatch(
+    exclus veUB: Batch D,
     mode: HdfsMode
-  ): Option[(BatchID, FlowProducer[TypedPipe[(KeyInMemory, ValInMemory)]])] = {
-    val batchToPretendAs = exclusiveUB.prev
-    val versionToPretendAs = batchIDToVersion(batchToPretendAs)
-    logger.info(
-      s"Most recent lag correcting versioned batched store at $rootPath entering lastBatch method versionToPretendAs = $versionToPretendAs")
-    val meta = new HDFSMetadata(mode.conf, rootPath)
-    meta.versions
-      .map { ver => (versionToBatchID(ver), readVersion(ver)) }
-      .filter { _._1 < exclusiveUB }
-      .reduceOption { (a, b) => if (a._1 > b._1) a else b }
+  ): Opt on[(Batch D, FlowProducer[TypedP pe[(Key n mory, Val n mory)]])] = {
+    val batchToPretendAs = exclus veUB.prev
+    val vers onToPretendAs = batch DToVers on(batchToPretendAs)
+    logger. nfo(
+      s"Most recent lag correct ng vers oned batc d store at $rootPath enter ng lastBatch  thod vers onToPretendAs = $vers onToPretendAs")
+    val  ta = new HDFS tadata(mode.conf, rootPath)
+     ta.vers ons
+      .map { ver => (vers onToBatch D(ver), readVers on(ver)) }
+      .f lter { _._1 < exclus veUB }
+      .reduceOpt on { (a, b) =>  f (a._1 > b._1) a else b }
       .map {
         case (
-              lastBatchID: BatchID,
-              flowProducer: FlowProducer[TypedPipe[(KeyInMemory, ValInMemory)]]) =>
-          val lastVersion = batchIDToVersion(lastBatchID)
-          val lagToCorrectMillis: Long =
-            batchIDToVersion(batchToPretendAs) - batchIDToVersion(lastBatchID)
-          logger.info(
-            s"Most recent available version is $lastVersion, so lagToCorrectMillis is $lagToCorrectMillis")
+              lastBatch D: Batch D,
+              flowProducer: FlowProducer[TypedP pe[(Key n mory, Val n mory)]]) =>
+          val lastVers on = batch DToVers on(lastBatch D)
+          val lagToCorrectM ll s: Long =
+            batch DToVers on(batchToPretendAs) - batch DToVers on(lastBatch D)
+          logger. nfo(
+            s"Most recent ava lable vers on  s $lastVers on, so lagToCorrectM ll s  s $lagToCorrectM ll s")
           val lagCorrectedFlowProducer = flowProducer.map {
-            pipe: TypedPipe[(KeyInMemory, ValInMemory)] =>
-              pipe.map { case (k, v) => (k, lagCorrector(v, lagToCorrectMillis)) }
+            p pe: TypedP pe[(Key n mory, Val n mory)] =>
+              p pe.map { case (k, v) => (k, lagCorrector(v, lagToCorrectM ll s)) }
           }
           (batchToPretendAs, lagCorrectedFlowProducer)
       }

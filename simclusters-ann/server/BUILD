@@ -1,23 +1,23 @@
-jvm_binary(
-    name = "bin",
-    basename = "simclusters-ann",
-    main = "com.twitter.simclustersann.SimClustersAnnServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+jvm_b nary(
+    na  = "b n",
+    basena  = "s mclusters-ann",
+    ma n = "com.tw ter.s mclustersann.S mClustersAnnServerMa n",
+    runt  _platform = "java11",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle-z pk n-scr be/src/ma n/scala",
+        "f natra/ nject/ nject-logback/src/ma n/scala",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "s mclusters-ann/server/src/ma n/scala/com/tw ter/s mclustersann",
+        "tw ter-server- nternal/src/ma n/scala",
+        "tw ter-server/logback-class c/src/ma n/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows bu ld phase convent on requ res a jvm_app na d w h ${project-na }-app
 jvm_app(
-    name = "simclusters-ann-app",
-    archive = "zip",
-    binary = ":bin",
-    tags = ["bazel-compatible"],
+    na  = "s mclusters-ann-app",
+    arch ve = "z p",
+    b nary = ":b n",
+    tags = ["bazel-compat ble"],
 )

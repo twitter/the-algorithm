@@ -1,50 +1,50 @@
 #pragma once
 
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/lib/io/random_inputstream.h"
+# nclude "tensorflow/core/fra work/common_shape_fns.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
+# nclude "tensorflow/core/platform/env.h"
+# nclude "tensorflow/core/l b/ o/random_ nputstream.h"
 
-#include <twml.h>
+# nclude <twml.h>
 
-#include <string>
+# nclude <str ng>
 
-using tensorflow::int64;
-using tensorflow::Status;
-using std::string;
+us ng tensorflow:: nt64;
+us ng tensorflow::Status;
+us ng std::str ng;
 
 class BlockFormatReader : twml::BlockFormatReader {
- public:
-  explicit BlockFormatReader(tensorflow::io::InputStreamInterface *stream)
+ publ c:
+  expl c  BlockFormatReader(tensorflow:: o:: nputStream nterface *stream)
       : twml::BlockFormatReader() , stream_(stream) {
   }
 
-  // Read the next record.
+  // Read t  next record.
   // Returns OK on success,
-  // Returns OUT_OF_RANGE for end of file, or something else for an error.
-  Status ReadNext(string* record) {
-    if (this->next()) {
-      return stream_->ReadNBytes(this->current_size(), record);
+  // Returns OUT_OF_RANGE for end of f le, or so th ng else for an error.
+  Status ReadNext(str ng* record) {
+     f (t ->next()) {
+      return stream_->ReadNBytes(t ->current_s ze(), record);
     }
     return tensorflow::errors::OutOfRange("eof");
   }
 
-  uint64_t read_bytes(void *dest, int size, int count) {
-    uint64_t bytesToRead = size * count;
-    std::string current;
-    // TODO: Try to merge ReadNBytes and the memcpy below
-    // ReadNBytes performs a memory copy already.
+  u nt64_t read_bytes(vo d *dest,  nt s ze,  nt count) {
+    u nt64_t bytesToRead = s ze * count;
+    std::str ng current;
+    // TODO: Try to  rge ReadNBytes and t   mcpy below
+    // ReadNBytes performs a  mory copy already.
     Status status = stream_->ReadNBytes(bytesToRead, &current);
-    if (!status.ok()) {
+     f (!status.ok()) {
       return 0;
     }
-    memcpy(dest, current.c_str(), bytesToRead);
+     mcpy(dest, current.c_str(), bytesToRead);
     return count;
   }
 
- private:
-  tensorflow::io::InputStreamInterface *stream_;
-  TF_DISALLOW_COPY_AND_ASSIGN(BlockFormatReader);
+ pr vate:
+  tensorflow:: o:: nputStream nterface *stream_;
+  TF_D SALLOW_COPY_AND_ASS GN(BlockFormatReader);
 };

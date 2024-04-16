@@ -1,189 +1,189 @@
-package com.twitter.search.common.util.ml.tensorflow_engine;
+package com.tw ter.search.common.ut l.ml.tensorflow_eng ne;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
+ mport java. o. OExcept on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.Suppl er;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tensorflow.SavedModelBundle;
-import org.tensorflow.Session;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport org.tensorflow.SavedModelBundle;
+ mport org.tensorflow.Sess on;
 
-import com.twitter.ml.api.FeatureUtil;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
-import com.twitter.tfcompute_java.TFModelRunner;
-import com.twitter.tfcompute_java.TFSessionInit;
-import com.twitter.twml.runtime.lib.TwmlLoader;
-import com.twitter.twml.runtime.models.ModelLocator;
-import com.twitter.twml.runtime.models.ModelLocator$;
-import com.twitter.util.Await;
+ mport com.tw ter.ml.ap .FeatureUt l;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maEntry;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.sc ma.Dynam cSc ma;
+ mport com.tw ter.search.common.ut l.ml.models_manager.BaseModelsManager;
+ mport com.tw ter.tfcompute_java.TFModelRunner;
+ mport com.tw ter.tfcompute_java.TFSess on n ;
+ mport com.tw ter.twml.runt  .l b.TwmlLoader;
+ mport com.tw ter.twml.runt  .models.ModelLocator;
+ mport com.tw ter.twml.runt  .models.ModelLocator$;
+ mport com.tw ter.ut l.Awa ;
 
 /**
- * TensorflowModelsManager manages the lifecyle of TF models.
+ * TensorflowModelsManager manages t  l fecyle of TF models.
  */
-public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
+publ c class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TensorflowModelsManager.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(TensorflowModelsManager.class);
 
-  private static final String[] TF_TAGS = new String[] {"serve"};
+  pr vate stat c f nal Str ng[] TF_TAGS = new Str ng[] {"serve"};
 
-  private volatile Map<Integer, Long> featureSchemaIdToMlApiId = new HashMap<Integer, Long>();
+  pr vate volat le Map< nteger, Long> featureSc ma dToMlAp  d = new HashMap< nteger, Long>();
 
-  static {
+  stat c {
     TwmlLoader.load();
   }
 
-  public static final TensorflowModelsManager NO_OP_MANAGER =
+  publ c stat c f nal TensorflowModelsManager NO_OP_MANAGER =
     createNoOp("no_op_manager");
 
-  public TensorflowModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  publ c TensorflowModelsManager(
+      Suppl er<Map<Str ng, AbstractF le>> act veModelsSuppl er,
+      boolean shouldUnload nact veModels,
+      Str ng statsPref x
   ) {
-    this(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
+    t (
+      act veModelsSuppl er,
+      shouldUnload nact veModels,
+      statsPref x,
       () -> true,
       () -> true,
       null
     );
   }
 
-  public TensorflowModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> serveModels,
-      Supplier<Boolean> loadModels,
-      DynamicSchema dynamicSchema
+  publ c TensorflowModelsManager(
+      Suppl er<Map<Str ng, AbstractF le>> act veModelsSuppl er,
+      boolean shouldUnload nact veModels,
+      Str ng statsPref x,
+      Suppl er<Boolean> serveModels,
+      Suppl er<Boolean> loadModels,
+      Dynam cSc ma dynam cSc ma
   ) {
     super(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
+      act veModelsSuppl er,
+      shouldUnload nact veModels,
+      statsPref x,
       serveModels,
       loadModels
     );
-    if (dynamicSchema != null) {
-      updateFeatureSchemaIdToMlIdMap(dynamicSchema.getSearchFeatureSchema());
+     f (dynam cSc ma != null) {
+      updateFeatureSc ma dToMl dMap(dynam cSc ma.getSearchFeatureSc ma());
     }
   }
 
   /**
-   * The ML API feature ids for tensorflow scoring are hashes of their feature names. This hashing
-   * could be expensive to do for every search request. Instead, allow the map from schema feature
-   * id to ML API id to be updated whenever the schema is reloaded.
+   * T  ML AP  feature  ds for tensorflow scor ng are has s of t  r feature na s. T  hash ng
+   * could be expens ve to do for every search request.  nstead, allow t  map from sc ma feature
+   *  d to ML AP   d to be updated w never t  sc ma  s reloaded.
    */
-  public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) {
-    HashMap<Integer, Long> newFeatureSchemaIdToMlApiId = new HashMap<Integer, Long>();
-    Map<Integer, ThriftSearchFeatureSchemaEntry> featureEntries = schema.getEntries();
-    for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry : featureEntries.entrySet()) {
-      long mlApiFeatureId = FeatureUtil.featureIdForName(entry.getValue().getFeatureName());
-      newFeatureSchemaIdToMlApiId.put(entry.getKey(), mlApiFeatureId);
+  publ c vo d updateFeatureSc ma dToMl dMap(Thr ftSearchFeatureSc ma sc ma) {
+    HashMap< nteger, Long> newFeatureSc ma dToMlAp  d = new HashMap< nteger, Long>();
+    Map< nteger, Thr ftSearchFeatureSc maEntry> featureEntr es = sc ma.getEntr es();
+    for (Map.Entry< nteger, Thr ftSearchFeatureSc maEntry> entry : featureEntr es.entrySet()) {
+      long mlAp Feature d = FeatureUt l.feature dForNa (entry.getValue().getFeatureNa ());
+      newFeatureSc ma dToMlAp  d.put(entry.getKey(), mlAp Feature d);
     }
 
-    featureSchemaIdToMlApiId = newFeatureSchemaIdToMlApiId;
+    featureSc ma dToMlAp  d = newFeatureSc ma dToMlAp  d;
   }
 
-  public Map<Integer, Long> getFeatureSchemaIdToMlApiId() {
-    return featureSchemaIdToMlApiId;
+  publ c Map< nteger, Long> getFeatureSc ma dToMlAp  d() {
+    return featureSc ma dToMlAp  d;
   }
 
   /**
-   * If the manager is not enabled, it won't fetch TF models.
+   *  f t  manager  s not enabled,   won't fetch TF models.
    */
-  public boolean isEnabled() {
+  publ c boolean  sEnabled() {
     return true;
   }
 
   /**
-   * Load an individual model and make it available for inference.
+   * Load an  nd v dual model and make   ava lable for  nference.
    */
-  public TFModelRunner readModelFromDirectory(
-    AbstractFile modelDir) throws IOException {
+  publ c TFModelRunner readModelFromD rectory(
+    AbstractF le modelD r) throws  OExcept on {
 
     ModelLocator modelLocator =
       ModelLocator$.MODULE$.apply(
-        modelDir.toString(),
-        modelDir.toURI()
+        modelD r.toStr ng(),
+        modelD r.toUR ()
       );
 
     try {
-      Await.result(modelLocator.ensureLocalPresent(true));
-    } catch (Exception e) {
-      LOG.error("Couldn't find model " + modelDir.toString(), e);
-      throw new IOException("Couldn't find model " + modelDir.toString());
+      Awa .result(modelLocator.ensureLocalPresent(true));
+    } catch (Except on e) {
+      LOG.error("Couldn't f nd model " + modelD r.toStr ng(), e);
+      throw new  OExcept on("Couldn't f nd model " + modelD r.toStr ng());
     }
 
-    Session session = SavedModelBundle.load(modelLocator.localPath(), TF_TAGS).session();
+    Sess on sess on = SavedModelBundle.load(modelLocator.localPath(), TF_TAGS).sess on();
 
-    return new TFModelRunner(session);
+    return new TFModelRunner(sess on);
   }
 
 
   /**
-   * Initialize Tensorflow intra and inter op thread pools.
-   * See `ConfigProto.[intra|inter]_op_parallelism_threads` documentation for more information:
-   * https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/config.proto
-   * Initialization should happen only once.
+   *  n  al ze Tensorflow  ntra and  nter op thread pools.
+   * See `Conf gProto.[ ntra| nter]_op_parallel sm_threads` docu ntat on for more  nformat on:
+   * https://g hub.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/conf g.proto
+   *  n  al zat on should happen only once.
    * Default values for Tensorflow are:
-   * intraOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * interOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * operation_timeout_in_ms = 0 which means that no timeout will be applied.
+   *  ntraOpParallel smThreads = 0 wh ch  ans that TF w ll p ck an appropr ate default.
+   *  nterOpParallel smThreads = 0 wh ch  ans that TF w ll p ck an appropr ate default.
+   * operat on_t  out_ n_ms = 0 wh ch  ans that no t  out w ll be appl ed.
    */
-  public static void initTensorflowThreadPools(
-    int intraOpParallelismThreads,
-    int interOpParallelismThreads) {
-    new TFSessionInit(intraOpParallelismThreads, interOpParallelismThreads, 0);
+  publ c stat c vo d  n TensorflowThreadPools(
+     nt  ntraOpParallel smThreads,
+     nt  nterOpParallel smThreads) {
+    new TFSess on n ( ntraOpParallel smThreads,  nterOpParallel smThreads, 0);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * Creates a no-op  nstance.   can be used for tests or w n t  models are d sabled.
    */
-  public static TensorflowModelsManager createNoOp(String statsPrefix) {
-    return new TensorflowModelsManager(Collections::emptyMap, false, statsPrefix) {
-      @Override
-      public void run() { }
+  publ c stat c TensorflowModelsManager createNoOp(Str ng statsPref x) {
+    return new TensorflowModelsManager(Collect ons::emptyMap, false, statsPref x) {
+      @Overr de
+      publ c vo d run() { }
 
-      @Override
-      public boolean isEnabled() {
+      @Overr de
+      publ c boolean  sEnabled() {
         return false;
       }
 
-      @Override
-      public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) { }
+      @Overr de
+      publ c vo d updateFeatureSc ma dToMl dMap(Thr ftSearchFeatureSc ma sc ma) { }
     };
   }
 
  /**
-   * Creates an instance that loads the models based on a ConfigSupplier.
+   * Creates an  nstance that loads t  models based on a Conf gSuppl er.
    */
-  public static TensorflowModelsManager createUsingConfigFile(
-      AbstractFile configFile,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> serveModels,
-      Supplier<Boolean> loadModels,
-      DynamicSchema dynamicSchema) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
+  publ c stat c TensorflowModelsManager createUs ngConf gF le(
+      AbstractF le conf gF le,
+      boolean shouldUnload nact veModels,
+      Str ng statsPref x,
+      Suppl er<Boolean> serveModels,
+      Suppl er<Boolean> loadModels,
+      Dynam cSc ma dynam cSc ma) {
+    Precond  ons.c ckArgu nt(
+        conf gF le.canRead(), "Conf g f le  s not readable: %s", conf gF le.getPath());
     return new TensorflowModelsManager(
-      new ConfigSupplier(configFile),
-      shouldUnloadInactiveModels,
-      statsPrefix,
+      new Conf gSuppl er(conf gF le),
+      shouldUnload nact veModels,
+      statsPref x,
       serveModels,
       loadModels,
-      dynamicSchema
+      dynam cSc ma
     );
   }
 }

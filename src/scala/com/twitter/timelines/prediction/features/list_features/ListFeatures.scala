@@ -1,24 +1,24 @@
-package com.twitter.timelines.prediction.features.list_features
+package com.tw ter.t  l nes.pred ct on.features.l st_features
 
-import com.twitter.ml.api.Feature.{Binary, Discrete}
-import com.twitter.ml.api.FeatureContext
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .Feature.{B nary, D screte}
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport scala.collect on.JavaConverters._
 
-object ListFeatures {
+object L stFeatures {
 
-  // list.id is used for list tweet injections in home. timelines.meta.list_id is used for list tweets in list timeline.
-  val LIST_ID = new Discrete("list.id")
+  // l st. d  s used for l st t et  nject ons  n ho . t  l nes. ta.l st_ d  s used for l st t ets  n l st t  l ne.
+  val L ST_ D = new D screte("l st. d")
 
-  val VIEWER_IS_OWNER =
-    new Binary("list.viewer.is_owner", Set(ListsNonpublicList, ListsPublicList).asJava)
-  val VIEWER_IS_SUBSCRIBER = new Binary("list.viewer.is_subscriber")
-  val IS_PINNED_LIST = new Binary("list.is_pinned")
+  val V EWER_ S_OWNER =
+    new B nary("l st.v e r. s_owner", Set(L stsNonpubl cL st, L stsPubl cL st).asJava)
+  val V EWER_ S_SUBSCR BER = new B nary("l st.v e r. s_subscr ber")
+  val  S_P NNED_L ST = new B nary("l st. s_p nned")
 
   val featureContext = new FeatureContext(
-    LIST_ID,
-    VIEWER_IS_OWNER,
-    VIEWER_IS_SUBSCRIBER,
-    IS_PINNED_LIST
+    L ST_ D,
+    V EWER_ S_OWNER,
+    V EWER_ S_SUBSCR BER,
+     S_P NNED_L ST
   )
 }

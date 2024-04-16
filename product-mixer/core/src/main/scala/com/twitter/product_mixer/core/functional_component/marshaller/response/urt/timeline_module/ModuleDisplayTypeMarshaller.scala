@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Carousel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.CompactCarousel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Conversat onTree
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Gr dCarousel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert cal
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calConversat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calW hContextL ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calGr d
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class ModuleDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class ModuleD splayTypeMarshaller @ nject() () {
 
-  def apply(displayType: ModuleDisplayType): urt.ModuleDisplayType = displayType match {
-    case Vertical => urt.ModuleDisplayType.Vertical
-    case Carousel => urt.ModuleDisplayType.Carousel
-    case VerticalWithContextLine => urt.ModuleDisplayType.VerticalWithContextLine
-    case VerticalConversation => urt.ModuleDisplayType.VerticalConversation
-    case ConversationTree => urt.ModuleDisplayType.ConversationTree
-    case GridCarousel => urt.ModuleDisplayType.GridCarousel
-    case CompactCarousel => urt.ModuleDisplayType.CompactCarousel
-    case VerticalGrid => urt.ModuleDisplayType.VerticalGrid
+  def apply(d splayType: ModuleD splayType): urt.ModuleD splayType = d splayType match {
+    case Vert cal => urt.ModuleD splayType.Vert cal
+    case Carousel => urt.ModuleD splayType.Carousel
+    case Vert calW hContextL ne => urt.ModuleD splayType.Vert calW hContextL ne
+    case Vert calConversat on => urt.ModuleD splayType.Vert calConversat on
+    case Conversat onTree => urt.ModuleD splayType.Conversat onTree
+    case Gr dCarousel => urt.ModuleD splayType.Gr dCarousel
+    case CompactCarousel => urt.ModuleD splayType.CompactCarousel
+    case Vert calGr d => urt.ModuleD splayType.Vert calGr d
   }
 }

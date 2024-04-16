@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BottomSheet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConfirmationDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Inline
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.BottomS et
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Conf rmat onD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. nl ne
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ConfirmationDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class Conf rmat onD splayTypeMarshaller @ nject() () {
 
-  def apply(confirmationDisplayType: ConfirmationDisplayType): urt.ConfirmationDisplayType =
-    confirmationDisplayType match {
-      case Inline => urt.ConfirmationDisplayType.Inline
-      case BottomSheet => urt.ConfirmationDisplayType.BottomSheet
+  def apply(conf rmat onD splayType: Conf rmat onD splayType): urt.Conf rmat onD splayType =
+    conf rmat onD splayType match {
+      case  nl ne => urt.Conf rmat onD splayType. nl ne
+      case BottomS et => urt.Conf rmat onD splayType.BottomS et
     }
 }

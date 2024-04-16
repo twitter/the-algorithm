@@ -1,26 +1,26 @@
 #pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+# nclude <twml/def nes.h>
+# nclude <twml/Tensor.h>
 
-#ifdef __cplusplus
-namespace twml {
+# fdef __cplusplus
+na space twml {
 
-    // Adding these as an easy way to test the wrappers
-    TWMLAPI void add1(Tensor &output, const Tensor input);
-    TWMLAPI void copy(Tensor &output, const Tensor input);
-    TWMLAPI int64_t featureId(const std::string &feature);
+    // Add ng t se as an easy way to test t  wrappers
+    TWMLAP  vo d add1(Tensor &output, const Tensor  nput);
+    TWMLAP  vo d copy(Tensor &output, const Tensor  nput);
+    TWMLAP   nt64_t feature d(const std::str ng &feature);
 }
-#endif
+#end f
 
-#ifdef __cplusplus
+# fdef __cplusplus
 extern "C" {
-#endif
+#end f
 
-    // Adding these as an easy way to test the wrappers
-    TWMLAPI twml_err twml_add1(twml_tensor output, const twml_tensor input);
-    TWMLAPI twml_err twml_copy(twml_tensor output, const twml_tensor input);
-    TWMLAPI twml_err twml_get_feature_id(int64_t *result, const uint64_t len, const char *str);
+    // Add ng t se as an easy way to test t  wrappers
+    TWMLAP  twml_err twml_add1(twml_tensor output, const twml_tensor  nput);
+    TWMLAP  twml_err twml_copy(twml_tensor output, const twml_tensor  nput);
+    TWMLAP  twml_err twml_get_feature_ d( nt64_t *result, const u nt64_t len, const char *str);
 
-#ifdef __cplusplus
+# fdef __cplusplus
 }
-#endif
+#end f

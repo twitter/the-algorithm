@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.tw ter.product_m xer.component_l brary.scorer.common
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.grpc.FutureConverters
-import com.twitter.stitch.Stitch
-import inference.GRPCInferenceServiceGrpc
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
-import io.grpc.ManagedChannel
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.grpc.F nagleChannelBu lder
+ mport com.tw ter.f nagle.grpc.FutureConverters
+ mport com.tw ter.st ch.St ch
+ mport  nference.GRPC nferenceServ ceGrpc
+ mport  nference.GrpcServ ce.Model nferRequest
+ mport  nference.GrpcServ ce.Model nferResponse
+ mport  o.grpc.ManagedChannel
 
 /**
- * Client wrapper for calling a Cortex Managed Inference Service (go/cmis) ML Model using GRPC.
- * @param httpClient Finagle HTTP Client to use for connection.
- * @param modelPath Wily path to the ML Model service (e.g. /cluster/local/role/service/instance).
+ * Cl ent wrapper for call ng a Cortex Managed  nference Serv ce (go/cm s) ML Model us ng GRPC.
+ * @param httpCl ent F nagle HTTP Cl ent to use for connect on.
+ * @param modelPath W ly path to t  ML Model serv ce (e.g. /cluster/local/role/serv ce/ nstance).
  */
-case class ManagedModelClient(
-  httpClient: Http.Client,
-  modelPath: String)
-    extends MLModelInferenceClient {
+case class ManagedModelCl ent(
+  httpCl ent: Http.Cl ent,
+  modelPath: Str ng)
+    extends MLModel nferenceCl ent {
 
-  private val channel: ManagedChannel =
-    FinagleChannelBuilder.forTarget(modelPath).httpClient(httpClient).build()
+  pr vate val channel: ManagedChannel =
+    F nagleChannelBu lder.forTarget(modelPath).httpCl ent(httpCl ent).bu ld()
 
-  private val inferenceServiceStub = GRPCInferenceServiceGrpc.newFutureStub(channel)
+  pr vate val  nferenceServ ceStub = GRPC nferenceServ ceGrpc.newFutureStub(channel)
 
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse] = {
-    Stitch
+  def score(request: Model nferRequest): St ch[Model nferResponse] = {
+    St ch
       .callFuture(
         FutureConverters
-          .RichListenableFuture(inferenceServiceStub.modelInfer(request)).toTwitter)
+          .R chL stenableFuture( nferenceServ ceStub.model nfer(request)).toTw ter)
   }
 }

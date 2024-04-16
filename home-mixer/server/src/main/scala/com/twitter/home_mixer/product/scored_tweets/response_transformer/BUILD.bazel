@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    dependencies = [
-        "explore/explore-ranker/thrift/src/main/thrift:thrift-scala",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/timelines",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util/tweetypie/content",
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
-        "src/thrift/com/twitter/timelineranker:thrift-scala",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    dependenc es = [
+        "explore/explore-ranker/thr ft/src/ma n/thr ft:thr ft-scala",
+        "ho -m xer/server/src/ma n/scala/com/tw ter/ho _m xer/marshaller/t  l nes",
+        "ho -m xer/server/src/ma n/scala/com/tw ter/ho _m xer/model",
+        "ho -m xer/server/src/ma n/scala/com/tw ter/ho _m xer/ut l/t etyp e/content",
+        "ho -m xer/thr ft/src/ma n/thr ft:thr ft-scala",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/transfor r",
+        "src/thr ft/com/tw ter/t  l neranker:thr ft-scala",
+        "top c-soc al-proof/server/src/ma n/thr ft:thr ft-scala",
+        "t et-m xer/thr ft/src/ma n/thr ft:thr ft-scala",
     ],
 )

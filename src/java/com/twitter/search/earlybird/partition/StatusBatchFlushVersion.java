@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
 /**
- * Keeps track of versioning for flushed status batch data.
+ * Keeps track of vers on ng for flus d status batch data.
  */
-public enum StatusBatchFlushVersion {
+publ c enum StatusBatchFlushVers on {
 
-  VERSION_0("Initial version of status batch flushing", true),
-  VERSION_1("Switching to use field groups (contains changes to PartitionedBatch)", true),
-  VERSION_2("Removing support for per-partition _SUCCESS markers", true),
-  /* Put the semi colon on a separate line to avoid polluting git blame history */;
+  VERS ON_0(" n  al vers on of status batch flush ng", true),
+  VERS ON_1("Sw ch ng to use f eld groups (conta ns changes to Part  onedBatch)", true),
+  VERS ON_2("Remov ng support for per-part  on _SUCCESS markers", true),
+  /* Put t  sem  colon on a separate l ne to avo d pollut ng g  bla   tory */;
 
-  public static final StatusBatchFlushVersion CURRENT_FLUSH_VERSION =
-      StatusBatchFlushVersion.values()[StatusBatchFlushVersion.values().length - 1];
+  publ c stat c f nal StatusBatchFlushVers on CURRENT_FLUSH_VERS ON =
+      StatusBatchFlushVers on.values()[StatusBatchFlushVers on.values().length - 1];
 
-  public static final String DELIMITER = "_v_";
+  publ c stat c f nal Str ng DEL M TER = "_v_";
 
-  private final String description;
-  private final boolean isOfficial;
+  pr vate f nal Str ng descr pt on;
+  pr vate f nal boolean  sOff c al;
 
-  private StatusBatchFlushVersion(String description, boolean official) {
-    this.description = description;
-    isOfficial = official;
+  pr vate StatusBatchFlushVers on(Str ng descr pt on, boolean off c al) {
+    t .descr pt on = descr pt on;
+     sOff c al = off c al;
   }
 
-  public int getVersionNumber() {
-    return this.ordinal();
+  publ c  nt getVers onNumber() {
+    return t .ord nal();
   }
 
-  public String getVersionFileExtension() {
-      return DELIMITER + ordinal();
+  publ c Str ng getVers onF leExtens on() {
+      return DEL M TER + ord nal();
   }
 
-  public boolean isOfficial() {
-    return isOfficial;
+  publ c boolean  sOff c al() {
+    return  sOff c al;
   }
 
-  public String getDescription() {
-    return description;
+  publ c Str ng getDescr pt on() {
+    return descr pt on;
   }
 }

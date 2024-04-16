@@ -1,68 +1,68 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.constant.SharedFeatures
-import java.lang.{Double => JDouble}
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . Transform
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport java.lang.{Double => JDouble}
 
-import com.twitter.timelines.prediction.common.adapters.AdapterConsumer
-import com.twitter.timelines.prediction.common.adapters.EngagementLabelFeaturesDataRecordUtils
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.suggests.common.engagement.thriftscala.EngagementType
-import com.twitter.timelines.suggests.common.engagement.thriftscala.Engagement
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.common.CombinedFeatures
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.AdapterConsu r
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.Engage ntLabelFeaturesDataRecordUt ls
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.t  l nes.suggests.common.engage nt.thr ftscala.Engage ntType
+ mport com.tw ter.t  l nes.suggests.common.engage nt.thr ftscala.Engage nt
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.common.Comb nedFeatures
 
 /**
- * To transfrom BCE events UUA data records that contain only continuous dwell time to datarecords that contain corresponding binary label features
- * The UUA datarecords inputted would have USER_ID, SOURCE_TWEET_ID,TIMESTAMP and
- * 0 or one of (TWEET_DETAIL_DWELL_TIME_MS, PROFILE_DWELL_TIME_MS, FULLSCREEN_VIDEO_DWELL_TIME_MS) features.
- * We will use the different engagement TIME_MS to differentiate different engagements,
- * and then re-use the function in EngagementTypeConverte to add the binary label to the datarecord.
+ * To transfrom BCE events UUA data records that conta n only cont nuous d ll t   to datarecords that conta n correspond ng b nary label features
+ * T  UUA datarecords  nputted would have USER_ D, SOURCE_TWEET_ D,T MESTAMP and
+ * 0 or one of (TWEET_DETA L_DWELL_T ME_MS, PROF LE_DWELL_T ME_MS, FULLSCREEN_V DEO_DWELL_T ME_MS) features.
+ *   w ll use t  d fferent engage nt T ME_MS to d fferent ate d fferent engage nts,
+ * and t n re-use t  funct on  n Engage ntTypeConverte to add t  b nary label to t  datarecord.
  **/
 
-object BCELabelTransformFromUUADataRecord extends ITransform {
+object BCELabelTransformFromUUADataRecord extends  Transform {
 
-  val dwellTimeFeatureToEngagementMap = Map(
-    TimelinesSharedFeatures.TWEET_DETAIL_DWELL_TIME_MS -> EngagementType.TweetDetailDwell,
-    TimelinesSharedFeatures.PROFILE_DWELL_TIME_MS -> EngagementType.ProfileDwell,
-    TimelinesSharedFeatures.FULLSCREEN_VIDEO_DWELL_TIME_MS -> EngagementType.FullscreenVideoDwell
+  val d llT  FeatureToEngage ntMap = Map(
+    T  l nesSharedFeatures.TWEET_DETA L_DWELL_T ME_MS -> Engage ntType.T etDeta lD ll,
+    T  l nesSharedFeatures.PROF LE_DWELL_T ME_MS -> Engage ntType.Prof leD ll,
+    T  l nesSharedFeatures.FULLSCREEN_V DEO_DWELL_T ME_MS -> Engage ntType.FullscreenV deoD ll
   )
 
-  def dwellFeatureToEngagement(
-    rdr: RichDataRecord,
-    dwellTimeFeature: Feature[JDouble],
-    engagementType: EngagementType
-  ): Option[Engagement] = {
-    if (rdr.hasFeature(dwellTimeFeature)) {
-      Some(
-        Engagement(
-          engagementType = engagementType,
-          timestampMs = rdr.getFeatureValue(SharedFeatures.TIMESTAMP),
-          weight = Some(rdr.getFeatureValue(dwellTimeFeature))
+  def d llFeatureToEngage nt(
+    rdr: R chDataRecord,
+    d llT  Feature: Feature[JDouble],
+    engage ntType: Engage ntType
+  ): Opt on[Engage nt] = {
+     f (rdr.hasFeature(d llT  Feature)) {
+      So (
+        Engage nt(
+          engage ntType = engage ntType,
+          t  stampMs = rdr.getFeatureValue(SharedFeatures.T MESTAMP),
+            ght = So (rdr.getFeatureValue(d llT  Feature))
         ))
     } else {
       None
     }
   }
-  override def transformContext(featureContext: FeatureContext): FeatureContext = {
+  overr de def transformContext(featureContext: FeatureContext): FeatureContext = {
     featureContext.addFeatures(
-      (CombinedFeatures.TweetDetailDwellEngagements ++ CombinedFeatures.ProfileDwellEngagements ++ CombinedFeatures.FullscreenVideoDwellEngagements).toSeq: _*)
+      (Comb nedFeatures.T etDeta lD llEngage nts ++ Comb nedFeatures.Prof leD llEngage nts ++ Comb nedFeatures.FullscreenV deoD llEngage nts).toSeq: _*)
   }
-  override def transform(record: DataRecord): Unit = {
-    val rdr = new RichDataRecord(record)
-    val engagements = dwellTimeFeatureToEngagementMap
+  overr de def transform(record: DataRecord): Un  = {
+    val rdr = new R chDataRecord(record)
+    val engage nts = d llT  FeatureToEngage ntMap
       .map {
-        case (dwellTimeFeature, engagementType) =>
-          dwellFeatureToEngagement(rdr, dwellTimeFeature, engagementType)
+        case (d llT  Feature, engage ntType) =>
+          d llFeatureToEngage nt(rdr, d llT  Feature, engage ntType)
       }.flatten.toSeq
 
-    // Re-use BCE( behavior client events) label conversion in EngagementTypeConverter to align with BCE labels generation for offline training data
-    EngagementLabelFeaturesDataRecordUtils.setDwellTimeFeatures(
+    // Re-use BCE( behav or cl ent events) label convers on  n Engage ntTypeConverter to al gn w h BCE labels generat on for offl ne tra n ng data
+    Engage ntLabelFeaturesDataRecordUt ls.setD llT  Features(
       rdr,
-      Some(engagements),
-      AdapterConsumer.Combined)
+      So (engage nts),
+      AdapterConsu r.Comb ned)
   }
 }

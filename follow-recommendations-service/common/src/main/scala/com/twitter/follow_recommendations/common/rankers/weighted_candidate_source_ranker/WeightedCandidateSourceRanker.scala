@@ -1,82 +1,82 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.common.DedupCandidates
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+package com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.DedupCand dates
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ut ls.Ut ls
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * Candidate Ranker that mixes and ranks multiple candidate lists from different candidate sources with the
- * following steps:
- *  1) generate a ranked candidate list of each candidate source by sorting and shuffling the candidate list
- *     of the algorithm.
- *  2) merge the ranked lists generated in 1) into a single list using weighted randomly sampling.
- *  3) If dedup is required, dedup the output from 2) by candidate id.
+ * Cand date Ranker that m xes and ranks mult ple cand date l sts from d fferent cand date s ces w h t 
+ * follow ng steps:
+ *  1) generate a ranked cand date l st of each cand date s ce by sort ng and shuffl ng t  cand date l st
+ *     of t  algor hm.
+ *  2)  rge t  ranked l sts generated  n 1)  nto a s ngle l st us ng   ghted randomly sampl ng.
+ *  3)  f dedup  s requ red, dedup t  output from 2) by cand date  d.
  *
  * @param basedRanker base ranker
- * @param shuffleFn the shuffle function that will be used to shuffle each algorithm's sorted candidate list.
- * @param dedup whether to remove duplicated candidates from the final output.
+ * @param shuffleFn t  shuffle funct on that w ll be used to shuffle each algor hm's sorted cand date l st.
+ * @param dedup w t r to remove dupl cated cand dates from t  f nal output.
  */
-class WeightedCandidateSourceRanker[Target <: HasParams](
-  basedRanker: WeightedCandidateSourceBaseRanker[
-    CandidateSourceIdentifier,
-    CandidateUser
+class   ghtedCand dateS ceRanker[Target <: HasParams](
+  basedRanker:   ghtedCand dateS ceBaseRanker[
+    Cand dateS ce dent f er,
+    Cand dateUser
   ],
-  shuffleFn: Seq[CandidateUser] => Seq[CandidateUser],
+  shuffleFn: Seq[Cand dateUser] => Seq[Cand dateUser],
   dedup: Boolean)
-    extends Ranker[Target, CandidateUser] {
+    extends Ranker[Target, Cand dateUser] {
 
-  val name: String = this.getClass.getSimpleName
+  val na : Str ng = t .getClass.getS mpleNa 
 
-  override def rank(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
-    val scribeRankingInfo: Boolean =
-      target.params(WeightedCandidateSourceRankerParams.ScribeRankingInfoInWeightedRanker)
-    val rankedCands = rankCandidates(group(candidates))
-    Stitch.value(if (scribeRankingInfo) Utils.addRankingInfo(rankedCands, name) else rankedCands)
+  overr de def rank(target: Target, cand dates: Seq[Cand dateUser]): St ch[Seq[Cand dateUser]] = {
+    val scr beRank ng nfo: Boolean =
+      target.params(  ghtedCand dateS ceRankerParams.Scr beRank ng nfo n  ghtedRanker)
+    val rankedCands = rankCand dates(group(cand dates))
+    St ch.value( f (scr beRank ng nfo) Ut ls.addRank ng nfo(rankedCands, na ) else rankedCands)
   }
 
-  private def group(
-    candidates: Seq[CandidateUser]
-  ): Map[CandidateSourceIdentifier, Seq[CandidateUser]] = {
+  pr vate def group(
+    cand dates: Seq[Cand dateUser]
+  ): Map[Cand dateS ce dent f er, Seq[Cand dateUser]] = {
     val flattened = for {
-      candidate <- candidates
-      identifier <- candidate.getPrimaryCandidateSource
-    } yield (identifier, candidate)
+      cand date <- cand dates
+       dent f er <- cand date.getPr maryCand dateS ce
+    } y eld ( dent f er, cand date)
     flattened.groupBy(_._1).mapValues(_.map(_._2))
   }
 
-  private def rankCandidates(
-    input: Map[CandidateSourceIdentifier, Seq[CandidateUser]]
-  ): Seq[CandidateUser] = {
-    // Sort and shuffle candidates per candidate source.
-    // Note 1: Using map instead mapValue here since mapValue somehow caused infinite loop when used as part of Stream.
-    val sortAndShuffledCandidates = input.map {
-      case (source, candidates) =>
-        // Note 2: toList is required here since candidates is a view, and it will result in infinit loop when used as part of Stream.
-        // Note 3: there is no real sorting logic here, it assumes the input is already sorted by candidate sources
-        val sortedCandidates = candidates.toList
-        source -> shuffleFn(sortedCandidates).iterator
+  pr vate def rankCand dates(
+     nput: Map[Cand dateS ce dent f er, Seq[Cand dateUser]]
+  ): Seq[Cand dateUser] = {
+    // Sort and shuffle cand dates per cand date s ce.
+    // Note 1: Us ng map  nstead mapValue  re s nce mapValue so how caused  nf n e loop w n used as part of Stream.
+    val sortAndShuffledCand dates =  nput.map {
+      case (s ce, cand dates) =>
+        // Note 2: toL st  s requ red  re s nce cand dates  s a v ew, and   w ll result  n  nf n  loop w n used as part of Stream.
+        // Note 3: t re  s no real sort ng log c  re,   assu s t   nput  s already sorted by cand date s ces
+        val sortedCand dates = cand dates.toL st
+        s ce -> shuffleFn(sortedCand dates). erator
     }
-    val rankedCandidates = basedRanker(sortAndShuffledCandidates)
+    val rankedCand dates = basedRanker(sortAndShuffledCand dates)
 
-    if (dedup) DedupCandidates(rankedCandidates) else rankedCandidates
+     f (dedup) DedupCand dates(rankedCand dates) else rankedCand dates
   }
 }
 
-object WeightedCandidateSourceRanker {
+object   ghtedCand dateS ceRanker {
 
-  def build[Target <: HasParams](
-    candidateSourceWeight: Map[CandidateSourceIdentifier, Double],
-    shuffleFn: Seq[CandidateUser] => Seq[CandidateUser] = identity,
+  def bu ld[Target <: HasParams](
+    cand dateS ce  ght: Map[Cand dateS ce dent f er, Double],
+    shuffleFn: Seq[Cand dateUser] => Seq[Cand dateUser] =  dent y,
     dedup: Boolean = false,
-    randomSeed: Option[Long] = None
-  ): WeightedCandidateSourceRanker[Target] = {
-    new WeightedCandidateSourceRanker(
-      new WeightedCandidateSourceBaseRanker(
-        candidateSourceWeight,
-        WeightMethod.WeightedRandomSampling,
+    randomSeed: Opt on[Long] = None
+  ):   ghtedCand dateS ceRanker[Target] = {
+    new   ghtedCand dateS ceRanker(
+      new   ghtedCand dateS ceBaseRanker(
+        cand dateS ce  ght,
+          ght thod.  ghtedRandomSampl ng,
         randomSeed = randomSeed),
       shuffleFn,
       dedup
@@ -84,16 +84,16 @@ object WeightedCandidateSourceRanker {
   }
 }
 
-object WeightedCandidateSourceRankerWithoutRandomSampling {
-  def build[Target <: HasParams](
-    candidateSourceWeight: Map[CandidateSourceIdentifier, Double]
-  ): WeightedCandidateSourceRanker[Target] = {
-    new WeightedCandidateSourceRanker(
-      new WeightedCandidateSourceBaseRanker(
-        candidateSourceWeight,
-        WeightMethod.WeightedRoundRobin,
+object   ghtedCand dateS ceRankerW houtRandomSampl ng {
+  def bu ld[Target <: HasParams](
+    cand dateS ce  ght: Map[Cand dateS ce dent f er, Double]
+  ):   ghtedCand dateS ceRanker[Target] = {
+    new   ghtedCand dateS ceRanker(
+      new   ghtedCand dateS ceBaseRanker(
+        cand dateS ce  ght,
+          ght thod.  ghtedRoundRob n,
         randomSeed = None),
-      identity,
+       dent y,
       false,
     )
   }

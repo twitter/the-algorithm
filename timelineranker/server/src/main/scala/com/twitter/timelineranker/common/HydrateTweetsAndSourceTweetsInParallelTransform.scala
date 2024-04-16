@@ -1,30 +1,30 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.ut l.Future
 
 /**
- * Transform that explicitly hydrates candidate tweets and fetches source tweets in parallel
- * and then joins the results back into the original Envelope
- * @param candidateTweetHydration Pipeline that hydrates candidate tweets
- * @param sourceTweetHydration Pipeline that fetches and hydrates source tweets
+ * Transform that expl c ly hydrates cand date t ets and fetc s s ce t ets  n parallel
+ * and t n jo ns t  results back  nto t  or g nal Envelope
+ * @param cand dateT etHydrat on P pel ne that hydrates cand date t ets
+ * @param s ceT etHydrat on P pel ne that fetc s and hydrates s ce t ets
  */
-class HydrateTweetsAndSourceTweetsInParallelTransform(
-  candidateTweetHydration: FutureArrow[CandidateEnvelope, CandidateEnvelope],
-  sourceTweetHydration: FutureArrow[CandidateEnvelope, CandidateEnvelope])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+class HydrateT etsAndS ceT ets nParallelTransform(
+  cand dateT etHydrat on: FutureArrow[Cand dateEnvelope, Cand dateEnvelope],
+  s ceT etHydrat on: FutureArrow[Cand dateEnvelope, Cand dateEnvelope])
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
     Future
-      .join(
-        candidateTweetHydration(envelope),
-        sourceTweetHydration(envelope)
+      .jo n(
+        cand dateT etHydrat on(envelope),
+        s ceT etHydrat on(envelope)
       ).map {
-        case (candidateTweetEnvelope, sourceTweetEnvelope) =>
+        case (cand dateT etEnvelope, s ceT etEnvelope) =>
           envelope.copy(
-            hydratedTweets = candidateTweetEnvelope.hydratedTweets,
-            sourceSearchResults = sourceTweetEnvelope.sourceSearchResults,
-            sourceHydratedTweets = sourceTweetEnvelope.sourceHydratedTweets
+            hydratedT ets = cand dateT etEnvelope.hydratedT ets,
+            s ceSearchResults = s ceT etEnvelope.s ceSearchResults,
+            s ceHydratedT ets = s ceT etEnvelope.s ceHydratedT ets
           )
       }
   }

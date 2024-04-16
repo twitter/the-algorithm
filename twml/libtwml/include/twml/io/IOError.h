@@ -1,43 +1,43 @@
 #pragma once
 
-#include <twml/Error.h>
+# nclude <twml/Error.h>
 
-namespace twml {
-namespace io {
+na space twml {
+na space  o {
 
-class IOError : public twml::Error {
-  public:
+class  OError : publ c twml::Error {
+  publ c:
     enum Status {
       OUT_OF_RANGE = 1,
-      WRONG_MAGIC = 2,
+      WRONG_MAG C = 2,
       WRONG_HEADER = 3,
       ERROR_HEADER_CHECKSUM = 4,
-      INVALID_METHOD = 5,
-      USING_RESERVED = 6,
-      ERROR_HEADER_EXTRA_FIELD_CHECKSUM = 7,
-      CANT_FIT_OUTPUT = 8,
-      SPLIT_FILE = 9,
-      BLOCK_SIZE_TOO_LARGE = 10,
-      SOURCE_LARGER_THAN_DESTINATION = 11,
-      DESTINATION_LARGER_THAN_CAPACITY = 12,
-      HEADER_FLAG_MISMATCH = 13,
-      NOT_ENOUGH_INPUT = 14,
+       NVAL D_METHOD = 5,
+      US NG_RESERVED = 6,
+      ERROR_HEADER_EXTRA_F ELD_CHECKSUM = 7,
+      CANT_F T_OUTPUT = 8,
+      SPL T_F LE = 9,
+      BLOCK_S ZE_TOO_LARGE = 10,
+      SOURCE_LARGER_THAN_DEST NAT ON = 11,
+      DEST NAT ON_LARGER_THAN_CAPAC TY = 12,
+      HEADER_FLAG_M SMATCH = 13,
+      NOT_ENOUGH_ NPUT = 14,
       ERROR_SOURCE_BLOCK_CHECKSUM = 15,
-      COMPRESSED_DATA_VIOLATION = 16,
-      ERROR_DESTINATION_BLOCK_CHECKSUM = 17,
+      COMPRESSED_DATA_V OLAT ON = 16,
+      ERROR_DEST NAT ON_BLOCK_CHECKSUM = 17,
       EMPTY_RECORD = 18,
       MALFORMED_MEMORY_RECORD = 19,
       UNSUPPORTED_OUTPUT_TYPE = 20,
       OTHER_ERROR
     };
 
-    IOError(Status status);
+     OError(Status status);
 
     Status status() const {
       return m_status;
     }
 
-  private:
+  pr vate:
     Status m_status;
 };
 

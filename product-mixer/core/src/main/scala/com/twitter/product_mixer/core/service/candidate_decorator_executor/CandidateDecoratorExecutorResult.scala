@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.service.candidate_decorator_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor
 
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.service.ExecutorResult
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
 
-case class CandidateDecoratorExecutorResult(result: Seq[Decoration]) extends ExecutorResult
+case class Cand dateDecoratorExecutorResult(result: Seq[Decorat on]) extends ExecutorResult

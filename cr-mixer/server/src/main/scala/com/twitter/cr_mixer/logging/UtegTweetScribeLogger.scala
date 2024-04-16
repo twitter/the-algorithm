@@ -1,146 +1,146 @@
-package com.twitter.cr_mixer.logging
+package com.tw ter.cr_m xer.logg ng
 
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.thriftscala.UtegTweetRequest
-import com.twitter.cr_mixer.thriftscala.UtegTweetResponse
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.GetUtegTweetsScribe
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.UtegTweetResult
-import com.twitter.cr_mixer.thriftscala.UtegTweetTopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.logg ng.Scr beLoggerUt ls._
+ mport com.tw ter.cr_m xer.model.UtegT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.T etW hScoreAndSoc alProof
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.FetchCand datesResult
+ mport com.tw ter.cr_m xer.thr ftscala.GetUtegT etsScr be
+ mport com.tw ter.cr_m xer.thr ftscala.Performance tr cs
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT etResult
+ mport com.tw ter.cr_m xer.thr ftscala.UtegT etTopLevelAp Result
+ mport com.tw ter.cr_m xer.thr ftscala.T etCand dateW h tadata
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Stopwatch
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-case class UtegTweetScribeLogger @Inject() (
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver,
-  @Named(ModuleNames.UtegTweetsLogger) utegTweetScribeLogger: Logger) {
+@S ngleton
+case class UtegT etScr beLogger @ nject() (
+  dec der: CrM xerDec der,
+  statsRece ver: StatsRece ver,
+  @Na d(ModuleNa s.UtegT etsLogger) utegT etScr beLogger: Logger) {
 
-  private val scopedStats = statsReceiver.scope("UtegTweetScribeLogger")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
+  pr vate val scopedStats = statsRece ver.scope("UtegT etScr beLogger")
+  pr vate val topLevelAp Stats = scopedStats.scope("TopLevelAp ")
+  pr vate val upperFunnelsStats = scopedStats.scope("UpperFunnels")
 
-  def scribeInitialCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[TweetWithScoreAndSocialProof]]
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
+  def scr be n  alCand dates(
+    query: UtegT etCand dateGeneratorQuery,
+    getResultFn: => Future[Seq[T etW hScoreAndSoc alProof]]
+  ): Future[Seq[T etW hScoreAndSoc alProof]] = {
+    scr beResultsAndPerformance tr cs(
+      Scr be tadata.from(query),
       getResultFn,
-      convertToResultFn = convertFetchCandidatesResult
+      convertToResultFn = convertFetchCand datesResult
     )
   }
 
   /**
-   * Scribe Top Level API Request / Response and performance metrics
-   * for the GetUtegTweetRecommendations() endpoint.
+   * Scr be Top Level AP  Request / Response and performance  tr cs
+   * for t  GetUtegT etRecom ndat ons() endpo nt.
    */
-  def scribeGetUtegTweetRecommendations(
-    request: UtegTweetRequest,
-    startTime: Long,
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[UtegTweetResponse]
-  ): Future[UtegTweetResponse] = {
-    val timer = Stopwatch.start()
+  def scr beGetUtegT etRecom ndat ons(
+    request: UtegT etRequest,
+    startT  : Long,
+    scr be tadata: Scr be tadata,
+    getResultFn: => Future[UtegT etResponse]
+  ): Future[UtegT etResponse] = {
+    val t  r = Stopwatch.start()
     getResultFn.onSuccess { response =>
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        topLevelApiStats.counter(scribeMetadata.product.originalName).incr()
-        val latencyMs = timer().inMilliseconds
-        val result = convertTopLevelAPIResult(request, response, startTime)
-        val traceId = Trace.id.traceId.toLong
-        val scribeMsg =
-          buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+       f (dec der. sAva lableFor d(
+          scr be tadata.user d,
+          Dec derConstants.upperFunnelPerStepScr beRate)) {
+        topLevelAp Stats.counter(scr be tadata.product.or g nalNa ). ncr()
+        val latencyMs = t  r(). nM ll seconds
+        val result = convertTopLevelAP Result(request, response, startT  )
+        val trace d = Trace. d.trace d.toLong
+        val scr beMsg =
+          bu ldScr be ssage(result, scr be tadata, latencyMs, trace d)
 
-        scribeResult(scribeMsg)
+        scr beResult(scr beMsg)
       }
     }
   }
 
-  private def convertTopLevelAPIResult(
-    request: UtegTweetRequest,
-    response: UtegTweetResponse,
-    startTime: Long
-  ): UtegTweetResult = {
-    UtegTweetResult.UtegTweetTopLevelApiResult(
-      UtegTweetTopLevelApiResult(
-        timestamp = startTime,
+  pr vate def convertTopLevelAP Result(
+    request: UtegT etRequest,
+    response: UtegT etResponse,
+    startT  : Long
+  ): UtegT etResult = {
+    UtegT etResult.UtegT etTopLevelAp Result(
+      UtegT etTopLevelAp Result(
+        t  stamp = startT  ,
         request = request,
         response = response
       ))
   }
 
-  private def buildScribeMessage(
-    utegTweetResult: UtegTweetResult,
-    scribeMetadata: ScribeMetadata,
+  pr vate def bu ldScr be ssage(
+    utegT etResult: UtegT etResult,
+    scr be tadata: Scr be tadata,
     latencyMs: Long,
-    traceId: Long
-  ): GetUtegTweetsScribe = {
-    GetUtegTweetsScribe(
-      uuid = scribeMetadata.requestUUID,
-      userId = scribeMetadata.userId,
-      utegTweetResult = utegTweetResult,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+    trace d: Long
+  ): GetUtegT etsScr be = {
+    GetUtegT etsScr be(
+      uu d = scr be tadata.requestUU D,
+      user d = scr be tadata.user d,
+      utegT etResult = utegT etResult,
+      trace d = So (trace d),
+      performance tr cs = So (Performance tr cs(So (latencyMs))),
+       mpressedBuckets = get mpressedBuckets(scopedStats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetUtegTweetsScribe
-  ): Unit = {
-    publish(logger = utegTweetScribeLogger, codec = GetUtegTweetsScribe, message = scribeMsg)
+  pr vate def scr beResult(
+    scr beMsg: GetUtegT etsScr be
+  ): Un  = {
+    publ sh(logger = utegT etScr beLogger, codec = GetUtegT etsScr be,  ssage = scr beMsg)
   }
 
-  private def convertFetchCandidatesResult(
-    candidates: Seq[TweetWithScoreAndSocialProof],
-    requestUserId: UserId
-  ): UtegTweetResult = {
-    val tweetCandidatesWithMetadata = candidates.map { candidate =>
-      TweetCandidateWithMetadata(
-        tweetId = candidate.tweetId,
-        candidateGenerationKey = None
-      ) // do not hydrate candidateGenerationKey to save cost
+  pr vate def convertFetchCand datesResult(
+    cand dates: Seq[T etW hScoreAndSoc alProof],
+    requestUser d: User d
+  ): UtegT etResult = {
+    val t etCand datesW h tadata = cand dates.map { cand date =>
+      T etCand dateW h tadata(
+        t et d = cand date.t et d,
+        cand dateGenerat onKey = None
+      ) // do not hydrate cand dateGenerat onKey to save cost
     }
-    UtegTweetResult.FetchCandidatesResult(FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    UtegT etResult.FetchCand datesResult(FetchCand datesResult(So (t etCand datesW h tadata)))
   }
 
   /**
-   * Scribe Per-step intermediate results and performance metrics
-   * for each step: fetch candidates, filters.
+   * Scr be Per-step  nter d ate results and performance  tr cs
+   * for each step: fetch cand dates, f lters.
    */
-  private def scribeResultsAndPerformanceMetrics[T](
-    scribeMetadata: ScribeMetadata,
+  pr vate def scr beResultsAndPerformance tr cs[T](
+    scr be tadata: Scr be tadata,
     getResultFn: => Future[T],
-    convertToResultFn: (T, UserId) => UtegTweetResult
+    convertToResultFn: (T, User d) => UtegT etResult
   ): Future[T] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        upperFunnelsStats.counter(scribeMetadata.product.originalName).incr()
-        val latencyMs = timer().inMilliseconds
-        val result = convertToResultFn(input, scribeMetadata.userId)
-        val traceId = Trace.id.traceId.toLong
-        val scribeMsg =
-          buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
-        scribeResult(scribeMsg)
+    val t  r = Stopwatch.start()
+    getResultFn.onSuccess {  nput =>
+       f (dec der. sAva lableFor d(
+          scr be tadata.user d,
+          Dec derConstants.upperFunnelPerStepScr beRate)) {
+        upperFunnelsStats.counter(scr be tadata.product.or g nalNa ). ncr()
+        val latencyMs = t  r(). nM ll seconds
+        val result = convertToResultFn( nput, scr be tadata.user d)
+        val trace d = Trace. d.trace d.toLong
+        val scr beMsg =
+          bu ldScr be ssage(result, scr be tadata, latencyMs, trace d)
+        scr beResult(scr beMsg)
       }
     }
   }

@@ -1,157 +1,157 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.Engagement
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.rux.RepeatedProfileVisitsAggregateClientColumn
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.dds.jobs.repeated_prof le_v s s.thr ftscala.Prof leV s or nfo
+ mport com.tw ter.exper  nts.general_ tr cs.thr ftscala. dType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.Engage nt
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.RealT  RealGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.rux.RepeatedProf leV s sAggregateCl entColumn
 
-@Singleton
-class RepeatedProfileVisitsSource @Inject() (
-  repeatedProfileVisitsAggregateClientColumn: RepeatedProfileVisitsAggregateClientColumn,
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser]
-    with Logging {
+@S ngleton
+class RepeatedProf leV s sS ce @ nject() (
+  repeatedProf leV s sAggregateCl entColumn: RepeatedProf leV s sAggregateCl entColumn,
+  realT  RealGraphCl ent: RealT  RealGraphCl ent,
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[HasParams w h HasCl entContext, Cand dateUser]
+    w h Logg ng {
 
-  val identifier: CandidateSourceIdentifier =
-    RepeatedProfileVisitsSource.Identifier
+  val  dent f er: Cand dateS ce dent f er =
+    RepeatedProf leV s sS ce. dent f er
 
-  val sourceStatsReceiver = statsReceiver.scope("repeated_profile_visits_source")
-  val offlineFetchErrorCounter = sourceStatsReceiver.counter("offline_fetch_error")
-  val offlineFetchSuccessCounter = sourceStatsReceiver.counter("offline_fetch_success")
-  val onlineFetchErrorCounter = sourceStatsReceiver.counter("online_fetch_error")
-  val onlineFetchSuccessCounter = sourceStatsReceiver.counter("online_fetch_success")
-  val noRepeatedProfileVisitsAboveBucketingThresholdCounter =
-    sourceStatsReceiver.counter("no_repeated_profile_visits_above_bucketing_threshold")
-  val hasRepeatedProfileVisitsAboveBucketingThresholdCounter =
-    sourceStatsReceiver.counter("has_repeated_profile_visits_above_bucketing_threshold")
-  val noRepeatedProfileVisitsAboveRecommendationsThresholdCounter =
-    sourceStatsReceiver.counter("no_repeated_profile_visits_above_recommendations_threshold")
-  val hasRepeatedProfileVisitsAboveRecommendationsThresholdCounter =
-    sourceStatsReceiver.counter("has_repeated_profile_visits_above_recommendations_threshold")
-  val includeCandidatesCounter = sourceStatsReceiver.counter("include_candidates")
-  val noIncludeCandidatesCounter = sourceStatsReceiver.counter("no_include_candidates")
+  val s ceStatsRece ver = statsRece ver.scope("repeated_prof le_v s s_s ce")
+  val offl neFetchErrorCounter = s ceStatsRece ver.counter("offl ne_fetch_error")
+  val offl neFetchSuccessCounter = s ceStatsRece ver.counter("offl ne_fetch_success")
+  val onl neFetchErrorCounter = s ceStatsRece ver.counter("onl ne_fetch_error")
+  val onl neFetchSuccessCounter = s ceStatsRece ver.counter("onl ne_fetch_success")
+  val noRepeatedProf leV s sAboveBucket ngThresholdCounter =
+    s ceStatsRece ver.counter("no_repeated_prof le_v s s_above_bucket ng_threshold")
+  val hasRepeatedProf leV s sAboveBucket ngThresholdCounter =
+    s ceStatsRece ver.counter("has_repeated_prof le_v s s_above_bucket ng_threshold")
+  val noRepeatedProf leV s sAboveRecom ndat onsThresholdCounter =
+    s ceStatsRece ver.counter("no_repeated_prof le_v s s_above_recom ndat ons_threshold")
+  val hasRepeatedProf leV s sAboveRecom ndat onsThresholdCounter =
+    s ceStatsRece ver.counter("has_repeated_prof le_v s s_above_recom ndat ons_threshold")
+  val  ncludeCand datesCounter = s ceStatsRece ver.counter(" nclude_cand dates")
+  val no ncludeCand datesCounter = s ceStatsRece ver.counter("no_ nclude_cand dates")
 
-  // Returns visited user -> visit count, via off dataset.
-  def applyWithOfflineDataset(targetUserId: Long): Stitch[Map[Long, Int]] = {
-    repeatedProfileVisitsAggregateClientColumn.fetcher
-      .fetch(ProfileVisitorInfo(id = targetUserId, idType = IdType.User)).map(_.v)
+  // Returns v s ed user -> v s  count, v a off dataset.
+  def applyW hOffl neDataset(targetUser d: Long): St ch[Map[Long,  nt]] = {
+    repeatedProf leV s sAggregateCl entColumn.fetc r
+      .fetch(Prof leV s or nfo( d = targetUser d,  dType =  dType.User)).map(_.v)
       .handle {
         case e: Throwable =>
-          logger.error("Strato fetch for RepeatedProfileVisitsAggregateClientColumn failed: " + e)
-          offlineFetchErrorCounter.incr()
+          logger.error("Strato fetch for RepeatedProf leV s sAggregateCl entColumn fa led: " + e)
+          offl neFetchErrorCounter. ncr()
           None
       }.onSuccess { result =>
-        offlineFetchSuccessCounter.incr()
-      }.map { resultOption =>
-        resultOption
+        offl neFetchSuccessCounter. ncr()
+      }.map { resultOpt on =>
+        resultOpt on
           .flatMap { result =>
-            result.profileVisitSet.map { profileVisitSet =>
-              profileVisitSet
-                .filter(profileVisit => profileVisit.totalTargetVisitsInLast14Days.getOrElse(0) > 0)
-                .filter(profileVisit => !profileVisit.doesSourceIdFollowTargetId.getOrElse(false))
-                .flatMap { profileVisit =>
-                  (profileVisit.targetId, profileVisit.totalTargetVisitsInLast14Days) match {
-                    case (Some(targetId), Some(totalVisitsInLast14Days)) =>
-                      Some(targetId -> totalVisitsInLast14Days)
+            result.prof leV s Set.map { prof leV s Set =>
+              prof leV s Set
+                .f lter(prof leV s  => prof leV s .totalTargetV s s nLast14Days.getOrElse(0) > 0)
+                .f lter(prof leV s  => !prof leV s .doesS ce dFollowTarget d.getOrElse(false))
+                .flatMap { prof leV s  =>
+                  (prof leV s .target d, prof leV s .totalTargetV s s nLast14Days) match {
+                    case (So (target d), So (totalV s s nLast14Days)) =>
+                      So (target d -> totalV s s nLast14Days)
                     case _ => None
                   }
-                }.toMap[Long, Int]
+                }.toMap[Long,  nt]
             }
           }.getOrElse(Map.empty)
       }
   }
 
-  // Returns visited user -> visit count, via online dataset.
-  def applyWithOnlineData(targetUserId: Long): Stitch[Map[Long, Int]] = {
-    val visitedUserToEngagementsStitch: Stitch[Map[Long, Seq[Engagement]]] =
-      realTimeRealGraphClient.getRecentProfileViewEngagements(targetUserId)
-    visitedUserToEngagementsStitch
-      .onFailure { f =>
-        onlineFetchErrorCounter.incr()
+  // Returns v s ed user -> v s  count, v a onl ne dataset.
+  def applyW hOnl neData(targetUser d: Long): St ch[Map[Long,  nt]] = {
+    val v s edUserToEngage ntsSt ch: St ch[Map[Long, Seq[Engage nt]]] =
+      realT  RealGraphCl ent.getRecentProf leV ewEngage nts(targetUser d)
+    v s edUserToEngage ntsSt ch
+      .onFa lure { f =>
+        onl neFetchErrorCounter. ncr()
       }.onSuccess { result =>
-        onlineFetchSuccessCounter.incr()
-      }.map { visitedUserToEngagements =>
-        visitedUserToEngagements
-          .mapValues(engagements => engagements.size)
+        onl neFetchSuccessCounter. ncr()
+      }.map { v s edUserToEngage nts =>
+        v s edUserToEngage nts
+          .mapValues(engage nts => engage nts.s ze)
       }
   }
 
-  def getRepeatedVisitedAccounts(params: Params, targetUserId: Long): Stitch[Map[Long, Int]] = {
-    var results: Stitch[Map[Long, Int]] = Stitch.value(Map.empty)
-    if (params.getBoolean(RepeatedProfileVisitsParams.UseOnlineDataset)) {
-      results = applyWithOnlineData(targetUserId)
+  def getRepeatedV s edAccounts(params: Params, targetUser d: Long): St ch[Map[Long,  nt]] = {
+    var results: St ch[Map[Long,  nt]] = St ch.value(Map.empty)
+     f (params.getBoolean(RepeatedProf leV s sParams.UseOnl neDataset)) {
+      results = applyW hOnl neData(targetUser d)
     } else {
-      results = applyWithOfflineDataset(targetUserId)
+      results = applyW hOffl neDataset(targetUser d)
     }
-    // Only keep users that had non-zero engagement counts.
-    results.map(_.filter(input => input._2 > 0))
+    // Only keep users that had non-zero engage nt counts.
+    results.map(_.f lter( nput =>  nput._2 > 0))
   }
 
-  def getRecommendations(params: Params, userId: Long): Stitch[Seq[CandidateUser]] = {
-    val recommendationThreshold = params.getInt(RepeatedProfileVisitsParams.RecommendationThreshold)
-    val bucketingThreshold = params.getInt(RepeatedProfileVisitsParams.BucketingThreshold)
+  def getRecom ndat ons(params: Params, user d: Long): St ch[Seq[Cand dateUser]] = {
+    val recom ndat onThreshold = params.get nt(RepeatedProf leV s sParams.Recom ndat onThreshold)
+    val bucket ngThreshold = params.get nt(RepeatedProf leV s sParams.Bucket ngThreshold)
 
-    // Get the list of repeatedly visited profilts. Only keep accounts with >= bucketingThreshold visits.
-    val repeatedVisitedAccountsStitch: Stitch[Map[Long, Int]] =
-      getRepeatedVisitedAccounts(params, userId).map(_.filter(kv => kv._2 >= bucketingThreshold))
+    // Get t  l st of repeatedly v s ed prof lts. Only keep accounts w h >= bucket ngThreshold v s s.
+    val repeatedV s edAccountsSt ch: St ch[Map[Long,  nt]] =
+      getRepeatedV s edAccounts(params, user d).map(_.f lter(kv => kv._2 >= bucket ngThreshold))
 
-    repeatedVisitedAccountsStitch.map { candidates =>
-      // Now check if we should includeCandidates (e.g. whether user is in control bucket or treatment buckets).
-      if (candidates.isEmpty) {
-        // User has not visited any accounts above bucketing threshold. We will not bucket user into experiment. Just
-        // don't return no candidates.
-        noRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
+    repeatedV s edAccountsSt ch.map { cand dates =>
+      // Now c ck  f   should  ncludeCand dates (e.g. w t r user  s  n control bucket or treat nt buckets).
+       f (cand dates. sEmpty) {
+        // User has not v s ed any accounts above bucket ng threshold.   w ll not bucket user  nto exper  nt. Just
+        // don't return no cand dates.
+        noRepeatedProf leV s sAboveBucket ngThresholdCounter. ncr()
         Seq.empty
       } else {
-        hasRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
-        if (!params.getBoolean(RepeatedProfileVisitsParams.IncludeCandidates)) {
-          // User has reached bucketing criteria. We check whether to include candidates (e.g. checking which bucket
-          // the user is in for the experiment). In this case the user is in a bucket to not include any candidates.
-          noIncludeCandidatesCounter.incr()
+        hasRepeatedProf leV s sAboveBucket ngThresholdCounter. ncr()
+         f (!params.getBoolean(RepeatedProf leV s sParams. ncludeCand dates)) {
+          // User has reac d bucket ng cr er a.   c ck w t r to  nclude cand dates (e.g. c ck ng wh ch bucket
+          // t  user  s  n for t  exper  nt).  n t  case t  user  s  n a bucket to not  nclude any cand dates.
+          no ncludeCand datesCounter. ncr()
           Seq.empty
         } else {
-          includeCandidatesCounter.incr()
-          // We should include candidates. Include any candidates above recommendation thresholds.
-          val outputCandidatesSeq = candidates
-            .filter(kv => kv._2 >= recommendationThreshold).map { kv =>
+           ncludeCand datesCounter. ncr()
+          //   should  nclude cand dates.  nclude any cand dates above recom ndat on thresholds.
+          val outputCand datesSeq = cand dates
+            .f lter(kv => kv._2 >= recom ndat onThreshold).map { kv =>
               val user = kv._1
-              val visitCount = kv._2
-              CandidateUser(user, Some(visitCount.toDouble))
-                .withCandidateSource(RepeatedProfileVisitsSource.Identifier)
+              val v s Count = kv._2
+              Cand dateUser(user, So (v s Count.toDouble))
+                .w hCand dateS ce(RepeatedProf leV s sS ce. dent f er)
             }.toSeq
-          if (outputCandidatesSeq.isEmpty) {
-            noRepeatedProfileVisitsAboveRecommendationsThresholdCounter.incr()
+           f (outputCand datesSeq. sEmpty) {
+            noRepeatedProf leV s sAboveRecom ndat onsThresholdCounter. ncr()
           } else {
-            hasRepeatedProfileVisitsAboveRecommendationsThresholdCounter.incr()
+            hasRepeatedProf leV s sAboveRecom ndat onsThresholdCounter. ncr()
           }
-          outputCandidatesSeq
+          outputCand datesSeq
         }
       }
     }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        getRecommendations(request.params, userId)
-      }.getOrElse(Stitch.Nil)
+  overr de def apply(request: HasParams w h HasCl entContext): St ch[Seq[Cand dateUser]] = {
+    request.getOpt onalUser d
+      .map { user d =>
+        getRecom ndat ons(request.params, user d)
+      }.getOrElse(St ch.N l)
   }
 }
 
-object RepeatedProfileVisitsSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RepeatedProfileVisits.toString)
+object RepeatedProf leV s sS ce {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.RepeatedProf leV s s.toStr ng)
 }

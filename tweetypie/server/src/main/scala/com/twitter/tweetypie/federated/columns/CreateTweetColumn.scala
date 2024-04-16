@@ -1,416 +1,416 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated.columns
 
-import com.twitter.accounts.util.SafetyMetadataUtils
-import com.twitter.ads.callback.thriftscala.EngagementRequest
-import com.twitter.bouncer.thriftscala.{Bounce => BouncerBounce}
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.geo.model.LatitudeLongitude
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AllOf
-import com.twitter.strato.config.BouncerAccess
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.response.Err
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.decider.overrides.TweetyPieDeciderOverrides
-import com.twitter.tweetypie.federated.columns.ApiErrors._
-import com.twitter.tweetypie.federated.columns.CreateTweetColumn.toCreateTweetErr
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRequest
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger._
-import com.twitter.tweetypie.repository.UnmentionInfoRepository
-import com.twitter.tweetypie.repository.VibeRepository
-import com.twitter.tweetypie.thriftscala.TransientCreateContext
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey
-import com.twitter.tweetypie.thriftscala.TweetCreateState._
-import com.twitter.tweetypie.thriftscala.{graphql => gql}
-import com.twitter.tweetypie.util.CommunityAnnotation
-import com.twitter.tweetypie.util.ConversationControls
-import com.twitter.tweetypie.util.TransientContextUtil
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.util.Throwables
-import com.twitter.weaverbird.common.{GetRequestContext => WGetRequestContext}
+ mport com.tw ter.accounts.ut l.Safety tadataUt ls
+ mport com.tw ter.ads.callback.thr ftscala.Engage ntRequest
+ mport com.tw ter.bouncer.thr ftscala.{Bounce => BouncerBounce}
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat on
+ mport com.tw ter.geo.model.Lat udeLong ude
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.AllOf
+ mport com.tw ter.strato.conf g.BouncerAccess
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle.Product on
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.opcontext.OpContext
+ mport com.tw ter.strato.response.Err
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.t etyp e.dec der.overr des.T etyP eDec derOverr des
+ mport com.tw ter.t etyp e.federated.columns.Ap Errors._
+ mport com.tw ter.t etyp e.federated.columns.CreateT etColumn.toCreateT etErr
+ mport com.tw ter.t etyp e.federated.context.GetRequestContext
+ mport com.tw ter.t etyp e.federated.prefetc ddata.Prefetc dDataRequest
+ mport com.tw ter.t etyp e.federated.prefetc ddata.Prefetc dDataResponse
+ mport com.tw ter.t etyp e.federated.promotedcontent.T etPromotedContentLogger
+ mport com.tw ter.t etyp e.federated.promotedcontent.T etPromotedContentLogger._
+ mport com.tw ter.t etyp e.repos ory.Un nt on nfoRepos ory
+ mport com.tw ter.t etyp e.repos ory.V beRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.Trans entCreateContext
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateContextKey
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState._
+ mport com.tw ter.t etyp e.thr ftscala.{graphql => gql}
+ mport com.tw ter.t etyp e.ut l.Commun yAnnotat on
+ mport com.tw ter.t etyp e.ut l.Conversat onControls
+ mport com.tw ter.t etyp e.ut l.Trans entContextUt l
+ mport com.tw ter.t etyp e.{thr ftscala => thr ft}
+ mport com.tw ter.ut l.Throwables
+ mport com.tw ter. averb rd.common.{GetRequestContext => WGetRequestContext}
 
-class CreateTweetColumn(
-  postTweet: thrift.PostTweetRequest => Future[thrift.PostTweetResult],
+class CreateT etColumn(
+  postT et: thr ft.PostT etRequest => Future[thr ft.PostT etResult],
   getRequestContext: GetRequestContext,
-  prefetchedDataRepository: PrefetchedDataRequest => Stitch[PrefetchedDataResponse],
-  unmentionInfoRepository: UnmentionInfoRepository.Type,
-  vibeRepository: VibeRepository.Type,
-  logTweetPromotedContent: TweetPromotedContentLogger.Type,
-  statsReceiver: StatsReceiver,
-  enableCommunityTweetCreatesDecider: Gate[Unit],
-) extends StratoFed.Column(CreateTweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
-    with StratoFed.HandleDarkRequests {
+  prefetc dDataRepos ory: Prefetc dDataRequest => St ch[Prefetc dDataResponse],
+  un nt on nfoRepos ory: Un nt on nfoRepos ory.Type,
+  v beRepos ory: V beRepos ory.Type,
+  logT etPromotedContent: T etPromotedContentLogger.Type,
+  statsRece ver: StatsRece ver,
+  enableCommun yT etCreatesDec der: Gate[Un ],
+) extends StratoFed.Column(CreateT etColumn.Path)
+    w h StratoFed.Execute.St chW hContext
+    w h StratoFed.HandleDarkRequests {
 
-  override val policy: Policy = AllOf(
-    Seq(AccessPolicy.TweetMutationCommonAccessPolicies, BouncerAccess()))
+  overr de val pol cy: Pol cy = AllOf(
+    Seq(AccessPol cy.T etMutat onCommonAccessPol c es, BouncerAccess()))
 
-  // The underlying call to thriftTweetService.postRetweet is not idempotent
-  override val isIdempotent: Boolean = false
+  // T  underly ng call to thr ftT etServ ce.postRet et  s not  dempotent
+  overr de val  s dempotent: Boolean = false
 
-  override type Arg = gql.CreateTweetRequest
-  override type Result = gql.CreateTweetResponseWithSubqueryPrefetchItems
+  overr de type Arg = gql.CreateT etRequest
+  overr de type Result = gql.CreateT etResponseW hSubqueryPrefetch ems
 
-  override val argConv: Conv[Arg] = ScroogeConv.fromStruct
-  override val resultConv: Conv[Result] = ScroogeConv.fromStruct
+  overr de val argConv: Conv[Arg] = ScroogeConv.fromStruct
+  overr de val resultConv: Conv[Result] = ScroogeConv.fromStruct
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata =
-    OpMetadata(
-      Some(Production),
-      Some(
-        PlainText(
+  overr de val contact nfo: Contact nfo = T etyp eContact nfo
+  overr de val  tadata: Op tadata =
+    Op tadata(
+      So (Product on),
+      So (
+        Pla nText(
           """
-    Creates a tweet using the calling authenticated Twitter user as author. 
-    NOTE, not all Tweet space fields are GraphQL queryable in the CreateTweet mutation response. 
-    See http://go/missing-create-tweet-fields.
+    Creates a t et us ng t  call ng aut nt cated Tw ter user as author. 
+    NOTE, not all T et space f elds are GraphQL queryable  n t  CreateT et mutat on response. 
+    See http://go/m ss ng-create-t et-f elds.
     """))
     )
 
-  private val getWeaverbirdCtx = new WGetRequestContext()
+  pr vate val get averb rdCtx = new WGetRequestContext()
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
+  overr de def execute(request: Arg, opContext: OpContext): St ch[Result] = {
 
     val ctx = getRequestContext(opContext)
 
-    // First, do any request parameter validation that can result in an error
-    // prior to calling into thriftTweetService.postTweet.
-    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
+    // F rst, do any request para ter val dat on that can result  n an error
+    // pr or to call ng  nto thr ftT etServ ce.postT et.
+    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelM ss ngErr)
 
-    val trackingId = request.engagementRequest match {
-      case Some(engagementRequest: EngagementRequest) if ctx.hasPrivilegePromotedTweetsInTimeline =>
-        TrackingId.parse(engagementRequest.impressionId, statsReceiver)
-      case Some(e: EngagementRequest) =>
-        throw ClientNotPrivilegedErr
+    val track ng d = request.engage ntRequest match {
+      case So (engage ntRequest: Engage ntRequest)  f ctx.hasPr v legePromotedT ets nT  l ne =>
+        Track ng d.parse(engage ntRequest. mpress on d, statsRece ver)
+      case So (e: Engage ntRequest) =>
+        throw Cl entNotPr v legedErr
       case None =>
         None
     }
 
-    val deviceSource = ctx.deviceSource.getOrElse(throw GenericAccessDeniedErr)
+    val dev ceS ce = ctx.dev ceS ce.getOrElse(throw Gener cAccessDen edErr)
 
-    if (request.nullcast && !ctx.hasPrivilegeNullcastingAccess) {
-      throw GenericAccessDeniedErr
+     f (request.nullcast && !ctx.hasPr v legeNullcast ngAccess) {
+      throw Gener cAccessDen edErr
     }
 
-    val safetyMetadata = SafetyMetadataUtils.makeSafetyMetaData(
-      sessionHash = ctx.sessionHash,
-      knownDeviceToken = ctx.knownDeviceToken,
-      contributorId = ctx.contributorId
+    val safety tadata = Safety tadataUt ls.makeSafety taData(
+      sess onHash = ctx.sess onHash,
+      knownDev ceToken = ctx.knownDev ceToken,
+      contr butor d = ctx.contr butor d
     )
 
-    val cardReference: Option[thrift.CardReference] =
-      request.cardUri.filter(_.nonEmpty).map(thrift.CardReference(_))
+    val cardReference: Opt on[thr ft.CardReference] =
+      request.cardUr .f lter(_.nonEmpty).map(thr ft.CardReference(_))
 
-    val escherbirdEntityAnnotations: Option[thrift.EscherbirdEntityAnnotations] =
-      request.semanticAnnotationIds
-        .filter(_.nonEmpty)
-        .map((seq: Seq[gql.TweetAnnotation]) => seq.map(parseTweetEntityAnnotation))
-        .map(thrift.EscherbirdEntityAnnotations(_))
+    val esc rb rdEnt yAnnotat ons: Opt on[thr ft.Esc rb rdEnt yAnnotat ons] =
+      request.semant cAnnotat on ds
+        .f lter(_.nonEmpty)
+        .map((seq: Seq[gql.T etAnnotat on]) => seq.map(parseT etEnt yAnnotat on))
+        .map(thr ft.Esc rb rdEnt yAnnotat ons(_))
 
-    val mediaEntities = request.media.map(_.mediaEntities)
-    val mediaUploadIds = mediaEntities.map(_.map(_.mediaId)).filter(_.nonEmpty)
+    val  d aEnt  es = request. d a.map(_. d aEnt  es)
+    val  d aUpload ds =  d aEnt  es.map(_.map(_. d a d)).f lter(_.nonEmpty)
 
-    val mediaTags: Option[thrift.TweetMediaTags] = {
-      val mediaTagsAuthorized = !ctx.isContributorRequest
+    val  d aTags: Opt on[thr ft.T et d aTags] = {
+      val  d aTagsAuthor zed = !ctx. sContr butorRequest
 
-      val tagMap: Map[MediaId, Seq[thrift.MediaTag]] =
-        mediaEntities
-          .getOrElse(Nil)
-          .filter(_ => mediaTagsAuthorized)
-          .filter(_.taggedUsers.nonEmpty)
-          .map(mediaEntity =>
-            mediaEntity.mediaId ->
-              mediaEntity.taggedUsers
-                .map(user_id => thrift.MediaTag(thrift.MediaTagType.User, Some(user_id))))
+      val tagMap: Map[ d a d, Seq[thr ft. d aTag]] =
+         d aEnt  es
+          .getOrElse(N l)
+          .f lter(_ =>  d aTagsAuthor zed)
+          .f lter(_.taggedUsers.nonEmpty)
+          .map( d aEnt y =>
+             d aEnt y. d a d ->
+               d aEnt y.taggedUsers
+                .map(user_ d => thr ft. d aTag(thr ft. d aTagType.User, So (user_ d))))
           .toMap
 
-      Option(tagMap)
-        .filter(_.nonEmpty)
-        .map(thrift.TweetMediaTags(_))
+      Opt on(tagMap)
+        .f lter(_.nonEmpty)
+        .map(thr ft.T et d aTags(_))
     }
 
-    // Can not have both conversation controls and communities defined for a tweet
-    // as they have conflicting permissions on who can reply to the tweet.
-    val communities = parseCommunityIds(escherbirdEntityAnnotations)
-    if (request.conversationControl.isDefined && communities.nonEmpty) {
-      throw CannotConvoControlAndCommunitiesErr
+    // Can not have both conversat on controls and commun  es def ned for a t et
+    // as t y have confl ct ng perm ss ons on who can reply to t  t et.
+    val commun  es = parseCommun y ds(esc rb rdEnt yAnnotat ons)
+     f (request.conversat onControl. sDef ned && commun  es.nonEmpty) {
+      throw CannotConvoControlAndCommun  esErr
     }
 
-    // Currently we do not support posting to multiple communities.
-    if (communities.length > 1) {
-      throw TooManyCommunitiesErr
+    // Currently   do not support post ng to mult ple commun  es.
+     f (commun  es.length > 1) {
+      throw TooManyCommun  esErr
     }
 
-    // Kill switch for community tweets in case we need to disable them for app security.
-    if (communities.nonEmpty && !enableCommunityTweetCreatesDecider()) {
-      throw CommunityUserNotAuthorizedErr
+    // K ll sw ch for commun y t ets  n case   need to d sable t m for app secur y.
+     f (commun  es.nonEmpty && !enableCommun yT etCreatesDec der()) {
+      throw Commun yUserNotAuthor zedErr
     }
 
-    // additionalFields is used to marshal multiple input params and
-    // should only be defined if one or more of those params are defined.
-    val additionalFields: Option[Tweet] =
+    // add  onalF elds  s used to marshal mult ple  nput params and
+    // should only be def ned  f one or more of those params are def ned.
+    val add  onalF elds: Opt on[T et] =
       cardReference
-        .orElse(escherbirdEntityAnnotations)
-        .orElse(mediaTags)
+        .orElse(esc rb rdEnt yAnnotat ons)
+        .orElse( d aTags)
         .map(_ =>
-          thrift.Tweet(
+          thr ft.T et(
             0L,
             cardReference = cardReference,
-            escherbirdEntityAnnotations = escherbirdEntityAnnotations,
-            mediaTags = mediaTags
+            esc rb rdEnt yAnnotat ons = esc rb rdEnt yAnnotat ons,
+             d aTags =  d aTags
           ))
 
-    val transientContext: Option[TransientCreateContext] =
-      parseTransientContext(
+    val trans entContext: Opt on[Trans entCreateContext] =
+      parseTrans entContext(
         request.batchCompose,
-        request.periscope,
-        ctx.twitterUserId,
+        request.per scope,
+        ctx.tw terUser d,
       )
 
-    // PostTweetRequest.additionalContext is marked as deprecated in favor of .transientContext,
-    // but the REST API still supports it and it is still passed along through Tweetypie, and
-    // FanoutService and Notifications still depend on it.
-    val additionalContext: Option[Map[TweetCreateContextKey, String]] =
-      transientContext.map(TransientContextUtil.toAdditionalContext)
+    // PostT etRequest.add  onalContext  s marked as deprecated  n favor of .trans entContext,
+    // but t  REST AP  st ll supports   and    s st ll passed along through T etyp e, and
+    // FanoutServ ce and Not f cat ons st ll depend on  .
+    val add  onalContext: Opt on[Map[T etCreateContextKey, Str ng]] =
+      trans entContext.map(Trans entContextUt l.toAdd  onalContext)
 
-    val thriftPostTweetRequest = thrift.PostTweetRequest(
-      userId = ctx.twitterUserId,
-      text = request.tweetText,
-      createdVia = deviceSource,
-      inReplyToTweetId = request.reply.map(_.inReplyToTweetId),
-      geo = request.geo.flatMap(parseTweetCreateGeo),
-      autoPopulateReplyMetadata = request.reply.isDefined,
-      excludeReplyUserIds = request.reply.map(_.excludeReplyUserIds).filter(_.nonEmpty),
+    val thr ftPostT etRequest = thr ft.PostT etRequest(
+      user d = ctx.tw terUser d,
+      text = request.t etText,
+      createdV a = dev ceS ce,
+       nReplyToT et d = request.reply.map(_. nReplyToT et d),
+      geo = request.geo.flatMap(parseT etCreateGeo),
+      autoPopulateReply tadata = request.reply. sDef ned,
+      excludeReplyUser ds = request.reply.map(_.excludeReplyUser ds).f lter(_.nonEmpty),
       nullcast = request.nullcast,
-      // Send a dark request to Tweetypie if the dark_request directive is set or
-      // if the Tweet is undo-able.
-      dark = ctx.isDarkRequest || request.undoOptions.exists(_.isUndo),
-      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(ctx.cardsPlatformKey)),
+      // Send a dark request to T etyp e  f t  dark_request d rect ve  s set or
+      //  f t  T et  s undo-able.
+      dark = ctx. sDarkRequest || request.undoOpt ons.ex sts(_. sUndo),
+      hydrat onOpt ons = So (Hydrat onOpt ons.wr ePathHydrat onOpt ons(ctx.cardsPlatformKey)),
       remoteHost = ctx.remoteHost,
-      safetyMetaData = Some(safetyMetadata),
-      attachmentUrl = request.attachmentUrl,
-      mediaUploadIds = mediaUploadIds,
-      mediaMetadata = None,
-      transientContext = transientContext,
-      additionalContext = additionalContext,
-      conversationControl = request.conversationControl.map(parseTweetCreateConversationControl),
-      exclusiveTweetControlOptions = request.exclusiveTweetControlOptions.map { _ =>
-        thrift.ExclusiveTweetControlOptions()
+      safety taData = So (safety tadata),
+      attach ntUrl = request.attach ntUrl,
+       d aUpload ds =  d aUpload ds,
+       d a tadata = None,
+      trans entContext = trans entContext,
+      add  onalContext = add  onalContext,
+      conversat onControl = request.conversat onControl.map(parseT etCreateConversat onControl),
+      exclus veT etControlOpt ons = request.exclus veT etControlOpt ons.map { _ =>
+        thr ft.Exclus veT etControlOpt ons()
       },
-      trustedFriendsControlOptions =
-        request.trustedFriendsControlOptions.map(parseTrustedFriendsControlOptions),
-      editOptions = request.editOptions.flatMap(_.previousTweetId.map(thrift.EditOptions(_))),
-      collabControlOptions = request.collabControlOptions.map(parseCollabControlOptions),
-      additionalFields = additionalFields,
-      trackingId = trackingId,
-      noteTweetOptions = request.noteTweetOptions.map(options =>
-        thrift.NoteTweetOptions(
-          options.noteTweetId,
-          options.mentionedScreenNames,
-          options.mentionedUserIds,
-          options.isExpandable))
+      trustedFr endsControlOpt ons =
+        request.trustedFr endsControlOpt ons.map(parseTrustedFr endsControlOpt ons),
+      ed Opt ons = request.ed Opt ons.flatMap(_.prev ousT et d.map(thr ft.Ed Opt ons(_))),
+      collabControlOpt ons = request.collabControlOpt ons.map(parseCollabControlOpt ons),
+      add  onalF elds = add  onalF elds,
+      track ng d = track ng d,
+      noteT etOpt ons = request.noteT etOpt ons.map(opt ons =>
+        thr ft.NoteT etOpt ons(
+          opt ons.noteT et d,
+          opt ons. nt onedScreenNa s,
+          opt ons. nt onedUser ds,
+          opt ons. sExpandable))
     )
 
-    val stitchPostTweet =
-      Stitch.callFuture {
-        TweetyPieDeciderOverrides.ConversationControlUseFeatureSwitchResults.On {
-          postTweet(thriftPostTweetRequest)
+    val st chPostT et =
+      St ch.callFuture {
+        T etyP eDec derOverr des.Conversat onControlUseFeatureSw chResults.On {
+          postT et(thr ftPostT etRequest)
         }
       }
 
     for {
-      engagement <- request.engagementRequest
-      if !request.reply.exists(_.inReplyToTweetId == 0) // no op per go/rb/845242
-      engagementType = if (request.reply.isDefined) ReplyEngagement else TweetEngagement
-    } logTweetPromotedContent(engagement, engagementType, ctx.isDarkRequest)
+      engage nt <- request.engage ntRequest
+       f !request.reply.ex sts(_. nReplyToT et d == 0) // no op per go/rb/845242
+      engage ntType =  f (request.reply. sDef ned) ReplyEngage nt else T etEngage nt
+    } logT etPromotedContent(engage nt, engage ntType, ctx. sDarkRequest)
 
-    stitchPostTweet.flatMap { result: thrift.PostTweetResult =>
+    st chPostT et.flatMap { result: thr ft.PostT etResult =>
       result.state match {
 
-        case thrift.TweetCreateState.Ok =>
-          val unmentionSuccessCounter = statsReceiver.counter("unmention_info_success")
-          val unmentionFailuresCounter = statsReceiver.counter("unmention_info_failures")
-          val unmentionFailuresScope = statsReceiver.scope("unmention_info_failures")
+        case thr ft.T etCreateState.Ok =>
+          val un nt onSuccessCounter = statsRece ver.counter("un nt on_ nfo_success")
+          val un nt onFa luresCounter = statsRece ver.counter("un nt on_ nfo_fa lures")
+          val un nt onFa luresScope = statsRece ver.scope("un nt on_ nfo_fa lures")
 
-          val unmentionInfoStitch = result.tweet match {
-            case Some(tweet) =>
-              unmentionInfoRepository(tweet)
-                .onFailure { t =>
-                  unmentionFailuresCounter.incr()
-                  unmentionFailuresScope.counter(Throwables.mkString(t): _*).incr()
+          val un nt on nfoSt ch = result.t et match {
+            case So (t et) =>
+              un nt on nfoRepos ory(t et)
+                .onFa lure { t =>
+                  un nt onFa luresCounter. ncr()
+                  un nt onFa luresScope.counter(Throwables.mkStr ng(t): _*). ncr()
                 }
                 .onSuccess { _ =>
-                  unmentionSuccessCounter.incr()
+                  un nt onSuccessCounter. ncr()
                 }
                 .rescue {
                   case _ =>
-                    Stitch.None
+                    St ch.None
                 }
             case _ =>
-              Stitch.None
+              St ch.None
           }
 
-          val vibeSuccessCounter = statsReceiver.counter("vibe_success")
-          val vibeFailuresCounter = statsReceiver.counter("vibe_failures")
-          val vibeFailuresScope = statsReceiver.scope("vibe_failures")
+          val v beSuccessCounter = statsRece ver.counter("v be_success")
+          val v beFa luresCounter = statsRece ver.counter("v be_fa lures")
+          val v beFa luresScope = statsRece ver.scope("v be_fa lures")
 
-          val vibeStitch = result.tweet match {
-            case Some(tweet) =>
-              vibeRepository(tweet)
+          val v beSt ch = result.t et match {
+            case So (t et) =>
+              v beRepos ory(t et)
                 .onSuccess { _ =>
-                  vibeSuccessCounter.incr()
+                  v beSuccessCounter. ncr()
                 }
-                .onFailure { t =>
-                  vibeFailuresCounter.incr()
-                  vibeFailuresScope.counter(Throwables.mkString(t): _*).incr()
+                .onFa lure { t =>
+                  v beFa luresCounter. ncr()
+                  v beFa luresScope.counter(Throwables.mkStr ng(t): _*). ncr()
                 }
                 .rescue {
                   case _ =>
-                    Stitch.None
+                    St ch.None
                 }
             case _ =>
-              Stitch.None
+              St ch.None
           }
 
-          Stitch
-            .join(unmentionInfoStitch, vibeStitch)
-            .liftToOption()
-            .flatMap { prefetchFields =>
-              val r = PrefetchedDataRequest(
-                tweet = result.tweet.get,
-                sourceTweet = result.sourceTweet,
-                quotedTweet = result.quotedTweet,
+          St ch
+            .jo n(un nt on nfoSt ch, v beSt ch)
+            .l ftToOpt on()
+            .flatMap { prefetchF elds =>
+              val r = Prefetc dDataRequest(
+                t et = result.t et.get,
+                s ceT et = result.s ceT et,
+                quotedT et = result.quotedT et,
                 safetyLevel = safetyLevel,
-                unmentionInfo = prefetchFields.flatMap(params => params._1),
-                vibe = prefetchFields.flatMap(params => params._2),
-                requestContext = getWeaverbirdCtx()
+                un nt on nfo = prefetchF elds.flatMap(params => params._1),
+                v be = prefetchF elds.flatMap(params => params._2),
+                requestContext = get averb rdCtx()
               )
 
-              prefetchedDataRepository(r)
-                .liftToOption()
-                .map((prefetchedData: Option[PrefetchedDataResponse]) => {
-                  gql.CreateTweetResponseWithSubqueryPrefetchItems(
-                    data = Some(gql.CreateTweetResponse(result.tweet.map(_.id))),
-                    subqueryPrefetchItems = prefetchedData.map(_.value)
+              prefetc dDataRepos ory(r)
+                .l ftToOpt on()
+                .map((prefetc dData: Opt on[Prefetc dDataResponse]) => {
+                  gql.CreateT etResponseW hSubqueryPrefetch ems(
+                    data = So (gql.CreateT etResponse(result.t et.map(_. d))),
+                    subqueryPrefetch ems = prefetc dData.map(_.value)
                   )
                 })
             }
 
         case errState =>
-          throw toCreateTweetErr(errState, result.bounce, result.failureReason)
+          throw toCreateT etErr(errState, result.bounce, result.fa lureReason)
       }
     }
   }
 
-  private[this] def parseTweetCreateGeo(gqlGeo: gql.TweetGeo): Option[thrift.TweetCreateGeo] = {
-    val coordinates: Option[thrift.GeoCoordinates] =
-      gqlGeo.coordinates.map { coords =>
-        LatitudeLongitude.of(coords.latitude, coords.longitude) match {
-          case Return(latlon: LatitudeLongitude) =>
-            thrift.GeoCoordinates(
-              latitude = latlon.latitudeDegrees,
-              longitude = latlon.longitudeDegrees,
-              geoPrecision = latlon.precision,
-              display = coords.displayCoordinates
+  pr vate[t ] def parseT etCreateGeo(gqlGeo: gql.T etGeo): Opt on[thr ft.T etCreateGeo] = {
+    val coord nates: Opt on[thr ft.GeoCoord nates] =
+      gqlGeo.coord nates.map { coords =>
+        Lat udeLong ude.of(coords.lat ude, coords.long ude) match {
+          case Return(latlon: Lat udeLong ude) =>
+            thr ft.GeoCoord nates(
+              lat ude = latlon.lat udeDegrees,
+              long ude = latlon.long udeDegrees,
+              geoPrec s on = latlon.prec s on,
+              d splay = coords.d splayCoord nates
             )
           case Throw(_) =>
-            throw InvalidCoordinatesErr
+            throw  nval dCoord natesErr
         }
       }
 
-    val geoSearchRequestId = gqlGeo.geoSearchRequestId.map { id =>
-      if (id.isEmpty) {
-        throw InvalidGeoSearchRequestIdErr
+    val geoSearchRequest d = gqlGeo.geoSearchRequest d.map {  d =>
+       f ( d. sEmpty) {
+        throw  nval dGeoSearchRequest dErr
       }
-      thrift.TweetGeoSearchRequestID(id)
+      thr ft.T etGeoSearchRequest D( d)
     }
 
-    if (coordinates.isEmpty && gqlGeo.placeId.isEmpty) {
+     f (coord nates. sEmpty && gqlGeo.place d. sEmpty) {
       None
     } else {
-      Some(
-        thrift.TweetCreateGeo(
-          coordinates = coordinates,
-          placeId = gqlGeo.placeId,
-          geoSearchRequestId = geoSearchRequestId
+      So (
+        thr ft.T etCreateGeo(
+          coord nates = coord nates,
+          place d = gqlGeo.place d,
+          geoSearchRequest d = geoSearchRequest d
         ))
     }
   }
 
-  private[this] def parseTweetCreateConversationControl(
-    gqlCC: gql.TweetConversationControl
-  ): thrift.TweetCreateConversationControl =
+  pr vate[t ] def parseT etCreateConversat onControl(
+    gqlCC: gql.T etConversat onControl
+  ): thr ft.T etCreateConversat onControl =
     gqlCC.mode match {
-      case gql.ConversationControlMode.ByInvitation =>
-        ConversationControls.Create.byInvitation()
-      case gql.ConversationControlMode.Community =>
-        ConversationControls.Create.community()
-      case gql.ConversationControlMode.EnumUnknownConversationControlMode(_) =>
-        throw ConversationControlNotSupportedErr
+      case gql.Conversat onControlMode.By nv at on =>
+        Conversat onControls.Create.by nv at on()
+      case gql.Conversat onControlMode.Commun y =>
+        Conversat onControls.Create.commun y()
+      case gql.Conversat onControlMode.EnumUnknownConversat onControlMode(_) =>
+        throw Conversat onControlNotSupportedErr
     }
 
-  private[this] def parseTweetEntityAnnotation(
-    gqlTweetAnnotation: gql.TweetAnnotation
-  ): TweetEntityAnnotation =
-    TweetEntityAnnotation(
-      gqlTweetAnnotation.groupId,
-      gqlTweetAnnotation.domainId,
-      gqlTweetAnnotation.entityId
+  pr vate[t ] def parseT etEnt yAnnotat on(
+    gqlT etAnnotat on: gql.T etAnnotat on
+  ): T etEnt yAnnotat on =
+    T etEnt yAnnotat on(
+      gqlT etAnnotat on.group d,
+      gqlT etAnnotat on.doma n d,
+      gqlT etAnnotat on.ent y d
     )
 
-  private[this] def parseCommunityIds(
-    escherbirdAnnotations: Option[thrift.EscherbirdEntityAnnotations]
+  pr vate[t ] def parseCommun y ds(
+    esc rb rdAnnotat ons: Opt on[thr ft.Esc rb rdEnt yAnnotat ons]
   ): Seq[Long] =
-    escherbirdAnnotations
-      .map(_.entityAnnotations).getOrElse(Nil)
+    esc rb rdAnnotat ons
+      .map(_.ent yAnnotat ons).getOrElse(N l)
       .flatMap {
-        case CommunityAnnotation(id) => Seq(id)
-        case _ => Nil
+        case Commun yAnnotat on( d) => Seq( d)
+        case _ => N l
       }
 
-  private[this] def parseBatchMode(
+  pr vate[t ] def parseBatchMode(
     gqlBatchComposeMode: gql.BatchComposeMode
-  ): thrift.BatchComposeMode = {
+  ): thr ft.BatchComposeMode = {
 
     gqlBatchComposeMode match {
-      case gql.BatchComposeMode.BatchFirst =>
-        thrift.BatchComposeMode.BatchFirst
+      case gql.BatchComposeMode.BatchF rst =>
+        thr ft.BatchComposeMode.BatchF rst
       case gql.BatchComposeMode.BatchSubsequent =>
-        thrift.BatchComposeMode.BatchSubsequent
+        thr ft.BatchComposeMode.BatchSubsequent
       case gql.BatchComposeMode.EnumUnknownBatchComposeMode(_) =>
-        throw InvalidBatchModeParameterErr
+        throw  nval dBatchModePara terErr
     }
   }
 
-  private[this] def parseTransientContext(
-    gqlBatchComposeMode: Option[gql.BatchComposeMode],
-    gqlPeriscope: Option[gql.TweetPeriscopeContext],
-    twitterUserId: UserId,
-  ): Option[TransientCreateContext] = {
+  pr vate[t ] def parseTrans entContext(
+    gqlBatchComposeMode: Opt on[gql.BatchComposeMode],
+    gqlPer scope: Opt on[gql.T etPer scopeContext],
+    tw terUser d: User d,
+  ): Opt on[Trans entCreateContext] = {
     val batchComposeMode = gqlBatchComposeMode.map(parseBatchMode)
 
-    // Per c.t.fanoutservice.model.Tweet#deviceFollowType, isLive=None and Some(false) are
-    // equivalent and the creatorId is discarded in both cases.
-    val periscopeIsLive = gqlPeriscope.map(_.isLive).filter(_ == true)
-    val periscopeCreatorId = if (periscopeIsLive.isDefined) Some(twitterUserId) else None
+    // Per c.t.fanoutserv ce.model.T et#dev ceFollowType,  sL ve=None and So (false) are
+    // equ valent and t  creator d  s d scarded  n both cases.
+    val per scope sL ve = gqlPer scope.map(_. sL ve).f lter(_ == true)
+    val per scopeCreator d =  f (per scope sL ve. sDef ned) So (tw terUser d) else None
 
-    if (batchComposeMode.isDefined || periscopeIsLive.isDefined) {
-      Some(
-        thrift.TransientCreateContext(
+     f (batchComposeMode. sDef ned || per scope sL ve. sDef ned) {
+      So (
+        thr ft.Trans entCreateContext(
           batchCompose = batchComposeMode,
-          periscopeIsLive = periscopeIsLive,
-          periscopeCreatorId = periscopeCreatorId
+          per scope sL ve = per scope sL ve,
+          per scopeCreator d = per scopeCreator d
         )
       )
     } else {
@@ -418,129 +418,129 @@ class CreateTweetColumn(
     }
   }
 
-  private[this] def parseTrustedFriendsControlOptions(
-    gqlTrustedFriendsControlOptions: gql.TrustedFriendsControlOptions
-  ): thrift.TrustedFriendsControlOptions = {
-    thrift.TrustedFriendsControlOptions(
-      trustedFriendsListId = gqlTrustedFriendsControlOptions.trustedFriendsListId
+  pr vate[t ] def parseTrustedFr endsControlOpt ons(
+    gqlTrustedFr endsControlOpt ons: gql.TrustedFr endsControlOpt ons
+  ): thr ft.TrustedFr endsControlOpt ons = {
+    thr ft.TrustedFr endsControlOpt ons(
+      trustedFr endsL st d = gqlTrustedFr endsControlOpt ons.trustedFr endsL st d
     )
   }
 
-  private[this] def parseCollabControlOptions(
-    gqlCollabControlOptions: gql.CollabControlOptions
-  ): thrift.CollabControlOptions = {
-    gqlCollabControlOptions.collabControlType match {
-      case gql.CollabControlType.CollabInvitation =>
-        thrift.CollabControlOptions.CollabInvitation(
-          thrift.CollabInvitationOptions(
-            collaboratorUserIds = gqlCollabControlOptions.collaboratorUserIds
+  pr vate[t ] def parseCollabControlOpt ons(
+    gqlCollabControlOpt ons: gql.CollabControlOpt ons
+  ): thr ft.CollabControlOpt ons = {
+    gqlCollabControlOpt ons.collabControlType match {
+      case gql.CollabControlType.Collab nv at on =>
+        thr ft.CollabControlOpt ons.Collab nv at on(
+          thr ft.Collab nv at onOpt ons(
+            collaboratorUser ds = gqlCollabControlOpt ons.collaboratorUser ds
           )
         )
       case gql.CollabControlType.EnumUnknownCollabControlType(_) =>
-        throw CollabTweetInvalidParamsErr
+        throw CollabT et nval dParamsErr
     }
   }
 }
 
-object CreateTweetColumn {
-  val Path = "tweetypie/createTweet.Tweet"
+object CreateT etColumn {
+  val Path = "t etyp e/createT et.T et"
 
-  def toCreateTweetErr(
-    errState: thrift.TweetCreateState,
-    bounce: Option[BouncerBounce],
-    failureReason: Option[String]
+  def toCreateT etErr(
+    errState: thr ft.T etCreateState,
+    bounce: Opt on[BouncerBounce],
+    fa lureReason: Opt on[Str ng]
   ): Err = errState match {
     case TextCannotBeBlank =>
-      TweetCannotBeBlankErr
+      T etCannotBeBlankErr
     case TextTooLong =>
-      TweetTextTooLongErr
-    case Duplicate =>
-      DuplicateStatusErr
+      T etTextTooLongErr
+    case Dupl cate =>
+      Dupl cateStatusErr
     case MalwareUrl =>
-      MalwareTweetErr
-    case UserDeactivated | UserSuspended =>
-      // should not occur since this condition is caught by access policy filters
+      MalwareT etErr
+    case UserDeact vated | UserSuspended =>
+      // should not occur s nce t  cond  on  s caught by access pol cy f lters
       CurrentUserSuspendedErr
-    case RateLimitExceeded =>
-      RateLimitExceededErr
+    case RateL m Exceeded =>
+      RateL m ExceededErr
     case UrlSpam =>
-      TweetUrlSpamErr
+      T etUrlSpamErr
     case Spam | UserReadonly =>
-      TweetSpammerErr
+      T etSpam rErr
     case SpamCaptcha =>
       CaptchaChallengeErr
-    case SafetyRateLimitExceeded =>
-      SafetyRateLimitExceededErr
-    case Bounce if bounce.isDefined =>
-      accessDeniedByBouncerErr(bounce.get)
-    case MentionLimitExceeded =>
-      MentionLimitExceededErr
-    case UrlLimitExceeded =>
-      UrlLimitExceededErr
-    case HashtagLimitExceeded =>
-      HashtagLimitExceededErr
-    case CashtagLimitExceeded =>
-      CashtagLimitExceededErr
-    case HashtagLengthLimitExceeded =>
-      HashtagLengthLimitExceededErr
-    case TooManyAttachmentTypes =>
-      TooManyAttachmentTypesErr
-    case InvalidUrl =>
-      InvalidUrlErr
-    case DisabledByIpiPolicy =>
-      failureReason
-        .map(tweetEngagementLimitedErr)
-        .getOrElse(GenericTweetCreateErr)
-    case InvalidAdditionalField =>
-      failureReason
-        .map(invalidAdditionalFieldWithReasonErr)
-        .getOrElse(InvalidAdditionalFieldErr)
-    // InvalidImage has been deprecated by tweetypie. Use InvalidMedia instead.
-    case InvalidMedia | InvalidImage | MediaNotFound =>
-      invalidMediaErr(failureReason)
-    case InReplyToTweetNotFound =>
-      InReplyToTweetNotFoundErr
-    case InvalidAttachmentUrl =>
-      InvalidAttachmentUrlErr
-    case ConversationControlNotAllowed =>
-      ConversationControlNotAuthorizedErr
-    case InvalidConversationControl =>
-      ConversationControlInvalidErr
-    case ReplyTweetNotAllowed =>
-      ConversationControlReplyRestricted
-    case ExclusiveTweetEngagementNotAllowed =>
-      ExclusiveTweetEngagementNotAllowedErr
-    case CommunityReplyTweetNotAllowed =>
-      CommunityReplyTweetNotAllowedErr
-    case CommunityUserNotAuthorized =>
-      CommunityUserNotAuthorizedErr
-    case CommunityNotFound =>
-      CommunityNotFoundErr
-    case SuperFollowsInvalidParams =>
-      SuperFollowInvalidParamsErr
-    case SuperFollowsCreateNotAuthorized =>
-      SuperFollowCreateNotAuthorizedErr
-    case CommunityProtectedUserCannotTweet =>
-      CommunityProtectedUserCannotTweetErr
-    case TrustedFriendsInvalidParams =>
-      TrustedFriendsInvalidParamsErr
-    case TrustedFriendsEngagementNotAllowed =>
-      TrustedFriendsEngagementNotAllowedErr
-    case TrustedFriendsCreateNotAllowed =>
-      TrustedFriendsCreateNotAllowedErr
-    case TrustedFriendsQuoteTweetNotAllowed =>
-      TrustedFriendsQuoteTweetNotAllowedErr
-    case CollabTweetInvalidParams =>
-      CollabTweetInvalidParamsErr
-    case StaleTweetEngagementNotAllowed =>
-      StaleTweetEngagementNotAllowedErr
-    case StaleTweetQuoteTweetNotAllowed =>
-      StaleTweetQuoteTweetNotAllowedErr
-    case FieldEditNotAllowed =>
-      FieldEditNotAllowedErr
-    case NotEligibleForEdit =>
-      NotEligibleForEditErr
+    case SafetyRateL m Exceeded =>
+      SafetyRateL m ExceededErr
+    case Bounce  f bounce. sDef ned =>
+      accessDen edByBouncerErr(bounce.get)
+    case  nt onL m Exceeded =>
+       nt onL m ExceededErr
+    case UrlL m Exceeded =>
+      UrlL m ExceededErr
+    case HashtagL m Exceeded =>
+      HashtagL m ExceededErr
+    case CashtagL m Exceeded =>
+      CashtagL m ExceededErr
+    case HashtagLengthL m Exceeded =>
+      HashtagLengthL m ExceededErr
+    case TooManyAttach ntTypes =>
+      TooManyAttach ntTypesErr
+    case  nval dUrl =>
+       nval dUrlErr
+    case D sabledBy p Pol cy =>
+      fa lureReason
+        .map(t etEngage ntL m edErr)
+        .getOrElse(Gener cT etCreateErr)
+    case  nval dAdd  onalF eld =>
+      fa lureReason
+        .map( nval dAdd  onalF eldW hReasonErr)
+        .getOrElse( nval dAdd  onalF eldErr)
+    //  nval d mage has been deprecated by t etyp e. Use  nval d d a  nstead.
+    case  nval d d a |  nval d mage |  d aNotFound =>
+       nval d d aErr(fa lureReason)
+    case  nReplyToT etNotFound =>
+       nReplyToT etNotFoundErr
+    case  nval dAttach ntUrl =>
+       nval dAttach ntUrlErr
+    case Conversat onControlNotAllo d =>
+      Conversat onControlNotAuthor zedErr
+    case  nval dConversat onControl =>
+      Conversat onControl nval dErr
+    case ReplyT etNotAllo d =>
+      Conversat onControlReplyRestr cted
+    case Exclus veT etEngage ntNotAllo d =>
+      Exclus veT etEngage ntNotAllo dErr
+    case Commun yReplyT etNotAllo d =>
+      Commun yReplyT etNotAllo dErr
+    case Commun yUserNotAuthor zed =>
+      Commun yUserNotAuthor zedErr
+    case Commun yNotFound =>
+      Commun yNotFoundErr
+    case SuperFollows nval dParams =>
+      SuperFollow nval dParamsErr
+    case SuperFollowsCreateNotAuthor zed =>
+      SuperFollowCreateNotAuthor zedErr
+    case Commun yProtectedUserCannotT et =>
+      Commun yProtectedUserCannotT etErr
+    case TrustedFr ends nval dParams =>
+      TrustedFr ends nval dParamsErr
+    case TrustedFr endsEngage ntNotAllo d =>
+      TrustedFr endsEngage ntNotAllo dErr
+    case TrustedFr endsCreateNotAllo d =>
+      TrustedFr endsCreateNotAllo dErr
+    case TrustedFr endsQuoteT etNotAllo d =>
+      TrustedFr endsQuoteT etNotAllo dErr
+    case CollabT et nval dParams =>
+      CollabT et nval dParamsErr
+    case StaleT etEngage ntNotAllo d =>
+      StaleT etEngage ntNotAllo dErr
+    case StaleT etQuoteT etNotAllo d =>
+      StaleT etQuoteT etNotAllo dErr
+    case F eldEd NotAllo d =>
+      F eldEd NotAllo dErr
+    case NotEl g bleForEd  =>
+      NotEl g bleForEd Err
     case _ =>
-      GenericTweetCreateErr
+      Gener cT etCreateErr
   }
 }

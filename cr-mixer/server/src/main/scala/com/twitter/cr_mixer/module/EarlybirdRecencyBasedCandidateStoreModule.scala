@@ -1,188 +1,188 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.SeqLongInjection
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.Earlyb rdCl ent d
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.FacetsToFetch
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.GetCollectorTerm nat onParams
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.GetEarlyb rdQuery
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l. tadataOpt ons
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.SeqLong nject on
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.search.common.query.thr ftjava.thr ftscala.CollectorParams
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdRequest
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdResponseCode
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdServ ce
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchQuery
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchRank ngMode
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport javax. nject.Na d
 
-object EarlybirdRecencyBasedCandidateStoreModule extends TwitterModule {
+object Earlyb rdRecencyBasedCand dateStoreModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache)
-  def providesEarlybirdRecencyBasedWithoutRetweetsRepliesCandidateStore(
-    statsReceiver: StatsReceiver,
-    earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-    @Named(ModuleNames.EarlybirdTweetsCache) earlybirdRecencyBasedTweetsCache: MemcachedClient,
-    timeoutConfig: TimeoutConfig
-  ): ReadableStore[UserId, Seq[TweetId]] = {
-    val stats = statsReceiver.scope("EarlybirdRecencyBasedWithoutRetweetsRepliesCandidateStore")
-    val underlyingStore = new ReadableStore[UserId, Seq[TweetId]] {
-      override def get(userId: UserId): Future[Option[Seq[TweetId]]] = {
-        // Home based EB filters out retweets and replies
-        val earlybirdRequest =
-          buildEarlybirdRequest(
-            userId,
-            FilterOutRetweetsAndReplies,
-            DefaultMaxNumTweetPerUser,
-            timeoutConfig.earlybirdServerTimeout)
-        getEarlybirdSearchResult(earlybirdSearchClient, earlybirdRequest, stats)
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Earlyb rdRecencyBasedW houtRet etsRepl esT etsCac )
+  def prov desEarlyb rdRecencyBasedW houtRet etsRepl esCand dateStore(
+    statsRece ver: StatsRece ver,
+    earlyb rdSearchCl ent: Earlyb rdServ ce. thodPerEndpo nt,
+    @Na d(ModuleNa s.Earlyb rdT etsCac ) earlyb rdRecencyBasedT etsCac :  mcac dCl ent,
+    t  outConf g: T  outConf g
+  ): ReadableStore[User d, Seq[T et d]] = {
+    val stats = statsRece ver.scope("Earlyb rdRecencyBasedW houtRet etsRepl esCand dateStore")
+    val underly ngStore = new ReadableStore[User d, Seq[T et d]] {
+      overr de def get(user d: User d): Future[Opt on[Seq[T et d]]] = {
+        // Ho  based EB f lters out ret ets and repl es
+        val earlyb rdRequest =
+          bu ldEarlyb rdRequest(
+            user d,
+            F lterOutRet etsAndRepl es,
+            DefaultMaxNumT etPerUser,
+            t  outConf g.earlyb rdServerT  out)
+        getEarlyb rdSearchResult(earlyb rdSearchCl ent, earlyb rdRequest, stats)
       }
     }
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = earlybirdRecencyBasedTweetsCache,
-      ttl = MemcacheKeyTimeToLiveDuration,
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = underly ngStore,
+      cac Cl ent = earlyb rdRecencyBasedT etsCac ,
+      ttl =  mcac KeyT  ToL veDurat on,
       asyncUpdate = true
     )(
-      valueInjection = SeqLongInjection,
-      statsReceiver = statsReceiver.scope("earlybird_recency_based_tweets_home_memcache"),
-      keyToString = { k =>
-        f"uEBRBHM:${keyHasher.hashKey(k.toString.getBytes)}%X" // prefix = EarlyBirdRecencyBasedHoMe
+      value nject on = SeqLong nject on,
+      statsRece ver = statsRece ver.scope("earlyb rd_recency_based_t ets_ho _ mcac "),
+      keyToStr ng = { k =>
+        f"uEBRBHM:${keyHas r.hashKey(k.toStr ng.getBytes)}%X" // pref x = EarlyB rdRecencyBasedHo 
       }
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.EarlybirdRecencyBasedWithRetweetsRepliesTweetsCache)
-  def providesEarlybirdRecencyBasedWithRetweetsRepliesCandidateStore(
-    statsReceiver: StatsReceiver,
-    earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-    @Named(ModuleNames.EarlybirdTweetsCache) earlybirdRecencyBasedTweetsCache: MemcachedClient,
-    timeoutConfig: TimeoutConfig
-  ): ReadableStore[UserId, Seq[TweetId]] = {
-    val stats = statsReceiver.scope("EarlybirdRecencyBasedWithRetweetsRepliesCandidateStore")
-    val underlyingStore = new ReadableStore[UserId, Seq[TweetId]] {
-      override def get(userId: UserId): Future[Option[Seq[TweetId]]] = {
-        val earlybirdRequest = buildEarlybirdRequest(
-          userId,
-          // Notifications based EB keeps retweets and replies
-          NotFilterOutRetweetsAndReplies,
-          DefaultMaxNumTweetPerUser,
-          processingTimeout = timeoutConfig.earlybirdServerTimeout
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Earlyb rdRecencyBasedW hRet etsRepl esT etsCac )
+  def prov desEarlyb rdRecencyBasedW hRet etsRepl esCand dateStore(
+    statsRece ver: StatsRece ver,
+    earlyb rdSearchCl ent: Earlyb rdServ ce. thodPerEndpo nt,
+    @Na d(ModuleNa s.Earlyb rdT etsCac ) earlyb rdRecencyBasedT etsCac :  mcac dCl ent,
+    t  outConf g: T  outConf g
+  ): ReadableStore[User d, Seq[T et d]] = {
+    val stats = statsRece ver.scope("Earlyb rdRecencyBasedW hRet etsRepl esCand dateStore")
+    val underly ngStore = new ReadableStore[User d, Seq[T et d]] {
+      overr de def get(user d: User d): Future[Opt on[Seq[T et d]]] = {
+        val earlyb rdRequest = bu ldEarlyb rdRequest(
+          user d,
+          // Not f cat ons based EB keeps ret ets and repl es
+          NotF lterOutRet etsAndRepl es,
+          DefaultMaxNumT etPerUser,
+          process ngT  out = t  outConf g.earlyb rdServerT  out
         )
-        getEarlybirdSearchResult(earlybirdSearchClient, earlybirdRequest, stats)
+        getEarlyb rdSearchResult(earlyb rdSearchCl ent, earlyb rdRequest, stats)
       }
     }
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = earlybirdRecencyBasedTweetsCache,
-      ttl = MemcacheKeyTimeToLiveDuration,
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = underly ngStore,
+      cac Cl ent = earlyb rdRecencyBasedT etsCac ,
+      ttl =  mcac KeyT  ToL veDurat on,
       asyncUpdate = true
     )(
-      valueInjection = SeqLongInjection,
-      statsReceiver = statsReceiver.scope("earlybird_recency_based_tweets_notifications_memcache"),
-      keyToString = { k =>
-        f"uEBRBN:${keyHasher.hashKey(k.toString.getBytes)}%X" // prefix = EarlyBirdRecencyBasedNotifications
+      value nject on = SeqLong nject on,
+      statsRece ver = statsRece ver.scope("earlyb rd_recency_based_t ets_not f cat ons_ mcac "),
+      keyToStr ng = { k =>
+        f"uEBRBN:${keyHas r.hashKey(k.toStr ng.getBytes)}%X" // pref x = EarlyB rdRecencyBasedNot f cat ons
       }
     )
   }
 
-  private val keyHasher: KeyHasher = KeyHasher.FNV1A_64
+  pr vate val keyHas r: KeyHas r = KeyHas r.FNV1A_64
 
   /**
-   * Note the DefaultMaxNumTweetPerUser is used to adjust the result size per cache entry.
-   * If the value changes, it will increase the size of the memcache.
+   * Note t  DefaultMaxNumT etPerUser  s used to adjust t  result s ze per cac  entry.
+   *  f t  value changes,   w ll  ncrease t  s ze of t   mcac .
    */
-  private val DefaultMaxNumTweetPerUser: Int = 100
-  private val FilterOutRetweetsAndReplies = true
-  private val NotFilterOutRetweetsAndReplies = false
-  private val MemcacheKeyTimeToLiveDuration: Duration = Duration.fromMinutes(15)
+  pr vate val DefaultMaxNumT etPerUser:  nt = 100
+  pr vate val F lterOutRet etsAndRepl es = true
+  pr vate val NotF lterOutRet etsAndRepl es = false
+  pr vate val  mcac KeyT  ToL veDurat on: Durat on = Durat on.fromM nutes(15)
 
-  private def buildEarlybirdRequest(
-    seedUserId: UserId,
-    filterOutRetweetsAndReplies: Boolean,
-    maxNumTweetsPerSeedUser: Int,
-    processingTimeout: Duration
-  ): EarlybirdRequest =
-    EarlybirdRequest(
-      searchQuery = getThriftSearchQuery(
-        seedUserId = seedUserId,
-        filterOutRetweetsAndReplies = filterOutRetweetsAndReplies,
-        maxNumTweetsPerSeedUser = maxNumTweetsPerSeedUser,
-        processingTimeout = processingTimeout
+  pr vate def bu ldEarlyb rdRequest(
+    seedUser d: User d,
+    f lterOutRet etsAndRepl es: Boolean,
+    maxNumT etsPerSeedUser:  nt,
+    process ngT  out: Durat on
+  ): Earlyb rdRequest =
+    Earlyb rdRequest(
+      searchQuery = getThr ftSearchQuery(
+        seedUser d = seedUser d,
+        f lterOutRet etsAndRepl es = f lterOutRet etsAndRepl es,
+        maxNumT etsPerSeedUser = maxNumT etsPerSeedUser,
+        process ngT  out = process ngT  out
       ),
-      clientId = Some(EarlybirdClientId),
-      timeoutMs = processingTimeout.inMilliseconds.intValue(),
-      getOlderResults = Some(false),
+      cl ent d = So (Earlyb rdCl ent d),
+      t  outMs = process ngT  out. nM ll seconds. ntValue(),
+      getOlderResults = So (false),
       adjustedProtectedRequestParams = None,
-      adjustedFullArchiveRequestParams = None,
-      getProtectedTweetsOnly = Some(false),
-      skipVeryRecentTweets = true,
+      adjustedFullArch veRequestParams = None,
+      getProtectedT etsOnly = So (false),
+      sk pVeryRecentT ets = true,
     )
 
-  private def getThriftSearchQuery(
-    seedUserId: UserId,
-    filterOutRetweetsAndReplies: Boolean,
-    maxNumTweetsPerSeedUser: Int,
-    processingTimeout: Duration
-  ): ThriftSearchQuery = ThriftSearchQuery(
-    serializedQuery = GetEarlybirdQuery(
+  pr vate def getThr ftSearchQuery(
+    seedUser d: User d,
+    f lterOutRet etsAndRepl es: Boolean,
+    maxNumT etsPerSeedUser:  nt,
+    process ngT  out: Durat on
+  ): Thr ftSearchQuery = Thr ftSearchQuery(
+    ser al zedQuery = GetEarlyb rdQuery(
       None,
       None,
       Set.empty,
-      filterOutRetweetsAndReplies
-    ).map(_.serialize),
-    fromUserIDFilter64 = Some(Seq(seedUserId)),
-    numResults = maxNumTweetsPerSeedUser,
-    rankingMode = ThriftSearchRankingMode.Recency,
-    collectorParams = Some(
+      f lterOutRet etsAndRepl es
+    ).map(_.ser al ze),
+    fromUser DF lter64 = So (Seq(seedUser d)),
+    numResults = maxNumT etsPerSeedUser,
+    rank ngMode = Thr ftSearchRank ngMode.Recency,
+    collectorParams = So (
       CollectorParams(
-        // numResultsToReturn defines how many results each EB shard will return to search root
-        numResultsToReturn = maxNumTweetsPerSeedUser,
-        // terminationParams.maxHitsToProcess is used for early terminating per shard results fetching.
-        terminationParams =
-          GetCollectorTerminationParams(maxNumTweetsPerSeedUser, processingTimeout)
+        // numResultsToReturn def nes how many results each EB shard w ll return to search root
+        numResultsToReturn = maxNumT etsPerSeedUser,
+        // term nat onParams.maxH sToProcess  s used for early term nat ng per shard results fetch ng.
+        term nat onParams =
+          GetCollectorTerm nat onParams(maxNumT etsPerSeedUser, process ngT  out)
       )),
-    facetFieldNames = Some(FacetsToFetch),
-    resultMetadataOptions = Some(MetadataOptions),
-    searchStatusIds = None
+    facetF eldNa s = So (FacetsToFetch),
+    result tadataOpt ons = So ( tadataOpt ons),
+    searchStatus ds = None
   )
 
-  private def getEarlybirdSearchResult(
-    earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-    request: EarlybirdRequest,
-    statsReceiver: StatsReceiver
-  ): Future[Option[Seq[TweetId]]] = earlybirdSearchClient
+  pr vate def getEarlyb rdSearchResult(
+    earlyb rdSearchCl ent: Earlyb rdServ ce. thodPerEndpo nt,
+    request: Earlyb rdRequest,
+    statsRece ver: StatsRece ver
+  ): Future[Opt on[Seq[T et d]]] = earlyb rdSearchCl ent
     .search(request)
     .map { response =>
       response.responseCode match {
-        case EarlybirdResponseCode.Success =>
-          val earlybirdSearchResult =
+        case Earlyb rdResponseCode.Success =>
+          val earlyb rdSearchResult =
             response.searchResults
               .map {
                 _.results
-                  .map(searchResult => searchResult.id)
+                  .map(searchResult => searchResult. d)
               }
-          statsReceiver.scope("result").stat("size").add(earlybirdSearchResult.size)
-          earlybirdSearchResult
+          statsRece ver.scope("result").stat("s ze").add(earlyb rdSearchResult.s ze)
+          earlyb rdSearchResult
         case e =>
-          statsReceiver.scope("failures").counter(e.getClass.getSimpleName).incr()
-          Some(Seq.empty)
+          statsRece ver.scope("fa lures").counter(e.getClass.getS mpleNa ). ncr()
+          So (Seq.empty)
       }
     }
 

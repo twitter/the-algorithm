@@ -1,121 +1,121 @@
-package com.twitter.product_mixer.core.service.feature_hydrator_observer
+package com.tw ter.product_m xer.core.serv ce.feature_hydrator_observer
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.shared_library.observer.Observer
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.util.Throw
-import com.twitter.util.Throwables
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.RollupStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.featurestore.l b.data.Hydrat onError
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.FeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer
+ mport com.tw ter.servo.ut l.CancelledExcept onExtractor
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Throwables
 
 class FeatureHydratorObserver(
-  statsReceiver: StatsReceiver,
+  statsRece ver: StatsRece ver,
   hydrators: Seq[FeatureHydrator[_]],
   context: Executor.Context) {
 
-  private val hydratorAndFeatureToStats: Map[
-    ComponentIdentifier,
+  pr vate val hydratorAndFeatureToStats: Map[
+    Component dent f er,
     Map[Feature[_, _], FeatureCounters]
   ] =
     hydrators.map { hydrator =>
-      val hydratorScope = Executor.buildScopes(context, hydrator.identifier)
+      val hydratorScope = Executor.bu ldScopes(context, hydrator. dent f er)
       val featureToCounterMap: Map[Feature[_, _], FeatureCounters] = hydrator.features
-        .asInstanceOf[Set[Feature[_, _]]].map { feature =>
+        .as nstanceOf[Set[Feature[_, _]]].map { feature =>
           val scopedStats = scopedBroadcastStats(hydratorScope, feature)
-          // Initialize so we have them registered
+          //  n  al ze so   have t m reg stered
           val requestsCounter = scopedStats.counter(Observer.Requests)
           val successCounter = scopedStats.counter(Observer.Success)
-          // These are dynamic so we can't really cache them
-          scopedStats.counter(Observer.Failures)
+          // T se are dynam c so   can't really cac  t m
+          scopedStats.counter(Observer.Fa lures)
           scopedStats.counter(Observer.Cancelled)
           feature -> FeatureCounters(requestsCounter, successCounter, scopedStats)
         }.toMap
-      hydrator.identifier -> featureToCounterMap
+      hydrator. dent f er -> featureToCounterMap
     }.toMap
 
-  def observeFeatureSuccessAndFailures(
+  def observeFeatureSuccessAndFa lures(
     hydrator: FeatureHydrator[_],
     featureMaps: Seq[FeatureMap]
-  ): Unit = {
+  ): Un  = {
 
-    val features = hydrator.features.asInstanceOf[Set[Feature[_, _]]]
+    val features = hydrator.features.as nstanceOf[Set[Feature[_, _]]]
 
-    val failedFeaturesWithErrorNames: Map[Feature[_, _], Seq[Seq[String]]] = hydrator match {
+    val fa ledFeaturesW hErrorNa s: Map[Feature[_, _], Seq[Seq[Str ng]]] = hydrator match {
       case _: FeatureStoreV1QueryFeatureHydrator[_] |
-          _: FeatureStoreV1CandidateFeatureHydrator[_, _] =>
-        featureMaps.toIterator
-          .flatMap(_.getTry(FeatureStoreV1ResponseFeature).toOption.map(_.failedFeatures)).flatMap {
-            failureMap: Map[_ <: Feature[_, _], Set[HydrationError]] =>
-              failureMap.flatMap {
-                case (feature, errors: Set[HydrationError]) =>
-                  errors.headOption.map { error =>
-                    feature -> Seq(Observer.Failures, error.errorType)
+          _: FeatureStoreV1Cand dateFeatureHydrator[_, _] =>
+        featureMaps.to erator
+          .flatMap(_.getTry(FeatureStoreV1ResponseFeature).toOpt on.map(_.fa ledFeatures)).flatMap {
+            fa lureMap: Map[_ <: Feature[_, _], Set[Hydrat onError]] =>
+              fa lureMap.flatMap {
+                case (feature, errors: Set[Hydrat onError]) =>
+                  errors. adOpt on.map { error =>
+                    feature -> Seq(Observer.Fa lures, error.errorType)
                   }
-              }.toIterator
+              }.to erator
           }.toSeq.groupBy { case (feature, _) => feature }.mapValues { seqOfTuples =>
             seqOfTuples.map { case (_, error) => error }
           }
 
       case _: FeatureHydrator[_] =>
-        features.toIterator
+        features.to erator
           .flatMap { feature =>
             featureMaps
-              .flatMap(_.underlyingMap
+              .flatMap(_.underly ngMap
                 .get(feature).collect {
-                  case Throw(CancelledExceptionExtractor(throwable)) =>
-                    (feature, Observer.Cancelled +: Throwables.mkString(throwable))
+                  case Throw(CancelledExcept onExtractor(throwable)) =>
+                    (feature, Observer.Cancelled +: Throwables.mkStr ng(throwable))
                   case Throw(throwable) =>
-                    (feature, Observer.Failures +: Throwables.mkString(throwable))
+                    (feature, Observer.Fa lures +: Throwables.mkStr ng(throwable))
                 })
           }.toSeq.groupBy { case (feature, _) => feature }.mapValues { seqOfTuples =>
             seqOfTuples.map { case (_, error) => error }
           }
     }
 
-    val failedFeaturesWithErrorCountsMap: Map[Feature[_, _], Map[Seq[String], Int]] =
-      failedFeaturesWithErrorNames.mapValues(_.groupBy { statKey => statKey }.mapValues(_.size))
+    val fa ledFeaturesW hErrorCountsMap: Map[Feature[_, _], Map[Seq[Str ng],  nt]] =
+      fa ledFeaturesW hErrorNa s.mapValues(_.groupBy { statKey => statKey }.mapValues(_.s ze))
 
     val featuresToCounterMap = hydratorAndFeatureToStats.getOrElse(
-      hydrator.identifier,
-      throw new MissingHydratorException(hydrator.identifier))
+      hydrator. dent f er,
+      throw new M ss ngHydratorExcept on(hydrator. dent f er))
     features.foreach { feature =>
       val hydratorFeatureCounters: FeatureCounters = featuresToCounterMap.getOrElse(
         feature,
-        throw new MissingFeatureException(hydrator.identifier, feature))
-      val failedMapsCount = failedFeaturesWithErrorNames.getOrElse(feature, Seq.empty).size
-      val failedFeatureErrorCounts = failedFeaturesWithErrorCountsMap.getOrElse(feature, Map.empty)
+        throw new M ss ngFeatureExcept on(hydrator. dent f er, feature))
+      val fa ledMapsCount = fa ledFeaturesW hErrorNa s.getOrElse(feature, Seq.empty).s ze
+      val fa ledFeatureErrorCounts = fa ledFeaturesW hErrorCountsMap.getOrElse(feature, Map.empty)
 
-      hydratorFeatureCounters.requestsCounter.incr(featureMaps.size)
-      hydratorFeatureCounters.successCounter.incr(featureMaps.size - failedMapsCount)
-      failedFeatureErrorCounts.foreach {
-        case (failure, count) =>
-          hydratorFeatureCounters.scopedStats.counter(failure: _*).incr(count)
+      hydratorFeatureCounters.requestsCounter. ncr(featureMaps.s ze)
+      hydratorFeatureCounters.successCounter. ncr(featureMaps.s ze - fa ledMapsCount)
+      fa ledFeatureErrorCounts.foreach {
+        case (fa lure, count) =>
+          hydratorFeatureCounters.scopedStats.counter(fa lure: _*). ncr(count)
       }
     }
   }
 
-  private def scopedBroadcastStats(
+  pr vate def scopedBroadcastStats(
     hydratorScope: Executor.Scopes,
     feature: Feature[_, _],
-  ): StatsReceiver = {
-    val suffix = Seq("Feature", feature.toString)
-    val localScope = hydratorScope.componentScopes ++ suffix
-    val relativeScope = hydratorScope.relativeScope ++ suffix
-    new RollupStatsReceiver(
-      BroadcastStatsReceiver(
+  ): StatsRece ver = {
+    val suff x = Seq("Feature", feature.toStr ng)
+    val localScope = hydratorScope.componentScopes ++ suff x
+    val relat veScope = hydratorScope.relat veScope ++ suff x
+    new RollupStatsRece ver(
+      BroadcastStatsRece ver(
         Seq(
-          statsReceiver.scope(localScope: _*),
-          statsReceiver.scope(relativeScope: _*),
+          statsRece ver.scope(localScope: _*),
+          statsRece ver.scope(relat veScope: _*),
         )
       ))
   }
@@ -124,13 +124,13 @@ class FeatureHydratorObserver(
 case class FeatureCounters(
   requestsCounter: Counter,
   successCounter: Counter,
-  scopedStats: StatsReceiver)
+  scopedStats: StatsRece ver)
 
-class MissingHydratorException(featureHydratorIdentifier: ComponentIdentifier)
-    extends Exception(s"Missing Feature Hydrator in Stats Map: ${featureHydratorIdentifier.name}")
+class M ss ngHydratorExcept on(featureHydrator dent f er: Component dent f er)
+    extends Except on(s"M ss ng Feature Hydrator  n Stats Map: ${featureHydrator dent f er.na }")
 
-class MissingFeatureException(
-  featureHydratorIdentifier: ComponentIdentifier,
+class M ss ngFeatureExcept on(
+  featureHydrator dent f er: Component dent f er,
   feature: Feature[_, _])
-    extends Exception(
-      s"Missing Feature in Stats Map: ${feature.toString} for ${featureHydratorIdentifier.name}")
+    extends Except on(
+      s"M ss ng Feature  n Stats Map: ${feature.toStr ng} for ${featureHydrator dent f er.na }")

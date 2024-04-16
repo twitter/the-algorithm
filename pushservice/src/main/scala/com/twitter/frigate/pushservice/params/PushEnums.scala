@@ -1,135 +1,135 @@
-package com.twitter.frigate.pushservice.params
+package com.tw ter.fr gate.pushserv ce.params
 
 /**
- * Enum for naming scores we will scribe for non-personalized high quality candidate generation
+ * Enum for nam ng scores   w ll scr be for non-personal zed h gh qual y cand date generat on
  */
-object HighQualityScribingScores extends Enumeration {
-  type Name = Value
-  val HeavyRankingScore = Value
-  val NonPersonalizedQualityScoreUsingCnn = Value
+object H ghQual yScr b ngScores extends Enu rat on {
+  type Na  = Value
+  val  avyRank ngScore = Value
+  val NonPersonal zedQual yScoreUs ngCnn = Value
   val BqmlNsfwScore = Value
   val BqmlReportScore = Value
 }
 
 /**
- * Enum for quality upranking transform
+ * Enum for qual y uprank ng transform
  */
-object MrQualityUprankingTransformTypeEnum extends Enumeration {
-  val Linear = Value
-  val Sigmoid = Value
+object MrQual yUprank ngTransformTypeEnum extends Enu rat on {
+  val L near = Value
+  val S gmo d = Value
 }
 
 /**
- * Enum for quality partial upranking transform
+ * Enum for qual y part al uprank ng transform
  */
-object MrQualityUprankingPartialTypeEnum extends Enumeration {
+object MrQual yUprank ngPart alTypeEnum extends Enu rat on {
   val All = Value
   val Oon = Value
 }
 
 /**
- * Enum for bucket membership in DDG 10220 Mr Bold Title Favorite Retweet Notification experiment
+ * Enum for bucket  mbersh p  n DDG 10220 Mr Bold T le Favor e Ret et Not f cat on exper  nt
  */
-object MRBoldTitleFavoriteAndRetweetExperimentEnum extends Enumeration {
-  val ShortTitle = Value
+object MRBoldT leFavor eAndRet etExper  ntEnum extends Enu rat on {
+  val ShortT le = Value
 }
 
 /**
- * Enum for ML filtering predicates
+ * Enum for ML f lter ng pred cates
  */
-object QualityPredicateEnum extends Enumeration {
-  val WeightedOpenOrNtabClick = Value
-  val ExplicitOpenOrNtabClickFilter = Value
-  val AlwaysTrue = Value // Disable ML filtering
+object Qual yPred cateEnum extends Enu rat on {
+  val   ghtedOpenOrNtabCl ck = Value
+  val Expl c OpenOrNtabCl ckF lter = Value
+  val AlwaysTrue = Value // D sable ML f lter ng
 }
 
 /**
- * Enum to specify normalization used in BigFiltering experiments
+ * Enum to spec fy normal zat on used  n B gF lter ng exper  nts
  */
-object BigFilteringNormalizationEnum extends Enumeration {
-  val NormalizationDisabled = Value
-  val NormalizeByNotSendingScore = Value
+object B gF lter ngNormal zat onEnum extends Enu rat on {
+  val Normal zat onD sabled = Value
+  val Normal zeByNotSend ngScore = Value
 }
 
 /**
- * Enum for inline actions
+ * Enum for  nl ne act ons
  */
-object InlineActionsEnum extends Enumeration {
-  val Favorite = Value
+object  nl neAct onsEnum extends Enu rat on {
+  val Favor e = Value
   val Follow = Value
   val Reply = Value
-  val Retweet = Value
+  val Ret et = Value
 }
 
 /**
  * Enum for template format
  */
-object IbisTemplateFormatEnum extends Enumeration {
+object  b sTemplateFormatEnum extends Enu rat on {
   val template1 = Value
 }
 
 /**
- * Enum for Store name for Top Tweets By Geo
+ * Enum for Store na  for Top T ets By Geo
  */
-object TopTweetsForGeoCombination extends Enumeration {
+object TopT etsForGeoComb nat on extends Enu rat on {
   val Default = Value
-  val AccountsTweetFavAsBackfill = Value
-  val AccountsTweetFavIntermixed = Value
+  val AccountsT etFavAsBackf ll = Value
+  val AccountsT etFav nterm xed = Value
 }
 
 /**
- * Enum for scoring function for Top Tweets By Geo
+ * Enum for scor ng funct on for Top T ets By Geo
  */
-object TopTweetsForGeoRankingFunction extends Enumeration {
+object TopT etsForGeoRank ngFunct on extends Enu rat on {
   val Score = Value
-  val GeohashLengthAndThenScore = Value
+  val GeohashLengthAndT nScore = Value
 }
 
 /**
- * Enum for which version of popgeo tweets to be using
+ * Enum for wh ch vers on of popgeo t ets to be us ng
  */
-object PopGeoTweetVersion extends Enumeration {
+object PopGeoT etVers on extends Enu rat on {
   val Prod = Value
 }
 
 /**
- * Enum for Subtext in Android header
+ * Enum for Subtext  n Andro d  ader
  */
-object SubtextForAndroidPushHeader extends Enumeration {
+object SubtextForAndro dPush ader extends Enu rat on {
   val None = Value
   val TargetHandler = Value
   val TargetTagHandler = Value
-  val TargetName = Value
+  val TargetNa  = Value
   val AuthorTagHandler = Value
-  val AuthorName = Value
+  val AuthorNa  = Value
 }
 
-object NsfwTextDetectionModel extends Enumeration {
+object NsfwTextDetect onModel extends Enu rat on {
   val ProdModel = Value
-  val RetrainedModel = Value
+  val Retra nedModel = Value
 }
 
-object HighQualityCandidateGroupEnum extends Enumeration {
+object H ghQual yCand dateGroupEnum extends Enu rat on {
   val AgeBucket = Value
   val Language = Value
-  val Topic = Value
+  val Top c = Value
   val Country = Value
-  val Admin0 = Value
-  val Admin1 = Value
+  val Adm n0 = Value
+  val Adm n1 = Value
 }
 
-object CrtGroupEnum extends Enumeration {
-  val Twistly = Value
+object CrtGroupEnum extends Enu rat on {
+  val Tw stly = Value
   val Frs = Value
   val F1 = Value
-  val Topic = Value
-  val Trip = Value
+  val Top c = Value
+  val Tr p = Value
   val GeoPop = Value
-  val Other = Value
+  val Ot r = Value
   val None = Value
 }
 
-object SportGameEnum extends Enumeration {
+object SportGa Enum extends Enu rat on {
   val Soccer = Value
   val Nfl = Value
 }

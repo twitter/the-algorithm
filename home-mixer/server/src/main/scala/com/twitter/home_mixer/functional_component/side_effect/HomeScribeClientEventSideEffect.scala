@@ -1,75 +1,75 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter.logp pel ne.cl ent.common.EventPubl s r
+ mport com.tw ter.product_m xer.component_l brary.s de_effect.Scr beCl entEventS deEffect
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Side effect that logs served tweet metrics to Scribe as client events.
+ * S de effect that logs served t et  tr cs to Scr be as cl ent events.
  */
-case class HomeScribeClientEventSideEffect(
-  enableScribeClientEvents: Boolean,
-  override val logPipelinePublisher: EventPublisher[LogEvent],
-  injectedTweetsCandidatePipelineIdentifiers: Seq[CandidatePipelineIdentifier],
-  adsCandidatePipelineIdentifier: Option[CandidatePipelineIdentifier] = None,
-  whoToFollowCandidatePipelineIdentifier: Option[CandidatePipelineIdentifier] = None,
-  whoToSubscribeCandidatePipelineIdentifier: Option[CandidatePipelineIdentifier] = None)
-    extends ScribeClientEventSideEffect[PipelineQuery, Timeline]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery,
-      Timeline
+case class Ho Scr beCl entEventS deEffect(
+  enableScr beCl entEvents: Boolean,
+  overr de val logP pel nePubl s r: EventPubl s r[LogEvent],
+   njectedT etsCand dateP pel ne dent f ers: Seq[Cand dateP pel ne dent f er],
+  adsCand dateP pel ne dent f er: Opt on[Cand dateP pel ne dent f er] = None,
+  whoToFollowCand dateP pel ne dent f er: Opt on[Cand dateP pel ne dent f er] = None,
+  whoToSubscr beCand dateP pel ne dent f er: Opt on[Cand dateP pel ne dent f er] = None)
+    extends Scr beCl entEventS deEffect[P pel neQuery, T  l ne]
+    w h P pel neResultS deEffect.Cond  onally[
+      P pel neQuery,
+      T  l ne
     ] {
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("HomeScribeClientEvent")
+  overr de val  dent f er: S deEffect dent f er = S deEffect dent f er("Ho Scr beCl entEvent")
 
-  override val page = "timelinemixer"
+  overr de val page = "t  l nem xer"
 
-  override def onlyIf(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Boolean = enableScribeClientEvents
+  overr de def only f(
+    query: P pel neQuery,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: T  l ne
+  ): Boolean = enableScr beCl entEvents
 
-  override def buildClientEvents(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Seq[ScribeClientEventSideEffect.ClientEvent] = {
+  overr de def bu ldCl entEvents(
+    query: P pel neQuery,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: T  l ne
+  ): Seq[Scr beCl entEventS deEffect.Cl entEvent] = {
 
-    val itemCandidates = CandidatesUtil.getItemCandidates(selectedCandidates)
-    val sources = itemCandidates.groupBy(_.source)
-    val injectedTweets =
-      injectedTweetsCandidatePipelineIdentifiers.flatMap(sources.getOrElse(_, Seq.empty))
-    val promotedTweets = adsCandidatePipelineIdentifier.flatMap(sources.get).toSeq.flatten
+    val  emCand dates = Cand datesUt l.get emCand dates(selectedCand dates)
+    val s ces =  emCand dates.groupBy(_.s ce)
+    val  njectedT ets =
+       njectedT etsCand dateP pel ne dent f ers.flatMap(s ces.getOrElse(_, Seq.empty))
+    val promotedT ets = adsCand dateP pel ne dent f er.flatMap(s ces.get).toSeq.flatten
 
-    // WhoToFollow and WhoToSubscribe modules are not required for all home-mixer products, e.g. list tweets timeline.
-    val whoToFollowUsers = whoToFollowCandidatePipelineIdentifier.flatMap(sources.get).toSeq.flatten
-    val whoToSubscribeUsers =
-      whoToSubscribeCandidatePipelineIdentifier.flatMap(sources.get).toSeq.flatten
+    // WhoToFollow and WhoToSubscr be modules are not requ red for all ho -m xer products, e.g. l st t ets t  l ne.
+    val whoToFollowUsers = whoToFollowCand dateP pel ne dent f er.flatMap(s ces.get).toSeq.flatten
+    val whoToSubscr beUsers =
+      whoToSubscr beCand dateP pel ne dent f er.flatMap(s ces.get).toSeq.flatten
 
-    val servedEvents = ServedEventsBuilder
-      .build(query, injectedTweets, promotedTweets, whoToFollowUsers, whoToSubscribeUsers)
+    val servedEvents = ServedEventsBu lder
+      .bu ld(query,  njectedT ets, promotedT ets, whoToFollowUsers, whoToSubscr beUsers)
 
-    val emptyTimelineEvents = EmptyTimelineEventsBuilder.build(query, injectedTweets)
+    val emptyT  l neEvents = EmptyT  l neEventsBu lder.bu ld(query,  njectedT ets)
 
-    val queryEvents = QueryEventsBuilder.build(query, injectedTweets)
+    val queryEvents = QueryEventsBu lder.bu ld(query,  njectedT ets)
 
-    (servedEvents ++ emptyTimelineEvents ++ queryEvents).filter(_.eventValue.forall(_ > 0))
+    (servedEvents ++ emptyT  l neEvents ++ queryEvents).f lter(_.eventValue.forall(_ > 0))
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.9)
   )
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeader
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Page ader
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Top cPage ader
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PageHeaderMarshaller @Inject() (
-  topicPageHeaderMarshaller: TopicPageHeaderMarshaller) {
+@S ngleton
+class Page aderMarshaller @ nject() (
+  top cPage aderMarshaller: Top cPage aderMarshaller) {
 
-  def apply(pageHeader: PageHeader): urp.PageHeader = pageHeader match {
-    case pageHeader: TopicPageHeader =>
-      urp.PageHeader.TopicPageHeader(topicPageHeaderMarshaller(pageHeader))
+  def apply(page ader: Page ader): urp.Page ader = page ader match {
+    case page ader: Top cPage ader =>
+      urp.Page ader.Top cPage ader(top cPage aderMarshaller(page ader))
   }
 }

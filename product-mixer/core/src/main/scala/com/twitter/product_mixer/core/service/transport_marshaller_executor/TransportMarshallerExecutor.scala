@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.core.service.transport_marshaller_executor
+package com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor.Inputs
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor.Result
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor.TransportMarshallerExecutor. nputs
+ mport com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor.TransportMarshallerExecutor.Result
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
  * Executes a [[TransportMarshaller]].
  *
- * @note This is a synchronous transform, so we don't observe it directly. Failures and such
- *       can be observed at the parent pipeline.
+ * @note T   s a synchronous transform, so   don't observe   d rectly. Fa lures and such
+ *       can be observed at t  parent p pel ne.
  */
-@Singleton
-class TransportMarshallerExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class TransportMarshallerExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor {
 
-  def arrow[DomainResponseType <: HasMarshalling, TransportResponseType](
-    marshaller: TransportMarshaller[DomainResponseType, TransportResponseType],
+  def arrow[Doma nResponseType <: HasMarshall ng, TransportResponseType](
+    marshaller: TransportMarshaller[Doma nResponseType, TransportResponseType],
     context: Executor.Context
-  ): Arrow[Inputs[DomainResponseType], Result[TransportResponseType]] = {
+  ): Arrow[ nputs[Doma nResponseType], Result[TransportResponseType]] = {
     val arrow =
-      Arrow.map[Inputs[DomainResponseType], Result[TransportResponseType]] {
-        case Inputs(domainResponse) => Result(marshaller(domainResponse))
+      Arrow.map[ nputs[Doma nResponseType], Result[TransportResponseType]] {
+        case  nputs(doma nResponse) => Result(marshaller(doma nResponse))
       }
 
-    wrapComponentWithExecutorBookkeeping(context, marshaller.identifier)(arrow)
+    wrapComponentW hExecutorBookkeep ng(context, marshaller. dent f er)(arrow)
   }
 }
 
 object TransportMarshallerExecutor {
-  case class Inputs[DomainResponseType <: HasMarshalling](domainResponse: DomainResponseType)
+  case class  nputs[Doma nResponseType <: HasMarshall ng](doma nResponse: Doma nResponseType)
   case class Result[TransportResponseType](result: TransportResponseType) extends ExecutorResult
 }

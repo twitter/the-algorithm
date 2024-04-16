@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PopGeoSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int] with FSName] = Seq(
-    PopGeoSourceParams.PopGeoSourceGeoHashMaxPrecision,
-    PopGeoSourceParams.PopGeoSourceMaxResultsPerPrecision,
-    PopGeoSourceParams.PopGeoSourceGeoHashMinPrecision,
+@S ngleton
+class PopGeoS ceFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val  ntFSParams: Seq[FSBoundedParam[ nt] w h FSNa ] = Seq(
+    PopGeoS ceParams.PopGeoS ceGeoHashMaxPrec s on,
+    PopGeoS ceParams.PopGeoS ceMaxResultsPerPrec s on,
+    PopGeoS ceParams.PopGeoS ceGeoHashM nPrec s on,
   )
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    PopGeoSourceParams.PopGeoSourceReturnFromAllPrecisions,
+  overr de val booleanFSParams: Seq[FSParam[Boolean] w h FSNa ] = Seq(
+    PopGeoS ceParams.PopGeoS ceReturnFromAllPrec s ons,
   )
 }

@@ -1,58 +1,58 @@
-# Scoring
+# Scor ng
 
-This folder contains the sql files that we'll use for scoring the real graph edges in BQ. We have 4 steps that take place:
-- check to make sure that our models are in place. the feature importance query should return 20 rows in total: 10 rows per model, 1 for each feature.
-- follow graph feature generation. this is to ensure that we have features for all users regardless if they have had any recent activity.
-- candidate generation. this query combines the candidates from the follow graph and the activity graph, and the features from both.
-- scoring. this query scores with 2 of our prod models and saves the scores to a table, with an additional field that distinguishes if an edge in in/out of network.
+T  folder conta ns t  sql f les that  'll use for scor ng t  real graph edges  n BQ.   have 4 steps that take place:
+- c ck to make sure that   models are  n place. t  feature  mportance query should return 20 rows  n total: 10 rows per model, 1 for each feature.
+- follow graph feature generat on. t   s to ensure that   have features for all users regardless  f t y have had any recent act v y.
+- cand date generat on. t  query comb nes t  cand dates from t  follow graph and t  act v y graph, and t  features from both.
+- scor ng. t  query scores w h 2 of   prod models and saves t  scores to a table, w h an add  onal f eld that d st ngu s s  f an edge  n  n/out of network.
 
-## Instructions
+##  nstruct ons
 
-For deploying the job, you would need to create a zip file, upload to packer, and then schedule it with aurora.
+For deploy ng t  job,   would need to create a z p f le, upload to packer, and t n sc dule   w h aurora.
 
 ```
-zip -jr real_graph_scoring src/scala/com/twitter/interaction_graph/bqe/scoring && \
-packer add_version --cluster=atla cassowary real_graph_scoring real_graph_scoring.zip
-aurora cron schedule atla/cassowary/prod/real_graph_scoring src/scala/com/twitter/interaction_graph/bqe/scoring/scoring.aurora && \
-aurora cron start atla/cassowary/prod/real_graph_scoring
+z p -jr real_graph_scor ng src/scala/com/tw ter/ nteract on_graph/bqe/scor ng && \
+packer add_vers on --cluster=atla cassowary real_graph_scor ng real_graph_scor ng.z p
+aurora cron sc dule atla/cassowary/prod/real_graph_scor ng src/scala/com/tw ter/ nteract on_graph/bqe/scor ng/scor ng.aurora && \
+aurora cron start atla/cassowary/prod/real_graph_scor ng
 ```
 
-# candidates.sql
+# cand dates.sql
 
-This BigQuery (BQ) query does the following:
+T  B gQuery (BQ) query does t  follow ng:
 
-1. Declares two variables, date_start and date_end, which are both of type DATE.
-2. Sets the date_end variable to the maximum partition ID of the interaction_graph_labels_daily table, using the PARSE_DATE() function to convert the partition ID to a date format.
-3. Sets the date_start variable to 30 days prior to the date_end variable, using the DATE_SUB() function.
-4. Creates a new table called candidates in the realgraph dataset, partitioned by ds.
-5. The query uses three common table expressions (T1, T2, and T3) to join data from two tables (interaction_graph_labels_daily and tweeting_follows) to generate a table containing candidate information and features.
-6. The table T3 is the result of a full outer join between T1 and T2, grouping by source_id and destination_id, and aggregating values such as num_tweets, label_types, and the counts of different types of labels (e.g. num_follows, num_favorites, etc.).
-7. The T4 table ranks each source_id by the number of num_days and num_tweets, and selects the top 2000 rows for each source_id.
-8. Finally, the query selects all columns from the T4 table and appends the date_end variable as a new column named ds.
+1. Declares two var ables, date_start and date_end, wh ch are both of type DATE.
+2. Sets t  date_end var able to t  max mum part  on  D of t   nteract on_graph_labels_da ly table, us ng t  PARSE_DATE() funct on to convert t  part  on  D to a date format.
+3. Sets t  date_start var able to 30 days pr or to t  date_end var able, us ng t  DATE_SUB() funct on.
+4. Creates a new table called cand dates  n t  realgraph dataset, part  oned by ds.
+5. T  query uses three common table express ons (T1, T2, and T3) to jo n data from two tables ( nteract on_graph_labels_da ly and t et ng_follows) to generate a table conta n ng cand date  nformat on and features.
+6. T  table T3  s t  result of a full outer jo n bet en T1 and T2, group ng by s ce_ d and dest nat on_ d, and aggregat ng values such as num_t ets, label_types, and t  counts of d fferent types of labels (e.g. num_follows, num_favor es, etc.).
+7. T  T4 table ranks each s ce_ d by t  number of num_days and num_t ets, and selects t  top 2000 rows for each s ce_ d.
+8. F nally, t  query selects all columns from t  T4 table and appends t  date_end var able as a new column na d ds.
 
-Overall, the query generates a table of candidates and their associated features for a particular date range, using data from two tables in the twttr-bq-cassowary-prod and twttr-recos-ml-prod datasets.
+Overall, t  query generates a table of cand dates and t  r assoc ated features for a part cular date range, us ng data from two tables  n t  twttr-bq-cassowary-prod and twttr-recos-ml-prod datasets.
 
 # follow_graph_features.sql
 
-This BigQuery script creates a table twttr-recos-ml-prod.realgraph.tweeting_follows that includes features for Twitter user interactions, specifically tweet counts and follows.
+T  B gQuery scr pt creates a table twttr-recos-ml-prod.realgraph.t et ng_follows that  ncludes features for Tw ter user  nteract ons, spec f cally t et counts and follows.
 
-First, it sets two variables date_latest_tweet and date_latest_follows to the most recent dates available in two separate tables: twttr-bq-tweetsource-pub-prod.user.public_tweets and twttr-recos-ml-prod.user_events.valid_user_follows, respectively.
+F rst,   sets two var ables date_latest_t et and date_latest_follows to t  most recent dates ava lable  n two separate tables: twttr-bq-t ets ce-pub-prod.user.publ c_t ets and twttr-recos-ml-prod.user_events.val d_user_follows, respect vely.
 
-Then, it creates the tweet_count and all_follows CTEs.
+T n,   creates t  t et_count and all_follows CTEs.
 
-The tweet_count CTE counts the number of tweets made by each user within the last 3 days prior to date_latest_tweet.
+T  t et_count CTE counts t  number of t ets made by each user w h n t  last 3 days pr or to date_latest_t et.
 
-The all_follows CTE retrieves all the follows from the valid_user_follows table that happened on date_latest_follows and left joins it with the tweet_count CTE. It also adds a row number that partitions by the source user ID and orders by the number of tweets in descending order. The final output is filtered to keep only the top 2000 follows per user based on the row number.
+T  all_follows CTE retr eves all t  follows from t  val d_user_follows table that happened on date_latest_follows and left jo ns   w h t  t et_count CTE.   also adds a row number that part  ons by t  s ce user  D and orders by t  number of t ets  n descend ng order. T  f nal output  s f ltered to keep only t  top 2000 follows per user based on t  row number.
 
-The final SELECT statement combines the all_follows CTE with the date_latest_tweet variable and inserts the results into the twttr-recos-ml-prod.realgraph.tweeting_follows table partitioned by date.
+T  f nal SELECT state nt comb nes t  all_follows CTE w h t  date_latest_t et var able and  nserts t  results  nto t  twttr-recos-ml-prod.realgraph.t et ng_follows table part  oned by date.
 
-# scoring.sql
+# scor ng.sql
 
-This BQ code performs operations on a BigQuery table called twttr-recos-ml-prod.realgraph.scores. Here is a step-by-step breakdown of what the code does:
+T  BQ code performs operat ons on a B gQuery table called twttr-recos-ml-prod.realgraph.scores.  re  s a step-by-step breakdown of what t  code does:
 
-Declare two variables, date_end and date_latest_follows, and set their values based on the latest partitions in the twttr-bq-cassowary-prod.user.INFORMATION_SCHEMA.PARTITIONS and twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS tables that correspond to specific tables, respectively. The PARSE_DATE() function is used to convert the partition IDs to date format.
+Declare two var ables, date_end and date_latest_follows, and set t  r values based on t  latest part  ons  n t  twttr-bq-cassowary-prod.user. NFORMAT ON_SCHEMA.PART T ONS and twttr-recos-ml-prod.user_events. NFORMAT ON_SCHEMA.PART T ONS tables that correspond to spec f c tables, respect vely. T  PARSE_DATE() funct on  s used to convert t  part  on  Ds to date format.
 
-Delete rows from the twttr-recos-ml-prod.realgraph.scores table where the value of the ds column is equal to date_end.
+Delete rows from t  twttr-recos-ml-prod.realgraph.scores table w re t  value of t  ds column  s equal to date_end.
 
-Insert rows into the twttr-recos-ml-prod.realgraph.scores table based on a query that generates predicted scores for pairs of user IDs using two machine learning models. Specifically, the query uses the ML.PREDICT() function to apply two machine learning models (twttr-recos-ml-prod.realgraph.prod and twttr-recos-ml-prod.realgraph.prod_explicit) to the twttr-recos-ml-prod.realgraph.candidates table. The resulting predicted scores are joined with the twttr-recos-ml-prod.realgraph.tweeting_follows table, which contains information about the number of tweets made by users and their follow relationships, using a full outer join. The final result includes columns for the source ID, destination ID, predicted score (prob), explicit predicted score (prob_explicit), a binary variable indicating whether the destination ID is followed by the source ID (followed), and the value of date_end for the ds column. If there is no match in the predicted_scores table for a given pair of user IDs, the COALESCE() function is used to return the corresponding values from the tweeting_follows table, with default values of 0.0 for the predicted scores.
+ nsert rows  nto t  twttr-recos-ml-prod.realgraph.scores table based on a query that generates pred cted scores for pa rs of user  Ds us ng two mach ne learn ng models. Spec f cally, t  query uses t  ML.PRED CT() funct on to apply two mach ne learn ng models (twttr-recos-ml-prod.realgraph.prod and twttr-recos-ml-prod.realgraph.prod_expl c ) to t  twttr-recos-ml-prod.realgraph.cand dates table. T  result ng pred cted scores are jo ned w h t  twttr-recos-ml-prod.realgraph.t et ng_follows table, wh ch conta ns  nformat on about t  number of t ets made by users and t  r follow relat onsh ps, us ng a full outer jo n. T  f nal result  ncludes columns for t  s ce  D, dest nat on  D, pred cted score (prob), expl c  pred cted score (prob_expl c ), a b nary var able  nd cat ng w t r t  dest nat on  D  s follo d by t  s ce  D (follo d), and t  value of date_end for t  ds column.  f t re  s no match  n t  pred cted_scores table for a g ven pa r of user  Ds, t  COALESCE() funct on  s used to return t  correspond ng values from t  t et ng_follows table, w h default values of 0.0 for t  pred cted scores.
 

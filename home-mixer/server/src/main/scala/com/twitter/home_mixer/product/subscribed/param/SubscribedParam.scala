@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.subscribed.param
+package com.tw ter.ho _m xer.product.subscr bed.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
 
-object SubscribedParam {
-  val SupportedClientFSName = "subscribed_supported_client"
+object Subscr bedParam {
+  val SupportedCl entFSNa  = "subscr bed_supported_cl ent"
 
   object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "subscribed_server_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "subscr bed_server_max_results",
         default = 100,
-        min = 1,
+        m n = 1,
         max = 500
       )
 }

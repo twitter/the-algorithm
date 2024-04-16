@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.modules
-import com.twitter.inject.TwitterModule
+package com.tw ter.follow_recom ndat ons.modules
+ mport com.tw ter. nject.Tw terModule
 
-object FlagsModule extends TwitterModule {
+object FlagsModule extends Tw terModule {
   flag[Boolean](
-    name = "fetch_prod_promoted_accounts",
-    help = "Whether or not to fetch production promoted accounts (true / false)"
+    na  = "fetch_prod_promoted_accounts",
+     lp = "W t r or not to fetch product on promoted accounts (true / false)"
   )
   flag[Boolean](
-    name = "interests_opt_out_prod_enabled",
-    help = "Whether to fetch intersts opt out data from the prod strato column or not"
+    na  = " nterests_opt_out_prod_enabled",
+     lp = "W t r to fetch  ntersts opt out data from t  prod strato column or not"
   )
   flag[Boolean](
-    name = "log_results",
+    na  = "log_results",
     default = false,
-    help = "Whether to log results such that we use them for scoring or metrics"
+     lp = "W t r to log results such that   use t m for scor ng or  tr cs"
   )
 }

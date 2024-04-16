@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.tw ter.ho _m xer.marshaller.t  l ne_logg ng
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => thr ftlog}
 
-object PromotedTweetDetailsMarshaller {
+object PromotedT etDeta lsMarshaller {
 
-  def apply(entry: TweetItem, position: Int): thriftlog.PromotedTweetDetails = {
-    thriftlog.PromotedTweetDetails(
-      advertiserId = Some(entry.promotedMetadata.map(_.advertiserId).getOrElse(0L)),
-      insertPosition = Some(position),
-      impressionId = entry.promotedMetadata.flatMap(_.impressionString)
+  def apply(entry: T et em, pos  on:  nt): thr ftlog.PromotedT etDeta ls = {
+    thr ftlog.PromotedT etDeta ls(
+      advert ser d = So (entry.promoted tadata.map(_.advert ser d).getOrElse(0L)),
+       nsertPos  on = So (pos  on),
+       mpress on d = entry.promoted tadata.flatMap(_. mpress onStr ng)
     )
   }
 }

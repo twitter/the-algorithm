@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.tw ter.product_m xer.core.p pel ne.product
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutorResult
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neResult
+ mport com.tw ter.product_m xer.core.p pel ne.m xer.M xerP pel neResult
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.recom ndat on.Recom ndat onP pel neResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_selector_executor.P pel neSelectorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.qual y_factor_executor.Qual yFactorExecutorResult
 
-case class ProductPipelineResult[Result](
-  transformedQuery: Option[PipelineQuery],
-  qualityFactorResult: Option[QualityFactorExecutorResult],
-  gateResult: Option[GateExecutorResult],
-  pipelineSelectorResult: Option[PipelineSelectorExecutorResult],
-  mixerPipelineResult: Option[MixerPipelineResult[Result]],
-  recommendationPipelineResult: Option[RecommendationPipelineResult[_, Result]],
-  traceId: Option[String],
-  failure: Option[PipelineFailure],
-  result: Option[Result])
-    extends PipelineResult[Result] {
+case class ProductP pel neResult[Result](
+  transfor dQuery: Opt on[P pel neQuery],
+  qual yFactorResult: Opt on[Qual yFactorExecutorResult],
+  gateResult: Opt on[GateExecutorResult],
+  p pel neSelectorResult: Opt on[P pel neSelectorExecutorResult],
+  m xerP pel neResult: Opt on[M xerP pel neResult[Result]],
+  recom ndat onP pel neResult: Opt on[Recom ndat onP pel neResult[_, Result]],
+  trace d: Opt on[Str ng],
+  fa lure: Opt on[P pel neFa lure],
+  result: Opt on[Result])
+    extends P pel neResult[Result] {
 
-  override val resultSize: Int = {
-    if (mixerPipelineResult.isDefined) {
-      mixerPipelineResult.map(_.resultSize).getOrElse(0)
+  overr de val resultS ze:  nt = {
+     f (m xerP pel neResult. sDef ned) {
+      m xerP pel neResult.map(_.resultS ze).getOrElse(0)
     } else {
-      recommendationPipelineResult.map(_.resultSize).getOrElse(0)
+      recom ndat onP pel neResult.map(_.resultS ze).getOrElse(0)
     }
   }
 
-  override def withFailure(failure: PipelineFailure): PipelineResult[Result] =
-    copy(failure = Some(failure))
+  overr de def w hFa lure(fa lure: P pel neFa lure): P pel neResult[Result] =
+    copy(fa lure = So (fa lure))
 
-  override def withResult(result: Result): PipelineResult[Result] = copy(result = Some(result))
+  overr de def w hResult(result: Result): P pel neResult[Result] = copy(result = So (result))
 }
 
-object ProductPipelineResult {
-  def empty[A]: ProductPipelineResult[A] = ProductPipelineResult(
+object ProductP pel neResult {
+  def empty[A]: ProductP pel neResult[A] = ProductP pel neResult(
     None,
     None,
     None,
@@ -48,7 +48,7 @@ object ProductPipelineResult {
     None
   )
 
-  def fromResult[A](result: A): ProductPipelineResult[A] = ProductPipelineResult(
+  def fromResult[A](result: A): ProductP pel neResult[A] = ProductP pel neResult(
     None,
     None,
     None,
@@ -57,6 +57,6 @@ object ProductPipelineResult {
     None,
     None,
     None,
-    Some(result)
+    So (result)
   )
 }

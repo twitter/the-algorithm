@@ -1,17 +1,17 @@
 #pragma once
 
-#ifdef __cplusplus
-#include <twml/optim.h>
-namespace twml {
+# fdef __cplusplus
+# nclude <twml/opt m.h>
+na space twml {
 
-  template<typename Tx>
-  static int64_t linear_search(const Tx *xsData, const Tx val, const int64_t mainSize) {
-    int64_t left = 0;
-    int64_t right = mainSize-1;
-    while(left <= right && val > xsData[left])
+  template<typena  Tx>
+  stat c  nt64_t l near_search(const Tx *xsData, const Tx val, const  nt64_t ma nS ze) {
+     nt64_t left = 0;
+     nt64_t r ght = ma nS ze-1;
+    wh le(left <= r ght && val > xsData[left])
       left++;
     return left;
   }
 
-}  // namespace twml
-#endif
+}  // na space twml
+#end f

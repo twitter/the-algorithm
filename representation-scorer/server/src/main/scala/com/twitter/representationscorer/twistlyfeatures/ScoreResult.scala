@@ -1,3 +1,3 @@
-package com.twitter.representationscorer.twistlyfeatures
+package com.tw ter.representat onscorer.tw stlyfeatures
 
-case class ScoreResult(id: Long, score: Option[Double])
+case class ScoreResult( d: Long, score: Opt on[Double])

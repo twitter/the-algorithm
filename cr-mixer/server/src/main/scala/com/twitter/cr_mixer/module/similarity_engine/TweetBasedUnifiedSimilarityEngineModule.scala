@@ -1,81 +1,81 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.tw ter.cr_m xer.module.s m lar y_eng ne
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedQigSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUserTweetGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUserVideoGraphSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.T etW hCand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.HnswANNS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S mClustersANNS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedQ gS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedUn f edS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedUserT etGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedUserV deoGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object TweetBasedUnifiedSimilarityEngineModule extends TwitterModule {
+object T etBasedUn f edS m lar yEng neModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetBasedUnifiedSimilarityEngine)
-  def providesTweetBasedUnifiedSimilarityEngine(
-    @Named(ModuleNames.TweetBasedUserTweetGraphSimilarityEngine) tweetBasedUserTweetGraphSimilarityEngine: StandardSimilarityEngine[
-      TweetBasedUserTweetGraphSimilarityEngine.Query,
-      TweetWithScore
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.T etBasedUn f edS m lar yEng ne)
+  def prov desT etBasedUn f edS m lar yEng ne(
+    @Na d(ModuleNa s.T etBasedUserT etGraphS m lar yEng ne) t etBasedUserT etGraphS m lar yEng ne: StandardS m lar yEng ne[
+      T etBasedUserT etGraphS m lar yEng ne.Query,
+      T etW hScore
     ],
-    @Named(ModuleNames.TweetBasedUserVideoGraphSimilarityEngine) tweetBasedUserVideoGraphSimilarityEngine: StandardSimilarityEngine[
-      TweetBasedUserVideoGraphSimilarityEngine.Query,
-      TweetWithScore
+    @Na d(ModuleNa s.T etBasedUserV deoGraphS m lar yEng ne) t etBasedUserV deoGraphS m lar yEng ne: StandardS m lar yEng ne[
+      T etBasedUserV deoGraphS m lar yEng ne.Query,
+      T etW hScore
     ],
-    @Named(ModuleNames.TweetBasedTwHINANNSimilarityEngine)
-    tweetBasedTwHINANNSimilarityEngine: HnswANNSimilarityEngine,
-    @Named(ModuleNames.TweetBasedQigSimilarityEngine) tweetBasedQigSimilarityEngine: StandardSimilarityEngine[
-      TweetBasedQigSimilarityEngine.Query,
-      TweetWithScore
+    @Na d(ModuleNa s.T etBasedTwH NANNS m lar yEng ne)
+    t etBasedTwH NANNS m lar yEng ne: HnswANNS m lar yEng ne,
+    @Na d(ModuleNa s.T etBasedQ gS m lar yEng ne) t etBasedQ gS m lar yEng ne: StandardS m lar yEng ne[
+      T etBasedQ gS m lar yEng ne.Query,
+      T etW hScore
     ],
-    @Named(ModuleNames.SimClustersANNSimilarityEngine)
-    simClustersANNSimilarityEngine: StandardSimilarityEngine[
-      SimClustersANNSimilarityEngine.Query,
-      TweetWithScore
+    @Na d(ModuleNa s.S mClustersANNS m lar yEng ne)
+    s mClustersANNS m lar yEng ne: StandardS m lar yEng ne[
+      S mClustersANNS m lar yEng ne.Query,
+      T etW hScore
     ],
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): StandardSimilarityEngine[
-    TweetBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): StandardS m lar yEng ne[
+    T etBasedUn f edS m lar yEng ne.Query,
+    T etW hCand dateGenerat on nfo
   ] = {
 
-    val underlyingStore: ReadableStore[TweetBasedUnifiedSimilarityEngine.Query, Seq[
-      TweetWithCandidateGenerationInfo
-    ]] = TweetBasedUnifiedSimilarityEngine(
-      tweetBasedUserTweetGraphSimilarityEngine,
-      tweetBasedUserVideoGraphSimilarityEngine,
-      simClustersANNSimilarityEngine,
-      tweetBasedQigSimilarityEngine,
-      tweetBasedTwHINANNSimilarityEngine,
-      statsReceiver
+    val underly ngStore: ReadableStore[T etBasedUn f edS m lar yEng ne.Query, Seq[
+      T etW hCand dateGenerat on nfo
+    ]] = T etBasedUn f edS m lar yEng ne(
+      t etBasedUserT etGraphS m lar yEng ne,
+      t etBasedUserV deoGraphS m lar yEng ne,
+      s mClustersANNS m lar yEng ne,
+      t etBasedQ gS m lar yEng ne,
+      t etBasedTwH NANNS m lar yEng ne,
+      statsRece ver
     )
 
-    new StandardSimilarityEngine[
-      TweetBasedUnifiedSimilarityEngine.Query,
-      TweetWithCandidateGenerationInfo
+    new StandardS m lar yEng ne[
+      T etBasedUn f edS m lar yEng ne.Query,
+      T etW hCand dateGenerat on nfo
     ](
-      implementingStore = underlyingStore,
-      identifier = SimilarityEngineType.TweetBasedUnifiedSimilarityEngine,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+       mple nt ngStore = underly ngStore,
+       dent f er = S m lar yEng neType.T etBasedUn f edS m lar yEng ne,
+      globalStats = statsRece ver,
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       )
     )

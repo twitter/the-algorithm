@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.query.cr_ml_ranker
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.cr_ml_ranker.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object CrMlRankerCommonFeatures extends Feature[PipelineQuery, t.CommonFeatures]
-object CrMlRankerRankingConfig extends Feature[PipelineQuery, t.RankingConfig]
+object CrMlRankerCommonFeatures extends Feature[P pel neQuery, t.CommonFeatures]
+object CrMlRankerRank ngConf g extends Feature[P pel neQuery, t.Rank ngConf g]
 
-private[cr_ml_ranker] class CrMlRankerCommonQueryFeatureHydrator(
-  crMlRanker: t.CrMLRanker.MethodPerEndpoint,
-  rankingConfigSelector: RankingConfigBuilder)
-    extends QueryFeatureHydrator[PipelineQuery] {
+pr vate[cr_ml_ranker] class CrMlRankerCommonQueryFeatureHydrator(
+  crMlRanker: t.CrMLRanker. thodPerEndpo nt,
+  rank ngConf gSelector: Rank ngConf gBu lder)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("CrMlRanker")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("CrMlRanker")
 
-  override val features: Set[Feature[_, _]] =
-    Set(CrMlRankerCommonFeatures, CrMlRankerRankingConfig)
+  overr de val features: Set[Feature[_, _]] =
+    Set(CrMlRankerCommonFeatures, CrMlRankerRank ngConf g)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val rankingConfig = rankingConfigSelector.apply(query)
-    Stitch
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val rank ngConf g = rank ngConf gSelector.apply(query)
+    St ch
       .callFuture(
         crMlRanker.getCommonFeatures(
-          t.RankingRequestContext(query.getRequiredUserId, rankingConfig))).map { commonFeatures =>
-        FeatureMapBuilder()
-          .add(CrMlRankerRankingConfig, rankingConfig)
+          t.Rank ngRequestContext(query.getRequ redUser d, rank ngConf g))).map { commonFeatures =>
+        FeatureMapBu lder()
+          .add(CrMlRankerRank ngConf g, rank ngConf g)
           .add(CrMlRankerCommonFeatures, commonFeatures)
-          .build()
+          .bu ld()
       }
   }
 }

@@ -1,50 +1,50 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.ml.featurestore.catalog.entities.core.Tweet
-import com.twitter.ml.featurestore.catalog.features.core.Tweet.Text
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.data_p pel ne.features_common.MrRequestContextForFeatureStore
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.T et
+ mport com.tw ter.ml.featurestore.catalog.features.core.T et.Text
+ mport com.tw ter.ml.featurestore.l b.T et d
+ mport com.tw ter.ml.featurestore.l b.dynam c.Dynam cFeatureStoreCl ent
+ mport com.tw ter.ml.featurestore.l b.onl ne.FeatureStoreRequest
+ mport com.tw ter.ut l.Future
 
-object PostRankingPredicateHelper {
+object PostRank ngPred cate lper {
 
-  val tweetTextFeature = "tweet.core.tweet.text"
+  val t etTextFeature = "t et.core.t et.text"
 
-  def getTweetText(
-    candidate: PushCandidate with TweetCandidate,
-    dynamicClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
-  ): Future[String] = {
-    if (candidate.categoricalFeatures.contains(tweetTextFeature)) {
-      Future.value(candidate.categoricalFeatures.getOrElse(tweetTextFeature, ""))
+  def getT etText(
+    cand date: PushCand date w h T etCand date,
+    dynam cCl ent: Dynam cFeatureStoreCl ent[MrRequestContextForFeatureStore]
+  ): Future[Str ng] = {
+     f (cand date.categor calFeatures.conta ns(t etTextFeature)) {
+      Future.value(cand date.categor calFeatures.getOrElse(t etTextFeature, ""))
     } else {
-      val candidateTweetEntity = Tweet.withId(TweetId(candidate.tweetId))
+      val cand dateT etEnt y = T et.w h d(T et d(cand date.t et d))
       val featureStoreRequests = Seq(
         FeatureStoreRequest(
-          entityIds = Seq(candidateTweetEntity)
+          ent y ds = Seq(cand dateT etEnt y)
         ))
-      val predictionRecords = dynamicClient(
+      val pred ct onRecords = dynam cCl ent(
         featureStoreRequests,
-        requestContext = candidate.target.mrRequestContextForFeatureStore)
+        requestContext = cand date.target.mrRequestContextForFeatureStore)
 
-      predictionRecords.map { records =>
-        val tweetText = records.head
-          .getFeatureValue(candidateTweetEntity, Text).getOrElse(
+      pred ct onRecords.map { records =>
+        val t etText = records. ad
+          .getFeatureValue(cand dateT etEnt y, Text).getOrElse(
             ""
           )
-        candidate.categoricalFeatures(tweetTextFeature) = tweetText
-        tweetText
+        cand date.categor calFeatures(t etTextFeature) = t etText
+        t etText
       }
     }
   }
 
-  def getTweetWordLength(tweetText: String): Double = {
-    val tweetTextWithoutUrl: String =
-      tweetText.replaceAll("https?://\\S+\\s?", "").replaceAll("[\\s]+", " ")
-    tweetTextWithoutUrl.trim().split(" ").length.toDouble
+  def getT etWordLength(t etText: Str ng): Double = {
+    val t etTextW houtUrl: Str ng =
+      t etText.replaceAll("https?://\\S+\\s?", "").replaceAll("[\\s]+", " ")
+    t etTextW houtUrl.tr m().spl (" ").length.toDouble
   }
 
 }

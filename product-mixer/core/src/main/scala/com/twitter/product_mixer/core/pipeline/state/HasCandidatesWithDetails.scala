@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.tw ter.product_m xer.core.p pel ne.state
 
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
-trait HasCandidatesWithDetails[T] {
-  def candidatesWithDetails: Seq[CandidateWithDetails]
-  def updateCandidatesWithDetails(newCandidates: Seq[CandidateWithDetails]): T
+tra  HasCand datesW hDeta ls[T] {
+  def cand datesW hDeta ls: Seq[Cand dateW hDeta ls]
+  def updateCand datesW hDeta ls(newCand dates: Seq[Cand dateW hDeta ls]): T
 
-  def updateDecorations(decoration: Seq[Decoration]): T
+  def updateDecorat ons(decorat on: Seq[Decorat on]): T
 }

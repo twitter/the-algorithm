@@ -1,11 +1,11 @@
-scala_library(
-    name = "base",
-    sources = [
+scala_l brary(
+    na  = "base",
+    s ces = [
         "AbstractAdapter.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "ut l/ut l-stats/src/ma n/scala/com/tw ter/f nagle/stats",
     ],
 )

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverCtaBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverBehav orD sm ss
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverBehav orNav gate
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
 
-@Singleton
-class CoverCtaBehaviorMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
+@S ngleton
+class CoverCtaBehav orMarshaller @ nject() (
+  r chTextMarshaller: R chTextMarshaller,
   urlMarshaller: UrlMarshaller) {
 
-  def apply(coverCtaBehavior: CoverCtaBehavior): urt.CoverCtaBehavior =
-    coverCtaBehavior match {
-      case dismiss: CoverBehaviorDismiss =>
-        urt.CoverCtaBehavior.Dismiss(
-          urt.CoverBehaviorDismiss(dismiss.feedbackMessage.map(richTextMarshaller(_))))
-      case nav: CoverBehaviorNavigate =>
-        urt.CoverCtaBehavior.Navigate(urt.CoverBehaviorNavigate(urlMarshaller(nav.url)))
+  def apply(coverCtaBehav or: CoverCtaBehav or): urt.CoverCtaBehav or =
+    coverCtaBehav or match {
+      case d sm ss: CoverBehav orD sm ss =>
+        urt.CoverCtaBehav or.D sm ss(
+          urt.CoverBehav orD sm ss(d sm ss.feedback ssage.map(r chTextMarshaller(_))))
+      case nav: CoverBehav orNav gate =>
+        urt.CoverCtaBehav or.Nav gate(urt.CoverBehav orNav gate(urlMarshaller(nav.url)))
     }
 }

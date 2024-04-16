@@ -1,218 +1,218 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+# nclude " nternal/thr ft.h"
+# nclude " nternal/error.h"
 
-#include <twml/HashedDataRecordReader.h>
-#include <twml/utilities.h>
-#include <twml/functions.h>
-#include <cmath>
+# nclude <twml/Has dDataRecordReader.h>
+# nclude <twml/ut l  es.h>
+# nclude <twml/funct ons.h>
+# nclude <cmath>
 
-namespace twml {
+na space twml {
 
-bool HashedDataRecordReader::keepId(const int64_t &key, int64_t &code) {
-  auto it = m_keep_map->find(key);
-  if (it == m_keep_map->end()) return false;
-  code = it->second;
+bool Has dDataRecordReader::keep d(const  nt64_t &key,  nt64_t &code) {
+  auto   = m_keep_map->f nd(key);
+   f (  == m_keep_map->end()) return false;
+  code =  ->second;
   return true;
 }
 
-bool HashedDataRecordReader::isLabel(const int64_t &key, int64_t &code) {
-  if (m_labels_map == nullptr) return false;
-  auto it = m_labels_map->find(key);
-  if (it == m_labels_map->end()) return false;
-  code = it->second;
+bool Has dDataRecordReader:: sLabel(const  nt64_t &key,  nt64_t &code) {
+   f (m_labels_map == nullptr) return false;
+  auto   = m_labels_map->f nd(key);
+   f (  == m_labels_map->end()) return false;
+  code =  ->second;
   return true;
 }
 
-bool HashedDataRecordReader::isWeight(const int64_t &key, int64_t &code) {
-  if (m_weights_map == nullptr) return false;
-  auto it = m_weights_map->find(key);
-  if (it == m_weights_map->end()) return false;
-  code = it->second;
+bool Has dDataRecordReader:: s  ght(const  nt64_t &key,  nt64_t &code) {
+   f (m_  ghts_map == nullptr) return false;
+  auto   = m_  ghts_map->f nd(key);
+   f (  == m_  ghts_map->end()) return false;
+  code =  ->second;
   return true;
 }
 
-void HashedDataRecordReader::readBinary(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_SET, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
+vo d Has dDataRecordReader::readB nary(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_SET, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
 
-  int32_t length = readInt32();
-  record->extendSize(length);
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepId(id, code)) {
-      record->addKey(id, id, code, DR_BINARY);
-    } else if (isLabel(id, code)) {
+   nt32_t length = read nt32();
+  record->extendS ze(length);
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keep d( d, code)) {
+      record->addKey( d,  d, code, DR_B NARY);
+    } else  f ( sLabel( d, code)) {
       record->addLabel(code);
     }
   }
 }
 
-void HashedDataRecordReader::readContinuous(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
+vo d Has dDataRecordReader::readCont nuous(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
 
-  int32_t length = readInt32();
-  record->extendSize(length);
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepId(id, code)) {
+   nt32_t length = read nt32();
+  record->extendS ze(length);
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keep d( d, code)) {
       double value = readDouble();
-      if (!std::isnan(value)) {
-        record->addKey(id, id, code, DR_CONTINUOUS, value);
+       f (!std:: snan(value)) {
+        record->addKey( d,  d, code, DR_CONT NUOUS, value);
       }
-    } else if (isLabel(id, code)) {
+    } else  f ( sLabel( d, code)) {
       record->addLabel(code, readDouble());
-    }  else if (isWeight(id, code)) {
-      record->addWeight(code, readDouble());
+    }  else  f ( s  ght( d, code)) {
+      record->add  ght(code, readDouble());
     } else {
-      skip<double>();
+      sk p<double>();
     }
   }
 }
 
-void HashedDataRecordReader::readDiscrete(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "value_type");
+vo d Has dDataRecordReader::readD screte(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "value_type");
 
-  int32_t length = readInt32();
-  record->extendSize(length);
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepId(id, code)) {
-      int64_t transformed_key = mixDiscreteIdAndValue(id, readInt64());
-      record->addKey(id, transformed_key, code, DR_DISCRETE);
+   nt32_t length = read nt32();
+  record->extendS ze(length);
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keep d( d, code)) {
+       nt64_t transfor d_key = m xD screte dAndValue( d, read nt64());
+      record->addKey( d, transfor d_key, code, DR_D SCRETE);
     } else {
-      skip<int64_t>();
+      sk p< nt64_t>();
     }
   }
 }
 
-void HashedDataRecordReader::readString(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
+vo d Has dDataRecordReader::readStr ng(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "value_type");
 
-  int32_t length = readInt32();
-  record->extendSize(length);
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepId(id, code)) {
-      const uint8_t *begin = nullptr;
-      int32_t str_len = getRawBuffer<uint8_t>(&begin);
-      int64_t transformed_key = mixStringIdAndValue(id, str_len, begin);
-      record->addKey(id, transformed_key, code, DR_STRING);
+   nt32_t length = read nt32();
+  record->extendS ze(length);
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keep d( d, code)) {
+      const u nt8_t *beg n = nullptr;
+       nt32_t str_len = getRawBuffer<u nt8_t>(&beg n);
+       nt64_t transfor d_key = m xStr ng dAndValue( d, str_len, beg n);
+      record->addKey( d, transfor d_key, code, DR_STR NG);
     } else {
-      int32_t str_len = readInt32();
-      skipLength(str_len);
+       nt32_t str_len = read nt32();
+      sk pLength(str_len);
     }
   }
 }
 
-void HashedDataRecordReader::readSparseBinary(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_SET, "value_type");
+vo d Has dDataRecordReader::readSparseB nary(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_SET, "value_type");
 
-  int32_t length = readInt32();
-  record->extendSize(length);
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepId(id, code)) {
-      CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "set:key_type");
-      int32_t set_length = readInt32();
-      for (int32_t j = 0; j < set_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        int64_t transformed_key = mixStringIdAndValue(id, str_len, begin);
-        record->addKey(id, transformed_key, code, DR_SPARSE_BINARY);
+   nt32_t length = read nt32();
+  record->extendS ze(length);
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keep d( d, code)) {
+      CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "set:key_type");
+       nt32_t set_length = read nt32();
+      for ( nt32_t j = 0; j < set_length; j++) {
+        const u nt8_t *beg n = nullptr;
+         nt32_t str_len = getRawBuffer<u nt8_t>(&beg n);
+         nt64_t transfor d_key = m xStr ng dAndValue( d, str_len, beg n);
+        record->addKey( d, transfor d_key, code, DR_SPARSE_B NARY);
       }
     } else {
-      CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "set:key_type");
-      int32_t set_length = readInt32();
-      for (int32_t j = 0; j < set_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
+      CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "set:key_type");
+       nt32_t set_length = read nt32();
+      for ( nt32_t j = 0; j < set_length; j++) {
+         nt32_t str_len = read nt32();
+        sk pLength(str_len);
       }
     }
   }
 }
 
-void HashedDataRecordReader::readSparseContinuous(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_MAP, "value_type");
+vo d Has dDataRecordReader::readSparseCont nuous(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_MAP, "value_type");
 
-  int32_t length = readInt32();
-  record->extendSize(length);
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepId(id, code)) {
-      CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "map::key_type");
-      CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
-      int32_t map_length = readInt32();
-      for (int32_t j = 0; j < map_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        int64_t transformed_key = 0;
-        switch(m_decode_mode) {
-          case DecodeMode::hash_fname_and_valname:
-            transformed_key = mixStringIdAndValue(id, str_len, begin);
+   nt32_t length = read nt32();
+  record->extendS ze(length);
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keep d( d, code)) {
+      CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "map::key_type");
+      CHECK_THR FT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
+       nt32_t map_length = read nt32();
+      for ( nt32_t j = 0; j < map_length; j++) {
+        const u nt8_t *beg n = nullptr;
+         nt32_t str_len = getRawBuffer<u nt8_t>(&beg n);
+         nt64_t transfor d_key = 0;
+        sw ch(m_decode_mode) {
+          case DecodeMode::hash_fna _and_valna :
+            transfor d_key = m xStr ng dAndValue( d, str_len, beg n);
             break;
-          default:  // m_decode_mode == DecodeMode::hash_valname == 0 is default
-            twml_get_feature_id(&transformed_key, str_len, reinterpret_cast<const char *>(begin));
+          default:  // m_decode_mode == DecodeMode::hash_valna  == 0  s default
+            twml_get_feature_ d(&transfor d_key, str_len, re nterpret_cast<const char *>(beg n));
         }
         double value = readDouble();
-        if (!std::isnan(value)) {
-          record->addKey(id, transformed_key, code, DR_SPARSE_CONTINUOUS, value);
+         f (!std:: snan(value)) {
+          record->addKey( d, transfor d_key, code, DR_SPARSE_CONT NUOUS, value);
         }
       }
     } else {
-      CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "map::key_type");
-      CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
-      int32_t map_length = readInt32();
-      for (int32_t j = 0; j < map_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
-        skip<double>();
+      CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "map::key_type");
+      CHECK_THR FT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
+       nt32_t map_length = read nt32();
+      for ( nt32_t j = 0; j < map_length; j++) {
+         nt32_t str_len = read nt32();
+        sk pLength(str_len);
+        sk p<double>();
       }
     }
   }
 }
 
-void HashedDataRecordReader::readBlob(
-  const int feature_type,
-  HashedDataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
+vo d Has dDataRecordReader::readBlob(
+  const  nt feature_type,
+  Has dDataRecord *record) {
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "value_type");
 
-  int32_t length = readInt32();
-  int64_t id;
-  for (int32_t i = 0; i < length; i++) {
-    // Skips the BlobFeatures if they are defined or not in the FeatureConfig
-    id = readInt64();
-    int32_t str_len = readInt32();
-    skipLength(str_len);
+   nt32_t length = read nt32();
+   nt64_t  d;
+  for ( nt32_t   = 0;   < length;  ++) {
+    // Sk ps t  BlobFeatures  f t y are def ned or not  n t  FeatureConf g
+     d = read nt64();
+     nt32_t str_len = read nt32();
+    sk pLength(str_len);
   }
 }
-}  // namespace twml
+}  // na space twml

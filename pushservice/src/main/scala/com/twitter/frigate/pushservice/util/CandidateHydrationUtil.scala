@@ -1,439 +1,439 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.escherbird.common.thriftscala.Domains
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.magic_events.thriftscala.TargetID
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model._
-import com.twitter.frigate.pushservice.model.FanoutReasonEntities
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.store.EventRequest
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.livevideo.timeline.domain.v2.{Event => LiveEvent}
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.UserId
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.util.Future
+ mport com.tw ter.channels.common.thr ftscala.Ap L st
+ mport com.tw ter.esc rb rd.common.thr ftscala.Doma ns
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Target D
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model._
+ mport com.tw ter.fr gate.pushserv ce.model.FanoutReasonEnt  es
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.store.EventRequest
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onStore
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.{Event => L veEvent}
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.storehaus.FutureOps
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.User d
+ mport com.tw ter.ubs.thr ftscala.Aud oSpace
+ mport com.tw ter.ut l.Future
 
-object CandidateHydrationUtil {
+object Cand dateHydrat onUt l {
 
-  def getAuthorIdFromTweetCandidate(tweetCandidate: TweetCandidate): Option[Long] = {
-    tweetCandidate match {
-      case candidate: TweetCandidate with TweetAuthor =>
-        candidate.authorId
+  def getAuthor dFromT etCand date(t etCand date: T etCand date): Opt on[Long] = {
+    t etCand date match {
+      case cand date: T etCand date w h T etAuthor =>
+        cand date.author d
       case _ => None
     }
   }
 
-  private def getCandidateAuthorFromUserMap(
-    tweetCandidate: TweetCandidate,
+  pr vate def getCand dateAuthorFromUserMap(
+    t etCand date: T etCand date,
     userMap: Map[Long, User]
-  ): Option[User] = {
-    getAuthorIdFromTweetCandidate(tweetCandidate) match {
-      case Some(id) =>
-        userMap.get(id)
+  ): Opt on[User] = {
+    getAuthor dFromT etCand date(t etCand date) match {
+      case So ( d) =>
+        userMap.get( d)
       case _ =>
         None
     }
   }
 
-  private def getRelationshipMapForInNetworkCandidate(
-    candidate: RawCandidate with TweetAuthor,
-    relationshipMap: Map[RelationEdge, Boolean]
-  ): Map[RelationEdge, Boolean] = {
-    val relationEdges =
-      RelationshipUtil.getPreCandidateRelationshipsForInNetworkTweets(candidate).toSet
-    relationEdges.map { relationEdge =>
-      (relationEdge, relationshipMap(relationEdge))
+  pr vate def getRelat onsh pMapFor nNetworkCand date(
+    cand date: RawCand date w h T etAuthor,
+    relat onsh pMap: Map[Relat onEdge, Boolean]
+  ): Map[Relat onEdge, Boolean] = {
+    val relat onEdges =
+      Relat onsh pUt l.getPreCand dateRelat onsh psFor nNetworkT ets(cand date).toSet
+    relat onEdges.map { relat onEdge =>
+      (relat onEdge, relat onsh pMap(relat onEdge))
     }.toMap
   }
 
-  private def getTweetCandidateSocialContextUsers(
-    candidate: RawCandidate with SocialContextActions,
+  pr vate def getT etCand dateSoc alContextUsers(
+    cand date: RawCand date w h Soc alContextAct ons,
     userMap: Map[Long, User]
-  ): Map[Long, Option[User]] = {
-    candidate.socialContextUserIds.map { userId => userId -> userMap.get(userId) }.toMap
+  ): Map[Long, Opt on[User]] = {
+    cand date.soc alContextUser ds.map { user d => user d -> userMap.get(user d) }.toMap
   }
 
-  type TweetWithSocialContextTraits = TweetCandidate with TweetDetails with SocialContextActions
+  type T etW hSoc alContextTra s = T etCand date w h T etDeta ls w h Soc alContextAct ons
 
-  def getHydratedCandidateForTweetRetweet(
-    candidate: RawCandidate with TweetWithSocialContextTraits,
+  def getHydratedCand dateForT etRet et(
+    cand date: RawCand date w h T etW hSoc alContextTra s,
     userMap: Map[Long, User],
-    copyIds: CopyIds
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): TweetRetweetPushCandidate = {
-    new TweetRetweetPushCandidate(
-      candidate = candidate,
-      socialContextUserMap = Future.value(getTweetCandidateSocialContextUsers(candidate, userMap)),
-      author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
-      copyIds: CopyIds
+  ): T etRet etPushCand date = {
+    new T etRet etPushCand date(
+      cand date = cand date,
+      soc alContextUserMap = Future.value(getT etCand dateSoc alContextUsers(cand date, userMap)),
+      author = Future.value(getCand dateAuthorFromUserMap(cand date, userMap)),
+      copy ds: Copy ds
     )
   }
 
-  def getHydratedCandidateForTweetFavorite(
-    candidate: RawCandidate with TweetWithSocialContextTraits,
+  def getHydratedCand dateForT etFavor e(
+    cand date: RawCand date w h T etW hSoc alContextTra s,
     userMap: Map[Long, User],
-    copyIds: CopyIds
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): TweetFavoritePushCandidate = {
-    new TweetFavoritePushCandidate(
-      candidate = candidate,
-      socialContextUserMap = Future.value(getTweetCandidateSocialContextUsers(candidate, userMap)),
-      author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
-      copyIds = copyIds
+  ): T etFavor ePushCand date = {
+    new T etFavor ePushCand date(
+      cand date = cand date,
+      soc alContextUserMap = Future.value(getT etCand dateSoc alContextUsers(cand date, userMap)),
+      author = Future.value(getCand dateAuthorFromUserMap(cand date, userMap)),
+      copy ds = copy ds
     )
   }
 
-  def getHydratedCandidateForF1FirstDegreeTweet(
-    candidate: RawCandidate with F1FirstDegree,
+  def getHydratedCand dateForF1F rstDegreeT et(
+    cand date: RawCand date w h F1F rstDegree,
     userMap: Map[Long, User],
-    relationshipMap: Map[RelationEdge, Boolean],
-    copyIds: CopyIds
+    relat onsh pMap: Map[Relat onEdge, Boolean],
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): F1TweetPushCandidate = {
-    new F1TweetPushCandidate(
-      candidate = candidate,
-      author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
-      socialGraphServiceResultMap =
-        getRelationshipMapForInNetworkCandidate(candidate, relationshipMap),
-      copyIds = copyIds
+  ): F1T etPushCand date = {
+    new F1T etPushCand date(
+      cand date = cand date,
+      author = Future.value(getCand dateAuthorFromUserMap(cand date, userMap)),
+      soc alGraphServ ceResultMap =
+        getRelat onsh pMapFor nNetworkCand date(cand date, relat onsh pMap),
+      copy ds = copy ds
     )
   }
-  def getHydratedTopicProofTweetCandidate(
-    candidate: RawCandidate with TopicProofTweetCandidate,
+  def getHydratedTop cProofT etCand date(
+    cand date: RawCand date w h Top cProofT etCand date,
     userMap: Map[Long, User],
-    copyIds: CopyIds
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushMLModelScorer: PushMLModelScorer
-  ): TopicProofTweetPushCandidate =
-    new TopicProofTweetPushCandidate(
-      candidate,
-      getCandidateAuthorFromUserMap(candidate, userMap),
-      copyIds
+  ): Top cProofT etPushCand date =
+    new Top cProofT etPushCand date(
+      cand date,
+      getCand dateAuthorFromUserMap(cand date, userMap),
+      copy ds
     )
 
-  def getHydratedSubscribedSearchTweetCandidate(
-    candidate: RawCandidate with SubscribedSearchTweetCandidate,
+  def getHydratedSubscr bedSearchT etCand date(
+    cand date: RawCand date w h Subscr bedSearchT etCand date,
     userMap: Map[Long, User],
-    copyIds: CopyIds
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushMLModelScorer: PushMLModelScorer
-  ): SubscribedSearchTweetPushCandidate =
-    new SubscribedSearchTweetPushCandidate(
-      candidate,
-      getCandidateAuthorFromUserMap(candidate, userMap),
-      copyIds)
+  ): Subscr bedSearchT etPushCand date =
+    new Subscr bedSearchT etPushCand date(
+      cand date,
+      getCand dateAuthorFromUserMap(cand date, userMap),
+      copy ds)
 
-  def getHydratedListCandidate(
-    apiListStore: ReadableStore[Long, ApiList],
-    candidate: RawCandidate with ListPushCandidate,
-    copyIds: CopyIds
+  def getHydratedL stCand date(
+    ap L stStore: ReadableStore[Long, Ap L st],
+    cand date: RawCand date w h L stPushCand date,
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushMLModelScorer: PushMLModelScorer
-  ): ListRecommendationPushCandidate = {
-    new ListRecommendationPushCandidate(apiListStore, candidate, copyIds)
+  ): L stRecom ndat onPushCand date = {
+    new L stRecom ndat onPushCand date(ap L stStore, cand date, copy ds)
   }
 
-  def getHydratedCandidateForOutOfNetworkTweetCandidate(
-    candidate: RawCandidate with OutOfNetworkTweetCandidate with TopicCandidate,
+  def getHydratedCand dateForOutOfNetworkT etCand date(
+    cand date: RawCand date w h OutOfNetworkT etCand date w h Top cCand date,
     userMap: Map[Long, User],
-    copyIds: CopyIds
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): OutOfNetworkTweetPushCandidate = {
-    new OutOfNetworkTweetPushCandidate(
-      candidate: RawCandidate with OutOfNetworkTweetCandidate with TopicCandidate,
-      author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
-      copyIds: CopyIds
+  ): OutOfNetworkT etPushCand date = {
+    new OutOfNetworkT etPushCand date(
+      cand date: RawCand date w h OutOfNetworkT etCand date w h Top cCand date,
+      author = Future.value(getCand dateAuthorFromUserMap(cand date, userMap)),
+      copy ds: Copy ds
     )
   }
 
-  def getHydratedCandidateForTripTweetCandidate(
-    candidate: RawCandidate with OutOfNetworkTweetCandidate with TripCandidate,
+  def getHydratedCand dateForTr pT etCand date(
+    cand date: RawCand date w h OutOfNetworkT etCand date w h Tr pCand date,
     userMap: Map[Long, User],
-    copyIds: CopyIds
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): TripTweetPushCandidate = {
-    new TripTweetPushCandidate(
-      candidate: RawCandidate with OutOfNetworkTweetCandidate with TripCandidate,
-      author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
-      copyIds: CopyIds
+  ): Tr pT etPushCand date = {
+    new Tr pT etPushCand date(
+      cand date: RawCand date w h OutOfNetworkT etCand date w h Tr pCand date,
+      author = Future.value(getCand dateAuthorFromUserMap(cand date, userMap)),
+      copy ds: Copy ds
     )
   }
 
-  def getHydratedCandidateForDiscoverTwitterCandidate(
-    candidate: RawCandidate with DiscoverTwitterCandidate,
-    copyIds: CopyIds
+  def getHydratedCand dateForD scoverTw terCand date(
+    cand date: RawCand date w h D scoverTw terCand date,
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): DiscoverTwitterPushCandidate = {
-    new DiscoverTwitterPushCandidate(
-      candidate = candidate,
-      copyIds = copyIds
+  ): D scoverTw terPushCand date = {
+    new D scoverTw terPushCand date(
+      cand date = cand date,
+      copy ds = copy ds
     )
   }
 
   /**
    * /*
-   * This method can be reusable for hydrating event candidates
+   * T   thod can be reusable for hydrat ng event cand dates
    **/
-   * @param candidate
-   * @param fanoutMetadataStore
-   * @param semanticCoreMegadataStore
-   * @return (hydratedEvent, hydratedFanoutEvent, hydratedSemanticEntityResults, hydratedSemanticCoreMegadata)
+   * @param cand date
+   * @param fanout tadataStore
+   * @param semant cCore gadataStore
+   * @return (hydratedEvent, hydratedFanoutEvent, hydratedSemant cEnt yResults, hydratedSemant cCore gadata)
    */
-  private def hydrateMagicFanoutEventCandidate(
-    candidate: RawCandidate with MagicFanoutEventCandidate,
-    fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
-    semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata]
-  ): Future[MagicFanoutEventHydratedInfo] = {
+  pr vate def hydrateMag cFanoutEventCand date(
+    cand date: RawCand date w h Mag cFanoutEventCand date,
+    fanout tadataStore: ReadableStore[(Long, Long), FanoutEvent],
+    semant cCore gadataStore: ReadableStore[Semant cEnt yForQuery, Ent y gadata]
+  ): Future[Mag cFanoutEventHydrated nfo] = {
 
-    val fanoutEventFut = fanoutMetadataStore.get((candidate.eventId, candidate.pushId))
+    val fanoutEventFut = fanout tadataStore.get((cand date.event d, cand date.push d))
 
-    val semanticEntityForQueries: Seq[SemanticEntityForQuery] = {
-      val semanticCoreEntityIdQueries = candidate.candidateMagicEventsReasons match {
-        case magicEventsReasons: Seq[MagicEventsReason] =>
-          magicEventsReasons.map(_.reason).collect {
-            case TargetID.SemanticCoreID(scInterest) =>
-              SemanticEntityForQuery(domainId = scInterest.domainId, entityId = scInterest.entityId)
+    val semant cEnt yForQuer es: Seq[Semant cEnt yForQuery] = {
+      val semant cCoreEnt y dQuer es = cand date.cand dateMag cEventsReasons match {
+        case mag cEventsReasons: Seq[Mag cEventsReason] =>
+          mag cEventsReasons.map(_.reason).collect {
+            case Target D.Semant cCore D(sc nterest) =>
+              Semant cEnt yForQuery(doma n d = sc nterest.doma n d, ent y d = sc nterest.ent y d)
           }
         case _ => Seq.empty
       }
-      val eventEntityQuery = SemanticEntityForQuery(
-        domainId = Domains.EventsEntityService.value,
-        entityId = candidate.eventId)
-      semanticCoreEntityIdQueries :+ eventEntityQuery
+      val eventEnt yQuery = Semant cEnt yForQuery(
+        doma n d = Doma ns.EventsEnt yServ ce.value,
+        ent y d = cand date.event d)
+      semant cCoreEnt y dQuer es :+ eventEnt yQuery
     }
 
-    val semanticEntityResultsFut = FutureOps.mapCollect(
-      semanticCoreMegadataStore.multiGet(semanticEntityForQueries.toSet)
+    val semant cEnt yResultsFut = FutureOps.mapCollect(
+      semant cCore gadataStore.mult Get(semant cEnt yForQuer es.toSet)
     )
 
     Future
-      .join(fanoutEventFut, semanticEntityResultsFut).map {
-        case (fanoutEvent, semanticEntityResults) =>
-          MagicFanoutEventHydratedInfo(
+      .jo n(fanoutEventFut, semant cEnt yResultsFut).map {
+        case (fanoutEvent, semant cEnt yResults) =>
+          Mag cFanoutEventHydrated nfo(
             fanoutEvent,
-            semanticEntityResults
+            semant cEnt yResults
           )
         case _ =>
-          throw new IllegalArgumentException(
-            "event candidate hydration errors" + candidate.frigateNotification.toString)
+          throw new  llegalArgu ntExcept on(
+            "event cand date hydrat on errors" + cand date.fr gateNot f cat on.toStr ng)
       }
   }
 
-  def getHydratedCandidateForMagicFanoutNewsEvent(
-    candidate: RawCandidate with MagicFanoutNewsEventCandidate,
-    copyIds: CopyIds,
-    lexServiceStore: ReadableStore[EventRequest, LiveEvent],
-    fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
-    semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
-    simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities],
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-    uttEntityHydrationStore: UttEntityHydrationStore
+  def getHydratedCand dateForMag cFanoutNewsEvent(
+    cand date: RawCand date w h Mag cFanoutNewsEventCand date,
+    copy ds: Copy ds,
+    lexServ ceStore: ReadableStore[EventRequest, L veEvent],
+    fanout tadataStore: ReadableStore[(Long, Long), FanoutEvent],
+    semant cCore gadataStore: ReadableStore[Semant cEnt yForQuery, Ent y gadata],
+    s mClusterToEnt yStore: ReadableStore[ nt, S mClusters nferredEnt  es],
+     nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests],
+    uttEnt yHydrat onStore: UttEnt yHydrat onStore
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): Future[MagicFanoutNewsEventPushCandidate] = {
-    val magicFanoutEventHydratedInfoFut = hydrateMagicFanoutEventCandidate(
-      candidate,
-      fanoutMetadataStore,
-      semanticCoreMegadataStore
+  ): Future[Mag cFanoutNewsEventPushCand date] = {
+    val mag cFanoutEventHydrated nfoFut = hydrateMag cFanoutEventCand date(
+      cand date,
+      fanout tadataStore,
+      semant cCore gadataStore
     )
 
-    lazy val simClusterToEntityMappingFut: Future[Map[Int, Option[SimClustersInferredEntities]]] =
+    lazy val s mClusterToEnt yMapp ngFut: Future[Map[ nt, Opt on[S mClusters nferredEnt  es]]] =
       Future.collect {
-        simClusterToEntityStore.multiGet(
-          FanoutReasonEntities
-            .from(candidate.candidateMagicEventsReasons.map(_.reason)).simclusterIds.map(
-              _.clusterId)
+        s mClusterToEnt yStore.mult Get(
+          FanoutReasonEnt  es
+            .from(cand date.cand dateMag cEventsReasons.map(_.reason)).s mcluster ds.map(
+              _.cluster d)
         )
       }
 
     Future
-      .join(
-        magicFanoutEventHydratedInfoFut,
-        simClusterToEntityMappingFut
+      .jo n(
+        mag cFanoutEventHydrated nfoFut,
+        s mClusterToEnt yMapp ngFut
       ).map {
-        case (magicFanoutEventHydratedInfo, simClusterToEntityMapping) =>
-          new MagicFanoutNewsEventPushCandidate(
-            candidate = candidate,
-            copyIds = copyIds,
-            fanoutEvent = magicFanoutEventHydratedInfo.fanoutEvent,
-            semanticEntityResults = magicFanoutEventHydratedInfo.semanticEntityResults,
-            simClusterToEntities = simClusterToEntityMapping,
-            lexServiceStore = lexServiceStore,
-            interestsLookupStore = interestsLookupStore,
-            uttEntityHydrationStore = uttEntityHydrationStore
+        case (mag cFanoutEventHydrated nfo, s mClusterToEnt yMapp ng) =>
+          new Mag cFanoutNewsEventPushCand date(
+            cand date = cand date,
+            copy ds = copy ds,
+            fanoutEvent = mag cFanoutEventHydrated nfo.fanoutEvent,
+            semant cEnt yResults = mag cFanoutEventHydrated nfo.semant cEnt yResults,
+            s mClusterToEnt  es = s mClusterToEnt yMapp ng,
+            lexServ ceStore = lexServ ceStore,
+             nterestsLookupStore =  nterestsLookupStore,
+            uttEnt yHydrat onStore = uttEnt yHydrat onStore
           )
       }
   }
 
-  def getHydratedCandidateForMagicFanoutSportsEvent(
-    candidate: RawCandidate
-      with MagicFanoutSportsEventCandidate
-      with MagicFanoutSportsScoreInformation,
-    copyIds: CopyIds,
-    lexServiceStore: ReadableStore[EventRequest, LiveEvent],
-    fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
-    semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-    uttEntityHydrationStore: UttEntityHydrationStore
+  def getHydratedCand dateForMag cFanoutSportsEvent(
+    cand date: RawCand date
+      w h Mag cFanoutSportsEventCand date
+      w h Mag cFanoutSportsScore nformat on,
+    copy ds: Copy ds,
+    lexServ ceStore: ReadableStore[EventRequest, L veEvent],
+    fanout tadataStore: ReadableStore[(Long, Long), FanoutEvent],
+    semant cCore gadataStore: ReadableStore[Semant cEnt yForQuery, Ent y gadata],
+     nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests],
+    uttEnt yHydrat onStore: UttEnt yHydrat onStore
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): Future[MagicFanoutSportsPushCandidate] = {
-    val magicFanoutEventHydratedInfoFut = hydrateMagicFanoutEventCandidate(
-      candidate,
-      fanoutMetadataStore,
-      semanticCoreMegadataStore
+  ): Future[Mag cFanoutSportsPushCand date] = {
+    val mag cFanoutEventHydrated nfoFut = hydrateMag cFanoutEventCand date(
+      cand date,
+      fanout tadataStore,
+      semant cCore gadataStore
     )
 
-    magicFanoutEventHydratedInfoFut.map { magicFanoutEventHydratedInfo =>
-      new MagicFanoutSportsPushCandidate(
-        candidate = candidate,
-        copyIds = copyIds,
-        fanoutEvent = magicFanoutEventHydratedInfo.fanoutEvent,
-        semanticEntityResults = magicFanoutEventHydratedInfo.semanticEntityResults,
-        simClusterToEntities = Map.empty,
-        lexServiceStore = lexServiceStore,
-        interestsLookupStore = interestsLookupStore,
-        uttEntityHydrationStore = uttEntityHydrationStore
+    mag cFanoutEventHydrated nfoFut.map { mag cFanoutEventHydrated nfo =>
+      new Mag cFanoutSportsPushCand date(
+        cand date = cand date,
+        copy ds = copy ds,
+        fanoutEvent = mag cFanoutEventHydrated nfo.fanoutEvent,
+        semant cEnt yResults = mag cFanoutEventHydrated nfo.semant cEnt yResults,
+        s mClusterToEnt  es = Map.empty,
+        lexServ ceStore = lexServ ceStore,
+         nterestsLookupStore =  nterestsLookupStore,
+        uttEnt yHydrat onStore = uttEnt yHydrat onStore
       )
     }
   }
 
-  def getHydratedCandidateForMagicFanoutProductLaunch(
-    candidate: RawCandidate with MagicFanoutProductLaunchCandidate,
-    copyIds: CopyIds
+  def getHydratedCand dateForMag cFanoutProductLaunch(
+    cand date: RawCand date w h Mag cFanoutProductLaunchCand date,
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): Future[MagicFanoutProductLaunchPushCandidate] =
-    Future.value(new MagicFanoutProductLaunchPushCandidate(candidate, copyIds))
+  ): Future[Mag cFanoutProductLaunchPushCand date] =
+    Future.value(new Mag cFanoutProductLaunchPushCand date(cand date, copy ds))
 
-  def getHydratedCandidateForMagicFanoutCreatorEvent(
-    candidate: RawCandidate with MagicFanoutCreatorEventCandidate,
+  def getHydratedCand dateForMag cFanoutCreatorEvent(
+    cand date: RawCand date w h Mag cFanoutCreatorEventCand date,
     safeUserStore: ReadableStore[Long, User],
-    copyIds: CopyIds,
-    creatorTweetCountStore: ReadableStore[UserId, Int]
+    copy ds: Copy ds,
+    creatorT etCountStore: ReadableStore[User d,  nt]
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): Future[MagicFanoutCreatorEventPushCandidate] = {
-    safeUserStore.get(candidate.creatorId).map { hydratedCreatorUser =>
-      new MagicFanoutCreatorEventPushCandidate(
-        candidate,
+  ): Future[Mag cFanoutCreatorEventPushCand date] = {
+    safeUserStore.get(cand date.creator d).map { hydratedCreatorUser =>
+      new Mag cFanoutCreatorEventPushCand date(
+        cand date,
         hydratedCreatorUser,
-        copyIds,
-        creatorTweetCountStore)
+        copy ds,
+        creatorT etCountStore)
     }
   }
 
-  def getHydratedCandidateForScheduledSpaceSubscriber(
-    candidate: RawCandidate with ScheduledSpaceSubscriberCandidate,
+  def getHydratedCand dateForSc duledSpaceSubscr ber(
+    cand date: RawCand date w h Sc duledSpaceSubscr berCand date,
     safeUserStore: ReadableStore[Long, User],
-    copyIds: CopyIds,
-    audioSpaceStore: ReadableStore[String, AudioSpace]
+    copy ds: Copy ds,
+    aud oSpaceStore: ReadableStore[Str ng, Aud oSpace]
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): Future[ScheduledSpaceSubscriberPushCandidate] = {
+  ): Future[Sc duledSpaceSubscr berPushCand date] = {
 
-    candidate.hostId match {
-      case Some(spaceHostId) =>
-        safeUserStore.get(spaceHostId).map { hydratedHost =>
-          new ScheduledSpaceSubscriberPushCandidate(
-            candidate = candidate,
+    cand date.host d match {
+      case So (spaceHost d) =>
+        safeUserStore.get(spaceHost d).map { hydratedHost =>
+          new Sc duledSpaceSubscr berPushCand date(
+            cand date = cand date,
             hostUser = hydratedHost,
-            copyIds = copyIds,
-            audioSpaceStore = audioSpaceStore
+            copy ds = copy ds,
+            aud oSpaceStore = aud oSpaceStore
           )
         }
       case _ =>
-        Future.exception(
-          new IllegalStateException(
-            "Missing Space Host Id for hydrating ScheduledSpaceSubscriberCandidate"))
+        Future.except on(
+          new  llegalStateExcept on(
+            "M ss ng Space Host  d for hydrat ng Sc duledSpaceSubscr berCand date"))
     }
   }
 
-  def getHydratedCandidateForScheduledSpaceSpeaker(
-    candidate: RawCandidate with ScheduledSpaceSpeakerCandidate,
+  def getHydratedCand dateForSc duledSpaceSpeaker(
+    cand date: RawCand date w h Sc duledSpaceSpeakerCand date,
     safeUserStore: ReadableStore[Long, User],
-    copyIds: CopyIds,
-    audioSpaceStore: ReadableStore[String, AudioSpace]
+    copy ds: Copy ds,
+    aud oSpaceStore: ReadableStore[Str ng, Aud oSpace]
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): Future[ScheduledSpaceSpeakerPushCandidate] = {
+  ): Future[Sc duledSpaceSpeakerPushCand date] = {
 
-    candidate.hostId match {
-      case Some(spaceHostId) =>
-        safeUserStore.get(spaceHostId).map { hydratedHost =>
-          new ScheduledSpaceSpeakerPushCandidate(
-            candidate = candidate,
+    cand date.host d match {
+      case So (spaceHost d) =>
+        safeUserStore.get(spaceHost d).map { hydratedHost =>
+          new Sc duledSpaceSpeakerPushCand date(
+            cand date = cand date,
             hostUser = hydratedHost,
-            copyIds = copyIds,
-            audioSpaceStore = audioSpaceStore
+            copy ds = copy ds,
+            aud oSpaceStore = aud oSpaceStore
           )
         }
       case _ =>
-        Future.exception(
-          new RuntimeException(
-            "Missing Space Host Id for hydrating ScheduledSpaceSpeakerCandidate"))
+        Future.except on(
+          new Runt  Except on(
+            "M ss ng Space Host  d for hydrat ng Sc duledSpaceSpeakerCand date"))
     }
   }
 
-  def getHydratedCandidateForTopTweetImpressionsCandidate(
-    candidate: RawCandidate with TopTweetImpressionsCandidate,
-    copyIds: CopyIds
+  def getHydratedCand dateForTopT et mpress onsCand date(
+    cand date: RawCand date w h TopT et mpress onsCand date,
+    copy ds: Copy ds
   )(
-    implicit stats: StatsReceiver,
+     mpl c  stats: StatsRece ver,
     pushModelScorer: PushMLModelScorer
-  ): TopTweetImpressionsPushCandidate = {
-    new TopTweetImpressionsPushCandidate(
-      candidate = candidate,
-      copyIds = copyIds
+  ): TopT et mpress onsPushCand date = {
+    new TopT et mpress onsPushCand date(
+      cand date = cand date,
+      copy ds = copy ds
     )
   }
 
-  def isNsfwAccount(user: User, nsfwTokens: Seq[String]): Boolean = {
-    def hasNsfwToken(str: String): Boolean = nsfwTokens.exists(str.toLowerCase().contains(_))
+  def  sNsfwAccount(user: User, nsfwTokens: Seq[Str ng]): Boolean = {
+    def hasNsfwToken(str: Str ng): Boolean = nsfwTokens.ex sts(str.toLo rCase().conta ns(_))
 
-    val name = user.profile.map(_.name).getOrElse("")
-    val screenName = user.profile.map(_.screenName).getOrElse("")
-    val location = user.profile.map(_.location).getOrElse("")
-    val description = user.profile.map(_.description).getOrElse("")
+    val na  = user.prof le.map(_.na ).getOrElse("")
+    val screenNa  = user.prof le.map(_.screenNa ).getOrElse("")
+    val locat on = user.prof le.map(_.locat on).getOrElse("")
+    val descr pt on = user.prof le.map(_.descr pt on).getOrElse("")
     val hasNsfwFlag =
-      user.safety.map(safety => safety.nsfwUser || safety.nsfwAdmin).getOrElse(false)
-    hasNsfwToken(name) || hasNsfwToken(screenName) || hasNsfwToken(location) || hasNsfwToken(
-      description) || hasNsfwFlag
+      user.safety.map(safety => safety.nsfwUser || safety.nsfwAdm n).getOrElse(false)
+    hasNsfwToken(na ) || hasNsfwToken(screenNa ) || hasNsfwToken(locat on) || hasNsfwToken(
+      descr pt on) || hasNsfwFlag
   }
 }

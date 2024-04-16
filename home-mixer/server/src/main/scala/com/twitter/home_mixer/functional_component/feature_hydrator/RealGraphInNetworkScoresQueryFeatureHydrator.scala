@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.wtf.candidate.{thriftscala => wtf}
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.RealGraph nNetworkScoresFeature
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealGraph nNetworkScores
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.wtf.cand date.{thr ftscala => wtf}
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-case class RealGraphInNetworkScoresQueryFeatureHydrator @Inject() (
-  @Named(RealGraphInNetworkScores) store: ReadableStore[Long, Seq[wtf.Candidate]])
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class RealGraph nNetworkScoresQueryFeatureHydrator @ nject() (
+  @Na d(RealGraph nNetworkScores) store: ReadableStore[Long, Seq[wtf.Cand date]])
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphInNetworkScores")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("RealGraph nNetworkScores")
 
-  override val features: Set[Feature[_, _]] = Set(RealGraphInNetworkScoresFeature)
+  overr de val features: Set[Feature[_, _]] = Set(RealGraph nNetworkScoresFeature)
 
-  private val RealGraphCandidateCount = 1000
+  pr vate val RealGraphCand dateCount = 1000
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    Stitch.callFuture(store.get(query.getRequiredUserId)).map { realGraphFollowedUsers =>
-      val realGraphScoresFeatures = realGraphFollowedUsers
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    St ch.callFuture(store.get(query.getRequ redUser d)).map { realGraphFollo dUsers =>
+      val realGraphScoresFeatures = realGraphFollo dUsers
         .getOrElse(Seq.empty)
         .sortBy(-_.score)
-        .map(candidate => candidate.userId -> scaleScore(candidate.score))
-        .take(RealGraphCandidateCount)
+        .map(cand date => cand date.user d -> scaleScore(cand date.score))
+        .take(RealGraphCand dateCount)
         .toMap
 
-      FeatureMapBuilder().add(RealGraphInNetworkScoresFeature, realGraphScoresFeatures).build()
+      FeatureMapBu lder().add(RealGraph nNetworkScoresFeature, realGraphScoresFeatures).bu ld()
     }
   }
 
-  // Rescale Real Graph v2 scores from [0,1] to the v1 scores distribution [1,2.97]
-  private def scaleScore(score: Double): Double =
-    if (score >= 0.0 && score <= 1.0) score * 1.97 + 1.0 else score
+  // Rescale Real Graph v2 scores from [0,1] to t  v1 scores d str but on [1,2.97]
+  pr vate def scaleScore(score: Double): Double =
+     f (score >= 0.0 && score <= 1.0) score * 1.97 + 1.0 else score
 }

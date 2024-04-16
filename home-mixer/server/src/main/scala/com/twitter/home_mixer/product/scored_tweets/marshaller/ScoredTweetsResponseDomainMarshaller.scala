@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.scored_tweets.marshaller
+package com.tw ter.ho _m xer.product.scored_t ets.marshaller
 
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsResponse
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Doma nMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
 /**
- * Creates a domain model of the Scored Tweets product response from the set of candidates selected
+ * Creates a doma n model of t  Scored T ets product response from t  set of cand dates selected
  */
-object ScoredTweetsResponseDomainMarshaller
-    extends DomainMarshaller[ScoredTweetsQuery, ScoredTweetsResponse] {
+object ScoredT etsResponseDoma nMarshaller
+    extends Doma nMarshaller[ScoredT etsQuery, ScoredT etsResponse] {
 
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("ScoredTweetsResponse")
+  overr de val  dent f er: Doma nMarshaller dent f er =
+    Doma nMarshaller dent f er("ScoredT etsResponse")
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    selections: Seq[CandidateWithDetails]
-  ): ScoredTweetsResponse = ScoredTweetsResponse(scoredTweets = selections)
+  overr de def apply(
+    query: ScoredT etsQuery,
+    select ons: Seq[Cand dateW hDeta ls]
+  ): ScoredT etsResponse = ScoredT etsResponse(scoredT ets = select ons)
 }

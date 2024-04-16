@@ -1,91 +1,91 @@
-package com.twitter.unified_user_actions.enricher.hcache
+package com.tw ter.un f ed_user_act ons.enr c r.hcac 
 
-import com.twitter.cache.FutureCache
-import com.twitter.cache.FutureCacheProxy
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import scala.annotation.nowarn
+ mport com.tw ter.cac .FutureCac 
+ mport com.tw ter.cac .FutureCac Proxy
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
+ mport scala.annotat on.nowarn
 
 /**
- * Adds stats and reuse the main logic of the EvictingCache.
+ * Adds stats and reuse t  ma n log c of t  Ev ct ngCac .
  */
-class ObservedEvictingCache[K, V](underlying: FutureCache[K, V], scopedStatsReceiver: StatsReceiver)
-    extends FutureCacheProxy[K, V](underlying) {
-  import ObservedEvictingCache._
+class ObservedEv ct ngCac [K, V](underly ng: FutureCac [K, V], scopedStatsRece ver: StatsRece ver)
+    extends FutureCac Proxy[K, V](underly ng) {
+   mport ObservedEv ct ngCac ._
 
-  private[this] val getsCounter = scopedStatsReceiver.counter(StatsNames.Gets)
-  private[this] val setsCounter = scopedStatsReceiver.counter(StatsNames.Sets)
-  private[this] val hitsCounter = scopedStatsReceiver.counter(StatsNames.Hits)
-  private[this] val missesCounter = scopedStatsReceiver.counter(StatsNames.Misses)
-  private[this] val evictionsCounter = scopedStatsReceiver.counter(StatsNames.Evictions)
-  private[this] val failedFuturesCounter = scopedStatsReceiver.counter(StatsNames.FailedFutures)
+  pr vate[t ] val getsCounter = scopedStatsRece ver.counter(StatsNa s.Gets)
+  pr vate[t ] val setsCounter = scopedStatsRece ver.counter(StatsNa s.Sets)
+  pr vate[t ] val h sCounter = scopedStatsRece ver.counter(StatsNa s.H s)
+  pr vate[t ] val m ssesCounter = scopedStatsRece ver.counter(StatsNa s.M sses)
+  pr vate[t ] val ev ct onsCounter = scopedStatsRece ver.counter(StatsNa s.Ev ct ons)
+  pr vate[t ] val fa ledFuturesCounter = scopedStatsRece ver.counter(StatsNa s.Fa ledFutures)
 
   @nowarn("cat=unused")
-  private[this] val cacheSizeGauge = scopedStatsReceiver.addGauge(StatsNames.Size)(underlying.size)
+  pr vate[t ] val cac S zeGauge = scopedStatsRece ver.addGauge(StatsNa s.S ze)(underly ng.s ze)
 
-  private[this] def evictOnFailure(k: K, f: Future[V]): Future[V] = {
-    f.onFailure { _ =>
-      failedFuturesCounter.incr()
-      evict(k, f)
+  pr vate[t ] def ev ctOnFa lure(k: K, f: Future[V]): Future[V] = {
+    f.onFa lure { _ =>
+      fa ledFuturesCounter. ncr()
+      ev ct(k, f)
     }
-    f // we return the original future to make evict(k, f) easier to work with.
+    f //   return t  or g nal future to make ev ct(k, f) eas er to work w h.
   }
 
-  override def set(k: K, v: Future[V]): Unit = {
-    setsCounter.incr()
+  overr de def set(k: K, v: Future[V]): Un  = {
+    setsCounter. ncr()
     super.set(k, v)
-    evictOnFailure(k, v)
+    ev ctOnFa lure(k, v)
   }
 
-  override def getOrElseUpdate(k: K)(v: => Future[V]): Future[V] = {
-    getsCounter.incr()
+  overr de def getOrElseUpdate(k: K)(v: => Future[V]): Future[V] = {
+    getsCounter. ncr()
 
     var computeWasEvaluated = false
-    def computeWithTracking: Future[V] = v.onSuccess { _ =>
+    def computeW hTrack ng: Future[V] = v.onSuccess { _ =>
       computeWasEvaluated = true
-      missesCounter.incr()
+      m ssesCounter. ncr()
     }
 
-    evictOnFailure(
+    ev ctOnFa lure(
       k,
-      super.getOrElseUpdate(k)(computeWithTracking).onSuccess { _ =>
-        if (!computeWasEvaluated) hitsCounter.incr()
+      super.getOrElseUpdate(k)(computeW hTrack ng).onSuccess { _ =>
+         f (!computeWasEvaluated) h sCounter. ncr()
       }
-    ).interruptible()
+    ). nterrupt ble()
   }
 
-  override def get(key: K): Option[Future[V]] = {
-    getsCounter.incr()
+  overr de def get(key: K): Opt on[Future[V]] = {
+    getsCounter. ncr()
     val value = super.get(key)
     value match {
-      case Some(_) => hitsCounter.incr()
-      case _ => missesCounter.incr()
+      case So (_) => h sCounter. ncr()
+      case _ => m ssesCounter. ncr()
     }
     value
   }
 
-  override def evict(key: K, value: Future[V]): Boolean = {
-    val evicted = super.evict(key, value)
-    if (evicted) evictionsCounter.incr()
-    evicted
+  overr de def ev ct(key: K, value: Future[V]): Boolean = {
+    val ev cted = super.ev ct(key, value)
+     f (ev cted) ev ct onsCounter. ncr()
+    ev cted
   }
 }
 
-object ObservedEvictingCache {
-  object StatsNames {
+object ObservedEv ct ngCac  {
+  object StatsNa s {
     val Gets = "gets"
-    val Hits = "hits"
-    val Misses = "misses"
+    val H s = "h s"
+    val M sses = "m sses"
     val Sets = "sets"
-    val Evictions = "evictions"
-    val FailedFutures = "failed_futures"
-    val Size = "size"
+    val Ev ct ons = "ev ct ons"
+    val Fa ledFutures = "fa led_futures"
+    val S ze = "s ze"
   }
 
   /**
-   * Wraps an underlying FutureCache, ensuring that failed Futures that are set in
-   * the cache are evicted later.
+   * Wraps an underly ng FutureCac , ensur ng that fa led Futures that are set  n
+   * t  cac  are ev cted later.
    */
-  def apply[K, V](underlying: FutureCache[K, V], statsReceiver: StatsReceiver): FutureCache[K, V] =
-    new ObservedEvictingCache[K, V](underlying, statsReceiver)
+  def apply[K, V](underly ng: FutureCac [K, V], statsRece ver: StatsRece ver): FutureCac [K, V] =
+    new ObservedEv ct ngCac [K, V](underly ng, statsRece ver)
 }

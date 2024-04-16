@@ -1,12 +1,12 @@
-java_library(
-    sources = ["*.java"],
+java_l brary(
+    s ces = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
         "3rdparty/jvm/log4j",
-        "src/java/com/twitter/search/common/relevance:utils",
-        "src/java/com/twitter/search/common/util/earlybird",
-        "src/thrift/com/twitter/search:earlybird-java",
+        "src/java/com/tw ter/search/common/relevance:ut ls",
+        "src/java/com/tw ter/search/common/ut l/earlyb rd",
+        "src/thr ft/com/tw ter/search:earlyb rd-java",
     ],
 )

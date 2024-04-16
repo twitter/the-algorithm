@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-trait MaxSelector[-Query <: PipelineQuery] {
+tra  MaxSelector[-Query <: P pel neQuery] {
   def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Int
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
+  ):  nt
 }
 
-object DropMaxCandidates {
+object DropMaxCand dates {
 
   /**
-   * A [[DropMaxCandidates]] Selector based on a [[Param]] applied to a single candidate pipeline
+   * A [[DropMaxCand dates]] Selector based on a [[Param]] appl ed to a s ngle cand date p pel ne
    */
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    maxSelectionsParam: Param[Int]
-  ) = new DropMaxCandidates[Query](
-    SpecificPipeline(candidatePipeline),
-    (query, _, _) => query.params(maxSelectionsParam))
+  def apply[Query <: P pel neQuery](
+    cand dateP pel ne: Cand dateP pel ne dent f er,
+    maxSelect onsParam: Param[ nt]
+  ) = new DropMaxCand dates[Query](
+    Spec f cP pel ne(cand dateP pel ne),
+    (query, _, _) => query.params(maxSelect onsParam))
 
   /**
-   * A [[DropMaxCandidates]] Selector based on a [[Param]] with multiple candidate pipelines
+   * A [[DropMaxCand dates]] Selector based on a [[Param]] w h mult ple cand date p pel nes
    */
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    maxSelectionsParam: Param[Int]
-  ) = new DropMaxCandidates[Query](
-    SpecificPipelines(candidatePipelines),
-    (query, _, _) => query.params(maxSelectionsParam))
+  def apply[Query <: P pel neQuery](
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er],
+    maxSelect onsParam: Param[ nt]
+  ) = new DropMaxCand dates[Query](
+    Spec f cP pel nes(cand dateP pel nes),
+    (query, _, _) => query.params(maxSelect onsParam))
 
   /**
-   * A [[DropMaxCandidates]] Selector based on a [[Param]] that applies to a [[CandidateScope]]
+   * A [[DropMaxCand dates]] Selector based on a [[Param]] that appl es to a [[Cand dateScope]]
    */
-  def apply[Query <: PipelineQuery](
-    pipelineScope: CandidateScope,
-    maxSelectionsParam: Param[Int]
-  ) = new DropMaxCandidates[Query](pipelineScope, (query, _, _) => query.params(maxSelectionsParam))
+  def apply[Query <: P pel neQuery](
+    p pel neScope: Cand dateScope,
+    maxSelect onsParam: Param[ nt]
+  ) = new DropMaxCand dates[Query](p pel neScope, (query, _, _) => query.params(maxSelect onsParam))
 }
 
 /**
- * Limit the number of item and module (not items inside modules) candidates from the
- * specified pipelines based on the value provided by the [[MaxSelector]]
+ * L m  t  number of  em and module (not  ems  ns de modules) cand dates from t 
+ * spec f ed p pel nes based on t  value prov ded by t  [[MaxSelector]]
  *
- * For example, if value from the [[MaxSelector]] is 3, and a candidatePipeline returned 10 items
- * in the candidate pool, then these items will be reduced to the first 3 items. Note that to
- * update the ordering of the candidates, an UpdateCandidateOrderingSelector may be used prior to
- * using this Selector.
+ * For example,  f value from t  [[MaxSelector]]  s 3, and a cand dateP pel ne returned 10  ems
+ *  n t  cand date pool, t n t se  ems w ll be reduced to t  f rst 3  ems. Note that to
+ * update t  order ng of t  cand dates, an UpdateCand dateOrder ngSelector may be used pr or to
+ * us ng t  Selector.
  *
- * Another example, if the [[MaxSelector]] value is 3, and a candidatePipeline returned 10 modules
- * in the candidate pool, then these will be reduced to the first 3 modules. The items inside the
- * modeles will not be affected by this selector. To control the number of items inside modules see
- * [[DropMaxModuleItemCandidates]].
+ * Anot r example,  f t  [[MaxSelector]] value  s 3, and a cand dateP pel ne returned 10 modules
+ *  n t  cand date pool, t n t se w ll be reduced to t  f rst 3 modules. T   ems  ns de t 
+ * modeles w ll not be affected by t  selector. To control t  number of  ems  ns de modules see
+ * [[DropMaxModule emCand dates]].
  */
-case class DropMaxCandidates[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
+case class DropMaxCand dates[-Query <: P pel neQuery](
+  overr de val p pel neScope: Cand dateScope,
   maxSelector: MaxSelector[Query])
     extends Selector[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val maxSelections = maxSelector(query, remainingCandidates, result)
-    assert(maxSelections > 0, "Max selections must be greater than zero")
+    val maxSelect ons = maxSelector(query, rema n ngCand dates, result)
+    assert(maxSelect ons > 0, "Max select ons must be greater than zero")
 
-    val remainingCandidatesLimited =
-      DropSelector.takeUntil(maxSelections, remainingCandidates, pipelineScope)
+    val rema n ngCand datesL m ed =
+      DropSelector.takeUnt l(maxSelect ons, rema n ngCand dates, p pel neScope)
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    SelectorResult(rema n ngCand dates = rema n ngCand datesL m ed, result = result)
   }
 }

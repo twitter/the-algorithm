@@ -1,19 +1,19 @@
-package com.twitter.servo
+package com.tw ter.servo
 
-import com.twitter.util.Future
-import java.sql.ResultSet
+ mport com.tw ter.ut l.Future
+ mport java.sql.ResultSet
 
 package object database {
   type DatabaseFactory = (() => Database)
 
   /**
-   * A function type for translating ResultSets into objects of the result type A.
+   * A funct on type for translat ng ResultSets  nto objects of t  result type A.
    */
-  type Builder[A] = ResultSet => A
+  type Bu lder[A] = ResultSet => A
 
   /**
-   * A function type for asynchronously translating ResultSets into objects
-   * of the result type A.
+   * A funct on type for asynchronously translat ng ResultSets  nto objects
+   * of t  result type A.
    */
-  type FutureBuilder[A] = Builder[Future[A]]
+  type FutureBu lder[A] = Bu lder[Future[A]]
 }

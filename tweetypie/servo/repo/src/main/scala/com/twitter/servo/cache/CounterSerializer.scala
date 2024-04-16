@@ -1,112 +1,112 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.google.common.base.Charsets
-import com.twitter.util.Try
+ mport com.google.common.base.Charsets
+ mport com.tw ter.ut l.Try
 
 /**
- * Fast implementation of dealing with memcached counters.
+ * Fast  mple ntat on of deal ng w h  mcac d counters.
  *
- * Memcache is funkytown for incr and decr. Basically, you store a number,
- * as a STRING, and then incr and decr that. This abstracts over that detail.
+ *  mcac   s funkytown for  ncr and decr. Bas cally,   store a number,
+ * as a STR NG, and t n  ncr and decr that. T  abstracts over that deta l.
  *
- * This implementation was quite a bit faster than the simple implementation
- * of `new String(bytes, Charsets.US_ASCII).toLong()`
- * and `Long.toString(value).getBytes()`
+ * T   mple ntat on was qu e a b  faster than t  s mple  mple ntat on
+ * of `new Str ng(bytes, Charsets.US_ASC  ).toLong()`
+ * and `Long.toStr ng(value).getBytes()`
  *
  * Thread-safe.
  */
-object CounterSerializer extends Serializer[Long] {
-  private[this] val Minus = '-'.toByte
-  // The lower bound
-  private[this] val Zero = '0'.toByte
-  // The upper bound
-  private[this] val Nine = '9'.toByte
+object CounterSer al zer extends Ser al zer[Long] {
+  pr vate[t ] val M nus = '-'.toByte
+  // T  lo r bound
+  pr vate[t ] val Zero = '0'.toByte
+  // T  upper bound
+  pr vate[t ] val N ne = '9'.toByte
 
-  // Max length for our byte arrays that'll fit all positive longs
-  private[this] val MaxByteArrayLength = 19
+  // Max length for   byte arrays that'll f  all pos  ve longs
+  pr vate[t ] val MaxByteArrayLength = 19
 
-  override def to(long: Long): Try[Array[Byte]] = Try {
-    // NOTE: code based on Long.toString(value), but it avoids creating the
-    // intermediate String object and the charset encoding in String.getBytes
-    // This was about 12% faster than calling Long.toString(long).getBytes
-    if (long == Long.MinValue) {
-      "-9223372036854775808".getBytes(Charsets.US_ASCII)
+  overr de def to(long: Long): Try[Array[Byte]] = Try {
+    // NOTE: code based on Long.toStr ng(value), but   avo ds creat ng t 
+    //  nter d ate Str ng object and t  charset encod ng  n Str ng.getBytes
+    // T  was about 12% faster than call ng Long.toStr ng(long).getBytes
+     f (long == Long.M nValue) {
+      "-9223372036854775808".getBytes(Charsets.US_ASC  )
     } else {
-      val size = if (long < 0) stringSize(-long) + 1 else stringSize(long)
-      val bytes = new Array[Byte](size)
+      val s ze =  f (long < 0) str ngS ze(-long) + 1 else str ngS ze(long)
+      val bytes = new Array[Byte](s ze)
 
-      var isNegative = false
+      var  sNegat ve = false
       var endAt = 0
-      var currentLong = if (long < 0) {
-        isNegative = true
+      var currentLong =  f (long < 0) {
+         sNegat ve = true
         endAt = 1
         -long
       } else {
         long
       }
 
-      // Note: look at the implementation in Long.getChars(long, int, char[])
-      // They can do 2 digits at a time for this, so we could speed this up
-      // See: Division by Invariant Integers using Multiplication
-      // http://gmplib.org/~tege/divcnst-pldi94.pdf
+      // Note: look at t   mple ntat on  n Long.getChars(long,  nt, char[])
+      // T y can do 2 d g s at a t   for t , so   could speed t  up
+      // See: D v s on by  nvar ant  ntegers us ng Mult pl cat on
+      // http://gmpl b.org/~tege/d vcnst-pld 94.pdf
 
-      // starting at the least significant digit and working our way up...
-      var pos = size - 1
+      // start ng at t  least s gn f cant d g  and work ng   way up...
+      var pos = s ze - 1
       do {
         val byte = currentLong % 10
         bytes(pos) = (Zero + byte).toByte
         currentLong /= 10
         pos -= 1
-      } while (currentLong != 0)
+      } wh le (currentLong != 0)
 
-      if (isNegative) {
+       f ( sNegat ve) {
         assert(pos == 0, "For value " + long + ", pos " + pos)
-        bytes(0) = Minus
+        bytes(0) = M nus
       }
 
       bytes
     }
   }
 
-  override def from(bytes: Array[Byte]): Try[Long] = Try {
-    // This implementation was about 4x faster than the simple:
-    //    new String(bytes, Charsets.US_ASCII).toLong
+  overr de def from(bytes: Array[Byte]): Try[Long] = Try {
+    // T   mple ntat on was about 4x faster than t  s mple:
+    //    new Str ng(bytes, Charsets.US_ASC  ).toLong
 
-    if (bytes.length < 1)
-      throw new NumberFormatException("Empty byte arrays are unsupported")
+     f (bytes.length < 1)
+      throw new NumberFormatExcept on("Empty byte arrays are unsupported")
 
-    val isNegative = bytes(0) == Minus
-    if (isNegative && bytes.length == 1)
-      throw new NumberFormatException(bytes.mkString(","))
+    val  sNegat ve = bytes(0) == M nus
+     f ( sNegat ve && bytes.length == 1)
+      throw new NumberFormatExcept on(bytes.mkStr ng(","))
 
-    // we count in negative numbers so we don't have problems at Long.MaxValue
+    //   count  n negat ve numbers so   don't have problems at Long.MaxValue
     var total = 0L
     val endAt = bytes.length
-    var i = if (isNegative) 1 else 0
-    while (i < endAt) {
-      val b = bytes(i)
-      if (b < Zero || b > Nine)
-        throw new NumberFormatException(bytes.mkString(","))
+    var   =  f ( sNegat ve) 1 else 0
+    wh le (  < endAt) {
+      val b = bytes( )
+       f (b < Zero || b > N ne)
+        throw new NumberFormatExcept on(bytes.mkStr ng(","))
 
-      val int = b - Zero
-      total = (total * 10L) - int
+      val  nt = b - Zero
+      total = (total * 10L) -  nt
 
-      i += 1
+        += 1
     }
 
-    if (isNegative) total else -total
+     f ( sNegat ve) total else -total
   }
 
   /**
-   * @param long must be non-negative
+   * @param long must be non-negat ve
    */
-  private[this] def stringSize(long: Long): Int = {
+  pr vate[t ] def str ngS ze(long: Long):  nt = {
     var p = 10
-    var i = 1
-    while (i < MaxByteArrayLength) {
-      if (long < p) return i
+    var   = 1
+    wh le (  < MaxByteArrayLength) {
+       f (long < p) return  
       p *= 10
-      i += 1
+        += 1
     }
     MaxByteArrayLength
   }

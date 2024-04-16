@@ -1,874 +1,874 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate.MaxTweetAge
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.predicate.tweet.TweetAuthorPredicates
-import com.twitter.frigate.common.predicate._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.gizmoduck._
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.MultiEdge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.socialgraph.SocialGraphPredicate
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date.MaxT etAge
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common.pred cate.t et.T etAuthorPred cates
+ mport com.tw ter.fr gate.common.pred cate._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.common.ut l.SnowflakeUt ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter.fr gate.thr ftscala.ChannelNa 
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.g zmoduck.thr ftscala.UserType
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. rm .pred cate.g zmoduck._
+ mport com.tw ter. rm .pred cate.soc algraph.Edge
+ mport com.tw ter. rm .pred cate.soc algraph.Mult Edge
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. rm .pred cate.soc algraph.Soc alGraphPred cate
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.Locat on
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-object PredicatesForCandidate {
+object Pred catesForCand date {
 
-  def oldTweetRecsPredicate(implicit stats: StatsReceiver): Predicate[
-    TweetCandidate with RecommendationType with TargetInfo[
-      TargetUser with TargetABDecider with MaxTweetAge
+  def oldT etRecsPred cate( mpl c  stats: StatsRece ver): Pred cate[
+    T etCand date w h Recom ndat onType w h Target nfo[
+      TargetUser w h TargetABDec der w h MaxT etAge
     ]
   ] = {
-    val name = "old_tweet"
-    Predicate
-      .from[TweetCandidate with RecommendationType with TargetInfo[
-        TargetUser with TargetABDecider with MaxTweetAge
-      ]] { candidate =>
+    val na  = "old_t et"
+    Pred cate
+      .from[T etCand date w h Recom ndat onType w h Target nfo[
+        TargetUser w h TargetABDec der w h MaxT etAge
+      ]] { cand date =>
         {
-          val crt = candidate.commonRecType
-          val defaultAge = if (RecTypes.mrModelingBasedTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.ModelingBasedCandidateMaxTweetAgeParam)
-          } else if (RecTypes.GeoPopTweetTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.GeoPopTweetMaxAgeInHours)
-          } else if (RecTypes.simclusterBasedTweets.contains(crt)) {
-            candidate.target.params(
-              PushFeatureSwitchParams.SimclusterBasedCandidateMaxTweetAgeParam)
-          } else if (RecTypes.detopicTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.DetopicBasedCandidateMaxTweetAgeParam)
-          } else if (RecTypes.f1FirstDegreeTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.F1CandidateMaxTweetAgeParam)
-          } else if (crt == CommonRecommendationType.ExploreVideoTweet) {
-            candidate.target.params(PushFeatureSwitchParams.ExploreVideoTweetAgeParam)
+          val crt = cand date.commonRecType
+          val defaultAge =  f (RecTypes.mrModel ngBasedTypes.conta ns(crt)) {
+            cand date.target.params(PushFeatureSw chParams.Model ngBasedCand dateMaxT etAgeParam)
+          } else  f (RecTypes.GeoPopT etTypes.conta ns(crt)) {
+            cand date.target.params(PushFeatureSw chParams.GeoPopT etMaxAge nH s)
+          } else  f (RecTypes.s mclusterBasedT ets.conta ns(crt)) {
+            cand date.target.params(
+              PushFeatureSw chParams.S mclusterBasedCand dateMaxT etAgeParam)
+          } else  f (RecTypes.detop cTypes.conta ns(crt)) {
+            cand date.target.params(PushFeatureSw chParams.Detop cBasedCand dateMaxT etAgeParam)
+          } else  f (RecTypes.f1F rstDegreeTypes.conta ns(crt)) {
+            cand date.target.params(PushFeatureSw chParams.F1Cand dateMaxT etAgeParam)
+          } else  f (crt == CommonRecom ndat onType.ExploreV deoT et) {
+            cand date.target.params(PushFeatureSw chParams.ExploreV deoT etAgeParam)
           } else
-            candidate.target.params(PushFeatureSwitchParams.MaxTweetAgeParam)
-          SnowflakeUtils.isRecent(candidate.tweetId, defaultAge)
+            cand date.target.params(PushFeatureSw chParams.MaxT etAgeParam)
+          SnowflakeUt ls. sRecent(cand date.t et d, defaultAge)
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def tweetIsNotAreply(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[TweetCandidate with TweetDetails] = {
-    val name = "tweet_candidate_not_a_reply"
-    Predicate
-      .from[TweetCandidate with TweetDetails] { c =>
-        c.isReply match {
-          case Some(true) => false
+  def t et sNotAreply(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[T etCand date w h T etDeta ls] = {
+    val na  = "t et_cand date_not_a_reply"
+    Pred cate
+      .from[T etCand date w h T etDeta ls] { c =>
+        c. sReply match {
+          case So (true) => false
           case _ => true
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
   /**
-   * Check if tweet contains any optouted free form interests.
-   * Currently, we use it for media categories and semantic core
+   * C ck  f t et conta ns any optouted free form  nterests.
+   * Currently,   use   for  d a categor es and semant c core
    * @param stats
    * @return
    */
-  def noOptoutFreeFormInterestPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "free_form_interest_opt_out"
-    val tweetMediaAnnotationFeature =
-      "tweet.mediaunderstanding.tweet_annotations.safe_category_probabilities"
-    val tweetSemanticCoreFeature =
-      "tweet.core.tweet.semantic_core_annotations"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    val withOptOutFreeFormInterestsCounter = stats.counter("with_optout_interests")
-    val withoutOptOutInterestsCounter = stats.counter("without_optout_interests")
-    val withOptOutFreeFormInterestsFromMediaAnnotationCounter =
-      stats.counter("with_optout_interests_from_media_annotation")
-    val withOptOutFreeFormInterestsFromSemanticCoreCounter =
-      stats.counter("with_optout_interests_from_semantic_core")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val tweetSemanticCoreEntityIds = candidate.sparseBinaryFeatures
-          .getOrElse(tweetSemanticCoreFeature, Set.empty[String]).map { id =>
-            id.split('.')(2)
+  def noOptoutFreeForm nterestPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "free_form_ nterest_opt_out"
+    val t et d aAnnotat onFeature =
+      "t et. d aunderstand ng.t et_annotat ons.safe_category_probab l  es"
+    val t etSemant cCoreFeature =
+      "t et.core.t et.semant c_core_annotat ons"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    val w hOptOutFreeForm nterestsCounter = stats.counter("w h_optout_ nterests")
+    val w houtOptOut nterestsCounter = stats.counter("w hout_optout_ nterests")
+    val w hOptOutFreeForm nterestsFrom d aAnnotat onCounter =
+      stats.counter("w h_optout_ nterests_from_ d a_annotat on")
+    val w hOptOutFreeForm nterestsFromSemant cCoreCounter =
+      stats.counter("w h_optout_ nterests_from_semant c_core")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        val t etSemant cCoreEnt y ds = cand date.sparseB naryFeatures
+          .getOrElse(t etSemant cCoreFeature, Set.empty[Str ng]).map {  d =>
+             d.spl ('.')(2)
           }.toSet
-        val tweetMediaAnnotationIds = candidate.sparseContinuousFeatures
-          .getOrElse(tweetMediaAnnotationFeature, Map.empty[String, Double]).keys.toSet
+        val t et d aAnnotat on ds = cand date.sparseCont nuousFeatures
+          .getOrElse(t et d aAnnotat onFeature, Map.empty[Str ng, Double]).keys.toSet
 
-        candidate.target.optOutFreeFormUserInterests.map {
-          case optOutUserInterests: Seq[String] =>
-            withOptOutFreeFormInterestsCounter.incr()
-            val optOutUserInterestsSet = optOutUserInterests.toSet
-            val mediaAnnoIntersect = optOutUserInterestsSet.intersect(tweetMediaAnnotationIds)
-            val semanticCoreIntersect = optOutUserInterestsSet.intersect(tweetSemanticCoreEntityIds)
-            if (!mediaAnnoIntersect.isEmpty) {
-              withOptOutFreeFormInterestsFromMediaAnnotationCounter.incr()
+        cand date.target.optOutFreeFormUser nterests.map {
+          case optOutUser nterests: Seq[Str ng] =>
+            w hOptOutFreeForm nterestsCounter. ncr()
+            val optOutUser nterestsSet = optOutUser nterests.toSet
+            val  d aAnno ntersect = optOutUser nterestsSet. ntersect(t et d aAnnotat on ds)
+            val semant cCore ntersect = optOutUser nterestsSet. ntersect(t etSemant cCoreEnt y ds)
+             f (! d aAnno ntersect. sEmpty) {
+              w hOptOutFreeForm nterestsFrom d aAnnotat onCounter. ncr()
             }
-            if (!semanticCoreIntersect.isEmpty) {
-              withOptOutFreeFormInterestsFromSemanticCoreCounter.incr()
+             f (!semant cCore ntersect. sEmpty) {
+              w hOptOutFreeForm nterestsFromSemant cCoreCounter. ncr()
             }
-            semanticCoreIntersect.isEmpty && mediaAnnoIntersect.isEmpty
+            semant cCore ntersect. sEmpty &&  d aAnno ntersect. sEmpty
           case _ =>
-            withoutOptOutInterestsCounter.incr()
+            w houtOptOut nterestsCounter. ncr()
             true
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def tweetCandidateWithLessThan2SocialContextsIsAReply(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[TweetCandidate with TweetDetails with SocialContextActions] = {
-    val name = "tweet_candidate_with_less_than_2_social_contexts_is_not_a_reply"
-    Predicate
-      .from[TweetCandidate with TweetDetails with SocialContextActions] { cand =>
-        cand.isReply match {
-          case Some(true) if cand.socialContextTweetIds.size < 2 => false
+  def t etCand dateW hLessThan2Soc alContexts sAReply(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[T etCand date w h T etDeta ls w h Soc alContextAct ons] = {
+    val na  = "t et_cand date_w h_less_than_2_soc al_contexts_ s_not_a_reply"
+    Pred cate
+      .from[T etCand date w h T etDeta ls w h Soc alContextAct ons] { cand =>
+        cand. sReply match {
+          case So (true)  f cand.soc alContextT et ds.s ze < 2 => false
           case _ => true
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def f1CandidateIsNotAReply(implicit stats: StatsReceiver): NamedPredicate[F1Candidate] = {
-    val name = "f1_candidate_is_not_a_reply"
-    Predicate
-      .from[F1Candidate] { candidate =>
-        candidate.isReply match {
-          case Some(true) => false
+  def f1Cand date sNotAReply( mpl c  stats: StatsRece ver): Na dPred cate[F1Cand date] = {
+    val na  = "f1_cand date_ s_not_a_reply"
+    Pred cate
+      .from[F1Cand date] { cand date =>
+        cand date. sReply match {
+          case So (true) => false
           case _ => true
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def outOfNetworkTweetCandidateEnabledCrTag(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] = {
-    val name = "out_of_network_tweet_candidate_enabled_crtag"
-    val scopedStats = stats.scope(name)
-    Predicate
-      .from[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] { cand =>
-        val disabledCrTag = cand.target
-          .params(PushFeatureSwitchParams.OONCandidatesDisabledCrTagParam)
-        val candGeneratedByDisabledSignal = cand.tagsCR.exists { tagsCR =>
-          val tagsCRSet = tagsCR.map(_.toString).toSet
-          tagsCRSet.nonEmpty && tagsCRSet.subsetOf(disabledCrTag.toSet)
+  def outOfNetworkT etCand dateEnabledCrTag(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[OutOfNetworkT etCand date w h Target nfo[TargetUser w h TargetABDec der]] = {
+    val na  = "out_of_network_t et_cand date_enabled_crtag"
+    val scopedStats = stats.scope(na )
+    Pred cate
+      .from[OutOfNetworkT etCand date w h Target nfo[TargetUser w h TargetABDec der]] { cand =>
+        val d sabledCrTag = cand.target
+          .params(PushFeatureSw chParams.OONCand datesD sabledCrTagParam)
+        val candGeneratedByD sabledS gnal = cand.tagsCR.ex sts { tagsCR =>
+          val tagsCRSet = tagsCR.map(_.toStr ng).toSet
+          tagsCRSet.nonEmpty && tagsCRSet.subsetOf(d sabledCrTag.toSet)
         }
-        if (candGeneratedByDisabledSignal) {
-          cand.tagsCR.getOrElse(Nil).foreach(tag => scopedStats.counter(tag.toString).incr())
+         f (candGeneratedByD sabledS gnal) {
+          cand.tagsCR.getOrElse(N l).foreach(tag => scopedStats.counter(tag.toStr ng). ncr())
           false
         } else true
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  def outOfNetworkTweetCandidateEnabledCrtGroup(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] = {
-    val name = "out_of_network_tweet_candidate_enabled_crt_group"
-    val scopedStats = stats.scope(name)
-    Predicate
-      .from[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] { cand =>
-        val disabledCrtGroup = cand.target
-          .params(PushFeatureSwitchParams.OONCandidatesDisabledCrtGroupParam)
-        val crtGroup = CandidateUtil.getCrtGroup(cand.commonRecType)
-        val candGeneratedByDisabledCrt = disabledCrtGroup.contains(crtGroup)
-        if (candGeneratedByDisabledCrt) {
-          scopedStats.counter("filter_" + crtGroup.toString).incr()
+  def outOfNetworkT etCand dateEnabledCrtGroup(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[OutOfNetworkT etCand date w h Target nfo[TargetUser w h TargetABDec der]] = {
+    val na  = "out_of_network_t et_cand date_enabled_crt_group"
+    val scopedStats = stats.scope(na )
+    Pred cate
+      .from[OutOfNetworkT etCand date w h Target nfo[TargetUser w h TargetABDec der]] { cand =>
+        val d sabledCrtGroup = cand.target
+          .params(PushFeatureSw chParams.OONCand datesD sabledCrtGroupParam)
+        val crtGroup = Cand dateUt l.getCrtGroup(cand.commonRecType)
+        val candGeneratedByD sabledCrt = d sabledCrtGroup.conta ns(crtGroup)
+         f (candGeneratedByD sabledCrt) {
+          scopedStats.counter("f lter_" + crtGroup.toStr ng). ncr()
           false
         } else true
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  def outOfNetworkTweetCandidateIsNotAReply(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate] = {
-    val name = "out_of_network_tweet_candidate_is_not_a_reply"
-    Predicate
-      .from[OutOfNetworkTweetCandidate] { cand =>
-        cand.isReply match {
-          case Some(true) => false
+  def outOfNetworkT etCand date sNotAReply(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[OutOfNetworkT etCand date] = {
+    val na  = "out_of_network_t et_cand date_ s_not_a_reply"
+    Pred cate
+      .from[OutOfNetworkT etCand date] { cand =>
+        cand. sReply match {
+          case So (true) => false
           case _ => true
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def recommendedTweetIsAuthoredBySelf(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] =
-    Predicate
-      .from[PushCandidate] {
-        case tweetCandidate: PushCandidate with TweetDetails =>
-          tweetCandidate.authorId match {
-            case Some(authorId) => authorId != tweetCandidate.target.targetId
+  def recom ndedT et sAuthoredBySelf(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] =
+    Pred cate
+      .from[PushCand date] {
+        case t etCand date: PushCand date w h T etDeta ls =>
+          t etCand date.author d match {
+            case So (author d) => author d != t etCand date.target.target d
             case None => true
           }
         case _ =>
           true
       }
-      .withStats(statsReceiver.scope("predicate_self_author"))
-      .withName("self_author")
+      .w hStats(statsRece ver.scope("pred cate_self_author"))
+      .w hNa ("self_author")
 
-  def authorInSocialContext(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] =
-    Predicate
-      .from[PushCandidate] {
-        case tweetCandidate: PushCandidate with TweetDetails with SocialContextActions =>
-          tweetCandidate.authorId match {
-            case Some(authorId) =>
-              !tweetCandidate.socialContextUserIds.contains(authorId)
+  def author nSoc alContext( mpl c  statsRece ver: StatsRece ver): Na dPred cate[PushCand date] =
+    Pred cate
+      .from[PushCand date] {
+        case t etCand date: PushCand date w h T etDeta ls w h Soc alContextAct ons =>
+          t etCand date.author d match {
+            case So (author d) =>
+              !t etCand date.soc alContextUser ds.conta ns(author d)
             case None => true
           }
         case _ => true
       }
-      .withStats(statsReceiver.scope("predicate_author_social_context"))
-      .withName("author_social_context")
+      .w hStats(statsRece ver.scope("pred cate_author_soc al_context"))
+      .w hNa ("author_soc al_context")
 
-  def selfInSocialContext(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "self_social_context"
-    Predicate
-      .from[PushCandidate] {
-        case candidate: PushCandidate with SocialContextActions =>
-          !candidate.socialContextUserIds.contains(candidate.target.targetId)
+  def self nSoc alContext( mpl c  statsRece ver: StatsRece ver): Na dPred cate[PushCand date] = {
+    val na  = "self_soc al_context"
+    Pred cate
+      .from[PushCand date] {
+        case cand date: PushCand date w h Soc alContextAct ons =>
+          !cand date.soc alContextUser ds.conta ns(cand date.target.target d)
         case _ =>
           true
       }
-      .withStats(statsReceiver.scope(s"${name}_predicate"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"${na }_pred cate"))
+      .w hNa (na )
   }
 
-  def minSocialContext(
-    threshold: Int
+  def m nSoc alContext(
+    threshold:  nt
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] = {
-    Predicate
-      .from { candidate: PushCandidate with SocialContextActions =>
-        candidate.socialContextUserIds.size >= threshold
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h Soc alContextAct ons] = {
+    Pred cate
+      .from { cand date: PushCand date w h Soc alContextAct ons =>
+        cand date.soc alContextUser ds.s ze >= threshold
       }
-      .withStats(statsReceiver.scope("predicate_min_social_context"))
-      .withName("min_social_context")
+      .w hStats(statsRece ver.scope("pred cate_m n_soc al_context"))
+      .w hNa ("m n_soc al_context")
   }
 
-  private def anyWithheldContent(
+  pr vate def anyW h ldContent(
     userStore: ReadableStore[Long, User],
-    userCountryStore: ReadableStore[Long, Location]
+    userCountryStore: ReadableStore[Long, Locat on]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Predicate[TargetRecUser] =
-    GizmoduckUserPredicate.withheldContentPredicate(
+     mpl c  statsRece ver: StatsRece ver
+  ): Pred cate[TargetRecUser] =
+    G zmoduckUserPred cate.w h ldContentPred cate(
       userStore = userStore,
       userCountryStore = userCountryStore,
-      statsReceiver = statsReceiver,
-      checkAllCountries = true
+      statsRece ver = statsRece ver,
+      c ckAllCountr es = true
     )
 
-  def targetUserExists(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    TargetUserPredicates
-      .targetUserExists()(statsReceiver)
-      .flatContraMap { candidate: PushCandidate => Future.value(candidate.target) }
-      .withName("target_user_exists")
+  def targetUserEx sts( mpl c  statsRece ver: StatsRece ver): Na dPred cate[PushCand date] = {
+    TargetUserPred cates
+      .targetUserEx sts()(statsRece ver)
+      .flatContraMap { cand date: PushCand date => Future.value(cand date.target) }
+      .w hNa ("target_user_ex sts")
   }
 
-  def secondaryDormantAccountPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "secondary_dormant_account"
-    TargetUserPredicates
-      .secondaryDormantAccountPredicate()(statsReceiver)
-      .on { candidate: PushCandidate => candidate.target }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+  def secondaryDormantAccountPred cate(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "secondary_dormant_account"
+    TargetUserPred cates
+      .secondaryDormantAccountPred cate()(statsRece ver)
+      .on { cand date: PushCand date => cand date.target }
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def socialContextBeingFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def soc alContextBe ngFollo d(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] =
-    SocialGraphPredicate
-      .allRelationEdgesExist(edgeStore, RelationshipType.Following)
-      .on { candidate: PushCandidate with SocialContextActions =>
-        candidate.socialContextUserIds.map { u => Edge(candidate.target.targetId, u) }
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h Soc alContextAct ons] =
+    Soc alGraphPred cate
+      .allRelat onEdgesEx st(edgeStore, Relat onsh pType.Follow ng)
+      .on { cand date: PushCand date w h Soc alContextAct ons =>
+        cand date.soc alContextUser ds.map { u => Edge(cand date.target.target d, u) }
       }
-      .withStats(statsReceiver.scope("predicate_social_context_being_followed"))
-      .withName("social_context_being_followed")
+      .w hStats(statsRece ver.scope("pred cate_soc al_context_be ng_follo d"))
+      .w hNa ("soc al_context_be ng_follo d")
 
-  private def edgeFromCandidate(candidate: PushCandidate with TweetAuthor): Option[Edge] = {
-    candidate.authorId map { authorId => Edge(candidate.target.targetId, authorId) }
+  pr vate def edgeFromCand date(cand date: PushCand date w h T etAuthor): Opt on[Edge] = {
+    cand date.author d map { author d => Edge(cand date.target.target d, author d) }
   }
 
-  def authorNotBeingDeviceFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def authorNotBe ngDev ceFollo d(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.DeviceFollowing)
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    Soc alGraphPred cate
+      .relat onEx sts(edgeStore, Relat onsh pType.Dev ceFollow ng)
+      .opt onalOn(
+        edgeFromCand date,
+        m ss ngResult = false
       )
-      .flip
-      .withStats(statsReceiver.scope("predicate_author_not_device_followed"))
-      .withName("author_not_device_followed")
+      .fl p
+      .w hStats(statsRece ver.scope("pred cate_author_not_dev ce_follo d"))
+      .w hNa ("author_not_dev ce_follo d")
   }
 
-  def authorBeingFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def authorBe ngFollo d(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.Following)
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    Soc alGraphPred cate
+      .relat onEx sts(edgeStore, Relat onsh pType.Follow ng)
+      .opt onalOn(
+        edgeFromCand date,
+        m ss ngResult = false
       )
-      .withStats(statsReceiver.scope("predicate_author_being_followed"))
-      .withName("author_being_followed")
+      .w hStats(statsRece ver.scope("pred cate_author_be ng_follo d"))
+      .w hNa ("author_be ng_follo d")
   }
 
-  def authorNotBeingFollowed(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def authorNotBe ngFollo d(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.Following)
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    Soc alGraphPred cate
+      .relat onEx sts(edgeStore, Relat onsh pType.Follow ng)
+      .opt onalOn(
+        edgeFromCand date,
+        m ss ngResult = false
       )
-      .flip
-      .withStats(statsReceiver.scope("predicate_author_not_being_followed"))
-      .withName("author_not_being_followed")
+      .fl p
+      .w hStats(statsRece ver.scope("pred cate_author_not_be ng_follo d"))
+      .w hNa ("author_not_be ng_follo d")
   }
 
-  def recommendedTweetAuthorAcceptableToTargetUser(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def recom ndedT etAuthorAcceptableToTargetUser(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "recommended_tweet_author_acceptable_to_target_user"
-    SocialGraphPredicate
-      .anyRelationExists(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    val na  = "recom nded_t et_author_acceptable_to_target_user"
+    Soc alGraphPred cate
+      .anyRelat onEx sts(
         edgeStore,
         Set(
-          RelationshipType.Blocking,
-          RelationshipType.BlockedBy,
-          RelationshipType.HideRecommendations,
-          RelationshipType.Muting
+          Relat onsh pType.Block ng,
+          Relat onsh pType.BlockedBy,
+          Relat onsh pType.H deRecom ndat ons,
+          Relat onsh pType.Mut ng
         )
       )
-      .flip
-      .optionalOn(
-        edgeFromCandidate,
-        missingResult = false
+      .fl p
+      .opt onalOn(
+        edgeFromCand date,
+        m ss ngResult = false
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def relationNotExistsPredicate(
-    edgeStore: ReadableStore[RelationEdge, Boolean],
-    relations: Set[RelationshipType]
-  ): Predicate[(Long, Iterable[Long])] =
-    SocialGraphPredicate
-      .anyRelationExistsForMultiEdge(
+  def relat onNotEx stsPred cate(
+    edgeStore: ReadableStore[Relat onEdge, Boolean],
+    relat ons: Set[Relat onsh pType]
+  ): Pred cate[(Long,  erable[Long])] =
+    Soc alGraphPred cate
+      .anyRelat onEx stsForMult Edge(
         edgeStore,
-        relations
+        relat ons
       )
-      .flip
+      .fl p
       .on {
-        case (targetUserId, userIds) =>
-          MultiEdge(targetUserId, userIds.toSet)
+        case (targetUser d, user ds) =>
+          Mult Edge(targetUser d, user ds.toSet)
       }
 
-  def blocking(edgeStore: ReadableStore[RelationEdge, Boolean]): Predicate[(Long, Iterable[Long])] =
-    relationNotExistsPredicate(
+  def block ng(edgeStore: ReadableStore[Relat onEdge, Boolean]): Pred cate[(Long,  erable[Long])] =
+    relat onNotEx stsPred cate(
       edgeStore,
-      Set(RelationshipType.BlockedBy, RelationshipType.Blocking)
+      Set(Relat onsh pType.BlockedBy, Relat onsh pType.Block ng)
     )
 
-  def blockingOrMuting(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
-  ): Predicate[(Long, Iterable[Long])] =
-    relationNotExistsPredicate(
+  def block ngOrMut ng(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
+  ): Pred cate[(Long,  erable[Long])] =
+    relat onNotEx stsPred cate(
       edgeStore,
-      Set(RelationshipType.BlockedBy, RelationshipType.Blocking, RelationshipType.Muting)
+      Set(Relat onsh pType.BlockedBy, Relat onsh pType.Block ng, Relat onsh pType.Mut ng)
     )
 
-  def socialContextNotRetweetFollowing(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def soc alContextNotRet etFollow ng(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] = {
-    val name = "social_context_not_retweet_following"
-    relationNotExistsPredicate(edgeStore, Set(RelationshipType.NotRetweetFollowing))
-      .optionalOn[PushCandidate with SocialContextActions](
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h Soc alContextAct ons] = {
+    val na  = "soc al_context_not_ret et_follow ng"
+    relat onNotEx stsPred cate(edgeStore, Set(Relat onsh pType.NotRet etFollow ng))
+      .opt onalOn[PushCand date w h Soc alContextAct ons](
         {
-          case candidate: PushCandidate with SocialContextActions
-              if RecTypes.isTweetRetweetType(candidate.commonRecType) =>
-            Some((candidate.target.targetId, candidate.socialContextUserIds))
+          case cand date: PushCand date w h Soc alContextAct ons
+               f RecTypes. sT etRet etType(cand date.commonRecType) =>
+            So ((cand date.target.target d, cand date.soc alContextUser ds))
           case _ =>
             None
         },
-        missingResult = true
+        m ss ngResult = true
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def socialContextBlockingOrMuting(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def soc alContextBlock ngOrMut ng(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] =
-    blockingOrMuting(edgeStore)
-      .on { candidate: PushCandidate with SocialContextActions =>
-        (candidate.target.targetId, candidate.socialContextUserIds)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h Soc alContextAct ons] =
+    block ngOrMut ng(edgeStore)
+      .on { cand date: PushCand date w h Soc alContextAct ons =>
+        (cand date.target.target d, cand date.soc alContextUser ds)
       }
-      .withStats(statsReceiver.scope("predicate_social_context_blocking_or_muting"))
-      .withName("social_context_blocking_or_muting")
+      .w hStats(statsRece ver.scope("pred cate_soc al_context_block ng_or_mut ng"))
+      .w hNa ("soc al_context_block ng_or_mut ng")
 
   /**
-   * Use hyrated Tweet object for F1 Protected experiment for checking null cast as Tweetypie hydration
-   * fails for protected Authors without passing in Target id. We do this specifically for
-   * F1 Protected Tweet Experiment in Earlybird Adaptor.
-   * For rest of the traffic refer to existing Nullcast Predicate
+   * Use hyrated T et object for F1 Protected exper  nt for c ck ng null cast as T etyp e hydrat on
+   * fa ls for protected Authors w hout pass ng  n Target  d.   do t  spec f cally for
+   * F1 Protected T et Exper  nt  n Earlyb rd Adaptor.
+   * For rest of t  traff c refer to ex st ng Nullcast Pred cate
    */
-  def nullCastF1ProtectedExperientPredicate(
-    tweetypieStore: ReadableStore[Long, TweetyPieResult]
+  def nullCastF1ProtectedExper entPred cate(
+    t etyp eStore: ReadableStore[Long, T etyP eResult]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "f1_exempted_null_cast_tweet"
-    val f1NullCastCheckCounter = statsReceiver.scope(name).counter("f1_null_cast_check")
-    Predicate
-      .fromAsync { tweetCandidate: PushCandidate with TweetCandidate with TweetDetails =>
-        if (RecTypes.f1FirstDegreeTypes(tweetCandidate.commonRecType) && tweetCandidate.target
-            .params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors)) {
-          f1NullCastCheckCounter.incr()
-          tweetCandidate.tweet match {
-            case Some(tweetObj) =>
-              baseNullCastTweet().apply(Seq(TweetyPieResult(tweetObj, None, None))).map(_.head)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date w h T etDeta ls] = {
+    val na  = "f1_exempted_null_cast_t et"
+    val f1NullCastC ckCounter = statsRece ver.scope(na ).counter("f1_null_cast_c ck")
+    Pred cate
+      .fromAsync { t etCand date: PushCand date w h T etCand date w h T etDeta ls =>
+         f (RecTypes.f1F rstDegreeTypes(t etCand date.commonRecType) && t etCand date.target
+            .params(PushFeatureSw chParams.EnableF1FromProtectedT etAuthors)) {
+          f1NullCastC ckCounter. ncr()
+          t etCand date.t et match {
+            case So (t etObj) =>
+              baseNullCastT et().apply(Seq(T etyP eResult(t etObj, None, None))).map(_. ad)
             case _ => Future.False
           }
         } else {
-          nullCastTweet(tweetypieStore).apply(Seq(tweetCandidate)).map(_.head)
+          nullCastT et(t etyp eStore).apply(Seq(t etCand date)).map(_. ad)
         }
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  private def baseNullCastTweet(): Predicate[TweetyPieResult] =
-    Predicate.from { t: TweetyPieResult => !t.tweet.coreData.exists { cd => cd.nullcast } }
+  pr vate def baseNullCastT et(): Pred cate[T etyP eResult] =
+    Pred cate.from { t: T etyP eResult => !t.t et.coreData.ex sts { cd => cd.nullcast } }
 
-  def nullCastTweet(
-    tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+  def nullCastT et(
+    t etyP eStore: ReadableStore[Long, T etyP eResult]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "null_cast_tweet"
-    baseNullCastTweet()
-      .flatOptionContraMap[PushCandidate with TweetCandidate](
-        f = (tweetCandidate: PushCandidate
-          with TweetCandidate) => tweetyPieStore.get(tweetCandidate.tweetId),
-        missingResult = false
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = "null_cast_t et"
+    baseNullCastT et()
+      .flatOpt onContraMap[PushCand date w h T etCand date](
+        f = (t etCand date: PushCand date
+          w h T etCand date) => t etyP eStore.get(t etCand date.t et d),
+        m ss ngResult = false
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
   /**
-   * Use the predicate except fn is true.
+   * Use t  pred cate except fn  s true.
    */
-  def exceptedPredicate[T <: PushCandidate](
-    name: String,
+  def exceptedPred cate[T <: PushCand date](
+    na : Str ng,
     fn: T => Future[Boolean],
-    predicate: Predicate[T]
+    pred cate: Pred cate[T]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    Pred cate
       .fromAsync { e: T => fn(e) }
-      .or(predicate)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .or(pred cate)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
   /**
    *
-   * @param edgeStore [[ReadableStore[RelationEdge, Boolean]]]
-   * @return - allow only out-network tweets if in-network tweets are disabled
+   * @param edgeStore [[ReadableStore[Relat onEdge, Boolean]]]
+   * @return - allow only out-network t ets  f  n-network t ets are d sabled
    */
-  def disableInNetworkTweetPredicate(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def d sable nNetworkT etPred cate(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "disable_in_network_tweet"
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetAuthor =>
-        if (candidate.target.params(PushParams.DisableInNetworkTweetCandidatesParam)) {
-          authorNotBeingFollowed(edgeStore)
-            .apply(Seq(candidate))
-            .map(_.head)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    val na  = "d sable_ n_network_t et"
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etAuthor =>
+         f (cand date.target.params(PushParams.D sable nNetworkT etCand datesParam)) {
+          authorNotBe ngFollo d(edgeStore)
+            .apply(Seq(cand date))
+            .map(_. ad)
         } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+      }.w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
   /**
    *
-   * @param edgeStore [[ReadableStore[RelationEdge, Boolean]]]
-   * @return - allow only in-network tweets if out-network tweets are disabled
+   * @param edgeStore [[ReadableStore[Relat onEdge, Boolean]]]
+   * @return - allow only  n-network t ets  f out-network t ets are d sabled
    */
-  def disableOutNetworkTweetPredicate(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def d sableOutNetworkT etPred cate(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "disable_out_network_tweet"
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetAuthor =>
-        if (candidate.target.params(PushFeatureSwitchParams.DisableOutNetworkTweetCandidatesFS)) {
-          authorBeingFollowed(edgeStore)
-            .apply(Seq(candidate))
-            .map(_.head)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    val na  = "d sable_out_network_t et"
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etAuthor =>
+         f (cand date.target.params(PushFeatureSw chParams.D sableOutNetworkT etCand datesFS)) {
+          authorBe ngFollo d(edgeStore)
+            .apply(Seq(cand date))
+            .map(_. ad)
         } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+      }.w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def alwaysTruePredicate: NamedPredicate[PushCandidate] = {
-    Predicate
-      .all[PushCandidate]
-      .withName("predicate_AlwaysTrue")
+  def alwaysTruePred cate: Na dPred cate[PushCand date] = {
+    Pred cate
+      .all[PushCand date]
+      .w hNa ("pred cate_AlwaysTrue")
   }
 
-  def alwaysTruePushCandidatePredicate: NamedPredicate[PushCandidate] = {
-    Predicate
-      .all[PushCandidate]
-      .withName("predicate_AlwaysTrue")
+  def alwaysTruePushCand datePred cate: Na dPred cate[PushCand date] = {
+    Pred cate
+      .all[PushCand date]
+      .w hNa ("pred cate_AlwaysTrue")
   }
 
-  def alwaysFalsePredicate(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "predicate_AlwaysFalse"
-    val scopedStatsReceiver = statsReceiver.scope(name)
-    Predicate
-      .from { candidate: PushCandidate => false }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+  def alwaysFalsePred cate( mpl c  statsRece ver: StatsRece ver): Na dPred cate[PushCand date] = {
+    val na  = "pred cate_AlwaysFalse"
+    val scopedStatsRece ver = statsRece ver.scope(na )
+    Pred cate
+      .from { cand date: PushCand date => false }
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def accountCountryPredicate(
-    allowedCountries: Set[String]
+  def accountCountryPred cate(
+    allo dCountr es: Set[Str ng]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "AccountCountryPredicate"
-    val stats = statsReceiver.scope(name)
-    AccountCountryPredicate(allowedCountries)
-      .on { candidate: PushCandidate => candidate.target }
-      .withStats(stats)
-      .withName(name)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "AccountCountryPred cate"
+    val stats = statsRece ver.scope(na )
+    AccountCountryPred cate(allo dCountr es)
+      .on { cand date: PushCand date => cand date.target }
+      .w hStats(stats)
+      .w hNa (na )
   }
 
-  def paramPredicate[T <: PushCandidate](
+  def paramPred cate[T <: PushCand date](
     param: Param[Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = param.getClass.getSimpleName.stripSuffix("$")
-    TargetPredicates
-      .paramPredicate(param)
-      .on { candidate: PushCandidate => candidate.target }
-      .withStats(statsReceiver.scope(s"param_${name}_controlled_predicate"))
-      .withName(s"param_${name}_controlled_predicate")
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = param.getClass.getS mpleNa .str pSuff x("$")
+    TargetPred cates
+      .paramPred cate(param)
+      .on { cand date: PushCand date => cand date.target }
+      .w hStats(statsRece ver.scope(s"param_${na }_controlled_pred cate"))
+      .w hNa (s"param_${na }_controlled_pred cate")
   }
 
-  def isDeviceEligibleForNewsOrSports(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_device_eligible_for_news_or_sports"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        candidate.target.deviceInfo.map(_.exists(_.isNewsEligible))
+  def  sDev ceEl g bleForNewsOrSports(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = " s_dev ce_el g ble_for_news_or_sports"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        cand date.target.dev ce nfo.map(_.ex sts(_. sNewsEl g ble))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def isDeviceEligibleForCreatorPush(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_device_eligible_for_creator_push"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        candidate.target.deviceInfo.map(_.exists(settings =>
-          settings.isNewsEligible || settings.isRecommendationsEligible))
+  def  sDev ceEl g bleForCreatorPush(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = " s_dev ce_el g ble_for_creator_push"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        cand date.target.dev ce nfo.map(_.ex sts(sett ngs =>
+          sett ngs. sNewsEl g ble || sett ngs. sRecom ndat onsEl g ble))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
   /**
-   * Like [[TargetUserPredicates.homeTimelineFatigue()]] but for candidate.
+   * L ke [[TargetUserPred cates.ho T  l neFat gue()]] but for cand date.
    */
-  def htlFatiguePredicate(
-    fatigueDuration: Param[Duration]
+  def htlFat guePred cate(
+    fat gueDurat on: Param[Durat on]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "htl_fatigue"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val _fatigueDuration = candidate.target.params(fatigueDuration)
-        TargetUserPredicates
-          .homeTimelineFatigue(
-            fatigueDuration = _fatigueDuration
-          ).apply(Seq(candidate.target)).map(_.head)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "htl_fat gue"
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        val _fat gueDurat on = cand date.target.params(fat gueDurat on)
+        TargetUserPred cates
+          .ho T  l neFat gue(
+            fat gueDurat on = _fat gueDurat on
+          ).apply(Seq(cand date.target)).map(_. ad)
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def mrWebHoldbackPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "mr_web_holdback_for_candidate"
-    val scopedStats = stats.scope(name)
-    PredicatesForCandidate.exludeCrtFromPushHoldback
+  def mr bHoldbackPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "mr_ b_holdback_for_cand date"
+    val scopedStats = stats.scope(na )
+    Pred catesForCand date.exludeCrtFromPushHoldback
       .or(
-        TargetPredicates
-          .webNotifsHoldback()
-          .on { candidate: PushCandidate => candidate.target }
+        TargetPred cates
+          . bNot fsHoldback()
+          .on { cand date: PushCand date => cand date.target }
       )
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  def candidateEnabledForEmailPredicate(
+  def cand dateEnabledForEma lPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "candidates_enabled_for_email"
-    Predicate
-      .from { candidate: PushCandidate =>
-        if (candidate.target.isEmailUser)
-          candidate.isInstanceOf[TweetCandidate with TweetAuthor with RecommendationType]
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "cand dates_enabled_for_ema l"
+    Pred cate
+      .from { cand date: PushCand date =>
+         f (cand date.target. sEma lUser)
+          cand date. s nstanceOf[T etCand date w h T etAuthor w h Recom ndat onType]
         else true
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def protectedTweetF1ExemptPredicate[
-    T <: TargetUser with TargetABDecider,
-    Cand <: TweetCandidate with TweetAuthorDetails with TargetInfo[T]
+  def protectedT etF1ExemptPred cate[
+    T <: TargetUser w h TargetABDec der,
+    Cand <: T etCand date w h T etAuthorDeta ls w h Target nfo[T]
   ](
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    TweetCandidate with TweetAuthorDetails with TargetInfo[
-      TargetUser with TargetABDecider
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    T etCand date w h T etAuthorDeta ls w h Target nfo[
+      TargetUser w h TargetABDec der
     ]
   ] = {
-    val name = "f1_exempt_tweet_author_protected"
-    val skipForProtectedAuthorScope = stats.scope(name).scope("skip_protected_author_for_f1")
-    val authorIsProtectedCounter = skipForProtectedAuthorScope.counter("author_protected_true")
-    val authorIsNotProtectedCounter = skipForProtectedAuthorScope.counter("author_protected_false")
-    val authorNotFoundCounter = stats.scope(name).counter("author_not_found")
-    Predicate
-      .fromAsync[TweetCandidate with TweetAuthorDetails with TargetInfo[
-        TargetUser with TargetABDecider
+    val na  = "f1_exempt_t et_author_protected"
+    val sk pForProtectedAuthorScope = stats.scope(na ).scope("sk p_protected_author_for_f1")
+    val author sProtectedCounter = sk pForProtectedAuthorScope.counter("author_protected_true")
+    val author sNotProtectedCounter = sk pForProtectedAuthorScope.counter("author_protected_false")
+    val authorNotFoundCounter = stats.scope(na ).counter("author_not_found")
+    Pred cate
+      .fromAsync[T etCand date w h T etAuthorDeta ls w h Target nfo[
+        TargetUser w h TargetABDec der
       ]] {
-        case candidate: F1Candidate
-            if candidate.target.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors) =>
-          candidate.tweetAuthor.foreach {
-            case Some(author) =>
-              if (GizmoduckUserPredicate.isProtected(author)) {
-                authorIsProtectedCounter.incr()
-              } else authorIsNotProtectedCounter.incr()
-            case _ => authorNotFoundCounter.incr()
+        case cand date: F1Cand date
+             f cand date.target.params(PushFeatureSw chParams.EnableF1FromProtectedT etAuthors) =>
+          cand date.t etAuthor.foreach {
+            case So (author) =>
+               f (G zmoduckUserPred cate. sProtected(author)) {
+                author sProtectedCounter. ncr()
+              } else author sNotProtectedCounter. ncr()
+            case _ => authorNotFoundCounter. ncr()
           }
           Future.True
         case cand =>
-          TweetAuthorPredicates.recTweetAuthorProtected.apply(Seq(cand)).map(_.head)
+          T etAuthorPred cates.recT etAuthorProtected.apply(Seq(cand)).map(_. ad)
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
   /**
-   * filter a notification if user has already received ANY prior notification about the space id
+   * f lter a not f cat on  f user has already rece ved ANY pr or not f cat on about t  space  d
    * @param stats
    * @return
    */
-  def duplicateSpacesPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Space with PushCandidate] = {
-    val name = "duplicate_spaces_predicate"
-    Predicate
-      .fromAsync { c: Space with PushCandidate =>
-        c.target.pushRecItems.map { pushRecItems =>
-          !pushRecItems.spaceIds.contains(c.spaceId)
+  def dupl cateSpacesPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Space w h PushCand date] = {
+    val na  = "dupl cate_spaces_pred cate"
+    Pred cate
+      .fromAsync { c: Space w h PushCand date =>
+        c.target.pushRec ems.map { pushRec ems =>
+          !pushRec ems.space ds.conta ns(c.space d)
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def filterOONCandidatePredicate(
+  def f lterOONCand datePred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "filter_oon_candidate"
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "f lter_oon_cand date"
 
-    Predicate
-      .fromAsync[PushCandidate] { cand =>
+    Pred cate
+      .fromAsync[PushCand date] { cand =>
         val crt = cand.commonRecType
-        val isOONCandidate =
-          RecTypes.isOutOfNetworkTweetRecType(crt) || RecTypes.outOfNetworkTopicTweetTypes
-            .contains(crt) || RecTypes.isOutOfNetworkSpaceType(crt) || RecTypes.userTypes.contains(
+        val  sOONCand date =
+          RecTypes. sOutOfNetworkT etRecType(crt) || RecTypes.outOfNetworkTop cT etTypes
+            .conta ns(crt) || RecTypes. sOutOfNetworkSpaceType(crt) || RecTypes.userTypes.conta ns(
             crt)
-        if (isOONCandidate) {
-          cand.target.notificationsFromOnlyPeopleIFollow.map { inNetworkOnly =>
-            if (inNetworkOnly) {
-              stats.scope(name, crt.toString).counter("inNetworkOnlyOn").incr()
+         f ( sOONCand date) {
+          cand.target.not f cat onsFromOnlyPeople Follow.map {  nNetworkOnly =>
+             f ( nNetworkOnly) {
+              stats.scope(na , crt.toStr ng).counter(" nNetworkOnlyOn"). ncr()
             } else {
-              stats.scope(name, crt.toString).counter("inNetworkOnlyOff").incr()
+              stats.scope(na , crt.toStr ng).counter(" nNetworkOnlyOff"). ncr()
             }
-            !(inNetworkOnly && cand.target.params(
-              PushFeatureSwitchParams.EnableOONFilteringBasedOnUserSettings))
+            !( nNetworkOnly && cand.target.params(
+              PushFeatureSw chParams.EnableOONF lter ngBasedOnUserSett ngs))
           }
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
   def exludeCrtFromPushHoldback(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = Predicate
-    .from { candidate: PushCandidate =>
-      val crtName = candidate.commonRecType.name
-      val target = candidate.target
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = Pred cate
+    .from { cand date: PushCand date =>
+      val crtNa  = cand date.commonRecType.na 
+      val target = cand date.target
       target
-        .params(PushFeatureSwitchParams.CommonRecommendationTypeDenyListPushHoldbacks)
-        .exists(crtName.equalsIgnoreCase)
+        .params(PushFeatureSw chParams.CommonRecom ndat onTypeDenyL stPushHoldbacks)
+        .ex sts(crtNa .equals gnoreCase)
     }
-    .withStats(stats.scope("exclude_crt_from_push_holdbacks"))
+    .w hStats(stats.scope("exclude_crt_from_push_holdbacks"))
 
-  def enableSendHandlerCandidates(implicit stats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "sendhandler_enable_push_recommendations"
-    PredicatesForCandidate.exludeCrtFromPushHoldback
-      .or(PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnablePushRecommendationsParam))
-      .withStats(stats.scope(name))
-      .withName(name)
+  def enableSendHandlerCand dates( mpl c  stats: StatsRece ver): Na dPred cate[PushCand date] = {
+    val na  = "sendhandler_enable_push_recom ndat ons"
+    Pred catesForCand date.exludeCrtFromPushHoldback
+      .or(Pred catesForCand date.paramPred cate(
+        PushFeatureSw chParams.EnablePushRecom ndat onsParam))
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def openAppExperimentUserCandidateAllowList(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "open_app_experiment_user_candidate_allow_list"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        Future.join(target.isOpenAppExperimentUser, target.targetUser).map {
-          case (isOpenAppUser, targetUser) =>
-            val shouldLimitOpenAppCrts =
-              isOpenAppUser || targetUser.exists(_.userType == UserType.Soft)
+  def openAppExper  ntUserCand dateAllowL st(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "open_app_exper  nt_user_cand date_allow_l st"
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        val target = cand date.target
+        Future.jo n(target. sOpenAppExper  ntUser, target.targetUser).map {
+          case ( sOpenAppUser, targetUser) =>
+            val shouldL m OpenAppCrts =
+               sOpenAppUser || targetUser.ex sts(_.userType == UserType.Soft)
 
-            if (shouldLimitOpenAppCrts) {
-              val listOfAllowedCrt = target
-                .params(PushFeatureSwitchParams.ListOfCrtsForOpenApp)
-                .flatMap(CommonRecommendationType.valueOf)
-              listOfAllowedCrt.contains(candidate.commonRecType)
+             f (shouldL m OpenAppCrts) {
+              val l stOfAllo dCrt = target
+                .params(PushFeatureSw chParams.L stOfCrtsForOpenApp)
+                .flatMap(CommonRecom ndat onType.valueOf)
+              l stOfAllo dCrt.conta ns(cand date.commonRecType)
             } else true
         }
-      }.withStats(stats.scope(name))
-      .withName(name)
+      }.w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def isTargetBlueVerified(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_target_already_blue_verified"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        target.isBlueVerified.map(_.getOrElse(false))
-      }.withStats(stats.scope(name))
-      .withName(name)
+  def  sTargetBlueVer f ed(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = " s_target_already_blue_ver f ed"
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        val target = cand date.target
+        target. sBlueVer f ed.map(_.getOrElse(false))
+      }.w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def isTargetLegacyVerified(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_target_already_legacy_verified"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        target.isVerified.map(_.getOrElse(false))
-      }.withStats(stats.scope(name))
-      .withName(name)
+  def  sTargetLegacyVer f ed(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = " s_target_already_legacy_ver f ed"
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        val target = cand date.target
+        target. sVer f ed.map(_.getOrElse(false))
+      }.w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def isTargetSuperFollowCreator(implicit stats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "is_target_already_super_follow_creator"
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        val target = candidate.target
-        target.isSuperFollowCreator.map(
+  def  sTargetSuperFollowCreator( mpl c  stats: StatsRece ver): Na dPred cate[PushCand date] = {
+    val na  = " s_target_already_super_follow_creator"
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        val target = cand date.target
+        target. sSuperFollowCreator.map(
           _.getOrElse(false)
         )
-      }.withStats(stats.scope(name))
-      .withName(name)
+      }.w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def isChannelValidPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "is_channel_valid"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        candidate
+  def  sChannelVal dPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = " s_channel_val d"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        cand date
           .getChannels().map(channels =>
-            !(channels.toSet.size == 1 && channels.head == ChannelName.None))
+            !(channels.toSet.s ze == 1 && channels. ad == ChannelNa .None))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 }

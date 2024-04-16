@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule aderBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module ader
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-case class ParamGatedModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
+case class ParamGatedModule aderBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
   enableParam: Param[Boolean],
-  enabledBuilder: BaseModuleHeaderBuilder[Query, Candidate],
-  defaultBuilder: Option[BaseModuleHeaderBuilder[Query, Candidate]] = None)
-    extends BaseModuleHeaderBuilder[Query, Candidate] {
+  enabledBu lder: BaseModule aderBu lder[Query, Cand date],
+  defaultBu lder: Opt on[BaseModule aderBu lder[Query, Cand date]] = None)
+    extends BaseModule aderBu lder[Query, Cand date] {
 
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[ModuleHeader] = {
-    if (query.params(enableParam)) {
-      enabledBuilder(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Opt on[Module ader] = {
+     f (query.params(enableParam)) {
+      enabledBu lder(query, cand dates)
     } else {
-      defaultBuilder.flatMap(_.apply(query, candidates))
+      defaultBu lder.flatMap(_.apply(query, cand dates))
     }
   }
 }

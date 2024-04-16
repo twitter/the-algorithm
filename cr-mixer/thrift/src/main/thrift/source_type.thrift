@@ -1,123 +1,123 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-// Due to legacy reason, SourceType used to represent both SourceSignalType and SimilarityEngineType
-// Hence, you can see several SourceType such as UserInterestedIn, HashSpace, etc.
-// Moving forward, SourceType will be used for SourceSignalType ONLY. eg., TweetFavorite, UserFollow
-// We will create a new SimilarityEngineType to separate them. eg., SimClustersANN
-enum SourceType {
-  // Tweet based Source Signal
-  TweetFavorite       = 0
-  Retweet             = 1
-  TrafficAttribution  = 2 // Traffic Attribution will be migrated over in Q3
-  OriginalTweet       = 3
+// Due to legacy reason, S ceType used to represent both S ceS gnalType and S m lar yEng neType
+//  nce,   can see several S ceType such as User nterested n, HashSpace, etc.
+// Mov ng forward, S ceType w ll be used for S ceS gnalType ONLY. eg., T etFavor e, UserFollow
+//   w ll create a new S m lar yEng neType to separate t m. eg., S mClustersANN
+enum S ceType {
+  // T et based S ce S gnal
+  T etFavor e       = 0
+  Ret et             = 1
+  Traff cAttr but on  = 2 // Traff c Attr but on w ll be m grated over  n Q3
+  Or g nalT et       = 3
   Reply               = 4
-  TweetShare          = 5
-  GoodTweetClick      = 6 // total dwell time > N seconds after click on the tweet
-  VideoTweetQualityView = 7
-  VideoTweetPlayback50  = 8
+  T etShare          = 5
+  GoodT etCl ck      = 6 // total d ll t   > N seconds after cl ck on t  t et
+  V deoT etQual yV ew = 7
+  V deoT etPlayback50  = 8
 
-  // UserId based Source Signal (includes both Producer/Consumer)
+  // User d based S ce S gnal ( ncludes both Producer/Consu r)
   UserFollow               = 101
-  UserRepeatedProfileVisit = 102
+  UserRepeatedProf leV s  = 102
 
   CurrentUser_DEPRECATED   = 103
 
   RealGraphOon             = 104
-  FollowRecommendation     = 105
+  FollowRecom ndat on     = 105
 
-  TwiceUserId              = 106
-  UserTrafficAttributionProfileVisit = 107
-  GoodProfileClick         = 108 // total dwell time > N seconds after click into the profile page
+  Tw ceUser d              = 106
+  UserTraff cAttr but onProf leV s  = 107
+  GoodProf leCl ck         = 108 // total d ll t   > N seconds after cl ck  nto t  prof le page
 
-  // (Notification) Tweet based Source Signal
-  NotificationClick   = 201
+  // (Not f cat on) T et based S ce S gnal
+  Not f cat onCl ck   = 201
 
-  // (Home) Tweet based Source Signal
-  HomeTweetClick       = 301
-  HomeVideoView        = 302
-  HomeSongbirdShowMore = 303
+  // (Ho ) T et based S ce S gnal
+  Ho T etCl ck       = 301
+  Ho V deoV ew        = 302
+  Ho Songb rdShowMore = 303
 
-  // Topic based Source Signal
-  TopicFollow         = 401 // Deprecated
-  PopularTopic        = 402 // Deprecated
+  // Top c based S ce S gnal
+  Top cFollow         = 401 // Deprecated
+  PopularTop c        = 402 // Deprecated
 
   // Old CR code
-  UserInterestedIn    = 501 // Deprecated
-  TwiceInterestedIn   = 502 // Deprecated
+  User nterested n    = 501 // Deprecated
+  Tw ce nterested n   = 502 // Deprecated
   MBCG                = 503 // Deprecated
   HashSpace           = 504 // Deprecated
 
   // Old CR code
   Cluster             = 601 // Deprecated
 
-  // Search based Source Signal
-  SearchProfileClick  = 701 // Deprecated
-  SearchTweetClick    = 702 // Deprecated
+  // Search based S ce S gnal
+  SearchProf leCl ck  = 701 // Deprecated
+  SearchT etCl ck    = 702 // Deprecated
 
-  // Graph based Source
-  StrongTiePrediction      = 801 // STP
-  TwiceClustersMembers     = 802
-  Lookalike                = 803 // Deprecated
-  RealGraphIn              = 804
+  // Graph based S ce
+  StrongT ePred ct on      = 801 // STP
+  Tw ceClusters mbers     = 802
+  Lookal ke                = 803 // Deprecated
+  RealGraph n              = 804
 
-  // Current requester User Id. It is only used for scribing. Placeholder value
-  RequestUserId       = 1001
-  // Current request Tweet Id used in RelatedTweet. Placeholder value
-  RequestTweetId      = 1002
+  // Current requester User  d.    s only used for scr b ng. Placeholder value
+  RequestUser d       = 1001
+  // Current request T et  d used  n RelatedT et. Placeholder value
+  RequestT et d      = 1002
 
-  // Negative Signals
-  TweetReport = 1101
-  TweetDontLike = 1102
-  TweetSeeFewer = 1103
+  // Negat ve S gnals
+  T etReport = 1101
+  T etDontL ke = 1102
+  T etSeeFe r = 1103
   AccountBlock = 1104
   AccountMute = 1105
 
-  // Aggregated Signals
-  TweetAggregation = 1201
-  ProducerAggregation = 1202
-} (persisted='true', hasPersonalData='true')
+  // Aggregated S gnals
+  T etAggregat on = 1201
+  ProducerAggregat on = 1202
+} (pers sted='true', hasPersonalData='true')
 
-enum SimilarityEngineType {
-  SimClustersANN              = 1
-  TweetBasedUserTweetGraph    = 2
-  TweetBasedTwHINANN          = 3
-  Follow2VecANN               = 4 // ConsumerEmbeddingBasedFollow2Vec
-  QIG                         = 5
-  OfflineSimClustersANN       = 6
-  LookalikeUTG_DEPRECATED     = 7
-  ProducerBasedUserTweetGraph = 8
+enum S m lar yEng neType {
+  S mClustersANN              = 1
+  T etBasedUserT etGraph    = 2
+  T etBasedTwH NANN          = 3
+  Follow2VecANN               = 4 // Consu rEmbedd ngBasedFollow2Vec
+  Q G                         = 5
+  Offl neS mClustersANN       = 6
+  Lookal keUTG_DEPRECATED     = 7
+  ProducerBasedUserT etGraph = 8
   FrsUTG_DEPRECATED           = 9
   RealGraphOonUTG_DEPRECATED  = 10
-  ConsumerEmbeddingBasedTwHINANN = 11
-  TwhinCollabFilter           = 12
-  TwiceUTG_DEPRECATED         = 13
-  ConsumerEmbeddingBasedTwoTowerANN = 14
-  TweetBasedBeTANN            = 15
+  Consu rEmbedd ngBasedTwH NANN = 11
+  Twh nCollabF lter           = 12
+  Tw ceUTG_DEPRECATED         = 13
+  Consu rEmbedd ngBasedTwoTo rANN = 14
+  T etBasedBeTANN            = 15
   StpUTG_DEPRECATED           = 16
   UTEG                        = 17
   ROMR                        = 18
-  ConsumersBasedUserTweetGraph  = 19
-  TweetBasedUserVideoGraph    = 20
-  CertoTopicTweet             = 24
-  ConsumersBasedUserAdGraph   = 25
-  TweetBasedUserAdGraph       = 26
-  SkitTfgTopicTweet           = 27
-  ConsumerBasedWalsANN        = 28
+  Consu rsBasedUserT etGraph  = 19
+  T etBasedUserV deoGraph    = 20
+  CertoTop cT et             = 24
+  Consu rsBasedUserAdGraph   = 25
+  T etBasedUserAdGraph       = 26
+  Sk TfgTop cT et           = 27
+  Consu rBasedWalsANN        = 28
   ProducerBasedUserAdGraph    = 29
-  SkitHighPrecisionTopicTweet = 30
-  SkitInterestBrowserTopicTweet = 31
-  SkitProducerBasedTopicTweet   = 32
-  ExploreTripOfflineSimClustersTweets = 33
-  DiffusionBasedTweet = 34
-  ConsumersBasedUserVideoGraph  = 35
+  Sk H ghPrec s onTop cT et = 30
+  Sk  nterestBrowserTop cT et = 31
+  Sk ProducerBasedTop cT et   = 32
+  ExploreTr pOffl neS mClustersT ets = 33
+  D ffus onBasedT et = 34
+  Consu rsBasedUserV deoGraph  = 35
 
-  // In network
-  EarlybirdRecencyBasedSimilarityEngine = 21
-  EarlybirdModelBasedSimilarityEngine = 22
-  EarlybirdTensorflowBasedSimilarityEngine = 23
-  // Composite
-  TweetBasedUnifiedSimilarityEngine    = 1001
-  ProducerBasedUnifiedSimilarityEngine = 1002
-} (persisted='true')
+  //  n network
+  Earlyb rdRecencyBasedS m lar yEng ne = 21
+  Earlyb rdModelBasedS m lar yEng ne = 22
+  Earlyb rdTensorflowBasedS m lar yEng ne = 23
+  // Compos e
+  T etBasedUn f edS m lar yEng ne    = 1001
+  ProducerBasedUn f edS m lar yEng ne = 1002
+} (pers sted='true')

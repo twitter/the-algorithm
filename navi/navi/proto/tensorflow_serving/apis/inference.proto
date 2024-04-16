@@ -1,59 +1,59 @@
-// This file contains messages for various machine learning inferences
-// such as regression and classification.
+// T  f le conta ns  ssages for var ous mach ne learn ng  nferences
+// such as regress on and class f cat on.
 //
-// In many applications more than one type of inference is desired for a single
-// input.  For example, given meteorologic data an application may want to
-// perform a classification to determine if we should expect rain, snow or sun
-// and also perform a regression to predict the temperature.
-// Sharing the single input data between two inference tasks can be accomplished
-// using MultiInferenceRequest and MultiInferenceResponse.
+//  n many appl cat ons more than one type of  nference  s des red for a s ngle
+//  nput.  For example, g ven  teorolog c data an appl cat on may want to
+// perform a class f cat on to determ ne  f   should expect ra n, snow or sun
+// and also perform a regress on to pred ct t  temperature.
+// Shar ng t  s ngle  nput data bet en two  nference tasks can be accompl s d
+// us ng Mult  nferenceRequest and Mult  nferenceResponse.
 
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/input.proto";
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/apis/regression.proto";
+ mport "tensorflow_serv ng/ap s/class f cat on.proto";
+ mport "tensorflow_serv ng/ap s/ nput.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
+ mport "tensorflow_serv ng/ap s/regress on.proto";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-// Inference request such as classification, regression, etc...
-message InferenceTask {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  // All ModelSpecs in a MultiInferenceRequest must access the same model name.
+//  nference request such as class f cat on, regress on, etc...
+ ssage  nferenceTask {
+  // Model Spec f cat on.  f vers on  s not spec f ed, w ll use t  latest
+  // (nu r cal) vers on.
+  // All ModelSpecs  n a Mult  nferenceRequest must access t  sa  model na .
   ModelSpec model_spec = 1;
 
-  // Signature's method_name. Should be one of the method names defined in
-  // third_party/tensorflow/python/saved_model/signature_constants.py.
-  // e.g. "tensorflow/serving/classify".
-  string method_name = 2;
+  // S gnature's  thod_na . Should be one of t   thod na s def ned  n
+  // th rd_party/tensorflow/python/saved_model/s gnature_constants.py.
+  // e.g. "tensorflow/serv ng/class fy".
+  str ng  thod_na  = 2;
 }
 
-// Inference result, matches the type of request or is an error.
-message InferenceResult {
+//  nference result, matc s t  type of request or  s an error.
+ ssage  nferenceResult {
   ModelSpec model_spec = 1;
 
   oneof result {
-    ClassificationResult classification_result = 2;
-    RegressionResult regression_result = 3;
+    Class f cat onResult class f cat on_result = 2;
+    Regress onResult regress on_result = 3;
   }
 }
 
-// Inference request containing one or more requests.
-message MultiInferenceRequest {
-  // Inference tasks.
-  repeated InferenceTask tasks = 1;
+//  nference request conta n ng one or more requests.
+ ssage Mult  nferenceRequest {
+  //  nference tasks.
+  repeated  nferenceTask tasks = 1;
 
-  // Input data.
-  Input input = 2;
+  //  nput data.
+   nput  nput = 2;
 }
 
-// Inference request containing one or more responses.
-message MultiInferenceResponse {
-  // List of results; one for each InferenceTask in the request, returned in the
-  // same order as the request.
-  repeated InferenceResult results = 1;
+//  nference request conta n ng one or more responses.
+ ssage Mult  nferenceResponse {
+  // L st of results; one for each  nferenceTask  n t  request, returned  n t 
+  // sa  order as t  request.
+  repeated  nferenceResult results = 1;
 }

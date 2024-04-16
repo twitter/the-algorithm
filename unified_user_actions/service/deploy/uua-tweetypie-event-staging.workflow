@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-tweetypie-event-staging",
-  "config-files": [
-    "uua-tweetypie-event.aurora"
+  "role": "d scode",
+  "na ": "uua-t etyp e-event-stag ng",
+  "conf g-f les": [
+    "uua-t etyp e-event.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tweetypie-event"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-t etyp e-event"
       },
       {
         "type": "packer",
-        "name": "uua-tweetypie-event-staging",
-        "artifact": "./dist/uua-tweetypie-event.zip"
+        "na ": "uua-t etyp e-event-stag ng",
+        "art fact": "./d st/uua-t etyp e-event.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-tweetypie-event-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-tweetypie-event"
+          "na ": "uua-t etyp e-event-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-t etyp e-event"
         }
       ]
     }

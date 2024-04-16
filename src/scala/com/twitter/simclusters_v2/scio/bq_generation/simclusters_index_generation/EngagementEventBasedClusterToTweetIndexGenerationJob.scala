@@ -1,659 +1,659 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package simclusters_index_generation
+package com.tw ter.s mclusters_v2.sc o.bq_generat on
+package s mclusters_ ndex_generat on
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ReplyBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.RetweetBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.buildActionTypesEngagementIndicatorString
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsClickEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsFavEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.EngagementEventBasedClusterToTweetIndexFromBQ.getTopKTweetsForClusterKeyBQ
-import com.twitter.simclusters_v2.thriftscala.ClusterIdToTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+ mport com.google.ap .serv ces.b gquery.model.T  Part  on ng
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.coders.Coder
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.fs.mult format.PathLa t
+ mport com.tw ter.beam.job.DateRangeOpt ons
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.sc o_ nternal.coders.Thr ftStructLazyB naryScroogeCoder
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdsFavBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdsFavCl ckBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.FavBasedEvergreenContentS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.FavBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.FavBasedV deoS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.ReplyBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Ret etBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.V deoV ewBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.PushOpenBasedS mclustersClusterToT et ndexScalaDataset
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.bu ldAct onTypesEngage nt nd catorStr ng
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.get nterested n2020SQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQTableDeta ls
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.Conf g.AdsCl ckEngage ntType ds
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.Conf g.AdsFavEngage ntType ds
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.Engage ntEventBasedClusterToT et ndexFromBQ.getTopKT etsForClusterKeyBQ
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cluster dToTopKT etsW hScores
+ mport com.tw ter.s mclusters_v2.thr ftscala.FullCluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopKT etsW hScores
+ mport com.tw ter.tcdc.bqblaster.beam.syntax._
+ mport com.tw ter.tcdc.bqblaster.core.avro.TypedProject on
+ mport com.tw ter.tcdc.bqblaster.core.transform.RootTransform
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport java.t  . nstant
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
+ mport org.joda.t  .DateT  
 
-trait EngagementEventBasedClusterToTweetIndexGenerationJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+tra  Engage ntEventBasedClusterToT et ndexGenerat onJob extends Sc oBeamJob[DateRangeOpt ons] {
+  // Conf gs to set for d fferent type of embedd ngs and jobs
+  val  sAdhoc: Boolean
+  val getConsu rEmbedd ngsSQLFunc: (DateT  ,  nt) => Str ng
+  val outputTable: BQTableDeta ls
+  val keyValDatasetOutputPath: Str ng
+  val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ]
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // Base conf gs
+  val project d = "twttr-recos-ml-prod"
+  val env ron nt: DAL.Env =  f ( sAdhoc) DAL.Env ron nt.Dev else DAL.Env ron nt.Prod
 
-  // Point to different user tweet interaction table generation sql
-  // UUA-supported events: Config.unifiedUserTweetActionPairGenerationSQLPath
-  val userTweetEngagementEventPairSqlPath: String
-  lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = Map.empty
+  // Po nt to d fferent user t et  nteract on table generat on sql
+  // UUA-supported events: Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  val userT etEngage ntEventPa rSqlPath: Str ng
+  lazy val userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng] = Map.empty
 
-  // Enable Video-only filters and health filters (for VideoViewBased embeddings)
-  val enableHealthAndVideoFilters: Boolean = Config.enableHealthAndVideoFilters
+  // Enable V deo-only f lters and  alth f lters (for V deoV ewBased embedd ngs)
+  val enable althAndV deoF lters: Boolean = Conf g.enable althAndV deoF lters
 
-  val enableFavClusterTopKTweetsIntersection: Boolean =
-    Config.enableIntersectionWithFavBasedClusterTopKTweetsIndex
+  val enableFavClusterTopKT ets ntersect on: Boolean =
+    Conf g.enable ntersect onW hFavBasedClusterTopKT ets ndex
 
-  // Min fav/interaction threshold
-  val minInteractionCount: Int = Config.minInteractionCount
-  val minFavCount: Int = Config.minFavCount
+  // M n fav/ nteract on threshold
+  val m n nteract onCount:  nt = Conf g.m n nteract onCount
+  val m nFavCount:  nt = Conf g.m nFavCount
 
-  // Tweet embeddings parameters
-  val tweetEmbeddingsLength: Int = Config.tweetEmbeddingsLength
-  val tweetEmbeddingsHalfLife: Int = Config.tweetEmbeddingsHalfLife
+  // T et embedd ngs para ters
+  val t etEmbedd ngsLength:  nt = Conf g.t etEmbedd ngsLength
+  val t etEmbedd ngsHalfL fe:  nt = Conf g.t etEmbedd ngsHalfL fe
 
-  // Clusters-to-tweet index parameters
-  val clusterTopKTweets: Int = Config.clusterTopKTweets
-  val maxTweetAgeHours: Int = Config.maxTweetAgeHours
-  val minEngagementPerCluster: Int = Config.minEngagementPerCluster
+  // Clusters-to-t et  ndex para ters
+  val clusterTopKT ets:  nt = Conf g.clusterTopKT ets
+  val maxT etAgeH s:  nt = Conf g.maxT etAgeH s
+  val m nEngage ntPerCluster:  nt = Conf g.m nEngage ntPerCluster
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  overr de  mpl c  def scroogeCoder[T <: Thr ftStruct: Man fest]: Coder[T] =
+    Thr ftStructLazyB naryScroogeCoder.scroogeCoder
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  overr de def conf gureP pel ne(sc: Sc oContext, opts: DateRangeOpt ons): Un  = {
+    // T  t   w n t  job  s sc duled
+    val queryT  stamp = opts. nterval.getEnd
 
-    // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 21)
+    // Read consu r embedd ngs SQL
+    val consu rEmbedd ngsSQL = getConsu rEmbedd ngsSQLFunc(queryT  stamp, 21)
 
-    // Generate SimClusters cluster-to-tweet index via BQ
-    val topKtweetsForClusterKey =
-      getTopKTweetsForClusterKeyBQ(
+    // Generate S mClusters cluster-to-t et  ndex v a BQ
+    val topKt etsForClusterKey =
+      getTopKT etsForClusterKeyBQ(
         sc,
-        queryTimestamp,
-        maxTweetAgeHours,
-        consumerEmbeddingsSQL,
-        userTweetEngagementEventPairSqlPath,
-        userTweetEngagementEventPairTemplateVariable,
-        enableHealthAndVideoFilters,
-        enableFavClusterTopKTweetsIntersection,
-        minInteractionCount,
-        minFavCount,
-        tweetEmbeddingsLength,
-        tweetEmbeddingsHalfLife,
-        minEngagementPerCluster,
-        clusterTopKTweets
+        queryT  stamp,
+        maxT etAgeH s,
+        consu rEmbedd ngsSQL,
+        userT etEngage ntEventPa rSqlPath,
+        userT etEngage ntEventPa rTemplateVar able,
+        enable althAndV deoF lters,
+        enableFavClusterTopKT ets ntersect on,
+        m n nteract onCount,
+        m nFavCount,
+        t etEmbedd ngsLength,
+        t etEmbedd ngsHalfL fe,
+        m nEngage ntPerCluster,
+        clusterTopKT ets
       )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("dateHour").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[ClusterIdToTopKTweetsWithScores]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // Setup BQ wr er
+    val  ngest onT   = opts.getDate().value.getEnd.toDate
+    val bqF eldsTransform = RootTransform
+      .Bu lder()
+      .w hPrependedF elds("dateH " -> TypedProject on.fromConstant( ngest onT  ))
+    val t  Part  on ng = new T  Part  on ng()
+      .setType("HOUR").setF eld("dateH ").setExp rat onMs(3.days. nM ll seconds)
+    val bqWr er = B gQuery O
+      .wr e[Cluster dToTopKT etsW hScores]
+      .to(outputTable.toStr ng)
+      .w hExtendedError nfo()
+      .w hT  Part  on ng(t  Part  on ng)
+      .w hLoadJobProject d(project d)
+      .w hThr ftSupport(bqF eldsTransform.bu ld(), AvroConverter.Legacy)
+      .w hCreateD spos  on(B gQuery O.Wr e.CreateD spos  on.CREATE_ F_NEEDED)
+      .w hWr eD spos  on(B gQuery O.Wr e.Wr eD spos  on.WR TE_APPEND)
 
-    // Save SimClusters index to a BQ table
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
+    // Save S mClusters  ndex to a BQ table
+    topKt etsForClusterKey
+      .map { cluster dToTopKT ets =>
         {
-          ClusterIdToTopKTweetsWithScores(
-            clusterId = clusterIdToTopKTweets.clusterId,
-            topKTweetsWithScores = clusterIdToTopKTweets.topKTweetsWithScores
+          Cluster dToTopKT etsW hScores(
+            cluster d = cluster dToTopKT ets.cluster d,
+            topKT etsW hScores = cluster dToTopKT ets.topKT etsW hScores
           )
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - ${outputTable}", bqWriter)
+      .saveAsCustomOutput(s"Wr eToBQTable - ${outputTable}", bqWr er)
 
-    // Save SimClusters index as a KeyValSnapshotDataset
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
-        KeyVal(clusterIdToTopKTweets.clusterId, clusterIdToTopKTweets.topKTweetsWithScores)
+    // Save S mClusters  ndex as a KeyValSnapshotDataset
+    topKt etsForClusterKey
+      .map { cluster dToTopKT ets =>
+        KeyVal(cluster dToTopKT ets.cluster d, cluster dToTopKT ets.topKT etsW hScores)
       }.saveAsCustomOutput(
-        name = s"WriteClusterToKeyIndexToKeyValDataset at ${keyValDatasetOutputPath}",
-        DAL.writeVersionedKeyVal(
-          clusterToTweetIndexSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
-            ((if (!isAdhoc)
-                Config.RootMHPath
+        na  = s"Wr eClusterToKey ndexToKeyValDataset at ${keyValDatasetOutputPath}",
+        DAL.wr eVers onedKeyVal(
+          clusterToT et ndexSnapshotDataset,
+          PathLa t.Vers onedPath(pref x =
+            (( f (! sAdhoc)
+                Conf g.RootMHPath
               else
-                Config.AdhocRootPath)
+                Conf g.AdhocRootPath)
               + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+           nstant =  nstant.ofEpochM ll (opts. nterval.getEndM ll s - 1L),
+          env ron ntOverr de = env ron nt,
         )
       )
   }
 }
 
-// This abstract class is used to define parameters specific to UUA events.
-abstract class UUABasedClusterToTweetIndexGenerationJob
-    extends EngagementEventBasedClusterToTweetIndexGenerationJob {
-  // UUA Action types and column names
-  val contributingActionTypes: Seq[String]
-  val contributingActionReferenceTweetIdColumn: String = Config.actionTweetIdColumn
-  val undoActionTypes: Seq[String]
-  // Default undo tweet id is same as the actionTweetId (e.g. for favs these are the same tweet id)
-  val undoActionReferenceTweetIdColumn: String = Config.actionTweetIdColumn
+// T  abstract class  s used to def ne para ters spec f c to UUA events.
+abstract class UUABasedClusterToT et ndexGenerat onJob
+    extends Engage ntEventBasedClusterToT et ndexGenerat onJob {
+  // UUA Act on types and column na s
+  val contr but ngAct onTypes: Seq[Str ng]
+  val contr but ngAct onReferenceT et dColumn: Str ng = Conf g.act onT et dColumn
+  val undoAct onTypes: Seq[Str ng]
+  // Default undo t et  d  s sa  as t  act onT et d (e.g. for favs t se are t  sa  t et  d)
+  val undoAct onReferenceT et dColumn: Str ng = Conf g.act onT et dColumn
 
-  // Get the string that represents the list of undo event ids
-  lazy val undoActionTypesStr: String = {
-    // Populate the action type list with a placeholder action if its empty
-    val actionTypes =
-      if (undoActionTypes.nonEmpty) undoActionTypes
-      else Seq(Config.PlaceholderActionType)
-    convertActionTypesSeqToString(actionTypes)
+  // Get t  str ng that represents t  l st of undo event  ds
+  lazy val undoAct onTypesStr: Str ng = {
+    // Populate t  act on type l st w h a placeholder act on  f  s empty
+    val act onTypes =
+       f (undoAct onTypes.nonEmpty) undoAct onTypes
+      else Seq(Conf g.PlaceholderAct onType)
+    convertAct onTypesSeqToStr ng(act onTypes)
   }
 
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+  overr de lazy val userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPES_STR" -> convertActionTypesSeqToString(contributingActionTypes),
-      "CONTRIBUTING_ACTION_TWEET_ID_COLUMN" -> contributingActionReferenceTweetIdColumn,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn
+      "CONTR BUT NG_ACT ON_TYPES_STR" -> convertAct onTypesSeqToStr ng(contr but ngAct onTypes),
+      "CONTR BUT NG_ACT ON_TWEET_ D_COLUMN" -> contr but ngAct onReferenceT et dColumn,
+      "UNDO_ACT ON_TYPES_STR" -> undoAct onTypesStr,
+      "UNDO_ACT ON_TWEET_ D_COLUMN" -> undoAct onReferenceT et dColumn
     )
   }
 
   /***
-   *  Convert a list of actions to a string that could be easily used in SQLs
-   *  Example input: Seq("ServerTweetFav", "ClientTweetFav")
-   *          output: "ServerTweetFav","ClientTweetFav"
-   *  SQL use case: SELECT * FROM table WHERE actionType IN ("ServerTweetFav","ClientTweetFav")
+   *  Convert a l st of act ons to a str ng that could be eas ly used  n SQLs
+   *  Example  nput: Seq("ServerT etFav", "Cl entT etFav")
+   *          output: "ServerT etFav","Cl entT etFav"
+   *  SQL use case: SELECT * FROM table WHERE act onType  N ("ServerT etFav","Cl entT etFav")
    */
-  private def convertActionTypesSeqToString(actionTypes: Seq[String]): String = {
-    actionTypes.map(action => f"""\"${action}\"""").mkString(",")
+  pr vate def convertAct onTypesSeqToStr ng(act onTypes: Seq[Str ng]): Str ng = {
+    act onTypes.map(act on => f"""\"${act on}\"""").mkStr ng(",")
   }
 }
 
-abstract class AdsClusterToTweetIndexGenerationJob
-    extends EngagementEventBasedClusterToTweetIndexGenerationJob {
-  // Ads contributing action types - fav, click, etc
-  val contributingActionTypes: Seq[Int]
+abstract class AdsClusterToT et ndexGenerat onJob
+    extends Engage ntEventBasedClusterToT et ndexGenerat onJob {
+  // Ads contr but ng act on types - fav, cl ck, etc
+  val contr but ngAct onTypes: Seq[ nt]
 
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+  overr de lazy val userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPES_STR" -> convertActionTypesSeqToString(contributingActionTypes)
+      "CONTR BUT NG_ACT ON_TYPES_STR" -> convertAct onTypesSeqToStr ng(contr but ngAct onTypes)
     )
   }
-  private def convertActionTypesSeqToString(actionTypes: Seq[Int]): String = {
-    actionTypes.map(action => f"""${action}""").mkString(",")
+  pr vate def convertAct onTypesSeqToStr ng(act onTypes: Seq[ nt]): Str ng = {
+    act onTypes.map(act on => f"""${act on}""").mkStr ng(",")
   }
 }
 
-object FavBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val outputTable =
-    BQTableDetails(
+object FavBasedClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etFav.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnfav.na )
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 8
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_fav_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.FavBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    FavBasedSimclustersClusterToTweetIndexScalaDataset
+    FavBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object FavBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val outputTable =
-    BQTableDetails(
+object FavBasedClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etFav.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnfav.na )
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 8
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_fav_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_fav_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.FavBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    FavBasedSimclustersClusterToTweetIndexScalaDataset
+    FavBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object VideoViewBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val enableHealthAndVideoFilters: Boolean = true
-  override val outputTable =
-    BQTableDetails(
+object V deoV ewBasedClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(
+    Act onType.Cl entT etV deoPlayback50.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq.empty
+  overr de val enable althAndV deoF lters: Boolean = true
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_video_view_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.VideoViewBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_v deo_v ew_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.V deoV ewBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+    V deoV ewBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object VideoViewBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val enableHealthAndVideoFilters: Boolean = true
-  override val outputTable =
-    BQTableDetails(
+object V deoV ewBasedClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(
+    Act onType.Cl entT etV deoPlayback50.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq.empty
+  overr de val enable althAndV deoF lters: Boolean = true
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_video_view_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.VideoViewBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_v deo_v ew_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.V deoV ewBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+    V deoV ewBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object RetweetBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnretweet.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.retweetTweetIdColumn
-  override val outputTable =
-    BQTableDetails(
+object Ret etBasedClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etRet et.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnret et.na )
+  overr de val undoAct onReferenceT et dColumn: Str ng = Conf g.ret etT et dColumn
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_retweet_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.RetweetBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_ret et_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.Ret etBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+    Ret etBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object RetweetBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnretweet.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.retweetTweetIdColumn
-  override val outputTable =
-    BQTableDetails(
+object Ret etBasedClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etRet et.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnret et.na )
+  overr de val undoAct onReferenceT et dColumn: Str ng = Conf g.ret etT et dColumn
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_retweet_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.RetweetBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_ret et_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.Ret etBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+    Ret etBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object ReplyBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.combinedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
-  // Add supplemental positive signals to the user tweet engagement event template
-  // We bundle each reply signal with a positive signal (fav or retweet)
-  val supplementalPositiveSignals: Seq[String] =
-    Seq(ActionType.ServerTweetFav.name, ActionType.ServerTweetRetweet.name)
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+object ReplyBasedClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.comb nedUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etReply.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etDelete.na )
+  overr de val undoAct onReferenceT et dColumn: Str ng = Conf g.replyT et dColumn
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 8
+  overr de val m nEngage ntPerCluster:  nt = 3
+  // Add supple ntal pos  ve s gnals to t  user t et engage nt event template
+  //   bundle each reply s gnal w h a pos  ve s gnal (fav or ret et)
+  val supple ntalPos  veS gnals: Seq[Str ng] =
+    Seq(Act onType.ServerT etFav.na , Act onType.ServerT etRet et.na )
+  overr de lazy val userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPE_STR" -> contributingActionTypes.head,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn,
-      "SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR" -> buildActionTypesEngagementIndicatorString(
-        supplementalPositiveSignals)
+      "CONTR BUT NG_ACT ON_TYPE_STR" -> contr but ngAct onTypes. ad,
+      "UNDO_ACT ON_TYPES_STR" -> undoAct onTypesStr,
+      "UNDO_ACT ON_TWEET_ D_COLUMN" -> undoAct onReferenceT et dColumn,
+      "SUPPLEMENTAL_ACT ON_TYPES_ENGAGEMENT_STR" -> bu ldAct onTypesEngage nt nd catorStr ng(
+        supple ntalPos  veS gnals)
     )
   }
-  override val outputTable =
-    BQTableDetails(
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_reply_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.ReplyBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_reply_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.ReplyBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+    ReplyBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object ReplyBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.combinedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
-  // Add supplemental positive signals to the user tweet engagement event template
-  // We bundle each reply signal with a positive signal (fav or retweet)
-  val supplementalPositiveSignals: Seq[String] =
-    Seq(ActionType.ServerTweetFav.name, ActionType.ServerTweetRetweet.name)
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+object ReplyBasedClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.comb nedUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etReply.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etDelete.na )
+  overr de val undoAct onReferenceT et dColumn: Str ng = Conf g.replyT et dColumn
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 8
+  overr de val m nEngage ntPerCluster:  nt = 3
+  // Add supple ntal pos  ve s gnals to t  user t et engage nt event template
+  //   bundle each reply s gnal w h a pos  ve s gnal (fav or ret et)
+  val supple ntalPos  veS gnals: Seq[Str ng] =
+    Seq(Act onType.ServerT etFav.na , Act onType.ServerT etRet et.na )
+  overr de lazy val userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPE_STR" -> contributingActionTypes.head,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn,
-      "SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR" -> buildActionTypesEngagementIndicatorString(
-        supplementalPositiveSignals)
+      "CONTR BUT NG_ACT ON_TYPE_STR" -> contr but ngAct onTypes. ad,
+      "UNDO_ACT ON_TYPES_STR" -> undoAct onTypesStr,
+      "UNDO_ACT ON_TWEET_ D_COLUMN" -> undoAct onReferenceT et dColumn,
+      "SUPPLEMENTAL_ACT ON_TYPES_ENGAGEMENT_STR" -> bu ldAct onTypesEngage nt nd catorStr ng(
+        supple ntalPos  veS gnals)
     )
   }
-  override val outputTable =
-    BQTableDetails(
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_reply_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.ReplyBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_reply_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.ReplyBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+    ReplyBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object PushOpenBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
-  override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
-  override val enableFavClusterTopKTweetsIntersection = true
-  override val outputTable =
-    BQTableDetails(
+object PushOpenBasedClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.Cl entNot f cat onOpen.na )
+  overr de val contr but ngAct onReferenceT et dColumn: Str ng = Conf g.pushT et dColumn
+  overr de val undoAct onTypes: Seq[Str ng] = Seq.empty
+  overr de val m n nteract onCount = 1
+  overr de val m nFavCount = 0
+  overr de val enableFavClusterTopKT ets ntersect on = true
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_push_open_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.PushOpenBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_push_open_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.PushOpenBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+    PushOpenBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object PushOpenBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
-  override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
-  override val enableFavClusterTopKTweetsIntersection = true
-  override val outputTable =
-    BQTableDetails(
+object PushOpenBasedClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.un f edUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.Cl entNot f cat onOpen.na )
+  overr de val contr but ngAct onReferenceT et dColumn: Str ng = Conf g.pushT et dColumn
+  overr de val undoAct onTypes: Seq[Str ng] = Seq.empty
+  overr de val m n nteract onCount = 1
+  overr de val m nFavCount = 0
+  overr de val enableFavClusterTopKT ets ntersect on = true
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_push_open_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.PushOpenBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_push_open_based_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath = Conf g.PushOpenBasedClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+    PushOpenBasedS mclustersClusterToT et ndexScalaDataset
 }
 
-object AdsFavBasedClusterToTweetIndexGenerationAdhocJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
+object AdsFavBasedClusterToT et ndexGenerat onAdhocJob
+    extends AdsClusterToT et ndexGenerat onJob {
+  val  sAdhoc: Boolean = true
+  val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val contr but ngAct onTypes: Seq[ nt] = AdsFavEngage ntType ds // fav
+  overr de val t etEmbedd ngsHalfL fe:  nt = 345600000 // 4 days
+  // T  earl est user t et engage nt event   cons der  s 7 days ago
+  // T  t et could be older than 7 days
+  overr de val maxT etAgeH s:  nt = 168 // 7 days
+  overr de val m n nteract onCount:  nt = 3
+  overr de val m nFavCount:  nt = 3
+  overr de val m nEngage ntPerCluster:  nt = 2
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_ads_fav_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+      "s mclusters",
+      "s mclusters_ads_fav_based_cluster_to_t et_ ndex")
+  val keyValDatasetOutputPath: Str ng = Conf g.AdsFavBasedClusterToT et ndexOutputPath
+  val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = AdsFavBasedS mclustersClusterToT et ndexScalaDataset
+  val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.adsUserT etAct onPa rGenerat onSQLPath
 }
-object AdsFavBasedClusterToTweetIndexGenerationBatchJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
+object AdsFavBasedClusterToT et ndexGenerat onBatchJob
+    extends AdsClusterToT et ndexGenerat onJob {
+  val  sAdhoc: Boolean = false
+  val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val contr but ngAct onTypes: Seq[ nt] = AdsFavEngage ntType ds // fav
+  overr de val t etEmbedd ngsHalfL fe:  nt = 345600000 // 4 days
+  // T  earl est user t et engage nt event   cons der  s 7 days ago
+  // T  t et could be older than 7 days
+  overr de val maxT etAgeH s:  nt = 168 // 7 days
+  overr de val m n nteract onCount:  nt = 3
+  overr de val m nFavCount:  nt = 3
+  overr de val m nEngage ntPerCluster:  nt = 2
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_ads_fav_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+      "s mclusters_ads_fav_based_cluster_to_t et_ ndex")
+  val keyValDatasetOutputPath: Str ng = Conf g.AdsFavBasedClusterToT et ndexOutputPath
+  val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = AdsFavBasedS mclustersClusterToT et ndexScalaDataset
+  val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.adsUserT etAct onPa rGenerat onSQLPath
 }
 
-object AdsFavClickBasedClusterToTweetIndexGenerationAdhocJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] =
-    AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
+object AdsFavCl ckBasedClusterToT et ndexGenerat onAdhocJob
+    extends AdsClusterToT et ndexGenerat onJob {
+  val  sAdhoc: Boolean = true
+  val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val contr but ngAct onTypes: Seq[ nt] =
+    AdsFavEngage ntType ds ++ AdsCl ckEngage ntType ds // fav + cl ck
+  overr de val t etEmbedd ngsHalfL fe:  nt = 604800000 // 7 days
+  // T  earl est user t et engage nt event   cons der  s 21 days ago
+  // T  t et could be older than 21 days
+  overr de val maxT etAgeH s:  nt = 504 // 21 days
+  overr de val m n nteract onCount:  nt = 3
+  overr de val m nFavCount:  nt = 3
+  overr de val m nEngage ntPerCluster:  nt = 2
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_ads_fav_click_ sbased_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavClickBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+      "s mclusters",
+      "s mclusters_ads_fav_cl ck_ sbased_cluster_to_t et_ ndex")
+  val keyValDatasetOutputPath: Str ng = Conf g.AdsFavCl ckBasedClusterToT et ndexOutputPath
+  val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = AdsFavCl ckBasedS mclustersClusterToT et ndexScalaDataset
+  val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.adsUserT etAct onPa rGenerat onSQLPath
 }
 
-object AdsFavClickBasedClusterToTweetIndexGenerationBatchJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] =
-    AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
+object AdsFavCl ckBasedClusterToT et ndexGenerat onBatchJob
+    extends AdsClusterToT et ndexGenerat onJob {
+  val  sAdhoc: Boolean = false
+  val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val contr but ngAct onTypes: Seq[ nt] =
+    AdsFavEngage ntType ds ++ AdsCl ckEngage ntType ds // fav + cl ck
+  overr de val t etEmbedd ngsHalfL fe:  nt = 604800000 // 7 days
+  // T  earl est user t et engage nt event   cons der  s 21 days ago
+  // T  t et could be older than 21 days
+  overr de val maxT etAgeH s:  nt = 504 // 21 days
+  overr de val m n nteract onCount:  nt = 3
+  overr de val m nFavCount:  nt = 3
+  overr de val m nEngage ntPerCluster:  nt = 2
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_ads_fav_click_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavClickBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+      "s mclusters_ads_fav_cl ck_based_cluster_to_t et_ ndex")
+  val keyValDatasetOutputPath: Str ng = Conf g.AdsFavCl ckBasedClusterToT et ndexOutputPath
+  val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = AdsFavCl ckBasedS mclustersClusterToT et ndexScalaDataset
+  val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.adsUserT etAct onPa rGenerat onSQLPath
 }
 
-object FavBasedEvergreenContentClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.evergreenContentUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
+object FavBasedEvergreenContentClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.evergreenContentUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etFav.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnfav.na )
+  overr de val t etEmbedd ngsHalfL fe:  nt = 57600000 // 16 h s
+  overr de val maxT etAgeH s:  nt = 48 // 2 days
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 0
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_evergreen_content_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedEvergreenContentClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_fav_based_evergreen_content_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath =
+    Conf g.FavBasedEvergreenContentClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+    FavBasedEvergreenContentS mclustersClusterToT et ndexScalaDataset
 }
 
-object FavBasedEvergreenContentClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.evergreenContentUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
+object FavBasedEvergreenContentClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.evergreenContentUserT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etFav.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnfav.na )
+  overr de val t etEmbedd ngsHalfL fe:  nt = 57600000 // 16 h s
+  overr de val maxT etAgeH s:  nt = 48 // 2 days
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 0
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_fav_based_evergreen_content_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedEvergreenContentClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_fav_based_evergreen_content_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath =
+    Conf g.FavBasedEvergreenContentClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+    FavBasedEvergreenContentS mclustersClusterToT et ndexScalaDataset
 }
 
-object FavBasedVideoClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.favBasedVideoTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
+object FavBasedV deoClusterToT et ndexGenerat onAdhocJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.favBasedV deoT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etFav.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnfav.na )
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 0
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_video_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedVideoClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters",
+      "s mclusters_fav_based_v deo_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath =
+    Conf g.FavBasedV deoClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+    FavBasedV deoS mclustersClusterToT et ndexScalaDataset
 }
 
-object FavBasedVideoClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.favBasedVideoTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
+object FavBasedV deoClusterToT et ndexGenerat onBatchJob
+    extends UUABasedClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val userT etEngage ntEventPa rSqlPath: Str ng =
+    Conf g.favBasedV deoT etAct onPa rGenerat onSQLPath
+  overr de val contr but ngAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etFav.na )
+  overr de val undoAct onTypes: Seq[Str ng] = Seq(Act onType.ServerT etUnfav.na )
+  overr de val m n nteract onCount:  nt = 8
+  overr de val m nFavCount:  nt = 0
+  overr de val outputTable =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_fav_based_video_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedVideoClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "s mclusters_fav_based_v deo_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath =
+    Conf g.FavBasedV deoClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ] =
-    FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+    FavBasedV deoS mclustersClusterToT et ndexScalaDataset
 }

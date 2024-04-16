@@ -1,356 +1,356 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.EnumMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.ResponseMergerUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.earlyb rd.Response rgerUt ls;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
 
 /**
- * Accumulates EarlybirdResponse's and determines when to early terminate.
+ * Accumulates Earlyb rdResponse's and determ nes w n to early term nate.
  */
-public abstract class ResponseAccumulator {
+publ c abstract class ResponseAccumulator {
 
-  @VisibleForTesting
-  static class MinMaxSearchedIdStats {
-    /** How many results did we actually check */
-    private final SearchCounter checkedMaxMinSearchedStatusId;
-    private final SearchCounter unsetMaxSearchedStatusId;
-    private final SearchCounter unsetMinSearchedStatusId;
-    private final SearchCounter unsetMaxAndMinSearchedStatusId;
-    private final SearchCounter sameMinMaxSearchedIdWithoutResults;
-    private final SearchCounter sameMinMaxSearchedIdWithOneResult;
-    private final SearchCounter sameMinMaxSearchedIdWithResults;
-    private final SearchCounter flippedMinMaxSearchedId;
+  @V s bleForTest ng
+  stat c class M nMaxSearc d dStats {
+    /** How many results d d   actually c ck */
+    pr vate f nal SearchCounter c ckedMaxM nSearc dStatus d;
+    pr vate f nal SearchCounter unsetMaxSearc dStatus d;
+    pr vate f nal SearchCounter unsetM nSearc dStatus d;
+    pr vate f nal SearchCounter unsetMaxAndM nSearc dStatus d;
+    pr vate f nal SearchCounter sa M nMaxSearc d dW houtResults;
+    pr vate f nal SearchCounter sa M nMaxSearc d dW hOneResult;
+    pr vate f nal SearchCounter sa M nMaxSearc d dW hResults;
+    pr vate f nal SearchCounter fl ppedM nMaxSearc d d;
 
-    MinMaxSearchedIdStats(EarlybirdRequestType requestType) {
-      String statPrefix = "merge_helper_" + requestType.getNormalizedName();
+    M nMaxSearc d dStats(Earlyb rdRequestType requestType) {
+      Str ng statPref x = " rge_ lper_" + requestType.getNormal zedNa ();
 
-      checkedMaxMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_max_min_searched_id_checks");
-      unsetMaxSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_max_searched_status_id");
-      unsetMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_min_searched_status_id");
-      unsetMaxAndMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_max_and_min_searched_status_id");
-      sameMinMaxSearchedIdWithoutResults = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_without_results");
-      sameMinMaxSearchedIdWithOneResult = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_with_one_results");
-      sameMinMaxSearchedIdWithResults = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_with_results");
-      flippedMinMaxSearchedId = SearchCounter.export(statPrefix
-          + "_flipped_min_max_searched_id");
+      c ckedMaxM nSearc dStatus d = SearchCounter.export(statPref x
+          + "_max_m n_searc d_ d_c cks");
+      unsetMaxSearc dStatus d = SearchCounter.export(statPref x
+          + "_unset_max_searc d_status_ d");
+      unsetM nSearc dStatus d = SearchCounter.export(statPref x
+          + "_unset_m n_searc d_status_ d");
+      unsetMaxAndM nSearc dStatus d = SearchCounter.export(statPref x
+          + "_unset_max_and_m n_searc d_status_ d");
+      sa M nMaxSearc d dW houtResults = SearchCounter.export(statPref x
+          + "_sa _m n_max_searc d_ d_w hout_results");
+      sa M nMaxSearc d dW hOneResult = SearchCounter.export(statPref x
+          + "_sa _m n_max_searc d_ d_w h_one_results");
+      sa M nMaxSearc d dW hResults = SearchCounter.export(statPref x
+          + "_sa _m n_max_searc d_ d_w h_results");
+      fl ppedM nMaxSearc d d = SearchCounter.export(statPref x
+          + "_fl pped_m n_max_searc d_ d");
     }
 
-    @VisibleForTesting
-    SearchCounter getCheckedMaxMinSearchedStatusId() {
-      return checkedMaxMinSearchedStatusId;
+    @V s bleForTest ng
+    SearchCounter getC ckedMaxM nSearc dStatus d() {
+      return c ckedMaxM nSearc dStatus d;
     }
 
-    @VisibleForTesting
-    SearchCounter getFlippedMinMaxSearchedId() {
-      return flippedMinMaxSearchedId;
+    @V s bleForTest ng
+    SearchCounter getFl ppedM nMaxSearc d d() {
+      return fl ppedM nMaxSearc d d;
     }
 
-    @VisibleForTesting
-    SearchCounter getUnsetMaxSearchedStatusId() {
-      return unsetMaxSearchedStatusId;
+    @V s bleForTest ng
+    SearchCounter getUnsetMaxSearc dStatus d() {
+      return unsetMaxSearc dStatus d;
     }
 
-    @VisibleForTesting
-    SearchCounter getUnsetMinSearchedStatusId() {
-      return unsetMinSearchedStatusId;
+    @V s bleForTest ng
+    SearchCounter getUnsetM nSearc dStatus d() {
+      return unsetM nSearc dStatus d;
     }
 
-    @VisibleForTesting
-    SearchCounter getUnsetMaxAndMinSearchedStatusId() {
-      return unsetMaxAndMinSearchedStatusId;
+    @V s bleForTest ng
+    SearchCounter getUnsetMaxAndM nSearc dStatus d() {
+      return unsetMaxAndM nSearc dStatus d;
     }
 
-    @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithoutResults() {
-      return sameMinMaxSearchedIdWithoutResults;
+    @V s bleForTest ng
+    SearchCounter getSa M nMaxSearc d dW houtResults() {
+      return sa M nMaxSearc d dW houtResults;
     }
 
-    @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithOneResult() {
-      return sameMinMaxSearchedIdWithOneResult;
+    @V s bleForTest ng
+    SearchCounter getSa M nMaxSearc d dW hOneResult() {
+      return sa M nMaxSearc d dW hOneResult;
     }
 
-    @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithResults() {
-      return sameMinMaxSearchedIdWithResults;
+    @V s bleForTest ng
+    SearchCounter getSa M nMaxSearc d dW hResults() {
+      return sa M nMaxSearc d dW hResults;
     }
   }
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, MinMaxSearchedIdStats> MIN_MAX_SEARCHED_ID_STATS_MAP;
-  static {
-    EnumMap<EarlybirdRequestType, MinMaxSearchedIdStats> statsMap
-        = Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType earlybirdRequestType : EarlybirdRequestType.values()) {
-      statsMap.put(earlybirdRequestType, new MinMaxSearchedIdStats(earlybirdRequestType));
+  @V s bleForTest ng
+  stat c f nal Map<Earlyb rdRequestType, M nMaxSearc d dStats> M N_MAX_SEARCHED_ D_STATS_MAP;
+  stat c {
+    EnumMap<Earlyb rdRequestType, M nMaxSearc d dStats> statsMap
+        = Maps.newEnumMap(Earlyb rdRequestType.class);
+    for (Earlyb rdRequestType earlyb rdRequestType : Earlyb rdRequestType.values()) {
+      statsMap.put(earlyb rdRequestType, new M nMaxSearc d dStats(earlyb rdRequestType));
     }
 
-    MIN_MAX_SEARCHED_ID_STATS_MAP = Maps.immutableEnumMap(statsMap);
+    M N_MAX_SEARCHED_ D_STATS_MAP = Maps. mmutableEnumMap(statsMap);
   }
 
-  // Merge has encountered at least one early terminated response.
-  private boolean foundEarlyTermination = false;
-  // Empty but successful response counter (E.g. when a tier or partition is skipped)
-  private int successfulEmptyResponseCount = 0;
-  // The list of the successful responses from all earlybird futures. This does not include empty
+  //  rge has encountered at least one early term nated response.
+  pr vate boolean foundEarlyTerm nat on = false;
+  // Empty but successful response counter (E.g. w n a t er or part  on  s sk pped)
+  pr vate  nt successfulEmptyResponseCount = 0;
+  // T  l st of t  successful responses from all earlyb rd futures. T  does not  nclude empty
   // responses resulted from null requests.
-  private final List<EarlybirdResponse> successResponses = new ArrayList<>();
-  // The list of the error responses from all earlybird futures.
-  private final List<EarlybirdResponse> errorResponses = new ArrayList<>();
-  // the list of max statusIds seen in each earlybird.
-  private final List<Long> maxIds = new ArrayList<>();
-  // the list of min statusIds seen in each earlybird.
-  private final List<Long> minIds = new ArrayList<>();
+  pr vate f nal L st<Earlyb rdResponse> successResponses = new ArrayL st<>();
+  // T  l st of t  error responses from all earlyb rd futures.
+  pr vate f nal L st<Earlyb rdResponse> errorResponses = new ArrayL st<>();
+  // t  l st of max status ds seen  n each earlyb rd.
+  pr vate f nal L st<Long> max ds = new ArrayL st<>();
+  // t  l st of m n status ds seen  n each earlyb rd.
+  pr vate f nal L st<Long> m n ds = new ArrayL st<>();
 
-  private int numResponses = 0;
+  pr vate  nt numResponses = 0;
 
-  private int numResultsAccumulated = 0;
-  private int numSearchedSegments = 0;
+  pr vate  nt numResultsAccumulated = 0;
+  pr vate  nt numSearc dSeg nts = 0;
 
   /**
-   * Returns a string that can be used for logging to identify a single response out of all the
-   * responses that are being merged.
+   * Returns a str ng that can be used for logg ng to  dent fy a s ngle response out of all t 
+   * responses that are be ng  rged.
    *
-   * @param responseIndex the index of a response's partition or tier, depending on the type of
-   *                      responses being accumulated.
-   * @param numTotalResponses the total number of partitions or tiers that are being merged.
+   * @param response ndex t   ndex of a response's part  on or t er, depend ng on t  type of
+   *                      responses be ng accumulated.
+   * @param numTotalResponses t  total number of part  ons or t ers that are be ng  rged.
    */
-  public abstract String getNameForLogging(int responseIndex, int numTotalResponses);
+  publ c abstract Str ng getNa ForLogg ng( nt response ndex,  nt numTotalResponses);
 
   /**
-   * Returns a string that is used to export per-EarlybirdResponseCode stats for partitions and tiers.
+   * Returns a str ng that  s used to export per-Earlyb rdResponseCode stats for part  ons and t ers.
    *
-   * @param responseIndex the index of of a response's partition or tier.
-   * @param numTotalResponses the total number of partitions or tiers that are being merged.
-   * @return a string that is used to export per-EarlybirdResponseCode stats for partitions and tiers.
+   * @param response ndex t   ndex of of a response's part  on or t er.
+   * @param numTotalResponses t  total number of part  ons or t ers that are be ng  rged.
+   * @return a str ng that  s used to export per-Earlyb rdResponseCode stats for part  ons and t ers.
    */
-  public abstract String getNameForEarlybirdResponseCodeStats(
-      int responseIndex, int numTotalResponses);
+  publ c abstract Str ng getNa ForEarlyb rdResponseCodeStats(
+       nt response ndex,  nt numTotalResponses);
 
-  abstract boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger);
+  abstract boolean shouldEarlyTerm nate rge(EarlyTerm nateT er rgePred cate  rger);
 
   /**
-   * Add a EarlybirdResponse
+   * Add a Earlyb rdResponse
    */
-  public void addResponse(EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
-                          EarlybirdRequest request,
-                          EarlybirdResponse response) {
+  publ c vo d addResponse(Earlyb rdResponseDebug ssageBu lder response ssageBu lder,
+                          Earlyb rdRequest request,
+                          Earlyb rdResponse response) {
     numResponses++;
-    numSearchedSegments += response.getNumSearchedSegments();
+    numSearc dSeg nts += response.getNumSearc dSeg nts();
 
-    if (isSkippedResponse(response)) {
-      // This is an empty response, no processing is required, just need to update statistics.
+     f ( sSk ppedResponse(response)) {
+      // T   s an empty response, no process ng  s requ red, just need to update stat st cs.
       successfulEmptyResponseCount++;
-      handleSkippedResponse(response.getResponseCode());
-    } else if (isErrorResponse(response)) {
+      handleSk ppedResponse(response.getResponseCode());
+    } else  f ( sErrorResponse(response)) {
       errorResponses.add(response);
       handleErrorResponse(response);
     } else {
-      handleSuccessfulResponse(responseMessageBuilder, request, response);
+      handleSuccessfulResponse(response ssageBu lder, request, response);
     }
   }
 
-  private boolean isErrorResponse(EarlybirdResponse response) {
-    return !response.isSetResponseCode()
-        || response.getResponseCode() != EarlybirdResponseCode.SUCCESS;
+  pr vate boolean  sErrorResponse(Earlyb rdResponse response) {
+    return !response. sSetResponseCode()
+        || response.getResponseCode() != Earlyb rdResponseCode.SUCCESS;
   }
 
-  private boolean isSkippedResponse(EarlybirdResponse response) {
-    return response.isSetResponseCode()
-        && (response.getResponseCode() == EarlybirdResponseCode.PARTITION_SKIPPED
-        || response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED);
+  pr vate boolean  sSk ppedResponse(Earlyb rdResponse response) {
+    return response. sSetResponseCode()
+        && (response.getResponseCode() == Earlyb rdResponseCode.PART T ON_SK PPED
+        || response.getResponseCode() == Earlyb rdResponseCode.T ER_SK PPED);
   }
 
   /**
-   * Record a response corresponding to a skipped partition or skipped tier.
+   * Record a response correspond ng to a sk pped part  on or sk pped t er.
    */
-  protected abstract void handleSkippedResponse(EarlybirdResponseCode responseCode);
+  protected abstract vo d handleSk ppedResponse(Earlyb rdResponseCode responseCode);
 
   /**
    * Handle an error response
    */
-  protected abstract void handleErrorResponse(EarlybirdResponse response);
+  protected abstract vo d handleErrorResponse(Earlyb rdResponse response);
 
   /**
-   * Subclasses can override this to perform more successful response handling.
+   * Subclasses can overr de t  to perform more successful response handl ng.
    */
-  protected void extraSuccessfulResponseHandler(EarlybirdResponse response) { }
+  protected vo d extraSuccessfulResponseHandler(Earlyb rdResponse response) { }
 
  /**
-  * Whether the helper is for merging results from partitions within a single tier.
+  * W t r t   lper  s for  rg ng results from part  ons w h n a s ngle t er.
   */
-  protected final boolean isMergingPartitionsWithinATier() {
-    return !isMergingAcrossTiers();
+  protected f nal boolean  s rg ngPart  onsW h nAT er() {
+    return ! s rg ngAcrossT ers();
   }
 
   /**
-   * Whether the helper is for merging results across different tiers.
+   * W t r t   lper  s for  rg ng results across d fferent t ers.
    */
-  protected abstract boolean isMergingAcrossTiers();
+  protected abstract boolean  s rg ngAcrossT ers();
 
 
   /**
    * Record a successful response.
    */
-  public final void handleSuccessfulResponse(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
-      EarlybirdRequest request,
-      EarlybirdResponse response) {
+  publ c f nal vo d handleSuccessfulResponse(
+      Earlyb rdResponseDebug ssageBu lder response ssageBu lder,
+      Earlyb rdRequest request,
+      Earlyb rdResponse response) {
     successResponses.add(response);
-    if (response.isSetSearchResults()) {
-      ThriftSearchResults searchResults = response.getSearchResults();
-      numResultsAccumulated += searchResults.getResultsSize();
+     f (response. sSetSearchResults()) {
+      Thr ftSearchResults searchResults = response.getSearchResults();
+      numResultsAccumulated += searchResults.getResultsS ze();
 
-      recordMinMaxSearchedIdsAndUpdateStats(responseMessageBuilder, request, response,
+      recordM nMaxSearc d dsAndUpdateStats(response ssageBu lder, request, response,
           searchResults);
     }
-    if (response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated()) {
-      foundEarlyTermination = true;
+     f (response. sSetEarlyTerm nat on nfo()
+        && response.getEarlyTerm nat on nfo(). sEarlyTerm nated()) {
+      foundEarlyTerm nat on = true;
     }
     extraSuccessfulResponseHandler(response);
   }
 
-  private void recordMinMaxSearchedIdsAndUpdateStats(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuidler,
-      EarlybirdRequest request,
-      EarlybirdResponse response,
-      ThriftSearchResults searchResults) {
+  pr vate vo d recordM nMaxSearc d dsAndUpdateStats(
+      Earlyb rdResponseDebug ssageBu lder response ssageBu dler,
+      Earlyb rdRequest request,
+      Earlyb rdResponse response,
+      Thr ftSearchResults searchResults) {
 
-    boolean isMaxIdSet = searchResults.isSetMaxSearchedStatusID();
-    boolean isMinIdSet = searchResults.isSetMinSearchedStatusID();
+    boolean  sMax dSet = searchResults. sSetMaxSearc dStatus D();
+    boolean  sM n dSet = searchResults. sSetM nSearc dStatus D();
 
-    if (isMaxIdSet) {
-      maxIds.add(searchResults.getMaxSearchedStatusID());
+     f ( sMax dSet) {
+      max ds.add(searchResults.getMaxSearc dStatus D());
     }
-    if (isMinIdSet) {
-      minIds.add(searchResults.getMinSearchedStatusID());
+     f ( sM n dSet) {
+      m n ds.add(searchResults.getM nSearc dStatus D());
     }
 
-    updateMinMaxIdStats(responseMessageBuidler, request, response, searchResults, isMaxIdSet,
-        isMinIdSet);
+    updateM nMax dStats(response ssageBu dler, request, response, searchResults,  sMax dSet,
+         sM n dSet);
   }
 
-  private void updateMinMaxIdStats(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
-      EarlybirdRequest request,
-      EarlybirdResponse response,
-      ThriftSearchResults searchResults,
-      boolean isMaxIdSet,
-      boolean isMinIdSet) {
-    // Now just track the stats.
-    EarlybirdRequestType requestType = EarlybirdRequestType.of(request);
-    MinMaxSearchedIdStats minMaxSearchedIdStats = MIN_MAX_SEARCHED_ID_STATS_MAP.get(requestType);
+  pr vate vo d updateM nMax dStats(
+      Earlyb rdResponseDebug ssageBu lder response ssageBu lder,
+      Earlyb rdRequest request,
+      Earlyb rdResponse response,
+      Thr ftSearchResults searchResults,
+      boolean  sMax dSet,
+      boolean  sM n dSet) {
+    // Now just track t  stats.
+    Earlyb rdRequestType requestType = Earlyb rdRequestType.of(request);
+    M nMaxSearc d dStats m nMaxSearc d dStats = M N_MAX_SEARCHED_ D_STATS_MAP.get(requestType);
 
-    minMaxSearchedIdStats.checkedMaxMinSearchedStatusId.increment();
-    if (isMaxIdSet && isMinIdSet) {
-      if (searchResults.getMinSearchedStatusID() > searchResults.getMaxSearchedStatusID()) {
-        // We do not expect this case to happen in production.
-        minMaxSearchedIdStats.flippedMinMaxSearchedId.increment();
-      } else if (searchResults.getResultsSize() == 0
-          && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithoutResults.increment();
-        responseMessageBuilder.debugVerbose(
-            "Got no results, and same min/max searched ids. Request: %s, Response: %s",
+    m nMaxSearc d dStats.c ckedMaxM nSearc dStatus d. ncre nt();
+     f ( sMax dSet &&  sM n dSet) {
+       f (searchResults.getM nSearc dStatus D() > searchResults.getMaxSearc dStatus D()) {
+        //   do not expect t  case to happen  n product on.
+        m nMaxSearc d dStats.fl ppedM nMaxSearc d d. ncre nt();
+      } else  f (searchResults.getResultsS ze() == 0
+          && searchResults.getMaxSearc dStatus D() == searchResults.getM nSearc dStatus D()) {
+        m nMaxSearc d dStats.sa M nMaxSearc d dW houtResults. ncre nt();
+        response ssageBu lder.debugVerbose(
+            "Got no results, and sa  m n/max searc d  ds. Request: %s, Response: %s",
             request, response);
-      } else if (searchResults.getResultsSize() == 1
-          && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithOneResult.increment();
-        responseMessageBuilder.debugVerbose(
-            "Got one results, and same min/max searched ids. Request: %s, Response: %s",
+      } else  f (searchResults.getResultsS ze() == 1
+          && searchResults.getMaxSearc dStatus D() == searchResults.getM nSearc dStatus D()) {
+        m nMaxSearc d dStats.sa M nMaxSearc d dW hOneResult. ncre nt();
+        response ssageBu lder.debugVerbose(
+            "Got one results, and sa  m n/max searc d  ds. Request: %s, Response: %s",
             request, response);
-      } else if (searchResults.getMaxSearchedStatusID()
-          == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithResults.increment();
-        responseMessageBuilder.debugVerbose(
-            "Got multiple results, and same min/max searched ids. Request: %s, Response: %s",
+      } else  f (searchResults.getMaxSearc dStatus D()
+          == searchResults.getM nSearc dStatus D()) {
+        m nMaxSearc d dStats.sa M nMaxSearc d dW hResults. ncre nt();
+        response ssageBu lder.debugVerbose(
+            "Got mult ple results, and sa  m n/max searc d  ds. Request: %s, Response: %s",
             request, response);
       }
-    } else if (!isMaxIdSet && isMinIdSet) {
-      // We do not expect this case to happen in production.
-      minMaxSearchedIdStats.unsetMaxSearchedStatusId.increment();
-      responseMessageBuilder.debugVerbose(
-          "Got unset maxSearchedStatusID. Request: %s, Response: %s", request, response);
-    } else if (isMaxIdSet && !isMinIdSet) {
-      // We do not expect this case to happen in production.
-      minMaxSearchedIdStats.unsetMinSearchedStatusId.increment();
-      responseMessageBuilder.debugVerbose(
-          "Got unset minSearchedStatusID. Request: %s, Response: %s", request, response);
+    } else  f (! sMax dSet &&  sM n dSet) {
+      //   do not expect t  case to happen  n product on.
+      m nMaxSearc d dStats.unsetMaxSearc dStatus d. ncre nt();
+      response ssageBu lder.debugVerbose(
+          "Got unset maxSearc dStatus D. Request: %s, Response: %s", request, response);
+    } else  f ( sMax dSet && ! sM n dSet) {
+      //   do not expect t  case to happen  n product on.
+      m nMaxSearc d dStats.unsetM nSearc dStatus d. ncre nt();
+      response ssageBu lder.debugVerbose(
+          "Got unset m nSearc dStatus D. Request: %s, Response: %s", request, response);
     } else {
-      Preconditions.checkState(!isMaxIdSet && !isMinIdSet);
-      minMaxSearchedIdStats.unsetMaxAndMinSearchedStatusId.increment();
-      responseMessageBuilder.debugVerbose(
-          "Got unset maxSearchedStatusID and minSearchedStatusID. Request: %s, Response: %s",
+      Precond  ons.c ckState(! sMax dSet && ! sM n dSet);
+      m nMaxSearc d dStats.unsetMaxAndM nSearc dStatus d. ncre nt();
+      response ssageBu lder.debugVerbose(
+          "Got unset maxSearc dStatus D and m nSearc dStatus D. Request: %s, Response: %s",
           request, response);
     }
   }
 
 
   /**
-   * Return partition counts with number of partitions, number of successful responses, and list of
-   * responses per tier.
+   * Return part  on counts w h number of part  ons, number of successful responses, and l st of
+   * responses per t er.
    */
-  public abstract AccumulatedResponses.PartitionCounts getPartitionCounts();
+  publ c abstract AccumulatedResponses.Part  onCounts getPart  onCounts();
 
-  public final AccumulatedResponses getAccumulatedResults() {
+  publ c f nal AccumulatedResponses getAccumulatedResults() {
     return new AccumulatedResponses(successResponses,
                                     errorResponses,
-                                    maxIds,
-                                    minIds,
-                                    ResponseMergerUtils.mergeEarlyTerminationInfo(successResponses),
-                                    isMergingAcrossTiers(),
-                                    getPartitionCounts(),
-                                    getNumSearchedSegments());
+                                    max ds,
+                                    m n ds,
+                                    Response rgerUt ls. rgeEarlyTerm nat on nfo(successResponses),
+                                     s rg ngAcrossT ers(),
+                                    getPart  onCounts(),
+                                    getNumSearc dSeg nts());
   }
 
-  // Getters are only intended to be used by subclasses.  Other users should get data from
+  // Getters are only  ntended to be used by subclasses.  Ot r users should get data from
   // AccumulatedResponses
 
-  int getNumResponses() {
+   nt getNumResponses() {
     return numResponses;
   }
 
-  int getNumSearchedSegments() {
-    return numSearchedSegments;
+   nt getNumSearc dSeg nts() {
+    return numSearc dSeg nts;
   }
 
-  List<EarlybirdResponse> getSuccessResponses() {
+  L st<Earlyb rdResponse> getSuccessResponses() {
     return successResponses;
   }
 
-  int getNumResultsAccumulated() {
+   nt getNumResultsAccumulated() {
     return numResultsAccumulated;
   }
 
-  int getSuccessfulEmptyResponseCount() {
+   nt getSuccessfulEmptyResponseCount() {
     return successfulEmptyResponseCount;
   }
 
   boolean foundError() {
-    return !errorResponses.isEmpty();
+    return !errorResponses. sEmpty();
   }
 
-  boolean foundEarlyTermination() {
-    return foundEarlyTermination;
+  boolean foundEarlyTerm nat on() {
+    return foundEarlyTerm nat on;
   }
 }

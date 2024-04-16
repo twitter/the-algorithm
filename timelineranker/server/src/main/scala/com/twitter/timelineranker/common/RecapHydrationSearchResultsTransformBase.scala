@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
 
-trait RecapHydrationSearchResultsTransformBase
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  protected def statsReceiver: StatsReceiver
-  protected def searchClient: SearchClient
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+tra  RecapHydrat onSearchResultsTransformBase
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  protected def statsRece ver: StatsRece ver
+  protected def searchCl ent: SearchCl ent
+  pr vate[t ] val numResultsFromSearchStat = statsRece ver.stat("numResultsFromSearch")
 
-  def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId]
+  def t et dsToHydrate(envelope: Cand dateEnvelope): Seq[T et d]
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    searchClient
-      .getTweetsScoredForRecap(
-        envelope.query.userId,
-        tweetIdsToHydrate(envelope),
-        envelope.query.earlybirdOptions
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    searchCl ent
+      .getT etsScoredForRecap(
+        envelope.query.user d,
+        t et dsToHydrate(envelope),
+        envelope.query.earlyb rdOpt ons
       ).map { results =>
-        numResultsFromSearchStat.add(results.size)
+        numResultsFromSearchStat.add(results.s ze)
         envelope.copy(searchResults = results)
       }
   }

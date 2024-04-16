@@ -1,205 +1,205 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object UpdatePossiblySensitiveTweet extends TweetStore.SyncModule {
+object UpdatePoss blySens  veT et extends T etStore.SyncModule {
 
   case class Event(
-    tweet: Tweet,
+    t et: T et,
     user: User,
-    timestamp: Time,
-    byUserId: UserId,
-    nsfwAdminChange: Option[Boolean],
-    nsfwUserChange: Option[Boolean],
-    note: Option[String],
-    host: Option[String])
-      extends SyncTweetStoreEvent("update_possibly_sensitive_tweet") {
-    def toAsyncRequest: AsyncUpdatePossiblySensitiveTweetRequest =
-      AsyncUpdatePossiblySensitiveTweetRequest(
-        tweet = tweet,
+    t  stamp: T  ,
+    byUser d: User d,
+    nsfwAdm nChange: Opt on[Boolean],
+    nsfwUserChange: Opt on[Boolean],
+    note: Opt on[Str ng],
+    host: Opt on[Str ng])
+      extends SyncT etStoreEvent("update_poss bly_sens  ve_t et") {
+    def toAsyncRequest: AsyncUpdatePoss blySens  veT etRequest =
+      AsyncUpdatePoss blySens  veT etRequest(
+        t et = t et,
         user = user,
-        byUserId = byUserId,
-        timestamp = timestamp.inMillis,
-        nsfwAdminChange = nsfwAdminChange,
+        byUser d = byUser d,
+        t  stamp = t  stamp. nM ll s,
+        nsfwAdm nChange = nsfwAdm nChange,
         nsfwUserChange = nsfwUserChange,
         note = note,
         host = host
       )
   }
 
-  trait Store {
-    val updatePossiblySensitiveTweet: FutureEffect[Event]
+  tra  Store {
+    val updatePoss blySens  veT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val updatePossiblySensitiveTweet: FutureEffect[Event] = wrap(
-      underlying.updatePossiblySensitiveTweet
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val updatePoss blySens  veT et: FutureEffect[Event] = wrap(
+      underly ng.updatePoss blySens  veT et
     )
   }
 
   object Store {
     def apply(
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
+      manhattanStore: ManhattanT etStore,
+      cach ngT etStore: Cach ngT etStore,
       logLensStore: LogLensStore,
       asyncEnqueueStore: AsyncEnqueueStore
     ): Store =
       new Store {
-        override val updatePossiblySensitiveTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            manhattanStore.ignoreFailures.updatePossiblySensitiveTweet,
-            cachingTweetStore.ignoreFailures.updatePossiblySensitiveTweet,
-            logLensStore.updatePossiblySensitiveTweet,
-            asyncEnqueueStore.updatePossiblySensitiveTweet
+        overr de val updatePoss blySens  veT et: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            manhattanStore. gnoreFa lures.updatePoss blySens  veT et,
+            cach ngT etStore. gnoreFa lures.updatePoss blySens  veT et,
+            logLensStore.updatePoss blySens  veT et,
+            asyncEnqueueStore.updatePoss blySens  veT et
           )
       }
   }
 }
 
-object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
+object AsyncUpdatePoss blySens  veT et extends T etStore.AsyncModule {
 
   object Event {
     def fromAsyncRequest(
-      request: AsyncUpdatePossiblySensitiveTweetRequest
-    ): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        AsyncUpdatePossiblySensitiveTweet.Event(
-          tweet = request.tweet,
+      request: AsyncUpdatePoss blySens  veT etRequest
+    ): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
+        AsyncUpdatePoss blySens  veT et.Event(
+          t et = request.t et,
           user = request.user,
-          optUser = Some(request.user),
-          timestamp = Time.fromMilliseconds(request.timestamp),
-          byUserId = request.byUserId,
-          nsfwAdminChange = request.nsfwAdminChange,
+          optUser = So (request.user),
+          t  stamp = T  .fromM ll seconds(request.t  stamp),
+          byUser d = request.byUser d,
+          nsfwAdm nChange = request.nsfwAdm nChange,
           nsfwUserChange = request.nsfwUserChange,
           note = request.note,
           host = request.host
         ),
-        request.action,
+        request.act on,
         RetryEvent
       )
   }
 
   case class Event(
-    tweet: Tweet,
+    t et: T et,
     user: User,
-    optUser: Option[User],
-    timestamp: Time,
-    byUserId: UserId,
-    nsfwAdminChange: Option[Boolean],
-    nsfwUserChange: Option[Boolean],
-    note: Option[String],
-    host: Option[String])
-      extends AsyncTweetStoreEvent("async_update_possibly_sensitive_tweet")
-      with TweetStoreTweetEvent {
+    optUser: Opt on[User],
+    t  stamp: T  ,
+    byUser d: User d,
+    nsfwAdm nChange: Opt on[Boolean],
+    nsfwUserChange: Opt on[Boolean],
+    note: Opt on[Str ng],
+    host: Opt on[Str ng])
+      extends AsyncT etStoreEvent("async_update_poss bly_sens  ve_t et")
+      w h T etStoreT etEvent {
 
     def toAsyncRequest(
-      action: Option[AsyncWriteAction] = None
-    ): AsyncUpdatePossiblySensitiveTweetRequest =
-      AsyncUpdatePossiblySensitiveTweetRequest(
-        tweet = tweet,
+      act on: Opt on[AsyncWr eAct on] = None
+    ): AsyncUpdatePoss blySens  veT etRequest =
+      AsyncUpdatePoss blySens  veT etRequest(
+        t et = t et,
         user = user,
-        byUserId = byUserId,
-        timestamp = timestamp.inMillis,
-        nsfwAdminChange = nsfwAdminChange,
+        byUser d = byUser d,
+        t  stamp = t  stamp. nM ll s,
+        nsfwAdm nChange = nsfwAdm nChange,
         nsfwUserChange = nsfwUserChange,
         note = note,
         host = host,
-        action = action
+        act on = act on
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.TweetPossiblySensitiveUpdateEvent(
-          TweetPossiblySensitiveUpdateEvent(
-            tweetId = tweet.id,
-            userId = user.id,
-            nsfwAdmin = TweetLenses.nsfwAdmin.get(tweet),
-            nsfwUser = TweetLenses.nsfwUser.get(tweet)
+        T etEventData.T etPoss blySens  veUpdateEvent(
+          T etPoss blySens  veUpdateEvent(
+            t et d = t et. d,
+            user d = user. d,
+            nsfwAdm n = T etLenses.nsfwAdm n.get(t et),
+            nsfwUser = T etLenses.nsfwUser.get(t et)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncUpdatePossiblySensitiveTweet(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.asyncUpdatePoss blySens  veT et(toAsyncRequest(So (act on)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.UpdatePossiblySensitiveTweet.type =
-      AsyncWriteEventType.UpdatePossiblySensitiveTweet
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    overr de val eventType: AsyncWr eEventType.UpdatePoss blySens  veT et.type =
+      AsyncWr eEventType.UpdatePoss blySens  veT et
+    overr de val scr bedT etOnFa lure: Opt on[T et] = So (event.t et)
   }
 
-  trait Store {
-    val asyncUpdatePossiblySensitiveTweet: FutureEffect[Event]
-    val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[TweetStoreRetryEvent[Event]]
+  tra  Store {
+    val asyncUpdatePoss blySens  veT et: FutureEffect[Event]
+    val retryAsyncUpdatePoss blySens  veT et: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncUpdatePossiblySensitiveTweet: FutureEffect[Event] = wrap(
-      underlying.asyncUpdatePossiblySensitiveTweet
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val asyncUpdatePoss blySens  veT et: FutureEffect[Event] = wrap(
+      underly ng.asyncUpdatePoss blySens  veT et
     )
-    override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[TweetStoreRetryEvent[Event]] =
+    overr de val retryAsyncUpdatePoss blySens  veT et: FutureEffect[T etStoreRetryEvent[Event]] =
       wrap(
-        underlying.retryAsyncUpdatePossiblySensitiveTweet
+        underly ng.retryAsyncUpdatePoss blySens  veT et
       )
   }
 
   object Store {
     def apply(
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      replicatingStore: ReplicatingTweetStore,
-      guanoStore: GuanoServiceStore,
-      eventBusStore: TweetEventBusStore
+      manhattanStore: ManhattanT etStore,
+      cach ngT etStore: Cach ngT etStore,
+      repl cat ngStore: Repl cat ngT etStore,
+      guanoStore: GuanoServ ceStore,
+      eventBusStore: T etEventBusStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
           manhattanStore,
-          cachingTweetStore,
-          replicatingStore,
+          cach ngT etStore,
+          repl cat ngStore,
           guanoStore,
           eventBusStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncUpdatePossiblySensitiveTweet: FutureEffect[Event] = build(
-          _.asyncUpdatePossiblySensitiveTweet)
-        override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-          TweetStoreRetryEvent[Event]
-        ] = build(
-          _.retryAsyncUpdatePossiblySensitiveTweet
+        overr de val asyncUpdatePoss blySens  veT et: FutureEffect[Event] = bu ld(
+          _.asyncUpdatePoss blySens  veT et)
+        overr de val retryAsyncUpdatePoss blySens  veT et: FutureEffect[
+          T etStoreRetryEvent[Event]
+        ] = bu ld(
+          _.retryAsyncUpdatePoss blySens  veT et
         )
       }
     }
   }
 }
 
-object ReplicatedUpdatePossiblySensitiveTweet extends TweetStore.ReplicatedModule {
+object Repl catedUpdatePoss blySens  veT et extends T etStore.Repl catedModule {
 
-  case class Event(tweet: Tweet)
-      extends ReplicatedTweetStoreEvent("replicated_update_possibly_sensitive_tweet")
+  case class Event(t et: T et)
+      extends Repl catedT etStoreEvent("repl cated_update_poss bly_sens  ve_t et")
 
-  trait Store {
-    val replicatedUpdatePossiblySensitiveTweet: FutureEffect[Event]
+  tra  Store {
+    val repl catedUpdatePoss blySens  veT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedUpdatePossiblySensitiveTweet: FutureEffect[Event] = wrap(
-      underlying.replicatedUpdatePossiblySensitiveTweet
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedUpdatePoss blySens  veT et: FutureEffect[Event] = wrap(
+      underly ng.repl catedUpdatePoss blySens  veT et
     )
   }
 
   object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
+    def apply(cach ngT etStore: Cach ngT etStore): Store = {
       new Store {
-        override val replicatedUpdatePossiblySensitiveTweet: FutureEffect[Event] =
-          cachingTweetStore.replicatedUpdatePossiblySensitiveTweet
+        overr de val repl catedUpdatePoss blySens  veT et: FutureEffect[Event] =
+          cach ngT etStore.repl catedUpdatePoss blySens  veT et
       }
     }
   }

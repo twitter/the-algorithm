@@ -1,260 +1,260 @@
-package com.twitter.visibility.interfaces.conversations
+package com.tw ter.v s b l y. nterfaces.conversat ons
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Stopwatch
-import com.twitter.util.Try
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.TweetIdFeatures
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.VerdictLogger
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.FosnrPefetchedLabelsRelationshipFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.ConversationRootAuthorIsVerified
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.HasInnerCircleOfFriendsRelationship
-import com.twitter.visibility.features.TweetConversationId
-import com.twitter.visibility.features.TweetParentId
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownranking
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownrankingMinimal
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.UnitOfDiversion
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.Label
+ mport com.tw ter.servo.repos ory.KeyValueResult
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelValue
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.t ets.T et dFeatures
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.Verd ctLogger
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.t ets.FosnrPefetc dLabelsRelat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.features.AuthorUserLabels
+ mport com.tw ter.v s b l y.features.Conversat onRootAuthor sVer f ed
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.features.Has nnerC rcleOfFr endsRelat onsh p
+ mport com.tw ter.v s b l y.features.T etConversat on d
+ mport com.tw ter.v s b l y.features.T etParent d
+ mport com.tw ter.v s b l y.logg ng.thr ftscala.VFL bType
+ mport com.tw ter.v s b l y.models.Content d.T et d
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neConversat onsDownrank ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neConversat onsDownrank ngM n mal
+ mport com.tw ter.v s b l y.models.SafetyLevel.toThr ft
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
+ mport com.tw ter.v s b l y.models.Un OfD vers on
 
-object TimelineConversationsVisibilityLibrary {
+object T  l neConversat onsV s b l yL brary {
   type Type =
-    TimelineConversationsVisibilityRequest => Stitch[TimelineConversationsVisibilityResponse]
+    T  l neConversat onsV s b l yRequest => St ch[T  l neConversat onsV s b l yResponse]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    batchSafetyLabelRepository: BatchSafetyLabelRepository,
-    decider: Decider,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    userSource: UserSource = UserSource.empty
+    v s b l yL brary: V s b l yL brary,
+    batchSafetyLabelRepos ory: BatchSafetyLabelRepos ory,
+    dec der: Dec der,
+    userRelat onsh pS ce: UserRelat onsh pS ce = UserRelat onsh pS ce.empty,
+    userS ce: UserS ce = UserS ce.empty
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val tweetIdFeatures = new TweetIdFeatures(
-      statsReceiver = libraryStatsReceiver,
-      enableStitchProfiling = Gate.False
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val t et dFeatures = new T et dFeatures(
+      statsRece ver = l braryStatsRece ver,
+      enableSt chProf l ng = Gate.False
     )
-    val tweetIdFeaturesMinimal = new TweetIdFeatures(
-      statsReceiver = libraryStatsReceiver,
-      enableStitchProfiling = Gate.False
+    val t et dFeaturesM n mal = new T et dFeatures(
+      statsRece ver = l braryStatsRece ver,
+      enableSt chProf l ng = Gate.False
     )
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
+    val vfLatencyOverallStat = l braryStatsRece ver.stat("vf_latency_overall")
+    val vfLatencySt chBu ldStat = l braryStatsRece ver.stat("vf_latency_st ch_bu ld")
+    val vfLatencySt chRunStat = l braryStatsRece ver.stat("vf_latency_st ch_run")
 
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val verdictLogger =
-      createVerdictLogger(
-        visibilityDeciderGates.enableVerdictLoggerTCVL,
-        decider,
-        libraryStatsReceiver)
+    val v s b l yDec derGates = V s b l yDec derGates(dec der)
+    val verd ctLogger =
+      createVerd ctLogger(
+        v s b l yDec derGates.enableVerd ctLoggerTCVL,
+        dec der,
+        l braryStatsRece ver)
 
-    request: TimelineConversationsVisibilityRequest =>
+    request: T  l neConversat onsV s b l yRequest =>
       val elapsed = Stopwatch.start()
-      var runStitchStartMs = 0L
+      var runSt chStartMs = 0L
 
-      val future = request.prefetchedSafetyLabels match {
-        case Some(labels) => Future.value(labels)
+      val future = request.prefetc dSafetyLabels match {
+        case So (labels) => Future.value(labels)
         case _ =>
-          batchSafetyLabelRepository((request.conversationId, request.tweetIds))
+          batchSafetyLabelRepos ory((request.conversat on d, request.t et ds))
       }
 
-      val fosnrPefetchedLabelsRelationshipFeatures =
-        new FosnrPefetchedLabelsRelationshipFeatures(
-          userRelationshipSource = userRelationshipSource,
-          statsReceiver = libraryStatsReceiver)
+      val fosnrPefetc dLabelsRelat onsh pFeatures =
+        new FosnrPefetc dLabelsRelat onsh pFeatures(
+          userRelat onsh pS ce = userRelat onsh pS ce,
+          statsRece ver = l braryStatsRece ver)
 
-      val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
+      val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
 
-      Stitch.callFuture(future).flatMap {
-        kvr: KeyValueResult[Long, scala.collection.Map[SafetyLabelType, SafetyLabel]] =>
-          val featureMapProvider: (ContentId, SafetyLevel) => FeatureMap = {
-            case (TweetId(tweetId), safetyLevel) =>
-              val constantTweetSafetyLabels: Seq[TweetSafetyLabel] =
-                kvr.found.getOrElse(tweetId, Map.empty).toSeq.map {
+      St ch.callFuture(future).flatMap {
+        kvr: KeyValueResult[Long, scala.collect on.Map[SafetyLabelType, SafetyLabel]] =>
+          val featureMapProv der: (Content d, SafetyLevel) => FeatureMap = {
+            case (T et d(t et d), safetyLevel) =>
+              val constantT etSafetyLabels: Seq[T etSafetyLabel] =
+                kvr.found.getOrElse(t et d, Map.empty).toSeq.map {
                   case (safetyLabelType, safetyLabel) =>
-                    TweetSafetyLabel.fromThrift(SafetyLabelValue(safetyLabelType, safetyLabel))
+                    T etSafetyLabel.fromThr ft(SafetyLabelValue(safetyLabelType, safetyLabel))
                 }
 
-              val replyAuthor = request.tweetAuthors.flatMap {
-                _(tweetId) match {
-                  case Return(Some(userId)) => Some(userId)
+              val replyAuthor = request.t etAuthors.flatMap {
+                _(t et d) match {
+                  case Return(So (user d)) => So (user d)
                   case _ => None
                 }
               }
 
-              val fosnrPefetchedLabelsRelationshipFeatureConf = replyAuthor match {
-                case Some(authorId) if visibilityLibrary.isReleaseCandidateEnabled =>
-                  fosnrPefetchedLabelsRelationshipFeatures
-                    .forTweetWithSafetyLabelsAndAuthorId(
-                      safetyLabels = constantTweetSafetyLabels,
-                      authorId = authorId,
-                      viewerId = request.viewerContext.userId)
-                case _ => fosnrPefetchedLabelsRelationshipFeatures.forNonFosnr()
+              val fosnrPefetc dLabelsRelat onsh pFeatureConf = replyAuthor match {
+                case So (author d)  f v s b l yL brary. sReleaseCand dateEnabled =>
+                  fosnrPefetc dLabelsRelat onsh pFeatures
+                    .forT etW hSafetyLabelsAndAuthor d(
+                      safetyLabels = constantT etSafetyLabels,
+                      author d = author d,
+                      v e r d = request.v e rContext.user d)
+                case _ => fosnrPefetc dLabelsRelat onsh pFeatures.forNonFosnr()
               }
 
               val authorFeatureConf = replyAuthor match {
-                case Some(authorId) if visibilityLibrary.isReleaseCandidateEnabled =>
-                  authorFeatures.forAuthorId(authorId)
+                case So (author d)  f v s b l yL brary. sReleaseCand dateEnabled =>
+                  authorFeatures.forAuthor d(author d)
                 case _ => authorFeatures.forNoAuthor()
               }
 
-              val baseBuilderArguments = (safetyLevel match {
-                case TimelineConversationsDownranking =>
-                  Seq(tweetIdFeatures.forTweetId(tweetId, constantTweetSafetyLabels))
-                case TimelineConversationsDownrankingMinimal =>
-                  Seq(tweetIdFeaturesMinimal.forTweetId(tweetId, constantTweetSafetyLabels))
-                case _ => Nil
-              }) :+ fosnrPefetchedLabelsRelationshipFeatureConf :+ authorFeatureConf
+              val baseBu lderArgu nts = (safetyLevel match {
+                case T  l neConversat onsDownrank ng =>
+                  Seq(t et dFeatures.forT et d(t et d, constantT etSafetyLabels))
+                case T  l neConversat onsDownrank ngM n mal =>
+                  Seq(t et dFeaturesM n mal.forT et d(t et d, constantT etSafetyLabels))
+                case _ => N l
+              }) :+ fosnrPefetc dLabelsRelat onsh pFeatureConf :+ authorFeatureConf
 
-              val tweetAuthorUserLabels: Option[Seq[Label]] =
-                request.prefetchedTweetAuthorUserLabels.flatMap {
-                  _.apply(tweetId) match {
-                    case Return(Some(labelMap)) =>
-                      Some(labelMap.values.toSeq)
+              val t etAuthorUserLabels: Opt on[Seq[Label]] =
+                request.prefetc dT etAuthorUserLabels.flatMap {
+                  _.apply(t et d) match {
+                    case Return(So (labelMap)) =>
+                      So (labelMap.values.toSeq)
                     case _ =>
                       None
                   }
                 }
 
-              val hasInnerCircleOfFriendsRelationship: Boolean =
-                request.innerCircleOfFriendsRelationships match {
-                  case Some(keyValueResult) =>
-                    keyValueResult(tweetId) match {
-                      case Return(Some(true)) => true
+              val has nnerC rcleOfFr endsRelat onsh p: Boolean =
+                request. nnerC rcleOfFr endsRelat onsh ps match {
+                  case So (keyValueResult) =>
+                    keyValueResult(t et d) match {
+                      case Return(So (true)) => true
                       case _ => false
                     }
                   case None => false
                 }
 
-              val builderArguments: Seq[FeatureMapBuilder => FeatureMapBuilder] =
-                tweetAuthorUserLabels match {
-                  case Some(labels) =>
-                    baseBuilderArguments :+ { (fmb: FeatureMapBuilder) =>
-                      fmb.withConstantFeature(AuthorUserLabels, labels)
+              val bu lderArgu nts: Seq[FeatureMapBu lder => FeatureMapBu lder] =
+                t etAuthorUserLabels match {
+                  case So (labels) =>
+                    baseBu lderArgu nts :+ { (fmb: FeatureMapBu lder) =>
+                      fmb.w hConstantFeature(AuthorUserLabels, labels)
                     }
 
                   case None =>
-                    baseBuilderArguments :+ { (fmb: FeatureMapBuilder) =>
-                      fmb.withConstantFeature(AuthorUserLabels, Seq.empty)
+                    baseBu lderArgu nts :+ { (fmb: FeatureMapBu lder) =>
+                      fmb.w hConstantFeature(AuthorUserLabels, Seq.empty)
                     }
                   case _ =>
-                    baseBuilderArguments
+                    baseBu lderArgu nts
                 }
 
-              val tweetParentIdOpt: Option[Long] =
-                request.tweetParentIdMap.flatMap(tweetParentIdMap => tweetParentIdMap(tweetId))
+              val t etParent dOpt: Opt on[Long] =
+                request.t etParent dMap.flatMap(t etParent dMap => t etParent dMap(t et d))
 
-              visibilityLibrary.featureMapBuilder(builderArguments :+ { (fmb: FeatureMapBuilder) =>
-                fmb.withConstantFeature(
-                  HasInnerCircleOfFriendsRelationship,
-                  hasInnerCircleOfFriendsRelationship)
-                fmb.withConstantFeature(TweetConversationId, request.conversationId)
-                fmb.withConstantFeature(TweetParentId, tweetParentIdOpt)
-                fmb.withConstantFeature(
-                  ConversationRootAuthorIsVerified,
-                  request.rootAuthorIsVerified)
+              v s b l yL brary.featureMapBu lder(bu lderArgu nts :+ { (fmb: FeatureMapBu lder) =>
+                fmb.w hConstantFeature(
+                  Has nnerC rcleOfFr endsRelat onsh p,
+                  has nnerC rcleOfFr endsRelat onsh p)
+                fmb.w hConstantFeature(T etConversat on d, request.conversat on d)
+                fmb.w hConstantFeature(T etParent d, t etParent dOpt)
+                fmb.w hConstantFeature(
+                  Conversat onRootAuthor sVer f ed,
+                  request.rootAuthor sVer f ed)
               })
             case _ =>
-              visibilityLibrary.featureMapBuilder(Nil)
+              v s b l yL brary.featureMapBu lder(N l)
           }
           val safetyLevel =
-            if (request.minimalSectioningOnly) TimelineConversationsDownrankingMinimal
-            else TimelineConversationsDownranking
+             f (request.m n malSect on ngOnly) T  l neConversat onsDownrank ngM n mal
+            else T  l neConversat onsDownrank ng
 
-          val evaluationContextBuilder = visibilityLibrary
-            .evaluationContextBuilder(request.viewerContext)
-            .withUnitOfDiversion(UnitOfDiversion.ConversationId(request.conversationId))
+          val evaluat onContextBu lder = v s b l yL brary
+            .evaluat onContextBu lder(request.v e rContext)
+            .w hUn OfD vers on(Un OfD vers on.Conversat on d(request.conversat on d))
 
-          visibilityLibrary
-            .runRuleEngineBatch(
-              request.tweetIds.map(TweetId),
-              featureMapProvider,
-              evaluationContextBuilder,
+          v s b l yL brary
+            .runRuleEng neBatch(
+              request.t et ds.map(T et d),
+              featureMapProv der,
+              evaluat onContextBu lder,
               safetyLevel
             )
-            .map { results: Seq[Try[VisibilityResult]] =>
-              val (succeededRequests, _) = results.partition(_.exists(_.finished))
-              val visibilityResultMap = succeededRequests.flatMap {
+            .map { results: Seq[Try[V s b l yResult]] =>
+              val (succeededRequests, _) = results.part  on(_.ex sts(_.f n s d))
+              val v s b l yResultMap = succeededRequests.flatMap {
                 case Return(result) =>
-                  scribeVisibilityVerdict(
+                  scr beV s b l yVerd ct(
                     result,
-                    visibilityDeciderGates.enableVerdictScribingTCVL,
-                    verdictLogger,
-                    request.viewerContext.userId,
+                    v s b l yDec derGates.enableVerd ctScr b ngTCVL,
+                    verd ctLogger,
+                    request.v e rContext.user d,
                     safetyLevel)
-                  result.contentId match {
-                    case TweetId(id) => Some((id, result))
+                  result.content d match {
+                    case T et d( d) => So (( d, result))
                     case _ => None
                   }
                 case _ => None
               }.toMap
-              val failedTweetIds = request.tweetIds diff visibilityResultMap.keys.toSeq
-              val response = TimelineConversationsVisibilityResponse(
-                visibilityResults = visibilityResultMap,
-                failedTweetIds = failedTweetIds
+              val fa ledT et ds = request.t et ds d ff v s b l yResultMap.keys.toSeq
+              val response = T  l neConversat onsV s b l yResponse(
+                v s b l yResults = v s b l yResultMap,
+                fa ledT et ds = fa ledT et ds
               )
 
-              runStitchStartMs = elapsed().inMilliseconds
-              val buildStitchStatMs = elapsed().inMilliseconds
-              vfLatencyStitchBuildStat.add(buildStitchStatMs)
+              runSt chStartMs = elapsed(). nM ll seconds
+              val bu ldSt chStatMs = elapsed(). nM ll seconds
+              vfLatencySt chBu ldStat.add(bu ldSt chStatMs)
 
               response
             }
             .onSuccess(_ => {
-              val overallStatMs = elapsed().inMilliseconds
+              val overallStatMs = elapsed(). nM ll seconds
               vfLatencyOverallStat.add(overallStatMs)
-              val runStitchEndMs = elapsed().inMilliseconds
-              vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+              val runSt chEndMs = elapsed(). nM ll seconds
+              vfLatencySt chRunStat.add(runSt chEndMs - runSt chStartMs)
             })
       }
   }
 
-  def scribeVisibilityVerdict(
-    visibilityResult: VisibilityResult,
-    enableVerdictScribing: Gate[Unit],
-    verdictLogger: VerdictLogger,
-    viewerId: Option[Long],
+  def scr beV s b l yVerd ct(
+    v s b l yResult: V s b l yResult,
+    enableVerd ctScr b ng: Gate[Un ],
+    verd ctLogger: Verd ctLogger,
+    v e r d: Opt on[Long],
     safetyLevel: SafetyLevel
-  ): Unit = if (enableVerdictScribing()) {
-    verdictLogger.scribeVerdict(
-      visibilityResult = visibilityResult,
-      viewerId = viewerId,
-      safetyLevel = toThrift(safetyLevel),
-      vfLibType = VFLibType.TimelineConversationsVisibilityLibrary)
+  ): Un  =  f (enableVerd ctScr b ng()) {
+    verd ctLogger.scr beVerd ct(
+      v s b l yResult = v s b l yResult,
+      v e r d = v e r d,
+      safetyLevel = toThr ft(safetyLevel),
+      vfL bType = VFL bType.T  l neConversat onsV s b l yL brary)
   }
 
-  def createVerdictLogger(
-    enableVerdictLogger: Gate[Unit],
-    decider: Decider,
-    statsReceiver: StatsReceiver
-  ): VerdictLogger = {
-    if (enableVerdictLogger()) {
-      VerdictLogger(statsReceiver, decider)
+  def createVerd ctLogger(
+    enableVerd ctLogger: Gate[Un ],
+    dec der: Dec der,
+    statsRece ver: StatsRece ver
+  ): Verd ctLogger = {
+     f (enableVerd ctLogger()) {
+      Verd ctLogger(statsRece ver, dec der)
     } else {
-      VerdictLogger.Empty
+      Verd ctLogger.Empty
     }
   }
 }

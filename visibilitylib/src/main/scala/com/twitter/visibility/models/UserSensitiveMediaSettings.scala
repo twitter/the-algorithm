@@ -1,13 +1,13 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettings
+ mport com.tw ter.content alth.sens  ve d asett ngs.thr ftscala.Sens  ve d aSett ngs
 
 
-case class UserSensitiveMediaSettings(sensitiveMediaSettings: Option[SensitiveMediaSettings]) {
+case class UserSens  ve d aSett ngs(sens  ve d aSett ngs: Opt on[Sens  ve d aSett ngs]) {
 
   def unapply(
-    userSensitiveMediaSettings: UserSensitiveMediaSettings
-  ): Option[SensitiveMediaSettings] = {
-    sensitiveMediaSettings
+    userSens  ve d aSett ngs: UserSens  ve d aSett ngs
+  ): Opt on[Sens  ve d aSett ngs] = {
+    sens  ve d aSett ngs
   }
 }

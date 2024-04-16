@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class StaticTimelineScribeConfigBuilder(
-  timelineScribeConfig: TimelineScribeConfig)
-    extends TimelineScribeConfigBuilder[PipelineQuery] {
+case class Stat cT  l neScr beConf gBu lder(
+  t  l neScr beConf g: T  l neScr beConf g)
+    extends T  l neScr beConf gBu lder[P pel neQuery] {
 
-  def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+  def bu ld(
+    query: P pel neQuery,
+    entr es: Seq[T  l neEntry]
+  ): Opt on[T  l neScr beConf g] = So (t  l neScr beConf g)
 }

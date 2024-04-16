@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect on;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport java.ut l.concurrent.Sc duledFuture;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.factory.QueryCacheUpdaterScheduledExecutorService;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ScheduledExecutorManager;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.factory.QueryCac UpdaterSc duledExecutorServ ce;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.ut l.Per od cAct onParams;
+ mport com.tw ter.search.earlyb rd.ut l.Sc duledExecutorManager;
+ mport com.tw ter.search.earlyb rd.ut l.ShutdownWa T  Params;
 
 /**
- * Class to manage the scheduler service and all the update tasks. Through this
- * class, update tasks are created and scheduled, canceled and removed.
+ * Class to manage t  sc duler serv ce and all t  update tasks. Through t 
+ * class, update tasks are created and sc duled, canceled and removed.
  *
- * This class is not thread-safe.
+ * T  class  s not thread-safe.
  */
-@VisibleForTesting
-final class QueryCacheUpdater extends ScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheUpdater.class);
+@V s bleForTest ng
+f nal class QueryCac Updater extends Sc duledExecutorManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(QueryCac Updater.class);
 
-  private final List<Task> tasks;
-  private final EarlybirdSearcherStats searcherStats;
-  private final Decider decider;
-  private final UserTable userTable;
-  private final Clock clock;
+  pr vate f nal L st<Task> tasks;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  pr vate f nal Dec der dec der;
+  pr vate f nal UserTable userTable;
+  pr vate f nal Clock clock;
 
-  @VisibleForTesting
-  static final class Task {
-    @VisibleForTesting public final QueryCacheUpdateTask updateTask;
-    @VisibleForTesting public final ScheduledFuture future;
+  @V s bleForTest ng
+  stat c f nal class Task {
+    @V s bleForTest ng publ c f nal QueryCac UpdateTask updateTask;
+    @V s bleForTest ng publ c f nal Sc duledFuture future;
 
-    private Task(QueryCacheUpdateTask updateTask, ScheduledFuture future) {
-      this.updateTask = updateTask;
-      this.future = future;
+    pr vate Task(QueryCac UpdateTask updateTask, Sc duledFuture future) {
+      t .updateTask = updateTask;
+      t .future = future;
     }
   }
 
-  public QueryCacheUpdater(Collection<QueryCacheFilter> cacheFilters,
-                           ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
+  publ c QueryCac Updater(Collect on<QueryCac F lter> cac F lters,
+                           Sc duledExecutorServ ceFactory updaterSc duledExecutorServ ceFactory,
                            UserTable userTable,
-                           SearchStatsReceiver searchStatsReceiver,
-                           EarlybirdSearcherStats searcherStats,
-                           Decider decider,
-                           CriticalExceptionHandler criticalExceptionHandler,
+                           SearchStatsRece ver searchStatsRece ver,
+                           Earlyb rdSearc rStats searc rStats,
+                           Dec der dec der,
+                           Cr  calExcept onHandler cr  calExcept onHandler,
                            Clock clock) {
-    super(updaterScheduledExecutorServiceFactory.build("QueryCacheUpdateThread-%d", true),
-        ShutdownWaitTimeParams.immediately(), searchStatsReceiver,
-        criticalExceptionHandler, clock);
-    Preconditions.checkNotNull(cacheFilters);
-    Preconditions.checkArgument(getExecutor() instanceof QueryCacheUpdaterScheduledExecutorService,
+    super(updaterSc duledExecutorServ ceFactory.bu ld("QueryCac UpdateThread-%d", true),
+        ShutdownWa T  Params. m d ately(), searchStatsRece ver,
+        cr  calExcept onHandler, clock);
+    Precond  ons.c ckNotNull(cac F lters);
+    Precond  ons.c ckArgu nt(getExecutor()  nstanceof QueryCac UpdaterSc duledExecutorServ ce,
         getExecutor().getClass());
 
-    this.searcherStats = searcherStats;
-    this.decider = decider;
-    this.userTable = userTable;
-    this.clock = clock;
+    t .searc rStats = searc rStats;
+    t .dec der = dec der;
+    t .userTable = userTable;
+    t .clock = clock;
 
     shouldLog = false;
-    // One update task per <query, segment>
-    tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
+    // One update task per <query, seg nt>
+    tasks = L sts.newArrayL stW hCapac y(cac F lters.s ze() * 20);
 
     SearchCustomGauge.export(
-        "querycache_num_tasks",
-        tasks::size
+        "querycac _num_tasks",
+        tasks::s ze
     );
   }
 
   /**
-   * Create an update task and add it to the executor
+   * Create an update task and add   to t  executor
    *
-   * @param filter The filter the task should execute
-   * @param segmentInfo The segment that this task would be responsible for
-   * @param updateInterval time in milliseconds between successive updates
-   * @param initialDelay Introduce a delay when adding the task to the executor
+   * @param f lter T  f lter t  task should execute
+   * @param seg nt nfo T  seg nt that t  task would be respons ble for
+   * @param update nterval t    n m ll seconds bet en success ve updates
+   * @param  n  alDelay  ntroduce a delay w n add ng t  task to t  executor
    */
-  void addTask(QueryCacheFilter filter, SegmentInfo segmentInfo,
-               Amount<Long, Time> updateInterval, Amount<Long, Time> initialDelay) {
-    String filterName = filter.getFilterName();
-    String query = filter.getQueryString();
+  vo d addTask(QueryCac F lter f lter, Seg nt nfo seg nt nfo,
+               Amount<Long, T  > update nterval, Amount<Long, T  >  n  alDelay) {
+    Str ng f lterNa  = f lter.getF lterNa ();
+    Str ng query = f lter.getQueryStr ng();
 
-    // Create the task.
-    QueryCacheUpdateTask qcTask = new QueryCacheUpdateTask(
-        filter,
-        segmentInfo,
+    // Create t  task.
+    QueryCac UpdateTask qcTask = new QueryCac UpdateTask(
+        f lter,
+        seg nt nfo,
         userTable,
-        updateInterval,
-        initialDelay,
-        getIterationCounter(),
-        searcherStats,
-        decider,
-        criticalExceptionHandler,
+        update nterval,
+         n  alDelay,
+        get erat onCounter(),
+        searc rStats,
+        dec der,
+        cr  calExcept onHandler,
         clock);
 
-    long initialDelayAsMS = initialDelay.as(Time.MILLISECONDS);
-    long updateIntervalAsMS = updateInterval.as(Time.MILLISECONDS);
-    Preconditions.checkArgument(
-        initialDelayAsMS >= initialDelay.getValue(), "initial delay unit granularity too small");
-    Preconditions.checkArgument(
-        updateIntervalAsMS >= updateInterval.getValue(),
-        "update interval unit granularity too small");
+    long  n  alDelayAsMS =  n  alDelay.as(T  .M LL SECONDS);
+    long update ntervalAsMS = update nterval.as(T  .M LL SECONDS);
+    Precond  ons.c ckArgu nt(
+         n  alDelayAsMS >=  n  alDelay.getValue(), " n  al delay un  granular y too small");
+    Precond  ons.c ckArgu nt(
+        update ntervalAsMS >= update nterval.getValue(),
+        "update  nterval un  granular y too small");
 
-    // Schedule the task.
-    ScheduledFuture future = scheduleNewTask(qcTask,
-        PeriodicActionParams.withIntialWaitAndFixedDelay(
-            initialDelayAsMS, updateIntervalAsMS, TimeUnit.MILLISECONDS
+    // Sc dule t  task.
+    Sc duledFuture future = sc duleNewTask(qcTask,
+        Per od cAct onParams.w h nt alWa AndF xedDelay(
+             n  alDelayAsMS, update ntervalAsMS, T  Un .M LL SECONDS
         )
     );
 
     tasks.add(new Task(qcTask, future));
 
-    LOG.debug("Added a task for filter [" + filterName
-            + "] for segment [" + segmentInfo.getTimeSliceID()
-            + "] with query [" + query
-            + "] update interval " + updateInterval + " "
-            + (initialDelay.getValue() == 0 ? "without" : "with " + initialDelay)
-            + " initial delay");
+    LOG.debug("Added a task for f lter [" + f lterNa 
+            + "] for seg nt [" + seg nt nfo.getT  Sl ce D()
+            + "] w h query [" + query
+            + "] update  nterval " + update nterval + " "
+            + ( n  alDelay.getValue() == 0 ? "w hout" : "w h " +  n  alDelay)
+            + "  n  al delay");
 
   }
 
-  void removeAllTasksForSegment(SegmentInfo segmentInfo) {
-    int removedTasksCount = 0;
-    for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
-      Task task = it.next();
-      if (task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID()) {
+  vo d removeAllTasksForSeg nt(Seg nt nfo seg nt nfo) {
+     nt removedTasksCount = 0;
+    for ( erator<Task>   = tasks. erator();  .hasNext();) {
+      Task task =  .next();
+       f (task.updateTask.getT  Sl ce D() == seg nt nfo.getT  Sl ce D()) {
         task.future.cancel(true);
-        it.remove();
+         .remove();
         removedTasksCount += 1;
       }
     }
 
-    LOG.info("Removed {} update tasks for segment {}.", removedTasksCount,
-        segmentInfo.getTimeSliceID());
+    LOG. nfo("Removed {} update tasks for seg nt {}.", removedTasksCount,
+        seg nt nfo.getT  Sl ce D());
   }
 
-  public void clearTasks() {
-    int totalTasks = tasks.size();
-    LOG.info("Removing {} update tasks for all segments.", totalTasks);
+  publ c vo d clearTasks() {
+     nt totalTasks = tasks.s ze();
+    LOG. nfo("Remov ng {} update tasks for all seg nts.", totalTasks);
     for (Task task : tasks) {
       task.future.cancel(true);
     }
     tasks.clear();
-    LOG.info("Canceled {} QueryCache update tasks", totalTasks);
+    LOG. nfo("Canceled {} QueryCac  update tasks", totalTasks);
   }
 
-  // Have all tasks run at least once (even if they failed)?
-  public boolean allTasksRan() {
+  // Have all tasks run at least once (even  f t y fa led)?
+  publ c boolean allTasksRan() {
     boolean allTasksRan = true;
     for (Task task : tasks) {
-      if (!task.updateTask.ranOnce()) {
+       f (!task.updateTask.ranOnce()) {
         allTasksRan = false;
         break;
       }
@@ -178,65 +178,65 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     return allTasksRan;
   }
 
-  // Have all tasks for this run at least once (even if they failed)?
-  public boolean allTasksRanForSegment(SegmentInfo segmentInfo) {
-    boolean allTasksRanForSegment = true;
+  // Have all tasks for t  run at least once (even  f t y fa led)?
+  publ c boolean allTasksRanForSeg nt(Seg nt nfo seg nt nfo) {
+    boolean allTasksRanForSeg nt = true;
     for (Task task : tasks) {
-      if ((task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID())
+       f ((task.updateTask.getT  Sl ce D() == seg nt nfo.getT  Sl ce D())
           && !task.updateTask.ranOnce()) {
-        allTasksRanForSegment = false;
+        allTasksRanForSeg nt = false;
         break;
       }
     }
 
-    return allTasksRanForSegment;
+    return allTasksRanForSeg nt;
   }
 
   /**
-   * After startup, we want only one thread to update the query cache.
+   * After startup,   want only one thread to update t  query cac .
    */
-  void setWorkerPoolSizeAfterStartup() {
-    QueryCacheUpdaterScheduledExecutorService executor =
-        (QueryCacheUpdaterScheduledExecutorService) getExecutor();
-    executor.setWorkerPoolSizeAfterStartup();
-    LOG.info("Done setting executor core pool size to one");
+  vo d setWorkerPoolS zeAfterStartup() {
+    QueryCac UpdaterSc duledExecutorServ ce executor =
+        (QueryCac UpdaterSc duledExecutorServ ce) getExecutor();
+    executor.setWorkerPoolS zeAfterStartup();
+    LOG. nfo("Done sett ng executor core pool s ze to one");
   }
 
-  @Override
-  protected void shutdownComponent() {
+  @Overr de
+  protected vo d shutdownComponent() {
     clearTasks();
   }
 
   //////////////////////////
-  // for unit tests only
+  // for un  tests only
   //////////////////////////
 
   /**
-   * Returns the list of all query cache updater tasks. This method should be used only in tests.
+   * Returns t  l st of all query cac  updater tasks. T   thod should be used only  n tests.
    */
-  @VisibleForTesting
-  List<Task> getTasksForTest() {
-    synchronized (tasks) {
-      return new ArrayList<>(tasks);
+  @V s bleForTest ng
+  L st<Task> getTasksForTest() {
+    synchron zed (tasks) {
+      return new ArrayL st<>(tasks);
     }
   }
 
-  @VisibleForTesting
-  int getTasksSize() {
-    synchronized (tasks) {
-      return tasks.size();
+  @V s bleForTest ng
+   nt getTasksS ze() {
+    synchron zed (tasks) {
+      return tasks.s ze();
     }
   }
 
-  @VisibleForTesting
-  boolean tasksContains(Task task) {
-    synchronized (tasks) {
-      return tasks.contains(task);
+  @V s bleForTest ng
+  boolean tasksConta ns(Task task) {
+    synchron zed (tasks) {
+      return tasks.conta ns(task);
     }
   }
 
-  @VisibleForTesting
-  public ScheduledExecutorService getExecutorForTest() {
+  @V s bleForTest ng
+  publ c Sc duledExecutorServ ce getExecutorForTest() {
     return getExecutor();
   }
 }

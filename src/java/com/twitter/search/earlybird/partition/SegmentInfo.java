@@ -1,428 +1,428 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java. o.OutputStreamWr er;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
+ mport java.ut l.concurrent.atom c.Atom c nteger;
+ mport java.ut l.concurrent.atom c.Atom cLong;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons. o.F leUt ls;
+ mport org.apac .lucene.store.D rectory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.part  on ng.base.T  Sl ce;
+ mport com.tw ter.search.common.sc ma.earlyb rd.FlushVers on;
+ mport com.tw ter.search.common.ut l.LogFormatUt l;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Pers stentF le;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg nt;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
 
-public class SegmentInfo implements Comparable<SegmentInfo> {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentInfo.class);
+publ c class Seg nt nfo  mple nts Comparable<Seg nt nfo> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg nt nfo.class);
 
-  private static final String UPDATE_STREAM_OFFSET_TIMESTAMP = "updateStreamOffsetTimestamp";
-  public static final int INVALID_ID = -1;
+  pr vate stat c f nal Str ng UPDATE_STREAM_OFFSET_T MESTAMP = "updateStreamOffsetT  stamp";
+  publ c stat c f nal  nt  NVAL D_ D = -1;
 
-  // Delay before deleting a segment
-  private final long timeToWaitBeforeClosingMillis = EarlybirdConfig.getLong(
-      "defer_index_closing_time_millis", 600000L);
-  // How many times deletions are retired.
-  private final AtomicInteger deletionRetries = new AtomicInteger(5);
+  // Delay before delet ng a seg nt
+  pr vate f nal long t  ToWa BeforeClos ngM ll s = Earlyb rdConf g.getLong(
+      "defer_ ndex_clos ng_t  _m ll s", 600000L);
+  // How many t  s delet ons are ret red.
+  pr vate f nal Atom c nteger delet onRetr es = new Atom c nteger(5);
 
-  // Base segment information, including database name, minStatusId.
-  private final Segment segment;
+  // Base seg nt  nformat on,  nclud ng database na , m nStatus d.
+  pr vate f nal Seg nt seg nt;
 
-  // Bits managed by various SegmentProcessors and PartitionManager.
-  private volatile boolean isEnabled   = true;   // True if the segment is enabled.
-  private volatile boolean isIndexing  = false;  // True during indexing.
-  private volatile boolean isComplete  = false;  // True when indexing is complete.
-  private volatile boolean isClosed    = false;  // True if indexSegment is closed.
-  private volatile boolean wasIndexed  = false;  // True if the segment was indexed from scratch.
-  private volatile boolean failedOptimize = false;  // optimize attempt failed.
-  private AtomicBoolean beingUploaded = new AtomicBoolean();  // segment is being copied to HDFS
+  // B s managed by var ous Seg ntProcessors and Part  onManager.
+  pr vate volat le boolean  sEnabled   = true;   // True  f t  seg nt  s enabled.
+  pr vate volat le boolean  s ndex ng  = false;  // True dur ng  ndex ng.
+  pr vate volat le boolean  sComplete  = false;  // True w n  ndex ng  s complete.
+  pr vate volat le boolean  sClosed    = false;  // True  f  ndexSeg nt  s closed.
+  pr vate volat le boolean was ndexed  = false;  // True  f t  seg nt was  ndexed from scratch.
+  pr vate volat le boolean fa ledOpt m ze = false;  // opt m ze attempt fa led.
+  pr vate Atom cBoolean be ngUploaded = new Atom cBoolean();  // seg nt  s be ng cop ed to HDFS
 
-  private final SegmentSyncInfo segmentSyncInfo;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
+  pr vate f nal Seg ntSync nfo seg ntSync nfo;
+  pr vate f nal Earlyb rd ndexConf g earlyb rd ndexConf g;
 
-  private final EarlybirdSegment indexSegment;
+  pr vate f nal Earlyb rdSeg nt  ndexSeg nt;
 
-  private final AtomicLong updatesStreamOffsetTimestamp = new AtomicLong(0);
+  pr vate f nal Atom cLong updatesStreamOffsetT  stamp = new Atom cLong(0);
 
-  public SegmentInfo(Segment segment,
-                     EarlybirdSegmentFactory earlybirdSegmentFactory,
-                     SegmentSyncConfig syncConfig) throws IOException {
-    this(segment, earlybirdSegmentFactory, new SegmentSyncInfo(syncConfig, segment));
+  publ c Seg nt nfo(Seg nt seg nt,
+                     Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+                     Seg ntSyncConf g syncConf g) throws  OExcept on {
+    t (seg nt, earlyb rdSeg ntFactory, new Seg ntSync nfo(syncConf g, seg nt));
   }
 
-  @VisibleForTesting
-  public SegmentInfo(Segment segment,
-                     EarlybirdSegmentFactory earlybirdSegmentFactory,
-                     SegmentSyncInfo segmentSyncInfo) throws IOException {
-    this(earlybirdSegmentFactory.newEarlybirdSegment(segment, segmentSyncInfo),
-        segmentSyncInfo,
-        segment,
-        earlybirdSegmentFactory.getEarlybirdIndexConfig());
+  @V s bleForTest ng
+  publ c Seg nt nfo(Seg nt seg nt,
+                     Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+                     Seg ntSync nfo seg ntSync nfo) throws  OExcept on {
+    t (earlyb rdSeg ntFactory.newEarlyb rdSeg nt(seg nt, seg ntSync nfo),
+        seg ntSync nfo,
+        seg nt,
+        earlyb rdSeg ntFactory.getEarlyb rd ndexConf g());
   }
 
-  public SegmentInfo(
-      EarlybirdSegment earlybirdSegment,
-      SegmentSyncInfo segmentSyncInfo,
-      Segment segment,
-      EarlybirdIndexConfig earlybirdIndexConfig
+  publ c Seg nt nfo(
+      Earlyb rdSeg nt earlyb rdSeg nt,
+      Seg ntSync nfo seg ntSync nfo,
+      Seg nt seg nt,
+      Earlyb rd ndexConf g earlyb rd ndexConf g
   ) {
-    this.indexSegment = earlybirdSegment;
-    this.segmentSyncInfo = segmentSyncInfo;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.segment = segment;
+    t . ndexSeg nt = earlyb rdSeg nt;
+    t .seg ntSync nfo = seg ntSync nfo;
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
+    t .seg nt = seg nt;
   }
 
-  public EarlybirdSegment getIndexSegment() {
-    return indexSegment;
+  publ c Earlyb rdSeg nt get ndexSeg nt() {
+    return  ndexSeg nt;
   }
 
-  public SegmentIndexStats getIndexStats() {
-    return indexSegment.getIndexStats();
+  publ c Seg nt ndexStats get ndexStats() {
+    return  ndexSeg nt.get ndexStats();
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  publ c Earlyb rd ndexConf g getEarlyb rd ndexConf g() {
+    return earlyb rd ndexConf g;
   }
 
-  public long getTimeSliceID() {
-    return segment.getTimeSliceID();
+  publ c long getT  Sl ce D() {
+    return seg nt.getT  Sl ce D();
   }
 
-  public String getSegmentName() {
-    return segment.getSegmentName();
+  publ c Str ng getSeg ntNa () {
+    return seg nt.getSeg ntNa ();
   }
 
-  public int getNumPartitions() {
-    return segment.getNumHashPartitions();
+  publ c  nt getNumPart  ons() {
+    return seg nt.getNumHashPart  ons();
   }
 
-  public boolean isEnabled() {
-    return isEnabled;
+  publ c boolean  sEnabled() {
+    return  sEnabled;
   }
 
-  public void setIsEnabled(boolean isEnabled) {
-    this.isEnabled = isEnabled;
+  publ c vo d set sEnabled(boolean  sEnabled) {
+    t . sEnabled =  sEnabled;
   }
 
-  public boolean isOptimized() {
-    return indexSegment.isOptimized();
+  publ c boolean  sOpt m zed() {
+    return  ndexSeg nt. sOpt m zed();
   }
 
-  public boolean wasIndexed() {
-    return wasIndexed;
+  publ c boolean was ndexed() {
+    return was ndexed;
   }
 
-  public void setWasIndexed(boolean wasIndexed) {
-    this.wasIndexed = wasIndexed;
+  publ c vo d setWas ndexed(boolean was ndexed) {
+    t .was ndexed = was ndexed;
   }
 
-  public boolean isFailedOptimize() {
-    return failedOptimize;
+  publ c boolean  sFa ledOpt m ze() {
+    return fa ledOpt m ze;
   }
 
-  public void setFailedOptimize() {
-    this.failedOptimize = true;
+  publ c vo d setFa ledOpt m ze() {
+    t .fa ledOpt m ze = true;
   }
 
-  public boolean isIndexing() {
-    return isIndexing;
+  publ c boolean  s ndex ng() {
+    return  s ndex ng;
   }
 
-  public void setIndexing(boolean indexing) {
-    this.isIndexing = indexing;
+  publ c vo d set ndex ng(boolean  ndex ng) {
+    t . s ndex ng =  ndex ng;
   }
 
-  public boolean isComplete() {
-    return isComplete;
+  publ c boolean  sComplete() {
+    return  sComplete;
   }
 
-  public boolean isClosed() {
-    return isClosed;
+  publ c boolean  sClosed() {
+    return  sClosed;
   }
 
-  public boolean isBeingUploaded() {
-    return beingUploaded.get();
+  publ c boolean  sBe ngUploaded() {
+    return be ngUploaded.get();
   }
 
-  public void setBeingUploaded(boolean beingUploaded) {
-    this.beingUploaded.set(beingUploaded);
+  publ c vo d setBe ngUploaded(boolean be ngUploaded) {
+    t .be ngUploaded.set(be ngUploaded);
   }
 
-  public boolean casBeingUploaded(boolean expectation, boolean updateValue) {
-    return beingUploaded.compareAndSet(expectation, updateValue);
+  publ c boolean casBe ngUploaded(boolean expectat on, boolean updateValue) {
+    return be ngUploaded.compareAndSet(expectat on, updateValue);
   }
 
-  @VisibleForTesting
-  public void setComplete(boolean complete) {
-    this.isComplete = complete;
+  @V s bleForTest ng
+  publ c vo d setComplete(boolean complete) {
+    t . sComplete = complete;
   }
 
-  public boolean needsIndexing() {
-    return isEnabled && !isIndexing && !isComplete;
+  publ c boolean needs ndex ng() {
+    return  sEnabled && ! s ndex ng && ! sComplete;
   }
 
-  @Override
-  public int compareTo(SegmentInfo other) {
-    return Long.compare(getTimeSliceID(), other.getTimeSliceID());
+  @Overr de
+  publ c  nt compareTo(Seg nt nfo ot r) {
+    return Long.compare(getT  Sl ce D(), ot r.getT  Sl ce D());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof SegmentInfo && compareTo((SegmentInfo) obj) == 0;
+  @Overr de
+  publ c boolean equals(Object obj) {
+    return obj  nstanceof Seg nt nfo && compareTo((Seg nt nfo) obj) == 0;
   }
 
-  @Override
-  public int hashCode() {
-    return new Long(getTimeSliceID()).hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return new Long(getT  Sl ce D()).hashCode();
   }
 
-  public long getUpdatesStreamOffsetTimestamp() {
-    return updatesStreamOffsetTimestamp.get();
+  publ c long getUpdatesStreamOffsetT  stamp() {
+    return updatesStreamOffsetT  stamp.get();
   }
 
-  public void setUpdatesStreamOffsetTimestamp(long timestamp) {
-    updatesStreamOffsetTimestamp.set(timestamp);
+  publ c vo d setUpdatesStreamOffsetT  stamp(long t  stamp) {
+    updatesStreamOffsetT  stamp.set(t  stamp);
   }
 
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append(getSegmentName()).append(" [");
-    builder.append(isEnabled ? "enabled, " : "disabled, ");
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder bu lder = new Str ngBu lder();
+    bu lder.append(getSeg ntNa ()).append(" [");
+    bu lder.append( sEnabled ? "enabled, " : "d sabled, ");
 
-    if (isIndexing) {
-      builder.append("indexing, ");
+     f ( s ndex ng) {
+      bu lder.append(" ndex ng, ");
     }
 
-    if (isComplete) {
-      builder.append("complete, ");
+     f ( sComplete) {
+      bu lder.append("complete, ");
     }
 
-    if (isOptimized()) {
-      builder.append("optimized, ");
+     f ( sOpt m zed()) {
+      bu lder.append("opt m zed, ");
     }
 
-    if (wasIndexed) {
-      builder.append("wasIndexed, ");
+     f (was ndexed) {
+      bu lder.append("was ndexed, ");
     }
 
-    builder.append("IndexSync:");
-    this.segmentSyncInfo.addDebugInfo(builder);
+    bu lder.append(" ndexSync:");
+    t .seg ntSync nfo.addDebug nfo(bu lder);
 
-    return builder.append("]").toString();
+    return bu lder.append("]").toStr ng();
   }
 
-  public Segment getSegment() {
-    return segment;
+  publ c Seg nt getSeg nt() {
+    return seg nt;
   }
 
   /**
-   * Delete the index segment directory corresponding to this segment info. Return true if deleted
-   * successfully; otherwise, false.
+   * Delete t   ndex seg nt d rectory correspond ng to t  seg nt  nfo. Return true  f deleted
+   * successfully; ot rw se, false.
    */
-  public boolean deleteLocalIndexedSegmentDirectoryImmediately() {
-    if (isClosed) {
-      LOG.info("SegmentInfo is already closed: " + toString());
+  publ c boolean deleteLocal ndexedSeg ntD rectory m d ately() {
+     f ( sClosed) {
+      LOG. nfo("Seg nt nfo  s already closed: " + toStr ng());
       return true;
     }
 
-    Preconditions.checkNotNull(indexSegment, "indexSegment should never be null.");
-    isClosed = true;
-    indexSegment.destroyImmediately();
+    Precond  ons.c ckNotNull( ndexSeg nt, " ndexSeg nt should never be null.");
+     sClosed = true;
+     ndexSeg nt.destroy m d ately();
 
-    SegmentSyncConfig sync = getSyncInfo().getSegmentSyncConfig();
+    Seg ntSyncConf g sync = getSync nfo().getSeg ntSyncConf g();
     try {
-      String dirToClear = sync.getLocalSyncDirName(segment);
-      FileUtils.forceDelete(new File(dirToClear));
-      LOG.info("Deleted segment directory: " + toString());
+      Str ng d rToClear = sync.getLocalSyncD rNa (seg nt);
+      F leUt ls.forceDelete(new F le(d rToClear));
+      LOG. nfo("Deleted seg nt d rectory: " + toStr ng());
       return true;
-    } catch (IOException e) {
-      LOG.error("Cannot clean up segment directory for segment: " + toString(), e);
+    } catch ( OExcept on e) {
+      LOG.error("Cannot clean up seg nt d rectory for seg nt: " + toStr ng(), e);
       return false;
     }
   }
 
   /**
-   * Delete the index segment directory after some configured delay.
-   * Note that we don't delete segments that are being uploaded.
-   * If a segment is being uploaded when we try to delete, close() retries the deletion later.
+   * Delete t   ndex seg nt d rectory after so  conf gured delay.
+   * Note that   don't delete seg nts that are be ng uploaded.
+   *  f a seg nt  s be ng uploaded w n   try to delete, close() retr es t  delet on later.
    */
-  public void deleteIndexSegmentDirectoryAfterDelay() {
-    LOG.info("Scheduling SegmentInfo for deletion: " + toString());
-    getEarlybirdIndexConfig().getResourceCloser().closeResourceQuietlyAfterDelay(
-        timeToWaitBeforeClosingMillis, () -> {
-          // Atomically check and set the being uploaded flag, if it is not set.
-          if (beingUploaded.compareAndSet(false, true)) {
-            // If successfully set the flag to true, we can delete immediately
-            setIsEnabled(false);
-            deleteLocalIndexedSegmentDirectoryImmediately();
-            LOG.info("Deleted index segment dir for segment: "
-                + getSegment().getSegmentName());
+  publ c vo d delete ndexSeg ntD rectoryAfterDelay() {
+    LOG. nfo("Sc dul ng Seg nt nfo for delet on: " + toStr ng());
+    getEarlyb rd ndexConf g().getRes ceCloser().closeRes ceQu etlyAfterDelay(
+        t  ToWa BeforeClos ngM ll s, () -> {
+          // Atom cally c ck and set t  be ng uploaded flag,  f    s not set.
+           f (be ngUploaded.compareAndSet(false, true)) {
+            //  f successfully set t  flag to true,   can delete  m d ately
+            set sEnabled(false);
+            deleteLocal ndexedSeg ntD rectory m d ately();
+            LOG. nfo("Deleted  ndex seg nt d r for seg nt: "
+                + getSeg nt().getSeg ntNa ());
           } else {
-            // If the flag is already true (compareAndSet fails), we need to reschedule.
-            if (deletionRetries.decrementAndGet() > 0) {
-              LOG.warn("Segment is being uploaded, will retry deletion later. SegmentInfo: "
-                  + getSegment().getSegmentName());
-              deleteIndexSegmentDirectoryAfterDelay();
+            //  f t  flag  s already true (compareAndSet fa ls),   need to resc dule.
+             f (delet onRetr es.decre ntAndGet() > 0) {
+              LOG.warn("Seg nt  s be ng uploaded, w ll retry delet on later. Seg nt nfo: "
+                  + getSeg nt().getSeg ntNa ());
+              delete ndexSeg ntD rectoryAfterDelay();
             } else {
-              LOG.warn("Failed to cleanup index segment dir for segment: "
-                  + getSegment().getSegmentName());
+              LOG.warn("Fa led to cleanup  ndex seg nt d r for seg nt: "
+                  + getSeg nt().getSeg ntNa ());
             }
           }
         });
   }
 
-  public SegmentSyncInfo getSyncInfo() {
-    return segmentSyncInfo;
+  publ c Seg ntSync nfo getSync nfo() {
+    return seg ntSync nfo;
   }
 
-  public FlushVersion getFlushVersion() {
-    return FlushVersion.CURRENT_FLUSH_VERSION;
+  publ c FlushVers on getFlushVers on() {
+    return FlushVers on.CURRENT_FLUSH_VERS ON;
   }
 
-  public String getZkNodeName() {
-    return getSegmentName() + getFlushVersion().getVersionFileExtension();
+  publ c Str ng getZkNodeNa () {
+    return getSeg ntNa () + getFlushVers on().getVers onF leExtens on();
   }
 
-  static String getSyncDirName(String parentDir, String dbName, String version) {
-    return parentDir + "/" + dbName + version;
+  stat c Str ng getSyncD rNa (Str ng parentD r, Str ng dbNa , Str ng vers on) {
+    return parentD r + "/" + dbNa  + vers on;
   }
 
   /**
-   * Parses the segment name from the name of the flushed directory.
+   * Parses t  seg nt na  from t  na  of t  flus d d rectory.
    */
-  public static String getSegmentNameFromFlushedDir(String flushedDir) {
-    String segmentName = null;
-    String[] fields = flushedDir.split("/");
-    if (fields.length > 0) {
-      segmentName = fields[fields.length - 1];
-      segmentName = segmentName.replaceAll(FlushVersion.DELIMITER + ".*", "");
+  publ c stat c Str ng getSeg ntNa FromFlus dD r(Str ng flus dD r) {
+    Str ng seg ntNa  = null;
+    Str ng[] f elds = flus dD r.spl ("/");
+     f (f elds.length > 0) {
+      seg ntNa  = f elds[f elds.length - 1];
+      seg ntNa  = seg ntNa .replaceAll(FlushVers on.DEL M TER + ".*", "");
     }
-    return segmentName;
+    return seg ntNa ;
   }
 
   /**
-   * Flushes this segment to the given directory.
+   * Flus s t  seg nt to t  g ven d rectory.
    *
-   * @param dir The directory to flush the segment to.
-   * @throws IOException If the segment could not be flushed.
+   * @param d r T  d rectory to flush t  seg nt to.
+   * @throws  OExcept on  f t  seg nt could not be flus d.
    */
-  public void flush(Directory dir) throws IOException {
-    LOG.info("Flushing segment: {}", getSegmentName());
-    try (PersistentFile.Writer writer = PersistentFile.getWriter(dir, getSegmentName())) {
-      FlushInfo flushInfo = new FlushInfo();
-      flushInfo.addLongProperty(UPDATE_STREAM_OFFSET_TIMESTAMP, getUpdatesStreamOffsetTimestamp());
-      getIndexSegment().flush(flushInfo, writer.getDataSerializer());
+  publ c vo d flush(D rectory d r) throws  OExcept on {
+    LOG. nfo("Flush ng seg nt: {}", getSeg ntNa ());
+    try (Pers stentF le.Wr er wr er = Pers stentF le.getWr er(d r, getSeg ntNa ())) {
+      Flush nfo flush nfo = new Flush nfo();
+      flush nfo.addLongProperty(UPDATE_STREAM_OFFSET_T MESTAMP, getUpdatesStreamOffsetT  stamp());
+      get ndexSeg nt().flush(flush nfo, wr er.getDataSer al zer());
 
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(writer.getInfoFileOutputStream());
-      FlushInfo.flushAsYaml(flushInfo, infoFileWriter);
+      OutputStreamWr er  nfoF leWr er = new OutputStreamWr er(wr er.get nfoF leOutputStream());
+      Flush nfo.flushAsYaml(flush nfo,  nfoF leWr er);
     }
   }
 
   /**
-   * Makes a new SegmentInfo out of the current segment info, except that we switch the underlying
-   * segment.
+   * Makes a new Seg nt nfo out of t  current seg nt  nfo, except that   sw ch t  underly ng
+   * seg nt.
    */
-  public SegmentInfo copyWithEarlybirdSegment(EarlybirdSegment optimizedSegment) {
-    // Take everything from the current segment info that doesn't change for the new segment
-    // info and rebuild everything that can change.
-    TimeSlice newTimeSlice = new TimeSlice(
-      getTimeSliceID(),
-      EarlybirdConfig.getMaxSegmentSize(),
-      segment.getHashPartitionID(),
-      segment.getNumHashPartitions()
+  publ c Seg nt nfo copyW hEarlyb rdSeg nt(Earlyb rdSeg nt opt m zedSeg nt) {
+    // Take everyth ng from t  current seg nt  nfo that doesn't change for t  new seg nt
+    //  nfo and rebu ld everyth ng that can change.
+    T  Sl ce newT  Sl ce = new T  Sl ce(
+      getT  Sl ce D(),
+      Earlyb rdConf g.getMaxSeg ntS ze(),
+      seg nt.getHashPart  on D(),
+      seg nt.getNumHashPart  ons()
     );
-    Segment newSegment = newTimeSlice.getSegment();
+    Seg nt newSeg nt = newT  Sl ce.getSeg nt();
 
-    return new SegmentInfo(
-        optimizedSegment,
-        new SegmentSyncInfo(
-            segmentSyncInfo.getSegmentSyncConfig(),
-            newSegment),
-        newSegment,
-        earlybirdIndexConfig
+    return new Seg nt nfo(
+        opt m zedSeg nt,
+        new Seg ntSync nfo(
+            seg ntSync nfo.getSeg ntSyncConf g(),
+            newSeg nt),
+        newSeg nt,
+        earlyb rd ndexConf g
     );
   }
 
   /**
-   * Loads the segment from the given directory.
+   * Loads t  seg nt from t  g ven d rectory.
    *
-   * @param dir The directory to load the segment from.
-   * @throws IOException If the segment could not be loaded.
+   * @param d r T  d rectory to load t  seg nt from.
+   * @throws  OExcept on  f t  seg nt could not be loaded.
    */
-  public void load(Directory dir) throws IOException {
-    LOG.info("Loading segment: {}", getSegmentName());
-    try (PersistentFile.Reader reader = PersistentFile.getReader(dir, getSegmentName())) {
-      FlushInfo flushInfo = FlushInfo.loadFromYaml(reader.getInfoInputStream());
-      setUpdatesStreamOffsetTimestamp(flushInfo.getLongProperty(UPDATE_STREAM_OFFSET_TIMESTAMP));
-      getIndexSegment().load(reader.getDataInputStream(), flushInfo);
+  publ c vo d load(D rectory d r) throws  OExcept on {
+    LOG. nfo("Load ng seg nt: {}", getSeg ntNa ());
+    try (Pers stentF le.Reader reader = Pers stentF le.getReader(d r, getSeg ntNa ())) {
+      Flush nfo flush nfo = Flush nfo.loadFromYaml(reader.get nfo nputStream());
+      setUpdatesStreamOffsetT  stamp(flush nfo.getLongProperty(UPDATE_STREAM_OFFSET_T MESTAMP));
+      get ndexSeg nt().load(reader.getData nputStream(), flush nfo);
     }
   }
 
-  private String getShortStatus() {
-    if (!isEnabled()) {
-      return "disabled";
+  pr vate Str ng getShortStatus() {
+     f (! sEnabled()) {
+      return "d sabled";
     }
 
-    if (isIndexing()) {
-      return "indexing";
+     f ( s ndex ng()) {
+      return " ndex ng";
     }
 
-    if (isComplete()) {
-      return "indexed";
+     f ( sComplete()) {
+      return " ndexed";
     }
 
-    return "pending";
+    return "pend ng";
   }
 
   /**
-   * Get a string to be shown in admin commands which shows the query caches' sizes for this
-   * segment.
+   * Get a str ng to be shown  n adm n commands wh ch shows t  query cac s' s zes for t 
+   * seg nt.
    */
-  public String getQueryCachesData() {
-    StringBuilder out = new StringBuilder();
-    out.append("Segment: " + getSegmentName() + "\n");
-    out.append("Total documents: " + LogFormatUtil.formatInt(
-        getIndexStats().getStatusCount()) + "\n");
-    out.append("Query caches:\n");
-    for (Pair<String, Long> data : indexSegment.getQueryCachesData()) {
-      out.append("  " + data.getFirst());
+  publ c Str ng getQueryCac sData() {
+    Str ngBu lder out = new Str ngBu lder();
+    out.append("Seg nt: " + getSeg ntNa () + "\n");
+    out.append("Total docu nts: " + LogFormatUt l.format nt(
+        get ndexStats().getStatusCount()) + "\n");
+    out.append("Query cac s:\n");
+    for (Pa r<Str ng, Long> data :  ndexSeg nt.getQueryCac sData()) {
+      out.append("  " + data.getF rst());
       out.append(": ");
-      out.append(LogFormatUtil.formatInt(data.getSecond()));
+      out.append(LogFormatUt l.format nt(data.getSecond()));
       out.append("\n");
     }
-    return out.toString();
+    return out.toStr ng();
   }
 
-  public String getSegmentMetadata() {
+  publ c Str ng getSeg nt tadata() {
     return "status: " + getShortStatus() + "\n"
-        + "id: " + getTimeSliceID() + "\n"
-        + "name: " + getSegmentName() + "\n"
-        + "statusCount: " + getIndexStats().getStatusCount() + "\n"
-        + "deleteCount: " + getIndexStats().getDeleteCount() + "\n"
-        + "partialUpdateCount: " + getIndexStats().getPartialUpdateCount() + "\n"
-        + "outOfOrderUpdateCount: " + getIndexStats().getOutOfOrderUpdateCount() + "\n"
-        + "isEnabled: " + isEnabled() + "\n"
-        + "isIndexing: " + isIndexing() + "\n"
-        + "isComplete: " + isComplete() + "\n"
-        + "isFlushed: " + getSyncInfo().isFlushed() + "\n"
-        + "isOptimized: " + isOptimized() + "\n"
-        + "isLoaded: " + getSyncInfo().isLoaded() + "\n"
-        + "wasIndexed: " + wasIndexed() + "\n"
-        + "queryCachesCardinality: " + indexSegment.getQueryCachesCardinality() + "\n";
+        + " d: " + getT  Sl ce D() + "\n"
+        + "na : " + getSeg ntNa () + "\n"
+        + "statusCount: " + get ndexStats().getStatusCount() + "\n"
+        + "deleteCount: " + get ndexStats().getDeleteCount() + "\n"
+        + "part alUpdateCount: " + get ndexStats().getPart alUpdateCount() + "\n"
+        + "outOfOrderUpdateCount: " + get ndexStats().getOutOfOrderUpdateCount() + "\n"
+        + " sEnabled: " +  sEnabled() + "\n"
+        + " s ndex ng: " +  s ndex ng() + "\n"
+        + " sComplete: " +  sComplete() + "\n"
+        + " sFlus d: " + getSync nfo(). sFlus d() + "\n"
+        + " sOpt m zed: " +  sOpt m zed() + "\n"
+        + " sLoaded: " + getSync nfo(). sLoaded() + "\n"
+        + "was ndexed: " + was ndexed() + "\n"
+        + "queryCac sCard nal y: " +  ndexSeg nt.getQueryCac sCard nal y() + "\n";
   }
 }

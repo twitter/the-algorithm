@@ -1,32 +1,32 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Funct on;
+ mport com.google.common.collect. erables;
+ mport com.google.common.collect.Maps;
 
 /**
- * Utility class used to help merging results.
+ * Ut l y class used to  lp  rg ng results.
  */
-public final class ResultsUtil {
-  private ResultsUtil() { }
+publ c f nal class ResultsUt l {
+  pr vate ResultsUt l() { }
 
   /**
-   * Aggregate a list of responses in the following way.
-   * 1. For each response, mapGetter can turn the response into a map.
-   * 2. Dump all entries from the above map into a "total" map, which accumulates entries from
-   *    all the responses.
+   * Aggregate a l st of responses  n t  follow ng way.
+   * 1. For each response, mapGetter can turn t  response  nto a map.
+   * 2. Dump all entr es from t  above map  nto a "total" map, wh ch accumulates entr es from
+   *    all t  responses.
    */
-  public static <T, V> Map<T, Integer> aggregateCountMap(
-          Iterable<V> responses,
-          Function<V, Map<T, Integer>> mapGetter) {
-    Map<T, Integer> total = Maps.newHashMap();
-    for (Map<T, Integer> map : Iterables.transform(responses, mapGetter)) {
-      if (map != null) {
-        for (Map.Entry<T, Integer> entry : map.entrySet()) {
+  publ c stat c <T, V> Map<T,  nteger> aggregateCountMap(
+           erable<V> responses,
+          Funct on<V, Map<T,  nteger>> mapGetter) {
+    Map<T,  nteger> total = Maps.newHashMap();
+    for (Map<T,  nteger> map :  erables.transform(responses, mapGetter)) {
+       f (map != null) {
+        for (Map.Entry<T,  nteger> entry : map.entrySet()) {
           T key = entry.getKey();
-          total.put(key, total.containsKey(key)
+          total.put(key, total.conta nsKey(key)
               ? total.get(key) + entry.getValue() : entry.getValue());
         }
       }

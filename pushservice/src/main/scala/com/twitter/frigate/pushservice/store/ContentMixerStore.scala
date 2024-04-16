@@ -1,17 +1,17 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.content_mixer.thriftscala.ContentMixer
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.content_m xer.thr ftscala.ContentM xer
+ mport com.tw ter.content_m xer.thr ftscala.ContentM xerRequest
+ mport com.tw ter.content_m xer.thr ftscala.ContentM xerResponse
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class ContentMixerStore(contentMixer: ContentMixer.MethodPerEndpoint)
-    extends ReadableStore[ContentMixerRequest, ContentMixerResponse] {
+case class ContentM xerStore(contentM xer: ContentM xer. thodPerEndpo nt)
+    extends ReadableStore[ContentM xerRequest, ContentM xerResponse] {
 
-  override def get(request: ContentMixerRequest): Future[Option[ContentMixerResponse]] = {
-    contentMixer.getCandidates(request).map { response =>
-      Some(response)
+  overr de def get(request: ContentM xerRequest): Future[Opt on[ContentM xerResponse]] = {
+    contentM xer.getCand dates(request).map { response =>
+      So (response)
     }
   }
 }

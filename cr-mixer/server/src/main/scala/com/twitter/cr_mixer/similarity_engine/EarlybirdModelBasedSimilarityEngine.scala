@@ -1,92 +1,92 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery
-import com.twitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngineBase._
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.search.common.ranking.thriftscala.ThriftRankingParams
-import com.twitter.search.common.ranking.thriftscala.ThriftScoringFunctionType
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
-import com.twitter.simclusters_v2.common.UserId
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Earlyb rdModelBasedS m lar yEng ne.Earlyb rdModelBasedSearchQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Earlyb rdS m lar yEng neBase._
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.Earlyb rdCl ent d
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.FacetsToFetch
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l. tadataOpt ons
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.search.common.rank ng.thr ftscala.Thr ftRank ngParams
+ mport com.tw ter.search.common.rank ng.thr ftscala.Thr ftScor ngFunct onType
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdRequest
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdServ ce
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchQuery
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchRank ngMode
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchRelevanceOpt ons
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class EarlybirdModelBasedSimilarityEngine @Inject() (
-  earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-  timeoutConfig: TimeoutConfig,
-  stats: StatsReceiver)
-    extends EarlybirdSimilarityEngineBase[EarlybirdModelBasedSearchQuery] {
-  import EarlybirdModelBasedSimilarityEngine._
-  override val statsReceiver: StatsReceiver = stats.scope(this.getClass.getSimpleName)
-  override def getEarlybirdRequest(
-    query: EarlybirdModelBasedSearchQuery
-  ): Option[EarlybirdRequest] =
-    if (query.seedUserIds.nonEmpty)
-      Some(
-        EarlybirdRequest(
-          searchQuery = getThriftSearchQuery(query),
-          clientId = Some(EarlybirdClientId),
-          timeoutMs = timeoutConfig.earlybirdServerTimeout.inMilliseconds.intValue(),
-          clientRequestID = Some(s"${Trace.id.traceId}"),
+@S ngleton
+case class Earlyb rdModelBasedS m lar yEng ne @ nject() (
+  earlyb rdSearchCl ent: Earlyb rdServ ce. thodPerEndpo nt,
+  t  outConf g: T  outConf g,
+  stats: StatsRece ver)
+    extends Earlyb rdS m lar yEng neBase[Earlyb rdModelBasedSearchQuery] {
+   mport Earlyb rdModelBasedS m lar yEng ne._
+  overr de val statsRece ver: StatsRece ver = stats.scope(t .getClass.getS mpleNa )
+  overr de def getEarlyb rdRequest(
+    query: Earlyb rdModelBasedSearchQuery
+  ): Opt on[Earlyb rdRequest] =
+     f (query.seedUser ds.nonEmpty)
+      So (
+        Earlyb rdRequest(
+          searchQuery = getThr ftSearchQuery(query),
+          cl ent d = So (Earlyb rdCl ent d),
+          t  outMs = t  outConf g.earlyb rdServerT  out. nM ll seconds. ntValue(),
+          cl entRequest D = So (s"${Trace. d.trace d}"),
         ))
     else None
 }
 
-object EarlybirdModelBasedSimilarityEngine {
-  case class EarlybirdModelBasedSearchQuery(
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    oldestTweetTimestampInSec: Option[UserId],
-    frsUserToScoresForScoreAdjustment: Option[Map[UserId, Double]])
-      extends EarlybirdSearchQuery
+object Earlyb rdModelBasedS m lar yEng ne {
+  case class Earlyb rdModelBasedSearchQuery(
+    seedUser ds: Seq[User d],
+    maxNumT ets:  nt,
+    oldestT etT  stamp nSec: Opt on[User d],
+    frsUserToScoresForScoreAdjust nt: Opt on[Map[User d, Double]])
+      extends Earlyb rdSearchQuery
 
   /**
-   * Used by Push Service
+   * Used by Push Serv ce
    */
-  val RealGraphScoringModel = "frigate_unified_engagement_rg"
-  val MaxHitsToProcess = 1000
-  val MaxConsecutiveSameUser = 1
+  val RealGraphScor ngModel = "fr gate_un f ed_engage nt_rg"
+  val MaxH sToProcess = 1000
+  val MaxConsecut veSa User = 1
 
-  private def getModelBasedRankingParams(
-    authorSpecificScoreAdjustments: Map[Long, Double]
-  ): ThriftRankingParams = ThriftRankingParams(
-    `type` = Some(ThriftScoringFunctionType.ModelBased),
-    selectedModels = Some(Map(RealGraphScoringModel -> 1.0)),
+  pr vate def getModelBasedRank ngParams(
+    authorSpec f cScoreAdjust nts: Map[Long, Double]
+  ): Thr ftRank ngParams = Thr ftRank ngParams(
+    `type` = So (Thr ftScor ngFunct onType.ModelBased),
+    selectedModels = So (Map(RealGraphScor ngModel -> 1.0)),
     applyBoosts = false,
-    authorSpecificScoreAdjustments = Some(authorSpecificScoreAdjustments)
+    authorSpec f cScoreAdjust nts = So (authorSpec f cScoreAdjust nts)
   )
 
-  private def getRelevanceOptions(
-    authorSpecificScoreAdjustments: Map[Long, Double],
-  ): ThriftSearchRelevanceOptions = {
-    ThriftSearchRelevanceOptions(
-      maxConsecutiveSameUser = Some(MaxConsecutiveSameUser),
-      rankingParams = Some(getModelBasedRankingParams(authorSpecificScoreAdjustments)),
-      maxHitsToProcess = Some(MaxHitsToProcess),
+  pr vate def getRelevanceOpt ons(
+    authorSpec f cScoreAdjust nts: Map[Long, Double],
+  ): Thr ftSearchRelevanceOpt ons = {
+    Thr ftSearchRelevanceOpt ons(
+      maxConsecut veSa User = So (MaxConsecut veSa User),
+      rank ngParams = So (getModelBasedRank ngParams(authorSpec f cScoreAdjust nts)),
+      maxH sToProcess = So (MaxH sToProcess),
       orderByRelevance = true
     )
   }
 
-  private def getThriftSearchQuery(query: EarlybirdModelBasedSearchQuery): ThriftSearchQuery =
-    ThriftSearchQuery(
-      serializedQuery = Some(f"(* [since_time ${query.oldestTweetTimestampInSec.getOrElse(0)}])"),
-      fromUserIDFilter64 = Some(query.seedUserIds),
-      numResults = query.maxNumTweets,
-      maxHitsToProcess = MaxHitsToProcess,
-      rankingMode = ThriftSearchRankingMode.Relevance,
-      relevanceOptions =
-        Some(getRelevanceOptions(query.frsUserToScoresForScoreAdjustment.getOrElse(Map.empty))),
-      facetFieldNames = Some(FacetsToFetch),
-      resultMetadataOptions = Some(MetadataOptions),
-      searcherId = None
+  pr vate def getThr ftSearchQuery(query: Earlyb rdModelBasedSearchQuery): Thr ftSearchQuery =
+    Thr ftSearchQuery(
+      ser al zedQuery = So (f"(* [s nce_t   ${query.oldestT etT  stamp nSec.getOrElse(0)}])"),
+      fromUser DF lter64 = So (query.seedUser ds),
+      numResults = query.maxNumT ets,
+      maxH sToProcess = MaxH sToProcess,
+      rank ngMode = Thr ftSearchRank ngMode.Relevance,
+      relevanceOpt ons =
+        So (getRelevanceOpt ons(query.frsUserToScoresForScoreAdjust nt.getOrElse(Map.empty))),
+      facetF eldNa s = So (FacetsToFetch),
+      result tadataOpt ons = So ( tadataOpt ons),
+      searc r d = None
     )
 }

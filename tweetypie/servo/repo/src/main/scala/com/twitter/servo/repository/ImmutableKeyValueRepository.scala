@@ -1,18 +1,18 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.util.{Future, Return, Throw, Try}
+ mport com.tw ter.ut l.{Future, Return, Throw, Try}
 
-class ImmutableKeyValueRepository[K, V](data: Map[K, Try[V]])
-    extends KeyValueRepository[Seq[K], K, V] {
+class  mmutableKeyValueRepos ory[K, V](data: Map[K, Try[V]])
+    extends KeyValueRepos ory[Seq[K], K, V] {
   def apply(keys: Seq[K]) = Future {
-    val hits = keys flatMap { key =>
+    val h s = keys flatMap { key =>
       data.get(key) map { key -> _ }
     } toMap
 
-    val found = hits collect { case (key, Return(value)) => key -> value }
-    val failed = hits collect { case (key, Throw(t)) => key -> t }
-    val notFound = keys.toSet -- found.keySet -- failed.keySet
+    val found = h s collect { case (key, Return(value)) => key -> value }
+    val fa led = h s collect { case (key, Throw(t)) => key -> t }
+    val notFound = keys.toSet -- found.keySet -- fa led.keySet
 
-    KeyValueResult(found, notFound, failed)
+    KeyValueResult(found, notFound, fa led)
   }
 }

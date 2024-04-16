@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+package com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry
 
 /**
- * Register Params that do not relate to a specific product.
- * See [[ParamConfig]] for hooks to register Params based on type.
+ * Reg ster Params that do not relate to a spec f c product.
+ * See [[ParamConf g]] for hooks to reg ster Params based on type.
  */
-trait GlobalParamConfig extends ParamConfig with ParamConfigBuilder
+tra  GlobalParamConf g extends ParamConf g w h ParamConf gBu lder

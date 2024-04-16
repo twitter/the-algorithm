@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
-import com.twitter.strato.catalog.OpTag
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Pred cate
+ mport com.tw ter.strato.catalog.OpTag
 
 /**
- * triggers when the a Strato column's is outside of the predicate set by the provided [[Alert]]
+ * tr ggers w n t  a Strato column's  s outs de of t  pred cate set by t  prov ded [[Alert]]
  *
- * @note the [[Alert]] passed into a [[StratoColumnAlert]]
+ * @note t  [[Alert]] passed  nto a [[StratoColumnAlert]]
  *       can not be a [[StratoColumnAlert]]
  */
-case class StratoColumnAlert(column: String, op: OpTag, alert: Alert with IsObservableFromStrato)
+case class StratoColumnAlert(column: Str ng, op: OpTag, alert: Alert w h  sObservableFromStrato)
     extends Alert {
 
-  override val source: Source = Strato(column, op.tag)
-  override val notificationGroup: NotificationGroup = alert.notificationGroup
-  override val warnPredicate: Predicate = alert.warnPredicate
-  override val criticalPredicate: Predicate = alert.criticalPredicate
-  override val runbookLink: Option[String] = alert.runbookLink
-  override val alertType: AlertType = alert.alertType
-  override val metricSuffix: Option[String] = alert.metricSuffix
+  overr de val s ce: S ce = Strato(column, op.tag)
+  overr de val not f cat onGroup: Not f cat onGroup = alert.not f cat onGroup
+  overr de val warnPred cate: Pred cate = alert.warnPred cate
+  overr de val cr  calPred cate: Pred cate = alert.cr  calPred cate
+  overr de val runbookL nk: Opt on[Str ng] = alert.runbookL nk
+  overr de val alertType: AlertType = alert.alertType
+  overr de val  tr cSuff x: Opt on[Str ng] = alert. tr cSuff x
 }
 
 object StratoColumnAlerts {
 
-  /** Make a seq of Alerts for the provided Strato column */
+  /** Make a seq of Alerts for t  prov ded Strato column */
   def apply(
-    column: String,
+    column: Str ng,
     op: OpTag,
-    alerts: Seq[Alert with IsObservableFromStrato]
+    alerts: Seq[Alert w h  sObservableFromStrato]
   ): Seq[Alert] = {
     alerts.map(StratoColumnAlert(column, op, _))
   }

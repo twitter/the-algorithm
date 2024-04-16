@@ -1,28 +1,28 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AlwaysInclude
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtInstructionBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Always nclude
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder. nclude nstruct on
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Urt nstruct onBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddEntr esT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Cover
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ShowAlert
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class AddEntriesWithReplaceAndShowAlertAndCoverInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+case class AddEntr esW hReplaceAndShowAlertAndCover nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, AddEntr esT  l ne nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries
-        .filterNot(_.isInstanceOf[ShowAlert])
-        .filterNot(_.isInstanceOf[Cover])
-        .filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
+    entr es: Seq[T  l neEntry]
+  ): Seq[AddEntr esT  l ne nstruct on] = {
+     f ( nclude nstruct on(query, entr es)) {
+      val entr esToAdd = entr es
+        .f lterNot(_. s nstanceOf[ShowAlert])
+        .f lterNot(_. s nstanceOf[Cover])
+        .f lter(_.entry dToReplace. sEmpty)
+       f (entr esToAdd.nonEmpty) Seq(AddEntr esT  l ne nstruct on(entr esToAdd))
       else Seq.empty
     } else
       Seq.empty

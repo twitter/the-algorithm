@@ -1,16 +1,16 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
 /**
- * A builder interface to build a LightweightLinearModel.
+ * A bu lder  nterface to bu ld a L ght  ghtL nearModel.
  */
-public interface ModelBuilder {
+publ c  nterface ModelBu lder {
   /**
-   * parses a line of the model file and updates the build state
+   * parses a l ne of t  model f le and updates t  bu ld state
    */
-  ModelBuilder parseLine(String line);
+  ModelBu lder parseL ne(Str ng l ne);
 
   /**
-   * builds the model
+   * bu lds t  model
    */
-  LightweightLinearModel build();
+  L ght  ghtL nearModel bu ld();
 }

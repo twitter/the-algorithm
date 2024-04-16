@@ -1,46 +1,46 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats._
+ mport com.tw ter.f nagle.stats._
 
 /**
- * Stores scoped StatsReceivers in a map to avoid unnecessary object creation.
+ * Stores scoped StatsRece vers  n a map to avo d unnecessary object creat on.
  */
-class MemoizingStatsReceiver(val self: StatsReceiver)
-    extends StatsReceiver
-    with DelegatingStatsReceiver
-    with Proxy {
-  def underlying: Seq[StatsReceiver] = Seq(self)
+class  mo z ngStatsRece ver(val self: StatsRece ver)
+    extends StatsRece ver
+    w h Delegat ngStatsRece ver
+    w h Proxy {
+  def underly ng: Seq[StatsRece ver] = Seq(self)
 
   val repr = self.repr
 
-  private[this] lazy val scopeMemo =
-    Memoize[String, StatsReceiver] { name =>
-      new MemoizingStatsReceiver(self.scope(name))
+  pr vate[t ] lazy val scope mo =
+     mo ze[Str ng, StatsRece ver] { na  =>
+      new  mo z ngStatsRece ver(self.scope(na ))
     }
 
-  private[this] lazy val counterMemo =
-    Memoize[(Seq[String], Verbosity), Counter] {
-      case (names, verbosity) =>
-        self.counter(verbosity, names: _*)
+  pr vate[t ] lazy val counter mo =
+     mo ze[(Seq[Str ng], Verbos y), Counter] {
+      case (na s, verbos y) =>
+        self.counter(verbos y, na s: _*)
     }
 
-  private[this] lazy val statMemo =
-    Memoize[(Seq[String], Verbosity), Stat] {
-      case (names, verbosity) =>
-        self.stat(verbosity, names: _*)
+  pr vate[t ] lazy val stat mo =
+     mo ze[(Seq[Str ng], Verbos y), Stat] {
+      case (na s, verbos y) =>
+        self.stat(verbos y, na s: _*)
     }
 
-  def counter(metricBuilder: MetricBuilder): Counter =
-    counterMemo(metricBuilder.name -> metricBuilder.verbosity)
+  def counter( tr cBu lder:  tr cBu lder): Counter =
+    counter mo( tr cBu lder.na  ->  tr cBu lder.verbos y)
 
-  def stat(metricBuilder: MetricBuilder): Stat = statMemo(
-    metricBuilder.name -> metricBuilder.verbosity)
+  def stat( tr cBu lder:  tr cBu lder): Stat = stat mo(
+     tr cBu lder.na  ->  tr cBu lder.verbos y)
 
-  def addGauge(metricBuilder: MetricBuilder)(f: => Float): Gauge = {
-    // scalafix:off StoreGaugesAsMemberVariables
-    self.addGauge(metricBuilder)(f)
-    // scalafix:on StoreGaugesAsMemberVariables
+  def addGauge( tr cBu lder:  tr cBu lder)(f: => Float): Gauge = {
+    // scalaf x:off StoreGaugesAs mberVar ables
+    self.addGauge( tr cBu lder)(f)
+    // scalaf x:on StoreGaugesAs mberVar ables
   }
 
-  override def scope(name: String): StatsReceiver = scopeMemo(name)
+  overr de def scope(na : Str ng): StatsRece ver = scope mo(na )
 }

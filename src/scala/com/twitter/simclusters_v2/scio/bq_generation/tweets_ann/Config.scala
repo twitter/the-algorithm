@@ -1,33 +1,33 @@
-package com.twitter.simclusters_v2.scio.bq_generation.tweets_ann
+package com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann
 
-object Config {
+object Conf g {
   /*
    * Common root path
    */
-  val RootMHPath: String = "manhattan_sequence_files/offline_sann/"
-  val RootThriftPath: String = "processed/offline_sann/"
-  val AdhocRootPath = "adhoc/offline_sann/"
+  val RootMHPath: Str ng = "manhattan_sequence_f les/offl ne_sann/"
+  val RootThr ftPath: Str ng = "processed/offl ne_sann/"
+  val AdhocRootPath = "adhoc/offl ne_sann/"
 
   /*
-   * Variables for MH output path
+   * Var ables for MH output path
    */
-  val IIKFANNOutputPath: String = "tweets_ann/iikf"
-  val IIKFHL0EL15ANNOutputPath: String = "tweets_ann/iikf_hl_0_el_15"
-  val IIKFHL2EL15ANNOutputPath: String = "tweets_ann/iikf_hl_2_el_15"
-  val IIKFHL2EL50ANNOutputPath: String = "tweets_ann/iikf_hl_2_el_50"
-  val IIKFHL8EL50ANNOutputPath: String = "tweets_ann/iikf_hl_8_el_50"
-  val MTSConsumerEmbeddingsANNOutputPath: String = "tweets_ann/mts_consumer_embeddings"
+  val   KFANNOutputPath: Str ng = "t ets_ann/  kf"
+  val   KFHL0EL15ANNOutputPath: Str ng = "t ets_ann/  kf_hl_0_el_15"
+  val   KFHL2EL15ANNOutputPath: Str ng = "t ets_ann/  kf_hl_2_el_15"
+  val   KFHL2EL50ANNOutputPath: Str ng = "t ets_ann/  kf_hl_2_el_50"
+  val   KFHL8EL50ANNOutputPath: Str ng = "t ets_ann/  kf_hl_8_el_50"
+  val MTSConsu rEmbedd ngsANNOutputPath: Str ng = "t ets_ann/mts_consu r_embedd ngs"
 
   /*
-   * Variables for tweet embeddings generation
+   * Var ables for t et embedd ngs generat on
    */
-  val SimClustersTweetEmbeddingsGenerationHalfLife: Int = 28800000 // 8hrs in ms
-  val SimClustersTweetEmbeddingsGenerationEmbeddingLength: Int = 15
+  val S mClustersT etEmbedd ngsGenerat onHalfL fe:  nt = 28800000 // 8hrs  n ms
+  val S mClustersT etEmbedd ngsGenerat onEmbedd ngLength:  nt = 15
 
   /*
-   * Variables for ANN
+   * Var ables for ANN
    */
-  val SimClustersANNTopNClustersPerSourceEmbedding: Int = 20
-  val SimClustersANNTopMTweetsPerCluster: Int = 50
-  val SimClustersANNTopKTweetsPerUserRequest: Int = 200
+  val S mClustersANNTopNClustersPerS ceEmbedd ng:  nt = 20
+  val S mClustersANNTopMT etsPerCluster:  nt = 50
+  val S mClustersANNTopKT etsPerUserRequest:  nt = 200
 }

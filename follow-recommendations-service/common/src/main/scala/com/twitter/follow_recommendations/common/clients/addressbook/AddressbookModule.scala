@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.clients.addressbook
+package com.tw ter.follow_recom ndat ons.common.cl ents.addressbook
 
-import com.twitter.addressbook.thriftscala.Addressbook2
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+ mport com.tw ter.addressbook.thr ftscala.Addressbook2
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.common.BaseCl entModule
 
-object AddressbookModule extends BaseClientModule[Addressbook2.MethodPerEndpoint] with MtlsClient {
-  override val label = "addressbook"
-  override val dest = "/s/addressbook/addressbook2"
+object AddressbookModule extends BaseCl entModule[Addressbook2. thodPerEndpo nt] w h MtlsCl ent {
+  overr de val label = "addressbook"
+  overr de val dest = "/s/addressbook/addressbook2"
 }

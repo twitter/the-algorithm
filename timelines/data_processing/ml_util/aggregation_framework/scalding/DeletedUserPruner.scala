@@ -1,95 +1,95 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng
 
-import com.twitter.gizmoduck.snapshot.DeletedUserScalaDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding_internal.pruner.Pruner
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.scalding.serialization.macros.impl.ordered_serialization.runtime_helpers.MacroEqualityOrderedSerialization
-import java.{util => ju}
+ mport com.tw ter.g zmoduck.snapshot.DeletedUserScalaDataset
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.DateOps
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.job.Requ redB naryComparators.ordSer
+ mport com.tw ter.scald ng_ nternal.pruner.Pruner
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport com.tw ter.scald ng.ser al zat on.macros. mpl.ordered_ser al zat on.runt  _ lpers.MacroEqual yOrderedSer al zat on
+ mport java.{ut l => ju}
 
 object DeletedUserSeqPruner extends Pruner[Seq[Long]] {
-  implicit val tz: ju.TimeZone = DateOps.UTC
-  implicit val userIdSequenceOrdering: MacroEqualityOrderedSerialization[Seq[Long]] =
+   mpl c  val tz: ju.T  Zone = DateOps.UTC
+   mpl c  val user dSequenceOrder ng: MacroEqual yOrderedSer al zat on[Seq[Long]] =
     ordSer[Seq[Long]]
 
-  private[scalding] def pruneDeletedUsers[T](
-    input: TypedPipe[T],
+  pr vate[scald ng] def pruneDeletedUsers[T](
+     nput: TypedP pe[T],
     extractor: T => Seq[Long],
-    deletedUsers: TypedPipe[Long]
-  ): TypedPipe[T] = {
-    val userIdsAndValues = input.map { t: T =>
-      val userIds: Seq[Long] = extractor(t)
-      (userIds, t)
+    deletedUsers: TypedP pe[Long]
+  ): TypedP pe[T] = {
+    val user dsAndValues =  nput.map { t: T =>
+      val user ds: Seq[Long] = extractor(t)
+      (user ds, t)
     }
 
-    // Find all valid sequences of userids in the input pipe
-    // that contain at least one deleted user. This is efficient
-    // as long as the number of deleted users is small.
-    val userSequencesWithDeletedUsers = userIdsAndValues
-      .flatMap { case (userIds, _) => userIds.map((_, userIds)) }
-      .leftJoin(deletedUsers.asKeys)
-      .collect { case (_, (userIds, Some(_))) => userIds }
-      .distinct
+    // F nd all val d sequences of user ds  n t   nput p pe
+    // that conta n at least one deleted user. T   s eff c ent
+    // as long as t  number of deleted users  s small.
+    val userSequencesW hDeletedUsers = user dsAndValues
+      .flatMap { case (user ds, _) => user ds.map((_, user ds)) }
+      .leftJo n(deletedUsers.asKeys)
+      .collect { case (_, (user ds, So (_))) => user ds }
+      .d st nct
 
-    userIdsAndValues
-      .leftJoin(userSequencesWithDeletedUsers.asKeys)
+    user dsAndValues
+      .leftJo n(userSequencesW hDeletedUsers.asKeys)
       .collect { case (_, (t, None)) => t }
   }
 
-  override def prune[T](
-    input: TypedPipe[T],
-    put: (T, Seq[Long]) => Option[T],
+  overr de def prune[T](
+     nput: TypedP pe[T],
+    put: (T, Seq[Long]) => Opt on[T],
     get: T => Seq[Long],
-    writeTime: RichDate
-  ): TypedPipe[T] = {
+    wr eT  : R chDate
+  ): TypedP pe[T] = {
     lazy val deletedUsers = DAL
-      .readMostRecentSnapshot(DeletedUserScalaDataset, DateRange(writeTime - Days(7), writeTime))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map(_.userId)
+      .readMostRecentSnapshot(DeletedUserScalaDataset, DateRange(wr eT   - Days(7), wr eT  ))
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
+      .map(_.user d)
 
-    pruneDeletedUsers(input, get, deletedUsers)
+    pruneDeletedUsers( nput, get, deletedUsers)
   }
 }
 
-object AggregationKeyPruner {
+object Aggregat onKeyPruner {
 
   /**
-   * Makes a pruner that prunes aggregate records where any of the
-   * "userIdFeatures" set in the aggregation key correspond to a
-   * user who has deleted their account. Here, "userIdFeatures" is
-   * intended as a catch-all term for all features corresponding to
-   * a Twitter user in the input data record -- the feature itself
-   * could represent an authorId, retweeterId, engagerId, etc.
+   * Makes a pruner that prunes aggregate records w re any of t 
+   * "user dFeatures" set  n t  aggregat on key correspond to a
+   * user who has deleted t  r account.  re, "user dFeatures"  s
+   *  ntended as a catch-all term for all features correspond ng to
+   * a Tw ter user  n t   nput data record -- t  feature  self
+   * could represent an author d, ret eter d, engager d, etc.
    */
   def mkDeletedUsersPruner(
-    userIdFeatures: Seq[Feature[_]]
-  ): Pruner[(AggregationKey, DataRecord)] = {
-    val userIdFeatureIds = userIdFeatures.map(TypedAggregateGroup.getDenseFeatureId)
+    user dFeatures: Seq[Feature[_]]
+  ): Pruner[(Aggregat onKey, DataRecord)] = {
+    val user dFeature ds = user dFeatures.map(TypedAggregateGroup.getDenseFeature d)
 
-    def getter(tupled: (AggregationKey, DataRecord)): Seq[Long] = {
+    def getter(tupled: (Aggregat onKey, DataRecord)): Seq[Long] = {
       tupled match {
-        case (aggregationKey, _) =>
-          userIdFeatureIds.flatMap { id =>
-            aggregationKey.discreteFeaturesById
-              .get(id)
-              .orElse(aggregationKey.textFeaturesById.get(id).map(_.toLong))
+        case (aggregat onKey, _) =>
+          user dFeature ds.flatMap {  d =>
+            aggregat onKey.d screteFeaturesBy d
+              .get( d)
+              .orElse(aggregat onKey.textFeaturesBy d.get( d).map(_.toLong))
           }
       }
     }
 
-    // Setting putter to always return None here. The put function is not used within pruneDeletedUsers, this function is just needed for xmap api.
-    def putter: ((AggregationKey, DataRecord), Seq[Long]) => Option[(AggregationKey, DataRecord)] =
+    // Sett ng putter to always return None  re. T  put funct on  s not used w h n pruneDeletedUsers, t  funct on  s just needed for xmap ap .
+    def putter: ((Aggregat onKey, DataRecord), Seq[Long]) => Opt on[(Aggregat onKey, DataRecord)] =
       (t, seq) => None
 
     DeletedUserSeqPruner.xmap(putter, getter)

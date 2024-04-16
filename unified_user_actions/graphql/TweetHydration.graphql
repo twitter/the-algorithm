@@ -1,11 +1,11 @@
-query TweetHydration($rest_id: NumericString!) {
-  tweet_result_by_rest_id(rest_id: $rest_id, safety_level: ForDevelopmentOnly) {
+query T etHydrat on($rest_ d: Nu r cStr ng!) {
+  t et_result_by_rest_ d(rest_ d: $rest_ d, safety_level: ForDevelop ntOnly) {
     result {
-      ... on Tweet {
+      ... on T et {
         core {
           user {
             legacy {
-              id_str
+               d_str
             }
           }
         }

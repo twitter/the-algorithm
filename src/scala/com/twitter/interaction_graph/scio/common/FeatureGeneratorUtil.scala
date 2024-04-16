@@ -1,263 +1,263 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGroups.DWELL_TIME_FEATURE_LIST
-import com.twitter.interaction_graph.scio.common.FeatureGroups.STATUS_FEATURE_LIST
-import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+ mport com.spot fy.sc o.Sc o tr cs
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGroups.DWELL_T ME_FEATURE_L ST
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGroups.STATUS_FEATURE_L ST
+ mport com.tw ter. nteract on_graph.sc o.common.UserUt l.DUMMY_USER_ D
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.EdgeFeature
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.T  Ser esStat st cs
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport com.tw ter. nteract on_graph.thr ftscala.VertexFeature
 
-object FeatureGeneratorUtil {
+object FeatureGeneratorUt l {
 
-  // Initialize a TimeSeriesStatistics object by (value, age) pair
-  def initializeTSS(featureValue: Double, age: Int = 1): TimeSeriesStatistics =
-    TimeSeriesStatistics(
-      mean = featureValue,
-      m2ForVariance = 0.0,
+  //  n  al ze a T  Ser esStat st cs object by (value, age) pa r
+  def  n  al zeTSS(featureValue: Double, age:  nt = 1): T  Ser esStat st cs =
+    T  Ser esStat st cs(
+       an = featureValue,
+      m2ForVar ance = 0.0,
       ewma = featureValue,
       numElapsedDays = age,
       numNonZeroDays = age,
-      numDaysSinceLast = Some(age)
+      numDaysS nceLast = So (age)
     )
 
   /**
-   * Create vertex feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will represent non-directional features (eg num_create_tweets) as "outgoing" values.
+   * Create vertex feature from  nteract onGraphRaw nput graph (src, dst, feature na , age, featureValue)
+   *   w ll represent non-d rect onal features (eg num_create_t ets) as "outgo ng" values.
    * @return
    */
   def getVertexFeature(
-    input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Vertex] = {
-    // For vertex features we need to calculate both in and out featureValue
-    val vertexAggregatedFeatureValues = input
-      .flatMap { input =>
-        if (input.dst != DUMMY_USER_ID) {
+     nput: SCollect on[ nteract onGraphRaw nput]
+  ): SCollect on[Vertex] = {
+    // For vertex features   need to calculate both  n and out featureValue
+    val vertexAggregatedFeatureValues =  nput
+      .flatMap {  nput =>
+         f ( nput.dst != DUMMY_USER_ D) {
           Seq(
-            ((input.src, input.name.value), (input.featureValue, 0.0)),
-            ((input.dst, input.name.value), (0.0, input.featureValue))
+            (( nput.src,  nput.na .value), ( nput.featureValue, 0.0)),
+            (( nput.dst,  nput.na .value), (0.0,  nput.featureValue))
           )
         } else {
-          // we put the non-directional features as "outgoing" values
-          Seq(((input.src, input.name.value), (input.featureValue, 0.0)))
+          //   put t  non-d rect onal features as "outgo ng" values
+          Seq((( nput.src,  nput.na .value), ( nput.featureValue, 0.0)))
         }
       }
       .sumByKey
       .map {
-        case ((userId, nameId), (outEdges, inEdges)) =>
-          (userId, (FeatureName(nameId), outEdges, inEdges))
+        case ((user d, na  d), (outEdges,  nEdges)) =>
+          (user d, (FeatureNa (na  d), outEdges,  nEdges))
       }.groupByKey
 
     vertexAggregatedFeatureValues.map {
-      case (userId, records) =>
-        // sort features by FeatureName for deterministic order (esp during testing)
+      case (user d, records) =>
+        // sort features by FeatureNa  for determ n st c order (esp dur ng test ng)
         val features = records.toSeq.sortBy(_._1.value).flatMap {
-          case (name, outEdges, inEdges) =>
+          case (na , outEdges,  nEdges) =>
             // create out vertex features
-            val outFeatures = if (outEdges > 0) {
-              val outTss = initializeTSS(outEdges)
-              List(
+            val outFeatures =  f (outEdges > 0) {
+              val outTss =  n  al zeTSS(outEdges)
+              L st(
                 VertexFeature(
-                  name = name,
-                  outgoing = true,
+                  na  = na ,
+                  outgo ng = true,
                   tss = outTss
                 ))
-            } else Nil
+            } else N l
 
-            // create in vertex features
-            val inFeatures = if (inEdges > 0) {
-              val inTss = initializeTSS(inEdges)
-              List(
+            // create  n vertex features
+            val  nFeatures =  f ( nEdges > 0) {
+              val  nTss =  n  al zeTSS( nEdges)
+              L st(
                 VertexFeature(
-                  name = name,
-                  outgoing = false,
-                  tss = inTss
+                  na  = na ,
+                  outgo ng = false,
+                  tss =  nTss
                 ))
-            } else Nil
+            } else N l
 
-            outFeatures ++ inFeatures
+            outFeatures ++  nFeatures
         }
-        Vertex(userId = userId, features = features)
+        Vertex(user d = user d, features = features)
     }
   }
 
   /**
-   * Create edge feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will exclude all non-directional features (eg num_create_tweets) from all edge aggregates
+   * Create edge feature from  nteract onGraphRaw nput graph (src, dst, feature na , age, featureValue)
+   *   w ll exclude all non-d rect onal features (eg num_create_t ets) from all edge aggregates
    */
   def getEdgeFeature(
-    input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Edge] = {
-    input
-      .withName("filter non-directional features")
-      .flatMap { input =>
-        if (input.dst != DUMMY_USER_ID) {
-          ScioMetrics.counter("getEdgeFeature", s"directional feature ${input.name.name}").inc()
-          Some(((input.src, input.dst), (input.name, input.age, input.featureValue)))
+     nput: SCollect on[ nteract onGraphRaw nput]
+  ): SCollect on[Edge] = {
+     nput
+      .w hNa ("f lter non-d rect onal features")
+      .flatMap {  nput =>
+         f ( nput.dst != DUMMY_USER_ D) {
+          Sc o tr cs.counter("getEdgeFeature", s"d rect onal feature ${ nput.na .na }"). nc()
+          So ((( nput.src,  nput.dst), ( nput.na ,  nput.age,  nput.featureValue)))
         } else {
-          ScioMetrics.counter("getEdgeFeature", s"non-directional feature ${input.name.name}").inc()
+          Sc o tr cs.counter("getEdgeFeature", s"non-d rect onal feature ${ nput.na .na }"). nc()
           None
         }
       }
-      .withName("group features by pairs")
+      .w hNa ("group features by pa rs")
       .groupByKey
       .map {
         case ((src, dst), records) =>
-          // sort features by FeatureName for deterministic order (esp during testing)
+          // sort features by FeatureNa  for determ n st c order (esp dur ng test ng)
           val features = records.toSeq.sortBy(_._1.value).map {
-            case (name, age, featureValue) =>
-              val tss = initializeTSS(featureValue, age)
+            case (na , age, featureValue) =>
+              val tss =  n  al zeTSS(featureValue, age)
               EdgeFeature(
-                name = name,
+                na  = na ,
                 tss = tss
               )
           }
           Edge(
-            sourceId = src,
-            destinationId = dst,
-            weight = Some(0.0),
+            s ce d = src,
+            dest nat on d = dst,
+              ght = So (0.0),
             features = features.toSeq
           )
       }
   }
 
-  // For same user id, combine different vertex feature records into one record
-  // The input will assume for each (userId, featureName, direction), there will be only one record
-  def combineVertexFeatures(
-    vertex: SCollection[Vertex],
-  ): SCollection[Vertex] = {
+  // For sa  user  d, comb ne d fferent vertex feature records  nto one record
+  // T   nput w ll assu  for each (user d, featureNa , d rect on), t re w ll be only one record
+  def comb neVertexFeatures(
+    vertex: SCollect on[Vertex],
+  ): SCollect on[Vertex] = {
     vertex
       .groupBy { v: Vertex =>
-        v.userId
+        v.user d
       }
       .map {
-        case (userId, vertexes) =>
-          val combiner = vertexes.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex)
+        case (user d, vertexes) =>
+          val comb ner = vertexes.foldLeft(VertexFeatureComb ner(user d)) {
+            case (comb ner, vertex) =>
+              comb ner.addFeature(vertex)
           }
-          combiner.getCombinedVertex(0)
+          comb ner.getComb nedVertex(0)
       }
 
   }
 
-  def combineEdgeFeatures(
-    edge: SCollection[Edge]
-  ): SCollection[Edge] = {
+  def comb neEdgeFeatures(
+    edge: SCollect on[Edge]
+  ): SCollect on[Edge] = {
     edge
       .groupBy { e =>
-        (e.sourceId, e.destinationId)
+        (e.s ce d, e.dest nat on d)
       }
-      .withName("combining edge features for each (src, dst)")
+      .w hNa ("comb n ng edge features for each (src, dst)")
       .map {
         case ((src, dst), edges) =>
-          val combiner = edges.foldLeft(EdgeFeatureCombiner(src, dst)) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge)
+          val comb ner = edges.foldLeft(EdgeFeatureComb ner(src, dst)) {
+            case (comb ner, edge) =>
+              comb ner.addFeature(edge)
           }
-          combiner.getCombinedEdge(0)
+          comb ner.getComb nedEdge(0)
       }
   }
 
-  def combineVertexFeaturesWithDecay(
-    history: SCollection[Vertex],
-    daily: SCollection[Vertex],
-    historyWeight: Double,
-    dailyWeight: Double
-  ): SCollection[Vertex] = {
+  def comb neVertexFeaturesW hDecay(
+     tory: SCollect on[Vertex],
+    da ly: SCollect on[Vertex],
+     tory  ght: Double,
+    da ly  ght: Double
+  ): SCollect on[Vertex] = {
 
-    history
-      .keyBy(_.userId)
-      .cogroup(daily.keyBy(_.userId)).map {
-        case (userId, (h, d)) =>
-          // Adding history iterators
-          val historyCombiner = h.toList.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, historyWeight, 0)
+     tory
+      .keyBy(_.user d)
+      .cogroup(da ly.keyBy(_.user d)).map {
+        case (user d, (h, d)) =>
+          // Add ng  tory  erators
+          val  toryComb ner = h.toL st.foldLeft(VertexFeatureComb ner(user d)) {
+            case (comb ner, vertex) =>
+              comb ner.addFeature(vertex,  tory  ght, 0)
           }
-          // Adding daily iterators
-          val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, dailyWeight, 1)
+          // Add ng da ly  erators
+          val f nalComb ner = d.toL st.foldLeft( toryComb ner) {
+            case (comb ner, vertex) =>
+              comb ner.addFeature(vertex, da ly  ght, 1)
           }
 
-          finalCombiner.getCombinedVertex(
+          f nalComb ner.getComb nedVertex(
             2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+          ) // 2  ans totally   have 2 days(yesterday and today) data to comb ne toget r
       }
   }
 
-  def combineEdgeFeaturesWithDecay(
-    history: SCollection[Edge],
-    daily: SCollection[Edge],
-    historyWeight: Double,
-    dailyWeight: Double
-  ): SCollection[Edge] = {
+  def comb neEdgeFeaturesW hDecay(
+     tory: SCollect on[Edge],
+    da ly: SCollect on[Edge],
+     tory  ght: Double,
+    da ly  ght: Double
+  ): SCollect on[Edge] = {
 
-    history
+     tory
       .keyBy { e =>
-        (e.sourceId, e.destinationId)
+        (e.s ce d, e.dest nat on d)
       }
-      .withName("combine history and daily edges with decay")
-      .cogroup(daily.keyBy { e =>
-        (e.sourceId, e.destinationId)
+      .w hNa ("comb ne  tory and da ly edges w h decay")
+      .cogroup(da ly.keyBy { e =>
+        (e.s ce d, e.dest nat on d)
       }).map {
         case ((src, dst), (h, d)) =>
-          //val combiner = EdgeFeatureCombiner(src, dst)
-          // Adding history iterators
+          //val comb ner = EdgeFeatureComb ner(src, dst)
+          // Add ng  tory  erators
 
-          val historyCombiner = h.toList.foldLeft(EdgeFeatureCombiner(src, dst)) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge, historyWeight, 0)
+          val  toryComb ner = h.toL st.foldLeft(EdgeFeatureComb ner(src, dst)) {
+            case (comb ner, edge) =>
+              comb ner.addFeature(edge,  tory  ght, 0)
           }
 
-          val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge, dailyWeight, 1)
+          val f nalComb ner = d.toL st.foldLeft( toryComb ner) {
+            case (comb ner, edge) =>
+              comb ner.addFeature(edge, da ly  ght, 1)
           }
 
-          finalCombiner.getCombinedEdge(
+          f nalComb ner.getComb nedEdge(
             2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+          ) // 2  ans totally   have 2 days(yesterday and today) data to comb ne toget r
 
       }
   }
 
   /**
-   * Create features from following graph (src, dst, age, featureValue)
-   * Note that we will filter out vertex features represented as edges from the edge output.
+   * Create features from follow ng graph (src, dst, age, featureValue)
+   * Note that   w ll f lter out vertex features represented as edges from t  edge output.
    */
   def getFeatures(
-    input: SCollection[InteractionGraphRawInput]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    (getVertexFeature(input), getEdgeFeature(input))
+     nput: SCollect on[ nteract onGraphRaw nput]
+  ): (SCollect on[Vertex], SCollect on[Edge]) = {
+    (getVertexFeature( nput), getEdgeFeature( nput))
   }
 
-  // remove the edge features that from flock, address book or sms as we will refresh them on a daily basis
+  // remove t  edge features that from flock, address book or sms as   w ll refresh t m on a da ly bas s
   def removeStatusFeatures(e: Edge): Seq[Edge] = {
-    val updatedFeatureList = e.features.filter { e =>
-      !STATUS_FEATURE_LIST.contains(e.name)
+    val updatedFeatureL st = e.features.f lter { e =>
+      !STATUS_FEATURE_L ST.conta ns(e.na )
     }
-    if (updatedFeatureList.size > 0) {
+     f (updatedFeatureL st.s ze > 0) {
       val edge = Edge(
-        sourceId = e.sourceId,
-        destinationId = e.destinationId,
-        weight = e.weight,
-        features = updatedFeatureList
+        s ce d = e.s ce d,
+        dest nat on d = e.dest nat on d,
+          ght = e.  ght,
+        features = updatedFeatureL st
       )
       Seq(edge)
     } else
-      Nil
+      N l
   }
 
-  // check if the edge feature has features other than dwell time feature
-  def edgeWithFeatureOtherThanDwellTime(e: Edge): Boolean = {
-    e.features.exists { f =>
-      !DWELL_TIME_FEATURE_LIST.contains(f.name)
+  // c ck  f t  edge feature has features ot r than d ll t   feature
+  def edgeW hFeatureOt rThanD llT  (e: Edge): Boolean = {
+    e.features.ex sts { f =>
+      !DWELL_T ME_FEATURE_L ST.conta ns(f.na )
     }
   }
 }

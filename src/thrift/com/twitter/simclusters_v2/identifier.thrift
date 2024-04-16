@@ -1,205 +1,205 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.identifier
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2. dent f er
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "com/twitter/simclusters_v2/online_store.thrift"
+ nclude "com/tw ter/s mclusters_v2/onl ne_store.thr ft"
 
 /**
-  * The uniform type for a SimClusters Embeddings.
-  * Each embeddings have the uniform underlying storage.
-  * Warning: Every EmbeddingType should map to one and only one InternalId.
+  * T  un form type for a S mClusters Embedd ngs.
+  * Each embedd ngs have t  un form underly ng storage.
+  * Warn ng: Every Embedd ngType should map to one and only one  nternal d.
   **/
-enum EmbeddingType {
-  // Reserve 001 - 99 for Tweet embeddings
-	FavBasedTweet = 1, // Deprecated
-	FollowBasedTweet = 2, // Deprecated
-	LogFavBasedTweet = 3, // Production Version
-	FavBasedTwistlyTweet = 10, // Deprecated
-	LogFavBasedTwistlyTweet = 11, // Deprecated
-	LogFavLongestL2EmbeddingTweet = 12, // Production Version
+enum Embedd ngType {
+  // Reserve 001 - 99 for T et embedd ngs
+	FavBasedT et = 1, // Deprecated
+	FollowBasedT et = 2, // Deprecated
+	LogFavBasedT et = 3, // Product on Vers on
+	FavBasedTw stlyT et = 10, // Deprecated
+	LogFavBasedTw stlyT et = 11, // Deprecated
+	LogFavLongestL2Embedd ngT et = 12, // Product on Vers on
 
-  // Tweet embeddings generated from non-fav events
-  // Naming convention: {Event}{Score}BasedTweet
-  // {Event}: The interaction event we use to build the tweet embeddings
-  // {Score}: The score from user InterestedIn embeddings
-  VideoPlayBack50LogFavBasedTweet = 21,
-  RetweetLogFavBasedTweet = 22,
-  ReplyLogFavBasedTweet = 23,
-  PushOpenLogFavBasedTweet = 24,
+  // T et embedd ngs generated from non-fav events
+  // Nam ng convent on: {Event}{Score}BasedT et
+  // {Event}: T   nteract on event   use to bu ld t  t et embedd ngs
+  // {Score}: T  score from user  nterested n embedd ngs
+  V deoPlayBack50LogFavBasedT et = 21,
+  Ret etLogFavBasedT et = 22,
+  ReplyLogFavBasedT et = 23,
+  PushOpenLogFavBasedT et = 24,
 
-  // [Experimental] Offline generated FavThroughRate-based Tweet Embedding
-  Pop1000RankDecay11Tweet = 30,
-  Pop10000RankDecay11Tweet = 31,
-  OonPop1000RankDecayTweet = 32,
+  // [Exper  ntal] Offl ne generated FavThroughRate-based T et Embedd ng
+  Pop1000RankDecay11T et = 30,
+  Pop10000RankDecay11T et = 31,
+  OonPop1000RankDecayT et = 32,
 
-  // [Experimental] Offline generated production-like LogFavScore-based Tweet Embedding
-  OfflineGeneratedLogFavBasedTweet = 40,
+  // [Exper  ntal] Offl ne generated product on-l ke LogFavScore-based T et Embedd ng
+  Offl neGeneratedLogFavBasedT et = 40,
 
-  // Reserve 51-59 for Ads Embedding
-  LogFavBasedAdsTweet = 51, // Experimental embedding for ads tweet candidate
-  LogFavClickBasedAdsTweet = 52, // Experimental embedding for ads tweet candidate
+  // Reserve 51-59 for Ads Embedd ng
+  LogFavBasedAdsT et = 51, // Exper  ntal embedd ng for ads t et cand date
+  LogFavCl ckBasedAdsT et = 52, // Exper  ntal embedd ng for ads t et cand date
 
   // Reserve 60-69 for Evergreen content
-  LogFavBasedEvergreenTweet = 60,
-  LogFavBasedRealTimeTweet = 65,
+  LogFavBasedEvergreenT et = 60,
+  LogFavBasedRealT  T et = 65,
 
-	// Reserve 101 to 149 for Semantic Core Entity embeddings
-  FavBasedSematicCoreEntity = 101, // Deprecated
-  FollowBasedSematicCoreEntity = 102, // Deprecated
-  FavBasedHashtagEntity = 103, // Deprecated
-  FollowBasedHashtagEntity = 104, // Deprecated
-  ProducerFavBasedSemanticCoreEntity = 105, // Deprecated
-  ProducerFollowBasedSemanticCoreEntity = 106,// Deprecated
-  FavBasedLocaleSemanticCoreEntity = 107, // Deprecated
-  FollowBasedLocaleSemanticCoreEntity = 108, // Deprecated
-  LogFavBasedLocaleSemanticCoreEntity = 109, // Deprecated
-  LanguageFilteredProducerFavBasedSemanticCoreEntity = 110, // Deprecated
-  LanguageFilteredFavBasedLocaleSemanticCoreEntity = 111, // Deprecated
-  FavTfgTopic = 112, // TFG topic embedding built from fav-based user interestedIn
-  LogFavTfgTopic = 113, // TFG topic embedding built from logfav-based user interestedIn
-  FavInferredLanguageTfgTopic = 114, // TFG topic embedding built using inferred consumed languages
-  FavBasedKgoApeTopic = 115, // topic embedding using fav-based aggregatable producer embedding of KGO seed accounts.
-  LogFavBasedKgoApeTopic = 116, // topic embedding using log fav-based aggregatable producer embedding of KGO seed accounts.
-  FavBasedOnboardingApeTopic = 117, // topic embedding using fav-based aggregatable producer embedding of onboarding seed accounts.
-  LogFavBasedOnboardingApeTopic = 118, // topic embedding using log fav-based aggregatable producer embedding of onboarding seed accounts.
-  LogFavApeBasedMuseTopic = 119, // Deprecated
-  LogFavApeBasedMuseTopicExperiment = 120 // Deprecated
+	// Reserve 101 to 149 for Semant c Core Ent y embedd ngs
+  FavBasedSemat cCoreEnt y = 101, // Deprecated
+  FollowBasedSemat cCoreEnt y = 102, // Deprecated
+  FavBasedHashtagEnt y = 103, // Deprecated
+  FollowBasedHashtagEnt y = 104, // Deprecated
+  ProducerFavBasedSemant cCoreEnt y = 105, // Deprecated
+  ProducerFollowBasedSemant cCoreEnt y = 106,// Deprecated
+  FavBasedLocaleSemant cCoreEnt y = 107, // Deprecated
+  FollowBasedLocaleSemant cCoreEnt y = 108, // Deprecated
+  LogFavBasedLocaleSemant cCoreEnt y = 109, // Deprecated
+  LanguageF lteredProducerFavBasedSemant cCoreEnt y = 110, // Deprecated
+  LanguageF lteredFavBasedLocaleSemant cCoreEnt y = 111, // Deprecated
+  FavTfgTop c = 112, // TFG top c embedd ng bu lt from fav-based user  nterested n
+  LogFavTfgTop c = 113, // TFG top c embedd ng bu lt from logfav-based user  nterested n
+  Fav nferredLanguageTfgTop c = 114, // TFG top c embedd ng bu lt us ng  nferred consu d languages
+  FavBasedKgoApeTop c = 115, // top c embedd ng us ng fav-based aggregatable producer embedd ng of KGO seed accounts.
+  LogFavBasedKgoApeTop c = 116, // top c embedd ng us ng log fav-based aggregatable producer embedd ng of KGO seed accounts.
+  FavBasedOnboard ngApeTop c = 117, // top c embedd ng us ng fav-based aggregatable producer embedd ng of onboard ng seed accounts.
+  LogFavBasedOnboard ngApeTop c = 118, // top c embedd ng us ng log fav-based aggregatable producer embedd ng of onboard ng seed accounts.
+  LogFavApeBasedMuseTop c = 119, // Deprecated
+  LogFavApeBasedMuseTop cExper  nt = 120 // Deprecated
 
-  // Reserved 201 - 299 for Producer embeddings (KnownFor)
+  // Reserved 201 - 299 for Producer embedd ngs (KnownFor)
   FavBasedProducer = 201
   FollowBasedProducer = 202
-  AggregatableFavBasedProducer = 203 // fav-based aggregatable producer embedding.
-  AggregatableLogFavBasedProducer = 204 // logfav-based aggregatable producer embedding.
-  RelaxedAggregatableLogFavBasedProducer = 205 // logfav-based aggregatable producer embedding.
-  AggregatableFollowBasedProducer = 206 // follow-based aggregatable producer embedding.
+  AggregatableFavBasedProducer = 203 // fav-based aggregatable producer embedd ng.
+  AggregatableLogFavBasedProducer = 204 // logfav-based aggregatable producer embedd ng.
+  RelaxedAggregatableLogFavBasedProducer = 205 // logfav-based aggregatable producer embedd ng.
+  AggregatableFollowBasedProducer = 206 // follow-based aggregatable producer embedd ng.
   KnownFor = 300
 
-  // Reserved 301 - 399 for User InterestedIn embeddings
-  FavBasedUserInterestedIn = 301
-  FollowBasedUserInterestedIn = 302
-  LogFavBasedUserInterestedIn = 303
-  RecentFollowBasedUserInterestedIn = 304 // interested-in embedding based on aggregating producer embeddings of recent follows
-  FilteredUserInterestedIn = 305 // interested-in embedding used by twistly read path
-  LogFavBasedUserInterestedInFromAPE = 306
-  FollowBasedUserInterestedInFromAPE = 307
-  TwiceUserInterestedIn = 308 // interested-in multi-embedding based on clustering producer embeddings of neighbors
-  UnfilteredUserInterestedIn = 309
-  UserNextInterestedIn = 310 // next interested-in embedding generated from BeT
+  // Reserved 301 - 399 for User  nterested n embedd ngs
+  FavBasedUser nterested n = 301
+  FollowBasedUser nterested n = 302
+  LogFavBasedUser nterested n = 303
+  RecentFollowBasedUser nterested n = 304 //  nterested- n embedd ng based on aggregat ng producer embedd ngs of recent follows
+  F lteredUser nterested n = 305 //  nterested- n embedd ng used by tw stly read path
+  LogFavBasedUser nterested nFromAPE = 306
+  FollowBasedUser nterested nFromAPE = 307
+  Tw ceUser nterested n = 308 //  nterested- n mult -embedd ng based on cluster ng producer embedd ngs of ne ghbors
+  Unf lteredUser nterested n = 309
+  UserNext nterested n = 310 // next  nterested- n embedd ng generated from BeT
 
-  // Denser User InterestedIn, generated by Producer embeddings.
-  FavBasedUserInterestedInFromPE = 311
-  FollowBasedUserInterestedInFromPE = 312
-  LogFavBasedUserInterestedInFromPE = 313
-  FilteredUserInterestedInFromPE = 314 // interested-in embedding used by twistly read path
+  // Denser User  nterested n, generated by Producer embedd ngs.
+  FavBasedUser nterested nFromPE = 311
+  FollowBasedUser nterested nFromPE = 312
+  LogFavBasedUser nterested nFromPE = 313
+  F lteredUser nterested nFromPE = 314 //  nterested- n embedd ng used by tw stly read path
 
-  // [Experimental] Denser User InterestedIn, generated by aggregating IIAPE embedding from AddressBook
-  LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE = 320
-  LogFavBasedUserInterestedAverageAddressBookFromIIAPE = 321
-  LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE = 322
-  LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE = 323
-  LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE = 324
-  LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE = 325
+  // [Exper  ntal] Denser User  nterested n, generated by aggregat ng   APE embedd ng from AddressBook
+  LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE = 320
+  LogFavBasedUser nterestedAverageAddressBookFrom  APE = 321
+  LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE = 322
+  LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE = 323
+  LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE = 324
+  LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE = 325
 
-  //Reserved 401 - 500 for Space embedding
+  //Reserved 401 - 500 for Space embedd ng
   FavBasedApeSpace = 401 // DEPRECATED
-  LogFavBasedListenerSpace = 402 // DEPRECATED
+  LogFavBasedL stenerSpace = 402 // DEPRECATED
   LogFavBasedAPESpeakerSpace = 403 // DEPRECATED
-  LogFavBasedUserInterestedInListenerSpace = 404 // DEPRECATED
+  LogFavBasedUser nterested nL stenerSpace = 404 // DEPRECATED
 
-  // Experimental, internal-only IDs
-  ExperimentalThirtyDayRecentFollowBasedUserInterestedIn = 10000 // Like RecentFollowBasedUserInterestedIn, except limited to last 30 days
-	ExperimentalLogFavLongestL2EmbeddingTweet = 10001 // DEPRECATED
-}(persisted = 'true', hasPersonalData = 'false')
+  // Exper  ntal,  nternal-only  Ds
+  Exper  ntalTh rtyDayRecentFollowBasedUser nterested n = 10000 // L ke RecentFollowBasedUser nterested n, except l m ed to last 30 days
+	Exper  ntalLogFavLongestL2Embedd ngT et = 10001 // DEPRECATED
+}(pers sted = 'true', hasPersonalData = 'false')
 
 /**
-  * The uniform type for a SimClusters MultiEmbeddings.
-  * Warning: Every MultiEmbeddingType should map to one and only one InternalId.
+  * T  un form type for a S mClusters Mult Embedd ngs.
+  * Warn ng: Every Mult Embedd ngType should map to one and only one  nternal d.
   **/
-enum MultiEmbeddingType {
-  // Reserved 0-99 for Tweet based MultiEmbedding
+enum Mult Embedd ngType {
+  // Reserved 0-99 for T et based Mult Embedd ng
 
-  // Reserved 100 - 199 for Topic based MultiEmbedding
-  LogFavApeBasedMuseTopic = 100 // Deprecated
-  LogFavApeBasedMuseTopicExperiment = 101 // Deprecated
+  // Reserved 100 - 199 for Top c based Mult Embedd ng
+  LogFavApeBasedMuseTop c = 100 // Deprecated
+  LogFavApeBasedMuseTop cExper  nt = 101 // Deprecated
 
-  // Reserved 301 - 399 for User InterestedIn embeddings
-  TwiceUserInterestedIn = 301 // interested-in multi-embedding based on clustering producer embeddings of neighbors
-}(persisted = 'true', hasPersonalData = 'true')
+  // Reserved 301 - 399 for User  nterested n embedd ngs
+  Tw ceUser nterested n = 301 //  nterested- n mult -embedd ng based on cluster ng producer embedd ngs of ne ghbors
+}(pers sted = 'true', hasPersonalData = 'true')
 
-// Deprecated. Please use TopicId for future cases.
-struct LocaleEntityId {
-  1: i64 entityId
-  2: string language
-}(persisted = 'true', hasPersonalData = 'false')
+// Deprecated. Please use Top c d for future cases.
+struct LocaleEnt y d {
+  1:  64 ent y d
+  2: str ng language
+}(pers sted = 'true', hasPersonalData = 'false')
 
-enum EngagementType {
-  Favorite = 1,
-  Retweet = 2,
+enum Engage ntType {
+  Favor e = 1,
+  Ret et = 2,
 }
 
-struct UserEngagedTweetId {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: i64 userId(personalDataType = 'UserId')
-  3: EngagementType engagementType(personalDataType = 'EventType')
-}(persisted = 'true', hasPersonalData = 'true')
+struct UserEngagedT et d {
+  1:  64 t et d(personalDataType = 'T et d')
+  2:  64 user d(personalDataType = 'User d')
+  3: Engage ntType engage ntType(personalDataType = 'EventType')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TopicId {
-  1: i64 entityId (personalDataType = 'SemanticcoreClassification')
-  // 2-letter ISO 639-1 language code
-  2: optional string language
-  // 2-letter ISO 3166-1 alpha-2 country code
-  3: optional string country
-}(persisted = 'true', hasPersonalData = 'false')
+struct Top c d {
+  1:  64 ent y d (personalDataType = 'Semant ccoreClass f cat on')
+  // 2-letter  SO 639-1 language code
+  2: opt onal str ng language
+  // 2-letter  SO 3166-1 alpha-2 country code
+  3: opt onal str ng country
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct TopicSubId {
-  1: i64 entityId (personalDataType = 'SemanticcoreClassification')
-  // 2-letter ISO 639-1 language code
-  2: optional string language
-  // 2-letter ISO 3166-1 alpha-2 country code
-  3: optional string country
-  4: i32 subId
-}(persisted = 'true', hasPersonalData = 'true')
+struct Top cSub d {
+  1:  64 ent y d (personalDataType = 'Semant ccoreClass f cat on')
+  // 2-letter  SO 639-1 language code
+  2: opt onal str ng language
+  // 2-letter  SO 3166-1 alpha-2 country code
+  3: opt onal str ng country
+  4:  32 sub d
+}(pers sted = 'true', hasPersonalData = 'true')
 
-// Will be used for testing purposes in DDG 15536, 15534
-struct UserWithLanguageId {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: optional string langCode(personalDataType = 'InferredLanguage')
-}(persisted = 'true', hasPersonalData = 'true')
-
-/**
-  * The internal identifier type.
-  * Need to add ordering in [[com.twitter.simclusters_v2.common.SimClustersEmbeddingId]]
-  * when adding a new type.
-  **/
-union InternalId {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: i64 userId(personalDataType = 'UserId')
-  3: i64 entityId(personalDataType = 'SemanticcoreClassification')
-  4: string hashtag(personalDataType = 'PublicTweetEntitiesAndMetadata')
-  5: i32 clusterId
-  6: LocaleEntityId localeEntityId(personalDataType = 'SemanticcoreClassification')
-  7: UserEngagedTweetId userEngagedTweetId
-  8: TopicId topicId
-  9: TopicSubId topicSubId
-  10: string spaceId
-  11: UserWithLanguageId userWithLanguageId
-}(persisted = 'true', hasPersonalData = 'true')
+// W ll be used for test ng purposes  n DDG 15536, 15534
+struct UserW hLanguage d {
+  1: requ red  64 user d(personalDataType = 'User d')
+  2: opt onal str ng langCode(personalDataType = ' nferredLanguage')
+}(pers sted = 'true', hasPersonalData = 'true')
 
 /**
-  * A uniform identifier type for all kinds of SimClusters based embeddings.
+  * T   nternal  dent f er type.
+  * Need to add order ng  n [[com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng d]]
+  * w n add ng a new type.
   **/
-struct SimClustersEmbeddingId {
-  1: required EmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-  3: required InternalId internalId
-}(persisted = 'true', hasPersonalData = 'true')
+un on  nternal d {
+  1:  64 t et d(personalDataType = 'T et d')
+  2:  64 user d(personalDataType = 'User d')
+  3:  64 ent y d(personalDataType = 'Semant ccoreClass f cat on')
+  4: str ng hashtag(personalDataType = 'Publ cT etEnt  esAnd tadata')
+  5:  32 cluster d
+  6: LocaleEnt y d localeEnt y d(personalDataType = 'Semant ccoreClass f cat on')
+  7: UserEngagedT et d userEngagedT et d
+  8: Top c d top c d
+  9: Top cSub d top cSub d
+  10: str ng space d
+  11: UserW hLanguage d userW hLanguage d
+}(pers sted = 'true', hasPersonalData = 'true')
 
 /**
-  * A uniform identifier type for multiple SimClusters embeddings
+  * A un form  dent f er type for all k nds of S mClusters based embedd ngs.
   **/
-struct SimClustersMultiEmbeddingId {
-  1: required MultiEmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-  3: required InternalId internalId
-}(persisted = 'true', hasPersonalData = 'true')
+struct S mClustersEmbedd ng d {
+  1: requ red Embedd ngType embedd ngType
+  2: requ red onl ne_store.ModelVers on modelVers on
+  3: requ red  nternal d  nternal d
+}(pers sted = 'true', hasPersonalData = 'true')
+
+/**
+  * A un form  dent f er type for mult ple S mClusters embedd ngs
+  **/
+struct S mClustersMult Embedd ng d {
+  1: requ red Mult Embedd ngType embedd ngType
+  2: requ red onl ne_store.ModelVers on modelVers on
+  3: requ red  nternal d  nternal d
+}(pers sted = 'true', hasPersonalData = 'true')

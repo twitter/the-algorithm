@@ -1,8 +1,8 @@
-# pylint: disable=invalid-name
+# pyl nt: d sable= nval d-na 
 """
-This module implements the reader for HashedBatchPredictionRequest.
+T  module  mple nts t  reader for Has dBatchPred ct onRequest.
 """
 
-from twitter.deepbird.io.legacy.readers.hashed_batch_prediction_request import (
-  HashedBatchPredictionRequest  # noqa: F401
+from tw ter.deepb rd. o.legacy.readers.has d_batch_pred ct on_request  mport (
+  Has dBatchPred ct onRequest  # noqa: F401
 )

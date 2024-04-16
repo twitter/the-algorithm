@@ -1,23 +1,23 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
 /**
- * An item associated with a float distance
- * @param <T> The type of the item.
+ * An  em assoc ated w h a float d stance
+ * @param <T> T  type of t   em.
  */
-public class DistancedItem<T> {
-  private final T item;
-  private final float distance;
+publ c class D stanced em<T> {
+  pr vate f nal T  em;
+  pr vate f nal float d stance;
 
-  public DistancedItem(T item, float distance) {
-    this.item = item;
-    this.distance = distance;
+  publ c D stanced em(T  em, float d stance) {
+    t . em =  em;
+    t .d stance = d stance;
   }
 
-  public T getItem() {
-    return item;
+  publ c T get em() {
+    return  em;
   }
 
-  public float getDistance() {
-    return distance;
+  publ c float getD stance() {
+    return d stance;
   }
 }

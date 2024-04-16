@@ -1,54 +1,54 @@
-package com.twitter.tweetypie.hydrator
+package com.tw ter.t etyp e.hydrator
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.mediaservices.commons.thriftscala._
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala._
+ mport com.tw ter. d aserv ces.commons.thr ftscala._
+ mport com.tw ter.t etyp e.core.ValueState
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object MediaKeyHydrator {
-  type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-  type Type = MediaEntityHydrator.Uncacheable.Type
+object  d aKeyHydrator {
+  type Ctx =  d aEnt yHydrator.Uncac able.Ctx
+  type Type =  d aEnt yHydrator.Uncac able.Type
 
   def apply(): Type =
     ValueHydrator
-      .map[MediaEntity, Ctx] { (curr, ctx) =>
-        val mediaKey = infer(ctx.mediaKeys, curr)
-        ValueState.modified(curr.copy(mediaKey = Some(mediaKey)))
+      .map[ d aEnt y, Ctx] { (curr, ctx) =>
+        val  d aKey =  nfer(ctx. d aKeys, curr)
+        ValueState.mod f ed(curr.copy( d aKey = So ( d aKey)))
       }
-      .onlyIf((curr, ctx) => curr.mediaKey.isEmpty)
+      .only f((curr, ctx) => curr. d aKey. sEmpty)
 
-  def infer(mediaKeys: Option[Seq[MediaKey]], mediaEntity: MediaEntity): MediaKey = {
+  def  nfer( d aKeys: Opt on[Seq[ d aKey]],  d aEnt y:  d aEnt y):  d aKey = {
 
-    def inferByMediaId =
-      mediaKeys
-        .flatMap(_.find(_.mediaId == mediaEntity.mediaId))
+    def  nferBy d a d =
+       d aKeys
+        .flatMap(_.f nd(_. d a d ==  d aEnt y. d a d))
 
     def contentType =
-      mediaEntity.sizes.find(_.sizeType == MediaSizeType.Orig).map(_.deprecatedContentType)
+       d aEnt y.s zes.f nd(_.s zeType ==  d aS zeType.Or g).map(_.deprecatedContentType)
 
-    def inferByContentType =
+    def  nferByContentType =
       contentType.map { tpe =>
         val category =
           tpe match {
-            case MediaContentType.VideoMp4 => MediaCategory.TweetGif
-            case MediaContentType.VideoGeneric => MediaCategory.TweetVideo
-            case _ => MediaCategory.TweetImage
+            case  d aContentType.V deoMp4 =>  d aCategory.T etG f
+            case  d aContentType.V deoGener c =>  d aCategory.T etV deo
+            case _ =>  d aCategory.T et mage
           }
-        MediaKey(category, mediaEntity.mediaId)
+         d aKey(category,  d aEnt y. d a d)
       }
 
-    def fail =
-      throw new IllegalStateException(
+    def fa l =
+      throw new  llegalStateExcept on(
         s"""
-           |Can't infer media key.
-           | mediaKeys:'$mediaKeys'
-           | mediaEntity:'$mediaEntity'
-          """.stripMargin
+           |Can't  nfer  d a key.
+           |  d aKeys:'$ d aKeys'
+           |  d aEnt y:'$ d aEnt y'
+          """.str pMarg n
       )
 
-    mediaEntity.mediaKey
-      .orElse(inferByMediaId)
-      .orElse(inferByContentType)
-      .getOrElse(fail)
+     d aEnt y. d aKey
+      .orElse( nferBy d a d)
+      .orElse( nferByContentType)
+      .getOrElse(fa l)
   }
 }

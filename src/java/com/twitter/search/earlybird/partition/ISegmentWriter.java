@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
 
-public interface ISegmentWriter {
+publ c  nterface  Seg ntWr er {
   enum Result {
     SUCCESS,
-    FAILURE_RETRYABLE,
-    FAILURE_NOT_RETRYABLE,
+    FA LURE_RETRYABLE,
+    FA LURE_NOT_RETRYABLE,
   }
 
   /**
-   * Indexes the given ThriftVersionedEvents instance (adds it to the segment associated with this
-   * SegmentWriter instance).
+   *  ndexes t  g ven Thr ftVers onedEvents  nstance (adds   to t  seg nt assoc ated w h t 
+   * Seg ntWr er  nstance).
    */
-  Result indexThriftVersionedEvents(ThriftVersionedEvents tve) throws IOException;
+  Result  ndexThr ftVers onedEvents(Thr ftVers onedEvents tve) throws  OExcept on;
 
   /**
-   * Returns the segment info for this segment writer.
+   * Returns t  seg nt  nfo for t  seg nt wr er.
    */
-  SegmentInfo getSegmentInfo();
+  Seg nt nfo getSeg nt nfo();
 }

@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.scorer.deepbird
+package com.tw ter.product_m xer.component_l brary.scorer.deepb rd
 
-import com.twitter.cortex.deepbird.{thriftjava => t}
-import com.twitter.ml.prediction_service.BatchPredictionRequest
-import com.twitter.ml.prediction_service.BatchPredictionResponse
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Future
+ mport com.tw ter.cortex.deepb rd.{thr ftjava => t}
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onRequest
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onResponse
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.ModelSelector
+ mport com.tw ter.product_m xer.core.feature.datarecord.BaseDataRecordFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.FeaturesScope
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * Configurable Scorer that calls any Deepbird Prediction Service thrift.
- * @param identifier Unique identifier for the scorer
- * @param predictionService The Prediction Thrift Service
- * @param modelSelector Model ID Selector to decide which model to select, can also be represented
- *                        as an anonymous function: { query: Query => Some("Ex") }
- * @param queryFeatures The Query Features to convert and pass to the deepbird model.
- * @param candidateFeatures The Candidate Features to convert and pass to the deepbird model.
- * @param resultFeatures The Candidate features returned by the model.
- * @tparam Query Type of pipeline query.
- * @tparam Candidate Type of candidates to score.
- * @tparam QueryFeatures type of the query level features consumed by the scorer.
- * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
- * @tparam ResultFeatures type of the candidate level features returned by the scorer.
+ * Conf gurable Scorer that calls any Deepb rd Pred ct on Serv ce thr ft.
+ * @param  dent f er Un que  dent f er for t  scorer
+ * @param pred ct onServ ce T  Pred ct on Thr ft Serv ce
+ * @param modelSelector Model  D Selector to dec de wh ch model to select, can also be represented
+ *                        as an anonymous funct on: { query: Query => So ("Ex") }
+ * @param queryFeatures T  Query Features to convert and pass to t  deepb rd model.
+ * @param cand dateFeatures T  Cand date Features to convert and pass to t  deepb rd model.
+ * @param resultFeatures T  Cand date features returned by t  model.
+ * @tparam Query Type of p pel ne query.
+ * @tparam Cand date Type of cand dates to score.
+ * @tparam QueryFeatures type of t  query level features consu d by t  scorer.
+ * @tparam Cand dateFeatures type of t  cand date level features consu d by t  scorer.
+ * @tparam ResultFeatures type of t  cand date level features returned by t  scorer.
  */
-case class DeepbirdV2PredictionServerScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
+case class Deepb rdV2Pred ct onServerScorer[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
   QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+  Cand dateFeatures <: BaseDataRecordFeature[Cand date, _],
+  ResultFeatures <: BaseDataRecordFeature[Cand date, _]
 ](
-  override val identifier: ScorerIdentifier,
-  predictionService: t.DeepbirdPredictionService.ServiceToClient,
+  overr de val  dent f er: Scorer dent f er,
+  pred ct onServ ce: t.Deepb rdPred ct onServ ce.Serv ceToCl ent,
   modelSelector: ModelSelector[Query],
   queryFeatures: FeaturesScope[QueryFeatures],
-  candidateFeatures: FeaturesScope[CandidateFeatures],
+  cand dateFeatures: FeaturesScope[Cand dateFeatures],
   resultFeatures: Set[ResultFeatures])
-    extends BaseDeepbirdV2Scorer[
+    extends BaseDeepb rdV2Scorer[
       Query,
-      Candidate,
+      Cand date,
       QueryFeatures,
-      CandidateFeatures,
+      Cand dateFeatures,
       ResultFeatures
-    ](identifier, modelSelector, queryFeatures, candidateFeatures, resultFeatures) {
+    ]( dent f er, modelSelector, queryFeatures, cand dateFeatures, resultFeatures) {
 
-  override def getBatchPredictions(
-    request: BatchPredictionRequest,
+  overr de def getBatchPred ct ons(
+    request: BatchPred ct onRequest,
     modelSelector: t.ModelSelector
-  ): Future[BatchPredictionResponse] =
-    predictionService.batchPredictFromModel(request, modelSelector)
+  ): Future[BatchPred ct onResponse] =
+    pred ct onServ ce.batchPred ctFromModel(request, modelSelector)
 }

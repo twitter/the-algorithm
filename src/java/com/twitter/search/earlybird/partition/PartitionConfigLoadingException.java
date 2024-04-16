@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
 /**
- * An exception thrown when the earlybird layout could not be loaded, or when a host cannot find
- * itself in the layout, and the layout has errors (which might be the reason why the host could not
- * find itself in the layout).
+ * An except on thrown w n t  earlyb rd la t could not be loaded, or w n a host cannot f nd
+ *  self  n t  la t, and t  la t has errors (wh ch m ght be t  reason why t  host could not
+ * f nd  self  n t  la t).
  */
-public class PartitionConfigLoadingException extends Exception {
-  public PartitionConfigLoadingException(String message) {
-    super(message);
+publ c class Part  onConf gLoad ngExcept on extends Except on {
+  publ c Part  onConf gLoad ngExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

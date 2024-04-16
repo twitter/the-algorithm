@@ -1,137 +1,137 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.tw ter.cr_m xer.cand date_generat on
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.filter.PreRankFilterRunner
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.contentrecom nder.thr ftscala.T et nfo
+ mport com.tw ter.cr_m xer.f lter.PreRankF lterRunner
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.RelatedV deoT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.T etW hCand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedUn f edS m lar yEng ne
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-class RelatedVideoTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.TweetBasedUnifiedSimilarityEngine) tweetBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    TweetBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+@S ngleton
+class RelatedV deoT etCand dateGenerator @ nject() (
+  @Na d(ModuleNa s.T etBasedUn f edS m lar yEng ne) t etBasedUn f edS m lar yEng ne: StandardS m lar yEng ne[
+    T etBasedUn f edS m lar yEng ne.Query,
+    T etW hCand dateGenerat on nfo
   ],
-  preRankFilterRunner: PreRankFilterRunner,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  globalStats: StatsReceiver) {
+  preRankF lterRunner: PreRankF lterRunner,
+  t et nfoStore: ReadableStore[T et d, T et nfo],
+  globalStats: StatsRece ver) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val preRankFilterStats = stats.scope("preRankFilter")
+  pr vate val stats: StatsRece ver = globalStats.scope(t .getClass.getCanon calNa )
+  pr vate val fetchCand datesStats = stats.scope("fetchCand dates")
+  pr vate val preRankF lterStats = stats.scope("preRankF lter")
 
   def get(
-    query: RelatedVideoTweetCandidateGeneratorQuery
-  ): Future[Seq[InitialCandidate]] = {
+    query: RelatedV deoT etCand dateGeneratorQuery
+  ): Future[Seq[ n  alCand date]] = {
 
     val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
+    val perProductStats = stats.scope("perProduct", query.product.toStr ng)
+    StatsUt l.track emsStats(allStats) {
+      StatsUt l.track emsStats(perProductStats) {
         for {
-          initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesStats) {
-            fetchCandidates(query)
+           n  alCand dates <- StatsUt l.trackBlockStats(fetchCand datesStats) {
+            fetchCand dates(query)
           }
-          filteredCandidates <- StatsUtil.trackBlockStats(preRankFilterStats) {
-            preRankFilter(query, initialCandidates)
+          f lteredCand dates <- StatsUt l.trackBlockStats(preRankF lterStats) {
+            preRankF lter(query,  n  alCand dates)
           }
-        } yield {
-          filteredCandidates.headOption
+        } y eld {
+          f lteredCand dates. adOpt on
             .getOrElse(
-              throw new UnsupportedOperationException(
-                "RelatedVideoTweetCandidateGenerator results invalid")
+              throw new UnsupportedOperat onExcept on(
+                "RelatedV deoT etCand dateGenerator results  nval d")
             ).take(query.maxNumResults)
         }
       }
     }
   }
 
-  def fetchCandidates(
-    query: RelatedVideoTweetCandidateGeneratorQuery
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    query.internalId match {
-      case InternalId.TweetId(_) =>
-        getCandidatesFromSimilarityEngine(
+  def fetchCand dates(
+    query: RelatedV deoT etCand dateGeneratorQuery
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    query. nternal d match {
+      case  nternal d.T et d(_) =>
+        getCand datesFromS m lar yEng ne(
           query,
-          TweetBasedUnifiedSimilarityEngine.fromParamsForRelatedVideoTweet,
-          tweetBasedUnifiedSimilarityEngine.getCandidates)
+          T etBasedUn f edS m lar yEng ne.fromParamsForRelatedV deoT et,
+          t etBasedUn f edS m lar yEng ne.getCand dates)
       case _ =>
-        throw new UnsupportedOperationException(
-          "RelatedVideoTweetCandidateGenerator gets invalid InternalId")
+        throw new UnsupportedOperat onExcept on(
+          "RelatedV deoT etCand dateGenerator gets  nval d  nternal d")
     }
   }
 
   /***
-   * fetch Candidates from TweetBased/ProducerBased Unified Similarity Engine,
-   * and apply VF filter based on TweetInfoStore
-   * To align with the downstream processing (filter, rank), we tend to return a Seq[Seq[InitialCandidate]]
-   * instead of a Seq[Candidate] even though we only have a Seq in it.
+   * fetch Cand dates from T etBased/ProducerBased Un f ed S m lar y Eng ne,
+   * and apply VF f lter based on T et nfoStore
+   * To al gn w h t  downstream process ng (f lter, rank),   tend to return a Seq[Seq[ n  alCand date]]
+   *  nstead of a Seq[Cand date] even though   only have a Seq  n  .
    */
-  private def getCandidatesFromSimilarityEngine[QueryType](
-    query: RelatedVideoTweetCandidateGeneratorQuery,
-    fromParamsForRelatedVideoTweet: (InternalId, configapi.Params) => QueryType,
-    getFunc: QueryType => Future[Option[Seq[TweetWithCandidateGenerationInfo]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  pr vate def getCand datesFromS m lar yEng ne[QueryType](
+    query: RelatedV deoT etCand dateGeneratorQuery,
+    fromParamsForRelatedV deoT et: ( nternal d, conf gap .Params) => QueryType,
+    getFunc: QueryType => Future[Opt on[Seq[T etW hCand dateGenerat on nfo]]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
 
     /***
-     * We wrap the query to be a Seq of queries for the Sim Engine to ensure evolvability of candidate generation
-     * and as a result, it will return Seq[Seq[InitialCandidate]]
+     *   wrap t  query to be a Seq of quer es for t  S m Eng ne to ensure evolvab l y of cand date generat on
+     * and as a result,   w ll return Seq[Seq[ n  alCand date]]
      */
-    val engineQueries =
-      Seq(fromParamsForRelatedVideoTweet(query.internalId, query.params))
+    val eng neQuer es =
+      Seq(fromParamsForRelatedV deoT et(query. nternal d, query.params))
 
     Future
       .collect {
-        engineQueries.map { query =>
+        eng neQuer es.map { query =>
           for {
-            candidates <- getFunc(query)
-            prefilterCandidates <- convertToInitialCandidates(
-              candidates.toSeq.flatten
+            cand dates <- getFunc(query)
+            pref lterCand dates <- convertTo n  alCand dates(
+              cand dates.toSeq.flatten
             )
-          } yield prefilterCandidates
+          } y eld pref lterCand dates
         }
       }
   }
 
-  private def preRankFilter(
-    query: RelatedVideoTweetCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    preRankFilterRunner
-      .runSequentialFilters(query, candidates)
+  pr vate def preRankF lter(
+    query: RelatedV deoT etCand dateGeneratorQuery,
+    cand dates: Seq[Seq[ n  alCand date]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    preRankF lterRunner
+      .runSequent alF lters(query, cand dates)
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithCandidateGenerationInfo],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  pr vate[cand date_generat on] def convertTo n  alCand dates(
+    cand dates: Seq[T etW hCand dateGenerat on nfo],
+  ): Future[Seq[ n  alCand date]] = {
+    val t et ds = cand dates.map(_.t et d).toSet
+    Future.collect(t et nfoStore.mult Get(t et ds)).map { t et nfos =>
       /***
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
-       * This tweetInfo filter also acts as the VF filter
+       *  f t et nfo does not ex st,   w ll f lter out t  t et cand date.
+       * T  t et nfo f lter also acts as t  VF f lter
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      cand dates.collect {
+        case cand date  f t et nfos.getOrElse(cand date.t et d, None). sDef ned =>
+          val t et nfo = t et nfos(cand date.t et d)
+            .getOrElse(throw new  llegalStateExcept on("C ck prev ous l ne's cond  on"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            candidate.candidateGenerationInfo
+           n  alCand date(
+            t et d = cand date.t et d,
+            t et nfo = t et nfo,
+            cand date.cand dateGenerat on nfo
           )
       }
     }

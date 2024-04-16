@@ -1,32 +1,32 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.pushservice.model.TopicProofTweetPushCandidate
-import com.twitter.frigate.pushservice.exception.UttEntityNotFoundException
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.Top cProofT etPushCand date
+ mport com.tw ter.fr gate.pushserv ce.except on.UttEnt yNotFoundExcept on
+ mport com.tw ter.ut l.Future
 
-trait TopicProofTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
-  self: TopicProofTweetPushCandidate =>
+tra  Top cProofT et b s2Hydrator extends T etCand date b s2Hydrator {
+  self: Top cProofT etPushCand date =>
 
-  private lazy val implicitTopicTweetModelValues: Map[String, String] = {
-    val uttEntity = localizedUttEntity.getOrElse(
-      throw new UttEntityNotFoundException(
-        s"${getClass.getSimpleName} UttEntity missing for $tweetId"))
+  pr vate lazy val  mpl c Top cT etModelValues: Map[Str ng, Str ng] = {
+    val uttEnt y = local zedUttEnt y.getOrElse(
+      throw new UttEnt yNotFoundExcept on(
+        s"${getClass.getS mpleNa } UttEnt y m ss ng for $t et d"))
 
     Map(
-      "topic_name" -> uttEntity.localizedNameForDisplay,
-      "topic_id" -> uttEntity.entityId.toString
+      "top c_na " -> uttEnt y.local zedNa ForD splay,
+      "top c_ d" -> uttEnt y.ent y d.toStr ng
     )
   }
 
-  override lazy val modelName: String = pushCopy.ibisPushModelName
+  overr de lazy val modelNa : Str ng = pushCopy. b sPushModelNa 
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
+  overr de lazy val t etModelValues: Future[Map[Str ng, Str ng]] =
     for {
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
+      superModelValues <- super.t etModelValues
+      t et nl neModelValues <- t et nl neAct onModelValue
+    } y eld {
       superModelValues ++
-        tweetInlineModelValues ++
-        implicitTopicTweetModelValues
+        t et nl neModelValues ++
+         mpl c Top cT etModelValues
     }
 }

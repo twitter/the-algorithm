@@ -1,26 +1,26 @@
-namespace java com.twitter.tsp.thriftjava
-namespace py gen.twitter.tsp
-#@namespace scala com.twitter.tsp.thriftscala
-#@namespace strato com.twitter.tsp.strato
+na space java com.tw ter.tsp.thr ftjava
+na space py gen.tw ter.tsp
+#@na space scala com.tw ter.tsp.thr ftscala
+#@na space strato com.tw ter.tsp.strato
 
-struct TspTweetInfo {
-  1: required i64 authorId
-  2: required i64 favCount
-  3: optional string language
-  6: optional bool hasImage
-  7: optional bool hasVideo
-  8: optional bool hasGif
-  9: optional bool isNsfwAuthor
-  10: optional bool isKGODenylist
-  11: optional bool isNullcast
-  // available if the tweet contains video
-  12: optional i32 videoDurationSeconds
-  13: optional bool isHighMediaResolution
-  14: optional bool isVerticalAspectRatio
-  // health signal scores
-  15: optional bool isPassAgathaHealthFilterStrictest
-  16: optional bool isPassTweetHealthFilterStrictest
-  17: optional bool isReply
-  18: optional bool hasMultipleMedia
-  23: optional bool hasUrl
-}(persisted='false', hasPersonalData='true')
+struct TspT et nfo {
+  1: requ red  64 author d
+  2: requ red  64 favCount
+  3: opt onal str ng language
+  6: opt onal bool has mage
+  7: opt onal bool hasV deo
+  8: opt onal bool hasG f
+  9: opt onal bool  sNsfwAuthor
+  10: opt onal bool  sKGODenyl st
+  11: opt onal bool  sNullcast
+  // ava lable  f t  t et conta ns v deo
+  12: opt onal  32 v deoDurat onSeconds
+  13: opt onal bool  sH gh d aResolut on
+  14: opt onal bool  sVert calAspectRat o
+  //  alth s gnal scores
+  15: opt onal bool  sPassAgatha althF lterStr ctest
+  16: opt onal bool  sPassT et althF lterStr ctest
+  17: opt onal bool  sReply
+  18: opt onal bool hasMult ple d a
+  23: opt onal bool hasUrl
+}(pers sted='false', hasPersonalData='true')

@@ -1,96 +1,96 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.SorterFromOrder ng
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.SorterProv der
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object UpdateSortModuleItemCandidates {
+object UpdateSortModule emCand dates {
   def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    ordering: Ordering[CandidateWithDetails]
-  ): UpdateSortModuleItemCandidates =
-    UpdateSortModuleItemCandidates(
-      SpecificPipeline(candidatePipeline),
-      SorterFromOrdering(ordering))
-
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    sorterProvider: SorterProvider
-  ): UpdateSortModuleItemCandidates =
-    UpdateSortModuleItemCandidates(SpecificPipeline(candidatePipeline), sorterProvider)
+    cand dateP pel ne: Cand dateP pel ne dent f er,
+    order ng: Order ng[Cand dateW hDeta ls]
+  ): UpdateSortModule emCand dates =
+    UpdateSortModule emCand dates(
+      Spec f cP pel ne(cand dateP pel ne),
+      SorterFromOrder ng(order ng))
 
   def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    ordering: Ordering[CandidateWithDetails]
-  ): UpdateSortModuleItemCandidates =
-    UpdateSortModuleItemCandidates(
-      SpecificPipelines(candidatePipelines),
-      SorterFromOrdering(ordering))
+    cand dateP pel ne: Cand dateP pel ne dent f er,
+    sorterProv der: SorterProv der
+  ): UpdateSortModule emCand dates =
+    UpdateSortModule emCand dates(Spec f cP pel ne(cand dateP pel ne), sorterProv der)
 
   def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    sorterProvider: SorterProvider
-  ): UpdateSortModuleItemCandidates =
-    UpdateSortModuleItemCandidates(SpecificPipelines(candidatePipelines), sorterProvider)
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er],
+    order ng: Order ng[Cand dateW hDeta ls]
+  ): UpdateSortModule emCand dates =
+    UpdateSortModule emCand dates(
+      Spec f cP pel nes(cand dateP pel nes),
+      SorterFromOrder ng(order ng))
+
+  def apply(
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er],
+    sorterProv der: SorterProv der
+  ): UpdateSortModule emCand dates =
+    UpdateSortModule emCand dates(Spec f cP pel nes(cand dateP pel nes), sorterProv der)
 }
 
 /**
- * Sort items inside a module from a candidate source and update the remainingCandidates.
+ * Sort  ems  ns de a module from a cand date s ce and update t  rema n ngCand dates.
  *
- * For example, we could specify the following ordering to sort by score descending:
+ * For example,   could spec fy t  follow ng order ng to sort by score descend ng:
  *
  * {{{
- * Ordering
- *   .by[CandidateWithDetails, Double](_.features.get(ScoreFeature) match {
+ * Order ng
+ *   .by[Cand dateW hDeta ls, Double](_.features.get(ScoreFeature) match {
  *     case Scored(score) => score
- *     case _ => Double.MinValue
+ *     case _ => Double.M nValue
  *   }).reverse
  *
- * // Before sorting:
- * ModuleCandidateWithDetails(
+ * // Before sort ng:
+ * ModuleCand dateW hDeta ls(
  *  Seq(
- *    ItemCandidateWithLowScore,
- *    ItemCandidateWithMidScore,
- *    ItemCandidateWithHighScore),
- *  ... other params
+ *     emCand dateW hLowScore,
+ *     emCand dateW hM dScore,
+ *     emCand dateW hH ghScore),
+ *  ... ot r params
  * )
  *
- * // After sorting:
- * ModuleCandidateWithDetails(
+ * // After sort ng:
+ * ModuleCand dateW hDeta ls(
  *  Seq(
- *    ItemCandidateWithHighScore,
- *    ItemCandidateWithMidScore,
- *    ItemCandidateWithLowScore),
- *  ... other params
+ *     emCand dateW hH ghScore,
+ *     emCand dateW hM dScore,
+ *     emCand dateW hLowScore),
+ *  ... ot r params
  * )
  * }}}
  *
- * @note this updates the modules in the `remainingCandidates`
+ * @note t  updates t  modules  n t  `rema n ngCand dates`
  */
-case class UpdateSortModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  sorterProvider: SorterProvider)
-    extends Selector[PipelineQuery] {
+case class UpdateSortModule emCand dates(
+  overr de val p pel neScope: Cand dateScope,
+  sorterProv der: SorterProv der)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val updatedCandidates = remainingCandidates.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        module.copy(candidates =
-          sorterProvider.sorter(query, remainingCandidates, result).sort(module.candidates))
-      case candidate => candidate
+    val updatedCand dates = rema n ngCand dates.map {
+      case module: ModuleCand dateW hDeta ls  f p pel neScope.conta ns(module) =>
+        module.copy(cand dates =
+          sorterProv der.sorter(query, rema n ngCand dates, result).sort(module.cand dates))
+      case cand date => cand date
     }
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    SelectorResult(rema n ngCand dates = updatedCand dates, result = result)
   }
 }

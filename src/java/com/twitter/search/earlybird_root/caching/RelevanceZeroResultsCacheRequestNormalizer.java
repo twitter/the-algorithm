@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.google.common.base.Optional;
+ mport com.google.common.base.Opt onal;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.SearchQueryNormalizer;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.cach ng.Cac Ut l;
+ mport com.tw ter.search.common.cach ng.SearchQueryNormal zer;
+ mport com.tw ter.search.common.cach ng.f lter.Cac RequestNormal zer;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class RelevanceZeroResultsCacheRequestNormalizer
-    extends CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    // If the query is not personalized, it means that:
-    //   - RelevanceCacheRequestNormalizer has already normalized it into a cacheable query.
-    //   - RelevanceCacheFilter could not find a response for this query in the cache.
+publ c class RelevanceZeroResultsCac RequestNormal zer
+    extends Cac RequestNormal zer<Earlyb rdRequestContext, Earlyb rdRequest> {
+  @Overr de
+  publ c Opt onal<Earlyb rdRequest> normal zeRequest(Earlyb rdRequestContext requestContext) {
+    //  f t  query  s not personal zed,    ans that:
+    //   - RelevanceCac RequestNormal zer has already normal zed    nto a cac able query.
+    //   - RelevanceCac F lter could not f nd a response for t  query  n t  cac .
     //
-    // So if we try to normalize it here again, we will succeed, but then
-    // RelevanceZeroResultsCacheFilter will do the same look up in the cache, which will again
-    // result in a cache miss. There is no need to do this look up twice, so if the query is not
-    // personalized, return Optional.absent().
+    // So  f   try to normal ze    re aga n,   w ll succeed, but t n
+    // RelevanceZeroResultsCac F lter w ll do t  sa  look up  n t  cac , wh ch w ll aga n
+    // result  n a cac  m ss. T re  s no need to do t  look up tw ce, so  f t  query  s not
+    // personal zed, return Opt onal.absent().
     //
-    // If the query is personalized, strip all personalization fields and normalize the request.
-    if (!SearchQueryNormalizer.queryIsPersonalized(requestContext.getRequest().getSearchQuery())) {
-      return Optional.absent();
+    //  f t  query  s personal zed, str p all personal zat on f elds and normal ze t  request.
+     f (!SearchQueryNormal zer.query sPersonal zed(requestContext.getRequest().getSearchQuery())) {
+      return Opt onal.absent();
     }
-    return Optional.fromNullable(
-        CacheUtil.normalizeRequestForCache(requestContext.getRequest(), true));
+    return Opt onal.fromNullable(
+        Cac Ut l.normal zeRequestForCac (requestContext.getRequest(), true));
   }
 }

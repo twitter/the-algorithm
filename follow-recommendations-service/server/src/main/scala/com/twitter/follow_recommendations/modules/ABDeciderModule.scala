@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.LoggerFactory
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.google. nject.na .Na d
+ mport com.tw ter.abdec der.ABDec derFactory
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.logg ng.LoggerFactory
+ mport javax. nject.S ngleton
 
-object ABDeciderModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def provideABDecider(
-    stats: StatsReceiver,
-    @Named(GuiceNamedConstants.CLIENT_EVENT_LOGGER) factory: LoggerFactory
-  ): LoggingABDecider = {
+object ABDec derModule extends Tw terModule {
+  @Prov des
+  @S ngleton
+  def prov deABDec der(
+    stats: StatsRece ver,
+    @Na d(Gu ceNa dConstants.CL ENT_EVENT_LOGGER) factory: LoggerFactory
+  ): Logg ngABDec der = {
 
-    val ymlPath = "/usr/local/config/abdecider/abdecider.yml"
+    val ymlPath = "/usr/local/conf g/abdec der/abdec der.yml"
 
-    val abDeciderFactory = ABDeciderFactory(
-      abDeciderYmlPath = ymlPath,
-      scribeLogger = Some(factory()),
-      environment = Some("production")
+    val abDec derFactory = ABDec derFactory(
+      abDec derYmlPath = ymlPath,
+      scr beLogger = So (factory()),
+      env ron nt = So ("product on")
     )
 
-    abDeciderFactory.buildWithLogging()
+    abDec derFactory.bu ldW hLogg ng()
   }
 }

@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-sealed trait ModuleHeaderDisplayType
+sealed tra  Module aderD splayType
 
-case object Classic extends ModuleHeaderDisplayType
-case object ContextEmphasis extends ModuleHeaderDisplayType
-case object ClassicNoDivider extends ModuleHeaderDisplayType
+case object Class c extends Module aderD splayType
+case object ContextEmphas s extends Module aderD splayType
+case object Class cNoD v der extends Module aderD splayType

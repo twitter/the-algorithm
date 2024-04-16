@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.scor ng_p pel ne
 
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.scorer.HeuristicScorer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.scorer. ur st cScorer
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neConf g
 
-object ScoredTweetsHeuristicScoringPipelineConfig
-    extends ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate] {
+object ScoredT ets ur st cScor ngP pel neConf g
+    extends Scor ngP pel neConf g[ScoredT etsQuery, T etCand date] {
 
-  override val identifier: ScoringPipelineIdentifier =
-    ScoringPipelineIdentifier("ScoredTweetsHeuristic")
+  overr de val  dent f er: Scor ngP pel ne dent f er =
+    Scor ngP pel ne dent f er("ScoredT ets ur st c")
 
-  override val selectors: Seq[Selector[ScoredTweetsQuery]] = Seq(InsertAppendResults(AllPipelines))
+  overr de val selectors: Seq[Selector[ScoredT etsQuery]] = Seq( nsertAppendResults(AllP pel nes))
 
-  override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(HeuristicScorer)
+  overr de val scorers: Seq[Scorer[ScoredT etsQuery, T etCand date]] =
+    Seq( ur st cScorer)
 }

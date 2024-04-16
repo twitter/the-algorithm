@@ -1,17 +1,17 @@
-resources(
-    sources = [
+res ces(
+    s ces = [
         "*.tsv",
         "*.xml",
         "**/*",
-        "config/*.yml",
+        "conf g/*.yml",
     ],
 )
 
-# Created for Bazel compatibility.
-# In Bazel, loose files must be part of a target to be included into a bundle.
-files(
-    name = "frs_resources",
-    sources = [
+# Created for Bazel compat b l y.
+#  n Bazel, loose f les must be part of a target to be  ncluded  nto a bundle.
+f les(
+    na  = "frs_res ces",
+    s ces = [
         "*.tsv",
         "*.xml",
         "*.yml",

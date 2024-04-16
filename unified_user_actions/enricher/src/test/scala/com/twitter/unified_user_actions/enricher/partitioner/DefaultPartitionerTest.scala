@@ -1,81 +1,81 @@
-package com.twitter.unified_user_actions.enricher.partitioner
+package com.tw ter.un f ed_user_act ons.enr c r.part  oner
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.NotificationTweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.TweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner.NullKey
-import org.scalatest.prop.TableDrivenPropertyChecks
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.enr c r.Enr c rF xture
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt dType
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on.Not f cat onT etEnr ch nt
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on.T etEnr ch nt
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.un f ed_user_act ons.enr c r.part  oner.DefaultPart  oner.NullKey
+ mport org.scalatest.prop.TableDr venPropertyC cks
 
-class DefaultPartitionerTest extends Test with TableDrivenPropertyChecks {
-  test("default partitioner should work") {
-    new EnricherFixture {
-      val partitioner = new DefaultPartitioner
+class DefaultPart  onerTest extends Test w h TableDr venPropertyC cks {
+  test("default part  oner should work") {
+    new Enr c rF xture {
+      val part  oner = new DefaultPart  oner
 
-      val instructions = Table(
-        ("instruction", "envelop", "expected"),
-        // tweet info
+      val  nstruct ons = Table(
+        (" nstruct on", "envelop", "expected"),
+        // t et  nfo
         (
-          TweetEnrichment,
-          EnrichmentEnvelop(1L, mkUUATweetEvent(123L), tweetInfoEnrichmentPlan),
-          Some(EnrichmentKey(EnrichmentIdType.TweetId, 123L))),
-        // notification tweet info
+          T etEnr ch nt,
+          Enr ch ntEnvelop(1L, mkUUAT etEvent(123L), t et nfoEnr ch ntPlan),
+          So (Enr ch ntKey(Enr ch nt dType.T et d, 123L))),
+        // not f cat on t et  nfo
         (
-          NotificationTweetEnrichment,
-          EnrichmentEnvelop(2L, mkUUATweetNotificationEvent(234L), tweetNotificationEnrichmentPlan),
-          Some(EnrichmentKey(EnrichmentIdType.TweetId, 234L))),
-        // notification with multiple tweet info
+          Not f cat onT etEnr ch nt,
+          Enr ch ntEnvelop(2L, mkUUAT etNot f cat onEvent(234L), t etNot f cat onEnr ch ntPlan),
+          So (Enr ch ntKey(Enr ch nt dType.T et d, 234L))),
+        // not f cat on w h mult ple t et  nfo
         (
-          NotificationTweetEnrichment,
-          EnrichmentEnvelop(
+          Not f cat onT etEnr ch nt,
+          Enr ch ntEnvelop(
             3L,
-            mkUUAMultiTweetNotificationEvent(22L, 33L),
-            tweetNotificationEnrichmentPlan),
-          Some(EnrichmentKey(EnrichmentIdType.TweetId, 22L))
-        ) // only the first tweet id is partitioned
+            mkUUAMult T etNot f cat onEvent(22L, 33L),
+            t etNot f cat onEnr ch ntPlan),
+          So (Enr ch ntKey(Enr ch nt dType.T et d, 22L))
+        ) // only t  f rst t et  d  s part  oned
       )
 
-      forEvery(instructions) {
+      forEvery( nstruct ons) {
         (
-          instruction: EnrichmentInstruction,
-          envelop: EnrichmentEnvelop,
-          expected: Some[EnrichmentKey]
+           nstruct on: Enr ch nt nstruct on,
+          envelop: Enr ch ntEnvelop,
+          expected: So [Enr ch ntKey]
         ) =>
-          val actual = partitioner.repartition(instruction, envelop)
+          val actual = part  oner.repart  on( nstruct on, envelop)
           assert(expected === actual)
       }
     }
   }
 
-  test("unsupported events shouldn't be partitioned") {
-    new EnricherFixture {
-      val partitioner = new DefaultPartitioner
+  test("unsupported events shouldn't be part  oned") {
+    new Enr c rF xture {
+      val part  oner = new DefaultPart  oner
 
-      val instructions = Table(
-        ("instruction", "envelop", "expected"),
-        // profile uua event
+      val  nstruct ons = Table(
+        (" nstruct on", "envelop", "expected"),
+        // prof le uua event
         (
-          TweetEnrichment,
-          EnrichmentEnvelop(1L, mkUUAProfileEvent(111L), tweetInfoEnrichmentPlan),
+          T etEnr ch nt,
+          Enr ch ntEnvelop(1L, mkUUAProf leEvent(111L), t et nfoEnr ch ntPlan),
           NullKey),
-        // unknown notification (not a tweet)
+        // unknown not f cat on (not a t et)
         (
-          NotificationTweetEnrichment,
-          EnrichmentEnvelop(1L, mkUUATweetNotificationUnknownEvent(), tweetInfoEnrichmentPlan),
+          Not f cat onT etEnr ch nt,
+          Enr ch ntEnvelop(1L, mkUUAT etNot f cat onUnknownEvent(), t et nfoEnr ch ntPlan),
           NullKey),
       )
 
-      forEvery(instructions) {
+      forEvery( nstruct ons) {
         (
-          instruction: EnrichmentInstruction,
-          envelop: EnrichmentEnvelop,
-          expected: Option[EnrichmentKey]
+           nstruct on: Enr ch nt nstruct on,
+          envelop: Enr ch ntEnvelop,
+          expected: Opt on[Enr ch ntKey]
         ) =>
-          val actual = partitioner.repartition(instruction, envelop)
+          val actual = part  oner.repart  on( nstruct on, envelop)
           assert(expected === actual)
       }
     }

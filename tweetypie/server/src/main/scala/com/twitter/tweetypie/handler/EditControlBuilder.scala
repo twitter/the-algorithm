@@ -1,359 +1,359 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.gizmoduck.util.UserUtil
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.Card2Repository
-import com.twitter.tweetypie.repository.StratoPromotedTweetRepository
-import com.twitter.tweetypie.repository.StratoSubscriptionVerificationRepository
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.repository.UrlCard2Key
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditOptions
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.tweetypie.util.EditControlUtil._
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.tweetypie.thriftscala.EditControlInitial
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.tweetypie.util.CommunityAnnotation
-import com.twitter.tweetypie.util.EditControlUtil
-import com.twitter.util.Future
+ mport com.tw ter.expandodo.thr ftscala.Card2RequestOpt ons
+ mport com.tw ter.featuresw c s.v2.FeatureSw chResults
+ mport com.tw ter.g zmoduck.ut l.UserUt l
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.repos ory.Card2Repos ory
+ mport com.tw ter.t etyp e.repos ory.StratoPromotedT etRepos ory
+ mport com.tw ter.t etyp e.repos ory.StratoSubscr pt onVer f cat onRepos ory
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.repos ory.UrlCard2Key
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala.Ed Opt ons
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l._
+ mport com.tw ter.t etyp e.thr ftscala.CardReference
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control n  al
+ mport com.tw ter.t etyp e.thr ftscala.PostT etRequest
+ mport com.tw ter.t etyp e.ut l.Commun yAnnotat on
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l
+ mport com.tw ter.ut l.Future
 
-object EditControlBuilder {
-  type Type = Request => Future[Option[EditControl]]
+object Ed ControlBu lder {
+  type Type = Request => Future[Opt on[Ed Control]]
 
-  val editTweetCountStat = "edit_tweet_count"
-  val editControlQueryOptions = TweetQuery.Options(
-    TweetQuery.Include(Set(Tweet.CoreDataField.id, Tweet.EditControlField.id))
+  val ed T etCountStat = "ed _t et_count"
+  val ed ControlQueryOpt ons = T etQuery.Opt ons(
+    T etQuery. nclude(Set(T et.CoreDataF eld. d, T et.Ed ControlF eld. d))
   )
-  val TweetEditCreationEnabledKey = "tweet_edit_creation_enabled"
-  val TweetEditCreationEnabledForTwitterBlueKey = "tweet_edit_creation_enabled_for_twitter_blue"
+  val T etEd Creat onEnabledKey = "t et_ed _creat on_enabled"
+  val T etEd Creat onEnabledForTw terBlueKey = "t et_ed _creat on_enabled_for_tw ter_blue"
 
-  val pollCardNames: Set[String] = Set(
-    "poll2choice_text_only",
-    "poll3choice_text_only",
-    "poll4choice_text_only",
-    "poll2choice_image",
-    "poll3choice_image",
-    "poll4choice_image",
-    "poll2choice_video",
-    "poll3choice_video",
-    "poll4choice_video",
+  val pollCardNa s: Set[Str ng] = Set(
+    "poll2cho ce_text_only",
+    "poll3cho ce_text_only",
+    "poll4cho ce_text_only",
+    "poll2cho ce_ mage",
+    "poll3cho ce_ mage",
+    "poll4cho ce_ mage",
+    "poll2cho ce_v deo",
+    "poll3cho ce_v deo",
+    "poll4cho ce_v deo",
   )
 
-  /** Used just for checking card name for poll check in case cards platform key not provided. */
-  val defaultCardsPlatformKey = "iPhone-13"
+  /** Used just for c ck ng card na  for poll c ck  n case cards platform key not prov ded. */
+  val defaultCardsPlatformKey = " Phone-13"
 
   /**
-   * Do we assume a Tweet has a poll (which makes it not editable) when it has a card
-   * that could be a poll, and it cannot be resolved at create.
+   * Do   assu  a T et has a poll (wh ch makes   not ed able) w n   has a card
+   * that could be a poll, and   cannot be resolved at create.
    */
-  val isPollCardAssumption = true
+  val  sPollCardAssumpt on = true
 
-  val tweetEditSubscriptionResource = "feature/tweet_edit"
+  val t etEd Subscr pt onRes ce = "feature/t et_ed "
 
   val log: Logger = Logger(getClass)
 
   case class Request(
-    postTweetRequest: PostTweetRequest,
-    tweet: Tweet,
-    matchedResults: Option[FeatureSwitchResults]) {
-    def editOptions: Option[EditOptions] = postTweetRequest.editOptions
+    postT etRequest: PostT etRequest,
+    t et: T et,
+    matc dResults: Opt on[FeatureSw chResults]) {
+    def ed Opt ons: Opt on[Ed Opt ons] = postT etRequest.ed Opt ons
 
-    def authorId: UserId = postTweetRequest.userId
+    def author d: User d = postT etRequest.user d
 
-    def createdAt: Time = Time.fromMilliseconds(tweet.coreData.get.createdAtSecs * 1000L)
+    def createdAt: T   = T  .fromM ll seconds(t et.coreData.get.createdAtSecs * 1000L)
 
-    def tweetId: TweetId = tweet.id
+    def t et d: T et d = t et. d
 
-    def cardReference: Option[CardReference] =
-      postTweetRequest.additionalFields.flatMap(_.cardReference)
+    def cardReference: Opt on[CardReference] =
+      postT etRequest.add  onalF elds.flatMap(_.cardReference)
 
-    def cardsPlatformKey: Option[String] =
-      postTweetRequest.hydrationOptions.flatMap(_.cardsPlatformKey)
+    def cardsPlatformKey: Opt on[Str ng] =
+      postT etRequest.hydrat onOpt ons.flatMap(_.cardsPlatformKey)
   }
 
   def apply(
-    tweetRepo: TweetRepository.Type,
-    card2Repo: Card2Repository.Type,
-    promotedTweetRepo: StratoPromotedTweetRepository.Type,
-    subscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type,
-    disablePromotedTweetEdit: Gate[Unit],
-    checkTwitterBlueSubscription: Gate[Unit],
-    setEditWindowToSixtyMinutes: Gate[Unit],
-    stats: StatsReceiver
+    t etRepo: T etRepos ory.Type,
+    card2Repo: Card2Repos ory.Type,
+    promotedT etRepo: StratoPromotedT etRepos ory.Type,
+    subscr pt onVer f cat onRepo: StratoSubscr pt onVer f cat onRepos ory.Type,
+    d sablePromotedT etEd : Gate[Un ],
+    c ckTw terBlueSubscr pt on: Gate[Un ],
+    setEd W ndowToS xtyM nutes: Gate[Un ],
+    stats: StatsRece ver
   ): Type = {
 
-    // Nullcast tweets not allowed, except if the tweet has a community annotation
-    def isNullcastedButNotCommunityTweet(request: Request): Boolean = {
+    // Nullcast t ets not allo d, except  f t  t et has a commun y annotat on
+    def  sNullcastedButNotCommun yT et(request: Request): Boolean = {
 
-      val isNullcasted: Boolean = request.tweet.coreData.get.nullcast
+      val  sNullcasted: Boolean = request.t et.coreData.get.nullcast
 
-      val communityIds: Option[Seq[CommunityId]] =
-        request.postTweetRequest.additionalFields
-          .flatMap(CommunityAnnotation.additionalFieldsToCommunityIDs)
+      val commun y ds: Opt on[Seq[Commun y d]] =
+        request.postT etRequest.add  onalF elds
+          .flatMap(Commun yAnnotat on.add  onalF eldsToCommun y Ds)
 
-      isNullcasted && !(communityIds.exists(_.nonEmpty))
+       sNullcasted && !(commun y ds.ex sts(_.nonEmpty))
     }
 
-    def isSuperFollow(tweet: Tweet): Boolean = tweet.exclusiveTweetControl.isDefined
+    def  sSuperFollow(t et: T et): Boolean = t et.exclus veT etControl. sDef ned
 
-    def isCollabTweet(tweet: Tweet): Boolean = tweet.collabControl.isDefined
+    def  sCollabT et(t et: T et): Boolean = t et.collabControl. sDef ned
 
-    def isReplyToTweet(tweet: Tweet): Boolean =
-      getReply(tweet).flatMap(_.inReplyToStatusId).isDefined
+    def  sReplyToT et(t et: T et): Boolean =
+      getReply(t et).flatMap(_. nReplyToStatus d). sDef ned
 
-    // When card is tombstone, tweet is not considered a poll, and therefore can be edit eligible.
-    val cardReferenceUriIsTombstone = stats.counter("edit_control_builder_card_tombstoned")
-    // We check whether tweets are polls since these are not edit eligible.
-    // If we are not sure due to lookup failure, we take an `isPollCardAssumption`.
-    def isPoll(
-      card2Repo: Card2Repository.Type,
+    // W n card  s tombstone, t et  s not cons dered a poll, and t refore can be ed  el g ble.
+    val cardReferenceUr  sTombstone = stats.counter("ed _control_bu lder_card_tombstoned")
+    //   c ck w t r t ets are polls s nce t se are not ed  el g ble.
+    //  f   are not sure due to lookup fa lure,   take an ` sPollCardAssumpt on`.
+    def  sPoll(
+      card2Repo: Card2Repos ory.Type,
       cardReference: CardReference,
-      cardsPlatformKey: String,
-    ): Stitch[Boolean] = {
-      if (cardReference.cardUri == "tombstone://card") {
-        cardReferenceUriIsTombstone.incr()
-        Stitch.value(false)
+      cardsPlatformKey: Str ng,
+    ): St ch[Boolean] = {
+       f (cardReference.cardUr  == "tombstone://card") {
+        cardReferenceUr  sTombstone. ncr()
+        St ch.value(false)
       } else {
-        val key = UrlCard2Key(cardReference.cardUri)
-        // `allowNonTcoUrls = true` This allows us to check if non-tco urls (e.g. apple.com) have a card
-        // at this point in tweet builder urls can be in their original form and not tcoified.
-        val options = Card2RequestOptions(
+        val key = UrlCard2Key(cardReference.cardUr )
+        // `allowNonTcoUrls = true` T  allows us to c ck  f non-tco urls (e.g. apple.com) have a card
+        // at t  po nt  n t et bu lder urls can be  n t  r or g nal form and not tco f ed.
+        val opt ons = Card2RequestOpt ons(
           platformKey = cardsPlatformKey,
           allowNonTcoUrls = true
         )
-        card2Repo(key, options)
-          .map(card2 => pollCardNames.contains(card2.name))
+        card2Repo(key, opt ons)
+          .map(card2 => pollCardNa s.conta ns(card2.na ))
       }
     }
 
-    def isFeatureSwitchEnabled(matchedResults: Option[FeatureSwitchResults], key: String): Boolean =
-      matchedResults.flatMap(_.getBoolean(key, shouldLogImpression = false)).contains(true)
+    def  sFeatureSw chEnabled(matc dResults: Opt on[FeatureSw chResults], key: Str ng): Boolean =
+      matc dResults.flatMap(_.getBoolean(key, shouldLog mpress on = false)).conta ns(true)
 
-    def wrapInitial(initial: EditControlInitial): Option[EditControl.Initial] =
-      Some(EditControl.Initial(initial = initial))
+    def wrap n  al( n  al: Ed Control n  al): Opt on[Ed Control. n  al] =
+      So (Ed Control. n  al( n  al =  n  al))
 
-    // Checks for validity of an edit are implemented as procedures
-    // that throw an error in case a check fails. This composes way better than
-    // returning a Try/Future/Stitch because:
-    // 1. We do not need to decide which of the aforementioned containers to use.
-    // 2. The checks as below compose with callbacks in all the aforementioned containers.
+    // C cks for val d y of an ed  are  mple nted as procedures
+    // that throw an error  n case a c ck fa ls. T  composes way better than
+    // return ng a Try/Future/St ch because:
+    // 1.   do not need to dec de wh ch of t  afore nt oned conta ners to use.
+    // 2. T  c cks as below compose w h callbacks  n all t  afore nt oned conta ners.
 
-    val editRequestOutsideOfAllowlist = stats.counter("edit_control_builder_rejected", "allowlist")
+    val ed RequestOuts deOfAllowl st = stats.counter("ed _control_bu lder_rejected", "allowl st")
 
-    // This method uses two feature switches:
-    // - TweetEditCreationEnabledKey authorizes the user to edit tweets directly
-    // - TweetEditCreationEnabledForTwitterBlueKey authorizes the user to edit tweets if they have
-    //     a Twitter Blue subscription
+    // T   thod uses two feature sw c s:
+    // - T etEd Creat onEnabledKey author zes t  user to ed  t ets d rectly
+    // - T etEd Creat onEnabledForTw terBlueKey author zes t  user to ed  t ets  f t y have
+    //     a Tw ter Blue subscr pt on
     //
-    // Test users are always authorized to edit tweets.
-    def checkUserEligibility(
-      authorId: UserId,
-      matchedResults: Option[FeatureSwitchResults]
-    ): Stitch[Unit] = {
-      val isTestUser = UserUtil.isTestUserId(authorId)
-      val authorizedWithoutTwitterBlue =
-        isFeatureSwitchEnabled(matchedResults, TweetEditCreationEnabledKey)
+    // Test users are always author zed to ed  t ets.
+    def c ckUserEl g b l y(
+      author d: User d,
+      matc dResults: Opt on[FeatureSw chResults]
+    ): St ch[Un ] = {
+      val  sTestUser = UserUt l. sTestUser d(author d)
+      val author zedW houtTw terBlue =
+         sFeatureSw chEnabled(matc dResults, T etEd Creat onEnabledKey)
 
-      if (isTestUser || authorizedWithoutTwitterBlue) {
-        // If the editing user is a test user or is authorized by the non-Twitter Blue feature
-        // switch, allow editing.
-        Stitch.Done
+       f ( sTestUser || author zedW houtTw terBlue) {
+        //  f t  ed  ng user  s a test user or  s author zed by t  non-Tw ter Blue feature
+        // sw ch, allow ed  ng.
+        St ch.Done
       } else {
-        // Otherwise, check if they're authorized by the Twitter Blue feature switch and if they're
-        // subscribed to Twitter Blue.
-        val authorizedWithTwitterBlue: Stitch[Boolean] =
-          if (checkTwitterBlueSubscription() &&
-            isFeatureSwitchEnabled(matchedResults, TweetEditCreationEnabledForTwitterBlueKey)) {
-            subscriptionVerificationRepo(authorId, tweetEditSubscriptionResource)
-          } else Stitch.value(false)
+        // Ot rw se, c ck  f t y're author zed by t  Tw ter Blue feature sw ch and  f t y're
+        // subscr bed to Tw ter Blue.
+        val author zedW hTw terBlue: St ch[Boolean] =
+           f (c ckTw terBlueSubscr pt on() &&
+             sFeatureSw chEnabled(matc dResults, T etEd Creat onEnabledForTw terBlueKey)) {
+            subscr pt onVer f cat onRepo(author d, t etEd Subscr pt onRes ce)
+          } else St ch.value(false)
 
-        authorizedWithTwitterBlue.flatMap { authorized =>
-          if (!authorized) {
-            log.error(s"User ${authorId} unauthorized to edit")
-            editRequestOutsideOfAllowlist.incr()
-            Stitch.exception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
-          } else Stitch.Done
+        author zedW hTw terBlue.flatMap { author zed =>
+           f (!author zed) {
+            log.error(s"User ${author d} unauthor zed to ed ")
+            ed RequestOuts deOfAllowl st. ncr()
+            St ch.except on(T etCreateFa lure.State(T etCreateState.Ed T etUserNotAuthor zed))
+          } else St ch.Done
         }
       }
     }
 
-    val editRequestByNonAuthor = stats.counter("edit_control_builder_rejected", "not_author")
-    def checkAuthor(
-      authorId: UserId,
-      previousTweetAuthorId: UserId
-    ): Unit = {
-      if (authorId != previousTweetAuthorId) {
-        editRequestByNonAuthor.incr()
-        throw TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthor)
+    val ed RequestByNonAuthor = stats.counter("ed _control_bu lder_rejected", "not_author")
+    def c ckAuthor(
+      author d: User d,
+      prev ousT etAuthor d: User d
+    ): Un  = {
+       f (author d != prev ousT etAuthor d) {
+        ed RequestByNonAuthor. ncr()
+        throw T etCreateFa lure.State(T etCreateState.Ed T etUserNotAuthor)
       }
     }
 
-    val tweetEditForStaleTweet = stats.counter("edit_control_builder_rejected", "stale")
-    def checkLatestEdit(
-      previousTweetId: TweetId,
-      initial: EditControlInitial,
-    ): Unit = {
-      if (previousTweetId != initial.editTweetIds.last) {
-        tweetEditForStaleTweet.incr()
-        throw TweetCreateFailure.State(TweetCreateState.EditTweetNotLatestVersion)
+    val t etEd ForStaleT et = stats.counter("ed _control_bu lder_rejected", "stale")
+    def c ckLatestEd (
+      prev ousT et d: T et d,
+       n  al: Ed Control n  al,
+    ): Un  = {
+       f (prev ousT et d !=  n  al.ed T et ds.last) {
+        t etEd ForStaleT et. ncr()
+        throw T etCreateFa lure.State(T etCreateState.Ed T etNotLatestVers on)
       }
     }
 
-    val tweetEditForLimitReached = stats.counter("edit_control_builder_rejected", "edits_limit")
-    def checkEditsRemaining(initial: EditControlInitial): Unit = {
-      initial.editsRemaining match {
-        case Some(number) if number > 0 => // OK
+    val t etEd ForL m Reac d = stats.counter("ed _control_bu lder_rejected", "ed s_l m ")
+    def c ckEd sRema n ng( n  al: Ed Control n  al): Un  = {
+       n  al.ed sRema n ng match {
+        case So (number)  f number > 0 => // OK
         case _ =>
-          tweetEditForLimitReached.incr()
-          throw TweetCreateFailure.State(TweetCreateState.EditCountLimitReached)
+          t etEd ForL m Reac d. ncr()
+          throw T etCreateFa lure.State(T etCreateState.Ed CountL m Reac d)
       }
     }
 
-    val editTweetExpired = stats.counter("edit_control_builder_rejected", "expired")
-    val editTweetExpiredNoEditControl =
-      stats.counter("edit_control_builder_rejected", "expired", "no_edit_control")
-    def checkEditTimeWindow(initial: EditControlInitial): Unit = {
-      initial.editableUntilMsecs match {
-        case Some(millis) if Time.now < Time.fromMilliseconds(millis) => // OK
-        case Some(_) =>
-          editTweetExpired.incr()
-          throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
-        case editable =>
-          editTweetExpired.incr()
-          if (editable.isEmpty) {
-            editTweetExpiredNoEditControl.incr()
+    val ed T etExp red = stats.counter("ed _control_bu lder_rejected", "exp red")
+    val ed T etExp redNoEd Control =
+      stats.counter("ed _control_bu lder_rejected", "exp red", "no_ed _control")
+    def c ckEd T  W ndow( n  al: Ed Control n  al): Un  = {
+       n  al.ed ableUnt lMsecs match {
+        case So (m ll s)  f T  .now < T  .fromM ll seconds(m ll s) => // OK
+        case So (_) =>
+          ed T etExp red. ncr()
+          throw T etCreateFa lure.State(T etCreateState.Ed T  L m Reac d)
+        case ed able =>
+          ed T etExp red. ncr()
+           f (ed able. sEmpty) {
+            ed T etExp redNoEd Control. ncr()
           }
-          throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
+          throw T etCreateFa lure.State(T etCreateState.Ed T  L m Reac d)
       }
     }
 
-    val tweetEditNotEligible = stats.counter("edit_control_builder_rejected", "not_eligible")
-    def checkIsEditEligible(initial: EditControlInitial): Unit = {
-      initial.isEditEligible match {
-        case Some(true) => // OK
+    val t etEd NotEl g ble = stats.counter("ed _control_bu lder_rejected", "not_el g ble")
+    def c ck sEd El g ble( n  al: Ed Control n  al): Un  = {
+       n  al. sEd El g ble match {
+        case So (true) => // OK
         case _ =>
-          tweetEditNotEligible.incr()
-          throw TweetCreateFailure.State(TweetCreateState.NotEligibleForEdit)
+          t etEd NotEl g ble. ncr()
+          throw T etCreateFa lure.State(T etCreateState.NotEl g bleForEd )
       }
     }
 
-    val editControlInitialMissing =
-      stats.counter("edit_control_builder_rejected", "initial_missing")
-    def findEditControlInitial(previousTweet: Tweet): EditControlInitial = {
-      previousTweet.editControl match {
-        case Some(EditControl.Initial(initial)) => initial
-        case Some(EditControl.Edit(edit)) =>
-          edit.editControlInitial.getOrElse {
-            editControlInitialMissing.incr()
-            throw new IllegalStateException(
-              "Encountered edit tweet with missing editControlInitial.")
+    val ed Control n  alM ss ng =
+      stats.counter("ed _control_bu lder_rejected", " n  al_m ss ng")
+    def f ndEd Control n  al(prev ousT et: T et): Ed Control n  al = {
+      prev ousT et.ed Control match {
+        case So (Ed Control. n  al( n  al)) =>  n  al
+        case So (Ed Control.Ed (ed )) =>
+          ed .ed Control n  al.getOrElse {
+            ed Control n  alM ss ng. ncr()
+            throw new  llegalStateExcept on(
+              "Encountered ed  t et w h m ss ng ed Control n  al.")
           }
         case _ =>
-          throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
+          throw T etCreateFa lure.State(T etCreateState.Ed T  L m Reac d)
       }
     }
 
-    val editPromotedTweet = stats.counter("tweet_edit_for_promoted_tweet")
-    def checkPromotedTweet(
-      previousTweetId: TweetId,
-      promotedTweetRepo: StratoPromotedTweetRepository.Type,
-      disablePromotedTweetEdit: Gate[Unit]
-    ): Stitch[Unit] = {
-      if (disablePromotedTweetEdit()) {
-        promotedTweetRepo(previousTweetId).flatMap {
+    val ed PromotedT et = stats.counter("t et_ed _for_promoted_t et")
+    def c ckPromotedT et(
+      prev ousT et d: T et d,
+      promotedT etRepo: StratoPromotedT etRepos ory.Type,
+      d sablePromotedT etEd : Gate[Un ]
+    ): St ch[Un ] = {
+       f (d sablePromotedT etEd ()) {
+        promotedT etRepo(prev ousT et d).flatMap {
           case false =>
-            Stitch.Done
+            St ch.Done
           case true =>
-            editPromotedTweet.incr()
-            Stitch.exception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
+            ed PromotedT et. ncr()
+            St ch.except on(T etCreateFa lure.State(T etCreateState.Ed T etUserNotAuthor zed))
         }
       } else {
-        Stitch.Done
+        St ch.Done
       }
     }
 
-    // Each time edit is made, count how many versions a tweet already has.
-    // Value should be always between 1 and 4.
-    val editTweetCount = 0
-      .to(EditControlUtil.maxTweetEditsAllowed)
-      .map(i => i -> stats.counter("edit_control_builder_edits_count", i.toString))
+    // Each t   ed   s made, count how many vers ons a t et already has.
+    // Value should be always bet en 1 and 4.
+    val ed T etCount = 0
+      .to(Ed ControlUt l.maxT etEd sAllo d)
+      .map(  =>   -> stats.counter("ed _control_bu lder_ed s_count",  .toStr ng))
       .toMap
-    // Overall counter and failures of card resolution for poll lookups. Needed because polls are not editable.
-    val pollCardResolutionTotal = stats.counter("edit_control_builder_card_resolution", "total")
-    val pollCardResolutionFailure =
-      stats.counter("edit_control_builder_card_resolution", "failures")
-    // Edit of initial tweet requested, and all edit checks successful.
-    val initialEditTweet = stats.counter("edit_control_builder_initial_edit")
+    // Overall counter and fa lures of card resolut on for poll lookups. Needed because polls are not ed able.
+    val pollCardResolut onTotal = stats.counter("ed _control_bu lder_card_resolut on", "total")
+    val pollCardResolut onFa lure =
+      stats.counter("ed _control_bu lder_card_resolut on", "fa lures")
+    // Ed  of  n  al t et requested, and all ed  c cks successful.
+    val  n  alEd T et = stats.counter("ed _control_bu lder_ n  al_ed ")
     request =>
-      Stitch.run {
-        request.editOptions match {
+      St ch.run {
+        request.ed Opt ons match {
           case None =>
-            val editControl =
-              makeEditControlInitial(
-                tweetId = request.tweetId,
+            val ed Control =
+              makeEd Control n  al(
+                t et d = request.t et d,
                 createdAt = request.createdAt,
-                setEditWindowToSixtyMinutes = setEditWindowToSixtyMinutes
-              ).initial.copy(
-                isEditEligible = Some(
-                  !isNullcastedButNotCommunityTweet(request)
-                    && !isSuperFollow(request.tweet)
-                    && !isCollabTweet(request.tweet)
-                    && !isReplyToTweet(request.tweet)
+                setEd W ndowToS xtyM nutes = setEd W ndowToS xtyM nutes
+              ). n  al.copy(
+                 sEd El g ble = So (
+                  ! sNullcastedButNotCommun yT et(request)
+                    && ! sSuperFollow(request.t et)
+                    && ! sCollabT et(request.t et)
+                    && ! sReplyToT et(request.t et)
                 ),
               )
-            (editControl.isEditEligible, request.cardReference) match {
-              case (Some(true), Some(reference)) =>
-                pollCardResolutionTotal.incr()
-                isPoll(
+            (ed Control. sEd El g ble, request.cardReference) match {
+              case (So (true), So (reference)) =>
+                pollCardResolut onTotal. ncr()
+                 sPoll(
                   card2Repo = card2Repo,
                   cardReference = reference,
                   cardsPlatformKey = request.cardsPlatformKey.getOrElse(defaultCardsPlatformKey),
                 ).rescue {
-                    // Revert to the assumed value if card cannot be resolved.
+                    // Revert to t  assu d value  f card cannot be resolved.
                     case _ =>
-                      pollCardResolutionFailure.incr()
-                      Stitch.value(isPollCardAssumption)
+                      pollCardResolut onFa lure. ncr()
+                      St ch.value( sPollCardAssumpt on)
                   }
-                  .map { tweetIsAPoll =>
-                    wrapInitial(editControl.copy(isEditEligible = Some(!tweetIsAPoll)))
+                  .map { t et sAPoll =>
+                    wrap n  al(ed Control.copy( sEd El g ble = So (!t et sAPoll)))
                   }
-              case _ => Stitch.value(wrapInitial(editControl))
+              case _ => St ch.value(wrap n  al(ed Control))
             }
-          case Some(editOptions) =>
+          case So (ed Opt ons) =>
             for {
-              (previousTweet, _, _) <- Stitch.join(
-                tweetRepo(editOptions.previousTweetId, editControlQueryOptions),
-                checkPromotedTweet(
-                  editOptions.previousTweetId,
-                  promotedTweetRepo,
-                  disablePromotedTweetEdit),
-                checkUserEligibility(
-                  authorId = request.authorId,
-                  matchedResults = request.matchedResults)
+              (prev ousT et, _, _) <- St ch.jo n(
+                t etRepo(ed Opt ons.prev ousT et d, ed ControlQueryOpt ons),
+                c ckPromotedT et(
+                  ed Opt ons.prev ousT et d,
+                  promotedT etRepo,
+                  d sablePromotedT etEd ),
+                c ckUserEl g b l y(
+                  author d = request.author d,
+                  matc dResults = request.matc dResults)
               )
-            } yield {
-              val initial = findEditControlInitial(previousTweet)
-              checkAuthor(
-                authorId = request.authorId,
-                previousTweetAuthorId = getUserId(previousTweet))
-              editTweetCount
-                .get(initial.editTweetIds.size)
-                .orElse(editTweetCount.get(EditControlUtil.maxTweetEditsAllowed))
-                .foreach(counter => counter.incr())
-              checkLatestEdit(previousTweet.id, initial)
-              checkEditsRemaining(initial)
-              checkEditTimeWindow(initial)
-              checkIsEditEligible(initial)
-              if (initial.editTweetIds == Seq(previousTweet.id)) {
-                initialEditTweet.incr()
+            } y eld {
+              val  n  al = f ndEd Control n  al(prev ousT et)
+              c ckAuthor(
+                author d = request.author d,
+                prev ousT etAuthor d = getUser d(prev ousT et))
+              ed T etCount
+                .get( n  al.ed T et ds.s ze)
+                .orElse(ed T etCount.get(Ed ControlUt l.maxT etEd sAllo d))
+                .foreach(counter => counter. ncr())
+              c ckLatestEd (prev ousT et. d,  n  al)
+              c ckEd sRema n ng( n  al)
+              c ckEd T  W ndow( n  al)
+              c ck sEd El g ble( n  al)
+               f ( n  al.ed T et ds == Seq(prev ousT et. d)) {
+                 n  alEd T et. ncr()
               }
-              Some(editControlEdit(initialTweetId = initial.editTweetIds.head))
+              So (ed ControlEd ( n  alT et d =  n  al.ed T et ds. ad))
             }
         }
       }

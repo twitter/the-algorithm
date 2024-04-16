@@ -1,66 +1,66 @@
-include "logging/flows.thrift"
-include "logging/recently_engaged_user_id.thrift"
+ nclude "logg ng/flows.thr ft"
+ nclude "logg ng/recently_engaged_user_ d.thr ft"
 
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+na space java com.tw ter.follow_recom ndat ons.logg ng.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.logg ng.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons.logg ng
 
-// Offline equal of Profile DisplayContext
-struct OfflineProfile {
-    1: required i64 profileId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+// Offl ne equal of Prof le D splayContext
+struct Offl neProf le {
+    1: requ red  64 prof le d(personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')
 
-// Offline equal of Search DisplayContext
-struct OfflineSearch {
-    1: required string searchQuery(personalDataType='SearchQuery')
-}(persisted='true', hasPersonalData='true')
+// Offl ne equal of Search D splayContext
+struct Offl neSearch {
+    1: requ red str ng searchQuery(personalDataType='SearchQuery')
+}(pers sted='true', hasPersonalData='true')
 
-// Offline equal of Rux Landing Page DisplayContext
-struct OfflineRux {
-  1: required i64 focalAuthorId(personalDataType="UserId")
-}(persisted='true', hasPersonalData='true')
+// Offl ne equal of Rux Land ng Page D splayContext
+struct Offl neRux {
+  1: requ red  64 focalAuthor d(personalDataType="User d")
+}(pers sted='true', hasPersonalData='true')
 
-// Offline equal of Topic DisplayContext
-struct OfflineTopic {
-  1: required i64 topicId(personalDataType = 'TopicFollow')
-}(persisted='true', hasPersonalData='true')
+// Offl ne equal of Top c D splayContext
+struct Offl neTop c {
+  1: requ red  64 top c d(personalDataType = 'Top cFollow')
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineReactiveFollow {
-    1: required list<i64> followedUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct Offl neReact veFollow {
+    1: requ red l st< 64> follo dUser ds(personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineNuxInterests {
-    1: optional flows.OfflineFlowContext flowContext // set for recommendation inside an interactive flow
-}(persisted='true', hasPersonalData='true')
+struct Offl neNux nterests {
+    1: opt onal flows.Offl neFlowContext flowContext // set for recom ndat on  ns de an  nteract ve flow
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineAdCampaignTarget {
-    1: required list<i64> similarToUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct Offl neAdCampa gnTarget {
+    1: requ red l st< 64> s m larToUser ds(personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineConnectTab {
-    1: required list<i64> byfSeedUserIds(personalDataType='UserId')
-    2: required list<i64> similarToUserIds(personalDataType='UserId')
-    3: required list<recently_engaged_user_id.RecentlyEngagedUserId> recentlyEngagedUserIds
-}(persisted='true', hasPersonalData='true')
+struct Offl neConnectTab {
+    1: requ red l st< 64> byfSeedUser ds(personalDataType='User d')
+    2: requ red l st< 64> s m larToUser ds(personalDataType='User d')
+    3: requ red l st<recently_engaged_user_ d.RecentlyEngagedUser d> recentlyEngagedUser ds
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineSimilarToUser {
-    1: required i64 similarToUserId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct Offl neS m larToUser {
+    1: requ red  64 s m larToUser d(personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflinePostNuxFollowTask {
-    1: optional flows.OfflineFlowContext flowContext // set for recommendation inside an interactive flow
-}(persisted='true', hasPersonalData='true')
+struct Offl nePostNuxFollowTask {
+    1: opt onal flows.Offl neFlowContext flowContext // set for recom ndat on  ns de an  nteract ve flow
+}(pers sted='true', hasPersonalData='true')
 
-// Offline equal of DisplayContext
-union OfflineDisplayContext {
-    1: OfflineProfile profile
-    2: OfflineSearch search
-    3: OfflineRux rux
-    4: OfflineTopic topic
-    5: OfflineReactiveFollow reactiveFollow
-    6: OfflineNuxInterests nuxInterests
-    7: OfflineAdCampaignTarget adCampaignTarget
-    8: OfflineConnectTab connectTab
-    9: OfflineSimilarToUser similarToUser
-    10: OfflinePostNuxFollowTask postNuxFollowTask
-}(persisted='true', hasPersonalData='true')
+// Offl ne equal of D splayContext
+un on Offl neD splayContext {
+    1: Offl neProf le prof le
+    2: Offl neSearch search
+    3: Offl neRux rux
+    4: Offl neTop c top c
+    5: Offl neReact veFollow react veFollow
+    6: Offl neNux nterests nux nterests
+    7: Offl neAdCampa gnTarget adCampa gnTarget
+    8: Offl neConnectTab connectTab
+    9: Offl neS m larToUser s m larToUser
+    10: Offl nePostNuxFollowTask postNuxFollowTask
+}(pers sted='true', hasPersonalData='true')

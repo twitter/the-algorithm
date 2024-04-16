@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait ShouldInclude[-Query <: PipelineQuery] {
-  def apply(query: Query, items: Seq[SliceItem]): Boolean
+tra  Should nclude[-Query <: P pel neQuery] {
+  def apply(query: Query,  ems: Seq[Sl ce em]): Boolean
 }
 
-object AlwaysInclude extends ShouldInclude[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = true
+object Always nclude extends Should nclude[P pel neQuery] {
+  overr de def apply(query: P pel neQuery, entr es: Seq[Sl ce em]): Boolean = true
 }
 
-object IncludeOnNonEmpty extends ShouldInclude[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = entries.nonEmpty
+object  ncludeOnNonEmpty extends Should nclude[P pel neQuery] {
+  overr de def apply(query: P pel neQuery, entr es: Seq[Sl ce em]): Boolean = entr es.nonEmpty
 }

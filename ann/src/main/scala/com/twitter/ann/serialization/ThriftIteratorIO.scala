@@ -1,57 +1,57 @@
-package com.twitter.ann.serialization
+package com.tw ter.ann.ser al zat on
 
-import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
-import java.io.{InputStream, OutputStream}
-import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.transport.{TIOStreamTransport, TTransportException}
+ mport com.tw ter.scrooge.{Thr ftStruct, Thr ftStructCodec}
+ mport java. o.{ nputStream, OutputStream}
+ mport org.apac .thr ft.protocol.TB naryProtocol
+ mport org.apac .thr ft.transport.{T OStreamTransport, TTransportExcept on}
 
 /**
- * Class that can serialize and deserialize an iterator of thrift objects.
- * This class can do things lazily so there is no need to have all the object into memory.
+ * Class that can ser al ze and deser al ze an  erator of thr ft objects.
+ * T  class can do th ngs laz ly so t re  s no need to have all t  object  nto  mory.
  */
-class ThriftIteratorIO[T <: ThriftStruct](
-  codec: ThriftStructCodec[T]) {
+class Thr ft erator O[T <: Thr ftStruct](
+  codec: Thr ftStructCodec[T]) {
   def toOutputStream(
-    iterator: Iterator[T],
+     erator:  erator[T],
     outputStream: OutputStream
-  ): Unit = {
-    val protocol = (new TBinaryProtocol.Factory).getProtocol(new TIOStreamTransport(outputStream))
-    iterator.foreach { thriftObject =>
-      codec.encode(thriftObject, protocol)
+  ): Un  = {
+    val protocol = (new TB naryProtocol.Factory).getProtocol(new T OStreamTransport(outputStream))
+     erator.foreach { thr ftObject =>
+      codec.encode(thr ftObject, protocol)
     }
   }
 
   /**
-   * Returns an iterator that lazily reads from an inputStream.
+   * Returns an  erator that laz ly reads from an  nputStream.
    * @return
    */
-  def fromInputStream(
-    inputStream: InputStream
-  ): Iterator[T] = {
-    ThriftIteratorIO.getIterator(codec, inputStream)
+  def from nputStream(
+     nputStream:  nputStream
+  ):  erator[T] = {
+    Thr ft erator O.get erator(codec,  nputStream)
   }
 }
 
-object ThriftIteratorIO {
-  private def getIterator[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    inputStream: InputStream
-  ): Iterator[T] = {
-    val protocol = (new TBinaryProtocol.Factory).getProtocol(new TIOStreamTransport(inputStream))
+object Thr ft erator O {
+  pr vate def get erator[T <: Thr ftStruct](
+    codec: Thr ftStructCodec[T],
+     nputStream:  nputStream
+  ):  erator[T] = {
+    val protocol = (new TB naryProtocol.Factory).getProtocol(new T OStreamTransport( nputStream))
 
-    def getNext: Option[T] =
+    def getNext: Opt on[T] =
       try {
-        Some(codec.decode(protocol))
+        So (codec.decode(protocol))
       } catch {
-        case e: TTransportException if e.getType == TTransportException.END_OF_FILE =>
-          inputStream.close()
+        case e: TTransportExcept on  f e.getType == TTransportExcept on.END_OF_F LE =>
+           nputStream.close()
           None
       }
 
-    Iterator
-      .continually[Option[T]](getNext)
-      .takeWhile(_.isDefined)
-      // It should be safe to call get on here since we are only take the defined ones.
+     erator
+      .cont nually[Opt on[T]](getNext)
+      .takeWh le(_. sDef ned)
+      //   should be safe to call get on  re s nce   are only take t  def ned ones.
       .map(_.get)
   }
 }

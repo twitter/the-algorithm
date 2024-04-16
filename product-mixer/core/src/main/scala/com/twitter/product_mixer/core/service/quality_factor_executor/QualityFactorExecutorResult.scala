@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.service.quality_factor_executor
+package com.tw ter.product_m xer.core.serv ce.qual y_factor_executor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
 
-case class QualityFactorExecutorResult(
-  pipelineQualityFactors: Map[ComponentIdentifier, Double])
+case class Qual yFactorExecutorResult(
+  p pel neQual yFactors: Map[Component dent f er, Double])
 
-object QualityFactorExecutorResult {
-  val empty: QualityFactorExecutorResult = QualityFactorExecutorResult(Map.empty)
+object Qual yFactorExecutorResult {
+  val empty: Qual yFactorExecutorResult = Qual yFactorExecutorResult(Map.empty)
 }

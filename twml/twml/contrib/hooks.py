@@ -1,42 +1,42 @@
-import datetime
+ mport datet  
 
-from absl import logging
-import pytz
-import tensorflow.compat.v1 as tf
+from absl  mport logg ng
+ mport pytz
+ mport tensorflow.compat.v1 as tf
 
 
-class StopAtTimeHook(tf.train.SessionRunHook):
+class StopAtT  Hook(tf.tra n.Sess onRunHook):
   """
-  Hook that stops training at a fixed datetime
+  Hook that stops tra n ng at a f xed datet  
   """
 
-  def __init__(self, stop_time):
+  def __ n __(self, stop_t  ):
     """
-    Arguments:
-      stop_time:
-        a datetime.datetime or a datetime.timedelta specifying when to stop.
-        For naive datetime.datetime objects (with no time zone specified),
-        UTC time zone is assumed.
+    Argu nts:
+      stop_t  :
+        a datet  .datet   or a datet  .t  delta spec fy ng w n to stop.
+        For na ve datet  .datet   objects (w h no t   zone spec f ed),
+        UTC t   zone  s assu d.
     """
-    if isinstance(stop_time, datetime.timedelta):
-      self._stop_datetime = pytz.utc.localize(datetime.datetime.utcnow() + stop_time)
-    elif isinstance(stop_time, datetime.datetime):
-      if stop_time.tzinfo is None:
-        self._stop_datetime = pytz.utc.localize(stop_time)
+     f  s nstance(stop_t  , datet  .t  delta):
+      self._stop_datet   = pytz.utc.local ze(datet  .datet  .utcnow() + stop_t  )
+    el f  s nstance(stop_t  , datet  .datet  ):
+       f stop_t  .tz nfo  s None:
+        self._stop_datet   = pytz.utc.local ze(stop_t  )
       else:
-        self._stop_datetime = stop_time.astimezone(pytz.UTC)
+        self._stop_datet   = stop_t  .ast  zone(pytz.UTC)
     else:
-      raise ValueError("Expecting datetime or timedelta for stop_time arg")
+      ra se ValueError("Expect ng datet   or t  delta for stop_t   arg")
     self._stop_requested = False
 
   def after_run(self, run_context, run_values):
-    delta = self._stop_datetime - pytz.utc.localize(datetime.datetime.utcnow())
-    if delta.total_seconds() <= 0:
-      logging.info("StopAtTimeHook reached stop_time; requesting stop")
+    delta = self._stop_datet   - pytz.utc.local ze(datet  .datet  .utcnow())
+     f delta.total_seconds() <= 0:
+      logg ng. nfo("StopAtT  Hook reac d stop_t  ; request ng stop")
       run_context.request_stop()
       self._stop_requested = True
 
   @property
   def stop_requested(self):
-    """ true if this hook requested a stop """
+    """ true  f t  hook requested a stop """
     return self._stop_requested

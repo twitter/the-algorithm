@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top c em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicItemMarshaller @Inject() (
-  displayTypeMarshaller: TopicDisplayTypeMarshaller,
-  functionalityTypeMarshaller: TopicFunctionalityTypeMarshaller) {
+@S ngleton
+class Top c emMarshaller @ nject() (
+  d splayTypeMarshaller: Top cD splayTypeMarshaller,
+  funct onal yTypeMarshaller: Top cFunct onal yTypeMarshaller) {
 
-  def apply(topicItem: TopicItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Topic(
-      urt.Topic(
-        topicId = topicItem.id.toString,
-        topicDisplayType = topicItem.topicDisplayType
-          .map(displayTypeMarshaller(_)).getOrElse(urt.TopicDisplayType.Basic),
-        topicFunctionalityType = topicItem.topicFunctionalityType
-          .map(functionalityTypeMarshaller(_)).getOrElse(urt.TopicFunctionalityType.Basic),
-        // This is currently not required by users of this library
-        reactiveTriggers = None
+  def apply(top c em: Top c em): urt.T  l ne emContent = {
+    urt.T  l ne emContent.Top c(
+      urt.Top c(
+        top c d = top c em. d.toStr ng,
+        top cD splayType = top c em.top cD splayType
+          .map(d splayTypeMarshaller(_)).getOrElse(urt.Top cD splayType.Bas c),
+        top cFunct onal yType = top c em.top cFunct onal yType
+          .map(funct onal yTypeMarshaller(_)).getOrElse(urt.Top cFunct onal yType.Bas c),
+        // T   s currently not requ red by users of t  l brary
+        react veTr ggers = None
       )
     )
   }

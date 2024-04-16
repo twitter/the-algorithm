@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.util
+package com.tw ter.product_m xer.core.ut l
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.T  
 
-object SortIndexBuilder {
+object Sort ndexBu lder {
 
-  /** the [[Time]] from a [[SnowflakeId]] */
-  def idToTime(id: Long): Time =
-    Time.fromMilliseconds(SnowflakeId.unixTimeMillisOrFloorFromId(id))
+  /** t  [[T  ]] from a [[Snowflake d]] */
+  def  dToT  ( d: Long): T   =
+    T  .fromM ll seconds(Snowflake d.un xT  M ll sOrFloorFrom d( d))
 
-  /** the first [[SnowflakeId]] possible for a given [[Time]]  */
-  def timeToId(time: Time): Long = SnowflakeId.firstIdFor(time)
+  /** t  f rst [[Snowflake d]] poss ble for a g ven [[T  ]]  */
+  def t  To d(t  : T  ): Long = Snowflake d.f rst dFor(t  )
 
-  /** the first [[SnowflakeId]] possible for a given unix epoch millis  */
-  def timeToId(timeMillis: Long): Long = SnowflakeId.firstIdFor(timeMillis)
+  /** t  f rst [[Snowflake d]] poss ble for a g ven un x epoch m ll s  */
+  def t  To d(t  M ll s: Long): Long = Snowflake d.f rst dFor(t  M ll s)
 }

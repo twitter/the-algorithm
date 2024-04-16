@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tw ter_l st
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st.Tw terL st em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TwitterListItemMarshaller @Inject() (
-  twitterListDisplayTypeMarshaller: TwitterListDisplayTypeMarshaller) {
+@S ngleton
+class Tw terL st emMarshaller @ nject() (
+  tw terL stD splayTypeMarshaller: Tw terL stD splayTypeMarshaller) {
 
-  def apply(twitterListItem: TwitterListItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.TwitterList(
-      urt.TwitterList(
-        id = twitterListItem.id,
-        displayType = twitterListItem.displayType.map(twitterListDisplayTypeMarshaller(_))
+  def apply(tw terL st em: Tw terL st em): urt.T  l ne emContent =
+    urt.T  l ne emContent.Tw terL st(
+      urt.Tw terL st(
+         d = tw terL st em. d,
+        d splayType = tw terL st em.d splayType.map(tw terL stD splayTypeMarshaller(_))
       )
     )
 }

@@ -1,176 +1,176 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.TierResponse;
+ mport com.tw ter.search.common.query.thr ftjava.EarlyTerm nat on nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.T erResponse;
 
 /**
- * Collection of EarlybirdResponses and associated stats to be merged.
+ * Collect on of Earlyb rdResponses and assoc ated stats to be  rged.
  */
-public class AccumulatedResponses {
-  // The list of the successful responses from all earlybird futures. This does not include empty
+publ c class AccumulatedResponses {
+  // T  l st of t  successful responses from all earlyb rd futures. T  does not  nclude empty
   // responses resulted from null requests.
-  private final List<EarlybirdResponse> successResponses;
-  // The list of the unsuccessful responses from all earlybird futures.
-  private final List<EarlybirdResponse> errorResponses;
-  // the list of max statusIds seen in each earlybird.
-  private final List<Long> maxIds;
-  // the list of min statusIds seen in each earlybird.
-  private final List<Long> minIds;
+  pr vate f nal L st<Earlyb rdResponse> successResponses;
+  // T  l st of t  unsuccessful responses from all earlyb rd futures.
+  pr vate f nal L st<Earlyb rdResponse> errorResponses;
+  // t  l st of max status ds seen  n each earlyb rd.
+  pr vate f nal L st<Long> max ds;
+  // t  l st of m n status ds seen  n each earlyb rd.
+  pr vate f nal L st<Long> m n ds;
 
-  private final EarlyTerminationInfo mergedEarlyTerminationInfo;
-  private final boolean isMergingAcrossTiers;
-  private final PartitionCounts partitionCounts;
-  private final int numSearchedSegments;
+  pr vate f nal EarlyTerm nat on nfo  rgedEarlyTerm nat on nfo;
+  pr vate f nal boolean  s rg ngAcrossT ers;
+  pr vate f nal Part  onCounts part  onCounts;
+  pr vate f nal  nt numSearc dSeg nts;
 
-  public static final class PartitionCounts {
-    private final int numPartitions;
-    private final int numSuccessfulPartitions;
-    private final List<TierResponse> perTierResponse;
+  publ c stat c f nal class Part  onCounts {
+    pr vate f nal  nt numPart  ons;
+    pr vate f nal  nt numSuccessfulPart  ons;
+    pr vate f nal L st<T erResponse> perT erResponse;
 
-    public PartitionCounts(int numPartitions, int numSuccessfulPartitions, List<TierResponse>
-        perTierResponse) {
-      this.numPartitions = numPartitions;
-      this.numSuccessfulPartitions = numSuccessfulPartitions;
-      this.perTierResponse = perTierResponse;
+    publ c Part  onCounts( nt numPart  ons,  nt numSuccessfulPart  ons, L st<T erResponse>
+        perT erResponse) {
+      t .numPart  ons = numPart  ons;
+      t .numSuccessfulPart  ons = numSuccessfulPart  ons;
+      t .perT erResponse = perT erResponse;
     }
 
-    public int getNumPartitions() {
-      return numPartitions;
+    publ c  nt getNumPart  ons() {
+      return numPart  ons;
     }
 
-    public int getNumSuccessfulPartitions() {
-      return numSuccessfulPartitions;
+    publ c  nt getNumSuccessfulPart  ons() {
+      return numSuccessfulPart  ons;
     }
 
-    public List<TierResponse> getPerTierResponse() {
-      return perTierResponse;
+    publ c L st<T erResponse> getPerT erResponse() {
+      return perT erResponse;
     }
   }
 
   /**
    * Create AccumulatedResponses
    */
-  public AccumulatedResponses(List<EarlybirdResponse> successResponses,
-                              List<EarlybirdResponse> errorResponses,
-                              List<Long> maxIds,
-                              List<Long> minIds,
-                              EarlyTerminationInfo mergedEarlyTerminationInfo,
-                              boolean isMergingAcrossTiers,
-                              PartitionCounts partitionCounts,
-                              int numSearchedSegments) {
-    this.successResponses = successResponses;
-    this.errorResponses = errorResponses;
-    this.maxIds = maxIds;
-    this.minIds = minIds;
-    this.mergedEarlyTerminationInfo = mergedEarlyTerminationInfo;
-    this.isMergingAcrossTiers = isMergingAcrossTiers;
-    this.partitionCounts = partitionCounts;
-    this.numSearchedSegments = numSearchedSegments;
+  publ c AccumulatedResponses(L st<Earlyb rdResponse> successResponses,
+                              L st<Earlyb rdResponse> errorResponses,
+                              L st<Long> max ds,
+                              L st<Long> m n ds,
+                              EarlyTerm nat on nfo  rgedEarlyTerm nat on nfo,
+                              boolean  s rg ngAcrossT ers,
+                              Part  onCounts part  onCounts,
+                               nt numSearc dSeg nts) {
+    t .successResponses = successResponses;
+    t .errorResponses = errorResponses;
+    t .max ds = max ds;
+    t .m n ds = m n ds;
+    t . rgedEarlyTerm nat on nfo =  rgedEarlyTerm nat on nfo;
+    t . s rg ngAcrossT ers =  s rg ngAcrossT ers;
+    t .part  onCounts = part  onCounts;
+    t .numSearc dSeg nts = numSearc dSeg nts;
   }
 
-  public List<EarlybirdResponse> getSuccessResponses() {
+  publ c L st<Earlyb rdResponse> getSuccessResponses() {
     return successResponses;
   }
 
-  public List<EarlybirdResponse> getErrorResponses() {
+  publ c L st<Earlyb rdResponse> getErrorResponses() {
     return errorResponses;
   }
 
-  public List<Long> getMaxIds() {
-    return maxIds;
+  publ c L st<Long> getMax ds() {
+    return max ds;
   }
 
-  public List<Long> getMinIds() {
-    return minIds;
+  publ c L st<Long> getM n ds() {
+    return m n ds;
   }
 
-  public EarlyTerminationInfo getMergedEarlyTerminationInfo() {
-    return mergedEarlyTerminationInfo;
+  publ c EarlyTerm nat on nfo get rgedEarlyTerm nat on nfo() {
+    return  rgedEarlyTerm nat on nfo;
   }
 
-  public boolean foundError() {
-    return !errorResponses.isEmpty();
+  publ c boolean foundError() {
+    return !errorResponses. sEmpty();
   }
 
   /**
-   * Tries to return a merged EarlybirdResponse that propagates as much information from the error
-   * responses as possible.
+   * Tr es to return a  rged Earlyb rdResponse that propagates as much  nformat on from t  error
+   * responses as poss ble.
    *
-   * If all error responses have the same error response code, the merged response will have the
-   * same error response code, and the debugString/debugInfo on the merged response will be set to
-   * the debugString/debugInfo of one of the merged responses.
+   *  f all error responses have t  sa  error response code, t   rged response w ll have t 
+   * sa  error response code, and t  debugStr ng/debug nfo on t   rged response w ll be set to
+   * t  debugStr ng/debug nfo of one of t   rged responses.
    *
-   * If the error responses have at least 2 different response codes, TRANSIENT_ERROR will be set
-   * on the merged response. Also, we will look for the most common error response code, and will
-   * propagate the debugString/debugInfo from an error response with that response code.
+   *  f t  error responses have at least 2 d fferent response codes, TRANS ENT_ERROR w ll be set
+   * on t   rged response. Also,   w ll look for t  most common error response code, and w ll
+   * propagate t  debugStr ng/debug nfo from an error response w h that response code.
    */
-  public EarlybirdResponse getMergedErrorResponse() {
-    Preconditions.checkState(!errorResponses.isEmpty());
+  publ c Earlyb rdResponse get rgedErrorResponse() {
+    Precond  ons.c ckState(!errorResponses. sEmpty());
 
-    // Find a response that has the most common error response code.
-    int maxCount = 0;
-    EarlybirdResponse errorResponseWithMostCommonErrorResponseCode = null;
-    Map<EarlybirdResponseCode, Integer> responseCodeCounts = Maps.newHashMap();
-    for (EarlybirdResponse errorResponse : errorResponses) {
-      EarlybirdResponseCode responseCode = errorResponse.getResponseCode();
-      Integer responseCodeCount = responseCodeCounts.get(responseCode);
-      if (responseCodeCount == null) {
+    // F nd a response that has t  most common error response code.
+     nt maxCount = 0;
+    Earlyb rdResponse errorResponseW hMostCommonErrorResponseCode = null;
+    Map<Earlyb rdResponseCode,  nteger> responseCodeCounts = Maps.newHashMap();
+    for (Earlyb rdResponse errorResponse : errorResponses) {
+      Earlyb rdResponseCode responseCode = errorResponse.getResponseCode();
+       nteger responseCodeCount = responseCodeCounts.get(responseCode);
+       f (responseCodeCount == null) {
         responseCodeCount = 0;
       }
       ++responseCodeCount;
       responseCodeCounts.put(responseCode, responseCodeCount);
-      if (responseCodeCount > maxCount) {
-        errorResponseWithMostCommonErrorResponseCode = errorResponse;
+       f (responseCodeCount > maxCount) {
+        errorResponseW hMostCommonErrorResponseCode = errorResponse;
       }
     }
 
-    // If all error responses have the same response code, set it on the merged response.
-    // Otherwise, set TRANSIENT_ERROR on the merged response.
-    EarlybirdResponseCode mergedResponseCode = EarlybirdResponseCode.TRANSIENT_ERROR;
-    if (responseCodeCounts.size() == 1) {
-      mergedResponseCode = responseCodeCounts.keySet().iterator().next();
+    //  f all error responses have t  sa  response code, set   on t   rged response.
+    // Ot rw se, set TRANS ENT_ERROR on t   rged response.
+    Earlyb rdResponseCode  rgedResponseCode = Earlyb rdResponseCode.TRANS ENT_ERROR;
+     f (responseCodeCounts.s ze() == 1) {
+       rgedResponseCode = responseCodeCounts.keySet(). erator().next();
     }
 
-    EarlybirdResponse mergedResponse = new EarlybirdResponse()
-        .setResponseCode(mergedResponseCode);
+    Earlyb rdResponse  rgedResponse = new Earlyb rdResponse()
+        .setResponseCode( rgedResponseCode);
 
-    // Propagate the debugString/debugInfo of the selected error response to the merged response.
-    Preconditions.checkNotNull(errorResponseWithMostCommonErrorResponseCode);
-    if (errorResponseWithMostCommonErrorResponseCode.isSetDebugString()) {
-      mergedResponse.setDebugString(errorResponseWithMostCommonErrorResponseCode.getDebugString());
+    // Propagate t  debugStr ng/debug nfo of t  selected error response to t   rged response.
+    Precond  ons.c ckNotNull(errorResponseW hMostCommonErrorResponseCode);
+     f (errorResponseW hMostCommonErrorResponseCode. sSetDebugStr ng()) {
+       rgedResponse.setDebugStr ng(errorResponseW hMostCommonErrorResponseCode.getDebugStr ng());
     }
-    if (errorResponseWithMostCommonErrorResponseCode.isSetDebugInfo()) {
-      mergedResponse.setDebugInfo(errorResponseWithMostCommonErrorResponseCode.getDebugInfo());
+     f (errorResponseW hMostCommonErrorResponseCode. sSetDebug nfo()) {
+       rgedResponse.setDebug nfo(errorResponseW hMostCommonErrorResponseCode.getDebug nfo());
     }
 
-    // Set the numPartitions and numPartitionsSucceeded on the mergedResponse
-    mergedResponse.setNumPartitions(partitionCounts.getNumPartitions());
-    mergedResponse.setNumSuccessfulPartitions(partitionCounts.getNumSuccessfulPartitions());
+    // Set t  numPart  ons and numPart  onsSucceeded on t   rgedResponse
+     rgedResponse.setNumPart  ons(part  onCounts.getNumPart  ons());
+     rgedResponse.setNumSuccessfulPart  ons(part  onCounts.getNumSuccessfulPart  ons());
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 
-  public boolean isMergingAcrossTiers() {
-    return isMergingAcrossTiers;
+  publ c boolean  s rg ngAcrossT ers() {
+    return  s rg ngAcrossT ers;
   }
 
-  public boolean isMergingPartitionsWithinATier() {
-    return !isMergingAcrossTiers;
+  publ c boolean  s rg ngPart  onsW h nAT er() {
+    return ! s rg ngAcrossT ers;
   }
 
-  public PartitionCounts getPartitionCounts() {
-    return partitionCounts;
+  publ c Part  onCounts getPart  onCounts() {
+    return part  onCounts;
   }
 
-  public int getNumSearchedSegments() {
-    return numSearchedSegments;
+  publ c  nt getNumSearc dSeg nts() {
+    return numSearc dSeg nts;
   }
 }

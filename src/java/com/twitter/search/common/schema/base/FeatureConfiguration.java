@@ -1,153 +1,153 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import java.util.Set;
+ mport java.ut l.Set;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.common.base.MorePreconditions;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
+ mport com.tw ter.common.base.MorePrecond  ons;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFeatureNormal zat onType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFeatureUpdateConstra nt;
 
-// FeatureConfiguration is defined for all the column stride view fields.
-public final class FeatureConfiguration {
-  private final String name;
-  private final int intIndex;
-  // Start position in the given int (0-31)
-  private final int bitStartPos;
-  // Length in bits of the feature
-  private final int bitLength;
+// FeatureConf gurat on  s def ned for all t  column str de v ew f elds.
+publ c f nal class FeatureConf gurat on {
+  pr vate f nal Str ng na ;
+  pr vate f nal  nt  nt ndex;
+  // Start pos  on  n t  g ven  nt (0-31)
+  pr vate f nal  nt b StartPos;
+  // Length  n b s of t  feature
+  pr vate f nal  nt b Length;
   // precomputed for reuse
-  private final int bitMask;
-  private final int inverseBitMask;
-  private final int maxValue;
+  pr vate f nal  nt b Mask;
+  pr vate f nal  nt  nverseB Mask;
+  pr vate f nal  nt maxValue;
 
-  private final ThriftCSFType type;
+  pr vate f nal Thr ftCSFType type;
 
-  // This is the client seen feature type: if this is null, this field is unused.
+  // T   s t  cl ent seen feature type:  f t   s null, t  f eld  s unused.
   @Nullable
-  private final ThriftCSFType outputType;
+  pr vate f nal Thr ftCSFType outputType;
 
-  private final String baseField;
+  pr vate f nal Str ng baseF eld;
 
-  private final Set<FeatureConstraint> featureUpdateConstraints;
+  pr vate f nal Set<FeatureConstra nt> featureUpdateConstra nts;
 
-  private final ThriftFeatureNormalizationType featureNormalizationType;
+  pr vate f nal Thr ftFeatureNormal zat onType featureNormal zat onType;
 
   /**
-   * Creates a new FeatureConfiguration with a base field.
+   * Creates a new FeatureConf gurat on w h a base f eld.
    *
-   * @param intIndex which integer is the feature in (0 based).
-   * @param bitStartPos at which bit does the feature start (0-31).
-   * @param bitLength length in bits of the feature
-   * @param baseField the CSF this feature is stored within.
+   * @param  nt ndex wh ch  nteger  s t  feature  n (0 based).
+   * @param b StartPos at wh ch b  does t  feature start (0-31).
+   * @param b Length length  n b s of t  feature
+   * @param baseF eld t  CSF t  feature  s stored w h n.
    */
-  private FeatureConfiguration(
-          String name,
-          ThriftCSFType type,
-          ThriftCSFType outputType,
-          int intIndex,
-          int bitStartPos,
-          int bitLength,
-          String baseField,
-          Set<FeatureConstraint> featureUpdateConstraints,
-          ThriftFeatureNormalizationType featureNormalizationType) {
-    Preconditions.checkState(bitStartPos + bitLength <= Integer.SIZE,
-            "Feature must not cross int boundary.");
-    this.name = MorePreconditions.checkNotBlank(name);
-    this.type = Preconditions.checkNotNull(type);
-    this.outputType = outputType;
-    this.intIndex = intIndex;
-    this.bitStartPos = bitStartPos;
-    this.bitLength = bitLength;
-    // Technically, int-sized features can use all 32 bits to store a positive value greater than
-    // Integer.MAX_VALUE. But in practice, we will convert the values of those features to Java ints
-    // on the read side, so the max value for those features will still be Integer.MAX_VALUE.
-    this.maxValue = (1 << Math.min(bitLength, Integer.SIZE - 1)) - 1;
-    this.bitMask = (int) (((1L << bitLength) - 1) << bitStartPos);
-    this.inverseBitMask = ~bitMask;
-    this.baseField = baseField;
-    this.featureUpdateConstraints = featureUpdateConstraints;
-    this.featureNormalizationType = Preconditions.checkNotNull(featureNormalizationType);
+  pr vate FeatureConf gurat on(
+          Str ng na ,
+          Thr ftCSFType type,
+          Thr ftCSFType outputType,
+           nt  nt ndex,
+           nt b StartPos,
+           nt b Length,
+          Str ng baseF eld,
+          Set<FeatureConstra nt> featureUpdateConstra nts,
+          Thr ftFeatureNormal zat onType featureNormal zat onType) {
+    Precond  ons.c ckState(b StartPos + b Length <=  nteger.S ZE,
+            "Feature must not cross  nt boundary.");
+    t .na  = MorePrecond  ons.c ckNotBlank(na );
+    t .type = Precond  ons.c ckNotNull(type);
+    t .outputType = outputType;
+    t . nt ndex =  nt ndex;
+    t .b StartPos = b StartPos;
+    t .b Length = b Length;
+    // Techn cally,  nt-s zed features can use all 32 b s to store a pos  ve value greater than
+    //  nteger.MAX_VALUE. But  n pract ce,   w ll convert t  values of those features to Java  nts
+    // on t  read s de, so t  max value for those features w ll st ll be  nteger.MAX_VALUE.
+    t .maxValue = (1 << Math.m n(b Length,  nteger.S ZE - 1)) - 1;
+    t .b Mask = ( nt) (((1L << b Length) - 1) << b StartPos);
+    t . nverseB Mask = ~b Mask;
+    t .baseF eld = baseF eld;
+    t .featureUpdateConstra nts = featureUpdateConstra nts;
+    t .featureNormal zat onType = Precond  ons.c ckNotNull(featureNormal zat onType);
   }
 
-  public String getName() {
-    return name;
+  publ c Str ng getNa () {
+    return na ;
   }
 
-  public int getMaxValue() {
+  publ c  nt getMaxValue() {
     return maxValue;
   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder().append(name)
-            .append(" (").append(intIndex).append(", ")
-            .append(bitStartPos).append(", ")
-            .append(bitLength).append(") ").toString();
+  @Overr de
+  publ c Str ng toStr ng() {
+    return new Str ngBu lder().append(na )
+            .append(" (").append( nt ndex).append(", ")
+            .append(b StartPos).append(", ")
+            .append(b Length).append(") ").toStr ng();
   }
 
-  public int getValueIndex() {
-    return intIndex;
+  publ c  nt getValue ndex() {
+    return  nt ndex;
   }
 
-  public int getBitStartPosition() {
-    return bitStartPos;
+  publ c  nt getB StartPos  on() {
+    return b StartPos;
   }
 
-  public int getBitLength() {
-    return bitLength;
+  publ c  nt getB Length() {
+    return b Length;
   }
 
-  public int getBitMask() {
-    return bitMask;
+  publ c  nt getB Mask() {
+    return b Mask;
   }
 
-  public int getInverseBitMask() {
-    return inverseBitMask;
+  publ c  nt get nverseB Mask() {
+    return  nverseB Mask;
   }
 
-  public String getBaseField() {
-    return baseField;
+  publ c Str ng getBaseF eld() {
+    return baseF eld;
   }
 
-  public ThriftCSFType getType() {
+  publ c Thr ftCSFType getType() {
     return type;
   }
 
   @Nullable
-  public ThriftCSFType getOutputType() {
+  publ c Thr ftCSFType getOutputType() {
     return outputType;
   }
 
-  public ThriftFeatureNormalizationType getFeatureNormalizationType() {
-    return featureNormalizationType;
+  publ c Thr ftFeatureNormal zat onType getFeatureNormal zat onType() {
+    return featureNormal zat onType;
   }
 
   /**
-   * Returns the update constraint for the feature.
+   * Returns t  update constra nt for t  feature.
    */
-  public Set<ThriftFeatureUpdateConstraint> getUpdateConstraints() {
-    if (featureUpdateConstraints == null) {
+  publ c Set<Thr ftFeatureUpdateConstra nt> getUpdateConstra nts() {
+     f (featureUpdateConstra nts == null) {
       return null;
     }
-    Set<ThriftFeatureUpdateConstraint> constraintSet = Sets.newHashSet();
-    for (FeatureConstraint constraint : featureUpdateConstraints) {
-      constraintSet.add(constraint.getType());
+    Set<Thr ftFeatureUpdateConstra nt> constra ntSet = Sets.newHashSet();
+    for (FeatureConstra nt constra nt : featureUpdateConstra nts) {
+      constra ntSet.add(constra nt.getType());
     }
-    return constraintSet;
+    return constra ntSet;
   }
 
   /**
-   * Returns true if the given update satisfies all feature update constraints.
+   * Returns true  f t  g ven update sat sf es all feature update constra nts.
    */
-  public boolean validateFeatureUpdate(final Number oldValue, final Number newValue) {
-    if (featureUpdateConstraints != null) {
-      for (FeatureConstraint contraint : featureUpdateConstraints) {
-        if (!contraint.apply(oldValue, newValue)) {
+  publ c boolean val dateFeatureUpdate(f nal Number oldValue, f nal Number newValue) {
+     f (featureUpdateConstra nts != null) {
+      for (FeatureConstra nt contra nt : featureUpdateConstra nts) {
+         f (!contra nt.apply(oldValue, newValue)) {
           return false;
         }
       }
@@ -156,159 +156,159 @@ public final class FeatureConfiguration {
     return true;
   }
 
-  @Override
-  public int hashCode() {
-    return (name == null ? 0 : name.hashCode())
-        + intIndex * 7
-        + bitStartPos * 13
-        + bitLength * 23
-        + bitMask * 31
-        + inverseBitMask * 43
-        + (int) maxValue * 53
+  @Overr de
+  publ c  nt hashCode() {
+    return (na  == null ? 0 : na .hashCode())
+        +  nt ndex * 7
+        + b StartPos * 13
+        + b Length * 23
+        + b Mask * 31
+        +  nverseB Mask * 43
+        + ( nt) maxValue * 53
         + (type == null ? 0 : type.hashCode()) * 61
         + (outputType == null ? 0 : outputType.hashCode()) * 71
-        + (baseField == null ? 0 : baseField.hashCode()) * 83
-        + (featureUpdateConstraints == null ? 0 : featureUpdateConstraints.hashCode()) * 87
-        + (featureNormalizationType == null ? 0 : featureNormalizationType.hashCode()) * 97;
+        + (baseF eld == null ? 0 : baseF eld.hashCode()) * 83
+        + (featureUpdateConstra nts == null ? 0 : featureUpdateConstra nts.hashCode()) * 87
+        + (featureNormal zat onType == null ? 0 : featureNormal zat onType.hashCode()) * 97;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FeatureConfiguration)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof FeatureConf gurat on)) {
       return false;
     }
 
-    FeatureConfiguration featureConfiguration = FeatureConfiguration.class.cast(obj);
-    return (name == featureConfiguration.name)
-        && (bitStartPos == featureConfiguration.bitStartPos)
-        && (bitLength == featureConfiguration.bitLength)
-        && (bitMask == featureConfiguration.bitMask)
-        && (inverseBitMask == featureConfiguration.inverseBitMask)
-        && (maxValue == featureConfiguration.maxValue)
-        && (type == featureConfiguration.type)
-        && (outputType == featureConfiguration.outputType)
-        && (baseField == featureConfiguration.baseField)
-        && (featureUpdateConstraints == null
-            ? featureConfiguration.featureUpdateConstraints == null
-            : featureUpdateConstraints.equals(featureConfiguration.featureUpdateConstraints))
-        && (featureNormalizationType == null
-            ? featureConfiguration.featureNormalizationType == null
-            : featureNormalizationType.equals(featureConfiguration.featureNormalizationType));
+    FeatureConf gurat on featureConf gurat on = FeatureConf gurat on.class.cast(obj);
+    return (na  == featureConf gurat on.na )
+        && (b StartPos == featureConf gurat on.b StartPos)
+        && (b Length == featureConf gurat on.b Length)
+        && (b Mask == featureConf gurat on.b Mask)
+        && ( nverseB Mask == featureConf gurat on. nverseB Mask)
+        && (maxValue == featureConf gurat on.maxValue)
+        && (type == featureConf gurat on.type)
+        && (outputType == featureConf gurat on.outputType)
+        && (baseF eld == featureConf gurat on.baseF eld)
+        && (featureUpdateConstra nts == null
+            ? featureConf gurat on.featureUpdateConstra nts == null
+            : featureUpdateConstra nts.equals(featureConf gurat on.featureUpdateConstra nts))
+        && (featureNormal zat onType == null
+            ? featureConf gurat on.featureNormal zat onType == null
+            : featureNormal zat onType.equals(featureConf gurat on.featureNormal zat onType));
   }
 
-  private interface FeatureConstraint {
+  pr vate  nterface FeatureConstra nt {
     boolean apply(Number oldValue, Number newValue);
-    ThriftFeatureUpdateConstraint getType();
+    Thr ftFeatureUpdateConstra nt getType();
   }
 
-  public static Builder builder() {
-    return new Builder();
+  publ c stat c Bu lder bu lder() {
+    return new Bu lder();
   }
 
-  public static final class Builder {
-    private String name;
-    private ThriftCSFType type;
-    private ThriftCSFType outputType;
-    private int intIndex;
-    // Start position in the given int (0-31)
-    private int bitStartPos;
-    // Length in bits of the feature
-    private int bitLength;
+  publ c stat c f nal class Bu lder {
+    pr vate Str ng na ;
+    pr vate Thr ftCSFType type;
+    pr vate Thr ftCSFType outputType;
+    pr vate  nt  nt ndex;
+    // Start pos  on  n t  g ven  nt (0-31)
+    pr vate  nt b StartPos;
+    // Length  n b s of t  feature
+    pr vate  nt b Length;
 
-    private String baseField;
+    pr vate Str ng baseF eld;
 
-    private Set<FeatureConstraint> featureUpdateConstraints;
+    pr vate Set<FeatureConstra nt> featureUpdateConstra nts;
 
-    private ThriftFeatureNormalizationType featureNormalizationType =
-        ThriftFeatureNormalizationType.NONE;
+    pr vate Thr ftFeatureNormal zat onType featureNormal zat onType =
+        Thr ftFeatureNormal zat onType.NONE;
 
-    public FeatureConfiguration build() {
-      return new FeatureConfiguration(name, type, outputType, intIndex, bitStartPos, bitLength,
-              baseField, featureUpdateConstraints, featureNormalizationType);
+    publ c FeatureConf gurat on bu ld() {
+      return new FeatureConf gurat on(na , type, outputType,  nt ndex, b StartPos, b Length,
+              baseF eld, featureUpdateConstra nts, featureNormal zat onType);
     }
 
-    public Builder withName(String n) {
-      this.name = n;
-      return this;
+    publ c Bu lder w hNa (Str ng n) {
+      t .na  = n;
+      return t ;
     }
 
-    public Builder withType(ThriftCSFType featureType) {
-      this.type = featureType;
-      return this;
+    publ c Bu lder w hType(Thr ftCSFType featureType) {
+      t .type = featureType;
+      return t ;
     }
 
-    public Builder withOutputType(ThriftCSFType featureFeatureType) {
-      this.outputType = featureFeatureType;
-      return this;
+    publ c Bu lder w hOutputType(Thr ftCSFType featureFeatureType) {
+      t .outputType = featureFeatureType;
+      return t ;
     }
 
-    public Builder withFeatureNormalizationType(
-        ThriftFeatureNormalizationType normalizationType) {
-      this.featureNormalizationType = Preconditions.checkNotNull(normalizationType);
-      return this;
+    publ c Bu lder w hFeatureNormal zat onType(
+        Thr ftFeatureNormal zat onType normal zat onType) {
+      t .featureNormal zat onType = Precond  ons.c ckNotNull(normal zat onType);
+      return t ;
     }
 
     /**
-     * Sets the bit range at the given intIndex, startPos and length.
+     * Sets t  b  range at t  g ven  nt ndex, startPos and length.
      */
-    public Builder withBitRange(int index, int startPos, int length) {
-      this.intIndex = index;
-      this.bitStartPos = startPos;
-      this.bitLength = length;
-      return this;
+    publ c Bu lder w hB Range( nt  ndex,  nt startPos,  nt length) {
+      t . nt ndex =  ndex;
+      t .b StartPos = startPos;
+      t .b Length = length;
+      return t ;
     }
 
-    public Builder withBaseField(String baseFieldName) {
-      this.baseField = baseFieldName;
-      return this;
+    publ c Bu lder w hBaseF eld(Str ng baseF eldNa ) {
+      t .baseF eld = baseF eldNa ;
+      return t ;
     }
 
     /**
-     * Adds a feature update constraint.
+     * Adds a feature update constra nt.
      */
-    public Builder withFeatureUpdateConstraint(final ThriftFeatureUpdateConstraint constraint) {
-      if (featureUpdateConstraints == null) {
-        featureUpdateConstraints = Sets.newHashSet();
+    publ c Bu lder w hFeatureUpdateConstra nt(f nal Thr ftFeatureUpdateConstra nt constra nt) {
+       f (featureUpdateConstra nts == null) {
+        featureUpdateConstra nts = Sets.newHashSet();
       }
 
-      switch (constraint) {
-        case IMMUTABLE:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override public boolean apply(Number oldValue, Number newValue) {
+      sw ch (constra nt) {
+        case  MMUTABLE:
+          featureUpdateConstra nts.add(new FeatureConstra nt() {
+            @Overr de publ c boolean apply(Number oldValue, Number newValue) {
               return false;
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.IMMUTABLE;
+            @Overr de publ c Thr ftFeatureUpdateConstra nt getType() {
+              return Thr ftFeatureUpdateConstra nt. MMUTABLE;
             }
           });
           break;
-        case INC_ONLY:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() > oldValue.intValue();
+        case  NC_ONLY:
+          featureUpdateConstra nts.add(new FeatureConstra nt() {
+            @Overr de  publ c boolean apply(Number oldValue, Number newValue) {
+              return newValue. ntValue() > oldValue. ntValue();
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.INC_ONLY;
+            @Overr de publ c Thr ftFeatureUpdateConstra nt getType() {
+              return Thr ftFeatureUpdateConstra nt. NC_ONLY;
             }
           });
           break;
-        case POSITIVE:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() >= 0;
+        case POS T VE:
+          featureUpdateConstra nts.add(new FeatureConstra nt() {
+            @Overr de  publ c boolean apply(Number oldValue, Number newValue) {
+              return newValue. ntValue() >= 0;
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.POSITIVE;
+            @Overr de publ c Thr ftFeatureUpdateConstra nt getType() {
+              return Thr ftFeatureUpdateConstra nt.POS T VE;
             }
           });
           break;
         default:
       }
 
-      return this;
+      return t ;
     }
 
-    private Builder() {
+    pr vate Bu lder() {
 
     }
   }

@@ -1,8 +1,8 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.twitter.ann.common.{Distance, Queryable, RuntimeParams}
-import com.twitter.search.common.file.AbstractFile
+ mport com.tw ter.ann.common.{D stance, Queryable, Runt  Params}
+ mport com.tw ter.search.common.f le.AbstractF le
 
-trait QueryableProvider[T, P <: RuntimeParams, D <: Distance[D]] {
-  def provideQueryable(indexDir: AbstractFile): Queryable[T, P, D]
+tra  QueryableProv der[T, P <: Runt  Params, D <: D stance[D]] {
+  def prov deQueryable( ndexD r: AbstractF le): Queryable[T, P, D]
 }

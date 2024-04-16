@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-object ModuleMetadata {
-  def isConversationModule(moduleMetadata: Option[ModuleMetadata]): Boolean =
-    moduleMetadata.map(_.conversationMetadata).isDefined
+object Module tadata {
+  def  sConversat onModule(module tadata: Opt on[Module tadata]): Boolean =
+    module tadata.map(_.conversat on tadata). sDef ned
 }
 
-case class ModuleMetadata(
-  adsMetadata: Option[AdsMetadata],
-  conversationMetadata: Option[ModuleConversationMetadata],
-  gridCarouselMetadata: Option[GridCarouselMetadata])
+case class Module tadata(
+  ads tadata: Opt on[Ads tadata],
+  conversat on tadata: Opt on[ModuleConversat on tadata],
+  gr dCarousel tadata: Opt on[Gr dCarousel tadata])

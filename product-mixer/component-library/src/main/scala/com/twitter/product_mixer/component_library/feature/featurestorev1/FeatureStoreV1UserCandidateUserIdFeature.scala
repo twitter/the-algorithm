@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.tw ter.product_m xer.component_l brary.feature.featurestorev1
 
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.ml.featurestore.catalog.ent  es
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.ml.featurestore.l b.feature.{Feature => FSv1Feature}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseUserCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object FeatureStoreV1UserCandidateUserIdFeature {
-  def apply[Query <: PipelineQuery, Candidate <: BaseUserCandidate, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
+object FeatureStoreV1UserCand dateUser dFeature {
+  def apply[Query <: P pel neQuery, Cand date <: BaseUserCand date, Value](
+    feature: FSv1Feature[User d, Value],
+    legacyNa : Opt on[Str ng] = None,
+    defaultValue: Opt on[Value] = None,
+    enabledParam: Opt on[FSParam[Boolean]] = None
+  ): FeatureStoreV1Cand dateFeature[Query, Cand date, _ <: Ent y d, Value] =
+    FeatureStoreV1Cand dateFeature(
       feature,
-      UserCandidateUserIdEntity,
-      legacyName,
+      UserCand dateUser dEnt y,
+      legacyNa ,
       defaultValue,
       enabledParam)
 }
 
-object UserCandidateUserIdEntity
-    extends FeatureStoreV1CandidateEntity[PipelineQuery, BaseUserCandidate, UserId] {
-  override val entity: Entity[UserId] = entities.core.User
+object UserCand dateUser dEnt y
+    extends FeatureStoreV1Cand dateEnt y[P pel neQuery, BaseUserCand date, User d] {
+  overr de val ent y: Ent y[User d] = ent  es.core.User
 
-  override def entityWithId(
-    query: PipelineQuery,
-    user: BaseUserCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[UserId] =
-    entity.withId(UserId(user.id))
+  overr de def ent yW h d(
+    query: P pel neQuery,
+    user: BaseUserCand date,
+    ex st ngFeatures: FeatureMap
+  ): Ent yW h d[User d] =
+    ent y.w h d(User d(user. d))
 }

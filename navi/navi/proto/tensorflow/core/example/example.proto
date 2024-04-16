@@ -1,120 +1,120 @@
-// Protocol messages for describing input data Examples for machine learning
-// model training or inference.
+// Protocol  ssages for descr b ng  nput data Examples for mach ne learn ng
+// model tra n ng or  nference.
 syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/example/feature.proto";
+ mport "tensorflow/core/example/feature.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ExampleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.example";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/example";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "ExampleProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.example";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/example";
 
-// LINT.IfChange
-// An Example is a mostly-normalized data format for storing data for
-// training and inference.  It contains a key-value store (features); where
-// each key (string) maps to a Feature message (which is oneof packed BytesList,
-// FloatList, or Int64List).  This flexible and compact format allows the
-// storage of large amounts of typed data, but requires that the data shape
-// and use be determined by the configuration files and parsers that are used to
-// read and write this format.  That is, the Example is mostly *not* a
-// self-describing format.  In TensorFlow, Examples are read in row-major
-// format, so any configuration that describes data with rank-2 or above
-// should keep this in mind.  For example, to store an M x N matrix of Bytes,
-// the BytesList must contain M*N bytes, with M rows of N contiguous values
-// each.  That is, the BytesList value must store the matrix as:
+// L NT. fChange
+// An Example  s a mostly-normal zed data format for stor ng data for
+// tra n ng and  nference.    conta ns a key-value store (features); w re
+// each key (str ng) maps to a Feature  ssage (wh ch  s oneof packed BytesL st,
+// FloatL st, or  nt64L st).  T  flex ble and compact format allows t 
+// storage of large amounts of typed data, but requ res that t  data shape
+// and use be determ ned by t  conf gurat on f les and parsers that are used to
+// read and wr e t  format.  That  s, t  Example  s mostly *not* a
+// self-descr b ng format.   n TensorFlow, Examples are read  n row-major
+// format, so any conf gurat on that descr bes data w h rank-2 or above
+// should keep t   n m nd.  For example, to store an M x N matr x of Bytes,
+// t  BytesL st must conta n M*N bytes, w h M rows of N cont guous values
+// each.  That  s, t  BytesL st value must store t  matr x as:
 //     .... row 0 .... .... row 1 .... // ...........  // ... row M-1 ....
 //
-// An Example for a movie recommendation application:
+// An Example for a mov e recom ndat on appl cat on:
 //   features {
 //     feature {
 //       key: "age"
-//       value { float_list {
+//       value { float_l st {
 //         value: 29.0
 //       }}
 //     }
 //     feature {
-//       key: "movie"
-//       value { bytes_list {
-//         value: "The Shawshank Redemption"
-//         value: "Fight Club"
+//       key: "mov e"
+//       value { bytes_l st {
+//         value: "T  Shawshank Redempt on"
+//         value: "F ght Club"
 //       }}
 //     }
 //     feature {
-//       key: "movie_ratings"
-//       value { float_list {
+//       key: "mov e_rat ngs"
+//       value { float_l st {
 //         value: 9.0
 //         value: 9.7
 //       }}
 //     }
 //     feature {
-//       key: "suggestion"
-//       value { bytes_list {
-//         value: "Inception"
+//       key: "suggest on"
+//       value { bytes_l st {
+//         value: " ncept on"
 //       }}
 //     }
-//     # Note that this feature exists to be used as a label in training.
-//     # E.g., if training a logistic regression model to predict purchase
-//     # probability in our learning tool we would set the label feature to
-//     # "suggestion_purchased".
+//     # Note that t  feature ex sts to be used as a label  n tra n ng.
+//     # E.g.,  f tra n ng a log st c regress on model to pred ct purchase
+//     # probab l y  n   learn ng tool   would set t  label feature to
+//     # "suggest on_purchased".
 //     feature {
-//       key: "suggestion_purchased"
-//       value { float_list {
+//       key: "suggest on_purchased"
+//       value { float_l st {
 //         value: 1.0
 //       }}
 //     }
-//     # Similar to "suggestion_purchased" above this feature exists to be used
-//     # as a label in training.
-//     # E.g., if training a linear regression model to predict purchase
-//     # price in our learning tool we would set the label feature to
-//     # "purchase_price".
+//     # S m lar to "suggest on_purchased" above t  feature ex sts to be used
+//     # as a label  n tra n ng.
+//     # E.g.,  f tra n ng a l near regress on model to pred ct purchase
+//     # pr ce  n   learn ng tool   would set t  label feature to
+//     # "purchase_pr ce".
 //     feature {
-//       key: "purchase_price"
-//       value { float_list {
+//       key: "purchase_pr ce"
+//       value { float_l st {
 //         value: 9.99
 //       }}
 //     }
 //  }
 //
-// A conformant Example data set obeys the following conventions:
-//   - If a Feature K exists in one example with data type T, it must be of
-//       type T in all other examples when present. It may be omitted.
-//   - The number of instances of Feature K list data may vary across examples,
-//       depending on the requirements of the model.
-//   - If a Feature K doesn't exist in an example, a K-specific default will be
-//       used, if configured.
-//   - If a Feature K exists in an example but contains no items, the intent
-//       is considered to be an empty tensor and no default will be used.
+// A conformant Example data set obeys t  follow ng convent ons:
+//   -  f a Feature K ex sts  n one example w h data type T,   must be of
+//       type T  n all ot r examples w n present.   may be om ted.
+//   - T  number of  nstances of Feature K l st data may vary across examples,
+//       depend ng on t  requ re nts of t  model.
+//   -  f a Feature K doesn't ex st  n an example, a K-spec f c default w ll be
+//       used,  f conf gured.
+//   -  f a Feature K ex sts  n an example but conta ns no  ems, t   ntent
+//        s cons dered to be an empty tensor and no default w ll be used.
 
-message Example {
+ ssage Example {
   Features features = 1;
 }
 
-// A SequenceExample is an Example representing one or more sequences, and
-// some context.  The context contains features which apply to the entire
-// example. The feature_lists contain a key, value map where each key is
-// associated with a repeated set of Features (a FeatureList).
-// A FeatureList thus represents the values of a feature identified by its key
-// over time / frames.
+// A SequenceExample  s an Example represent ng one or more sequences, and
+// so  context.  T  context conta ns features wh ch apply to t  ent re
+// example. T  feature_l sts conta n a key, value map w re each key  s
+// assoc ated w h a repeated set of Features (a FeatureL st).
+// A FeatureL st thus represents t  values of a feature  dent f ed by  s key
+// over t   / fra s.
 //
-// Below is a SequenceExample for a movie recommendation application recording a
-// sequence of ratings by a user. The time-independent features ("locale",
-// "age", "favorites") describing the user are part of the context. The sequence
-// of movies the user rated are part of the feature_lists. For each movie in the
-// sequence we have information on its name and actors and the user's rating.
-// This information is recorded in three separate feature_list(s).
-// In the example below there are only two movies. All three feature_list(s),
-// namely "movie_ratings", "movie_names", and "actors" have a feature value for
-// both movies. Note, that "actors" is itself a bytes_list with multiple
-// strings per movie.
+// Below  s a SequenceExample for a mov e recom ndat on appl cat on record ng a
+// sequence of rat ngs by a user. T  t  - ndependent features ("locale",
+// "age", "favor es") descr b ng t  user are part of t  context. T  sequence
+// of mov es t  user rated are part of t  feature_l sts. For each mov e  n t 
+// sequence   have  nformat on on  s na  and actors and t  user's rat ng.
+// T   nformat on  s recorded  n three separate feature_l st(s).
+//  n t  example below t re are only two mov es. All three feature_l st(s),
+// na ly "mov e_rat ngs", "mov e_na s", and "actors" have a feature value for
+// both mov es. Note, that "actors"  s  self a bytes_l st w h mult ple
+// str ngs per mov e.
 //
 // context: {
 //   feature: {
 //     key  : "locale"
 //     value: {
-//       bytes_list: {
+//       bytes_l st: {
 //         value: [ "pt_BR" ]
 //       }
 //     }
@@ -122,185 +122,185 @@ message Example {
 //   feature: {
 //     key  : "age"
 //     value: {
-//       float_list: {
+//       float_l st: {
 //         value: [ 19.0 ]
 //       }
 //     }
 //   }
 //   feature: {
-//     key  : "favorites"
+//     key  : "favor es"
 //     value: {
-//       bytes_list: {
-//         value: [ "Majesty Rose", "Savannah Outen", "One Direction" ]
+//       bytes_l st: {
+//         value: [ "Majesty Rose", "Savannah Outen", "One D rect on" ]
 //       }
 //     }
 //   }
 // }
-// feature_lists: {
-//   feature_list: {
-//     key  : "movie_ratings"
+// feature_l sts: {
+//   feature_l st: {
+//     key  : "mov e_rat ngs"
 //     value: {
 //       feature: {
-//         float_list: {
+//         float_l st: {
 //           value: [ 4.5 ]
 //         }
 //       }
 //       feature: {
-//         float_list: {
+//         float_l st: {
 //           value: [ 5.0 ]
 //         }
 //       }
 //     }
 //   }
-//   feature_list: {
-//     key  : "movie_names"
+//   feature_l st: {
+//     key  : "mov e_na s"
 //     value: {
 //       feature: {
-//         bytes_list: {
-//           value: [ "The Shawshank Redemption" ]
+//         bytes_l st: {
+//           value: [ "T  Shawshank Redempt on" ]
 //         }
 //       }
 //       feature: {
-//         bytes_list: {
-//           value: [ "Fight Club" ]
+//         bytes_l st: {
+//           value: [ "F ght Club" ]
 //         }
 //       }
 //     }
 //   }
-//   feature_list: {
+//   feature_l st: {
 //     key  : "actors"
 //     value: {
 //       feature: {
-//         bytes_list: {
-//           value: [ "Tim Robbins", "Morgan Freeman" ]
+//         bytes_l st: {
+//           value: [ "T m Robb ns", "Morgan Freeman" ]
 //         }
 //       }
 //       feature: {
-//         bytes_list: {
-//           value: [ "Brad Pitt", "Edward Norton", "Helena Bonham Carter" ]
+//         bytes_l st: {
+//           value: [ "Brad P t", "Edward Norton", " lena Bonham Carter" ]
 //         }
 //       }
 //     }
 //   }
 // }
 //
-// A conformant SequenceExample data set obeys the following conventions:
+// A conformant SequenceExample data set obeys t  follow ng convent ons:
 //
 // Context:
-//   - All conformant context features K must obey the same conventions as
+//   - All conformant context features K must obey t  sa  convent ons as
 //     a conformant Example's features (see above).
-// Feature lists:
-//   - A FeatureList L may be missing in an example; it is up to the
-//     parser configuration to determine if this is allowed or considered
-//     an empty list (zero length).
-//   - If a FeatureList L exists, it may be empty (zero length).
-//   - If a FeatureList L is non-empty, all features within the FeatureList
-//     must have the same data type T. Even across SequenceExamples, the type T
-//     of the FeatureList identified by the same key must be the same. An entry
-//     without any values may serve as an empty feature.
-//   - If a FeatureList L is non-empty, it is up to the parser configuration
-//     to determine if all features within the FeatureList must
-//     have the same size.  The same holds for this FeatureList across multiple
+// Feature l sts:
+//   - A FeatureL st L may be m ss ng  n an example;    s up to t 
+//     parser conf gurat on to determ ne  f t   s allo d or cons dered
+//     an empty l st (zero length).
+//   -  f a FeatureL st L ex sts,   may be empty (zero length).
+//   -  f a FeatureL st L  s non-empty, all features w h n t  FeatureL st
+//     must have t  sa  data type T. Even across SequenceExamples, t  type T
+//     of t  FeatureL st  dent f ed by t  sa  key must be t  sa . An entry
+//     w hout any values may serve as an empty feature.
+//   -  f a FeatureL st L  s non-empty,    s up to t  parser conf gurat on
+//     to determ ne  f all features w h n t  FeatureL st must
+//     have t  sa  s ze.  T  sa  holds for t  FeatureL st across mult ple
 //     examples.
-//   - For sequence modeling, e.g.:
-//        http://colah.github.io/posts/2015-08-Understanding-LSTMs/
-//        https://github.com/tensorflow/nmt
-//     the feature lists represent a sequence of frames.
-//     In this scenario, all FeatureLists in a SequenceExample have the same
-//     number of Feature messages, so that the ith element in each FeatureList
-//     is part of the ith frame (or time step).
-// Examples of conformant and non-conformant examples' FeatureLists:
+//   - For sequence model ng, e.g.:
+//        http://colah.g hub. o/posts/2015-08-Understand ng-LSTMs/
+//        https://g hub.com/tensorflow/nmt
+//     t  feature l sts represent a sequence of fra s.
+//      n t  scenar o, all FeatureL sts  n a SequenceExample have t  sa 
+//     number of Feature  ssages, so that t   h ele nt  n each FeatureL st
+//      s part of t   h fra  (or t   step).
+// Examples of conformant and non-conformant examples' FeatureL sts:
 //
-// Conformant FeatureLists:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conformant FeatureL sts:
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } } }
 //    } }
 //
-// Non-conformant FeatureLists (mismatched types):
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { int64_list: { value: [ 5 ] } } }
+// Non-conformant FeatureL sts (m smatc d types):
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: {  nt64_l st: { value: [ 5 ] } } }
 //    } }
 //
-// Conditionally conformant FeatureLists, the parser configuration determines
-// if the feature sizes must match:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0, 6.0 ] } } }
+// Cond  onally conformant FeatureL sts, t  parser conf gurat on determ nes
+//  f t  feature s zes must match:
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0, 6.0 ] } } }
 //    } }
 //
-// Conformant pair of SequenceExample
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conformant pa r of SequenceExample
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } }
-//               feature: { float_list: { value: [ 2.0 ] } } }
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } }
+//               feature: { float_l st: { value: [ 2.0 ] } } }
 //    } }
 //
-// Conformant pair of SequenceExample
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conformant pa r of SequenceExample
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
 //      value: { }
 //    } }
 //
-// Conditionally conformant pair of SequenceExample, the parser configuration
-// determines if the second feature_lists is consistent (zero-length) or
-// invalid (missing "movie_ratings"):
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Cond  onally conformant pa r of SequenceExample, t  parser conf gurat on
+// determ nes  f t  second feature_l sts  s cons stent (zero-length) or
+//  nval d (m ss ng "mov e_rat ngs"):
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { }
+//    feature_l sts: { }
 //
-// Non-conformant pair of SequenceExample (mismatched types)
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Non-conformant pa r of SequenceExample (m smatc d types)
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { int64_list: { value: [ 4 ] } }
-//               feature: { int64_list: { value: [ 5 ] } }
-//               feature: { int64_list: { value: [ 2 ] } } }
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: {  nt64_l st: { value: [ 4 ] } }
+//               feature: {  nt64_l st: { value: [ 5 ] } }
+//               feature: {  nt64_l st: { value: [ 2 ] } } }
 //    } }
 //
-// Conditionally conformant pair of SequenceExample; the parser configuration
-// determines if the feature sizes must match:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Cond  onally conformant pa r of SequenceExample; t  parser conf gurat on
+// determ nes  f t  feature s zes must match:
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.5 ] } }
+//               feature: { float_l st: { value: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.0 ] } }
-//               feature: { float_list: { value: [ 5.0, 3.0 ] } }
+//    feature_l sts: { feature_l st: {
+//      key: "mov e_rat ngs"
+//      value: { feature: { float_l st: { value: [ 4.0 ] } }
+//               feature: { float_l st: { value: [ 5.0, 3.0 ] } }
 //    } }
 
-message SequenceExample {
+ ssage SequenceExample {
   Features context = 1;
-  FeatureLists feature_lists = 2;
+  FeatureL sts feature_l sts = 2;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+// L NT.T nChange(
+//     https://www.tensorflow.org/code/tensorflow/python/tra n ng/tra n ng.py)

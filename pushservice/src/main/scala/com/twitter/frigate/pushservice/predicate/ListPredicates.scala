@@ -1,110 +1,110 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.socialgraph.SocialGraphPredicate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.L stRecom ndat onPushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter. rm .pred cate.soc algraph.Edge
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. rm .pred cate.soc algraph.Soc alGraphPred cate
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-object ListPredicates {
+object L stPred cates {
 
-  def listNameExistsPredicate(
+  def l stNa Ex stsPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.listName.map(_.isDefined)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[L stRecom ndat onPushCand date] = {
+    Pred cate
+      .fromAsync { cand date: L stRecom ndat onPushCand date =>
+        cand date.l stNa .map(_. sDef ned)
       }
-      .withStats(stats)
-      .withName("list_name_exists")
+      .w hStats(stats)
+      .w hNa ("l st_na _ex sts")
   }
 
-  def listAuthorExistsPredicate(
+  def l stAuthorEx stsPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.listOwnerId.map(_.isDefined)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[L stRecom ndat onPushCand date] = {
+    Pred cate
+      .fromAsync { cand date: L stRecom ndat onPushCand date =>
+        cand date.l stOwner d.map(_. sDef ned)
       }
-      .withStats(stats)
-      .withName("list_owner_exists")
+      .w hStats(stats)
+      .w hNa ("l st_owner_ex sts")
   }
 
-  def listAuthorAcceptableToTargetUser(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def l stAuthorAcceptableToTargetUser(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    val name = "list_author_acceptable_to_target_user"
-    val sgsPredicate = SocialGraphPredicate
-      .anyRelationExists(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[L stRecom ndat onPushCand date] = {
+    val na  = "l st_author_acceptable_to_target_user"
+    val sgsPred cate = Soc alGraphPred cate
+      .anyRelat onEx sts(
         edgeStore,
         Set(
-          RelationshipType.Blocking,
-          RelationshipType.BlockedBy,
-          RelationshipType.Muting
+          Relat onsh pType.Block ng,
+          Relat onsh pType.BlockedBy,
+          Relat onsh pType.Mut ng
         )
       )
-      .withStats(statsReceiver.scope("list_sgs_any_relation_exists"))
-      .withName("list_sgs_any_relation_exists")
+      .w hStats(statsRece ver.scope("l st_sgs_any_relat on_ex sts"))
+      .w hNa ("l st_sgs_any_relat on_ex sts")
 
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.listOwnerId.flatMap {
-          case Some(ownerId) =>
-            sgsPredicate.apply(Seq(Edge(candidate.target.targetId, ownerId))).map(_.head)
+    Pred cate
+      .fromAsync { cand date: L stRecom ndat onPushCand date =>
+        cand date.l stOwner d.flatMap {
+          case So (owner d) =>
+            sgsPred cate.apply(Seq(Edge(cand date.target.target d, owner d))).map(_. ad)
           case _ => Future.True
         }
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
   /**
-   * Checks if the list is acceptable to Target user =>
-   *    - Is Target not following the list
-   *    - Is Target not muted the list
+   * C cks  f t  l st  s acceptable to Target user =>
+   *    -  s Target not follow ng t  l st
+   *    -  s Target not muted t  l st
    */
-  def listAcceptablePredicate(
+  def l stAcceptablePred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    val name = "list_acceptable_to_target_user"
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.apiList.map {
-          case Some(apiList) =>
-            !(apiList.following.contains(true) || apiList.muting.contains(true))
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[L stRecom ndat onPushCand date] = {
+    val na  = "l st_acceptable_to_target_user"
+    Pred cate
+      .fromAsync { cand date: L stRecom ndat onPushCand date =>
+        cand date.ap L st.map {
+          case So (ap L st) =>
+            !(ap L st.follow ng.conta ns(true) || ap L st.mut ng.conta ns(true))
           case _ => false
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def listSubscriberCountPredicate(
+  def l stSubscr berCountPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[ListRecommendationPushCandidate] = {
-    val name = "list_subscribe_count"
-    Predicate
-      .fromAsync { candidate: ListRecommendationPushCandidate =>
-        candidate.apiList.map { apiListOpt =>
-          apiListOpt.exists { apiList =>
-            apiList.subscriberCount >= candidate.target.params(
-              PushFeatureSwitchParams.ListRecommendationsSubscriberCount)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[L stRecom ndat onPushCand date] = {
+    val na  = "l st_subscr be_count"
+    Pred cate
+      .fromAsync { cand date: L stRecom ndat onPushCand date =>
+        cand date.ap L st.map { ap L stOpt =>
+          ap L stOpt.ex sts { ap L st =>
+            ap L st.subscr berCount >= cand date.target.params(
+              PushFeatureSw chParams.L stRecom ndat onsSubscr berCount)
           }
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

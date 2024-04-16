@@ -1,16 +1,16 @@
-java_library(
-    sources = ["*.java"],
+java_l brary(
+    s ces = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/it/unimi/dsi:fastutil",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/util/io",
+        "3rdparty/jvm/com/google/ nject:gu ce",
+        "3rdparty/jvm/ /un m /ds :fastut l",
+        "3rdparty/jvm/org/apac /hadoop:hadoop-cl ent-default",
+        "3rdparty/jvm/org/apac /thr ft:l bthr ft",
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
+        "src/java/com/tw ter/common/base",
+        "src/java/com/tw ter/search/common/f le",
+        "src/java/com/tw ter/search/common/ut l/ o",
     ],
 )

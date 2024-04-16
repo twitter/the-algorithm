@@ -1,256 +1,256 @@
-package com.twitter.recosinjector.event_processors
+package com.tw ter.recos njector.event_processors
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.SocialGraph
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.edges.TweetEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserUserGraphBuilder
-import com.twitter.recosinjector.filters.TweetFilter
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetCreateEvent
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.tweetypie.thriftscala.TweetEventData
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.SnowflakeUt ls
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos.ut l.Act on.Act on
+ mport com.tw ter.recos njector.cl ents.G zmoduck
+ mport com.tw ter.recos njector.cl ents.Soc alGraph
+ mport com.tw ter.recos njector.cl ents.T etyp e
+ mport com.tw ter.recos njector.edges.T etEventToUserT etEnt yGraphBu lder
+ mport com.tw ter.recos njector.edges.T etEventToUserUserGraphBu lder
+ mport com.tw ter.recos njector.f lters.T etF lter
+ mport com.tw ter.recos njector.f lters.UserF lter
+ mport com.tw ter.recos njector.publ s rs.KafkaEventPubl s r
+ mport com.tw ter.recos njector.ut l.T etCreateEventDeta ls
+ mport com.tw ter.recos njector.ut l.T etDeta ls
+ mport com.tw ter.recos njector.ut l.UserT etEngage nt
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateEvent
+ mport com.tw ter.t etyp e.thr ftscala.T etEvent
+ mport com.tw ter.t etyp e.thr ftscala.T etEventData
+ mport com.tw ter.ut l.Future
 
 /**
- * Event processor for tweet_events EventBus stream from Tweetypie. This stream provides all the
- * key events related to a new tweet, like Creation, Retweet, Quote Tweet, and Replying.
- * It also carries the entities/metadata information in a tweet, including
- * @ Mention, HashTag, MediaTag, URL, etc.
+ * Event processor for t et_events EventBus stream from T etyp e. T  stream prov des all t 
+ * key events related to a new t et, l ke Creat on, Ret et, Quote T et, and Reply ng.
+ *   also carr es t  ent  es/ tadata  nformat on  n a t et,  nclud ng
+ * @  nt on, HashTag,  d aTag, URL, etc.
  */
-class TweetEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[TweetEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  userUserGraphMessageBuilder: TweetEventToUserUserGraphBuilder,
-  userUserGraphTopic: String,
-  userTweetEntityGraphMessageBuilder: TweetEventToUserTweetEntityGraphBuilder,
-  userTweetEntityGraphTopic: String,
-  kafkaEventPublisher: KafkaEventPublisher,
-  socialGraph: SocialGraph,
-  gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie
+class T etEventProcessor(
+  overr de val eventBusStreamNa : Str ng,
+  overr de val thr ftStruct: Thr ftStructCodec[T etEvent],
+  overr de val serv ce dent f er: Serv ce dent f er,
+  userUserGraph ssageBu lder: T etEventToUserUserGraphBu lder,
+  userUserGraphTop c: Str ng,
+  userT etEnt yGraph ssageBu lder: T etEventToUserT etEnt yGraphBu lder,
+  userT etEnt yGraphTop c: Str ng,
+  kafkaEventPubl s r: KafkaEventPubl s r,
+  soc alGraph: Soc alGraph,
+  g zmoduck: G zmoduck,
+  t etyp e: T etyp e
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TweetEvent] {
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventBusProcessor[T etEvent] {
 
-  private val tweetCreateEventCounter = statsReceiver.counter("num_tweet_create_events")
-  private val nonTweetCreateEventCounter = statsReceiver.counter("num_non_tweet_create_events")
+  pr vate val t etCreateEventCounter = statsRece ver.counter("num_t et_create_events")
+  pr vate val nonT etCreateEventCounter = statsRece ver.counter("num_non_t et_create_events")
 
-  private val tweetActionStats = statsReceiver.scope("tweet_action")
-  private val numUrlCounter = statsReceiver.counter("num_tweet_url")
-  private val numMediaUrlCounter = statsReceiver.counter("num_tweet_media_url")
-  private val numHashTagCounter = statsReceiver.counter("num_tweet_hashtag")
+  pr vate val t etAct onStats = statsRece ver.scope("t et_act on")
+  pr vate val numUrlCounter = statsRece ver.counter("num_t et_url")
+  pr vate val num d aUrlCounter = statsRece ver.counter("num_t et_ d a_url")
+  pr vate val numHashTagCounter = statsRece ver.counter("num_t et_hashtag")
 
-  private val numMentionsCounter = statsReceiver.counter("num_tweet_mention")
-  private val numMediatagCounter = statsReceiver.counter("num_tweet_mediatag")
-  private val numValidMentionsCounter = statsReceiver.counter("num_tweet_valid_mention")
-  private val numValidMediatagCounter = statsReceiver.counter("num_tweet_valid_mediatag")
+  pr vate val num nt onsCounter = statsRece ver.counter("num_t et_ nt on")
+  pr vate val num d atagCounter = statsRece ver.counter("num_t et_ d atag")
+  pr vate val numVal d nt onsCounter = statsRece ver.counter("num_t et_val d_ nt on")
+  pr vate val numVal d d atagCounter = statsRece ver.counter("num_t et_val d_ d atag")
 
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numNullCastSourceTweetCounter = statsReceiver.counter("num_null_cast_source_tweet")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numAuthorUnsafeCounter = statsReceiver.counter("num_author_unsafe")
-  private val numProcessTweetCounter = statsReceiver.counter("num_process_tweet")
-  private val numNoProcessTweetCounter = statsReceiver.counter("num_no_process_tweet")
+  pr vate val numNullCastT etCounter = statsRece ver.counter("num_null_cast_t et")
+  pr vate val numNullCastS ceT etCounter = statsRece ver.counter("num_null_cast_s ce_t et")
+  pr vate val numT etFa lSafetyLevelCounter = statsRece ver.counter("num_fa l_t etyp e_safety")
+  pr vate val numAuthorUnsafeCounter = statsRece ver.counter("num_author_unsafe")
+  pr vate val numProcessT etCounter = statsRece ver.counter("num_process_t et")
+  pr vate val numNoProcessT etCounter = statsRece ver.counter("num_no_process_t et")
 
-  private val selfRetweetCounter = statsReceiver.counter("num_retweets_self")
+  pr vate val selfRet etCounter = statsRece ver.counter("num_ret ets_self")
 
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("author_user"))
-  private val tweetFilter = new TweetFilter(tweetypie)
+  pr vate val engageUserF lter = new UserF lter(g zmoduck)(statsRece ver.scope("author_user"))
+  pr vate val t etF lter = new T etF lter(t etyp e)
 
-  private def trackTweetCreateEventStats(details: TweetCreateEventDetails): Unit = {
-    tweetActionStats.counter(details.userTweetEngagement.action.toString).incr()
+  pr vate def trackT etCreateEventStats(deta ls: T etCreateEventDeta ls): Un  = {
+    t etAct onStats.counter(deta ls.userT etEngage nt.act on.toStr ng). ncr()
 
-    details.userTweetEngagement.tweetDetails.foreach { tweetDetails =>
-      tweetDetails.mentionUserIds.foreach(mention => numMentionsCounter.incr(mention.size))
-      tweetDetails.mediatagUserIds.foreach(mediatag => numMediatagCounter.incr(mediatag.size))
-      tweetDetails.urls.foreach(urls => numUrlCounter.incr(urls.size))
-      tweetDetails.mediaUrls.foreach(mediaUrls => numMediaUrlCounter.incr(mediaUrls.size))
-      tweetDetails.hashtags.foreach(hashtags => numHashTagCounter.incr(hashtags.size))
+    deta ls.userT etEngage nt.t etDeta ls.foreach { t etDeta ls =>
+      t etDeta ls. nt onUser ds.foreach( nt on => num nt onsCounter. ncr( nt on.s ze))
+      t etDeta ls. d atagUser ds.foreach( d atag => num d atagCounter. ncr( d atag.s ze))
+      t etDeta ls.urls.foreach(urls => numUrlCounter. ncr(urls.s ze))
+      t etDeta ls. d aUrls.foreach( d aUrls => num d aUrlCounter. ncr( d aUrls.s ze))
+      t etDeta ls.hashtags.foreach(hashtags => numHashTagCounter. ncr(hashtags.s ze))
     }
 
-    details.validMentionUserIds.foreach(mentions => numValidMentionsCounter.incr(mentions.size))
-    details.validMediatagUserIds.foreach(mediatags => numValidMediatagCounter.incr(mediatags.size))
+    deta ls.val d nt onUser ds.foreach( nt ons => numVal d nt onsCounter. ncr( nt ons.s ze))
+    deta ls.val d d atagUser ds.foreach( d atags => numVal d d atagCounter. ncr( d atags.s ze))
   }
 
   /**
-   * Given a created tweet, return what type of tweet it is, i.e. Tweet, Retweet, Quote, or Reply。
-   * Retweet, Quote, or Reply are responsive actions to a source tweet, so for these tweets,
-   * we also return the tweet id and author of the source tweet (ex. the tweet being retweeted).
+   * G ven a created t et, return what type of t et    s,  .e. T et, Ret et, Quote, or Reply。
+   * Ret et, Quote, or Reply are respons ve act ons to a s ce t et, so for t se t ets,
+   *   also return t  t et  d and author of t  s ce t et (ex. t  t et be ng ret eted).
    */
-  private def getTweetAction(tweetDetails: TweetDetails): Action = {
-    (tweetDetails.replySourceId, tweetDetails.retweetSourceId, tweetDetails.quoteSourceId) match {
-      case (Some(_), _, _) =>
-        Action.Reply
-      case (_, Some(_), _) =>
-        Action.Retweet
-      case (_, _, Some(_)) =>
-        Action.Quote
+  pr vate def getT etAct on(t etDeta ls: T etDeta ls): Act on = {
+    (t etDeta ls.replyS ce d, t etDeta ls.ret etS ce d, t etDeta ls.quoteS ce d) match {
+      case (So (_), _, _) =>
+        Act on.Reply
+      case (_, So (_), _) =>
+        Act on.Ret et
+      case (_, _, So (_)) =>
+        Act on.Quote
       case _ =>
-        Action.Tweet
+        Act on.T et
     }
   }
 
   /**
-   * Given a list of mentioned users and mediatagged users in the tweet, return the users who
-   * actually follow the source user.
+   * G ven a l st of  nt oned users and  d atagged users  n t  t et, return t  users who
+   * actually follow t  s ce user.
    */
-  private def getFollowedByIds(
-    sourceUserId: Long,
-    mentionUserIds: Option[Seq[Long]],
-    mediatagUserIds: Option[Seq[Long]]
+  pr vate def getFollo dBy ds(
+    s ceUser d: Long,
+     nt onUser ds: Opt on[Seq[Long]],
+     d atagUser ds: Opt on[Seq[Long]]
   ): Future[Seq[Long]] = {
-    val uniqueEntityUserIds =
-      (mentionUserIds.getOrElse(Nil) ++ mediatagUserIds.getOrElse(Nil)).distinct
-    if (uniqueEntityUserIds.isEmpty) {
-      Future.Nil
+    val un queEnt yUser ds =
+      ( nt onUser ds.getOrElse(N l) ++  d atagUser ds.getOrElse(N l)).d st nct
+     f (un queEnt yUser ds. sEmpty) {
+      Future.N l
     } else {
-      socialGraph.followedByNotMutedBy(sourceUserId, uniqueEntityUserIds)
+      soc alGraph.follo dByNotMutedBy(s ceUser d, un queEnt yUser ds)
     }
   }
 
-  private def getSourceTweet(tweetDetails: TweetDetails): Future[Option[Tweet]] = {
-    tweetDetails.sourceTweetId match {
-      case Some(sourceTweetId) =>
-        tweetypie.getTweet(sourceTweetId)
+  pr vate def getS ceT et(t etDeta ls: T etDeta ls): Future[Opt on[T et]] = {
+    t etDeta ls.s ceT et d match {
+      case So (s ceT et d) =>
+        t etyp e.getT et(s ceT et d)
       case _ =>
         Future.None
     }
   }
 
   /**
-   * Extract and return the details when the source user created a new tweet.
+   * Extract and return t  deta ls w n t  s ce user created a new t et.
    */
-  private def getTweetDetails(
-    tweet: Tweet,
+  pr vate def getT etDeta ls(
+    t et: T et,
     engageUser: User
-  ): Future[TweetCreateEventDetails] = {
-    val tweetDetails = TweetDetails(tweet)
+  ): Future[T etCreateEventDeta ls] = {
+    val t etDeta ls = T etDeta ls(t et)
 
-    val action = getTweetAction(tweetDetails)
-    val tweetCreationTimeMillis = SnowflakeUtils.tweetCreationTime(tweet.id).map(_.inMilliseconds)
-    val engageUserId = engageUser.id
-    val userTweetEngagement = UserTweetEngagement(
-      engageUserId = engageUserId,
-      engageUser = Some(engageUser),
-      action = action,
-      engagementTimeMillis = tweetCreationTimeMillis,
-      tweetId = tweet.id,
-      tweetDetails = Some(tweetDetails)
+    val act on = getT etAct on(t etDeta ls)
+    val t etCreat onT  M ll s = SnowflakeUt ls.t etCreat onT  (t et. d).map(_. nM ll seconds)
+    val engageUser d = engageUser. d
+    val userT etEngage nt = UserT etEngage nt(
+      engageUser d = engageUser d,
+      engageUser = So (engageUser),
+      act on = act on,
+      engage ntT  M ll s = t etCreat onT  M ll s,
+      t et d = t et. d,
+      t etDeta ls = So (t etDeta ls)
     )
 
-    val sourceTweetFut = getSourceTweet(tweetDetails)
-    val followedByIdsFut = getFollowedByIds(
-      engageUserId,
-      tweetDetails.mentionUserIds,
-      tweetDetails.mediatagUserIds
+    val s ceT etFut = getS ceT et(t etDeta ls)
+    val follo dBy dsFut = getFollo dBy ds(
+      engageUser d,
+      t etDeta ls. nt onUser ds,
+      t etDeta ls. d atagUser ds
     )
 
-    Future.join(followedByIdsFut, sourceTweetFut).map {
-      case (followedByIds, sourceTweet) =>
-        TweetCreateEventDetails(
-          userTweetEngagement = userTweetEngagement,
-          validEntityUserIds = followedByIds,
-          sourceTweetDetails = sourceTweet.map(TweetDetails)
+    Future.jo n(follo dBy dsFut, s ceT etFut).map {
+      case (follo dBy ds, s ceT et) =>
+        T etCreateEventDeta ls(
+          userT etEngage nt = userT etEngage nt,
+          val dEnt yUser ds = follo dBy ds,
+          s ceT etDeta ls = s ceT et.map(T etDeta ls)
         )
     }
   }
 
   /**
-   * Exclude any Retweets of one's own tweets
+   * Exclude any Ret ets of one's own t ets
    */
-  private def isEventSelfRetweet(tweetEvent: TweetCreateEventDetails): Boolean = {
-    (tweetEvent.userTweetEngagement.action == Action.Retweet) &&
-    tweetEvent.userTweetEngagement.tweetDetails.exists(
-      _.sourceTweetUserId.contains(
-        tweetEvent.userTweetEngagement.engageUserId
+  pr vate def  sEventSelfRet et(t etEvent: T etCreateEventDeta ls): Boolean = {
+    (t etEvent.userT etEngage nt.act on == Act on.Ret et) &&
+    t etEvent.userT etEngage nt.t etDeta ls.ex sts(
+      _.s ceT etUser d.conta ns(
+        t etEvent.userT etEngage nt.engageUser d
       ))
   }
 
-  private def isTweetPassSafetyFilter(tweetEvent: TweetCreateEventDetails): Future[Boolean] = {
-    tweetEvent.userTweetEngagement.action match {
-      case Action.Reply | Action.Retweet | Action.Quote =>
-        tweetEvent.userTweetEngagement.tweetDetails
-          .flatMap(_.sourceTweetId).map { sourceTweetId =>
-            tweetFilter.filterForTweetypieSafetyLevel(sourceTweetId)
+  pr vate def  sT etPassSafetyF lter(t etEvent: T etCreateEventDeta ls): Future[Boolean] = {
+    t etEvent.userT etEngage nt.act on match {
+      case Act on.Reply | Act on.Ret et | Act on.Quote =>
+        t etEvent.userT etEngage nt.t etDeta ls
+          .flatMap(_.s ceT et d).map { s ceT et d =>
+            t etF lter.f lterForT etyp eSafetyLevel(s ceT et d)
           }.getOrElse(Future(false))
-      case Action.Tweet =>
-        tweetFilter.filterForTweetypieSafetyLevel(tweetEvent.userTweetEngagement.tweetId)
+      case Act on.T et =>
+        t etF lter.f lterForT etyp eSafetyLevel(t etEvent.userT etEngage nt.t et d)
     }
   }
 
-  private def shouldProcessTweetEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
+  pr vate def shouldProcessT etEvent(event: T etCreateEventDeta ls): Future[Boolean] = {
+    val engage nt = event.userT etEngage nt
+    val engageUser d = engage nt.engageUser d
 
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isNullCastSourceTweet = event.sourceTweetDetails.exists(_.isNullCastTweet)
-    val isSelfRetweet = isEventSelfRetweet(event)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafetyFut = isTweetPassSafetyFilter(event)
+    val  sNullCastT et = engage nt.t etDeta ls.forall(_. sNullCastT et)
+    val  sNullCastS ceT et = event.s ceT etDeta ls.ex sts(_. sNullCastT et)
+    val  sSelfRet et =  sEventSelfRet et(event)
+    val  sEngageUserSafeFut = engageUserF lter.f lterByUser d(engageUser d)
+    val  sT etPassSafetyFut =  sT etPassSafetyF lter(event)
 
-    Future.join(isEngageUserSafeFut, isTweetPassSafetyFut).map {
-      case (isEngageUserSafe, isTweetPassSafety) =>
-        if (isNullCastTweet) numNullCastTweetCounter.incr()
-        if (isNullCastSourceTweet) numNullCastSourceTweetCounter.incr()
-        if (!isEngageUserSafe) numAuthorUnsafeCounter.incr()
-        if (isSelfRetweet) selfRetweetCounter.incr()
-        if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    Future.jo n( sEngageUserSafeFut,  sT etPassSafetyFut).map {
+      case ( sEngageUserSafe,  sT etPassSafety) =>
+         f ( sNullCastT et) numNullCastT etCounter. ncr()
+         f ( sNullCastS ceT et) numNullCastS ceT etCounter. ncr()
+         f (! sEngageUserSafe) numAuthorUnsafeCounter. ncr()
+         f ( sSelfRet et) selfRet etCounter. ncr()
+         f (! sT etPassSafety) numT etFa lSafetyLevelCounter. ncr()
 
-        !isNullCastTweet &&
-        !isNullCastSourceTweet &&
-        !isSelfRetweet &&
-        isEngageUserSafe &&
-        isTweetPassSafety
+        ! sNullCastT et &&
+        ! sNullCastS ceT et &&
+        ! sSelfRet et &&
+         sEngageUserSafe &&
+         sT etPassSafety
     }
   }
 
-  override def processEvent(event: TweetEvent): Future[Unit] = {
+  overr de def processEvent(event: T etEvent): Future[Un ] = {
     event.data match {
-      case TweetEventData.TweetCreateEvent(event: TweetCreateEvent) =>
-        getTweetDetails(
-          tweet = event.tweet,
+      case T etEventData.T etCreateEvent(event: T etCreateEvent) =>
+        getT etDeta ls(
+          t et = event.t et,
           engageUser = event.user
-        ).flatMap { eventWithDetails =>
-          tweetCreateEventCounter.incr()
+        ).flatMap { eventW hDeta ls =>
+          t etCreateEventCounter. ncr()
 
-          shouldProcessTweetEvent(eventWithDetails).map {
+          shouldProcessT etEvent(eventW hDeta ls).map {
             case true =>
-              numProcessTweetCounter.incr()
-              trackTweetCreateEventStats(eventWithDetails)
-              // Convert the event for UserUserGraph
-              userUserGraphMessageBuilder.processEvent(eventWithDetails).map { edges =>
+              numProcessT etCounter. ncr()
+              trackT etCreateEventStats(eventW hDeta ls)
+              // Convert t  event for UserUserGraph
+              userUserGraph ssageBu lder.processEvent(eventW hDeta ls).map { edges =>
                 edges.foreach { edge =>
-                  kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userUserGraphTopic)
+                  kafkaEventPubl s r.publ sh(edge.convertToRecosHose ssage, userUserGraphTop c)
                 }
               }
-              // Convert the event for UserTweetEntityGraph
-              userTweetEntityGraphMessageBuilder.processEvent(eventWithDetails).map { edges =>
+              // Convert t  event for UserT etEnt yGraph
+              userT etEnt yGraph ssageBu lder.processEvent(eventW hDeta ls).map { edges =>
                 edges.foreach { edge =>
-                  kafkaEventPublisher
-                    .publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+                  kafkaEventPubl s r
+                    .publ sh(edge.convertToRecosHose ssage, userT etEnt yGraphTop c)
                 }
               }
             case false =>
-              numNoProcessTweetCounter.incr()
+              numNoProcessT etCounter. ncr()
           }
         }
       case _ =>
-        nonTweetCreateEventCounter.incr()
-        Future.Unit
+        nonT etCreateEventCounter. ncr()
+        Future.Un 
     }
   }
 }

@@ -1,543 +1,543 @@
 """
-This module contains the experiment tracker for tracking training in ML Metastore
+T  module conta ns t  exper  nt tracker for track ng tra n ng  n ML  tastore
 """
-from contextlib import contextmanager
-from datetime import datetime
-import getpass
-import hashlib
-import os
-import re
-import sys
-import time
+from contextl b  mport contextmanager
+from datet    mport datet  
+ mport getpass
+ mport hashl b
+ mport os
+ mport re
+ mport sys
+ mport t  
 
-from absl import logging
-import tensorflow.compat.v1 as tf
-from twml.hooks import MetricsUpdateHook
-
-
-try:
-  from urllib import quote as encode_url
-except ImportError:
-  from urllib.parse import quote as encode_url
+from absl  mport logg ng
+ mport tensorflow.compat.v1 as tf
+from twml.hooks  mport  tr csUpdateHook
 
 
 try:
-  # ML Metastore packages might not be available on GCP.
-  # If they are not found, tracking is disabled
-  import requests
-  from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-  from com.twitter.mlmetastore.modelrepo.core.path import (
-    check_valid_id, get_components_from_id, generate_id)
-  from com.twitter.mlmetastore.modelrepo.core import (
-    DeepbirdRun, Experiment, FeatureConfig, FeatureConfigFeature, Model, ProgressReport, Project, StatusUpdate)
-except ImportError:
-  ModelRepoClient = None
+  from urll b  mport quote as encode_url
+except  mportError:
+  from urll b.parse  mport quote as encode_url
 
 
-class ExperimentTracker(object):
+try:
+  # ML  tastore packages m ght not be ava lable on GCP.
+  #  f t y are not found, track ng  s d sabled
+   mport requests
+  from com.tw ter.ml tastore.modelrepo.cl ent  mport ModelRepoCl ent
+  from com.tw ter.ml tastore.modelrepo.core.path  mport (
+    c ck_val d_ d, get_components_from_ d, generate_ d)
+  from com.tw ter.ml tastore.modelrepo.core  mport (
+    Deepb rdRun, Exper  nt, FeatureConf g, FeatureConf gFeature, Model, ProgressReport, Project, StatusUpdate)
+except  mportError:
+  ModelRepoCl ent = None
+
+
+class Exper  ntTracker(object):
   """
-  A tracker that records twml runs in ML Metastore.
+  A tracker that records twml runs  n ML  tastore.
   """
 
-  def __init__(self, params, run_config, save_dir):
+  def __ n __(self, params, run_conf g, save_d r):
     """
 
     Args:
-      params (python dict):
-        The trainer params. ExperimentTracker uses `params.experiment_tracking_path` (String) and
-        `params.disable_experiment_tracking`.
-        If `experiment_tracking_path` is set to None, the tracker tries to guess a path with
-        save_dir.
-        If `disable_experiment_tracking` is True, the tracker is disabled.
-      run_config (tf.estimator.RunConfig):
-        The run config used by the estimator.
-      save_dir (str):
-        save_dir of the trainer
+      params (python d ct):
+        T  tra ner params. Exper  ntTracker uses `params.exper  nt_track ng_path` (Str ng) and
+        `params.d sable_exper  nt_track ng`.
+         f `exper  nt_track ng_path`  s set to None, t  tracker tr es to guess a path w h
+        save_d r.
+         f `d sable_exper  nt_track ng`  s True, t  tracker  s d sabled.
+      run_conf g (tf.est mator.RunConf g):
+        T  run conf g used by t  est mator.
+      save_d r (str):
+        save_d r of t  tra ner
     """
-    if isinstance(params, dict):
+     f  s nstance(params, d ct):
       self._params = params
     else:
-      # preserving backward compatibility for people still using HParams
-      logging.warning("Please stop using HParams and use python dicts. HParams are removed in TF 2")
-      self._params = dict((k, v) for k, v in params.values().items() if v != 'null')
-    self._run_config = run_config
-    self._graceful_shutdown_port = self._params.get('health_port')
+      # preserv ng backward compat b l y for people st ll us ng HParams
+      logg ng.warn ng("Please stop us ng HParams and use python d cts. HParams are removed  n TF 2")
+      self._params = d ct((k, v) for k, v  n params.values(). ems()  f v != 'null')
+    self._run_conf g = run_conf g
+    self._graceful_shutdown_port = self._params.get(' alth_port')
 
-    self.tracking_path = self._params.get('experiment_tracking_path')
-    is_tracking_path_too_long = self.tracking_path is not None and len(self.tracking_path) > 256
+    self.track ng_path = self._params.get('exper  nt_track ng_path')
+     s_track ng_path_too_long = self.track ng_path  s not None and len(self.track ng_path) > 256
 
-    if is_tracking_path_too_long:
-      raise ValueError("Experiment Tracking Path longer than 256 characters")
+     f  s_track ng_path_too_long:
+      ra se ValueError("Exper  nt Track ng Path longer than 256 characters")
 
-    self.disabled = (
-      self._params.get('disable_experiment_tracking', False) or
-      not self._is_env_eligible_for_tracking() or
-      ModelRepoClient is None
+    self.d sabled = (
+      self._params.get('d sable_exper  nt_track ng', False) or
+      not self._ s_env_el g ble_for_track ng() or
+      ModelRepoCl ent  s None
     )
 
-    self._is_hogwild = bool(os.environ.get('TWML_HOGWILD_PORTS'))
+    self._ s_hogw ld = bool(os.env ron.get('TWML_HOGW LD_PORTS'))
 
-    self._is_distributed = bool(os.environ.get('TF_CONFIG'))
+    self._ s_d str buted = bool(os.env ron.get('TF_CONF G'))
 
-    self._client = None if self.disabled else ModelRepoClient()
+    self._cl ent = None  f self.d sabled else ModelRepoCl ent()
 
-    run_name_from_environ = self.run_name_from_environ()
-    run_name_can_be_inferred = (
-      self.tracking_path is not None or run_name_from_environ is not None)
+    run_na _from_env ron = self.run_na _from_env ron()
+    run_na _can_be_ nferred = (
+      self.track ng_path  s not None or run_na _from_env ron  s not None)
 
-    # Turn the flags off as needed in hogwild / distributed
-    if self._is_hogwild or self._is_distributed:
-      self._env_eligible_for_recording_experiment = (
-        self._run_config.task_type == "evaluator")
-      if run_name_can_be_inferred:
-        self._env_eligible_for_recording_export_metadata = (
-          self._run_config.task_type == "chief")
+    # Turn t  flags off as needed  n hogw ld / d str buted
+     f self._ s_hogw ld or self._ s_d str buted:
+      self._env_el g ble_for_record ng_exper  nt = (
+        self._run_conf g.task_type == "evaluator")
+       f run_na _can_be_ nferred:
+        self._env_el g ble_for_record ng_export_ tadata = (
+          self._run_conf g.task_type == "ch ef")
       else:
-        logging.info(
-          'experiment_tracking_path is not set and can not be inferred. '
-          'Recording export metadata is disabled because the chief node and eval node '
-          'are setting different experiment tracking paths.')
-        self._env_eligible_for_recording_export_metadata = False
+        logg ng. nfo(
+          'exper  nt_track ng_path  s not set and can not be  nferred. '
+          'Record ng export  tadata  s d sabled because t  ch ef node and eval node '
+          'are sett ng d fferent exper  nt track ng paths.')
+        self._env_el g ble_for_record ng_export_ tadata = False
     else:
       # Defaults to True
-      self._env_eligible_for_recording_experiment = True
-      self._env_eligible_for_recording_export_metadata = True
+      self._env_el g ble_for_record ng_exper  nt = True
+      self._env_el g ble_for_record ng_export_ tadata = True
 
-    if not self.disabled:
-      # Sanitize passed in experiment tracking paths. e.g. own:proJ:exp:Run.Name
-      # -> own:proj:exp:Run_Name
-      if self.tracking_path:
+     f not self.d sabled:
+      # San  ze passed  n exper  nt track ng paths. e.g. own:proJ:exp:Run.Na 
+      # -> own:proj:exp:Run_Na 
+       f self.track ng_path:
         try:
-          check_valid_id(self.tracking_path)
+          c ck_val d_ d(self.track ng_path)
         except ValueError as err:
-          logging.error(f'Invalid experiment tracking path provided. Sanitizing: {self.tracking_path}\nError: {err}')
-          self.tracking_path = generate_id(
+          logg ng.error(f' nval d exper  nt track ng path prov ded. San  z ng: {self.track ng_path}\nError: {err}')
+          self.track ng_path = generate_ d(
             owner=self.path['owner'],
-            project_name=self.path['project_name'],
-            experiment_name=self.path['experiment_name'],
-            run_name=self.path['run_name']
+            project_na =self.path['project_na '],
+            exper  nt_na =self.path['exper  nt_na '],
+            run_na =self.path['run_na ']
           )
-          logging.error(f'Generated sanitized experiment tracking path: {self.tracking_path}')
+          logg ng.error(f'Generated san  zed exper  nt track ng path: {self.track ng_path}')
       else:
-        logging.info(
-          'No experiment_tracking_path set. Experiment Tracker will try to guess a path')
-        self.tracking_path = self.guess_path(save_dir, run_name_from_environ)
-        logging.info('Guessed path: %s', self.tracking_path)
+        logg ng. nfo(
+          'No exper  nt_track ng_path set. Exper  nt Tracker w ll try to guess a path')
+        self.track ng_path = self.guess_path(save_d r, run_na _from_env ron)
+        logg ng. nfo('Guessed path: %s', self.track ng_path)
 
-      # additional check to see if generated path is valid
+      # add  onal c ck to see  f generated path  s val d
       try:
-        check_valid_id(self.tracking_path)
+        c ck_val d_ d(self.track ng_path)
       except ValueError as err:
-        logging.error(
-          'Could not generate valid experiment tracking path. Disabling tracking. ' +
+        logg ng.error(
+          'Could not generate val d exper  nt track ng path. D sabl ng track ng. ' +
           'Error:\n{}'.format(err)
         )
-        self.disabled = True
+        self.d sabled = True
 
-    self.project_id = None if self.disabled else '{}:{}'.format(
-      self.path['owner'], self.path['project_name'])
-    self.base_run_id = None if self.disabled else self.tracking_path
-    self._current_run_name_suffix = None
+    self.project_ d = None  f self.d sabled else '{}:{}'.format(
+      self.path['owner'], self.path['project_na '])
+    self.base_run_ d = None  f self.d sabled else self.track ng_path
+    self._current_run_na _suff x = None
 
     self._current_tracker_hook = None
 
-    if self.disabled:
-      logging.info('Experiment Tracker is disabled')
+     f self.d sabled:
+      logg ng. nfo('Exper  nt Tracker  s d sabled')
     else:
-      logging.info('Experiment Tracker initialized with base run id: %s', self.base_run_id)
+      logg ng. nfo('Exper  nt Tracker  n  al zed w h base run  d: %s', self.base_run_ d)
 
   @contextmanager
-  def track_experiment(self, eval_hooks, get_estimator_spec_fn, name=None):
+  def track_exper  nt(self, eval_hooks, get_est mator_spec_fn, na =None):
     """
-    A context manager for tracking experiment. It should wrap the training loop.
-    An experiment tracker eval hook is appended to eval_hooks to collect metrics.
+    A context manager for track ng exper  nt.   should wrap t  tra n ng loop.
+    An exper  nt tracker eval hook  s appended to eval_hooks to collect  tr cs.
 
     Args:
-      eval_hooks (list):
-        The list of eval_hooks to be used. When it's not None, and does not contain any ,
-        MetricsUpdateHook an experiment tracker eval hook is appended to it. When it contains
-        any MetricsUpdateHook, this tracker is disabled to avoid conflict with legacy Model Repo
+      eval_hooks (l st):
+        T  l st of eval_hooks to be used. W n  's not None, and does not conta n any ,
+         tr csUpdateHook an exper  nt tracker eval hook  s appended to  . W n   conta ns
+        any  tr csUpdateHook, t  tracker  s d sabled to avo d confl ct w h legacy Model Repo
         tracker (`TrackRun`).
-      get_estimator_spec_fn (func):
-        A function to get the current EstimatorSpec of the trainer, used by the eval hook.
-      name (str);
-        Name of this training or evaluation. Used as a suffix of the run_id.
+      get_est mator_spec_fn (func):
+        A funct on to get t  current Est matorSpec of t  tra ner, used by t  eval hook.
+      na  (str);
+        Na  of t  tra n ng or evaluat on. Used as a suff x of t  run_ d.
 
     Returns:
-      The tracker's eval hook which is appended to eval_hooks.
+      T  tracker's eval hook wh ch  s appended to eval_hooks.
     """
 
-    # disable this tracker if legacy TrackRun hook is present
-    # TODO: remove this once we completely deprecate the old TrackRun interface
-    if eval_hooks is not None:
-      self.disabled = self.disabled or any(isinstance(x, MetricsUpdateHook) for x in eval_hooks)
+    # d sable t  tracker  f legacy TrackRun hook  s present
+    # TODO: remove t  once   completely deprecate t  old TrackRun  nterface
+     f eval_hooks  s not None:
+      self.d sabled = self.d sabled or any( s nstance(x,  tr csUpdateHook) for x  n eval_hooks)
 
-    logging.info('Is environment eligible for recording experiment: %s',
-                 self._env_eligible_for_recording_experiment)
+    logg ng. nfo(' s env ron nt el g ble for record ng exper  nt: %s',
+                 self._env_el g ble_for_record ng_exper  nt)
 
-    if self._env_eligible_for_recording_experiment and self._graceful_shutdown_port:
-      requests.post('http://localhost:{}/track_training_start'.format(
+     f self._env_el g ble_for_record ng_exper  nt and self._graceful_shutdown_port:
+      requests.post('http://localhost:{}/track_tra n ng_start'.format(
         self._graceful_shutdown_port
       ))
 
-    if self.disabled or eval_hooks is None:
-      yield None
+     f self.d sabled or eval_hooks  s None:
+      y eld None
     else:
-      assert self._current_tracker_hook is None, 'experiment tracking has been started already'
+      assert self._current_tracker_hook  s None, 'exper  nt track ng has been started already'
 
-      if name is not None:
-        self._current_run_name_suffix = '_' + name
+       f na   s not None:
+        self._current_run_na _suff x = '_' + na 
 
-      logging.info('Starting experiment tracking. Path: %s', self._current_run_id)
-      logging.info('Is environment eligible for recording export metadata: %s',
-                   self._env_eligible_for_recording_export_metadata)
-      logging.info('This run will be available at: http://go/mldash/experiments/%s',
-                   encode_url(self.experiment_id))
+      logg ng. nfo('Start ng exper  nt track ng. Path: %s', self._current_run_ d)
+      logg ng. nfo(' s env ron nt el g ble for record ng export  tadata: %s',
+                   self._env_el g ble_for_record ng_export_ tadata)
+      logg ng. nfo('T  run w ll be ava lable at: http://go/mldash/exper  nts/%s',
+                   encode_url(self.exper  nt_ d))
 
       try:
         self._record_run()
-        self._add_run_status(StatusUpdate(self._current_run_id, status='RUNNING'))
-        self._register_for_graceful_shutdown()
+        self._add_run_status(StatusUpdate(self._current_run_ d, status='RUNN NG'))
+        self._reg ster_for_graceful_shutdown()
 
-        self._current_tracker_hook = self.create_eval_hook(get_estimator_spec_fn)
-      except Exception as err:
-        logging.error(
-          'Failed to record run. This experiment will not be tracked. Error: %s', str(err))
+        self._current_tracker_hook = self.create_eval_hook(get_est mator_spec_fn)
+      except Except on as err:
+        logg ng.error(
+          'Fa led to record run. T  exper  nt w ll not be tracked. Error: %s', str(err))
         self._current_tracker_hook = None
 
-      if self._current_tracker_hook is None:
-        yield None
+       f self._current_tracker_hook  s None:
+        y eld None
       else:
         try:
           eval_hooks.append(self._current_tracker_hook)
-          yield self._current_tracker_hook
-        except Exception as err:
+          y eld self._current_tracker_hook
+        except Except on as err:
           self._add_run_status(
-            StatusUpdate(self._current_run_id, status='FAILED', description=str(err)))
-          self._deregister_for_graceful_shutdown()
+            StatusUpdate(self._current_run_ d, status='FA LED', descr pt on=str(err)))
+          self._dereg ster_for_graceful_shutdown()
           self._current_tracker_hook = None
-          self._current_run_name_suffix = None
-          logging.error('Experiment tracking done. Experiment failed.')
-          raise
+          self._current_run_na _suff x = None
+          logg ng.error('Exper  nt track ng done. Exper  nt fa led.')
+          ra se
 
         try:
-          if self._current_tracker_hook.metric_values:
-            self._record_update(self._current_tracker_hook.metric_values)
-          self._add_run_status(StatusUpdate(self._current_run_id, status='SUCCESS'))
-          logging.info('Experiment tracking done. Experiment succeeded.')
-        except Exception as err:
-          logging.error(
-            'Failed to update mark run as successful. Error: %s', str(err))
-        finally:
-          self._deregister_for_graceful_shutdown()
+           f self._current_tracker_hook. tr c_values:
+            self._record_update(self._current_tracker_hook. tr c_values)
+          self._add_run_status(StatusUpdate(self._current_run_ d, status='SUCCESS'))
+          logg ng. nfo('Exper  nt track ng done. Exper  nt succeeded.')
+        except Except on as err:
+          logg ng.error(
+            'Fa led to update mark run as successful. Error: %s', str(err))
+        f nally:
+          self._dereg ster_for_graceful_shutdown()
           self._current_tracker_hook = None
-          self._current_run_name_suffix = None
+          self._current_run_na _suff x = None
 
-  def create_eval_hook(self, get_estimator_spec_fn):
+  def create_eval_hook(self, get_est mator_spec_fn):
     """
-    Create an eval_hook to track eval metrics
+    Create an eval_hook to track eval  tr cs
 
     Args:
-      get_estimator_spec_fn (func):
-        A function that returns the current EstimatorSpec of the trainer.
+      get_est mator_spec_fn (func):
+        A funct on that returns t  current Est matorSpec of t  tra ner.
     """
-    return MetricsUpdateHook(
-      get_estimator_spec_fn=get_estimator_spec_fn,
-      add_metrics_fn=self._record_update)
+    return  tr csUpdateHook(
+      get_est mator_spec_fn=get_est mator_spec_fn,
+      add_ tr cs_fn=self._record_update)
 
-  def register_model(self, export_path):
+  def reg ster_model(self, export_path):
     """
-    Record the exported model.
+    Record t  exported model.
 
     Args:
       export_path (str):
-        The path to the exported model.
+        T  path to t  exported model.
     """
-    if self.disabled:
+     f self.d sabled:
       return None
 
     try:
-      logging.info('Model is exported to %s. Computing hash of the model.', export_path)
+      logg ng. nfo('Model  s exported to %s. Comput ng hash of t  model.', export_path)
       model_hash = self.compute_model_hash(export_path)
-      logging.info('Model hash: %s. Registering it in ML Metastore.', model_hash)
-      self._client.register_model(Model(model_hash, self.path['owner'], self.base_run_id))
-    except Exception as err:
-      logging.error('Failed to register model. Error: %s', str(err))
+      logg ng. nfo('Model hash: %s. Reg ster ng    n ML  tastore.', model_hash)
+      self._cl ent.reg ster_model(Model(model_hash, self.path['owner'], self.base_run_ d))
+    except Except on as err:
+      logg ng.error('Fa led to reg ster model. Error: %s', str(err))
 
-  def export_feature_spec(self, feature_spec_dict):
+  def export_feature_spec(self, feature_spec_d ct):
     """
-    Export feature spec to ML Metastore (go/ml-metastore).
+    Export feature spec to ML  tastore (go/ml- tastore).
 
-    Please note that the feature list in FeatureConfig only keeps the list of feature hash ids due
-    to the 1mb upper limit for values in manhattan, and more specific information (feature type,
-    feature name) for each feature config feature is stored separately in FeatureConfigFeature dataset.
+    Please note that t  feature l st  n FeatureConf g only keeps t  l st of feature hash  ds due
+    to t  1mb upper l m  for values  n manhattan, and more spec f c  nformat on (feature type,
+    feature na ) for each feature conf g feature  s stored separately  n FeatureConf gFeature dataset.
 
     Args:
-       feature_spec_dict (dict): A dictionary obtained from FeatureConfig.get_feature_spec()
+       feature_spec_d ct (d ct): A d ct onary obta ned from FeatureConf g.get_feature_spec()
     """
-    if self.disabled or not self._env_eligible_for_recording_export_metadata:
+     f self.d sabled or not self._env_el g ble_for_record ng_export_ tadata:
       return None
 
     try:
-      logging.info('Exporting feature spec to ML Metastore.')
-      feature_list = feature_spec_dict['features']
-      label_list = feature_spec_dict['labels']
-      weight_list = feature_spec_dict['weight']
-      self._client.add_feature_config(FeatureConfig(self._current_run_id, list(feature_list.keys()),
-                                                    list(label_list.keys()), list(weight_list.keys())))
+      logg ng. nfo('Export ng feature spec to ML  tastore.')
+      feature_l st = feature_spec_d ct['features']
+      label_l st = feature_spec_d ct['labels']
+        ght_l st = feature_spec_d ct['  ght']
+      self._cl ent.add_feature_conf g(FeatureConf g(self._current_run_ d, l st(feature_l st.keys()),
+                                                    l st(label_l st.keys()), l st(  ght_l st.keys())))
 
-      feature_config_features = [
-        FeatureConfigFeature(
-          hash_id=_feature_hash_id,
-          feature_name=_feature['featureName'],
+      feature_conf g_features = [
+        FeatureConf gFeature(
+          hash_ d=_feature_hash_ d,
+          feature_na =_feature['featureNa '],
           feature_type=_feature['featureType']
         )
-        for _feature_hash_id, _feature in zip(feature_list.keys(), feature_list.values())
+        for _feature_hash_ d, _feature  n z p(feature_l st.keys(), feature_l st.values())
       ]
-      self._client.add_feature_config_features(list(feature_list.keys()), feature_config_features)
+      self._cl ent.add_feature_conf g_features(l st(feature_l st.keys()), feature_conf g_features)
 
-      feature_config_labels = [
-        FeatureConfigFeature(
-          hash_id=_label_hash_id,
-          feature_name=_label['featureName']
+      feature_conf g_labels = [
+        FeatureConf gFeature(
+          hash_ d=_label_hash_ d,
+          feature_na =_label['featureNa ']
         )
-        for _label_hash_id, _label in zip(label_list.keys(), label_list.values())
+        for _label_hash_ d, _label  n z p(label_l st.keys(), label_l st.values())
       ]
-      self._client.add_feature_config_features(list(label_list.keys()), feature_config_labels)
+      self._cl ent.add_feature_conf g_features(l st(label_l st.keys()), feature_conf g_labels)
 
-      feature_config_weights = [
-        FeatureConfigFeature(
-          hash_id=_weight_hash_id,
-          feature_name=_weight['featureName'],
-          feature_type=_weight['featureType']
+      feature_conf g_  ghts = [
+        FeatureConf gFeature(
+          hash_ d=_  ght_hash_ d,
+          feature_na =_  ght['featureNa '],
+          feature_type=_  ght['featureType']
         )
-        for _weight_hash_id, _weight in zip(weight_list.keys(), weight_list.values())
+        for _  ght_hash_ d, _  ght  n z p(  ght_l st.keys(),   ght_l st.values())
       ]
-      self._client.add_feature_config_features(list(weight_list.keys()), feature_config_weights)
+      self._cl ent.add_feature_conf g_features(l st(  ght_l st.keys()), feature_conf g_  ghts)
 
-    except Exception as err:
-      logging.error('Failed to export feature spec. Error: %s', str(err))
+    except Except on as err:
+      logg ng.error('Fa led to export feature spec. Error: %s', str(err))
 
   @property
   def path(self):
-    if self.disabled:
+     f self.d sabled:
       return None
-    return get_components_from_id(self.tracking_path, ensure_valid_id=False)
+    return get_components_from_ d(self.track ng_path, ensure_val d_ d=False)
 
   @property
-  def experiment_id(self):
-    if self.disabled:
+  def exper  nt_ d(self):
+     f self.d sabled:
       return None
-    return '%s:%s:%s' % (self.path['owner'], self.path['project_name'],
-                         self.path['experiment_name'])
+    return '%s:%s:%s' % (self.path['owner'], self.path['project_na '],
+                         self.path['exper  nt_na '])
 
   @property
-  def _current_run_name(self):
+  def _current_run_na (self):
     """
-    Return the current run name.
+    Return t  current run na .
     """
-    if self._current_run_name_suffix is not None:
-      return self.path['run_name'] + self._current_run_name_suffix
+     f self._current_run_na _suff x  s not None:
+      return self.path['run_na '] + self._current_run_na _suff x
     else:
-      return self.path['run_name']
+      return self.path['run_na ']
 
   @property
-  def _current_run_id(self):
+  def _current_run_ d(self):
     """
-    Return the current run id.
+    Return t  current run  d.
     """
-    if self._current_run_name_suffix is not None:
-      return self.base_run_id + self._current_run_name_suffix
+     f self._current_run_na _suff x  s not None:
+      return self.base_run_ d + self._current_run_na _suff x
     else:
-      return self.base_run_id
+      return self.base_run_ d
 
   def get_run_status(self) -> str:
-    if not self.disabled:
-      return self._client.get_latest_dbv2_status(self._current_run_id)
+     f not self.d sabled:
+      return self._cl ent.get_latest_dbv2_status(self._current_run_ d)
 
   def _add_run_status(self, status):
     """
-    Add run status with underlying client.
+    Add run status w h underly ng cl ent.
 
     Args:
       status (StatusUpdate):
-        The status update to add.
+        T  status update to add.
     """
-    if not self.disabled and self._env_eligible_for_recording_experiment:
-      self._client.add_run_status(status)
+     f not self.d sabled and self._env_el g ble_for_record ng_exper  nt:
+      self._cl ent.add_run_status(status)
 
   def _record_run(self):
     """
-    Record the run in ML Metastore.
+    Record t  run  n ML  tastore.
     """
-    if self.disabled or not self._env_eligible_for_recording_experiment:
+     f self.d sabled or not self._env_el g ble_for_record ng_exper  nt:
       return None
 
-    if not self._client.project_exists(self.project_id):
-      self._client.add_project(Project(self.path['project_name'], self.path['owner']))
-      time.sleep(1)
+     f not self._cl ent.project_ex sts(self.project_ d):
+      self._cl ent.add_project(Project(self.path['project_na '], self.path['owner']))
+      t  .sleep(1)
 
-    if not self._client.experiment_exists(self.experiment_id):
-      self._client.add_experiment(Experiment(
-        self.path['experiment_name'], self.path['owner'], self.project_id, ''))
-      time.sleep(1)
+     f not self._cl ent.exper  nt_ex sts(self.exper  nt_ d):
+      self._cl ent.add_exper  nt(Exper  nt(
+        self.path['exper  nt_na '], self.path['owner'], self.project_ d, ''))
+      t  .sleep(1)
 
-    run = DeepbirdRun(self.experiment_id, self._current_run_name, '',
-                      {'raw_command': ' '.join(sys.argv)}, self._params)
-    self._client.add_deepbird_run(run, force=True)
-    time.sleep(1)
+    run = Deepb rdRun(self.exper  nt_ d, self._current_run_na , '',
+                      {'raw_command': ' '.jo n(sys.argv)}, self._params)
+    self._cl ent.add_deepb rd_run(run, force=True)
+    t  .sleep(1)
 
-  def _record_update(self, metrics):
+  def _record_update(self,  tr cs):
     """
-    Record metrics update in ML Metastore.
+    Record  tr cs update  n ML  tastore.
 
     Args:
-      metrics (dict):
-        The dict of the metrics and their values.
+       tr cs (d ct):
+        T  d ct of t   tr cs and t  r values.
     """
 
-    if self.disabled or not self._env_eligible_for_recording_experiment:
+     f self.d sabled or not self._env_el g ble_for_record ng_exper  nt:
       return None
 
-    reported_metrics = {}
-    for k, v in metrics.items():
+    reported_ tr cs = {}
+    for k, v  n  tr cs. ems():
 
-      if hasattr(v, 'item'):
-        reported_metrics[k] = v.item() if v.size == 1 else str(v.tolist())
+       f hasattr(v, ' em'):
+        reported_ tr cs[k] = v. em()  f v.s ze == 1 else str(v.tol st())
       else:
-        logging.warning("Ignoring %s because the value (%s) is not valid" % (k, str(v)))
+        logg ng.warn ng(" gnor ng %s because t  value (%s)  s not val d" % (k, str(v)))
 
-    report = ProgressReport(self._current_run_id, reported_metrics)
+    report = ProgressReport(self._current_run_ d, reported_ tr cs)
 
     try:
-      self._client.add_progress_report(report)
-    except Exception as err:
-      logging.error('Failed to record metrics in ML Metastore. Error: {}'.format(err))
-      logging.error('Run ID: {}'.format(self._current_run_id))
-      logging.error('Progress Report: {}'.format(report.to_json_string()))
+      self._cl ent.add_progress_report(report)
+    except Except on as err:
+      logg ng.error('Fa led to record  tr cs  n ML  tastore. Error: {}'.format(err))
+      logg ng.error('Run  D: {}'.format(self._current_run_ d))
+      logg ng.error('Progress Report: {}'.format(report.to_json_str ng()))
 
-  def _register_for_graceful_shutdown(self):
+  def _reg ster_for_graceful_shutdown(self):
     """
-    Register the tracker with the health server, enabling graceful shutdown.
-
-    Returns:
-      (Response) health server response
-    """
-    if self._graceful_shutdown_port and not self.disabled and self._env_eligible_for_recording_experiment:
-      return requests.post('http://localhost:{}/register_id/{}'.format(
-        self._graceful_shutdown_port,
-        self._current_run_id
-      ))
-
-  def _deregister_for_graceful_shutdown(self):
-    """
-    Deregister the tracker with the health server, disabling graceful shutdown.
+    Reg ster t  tracker w h t   alth server, enabl ng graceful shutdown.
 
     Returns:
-      (Response) health server response
+      (Response)  alth server response
     """
-    if self._graceful_shutdown_port and not self.disabled and self._env_eligible_for_recording_experiment:
-      return requests.post('http://localhost:{}/deregister_id/{}'.format(
+     f self._graceful_shutdown_port and not self.d sabled and self._env_el g ble_for_record ng_exper  nt:
+      return requests.post('http://localhost:{}/reg ster_ d/{}'.format(
         self._graceful_shutdown_port,
-        self._current_run_id
+        self._current_run_ d
       ))
 
-  def _is_env_eligible_for_tracking(self):
+  def _dereg ster_for_graceful_shutdown(self):
     """
-    Determine if experiment tracking should run in the env.
+    Dereg ster t  tracker w h t   alth server, d sabl ng graceful shutdown.
+
+    Returns:
+      (Response)  alth server response
     """
-    is_unit_test = (
-      os.environ.get('PYTEST_CURRENT_TEST') is not None and
-      os.environ.get('TEST_EXP_TRACKER') is None
+     f self._graceful_shutdown_port and not self.d sabled and self._env_el g ble_for_record ng_exper  nt:
+      return requests.post('http://localhost:{}/dereg ster_ d/{}'.format(
+        self._graceful_shutdown_port,
+        self._current_run_ d
+      ))
+
+  def _ s_env_el g ble_for_track ng(self):
+    """
+    Determ ne  f exper  nt track ng should run  n t  env.
+    """
+     s_un _test = (
+      os.env ron.get('PYTEST_CURRENT_TEST')  s not None and
+      os.env ron.get('TEST_EXP_TRACKER')  s None
     )
 
-    is_running_on_ci = (
-      getpass.getuser() == 'scoot-service' and
-      os.environ.get('TEST_EXP_TRACKER') is None
+     s_runn ng_on_c  = (
+      getpass.getuser() == 'scoot-serv ce' and
+      os.env ron.get('TEST_EXP_TRACKER')  s None
     )
 
     return (
-      not is_unit_test and
-      not is_running_on_ci
+      not  s_un _test and
+      not  s_runn ng_on_c 
     )
 
-  @classmethod
-  def run_name_from_environ(cls):
+  @class thod
+  def run_na _from_env ron(cls):
     """
-    Create run id from environment if possible.
+    Create run  d from env ron nt  f poss ble.
     """
-    job_name = os.environ.get("TWML_JOB_NAME")
-    job_launch_time = os.environ.get("TWML_JOB_LAUNCH_TIME")
+    job_na  = os.env ron.get("TWML_JOB_NAME")
+    job_launch_t   = os.env ron.get("TWML_JOB_LAUNCH_T ME")
 
-    if not job_name or not job_launch_time:
+     f not job_na  or not job_launch_t  :
       return None
 
     try:
-      # job_launch_time should be in isoformat
-      # python2 doesnt support datetime.fromisoformat, so use hardcoded format string.
-      job_launch_time_formatted = datetime.strptime(job_launch_time,
+      # job_launch_t   should be  n  soformat
+      # python2 doesnt support datet  .from soformat, so use hardcoded format str ng.
+      job_launch_t  _formatted = datet  .strpt  (job_launch_t  ,
                                                     "%Y-%m-%dT%H:%M:%S.%f")
     except ValueError:
-      # Fallback in case aurora config is generating datetime in a different format.
-      job_launch_time_formatted = (job_launch_time
+      # Fallback  n case aurora conf g  s generat ng datet    n a d fferent format.
+      job_launch_t  _formatted = (job_launch_t  
                                    .replace("-", "_").replace("T", "_")
                                    .replace(":", "_").replace(".", "_"))
 
     return '{}_{}'.format(
-      job_name, job_launch_time_formatted.strftime('%m_%d_%Y_%I_%M_%p'))
+      job_na , job_launch_t  _formatted.strft  ('%m_%d_%Y_% _%M_%p'))
 
-  @classmethod
-  def guess_path(cls, save_dir, run_name=None):
+  @class thod
+  def guess_path(cls, save_d r, run_na =None):
     """
-    Guess an experiment tracking path based on save_dir.
+    Guess an exper  nt track ng path based on save_d r.
 
     Returns:
       (str) guessed path
     """
-    if not run_name:
-      run_name = 'Unnamed_{}'.format(datetime.now().strftime('%m_%d_%Y_%I_%M_%p'))
+     f not run_na :
+      run_na  = 'Unna d_{}'.format(datet  .now().strft  ('%m_%d_%Y_% _%M_%p'))
 
-    if save_dir.startswith('hdfs://'):
-      path_match = re.search(r'/user/([a-z0-9\-_]+)/([a-z0-9\-_]+)', save_dir)
+     f save_d r.startsw h('hdfs://'):
+      path_match = re.search(r'/user/([a-z0-9\-_]+)/([a-z0-9\-_]+)', save_d r)
 
-      if path_match:
+       f path_match:
         groups = path_match.groups()
         user = groups[0]
-        project_name = groups[1]
+        project_na  = groups[1]
 
-        return generate_id(user, 'default', project_name, run_name)
+        return generate_ d(user, 'default', project_na , run_na )
 
     user = getpass.getuser()
-    project_name = re.sub(r'^[a-z0-9\-_]', os.path.basename(save_dir), '')
-    if not project_name:
-      project_name = 'unnamed'
+    project_na  = re.sub(r'^[a-z0-9\-_]', os.path.basena (save_d r), '')
+     f not project_na :
+      project_na  = 'unna d'
 
-    return generate_id(user, 'default', project_name, run_name)
+    return generate_ d(user, 'default', project_na , run_na )
 
-  @classmethod
+  @class thod
   def compute_model_hash(cls, export_path):
     """
-    Computes the hash of an exported model. This is a gfile version of
-    twitter.mlmetastore.common.versioning.compute_hash. The two functions should generate
-    the same hash when given the same model.
+    Computes t  hash of an exported model. T   s a gf le vers on of
+    tw ter.ml tastore.common.vers on ng.compute_hash. T  two funct ons should generate
+    t  sa  hash w n g ven t  sa  model.
 
     Args:
       export_path (str):
-        The path to the exported model.
+        T  path to t  exported model.
 
     Returns:
-      (str) hash of the exported model
+      (str) hash of t  exported model
     """
     paths = []
-    for path, subdirs, files in tf.io.gfile.walk(export_path):
-      for name in sorted(files):
-        paths.append(os.path.join(path, name))
+    for path, subd rs, f les  n tf. o.gf le.walk(export_path):
+      for na   n sorted(f les):
+        paths.append(os.path.jo n(path, na ))
 
     paths.sort()
-    hash_object = hashlib.new('sha1')
+    hash_object = hashl b.new('sha1')
 
-    for path in paths:
-      with tf.io.gfile.GFile(path, "rb") as file:
-        hash_object.update(file.read())
+    for path  n paths:
+      w h tf. o.gf le.GF le(path, "rb") as f le:
+        hash_object.update(f le.read())
 
-    return hash_object.hexdigest()
+    return hash_object. xd gest()

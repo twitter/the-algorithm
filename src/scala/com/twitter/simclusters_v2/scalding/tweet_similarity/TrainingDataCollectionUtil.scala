@@ -1,138 +1,138 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.tw ter.s mclusters_v2.scald ng.t et_s m lar y
 
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, DataSetPipe}
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
-import com.twitter.util.Time
-import java.util.Random
+ mport com.tw ter.dal.cl ent.dataset.T  Part  onedDALDataset
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .{DataRecord, DataSetP pe}
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.dataset.DALWr e._
+ mport com.tw ter.s mclusters_v2.t et_s m lar y.T etS m lar yFeatures
+ mport com.tw ter.ut l.T  
+ mport java.ut l.Random
 
 /**
- * Collect training data for supervised tweet similarity
+ * Collect tra n ng data for superv sed t et s m lar y
  */
-object TrainingDataCollectionUtil {
+object Tra n ngDataCollect onUt l {
 
   /**
-   * Split dataset into train and test based on time
-   * @param dataset: input dataset
-   * @param testStartDate: samples before/after testStartDate will be used for training/testing
-   * @return (train dataset, test dataset)
+   * Spl  dataset  nto tra n and test based on t  
+   * @param dataset:  nput dataset
+   * @param testStartDate: samples before/after testStartDate w ll be used for tra n ng/test ng
+   * @return (tra n dataset, test dataset)
    */
-  def splitRecordsByTime(
-    dataset: DataSetPipe,
-    testStartDate: RichDate
-  ): (DataSetPipe, DataSetPipe) = {
-    val (leftRecords, rightRecords) = dataset.records.partition { record =>
-      // record will be in training dataset when both tweets were engaged before testStartDate
+  def spl RecordsByT  (
+    dataset: DataSetP pe,
+    testStartDate: R chDate
+  ): (DataSetP pe, DataSetP pe) = {
+    val (leftRecords, r ghtRecords) = dataset.records.part  on { record =>
+      // record w ll be  n tra n ng dataset w n both t ets  re engaged before testStartDate
       (record.getFeatureValue(
-        TweetSimilarityFeatures.QueryTweetTimestamp) < testStartDate.timestamp) &
+        T etS m lar yFeatures.QueryT etT  stamp) < testStartDate.t  stamp) &
         (record.getFeatureValue(
-          TweetSimilarityFeatures.CandidateTweetTimestamp) < testStartDate.timestamp)
+          T etS m lar yFeatures.Cand dateT etT  stamp) < testStartDate.t  stamp)
     }
     (
-      DataSetPipe(leftRecords, dataset.featureContext),
-      DataSetPipe(rightRecords, dataset.featureContext))
+      DataSetP pe(leftRecords, dataset.featureContext),
+      DataSetP pe(r ghtRecords, dataset.featureContext))
   }
 
   /**
-   * Split dataset into train and test randomly based on query
-   * @param dataset: input dataset
-   * @param testRatio: ratio for test
-   * @return (train dataset, test dataset)
+   * Spl  dataset  nto tra n and test randomly based on query
+   * @param dataset:  nput dataset
+   * @param testRat o: rat o for test
+   * @return (tra n dataset, test dataset)
    */
-  def splitRecordsByQuery(dataset: DataSetPipe, testRatio: Double): (DataSetPipe, DataSetPipe) = {
+  def spl RecordsByQuery(dataset: DataSetP pe, testRat o: Double): (DataSetP pe, DataSetP pe) = {
     val queryToRand = dataset.records
-      .map { record => record.getFeatureValue(TweetSimilarityFeatures.QueryTweetId) }
-      .distinct
-      .map { queryTweet => queryTweet -> new Random(Time.now.inMilliseconds).nextDouble() }
-      .forceToDisk
+      .map { record => record.getFeatureValue(T etS m lar yFeatures.QueryT et d) }
+      .d st nct
+      .map { queryT et => queryT et -> new Random(T  .now. nM ll seconds).nextDouble() }
+      .forceToD sk
 
-    val (trainRecords, testRecords) = dataset.records
-      .groupBy { record => record.getFeatureValue(TweetSimilarityFeatures.QueryTweetId) }
-      .join(queryToRand)
+    val (tra nRecords, testRecords) = dataset.records
+      .groupBy { record => record.getFeatureValue(T etS m lar yFeatures.QueryT et d) }
+      .jo n(queryToRand)
       .values
-      .partition {
-        case (_, random) => random > testRatio
+      .part  on {
+        case (_, random) => random > testRat o
       }
 
     (
-      DataSetPipe(trainRecords.map { case (record, _) => record }, dataset.featureContext),
-      DataSetPipe(testRecords.map { case (record, _) => record }, dataset.featureContext))
+      DataSetP pe(tra nRecords.map { case (record, _) => record }, dataset.featureContext),
+      DataSetP pe(testRecords.map { case (record, _) => record }, dataset.featureContext))
   }
 
   /**
-   * Get the write exec for train and test datasets
-   * @param dataset: input dataset
-   * @param testStartDate: samples before/after testStartDate will be used for training/testing
-   * @param outputPath: output path for the train/test datasets
-   * @return execution of the the writing exec
+   * Get t  wr e exec for tra n and test datasets
+   * @param dataset:  nput dataset
+   * @param testStartDate: samples before/after testStartDate w ll be used for tra n ng/test ng
+   * @param outputPath: output path for t  tra n/test datasets
+   * @return execut on of t  t  wr  ng exec
    */
-  def getTrainTestByTimeExec(
-    dataset: DataSetPipe,
-    testStartDate: RichDate,
-    trainDataset: TimePartitionedDALDataset[DataRecord],
-    testDataset: TimePartitionedDALDataset[DataRecord],
-    outputPath: String
+  def getTra nTestByT  Exec(
+    dataset: DataSetP pe,
+    testStartDate: R chDate,
+    tra nDataset: T  Part  onedDALDataset[DataRecord],
+    testDataset: T  Part  onedDALDataset[DataRecord],
+    outputPath: Str ng
   )(
-    implicit dateRange: DateRange
-  ): Execution[Unit] = {
-    val (trainDataSet, testDataSet) = splitRecordsByTime(dataset, testStartDate)
-    val trainExecution: Execution[Unit] = trainDataSet
-      .writeDALExecution(trainDataset, D.Daily, D.Suffix(s"$outputPath/train"), D.EBLzo())
-    val trainStatsExecution: Execution[Unit] =
-      getStatsExec(trainDataSet, s"$outputPath/train_stats")
-    val testExecution: Execution[Unit] = testDataSet
-      .writeDALExecution(testDataset, D.Daily, D.Suffix(s"$outputPath/test"), D.EBLzo())
-    val testStatsExecution: Execution[Unit] = getStatsExec(testDataSet, s"$outputPath/test_stats")
-    Execution.zip(trainExecution, trainStatsExecution, testExecution, testStatsExecution).unit
+     mpl c  dateRange: DateRange
+  ): Execut on[Un ] = {
+    val (tra nDataSet, testDataSet) = spl RecordsByT  (dataset, testStartDate)
+    val tra nExecut on: Execut on[Un ] = tra nDataSet
+      .wr eDALExecut on(tra nDataset, D.Da ly, D.Suff x(s"$outputPath/tra n"), D.EBLzo())
+    val tra nStatsExecut on: Execut on[Un ] =
+      getStatsExec(tra nDataSet, s"$outputPath/tra n_stats")
+    val testExecut on: Execut on[Un ] = testDataSet
+      .wr eDALExecut on(testDataset, D.Da ly, D.Suff x(s"$outputPath/test"), D.EBLzo())
+    val testStatsExecut on: Execut on[Un ] = getStatsExec(testDataSet, s"$outputPath/test_stats")
+    Execut on.z p(tra nExecut on, tra nStatsExecut on, testExecut on, testStatsExecut on).un 
   }
 
   /**
-   * Get the write exec for train and test datasets
-   * @param dataset: input dataset
-   * @param testRatio: samples before/after testStartDate will be used for training/testing
-   * @param outputPath: output path for the train/test datasets
-   * @return execution of the the writing exec
+   * Get t  wr e exec for tra n and test datasets
+   * @param dataset:  nput dataset
+   * @param testRat o: samples before/after testStartDate w ll be used for tra n ng/test ng
+   * @param outputPath: output path for t  tra n/test datasets
+   * @return execut on of t  t  wr  ng exec
    */
-  def getTrainTestByQueryExec(
-    dataset: DataSetPipe,
-    testRatio: Double,
-    trainDataset: TimePartitionedDALDataset[DataRecord],
-    testDataset: TimePartitionedDALDataset[DataRecord],
-    outputPath: String
+  def getTra nTestByQueryExec(
+    dataset: DataSetP pe,
+    testRat o: Double,
+    tra nDataset: T  Part  onedDALDataset[DataRecord],
+    testDataset: T  Part  onedDALDataset[DataRecord],
+    outputPath: Str ng
   )(
-    implicit dateRange: DateRange
-  ): Execution[Unit] = {
-    val (trainDataSet, testDataSet) = splitRecordsByQuery(dataset, testRatio)
-    val trainExecution: Execution[Unit] = trainDataSet
-      .writeDALExecution(trainDataset, D.Daily, D.Suffix(s"$outputPath/train"), D.EBLzo())
-    val trainStatsExecution: Execution[Unit] =
-      getStatsExec(trainDataSet, s"$outputPath/train_stats")
-    val testExecution: Execution[Unit] = testDataSet
-      .writeDALExecution(testDataset, D.Daily, D.Suffix(s"$outputPath/test"), D.EBLzo())
-    val testStatsExecution: Execution[Unit] = getStatsExec(testDataSet, s"$outputPath/test_stats")
-    Execution.zip(trainExecution, trainStatsExecution, testExecution, testStatsExecution).unit
+     mpl c  dateRange: DateRange
+  ): Execut on[Un ] = {
+    val (tra nDataSet, testDataSet) = spl RecordsByQuery(dataset, testRat o)
+    val tra nExecut on: Execut on[Un ] = tra nDataSet
+      .wr eDALExecut on(tra nDataset, D.Da ly, D.Suff x(s"$outputPath/tra n"), D.EBLzo())
+    val tra nStatsExecut on: Execut on[Un ] =
+      getStatsExec(tra nDataSet, s"$outputPath/tra n_stats")
+    val testExecut on: Execut on[Un ] = testDataSet
+      .wr eDALExecut on(testDataset, D.Da ly, D.Suff x(s"$outputPath/test"), D.EBLzo())
+    val testStatsExecut on: Execut on[Un ] = getStatsExec(testDataSet, s"$outputPath/test_stats")
+    Execut on.z p(tra nExecut on, tra nStatsExecut on, testExecut on, testStatsExecut on).un 
   }
 
   /**
-   * Get the exec for reporting dataset stats
-   * @param dataset: dataset of interest
-   * @param outputPath: path for outputting the stats
+   * Get t  exec for report ng dataset stats
+   * @param dataset: dataset of  nterest
+   * @param outputPath: path for outputt ng t  stats
    * @return exec
    */
-  def getStatsExec(dataset: DataSetPipe, outputPath: String): Execution[Unit] = {
+  def getStatsExec(dataset: DataSetP pe, outputPath: Str ng): Execut on[Un ] = {
     dataset.records
       .map { rec =>
-        if (TweetSimilarityFeatures.isCoengaged(rec))
-          "total_positive_records" -> 1L
+         f (T etS m lar yFeatures. sCoengaged(rec))
+          "total_pos  ve_records" -> 1L
         else
-          "total_negative_records" -> 1L
+          "total_negat ve_records" -> 1L
       }
       .sumByKey
       .shard(1)
-      .writeExecution(TypedTsv(outputPath))
+      .wr eExecut on(TypedTsv(outputPath))
   }
 }

@@ -1,119 +1,119 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.tw ter.search.earlyb rd.common.userupdates;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import javax.annotation.Nullable;
+ mport java. o.BufferedReader;
+ mport java. o. OExcept on;
+ mport java. o. nputStreamReader;
+ mport java.ut l.Arrays;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.NoSuchEle ntExcept on;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Spl erator;
+ mport java.ut l.Spl erators;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.funct on.Pred cate;
+ mport java.ut l.stream.Collectors;
+ mport java.ut l.stream.Stream;
+ mport java.ut l.stream.StreamSupport;
+ mport javax.annotat on.Nullable;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.HdfsConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .hadoop.conf.Conf gurat on;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.apac .hadoop.hdfs.HdfsConf gurat on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.hadoop.HdfsUtils;
-import com.twitter.scalding.DateRange;
-import com.twitter.scalding.Hours;
-import com.twitter.scalding.RichDate;
-import com.twitter.search.user_table.sources.MostRecentGoodSafetyUserStateSource;
-import com.twitter.search.common.indexing.thriftjava.SafetyUserState;
-import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.util.Duration;
-import com.twitter.util.Time;
+ mport com.tw ter.common_ nternal.hadoop.HdfsUt ls;
+ mport com.tw ter.scald ng.DateRange;
+ mport com.tw ter.scald ng.H s;
+ mport com.tw ter.scald ng.R chDate;
+ mport com.tw ter.search.user_table.s ces.MostRecentGoodSafetyUserStateS ce;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.SafetyUserState;
+ mport com.tw ter.search.common.ut l. o.LzoThr ftBlockF leReader;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.T  ;
 
 /**
- * Builds a user table from a user safety snapshot on HDFS.
+ * Bu lds a user table from a user safety snapshot on HDFS.
  */
-public class UserTableBuilderFromSnapshot {
-  private static final Logger LOG = LoggerFactory.getLogger(UserTableBuilderFromSnapshot.class);
+publ c class UserTableBu lderFromSnapshot {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(UserTableBu lderFromSnapshot.class);
 
-  private static final int MAX_DAYS_TO_CHECK = 7;
-  public static final String DATA_DIR = "user_states";
-  public static final String METADATA_DIR = "last_updated_ms";
+  pr vate stat c f nal  nt MAX_DAYS_TO_CHECK = 7;
+  publ c stat c f nal Str ng DATA_D R = "user_states";
+  publ c stat c f nal Str ng METADATA_D R = "last_updated_ms";
 
-  private final String snapshotBaseDir;
+  pr vate f nal Str ng snapshotBaseD r;
 
-  private String snapshotDataPath;
-  private String snapshotMetaDataPath;
-  private UserTable userTable;
+  pr vate Str ng snapshotDataPath;
+  pr vate Str ng snapshot taDataPath;
+  pr vate UserTable userTable;
 
-  private long nsfwCount;
-  private long antisocialCount;
-  private long isProtectedCount;
+  pr vate long nsfwCount;
+  pr vate long ant soc alCount;
+  pr vate long  sProtectedCount;
 
-  public UserTableBuilderFromSnapshot() {
-    snapshotBaseDir =
-        EarlybirdConfig.getString(EarlybirdConfig.USER_SNAPSHOT_BASE_DIR, null);
+  publ c UserTableBu lderFromSnapshot() {
+    snapshotBaseD r =
+        Earlyb rdConf g.getStr ng(Earlyb rdConf g.USER_SNAPSHOT_BASE_D R, null);
 
-    LOG.info("Configured user snapshot directory: " + snapshotBaseDir);
+    LOG. nfo("Conf gured user snapshot d rectory: " + snapshotBaseD r);
   }
 
-  private static final class UserUpdate {
-    public final long userId;
-    @Nullable public final Boolean antisocial;
-    @Nullable public final Boolean nsfw;
-    @Nullable public final Boolean isProtected;
+  pr vate stat c f nal class UserUpdate {
+    publ c f nal long user d;
+    @Nullable publ c f nal Boolean ant soc al;
+    @Nullable publ c f nal Boolean nsfw;
+    @Nullable publ c f nal Boolean  sProtected;
 
-    private UserUpdate(long userId,
-                       @Nullable Boolean antisocial,
+    pr vate UserUpdate(long user d,
+                       @Nullable Boolean ant soc al,
                        @Nullable Boolean nsfw,
-                       @Nullable Boolean isProtected) {
-      this.userId = userId;
-      this.antisocial = antisocial;
-      this.nsfw = nsfw;
-      this.isProtected = isProtected;
+                       @Nullable Boolean  sProtected) {
+      t .user d = user d;
+      t .ant soc al = ant soc al;
+      t .nsfw = nsfw;
+      t . sProtected =  sProtected;
     }
 
-    public static UserUpdate fromUserState(SafetyUserState safetyUserState) {
-      long userId = safetyUserState.getUserID();
-      @Nullable Boolean antisocial = null;
+    publ c stat c UserUpdate fromUserState(SafetyUserState safetyUserState) {
+      long user d = safetyUserState.getUser D();
+      @Nullable Boolean ant soc al = null;
       @Nullable Boolean nsfw = null;
-      @Nullable Boolean isProtected = null;
+      @Nullable Boolean  sProtected = null;
 
-      if (safetyUserState.isIsAntisocial()) {
-        antisocial = true;
+       f (safetyUserState. s sAnt soc al()) {
+        ant soc al = true;
       }
-      if (safetyUserState.isIsNsfw()) {
+       f (safetyUserState. s sNsfw()) {
         nsfw = true;
       }
-      if (safetyUserState.isSetIsProtected() && safetyUserState.isIsProtected()) {
-        isProtected = true;
+       f (safetyUserState. sSet sProtected() && safetyUserState. s sProtected()) {
+         sProtected = true;
       }
 
-      return new UserUpdate(userId, antisocial, nsfw, isProtected);
+      return new UserUpdate(user d, ant soc al, nsfw,  sProtected);
     }
   }
 
   /**
-   * Builds a user table from an HDFS user snapshot.
-   * @return The table, or nothing if something went wrong.
+   * Bu lds a user table from an HDFS user snapshot.
+   * @return T  table, or noth ng  f so th ng  nt wrong.
    */
-  public Optional<UserTable> build(Predicate<Long> userFilter) {
-    userTable = UserTable.newTableWithDefaultCapacityAndPredicate(userFilter);
+  publ c Opt onal<UserTable> bu ld(Pred cate<Long> userF lter) {
+    userTable = UserTable.newTableW hDefaultCapac yAndPred cate(userF lter);
     nsfwCount = 0;
-    antisocialCount = 0;
-    isProtectedCount = 0;
+    ant soc alCount = 0;
+     sProtectedCount = 0;
 
-    if (snapshotBaseDir == null || snapshotBaseDir.isEmpty()) {
-      LOG.info("No snapshot directory. Can't build user table.");
-      return Optional.empty();
+     f (snapshotBaseD r == null || snapshotBaseD r. sEmpty()) {
+      LOG. nfo("No snapshot d rectory. Can't bu ld user table.");
+      return Opt onal.empty();
     }
 
-    LOG.info("Starting to build user table.");
+    LOG. nfo("Start ng to bu ld user table.");
 
     Stream<UserUpdate> stream = null;
 
@@ -121,143 +121,143 @@ public class UserTableBuilderFromSnapshot {
       setSnapshotPath();
 
       stream = getUserUpdates();
-      stream.forEach(this::insertUser);
-    } catch (IOException e) {
-      LOG.error("IOException while building table: {}", e.getMessage(), e);
+      stream.forEach(t :: nsertUser);
+    } catch ( OExcept on e) {
+      LOG.error(" OExcept on wh le bu ld ng table: {}", e.get ssage(), e);
 
-      return Optional.empty();
-    } finally {
-      if (stream != null) {
+      return Opt onal.empty();
+    } f nally {
+       f (stream != null) {
         stream.close();
       }
     }
 
-    LOG.info("Built user table with {} users, {} nsfw, {} antisocial and {} protected.",
-        userTable.getNumUsersInTable(),
+    LOG. nfo("Bu lt user table w h {} users, {} nsfw, {} ant soc al and {} protected.",
+        userTable.getNumUsers nTable(),
         nsfwCount,
-        antisocialCount,
-        isProtectedCount);
+        ant soc alCount,
+         sProtectedCount);
 
     try {
-      userTable.setLastRecordTimestamp(readTimestampOfLastSeenUpdateFromSnapshot());
-    } catch (IOException e) {
-      LOG.error("IOException reading timestamp of last update: {}", e.getMessage(), e);
-      return Optional.empty();
+      userTable.setLastRecordT  stamp(readT  stampOfLastSeenUpdateFromSnapshot());
+    } catch ( OExcept on e) {
+      LOG.error(" OExcept on read ng t  stamp of last update: {}", e.get ssage(), e);
+      return Opt onal.empty();
     }
 
-    LOG.info("Setting last record timestamp to {}.", userTable.getLastRecordTimestamp());
+    LOG. nfo("Sett ng last record t  stamp to {}.", userTable.getLastRecordT  stamp());
 
-    return Optional.of(userTable);
+    return Opt onal.of(userTable);
   }
 
-  private void setSnapshotPath() {
+  pr vate vo d setSnapshotPath() {
     snapshotDataPath =
-        new MostRecentGoodSafetyUserStateSource(
-            snapshotBaseDir,
-            DATA_DIR,
-            METADATA_DIR,
+        new MostRecentGoodSafetyUserStateS ce(
+            snapshotBaseD r,
+            DATA_D R,
+            METADATA_D R,
             DateRange.apply(
-                RichDate.now().$minus(Hours.apply(MAX_DAYS_TO_CHECK * 24)),
-                RichDate.now())
-        ).partitionHdfsPaths(new HdfsConfiguration())
+                R chDate.now().$m nus(H s.apply(MAX_DAYS_TO_CHECK * 24)),
+                R chDate.now())
+        ).part  onHdfsPaths(new HdfsConf gurat on())
          ._1()
-         .head()
+         . ad()
          .replaceAll("\\*$", "");
-    snapshotMetaDataPath = snapshotDataPath.replace(DATA_DIR, METADATA_DIR);
+    snapshot taDataPath = snapshotDataPath.replace(DATA_D R, METADATA_D R);
 
-    LOG.info("Snapshot data path: {}", snapshotDataPath);
-    LOG.info("Snapshot metadata path: {}", snapshotMetaDataPath);
+    LOG. nfo("Snapshot data path: {}", snapshotDataPath);
+    LOG. nfo("Snapshot  tadata path: {}", snapshot taDataPath);
   }
 
-  private Stream<UserUpdate> getUserUpdates() throws IOException {
-    FileSystem fs = FileSystem.get(new Configuration());
-    List<String> lzoFiles =
-        Arrays.stream(fs.listStatus(new Path(snapshotDataPath),
-                                    path -> path.getName().startsWith("part-")))
-              .map(fileStatus -> Path.getPathWithoutSchemeAndAuthority(fileStatus.getPath())
-                                     .toString())
-              .collect(Collectors.toList());
+  pr vate Stream<UserUpdate> getUserUpdates() throws  OExcept on {
+    F leSystem fs = F leSystem.get(new Conf gurat on());
+    L st<Str ng> lzoF les =
+        Arrays.stream(fs.l stStatus(new Path(snapshotDataPath),
+                                    path -> path.getNa ().startsW h("part-")))
+              .map(f leStatus -> Path.getPathW houtSc  AndAuthor y(f leStatus.getPath())
+                                     .toStr ng())
+              .collect(Collectors.toL st());
 
-    final LzoThriftBlockFileReader<SafetyUserState> thriftReader =
-        new LzoThriftBlockFileReader<>(lzoFiles, SafetyUserState.class, null);
+    f nal LzoThr ftBlockF leReader<SafetyUserState> thr ftReader =
+        new LzoThr ftBlockF leReader<>(lzoF les, SafetyUserState.class, null);
 
-    Iterator<UserUpdate> iter = new Iterator<UserUpdate>() {
-      private SafetyUserState next;
+     erator<UserUpdate>  er = new  erator<UserUpdate>() {
+      pr vate SafetyUserState next;
 
-      @Override
-      public boolean hasNext() {
-        if (next != null) {
+      @Overr de
+      publ c boolean hasNext() {
+         f (next != null) {
           return true;
         }
 
         do {
           try {
-            next = thriftReader.readNext();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
+            next = thr ftReader.readNext();
+          } catch ( OExcept on e) {
+            throw new Runt  Except on(e);
           }
-        } while (next == null && !thriftReader.isExhausted());
+        } wh le (next == null && !thr ftReader. sExhausted());
         return next != null;
       }
 
-      @Override
-      public UserUpdate next() {
-        if (next != null || hasNext()) {
+      @Overr de
+      publ c UserUpdate next() {
+         f (next != null || hasNext()) {
           UserUpdate userUpdate = UserUpdate.fromUserState(next);
           next = null;
           return userUpdate;
         }
-        throw new NoSuchElementException();
+        throw new NoSuchEle ntExcept on();
       }
     };
 
     return StreamSupport
         .stream(
-            Spliterators.spliteratorUnknownSize(iter, Spliterator.ORDERED | Spliterator.NONNULL),
+            Spl erators.spl eratorUnknownS ze( er, Spl erator.ORDERED | Spl erator.NONNULL),
             false)
-        .onClose(thriftReader::stop);
+        .onClose(thr ftReader::stop);
   }
 
-  private long readTimestampOfLastSeenUpdateFromSnapshot() throws IOException {
-    String timestampFile = snapshotMetaDataPath + "part-00000";
-    BufferedReader buffer = new BufferedReader(new InputStreamReader(
-        HdfsUtils.getInputStreamSupplier(timestampFile).openStream()));
+  pr vate long readT  stampOfLastSeenUpdateFromSnapshot() throws  OExcept on {
+    Str ng t  stampF le = snapshot taDataPath + "part-00000";
+    BufferedReader buffer = new BufferedReader(new  nputStreamReader(
+        HdfsUt ls.get nputStreamSuppl er(t  stampF le).openStream()));
 
-    long timestampMillis = Long.parseLong(buffer.readLine());
-    LOG.info("read timestamp {} from HDFS:{}", timestampMillis, timestampFile);
+    long t  stampM ll s = Long.parseLong(buffer.readL ne());
+    LOG. nfo("read t  stamp {} from HDFS:{}", t  stampM ll s, t  stampF le);
 
-    Time time = Time.fromMilliseconds(timestampMillis)
-                    .minus(Duration.fromTimeUnit(10, TimeUnit.MINUTES));
-    return time.inMilliseconds();
+    T   t   = T  .fromM ll seconds(t  stampM ll s)
+                    .m nus(Durat on.fromT  Un (10, T  Un .M NUTES));
+    return t  . nM ll seconds();
   }
 
-  private void insertUser(UserUpdate userUpdate) {
-    if (userUpdate == null) {
+  pr vate vo d  nsertUser(UserUpdate userUpdate) {
+     f (userUpdate == null) {
       return;
     }
 
-    if (userUpdate.antisocial != null) {
+     f (userUpdate.ant soc al != null) {
       userTable.set(
-          userUpdate.userId,
-          UserTable.ANTISOCIAL_BIT,
-          userUpdate.antisocial);
-      antisocialCount++;
+          userUpdate.user d,
+          UserTable.ANT SOC AL_B T,
+          userUpdate.ant soc al);
+      ant soc alCount++;
     }
 
-    if (userUpdate.nsfw != null) {
+     f (userUpdate.nsfw != null) {
       userTable.set(
-          userUpdate.userId,
-          UserTable.NSFW_BIT,
+          userUpdate.user d,
+          UserTable.NSFW_B T,
           userUpdate.nsfw);
       nsfwCount++;
     }
 
-    if (userUpdate.isProtected != null) {
+     f (userUpdate. sProtected != null) {
       userTable.set(
-          userUpdate.userId,
-          UserTable.IS_PROTECTED_BIT,
-          userUpdate.isProtected);
-      isProtectedCount++;
+          userUpdate.user d,
+          UserTable. S_PROTECTED_B T,
+          userUpdate. sProtected);
+       sProtectedCount++;
     }
   }
 }

@@ -1,232 +1,232 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPayloads;
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPositions;
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.INVALID_POSITION;
-import static com.twitter.search.core.earlybird.index.inverted.TermsArray.INVALID;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex. nverted.Sk pL stConta ner.HasPayloads;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex. nverted.Sk pL stConta ner.HasPos  ons;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex. nverted.Sk pL stConta ner. NVAL D_POS T ON;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex. nverted.TermsArray. NVAL D;
 
 /**
- * A skip list implementation of real time posting list. Supports out of order updates.
+ * A sk p l st  mple ntat on of real t   post ng l st. Supports out of order updates.
  */
-public class SkipListPostingList implements Flushable {
-  /** Underlying skip list. */
-  private final SkipListContainer<Key> skipListContainer;
+publ c class Sk pL stPost ngL st  mple nts Flushable {
+  /** Underly ng sk p l st. */
+  pr vate f nal Sk pL stConta ner<Key> sk pL stConta ner;
 
-  /** Key used when inserting into the skip list. */
-  private final Key key = new Key();
+  /** Key used w n  nsert ng  nto t  sk p l st. */
+  pr vate f nal Key key = new Key();
 
-  public SkipListPostingList(
-      HasPositions hasPositions,
+  publ c Sk pL stPost ngL st(
+      HasPos  ons hasPos  ons,
       HasPayloads hasPayloads,
-      String field) {
-    this.skipListContainer = new SkipListContainer<>(
-        new DocIDComparator(),
-        hasPositions,
+      Str ng f eld) {
+    t .sk pL stConta ner = new Sk pL stConta ner<>(
+        new Doc DComparator(),
+        hasPos  ons,
         hasPayloads,
-        field);
+        f eld);
   }
 
-  /** Used by {@link SkipListPostingList.FlushHandler} */
-  private SkipListPostingList(SkipListContainer<Key> skipListContainer) {
-    this.skipListContainer = skipListContainer;
+  /** Used by {@l nk Sk pL stPost ngL st.FlushHandler} */
+  pr vate Sk pL stPost ngL st(Sk pL stConta ner<Key> sk pL stConta ner) {
+    t .sk pL stConta ner = sk pL stConta ner;
   }
 
   /**
-   * Appends a posting to the posting list for a term.
+   * Appends a post ng to t  post ng l st for a term.
    */
-  public void appendPosting(
-      int termID,
+  publ c vo d appendPost ng(
+       nt term D,
       TermsArray termsArray,
-      int docID,
-      int position,
+       nt doc D,
+       nt pos  on,
       @Nullable BytesRef payload) {
-    termsArray.getLargestPostings()[termID] = Math.max(
-        termsArray.getLargestPostings()[termID],
-        docID);
+    termsArray.getLargestPost ngs()[term D] = Math.max(
+        termsArray.getLargestPost ngs()[term D],
+        doc D);
 
-    // Append to an existing skip list.
-    // Notice, header tower index is stored at the last postings pointer spot.
-    int postingsPointer = termsArray.getPostingsPointer(termID);
-    if (postingsPointer == INVALID) {
-      // Create a new skip list and add the first posting.
-      postingsPointer = skipListContainer.newSkipList();
+    // Append to an ex st ng sk p l st.
+    // Not ce,  ader to r  ndex  s stored at t  last post ngs po nter spot.
+     nt post ngsPo nter = termsArray.getPost ngsPo nter(term D);
+     f (post ngsPo nter ==  NVAL D) {
+      // Create a new sk p l st and add t  f rst post ng.
+      post ngsPo nter = sk pL stConta ner.newSk pL st();
     }
 
-    boolean havePostingForThisDoc = insertPosting(docID, position, payload, postingsPointer);
+    boolean havePost ngForT Doc =  nsertPost ng(doc D, pos  on, payload, post ngsPo nter);
 
-    // If this is a new document ID, we need to update the document frequency for this term
-    if (!havePostingForThisDoc) {
-      termsArray.getDocumentFrequency()[termID]++;
+    //  f t   s a new docu nt  D,   need to update t  docu nt frequency for t  term
+     f (!havePost ngForT Doc) {
+      termsArray.getDocu ntFrequency()[term D]++;
     }
 
-    termsArray.updatePostingsPointer(termID, postingsPointer);
+    termsArray.updatePost ngsPo nter(term D, post ngsPo nter);
   }
 
   /**
-   * Deletes the given doc ID from the posting list for the term.
+   * Deletes t  g ven doc  D from t  post ng l st for t  term.
    */
-  public void deletePosting(int termID, TermsArray postingsArray, int docID) {
-    int docFreq = postingsArray.getDocumentFrequency()[termID];
-    if (docFreq == 0) {
+  publ c vo d deletePost ng( nt term D, TermsArray post ngsArray,  nt doc D) {
+     nt docFreq = post ngsArray.getDocu ntFrequency()[term D];
+     f (docFreq == 0) {
       return;
     }
 
-    int postingsPointer = postingsArray.getPostingsPointer(termID);
-    // skipListContainer is not empty, try to delete docId from it.
-    int smallestDoc = deletePosting(docID, postingsPointer);
-    if (smallestDoc == SkipListContainer.INITIAL_VALUE) {
-      // Key does not exist.
+     nt post ngsPo nter = post ngsArray.getPost ngsPo nter(term D);
+    // sk pL stConta ner  s not empty, try to delete doc d from  .
+     nt smallestDoc = deletePost ng(doc D, post ngsPo nter);
+     f (smallestDoc == Sk pL stConta ner. N T AL_VALUE) {
+      // Key does not ex st.
       return;
     }
 
-    postingsArray.getDocumentFrequency()[termID]--;
+    post ngsArray.getDocu ntFrequency()[term D]--;
   }
 
   /**
-   * Insert posting into an existing skip list.
+   *  nsert post ng  nto an ex st ng sk p l st.
    *
-   * @param docID docID of the this posting.
-   * @param skipListHead header tower index of the skip list
-   *                         in which the posting will be inserted.
-   * @return whether we have already inserted this document ID into this term list.
+   * @param doc D doc D of t  t  post ng.
+   * @param sk pL st ad  ader to r  ndex of t  sk p l st
+   *                          n wh ch t  post ng w ll be  nserted.
+   * @return w t r   have already  nserted t  docu nt  D  nto t  term l st.
    */
-  private boolean insertPosting(int docID, int position, BytesRef termPayload, int skipListHead) {
-    int[] payload = PayloadUtil.encodePayload(termPayload);
-    return skipListContainer.insert(key.withDocAndPosition(docID, position), docID, position,
-        payload, skipListHead);
+  pr vate boolean  nsertPost ng( nt doc D,  nt pos  on, BytesRef termPayload,  nt sk pL st ad) {
+     nt[] payload = PayloadUt l.encodePayload(termPayload);
+    return sk pL stConta ner. nsert(key.w hDocAndPos  on(doc D, pos  on), doc D, pos  on,
+        payload, sk pL st ad);
   }
 
-  private int deletePosting(int docID, int skipListHead) {
-    return skipListContainer.delete(key.withDocAndPosition(docID, INVALID_POSITION), skipListHead);
+  pr vate  nt deletePost ng( nt doc D,  nt sk pL st ad) {
+    return sk pL stConta ner.delete(key.w hDocAndPos  on(doc D,  NVAL D_POS T ON), sk pL st ad);
   }
 
-  /** Return a term docs enumerator with position flag on. */
-  public PostingsEnum postings(
-      int postingPointer,
-      int docFreq,
-      int maxPublishedPointer) {
-    return new SkipListPostingsEnum(
-        postingPointer, docFreq, maxPublishedPointer, skipListContainer);
+  /** Return a term docs enu rator w h pos  on flag on. */
+  publ c Post ngsEnum post ngs(
+       nt post ngPo nter,
+       nt docFreq,
+       nt maxPubl s dPo nter) {
+    return new Sk pL stPost ngsEnum(
+        post ngPo nter, docFreq, maxPubl s dPo nter, sk pL stConta ner);
   }
 
   /**
-   * Get the number of documents (AKA document frequency or DF) for the given term.
+   * Get t  number of docu nts (AKA docu nt frequency or DF) for t  g ven term.
    */
-  public int getDF(int termID, TermsArray postingsArray) {
-    int[] documentFrequency = postingsArray.getDocumentFrequency();
-    Preconditions.checkArgument(termID < documentFrequency.length);
+  publ c  nt getDF( nt term D, TermsArray post ngsArray) {
+     nt[] docu ntFrequency = post ngsArray.getDocu ntFrequency();
+    Precond  ons.c ckArgu nt(term D < docu ntFrequency.length);
 
-    return documentFrequency[termID];
+    return docu ntFrequency[term D];
   }
 
-  public int getDocIDFromPosting(int posting) {
-    // Posting is simply the whole doc ID.
-    return posting;
+  publ c  nt getDoc DFromPost ng( nt post ng) {
+    // Post ng  s s mply t  whole doc  D.
+    return post ng;
   }
 
-  public int getMaxPublishedPointer() {
-    return skipListContainer.getPoolSize();
+  publ c  nt getMaxPubl s dPo nter() {
+    return sk pL stConta ner.getPoolS ze();
   }
 
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<SkipListPostingList> {
-    private static final String SKIP_LIST_PROP_NAME = "skipList";
+  publ c stat c class FlushHandler extends Flushable.Handler<Sk pL stPost ngL st> {
+    pr vate stat c f nal Str ng SK P_L ST_PROP_NAME = "sk pL st";
 
-    public FlushHandler(SkipListPostingList objectToFlush) {
+    publ c FlushHandler(Sk pL stPost ngL st objectToFlush) {
       super(objectToFlush);
     }
 
-    public FlushHandler() {
+    publ c FlushHandler() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      SkipListPostingList objectToFlush = getObjectToFlush();
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      Sk pL stPost ngL st objectToFlush = getObjectToFlush();
 
-      objectToFlush.skipListContainer.getFlushHandler()
-          .flush(flushInfo.newSubProperties(SKIP_LIST_PROP_NAME), out);
+      objectToFlush.sk pL stConta ner.getFlushHandler()
+          .flush(flush nfo.newSubPropert es(SK P_L ST_PROP_NAME), out);
     }
 
-    @Override
-    protected SkipListPostingList doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      SkipListComparator<Key> comparator = new DocIDComparator();
-      SkipListContainer.FlushHandler<Key> flushHandler =
-          new SkipListContainer.FlushHandler<>(comparator);
-      SkipListContainer<Key> skipList =
-          flushHandler.load(flushInfo.getSubProperties(SKIP_LIST_PROP_NAME), in);
-      return new SkipListPostingList(skipList);
-    }
-  }
-
-  /**
-   * Key used to in {@link SkipListContainer} by {@link SkipListPostingList}.
-   */
-  public static class Key {
-    private int docID;
-    private int position;
-
-    public int getDocID() {
-      return docID;
-    }
-
-    public int getPosition() {
-      return position;
-    }
-
-    public Key withDocAndPosition(int withDocID, int withPosition) {
-      this.docID = withDocID;
-      this.position = withPosition;
-      return this;
+    @Overr de
+    protected Sk pL stPost ngL st doLoad(
+        Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+      Sk pL stComparator<Key> comparator = new Doc DComparator();
+      Sk pL stConta ner.FlushHandler<Key> flushHandler =
+          new Sk pL stConta ner.FlushHandler<>(comparator);
+      Sk pL stConta ner<Key> sk pL st =
+          flushHandler.load(flush nfo.getSubPropert es(SK P_L ST_PROP_NAME),  n);
+      return new Sk pL stPost ngL st(sk pL st);
     }
   }
 
   /**
-   * Comparator for docID and position.
+   * Key used to  n {@l nk Sk pL stConta ner} by {@l nk Sk pL stPost ngL st}.
    */
-  public static class DocIDComparator implements SkipListComparator<Key> {
-    private static final int SENTINEL_VALUE = DocIdSetIterator.NO_MORE_DOCS;
+  publ c stat c class Key {
+    pr vate  nt doc D;
+    pr vate  nt pos  on;
 
-    @Override
-    public int compareKeyWithValue(Key key, int targetDocID, int targetPosition) {
-      // No key could represent sentinel value and sentinel value is the largest.
-      int docCompare = key.getDocID() - targetDocID;
-      if (docCompare == 0 && targetPosition != INVALID_POSITION) {
-        return key.getPosition() - targetPosition;
+    publ c  nt getDoc D() {
+      return doc D;
+    }
+
+    publ c  nt getPos  on() {
+      return pos  on;
+    }
+
+    publ c Key w hDocAndPos  on( nt w hDoc D,  nt w hPos  on) {
+      t .doc D = w hDoc D;
+      t .pos  on = w hPos  on;
+      return t ;
+    }
+  }
+
+  /**
+   * Comparator for doc D and pos  on.
+   */
+  publ c stat c class Doc DComparator  mple nts Sk pL stComparator<Key> {
+    pr vate stat c f nal  nt SENT NEL_VALUE = Doc dSet erator.NO_MORE_DOCS;
+
+    @Overr de
+    publ c  nt compareKeyW hValue(Key key,  nt targetDoc D,  nt targetPos  on) {
+      // No key could represent sent nel value and sent nel value  s t  largest.
+       nt docCompare = key.getDoc D() - targetDoc D;
+       f (docCompare == 0 && targetPos  on !=  NVAL D_POS T ON) {
+        return key.getPos  on() - targetPos  on;
       } else {
         return docCompare;
       }
     }
 
-    @Override
-    public int compareValues(int docID1, int docID2) {
-      // Sentinel value is the largest.
-      return docID1 - docID2;
+    @Overr de
+    publ c  nt compareValues( nt doc D1,  nt doc D2) {
+      // Sent nel value  s t  largest.
+      return doc D1 - doc D2;
     }
 
-    @Override
-    public int getSentinelValue() {
-      return SENTINEL_VALUE;
+    @Overr de
+    publ c  nt getSent nelValue() {
+      return SENT NEL_VALUE;
     }
   }
 }

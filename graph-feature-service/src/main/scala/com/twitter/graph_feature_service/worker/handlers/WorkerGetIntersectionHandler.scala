@@ -1,95 +1,95 @@
-package com.twitter.graph_feature_service.worker.handlers
+package com.tw ter.graph_feature_serv ce.worker.handlers
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.graph_feature_service.thriftscala.{
-  WorkerIntersectionRequest,
-  WorkerIntersectionResponse,
-  WorkerIntersectionValue
+ mport com.tw ter.f nagle.stats.{Stat, StatsRece ver}
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.{
+  Worker ntersect onRequest,
+  Worker ntersect onResponse,
+  Worker ntersect onValue
 }
-import com.twitter.graph_feature_service.util.{FeatureTypesCalculator, IntersectionValueCalculator}
-import com.twitter.graph_feature_service.util.IntersectionValueCalculator._
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import java.nio.ByteBuffer
-import javax.inject.{Inject, Singleton}
+ mport com.tw ter.graph_feature_serv ce.ut l.{FeatureTypesCalculator,  ntersect onValueCalculator}
+ mport com.tw ter.graph_feature_serv ce.ut l. ntersect onValueCalculator._
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.GraphConta ner
+ mport com.tw ter.servo.request.RequestHandler
+ mport com.tw ter.ut l.Future
+ mport java.n o.ByteBuffer
+ mport javax. nject.{ nject, S ngleton}
 
-@Singleton
-class WorkerGetIntersectionHandler @Inject() (
-  graphContainer: GraphContainer,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[WorkerIntersectionRequest, WorkerIntersectionResponse] {
+@S ngleton
+class WorkerGet ntersect onHandler @ nject() (
+  graphConta ner: GraphConta ner,
+  statsRece ver: StatsRece ver)
+    extends RequestHandler[Worker ntersect onRequest, Worker ntersect onResponse] {
 
-  import WorkerGetIntersectionHandler._
+   mport WorkerGet ntersect onHandler._
 
-  private val stats: StatsReceiver = statsReceiver.scope("srv/get_intersection")
-  private val numCandidatesCount = stats.counter("total_num_candidates")
-  private val toPartialGraphQueryStat = stats.stat("to_partial_graph_query_latency")
-  private val fromPartialGraphQueryStat = stats.stat("from_partial_graph_query_latency")
-  private val intersectionCalculationStat = stats.stat("computation_latency")
+  pr vate val stats: StatsRece ver = statsRece ver.scope("srv/get_ ntersect on")
+  pr vate val numCand datesCount = stats.counter("total_num_cand dates")
+  pr vate val toPart alGraphQueryStat = stats.stat("to_part al_graph_query_latency")
+  pr vate val fromPart alGraphQueryStat = stats.stat("from_part al_graph_query_latency")
+  pr vate val  ntersect onCalculat onStat = stats.stat("computat on_latency")
 
-  override def apply(request: WorkerIntersectionRequest): Future[WorkerIntersectionResponse] = {
+  overr de def apply(request: Worker ntersect onRequest): Future[Worker ntersect onResponse] = {
 
-    numCandidatesCount.incr(request.candidateUserIds.length)
+    numCand datesCount. ncr(request.cand dateUser ds.length)
 
-    val userId = request.userId
+    val user d = request.user d
 
-    // NOTE: do not change the order of candidates
-    val candidateIds = request.candidateUserIds
+    // NOTE: do not change t  order of cand dates
+    val cand date ds = request.cand dateUser ds
 
-    // NOTE: do not change the order of features
+    // NOTE: do not change t  order of features
     val featureTypes =
       FeatureTypesCalculator.getFeatureTypes(request.presetFeatureTypes, request.featureTypes)
 
-    val leftEdges = featureTypes.map(_.leftEdgeType).distinct
-    val rightEdges = featureTypes.map(_.rightEdgeType).distinct
+    val leftEdges = featureTypes.map(_.leftEdgeType).d st nct
+    val r ghtEdges = featureTypes.map(_.r ghtEdgeType).d st nct
 
-    val rightEdgeMap = Stat.time(toPartialGraphQueryStat) {
-      rightEdges.map { rightEdge =>
-        val map = graphContainer.toPartialMap.get(rightEdge) match {
-          case Some(graph) =>
-            candidateIds.flatMap { candidateId =>
-              graph.apply(candidateId).map(candidateId -> _)
+    val r ghtEdgeMap = Stat.t  (toPart alGraphQueryStat) {
+      r ghtEdges.map { r ghtEdge =>
+        val map = graphConta ner.toPart alMap.get(r ghtEdge) match {
+          case So (graph) =>
+            cand date ds.flatMap { cand date d =>
+              graph.apply(cand date d).map(cand date d -> _)
             }.toMap
           case None =>
             Map.empty[Long, ByteBuffer]
         }
-        rightEdge -> map
+        r ghtEdge -> map
       }.toMap
     }
 
-    val leftEdgeMap = Stat.time(fromPartialGraphQueryStat) {
+    val leftEdgeMap = Stat.t  (fromPart alGraphQueryStat) {
       leftEdges.flatMap { leftEdge =>
-        graphContainer.toPartialMap.get(leftEdge).flatMap(_.apply(userId)).map(leftEdge -> _)
+        graphConta ner.toPart alMap.get(leftEdge).flatMap(_.apply(user d)).map(leftEdge -> _)
       }.toMap
     }
 
-    val res = Stat.time(intersectionCalculationStat) {
-      WorkerIntersectionResponse(
-        // NOTE that candidate ordering is important
-        candidateIds.map { candidateId =>
-          // NOTE that the featureTypes ordering is important
+    val res = Stat.t  ( ntersect onCalculat onStat) {
+      Worker ntersect onResponse(
+        // NOTE that cand date order ng  s  mportant
+        cand date ds.map { cand date d =>
+          // NOTE that t  featureTypes order ng  s  mportant
           featureTypes.map {
             featureType =>
-              val leftNeighborsOpt = leftEdgeMap.get(featureType.leftEdgeType)
-              val rightNeighborsOpt =
-                rightEdgeMap.get(featureType.rightEdgeType).flatMap(_.get(candidateId))
+              val leftNe ghborsOpt = leftEdgeMap.get(featureType.leftEdgeType)
+              val r ghtNe ghborsOpt =
+                r ghtEdgeMap.get(featureType.r ghtEdgeType).flatMap(_.get(cand date d))
 
-              if (leftNeighborsOpt.isEmpty && rightNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue
-              } else if (rightNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue.copy(
-                  leftNodeDegree = computeArraySize(leftNeighborsOpt.get)
+               f (leftNe ghborsOpt. sEmpty && r ghtNe ghborsOpt. sEmpty) {
+                EmptyWorker ntersect onValue
+              } else  f (r ghtNe ghborsOpt. sEmpty) {
+                EmptyWorker ntersect onValue.copy(
+                  leftNodeDegree = computeArrayS ze(leftNe ghborsOpt.get)
                 )
-              } else if (leftNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue.copy(
-                  rightNodeDegree = computeArraySize(rightNeighborsOpt.get)
+              } else  f (leftNe ghborsOpt. sEmpty) {
+                EmptyWorker ntersect onValue.copy(
+                  r ghtNodeDegree = computeArrayS ze(r ghtNe ghborsOpt.get)
                 )
               } else {
-                IntersectionValueCalculator(
-                  leftNeighborsOpt.get,
-                  rightNeighborsOpt.get,
-                  request.intersectionIdLimit)
+                 ntersect onValueCalculator(
+                  leftNe ghborsOpt.get,
+                  r ghtNe ghborsOpt.get,
+                  request. ntersect on dL m )
               }
           }
         }
@@ -100,6 +100,6 @@ class WorkerGetIntersectionHandler @Inject() (
   }
 }
 
-object WorkerGetIntersectionHandler {
-  val EmptyWorkerIntersectionValue: WorkerIntersectionValue = WorkerIntersectionValue(0, 0, 0, Nil)
+object WorkerGet ntersect onHandler {
+  val EmptyWorker ntersect onValue: Worker ntersect onValue = Worker ntersect onValue(0, 0, 0, N l)
 }

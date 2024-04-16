@@ -1,62 +1,62 @@
-package com.twitter.graph_feature_service.worker.modules
+package com.tw ter.graph_feature_serv ce.worker.modules
 
-import com.google.inject.Provides
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.worker.util
-import com.twitter.graph_feature_service.worker.util.AutoUpdatingGraph
-import com.twitter.graph_feature_service.worker.util.FollowedByPartialValueGraph
-import com.twitter.graph_feature_service.worker.util.FollowingPartialValueGraph
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.graph_feature_service.worker.util.GraphKey
-import com.twitter.graph_feature_service.worker.util.MutualFollowPartialValueGraph
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Timer
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.concurrent.AsyncSemaphore
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graph_feature_serv ce.common.Conf gs._
+ mport com.tw ter.graph_feature_serv ce.worker.ut l
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.AutoUpdat ngGraph
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.Follo dByPart alValueGraph
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.Follow ngPart alValueGraph
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.GraphConta ner
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.GraphKey
+ mport com.tw ter.graph_feature_serv ce.worker.ut l.MutualFollowPart alValueGraph
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.ut l.T  r
+ mport javax. nject.S ngleton
 
-object GraphContainerProviderModule extends TwitterModule {
+object GraphConta nerProv derModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def provideAutoUpdatingGraphs(
-    @Flag(WorkerFlagNames.HdfsCluster) hdfsCluster: String,
-    @Flag(WorkerFlagNames.HdfsClusterUrl) hdfsClusterUrl: String,
-    @Flag(WorkerFlagNames.ShardId) shardId: Int
+  @Prov des
+  @S ngleton
+  def prov deAutoUpdat ngGraphs(
+    @Flag(WorkerFlagNa s.HdfsCluster) hdfsCluster: Str ng,
+    @Flag(WorkerFlagNa s.HdfsClusterUrl) hdfsClusterUrl: Str ng,
+    @Flag(WorkerFlagNa s.Shard d) shard d:  nt
   )(
-    implicit statsReceiver: StatsReceiver,
-    timer: Timer
-  ): GraphContainer = {
+     mpl c  statsRece ver: StatsRece ver,
+    t  r: T  r
+  ): GraphConta ner = {
 
-    // NOTE that we do not load some the graphs for saving RAM at this moment.
-    val enabledGraphPaths: Map[GraphKey, String] =
+    // NOTE that   do not load so  t  graphs for sav ng RAM at t  mo nt.
+    val enabledGraphPaths: Map[GraphKey, Str ng] =
       Map(
-        FollowingPartialValueGraph -> FollowOutValPath,
-        FollowedByPartialValueGraph -> FollowInValPath
+        Follow ngPart alValueGraph -> FollowOutValPath,
+        Follo dByPart alValueGraph -> Follow nValPath
       )
 
-    // Only allow one graph to update at the same time.
+    // Only allow one graph to update at t  sa  t  .
     val sharedSemaphore = new AsyncSemaphore(1)
 
-    val graphs: Map[GraphKey, AutoUpdatingGraph] =
+    val graphs: Map[GraphKey, AutoUpdat ngGraph] =
       enabledGraphPaths.map {
         case (graphKey, path) =>
-          graphKey -> AutoUpdatingGraph(
+          graphKey -> AutoUpdat ngGraph(
             dataPath = getHdfsPath(path),
             hdfsCluster = hdfsCluster,
             hdfsClusterUrl = hdfsClusterUrl,
-            shard = shardId,
-            minimumSizeForCompleteGraph = 1e6.toLong,
-            sharedSemaphore = Some(sharedSemaphore)
+            shard = shard d,
+            m n mumS zeForCompleteGraph = 1e6.toLong,
+            sharedSemaphore = So (sharedSemaphore)
           )(
-            statsReceiver
+            statsRece ver
               .scope("graphs")
-              .scope(graphKey.getClass.getSimpleName),
-            timer
+              .scope(graphKey.getClass.getS mpleNa ),
+            t  r
           )
       }
 
-    util.GraphContainer(graphs)
+    ut l.GraphConta ner(graphs)
   }
 }

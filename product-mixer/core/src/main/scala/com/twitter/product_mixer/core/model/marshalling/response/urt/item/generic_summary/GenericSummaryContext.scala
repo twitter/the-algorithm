@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Hor zon con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-case class GenericSummaryContext(
-  text: RichText,
-  icon: Option[HorizonIcon])
+case class Gener cSummaryContext(
+  text: R chText,
+   con: Opt on[Hor zon con])

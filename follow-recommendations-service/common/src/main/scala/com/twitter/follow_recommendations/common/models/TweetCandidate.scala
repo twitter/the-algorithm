@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-case class TweetCandidate(
-  tweetId: Long,
-  authorId: Long,
-  score: Option[Double])
+case class T etCand date(
+  t et d: Long,
+  author d: Long,
+  score: Opt on[Double])

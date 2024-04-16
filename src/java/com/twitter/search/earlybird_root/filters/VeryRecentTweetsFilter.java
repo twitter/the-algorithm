@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-public class VeryRecentTweetsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String DECIDER_KEY = "enable_very_recent_tweets";
-  private static final SearchRateCounter VERY_RECENT_TWEETS_NOT_MODIFIED =
-      SearchRateCounter.export("very_recent_tweets_not_modified");
-  private static final SearchRateCounter VERY_RECENT_TWEETS_ENABLED =
-      SearchRateCounter.export("very_recent_tweets_enabled");
+publ c class VeryRecentT etsF lter
+    extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal Str ng DEC DER_KEY = "enable_very_recent_t ets";
+  pr vate stat c f nal SearchRateCounter VERY_RECENT_TWEETS_NOT_MOD F ED =
+      SearchRateCounter.export("very_recent_t ets_not_mod f ed");
+  pr vate stat c f nal SearchRateCounter VERY_RECENT_TWEETS_ENABLED =
+      SearchRateCounter.export("very_recent_t ets_enabled");
 
-  private final SearchDecider decider;
+  pr vate f nal SearchDec der dec der;
 
-  @Inject
-  public VeryRecentTweetsFilter(
-      SearchDecider decider
+  @ nject
+  publ c VeryRecentT etsF lter(
+      SearchDec der dec der
   ) {
-    this.decider = decider;
+    t .dec der = dec der;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequest request,
+      Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce
   ) {
-    if (decider.isAvailable(DECIDER_KEY)) {
-      VERY_RECENT_TWEETS_ENABLED.increment();
-      request.setSkipVeryRecentTweets(false);
+     f (dec der. sAva lable(DEC DER_KEY)) {
+      VERY_RECENT_TWEETS_ENABLED. ncre nt();
+      request.setSk pVeryRecentT ets(false);
     } else {
-      VERY_RECENT_TWEETS_NOT_MODIFIED.increment();
+      VERY_RECENT_TWEETS_NOT_MOD F ED. ncre nt();
     }
 
-    return service.apply(request);
+    return serv ce.apply(request);
   }
 }

@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.peopled scovery.ap .thr ftscala.Thr ftPeopleD scoveryServ ce
+ mport com.tw ter.ut l.Durat on
 
 /**
- * Copy of com.twitter.product_mixer.component_library.module.PeopleDiscoveryServiceModule
+ * Copy of com.tw ter.product_m xer.component_l brary.module.PeopleD scoveryServ ceModule
  */
-object PeopleDiscoveryServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ThriftPeopleDiscoveryService.ServicePerEndpoint,
-      ThriftPeopleDiscoveryService.MethodPerEndpoint
+object PeopleD scoveryServ ceModule
+    extends Thr ft thodBu lderCl entModule[
+      Thr ftPeopleD scoveryServ ce.Serv cePerEndpo nt,
+      Thr ftPeopleD scoveryServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label: String = "people-discovery-api"
+  overr de val label: Str ng = "people-d scovery-ap "
 
-  override val dest: String = "/s/people-discovery-api/people-discovery-api:thrift"
+  overr de val dest: Str ng = "/s/people-d scovery-ap /people-d scovery-ap :thr ft"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(350.millis)
-      .withTimeoutTotal(350.millis)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(350.m ll s)
+      .w hT  outTotal(350.m ll s)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

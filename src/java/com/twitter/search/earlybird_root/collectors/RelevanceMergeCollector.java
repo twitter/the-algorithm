@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root.collectors;
+package com.tw ter.search.earlyb rd_root.collectors;
 
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultsRelevanceStatsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.search.common.relevance.ut ls.ResultComparators;
+ mport com.tw ter.search.common.ut l.earlyb rd.Thr ftSearchResultsRelevanceStatsUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
 /**
- * RelevanceMergeCollector class extends (@link RecencyMergeCollector} to do k-way merge of
- * earlybird responses, but sorted by relevance score.
+ * Relevance rgeCollector class extends (@l nk Recency rgeCollector} to do k-way  rge of
+ * earlyb rd responses, but sorted by relevance score.
  *
- * Note that this is a superset of functionality found in
- * {@link com.twitter.search.blender.services.earlybird.relevance.RelevanceCollector}
- * If you make changes here, evaluate if they should be made in RelevanceCollector as well.
+ * Note that t   s a superset of funct onal y found  n
+ * {@l nk com.tw ter.search.blender.serv ces.earlyb rd.relevance.RelevanceCollector}
+ *  f   make changes  re, evaluate  f t y should be made  n RelevanceCollector as  ll.
  */
-public class RelevanceMergeCollector extends RecencyMergeCollector {
+publ c class Relevance rgeCollector extends Recency rgeCollector {
 
-  public RelevanceMergeCollector(int numResponses) {
+  publ c Relevance rgeCollector( nt numResponses) {
     super(numResponses, ResultComparators.SCORE_COMPARATOR);
   }
 
-  @Override
-  protected void collectStats(EarlybirdResponse response) {
+  @Overr de
+  protected vo d collectStats(Earlyb rdResponse response) {
     super.collectStats(response);
 
-    if (!response.getSearchResults().isSetRelevanceStats()) {
+     f (!response.getSearchResults(). sSetRelevanceStats()) {
       return;
     }
 
-    if (!finalResults.isSetRelevanceStats()) {
-      finalResults.setRelevanceStats(new ThriftSearchResultsRelevanceStats());
+     f (!f nalResults. sSetRelevanceStats()) {
+      f nalResults.setRelevanceStats(new Thr ftSearchResultsRelevanceStats());
     }
 
-    ThriftSearchResultsRelevanceStats base = finalResults.getRelevanceStats();
-    ThriftSearchResultsRelevanceStats delta = response.getSearchResults().getRelevanceStats();
+    Thr ftSearchResultsRelevanceStats base = f nalResults.getRelevanceStats();
+    Thr ftSearchResultsRelevanceStats delta = response.getSearchResults().getRelevanceStats();
 
-    ThriftSearchResultsRelevanceStatsUtil.addRelevanceStats(base, delta);
+    Thr ftSearchResultsRelevanceStatsUt l.addRelevanceStats(base, delta);
   }
 }

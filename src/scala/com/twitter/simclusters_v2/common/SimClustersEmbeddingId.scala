@@ -1,51 +1,51 @@
-package com.twitter.simclusters_v2.common
+package com.tw ter.s mclusters_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingId => ThriftSimClustersEmbeddingId
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.LocaleEnt y d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersEmbedd ng d => Thr ftS mClustersEmbedd ng d
 }
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId.EntityId
-import com.twitter.simclusters_v2.thriftscala.InternalId.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId.UserId
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType._
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d.Ent y d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Embedd ngType => S mClustersEmbedd ngType}
 
-object SimClustersEmbeddingId {
+object S mClustersEmbedd ng d {
 
-  val DefaultModelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  val DefaultModelVers on: ModelVers on = ModelVers on.Model20m145k2020
 
-  // Embeddings which is available in Content-Recommender
-  val TweetEmbeddingTypes: Set[EmbeddingType] =
+  // Embedd ngs wh ch  s ava lable  n Content-Recom nder
+  val T etEmbedd ngTypes: Set[Embedd ngType] =
     Set(
-      FavBasedTweet,
-      FollowBasedTweet,
-      LogFavBasedTweet,
-      LogFavLongestL2EmbeddingTweet
+      FavBasedT et,
+      FollowBasedT et,
+      LogFavBasedT et,
+      LogFavLongestL2Embedd ngT et
     )
-  val DefaultTweetEmbeddingType: EmbeddingType = LogFavLongestL2EmbeddingTweet
+  val DefaultT etEmbedd ngType: Embedd ngType = LogFavLongestL2Embedd ngT et
 
-  val UserInterestedInEmbeddingTypes: Set[EmbeddingType] =
+  val User nterested nEmbedd ngTypes: Set[Embedd ngType] =
     Set(
-      FavBasedUserInterestedIn,
-      FollowBasedUserInterestedIn,
-      LogFavBasedUserInterestedIn,
-      RecentFollowBasedUserInterestedIn,
-      FilteredUserInterestedIn,
-      FavBasedUserInterestedInFromPE,
-      FollowBasedUserInterestedInFromPE,
-      LogFavBasedUserInterestedInFromPE,
-      FilteredUserInterestedInFromPE,
-      LogFavBasedUserInterestedInFromAPE,
-      FollowBasedUserInterestedInFromAPE,
-      UnfilteredUserInterestedIn
+      FavBasedUser nterested n,
+      FollowBasedUser nterested n,
+      LogFavBasedUser nterested n,
+      RecentFollowBasedUser nterested n,
+      F lteredUser nterested n,
+      FavBasedUser nterested nFromPE,
+      FollowBasedUser nterested nFromPE,
+      LogFavBasedUser nterested nFromPE,
+      F lteredUser nterested nFromPE,
+      LogFavBasedUser nterested nFromAPE,
+      FollowBasedUser nterested nFromAPE,
+      Unf lteredUser nterested n
     )
-  val DefaultUserInterestInEmbeddingType: EmbeddingType = FavBasedUserInterestedIn
+  val DefaultUser nterest nEmbedd ngType: Embedd ngType = FavBasedUser nterested n
 
-  val ProducerEmbeddingTypes: Set[EmbeddingType] =
+  val ProducerEmbedd ngTypes: Set[Embedd ngType] =
     Set(
       FavBasedProducer,
       FollowBasedProducer,
@@ -54,156 +54,156 @@ object SimClustersEmbeddingId {
       RelaxedAggregatableLogFavBasedProducer,
       KnownFor
     )
-  val DefaultProducerEmbeddingType: EmbeddingType = FavBasedProducer
+  val DefaultProducerEmbedd ngType: Embedd ngType = FavBasedProducer
 
-  val LocaleEntityEmbeddingTypes: Set[EmbeddingType] =
+  val LocaleEnt yEmbedd ngTypes: Set[Embedd ngType] =
     Set(
-      FavTfgTopic,
-      LogFavTfgTopic
+      FavTfgTop c,
+      LogFavTfgTop c
     )
-  val DefaultLocaleEntityEmbeddingType: EmbeddingType = FavTfgTopic
+  val DefaultLocaleEnt yEmbedd ngType: Embedd ngType = FavTfgTop c
 
-  val TopicEmbeddingTypes: Set[EmbeddingType] =
+  val Top cEmbedd ngTypes: Set[Embedd ngType] =
     Set(
-      LogFavBasedKgoApeTopic
+      LogFavBasedKgoApeTop c
     )
-  val DefaultTopicEmbeddingType: EmbeddingType = LogFavBasedKgoApeTopic
+  val DefaultTop cEmbedd ngType: Embedd ngType = LogFavBasedKgoApeTop c
 
-  val AllEmbeddingTypes: Set[EmbeddingType] =
-    TweetEmbeddingTypes ++
-      UserInterestedInEmbeddingTypes ++
-      ProducerEmbeddingTypes ++
-      LocaleEntityEmbeddingTypes ++
-      TopicEmbeddingTypes
+  val AllEmbedd ngTypes: Set[Embedd ngType] =
+    T etEmbedd ngTypes ++
+      User nterested nEmbedd ngTypes ++
+      ProducerEmbedd ngTypes ++
+      LocaleEnt yEmbedd ngTypes ++
+      Top cEmbedd ngTypes
 
-  def buildTweetId(
-    tweetId: TweetId,
-    embeddingType: EmbeddingType = DefaultTweetEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(TweetEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.TweetId(tweetId)
-    )
-  }
-
-  def buildUserInterestedInId(
-    userId: UserId,
-    embeddingType: EmbeddingType = DefaultUserInterestInEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(UserInterestedInEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.UserId(userId)
+  def bu ldT et d(
+    t et d: T et d,
+    embedd ngType: Embedd ngType = DefaultT etEmbedd ngType,
+    modelVers on: ModelVers on = DefaultModelVers on
+  ): Thr ftS mClustersEmbedd ng d = {
+    assert(T etEmbedd ngTypes.conta ns(embedd ngType))
+    Thr ftS mClustersEmbedd ng d(
+      embedd ngType,
+      modelVers on,
+       nternal d.T et d(t et d)
     )
   }
 
-  def buildProducerId(
-    userId: UserId,
-    embeddingType: EmbeddingType = DefaultProducerEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(ProducerEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.UserId(userId)
+  def bu ldUser nterested n d(
+    user d: User d,
+    embedd ngType: Embedd ngType = DefaultUser nterest nEmbedd ngType,
+    modelVers on: ModelVers on = DefaultModelVers on
+  ): Thr ftS mClustersEmbedd ng d = {
+    assert(User nterested nEmbedd ngTypes.conta ns(embedd ngType))
+    Thr ftS mClustersEmbedd ng d(
+      embedd ngType,
+      modelVers on,
+       nternal d.User d(user d)
     )
   }
 
-  def buildLocaleEntityId(
-    entityId: SemanticCoreEntityId,
-    language: String,
-    embeddingType: EmbeddingType = DefaultLocaleEntityEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.LocaleEntityId(
-        LocaleEntityId(entityId, language)
+  def bu ldProducer d(
+    user d: User d,
+    embedd ngType: Embedd ngType = DefaultProducerEmbedd ngType,
+    modelVers on: ModelVers on = DefaultModelVers on
+  ): Thr ftS mClustersEmbedd ng d = {
+    assert(ProducerEmbedd ngTypes.conta ns(embedd ngType))
+    Thr ftS mClustersEmbedd ng d(
+      embedd ngType,
+      modelVers on,
+       nternal d.User d(user d)
+    )
+  }
+
+  def bu ldLocaleEnt y d(
+    ent y d: Semant cCoreEnt y d,
+    language: Str ng,
+    embedd ngType: Embedd ngType = DefaultLocaleEnt yEmbedd ngType,
+    modelVers on: ModelVers on = DefaultModelVers on
+  ): Thr ftS mClustersEmbedd ng d = {
+    Thr ftS mClustersEmbedd ng d(
+      embedd ngType,
+      modelVers on,
+       nternal d.LocaleEnt y d(
+        LocaleEnt y d(ent y d, language)
       )
     )
   }
 
-  def buildTopicId(
-    topicId: TopicId,
-    language: Option[String] = None,
-    country: Option[String] = None,
-    embeddingType: EmbeddingType = DefaultTopicEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.TopicId(
-        TopicId(topicId, language, country)
+  def bu ldTop c d(
+    top c d: Top c d,
+    language: Opt on[Str ng] = None,
+    country: Opt on[Str ng] = None,
+    embedd ngType: Embedd ngType = DefaultTop cEmbedd ngType,
+    modelVers on: ModelVers on = DefaultModelVers on
+  ): Thr ftS mClustersEmbedd ng d = {
+    Thr ftS mClustersEmbedd ng d(
+      embedd ngType,
+      modelVers on,
+       nternal d.Top c d(
+        Top c d(top c d, language, country)
       )
     )
   }
 
-  // Extractor object for InternalIds that wrap Long
-  object LongInternalId {
-    def unapply(iid: InternalId): Option[Long] = iid match {
-      case InternalId.TweetId(id) => Some(id)
-      case InternalId.UserId(id) => Some(id)
-      case InternalId.EntityId(id) => Some(id)
+  // Extractor object for  nternal ds that wrap Long
+  object Long nternal d {
+    def unapply(  d:  nternal d): Opt on[Long] =   d match {
+      case  nternal d.T et d( d) => So ( d)
+      case  nternal d.User d( d) => So ( d)
+      case  nternal d.Ent y d( d) => So ( d)
       case _ => None
     }
   }
 
-  // Extractor object for SimClusterEmbeddingIds with InternalIds that wrap Long
-  object LongSimClustersEmbeddingId {
-    def unapply(id: ThriftSimClustersEmbeddingId): Option[Long] =
-      LongInternalId.unapply(id.internalId)
+  // Extractor object for S mClusterEmbedd ng ds w h  nternal ds that wrap Long
+  object LongS mClustersEmbedd ng d {
+    def unapply( d: Thr ftS mClustersEmbedd ng d): Opt on[Long] =
+      Long nternal d.unapply( d. nternal d)
   }
 
   // Only for debuggers.
-  def buildEmbeddingId(
-    entityId: String,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    if (TweetEmbeddingTypes.contains(embeddingType)) {
-      buildTweetId(entityId.toLong, embeddingType, modelVersion)
-    } else if (UserInterestedInEmbeddingTypes.contains(embeddingType)) {
-      buildUserInterestedInId(entityId.toLong, embeddingType, modelVersion)
-    } else if (ProducerEmbeddingTypes.contains(embeddingType)) {
-      buildProducerId(entityId.toLong, embeddingType, modelVersion)
-    } else if (LocaleEntityEmbeddingTypes.contains(embeddingType)) {
-      buildLocaleEntityId(entityId.toLong, "en", embeddingType, modelVersion)
-    } else if (TopicEmbeddingTypes.contains(embeddingType)) {
-      buildTopicId(
-        entityId.toLong,
-        Some("en"),
-        embeddingType = embeddingType,
-        modelVersion = modelVersion)
+  def bu ldEmbedd ng d(
+    ent y d: Str ng,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on = DefaultModelVers on
+  ): Thr ftS mClustersEmbedd ng d = {
+     f (T etEmbedd ngTypes.conta ns(embedd ngType)) {
+      bu ldT et d(ent y d.toLong, embedd ngType, modelVers on)
+    } else  f (User nterested nEmbedd ngTypes.conta ns(embedd ngType)) {
+      bu ldUser nterested n d(ent y d.toLong, embedd ngType, modelVers on)
+    } else  f (ProducerEmbedd ngTypes.conta ns(embedd ngType)) {
+      bu ldProducer d(ent y d.toLong, embedd ngType, modelVers on)
+    } else  f (LocaleEnt yEmbedd ngTypes.conta ns(embedd ngType)) {
+      bu ldLocaleEnt y d(ent y d.toLong, "en", embedd ngType, modelVers on)
+    } else  f (Top cEmbedd ngTypes.conta ns(embedd ngType)) {
+      bu ldTop c d(
+        ent y d.toLong,
+        So ("en"),
+        embedd ngType = embedd ngType,
+        modelVers on = modelVers on)
     } else {
-      throw new IllegalArgumentException(s"Invalid embedding type: $embeddingType")
+      throw new  llegalArgu ntExcept on(s" nval d embedd ng type: $embedd ngType")
     }
   }
 
-  implicit val internalIdOrdering: Ordering[InternalId] =
-    Ordering.by(internalId => internalId.hashCode())
+   mpl c  val  nternal dOrder ng: Order ng[ nternal d] =
+    Order ng.by( nternal d =>  nternal d.hashCode())
 
-  implicit val simClustersEmbeddingIdOrdering: Ordering[ThriftSimClustersEmbeddingId] =
-    Ordering.by(embeddingId =>
-      (embeddingId.embeddingType.value, embeddingId.modelVersion.value, embeddingId.internalId))
+   mpl c  val s mClustersEmbedd ng dOrder ng: Order ng[Thr ftS mClustersEmbedd ng d] =
+    Order ng.by(embedd ng d =>
+      (embedd ng d.embedd ngType.value, embedd ng d.modelVers on.value, embedd ng d. nternal d))
 
-  // Use Enum for feature switch
-  object TopicEnum extends Enumeration {
-    protected case class EmbeddingType(embeddingType: SimClustersEmbeddingType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToEmbeddingType(value: Value): EmbeddingType =
-      value.asInstanceOf[EmbeddingType]
+  // Use Enum for feature sw ch
+  object Top cEnum extends Enu rat on {
+    protected case class Embedd ngType(embedd ngType: S mClustersEmbedd ngType) extends super.Val
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToEmbedd ngType(value: Value): Embedd ngType =
+      value.as nstanceOf[Embedd ngType]
 
-    val FavTfgTopic: Value = EmbeddingType(SimClustersEmbeddingType.FavTfgTopic)
-    val LogFavBasedKgoApeTopic: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedKgoApeTopic)
+    val FavTfgTop c: Value = Embedd ngType(S mClustersEmbedd ngType.FavTfgTop c)
+    val LogFavBasedKgoApeTop c: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedKgoApeTop c)
   }
 
 }

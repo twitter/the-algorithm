@@ -1,46 +1,46 @@
-// Protocol buffer representing the shape of tensors.
+// Protocol buffer represent ng t  shape of tensors.
 
 syntax = "proto3";
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorShapeProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_shape_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "TensorShapeProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/tensor_shape_go_proto";
 
 package tensorflow;
 
-// Dimensions of a tensor.
-message TensorShapeProto {
-  // One dimension of the tensor.
-  message Dim {
-    // Size of the tensor in that dimension.
-    // This value must be >= -1, but values of -1 are reserved for "unknown"
-    // shapes (values of -1 mean "unknown" dimension).  Certain wrappers
-    // that work with TensorShapeProto may fail at runtime when deserializing
-    // a TensorShapeProto containing a dim value of -1.
-    int64 size = 1;
+// D  ns ons of a tensor.
+ ssage TensorShapeProto {
+  // One d  ns on of t  tensor.
+   ssage D m {
+    // S ze of t  tensor  n that d  ns on.
+    // T  value must be >= -1, but values of -1 are reserved for "unknown"
+    // shapes (values of -1  an "unknown" d  ns on).  Certa n wrappers
+    // that work w h TensorShapeProto may fa l at runt   w n deser al z ng
+    // a TensorShapeProto conta n ng a d m value of -1.
+     nt64 s ze = 1;
 
-    // Optional name of the tensor dimension.
-    string name = 2;
+    // Opt onal na  of t  tensor d  ns on.
+    str ng na  = 2;
   };
 
-  // Dimensions of the tensor, such as {"input", 30}, {"output", 40}
-  // for a 30 x 40 2D tensor.  If an entry has size -1, this
-  // corresponds to a dimension of unknown size. The names are
-  // optional.
+  // D  ns ons of t  tensor, such as {" nput", 30}, {"output", 40}
+  // for a 30 x 40 2D tensor.   f an entry has s ze -1, t 
+  // corresponds to a d  ns on of unknown s ze. T  na s are
+  // opt onal.
   //
-  // The order of entries in "dim" matters: It indicates the layout of the
-  // values in the tensor in-memory representation.
+  // T  order of entr es  n "d m" matters:    nd cates t  la t of t 
+  // values  n t  tensor  n- mory representat on.
   //
-  // The first entry in "dim" is the outermost dimension used to layout the
-  // values, the last entry is the innermost dimension.  This matches the
-  // in-memory layout of RowMajor Eigen tensors.
+  // T  f rst entry  n "d m"  s t  outermost d  ns on used to la t t 
+  // values, t  last entry  s t   nnermost d  ns on.  T  matc s t 
+  //  n- mory la t of RowMajor E gen tensors.
   //
-  // If "dim.size()" > 0, "unknown_rank" must be false.
-  repeated Dim dim = 2;
+  //  f "d m.s ze()" > 0, "unknown_rank" must be false.
+  repeated D m d m = 2;
 
-  // If true, the number of dimensions in the shape is unknown.
+  //  f true, t  number of d  ns ons  n t  shape  s unknown.
   //
-  // If true, "dim.size()" must be 0.
+  //  f true, "d m.s ze()" must be 0.
   bool unknown_rank = 3;
 };

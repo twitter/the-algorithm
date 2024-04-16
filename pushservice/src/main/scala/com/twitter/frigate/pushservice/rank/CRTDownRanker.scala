@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.rank
+package com.tw ter.fr gate.pushserv ce.rank
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
 
 /**
- *  This Ranker re-ranks MR candidates, down ranks input CRTs.
- *  Relative ranking between input CRTs and rest of the candidates doesn't change
+ *  T  Ranker re-ranks MR cand dates, down ranks  nput CRTs.
+ *  Relat ve rank ng bet en  nput CRTs and rest of t  cand dates doesn't change
  *
- *  Ex: T: Tweet candidate, F: input CRT candidates
+ *  Ex: T: T et cand date, F:  nput CRT cand dates
  *
  *  T3, F2, T1, T2, F1 => T3, T1, T2, F2, F1
  */
-case class CRTDownRanker(statsReceiver: StatsReceiver) {
+case class CRTDownRanker(statsRece ver: StatsRece ver) {
 
-  private val recsToDownRankStat = statsReceiver.stat("recs_to_down_rank")
-  private val otherRecsStat = statsReceiver.stat("other_recs")
-  private val downRankerRequests = statsReceiver.counter("down_ranker_requests")
+  pr vate val recsToDownRankStat = statsRece ver.stat("recs_to_down_rank")
+  pr vate val ot rRecsStat = statsRece ver.stat("ot r_recs")
+  pr vate val downRankerRequests = statsRece ver.counter("down_ranker_requests")
 
-  private def downRank(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtToDownRank: CommonRecommendationType
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    downRankerRequests.incr()
-    val (downRankedCandidates, otherCandidates) =
-      inputCandidates.partition(_.candidate.commonRecType == crtToDownRank)
-    recsToDownRankStat.add(downRankedCandidates.size)
-    otherRecsStat.add(otherCandidates.size)
-    otherCandidates ++ downRankedCandidates
+  pr vate def downRank(
+     nputCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    crtToDownRank: CommonRecom ndat onType
+  ): Seq[Cand dateDeta ls[PushCand date]] = {
+    downRankerRequests. ncr()
+    val (downRankedCand dates, ot rCand dates) =
+       nputCand dates.part  on(_.cand date.commonRecType == crtToDownRank)
+    recsToDownRankStat.add(downRankedCand dates.s ze)
+    ot rRecsStat.add(ot rCand dates.s ze)
+    ot rCand dates ++ downRankedCand dates
   }
 
-  final def downRank(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtsToDownRank: Seq[CommonRecommendationType]
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    crtsToDownRank.headOption match {
-      case Some(crt) =>
-        val downRankedCandidates = downRank(inputCandidates, crt)
-        downRank(downRankedCandidates, crtsToDownRank.tail)
-      case None => inputCandidates
+  f nal def downRank(
+     nputCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    crtsToDownRank: Seq[CommonRecom ndat onType]
+  ): Seq[Cand dateDeta ls[PushCand date]] = {
+    crtsToDownRank. adOpt on match {
+      case So (crt) =>
+        val downRankedCand dates = downRank( nputCand dates, crt)
+        downRank(downRankedCand dates, crtsToDownRank.ta l)
+      case None =>  nputCand dates
     }
   }
 }

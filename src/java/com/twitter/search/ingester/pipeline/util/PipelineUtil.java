@@ -1,26 +1,26 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.pipeline.Feeder;
-import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
+ mport org.apac .commons.p pel ne.Feeder;
+ mport org.apac .commons.p pel ne.stage. nstru ntedBaseStage;
 
-public final class PipelineUtil {
+publ c f nal class P pel neUt l {
 
   /**
-   * Feed an object to a specified stage.  Used for stages that follow the pattern of
-   * looping indefinitely in the first call to process() and don't care what the object passed
-   * in is, but still needs at least one item fed to the stage to start processing.
+   * Feed an object to a spec f ed stage.  Used for stages that follow t  pattern of
+   * loop ng  ndef n ely  n t  f rst call to process() and don't care what t  object passed
+   *  n  s, but st ll needs at least one  em fed to t  stage to start process ng.
    *
-   * Examples of stages like this are: EventBusReaderStage and KafkaBytesReaderStage
+   * Examples of stages l ke t  are: EventBusReaderStage and KafkaBytesReaderStage
    *
-   * @param stage stage to enqueue an arbitrary object to.
+   * @param stage stage to enqueue an arb rary object to.
    */
-  public static void feedStartObjectToStage(InstrumentedBaseStage stage) {
+  publ c stat c vo d feedStartObjectToStage( nstru ntedBaseStage stage) {
     Feeder stageFeeder = stage.getStageContext().getStageFeeder(stage);
-    Preconditions.checkNotNull(stageFeeder);
-    stageFeeder.feed("off to the races");
+    Precond  ons.c ckNotNull(stageFeeder);
+    stageFeeder.feed("off to t  races");
   }
 
-  private PipelineUtil() { /* prevent instantiation */ }
+  pr vate P pel neUt l() { /* prevent  nstant at on */ }
 }

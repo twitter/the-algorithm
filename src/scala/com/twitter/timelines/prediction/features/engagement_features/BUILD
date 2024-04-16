@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/timelineservice/server/suggests/features/engagement_features:thrift-scala",
-        "timelines/data_processing/ml_util/aggregation_framework:common_types",
-        "timelines/data_processing/ml_util/transforms",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/thr ft/com/tw ter/dal/personal_data:personal_data-java",
+        "src/thr ft/com/tw ter/t  l neserv ce/server/suggests/features/engage nt_features:thr ft-scala",
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work:common_types",
+        "t  l nes/data_process ng/ml_ut l/transforms",
     ],
 )

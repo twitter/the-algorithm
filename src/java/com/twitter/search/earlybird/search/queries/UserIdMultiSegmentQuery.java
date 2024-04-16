@@ -1,528 +1,528 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.stream.Collectors;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BulkScorer;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.BulkScorer;
+ mport org.apac .lucene.search.ConstantScoreQuery;
+ mport org.apac .lucene.search.ConstantScore  ght;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.query.IDDisjunctionQuery;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.queryparser.EarlybirdQueryHelper;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.query.H Attr bute lper;
+ mport com.tw ter.search.common.query. DD sjunct onQuery;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base. ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.search.term nat on.QueryT  out;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.analys s.SortableLongTermAttr bute mpl;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Mult Seg ntTermD ct onary;
+ mport com.tw ter.search.earlyb rd.part  on.Mult Seg ntTermD ct onaryManager;
+ mport com.tw ter.search.earlyb rd.queryparser.Earlyb rdQuery lper;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
 /**
- * A variant of a multi-term ID disjunction query (similar to {@link UserIdMultiSegmentQuery}),
- * that also uses a {@link MultiSegmentTermDictionary} where available, for more efficient
- * term lookups for queries that span multiple segments.
+ * A var ant of a mult -term  D d sjunct on query (s m lar to {@l nk User dMult Seg ntQuery}),
+ * that also uses a {@l nk Mult Seg ntTermD ct onary} w re ava lable, for more eff c ent
+ * term lookups for quer es that span mult ple seg nts.
  *
- * By default, a IDDisjunctionQuery (or Lucene's MultiTermQuery), does a term dictionary lookup
- * for all of the terms in its disjunction, and it does it once for each segment (or AtomicReader)
- * that the query is searching.
- * This means that when the term dictionary is large, and the term lookups are expensive, and when
- * we are searching multiple segments, the query needs to make num_terms * num_segments expensive
- * term dictionary lookups.
+ * By default, a  DD sjunct onQuery (or Lucene's Mult TermQuery), does a term d ct onary lookup
+ * for all of t  terms  n  s d sjunct on, and   does   once for each seg nt (or Atom cReader)
+ * that t  query  s search ng.
+ * T   ans that w n t  term d ct onary  s large, and t  term lookups are expens ve, and w n
+ *   are search ng mult ple seg nts, t  query needs to make num_terms * num_seg nts expens ve
+ * term d ct onary lookups.
  *
- * With the help of a MultiSegmentTermDictionary, this multi-term disjunction query implementation
- * only does one lookup for all of the segments managed by the MultiSegmentTermDictionary.
- * If a segment is not supported by the MultiSegmentTermDictionary (e.g. if it's not optimized yet),
- * a regular lookup in that segment's term dictionary will be performed.
+ * W h t   lp of a Mult Seg ntTermD ct onary, t  mult -term d sjunct on query  mple ntat on
+ * only does one lookup for all of t  seg nts managed by t  Mult Seg ntTermD ct onary.
+ *  f a seg nt  s not supported by t  Mult Seg ntTermD ct onary (e.g.  f  's not opt m zed yet),
+ * a regular lookup  n that seg nt's term d ct onary w ll be perfor d.
  *
- * Usually, we will make 'num_terms' lookups in the current, un-optimized segment, and then if
- * more segments need to be searched, we will make another 'num_terms' lookups, once for all of
- * the remaining segments.
+ * Usually,   w ll make 'num_terms' lookups  n t  current, un-opt m zed seg nt, and t n  f
+ * more seg nts need to be searc d,   w ll make anot r 'num_terms' lookups, once for all of
+ * t  rema n ng seg nts.
  *
- * When performing lookups in the MultiSegmentTermDictionary, for each supported segment, we save
- * a list of termIds from that segment for all the searched terms that appear in that segment.
+ * W n perform ng lookups  n t  Mult Seg ntTermD ct onary, for each supported seg nt,   save
+ * a l st of term ds from that seg nt for all t  searc d terms that appear  n that seg nt.
  *
- * For example, when querying for UserIdMultiSegmentQuery with user ids: {1L, 2L, 3L} and
- * segments: {1, 2}, where segment 1 has user ids {1L, 2L} indexed under termIds {100, 200},
- * and segment 2 has user ids {1L, 2L, 3L} indexed under termIds {200, 300, 400}, we will build
- * up the following map once:
- *   segment1 -> [100, 200]
- *   segment2 -> [200, 300, 400]
+ * For example, w n query ng for User dMult Seg ntQuery w h user  ds: {1L, 2L, 3L} and
+ * seg nts: {1, 2}, w re seg nt 1 has user  ds {1L, 2L}  ndexed under term ds {100, 200},
+ * and seg nt 2 has user  ds {1L, 2L, 3L}  ndexed under term ds {200, 300, 400},   w ll bu ld
+ * up t  follow ng map once:
+ *   seg nt1 -> [100, 200]
+ *   seg nt2 -> [200, 300, 400]
  */
-public class UserIdMultiSegmentQuery extends Query {
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_LOOKUP_STATS =
-      SearchTimerStats.export("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, false);
-  public static final SearchTimerStats QUERY_FROM_PRECOMPUTED =
-      SearchTimerStats.export("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, false);
-  public static final SearchTimerStats QUERY_REGULAR =
-      SearchTimerStats.export("multi_segment_query_regular", TimeUnit.NANOSECONDS, false);
+publ c class User dMult Seg ntQuery extends Query {
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats TERM_LOOKUP_STATS =
+      SearchT  rStats.export("mult _seg nt_query_term_lookup", T  Un .NANOSECONDS, false);
+  publ c stat c f nal SearchT  rStats QUERY_FROM_PRECOMPUTED =
+      SearchT  rStats.export("mult _seg nt_query_from_precomputed", T  Un .NANOSECONDS, false);
+  publ c stat c f nal SearchT  rStats QUERY_REGULAR =
+      SearchT  rStats.export("mult _seg nt_query_regular", T  Un .NANOSECONDS, false);
 
-  @VisibleForTesting
-  public static final SearchCounter USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT = SearchCounter.export(
-      "user_id_multi_segment_query_used_multi_segment_term_dictionary_count");
-  @VisibleForTesting
-  public static final SearchCounter USED_ORIGINAL_TERM_DICTIONARY_COUNT = SearchCounter.export(
-      "user_id_multi_segment_query_used_original_term_dictionary_count");
+  @V s bleForTest ng
+  publ c stat c f nal SearchCounter USED_MULT _SEGMENT_TERM_D CT ONARY_COUNT = SearchCounter.export(
+      "user_ d_mult _seg nt_query_used_mult _seg nt_term_d ct onary_count");
+  @V s bleForTest ng
+  publ c stat c f nal SearchCounter USED_OR G NAL_TERM_D CT ONARY_COUNT = SearchCounter.export(
+      "user_ d_mult _seg nt_query_used_or g nal_term_d ct onary_count");
 
-  private static final SearchCounter NEW_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_new_query_count");
-  private static final SearchCounter OLD_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_old_query_count");
+  pr vate stat c f nal SearchCounter NEW_QUERY_COUNT =
+      SearchCounter.export("user_ d_mult _seg nt_new_query_count");
+  pr vate stat c f nal SearchCounter OLD_QUERY_COUNT =
+      SearchCounter.export("user_ d_mult _seg nt_old_query_count");
 
-  private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_QUERY_NAME = new HashMap<>();
-  private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_FIELD_NAME = new HashMap<>();
+  pr vate stat c f nal HashMap<Str ng, SearchCounter> QUERY_COUNT_BY_QUERY_NAME = new HashMap<>();
+  pr vate stat c f nal HashMap<Str ng, SearchCounter> QUERY_COUNT_BY_F ELD_NAME = new HashMap<>();
 
-  private static final String DECIDER_KEY_PREFIX = "use_multi_segment_id_disjunction_queries_in_";
+  pr vate stat c f nal Str ng DEC DER_KEY_PREF X = "use_mult _seg nt_ d_d sjunct on_quer es_ n_";
 
   /**
-   * Returns a new user ID disjunction query.
+   * Returns a new user  D d sjunct on query.
    *
-   * @param ids The user IDs.
-   * @param field The field storing the user IDs.
-   * @param schemaSnapshot A snapshot of earlybird's schema.
-   * @param multiSegmentTermDictionaryManager The manager for the term dictionaries that span
-   *                                          multiple segments.
-   * @param decider The decider.
-   * @param earlybirdCluster The earlybird cluster.
-   * @param ranks The hit attribution ranks to be assigned to every user ID.
-   * @param hitAttributeHelper The helper that tracks hit attributions.
-   * @param queryTimeout The timeout to be enforced on this query.
-   * @return A new user ID disjunction query.
+   * @param  ds T  user  Ds.
+   * @param f eld T  f eld stor ng t  user  Ds.
+   * @param sc maSnapshot A snapshot of earlyb rd's sc ma.
+   * @param mult Seg ntTermD ct onaryManager T  manager for t  term d ct onar es that span
+   *                                          mult ple seg nts.
+   * @param dec der T  dec der.
+   * @param earlyb rdCluster T  earlyb rd cluster.
+   * @param ranks T  h  attr but on ranks to be ass gned to every user  D.
+   * @param h Attr bute lper T   lper that tracks h  attr but ons.
+   * @param queryT  out T  t  out to be enforced on t  query.
+   * @return A new user  D d sjunct on query.
    */
-  public static Query createIdDisjunctionQuery(
-      String queryName,
-      List<Long> ids,
-      String field,
-      ImmutableSchemaInterface schemaSnapshot,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster,
-      List<Integer> ranks,
-      @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) throws QueryParserException {
-    QUERY_COUNT_BY_QUERY_NAME.computeIfAbsent(queryName, name ->
-        SearchCounter.export("multi_segment_query_name_" + name)).increment();
-    QUERY_COUNT_BY_FIELD_NAME.computeIfAbsent(field, name ->
-        SearchCounter.export("multi_segment_query_count_for_field_" + name)).increment();
+  publ c stat c Query create dD sjunct onQuery(
+      Str ng queryNa ,
+      L st<Long>  ds,
+      Str ng f eld,
+       mmutableSc ma nterface sc maSnapshot,
+      Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+      Dec der dec der,
+      Earlyb rdCluster earlyb rdCluster,
+      L st< nteger> ranks,
+      @Nullable H Attr bute lper h Attr bute lper,
+      @Nullable QueryT  out queryT  out) throws QueryParserExcept on {
+    QUERY_COUNT_BY_QUERY_NAME.compute fAbsent(queryNa , na  ->
+        SearchCounter.export("mult _seg nt_query_na _" + na )). ncre nt();
+    QUERY_COUNT_BY_F ELD_NAME.compute fAbsent(f eld, na  ->
+        SearchCounter.export("mult _seg nt_query_count_for_f eld_" + na )). ncre nt();
 
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, getDeciderName(earlybirdCluster))) {
-      NEW_QUERY_COUNT.increment();
-      MultiSegmentTermDictionary multiSegmentTermDictionary =
-          multiSegmentTermDictionaryManager.getMultiSegmentTermDictionary(field);
-      return new UserIdMultiSegmentQuery(
-          ids,
-          field,
-          schemaSnapshot,
-          multiSegmentTermDictionary,
+     f (Dec derUt l. sAva lableForRandomRec p ent(dec der, getDec derNa (earlyb rdCluster))) {
+      NEW_QUERY_COUNT. ncre nt();
+      Mult Seg ntTermD ct onary mult Seg ntTermD ct onary =
+          mult Seg ntTermD ct onaryManager.getMult Seg ntTermD ct onary(f eld);
+      return new User dMult Seg ntQuery(
+           ds,
+          f eld,
+          sc maSnapshot,
+          mult Seg ntTermD ct onary,
           ranks,
-          hitAttributeHelper,
-          queryTimeout);
+          h Attr bute lper,
+          queryT  out);
     } else {
-      OLD_QUERY_COUNT.increment();
-      return new IDDisjunctionQuery(ids, field, schemaSnapshot);
+      OLD_QUERY_COUNT. ncre nt();
+      return new  DD sjunct onQuery( ds, f eld, sc maSnapshot);
     }
   }
 
-  @VisibleForTesting
-  public static String getDeciderName(EarlybirdCluster earlybirdCluster) {
-    return DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
+  @V s bleForTest ng
+  publ c stat c Str ng getDec derNa (Earlyb rdCluster earlyb rdCluster) {
+    return DEC DER_KEY_PREF X + earlyb rdCluster.na ().toLo rCase();
   }
 
-  private final boolean useOrderPreservingEncoding;
-  private final HitAttributeHelper hitAttributeHelper;
-  private final QueryTimeout queryTimeout;
-  private final MultiSegmentTermDictionary multiSegmentTermDictionary;
-  private final Schema.FieldInfo fieldInfo;
-  private final String field;
-  private final List<Long> ids;
+  pr vate f nal boolean useOrderPreserv ngEncod ng;
+  pr vate f nal H Attr bute lper h Attr bute lper;
+  pr vate f nal QueryT  out queryT  out;
+  pr vate f nal Mult Seg ntTermD ct onary mult Seg ntTermD ct onary;
+  pr vate f nal Sc ma.F eld nfo f eld nfo;
+  pr vate f nal Str ng f eld;
+  pr vate f nal L st<Long>  ds;
 
-  private final List<Integer> ranks;
-  // For each segment where we have a multi-segment term dictionary, this map will contain the
-  // termIds of all the terms that actually appear in that segment's index.
+  pr vate f nal L st< nteger> ranks;
+  // For each seg nt w re   have a mult -seg nt term d ct onary, t  map w ll conta n t 
+  // term ds of all t  terms that actually appear  n that seg nt's  ndex.
   @Nullable
-  private Map<InvertedIndex, List<TermRankPair>> termIdsPerSegment;
+  pr vate Map< nverted ndex, L st<TermRankPa r>> term dsPerSeg nt;
 
-  // A wrap class helps to associate termId with corresponding search operator rank if exist
-  private final class TermRankPair {
-    private final int termId;
-    private final int rank;
+  // A wrap class  lps to assoc ate term d w h correspond ng search operator rank  f ex st
+  pr vate f nal class TermRankPa r {
+    pr vate f nal  nt term d;
+    pr vate f nal  nt rank;
 
-    TermRankPair(int termId, int rank) {
-      this.termId = termId;
-      this.rank = rank;
+    TermRankPa r( nt term d,  nt rank) {
+      t .term d = term d;
+      t .rank = rank;
     }
 
-    public int getTermId() {
-      return termId;
+    publ c  nt getTerm d() {
+      return term d;
     }
 
-    public int getRank() {
+    publ c  nt getRank() {
       return rank;
     }
   }
 
-  @VisibleForTesting
-  public UserIdMultiSegmentQuery(
-      List<Long> ids,
-      String field,
-      ImmutableSchemaInterface schemaSnapshot,
-      MultiSegmentTermDictionary termDictionary,
-      List<Integer> ranks,
-      @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) {
-    this.field = field;
-    this.ids = ids;
-    this.multiSegmentTermDictionary = termDictionary;
-    this.ranks = ranks;
-    this.hitAttributeHelper = hitAttributeHelper;
-    this.queryTimeout = queryTimeout;
+  @V s bleForTest ng
+  publ c User dMult Seg ntQuery(
+      L st<Long>  ds,
+      Str ng f eld,
+       mmutableSc ma nterface sc maSnapshot,
+      Mult Seg ntTermD ct onary termD ct onary,
+      L st< nteger> ranks,
+      @Nullable H Attr bute lper h Attr bute lper,
+      @Nullable QueryT  out queryT  out) {
+    t .f eld = f eld;
+    t . ds =  ds;
+    t .mult Seg ntTermD ct onary = termD ct onary;
+    t .ranks = ranks;
+    t .h Attr bute lper = h Attr bute lper;
+    t .queryT  out = queryT  out;
 
-    // check ids and ranks have same size
-    Preconditions.checkArgument(ranks.size() == 0 || ranks.size() == ids.size());
-    // hitAttributeHelper is not null iff ranks is not empty
-    if (ranks.size() > 0) {
-      Preconditions.checkNotNull(hitAttributeHelper);
+    // c ck  ds and ranks have sa  s ze
+    Precond  ons.c ckArgu nt(ranks.s ze() == 0 || ranks.s ze() ==  ds.s ze());
+    // h Attr bute lper  s not null  ff ranks  s not empty
+     f (ranks.s ze() > 0) {
+      Precond  ons.c ckNotNull(h Attr bute lper);
     } else {
-      Preconditions.checkArgument(hitAttributeHelper == null);
+      Precond  ons.c ckArgu nt(h Attr bute lper == null);
     }
 
-    if (!schemaSnapshot.hasField(field)) {
-      throw new IllegalStateException("Tried to search a field which does not exist in schema");
+     f (!sc maSnapshot.hasF eld(f eld)) {
+      throw new  llegalStateExcept on("Tr ed to search a f eld wh ch does not ex st  n sc ma");
     }
-    this.fieldInfo = Preconditions.checkNotNull(schemaSnapshot.getFieldInfo(field));
+    t .f eld nfo = Precond  ons.c ckNotNull(sc maSnapshot.getF eld nfo(f eld));
 
-    IndexedNumericFieldSettings numericFieldSettings =
-        fieldInfo.getFieldType().getNumericFieldSettings();
-    if (numericFieldSettings == null) {
-      throw new IllegalStateException("Id field is not numerical");
+     ndexedNu r cF eldSett ngs nu r cF eldSett ngs =
+        f eld nfo.getF eldType().getNu r cF eldSett ngs();
+     f (nu r cF eldSett ngs == null) {
+      throw new  llegalStateExcept on(" d f eld  s not nu r cal");
     }
 
-    this.useOrderPreservingEncoding = numericFieldSettings.isUseSortableEncoding();
+    t .useOrderPreserv ngEncod ng = nu r cF eldSett ngs. sUseSortableEncod ng();
   }
 
   /**
-   * If it hasn't been built yet, build up the map containing termIds of all the terms being
-   * searched, for all of the segments that are managed by the multi-segment term dictionary.
+   *  f   hasn't been bu lt yet, bu ld up t  map conta n ng term ds of all t  terms be ng
+   * searc d, for all of t  seg nts that are managed by t  mult -seg nt term d ct onary.
    *
-   * We only do this once, when we have to search the first segment that's supported by our
-   * multi-segment term dictionary.
+   *   only do t  once, w n   have to search t  f rst seg nt that's supported by  
+   * mult -seg nt term d ct onary.
    *
-   * Flow here is to:
-   * 1. go through all the ids being queried.
-   * 2. for each id, get the termIds for that term in all of the segments in the term dictionary
-   * 3. for all of the segments that have that term, add the termId to that segment's list of
-   * term ids (in the 'termIdsPerSegment' map).
+   * Flow  re  s to:
+   * 1. go through all t   ds be ng quer ed.
+   * 2. for each  d, get t  term ds for that term  n all of t  seg nts  n t  term d ct onary
+   * 3. for all of t  seg nts that have that term, add t  term d to that seg nt's l st of
+   * term  ds ( n t  'term dsPerSeg nt' map).
    */
-  private void createTermIdsPerSegment() {
-    if (termIdsPerSegment != null) {
-      // already created the map
+  pr vate vo d createTerm dsPerSeg nt() {
+     f (term dsPerSeg nt != null) {
+      // already created t  map
       return;
     }
 
-    long start = System.nanoTime();
+    long start = System.nanoT  ();
 
-    final BytesRef termRef = useOrderPreservingEncoding
-        ? SortableLongTermAttributeImpl.newBytesRef()
-        : LongTermAttributeImpl.newBytesRef();
+    f nal BytesRef termRef = useOrderPreserv ngEncod ng
+        ? SortableLongTermAttr bute mpl.newBytesRef()
+        : LongTermAttr bute mpl.newBytesRef();
 
-    termIdsPerSegment = Maps.newHashMap();
-    List<? extends InvertedIndex> segmentIndexes = multiSegmentTermDictionary.getSegmentIndexes();
+    term dsPerSeg nt = Maps.newHashMap();
+    L st<? extends  nverted ndex> seg nt ndexes = mult Seg ntTermD ct onary.getSeg nt ndexes();
 
-    for (int idx = 0; idx < ids.size(); ++idx) {
-      long longTerm = ids.get(idx);
+    for ( nt  dx = 0;  dx <  ds.s ze(); ++ dx) {
+      long longTerm =  ds.get( dx);
 
-      if (useOrderPreservingEncoding) {
-        SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+       f (useOrderPreserv ngEncod ng) {
+        SortableLongTermAttr bute mpl.copyLongToBytesRef(termRef, longTerm);
       } else {
-        LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+        LongTermAttr bute mpl.copyLongToBytesRef(termRef, longTerm);
       }
 
-      int[] termIds = multiSegmentTermDictionary.lookupTermIds(termRef);
-      Preconditions.checkState(segmentIndexes.size() == termIds.length,
-          "SegmentIndexes: %s, field: %s, termIds: %s",
-          segmentIndexes.size(), field, termIds.length);
+       nt[] term ds = mult Seg ntTermD ct onary.lookupTerm ds(termRef);
+      Precond  ons.c ckState(seg nt ndexes.s ze() == term ds.length,
+          "Seg nt ndexes: %s, f eld: %s, term ds: %s",
+          seg nt ndexes.s ze(), f eld, term ds.length);
 
-      for (int indexId = 0; indexId < termIds.length; indexId++) {
-        int termId = termIds[indexId];
-        if (termId != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          InvertedIndex fieldIndex = segmentIndexes.get(indexId);
+      for ( nt  ndex d = 0;  ndex d < term ds.length;  ndex d++) {
+         nt term d = term ds[ ndex d];
+         f (term d != Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND) {
+           nverted ndex f eld ndex = seg nt ndexes.get( ndex d);
 
-          List<TermRankPair> termIdsList = termIdsPerSegment.get(fieldIndex);
-          if (termIdsList == null) {
-            termIdsList = Lists.newArrayList();
-            termIdsPerSegment.put(fieldIndex, termIdsList);
+          L st<TermRankPa r> term dsL st = term dsPerSeg nt.get(f eld ndex);
+           f (term dsL st == null) {
+            term dsL st = L sts.newArrayL st();
+            term dsPerSeg nt.put(f eld ndex, term dsL st);
           }
-          termIdsList.add(new TermRankPair(
-              termId, ranks.size() > 0 ? ranks.get(idx) : -1));
+          term dsL st.add(new TermRankPa r(
+              term d, ranks.s ze() > 0 ? ranks.get( dx) : -1));
         }
       }
     }
 
-    long elapsed = System.nanoTime() - start;
-    TERM_LOOKUP_STATS.timerIncrement(elapsed);
+    long elapsed = System.nanoT  () - start;
+    TERM_LOOKUP_STATS.t  r ncre nt(elapsed);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new UserIdMultiSegmentQueryWeight(searcher, scoreMode, boost);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new User dMult Seg ntQuery  ght(searc r, scoreMode, boost);
   }
 
-  @Override
-  public int hashCode() {
+  @Overr de
+  publ c  nt hashCode() {
     return Arrays.hashCode(
-        new Object[] {useOrderPreservingEncoding, queryTimeout, field, ids, ranks});
+        new Object[] {useOrderPreserv ngEncod ng, queryT  out, f eld,  ds, ranks});
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserIdMultiSegmentQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof User dMult Seg ntQuery)) {
       return false;
     }
 
-    UserIdMultiSegmentQuery query = UserIdMultiSegmentQuery.class.cast(obj);
+    User dMult Seg ntQuery query = User dMult Seg ntQuery.class.cast(obj);
     return Arrays.equals(
-        new Object[] {useOrderPreservingEncoding, queryTimeout, field, ids, ranks},
-        new Object[] {query.useOrderPreservingEncoding,
-                      query.queryTimeout,
-                      query.field,
-                      query.ids,
+        new Object[] {useOrderPreserv ngEncod ng, queryT  out, f eld,  ds, ranks},
+        new Object[] {query.useOrderPreserv ngEncod ng,
+                      query.queryT  out,
+                      query.f eld,
+                      query. ds,
                       query.ranks});
   }
 
-  @Override
-  public String toString(String fieldName) {
-    StringBuilder builder = new StringBuilder();
-    builder.append(getClass().getSimpleName()).append("[").append(fieldName).append(":");
-    for (Long id : this.ids) {
-      builder.append(id);
-      builder.append(",");
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eldNa ) {
+    Str ngBu lder bu lder = new Str ngBu lder();
+    bu lder.append(getClass().getS mpleNa ()).append("[").append(f eldNa ).append(":");
+    for (Long  d : t . ds) {
+      bu lder.append( d);
+      bu lder.append(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    bu lder.setLength(bu lder.length() - 1);
+    bu lder.append("]");
+    return bu lder.toStr ng();
   }
 
-  private final class UserIdMultiSegmentQueryWeight extends ConstantScoreWeight {
-    private final IndexSearcher searcher;
-    private final ScoreMode scoreMode;
+  pr vate f nal class User dMult Seg ntQuery  ght extends ConstantScore  ght {
+    pr vate f nal  ndexSearc r searc r;
+    pr vate f nal ScoreMode scoreMode;
 
-    private UserIdMultiSegmentQueryWeight(
-        IndexSearcher searcher,
+    pr vate User dMult Seg ntQuery  ght(
+         ndexSearc r searc r,
         ScoreMode scoreMode,
         float boost) {
-      super(UserIdMultiSegmentQuery.this, boost);
-      this.searcher = searcher;
-      this.scoreMode = scoreMode;
+      super(User dMult Seg ntQuery.t , boost);
+      t .searc r = searc r;
+      t .scoreMode = scoreMode;
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
-      if (weight != null) {
-        return weight.scorer(context);
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+        ght   ght = rewr e(context);
+       f (  ght != null) {
+        return   ght.scorer(context);
       } else {
         return null;
       }
     }
 
-    @Override
-    public BulkScorer bulkScorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
-      if (weight != null) {
-        return weight.bulkScorer(context);
+    @Overr de
+    publ c BulkScorer bulkScorer(LeafReaderContext context) throws  OExcept on {
+        ght   ght = rewr e(context);
+       f (  ght != null) {
+        return   ght.bulkScorer(context);
       } else {
         return null;
       }
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      terms.addAll(ids
+    @Overr de
+    publ c vo d extractTerms(Set<Term> terms) {
+      terms.addAll( ds
           .stream()
-          .map(id -> new Term(field, LongTermAttributeImpl.copyIntoNewBytesRef(id)))
+          .map( d -> new Term(f eld, LongTermAttr bute mpl.copy ntoNewBytesRef( d)))
           .collect(Collectors.toSet()));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext ctx) {
       return true;
     }
 
-    private Weight rewrite(LeafReaderContext context) throws IOException {
-      final Terms terms = context.reader().terms(field);
-      if (terms == null) {
-        // field does not exist
+    pr vate   ght rewr e(LeafReaderContext context) throws  OExcept on {
+      f nal Terms terms = context.reader().terms(f eld);
+       f (terms == null) {
+        // f eld does not ex st
         return null;
       }
-      final TermsEnum termsEnum = terms.iterator();
-      Preconditions.checkNotNull(termsEnum, "No termsEnum for field: %s", field);
+      f nal TermsEnum termsEnum = terms. erator();
+      Precond  ons.c ckNotNull(termsEnum, "No termsEnum for f eld: %s", f eld);
 
       BooleanQuery bq;
-      // See if the segment is supported by the multi-segment term dictionary. If so, build up
-      // the query using the termIds from the multi-segment term dictionary.
-      // If not (for the current segment), do the term lookups directly in the queried segment.
-      InvertedIndex fieldIndex = getFieldIndexFromMultiTermDictionary(context);
-      if (fieldIndex != null) {
-        createTermIdsPerSegment();
+      // See  f t  seg nt  s supported by t  mult -seg nt term d ct onary.  f so, bu ld up
+      // t  query us ng t  term ds from t  mult -seg nt term d ct onary.
+      //  f not (for t  current seg nt), do t  term lookups d rectly  n t  quer ed seg nt.
+       nverted ndex f eld ndex = getF eld ndexFromMult TermD ct onary(context);
+       f (f eld ndex != null) {
+        createTerm dsPerSeg nt();
 
-        USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT.increment();
-        SearchTimer timer = QUERY_FROM_PRECOMPUTED.startNewTimer();
-        bq = addPrecomputedTermQueries(fieldIndex, termsEnum);
-        QUERY_FROM_PRECOMPUTED.stopTimerAndIncrement(timer);
+        USED_MULT _SEGMENT_TERM_D CT ONARY_COUNT. ncre nt();
+        SearchT  r t  r = QUERY_FROM_PRECOMPUTED.startNewT  r();
+        bq = addPrecomputedTermQuer es(f eld ndex, termsEnum);
+        QUERY_FROM_PRECOMPUTED.stopT  rAnd ncre nt(t  r);
       } else {
-        USED_ORIGINAL_TERM_DICTIONARY_COUNT.increment();
-        // This segment is not supported by the multi-segment term dictionary. Lookup terms
-        // directly.
-        SearchTimer timer = QUERY_REGULAR.startNewTimer();
-        bq = addTermQueries(termsEnum);
-        QUERY_REGULAR.stopTimerAndIncrement(timer);
+        USED_OR G NAL_TERM_D CT ONARY_COUNT. ncre nt();
+        // T  seg nt  s not supported by t  mult -seg nt term d ct onary. Lookup terms
+        // d rectly.
+        SearchT  r t  r = QUERY_REGULAR.startNewT  r();
+        bq = addTermQuer es(termsEnum);
+        QUERY_REGULAR.stopT  rAnd ncre nt(t  r);
       }
 
-      return searcher.rewrite(new ConstantScoreQuery(bq)).createWeight(
-          searcher, scoreMode, score());
+      return searc r.rewr e(new ConstantScoreQuery(bq)).create  ght(
+          searc r, scoreMode, score());
     }
 
     /**
-     * If the multi-segment term dictionary supports this segment/LeafReader, then return the
-     * InvertedIndex representing this segment.
+     *  f t  mult -seg nt term d ct onary supports t  seg nt/LeafReader, t n return t 
+     *  nverted ndex represent ng t  seg nt.
      *
-     * If the segment being queried right now is not in the multi-segment term dictionary (e.g.
-     * if it's not optimized yet), return null.
+     *  f t  seg nt be ng quer ed r ght now  s not  n t  mult -seg nt term d ct onary (e.g.
+     *  f  's not opt m zed yet), return null.
      */
     @Nullable
-    private InvertedIndex getFieldIndexFromMultiTermDictionary(LeafReaderContext context)
-        throws IOException {
-      if (multiSegmentTermDictionary == null) {
+    pr vate  nverted ndex getF eld ndexFromMult TermD ct onary(LeafReaderContext context)
+        throws  OExcept on {
+       f (mult Seg ntTermD ct onary == null) {
         return null;
       }
 
-      if (context.reader() instanceof EarlybirdIndexSegmentAtomicReader) {
-        EarlybirdIndexSegmentAtomicReader reader =
-            (EarlybirdIndexSegmentAtomicReader) context.reader();
+       f (context.reader()  nstanceof Earlyb rd ndexSeg ntAtom cReader) {
+        Earlyb rd ndexSeg ntAtom cReader reader =
+            (Earlyb rd ndexSeg ntAtom cReader) context.reader();
 
-        EarlybirdIndexSegmentData segmentData = reader.getSegmentData();
-        InvertedIndex fieldIndex = segmentData.getFieldIndex(field);
+        Earlyb rd ndexSeg ntData seg ntData = reader.getSeg ntData();
+         nverted ndex f eld ndex = seg ntData.getF eld ndex(f eld);
 
-        if (multiSegmentTermDictionary.supportSegmentIndex(fieldIndex)) {
-          return fieldIndex;
+         f (mult Seg ntTermD ct onary.supportSeg nt ndex(f eld ndex)) {
+          return f eld ndex;
         }
       }
 
       return null;
     }
 
-    private BooleanQuery addPrecomputedTermQueries(
-        InvertedIndex fieldIndex,
-        TermsEnum termsEnum) throws IOException {
+    pr vate BooleanQuery addPrecomputedTermQuer es(
+         nverted ndex f eld ndex,
+        TermsEnum termsEnum) throws  OExcept on {
 
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      BooleanQuery.Bu lder bqBu lder = new BooleanQuery.Bu lder();
+       nt numClauses = 0;
 
-      List<TermRankPair> termRankPairs = termIdsPerSegment.get(fieldIndex);
-      if (termRankPairs != null) {
-        for (TermRankPair pair : termRankPairs) {
-          int termId = pair.getTermId();
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
+      L st<TermRankPa r> termRankPa rs = term dsPerSeg nt.get(f eld ndex);
+       f (termRankPa rs != null) {
+        for (TermRankPa r pa r : termRankPa rs) {
+           nt term d = pa r.getTerm d();
+           f (numClauses >= BooleanQuery.getMaxClauseCount()) {
+            BooleanQuery saved = bqBu lder.bu ld();
+            bqBu lder = new BooleanQuery.Bu lder();
+            bqBu lder.add(saved, BooleanClause.Occur.SHOULD);
             numClauses = 1;
           }
 
           Query query;
-          if (pair.getRank() != -1) {
-            query = EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-                new SimpleTermQuery(termsEnum, termId),
-                pair.getRank(),
-                fieldInfo,
-                hitAttributeHelper);
+           f (pa r.getRank() != -1) {
+            query = Earlyb rdQuery lper.maybeWrapW hH Attr but onCollector(
+                new S mpleTermQuery(termsEnum, term d),
+                pa r.getRank(),
+                f eld nfo,
+                h Attr bute lper);
           } else {
-            query = new SimpleTermQuery(termsEnum, termId);
+            query = new S mpleTermQuery(termsEnum, term d);
           }
-          bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithTimeout(query, queryTimeout),
+          bqBu lder.add(Earlyb rdQuery lper.maybeWrapW hT  out(query, queryT  out),
                         BooleanClause.Occur.SHOULD);
           ++numClauses;
         }
       }
-      return bqBuilder.build();
+      return bqBu lder.bu ld();
     }
 
-    private BooleanQuery addTermQueries(TermsEnum termsEnum) throws IOException {
-      final BytesRef termRef = useOrderPreservingEncoding
-          ? SortableLongTermAttributeImpl.newBytesRef()
-          : LongTermAttributeImpl.newBytesRef();
+    pr vate BooleanQuery addTermQuer es(TermsEnum termsEnum) throws  OExcept on {
+      f nal BytesRef termRef = useOrderPreserv ngEncod ng
+          ? SortableLongTermAttr bute mpl.newBytesRef()
+          : LongTermAttr bute mpl.newBytesRef();
 
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      BooleanQuery.Bu lder bqBu lder = new BooleanQuery.Bu lder();
+       nt numClauses = 0;
 
-      for (int idx = 0; idx < ids.size(); ++idx) {
-        long longTerm = ids.get(idx);
-        if (useOrderPreservingEncoding) {
-          SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+      for ( nt  dx = 0;  dx <  ds.s ze(); ++ dx) {
+        long longTerm =  ds.get( dx);
+         f (useOrderPreserv ngEncod ng) {
+          SortableLongTermAttr bute mpl.copyLongToBytesRef(termRef, longTerm);
         } else {
-          LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+          LongTermAttr bute mpl.copyLongToBytesRef(termRef, longTerm);
         }
 
-        if (termsEnum.seekExact(termRef)) {
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
+         f (termsEnum.seekExact(termRef)) {
+           f (numClauses >= BooleanQuery.getMaxClauseCount()) {
+            BooleanQuery saved = bqBu lder.bu ld();
+            bqBu lder = new BooleanQuery.Bu lder();
+            bqBu lder.add(saved, BooleanClause.Occur.SHOULD);
             numClauses = 1;
           }
 
-          if (ranks.size() > 0) {
-            bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-                              new SimpleTermQuery(termsEnum, termsEnum.ord()),
-                              ranks.get(idx),
-                              fieldInfo,
-                              hitAttributeHelper),
+           f (ranks.s ze() > 0) {
+            bqBu lder.add(Earlyb rdQuery lper.maybeWrapW hH Attr but onCollector(
+                              new S mpleTermQuery(termsEnum, termsEnum.ord()),
+                              ranks.get( dx),
+                              f eld nfo,
+                              h Attr bute lper),
                           BooleanClause.Occur.SHOULD);
           } else {
-            bqBuilder.add(new SimpleTermQuery(termsEnum, termsEnum.ord()),
+            bqBu lder.add(new S mpleTermQuery(termsEnum, termsEnum.ord()),
                           BooleanClause.Occur.SHOULD);
           }
           ++numClauses;
         }
       }
 
-      return bqBuilder.build();
+      return bqBu lder.bu ld();
     }
   }
 }

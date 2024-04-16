@@ -1,182 +1,182 @@
-package com.twitter.product_mixer.core.service.component_registry
+package com.tw ter.product_m xer.core.serv ce.component_reg stry
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.util.Activity
-import com.twitter.util.Future
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.ut l.Act v y
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
 /**
- * The [[ComponentRegistry]] works closely with [[ComponentIdentifier]]s and the [[com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry]]
- * to provide the Product Mixer framework information about the [[com.twitter.product_mixer.core.pipeline.Pipeline]]s and [[Component]]s
- * that make up an application.
+ * T  [[ComponentReg stry]] works closely w h [[Component dent f er]]s and t  [[com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stry]]
+ * to prov de t  Product M xer fra work  nformat on about t  [[com.tw ter.product_m xer.core.p pel ne.P pel ne]]s and [[Component]]s
+ * that make up an appl cat on.
  *
- * This registration allows us to configure alerts and dashboards,
- * to query your application structure letting us display the graph of the execution and the results of queries,
- * and to garner insight into usages.
+ * T  reg strat on allows us to conf gure alerts and dashboards,
+ * to query y  appl cat on structure lett ng us d splay t  graph of t  execut on and t  results of quer es,
+ * and to garner  ns ght  nto usages.
  *
- * The registry is a snapshot of the state of the world when pipelines were last built successfully.
- * For most services, this only happens once on startup. However, some services may rebuild their
- * pipelines dynamically later on.
+ * T  reg stry  s a snapshot of t  state of t  world w n p pel nes  re last bu lt successfully.
+ * For most serv ces, t  only happens once on startup. Ho ver, so  serv ces may rebu ld t  r
+ * p pel nes dynam cally later on.
  */
 
-@Singleton
-class ComponentRegistry @Inject() (statsReceiver: StatsReceiver) {
-  // Initially pending until the first snapshot is built by [[ProductPipelineRegistry]]
-  private val (snapshotActivity, snapshotWitness) = Activity[ComponentRegistrySnapshot]()
-  private val snapshotCount = statsReceiver.counter("ComponentRegistry", "SnapshotCount")
+@S ngleton
+class ComponentReg stry @ nject() (statsRece ver: StatsRece ver) {
+  //  n  ally pend ng unt l t  f rst snapshot  s bu lt by [[ProductP pel neReg stry]]
+  pr vate val (snapshotAct v y, snapshotW ness) = Act v y[ComponentReg strySnapshot]()
+  pr vate val snapshotCount = statsRece ver.counter("ComponentReg stry", "SnapshotCount")
 
-  def get: Future[ComponentRegistrySnapshot] = snapshotActivity.values.toFuture.lowerFromTry
-  private[core] def set(snapshot: ComponentRegistrySnapshot): Unit = {
-    snapshotCount.incr()
-    snapshotWitness.notify(Try(snapshot))
+  def get: Future[ComponentReg strySnapshot] = snapshotAct v y.values.toFuture.lo rFromTry
+  pr vate[core] def set(snapshot: ComponentReg strySnapshot): Un  = {
+    snapshotCount. ncr()
+    snapshotW ness.not fy(Try(snapshot))
   }
 }
 
-class ComponentRegistrySnapshot() extends Logging {
+class ComponentReg strySnapshot() extends Logg ng {
 
-  /** for storing the [[RegisteredComponent]]s */
-  private[this] val componentRegistry =
-    new ConcurrentHashMap[ComponentIdentifier, RegisteredComponent]
+  /** for stor ng t  [[Reg steredComponent]]s */
+  pr vate[t ] val componentReg stry =
+    new ConcurrentHashMap[Component dent f er, Reg steredComponent]
 
-  /** for determining the children of a [[ComponentIdentifier]] */
-  private[this] val componentChildren =
-    new ConcurrentHashMap[ComponentIdentifier, Set[ComponentIdentifier]]
+  /** for determ n ng t  ch ldren of a [[Component dent f er]] */
+  pr vate[t ] val componentCh ldren =
+    new ConcurrentHashMap[Component dent f er, Set[Component dent f er]]
 
-  /** for determining [[ComponentIdentifier]] uniqueness within a given [[ComponentIdentifierStack]] */
-  private[this] val componentHierarchy =
-    new ConcurrentHashMap[ComponentIdentifierStack, Set[ComponentIdentifier]]
+  /** for determ n ng [[Component dent f er]] un queness w h n a g ven [[Component dent f erStack]] */
+  pr vate[t ] val componentH erarchy =
+    new ConcurrentHashMap[Component dent f erStack, Set[Component dent f er]]
 
   /**
-   * Register the given [[Component]] at the end of path provided by `parentIdentifierStack`
-   * or throws an exception if adding the component results in an invalid configuration.
+   * Reg ster t  g ven [[Component]] at t  end of path prov ded by `parent dent f erStack`
+   * or throws an except on  f add ng t  component results  n an  nval d conf gurat on.
    *
-   * @throws ChildComponentCollisionException if a [[Component]] with the same [[ComponentIdentifier]] is registered
-   *                                          more than once under the same parent.
-   *                                          e.g. if you register `ComponentA` under `ProductA -> PipelineA` twice,
-   *                                          this exception will be thrown when registering `ComponentA` the second
-   *                                          time. This is pretty much always a configuration error due to copy-pasting
-   *                                          and forgetting to update the identifier, or accidentally using the same
-   *                                          component twice under the same parent. If this didn't throw, stats from
-   *                                          these 2 components would be indistinguishable.
+   * @throws Ch ldComponentColl s onExcept on  f a [[Component]] w h t  sa  [[Component dent f er]]  s reg stered
+   *                                          more than once under t  sa  parent.
+   *                                          e.g.  f   reg ster `ComponentA` under `ProductA -> P pel neA` tw ce,
+   *                                          t  except on w ll be thrown w n reg ster ng `ComponentA` t  second
+   *                                          t  . T   s pretty much always a conf gurat on error due to copy-past ng
+   *                                          and forgett ng to update t   dent f er, or acc dentally us ng t  sa 
+   *                                          component tw ce under t  sa  parent.  f t  d dn't throw, stats from
+   *                                          t se 2 components would be  nd st ngu shable.
    *
-   * @throws ComponentIdentifierCollisionException if a [[Component]] with the same [[ComponentIdentifier]] is registered
-   *                                               but it's type is not the same as a previously registered [[Component]]
-   *                                               with the same [[ComponentIdentifier]]
-   *                                               e.g. if you register 2 [[Component]]s with the same [[ComponentIdentifier]]
-   *                                               such as `new Component` and an instance of
-   *                                               `class MyComponent extends Component` the `new Component` will have a
-   *                                               type of `Component` and the other one will have a type of `MyComponent`
-   *                                               which will throw. This is usually due to copy-pasting a component as
-   *                                               a starting point and forgetting to update the identifier. If this
-   *                                               didn't throw, absolute stats from these 2 components would be
-   *                                               indistinguishable.
+   * @throws Component dent f erColl s onExcept on  f a [[Component]] w h t  sa  [[Component dent f er]]  s reg stered
+   *                                               but  's type  s not t  sa  as a prev ously reg stered [[Component]]
+   *                                               w h t  sa  [[Component dent f er]]
+   *                                               e.g.  f   reg ster 2 [[Component]]s w h t  sa  [[Component dent f er]]
+   *                                               such as `new Component` and an  nstance of
+   *                                               `class  Component extends Component` t  `new Component` w ll have a
+   *                                               type of `Component` and t  ot r one w ll have a type of ` Component`
+   *                                               wh ch w ll throw. T   s usually due to copy-past ng a component as
+   *                                               a start ng po nt and forgett ng to update t   dent f er.  f t 
+   *                                               d dn't throw, absolute stats from t se 2 components would be
+   *                                                nd st ngu shable.
    *
    *
-   * @note this will log details of component identifier reuse if the underling components are not equal, but otherwise are of the same class.
-   *       Their stats will be merged and indistinguishable but since they are the same name and same class, we assume the differences are
-   *       minor enough that this is okay, but make a note in the log at startup in case someone sees unexpected metrics, we can look
-   *       back at the logs and see the details.
+   * @note t  w ll log deta ls of component  dent f er reuse  f t  underl ng components are not equal, but ot rw se are of t  sa  class.
+   *       T  r stats w ll be  rged and  nd st ngu shable but s nce t y are t  sa  na  and sa  class,   assu  t  d fferences are
+   *       m nor enough that t   s okay, but make a note  n t  log at startup  n case so one sees unexpected  tr cs,   can look
+   *       back at t  logs and see t  deta ls.
    *
-   * @param component the component to register
-   * @param parentIdentifierStack the complete [[ComponentIdentifierStack]] excluding the current [[Component]]'s [[ComponentIdentifier]]
+   * @param component t  component to reg ster
+   * @param parent dent f erStack t  complete [[Component dent f erStack]] exclud ng t  current [[Component]]'s [[Component dent f er]]
    */
-  def register(
+  def reg ster(
     component: Component,
-    parentIdentifierStack: ComponentIdentifierStack
-  ): Unit = synchronized {
-    val identifier = component.identifier
-    val parentIdentifier = parentIdentifierStack.peek
+    parent dent f erStack: Component dent f erStack
+  ): Un  = synchron zed {
+    val  dent f er = component. dent f er
+    val parent dent f er = parent dent f erStack.peek
 
-    val registeredComponent =
-      RegisteredComponent(identifier, component, component.identifier.file.value)
+    val reg steredComponent =
+      Reg steredComponent( dent f er, component, component. dent f er.f le.value)
 
-    componentRegistry.asScala
-      .get(identifier)
-      .filter(_.component != component) // only do the foreach if the components aren't equal
+    componentReg stry.asScala
+      .get( dent f er)
+      .f lter(_.component != component) // only do t  foreach  f t  components aren't equal
       .foreach {
-        case existingComponent if existingComponent.component.getClass != component.getClass =>
+        case ex st ngComponent  f ex st ngComponent.component.getClass != component.getClass =>
           /**
-           * The same component may be registered under different parent components.
-           * However, different component types cannot use the same component identifier.
+           * T  sa  component may be reg stered under d fferent parent components.
+           * Ho ver, d fferent component types cannot use t  sa  component  dent f er.
            *
-           * This catches some copy-pasting of a config or component and forgetting to update the identifier.
+           * T  catc s so  copy-past ng of a conf g or component and forgett ng to update t   dent f er.
            */
-          throw new ComponentIdentifierCollisionException(
-            componentIdentifier = identifier,
-            component = registeredComponent,
-            existingComponent = componentRegistry.get(identifier),
-            parentIdentifierStack = parentIdentifierStack,
-            existingIdentifierStack = componentHierarchy.search[ComponentIdentifierStack](
+          throw new Component dent f erColl s onExcept on(
+            component dent f er =  dent f er,
+            component = reg steredComponent,
+            ex st ngComponent = componentReg stry.get( dent f er),
+            parent dent f erStack = parent dent f erStack,
+            ex st ng dent f erStack = componentH erarchy.search[Component dent f erStack](
               1,
-              (stack, identifiers) => if (identifiers.contains(identifier)) stack else null)
+              (stack,  dent f ers) =>  f ( dent f ers.conta ns( dent f er)) stack else null)
           )
-        case existingComponent =>
+        case ex st ngComponent =>
           /**
-           * The same component may be registered under different parent components.
-           * However, if the components are not equal it __may be__ a configuration error
-           * so we log a detailed description of the issue in case they need to debug.
+           * T  sa  component may be reg stered under d fferent parent components.
+           * Ho ver,  f t  components are not equal   __may be__ a conf gurat on error
+           * so   log a deta led descr pt on of t   ssue  n case t y need to debug.
            *
-           * This warns customers of some copy-pasting of a config or component and forgetting to update the
-           * identifier and of reusing components with hard-coded values which are configured differently.
+           * T  warns custo rs of so  copy-past ng of a conf g or component and forgett ng to update t 
+           *  dent f er and of reus ng components w h hard-coded values wh ch are conf gured d fferently.
            */
-          val existingIdentifierStack = componentHierarchy.search[ComponentIdentifierStack](
+          val ex st ng dent f erStack = componentH erarchy.search[Component dent f erStack](
             1,
-            (stack, identifiers) => if (identifiers.contains(identifier)) stack else null)
-          logger.info(
-            s"Found duplicate identifiers for non-equal components, $identifier from ${registeredComponent.sourceFile} " +
-              s"under ${parentIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")} " +
-              s"was already defined and is unequal to ${existingComponent.sourceFile} " +
-              s"under ${existingIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")}. " +
-              s"Merging these components in the registry, this will result in their metrics being merged. " +
-              s"If these components should have separate metrics, consider providing unique identifiers for them instead."
+            (stack,  dent f ers) =>  f ( dent f ers.conta ns( dent f er)) stack else null)
+          logger. nfo(
+            s"Found dupl cate  dent f ers for non-equal components, $ dent f er from ${reg steredComponent.s ceF le} " +
+              s"under ${parent dent f erStack.component dent f ers.reverse.mkStr ng(" -> ")} " +
+              s"was already def ned and  s unequal to ${ex st ngComponent.s ceF le} " +
+              s"under ${ex st ng dent f erStack.component dent f ers.reverse.mkStr ng(" -> ")}. " +
+              s" rg ng t se components  n t  reg stry, t  w ll result  n t  r  tr cs be ng  rged. " +
+              s" f t se components should have separate  tr cs, cons der prov d ng un que  dent f ers for t m  nstead."
           )
       }
 
-    /** The same component may not be registered multiple times under the same parent */
-    if (componentHierarchy.getOrDefault(parentIdentifierStack, Set.empty).contains(identifier))
-      throw new ChildComponentCollisionException(identifier, parentIdentifierStack)
+    /** T  sa  component may not be reg stered mult ple t  s under t  sa  parent */
+     f (componentH erarchy.getOrDefault(parent dent f erStack, Set.empty).conta ns( dent f er))
+      throw new Ch ldComponentColl s onExcept on( dent f er, parent dent f erStack)
 
-    // add component to registry
-    componentRegistry.putIfAbsent(identifier, registeredComponent)
-    // add component to parent's `children` set for easy lookup
-    componentChildren.merge(parentIdentifier, Set(identifier), _ ++ _)
-    // add the component to the hierarchy under it's parent's identifier stack
-    componentHierarchy.merge(parentIdentifierStack, Set(identifier), _ ++ _)
+    // add component to reg stry
+    componentReg stry.put fAbsent( dent f er, reg steredComponent)
+    // add component to parent's `ch ldren` set for easy lookup
+    componentCh ldren. rge(parent dent f er, Set( dent f er), _ ++ _)
+    // add t  component to t  h erarchy under  's parent's  dent f er stack
+    componentH erarchy. rge(parent dent f erStack, Set( dent f er), _ ++ _)
   }
 
-  def getAllRegisteredComponents: Seq[RegisteredComponent] =
-    componentRegistry.values.asScala.toSeq.sorted
+  def getAllReg steredComponents: Seq[Reg steredComponent] =
+    componentReg stry.values.asScala.toSeq.sorted
 
-  def getChildComponents(component: ComponentIdentifier): Seq[ComponentIdentifier] =
-    Option(componentChildren.get(component)) match {
-      case Some(components) => components.toSeq.sorted(ComponentIdentifier.ordering)
+  def getCh ldComponents(component: Component dent f er): Seq[Component dent f er] =
+    Opt on(componentCh ldren.get(component)) match {
+      case So (components) => components.toSeq.sorted(Component dent f er.order ng)
       case None => Seq.empty
     }
 }
 
-class ComponentIdentifierCollisionException(
-  componentIdentifier: ComponentIdentifier,
-  component: RegisteredComponent,
-  existingComponent: RegisteredComponent,
-  parentIdentifierStack: ComponentIdentifierStack,
-  existingIdentifierStack: ComponentIdentifierStack)
-    extends IllegalArgumentException(
-      s"Tried to register component $componentIdentifier: of type ${component.component.getClass} from ${component.sourceFile} " +
-        s"under ${parentIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")} " +
-        s"but it was already defined with a different type ${existingComponent.component.getClass} from ${existingComponent.sourceFile} " +
-        s"under ${existingIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")}. " +
-        s"Ensure you aren't reusing a component identifier which can happen when copy-pasting existing component code by accident")
+class Component dent f erColl s onExcept on(
+  component dent f er: Component dent f er,
+  component: Reg steredComponent,
+  ex st ngComponent: Reg steredComponent,
+  parent dent f erStack: Component dent f erStack,
+  ex st ng dent f erStack: Component dent f erStack)
+    extends  llegalArgu ntExcept on(
+      s"Tr ed to reg ster component $component dent f er: of type ${component.component.getClass} from ${component.s ceF le} " +
+        s"under ${parent dent f erStack.component dent f ers.reverse.mkStr ng(" -> ")} " +
+        s"but   was already def ned w h a d fferent type ${ex st ngComponent.component.getClass} from ${ex st ngComponent.s ceF le} " +
+        s"under ${ex st ng dent f erStack.component dent f ers.reverse.mkStr ng(" -> ")}. " +
+        s"Ensure   aren't reus ng a component  dent f er wh ch can happen w n copy-past ng ex st ng component code by acc dent")
 
-class ChildComponentCollisionException(
-  componentIdentifier: ComponentIdentifier,
-  parentIdentifierStack: ComponentIdentifierStack)
-    extends IllegalArgumentException(
-      s"Component $componentIdentifier already defined under parent component $parentIdentifierStack")
+class Ch ldComponentColl s onExcept on(
+  component dent f er: Component dent f er,
+  parent dent f erStack: Component dent f erStack)
+    extends  llegalArgu ntExcept on(
+      s"Component $component dent f er already def ned under parent component $parent dent f erStack")

@@ -1,13 +1,13 @@
-namespace java com.twitter.recos.user_tweet_graph.thriftjava
-namespace py gen.twitter.recos.user_tweet_graph
-#@namespace scala com.twitter.recos.user_tweet_graph.thriftscala
-#@namespace strato com.twitter.recos.user_tweet_graph
-namespace rb UserTweetGraph
+na space java com.tw ter.recos.user_t et_graph.thr ftjava
+na space py gen.tw ter.recos.user_t et_graph
+#@na space scala com.tw ter.recos.user_t et_graph.thr ftscala
+#@na space strato com.tw ter.recos.user_t et_graph
+na space rb UserT etGraph
 
-include "com/twitter/recos/features/tweet.thrift"
-include "com/twitter/recos/recos_common.thrift"
+ nclude "com/tw ter/recos/features/t et.thr ft"
+ nclude "com/tw ter/recos/recos_common.thr ft"
 
-enum TweetType {
+enum T etType {
   Summary    = 0
   Photo      = 1
   Player     = 2
@@ -15,158 +15,158 @@ enum TweetType {
   Regular    = 4
 }
 
-enum Algorithm {
+enum Algor hm {
   Salsa              = 0
   SubGraphSalsa      = 1
 }
 
-enum RecommendTweetDisplayLocation {
-  HomeTimeline       = 0
-  WelcomeFlow        = 1
-  NetworkDigest      = 2
-  BackfillDigest     = 3
-  HttpEndpoint       = 4
+enum Recom ndT etD splayLocat on {
+  Ho T  l ne       = 0
+   lco Flow        = 1
+  NetworkD gest      = 2
+  Backf llD gest     = 3
+  HttpEndpo nt       = 4
   Poptart            = 5
-  InstantTimeline    = 6
+   nstantT  l ne    = 6
   Explore            = 7
-  MagicRecs          = 8
-  LoggedOutProfile   = 9
-  LoggedOutPermalink = 10
-  VideoHome          = 11
+  Mag cRecs          = 8
+  LoggedOutProf le   = 9
+  LoggedOutPermal nk = 10
+  V deoHo           = 11
 }
 
-struct RecommendTweetRequest {
-  1: required i64                                      requesterId              // user id of the requesting user
-  2: required RecommendTweetDisplayLocation            displayLocation          // display location from the client
-  3: required i32                                      maxResults               // number of suggested results to return
-  4: required list<i64>                                excludedTweetIds         // list of tweet ids to exclude from response
-  5: required map<i64,double>                          seeds                    // seeds used in salsa random walk
-  6: required i64                                      tweetRecency             // the tweet recency threshold
-  7: required i32                                      minInteraction           // minimum interaction threshold
-  8: required list<TweetType>                          includeTweetTypes        // summary, photo, player, promote, other
-  9: required double                                   resetProbability         // reset probability to query node
-  10: required double                                  queryNodeWeightFraction  // the percentage of weights assigned to query node in seeding
-  11: required i32                                     numRandomWalks           // number of random walks
-  12: required i32                                     maxRandomWalkLength      // max random walk length
-  13: required i32                                     maxSocialProofSize       // max social proof size
-  14: required Algorithm                               algorithm                // algorithm type
-  15: optional list<recos_common.SocialProofType>      socialProofTypes         // the list of social proof types to return
+struct Recom ndT etRequest {
+  1: requ red  64                                      requester d              // user  d of t  request ng user
+  2: requ red Recom ndT etD splayLocat on            d splayLocat on          // d splay locat on from t  cl ent
+  3: requ red  32                                      maxResults               // number of suggested results to return
+  4: requ red l st< 64>                                excludedT et ds         // l st of t et  ds to exclude from response
+  5: requ red map< 64,double>                          seeds                    // seeds used  n salsa random walk
+  6: requ red  64                                      t etRecency             // t  t et recency threshold
+  7: requ red  32                                      m n nteract on           // m n mum  nteract on threshold
+  8: requ red l st<T etType>                           ncludeT etTypes        // summary, photo, player, promote, ot r
+  9: requ red double                                   resetProbab l y         // reset probab l y to query node
+  10: requ red double                                  queryNode  ghtFract on  // t  percentage of   ghts ass gned to query node  n seed ng
+  11: requ red  32                                     numRandomWalks           // number of random walks
+  12: requ red  32                                     maxRandomWalkLength      // max random walk length
+  13: requ red  32                                     maxSoc alProofS ze       // max soc al proof s ze
+  14: requ red Algor hm                               algor hm                // algor hm type
+  15: opt onal l st<recos_common.Soc alProofType>      soc alProofTypes         // t  l st of soc al proof types to return
 }
 
-struct RecommendedTweet {
-  1: required i64                                                tweetId
-  2: required double                                             score
-  3: optional list<i64>                                          socialProof              // social proof in aggregate
-  4: optional map<recos_common.SocialProofType, list<i64>>       socialProofPerType       // social proofs per engagement type
+struct Recom ndedT et {
+  1: requ red  64                                                t et d
+  2: requ red double                                             score
+  3: opt onal l st< 64>                                          soc alProof              // soc al proof  n aggregate
+  4: opt onal map<recos_common.Soc alProofType, l st< 64>>       soc alProofPerType       // soc al proofs per engage nt type
 }
 
-struct RecommendTweetResponse {
-  1: required list<RecommendedTweet> tweets
+struct Recom ndT etResponse {
+  1: requ red l st<Recom ndedT et> t ets
 }
 
-enum RelatedTweetDisplayLocation {
-  Permalink       = 0
-  Permalink1      = 1
-  MobilePermalink = 2
-  Permalink3      = 3
-  Permalink4      = 4
-  RelatedTweets   = 5
-  RelatedTweets1  = 6
-  RelatedTweets2  = 7
-  RelatedTweets3  = 8
-  RelatedTweets4  = 9
-  LoggedOutProfile = 10
-  LoggedOutPermalink = 11
+enum RelatedT etD splayLocat on {
+  Permal nk       = 0
+  Permal nk1      = 1
+  Mob lePermal nk = 2
+  Permal nk3      = 3
+  Permal nk4      = 4
+  RelatedT ets   = 5
+  RelatedT ets1  = 6
+  RelatedT ets2  = 7
+  RelatedT ets3  = 8
+  RelatedT ets4  = 9
+  LoggedOutProf le = 10
+  LoggedOutPermal nk = 11
 }
 
-struct UserTweetFeatureResponse {
-  1: optional double                                favAdamicAdarAvg
-  2: optional double                                favAdamicAdarMax 
-  3: optional double                                favLogCosineAvg
-  4: optional double                                favLogCosineMax
-  5: optional double                                retweetAdamicAdarAvg
-  6: optional double                                retweetAdamicAdarMax 
-  7: optional double                                retweetLogCosineAvg
-  8: optional double                                retweetLogCosineMax
+struct UserT etFeatureResponse {
+  1: opt onal double                                favAdam cAdarAvg
+  2: opt onal double                                favAdam cAdarMax 
+  3: opt onal double                                favLogCos neAvg
+  4: opt onal double                                favLogCos neMax
+  5: opt onal double                                ret etAdam cAdarAvg
+  6: opt onal double                                ret etAdam cAdarMax 
+  7: opt onal double                                ret etLogCos neAvg
+  8: opt onal double                                ret etLogCos neMax
 }
 
-struct RelatedTweetRequest {
-  1: required i64                                   tweetId               // original tweet id
-  2: required RelatedTweetDisplayLocation           displayLocation       // display location from the client
-  3: optional string                                algorithm             // additional parameter that the system can interpret
-  4: optional i64                                   requesterId           // user id of the requesting user
-  5: optional i32                                   maxResults            // number of suggested results to return
-  6: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  7: optional i32                                   maxNumNeighbors
-  8: optional i32                                   minNeighborDegree
-  9: optional i32                                   maxNumSamplesPerNeighbor
-  10: optional i32                                  minCooccurrence
-  11: optional i32                                  minQueryDegree
-  12: optional double                               maxLowerMultiplicativeDeviation
-  13: optional double                               maxUpperMultiplicativeDeviation
-  14: optional bool                                 populateTweetFeatures // whether to populate graph features
-  15: optional i32                                  minResultDegree
-  16: optional list<i64>                            additionalTweetIds
-  17: optional double                               minScore
-  18: optional i32                                  maxTweetAgeInHours
+struct RelatedT etRequest {
+  1: requ red  64                                   t et d               // or g nal t et  d
+  2: requ red RelatedT etD splayLocat on           d splayLocat on       // d splay locat on from t  cl ent
+  3: opt onal str ng                                algor hm             // add  onal para ter that t  system can  nterpret
+  4: opt onal  64                                   requester d           // user  d of t  request ng user
+  5: opt onal  32                                   maxResults            // number of suggested results to return
+  6: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response
+  7: opt onal  32                                   maxNumNe ghbors
+  8: opt onal  32                                   m nNe ghborDegree
+  9: opt onal  32                                   maxNumSamplesPerNe ghbor
+  10: opt onal  32                                  m nCooccurrence
+  11: opt onal  32                                  m nQueryDegree
+  12: opt onal double                               maxLo rMult pl cat veDev at on
+  13: opt onal double                               maxUpperMult pl cat veDev at on
+  14: opt onal bool                                 populateT etFeatures // w t r to populate graph features
+  15: opt onal  32                                  m nResultDegree
+  16: opt onal l st< 64>                            add  onalT et ds
+  17: opt onal double                               m nScore
+  18: opt onal  32                                  maxT etAge nH s
 }
 
-struct TweetBasedRelatedTweetRequest {
-  1: required i64                                   tweetId               // query tweet id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query tweet
-  5: optional i32                                   maxNumSamplesPerNeighbor // max number of sampled users who engaged with the query tweet
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct T etBasedRelatedT etRequest {
+  1: requ red  64                                   t et d               // query t et  d
+  2: opt onal  32                                   maxResults            // number of suggested results to return
+  3: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response
+  4: opt onal  32                                   m nQueryDegree        // m n degree of query t et
+  5: opt onal  32                                   maxNumSamplesPerNe ghbor // max number of sampled users who engaged w h t  query t et
+  6: opt onal  32                                   m nCooccurrence       // m n co-occurrence of related t et cand date 
+  7: opt onal  32                                   m nResultDegree       // m n degree of related t et cand date 
+  8: opt onal double                                m nScore              // m n score of related t et cand date
+  9: opt onal  32                                   maxT etAge nH s    // max t et age  n h s of related t et cand date 
 }
 
-struct ProducerBasedRelatedTweetRequest {
-  1: required i64                                   producerId            // query producer id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query producer, e.g. number of followers
-  5: optional i32                                   maxNumFollowers       // max number of sampled users who follow the query producer 
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct ProducerBasedRelatedT etRequest {
+  1: requ red  64                                   producer d            // query producer  d
+  2: opt onal  32                                   maxResults            // number of suggested results to return
+  3: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response
+  4: opt onal  32                                   m nQueryDegree        // m n degree of query producer, e.g. number of follo rs
+  5: opt onal  32                                   maxNumFollo rs       // max number of sampled users who follow t  query producer 
+  6: opt onal  32                                   m nCooccurrence       // m n co-occurrence of related t et cand date 
+  7: opt onal  32                                   m nResultDegree       // m n degree of related t et cand date 
+  8: opt onal double                                m nScore              // m n score of related t et cand date
+  9: opt onal  32                                   maxT etAge nH s    // max t et age  n h s of related t et cand date 
 }
 
-struct ConsumersBasedRelatedTweetRequest {
-  1: required list<i64>                             consumerSeedSet       // query consumer userId set 
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response 
-  4: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  5: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  6: optional double                                minScore              // min score of related tweet candidate
-  7: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct Consu rsBasedRelatedT etRequest {
+  1: requ red l st< 64>                             consu rSeedSet       // query consu r user d set 
+  2: opt onal  32                                   maxResults            // number of suggested results to return
+  3: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response 
+  4: opt onal  32                                   m nCooccurrence       // m n co-occurrence of related t et cand date 
+  5: opt onal  32                                   m nResultDegree       // m n degree of related t et cand date 
+  6: opt onal double                                m nScore              // m n score of related t et cand date
+  7: opt onal  32                                   maxT etAge nH s    // max t et age  n h s of related t et cand date 
 }
 
-struct RelatedTweet {
-  1: required i64                          tweetId
-  2: required double                       score
-  3: optional tweet.GraphFeaturesForTweet  relatedTweetGraphFeatures
+struct RelatedT et {
+  1: requ red  64                          t et d
+  2: requ red double                       score
+  3: opt onal t et.GraphFeaturesForT et  relatedT etGraphFeatures
 }
 
-struct RelatedTweetResponse {
-  1: required list<RelatedTweet>           tweets
-  2: optional tweet.GraphFeaturesForQuery  queryTweetGraphFeatures
+struct RelatedT etResponse {
+  1: requ red l st<RelatedT et>           t ets
+  2: opt onal t et.GraphFeaturesForQuery  queryT etGraphFeatures
 }
 
 /**
- * The main interface-definition for UserTweetGraph.
+ * T  ma n  nterface-def n  on for UserT etGraph.
  */
-service UserTweetGraph {
-  RecommendTweetResponse recommendTweets (RecommendTweetRequest request)
+serv ce UserT etGraph {
+  Recom ndT etResponse recom ndT ets (Recom ndT etRequest request)
   recos_common.GetRecentEdgesResponse getLeftNodeEdges (recos_common.GetRecentEdgesRequest request)
-  recos_common.NodeInfo getRightNode (i64 node)
-  RelatedTweetResponse relatedTweets (RelatedTweetRequest request)
-  RelatedTweetResponse tweetBasedRelatedTweets (TweetBasedRelatedTweetRequest request)
-  RelatedTweetResponse producerBasedRelatedTweets (ProducerBasedRelatedTweetRequest request)
-  RelatedTweetResponse consumersBasedRelatedTweets (ConsumersBasedRelatedTweetRequest request)
-  UserTweetFeatureResponse userTweetFeatures (1: required i64 userId, 2: required i64 tweetId)
+  recos_common.Node nfo getR ghtNode ( 64 node)
+  RelatedT etResponse relatedT ets (RelatedT etRequest request)
+  RelatedT etResponse t etBasedRelatedT ets (T etBasedRelatedT etRequest request)
+  RelatedT etResponse producerBasedRelatedT ets (ProducerBasedRelatedT etRequest request)
+  RelatedT etResponse consu rsBasedRelatedT ets (Consu rsBasedRelatedT etRequest request)
+  UserT etFeatureResponse userT etFeatures (1: requ red  64 user d, 2: requ red  64 t et d)
 }
 

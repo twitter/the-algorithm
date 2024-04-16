@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
-import java.lang.{Long => JLong}
-import java.util.{Map => JMap}
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateType.AggregateType
+ mport com.tw ter.t  l nes.suggests.common.dense_data_record.thr ftjava.DenseCompactDataRecord
+ mport java.lang.{Long => JLong}
+ mport java.ut l.{Map => JMap}
 
 abstract case class BaseEdgeAggregateFeature(
   aggregateGroups: Set[AggregateGroup],
   aggregateType: AggregateType,
-  extractMapFn: AggregateFeaturesToDecodeWithMetadata => JMap[JLong, DenseCompactDataRecord],
-  adapter: IRecordOneToOneAdapter[Seq[DataRecord]],
-  getSecondaryKeysFn: CandidateWithFeatures[TweetCandidate] => Seq[Long])
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord
+  extractMapFn: AggregateFeaturesToDecodeW h tadata => JMap[JLong, DenseCompactDataRecord],
+  adapter:  RecordOneToOneAdapter[Seq[DataRecord]],
+  getSecondaryKeysFn: Cand dateW hFeatures[T etCand date] => Seq[Long])
+    extends DataRecord nAFeature[P pel neQuery]
+    w h FeatureW hDefaultOnFa lure[P pel neQuery, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord
 
-  private val rootFeatureInfo = new AggregateFeatureInfo(aggregateGroups, aggregateType)
-  val featureContext: FeatureContext = rootFeatureInfo.featureContext
-  val rootFeature: BaseAggregateRootFeature = rootFeatureInfo.feature
+  pr vate val rootFeature nfo = new AggregateFeature nfo(aggregateGroups, aggregateType)
+  val featureContext: FeatureContext = rootFeature nfo.featureContext
+  val rootFeature: BaseAggregateRootFeature = rootFeature nfo.feature
 }
 
-trait BaseEdgeAggregateFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+tra  BaseEdgeAggregateFeatureHydrator
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
   def aggregateFeatures: Set[BaseEdgeAggregateFeature]
 
-  override def features = aggregateFeatures.asInstanceOf[Set[Feature[_, _]]]
+  overr de def features = aggregateFeatures.as nstanceOf[Set[Feature[_, _]]]
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offload {
-    val featureMapBuilders: Seq[FeatureMapBuilder] =
-      for (_ <- candidates) yield FeatureMapBuilder()
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offload {
+    val featureMapBu lders: Seq[FeatureMapBu lder] =
+      for (_ <- cand dates) y eld FeatureMapBu lder()
 
     aggregateFeatures.foreach { feature =>
-      val featureValues = hydrateAggregateFeature(query, candidates, feature)
-      (featureMapBuilders zip featureValues).foreach {
-        case (featureMapBuilder, featureValue) => featureMapBuilder.add(feature, featureValue)
+      val featureValues = hydrateAggregateFeature(query, cand dates, feature)
+      (featureMapBu lders z p featureValues).foreach {
+        case (featureMapBu lder, featureValue) => featureMapBu lder.add(feature, featureValue)
       }
     }
 
-    featureMapBuilders.map(_.build())
+    featureMapBu lders.map(_.bu ld())
   }
 
-  private def hydrateAggregateFeature(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]],
+  pr vate def hydrateAggregateFeature(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]],
     feature: BaseEdgeAggregateFeature
   ): Seq[DataRecord] = {
     val rootFeature = feature.rootFeature
     val extractMapFn = feature.extractMapFn
     val featureContext = feature.featureContext
-    val secondaryIds: Seq[Seq[Long]] = candidates.map(feature.getSecondaryKeysFn)
+    val secondary ds: Seq[Seq[Long]] = cand dates.map(feature.getSecondaryKeysFn)
 
-    val featuresToDecodeWithMetadata = query.features
+    val featuresToDecodeW h tadata = query.features
       .flatMap(_.getOrElse(rootFeature, None))
-      .getOrElse(AggregateFeaturesToDecodeWithMetadata.empty)
+      .getOrElse(AggregateFeaturesToDecodeW h tadata.empty)
 
-    // Decode the DenseCompactDataRecords into DataRecords for each required secondary id.
-    val decoded: Map[Long, DataRecord] = Utils.selectAndTransform(
-      secondaryIds.flatten.distinct,
-      featuresToDecodeWithMetadata.toDataRecord,
-      extractMapFn(featuresToDecodeWithMetadata)
+    // Decode t  DenseCompactDataRecords  nto DataRecords for each requ red secondary  d.
+    val decoded: Map[Long, DataRecord] = Ut ls.selectAndTransform(
+      secondary ds.flatten.d st nct,
+      featuresToDecodeW h tadata.toDataRecord,
+      extractMapFn(featuresToDecodeW h tadata)
     )
 
-    // Remove unnecessary features in-place. This is safe because the underlying DataRecords
-    // are unique and have just been generated in the previous step.
-    decoded.values.foreach(Utils.filterDataRecord(_, featureContext))
+    // Remove unnecessary features  n-place. T   s safe because t  underly ng DataRecords
+    // are un que and have just been generated  n t  prev ous step.
+    decoded.values.foreach(Ut ls.f lterDataRecord(_, featureContext))
 
-    // Put features into the FeatureMapBuilders
-    secondaryIds.map { ids =>
-      val dataRecords = ids.flatMap(decoded.get)
+    // Put features  nto t  FeatureMapBu lders
+    secondary ds.map {  ds =>
+      val dataRecords =  ds.flatMap(decoded.get)
       feature.adapter.adaptToDataRecord(dataRecords)
     }
   }

@@ -1,31 +1,31 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.Feature
-import java.lang.{Double => JDouble}
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport java.lang.{Double => JDouble}
 
-object DataRecordUtil {
-  def applyRename(
+object DataRecordUt l {
+  def applyRena (
     dataRecord: DataRecord,
     featureContext: FeatureContext,
-    renamedFeatureContext: FeatureContext,
-    featureRenamingMap: Map[Feature[_], Feature[_]]
+    rena dFeatureContext: FeatureContext,
+    featureRenam ngMap: Map[Feature[_], Feature[_]]
   ): DataRecord = {
-    val richFullDr = new SRichDataRecord(dataRecord, featureContext)
-    val richNewDr = new SRichDataRecord(new DataRecord, renamedFeatureContext)
-    val featureIterator = featureContext.iterator()
-    featureIterator.forEachRemaining { feature =>
-      if (richFullDr.hasFeature(feature)) {
-        val renamedFeature = featureRenamingMap.getOrElse(feature, feature)
+    val r chFullDr = new SR chDataRecord(dataRecord, featureContext)
+    val r chNewDr = new SR chDataRecord(new DataRecord, rena dFeatureContext)
+    val feature erator = featureContext. erator()
+    feature erator.forEachRema n ng { feature =>
+       f (r chFullDr.hasFeature(feature)) {
+        val rena dFeature = featureRenam ngMap.getOrElse(feature, feature)
 
-        val typedFeature = feature.asInstanceOf[Feature[JDouble]]
-        val typedRenamedFeature = renamedFeature.asInstanceOf[Feature[JDouble]]
+        val typedFeature = feature.as nstanceOf[Feature[JDouble]]
+        val typedRena dFeature = rena dFeature.as nstanceOf[Feature[JDouble]]
 
-        richNewDr.setFeatureValue(typedRenamedFeature, richFullDr.getFeatureValue(typedFeature))
+        r chNewDr.setFeatureValue(typedRena dFeature, r chFullDr.getFeatureValue(typedFeature))
       }
     }
-    richNewDr.getRecord
+    r chNewDr.getRecord
   }
 }

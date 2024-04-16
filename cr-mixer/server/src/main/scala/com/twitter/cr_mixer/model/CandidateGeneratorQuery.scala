@@ -1,96 +1,96 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.cr_m xer.thr ftscala.Product
+ mport com.tw ter.product_m xer.core.thr ftscala.Cl entContext
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.t  l nes.conf gap .Params
 
-sealed trait CandidateGeneratorQuery {
+sealed tra  Cand dateGeneratorQuery {
   val product: Product
-  val maxNumResults: Int
-  val impressedTweetList: Set[TweetId]
+  val maxNumResults:  nt
+  val  mpressedT etL st: Set[T et d]
   val params: Params
-  val requestUUID: Long
+  val requestUU D: Long
 }
 
-sealed trait HasUserId {
-  val userId: UserId
+sealed tra  HasUser d {
+  val user d: User d
 }
 
-case class CrCandidateGeneratorQuery(
-  userId: UserId,
+case class CrCand dateGeneratorQuery(
+  user d: User d,
   product: Product,
   userState: UserState,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumResults:  nt,
+   mpressedT etL st: Set[T et d],
   params: Params,
-  requestUUID: Long,
-  languageCode: Option[String] = None)
-    extends CandidateGeneratorQuery
-    with HasUserId
+  requestUU D: Long,
+  languageCode: Opt on[Str ng] = None)
+    extends Cand dateGeneratorQuery
+    w h HasUser d
 
-case class UtegTweetCandidateGeneratorQuery(
-  userId: UserId,
+case class UtegT etCand dateGeneratorQuery(
+  user d: User d,
   product: Product,
   userState: UserState,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumResults:  nt,
+   mpressedT etL st: Set[T et d],
   params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
-    with HasUserId
+  requestUU D: Long)
+    extends Cand dateGeneratorQuery
+    w h HasUser d
 
-case class RelatedTweetCandidateGeneratorQuery(
-  internalId: InternalId,
-  clientContext: ClientContext, // To scribe LogIn/LogOut requests
+case class RelatedT etCand dateGeneratorQuery(
+   nternal d:  nternal d,
+  cl entContext: Cl entContext, // To scr be Log n/LogOut requests
   product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumResults:  nt,
+   mpressedT etL st: Set[T et d],
   params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+  requestUU D: Long)
+    extends Cand dateGeneratorQuery
 
-case class RelatedVideoTweetCandidateGeneratorQuery(
-  internalId: InternalId,
-  clientContext: ClientContext, // To scribe LogIn/LogOut requests
+case class RelatedV deoT etCand dateGeneratorQuery(
+   nternal d:  nternal d,
+  cl entContext: Cl entContext, // To scr be Log n/LogOut requests
   product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumResults:  nt,
+   mpressedT etL st: Set[T et d],
   params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+  requestUU D: Long)
+    extends Cand dateGeneratorQuery
 
-case class FrsTweetCandidateGeneratorQuery(
-  userId: UserId,
+case class FrsT etCand dateGeneratorQuery(
+  user d: User d,
   product: Product,
-  maxNumResults: Int,
-  impressedUserList: Set[UserId],
-  impressedTweetList: Set[TweetId],
+  maxNumResults:  nt,
+   mpressedUserL st: Set[User d],
+   mpressedT etL st: Set[T et d],
   params: Params,
-  languageCodeOpt: Option[String] = None,
-  countryCodeOpt: Option[String] = None,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+  languageCodeOpt: Opt on[Str ng] = None,
+  countryCodeOpt: Opt on[Str ng] = None,
+  requestUU D: Long)
+    extends Cand dateGeneratorQuery
 
-case class AdsCandidateGeneratorQuery(
-  userId: UserId,
+case class AdsCand dateGeneratorQuery(
+  user d: User d,
   product: Product,
   userState: UserState,
-  maxNumResults: Int,
+  maxNumResults:  nt,
   params: Params,
-  requestUUID: Long)
+  requestUU D: Long)
 
-case class TopicTweetCandidateGeneratorQuery(
-  userId: UserId,
-  topicIds: Set[TopicId],
+case class Top cT etCand dateGeneratorQuery(
+  user d: User d,
+  top c ds: Set[Top c d],
   product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumResults:  nt,
+   mpressedT etL st: Set[T et d],
   params: Params,
-  requestUUID: Long,
-  isVideoOnly: Boolean)
-    extends CandidateGeneratorQuery
+  requestUU D: Long,
+   sV deoOnly: Boolean)
+    extends Cand dateGeneratorQuery

@@ -1,71 +1,71 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.TweetIsEditTweet
-import com.twitter.visibility.features.TweetIsInitialTweet
-import com.twitter.visibility.features.TweetIsLatestTweet
-import com.twitter.visibility.features.TweetIsStaleTweet
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features.T et sEd T et
+ mport com.tw ter.v s b l y.features.T et s n  alT et
+ mport com.tw ter.v s b l y.features.T et sLatestT et
+ mport com.tw ter.v s b l y.features.T et sStaleT et
 
-class EditTweetFeatures(
-  statsReceiver: StatsReceiver) {
+class Ed T etFeatures(
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("edit_tweet_features")
-  private[this] val tweetIsEditTweet =
-    scopedStatsReceiver.scope(TweetIsEditTweet.name).counter("requests")
-  private[this] val tweetIsStaleTweet =
-    scopedStatsReceiver.scope(TweetIsStaleTweet.name).counter("requests")
-  private[this] val tweetIsLatestTweet =
-    scopedStatsReceiver.scope(TweetIsLatestTweet.name).counter("requests")
-  private[this] val tweetIsInitialTweet =
-    scopedStatsReceiver.scope(TweetIsInitialTweet.name).counter("requests")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("ed _t et_features")
+  pr vate[t ] val t et sEd T et =
+    scopedStatsRece ver.scope(T et sEd T et.na ).counter("requests")
+  pr vate[t ] val t et sStaleT et =
+    scopedStatsRece ver.scope(T et sStaleT et.na ).counter("requests")
+  pr vate[t ] val t et sLatestT et =
+    scopedStatsRece ver.scope(T et sLatestT et.na ).counter("requests")
+  pr vate[t ] val t et s n  alT et =
+    scopedStatsRece ver.scope(T et s n  alT et.na ).counter("requests")
 
-  def forTweet(
-    tweet: Tweet
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsEditTweet, tweetIsEditTweet(tweet))
-      .withConstantFeature(TweetIsStaleTweet, tweetIsStaleTweet(tweet))
-      .withConstantFeature(TweetIsLatestTweet, tweetIsLatestTweet(tweet))
-      .withConstantFeature(TweetIsInitialTweet, tweetIsInitialTweet(tweet))
+  def forT et(
+    t et: T et
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(T et sEd T et, t et sEd T et(t et))
+      .w hConstantFeature(T et sStaleT et, t et sStaleT et(t et))
+      .w hConstantFeature(T et sLatestT et, t et sLatestT et(t et))
+      .w hConstantFeature(T et s n  alT et, t et s n  alT et(t et))
   }
 
-  def tweetIsStaleTweet(tweet: Tweet, incrementMetric: Boolean = true): Boolean = {
-    if (incrementMetric) tweetIsStaleTweet.incr()
+  def t et sStaleT et(t et: T et,  ncre nt tr c: Boolean = true): Boolean = {
+     f ( ncre nt tr c) t et sStaleT et. ncr()
 
-    tweet.editControl match {
+    t et.ed Control match {
       case None => false
-      case Some(ec) =>
+      case So (ec) =>
         ec match {
-          case eci: EditControl.Initial => eci.initial.editTweetIds.last != tweet.id
-          case ece: EditControl.Edit =>
-            ece.edit.editControlInitial.exists(_.editTweetIds.last != tweet.id)
+          case ec : Ed Control. n  al => ec . n  al.ed T et ds.last != t et. d
+          case ece: Ed Control.Ed  =>
+            ece.ed .ed Control n  al.ex sts(_.ed T et ds.last != t et. d)
           case _ => false
         }
     }
   }
 
-  def tweetIsEditTweet(tweet: Tweet, incrementMetric: Boolean = true): Boolean = {
-    if (incrementMetric) tweetIsEditTweet.incr()
+  def t et sEd T et(t et: T et,  ncre nt tr c: Boolean = true): Boolean = {
+     f ( ncre nt tr c) t et sEd T et. ncr()
 
-    tweet.editControl match {
+    t et.ed Control match {
       case None => false
-      case Some(ec) =>
+      case So (ec) =>
         ec match {
-          case _: EditControl.Initial => false
+          case _: Ed Control. n  al => false
           case _ => true
         }
     }
   }
 
-  def tweetIsLatestTweet(tweet: Tweet): Boolean = {
-    tweetIsLatestTweet.incr()
-    !tweetIsStaleTweet(tweet = tweet, incrementMetric = false)
+  def t et sLatestT et(t et: T et): Boolean = {
+    t et sLatestT et. ncr()
+    !t et sStaleT et(t et = t et,  ncre nt tr c = false)
   }
 
-  def tweetIsInitialTweet(tweet: Tweet): Boolean = {
-    tweetIsInitialTweet.incr()
-    !tweetIsEditTweet(tweet = tweet, incrementMetric = false)
+  def t et s n  alT et(t et: T et): Boolean = {
+    t et s n  alT et. ncr()
+    !t et sEd T et(t et = t et,  ncre nt tr c = false)
   }
 }

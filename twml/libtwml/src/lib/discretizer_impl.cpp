@@ -1,167 +1,167 @@
-#include "internal/interpolate.h"
-#include "internal/error.h"
-#include <twml/discretizer_impl.h>
-#include <twml/optim.h>
+# nclude " nternal/ nterpolate.h"
+# nclude " nternal/error.h"
+# nclude <twml/d scret zer_ mpl.h>
+# nclude <twml/opt m.h>
 
-namespace twml {
-  // it is assumed that start_compute and end_compute are valid
-  template<typename T>
-  void discretizerInfer(Tensor &output_keys,
+na space twml {
+  //    s assu d that start_compute and end_compute are val d
+  template<typena  T>
+  vo d d scret zer nfer(Tensor &output_keys,
           Tensor &output_vals,
-          const Tensor &input_ids,
-          const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
+          const Tensor & nput_ ds,
+          const Tensor & nput_vals,
+          const Tensor &b n_ ds,
+          const Tensor &b n_vals,
           const Tensor &feature_offsets,
-          int output_bits,
-          const Map<int64_t, int64_t> &ID_to_index,
-          int64_t start_compute,
-          int64_t end_compute,
-          int64_t output_start) {
-    auto out_keysData = output_keys.getData<int64_t>();
+           nt output_b s,
+          const Map< nt64_t,  nt64_t> & D_to_ ndex,
+           nt64_t start_compute,
+           nt64_t end_compute,
+           nt64_t output_start) {
+    auto out_keysData = output_keys.getData< nt64_t>();
     auto out_valsData = output_vals.getData<T>();
-    uint64_t out_keysStride = output_keys.getStride(0);
-    uint64_t out_valsStride = output_vals.getStride(0);
+    u nt64_t out_keysStr de = output_keys.getStr de(0);
+    u nt64_t out_valsStr de = output_vals.getStr de(0);
 
-    auto in_idsData = input_ids.getData<int64_t>();
-    auto in_valsData = input_vals.getData<T>();
-    uint64_t in_idsStride = input_ids.getStride(0);
-    uint64_t in_valsStride = input_vals.getStride(0);
+    auto  n_ dsData =  nput_ ds.getData< nt64_t>();
+    auto  n_valsData =  nput_vals.getData<T>();
+    u nt64_t  n_ dsStr de =  nput_ ds.getStr de(0);
+    u nt64_t  n_valsStr de =  nput_vals.getStr de(0);
 
-    auto xsData = bin_vals.getData<T>();
-    auto ysData = bin_ids.getData<int64_t>();
-    uint64_t xsStride = bin_vals.getStride(0);
-    uint64_t ysStride = bin_ids.getStride(0);
+    auto xsData = b n_vals.getData<T>();
+    auto ysData = b n_ ds.getData< nt64_t>();
+    u nt64_t xsStr de = b n_vals.getStr de(0);
+    u nt64_t ysStr de = b n_ ds.getStr de(0);
 
-    auto offsetData = feature_offsets.getData<int64_t>();
+    auto offsetData = feature_offsets.getData< nt64_t>();
 
-    uint64_t total_bins = bin_ids.getNumElements();
-    uint64_t fsize = feature_offsets.getNumElements();
+    u nt64_t total_b ns = b n_ ds.getNumEle nts();
+    u nt64_t fs ze = feature_offsets.getNumEle nts();
 
-    uint64_t output_size = (1 << output_bits);
+    u nt64_t output_s ze = (1 << output_b s);
 
-    for (uint64_t i = start_compute; i < end_compute; i++) {
-      int64_t feature_ID = in_idsData[i * in_idsStride];
-      T val = in_valsData[i * in_valsStride];
+    for (u nt64_t   = start_compute;   < end_compute;  ++) {
+       nt64_t feature_ D =  n_ dsData[  *  n_ dsStr de];
+      T val =  n_valsData[  *  n_valsStr de];
 
-      auto iter = ID_to_index.find(feature_ID);
-      if (iter == ID_to_index.end()) {
-        // feature not calibrated
-        // modulo add operation for new key from feature ID
-        int64_t ikey = feature_ID % (output_size - total_bins) + total_bins;
-        out_keysData[(i + output_start - start_compute) * out_keysStride] = ikey;
-        out_valsData[(i + output_start - start_compute) * out_valsStride] = val;
-        continue;
+      auto  er =  D_to_ ndex.f nd(feature_ D);
+       f ( er ==  D_to_ ndex.end()) {
+        // feature not cal brated
+        // modulo add operat on for new key from feature  D
+         nt64_t  key = feature_ D % (output_s ze - total_b ns) + total_b ns;
+        out_keysData[(  + output_start - start_compute) * out_keysStr de] =  key;
+        out_valsData[(  + output_start - start_compute) * out_valsStr de] = val;
+        cont nue;
       }
 
-      int64_t ikey = iter->second;
+       nt64_t  key =  er->second;
 
-      // Perform interpolation
-      uint64_t offset = offsetData[ikey];
-      uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
-      uint64_t mainSize = next_offset - offset;
+      // Perform  nterpolat on
+      u nt64_t offset = offsetData[ key];
+      u nt64_t next_offset = ( key == ( nt64_t)(fs ze - 1)) ? total_b ns : offsetData[ key + 1];
+      u nt64_t ma nS ze = next_offset - offset;
 
       const T *lxsData = xsData + offset;
-      const int64_t *lysData = ysData + offset;
-      int64_t okey;
-      okey = interpolation<T, int64_t>(lxsData, xsStride,
-                                       lysData, ysStride,
-                                       val, mainSize,
+      const  nt64_t *lysData = ysData + offset;
+       nt64_t okey;
+      okey =  nterpolat on<T,  nt64_t>(lxsData, xsStr de,
+                                       lysData, ysStr de,
+                                       val, ma nS ze,
                                        NEAREST, 0);
-      out_keysData[(i + output_start - start_compute) * out_keysStride] = okey;
-      out_valsData[(i + output_start - start_compute) * out_valsStride] = 1;
+      out_keysData[(  + output_start - start_compute) * out_keysStr de] = okey;
+      out_valsData[(  + output_start - start_compute) * out_valsStr de] = 1;
     }
   }
 
-  void discretizerInfer(Tensor &output_keys,
+  vo d d scret zer nfer(Tensor &output_keys,
           Tensor &output_vals,
-          const Tensor &input_ids,
-          const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
+          const Tensor & nput_ ds,
+          const Tensor & nput_vals,
+          const Tensor &b n_ ds,
+          const Tensor &b n_vals,
           const Tensor &feature_offsets,
-          int output_bits,
-          const Map<int64_t, int64_t> &ID_to_index,
-          int start_compute,
-          int end_compute,
-          int output_start) {
-    if (input_ids.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "input_ids must be a Long Tensor");
+           nt output_b s,
+          const Map< nt64_t,  nt64_t> & D_to_ ndex,
+           nt start_compute,
+           nt end_compute,
+           nt output_start) {
+     f ( nput_ ds.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, " nput_ ds must be a Long Tensor");
     }
 
-    if (output_keys.getType() != TWML_TYPE_INT64) {
+     f (output_keys.getType() != TWML_TYPE_ NT64) {
       throw twml::Error(TWML_ERR_TYPE, "output_keys must be a Long Tensor");
     }
 
-    if (bin_ids.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+     f (b n_ ds.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, "b n_ ds must be a Long Tensor");
     }
 
-    if (feature_offsets.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+     f (feature_offsets.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, "b n_ ds must be a Long Tensor");
     }
 
-    if (input_vals.getType() != bin_vals.getType()) {
+     f ( nput_vals.getType() != b n_vals.getType()) {
       throw twml::Error(TWML_ERR_TYPE,
-                "Data type of input_vals does not match type of bin_vals");
+                "Data type of  nput_vals does not match type of b n_vals");
     }
 
-    if (bin_vals.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_vals must be 1 Dimensional");
+     f (b n_vals.getNumD ms() != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "b n_vals must be 1 D  ns onal");
     }
 
-    if (bin_ids.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_ids must be 1 Dimensional");
+     f (b n_ ds.getNumD ms() != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "b n_ ds must be 1 D  ns onal");
     }
 
-    if (bin_vals.getNumElements() != bin_ids.getNumElements()) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "Dimensions of bin_vals and bin_ids do not match");
+     f (b n_vals.getNumEle nts() != b n_ ds.getNumEle nts()) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "D  ns ons of b n_vals and b n_ ds do not match");
     }
 
-    if (feature_offsets.getStride(0) != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "feature_offsets must be contiguous");
+     f (feature_offsets.getStr de(0) != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "feature_offsets must be cont guous");
     }
 
-    uint64_t size = input_ids.getDim(0);
-    if (end_compute == -1) {
-      end_compute = size;
+    u nt64_t s ze =  nput_ ds.getD m(0);
+     f (end_compute == -1) {
+      end_compute = s ze;
     }
 
-    if (start_compute < 0 || start_compute >= size) {
-      throw twml::Error(TWML_ERR_SIZE,
+     f (start_compute < 0 || start_compute >= s ze) {
+      throw twml::Error(TWML_ERR_S ZE,
                 "start_compute out of range");
     }
 
-    if (end_compute < -1 || end_compute > size) {
-      throw twml::Error(TWML_ERR_SIZE,
+     f (end_compute < -1 || end_compute > s ze) {
+      throw twml::Error(TWML_ERR_S ZE,
                 "end_compute out of range");
     }
 
-    if (start_compute > end_compute && end_compute != -1) {
-      throw twml::Error(TWML_ERR_SIZE,
+     f (start_compute > end_compute && end_compute != -1) {
+      throw twml::Error(TWML_ERR_S ZE,
                 "must have start_compute <= end_compute, or end_compute==-1");
     }
 
-    switch (input_vals.getType()) {
+    sw ch ( nput_vals.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::discretizerInfer<float>(output_keys, output_vals,
-                  input_ids, input_vals,
-                  bin_ids, bin_vals, feature_offsets, output_bits, ID_to_index,
+      twml::d scret zer nfer<float>(output_keys, output_vals,
+                   nput_ ds,  nput_vals,
+                  b n_ ds, b n_vals, feature_offsets, output_b s,  D_to_ ndex,
                   start_compute, end_compute, output_start);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::discretizerInfer<double>(output_keys, output_vals,
-                   input_ids, input_vals,
-                   bin_ids, bin_vals, feature_offsets, output_bits, ID_to_index,
+      twml::d scret zer nfer<double>(output_keys, output_vals,
+                    nput_ ds,  nput_vals,
+                   b n_ ds, b n_vals, feature_offsets, output_b s,  D_to_ ndex,
                    start_compute, end_compute, output_start);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for discretizerInfer");
+        "Unsupported datatype for d scret zer nfer");
     }
   }
-}  // namespace twml
+}  // na space twml

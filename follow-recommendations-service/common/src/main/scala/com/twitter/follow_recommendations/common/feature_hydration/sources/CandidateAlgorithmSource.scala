@@ -1,73 +1,73 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.google. nject. nject
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters.Cand dateAlgor hmAdapter
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce d
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * This source only takes features from the candidate's source,
- * which is all the information we have about the candidate pre-feature-hydration
+ * T  s ce only takes features from t  cand date's s ce,
+ * wh ch  s all t   nformat on   have about t  cand date pre-feature-hydrat on
  */
 
-@Provides
-@Singleton
-class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) extends FeatureSource {
+@Prov des
+@S ngleton
+class Cand dateAlgor hmS ce @ nject() (stats: StatsRece ver) extends FeatureS ce {
 
-  override val id: FeatureSourceId = FeatureSourceId.CandidateAlgorithmSourceId
+  overr de val  d: FeatureS ce d = FeatureS ce d.Cand dateAlgor hmS ce d
 
-  override val featureContext: FeatureContext = CandidateAlgorithmAdapter.getFeatureContext
+  overr de val featureContext: FeatureContext = Cand dateAlgor hmAdapter.getFeatureContext
 
-  override def hydrateFeatures(
-    t: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation, // we don't use the target here
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    val featureHydrationStats = stats.scope("candidate_alg_source")
-    val hasSourceDetailsStat = featureHydrationStats.counter("has_source_details")
-    val noSourceDetailsStat = featureHydrationStats.counter("no_source_details")
-    val noSourceRankStat = featureHydrationStats.counter("no_source_rank")
-    val hasSourceRankStat = featureHydrationStats.counter("has_source_rank")
-    val noSourceScoreStat = featureHydrationStats.counter("no_source_score")
-    val hasSourceScoreStat = featureHydrationStats.counter("has_source_score")
+  overr de def hydrateFeatures(
+    t: HasCl entContext
+      w h HasPreFetc dFeature
+      w h HasParams
+      w h HasS m larToContext
+      w h HasD splayLocat on, //   don't use t  target  re
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Map[Cand dateUser, DataRecord]] = {
+    val featureHydrat onStats = stats.scope("cand date_alg_s ce")
+    val hasS ceDeta lsStat = featureHydrat onStats.counter("has_s ce_deta ls")
+    val noS ceDeta lsStat = featureHydrat onStats.counter("no_s ce_deta ls")
+    val noS ceRankStat = featureHydrat onStats.counter("no_s ce_rank")
+    val hasS ceRankStat = featureHydrat onStats.counter("has_s ce_rank")
+    val noS ceScoreStat = featureHydrat onStats.counter("no_s ce_score")
+    val hasS ceScoreStat = featureHydrat onStats.counter("has_s ce_score")
 
-    val candidatesToAlgoMap = for {
-      candidate <- candidates
-    } yield {
-      if (candidate.userCandidateSourceDetails.nonEmpty) {
-        hasSourceDetailsStat.incr()
-        candidate.userCandidateSourceDetails.foreach { details =>
-          if (details.candidateSourceRanks.isEmpty) {
-            noSourceRankStat.incr()
+    val cand datesToAlgoMap = for {
+      cand date <- cand dates
+    } y eld {
+       f (cand date.userCand dateS ceDeta ls.nonEmpty) {
+        hasS ceDeta lsStat. ncr()
+        cand date.userCand dateS ceDeta ls.foreach { deta ls =>
+           f (deta ls.cand dateS ceRanks. sEmpty) {
+            noS ceRankStat. ncr()
           } else {
-            hasSourceRankStat.incr()
+            hasS ceRankStat. ncr()
           }
-          if (details.candidateSourceScores.isEmpty) {
-            noSourceScoreStat.incr()
+           f (deta ls.cand dateS ceScores. sEmpty) {
+            noS ceScoreStat. ncr()
           } else {
-            hasSourceScoreStat.incr()
+            hasS ceScoreStat. ncr()
           }
         }
       } else {
-        noSourceDetailsStat.incr()
+        noS ceDeta lsStat. ncr()
       }
-      candidate -> CandidateAlgorithmAdapter.adaptToDataRecord(candidate.userCandidateSourceDetails)
+      cand date -> Cand dateAlgor hmAdapter.adaptToDataRecord(cand date.userCand dateS ceDeta ls)
     }
-    Stitch.value(candidatesToAlgoMap.toMap)
+    St ch.value(cand datesToAlgoMap.toMap)
   }
 }

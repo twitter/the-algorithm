@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.app.Flag
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter. rm .stp.thr ftscala.STPResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport javax. nject.Na d
 
-object StrongTiePredictionStoreModule extends TwitterModule {
+object StrongT ePred ct onStoreModule extends Tw terModule {
 
-  private val strongTiePredictionColumnPath: Flag[String] = flag[String](
-    name = "crMixer.strongTiePredictionColumnPath",
-    default = "onboarding/userrecs/strong_tie_prediction_big",
-    help = "Strato column path for StrongTiePredictionStore"
+  pr vate val strongT ePred ct onColumnPath: Flag[Str ng] = flag[Str ng](
+    na  = "crM xer.strongT ePred ct onColumnPath",
+    default = "onboard ng/userrecs/strong_t e_pred ct on_b g",
+     lp = "Strato column path for StrongT ePred ct onStore"
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.StpStore)
-  def providesStrongTiePredictionStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, STPResult] = {
-    val strongTiePredictionStratoFetchableStore = StratoFetchableStore
-      .withUnitView[UserId, STPResult](stratoClient, strongTiePredictionColumnPath())
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.StpStore)
+  def prov desStrongT ePred ct onStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[User d, STPResult] = {
+    val strongT ePred ct onStratoFetchableStore = StratoFetchableStore
+      .w hUn V ew[User d, STPResult](stratoCl ent, strongT ePred ct onColumnPath())
 
     ObservedReadableStore(
-      strongTiePredictionStratoFetchableStore
-    )(statsReceiver.scope("strong_tie_prediction_big_store"))
+      strongT ePred ct onStratoFetchableStore
+    )(statsRece ver.scope("strong_t e_pred ct on_b g_store"))
   }
 }

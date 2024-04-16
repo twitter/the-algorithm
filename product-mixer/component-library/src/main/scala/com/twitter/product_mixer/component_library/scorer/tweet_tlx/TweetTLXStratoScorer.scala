@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.scorer.tweet_tlx
+package com.tw ter.product_m xer.component_l brary.scorer.t et_tlx
 
-import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch.Result
-import com.twitter.strato.generated.client.ml.featureStore.TimelineScorerTweetScoresV1ClientColumn
-import com.twitter.timelinescorer.thriftscala.v1
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ml.featurestore.t  l nes.thr ftscala.T  l neScorerScoreV ew
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Fetch.Result
+ mport com.tw ter.strato.generated.cl ent.ml.featureStore.T  l neScorerT etScoresV1Cl entColumn
+ mport com.tw ter.t  l nescorer.thr ftscala.v1
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Score Tweets via Timeline Scorer (TLX) Strato API
+ * Score T ets v a T  l ne Scorer (TLX) Strato AP 
  *
- * @note This results in an additional hop through Strato Server
- * @note This is the [[Scorer]] version of
- * [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx.TweetTLXScoreCandidateFeatureHydrator]]
+ * @note T  results  n an add  onal hop through Strato Server
+ * @note T   s t  [[Scorer]] vers on of
+ * [[com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_tlx.T etTLXScoreCand dateFeatureHydrator]]
  */
-@Singleton
-class TweetTLXStratoScorer @Inject() (column: TimelineScorerTweetScoresV1ClientColumn)
-    extends Scorer[PipelineQuery, TweetCandidate] {
+@S ngleton
+class T etTLXStratoScorer @ nject() (column: T  l neScorerT etScoresV1Cl entColumn)
+    extends Scorer[P pel neQuery, T etCand date] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("TweetTLX")
+  overr de val  dent f er: Scorer dent f er = Scorer dent f er("T etTLX")
 
-  override val features: Set[Feature[_, _]] = Set(TLXScore)
+  overr de val features: Set[Feature[_, _]] = Set(TLXScore)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = query.getOptionalUserId match {
-    case Some(userId) => getScoredTweetsFromTLX(userId, candidates.map(_.candidate))
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = query.getOpt onalUser d match {
+    case So (user d) => getScoredT etsFromTLX(user d, cand dates.map(_.cand date))
     case _ =>
-      val defaultFeatureMap = FeatureMapBuilder().add(TLXScore, None).build()
-      Stitch.value(candidates.map(_ => defaultFeatureMap))
+      val defaultFeatureMap = FeatureMapBu lder().add(TLXScore, None).bu ld()
+      St ch.value(cand dates.map(_ => defaultFeatureMap))
   }
 
-  def getScoredTweetsFromTLX(
-    userId: Long,
-    tweetCandidates: Seq[TweetCandidate]
-  ): Stitch[Seq[FeatureMap]] = Stitch.collect(tweetCandidates.map { candidate =>
-    column.fetcher
-      .fetch(candidate.id, TimelineScorerScoreView(Some(userId)))
+  def getScoredT etsFromTLX(
+    user d: Long,
+    t etCand dates: Seq[T etCand date]
+  ): St ch[Seq[FeatureMap]] = St ch.collect(t etCand dates.map { cand date =>
+    column.fetc r
+      .fetch(cand date. d, T  l neScorerScoreV ew(So (user d)))
       .map {
-        case Result(Some(v1.ScoredTweet(_, score, _, _)), _) =>
-          FeatureMapBuilder()
+        case Result(So (v1.ScoredT et(_, score, _, _)), _) =>
+          FeatureMapBu lder()
             .add(TLXScore, score)
-            .build()
-        case fetchResult => throw new Exception(s"Invalid response from TLX: ${fetchResult.v}")
+            .bu ld()
+        case fetchResult => throw new Except on(s" nval d response from TLX: ${fetchResult.v}")
       }
   })
 }

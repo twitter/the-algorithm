@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.product
+package com.tw ter.product_m xer.core.product
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.configapi.registry.ParamConfigBuilder
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.decider.DeciderUtils
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry.ParamConf gBu lder
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Opt onalOverr de
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derUt ls
 
-trait ProductParamConfigBuilder extends ParamConfigBuilder {
-  productParamConfig: ProductParamConfig =>
+tra  ProductParamConf gBu lder extends ParamConf gBu lder {
+  productParamConf g: ProductParamConf g =>
 
-  override def build(
-    deciderGateBuilder: DeciderGateBuilder,
-    statsReceiver: StatsReceiver
-  ): Seq[OptionalOverride[_]] = {
-    DeciderUtils.getBooleanDeciderOverrides(deciderGateBuilder, EnabledDeciderParam) ++
-      FeatureSwitchOverrideUtil.getBooleanFSOverrides(SupportedClientParam) ++
-      super.build(deciderGateBuilder, statsReceiver)
+  overr de def bu ld(
+    dec derGateBu lder: Dec derGateBu lder,
+    statsRece ver: StatsRece ver
+  ): Seq[Opt onalOverr de[_]] = {
+    Dec derUt ls.getBooleanDec derOverr des(dec derGateBu lder, EnabledDec derParam) ++
+      FeatureSw chOverr deUt l.getBooleanFSOverr des(SupportedCl entParam) ++
+      super.bu ld(dec derGateBu lder, statsRece ver)
   }
 }

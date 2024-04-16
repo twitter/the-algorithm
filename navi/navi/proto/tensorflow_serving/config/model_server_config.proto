@@ -1,85 +1,85 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "google/protobuf/any.proto";
-import "tensorflow_serving/config/file_system_storage_path_source.proto";
-import "tensorflow_serving/config/logging_config.proto";
+ mport "google/protobuf/any.proto";
+ mport "tensorflow_serv ng/conf g/f le_system_storage_path_s ce.proto";
+ mport "tensorflow_serv ng/conf g/logg ng_conf g.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-// The type of model.
+// T  type of model.
 // TODO(b/31336131): DEPRECATED.
 enum ModelType {
-  MODEL_TYPE_UNSPECIFIED = 0 [deprecated = true];
+  MODEL_TYPE_UNSPEC F ED = 0 [deprecated = true];
   TENSORFLOW = 1 [deprecated = true];
   OTHER = 2 [deprecated = true];
 }
 
-// Common configuration for loading a model being served.
-message ModelConfig {
-  // Name of the model.
-  string name = 1;
+// Common conf gurat on for load ng a model be ng served.
+ ssage ModelConf g {
+  // Na  of t  model.
+  str ng na  = 1;
 
-  // Base path to the model, excluding the version directory.
-  // E.g> for a model at /foo/bar/my_model/123, where 123 is the version, the
-  // base path is /foo/bar/my_model.
+  // Base path to t  model, exclud ng t  vers on d rectory.
+  // E.g> for a model at /foo/bar/ _model/123, w re 123  s t  vers on, t 
+  // base path  s /foo/bar/ _model.
   //
-  // (This can be changed once a model is in serving, *if* the underlying data
-  // remains the same. Otherwise there are no guarantees about whether the old
-  // or new data will be used for model versions currently loaded.)
-  string base_path = 2;
+  // (T  can be changed once a model  s  n serv ng, * f* t  underly ng data
+  // rema ns t  sa . Ot rw se t re are no guarantees about w t r t  old
+  // or new data w ll be used for model vers ons currently loaded.)
+  str ng base_path = 2;
 
   // Type of model.
-  // TODO(b/31336131): DEPRECATED. Please use 'model_platform' instead.
+  // TODO(b/31336131): DEPRECATED. Please use 'model_platform'  nstead.
   ModelType model_type = 3 [deprecated = true];
 
   // Type of model (e.g. "tensorflow").
   //
-  // (This cannot be changed once a model is in serving.)
-  string model_platform = 4;
+  // (T  cannot be changed once a model  s  n serv ng.)
+  str ng model_platform = 4;
 
   reserved 5, 9;
 
-  // Version policy for the model indicating which version(s) of the model to
-  // load and make available for serving simultaneously.
-  // The default option is to serve only the latest version of the model.
+  // Vers on pol cy for t  model  nd cat ng wh ch vers on(s) of t  model to
+  // load and make ava lable for serv ng s multaneously.
+  // T  default opt on  s to serve only t  latest vers on of t  model.
   //
-  // (This can be changed once a model is in serving.)
-  FileSystemStoragePathSourceConfig.ServableVersionPolicy model_version_policy =
+  // (T  can be changed once a model  s  n serv ng.)
+  F leSystemStoragePathS ceConf g.ServableVers onPol cy model_vers on_pol cy =
       7;
 
-  // String labels to associate with versions of the model, allowing inference
-  // queries to refer to versions by label instead of number. Multiple labels
-  // can map to the same version, but not vice-versa.
+  // Str ng labels to assoc ate w h vers ons of t  model, allow ng  nference
+  // quer es to refer to vers ons by label  nstead of number. Mult ple labels
+  // can map to t  sa  vers on, but not v ce-versa.
   //
-  // An envisioned use-case for these labels is canarying tentative versions.
-  // For example, one can assign labels "stable" and "canary" to two specific
-  // versions. Perhaps initially "stable" is assigned to version 0 and "canary"
-  // to version 1. Once version 1 passes canary, one can shift the "stable"
-  // label to refer to version 1 (at that point both labels map to the same
-  // version -- version 1 -- which is fine). Later once version 2 is ready to
-  // canary one can move the "canary" label to version 2. And so on.
-  map<string, int64> version_labels = 8;
+  // An env s oned use-case for t se labels  s canary ng tentat ve vers ons.
+  // For example, one can ass gn labels "stable" and "canary" to two spec f c
+  // vers ons. Perhaps  n  ally "stable"  s ass gned to vers on 0 and "canary"
+  // to vers on 1. Once vers on 1 passes canary, one can sh ft t  "stable"
+  // label to refer to vers on 1 (at that po nt both labels map to t  sa 
+  // vers on -- vers on 1 -- wh ch  s f ne). Later once vers on 2  s ready to
+  // canary one can move t  "canary" label to vers on 2. And so on.
+  map<str ng,  nt64> vers on_labels = 8;
 
-  // Configures logging requests and responses, to the model.
+  // Conf gures logg ng requests and responses, to t  model.
   //
-  // (This can be changed once a model is in serving.)
-  LoggingConfig logging_config = 6;
+  // (T  can be changed once a model  s  n serv ng.)
+  Logg ngConf g logg ng_conf g = 6;
 }
 
-// Static list of models to be loaded for serving.
-message ModelConfigList {
-  repeated ModelConfig config = 1;
+// Stat c l st of models to be loaded for serv ng.
+ ssage ModelConf gL st {
+  repeated ModelConf g conf g = 1;
 }
 
-// ModelServer config.
-message ModelServerConfig {
-  // ModelServer takes either a static file-based model config list or an Any
-  // proto representing custom model config that is fetched dynamically at
-  // runtime (through network RPC, custom service, etc.).
-  oneof config {
-    ModelConfigList model_config_list = 1;
-    google.protobuf.Any custom_model_config = 2;
+// ModelServer conf g.
+ ssage ModelServerConf g {
+  // ModelServer takes e  r a stat c f le-based model conf g l st or an Any
+  // proto represent ng custom model conf g that  s fetc d dynam cally at
+  // runt   (through network RPC, custom serv ce, etc.).
+  oneof conf g {
+    ModelConf gL st model_conf g_l st = 1;
+    google.protobuf.Any custom_model_conf g = 2;
   }
 }

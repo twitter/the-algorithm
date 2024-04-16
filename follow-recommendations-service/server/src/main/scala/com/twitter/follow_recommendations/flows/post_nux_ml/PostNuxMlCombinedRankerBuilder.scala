@@ -1,193 +1,193 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.IdentityRanker
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.fatigue_ranker.ImpressionBasedFatigueRanker
-import com.twitter.follow_recommendations.common.rankers.first_n_ranker.FirstNRanker
-import com.twitter.follow_recommendations.common.rankers.first_n_ranker.FirstNRankerParams
-import com.twitter.follow_recommendations.common.rankers.interleave_ranker.InterleaveRanker
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.HydrateFeaturesTransform
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRanker
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRankerParams
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRanker
-import com.twitter.follow_recommendations.configapi.candidates.HydrateCandidateParamsTransform
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yRanker
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.models._
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.fat gue_ranker. mpress onBasedFat gueRanker
+ mport com.tw ter.follow_recom ndat ons.common.rankers.f rst_n_ranker.F rstNRanker
+ mport com.tw ter.follow_recom ndat ons.common.rankers.f rst_n_ranker.F rstNRankerParams
+ mport com.tw ter.follow_recom ndat ons.common.rankers. nterleave_ranker. nterleaveRanker
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng.HydrateFeaturesTransform
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng.MlRanker
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng.MlRankerParams
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.  ghtedCand dateS ceRanker
+ mport com.tw ter.follow_recom ndat ons.conf gap .cand dates.HydrateCand dateParamsTransform
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * Used to build the combined ranker comprising 4 stages of ranking:
- * - weighted sampler
- * - truncating to the top N merged results for ranking
+ * Used to bu ld t  comb ned ranker compr s ng 4 stages of rank ng:
+ * -   ghted sampler
+ * - truncat ng to t  top N  rged results for rank ng
  * - ML ranker
- * - Interleaving ranker for producer-side experiments
- * - impression-based fatigueing
+ * -  nterleav ng ranker for producer-s de exper  nts
+ * -  mpress on-based fat gue ng
  */
-@Singleton
-class PostNuxMlCombinedRankerBuilder[
-  T <: HasParams with HasSimilarToContext with HasClientContext with HasExcludedUserIds with HasDisplayLocation with HasDebugOptions with HasPreFetchedFeature with HasDismissedUserIds with HasQualityFactor] @Inject() (
-  firstNRanker: FirstNRanker[T],
+@S ngleton
+class PostNuxMlComb nedRankerBu lder[
+  T <: HasParams w h HasS m larToContext w h HasCl entContext w h HasExcludedUser ds w h HasD splayLocat on w h HasDebugOpt ons w h HasPreFetc dFeature w h HasD sm ssedUser ds w h HasQual yFactor] @ nject() (
+  f rstNRanker: F rstNRanker[T],
   hydrateFeaturesTransform: HydrateFeaturesTransform[T],
-  hydrateCandidateParamsTransform: HydrateCandidateParamsTransform[T],
+  hydrateCand dateParamsTransform: HydrateCand dateParamsTransform[T],
   mlRanker: MlRanker[T],
-  statsReceiver: StatsReceiver) {
-  private[this] val stats: StatsReceiver = statsReceiver.scope("post_nux_ml_ranker")
+  statsRece ver: StatsRece ver) {
+  pr vate[t ] val stats: StatsRece ver = statsRece ver.scope("post_nux_ml_ranker")
 
-  // we construct each ranker independently and chain them together
-  def build(
+  //   construct each ranker  ndependently and cha n t m toget r
+  def bu ld(
     request: T,
-    candidateSourceWeights: Map[CandidateSourceIdentifier, Double]
-  ): Ranker[T, CandidateUser] = {
-    val displayLocationStats = stats.scope(request.displayLocation.toString)
-    val weightedRankerStats: StatsReceiver =
-      displayLocationStats.scope("weighted_candidate_source_ranker")
-    val firstNRankerStats: StatsReceiver =
-      displayLocationStats.scope("first_n_ranker")
-    val hydrateCandidateParamsStats =
-      displayLocationStats.scope("hydrate_candidate_params")
-    val fatigueRankerStats = displayLocationStats.scope("fatigue_ranker")
-    val interleaveRankerStats =
-      displayLocationStats.scope("interleave_ranker")
-    val allRankersStats = displayLocationStats.scope("all_rankers")
+    cand dateS ce  ghts: Map[Cand dateS ce dent f er, Double]
+  ): Ranker[T, Cand dateUser] = {
+    val d splayLocat onStats = stats.scope(request.d splayLocat on.toStr ng)
+    val   ghtedRankerStats: StatsRece ver =
+      d splayLocat onStats.scope("  ghted_cand date_s ce_ranker")
+    val f rstNRankerStats: StatsRece ver =
+      d splayLocat onStats.scope("f rst_n_ranker")
+    val hydrateCand dateParamsStats =
+      d splayLocat onStats.scope("hydrate_cand date_params")
+    val fat gueRankerStats = d splayLocat onStats.scope("fat gue_ranker")
+    val  nterleaveRankerStats =
+      d splayLocat onStats.scope(" nterleave_ranker")
+    val allRankersStats = d splayLocat onStats.scope("all_rankers")
 
-    // Checking if the heavy-ranker is an experimental model.
-    // If it is, InterleaveRanker and candidate parameter hydration are disabled.
-    // *NOTE* that consumer-side experiments should at any time take a small % of traffic, less
-    // than 20% for instance, to leave enough room for producer experiments. Increasing bucket
-    // size for producer experiments lead to other issues and is not a viable option for faster
-    // experiments.
-    val requestRankerId = request.params(MlRankerParams.RequestScorerIdParam)
-    if (requestRankerId != RankerId.PostNuxProdRanker) {
-      hydrateCandidateParamsStats.counter(s"disabled_by_${requestRankerId.toString}").incr()
-      interleaveRankerStats.counter(s"disabled_by_${requestRankerId.toString}").incr()
+    // C ck ng  f t   avy-ranker  s an exper  ntal model.
+    //  f    s,  nterleaveRanker and cand date para ter hydrat on are d sabled.
+    // *NOTE* that consu r-s de exper  nts should at any t   take a small % of traff c, less
+    // than 20% for  nstance, to leave enough room for producer exper  nts.  ncreas ng bucket
+    // s ze for producer exper  nts lead to ot r  ssues and  s not a v able opt on for faster
+    // exper  nts.
+    val requestRanker d = request.params(MlRankerParams.RequestScorer dParam)
+     f (requestRanker d != Ranker d.PostNuxProdRanker) {
+      hydrateCand dateParamsStats.counter(s"d sabled_by_${requestRanker d.toStr ng}"). ncr()
+       nterleaveRankerStats.counter(s"d sabled_by_${requestRanker d.toStr ng}"). ncr()
     }
 
-    // weighted ranker that samples from the candidate sources
-    val weightedRanker = WeightedCandidateSourceRanker
-      .build[T](
-        candidateSourceWeights,
-        request.params(PostNuxMlParams.CandidateShuffler).shuffle(request.getRandomizationSeed),
-        randomSeed = request.getRandomizationSeed
-      ).observe(weightedRankerStats)
+    //   ghted ranker that samples from t  cand date s ces
+    val   ghtedRanker =   ghtedCand dateS ceRanker
+      .bu ld[T](
+        cand dateS ce  ghts,
+        request.params(PostNuxMlParams.Cand dateShuffler).shuffle(request.getRandom zat onSeed),
+        randomSeed = request.getRandom zat onSeed
+      ).observe(  ghtedRankerStats)
 
-    // ranker that takes the first n results (ie truncates output) while merging duplicates
-    val firstNRankerObs = firstNRanker.observe(firstNRankerStats)
-    // either ML ranker that uses deepbirdv2 to score or no ranking
-    val mainRanker: Ranker[T, CandidateUser] =
-      buildMainRanker(request, requestRankerId == RankerId.PostNuxProdRanker, displayLocationStats)
-    // fatigue ranker that uses wtf impressions to fatigue
-    val fatigueRanker = buildFatigueRanker(request, fatigueRankerStats).observe(fatigueRankerStats)
+    // ranker that takes t  f rst n results ( e truncates output) wh le  rg ng dupl cates
+    val f rstNRankerObs = f rstNRanker.observe(f rstNRankerStats)
+    // e  r ML ranker that uses deepb rdv2 to score or no rank ng
+    val ma nRanker: Ranker[T, Cand dateUser] =
+      bu ldMa nRanker(request, requestRanker d == Ranker d.PostNuxProdRanker, d splayLocat onStats)
+    // fat gue ranker that uses wtf  mpress ons to fat gue
+    val fat gueRanker = bu ldFat gueRanker(request, fat gueRankerStats).observe(fat gueRankerStats)
 
-    // interleaveRanker combines rankings from several rankers and enforces candidates' ranks in
-    // experiment buckets according to their assigned ranker model.
-    val interleaveRanker =
-      buildInterleaveRanker(
+    //  nterleaveRanker comb nes rank ngs from several rankers and enforces cand dates' ranks  n
+    // exper  nt buckets accord ng to t  r ass gned ranker model.
+    val  nterleaveRanker =
+      bu ld nterleaveRanker(
         request,
-        requestRankerId == RankerId.PostNuxProdRanker,
-        interleaveRankerStats)
-        .observe(interleaveRankerStats)
+        requestRanker d == Ranker d.PostNuxProdRanker,
+         nterleaveRankerStats)
+        .observe( nterleaveRankerStats)
 
-    weightedRanker
-      .andThen(firstNRankerObs)
-      .andThen(mainRanker)
-      .andThen(fatigueRanker)
-      .andThen(interleaveRanker)
+      ghtedRanker
+      .andT n(f rstNRankerObs)
+      .andT n(ma nRanker)
+      .andT n(fat gueRanker)
+      .andT n( nterleaveRanker)
       .observe(allRankersStats)
   }
 
-  def buildMainRanker(
+  def bu ldMa nRanker(
     request: T,
-    isMainRankerPostNuxProd: Boolean,
-    displayLocationStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
+     sMa nRankerPostNuxProd: Boolean,
+    d splayLocat onStats: StatsRece ver
+  ): Ranker[T, Cand dateUser] = {
 
-    // note that we may be disabling heavy ranker for users not bucketed
-    // (due to empty results from the new candidate source)
-    // need a better solution in the future
-    val mlRankerStats = displayLocationStats.scope("ml_ranker")
-    val noMlRankerStats = displayLocationStats.scope("no_ml_ranker")
+    // note that   may be d sabl ng  avy ranker for users not bucketed
+    // (due to empty results from t  new cand date s ce)
+    // need a better solut on  n t  future
+    val mlRankerStats = d splayLocat onStats.scope("ml_ranker")
+    val noMlRankerStats = d splayLocat onStats.scope("no_ml_ranker")
     val hydrateFeaturesStats =
-      displayLocationStats.scope("hydrate_features")
-    val hydrateCandidateParamsStats =
-      displayLocationStats.scope("hydrate_candidate_params")
-    val notHydrateCandidateParamsStats =
-      displayLocationStats.scope("not_hydrate_candidate_params")
-    val rankerStats = displayLocationStats.scope("ranker")
-    val mlRankerDisabledByExperimentsCounter =
-      mlRankerStats.counter("disabled_by_experiments")
-    val mlRankerDisabledByQualityFactorCounter =
-      mlRankerStats.counter("disabled_by_quality_factor")
+      d splayLocat onStats.scope("hydrate_features")
+    val hydrateCand dateParamsStats =
+      d splayLocat onStats.scope("hydrate_cand date_params")
+    val notHydrateCand dateParamsStats =
+      d splayLocat onStats.scope("not_hydrate_cand date_params")
+    val rankerStats = d splayLocat onStats.scope("ranker")
+    val mlRankerD sabledByExper  ntsCounter =
+      mlRankerStats.counter("d sabled_by_exper  nts")
+    val mlRankerD sabledByQual yFactorCounter =
+      mlRankerStats.counter("d sabled_by_qual y_factor")
 
-    val disabledByQualityFactor = request.qualityFactor
-      .exists(_ <= request.params(PostNuxMlParams.TurnoffMLScorerQFThreshold))
+    val d sabledByQual yFactor = request.qual yFactor
+      .ex sts(_ <= request.params(PostNuxMlParams.TurnoffMLScorerQFThreshold))
 
-    if (disabledByQualityFactor)
-      mlRankerDisabledByQualityFactorCounter.incr()
+     f (d sabledByQual yFactor)
+      mlRankerD sabledByQual yFactorCounter. ncr()
 
-    if (request.params(PostNuxMlParams.UseMlRanker) && !disabledByQualityFactor) {
+     f (request.params(PostNuxMlParams.UseMlRanker) && !d sabledByQual yFactor) {
 
       val hydrateFeatures = hydrateFeaturesTransform
         .observe(hydrateFeaturesStats)
 
-      val optionalHydratedParamsTransform: Transform[T, CandidateUser] = {
-        // We disable candidate parameter hydration for experimental heavy-ranker models.
-        if (isMainRankerPostNuxProd &&
-          request.params(PostNuxMlParams.EnableCandidateParamHydration)) {
-          hydrateCandidateParamsTransform
-            .observe(hydrateCandidateParamsStats)
+      val opt onalHydratedParamsTransform: Transform[T, Cand dateUser] = {
+        //   d sable cand date para ter hydrat on for exper  ntal  avy-ranker models.
+         f ( sMa nRankerPostNuxProd &&
+          request.params(PostNuxMlParams.EnableCand dateParamHydrat on)) {
+          hydrateCand dateParamsTransform
+            .observe(hydrateCand dateParamsStats)
         } else {
-          new IdentityTransform[T, CandidateUser]()
-            .observe(notHydrateCandidateParamsStats)
+          new  dent yTransform[T, Cand dateUser]()
+            .observe(notHydrateCand dateParamsStats)
         }
       }
-      val candidateSize = request.params(FirstNRankerParams.CandidatesToRank)
+      val cand dateS ze = request.params(F rstNRankerParams.Cand datesToRank)
       Ranker
-        .chain(
-          hydrateFeatures.andThen(optionalHydratedParamsTransform),
+        .cha n(
+          hydrateFeatures.andT n(opt onalHydratedParamsTransform),
           mlRanker.observe(mlRankerStats),
         )
-        .within(
+        .w h n(
           request.params(PostNuxMlParams.MlRankerBudget),
-          rankerStats.scope(s"n$candidateSize"))
+          rankerStats.scope(s"n$cand dateS ze"))
     } else {
-      new IdentityRanker[T, CandidateUser].observe(noMlRankerStats)
+      new  dent yRanker[T, Cand dateUser].observe(noMlRankerStats)
     }
   }
 
-  def buildInterleaveRanker(
+  def bu ld nterleaveRanker(
     request: T,
-    isMainRankerPostNuxProd: Boolean,
-    interleaveRankerStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
-    // InterleaveRanker is enabled only for display locations powered by the PostNux heavy-ranker.
-    if (request.params(PostNuxMlParams.EnableInterleaveRanker) &&
-      // InterleaveRanker is disabled for requests with experimental heavy-rankers.
-      isMainRankerPostNuxProd) {
-      new InterleaveRanker[T](interleaveRankerStats)
+     sMa nRankerPostNuxProd: Boolean,
+     nterleaveRankerStats: StatsRece ver
+  ): Ranker[T, Cand dateUser] = {
+    //  nterleaveRanker  s enabled only for d splay locat ons po red by t  PostNux  avy-ranker.
+     f (request.params(PostNuxMlParams.Enable nterleaveRanker) &&
+      //  nterleaveRanker  s d sabled for requests w h exper  ntal  avy-rankers.
+       sMa nRankerPostNuxProd) {
+      new  nterleaveRanker[T]( nterleaveRankerStats)
     } else {
-      new IdentityRanker[T, CandidateUser]()
+      new  dent yRanker[T, Cand dateUser]()
     }
   }
 
-  def buildFatigueRanker(
+  def bu ldFat gueRanker(
     request: T,
-    fatigueRankerStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
-    if (request.params(PostNuxMlParams.EnableFatigueRanker)) {
-      ImpressionBasedFatigueRanker
-        .build[T](
-          fatigueRankerStats
-        ).within(request.params(PostNuxMlParams.FatigueRankerBudget), fatigueRankerStats)
+    fat gueRankerStats: StatsRece ver
+  ): Ranker[T, Cand dateUser] = {
+     f (request.params(PostNuxMlParams.EnableFat gueRanker)) {
+       mpress onBasedFat gueRanker
+        .bu ld[T](
+          fat gueRankerStats
+        ).w h n(request.params(PostNuxMlParams.Fat gueRankerBudget), fat gueRankerStats)
     } else {
-      new IdentityRanker[T, CandidateUser]()
+      new  dent yRanker[T, Cand dateUser]()
     }
   }
 }

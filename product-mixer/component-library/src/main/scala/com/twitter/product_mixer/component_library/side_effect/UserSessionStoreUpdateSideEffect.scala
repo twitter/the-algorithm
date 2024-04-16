@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.tw ter.product_m xer.component_l brary.s de_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.WriteRequest
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.user_sess on_store.ReadWr eUserSess onStore
+ mport com.tw ter.user_sess on_store.Wr eRequest
 
 /**
- * A [[PipelineResultSideEffect]] that writes to a [[ReadWriteUserSessionStore]]
+ * A [[P pel neResultS deEffect]] that wr es to a [[ReadWr eUserSess onStore]]
  */
-trait UserSessionStoreUpdateSideEffect[
-  Request <: WriteRequest,
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+tra  UserSess onStoreUpdateS deEffect[
+  Request <: Wr eRequest,
+  Query <: P pel neQuery,
+  ResponseType <: HasMarshall ng]
+    extends P pel neResultS deEffect[Query, ResponseType] {
 
   /**
-   * Build the write request from the query
-   * @param query PipelineQuery
-   * @return WriteRequest
+   * Bu ld t  wr e request from t  query
+   * @param query P pel neQuery
+   * @return Wr eRequest
    */
-  def buildWriteRequest(query: Query): Option[Request]
+  def bu ldWr eRequest(query: Query): Opt on[Request]
 
-  val userSessionStore: ReadWriteUserSessionStore
+  val userSess onStore: ReadWr eUserSess onStore
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
-  ): Stitch[Unit] = {
-    buildWriteRequest(inputs.query)
-      .map(userSessionStore.write)
-      .getOrElse(Stitch.Unit)
+  f nal overr de def apply(
+     nputs: P pel neResultS deEffect. nputs[Query, ResponseType]
+  ): St ch[Un ] = {
+    bu ldWr eRequest( nputs.query)
+      .map(userSess onStore.wr e)
+      .getOrElse(St ch.Un )
   }
 }

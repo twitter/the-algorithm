@@ -1,168 +1,168 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.producer
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{DataSources, InterestedInSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedIn
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{
-  ClusterId,
-  ProducerId,
-  UserId
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.scald ng_ nternal.s ce.lzo_scrooge.F xedPathLzoScrooge
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{DataS ces,  nterested nS ces}
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.{SparseMatr x, SparseRowMatr x}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested n
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.{
+  Cluster d,
+  Producer d,
+  User d
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingBaseJob
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType, _}
-import java.util.TimeZone
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.S mClustersEmbedd ngBaseJob
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Embedd ngType, _}
+ mport java.ut l.T  Zone
 
 /**
- * This file implements a new Producer SimClusters Embeddings.
- * The differences with existing producer embeddings are:
+ * T  f le  mple nts a new Producer S mClusters Embedd ngs.
+ * T  d fferences w h ex st ng producer embedd ngs are:
  *
- * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
- * 2) we use log-fav scores in the user-producer graph and user-simclusters graph.
- * LogFav scores are smoother than fav scores we previously used and they are less sensitive to outliers
+ * 1) t  embedd ng scores are not normal zed, so that one can aggregate mult ple producer embedd ngs by add ng t m.
+ * 2)   use log-fav scores  n t  user-producer graph and user-s mclusters graph.
+ * LogFav scores are smoot r than fav scores   prev ously used and t y are less sens  ve to outl ers
  *
  *
  *
- *  The main difference with other normalized embeddings is the `convertEmbeddingToAggregatableEmbeddings` function
- *  where we multiply the normalized embedding with producer's norms. The resulted embeddings are then
- *  unnormalized and aggregatable.
+ *  T  ma n d fference w h ot r normal zed embedd ngs  s t  `convertEmbedd ngToAggregatableEmbedd ngs` funct on
+ *  w re   mult ply t  normal zed embedd ng w h producer's norms. T  resulted embedd ngs are t n
+ *  unnormal zed and aggregatable.
  *
  */
-trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[ProducerId] {
+tra  AggregatableProducerEmbedd ngsBaseApp extends S mClustersEmbedd ngBaseJob[Producer d] {
 
-  val userToProducerScoringFn: NeighborWithWeights => Double
-  val userToClusterScoringFn: UserToInterestedInClusterScores => Double
-  val modelVersion: ModelVersion
+  val userToProducerScor ngFn: Ne ghborW h  ghts => Double
+  val userToClusterScor ngFn: UserTo nterested nClusterScores => Double
+  val modelVers on: ModelVers on
 
-  // Minimum engagement threshold
-  val minNumFavers: Int = ProducerEmbeddingsFromInterestedIn.minNumFaversForProducer
+  // M n mum engage nt threshold
+  val m nNumFavers:  nt = ProducerEmbedd ngsFrom nterested n.m nNumFaversForProducer
 
-  override def numClustersPerNoun: Int = 60
+  overr de def numClustersPerNoun:  nt = 60
 
-  override def numNounsPerClusters: Int = 500 // this is not used for now
+  overr de def numNounsPerClusters:  nt = 500 // t   s not used for now
 
-  override def thresholdForEmbeddingScores: Double = 0.01
+  overr de def thresholdForEmbedd ngScores: Double = 0.01
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[ProducerId, UserId, Double] = {
+  overr de def prepareNounToUserMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseMatr x[Producer d, User d, Double] = {
 
-    SparseMatrix(
-      ProducerEmbeddingsFromInterestedIn
-        .getFilteredUserUserNormalizedGraph(
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          userToProducerScoringFn,
-          _.faverCount.exists(
-            _ > minNumFavers
+    SparseMatr x(
+      ProducerEmbedd ngsFrom nterested n
+        .getF lteredUserUserNormal zedGraph(
+          DataS ces.userUserNormal zedGraphS ce,
+          DataS ces.userNormsAndCounts,
+          userToProducerScor ngFn,
+          _.faverCount.ex sts(
+            _ > m nNumFavers
           )
         )
         .map {
-          case (userId, (producerId, score)) =>
-            (producerId, userId, score)
+          case (user d, (producer d, score)) =>
+            (producer d, user d, score)
         })
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ProducerEmbeddingsFromInterestedIn
-        .getUserSimClustersMatrix(
-          InterestedInSources
-            .simClustersInterestedInSource(modelVersion, dateRange.embiggen(Days(5)), timeZone),
-          userToClusterScoringFn,
-          modelVersion
+  overr de def prepareUserToClusterMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseRowMatr x[User d, Cluster d, Double] = {
+    SparseRowMatr x(
+      ProducerEmbedd ngsFrom nterested n
+        .getUserS mClustersMatr x(
+           nterested nS ces
+            .s mClusters nterested nS ce(modelVers on, dateRange.emb ggen(Days(5)), t  Zone),
+          userToClusterScor ngFn,
+          modelVers on
         )
         .mapValues(_.toMap),
-      isSkinnyMatrix = true
+       sSk nnyMatr x = true
     )
   }
 
-  // in order to make the embeddings aggregatable, we need to revert the normalization
-  // (multiply the norms) we did when computing embeddings in the base job.
-  def convertEmbeddingToAggregatableEmbeddings(
-    embeddings: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
+  //  n order to make t  embedd ngs aggregatable,   need to revert t  normal zat on
+  // (mult ply t  norms)   d d w n comput ng embedd ngs  n t  base job.
+  def convertEmbedd ngToAggregatableEmbedd ngs(
+    embedd ngs: TypedP pe[(Producer d, Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, Seq[(ClusterId, Double)])] = {
-    embeddings.join(prepareNounToUserMatrix.rowL2Norms).map {
-      case (producerId, (embeddingVec, norm)) =>
-        producerId -> embeddingVec.map {
-          case (id, score) => (id, score * norm)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Producer d, Seq[(Cluster d, Double)])] = {
+    embedd ngs.jo n(prepareNounToUserMatr x.rowL2Norms).map {
+      case (producer d, (embedd ngVec, norm)) =>
+        producer d -> embedd ngVec.map {
+          case ( d, score) => ( d, score * norm)
         }
     }
   }
 
-  override final def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(ProducerId, Double)])]
+  overr de f nal def wr eClusterToNouns ndex(
+    output: TypedP pe[(Cluster d, Seq[(Producer d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = { Execution.unit } // we do not need this for now
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = { Execut on.un  } //   do not need t  for now
 
   /**
-   * Override this method to write the manhattan dataset.
+   * Overr de t   thod to wr e t  manhattan dataset.
    */
-  def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  def wr eToManhattan(
+    output: TypedP pe[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ]
 
   /**
-   * Override this method to writethrough the thrift dataset.
+   * Overr de t   thod to wr ethrough t  thr ft dataset.
    */
-  def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  def wr eToThr ft(
+    output: TypedP pe[S mClustersEmbedd ngW h d]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ]
 
-  val embeddingType: EmbeddingType
+  val embedd ngType: Embedd ngType
 
-  override final def writeNounToClustersIndex(
-    output: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
+  overr de f nal def wr eNounToClusters ndex(
+    output: TypedP pe[(Producer d, Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val convertedEmbeddings = convertEmbeddingToAggregatableEmbeddings(output)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val convertedEmbedd ngs = convertEmbedd ngToAggregatableEmbedd ngs(output)
       .map {
-        case (producerId, topSimClustersWithScore) =>
-          val id = SimClustersEmbeddingId(
-            embeddingType = embeddingType,
-            modelVersion = modelVersion,
-            internalId = InternalId.UserId(producerId))
+        case (producer d, topS mClustersW hScore) =>
+          val  d = S mClustersEmbedd ng d(
+            embedd ngType = embedd ngType,
+            modelVers on = modelVers on,
+             nternal d =  nternal d.User d(producer d))
 
-          val embeddings = SimClustersEmbedding(topSimClustersWithScore.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+          val embedd ngs = S mClustersEmbedd ng(topS mClustersW hScore.map {
+            case (cluster d, score) => S mClusterW hScore(cluster d, score)
           })
 
-          SimClustersEmbeddingWithId(id, embeddings)
+          S mClustersEmbedd ngW h d( d, embedd ngs)
       }
 
-    val keyValuePairs = convertedEmbeddings.map { simClustersEmbeddingWithId =>
-      KeyVal(simClustersEmbeddingWithId.embeddingId, simClustersEmbeddingWithId.embedding)
+    val keyValuePa rs = convertedEmbedd ngs.map { s mClustersEmbedd ngW h d =>
+      KeyVal(s mClustersEmbedd ngW h d.embedd ng d, s mClustersEmbedd ngW h d.embedd ng)
     }
-    val manhattanExecution = writeToManhattan(keyValuePairs)
+    val manhattanExecut on = wr eToManhattan(keyValuePa rs)
 
-    val thriftExecution = writeToThrift(convertedEmbeddings)
+    val thr ftExecut on = wr eToThr ft(convertedEmbedd ngs)
 
-    Execution.zip(manhattanExecution, thriftExecution).unit
+    Execut on.z p(manhattanExecut on, thr ftExecut on).un 
   }
 }

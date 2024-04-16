@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module.ModuleD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Module emTreeD splay
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleItemTreeDisplayMarshaller @Inject() (
-  moduleDisplayTypeMarshaller: ModuleDisplayTypeMarshaller) {
+@S ngleton
+class Module emTreeD splayMarshaller @ nject() (
+  moduleD splayTypeMarshaller: ModuleD splayTypeMarshaller) {
 
-  def apply(moduleItemTreeDisplay: ModuleItemTreeDisplay): urt.ModuleItemTreeDisplay =
-    urt.ModuleItemTreeDisplay(
-      parentModuleItemEntryId = moduleItemTreeDisplay.parentModuleEntryItemId,
-      indentFromParent = moduleItemTreeDisplay.indentFromParent,
-      displayType = moduleItemTreeDisplay.displayType.map(moduleDisplayTypeMarshaller(_)),
-      isAnchorChild = moduleItemTreeDisplay.isAnchorChild
+  def apply(module emTreeD splay: Module emTreeD splay): urt.Module emTreeD splay =
+    urt.Module emTreeD splay(
+      parentModule emEntry d = module emTreeD splay.parentModuleEntry em d,
+       ndentFromParent = module emTreeD splay. ndentFromParent,
+      d splayType = module emTreeD splay.d splayType.map(moduleD splayTypeMarshaller(_)),
+       sAnchorCh ld = module emTreeD splay. sAnchorCh ld
     )
 }

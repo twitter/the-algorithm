@@ -1,39 +1,39 @@
-package com.twitter.recos.decider
+package com.tw ter.recos.dec der
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.util.Future
-import scala.util.control.NoStackTrace
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.ut l.Future
+ mport scala.ut l.control.NoStackTrace
 
 /*
-  Provides deciders-controlled load shedding for a given endpoint.
-  The format of the decider keys is:
+  Prov des dec ders-controlled load s dd ng for a g ven endpo nt.
+  T  format of t  dec der keys  s:
 
-    enable_loadshedding_<graphNamePrefix>_<endpoint name>
+    enable_loads dd ng_<graphNa Pref x>_<endpo nt na >
   E.g.:
-    enable_loadshedding_user-tweet-graph_relatedTweets
+    enable_loads dd ng_user-t et-graph_relatedT ets
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular endpoint, those requests will always be
+  Dec ders are fract onal, so a value of 50.00 w ll drop 50% of responses.  f a dec der key  s not
+  def ned for a part cular endpo nt, those requests w ll always be
   served.
 
-  We should therefore aim to define keys for the endpoints we care most about in decider.yml,
-  so that we can control them during incidents.
+    should t refore a m to def ne keys for t  endpo nts   care most about  n dec der.yml,
+  so that   can control t m dur ng  nc dents.
  */
-class EndpointLoadShedder(
-  decider: GraphDecider) {
-  import EndpointLoadShedder._
+class Endpo ntLoadS dder(
+  dec der: GraphDec der) {
+   mport Endpo ntLoadS dder._
 
-  private val keyPrefix = "enable_loadshedding"
+  pr vate val keyPref x = "enable_loads dd ng"
 
-  def apply[T](endpointName: String)(serve: => Future[T]): Future[T] = {
-    val key = s"${keyPrefix}_${decider.graphNamePrefix}_${endpointName}"
-    if (decider.isAvailable(key, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
+  def apply[T](endpo ntNa : Str ng)(serve: => Future[T]): Future[T] = {
+    val key = s"${keyPref x}_${dec der.graphNa Pref x}_${endpo ntNa }"
+     f (dec der. sAva lable(key, rec p ent = So (RandomRec p ent)))
+      Future.except on(LoadS dd ngExcept on)
     else serve
   }
 }
 
-object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+object Endpo ntLoadS dder {
+  object LoadS dd ngExcept on extends Except on w h NoStackTrace
 }

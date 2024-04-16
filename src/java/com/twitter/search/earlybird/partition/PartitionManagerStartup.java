@@ -1,57 +1,57 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.Closeable;
+ mport java. o.Closeable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.earlybird.EarlybirdServer;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.earlyb rd.Earlyb rdServer;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
 
 /**
- * Handles starting and indexing data for a partition, using a PartitionManager.
+ * Handles start ng and  ndex ng data for a part  on, us ng a Part  onManager.
  */
-public class PartitionManagerStartup implements EarlybirdStartup {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServer.class);
+publ c class Part  onManagerStartup  mple nts Earlyb rdStartup {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdServer.class);
 
-  private final Clock clock;
-  private final PartitionManager partitionManager;
+  pr vate f nal Clock clock;
+  pr vate f nal Part  onManager part  onManager;
 
-  public PartitionManagerStartup(
+  publ c Part  onManagerStartup(
       Clock clock,
-      PartitionManager partitionManager
+      Part  onManager part  onManager
   ) {
-    this.clock = clock;
-    this.partitionManager = partitionManager;
+    t .clock = clock;
+    t .part  onManager = part  onManager;
   }
 
-  @Override
-  public Closeable start() throws EarlybirdStartupException {
-    partitionManager.schedule();
+  @Overr de
+  publ c Closeable start() throws Earlyb rdStartupExcept on {
+    part  onManager.sc dule();
 
-    int count = 0;
+     nt count = 0;
 
-    while (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.CURRENT) {
-      if (EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.STOPPING) {
-        return partitionManager;
+    wh le (Earlyb rdStatus.getStatusCode() != Earlyb rdStatusCode.CURRENT) {
+       f (Earlyb rdStatus.getStatusCode() == Earlyb rdStatusCode.STOPP NG) {
+        return part  onManager;
       }
 
       try {
-        clock.waitFor(1000);
-      } catch (InterruptedException e) {
-        LOG.info("Sleep interrupted, quitting earlybird");
-        throw new EarlybirdStartupException("Sleep interrupted");
+        clock.wa For(1000);
+      } catch ( nterruptedExcept on e) {
+        LOG. nfo("Sleep  nterrupted, qu t ng earlyb rd");
+        throw new Earlyb rdStartupExcept on("Sleep  nterrupted");
       }
 
       // Log every 120 seconds.
-      if (count++ % 120 == 0) {
-        LOG.info("Thrift port closed until Earlybird, both indexing and query cache, is current");
+       f (count++ % 120 == 0) {
+        LOG. nfo("Thr ft port closed unt l Earlyb rd, both  ndex ng and query cac ,  s current");
       }
     }
 
-    return partitionManager;
+    return part  onManager;
   }
 }

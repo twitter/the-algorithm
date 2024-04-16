@@ -1,40 +1,40 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
 
-case class ModelVersionProfile(
-  modelVersion: ModelVersion,
-  usingLogFavScore: Boolean,
-  // redundant in the current models because the above parameter does the same currently.
-  coreEmbeddingType: EmbeddingType,
-  favScoreThresholdForUserInterest: Double,
-  // these values are shared between all profiles so lets set up defaults
-  halfLife: Duration = 8.hours,
-  scoreThresholdForEntityTopKClustersCache: Double = 0.2,
-  scoreThresholdForTweetTopKClustersCache: Double = 0.02,
-  scoreThresholdForClusterTopKTweetsCache: Double = 0.001,
-  scoreThresholdForClusterTopKEntitiesCache: Double = 0.001)
+case class ModelVers onProf le(
+  modelVers on: ModelVers on,
+  us ngLogFavScore: Boolean,
+  // redundant  n t  current models because t  above para ter does t  sa  currently.
+  coreEmbedd ngType: Embedd ngType,
+  favScoreThresholdForUser nterest: Double,
+  // t se values are shared bet en all prof les so lets set up defaults
+  halfL fe: Durat on = 8.h s,
+  scoreThresholdForEnt yTopKClustersCac : Double = 0.2,
+  scoreThresholdForT etTopKClustersCac : Double = 0.02,
+  scoreThresholdForClusterTopKT etsCac : Double = 0.001,
+  scoreThresholdForClusterTopKEnt  esCac : Double = 0.001)
 
-object ModelVersionProfiles {
-  final val ModelVersion20M145KUpdated = ModelVersionProfile(
-    ModelVersion.Model20m145kUpdated,
-    usingLogFavScore = true,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 1.0
+object ModelVers onProf les {
+  f nal val ModelVers on20M145KUpdated = ModelVers onProf le(
+    ModelVers on.Model20m145kUpdated,
+    us ngLogFavScore = true,
+    coreEmbedd ngType = Embedd ngType.LogFavBasedT et,
+    favScoreThresholdForUser nterest = 1.0
   )
 
-  final val ModelVersion20M145K2020 = ModelVersionProfile(
-    ModelVersion.Model20m145k2020,
-    usingLogFavScore = true,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 0.3
+  f nal val ModelVers on20M145K2020 = ModelVers onProf le(
+    ModelVers on.Model20m145k2020,
+    us ngLogFavScore = true,
+    coreEmbedd ngType = Embedd ngType.LogFavBasedT et,
+    favScoreThresholdForUser nterest = 0.3
   )
 
-  final val ModelVersionProfiles: Map[ModelVersion, ModelVersionProfile] = Map(
-    ModelVersion.Model20m145kUpdated -> ModelVersion20M145KUpdated,
-    ModelVersion.Model20m145k2020 -> ModelVersion20M145K2020
+  f nal val ModelVers onProf les: Map[ModelVers on, ModelVers onProf le] = Map(
+    ModelVers on.Model20m145kUpdated -> ModelVers on20M145KUpdated,
+    ModelVers on.Model20m145k2020 -> ModelVers on20M145K2020
   )
 }

@@ -1,73 +1,73 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.tw ter.ann.serv ce.query_server.common.throttl ng
 
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.Task
-import com.twitter.ann.faiss.FaissParams
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.ann.service.query_server.common.throttling.ThrottlingBasedQualityTask.SAMPLING_INTERVAL
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
+ mport com.tw ter.ann.common.Runt  Params
+ mport com.tw ter.ann.common.Task
+ mport com.tw ter.ann.fa ss.Fa ssParams
+ mport com.tw ter.ann.hnsw.HnswParams
+ mport com.tw ter.ann.serv ce.query_server.common.throttl ng.Throttl ngBasedQual yTask.SAMPL NG_ NTERVAL
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-object ThrottlingBasedQualityTask {
-  private[throttling] val SAMPLING_INTERVAL = 100.milliseconds
+object Throttl ngBasedQual yTask {
+  pr vate[throttl ng] val SAMPL NG_ NTERVAL = 100.m ll seconds
 }
 
-class ThrottlingBasedQualityTask(
-  override val statsReceiver: StatsReceiver,
-  // Parameters are taken from OverloadAdmissionController
-  instrument: ThrottlingInstrument = new WindowedThrottlingInstrument(SAMPLING_INTERVAL, 5,
+class Throttl ngBasedQual yTask(
+  overr de val statsRece ver: StatsRece ver,
+  // Para ters are taken from OverloadAdm ss onController
+   nstru nt: Throttl ng nstru nt = new W ndo dThrottl ng nstru nt(SAMPL NG_ NTERVAL, 5,
     new AuroraCPUStatsReader()))
     extends Task
-    with Logging {
-  import ThrottlingBasedQualityTask._
+    w h Logg ng {
+   mport Throttl ngBasedQual yTask._
 
-  // [0, 1] where 1 is fully throttled
-  // Quickly throttle, but dampen recovery to make sure we won't enter throttle/GC death spiral
-  @volatile private var dampenedThrottlingPercentage: Double = 0
+  // [0, 1] w re 1  s fully throttled
+  // Qu ckly throttle, but dampen recovery to make sure   won't enter throttle/GC death sp ral
+  @volat le pr vate var dampenedThrottl ngPercentage: Double = 0
 
-  protected[throttling] def task(): Future[Unit] = {
-    if (!instrument.disabled) {
-      instrument.sample()
+  protected[throttl ng] def task(): Future[Un ] = {
+     f (! nstru nt.d sabled) {
+       nstru nt.sample()
 
-      val delta = instrument.percentageOfTimeSpentThrottling - dampenedThrottlingPercentage
-      if (delta > 0) {
-        // We want to start shedding load, do it quickly
-        dampenedThrottlingPercentage += delta
+      val delta =  nstru nt.percentageOfT  SpentThrottl ng - dampenedThrottl ngPercentage
+       f (delta > 0) {
+        //   want to start s dd ng load, do   qu ckly
+        dampenedThrottl ngPercentage += delta
       } else {
-        // Recover much slower
-        // At the rate of 100ms per sample, lookback is 2 minutes
+        // Recover much slo r
+        // At t  rate of 100ms per sample, lookback  s 2 m nutes
         val samplesToConverge = 1200.toDouble
-        dampenedThrottlingPercentage =
-          dampenedThrottlingPercentage + delta * (2 / (samplesToConverge + 1))
+        dampenedThrottl ngPercentage =
+          dampenedThrottl ngPercentage + delta * (2 / (samplesToConverge + 1))
       }
 
-      statsReceiver.stat("dampened_throttling").add(dampenedThrottlingPercentage.toFloat * 100)
+      statsRece ver.stat("dampened_throttl ng").add(dampenedThrottl ngPercentage.toFloat * 100)
     }
 
-    Future.Unit
+    Future.Un 
   }
 
-  protected def taskInterval: Duration = SAMPLING_INTERVAL
+  protected def task nterval: Durat on = SAMPL NG_ NTERVAL
 
-  def discountParams[T <: RuntimeParams](params: T): T = {
-    // [0, 1] where 1 is best quality and lowest speed
-    // It's expected to run @1 majority of time
-    val qualityFactor = math.min(1, math.max(0, 1 - dampenedThrottlingPercentage))
-    def applyQualityFactor(param: Int) = math.max(1, math.ceil(param * qualityFactor).toInt)
+  def d scountParams[T <: Runt  Params](params: T): T = {
+    // [0, 1] w re 1  s best qual y and lo st speed
+    //  's expected to run @1 major y of t  
+    val qual yFactor = math.m n(1, math.max(0, 1 - dampenedThrottl ngPercentage))
+    def applyQual yFactor(param:  nt) = math.max(1, math.ce l(param * qual yFactor).to nt)
 
     params match {
-      case HnswParams(ef) => HnswParams(applyQualityFactor(ef)).asInstanceOf[T]
-      case FaissParams(nprobe, quantizerEf, quantizerKFactorRF, quantizerNprobe, ht) =>
-        FaissParams(
-          nprobe.map(applyQualityFactor),
-          quantizerEf.map(applyQualityFactor),
-          quantizerKFactorRF.map(applyQualityFactor),
-          quantizerNprobe.map(applyQualityFactor),
-          ht.map(applyQualityFactor)
-        ).asInstanceOf[T]
+      case HnswParams(ef) => HnswParams(applyQual yFactor(ef)).as nstanceOf[T]
+      case Fa ssParams(nprobe, quant zerEf, quant zerKFactorRF, quant zerNprobe, ht) =>
+        Fa ssParams(
+          nprobe.map(applyQual yFactor),
+          quant zerEf.map(applyQual yFactor),
+          quant zerKFactorRF.map(applyQual yFactor),
+          quant zerNprobe.map(applyQual yFactor),
+          ht.map(applyQual yFactor)
+        ).as nstanceOf[T]
     }
   }
 }

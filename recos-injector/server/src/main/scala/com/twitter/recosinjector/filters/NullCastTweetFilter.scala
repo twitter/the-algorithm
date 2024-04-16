@@ -1,34 +1,34 @@
-package com.twitter.recosinjector.filters
+package com.tw ter.recos njector.f lters
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos njector.cl ents.T etyp e
+ mport com.tw ter.ut l.Future
 
 /**
- * Filters tweets that are null cast, i.e. tweet is not delivered to a user's followers,
- * not shown in the user's timeline, and does not appear in search results.
- * They are mainly ads tweets.
+ * F lters t ets that are null cast,  .e. t et  s not del vered to a user's follo rs,
+ * not shown  n t  user's t  l ne, and does not appear  n search results.
+ * T y are ma nly ads t ets.
  */
-class NullCastTweetFilter(
-  tweetypie: Tweetypie
+class NullCastT etF lter(
+  t etyp e: T etyp e
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+   mpl c  statsRece ver: StatsRece ver) {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val requests = stats.counter("requests")
+  pr vate val f ltered = stats.counter("f ltered")
 
-  // Return Future(True) to keep the Tweet.
-  def filter(tweetId: Long): Future[Boolean] = {
-    requests.incr()
-    tweetypie
-      .getTweet(tweetId)
-      .map { tweetOpt =>
-        // If the null cast bit is Some(true), drop the tweet.
-        val isNullCastTweet = tweetOpt.flatMap(_.coreData).exists(_.nullcast)
-        if (isNullCastTweet) {
-          filtered.incr()
+  // Return Future(True) to keep t  T et.
+  def f lter(t et d: Long): Future[Boolean] = {
+    requests. ncr()
+    t etyp e
+      .getT et(t et d)
+      .map { t etOpt =>
+        //  f t  null cast b   s So (true), drop t  t et.
+        val  sNullCastT et = t etOpt.flatMap(_.coreData).ex sts(_.nullcast)
+         f ( sNullCastT et) {
+          f ltered. ncr()
         }
-        !isNullCastTweet
+        ! sNullCastT et
       }
   }
 }

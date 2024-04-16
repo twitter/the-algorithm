@@ -1,9 +1,9 @@
-package com.twitter.graph_feature_service.scalding
+package com.tw ter.graph_feature_serv ce.scald ng
 
 case class EdgeFeature(
   realGraphScore: Float,
-  followScore: Option[Float] = None,
-  mutualFollowScore: Option[Float] = None,
-  favoriteScore: Option[Float] = None,
-  retweetScore: Option[Float] = None,
-  mentionScore: Option[Float] = None)
+  followScore: Opt on[Float] = None,
+  mutualFollowScore: Opt on[Float] = None,
+  favor eScore: Opt on[Float] = None,
+  ret etScore: Opt on[Float] = None,
+   nt onScore: Opt on[Float] = None)

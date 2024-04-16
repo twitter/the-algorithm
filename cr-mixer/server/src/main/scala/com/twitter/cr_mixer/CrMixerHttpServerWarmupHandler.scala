@@ -1,18 +1,18 @@
-package com.twitter.cr_mixer
+package com.tw ter.cr_m xer
 
-import com.twitter.finatra.http.routing.HttpWarmup
-import com.twitter.finatra.httpclient.RequestBuilder._
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f natra.http.rout ng.HttpWarmup
+ mport com.tw ter.f natra.httpcl ent.RequestBu lder._
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter. nject.ut ls.Handler
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CrMixerHttpServerWarmupHandler @Inject() (warmup: HttpWarmup) extends Handler with Logging {
+@S ngleton
+class CrM xerHttpServerWarmupHandler @ nject() (warmup: HttpWarmup) extends Handler w h Logg ng {
 
-  override def handle(): Unit = {
-    Try(warmup.send(get("/admin/cr-mixer/product-pipelines"), admin = true)())
-      .onFailure(e => error(e.getMessage, e))
+  overr de def handle(): Un  = {
+    Try(warmup.send(get("/adm n/cr-m xer/product-p pel nes"), adm n = true)())
+      .onFa lure(e => error(e.get ssage, e))
   }
 }

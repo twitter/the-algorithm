@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.mo nt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment.MomentAnnotationCandidateUrtItemBuilder.MomentAnnotationItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.MomentAnnotationCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment.MomentAnnotationItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.mo nt.Mo ntAnnotat onCand dateUrt emBu lder.Mo ntAnnotat on emCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Mo ntAnnotat onCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.r chtext.BaseR chTextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.mo nt.Mo ntAnnotat on em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object MomentAnnotationCandidateUrtItemBuilder {
-  val MomentAnnotationItemClientEventInfoElement = "metadata"
+object Mo ntAnnotat onCand dateUrt emBu lder {
+  val Mo ntAnnotat on emCl entEvent nfoEle nt = " tadata"
 }
 
-case class MomentAnnotationCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, MomentAnnotationCandidate],
-  annotationTextRichTextBuilder: BaseRichTextBuilder[Query, MomentAnnotationCandidate],
-  annotationHeaderRichTextBuilder: BaseRichTextBuilder[Query, MomentAnnotationCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, MomentAnnotationCandidate]
+case class Mo ntAnnotat onCand dateUrt emBu lder[Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Mo ntAnnotat onCand date],
+  annotat onTextR chTextBu lder: BaseR chTextBu lder[Query, Mo ntAnnotat onCand date],
+  annotat on aderR chTextBu lder: BaseR chTextBu lder[Query, Mo ntAnnotat onCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Mo ntAnnotat onCand date]
   ] = None,
-) extends CandidateUrtEntryBuilder[Query, MomentAnnotationCandidate, MomentAnnotationItem] {
+) extends Cand dateUrtEntryBu lder[Query, Mo ntAnnotat onCand date, Mo ntAnnotat on em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: MomentAnnotationCandidate,
-    candidateFeatures: FeatureMap
-  ): MomentAnnotationItem = MomentAnnotationItem(
-    id = candidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    cand date: Mo ntAnnotat onCand date,
+    cand dateFeatures: FeatureMap
+  ): Mo ntAnnotat on em = Mo ntAnnotat on em(
+     d = cand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      candidate,
-      candidateFeatures,
-      Some(MomentAnnotationItemClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-    isPinned = None,
+      cand date,
+      cand dateFeatures,
+      So (Mo ntAnnotat on emCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, cand date, cand dateFeatures)),
+     sP nned = None,
     text =
-      candidate.text.map(_ => annotationTextRichTextBuilder(query, candidate, candidateFeatures)),
-    header = candidate.header.map(_ =>
-      annotationHeaderRichTextBuilder(query, candidate, candidateFeatures)),
+      cand date.text.map(_ => annotat onTextR chTextBu lder(query, cand date, cand dateFeatures)),
+     ader = cand date. ader.map(_ =>
+      annotat on aderR chTextBu lder(query, cand date, cand dateFeatures)),
   )
 }

@@ -1,28 +1,28 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserEngagerAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserEngagerGoodClickAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserInferredTopicAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserInferredTopicAggregateV2Feature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserMediaUnderstandingAnnotationAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserTopicAggregateFeature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures.UserEngagerAggregateFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures.UserEngagerGoodCl ckAggregateFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures.User nferredTop cAggregateFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures.User nferredTop cAggregateV2Feature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures.User d aUnderstand ngAnnotat onAggregateFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures.UserTop cAggregateFeature
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class Phase2EdgeAggregateFeatureHydrator @Inject() extends BaseEdgeAggregateFeatureHydrator {
+@S ngleton
+class Phase2EdgeAggregateFeatureHydrator @ nject() extends BaseEdgeAggregateFeatureHydrator {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Phase2EdgeAggregate")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Phase2EdgeAggregate")
 
-  override val aggregateFeatures: Set[BaseEdgeAggregateFeature] =
+  overr de val aggregateFeatures: Set[BaseEdgeAggregateFeature] =
     Set(
       UserEngagerAggregateFeature,
-      UserEngagerGoodClickAggregateFeature,
-      UserInferredTopicAggregateFeature,
-      UserInferredTopicAggregateV2Feature,
-      UserTopicAggregateFeature,
-      UserMediaUnderstandingAnnotationAggregateFeature
+      UserEngagerGoodCl ckAggregateFeature,
+      User nferredTop cAggregateFeature,
+      User nferredTop cAggregateV2Feature,
+      UserTop cAggregateFeature,
+      User d aUnderstand ngAnnotat onAggregateFeature
     )
 }

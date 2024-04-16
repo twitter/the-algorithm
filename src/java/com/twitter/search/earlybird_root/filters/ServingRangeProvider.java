@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.earlyb rd.conf g.Serv ngRange;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public interface ServingRangeProvider {
+publ c  nterface Serv ngRangeProv der {
   /**
-   * Get a ServingRange implementation.
-   * Usually backed by either TierInfoWrapper or RootClusterBoundaryInfo.
+   * Get a Serv ngRange  mple ntat on.
+   * Usually backed by e  r T er nfoWrapper or RootClusterBoundary nfo.
    */
-  ServingRange getServingRange(EarlybirdRequestContext requestContext, boolean useBoundaryOverride);
+  Serv ngRange getServ ngRange(Earlyb rdRequestContext requestContext, boolean useBoundaryOverr de);
 }

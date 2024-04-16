@@ -1,158 +1,158 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.tw ter.cr_m xer.cand date_generat on
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.logging.UtegTweetScribeLogger
-import com.twitter.cr_mixer.filter.UtegFilterRunner
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.source_signal.RealGraphInSourceGraphFetcher
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.contentrecom nder.thr ftscala.T et nfo
+ mport com.tw ter.cr_m xer.logg ng.UtegT etScr beLogger
+ mport com.tw ter.cr_m xer.f lter.UtegF lterRunner
+ mport com.tw ter.cr_m xer.model.Cand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScoreAndSoc alProof
+ mport com.tw ter.cr_m xer.model.UtegT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.UserT etEnt yGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s ce_s gnal.RealGraph nS ceGraphFetc r
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-class UtegTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.UserTweetEntityGraphSimilarityEngine) userTweetEntityGraphSimilarityEngine: StandardSimilarityEngine[
-    UserTweetEntityGraphSimilarityEngine.Query,
-    TweetWithScoreAndSocialProof
+@S ngleton
+class UtegT etCand dateGenerator @ nject() (
+  @Na d(ModuleNa s.UserT etEnt yGraphS m lar yEng ne) userT etEnt yGraphS m lar yEng ne: StandardS m lar yEng ne[
+    UserT etEnt yGraphS m lar yEng ne.Query,
+    T etW hScoreAndSoc alProof
   ],
-  utegTweetScribeLogger: UtegTweetScribeLogger,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
-  utegFilterRunner: UtegFilterRunner,
-  globalStats: StatsReceiver) {
+  utegT etScr beLogger: UtegT etScr beLogger,
+  t et nfoStore: ReadableStore[T et d, T et nfo],
+  realGraph nS ceGraphFetc r: RealGraph nS ceGraphFetc r,
+  utegF lterRunner: UtegF lterRunner,
+  globalStats: StatsRece ver) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchSeedsStats = stats.scope("fetchSeeds")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val utegFilterStats = stats.scope("utegFilter")
-  private val rankStats = stats.scope("rank")
+  pr vate val stats: StatsRece ver = globalStats.scope(t .getClass.getCanon calNa )
+  pr vate val fetchSeedsStats = stats.scope("fetchSeeds")
+  pr vate val fetchCand datesStats = stats.scope("fetchCand dates")
+  pr vate val utegF lterStats = stats.scope("utegF lter")
+  pr vate val rankStats = stats.scope("rank")
 
   def get(
-    query: UtegTweetCandidateGeneratorQuery
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
+    query: UtegT etCand dateGeneratorQuery
+  ): Future[Seq[T etW hScoreAndSoc alProof]] = {
 
     val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
+    val perProductStats = stats.scope("perProduct", query.product.toStr ng)
+    StatsUt l.track emsStats(allStats) {
+      StatsUt l.track emsStats(perProductStats) {
 
         /**
-         * The candidate we return in the end needs a social proof field, which isn't
-         * supported by the any existing Candidate type, so we created TweetWithScoreAndSocialProof
-         * instead.
+         * T  cand date   return  n t  end needs a soc al proof f eld, wh ch  sn't
+         * supported by t  any ex st ng Cand date type, so   created T etW hScoreAndSoc alProof
+         *  nstead.
          *
-         * However, filters and light ranker expect Candidate-typed param to work. In order to minimise the
-         * changes to them, we are doing conversions from/to TweetWithScoreAndSocialProof to/from Candidate
-         * in this method.
+         * Ho ver, f lters and l ght ranker expect Cand date-typed param to work.  n order to m n m se t 
+         * changes to t m,   are do ng convers ons from/to T etW hScoreAndSoc alProof to/from Cand date
+         *  n t   thod.
          */
         for {
-          realGraphSeeds <- StatsUtil.trackItemMapStats(fetchSeedsStats) {
+          realGraphSeeds <- StatsUt l.track emMapStats(fetchSeedsStats) {
             fetchSeeds(query)
           }
-          initialTweets <- StatsUtil.trackItemsStats(fetchCandidatesStats) {
-            fetchCandidates(query, realGraphSeeds)
+           n  alT ets <- StatsUt l.track emsStats(fetchCand datesStats) {
+            fetchCand dates(query, realGraphSeeds)
           }
-          initialCandidates <- convertToInitialCandidates(initialTweets)
-          filteredCandidates <- StatsUtil.trackItemsStats(utegFilterStats) {
-            utegFilter(query, initialCandidates)
+           n  alCand dates <- convertTo n  alCand dates( n  alT ets)
+          f lteredCand dates <- StatsUt l.track emsStats(utegF lterStats) {
+            utegF lter(query,  n  alCand dates)
           }
-          rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
-            rankCandidates(query, filteredCandidates)
+          rankedCand dates <- StatsUt l.track emsStats(rankStats) {
+            rankCand dates(query, f lteredCand dates)
           }
-        } yield {
-          val topTweets = rankedCandidates.take(query.maxNumResults)
-          convertToTweets(topTweets, initialTweets.map(tweet => tweet.tweetId -> tweet).toMap)
+        } y eld {
+          val topT ets = rankedCand dates.take(query.maxNumResults)
+          convertToT ets(topT ets,  n  alT ets.map(t et => t et.t et d -> t et).toMap)
         }
       }
     }
   }
 
-  private def utegFilter(
-    query: UtegTweetCandidateGeneratorQuery,
-    candidates: Seq[InitialCandidate]
-  ): Future[Seq[InitialCandidate]] = {
-    utegFilterRunner.runSequentialFilters(query, Seq(candidates)).map(_.flatten)
+  pr vate def utegF lter(
+    query: UtegT etCand dateGeneratorQuery,
+    cand dates: Seq[ n  alCand date]
+  ): Future[Seq[ n  alCand date]] = {
+    utegF lterRunner.runSequent alF lters(query, Seq(cand dates)).map(_.flatten)
   }
 
-  private def fetchSeeds(
-    query: UtegTweetCandidateGeneratorQuery
-  ): Future[Map[UserId, Double]] = {
-    realGraphInSourceGraphFetcher
-      .get(FetcherQuery(query.userId, query.product, query.userState, query.params))
-      .map(_.map(_.seedWithScores).getOrElse(Map.empty))
+  pr vate def fetchSeeds(
+    query: UtegT etCand dateGeneratorQuery
+  ): Future[Map[User d, Double]] = {
+    realGraph nS ceGraphFetc r
+      .get(Fetc rQuery(query.user d, query.product, query.userState, query.params))
+      .map(_.map(_.seedW hScores).getOrElse(Map.empty))
   }
 
-  private[candidate_generation] def rankCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    filteredCandidates: Seq[InitialCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    val blendedCandidates = filteredCandidates.map(candidate =>
-      candidate.toBlendedCandidate(Seq(candidate.candidateGenerationInfo)))
+  pr vate[cand date_generat on] def rankCand dates(
+    query: UtegT etCand dateGeneratorQuery,
+    f lteredCand dates: Seq[ n  alCand date],
+  ): Future[Seq[RankedCand date]] = {
+    val blendedCand dates = f lteredCand dates.map(cand date =>
+      cand date.toBlendedCand date(Seq(cand date.cand dateGenerat on nfo)))
 
     Future(
-      blendedCandidates.map { candidate =>
-        val score = candidate.getSimilarityScore
-        candidate.toRankedCandidate(score)
+      blendedCand dates.map { cand date =>
+        val score = cand date.getS m lar yScore
+        cand date.toRankedCand date(score)
       }
     )
 
   }
 
-  def fetchCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    realGraphSeeds: Map[UserId, Double],
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
-    val engineQuery = UserTweetEntityGraphSimilarityEngine.fromParams(
-      query.userId,
+  def fetchCand dates(
+    query: UtegT etCand dateGeneratorQuery,
+    realGraphSeeds: Map[User d, Double],
+  ): Future[Seq[T etW hScoreAndSoc alProof]] = {
+    val eng neQuery = UserT etEnt yGraphS m lar yEng ne.fromParams(
+      query.user d,
       realGraphSeeds,
-      Some(query.impressedTweetList.toSeq),
+      So (query. mpressedT etL st.toSeq),
       query.params
     )
 
-    utegTweetScribeLogger.scribeInitialCandidates(
+    utegT etScr beLogger.scr be n  alCand dates(
       query,
-      userTweetEntityGraphSimilarityEngine.getCandidates(engineQuery).map(_.toSeq.flatten)
+      userT etEnt yGraphS m lar yEng ne.getCand dates(eng neQuery).map(_.toSeq.flatten)
     )
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithScoreAndSocialProof],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  pr vate[cand date_generat on] def convertTo n  alCand dates(
+    cand dates: Seq[T etW hScoreAndSoc alProof],
+  ): Future[Seq[ n  alCand date]] = {
+    val t et ds = cand dates.map(_.t et d).toSet
+    Future.collect(t et nfoStore.mult Get(t et ds)).map { t et nfos =>
       /** *
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
+       *  f t et nfo does not ex st,   w ll f lter out t  t et cand date.
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      cand dates.collect {
+        case cand date  f t et nfos.getOrElse(cand date.t et d, None). sDef ned =>
+          val t et nfo = t et nfos(cand date.t et d)
+            .getOrElse(throw new  llegalStateExcept on("C ck prev ous l ne's cond  on"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            CandidateGenerationInfo(
+           n  alCand date(
+            t et d = cand date.t et d,
+            t et nfo = t et nfo,
+            Cand dateGenerat on nfo(
               None,
-              SimilarityEngineInfo(
-                similarityEngineType = SimilarityEngineType.Uteg,
-                modelId = None,
-                score = Some(candidate.score)),
+              S m lar yEng ne nfo(
+                s m lar yEng neType = S m lar yEng neType.Uteg,
+                model d = None,
+                score = So (cand date.score)),
               Seq.empty
             )
           )
@@ -160,20 +160,20 @@ class UtegTweetCandidateGenerator @Inject() (
     }
   }
 
-  private[candidate_generation] def convertToTweets(
-    candidates: Seq[RankedCandidate],
-    tweetMap: Map[TweetId, TweetWithScoreAndSocialProof]
-  ): Seq[TweetWithScoreAndSocialProof] = {
-    candidates.map { candidate =>
-      tweetMap
-        .get(candidate.tweetId).map { tweet =>
-          TweetWithScoreAndSocialProof(
-            tweet.tweetId,
-            candidate.predictionScore,
-            tweet.socialProofByType
+  pr vate[cand date_generat on] def convertToT ets(
+    cand dates: Seq[RankedCand date],
+    t etMap: Map[T et d, T etW hScoreAndSoc alProof]
+  ): Seq[T etW hScoreAndSoc alProof] = {
+    cand dates.map { cand date =>
+      t etMap
+        .get(cand date.t et d).map { t et =>
+          T etW hScoreAndSoc alProof(
+            t et.t et d,
+            cand date.pred ct onScore,
+            t et.soc alProofByType
           )
-        // The exception should never be thrown
-        }.getOrElse(throw new Exception("Cannot find ranked candidate in original UTEG tweets"))
+        // T  except on should never be thrown
+        }.getOrElse(throw new Except on("Cannot f nd ranked cand date  n or g nal UTEG t ets"))
     }
   }
 }

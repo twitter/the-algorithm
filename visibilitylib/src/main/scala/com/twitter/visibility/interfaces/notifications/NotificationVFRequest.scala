@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.notifications
+package com.tw ter.v s b l y. nterfaces.not f cat ons
 
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.SafetyLevel
 
-case class NotificationVFRequest(
-  recipientId: Long,
-  subject: ContentId.UserId,
+case class Not f cat onVFRequest(
+  rec p ent d: Long,
+  subject: Content d.User d,
   safetyLevel: SafetyLevel)

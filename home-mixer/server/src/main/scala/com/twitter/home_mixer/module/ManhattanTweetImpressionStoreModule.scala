@@ -1,58 +1,58 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClientConfig
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.storage.cl ent.manhattan.kv.Guarantee
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanClusters
+ mport com.tw ter.t  l nes.cl ents.manhattan.mhv3.ManhattanCl entBu lder
+ mport com.tw ter.t  l nes. mpress onstore.store.ManhattanT et mpress onStoreCl entConf g
+ mport com.tw ter.t  l nes. mpress onstore.store.ManhattanT et mpress onStoreCl ent
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
-object ManhattanTweetImpressionStoreModule extends TwitterModule {
+object ManhattanT et mpress onStoreModule extends Tw terModule {
 
-  private val ProdAppId = "timelines_tweet_impression_store_v2"
-  private val ProdDataset = "timelines_tweet_impressions_v2"
-  private val StagingAppId = "timelines_tweet_impression_store_staging"
-  private val StagingDataset = "timelines_tweet_impressions_staging"
-  private val StatsScope = "manhattanTweetImpressionStoreClient"
-  private val DefaultTTL = 2.days
-  private final val Timeout = "mh_impression_store.timeout"
+  pr vate val ProdApp d = "t  l nes_t et_ mpress on_store_v2"
+  pr vate val ProdDataset = "t  l nes_t et_ mpress ons_v2"
+  pr vate val Stag ngApp d = "t  l nes_t et_ mpress on_store_stag ng"
+  pr vate val Stag ngDataset = "t  l nes_t et_ mpress ons_stag ng"
+  pr vate val StatsScope = "manhattanT et mpress onStoreCl ent"
+  pr vate val DefaultTTL = 2.days
+  pr vate f nal val T  out = "mh_ mpress on_store.t  out"
 
-  flag[Duration](Timeout, 150.millis, "Timeout per request")
+  flag[Durat on](T  out, 150.m ll s, "T  out per request")
 
-  @Provides
-  @Singleton
-  def providesManhattanTweetImpressionStoreClient(
-    @Flag(Timeout) timeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ManhattanTweetImpressionStoreClient = {
+  @Prov des
+  @S ngleton
+  def prov desManhattanT et mpress onStoreCl ent(
+    @Flag(T  out) t  out: Durat on,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): ManhattanT et mpress onStoreCl ent = {
 
-    val (appId, dataset) = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => (ProdAppId, ProdDataset)
-      case _ => (StagingAppId, StagingDataset)
+    val (app d, dataset) = serv ce dent f er.env ron nt.toLo rCase match {
+      case "prod" => (ProdApp d, ProdDataset)
+      case _ => (Stag ngApp d, Stag ngDataset)
     }
 
-    val config = ManhattanTweetImpressionStoreClientConfig(
+    val conf g = ManhattanT et mpress onStoreCl entConf g(
       cluster = ManhattanClusters.nash,
-      appId = appId,
+      app d = app d,
       dataset = dataset,
       statsScope = StatsScope,
-      defaultGuarantee = Guarantee.SoftDcReadMyWrites,
-      defaultMaxTimeout = timeout,
+      defaultGuarantee = Guarantee.SoftDcRead Wr es,
+      defaultMaxT  out = t  out,
       maxRetryCount = 2,
-      isReadOnly = false,
-      serviceIdentifier = serviceIdentifier,
+       sReadOnly = false,
+      serv ce dent f er = serv ce dent f er,
       ttl = DefaultTTL
     )
 
-    val manhattanEndpoint = ManhattanClientBuilder.buildManhattanEndpoint(config, statsReceiver)
-    ManhattanTweetImpressionStoreClient(config, manhattanEndpoint, statsReceiver)
+    val manhattanEndpo nt = ManhattanCl entBu lder.bu ldManhattanEndpo nt(conf g, statsRece ver)
+    ManhattanT et mpress onStoreCl ent(conf g, manhattanEndpo nt, statsRece ver)
   }
 }

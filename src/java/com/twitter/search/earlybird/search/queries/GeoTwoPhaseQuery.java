@@ -1,254 +1,254 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TwoPhaseIterator;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.ConstantScoreQuery;
+ mport org.apac .lucene.search.ConstantScoreScorer;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.TwoPhase erator;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
 
 
-public class GeoTwoPhaseQuery extends Query {
-  private static final boolean ENABLE_GEO_EARLY_TERMINATION =
-          EarlybirdConfig.getBool("early_terminate_geo_searches", true);
+publ c class GeoTwoPhaseQuery extends Query {
+  pr vate stat c f nal boolean ENABLE_GEO_EARLY_TERM NAT ON =
+          Earlyb rdConf g.getBool("early_term nate_geo_searc s", true);
 
-  private static final int GEO_TIMEOUT_OVERRIDE =
-          EarlybirdConfig.getInt("early_terminate_geo_searches_timeout_override", -1);
+  pr vate stat c f nal  nt GEO_T MEOUT_OVERR DE =
+          Earlyb rdConf g.get nt("early_term nate_geo_searc s_t  out_overr de", -1);
 
-  // How many geo searches are early terminated due to timeout.
-  private static final SearchCounter GEO_SEARCH_TIMEOUT_COUNT =
-      SearchCounter.export("geo_search_timeout_count");
+  // How many geo searc s are early term nated due to t  out.
+  pr vate stat c f nal SearchCounter GEO_SEARCH_T MEOUT_COUNT =
+      SearchCounter.export("geo_search_t  out_count");
 
-  private final SecondPhaseDocAccepter accepter;
-  private final TerminationTracker terminationTracker;
-  private final ConstantScoreQuery query;
+  pr vate f nal SecondPhaseDocAccepter accepter;
+  pr vate f nal Term nat onTracker term nat onTracker;
+  pr vate f nal ConstantScoreQuery query;
 
-  public GeoTwoPhaseQuery(
-      Query query, SecondPhaseDocAccepter accepter, TerminationTracker terminationTracker) {
-    this.accepter = accepter;
-    this.terminationTracker = terminationTracker;
+  publ c GeoTwoPhaseQuery(
+      Query query, SecondPhaseDocAccepter accepter, Term nat onTracker term nat onTracker) {
+    t .accepter = accepter;
+    t .term nat onTracker = term nat onTracker;
 
-    this.query = new ConstantScoreQuery(query);
+    t .query = new ConstantScoreQuery(query);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = query.getQuery().rewrite(reader);
-    if (rewritten != query.getQuery()) {
-      return new GeoTwoPhaseQuery(rewritten, accepter, terminationTracker);
+  @Overr de
+  publ c Query rewr e( ndexReader reader) throws  OExcept on {
+    Query rewr ten = query.getQuery().rewr e(reader);
+     f (rewr ten != query.getQuery()) {
+      return new GeoTwoPhaseQuery(rewr ten, accepter, term nat onTracker);
     }
 
-    return this;
+    return t ;
   }
 
-  @Override
-  public int hashCode() {
+  @Overr de
+  publ c  nt hashCode() {
     return query.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof GeoTwoPhaseQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof GeoTwoPhaseQuery)) {
       return false;
     }
     GeoTwoPhaseQuery that = (GeoTwoPhaseQuery) obj;
     return query.equals(that.query)
         && accepter.equals(that.accepter)
-        && terminationTracker.equals(that.terminationTracker);
+        && term nat onTracker.equals(that.term nat onTracker);
   }
 
-  @Override
-  public String toString(String field) {
-    return new StringBuilder("GeoTwoPhaseQuery(")
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return new Str ngBu lder("GeoTwoPhaseQuery(")
       .append("Accepter(")
-      .append(accepter.toString())
-      .append(") Geohashes(")
-      .append(query.getQuery().toString(field))
+      .append(accepter.toStr ng())
+      .append(") Geohas s(")
+      .append(query.getQuery().toStr ng(f eld))
       .append("))")
-      .toString();
+      .toStr ng();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight innerWeight = query.createWeight(searcher, scoreMode, boost);
-    return new GeoTwoPhaseWeight(this, innerWeight, accepter, terminationTracker);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+      ght  nner  ght = query.create  ght(searc r, scoreMode, boost);
+    return new GeoTwoPhase  ght(t ,  nner  ght, accepter, term nat onTracker);
   }
 
-  private static final class GeoTwoPhaseWeight extends Weight {
-    private final Weight innerWeight;
-    private final SecondPhaseDocAccepter accepter;
-    private final TerminationTracker terminationTracker;
+  pr vate stat c f nal class GeoTwoPhase  ght extends   ght {
+    pr vate f nal   ght  nner  ght;
+    pr vate f nal SecondPhaseDocAccepter accepter;
+    pr vate f nal Term nat onTracker term nat onTracker;
 
-    private GeoTwoPhaseWeight(
+    pr vate GeoTwoPhase  ght(
         Query query,
-        Weight innerWeight,
+          ght  nner  ght,
         SecondPhaseDocAccepter accepter,
-        TerminationTracker terminationTracker) {
+        Term nat onTracker term nat onTracker) {
       super(query);
-      this.innerWeight = innerWeight;
-      this.accepter = accepter;
-      this.terminationTracker = terminationTracker;
+      t . nner  ght =  nner  ght;
+      t .accepter = accepter;
+      t .term nat onTracker = term nat onTracker;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      innerWeight.extractTerms(terms);
+    @Overr de
+    publ c vo d extractTerms(Set<Term> terms) {
+       nner  ght.extractTerms(terms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return innerWeight.explain(context, doc);
+    @Overr de
+    publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
+      return  nner  ght.expla n(context, doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer innerScorer = innerWeight.scorer(context);
-      if (innerScorer == null) {
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+      Scorer  nnerScorer =  nner  ght.scorer(context);
+       f ( nnerScorer == null) {
         return null;
       }
-      if (ENABLE_GEO_EARLY_TERMINATION
-          && (terminationTracker == null || !terminationTracker.useLastSearchedDocIdOnTimeout())) {
-        innerScorer = new ConstantScoreScorer(
-            this,
+       f (ENABLE_GEO_EARLY_TERM NAT ON
+          && (term nat onTracker == null || !term nat onTracker.useLastSearc dDoc dOnT  out())) {
+         nnerScorer = new ConstantScoreScorer(
+            t ,
             0.0f,
             ScoreMode.COMPLETE_NO_SCORES,
-            new TimedDocIdSetIterator(innerScorer.iterator(),
-                                      terminationTracker,
-                                      GEO_TIMEOUT_OVERRIDE,
-                                      GEO_SEARCH_TIMEOUT_COUNT));
+            new T  dDoc dSet erator( nnerScorer. erator(),
+                                      term nat onTracker,
+                                      GEO_T MEOUT_OVERR DE,
+                                      GEO_SEARCH_T MEOUT_COUNT));
       }
 
-      accepter.initialize(context);
-      return new GeoTwoPhaseScorer(this, innerScorer, accepter);
+      accepter. n  al ze(context);
+      return new GeoTwoPhaseScorer(t ,  nnerScorer, accepter);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return innerWeight.isCacheable(ctx);
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext ctx) {
+      return  nner  ght. sCac able(ctx);
     }
   }
 
-  private static final class GeoTwoPhaseScorer extends Scorer {
-    private final Scorer innerScorer;
-    private final SecondPhaseDocAccepter accepter;
+  pr vate stat c f nal class GeoTwoPhaseScorer extends Scorer {
+    pr vate f nal Scorer  nnerScorer;
+    pr vate f nal SecondPhaseDocAccepter accepter;
 
-    private GeoTwoPhaseScorer(Weight weight, Scorer innerScorer, SecondPhaseDocAccepter accepter) {
-      super(weight);
-      this.innerScorer = innerScorer;
-      this.accepter = accepter;
+    pr vate GeoTwoPhaseScorer(  ght   ght, Scorer  nnerScorer, SecondPhaseDocAccepter accepter) {
+      super(  ght);
+      t . nnerScorer =  nnerScorer;
+      t .accepter = accepter;
     }
 
-    @Override
-    public TwoPhaseIterator twoPhaseIterator() {
-      return new TwoPhaseIterator(innerScorer.iterator()) {
-        @Override
-        public boolean matches() throws IOException {
-          return checkDocExpensive(innerScorer.docID());
+    @Overr de
+    publ c TwoPhase erator twoPhase erator() {
+      return new TwoPhase erator( nnerScorer. erator()) {
+        @Overr de
+        publ c boolean matc s() throws  OExcept on {
+          return c ckDocExpens ve( nnerScorer.doc D());
         }
 
-        @Override
-        public float matchCost() {
+        @Overr de
+        publ c float matchCost() {
           return 0.0f;
         }
       };
     }
 
-    @Override
-    public int docID() {
-      return iterator().docID();
+    @Overr de
+    publ c  nt doc D() {
+      return  erator().doc D();
     }
 
-    @Override
-    public float score() throws IOException {
-      return innerScorer.score();
+    @Overr de
+    publ c float score() throws  OExcept on {
+      return  nnerScorer.score();
     }
 
-    @Override
-    public DocIdSetIterator iterator() {
-      return new DocIdSetIterator() {
-        private int doNext(int startingDocId) throws IOException {
-          int docId = startingDocId;
-          while ((docId != NO_MORE_DOCS) && !checkDocExpensive(docId)) {
-            docId = innerScorer.iterator().nextDoc();
+    @Overr de
+    publ c Doc dSet erator  erator() {
+      return new Doc dSet erator() {
+        pr vate  nt doNext( nt start ngDoc d) throws  OExcept on {
+           nt doc d = start ngDoc d;
+          wh le ((doc d != NO_MORE_DOCS) && !c ckDocExpens ve(doc d)) {
+            doc d =  nnerScorer. erator().nextDoc();
           }
-          return docId;
+          return doc d;
         }
 
-        @Override
-        public int docID() {
-          return innerScorer.iterator().docID();
+        @Overr de
+        publ c  nt doc D() {
+          return  nnerScorer. erator().doc D();
         }
 
-        @Override
-        public int nextDoc() throws IOException {
-          return doNext(innerScorer.iterator().nextDoc());
+        @Overr de
+        publ c  nt nextDoc() throws  OExcept on {
+          return doNext( nnerScorer. erator().nextDoc());
         }
 
-        @Override
-        public int advance(int target) throws IOException {
-          return doNext(innerScorer.iterator().advance(target));
+        @Overr de
+        publ c  nt advance( nt target) throws  OExcept on {
+          return doNext( nnerScorer. erator().advance(target));
         }
 
-        @Override
-        public long cost() {
-          return 2 * innerScorer.iterator().cost();
+        @Overr de
+        publ c long cost() {
+          return 2 *  nnerScorer. erator().cost();
         }
       };
     }
 
-    @Override
-    public float getMaxScore(int upTo) throws IOException {
-      return innerScorer.getMaxScore(upTo);
+    @Overr de
+    publ c float getMaxScore( nt upTo) throws  OExcept on {
+      return  nnerScorer.getMaxScore(upTo);
     }
 
-    private boolean checkDocExpensive(int doc) throws IOException {
+    pr vate boolean c ckDocExpens ve( nt doc) throws  OExcept on {
       return accepter.accept(doc);
     }
   }
 
-  public abstract static class SecondPhaseDocAccepter {
+  publ c abstract stat c class SecondPhaseDocAccepter {
     /**
-     * Initializes this accepter with the given reader context.
+     *  n  al zes t  accepter w h t  g ven reader context.
      */
-    public abstract void initialize(LeafReaderContext context) throws IOException;
+    publ c abstract vo d  n  al ze(LeafReaderContext context) throws  OExcept on;
 
     /**
-     * Determines if the given doc ID is accepted by this accepter.
+     * Determ nes  f t  g ven doc  D  s accepted by t  accepter.
      */
-    public abstract boolean accept(int doc) throws IOException;
+    publ c abstract boolean accept( nt doc) throws  OExcept on;
 
     /**
-     * Returns a string description for this SecondPhaseDocAccepter instance.
+     * Returns a str ng descr pt on for t  SecondPhaseDocAccepter  nstance.
      */
-    public abstract String toString();
+    publ c abstract Str ng toStr ng();
   }
 
-  public static final SecondPhaseDocAccepter ALL_DOCS_ACCEPTER = new SecondPhaseDocAccepter() {
-    @Override
-    public void initialize(LeafReaderContext context) { }
+  publ c stat c f nal SecondPhaseDocAccepter ALL_DOCS_ACCEPTER = new SecondPhaseDocAccepter() {
+    @Overr de
+    publ c vo d  n  al ze(LeafReaderContext context) { }
 
-    @Override
-    public boolean accept(int doc) {
+    @Overr de
+    publ c boolean accept( nt doc) {
       return true;
     }
 
-    @Override
-    public String toString() {
+    @Overr de
+    publ c Str ng toStr ng() {
       return "AllDocsAccepter";
     }
   };

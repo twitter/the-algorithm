@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleFooterBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleFooter
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseUrlBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleFooterBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
 
-case class ModuleFooterBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  urlBuilder: Option[BaseUrlBuilder[Query, Candidate]])
-    extends BaseModuleFooterBuilder[Query, Candidate] {
+case class ModuleFooterBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  textBu lder: BaseStr[Query, Cand date],
+  urlBu lder: Opt on[BaseUrlBu lder[Query, Cand date]])
+    extends BaseModuleFooterBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[ModuleFooter] = {
-    candidates.headOption.map { candidate =>
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Opt on[ModuleFooter] = {
+    cand dates. adOpt on.map { cand date =>
       ModuleFooter(
-        text = textBuilder(query, candidate.candidate, candidate.features),
-        landingUrl = urlBuilder.map(_.apply(query, candidate.candidate, candidate.features))
+        text = textBu lder(query, cand date.cand date, cand date.features),
+        land ngUrl = urlBu lder.map(_.apply(query, cand date.cand date, cand date.features))
       )
     }
   }

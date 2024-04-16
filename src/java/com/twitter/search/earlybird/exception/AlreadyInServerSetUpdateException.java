@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-import com.twitter.common.zookeeper.ServerSet;
+ mport com.tw ter.common.zookeeper.ServerSet;
 
 /**
- * Used when trying to join a server set when this earlybird is already in a server set.
+ * Used w n try ng to jo n a server set w n t  earlyb rd  s already  n a server set.
  */
-public class AlreadyInServerSetUpdateException extends ServerSet.UpdateException {
-  public AlreadyInServerSetUpdateException(String message) {
-    super(message);
+publ c class Already nServerSetUpdateExcept on extends ServerSet.UpdateExcept on {
+  publ c Already nServerSetUpdateExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

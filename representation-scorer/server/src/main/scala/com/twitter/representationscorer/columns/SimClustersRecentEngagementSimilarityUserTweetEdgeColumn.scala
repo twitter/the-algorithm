@@ -1,52 +1,52 @@
-package com.twitter.representationscorer.columns
+package com.tw ter.representat onscorer.columns
 
-import com.twitter.representationscorer.common.TweetId
-import com.twitter.representationscorer.common.UserId
-import com.twitter.representationscorer.thriftscala.SimClustersRecentEngagementSimilarities
-import com.twitter.representationscorer.twistlyfeatures.Scorer
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+ mport com.tw ter.representat onscorer.common.T et d
+ mport com.tw ter.representat onscorer.common.User d
+ mport com.tw ter.representat onscorer.thr ftscala.S mClustersRecentEngage ntS m lar  es
+ mport com.tw ter.representat onscorer.tw stlyfeatures.Scorer
+ mport com.tw ter.st ch
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport javax. nject. nject
 
-class SimClustersRecentEngagementSimilarityUserTweetEdgeColumn @Inject() (scorer: Scorer)
+class S mClustersRecentEngage ntS m lar yUserT etEdgeColumn @ nject() (scorer: Scorer)
     extends StratoFed.Column(
-      "recommendations/representation_scorer/simClustersRecentEngagementSimilarity.UserTweetEdge")
-    with StratoFed.Fetch.Stitch {
+      "recom ndat ons/representat on_scorer/s mClustersRecentEngage ntS m lar y.UserT etEdge")
+    w h StratoFed.Fetch.St ch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  overr de val pol cy: Pol cy = Common.rsxReadPol cy
 
-  override type Key = (UserId, TweetId)
-  override type View = Unit
-  override type Value = SimClustersRecentEngagementSimilarities
+  overr de type Key = (User d, T et d)
+  overr de type V ew = Un 
+  overr de type Value = S mClustersRecentEngage ntS m lar  es
 
-  override val keyConv: Conv[Key] = Conv.ofType[(Long, Long)]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] =
-    ScroogeConv.fromStruct[SimClustersRecentEngagementSimilarities]
+  overr de val keyConv: Conv[Key] = Conv.ofType[(Long, Long)]
+  overr de val v ewConv: Conv[V ew] = Conv.ofType
+  overr de val valueConv: Conv[Value] =
+    ScroogeConv.fromStruct[S mClustersRecentEngage ntS m lar  es]
 
-  override val contactInfo: ContactInfo = Info.contactInfo
+  overr de val contact nfo: Contact nfo =  nfo.contact nfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(
-      PlainText(
-        "User-Tweet scores based on the user's recent engagements"
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (L fecycle.Product on),
+    descr pt on = So (
+      Pla nText(
+        "User-T et scores based on t  user's recent engage nts"
       ))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] =
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] =
     scorer
       .get(key._1, key._2)
       .map(found(_))
       .handle {
-        case stitch.NotFound => missing
+        case st ch.NotFound => m ss ng
       }
 }

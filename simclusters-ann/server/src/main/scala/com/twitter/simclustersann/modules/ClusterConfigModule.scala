@@ -1,25 +1,25 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfig
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import com.twitter.simclustersann.exceptions.MissingClusterConfigForSimClustersAnnVariantException
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.ClusterConf g
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.ClusterConf gMapper
+ mport com.tw ter.s mclustersann.except ons.M ss ngClusterConf gForS mClustersAnnVar antExcept on
+ mport javax. nject.S ngleton
 
-object ClusterConfigModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesClusterConfig(
-    serviceIdentifier: ServiceIdentifier,
-    clusterConfigMapper: ClusterConfigMapper
-  ): ClusterConfig = {
-    val serviceName = serviceIdentifier.service
+object ClusterConf gModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desClusterConf g(
+    serv ce dent f er: Serv ce dent f er,
+    clusterConf gMapper: ClusterConf gMapper
+  ): ClusterConf g = {
+    val serv ceNa  = serv ce dent f er.serv ce
 
-    clusterConfigMapper.getClusterConfig(serviceName) match {
-      case Some(config) => config
-      case None => throw MissingClusterConfigForSimClustersAnnVariantException(serviceName)
+    clusterConf gMapper.getClusterConf g(serv ceNa ) match {
+      case So (conf g) => conf g
+      case None => throw M ss ngClusterConf gForS mClustersAnnVar antExcept on(serv ceNa )
     }
   }
 }

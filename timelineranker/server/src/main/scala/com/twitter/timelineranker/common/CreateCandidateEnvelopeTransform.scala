@@ -1,15 +1,15 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * Create a CandidateEnvelope based on the incoming RecapQuery
+ * Create a Cand dateEnvelope based on t   ncom ng RecapQuery
  */
-object CreateCandidateEnvelopeTransform extends FutureArrow[RecapQuery, CandidateEnvelope] {
-  override def apply(query: RecapQuery): Future[CandidateEnvelope] = {
-    Future.value(CandidateEnvelope(query))
+object CreateCand dateEnvelopeTransform extends FutureArrow[RecapQuery, Cand dateEnvelope] {
+  overr de def apply(query: RecapQuery): Future[Cand dateEnvelope] = {
+    Future.value(Cand dateEnvelope(query))
   }
 }

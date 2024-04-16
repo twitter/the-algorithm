@@ -1,233 +1,233 @@
-package com.twitter.servo.request
+package com.tw ter.servo.request
 
-import com.twitter.config.yaml.YamlMap
-import com.twitter.util.Try
+ mport com.tw ter.conf g.yaml.YamlMap
+ mport com.tw ter.ut l.Try
 
 /**
- * Module for defining a set of permissions. This is similar to
- * Enumeration in the scala standard library.
+ * Module for def n ng a set of perm ss ons. T   s s m lar to
+ * Enu rat on  n t  scala standard l brary.
  *
- * To use, instantiate a subclass:
+ * To use,  nstant ate a subclass:
  *
  * {{{
- * object MyPermissions extends PermissionModule {
+ * object  Perm ss ons extends Perm ss onModule {
  *   val Eat = create("eat")
- *   val Drink = create("drink")
+ *   val Dr nk = create("dr nk")
  * }
  * }}}
  *
- * Permissions only support one kind of authorization, which is that
- * you can check whether a holder of permissions has all of the
- * permissions in a particular set.
+ * Perm ss ons only support one k nd of author zat on, wh ch  s that
+ *   can c ck w t r a holder of perm ss ons has all of t 
+ * perm ss ons  n a part cular set.
  *
  * {{{
- * val snack = MyPermissions.Eat
- * val dinner = MyPermissions.Eat union MyPermissions.Drink
- * val canEat = MyPermissions.Eat
- * dinner satisfiedBy canEat // false
- * snack satisfiedBy canEat // true
+ * val snack =  Perm ss ons.Eat
+ * val d nner =  Perm ss ons.Eat un on  Perm ss ons.Dr nk
+ * val canEat =  Perm ss ons.Eat
+ * d nner sat sf edBy canEat // false
+ * snack sat sf edBy canEat // true
  * }}}
  *
- * Each instance will have its own distinct permission type, so it is
- * not possible to confuse the permissions defined in different
+ * Each  nstance w ll have  s own d st nct perm ss on type, so    s
+ * not poss ble to confuse t  perm ss ons def ned  n d fferent
  * modules.
  *
  * {{{
- * scala> object P1 extends PermissionModule { val Read = create("read") }
- * scala> object P2 extends PermissionModule { val Read = create("read") }
- * scala> P1.Read satisfiedBy P2.Read
- * error: type mismatch;
- * found   : P2.Permissions
- * required: P1.Permissions
- *              P1.Read satisfiedBy P2.Read
+ * scala> object P1 extends Perm ss onModule { val Read = create("read") }
+ * scala> object P2 extends Perm ss onModule { val Read = create("read") }
+ * scala> P1.Read sat sf edBy P2.Read
+ * error: type m smatch;
+ * found   : P2.Perm ss ons
+ * requ red: P1.Perm ss ons
+ *              P1.Read sat sf edBy P2.Read
  * }}}
  *
- * Once an instance has been created, it will not be possible to
- * create new permissions. The intention is that all permissions will
- * be created at object initialization time.
+ * Once an  nstance has been created,   w ll not be poss ble to
+ * create new perm ss ons. T   ntent on  s that all perm ss ons w ll
+ * be created at object  n  al zat on t  .
  *
- * Each instance also supplies functionality for accessing permissions
- * by name, including parsing client permission maps from YAML.
+ * Each  nstance also suppl es funct onal y for access ng perm ss ons
+ * by na ,  nclud ng pars ng cl ent perm ss on maps from YAML.
  */
-trait PermissionModule {
-  // This var is used during object initialization to collect all of
-  // the permissions that are created in the subclass. The lazy
-  // initializer for `All` will set this to null as a side-effect, so
-  // that further permission creations are not allowed.
-  @volatile private[this] var allPerms: Set[String] = Set.empty
+tra  Perm ss onModule {
+  // T  var  s used dur ng object  n  al zat on to collect all of
+  // t  perm ss ons that are created  n t  subclass. T  lazy
+  //  n  al zer for `All` w ll set t  to null as a s de-effect, so
+  // that furt r perm ss on creat ons are not allo d.
+  @volat le pr vate[t ] var allPerms: Set[Str ng] = Set.empty
 
   /**
-   * Create a new Permission with the given name. Note that "*" is a
-   * reversed string for `All` permissions, thus it can not be
-   * used as the name of an individual permission.
+   * Create a new Perm ss on w h t  g ven na . Note that "*"  s a
+   * reversed str ng for `All` perm ss ons, thus   can not be
+   * used as t  na  of an  nd v dual perm ss on.
    *
-   * This method must be called before `All` is accessed.
-   * The intention is that it should be called as part of
-   * object initialization.
+   * T   thod must be called before `All`  s accessed.
+   * T   ntent on  s that   should be called as part of
+   * object  n  al zat on.
    *
-   * Note that some methods of PermissionModule access `All`, so it is
-   * best to create all of your permissions before doing anything
+   * Note that so   thods of Perm ss onModule access `All`, so    s
+   * best to create all of y  perm ss ons before do ng anyth ng
    * else.
    *
-   * @throws RuntimeException: If it is called after `All` has been
-   *   initialized.
+   * @throws Runt  Except on:  f    s called after `All` has been
+   *    n  al zed.
    */
-  protected def create(name: String) = {
-    synchronized {
-      if (allPerms == null) {
-        throw new RuntimeException("Permission creation after initialization")
+  protected def create(na : Str ng) = {
+    synchron zed {
+       f (allPerms == null) {
+        throw new Runt  Except on("Perm ss on creat on after  n  al zat on")
       }
 
-      allPerms = allPerms union Set(name)
+      allPerms = allPerms un on Set(na )
     }
 
-    new Permissions(Set(name))
+    new Perm ss ons(Set(na ))
   }
 
   /**
-   * Get a set of permissions with this single permission by name. It
-   * will return None if there is no permission by that name.
+   * Get a set of perm ss ons w h t  s ngle perm ss on by na .  
+   * w ll return None  f t re  s no perm ss on by that na .
    *
-   * No permissions may be defined after this method is called.
+   * No perm ss ons may be def ned after t   thod  s called.
    */
-  def get(name: String): Option[Permissions] = All.get(name)
+  def get(na : Str ng): Opt on[Perm ss ons] = All.get(na )
 
   /**
-   * Get the set of permissions that contains that single permission
-   * by name.
+   * Get t  set of perm ss ons that conta ns that s ngle perm ss on
+   * by na .
    *
-   * @throws RuntimeException if there is no defined permission with
-   *   this name.
+   * @throws Runt  Except on  f t re  s no def ned perm ss on w h
+   *   t  na .
    *
-   * No permissions may be defined after this method is called.
+   * No perm ss ons may be def ned after t   thod  s called.
    */
-  def apply(name: String): Permissions =
-    get(name) match {
-      case None => throw new RuntimeException("Unknown permission: " + name)
-      case Some(p) => p
+  def apply(na : Str ng): Perm ss ons =
+    get(na ) match {
+      case None => throw new Runt  Except on("Unknown perm ss on: " + na )
+      case So (p) => p
     }
 
   /**
-   * No permissions (required or held)
+   * No perm ss ons (requ red or  ld)
    */
-  val Empty: Permissions = new Permissions(Set.empty)
+  val Empty: Perm ss ons = new Perm ss ons(Set.empty)
 
   /**
-   * All defined permissions.
+   * All def ned perm ss ons.
    *
-   * No permissions may be defined after this value is initialized.
+   * No perm ss ons may be def ned after t  value  s  n  al zed.
    */
-  lazy val All: Permissions = {
-    val p = new Permissions(allPerms)
+  lazy val All: Perm ss ons = {
+    val p = new Perm ss ons(allPerms)
     allPerms = null
     p
   }
 
   /**
-   * Load permissions from a YAML map.
+   * Load perm ss ons from a YAML map.
    *
-   * No permissions may be defined after this method is called.
+   * No perm ss ons may be def ned after t   thod  s called.
    *
-   * @return a map from client identifier to permission set.
-   * @throws RuntimeException when the permission from the Map is not defined.
+   * @return a map from cl ent  dent f er to perm ss on set.
+   * @throws Runt  Except on w n t  perm ss on from t  Map  s not def ned.
    */
-  def fromYaml(m: YamlMap): Try[Map[String, Permissions]] =
+  def fromYaml(m: YamlMap): Try[Map[Str ng, Perm ss ons]] =
     Try {
       m.keys.map { k =>
-        k -> fromSeq((m yamlList k).map { _.toString })
+        k -> fromSeq((m yamlL st k).map { _.toStr ng })
       }.toMap
     }
 
   /**
-   * Load permissions from map.
+   * Load perm ss ons from map.
    *
-   * No permissions may be defined after this method is called.
+   * No perm ss ons may be def ned after t   thod  s called.
    *
-   * @param m a map from client identifier to a set of permission strings
+   * @param m a map from cl ent  dent f er to a set of perm ss on str ngs
    *
-   * @return a map from client identifier to permission set.
-   * @throws RuntimeException when the permission from the Map is not defined.
+   * @return a map from cl ent  dent f er to perm ss on set.
+   * @throws Runt  Except on w n t  perm ss on from t  Map  s not def ned.
    */
-  def fromMap(m: Map[String, Seq[String]]): Try[Map[String, Permissions]] =
+  def fromMap(m: Map[Str ng, Seq[Str ng]]): Try[Map[Str ng, Perm ss ons]] =
     Try {
       m.map { case (k, v) => k -> fromSeq(v) }
     }
 
   /**
-   * Load permissions from seq.
+   * Load perm ss ons from seq.
    *
-   * No permissions may be defined after this method is called.
+   * No perm ss ons may be def ned after t   thod  s called.
    *
-   * @param sequence a Seq of permission strings
+   * @param sequence a Seq of perm ss on str ngs
    *
-   * @return a permission set.
-   * @throws RuntimeException when the permission is not defined.
+   * @return a perm ss on set.
+   * @throws Runt  Except on w n t  perm ss on  s not def ned.
    */
-  def fromSeq(permissionStrings: Seq[String]): Permissions =
-    permissionStrings.foldLeft(Empty) { (p, v) =>
+  def fromSeq(perm ss onStr ngs: Seq[Str ng]): Perm ss ons =
+    perm ss onStr ngs.foldLeft(Empty) { (p, v) =>
       v match {
-        case "all" if get("all").isEmpty => All
-        case other => p union apply(other)
+        case "all"  f get("all"). sEmpty => All
+        case ot r => p un on apply(ot r)
       }
     }
 
   /**
-   * Authorizer based on a Permissions for RPC method names.
-   * @param requiredPermissions
-   *   map of RPC method names to Permissions required for that RPC
-   * @param clientPermissions
-   *   map of ClientId to Permissions a client has
+   * Author zer based on a Perm ss ons for RPC  thod na s.
+   * @param requ redPerm ss ons
+   *   map of RPC  thod na s to Perm ss ons requ red for that RPC
+   * @param cl entPerm ss ons
+   *   map of Cl ent d to Perm ss ons a cl ent has
    */
-  def permissionBasedAuthorizer(
-    requiredPermissions: Map[String, Permissions],
-    clientPermissions: Map[String, Permissions]
-  ): ClientRequestAuthorizer =
-    ClientRequestAuthorizer.filtered { (methodName, clientId) =>
-      requiredPermissions.get(methodName) exists {
-        _ satisfiedBy clientPermissions.getOrElse(clientId, Empty)
+  def perm ss onBasedAuthor zer(
+    requ redPerm ss ons: Map[Str ng, Perm ss ons],
+    cl entPerm ss ons: Map[Str ng, Perm ss ons]
+  ): Cl entRequestAuthor zer =
+    Cl entRequestAuthor zer.f ltered { ( thodNa , cl ent d) =>
+      requ redPerm ss ons.get( thodNa ) ex sts {
+        _ sat sf edBy cl entPerm ss ons.getOrElse(cl ent d, Empty)
       }
     }
 
   /**
-   * A set of permissions. This can represent either permissions that
-   * are required to perform an action, or permissions that are held
-   * by a client.
+   * A set of perm ss ons. T  can represent e  r perm ss ons that
+   * are requ red to perform an act on, or perm ss ons that are  ld
+   * by a cl ent.
    *
-   * This type cannot be instantiated directly. Use the methods of
-   * your subclass of PermissionModule to do so.
+   * T  type cannot be  nstant ated d rectly. Use t   thods of
+   * y  subclass of Perm ss onModule to do so.
    */
-  class Permissions private[PermissionModule] (private[PermissionModule] val permSet: Set[String]) {
+  class Perm ss ons pr vate[Perm ss onModule] (pr vate[Perm ss onModule] val permSet: Set[Str ng]) {
 
     /**
-     * Does the supplied set of held permissions satisfy the
-     * requirements of this set of permissions?
+     * Does t  suppl ed set of  ld perm ss ons sat sfy t 
+     * requ re nts of t  set of perm ss ons?
      *
-     * For example, if this set of permissions is Set("read"), and the
-     * other set of permissions is Set("read", "write"), then the
-     * other set of permissions satisfies this set.
+     * For example,  f t  set of perm ss ons  s Set("read"), and t 
+     * ot r set of perm ss ons  s Set("read", "wr e"), t n t 
+     * ot r set of perm ss ons sat sf es t  set.
      */
-    def satisfiedBy(other: Permissions): Boolean = permSet subsetOf other.permSet
+    def sat sf edBy(ot r: Perm ss ons): Boolean = permSet subsetOf ot r.permSet
 
-    override def equals(other: Any): Boolean =
-      other match {
-        case p: Permissions => p.permSet == permSet
+    overr de def equals(ot r: Any): Boolean =
+      ot r match {
+        case p: Perm ss ons => p.permSet == permSet
         case _ => false
       }
 
-    override lazy val hashCode: Int = 5 + 37 * permSet.hashCode
+    overr de lazy val hashCode:  nt = 5 + 37 * permSet.hashCode
 
     /**
-     * Get a single permission
+     * Get a s ngle perm ss on
      */
-    def get(permName: String): Option[Permissions] =
-      if (permSet contains permName) Some(new Permissions(Set(permName))) else None
+    def get(permNa : Str ng): Opt on[Perm ss ons] =
+       f (permSet conta ns permNa ) So (new Perm ss ons(Set(permNa ))) else None
 
     /**
-     * Create a new permission set that holds the permissions of this
-     * object as well as the permissions of the other object.
+     * Create a new perm ss on set that holds t  perm ss ons of t 
+     * object as  ll as t  perm ss ons of t  ot r object.
      */
-    def union(other: Permissions): Permissions = new Permissions(permSet union other.permSet)
+    def un on(ot r: Perm ss ons): Perm ss ons = new Perm ss ons(permSet un on ot r.permSet)
 
-    override def toString: String = "Permissions(%s)".format(permSet.mkString(", "))
+    overr de def toStr ng: Str ng = "Perm ss ons(%s)".format(permSet.mkStr ng(", "))
   }
 }

@@ -1,161 +1,161 @@
-package com.twitter.follow_recommendations.common.predicates.user_activity
+package com.tw ter.follow_recom ndat ons.common.pred cates.user_act v y
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftEnumOptionBijection
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.UserRecommendabilityWithLongKeysOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.cac . mcac Cl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.cac .Thr ftEnumOpt onB ject on
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derKey
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.UserRecom ndab l yW hLongKeysOnUserCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-abstract case class UserStateActivityPredicate(
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  validCandidateStates: Set[UserState],
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False)
-    extends Predicate[(HasParams with HasClientContext, CandidateUser)] {
+abstract case class UserStateAct v yPred cate(
+  userRecom ndab l yCl ent: UserRecom ndab l yW hLongKeysOnUserCl entColumn,
+  val dCand dateStates: Set[UserState],
+  cl ent: Cl ent,
+  statsRece ver: StatsRece ver,
+  dec der: Dec der = Dec der.False)
+    extends Pred cate[(HasParams w h HasCl entContext, Cand dateUser)] {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  // client to memcache cluster
-  val bijection = new ThriftEnumOptionBijection[UserState](UserState.apply)
-  val memcacheClient = MemcacheClient[Option[UserState]](
-    client = client,
-    dest = "/s/cache/follow_recos_service:twemcaches",
-    valueBijection = bijection,
-    ttl = UserActivityPredicateParams.CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  // cl ent to  mcac  cluster
+  val b ject on = new Thr ftEnumOpt onB ject on[UserState](UserState.apply)
+  val  mcac Cl ent =  mcac Cl ent[Opt on[UserState]](
+    cl ent = cl ent,
+    dest = "/s/cac /follow_recos_serv ce:t mcac s",
+    valueB ject on = b ject on,
+    ttl = UserAct v yPred cateParams.Cac TTL,
+    statsRece ver = stats.scope("t mcac ")
   )
 
-  override def apply(
-    targetAndCandidate: (HasParams with HasClientContext, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val userRecommendabilityFetcher = userRecommendabilityClient.fetcher
-    val (_, candidate) = targetAndCandidate
+  overr de def apply(
+    targetAndCand date: (HasParams w h HasCl entContext, Cand dateUser)
+  ): St ch[Pred cateResult] = {
+    val userRecom ndab l yFetc r = userRecom ndab l yCl ent.fetc r
+    val (_, cand date) = targetAndCand date
 
-    val deciderKey: String = DeciderKey.EnableExperimentalCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
-    val userStateStitch: Stitch[Option[UserState]] = 
-      enableDistributedCaching match {
+    val dec derKey: Str ng = Dec derKey.EnableExper  ntalCach ng.toStr ng
+    val enableD str butedCach ng: Boolean = dec der. sAva lable(dec derKey, So (RandomRec p ent))
+    val userStateSt ch: St ch[Opt on[UserState]] = 
+      enableD str butedCach ng match {
         case true => {
-          memcacheClient.readThrough(
-            // add a key prefix to address cache key collisions
-            key = "UserActivityPredicate" + candidate.id.toString,
-            underlyingCall = () => queryUserRecommendable(candidate.id)
+           mcac Cl ent.readThrough(
+            // add a key pref x to address cac  key coll s ons
+            key = "UserAct v yPred cate" + cand date. d.toStr ng,
+            underly ngCall = () => queryUserRecom ndable(cand date. d)
           )
         }
-        case false => queryUserRecommendable(candidate.id)
+        case false => queryUserRecom ndable(cand date. d)
       }
-    val resultStitch: Stitch[PredicateResult] = 
-      userStateStitch.map { userStateOpt =>
+    val resultSt ch: St ch[Pred cateResult] = 
+      userStateSt ch.map { userStateOpt =>
         userStateOpt match {
-          case Some(userState) => {
-            if (validCandidateStates.contains(userState)) {
-              PredicateResult.Valid
+          case So (userState) => {
+             f (val dCand dateStates.conta ns(userState)) {
+              Pred cateResult.Val d
             } else {
-              PredicateResult.Invalid(Set(FilterReason.MinStateNotMet))
+              Pred cateResult. nval d(Set(F lterReason.M nStateNot t))
             }
           }
           case None => {
-            PredicateResult.Invalid(Set(FilterReason.MissingRecommendabilityData))
+            Pred cateResult. nval d(Set(F lterReason.M ss ngRecom ndab l yData))
           }
         }
       }
     
-    StatsUtil.profileStitch(resultStitch, stats.scope("apply"))
+    StatsUt l.prof leSt ch(resultSt ch, stats.scope("apply"))
       .rescue {
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
+        case e: Except on =>
+          stats.scope("rescued").counter(e.getClass.getS mpleNa ). ncr()
+          St ch(Pred cateResult. nval d(Set(F lterReason.Fa lOpen)))
       }
   }
 
-  def queryUserRecommendable(
-    userId: Long
-  ): Stitch[Option[UserState]] = {
-    val userRecommendabilityFetcher = userRecommendabilityClient.fetcher
-    userRecommendabilityFetcher.fetch(userId).map { userCandidate => 
-      userCandidate.v.flatMap(_.userState)
+  def queryUserRecom ndable(
+    user d: Long
+  ): St ch[Opt on[UserState]] = {
+    val userRecom ndab l yFetc r = userRecom ndab l yCl ent.fetc r
+    userRecom ndab l yFetc r.fetch(user d).map { userCand date => 
+      userCand date.v.flatMap(_.userState)
     }
   }
 }
 
-@Singleton
-class MinStateUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
+@S ngleton
+class M nStateUserAct v yPred cate @ nject() (
+  userRecom ndab l yCl ent: UserRecom ndab l yW hLongKeysOnUserCl entColumn,
+  cl ent: Cl ent,
+  statsRece ver: StatsRece ver)
+    extends UserStateAct v yPred cate(
+      userRecom ndab l yCl ent,
       Set(
-        UserState.Light,
-        UserState.HeavyNonTweeter,
-        UserState.MediumNonTweeter,
-        UserState.HeavyTweeter,
-        UserState.MediumTweeter
+        UserState.L ght,
+        UserState. avyNonT eter,
+        UserState. d umNonT eter,
+        UserState. avyT eter,
+        UserState. d umT eter
       ),
-      client,
-      statsReceiver
+      cl ent,
+      statsRece ver
     )
 
-@Singleton
-class AllTweeterUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
+@S ngleton
+class AllT eterUserAct v yPred cate @ nject() (
+  userRecom ndab l yCl ent: UserRecom ndab l yW hLongKeysOnUserCl entColumn,
+  cl ent: Cl ent,
+  statsRece ver: StatsRece ver)
+    extends UserStateAct v yPred cate(
+      userRecom ndab l yCl ent,
       Set(
-        UserState.HeavyTweeter,
-        UserState.MediumTweeter
+        UserState. avyT eter,
+        UserState. d umT eter
       ),
-      client,
-      statsReceiver
+      cl ent,
+      statsRece ver
     )
 
-@Singleton
-class HeavyTweeterUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
+@S ngleton
+class  avyT eterUserAct v yPred cate @ nject() (
+  userRecom ndab l yCl ent: UserRecom ndab l yW hLongKeysOnUserCl entColumn,
+  cl ent: Cl ent,
+  statsRece ver: StatsRece ver)
+    extends UserStateAct v yPred cate(
+      userRecom ndab l yCl ent,
       Set(
-        UserState.HeavyTweeter
+        UserState. avyT eter
       ),
-      client,
-      statsReceiver
+      cl ent,
+      statsRece ver
     )
 
-@Singleton
-class NonNearZeroUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
+@S ngleton
+class NonNearZeroUserAct v yPred cate @ nject() (
+  userRecom ndab l yCl ent: UserRecom ndab l yW hLongKeysOnUserCl entColumn,
+  cl ent: Cl ent,
+  statsRece ver: StatsRece ver)
+    extends UserStateAct v yPred cate(
+      userRecom ndab l yCl ent,
       Set(
         UserState.New,
-        UserState.VeryLight,
-        UserState.Light,
-        UserState.MediumNonTweeter,
-        UserState.MediumTweeter,
-        UserState.HeavyNonTweeter,
-        UserState.HeavyTweeter
+        UserState.VeryL ght,
+        UserState.L ght,
+        UserState. d umNonT eter,
+        UserState. d umT eter,
+        UserState. avyNonT eter,
+        UserState. avyT eter
       ),
-      client,
-      statsReceiver
+      cl ent,
+      statsRece ver
     )

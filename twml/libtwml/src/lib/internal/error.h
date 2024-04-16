@@ -1,8 +1,8 @@
 #pragma once
-#include <twml/Error.h>
-#include <iostream>
+# nclude <twml/Error.h>
+# nclude < ostream>
 
-#define HANDLE_EXCEPTIONS(fn) do {              \
+#def ne HANDLE_EXCEPT ONS(fn) do {              \
         try {                                   \
             fn                                  \
         } catch(const twml::Error &e) {         \
@@ -12,18 +12,18 @@
             std::cerr << "Unknown error\n";     \
             return TWML_ERR_UNKNOWN;            \
         }                                       \
-    } while(0)
+    } wh le(0)
 
-#define TWML_CHECK(fn, msg) do {                \
+#def ne TWML_CHECK(fn, msg) do {                \
         twml_err err = fn;                      \
-        if (err == TWML_ERR_NONE) break;        \
+         f (err == TWML_ERR_NONE) break;        \
         throw twml::Error(err, msg);            \
-    } while(0)
+    } wh le(0)
 
 
-#define CHECK_THRIFT_TYPE(real_type, expected_type, type) do {      \
-    int real_type_val = real_type;                                  \
-    if (real_type_val != expected_type) {                           \
-      throw twml::ThriftInvalidType(real_type_val, __func__, type); \
+#def ne CHECK_THR FT_TYPE(real_type, expected_type, type) do {      \
+     nt real_type_val = real_type;                                  \
+     f (real_type_val != expected_type) {                           \
+      throw twml::Thr ft nval dType(real_type_val, __func__, type); \
     }                                                               \
-  } while(0)
+  } wh le(0)

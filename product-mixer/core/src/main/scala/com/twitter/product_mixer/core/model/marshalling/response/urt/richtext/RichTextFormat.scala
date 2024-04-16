@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext
 
-sealed trait RichTextFormat {
-  def name: String
+sealed tra  R chTextFormat {
+  def na : Str ng
 }
 
-case object Plain extends RichTextFormat {
-  override val name: String = "Plain"
+case object Pla n extends R chTextFormat {
+  overr de val na : Str ng = "Pla n"
 }
 
-case object Strong extends RichTextFormat {
-  override val name: String = "Strong"
+case object Strong extends R chTextFormat {
+  overr de val na : Str ng = "Strong"
 }

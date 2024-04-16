@@ -1,327 +1,327 @@
-.. _real_time:
+.. _real_t  :
 
-Real-Time aggregate features
+Real-T   aggregate features
 ============================
 
-In addition to computing batch aggregate features, the aggregation framework supports real-time aggregates as well. The framework concepts used here are identical to the batch use case, however, the underlying implementation differs and is provided by summingbird-storm jobs.
+ n add  on to comput ng batch aggregate features, t  aggregat on fra work supports real-t   aggregates as  ll. T  fra work concepts used  re are  dent cal to t  batch use case, ho ver, t  underly ng  mple ntat on d ffers and  s prov ded by summ ngb rd-storm jobs.
 
 RTA Runbook
 -----------
 
-For operational details, please visit http://go/tqrealtimeaggregates.
+For operat onal deta ls, please v s  http://go/tqrealt  aggregates.
 
-Prerequisites
+Prerequ s es
 -------------
 
-In order to start computing real-time aggregate features, the framework requires the following to be provided:
+ n order to start comput ng real-t   aggregate features, t  fra work requ res t  follow ng to be prov ded:
 
-* A backing memcached store that will hold the computed aggregate features. This is conceptually equivalent to the output HDFS store in the batch compute case.
-* Implementation of `StormAggregateSource <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/heron/StormAggregateSource.scala#n15>`_ that creates `DataRecords` with the necessary input features. This serves as the input to the aggregation operations.
-* Definition of aggregate features by defining `AggregateGroup` in an implementation of `OnlineAggregationConfigTrait`. This is identical to the batch case.
-* Job config file defining the backing memcached for feature storage and retrieval, and job-related parameters.
+* A back ng  mcac d store that w ll hold t  computed aggregate features. T   s conceptually equ valent to t  output HDFS store  n t  batch compute case.
+*  mple ntat on of `StormAggregateS ce <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/ ron/StormAggregateS ce.scala#n15>`_ that creates `DataRecords` w h t  necessary  nput features. T  serves as t   nput to t  aggregat on operat ons.
+* Def n  on of aggregate features by def n ng `AggregateGroup`  n an  mple ntat on of `Onl neAggregat onConf gTra `. T   s  dent cal to t  batch case.
+* Job conf g f le def n ng t  back ng  mcac d for feature storage and retr eval, and job-related para ters.
 
-We will now go through the details in setting up each required component.
+  w ll now go through t  deta ls  n sett ng up each requ red component.
 
-Memcached store
+ mcac d store
 ---------------
 
-Real-time aggregates use Memcache as the backing cache to store and update aggregate features keys. Caches can be provisioned on `go/cacheboard <https://cacheboardv2--prod--cache.service.atla.twitter.biz/>`_.
+Real-t   aggregates use  mcac  as t  back ng cac  to store and update aggregate features keys. Cac s can be prov s oned on `go/cac board <https://cac boardv2--prod--cac .serv ce.atla.tw ter.b z/>`_.
 
-.. admonition:: Test and prod caches
+.. admon  on:: Test and prod cac s
 
-  For development, it is sufficient to setup a test cache that your new job can query and write to. At the same time, a production cache request should also be submitted as these generally have significant lead times for provisioning.
+  For develop nt,    s suff c ent to setup a test cac  that y  new job can query and wr e to. At t  sa  t  , a product on cac  request should also be subm ted as t se generally have s gn f cant lead t  s for prov s on ng.
 
-StormAggregateSource
+StormAggregateS ce
 --------------------
 
-To enable aggregation of your features, we need to start with defining a `StormAggregateSource` that builds a `Producer[Storm, DataRecord]`. This summingbird producer generates `DataRecords` that contain the input features and labels that the real-time aggregate job will compute aggregate features on. Conceptually, this is equivalent to the input data set in the offline batch use case.
+To enable aggregat on of y  features,   need to start w h def n ng a `StormAggregateS ce` that bu lds a `Producer[Storm, DataRecord]`. T  summ ngb rd producer generates `DataRecords` that conta n t   nput features and labels that t  real-t   aggregate job w ll compute aggregate features on. Conceptually, t   s equ valent to t   nput data set  n t  offl ne batch use case.
 
-.. admonition:: Example
+.. admon  on:: Example
 
-  If you are planning to aggregate on client engagements, you would need to subscribe to the `ClientEvent` kafka stream and then convert each event to a `DataRecord` that contains the key and the engagement on which to aggregate.
+   f   are plann ng to aggregate on cl ent engage nts,   would need to subscr be to t  `Cl entEvent` kafka stream and t n convert each event to a `DataRecord` that conta ns t  key and t  engage nt on wh ch to aggregate.
 
-Typically, we would setup a julep filter for the relevant client events that we would like to aggregate on. This gives us a `Producer[Storm, LogEvent]` object which we then convert to `Producer[Storm, DataRecord]` with adapters that we wrote:
+Typ cally,   would setup a julep f lter for t  relevant cl ent events that   would l ke to aggregate on. T  g ves us a `Producer[Storm, LogEvent]` object wh ch   t n convert to `Producer[Storm, DataRecord]` w h adapters that   wrote:
 
 .. code-block:: scala
 
-  lazy val clientEventProducer: Producer[Storm, LogEvent] =
-    ClientEventSourceScrooge(
-      appId = AppId(jobConfig.appId),
-      topic = "julep_client_event_suggests",
-      resumeAtLastReadOffset = false
-    ).source.name("timelines_events")
+  lazy val cl entEventProducer: Producer[Storm, LogEvent] =
+    Cl entEventS ceScrooge(
+      app d = App d(jobConf g.app d),
+      top c = "julep_cl ent_event_suggests",
+      resu AtLastReadOffset = false
+    ).s ce.na ("t  l nes_events")
 
-  lazy val clientEventWithCachedFeaturesProducer: Producer[Storm, DataRecord] = clientEventProducer
+  lazy val cl entEventW hCac dFeaturesProducer: Producer[Storm, DataRecord] = cl entEventProducer
     .flatMap(mkDataRecords)
 
-Note that this way of composing the storm graph gives us flexiblity in how we can hydrate input features. If you would like to join more complex features to `DataRecord`, you can do so here with additional storm components which can implement cache queries.
+Note that t  way of compos ng t  storm graph g ves us flex bl y  n how   can hydrate  nput features.  f   would l ke to jo n more complex features to `DataRecord`,   can do so  re w h add  onal storm components wh ch can  mple nt cac  quer es.
 
-.. admonition:: Timelines Quality use case
+.. admon  on:: T  l nes Qual y use case
 
-  In Timelines Quality, we aggregate client engagements on `userId` or `tweetId` and implement
-  `TimelinesStormAggregateSource <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/TimelinesStormAggregateSource.scala>`_. We create
-  `Producer[Storm,LogEvent]` of Timelines engagements to which we apply `ClientLogEventAdapter <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/adapters/client_log_event/ClientLogEventAdapter.scala>`_ which converts the event to `DataRecord` containing `userId`, `tweetId`, `timestampFeature` of the engagement and the engagement label itself.
+   n T  l nes Qual y,   aggregate cl ent engage nts on `user d` or `t et d` and  mple nt
+  `T  l nesStormAggregateS ce <https://cg .tw ter.b z/s ce/tree/src/scala/com/tw ter/t  l nes/pred ct on/common/aggregates/real_t  /T  l nesStormAggregateS ce.scala>`_.   create
+  `Producer[Storm,LogEvent]` of T  l nes engage nts to wh ch   apply `Cl entLogEventAdapter <https://cg .tw ter.b z/s ce/tree/src/scala/com/tw ter/t  l nes/pred ct on/adapters/cl ent_log_event/Cl entLogEventAdapter.scala>`_ wh ch converts t  event to `DataRecord` conta n ng `user d`, `t et d`, `t  stampFeature` of t  engage nt and t  engage nt label  self.
 
-.. admonition:: MagicRecs use case
+.. admon  on:: Mag cRecs use case
 
-  MagicRecs has a very similar setup for real-time aggregate features. In addition, they also implement a more complex cache query to fetch the user's history in the `StormAggregateSource` for each observed client engagement to hydrate a richer set of input `DataRecords`:
-
-  .. code-block:: scala
-
-    val userHistoryStoreService: Storm#Service[Long, History] =
-      Storm.service(UserHistoryReadableStore)
-
-    val clientEventDataRecordProducer: Producer[Storm, DataRecord] =
-      magicRecsClientEventProducer
-        .flatMap { ...
-          (userId, logEvent)
-        }.leftJoin(userHistoryStoreService)
-        .flatMap {
-          case (_, (logEvent, history)) =>
-            mkDataRecords(LogEventHistoryPair(logEvent, history))
-        }
-
-.. admonition:: EmailRecs use case
-
-  EmailRecs shares the same cache as MagicRecs. They combine notification scribe data with email history data to identify the particular item a user engaged with in an email:
+  Mag cRecs has a very s m lar setup for real-t   aggregate features.  n add  on, t y also  mple nt a more complex cac  query to fetch t  user's  tory  n t  `StormAggregateS ce` for each observed cl ent engage nt to hydrate a r c r set of  nput `DataRecords`:
 
   .. code-block:: scala
 
-    val emailHistoryStoreService: Storm#Service[Long, History] =
-      Storm.service(EmailHistoryReadableStore)
+    val user toryStoreServ ce: Storm#Serv ce[Long,  tory] =
+      Storm.serv ce(User toryReadableStore)
 
-    val emailEventDataRecordProducer: Producer[Storm, DataRecord] =
-      emailEventProducer
+    val cl entEventDataRecordProducer: Producer[Storm, DataRecord] =
+      mag cRecsCl entEventProducer
         .flatMap { ...
-          (userId, logEvent)
-        }.leftJoin(emailHistoryStoreService)
+          (user d, logEvent)
+        }.leftJo n(user toryStoreServ ce)
         .flatMap {
-          case (_, (scribe, history)) =>
-            mkDataRecords(ScribeHistoryPair(scribe, history))
+          case (_, (logEvent,  tory)) =>
+            mkDataRecords(LogEvent toryPa r(logEvent,  tory))
+        }
+
+.. admon  on:: Ema lRecs use case
+
+  Ema lRecs shares t  sa  cac  as Mag cRecs. T y comb ne not f cat on scr be data w h ema l  tory data to  dent fy t  part cular  em a user engaged w h  n an ema l:
+
+  .. code-block:: scala
+
+    val ema l toryStoreServ ce: Storm#Serv ce[Long,  tory] =
+      Storm.serv ce(Ema l toryReadableStore)
+
+    val ema lEventDataRecordProducer: Producer[Storm, DataRecord] =
+      ema lEventProducer
+        .flatMap { ...
+          (user d, logEvent)
+        }.leftJo n(ema l toryStoreServ ce)
+        .flatMap {
+          case (_, (scr be,  tory)) =>
+            mkDataRecords(Scr be toryPa r(scr be,  tory))
         }
 
 
-Aggregation config
+Aggregat on conf g
 ------------------
 
-The real-time aggregation config is extended from `OnlineAggregationConfigTrait <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/heron/OnlineAggregationConfigTrait.scala>`_ and defines the features to aggregate and the backing memcached store to which they will be written.
+T  real-t   aggregat on conf g  s extended from `Onl neAggregat onConf gTra  <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/ ron/Onl neAggregat onConf gTra .scala>`_ and def nes t  features to aggregate and t  back ng  mcac d store to wh ch t y w ll be wr ten.
 
-Setting up real-time aggregates follows the same rules as in the offline batch use case. The major difference here is that `inputSource` should point to the `StormAggregateSource` implementation that provides the `DataRecord` containing the engagements and core features on which to aggregate. In the offline case, this would have been an `OfflineAggregateSource` pointing to an offline source of daily records.
+Sett ng up real-t   aggregates follows t  sa  rules as  n t  offl ne batch use case. T  major d fference  re  s that ` nputS ce` should po nt to t  `StormAggregateS ce`  mple ntat on that prov des t  `DataRecord` conta n ng t  engage nts and core features on wh ch to aggregate.  n t  offl ne case, t  would have been an `Offl neAggregateS ce` po nt ng to an offl ne s ce of da ly records.
 
-Finally, `RealTimeAggregateStore` defines the backing memcache to be used and should be provided here as the `outputStore`.
+F nally, `RealT  AggregateStore` def nes t  back ng  mcac  to be used and should be prov ded  re as t  `outputStore`.
 
 .. NOTE::
 
-  Please make sure to provide an `AggregateGroup` for both staging and production. The main difference should be the `outputStore` where features in either environment are read from and written to. You want to make sure that a staged real-time aggregates summingbird job is reading/writing only to the test memcache store and does not mutate the production store.
+  Please make sure to prov de an `AggregateGroup` for both stag ng and product on. T  ma n d fference should be t  `outputStore` w re features  n e  r env ron nt are read from and wr ten to.   want to make sure that a staged real-t   aggregates summ ngb rd job  s read ng/wr  ng only to t  test  mcac  store and does not mutate t  product on store.
 
-Job config
+Job conf g
 ----------
 
-In addition to the aggregation config that defines the features to aggregate, the final piece we need to provide is a `RealTimeAggregatesJobConfig` that specificies job values such as `appId`, `teamName` and counts for the various topology components that define the capacity of the job (`Timelines example <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/TimelinesRealTimeAggregatesJob.scala#n22>`_).
+ n add  on to t  aggregat on conf g that def nes t  features to aggregate, t  f nal p ece   need to prov de  s a `RealT  AggregatesJobConf g` that spec f c es job values such as `app d`, `teamNa ` and counts for t  var ous topology components that def ne t  capac y of t  job (`T  l nes example <https://cg .tw ter.b z/s ce/tree/src/scala/com/tw ter/t  l nes/pred ct on/common/aggregates/real_t  /T  l nesRealT  AggregatesJob.scala#n22>`_).
 
-Once you have the job config, implementing the storm job itself is easy and almost as concise as in the batch use case:
+Once   have t  job conf g,  mple nt ng t  storm job  self  s easy and almost as conc se as  n t  batch use case:
 
 .. code-block:: scala
 
-  object TimelinesRealTimeAggregatesJob extends RealTimeAggregatesJobBase {
-    override lazy val statsReceiver = DefaultStatsReceiver.scope("timelines_real_time_aggregates")
-    override lazy val jobConfigs = TimelinesRealTimeAggregatesJobConfigs
-    override lazy val aggregatesToCompute = TimelinesOnlineAggregationConfig.AggregatesToCompute
+  object T  l nesRealT  AggregatesJob extends RealT  AggregatesJobBase {
+    overr de lazy val statsRece ver = DefaultStatsRece ver.scope("t  l nes_real_t  _aggregates")
+    overr de lazy val jobConf gs = T  l nesRealT  AggregatesJobConf gs
+    overr de lazy val aggregatesToCompute = T  l nesOnl neAggregat onConf g.AggregatesToCompute
   }
 
 .. NOTE::
-  There are some topology settings that are currently hard-coded. In particular, we enable `Config.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE` to be true for added robustness. This may be made user-definable in the future.
+  T re are so  topology sett ngs that are currently hard-coded.  n part cular,   enable `Conf g.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE` to be true for added robustness. T  may be made user-def nable  n t  future.
 
 Steps to hydrate RTAs
 --------------------
-1. Make the changes to RTAs and follow the steps for `Running the topology`.
-2. Register the new RTAs to feature store. Sample phab: https://phabricator.twitter.biz/D718120
-3. Wire the features from feature store to TLX. This is usually done with the feature switch set to False. So it's just a code change and will not yet start hydrating the features yet. Merge the phab. Sample phab: https://phabricator.twitter.biz/D718424
-4. Now we hydrate the features to TLX gradually by doing it shard wise. For this, first create a PCM and then enable the hydration. Sample PCM: https://jira.twitter.biz/browse/PCM-147814
+1. Make t  changes to RTAs and follow t  steps for `Runn ng t  topology`.
+2. Reg ster t  new RTAs to feature store. Sample phab: https://phabr cator.tw ter.b z/D718120
+3. W re t  features from feature store to TLX. T   s usually done w h t  feature sw ch set to False. So  's just a code change and w ll not yet start hydrat ng t  features yet.  rge t  phab. Sample phab: https://phabr cator.tw ter.b z/D718424
+4. Now   hydrate t  features to TLX gradually by do ng   shard w se. For t , f rst create a PCM and t n enable t  hydrat on. Sample PCM: https://j ra.tw ter.b z/browse/PCM-147814
 
-Running the topology
+Runn ng t  topology
 --------------------
-0. For phab that makes change to the topology (such as adding new ML features), before landing the phab, please create a PCM (`example <https://jira.twitter.biz/browse/PCM-131614>`_) and deploy the change to devel topology first and then prod (atla and pdxa). Once it is confirmed that the prod topology can handle the change, the phab can be landed. 
-1. Go to https://ci.twitter.biz/job/tq-ci/build
-2. In `commands` input
+0. For phab that makes change to t  topology (such as add ng new ML features), before land ng t  phab, please create a PCM (`example <https://j ra.tw ter.b z/browse/PCM-131614>`_) and deploy t  change to devel topology f rst and t n prod (atla and pdxa). Once    s conf r d that t  prod topology can handle t  change, t  phab can be landed. 
+1. Go to https://c .tw ter.b z/job/tq-c /bu ld
+2.  n `commands`  nput
 
 .. code-block:: bash
 
-  . src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/deploy_local.sh [devel|atla|pdxa]
+  . src/scala/com/tw ter/t  l nes/pred ct on/common/aggregates/real_t  /deploy_local.sh [devel|atla|pdxa]
 
-One can only deploy either `devel`, `atla` (prod atla), `pdxa` (prod pdxa) at a time.
-For example, to deploy both pdxa and atla prod topologies, one needs to build/run the above steps twice, one with `pdxa` and the other with `atla`.
+One can only deploy e  r `devel`, `atla` (prod atla), `pdxa` (prod pdxa) at a t  .
+For example, to deploy both pdxa and atla prod topolog es, one needs to bu ld/run t  above steps tw ce, one w h `pdxa` and t  ot r w h `atla`.
 
-The status and performance stats of the topology are found at `go/heron-ui <http://heron-ui-new--prod--heron.service.pdxa.twitter.biz/topologies>`_. Here you can view whether the job is processing tuples, whether it is under any memory or backpressure and provides general observability.
+T  status and performance stats of t  topology are found at `go/ ron-u  <http:// ron-u -new--prod-- ron.serv ce.pdxa.tw ter.b z/topolog es>`_.  re   can v ew w t r t  job  s process ng tuples, w t r    s under any  mory or backpressure and prov des general observab l y.
 
-Finally, since we enable `Config.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE` by default in the topology, we also need to monitor and alert on the number of dropped tuples. Since this is a job generating features a small fraction of dropped tuples is tolerable if that enables us to avoid backpressure that would hold up global computation in the entire graph.
+F nally, s nce   enable `Conf g.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE` by default  n t  topology,   also need to mon or and alert on t  number of dropped tuples. S nce t   s a job generat ng features a small fract on of dropped tuples  s tolerable  f that enables us to avo d backpressure that would hold up global computat on  n t  ent re graph.
 
-Hydrating Real-Time Aggregate Features
+Hydrat ng Real-T   Aggregate Features
 --------------------------------------
 
-Once the job is up and running, the aggregate features will be accessible in the backing memcached store. To access these features and hydrate to your online pipeline, we need to build a Memcache client with the right query key.
+Once t  job  s up and runn ng, t  aggregate features w ll be access ble  n t  back ng  mcac d store. To access t se features and hydrate to y  onl ne p pel ne,   need to bu ld a  mcac  cl ent w h t  r ght query key.
 
-.. admonition:: Example
+.. admon  on:: Example
 
-  Some care needs to be taken to define the key injection and codec correctly for the memcached store. These types do not change and you can use the Timelines `memcache client builder <https://cgit.twitter.biz/source/tree/timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/real_time_aggregates_cache/RealTimeAggregatesMemcacheBuilder.scala>`_ as an example.
+  So  care needs to be taken to def ne t  key  nject on and codec correctly for t   mcac d store. T se types do not change and   can use t  T  l nes ` mcac  cl ent bu lder <https://cg .tw ter.b z/s ce/tree/t  l nem xer/common/src/ma n/scala/com/tw ter/t  l nem xer/cl ents/real_t  _aggregates_cac /RealT  Aggregates mcac Bu lder.scala>`_ as an example.
 
-Aggregate features are written to store with a `(AggregationKey, BatchID)` key.
+Aggregate features are wr ten to store w h a `(Aggregat onKey, Batch D)` key.
 
-`AggregationKey <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/AggregationKey.scala#n31>`_ is an instant of the keys that you previously defined in `AggregateGroup`. If your aggregation key is `USER_ID`, you would need to instantiate `AggregationKey` with the `USER_ID` featureId and the userId value.
+`Aggregat onKey <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/Aggregat onKey.scala#n31>`_  s an  nstant of t  keys that   prev ously def ned  n `AggregateGroup`.  f y  aggregat on key  s `USER_ D`,   would need to  nstant ate `Aggregat onKey` w h t  `USER_ D` feature d and t  user d value.
 
-.. admonition:: Returned features
+.. admon  on:: Returned features
 
-  The `DataRecord` that is returned by the cache now contains all real-time aggregate features for the query `AggregationKey` (similar to the batch use case). If your online hydration flow produces data records, the real-time aggregate features can be joined with your existing records in a straightforward way.
+  T  `DataRecord` that  s returned by t  cac  now conta ns all real-t   aggregate features for t  query `Aggregat onKey` (s m lar to t  batch use case).  f y  onl ne hydrat on flow produces data records, t  real-t   aggregate features can be jo ned w h y  ex st ng records  n a stra ghtforward way.
 
-Adding features from Feature Store to RTA
+Add ng features from Feature Store to RTA
 --------------------------------------------
-To add features from Feature Store to RTA and create real time aggregated features based on them, one needs to follow these steps:
+To add features from Feature Store to RTA and create real t   aggregated features based on t m, one needs to follow t se steps:
 
 **Step 1**
 
-Copy Strato column for features that one wants to explore and add a cache if needed. See details at `Customize any Columns for your Team as Needed <https://docbird.twitter.biz/ml_feature_store/productionisation-checklist.html?highlight=manhattan#customize-any-columns-for-your-team-as-needed>`_. As an `example <https://phabricator.twitter.biz/D441050>`_, we copy Strato column of recommendationsUserFeaturesProd.User.strato and add a cache for timelines team's usage. 
+Copy Strato column for features that one wants to explore and add a cac   f needed. See deta ls at `Custom ze any Columns for y  Team as Needed <https://docb rd.tw ter.b z/ml_feature_store/product on sat on-c ckl st.html?h ghl ght=manhattan#custom ze-any-columns-for-y -team-as-needed>`_. As an `example <https://phabr cator.tw ter.b z/D441050>`_,   copy Strato column of recom ndat onsUserFeaturesProd.User.strato and add a cac  for t  l nes team's usage. 
 
 **Step 2**
 
-Create a new ReadableStore which uses Feature Store Client to request features from Feature Store. Implement FeaturesAdapter which extends TimelinesAdapterBase and derive new features based on raw features from Feature Store. As an `example <https://phabricator.twitter.biz/D458168>`_, we create UserFeaturesReadableStore which reads discrete feature user state, and convert it to a list of boolean user state features. 
+Create a new ReadableStore wh ch uses Feature Store Cl ent to request features from Feature Store.  mple nt FeaturesAdapter wh ch extends T  l nesAdapterBase and der ve new features based on raw features from Feature Store. As an `example <https://phabr cator.tw ter.b z/D458168>`_,   create UserFeaturesReadableStore wh ch reads d screte feature user state, and convert   to a l st of boolean user state features. 
 
 **Step 3**
 
-Join these derived features from Feature Store to timelines storm aggregate source. Depends on the characteristic of these derived features, joined key could be tweet id, user id or others. As an `example <https://phabricator.twitter.biz/D454408>`_, because user state is per user, the joined key is user id. 
+Jo n t se der ved features from Feature Store to t  l nes storm aggregate s ce. Depends on t  character st c of t se der ved features, jo ned key could be t et  d, user  d or ot rs. As an `example <https://phabr cator.tw ter.b z/D454408>`_, because user state  s per user, t  jo ned key  s user  d. 
 
 **Step 4**
 
-Define `AggregateGroup` based on derived features in RTA
+Def ne `AggregateGroup` based on der ved features  n RTA
 
-Adding New Aggregate Features from an Existing Dataset
+Add ng New Aggregate Features from an Ex st ng Dataset
 --------------------------------
-To add a new aggregate feature group from an existing dataset for use in home models, use the following steps:
+To add a new aggregate feature group from an ex st ng dataset for use  n ho  models, use t  follow ng steps:
 
-1. Identify the hypothesis being tested by the addition of the features, in accordance with `go/tpfeatureguide <http://go/tpfeatureguide>`_. 
-2. Modify or add a new AggregateGroup to `TimelinesOnlineAggregationConfigBase.scala <https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/TimelinesOnlineAggregationConfigBase.scala>`_ to define the aggregation key, set of features, labels and metrics. An example phab to add more halflives can be found at `D204415 <https://phabricator.twitter.biz/D204415>`_.
-3. If the change is expected to be very large, it may be recommended to perform capacity estimation. See :ref:`Capacity Estimation` for more details.
-4. Create feature catalog items for the new RTAs. An example phab is `D706348 <https://phabricator.twitter.biz/D706438>`_. For approval from a featurestore owner ping #help-ml-features on slack.
-5. Add new features to the featurestore. An example phab is `D706112 <https://phabricator.twitter.biz/D706112>`_. This change can be rolled out with feature switches or by canarying TLX, depending on the risk. An example PCM for feature switches is: `PCM-148654 <https://jira.twitter.biz/browse/PCM-148654>`_. An example PCM for canarying is: `PCM-145753 <https://jira.twitter.biz/browse/PCM-145753>`_.
-6. Wait for redeploy and confirm the new features are available. One way is querying in BigQuery from a table like `twitter-bq-timelines-prod.continuous_training_recap_fav`. Another way is to inspect individual records using pcat. The command to be used is like: 
+1.  dent fy t  hypot s s be ng tested by t  add  on of t  features,  n accordance w h `go/tpfeaturegu de <http://go/tpfeaturegu de>`_. 
+2. Mod fy or add a new AggregateGroup to `T  l nesOnl neAggregat onConf gBase.scala <https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/scala/com/tw ter/t  l nes/pred ct on/common/aggregates/real_t  /T  l nesOnl neAggregat onConf gBase.scala>`_ to def ne t  aggregat on key, set of features, labels and  tr cs. An example phab to add more halfl ves can be found at `D204415 <https://phabr cator.tw ter.b z/D204415>`_.
+3.  f t  change  s expected to be very large,   may be recom nded to perform capac y est mat on. See :ref:`Capac y Est mat on` for more deta ls.
+4. Create feature catalog  ems for t  new RTAs. An example phab  s `D706348 <https://phabr cator.tw ter.b z/D706438>`_. For approval from a featurestore owner p ng # lp-ml-features on slack.
+5. Add new features to t  featurestore. An example phab  s `D706112 <https://phabr cator.tw ter.b z/D706112>`_. T  change can be rolled out w h feature sw c s or by canary ng TLX, depend ng on t  r sk. An example PCM for feature sw c s  s: `PCM-148654 <https://j ra.tw ter.b z/browse/PCM-148654>`_. An example PCM for canary ng  s: `PCM-145753 <https://j ra.tw ter.b z/browse/PCM-145753>`_.
+6. Wa  for redeploy and conf rm t  new features are ava lable. One way  s query ng  n B gQuery from a table l ke `tw ter-bq-t  l nes-prod.cont nuous_tra n ng_recap_fav`. Anot r way  s to  nspect  nd v dual records us ng pcat. T  command to be used  s l ke: 
 
 .. code-block:: bash
 
-  java -cp pcat-deploy.jar:$(hadoop classpath) com.twitter.ml.tool.pcat.PredictionCatTool 
-  -path /atla/proc2/user/timelines/processed/suggests/recap/continuous_training_data_records/fav/data/YYYY/MM/DD/01/part-00000.lzo 
-  -fc /atla/proc2/user/timelines/processed/suggests/recap/continuous_training_data_records/fav/data_spec.json 
-  -dates YYYY-MM-DDT01 -record_limit 100 | grep [feature_group]
+  java -cp pcat-deploy.jar:$(hadoop classpath) com.tw ter.ml.tool.pcat.Pred ct onCatTool 
+  -path /atla/proc2/user/t  l nes/processed/suggests/recap/cont nuous_tra n ng_data_records/fav/data/YYYY/MM/DD/01/part-00000.lzo 
+  -fc /atla/proc2/user/t  l nes/processed/suggests/recap/cont nuous_tra n ng_data_records/fav/data_spec.json 
+  -dates YYYY-MM-DDT01 -record_l m  100 | grep [feature_group]
 
 
-7. Create a phab with the new features and test the performance of a model with them compared to a control model without them. Test offline using `Deepbird for training <https://docbird.twitter.biz/tq_gcp_guide/deepbird.html to train>`_ and `RCE Hypothesis Testing <https://docbird.twitter.biz/Timelines_Deepbird_v2/training.html#model-evaluation-rce-hypothesis-testing>`_ to test. Test online using a DDG. Some helpful instructions are available in `Serving Timelines Models <https://docbird.twitter.biz/timelines_deepbird_v2/serving.html>`_ and the `Experiment Cookbook <https://docs.google.com/document/d/1FTaqd_XOzdTppzePeipLhAgYA9hercN5a_SyQXbuGws/edit#>`_
+7. Create a phab w h t  new features and test t  performance of a model w h t m compared to a control model w hout t m. Test offl ne us ng `Deepb rd for tra n ng <https://docb rd.tw ter.b z/tq_gcp_gu de/deepb rd.html to tra n>`_ and `RCE Hypot s s Test ng <https://docb rd.tw ter.b z/T  l nes_Deepb rd_v2/tra n ng.html#model-evaluat on-rce-hypot s s-test ng>`_ to test. Test onl ne us ng a DDG. So   lpful  nstruct ons are ava lable  n `Serv ng T  l nes Models <https://docb rd.tw ter.b z/t  l nes_deepb rd_v2/serv ng.html>`_ and t  `Exper  nt Cookbook <https://docs.google.com/docu nt/d/1FTaqd_XOzdTppzePe pLhAgYA9 rcN5a_SyQXbuGws/ed #>`_
 
-Capacity Estimation
+Capac y Est mat on
 --------------------------------
-This section describes how to approximate the capacity required for a new aggregate group. It is not expected to be exact, but should give a rough estimate.
+T  sect on descr bes how to approx mate t  capac y requ red for a new aggregate group.    s not expected to be exact, but should g ve a rough est mate.
 
-There are two main components that must be stored for each aggregate group.
+T re are two ma n components that must be stored for each aggregate group.
 
-Key space: Each AggregationKey struct consists of two maps, one of which is populated with tuples [Long, Long] representing <featureId, value> of discrete features. This takes up 4 x 8 bytes or 32 bytes. The cache team estimates an additional 40 bytes of overhead.
+Key space: Each Aggregat onKey struct cons sts of two maps, one of wh ch  s populated w h tuples [Long, Long] represent ng <feature d, value> of d screte features. T  takes up 4 x 8 bytes or 32 bytes. T  cac  team est mates an add  onal 40 bytes of over ad.
 
-Features: An aggregate feature is represented as a <Long, Double> pair (16 bytes) and is produced for each feature x label x metric x halflife combination.
+Features: An aggregate feature  s represented as a <Long, Double> pa r (16 bytes) and  s produced for each feature x label x  tr c x halfl fe comb nat on.
 
-1. Use bigquery to estimate how many unique values exist for the selected key (key_count). Also collect the number of features, labels, metrics, and half-lives being used.
-2. Compute the number of entries to be created, which is num_entires = feature_count * label_count * metric_count * halflife_count
-3. Compute the number of bytes per entry, which is num_entry_bytes = 16*num_entries + 32 bytes (key storage) + 40 bytes (overhead)
-4. Compute total space required = num_entry_bytes * key_count
+1. Use b gquery to est mate how many un que values ex st for t  selected key (key_count). Also collect t  number of features, labels,  tr cs, and half-l ves be ng used.
+2. Compute t  number of entr es to be created, wh ch  s num_ent res = feature_count * label_count *  tr c_count * halfl fe_count
+3. Compute t  number of bytes per entry, wh ch  s num_entry_bytes = 16*num_entr es + 32 bytes (key storage) + 40 bytes (over ad)
+4. Compute total space requ red = num_entry_bytes * key_count
 
-Debugging New Aggregate Features
+Debugg ng New Aggregate Features
 --------------------------------
 
-To debug problems in the setup of your job, there are several steps you can take.
+To debug problems  n t  setup of y  job, t re are several steps   can take.
 
-First, ensure that data is being received from the input stream and passed through to create data records. This can be achieved by logging results at various places in your code, and especially at the point of data record creation.
+F rst, ensure that data  s be ng rece ved from t   nput stream and passed through to create data records. T  can be ach eved by logg ng results at var ous places  n y  code, and espec ally at t  po nt of data record creat on.
 
-For example, suppose you want to ensure that a data record is being created with
-the features you expect. With push and email features, we find that data records
-are created in the adaptor, using logic like the following:
+For example, suppose   want to ensure that a data record  s be ng created w h
+t  features   expect. W h push and ema l features,   f nd that data records
+are created  n t  adaptor, us ng log c l ke t  follow ng:
 
 .. code-block:: scala
 
-  val record = new SRichDataRecord(new DataRecord)
+  val record = new SR chDataRecord(new DataRecord)
   ...
   record.setFeatureValue(feature, value)
 
-To see what these feature values look like, we can have our adaptor class extend
-Twitter's `Logging` trait, and write each created record to a log file.
+To see what t se feature values look l ke,   can have   adaptor class extend
+Tw ter's `Logg ng` tra , and wr e each created record to a log f le.
 
 .. code-block:: scala
 
-  class MyEventAdaptor extends TimelinesAdapterBase[MyObject] with Logging {
+  class  EventAdaptor extends T  l nesAdapterBase[ Object] w h Logg ng {
     ...
     ...
-      def mkDataRecord(myFeatures: MyFeatures): DataRecord = {
-        val record = new SRichDataRecord(new DataRecord)
+      def mkDataRecord( Features:  Features): DataRecord = {
+        val record = new SR chDataRecord(new DataRecord)
         ...
         record.setFeatureValue(feature, value)
-        logger.info("data record xyz: " + record.getRecord.toString)
+        logger. nfo("data record xyz: " + record.getRecord.toStr ng)
       }
 
-This way, every time a data record is sent to the aggregator, it will also be
-logged. To inspect these logs, you can push these changes to a staging instance,
-ssh into that aurora instance, and grep the `log-files` directory for `xyz`. The
-data record objects you find should resemble a map from feature ids to their
+T  way, every t   a data record  s sent to t  aggregator,   w ll also be
+logged. To  nspect t se logs,   can push t se changes to a stag ng  nstance,
+ssh  nto that aurora  nstance, and grep t  `log-f les` d rectory for `xyz`. T 
+data record objects   f nd should resemble a map from feature  ds to t  r
 values.
 
-To check that steps in the aggregation are being performed, you can also inspect the job's topology on go/heronui.
+To c ck that steps  n t  aggregat on are be ng perfor d,   can also  nspect t  job's topology on go/ ronu .
 
-Lastly, to verify that values are being written to your cache you can check the `set` chart in your cache's viz.
+Lastly, to ver fy that values are be ng wr ten to y  cac    can c ck t  `set` chart  n y  cac 's v z.
 
-To check particular feature values for a given key, you can spin up a Scala REPL like so:
+To c ck part cular feature values for a g ven key,   can sp n up a Scala REPL l ke so:
 
 .. code-block:: bash
 
-  $ ssh -fN -L*:2181:sdzookeeper-read.atla.twitter.com:2181 -D *:50001 nest.atlc.twitter.com
+  $ ssh -fN -L*:2181:sdzookeeper-read.atla.tw ter.com:2181 -D *:50001 nest.atlc.tw ter.com
 
-  $ ./pants repl --jvm-repl-scala-options='-DsocksProxyHost=localhost -DsocksProxyPort=50001 -Dcom.twitter.server.resolverZkHosts=localhost:2181' timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/real_time_aggregates_cache
+  $ ./pants repl --jvm-repl-scala-opt ons='-DsocksProxyHost=localhost -DsocksProxyPort=50001 -Dcom.tw ter.server.resolverZkHosts=localhost:2181' t  l nem xer/common/src/ma n/scala/com/tw ter/t  l nem xer/cl ents/real_t  _aggregates_cac 
 
-You will then need to create a connection to the cache, and a key with which to query it.
+  w ll t n need to create a connect on to t  cac , and a key w h wh ch to query  .
 
 .. code-block:: scala
 
-  import com.twitter.conversions.DurationOps._
-  import com.twitter.finagle.stats.{DefaultStatsReceiver, StatsReceiver}
-  import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-  import com.twitter.summingbird.batch.Batcher
-  import com.twitter.timelinemixer.clients.real_time_aggregates_cache.RealTimeAggregatesMemcacheBuilder
-  import com.twitter.timelines.clients.memcache_common.StorehausMemcacheConfig
+   mport com.tw ter.convers ons.Durat onOps._
+   mport com.tw ter.f nagle.stats.{DefaultStatsRece ver, StatsRece ver}
+   mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+   mport com.tw ter.summ ngb rd.batch.Batc r
+   mport com.tw ter.t  l nem xer.cl ents.real_t  _aggregates_cac .RealT  Aggregates mcac Bu lder
+   mport com.tw ter.t  l nes.cl ents. mcac _common.Storehaus mcac Conf g
 
-  val userFeature = -1887718638306251279L // feature id corresponding to User feature
-  val userId = 12L // replace with a user id logged when creating your data record
-  val key = (AggregationKey(Map(userFeature -> userId), Map.empty), Batcher.unit.currentBatch)
+  val userFeature = -1887718638306251279L // feature  d correspond ng to User feature
+  val user d = 12L // replace w h a user  d logged w n creat ng y  data record
+  val key = (Aggregat onKey(Map(userFeature -> user d), Map.empty), Batc r.un .currentBatch)
 
-  val dataset = "twemcache_magicrecs_real_time_aggregates_cache_staging" // replace with the appropriate cache name
-  val dest = s"/srv#/test/local/cache/twemcache_/$dataset"
+  val dataset = "t mcac _mag crecs_real_t  _aggregates_cac _stag ng" // replace w h t  appropr ate cac  na 
+  val dest = s"/srv#/test/local/cac /t mcac _/$dataset"
 
-  val statsReceiver: StatsReceiver = DefaultStatsReceiver
-  val cache = new RealTimeAggregatesMemcacheBuilder(
-        config = StorehausMemcacheConfig(
-          destName = dest,
-          keyPrefix = "",
-          requestTimeout = 10.seconds,
-          numTries = 1,
-          globalTimeout = 10.seconds,
-          tcpConnectTimeout = 10.seconds,
-          connectionAcquisitionTimeout = 10.seconds,
-          numPendingRequests = 250,
-          isReadOnly = true
+  val statsRece ver: StatsRece ver = DefaultStatsRece ver
+  val cac  = new RealT  Aggregates mcac Bu lder(
+        conf g = Storehaus mcac Conf g(
+          destNa  = dest,
+          keyPref x = "",
+          requestT  out = 10.seconds,
+          numTr es = 1,
+          globalT  out = 10.seconds,
+          tcpConnectT  out = 10.seconds,
+          connect onAcqu s  onT  out = 10.seconds,
+          numPend ngRequests = 250,
+           sReadOnly = true
         ),
-        statsReceiver.scope(dataset)
-      ).build
+        statsRece ver.scope(dataset)
+      ).bu ld
 
-  val result = cache.get(key)
+  val result = cac .get(key)
 
-Another option is to create a debugger which points to the staging cache and creates a cache connection and key similar to the logic above.
+Anot r opt on  s to create a debugger wh ch po nts to t  stag ng cac  and creates a cac  connect on and key s m lar to t  log c above.
 
-Run CQL query to find metrics/counters
+Run CQL query to f nd  tr cs/counters
 --------------------------------
-We can also visualize the counters from our job to verify new features. Run CQL query on terminal to find the right path of metrics/counters. For example, in order to check counter mergeNumFeatures, run:
+  can also v sual ze t  counters from   job to ver fy new features. Run CQL query on term nal to f nd t  r ght path of  tr cs/counters. For example,  n order to c ck counter  rgeNumFeatures, run:
 
-cql -z atla keys heron/summingbird_timelines_real_time_aggregates Tail-FlatMap | grep mergeNumFeatures
+cql -z atla keys  ron/summ ngb rd_t  l nes_real_t  _aggregates Ta l-FlatMap | grep  rgeNumFeatures
    
    
-Then use the right path to create the viz, example: https://monitoring.twitter.biz/tiny/2552105   
+T n use t  r ght path to create t  v z, example: https://mon or ng.tw ter.b z/t ny/2552105   

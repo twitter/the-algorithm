@@ -1,46 +1,46 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.servo.exception.thriftscala
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.TimeoutManhattanException
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.storage.TweetStorageClient.Ping
-import com.twitter.tweetypie.storage.ClientError
-import com.twitter.tweetypie.storage.RateLimited
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.util.StitchUtils
-import com.twitter.util.TimeoutException
+ mport com.tw ter.servo.except on.thr ftscala
+ mport com.tw ter.servo.except on.thr ftscala.Cl entErrorCause
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.kv.T  outManhattanExcept on
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.P ng
+ mport com.tw ter.t etyp e.storage.Cl entError
+ mport com.tw ter.t etyp e.storage.RateL m ed
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent
+ mport com.tw ter.t etyp e.ut l.St chUt ls
+ mport com.tw ter.ut l.T  outExcept on
 
 object Manhattan {
-  def fromClient(underlying: TweetStorageClient): TweetStorageClient =
-    new TweetStorageClient {
-      val addTweet = translateExceptions(underlying.addTweet)
-      val deleteAdditionalFields = translateExceptions(underlying.deleteAdditionalFields)
-      val getDeletedTweets = translateExceptions(underlying.getDeletedTweets)
-      val getTweet = translateExceptions(underlying.getTweet)
-      val getStoredTweet = translateExceptions(underlying.getStoredTweet)
-      val scrub = translateExceptions(underlying.scrub)
-      val softDelete = translateExceptions(underlying.softDelete)
-      val undelete = translateExceptions(underlying.undelete)
-      val updateTweet = translateExceptions(underlying.updateTweet)
-      val hardDeleteTweet = translateExceptions(underlying.hardDeleteTweet)
-      val ping: Ping = underlying.ping
-      val bounceDelete = translateExceptions(underlying.bounceDelete)
+  def fromCl ent(underly ng: T etStorageCl ent): T etStorageCl ent =
+    new T etStorageCl ent {
+      val addT et = translateExcept ons(underly ng.addT et)
+      val deleteAdd  onalF elds = translateExcept ons(underly ng.deleteAdd  onalF elds)
+      val getDeletedT ets = translateExcept ons(underly ng.getDeletedT ets)
+      val getT et = translateExcept ons(underly ng.getT et)
+      val getStoredT et = translateExcept ons(underly ng.getStoredT et)
+      val scrub = translateExcept ons(underly ng.scrub)
+      val softDelete = translateExcept ons(underly ng.softDelete)
+      val undelete = translateExcept ons(underly ng.undelete)
+      val updateT et = translateExcept ons(underly ng.updateT et)
+      val hardDeleteT et = translateExcept ons(underly ng.hardDeleteT et)
+      val p ng: P ng = underly ng.p ng
+      val bounceDelete = translateExcept ons(underly ng.bounceDelete)
     }
 
-  private[backends] object translateExceptions {
-    private[this] def pf: PartialFunction[Throwable, Throwable] = {
-      case e: RateLimited => OverCapacity(s"storage: ${e.getMessage}")
-      case e: TimeoutManhattanException => new TimeoutException(e.getMessage)
-      case e: ClientError => thriftscala.ClientError(ClientErrorCause.BadRequest, e.message)
+  pr vate[backends] object translateExcept ons {
+    pr vate[t ] def pf: Part alFunct on[Throwable, Throwable] = {
+      case e: RateL m ed => OverCapac y(s"storage: ${e.get ssage}")
+      case e: T  outManhattanExcept on => new T  outExcept on(e.get ssage)
+      case e: Cl entError => thr ftscala.Cl entError(Cl entErrorCause.BadRequest, e. ssage)
     }
 
-    def apply[A, B](f: A => Stitch[B]): A => Stitch[B] =
-      a => StitchUtils.translateExceptions(f(a), pf)
+    def apply[A, B](f: A => St ch[B]): A => St ch[B] =
+      a => St chUt ls.translateExcept ons(f(a), pf)
 
-    def apply[A, B, C](f: (A, B) => Stitch[C]): (A, B) => Stitch[C] =
-      (a, b) => StitchUtils.translateExceptions(f(a, b), pf)
+    def apply[A, B, C](f: (A, B) => St ch[C]): (A, B) => St ch[C] =
+      (a, b) => St chUt ls.translateExcept ons(f(a, b), pf)
   }
 }

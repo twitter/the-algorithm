@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.ads
 
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.adserver.{thr ftscala => ad}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object AdvertiserBrandSafetySettingsFeature
-    extends FeatureWithDefaultOnFailure[AdsCandidate, Option[ad.AdvertiserBrandSafetySettings]] {
-  override val defaultValue = None
+object Advert serBrandSafetySett ngsFeature
+    extends FeatureW hDefaultOnFa lure[AdsCand date, Opt on[ad.Advert serBrandSafetySett ngs]] {
+  overr de val defaultValue = None
 }
 
-@Singleton
-case class AdvertiserBrandSafetySettingsFeatureHydrator[
-  Query <: PipelineQuery with AdsQuery,
-  Candidate <: AdsCandidate] @Inject() (
-  advertiserBrandSafetySettingsStore: ReadableStore[Long, ad.AdvertiserBrandSafetySettings])
-    extends CandidateFeatureHydrator[Query, Candidate] {
+@S ngleton
+case class Advert serBrandSafetySett ngsFeatureHydrator[
+  Query <: P pel neQuery w h AdsQuery,
+  Cand date <: AdsCand date] @ nject() (
+  advert serBrandSafetySett ngsStore: ReadableStore[Long, ad.Advert serBrandSafetySett ngs])
+    extends Cand dateFeatureHydrator[Query, Cand date] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "AdvertiserBrandSafetySettings")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    "Advert serBrandSafetySett ngs")
 
-  override val features: Set[Feature[_, _]] = Set(AdvertiserBrandSafetySettingsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(Advert serBrandSafetySett ngsFeature)
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: Candidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
+    cand date: Cand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = {
 
-    val featureMapFuture: Future[FeatureMap] = advertiserBrandSafetySettingsStore
-      .get(candidate.adImpression.advertiserId)
-      .map { advertiserBrandSafetySettingsOpt =>
-        FeatureMapBuilder()
-          .add(AdvertiserBrandSafetySettingsFeature, advertiserBrandSafetySettingsOpt).build()
+    val featureMapFuture: Future[FeatureMap] = advert serBrandSafetySett ngsStore
+      .get(cand date.ad mpress on.advert ser d)
+      .map { advert serBrandSafetySett ngsOpt =>
+        FeatureMapBu lder()
+          .add(Advert serBrandSafetySett ngsFeature, advert serBrandSafetySett ngsOpt).bu ld()
       }
 
-    Stitch.callFuture(featureMapFuture)
+    St ch.callFuture(featureMapFuture)
   }
 }

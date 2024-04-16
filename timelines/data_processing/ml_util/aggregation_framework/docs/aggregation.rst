@@ -1,167 +1,167 @@
-.. _aggregation:
+.. _aggregat on:
 
 Core Concepts
 =============
 
-This page provides an overview of the aggregation framework and goes through examples on how to define aggregate features. In general, we can think of an aggregate feature as a grouped set of records, on which we incrementally update the aggregate feature values, crossed by the provided features and conditional on the provided labels.
+T  page prov des an overv ew of t  aggregat on fra work and goes through examples on how to def ne aggregate features.  n general,   can th nk of an aggregate feature as a grouped set of records, on wh ch    ncre ntally update t  aggregate feature values, crossed by t  prov ded features and cond  onal on t  prov ded labels.
 
 AggregateGroup
 --------------
 
-An `AggregateGroup` defines a single unit of aggregate computation, similar to a SQL query. These are executed by the underlying jobs (internally, a `DataRecordAggregationMonoid <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/DataRecordAggregationMonoid.scala#n42>`_ is applied to `DataRecords` that contain the features to aggregate). Many of these groups can exist to define different types of aggregate features.
+An `AggregateGroup` def nes a s ngle un  of aggregate computat on, s m lar to a SQL query. T se are executed by t  underly ng jobs ( nternally, a `DataRecordAggregat onMono d <https://cg .tw ter.b z/s ce/tree/t  l nes/data_process ng/ml_ut l/aggregat on_fra work/DataRecordAggregat onMono d.scala#n42>`_  s appl ed to `DataRecords` that conta n t  features to aggregate). Many of t se groups can ex st to def ne d fferent types of aggregate features.
 
-Let's start with the following examples of an `AggregateGroup` to discuss the meaning of each of its constructor arguments:
+Let's start w h t  follow ng examples of an `AggregateGroup` to d scuss t   an ng of each of  s constructor argu nts:
 
 .. code-block:: scala
 
    val UserAggregateStore = "user_aggregates"
    val aggregatesToCompute: Set[TypedAggregateGroup[_]] = Set(
      AggregateGroup(
-       inputSource = timelinesDailyRecapSource,
-       aggregatePrefix = "user_aggregate_v2",
-       preTransformOpt = Some(RemoveUserIdZero),
-       keys = Set(USER_ID),
+        nputS ce = t  l nesDa lyRecapS ce,
+       aggregatePref x = "user_aggregate_v2",
+       preTransformOpt = So (RemoveUser dZero),
+       keys = Set(USER_ D),
        features = Set(HAS_PHOTO),
-       labels = Set(IS_FAVORITED),
-       metrics = Set(CountMetric, SumMetric),
-       halfLives = Set(50.days),
-       outputStore = OfflineAggregateStore(
-         name = UserAggregateStore,
+       labels = Set( S_FAVOR TED),
+        tr cs = Set(Count tr c, Sum tr c),
+       halfL ves = Set(50.days),
+       outputStore = Offl neAggregateStore(
+         na  = UserAggregateStore,
          startDate = "2016-07-15 00:00",
-         commonConfig = timelinesDailyAggregateSink,
-         batchesToKeep = 5
+         commonConf g = t  l nesDa lyAggregateS nk,
+         batc sToKeep = 5
        )
      )
-     .flatMap(_.buildTypedAggregateGroups)
+     .flatMap(_.bu ldTypedAggregateGroups)
    )
 
-This `AggregateGroup` computes the number of times each user has faved a tweet with a photo. The aggregate count is decayed with a 50 day halflife.
+T  `AggregateGroup` computes t  number of t  s each user has faved a t et w h a photo. T  aggregate count  s decayed w h a 50 day halfl fe.
 
-Naming and preprocessing
+Nam ng and preprocess ng
 ------------------------
 
-`UserAggregateStore` is a string val that acts as a scope of a "root path" to which this group of aggregate features will be written. The root path is provided separately by the implementing job.
+`UserAggregateStore`  s a str ng val that acts as a scope of a "root path" to wh ch t  group of aggregate features w ll be wr ten. T  root path  s prov ded separately by t   mple nt ng job.
 
-`inputSource` defines the input source of `DataRecords` that we aggregate on. These records contain the relevant features required for aggregation. 
+` nputS ce` def nes t   nput s ce of `DataRecords` that   aggregate on. T se records conta n t  relevant features requ red for aggregat on. 
 
-`aggregatePrefix` tells the framework what prefix to use for the aggregate features it generates. A descriptive naming scheme with versioning makes it easier to maintain features as you add or remove them over the long-term.
+`aggregatePref x` tells t  fra work what pref x to use for t  aggregate features   generates. A descr pt ve nam ng sc   w h vers on ng makes   eas er to ma nta n features as   add or remove t m over t  long-term.
 
-`preTransforms` is a `Seq[com.twitter.ml.api.ITransform] <https://cgit.twitter.biz/source/tree/src/java/com/twitter/ml/api/ITransform.java>`_ that can be applied to the data records read from the input source before they are fed into the `AggregateGroup` to apply aggregation. These transforms are optional but can be useful for certain preprocessing operations for a group's raw input features. 
+`preTransforms`  s a `Seq[com.tw ter.ml.ap . Transform] <https://cg .tw ter.b z/s ce/tree/src/java/com/tw ter/ml/ap / Transform.java>`_ that can be appl ed to t  data records read from t   nput s ce before t y are fed  nto t  `AggregateGroup` to apply aggregat on. T se transforms are opt onal but can be useful for certa n preprocess ng operat ons for a group's raw  nput features. 
 
-.. admonition:: Examples
+.. admon  on:: Examples
   
-  You can downsample input data records by providing `preTransforms`. In addition, you could also join different input labels (e.g. "is_push_openend" and "is_push_favorited") and transform them into a combined label that is their union ("is_push_engaged") on which aggregate counts will be calculated.
+    can downsample  nput data records by prov d ng `preTransforms`.  n add  on,   could also jo n d fferent  nput labels (e.g. " s_push_openend" and " s_push_favor ed") and transform t m  nto a comb ned label that  s t  r un on (" s_push_engaged") on wh ch aggregate counts w ll be calculated.
 
 
 Keys
 ----
 
-`keys` is a crucial field in the config. It defines a `Set[com.twitter.ml.api.Feature]` which specifies a set of grouping keys to use for this `AggregateGroup`.
+`keys`  s a cruc al f eld  n t  conf g.   def nes a `Set[com.tw ter.ml.ap .Feature]` wh ch spec f es a set of group ng keys to use for t  `AggregateGroup`.
 
-Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARSE_BINARY`. Using a discrete or a string/text feature as a key specifies the unit to group records by before applying counting/aggregation operators.
+Keys can only be of 3 supported types currently: `D SCRETE`, `STR NG` and `SPARSE_B NARY`. Us ng a d screte or a str ng/text feature as a key spec f es t  un  to group records by before apply ng count ng/aggregat on operators.
 
 
-.. admonition:: Examples
+.. admon  on:: Examples
 
-  .. cssclass:: shortlist
+  .. cssclass:: shortl st
 
-  #. If the key is `USER_ID`, this tells the framework to group all records by `USER_ID`, and then apply aggregations (sum/count/etc) within each user’s data to generate aggregate features for each user.
+  #.  f t  key  s `USER_ D`, t  tells t  fra work to group all records by `USER_ D`, and t n apply aggregat ons (sum/count/etc) w h n each user’s data to generate aggregate features for each user.
 
-  #. If the key is `(USER_ID, AUTHOR_ID)`, then the `AggregateGroup` will output features for each unique user-author pair in the input data.
+  #.  f t  key  s `(USER_ D, AUTHOR_ D)`, t n t  `AggregateGroup` w ll output features for each un que user-author pa r  n t   nput data.
 
-  #. Finally, using a sparse binary feature as key has special "flattening" or "flatMap" like semantics. For example, consider grouping by `(USER_ID, AUTHOR_INTEREST_IDS)` where `AUTHOR_INTEREST_IDS` is a sparse binary feature which represents a set of topic IDs the author may be tweeting about. This creates one record for each `(user_id, interest_id)` pair - so each record with multiple author interests is flattened before feeding it to the aggregation.
+  #. F nally, us ng a sparse b nary feature as key has spec al "flatten ng" or "flatMap" l ke semant cs. For example, cons der group ng by `(USER_ D, AUTHOR_ NTEREST_ DS)` w re `AUTHOR_ NTEREST_ DS`  s a sparse b nary feature wh ch represents a set of top c  Ds t  author may be t et ng about. T  creates one record for each `(user_ d,  nterest_ d)` pa r - so each record w h mult ple author  nterests  s flattened before feed ng   to t  aggregat on.
 
 Features
 --------
 
-`features` specifies a `Set[com.twitter.ml.api.Feature]` to aggregate within each group (defined by the keys specified earlier).
+`features` spec f es a `Set[com.tw ter.ml.ap .Feature]` to aggregate w h n each group (def ned by t  keys spec f ed earl er).
 
-We support 2 types of `features`: `BINARY` and `CONTINUOUS`.
+  support 2 types of `features`: `B NARY` and `CONT NUOUS`.
 
-The semantics of how the aggregation works is slightly different based on the type of “feature”, and based on the “metric” (or aggregation operation):
+T  semant cs of how t  aggregat on works  s sl ghtly d fferent based on t  type of “feature”, and based on t  “ tr c” (or aggregat on operat on):
 
-.. cssclass:: shortlist
+.. cssclass:: shortl st
 
-#. Binary Feature, Count Metric: Suppose we have a binary feature `HAS_PHOTO` in this set, and are applying the “Count” metric (see below for more details on the metrics), with key `USER_ID`. The semantics is that this computes a feature which measures the count of records with `HAS_PHOTO` set to true for each user.
+#. B nary Feature, Count  tr c: Suppose   have a b nary feature `HAS_PHOTO`  n t  set, and are apply ng t  “Count”  tr c (see below for more deta ls on t   tr cs), w h key `USER_ D`. T  semant cs  s that t  computes a feature wh ch  asures t  count of records w h `HAS_PHOTO` set to true for each user.
 
-#. Binary Feature, Sum Metric - Does not apply. No feature will be computed.
+#. B nary Feature, Sum  tr c - Does not apply. No feature w ll be computed.
 
-#. Continuous Feature, Count Metric - The count metric treats all features as binary features ignoring their value. For example, suppose we have a continuous feature `NUM_CHARACTERS_IN_TWEET`, and key `USER_ID`. This measures the count of records that have this feature `NUM_CHARACTERS_IN_TWEET` present.
+#. Cont nuous Feature, Count  tr c - T  count  tr c treats all features as b nary features  gnor ng t  r value. For example, suppose   have a cont nuous feature `NUM_CHARACTERS_ N_TWEET`, and key `USER_ D`. T   asures t  count of records that have t  feature `NUM_CHARACTERS_ N_TWEET` present.
 
-#. Continuous Feature, Sum Metric - In the above example, the features measures the sum of (num_characters_in_tweet) over all a user’s records. Dividing this sum feature by the count feature would give the average number of characters in all tweets.
+#. Cont nuous Feature, Sum  tr c -  n t  above example, t  features  asures t  sum of (num_characters_ n_t et) over all a user’s records. D v d ng t  sum feature by t  count feature would g ve t  average number of characters  n all t ets.
 
-.. admonition:: Unsupported feature types
+.. admon  on:: Unsupported feature types
 
-  `DISCRETE` and `SPARSE` features are not supported by the Sum Metric, because there is no meaning in summing a discrete feature or a sparse feature. You can use them with the CountMetric, but they may not do what you would expect since they will be treated as binary features losing all the information within the feature. The best way to use these is as “keys” and not as “features”.
+  `D SCRETE` and `SPARSE` features are not supported by t  Sum  tr c, because t re  s no  an ng  n summ ng a d screte feature or a sparse feature.   can use t m w h t  Count tr c, but t y may not do what   would expect s nce t y w ll be treated as b nary features los ng all t   nformat on w h n t  feature. T  best way to use t se  s as “keys” and not as “features”.
 
-.. admonition:: Setting includeAnyFeature
+.. admon  on:: Sett ng  ncludeAnyFeature
 
-  If constructor argument `includeAnyFeature` is set, the framework will append a feature with scope `any_feature` to the set of all features you define. This additional feature simply measures the total count of records. So if you set your features to be equal to Set.empty, this will measure the count of records for a given `USER_ID`.
+   f constructor argu nt ` ncludeAnyFeature`  s set, t  fra work w ll append a feature w h scope `any_feature` to t  set of all features   def ne. T  add  onal feature s mply  asures t  total count of records. So  f   set y  features to be equal to Set.empty, t  w ll  asure t  count of records for a g ven `USER_ D`.
 
 Labels
 ------
 
-`labels` specifies a set of `BINARY` features that you can cross with, prior to applying aggregations on the `features`. This essentially restricts the aggregate computation to a subset of the records within a particular key.
+`labels` spec f es a set of `B NARY` features that   can cross w h, pr or to apply ng aggregat ons on t  `features`. T  essent ally restr cts t  aggregate computat on to a subset of t  records w h n a part cular key.
 
-We typically use this to represent engagement labels in an ML model, in this case, `IS_FAVORITED`.
+  typ cally use t  to represent engage nt labels  n an ML model,  n t  case, ` S_FAVOR TED`.
 
-In this example, we are grouping by `USER_ID`, the feature is `HAS_PHOTO`, the label is `IS_FAVORITED`, and we are computing `CountMetric`. The system will output a feature for each user that represents the number of favorites on tweets having photos by this `userId`.
+ n t  example,   are group ng by `USER_ D`, t  feature  s `HAS_PHOTO`, t  label  s ` S_FAVOR TED`, and   are comput ng `Count tr c`. T  system w ll output a feature for each user that represents t  number of favor es on t ets hav ng photos by t  `user d`.
 
-.. admonition:: Setting includeAnyLabel
+.. admon  on:: Sett ng  ncludeAnyLabel
 
-  If constructor argument `includeAnyLabel` is set (as it is by default), then similar to `any_feature`, the framework automatically appends a label of type `any_label` to the set of all labels you define, which represents not applying any filter or cross.
+   f constructor argu nt ` ncludeAnyLabel`  s set (as    s by default), t n s m lar to `any_feature`, t  fra work automat cally appends a label of type `any_label` to t  set of all labels   def ne, wh ch represents not apply ng any f lter or cross.
   
-In this example, `any_label` and `any_feature` are set by default and the system would actually output 4 features for each `user_id`:
+ n t  example, `any_label` and `any_feature` are set by default and t  system would actually output 4 features for each `user_ d`:
 
-.. cssclass:: shortlist
+.. cssclass:: shortl st
 
-#. The number of `IS_FAVORITED` (favorites) on tweet impressions having `HAS_PHOTO=true`
+#. T  number of ` S_FAVOR TED` (favor es) on t et  mpress ons hav ng `HAS_PHOTO=true`
 
-#. The number of `IS_FAVORITED` (favorites) on all tweet impressions (`any_feature` aggregate)
+#. T  number of ` S_FAVOR TED` (favor es) on all t et  mpress ons (`any_feature` aggregate)
 
-#. The number of tweet impressions having `HAS_PHOTO=true` (`any_label` aggregate)
+#. T  number of t et  mpress ons hav ng `HAS_PHOTO=true` (`any_label` aggregate)
 
-#. The total number of tweet impressions for this user id (`any_feature.any_label` aggregate)
+#. T  total number of t et  mpress ons for t  user  d (`any_feature.any_label` aggregate)
 
-.. admonition:: Disabling includeAnyLabel
+.. admon  on:: D sabl ng  ncludeAnyLabel
 
-  To disable this automatically generated feature you can use `includeAnyLabel = false` in your config. This will remove some useful features (particularly for counterfactual signal), but it can greatly save on space since it does not store every possible impressed set of keys in the output store. So use this if you are short on space, but not otherwise.
+  To d sable t  automat cally generated feature   can use ` ncludeAnyLabel = false`  n y  conf g. T  w ll remove so  useful features (part cularly for counterfactual s gnal), but   can greatly save on space s nce   does not store every poss ble  mpressed set of keys  n t  output store. So use t   f   are short on space, but not ot rw se.
 
-Metrics
+ tr cs
 -------
 
-`metrics` specifies the aggregate operators to apply. The most commonly used are `Count`, `Sum` and `SumSq`.
+` tr cs` spec f es t  aggregate operators to apply. T  most commonly used are `Count`, `Sum` and `SumSq`.
 
-As mentioned before, `Count` can be applied to all types of features, but treats every feature as binary and ignores the value of the feature. `Sum` and `SumSq` can only be applied to Continuous features - they will ignore all other features you specify. By combining sum and sumsq and count, you can produce powerful “z-score” features or other distributional features using a post-transform.
+As  nt oned before, `Count` can be appl ed to all types of features, but treats every feature as b nary and  gnores t  value of t  feature. `Sum` and `SumSq` can only be appl ed to Cont nuous features - t y w ll  gnore all ot r features   spec fy. By comb n ng sum and sumsq and count,   can produce po rful “z-score” features or ot r d str but onal features us ng a post-transform.
 
-It is also possible to add your own aggregate operators (e.g. `LastResetMetric <https://phabricator.twitter.biz/D228537>`_) to the framework with some additional work.
+   s also poss ble to add y  own aggregate operators (e.g. `LastReset tr c <https://phabr cator.tw ter.b z/D228537>`_) to t  fra work w h so  add  onal work.
 
-HalfLives
+HalfL ves
 ---------
 
-`halfLives` specifies how fast aggregate features should be decayed. It is important to note that the framework works on an incremental basis: in the batch implementation, the summingbird-scalding job takes in the most recently computed aggregate features, processed on data until day `N-1`, then reads new data records for day `N` and computes updated values of the aggregate features. Similarly, the decay of real-time aggregate features takes the actual time delta between the current time and the last time the aggregate feature value was updated.
+`halfL ves` spec f es how fast aggregate features should be decayed.    s  mportant to note that t  fra work works on an  ncre ntal bas s:  n t  batch  mple ntat on, t  summ ngb rd-scald ng job takes  n t  most recently computed aggregate features, processed on data unt l day `N-1`, t n reads new data records for day `N` and computes updated values of t  aggregate features. S m larly, t  decay of real-t   aggregate features takes t  actual t   delta bet en t  current t   and t  last t   t  aggregate feature value was updated.
 
-The halflife `H` specifies how fast to decay old sums/counts to simulate a sliding window of counts. The implementation is such that it will take `H` amount of time to decay an aggregate feature to half its initial value. New observed values of sums/counts are added to the aggregate feature value.
+T  halfl fe `H` spec f es how fast to decay old sums/counts to s mulate a sl d ng w ndow of counts. T   mple ntat on  s such that   w ll take `H` amount of t   to decay an aggregate feature to half  s  n  al value. New observed values of sums/counts are added to t  aggregate feature value.
 
-.. admonition:: Batch and real-time
+.. admon  on:: Batch and real-t  
   
-  In the batch use case where aggregate features are recomputed on a daily basis, we typically take halflives on the order of weeks or longer (in Timelines, 50 days). In the real-time use case, shorter halflives are appropriate (hours) since they are updated as client engagements are received by the summingbird job.
+   n t  batch use case w re aggregate features are recomputed on a da ly bas s,   typ cally take halfl ves on t  order of  eks or longer ( n T  l nes, 50 days).  n t  real-t   use case, shorter halfl ves are appropr ate (h s) s nce t y are updated as cl ent engage nts are rece ved by t  summ ngb rd job.
 
 
-SQL Equivalent
+SQL Equ valent
 --------------
-Conceptually, you can also think of it as:
+Conceptually,   can also th nk of   as:
 
 .. code-block:: sql
 
-  INSERT INTO <outputStore>.<aggregatePrefix>
-  SELECT AGG(<features>) /* AGG is <metrics>, which is a exponentially decaying SUM or COUNT etc. based on the halfLifves */
+   NSERT  NTO <outputStore>.<aggregatePref x>
+  SELECT AGG(<features>) /* AGG  s < tr cs>, wh ch  s a exponent ally decay ng SUM or COUNT etc. based on t  halfL fves */
   FROM (
-    SELECT preTransformOpt(*) FROM <inputSource>
+    SELECT preTransformOpt(*) FROM < nputS ce>
   ) 
   GROUP BY <keys>
   WHERE <labels> = True
 
-any_features is AGG(*).
+any_features  s AGG(*).
 
-any_labels removes the WHERE clause.
+any_labels removes t  WHERE clause.

@@ -1,225 +1,225 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.Collect on;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.common.text.token.TokenizedCharSequence;
+ mport com.tw ter.common.text.token.Token zedCharSequence;
 
-public class TweetTextFeatures {
-  // Basic Features, always extracted.
-  // normalized, lower cased tweet text, w/o resolved urls
-  private String normalizedText;
+publ c class T etTextFeatures {
+  // Bas c Features, always extracted.
+  // normal zed, lo r cased t et text, w/o resolved urls
+  pr vate Str ng normal zedText;
 
-  // tokens from normalizedText, w/o resolved urls, lower cased.
-  private List<String> tokens;
+  // tokens from normal zedText, w/o resolved urls, lo r cased.
+  pr vate L st<Str ng> tokens;
 
-  // tokens from resolved urls, lower cased.
-  private List<String> resolvedUrlsTokens;
+  // tokens from resolved urls, lo r cased.
+  pr vate L st<Str ng> resolvedUrlsTokens;
 
-  // tokens in the form of a TokenizedCharSeq, NOT LOWER CASED
-  private TokenizedCharSequence tokenSequence;
+  // tokens  n t  form of a Token zedCharSeq, NOT LOWER CASED
+  pr vate Token zedCharSequence tokenSequence;
 
-  // strippedTokens above joined with space
-  private String normalizedStrippedText;
+  // str ppedTokens above jo ned w h space
+  pr vate Str ng normal zedStr ppedText;
 
-  // normalized, original case tokens, without @mention, #hashtag or urls.
-  private List<String> strippedTokens;
+  // normal zed, or g nal case tokens, w hout @ nt on, #hashtag or urls.
+  pr vate L st<Str ng> str ppedTokens;
 
-  // all hash tags, without "#", lower cased
-  private Set<String> hashtags = Sets.newHashSet();
+  // all hash tags, w hout "#", lo r cased
+  pr vate Set<Str ng> hashtags = Sets.newHashSet();
 
-  // all mentions, without "@", lower cased
-  private Set<String> mentions = Sets.newHashSet();
+  // all  nt ons, w hout "@", lo r cased
+  pr vate Set<Str ng>  nt ons = Sets.newHashSet();
 
-  // whether this tweet has a question mark that's not in url.
-  private boolean hasQuestionMark = false;
+  // w t r t  t et has a quest on mark that's not  n url.
+  pr vate boolean hasQuest onMark = false;
 
-  private boolean hasPositiveSmiley = false;
-  private boolean hasNegativeSmiley = false;
+  pr vate boolean hasPos  veSm ley = false;
+  pr vate boolean hasNegat veSm ley = false;
 
-  // normalized, original case smileys
-  private List<String> smileys;
+  // normal zed, or g nal case sm leys
+  pr vate L st<Str ng> sm leys;
 
-  // lower cased, normalized stock names, without "$"
-  private List<String> stocks;
+  // lo r cased, normal zed stock na s, w hout "$"
+  pr vate L st<Str ng> stocks;
 
-  // Extra features for text quality evaluation only.
-  private int signature = TweetIntegerShingleSignature.DEFAULT_NO_SIGNATURE;
-  private Set<String> trendingTerms = Sets.newHashSet();
-  private int length;
-  private int caps;
+  // Extra features for text qual y evaluat on only.
+  pr vate  nt s gnature = T et ntegerSh ngleS gnature.DEFAULT_NO_S GNATURE;
+  pr vate Set<Str ng> trend ngTerms = Sets.newHashSet();
+  pr vate  nt length;
+  pr vate  nt caps;
 
-  public String getNormalizedText() {
-    return normalizedText;
+  publ c Str ng getNormal zedText() {
+    return normal zedText;
   }
 
-  public void setNormalizedText(String normalizedText) {
-    this.normalizedText = normalizedText;
+  publ c vo d setNormal zedText(Str ng normal zedText) {
+    t .normal zedText = normal zedText;
   }
 
-  public List<String> getTokens() {
+  publ c L st<Str ng> getTokens() {
     return tokens;
   }
 
-  public int getTokensSize() {
-    return tokens == null ? 0 : tokens.size();
+  publ c  nt getTokensS ze() {
+    return tokens == null ? 0 : tokens.s ze();
   }
 
-  public void setTokens(List<String> tokens) {
-    this.tokens = tokens;
+  publ c vo d setTokens(L st<Str ng> tokens) {
+    t .tokens = tokens;
   }
 
-  public List<String> getResolvedUrlTokens() {
+  publ c L st<Str ng> getResolvedUrlTokens() {
     return resolvedUrlsTokens;
   }
 
-  public int getResolvedUrlTokensSize() {
-    return resolvedUrlsTokens == null ? 0 : resolvedUrlsTokens.size();
+  publ c  nt getResolvedUrlTokensS ze() {
+    return resolvedUrlsTokens == null ? 0 : resolvedUrlsTokens.s ze();
   }
 
-  public void setResolvedUrlTokens(List<String> tokensResolvedUrls) {
-    this.resolvedUrlsTokens = tokensResolvedUrls;
+  publ c vo d setResolvedUrlTokens(L st<Str ng> tokensResolvedUrls) {
+    t .resolvedUrlsTokens = tokensResolvedUrls;
   }
 
-  public TokenizedCharSequence getTokenSequence() {
+  publ c Token zedCharSequence getTokenSequence() {
     return tokenSequence;
   }
 
-  public void setTokenSequence(TokenizedCharSequence tokenSequence) {
-    this.tokenSequence = tokenSequence;
+  publ c vo d setTokenSequence(Token zedCharSequence tokenSequence) {
+    t .tokenSequence = tokenSequence;
   }
 
-  public String getNormalizedStrippedText() {
-    return normalizedStrippedText;
+  publ c Str ng getNormal zedStr ppedText() {
+    return normal zedStr ppedText;
   }
 
-  public void setNormalizedStrippedText(String normalizedStrippedText) {
-    this.normalizedStrippedText = normalizedStrippedText;
+  publ c vo d setNormal zedStr ppedText(Str ng normal zedStr ppedText) {
+    t .normal zedStr ppedText = normal zedStr ppedText;
   }
 
-  public List<String> getStrippedTokens() {
-    return strippedTokens;
+  publ c L st<Str ng> getStr ppedTokens() {
+    return str ppedTokens;
   }
 
-  public int getStrippedTokensSize() {
-    return strippedTokens == null ? 0 : strippedTokens.size();
+  publ c  nt getStr ppedTokensS ze() {
+    return str ppedTokens == null ? 0 : str ppedTokens.s ze();
   }
 
-  public void setStrippedTokens(List<String> strippedTokens) {
-    this.strippedTokens = strippedTokens;
+  publ c vo d setStr ppedTokens(L st<Str ng> str ppedTokens) {
+    t .str ppedTokens = str ppedTokens;
   }
 
-  public Set<String> getHashtags() {
+  publ c Set<Str ng> getHashtags() {
     return hashtags;
   }
 
-  public int getHashtagsSize() {
-    return hashtags.size();
+  publ c  nt getHashtagsS ze() {
+    return hashtags.s ze();
   }
 
-  public void setHashtags(Collection<String> hashtags) {
-    this.hashtags = Sets.newHashSet(hashtags);
+  publ c vo d setHashtags(Collect on<Str ng> hashtags) {
+    t .hashtags = Sets.newHashSet(hashtags);
   }
 
-  public Set<String> getMentions() {
-    return mentions;
+  publ c Set<Str ng> get nt ons() {
+    return  nt ons;
   }
 
-  public int getMentionsSize() {
-    return mentions.size();
+  publ c  nt get nt onsS ze() {
+    return  nt ons.s ze();
   }
 
-  public void setMentions(Collection<String> mentions) {
-    this.mentions = Sets.newHashSet(mentions);
+  publ c vo d set nt ons(Collect on<Str ng>  nt ons) {
+    t . nt ons = Sets.newHashSet( nt ons);
   }
 
-  public boolean hasQuestionMark() {
-    return hasQuestionMark;
+  publ c boolean hasQuest onMark() {
+    return hasQuest onMark;
   }
 
-  public void setHasQuestionMark(boolean hasQuestionMark) {
-    this.hasQuestionMark = hasQuestionMark;
+  publ c vo d setHasQuest onMark(boolean hasQuest onMark) {
+    t .hasQuest onMark = hasQuest onMark;
   }
 
-  public boolean hasPositiveSmiley() {
-    return hasPositiveSmiley;
+  publ c boolean hasPos  veSm ley() {
+    return hasPos  veSm ley;
   }
 
-  public void setHasPositiveSmiley(boolean hasPositiveSmiley) {
-    this.hasPositiveSmiley = hasPositiveSmiley;
+  publ c vo d setHasPos  veSm ley(boolean hasPos  veSm ley) {
+    t .hasPos  veSm ley = hasPos  veSm ley;
   }
 
-  public boolean hasNegativeSmiley() {
-    return hasNegativeSmiley;
+  publ c boolean hasNegat veSm ley() {
+    return hasNegat veSm ley;
   }
 
-  public void setHasNegativeSmiley(boolean hasNegativeSmiley) {
-    this.hasNegativeSmiley = hasNegativeSmiley;
+  publ c vo d setHasNegat veSm ley(boolean hasNegat veSm ley) {
+    t .hasNegat veSm ley = hasNegat veSm ley;
   }
 
-  public List<String> getSmileys() {
-    return smileys;
+  publ c L st<Str ng> getSm leys() {
+    return sm leys;
   }
 
-  public int getSmileysSize() {
-    return smileys == null ? 0 : smileys.size();
+  publ c  nt getSm leysS ze() {
+    return sm leys == null ? 0 : sm leys.s ze();
   }
 
-  public void setSmileys(List<String> smileys) {
-    this.smileys = smileys;
+  publ c vo d setSm leys(L st<Str ng> sm leys) {
+    t .sm leys = sm leys;
   }
 
-  public List<String> getStocks() {
+  publ c L st<Str ng> getStocks() {
     return stocks;
   }
 
-  public int getStocksSize() {
-    return stocks == null ? 0 : stocks.size();
+  publ c  nt getStocksS ze() {
+    return stocks == null ? 0 : stocks.s ze();
   }
 
-  public void setStocks(List<String> stocks) {
-    this.stocks = stocks;
+  publ c vo d setStocks(L st<Str ng> stocks) {
+    t .stocks = stocks;
   }
 
-  public int getSignature() {
-    return signature;
+  publ c  nt getS gnature() {
+    return s gnature;
   }
 
-  public void setSignature(int signature) {
-    this.signature = signature;
+  publ c vo d setS gnature( nt s gnature) {
+    t .s gnature = s gnature;
   }
 
-  /** Returns the trending terms. */
-  public Set<String> getTrendingTerms() {
-    return trendingTerms;
+  /** Returns t  trend ng terms. */
+  publ c Set<Str ng> getTrend ngTerms() {
+    return trend ngTerms;
   }
 
-  public int getTrendingTermsSize() {
-    return trendingTerms.size();
+  publ c  nt getTrend ngTermsS ze() {
+    return trend ngTerms.s ze();
   }
 
-  @VisibleForTesting
-  public void setTrendingTerms(Set<String> trendingTerms) {
-    this.trendingTerms = trendingTerms;
+  @V s bleForTest ng
+  publ c vo d setTrend ngTerms(Set<Str ng> trend ngTerms) {
+    t .trend ngTerms = trend ngTerms;
   }
 
-  public int getLength() {
+  publ c  nt getLength() {
     return length;
   }
 
-  public void setLength(int length) {
-    this.length = length;
+  publ c vo d setLength( nt length) {
+    t .length = length;
   }
 
-  public int getCaps() {
+  publ c  nt getCaps() {
     return caps;
   }
 
-  public void setCaps(int caps) {
-    this.caps = caps;
+  publ c vo d setCaps( nt caps) {
+    t .caps = caps;
   }
 }

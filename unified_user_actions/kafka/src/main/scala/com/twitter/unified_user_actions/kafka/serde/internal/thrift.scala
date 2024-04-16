@@ -1,121 +1,121 @@
 /**
- * Copyright 2021 Twitter, Inc.
- * SPDX-License-Identifier: Apache-2.0
+ * Copyr ght 2021 Tw ter,  nc.
+ * SPDX-L cense- dent f er: Apac -2.0
  */
-package com.twitter.unified_user_actions.kafka.serde.internal
+package com.tw ter.un f ed_user_act ons.kafka.serde. nternal
 
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import java.util
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.scrooge.ThriftStructSerializer
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.common.serialization.Serializer
-import com.twitter.util.logging.Logging
-import org.apache.thrift.protocol.TBinaryProtocol
+ mport com.google.common.ut l.concurrent.RateL m er
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport java.ut l
+ mport com.tw ter.scrooge.CompactThr ftSer al zer
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.scrooge.Thr ftStructSer al zer
+ mport org.apac .kafka.common.ser al zat on.Deser al zer
+ mport org.apac .kafka.common.ser al zat on.Serde
+ mport org.apac .kafka.common.ser al zat on.Ser al zer
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport org.apac .thr ft.protocol.TB naryProtocol
 
-abstract class AbstractScroogeSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter)
+abstract class AbstractScroogeSerDe[T <: Thr ftStruct: Man fest](nullCounter: Counter)
     extends Serde[T]
-    with Logging {
+    w h Logg ng {
 
-  private val rateLimiter = RateLimiter.create(1.0) // at most 1 log message per second
+  pr vate val rateL m er = RateL m er.create(1.0) // at most 1 log  ssage per second
 
-  private def rateLimitedLogError(e: Exception): Unit =
-    if (rateLimiter.tryAcquire()) {
-      logger.error(e.getMessage, e)
+  pr vate def rateL m edLogError(e: Except on): Un  =
+     f (rateL m er.tryAcqu re()) {
+      logger.error(e.get ssage, e)
     }
 
-  private[kafka] val thriftStructSerializer: ThriftStructSerializer[T] = {
-    val clazz = manifest.runtimeClass.asInstanceOf[Class[T]]
-    val codec = ThriftStructCodec.forStructClass(clazz)
+  pr vate[kafka] val thr ftStructSer al zer: Thr ftStructSer al zer[T] = {
+    val clazz = man fest.runt  Class.as nstanceOf[Class[T]]
+    val codec = Thr ftStructCodec.forStructClass(clazz)
 
-    constructThriftStructSerializer(clazz, codec)
+    constructThr ftStructSer al zer(clazz, codec)
   }
 
-  private val _deserializer = new Deserializer[T] {
-    override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {}
+  pr vate val _deser al zer = new Deser al zer[T] {
+    overr de def conf gure(conf gs: ut l.Map[Str ng, _],  sKey: Boolean): Un  = {}
 
-    override def close(): Unit = {}
+    overr de def close(): Un  = {}
 
-    override def deserialize(topic: String, data: Array[Byte]): T = {
-      if (data == null) {
-        null.asInstanceOf[T]
+    overr de def deser al ze(top c: Str ng, data: Array[Byte]): T = {
+       f (data == null) {
+        null.as nstanceOf[T]
       } else {
         try {
-          thriftStructSerializer.fromBytes(data)
+          thr ftStructSer al zer.fromBytes(data)
         } catch {
-          case e: Exception =>
-            nullCounter.incr()
-            rateLimitedLogError(e)
-            null.asInstanceOf[T]
+          case e: Except on =>
+            nullCounter. ncr()
+            rateL m edLogError(e)
+            null.as nstanceOf[T]
         }
       }
     }
   }
 
-  private val _serializer = new Serializer[T] {
-    override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {}
+  pr vate val _ser al zer = new Ser al zer[T] {
+    overr de def conf gure(conf gs: ut l.Map[Str ng, _],  sKey: Boolean): Un  = {}
 
-    override def serialize(topic: String, data: T): Array[Byte] = {
-      if (data == null) {
+    overr de def ser al ze(top c: Str ng, data: T): Array[Byte] = {
+       f (data == null) {
         null
       } else {
-        thriftStructSerializer.toBytes(data)
+        thr ftStructSer al zer.toBytes(data)
       }
     }
 
-    override def close(): Unit = {}
+    overr de def close(): Un  = {}
   }
 
-  /* Public */
+  /* Publ c */
 
-  override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {}
+  overr de def conf gure(conf gs: ut l.Map[Str ng, _],  sKey: Boolean): Un  = {}
 
-  override def close(): Unit = {}
+  overr de def close(): Un  = {}
 
-  override def deserializer: Deserializer[T] = {
-    _deserializer
+  overr de def deser al zer: Deser al zer[T] = {
+    _deser al zer
   }
 
-  override def serializer: Serializer[T] = {
-    _serializer
+  overr de def ser al zer: Ser al zer[T] = {
+    _ser al zer
   }
 
   /**
-   * Subclasses should implement this method and provide a concrete ThriftStructSerializer
+   * Subclasses should  mple nt t   thod and prov de a concrete Thr ftStructSer al zer
    */
-  protected[this] def constructThriftStructSerializer(
-    thriftStructClass: Class[T],
-    thriftStructCodec: ThriftStructCodec[T]
-  ): ThriftStructSerializer[T]
+  protected[t ] def constructThr ftStructSer al zer(
+    thr ftStructClass: Class[T],
+    thr ftStructCodec: Thr ftStructCodec[T]
+  ): Thr ftStructSer al zer[T]
 }
 
-class ThriftSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter = NullStatsReceiver.NullCounter)
+class Thr ftSerDe[T <: Thr ftStruct: Man fest](nullCounter: Counter = NullStatsRece ver.NullCounter)
     extends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
-  protected[this] override def constructThriftStructSerializer(
-    thriftStructClass: Class[T],
-    thriftStructCodec: ThriftStructCodec[T]
-  ): ThriftStructSerializer[T] = {
-    new ThriftStructSerializer[T] {
-      override val protocolFactory = new TBinaryProtocol.Factory
-      override def codec: ThriftStructCodec[T] = thriftStructCodec
+  protected[t ] overr de def constructThr ftStructSer al zer(
+    thr ftStructClass: Class[T],
+    thr ftStructCodec: Thr ftStructCodec[T]
+  ): Thr ftStructSer al zer[T] = {
+    new Thr ftStructSer al zer[T] {
+      overr de val protocolFactory = new TB naryProtocol.Factory
+      overr de def codec: Thr ftStructCodec[T] = thr ftStructCodec
     }
   }
 }
 
-class CompactThriftSerDe[T <: ThriftStruct: Manifest](
-  nullCounter: Counter = NullStatsReceiver.NullCounter)
+class CompactThr ftSerDe[T <: Thr ftStruct: Man fest](
+  nullCounter: Counter = NullStatsRece ver.NullCounter)
     extends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
-  override protected[this] def constructThriftStructSerializer(
-    thriftStructClass: Class[T],
-    thriftStructCodec: ThriftStructCodec[T]
-  ): ThriftStructSerializer[T] = {
-    new CompactThriftSerializer[T] {
-      override def codec: ThriftStructCodec[T] = thriftStructCodec
+  overr de protected[t ] def constructThr ftStructSer al zer(
+    thr ftStructClass: Class[T],
+    thr ftStructCodec: Thr ftStructCodec[T]
+  ): Thr ftStructSer al zer[T] = {
+    new CompactThr ftSer al zer[T] {
+      overr de def codec: Thr ftStructCodec[T] = thr ftStructCodec
     }
   }
 }

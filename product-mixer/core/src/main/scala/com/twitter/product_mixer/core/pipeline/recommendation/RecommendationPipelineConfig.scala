@@ -1,262 +1,262 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.tw ter.product_m xer.core.p pel ne.recom ndat on
 
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseQueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf gCompan on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ClosedGate
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorConf g
 
 /**
- *  This is the configuration necessary to generate a Recommendation Pipeline. Product code should create a
- *  RecommendationPipelineConfig, and then use a RecommendationPipelineBuilder to get the final RecommendationPipeline which can
+ *  T   s t  conf gurat on necessary to generate a Recom ndat on P pel ne. Product code should create a
+ *  Recom ndat onP pel neConf g, and t n use a Recom ndat onP pel neBu lder to get t  f nal Recom ndat onP pel ne wh ch can
  *  process requests.
  *
- * @tparam Query - The domain model for the query or request
- * @tparam Candidate - The type of the candidates that the Candidate Pipelines are generating
- * @tparam UnmarshalledResultType - The result type of the pipeline, but before marshalling to a wire protocol like URT
- * @tparam Result - The final result that will be served to users
+ * @tparam Query - T  doma n model for t  query or request
+ * @tparam Cand date - T  type of t  cand dates that t  Cand date P pel nes are generat ng
+ * @tparam UnmarshalledResultType - T  result type of t  p pel ne, but before marshall ng to a w re protocol l ke URT
+ * @tparam Result - T  f nal result that w ll be served to users
  */
-trait RecommendationPipelineConfig[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  UnmarshalledResultType <: HasMarshalling,
+tra  Recom ndat onP pel neConf g[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
+  UnmarshalledResultType <: HasMarshall ng,
   Result]
-    extends PipelineConfig {
+    extends P pel neConf g {
 
-  override val identifier: RecommendationPipelineIdentifier
+  overr de val  dent f er: Recom ndat onP pel ne dent f er
 
   /**
-   * Recommendation Pipeline Gates will be executed before any other step (including retrieval from candidate
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
+   * Recom ndat on P pel ne Gates w ll be executed before any ot r step ( nclud ng retr eval from cand date
+   * p pel nes). T y're executed sequent ally, and any "Stop" result w ll prevent p pel ne execut on.
    */
   def gates: Seq[Gate[Query]] = Seq.empty
 
   /**
-   * A recommendation pipeline can fetch query-level features before candidate pipelines are executed.
+   * A recom ndat on p pel ne can fetch query-level features before cand date p pel nes are executed.
    */
   def fetchQueryFeatures: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
 
   /**
-   * Candidate pipelines retrieve candidates for possible inclusion in the result
+   * Cand date p pel nes retr eve cand dates for poss ble  nclus on  n t  result
    */
   def fetchQueryFeaturesPhase2: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
 
   /**
-   * What candidate pipelines should this Recommendations Pipeline get candidate from?
+   * What cand date p pel nes should t  Recom ndat ons P pel ne get cand date from?
    */
-  def candidatePipelines: Seq[CandidatePipelineConfig[Query, _, _, _]]
+  def cand dateP pel nes: Seq[Cand dateP pel neConf g[Query, _, _, _]]
 
   /**
-   * Dependent candidate pipelines to retrieve candidates that depend on the result of [[candidatePipelines]]
-   * [[DependentCandidatePipelineConfig]] have access to the list of previously retrieved & decorated
-   * candidates for use in constructing the query object.
+   * Dependent cand date p pel nes to retr eve cand dates that depend on t  result of [[cand dateP pel nes]]
+   * [[DependentCand dateP pel neConf g]] have access to t  l st of prev ously retr eved & decorated
+   * cand dates for use  n construct ng t  query object.
    */
-  def dependentCandidatePipelines: Seq[DependentCandidatePipelineConfig[Query, _, _, _]] = Seq.empty
+  def dependentCand dateP pel nes: Seq[DependentCand dateP pel neConf g[Query, _, _, _]] = Seq.empty
 
   /**
-   * Takes final ranked list of candidates & apply any business logic (e.g, deduplicating and merging
-   * candidates before scoring).
+   * Takes f nal ranked l st of cand dates & apply any bus ness log c (e.g, dedupl cat ng and  rg ng
+   * cand dates before scor ng).
    */
-  def postCandidatePipelinesSelectors: Seq[Selector[Query]] = Seq(InsertAppendResults(AllPipelines))
+  def postCand dateP pel nesSelectors: Seq[Selector[Query]] = Seq( nsertAppendResults(AllP pel nes))
 
   /**
-   * After selectors are run, you can fetch features for each candidate.
-   * The existing features from previous hydrations are passed in as inputs. You are not expected to
-   * put them into the resulting feature map yourself - they will be merged for you by the platform.
+   * After selectors are run,   can fetch features for each cand date.
+   * T  ex st ng features from prev ous hydrat ons are passed  n as  nputs.   are not expected to
+   * put t m  nto t  result ng feature map y self - t y w ll be  rged for   by t  platform.
    */
-  def postCandidatePipelinesFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[Query, Candidate, _]
+  def postCand dateP pel nesFeatureHydrat on: Seq[
+    BaseCand dateFeatureHydrator[Query, Cand date, _]
   ] =
     Seq.empty
 
   /**
-   * Global filters to run on all candidates.
+   * Global f lters to run on all cand dates.
    */
-  def globalFilters: Seq[Filter[Query, Candidate]] = Seq.empty
+  def globalF lters: Seq[F lter[Query, Cand date]] = Seq.empty
 
   /**
-   * By default, a Recommendation Pipeline will fail closed - if any candidate or scoring
-   * pipeline fails to return a result, then the Recommendation Pipeline will not return a result.
-   * You can adjust this default policy, or provide specific policies to specific pipelines.
-   * Those specific policies will take priority.
+   * By default, a Recom ndat on P pel ne w ll fa l closed -  f any cand date or scor ng
+   * p pel ne fa ls to return a result, t n t  Recom ndat on P pel ne w ll not return a result.
+   *   can adjust t  default pol cy, or prov de spec f c pol c es to spec f c p pel nes.
+   * Those spec f c pol c es w ll take pr or y.
    *
-   * FailOpenPolicy.All will always fail open (the RecommendationPipeline will continue without that pipeline)
-   * FailOpenPolicy.Never will always fail closed (the RecommendationPipeline will fail if that pipeline fails)
+   * Fa lOpenPol cy.All w ll always fa l open (t  Recom ndat onP pel ne w ll cont nue w hout that p pel ne)
+   * Fa lOpenPol cy.Never w ll always fa l closed (t  Recom ndat onP pel ne w ll fa l  f that p pel ne fa ls)
    *
-   * There's a default policy, and a specific Map of policies that takes precedence.
+   * T re's a default pol cy, and a spec f c Map of pol c es that takes precedence.
    */
-  def defaultFailOpenPolicy: FailOpenPolicy = FailOpenPolicy(Set(ClosedGate))
-  def candidatePipelineFailOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] =
+  def defaultFa lOpenPol cy: Fa lOpenPol cy = Fa lOpenPol cy(Set(ClosedGate))
+  def cand dateP pel neFa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy] =
     Map.empty
-  def scoringPipelineFailOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy] = Map.empty
+  def scor ngP pel neFa lOpenPol c es: Map[Scor ngP pel ne dent f er, Fa lOpenPol cy] = Map.empty
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific candidate pipelines
-   * using [[ComponentIdentifier]].
+   ** [[qual yFactorConf gs]] assoc ates [[Qual yFactorConf g]]s to spec f c cand date p pel nes
+   * us ng [[Component dent f er]].
    */
-  def qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] =
+  def qual yFactorConf gs: Map[Component dent f er, Qual yFactorConf g] =
     Map.empty
 
   /**
-   * Scoring pipelines for scoring candidates.
-   * @note These do not drop or re-order candidates, you should do those in the sub-sequent selectors
-   * step based off of the scores on candidates set in those [[ScoringPipeline]]s.
+   * Scor ng p pel nes for scor ng cand dates.
+   * @note T se do not drop or re-order cand dates,   should do those  n t  sub-sequent selectors
+   * step based off of t  scores on cand dates set  n those [[Scor ngP pel ne]]s.
    */
-  def scoringPipelines: Seq[ScoringPipelineConfig[Query, Candidate]]
+  def scor ngP pel nes: Seq[Scor ngP pel neConf g[Query, Cand date]]
 
   /**
-   * Takes final ranked list of candidates & apply any business logic (e.g, capping number
-   * of ad accounts or pacing ad accounts).
+   * Takes f nal ranked l st of cand dates & apply any bus ness log c (e.g, capp ng number
+   * of ad accounts or pac ng ad accounts).
    */
   def resultSelectors: Seq[Selector[Query]]
 
   /**
-   * Takes the final selected list of candidates and applies a final list of filters.
-   * Useful for doing very expensive filtering at the end of your pipeline.
+   * Takes t  f nal selected l st of cand dates and appl es a f nal l st of f lters.
+   * Useful for do ng very expens ve f lter ng at t  end of y  p pel ne.
    */
-  def postSelectionFilters: Seq[Filter[Query, Candidate]] = Seq.empty
+  def postSelect onF lters: Seq[F lter[Query, Cand date]] = Seq.empty
 
   /**
-   * Decorators allow for adding Presentations to candidates. While the Presentation can contain any
-   * arbitrary data, Decorators are often used to add a UrtItemPresentation for URT item support. Most
-   * customers will prefer to set a decorator in their respective candidate pipeline, however, a final
-   * global one is available for those that do global decoration as late possible to avoid unnecessary hydrations.
-   * @note This decorator can only return an ItemPresentation.
-   * @note This decorator cannot decorate an already decorated candidate from the prior decorator
-   *       step in candidate pipelines.
+   * Decorators allow for add ng Presentat ons to cand dates. Wh le t  Presentat on can conta n any
+   * arb rary data, Decorators are often used to add a Urt emPresentat on for URT  em support. Most
+   * custo rs w ll prefer to set a decorator  n t  r respect ve cand date p pel ne, ho ver, a f nal
+   * global one  s ava lable for those that do global decorat on as late poss ble to avo d unnecessary hydrat ons.
+   * @note T  decorator can only return an  emPresentat on.
+   * @note T  decorator cannot decorate an already decorated cand date from t  pr or decorator
+   *       step  n cand date p pel nes.
    */
-  def decorator: Option[CandidateDecorator[Query, Candidate]] = None
+  def decorator: Opt on[Cand dateDecorator[Query, Cand date]] = None
 
   /**
-   * Domain marshaller transforms the selections into the model expected by the marshaller
+   * Doma n marshaller transforms t  select ons  nto t  model expected by t  marshaller
    */
-  def domainMarshaller: DomainMarshaller[Query, UnmarshalledResultType]
+  def doma nMarshaller: Doma nMarshaller[Query, UnmarshalledResultType]
 
   /**
-   * Mixer result side effects that are executed after selection and domain marshalling
+   * M xer result s de effects that are executed after select on and doma n marshall ng
    */
-  def resultSideEffects: Seq[PipelineResultSideEffect[Query, UnmarshalledResultType]] = Seq()
+  def resultS deEffects: Seq[P pel neResultS deEffect[Query, UnmarshalledResultType]] = Seq()
 
   /**
-   * Transport marshaller transforms the model into our line-level API like URT or JSON
+   * Transport marshaller transforms t  model  nto   l ne-level AP  l ke URT or JSON
    */
   def transportMarshaller: TransportMarshaller[UnmarshalledResultType, Result]
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A p pel ne can def ne a part al funct on to rescue fa lures  re. T y w ll be treated as fa lures
+   * from a mon or ng standpo nt, and cancellat on except ons w ll always be propagated (t y cannot be caught  re).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def fa lureClass f er: Part alFunct on[Throwable, P pel neFa lure] = Part alFunct on.empty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alerts can be used to  nd cate t  p pel ne's serv ce level object ves. Alerts and
+   * dashboards w ll be automat cally created based on t   nformat on.
    */
   val alerts: Seq[Alert] = Seq.empty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * T   thod  s used by t  product m xer fra work to bu ld t  p pel ne.
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    builder: RecommendationPipelineBuilderFactory
-  ): RecommendationPipeline[Query, Candidate, Result] =
-    builder.get.build(parentComponentIdentifierStack, this)
+  pr vate[core] f nal def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    bu lder: Recom ndat onP pel neBu lderFactory
+  ): Recom ndat onP pel ne[Query, Cand date, Result] =
+    bu lder.get.bu ld(parentComponent dent f erStack, t )
 }
 
-object RecommendationPipelineConfig extends PipelineConfigCompanion {
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val fetchQueryFeaturesStep: PipelineStepIdentifier = PipelineStepIdentifier("FetchQueryFeatures")
-  val fetchQueryFeaturesPhase2Step: PipelineStepIdentifier = PipelineStepIdentifier(
+object Recom ndat onP pel neConf g extends P pel neConf gCompan on {
+  val qual yFactorStep: P pel neStep dent f er = P pel neStep dent f er("Qual yFactor")
+  val gatesStep: P pel neStep dent f er = P pel neStep dent f er("Gates")
+  val fetchQueryFeaturesStep: P pel neStep dent f er = P pel neStep dent f er("FetchQueryFeatures")
+  val fetchQueryFeaturesPhase2Step: P pel neStep dent f er = P pel neStep dent f er(
     "FetchQueryFeaturesPhase2")
-  val candidatePipelinesStep: PipelineStepIdentifier = PipelineStepIdentifier("CandidatePipelines")
-  val dependentCandidatePipelinesStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("DependentCandidatePipelines")
-  val postCandidatePipelinesSelectorsStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("PostCandidatePipelinesSelectors")
-  val postCandidatePipelinesFeatureHydrationStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("PostCandidatePipelinesFeatureHydration")
-  val globalFiltersStep: PipelineStepIdentifier = PipelineStepIdentifier("GlobalFilters")
-  val scoringPipelinesStep: PipelineStepIdentifier = PipelineStepIdentifier("ScoringPipelines")
-  val resultSelectorsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSelectors")
-  val postSelectionFiltersStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "PostSelectionFilters")
-  val decoratorStep: PipelineStepIdentifier = PipelineStepIdentifier("Decorator")
-  val domainMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier("DomainMarshaller")
-  val resultSideEffectsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSideEffects")
-  val transportMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier(
+  val cand dateP pel nesStep: P pel neStep dent f er = P pel neStep dent f er("Cand dateP pel nes")
+  val dependentCand dateP pel nesStep: P pel neStep dent f er =
+    P pel neStep dent f er("DependentCand dateP pel nes")
+  val postCand dateP pel nesSelectorsStep: P pel neStep dent f er =
+    P pel neStep dent f er("PostCand dateP pel nesSelectors")
+  val postCand dateP pel nesFeatureHydrat onStep: P pel neStep dent f er =
+    P pel neStep dent f er("PostCand dateP pel nesFeatureHydrat on")
+  val globalF ltersStep: P pel neStep dent f er = P pel neStep dent f er("GlobalF lters")
+  val scor ngP pel nesStep: P pel neStep dent f er = P pel neStep dent f er("Scor ngP pel nes")
+  val resultSelectorsStep: P pel neStep dent f er = P pel neStep dent f er("ResultSelectors")
+  val postSelect onF ltersStep: P pel neStep dent f er = P pel neStep dent f er(
+    "PostSelect onF lters")
+  val decoratorStep: P pel neStep dent f er = P pel neStep dent f er("Decorator")
+  val doma nMarshallerStep: P pel neStep dent f er = P pel neStep dent f er("Doma nMarshaller")
+  val resultS deEffectsStep: P pel neStep dent f er = P pel neStep dent f er("ResultS deEffects")
+  val transportMarshallerStep: P pel neStep dent f er = P pel neStep dent f er(
     "TransportMarshaller")
 
-  /** All the Steps which are executed by a [[RecommendationPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    qualityFactorStep,
+  /** All t  Steps wh ch are executed by a [[Recom ndat onP pel ne]]  n t  order  n wh ch t y are run */
+  overr de val steps nOrder: Seq[P pel neStep dent f er] = Seq(
+    qual yFactorStep,
     gatesStep,
     fetchQueryFeaturesStep,
     fetchQueryFeaturesPhase2Step,
-    asyncFeaturesStep(candidatePipelinesStep),
-    candidatePipelinesStep,
-    asyncFeaturesStep(dependentCandidatePipelinesStep),
-    dependentCandidatePipelinesStep,
-    asyncFeaturesStep(postCandidatePipelinesSelectorsStep),
-    postCandidatePipelinesSelectorsStep,
-    asyncFeaturesStep(postCandidatePipelinesFeatureHydrationStep),
-    postCandidatePipelinesFeatureHydrationStep,
-    asyncFeaturesStep(globalFiltersStep),
-    globalFiltersStep,
-    asyncFeaturesStep(scoringPipelinesStep),
-    scoringPipelinesStep,
+    asyncFeaturesStep(cand dateP pel nesStep),
+    cand dateP pel nesStep,
+    asyncFeaturesStep(dependentCand dateP pel nesStep),
+    dependentCand dateP pel nesStep,
+    asyncFeaturesStep(postCand dateP pel nesSelectorsStep),
+    postCand dateP pel nesSelectorsStep,
+    asyncFeaturesStep(postCand dateP pel nesFeatureHydrat onStep),
+    postCand dateP pel nesFeatureHydrat onStep,
+    asyncFeaturesStep(globalF ltersStep),
+    globalF ltersStep,
+    asyncFeaturesStep(scor ngP pel nesStep),
+    scor ngP pel nesStep,
     asyncFeaturesStep(resultSelectorsStep),
     resultSelectorsStep,
-    asyncFeaturesStep(postSelectionFiltersStep),
-    postSelectionFiltersStep,
+    asyncFeaturesStep(postSelect onF ltersStep),
+    postSelect onF ltersStep,
     asyncFeaturesStep(decoratorStep),
     decoratorStep,
-    domainMarshallerStep,
-    asyncFeaturesStep(resultSideEffectsStep),
-    resultSideEffectsStep,
+    doma nMarshallerStep,
+    asyncFeaturesStep(resultS deEffectsStep),
+    resultS deEffectsStep,
     transportMarshallerStep
   )
 
   /**
-   * All the Steps which an [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
-   * can be configured to [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
+   * All t  Steps wh ch an [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
+   * can be conf gured to [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
    */
-  override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
-    candidatePipelinesStep,
-    dependentCandidatePipelinesStep,
-    postCandidatePipelinesSelectorsStep,
-    postCandidatePipelinesFeatureHydrationStep,
-    globalFiltersStep,
-    scoringPipelinesStep,
+  overr de val stepsAsyncFeatureHydrat onCanBeCompletedBy: Set[P pel neStep dent f er] = Set(
+    cand dateP pel nesStep,
+    dependentCand dateP pel nesStep,
+    postCand dateP pel nesSelectorsStep,
+    postCand dateP pel nesFeatureHydrat onStep,
+    globalF ltersStep,
+    scor ngP pel nesStep,
     resultSelectorsStep,
-    postSelectionFiltersStep,
+    postSelect onF ltersStep,
     decoratorStep,
-    resultSideEffectsStep,
+    resultS deEffectsStep,
   )
 }

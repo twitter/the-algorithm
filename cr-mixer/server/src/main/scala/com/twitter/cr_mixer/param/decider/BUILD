@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "decider/src/main/scala",
-        "finagle/finagle-base-http/src/main",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-http/src/main/scala",
-        "servo/decider",
-        "src/scala/com/twitter/simclusters_v2/common",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "dec der/src/ma n/scala",
+        "f nagle/f nagle-base-http/src/ma n",
+        "f nagle/f nagle-core/src/ma n",
+        "f nagle/f nagle-http/src/ma n/scala",
+        "servo/dec der",
+        "src/scala/com/tw ter/s mclusters_v2/common",
     ],
 )

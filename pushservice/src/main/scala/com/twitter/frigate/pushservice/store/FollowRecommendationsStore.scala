@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.Recommendation
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.follow_recommendations.thriftscala.RecommendationResponse
-import com.twitter.follow_recommendations.thriftscala.UserRecommendation
-import com.twitter.inject.Logging
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.FollowRecom ndat onsThr ftServ ce
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.Recom ndat onRequest
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.Recom ndat onResponse
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.UserRecom ndat on
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class FollowRecommendationsStore(
-  frsClient: FollowRecommendationsThriftService.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[RecommendationRequest, RecommendationResponse]
-    with Logging {
+case class FollowRecom ndat onsStore(
+  frsCl ent: FollowRecom ndat onsThr ftServ ce. thodPerEndpo nt,
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[Recom ndat onRequest, Recom ndat onResponse]
+    w h Logg ng {
 
-  private val scopedStats = statsReceiver.scope(getClass.getSimpleName)
-  private val requests = scopedStats.counter("requests")
-  private val valid = scopedStats.counter("valid")
-  private val invalid = scopedStats.counter("invalid")
-  private val numTotalResults = scopedStats.stat("total_results")
-  private val numValidResults = scopedStats.stat("valid_results")
+  pr vate val scopedStats = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate val requests = scopedStats.counter("requests")
+  pr vate val val d = scopedStats.counter("val d")
+  pr vate val  nval d = scopedStats.counter(" nval d")
+  pr vate val numTotalResults = scopedStats.stat("total_results")
+  pr vate val numVal dResults = scopedStats.stat("val d_results")
 
-  override def get(request: RecommendationRequest): Future[Option[RecommendationResponse]] = {
-    requests.incr()
-    frsClient.getRecommendations(request).map { response =>
-      numTotalResults.add(response.recommendations.size)
-      val validRecs = response.recommendations.filter {
-        case Recommendation.User(_: UserRecommendation) =>
-          valid.incr()
+  overr de def get(request: Recom ndat onRequest): Future[Opt on[Recom ndat onResponse]] = {
+    requests. ncr()
+    frsCl ent.getRecom ndat ons(request).map { response =>
+      numTotalResults.add(response.recom ndat ons.s ze)
+      val val dRecs = response.recom ndat ons.f lter {
+        case Recom ndat on.User(_: UserRecom ndat on) =>
+          val d. ncr()
           true
         case _ =>
-          invalid.incr()
+           nval d. ncr()
           false
       }
 
-      numValidResults.add(validRecs.size)
-      Some(
-        RecommendationResponse(
-          recommendations = validRecs
+      numVal dResults.add(val dRecs.s ze)
+      So (
+        Recom ndat onResponse(
+          recom ndat ons = val dRecs
         ))
     }
   }

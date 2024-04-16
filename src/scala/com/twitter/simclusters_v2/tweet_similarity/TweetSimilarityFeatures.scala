@@ -1,54 +1,54 @@
-package com.twitter.simclusters_v2.tweet_similarity
+package com.tw ter.s mclusters_v2.t et_s m lar y
 
-import com.twitter.ml.api.Feature.{Binary, Continuous, Discrete, SparseContinuous}
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
-import com.twitter.ml.featurestore.catalog.features.recommendations.ProducerSimClustersEmbedding
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.data.{PredictionRecord, PredictionRecordAdapter}
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
+ mport com.tw ter.ml.ap .Feature.{B nary, Cont nuous, D screte, SparseCont nuous}
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .{DataRecord, FeatureContext,  RecordOneToOneAdapter}
+ mport com.tw ter.ml.featurestore.catalog.features.recom ndat ons.ProducerS mClustersEmbedd ng
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.data.{Pred ct onRecord, Pred ct onRecordAdapter}
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeatureSet
 
-object TweetSimilarityFeatures {
-  val QueryTweetId = new Discrete("query_tweet.id")
-  val CandidateTweetId = new Discrete("candidate_tweet.id")
-  val QueryTweetEmbedding = new SparseContinuous("query_tweet.simclusters_embedding")
-  val CandidateTweetEmbedding = new SparseContinuous("candidate_tweet.simclusters_embedding")
-  val QueryTweetEmbeddingNorm = new Continuous("query_tweet.embedding_norm")
-  val CandidateTweetEmbeddingNorm = new Continuous("candidate_tweet.embedding_norm")
-  val QueryTweetTimestamp = new Discrete("query_tweet.timestamp")
-  val CandidateTweetTimestamp = new Discrete("candidate_tweet.timestamp")
-  val TweetPairCount = new Discrete("popularity_count.tweet_pair")
-  val QueryTweetCount = new Discrete("popularity_count.query_tweet")
-  val CosineSimilarity = new Continuous("meta.cosine_similarity")
-  val Label = new Binary("co-engagement.label")
+object T etS m lar yFeatures {
+  val QueryT et d = new D screte("query_t et. d")
+  val Cand dateT et d = new D screte("cand date_t et. d")
+  val QueryT etEmbedd ng = new SparseCont nuous("query_t et.s mclusters_embedd ng")
+  val Cand dateT etEmbedd ng = new SparseCont nuous("cand date_t et.s mclusters_embedd ng")
+  val QueryT etEmbedd ngNorm = new Cont nuous("query_t et.embedd ng_norm")
+  val Cand dateT etEmbedd ngNorm = new Cont nuous("cand date_t et.embedd ng_norm")
+  val QueryT etT  stamp = new D screte("query_t et.t  stamp")
+  val Cand dateT etT  stamp = new D screte("cand date_t et.t  stamp")
+  val T etPa rCount = new D screte("popular y_count.t et_pa r")
+  val QueryT etCount = new D screte("popular y_count.query_t et")
+  val Cos neS m lar y = new Cont nuous(" ta.cos ne_s m lar y")
+  val Label = new B nary("co-engage nt.label")
 
   val FeatureContext: FeatureContext = new FeatureContext(
-    QueryTweetId,
-    CandidateTweetId,
-    QueryTweetEmbedding,
-    CandidateTweetEmbedding,
-    QueryTweetEmbeddingNorm,
-    CandidateTweetEmbeddingNorm,
-    QueryTweetTimestamp,
-    CandidateTweetTimestamp,
-    TweetPairCount,
-    QueryTweetCount,
-    CosineSimilarity,
+    QueryT et d,
+    Cand dateT et d,
+    QueryT etEmbedd ng,
+    Cand dateT etEmbedd ng,
+    QueryT etEmbedd ngNorm,
+    Cand dateT etEmbedd ngNorm,
+    QueryT etT  stamp,
+    Cand dateT etT  stamp,
+    T etPa rCount,
+    QueryT etCount,
+    Cos neS m lar y,
     Label
   )
 
-  def isCoengaged(dataRecord: DataRecord): Boolean = {
+  def  sCoengaged(dataRecord: DataRecord): Boolean = {
     dataRecord.getFeatureValue(Label)
   }
 }
 
-class TweetSimilarityFeaturesStoreConfig(identifier: String) {
-  val bindingIdentifier: Entity[UserId] = Entity[UserId](identifier)
+class T etS m lar yFeaturesStoreConf g( dent f er: Str ng) {
+  val b nd ng dent f er: Ent y[User d] = Ent y[User d]( dent f er)
 
   val featureStoreBoundFeatureSet: BoundFeatureSet = BoundFeatureSet(
-    ProducerSimClustersEmbedding.FavBasedEmbedding20m145kUpdated.bind(bindingIdentifier))
+    ProducerS mClustersEmbedd ng.FavBasedEmbedd ng20m145kUpdated.b nd(b nd ng dent f er))
 
-  val predictionRecordAdapter: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(featureStoreBoundFeatureSet)
+  val pred ct onRecordAdapter:  RecordOneToOneAdapter[Pred ct onRecord] =
+    Pred ct onRecordAdapter.oneToOne(featureStoreBoundFeatureSet)
 }

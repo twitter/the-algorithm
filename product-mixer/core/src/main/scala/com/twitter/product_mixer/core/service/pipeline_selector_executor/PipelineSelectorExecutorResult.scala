@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.service.pipeline_selector_executor
+package com.tw ter.product_m xer.core.serv ce.p pel ne_selector_executor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
 
-case class PipelineSelectorExecutorResult(pipelineIdentifier: ComponentIdentifier)
+case class P pel neSelectorExecutorResult(p pel ne dent f er: Component dent f er)

@@ -1,167 +1,167 @@
-scala_library(
-    name = "simclusters_index_generation",
-    sources = [
+scala_l brary(
+    na  = "s mclusters_ ndex_generat on",
+    s ces = [
         "**/*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:ads_fav_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:ads_fav_click_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:fav_based_evergreen_content_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:fav_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:fav_based_video_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:push_open_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:reply_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:retweet_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:video_view_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/common",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/sql",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:bq_generation",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:ads_fav_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:ads_fav_cl ck_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:fav_based_evergreen_content_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:fav_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:fav_based_v deo_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:push_open_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:reply_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:ret et_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:v deo_v ew_based_s mclusters_cluster_to_t et_ ndex-scala",
+        "src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/common",
+        "src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql",
+        "src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann:bq_generat on",
+        "un f ed_user_act ons/thr ft/src/ma n/thr ft/com/tw ter/un f ed_user_act ons:un f ed_user_act ons-scala",
     ],
 )
 
-jvm_binary(
-    name = "fav-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.FavBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "fav-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.FavBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "fav-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.FavBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "fav-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.FavBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "video-view-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.VideoViewBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "v deo-v ew-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.V deoV ewBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "video-view-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.VideoViewBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "v deo-v ew-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.V deoV ewBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "retweet-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.RetweetBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "ret et-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.Ret etBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "retweet-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.RetweetBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "ret et-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.Ret etBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "reply-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.ReplyBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "reply-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.ReplyBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "reply-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.ReplyBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "reply-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.ReplyBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "push-open-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.PushOpenBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "push-open-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.PushOpenBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "push-open-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.PushOpenBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "push-open-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.PushOpenBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "ads-fav-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.AdsFavBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "ads-fav-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.AdsFavBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "ads-fav-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.AdsFavBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "ads-fav-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.AdsFavBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "ads-fav-click-based-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.AdsFavClickBasedClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "ads-fav-cl ck-based-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.AdsFavCl ckBasedClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "ads-fav-click-based-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.AdsFavClickBasedClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "ads-fav-cl ck-based-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.AdsFavCl ckBasedClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "fav-based-evergreen-content-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.FavBasedEvergreenContentClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "fav-based-evergreen-content-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.FavBasedEvergreenContentClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "fav-based-evergreen-content-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.FavBasedEvergreenContentClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "fav-based-evergreen-content-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.FavBasedEvergreenContentClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "fav-based-video-cluster-to-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.FavBasedVideoClusterToTweetIndexGenerationAdhocJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "fav-based-v deo-cluster-to-t et- ndex-generat on-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.FavBasedV deoClusterToT et ndexGenerat onAdhocJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )
 
-jvm_binary(
-    name = "fav-based-video-cluster-to-tweet-index-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.FavBasedVideoClusterToTweetIndexGenerationBatchJob",
-    dependencies = [
-        ":simclusters_index_generation",
+jvm_b nary(
+    na  = "fav-based-v deo-cluster-to-t et- ndex-generat on-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.FavBasedV deoClusterToT et ndexGenerat onBatchJob",
+    dependenc es = [
+        ":s mclusters_ ndex_generat on",
     ],
 )

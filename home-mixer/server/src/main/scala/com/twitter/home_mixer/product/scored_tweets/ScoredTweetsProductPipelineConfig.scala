@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.product.scored_tweets
+package com.tw ter.ho _m xer.product.scored_t ets
 
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedT et dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T  l neServ ceT etsFeature
+ mport com.tw ter.ho _m xer.model.request.Ho M xerRequest
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProduct
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProductContext
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.ServerMaxResultsParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParamConf g
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAccessPol cy.DefaultHo M xerAccessPol cy
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.ProductP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neConf g
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScoredTweetsProductPipelineConfig @Inject() (
-  scoredTweetsRecommendationPipelineConfig: ScoredTweetsRecommendationPipelineConfig,
-  scoredTweetsParamConfig: ScoredTweetsParamConfig)
-    extends ProductPipelineConfig[HomeMixerRequest, ScoredTweetsQuery, t.ScoredTweets] {
+@S ngleton
+class ScoredT etsProductP pel neConf g @ nject() (
+  scoredT etsRecom ndat onP pel neConf g: ScoredT etsRecom ndat onP pel neConf g,
+  scoredT etsParamConf g: ScoredT etsParamConf g)
+    extends ProductP pel neConf g[Ho M xerRequest, ScoredT etsQuery, t.ScoredT ets] {
 
-  override val identifier: ProductPipelineIdentifier = ProductPipelineIdentifier("ScoredTweets")
+  overr de val  dent f er: ProductP pel ne dent f er = ProductP pel ne dent f er("ScoredT ets")
 
-  override val product: Product = ScoredTweetsProduct
+  overr de val product: Product = ScoredT etsProduct
 
-  override val paramConfig: ProductParamConfig = scoredTweetsParamConfig
+  overr de val paramConf g: ProductParamConf g = scoredT etsParamConf g
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
+  overr de def p pel neQueryTransfor r(
+    request: Ho M xerRequest,
     params: Params
-  ): ScoredTweetsQuery = {
+  ): ScoredT etsQuery = {
     val context = request.productContext match {
-      case Some(context: ScoredTweetsProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ScoredTweetsProductContext not found")
+      case So (context: ScoredT etsProductContext) => context
+      case _ => throw P pel neFa lure(BadRequest, "ScoredT etsProductContext not found")
     }
 
-    val featureMap = FeatureMapBuilder()
-      .add(ServedTweetIdsFeature, context.servedTweetIds.getOrElse(Seq.empty))
-      .add(TimelineServiceTweetsFeature, context.backfillTweetIds.getOrElse(Seq.empty))
-      .build()
+    val featureMap = FeatureMapBu lder()
+      .add(ServedT et dsFeature, context.servedT et ds.getOrElse(Seq.empty))
+      .add(T  l neServ ceT etsFeature, context.backf llT et ds.getOrElse(Seq.empty))
+      .bu ld()
 
-    ScoredTweetsQuery(
+    ScoredT etsQuery(
       params = params,
-      clientContext = request.clientContext,
-      pipelineCursor =
-        request.serializedRequestCursor.flatMap(UrtCursorSerializer.deserializeOrderedCursor),
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = request.debugParams.flatMap(_.debugOptions),
-      features = Some(featureMap),
-      deviceContext = context.deviceContext,
-      seenTweetIds = context.seenTweetIds,
-      qualityFactorStatus = None
+      cl entContext = request.cl entContext,
+      p pel neCursor =
+        request.ser al zedRequestCursor.flatMap(UrtCursorSer al zer.deser al zeOrderedCursor),
+      requestedMaxResults = So (params(ServerMaxResultsParam)),
+      debugOpt ons = request.debugParams.flatMap(_.debugOpt ons),
+      features = So (featureMap),
+      dev ceContext = context.dev ceContext,
+      seenT et ds = context.seenT et ds,
+      qual yFactorStatus = None
     )
   }
 
-  override val pipelines: Seq[PipelineConfig] = Seq(scoredTweetsRecommendationPipelineConfig)
+  overr de val p pel nes: Seq[P pel neConf g] = Seq(scoredT etsRecom ndat onP pel neConf g)
 
-  override def pipelineSelector(query: ScoredTweetsQuery): ComponentIdentifier =
-    scoredTweetsRecommendationPipelineConfig.identifier
+  overr de def p pel neSelector(query: ScoredT etsQuery): Component dent f er =
+    scoredT etsRecom ndat onP pel neConf g. dent f er
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  overr de val debugAccessPol c es: Set[AccessPol cy] = DefaultHo M xerAccessPol cy
 }

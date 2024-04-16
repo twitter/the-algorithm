@@ -1,36 +1,36 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
 
 /**
- * Counts facet occurrences and provides the top items
- * at the end. Actual subclass can implement this functionality differently: e.g. by using
- * a heap (priority queue) or a hashmap with pruning step.
- * The type R represents the facet results, which can e.g. be a thrift class.
+ * Counts facet occurrences and prov des t  top  ems
+ * at t  end. Actual subclass can  mple nt t  funct onal y d fferently: e.g. by us ng
+ * a  ap (pr or y queue) or a hashmap w h prun ng step.
+ * T  type R represents t  facet results, wh ch can e.g. be a thr ft class.
  */
-public abstract class FacetAccumulator<R> {
-  /** Called to notify the accumulator that the given termID has occurred in a document
-   *  Returns the current count of the given termID.
+publ c abstract class FacetAccumulator<R> {
+  /** Called to not fy t  accumulator that t  g ven term D has occurred  n a docu nt
+   *  Returns t  current count of t  g ven term D.
    */
-  public abstract int add(long termID, int scoreIncrement, int penaltyIncrement, int tweepCred);
+  publ c abstract  nt add(long term D,  nt score ncre nt,  nt penalty ncre nt,  nt t epCred);
 
-  /** After hit collection is done this can be called to
-   * retrieve the items that occurred most often */
-  public abstract R getTopFacets(int n);
+  /** After h  collect on  s done t  can be called to
+   * retr eve t   ems that occurred most often */
+  publ c abstract R getTopFacets( nt n);
 
-  /** After hit collection is done this can be called to retrieve all the items accumulated
-   * (which may not be all that occurred) */
-  public abstract R getAllFacets();
+  /** After h  collect on  s done t  can be called to retr eve all t   ems accumulated
+   * (wh ch may not be all that occurred) */
+  publ c abstract R getAllFacets();
 
-  /** Called to reset a facet accumulator for re-use.  This is an optimization
-   * which takes advantage of the fact that these accumulators may allocate
-   * large hash-tables, and we use one per-segment, which may be as many as 10-20 **/
-  public abstract void reset(FacetLabelProvider facetLabelProvider);
+  /** Called to reset a facet accumulator for re-use.  T   s an opt m zat on
+   * wh ch takes advantage of t  fact that t se accumulators may allocate
+   * large hash-tables, and   use one per-seg nt, wh ch may be as many as 10-20 **/
+  publ c abstract vo d reset(FacetLabelProv der facetLabelProv der);
 
-  /** Language histogram accumulation and retrieval. They both have no-op default implementations.
+  /** Language  togram accumulat on and retr eval. T y both have no-op default  mple ntat ons.
    */
-  public void recordLanguage(int languageId) { }
+  publ c vo d recordLanguage( nt language d) { }
 
-  public LanguageHistogram getLanguageHistogram() {
-    return LanguageHistogram.EMPTY_HISTOGRAM;
+  publ c Language togram getLanguage togram() {
+    return Language togram.EMPTY_H STOGRAM;
   }
 }

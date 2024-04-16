@@ -1,13 +1,13 @@
-package com.twitter.representationscorer.columns
+package com.tw ter.representat onscorer.columns
 
-import com.twitter.strato.config.{ContactInfo => StratoContactInfo}
+ mport com.tw ter.strato.conf g.{Contact nfo => StratoContact nfo}
 
-object Info {
-  val contactInfo: StratoContactInfo = StratoContactInfo(
-    description = "Please contact Relevance Platform team for more details",
-    contactEmail = "no-reply@twitter.com",
-    ldapGroup = "representation-scorer-admins",
-    jiraProject = "JIRA",
-    links = Seq("http://go.twitter.biz/rsx-runbook")
+object  nfo {
+  val contact nfo: StratoContact nfo = StratoContact nfo(
+    descr pt on = "Please contact Relevance Platform team for more deta ls",
+    contactEma l = "no-reply@tw ter.com",
+    ldapGroup = "representat on-scorer-adm ns",
+    j raProject = "J RA",
+    l nks = Seq("http://go.tw ter.b z/rsx-runbook")
   )
 }

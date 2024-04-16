@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
+ mport com.tw ter.s mclusters_v2.thr ftscala.LeftNode
+ mport com.tw ter.s mclusters_v2.thr ftscala.NounW hFrequencyL st
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNode
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeTypeStruct
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeW hEdge  ghtL st
+ mport com.tw ter.s mclusters_v2.thr ftscala.S m larR ghtNodes
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cand dateT etsL st
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
 
-object MultiTypeGraphInjections {
-  final val truncatedMultiTypeGraphInjection =
-    KeyValInjection(ScalaCompactThrift(LeftNode), ScalaCompactThrift(RightNodeWithEdgeWeightList))
-  final val topKRightNounListInjection =
-    KeyValInjection(
-      ScalaCompactThrift(RightNodeTypeStruct),
-      ScalaCompactThrift(NounWithFrequencyList))
-  final val similarRightNodesInjection =
-    KeyValInjection[RightNode, SimilarRightNodes](
-      ScalaCompactThrift(RightNode),
-      ScalaCompactThrift(SimilarRightNodes)
+object Mult TypeGraph nject ons {
+  f nal val truncatedMult TypeGraph nject on =
+    KeyVal nject on(ScalaCompactThr ft(LeftNode), ScalaCompactThr ft(R ghtNodeW hEdge  ghtL st))
+  f nal val topKR ghtNounL st nject on =
+    KeyVal nject on(
+      ScalaCompactThr ft(R ghtNodeTypeStruct),
+      ScalaCompactThr ft(NounW hFrequencyL st))
+  f nal val s m larR ghtNodes nject on =
+    KeyVal nject on[R ghtNode, S m larR ghtNodes](
+      ScalaCompactThr ft(R ghtNode),
+      ScalaCompactThr ft(S m larR ghtNodes)
     )
-  final val tweetRecommendationsInjection =
-    KeyValInjection[Long, CandidateTweetsList](
-      Long2BigEndian,
-      ScalaCompactThrift(CandidateTweetsList)
+  f nal val t etRecom ndat ons nject on =
+    KeyVal nject on[Long, Cand dateT etsL st](
+      Long2B gEnd an,
+      ScalaCompactThr ft(Cand dateT etsL st)
     )
 }

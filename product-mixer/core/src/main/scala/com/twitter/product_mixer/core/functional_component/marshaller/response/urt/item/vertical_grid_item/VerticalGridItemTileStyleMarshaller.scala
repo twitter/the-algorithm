@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.SingleStateDefaultVerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.DoubleStateDefaultVerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTileStyle
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.S ngleStateDefaultVert calGr d emT leStyle
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.DoubleStateDefaultVert calGr d emT leStyle
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d emT leStyle
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class VerticalGridItemTileStyleMarshaller @Inject() () {
+@S ngleton
+class Vert calGr d emT leStyleMarshaller @ nject() () {
 
-  def apply(verticalGridItemTileStyle: VerticalGridItemTileStyle): urt.VerticalGridItemTileStyle =
-    verticalGridItemTileStyle match {
-      case SingleStateDefaultVerticalGridItemTileStyle =>
-        urt.VerticalGridItemTileStyle.SingleStateDefault
-      case DoubleStateDefaultVerticalGridItemTileStyle =>
-        urt.VerticalGridItemTileStyle.DoubleStateDefault
+  def apply(vert calGr d emT leStyle: Vert calGr d emT leStyle): urt.Vert calGr d emT leStyle =
+    vert calGr d emT leStyle match {
+      case S ngleStateDefaultVert calGr d emT leStyle =>
+        urt.Vert calGr d emT leStyle.S ngleStateDefault
+      case DoubleStateDefaultVert calGr d emT leStyle =>
+        urt.Vert calGr d emT leStyle.DoubleStateDefault
     }
 }

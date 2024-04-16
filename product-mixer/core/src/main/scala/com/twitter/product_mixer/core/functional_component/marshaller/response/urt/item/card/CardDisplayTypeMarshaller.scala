@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.card
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card._
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card._
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class CardDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class CardD splayTypeMarshaller @ nject() () {
 
-  def apply(cardDisplayType: CardDisplayType): urt.CardDisplayType = cardDisplayType match {
-    case HeroDisplayType => urt.CardDisplayType.Hero
-    case CellDisplayType => urt.CardDisplayType.Cell
-    case TweetCardDisplayType => urt.CardDisplayType.TweetCard
+  def apply(cardD splayType: CardD splayType): urt.CardD splayType = cardD splayType match {
+    case  roD splayType => urt.CardD splayType. ro
+    case CellD splayType => urt.CardD splayType.Cell
+    case T etCardD splayType => urt.CardD splayType.T etCard
   }
 }

@@ -1,16 +1,16 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cand date",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/conf gap ",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/scorer",
+        "snowflake/src/ma n/scala/com/tw ter/snowflake/ d",
     ],
     exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cand date",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/scorer",
     ],
 )

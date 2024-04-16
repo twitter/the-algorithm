@@ -1,326 +1,326 @@
 use anyhow::Result;
-use log::{info, warn};
-use x509_parser::{prelude::{parse_x509_pem}, parse_x509_certificate};
-use std::collections::HashMap;
-use tokio::time::Instant;
-use tonic::{
+use log::{ nfo, warn};
+use x509_parser::{prelude::{parse_x509_pem}, parse_x509_cert f cate};
+use std::collect ons::HashMap;
+use tok o::t  :: nstant;
+use ton c::{
     Request,
-    Response, Status, transport::{Certificate, Identity, Server, ServerTlsConfig},
+    Response, Status, transport::{Cert f cate,  dent y, Server, ServerTlsConf g},
 };
 
 // protobuf related
-use crate::tf_proto::tensorflow_serving::{
-    ClassificationRequest, ClassificationResponse, GetModelMetadataRequest,
-    GetModelMetadataResponse, MultiInferenceRequest, MultiInferenceResponse, PredictRequest,
-    PredictResponse, RegressionRequest, RegressionResponse,
+use crate::tf_proto::tensorflow_serv ng::{
+    Class f cat onRequest, Class f cat onResponse, GetModel tadataRequest,
+    GetModel tadataResponse, Mult  nferenceRequest, Mult  nferenceResponse, Pred ctRequest,
+    Pred ctResponse, Regress onRequest, Regress onResponse,
 };
-use crate::{kf_serving::{
-    grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
-    ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
-    ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
+use crate::{kf_serv ng::{
+    grpc_ nference_serv ce_server::Grpc nferenceServ ce, Model nferRequest, Model nferResponse,
+    Model tadataRequest, Model tadataResponse, ModelReadyRequest, ModelReadyResponse,
+    ServerL veRequest, ServerL veResponse, Server tadataRequest, Server tadataResponse,
     ServerReadyRequest, ServerReadyResponse,
-}, ModelFactory, tf_proto::tensorflow_serving::prediction_service_server::{
-    PredictionService, PredictionServiceServer,
-}, VERSION, NAME};
+}, ModelFactory, tf_proto::tensorflow_serv ng::pred ct on_serv ce_server::{
+    Pred ct onServ ce, Pred ct onServ ceServer,
+}, VERS ON, NAME};
 
-use crate::PredictResult;
-use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
-use crate::metrics::{
-    NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
-    NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
-    CERT_EXPIRY_EPOCH
+use crate::Pred ctResult;
+use crate::cl _args::{ARGS,  NPUTS, OUTPUTS};
+use crate:: tr cs::{
+    NAV _VERS ON, NUM_PRED CT ONS, NUM_REQUESTS_FA LED, NUM_REQUESTS_FA LED_BY_MODEL,
+    NUM_REQUESTS_RECE VED, NUM_REQUESTS_RECE VED_BY_MODEL, RESPONSE_T ME_COLLECTOR,
+    CERT_EXP RY_EPOCH
 };
-use crate::predict_service::{Model, PredictService};
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
-use crate::tf_proto::tensorflow_serving::ModelSpec;
+use crate::pred ct_serv ce::{Model, Pred ctServ ce};
+use crate::tf_proto::tensorflow_serv ng::model_spec::Vers onCho ce::Vers on;
+use crate::tf_proto::tensorflow_serv ng::ModelSpec;
 
-#[derive(Debug)]
-pub enum TensorInputEnum {
-    String(Vec<Vec<u8>>),
-    Int(Vec<i32>),
-    Int64(Vec<i64>),
+#[der ve(Debug)]
+pub enum Tensor nputEnum {
+    Str ng(Vec<Vec<u8>>),
+     nt(Vec< 32>),
+     nt64(Vec< 64>),
     Float(Vec<f32>),
     Double(Vec<f64>),
     Boolean(Vec<bool>),
 }
 
-#[derive(Debug)]
-pub struct TensorInput {
-    pub tensor_data: TensorInputEnum,
-    pub name: String,
-    pub dims: Option<Vec<i64>>,
+#[der ve(Debug)]
+pub struct Tensor nput {
+    pub tensor_data: Tensor nputEnum,
+    pub na : Str ng,
+    pub d ms: Opt on<Vec< 64>>,
 }
 
-impl TensorInput {
-    pub fn new(tensor_data: TensorInputEnum, name: String, dims: Option<Vec<i64>>) -> TensorInput {
-        TensorInput {
+ mpl Tensor nput {
+    pub fn new(tensor_data: Tensor nputEnum, na : Str ng, d ms: Opt on<Vec< 64>>) -> Tensor nput {
+        Tensor nput {
             tensor_data,
-            name,
-            dims,
+            na ,
+            d ms,
         }
     }
 }
 
-impl TensorInputEnum {
-    #[inline(always)]
-    pub(crate) fn extend(&mut self, another: TensorInputEnum) {
-        match (self, another) {
-            (Self::String(input), Self::String(ex)) => input.extend(ex),
-            (Self::Int(input), Self::Int(ex)) => input.extend(ex),
-            (Self::Int64(input), Self::Int64(ex)) => input.extend(ex),
-            (Self::Float(input), Self::Float(ex)) => input.extend(ex),
-            (Self::Double(input), Self::Double(ex)) => input.extend(ex),
-            (Self::Boolean(input), Self::Boolean(ex)) => input.extend(ex),
-            x => panic!("input enum type not matched. input:{:?}, ex:{:?}", x.0, x.1),
+ mpl Tensor nputEnum {
+    #[ nl ne(always)]
+    pub(crate) fn extend(&mut self, anot r: Tensor nputEnum) {
+        match (self, anot r) {
+            (Self::Str ng( nput), Self::Str ng(ex)) =>  nput.extend(ex),
+            (Self:: nt( nput), Self:: nt(ex)) =>  nput.extend(ex),
+            (Self:: nt64( nput), Self:: nt64(ex)) =>  nput.extend(ex),
+            (Self::Float( nput), Self::Float(ex)) =>  nput.extend(ex),
+            (Self::Double( nput), Self::Double(ex)) =>  nput.extend(ex),
+            (Self::Boolean( nput), Self::Boolean(ex)) =>  nput.extend(ex),
+            x => pan c!(" nput enum type not matc d.  nput:{:?}, ex:{:?}", x.0, x.1),
         }
     }
-    #[inline(always)]
-    pub(crate) fn merge_batch(input_tensors: Vec<Vec<TensorInput>>) -> Vec<TensorInput> {
-        input_tensors
-            .into_iter()
+    #[ nl ne(always)]
+    pub(crate) fn  rge_batch( nput_tensors: Vec<Vec<Tensor nput>>) -> Vec<Tensor nput> {
+         nput_tensors
+            . nto_ er()
             .reduce(|mut acc, e| {
-                for (i, ext) in acc.iter_mut().zip(e) {
-                    i.tensor_data.extend(ext.tensor_data);
+                for ( , ext)  n acc. er_mut().z p(e) {
+                     .tensor_data.extend(ext.tensor_data);
                 }
                 acc
             })
-            .unwrap() //invariant: we expect there's always rows in input_tensors
+            .unwrap() // nvar ant:   expect t re's always rows  n  nput_tensors
     }
 }
 
 
-///entry point for tfServing gRPC
-#[tonic::async_trait]
-impl<T: Model> GrpcInferenceService for PredictService<T> {
-    async fn server_live(
+///entry po nt for tfServ ng gRPC
+#[ton c::async_tra ]
+ mpl<T: Model> Grpc nferenceServ ce for Pred ctServ ce<T> {
+    async fn server_l ve(
         &self,
-        _request: Request<ServerLiveRequest>,
-    ) -> Result<Response<ServerLiveResponse>, Status> {
-        unimplemented!()
+        _request: Request<ServerL veRequest>,
+    ) -> Result<Response<ServerL veResponse>, Status> {
+        un mple nted!()
     }
     async fn server_ready(
         &self,
         _request: Request<ServerReadyRequest>,
     ) -> Result<Response<ServerReadyResponse>, Status> {
-        unimplemented!()
+        un mple nted!()
     }
 
     async fn model_ready(
         &self,
         _request: Request<ModelReadyRequest>,
     ) -> Result<Response<ModelReadyResponse>, Status> {
-        unimplemented!()
+        un mple nted!()
     }
 
-    async fn server_metadata(
+    async fn server_ tadata(
         &self,
-        _request: Request<ServerMetadataRequest>,
-    ) -> Result<Response<ServerMetadataResponse>, Status> {
-        unimplemented!()
+        _request: Request<Server tadataRequest>,
+    ) -> Result<Response<Server tadataResponse>, Status> {
+        un mple nted!()
     }
 
-    async fn model_metadata(
+    async fn model_ tadata(
         &self,
-        _request: Request<ModelMetadataRequest>,
-    ) -> Result<Response<ModelMetadataResponse>, Status> {
-        unimplemented!()
+        _request: Request<Model tadataRequest>,
+    ) -> Result<Response<Model tadataResponse>, Status> {
+        un mple nted!()
     }
 
-    async fn model_infer(
+    async fn model_ nfer(
         &self,
-        _request: Request<ModelInferRequest>,
-    ) -> Result<Response<ModelInferResponse>, Status> {
-        unimplemented!()
+        _request: Request<Model nferRequest>,
+    ) -> Result<Response<Model nferResponse>, Status> {
+        un mple nted!()
     }
 }
 
-#[tonic::async_trait]
-impl<T: Model> PredictionService for PredictService<T> {
-    async fn classify(
+#[ton c::async_tra ]
+ mpl<T: Model> Pred ct onServ ce for Pred ctServ ce<T> {
+    async fn class fy(
         &self,
-        _request: Request<ClassificationRequest>,
-    ) -> Result<Response<ClassificationResponse>, Status> {
-        unimplemented!()
+        _request: Request<Class f cat onRequest>,
+    ) -> Result<Response<Class f cat onResponse>, Status> {
+        un mple nted!()
     }
     async fn regress(
         &self,
-        _request: Request<RegressionRequest>,
-    ) -> Result<Response<RegressionResponse>, Status> {
-        unimplemented!()
+        _request: Request<Regress onRequest>,
+    ) -> Result<Response<Regress onResponse>, Status> {
+        un mple nted!()
     }
-    async fn predict(
+    async fn pred ct(
         &self,
-        request: Request<PredictRequest>,
-    ) -> Result<Response<PredictResponse>, Status> {
-        NUM_REQUESTS_RECEIVED.inc();
-        let start = Instant::now();
-        let mut req = request.into_inner();
-        let (model_spec, version) = req.take_model_spec();
-        NUM_REQUESTS_RECEIVED_BY_MODEL
-            .with_label_values(&[&model_spec])
-            .inc();
-        let idx = PredictService::<T>::get_model_index(&model_spec).ok_or_else(|| {
-            Status::failed_precondition(format!("model spec not found:{}", model_spec))
+        request: Request<Pred ctRequest>,
+    ) -> Result<Response<Pred ctResponse>, Status> {
+        NUM_REQUESTS_RECE VED. nc();
+        let start =  nstant::now();
+        let mut req = request. nto_ nner();
+        let (model_spec, vers on) = req.take_model_spec();
+        NUM_REQUESTS_RECE VED_BY_MODEL
+            .w h_label_values(&[&model_spec])
+            . nc();
+        let  dx = Pred ctServ ce::<T>::get_model_ ndex(&model_spec).ok_or_else(|| {
+            Status::fa led_precond  on(format!("model spec not found:{}", model_spec))
         })?;
-        let input_spec = match INPUTS[idx].get() {
-            Some(input) => input,
-            _ => return Err(Status::not_found(format!("model input spec {}", idx))),
+        let  nput_spec = match  NPUTS[ dx].get() {
+            So ( nput) =>  nput,
+            _ => return Err(Status::not_found(format!("model  nput spec {}",  dx))),
         };
-        let input_val = req.take_input_vals(input_spec);
-        self.predict(idx, version, input_val, start)
-            .await
+        let  nput_val = req.take_ nput_vals( nput_spec);
+        self.pred ct( dx, vers on,  nput_val, start)
+            .awa 
             .map_or_else(
                 |e| {
-                    NUM_REQUESTS_FAILED.inc();
-                    NUM_REQUESTS_FAILED_BY_MODEL
-                        .with_label_values(&[&model_spec])
-                        .inc();
-                    Err(Status::internal(e.to_string()))
+                    NUM_REQUESTS_FA LED. nc();
+                    NUM_REQUESTS_FA LED_BY_MODEL
+                        .w h_label_values(&[&model_spec])
+                        . nc();
+                    Err(Status:: nternal(e.to_str ng()))
                 },
                 |res| {
-                    RESPONSE_TIME_COLLECTOR
-                        .with_label_values(&[&model_spec])
-                        .observe(start.elapsed().as_millis() as f64);
+                    RESPONSE_T ME_COLLECTOR
+                        .w h_label_values(&[&model_spec])
+                        .observe(start.elapsed().as_m ll s() as f64);
 
                     match res {
-                        PredictResult::Ok(tensors, version) => {
+                        Pred ctResult::Ok(tensors, vers on) => {
                             let mut outputs = HashMap::new();
-                            NUM_PREDICTIONS.with_label_values(&[&model_spec]).inc();
-                            //FIXME: uncomment when prediction scores are normal
-                            // PREDICTION_SCORE_SUM
-                            // .with_label_values(&[&model_spec])
-                            // .inc_by(tensors[0]as f64);
-                            for (tp, output_name) in tensors
-                                .into_iter()
+                            NUM_PRED CT ONS.w h_label_values(&[&model_spec]). nc();
+                            //F XME: uncom nt w n pred ct on scores are normal
+                            // PRED CT ON_SCORE_SUM
+                            // .w h_label_values(&[&model_spec])
+                            // . nc_by(tensors[0]as f64);
+                            for (tp, output_na )  n tensors
+                                . nto_ er()
                                 .map(|tensor| tensor.create_tensor_proto())
-                                .zip(OUTPUTS[idx].iter())
+                                .z p(OUTPUTS[ dx]. er())
                             {
-                                outputs.insert(output_name.to_owned(), tp);
+                                outputs. nsert(output_na .to_owned(), tp);
                             }
-                            let reply = PredictResponse {
-                                model_spec: Some(ModelSpec {
-                                    version_choice: Some(Version(version)),
+                            let reply = Pred ctResponse {
+                                model_spec: So (ModelSpec {
+                                    vers on_cho ce: So (Vers on(vers on)),
                                     ..Default::default()
                                 }),
                                 outputs,
                             };
                             Ok(Response::new(reply))
                         }
-                        PredictResult::DropDueToOverload => Err(Status::resource_exhausted("")),
-                        PredictResult::ModelNotFound(idx) => {
-                            Err(Status::not_found(format!("model index {}", idx)))
+                        Pred ctResult::DropDueToOverload => Err(Status::res ce_exhausted("")),
+                        Pred ctResult::ModelNotFound( dx) => {
+                            Err(Status::not_found(format!("model  ndex {}",  dx)))
                         },
-                        PredictResult::ModelNotReady(idx) => {
-                            Err(Status::unavailable(format!("model index {}", idx)))
+                        Pred ctResult::ModelNotReady( dx) => {
+                            Err(Status::unava lable(format!("model  ndex {}",  dx)))
                         }
-                        PredictResult::ModelVersionNotFound(idx, version) => Err(
-                            Status::not_found(format!("model index:{}, version {}", idx, version)),
+                        Pred ctResult::ModelVers onNotFound( dx, vers on) => Err(
+                            Status::not_found(format!("model  ndex:{}, vers on {}",  dx, vers on)),
                         ),
                     }
                 },
             )
     }
 
-    async fn multi_inference(
+    async fn mult _ nference(
         &self,
-        _request: Request<MultiInferenceRequest>,
-    ) -> Result<Response<MultiInferenceResponse>, Status> {
-        unimplemented!()
+        _request: Request<Mult  nferenceRequest>,
+    ) -> Result<Response<Mult  nferenceResponse>, Status> {
+        un mple nted!()
     }
-    async fn get_model_metadata(
+    async fn get_model_ tadata(
         &self,
-        _request: Request<GetModelMetadataRequest>,
-    ) -> Result<Response<GetModelMetadataResponse>, Status> {
-        unimplemented!()
+        _request: Request<GetModel tadataRequest>,
+    ) -> Result<Response<GetModel tadataResponse>, Status> {
+        un mple nted!()
     }
 }
 
-// A function that takes a timestamp as input and returns a ticker stream
-fn report_expiry(expiry_time: i64) {
-    info!("Certificate expires at epoch: {:?}", expiry_time);
-    CERT_EXPIRY_EPOCH.set(expiry_time as i64);
+// A funct on that takes a t  stamp as  nput and returns a t cker stream
+fn report_exp ry(exp ry_t  :  64) {
+     nfo!("Cert f cate exp res at epoch: {:?}", exp ry_t  );
+    CERT_EXP RY_EPOCH.set(exp ry_t   as  64);
 }
 
 pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
-    info!("package: {}, version: {}, args: {:?}", NAME, VERSION, *ARGS);
-    //we follow SemVer. So here we assume MAJOR.MINOR.PATCH
-    let parts = VERSION
-        .split(".")
-        .map(|v| v.parse::<i64>())
+     nfo!("package: {}, vers on: {}, args: {:?}", NAME, VERS ON, *ARGS);
+    //  follow SemVer. So  re   assu  MAJOR.M NOR.PATCH
+    let parts = VERS ON
+        .spl (".")
+        .map(|v| v.parse::< 64>())
         .collect::<std::result::Result<Vec<_>, _>>()?;
-    if let [major, minor, patch] = &parts[..] {
-        NAVI_VERSION.set(major * 1000_000 + minor * 1000 + patch);
+     f let [major, m nor, patch] = &parts[..] {
+        NAV _VERS ON.set(major * 1000_000 + m nor * 1000 + patch);
     } else {
         warn!(
-            "version {} doesn't follow SemVer conversion of MAJOR.MINOR.PATCH",
-            VERSION
+            "vers on {} doesn't follow SemVer convers on of MAJOR.M NOR.PATCH",
+            VERS ON
         );
     }
 
     
-    tokio::runtime::Builder::new_multi_thread()
-        .thread_name("async worker")
+    tok o::runt  ::Bu lder::new_mult _thread()
+        .thread_na ("async worker")
         .worker_threads(ARGS.num_worker_threads)
-        .max_blocking_threads(ARGS.max_blocking_threads)
+        .max_block ng_threads(ARGS.max_block ng_threads)
         .enable_all()
-        .build()
+        .bu ld()
         .unwrap()
         .block_on(async {
-            #[cfg(feature = "navi_console")]
-            console_subscriber::init();
+            #[cfg(feature = "nav _console")]
+            console_subscr ber:: n ();
             let addr = format!("0.0.0.0:{}", ARGS.port).parse()?;
 
-            let ps = PredictService::init(model_factory).await;
+            let ps = Pred ctServ ce:: n (model_factory).awa ;
 
-            let mut builder = if ARGS.ssl_dir.is_empty() {
-                Server::builder()
+            let mut bu lder =  f ARGS.ssl_d r. s_empty() {
+                Server::bu lder()
             } else {
-                // Read the pem file as a string
-                let pem_str = std::fs::read_to_string(format!("{}/server.crt", ARGS.ssl_dir)).unwrap();
+                // Read t  pem f le as a str ng
+                let pem_str = std::fs::read_to_str ng(format!("{}/server.crt", ARGS.ssl_d r)).unwrap();
                 let res = parse_x509_pem(&pem_str.as_bytes());
                 match res {
                     Ok((rem, pem_2)) => {
-                        assert!(rem.is_empty());
-                        assert_eq!(pem_2.label, String::from("CERTIFICATE"));
-                        let res_x509 = parse_x509_certificate(&pem_2.contents);
-                        info!("Certificate label: {}", pem_2.label);
-                        assert!(res_x509.is_ok());
-                        report_expiry(res_x509.unwrap().1.validity().not_after.timestamp());
+                        assert!(rem. s_empty());
+                        assert_eq!(pem_2.label, Str ng::from("CERT F CATE"));
+                        let res_x509 = parse_x509_cert f cate(&pem_2.contents);
+                         nfo!("Cert f cate label: {}", pem_2.label);
+                        assert!(res_x509. s_ok());
+                        report_exp ry(res_x509.unwrap().1.val d y().not_after.t  stamp());
                     },
-                    _ => panic!("PEM parsing failed: {:?}", res),
+                    _ => pan c!("PEM pars ng fa led: {:?}", res),
                 }
 
-                let key = tokio::fs::read(format!("{}/server.key", ARGS.ssl_dir))
-                    .await
-                    .expect("can't find key file");
-                let crt = tokio::fs::read(format!("{}/server.crt", ARGS.ssl_dir))
-                    .await
-                    .expect("can't find crt file");
-                let chain = tokio::fs::read(format!("{}/server.chain", ARGS.ssl_dir))
-                    .await
-                    .expect("can't find chain file");
+                let key = tok o::fs::read(format!("{}/server.key", ARGS.ssl_d r))
+                    .awa 
+                    .expect("can't f nd key f le");
+                let crt = tok o::fs::read(format!("{}/server.crt", ARGS.ssl_d r))
+                    .awa 
+                    .expect("can't f nd crt f le");
+                let cha n = tok o::fs::read(format!("{}/server.cha n", ARGS.ssl_d r))
+                    .awa 
+                    .expect("can't f nd cha n f le");
                 let mut pem = Vec::new();
                 pem.extend(crt);
-                pem.extend(chain);
-                let identity = Identity::from_pem(pem.clone(), key);
-                let client_ca_cert = Certificate::from_pem(pem.clone());
-                let tls = ServerTlsConfig::new()
-                    .identity(identity) 
-                    .client_ca_root(client_ca_cert);
-                Server::builder()
-                    .tls_config(tls)
-                    .expect("fail to config SSL")
+                pem.extend(cha n);
+                let  dent y =  dent y::from_pem(pem.clone(), key);
+                let cl ent_ca_cert = Cert f cate::from_pem(pem.clone());
+                let tls = ServerTlsConf g::new()
+                    . dent y( dent y) 
+                    .cl ent_ca_root(cl ent_ca_cert);
+                Server::bu lder()
+                    .tls_conf g(tls)
+                    .expect("fa l to conf g SSL")
             };
 
-            info!(
-                "Prometheus server started: 0.0.0.0: {}",
-                ARGS.prometheus_port
+             nfo!(
+                "Pro t us server started: 0.0.0.0: {}",
+                ARGS.pro t us_port
             );
 
-            let ps_server = builder
-                .add_service(PredictionServiceServer::new(ps).accept_gzip().send_gzip())
+            let ps_server = bu lder
+                .add_serv ce(Pred ct onServ ceServer::new(ps).accept_gz p().send_gz p())
                 .serve(addr);
-            info!("Prediction server started: {}", addr);
-            ps_server.await.map_err(anyhow::Error::msg)
+             nfo!("Pred ct on server started: {}", addr);
+            ps_server.awa .map_err(anyhow::Error::msg)
         })
 }

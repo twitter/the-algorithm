@@ -1,571 +1,571 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.twittertext.Extractor
-import scala.annotation.tailrec
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.util.control.NoStackTrace
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.t ettext.Offset
+ mport com.tw ter.tw tertext.Extractor
+ mport scala.annotat on.ta lrec
+ mport scala.collect on.JavaConverters._
+ mport scala.collect on.mutable
+ mport scala.ut l.control.NoStackTrace
 
-object ReplyBuilder {
-  private val extractor = new Extractor
-  private val InReplyToTweetNotFound =
-    TweetCreateFailure.State(TweetCreateState.InReplyToTweetNotFound)
+object ReplyBu lder {
+  pr vate val extractor = new Extractor
+  pr vate val  nReplyToT etNotFound =
+    T etCreateFa lure.State(T etCreateState. nReplyToT etNotFound)
 
   case class Request(
-    authorId: UserId,
-    authorScreenName: String,
-    inReplyToTweetId: Option[TweetId],
-    tweetText: String,
-    prependImplicitMentions: Boolean,
-    enableTweetToNarrowcasting: Boolean,
-    excludeUserIds: Seq[UserId],
+    author d: User d,
+    authorScreenNa : Str ng,
+     nReplyToT et d: Opt on[T et d],
+    t etText: Str ng,
+    prepend mpl c  nt ons: Boolean,
+    enableT etToNarrowcast ng: Boolean,
+    excludeUser ds: Seq[User d],
     spamResult: Spam.Result,
-    batchMode: Option[BatchComposeMode])
+    batchMode: Opt on[BatchComposeMode])
 
   /**
-   * This case class contains the fields that are shared between legacy and simplified replies.
+   * T  case class conta ns t  f elds that are shared bet en legacy and s mpl f ed repl es.
    */
   case class BaseResult(
     reply: Reply,
-    conversationId: Option[ConversationId],
-    selfThreadMetadata: Option[SelfThreadMetadata],
-    community: Option[Communities] = None,
-    exclusiveTweetControl: Option[ExclusiveTweetControl] = None,
-    trustedFriendsControl: Option[TrustedFriendsControl] = None,
-    editControl: Option[EditControl] = None) {
-    // Creates a Result by providing the fields that differ between legacy and simplified replies.
+    conversat on d: Opt on[Conversat on d],
+    selfThread tadata: Opt on[SelfThread tadata],
+    commun y: Opt on[Commun  es] = None,
+    exclus veT etControl: Opt on[Exclus veT etControl] = None,
+    trustedFr endsControl: Opt on[TrustedFr endsControl] = None,
+    ed Control: Opt on[Ed Control] = None) {
+    // Creates a Result by prov d ng t  f elds that d ffer bet en legacy and s mpl f ed repl es.
     def toResult(
-      tweetText: String,
-      directedAtMetadata: DirectedAtUserMetadata,
-      visibleStart: Offset.CodePoint = Offset.CodePoint(0),
+      t etText: Str ng,
+      d rectedAt tadata: D rectedAtUser tadata,
+      v s bleStart: Offset.CodePo nt = Offset.CodePo nt(0),
     ): Result =
       Result(
         reply,
-        tweetText,
-        directedAtMetadata,
-        conversationId,
-        selfThreadMetadata,
-        visibleStart,
-        community,
-        exclusiveTweetControl,
-        trustedFriendsControl,
-        editControl
+        t etText,
+        d rectedAt tadata,
+        conversat on d,
+        selfThread tadata,
+        v s bleStart,
+        commun y,
+        exclus veT etControl,
+        trustedFr endsControl,
+        ed Control
       )
   }
 
   /**
-   * @param reply              the Reply object to include in the tweet.
-   * @param tweetText          updated tweet text which may include prepended at-mentions, trimmed
-   * @param directedAtMetadata see DirectedAtHydrator for usage.
-   * @param conversationId     conversation id to assign to the tweet.
-   * @param selfThreadMetadata returns the result of `SelfThreadBuilder`
-   * @param visibleStart       offset into `tweetText` separating hideable at-mentions from the
-   *                           visible text.
+   * @param reply              t  Reply object to  nclude  n t  t et.
+   * @param t etText          updated t et text wh ch may  nclude prepended at- nt ons, tr m d
+   * @param d rectedAt tadata see D rectedAtHydrator for usage.
+   * @param conversat on d     conversat on  d to ass gn to t  t et.
+   * @param selfThread tadata returns t  result of `SelfThreadBu lder`
+   * @param v s bleStart       offset  nto `t etText` separat ng h deable at- nt ons from t 
+   *                           v s ble text.
    */
   case class Result(
     reply: Reply,
-    tweetText: String,
-    directedAtMetadata: DirectedAtUserMetadata,
-    conversationId: Option[ConversationId] = None,
-    selfThreadMetadata: Option[SelfThreadMetadata] = None,
-    visibleStart: Offset.CodePoint = Offset.CodePoint(0),
-    community: Option[Communities] = None,
-    exclusiveTweetControl: Option[ExclusiveTweetControl] = None,
-    trustedFriendsControl: Option[TrustedFriendsControl] = None,
-    editControl: Option[EditControl] = None) {
+    t etText: Str ng,
+    d rectedAt tadata: D rectedAtUser tadata,
+    conversat on d: Opt on[Conversat on d] = None,
+    selfThread tadata: Opt on[SelfThread tadata] = None,
+    v s bleStart: Offset.CodePo nt = Offset.CodePo nt(0),
+    commun y: Opt on[Commun  es] = None,
+    exclus veT etControl: Opt on[Exclus veT etControl] = None,
+    trustedFr endsControl: Opt on[TrustedFr endsControl] = None,
+    ed Control: Opt on[Ed Control] = None) {
 
     /**
-     * @param finalText final tweet text after any server-side additions.
-     * @return true iff the final tweet text consists exclusively of a hidden reply mention prefix.
-     *         When this happens there's no content to the reply and thus the tweet creation should
-     *         fail.
+     * @param f nalText f nal t et text after any server-s de add  ons.
+     * @return true  ff t  f nal t et text cons sts exclus vely of a h dden reply  nt on pref x.
+     *         W n t  happens t re's no content to t  reply and thus t  t et creat on should
+     *         fa l.
      */
-    def replyTextIsEmpty(finalText: String): Boolean = {
+    def replyText sEmpty(f nalText: Str ng): Boolean = {
 
-      // Length of the tweet text originally output via ReplyBuilder.Result before server-side
-      // additions (e.g. media, quoted-tweet URLs)
-      val origTextLength = Offset.CodePoint.length(tweetText)
+      // Length of t  t et text or g nally output v a ReplyBu lder.Result before server-s de
+      // add  ons (e.g.  d a, quoted-t et URLs)
+      val or gTextLength = Offset.CodePo nt.length(t etText)
 
-      // Length of the tweet text after server-side additions.
-      val finalTextLength = Offset.CodePoint.length(finalText)
+      // Length of t  t et text after server-s de add  ons.
+      val f nalTextLength = Offset.CodePo nt.length(f nalText)
 
-      val prefixWasEntireText = origTextLength == visibleStart
-      val textLenUnchanged = origTextLength == finalTextLength
+      val pref xWasEnt reText = or gTextLength == v s bleStart
+      val textLenUnchanged = or gTextLength == f nalTextLength
 
-      prefixWasEntireText && textLenUnchanged
+      pref xWasEnt reText && textLenUnchanged
     }
   }
 
-  type Type = Request => Future[Option[Result]]
+  type Type = Request => Future[Opt on[Result]]
 
-  private object InvalidUserException extends NoStackTrace
-
-  /**
-   * A user ID and screen name used for building replies.
-   */
-  private case class User(id: UserId, screenName: String)
+  pr vate object  nval dUserExcept on extends NoStackTrace
 
   /**
-   * Captures the in-reply-to tweet, its author, and if the user is attempting to reply to a
-   * retweet, then that retweet and its author.
+   * A user  D and screen na  used for bu ld ng repl es.
    */
-  private case class ReplySource(
-    srcTweet: Tweet,
+  pr vate case class User( d: User d, screenNa : Str ng)
+
+  /**
+   * Captures t   n-reply-to t et,  s author, and  f t  user  s attempt ng to reply to a
+   * ret et, t n that ret et and  s author.
+   */
+  pr vate case class ReplyS ce(
+    srcT et: T et,
     srcUser: User,
-    retweet: Option[Tweet] = None,
-    rtUser: Option[User] = None) {
-    private val photoTaggedUsers: Seq[User] =
-      srcTweet.mediaTags
+    ret et: Opt on[T et] = None,
+    rtUser: Opt on[User] = None) {
+    pr vate val photoTaggedUsers: Seq[User] =
+      srcT et. d aTags
         .map(_.tagMap.values.flatten)
-        .getOrElse(Nil)
+        .getOrElse(N l)
         .map(toUser)
         .toSeq
 
-    private def toUser(mt: MediaTag): User =
+    pr vate def toUser(mt:  d aTag): User =
       mt match {
-        case MediaTag(_, Some(id), Some(screenName), _) => User(id, screenName)
-        case _ => throw InvalidUserException
+        case  d aTag(_, So ( d), So (screenNa ), _) => User( d, screenNa )
+        case _ => throw  nval dUserExcept on
       }
 
-    private def toUser(e: MentionEntity): User =
+    pr vate def toUser(e:  nt onEnt y): User =
       e match {
-        case MentionEntity(_, _, screenName, Some(id), _, _) => User(id, screenName)
-        case _ => throw InvalidUserException
+        case  nt onEnt y(_, _, screenNa , So ( d), _, _) => User( d, screenNa )
+        case _ => throw  nval dUserExcept on
       }
 
-    private def toUser(d: DirectedAtUser) = User(d.userId, d.screenName)
+    pr vate def toUser(d: D rectedAtUser) = User(d.user d, d.screenNa )
 
-    def allCardUsers(authorUser: User, cardUsersFinder: CardUsersFinder.Type): Future[Set[UserId]] =
-      Stitch.run(
-        cardUsersFinder(
-          CardUsersFinder.Request(
-            cardReference = getCardReference(srcTweet),
-            urls = getUrls(srcTweet).map(_.url),
-            perspectiveUserId = authorUser.id
+    def allCardUsers(authorUser: User, cardUsersF nder: CardUsersF nder.Type): Future[Set[User d]] =
+      St ch.run(
+        cardUsersF nder(
+          CardUsersF nder.Request(
+            cardReference = getCardReference(srcT et),
+            urls = getUrls(srcT et).map(_.url),
+            perspect veUser d = authorUser. d
           )
         )
       )
 
-    def srcTweetMentionedUsers: Seq[User] = getMentions(srcTweet).map(toUser)
+    def srcT et nt onedUsers: Seq[User] = get nt ons(srcT et).map(toUser)
 
-    private trait ReplyType {
+    pr vate tra  ReplyType {
 
-      val allExcludedUserIds: Set[UserId]
+      val allExcludedUser ds: Set[User d]
 
-      def directedAt: Option[User]
-      def requiredTextMention: Option[User]
+      def d rectedAt: Opt on[User]
+      def requ redText nt on: Opt on[User]
 
-      def isExcluded(u: User): Boolean = allExcludedUserIds.contains(u.id)
+      def  sExcluded(u: User): Boolean = allExcludedUser ds.conta ns(u. d)
 
-      def buildPrefix(otherMentions: Seq[User], maxImplicits: Int): String = {
-        val seen = new mutable.HashSet[UserId]
-        seen ++= allExcludedUserIds
-        // Never exclude the required mention
-        seen --= requiredTextMention.map(_.id)
+      def bu ldPref x(ot r nt ons: Seq[User], max mpl c s:  nt): Str ng = {
+        val seen = new mutable.HashSet[User d]
+        seen ++= allExcludedUser ds
+        // Never exclude t  requ red  nt on
+        seen --= requ redText nt on.map(_. d)
 
-        (requiredTextMention.toSeq ++ otherMentions)
-          .filter(u => seen.add(u.id))
-          .take(maxImplicits.max(requiredTextMention.size))
-          .map(u => s"@${u.screenName}")
-          .mkString(" ")
+        (requ redText nt on.toSeq ++ ot r nt ons)
+          .f lter(u => seen.add(u. d))
+          .take(max mpl c s.max(requ redText nt on.s ze))
+          .map(u => s"@${u.screenNa }")
+          .mkStr ng(" ")
       }
     }
 
-    private case class SelfReply(
-      allExcludedUserIds: Set[UserId],
-      enableTweetToNarrowcasting: Boolean)
+    pr vate case class SelfReply(
+      allExcludedUser ds: Set[User d],
+      enableT etToNarrowcast ng: Boolean)
         extends ReplyType {
 
-      private def srcTweetDirectedAt: Option[User] = getDirectedAtUser(srcTweet).map(toUser)
+      pr vate def srcT etD rectedAt: Opt on[User] = getD rectedAtUser(srcT et).map(toUser)
 
-      override def directedAt: Option[User] =
-        if (!enableTweetToNarrowcasting) None
-        else Seq.concat(rtUser, srcTweetDirectedAt).find(!isExcluded(_))
+      overr de def d rectedAt: Opt on[User] =
+         f (!enableT etToNarrowcast ng) None
+        else Seq.concat(rtUser, srcT etD rectedAt).f nd(! sExcluded(_))
 
-      override def requiredTextMention: Option[User] =
-        // Make sure the directedAt user is in the text to avoid confusion
-        directedAt
+      overr de def requ redText nt on: Opt on[User] =
+        // Make sure t  d rectedAt user  s  n t  text to avo d confus on
+        d rectedAt
     }
 
-    private case class BatchSubsequentReply(allExcludedUserIds: Set[UserId]) extends ReplyType {
+    pr vate case class BatchSubsequentReply(allExcludedUser ds: Set[User d]) extends ReplyType {
 
-      override def directedAt: Option[User] = None
+      overr de def d rectedAt: Opt on[User] = None
 
-      override def requiredTextMention: Option[User] = None
+      overr de def requ redText nt on: Opt on[User] = None
 
-      override def buildPrefix(otherMentions: Seq[User], maxImplicits: Int): String = ""
+      overr de def bu ldPref x(ot r nt ons: Seq[User], max mpl c s:  nt): Str ng = ""
     }
 
-    private case class RegularReply(
-      allExcludedUserIds: Set[UserId],
-      enableTweetToNarrowcasting: Boolean)
+    pr vate case class RegularReply(
+      allExcludedUser ds: Set[User d],
+      enableT etToNarrowcast ng: Boolean)
         extends ReplyType {
 
-      override def directedAt: Option[User] =
-        Some(srcUser)
-          .filterNot(isExcluded)
-          .filter(_ => enableTweetToNarrowcasting)
+      overr de def d rectedAt: Opt on[User] =
+        So (srcUser)
+          .f lterNot( sExcluded)
+          .f lter(_ => enableT etToNarrowcast ng)
 
-      override def requiredTextMention: Option[User] =
-        // Include the source tweet's author as a mention in the reply, even if the reply is not
-        // narrowcasted to that user.  All non-self-reply tweets require this mention.
-        Some(srcUser)
+      overr de def requ redText nt on: Opt on[User] =
+        //  nclude t  s ce t et's author as a  nt on  n t  reply, even  f t  reply  s not
+        // narrowcasted to that user.  All non-self-reply t ets requ re t   nt on.
+        So (srcUser)
     }
 
     /**
-     * Computes an implicit mention prefix to add to the tweet text as well as any directed-at user.
+     * Computes an  mpl c   nt on pref x to add to t  t et text as  ll as any d rected-at user.
      *
-     * The first implicit mention is the source-tweet's author unless the reply is a self-reply, in
-     * which case it inherits the DirectedAtUser from the source tweet, though the current author is
-     * never added.  This mention, if it exists, is the only mention that may be used to direct-at a
-     * user and is the user that ends up in DirectedAtUserMetadata.  If the user replied to a
-     * retweet and the reply doesn't explicitly mention the retweet author, then the retweet author
-     * will be next, followed by source tweet mentions and source tweet photo-tagged users.
+     * T  f rst  mpl c   nt on  s t  s ce-t et's author unless t  reply  s a self-reply,  n
+     * wh ch case    n r s t  D rectedAtUser from t  s ce t et, though t  current author  s
+     * never added.  T   nt on,  f   ex sts,  s t  only  nt on that may be used to d rect-at a
+     * user and  s t  user that ends up  n D rectedAtUser tadata.   f t  user repl ed to a
+     * ret et and t  reply doesn't expl c ly  nt on t  ret et author, t n t  ret et author
+     * w ll be next, follo d by s ce t et  nt ons and s ce t et photo-tagged users.
      *
-     * Users in excludedScreenNames originate from the PostTweetRequest and are filtered out of any
-     * non-leading mention.
+     * Users  n excludedScreenNa s or g nate from t  PostT etRequest and are f ltered out of any
+     * non-lead ng  nt on.
      *
-     * Note on maxImplicits:
-     * This method returns at most 'maxImplicits' mentions unless 'maxImplicits' is 0 and a
-     * directed-at mention is required, in which case it returns 1.  If this happens the reply may
-     * fail downstream validation checks (e.g. TweetBuilder).  With 280 visible character limit it's
-     * theoretically possible to explicitly mention 93 users (280 / 3) but this bug shouldn't really
-     * be an issue because:
-     * 1.) Most replies don't have 50 explicit mentions
-     * 2.) TOO-clients have switched to batchMode=Subsequent for self-replies which disable
-      source tweet's directed-at user inheritance
-     * 3.) Requests rarely are rejected due to mention_limit_exceeded
-     * If this becomes a problem we could reopen the mention limit discussion, specifically if the
-     * backend should allow 51 while the explicit limit remains at 50.
+     * Note on max mpl c s:
+     * T   thod returns at most 'max mpl c s'  nt ons unless 'max mpl c s'  s 0 and a
+     * d rected-at  nt on  s requ red,  n wh ch case   returns 1.   f t  happens t  reply may
+     * fa l downstream val dat on c cks (e.g. T etBu lder).  W h 280 v s ble character l m   's
+     * t oret cally poss ble to expl c ly  nt on 93 users (280 / 3) but t  bug shouldn't really
+     * be an  ssue because:
+     * 1.) Most repl es don't have 50 expl c   nt ons
+     * 2.) TOO-cl ents have sw c d to batchMode=Subsequent for self-repl es wh ch d sable
+      s ce t et's d rected-at user  n r ance
+     * 3.) Requests rarely are rejected due to  nt on_l m _exceeded
+     *  f t  beco s a problem   could reopen t   nt on l m  d scuss on, spec f cally  f t 
+     * backend should allow 51 wh le t  expl c  l m  rema ns at 50.
      *
      * Note on batchMode:
-     * Implicit mention prefix will be empty string if batchMode is BatchSubsequent. This is to
+     *  mpl c   nt on pref x w ll be empty str ng  f batchMode  s BatchSubsequent. T   s to
      * support batch composer.
      */
-    def implicitMentionPrefixAndDAU(
-      maxImplicits: Int,
+    def  mpl c  nt onPref xAndDAU(
+      max mpl c s:  nt,
       excludedUsers: Seq[User],
       author: User,
-      enableTweetToNarrowcasting: Boolean,
-      batchMode: Option[BatchComposeMode]
-    ): (String, Option[User]) = {
-      def allExcludedUserIds =
-        (excludedUsers ++ Seq(author)).map(_.id).toSet
+      enableT etToNarrowcast ng: Boolean,
+      batchMode: Opt on[BatchComposeMode]
+    ): (Str ng, Opt on[User]) = {
+      def allExcludedUser ds =
+        (excludedUsers ++ Seq(author)).map(_. d).toSet
 
       val replyType =
-        if (author.id == srcUser.id) {
-          if (batchMode.contains(BatchComposeMode.BatchSubsequent)) {
-            BatchSubsequentReply(allExcludedUserIds)
+         f (author. d == srcUser. d) {
+           f (batchMode.conta ns(BatchComposeMode.BatchSubsequent)) {
+            BatchSubsequentReply(allExcludedUser ds)
           } else {
-            SelfReply(allExcludedUserIds, enableTweetToNarrowcasting)
+            SelfReply(allExcludedUser ds, enableT etToNarrowcast ng)
           }
         } else {
-          RegularReply(allExcludedUserIds, enableTweetToNarrowcasting)
+          RegularReply(allExcludedUser ds, enableT etToNarrowcast ng)
         }
 
-      val prefix =
-        replyType.buildPrefix(
-          otherMentions = List.concat(rtUser, srcTweetMentionedUsers, photoTaggedUsers),
-          maxImplicits = maxImplicits
+      val pref x =
+        replyType.bu ldPref x(
+          ot r nt ons = L st.concat(rtUser, srcT et nt onedUsers, photoTaggedUsers),
+          max mpl c s = max mpl c s
         )
 
-      (prefix, replyType.directedAt)
+      (pref x, replyType.d rectedAt)
     }
 
     /**
-     * Finds the longest possible prefix of whitespace separated @-mentions, restricted to
-     * @-mentions that are derived from the reply chain.
+     * F nds t  longest poss ble pref x of wh espace separated @- nt ons, restr cted to
+     * @- nt ons that are der ved from t  reply cha n.
      */
-    def hideablePrefix(
-      text: String,
+    def h deablePref x(
+      text: Str ng,
       cardUsers: Seq[User],
-      explicitMentions: Seq[Extractor.Entity]
-    ): Offset.CodePoint = {
-      val allowedMentions =
-        (srcTweetMentionedUsers.toSet + srcUser ++ rtUser.toSet ++ photoTaggedUsers ++ cardUsers)
-          .map(_.screenName.toLowerCase)
-      val len = Offset.CodeUnit.length(text)
+      expl c  nt ons: Seq[Extractor.Ent y]
+    ): Offset.CodePo nt = {
+      val allo d nt ons =
+        (srcT et nt onedUsers.toSet + srcUser ++ rtUser.toSet ++ photoTaggedUsers ++ cardUsers)
+          .map(_.screenNa .toLo rCase)
+      val len = Offset.CodeUn .length(text)
 
-      // To allow NO-BREAK SPACE' (U+00A0) in the prefix need .isSpaceChar
-      def isWhitespace(c: Char) = c.isWhitespace || c.isSpaceChar
+      // To allow NO-BREAK SPACE' (U+00A0)  n t  pref x need . sSpaceChar
+      def  sWh espace(c: Char) = c. sWh espace || c. sSpaceChar
 
-      @tailrec
-      def skipWs(offset: Offset.CodeUnit): Offset.CodeUnit =
-        if (offset == len || !isWhitespace(text.charAt(offset.toInt))) offset
-        else skipWs(offset.incr)
+      @ta lrec
+      def sk pWs(offset: Offset.CodeUn ): Offset.CodeUn  =
+         f (offset == len || ! sWh espace(text.charAt(offset.to nt))) offset
+        else sk pWs(offset. ncr)
 
-      @tailrec
-      def go(offset: Offset.CodeUnit, mentions: Stream[Extractor.Entity]): Offset.CodeUnit =
-        if (offset == len) offset
+      @ta lrec
+      def go(offset: Offset.CodeUn ,  nt ons: Stream[Extractor.Ent y]): Offset.CodeUn  =
+         f (offset == len) offset
         else {
-          mentions match {
-            // if we are at the next mention, and it is allowed, skip past and recurse
-            case next #:: tail if next.getStart == offset.toInt =>
-              if (!allowedMentions.contains(next.getValue.toLowerCase)) offset
-              else go(skipWs(Offset.CodeUnit(next.getEnd)), tail)
-            // we found non-mention text
+           nt ons match {
+            //  f   are at t  next  nt on, and    s allo d, sk p past and recurse
+            case next #:: ta l  f next.getStart == offset.to nt =>
+               f (!allo d nt ons.conta ns(next.getValue.toLo rCase)) offset
+              else go(sk pWs(Offset.CodeUn (next.getEnd)), ta l)
+            //   found non- nt on text
             case _ => offset
           }
         }
 
-      go(Offset.CodeUnit(0), explicitMentions.toStream).toCodePoint(text)
+      go(Offset.CodeUn (0), expl c  nt ons.toStream).toCodePo nt(text)
     }
   }
 
-  private def replyToUser(user: User, inReplyToStatusId: Option[TweetId] = None): Reply =
+  pr vate def replyToUser(user: User,  nReplyToStatus d: Opt on[T et d] = None): Reply =
     Reply(
-      inReplyToUserId = user.id,
-      inReplyToScreenName = Some(user.screenName),
-      inReplyToStatusId = inReplyToStatusId
+       nReplyToUser d = user. d,
+       nReplyToScreenNa  = So (user.screenNa ),
+       nReplyToStatus d =  nReplyToStatus d
     )
 
   /**
-   * A builder that generates reply from `inReplyToTweetId` or tweet text
+   * A bu lder that generates reply from ` nReplyToT et d` or t et text
    *
-   * There are two kinds of "reply":
-   * 1. reply to tweet, which is generated from `inReplyToTweetId`.
+   * T re are two k nds of "reply":
+   * 1. reply to t et, wh ch  s generated from ` nReplyToT et d`.
    *
-   * A valid reply-to-tweet satisfies the following conditions:
-   * 1). the tweet that is in-reply-to exists (and is visible to the user creating the tweet)
-   * 2). the author of the in-reply-to tweet is mentioned anywhere in the tweet, or
-   *     this is a tweet that is in reply to the author's own tweet
+   * A val d reply-to-t et sat sf es t  follow ng cond  ons:
+   * 1). t  t et that  s  n-reply-to ex sts (and  s v s ble to t  user creat ng t  t et)
+   * 2). t  author of t   n-reply-to t et  s  nt oned anyw re  n t  t et, or
+   *     t   s a t et that  s  n reply to t  author's own t et
    *
-   * 2. reply to user, is generated when the tweet text starts with @user_name.  This is only
-   * attempted if PostTweetRequest.enableTweetToNarrowcasting is true (default).
+   * 2. reply to user,  s generated w n t  t et text starts w h @user_na .  T   s only
+   * attempted  f PostT etRequest.enableT etToNarrowcast ng  s true (default).
    */
   def apply(
-    userIdentityRepo: UserIdentityRepository.Type,
-    tweetRepo: TweetRepository.Optional,
-    replyCardUsersFinder: CardUsersFinder.Type,
-    selfThreadBuilder: SelfThreadBuilder,
-    relationshipRepo: RelationshipRepository.Type,
-    unmentionedEntitiesRepo: UnmentionedEntitiesRepository.Type,
-    enableRemoveUnmentionedImplicits: Gate[Unit],
-    stats: StatsReceiver,
-    maxMentions: Int
+    user dent yRepo: User dent yRepos ory.Type,
+    t etRepo: T etRepos ory.Opt onal,
+    replyCardUsersF nder: CardUsersF nder.Type,
+    selfThreadBu lder: SelfThreadBu lder,
+    relat onsh pRepo: Relat onsh pRepos ory.Type,
+    un nt onedEnt  esRepo: Un nt onedEnt  esRepos ory.Type,
+    enableRemoveUn nt oned mpl c s: Gate[Un ],
+    stats: StatsRece ver,
+    max nt ons:  nt
   ): Type = {
-    val exceptionCounters = ExceptionCounter(stats)
+    val except onCounters = Except onCounter(stats)
     val modeScope = stats.scope("mode")
     val compatModeCounter = modeScope.counter("compat")
-    val simpleModeCounter = modeScope.counter("simple")
+    val s mpleModeCounter = modeScope.counter("s mple")
 
-    def getUser(key: UserKey): Future[Option[User]] =
-      Stitch.run(
-        userIdentityRepo(key)
-          .map(ident => User(ident.id, ident.screenName))
-          .liftNotFoundToOption
+    def getUser(key: UserKey): Future[Opt on[User]] =
+      St ch.run(
+        user dent yRepo(key)
+          .map( dent => User( dent. d,  dent.screenNa ))
+          .l ftNotFoundToOpt on
       )
 
-    def getUsers(userIds: Seq[UserId]): Future[Seq[ReplyBuilder.User]] =
-      Stitch.run(
-        Stitch
-          .traverse(userIds)(id => userIdentityRepo(UserKey(id)).liftNotFoundToOption)
+    def getUsers(user ds: Seq[User d]): Future[Seq[ReplyBu lder.User]] =
+      St ch.run(
+        St ch
+          .traverse(user ds)( d => user dent yRepo(UserKey( d)).l ftNotFoundToOpt on)
           .map(_.flatten)
-          .map { identities => identities.map { ident => User(ident.id, ident.screenName) } }
+          .map {  dent  es =>  dent  es.map {  dent => User( dent. d,  dent.screenNa ) } }
       )
 
-    val tweetQueryIncludes =
-      TweetQuery.Include(
-        tweetFields = Set(
-          Tweet.CoreDataField.id,
-          Tweet.CardReferenceField.id,
-          Tweet.CommunitiesField.id,
-          Tweet.MediaTagsField.id,
-          Tweet.MentionsField.id,
-          Tweet.UrlsField.id,
-          Tweet.EditControlField.id
-        ) ++ selfThreadBuilder.requiredReplySourceFields.map(_.id)
+    val t etQuery ncludes =
+      T etQuery. nclude(
+        t etF elds = Set(
+          T et.CoreDataF eld. d,
+          T et.CardReferenceF eld. d,
+          T et.Commun  esF eld. d,
+          T et. d aTagsF eld. d,
+          T et. nt onsF eld. d,
+          T et.UrlsF eld. d,
+          T et.Ed ControlF eld. d
+        ) ++ selfThreadBu lder.requ redReplyS ceF elds.map(_. d)
       )
 
-    def tweetQueryOptions(forUserId: UserId) =
-      TweetQuery.Options(
-        tweetQueryIncludes,
-        forUserId = Some(forUserId),
-        enforceVisibilityFiltering = true
+    def t etQueryOpt ons(forUser d: User d) =
+      T etQuery.Opt ons(
+        t etQuery ncludes,
+        forUser d = So (forUser d),
+        enforceV s b l yF lter ng = true
       )
 
-    def getTweet(tweetId: TweetId, forUserId: UserId): Future[Option[Tweet]] =
-      Stitch.run(tweetRepo(tweetId, tweetQueryOptions(forUserId)))
+    def getT et(t et d: T et d, forUser d: User d): Future[Opt on[T et]] =
+      St ch.run(t etRepo(t et d, t etQueryOpt ons(forUser d)))
 
-    def checkBlockRelationship(authorId: UserId, result: Result): Future[Unit] = {
-      val inReplyToBlocksTweeter =
-        RelationshipKey.blocks(
-          sourceId = result.reply.inReplyToUserId,
-          destinationId = authorId
+    def c ckBlockRelat onsh p(author d: User d, result: Result): Future[Un ] = {
+      val  nReplyToBlocksT eter =
+        Relat onsh pKey.blocks(
+          s ce d = result.reply. nReplyToUser d,
+          dest nat on d = author d
         )
 
-      Stitch.run(relationshipRepo(inReplyToBlocksTweeter)).flatMap {
-        case true => Future.exception(InReplyToTweetNotFound)
-        case false => Future.Unit
+      St ch.run(relat onsh pRepo( nReplyToBlocksT eter)).flatMap {
+        case true => Future.except on( nReplyToT etNotFound)
+        case false => Future.Un 
       }
     }
 
-    def checkIPIPolicy(request: Request, reply: Reply): Future[Unit] = {
-      if (request.spamResult == Spam.DisabledByIpiPolicy) {
-        Future.exception(Spam.DisabledByIpiFailure(reply.inReplyToScreenName))
+    def c ck P Pol cy(request: Request, reply: Reply): Future[Un ] = {
+       f (request.spamResult == Spam.D sabledBy p Pol cy) {
+        Future.except on(Spam.D sabledBy p Fa lure(reply. nReplyToScreenNa ))
       } else {
-        Future.Unit
+        Future.Un 
       }
     }
 
-    def getUnmentionedUsers(replySource: ReplySource): Future[Seq[UserId]] = {
-      if (enableRemoveUnmentionedImplicits()) {
-        val srcDirectedAt = replySource.srcTweet.directedAtUserMetadata.flatMap(_.userId)
-        val srcTweetMentions = replySource.srcTweet.mentions.getOrElse(Nil).flatMap(_.userId)
-        val idsToCheck = srcTweetMentions ++ srcDirectedAt
+    def getUn nt onedUsers(replyS ce: ReplyS ce): Future[Seq[User d]] = {
+       f (enableRemoveUn nt oned mpl c s()) {
+        val srcD rectedAt = replyS ce.srcT et.d rectedAtUser tadata.flatMap(_.user d)
+        val srcT et nt ons = replyS ce.srcT et. nt ons.getOrElse(N l).flatMap(_.user d)
+        val  dsToC ck = srcT et nt ons ++ srcD rectedAt
 
-        val conversationId = replySource.srcTweet.coreData.flatMap(_.conversationId)
-        conversationId match {
-          case Some(cid) if idsToCheck.nonEmpty =>
-            stats.counter("unmentioned_implicits_check").incr()
-            Stitch
-              .run(unmentionedEntitiesRepo(cid, idsToCheck)).liftToTry.map {
-                case Return(Some(unmentionedUserIds)) =>
-                  unmentionedUserIds
-                case _ => Seq[UserId]()
+        val conversat on d = replyS ce.srcT et.coreData.flatMap(_.conversat on d)
+        conversat on d match {
+          case So (c d)  f  dsToC ck.nonEmpty =>
+            stats.counter("un nt oned_ mpl c s_c ck"). ncr()
+            St ch
+              .run(un nt onedEnt  esRepo(c d,  dsToC ck)).l ftToTry.map {
+                case Return(So (un nt onedUser ds)) =>
+                  un nt onedUser ds
+                case _ => Seq[User d]()
               }
-          case _ => Future.Nil
+          case _ => Future.N l
 
         }
       } else {
-        Future.Nil
+        Future.N l
       }
     }
 
     /**
-     * Constructs a `ReplySource` for the given `tweetId`, which captures the source tweet to be
-     * replied to, its author, and if `tweetId` is for a retweet of the source tweet, then also
-     * that retweet and its author.  If the source tweet (or a retweet of it), or a corresponding
-     * author, can't be found or isn't visible to the replier, then `InReplyToTweetNotFound` is
+     * Constructs a `ReplyS ce` for t  g ven `t et d`, wh ch captures t  s ce t et to be
+     * repl ed to,  s author, and  f `t et d`  s for a ret et of t  s ce t et, t n also
+     * that ret et and  s author.   f t  s ce t et (or a ret et of  ), or a correspond ng
+     * author, can't be found or  sn't v s ble to t  repl er, t n ` nReplyToT etNotFound`  s
      * thrown.
      */
-    def getReplySource(tweetId: TweetId, forUserId: UserId): Future[ReplySource] =
+    def getReplyS ce(t et d: T et d, forUser d: User d): Future[ReplyS ce] =
       for {
-        tweet <- getTweet(tweetId, forUserId).flatMap {
-          case None => Future.exception(InReplyToTweetNotFound)
-          case Some(t) => Future.value(t)
+        t et <- getT et(t et d, forUser d).flatMap {
+          case None => Future.except on( nReplyToT etNotFound)
+          case So (t) => Future.value(t)
         }
 
-        user <- getUser(UserKey(getUserId(tweet))).flatMap {
-          case None => Future.exception(InReplyToTweetNotFound)
-          case Some(u) => Future.value(u)
+        user <- getUser(UserKey(getUser d(t et))).flatMap {
+          case None => Future.except on( nReplyToT etNotFound)
+          case So (u) => Future.value(u)
         }
 
-        res <- getShare(tweet) match {
-          case None => Future.value(ReplySource(tweet, user))
-          case Some(share) =>
-            // if the user is replying to a retweet, find the retweet source tweet,
-            // then update with the retweet and author.
-            getReplySource(share.sourceStatusId, forUserId)
-              .map(_.copy(retweet = Some(tweet), rtUser = Some(user)))
+        res <- getShare(t et) match {
+          case None => Future.value(ReplyS ce(t et, user))
+          case So (share) =>
+            //  f t  user  s reply ng to a ret et, f nd t  ret et s ce t et,
+            // t n update w h t  ret et and author.
+            getReplyS ce(share.s ceStatus d, forUser d)
+              .map(_.copy(ret et = So (t et), rtUser = So (user)))
         }
-      } yield res
+      } y eld res
 
     /**
-     * Computes a `Result` for the reply-to-tweet case.  If `inReplyToTweetId` is for a retweet,
-     * the reply will be computed against the source tweet.  If `prependImplicitMentions` is true
-     * and source tweet can't be found or isn't visible to replier, then this method will return
-     * a `InReplyToTweetNotFound` failure.  If `prependImplicitMentions` is false, then the reply
-     * text must either mention the source tweet user, or it must be a reply to self; if both of
-     * those conditions fail, then `None` is returned.
+     * Computes a `Result` for t  reply-to-t et case.   f ` nReplyToT et d`  s for a ret et,
+     * t  reply w ll be computed aga nst t  s ce t et.   f `prepend mpl c  nt ons`  s true
+     * and s ce t et can't be found or  sn't v s ble to repl er, t n t   thod w ll return
+     * a ` nReplyToT etNotFound` fa lure.   f `prepend mpl c  nt ons`  s false, t n t  reply
+     * text must e  r  nt on t  s ce t et user, or   must be a reply to self;  f both of
+     * those cond  ons fa l, t n `None`  s returned.
      */
-    def makeReplyToTweet(
-      inReplyToTweetId: TweetId,
-      text: String,
+    def makeReplyToT et(
+       nReplyToT et d: T et d,
+      text: Str ng,
       author: User,
-      prependImplicitMentions: Boolean,
-      enableTweetToNarrowcasting: Boolean,
-      excludeUserIds: Seq[UserId],
-      batchMode: Option[BatchComposeMode]
-    ): Future[Option[Result]] = {
-      val explicitMentions: Seq[Extractor.Entity] =
-        extractor.extractMentionedScreennamesWithIndices(text).asScala.toSeq
-      val mentionedScreenNames =
-        explicitMentions.map(_.getValue.toLowerCase).toSet
+      prepend mpl c  nt ons: Boolean,
+      enableT etToNarrowcast ng: Boolean,
+      excludeUser ds: Seq[User d],
+      batchMode: Opt on[BatchComposeMode]
+    ): Future[Opt on[Result]] = {
+      val expl c  nt ons: Seq[Extractor.Ent y] =
+        extractor.extract nt onedScreenna sW h nd ces(text).asScala.toSeq
+      val  nt onedScreenNa s =
+        expl c  nt ons.map(_.getValue.toLo rCase).toSet
 
       /**
-       * If `prependImplicitMentions` is true, or the reply author is the same as the in-reply-to
-       * author, then the reply text doesn't have to mention the in-reply-to author.  Otherwise,
-       * check that the text contains a mention of the reply author.
+       *  f `prepend mpl c  nt ons`  s true, or t  reply author  s t  sa  as t   n-reply-to
+       * author, t n t  reply text doesn't have to  nt on t   n-reply-to author.  Ot rw se,
+       * c ck that t  text conta ns a  nt on of t  reply author.
        */
-      def isValidReplyTo(inReplyToUser: User): Boolean =
-        prependImplicitMentions ||
-          (inReplyToUser.id == author.id) ||
-          mentionedScreenNames.contains(inReplyToUser.screenName.toLowerCase)
+      def  sVal dReplyTo( nReplyToUser: User): Boolean =
+        prepend mpl c  nt ons ||
+          ( nReplyToUser. d == author. d) ||
+           nt onedScreenNa s.conta ns( nReplyToUser.screenNa .toLo rCase)
 
-      getReplySource(inReplyToTweetId, author.id)
+      getReplyS ce( nReplyToT et d, author. d)
         .flatMap { replySrc =>
           val baseResult = BaseResult(
-            reply = replyToUser(replySrc.srcUser, Some(replySrc.srcTweet.id)),
-            conversationId = getConversationId(replySrc.srcTweet),
-            selfThreadMetadata = selfThreadBuilder.build(author.id, replySrc.srcTweet),
-            community = replySrc.srcTweet.communities,
-            // Reply tweets retain the same exclusive
-            // tweet controls as the tweet being replied to.
-            exclusiveTweetControl = replySrc.srcTweet.exclusiveTweetControl,
-            trustedFriendsControl = replySrc.srcTweet.trustedFriendsControl,
-            editControl = replySrc.srcTweet.editControl
+            reply = replyToUser(replySrc.srcUser, So (replySrc.srcT et. d)),
+            conversat on d = getConversat on d(replySrc.srcT et),
+            selfThread tadata = selfThreadBu lder.bu ld(author. d, replySrc.srcT et),
+            commun y = replySrc.srcT et.commun  es,
+            // Reply t ets reta n t  sa  exclus ve
+            // t et controls as t  t et be ng repl ed to.
+            exclus veT etControl = replySrc.srcT et.exclus veT etControl,
+            trustedFr endsControl = replySrc.srcT et.trustedFr endsControl,
+            ed Control = replySrc.srcT et.ed Control
           )
 
-          if (isValidReplyTo(replySrc.srcUser)) {
-            if (prependImplicitMentions) {
+           f ( sVal dReplyTo(replySrc.srcUser)) {
+             f (prepend mpl c  nt ons) {
 
-              // Simplified Replies mode - append server-side generated prefix to passed in text
-              simpleModeCounter.incr()
-              // remove the in-reply-to tweet author from the excluded users, in-reply-to tweet author will always be a directedAtUser
-              val filteredExcludedIds =
-                excludeUserIds.filterNot(uid => uid == TweetLenses.userId(replySrc.srcTweet))
+              // S mpl f ed Repl es mode - append server-s de generated pref x to passed  n text
+              s mpleModeCounter. ncr()
+              // remove t   n-reply-to t et author from t  excluded users,  n-reply-to t et author w ll always be a d rectedAtUser
+              val f lteredExcluded ds =
+                excludeUser ds.f lterNot(u d => u d == T etLenses.user d(replySrc.srcT et))
               for {
-                unmentionedUserIds <- getUnmentionedUsers(replySrc)
-                excludedUsers <- getUsers(filteredExcludedIds ++ unmentionedUserIds)
-                (prefix, directedAtUser) = replySrc.implicitMentionPrefixAndDAU(
-                  maxImplicits = math.max(0, maxMentions - explicitMentions.size),
+                un nt onedUser ds <- getUn nt onedUsers(replySrc)
+                excludedUsers <- getUsers(f lteredExcluded ds ++ un nt onedUser ds)
+                (pref x, d rectedAtUser) = replySrc. mpl c  nt onPref xAndDAU(
+                  max mpl c s = math.max(0, max nt ons - expl c  nt ons.s ze),
                   excludedUsers = excludedUsers,
                   author = author,
-                  enableTweetToNarrowcasting = enableTweetToNarrowcasting,
+                  enableT etToNarrowcast ng = enableT etToNarrowcast ng,
                   batchMode = batchMode
                 )
-              } yield {
-                // prefix or text (or both) can be empty strings.  Add " " separator and adjust
-                // prefix length only when both prefix and text are non-empty.
-                val textChunks = Seq(prefix, text).map(_.trim).filter(_.nonEmpty)
-                val tweetText = textChunks.mkString(" ")
-                val visibleStart =
-                  if (textChunks.size == 2) {
-                    Offset.CodePoint.length(prefix + " ")
+              } y eld {
+                // pref x or text (or both) can be empty str ngs.  Add " " separator and adjust
+                // pref x length only w n both pref x and text are non-empty.
+                val textChunks = Seq(pref x, text).map(_.tr m).f lter(_.nonEmpty)
+                val t etText = textChunks.mkStr ng(" ")
+                val v s bleStart =
+                   f (textChunks.s ze == 2) {
+                    Offset.CodePo nt.length(pref x + " ")
                   } else {
-                    Offset.CodePoint.length(prefix)
+                    Offset.CodePo nt.length(pref x)
                   }
 
-                Some(
+                So (
                   baseResult.toResult(
-                    tweetText = tweetText,
-                    directedAtMetadata = DirectedAtUserMetadata(directedAtUser.map(_.id)),
-                    visibleStart = visibleStart
+                    t etText = t etText,
+                    d rectedAt tadata = D rectedAtUser tadata(d rectedAtUser.map(_. d)),
+                    v s bleStart = v s bleStart
                   )
                 )
               }
             } else {
-              // Backwards-compatibility mode - walk from beginning of text until find visibleStart
-              compatModeCounter.incr()
+              // Backwards-compat b l y mode - walk from beg nn ng of text unt l f nd v s bleStart
+              compatModeCounter. ncr()
               for {
-                cardUserIds <- replySrc.allCardUsers(author, replyCardUsersFinder)
-                cardUsers <- getUsers(cardUserIds.toSeq)
-                optUserIdentity <- extractReplyToUser(text)
-                directedAtUserId = optUserIdentity.map(_.id).filter(_ => enableTweetToNarrowcasting)
-              } yield {
-                Some(
+                cardUser ds <- replySrc.allCardUsers(author, replyCardUsersF nder)
+                cardUsers <- getUsers(cardUser ds.toSeq)
+                optUser dent y <- extractReplyToUser(text)
+                d rectedAtUser d = optUser dent y.map(_. d).f lter(_ => enableT etToNarrowcast ng)
+              } y eld {
+                So (
                   baseResult.toResult(
-                    tweetText = text,
-                    directedAtMetadata = DirectedAtUserMetadata(directedAtUserId),
-                    visibleStart = replySrc.hideablePrefix(text, cardUsers, explicitMentions),
+                    t etText = text,
+                    d rectedAt tadata = D rectedAtUser tadata(d rectedAtUser d),
+                    v s bleStart = replySrc.h deablePref x(text, cardUsers, expl c  nt ons),
                   )
                 )
               }
@@ -575,54 +575,54 @@ object ReplyBuilder {
           }
         }
         .handle {
-          // if `getReplySource` throws this exception, but we aren't computing implicit
-          // mentions, then we fall back to the reply-to-user case instead of reply-to-tweet
-          case InReplyToTweetNotFound if !prependImplicitMentions => None
+          //  f `getReplyS ce` throws t  except on, but   aren't comput ng  mpl c 
+          //  nt ons, t n   fall back to t  reply-to-user case  nstead of reply-to-t et
+          case  nReplyToT etNotFound  f !prepend mpl c  nt ons => None
         }
     }
 
-    def makeReplyToUser(text: String): Future[Option[Result]] =
+    def makeReplyToUser(text: Str ng): Future[Opt on[Result]] =
       extractReplyToUser(text).map(_.map { user =>
-        Result(replyToUser(user), text, DirectedAtUserMetadata(Some(user.id)))
+        Result(replyToUser(user), text, D rectedAtUser tadata(So (user. d)))
       })
 
-    def extractReplyToUser(text: String): Future[Option[User]] =
-      Option(extractor.extractReplyScreenname(text)) match {
+    def extractReplyToUser(text: Str ng): Future[Opt on[User]] =
+      Opt on(extractor.extractReplyScreenna (text)) match {
         case None => Future.None
-        case Some(screenName) => getUser(UserKey(screenName))
+        case So (screenNa ) => getUser(UserKey(screenNa ))
       }
 
-    FutureArrow[Request, Option[Result]] { request =>
-      exceptionCounters {
-        (request.inReplyToTweetId.filter(_ > 0) match {
+    FutureArrow[Request, Opt on[Result]] { request =>
+      except onCounters {
+        (request. nReplyToT et d.f lter(_ > 0) match {
           case None =>
             Future.None
 
-          case Some(tweetId) =>
-            makeReplyToTweet(
-              tweetId,
-              request.tweetText,
-              User(request.authorId, request.authorScreenName),
-              request.prependImplicitMentions,
-              request.enableTweetToNarrowcasting,
-              request.excludeUserIds,
+          case So (t et d) =>
+            makeReplyToT et(
+              t et d,
+              request.t etText,
+              User(request.author d, request.authorScreenNa ),
+              request.prepend mpl c  nt ons,
+              request.enableT etToNarrowcast ng,
+              request.excludeUser ds,
               request.batchMode
             )
         }).flatMap {
-          case Some(r) =>
-            // Ensure that the author of this reply is not blocked by
-            // the user who they are replying to.
-            checkBlockRelationship(request.authorId, r)
-              .before(checkIPIPolicy(request, r.reply))
-              .before(Future.value(Some(r)))
+          case So (r) =>
+            // Ensure that t  author of t  reply  s not blocked by
+            // t  user who t y are reply ng to.
+            c ckBlockRelat onsh p(request.author d, r)
+              .before(c ck P Pol cy(request, r.reply))
+              .before(Future.value(So (r)))
 
-          case None if request.enableTweetToNarrowcasting =>
-            // We don't check the block relationship when the tweet is
-            // not part of a conversation (which is to say, we allow
-            // directed-at tweets from a blocked user.) These tweets
-            // will not cause notifications for the blocking user,
-            // despite the presence of the reply struct.
-            makeReplyToUser(request.tweetText)
+          case None  f request.enableT etToNarrowcast ng =>
+            //   don't c ck t  block relat onsh p w n t  t et  s
+            // not part of a conversat on (wh ch  s to say,   allow
+            // d rected-at t ets from a blocked user.) T se t ets
+            // w ll not cause not f cat ons for t  block ng user,
+            // desp e t  presence of t  reply struct.
+            makeReplyToUser(request.t etText)
 
           case None =>
             Future.None

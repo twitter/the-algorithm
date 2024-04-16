@@ -1,90 +1,90 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.common.base.TopicCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.rec_types.RecTypes._
-import com.twitter.frigate.common.util.MrPushCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.OutOfNetworkT etCand date
+ mport com.tw ter.fr gate.common.base.Top cCand date
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.rec_types.RecTypes._
+ mport com.tw ter.fr gate.common.ut l.MrPushCopyObjects
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l. nl neAct onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l. rgeModelValues
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.ut l.Future
 
-trait OutOfNetworkTweetIbis2HydratorForCandidate extends TweetCandidateIbis2Hydrator {
-  self: PushCandidate with OutOfNetworkTweetCandidate with TopicCandidate with TweetAuthorDetails =>
+tra  OutOfNetworkT et b s2HydratorForCand date extends T etCand date b s2Hydrator {
+  self: PushCand date w h OutOfNetworkT etCand date w h Top cCand date w h T etAuthorDeta ls =>
 
-  private lazy val useNewOonCopyValue =
-    if (target.params(PushFeatureSwitchParams.EnableNewMROONCopyForPush)) {
+  pr vate lazy val useNewOonCopyValue =
+     f (target.params(PushFeatureSw chParams.EnableNewMROONCopyForPush)) {
       Map(
         "use_new_oon_copy" -> "true"
       )
-    } else Map.empty[String, String]
+    } else Map.empty[Str ng, Str ng]
 
-  override lazy val tweetDynamicInlineActionsModelValues =
-    if (target.params(PushFeatureSwitchParams.EnableOONGeneratedInlineActions)) {
-      val actions = target.params(PushFeatureSwitchParams.OONTweetDynamicInlineActionsList)
-      InlineActionUtil.getGeneratedTweetInlineActions(target, statsReceiver, actions)
-    } else Map.empty[String, String]
+  overr de lazy val t etDynam c nl neAct onsModelValues =
+     f (target.params(PushFeatureSw chParams.EnableOONGenerated nl neAct ons)) {
+      val act ons = target.params(PushFeatureSw chParams.OONT etDynam c nl neAct onsL st)
+       nl neAct onUt l.getGeneratedT et nl neAct ons(target, statsRece ver, act ons)
+    } else Map.empty[Str ng, Str ng]
 
-  private lazy val ibtModelValues: Map[String, String] =
+  pr vate lazy val  btModelValues: Map[Str ng, Str ng] =
     Map(
-      "is_tweet" -> s"${!(hasPhoto || hasVideo)}",
-      "is_photo" -> s"$hasPhoto",
-      "is_video" -> s"$hasVideo"
+      " s_t et" -> s"${!(hasPhoto || hasV deo)}",
+      " s_photo" -> s"$hasPhoto",
+      " s_v deo" -> s"$hasV deo"
     )
 
-  private lazy val launchVideosInImmersiveExploreValue =
+  pr vate lazy val launchV deos n m rs veExploreValue =
     Map(
-      "launch_videos_in_immersive_explore" -> s"${hasVideo && target.params(PushFeatureSwitchParams.EnableLaunchVideosInImmersiveExplore)}"
+      "launch_v deos_ n_ m rs ve_explore" -> s"${hasV deo && target.params(PushFeatureSw chParams.EnableLaunchV deos n m rs veExplore)}"
     )
 
-  private lazy val oonTweetModelValues =
-    useNewOonCopyValue ++ ibtModelValues ++ tweetDynamicInlineActionsModelValues ++ launchVideosInImmersiveExploreValue
+  pr vate lazy val oonT etModelValues =
+    useNewOonCopyValue ++  btModelValues ++ t etDynam c nl neAct onsModelValues ++ launchV deos n m rs veExploreValue
 
-  lazy val useTopicCopyForMBCGIbis = mrModelingBasedTypes.contains(commonRecType) && target.params(
-    PushFeatureSwitchParams.EnableMrModelingBasedCandidatesTopicCopy)
-  lazy val useTopicCopyForFrsIbis = frsTypes.contains(commonRecType) && target.params(
-    PushFeatureSwitchParams.EnableFrsTweetCandidatesTopicCopy)
-  lazy val useTopicCopyForTagspaceIbis = tagspaceTypes.contains(commonRecType) && target.params(
-    PushFeatureSwitchParams.EnableHashspaceCandidatesTopicCopy)
+  lazy val useTop cCopyForMBCG b s = mrModel ngBasedTypes.conta ns(commonRecType) && target.params(
+    PushFeatureSw chParams.EnableMrModel ngBasedCand datesTop cCopy)
+  lazy val useTop cCopyForFrs b s = frsTypes.conta ns(commonRecType) && target.params(
+    PushFeatureSw chParams.EnableFrsT etCand datesTop cCopy)
+  lazy val useTop cCopyForTagspace b s = tagspaceTypes.conta ns(commonRecType) && target.params(
+    PushFeatureSw chParams.EnableHashspaceCand datesTop cCopy)
 
-  override lazy val modelName: String = {
-    if (localizedUttEntity.isDefined &&
-      (useTopicCopyForMBCGIbis || useTopicCopyForFrsIbis || useTopicCopyForTagspaceIbis)) {
-      MrPushCopyObjects.TopicTweet.ibisPushModelName // uses topic copy
-    } else super.modelName
+  overr de lazy val modelNa : Str ng = {
+     f (local zedUttEnt y. sDef ned &&
+      (useTop cCopyForMBCG b s || useTop cCopyForFrs b s || useTop cCopyForTagspace b s)) {
+      MrPushCopyObjects.Top cT et. b sPushModelNa  // uses top c copy
+    } else super.modelNa 
   }
 
-  lazy val exploreVideoParams: Map[String, String] = {
-    if (self.commonRecType == CommonRecommendationType.ExploreVideoTweet) {
+  lazy val exploreV deoParams: Map[Str ng, Str ng] = {
+     f (self.commonRecType == CommonRecom ndat onType.ExploreV deoT et) {
       Map(
-        "is_explore_video" -> "true"
+        " s_explore_v deo" -> "true"
       )
-    } else Map.empty[String, String]
+    } else Map.empty[Str ng, Str ng]
   }
 
-  override lazy val customFieldsMapFut: Future[Map[String, String]] =
-    mergeModelValues(super.customFieldsMapFut, exploreVideoParams)
+  overr de lazy val customF eldsMapFut: Future[Map[Str ng, Str ng]] =
+     rgeModelValues(super.customF eldsMapFut, exploreV deoParams)
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
-    if (localizedUttEntity.isDefined &&
-      (useTopicCopyForMBCGIbis || useTopicCopyForFrsIbis || useTopicCopyForTagspaceIbis)) {
-      lazy val topicTweetModelValues: Map[String, String] =
-        Map("topic_name" -> s"${localizedUttEntity.get.localizedNameForDisplay}")
+  overr de lazy val t etModelValues: Future[Map[Str ng, Str ng]] =
+     f (local zedUttEnt y. sDef ned &&
+      (useTop cCopyForMBCG b s || useTop cCopyForFrs b s || useTop cCopyForTagspace b s)) {
+      lazy val top cT etModelValues: Map[Str ng, Str ng] =
+        Map("top c_na " -> s"${local zedUttEnt y.get.local zedNa ForD splay}")
       for {
-        superModelValues <- super.tweetModelValues
-        tweetInlineModelValue <- tweetInlineActionModelValue
-      } yield {
-        superModelValues ++ topicTweetModelValues ++ tweetInlineModelValue
+        superModelValues <- super.t etModelValues
+        t et nl neModelValue <- t et nl neAct onModelValue
+      } y eld {
+        superModelValues ++ top cT etModelValues ++ t et nl neModelValue
       }
     } else {
       for {
-        superModelValues <- super.tweetModelValues
-        tweetInlineModelValues <- tweetInlineActionModelValue
-      } yield {
-        superModelValues ++ mediaModelValue ++ oonTweetModelValues ++ tweetInlineModelValues ++ inlineVideoMediaMap
+        superModelValues <- super.t etModelValues
+        t et nl neModelValues <- t et nl neAct onModelValue
+      } y eld {
+        superModelValues ++  d aModelValue ++ oonT etModelValues ++ t et nl neModelValues ++  nl neV deo d aMap
       }
     }
 }

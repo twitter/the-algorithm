@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.gate
+package com.tw ter.product_m xer.component_l brary.gate
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object NonEmptyAdsQueryStringGate extends Gate[PipelineQuery with AdsQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("NonEmptyAdsQueryString")
+object NonEmptyAdsQueryStr ngGate extends Gate[P pel neQuery w h AdsQuery] {
+  overr de val  dent f er: Gate dent f er = Gate dent f er("NonEmptyAdsQueryStr ng")
 
-  override def shouldContinue(query: PipelineQuery with AdsQuery): Stitch[Boolean] = {
-    val queryString = query.searchRequestContext.flatMap(_.queryString)
-    Stitch.value(queryString.exists(_.trim.nonEmpty))
+  overr de def shouldCont nue(query: P pel neQuery w h AdsQuery): St ch[Boolean] = {
+    val queryStr ng = query.searchRequestContext.flatMap(_.queryStr ng)
+    St ch.value(queryStr ng.ex sts(_.tr m.nonEmpty))
   }
 }

@@ -1,420 +1,420 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.servo.cache.LockingCache._
-import com.twitter.servo.cache._
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.repository.CachedBounceDeleted.isBounceDeleted
-import com.twitter.tweetypie.repository.CachedBounceDeleted.toBounceDeletedCachedTweet
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.store.TweetUpdate._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Time
-import diffshow.DiffShow
+ mport com.fasterxml.jackson.datab nd.ObjectMapper
+ mport com.fasterxml.jackson.module.scala.DefaultScalaModule
+ mport com.tw ter.scrooge.TF eldBlob
+ mport com.tw ter.servo.cac .Lock ngCac ._
+ mport com.tw ter.servo.cac ._
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e.repos ory.Cac dBounceDeleted. sBounceDeleted
+ mport com.tw ter.t etyp e.repos ory.Cac dBounceDeleted.toBounceDeletedCac dT et
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.store.T etUpdate._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport d ffshow.D ffShow
 
-trait CachingTweetStore
-    extends TweetStoreBase[CachingTweetStore]
-    with InsertTweet.Store
-    with ReplicatedInsertTweet.Store
-    with DeleteTweet.Store
-    with AsyncDeleteTweet.Store
-    with ReplicatedDeleteTweet.Store
-    with UndeleteTweet.Store
-    with AsyncUndeleteTweet.Store
-    with ReplicatedUndeleteTweet.Store
-    with SetAdditionalFields.Store
-    with ReplicatedSetAdditionalFields.Store
-    with DeleteAdditionalFields.Store
-    with AsyncDeleteAdditionalFields.Store
-    with ReplicatedDeleteAdditionalFields.Store
-    with ScrubGeo.Store
-    with ReplicatedScrubGeo.Store
-    with Takedown.Store
-    with ReplicatedTakedown.Store
-    with Flush.Store
-    with UpdatePossiblySensitiveTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store
-    with ReplicatedUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): CachingTweetStore =
-    new TweetStoreWrapper(w, this)
-      with CachingTweetStore
-      with InsertTweet.StoreWrapper
-      with ReplicatedInsertTweet.StoreWrapper
-      with DeleteTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with ReplicatedDeleteTweet.StoreWrapper
-      with UndeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
-      with ReplicatedUndeleteTweet.StoreWrapper
-      with SetAdditionalFields.StoreWrapper
-      with ReplicatedSetAdditionalFields.StoreWrapper
-      with DeleteAdditionalFields.StoreWrapper
-      with AsyncDeleteAdditionalFields.StoreWrapper
-      with ReplicatedDeleteAdditionalFields.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with ReplicatedScrubGeo.StoreWrapper
-      with Takedown.StoreWrapper
-      with ReplicatedTakedown.StoreWrapper
-      with Flush.StoreWrapper
-      with UpdatePossiblySensitiveTweet.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
-      with ReplicatedUpdatePossiblySensitiveTweet.StoreWrapper
+tra  Cach ngT etStore
+    extends T etStoreBase[Cach ngT etStore]
+    w h  nsertT et.Store
+    w h Repl cated nsertT et.Store
+    w h DeleteT et.Store
+    w h AsyncDeleteT et.Store
+    w h Repl catedDeleteT et.Store
+    w h UndeleteT et.Store
+    w h AsyncUndeleteT et.Store
+    w h Repl catedUndeleteT et.Store
+    w h SetAdd  onalF elds.Store
+    w h Repl catedSetAdd  onalF elds.Store
+    w h DeleteAdd  onalF elds.Store
+    w h AsyncDeleteAdd  onalF elds.Store
+    w h Repl catedDeleteAdd  onalF elds.Store
+    w h ScrubGeo.Store
+    w h Repl catedScrubGeo.Store
+    w h Takedown.Store
+    w h Repl catedTakedown.Store
+    w h Flush.Store
+    w h UpdatePoss blySens  veT et.Store
+    w h AsyncUpdatePoss blySens  veT et.Store
+    w h Repl catedUpdatePoss blySens  veT et.Store {
+  def wrap(w: T etStore.Wrap): Cach ngT etStore =
+    new T etStoreWrapper(w, t )
+      w h Cach ngT etStore
+      w h  nsertT et.StoreWrapper
+      w h Repl cated nsertT et.StoreWrapper
+      w h DeleteT et.StoreWrapper
+      w h AsyncDeleteT et.StoreWrapper
+      w h Repl catedDeleteT et.StoreWrapper
+      w h UndeleteT et.StoreWrapper
+      w h AsyncUndeleteT et.StoreWrapper
+      w h Repl catedUndeleteT et.StoreWrapper
+      w h SetAdd  onalF elds.StoreWrapper
+      w h Repl catedSetAdd  onalF elds.StoreWrapper
+      w h DeleteAdd  onalF elds.StoreWrapper
+      w h AsyncDeleteAdd  onalF elds.StoreWrapper
+      w h Repl catedDeleteAdd  onalF elds.StoreWrapper
+      w h ScrubGeo.StoreWrapper
+      w h Repl catedScrubGeo.StoreWrapper
+      w h Takedown.StoreWrapper
+      w h Repl catedTakedown.StoreWrapper
+      w h Flush.StoreWrapper
+      w h UpdatePoss blySens  veT et.StoreWrapper
+      w h AsyncUpdatePoss blySens  veT et.StoreWrapper
+      w h Repl catedUpdatePoss blySens  veT et.StoreWrapper
 }
 
-object CachingTweetStore {
-  val Action: AsyncWriteAction.CacheUpdate.type = AsyncWriteAction.CacheUpdate
+object Cach ngT etStore {
+  val Act on: AsyncWr eAct on.Cac Update.type = AsyncWr eAct on.Cac Update
 
   def apply(
-    tweetCache: LockingCache[TweetKey, Cached[CachedTweet]],
-    tweetKeyFactory: TweetKeyFactory,
-    stats: StatsReceiver
-  ): CachingTweetStore = {
+    t etCac : Lock ngCac [T etKey, Cac d[Cac dT et]],
+    t etKeyFactory: T etKeyFactory,
+    stats: StatsRece ver
+  ): Cach ngT etStore = {
     val ops =
-      new CachingTweetStoreOps(
-        tweetCache,
-        tweetKeyFactory,
+      new Cach ngT etStoreOps(
+        t etCac ,
+        t etKeyFactory,
         stats
       )
 
-    new CachingTweetStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] = {
-        FutureEffect[InsertTweet.Event](e =>
-          ops.insertTweet(e.internalTweet, e.initialTweetUpdateRequest))
+    new Cach ngT etStore {
+      overr de val  nsertT et: FutureEffect[ nsertT et.Event] = {
+        FutureEffect[ nsertT et.Event](e =>
+          ops. nsertT et(e. nternalT et, e. n  alT etUpdateRequest))
       }
 
-      override val replicatedInsertTweet: FutureEffect[ReplicatedInsertTweet.Event] =
-        FutureEffect[ReplicatedInsertTweet.Event](e =>
-          ops.insertTweet(e.cachedTweet, e.initialTweetUpdateRequest))
+      overr de val repl cated nsertT et: FutureEffect[Repl cated nsertT et.Event] =
+        FutureEffect[Repl cated nsertT et.Event](e =>
+          ops. nsertT et(e.cac dT et, e. n  alT etUpdateRequest))
 
-      override val deleteTweet: FutureEffect[DeleteTweet.Event] =
-        FutureEffect[DeleteTweet.Event](e =>
-          ops.deleteTweet(e.tweet.id, updateOnly = true, isBounceDelete = e.isBounceDelete))
+      overr de val deleteT et: FutureEffect[DeleteT et.Event] =
+        FutureEffect[DeleteT et.Event](e =>
+          ops.deleteT et(e.t et. d, updateOnly = true,  sBounceDelete = e. sBounceDelete))
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event](e =>
-          ops.deleteTweet(e.tweet.id, updateOnly = true, isBounceDelete = e.isBounceDelete))
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        FutureEffect[AsyncDeleteT et.Event](e =>
+          ops.deleteT et(e.t et. d, updateOnly = true,  sBounceDelete = e. sBounceDelete))
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        T etStore.retry(Act on, asyncDeleteT et)
 
-      override val replicatedDeleteTweet: FutureEffect[ReplicatedDeleteTweet.Event] =
-        FutureEffect[ReplicatedDeleteTweet.Event](e =>
-          ops.deleteTweet(
-            tweetId = e.tweet.id,
-            updateOnly = e.isErasure,
-            isBounceDelete = e.isBounceDelete
+      overr de val repl catedDeleteT et: FutureEffect[Repl catedDeleteT et.Event] =
+        FutureEffect[Repl catedDeleteT et.Event](e =>
+          ops.deleteT et(
+            t et d = e.t et. d,
+            updateOnly = e. sErasure,
+             sBounceDelete = e. sBounceDelete
           ))
 
-      override val undeleteTweet: FutureEffect[UndeleteTweet.Event] =
-        FutureEffect[UndeleteTweet.Event](e => ops.undeleteTweet(e.internalTweet))
+      overr de val undeleteT et: FutureEffect[UndeleteT et.Event] =
+        FutureEffect[UndeleteT et.Event](e => ops.undeleteT et(e. nternalT et))
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        FutureEffect[AsyncUndeleteTweet.Event](e => ops.undeleteTweet(e.cachedTweet))
+      overr de val asyncUndeleteT et: FutureEffect[AsyncUndeleteT et.Event] =
+        FutureEffect[AsyncUndeleteT et.Event](e => ops.undeleteT et(e.cac dT et))
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      overr de val retryAsyncUndeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUndeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        T etStore.retry(Act on, asyncUndeleteT et)
 
-      override val replicatedUndeleteTweet: FutureEffect[ReplicatedUndeleteTweet.Event] =
-        FutureEffect[ReplicatedUndeleteTweet.Event](e => ops.undeleteTweet(e.cachedTweet))
+      overr de val repl catedUndeleteT et: FutureEffect[Repl catedUndeleteT et.Event] =
+        FutureEffect[Repl catedUndeleteT et.Event](e => ops.undeleteT et(e.cac dT et))
 
-      override val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        FutureEffect[SetAdditionalFields.Event](e => ops.setAdditionalFields(e.additionalFields))
+      overr de val setAdd  onalF elds: FutureEffect[SetAdd  onalF elds.Event] =
+        FutureEffect[SetAdd  onalF elds.Event](e => ops.setAdd  onalF elds(e.add  onalF elds))
 
-      override val replicatedSetAdditionalFields: FutureEffect[
-        ReplicatedSetAdditionalFields.Event
+      overr de val repl catedSetAdd  onalF elds: FutureEffect[
+        Repl catedSetAdd  onalF elds.Event
       ] =
-        FutureEffect[ReplicatedSetAdditionalFields.Event](e =>
-          ops.setAdditionalFields(e.additionalFields))
+        FutureEffect[Repl catedSetAdd  onalF elds.Event](e =>
+          ops.setAdd  onalF elds(e.add  onalF elds))
 
-      override val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        FutureEffect[DeleteAdditionalFields.Event](e =>
-          ops.deleteAdditionalFields(e.tweetId, e.fieldIds))
+      overr de val deleteAdd  onalF elds: FutureEffect[DeleteAdd  onalF elds.Event] =
+        FutureEffect[DeleteAdd  onalF elds.Event](e =>
+          ops.deleteAdd  onalF elds(e.t et d, e.f eld ds))
 
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        FutureEffect[AsyncDeleteAdditionalFields.Event](e =>
-          ops.deleteAdditionalFields(e.tweetId, e.fieldIds))
+      overr de val asyncDeleteAdd  onalF elds: FutureEffect[AsyncDeleteAdd  onalF elds.Event] =
+        FutureEffect[AsyncDeleteAdd  onalF elds.Event](e =>
+          ops.deleteAdd  onalF elds(e.t et d, e.f eld ds))
 
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+      overr de val retryAsyncDeleteAdd  onalF elds: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteAdd  onalF elds.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteAdditionalFields)
+        T etStore.retry(Act on, asyncDeleteAdd  onalF elds)
 
-      override val replicatedDeleteAdditionalFields: FutureEffect[
-        ReplicatedDeleteAdditionalFields.Event
+      overr de val repl catedDeleteAdd  onalF elds: FutureEffect[
+        Repl catedDeleteAdd  onalF elds.Event
       ] =
-        FutureEffect[ReplicatedDeleteAdditionalFields.Event](e =>
-          ops.deleteAdditionalFields(e.tweetId, e.fieldIds))
+        FutureEffect[Repl catedDeleteAdd  onalF elds.Event](e =>
+          ops.deleteAdd  onalF elds(e.t et d, e.f eld ds))
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        FutureEffect[ScrubGeo.Event](e => ops.scrubGeo(e.tweetIds))
+      overr de val scrubGeo: FutureEffect[ScrubGeo.Event] =
+        FutureEffect[ScrubGeo.Event](e => ops.scrubGeo(e.t et ds))
 
-      override val replicatedScrubGeo: FutureEffect[ReplicatedScrubGeo.Event] =
-        FutureEffect[ReplicatedScrubGeo.Event](e => ops.scrubGeo(e.tweetIds))
+      overr de val repl catedScrubGeo: FutureEffect[Repl catedScrubGeo.Event] =
+        FutureEffect[Repl catedScrubGeo.Event](e => ops.scrubGeo(e.t et ds))
 
-      override val takedown: FutureEffect[Takedown.Event] =
-        FutureEffect[Takedown.Event](e => ops.takedown(e.tweet))
+      overr de val takedown: FutureEffect[Takedown.Event] =
+        FutureEffect[Takedown.Event](e => ops.takedown(e.t et))
 
-      override val replicatedTakedown: FutureEffect[ReplicatedTakedown.Event] =
-        FutureEffect[ReplicatedTakedown.Event](e => ops.takedown(e.tweet))
+      overr de val repl catedTakedown: FutureEffect[Repl catedTakedown.Event] =
+        FutureEffect[Repl catedTakedown.Event](e => ops.takedown(e.t et))
 
-      override val flush: FutureEffect[Flush.Event] =
-        FutureEffect[Flush.Event](e => ops.flushTweets(e.tweetIds, logExisting = e.logExisting))
-          .onlyIf(_.flushTweets)
+      overr de val flush: FutureEffect[Flush.Event] =
+        FutureEffect[Flush.Event](e => ops.flushT ets(e.t et ds, logEx st ng = e.logEx st ng))
+          .only f(_.flushT ets)
 
-      override val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        FutureEffect[UpdatePossiblySensitiveTweet.Event](e => ops.updatePossiblySensitive(e.tweet))
+      overr de val updatePoss blySens  veT et: FutureEffect[UpdatePoss blySens  veT et.Event] =
+        FutureEffect[UpdatePoss blySens  veT et.Event](e => ops.updatePoss blySens  ve(e.t et))
 
-      override val replicatedUpdatePossiblySensitiveTweet: FutureEffect[
-        ReplicatedUpdatePossiblySensitiveTweet.Event
+      overr de val repl catedUpdatePoss blySens  veT et: FutureEffect[
+        Repl catedUpdatePoss blySens  veT et.Event
       ] =
-        FutureEffect[ReplicatedUpdatePossiblySensitiveTweet.Event](e =>
-          ops.updatePossiblySensitive(e.tweet))
+        FutureEffect[Repl catedUpdatePoss blySens  veT et.Event](e =>
+          ops.updatePoss blySens  ve(e.t et))
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      overr de val asyncUpdatePoss blySens  veT et: FutureEffect[
+        AsyncUpdatePoss blySens  veT et.Event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event](e =>
-          ops.updatePossiblySensitive(e.tweet))
+        FutureEffect[AsyncUpdatePoss blySens  veT et.Event](e =>
+          ops.updatePoss blySens  ve(e.t et))
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      overr de val retryAsyncUpdatePoss blySens  veT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUpdatePoss blySens  veT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        T etStore.retry(Act on, asyncUpdatePoss blySens  veT et)
     }
   }
 }
 
-private class CachingTweetStoreOps(
-  tweetCache: LockingCache[TweetKey, Cached[CachedTweet]],
-  tweetKeyFactory: TweetKeyFactory,
-  stats: StatsReceiver,
-  evictionRetries: Int = 3) {
-  type CachedTweetHandler = Handler[Cached[CachedTweet]]
+pr vate class Cach ngT etStoreOps(
+  t etCac : Lock ngCac [T etKey, Cac d[Cac dT et]],
+  t etKeyFactory: T etKeyFactory,
+  stats: StatsRece ver,
+  ev ct onRetr es:  nt = 3) {
+  type Cac dT etHandler = Handler[Cac d[Cac dT et]]
 
-  private val preferNewestPicker = new PreferNewestCached[CachedTweet]
+  pr vate val preferNe stP cker = new PreferNe stCac d[Cac dT et]
 
-  private val evictionFailedCounter = stats.counter("eviction_failures")
+  pr vate val ev ct onFa ledCounter = stats.counter("ev ct on_fa lures")
 
-  private val cacheFlushesLog = Logger("com.twitter.tweetypie.store.CacheFlushesLog")
+  pr vate val cac Flus sLog = Logger("com.tw ter.t etyp e.store.Cac Flus sLog")
 
-  private[this] val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
+  pr vate[t ] val mapper = new ObjectMapper().reg sterModule(DefaultScalaModule)
 
   /**
-   * Inserts a tweet into cache, recording all compiled additional fields and all
-   * included passthrough fields. Additionally if the insertion event contains
-   * a 'InitialTweetUpdateRequest` we will update the cache entry for this tweet's
-   * initialTweet.
+   *  nserts a t et  nto cac , record ng all comp led add  onal f elds and all
+   *  ncluded passthrough f elds. Add  onally  f t   nsert on event conta ns
+   * a ' n  alT etUpdateRequest`   w ll update t  cac  entry for t  t et's
+   *  n  alT et.
    */
-  def insertTweet(
-    ct: CachedTweet,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest]
-  ): Future[Unit] =
+  def  nsertT et(
+    ct: Cac dT et,
+     n  alT etUpdateRequest: Opt on[ n  alT etUpdateRequest]
+  ): Future[Un ] =
     lockAndSet(
-      ct.tweet.id,
-      insertTweetHandler(ct)
+      ct.t et. d,
+       nsertT etHandler(ct)
     ).flatMap { _ =>
-      initialTweetUpdateRequest match {
-        case Some(request) =>
+       n  alT etUpdateRequest match {
+        case So (request) =>
           lockAndSet(
-            request.initialTweetId,
-            updateTweetHandler(tweet => InitialTweetUpdate.updateTweet(tweet, request))
+            request. n  alT et d,
+            updateT etHandler(t et =>  n  alT etUpdate.updateT et(t et, request))
           )
         case None =>
-          Future.Unit
+          Future.Un 
       }
     }
 
   /**
-   * Writes a `deleted` tombstone to cache.  If `updateOnly` is true, then we only
-   * write the tombstone if the tweet is already in cache. If `isBounceDelete` we
-   * write a special bounce-deleted CachedTweet record to cache.
+   * Wr es a `deleted` tombstone to cac .   f `updateOnly`  s true, t n   only
+   * wr e t  tombstone  f t  t et  s already  n cac .  f ` sBounceDelete`  
+   * wr e a spec al bounce-deleted Cac dT et record to cac .
    */
-  def deleteTweet(tweetId: TweetId, updateOnly: Boolean, isBounceDelete: Boolean): Future[Unit] = {
-    // We only need to store a CachedTweet value the tweet is bounce-deleted to support rendering
-    // timeline tombstones for tweets that violated the Twitter Rules. see go/bounced-tweet
-    val cachedValue = if (isBounceDelete) {
-      found(toBounceDeletedCachedTweet(tweetId))
+  def deleteT et(t et d: T et d, updateOnly: Boolean,  sBounceDelete: Boolean): Future[Un ] = {
+    //   only need to store a Cac dT et value t  t et  s bounce-deleted to support render ng
+    // t  l ne tombstones for t ets that v olated t  Tw ter Rules. see go/bounced-t et
+    val cac dValue =  f ( sBounceDelete) {
+      found(toBounceDeletedCac dT et(t et d))
     } else {
-      writeThroughCached[CachedTweet](None, CachedValueStatus.Deleted)
+      wr eThroughCac d[Cac dT et](None, Cac dValueStatus.Deleted)
     }
 
-    val pickerHandler =
-      if (updateOnly) {
-        deleteTweetUpdateOnlyHandler(cachedValue)
+    val p ckerHandler =
+       f (updateOnly) {
+        deleteT etUpdateOnlyHandler(cac dValue)
       } else {
-        deleteTweetHandler(cachedValue)
+        deleteT etHandler(cac dValue)
       }
 
-    lockAndSet(tweetId, pickerHandler)
+    lockAndSet(t et d, p ckerHandler)
   }
 
-  def undeleteTweet(ct: CachedTweet): Future[Unit] =
+  def undeleteT et(ct: Cac dT et): Future[Un ] =
     lockAndSet(
-      ct.tweet.id,
-      insertTweetHandler(ct)
+      ct.t et. d,
+       nsertT etHandler(ct)
     )
 
-  def setAdditionalFields(tweet: Tweet): Future[Unit] =
-    lockAndSet(tweet.id, setFieldsHandler(AdditionalFields.additionalFields(tweet)))
+  def setAdd  onalF elds(t et: T et): Future[Un ] =
+    lockAndSet(t et. d, setF eldsHandler(Add  onalF elds.add  onalF elds(t et)))
 
-  def deleteAdditionalFields(tweetId: TweetId, fieldIds: Seq[FieldId]): Future[Unit] =
-    lockAndSet(tweetId, deleteFieldsHandler(fieldIds))
+  def deleteAdd  onalF elds(t et d: T et d, f eld ds: Seq[F eld d]): Future[Un ] =
+    lockAndSet(t et d, deleteF eldsHandler(f eld ds))
 
-  def scrubGeo(tweetIds: Seq[TweetId]): Future[Unit] =
-    Future.join {
-      tweetIds.map { id =>
-        // First, attempt to modify any tweets that are in cache to
-        // avoid having to reload the cached tweet from storage.
-        lockAndSet(id, scrubGeoHandler).unit.rescue {
-          case _: OptimisticLockingCache.LockAndSetFailure =>
-            // If the modification fails, then remove whatever is in
-            // cache. This is much more likely to succeed because it
-            // does not require multiple successful requests to cache.
-            // This will force the tweet to be loaded from storage the
-            // next time it is requested, and the stored tweet will have
-            // the geo information removed.
+  def scrubGeo(t et ds: Seq[T et d]): Future[Un ] =
+    Future.jo n {
+      t et ds.map {  d =>
+        // F rst, attempt to mod fy any t ets that are  n cac  to
+        // avo d hav ng to reload t  cac d t et from storage.
+        lockAndSet( d, scrubGeoHandler).un .rescue {
+          case _: Opt m st cLock ngCac .LockAndSetFa lure =>
+            //  f t  mod f cat on fa ls, t n remove whatever  s  n
+            // cac . T   s much more l kely to succeed because  
+            // does not requ re mult ple successful requests to cac .
+            // T  w ll force t  t et to be loaded from storage t 
+            // next t      s requested, and t  stored t et w ll have
+            // t  geo  nformat on removed.
             //
-            // This eviction path was added due to frequent failures of
-            // the in-place modification code path, causing geoscrub
-            // daemon tasks to fail.
-            evictOne(tweetKeyFactory.fromId(id), evictionRetries)
+            // T  ev ct on path was added due to frequent fa lures of
+            // t   n-place mod f cat on code path, caus ng geoscrub
+            // daemon tasks to fa l.
+            ev ctOne(t etKeyFactory.from d( d), ev ct onRetr es)
         }
       }
     }
 
-  def takedown(tweet: Tweet): Future[Unit] =
-    lockAndSet(tweet.id, updateCachedTweetHandler(copyTakedownFieldsForUpdate(tweet)))
+  def takedown(t et: T et): Future[Un ] =
+    lockAndSet(t et. d, updateCac dT etHandler(copyTakedownF eldsForUpdate(t et)))
 
-  def updatePossiblySensitive(tweet: Tweet): Future[Unit] =
-    lockAndSet(tweet.id, updateTweetHandler(copyNsfwFieldsForUpdate(tweet)))
+  def updatePoss blySens  ve(t et: T et): Future[Un ] =
+    lockAndSet(t et. d, updateT etHandler(copyNsfwF eldsForUpdate(t et)))
 
-  def flushTweets(tweetIds: Seq[TweetId], logExisting: Boolean = false): Future[Unit] = {
-    val tweetKeys = tweetIds.map(tweetKeyFactory.fromId)
+  def flushT ets(t et ds: Seq[T et d], logEx st ng: Boolean = false): Future[Un ] = {
+    val t etKeys = t et ds.map(t etKeyFactory.from d)
 
-    Future.when(logExisting) { logExistingValues(tweetKeys) }.ensure {
-      evictAll(tweetKeys)
+    Future.w n(logEx st ng) { logEx st ngValues(t etKeys) }.ensure {
+      ev ctAll(t etKeys)
     }
   }
 
   /**
-   * A LockingCache.Handler that inserts a tweet into cache.
+   * A Lock ngCac .Handler that  nserts a t et  nto cac .
    */
-  private def insertTweetHandler(newValue: CachedTweet): Handler[Cached[CachedTweet]] =
-    AlwaysSetHandler(Some(writeThroughCached(Some(newValue), CachedValueStatus.Found)))
+  pr vate def  nsertT etHandler(newValue: Cac dT et): Handler[Cac d[Cac dT et]] =
+    AlwaysSetHandler(So (wr eThroughCac d(So (newValue), Cac dValueStatus.Found)))
 
-  private def foundAndNotBounced(c: Cached[CachedTweet]) =
-    c.status == CachedValueStatus.Found && !isBounceDeleted(c)
+  pr vate def foundAndNotBounced(c: Cac d[Cac dT et]) =
+    c.status == Cac dValueStatus.Found && ! sBounceDeleted(c)
 
   /**
-   * A LockingCache.Handler that updates an existing CachedTweet in cache.
+   * A Lock ngCac .Handler that updates an ex st ng Cac dT et  n cac .
    */
-  private def updateTweetHandler(update: Tweet => Tweet): CachedTweetHandler =
-    inCache =>
+  pr vate def updateT etHandler(update: T et => T et): Cac dT etHandler =
+     nCac  =>
       for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedTweet = update(cachedTweet.tweet)
-      } yield found(cachedTweet.copy(tweet = updatedTweet))
+        cac d <-  nCac .f lter(foundAndNotBounced)
+        cac dT et <- cac d.value
+        updatedT et = update(cac dT et.t et)
+      } y eld found(cac dT et.copy(t et = updatedT et))
 
   /**
-   * A LockingCache.Handler that updates an existing CachedTweet in cache.
+   * A Lock ngCac .Handler that updates an ex st ng Cac dT et  n cac .
    */
-  private def updateCachedTweetHandler(update: CachedTweet => CachedTweet): CachedTweetHandler =
-    inCache =>
+  pr vate def updateCac dT etHandler(update: Cac dT et => Cac dT et): Cac dT etHandler =
+     nCac  =>
       for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedCachedTweet = update(cachedTweet)
-      } yield found(updatedCachedTweet)
+        cac d <-  nCac .f lter(foundAndNotBounced)
+        cac dT et <- cac d.value
+        updatedCac dT et = update(cac dT et)
+      } y eld found(updatedCac dT et)
 
-  private def deleteTweetHandler(value: Cached[CachedTweet]): CachedTweetHandler =
-    PickingHandler(value, preferNewestPicker)
+  pr vate def deleteT etHandler(value: Cac d[Cac dT et]): Cac dT etHandler =
+    P ck ngHandler(value, preferNe stP cker)
 
-  private def deleteTweetUpdateOnlyHandler(value: Cached[CachedTweet]): CachedTweetHandler =
-    UpdateOnlyPickingHandler(value, preferNewestPicker)
+  pr vate def deleteT etUpdateOnlyHandler(value: Cac d[Cac dT et]): Cac dT etHandler =
+    UpdateOnlyP ck ngHandler(value, preferNe stP cker)
 
-  private def setFieldsHandler(additional: Seq[TFieldBlob]): CachedTweetHandler =
-    inCache =>
+  pr vate def setF eldsHandler(add  onal: Seq[TF eldBlob]): Cac dT etHandler =
+     nCac  =>
       for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedTweet = AdditionalFields.setAdditionalFields(cachedTweet.tweet, additional)
-        updatedCachedTweet = CachedTweet(updatedTweet)
-      } yield found(updatedCachedTweet)
+        cac d <-  nCac .f lter(foundAndNotBounced)
+        cac dT et <- cac d.value
+        updatedT et = Add  onalF elds.setAdd  onalF elds(cac dT et.t et, add  onal)
+        updatedCac dT et = Cac dT et(updatedT et)
+      } y eld found(updatedCac dT et)
 
-  private def deleteFieldsHandler(fieldIds: Seq[FieldId]): CachedTweetHandler =
-    inCache =>
+  pr vate def deleteF eldsHandler(f eld ds: Seq[F eld d]): Cac dT etHandler =
+     nCac  =>
       for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedTweet = AdditionalFields.unsetFields(cachedTweet.tweet, fieldIds)
-        scrubbedCachedTweet = cachedTweet.copy(tweet = updatedTweet)
-      } yield found(scrubbedCachedTweet)
+        cac d <-  nCac .f lter(foundAndNotBounced)
+        cac dT et <- cac d.value
+        updatedT et = Add  onalF elds.unsetF elds(cac dT et.t et, f eld ds)
+        scrubbedCac dT et = cac dT et.copy(t et = updatedT et)
+      } y eld found(scrubbedCac dT et)
 
-  private val scrubGeoHandler: CachedTweetHandler =
-    inCache =>
+  pr vate val scrubGeoHandler: Cac dT etHandler =
+     nCac  =>
       for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        tweet = cachedTweet.tweet
-        coreData <- tweet.coreData if hasGeo(tweet)
-        scrubbedCoreData = coreData.copy(coordinates = None, placeId = None)
-        scrubbedTweet = tweet.copy(coreData = Some(scrubbedCoreData), place = None)
-        scrubbedCachedTweet = cachedTweet.copy(tweet = scrubbedTweet)
-      } yield found(scrubbedCachedTweet)
+        cac d <-  nCac .f lter(foundAndNotBounced)
+        cac dT et <- cac d.value
+        t et = cac dT et.t et
+        coreData <- t et.coreData  f hasGeo(t et)
+        scrubbedCoreData = coreData.copy(coord nates = None, place d = None)
+        scrubbedT et = t et.copy(coreData = So (scrubbedCoreData), place = None)
+        scrubbedCac dT et = cac dT et.copy(t et = scrubbedT et)
+      } y eld found(scrubbedCac dT et)
 
-  private def evictOne(key: TweetKey, tries: Int): Future[Int] =
-    tweetCache.delete(key).transform {
-      case Throw(_) if tries > 1 => evictOne(key, tries - 1)
+  pr vate def ev ctOne(key: T etKey, tr es:  nt): Future[ nt] =
+    t etCac .delete(key).transform {
+      case Throw(_)  f tr es > 1 => ev ctOne(key, tr es - 1)
       case Throw(_) => Future.value(1)
       case Return(_) => Future.value(0)
     }
 
-  private def evictAll(keys: Seq[TweetKey]): Future[Unit] =
+  pr vate def ev ctAll(keys: Seq[T etKey]): Future[Un ] =
     Future
       .collect {
-        keys.map(evictOne(_, evictionRetries))
+        keys.map(ev ctOne(_, ev ct onRetr es))
       }
-      .onSuccess { (failures: Seq[Int]) => evictionFailedCounter.incr(failures.sum) }
-      .unit
+      .onSuccess { (fa lures: Seq[ nt]) => ev ct onFa ledCounter. ncr(fa lures.sum) }
+      .un 
 
-  private def logExistingValues(keys: Seq[TweetKey]): Future[Unit] =
-    tweetCache
+  pr vate def logEx st ngValues(keys: Seq[T etKey]): Future[Un ] =
+    t etCac 
       .get(keys)
-      .map { existing =>
+      .map { ex st ng =>
         for {
-          (key, cached) <- existing.found
-          cachedTweet <- cached.value
-          tweet = cachedTweet.tweet
-        } yield {
-          cacheFlushesLog.info(
-            mapper.writeValueAsString(
+          (key, cac d) <- ex st ng.found
+          cac dT et <- cac d.value
+          t et = cac dT et.t et
+        } y eld {
+          cac Flus sLog. nfo(
+            mapper.wr eValueAsStr ng(
               Map(
                 "key" -> key,
-                "tweet_id" -> tweet.id,
-                "tweet" -> DiffShow.show(tweet)
+                "t et_ d" -> t et. d,
+                "t et" -> D ffShow.show(t et)
               )
             )
           )
         }
       }
-      .unit
+      .un 
 
-  private def found(value: CachedTweet): Cached[CachedTweet] =
-    writeThroughCached(Some(value), CachedValueStatus.Found)
+  pr vate def found(value: Cac dT et): Cac d[Cac dT et] =
+    wr eThroughCac d(So (value), Cac dValueStatus.Found)
 
-  private def writeThroughCached[V](value: Option[V], status: CachedValueStatus): Cached[V] = {
-    val now = Time.now
-    Cached(value, status, now, None, Some(now))
+  pr vate def wr eThroughCac d[V](value: Opt on[V], status: Cac dValueStatus): Cac d[V] = {
+    val now = T  .now
+    Cac d(value, status, now, None, So (now))
   }
 
-  private def lockAndSet(tweetId: TweetId, handler: LockingCache.Handler[Cached[CachedTweet]]) =
-    tweetCache.lockAndSet(tweetKeyFactory.fromId(tweetId), handler).unit
+  pr vate def lockAndSet(t et d: T et d, handler: Lock ngCac .Handler[Cac d[Cac dT et]]) =
+    t etCac .lockAndSet(t etKeyFactory.from d(t et d), handler).un 
 }

@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.thriftscala.MentionEntity
-import com.twitter.tweetypie.unmentions.thriftscala.UnmentionData
+ mport com.tw ter.t etyp e.core.ValueState
+ mport com.tw ter.t etyp e.thr ftscala. nt onEnt y
+ mport com.tw ter.t etyp e.un nt ons.thr ftscala.Un nt onData
 
-object UnmentionDataHydrator {
-  type Type = ValueHydrator[Option[UnmentionData], Ctx]
+object Un nt onDataHydrator {
+  type Type = ValueHydrator[Opt on[Un nt onData], Ctx]
 
   case class Ctx(
-    conversationId: Option[TweetId],
-    mentions: Seq[MentionEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    conversat on d: Opt on[T et d],
+     nt ons: Seq[ nt onEnt y],
+    underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
   def apply(): Type = {
-    ValueHydrator.map[Option[UnmentionData], Ctx] { (_, ctx) =>
-      val mentionedUserIds: Seq[UserId] = ctx.mentions.flatMap(_.userId)
+    ValueHydrator.map[Opt on[Un nt onData], Ctx] { (_, ctx) =>
+      val  nt onedUser ds: Seq[User d] = ctx. nt ons.flatMap(_.user d)
 
-      ValueState.modified(
-        Some(UnmentionData(ctx.conversationId, Option(mentionedUserIds).filter(_.nonEmpty)))
+      ValueState.mod f ed(
+        So (Un nt onData(ctx.conversat on d, Opt on( nt onedUser ds).f lter(_.nonEmpty)))
       )
     }
-  }.onlyIf { (_, ctx) =>
-    ctx.tweetFieldRequested(Tweet.UnmentionDataField)
+  }.only f { (_, ctx) =>
+    ctx.t etF eldRequested(T et.Un nt onDataF eld)
   }
 }

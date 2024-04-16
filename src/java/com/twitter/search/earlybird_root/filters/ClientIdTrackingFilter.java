@@ -1,148 +1,148 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.ConcurrentMap;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchQueryUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.cl entstats.RequestCounters;
+ mport com.tw ter.search.common.cl entstats.RequestCountersEventL stener;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Thr ftSearchQueryUt l;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.ut l.Future;
 
-/** Tracks the number of queries we get from each client. */
-public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  // Be careful when changing the names of these stats or adding new ones: make sure that they have
-  // prefixes/suffixes that will allow us to group them in Viz, without pulling in other stats.
-  // For example, we'll probably have a Viz graph for client_id_tracker_qps_for_client_id_*_all.
-  // So if you add a new stat named client_id_tracker_qps_for_client_id_%s_and_new_field_%s_all,
-  // then the graph will be grouping up the values from both stats, instead of grouping up the
-  // values only for client_id_tracker_qps_for_client_id_%s_all.
-  @VisibleForTesting
-  static final String QPS_ALL_STAT_PATTERN = "client_id_tracker_qps_for_%s_all";
+/** Tracks t  number of quer es   get from each cl ent. */
+publ c class Cl ent dTrack ngF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  // Be careful w n chang ng t  na s of t se stats or add ng new ones: make sure that t y have
+  // pref xes/suff xes that w ll allow us to group t m  n V z, w hout pull ng  n ot r stats.
+  // For example,  'll probably have a V z graph for cl ent_ d_tracker_qps_for_cl ent_ d_*_all.
+  // So  f   add a new stat na d cl ent_ d_tracker_qps_for_cl ent_ d_%s_and_new_f eld_%s_all,
+  // t n t  graph w ll be group ng up t  values from both stats,  nstead of group ng up t 
+  // values only for cl ent_ d_tracker_qps_for_cl ent_ d_%s_all.
+  @V s bleForTest ng
+  stat c f nal Str ng QPS_ALL_STAT_PATTERN = "cl ent_ d_tracker_qps_for_%s_all";
 
-  @VisibleForTesting
-  static final String QPS_LOGGED_IN_STAT_PATTERN = "client_id_tracker_qps_for_%s_logged_in";
+  @V s bleForTest ng
+  stat c f nal Str ng QPS_LOGGED_ N_STAT_PATTERN = "cl ent_ d_tracker_qps_for_%s_logged_ n";
 
-  @VisibleForTesting
-  static final String QPS_LOGGED_OUT_STAT_PATTERN = "client_id_tracker_qps_for_%s_logged_out";
+  @V s bleForTest ng
+  stat c f nal Str ng QPS_LOGGED_OUT_STAT_PATTERN = "cl ent_ d_tracker_qps_for_%s_logged_out";
 
-  static final String SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID =
-      "superroot_reject_requests_with_unknown_finagle_id";
+  stat c f nal Str ng SUPERROOT_REJECT_REQUESTS_W TH_UNKNOWN_F NAGLE_ D =
+      "superroot_reject_requests_w h_unknown_f nagle_ d";
 
-  static final String UNKNOWN_FINAGLE_ID_DEBUG_STRING = "Please specify a finagle client id.";
+  stat c f nal Str ng UNKNOWN_F NAGLE_ D_DEBUG_STR NG = "Please spec fy a f nagle cl ent  d.";
 
-  private final ConcurrentMap<String, RequestCounters> requestCountersByClientId =
+  pr vate f nal ConcurrentMap<Str ng, RequestCounters> requestCountersByCl ent d =
     new ConcurrentHashMap<>();
-  private final ConcurrentMap<Pair<String, String>, RequestCounters>
-      requestCountersByFinagleIdAndClientId = new ConcurrentHashMap<>();
-  private final Clock clock;
-  private final SearchDecider decider;
+  pr vate f nal ConcurrentMap<Pa r<Str ng, Str ng>, RequestCounters>
+      requestCountersByF nagle dAndCl ent d = new ConcurrentHashMap<>();
+  pr vate f nal Clock clock;
+  pr vate f nal SearchDec der dec der;
 
-  @Inject
-  public ClientIdTrackingFilter(SearchDecider decider) {
-    this(decider, Clock.SYSTEM_CLOCK);
+  @ nject
+  publ c Cl ent dTrack ngF lter(SearchDec der dec der) {
+    t (dec der, Clock.SYSTEM_CLOCK);
   }
 
-  @VisibleForTesting
-  ClientIdTrackingFilter(SearchDecider decider, Clock clock) {
-    this.decider = decider;
-    this.clock = clock;
+  @V s bleForTest ng
+  Cl ent dTrack ngF lter(SearchDec der dec der, Clock clock) {
+    t .dec der = dec der;
+    t .clock = clock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleId = FinagleUtil.getFinagleClientName();
-    boolean isLoggedIn = ThriftSearchQueryUtil.requestInitiatedByLoggedInUser(request);
-    incrementCounters(clientId, finagleId, isLoggedIn);
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    Str ng cl ent d = Cl ent dUt l.getCl ent dFromRequest(request);
+    Str ng f nagle d = F nagleUt l.getF nagleCl entNa ();
+    boolean  sLogged n = Thr ftSearchQueryUt l.request n  atedByLogged nUser(request);
+     ncre ntCounters(cl ent d, f nagle d,  sLogged n);
 
-    if (decider.isAvailable(SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID)
-        && finagleId.equals(FinagleUtil.UNKNOWN_CLIENT_NAME)) {
-      EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
-          .setDebugString(UNKNOWN_FINAGLE_ID_DEBUG_STRING);
+     f (dec der. sAva lable(SUPERROOT_REJECT_REQUESTS_W TH_UNKNOWN_F NAGLE_ D)
+        && f nagle d.equals(F nagleUt l.UNKNOWN_CL ENT_NAME)) {
+      Earlyb rdResponse response = new Earlyb rdResponse(
+          Earlyb rdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+          .setDebugStr ng(UNKNOWN_F NAGLE_ D_DEBUG_STR NG);
       return Future.value(response);
     }
 
-    RequestCounters clientCounters = getClientCounters(clientId);
-    RequestCountersEventListener<EarlybirdResponse> clientCountersEventListener =
-        new RequestCountersEventListener<>(
-            clientCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
-    RequestCounters finagleIdAndClientCounters = getFinagleIdClientCounters(clientId, finagleId);
-    RequestCountersEventListener<EarlybirdResponse> finagleIdAndClientCountersEventListener =
-        new RequestCountersEventListener<>(
-            finagleIdAndClientCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
+    RequestCounters cl entCounters = getCl entCounters(cl ent d);
+    RequestCountersEventL stener<Earlyb rdResponse> cl entCountersEventL stener =
+        new RequestCountersEventL stener<>(
+            cl entCounters, clock, Earlyb rdSuccessfulResponseHandler. NSTANCE);
+    RequestCounters f nagle dAndCl entCounters = getF nagle dCl entCounters(cl ent d, f nagle d);
+    RequestCountersEventL stener<Earlyb rdResponse> f nagle dAndCl entCountersEventL stener =
+        new RequestCountersEventL stener<>(
+            f nagle dAndCl entCounters, clock, Earlyb rdSuccessfulResponseHandler. NSTANCE);
 
-    return service.apply(request)
-        .addEventListener(clientCountersEventListener)
-        .addEventListener(finagleIdAndClientCountersEventListener);
+    return serv ce.apply(request)
+        .addEventL stener(cl entCountersEventL stener)
+        .addEventL stener(f nagle dAndCl entCountersEventL stener);
   }
 
-  // Returns the RequestCounters instance tracking the requests from the given client ID.
-  private RequestCounters getClientCounters(String clientId) {
-    RequestCounters clientCounters = requestCountersByClientId.get(clientId);
-    if (clientCounters == null) {
-      clientCounters = new RequestCounters(ClientIdUtil.formatClientId(clientId));
-      RequestCounters existingCounters =
-        requestCountersByClientId.putIfAbsent(clientId, clientCounters);
-      if (existingCounters != null) {
-        clientCounters = existingCounters;
+  // Returns t  RequestCounters  nstance track ng t  requests from t  g ven cl ent  D.
+  pr vate RequestCounters getCl entCounters(Str ng cl ent d) {
+    RequestCounters cl entCounters = requestCountersByCl ent d.get(cl ent d);
+     f (cl entCounters == null) {
+      cl entCounters = new RequestCounters(Cl ent dUt l.formatCl ent d(cl ent d));
+      RequestCounters ex st ngCounters =
+        requestCountersByCl ent d.put fAbsent(cl ent d, cl entCounters);
+       f (ex st ngCounters != null) {
+        cl entCounters = ex st ngCounters;
       }
     }
-    return clientCounters;
+    return cl entCounters;
   }
 
-  // Returns the RequestCounters instance tracking the requests from the given client ID.
-  private RequestCounters getFinagleIdClientCounters(String clientId, String finagleId) {
-    Pair<String, String> clientKey = Pair.of(clientId, finagleId);
-    RequestCounters counters = requestCountersByFinagleIdAndClientId.get(clientKey);
-    if (counters == null) {
-      counters = new RequestCounters(ClientIdUtil.formatFinagleClientIdAndClientId(
-          finagleId, clientId));
-      RequestCounters existingCounters = requestCountersByFinagleIdAndClientId.putIfAbsent(
-          clientKey, counters);
-      if (existingCounters != null) {
-        counters = existingCounters;
+  // Returns t  RequestCounters  nstance track ng t  requests from t  g ven cl ent  D.
+  pr vate RequestCounters getF nagle dCl entCounters(Str ng cl ent d, Str ng f nagle d) {
+    Pa r<Str ng, Str ng> cl entKey = Pa r.of(cl ent d, f nagle d);
+    RequestCounters counters = requestCountersByF nagle dAndCl ent d.get(cl entKey);
+     f (counters == null) {
+      counters = new RequestCounters(Cl ent dUt l.formatF nagleCl ent dAndCl ent d(
+          f nagle d, cl ent d));
+      RequestCounters ex st ngCounters = requestCountersByF nagle dAndCl ent d.put fAbsent(
+          cl entKey, counters);
+       f (ex st ngCounters != null) {
+        counters = ex st ngCounters;
       }
     }
     return counters;
   }
 
-  // Increments the correct counters, based on the given clientId, finagleId, and whether or not the
-  // request came from a logged in user.
-  private static void incrementCounters(String clientId, String finagleId, boolean isLoggedIn) {
-    String clientIdForStats = ClientIdUtil.formatClientId(clientId);
-    String finagleClientIdAndClientIdForStats =
-      ClientIdUtil.formatFinagleClientIdAndClientId(finagleId, clientId);
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, clientIdForStats)).increment();
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-      .increment();
-    if (isLoggedIn) {
-      SearchCounter.export(String.format(QPS_LOGGED_IN_STAT_PATTERN, clientIdForStats)).increment();
+  //  ncre nts t  correct counters, based on t  g ven cl ent d, f nagle d, and w t r or not t 
+  // request ca  from a logged  n user.
+  pr vate stat c vo d  ncre ntCounters(Str ng cl ent d, Str ng f nagle d, boolean  sLogged n) {
+    Str ng cl ent dForStats = Cl ent dUt l.formatCl ent d(cl ent d);
+    Str ng f nagleCl ent dAndCl ent dForStats =
+      Cl ent dUt l.formatF nagleCl ent dAndCl ent d(f nagle d, cl ent d);
+    SearchCounter.export(Str ng.format(QPS_ALL_STAT_PATTERN, cl ent dForStats)). ncre nt();
+    SearchCounter.export(Str ng.format(QPS_ALL_STAT_PATTERN, f nagleCl ent dAndCl ent dForStats))
+      . ncre nt();
+     f ( sLogged n) {
+      SearchCounter.export(Str ng.format(QPS_LOGGED_ N_STAT_PATTERN, cl ent dForStats)). ncre nt();
       SearchCounter.export(
-          String.format(QPS_LOGGED_IN_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-        .increment();
+          Str ng.format(QPS_LOGGED_ N_STAT_PATTERN, f nagleCl ent dAndCl ent dForStats))
+        . ncre nt();
     } else {
-      SearchCounter.export(String.format(QPS_LOGGED_OUT_STAT_PATTERN, clientIdForStats))
-        .increment();
+      SearchCounter.export(Str ng.format(QPS_LOGGED_OUT_STAT_PATTERN, cl ent dForStats))
+        . ncre nt();
       SearchCounter.export(
-          String.format(QPS_LOGGED_OUT_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-        .increment();
+          Str ng.format(QPS_LOGGED_OUT_STAT_PATTERN, f nagleCl ent dAndCl ent dForStats))
+        . ncre nt();
     }
   }
 }

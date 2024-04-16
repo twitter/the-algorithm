@@ -1,124 +1,124 @@
-package com.twitter.tweetypie.federated
+package com.tw ter.t etyp e.federated
 
-import com.twitter.ads.internal.pcl.service.CallbackPromotedContentLogger
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.scrooge.ThriftStructFieldInfo
-import com.twitter.servo.util.Gate
-import com.twitter.strato.catalog.Catalog
-import com.twitter.strato.client.Client
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.ThriftTweetService
-import com.twitter.tweetypie.Tweet
-import com.twitter.tweetypie.backends.Gizmoduck
-import com.twitter.tweetypie.federated.columns._
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRepositoryBuilder
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
-import com.twitter.tweetypie.repository.UnmentionInfoRepository
-import com.twitter.tweetypie.repository.VibeRepository
-import com.twitter.util.Activity
-import com.twitter.util.logging.Logger
+ mport com.tw ter.ads. nternal.pcl.serv ce.CallbackPromotedContentLogger
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.scrooge.Thr ftStructF eld nfo
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.strato.catalog.Catalog
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.t etyp e.Thr ftT etServ ce
+ mport com.tw ter.t etyp e.T et
+ mport com.tw ter.t etyp e.backends.G zmoduck
+ mport com.tw ter.t etyp e.federated.columns._
+ mport com.tw ter.t etyp e.federated.context.GetRequestContext
+ mport com.tw ter.t etyp e.federated.prefetc ddata.Prefetc dDataRepos oryBu lder
+ mport com.tw ter.t etyp e.federated.promotedcontent.T etPromotedContentLogger
+ mport com.tw ter.t etyp e.repos ory.Un nt on nfoRepos ory
+ mport com.tw ter.t etyp e.repos ory.V beRepos ory
+ mport com.tw ter.ut l.Act v y
+ mport com.tw ter.ut l.logg ng.Logger
 
-object StratoCatalogBuilder {
+object StratoCatalogBu lder {
 
   def catalog(
-    thriftTweetService: ThriftTweetService,
-    stratoClient: Client,
-    getUserResultsById: Gizmoduck.GetById,
+    thr ftT etServ ce: Thr ftT etServ ce,
+    stratoCl ent: Cl ent,
+    getUserResultsBy d: G zmoduck.GetBy d,
     callbackPromotedContentLogger: CallbackPromotedContentLogger,
-    statsReceiver: StatsReceiver,
-    enableCommunityTweetCreatesDecider: Gate[Unit],
-  ): Activity[Catalog[StratoFed.Column]] = {
+    statsRece ver: StatsRece ver,
+    enableCommun yT etCreatesDec der: Gate[Un ],
+  ): Act v y[Catalog[StratoFed.Column]] = {
     val log = Logger(getClass)
 
     val getRequestContext = new GetRequestContext()
-    val prefetchedDataRepository =
-      PrefetchedDataRepositoryBuilder(getUserResultsById, statsReceiver)
-    val unmentionInfoRepository = UnmentionInfoRepository(stratoClient)
-    val vibeRepository = VibeRepository(stratoClient)
+    val prefetc dDataRepos ory =
+      Prefetc dDataRepos oryBu lder(getUserResultsBy d, statsRece ver)
+    val un nt on nfoRepos ory = Un nt on nfoRepos ory(stratoCl ent)
+    val v beRepos ory = V beRepos ory(stratoCl ent)
 
-    val tweetPromotedContentLogger =
-      TweetPromotedContentLogger(callbackPromotedContentLogger)
+    val t etPromotedContentLogger =
+      T etPromotedContentLogger(callbackPromotedContentLogger)
 
-    // A stitch group builder to be used for Federated Field Column requests. The handler must be the same across
-    // all Federated Field Columns to ensure requests are batched across columns for different fields
-    val federatedFieldGroupBuilder: FederatedFieldGroupBuilder.Type = FederatedFieldGroupBuilder(
-      thriftTweetService.getTweetFields)
+    // A st ch group bu lder to be used for Federated F eld Column requests. T  handler must be t  sa  across
+    // all Federated F eld Columns to ensure requests are batc d across columns for d fferent f elds
+    val federatedF eldGroupBu lder: FederatedF eldGroupBu lder.Type = FederatedF eldGroupBu lder(
+      thr ftT etServ ce.getT etF elds)
 
     val columns: Seq[StratoFed.Column] = Seq(
-      new UnretweetColumn(
-        thriftTweetService.unretweet,
+      new Unret etColumn(
+        thr ftT etServ ce.unret et,
         getRequestContext,
       ),
-      new CreateRetweetColumn(
-        thriftTweetService.postRetweet,
+      new CreateRet etColumn(
+        thr ftT etServ ce.postRet et,
         getRequestContext,
-        prefetchedDataRepository,
-        tweetPromotedContentLogger,
-        statsReceiver
+        prefetc dDataRepos ory,
+        t etPromotedContentLogger,
+        statsRece ver
       ),
-      new CreateTweetColumn(
-        thriftTweetService.postTweet,
+      new CreateT etColumn(
+        thr ftT etServ ce.postT et,
         getRequestContext,
-        prefetchedDataRepository,
-        unmentionInfoRepository,
-        vibeRepository,
-        tweetPromotedContentLogger,
-        statsReceiver,
-        enableCommunityTweetCreatesDecider,
+        prefetc dDataRepos ory,
+        un nt on nfoRepos ory,
+        v beRepos ory,
+        t etPromotedContentLogger,
+        statsRece ver,
+        enableCommun yT etCreatesDec der,
       ),
-      new DeleteTweetColumn(
-        thriftTweetService.deleteTweets,
+      new DeleteT etColumn(
+        thr ftT etServ ce.deleteT ets,
         getRequestContext,
       ),
-      new GetTweetFieldsColumn(thriftTweetService.getTweetFields, statsReceiver),
-      new GetStoredTweetsColumn(thriftTweetService.getStoredTweets),
-      new GetStoredTweetsByUserColumn(thriftTweetService.getStoredTweetsByUser)
+      new GetT etF eldsColumn(thr ftT etServ ce.getT etF elds, statsRece ver),
+      new GetStoredT etsColumn(thr ftT etServ ce.getStoredT ets),
+      new GetStoredT etsByUserColumn(thr ftT etServ ce.getStoredT etsByUser)
     )
 
-    // Gather tweet field ids that are eligible to be federated field columns
-    val federatedFieldInfos =
-      Tweet.fieldInfos
-        .filter((info: ThriftStructFieldInfo) =>
-          FederatedFieldColumn.isFederatedField(info.tfield.id))
+    // Gat r t et f eld  ds that are el g ble to be federated f eld columns
+    val federatedF eld nfos =
+      T et.f eld nfos
+        .f lter(( nfo: Thr ftStructF eld nfo) =>
+          FederatedF eldColumn. sFederatedF eld( nfo.tf eld. d))
 
-    // Instantiate the federated field columns
-    val federatedFieldColumns: Seq[FederatedFieldColumn] =
-      federatedFieldInfos.map { fieldInfo: ThriftStructFieldInfo =>
-        val path = FederatedFieldColumn.makeColumnPath(fieldInfo.tfield)
-        val stratoType = ScroogeConv.typeOfFieldInfo(fieldInfo)
-        log.info(f"creating federated column: $path")
-        new FederatedFieldColumn(
-          federatedFieldGroupBuilder,
-          thriftTweetService.setAdditionalFields,
+    //  nstant ate t  federated f eld columns
+    val federatedF eldColumns: Seq[FederatedF eldColumn] =
+      federatedF eld nfos.map { f eld nfo: Thr ftStructF eld nfo =>
+        val path = FederatedF eldColumn.makeColumnPath(f eld nfo.tf eld)
+        val stratoType = ScroogeConv.typeOfF eld nfo(f eld nfo)
+        log. nfo(f"creat ng federated column: $path")
+        new FederatedF eldColumn(
+          federatedF eldGroupBu lder,
+          thr ftT etServ ce.setAdd  onalF elds,
           stratoType,
-          fieldInfo.tfield,
+          f eld nfo.tf eld,
         )
       }
 
-    // Instantiate the federated V1 field columns
-    val federatedV1FieldColumns: Seq[FederatedFieldColumn] =
-      federatedFieldInfos
-        .filter(f => FederatedFieldColumn.isMigrationFederatedField(f.tfield))
-        .map { fieldInfo: ThriftStructFieldInfo =>
-          val v1Path = FederatedFieldColumn.makeV1ColumnPath(fieldInfo.tfield)
-          val stratoType = ScroogeConv.typeOfFieldInfo(fieldInfo)
-          log.info(f"creating V1 federated column: $v1Path")
-          new FederatedFieldColumn(
-            federatedFieldGroupBuilder,
-            thriftTweetService.setAdditionalFields,
+    //  nstant ate t  federated V1 f eld columns
+    val federatedV1F eldColumns: Seq[FederatedF eldColumn] =
+      federatedF eld nfos
+        .f lter(f => FederatedF eldColumn. sM grat onFederatedF eld(f.tf eld))
+        .map { f eld nfo: Thr ftStructF eld nfo =>
+          val v1Path = FederatedF eldColumn.makeV1ColumnPath(f eld nfo.tf eld)
+          val stratoType = ScroogeConv.typeOfF eld nfo(f eld nfo)
+          log. nfo(f"creat ng V1 federated column: $v1Path")
+          new FederatedF eldColumn(
+            federatedF eldGroupBu lder,
+            thr ftT etServ ce.setAdd  onalF elds,
             stratoType,
-            fieldInfo.tfield,
-            Some(v1Path)
+            f eld nfo.tf eld,
+            So (v1Path)
           )
         }
 
-    // Combine the dynamic and hard coded federated columns
+    // Comb ne t  dynam c and hard coded federated columns
     val allColumns: Seq[StratoFed.Column] =
-      columns ++ federatedFieldColumns ++ federatedV1FieldColumns
+      columns ++ federatedF eldColumns ++ federatedV1F eldColumns
 
-    Activity.value(
+    Act v y.value(
       Catalog(
         allColumns.map { column =>
           column.path -> column

@@ -1,39 +1,39 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.ExperimentalNudge
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.SemanticCoreMisinformation
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.UnsafeUrl
-import com.twitter.visibility.common.LocalizedNudgeSource
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.SemanticCoreMisinformationLabelReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.UnsafeURLLabelReason
-import com.twitter.visibility.rules.LocalizedNudge
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType.Exper  ntalNudge
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType.Semant cCoreM s nformat on
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType.UnsafeUrl
+ mport com.tw ter.v s b l y.common.Local zedNudgeS ce
+ mport com.tw ter.v s b l y.common.act ons.T etV s b l yNudgeReason
+ mport com.tw ter.v s b l y.common.act ons.T etV s b l yNudgeReason.Exper  ntalNudgeSafetyLabelReason
+ mport com.tw ter.v s b l y.common.act ons.T etV s b l yNudgeReason.Semant cCoreM s nformat onLabelReason
+ mport com.tw ter.v s b l y.common.act ons.T etV s b l yNudgeReason.UnsafeURLLabelReason
+ mport com.tw ter.v s b l y.rules.Local zedNudge
 
-class TweetVisibilityNudgeSourceWrapper(localizedNudgeSource: LocalizedNudgeSource) {
+class T etV s b l yNudgeS ceWrapper(local zedNudgeS ce: Local zedNudgeS ce) {
 
-  def getLocalizedNudge(
-    reason: TweetVisibilityNudgeReason,
-    languageCode: String,
-    countryCode: Option[String]
-  ): Option[LocalizedNudge] =
+  def getLocal zedNudge(
+    reason: T etV s b l yNudgeReason,
+    languageCode: Str ng,
+    countryCode: Opt on[Str ng]
+  ): Opt on[Local zedNudge] =
     reason match {
-      case ExperimentalNudgeSafetyLabelReason =>
-        fetchNudge(ExperimentalNudge, languageCode, countryCode)
-      case SemanticCoreMisinformationLabelReason =>
-        fetchNudge(SemanticCoreMisinformation, languageCode, countryCode)
+      case Exper  ntalNudgeSafetyLabelReason =>
+        fetchNudge(Exper  ntalNudge, languageCode, countryCode)
+      case Semant cCoreM s nformat onLabelReason =>
+        fetchNudge(Semant cCoreM s nformat on, languageCode, countryCode)
       case UnsafeURLLabelReason =>
         fetchNudge(UnsafeUrl, languageCode, countryCode)
     }
 
-  private def fetchNudge(
+  pr vate def fetchNudge(
     safetyLabel: SafetyLabelType,
-    languageCode: String,
-    countryCode: Option[String]
-  ): Option[LocalizedNudge] = {
-    localizedNudgeSource
+    languageCode: Str ng,
+    countryCode: Opt on[Str ng]
+  ): Opt on[Local zedNudge] = {
+    local zedNudgeS ce
       .fetch(safetyLabel, languageCode, countryCode)
-      .map(LocalizedNudge.fromStratoThrift)
+      .map(Local zedNudge.fromStratoThr ft)
   }
 }

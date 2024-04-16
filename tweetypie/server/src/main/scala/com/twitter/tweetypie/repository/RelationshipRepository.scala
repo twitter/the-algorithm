@@ -1,53 +1,53 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.socialgraph.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.soc algraph.thr ftscala._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
 
-object RelationshipKey {
-  def blocks(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.Blocking)
+object Relat onsh pKey {
+  def blocks(s ce d: User d, dest nat on d: User d): Relat onsh pKey =
+    Relat onsh pKey(s ce d, dest nat on d, Relat onsh pType.Block ng)
 
-  def follows(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.Following)
+  def follows(s ce d: User d, dest nat on d: User d): Relat onsh pKey =
+    Relat onsh pKey(s ce d, dest nat on d, Relat onsh pType.Follow ng)
 
-  def mutes(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.Muting)
+  def mutes(s ce d: User d, dest nat on d: User d): Relat onsh pKey =
+    Relat onsh pKey(s ce d, dest nat on d, Relat onsh pType.Mut ng)
 
-  def reported(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.ReportedAsSpam)
+  def reported(s ce d: User d, dest nat on d: User d): Relat onsh pKey =
+    Relat onsh pKey(s ce d, dest nat on d, Relat onsh pType.ReportedAsSpam)
 }
 
-case class RelationshipKey(
-  sourceId: UserId,
-  destinationId: UserId,
-  relationship: RelationshipType) {
-  def asExistsRequest: ExistsRequest =
-    ExistsRequest(
-      source = sourceId,
-      target = destinationId,
-      relationships = Seq(Relationship(relationship))
+case class Relat onsh pKey(
+  s ce d: User d,
+  dest nat on d: User d,
+  relat onsh p: Relat onsh pType) {
+  def asEx stsRequest: Ex stsRequest =
+    Ex stsRequest(
+      s ce = s ce d,
+      target = dest nat on d,
+      relat onsh ps = Seq(Relat onsh p(relat onsh p))
     )
 }
 
-object RelationshipRepository {
-  type Type = RelationshipKey => Stitch[Boolean]
+object Relat onsh pRepos ory {
+  type Type = Relat onsh pKey => St ch[Boolean]
 
   def apply(
-    exists: FutureArrow[(Seq[ExistsRequest], Option[RequestContext]), Seq[ExistsResult]],
-    maxRequestSize: Int
+    ex sts: FutureArrow[(Seq[Ex stsRequest], Opt on[RequestContext]), Seq[Ex stsResult]],
+    maxRequestS ze:  nt
   ): Type = {
-    val relationshipGroup: SeqGroup[RelationshipKey, Boolean] =
-      new SeqGroup[RelationshipKey, Boolean] {
-        override def run(keys: Seq[RelationshipKey]): Future[Seq[Try[Boolean]]] =
-          LegacySeqGroup.liftToSeqTry(
-            exists((keys.map(_.asExistsRequest), None)).map(_.map(_.exists)))
-        override val maxSize: Int = maxRequestSize
+    val relat onsh pGroup: SeqGroup[Relat onsh pKey, Boolean] =
+      new SeqGroup[Relat onsh pKey, Boolean] {
+        overr de def run(keys: Seq[Relat onsh pKey]): Future[Seq[Try[Boolean]]] =
+          LegacySeqGroup.l ftToSeqTry(
+            ex sts((keys.map(_.asEx stsRequest), None)).map(_.map(_.ex sts)))
+        overr de val maxS ze:  nt = maxRequestS ze
       }
 
-    relationshipKey => Stitch.call(relationshipKey, relationshipGroup)
+    relat onsh pKey => St ch.call(relat onsh pKey, relat onsh pGroup)
   }
 }

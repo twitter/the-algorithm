@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+ mport java.ut l.Arrays;
+ mport java.ut l.Comparator;
+ mport java.ut l.Pr or yQueue;
 
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider.FacetLabelAccessor;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftFacetEarlyb rdSort ngMode;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetAccumulator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der.FacetLabelAccessor;
+ mport com.tw ter.search.core.earlyb rd.facets.Language togram;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
 
-public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
-  private static final int DEFAULT_HASH_SIZE = 4096;
+publ c class Hash ngAndPrun ngFacetAccumulator extends FacetAccumulator {
+  pr vate stat c f nal  nt DEFAULT_HASH_S ZE = 4096;
   /**
-   * 4 longs per entry accommodates long termIDs.
-   * Although entries could be encoded in 3 bytes, 4 ensures that no entry is split
-   * across cache lines.
+   * 4 longs per entry accommodates long term Ds.
+   * Although entr es could be encoded  n 3 bytes, 4 ensures that no entry  s spl 
+   * across cac  l nes.
    */
-  protected static final int LONGS_PER_ENTRY = 4;
-  private static final double LOAD_FACTOR = 0.5;
-  private static final long BITSHIFT_MAX_TWEEPCRED = 32;
-  private static final long PENALTY_COUNT_MASK = (1L << BITSHIFT_MAX_TWEEPCRED) - 1;
+  protected stat c f nal  nt LONGS_PER_ENTRY = 4;
+  pr vate stat c f nal double LOAD_FACTOR = 0.5;
+  pr vate stat c f nal long B TSH FT_MAX_TWEEPCRED = 32;
+  pr vate stat c f nal long PENALTY_COUNT_MASK = (1L << B TSH FT_MAX_TWEEPCRED) - 1;
 
-  protected static final long UNASSIGNED = -1;
+  protected stat c f nal long UNASS GNED = -1;
 
-  protected LanguageHistogram languageHistogram = new LanguageHistogram();
+  protected Language togram language togram = new Language togram();
 
-  protected static final class HashTable {
-    protected final long[] hash;
-    protected final int size;
-    protected final int maxLoad;
-    protected final int mask;
+  protected stat c f nal class HashTable {
+    protected f nal long[] hash;
+    protected f nal  nt s ze;
+    protected f nal  nt maxLoad;
+    protected f nal  nt mask;
 
-    public HashTable(int size) {
-      hash = new long[LONGS_PER_ENTRY * size];
-      Arrays.fill(hash, UNASSIGNED);
-      this.size = size;
-      // Ensure alignment to LONGS_PER_ENTRY-byte boundaries
-      this.mask = LONGS_PER_ENTRY * (size - 1);
-      this.maxLoad = (int) (size * LOAD_FACTOR);
+    publ c HashTable( nt s ze) {
+      hash = new long[LONGS_PER_ENTRY * s ze];
+      Arrays.f ll(hash, UNASS GNED);
+      t .s ze = s ze;
+      // Ensure al gn nt to LONGS_PER_ENTRY-byte boundar es
+      t .mask = LONGS_PER_ENTRY * (s ze - 1);
+      t .maxLoad = ( nt) (s ze * LOAD_FACTOR);
     }
 
-    protected void reset() {
-      Arrays.fill(hash, UNASSIGNED);
+    protected vo d reset() {
+      Arrays.f ll(hash, UNASS GNED);
     }
 
-    private final Cursor cursor = new Cursor();
+    pr vate f nal Cursor cursor = new Cursor();
 
-    public int findHashPosition(long termID) {
-      int code = (new Long(termID)).hashCode();
-      int hashPos = code & mask;
+    publ c  nt f ndHashPos  on(long term D) {
+       nt code = (new Long(term D)).hashCode();
+       nt hashPos = code & mask;
 
-      if (cursor.readFromHash(hashPos) && (cursor.termID != termID)) {
-        final int inc = ((code >> 8) + code) | 1;
+       f (cursor.readFromHash(hashPos) && (cursor.term D != term D)) {
+        f nal  nt  nc = ((code >> 8) + code) | 1;
         do {
-          code += inc;
-          hashPos = code & this.mask;
-        } while (cursor.readFromHash(hashPos) && (cursor.termID != termID));
+          code +=  nc;
+          hashPos = code & t .mask;
+        } wh le (cursor.readFromHash(hashPos) && (cursor.term D != term D));
       }
 
       return hashPos;
     }
 
     /**
-     * The cursor can be used to access the different fields of a hash entry.
-     * Callers should always position the cursor with readFromHash() before
-     * accessing the members.
+     * T  cursor can be used to access t  d fferent f elds of a hash entry.
+     * Callers should always pos  on t  cursor w h readFromHash() before
+     * access ng t   mbers.
      */
-    private final class Cursor {
-      private int simpleCount;
-      private int weightedCount;
-      private int penaltyCount;
-      private int maxTweepcred;
-      private long termID;
+    pr vate f nal class Cursor {
+      pr vate  nt s mpleCount;
+      pr vate  nt   ghtedCount;
+      pr vate  nt penaltyCount;
+      pr vate  nt maxT epcred;
+      pr vate long term D;
 
-      public void writeToHash(int position) {
-        long payload = (((long) maxTweepcred) << BITSHIFT_MAX_TWEEPCRED)
+      publ c vo d wr eToHash( nt pos  on) {
+        long payload = (((long) maxT epcred) << B TSH FT_MAX_TWEEPCRED)
                        | ((long) penaltyCount);
 
-        assert itemPenaltyCount(payload) == penaltyCount : payload + ", "
-                      + itemPenaltyCount(payload) + " != " + penaltyCount;
-        assert itemMaxTweepCred(payload) == maxTweepcred;
+        assert  emPenaltyCount(payload) == penaltyCount : payload + ", "
+                      +  emPenaltyCount(payload) + " != " + penaltyCount;
+        assert  emMaxT epCred(payload) == maxT epcred;
 
-        hash[position] = termID;
-        hash[position + 1] = simpleCount;
-        hash[position + 2] = weightedCount;
-        hash[position + 3] = payload;
+        hash[pos  on] = term D;
+        hash[pos  on + 1] = s mpleCount;
+        hash[pos  on + 2] =   ghtedCount;
+        hash[pos  on + 3] = payload;
       }
 
-      /** Returns the item ID, or UNASSIGNED */
-      public boolean readFromHash(int position) {
-        long entry = hash[position];
-        if (entry == UNASSIGNED) {
-          termID = UNASSIGNED;
+      /** Returns t   em  D, or UNASS GNED */
+      publ c boolean readFromHash( nt pos  on) {
+        long entry = hash[pos  on];
+         f (entry == UNASS GNED) {
+          term D = UNASS GNED;
           return false;
         }
 
-        termID = entry;
+        term D = entry;
 
-        simpleCount = (int) hash[position + 1];
-        weightedCount = (int) hash[position + 2];
-        long payload = hash[position + 3];
+        s mpleCount = ( nt) hash[pos  on + 1];
+          ghtedCount = ( nt) hash[pos  on + 2];
+        long payload = hash[pos  on + 3];
 
-        penaltyCount = itemPenaltyCount(payload);
-        maxTweepcred = itemMaxTweepCred(payload);
+        penaltyCount =  emPenaltyCount(payload);
+        maxT epcred =  emMaxT epCred(payload);
 
         return true;
       }
     }
   }
 
-  protected static int itemPenaltyCount(long payload) {
-    return (int) (payload & PENALTY_COUNT_MASK);
+  protected stat c  nt  emPenaltyCount(long payload) {
+    return ( nt) (payload & PENALTY_COUNT_MASK);
   }
 
-  protected static int itemMaxTweepCred(long payload) {
-    return (int) (payload >>> BITSHIFT_MAX_TWEEPCRED);
+  protected stat c  nt  emMaxT epCred(long payload) {
+    return ( nt) (payload >>> B TSH FT_MAX_TWEEPCRED);
   }
 
-  protected int numItems;
-  protected final HashTable hashTable;
-  protected final long[] sortBuffer;
-  private FacetLabelProvider facetLabelProvider;
+  protected  nt num ems;
+  protected f nal HashTable hashTable;
+  protected f nal long[] sortBuffer;
+  pr vate FacetLabelProv der facetLabelProv der;
 
-  private int totalSimpleCount;
-  private int totalWeightedCount;
-  private int totalPenalty;
+  pr vate  nt totalS mpleCount;
+  pr vate  nt total  ghtedCount;
+  pr vate  nt totalPenalty;
 
-  static final double DEFAULT_QUERY_INDEPENDENT_PENALTY_WEIGHT = 1.0;
-  private final double queryIndependentPenaltyWeight;
+  stat c f nal double DEFAULT_QUERY_ NDEPENDENT_PENALTY_WE GHT = 1.0;
+  pr vate f nal double query ndependentPenalty  ght;
 
-  private final FacetComparator facetComparator;
+  pr vate f nal FacetComparator facetComparator;
 
-  public HashingAndPruningFacetAccumulator(FacetLabelProvider facetLabelProvider,
+  publ c Hash ngAndPrun ngFacetAccumulator(FacetLabelProv der facetLabelProv der,
           FacetComparator comparator) {
-    this(DEFAULT_HASH_SIZE, facetLabelProvider,
-            DEFAULT_QUERY_INDEPENDENT_PENALTY_WEIGHT, comparator);
+    t (DEFAULT_HASH_S ZE, facetLabelProv der,
+            DEFAULT_QUERY_ NDEPENDENT_PENALTY_WE GHT, comparator);
   }
 
-  public HashingAndPruningFacetAccumulator(FacetLabelProvider facetLabelProvider,
-          double queryIndependentPenaltyWeight, FacetComparator comparator) {
-    this(DEFAULT_HASH_SIZE, facetLabelProvider, queryIndependentPenaltyWeight, comparator);
+  publ c Hash ngAndPrun ngFacetAccumulator(FacetLabelProv der facetLabelProv der,
+          double query ndependentPenalty  ght, FacetComparator comparator) {
+    t (DEFAULT_HASH_S ZE, facetLabelProv der, query ndependentPenalty  ght, comparator);
   }
 
   /**
-   * Creates a new, empty HashingAndPruningFacetAccumulator with the given initial size.
-   * HashSize will be rounded up to the next power-of-2 value.
+   * Creates a new, empty Hash ngAndPrun ngFacetAccumulator w h t  g ven  n  al s ze.
+   * HashS ze w ll be rounded up to t  next po r-of-2 value.
    */
-  public HashingAndPruningFacetAccumulator(int hashSize, FacetLabelProvider facetLabelProvider,
-          double queryIndependentPenaltyWeight, FacetComparator comparator) {
-    int powerOfTwoSize = 2;
-    while (hashSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
+  publ c Hash ngAndPrun ngFacetAccumulator( nt hashS ze, FacetLabelProv der facetLabelProv der,
+          double query ndependentPenalty  ght, FacetComparator comparator) {
+     nt po rOfTwoS ze = 2;
+    wh le (hashS ze > po rOfTwoS ze) {
+      po rOfTwoS ze *= 2;
     }
 
-    this.facetComparator  = comparator;
-    hashTable = new HashTable(powerOfTwoSize);
-    sortBuffer = new long[LONGS_PER_ENTRY * (int) Math.ceil(LOAD_FACTOR * powerOfTwoSize)];
-    this.facetLabelProvider = facetLabelProvider;
-    this.queryIndependentPenaltyWeight = queryIndependentPenaltyWeight;
+    t .facetComparator  = comparator;
+    hashTable = new HashTable(po rOfTwoS ze);
+    sortBuffer = new long[LONGS_PER_ENTRY * ( nt) Math.ce l(LOAD_FACTOR * po rOfTwoS ze)];
+    t .facetLabelProv der = facetLabelProv der;
+    t .query ndependentPenalty  ght = query ndependentPenalty  ght;
   }
 
-  @Override
-  public void reset(FacetLabelProvider facetLabelProviderToReset) {
-    this.facetLabelProvider = facetLabelProviderToReset;
-    this.numItems = 0;
-    this.hashTable.reset();
-    this.totalSimpleCount = 0;
-    this.totalPenalty = 0;
-    this.totalWeightedCount = 0;
-    languageHistogram.clear();
+  @Overr de
+  publ c vo d reset(FacetLabelProv der facetLabelProv derToReset) {
+    t .facetLabelProv der = facetLabelProv derToReset;
+    t .num ems = 0;
+    t .hashTable.reset();
+    t .totalS mpleCount = 0;
+    t .totalPenalty = 0;
+    t .total  ghtedCount = 0;
+    language togram.clear();
   }
 
 
-  @Override
-  public int add(long termID, int weightedCounterIncrement, int penaltyIncrement, int tweepCred) {
-    int hashPos = hashTable.findHashPosition(termID);
+  @Overr de
+  publ c  nt add(long term D,  nt   ghtedCounter ncre nt,  nt penalty ncre nt,  nt t epCred) {
+     nt hashPos = hashTable.f ndHashPos  on(term D);
 
-    totalPenalty += penaltyIncrement;
-    totalSimpleCount++;
-    totalWeightedCount += weightedCounterIncrement;
+    totalPenalty += penalty ncre nt;
+    totalS mpleCount++;
+    total  ghtedCount +=   ghtedCounter ncre nt;
 
-    if (hashTable.cursor.termID == UNASSIGNED) {
-      hashTable.cursor.termID = termID;
-      hashTable.cursor.simpleCount = 1;
-      hashTable.cursor.weightedCount = weightedCounterIncrement;
-      hashTable.cursor.penaltyCount = penaltyIncrement;
-      hashTable.cursor.maxTweepcred = tweepCred;
-      hashTable.cursor.writeToHash(hashPos);
+     f (hashTable.cursor.term D == UNASS GNED) {
+      hashTable.cursor.term D = term D;
+      hashTable.cursor.s mpleCount = 1;
+      hashTable.cursor.  ghtedCount =   ghtedCounter ncre nt;
+      hashTable.cursor.penaltyCount = penalty ncre nt;
+      hashTable.cursor.maxT epcred = t epCred;
+      hashTable.cursor.wr eToHash(hashPos);
 
-      numItems++;
-      if (numItems >= hashTable.maxLoad) {
+      num ems++;
+       f (num ems >= hashTable.maxLoad) {
         prune();
       }
       return 1;
     } else {
 
-      hashTable.cursor.simpleCount++;
-      hashTable.cursor.weightedCount += weightedCounterIncrement;
+      hashTable.cursor.s mpleCount++;
+      hashTable.cursor.  ghtedCount +=   ghtedCounter ncre nt;
 
-      if (tweepCred > hashTable.cursor.maxTweepcred) {
-        hashTable.cursor.maxTweepcred = tweepCred;
+       f (t epCred > hashTable.cursor.maxT epcred) {
+        hashTable.cursor.maxT epcred = t epCred;
       }
 
-      hashTable.cursor.penaltyCount += penaltyIncrement;
-      hashTable.cursor.writeToHash(hashPos);
-      return hashTable.cursor.simpleCount;
+      hashTable.cursor.penaltyCount += penalty ncre nt;
+      hashTable.cursor.wr eToHash(hashPos);
+      return hashTable.cursor.s mpleCount;
     }
   }
 
-  @Override
-  public void recordLanguage(int languageId) {
-    languageHistogram.increment(languageId);
+  @Overr de
+  publ c vo d recordLanguage( nt language d) {
+    language togram. ncre nt(language d);
   }
 
-  @Override
-  public LanguageHistogram getLanguageHistogram() {
-    return languageHistogram;
+  @Overr de
+  publ c Language togram getLanguage togram() {
+    return language togram;
   }
 
-  private void prune() {
+  pr vate vo d prune() {
     copyToSortBuffer();
     hashTable.reset();
 
-    int targetNumItems = (int) (hashTable.maxLoad >> 1);
+     nt targetNum ems = ( nt) (hashTable.maxLoad >> 1);
 
-    int minCount = 2;
-    int nextMinCount = Integer.MAX_VALUE;
+     nt m nCount = 2;
+     nt nextM nCount =  nteger.MAX_VALUE;
 
-    final int n = LONGS_PER_ENTRY * numItems;
+    f nal  nt n = LONGS_PER_ENTRY * num ems;
 
-    while (numItems > targetNumItems) {
-      for (int i = 0; i < n; i += LONGS_PER_ENTRY) {
-        long item = sortBuffer[i];
-        if (item != UNASSIGNED) {
-          int count = (int) sortBuffer[i + 1];
-          if (count < minCount) {
-            evict(i);
-          } else if (count < nextMinCount) {
-            nextMinCount = count;
+    wh le (num ems > targetNum ems) {
+      for ( nt   = 0;   < n;   += LONGS_PER_ENTRY) {
+        long  em = sortBuffer[ ];
+         f ( em != UNASS GNED) {
+           nt count = ( nt) sortBuffer[  + 1];
+           f (count < m nCount) {
+            ev ct( );
+          } else  f (count < nextM nCount) {
+            nextM nCount = count;
           }
         }
       }
-      if (minCount == nextMinCount) {
-        minCount++;
+       f (m nCount == nextM nCount) {
+        m nCount++;
       } else {
-        minCount = nextMinCount;
+        m nCount = nextM nCount;
       }
-      nextMinCount = Integer.MAX_VALUE;
+      nextM nCount =  nteger.MAX_VALUE;
     }
 
     // rehash
-    for (int i = 0; i < n; i += LONGS_PER_ENTRY) {
-      long item = sortBuffer[i];
-      if (item != UNASSIGNED) {
-        final long termID = item;
-        int hashPos = hashTable.findHashPosition(termID);
-        for (int j = 0; j < LONGS_PER_ENTRY; ++j) {
-          hashTable.hash[hashPos + j] = sortBuffer[i + j];
+    for ( nt   = 0;   < n;   += LONGS_PER_ENTRY) {
+      long  em = sortBuffer[ ];
+       f ( em != UNASS GNED) {
+        f nal long term D =  em;
+         nt hashPos = hashTable.f ndHashPos  on(term D);
+        for ( nt j = 0; j < LONGS_PER_ENTRY; ++j) {
+          hashTable.hash[hashPos + j] = sortBuffer[  + j];
         }
       }
     }
   }
 
-  // overridable for unit test
-  protected void evict(int index) {
-    sortBuffer[index] = UNASSIGNED;
-    numItems--;
+  // overr dable for un  test
+  protected vo d ev ct( nt  ndex) {
+    sortBuffer[ ndex] = UNASS GNED;
+    num ems--;
   }
 
-  @Override
-  public ThriftFacetFieldResults getAllFacets() {
-    return getTopFacets(numItems);
+  @Overr de
+  publ c Thr ftFacetF eldResults getAllFacets() {
+    return getTopFacets(num ems);
   }
 
-  @Override
-  public ThriftFacetFieldResults getTopFacets(final int numRequested) {
-    int n = numRequested > numItems ? numItems : numRequested;
+  @Overr de
+  publ c Thr ftFacetF eldResults getTopFacets(f nal  nt numRequested) {
+     nt n = numRequested > num ems ? num ems : numRequested;
 
-    if (n == 0) {
+     f (n == 0) {
       return null;
     }
 
-    ThriftFacetFieldResults facetResults = new ThriftFacetFieldResults();
-    facetResults.setTotalCount(totalSimpleCount);
-    facetResults.setTotalScore(totalWeightedCount);
+    Thr ftFacetF eldResults facetResults = new Thr ftFacetF eldResults();
+    facetResults.setTotalCount(totalS mpleCount);
+    facetResults.setTotalScore(total  ghtedCount);
     facetResults.setTotalPenalty(totalPenalty);
 
     copyToSortBuffer();
 
-    // sort table using the facet comparator
-    PriorityQueue<Item> pq = new PriorityQueue<>(numItems, facetComparator.getComparator(true));
+    // sort table us ng t  facet comparator
+    Pr or yQueue< em> pq = new Pr or yQueue<>(num ems, facetComparator.getComparator(true));
 
-    for (int i = 0; i < LONGS_PER_ENTRY * numItems; i += LONGS_PER_ENTRY) {
-      pq.add(new Item(sortBuffer, i));
+    for ( nt   = 0;   < LONGS_PER_ENTRY * num ems;   += LONGS_PER_ENTRY) {
+      pq.add(new  em(sortBuffer,  ));
     }
 
-    FacetLabelAccessor accessor = facetLabelProvider.getLabelAccessor();
+    FacetLabelAccessor accessor = facetLabelProv der.getLabelAccessor();
 
-    for (int i = 0; i < n; i++) {
-      Item item = pq.poll();
-      long id = item.getTermId();
+    for ( nt   = 0;   < n;  ++) {
+       em  em = pq.poll();
+      long  d =  em.getTerm d();
 
-      int penalty = item.getPenaltyCount() + (int) (queryIndependentPenaltyWeight
-              * accessor.getOffensiveCount(id));
-      ThriftFacetCount result = new ThriftFacetCount().setFacetLabel(accessor.getTermText(id));
+       nt penalty =  em.getPenaltyCount() + ( nt) (query ndependentPenalty  ght
+              * accessor.getOffens veCount( d));
+      Thr ftFacetCount result = new Thr ftFacetCount().setFacetLabel(accessor.getTermText( d));
       result.setPenaltyCount(penalty);
-      result.setSimpleCount(item.getSimpleCount());
-      result.setWeightedCount(item.getWeightedCount());
-      result.setMetadata(new ThriftFacetCountMetadata().setMaxTweepCred(item.getMaxTweetCred()));
+      result.setS mpleCount( em.getS mpleCount());
+      result.set  ghtedCount( em.get  ghtedCount());
+      result.set tadata(new Thr ftFacetCount tadata().setMaxT epCred( em.getMaxT etCred()));
 
-      result.setFacetCount(result.getWeightedCount());
+      result.setFacetCount(result.get  ghtedCount());
       facetResults.addToTopFacets(result);
     }
 
     return facetResults;
   }
 
-  // Compacts the hashtable entries in place by removing empty hashes.  After
-  // this operation it's no longer a hash table but a array of entries.
-  private void copyToSortBuffer() {
-    int upto = 0;
+  // Compacts t  hashtable entr es  n place by remov ng empty has s.  After
+  // t  operat on  's no longer a hash table but a array of entr es.
+  pr vate vo d copyToSortBuffer() {
+     nt upto = 0;
 
-    for (int i = 0; i < hashTable.hash.length; i += LONGS_PER_ENTRY) {
-      if (hashTable.hash[i] != UNASSIGNED) {
-        for (int j = 0; j < LONGS_PER_ENTRY; ++j) {
-          sortBuffer[upto + j] = hashTable.hash[i + j];
+    for ( nt   = 0;   < hashTable.hash.length;   += LONGS_PER_ENTRY) {
+       f (hashTable.hash[ ] != UNASS GNED) {
+        for ( nt j = 0; j < LONGS_PER_ENTRY; ++j) {
+          sortBuffer[upto + j] = hashTable.hash[  + j];
         }
         upto += LONGS_PER_ENTRY;
       }
     }
-    assert upto == numItems * LONGS_PER_ENTRY;
+    assert upto == num ems * LONGS_PER_ENTRY;
   }
 
   /**
-   * Sorts facets in the following order:
-   * 1) ascending by weightedCount
-   * 2) if weightedCount equal: ascending by simpleCount
-   * 3) if weightedCount and simpleCount equal: descending by penaltyCount
+   * Sorts facets  n t  follow ng order:
+   * 1) ascend ng by   ghtedCount
+   * 2)  f   ghtedCount equal: ascend ng by s mpleCount
+   * 3)  f   ghtedCount and s mpleCount equal: descend ng by penaltyCount
    */
-  public static int compareFacetCounts(int weightedCount1, int simpleCount1, int penaltyCount1,
-                                       int weightedCount2, int simpleCount2, int penaltyCount2,
-                                       boolean simpleCountPrecedence) {
-    if (simpleCountPrecedence) {
-      if (simpleCount1 < simpleCount2) {
+  publ c stat c  nt compareFacetCounts( nt   ghtedCount1,  nt s mpleCount1,  nt penaltyCount1,
+                                        nt   ghtedCount2,  nt s mpleCount2,  nt penaltyCount2,
+                                       boolean s mpleCountPrecedence) {
+     f (s mpleCountPrecedence) {
+       f (s mpleCount1 < s mpleCount2) {
         return -1;
-      } else if (simpleCount1 > simpleCount2) {
+      } else  f (s mpleCount1 > s mpleCount2) {
         return 1;
       } else {
-        if (weightedCount1 < weightedCount2) {
+         f (  ghtedCount1 <   ghtedCount2) {
           return -1;
-        } else if (weightedCount1 > weightedCount2) {
+        } else  f (  ghtedCount1 >   ghtedCount2) {
           return 1;
         } else {
-          if (penaltyCount1 < penaltyCount2) {
-            // descending
+           f (penaltyCount1 < penaltyCount2) {
+            // descend ng
             return 1;
-          } else if (penaltyCount1 > penaltyCount2) {
+          } else  f (penaltyCount1 > penaltyCount2) {
             return -1;
           } else {
             return 0;
@@ -367,20 +367,20 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
         }
       }
     } else {
-      if (weightedCount1 < weightedCount2) {
+       f (  ghtedCount1 <   ghtedCount2) {
         return -1;
-      } else if (weightedCount1 > weightedCount2) {
+      } else  f (  ghtedCount1 >   ghtedCount2) {
         return 1;
       } else {
-        if (simpleCount1 < simpleCount2) {
+         f (s mpleCount1 < s mpleCount2) {
           return -1;
-        } else if (simpleCount1 > simpleCount2) {
+        } else  f (s mpleCount1 > s mpleCount2) {
           return 1;
         } else {
-          if (penaltyCount1 < penaltyCount2) {
-            // descending
+           f (penaltyCount1 < penaltyCount2) {
+            // descend ng
             return 1;
-          } else if (penaltyCount1 > penaltyCount2) {
+          } else  f (penaltyCount1 > penaltyCount2) {
             return -1;
           } else {
             return 0;
@@ -390,102 +390,102 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     }
   }
 
-  public static final class FacetComparator {
-    private final Comparator<ThriftFacetCount> thriftComparator;
-    private final Comparator<Item> comparator;
+  publ c stat c f nal class FacetComparator {
+    pr vate f nal Comparator<Thr ftFacetCount> thr ftComparator;
+    pr vate f nal Comparator< em> comparator;
 
-    private FacetComparator(Comparator<ThriftFacetCount> thriftComparator,
-                            Comparator<Item> comparator) {
-      this.thriftComparator = thriftComparator;
-      this.comparator = comparator;
+    pr vate FacetComparator(Comparator<Thr ftFacetCount> thr ftComparator,
+                            Comparator< em> comparator) {
+      t .thr ftComparator = thr ftComparator;
+      t .comparator = comparator;
     }
 
-    public Comparator<ThriftFacetCount> getThriftComparator() {
-      return getThriftComparator(false);
+    publ c Comparator<Thr ftFacetCount> getThr ftComparator() {
+      return getThr ftComparator(false);
     }
 
-    public Comparator<ThriftFacetCount> getThriftComparator(boolean reverse) {
-      return reverse ? getReverseComparator(thriftComparator) : thriftComparator;
+    publ c Comparator<Thr ftFacetCount> getThr ftComparator(boolean reverse) {
+      return reverse ? getReverseComparator(thr ftComparator) : thr ftComparator;
     }
 
-    private Comparator<Item> getComparator(boolean reverse) {
+    pr vate Comparator< em> getComparator(boolean reverse) {
       return reverse ? getReverseComparator(comparator) : comparator;
     }
   }
 
-  public static final FacetComparator SIMPLE_COUNT_COMPARATOR = new FacetComparator(
+  publ c stat c f nal FacetComparator S MPLE_COUNT_COMPARATOR = new FacetComparator(
       (facet1, facet2) -> compareFacetCounts(
-          facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
-          facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
+          facet1.  ghtedCount, facet1.s mpleCount, facet1.penaltyCount,
+          facet2.  ghtedCount, facet2.s mpleCount, facet2.penaltyCount,
           true),
       (facet1, facet2) -> compareFacetCounts(
-          facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
-          facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
+          facet1.get  ghtedCount(), facet1.getS mpleCount(), facet1.getPenaltyCount(),
+          facet2.get  ghtedCount(), facet2.getS mpleCount(), facet2.getPenaltyCount(),
           true));
 
 
-  public static final FacetComparator WEIGHTED_COUNT_COMPARATOR = new FacetComparator(
+  publ c stat c f nal FacetComparator WE GHTED_COUNT_COMPARATOR = new FacetComparator(
       (facet1, facet2) -> compareFacetCounts(
-          facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
-          facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
+          facet1.  ghtedCount, facet1.s mpleCount, facet1.penaltyCount,
+          facet2.  ghtedCount, facet2.s mpleCount, facet2.penaltyCount,
           false),
       (facet1, facet2) -> compareFacetCounts(
-          facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
-          facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
+          facet1.get  ghtedCount(), facet1.getS mpleCount(), facet1.getPenaltyCount(),
+          facet2.get  ghtedCount(), facet2.getS mpleCount(), facet2.getPenaltyCount(),
           false));
 
   /**
-   * Returns the appropriate FacetComparator for the specified sortingMode.
+   * Returns t  appropr ate FacetComparator for t  spec f ed sort ngMode.
    */
-  public static FacetComparator getComparator(ThriftFacetEarlybirdSortingMode sortingMode) {
-    switch (sortingMode) {
-      case SORT_BY_WEIGHTED_COUNT:
-        return WEIGHTED_COUNT_COMPARATOR;
-      case SORT_BY_SIMPLE_COUNT:
+  publ c stat c FacetComparator getComparator(Thr ftFacetEarlyb rdSort ngMode sort ngMode) {
+    sw ch (sort ngMode) {
+      case SORT_BY_WE GHTED_COUNT:
+        return WE GHTED_COUNT_COMPARATOR;
+      case SORT_BY_S MPLE_COUNT:
       default:
-        return SIMPLE_COUNT_COMPARATOR;
+        return S MPLE_COUNT_COMPARATOR;
     }
   }
 
-  private static <T> Comparator<T> getReverseComparator(final Comparator<T> comparator) {
+  pr vate stat c <T> Comparator<T> getReverseComparator(f nal Comparator<T> comparator) {
     return (t1, t2) -> -comparator.compare(t1, t2);
   }
 
-  static final class Item {
-    private final long[] data;
-    private final int offset;
+  stat c f nal class  em {
+    pr vate f nal long[] data;
+    pr vate f nal  nt offset;
 
-    Item(long[] data, int offset) {
-      this.data = data;
-      this.offset = offset;
+     em(long[] data,  nt offset) {
+      t .data = data;
+      t .offset = offset;
     }
 
-    public long getTermId() {
+    publ c long getTerm d() {
       return data[offset];
     }
 
-    public int getSimpleCount() {
-      return (int) data[offset + 1];
+    publ c  nt getS mpleCount() {
+      return ( nt) data[offset + 1];
     }
 
-    public int getWeightedCount() {
-      return (int) data[offset + 2];
+    publ c  nt get  ghtedCount() {
+      return ( nt) data[offset + 2];
     }
 
-    public int getPenaltyCount() {
-      return itemPenaltyCount(data[offset + 3]);
+    publ c  nt getPenaltyCount() {
+      return  emPenaltyCount(data[offset + 3]);
     }
 
-    public int getMaxTweetCred() {
-      return itemMaxTweepCred(data[offset + 3]);
+    publ c  nt getMaxT etCred() {
+      return  emMaxT epCred(data[offset + 3]);
     }
 
-    @Override public int hashCode() {
-      return (int) (31 * getTermId());
+    @Overr de publ c  nt hashCode() {
+      return ( nt) (31 * getTerm d());
     }
 
-    @Override public boolean equals(Object o) {
-      return getTermId() == ((Item) o).getTermId();
+    @Overr de publ c boolean equals(Object o) {
+      return getTerm d() == (( em) o).getTerm d();
     }
 
   }

@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.common.RecapHydrationSearchResultsTransformBase
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l neranker.common.RecapHydrat onSearchResultsTransformBase
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
 
-class UtegLikedByTweetsSearchResultsTransform(
-  override protected val searchClient: SearchClient,
-  override protected val statsReceiver: StatsReceiver,
-  relevanceSearchProvider: DependencyProvider[Boolean])
-    extends RecapHydrationSearchResultsTransformBase {
+class UtegL kedByT etsSearchResultsTransform(
+  overr de protected val searchCl ent: SearchCl ent,
+  overr de protected val statsRece ver: StatsRece ver,
+  relevanceSearchProv der: DependencyProv der[Boolean])
+    extends RecapHydrat onSearchResultsTransformBase {
 
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+  pr vate[t ] val numResultsFromSearchStat = statsRece ver.stat("numResultsFromSearch")
 
-  override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
+  overr de def t et dsToHydrate(envelope: Cand dateEnvelope): Seq[T et d] =
     envelope.utegResults.keys.toSeq
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    searchClient
-      .getTweetsScoredForRecap(
-        userId = envelope.query.userId,
-        tweetIds = tweetIdsToHydrate(envelope),
-        earlybirdOptions = envelope.query.earlybirdOptions,
-        logSearchDebugInfo = false,
-        searchClientId = None,
-        relevanceSearch = relevanceSearchProvider(envelope.query)
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    searchCl ent
+      .getT etsScoredForRecap(
+        user d = envelope.query.user d,
+        t et ds = t et dsToHydrate(envelope),
+        earlyb rdOpt ons = envelope.query.earlyb rdOpt ons,
+        logSearchDebug nfo = false,
+        searchCl ent d = None,
+        relevanceSearch = relevanceSearchProv der(envelope.query)
       ).map { results =>
-        numResultsFromSearchStat.add(results.size)
+        numResultsFromSearchStat.add(results.s ze)
         envelope.copy(searchResults = results)
       }
   }

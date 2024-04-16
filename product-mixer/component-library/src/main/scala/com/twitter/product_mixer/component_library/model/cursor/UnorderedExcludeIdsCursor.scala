@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.tw ter.product_m xer.component_l brary.model.cursor
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
 
 /**
- * URT Cursor model that may be used when cursoring over a unordered candidate source. On each server
- * round-trip, the server will append the IDs of the elements in the response to the cursor. Then
- * on subsequent requests the client will return the cursor, and the excludedIds list can be sent to
- * the downstream's excludeIds parameter, or excluded locally via a filter on the candidate source
- * pipeline.
+ * URT Cursor model that may be used w n cursor ng over a unordered cand date s ce. On each server
+ * round-tr p, t  server w ll append t   Ds of t  ele nts  n t  response to t  cursor. T n
+ * on subsequent requests t  cl ent w ll return t  cursor, and t  excluded ds l st can be sent to
+ * t  downstream's exclude ds para ter, or excluded locally v a a f lter on t  cand date s ce
+ * p pel ne.
  *
- * Note that the cursor is bounded, as the excludedIds list cannot be appended to indefinitely due
- * to payload size constraints. As such, this strategy is typically used for bounded (limited page
- * size) products, or for unbounded (unlimited page size) products in conjunction with an
- * impression store. In the latter case, the cursor excludedIds list would be limited to a max size
- * via a circular buffer implementation, which would be unioned with the impression store IDs when
- * filtering. This usage allows the impression store to "catch up", as there is often latency
- * between when an impression client event is sent by the client and storage in the impression
+ * Note that t  cursor  s bounded, as t  excluded ds l st cannot be appended to  ndef n ely due
+ * to payload s ze constra nts. As such, t  strategy  s typ cally used for bounded (l m ed page
+ * s ze) products, or for unbounded (unl m ed page s ze) products  n conjunct on w h an
+ *  mpress on store.  n t  latter case, t  cursor excluded ds l st would be l m ed to a max s ze
+ * v a a c rcular buffer  mple ntat on, wh ch would be un oned w h t   mpress on store  Ds w n
+ * f lter ng. T  usage allows t   mpress on store to "catch up", as t re  s often latency
+ * bet en w n an  mpress on cl ent event  s sent by t  cl ent and storage  n t   mpress on
  * store.
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param excludedIds the list of IDs to exclude from the candidate list
+ * @param  n  alSort ndex See [[UrtP pel neCursor]]
+ * @param excluded ds t  l st of  Ds to exclude from t  cand date l st
  */
-case class UrtUnorderedExcludeIdsCursor(
-  override val initialSortIndex: Long,
-  excludedIds: Seq[Long])
-    extends UrtPipelineCursor
+case class UrtUnorderedExclude dsCursor(
+  overr de val  n  alSort ndex: Long,
+  excluded ds: Seq[Long])
+    extends UrtP pel neCursor
 
-case class UnorderedExcludeIdsCursor(excludedIds: Seq[Long]) extends PipelineCursor
+case class UnorderedExclude dsCursor(excluded ds: Seq[Long]) extends P pel neCursor

@@ -1,70 +1,70 @@
-scala_library(
-    name = "agg_flock",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    na  = "agg_flock",
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":interaction_graph_agg_flock_edge_snapshot-scala",
-        ":interaction_graph_agg_flock_vertex_snapshot-scala",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ": nteract on_graph_agg_flock_edge_snapshot-scala",
+        ": nteract on_graph_agg_flock_vertex_snapshot-scala",
+        "3rdparty/jvm/com/tw ter/storehaus:algebra",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/job",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
+        "consu r-data-tools/src/ma n/scala/com/tw ter/cde/sc o/dal_read",
         "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
         "flockdb-tools/datasets/flock:flock-mutes-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "src/scala/com/twitter/interaction_graph/scio/common",
-        "src/scala/com/twitter/wtf/dataflow/user_events:valid_user_follows-scala",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-java",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/combined:usersource-scala",
+        "src/scala/com/tw ter/ nteract on_graph/sc o/common",
+        "src/scala/com/tw ter/wtf/dataflow/user_events:val d_user_follows-scala",
+        "src/thr ft/com/tw ter/core_workflows/user_model:user_model-scala",
+        "src/thr ft/com/tw ter/twadoop/user/gen:gen-java",
+        "src/thr ft/com/tw ter/twadoop/user/gen:gen-scala",
+        "users ce/snapshot/src/ma n/scala/com/tw ter/users ce/snapshot/comb ned:users ce-scala",
     ],
 )
 
-jvm_binary(
-    name = "interaction_graph_agg_flock_scio",
-    main = "com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockJob",
+jvm_b nary(
+    na  = " nteract on_graph_agg_flock_sc o",
+    ma n = "com.tw ter. nteract on_graph.sc o.agg_flock. nteract onGraphAggFlockJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":agg_flock",
     ],
 )
 
 create_datasets(
-    base_name = "interaction_graph_agg_flock_edge_snapshot",
-    description = "User-user directed edges with flock features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
+    base_na  = " nteract on_graph_agg_flock_edge_snapshot",
+    descr pt on = "User-user d rected edges w h flock features",
+    java_sc ma = "com.tw ter. nteract on_graph.thr ftjava.Edge",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    scala_sc ma = "com.tw ter. nteract on_graph.thr ftscala.Edge",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-scala",
     ],
 )
 
 create_datasets(
-    base_name = "interaction_graph_agg_flock_vertex_snapshot",
-    description = "User vertex with flock features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_na  = " nteract on_graph_agg_flock_vertex_snapshot",
+    descr pt on = "User vertex w h flock features",
+    java_sc ma = "com.tw ter. nteract on_graph.thr ftjava.Vertex",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    scala_sc ma = "com.tw ter. nteract on_graph.thr ftscala.Vertex",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/ nteract on_graph: nteract on_graph-scala",
     ],
 )

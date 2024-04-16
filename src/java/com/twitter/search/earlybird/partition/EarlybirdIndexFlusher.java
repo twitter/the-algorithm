@@ -1,264 +1,264 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.TimeoutException;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java. o.OutputStreamWr er;
+ mport java.text.DateFormat;
+ mport java.text.ParseExcept on;
+ mport java.text.S mpleDateFormat;
+ mport java.t  .Durat on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Date;
+ mport java.ut l.SortedMap;
+ mport java.ut l.TreeMap;
+ mport java.ut l.concurrent.T  outExcept on;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.compress.ut ls.L sts;
+ mport org.apac .commons.lang.RandomStr ngUt ls;
+ mport org.apac .hadoop.fs.FSDataOutputStream;
+ mport org.apac .hadoop.fs.F leStatus;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.util.ActionLogger;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionLockFailed;
-import com.twitter.search.earlybird.util.ParallelUtil;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.earlyb rd.FlushVers on;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.earlyb rd.common.NonPag ngAssert;
+ mport com.tw ter.search.earlyb rd.ut l.Act onLogger;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct on nterface;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct onLockFa led;
+ mport com.tw ter.search.earlyb rd.ut l.ParallelUt l;
 
 /**
- * Flushes an EarlybirdIndex to HDFS, so that when Earlybird starts, it can read the index from
- * HDFS instead of indexing from scratch.
+ * Flus s an Earlyb rd ndex to HDFS, so that w n Earlyb rd starts,   can read t   ndex from
+ * HDFS  nstead of  ndex ng from scratch.
  *
- * The path looks like:
- * /smf1/rt2/user/search/earlybird/loadtest/realtime/indexes/flush_version_158/partition_8/index_2020_02_25_02
+ * T  path looks l ke:
+ * /smf1/rt2/user/search/earlyb rd/loadtest/realt  / ndexes/flush_vers on_158/part  on_8/ ndex_2020_02_25_02
  */
-public class EarlybirdIndexFlusher {
-  public enum FlushAttemptResult {
+publ c class Earlyb rd ndexFlus r {
+  publ c enum FlushAttemptResult {
     CHECKED_RECENTLY,
-    FOUND_INDEX,
+    FOUND_ NDEX,
     FLUSH_ATTEMPT_MADE,
-    FAILED_LOCK_ATTEMPT,
-    HADOOP_TIMEOUT
+    FA LED_LOCK_ATTEMPT,
+    HADOOP_T MEOUT
   }
 
-  @FunctionalInterface
-  public interface PostFlushOperation {
+  @Funct onal nterface
+  publ c  nterface PostFlushOperat on {
     /**
-     * Run this after we finish flushing an index, before we rejoin the serverset.
+     * Run t  after   f n sh flush ng an  ndex, before   rejo n t  serverset.
      */
-    void execute();
+    vo d execute();
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexFlusher.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rd ndexFlus r.class);
 
-  private static final SearchCounter FLUSH_SUCCESS_COUNTER =
-      SearchCounter.export("successfully_flushed_index");
+  pr vate stat c f nal SearchCounter FLUSH_SUCCESS_COUNTER =
+      SearchCounter.export("successfully_flus d_ ndex");
 
-  public static final String TWEET_KAFKA_OFFSET = "tweet_kafka_offset";
-  public static final String UPDATE_KAFKA_OFFSET = "update_kafka_offset";
-  public static final String FLUSHED_FROM_REPLICA = "flushed_from_replica";
-  public static final String SEGMENTS = "segments";
-  public static final String TIMESLICE_ID = "timeslice_id";
+  publ c stat c f nal Str ng TWEET_KAFKA_OFFSET = "t et_kafka_offset";
+  publ c stat c f nal Str ng UPDATE_KAFKA_OFFSET = "update_kafka_offset";
+  publ c stat c f nal Str ng FLUSHED_FROM_REPL CA = "flus d_from_repl ca";
+  publ c stat c f nal Str ng SEGMENTS = "seg nts";
+  publ c stat c f nal Str ng T MESL CE_ D = "t  sl ce_ d";
 
-  public static final String DATA_SUFFIX = ".data";
-  public static final String INFO_SUFFIX = ".info";
-  public static final String INDEX_INFO = "earlybird_index.info";
+  publ c stat c f nal Str ng DATA_SUFF X = ".data";
+  publ c stat c f nal Str ng  NFO_SUFF X = ". nfo";
+  publ c stat c f nal Str ng  NDEX_ NFO = "earlyb rd_ ndex. nfo";
 
-  private static final String INDEX_PATH_FORMAT = "%s/flush_version_%d/partition_%d";
-  public static final DateFormat INDEX_DATE_SUFFIX = new SimpleDateFormat("yyyy_MM_dd_HH");
-  public static final String INDEX_PREFIX = "index_";
-  public static final String TMP_PREFIX = "tmp_";
+  pr vate stat c f nal Str ng  NDEX_PATH_FORMAT = "%s/flush_vers on_%d/part  on_%d";
+  publ c stat c f nal DateFormat  NDEX_DATE_SUFF X = new S mpleDateFormat("yyyy_MM_dd_HH");
+  publ c stat c f nal Str ng  NDEX_PREF X = " ndex_";
+  publ c stat c f nal Str ng TMP_PREF X = "tmp_";
 
-  // Check if we need to flush every five minutes.
-  private static final long FLUSH_CHECK_PERIOD = Duration.ofMinutes(5).toMillis();
+  // C ck  f   need to flush every f ve m nutes.
+  pr vate stat c f nal long FLUSH_CHECK_PER OD = Durat on.ofM nutes(5).toM ll s();
 
-  // Make sure we don't keep more than 3 copies of the index in HDFS, so that we don't run out of
+  // Make sure   don't keep more than 3 cop es of t   ndex  n HDFS, so that   don't run out of
   // HDFS space.
-  private static final int INDEX_COPIES = 3;
+  pr vate stat c f nal  nt  NDEX_COP ES = 3;
 
-  private static final NonPagingAssert FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
-          new NonPagingAssert("flushing_too_many_non_optimized_segments");
+  pr vate stat c f nal NonPag ngAssert FLUSH NG_TOO_MANY_NON_OPT M ZED_SEGMENTS =
+          new NonPag ngAssert("flush ng_too_many_non_opt m zed_seg nts");
 
-  private final CoordinatedEarlybirdActionInterface actionCoordinator;
-  private final FileSystem fileSystem;
-  private final Path indexPath;
-  private final Clock clock;
-  private final SegmentManager segmentManager;
-  private final int replicaId;
-  private final TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall;
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
+  pr vate f nal Coord natedEarlyb rdAct on nterface act onCoord nator;
+  pr vate f nal F leSystem f leSystem;
+  pr vate f nal Path  ndexPath;
+  pr vate f nal Clock clock;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal  nt repl ca d;
+  pr vate f nal T  L m edHadoopEx stsCall t  L m edHadoopEx stsCall;
+  pr vate f nal Opt m zat onAndFlush ngCoord nat onLock opt m zat onAndFlush ngCoord nat onLock;
 
-  private long checkedAt = 0;
+  pr vate long c ckedAt = 0;
 
-  public EarlybirdIndexFlusher(
-      CoordinatedEarlybirdActionInterface actionCoordinator,
-      FileSystem fileSystem,
-      String indexHDFSPath,
-      SegmentManager segmentManager,
-      PartitionConfig partitionConfig,
+  publ c Earlyb rd ndexFlus r(
+      Coord natedEarlyb rdAct on nterface act onCoord nator,
+      F leSystem f leSystem,
+      Str ng  ndexHDFSPath,
+      Seg ntManager seg ntManager,
+      Part  onConf g part  onConf g,
       Clock clock,
-      TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall,
-      OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
+      T  L m edHadoopEx stsCall t  L m edHadoopEx stsCall,
+      Opt m zat onAndFlush ngCoord nat onLock opt m zat onAndFlush ngCoord nat onLock
   ) {
-    this.actionCoordinator = actionCoordinator;
-    this.fileSystem = fileSystem;
-    this.indexPath = buildPathToIndexes(indexHDFSPath, partitionConfig);
-    this.segmentManager = segmentManager;
-    this.clock = clock;
-    this.replicaId = partitionConfig.getHostPositionWithinHashPartition();
-    this.timeLimitedHadoopExistsCall = timeLimitedHadoopExistsCall;
-    this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
+    t .act onCoord nator = act onCoord nator;
+    t .f leSystem = f leSystem;
+    t . ndexPath = bu ldPathTo ndexes( ndexHDFSPath, part  onConf g);
+    t .seg ntManager = seg ntManager;
+    t .clock = clock;
+    t .repl ca d = part  onConf g.getHostPos  onW h nHashPart  on();
+    t .t  L m edHadoopEx stsCall = t  L m edHadoopEx stsCall;
+    t .opt m zat onAndFlush ngCoord nat onLock = opt m zat onAndFlush ngCoord nat onLock;
   }
 
   /**
-   * Periodically checks if an index needs to be uploaded to HDFS, and uploads it if necessary.
-   * Skips flush if unable to acquire the optimizationAndFlushingCoordinationLock.
+   * Per od cally c cks  f an  ndex needs to be uploaded to HDFS, and uploads    f necessary.
+   * Sk ps flush  f unable to acqu re t  opt m zat onAndFlush ngCoord nat onLock.
    */
-  public FlushAttemptResult flushIfNecessary(
-      long tweetOffset,
+  publ c FlushAttemptResult flush fNecessary(
+      long t etOffset,
       long updateOffset,
-      PostFlushOperation postFlushOperation) throws Exception {
-    long now = clock.nowMillis();
-    if (now - checkedAt < FLUSH_CHECK_PERIOD) {
+      PostFlushOperat on postFlushOperat on) throws Except on {
+    long now = clock.nowM ll s();
+     f (now - c ckedAt < FLUSH_CHECK_PER OD) {
       return FlushAttemptResult.CHECKED_RECENTLY;
     }
 
-    checkedAt = now;
+    c ckedAt = now;
 
-    // Try to aqcuire lock to ensure that we are not in the gc_before_optimization or the
-    // post_optimization_rebuilds step of optimization. If the lock is not available, then skip
-    // flushing.
-    if (!optimizationAndFlushingCoordinationLock.tryLock()) {
-      return FlushAttemptResult.FAILED_LOCK_ATTEMPT;
+    // Try to aqcu re lock to ensure that   are not  n t  gc_before_opt m zat on or t 
+    // post_opt m zat on_rebu lds step of opt m zat on.  f t  lock  s not ava lable, t n sk p
+    // flush ng.
+     f (!opt m zat onAndFlush ngCoord nat onLock.tryLock()) {
+      return FlushAttemptResult.FA LED_LOCK_ATTEMPT;
     }
-    // Acquired the lock, so wrap the flush in a try/finally block to ensure we release the lock
+    // Acqu red t  lock, so wrap t  flush  n a try/f nally block to ensure   release t  lock
     try {
-      Path flushPath = pathForHour();
+      Path flushPath = pathForH ();
 
       try {
-        // If this doesn't execute on time, it will throw an exception and this function
-        // finishes its execution.
-        boolean result = timeLimitedHadoopExistsCall.exists(flushPath);
+        //  f t  doesn't execute on t  ,   w ll throw an except on and t  funct on
+        // f n s s  s execut on.
+        boolean result = t  L m edHadoopEx stsCall.ex sts(flushPath);
 
-        if (result) {
-          return FlushAttemptResult.FOUND_INDEX;
+         f (result) {
+          return FlushAttemptResult.FOUND_ NDEX;
         }
-      } catch (TimeoutException e) {
-        LOG.warn("Timeout while calling hadoop", e);
-        return FlushAttemptResult.HADOOP_TIMEOUT;
+      } catch (T  outExcept on e) {
+        LOG.warn("T  out wh le call ng hadoop", e);
+        return FlushAttemptResult.HADOOP_T MEOUT;
       }
 
-      boolean flushedIndex = false;
+      boolean flus d ndex = false;
       try {
-        // this function returns a boolean.
-        actionCoordinator.execute("index_flushing", isCoordinated ->
-            flushIndex(flushPath, isCoordinated, tweetOffset, updateOffset, postFlushOperation));
-        flushedIndex = true;
-      } catch (CoordinatedEarlybirdActionLockFailed e) {
-        // This only happens when we fail to grab the lock, which is fine because another Earlybird
-        // is already working on flushing this index, so we don't need to.
-        LOG.debug("Failed to grab lock", e);
+        // t  funct on returns a boolean.
+        act onCoord nator.execute(" ndex_flush ng",  sCoord nated ->
+            flush ndex(flushPath,  sCoord nated, t etOffset, updateOffset, postFlushOperat on));
+        flus d ndex = true;
+      } catch (Coord natedEarlyb rdAct onLockFa led e) {
+        // T  only happens w n   fa l to grab t  lock, wh ch  s f ne because anot r Earlyb rd
+        //  s already work ng on flush ng t   ndex, so   don't need to.
+        LOG.debug("Fa led to grab lock", e);
       }
 
-      if (flushedIndex) {
-        // We don't return with a guarantee that we actually flushed something. It's possible
-        // that the .execute() function above was not able to leave the server set to flush.
+       f (flus d ndex) {
+        //   don't return w h a guarantee that   actually flus d so th ng.  's poss ble
+        // that t  .execute() funct on above was not able to leave t  server set to flush.
         return FlushAttemptResult.FLUSH_ATTEMPT_MADE;
       } else {
-        return FlushAttemptResult.FAILED_LOCK_ATTEMPT;
+        return FlushAttemptResult.FA LED_LOCK_ATTEMPT;
       }
-    } finally {
-      optimizationAndFlushingCoordinationLock.unlock();
+    } f nally {
+      opt m zat onAndFlush ngCoord nat onLock.unlock();
     }
   }
 
   /**
-   * Create a subpath to the directory with many indexes in it. Will have an index for each hour.
+   * Create a subpath to t  d rectory w h many  ndexes  n  . W ll have an  ndex for each h .
    */
-  public static Path buildPathToIndexes(String root, PartitionConfig partitionConfig) {
-    return new Path(String.format(
-        INDEX_PATH_FORMAT,
+  publ c stat c Path bu ldPathTo ndexes(Str ng root, Part  onConf g part  onConf g) {
+    return new Path(Str ng.format(
+         NDEX_PATH_FORMAT,
         root,
-        FlushVersion.CURRENT_FLUSH_VERSION.getVersionNumber(),
-        partitionConfig.getIndexingHashPartitionID()));
+        FlushVers on.CURRENT_FLUSH_VERS ON.getVers onNumber(),
+        part  onConf g.get ndex ngHashPart  on D()));
   }
 
 
   /**
-   * Returns a sorted map from the unix time in millis an index was flushed to the path of an index.
-   * The last element will be the path of the most recent index.
+   * Returns a sorted map from t  un x t    n m ll s an  ndex was flus d to t  path of an  ndex.
+   * T  last ele nt w ll be t  path of t  most recent  ndex.
    */
-  public static SortedMap<Long, Path> getIndexPathsByTime(
-      Path indexPath,
-      FileSystem fileSystem
-  ) throws IOException, ParseException {
-    LOG.info("Getting index paths from file system: {}", fileSystem.getUri().toASCIIString());
+  publ c stat c SortedMap<Long, Path> get ndexPathsByT  (
+      Path  ndexPath,
+      F leSystem f leSystem
+  ) throws  OExcept on, ParseExcept on {
+    LOG. nfo("Gett ng  ndex paths from f le system: {}", f leSystem.getUr ().toASC  Str ng());
 
-    SortedMap<Long, Path> pathByTime = new TreeMap<>();
-    Path globPattern = indexPath.suffix("/" + EarlybirdIndexFlusher.INDEX_PREFIX + "*");
-    LOG.info("Lookup glob pattern: {}", globPattern);
+    SortedMap<Long, Path> pathByT   = new TreeMap<>();
+    Path globPattern =  ndexPath.suff x("/" + Earlyb rd ndexFlus r. NDEX_PREF X + "*");
+    LOG. nfo("Lookup glob pattern: {}", globPattern);
 
-    for (FileStatus indexDir : fileSystem.globStatus(globPattern)) {
-      String name = new File(indexDir.getPath().toString()).getName();
-      String dateString = name.substring(EarlybirdIndexFlusher.INDEX_PREFIX.length());
-      Date date = EarlybirdIndexFlusher.INDEX_DATE_SUFFIX.parse(dateString);
-      pathByTime.put(date.getTime(), indexDir.getPath());
+    for (F leStatus  ndexD r : f leSystem.globStatus(globPattern)) {
+      Str ng na  = new F le( ndexD r.getPath().toStr ng()).getNa ();
+      Str ng dateStr ng = na .substr ng(Earlyb rd ndexFlus r. NDEX_PREF X.length());
+      Date date = Earlyb rd ndexFlus r. NDEX_DATE_SUFF X.parse(dateStr ng);
+      pathByT  .put(date.getT  (),  ndexD r.getPath());
     }
-    LOG.info("Found {} files matching the pattern.", pathByTime.size());
+    LOG. nfo("Found {} f les match ng t  pattern.", pathByT  .s ze());
 
-    return pathByTime;
+    return pathByT  ;
   }
 
-  private boolean flushIndex(
+  pr vate boolean flush ndex(
       Path flushPath,
-      boolean isCoordinated,
-      long tweetOffset,
+      boolean  sCoord nated,
+      long t etOffset,
       long updateOffset,
-      PostFlushOperation postFlushOperation
-  ) throws Exception {
-    Preconditions.checkState(isCoordinated);
+      PostFlushOperat on postFlushOperat on
+  ) throws Except on {
+    Precond  ons.c ckState( sCoord nated);
 
-    if (fileSystem.exists(flushPath)) {
+     f (f leSystem.ex sts(flushPath)) {
       return false;
     }
 
-    LOG.info("Starting index flush");
+    LOG. nfo("Start ng  ndex flush");
 
-    // In case the process is killed suddenly, we wouldn't be able to clean up the temporary
-    // directory, and we don't want other processes to reuse it, so add some randomness.
-    Path tmpPath = indexPath.suffix("/" + TMP_PREFIX + RandomStringUtils.randomAlphabetic(8));
-    boolean creationSucceed = fileSystem.mkdirs(tmpPath);
-    if (!creationSucceed) {
-      throw new IOException("Couldn't create HDFS directory at " + flushPath);
+    //  n case t  process  s k lled suddenly,   wouldn't be able to clean up t  temporary
+    // d rectory, and   don't want ot r processes to reuse  , so add so  randomness.
+    Path tmpPath =  ndexPath.suff x("/" + TMP_PREF X + RandomStr ngUt ls.randomAlphabet c(8));
+    boolean creat onSucceed = f leSystem.mkd rs(tmpPath);
+     f (!creat onSucceed) {
+      throw new  OExcept on("Couldn't create HDFS d rectory at " + flushPath);
     }
 
-    LOG.info("Temp path: {}", tmpPath);
+    LOG. nfo("Temp path: {}", tmpPath);
     try {
-      ArrayList<SegmentInfo> segmentInfos = Lists.newArrayList(segmentManager.getSegmentInfos(
-          SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD).iterator());
-      segmentManager.logState("Before flushing");
-      EarlybirdIndex index = new EarlybirdIndex(segmentInfos, tweetOffset, updateOffset);
-      ActionLogger.run(
-          "Flushing index to " + tmpPath,
-          () -> flushIndex(tmpPath, index));
-    } catch (Exception e) {
-      LOG.error("Exception while flushing index. Rethrowing.");
+      ArrayL st<Seg nt nfo> seg nt nfos = L sts.newArrayL st(seg ntManager.getSeg nt nfos(
+          Seg ntManager.F lter.Enabled, Seg ntManager.Order.NEW_TO_OLD). erator());
+      seg ntManager.logState("Before flush ng");
+      Earlyb rd ndex  ndex = new Earlyb rd ndex(seg nt nfos, t etOffset, updateOffset);
+      Act onLogger.run(
+          "Flush ng  ndex to " + tmpPath,
+          () -> flush ndex(tmpPath,  ndex));
+    } catch (Except on e) {
+      LOG.error("Except on wh le flush ng  ndex. Rethrow ng.");
 
-      if (fileSystem.delete(tmpPath, true)) {
-        LOG.info("Successfully deleted temp output");
+       f (f leSystem.delete(tmpPath, true)) {
+        LOG. nfo("Successfully deleted temp output");
       } else {
         LOG.error("Couldn't delete temp output");
       }
@@ -266,106 +266,106 @@ public class EarlybirdIndexFlusher {
       throw e;
     }
 
-    // We flush it to a temporary directory, then rename the temporary directory so that it the
-    // change is atomic, and other Earlybirds will either see the old indexes, or the new, complete
-    // index, but never an in progress index.
-    boolean renameSucceeded = fileSystem.rename(tmpPath, flushPath);
-    if (!renameSucceeded) {
-      throw new IOException("Couldn't rename HDFS from " + tmpPath + " to " + flushPath);
+    //   flush   to a temporary d rectory, t n rena  t  temporary d rectory so that   t 
+    // change  s atom c, and ot r Earlyb rds w ll e  r see t  old  ndexes, or t  new, complete
+    //  ndex, but never an  n progress  ndex.
+    boolean rena Succeeded = f leSystem.rena (tmpPath, flushPath);
+     f (!rena Succeeded) {
+      throw new  OExcept on("Couldn't rena  HDFS from " + tmpPath + " to " + flushPath);
     }
-    LOG.info("Flushed index to {}", flushPath);
+    LOG. nfo("Flus d  ndex to {}", flushPath);
 
-    cleanupOldIndexes();
+    cleanupOld ndexes();
 
-    FLUSH_SUCCESS_COUNTER.increment();
+    FLUSH_SUCCESS_COUNTER. ncre nt();
 
-    LOG.info("Executing post flush operation...");
-    postFlushOperation.execute();
+    LOG. nfo("Execut ng post flush operat on...");
+    postFlushOperat on.execute();
 
     return true;
   }
 
-  private void cleanupOldIndexes() throws Exception {
-    LOG.info("Looking up whether we need to clean up old indexes...");
-    SortedMap<Long, Path> pathsByTime =
-        EarlybirdIndexFlusher.getIndexPathsByTime(indexPath, fileSystem);
+  pr vate vo d cleanupOld ndexes() throws Except on {
+    LOG. nfo("Look ng up w t r   need to clean up old  ndexes...");
+    SortedMap<Long, Path> pathsByT   =
+        Earlyb rd ndexFlus r.get ndexPathsByT  ( ndexPath, f leSystem);
 
-    while (pathsByTime.size() > INDEX_COPIES) {
-      Long key = pathsByTime.firstKey();
-      Path oldestHourPath = pathsByTime.remove(key);
-      LOG.info("Deleting old index at path '{}'.", oldestHourPath);
+    wh le (pathsByT  .s ze() >  NDEX_COP ES) {
+      Long key = pathsByT  .f rstKey();
+      Path oldestH Path = pathsByT  .remove(key);
+      LOG. nfo("Delet ng old  ndex at path '{}'.", oldestH Path);
 
-      if (fileSystem.delete(oldestHourPath, true)) {
-        LOG.info("Successfully deleted old index");
+       f (f leSystem.delete(oldestH Path, true)) {
+        LOG. nfo("Successfully deleted old  ndex");
       } else {
-        LOG.error("Couldn't delete old index");
+        LOG.error("Couldn't delete old  ndex");
       }
     }
   }
 
-  private Path pathForHour() {
-    Date date = new Date(clock.nowMillis());
-    String time = INDEX_DATE_SUFFIX.format(date);
-    return indexPath.suffix("/" + INDEX_PREFIX + time);
+  pr vate Path pathForH () {
+    Date date = new Date(clock.nowM ll s());
+    Str ng t   =  NDEX_DATE_SUFF X.format(date);
+    return  ndexPath.suff x("/" +  NDEX_PREF X + t  );
   }
 
-  private void flushIndex(Path flushPath, EarlybirdIndex index) throws Exception {
-    int numOfNonOptimized = index.numOfNonOptimizedSegments();
-    if (numOfNonOptimized > EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS) {
+  pr vate vo d flush ndex(Path flushPath, Earlyb rd ndex  ndex) throws Except on {
+     nt numOfNonOpt m zed =  ndex.numOfNonOpt m zedSeg nts();
+     f (numOfNonOpt m zed > Earlyb rd ndex.MAX_NUM_OF_NON_OPT M ZED_SEGMENTS) {
       LOG.error(
-              "Found {} non-optimized segments when flushing to disk!", numOfNonOptimized);
-      FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS.assertFailed();
+              "Found {} non-opt m zed seg nts w n flush ng to d sk!", numOfNonOpt m zed);
+      FLUSH NG_TOO_MANY_NON_OPT M ZED_SEGMENTS.assertFa led();
     }
 
-    int numSegments = index.getSegmentInfoList().size();
-    int flushingThreadPoolSize = numSegments;
+     nt numSeg nts =  ndex.getSeg nt nfoL st().s ze();
+     nt flush ngThreadPoolS ze = numSeg nts;
 
-    if (Config.environmentIsTest()) {
-      // SEARCH-33763: Limit the thread pool size for tests to avoid using too much memory on scoot.
-      flushingThreadPoolSize = 2;
+     f (Conf g.env ron nt sTest()) {
+      // SEARCH-33763: L m  t  thread pool s ze for tests to avo d us ng too much  mory on scoot.
+      flush ngThreadPoolS ze = 2;
     }
 
-    LOG.info("Flushing index using a thread pool size of {}", flushingThreadPoolSize);
+    LOG. nfo("Flush ng  ndex us ng a thread pool s ze of {}", flush ngThreadPoolS ze);
 
-    ParallelUtil.parmap("flush-index", flushingThreadPoolSize, si -> ActionLogger.call(
-        "Flushing segment " + si.getSegmentName(),
-        () -> flushSegment(flushPath, si)), index.getSegmentInfoList());
+    ParallelUt l.parmap("flush- ndex", flush ngThreadPoolS ze, s  -> Act onLogger.call(
+        "Flush ng seg nt " + s .getSeg ntNa (),
+        () -> flushSeg nt(flushPath, s )),  ndex.getSeg nt nfoL st());
 
-    FlushInfo indexInfo = new FlushInfo();
-    indexInfo.addLongProperty(UPDATE_KAFKA_OFFSET, index.getUpdateOffset());
-    indexInfo.addLongProperty(TWEET_KAFKA_OFFSET, index.getTweetOffset());
-    indexInfo.addIntProperty(FLUSHED_FROM_REPLICA, replicaId);
+    Flush nfo  ndex nfo = new Flush nfo();
+     ndex nfo.addLongProperty(UPDATE_KAFKA_OFFSET,  ndex.getUpdateOffset());
+     ndex nfo.addLongProperty(TWEET_KAFKA_OFFSET,  ndex.getT etOffset());
+     ndex nfo.add ntProperty(FLUSHED_FROM_REPL CA, repl ca d);
 
-    FlushInfo segmentFlushInfos = indexInfo.newSubProperties(SEGMENTS);
-    for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-      FlushInfo segmentFlushInfo = segmentFlushInfos.newSubProperties(segmentInfo.getSegmentName());
-      segmentFlushInfo.addLongProperty(TIMESLICE_ID, segmentInfo.getTimeSliceID());
+    Flush nfo seg ntFlush nfos =  ndex nfo.newSubPropert es(SEGMENTS);
+    for (Seg nt nfo seg nt nfo :  ndex.getSeg nt nfoL st()) {
+      Flush nfo seg ntFlush nfo = seg ntFlush nfos.newSubPropert es(seg nt nfo.getSeg ntNa ());
+      seg ntFlush nfo.addLongProperty(T MESL CE_ D, seg nt nfo.getT  Sl ce D());
     }
 
-    Path indexInfoPath = flushPath.suffix("/" + INDEX_INFO);
-    try (FSDataOutputStream infoOutputStream = fileSystem.create(indexInfoPath)) {
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(infoOutputStream);
-      FlushInfo.flushAsYaml(indexInfo, infoFileWriter);
+    Path  ndex nfoPath = flushPath.suff x("/" +  NDEX_ NFO);
+    try (FSDataOutputStream  nfoOutputStream = f leSystem.create( ndex nfoPath)) {
+      OutputStreamWr er  nfoF leWr er = new OutputStreamWr er( nfoOutputStream);
+      Flush nfo.flushAsYaml( ndex nfo,  nfoF leWr er);
     }
   }
 
-  private BoxedUnit flushSegment(Path flushPath, SegmentInfo segmentInfo) throws Exception {
-    Path segmentPrefix = flushPath.suffix("/" + segmentInfo.getSegmentName());
-    Path segmentPath = segmentPrefix.suffix(DATA_SUFFIX);
+  pr vate BoxedUn  flushSeg nt(Path flushPath, Seg nt nfo seg nt nfo) throws Except on {
+    Path seg ntPref x = flushPath.suff x("/" + seg nt nfo.getSeg ntNa ());
+    Path seg ntPath = seg ntPref x.suff x(DATA_SUFF X);
 
-    FlushInfo flushInfo = new FlushInfo();
+    Flush nfo flush nfo = new Flush nfo();
 
-    try (FSDataOutputStream outputStream = fileSystem.create(segmentPath)) {
-      DataSerializer out = new DataSerializer(segmentPath.toString(), outputStream);
-      segmentInfo.getIndexSegment().flush(flushInfo, out);
+    try (FSDataOutputStream outputStream = f leSystem.create(seg ntPath)) {
+      DataSer al zer out = new DataSer al zer(seg ntPath.toStr ng(), outputStream);
+      seg nt nfo.get ndexSeg nt().flush(flush nfo, out);
     }
 
-    Path infoPath = segmentPrefix.suffix(INFO_SUFFIX);
+    Path  nfoPath = seg ntPref x.suff x( NFO_SUFF X);
 
-    try (FSDataOutputStream infoOutputStream = fileSystem.create(infoPath)) {
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(infoOutputStream);
-      FlushInfo.flushAsYaml(flushInfo, infoFileWriter);
+    try (FSDataOutputStream  nfoOutputStream = f leSystem.create( nfoPath)) {
+      OutputStreamWr er  nfoF leWr er = new OutputStreamWr er( nfoOutputStream);
+      Flush nfo.flushAsYaml(flush nfo,  nfoF leWr er);
     }
-    return BoxedUnit.UNIT;
+    return BoxedUn .UN T;
   }
 }

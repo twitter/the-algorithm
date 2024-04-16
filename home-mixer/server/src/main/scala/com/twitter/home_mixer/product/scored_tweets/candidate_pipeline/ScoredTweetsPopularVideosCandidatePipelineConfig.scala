@@ -1,82 +1,82 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne
 
-import com.twitter.explore_ranker.{thriftscala => ert}
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieStaticEntitiesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsPopularVideosResponseFeatureTransformer
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.component_library.candidate_source.explore_ranker.ExploreRankerImmersiveRecsCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.explore_ranker.{thr ftscala => ert}
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.T etyp eStat cEnt  esFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cac dScoredT ets
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cand dateP pel ne
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.ScoredT etsPopularV deosResponseFeatureTransfor r
+ mport com.tw ter.ho _m xer.ut l.Cac dScoredT ets lper
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.explore_ranker.ExploreRanker m rs veRecsCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.request.Cl entContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScoredTweetsPopularVideosCandidatePipelineConfig @Inject() (
-  exploreRankerCandidateSource: ExploreRankerImmersiveRecsCandidateSource,
-  tweetypieStaticEntitiesFeatureHydrator: TweetypieStaticEntitiesFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
+@S ngleton
+class ScoredT etsPopularV deosCand dateP pel neConf g @ nject() (
+  exploreRankerCand dateS ce: ExploreRanker m rs veRecsCand dateS ce,
+  t etyp eStat cEnt  esFeatureHydrator: T etyp eStat cEnt  esFeatureHydrator)
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
       ert.ExploreRankerRequest,
-      ert.ExploreTweetRecommendation,
-      TweetCandidate
+      ert.ExploreT etRecom ndat on,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsPopularVideos")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("ScoredT etsPopularV deos")
 
-  private val MaxTweetsToFetch = 40
+  pr vate val MaxT etsToFetch = 40
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnablePopularVideosParam)
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]] =
+    So (Cand dateP pel ne.EnablePopularV deosParam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  overr de val gates: Seq[Gate[ScoredT etsQuery]] = Seq(
+    M nCac dT etsGate( dent f er, Cac dScoredT ets.M nCac dT etsParam)
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
     ert.ExploreRankerRequest
   ] = { query =>
-    val excludedTweetIds = query.features.map(
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweets(_, identifier))
+    val excludedT et ds = query.features.map(
+      Cac dScoredT ets lper.t et mpress onsAndCac dScoredT ets(_,  dent f er))
 
     ert.ExploreRankerRequest(
-      clientContext = ClientContextMarshaller(query.clientContext),
-      product = ert.Product.HomeTimelineVideoInline,
-      productContext = Some(
-        ert.ProductContext.HomeTimelineVideoInline(ert.HomeTimelineVideoInline(excludedTweetIds))),
-      maxResults = Some(MaxTweetsToFetch)
+      cl entContext = Cl entContextMarshaller(query.cl entContext),
+      product = ert.Product.Ho T  l neV deo nl ne,
+      productContext = So (
+        ert.ProductContext.Ho T  l neV deo nl ne(ert.Ho T  l neV deo nl ne(excludedT et ds))),
+      maxResults = So (MaxT etsToFetch)
     )
   }
 
-  override def candidateSource: BaseCandidateSource[
+  overr de def cand dateS ce: BaseCand dateS ce[
     ert.ExploreRankerRequest,
-    ert.ExploreTweetRecommendation
-  ] = exploreRankerCandidateSource
+    ert.ExploreT etRecom ndat on
+  ] = exploreRankerCand dateS ce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[ert.ExploreTweetRecommendation]
-  ] = Seq(ScoredTweetsPopularVideosResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[ert.ExploreT etRecom ndat on]
+  ] = Seq(ScoredT etsPopularV deosResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ert.ExploreTweetRecommendation,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    ert.ExploreT etRecom ndat on,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult.t et d) }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(tweetypieStaticEntitiesFeatureHydrator)
+  overr de val preF lterFeatureHydrat onPhase1: Seq[
+    BaseCand dateFeatureHydrator[ScoredT etsQuery, T etCand date, _]
+  ] = Seq(t etyp eStat cEnt  esFeatureHydrator)
 }

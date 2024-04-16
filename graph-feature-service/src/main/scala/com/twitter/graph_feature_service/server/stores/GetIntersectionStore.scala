@@ -1,142 +1,142 @@
-package com.twitter.graph_feature_service.server.stores
+package com.tw ter.graph_feature_serv ce.server.stores
 
-import com.twitter.finagle.RequestTimeoutException
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.graph_feature_service.server.handlers.ServerGetIntersectionHandler.GetIntersectionRequest
-import com.twitter.graph_feature_service.server.modules.GraphFeatureServiceWorkerClients
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala._
-import com.twitter.inject.Logging
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Singleton
-import scala.collection.mutable.ArrayBuffer
+ mport com.tw ter.f nagle.RequestT  outExcept on
+ mport com.tw ter.f nagle.stats.{Stat, StatsRece ver}
+ mport com.tw ter.graph_feature_serv ce.server.handlers.ServerGet ntersect onHandler.Get ntersect onRequest
+ mport com.tw ter.graph_feature_serv ce.server.modules.GraphFeatureServ ceWorkerCl ents
+ mport com.tw ter.graph_feature_serv ce.server.stores.Get ntersect onStore.Get ntersect onQuery
+ mport com.tw ter.graph_feature_serv ce.thr ftscala._
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
+ mport scala.collect on.mutable.ArrayBuffer
 
-@Singleton
-case class GetIntersectionStore(
-  graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[GetIntersectionQuery, CachedIntersectionResult]
-    with Logging {
+@S ngleton
+case class Get ntersect onStore(
+  graphFeatureServ ceWorkerCl ents: GraphFeatureServ ceWorkerCl ents,
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[Get ntersect onQuery, Cac d ntersect onResult]
+    w h Logg ng {
 
-  import GetIntersectionStore._
+   mport Get ntersect onStore._
 
-  private val stats = statsReceiver.scope("get_intersection_store")
-  private val requestCount = stats.counter(name = "request_count")
-  private val aggregatorLatency = stats.stat("aggregator_latency")
-  private val timeOutCounter = stats.counter("worker_timeouts")
-  private val unknownErrorCounter = stats.counter("unknown_errors")
+  pr vate val stats = statsRece ver.scope("get_ ntersect on_store")
+  pr vate val requestCount = stats.counter(na  = "request_count")
+  pr vate val aggregatorLatency = stats.stat("aggregator_latency")
+  pr vate val t  OutCounter = stats.counter("worker_t  outs")
+  pr vate val unknownErrorCounter = stats.counter("unknown_errors")
 
-  override def multiGet[K1 <: GetIntersectionQuery](
+  overr de def mult Get[K1 <: Get ntersect onQuery](
     ks: Set[K1]
-  ): Map[K1, Future[Option[CachedIntersectionResult]]] = {
-    if (ks.isEmpty) {
+  ): Map[K1, Future[Opt on[Cac d ntersect onResult]]] = {
+     f (ks. sEmpty) {
       Map.empty
     } else {
-      requestCount.incr()
+      requestCount. ncr()
 
-      val head = ks.head
-      // We assume all the GetIntersectionQuery use the same userId and featureTypes
-      val userId = head.userId
-      val featureTypes = head.featureTypes
-      val presetFeatureTypes = head.presetFeatureTypes
-      val calculatedFeatureTypes = head.calculatedFeatureTypes
-      val intersectionIdLimit = head.intersectionIdLimit
+      val  ad = ks. ad
+      //   assu  all t  Get ntersect onQuery use t  sa  user d and featureTypes
+      val user d =  ad.user d
+      val featureTypes =  ad.featureTypes
+      val presetFeatureTypes =  ad.presetFeatureTypes
+      val calculatedFeatureTypes =  ad.calculatedFeatureTypes
+      val  ntersect on dL m  =  ad. ntersect on dL m 
 
-      val request = WorkerIntersectionRequest(
-        userId,
-        ks.map(_.candidateId).toArray,
+      val request = Worker ntersect onRequest(
+        user d,
+        ks.map(_.cand date d).toArray,
         featureTypes,
         presetFeatureTypes,
-        intersectionIdLimit
+         ntersect on dL m 
       )
 
       val resultFuture = Future
         .collect(
-          graphFeatureServiceWorkerClients.workers.map { worker =>
+          graphFeatureServ ceWorkerCl ents.workers.map { worker =>
             worker
-              .getIntersection(request)
+              .get ntersect on(request)
               .rescue {
-                case _: RequestTimeoutException =>
-                  timeOutCounter.incr()
-                  Future.value(DefaultWorkerIntersectionResponse)
+                case _: RequestT  outExcept on =>
+                  t  OutCounter. ncr()
+                  Future.value(DefaultWorker ntersect onResponse)
                 case e =>
-                  unknownErrorCounter.incr()
-                  logger.error("Failure to load result.", e)
-                  Future.value(DefaultWorkerIntersectionResponse)
+                  unknownErrorCounter. ncr()
+                  logger.error("Fa lure to load result.", e)
+                  Future.value(DefaultWorker ntersect onResponse)
               }
           }
         ).map { responses =>
-          Stat.time(aggregatorLatency) {
-            gfsIntersectionResponseAggregator(
+          Stat.t  (aggregatorLatency) {
+            gfs ntersect onResponseAggregator(
               responses,
               calculatedFeatureTypes,
-              request.candidateUserIds,
-              intersectionIdLimit
+              request.cand dateUser ds,
+               ntersect on dL m 
             )
           }
         }
 
       ks.map { query =>
-        query -> resultFuture.map(_.get(query.candidateId))
+        query -> resultFuture.map(_.get(query.cand date d))
       }.toMap
     }
   }
 
   /**
-   * Function to merge GfsIntersectionResponse from workers into one result.
+   * Funct on to  rge Gfs ntersect onResponse from workers  nto one result.
    */
-  private def gfsIntersectionResponseAggregator(
-    responseList: Seq[WorkerIntersectionResponse],
+  pr vate def gfs ntersect onResponseAggregator(
+    responseL st: Seq[Worker ntersect onResponse],
     features: Seq[FeatureType],
-    candidates: Seq[Long],
-    intersectionIdLimit: Int
-  ): Map[Long, CachedIntersectionResult] = {
+    cand dates: Seq[Long],
+     ntersect on dL m :  nt
+  ): Map[Long, Cac d ntersect onResult] = {
 
-    // Map of (candidate -> features -> type -> value)
-    val cube = Array.fill[Int](candidates.length, features.length, 3)(0)
-    // Map of (candidate -> features -> intersectionIds)
-    val ids = Array.fill[Option[ArrayBuffer[Long]]](candidates.length, features.length)(None)
-    val notZero = intersectionIdLimit != 0
+    // Map of (cand date -> features -> type -> value)
+    val cube = Array.f ll[ nt](cand dates.length, features.length, 3)(0)
+    // Map of (cand date -> features ->  ntersect on ds)
+    val  ds = Array.f ll[Opt on[ArrayBuffer[Long]]](cand dates.length, features.length)(None)
+    val notZero =  ntersect on dL m  != 0
 
     for {
-      response <- responseList
-      (features, candidateIndex) <- response.results.zipWithIndex
-      (workerValue, featureIndex) <- features.zipWithIndex
+      response <- responseL st
+      (features, cand date ndex) <- response.results.z pW h ndex
+      (workerValue, feature ndex) <- features.z pW h ndex
     } {
-      cube(candidateIndex)(featureIndex)(CountIndex) += workerValue.count
-      cube(candidateIndex)(featureIndex)(LeftDegreeIndex) += workerValue.leftNodeDegree
-      cube(candidateIndex)(featureIndex)(RightDegreeIndex) += workerValue.rightNodeDegree
+      cube(cand date ndex)(feature ndex)(Count ndex) += workerValue.count
+      cube(cand date ndex)(feature ndex)(LeftDegree ndex) += workerValue.leftNodeDegree
+      cube(cand date ndex)(feature ndex)(R ghtDegree ndex) += workerValue.r ghtNodeDegree
 
-      if (notZero && workerValue.intersectionIds.nonEmpty) {
-        val arrayBuffer = ids(candidateIndex)(featureIndex) match {
-          case Some(buffer) => buffer
+       f (notZero && workerValue. ntersect on ds.nonEmpty) {
+        val arrayBuffer =  ds(cand date ndex)(feature ndex) match {
+          case So (buffer) => buffer
           case None =>
             val buffer = ArrayBuffer[Long]()
-            ids(candidateIndex)(featureIndex) = Some(buffer)
+             ds(cand date ndex)(feature ndex) = So (buffer)
             buffer
         }
-        val intersectionIds = workerValue.intersectionIds
+        val  ntersect on ds = workerValue. ntersect on ds
 
-        // Scan the intersectionId based on the Shard. The response order is consistent.
-        if (arrayBuffer.size < intersectionIdLimit) {
-          if (intersectionIds.size > intersectionIdLimit - arrayBuffer.size) {
-            arrayBuffer ++= intersectionIds.slice(0, intersectionIdLimit - arrayBuffer.size)
+        // Scan t   ntersect on d based on t  Shard. T  response order  s cons stent.
+         f (arrayBuffer.s ze <  ntersect on dL m ) {
+           f ( ntersect on ds.s ze >  ntersect on dL m  - arrayBuffer.s ze) {
+            arrayBuffer ++=  ntersect on ds.sl ce(0,  ntersect on dL m  - arrayBuffer.s ze)
           } else {
-            arrayBuffer ++= intersectionIds
+            arrayBuffer ++=  ntersect on ds
           }
         }
       }
     }
 
-    candidates.zipWithIndex.map {
-      case (candidate, candidateIndex) =>
-        candidate -> CachedIntersectionResult(features.indices.map { featureIndex =>
-          WorkerIntersectionValue(
-            cube(candidateIndex)(featureIndex)(CountIndex),
-            cube(candidateIndex)(featureIndex)(LeftDegreeIndex),
-            cube(candidateIndex)(featureIndex)(RightDegreeIndex),
-            ids(candidateIndex)(featureIndex).getOrElse(Nil)
+    cand dates.z pW h ndex.map {
+      case (cand date, cand date ndex) =>
+        cand date -> Cac d ntersect onResult(features. nd ces.map { feature ndex =>
+          Worker ntersect onValue(
+            cube(cand date ndex)(feature ndex)(Count ndex),
+            cube(cand date ndex)(feature ndex)(LeftDegree ndex),
+            cube(cand date ndex)(feature ndex)(R ghtDegree ndex),
+             ds(cand date ndex)(feature ndex).getOrElse(N l)
           )
         })
     }.toMap
@@ -144,38 +144,38 @@ case class GetIntersectionStore(
 
 }
 
-object GetIntersectionStore {
+object Get ntersect onStore {
 
-  private[graph_feature_service] case class GetIntersectionQuery(
-    userId: Long,
-    candidateId: Long,
+  pr vate[graph_feature_serv ce] case class Get ntersect onQuery(
+    user d: Long,
+    cand date d: Long,
     featureTypes: Seq[FeatureType],
     presetFeatureTypes: PresetFeatureTypes,
-    featureTypesString: String,
+    featureTypesStr ng: Str ng,
     calculatedFeatureTypes: Seq[FeatureType],
-    intersectionIdLimit: Int)
+     ntersect on dL m :  nt)
 
-  private[graph_feature_service] object GetIntersectionQuery {
-    def buildQueries(request: GetIntersectionRequest): Set[GetIntersectionQuery] = {
-      request.candidateUserIds.toSet.map { candidateId: Long =>
-        GetIntersectionQuery(
-          request.userId,
-          candidateId,
+  pr vate[graph_feature_serv ce] object Get ntersect onQuery {
+    def bu ldQuer es(request: Get ntersect onRequest): Set[Get ntersect onQuery] = {
+      request.cand dateUser ds.toSet.map { cand date d: Long =>
+        Get ntersect onQuery(
+          request.user d,
+          cand date d,
           request.featureTypes,
           request.presetFeatureTypes,
-          request.calculatedFeatureTypesString,
+          request.calculatedFeatureTypesStr ng,
           request.calculatedFeatureTypes,
-          request.intersectionIdLimit.getOrElse(DefaultIntersectionIdLimit)
+          request. ntersect on dL m .getOrElse(Default ntersect on dL m )
         )
       }
     }
   }
 
-  // Don't return the intersectionId for better performance
-  private val DefaultIntersectionIdLimit = 0
-  private val DefaultWorkerIntersectionResponse = WorkerIntersectionResponse()
+  // Don't return t   ntersect on d for better performance
+  pr vate val Default ntersect on dL m  = 0
+  pr vate val DefaultWorker ntersect onResponse = Worker ntersect onResponse()
 
-  private val CountIndex = 0
-  private val LeftDegreeIndex = 1
-  private val RightDegreeIndex = 2
+  pr vate val Count ndex = 0
+  pr vate val LeftDegree ndex = 1
+  pr vate val R ghtDegree ndex = 2
 }

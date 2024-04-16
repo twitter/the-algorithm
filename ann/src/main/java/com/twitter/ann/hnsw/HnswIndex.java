@@ -1,346 +1,346 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Function;
+ mport java. o. OExcept on;
+ mport java.n o.ByteBuffer;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Objects;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Random;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.atom c.Atom cReference;
+ mport java.ut l.concurrent.locks.Lock;
+ mport java.ut l.concurrent.locks.ReadWr eLock;
+ mport java.ut l.concurrent.locks.ReentrantLock;
+ mport java.ut l.concurrent.locks.ReentrantReadWr eLock;
+ mport java.ut l.funct on.Funct on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
 
-import org.apache.thrift.TException;
+ mport org.apac .thr ft.TExcept on;
 
-import com.twitter.ann.common.IndexOutputFile;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.logging.Logger;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+ mport com.tw ter.ann.common. ndexOutputF le;
+ mport com.tw ter.ann.common.thr ftjava.Hnsw nternal ndex tadata;
+ mport com.tw ter.b ject on. nject on;
+ mport com.tw ter.logg ng.Logger;
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec;
+ mport com.tw ter.search.common.f le.AbstractF le;
 
 /**
- * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour
- * Paper: https://arxiv.org/pdf/1603.09320.pdf
- * Multithreading impl based on NMSLIB version : https://github.com/nmslib/hnsw/blob/master/hnswlib/hnswalg.h
+ * Typed mult hreaded HNSW  mple ntat on support ng creat on/query ng of approx mate nearest ne ghb 
+ * Paper: https://arx v.org/pdf/1603.09320.pdf
+ * Mult hread ng  mpl based on NMSL B vers on : https://g hub.com/nmsl b/hnsw/blob/master/hnswl b/hnswalg.h
  *
- * @param <T> The type of items inserted / searched in the HNSW index.
- * @param <Q> The type of KNN query.
+ * @param <T> T  type of  ems  nserted / searc d  n t  HNSW  ndex.
+ * @param <Q> T  type of KNN query.
  */
-public class HnswIndex<T, Q> {
-  private static final Logger LOG = Logger.get(HnswIndex.class);
-  private static final String METADATA_FILE_NAME = "hnsw_internal_metadata";
-  private static final String GRAPH_FILE_NAME = "hnsw_internal_graph";
-  private static final int MAP_SIZE_FACTOR = 5;
+publ c class Hnsw ndex<T, Q> {
+  pr vate stat c f nal Logger LOG = Logger.get(Hnsw ndex.class);
+  pr vate stat c f nal Str ng METADATA_F LE_NAME = "hnsw_ nternal_ tadata";
+  pr vate stat c f nal Str ng GRAPH_F LE_NAME = "hnsw_ nternal_graph";
+  pr vate stat c f nal  nt MAP_S ZE_FACTOR = 5;
 
-  private final DistanceFunction<T, T> distFnIndex;
-  private final DistanceFunction<Q, T> distFnQuery;
-  private final int efConstruction;
-  private final int maxM;
-  private final int maxM0;
-  private final double levelMultiplier;
-  private final AtomicReference<HnswMeta<T>> graphMeta = new AtomicReference<>();
-  private final Map<HnswNode<T>, ImmutableList<T>> graph;
+  pr vate f nal D stanceFunct on<T, T> d stFn ndex;
+  pr vate f nal D stanceFunct on<Q, T> d stFnQuery;
+  pr vate f nal  nt efConstruct on;
+  pr vate f nal  nt maxM;
+  pr vate f nal  nt maxM0;
+  pr vate f nal double levelMult pl er;
+  pr vate f nal Atom cReference<Hnsw ta<T>> graph ta = new Atom cReference<>();
+  pr vate f nal Map<HnswNode<T>,  mmutableL st<T>> graph;
   // To take lock on vertex level
-  private final ConcurrentHashMap<T, ReadWriteLock> locks;
-  // To take lock on whole graph only if vertex addition is on layer above the current maxLevel
-  private final ReentrantLock globalLock;
-  private final Function<T, ReadWriteLock> lockProvider;
+  pr vate f nal ConcurrentHashMap<T, ReadWr eLock> locks;
+  // To take lock on whole graph only  f vertex add  on  s on layer above t  current maxLevel
+  pr vate f nal ReentrantLock globalLock;
+  pr vate f nal Funct on<T, ReadWr eLock> lockProv der;
 
-  private final RandomProvider randomProvider;
+  pr vate f nal RandomProv der randomProv der;
 
-  // Probability of reevaluating connections of an element in the neighborhood during an update
+  // Probab l y of reevaluat ng connect ons of an ele nt  n t  ne ghborhood dur ng an update
   // Can be used as a knob to adjust update_speed/search_speed tradeoff.
-  private final float updateNeighborProbability;
+  pr vate f nal float updateNe ghborProbab l y;
 
   /**
-   * Creates instance of hnsw index.
+   * Creates  nstance of hnsw  ndex.
    *
-   * @param distFnIndex      Any distance metric/non metric that specifies similarity between two items for indexing.
-   * @param distFnQuery      Any distance metric/non metric that specifies similarity between item for which nearest neighbours queried for and already indexed item.
-   * @param efConstruction   Provide speed vs index quality tradeoff, higher the value better the quality and higher the time to create index.
-   *                         Valid range of efConstruction can be anywhere between 1 and tens of thousand. Typically, it should be set so that a search of M
-   *                         neighbors with ef=efConstruction should end in recall>0.95.
-   * @param maxM             Maximum connections per layer except 0th level.
-   *                         Optimal values between 5-48.
-   *                         Smaller M generally produces better result for lower recalls and/ or lower dimensional data,
-   *                         while bigger M is better for high recall and/ or high dimensional, data on the expense of more memory/disk usage
-   * @param expectedElements Approximate number of elements to be indexed
+   * @param d stFn ndex      Any d stance  tr c/non  tr c that spec f es s m lar y bet en two  ems for  ndex ng.
+   * @param d stFnQuery      Any d stance  tr c/non  tr c that spec f es s m lar y bet en  em for wh ch nearest ne ghb s quer ed for and already  ndexed  em.
+   * @param efConstruct on   Prov de speed vs  ndex qual y tradeoff, h g r t  value better t  qual y and h g r t  t   to create  ndex.
+   *                         Val d range of efConstruct on can be anyw re bet en 1 and tens of thousand. Typ cally,   should be set so that a search of M
+   *                         ne ghbors w h ef=efConstruct on should end  n recall>0.95.
+   * @param maxM             Max mum connect ons per layer except 0th level.
+   *                         Opt mal values bet en 5-48.
+   *                         Smaller M generally produces better result for lo r recalls and/ or lo r d  ns onal data,
+   *                         wh le b gger M  s better for h gh recall and/ or h gh d  ns onal, data on t  expense of more  mory/d sk usage
+   * @param expectedEle nts Approx mate number of ele nts to be  ndexed
    */
-  protected HnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      int efConstruction,
-      int maxM,
-      int expectedElements,
-      RandomProvider randomProvider
+  protected Hnsw ndex(
+      D stanceFunct on<T, T> d stFn ndex,
+      D stanceFunct on<Q, T> d stFnQuery,
+       nt efConstruct on,
+       nt maxM,
+       nt expectedEle nts,
+      RandomProv der randomProv der
   ) {
-    this(distFnIndex,
-        distFnQuery,
-        efConstruction,
+    t (d stFn ndex,
+        d stFnQuery,
+        efConstruct on,
         maxM,
-        expectedElements,
-        new HnswMeta<>(-1, Optional.empty()),
-        new ConcurrentHashMap<>(MAP_SIZE_FACTOR * expectedElements),
-        randomProvider
+        expectedEle nts,
+        new Hnsw ta<>(-1, Opt onal.empty()),
+        new ConcurrentHashMap<>(MAP_S ZE_FACTOR * expectedEle nts),
+        randomProv der
     );
   }
 
-  private HnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      int efConstruction,
-      int maxM,
-      int expectedElements,
-      HnswMeta<T> graphMeta,
-      Map<HnswNode<T>, ImmutableList<T>> graph,
-      RandomProvider randomProvider
+  pr vate Hnsw ndex(
+      D stanceFunct on<T, T> d stFn ndex,
+      D stanceFunct on<Q, T> d stFnQuery,
+       nt efConstruct on,
+       nt maxM,
+       nt expectedEle nts,
+      Hnsw ta<T> graph ta,
+      Map<HnswNode<T>,  mmutableL st<T>> graph,
+      RandomProv der randomProv der
   ) {
-    this.distFnIndex = distFnIndex;
-    this.distFnQuery = distFnQuery;
-    this.efConstruction = efConstruction;
-    this.maxM = maxM;
-    this.maxM0 = 2 * maxM;
-    this.levelMultiplier = 1.0 / Math.log(1.0 * maxM);
-    this.graphMeta.set(graphMeta);
-    this.graph = graph;
-    this.locks = new ConcurrentHashMap<>(MAP_SIZE_FACTOR * expectedElements);
-    this.globalLock = new ReentrantLock();
-    this.lockProvider = key -> new ReentrantReadWriteLock();
-    this.randomProvider = randomProvider;
-    this.updateNeighborProbability = 1.0f;
+    t .d stFn ndex = d stFn ndex;
+    t .d stFnQuery = d stFnQuery;
+    t .efConstruct on = efConstruct on;
+    t .maxM = maxM;
+    t .maxM0 = 2 * maxM;
+    t .levelMult pl er = 1.0 / Math.log(1.0 * maxM);
+    t .graph ta.set(graph ta);
+    t .graph = graph;
+    t .locks = new ConcurrentHashMap<>(MAP_S ZE_FACTOR * expectedEle nts);
+    t .globalLock = new ReentrantLock();
+    t .lockProv der = key -> new ReentrantReadWr eLock();
+    t .randomProv der = randomProv der;
+    t .updateNe ghborProbab l y = 1.0f;
   }
 
   /**
-   * wireConnectionForAllLayers finds connections for a new element and creates bi-direction links.
-   * The method assumes using a reentrant lock to link list reads.
+   * w reConnect onForAllLayers f nds connect ons for a new ele nt and creates b -d rect on l nks.
+   * T   thod assu s us ng a reentrant lock to l nk l st reads.
    *
-   * @param entryPoint the global entry point
-   * @param item       the item for which the connections are found
-   * @param itemLevel  the level of the added item (maximum layer in which we wire the connections)
-   * @param maxLayer   the level of the entry point
+   * @param entryPo nt t  global entry po nt
+   * @param  em       t   em for wh ch t  connect ons are found
+   * @param  emLevel  t  level of t  added  em (max mum layer  n wh ch   w re t  connect ons)
+   * @param maxLayer   t  level of t  entry po nt
    */
-  private void wireConnectionForAllLayers(final T entryPoint, final T item, final int itemLevel,
-                                          final int maxLayer, final boolean isUpdate) {
-    T curObj = entryPoint;
-    if (itemLevel < maxLayer) {
-      curObj = bestEntryPointUntilLayer(curObj, item, maxLayer, itemLevel, distFnIndex);
+  pr vate vo d w reConnect onForAllLayers(f nal T entryPo nt, f nal T  em, f nal  nt  emLevel,
+                                          f nal  nt maxLayer, f nal boolean  sUpdate) {
+    T curObj = entryPo nt;
+     f ( emLevel < maxLayer) {
+      curObj = bestEntryPo ntUnt lLayer(curObj,  em, maxLayer,  emLevel, d stFn ndex);
     }
-    for (int level = Math.min(itemLevel, maxLayer); level >= 0; level--) {
-      final DistancedItemQueue<T, T> candidates =
-          searchLayerForCandidates(item, curObj, efConstruction, level, distFnIndex, isUpdate);
-      curObj = mutuallyConnectNewElement(item, candidates, level, isUpdate);
+    for ( nt level = Math.m n( emLevel, maxLayer); level >= 0; level--) {
+      f nal D stanced emQueue<T, T> cand dates =
+          searchLayerForCand dates( em, curObj, efConstruct on, level, d stFn ndex,  sUpdate);
+      curObj = mutuallyConnectNewEle nt( em, cand dates, level,  sUpdate);
     }
   }
 
   /**
-   * Insert the item into HNSW index.
+   *  nsert t   em  nto HNSW  ndex.
    */
-  public void insert(final T item) throws IllegalDuplicateInsertException {
-    final Lock itemLock = locks.computeIfAbsent(item, lockProvider).writeLock();
-    itemLock.lock();
+  publ c vo d  nsert(f nal T  em) throws  llegalDupl cate nsertExcept on {
+    f nal Lock  emLock = locks.compute fAbsent( em, lockProv der).wr eLock();
+     emLock.lock();
     try {
-      final HnswMeta<T> metadata = graphMeta.get();
-      // If the graph already have the item, should not re-insert it again
-      // Need to check entry point in case we reinsert first item where is are no graph
-      // but only a entry point
-      if (graph.containsKey(HnswNode.from(0, item))
-          || (metadata.getEntryPoint().isPresent()
-          && Objects.equals(metadata.getEntryPoint().get(), item))) {
-        throw new IllegalDuplicateInsertException(
-            "Duplicate insertion is not supported: " + item);
+      f nal Hnsw ta<T>  tadata = graph ta.get();
+      //  f t  graph already have t   em, should not re- nsert   aga n
+      // Need to c ck entry po nt  n case   re nsert f rst  em w re  s are no graph
+      // but only a entry po nt
+       f (graph.conta nsKey(HnswNode.from(0,  em))
+          || ( tadata.getEntryPo nt(). sPresent()
+          && Objects.equals( tadata.getEntryPo nt().get(),  em))) {
+        throw new  llegalDupl cate nsertExcept on(
+            "Dupl cate  nsert on  s not supported: " +  em);
       }
-      final int curLevel = getRandomLevel();
-      Optional<T> entryPoint = metadata.getEntryPoint();
-      // The global lock prevents two threads from making changes to the entry point. This lock
-      // should get taken very infrequently. Something like log-base-levelMultiplier(num items)
-      // For a full explanation of locking see this document: http://go/hnsw-locking
-      int maxLevelCopy = metadata.getMaxLevel();
-      if (curLevel > maxLevelCopy) {
+      f nal  nt curLevel = getRandomLevel();
+      Opt onal<T> entryPo nt =  tadata.getEntryPo nt();
+      // T  global lock prevents two threads from mak ng changes to t  entry po nt. T  lock
+      // should get taken very  nfrequently. So th ng l ke log-base-levelMult pl er(num  ems)
+      // For a full explanat on of lock ng see t  docu nt: http://go/hnsw-lock ng
+       nt maxLevelCopy =  tadata.getMaxLevel();
+       f (curLevel > maxLevelCopy) {
         globalLock.lock();
-        // Re initialize the entryPoint and maxLevel in case these are changed by any other thread
-        // No need to check the condition again since,
-        // it is already checked at the end before updating entry point struct
-        // No need to unlock for optimization and keeping as is if condition fails since threads
-        // will not be entering this section a lot.
-        final HnswMeta<T> temp = graphMeta.get();
-        entryPoint = temp.getEntryPoint();
+        // Re  n  al ze t  entryPo nt and maxLevel  n case t se are changed by any ot r thread
+        // No need to c ck t  cond  on aga n s nce,
+        //    s already c cked at t  end before updat ng entry po nt struct
+        // No need to unlock for opt m zat on and keep ng as  s  f cond  on fa ls s nce threads
+        // w ll not be enter ng t  sect on a lot.
+        f nal Hnsw ta<T> temp = graph ta.get();
+        entryPo nt = temp.getEntryPo nt();
         maxLevelCopy = temp.getMaxLevel();
       }
 
-      if (entryPoint.isPresent()) {
-        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, false);
+       f (entryPo nt. sPresent()) {
+        w reConnect onForAllLayers(entryPo nt.get(),  em, curLevel, maxLevelCopy, false);
       }
 
-      if (curLevel > maxLevelCopy) {
-        Preconditions.checkState(globalLock.isHeldByCurrentThread(),
-            "Global lock not held before updating entry point");
-        graphMeta.set(new HnswMeta<>(curLevel, Optional.of(item)));
+       f (curLevel > maxLevelCopy) {
+        Precond  ons.c ckState(globalLock. s ldByCurrentThread(),
+            "Global lock not  ld before updat ng entry po nt");
+        graph ta.set(new Hnsw ta<>(curLevel, Opt onal.of( em)));
       }
-    } finally {
-      if (globalLock.isHeldByCurrentThread()) {
+    } f nally {
+       f (globalLock. s ldByCurrentThread()) {
         globalLock.unlock();
       }
-      itemLock.unlock();
+       emLock.unlock();
     }
   }
 
   /**
-   * set connections of an element with synchronization
-   * The only other place that should have the lock for writing is during
-   * the element insertion
+   * set connect ons of an ele nt w h synchron zat on
+   * T  only ot r place that should have t  lock for wr  ng  s dur ng
+   * t  ele nt  nsert on
    */
-  private void setConnectionList(final T item, int layer, List<T> connections) {
-    final Lock candidateLock = locks.computeIfAbsent(item, lockProvider).writeLock();
-    candidateLock.lock();
+  pr vate vo d setConnect onL st(f nal T  em,  nt layer, L st<T> connect ons) {
+    f nal Lock cand dateLock = locks.compute fAbsent( em, lockProv der).wr eLock();
+    cand dateLock.lock();
     try {
       graph.put(
-          HnswNode.from(layer, item),
-          ImmutableList.copyOf(connections)
+          HnswNode.from(layer,  em),
+           mmutableL st.copyOf(connect ons)
       );
-    } finally {
-      candidateLock.unlock();
+    } f nally {
+      cand dateLock.unlock();
     }
   }
 
   /**
-   * Reinsert the item into HNSW index.
-   * This method updates the links of an element assuming
-   * the element's distance function is changed externally (e.g. by updating the features)
+   * Re nsert t   em  nto HNSW  ndex.
+   * T   thod updates t  l nks of an ele nt assum ng
+   * t  ele nt's d stance funct on  s changed externally (e.g. by updat ng t  features)
    */
 
-  public void reInsert(final T item) {
-    final HnswMeta<T> metadata = graphMeta.get();
+  publ c vo d re nsert(f nal T  em) {
+    f nal Hnsw ta<T>  tadata = graph ta.get();
 
-    Optional<T> entryPoint = metadata.getEntryPoint();
+    Opt onal<T> entryPo nt =  tadata.getEntryPo nt();
 
-    Preconditions.checkState(entryPoint.isPresent(),
-        "Update cannot be performed if entry point is not present");
+    Precond  ons.c ckState(entryPo nt. sPresent(),
+        "Update cannot be perfor d  f entry po nt  s not present");
 
-    // This is a check for the single element case
-    if (entryPoint.get().equals(item) && graph.isEmpty()) {
+    // T   s a c ck for t  s ngle ele nt case
+     f (entryPo nt.get().equals( em) && graph. sEmpty()) {
       return;
     }
 
-    Preconditions.checkState(graph.containsKey(HnswNode.from(0, item)),
-        "Graph does not contain the item to be updated at level 0");
+    Precond  ons.c ckState(graph.conta nsKey(HnswNode.from(0,  em)),
+        "Graph does not conta n t   em to be updated at level 0");
 
-    int curLevel = 0;
+     nt curLevel = 0;
 
-    int maxLevelCopy = metadata.getMaxLevel();
+     nt maxLevelCopy =  tadata.getMaxLevel();
 
-    for (int layer = maxLevelCopy; layer >= 0; layer--) {
-      if (graph.containsKey(HnswNode.from(layer, item))) {
+    for ( nt layer = maxLevelCopy; layer >= 0; layer--) {
+       f (graph.conta nsKey(HnswNode.from(layer,  em))) {
         curLevel = layer;
         break;
       }
     }
 
-    // Updating the links of the elements from the 1-hop radius of the updated element
+    // Updat ng t  l nks of t  ele nts from t  1-hop rad us of t  updated ele nt
 
-    for (int layer = 0; layer <= curLevel; layer++) {
+    for ( nt layer = 0; layer <= curLevel; layer++) {
 
-      // Filling the element sets for candidates and updated elements
-      final HashSet<T> setCand = new HashSet<T>();
-      final HashSet<T> setNeigh = new HashSet<T>();
-      final List<T> listOneHop = getConnectionListForRead(item, layer);
+      // F ll ng t  ele nt sets for cand dates and updated ele nts
+      f nal HashSet<T> setCand = new HashSet<T>();
+      f nal HashSet<T> setNe gh = new HashSet<T>();
+      f nal L st<T> l stOneHop = getConnect onL stForRead( em, layer);
 
-      if (listOneHop.isEmpty()) {
-        LOG.debug("No links for the updated element. Empty dataset?");
-        continue;
+       f (l stOneHop. sEmpty()) {
+        LOG.debug("No l nks for t  updated ele nt. Empty dataset?");
+        cont nue;
       }
 
-      setCand.add(item);
+      setCand.add( em);
 
-      for (T elOneHop : listOneHop) {
+      for (T elOneHop : l stOneHop) {
         setCand.add(elOneHop);
-        if (randomProvider.get().nextFloat() > updateNeighborProbability) {
-          continue;
+         f (randomProv der.get().nextFloat() > updateNe ghborProbab l y) {
+          cont nue;
         }
-        setNeigh.add(elOneHop);
-        final List<T> listTwoHop = getConnectionListForRead(elOneHop, layer);
+        setNe gh.add(elOneHop);
+        f nal L st<T> l stTwoHop = getConnect onL stForRead(elOneHop, layer);
 
-        if (listTwoHop.isEmpty()) {
-          LOG.debug("No links for the updated element. Empty dataset?");
+         f (l stTwoHop. sEmpty()) {
+          LOG.debug("No l nks for t  updated ele nt. Empty dataset?");
         }
 
-        for (T oneHopEl : listTwoHop) {
+        for (T oneHopEl : l stTwoHop) {
           setCand.add(oneHopEl);
         }
       }
-      // No need to update the item itself, so remove it
-      setNeigh.remove(item);
+      // No need to update t   em  self, so remove  
+      setNe gh.remove( em);
 
-      // Updating the link lists of elements from setNeigh:
-      for (T neigh : setNeigh) {
-        final HashSet<T> setCopy = new HashSet<T>(setCand);
-        setCopy.remove(neigh);
-        int keepElementsNum = Math.min(efConstruction, setCopy.size());
-        final DistancedItemQueue<T, T> candidates = new DistancedItemQueue<>(
-            neigh,
-            ImmutableList.of(),
+      // Updat ng t  l nk l sts of ele nts from setNe gh:
+      for (T ne gh : setNe gh) {
+        f nal HashSet<T> setCopy = new HashSet<T>(setCand);
+        setCopy.remove(ne gh);
+         nt keepEle ntsNum = Math.m n(efConstruct on, setCopy.s ze());
+        f nal D stanced emQueue<T, T> cand dates = new D stanced emQueue<>(
+            ne gh,
+             mmutableL st.of(),
             false,
-            distFnIndex
+            d stFn ndex
         );
         for (T cand : setCopy) {
-          final float distance = distFnIndex.distance(neigh, cand);
-          if (candidates.size() < keepElementsNum) {
-            candidates.enqueue(cand, distance);
+          f nal float d stance = d stFn ndex.d stance(ne gh, cand);
+           f (cand dates.s ze() < keepEle ntsNum) {
+            cand dates.enqueue(cand, d stance);
           } else {
-            if (distance < candidates.peek().getDistance()) {
-              candidates.dequeue();
-              candidates.enqueue(cand, distance);
+             f (d stance < cand dates.peek().getD stance()) {
+              cand dates.dequeue();
+              cand dates.enqueue(cand, d stance);
             }
           }
         }
-        final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(
-            candidates,
+        f nal  mmutableL st<T> ne ghb s = selectNearestNe ghb sBy ur st c(
+            cand dates,
             layer == 0 ? maxM0 : maxM
         );
 
-        final List<T> temp = getConnectionListForRead(neigh, layer);
-        if (temp.isEmpty()) {
-          LOG.debug("existing linkslist is empty. Corrupt index");
+        f nal L st<T> temp = getConnect onL stForRead(ne gh, layer);
+         f (temp. sEmpty()) {
+          LOG.debug("ex st ng l nksl st  s empty. Corrupt  ndex");
         }
-        if (neighbours.isEmpty()) {
-          LOG.debug("predicted linkslist is empty. Corrupt index");
+         f (ne ghb s. sEmpty()) {
+          LOG.debug("pred cted l nksl st  s empty. Corrupt  ndex");
         }
-        setConnectionList(neigh, layer, neighbours);
+        setConnect onL st(ne gh, layer, ne ghb s);
 
       }
 
 
     }
-    wireConnectionForAllLayers(metadata.getEntryPoint().get(), item, curLevel, maxLevelCopy, true);
+    w reConnect onForAllLayers( tadata.getEntryPo nt().get(),  em, curLevel, maxLevelCopy, true);
   }
 
   /**
-   * This method can be used to get the graph statistics, specifically
-   * it prints the histogram of inbound connections for each element.
+   * T   thod can be used to get t  graph stat st cs, spec f cally
+   *   pr nts t   togram of  nbound connect ons for each ele nt.
    */
-  private String getStats() {
-    int histogramMaxBins = 50;
-    int[] histogram = new int[histogramMaxBins];
-    HashMap<T, Integer> mmap = new HashMap<T, Integer>();
+  pr vate Str ng getStats() {
+     nt  togramMaxB ns = 50;
+     nt[]  togram = new  nt[ togramMaxB ns];
+    HashMap<T,  nteger> mmap = new HashMap<T,  nteger>();
     for (HnswNode<T> key : graph.keySet()) {
-      if (key.level == 0) {
-        List<T> linkList = getConnectionListForRead(key.item, key.level);
-        for (T node : linkList) {
-          int a = mmap.computeIfAbsent(node, k -> 0);
+       f (key.level == 0) {
+        L st<T> l nkL st = getConnect onL stForRead(key. em, key.level);
+        for (T node : l nkL st) {
+           nt a = mmap.compute fAbsent(node, k -> 0);
           mmap.put(node, a + 1);
 
         }
@@ -348,121 +348,121 @@ public class HnswIndex<T, Q> {
     }
 
     for (T key : mmap.keySet()) {
-      int ind = mmap.get(key) < histogramMaxBins - 1 ? mmap.get(key) : histogramMaxBins - 1;
-      histogram[ind]++;
+       nt  nd = mmap.get(key) <  togramMaxB ns - 1 ? mmap.get(key) :  togramMaxB ns - 1;
+       togram[ nd]++;
     }
-    int minNonZeroIndex;
-    for (minNonZeroIndex = histogramMaxBins - 1; minNonZeroIndex >= 0; minNonZeroIndex--) {
-      if (histogram[minNonZeroIndex] > 0) {
+     nt m nNonZero ndex;
+    for (m nNonZero ndex =  togramMaxB ns - 1; m nNonZero ndex >= 0; m nNonZero ndex--) {
+       f ( togram[m nNonZero ndex] > 0) {
         break;
       }
     }
 
-    String output = "";
-    for (int i = 0; i <= minNonZeroIndex; i++) {
-      output += "" + i + "\t" + histogram[i] / (0.01f * mmap.keySet().size()) + "\n";
+    Str ng output = "";
+    for ( nt   = 0;   <= m nNonZero ndex;  ++) {
+      output += "" +   + "\t" +  togram[ ] / (0.01f * mmap.keySet().s ze()) + "\n";
     }
 
     return output;
   }
 
-  private int getRandomLevel() {
-    return (int) (-Math.log(randomProvider.get().nextDouble()) * levelMultiplier);
+  pr vate  nt getRandomLevel() {
+    return ( nt) (-Math.log(randomProv der.get().nextDouble()) * levelMult pl er);
   }
 
   /**
-   * Note that to avoid deadlocks it is important that this method is called after all the searches
-   * of the graph have completed. If you take a lock on any items discovered in the graph after
-   * this, you may get stuck waiting on a thread that is waiting for item to be fully inserted.
+   * Note that to avo d deadlocks    s  mportant that t   thod  s called after all t  searc s
+   * of t  graph have completed.  f   take a lock on any  ems d scovered  n t  graph after
+   * t ,   may get stuck wa  ng on a thread that  s wa  ng for  em to be fully  nserted.
    * <p>
-   * Note: when using concurrent writers we can miss connections that we would otherwise get.
-   * This will reduce the recall.
+   * Note: w n us ng concurrent wr ers   can m ss connect ons that   would ot rw se get.
+   * T  w ll reduce t  recall.
    * <p>
-   * For a full explanation of locking see this document: http://go/hnsw-locking
-   * The method returns the closest nearest neighbor (can be used as an enter point)
+   * For a full explanat on of lock ng see t  docu nt: http://go/hnsw-lock ng
+   * T   thod returns t  closest nearest ne ghbor (can be used as an enter po nt)
    */
-  private T mutuallyConnectNewElement(
-      final T item,
-      final DistancedItemQueue<T, T> candidates, // Max queue
-      final int level,
-      final boolean isUpdate
+  pr vate T mutuallyConnectNewEle nt(
+      f nal T  em,
+      f nal D stanced emQueue<T, T> cand dates, // Max queue
+      f nal  nt level,
+      f nal boolean  sUpdate
   ) {
 
-    // Using maxM here. Its implementation is ambiguous in HNSW paper,
-    // so using the way it is getting used in Hnsw lib.
-    final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(candidates, maxM);
-    setConnectionList(item, level, neighbours);
-    final int M = level == 0 ? maxM0 : maxM;
-    for (T nn : neighbours) {
-      if (nn.equals(item)) {
-        continue;
+    // Us ng maxM  re.  s  mple ntat on  s amb guous  n HNSW paper,
+    // so us ng t  way    s gett ng used  n Hnsw l b.
+    f nal  mmutableL st<T> ne ghb s = selectNearestNe ghb sBy ur st c(cand dates, maxM);
+    setConnect onL st( em, level, ne ghb s);
+    f nal  nt M = level == 0 ? maxM0 : maxM;
+    for (T nn : ne ghb s) {
+       f (nn.equals( em)) {
+        cont nue;
       }
-      final Lock curLock = locks.computeIfAbsent(nn, lockProvider).writeLock();
+      f nal Lock curLock = locks.compute fAbsent(nn, lockProv der).wr eLock();
       curLock.lock();
       try {
-        final HnswNode<T> key = HnswNode.from(level, nn);
-        final ImmutableList<T> connections = graph.getOrDefault(key, ImmutableList.of());
-        final boolean isItemAlreadyPresent =
-            isUpdate && connections.indexOf(item) != -1 ? true : false;
+        f nal HnswNode<T> key = HnswNode.from(level, nn);
+        f nal  mmutableL st<T> connect ons = graph.getOrDefault(key,  mmutableL st.of());
+        f nal boolean  s emAlreadyPresent =
+             sUpdate && connect ons. ndexOf( em) != -1 ? true : false;
 
-        // If `item` is already present in the neighboring connections,
-        // then no need to modify any connections or run the search heuristics.
-        if (isItemAlreadyPresent) {
-          continue;
+        //  f ` em`  s already present  n t  ne ghbor ng connect ons,
+        // t n no need to mod fy any connect ons or run t  search  ur st cs.
+         f ( s emAlreadyPresent) {
+          cont nue;
         }
 
-        final ImmutableList<T> updatedConnections;
-        if (connections.size() < M) {
-          final List<T> temp = new ArrayList<>(connections);
-          temp.add(item);
-          updatedConnections = ImmutableList.copyOf(temp.iterator());
+        f nal  mmutableL st<T> updatedConnect ons;
+         f (connect ons.s ze() < M) {
+          f nal L st<T> temp = new ArrayL st<>(connect ons);
+          temp.add( em);
+          updatedConnect ons =  mmutableL st.copyOf(temp. erator());
         } else {
           // Max Queue
-          final DistancedItemQueue<T, T> queue = new DistancedItemQueue<>(
+          f nal D stanced emQueue<T, T> queue = new D stanced emQueue<>(
               nn,
-              connections,
+              connect ons,
               false,
-              distFnIndex
+              d stFn ndex
           );
-          queue.enqueue(item);
-          updatedConnections = selectNearestNeighboursByHeuristic(queue, M);
+          queue.enqueue( em);
+          updatedConnect ons = selectNearestNe ghb sBy ur st c(queue, M);
         }
-        if (updatedConnections.isEmpty()) {
-          LOG.debug("Internal error: predicted linkslist is empty");
+         f (updatedConnect ons. sEmpty()) {
+          LOG.debug(" nternal error: pred cted l nksl st  s empty");
         }
 
-        graph.put(key, updatedConnections);
-      } finally {
+        graph.put(key, updatedConnect ons);
+      } f nally {
         curLock.unlock();
       }
     }
-    return neighbours.get(0);
+    return ne ghb s.get(0);
   }
 
   /*
-   *  bestEntryPointUntilLayer starts the graph search for item from the entry point
-   *  until the searches reaches the selectedLayer layer.
-   *  @return a point from selectedLayer layer, was the closest on the (selectedLayer+1) layer
+   *  bestEntryPo ntUnt lLayer starts t  graph search for  em from t  entry po nt
+   *  unt l t  searc s reac s t  selectedLayer layer.
+   *  @return a po nt from selectedLayer layer, was t  closest on t  (selectedLayer+1) layer
    */
-  private <K> T bestEntryPointUntilLayer(
-      final T entryPoint,
-      final K item,
-      int maxLayer,
-      int selectedLayer,
-      DistanceFunction<K, T> distFn
+  pr vate <K> T bestEntryPo ntUnt lLayer(
+      f nal T entryPo nt,
+      f nal K  em,
+       nt maxLayer,
+       nt selectedLayer,
+      D stanceFunct on<K, T> d stFn
   ) {
-    T curObj = entryPoint;
-    if (selectedLayer < maxLayer) {
-      float curDist = distFn.distance(item, curObj);
-      for (int level = maxLayer; level > selectedLayer; level--) {
+    T curObj = entryPo nt;
+     f (selectedLayer < maxLayer) {
+      float curD st = d stFn.d stance( em, curObj);
+      for ( nt level = maxLayer; level > selectedLayer; level--) {
         boolean changed = true;
-        while (changed) {
+        wh le (changed) {
           changed = false;
-          final List<T> list = getConnectionListForRead(curObj, level);
-          for (T nn : list) {
-            final float tempDist = distFn.distance(item, nn);
-            if (tempDist < curDist) {
-              curDist = tempDist;
+          f nal L st<T> l st = getConnect onL stForRead(curObj, level);
+          for (T nn : l st) {
+            f nal float tempD st = d stFn.d stance( em, nn);
+             f (tempD st < curD st) {
+              curD st = tempD st;
               curObj = nn;
               changed = true;
             }
@@ -475,145 +475,145 @@ public class HnswIndex<T, Q> {
   }
 
 
-  @VisibleForTesting
-  protected ImmutableList<T> selectNearestNeighboursByHeuristic(
-      final DistancedItemQueue<T, T> candidates, // Max queue
-      final int maxConnections
+  @V s bleForTest ng
+  protected  mmutableL st<T> selectNearestNe ghb sBy ur st c(
+      f nal D stanced emQueue<T, T> cand dates, // Max queue
+      f nal  nt maxConnect ons
   ) {
-    Preconditions.checkState(!candidates.isMinQueue(),
-        "candidates in selectNearestNeighboursByHeuristic should be a max queue");
+    Precond  ons.c ckState(!cand dates. sM nQueue(),
+        "cand dates  n selectNearestNe ghb sBy ur st c should be a max queue");
 
-    final T baseElement = candidates.getOrigin();
-    if (candidates.size() <= maxConnections) {
-      List<T> list = candidates.toListWithItem();
-      list.remove(baseElement);
-      return ImmutableList.copyOf(list);
+    f nal T baseEle nt = cand dates.getOr g n();
+     f (cand dates.s ze() <= maxConnect ons) {
+      L st<T> l st = cand dates.toL stW h em();
+      l st.remove(baseEle nt);
+      return  mmutableL st.copyOf(l st);
     } else {
-      final List<T> resSet = new ArrayList<>(maxConnections);
-      // Min queue for closest elements first
-      final DistancedItemQueue<T, T> minQueue = candidates.reverse();
-      while (minQueue.nonEmpty()) {
-        if (resSet.size() >= maxConnections) {
+      f nal L st<T> resSet = new ArrayL st<>(maxConnect ons);
+      // M n queue for closest ele nts f rst
+      f nal D stanced emQueue<T, T> m nQueue = cand dates.reverse();
+      wh le (m nQueue.nonEmpty()) {
+         f (resSet.s ze() >= maxConnect ons) {
           break;
         }
-        final DistancedItem<T> candidate = minQueue.dequeue();
+        f nal D stanced em<T> cand date = m nQueue.dequeue();
 
-        // We do not want to creates loops:
-        // While heuristic is used only for creating the links
-        if (candidate.getItem().equals(baseElement)) {
-          continue;
+        //   do not want to creates loops:
+        // Wh le  ur st c  s used only for creat ng t  l nks
+         f (cand date.get em().equals(baseEle nt)) {
+          cont nue;
         }
 
-        boolean toInclude = true;
+        boolean to nclude = true;
         for (T e : resSet) {
-          // Do not include candidate if the distance from candidate to any of existing item in
-          // resSet is closer to the distance from the candidate to the item. By doing this, the
-          // connection of graph will be more diverse, and in case of highly clustered data set,
-          // connections will be made between clusters instead of all being in the same cluster.
-          final float dist = distFnIndex.distance(e, candidate.getItem());
-          if (dist < candidate.getDistance()) {
-            toInclude = false;
+          // Do not  nclude cand date  f t  d stance from cand date to any of ex st ng  em  n
+          // resSet  s closer to t  d stance from t  cand date to t   em. By do ng t , t 
+          // connect on of graph w ll be more d verse, and  n case of h ghly clustered data set,
+          // connect ons w ll be made bet en clusters  nstead of all be ng  n t  sa  cluster.
+          f nal float d st = d stFn ndex.d stance(e, cand date.get em());
+           f (d st < cand date.getD stance()) {
+            to nclude = false;
             break;
           }
         }
 
-        if (toInclude) {
-          resSet.add(candidate.getItem());
+         f (to nclude) {
+          resSet.add(cand date.get em());
         }
       }
-      return ImmutableList.copyOf(resSet);
+      return  mmutableL st.copyOf(resSet);
     }
   }
 
   /**
-   * Search the index for the neighbours.
+   * Search t   ndex for t  ne ghb s.
    *
    * @param query           Query
-   * @param numOfNeighbours Number of neighbours to search for.
-   * @param ef              This param controls the accuracy of the search.
-   *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
-   * @return Neighbours
+   * @param numOfNe ghb s Number of ne ghb s to search for.
+   * @param ef              T  param controls t  accuracy of t  search.
+   *                        B gger t  ef better t  accuracy on t  expense of latency.
+   *                        Keep   atleast number of ne ghb s to f nd.
+   * @return Ne ghb s
    */
-  public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {
-    final HnswMeta<T> metadata = graphMeta.get();
-    if (metadata.getEntryPoint().isPresent()) {
-      T entryPoint = bestEntryPointUntilLayer(metadata.getEntryPoint().get(),
-          query, metadata.getMaxLevel(), 0, distFnQuery);
-      // Get the actual neighbours from 0th layer
-      final List<DistancedItem<T>> neighbours =
-          searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfNeighbours),
-              0, distFnQuery, false).dequeueAll();
-      Collections.reverse(neighbours);
-      return neighbours.size() > numOfNeighbours
-          ? neighbours.subList(0, numOfNeighbours) : neighbours;
+  publ c L st<D stanced em<T>> searchKnn(f nal Q query, f nal  nt numOfNe ghb s, f nal  nt ef) {
+    f nal Hnsw ta<T>  tadata = graph ta.get();
+     f ( tadata.getEntryPo nt(). sPresent()) {
+      T entryPo nt = bestEntryPo ntUnt lLayer( tadata.getEntryPo nt().get(),
+          query,  tadata.getMaxLevel(), 0, d stFnQuery);
+      // Get t  actual ne ghb s from 0th layer
+      f nal L st<D stanced em<T>> ne ghb s =
+          searchLayerForCand dates(query, entryPo nt, Math.max(ef, numOfNe ghb s),
+              0, d stFnQuery, false).dequeueAll();
+      Collect ons.reverse(ne ghb s);
+      return ne ghb s.s ze() > numOfNe ghb s
+          ? ne ghb s.subL st(0, numOfNe ghb s) : ne ghb s;
     } else {
-      return Collections.emptyList();
+      return Collect ons.emptyL st();
     }
   }
 
-  // This method is currently not used
-  // It is needed for debugging purposes only
-  private void checkIntegrity(String message) {
-    final HnswMeta<T> metadata = graphMeta.get();
+  // T   thod  s currently not used
+  //    s needed for debugg ng purposes only
+  pr vate vo d c ck ntegr y(Str ng  ssage) {
+    f nal Hnsw ta<T>  tadata = graph ta.get();
     for (HnswNode<T> node : graph.keySet()) {
-      List<T> linkList = graph.get(node);
+      L st<T> l nkL st = graph.get(node);
 
-      for (T el : linkList) {
-        if (el.equals(node.item)) {
-          LOG.debug(message);
-          throw new RuntimeException("integrity check failed");
+      for (T el : l nkL st) {
+         f (el.equals(node. em)) {
+          LOG.debug( ssage);
+          throw new Runt  Except on(" ntegr y c ck fa led");
         }
       }
     }
   }
 
-  private <K> DistancedItemQueue<K, T> searchLayerForCandidates(
-      final K item,
-      final T entryPoint,
-      final int ef,
-      final int level,
-      final DistanceFunction<K, T> distFn,
-      boolean isUpdate
+  pr vate <K> D stanced emQueue<K, T> searchLayerForCand dates(
+      f nal K  em,
+      f nal T entryPo nt,
+      f nal  nt ef,
+      f nal  nt level,
+      f nal D stanceFunct on<K, T> d stFn,
+      boolean  sUpdate
   ) {
-    // Min queue
-    final DistancedItemQueue<K, T> cQueue = new DistancedItemQueue<>(
-        item,
-        Collections.singletonList(entryPoint),
+    // M n queue
+    f nal D stanced emQueue<K, T> cQueue = new D stanced emQueue<>(
+         em,
+        Collect ons.s ngletonL st(entryPo nt),
         true,
-        distFn
+        d stFn
     );
     // Max Queue
-    final DistancedItemQueue<K, T> wQueue = cQueue.reverse();
-    final Set<T> visited = new HashSet<>();
-    float lowerBoundDistance = wQueue.peek().getDistance();
-    visited.add(entryPoint);
+    f nal D stanced emQueue<K, T> wQueue = cQueue.reverse();
+    f nal Set<T> v s ed = new HashSet<>();
+    float lo rBoundD stance = wQueue.peek().getD stance();
+    v s ed.add(entryPo nt);
 
-    while (cQueue.nonEmpty()) {
-      final DistancedItem<T> candidate = cQueue.peek();
-      if (candidate.getDistance() > lowerBoundDistance) {
+    wh le (cQueue.nonEmpty()) {
+      f nal D stanced em<T> cand date = cQueue.peek();
+       f (cand date.getD stance() > lo rBoundD stance) {
         break;
       }
 
       cQueue.dequeue();
-      final List<T> list = getConnectionListForRead(candidate.getItem(), level);
-      for (T nn : list) {
-        if (!visited.contains(nn)) {
-          visited.add(nn);
-          final float distance = distFn.distance(item, nn);
-          if (wQueue.size() < ef || distance < wQueue.peek().getDistance()) {
-            cQueue.enqueue(nn, distance);
+      f nal L st<T> l st = getConnect onL stForRead(cand date.get em(), level);
+      for (T nn : l st) {
+         f (!v s ed.conta ns(nn)) {
+          v s ed.add(nn);
+          f nal float d stance = d stFn.d stance( em, nn);
+           f (wQueue.s ze() < ef || d stance < wQueue.peek().getD stance()) {
+            cQueue.enqueue(nn, d stance);
 
-            if (isUpdate && item.equals(nn)) {
-              continue;
+             f ( sUpdate &&  em.equals(nn)) {
+              cont nue;
             }
 
-            wQueue.enqueue(nn, distance);
-            if (wQueue.size() > ef) {
+            wQueue.enqueue(nn, d stance);
+             f (wQueue.s ze() > ef) {
               wQueue.dequeue();
             }
 
-            lowerBoundDistance = wQueue.peek().getDistance();
+            lo rBoundD stance = wQueue.peek().getD stance();
           }
         }
       }
@@ -623,88 +623,88 @@ public class HnswIndex<T, Q> {
   }
 
   /**
-   * Serialize hnsw index
+   * Ser al ze hnsw  ndex
    */
-  public void toDirectory(IndexOutputFile indexOutputFile, Injection<T, byte[]> injection)
-    throws IOException, TException {
-  final int totalGraphEntries = HnswIndexIOUtil.saveHnswGraphEntries(
+  publ c vo d toD rectory( ndexOutputF le  ndexOutputF le,  nject on<T, byte[]>  nject on)
+    throws  OExcept on, TExcept on {
+  f nal  nt totalGraphEntr es = Hnsw ndex OUt l.saveHnswGraphEntr es(
       graph,
-      indexOutputFile.createFile(GRAPH_FILE_NAME).getOutputStream(),
-      injection);
+       ndexOutputF le.createF le(GRAPH_F LE_NAME).getOutputStream(),
+       nject on);
 
-  HnswIndexIOUtil.saveMetadata(
-      graphMeta.get(),
-      efConstruction,
+  Hnsw ndex OUt l.save tadata(
+      graph ta.get(),
+      efConstruct on,
       maxM,
-      totalGraphEntries,
-      injection,
-      indexOutputFile.createFile(METADATA_FILE_NAME).getOutputStream());
+      totalGraphEntr es,
+       nject on,
+       ndexOutputF le.createF le(METADATA_F LE_NAME).getOutputStream());
 }
 
   /**
-   * Load hnsw index
+   * Load hnsw  ndex
    */
-  public static <T, Q> HnswIndex<T, Q> loadHnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      AbstractFile directory,
-      Injection<T, byte[]> injection,
-      RandomProvider randomProvider) throws IOException, TException {
-    final AbstractFile graphFile = directory.getChild(GRAPH_FILE_NAME);
-    final AbstractFile metadataFile = directory.getChild(METADATA_FILE_NAME);
-    final HnswInternalIndexMetadata metadata = HnswIndexIOUtil.loadMetadata(metadataFile);
-    final Map<HnswNode<T>, ImmutableList<T>> graph =
-        HnswIndexIOUtil.loadHnswGraph(graphFile, injection, metadata.numElements);
-    final ByteBuffer entryPointBB = metadata.entryPoint;
-    final HnswMeta<T> graphMeta = new HnswMeta<>(
-        metadata.maxLevel,
-        entryPointBB == null ? Optional.empty()
-            : Optional.of(injection.invert(ArrayByteBufferCodec.decode(entryPointBB)).get())
+  publ c stat c <T, Q> Hnsw ndex<T, Q> loadHnsw ndex(
+      D stanceFunct on<T, T> d stFn ndex,
+      D stanceFunct on<Q, T> d stFnQuery,
+      AbstractF le d rectory,
+       nject on<T, byte[]>  nject on,
+      RandomProv der randomProv der) throws  OExcept on, TExcept on {
+    f nal AbstractF le graphF le = d rectory.getCh ld(GRAPH_F LE_NAME);
+    f nal AbstractF le  tadataF le = d rectory.getCh ld(METADATA_F LE_NAME);
+    f nal Hnsw nternal ndex tadata  tadata = Hnsw ndex OUt l.load tadata( tadataF le);
+    f nal Map<HnswNode<T>,  mmutableL st<T>> graph =
+        Hnsw ndex OUt l.loadHnswGraph(graphF le,  nject on,  tadata.numEle nts);
+    f nal ByteBuffer entryPo ntBB =  tadata.entryPo nt;
+    f nal Hnsw ta<T> graph ta = new Hnsw ta<>(
+         tadata.maxLevel,
+        entryPo ntBB == null ? Opt onal.empty()
+            : Opt onal.of( nject on. nvert(ArrayByteBufferCodec.decode(entryPo ntBB)).get())
     );
-    return new HnswIndex<>(
-        distFnIndex,
-        distFnQuery,
-        metadata.efConstruction,
-        metadata.maxM,
-        metadata.numElements,
-        graphMeta,
+    return new Hnsw ndex<>(
+        d stFn ndex,
+        d stFnQuery,
+         tadata.efConstruct on,
+         tadata.maxM,
+         tadata.numEle nts,
+        graph ta,
         graph,
-        randomProvider
+        randomProv der
     );
   }
 
-  private List<T> getConnectionListForRead(T node, int level) {
-    final Lock curLock = locks.computeIfAbsent(node, lockProvider).readLock();
+  pr vate L st<T> getConnect onL stForRead(T node,  nt level) {
+    f nal Lock curLock = locks.compute fAbsent(node, lockProv der).readLock();
     curLock.lock();
-    final List<T> list;
+    f nal L st<T> l st;
     try {
-      list = graph
-          .getOrDefault(HnswNode.from(level, node), ImmutableList.of());
-    } finally {
+      l st = graph
+          .getOrDefault(HnswNode.from(level, node),  mmutableL st.of());
+    } f nally {
       curLock.unlock();
     }
 
-    return list;
+    return l st;
   }
 
-  @VisibleForTesting
-  AtomicReference<HnswMeta<T>> getGraphMeta() {
-    return graphMeta;
+  @V s bleForTest ng
+  Atom cReference<Hnsw ta<T>> getGraph ta() {
+    return graph ta;
   }
 
-  @VisibleForTesting
-  Map<T, ReadWriteLock> getLocks() {
+  @V s bleForTest ng
+  Map<T, ReadWr eLock> getLocks() {
     return locks;
   }
 
-  @VisibleForTesting
-  Map<HnswNode<T>, ImmutableList<T>> getGraph() {
+  @V s bleForTest ng
+  Map<HnswNode<T>,  mmutableL st<T>> getGraph() {
     return graph;
   }
 
-  public interface RandomProvider {
+  publ c  nterface RandomProv der {
     /**
-     * RandomProvider interface made public for scala 2.12 compat
+     * RandomProv der  nterface made publ c for scala 2.12 compat
      */
     Random get();
   }

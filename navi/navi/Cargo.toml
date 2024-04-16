@@ -1,81 +1,81 @@
 [package]
-name = "navi"
-version = "2.0.45"
-edition = "2021"
+na  = "nav "
+vers on = "2.0.45"
+ed  on = "2021"
 
-[[bin]]
-name = "navi"
-path = "src/bin/navi.rs"
-required-features=["tf"]
-[[bin]]
-name = "navi_torch"
-path = "src/bin/navi_torch.rs"
-required-features=["torch"]
-[[bin]]
-name = "navi_onnx"
-path = "src/bin/navi_onnx.rs"
-required-features=["onnx"]
-[[bin]]
-name = "navi_onnx_test"
-path = "src/bin/bin_tests/navi_onnx_test.rs"
-[[bin]]
-name = "navi_torch_test"
-path = "src/bin/bin_tests/navi_torch_test.rs"
-required-features=["torch"]
+[[b n]]
+na  = "nav "
+path = "src/b n/nav .rs"
+requ red-features=["tf"]
+[[b n]]
+na  = "nav _torch"
+path = "src/b n/nav _torch.rs"
+requ red-features=["torch"]
+[[b n]]
+na  = "nav _onnx"
+path = "src/b n/nav _onnx.rs"
+requ red-features=["onnx"]
+[[b n]]
+na  = "nav _onnx_test"
+path = "src/b n/b n_tests/nav _onnx_test.rs"
+[[b n]]
+na  = "nav _torch_test"
+path = "src/b n/b n_tests/nav _torch_test.rs"
+requ red-features=["torch"]
 
 [features]
 default=[]
-navi_console=[]
+nav _console=[]
 torch=["tch"]
 onnx=[]
 tf=["tensorflow"]
-[dependencies]
-itertools = "0.10.5"
+[dependenc es]
+ ertools = "0.10.5"
 anyhow = "1.0.57"
 arrayvec = "0.7.2"
-clap = { version = "4.0.32", features = ["derive"] }
-console-subscriber = "0.1.6"
-time = { version = "0.3.20", features = ["parsing"] }
+clap = { vers on = "4.0.32", features = ["der ve"] }
+console-subscr ber = "0.1.6"
+t   = { vers on = "0.3.20", features = ["pars ng"] }
 env_logger = "0.10.0"
-flamegraph = "0.6.1"
+fla graph = "0.6.1"
 fnv = "1.0.7"
-futures = { version = "0.3", default-features = false }
-image = "0.24.5"
-indexmap = "1.8.1"
-lazy_static = "1.4"
-libloading = "0.7"
+futures = { vers on = "0.3", default-features = false }
+ mage = "0.24.5"
+ ndexmap = "1.8.1"
+lazy_stat c = "1.4"
+l bload ng = "0.7"
 log = "0.4.17"
 ndarray-rand = "0.14.0"
-prometheus = "0.13.1"
+pro t us = "0.13.1"
 prost = "0.9"
 prost-types = "0.9"
-parking_lot = "0.12.1"
+park ng_lot = "0.12.1"
 rand = "0.8.5"
 rand_pcg = "0.3.1"
 random = "0.12.2"
 x509-parser = "0.15.0"
 sha256 = "1.0.3"
-tonic = { version = "0.6.2", features=['compression', 'tls'] }
-tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread", "fs", "process"] }
+ton c = { vers on = "0.6.2", features=['compress on', 'tls'] }
+tok o = { vers on = "1.17.0", features = ["macros", "rt-mult -thread", "fs", "process"] }
 warp = "0.3"
 npyz = "0.7.3"
 base64 = "0.21.0"
-histogram = "0.6.9"
-tch = {version = "0.10.3", optional = true}
-tensorflow = { version = "0.18.0", optional = true }
-once_cell = {version = "1.17.1"}
+ togram = "0.6.9"
+tch = {vers on = "0.10.3", opt onal = true}
+tensorflow = { vers on = "0.18.0", opt onal = true }
+once_cell = {vers on = "1.17.1"}
 ndarray = "0.15"
 serde = "1.0.154"
 serde_json = "1.0.94"
 dr_transform = { path = "../dr_transform"}
-[build-dependencies]
-tonic-build = {version = "0.6.2", features=['prost', "compression"] }
-[profile.release]
+[bu ld-dependenc es]
+ton c-bu ld = {vers on = "0.6.2", features=['prost', "compress on"] }
+[prof le.release]
 debug = true
-[dev-dependencies]
+[dev-dependenc es]
 ndarray-rand = "0.14.0"
-tokio-test = "*"
+tok o-test = "*"
 assert_cmd = "2.0"
-criterion = "0.4.0"
+cr er on = "0.4.0"
 
 

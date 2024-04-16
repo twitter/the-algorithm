@@ -1,281 +1,281 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.Closeable;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+ mport java. o.Closeable;
+ mport java.t  .Durat on;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.collect. mmutableL st;
 
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.apac .kafka.common.errors.Ap Except on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.ut l.LogFormatUt l;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.CaughtUpMon or;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.WrappedKafkaAp Except on;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
 
 /**
- * Reads TVEs from Kafka and writes them to a PartitionWriter.
+ * Reads TVEs from Kafka and wr es t m to a Part  onWr er.
  */
-public class EarlybirdKafkaConsumer implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdKafkaConsumer.class);
+publ c class Earlyb rdKafkaConsu r  mple nts Closeable {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdKafkaConsu r.class);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
-  private static final String STATS_PREFIX = "earlybird_kafka_consumer_";
+  pr vate stat c f nal Durat on POLL_T MEOUT = Durat on.ofSeconds(1);
+  pr vate stat c f nal Str ng STATS_PREF X = "earlyb rd_kafka_consu r_";
 
   // See SEARCH-31827
-  private static final SearchCounter INGESTING_DONE =
-      SearchCounter.export(STATS_PREFIX + "ingesting_done");
-  private static final SearchRateCounter POLL_LOOP_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "poll_loop_exceptions");
-  private static final SearchRateCounter FLUSHING_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "flushing_exceptions");
+  pr vate stat c f nal SearchCounter  NGEST NG_DONE =
+      SearchCounter.export(STATS_PREF X + " ngest ng_done");
+  pr vate stat c f nal SearchRateCounter POLL_LOOP_EXCEPT ONS =
+      SearchRateCounter.export(STATS_PREF X + "poll_loop_except ons");
+  pr vate stat c f nal SearchRateCounter FLUSH NG_EXCEPT ONS =
+      SearchRateCounter.export(STATS_PREF X + "flush ng_except ons");
 
-  private static final SearchTimerStats TIMED_POLLS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_polls");
-  private static final SearchTimerStats TIMED_INDEX_EVENTS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_index_events");
+  pr vate stat c f nal SearchT  rStats T MED_POLLS =
+      SearchT  rStats.export(STATS_PREF X + "t  d_polls");
+  pr vate stat c f nal SearchT  rStats T MED_ NDEX_EVENTS =
+      SearchT  rStats.export(STATS_PREF X + "t  d_ ndex_events");
 
-  private final AtomicBoolean running = new AtomicBoolean(true);
-  private final BalancingKafkaConsumer balancingKafkaConsumer;
-  private final PartitionWriter partitionWriter;
-  protected final TopicPartition tweetTopic;
-  protected final TopicPartition updateTopic;
-  private final KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final EarlybirdIndexFlusher earlybirdIndexFlusher;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private boolean finishedIngestUntilCurrent;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  pr vate f nal Atom cBoolean runn ng = new Atom cBoolean(true);
+  pr vate f nal Balanc ngKafkaConsu r balanc ngKafkaConsu r;
+  pr vate f nal Part  onWr er part  onWr er;
+  protected f nal Top cPart  on t etTop c;
+  protected f nal Top cPart  on updateTop c;
+  pr vate f nal KafkaConsu r<Long, Thr ftVers onedEvents> underly ngKafkaConsu r;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal Earlyb rd ndexFlus r earlyb rd ndexFlus r;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate boolean f n s d ngestUnt lCurrent;
+  pr vate f nal CaughtUpMon or  ndexCaughtUpMon or;
 
-  protected class ConsumeBatchResult {
-    private boolean isCaughtUp;
-    private long readRecordsCount;
+  protected class Consu BatchResult {
+    pr vate boolean  sCaughtUp;
+    pr vate long readRecordsCount;
 
-    public ConsumeBatchResult(boolean isCaughtUp, long readRecordsCount) {
-      this.isCaughtUp = isCaughtUp;
-      this.readRecordsCount = readRecordsCount;
+    publ c Consu BatchResult(boolean  sCaughtUp, long readRecordsCount) {
+      t . sCaughtUp =  sCaughtUp;
+      t .readRecordsCount = readRecordsCount;
     }
 
-    public boolean isCaughtUp() {
-      return isCaughtUp;
+    publ c boolean  sCaughtUp() {
+      return  sCaughtUp;
     }
 
-    public long getReadRecordsCount() {
+    publ c long getReadRecordsCount() {
       return readRecordsCount;
     }
   }
 
-  public EarlybirdKafkaConsumer(
-      KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
-      PartitionWriter partitionWriter,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      EarlybirdIndexFlusher earlybirdIndexFlusher,
-      CaughtUpMonitor kafkaIndexCaughtUpMonitor
+  publ c Earlyb rdKafkaConsu r(
+      KafkaConsu r<Long, Thr ftVers onedEvents> underly ngKafkaConsu r,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      Part  onWr er part  onWr er,
+      Top cPart  on t etTop c,
+      Top cPart  on updateTop c,
+      Earlyb rd ndexFlus r earlyb rd ndexFlus r,
+      CaughtUpMon or kafka ndexCaughtUpMon or
   ) {
-    this.partitionWriter = partitionWriter;
-    this.underlyingKafkaConsumer = underlyingKafkaConsumer;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.earlybirdIndexFlusher = earlybirdIndexFlusher;
+    t .part  onWr er = part  onWr er;
+    t .underly ngKafkaConsu r = underly ngKafkaConsu r;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .t etTop c = t etTop c;
+    t .updateTop c = updateTop c;
+    t .earlyb rd ndexFlus r = earlyb rd ndexFlus r;
 
-    LOG.info("Reading from Kafka topics: tweetTopic={}, updateTopic={}", tweetTopic, updateTopic);
-    underlyingKafkaConsumer.assign(ImmutableList.of(updateTopic, tweetTopic));
+    LOG. nfo("Read ng from Kafka top cs: t etTop c={}, updateTop c={}", t etTop c, updateTop c);
+    underly ngKafkaConsu r.ass gn( mmutableL st.of(updateTop c, t etTop c));
 
-    this.balancingKafkaConsumer =
-        new BalancingKafkaConsumer(underlyingKafkaConsumer, tweetTopic, updateTopic);
-    this.finishedIngestUntilCurrent = false;
-    this.indexCaughtUpMonitor = kafkaIndexCaughtUpMonitor;
+    t .balanc ngKafkaConsu r =
+        new Balanc ngKafkaConsu r(underly ngKafkaConsu r, t etTop c, updateTop c);
+    t .f n s d ngestUnt lCurrent = false;
+    t . ndexCaughtUpMon or = kafka ndexCaughtUpMon or;
   }
 
   /**
-   * Run the consumer, indexing from Kafka.
+   * Run t  consu r,  ndex ng from Kafka.
    */
-  @VisibleForTesting
-  public void run() {
-    while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(true);
-      indexCaughtUpMonitor.setAndNotify(result.isCaughtUp());
+  @V s bleForTest ng
+  publ c vo d run() {
+    wh le ( sRunn ng()) {
+      Consu BatchResult result = consu Batch(true);
+       ndexCaughtUpMon or.setAndNot fy(result. sCaughtUp());
     }
   }
 
   /**
-   * Reads from Kafka, starting at the given offsets, and applies the events until we are caught up
-   * with the current streams.
+   * Reads from Kafka, start ng at t  g ven offsets, and appl es t  events unt l   are caught up
+   * w h t  current streams.
    */
-  public void ingestUntilCurrent(long tweetOffset, long updateOffset) {
-    Preconditions.checkState(!finishedIngestUntilCurrent);
+  publ c vo d  ngestUnt lCurrent(long t etOffset, long updateOffset) {
+    Precond  ons.c ckState(!f n s d ngestUnt lCurrent);
     Stopwatch stopwatch = Stopwatch.createStarted();
-    LOG.info("Ingest until current: seeking to Kafka offset {} for tweets and {} for updates.",
-        tweetOffset, updateOffset);
+    LOG. nfo(" ngest unt l current: seek ng to Kafka offset {} for t ets and {} for updates.",
+        t etOffset, updateOffset);
 
     try {
-      underlyingKafkaConsumer.seek(tweetTopic, tweetOffset);
-      underlyingKafkaConsumer.seek(updateTopic, updateOffset);
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't seek to tweet and update offsets",
-          kafkaApiException);
+      underly ngKafkaConsu r.seek(t etTop c, t etOffset);
+      underly ngKafkaConsu r.seek(updateTop c, updateOffset);
+    } catch (Ap Except on kafkaAp Except on) {
+      throw new WrappedKafkaAp Except on("Can't seek to t et and update offsets",
+          kafkaAp Except on);
     }
 
-    Map<TopicPartition, Long> endOffsets;
+    Map<Top cPart  on, Long> endOffsets;
     try {
-      endOffsets = underlyingKafkaConsumer.endOffsets(ImmutableList.of(tweetTopic, updateTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't find end offsets",
-          kafkaApiException);
+      endOffsets = underly ngKafkaConsu r.endOffsets( mmutableL st.of(t etTop c, updateTop c));
+    } catch (Ap Except on kafkaAp Except on) {
+      throw new WrappedKafkaAp Except on("Can't f nd end offsets",
+          kafkaAp Except on);
     }
 
-    if (endOffsets.size() > 0) {
-      LOG.info(String.format("Records until current: tweets=%,d, updates=%,d",
-          endOffsets.get(tweetTopic) - tweetOffset + 1,
-          endOffsets.get(updateTopic) - updateOffset + 1));
+     f (endOffsets.s ze() > 0) {
+      LOG. nfo(Str ng.format("Records unt l current: t ets=%,d, updates=%,d",
+          endOffsets.get(t etTop c) - t etOffset + 1,
+          endOffsets.get(updateTop c) - updateOffset + 1));
     }
 
-    consumeBatchesUntilCurrent(true);
+    consu Batc sUnt lCurrent(true);
 
-    LOG.info("ingestUntilCurrent finished in {}.", stopwatch);
+    LOG. nfo(" ngestUnt lCurrent f n s d  n {}.", stopwatch);
 
-    partitionWriter.logState();
-    INGESTING_DONE.increment();
-    finishedIngestUntilCurrent = true;
+    part  onWr er.logState();
+     NGEST NG_DONE. ncre nt();
+    f n s d ngestUnt lCurrent = true;
   }
 
   /**
-   * Consume tweets and updates from streams until we're up to date.
+   * Consu  t ets and updates from streams unt l  're up to date.
    *
    * @return total number of read records.
    */
-  private long consumeBatchesUntilCurrent(boolean flushingEnabled) {
+  pr vate long consu Batc sUnt lCurrent(boolean flush ngEnabled) {
     long totalRecordsRead = 0;
-    long batchesConsumed = 0;
+    long batc sConsu d = 0;
 
-    while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(flushingEnabled);
-      batchesConsumed++;
+    wh le ( sRunn ng()) {
+      Consu BatchResult result = consu Batch(flush ngEnabled);
+      batc sConsu d++;
       totalRecordsRead += result.getReadRecordsCount();
-      if (isCurrent(result.isCaughtUp())) {
+       f ( sCurrent(result. sCaughtUp())) {
         break;
       }
     }
 
-    LOG.info("Processed batches: {}", batchesConsumed);
+    LOG. nfo("Processed batc s: {}", batc sConsu d);
 
     return totalRecordsRead;
   }
 
-  // This method is overriden in MockEarlybirdKafkaConsumer.
-  public boolean isCurrent(boolean current) {
+  // T   thod  s overr den  n MockEarlyb rdKafkaConsu r.
+  publ c boolean  sCurrent(boolean current) {
     return current;
   }
 
   /**
-   * We don't index during flushing, so after the flush is done, the index is stale.
-   * We need to get to current, before we rejoin the serverset so that upon rejoining we're
-   * not serving a stale index.
+   *   don't  ndex dur ng flush ng, so after t  flush  s done, t   ndex  s stale.
+   *   need to get to current, before   rejo n t  serverset so that upon rejo n ng  're
+   * not serv ng a stale  ndex.
    */
-  @VisibleForTesting
-  void getToCurrentPostFlush() {
-    LOG.info("Getting to current post flush");
+  @V s bleForTest ng
+  vo d getToCurrentPostFlush() {
+    LOG. nfo("Gett ng to current post flush");
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    long totalRecordsRead = consumeBatchesUntilCurrent(false);
+    long totalRecordsRead = consu Batc sUnt lCurrent(false);
 
-    LOG.info("Post flush, became current in: {}, after reading {} records.",
-        stopwatch, LogFormatUtil.formatInt(totalRecordsRead));
+    LOG. nfo("Post flush, beca  current  n: {}, after read ng {} records.",
+        stopwatch, LogFormatUt l.format nt(totalRecordsRead));
   }
 
   /*
-   * @return true if we are current after indexing this batch.
+   * @return true  f   are current after  ndex ng t  batch.
    */
-  @VisibleForTesting
-  protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
+  @V s bleForTest ng
+  protected Consu BatchResult consu Batch(boolean flush ngEnabled) {
     long readRecordsCount = 0;
-    boolean isCaughtUp = false;
+    boolean  sCaughtUp = false;
 
     try {
       // Poll.
-      SearchTimer pollTimer = TIMED_POLLS.startNewTimer();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          balancingKafkaConsumer.poll(POLL_TIMEOUT);
+      SearchT  r pollT  r = T MED_POLLS.startNewT  r();
+      Consu rRecords<Long, Thr ftVers onedEvents> records =
+          balanc ngKafkaConsu r.poll(POLL_T MEOUT);
       readRecordsCount += records.count();
-      TIMED_POLLS.stopTimerAndIncrement(pollTimer);
+      T MED_POLLS.stopT  rAnd ncre nt(pollT  r);
 
-      // Index.
-      SearchTimer indexTimer = TIMED_INDEX_EVENTS.startNewTimer();
-      isCaughtUp = partitionWriter.indexBatch(records);
-      TIMED_INDEX_EVENTS.stopTimerAndIncrement(indexTimer);
-    } catch (Exception ex) {
-      POLL_LOOP_EXCEPTIONS.increment();
-      LOG.error("Exception in poll loop", ex);
+      //  ndex.
+      SearchT  r  ndexT  r = T MED_ NDEX_EVENTS.startNewT  r();
+       sCaughtUp = part  onWr er. ndexBatch(records);
+      T MED_ NDEX_EVENTS.stopT  rAnd ncre nt( ndexT  r);
+    } catch (Except on ex) {
+      POLL_LOOP_EXCEPT ONS. ncre nt();
+      LOG.error("Except on  n poll loop", ex);
     }
 
     try {
-      // Possibly flush the index.
-      if (isCaughtUp && flushingEnabled) {
-        long tweetOffset = 0;
+      // Poss bly flush t   ndex.
+       f ( sCaughtUp && flush ngEnabled) {
+        long t etOffset = 0;
         long updateOffset = 0;
 
         try {
-          tweetOffset = underlyingKafkaConsumer.position(tweetTopic);
-          updateOffset = underlyingKafkaConsumer.position(updateTopic);
-        } catch (ApiException kafkaApiException) {
-          throw new WrappedKafkaApiException("can't get topic positions", kafkaApiException);
+          t etOffset = underly ngKafkaConsu r.pos  on(t etTop c);
+          updateOffset = underly ngKafkaConsu r.pos  on(updateTop c);
+        } catch (Ap Except on kafkaAp Except on) {
+          throw new WrappedKafkaAp Except on("can't get top c pos  ons", kafkaAp Except on);
         }
 
-        EarlybirdIndexFlusher.FlushAttemptResult flushAttemptResult =
-            earlybirdIndexFlusher.flushIfNecessary(
-                tweetOffset, updateOffset, this::getToCurrentPostFlush);
+        Earlyb rd ndexFlus r.FlushAttemptResult flushAttemptResult =
+            earlyb rd ndexFlus r.flush fNecessary(
+                t etOffset, updateOffset, t ::getToCurrentPostFlush);
 
-        if (flushAttemptResult == EarlybirdIndexFlusher.FlushAttemptResult.FLUSH_ATTEMPT_MADE) {
-          // Viz might show this as a fairly high number, so we're printing it here to confirm
-          // the value on the server.
-          LOG.info("Finished flushing. Index freshness in ms: {}",
-              LogFormatUtil.formatInt(searchIndexingMetricSet.getIndexFreshnessInMillis()));
+         f (flushAttemptResult == Earlyb rd ndexFlus r.FlushAttemptResult.FLUSH_ATTEMPT_MADE) {
+          // V z m ght show t  as a fa rly h gh number, so  're pr nt ng    re to conf rm
+          // t  value on t  server.
+          LOG. nfo("F n s d flush ng.  ndex freshness  n ms: {}",
+              LogFormatUt l.format nt(search ndex ng tr cSet.get ndexFreshness nM ll s()));
         }
 
-        if (!finishedIngestUntilCurrent) {
-          LOG.info("Became current on startup. Tried to flush with result: {}",
+         f (!f n s d ngestUnt lCurrent) {
+          LOG. nfo("Beca  current on startup. Tr ed to flush w h result: {}",
               flushAttemptResult);
         }
       }
-    } catch (Exception ex) {
-      FLUSHING_EXCEPTIONS.increment();
-      LOG.error("Exception while flushing", ex);
+    } catch (Except on ex) {
+      FLUSH NG_EXCEPT ONS. ncre nt();
+      LOG.error("Except on wh le flush ng", ex);
     }
 
-    return new ConsumeBatchResult(isCaughtUp, readRecordsCount);
+    return new Consu BatchResult( sCaughtUp, readRecordsCount);
   }
 
-  public boolean isRunning() {
-    return running.get() && EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING;
+  publ c boolean  sRunn ng() {
+    return runn ng.get() && Earlyb rdStatus.getStatusCode() != Earlyb rdStatusCode.STOPP NG;
   }
 
-  public void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    partitionWriter.prepareAfterStartingWithIndex(maxIndexedTweetId);
+  publ c vo d prepareAfterStart ngW h ndex(long max ndexedT et d) {
+    part  onWr er.prepareAfterStart ngW h ndex(max ndexedT et d);
   }
 
-  public void close() {
-    balancingKafkaConsumer.close();
-    running.set(false);
+  publ c vo d close() {
+    balanc ngKafkaConsu r.close();
+    runn ng.set(false);
   }
 }

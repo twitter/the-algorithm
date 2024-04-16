@@ -1,93 +1,93 @@
-package com.twitter.product_mixer.core.feature.featurestorev1
+package com.tw ter.product_m xer.core.feature.featurestorev1
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.dynamic.BaseGatedFeatures
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.datarecord.FeatureStoreDataRecordFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.util.{Gate => ServoGate}
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .transform.FeatureRena Transform
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.dynam c.BaseGatedFeatures
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeature
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeatureSet
+ mport com.tw ter.ml.featurestore.l b.feature.T  l nesAggregat onFra workFeatureGroup
+ mport com.tw ter.ml.featurestore.l b.feature.{Feature => FSv1Feature}
+ mport com.tw ter.product_m xer.core.feature.ModelFeatureNa 
+ mport com.tw ter.product_m xer.core.feature.datarecord.FeatureStoreDataRecordFeature
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.ut l.{Gate => ServoGate}
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport scala.reflect.ClassTag
 
 /**
- * The base trait for all feature store features on ProMix. This should not be constructed directly
- * and should instead be used through the other implementations below
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
+ * T  base tra  for all feature store features on ProM x. T  should not be constructed d rectly
+ * and should  nstead be used through t  ot r  mple ntat ons below
+ * @tparam Query Product M xer Query Type
+ * @tparam  nput T   nput type t  feature should be keyed on, t   s sa  as Query for query
  *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
- * @tparam Value The type of the value of this feature.
+ * @tparam FeatureStoreEnt y d Feature Store Ent y Type
+ * @tparam Value T  type of t  value of t  feature.
  */
-sealed trait BaseFeatureStoreV1Feature[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId,
+sealed tra  BaseFeatureStoreV1Feature[
+  -Query <: P pel neQuery,
+  - nput,
+  FeatureStoreEnt y d <: Ent y d,
   Value]
-    extends FeatureStoreDataRecordFeature[Input, Value]
-    with BaseGatedFeatures[Query] {
-  val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value]
+    extends FeatureStoreDataRecordFeature[ nput, Value]
+    w h BaseGatedFeatures[Query] {
+  val fsv1Feature: FSv1Feature[FeatureStoreEnt y d, Value]
 
-  val entity: FeatureStoreV1Entity[Query, Input, FeatureStoreEntityId]
+  val ent y: FeatureStoreV1Ent y[Query,  nput, FeatureStoreEnt y d]
 
-  val enabledParam: Option[FSParam[Boolean]]
+  val enabledParam: Opt on[FSParam[Boolean]]
 
-  override final lazy val gate: ServoGate[Query] = enabledParam
+  overr de f nal lazy val gate: ServoGate[Query] = enabledParam
     .map { param =>
-      new ServoGate[PipelineQuery] {
-        override def apply[U](query: U)(implicit asT: <:<[U, PipelineQuery]): Boolean = {
+      new ServoGate[P pel neQuery] {
+        overr de def apply[U](query: U)( mpl c  asT: <:<[U, P pel neQuery]): Boolean = {
           query.params(param)
         }
       }
     }.getOrElse(ServoGate.True)
 
-  override final lazy val boundFeatureSet: BoundFeatureSet = new BoundFeatureSet(Set(boundFeature))
+  overr de f nal lazy val boundFeatureSet: BoundFeatureSet = new BoundFeatureSet(Set(boundFeature))
 
-  val boundFeature: BoundFeature[FeatureStoreEntityId, Value]
+  val boundFeature: BoundFeature[FeatureStoreEnt y d, Value]
 
   /**
-   * Since this trait is normally constructed inline, avoid the anonymous toString and use the bounded feature name.
+   * S nce t  tra   s normally constructed  nl ne, avo d t  anonymous toStr ng and use t  bounded feature na .
    */
-  override lazy val toString: String = boundFeature.name
+  overr de lazy val toStr ng: Str ng = boundFeature.na 
 }
 
 /**
- * A unitary (non-aggregate group) feature store feature in ProMix. This should be constructed using
- * [[FeatureStoreV1CandidateFeature]] or [[FeatureStoreV1QueryFeature]].
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
+ * A un ary (non-aggregate group) feature store feature  n ProM x. T  should be constructed us ng
+ * [[FeatureStoreV1Cand dateFeature]] or [[FeatureStoreV1QueryFeature]].
+ * @tparam Query Product M xer Query Type
+ * @tparam  nput T   nput type t  feature should be keyed on, t   s sa  as Query for query
  *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
- * @tparam Value The type of the value of this feature.
+ * @tparam FeatureStoreEnt y d Feature Store Ent y Type
+ * @tparam Value T  type of t  value of t  feature.
  */
-sealed trait FeatureStoreV1Feature[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId,
+sealed tra  FeatureStoreV1Feature[
+  -Query <: P pel neQuery,
+  - nput,
+  FeatureStoreEnt y d <: Ent y d,
   Value]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value]
-    with ModelFeatureName {
+    extends BaseFeatureStoreV1Feature[Query,  nput, FeatureStoreEnt y d, Value]
+    w h ModelFeatureNa  {
 
-  val legacyName: Option[String]
-  val defaultValue: Option[Value]
+  val legacyNa : Opt on[Str ng]
+  val defaultValue: Opt on[Value]
 
-  override lazy val featureName: String = boundFeature.name
+  overr de lazy val featureNa : Str ng = boundFeature.na 
 
-  override final lazy val boundFeature = (legacyName, defaultValue) match {
-    case (Some(legacyName), Some(defaultValue)) =>
-      fsv1Feature.bind(entity.entity).withLegacyName(legacyName).withDefault(defaultValue)
-    case (Some(legacyName), _) =>
-      fsv1Feature.bind(entity.entity).withLegacyName(legacyName)
-    case (_, Some(defaultValue)) =>
-      fsv1Feature.bind(entity.entity).withDefault(defaultValue)
+  overr de f nal lazy val boundFeature = (legacyNa , defaultValue) match {
+    case (So (legacyNa ), So (defaultValue)) =>
+      fsv1Feature.b nd(ent y.ent y).w hLegacyNa (legacyNa ).w hDefault(defaultValue)
+    case (So (legacyNa ), _) =>
+      fsv1Feature.b nd(ent y.ent y).w hLegacyNa (legacyNa )
+    case (_, So (defaultValue)) =>
+      fsv1Feature.b nd(ent y.ent y).w hDefault(defaultValue)
     case _ =>
-      fsv1Feature.bind(entity.entity)
+      fsv1Feature.b nd(ent y.ent y)
   }
 
   def fromDataRecordValue(recordValue: boundFeature.feature.mfc.V): Value =
@@ -95,81 +95,81 @@ sealed trait FeatureStoreV1Feature[
 }
 
 /**
- * A feature store aggregated group feature in ProMix. This should be constructed using
- * [[FeatureStoreV1CandidateFeatureGroup]] or [[FeatureStoreV1QueryFeatureGroup]].
+ * A feature store aggregated group feature  n ProM x. T  should be constructed us ng
+ * [[FeatureStoreV1Cand dateFeatureGroup]] or [[FeatureStoreV1QueryFeatureGroup]].
  *
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
+ * @tparam Query Product M xer Query Type
+ * @tparam  nput T   nput type t  feature should be keyed on, t   s sa  as Query for query
  *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
+ * @tparam FeatureStoreEnt y d Feature Store Ent y Type
  */
 abstract class FeatureStoreV1FeatureGroup[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId: ClassTag]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, DataRecord] {
-  val keepLegacyNames: Boolean
-  val featureNameTransform: Option[FeatureRenameTransform]
+  -Query <: P pel neQuery,
+  - nput,
+  FeatureStoreEnt y d <: Ent y d: ClassTag]
+    extends BaseFeatureStoreV1Feature[Query,  nput, FeatureStoreEnt y d, DataRecord] {
+  val keepLegacyNa s: Boolean
+  val featureNa Transform: Opt on[FeatureRena Transform]
 
-  val featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId]
+  val featureGroup: T  l nesAggregat onFra workFeatureGroup[FeatureStoreEnt y d]
 
-  override lazy val fsv1Feature: FSv1Feature[FeatureStoreEntityId, DataRecord] =
+  overr de lazy val fsv1Feature: FSv1Feature[FeatureStoreEnt y d, DataRecord] =
     featureGroup.FeaturesAsDataRecord
 
-  override final lazy val boundFeature = (keepLegacyNames, featureNameTransform) match {
-    case (_, Some(transform)) =>
-      fsv1Feature.bind(entity.entity).withLegacyIndividualFeatureNames(transform)
+  overr de f nal lazy val boundFeature = (keepLegacyNa s, featureNa Transform) match {
+    case (_, So (transform)) =>
+      fsv1Feature.b nd(ent y.ent y).w hLegacy nd v dualFeatureNa s(transform)
     case (true, _) =>
-      fsv1Feature.bind(entity.entity).keepLegacyNames
+      fsv1Feature.b nd(ent y.ent y).keepLegacyNa s
     case _ =>
-      fsv1Feature.bind(entity.entity)
+      fsv1Feature.b nd(ent y.ent y)
   }
 }
 
-sealed trait BaseFeatureStoreV1QueryFeature[
-  -Query <: PipelineQuery,
-  FeatureStoreEntityId <: EntityId,
+sealed tra  BaseFeatureStoreV1QueryFeature[
+  -Query <: P pel neQuery,
+  FeatureStoreEnt y d <: Ent y d,
   Value]
-    extends BaseFeatureStoreV1Feature[Query, Query, FeatureStoreEntityId, Value] {
+    extends BaseFeatureStoreV1Feature[Query, Query, FeatureStoreEnt y d, Value] {
 
-  override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId]
+  overr de val ent y: FeatureStoreV1QueryEnt y[Query, FeatureStoreEnt y d]
 }
 
-trait FeatureStoreV1QueryFeature[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId, Value]
-    extends FeatureStoreV1Feature[Query, Query, FeatureStoreEntityId, Value]
-    with BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value]
+tra  FeatureStoreV1QueryFeature[-Query <: P pel neQuery, FeatureStoreEnt y d <: Ent y d, Value]
+    extends FeatureStoreV1Feature[Query, Query, FeatureStoreEnt y d, Value]
+    w h BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEnt y d, Value]
 
-trait FeatureStoreV1QueryFeatureGroup[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1FeatureGroup[Query, Query, FeatureStoreEntityId]
-    with BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, DataRecord]
+tra  FeatureStoreV1QueryFeatureGroup[-Query <: P pel neQuery, FeatureStoreEnt y d <: Ent y d]
+    extends FeatureStoreV1FeatureGroup[Query, Query, FeatureStoreEnt y d]
+    w h BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEnt y d, DataRecord]
 
 object FeatureStoreV1QueryFeature {
 
   /**
    * Query-based Feature Store backed feature
-   * @param feature The underling feature store feature this represents.
-   * @param _entity The entity for binding the Feature Store features
-   * @param _legacyName Feature Store legacy name if required
-   * @param _defaultValue The default value to return for this feature if not hydrated.
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @tparam Query The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
-   * @tparam Value The type of the value this feature contains.
-   * @return Product Mixer Feature
+   * @param feature T  underl ng feature store feature t  represents.
+   * @param _ent y T  ent y for b nd ng t  Feature Store features
+   * @param _legacyNa  Feature Store legacy na   f requ red
+   * @param _defaultValue T  default value to return for t  feature  f not hydrated.
+   * @param _enabledParam T  Feature Sw ch Param to gate t  feature, always enabled  f none.
+   * @tparam Query T  Product M xer query type t  feature  s keyed on.
+   * @tparam FeatureStoreEnt y d Feature Store Ent y  D
+   * @tparam Value T  type of t  value t  feature conta ns.
+   * @return Product M xer Feature
    */
-  def apply[Query <: PipelineQuery, FeatureStoreEntityId <: EntityId, Value](
-    feature: FSv1Feature[FeatureStoreEntityId, Value],
-    _entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId],
-    _legacyName: Option[String] = None,
-    _defaultValue: Option[Value] = None,
-    _enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value] =
-    new FeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value] {
-      override val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value] = feature
-      override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId] = _entity
-      override val legacyName: Option[String] = _legacyName
-      override val defaultValue: Option[Value] = _defaultValue
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+  def apply[Query <: P pel neQuery, FeatureStoreEnt y d <: Ent y d, Value](
+    feature: FSv1Feature[FeatureStoreEnt y d, Value],
+    _ent y: FeatureStoreV1QueryEnt y[Query, FeatureStoreEnt y d],
+    _legacyNa : Opt on[Str ng] = None,
+    _defaultValue: Opt on[Value] = None,
+    _enabledParam: Opt on[FSParam[Boolean]] = None
+  ): FeatureStoreV1QueryFeature[Query, FeatureStoreEnt y d, Value] =
+    new FeatureStoreV1QueryFeature[Query, FeatureStoreEnt y d, Value] {
+      overr de val fsv1Feature: FSv1Feature[FeatureStoreEnt y d, Value] = feature
+      overr de val ent y: FeatureStoreV1QueryEnt y[Query, FeatureStoreEnt y d] = _ent y
+      overr de val legacyNa : Opt on[Str ng] = _legacyNa 
+      overr de val defaultValue: Opt on[Value] = _defaultValue
+      overr de val enabledParam: Opt on[FSParam[Boolean]] = _enabledParam
     }
 }
 
@@ -178,135 +178,135 @@ object FeatureStoreV1QueryFeatureGroup {
   /**
    * Query-based Feature Store Aggregated group backed feature
    *
-   * @param featureGroup  The underling aggregation group feature this represents.
-   * @param _entity       The entity for binding the Feature Store features
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @param _keepLegacyNames Whether to keep the legacy names as is for the entire group
-   * @param _featureNameTransform Rename the entire group's legacy names using the [[FeatureRenameTransform]]
-   * @tparam Query                The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
+   * @param featureGroup  T  underl ng aggregat on group feature t  represents.
+   * @param _ent y       T  ent y for b nd ng t  Feature Store features
+   * @param _enabledParam T  Feature Sw ch Param to gate t  feature, always enabled  f none.
+   * @param _keepLegacyNa s W t r to keep t  legacy na s as  s for t  ent re group
+   * @param _featureNa Transform Rena  t  ent re group's legacy na s us ng t  [[FeatureRena Transform]]
+   * @tparam Query                T  Product M xer query type t  feature  s keyed on.
+   * @tparam FeatureStoreEnt y d Feature Store Ent y  D
    *
-   * @return Product Mixer Feature
+   * @return Product M xer Feature
    */
-  def apply[Query <: PipelineQuery, FeatureStoreEntityId <: EntityId: ClassTag](
-    _featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId],
-    _entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId],
-    _enabledParam: Option[FSParam[Boolean]] = None,
-    _keepLegacyNames: Boolean = false,
-    _featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEntityId] =
-    new FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEntityId] {
-      override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId] = _entity
-      override val featureGroup: TimelinesAggregationFrameworkFeatureGroup[
-        FeatureStoreEntityId
+  def apply[Query <: P pel neQuery, FeatureStoreEnt y d <: Ent y d: ClassTag](
+    _featureGroup: T  l nesAggregat onFra workFeatureGroup[FeatureStoreEnt y d],
+    _ent y: FeatureStoreV1QueryEnt y[Query, FeatureStoreEnt y d],
+    _enabledParam: Opt on[FSParam[Boolean]] = None,
+    _keepLegacyNa s: Boolean = false,
+    _featureNa Transform: Opt on[FeatureRena Transform] = None
+  ): FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEnt y d] =
+    new FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEnt y d] {
+      overr de val ent y: FeatureStoreV1QueryEnt y[Query, FeatureStoreEnt y d] = _ent y
+      overr de val featureGroup: T  l nesAggregat onFra workFeatureGroup[
+        FeatureStoreEnt y d
       ] = _featureGroup
 
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      overr de val enabledParam: Opt on[FSParam[Boolean]] = _enabledParam
 
-      override val keepLegacyNames: Boolean = _keepLegacyNames
-      override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
+      overr de val keepLegacyNa s: Boolean = _keepLegacyNa s
+      overr de val featureNa Transform: Opt on[FeatureRena Transform] = _featureNa Transform
     }
 }
 
-sealed trait BaseFeatureStoreV1CandidateFeature[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId,
+sealed tra  BaseFeatureStoreV1Cand dateFeature[
+  -Query <: P pel neQuery,
+  - nput <: Un versalNoun[Any],
+  FeatureStoreEnt y d <: Ent y d,
   Value]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value] {
+    extends BaseFeatureStoreV1Feature[Query,  nput, FeatureStoreEnt y d, Value] {
 
-  override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId]
+  overr de val ent y: FeatureStoreV1Cand dateEnt y[Query,  nput, FeatureStoreEnt y d]
 }
 
-trait FeatureStoreV1CandidateFeature[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId,
+tra  FeatureStoreV1Cand dateFeature[
+  -Query <: P pel neQuery,
+  - nput <: Un versalNoun[Any],
+  FeatureStoreEnt y d <: Ent y d,
   Value]
-    extends FeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value]
-    with BaseFeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value]
+    extends FeatureStoreV1Feature[Query,  nput, FeatureStoreEnt y d, Value]
+    w h BaseFeatureStoreV1Cand dateFeature[Query,  nput, FeatureStoreEnt y d, Value]
 
-trait FeatureStoreV1CandidateFeatureGroup[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1FeatureGroup[Query, Input, FeatureStoreEntityId]
-    with BaseFeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, DataRecord]
+tra  FeatureStoreV1Cand dateFeatureGroup[
+  -Query <: P pel neQuery,
+  - nput <: Un versalNoun[Any],
+  FeatureStoreEnt y d <: Ent y d]
+    extends FeatureStoreV1FeatureGroup[Query,  nput, FeatureStoreEnt y d]
+    w h BaseFeatureStoreV1Cand dateFeature[Query,  nput, FeatureStoreEnt y d, DataRecord]
 
-object FeatureStoreV1CandidateFeature {
+object FeatureStoreV1Cand dateFeature {
 
   /**
-   * Candidate-based Feature Store backed feature
-   * @param feature The underling feature store feature this represents.
-   * @param _entity The entity for binding the Feature Store features
-   * @param _legacyName Feature Store legacy name if required
-   * @param _defaultValue The default value to return for this feature if not hydrated.
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @tparam Query The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId The feature store entity type
-   * @tparam Input The type of the candidate this feature is keyed on
-   * @tparam Value The type of value this feature contains.
-   * @return Product Mixer Feature
+   * Cand date-based Feature Store backed feature
+   * @param feature T  underl ng feature store feature t  represents.
+   * @param _ent y T  ent y for b nd ng t  Feature Store features
+   * @param _legacyNa  Feature Store legacy na   f requ red
+   * @param _defaultValue T  default value to return for t  feature  f not hydrated.
+   * @param _enabledParam T  Feature Sw ch Param to gate t  feature, always enabled  f none.
+   * @tparam Query T  Product M xer query type t  feature  s keyed on.
+   * @tparam FeatureStoreEnt y d T  feature store ent y type
+   * @tparam  nput T  type of t  cand date t  feature  s keyed on
+   * @tparam Value T  type of value t  feature conta ns.
+   * @return Product M xer Feature
    */
   def apply[
-    Query <: PipelineQuery,
-    Input <: UniversalNoun[Any],
-    FeatureStoreEntityId <: EntityId,
+    Query <: P pel neQuery,
+     nput <: Un versalNoun[Any],
+    FeatureStoreEnt y d <: Ent y d,
     Value
   ](
-    feature: FSv1Feature[FeatureStoreEntityId, Value],
-    _entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId],
-    _legacyName: Option[String] = None,
-    _defaultValue: Option[Value] = None,
-    _enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value] =
-    new FeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value] {
-      override val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value] = feature
-      override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId] =
-        _entity
-      override val legacyName: Option[String] = _legacyName
-      override val defaultValue: Option[Value] = _defaultValue
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+    feature: FSv1Feature[FeatureStoreEnt y d, Value],
+    _ent y: FeatureStoreV1Cand dateEnt y[Query,  nput, FeatureStoreEnt y d],
+    _legacyNa : Opt on[Str ng] = None,
+    _defaultValue: Opt on[Value] = None,
+    _enabledParam: Opt on[FSParam[Boolean]] = None
+  ): FeatureStoreV1Cand dateFeature[Query,  nput, FeatureStoreEnt y d, Value] =
+    new FeatureStoreV1Cand dateFeature[Query,  nput, FeatureStoreEnt y d, Value] {
+      overr de val fsv1Feature: FSv1Feature[FeatureStoreEnt y d, Value] = feature
+      overr de val ent y: FeatureStoreV1Cand dateEnt y[Query,  nput, FeatureStoreEnt y d] =
+        _ent y
+      overr de val legacyNa : Opt on[Str ng] = _legacyNa 
+      overr de val defaultValue: Opt on[Value] = _defaultValue
+      overr de val enabledParam: Opt on[FSParam[Boolean]] = _enabledParam
     }
 }
 
-object FeatureStoreV1CandidateFeatureGroup {
+object FeatureStoreV1Cand dateFeatureGroup {
 
   /**
-   * Candidate-based Feature Store Aggregated group backed feature
+   * Cand date-based Feature Store Aggregated group backed feature
    *
-   * @param featureGroup          The underling aggregation group feature this represents.
-   * @param _entity               The entity for binding the Feature Store features
-   * @param _enabledParam         The Feature Switch Param to gate this feature, always enabled if none.
-   * @param _keepLegacyNames      Whether to keep the legacy names as is for the entire group
-   * @param _featureNameTransform Rename the entire group's legacy names using the [[FeatureRenameTransform]]
-   * @tparam Query                The Product Mixer query type this feature is keyed on.
-   * @tparam Input The type of the candidate this feature is keyed on
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
+   * @param featureGroup          T  underl ng aggregat on group feature t  represents.
+   * @param _ent y               T  ent y for b nd ng t  Feature Store features
+   * @param _enabledParam         T  Feature Sw ch Param to gate t  feature, always enabled  f none.
+   * @param _keepLegacyNa s      W t r to keep t  legacy na s as  s for t  ent re group
+   * @param _featureNa Transform Rena  t  ent re group's legacy na s us ng t  [[FeatureRena Transform]]
+   * @tparam Query                T  Product M xer query type t  feature  s keyed on.
+   * @tparam  nput T  type of t  cand date t  feature  s keyed on
+   * @tparam FeatureStoreEnt y d Feature Store Ent y  D
    *
-   * @return Product Mixer Feature
+   * @return Product M xer Feature
    */
   def apply[
-    Query <: PipelineQuery,
-    Input <: UniversalNoun[Any],
-    FeatureStoreEntityId <: EntityId: ClassTag,
+    Query <: P pel neQuery,
+     nput <: Un versalNoun[Any],
+    FeatureStoreEnt y d <: Ent y d: ClassTag,
   ](
-    _featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId],
-    _entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId],
-    _enabledParam: Option[FSParam[Boolean]] = None,
-    _keepLegacyNames: Boolean = false,
-    _featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, Input, FeatureStoreEntityId] =
-    new FeatureStoreV1CandidateFeatureGroup[Query, Input, FeatureStoreEntityId] {
-      override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId] =
-        _entity
-      override val featureGroup: TimelinesAggregationFrameworkFeatureGroup[
-        FeatureStoreEntityId
+    _featureGroup: T  l nesAggregat onFra workFeatureGroup[FeatureStoreEnt y d],
+    _ent y: FeatureStoreV1Cand dateEnt y[Query,  nput, FeatureStoreEnt y d],
+    _enabledParam: Opt on[FSParam[Boolean]] = None,
+    _keepLegacyNa s: Boolean = false,
+    _featureNa Transform: Opt on[FeatureRena Transform] = None
+  ): FeatureStoreV1Cand dateFeatureGroup[Query,  nput, FeatureStoreEnt y d] =
+    new FeatureStoreV1Cand dateFeatureGroup[Query,  nput, FeatureStoreEnt y d] {
+      overr de val ent y: FeatureStoreV1Cand dateEnt y[Query,  nput, FeatureStoreEnt y d] =
+        _ent y
+      overr de val featureGroup: T  l nesAggregat onFra workFeatureGroup[
+        FeatureStoreEnt y d
       ] = _featureGroup
 
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      overr de val enabledParam: Opt on[FSParam[Boolean]] = _enabledParam
 
-      override val keepLegacyNames: Boolean = _keepLegacyNames
-      override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
+      overr de val keepLegacyNa s: Boolean = _keepLegacyNa s
+      overr de val featureNa Transform: Opt on[FeatureRena Transform] = _featureNa Transform
     }
 }

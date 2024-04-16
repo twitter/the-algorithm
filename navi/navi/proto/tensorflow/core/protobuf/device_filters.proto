@@ -1,73 +1,73 @@
-/* Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2020 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DeviceFiltersProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Dev ceF ltersProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.d strunt  ";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// This file contains protos to be used when defining a TensorFlow
+// T  f le conta ns protos to be used w n def n ng a TensorFlow
 // cluster.
 //
-// Configure device filters for remote tasks in the cluster. When associated
-// with a ClusterDef in setting up the cluster, a remote task will ignore all
-// devices which do not match any of its filters. Device filters must be
-// configured at the cluster startup, and cannot be updated once the cluster is
-// up and running.
+// Conf gure dev ce f lters for remote tasks  n t  cluster. W n assoc ated
+// w h a ClusterDef  n sett ng up t  cluster, a remote task w ll  gnore all
+// dev ces wh ch do not match any of  s f lters. Dev ce f lters must be
+// conf gured at t  cluster startup, and cannot be updated once t  cluster  s
+// up and runn ng.
 //
 // EXAMPLES
 // --------
 //
-// A two-job cluster with the following ClusterDef:
+// A two-job cluster w h t  follow ng ClusterDef:
 //
 //  Cluster:
-//    job { name: 'worker' tasks { key: 0 value: 'worker1:2222' }
+//    job { na : 'worker' tasks { key: 0 value: 'worker1:2222' }
 //                         tasks { key: 1 value: 'worker2:2222' } }
-//    job { name: 'ps'     tasks { key: 0 value: 'ps0:2222' }
+//    job { na : 'ps'     tasks { key: 0 value: 'ps0:2222' }
 //                         tasks { key: 1 value: 'ps1:2222' } }
 //
-// Set device filters to isolate worker tasks:
+// Set dev ce f lters to  solate worker tasks:
 //
-//  ClusterDeviceFilters:
-//    job { name: 'worker' tasks { key: 0
-//                                 value: device_filter '/job:ps'
-//                                        device_filter '/job:worker/task:0' }
+//  ClusterDev ceF lters:
+//    job { na : 'worker' tasks { key: 0
+//                                 value: dev ce_f lter '/job:ps'
+//                                        dev ce_f lter '/job:worker/task:0' }
 //                         tasks { key: 1
-//                                 value: device_filter '/job:ps'
-//                                        device_filter '/job:worker/task:1' } }
+//                                 value: dev ce_f lter '/job:ps'
+//                                        dev ce_f lter '/job:worker/task:1' } }
 
-// Defines the device filters for a remote task.
-message TaskDeviceFilters {
-  repeated string device_filters = 1;
+// Def nes t  dev ce f lters for a remote task.
+ ssage TaskDev ceF lters {
+  repeated str ng dev ce_f lters = 1;
 }
 
-// Defines the device filters for tasks in a job.
-message JobDeviceFilters {
-  // The name of this job.
-  string name = 1;
+// Def nes t  dev ce f lters for tasks  n a job.
+ ssage JobDev ceF lters {
+  // T  na  of t  job.
+  str ng na  = 1;
 
-  // Mapping from task ID to task device filters.
-  map<int32, TaskDeviceFilters> tasks = 2;
+  // Mapp ng from task  D to task dev ce f lters.
+  map< nt32, TaskDev ceF lters> tasks = 2;
 }
 
-// Defines the device filters for jobs in a cluster.
-message ClusterDeviceFilters {
-  repeated JobDeviceFilters jobs = 1;
+// Def nes t  dev ce f lters for jobs  n a cluster.
+ ssage ClusterDev ceF lters {
+  repeated JobDev ceF lters jobs = 1;
 }

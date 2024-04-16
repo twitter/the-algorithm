@@ -1,37 +1,37 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
+ mport com.tw ter.ut l.Future
 
 /**
- * trims searchResults to match with hydratedTweets
- * (if we previously filtered out hydrated tweets, this transform filters the search result set
- * down to match the hydrated tweets.)
+ * tr ms searchResults to match w h hydratedT ets
+ * ( f   prev ously f ltered out hydrated t ets, t  transform f lters t  search result set
+ * down to match t  hydrated t ets.)
  */
-object TrimToMatchHydratedTweetsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults =
-      trimSearchResults(envelope.searchResults, envelope.hydratedTweets.outerTweets)
-    val filteredSourceSearchResults =
-      trimSearchResults(envelope.sourceSearchResults, envelope.sourceHydratedTweets.outerTweets)
+object Tr mToMatchHydratedT etsTransform
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val f lteredSearchResults =
+      tr mSearchResults(envelope.searchResults, envelope.hydratedT ets.outerT ets)
+    val f lteredS ceSearchResults =
+      tr mSearchResults(envelope.s ceSearchResults, envelope.s ceHydratedT ets.outerT ets)
 
     Future.value(
       envelope.copy(
-        searchResults = filteredSearchResults,
-        sourceSearchResults = filteredSourceSearchResults
+        searchResults = f lteredSearchResults,
+        s ceSearchResults = f lteredS ceSearchResults
       )
     )
   }
 
-  private def trimSearchResults(
-    searchResults: Seq[ThriftSearchResult],
-    hydratedTweets: Seq[HydratedTweet]
-  ): Seq[ThriftSearchResult] = {
-    val filteredTweetIds = hydratedTweets.map(_.tweetId).toSet
-    searchResults.filter(result => filteredTweetIds.contains(result.id))
+  pr vate def tr mSearchResults(
+    searchResults: Seq[Thr ftSearchResult],
+    hydratedT ets: Seq[HydratedT et]
+  ): Seq[Thr ftSearchResult] = {
+    val f lteredT et ds = hydratedT ets.map(_.t et d).toSet
+    searchResults.f lter(result => f lteredT et ds.conta ns(result. d))
   }
 }

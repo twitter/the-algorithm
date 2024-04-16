@@ -1,52 +1,52 @@
-package com.twitter.unified_user_actions.adapter.favorite_archival_events
+package com.tw ter.un f ed_user_act ons.adapter.favor e_arch val_events
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.Favor eArch valEvent
+ mport com.tw ter.un f ed_user_act ons.adapter.AbstractAdapter
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-class FavoriteArchivalEventsAdapter
-    extends AbstractAdapter[FavoriteArchivalEvent, UnKeyed, UnifiedUserAction] {
+class Favor eArch valEventsAdapter
+    extends AbstractAdapter[Favor eArch valEvent, UnKeyed, Un f edUserAct on] {
 
-  import FavoriteArchivalEventsAdapter._
-  override def adaptOneToKeyedMany(
-    input: FavoriteArchivalEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+   mport Favor eArch valEventsAdapter._
+  overr de def adaptOneToKeyedMany(
+     nput: Favor eArch valEvent,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[(UnKeyed, Un f edUserAct on)] =
+    adaptEvent( nput).map { e => (UnKeyed, e) }
 }
 
-object FavoriteArchivalEventsAdapter {
+object Favor eArch valEventsAdapter {
 
-  def adaptEvent(e: FavoriteArchivalEvent): Seq[UnifiedUserAction] =
-    Option(e).map { e =>
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(e.favoriterId)),
-        item = getItem(e),
-        actionType =
-          if (e.isArchivingAction.getOrElse(true)) ActionType.ServerTweetArchiveFavorite
-          else ActionType.ServerTweetUnarchiveFavorite,
-        eventMetadata = getEventMetadata(e)
+  def adaptEvent(e: Favor eArch valEvent): Seq[Un f edUserAct on] =
+    Opt on(e).map { e =>
+      Un f edUserAct on(
+        user dent f er = User dent f er(user d = So (e.favor er d)),
+         em = get em(e),
+        act onType =
+           f (e. sArch v ngAct on.getOrElse(true)) Act onType.ServerT etArch veFavor e
+          else Act onType.ServerT etUnarch veFavor e,
+        event tadata = getEvent tadata(e)
       )
     }.toSeq
 
-  def getItem(e: FavoriteArchivalEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        // Please note that here we always use TweetId (not sourceTweetId)!!!
-        actionTweetId = e.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = e.tweetUserId)),
-        retweetedTweetId = e.sourceTweetId
+  def get em(e: Favor eArch valEvent):  em =
+     em.T et nfo(
+      T et nfo(
+        // Please note that  re   always use T et d (not s ceT et d)!!!
+        act onT et d = e.t et d,
+        act onT etAuthor nfo = So (Author nfo(author d = e.t etUser d)),
+        ret etedT et d = e.s ceT et d
       )
     )
 
-  def getEventMetadata(e: FavoriteArchivalEvent): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = e.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+  def getEvent tadata(e: Favor eArch valEvent): Event tadata =
+    Event tadata(
+      s ceT  stampMs = e.t  stampMs,
+      rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+      s ceL neage = S ceL neage.ServerFavor eArch valEvents,
     )
 }

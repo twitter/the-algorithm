@@ -1,38 +1,38 @@
-## InteractionGraphAggregationJob Dataflow Job
+##  nteract onGraphAggregat onJob Dataflow Job
 
-This job aggregates the previous day's history with today's activities, and outputs an updated
-history. This history is joined with the explicit scores from real graph's BQML pipeline, and
-exported as features for timelines (which is why we're using their thrift).
+T  job aggregates t  prev ous day's  tory w h today's act v  es, and outputs an updated
+ tory. T   tory  s jo ned w h t  expl c  scores from real graph's BQML p pel ne, and
+exported as features for t  l nes (wh ch  s why  're us ng t  r thr ft).
 
-#### IntelliJ
+####  ntell J
 ```
-fastpass create --name rg_agg_all --intellij src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+fastpass create --na  rg_agg_all -- ntell j src/scala/com/tw ter/ nteract on_graph/sc o/agg_all: nteract on_graph_aggregat on_job_sc o
 ```
 
-#### Build Jar
+#### Comp le
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+bazel bu ld src/scala/com/tw ter/ nteract on_graph/sc o/agg_all: nteract on_graph_aggregat on_job_sc o
 ```
 
-#### Run Scheduled Job
+#### Bu ld Jar
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-aggregation-dataflow
+bazel bundle src/scala/com/tw ter/ nteract on_graph/sc o/agg_all: nteract on_graph_aggregat on_job_sc o
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_all/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-11-08 \
-  --bind=profile.output_path=processed/interaction_graph_aggregation_dataflow
+#### Run Sc duled Job
+```
+export PROJECT D=twttr-recos-ml-prod
+export REG ON=us-central1
+export JOB_NAME= nteract on-graph-aggregat on-dataflow
+
+b n/d6w sc dule \
+  ${PROJECT D}/${REG ON}/${JOB_NAME} \
+  src/scala/com/tw ter/ nteract on_graph/sc o/agg_all/conf g.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.project=${PROJECT D} \
+  --b nd=prof le.reg on=${REG ON} \
+  --b nd=prof le.job_na =${JOB_NAME} \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date=2022-11-08 \
+  --b nd=prof le.output_path=processed/ nteract on_graph_aggregat on_dataflow
 ```

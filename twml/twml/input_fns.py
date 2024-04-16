@@ -1,129 +1,129 @@
 '''
-Contains implementations of functions to read input data.
+Conta ns  mple ntat ons of funct ons to read  nput data.
 '''
-from .dataset import stream_block_format_dataset
+from .dataset  mport stream_block_format_dataset
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-def data_record_input_fn(
-        files, batch_size, parse_fn,
+def data_record_ nput_fn(
+        f les, batch_s ze, parse_fn,
         num_threads=2, repeat=False, dataset_fn=None,
-        keep_rate=None, parts_downsampling_rate=None,
-        shards=None, shard_index=None, shuffle=True, shuffle_files=True, interleave=True,
-        initializable=False, log_tf_data_summaries=False,
+        keep_rate=None, parts_downsampl ng_rate=None,
+        shards=None, shard_ ndex=None, shuffle=True, shuffle_f les=True,  nterleave=True,
+         n  al zable=False, log_tf_data_summar es=False,
         **kwargs):
   """
-  Returns a nested structure of tf.Tensors containing the next element.
-  Used by ``train_input_fn`` and ``eval_input_fn`` in DataRecordTrainer.
-  By default, works with DataRecord dataset for compressed partition files.
+  Returns a nested structure of tf.Tensors conta n ng t  next ele nt.
+  Used by ``tra n_ nput_fn`` and ``eval_ nput_fn``  n DataRecordTra ner.
+  By default, works w h DataRecord dataset for compressed part  on f les.
 
   Args:
-    files:
-      List of files that will be parsed.
-    batch_size:
+    f les:
+      L st of f les that w ll be parsed.
+    batch_s ze:
       number of samples per batch.
     parse_fn:
-      function passed to data loading for parsing individual data records.
-      Usually one of the decoder functions like ``parsers.get_sparse_parse_fn``.
-    num_threads (optional):
-      number of threads used for loading data. Defaults to 2.
-    repeat (optional):
-      Repeat the dataset indefinitely. Defaults to False.
-      Useful when you want to use ``train_steps`` or ``eval_steps``
-      greater than the size of the dataset
-      (otherwise Estimator.[train,evaluate] stops when the end of the dataset is reached).
-    dataset_fn (optional):
-      A function that modifies the dataset after it reads different interleaved parts files.
+      funct on passed to data load ng for pars ng  nd v dual data records.
+      Usually one of t  decoder funct ons l ke ``parsers.get_sparse_parse_fn``.
+    num_threads (opt onal):
+      number of threads used for load ng data. Defaults to 2.
+    repeat (opt onal):
+      Repeat t  dataset  ndef n ely. Defaults to False.
+      Useful w n   want to use ``tra n_steps`` or ``eval_steps``
+      greater than t  s ze of t  dataset
+      (ot rw se Est mator.[tra n,evaluate] stops w n t  end of t  dataset  s reac d).
+    dataset_fn (opt onal):
+      A funct on that mod f es t  dataset after   reads d fferent  nterleaved parts f les.
       Defaults to:
 
       .. code-block:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          return dataset.batch(batch_size).map(parse_fn, 1)
+        def dataset_fn(dataset, parse_fn, batch_s ze):
+          return dataset.batch(batch_s ze).map(parse_fn, 1)
 
-    keep_rate (optional):
-      A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli
-      distribution with p = 1 - keep_rate.
+    keep_rate (opt onal):
+      A float value  n (0.0, 1.0] that  nd cates to drop records accord ng to t  Bernoull 
+      d str but on w h p = 1 - keep_rate.
       Defaults to None (no records dropped).
 
-    parts_downsampling_rate (optional):
-      A float value in (0.0, 1.0] that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+    parts_downsampl ng_rate (opt onal):
+      A float value  n (0.0, 1.0] that  nd cates t  factor by wh ch to downsample part f les.
+      For example, a value of 0.2  ans only 20 percent of part f les beco  part of t  dataset.
 
-    shards (optional):
-      Number of partitions to shard the dataset into. This is useful for codistillation
-      (https://arxiv.org/pdf/1804.03235.pdf) and other techniques that require each worker to
-      train on disjoint partitions of the dataset.
-      The dataset is not sharded by default.
+    shards (opt onal):
+      Number of part  ons to shard t  dataset  nto. T   s useful for cod st llat on
+      (https://arx v.org/pdf/1804.03235.pdf) and ot r techn ques that requ re each worker to
+      tra n on d sjo nt part  ons of t  dataset.
+      T  dataset  s not sharded by default.
 
-    shard_index (optional):
-      Which partition of the dataset to use if ``shards`` is set.
+    shard_ ndex (opt onal):
+      Wh ch part  on of t  dataset to use  f ``shards``  s set.
 
-    shuffle (optional):
-      Whether to shuffle the records. Defaults to True.
+    shuffle (opt onal):
+      W t r to shuffle t  records. Defaults to True.
 
-    shuffle_files (optional):
-      Shuffle the list of files. Defaults to True.
-      When False, files are iterated in the order they are passed in.
+    shuffle_f les (opt onal):
+      Shuffle t  l st of f les. Defaults to True.
+      W n False, f les are  erated  n t  order t y are passed  n.
 
-    interleave (optional):
-      Interleave records from multiple files in parallel. Defaults to True.
+     nterleave (opt onal):
+       nterleave records from mult ple f les  n parallel. Defaults to True.
 
-    initializable (optional):
-      A boolean indicator. When the Dataset Iterator depends on some resource, e.g. a HashTable or
-      a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value (false)
-      is used for most plain iterators.
+     n  al zable (opt onal):
+      A boolean  nd cator. W n t  Dataset  erator depends on so  res ce, e.g. a HashTable or
+      a Tensor,  .e.  's an  n  al zable  erator, set   to True. Ot rw se, default value (false)
+       s used for most pla n  erators.
 
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+      log_tf_data_summar es (opt onal):
+        A boolean  nd cator denot ng w t r to add a `tf.data.exper  ntal.StatsAggregator` to t 
+        tf.data p pel ne. T  adds summar es of p pel ne ut l zat on and buffer s zes to t  output
+        events f les. T  requ res that ` n  al zable`  s `True` above.
 
   Returns:
-    Iterator of elements of the dataset.
+     erator of ele nts of t  dataset.
   """
-  if not parse_fn:
-    raise ValueError("default_input_fn requires a parse_fn")
+   f not parse_fn:
+    ra se ValueError("default_ nput_fn requ res a parse_fn")
 
-  if log_tf_data_summaries and not initializable:
-    raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+   f log_tf_data_summar es and not  n  al zable:
+    ra se ValueError("Requ re ` n  al zable`  f `log_tf_data_summar es`.")
 
   dataset = stream_block_format_dataset(
-    files=files,
+    f les=f les,
     parse_fn=parse_fn,
-    batch_size=batch_size,
+    batch_s ze=batch_s ze,
     repeat=repeat,
     num_threads=num_threads,
     dataset_fn=dataset_fn,
     keep_rate=keep_rate,
-    parts_downsampling_rate=parts_downsampling_rate,
+    parts_downsampl ng_rate=parts_downsampl ng_rate,
     shards=shards,
-    shard_index=shard_index,
+    shard_ ndex=shard_ ndex,
     shuffle=shuffle,
-    shuffle_files=shuffle_files,
-    interleave=interleave,
+    shuffle_f les=shuffle_f les,
+     nterleave= nterleave,
     **kwargs
   )
 
-  # Add a tf.data.experimental.StatsAggregator
-  # https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/data/experimental/StatsAggregator
-  if log_tf_data_summaries:
-    aggregator = tf.data.experimental.StatsAggregator()
-    options = tf.data.Options()
-    options.experimental_stats.aggregator = aggregator
-    dataset = dataset.with_options(options)
+  # Add a tf.data.exper  ntal.StatsAggregator
+  # https://www.tensorflow.org/vers ons/r1.15/ap _docs/python/tf/data/exper  ntal/StatsAggregator
+   f log_tf_data_summar es:
+    aggregator = tf.data.exper  ntal.StatsAggregator()
+    opt ons = tf.data.Opt ons()
+    opt ons.exper  ntal_stats.aggregator = aggregator
+    dataset = dataset.w h_opt ons(opt ons)
     stats_summary = aggregator.get_summary()
-    tf.add_to_collection(tf.GraphKeys.SUMMARIES, stats_summary)
+    tf.add_to_collect on(tf.GraphKeys.SUMMAR ES, stats_summary)
 
-  if initializable:
-    # when the data parsing dpends on some HashTable or Tensor, the iterator is initalizable and
-    # therefore we need to be run explicitly
-    iterator = dataset.make_initializable_iterator()
-    tf.add_to_collection(tf.GraphKeys.TABLE_INITIALIZERS, iterator.initializer)
+   f  n  al zable:
+    # w n t  data pars ng dpends on so  HashTable or Tensor, t   erator  s  n al zable and
+    # t refore   need to be run expl c ly
+     erator = dataset.make_ n  al zable_ erator()
+    tf.add_to_collect on(tf.GraphKeys.TABLE_ N T AL ZERS,  erator. n  al zer)
   else:
-    iterator = dataset.make_one_shot_iterator()
-  return iterator.get_next()
+     erator = dataset.make_one_shot_ erator()
+  return  erator.get_next()
 
 
-default_input_fn = data_record_input_fn  # pylint: disable=invalid-name
+default_ nput_fn = data_record_ nput_fn  # pyl nt: d sable= nval d-na 

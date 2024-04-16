@@ -1,89 +1,89 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.AbstractFile.Filter
-import com.twitter.util.Future
-import org.apache.beam.sdk.io.fs.ResourceId
-import scala.collection.JavaConverters._
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.AbstractF le.F lter
+ mport com.tw ter.ut l.Future
+ mport org.apac .beam.sdk. o.fs.Res ce d
+ mport scala.collect on.JavaConverters._
 
 object ShardConstants {
-  val ShardPrefix = "shard_"
+  val ShardPref x = "shard_"
 }
 
 /**
- * Serialize shards to directory
- * @param shards: List of shards to serialize
+ * Ser al ze shards to d rectory
+ * @param shards: L st of shards to ser al ze
  */
-class ShardedSerialization(
-  shards: Seq[Serialization])
-    extends Serialization {
-  override def toDirectory(directory: AbstractFile): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+class ShardedSer al zat on(
+  shards: Seq[Ser al zat on])
+    extends Ser al zat on {
+  overr de def toD rectory(d rectory: AbstractF le): Un  = {
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
-  override def toDirectory(directory: ResourceId): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+  overr de def toD rectory(d rectory: Res ce d): Un  = {
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
-  private def toDirectory(directory: IndexOutputFile): Unit = {
-    shards.indices.foreach { shardId =>
-      val shardDirectory = directory.createDirectory(ShardConstants.ShardPrefix + shardId)
-      val serialization = shards(shardId)
-      if (shardDirectory.isAbstractFile) {
-        serialization.toDirectory(shardDirectory.abstractFile)
+  pr vate def toD rectory(d rectory:  ndexOutputF le): Un  = {
+    shards. nd ces.foreach { shard d =>
+      val shardD rectory = d rectory.createD rectory(ShardConstants.ShardPref x + shard d)
+      val ser al zat on = shards(shard d)
+       f (shardD rectory. sAbstractF le) {
+        ser al zat on.toD rectory(shardD rectory.abstractF le)
       } else {
-        serialization.toDirectory(shardDirectory.resourceId)
+        ser al zat on.toD rectory(shardD rectory.res ce d)
       }
     }
   }
 }
 
 /**
- * Deserialize directories containing index shards data to a composed queryable
- * @param deserializationFn function to deserialize a shard file to Queryable
- * @tparam T the id of the embeddings
- * @tparam P : Runtime params type
- * @tparam D: Distance metric type
+ * Deser al ze d rector es conta n ng  ndex shards data to a composed queryable
+ * @param deser al zat onFn funct on to deser al ze a shard f le to Queryable
+ * @tparam T t   d of t  embedd ngs
+ * @tparam P : Runt   params type
+ * @tparam D: D stance  tr c type
  */
-class ComposedQueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D]](
-  deserializationFn: (AbstractFile) => Queryable[T, P, D])
-    extends QueryableDeserialization[T, P, D, Queryable[T, P, D]] {
-  override def fromDirectory(directory: AbstractFile): Queryable[T, P, D] = {
-    val shardDirs = directory
-      .listFiles(new Filter {
-        override def accept(file: AbstractFile): Boolean =
-          file.getName.startsWith(ShardConstants.ShardPrefix)
+class ComposedQueryableDeser al zat on[T, P <: Runt  Params, D <: D stance[D]](
+  deser al zat onFn: (AbstractF le) => Queryable[T, P, D])
+    extends QueryableDeser al zat on[T, P, D, Queryable[T, P, D]] {
+  overr de def fromD rectory(d rectory: AbstractF le): Queryable[T, P, D] = {
+    val shardD rs = d rectory
+      .l stF les(new F lter {
+        overr de def accept(f le: AbstractF le): Boolean =
+          f le.getNa .startsW h(ShardConstants.ShardPref x)
       })
       .asScala
-      .toList
+      .toL st
 
-    val indices = shardDirs
-      .map { shardDir =>
-        deserializationFn(shardDir)
+    val  nd ces = shardD rs
+      .map { shardD r =>
+        deser al zat onFn(shardD r)
       }
 
-    new ComposedQueryable[T, P, D](indices)
+    new ComposedQueryable[T, P, D]( nd ces)
   }
 }
 
-class ShardedIndexBuilderWithSerialization[T, P <: RuntimeParams, D <: Distance[D]](
-  shardedIndex: ShardedAppendable[T, P, D],
-  shardedSerialization: ShardedSerialization)
+class Sharded ndexBu lderW hSer al zat on[T, P <: Runt  Params, D <: D stance[D]](
+  sharded ndex: ShardedAppendable[T, P, D],
+  shardedSer al zat on: ShardedSer al zat on)
     extends Appendable[T, P, D]
-    with Serialization {
-  override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    shardedIndex.append(entity)
+    w h Ser al zat on {
+  overr de def append(ent y: Ent yEmbedd ng[T]): Future[Un ] = {
+    sharded ndex.append(ent y)
   }
 
-  override def toDirectory(directory: AbstractFile): Unit = {
-    shardedSerialization.toDirectory(directory)
+  overr de def toD rectory(d rectory: AbstractF le): Un  = {
+    shardedSer al zat on.toD rectory(d rectory)
   }
 
-  override def toDirectory(directory: ResourceId): Unit = {
-    shardedSerialization.toDirectory(directory)
+  overr de def toD rectory(d rectory: Res ce d): Un  = {
+    shardedSer al zat on.toD rectory(d rectory)
   }
 
-  override def toQueryable: Queryable[T, P, D] = {
-    shardedIndex.toQueryable
+  overr de def toQueryable: Queryable[T, P, D] = {
+    sharded ndex.toQueryable
   }
 }

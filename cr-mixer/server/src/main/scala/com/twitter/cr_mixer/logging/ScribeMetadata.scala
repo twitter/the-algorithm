@@ -1,45 +1,45 @@
-package com.twitter.cr_mixer.logging
+package com.tw ter.cr_m xer.logg ng
 
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
+ mport com.tw ter.cr_m xer.model.AdsCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.RelatedT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.UtegT etCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.thr ftscala.Product
+ mport com.tw ter.product_m xer.core.thr ftscala.Cl entContext
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
 
-case class ScribeMetadata(
-  requestUUID: Long,
-  userId: UserId,
+case class Scr be tadata(
+  requestUU D: Long,
+  user d: User d,
   product: Product)
 
-object ScribeMetadata {
-  def from(query: CrCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+object Scr be tadata {
+  def from(query: CrCand dateGeneratorQuery): Scr be tadata = {
+    Scr be tadata(query.requestUU D, query.user d, query.product)
   }
 
-  def from(query: UtegTweetCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+  def from(query: UtegT etCand dateGeneratorQuery): Scr be tadata = {
+    Scr be tadata(query.requestUU D, query.user d, query.product)
   }
 
-  def from(query: AdsCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+  def from(query: AdsCand dateGeneratorQuery): Scr be tadata = {
+    Scr be tadata(query.requestUU D, query.user d, query.product)
   }
 }
 
-case class RelatedTweetScribeMetadata(
-  requestUUID: Long,
-  internalId: InternalId,
-  clientContext: ClientContext,
+case class RelatedT etScr be tadata(
+  requestUU D: Long,
+   nternal d:  nternal d,
+  cl entContext: Cl entContext,
   product: Product)
 
-object RelatedTweetScribeMetadata {
-  def from(query: RelatedTweetCandidateGeneratorQuery): RelatedTweetScribeMetadata = {
-    RelatedTweetScribeMetadata(
-      query.requestUUID,
-      query.internalId,
-      query.clientContext,
+object RelatedT etScr be tadata {
+  def from(query: RelatedT etCand dateGeneratorQuery): RelatedT etScr be tadata = {
+    RelatedT etScr be tadata(
+      query.requestUU D,
+      query. nternal d,
+      query.cl entContext,
       query.product)
   }
 }

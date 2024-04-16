@@ -1,118 +1,118 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetPreviewIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.WhoToFollowExcludedUserIdsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.common_ nternal.analyt cs.tw ter_cl ent_user_agent_parser.UserAgent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.Pers stenceEntr esFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedT et dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedT etPrev ew dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.WhoToFollowExcludedUser dsFeature
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseBatc sCl ent
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseV3
+ mport com.tw ter.t  l nes.ut l.cl ent_ nfo.Cl entPlatform
+ mport com.tw ter.t  l neserv ce.model.T  l neQuery
+ mport com.tw ter.t  l neserv ce.model.core.T  l neK nd
+ mport com.tw ter.t  l neserv ce.model.r ch.Ent y dType
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class PersistenceStoreQueryFeatureHydrator @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3],
-  statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class Pers stenceStoreQueryFeatureHydrator @ nject() (
+  t  l neResponseBatc sCl ent: T  l neResponseBatc sCl ent[T  l neResponseV3],
+  statsRece ver: StatsRece ver)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("PersistenceStore")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("Pers stenceStore")
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val servedTweetIdsSizeStat = scopedStatsReceiver.stat("ServedTweetIdsSize")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate val servedT et dsS zeStat = scopedStatsRece ver.stat("ServedT et dsS ze")
 
-  private val WhoToFollowExcludedUserIdsLimit = 1000
-  private val ServedTweetIdsDuration = 10.minutes
-  private val ServedTweetIdsLimit = 100
-  private val ServedTweetPreviewIdsDuration = 10.hours
-  private val ServedTweetPreviewIdsLimit = 10
+  pr vate val WhoToFollowExcludedUser dsL m  = 1000
+  pr vate val ServedT et dsDurat on = 10.m nutes
+  pr vate val ServedT et dsL m  = 100
+  pr vate val ServedT etPrev ew dsDurat on = 10.h s
+  pr vate val ServedT etPrev ew dsL m  = 10
 
-  override val features: Set[Feature[_, _]] =
+  overr de val features: Set[Feature[_, _]] =
     Set(
-      ServedTweetIdsFeature,
-      ServedTweetPreviewIdsFeature,
-      PersistenceEntriesFeature,
-      WhoToFollowExcludedUserIdsFeature)
+      ServedT et dsFeature,
+      ServedT etPrev ew dsFeature,
+      Pers stenceEntr esFeature,
+      WhoToFollowExcludedUser dsFeature)
 
-  private val supportedClients = Seq(
-    ClientPlatform.IPhone,
-    ClientPlatform.IPad,
-    ClientPlatform.Mac,
-    ClientPlatform.Android,
-    ClientPlatform.Web,
-    ClientPlatform.RWeb,
-    ClientPlatform.TweetDeckGryphon
+  pr vate val supportedCl ents = Seq(
+    Cl entPlatform. Phone,
+    Cl entPlatform. Pad,
+    Cl entPlatform.Mac,
+    Cl entPlatform.Andro d,
+    Cl entPlatform. b,
+    Cl entPlatform.R b,
+    Cl entPlatform.T etDeckGryphon
   )
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val timelineKind = query.product match {
-      case FollowingProduct => TimelineKind.homeLatest
-      case ForYouProduct => TimelineKind.home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val t  l neK nd = query.product match {
+      case Follow ngProduct => T  l neK nd.ho Latest
+      case For Product => T  l neK nd.ho 
+      case ot r => throw new UnsupportedOperat onExcept on(s"Unknown product: $ot r")
     }
-    val timelineQuery = TimelineQuery(id = query.getRequiredUserId, kind = timelineKind)
+    val t  l neQuery = T  l neQuery( d = query.getRequ redUser d, k nd = t  l neK nd)
 
-    Stitch.callFuture {
-      timelineResponseBatchesClient
-        .get(query = timelineQuery, clientPlatforms = supportedClients)
-        .map { timelineResponses =>
-          // Note that the WTF entries are not being scoped by ClientPlatform
-          val whoToFollowUserIds = timelineResponses
-            .flatMap { timelineResponse =>
-              timelineResponse.entries
-                .filter(_.entityIdType == EntityIdType.WhoToFollow)
-                .flatMap(_.itemIds.toSeq.flatMap(_.flatMap(_.userId)))
-            }.take(WhoToFollowExcludedUserIdsLimit)
+    St ch.callFuture {
+      t  l neResponseBatc sCl ent
+        .get(query = t  l neQuery, cl entPlatforms = supportedCl ents)
+        .map { t  l neResponses =>
+          // Note that t  WTF entr es are not be ng scoped by Cl entPlatform
+          val whoToFollowUser ds = t  l neResponses
+            .flatMap { t  l neResponse =>
+              t  l neResponse.entr es
+                .f lter(_.ent y dType == Ent y dType.WhoToFollow)
+                .flatMap(_. em ds.toSeq.flatMap(_.flatMap(_.user d)))
+            }.take(WhoToFollowExcludedUser dsL m )
 
-          val clientPlatform = ClientPlatform.fromQueryOptions(
-            clientAppId = query.clientContext.appId,
-            userAgent = query.clientContext.userAgent.flatMap(UserAgent.fromString))
+          val cl entPlatform = Cl entPlatform.fromQueryOpt ons(
+            cl entApp d = query.cl entContext.app d,
+            userAgent = query.cl entContext.userAgent.flatMap(UserAgent.fromStr ng))
 
-          val servedTweetIds = timelineResponses
-            .filter(_.clientPlatform == clientPlatform)
-            .filter(_.servedTime >= Time.now - ServedTweetIdsDuration)
-            .sortBy(-_.servedTime.inMilliseconds)
+          val servedT et ds = t  l neResponses
+            .f lter(_.cl entPlatform == cl entPlatform)
+            .f lter(_.servedT   >= T  .now - ServedT et dsDurat on)
+            .sortBy(-_.servedT  . nM ll seconds)
             .flatMap(
-              _.entries.flatMap(_.tweetIds(includeSourceTweets = true)).take(ServedTweetIdsLimit))
+              _.entr es.flatMap(_.t et ds( ncludeS ceT ets = true)).take(ServedT et dsL m ))
 
-          servedTweetIdsSizeStat.add(servedTweetIds.size)
+          servedT et dsS zeStat.add(servedT et ds.s ze)
 
-          val servedTweetPreviewIds = timelineResponses
-            .filter(_.clientPlatform == clientPlatform)
-            .filter(_.servedTime >= Time.now - ServedTweetPreviewIdsDuration)
-            .sortBy(-_.servedTime.inMilliseconds)
-            .flatMap(_.entries
-              .filter(_.entityIdType == EntityIdType.TweetPreview)
-              .flatMap(_.tweetIds(includeSourceTweets = true)).take(ServedTweetPreviewIdsLimit))
+          val servedT etPrev ew ds = t  l neResponses
+            .f lter(_.cl entPlatform == cl entPlatform)
+            .f lter(_.servedT   >= T  .now - ServedT etPrev ew dsDurat on)
+            .sortBy(-_.servedT  . nM ll seconds)
+            .flatMap(_.entr es
+              .f lter(_.ent y dType == Ent y dType.T etPrev ew)
+              .flatMap(_.t et ds( ncludeS ceT ets = true)).take(ServedT etPrev ew dsL m ))
 
-          FeatureMapBuilder()
-            .add(ServedTweetIdsFeature, servedTweetIds)
-            .add(ServedTweetPreviewIdsFeature, servedTweetPreviewIds)
-            .add(PersistenceEntriesFeature, timelineResponses)
-            .add(WhoToFollowExcludedUserIdsFeature, whoToFollowUserIds)
-            .build()
+          FeatureMapBu lder()
+            .add(ServedT et dsFeature, servedT et ds)
+            .add(ServedT etPrev ew dsFeature, servedT etPrev ew ds)
+            .add(Pers stenceEntr esFeature, t  l neResponses)
+            .add(WhoToFollowExcludedUser dsFeature, whoToFollowUser ds)
+            .bu ld()
         }
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7, 50, 60, 60)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.7, 50, 60, 60)
   )
 }

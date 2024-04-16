@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Preroll
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PrerollMarshaller @Inject() (
-  dynamicPrerollTypeMarshaller: DynamicPrerollTypeMarshaller,
-  mediaInfoMarshaller: MediaInfoMarshaller) {
+@S ngleton
+class PrerollMarshaller @ nject() (
+  dynam cPrerollTypeMarshaller: Dynam cPrerollTypeMarshaller,
+   d a nfoMarshaller:  d a nfoMarshaller) {
 
   def apply(preroll: Preroll): urt.Preroll =
     urt.Preroll(
-      prerollId = preroll.prerollId,
-      dynamicPrerollType = preroll.dynamicPrerollType.map(dynamicPrerollTypeMarshaller(_)),
-      mediaInfo = preroll.mediaInfo.map(mediaInfoMarshaller(_))
+      preroll d = preroll.preroll d,
+      dynam cPrerollType = preroll.dynam cPrerollType.map(dynam cPrerollTypeMarshaller(_)),
+       d a nfo = preroll. d a nfo.map( d a nfoMarshaller(_))
     )
 }

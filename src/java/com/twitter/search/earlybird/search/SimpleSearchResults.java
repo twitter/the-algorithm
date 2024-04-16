@@ -1,35 +1,35 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-public class SimpleSearchResults extends SearchResultsInfo {
-  protected Hit[] hits;
-  protected int numHits;
+publ c class S mpleSearchResults extends SearchResults nfo {
+  protected H [] h s;
+  protected  nt numH s;
 
-  public SimpleSearchResults(int size) {
-    this.hits = new Hit[size];
-    this.numHits = 0;
+  publ c S mpleSearchResults( nt s ze) {
+    t .h s = new H [s ze];
+    t .numH s = 0;
   }
 
-  public SimpleSearchResults(List<Hit> hits) {
-    this.hits = new Hit[hits.size()];
-    this.numHits = hits.size();
-    hits.toArray(this.hits);
+  publ c S mpleSearchResults(L st<H > h s) {
+    t .h s = new H [h s.s ze()];
+    t .numH s = h s.s ze();
+    h s.toArray(t .h s);
   }
 
-  public Hit[] hits() {
-    return hits;
+  publ c H [] h s() {
+    return h s;
   }
 
-  public int numHits() {
-    return numHits;
+  publ c  nt numH s() {
+    return numH s;
   }
 
-  public void setNumHits(int numHits) {
-    this.numHits = numHits;
+  publ c vo d setNumH s( nt numH s) {
+    t .numH s = numH s;
   }
 
-  public Hit getHit(int hitIndex) {
-    return hits[hitIndex];
+  publ c H  getH ( nt h  ndex) {
+    return h s[h  ndex];
   }
 }

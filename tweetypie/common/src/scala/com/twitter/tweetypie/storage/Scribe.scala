@@ -1,85 +1,85 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.servo.util.FutureEffect
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging._
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.servo.util.{Scribe => ServoScribe}
-import com.twitter.tweetypie.storage_internal.thriftscala._
-import com.twitter.tbird.thriftscala.Added
-import com.twitter.tbird.thriftscala.Removed
-import com.twitter.tbird.thriftscala.Scrubbed
-import com.twitter.util.Time
+ mport com.tw ter.servo.ut l.FutureEffect
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng._
+ mport com.tw ter.scrooge.B naryThr ftStructSer al zer
+ mport com.tw ter.servo.ut l.{Scr be => ServoScr be}
+ mport com.tw ter.t etyp e.storage_ nternal.thr ftscala._
+ mport com.tw ter.tb rd.thr ftscala.Added
+ mport com.tw ter.tb rd.thr ftscala.Removed
+ mport com.tw ter.tb rd.thr ftscala.Scrubbed
+ mport com.tw ter.ut l.T  
 
 /**
- * Scribe is used to log tweet writes which are used to generate /tables/statuses in HDFS.
+ * Scr be  s used to log t et wr es wh ch are used to generate /tables/statuses  n HDFS.
  *
- * Write   Scribe Category      Message
+ * Wr e   Scr be Category       ssage
  * -----   ---------------      -------
- * add     tbird_add_status     [[com.twitter.tbird.thriftscala.Added]]
- * remove  tbird_remove_status  [[com.twitter.tbird.thriftscala.Removed]]
- * scrub   tbird_scrub_status   [[com.twitter.tbird.thriftscala.Scrubbed]]
+ * add     tb rd_add_status     [[com.tw ter.tb rd.thr ftscala.Added]]
+ * remove  tb rd_remove_status  [[com.tw ter.tb rd.thr ftscala.Removed]]
+ * scrub   tb rd_scrub_status   [[com.tw ter.tb rd.thr ftscala.Scrubbed]]
  *
- * The thrift representation is encoded using binary thrift protocol format, followed by base64
- * encoding and converted to string using default character set (utf8). The logger uses BareFormatter.
+ * T  thr ft representat on  s encoded us ng b nary thr ft protocol format, follo d by base64
+ * encod ng and converted to str ng us ng default character set (utf8). T  logger uses BareFormatter.
  *
- * The thrift ops are scribed only after the write API call has succeeded.
+ * T  thr ft ops are scr bed only after t  wr e AP  call has succeeded.
  *
- * The class is thread safe except initial configuration and registration routines,
- * and no exception is expected unless java heap is out of memory.
+ * T  class  s thread safe except  n  al conf gurat on and reg strat on rout nes,
+ * and no except on  s expected unless java  ap  s out of  mory.
  *
- * If exception does get thrown, add/remove/scrub operations will fail and
- * client will have to retry
+ *  f except on does get thrown, add/remove/scrub operat ons w ll fa l and
+ * cl ent w ll have to retry
  */
-class Scribe(factory: Scribe.ScribeHandlerFactory, statsReceiver: StatsReceiver) {
-  import Scribe._
+class Scr be(factory: Scr be.Scr beHandlerFactory, statsRece ver: StatsRece ver) {
+   mport Scr be._
 
-  private val AddedSerializer = BinaryThriftStructSerializer(Added)
-  private val RemovedSerializer = BinaryThriftStructSerializer(Removed)
-  private val ScrubbedSerializer = BinaryThriftStructSerializer(Scrubbed)
+  pr vate val AddedSer al zer = B naryThr ftStructSer al zer(Added)
+  pr vate val RemovedSer al zer = B naryThr ftStructSer al zer(Removed)
+  pr vate val ScrubbedSer al zer = B naryThr ftStructSer al zer(Scrubbed)
 
-  private val addCounter = statsReceiver.counter("scribe/add/count")
-  private val removeCounter = statsReceiver.counter("scribe/remove/count")
-  private val scrubCounter = statsReceiver.counter("scribe/scrub/count")
+  pr vate val addCounter = statsRece ver.counter("scr be/add/count")
+  pr vate val removeCounter = statsRece ver.counter("scr be/remove/count")
+  pr vate val scrubCounter = statsRece ver.counter("scr be/scrub/count")
 
-  val addHandler: FutureEffect[String] = ServoScribe(factory(scribeAddedCategory)())
-  val removeHandler: FutureEffect[String] = ServoScribe(factory(scribeRemovedCategory)())
-  val scrubHandler: FutureEffect[String] = ServoScribe(factory(scribeScrubbedCategory)())
+  val addHandler: FutureEffect[Str ng] = ServoScr be(factory(scr beAddedCategory)())
+  val removeHandler: FutureEffect[Str ng] = ServoScr be(factory(scr beRemovedCategory)())
+  val scrubHandler: FutureEffect[Str ng] = ServoScr be(factory(scr beScrubbedCategory)())
 
-  private def addedToString(tweet: StoredTweet): String =
-    AddedSerializer.toString(
-      Added(StatusConversions.toTBirdStatus(tweet), Time.now.inMilliseconds, Some(false))
+  pr vate def addedToStr ng(t et: StoredT et): Str ng =
+    AddedSer al zer.toStr ng(
+      Added(StatusConvers ons.toTB rdStatus(t et), T  .now. nM ll seconds, So (false))
     )
 
-  private def removedToString(id: Long, at: Time, isSoftDeleted: Boolean): String =
-    RemovedSerializer.toString(Removed(id, at.inMilliseconds, Some(isSoftDeleted)))
+  pr vate def removedToStr ng( d: Long, at: T  ,  sSoftDeleted: Boolean): Str ng =
+    RemovedSer al zer.toStr ng(Removed( d, at. nM ll seconds, So ( sSoftDeleted)))
 
-  private def scrubbedToString(id: Long, cols: Seq[Int], at: Time): String =
-    ScrubbedSerializer.toString(Scrubbed(id, cols, at.inMilliseconds))
+  pr vate def scrubbedToStr ng( d: Long, cols: Seq[ nt], at: T  ): Str ng =
+    ScrubbedSer al zer.toStr ng(Scrubbed( d, cols, at. nM ll seconds))
 
-  def logAdded(tweet: StoredTweet): Unit = {
-    addHandler(addedToString(tweet))
-    addCounter.incr()
+  def logAdded(t et: StoredT et): Un  = {
+    addHandler(addedToStr ng(t et))
+    addCounter. ncr()
   }
 
-  def logRemoved(id: Long, at: Time, isSoftDeleted: Boolean): Unit = {
-    removeHandler(removedToString(id, at, isSoftDeleted))
-    removeCounter.incr()
+  def logRemoved( d: Long, at: T  ,  sSoftDeleted: Boolean): Un  = {
+    removeHandler(removedToStr ng( d, at,  sSoftDeleted))
+    removeCounter. ncr()
   }
 
-  def logScrubbed(id: Long, cols: Seq[Int], at: Time): Unit = {
-    scrubHandler(scrubbedToString(id, cols, at))
-    scrubCounter.incr()
+  def logScrubbed( d: Long, cols: Seq[ nt], at: T  ): Un  = {
+    scrubHandler(scrubbedToStr ng( d, cols, at))
+    scrubCounter. ncr()
   }
 }
 
-object Scribe {
-  type ScribeHandlerFactory = (String) => HandlerFactory
+object Scr be {
+  type Scr beHandlerFactory = (Str ng) => HandlerFactory
 
-  /** WARNING: These categories are white-listed. If you are changing them, the new categories should be white-listed.
-   *  You should followup with CoreWorkflows team (CW) for that.
+  /** WARN NG: T se categor es are wh e-l sted.  f   are chang ng t m, t  new categor es should be wh e-l sted.
+   *    should followup w h CoreWorkflows team (CW) for that.
    */
-  private val scribeAddedCategory = "tbird_add_status"
-  private val scribeRemovedCategory = "tbird_remove_status"
-  private val scribeScrubbedCategory = "tbird_scrub_status"
+  pr vate val scr beAddedCategory = "tb rd_add_status"
+  pr vate val scr beRemovedCategory = "tb rd_remove_status"
+  pr vate val scr beScrubbedCategory = "tb rd_scrub_status"
 }

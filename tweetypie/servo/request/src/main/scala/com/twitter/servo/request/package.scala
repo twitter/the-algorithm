@@ -1,32 +1,32 @@
-package com.twitter.servo
+package com.tw ter.servo
 
-import com.twitter.servo.util.FutureArrow
+ mport com.tw ter.servo.ut l.FutureArrow
 
 package object request {
 
   /**
-   * RequestFilters provide a mechanism for composing a chain of actions
-   * (e.g. logging, authentication, replication, etc) to be performed per
-   * request. The intention is for a series of RequestFilters are terminated in a
-   * RequestHandler, which returns an object of some response type.
+   * RequestF lters prov de a  chan sm for compos ng a cha n of act ons
+   * (e.g. logg ng, aut nt cat on, repl cat on, etc) to be perfor d per
+   * request. T   ntent on  s for a ser es of RequestF lters are term nated  n a
+   * RequestHandler, wh ch returns an object of so  response type.
    *
-   * Upon completion of a filter's work, the convention is to either:
+   * Upon complet on of a f lter's work, t  convent on  s to e  r:
    *
-   * a) Return a Future of a request object of type `A` to be passed to the next
-   *    member of the filter/handler chain.
-   * b) Return a Future response outright in cases where request handling must
-   *    be halted at the current filter (i.e. returning `Future.exception(...)`.
+   * a) Return a Future of a request object of type `A` to be passed to t  next
+   *     mber of t  f lter/handler cha n.
+   * b) Return a Future response outr ght  n cases w re request handl ng must
+   *    be halted at t  current f lter ( .e. return ng `Future.except on(...)`.
    *
    * @tparam A
-   *   A type encapsulating all context and data required to satisfy a request.
+   *   A type encapsulat ng all context and data requ red to sat sfy a request.
    */
-  type RequestFilter[A] = FutureArrow[A, A]
+  type RequestF lter[A] = FutureArrow[A, A]
 
   /**
-   * A handler of requests parameterized on the request and response types.
+   * A handler of requests para ter zed on t  request and response types.
    *
    * @tparam A
-   *   A type encapsulating all context and data required to satisfy a request.
+   *   A type encapsulat ng all context and data requ red to sat sfy a request.
    *
    * @tparam B
    *   A response type.

@@ -1,64 +1,64 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Throw
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.kv.Den edManhattanExcept on
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanValue
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
 
-object UpdateTweetHandler {
+object UpdateT etHandler {
   def apply(
-    insert: ManhattanOperations.Insert,
-    stats: StatsReceiver
-  ): TweetStorageClient.UpdateTweet = { (tpTweet: Tweet, fields: Seq[Field]) =>
-    require(
-      fields.forall(!TweetFields.coreFieldIds.contains(_)),
-      "Core fields cannot be modified by calling updateTweet; use addTweet instead."
+     nsert: ManhattanOperat ons. nsert,
+    stats: StatsRece ver
+  ): T etStorageCl ent.UpdateT et = { (tpT et: T et, f elds: Seq[F eld]) =>
+    requ re(
+      f elds.forall(!T etF elds.coreF eld ds.conta ns(_)),
+      "Core f elds cannot be mod f ed by call ng updateT et; use addT et  nstead."
     )
-    require(
-      areAllFieldsDefined(tpTweet, fields),
-      s"Input tweet $tpTweet does not have specified fields $fields set"
+    requ re(
+      areAllF eldsDef ned(tpT et, f elds),
+      s" nput t et $tpT et does not have spec f ed f elds $f elds set"
     )
 
-    val now = Time.now
-    val storedTweet = StorageConversions.toStoredTweetForFields(tpTweet, fields.toSet)
-    val tweetId = storedTweet.id
-    Stats.updatePerFieldQpsCounters("updateTweet", fields.map(_.id), 1, stats)
+    val now = T  .now
+    val storedT et = StorageConvers ons.toStoredT etForF elds(tpT et, f elds.toSet)
+    val t et d = storedT et. d
+    Stats.updatePerF eldQpsCounters("updateT et", f elds.map(_. d), 1, stats)
 
-    val (fieldIds, stitchesPerTweet) =
-      fields.map { field =>
-        val fieldId = field.id
-        val tweetKey = TweetKey.fieldKey(tweetId, fieldId)
-        val blob = storedTweet.getFieldBlob(fieldId).get
-        val value = ManhattanValue(TFieldBlobCodec.toByteBuffer(blob), Some(now))
-        val record = TweetManhattanRecord(tweetKey, value)
+    val (f eld ds, st c sPerT et) =
+      f elds.map { f eld =>
+        val f eld d = f eld. d
+        val t etKey = T etKey.f eldKey(t et d, f eld d)
+        val blob = storedT et.getF eldBlob(f eld d).get
+        val value = ManhattanValue(TF eldBlobCodec.toByteBuffer(blob), So (now))
+        val record = T etManhattanRecord(t etKey, value)
 
-        (fieldId, insert(record).liftToTry)
-      }.unzip
+        (f eld d,  nsert(record).l ftToTry)
+      }.unz p
 
-    Stitch.collect(stitchesPerTweet).map { seqOfTries =>
-      val fieldkeyAndMhResults = fieldIds.zip(seqOfTries).toMap
-      // If even a single field was rate limited, we will send an overall OverCapacity TweetResponse
-      val wasRateLimited = fieldkeyAndMhResults.exists { keyAndResult =>
+    St ch.collect(st c sPerT et).map { seqOfTr es =>
+      val f eldkeyAndMhResults = f eld ds.z p(seqOfTr es).toMap
+      //  f even a s ngle f eld was rate l m ed,   w ll send an overall OverCapac y T etResponse
+      val wasRateL m ed = f eldkeyAndMhResults.ex sts { keyAndResult =>
         keyAndResult._2 match {
-          case Throw(e: DeniedManhattanException) => true
+          case Throw(e: Den edManhattanExcept on) => true
           case _ => false
         }
       }
 
-      if (wasRateLimited) {
-        buildTweetOverCapacityResponse("updateTweets", tweetId, fieldkeyAndMhResults)
+       f (wasRateL m ed) {
+        bu ldT etOverCapac yResponse("updateT ets", t et d, f eldkeyAndMhResults)
       } else {
-        buildTweetResponse("updateTweets", tweetId, fieldkeyAndMhResults)
+        bu ldT etResponse("updateT ets", t et d, f eldkeyAndMhResults)
       }
     }
   }
 
-  private def areAllFieldsDefined(tpTweet: Tweet, fields: Seq[Field]) = {
-    val storedTweet = StorageConversions.toStoredTweetForFields(tpTweet, fields.toSet)
-    fields.map(_.id).forall(storedTweet.getFieldBlob(_).isDefined)
+  pr vate def areAllF eldsDef ned(tpT et: T et, f elds: Seq[F eld]) = {
+    val storedT et = StorageConvers ons.toStoredT etForF elds(tpT et, f elds.toSet)
+    f elds.map(_. d).forall(storedT et.getF eldBlob(_). sDef ned)
   }
 }

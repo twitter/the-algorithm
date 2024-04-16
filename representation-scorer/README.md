@@ -1,5 +1,5 @@
-# Representation Scorer #
+# Representat on Scorer #
 
-**Representation Scorer** (RSX) serves as a centralized scoring system, offering SimClusters or other embedding-based scoring solutions as machine learning features.
+**Representat on Scorer** (RSX) serves as a central zed scor ng system, offer ng S mClusters or ot r embedd ng-based scor ng solut ons as mach ne learn ng features.
 
-The Representation Scorer acquires user behavior data from the User Signal Service (USS) and extracts embeddings from the Representation Manager (RMS). It then calculates both pairwise and listwise features. These features are used at various stages, including candidate retrieval and ranking.
+T  Representat on Scorer acqu res user behav or data from t  User S gnal Serv ce (USS) and extracts embedd ngs from t  Representat on Manager (RMS).   t n calculates both pa rw se and l stw se features. T se features are used at var ous stages,  nclud ng cand date retr eval and rank ng.

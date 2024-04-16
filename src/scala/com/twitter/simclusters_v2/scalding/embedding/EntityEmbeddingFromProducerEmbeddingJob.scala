@@ -1,236 +1,236 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.tw ter.s mclusters_v2.scald ng.embedd ng
 
-import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
-import com.twitter.onboarding.relevance.candidates.thriftscala.UTTInterest
-import com.twitter.onboarding.relevance.source.UttAccountRecommendationsScalaDataset
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.SemanticCoreEmbeddingsFromProducerScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.wtf.scalding.jobs.common.StatsUtil._
-import java.util.TimeZone
+ mport com.tw ter.onboard ng.relevance.cand dates.thr ftscala. nterestBasedUserRecom ndat ons
+ mport com.tw ter.onboard ng.relevance.cand dates.thr ftscala.UTT nterest
+ mport com.tw ter.onboard ng.relevance.s ce.UttAccountRecom ndat onsScalaDataset
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Durat on
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.typed.UnsortedGrouped
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocKeyValS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.ProducerEmbedd ngS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Semant cCoreEmbedd ngsFromProducerScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l._
+ mport com.tw ter.s mclusters_v2.thr ftscala
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusterW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopS mClustersW hScore
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.StatsUt l._
+ mport java.ut l.T  Zone
 
 /*
-  $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding-adhoc
+  $ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:ent y_embedd ng_from_producer_embedd ng-adhoc
 
-  $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.EntityEmbeddingFromProducerEmbeddingAdhocJob \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding-adhoc \
+  $ scald ng remote run \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.Ent yEmbedd ngFromProducerEmbedd ngAdhocJob \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:ent y_embedd ng_from_producer_embedd ng-adhoc \
   --user recos-platform \
-  -- --date 2019-10-23 --model_version 20M_145K_updated
+  -- --date 2019-10-23 --model_vers on 20M_145K_updated
  */
-object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
+object Ent yEmbedd ngFromProducerEmbedd ngAdhocJob extends AdhocExecut onApp {
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // step 1: read in (entity, producer) pairs and remove duplicates
-    val topK = args.getOrElse("top_k", "100").toInt
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    // step 1: read  n (ent y, producer) pa rs and remove dupl cates
+    val topK = args.getOrElse("top_k", "100").to nt
 
-    val modelVersion = ModelVersions.toModelVersion(
-      args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))
+    val modelVers on = ModelVers ons.toModelVers on(
+      args.getOrElse("model_vers on", ModelVers ons.Model20M145KUpdated))
 
-    val entityKnownForProducers =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
-        .count("num unique entity producer pairs").map {
-          case (entityId, producerId, score) => (producerId, (entityId, score))
+    val ent yKnownForProducers =
+      Ent yEmbedd ngFromProducerEmbedd ngJob
+        .getNormal zedEnt yProducerMatr x(dateRange.emb ggen(Days(7)))
+        .count("num un que ent y producer pa rs").map {
+          case (ent y d, producer d, score) => (producer d, (ent y d, score))
         }
 
-    // step 2: read in producer to simclusters embeddings
+    // step 2: read  n producer to s mclusters embedd ngs
 
-    val producersEmbeddingsFollowBased =
-      ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-        modelVersion)(dateRange.embiggen(Days(7)))
+    val producersEmbedd ngsFollowBased =
+      ProducerEmbedd ngS ces.producerEmbedd ngS ceLegacy(
+        Embedd ngType.ProducerFollowBasedSemant cCoreEnt y,
+        modelVers on)(dateRange.emb ggen(Days(7)))
 
-    val producersEmbeddingsFavBased =
-      ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-        modelVersion)(dateRange.embiggen(Days(7)))
+    val producersEmbedd ngsFavBased =
+      ProducerEmbedd ngS ces.producerEmbedd ngS ceLegacy(
+        Embedd ngType.ProducerFavBasedSemant cCoreEnt y,
+        modelVers on)(dateRange.emb ggen(Days(7)))
 
-    // step 3: join producer embedding with entity, producer pairs and reformat result into format [SimClustersEmbeddingId, SimClustersEmbedding]
-    val producerBasedEntityEmbeddingsFollowBased =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .computeEmbedding(
-          producersEmbeddingsFollowBased,
-          entityKnownForProducers,
+    // step 3: jo n producer embedd ng w h ent y, producer pa rs and reformat result  nto format [S mClustersEmbedd ng d, S mClustersEmbedd ng]
+    val producerBasedEnt yEmbedd ngsFollowBased =
+      Ent yEmbedd ngFromProducerEmbedd ngJob
+        .computeEmbedd ng(
+          producersEmbedd ngsFollowBased,
+          ent yKnownForProducers,
           topK,
-          modelVersion,
-          EmbeddingType.ProducerFollowBasedSemanticCoreEntity).toTypedPipe.count(
-          "follow_based_entity_count")
+          modelVers on,
+          Embedd ngType.ProducerFollowBasedSemant cCoreEnt y).toTypedP pe.count(
+          "follow_based_ent y_count")
 
-    val producerBasedEntityEmbeddingsFavBased =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .computeEmbedding(
-          producersEmbeddingsFavBased,
-          entityKnownForProducers,
+    val producerBasedEnt yEmbedd ngsFavBased =
+      Ent yEmbedd ngFromProducerEmbedd ngJob
+        .computeEmbedd ng(
+          producersEmbedd ngsFavBased,
+          ent yKnownForProducers,
           topK,
-          modelVersion,
-          EmbeddingType.ProducerFavBasedSemanticCoreEntity).toTypedPipe.count(
-          "fav_based_entity_count")
+          modelVers on,
+          Embedd ngType.ProducerFavBasedSemant cCoreEnt y).toTypedP pe.count(
+          "fav_based_ent y_count")
 
-    val producerBasedEntityEmbeddings =
-      producerBasedEntityEmbeddingsFollowBased ++ producerBasedEntityEmbeddingsFavBased
+    val producerBasedEnt yEmbedd ngs =
+      producerBasedEnt yEmbedd ngsFollowBased ++ producerBasedEnt yEmbedd ngsFavBased
 
-    // step 4 write results to file
-    producerBasedEntityEmbeddings
-      .count("total_count").writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          getHdfsPath(isAdhoc = true, isManhattanKeyVal = true, modelVersion, "producer")))
+    // step 4 wr e results to f le
+    producerBasedEnt yEmbedd ngs
+      .count("total_count").wr eExecut on(
+        AdhocKeyValS ces.ent yToClustersS ce(
+          getHdfsPath( sAdhoc = true,  sManhattanKeyVal = true, modelVers on, "producer")))
   }
 
 }
 
 /*
- $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding_job
+ $ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:ent y_embedd ng_from_producer_embedd ng_job
  $ capesospy-v2 update \
-  --build_locally \
-  --start_cron entity_embedding_from_producer_embedding_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --bu ld_locally \
+  --start_cron ent y_embedd ng_from_producer_embedd ng_job src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2019-10-16")
+object Ent yEmbedd ngFromProducerEmbedd ngSc duledJob extends Sc duledExecut onApp {
+  overr de def f rstT  : R chDate = R chDate("2019-10-16")
 
-  override def batchIncrement: Duration = Days(7)
+  overr de def batch ncre nt: Durat on = Days(7)
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // parse args: modelVersion, topK
-    val topK = args.getOrElse("top_k", "100").toInt
-    // only support dec11 now since updated model is not productionized for producer embedding
-    val modelVersion =
-      ModelVersions.toModelVersion(
-        args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    // parse args: modelVers on, topK
+    val topK = args.getOrElse("top_k", "100").to nt
+    // only support dec11 now s nce updated model  s not product on zed for producer embedd ng
+    val modelVers on =
+      ModelVers ons.toModelVers on(
+        args.getOrElse("model_vers on", ModelVers ons.Model20M145KUpdated))
 
-    val entityKnownForProducers =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
-        .count("num unique entity producer pairs").map {
-          case (entityId, producerId, score) => (producerId, (entityId, score))
+    val ent yKnownForProducers =
+      Ent yEmbedd ngFromProducerEmbedd ngJob
+        .getNormal zedEnt yProducerMatr x(dateRange.emb ggen(Days(7)))
+        .count("num un que ent y producer pa rs").map {
+          case (ent y d, producer d, score) => (producer d, (ent y d, score))
         }
 
-    val favBasedEmbeddings = EntityEmbeddingFromProducerEmbeddingJob
-      .computeEmbedding(
-        ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-          EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-          modelVersion)(dateRange.embiggen(Days(7))),
-        entityKnownForProducers,
+    val favBasedEmbedd ngs = Ent yEmbedd ngFromProducerEmbedd ngJob
+      .computeEmbedd ng(
+        ProducerEmbedd ngS ces.producerEmbedd ngS ceLegacy(
+          Embedd ngType.ProducerFavBasedSemant cCoreEnt y,
+          modelVers on)(dateRange.emb ggen(Days(7))),
+        ent yKnownForProducers,
         topK,
-        modelVersion,
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity
-      ).toTypedPipe.count("follow_based_entity_count")
+        modelVers on,
+        Embedd ngType.ProducerFavBasedSemant cCoreEnt y
+      ).toTypedP pe.count("follow_based_ent y_count")
 
-    val followBasedEmbeddings = EntityEmbeddingFromProducerEmbeddingJob
-      .computeEmbedding(
-        ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-          EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-          modelVersion)(dateRange.embiggen(Days(7))),
-        entityKnownForProducers,
+    val followBasedEmbedd ngs = Ent yEmbedd ngFromProducerEmbedd ngJob
+      .computeEmbedd ng(
+        ProducerEmbedd ngS ces.producerEmbedd ngS ceLegacy(
+          Embedd ngType.ProducerFollowBasedSemant cCoreEnt y,
+          modelVers on)(dateRange.emb ggen(Days(7))),
+        ent yKnownForProducers,
         topK,
-        modelVersion,
-        EmbeddingType.ProducerFollowBasedSemanticCoreEntity
-      ).toTypedPipe.count("fav_based_entity_count")
+        modelVers on,
+        Embedd ngType.ProducerFollowBasedSemant cCoreEnt y
+      ).toTypedP pe.count("fav_based_ent y_count")
 
-    val embedding = favBasedEmbeddings ++ followBasedEmbeddings
+    val embedd ng = favBasedEmbedd ngs ++ followBasedEmbedd ngs
 
-    embedding
+    embedd ng
       .count("total_count")
       .map {
-        case (embeddingId, embedding) => KeyVal(embeddingId, embedding)
-      }.writeDALVersionedKeyValExecution(
-        SemanticCoreEmbeddingsFromProducerScalaDataset,
-        D.Suffix(getHdfsPath(isAdhoc = false, isManhattanKeyVal = true, modelVersion, "producer"))
+        case (embedd ng d, embedd ng) => KeyVal(embedd ng d, embedd ng)
+      }.wr eDALVers onedKeyValExecut on(
+        Semant cCoreEmbedd ngsFromProducerScalaDataset,
+        D.Suff x(getHdfsPath( sAdhoc = false,  sManhattanKeyVal = true, modelVers on, "producer"))
       )
 
   }
 
 }
 
-private object EntityEmbeddingFromProducerEmbeddingJob {
-  def computeEmbedding(
-    producersEmbeddings: TypedPipe[(Long, TopSimClustersWithScore)],
-    entityKnownForProducers: TypedPipe[(Long, (Long, Double))],
-    topK: Int,
-    modelVersion: ModelVersion,
-    embeddingType: EmbeddingType
-  ): UnsortedGrouped[SimClustersEmbeddingId, thriftscala.SimClustersEmbedding] = {
-    producersEmbeddings
-      .hashJoin(entityKnownForProducers).flatMap {
-        case (_, (topSimClustersWithScore, (entityId, producerScore))) => {
-          val entityEmbedding = topSimClustersWithScore.topClusters
-          entityEmbedding.map {
-            case SimClusterWithScore(clusterId, score) =>
+pr vate object Ent yEmbedd ngFromProducerEmbedd ngJob {
+  def computeEmbedd ng(
+    producersEmbedd ngs: TypedP pe[(Long, TopS mClustersW hScore)],
+    ent yKnownForProducers: TypedP pe[(Long, (Long, Double))],
+    topK:  nt,
+    modelVers on: ModelVers on,
+    embedd ngType: Embedd ngType
+  ): UnsortedGrouped[S mClustersEmbedd ng d, thr ftscala.S mClustersEmbedd ng] = {
+    producersEmbedd ngs
+      .hashJo n(ent yKnownForProducers).flatMap {
+        case (_, (topS mClustersW hScore, (ent y d, producerScore))) => {
+          val ent yEmbedd ng = topS mClustersW hScore.topClusters
+          ent yEmbedd ng.map {
+            case S mClusterW hScore(cluster d, score) =>
               (
                 (
-                  SimClustersEmbeddingId(
-                    embeddingType,
-                    modelVersion,
-                    InternalId.EntityId(entityId)),
-                  clusterId),
+                  S mClustersEmbedd ng d(
+                    embedd ngType,
+                    modelVers on,
+                     nternal d.Ent y d(ent y d)),
+                  cluster d),
                 score * producerScore)
           }
         }
       }.sumByKey.map {
-        case ((embeddingId, clusterId), clusterScore) =>
-          (embeddingId, (clusterId, clusterScore))
-      }.group.sortedReverseTake(topK)(Ordering.by(_._2)).mapValues(SimClustersEmbedding
-        .apply(_).toThrift)
+        case ((embedd ng d, cluster d), clusterScore) =>
+          (embedd ng d, (cluster d, clusterScore))
+      }.group.sortedReverseTake(topK)(Order ng.by(_._2)).mapValues(S mClustersEmbedd ng
+        .apply(_).toThr ft)
   }
 
-  def getNormalizedEntityProducerMatrix(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, Long, Double)] = {
-    val uttRecs: TypedPipe[(UTTInterest, InterestBasedUserRecommendations)] =
+  def getNormal zedEnt yProducerMatr x(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Long, Long, Double)] = {
+    val uttRecs: TypedP pe[(UTT nterest,  nterestBasedUserRecom ndat ons)] =
       DAL
-        .readMostRecentSnapshot(UttAccountRecommendationsScalaDataset).withRemoteReadPolicy(
-          ExplicitLocation(ProcAtla)).toTypedPipe.map {
-          case KeyVal(interest, candidates) => (interest, candidates)
+        .readMostRecentSnapshot(UttAccountRecom ndat onsScalaDataset).w hRemoteReadPol cy(
+          Expl c Locat on(ProcAtla)).toTypedP pe.map {
+          case KeyVal( nterest, cand dates) => ( nterest, cand dates)
         }
 
     uttRecs
       .flatMap {
-        case (interest, candidates) => {
+        case ( nterest, cand dates) => {
           // current populated features
-          val top20Producers = candidates.recommendations.sortBy(-_.score.getOrElse(0.0d)).take(20)
-          val producerScorePairs = top20Producers.map { producer =>
-            (producer.candidateUserID, producer.score.getOrElse(0.0))
+          val top20Producers = cand dates.recom ndat ons.sortBy(-_.score.getOrElse(0.0d)).take(20)
+          val producerScorePa rs = top20Producers.map { producer =>
+            (producer.cand dateUser D, producer.score.getOrElse(0.0))
           }
-          val scoreSum = producerScorePairs.map(_._2).sum
-          producerScorePairs.map {
-            case (producerId, score) => (interest.uttID, producerId, score / scoreSum)
+          val scoreSum = producerScorePa rs.map(_._2).sum
+          producerScorePa rs.map {
+            case (producer d, score) => ( nterest.utt D, producer d, score / scoreSum)
           }
         }
       }

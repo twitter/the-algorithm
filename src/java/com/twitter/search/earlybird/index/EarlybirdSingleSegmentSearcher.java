@@ -1,423 +1,423 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
+ mport java.ut l.Map.Entry;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.CollectionStatistics;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TermStatistics;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Collect onStat st cs;
+ mport org.apac .lucene.search.Collector;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search.LeafCollector;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.TermStat st cs;
+ mport org.apac .lucene.search.  ght;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterCollector;
-import com.twitter.search.common.search.TwitterIndexSearcher;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.relevance.scoring.RelevanceQuery;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.relevance.features.Earlyb rdDocu ntFeatures;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH Attr but on;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.Tw terCollector;
+ mport com.tw ter.search.common.search.Tw ter ndexSearc r;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.earlyb rd.Earlyb rdSearc r;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdLuceneSearc r;
+ mport com.tw ter.search.earlyb rd.search.H ;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.S mpleSearchResults;
+ mport com.tw ter.search.earlyb rd.search.facets.AbstractFacetTermCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.RelevanceQuery;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csResults;
 
-public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSingleSegmentSearcher.class);
+publ c class Earlyb rdS ngleSeg ntSearc r extends Earlyb rdLuceneSearc r {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdS ngleSeg ntSearc r.class);
 
-  private final EarlybirdIndexSegmentAtomicReader twitterReader;
-  private final ImmutableSchemaInterface schema;
-  private final UserTable userTable;
-  private final long timeSliceID;
+  pr vate f nal Earlyb rd ndexSeg ntAtom cReader tw terReader;
+  pr vate f nal  mmutableSc ma nterface sc ma;
+  pr vate f nal UserTable userTable;
+  pr vate f nal long t  Sl ce D;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private Clock clock;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  pr vate Clock clock;
 
-  public EarlybirdSingleSegmentSearcher(
-      ImmutableSchemaInterface schema,
-      EarlybirdIndexSegmentAtomicReader reader,
+  publ c Earlyb rdS ngleSeg ntSearc r(
+       mmutableSc ma nterface sc ma,
+      Earlyb rd ndexSeg ntAtom cReader reader,
       UserTable userTable,
-      EarlybirdSearcherStats searcherStats,
+      Earlyb rdSearc rStats searc rStats,
       Clock clock) {
     super(reader);
-    this.schema = schema;
-    this.twitterReader = reader;
-    this.userTable = userTable;
-    this.timeSliceID = reader.getSegmentData().getTimeSliceID();
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+    t .sc ma = sc ma;
+    t .tw terReader = reader;
+    t .userTable = userTable;
+    t .t  Sl ce D = reader.getSeg ntData().getT  Sl ce D();
+    t .searc rStats = searc rStats;
+    t .clock = clock;
   }
 
-  public final long getTimeSliceID() {
-    return timeSliceID;
+  publ c f nal long getT  Sl ce D() {
+    return t  Sl ce D;
   }
 
-  public EarlybirdIndexSegmentAtomicReader getTwitterIndexReader() {
-    return twitterReader;
+  publ c Earlyb rd ndexSeg ntAtom cReader getTw ter ndexReader() {
+    return tw terReader;
   }
 
   /**
-   * search() main loop.
-   * This behaves exactly like IndexSearcher.search() if a stock Lucene collector passed in.
-   * However, if a TwitterCollector is passed in, this class performs Twitter style early
-   * termination without relying on
-   * {@link org.apache.lucene.search.CollectionTerminatedException}.
-   * This method is nearly identical to TwitterIndexSearcher.search() with two differences:
-   *  1) advances to smallest docID before searching.  Important to skip incomplete docs in
-   *     realtime segments.
-   *  2) skips deletes using twitterReader
+   * search() ma n loop.
+   * T  behaves exactly l ke  ndexSearc r.search()  f a stock Lucene collector passed  n.
+   * Ho ver,  f a Tw terCollector  s passed  n, t  class performs Tw ter style early
+   * term nat on w hout rely ng on
+   * {@l nk org.apac .lucene.search.Collect onTerm natedExcept on}.
+   * T   thod  s nearly  dent cal to Tw ter ndexSearc r.search() w h two d fferences:
+   *  1) advances to smallest doc D before search ng.   mportant to sk p  ncomplete docs  n
+   *     realt   seg nts.
+   *  2) sk ps deletes us ng tw terReader
    */
-  @Override
-  protected void search(List<LeafReaderContext> leaves, Weight weight, Collector coll)
-      throws IOException {
-    // If an TwitterCollector is passed in, we can do a few extra things in here, such
-    // as early termination.  Otherwise we can just fall back to IndexSearcher.search().
-    if (!(coll instanceof TwitterCollector)) {
-      super.search(leaves, weight, coll);
+  @Overr de
+  protected vo d search(L st<LeafReaderContext> leaves,   ght   ght, Collector coll)
+      throws  OExcept on {
+    //  f an Tw terCollector  s passed  n,   can do a few extra th ngs  n  re, such
+    // as early term nat on.  Ot rw se   can just fall back to  ndexSearc r.search().
+     f (!(coll  nstanceof Tw terCollector)) {
+      super.search(leaves,   ght, coll);
       return;
     }
 
-    TwitterCollector collector = (TwitterCollector) coll;
-    if (collector.isTerminated()) {
+    Tw terCollector collector = (Tw terCollector) coll;
+     f (collector. sTerm nated()) {
       return;
     }
 
-    LOG.debug("Starting segment {}", timeSliceID);
+    LOG.debug("Start ng seg nt {}", t  Sl ce D);
 
-    // Notify the collector that we're starting this segment, and check for early
-    // termination criteria again.  setNextReader() performs 'expensive' early
-    // termination checks in some implementations such as TwitterEarlyTerminationCollector.
-    LeafCollector leafCollector = collector.getLeafCollector(twitterReader.getContext());
-    if (collector.isTerminated()) {
+    // Not fy t  collector that  're start ng t  seg nt, and c ck for early
+    // term nat on cr er a aga n.  setNextReader() performs 'expens ve' early
+    // term nat on c cks  n so   mple ntat ons such as Tw terEarlyTerm nat onCollector.
+    LeafCollector leafCollector = collector.getLeafCollector(tw terReader.getContext());
+     f (collector. sTerm nated()) {
       return;
     }
 
-    // Initialize the scorer:
-    // Note that constructing the scorer may actually do real work, such as advancing to the
-    // first hit.
-    // The scorer may be null if we can tell right away that the query has no hits: e.g. if the
-    // first hit does not actually exist.
-    Scorer scorer = weight.scorer(twitterReader.getContext());
-    if (scorer == null) {
-      LOG.debug("Scorer was null, not searching segment {}", timeSliceID);
-      collector.finishSegment(DocIdSetIterator.NO_MORE_DOCS);
+    //  n  al ze t  scorer:
+    // Note that construct ng t  scorer may actually do real work, such as advanc ng to t 
+    // f rst h .
+    // T  scorer may be null  f   can tell r ght away that t  query has no h s: e.g.  f t 
+    // f rst h  does not actually ex st.
+    Scorer scorer =   ght.scorer(tw terReader.getContext());
+     f (scorer == null) {
+      LOG.debug("Scorer was null, not search ng seg nt {}", t  Sl ce D);
+      collector.f n shSeg nt(Doc dSet erator.NO_MORE_DOCS);
       return;
     }
     leafCollector.setScorer(scorer);
 
-    // Make sure to start searching at the smallest docID.
-    DocIdSetIterator docIdSetIterator = scorer.iterator();
-    int smallestDocId = twitterReader.getSmallestDocID();
-    int docID = docIdSetIterator.advance(smallestDocId);
+    // Make sure to start search ng at t  smallest doc D.
+    Doc dSet erator doc dSet erator = scorer. erator();
+     nt smallestDoc d = tw terReader.getSmallestDoc D();
+     nt doc D = doc dSet erator.advance(smallestDoc d);
 
     // Collect results.
-    while (docID != DocIdSetIterator.NO_MORE_DOCS) {
+    wh le (doc D != Doc dSet erator.NO_MORE_DOCS) {
       // Exclude deleted docs.
-      if (!twitterReader.getDeletesView().isDeleted(docID)) {
-        leafCollector.collect(docID);
+       f (!tw terReader.getDeletesV ew(). sDeleted(doc D)) {
+        leafCollector.collect(doc D);
       }
 
-      // Check if we're done after we consumed the document.
-      if (collector.isTerminated()) {
+      // C ck  f  're done after   consu d t  docu nt.
+       f (collector. sTerm nated()) {
         break;
       }
 
-      docID = docIdSetIterator.nextDoc();
+      doc D = doc dSet erator.nextDoc();
     }
 
-    // Always finish the segment, providing the last docID advanced to.
-    collector.finishSegment(docID);
+    // Always f n sh t  seg nt, prov d ng t  last doc D advanced to.
+    collector.f n shSeg nt(doc D);
   }
 
-  @Override
-  public void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
-      throws IOException {
-    if (searchResults == null || searchResults.getResultsSize() == 0) {
+  @Overr de
+  publ c vo d f llFacetResults(
+      AbstractFacetTermCollector collector, Thr ftSearchResults searchResults)
+      throws  OExcept on {
+     f (searchResults == null || searchResults.getResultsS ze() == 0) {
       return;
     }
 
-    EarlybirdIndexSegmentData segmentData = twitterReader.getSegmentData();
-    collector.resetFacetLabelProviders(
-        segmentData.getFacetLabelProviders(), segmentData.getFacetIDMap());
-    DocIDToTweetIDMapper docIdMapper = segmentData.getDocIDToTweetIDMapper();
-    for (ThriftSearchResult result : searchResults.getResults()) {
-      int docId = docIdMapper.getDocID(result.getId());
-      if (docId < 0) {
-        continue;
+    Earlyb rd ndexSeg ntData seg ntData = tw terReader.getSeg ntData();
+    collector.resetFacetLabelProv ders(
+        seg ntData.getFacetLabelProv ders(), seg ntData.getFacet DMap());
+    Doc DToT et DMapper doc dMapper = seg ntData.getDoc DToT et DMapper();
+    for (Thr ftSearchResult result : searchResults.getResults()) {
+       nt doc d = doc dMapper.getDoc D(result.get d());
+       f (doc d < 0) {
+        cont nue;
       }
 
-      segmentData.getFacetCountingArray().collectForDocId(docId, collector);
-      collector.fillResultAndClear(result);
+      seg ntData.getFacetCount ngArray().collectForDoc d(doc d, collector);
+      collector.f llResultAndClear(result);
     }
   }
 
-  @Override
-  public TermStatisticsCollector.TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher, int requestDebugMode) throws IOException {
-    TermStatisticsCollector collector = new TermStatisticsCollector(
-        schema, searchRequestInfo, searcherStats, clock, requestDebugMode);
+  @Overr de
+  publ c TermStat st csCollector.TermStat st csSearchResults collectTermStat st cs(
+      TermStat st csRequest nfo searchRequest nfo,
+      Earlyb rdSearc r searc r,  nt requestDebugMode) throws  OExcept on {
+    TermStat st csCollector collector = new TermStat st csCollector(
+        sc ma, searchRequest nfo, searc rStats, clock, requestDebugMode);
 
-    search(searchRequestInfo.getLuceneQuery(), collector);
-    searcher.maybeSetCollectorDebugInfo(collector);
+    search(searchRequest nfo.getLuceneQuery(), collector);
+    searc r.maybeSetCollectorDebug nfo(collector);
     return collector.getResults();
   }
 
-  /** This method is only used for debugging, so it's not optimized for speed */
-  @Override
-  public void explainSearchResults(SearchRequestInfo searchRequestInfo,
-                                   SimpleSearchResults hits,
-                                   ThriftSearchResults searchResults) throws IOException {
-    Weight weight =
-        createWeight(rewrite(searchRequestInfo.getLuceneQuery()), ScoreMode.COMPLETE, 1.0f);
+  /** T   thod  s only used for debugg ng, so  's not opt m zed for speed */
+  @Overr de
+  publ c vo d expla nSearchResults(SearchRequest nfo searchRequest nfo,
+                                   S mpleSearchResults h s,
+                                   Thr ftSearchResults searchResults) throws  OExcept on {
+      ght   ght =
+        create  ght(rewr e(searchRequest nfo.getLuceneQuery()), ScoreMode.COMPLETE, 1.0f);
 
-    DocIDToTweetIDMapper docIdMapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    for (int i = 0; i < hits.numHits(); i++) {
-      final Hit hit = hits.getHit(i);
-      Preconditions.checkState(hit.getTimeSliceID() == timeSliceID,
-          "hit: " + hit.toString() + " is not in timeslice: " + timeSliceID);
-      final ThriftSearchResult result = searchResults.getResults().get(i);
-      if (!result.isSetMetadata()) {
-        result.setMetadata(new ThriftSearchResultMetadata()
-            .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte()));
+    Doc DToT et DMapper doc dMapper = tw terReader.getSeg ntData().getDoc DToT et DMapper();
+    for ( nt   = 0;   < h s.numH s();  ++) {
+      f nal H  h  = h s.getH ( );
+      Precond  ons.c ckState(h .getT  Sl ce D() == t  Sl ce D,
+          "h : " + h .toStr ng() + "  s not  n t  sl ce: " + t  Sl ce D);
+      f nal Thr ftSearchResult result = searchResults.getResults().get( );
+       f (!result. sSet tadata()) {
+        result.set tadata(new Thr ftSearchResult tadata()
+            .setPengu nVers on(Earlyb rdConf g.getPengu nVers onByte()));
       }
 
-      final int docIdToExplain = docIdMapper.getDocID(hit.getStatusID());
-      if (docIdToExplain == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-        result.getMetadata().setExplanation(
-            "ERROR: Could not find doc ID to explain for " + hit.toString());
+      f nal  nt doc dToExpla n = doc dMapper.getDoc D(h .getStatus D());
+       f (doc dToExpla n == Doc DToT et DMapper. D_NOT_FOUND) {
+        result.get tadata().setExplanat on(
+            "ERROR: Could not f nd doc  D to expla n for " + h .toStr ng());
       } else {
-        Explanation explanation;
-        FieldHitAttribution fieldHitAttribution = result.getMetadata().getFieldHitAttribution();
-        if (weight instanceof RelevanceQuery.RelevanceWeight && fieldHitAttribution != null) {
-          RelevanceQuery.RelevanceWeight relevanceWeight =
-              (RelevanceQuery.RelevanceWeight) weight;
+        Explanat on explanat on;
+        F eldH Attr but on f eldH Attr but on = result.get tadata().getF eldH Attr but on();
+         f (  ght  nstanceof RelevanceQuery.Relevance  ght && f eldH Attr but on != null) {
+          RelevanceQuery.Relevance  ght relevance  ght =
+              (RelevanceQuery.Relevance  ght)   ght;
 
-          explanation = relevanceWeight.explain(
-              twitterReader.getContext(), docIdToExplain, fieldHitAttribution);
+          explanat on = relevance  ght.expla n(
+              tw terReader.getContext(), doc dToExpla n, f eldH Attr but on);
         } else {
-          explanation = weight.explain(twitterReader.getContext(), docIdToExplain);
+          explanat on =   ght.expla n(tw terReader.getContext(), doc dToExpla n);
         }
-        hit.setHasExplanation(true);
-        result.getMetadata().setExplanation(explanation.toString());
+        h .setHasExplanat on(true);
+        result.get tadata().setExplanat on(explanat on.toStr ng());
       }
     }
   }
 
-  @Override
-  public void fillFacetResultMetadata(Map<Term, ThriftFacetCount> facetResults,
-                                      ImmutableSchemaInterface documentSchema,
-                                      byte debugMode) throws IOException {
-    FacetLabelProvider provider = twitterReader.getFacetLabelProviders(
-            documentSchema.getFacetFieldByFacetName(EarlybirdFieldConstant.TWIMG_FACET));
+  @Overr de
+  publ c vo d f llFacetResult tadata(Map<Term, Thr ftFacetCount> facetResults,
+                                       mmutableSc ma nterface docu ntSc ma,
+                                      byte debugMode) throws  OExcept on {
+    FacetLabelProv der prov der = tw terReader.getFacetLabelProv ders(
+            docu ntSc ma.getFacetF eldByFacetNa (Earlyb rdF eldConstant.TW MG_FACET));
 
-    FacetLabelProvider.FacetLabelAccessor photoAccessor = null;
+    FacetLabelProv der.FacetLabelAccessor photoAccessor = null;
 
-    if (provider != null) {
-      photoAccessor = provider.getLabelAccessor();
+     f (prov der != null) {
+      photoAccessor = prov der.getLabelAccessor();
     }
 
-    for (Entry<Term, ThriftFacetCount> facetResult : facetResults.entrySet()) {
+    for (Entry<Term, Thr ftFacetCount> facetResult : facetResults.entrySet()) {
       Term term = facetResult.getKey();
-      ThriftFacetCount facetCount = facetResult.getValue();
+      Thr ftFacetCount facetCount = facetResult.getValue();
 
-      ThriftFacetCountMetadata metadata = facetCount.getMetadata();
-      if (metadata == null) {
-        metadata = new ThriftFacetCountMetadata();
-        facetCount.setMetadata(metadata);
+      Thr ftFacetCount tadata  tadata = facetCount.get tadata();
+       f ( tadata == null) {
+         tadata = new Thr ftFacetCount tadata();
+        facetCount.set tadata( tadata);
       }
 
-      fillTermMetadata(term, metadata, photoAccessor, debugMode);
+      f llTerm tadata(term,  tadata, photoAccessor, debugMode);
     }
   }
 
-  @Override
-  public void fillTermStatsMetadata(ThriftTermStatisticsResults termStatsResults,
-                                    ImmutableSchemaInterface documentSchema,
-                                    byte debugMode) throws IOException {
+  @Overr de
+  publ c vo d f llTermStats tadata(Thr ftTermStat st csResults termStatsResults,
+                                     mmutableSc ma nterface docu ntSc ma,
+                                    byte debugMode) throws  OExcept on {
 
-    FacetLabelProvider provider = twitterReader.getFacetLabelProviders(
-        documentSchema.getFacetFieldByFacetName(EarlybirdFieldConstant.TWIMG_FACET));
+    FacetLabelProv der prov der = tw terReader.getFacetLabelProv ders(
+        docu ntSc ma.getFacetF eldByFacetNa (Earlyb rdF eldConstant.TW MG_FACET));
 
-    FacetLabelProvider.FacetLabelAccessor photoAccessor = null;
+    FacetLabelProv der.FacetLabelAccessor photoAccessor = null;
 
-    if (provider != null) {
-      photoAccessor = provider.getLabelAccessor();
+     f (prov der != null) {
+      photoAccessor = prov der.getLabelAccessor();
     }
 
-    for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry
+    for (Map.Entry<Thr ftTermRequest, Thr ftTermResults> entry
          : termStatsResults.termResults.entrySet()) {
 
-      ThriftTermRequest termRequest = entry.getKey();
-      if (termRequest.getFieldName().isEmpty()) {
-        continue;
+      Thr ftTermRequest termRequest = entry.getKey();
+       f (termRequest.getF eldNa (). sEmpty()) {
+        cont nue;
       }
-      Schema.FieldInfo facetField = schema.getFacetFieldByFacetName(termRequest.getFieldName());
+      Sc ma.F eld nfo facetF eld = sc ma.getFacetF eldByFacetNa (termRequest.getF eldNa ());
       Term term = null;
-      if (facetField != null) {
-        term = new Term(facetField.getName(), termRequest.getTerm());
+       f (facetF eld != null) {
+        term = new Term(facetF eld.getNa (), termRequest.getTerm());
       }
-      if (term == null) {
-        continue;
-      }
-
-      ThriftFacetCountMetadata metadata = entry.getValue().getMetadata();
-      if (metadata == null) {
-        metadata = new ThriftFacetCountMetadata();
-        entry.getValue().setMetadata(metadata);
+       f (term == null) {
+        cont nue;
       }
 
-      fillTermMetadata(term, metadata, photoAccessor, debugMode);
+      Thr ftFacetCount tadata  tadata = entry.getValue().get tadata();
+       f ( tadata == null) {
+         tadata = new Thr ftFacetCount tadata();
+        entry.getValue().set tadata( tadata);
+      }
+
+      f llTerm tadata(term,  tadata, photoAccessor, debugMode);
     }
   }
 
-  private void fillTermMetadata(Term term, ThriftFacetCountMetadata metadata,
-                                FacetLabelProvider.FacetLabelAccessor photoAccessor,
-                                byte debugMode) throws IOException {
-    boolean isTwimg = term.field().equals(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName());
-    int internalDocID = DocIDToTweetIDMapper.ID_NOT_FOUND;
-    long statusID = -1;
-    long userID = -1;
+  pr vate vo d f llTerm tadata(Term term, Thr ftFacetCount tadata  tadata,
+                                FacetLabelProv der.FacetLabelAccessor photoAccessor,
+                                byte debugMode) throws  OExcept on {
+    boolean  sTw mg = term.f eld().equals(Earlyb rdF eldConstant.TW MG_L NKS_F ELD.getF eldNa ());
+     nt  nternalDoc D = Doc DToT et DMapper. D_NOT_FOUND;
+    long status D = -1;
+    long user D = -1;
     Term facetTerm = term;
 
-    // Deal with the from_user_id facet.
-    if (term.field().equals(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName())) {
-      userID = Long.parseLong(term.text());
-      facetTerm = new Term(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-          LongTermAttributeImpl.copyIntoNewBytesRef(userID));
-    } else if (isTwimg) {
-      statusID = Long.parseLong(term.text());
-      internalDocID = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(statusID);
+    // Deal w h t  from_user_ d facet.
+     f (term.f eld().equals(Earlyb rdF eldConstant.FROM_USER_ D_CSF.getF eldNa ())) {
+      user D = Long.parseLong(term.text());
+      facetTerm = new Term(Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa (),
+          LongTermAttr bute mpl.copy ntoNewBytesRef(user D));
+    } else  f ( sTw mg) {
+      status D = Long.parseLong(term.text());
+       nternalDoc D = tw terReader.getSeg ntData().getDoc DToT et DMapper().getDoc D(status D);
     }
 
-    if (internalDocID == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      // If this is not a twimg, this is how statusID should be looked up
+     f ( nternalDoc D == Doc DToT et DMapper. D_NOT_FOUND) {
+      //  f t   s not a tw mg, t   s how status D should be looked up
       //
-      // If this is a twimg but we couldn't find the internalDocID, that means this segment,
-      // or maybe even this earlybird, does not contain the original tweet. Then we treat this as
+      //  f t   s a tw mg but   couldn't f nd t   nternalDoc D, that  ans t  seg nt,
+      // or maybe even t  earlyb rd, does not conta n t  or g nal t et. T n   treat t  as
       // a normal facet for now
-      internalDocID = twitterReader.getOldestDocID(facetTerm);
-      if (internalDocID >= 0) {
-        statusID =
-            twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(internalDocID);
+       nternalDoc D = tw terReader.getOldestDoc D(facetTerm);
+       f ( nternalDoc D >= 0) {
+        status D =
+            tw terReader.getSeg ntData().getDoc DToT et DMapper().getT et D( nternalDoc D);
       } else {
-        statusID = -1;
+        status D = -1;
       }
     }
 
-    // make sure tweet is not deleted
-    if (internalDocID < 0 || twitterReader.getDeletesView().isDeleted(internalDocID)) {
+    // make sure t et  s not deleted
+     f ( nternalDoc D < 0 || tw terReader.getDeletesV ew(). sDeleted( nternalDoc D)) {
       return;
     }
 
-    if (metadata.isSetStatusId()
-        && metadata.getStatusId() > 0
-        && metadata.getStatusId() <= statusID) {
-      // we already have the metadata for this facet from an earlier tweet
+     f ( tadata. sSetStatus d()
+        &&  tadata.getStatus d() > 0
+        &&  tadata.getStatus d() <= status D) {
+      //   already have t   tadata for t  facet from an earl er t et
       return;
     }
 
-    // now check if this tweet is offensive, e.g. antisocial, nsfw, sensitive
-    EarlybirdDocumentFeatures documentFeatures = new EarlybirdDocumentFeatures(twitterReader);
-    documentFeatures.advance(internalDocID);
-    boolean isOffensiveFlagSet =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    boolean isSensitiveFlagSet =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
-    boolean offensive = isOffensiveFlagSet || isSensitiveFlagSet;
+    // now c ck  f t  t et  s offens ve, e.g. ant soc al, nsfw, sens  ve
+    Earlyb rdDocu ntFeatures docu ntFeatures = new Earlyb rdDocu ntFeatures(tw terReader);
+    docu ntFeatures.advance( nternalDoc D);
+    boolean  sOffens veFlagSet =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_OFFENS VE_FLAG);
+    boolean  sSens  veFlagSet =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_SENS T VE_CONTENT);
+    boolean offens ve =  sOffens veFlagSet ||  sSens  veFlagSet;
 
-    // also, user should not be marked as antisocial, nsfw or offensive
-    if (userID < 0) {
-      userID = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
+    // also, user should not be marked as ant soc al, nsfw or offens ve
+     f (user D < 0) {
+      user D = docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.FROM_USER_ D_CSF);
     }
-    offensive |= userTable.isSet(userID,
-        UserTable.ANTISOCIAL_BIT
-        | UserTable.OFFENSIVE_BIT
-        | UserTable.NSFW_BIT);
+    offens ve |= userTable. sSet(user D,
+        UserTable.ANT SOC AL_B T
+        | UserTable.OFFENS VE_B T
+        | UserTable.NSFW_B T);
 
-    metadata.setStatusId(statusID);
-    metadata.setTwitterUserId(userID);
-    metadata.setCreated_at(twitterReader.getSegmentData().getTimeMapper().getTime(internalDocID));
-    int langId = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
-    Locale lang = ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(langId));
-    metadata.setStatusLanguage(ThriftLanguageUtil.getThriftLanguageOf(lang));
-    metadata.setStatusPossiblySensitive(offensive);
-    if (isTwimg && photoAccessor != null && !metadata.isSetNativePhotoUrl()) {
-      int termID = twitterReader.getTermID(term);
-      if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-        BytesRef termPayload = photoAccessor.getTermPayload(termID);
-        if (termPayload != null) {
-          metadata.setNativePhotoUrl(termPayload.utf8ToString());
+     tadata.setStatus d(status D);
+     tadata.setTw terUser d(user D);
+     tadata.setCreated_at(tw terReader.getSeg ntData().getT  Mapper().getT  ( nternalDoc D));
+     nt lang d = ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.LANGUAGE);
+    Locale lang = Thr ftLanguageUt l.getLocaleOf(Thr ftLanguage.f ndByValue(lang d));
+     tadata.setStatusLanguage(Thr ftLanguageUt l.getThr ftLanguageOf(lang));
+     tadata.setStatusPoss blySens  ve(offens ve);
+     f ( sTw mg && photoAccessor != null && ! tadata. sSetNat vePhotoUrl()) {
+       nt term D = tw terReader.getTerm D(term);
+       f (term D != Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND) {
+        BytesRef termPayload = photoAccessor.getTermPayload(term D);
+         f (termPayload != null) {
+           tadata.setNat vePhotoUrl(termPayload.utf8ToStr ng());
         }
       }
     }
 
-    if (debugMode > 3) {
-      StringBuilder sb = new StringBuilder(256);
-      if (metadata.isSetExplanation()) {
-        sb.append(metadata.getExplanation());
+     f (debugMode > 3) {
+      Str ngBu lder sb = new Str ngBu lder(256);
+       f ( tadata. sSetExplanat on()) {
+        sb.append( tadata.getExplanat on());
       }
-      sb.append(String.format("TweetId=%d (%s %s), UserId=%d (%s %s), Term=%s\n",
-          statusID,
-          isOffensiveFlagSet ? "OFFENSIVE" : "",
-          isSensitiveFlagSet ? "SENSITIVE" : "",
-          userID,
-          userTable.isSet(userID, UserTable.ANTISOCIAL_BIT) ? "ANTISOCIAL" : "",
-          userTable.isSet(userID, UserTable.NSFW_BIT) ? "NSFW" : "",
-          term.toString()));
-      metadata.setExplanation(sb.toString());
+      sb.append(Str ng.format("T et d=%d (%s %s), User d=%d (%s %s), Term=%s\n",
+          status D,
+           sOffens veFlagSet ? "OFFENS VE" : "",
+           sSens  veFlagSet ? "SENS T VE" : "",
+          user D,
+          userTable. sSet(user D, UserTable.ANT SOC AL_B T) ? "ANT SOC AL" : "",
+          userTable. sSet(user D, UserTable.NSFW_B T) ? "NSFW" : "",
+          term.toStr ng()));
+       tadata.setExplanat on(sb.toStr ng());
     }
   }
 
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return schema;
+  publ c  mmutableSc ma nterface getSc maSnapshot() {
+    return sc ma;
   }
 
-  @Override
-  public CollectionStatistics collectionStatistics(String field) throws IOException {
-    return TwitterIndexSearcher.collectionStatistics(field, getIndexReader());
+  @Overr de
+  publ c Collect onStat st cs collect onStat st cs(Str ng f eld) throws  OExcept on {
+    return Tw ter ndexSearc r.collect onStat st cs(f eld, get ndexReader());
   }
 
-  @Override
-  public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) {
-    return TwitterIndexSearcher.termStats(term, docFreq, totalTermFreq);
+  @Overr de
+  publ c TermStat st cs termStat st cs(Term term,  nt docFreq, long totalTermFreq) {
+    return Tw ter ndexSearc r.termStats(term, docFreq, totalTermFreq);
   }
 }

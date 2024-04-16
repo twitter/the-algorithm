@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
 /**
- * Each candidate source algorithm could be based on one, or more, of the 4 general type of
- * information we have on a user:
- *   1. Social: the user's connections in Twitter's social graph.
- *   2. Geo: the user's geographical information.
- *   3. Interest: information on the user's chosen interests.
- *   4. Activity: information on the user's past activity.
+ * Each cand date s ce algor hm could be based on one, or more, of t  4 general type of
+ *  nformat on   have on a user:
+ *   1. Soc al: t  user's connect ons  n Tw ter's soc al graph.
+ *   2. Geo: t  user's geograph cal  nformat on.
+ *   3.  nterest:  nformat on on t  user's chosen  nterests.
+ *   4. Act v y:  nformat on on t  user's past act v y.
  *
- * Note that an algorithm can fall under more than one of these categories.
+ * Note that an algor hm can fall under more than one of t se categor es.
  */
-object AlgorithmType extends Enumeration {
-  type AlgorithmType = Value
+object Algor hmType extends Enu rat on {
+  type Algor hmType = Value
 
-  val Social: Value = Value("social")
+  val Soc al: Value = Value("soc al")
   val Geo: Value = Value("geo")
-  val Activity: Value = Value("activity")
-  val Interest: Value = Value("interest")
+  val Act v y: Value = Value("act v y")
+  val  nterest: Value = Value(" nterest")
 }

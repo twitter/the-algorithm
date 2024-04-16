@@ -1,12 +1,12 @@
 """
-libtwml setup.py module
+l btwml setup.py module
 """
-from setuptools import setup, find_packages
+from setuptools  mport setup, f nd_packages
 
 setup(
-  name='libtwml',
-  version='2.0',
-  description="Tensorflow C++ ops for twml",
-  packages=find_packages(),
-  data_files=[('', ['libtwml_tf.so'])],
+  na ='l btwml',
+  vers on='2.0',
+  descr pt on="Tensorflow C++ ops for twml",
+  packages=f nd_packages(),
+  data_f les=[('', ['l btwml_tf.so'])],
 )

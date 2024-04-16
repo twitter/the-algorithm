@@ -1,14 +1,14 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
+ mport org.apac .lucene.facet.sortedset.SortedSetDocValuesReaderState;
 
 /**
- * We have to check if the facet field (dim called by lucene) is supported or
- * not by the SortedSetDocValuesReaderState. The method we have to call is
- * private to the lucene package, so we have this helper to do the call for us.
+ *   have to c ck  f t  facet f eld (d m called by lucene)  s supported or
+ * not by t  SortedSetDocValuesReaderState. T   thod   have to call  s
+ * pr vate to t  lucene package, so   have t   lper to do t  call for us.
  */
-public abstract class SortedSetDocValuesReaderStateHelper {
-  public static boolean isDimSupported(SortedSetDocValuesReaderState state, String dim) {
-    return state.getOrdRange(dim) != null;
+publ c abstract class SortedSetDocValuesReaderState lper {
+  publ c stat c boolean  sD mSupported(SortedSetDocValuesReaderState state, Str ng d m) {
+    return state.getOrdRange(d m) != null;
   }
 }

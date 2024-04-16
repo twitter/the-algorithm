@@ -1,91 +1,91 @@
-package com.twitter.search.common.search.termination;
+package com.tw ter.search.common.search.term nat on;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.FilteredScorer;
-import com.twitter.search.common.search.DocIdTracker;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.query.F lteredScorer;
+ mport com.tw ter.search.common.search.Doc dTracker;
 
 /**
- * Scorer implementation that adds termination support for an underlying query.
- * Meant to be used in conjunction with {@link TerminationQuery}.
+ * Scorer  mple ntat on that adds term nat on support for an underly ng query.
+ *  ant to be used  n conjunct on w h {@l nk Term nat onQuery}.
  */
-public class TerminationQueryScorer extends FilteredScorer implements DocIdTracker {
-  private final QueryTimeout timeout;
-  private int lastSearchedDocId = -1;
+publ c class Term nat onQueryScorer extends F lteredScorer  mple nts Doc dTracker {
+  pr vate f nal QueryT  out t  out;
+  pr vate  nt lastSearc dDoc d = -1;
 
-  TerminationQueryScorer(Weight weight, Scorer inner, QueryTimeout timeout) {
-    super(weight, inner);
-    this.timeout = Preconditions.checkNotNull(timeout);
-    this.timeout.registerDocIdTracker(this);
+  Term nat onQueryScorer(  ght   ght, Scorer  nner, QueryT  out t  out) {
+    super(  ght,  nner);
+    t .t  out = Precond  ons.c ckNotNull(t  out);
+    t .t  out.reg sterDoc dTracker(t );
     SearchRateCounter.export(
-        timeout.getClientId() + "_num_termination_query_scorers_created").increment();
+        t  out.getCl ent d() + "_num_term nat on_query_scorers_created"). ncre nt();
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
-    return new DocIdSetIterator() {
-      // lastSearchedDocId is the ID of the last document that was traversed in the posting list.
-      // docId is the current doc ID in this iterator. In most cases, lastSearchedDocId and docId
-      // will be equal. They will be different only if the query needed to be terminated based on
-      // the timeout. In that case, docId will be set to NO_MORE_DOCS, but lastSearchedDocId will
-      // still be set to the last document that was actually traversed.
-      private int docId = -1;
+  @Overr de
+  publ c Doc dSet erator  erator() {
+    f nal Doc dSet erator superD S  = super. erator();
+    return new Doc dSet erator() {
+      // lastSearc dDoc d  s t   D of t  last docu nt that was traversed  n t  post ng l st.
+      // doc d  s t  current doc  D  n t   erator.  n most cases, lastSearc dDoc d and doc d
+      // w ll be equal. T y w ll be d fferent only  f t  query needed to be term nated based on
+      // t  t  out.  n that case, doc d w ll be set to NO_MORE_DOCS, but lastSearc dDoc d w ll
+      // st ll be set to t  last docu nt that was actually traversed.
+      pr vate  nt doc d = -1;
 
-      @Override
-      public int docID() {
-        return docId;
+      @Overr de
+      publ c  nt doc D() {
+        return doc d;
       }
 
-      @Override
-      public int nextDoc() throws IOException {
-        if (docId == NO_MORE_DOCS) {
+      @Overr de
+      publ c  nt nextDoc() throws  OExcept on {
+         f (doc d == NO_MORE_DOCS) {
           return NO_MORE_DOCS;
         }
 
-        if (timeout.shouldExit()) {
-          docId = NO_MORE_DOCS;
+         f (t  out.shouldEx ()) {
+          doc d = NO_MORE_DOCS;
         } else {
-          docId = superDISI.nextDoc();
-          lastSearchedDocId = docId;
+          doc d = superD S .nextDoc();
+          lastSearc dDoc d = doc d;
         }
-        return docId;
+        return doc d;
       }
 
-      @Override
-      public int advance(int target) throws IOException {
-        if (docId == NO_MORE_DOCS) {
+      @Overr de
+      publ c  nt advance( nt target) throws  OExcept on {
+         f (doc d == NO_MORE_DOCS) {
           return NO_MORE_DOCS;
         }
 
-        if (target == NO_MORE_DOCS) {
-          docId = NO_MORE_DOCS;
-          lastSearchedDocId = docId;
-        } else if (timeout.shouldExit()) {
-          docId = NO_MORE_DOCS;
+         f (target == NO_MORE_DOCS) {
+          doc d = NO_MORE_DOCS;
+          lastSearc dDoc d = doc d;
+        } else  f (t  out.shouldEx ()) {
+          doc d = NO_MORE_DOCS;
         } else {
-          docId = superDISI.advance(target);
-          lastSearchedDocId = docId;
+          doc d = superD S .advance(target);
+          lastSearc dDoc d = doc d;
         }
-        return docId;
+        return doc d;
       }
 
-      @Override
-      public long cost() {
-        return superDISI.cost();
+      @Overr de
+      publ c long cost() {
+        return superD S .cost();
       }
     };
   }
 
-  @Override
-  public int getCurrentDocId() {
-    return lastSearchedDocId;
+  @Overr de
+  publ c  nt getCurrentDoc d() {
+    return lastSearc dDoc d;
   }
 }

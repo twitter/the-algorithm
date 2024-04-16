@@ -1,13 +1,13 @@
-package com.twitter.servo.store
+package com.tw ter.servo.store
 
-import com.twitter.util.Future
+ mport com.tw ter.ut l.Future
 
-trait KeyValueStore[C, K, V, R] {
-  def put(ctx: C, key: K, value: Option[V]): Future[R] = multiPut(ctx, Seq((key -> value)))
-  def multiPut(ctx: C, kvs: Seq[(K, Option[V])]): Future[R]
+tra  KeyValueStore[C, K, V, R] {
+  def put(ctx: C, key: K, value: Opt on[V]): Future[R] = mult Put(ctx, Seq((key -> value)))
+  def mult Put(ctx: C, kvs: Seq[(K, Opt on[V])]): Future[R]
 }
 
-trait SimpleKeyValueStore[K, V] extends KeyValueStore[Unit, K, V, Unit] {
-  def put(key: K, value: Option[V]): Future[Unit] = multiPut((), Seq(key -> value))
-  def multiPut(kvs: Seq[(K, Option[V])]): Future[Unit] = multiPut((), kvs)
+tra  S mpleKeyValueStore[K, V] extends KeyValueStore[Un , K, V, Un ] {
+  def put(key: K, value: Opt on[V]): Future[Un ] = mult Put((), Seq(key -> value))
+  def mult Put(kvs: Seq[(K, Opt on[V])]): Future[Un ] = mult Put((), kvs)
 }

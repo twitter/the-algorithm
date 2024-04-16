@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage
 
-case class MessageTextAction(
-  text: String,
-  action: MessageAction)
+case class  ssageTextAct on(
+  text: Str ng,
+  act on:  ssageAct on)

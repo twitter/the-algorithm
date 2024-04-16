@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.component_library.selector.sorter.featurestorev1
+package com.tw ter.product_m xer.component_l brary.selector.sorter.featurestorev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.component_library.selector.sorter.Ascending
-import com.twitter.product_mixer.component_library.selector.sorter.Descending
-import com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.reflect.runtime.universe._
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.Ascend ng
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.Descend ng
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.SorterFromOrder ng
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.SorterProv der
+ mport com.tw ter.product_m xer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.FeatureStoreV1Cand dateFeature
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport scala.reflect.runt  .un verse._
 
 /**
- * Feature Store v1 version of [[com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter]]
+ * Feature Store v1 vers on of [[com.tw ter.product_m xer.component_l brary.selector.sorter.FeatureValueSorter]]
  */
 object FeatureStoreV1FeatureValueSorter {
 
   /**
-   * Sort by a Feature Store v1 feature value ascending. If the feature failed or is missing, use an
-   * inferred default based on the type of [[FeatureValue]]. For Numeric values this is the MinValue
-   * (e.g. Long.MinValue, Double.MinValue).
+   * Sort by a Feature Store v1 feature value ascend ng.  f t  feature fa led or  s m ss ng, use an
+   *  nferred default based on t  type of [[FeatureValue]]. For Nu r c values t   s t  M nValue
+   * (e.g. Long.M nValue, Double.M nValue).
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature Feature Store v1 feature w h value to sort by
+   * @param typeTag allows for  nferr ng default value from t  FeatureValue type.
+   *                See [[com.tw ter.product_m xer.component_l brary.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue]]
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue]
+  def ascend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: FeatureStoreV1Cand dateFeature[P pel neQuery, Cand date, _ <: Ent y d, FeatureValue]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Ascending)
+     mpl c  typeTag: TypeTag[FeatureValue]
+  ): SorterProv der = {
+    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Ascend ng)
 
-    ascending(feature, defaultFeatureValue)
+    ascend ng(feature, defaultFeatureValue)
   }
 
   /**
-   * Sort by a Feature Store v1 feature value ascending. If the feature failed or is missing, use
-   * the provided default.
+   * Sort by a Feature Store v1 feature value ascend ng.  f t  feature fa led or  s m ss ng, use
+   * t  prov ded default.
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature Feature Store v1 feature w h value to sort by
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue],
+  def ascend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: FeatureStoreV1Cand dateFeature[P pel neQuery, Cand date, _ <: Ent y d, FeatureValue],
     defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElseFeatureStoreV1CandidateFeature(feature, defaultFeatureValue))
+  ): SorterProv der = {
+    val order ng = Order ng.by[Cand dateW hDeta ls, FeatureValue](
+      _.features.getOrElseFeatureStoreV1Cand dateFeature(feature, defaultFeatureValue))
 
-    SorterFromOrdering(ordering, Ascending)
+    SorterFromOrder ng(order ng, Ascend ng)
   }
 
   /**
-   * Sort by a Feature Store v1 feature value descending. If the feature failed or is missing, use
-   * an inferred default based on the type of [[FeatureValue]]. For Numeric values this is the
+   * Sort by a Feature Store v1 feature value descend ng.  f t  feature fa led or  s m ss ng, use
+   * an  nferred default based on t  type of [[FeatureValue]]. For Nu r c values t   s t 
    * MaxValue (e.g. Long.MaxValue, Double.MaxValue).
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature Feature Store v1 feature w h value to sort by
+   * @param typeTag allows for  nferr ng default value from t  FeatureValue type.
+   *                See [[com.tw ter.product_m xer.component_l brary.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue]]
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue]
+  def descend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: FeatureStoreV1Cand dateFeature[P pel neQuery, Cand date, _ <: Ent y d, FeatureValue]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Descending)
+     mpl c  typeTag: TypeTag[FeatureValue]
+  ): SorterProv der = {
+    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Descend ng)
 
-    descending(feature, defaultFeatureValue)
+    descend ng(feature, defaultFeatureValue)
   }
 
   /**
-   * Sort by a Feature Store v1 feature value descending. If the feature failed or is missing, use
-   * the provided default.
+   * Sort by a Feature Store v1 feature value descend ng.  f t  feature fa led or  s m ss ng, use
+   * t  prov ded default.
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature Feature Store v1 feature w h value to sort by
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue],
+  def descend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: FeatureStoreV1Cand dateFeature[P pel neQuery, Cand date, _ <: Ent y d, FeatureValue],
     defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElseFeatureStoreV1CandidateFeature(feature, defaultFeatureValue))
+  ): SorterProv der = {
+    val order ng = Order ng.by[Cand dateW hDeta ls, FeatureValue](
+      _.features.getOrElseFeatureStoreV1Cand dateFeature(feature, defaultFeatureValue))
 
-    SorterFromOrdering(ordering, Descending)
+    SorterFromOrder ng(order ng, Descend ng)
   }
 }

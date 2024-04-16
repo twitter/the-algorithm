@@ -1,51 +1,51 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.abdecider.GuestRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.conversions.DurationOps._
-import com.twitter.frigate.common.util.Experiments.LoggedOutRecsHoldback
-import com.twitter.hermit.predicate.Predicate
+ mport com.tw ter.abdec der.GuestRec p ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.common.pred cate.{Fat guePred cate => CommonFat guePred cate}
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.fr gate.common.ut l.Exper  nts.LoggedOutRecsHoldback
+ mport com.tw ter. rm .pred cate.Pred cate
 
-object LoggedOutTargetPredicates {
+object LoggedOutTargetPred cates {
 
-  def targetFatiguePredicate[T <: Target](
+  def targetFat guePred cate[T <: Target](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "logged_out_target_min_duration_since_push"
-    CommonFatiguePredicate
-      .magicRecsPushTargetFatiguePredicate(
-        minInterval = 24.hours,
-        maxInInterval = 1
-      ).withStats(statsReceiver.scope(name))
-      .withName(name)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "logged_out_target_m n_durat on_s nce_push"
+    CommonFat guePred cate
+      .mag cRecsPushTargetFat guePred cate(
+        m n nterval = 24.h s,
+        max n nterval = 1
+      ).w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def loggedOutRecsHoldbackPredicate[T <: Target](
+  def loggedOutRecsHoldbackPred cate[T <: Target](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "logged_out_recs_holdback"
-    val guestIdNotFoundCounter = statsReceiver.scope("logged_out").counter("guest_id_not_found")
-    val controlBucketCounter = statsReceiver.scope("logged_out").counter("holdback_control")
-    val allowTrafficCounter = statsReceiver.scope("logged_out").counter("allow_traffic")
-    Predicate.from { target: T =>
-      val guestId = target.targetGuestId match {
-        case Some(guest) => guest
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "logged_out_recs_holdback"
+    val guest dNotFoundCounter = statsRece ver.scope("logged_out").counter("guest_ d_not_found")
+    val controlBucketCounter = statsRece ver.scope("logged_out").counter("holdback_control")
+    val allowTraff cCounter = statsRece ver.scope("logged_out").counter("allow_traff c")
+    Pred cate.from { target: T =>
+      val guest d = target.targetGuest d match {
+        case So (guest) => guest
         case _ =>
-          guestIdNotFoundCounter.incr()
-          throw new IllegalStateException("guest_id_not_found")
+          guest dNotFoundCounter. ncr()
+          throw new  llegalStateExcept on("guest_ d_not_found")
       }
-      target.abDecider
-        .bucket(LoggedOutRecsHoldback.exptName, GuestRecipient(guestId)).map(_.name) match {
-        case Some(LoggedOutRecsHoldback.control) =>
-          controlBucketCounter.incr()
+      target.abDec der
+        .bucket(LoggedOutRecsHoldback.exptNa , GuestRec p ent(guest d)).map(_.na ) match {
+        case So (LoggedOutRecsHoldback.control) =>
+          controlBucketCounter. ncr()
           false
         case _ =>
-          allowTrafficCounter.incr()
+          allowTraff cCounter. ncr()
           true
       }
     }

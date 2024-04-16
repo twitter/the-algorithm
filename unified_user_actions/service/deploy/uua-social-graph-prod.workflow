@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-social-graph-prod",
-  "config-files": [
-    "uua-social-graph.aurora"
+  "role": "d scode",
+  "na ": "uua-soc al-graph-prod",
+  "conf g-f les": [
+    "uua-soc al-graph.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-social-graph"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-soc al-graph"
       },
       {
         "type": "packer",
-        "name": "uua-social-graph",
-        "artifact": "./dist/uua-social-graph.zip"
+        "na ": "uua-soc al-graph",
+        "art fact": "./d st/uua-soc al-graph.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "uua-social-graph-prod-atla",
-          "key": "atla/discode/prod/uua-social-graph"
+          "na ": "uua-soc al-graph-prod-atla",
+          "key": "atla/d scode/prod/uua-soc al-graph"
         },
         {
-          "name": "uua-social-graph-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-social-graph"
+          "na ": "uua-soc al-graph-prod-pdxa",
+          "key": "pdxa/d scode/prod/uua-soc al-graph"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
     {
       "type": "SLACK",
-      "recipients": [
+      "rec p ents": [
         {
-          "to": "discode-oncall"
+          "to": "d scode-oncall"
         }
       ],
       "events": ["WORKFLOW_SUCCESS"]
     },
     {
       "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
+      "rec p ents": [{
+        "to": "d scode-oncall"
       }],
-      "events": ["*FAILED"]
+      "events": ["*FA LED"]
     }
   ]
 }

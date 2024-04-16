@@ -1,175 +1,175 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.LeafMetaData;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PointValues;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.index.StoredFieldVisitor;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.Version;
+ mport org.apac .lucene. ndex.B naryDocValues;
+ mport org.apac .lucene. ndex.F elds;
+ mport org.apac .lucene. ndex.Leaf taData;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene. ndex.Po ntValues;
+ mport org.apac .lucene. ndex.SortedDocValues;
+ mport org.apac .lucene. ndex.SortedNu r cDocValues;
+ mport org.apac .lucene. ndex.SortedSetDocValues;
+ mport org.apac .lucene. ndex.StoredF eldV s or;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene.search.Sort;
+ mport org.apac .lucene.ut l.B s;
+ mport org.apac .lucene.ut l.Vers on;
 
-import com.twitter.search.core.earlybird.facets.EarlybirdFacetDocValueSet;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldDocValues;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.inverted.InMemoryFields;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+ mport com.tw ter.search.core.earlyb rd.facets.Earlyb rdFacetDocValueSet;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eldDocValues;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. n moryF elds;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
 
-public final class EarlybirdRealtimeIndexSegmentAtomicReader
-    extends EarlybirdIndexSegmentAtomicReader {
-  private final Fields fields;
-  private final int maxDocId;
-  private final int numDocs;
+publ c f nal class Earlyb rdRealt   ndexSeg ntAtom cReader
+    extends Earlyb rd ndexSeg ntAtom cReader {
+  pr vate f nal F elds f elds;
+  pr vate f nal  nt maxDoc d;
+  pr vate f nal  nt numDocs;
 
   /**
-   * Creates a new real-time reader for the given segment. Do not add public constructors to this
-   * class. EarlybirdRealtimeIndexSegmentAtomicReader instances should be created only by calling
-   * EarlybirdRealtimeIndexSegmentData.createAtomicReader(), to make sure everything is set up
+   * Creates a new real-t   reader for t  g ven seg nt. Do not add publ c constructors to t 
+   * class. Earlyb rdRealt   ndexSeg ntAtom cReader  nstances should be created only by call ng
+   * Earlyb rdRealt   ndexSeg ntData.createAtom cReader(), to make sure everyth ng  s set up
    * properly (such as CSF readers).
    */
-  EarlybirdRealtimeIndexSegmentAtomicReader(EarlybirdRealtimeIndexSegmentData segmentData) {
-    super(segmentData);
+  Earlyb rdRealt   ndexSeg ntAtom cReader(Earlyb rdRealt   ndexSeg ntData seg ntData) {
+    super(seg ntData);
 
-    this.fields = new InMemoryFields(segmentData.getPerFieldMap(), syncData.getIndexPointers());
+    t .f elds = new  n moryF elds(seg ntData.getPerF eldMap(), syncData.get ndexPo nters());
 
-    // We cache the highest doc ID and the number of docs, because the reader must return the same
-    // values for its entire lifetime, and the segment will get more tweets over time.
-    // These values could be slightly out of sync with 'fields', because we don't update these
-    // values atomically with the fields.
-    this.maxDocId = segmentData.getDocIDToTweetIDMapper().getPreviousDocID(Integer.MAX_VALUE);
-    this.numDocs = segmentData.getDocIDToTweetIDMapper().getNumDocs();
+    //   cac  t  h g st doc  D and t  number of docs, because t  reader must return t  sa 
+    // values for  s ent re l fet  , and t  seg nt w ll get more t ets over t  .
+    // T se values could be sl ghtly out of sync w h 'f elds', because   don't update t se
+    // values atom cally w h t  f elds.
+    t .maxDoc d = seg ntData.getDoc DToT et DMapper().getPrev ousDoc D( nteger.MAX_VALUE);
+    t .numDocs = seg ntData.getDoc DToT et DMapper().getNumDocs();
   }
 
-  @Override
-  public int maxDoc() {
-    return maxDocId + 1;
+  @Overr de
+  publ c  nt maxDoc() {
+    return maxDoc d + 1;
   }
 
-  @Override
-  public int numDocs() {
+  @Overr de
+  publ c  nt numDocs() {
     return numDocs;
   }
 
-  @Override
-  protected void doClose() {
-    // nothing to do
+  @Overr de
+  protected vo d doClose() {
+    // noth ng to do
   }
 
-  @Override
-  public void document(int docID, StoredFieldVisitor visitor) {
+  @Overr de
+  publ c vo d docu nt( nt doc D, StoredF eldV s or v s or) {
     // not supported
   }
 
-  @Override
-  public int getOldestDocID(Term t) throws IOException {
-    InvertedIndex perField = getSegmentData().getPerFieldMap().get(t.field());
-    if (perField == null) {
+  @Overr de
+  publ c  nt getOldestDoc D(Term t) throws  OExcept on {
+     nverted ndex perF eld = getSeg ntData().getPerF eldMap().get(t.f eld());
+     f (perF eld == null) {
       return TERM_NOT_FOUND;
     }
-    return perField.getLargestDocIDForTerm(t.bytes());
+    return perF eld.getLargestDoc DForTerm(t.bytes());
   }
 
-  @Override
-  public int getTermID(Term t) throws IOException {
-    InvertedIndex perField = getSegmentData().getPerFieldMap().get(t.field());
-    if (perField == null) {
+  @Overr de
+  publ c  nt getTerm D(Term t) throws  OExcept on {
+     nverted ndex perF eld = getSeg ntData().getPerF eldMap().get(t.f eld());
+     f (perF eld == null) {
       return TERM_NOT_FOUND;
     }
-    return perField.lookupTerm(t.bytes());
+    return perF eld.lookupTerm(t.bytes());
   }
 
-  @Override
-  public Bits getLiveDocs() {
-    // liveDocs contains inverted (decreasing) docIDs.
-    return getDeletesView().getLiveDocs();
+  @Overr de
+  publ c B s getL veDocs() {
+    // l veDocs conta ns  nverted (decreas ng) doc Ds.
+    return getDeletesV ew().getL veDocs();
   }
 
-  @Override
-  public boolean hasDeletions() {
-    return getDeletesView().hasDeletions();
+  @Overr de
+  publ c boolean hasDelet ons() {
+    return getDeletesV ew().hasDelet ons();
   }
 
-  @Override
-  public Terms terms(String field) throws IOException {
-    return fields.terms(field);
+  @Overr de
+  publ c Terms terms(Str ng f eld) throws  OExcept on {
+    return f elds.terms(f eld);
   }
 
-  @Override
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    ColumnStrideFieldIndex csf =
-        getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+  @Overr de
+  publ c Nu r cDocValues getNu r cDocValues(Str ng f eld) throws  OExcept on {
+    ColumnStr deF eld ndex csf =
+        getSeg ntData().getDocValuesManager().getColumnStr deF eld ndex(f eld);
+    return csf != null ? new ColumnStr deF eldDocValues(csf, t ) : null;
   }
 
-  @Override
-  public boolean hasDocs() {
-    // smallestDocID is the smallest document ID that was available when this reader was created.
-    // So we need to check its value in order to decide if this reader can see any documents,
-    // because in the meantime other documents might've been added to the tweet ID mapper.
-    return getSmallestDocID() != Integer.MAX_VALUE;
+  @Overr de
+  publ c boolean hasDocs() {
+    // smallestDoc D  s t  smallest docu nt  D that was ava lable w n t  reader was created.
+    // So   need to c ck  s value  n order to dec de  f t  reader can see any docu nts,
+    // because  n t   ant   ot r docu nts m ght've been added to t  t et  D mapper.
+    return getSmallestDoc D() !=  nteger.MAX_VALUE;
   }
 
-  @Override
-  public BinaryDocValues getBinaryDocValues(String field) {
+  @Overr de
+  publ c B naryDocValues getB naryDocValues(Str ng f eld) {
     return null;
   }
 
-  @Override
-  public SortedDocValues getSortedDocValues(String field) {
+  @Overr de
+  publ c SortedDocValues getSortedDocValues(Str ng f eld) {
     return null;
   }
 
-  @Override
-  public SortedSetDocValues getSortedSetDocValues(String field) {
-    // special handling for facet field
-    if (EarlybirdFacetDocValueSet.FIELD_NAME.equals(field)) {
-      return ((EarlybirdRealtimeIndexSegmentData) getSegmentData()).getFacetDocValueSet();
+  @Overr de
+  publ c SortedSetDocValues getSortedSetDocValues(Str ng f eld) {
+    // spec al handl ng for facet f eld
+     f (Earlyb rdFacetDocValueSet.F ELD_NAME.equals(f eld)) {
+      return ((Earlyb rdRealt   ndexSeg ntData) getSeg ntData()).getFacetDocValueSet();
     }
 
     return null;
   }
 
-  @Override
-  public NumericDocValues getNormValues(String field) throws IOException {
-    ColumnStrideFieldIndex csf = getSegmentData().getNormIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+  @Overr de
+  publ c Nu r cDocValues getNormValues(Str ng f eld) throws  OExcept on {
+    ColumnStr deF eld ndex csf = getSeg ntData().getNorm ndex(f eld);
+    return csf != null ? new ColumnStr deF eldDocValues(csf, t ) : null;
   }
 
-  @Override
-  public SortedNumericDocValues getSortedNumericDocValues(String field) {
+  @Overr de
+  publ c SortedNu r cDocValues getSortedNu r cDocValues(Str ng f eld) {
     return null;
   }
 
-  @Override
-  public void checkIntegrity() {
-    // nothing to do
+  @Overr de
+  publ c vo d c ck ntegr y() {
+    // noth ng to do
   }
 
-  @Override
-  public PointValues getPointValues(String field) {
+  @Overr de
+  publ c Po ntValues getPo ntValues(Str ng f eld) {
     return null;
   }
 
-  @Override
-  public LeafMetaData getMetaData() {
-    return new LeafMetaData(Version.LATEST.major, Version.LATEST, Sort.RELEVANCE);
+  @Overr de
+  publ c Leaf taData get taData() {
+    return new Leaf taData(Vers on.LATEST.major, Vers on.LATEST, Sort.RELEVANCE);
   }
 
-  @Override
-  public CacheHelper getCoreCacheHelper() {
+  @Overr de
+  publ c Cac  lper getCoreCac  lper() {
     return null;
   }
 
-  @Override
-  public CacheHelper getReaderCacheHelper() {
+  @Overr de
+  publ c Cac  lper getReaderCac  lper() {
     return null;
   }
 }

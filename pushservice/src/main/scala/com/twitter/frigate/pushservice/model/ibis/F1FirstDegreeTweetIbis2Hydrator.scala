@@ -1,24 +1,24 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.F1FirstDegree
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.F1F rstDegree
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.ut l.Future
 
-trait F1FirstDegreeTweetIbis2HydratorForCandidate
-    extends TweetCandidateIbis2Hydrator
-    with RankedSocialContextIbis2Hydrator {
-  self: PushCandidate with F1FirstDegree with TweetAuthorDetails =>
+tra  F1F rstDegreeT et b s2HydratorForCand date
+    extends T etCand date b s2Hydrator
+    w h RankedSoc alContext b s2Hydrator {
+  self: PushCand date w h F1F rstDegree w h T etAuthorDeta ls =>
 
-  override lazy val scopedStats: StatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  overr de lazy val scopedStats: StatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
 
-  override lazy val tweetModelValues: Future[Map[String, String]] = {
+  overr de lazy val t etModelValues: Future[Map[Str ng, Str ng]] = {
     for {
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ otherModelValues ++ mediaModelValue ++ tweetInlineModelValues ++ inlineVideoMediaMap
+      superModelValues <- super.t etModelValues
+      t et nl neModelValues <- t et nl neAct onModelValue
+    } y eld {
+      superModelValues ++ ot rModelValues ++  d aModelValue ++ t et nl neModelValues ++  nl neV deo d aMap
     }
   }
 }

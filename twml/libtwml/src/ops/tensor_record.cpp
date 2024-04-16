@@ -1,692 +1,692 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
+# nclude "res ce_ut ls.h"
 
-#include <algorithm>
-using std::string;
+# nclude <algor hm>
+us ng std::str ng;
 
-REGISTER_OP("GetStringTensorsFromDataRecord")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetStr ngTensorsFromDataRecord")
+.Attr("feature_ d:  nt")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("str ngs: str ng")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns string tensors from the data record.
+A tensorflow OP that decodes and returns str ng tensors from t  data record.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  feature_ d: T  has d  d of t  feature na .
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
-  strings: A 1D string tensor representing the decoded strings from the batch.
+   ds: A 1D  nt64 tensor represent ng t   nput  ndex  n a g ven batch.
+  str ngs: A 1D str ng tensor represent ng t  decoded str ngs from t  batch.
 )doc");
 
-REGISTER_OP("GetStringTensorsFromHashedDataRecord")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
-.Output("ids: int64")
-.Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetStr ngTensorsFromHas dDataRecord")
+.Attr("feature_ d:  nt")
+. nput("has d_data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("str ngs: str ng")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns string tensors from the hashed data record.
+A tensorflow OP that decodes and returns str ng tensors from t  has d data record.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  feature_ d: T  has d  d of t  feature na .
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
-  strings: A 1D string tensor representing the decoded strings from the batch.
+   ds: A 1D  nt64 tensor represent ng t   nput  ndex  n a g ven batch.
+  str ngs: A 1D str ng tensor represent ng t  decoded str ngs from t  batch.
 )doc");
 
-template<typename Resource>
-class GetStringTensorsOp : public OpKernel {
- private:
-  int64 feature_id;
+template<typena  Res ce>
+class GetStr ngTensorsOp : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
 
- public:
-  explicit GetStringTensorsOp(OpKernelConstruction *context)
+ publ c:
+  expl c  GetStr ngTensorsOp(OpKernelConstruct on *context)
       : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    const int64 batch_size = static_cast<int64>(handle->records.size());
+  vo d Compute(OpKernelContext *context) overr de {
+    auto handle = getHandle<Res ce>(context, 0);
+    const  nt64 batch_s ze = stat c_cast< nt64>(handle->records.s ze());
     const auto &records = handle->records;
 
     try {
-      int64 total_size = 0;
+       nt64 total_s ze = 0;
       for (const auto &record : records) {
         try {
-          const auto &tensor = record.getRawTensor(feature_id);
-          total_size += static_cast<int64>(tensor.getNumElements());
+          const auto &tensor = record.getRawTensor(feature_ d);
+          total_s ze += stat c_cast< nt64>(tensor.getNumEle nts());
         } catch(const std::out_of_range &err) {
-          LOG(WARNING) << "Ignoring missing string tensor with key: " << feature_id << std::endl;
-          continue;
+          LOG(WARN NG) << " gnor ng m ss ng str ng tensor w h key: " << feature_ d << std::endl;
+          cont nue;
         }
       }
 
-      twml::ThriftReader reader(nullptr);
-      TensorShape shape = {total_size};
-      Tensor *strings_tensor = nullptr;
-      Tensor *ids_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &strings_tensor));
+      twml::Thr ftReader reader(nullptr);
+      TensorShape shape = {total_s ze};
+      Tensor *str ngs_tensor = nullptr;
+      Tensor * ds_tensor = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds_tensor));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &str ngs_tensor));
 
-      auto strings_data = strings_tensor->flat<string>().data();
-      auto ids_data = ids_tensor->flat<int64>().data();
+      auto str ngs_data = str ngs_tensor->flat<str ng>().data();
+      auto  ds_data =  ds_tensor->flat< nt64>().data();
 
-      for (int64 i = 0; i < batch_size; i++) {
-        const auto &record = records[i];
+      for ( nt64   = 0;   < batch_s ze;  ++) {
+        const auto &record = records[ ];
         try {
-          const twml::RawTensor &tensor = record.getRawTensor(feature_id);
-          const uint8_t *buffer = static_cast<const uint8_t *>(tensor.getData<void>());
-          const int64 num_strings = static_cast<int64>(tensor.getNumElements());
+          const twml::RawTensor &tensor = record.getRawTensor(feature_ d);
+          const u nt8_t *buffer = stat c_cast<const u nt8_t *>(tensor.getData<vo d>());
+          const  nt64 num_str ngs = stat c_cast< nt64>(tensor.getNumEle nts());
           reader.setBuffer(buffer);
 
-          for (int64 j = 0; j < num_strings; j++) {
-            const uint8_t *curr_begin = nullptr;
-            const auto curr_length = reader.getRawBuffer<uint8_t>(&curr_begin);
-            strings_data[j] = std::string(curr_begin, curr_begin + curr_length);
-            ids_data[j] = i;
+          for ( nt64 j = 0; j < num_str ngs; j++) {
+            const u nt8_t *curr_beg n = nullptr;
+            const auto curr_length = reader.getRawBuffer<u nt8_t>(&curr_beg n);
+            str ngs_data[j] = std::str ng(curr_beg n, curr_beg n + curr_length);
+             ds_data[j] =  ;
           }
-          ids_data += num_strings;
-          strings_data += num_strings;
+           ds_data += num_str ngs;
+          str ngs_data += num_str ngs;
         } catch(const std::out_of_range &err) {
-          continue;
+          cont nue;
         }
       }
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::except on &err) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(err.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetStringTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetStringTensorsOp<DataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetStr ngTensorsFromDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetStr ngTensorsOp<DataRecordRes ce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetStringTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetStringTensorsOp<HashedDataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetStr ngTensorsFromHas dDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetStr ngTensorsOp<Has dDataRecordRes ce>);
 
-REGISTER_OP("GetTensorsFromDataRecord")
+REG STER_OP("GetTensorsFromDataRecord")
 .Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
-.Output("output: string")
-.Output("out_shape: int64")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Attr("feature_ d:  nt")
+. nput("data_record_handle: res ce")
+.Output("output: str ng")
+.Output("out_shape:  nt64")
+.Output("out_type: str ng")
+.Output("out_end an: u nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A tensorflow OP that decodes and returns tensors from t  data record.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  feature_ d: T  has d  d of t  feature na .
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_shape: A tensor containing [batch_size, thrift_shape].
-  out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  output: A 2D byte tensor represent ng t  requested feature.
+  out_shape: A tensor conta n ng [batch_s ze, thr ft_shape].
+  out_type: Output type returned as a str ng tensor of s ze 1.
+  out_end an: End anness of t  bytes returned a tensor of s ze 1. 0: l te, 1: b g.
 )doc");
 
-REGISTER_OP("GetTensorsFromHashedDataRecord")
+REG STER_OP("GetTensorsFromHas dDataRecord")
 .Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
-.Output("output: string")
-.Output("out_shape: int64")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Attr("feature_ d:  nt")
+. nput("has d_data_record_handle: res ce")
+.Output("output: str ng")
+.Output("out_shape:  nt64")
+.Output("out_type: str ng")
+.Output("out_end an: u nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns decodes and tensors from the hashed data record.
+A tensorflow OP that returns decodes and tensors from t  has d data record.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  feature_ d: T  has d  d of t  feature na .
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_shape: A tensor containing [batch_size, thrift_shape].
-  out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  output: A 2D byte tensor represent ng t  requested feature.
+  out_shape: A tensor conta n ng [batch_s ze, thr ft_shape].
+  out_type: Output type returned as a str ng tensor of s ze 1.
+  out_end an: End anness of t  bytes returned a tensor of s ze 1. 0: l te, 1: b g.
 )doc");
 
-template<class Resource>
-class GetTensorsOp : public OpKernel {
- private:
+template<class Res ce>
+class GetTensorsOp : publ c OpKernel {
+ pr vate:
   bool assert_shape;
-  int64 feature_id;
+   nt64 feature_ d;
 
- public:
-  explicit GetTensorsOp(OpKernelConstruction *context)
+ publ c:
+  expl c  GetTensorsOp(OpKernelConstruct on *context)
       : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+    OP_REQU RES_OK(context, context->GetAttr("assert_shape", &assert_shape));
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    uint64 batch_size = handle->records.size();
+  vo d Compute(OpKernelContext *context) overr de {
+    auto handle = getHandle<Res ce>(context, 0);
+    u nt64 batch_s ze = handle->records.s ze();
     const auto &records = handle->records;
 
     try {
-      TensorShape raw_shape = {static_cast<int64>(batch_size)};
+      TensorShape raw_shape = {stat c_cast< nt64>(batch_s ze)};
       Tensor* output_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      auto output_flat = output_tensor->flat<string>();
+      OP_REQU RES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
+      auto output_flat = output_tensor->flat<str ng>();
       auto output_data = output_flat.data();
 
       twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      bool  s_b g_end an = false;
 
-      std::vector<uint64> shape(1, batch_size);
-      uint64 length = 0;
+      std::vector<u nt64> shape(1, batch_s ze);
+      u nt64 length = 0;
 
       for (auto record : records) {
-        const twml::RawTensor tensor = record.getRawTensor(feature_id);
-        const auto &curr_dims = tensor.getDims();
+        const twml::RawTensor tensor = record.getRawTensor(feature_ d);
+        const auto &curr_d ms = tensor.getD ms();
         const auto curr_type = tensor.getType();
-        const bool curr_is_big_endian = tensor.is_big_endian();
-        const uint64 curr_length = tensor.getRawLength();
+        const bool curr_ s_b g_end an = tensor. s_b g_end an();
+        const u nt64 curr_length = tensor.getRawLength();
 
-        // Create the output tensor based on first tensor
-        if (shape.size() == 1) {
-          // Push the shape of individual tensors into shape
-          shape.reserve(curr_dims.size() + 1);
-          shape.insert(shape.end(), curr_dims.begin(), curr_dims.end());
+        // Create t  output tensor based on f rst tensor
+         f (shape.s ze() == 1) {
+          // Push t  shape of  nd v dual tensors  nto shape
+          shape.reserve(curr_d ms.s ze() + 1);
+          shape. nsert(shape.end(), curr_d ms.beg n(), curr_d ms.end());
           type = curr_type;
-          is_big_endian = curr_is_big_endian;
+           s_b g_end an = curr_ s_b g_end an;
           length = curr_length;
 
         } else {
-          if (assert_shape) {
-            // Assert shape of all tensors is the same.
-            bool is_same_shape = std::equal(shape.begin() + 1, shape.end(), curr_dims.begin());
+           f (assert_shape) {
+            // Assert shape of all tensors  s t  sa .
+            bool  s_sa _shape = std::equal(shape.beg n() + 1, shape.end(), curr_d ms.beg n());
 
-            if (!is_same_shape || length != curr_length) {
-              throw std::runtime_error("TensorShape mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+             f (! s_sa _shape || length != curr_length) {
+              throw std::runt  _error("TensorShape m smatch for feature_ d: "
+                                       + std::to_str ng(feature_ d));
             }
           }
 
-          // Assert type and endianness of all tensors is the same.
-          if (type != curr_type || is_big_endian != curr_is_big_endian) {
-            throw std::runtime_error("Tensor type mismatch for feature_id: "
-                                     + std::to_string(feature_id));
+          // Assert type and end anness of all tensors  s t  sa .
+           f (type != curr_type ||  s_b g_end an != curr_ s_b g_end an) {
+            throw std::runt  _error("Tensor type m smatch for feature_ d: "
+                                     + std::to_str ng(feature_ d));
           }
         }
 
         // Copy from datarecord to output
-        const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
-        *output_data = std::string(tensor_data, tensor_data + curr_length);
+        const u nt8 *tensor_data = re nterpret_cast<const u nt8 *>(tensor.getData<vo d>());
+        *output_data = std::str ng(tensor_data, tensor_data + curr_length);
 
-        // Increment it for the next tensor in the batch.
+        //  ncre nt   for t  next tensor  n t  batch.
         output_data++;
       }
 
       Tensor *shape_tensor = nullptr;
-      TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape_shape, &shape_tensor));
-      auto shape_flat = shape_tensor->flat<int64>();
-      for (int i = 0; i < static_cast<int>(shape.size()); i++) {
-        shape_flat(i) = shape[i];
+      TensorShape shape_shape = {stat c_cast< nt64>(shape.s ze())};
+      OP_REQU RES_OK(context, context->allocate_output(1, shape_shape, &shape_tensor));
+      auto shape_flat = shape_tensor->flat< nt64>();
+      for ( nt   = 0;   < stat c_cast< nt>(shape.s ze());  ++) {
+        shape_flat( ) = shape[ ];
       }
 
       Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      OP_REQU RES_OK(context, context->allocate_output(2, {}, &type_tensor));
+      type_tensor->scalar<str ng>()() = twml::getTypeNa (type);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(3, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      Tensor* end an_tensor = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(3, {}, &end an_tensor));
+      end an_tensor->scalar<u nt8>()() =  s_b g_end an;
+    } catch(const std::except on &err) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(err.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsOp<DataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetTensorsFromDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetTensorsOp<DataRecordRes ce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsOp<HashedDataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetTensorsFromHas dDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetTensorsOp<Has dDataRecordRes ce>);
 
-REGISTER_OP("GetTensorsWithMissingMaskFromDataRecord")
+REG STER_OP("GetTensorsW hM ss ngMaskFromDataRecord")
 .Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Attr("default_shape: list(int)")
-.Attr("dtype_size: int")
-.Input("data_record_handle: resource")
-.Output("output: string")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Attr("feature_ d:  nt")
+.Attr("default_shape: l st( nt)")
+.Attr("dtype_s ze:  nt")
+. nput("data_record_handle: res ce")
+.Output("output: str ng")
+.Output("out_type: str ng")
+.Output("out_end an: u nt8")
+.Output(" s_found: bool")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A tensorflow OP that decodes and returns tensors from t  data record.
 
 Attr
-  assert_shape: Specifies if the shape needs to be same across the batch.
-  feature_id: The hashed id of the feature name.
+  assert_shape: Spec f es  f t  shape needs to be sa  across t  batch.
+  feature_ d: T  has d  d of t  feature na .
   default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+  dtype_s ze: expected s ze of each ele nt.
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  output: A 2D byte tensor represent ng t  requested feature.
+  out_type: A str ng tensor represnt ng t  type.
+  out_end an: End anness of t  bytes returned a tensor of s ze 1. 0: l te, 1: b g.
+   s_m ss ng: A boolean tensor of length batch_s ze represnt ng  f t  tensor was found for an  nput.
 )doc");
 
-REGISTER_OP("GetTensorsWithMissingMaskFromHashedDataRecord")
+REG STER_OP("GetTensorsW hM ss ngMaskFromHas dDataRecord")
 .Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Attr("default_shape: list(int)")
-.Attr("dtype_size: int")
-.Input("hashed_data_record_handle: resource")
-.Output("output: string")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Attr("feature_ d:  nt")
+.Attr("default_shape: l st( nt)")
+.Attr("dtype_s ze:  nt")
+. nput("has d_data_record_handle: res ce")
+.Output("output: str ng")
+.Output("out_type: str ng")
+.Output("out_end an: u nt8")
+.Output(" s_found: bool")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A tensorflow OP that decodes and returns tensors from t  data record.
 
 Attr
-  assert_shape: Specifies if the shape needs to be same across the batch.
-  feature_id: The hashed id of the feature name.
+  assert_shape: Spec f es  f t  shape needs to be sa  across t  batch.
+  feature_ d: T  has d  d of t  feature na .
   default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+  dtype_s ze: expected s ze of each ele nt.
 
-Input
-  hashed_data_record_handle: Resource handle to HashedDataRecord.
+ nput
+  has d_data_record_handle: Res ce handle to Has dDataRecord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  output: A 2D byte tensor represent ng t  requested feature.
+  out_type: A str ng tensor represnt ng t  type.
+  out_end an: End anness of t  bytes returned a tensor of s ze 1. 0: l te, 1: b g.
+   s_m ss ng: A boolean tensor of length batch_s ze represnt ng  f t  tensor was found for an  nput.
 )doc");
 
-template<class Resource>
-class GetTensorsWithMissingMaskOp : public OpKernel {
- private:
+template<class Res ce>
+class GetTensorsW hM ss ngMaskOp : publ c OpKernel {
+ pr vate:
   bool assert_shape;
-  int64 feature_id;
-  int64 dtype_size;
-  std::vector<int64> shape;
+   nt64 feature_ d;
+   nt64 dtype_s ze;
+  std::vector< nt64> shape;
 
- public:
-  explicit GetTensorsWithMissingMaskOp(OpKernelConstruction *context)
+ publ c:
+  expl c  GetTensorsW hM ss ngMaskOp(OpKernelConstruct on *context)
       : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_shape", &shape));
-    OP_REQUIRES_OK(context, context->GetAttr("dtype_size", &dtype_size));
+    OP_REQU RES_OK(context, context->GetAttr("assert_shape", &assert_shape));
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
+    OP_REQU RES_OK(context, context->GetAttr("default_shape", &shape));
+    OP_REQU RES_OK(context, context->GetAttr("dtype_s ze", &dtype_s ze));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    uint64 batch_size = handle->records.size();
+  vo d Compute(OpKernelContext *context) overr de {
+    auto handle = getHandle<Res ce>(context, 0);
+    u nt64 batch_s ze = handle->records.s ze();
     const auto &records = handle->records;
 
     try {
-      TensorShape raw_shape = {static_cast<int64>(batch_size)};
+      TensorShape raw_shape = {stat c_cast< nt64>(batch_s ze)};
       Tensor* output_tensor = nullptr;
-      Tensor* is_found_tensor = nullptr;
+      Tensor*  s_found_tensor = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(3, raw_shape, &is_found_tensor));
+      OP_REQU RES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
+      OP_REQU RES_OK(context, context->allocate_output(3, raw_shape, & s_found_tensor));
 
-      auto output_flat = output_tensor->flat<string>();
+      auto output_flat = output_tensor->flat<str ng>();
       auto output_data = output_flat.data();
-      auto is_found_data = is_found_tensor->flat<bool>().data();
+      auto  s_found_data =  s_found_tensor->flat<bool>().data();
 
       twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      bool  s_b g_end an = false;
 
-      uint64 length = std::accumulate(shape.begin(), shape.end(), dtype_size, std::multiplies<int64>());
+      u nt64 length = std::accumulate(shape.beg n(), shape.end(), dtype_s ze, std::mult pl es< nt64>());
       for (auto record : records) {
         try {
-          const twml::RawTensor tensor = record.getRawTensor(feature_id);
-          const auto &curr_dims = tensor.getDims();
+          const twml::RawTensor tensor = record.getRawTensor(feature_ d);
+          const auto &curr_d ms = tensor.getD ms();
           const auto curr_type = tensor.getType();
-          const bool curr_is_big_endian = tensor.is_big_endian();
-          const uint64 curr_length = tensor.getRawLength();
+          const bool curr_ s_b g_end an = tensor. s_b g_end an();
+          const u nt64 curr_length = tensor.getRawLength();
 
-          if (type == TWML_TYPE_UNKNOWN) {
+           f (type == TWML_TYPE_UNKNOWN) {
             type = curr_type;
-            is_big_endian = curr_is_big_endian;
-            // FloatTensors are stored as a list of doubles.
-            // If the requested dtype_size is 4, update the length.
-            // NOTE: All the missing tensors before this have wrong length, this is fixed at the end.
-            if (type == TWML_TYPE_DOUBLE && is_big_endian && dtype_size == 4) {
+             s_b g_end an = curr_ s_b g_end an;
+            // FloatTensors are stored as a l st of doubles.
+            //  f t  requested dtype_s ze  s 4, update t  length.
+            // NOTE: All t  m ss ng tensors before t  have wrong length, t   s f xed at t  end.
+             f (type == TWML_TYPE_DOUBLE &&  s_b g_end an && dtype_s ze == 4) {
               length = length * 2;
             }
           } else {
-            // Assert type and endianness of all tensors is the same.
-            if (type != curr_type || is_big_endian != curr_is_big_endian) {
-              throw std::runtime_error("Tensor type mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+            // Assert type and end anness of all tensors  s t  sa .
+             f (type != curr_type ||  s_b g_end an != curr_ s_b g_end an) {
+              throw std::runt  _error("Tensor type m smatch for feature_ d: "
+                                       + std::to_str ng(feature_ d));
             }
           }
 
-          // Assert shape of all tensors is the same.
-          if (assert_shape && type != TWML_TYPE_UNKNOWN) {
-            // Assert shape of all tensors is the same.
-            bool is_same_shape = std::equal(shape.begin(), shape.end(), curr_dims.begin());
+          // Assert shape of all tensors  s t  sa .
+           f (assert_shape && type != TWML_TYPE_UNKNOWN) {
+            // Assert shape of all tensors  s t  sa .
+            bool  s_sa _shape = std::equal(shape.beg n(), shape.end(), curr_d ms.beg n());
 
-            if (!is_same_shape || length != curr_length) {
-              throw std::runtime_error("TensorShape mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+             f (! s_sa _shape || length != curr_length) {
+              throw std::runt  _error("TensorShape m smatch for feature_ d: "
+                                       + std::to_str ng(feature_ d));
             }
           }
 
           // Copy from datarecord to output
-          const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
-          *output_data = std::string(tensor_data, tensor_data + curr_length);
-          *is_found_data = true;
+          const u nt8 *tensor_data = re nterpret_cast<const u nt8 *>(tensor.getData<vo d>());
+          *output_data = std::str ng(tensor_data, tensor_data + curr_length);
+          * s_found_data = true;
         } catch(const std::out_of_range &err) {
-          *output_data = std::string();
-          output_data->resize(length);
-          *is_found_data = false;
+          *output_data = std::str ng();
+          output_data->res ze(length);
+          * s_found_data = false;
         }
 
-        // Increment it for the next tensor in the batch.
+        //  ncre nt   for t  next tensor  n t  batch.
         output_data++;
-        is_found_data++;
+         s_found_data++;
       }
 
-      // Reset pointers to the beginning
+      // Reset po nters to t  beg nn ng
       output_data = output_flat.data();
-      is_found_data = is_found_tensor->flat<bool>().data();
+       s_found_data =  s_found_tensor->flat<bool>().data();
 
-      // Resize any missing tensors before type (and hence true length) was known.
-      if (type == TWML_TYPE_DOUBLE) {
-        for (int64 i = 0; i < static_cast<int64>(records.size()); i++) {
-          if (!is_found_data[i]) {
-            output_data[i].resize(length);
+      // Res ze any m ss ng tensors before type (and  nce true length) was known.
+       f (type == TWML_TYPE_DOUBLE) {
+        for ( nt64   = 0;   < stat c_cast< nt64>(records.s ze());  ++) {
+           f (! s_found_data[ ]) {
+            output_data[ ].res ze(length);
           }
         }
       }
 
       Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      OP_REQU RES_OK(context, context->allocate_output(1, {}, &type_tensor));
+      type_tensor->scalar<str ng>()() = twml::getTypeNa (type);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      Tensor* end an_tensor = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(2, {}, &end an_tensor));
+      end an_tensor->scalar<u nt8>()() =  s_b g_end an;
+    } catch(const std::except on &err) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(err.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsWithMissingMaskFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsWithMissingMaskOp<DataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetTensorsW hM ss ngMaskFromDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetTensorsW hM ss ngMaskOp<DataRecordRes ce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsWithMissingMaskFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsWithMissingMaskOp<HashedDataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetTensorsW hM ss ngMaskFromHas dDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetTensorsW hM ss ngMaskOp<Has dDataRecordRes ce>);
 
-REGISTER_OP("GetSparseTensorsFromDataRecord")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("indices: string")
-.Output("values: string")
-.Output("dense_shape: int64")
-.Output("values_type: string")
-.Output("valueendian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetSparseTensorsFromDataRecord")
+.Attr("feature_ d:  nt")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output(" nd ces: str ng")
+.Output("values: str ng")
+.Output("dense_shape:  nt64")
+.Output("values_type: str ng")
+.Output("valueend an: u nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A tensorflow OP that decodes and returns tensors from t  data record.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  feature_ d: T  has d  d of t  feature na .
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
-  indices: An string tensor containing indices of the sparse tensor as bytes.
-  values: An string tensor containing values of the sparse tensor as bytes.
-  dense_shape: A tensor containing [batch_size, thrift_shape].
-  values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+   ds: A 1D tensor represent ng wh ch  nput  n t  batch t  value belongs to.
+   nd ces: An str ng tensor conta n ng  nd ces of t  sparse tensor as bytes.
+  values: An str ng tensor conta n ng values of t  sparse tensor as bytes.
+  dense_shape: A tensor conta n ng [batch_s ze, thr ft_shape].
+  values_type: T  data type of value tensor returned as a str ng tensor of s ze 1.
+  values_end an: End anness of t  bytes returned a tensor of s ze 1. 0: l te, 1: b g.
 )doc");
 
-REGISTER_OP("GetSparseTensorsFromHashedDataRecord")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
-.Output("ids: int64")
-.Output("indices: string")
-.Output("values: string")
-.Output("dense_shape: int64")
-.Output("values_type: string")
-.Output("values_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetSparseTensorsFromHas dDataRecord")
+.Attr("feature_ d:  nt")
+. nput("has d_data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output(" nd ces: str ng")
+.Output("values: str ng")
+.Output("dense_shape:  nt64")
+.Output("values_type: str ng")
+.Output("values_end an: u nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A tensorflow OP that decodes and returns tensors from t  data record.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  feature_ d: T  has d  d of t  feature na .
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+ nput
+  data_record_handle: Res ce handle to DataRecord.
 
 Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
-  indices: An string tensor containing indices of the sparse tensor as bytes.
-  values: An string tensor containing values of the sparse tensor as bytes.
-  dense_shape: A tensor containing [batch_size, thrift_shape].
-  values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+   ds: A 1D tensor represent ng wh ch  nput  n t  batch t  value belongs to.
+   nd ces: An str ng tensor conta n ng  nd ces of t  sparse tensor as bytes.
+  values: An str ng tensor conta n ng values of t  sparse tensor as bytes.
+  dense_shape: A tensor conta n ng [batch_s ze, thr ft_shape].
+  values_type: T  data type of value tensor returned as a str ng tensor of s ze 1.
+  values_end an: End anness of t  bytes returned a tensor of s ze 1. 0: l te, 1: b g.
 )doc");
 
-template<typename Resource>
-class GetSparseTensorsOp : public OpKernel {
- private:
-  int64 feature_id;
+template<typena  Res ce>
+class GetSparseTensorsOp : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
 
- public:
-  explicit GetSparseTensorsOp(OpKernelConstruction *context)
+ publ c:
+  expl c  GetSparseTensorsOp(OpKernelConstruct on *context)
       : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    const int64 batch_size = static_cast<int64>(handle->records.size());
+  vo d Compute(OpKernelContext *context) overr de {
+    auto handle = getHandle<Res ce>(context, 0);
+    const  nt64 batch_s ze = stat c_cast< nt64>(handle->records.s ze());
     const auto &records = handle->records;
 
     try {
       twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      bool  s_b g_end an = false;
 
-      std::vector<uint64> shape(1, batch_size);
+      std::vector<u nt64> shape(1, batch_s ze);
 
-      int64 total_length = 0;
-      std::vector<int64> lengths;
-      lengths.reserve(batch_size);
+       nt64 total_length = 0;
+      std::vector< nt64> lengths;
+      lengths.reserve(batch_s ze);
 
-      int64 total_indices_length = 0;
-      std::vector<int64> indices_raw_lengths;
-      std::vector<const uint8 *> indices_data_ptrs;
-      indices_raw_lengths.reserve(batch_size);
-      indices_data_ptrs.reserve(batch_size);
+       nt64 total_ nd ces_length = 0;
+      std::vector< nt64>  nd ces_raw_lengths;
+      std::vector<const u nt8 *>  nd ces_data_ptrs;
+       nd ces_raw_lengths.reserve(batch_s ze);
+       nd ces_data_ptrs.reserve(batch_s ze);
 
-      int64 total_values_length = 0;
-      std::vector<int64> values_raw_lengths;
-      std::vector<const uint8 *> values_data_ptrs;
-      values_raw_lengths.reserve(batch_size);
-      values_data_ptrs.reserve(batch_size);
+       nt64 total_values_length = 0;
+      std::vector< nt64> values_raw_lengths;
+      std::vector<const u nt8 *> values_data_ptrs;
+      values_raw_lengths.reserve(batch_s ze);
+      values_data_ptrs.reserve(batch_s ze);
 
       for (auto record : records) {
-        const twml::RawSparseTensor sparse_tensor = record.getRawSparseTensor(feature_id);
-        const twml::RawTensor indices = sparse_tensor.indices();
+        const twml::RawSparseTensor sparse_tensor = record.getRawSparseTensor(feature_ d);
+        const twml::RawTensor  nd ces = sparse_tensor. nd ces();
         const twml::RawTensor values = sparse_tensor.values();
         const auto &dense_shape = sparse_tensor.denseShape();
-        const auto indices_type = indices.getType();
-        const auto indices_is_big_endian = indices.is_big_endian();
+        const auto  nd ces_type =  nd ces.getType();
+        const auto  nd ces_ s_b g_end an =  nd ces. s_b g_end an();
         const auto values_type = values.getType();
-        const bool values_is_big_endian = values.is_big_endian();
+        const bool values_ s_b g_end an = values. s_b g_end an();
 
-        const uint64 indices_length = indices.getDims().back();
-        const uint64 values_length = values.getDims().back();
+        const u nt64  nd ces_length =  nd ces.getD ms().back();
+        const u nt64 values_length = values.getD ms().back();
 
-        auto indices_raw_length = indices.getRawLength();
+        auto  nd ces_raw_length =  nd ces.getRawLength();
         auto values_raw_length = values.getRawLength();
 
-        auto indices_data_ptr = reinterpret_cast<const uint8 *>(indices.getData<void>());
-        auto values_data_ptr = reinterpret_cast<const uint8 *>(values.getData<void>());
+        auto  nd ces_data_ptr = re nterpret_cast<const u nt8 *>( nd ces.getData<vo d>());
+        auto values_data_ptr = re nterpret_cast<const u nt8 *>(values.getData<vo d>());
 
-        indices_raw_lengths.push_back(indices_raw_length);
+         nd ces_raw_lengths.push_back( nd ces_raw_length);
         values_raw_lengths.push_back(values_raw_length);
 
-        indices_data_ptrs.push_back(indices_data_ptr);
+         nd ces_data_ptrs.push_back( nd ces_data_ptr);
         values_data_ptrs.push_back(values_data_ptr);
 
-        total_indices_length += indices_raw_length;
+        total_ nd ces_length +=  nd ces_raw_length;
         total_values_length += values_raw_length;
 
-        if (shape.size() == 1) {
-          shape.reserve(dense_shape.size() + 1);
-          shape.insert(shape.end(), dense_shape.begin(), dense_shape.end());
+         f (shape.s ze() == 1) {
+          shape.reserve(dense_shape.s ze() + 1);
+          shape. nsert(shape.end(), dense_shape.beg n(), dense_shape.end());
           type = values_type;
-          is_big_endian = values_is_big_endian;
+           s_b g_end an = values_ s_b g_end an;
         }
 
-        // Assert shape of all tensors is the same.
-        if (!std::equal(shape.begin() + 1, shape.end(), dense_shape.begin())) {
-          throw std::runtime_error("dense_shape of sparse tensors doesn't match for feature_id: "
-                                   + std::to_string(feature_id));
+        // Assert shape of all tensors  s t  sa .
+         f (!std::equal(shape.beg n() + 1, shape.end(), dense_shape.beg n())) {
+          throw std::runt  _error("dense_shape of sparse tensors doesn't match for feature_ d: "
+                                   + std::to_str ng(feature_ d));
         }
-        // Assert type of all values tensor is the same.
-        if (type != values_type || is_big_endian != values_is_big_endian) {
-          throw std::runtime_error("The type of values do not match for feature_id: "
-                                   + std::to_string(feature_id));
+        // Assert type of all values tensor  s t  sa .
+         f (type != values_type ||  s_b g_end an != values_ s_b g_end an) {
+          throw std::runt  _error("T  type of values do not match for feature_ d: "
+                                   + std::to_str ng(feature_ d));
         }
-        // Assert indices tensor is big endian and of type INT64.
-        if (indices_type != TWML_TYPE_INT64 || !indices_is_big_endian) {
-          throw std::runtime_error("Unexpected type for index tensor for feature_id: "
-                                   + std::to_string(feature_id));
-        }
-
-        if (indices_length != values_length) {
-          throw std::runtime_error("The length of values and indices does not match for : "
-                                   + std::to_string(feature_id));
+        // Assert  nd ces tensor  s b g end an and of type  NT64.
+         f ( nd ces_type != TWML_TYPE_ NT64 || ! nd ces_ s_b g_end an) {
+          throw std::runt  _error("Unexpected type for  ndex tensor for feature_ d: "
+                                   + std::to_str ng(feature_ d));
         }
 
-        lengths.push_back(indices_length);
-        total_length += indices_length;
+         f ( nd ces_length != values_length) {
+          throw std::runt  _error("T  length of values and  nd ces does not match for : "
+                                   + std::to_str ng(feature_ d));
+        }
+
+        lengths.push_back( nd ces_length);
+        total_length +=  nd ces_length;
       }
 
-      Tensor* ids_tensor = nullptr;
-      TensorShape ids_shape = {static_cast<int64>(total_length)};
-      OP_REQUIRES_OK(context, context->allocate_output(0, ids_shape, &ids_tensor));
-      auto ids_tensor_flat = ids_tensor->flat<int64>();
-      auto ids_tensor_data = ids_tensor_flat.data();
+      Tensor*  ds_tensor = nullptr;
+      TensorShape  ds_shape = {stat c_cast< nt64>(total_length)};
+      OP_REQU RES_OK(context, context->allocate_output(0,  ds_shape, & ds_tensor));
+      auto  ds_tensor_flat =  ds_tensor->flat< nt64>();
+      auto  ds_tensor_data =  ds_tensor_flat.data();
 
-      TensorShape raw_shape = {static_cast<int64>(1)};
+      TensorShape raw_shape = {stat c_cast< nt64>(1)};
 
-      Tensor* indices_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, raw_shape, &indices_tensor));
-      auto indices_tensor_flat = indices_tensor->flat<string>();
-      auto indices_tensor_string = indices_tensor_flat.data();
-      indices_tensor_string->resize(total_indices_length);
-      auto indices_tensor_iter = indices_tensor_string->begin();
+      Tensor*  nd ces_tensor = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(1, raw_shape, & nd ces_tensor));
+      auto  nd ces_tensor_flat =  nd ces_tensor->flat<str ng>();
+      auto  nd ces_tensor_str ng =  nd ces_tensor_flat.data();
+       nd ces_tensor_str ng->res ze(total_ nd ces_length);
+      auto  nd ces_tensor_ er =  nd ces_tensor_str ng->beg n();
 
       Tensor* values_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, raw_shape, &values_tensor));
-      auto values_tensor_flat = values_tensor->flat<string>();
-      auto values_tensor_string = values_tensor_flat.data();
-      values_tensor_string->resize(total_values_length);
-      auto values_tensor_iter = values_tensor_string->begin();
+      OP_REQU RES_OK(context, context->allocate_output(2, raw_shape, &values_tensor));
+      auto values_tensor_flat = values_tensor->flat<str ng>();
+      auto values_tensor_str ng = values_tensor_flat.data();
+      values_tensor_str ng->res ze(total_values_length);
+      auto values_tensor_ er = values_tensor_str ng->beg n();
 
-      for (int64 i = 0; i < batch_size; i++) {
-        // Fill in the data for id == i for all values in the current input.
-        std::fill(ids_tensor_data, ids_tensor_data + lengths[i], i);
-        ids_tensor_data += lengths[i];
+      for ( nt64   = 0;   < batch_s ze;  ++) {
+        // F ll  n t  data for  d ==   for all values  n t  current  nput.
+        std::f ll( ds_tensor_data,  ds_tensor_data + lengths[ ],  );
+         ds_tensor_data += lengths[ ];
 
-        indices_tensor_iter = std::copy(indices_data_ptrs[i],
-                                        indices_data_ptrs[i] + indices_raw_lengths[i],
-                                        indices_tensor_iter);
+         nd ces_tensor_ er = std::copy( nd ces_data_ptrs[ ],
+                                         nd ces_data_ptrs[ ] +  nd ces_raw_lengths[ ],
+                                         nd ces_tensor_ er);
 
-        values_tensor_iter = std::copy(values_data_ptrs[i],
-                                        values_data_ptrs[i] + values_raw_lengths[i],
-                                        values_tensor_iter);
+        values_tensor_ er = std::copy(values_data_ptrs[ ],
+                                        values_data_ptrs[ ] + values_raw_lengths[ ],
+                                        values_tensor_ er);
       }
 
       Tensor *shape_tensor = nullptr;
-      TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape_shape, &shape_tensor));
-      auto shape_flat = shape_tensor->flat<int64>();
-      for (int i = 0; i < static_cast<int>(shape.size()); i++) {
-        shape_flat(i) = shape[i];
+      TensorShape shape_shape = {stat c_cast< nt64>(shape.s ze())};
+      OP_REQU RES_OK(context, context->allocate_output(3, shape_shape, &shape_tensor));
+      auto shape_flat = shape_tensor->flat< nt64>();
+      for ( nt   = 0;   < stat c_cast< nt>(shape.s ze());  ++) {
+        shape_flat( ) = shape[ ];
       }
 
       Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(4, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      OP_REQU RES_OK(context, context->allocate_output(4, {}, &type_tensor));
+      type_tensor->scalar<str ng>()() = twml::getTypeNa (type);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(5, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      Tensor* end an_tensor = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(5, {}, &end an_tensor));
+      end an_tensor->scalar<u nt8>()() =  s_b g_end an;
+    } catch(const std::except on &err) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(err.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetSparseTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetSparseTensorsOp<DataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetSparseTensorsFromDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetSparseTensorsOp<DataRecordRes ce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetSparseTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetSparseTensorsOp<HashedDataRecordResource>);
+REG STER_KERNEL_BU LDER(
+  Na ("GetSparseTensorsFromHas dDataRecord")
+  .Dev ce(DEV CE_CPU),
+  GetSparseTensorsOp<Has dDataRecordRes ce>);

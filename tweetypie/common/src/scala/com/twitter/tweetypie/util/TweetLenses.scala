@@ -1,506 +1,506 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
-import com.twitter.dataproducts.enrichments.thriftscala.ProfileGeoEnrichment
-import com.twitter.expandodo.thriftscala._
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.servo.data.Lens
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.unmentions.thriftscala.UnmentionData
+ mport com.tw ter.dataproducts.enr ch nts.thr ftscala.Prof leGeoEnr ch nt
+ mport com.tw ter.expandodo.thr ftscala._
+ mport com.tw ter. d aserv ces.commons.thr ftscala. d aKey
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala._
+ mport com.tw ter.servo.data.Lens
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.un nt ons.thr ftscala.Un nt onData
 
-object TweetLenses {
-  import Lens.checkEq
+object T etLenses {
+   mport Lens.c ckEq
 
-  def requireSome[A, B](l: Lens[A, Option[B]]): Lens[A, B] =
-    checkEq[A, B](
+  def requ reSo [A, B](l: Lens[A, Opt on[B]]): Lens[A, B] =
+    c ckEq[A, B](
       a => l.get(a).get,
-      (a, b) => l.set(a, Some(b))
+      (a, b) => l.set(a, So (b))
     )
 
-  def tweetLens[A](get: Tweet => A, set: (Tweet, A) => Tweet): Lens[Tweet, A] =
-    checkEq[Tweet, A](get, set)
+  def t etLens[A](get: T et => A, set: (T et, A) => T et): Lens[T et, A] =
+    c ckEq[T et, A](get, set)
 
-  val id: Lens[Tweet, TweetId] =
-    tweetLens[TweetId](_.id, (t, id) => t.copy(id = id))
+  val  d: Lens[T et, T et d] =
+    t etLens[T et d](_. d, (t,  d) => t.copy( d =  d))
 
-  val coreData: Lens[Tweet, Option[TweetCoreData]] =
-    tweetLens[Option[TweetCoreData]](_.coreData, (t, coreData) => t.copy(coreData = coreData))
+  val coreData: Lens[T et, Opt on[T etCoreData]] =
+    t etLens[Opt on[T etCoreData]](_.coreData, (t, coreData) => t.copy(coreData = coreData))
 
-  val requiredCoreData: Lens[Tweet, TweetCoreData] =
-    requireSome(coreData)
+  val requ redCoreData: Lens[T et, T etCoreData] =
+    requ reSo (coreData)
 
-  val optUrls: Lens[Tweet, Option[Seq[UrlEntity]]] =
-    tweetLens[Option[Seq[UrlEntity]]](_.urls, (t, urls) => t.copy(urls = urls))
+  val optUrls: Lens[T et, Opt on[Seq[UrlEnt y]]] =
+    t etLens[Opt on[Seq[UrlEnt y]]](_.urls, (t, urls) => t.copy(urls = urls))
 
-  val urls: Lens[Tweet, Seq[UrlEntity]] =
-    tweetLens[Seq[UrlEntity]](_.urls.toSeq.flatten, (t, urls) => t.copy(urls = Some(urls)))
+  val urls: Lens[T et, Seq[UrlEnt y]] =
+    t etLens[Seq[UrlEnt y]](_.urls.toSeq.flatten, (t, urls) => t.copy(urls = So (urls)))
 
-  val optMentions: Lens[Tweet, Option[Seq[MentionEntity]]] =
-    tweetLens[Option[Seq[MentionEntity]]](_.mentions, (t, v) => t.copy(mentions = v))
+  val opt nt ons: Lens[T et, Opt on[Seq[ nt onEnt y]]] =
+    t etLens[Opt on[Seq[ nt onEnt y]]](_. nt ons, (t, v) => t.copy( nt ons = v))
 
-  val mentions: Lens[Tweet, Seq[MentionEntity]] =
-    tweetLens[Seq[MentionEntity]](_.mentions.toSeq.flatten, (t, v) => t.copy(mentions = Some(v)))
+  val  nt ons: Lens[T et, Seq[ nt onEnt y]] =
+    t etLens[Seq[ nt onEnt y]](_. nt ons.toSeq.flatten, (t, v) => t.copy( nt ons = So (v)))
 
-  val unmentionData: Lens[Tweet, Option[UnmentionData]] =
-    tweetLens[Option[UnmentionData]](_.unmentionData, (t, v) => t.copy(unmentionData = v))
+  val un nt onData: Lens[T et, Opt on[Un nt onData]] =
+    t etLens[Opt on[Un nt onData]](_.un nt onData, (t, v) => t.copy(un nt onData = v))
 
-  val optHashtags: Lens[Tweet, Option[Seq[HashtagEntity]]] =
-    tweetLens[Option[Seq[HashtagEntity]]](_.hashtags, (t, v) => t.copy(hashtags = v))
+  val optHashtags: Lens[T et, Opt on[Seq[HashtagEnt y]]] =
+    t etLens[Opt on[Seq[HashtagEnt y]]](_.hashtags, (t, v) => t.copy(hashtags = v))
 
-  val hashtags: Lens[Tweet, Seq[HashtagEntity]] =
-    tweetLens[Seq[HashtagEntity]](_.hashtags.toSeq.flatten, (t, v) => t.copy(hashtags = Some(v)))
+  val hashtags: Lens[T et, Seq[HashtagEnt y]] =
+    t etLens[Seq[HashtagEnt y]](_.hashtags.toSeq.flatten, (t, v) => t.copy(hashtags = So (v)))
 
-  val optCashtags: Lens[Tweet, Option[Seq[CashtagEntity]]] =
-    tweetLens[Option[Seq[CashtagEntity]]](_.cashtags, (t, v) => t.copy(cashtags = v))
+  val optCashtags: Lens[T et, Opt on[Seq[CashtagEnt y]]] =
+    t etLens[Opt on[Seq[CashtagEnt y]]](_.cashtags, (t, v) => t.copy(cashtags = v))
 
-  val cashtags: Lens[Tweet, Seq[CashtagEntity]] =
-    tweetLens[Seq[CashtagEntity]](_.cashtags.toSeq.flatten, (t, v) => t.copy(cashtags = Some(v)))
+  val cashtags: Lens[T et, Seq[CashtagEnt y]] =
+    t etLens[Seq[CashtagEnt y]](_.cashtags.toSeq.flatten, (t, v) => t.copy(cashtags = So (v)))
 
-  val optMedia: Lens[Tweet, Option[Seq[MediaEntity]]] =
-    tweetLens[Option[Seq[MediaEntity]]](_.media, (t, v) => t.copy(media = v))
+  val opt d a: Lens[T et, Opt on[Seq[ d aEnt y]]] =
+    t etLens[Opt on[Seq[ d aEnt y]]](_. d a, (t, v) => t.copy( d a = v))
 
-  val media: Lens[Tweet, Seq[MediaEntity]] =
-    tweetLens[Seq[MediaEntity]](_.media.toSeq.flatten, (t, v) => t.copy(media = Some(v)))
+  val  d a: Lens[T et, Seq[ d aEnt y]] =
+    t etLens[Seq[ d aEnt y]](_. d a.toSeq.flatten, (t, v) => t.copy( d a = So (v)))
 
-  val mediaKeys: Lens[Tweet, Seq[MediaKey]] =
-    tweetLens[Seq[MediaKey]](
-      _.mediaKeys.toSeq.flatten,
+  val  d aKeys: Lens[T et, Seq[ d aKey]] =
+    t etLens[Seq[ d aKey]](
+      _. d aKeys.toSeq.flatten,
       {
-        case (t, v) => t.copy(mediaKeys = Some(v))
+        case (t, v) => t.copy( d aKeys = So (v))
       })
 
-  val place: Lens[Tweet, Option[Place]] =
-    tweetLens[Option[Place]](
+  val place: Lens[T et, Opt on[Place]] =
+    t etLens[Opt on[Place]](
       _.place,
       {
         case (t, v) => t.copy(place = v)
       })
 
-  val quotedTweet: Lens[Tweet, Option[QuotedTweet]] =
-    tweetLens[Option[QuotedTweet]](
-      _.quotedTweet,
+  val quotedT et: Lens[T et, Opt on[QuotedT et]] =
+    t etLens[Opt on[QuotedT et]](
+      _.quotedT et,
       {
-        case (t, v) => t.copy(quotedTweet = v)
+        case (t, v) => t.copy(quotedT et = v)
       })
 
-  val selfThreadMetadata: Lens[Tweet, Option[SelfThreadMetadata]] =
-    tweetLens[Option[SelfThreadMetadata]](
-      _.selfThreadMetadata,
+  val selfThread tadata: Lens[T et, Opt on[SelfThread tadata]] =
+    t etLens[Opt on[SelfThread tadata]](
+      _.selfThread tadata,
       {
-        case (t, v) => t.copy(selfThreadMetadata = v)
+        case (t, v) => t.copy(selfThread tadata = v)
       })
 
-  val composerSource: Lens[Tweet, Option[ComposerSource]] =
-    tweetLens[Option[ComposerSource]](
-      _.composerSource,
+  val composerS ce: Lens[T et, Opt on[ComposerS ce]] =
+    t etLens[Opt on[ComposerS ce]](
+      _.composerS ce,
       {
-        case (t, v) => t.copy(composerSource = v)
+        case (t, v) => t.copy(composerS ce = v)
       })
 
-  val deviceSource: Lens[Tweet, Option[DeviceSource]] =
-    tweetLens[Option[DeviceSource]](
-      _.deviceSource,
+  val dev ceS ce: Lens[T et, Opt on[Dev ceS ce]] =
+    t etLens[Opt on[Dev ceS ce]](
+      _.dev ceS ce,
       {
-        case (t, v) => t.copy(deviceSource = v)
+        case (t, v) => t.copy(dev ceS ce = v)
       })
 
-  val perspective: Lens[Tweet, Option[StatusPerspective]] =
-    tweetLens[Option[StatusPerspective]](
-      _.perspective,
+  val perspect ve: Lens[T et, Opt on[StatusPerspect ve]] =
+    t etLens[Opt on[StatusPerspect ve]](
+      _.perspect ve,
       {
-        case (t, v) => t.copy(perspective = v)
+        case (t, v) => t.copy(perspect ve = v)
       })
 
-  val cards: Lens[Tweet, Option[Seq[Card]]] =
-    tweetLens[Option[Seq[Card]]](
+  val cards: Lens[T et, Opt on[Seq[Card]]] =
+    t etLens[Opt on[Seq[Card]]](
       _.cards,
       {
         case (t, v) => t.copy(cards = v)
       })
 
-  val card2: Lens[Tweet, Option[Card2]] =
-    tweetLens[Option[Card2]](
+  val card2: Lens[T et, Opt on[Card2]] =
+    t etLens[Opt on[Card2]](
       _.card2,
       {
         case (t, v) => t.copy(card2 = v)
       })
 
-  val cardReference: Lens[Tweet, Option[CardReference]] =
-    tweetLens[Option[CardReference]](
+  val cardReference: Lens[T et, Opt on[CardReference]] =
+    t etLens[Opt on[CardReference]](
       _.cardReference,
       {
         case (t, v) => t.copy(cardReference = v)
       })
 
-  val spamLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
+  val spamLabel: Lens[T et, Opt on[SafetyLabel]] =
+    t etLens[Opt on[SafetyLabel]](
       _.spamLabel,
       {
         case (t, v) => t.copy(spamLabel = v)
       })
 
-  val lowQualityLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
-      _.lowQualityLabel,
+  val lowQual yLabel: Lens[T et, Opt on[SafetyLabel]] =
+    t etLens[Opt on[SafetyLabel]](
+      _.lowQual yLabel,
       {
-        case (t, v) => t.copy(lowQualityLabel = v)
+        case (t, v) => t.copy(lowQual yLabel = v)
       })
 
-  val nsfwHighPrecisionLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
-      _.nsfwHighPrecisionLabel,
+  val nsfwH ghPrec s onLabel: Lens[T et, Opt on[SafetyLabel]] =
+    t etLens[Opt on[SafetyLabel]](
+      _.nsfwH ghPrec s onLabel,
       {
-        case (t, v) => t.copy(nsfwHighPrecisionLabel = v)
+        case (t, v) => t.copy(nsfwH ghPrec s onLabel = v)
       })
 
-  val bounceLabel: Lens[Tweet, Option[SafetyLabel]] =
-    tweetLens[Option[SafetyLabel]](
+  val bounceLabel: Lens[T et, Opt on[SafetyLabel]] =
+    t etLens[Opt on[SafetyLabel]](
       _.bounceLabel,
       {
         case (t, v) => t.copy(bounceLabel = v)
       })
 
-  val takedownCountryCodes: Lens[Tweet, Option[Seq[String]]] =
-    tweetLens[Option[Seq[String]]](
+  val takedownCountryCodes: Lens[T et, Opt on[Seq[Str ng]]] =
+    t etLens[Opt on[Seq[Str ng]]](
       _.takedownCountryCodes,
       {
         case (t, v) => t.copy(takedownCountryCodes = v)
       })
 
-  val takedownReasons: Lens[Tweet, Option[Seq[TakedownReason]]] =
-    tweetLens[Option[Seq[TakedownReason]]](
+  val takedownReasons: Lens[T et, Opt on[Seq[TakedownReason]]] =
+    t etLens[Opt on[Seq[TakedownReason]]](
       _.takedownReasons,
       {
         case (t, v) => t.copy(takedownReasons = v)
       })
 
-  val contributor: Lens[Tweet, Option[Contributor]] =
-    tweetLens[Option[Contributor]](
-      _.contributor,
+  val contr butor: Lens[T et, Opt on[Contr butor]] =
+    t etLens[Opt on[Contr butor]](
+      _.contr butor,
       {
-        case (t, v) => t.copy(contributor = v)
+        case (t, v) => t.copy(contr butor = v)
       })
 
-  val mediaTags: Lens[Tweet, Option[TweetMediaTags]] =
-    tweetLens[Option[TweetMediaTags]](
-      _.mediaTags,
+  val  d aTags: Lens[T et, Opt on[T et d aTags]] =
+    t etLens[Opt on[T et d aTags]](
+      _. d aTags,
       {
-        case (t, v) => t.copy(mediaTags = v)
+        case (t, v) => t.copy( d aTags = v)
       })
 
-  val mediaTagMap: Lens[Tweet, Map[MediaId, Seq[MediaTag]]] =
-    tweetLens[Map[MediaId, Seq[MediaTag]]](
-      _.mediaTags.map { case TweetMediaTags(tagMap) => tagMap.toMap }.getOrElse(Map.empty),
+  val  d aTagMap: Lens[T et, Map[ d a d, Seq[ d aTag]]] =
+    t etLens[Map[ d a d, Seq[ d aTag]]](
+      _. d aTags.map { case T et d aTags(tagMap) => tagMap.toMap }.getOrElse(Map.empty),
       (t, v) => {
-        val cleanMap = v.filter { case (_, tags) => tags.nonEmpty }
-        t.copy(mediaTags = if (cleanMap.nonEmpty) Some(TweetMediaTags(cleanMap)) else None)
+        val cleanMap = v.f lter { case (_, tags) => tags.nonEmpty }
+        t.copy( d aTags =  f (cleanMap.nonEmpty) So (T et d aTags(cleanMap)) else None)
       }
     )
 
-  val escherbirdEntityAnnotations: Lens[Tweet, Option[EscherbirdEntityAnnotations]] =
-    tweetLens[Option[EscherbirdEntityAnnotations]](
-      _.escherbirdEntityAnnotations,
+  val esc rb rdEnt yAnnotat ons: Lens[T et, Opt on[Esc rb rdEnt yAnnotat ons]] =
+    t etLens[Opt on[Esc rb rdEnt yAnnotat ons]](
+      _.esc rb rdEnt yAnnotat ons,
       {
-        case (t, v) => t.copy(escherbirdEntityAnnotations = v)
+        case (t, v) => t.copy(esc rb rdEnt yAnnotat ons = v)
       })
 
-  val communities: Lens[Tweet, Option[Communities]] =
-    tweetLens[Option[Communities]](
-      _.communities,
+  val commun  es: Lens[T et, Opt on[Commun  es]] =
+    t etLens[Opt on[Commun  es]](
+      _.commun  es,
       {
-        case (t, v) => t.copy(communities = v)
+        case (t, v) => t.copy(commun  es = v)
       })
 
-  val tweetypieOnlyTakedownCountryCodes: Lens[Tweet, Option[Seq[String]]] =
-    tweetLens[Option[Seq[String]]](
-      _.tweetypieOnlyTakedownCountryCodes,
+  val t etyp eOnlyTakedownCountryCodes: Lens[T et, Opt on[Seq[Str ng]]] =
+    t etLens[Opt on[Seq[Str ng]]](
+      _.t etyp eOnlyTakedownCountryCodes,
       {
-        case (t, v) => t.copy(tweetypieOnlyTakedownCountryCodes = v)
+        case (t, v) => t.copy(t etyp eOnlyTakedownCountryCodes = v)
       })
 
-  val tweetypieOnlyTakedownReasons: Lens[Tweet, Option[Seq[TakedownReason]]] =
-    tweetLens[Option[Seq[TakedownReason]]](
-      _.tweetypieOnlyTakedownReasons,
+  val t etyp eOnlyTakedownReasons: Lens[T et, Opt on[Seq[TakedownReason]]] =
+    t etLens[Opt on[Seq[TakedownReason]]](
+      _.t etyp eOnlyTakedownReasons,
       {
-        case (t, v) => t.copy(tweetypieOnlyTakedownReasons = v)
+        case (t, v) => t.copy(t etyp eOnlyTakedownReasons = v)
       })
 
-  val profileGeo: Lens[Tweet, Option[ProfileGeoEnrichment]] =
-    tweetLens[Option[ProfileGeoEnrichment]](
-      _.profileGeoEnrichment,
-      (t, v) => t.copy(profileGeoEnrichment = v)
+  val prof leGeo: Lens[T et, Opt on[Prof leGeoEnr ch nt]] =
+    t etLens[Opt on[Prof leGeoEnr ch nt]](
+      _.prof leGeoEnr ch nt,
+      (t, v) => t.copy(prof leGeoEnr ch nt = v)
     )
 
-  val visibleTextRange: Lens[Tweet, Option[TextRange]] =
-    tweetLens[Option[TextRange]](
-      _.visibleTextRange,
+  val v s bleTextRange: Lens[T et, Opt on[TextRange]] =
+    t etLens[Opt on[TextRange]](
+      _.v s bleTextRange,
       {
-        case (t, v) => t.copy(visibleTextRange = v)
+        case (t, v) => t.copy(v s bleTextRange = v)
       })
 
-  val selfPermalink: Lens[Tweet, Option[ShortenedUrl]] =
-    tweetLens[Option[ShortenedUrl]](
-      _.selfPermalink,
+  val selfPermal nk: Lens[T et, Opt on[ShortenedUrl]] =
+    t etLens[Opt on[ShortenedUrl]](
+      _.selfPermal nk,
       {
-        case (t, v) => t.copy(selfPermalink = v)
+        case (t, v) => t.copy(selfPermal nk = v)
       })
 
-  val extendedTweetMetadata: Lens[Tweet, Option[ExtendedTweetMetadata]] =
-    tweetLens[Option[ExtendedTweetMetadata]](
-      _.extendedTweetMetadata,
+  val extendedT et tadata: Lens[T et, Opt on[ExtendedT et tadata]] =
+    t etLens[Opt on[ExtendedT et tadata]](
+      _.extendedT et tadata,
       {
-        case (t, v) => t.copy(extendedTweetMetadata = v)
+        case (t, v) => t.copy(extendedT et tadata = v)
       })
 
-  object TweetCoreData {
-    val userId: Lens[TweetCoreData, UserId] = checkEq[TweetCoreData, UserId](
-      _.userId,
+  object T etCoreData {
+    val user d: Lens[T etCoreData, User d] = c ckEq[T etCoreData, User d](
+      _.user d,
       { (c, v) =>
-        // Pleases the compiler: https://github.com/scala/bug/issues/9171
-        val userId = v
-        c.copy(userId = userId)
+        // Pleases t  comp ler: https://g hub.com/scala/bug/ ssues/9171
+        val user d = v
+        c.copy(user d = user d)
       })
-    val text: Lens[TweetCoreData, String] = checkEq[TweetCoreData, String](
+    val text: Lens[T etCoreData, Str ng] = c ckEq[T etCoreData, Str ng](
       _.text,
       { (c, v) =>
-        // Pleases the compiler: https://github.com/scala/bug/issues/9171
+        // Pleases t  comp ler: https://g hub.com/scala/bug/ ssues/9171
         val text = v
         c.copy(text = text)
       })
-    val createdAt: Lens[TweetCoreData, TweetId] =
-      checkEq[TweetCoreData, Long](_.createdAtSecs, (c, v) => c.copy(createdAtSecs = v))
-    val createdVia: Lens[TweetCoreData, String] =
-      checkEq[TweetCoreData, String](
-        _.createdVia,
+    val createdAt: Lens[T etCoreData, T et d] =
+      c ckEq[T etCoreData, Long](_.createdAtSecs, (c, v) => c.copy(createdAtSecs = v))
+    val createdV a: Lens[T etCoreData, Str ng] =
+      c ckEq[T etCoreData, Str ng](
+        _.createdV a,
         {
-          case (c, v) => c.copy(createdVia = v)
+          case (c, v) => c.copy(createdV a = v)
         })
-    val hasTakedown: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
+    val hasTakedown: Lens[T etCoreData, Boolean] =
+      c ckEq[T etCoreData, Boolean](
         _.hasTakedown,
         {
           case (c, v) => c.copy(hasTakedown = v)
         })
-    val nullcast: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
+    val nullcast: Lens[T etCoreData, Boolean] =
+      c ckEq[T etCoreData, Boolean](
         _.nullcast,
         {
           case (c, v) => c.copy(nullcast = v)
         })
-    val nsfwUser: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
+    val nsfwUser: Lens[T etCoreData, Boolean] =
+      c ckEq[T etCoreData, Boolean](
         _.nsfwUser,
         {
           case (c, v) => c.copy(nsfwUser = v)
         })
-    val nsfwAdmin: Lens[TweetCoreData, Boolean] =
-      checkEq[TweetCoreData, Boolean](
-        _.nsfwAdmin,
+    val nsfwAdm n: Lens[T etCoreData, Boolean] =
+      c ckEq[T etCoreData, Boolean](
+        _.nsfwAdm n,
         {
-          case (c, v) => c.copy(nsfwAdmin = v)
+          case (c, v) => c.copy(nsfwAdm n = v)
         })
-    val reply: Lens[TweetCoreData, Option[Reply]] =
-      checkEq[TweetCoreData, Option[Reply]](
+    val reply: Lens[T etCoreData, Opt on[Reply]] =
+      c ckEq[T etCoreData, Opt on[Reply]](
         _.reply,
         {
           case (c, v) => c.copy(reply = v)
         })
-    val share: Lens[TweetCoreData, Option[Share]] =
-      checkEq[TweetCoreData, Option[Share]](
+    val share: Lens[T etCoreData, Opt on[Share]] =
+      c ckEq[T etCoreData, Opt on[Share]](
         _.share,
         {
           case (c, v) => c.copy(share = v)
         })
-    val narrowcast: Lens[TweetCoreData, Option[Narrowcast]] =
-      checkEq[TweetCoreData, Option[Narrowcast]](
+    val narrowcast: Lens[T etCoreData, Opt on[Narrowcast]] =
+      c ckEq[T etCoreData, Opt on[Narrowcast]](
         _.narrowcast,
         {
           case (c, v) => c.copy(narrowcast = v)
         })
-    val directedAtUser: Lens[TweetCoreData, Option[DirectedAtUser]] =
-      checkEq[TweetCoreData, Option[DirectedAtUser]](
-        _.directedAtUser,
+    val d rectedAtUser: Lens[T etCoreData, Opt on[D rectedAtUser]] =
+      c ckEq[T etCoreData, Opt on[D rectedAtUser]](
+        _.d rectedAtUser,
         {
-          case (c, v) => c.copy(directedAtUser = v)
+          case (c, v) => c.copy(d rectedAtUser = v)
         })
-    val conversationId: Lens[TweetCoreData, Option[ConversationId]] =
-      checkEq[TweetCoreData, Option[ConversationId]](
-        _.conversationId,
+    val conversat on d: Lens[T etCoreData, Opt on[Conversat on d]] =
+      c ckEq[T etCoreData, Opt on[Conversat on d]](
+        _.conversat on d,
         {
-          case (c, v) => c.copy(conversationId = v)
+          case (c, v) => c.copy(conversat on d = v)
         })
-    val placeId: Lens[TweetCoreData, Option[String]] =
-      checkEq[TweetCoreData, Option[String]](
-        _.placeId,
+    val place d: Lens[T etCoreData, Opt on[Str ng]] =
+      c ckEq[T etCoreData, Opt on[Str ng]](
+        _.place d,
         {
-          case (c, v) => c.copy(placeId = v)
+          case (c, v) => c.copy(place d = v)
         })
-    val geoCoordinates: Lens[TweetCoreData, Option[GeoCoordinates]] =
-      checkEq[TweetCoreData, Option[GeoCoordinates]](
-        _.coordinates,
-        (c, v) => c.copy(coordinates = v)
+    val geoCoord nates: Lens[T etCoreData, Opt on[GeoCoord nates]] =
+      c ckEq[T etCoreData, Opt on[GeoCoord nates]](
+        _.coord nates,
+        (c, v) => c.copy(coord nates = v)
       )
-    val trackingId: Lens[TweetCoreData, Option[TweetId]] =
-      checkEq[TweetCoreData, Option[Long]](
-        _.trackingId,
+    val track ng d: Lens[T etCoreData, Opt on[T et d]] =
+      c ckEq[T etCoreData, Opt on[Long]](
+        _.track ng d,
         {
-          case (c, v) => c.copy(trackingId = v)
+          case (c, v) => c.copy(track ng d = v)
         })
-    val hasMedia: Lens[TweetCoreData, Option[Boolean]] =
-      checkEq[TweetCoreData, Option[Boolean]](
-        _.hasMedia,
+    val has d a: Lens[T etCoreData, Opt on[Boolean]] =
+      c ckEq[T etCoreData, Opt on[Boolean]](
+        _.has d a,
         {
-          case (c, v) => c.copy(hasMedia = v)
+          case (c, v) => c.copy(has d a = v)
         })
   }
 
-  val counts: Lens[Tweet, Option[StatusCounts]] =
-    tweetLens[Option[StatusCounts]](
+  val counts: Lens[T et, Opt on[StatusCounts]] =
+    t etLens[Opt on[StatusCounts]](
       _.counts,
       {
         case (t, v) => t.copy(counts = v)
       })
 
   object StatusCounts {
-    val retweetCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
-        _.retweetCount,
-        (c, retweetCount) => c.copy(retweetCount = retweetCount)
+    val ret etCount: Lens[StatusCounts, Opt on[T et d]] =
+      c ckEq[StatusCounts, Opt on[Long]](
+        _.ret etCount,
+        (c, ret etCount) => c.copy(ret etCount = ret etCount)
       )
 
-    val replyCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
+    val replyCount: Lens[StatusCounts, Opt on[T et d]] =
+      c ckEq[StatusCounts, Opt on[Long]](
         _.replyCount,
         (c, replyCount) => c.copy(replyCount = replyCount)
       )
 
-    val favoriteCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
-        _.favoriteCount,
+    val favor eCount: Lens[StatusCounts, Opt on[T et d]] =
+      c ckEq[StatusCounts, Opt on[Long]](
+        _.favor eCount,
         {
-          case (c, v) => c.copy(favoriteCount = v)
+          case (c, v) => c.copy(favor eCount = v)
         })
 
-    val quoteCount: Lens[StatusCounts, Option[TweetId]] =
-      checkEq[StatusCounts, Option[Long]](
+    val quoteCount: Lens[StatusCounts, Opt on[T et d]] =
+      c ckEq[StatusCounts, Opt on[Long]](
         _.quoteCount,
         {
           case (c, v) => c.copy(quoteCount = v)
         })
   }
 
-  val userId: Lens[Tweet, UserId] = requiredCoreData andThen TweetCoreData.userId
-  val text: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.text
-  val createdVia: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.createdVia
-  val createdAt: Lens[Tweet, ConversationId] = requiredCoreData andThen TweetCoreData.createdAt
-  val reply: Lens[Tweet, Option[Reply]] = requiredCoreData andThen TweetCoreData.reply
-  val share: Lens[Tweet, Option[Share]] = requiredCoreData andThen TweetCoreData.share
-  val narrowcast: Lens[Tweet, Option[Narrowcast]] =
-    requiredCoreData andThen TweetCoreData.narrowcast
-  val directedAtUser: Lens[Tweet, Option[DirectedAtUser]] =
-    requiredCoreData andThen TweetCoreData.directedAtUser
-  val conversationId: Lens[Tweet, Option[ConversationId]] =
-    requiredCoreData andThen TweetCoreData.conversationId
-  val placeId: Lens[Tweet, Option[String]] = requiredCoreData andThen TweetCoreData.placeId
-  val geoCoordinates: Lens[Tweet, Option[GeoCoordinates]] =
-    requiredCoreData andThen TweetCoreData.geoCoordinates
-  val hasTakedown: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.hasTakedown
-  val nsfwAdmin: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.nsfwAdmin
-  val nsfwUser: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.nsfwUser
-  val nullcast: Lens[Tweet, Boolean] = requiredCoreData andThen TweetCoreData.nullcast
-  val trackingId: Lens[Tweet, Option[ConversationId]] =
-    requiredCoreData andThen TweetCoreData.trackingId
-  val hasMedia: Lens[Tweet, Option[Boolean]] = requiredCoreData andThen TweetCoreData.hasMedia
+  val user d: Lens[T et, User d] = requ redCoreData andT n T etCoreData.user d
+  val text: Lens[T et, Str ng] = requ redCoreData andT n T etCoreData.text
+  val createdV a: Lens[T et, Str ng] = requ redCoreData andT n T etCoreData.createdV a
+  val createdAt: Lens[T et, Conversat on d] = requ redCoreData andT n T etCoreData.createdAt
+  val reply: Lens[T et, Opt on[Reply]] = requ redCoreData andT n T etCoreData.reply
+  val share: Lens[T et, Opt on[Share]] = requ redCoreData andT n T etCoreData.share
+  val narrowcast: Lens[T et, Opt on[Narrowcast]] =
+    requ redCoreData andT n T etCoreData.narrowcast
+  val d rectedAtUser: Lens[T et, Opt on[D rectedAtUser]] =
+    requ redCoreData andT n T etCoreData.d rectedAtUser
+  val conversat on d: Lens[T et, Opt on[Conversat on d]] =
+    requ redCoreData andT n T etCoreData.conversat on d
+  val place d: Lens[T et, Opt on[Str ng]] = requ redCoreData andT n T etCoreData.place d
+  val geoCoord nates: Lens[T et, Opt on[GeoCoord nates]] =
+    requ redCoreData andT n T etCoreData.geoCoord nates
+  val hasTakedown: Lens[T et, Boolean] = requ redCoreData andT n T etCoreData.hasTakedown
+  val nsfwAdm n: Lens[T et, Boolean] = requ redCoreData andT n T etCoreData.nsfwAdm n
+  val nsfwUser: Lens[T et, Boolean] = requ redCoreData andT n T etCoreData.nsfwUser
+  val nullcast: Lens[T et, Boolean] = requ redCoreData andT n T etCoreData.nullcast
+  val track ng d: Lens[T et, Opt on[Conversat on d]] =
+    requ redCoreData andT n T etCoreData.track ng d
+  val has d a: Lens[T et, Opt on[Boolean]] = requ redCoreData andT n T etCoreData.has d a
 
-  object CashtagEntity {
-    val indices: Lens[CashtagEntity, (Short, Short)] =
-      checkEq[CashtagEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  object CashtagEnt y {
+    val  nd ces: Lens[CashtagEnt y, (Short, Short)] =
+      c ckEq[CashtagEnt y, (Short, Short)](
+        t => (t.from ndex, t.to ndex),
+        (t, v) => t.copy(from ndex = v._1, to ndex = v._2)
       )
-    val text: Lens[CashtagEntity, String] =
-      checkEq[CashtagEntity, String](_.text, (t, text) => t.copy(text = text))
+    val text: Lens[CashtagEnt y, Str ng] =
+      c ckEq[CashtagEnt y, Str ng](_.text, (t, text) => t.copy(text = text))
   }
 
-  object HashtagEntity {
-    val indices: Lens[HashtagEntity, (Short, Short)] =
-      checkEq[HashtagEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  object HashtagEnt y {
+    val  nd ces: Lens[HashtagEnt y, (Short, Short)] =
+      c ckEq[HashtagEnt y, (Short, Short)](
+        t => (t.from ndex, t.to ndex),
+        (t, v) => t.copy(from ndex = v._1, to ndex = v._2)
       )
-    val text: Lens[HashtagEntity, String] =
-      checkEq[HashtagEntity, String](_.text, (t, text) => t.copy(text = text))
+    val text: Lens[HashtagEnt y, Str ng] =
+      c ckEq[HashtagEnt y, Str ng](_.text, (t, text) => t.copy(text = text))
   }
 
-  object MediaEntity {
-    val indices: Lens[MediaEntity, (Short, Short)] =
-      checkEq[MediaEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  object  d aEnt y {
+    val  nd ces: Lens[ d aEnt y, (Short, Short)] =
+      c ckEq[ d aEnt y, (Short, Short)](
+        t => (t.from ndex, t.to ndex),
+        (t, v) => t.copy(from ndex = v._1, to ndex = v._2)
       )
-    val mediaSizes: Lens[MediaEntity, collection.Set[MediaSize]] =
-      checkEq[MediaEntity, scala.collection.Set[MediaSize]](
-        _.sizes,
-        (m, sizes) => m.copy(sizes = sizes)
+    val  d aS zes: Lens[ d aEnt y, collect on.Set[ d aS ze]] =
+      c ckEq[ d aEnt y, scala.collect on.Set[ d aS ze]](
+        _.s zes,
+        (m, s zes) => m.copy(s zes = s zes)
       )
-    val url: Lens[MediaEntity, String] =
-      checkEq[MediaEntity, String](
+    val url: Lens[ d aEnt y, Str ng] =
+      c ckEq[ d aEnt y, Str ng](
         _.url,
         {
           case (t, v) => t.copy(url = v)
         })
-    val mediaInfo: Lens[MediaEntity, Option[MediaInfo]] =
-      checkEq[MediaEntity, Option[MediaInfo]](
-        _.mediaInfo,
+    val  d a nfo: Lens[ d aEnt y, Opt on[ d a nfo]] =
+      c ckEq[ d aEnt y, Opt on[ d a nfo]](
+        _. d a nfo,
         {
-          case (t, v) => t.copy(mediaInfo = v)
+          case (t, v) => t.copy( d a nfo = v)
         })
   }
 
-  object MentionEntity {
-    val indices: Lens[MentionEntity, (Short, Short)] =
-      checkEq[MentionEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  object  nt onEnt y {
+    val  nd ces: Lens[ nt onEnt y, (Short, Short)] =
+      c ckEq[ nt onEnt y, (Short, Short)](
+        t => (t.from ndex, t.to ndex),
+        (t, v) => t.copy(from ndex = v._1, to ndex = v._2)
       )
-    val screenName: Lens[MentionEntity, String] =
-      checkEq[MentionEntity, String](
-        _.screenName,
-        (t, screenName) => t.copy(screenName = screenName)
+    val screenNa : Lens[ nt onEnt y, Str ng] =
+      c ckEq[ nt onEnt y, Str ng](
+        _.screenNa ,
+        (t, screenNa ) => t.copy(screenNa  = screenNa )
       )
   }
 
-  object UrlEntity {
-    val indices: Lens[UrlEntity, (Short, Short)] =
-      checkEq[UrlEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+  object UrlEnt y {
+    val  nd ces: Lens[UrlEnt y, (Short, Short)] =
+      c ckEq[UrlEnt y, (Short, Short)](
+        t => (t.from ndex, t.to ndex),
+        (t, v) => t.copy(from ndex = v._1, to ndex = v._2)
       )
-    val url: Lens[UrlEntity, String] =
-      checkEq[UrlEntity, String](_.url, (t, url) => t.copy(url = url))
+    val url: Lens[UrlEnt y, Str ng] =
+      c ckEq[UrlEnt y, Str ng](_.url, (t, url) => t.copy(url = url))
   }
 
-  object Contributor {
-    val screenName: Lens[Contributor, Option[String]] =
-      checkEq[Contributor, Option[String]](
-        _.screenName,
-        (c, screenName) => c.copy(screenName = screenName)
+  object Contr butor {
+    val screenNa : Lens[Contr butor, Opt on[Str ng]] =
+      c ckEq[Contr butor, Opt on[Str ng]](
+        _.screenNa ,
+        (c, screenNa ) => c.copy(screenNa  = screenNa )
       )
   }
 
   object Reply {
-    val inReplyToScreenName: Lens[Reply, Option[String]] =
-      checkEq[Reply, Option[String]](
-        _.inReplyToScreenName,
-        (c, inReplyToScreenName) => c.copy(inReplyToScreenName = inReplyToScreenName)
+    val  nReplyToScreenNa : Lens[Reply, Opt on[Str ng]] =
+      c ckEq[Reply, Opt on[Str ng]](
+        _. nReplyToScreenNa ,
+        (c,  nReplyToScreenNa ) => c.copy( nReplyToScreenNa  =  nReplyToScreenNa )
       )
 
-    val inReplyToStatusId: Lens[Reply, Option[TweetId]] =
-      checkEq[Reply, Option[TweetId]](
-        _.inReplyToStatusId,
-        (c, inReplyToStatusId) => c.copy(inReplyToStatusId = inReplyToStatusId)
+    val  nReplyToStatus d: Lens[Reply, Opt on[T et d]] =
+      c ckEq[Reply, Opt on[T et d]](
+        _. nReplyToStatus d,
+        (c,  nReplyToStatus d) => c.copy( nReplyToStatus d =  nReplyToStatus d)
       )
   }
 }

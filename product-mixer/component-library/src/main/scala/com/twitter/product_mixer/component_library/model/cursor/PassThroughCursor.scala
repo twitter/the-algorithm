@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.tw ter.product_m xer.component_l brary.model.cursor
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.{
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.CursorType
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.{
   CursorType => UrtCursorType
 }
 
-case object PreviousCursorFeature
-    extends Feature[PipelineQuery with HasPipelineCursor[UrtPassThroughCursor], String]
+case object Prev ousCursorFeature
+    extends Feature[P pel neQuery w h HasP pel neCursor[UrtPassThroughCursor], Str ng]
 
 case object NextCursorFeature
-    extends Feature[PipelineQuery with HasPipelineCursor[UrtPassThroughCursor], String]
+    extends Feature[P pel neQuery w h HasP pel neCursor[UrtPassThroughCursor], Str ng]
 
 /**
- * Cursor model that may be used when we want to pass through the cursor value from and back to
- * a downstream as-is.
+ * Cursor model that may be used w n   want to pass through t  cursor value from and back to
+ * a downstream as- s.
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param cursorValue the pass through cursor
+ * @param  n  alSort ndex See [[UrtP pel neCursor]]
+ * @param cursorValue t  pass through cursor
  */
 case class UrtPassThroughCursor(
-  override val initialSortIndex: Long,
-  cursorValue: String,
-  cursorType: Option[UrtCursorType] = None)
-    extends UrtPipelineCursor
+  overr de val  n  alSort ndex: Long,
+  cursorValue: Str ng,
+  cursorType: Opt on[UrtCursorType] = None)
+    extends UrtP pel neCursor
 
 case class PassThroughCursor(
-  cursorValue: String,
-  cursorType: Option[CursorType] = None)
-    extends PipelineCursor
+  cursorValue: Str ng,
+  cursorType: Opt on[CursorType] = None)
+    extends P pel neCursor

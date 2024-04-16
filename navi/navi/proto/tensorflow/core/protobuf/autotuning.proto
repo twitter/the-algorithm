@@ -1,106 +1,106 @@
-// This file defines protos that store the results of autotuning various
-// operations.
+// T  f le def nes protos that store t  results of autotun ng var ous
+// operat ons.
 //
-// They are in proto format because we want to log them structured. They offer
-// tremendous statistical, testing, and debugging value.
+// T y are  n proto format because   want to log t m structured. T y offer
+// tre ndous stat st cal, test ng, and debugg ng value.
 syntax = "proto3";
 
 package tensorflow;
 
-import "google/protobuf/any.proto";
-import "google/protobuf/duration.proto";
-import "tensorflow/stream_executor/dnn.proto";
+ mport "google/protobuf/any.proto";
+ mport "google/protobuf/durat on.proto";
+ mport "tensorflow/stream_executor/dnn.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-message CudnnVersion {
-  int32 major = 1;
-  int32 minor = 2;
-  int32 patch = 3;
+ ssage CudnnVers on {
+   nt32 major = 1;
+   nt32 m nor = 2;
+   nt32 patch = 3;
 }
 
-message ComputeCapability {
-  int32 major = 1;
-  int32 minor = 2;
+ ssage ComputeCapab l y {
+   nt32 major = 1;
+   nt32 m nor = 2;
 }
 
-message AutotuneResult {
-  enum FailureKind {
+ ssage AutotuneResult {
+  enum Fa lureK nd {
     UNKNOWN = 0;
 
-    // Algorithm wrote memory outside its output buffers.
-    REDZONE_MODIFIED = 1;
+    // Algor hm wrote  mory outs de  s output buffers.
+    REDZONE_MOD F ED = 1;
 
-    // Algorithm gave a different result from a reference algorithm.
+    // Algor hm gave a d fferent result from a reference algor hm.
     WRONG_RESULT = 2;
 
-    // Algorithm was rejected for failing to run or for known bugs.
-    DISQUALIFIED = 3;
+    // Algor hm was rejected for fa l ng to run or for known bugs.
+    D SQUAL F ED = 3;
   }
 
-  message FailureResult {
-    FailureKind kind = 1;
-    string msg = 2;
+   ssage Fa lureResult {
+    Fa lureK nd k nd = 1;
+    str ng msg = 2;
 
-    // For failure_kind == WRONG_RESULT, this field indicates the reference
-    // configuration that we compared against.
+    // For fa lure_k nd == WRONG_RESULT, t  f eld  nd cates t  reference
+    // conf gurat on that   compared aga nst.
     //
-    // Note that the reference algorithm isn't always correct.  However,
-    // empirically it's more correct, as it's "algo 0", less fancy than the
+    // Note that t  reference algor hm  sn't always correct.  Ho ver,
+    // emp r cally  's more correct, as  's "algo 0", less fancy than t 
     // compared one.
     oneof key {
       ConvKey reference_conv = 11;
       GemmKey reference_gemm = 12;
       CudaConvPlanKey reference_cuda_conv_plan = 14;
-      stream_executor.dnn.AlgorithmProto reference_algorithm = 15;
+      stream_executor.dnn.Algor hmProto reference_algor hm = 15;
     }
 
-    int64 buffer_address = 13;
+     nt64 buffer_address = 13;
   }
 
-  // Legacy and unused in new data; superseded by AlgorithmProto.
-  message ConvKey {
-    int64 algorithm = 1;
+  // Legacy and unused  n new data; superseded by Algor hmProto.
+   ssage ConvKey {
+     nt64 algor hm = 1;
     bool tensor_ops_enabled = 2;
   }
 
-  message GemmKey {
-    int64 algorithm = 1;
+   ssage GemmKey {
+     nt64 algor hm = 1;
   }
 
-  // Legacy and unused in new data; superseded by AlgorithmProto.
-  message CudaConvPlanKey {
-    string exec_plan_id = 1;
+  // Legacy and unused  n new data; superseded by Algor hmProto.
+   ssage CudaConvPlanKey {
+    str ng exec_plan_ d = 1;
   }
 
-  int64 scratch_bytes = 8;
-  google.protobuf.Duration run_time = 9;
+   nt64 scratch_bytes = 8;
+  google.protobuf.Durat on run_t   = 9;
 
-  FailureResult failure = 7;
+  Fa lureResult fa lure = 7;
 
   oneof key {
     ConvKey conv = 5;
     GemmKey gemm = 6;
     CudaConvPlanKey cuda_conv_plan = 15;
-    stream_executor.dnn.AlgorithmProto algorithm = 16;
+    stream_executor.dnn.Algor hmProto algor hm = 16;
   }
 
-  // Next ID: 17
+  // Next  D: 17
 }
 
-message AutotuningLog {
-  google.protobuf.Any instr = 1;
+ ssage Autotun ngLog {
+  google.protobuf.Any  nstr = 1;
 
-  // Records all auto-tuning results per algorithm.
+  // Records all auto-tun ng results per algor hm.
   repeated AutotuneResult results = 2;
 
-  CudnnVersion cudnn_version = 3;
-  ComputeCapability compute_capability = 4;
+  CudnnVers on cudnn_vers on = 3;
+  ComputeCapab l y compute_capab l y = 4;
 
-  // stream_executor::DeviceDescription::pci_bus_id.
-  string device_pci_bus_id = 5;
+  // stream_executor::Dev ceDescr pt on::pc _bus_ d.
+  str ng dev ce_pc _bus_ d = 5;
 
-  string blas_version = 6;
+  str ng blas_vers on = 6;
 
-  // Next ID: 7
+  // Next  D: 7
 }

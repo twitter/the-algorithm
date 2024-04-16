@@ -1,65 +1,65 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * ConsumersBasedUserVideoGraph Params: there are multiple ways (e.g. FRS, RealGraphIn) to generate consumersSeedSet for ConsumersBasedUserTweetGraph
- * for now we allow flexibility in tuning UVG params for different consumersSeedSet generation algo by giving the param name {consumerSeedSetAlgo}{ParamName}
+ * Consu rsBasedUserV deoGraph Params: t re are mult ple ways (e.g. FRS, RealGraph n) to generate consu rsSeedSet for Consu rsBasedUserT etGraph
+ * for now   allow flex b l y  n tun ng UVG params for d fferent consu rsSeedSet generat on algo by g v ng t  param na  {consu rSeedSetAlgo}{ParamNa }
  */
 
-object ConsumersBasedUserVideoGraphParams {
+object Consu rsBasedUserV deoGraphParams {
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "consumers_based_user_video_graph_enable_source",
+        na  = "consu rs_based_user_v deo_graph_enable_s ce",
         default = false
       )
 
-  // UTG-RealGraphIN
-  object RealGraphInMinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "consumers_based_user_video_graph_real_graph_in_min_co_occurrence",
+  // UTG-RealGraph N
+  object RealGraph nM nCoOccurrenceParam
+      extends FSBoundedParam[ nt](
+        na  = "consu rs_based_user_v deo_graph_real_graph_ n_m n_co_occurrence",
         default = 3,
-        min = 0,
+        m n = 0,
         max = 500
       )
 
-  object RealGraphInMinScoreParam
+  object RealGraph nM nScoreParam
       extends FSBoundedParam[Double](
-        name = "consumers_based_user_video_graph_real_graph_in_min_score",
+        na  = "consu rs_based_user_v deo_graph_real_graph_ n_m n_score",
         default = 2.0,
-        min = 0.0,
+        m n = 0.0,
         max = 10.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    RealGraphInMinCoOccurrenceParam,
-    RealGraphInMinScoreParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
+    RealGraph nM nCoOccurrenceParam,
+    RealGraph nM nScoreParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val intOverrides =
-      FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(RealGraphInMinCoOccurrenceParam)
+    val  ntOverr des =
+      FeatureSw chOverr deUt l.getBounded ntFSOverr des(RealGraph nM nCoOccurrenceParam)
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(RealGraphInMinScoreParam)
+    val doubleOverr des =
+      FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(RealGraph nM nScoreParam)
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

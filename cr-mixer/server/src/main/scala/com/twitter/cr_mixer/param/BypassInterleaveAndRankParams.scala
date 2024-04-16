@@ -1,98 +1,98 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object BypassInterleaveAndRankParams {
-  object EnableTwhinCollabFilterBypassParam
+object Bypass nterleaveAndRankParams {
+  object EnableTwh nCollabF lterBypassParam
       extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_twhin_collab_filter",
+        na  = "bypass_ nterleave_and_rank_twh n_collab_f lter",
         default = false
       )
 
-  object EnableTwoTowerBypassParam
+  object EnableTwoTo rBypassParam
       extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_two_tower",
+        na  = "bypass_ nterleave_and_rank_two_to r",
         default = false
       )
 
-  object EnableConsumerBasedTwhinBypassParam
+  object EnableConsu rBasedTwh nBypassParam
       extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_consumer_based_twhin",
+        na  = "bypass_ nterleave_and_rank_consu r_based_twh n",
         default = false
       )
 
-  object EnableConsumerBasedWalsBypassParam
+  object EnableConsu rBasedWalsBypassParam
       extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_consumer_based_wals",
+        na  = "bypass_ nterleave_and_rank_consu r_based_wals",
         default = false
       )
 
-  object TwhinCollabFilterBypassPercentageParam
+  object Twh nCollabF lterBypassPercentageParam
       extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_twhin_collab_filter_percentage",
+        na  = "bypass_ nterleave_and_rank_twh n_collab_f lter_percentage",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object TwoTowerBypassPercentageParam
+  object TwoTo rBypassPercentageParam
       extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_two_tower_percentage",
+        na  = "bypass_ nterleave_and_rank_two_to r_percentage",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object ConsumerBasedTwhinBypassPercentageParam
+  object Consu rBasedTwh nBypassPercentageParam
       extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_consumer_based_twhin_percentage",
+        na  = "bypass_ nterleave_and_rank_consu r_based_twh n_percentage",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object ConsumerBasedWalsBypassPercentageParam
+  object Consu rBasedWalsBypassPercentageParam
       extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_consumer_based_wals_percentage",
+        na  = "bypass_ nterleave_and_rank_consu r_based_wals_percentage",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTwhinCollabFilterBypassParam,
-    EnableTwoTowerBypassParam,
-    EnableConsumerBasedTwhinBypassParam,
-    EnableConsumerBasedWalsBypassParam,
-    TwhinCollabFilterBypassPercentageParam,
-    TwoTowerBypassPercentageParam,
-    ConsumerBasedTwhinBypassPercentageParam,
-    ConsumerBasedWalsBypassPercentageParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableTwh nCollabF lterBypassParam,
+    EnableTwoTo rBypassParam,
+    EnableConsu rBasedTwh nBypassParam,
+    EnableConsu rBasedWalsBypassParam,
+    Twh nCollabF lterBypassPercentageParam,
+    TwoTo rBypassPercentageParam,
+    Consu rBasedTwh nBypassPercentageParam,
+    Consu rBasedWalsBypassPercentageParam,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTwhinCollabFilterBypassParam,
-      EnableTwoTowerBypassParam,
-      EnableConsumerBasedTwhinBypassParam,
-      EnableConsumerBasedWalsBypassParam,
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableTwh nCollabF lterBypassParam,
+      EnableTwoTo rBypassParam,
+      EnableConsu rBasedTwh nBypassParam,
+      EnableConsu rBasedWalsBypassParam,
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      TwhinCollabFilterBypassPercentageParam,
-      TwoTowerBypassPercentageParam,
-      ConsumerBasedTwhinBypassPercentageParam,
-      ConsumerBasedWalsBypassPercentageParam,
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+      Twh nCollabF lterBypassPercentageParam,
+      TwoTo rBypassPercentageParam,
+      Consu rBasedTwh nBypassPercentageParam,
+      Consu rBasedWalsBypassPercentageParam,
     )
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

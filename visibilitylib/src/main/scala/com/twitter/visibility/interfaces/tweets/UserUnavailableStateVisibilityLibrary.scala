@@ -1,69 +1,69 @@
-package com.twitter.visibility.interfaces.tweets
+package com.tw ter.v s b l y. nterfaces.t ets
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.UserUnavailableFeatures
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.generators.LocalizedInterstitialGenerator
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.UserUnavailableState
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.Tombstone
-import com.twitter.visibility.thriftscala.UserVisibilityResult
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.users.UserUnava lableFeatures
+ mport com.tw ter.v s b l y.common.act ons.converter.scala.DropReasonConverter
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.features.T et s nnerQuotedT et
+ mport com.tw ter.v s b l y.features.T et sRet et
+ mport com.tw ter.v s b l y.generators.Local zed nterst  alGenerator
+ mport com.tw ter.v s b l y.generators.TombstoneGenerator
+ mport com.tw ter.v s b l y.models.Content d.UserUnava lableState
+ mport com.tw ter.v s b l y.models.UserUnava lableStateEnum
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules. nterst  al
+ mport com.tw ter.v s b l y.rules.Reason
+ mport com.tw ter.v s b l y.rules.Tombstone
+ mport com.tw ter.v s b l y.thr ftscala.UserV s b l yResult
 
-object UserUnavailableStateVisibilityLibrary {
-  type Type = UserUnavailableStateVisibilityRequest => Stitch[VisibilityResult]
+object UserUnava lableStateV s b l yL brary {
+  type Type = UserUnava lableStateV s b l yRequest => St ch[V s b l yResult]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
+    v s b l yL brary: V s b l yL brary,
+    dec der: Dec der,
     tombstoneGenerator: TombstoneGenerator,
-    interstitialGenerator: LocalizedInterstitialGenerator
+     nterst  alGenerator: Local zed nterst  alGenerator
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver.scope("user_unavailable_vis_library")
-    val defaultDropScope = visibilityLibrary.statsReceiver.scope("default_drop")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver.scope("user_unava lable_v s_l brary")
+    val defaultDropScope = v s b l yL brary.statsRece ver.scope("default_drop")
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
-    val userUnavailableFeatures = UserUnavailableFeatures(libraryStatsReceiver)
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    val userUnava lableFeatures = UserUnava lableFeatures(l braryStatsRece ver)
+    val v s b l yDec derGates = V s b l yDec derGates(dec der)
 
-    { r: UserUnavailableStateVisibilityRequest =>
-      vfEngineCounter.incr()
-      val contentId = UserUnavailableState(r.tweetId)
+    { r: UserUnava lableStateV s b l yRequest =>
+      vfEng neCounter. ncr()
+      val content d = UserUnava lableState(r.t et d)
 
       val featureMap =
-        visibilityLibrary.featureMapBuilder(
+        v s b l yL brary.featureMapBu lder(
           Seq(
-            _.withConstantFeature(TweetIsInnerQuotedTweet, r.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, r.isRetweet),
-            userUnavailableFeatures.forState(r.userUnavailableState)
+            _.w hConstantFeature(T et s nnerQuotedT et, r. s nnerQuotedT et),
+            _.w hConstantFeature(T et sRet et, r. sRet et),
+            userUnava lableFeatures.forState(r.userUnava lableState)
           )
         )
 
-      val language = r.viewerContext.requestLanguageCode.getOrElse("en")
+      val language = r.v e rContext.requestLanguageCode.getOrElse("en")
 
-      val reason = visibilityLibrary
-        .runRuleEngine(
-          contentId,
+      val reason = v s b l yL brary
+        .runRuleEng ne(
+          content d,
           featureMap,
-          r.viewerContext,
+          r.v e rContext,
           r.safetyLevel
-        ).map(defaultToDrop(r.userUnavailableState, defaultDropScope))
+        ).map(defaultToDrop(r.userUnava lableState, defaultDropScope))
         .map(tombstoneGenerator(_, language))
-        .map(visibilityResult => {
-          if (visibilityDeciderGates.enableLocalizedInterstitialInUserStateLibrary()) {
-            interstitialGenerator(visibilityResult, language)
+        .map(v s b l yResult => {
+           f (v s b l yDec derGates.enableLocal zed nterst  al nUserStateL brary()) {
+             nterst  alGenerator(v s b l yResult, language)
           } else {
-            visibilityResult
+            v s b l yResult
           }
         })
 
@@ -72,67 +72,67 @@ object UserUnavailableStateVisibilityLibrary {
   }
 
   def defaultToDrop(
-    userUnavailableState: UserUnavailableStateEnum,
-    defaultDropScope: StatsReceiver
+    userUnava lableState: UserUnava lableStateEnum,
+    defaultDropScope: StatsRece ver
   )(
-    result: VisibilityResult
-  ): VisibilityResult =
-    result.verdict match {
+    result: V s b l yResult
+  ): V s b l yResult =
+    result.verd ct match {
       case _: Drop | _: Tombstone => result
 
-      case _: Interstitial => result
+      case _:  nterst  al => result
       case _ =>
-        result.copy(verdict =
-          Drop(userUnavailableStateToDropReason(userUnavailableState, defaultDropScope)))
+        result.copy(verd ct =
+          Drop(userUnava lableStateToDropReason(userUnava lableState, defaultDropScope)))
     }
 
-  private[this] def userUnavailableStateToDropReason(
-    userUnavailableState: UserUnavailableStateEnum,
-    stats: StatsReceiver
+  pr vate[t ] def userUnava lableStateToDropReason(
+    userUnava lableState: UserUnava lableStateEnum,
+    stats: StatsRece ver
   ): Reason =
-    userUnavailableState match {
-      case UserUnavailableStateEnum.Erased =>
-        stats.counter("erased").incr()
+    userUnava lableState match {
+      case UserUnava lableStateEnum.Erased =>
+        stats.counter("erased"). ncr()
         Reason.ErasedAuthor
-      case UserUnavailableStateEnum.Protected =>
-        stats.counter("protected").incr()
+      case UserUnava lableStateEnum.Protected =>
+        stats.counter("protected"). ncr()
         Reason.ProtectedAuthor
-      case UserUnavailableStateEnum.Offboarded =>
-        stats.counter("offboarded").incr()
+      case UserUnava lableStateEnum.Offboarded =>
+        stats.counter("offboarded"). ncr()
         Reason.OffboardedAuthor
-      case UserUnavailableStateEnum.AuthorBlocksViewer =>
-        stats.counter("author_blocks_viewer").incr()
-        Reason.AuthorBlocksViewer
-      case UserUnavailableStateEnum.Suspended =>
-        stats.counter("suspended_author").incr()
+      case UserUnava lableStateEnum.AuthorBlocksV e r =>
+        stats.counter("author_blocks_v e r"). ncr()
+        Reason.AuthorBlocksV e r
+      case UserUnava lableStateEnum.Suspended =>
+        stats.counter("suspended_author"). ncr()
         Reason.SuspendedAuthor
-      case UserUnavailableStateEnum.Deactivated =>
-        stats.counter("deactivated_author").incr()
-        Reason.DeactivatedAuthor
-      case UserUnavailableStateEnum.Filtered(result) =>
-        stats.counter("filtered").incr()
-        userVisibilityResultToDropReason(result, stats.scope("filtered"))
-      case UserUnavailableStateEnum.Unavailable =>
-        stats.counter("unspecified").incr()
-        Reason.Unspecified
+      case UserUnava lableStateEnum.Deact vated =>
+        stats.counter("deact vated_author"). ncr()
+        Reason.Deact vatedAuthor
+      case UserUnava lableStateEnum.F ltered(result) =>
+        stats.counter("f ltered"). ncr()
+        userV s b l yResultToDropReason(result, stats.scope("f ltered"))
+      case UserUnava lableStateEnum.Unava lable =>
+        stats.counter("unspec f ed"). ncr()
+        Reason.Unspec f ed
       case _ =>
-        stats.counter("unknown").incr()
-        stats.scope("unknown").counter(userUnavailableState.name).incr()
-        Reason.Unspecified
+        stats.counter("unknown"). ncr()
+        stats.scope("unknown").counter(userUnava lableState.na ). ncr()
+        Reason.Unspec f ed
     }
 
-  private[this] def userVisibilityResultToDropReason(
-    result: UserVisibilityResult,
-    stats: StatsReceiver
+  pr vate[t ] def userV s b l yResultToDropReason(
+    result: UserV s b l yResult,
+    stats: StatsRece ver
   ): Reason =
-    result.action
-      .flatMap(DropReasonConverter.fromAction)
+    result.act on
+      .flatMap(DropReasonConverter.fromAct on)
       .map { dropReason =>
         val reason = Reason.fromDropReason(dropReason)
-        stats.counter(reason.name).incr()
+        stats.counter(reason.na ). ncr()
         reason
       }.getOrElse {
         stats.counter("empty")
-        Reason.Unspecified
+        Reason.Unspec f ed
       }
 }

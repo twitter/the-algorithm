@@ -1,89 +1,89 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.visibility.safety_label_store.{thriftscala => s}
-import com.twitter.visibility.util.NamingUtils
+ mport com.tw ter.v s b l y.safety_label_store.{thr ftscala => s}
+ mport com.tw ter.v s b l y.ut l.Nam ngUt ls
 
-sealed trait MediaSafetyLabelType extends SafetyLabelType {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+sealed tra   d aSafetyLabelType extends SafetyLabelType {
+  lazy val na : Str ng = Nam ngUt ls.getFr endlyNa (t )
 }
 
-object MediaSafetyLabelType extends SafetyLabelType {
+object  d aSafetyLabelType extends SafetyLabelType {
 
-  val List: List[MediaSafetyLabelType] = s.MediaSafetyLabelType.list.map(fromThrift)
+  val L st: L st[ d aSafetyLabelType] = s. d aSafetyLabelType.l st.map(fromThr ft)
 
-  val ActiveLabels: List[MediaSafetyLabelType] = List.filter { labelType =>
+  val Act veLabels: L st[ d aSafetyLabelType] = L st.f lter { labelType =>
     labelType != Unknown && labelType != Deprecated
   }
 
-  private lazy val nameToValueMap: Map[String, MediaSafetyLabelType] =
-    List.map(l => l.name.toLowerCase -> l).toMap
-  def fromName(name: String): Option[MediaSafetyLabelType] = nameToValueMap.get(name.toLowerCase)
+  pr vate lazy val na ToValueMap: Map[Str ng,  d aSafetyLabelType] =
+    L st.map(l => l.na .toLo rCase -> l).toMap
+  def fromNa (na : Str ng): Opt on[ d aSafetyLabelType] = na ToValueMap.get(na .toLo rCase)
 
-  private val UnknownThriftSafetyLabelType =
-    s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(UnknownEnumValue)
+  pr vate val UnknownThr ftSafetyLabelType =
+    s. d aSafetyLabelType.EnumUnknown d aSafetyLabelType(UnknownEnumValue)
 
-  private lazy val thriftToModelMap: Map[s.MediaSafetyLabelType, MediaSafetyLabelType] = Map(
-    s.MediaSafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
-    s.MediaSafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
-    s.MediaSafetyLabelType.NsfwNearPerfect -> NsfwNearPerfect,
-    s.MediaSafetyLabelType.NsfwCardImage -> NsfwCardImage,
-    s.MediaSafetyLabelType.Pdna -> Pdna,
-    s.MediaSafetyLabelType.PdnaNoTreatmentIfVerified -> PdnaNoTreatmentIfVerified,
-    s.MediaSafetyLabelType.DmcaWithheld -> DmcaWithheld,
-    s.MediaSafetyLabelType.LegalDemandsWithheld -> LegalDemandsWithheld,
-    s.MediaSafetyLabelType.LocalLawsWithheld -> LocalLawsWithheld,
-    s.MediaSafetyLabelType.Reserved10 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved11 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved12 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved13 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved14 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved15 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved16 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved17 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved18 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved19 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved20 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved21 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved22 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved23 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved24 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved25 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved26 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved27 -> Deprecated,
+  pr vate lazy val thr ftToModelMap: Map[s. d aSafetyLabelType,  d aSafetyLabelType] = Map(
+    s. d aSafetyLabelType.NsfwH ghPrec s on -> NsfwH ghPrec s on,
+    s. d aSafetyLabelType.NsfwH ghRecall -> NsfwH ghRecall,
+    s. d aSafetyLabelType.NsfwNearPerfect -> NsfwNearPerfect,
+    s. d aSafetyLabelType.NsfwCard mage -> NsfwCard mage,
+    s. d aSafetyLabelType.Pdna -> Pdna,
+    s. d aSafetyLabelType.PdnaNoTreat nt fVer f ed -> PdnaNoTreat nt fVer f ed,
+    s. d aSafetyLabelType.DmcaW h ld -> DmcaW h ld,
+    s. d aSafetyLabelType.LegalDemandsW h ld -> LegalDemandsW h ld,
+    s. d aSafetyLabelType.LocalLawsW h ld -> LocalLawsW h ld,
+    s. d aSafetyLabelType.Reserved10 -> Deprecated,
+    s. d aSafetyLabelType.Reserved11 -> Deprecated,
+    s. d aSafetyLabelType.Reserved12 -> Deprecated,
+    s. d aSafetyLabelType.Reserved13 -> Deprecated,
+    s. d aSafetyLabelType.Reserved14 -> Deprecated,
+    s. d aSafetyLabelType.Reserved15 -> Deprecated,
+    s. d aSafetyLabelType.Reserved16 -> Deprecated,
+    s. d aSafetyLabelType.Reserved17 -> Deprecated,
+    s. d aSafetyLabelType.Reserved18 -> Deprecated,
+    s. d aSafetyLabelType.Reserved19 -> Deprecated,
+    s. d aSafetyLabelType.Reserved20 -> Deprecated,
+    s. d aSafetyLabelType.Reserved21 -> Deprecated,
+    s. d aSafetyLabelType.Reserved22 -> Deprecated,
+    s. d aSafetyLabelType.Reserved23 -> Deprecated,
+    s. d aSafetyLabelType.Reserved24 -> Deprecated,
+    s. d aSafetyLabelType.Reserved25 -> Deprecated,
+    s. d aSafetyLabelType.Reserved26 -> Deprecated,
+    s. d aSafetyLabelType.Reserved27 -> Deprecated,
   )
 
-  private lazy val modelToThriftMap: Map[MediaSafetyLabelType, s.MediaSafetyLabelType] =
-    (for ((k, v) <- thriftToModelMap) yield (v, k)) ++ Map(
-      Deprecated -> s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(DeprecatedEnumValue),
+  pr vate lazy val modelToThr ftMap: Map[ d aSafetyLabelType, s. d aSafetyLabelType] =
+    (for ((k, v) <- thr ftToModelMap) y eld (v, k)) ++ Map(
+      Deprecated -> s. d aSafetyLabelType.EnumUnknown d aSafetyLabelType(DeprecatedEnumValue),
     )
 
-  case object NsfwHighPrecision extends MediaSafetyLabelType
-  case object NsfwHighRecall extends MediaSafetyLabelType
-  case object NsfwNearPerfect extends MediaSafetyLabelType
-  case object NsfwCardImage extends MediaSafetyLabelType
-  case object Pdna extends MediaSafetyLabelType
-  case object PdnaNoTreatmentIfVerified extends MediaSafetyLabelType
-  case object DmcaWithheld extends MediaSafetyLabelType
-  case object LegalDemandsWithheld extends MediaSafetyLabelType
-  case object LocalLawsWithheld extends MediaSafetyLabelType
+  case object NsfwH ghPrec s on extends  d aSafetyLabelType
+  case object NsfwH ghRecall extends  d aSafetyLabelType
+  case object NsfwNearPerfect extends  d aSafetyLabelType
+  case object NsfwCard mage extends  d aSafetyLabelType
+  case object Pdna extends  d aSafetyLabelType
+  case object PdnaNoTreat nt fVer f ed extends  d aSafetyLabelType
+  case object DmcaW h ld extends  d aSafetyLabelType
+  case object LegalDemandsW h ld extends  d aSafetyLabelType
+  case object LocalLawsW h ld extends  d aSafetyLabelType
 
-  case object Deprecated extends MediaSafetyLabelType
-  case object Unknown extends MediaSafetyLabelType
+  case object Deprecated extends  d aSafetyLabelType
+  case object Unknown extends  d aSafetyLabelType
 
-  def fromThrift(safetyLabelType: s.MediaSafetyLabelType): MediaSafetyLabelType =
-    thriftToModelMap.get(safetyLabelType) match {
-      case Some(mediaSafetyLabelType) => mediaSafetyLabelType
+  def fromThr ft(safetyLabelType: s. d aSafetyLabelType):  d aSafetyLabelType =
+    thr ftToModelMap.get(safetyLabelType) match {
+      case So ( d aSafetyLabelType) =>  d aSafetyLabelType
       case _ =>
         safetyLabelType match {
-          case s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(DeprecatedEnumValue) =>
+          case s. d aSafetyLabelType.EnumUnknown d aSafetyLabelType(DeprecatedEnumValue) =>
             Deprecated
           case _ =>
             Unknown
         }
     }
 
-  def toThrift(safetyLabelType: MediaSafetyLabelType): s.MediaSafetyLabelType = {
-    modelToThriftMap
-      .get(safetyLabelType).getOrElse(UnknownThriftSafetyLabelType)
+  def toThr ft(safetyLabelType:  d aSafetyLabelType): s. d aSafetyLabelType = {
+    modelToThr ftMap
+      .get(safetyLabelType).getOrElse(UnknownThr ftSafetyLabelType)
   }
 }

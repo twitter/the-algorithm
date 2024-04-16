@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.tw ter.product_m xer.core.model.common.presentat on
 
-trait ItemPresentation extends UniversalPresentation {
-  // Optional field which if populated, will group the items into the specified module
-  def modulePresentation: Option[ModulePresentation] = None
+tra   emPresentat on extends Un versalPresentat on {
+  // Opt onal f eld wh ch  f populated, w ll group t   ems  nto t  spec f ed module
+  def modulePresentat on: Opt on[ModulePresentat on] = None
 }

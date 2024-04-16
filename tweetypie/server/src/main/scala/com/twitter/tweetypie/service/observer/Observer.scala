@@ -1,362 +1,362 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.media.MediaKeyClassifier
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.TweetText.codePointLength
-import com.twitter.conversions.DurationOps._
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e. d a. d aKeyClass f er
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.t ettext.T etText.codePo ntLength
+ mport com.tw ter.convers ons.Durat onOps._
 
 /**
- * Observer can be used for storing
- * - one-off handler specific metrics with minor logic
- * - reusable Tweetypie service metrics for multiple handlers
+ * Observer can be used for stor ng
+ * - one-off handler spec f c  tr cs w h m nor log c
+ * - reusable T etyp e serv ce  tr cs for mult ple handlers
  */
-private[service] object Observer {
+pr vate[serv ce] object Observer {
 
   val successStatusStates: Set[StatusState] = Set(
     StatusState.Found,
     StatusState.NotFound,
-    StatusState.DeactivatedUser,
+    StatusState.Deact vatedUser,
     StatusState.SuspendedUser,
     StatusState.ProtectedUser,
-    StatusState.ReportedTweet,
-    StatusState.UnsupportedClient,
+    StatusState.ReportedT et,
+    StatusState.UnsupportedCl ent,
     StatusState.Drop,
     StatusState.Suppress,
     StatusState.Deleted,
     StatusState.BounceDeleted
   )
 
-  def observeStatusStates(statsReceiver: StatsReceiver): Effect[StatusState] = {
-    val stats = statsReceiver.scope("status_state")
-    val total = statsReceiver.counter("status_results")
+  def observeStatusStates(statsRece ver: StatsRece ver): Effect[StatusState] = {
+    val stats = statsRece ver.scope("status_state")
+    val total = statsRece ver.counter("status_results")
 
     val foundCounter = stats.counter("found")
     val notFoundCounter = stats.counter("not_found")
-    val partialCounter = stats.counter("partial")
-    val timedOutCounter = stats.counter("timed_out")
-    val failedCounter = stats.counter("failed")
-    val deactivatedCounter = stats.counter("deactivated")
+    val part alCounter = stats.counter("part al")
+    val t  dOutCounter = stats.counter("t  d_out")
+    val fa ledCounter = stats.counter("fa led")
+    val deact vatedCounter = stats.counter("deact vated")
     val suspendedCounter = stats.counter("suspended")
     val protectedCounter = stats.counter("protected")
     val reportedCounter = stats.counter("reported")
-    val overCapacityCounter = stats.counter("over_capacity")
-    val unsupportedClientCounter = stats.counter("unsupported_client")
+    val overCapac yCounter = stats.counter("over_capac y")
+    val unsupportedCl entCounter = stats.counter("unsupported_cl ent")
     val dropCounter = stats.counter("drop")
     val suppressCounter = stats.counter("suppress")
     val deletedCounter = stats.counter("deleted")
     val bounceDeletedCounter = stats.counter("bounce_deleted")
 
     Effect { st =>
-      total.incr()
+      total. ncr()
       st match {
-        case StatusState.Found => foundCounter.incr()
-        case StatusState.NotFound => notFoundCounter.incr()
-        case StatusState.Partial => partialCounter.incr()
-        case StatusState.TimedOut => timedOutCounter.incr()
-        case StatusState.Failed => failedCounter.incr()
-        case StatusState.DeactivatedUser => deactivatedCounter.incr()
-        case StatusState.SuspendedUser => suspendedCounter.incr()
-        case StatusState.ProtectedUser => protectedCounter.incr()
-        case StatusState.ReportedTweet => reportedCounter.incr()
-        case StatusState.OverCapacity => overCapacityCounter.incr()
-        case StatusState.UnsupportedClient => unsupportedClientCounter.incr()
-        case StatusState.Drop => dropCounter.incr()
-        case StatusState.Suppress => suppressCounter.incr()
-        case StatusState.Deleted => deletedCounter.incr()
-        case StatusState.BounceDeleted => bounceDeletedCounter.incr()
+        case StatusState.Found => foundCounter. ncr()
+        case StatusState.NotFound => notFoundCounter. ncr()
+        case StatusState.Part al => part alCounter. ncr()
+        case StatusState.T  dOut => t  dOutCounter. ncr()
+        case StatusState.Fa led => fa ledCounter. ncr()
+        case StatusState.Deact vatedUser => deact vatedCounter. ncr()
+        case StatusState.SuspendedUser => suspendedCounter. ncr()
+        case StatusState.ProtectedUser => protectedCounter. ncr()
+        case StatusState.ReportedT et => reportedCounter. ncr()
+        case StatusState.OverCapac y => overCapac yCounter. ncr()
+        case StatusState.UnsupportedCl ent => unsupportedCl entCounter. ncr()
+        case StatusState.Drop => dropCounter. ncr()
+        case StatusState.Suppress => suppressCounter. ncr()
+        case StatusState.Deleted => deletedCounter. ncr()
+        case StatusState.BounceDeleted => bounceDeletedCounter. ncr()
         case _ =>
       }
     }
   }
 
-  def observeSetFieldsRequest(stats: StatsReceiver): Effect[SetAdditionalFieldsRequest] =
+  def observeSetF eldsRequest(stats: StatsRece ver): Effect[SetAdd  onalF eldsRequest] =
     Effect { request =>
-      val tweet = request.additionalFields
-      AdditionalFields.nonEmptyAdditionalFieldIds(tweet).foreach { id =>
-        val fieldScope = "field_%d".format(id)
-        val fieldCounter = stats.counter(fieldScope)
-        val sizeStats = stats.stat(fieldScope)
+      val t et = request.add  onalF elds
+      Add  onalF elds.nonEmptyAdd  onalF eld ds(t et).foreach {  d =>
+        val f eldScope = "f eld_%d".format( d)
+        val f eldCounter = stats.counter(f eldScope)
+        val s zeStats = stats.stat(f eldScope)
 
-        tweet.getFieldBlob(id).foreach { blob =>
-          fieldCounter.incr()
-          sizeStats.add(blob.content.length)
+        t et.getF eldBlob( d).foreach { blob =>
+          f eldCounter. ncr()
+          s zeStats.add(blob.content.length)
         }
       }
     }
 
-  def observeSetRetweetVisibilityRequest(
-    stats: StatsReceiver
-  ): Effect[SetRetweetVisibilityRequest] = {
-    val setInvisibleCounter = stats.counter("set_invisible")
-    val setVisibleCounter = stats.counter("set_visible")
+  def observeSetRet etV s b l yRequest(
+    stats: StatsRece ver
+  ): Effect[SetRet etV s b l yRequest] = {
+    val set nv s bleCounter = stats.counter("set_ nv s ble")
+    val setV s bleCounter = stats.counter("set_v s ble")
 
     Effect { request =>
-      if (request.visible) setVisibleCounter.incr() else setInvisibleCounter.incr()
+       f (request.v s ble) setV s bleCounter. ncr() else set nv s bleCounter. ncr()
     }
   }
 
-  def observeDeleteFieldsRequest(stats: StatsReceiver): Effect[DeleteAdditionalFieldsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
+  def observeDeleteF eldsRequest(stats: StatsRece ver): Effect[DeleteAdd  onalF eldsRequest] = {
+    val requestS zeStat = stats.stat("request_s ze")
 
     Effect { request =>
-      requestSizeStat.add(request.tweetIds.size)
+      requestS zeStat.add(request.t et ds.s ze)
 
-      request.fieldIds.foreach { id =>
-        val fieldScope = "field_%d".format(id)
-        val fieldCounter = stats.counter(fieldScope)
-        fieldCounter.incr()
+      request.f eld ds.foreach {  d =>
+        val f eldScope = "f eld_%d".format( d)
+        val f eldCounter = stats.counter(f eldScope)
+        f eldCounter. ncr()
       }
     }
   }
 
-  def observeDeleteTweetsRequest(stats: StatsReceiver): Effect[DeleteTweetsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
-    val userErasureTweetsStat = stats.counter("user_erasure_tweets")
-    val isBounceDeleteStat = stats.counter("is_bounce_delete_tweets")
+  def observeDeleteT etsRequest(stats: StatsRece ver): Effect[DeleteT etsRequest] = {
+    val requestS zeStat = stats.stat("request_s ze")
+    val userErasureT etsStat = stats.counter("user_erasure_t ets")
+    val  sBounceDeleteStat = stats.counter(" s_bounce_delete_t ets")
 
     Effect {
-      case DeleteTweetsRequest(tweetIds, _, _, _, isUserErasure, _, isBounceDelete, _, _) =>
-        requestSizeStat.add(tweetIds.size)
-        if (isUserErasure) {
-          userErasureTweetsStat.incr(tweetIds.size)
+      case DeleteT etsRequest(t et ds, _, _, _,  sUserErasure, _,  sBounceDelete, _, _) =>
+        requestS zeStat.add(t et ds.s ze)
+         f ( sUserErasure) {
+          userErasureT etsStat. ncr(t et ds.s ze)
         }
-        if (isBounceDelete) {
-          isBounceDeleteStat.incr(tweetIds.size)
+         f ( sBounceDelete) {
+           sBounceDeleteStat. ncr(t et ds.s ze)
         }
     }
   }
 
-  def observeRetweetRequest(stats: StatsReceiver): Effect[RetweetRequest] = {
-    val optionsScope = stats.scope("options")
-    val narrowcastCounter = optionsScope.counter("narrowcast")
-    val nullcastCounter = optionsScope.counter("nullcast")
-    val darkCounter = optionsScope.counter("dark")
-    val successOnDupCounter = optionsScope.counter("success_on_dup")
+  def observeRet etRequest(stats: StatsRece ver): Effect[Ret etRequest] = {
+    val opt onsScope = stats.scope("opt ons")
+    val narrowcastCounter = opt onsScope.counter("narrowcast")
+    val nullcastCounter = opt onsScope.counter("nullcast")
+    val darkCounter = opt onsScope.counter("dark")
+    val successOnDupCounter = opt onsScope.counter("success_on_dup")
 
     Effect { request =>
-      if (request.narrowcast.nonEmpty) narrowcastCounter.incr()
-      if (request.nullcast) nullcastCounter.incr()
-      if (request.dark) darkCounter.incr()
-      if (request.returnSuccessOnDuplicate) successOnDupCounter.incr()
+       f (request.narrowcast.nonEmpty) narrowcastCounter. ncr()
+       f (request.nullcast) nullcastCounter. ncr()
+       f (request.dark) darkCounter. ncr()
+       f (request.returnSuccessOnDupl cate) successOnDupCounter. ncr()
     }
   }
 
-  def observeScrubGeo(stats: StatsReceiver): Effect[GeoScrub] = {
-    val optionsScope = stats.scope("options")
-    val hosebirdEnqueueCounter = optionsScope.counter("hosebird_enqueue")
-    val requestSizeStat = stats.stat("request_size")
+  def observeScrubGeo(stats: StatsRece ver): Effect[GeoScrub] = {
+    val opt onsScope = stats.scope("opt ons")
+    val hoseb rdEnqueueCounter = opt onsScope.counter("hoseb rd_enqueue")
+    val requestS zeStat = stats.stat("request_s ze")
 
     Effect { request =>
-      requestSizeStat.add(request.statusIds.size)
-      if (request.hosebirdEnqueue) hosebirdEnqueueCounter.incr()
+      requestS zeStat.add(request.status ds.s ze)
+       f (request.hoseb rdEnqueue) hoseb rdEnqueueCounter. ncr()
     }
   }
 
-  def observeEventOrRetry(stats: StatsReceiver, isRetry: Boolean): Unit = {
-    val statName = if (isRetry) "retry" else "event"
-    stats.counter(statName).incr()
+  def observeEventOrRetry(stats: StatsRece ver,  sRetry: Boolean): Un  = {
+    val statNa  =  f ( sRetry) "retry" else "event"
+    stats.counter(statNa ). ncr()
   }
 
-  def observeAsyncInsertRequest(stats: StatsReceiver): Effect[AsyncInsertRequest] = {
-    val insertScope = stats.scope("insert")
-    val ageStat = insertScope.stat("age")
+  def observeAsync nsertRequest(stats: StatsRece ver): Effect[Async nsertRequest] = {
+    val  nsertScope = stats.scope(" nsert")
+    val ageStat =  nsertScope.stat("age")
     Effect { request =>
-      observeEventOrRetry(insertScope, request.retryAction.isDefined)
-      ageStat.add(SnowflakeId.timeFromId(request.tweet.id).untilNow.inMillis)
+      observeEventOrRetry( nsertScope, request.retryAct on. sDef ned)
+      ageStat.add(Snowflake d.t  From d(request.t et. d).unt lNow. nM ll s)
     }
   }
 
-  def observeAsyncSetAdditionalFieldsRequest(
-    stats: StatsReceiver
-  ): Effect[AsyncSetAdditionalFieldsRequest] = {
-    val setAdditionalFieldsScope = stats.scope("set_additional_fields")
+  def observeAsyncSetAdd  onalF eldsRequest(
+    stats: StatsRece ver
+  ): Effect[AsyncSetAdd  onalF eldsRequest] = {
+    val setAdd  onalF eldsScope = stats.scope("set_add  onal_f elds")
     Effect { request =>
-      observeEventOrRetry(setAdditionalFieldsScope, request.retryAction.isDefined)
+      observeEventOrRetry(setAdd  onalF eldsScope, request.retryAct on. sDef ned)
     }
   }
 
-  def observeAsyncSetRetweetVisibilityRequest(
-    stats: StatsReceiver
-  ): Effect[AsyncSetRetweetVisibilityRequest] = {
-    val setRetweetVisibilityScope = stats.scope("set_retweet_visibility")
+  def observeAsyncSetRet etV s b l yRequest(
+    stats: StatsRece ver
+  ): Effect[AsyncSetRet etV s b l yRequest] = {
+    val setRet etV s b l yScope = stats.scope("set_ret et_v s b l y")
 
     Effect { request =>
-      observeEventOrRetry(setRetweetVisibilityScope, request.retryAction.isDefined)
+      observeEventOrRetry(setRet etV s b l yScope, request.retryAct on. sDef ned)
     }
   }
 
-  def observeAsyncUndeleteTweetRequest(stats: StatsReceiver): Effect[AsyncUndeleteTweetRequest] = {
-    val undeleteTweetScope = stats.scope("undelete_tweet")
-    Effect { request => observeEventOrRetry(undeleteTweetScope, request.retryAction.isDefined) }
+  def observeAsyncUndeleteT etRequest(stats: StatsRece ver): Effect[AsyncUndeleteT etRequest] = {
+    val undeleteT etScope = stats.scope("undelete_t et")
+    Effect { request => observeEventOrRetry(undeleteT etScope, request.retryAct on. sDef ned) }
   }
 
-  def observeAsyncDeleteTweetRequest(stats: StatsReceiver): Effect[AsyncDeleteRequest] = {
-    val deleteTweetScope = stats.scope("delete_tweet")
-    Effect { request => observeEventOrRetry(deleteTweetScope, request.retryAction.isDefined) }
+  def observeAsyncDeleteT etRequest(stats: StatsRece ver): Effect[AsyncDeleteRequest] = {
+    val deleteT etScope = stats.scope("delete_t et")
+    Effect { request => observeEventOrRetry(deleteT etScope, request.retryAct on. sDef ned) }
   }
 
-  def observeAsyncDeleteAdditionalFieldsRequest(
-    stats: StatsReceiver
-  ): Effect[AsyncDeleteAdditionalFieldsRequest] = {
-    val deleteAdditionalFieldsScope = stats.scope("delete_additional_fields")
+  def observeAsyncDeleteAdd  onalF eldsRequest(
+    stats: StatsRece ver
+  ): Effect[AsyncDeleteAdd  onalF eldsRequest] = {
+    val deleteAdd  onalF eldsScope = stats.scope("delete_add  onal_f elds")
     Effect { request =>
       observeEventOrRetry(
-        deleteAdditionalFieldsScope,
-        request.retryAction.isDefined
+        deleteAdd  onalF eldsScope,
+        request.retryAct on. sDef ned
       )
     }
   }
 
-  def observeAsyncTakedownRequest(stats: StatsReceiver): Effect[AsyncTakedownRequest] = {
+  def observeAsyncTakedownRequest(stats: StatsRece ver): Effect[AsyncTakedownRequest] = {
     val takedownScope = stats.scope("takedown")
-    Effect { request => observeEventOrRetry(takedownScope, request.retryAction.isDefined) }
+    Effect { request => observeEventOrRetry(takedownScope, request.retryAct on. sDef ned) }
   }
 
-  def observeAsyncUpdatePossiblySensitiveTweetRequest(
-    stats: StatsReceiver
-  ): Effect[AsyncUpdatePossiblySensitiveTweetRequest] = {
-    val updatePossiblySensitiveTweetScope = stats.scope("update_possibly_sensitive_tweet")
+  def observeAsyncUpdatePoss blySens  veT etRequest(
+    stats: StatsRece ver
+  ): Effect[AsyncUpdatePoss blySens  veT etRequest] = {
+    val updatePoss blySens  veT etScope = stats.scope("update_poss bly_sens  ve_t et")
     Effect { request =>
-      observeEventOrRetry(updatePossiblySensitiveTweetScope, request.action.isDefined)
+      observeEventOrRetry(updatePoss blySens  veT etScope, request.act on. sDef ned)
     }
   }
 
-  def observeReplicatedInsertTweetRequest(stats: StatsReceiver): Effect[Tweet] = {
-    val ageStat = stats.stat("age") // in milliseconds
-    Effect { request => ageStat.add(SnowflakeId.timeFromId(request.id).untilNow.inMillis) }
+  def observeRepl cated nsertT etRequest(stats: StatsRece ver): Effect[T et] = {
+    val ageStat = stats.stat("age") //  n m ll seconds
+    Effect { request => ageStat.add(Snowflake d.t  From d(request. d).unt lNow. nM ll s) }
   }
 
-  def camelToUnderscore(str: String): String = {
-    val bldr = new StringBuilder
-    str.foldLeft(false) { (prevWasLowercase, c) =>
-      if (prevWasLowercase && c.isUpper) {
+  def ca lToUnderscore(str: Str ng): Str ng = {
+    val bldr = new Str ngBu lder
+    str.foldLeft(false) { (prevWasLo rcase, c) =>
+       f (prevWasLo rcase && c. sUpper) {
         bldr += '_'
       }
-      bldr += c.toLower
-      c.isLower
+      bldr += c.toLo r
+      c. sLo r
     }
     bldr.result
   }
 
-  def observeAdditionalFields(stats: StatsReceiver): Effect[Tweet] = {
-    val additionalScope = stats.scope("additional_fields")
+  def observeAdd  onalF elds(stats: StatsRece ver): Effect[T et] = {
+    val add  onalScope = stats.scope("add  onal_f elds")
 
-    Effect { tweet =>
-      for (fieldId <- AdditionalFields.nonEmptyAdditionalFieldIds(tweet))
-        additionalScope.counter(fieldId.toString).incr()
+    Effect { t et =>
+      for (f eld d <- Add  onalF elds.nonEmptyAdd  onalF eld ds(t et))
+        add  onalScope.counter(f eld d.toStr ng). ncr()
     }
   }
 
   /**
-   * We count how many tweets have each of these attributes so that we
-   * can observe general trends, as well as for tracking down the
-   * cause of behavior changes, like increased calls to certain
-   * services.
+   *   count how many t ets have each of t se attr butes so that  
+   * can observe general trends, as  ll as for track ng down t 
+   * cause of behav or changes, l ke  ncreased calls to certa n
+   * serv ces.
    */
-  def countTweetAttributes(stats: StatsReceiver, byClient: Boolean): Effect[Tweet] = {
+  def countT etAttr butes(stats: StatsRece ver, byCl ent: Boolean): Effect[T et] = {
     val ageStat = stats.stat("age")
-    val tweetCounter = stats.counter("tweets")
-    val retweetCounter = stats.counter("retweets")
-    val repliesCounter = stats.counter("replies")
-    val inReplyToTweetCounter = stats.counter("in_reply_to_tweet")
-    val selfRepliesCounter = stats.counter("self_replies")
-    val directedAtCounter = stats.counter("directed_at")
-    val mentionsCounter = stats.counter("mentions")
-    val mentionsStat = stats.stat("mentions")
+    val t etCounter = stats.counter("t ets")
+    val ret etCounter = stats.counter("ret ets")
+    val repl esCounter = stats.counter("repl es")
+    val  nReplyToT etCounter = stats.counter(" n_reply_to_t et")
+    val selfRepl esCounter = stats.counter("self_repl es")
+    val d rectedAtCounter = stats.counter("d rected_at")
+    val  nt onsCounter = stats.counter(" nt ons")
+    val  nt onsStat = stats.stat(" nt ons")
     val urlsCounter = stats.counter("urls")
     val urlsStat = stats.stat("urls")
     val hashtagsCounter = stats.counter("hashtags")
     val hashtagsStat = stats.stat("hashtags")
-    val mediaCounter = stats.counter("media")
-    val mediaStat = stats.stat("media")
-    val photosCounter = stats.counter("media", "photos")
-    val gifsCounter = stats.counter("media", "animated_gifs")
-    val videosCounter = stats.counter("media", "videos")
+    val  d aCounter = stats.counter(" d a")
+    val  d aStat = stats.stat(" d a")
+    val photosCounter = stats.counter(" d a", "photos")
+    val g fsCounter = stats.counter(" d a", "an mated_g fs")
+    val v deosCounter = stats.counter(" d a", "v deos")
     val cardsCounter = stats.counter("cards")
     val card2Counter = stats.counter("card2")
-    val geoCoordsCounter = stats.counter("geo_coordinates")
+    val geoCoordsCounter = stats.counter("geo_coord nates")
     val placeCounter = stats.counter("place")
-    val quotedTweetCounter = stats.counter("quoted_tweet")
-    val selfRetweetCounter = stats.counter("self_retweet")
+    val quotedT etCounter = stats.counter("quoted_t et")
+    val selfRet etCounter = stats.counter("self_ret et")
     val languageScope = stats.scope("language")
     val textLengthStat = stats.stat("text_length")
     val selfThreadCounter = stats.counter("self_thread")
-    val communitiesTweetCounter = stats.counter("communities")
+    val commun  esT etCounter = stats.counter("commun  es")
 
-    observeAdditionalFields(stats).also {
-      Effect[Tweet] { tweet =>
-        def coreDataField[T](f: TweetCoreData => T): Option[T] =
-          tweet.coreData.map(f)
+    observeAdd  onalF elds(stats).also {
+      Effect[T et] { t et =>
+        def coreDataF eld[T](f: T etCoreData => T): Opt on[T] =
+          t et.coreData.map(f)
 
-        def coreDataOptionField[T](f: TweetCoreData => Option[T]) =
-          coreDataField(f).flatten
+        def coreDataOpt onF eld[T](f: T etCoreData => Opt on[T]) =
+          coreDataF eld(f).flatten
 
-        (SnowflakeId.isSnowflakeId(tweet.id) match {
-          case true => Some(SnowflakeId.timeFromId(tweet.id))
-          case false => coreDataField(_.createdAtSecs.seconds.afterEpoch)
-        }).foreach { createdAt => ageStat.add(createdAt.untilNow.inSeconds) }
+        (Snowflake d. sSnowflake d(t et. d) match {
+          case true => So (Snowflake d.t  From d(t et. d))
+          case false => coreDataF eld(_.createdAtSecs.seconds.afterEpoch)
+        }).foreach { createdAt => ageStat.add(createdAt.unt lNow. nSeconds) }
 
-        if (!byClient) {
-          val mentions = getMentions(tweet)
-          val urls = getUrls(tweet)
-          val hashtags = getHashtags(tweet)
-          val media = getMedia(tweet)
-          val mediaKeys = media.flatMap(_.mediaKey)
-          val share = coreDataOptionField(_.share)
-          val selfThreadMetadata = getSelfThreadMetadata(tweet)
-          val communities = getCommunities(tweet)
+         f (!byCl ent) {
+          val  nt ons = get nt ons(t et)
+          val urls = getUrls(t et)
+          val hashtags = getHashtags(t et)
+          val  d a = get d a(t et)
+          val  d aKeys =  d a.flatMap(_. d aKey)
+          val share = coreDataOpt onF eld(_.share)
+          val selfThread tadata = getSelfThread tadata(t et)
+          val commun  es = getCommun  es(t et)
 
-          tweetCounter.incr()
-          if (share.isDefined) retweetCounter.incr()
-          if (coreDataOptionField(_.directedAtUser).isDefined) directedAtCounter.incr()
+          t etCounter. ncr()
+           f (share. sDef ned) ret etCounter. ncr()
+           f (coreDataOpt onF eld(_.d rectedAtUser). sDef ned) d rectedAtCounter. ncr()
 
-          coreDataOptionField(_.reply).foreach { reply =>
-            repliesCounter.incr()
-            if (reply.inReplyToStatusId.nonEmpty) {
-              // repliesCounter counts all Tweets with a Reply struct,
-              // but that includes both directed-at Tweets and
-              // conversational replies. Only conversational replies
-              // have inReplyToStatusId present, so this counter lets
-              // us split apart those two cases.
-              inReplyToTweetCounter.incr()
+          coreDataOpt onF eld(_.reply).foreach { reply =>
+            repl esCounter. ncr()
+             f (reply. nReplyToStatus d.nonEmpty) {
+              // repl esCounter counts all T ets w h a Reply struct,
+              // but that  ncludes both d rected-at T ets and
+              // conversat onal repl es. Only conversat onal repl es
+              // have  nReplyToStatus d present, so t  counter lets
+              // us spl  apart those two cases.
+               nReplyToT etCounter. ncr()
             }
 
-            // Not all Tweet objects have CoreData yet isSelfReply() requires it.  Thus, this
-            // invocation is guarded by the `coreDataOptionField(_.reply)` above.
-            if (isSelfReply(tweet)) selfRepliesCounter.incr()
+            // Not all T et objects have CoreData yet  sSelfReply() requ res  .  Thus, t 
+            //  nvocat on  s guarded by t  `coreDataOpt onF eld(_.reply)` above.
+             f ( sSelfReply(t et)) selfRepl esCounter. ncr()
           }
 
-          if (mentions.nonEmpty) mentionsCounter.incr()
-          if (urls.nonEmpty) urlsCounter.incr()
-          if (hashtags.nonEmpty) hashtagsCounter.incr()
-          if (media.nonEmpty) mediaCounter.incr()
-          if (selfThreadMetadata.nonEmpty) selfThreadCounter.incr()
-          if (communities.nonEmpty) communitiesTweetCounter.incr()
+           f ( nt ons.nonEmpty)  nt onsCounter. ncr()
+           f (urls.nonEmpty) urlsCounter. ncr()
+           f (hashtags.nonEmpty) hashtagsCounter. ncr()
+           f ( d a.nonEmpty)  d aCounter. ncr()
+           f (selfThread tadata.nonEmpty) selfThreadCounter. ncr()
+           f (commun  es.nonEmpty) commun  esT etCounter. ncr()
 
-          mentionsStat.add(mentions.size)
-          urlsStat.add(urls.size)
-          hashtagsStat.add(hashtags.size)
-          mediaStat.add(media.size)
+           nt onsStat.add( nt ons.s ze)
+          urlsStat.add(urls.s ze)
+          hashtagsStat.add(hashtags.s ze)
+           d aStat.add( d a.s ze)
 
-          if (mediaKeys.exists(MediaKeyClassifier.isImage(_))) photosCounter.incr()
-          if (mediaKeys.exists(MediaKeyClassifier.isGif(_))) gifsCounter.incr()
-          if (mediaKeys.exists(MediaKeyClassifier.isVideo(_))) videosCounter.incr()
+           f ( d aKeys.ex sts( d aKeyClass f er. s mage(_))) photosCounter. ncr()
+           f ( d aKeys.ex sts( d aKeyClass f er. sG f(_))) g fsCounter. ncr()
+           f ( d aKeys.ex sts( d aKeyClass f er. sV deo(_))) v deosCounter. ncr()
 
-          if (tweet.cards.exists(_.nonEmpty)) cardsCounter.incr()
-          if (tweet.card2.nonEmpty) card2Counter.incr()
-          if (coreDataOptionField(_.coordinates).nonEmpty) geoCoordsCounter.incr()
-          if (TweetLenses.place.get(tweet).nonEmpty) placeCounter.incr()
-          if (TweetLenses.quotedTweet.get(tweet).nonEmpty) quotedTweetCounter.incr()
-          if (share.exists(_.sourceUserId == getUserId(tweet))) selfRetweetCounter.incr()
+           f (t et.cards.ex sts(_.nonEmpty)) cardsCounter. ncr()
+           f (t et.card2.nonEmpty) card2Counter. ncr()
+           f (coreDataOpt onF eld(_.coord nates).nonEmpty) geoCoordsCounter. ncr()
+           f (T etLenses.place.get(t et).nonEmpty) placeCounter. ncr()
+           f (T etLenses.quotedT et.get(t et).nonEmpty) quotedT etCounter. ncr()
+           f (share.ex sts(_.s ceUser d == getUser d(t et))) selfRet etCounter. ncr()
 
-          tweet.language
+          t et.language
             .map(_.language)
-            .foreach(lang => languageScope.counter(lang).incr())
-          coreDataField(_.text).foreach(text => textLengthStat.add(codePointLength(text)))
+            .foreach(lang => languageScope.counter(lang). ncr())
+          coreDataF eld(_.text).foreach(text => textLengthStat.add(codePo ntLength(text)))
         }
       }
     }

@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.marshaller.request
+package com.tw ter.ho _m xer.marshaller.request
 
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.model.request.L stRecom ndedUsersProduct
+ mport com.tw ter.ho _m xer.model.request.L stT etsProduct
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProduct
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProduct
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeMixerProductUnmarshaller @Inject() () {
+@S ngleton
+class Ho M xerProductUnmarshaller @ nject() () {
 
   def apply(product: t.Product): Product = product match {
-    case t.Product.Following => FollowingProduct
-    case t.Product.ForYou => ForYouProduct
-    case t.Product.ListManagement =>
-      throw new UnsupportedOperationException(s"This product is no longer used")
-    case t.Product.ScoredTweets => ScoredTweetsProduct
-    case t.Product.ListTweets => ListTweetsProduct
-    case t.Product.ListRecommendedUsers => ListRecommendedUsersProduct
-    case t.Product.Subscribed => SubscribedProduct
+    case t.Product.Follow ng => Follow ngProduct
+    case t.Product.For  => For Product
+    case t.Product.L stManage nt =>
+      throw new UnsupportedOperat onExcept on(s"T  product  s no longer used")
+    case t.Product.ScoredT ets => ScoredT etsProduct
+    case t.Product.L stT ets => L stT etsProduct
+    case t.Product.L stRecom ndedUsers => L stRecom ndedUsersProduct
+    case t.Product.Subscr bed => Subscr bedProduct
     case t.Product.EnumUnknownProduct(value) =>
-      throw new UnsupportedOperationException(s"Unknown product: $value")
+      throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesAncestor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesDescendant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.Inline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.NonCompliant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TweetUnavailable
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.D sconnectedRepl esAncestor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.D sconnectedRepl esDescendant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone. nl ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.NonCompl ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.TombstoneD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.T etUnava lable
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TombstoneDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class TombstoneD splayTypeMarshaller @ nject() () {
 
-  def apply(tombstoneDisplayType: TombstoneDisplayType): urt.TombstoneDisplayType =
-    tombstoneDisplayType match {
-      case TweetUnavailable => urt.TombstoneDisplayType.TweetUnavailable
-      case DisconnectedRepliesAncestor => urt.TombstoneDisplayType.DisconnectedRepliesAncestor
-      case DisconnectedRepliesDescendant => urt.TombstoneDisplayType.DisconnectedRepliesDescendant
-      case Inline => urt.TombstoneDisplayType.Inline
-      case NonCompliant => urt.TombstoneDisplayType.NonCompliant
+  def apply(tombstoneD splayType: TombstoneD splayType): urt.TombstoneD splayType =
+    tombstoneD splayType match {
+      case T etUnava lable => urt.TombstoneD splayType.T etUnava lable
+      case D sconnectedRepl esAncestor => urt.TombstoneD splayType.D sconnectedRepl esAncestor
+      case D sconnectedRepl esDescendant => urt.TombstoneD splayType.D sconnectedRepl esDescendant
+      case  nl ne => urt.TombstoneD splayType. nl ne
+      case NonCompl ant => urt.TombstoneD splayType.NonCompl ant
     }
 }

@@ -1,28 +1,28 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
 /**
- * This accumulator does not accumulate the facet counts when {@link #add(long, int, int, int)}
- * is called.
+ * T  accumulator does not accumulate t  facet counts w n {@l nk #add(long,  nt,  nt,  nt)}
+ *  s called.
  */
-public class DummyFacetAccumulator<R> extends FacetAccumulator<R> {
+publ c class Dum FacetAccumulator<R> extends FacetAccumulator<R> {
 
-  @Override
-  public int add(long termID, int scoreIncrement, int penaltyCount, int tweepCred) {
+  @Overr de
+  publ c  nt add(long term D,  nt score ncre nt,  nt penaltyCount,  nt t epCred) {
     return 0;
   }
 
-  @Override
-  public R getAllFacets() {
+  @Overr de
+  publ c R getAllFacets() {
     return null;
   }
 
-  @Override
-  public R getTopFacets(int n) {
+  @Overr de
+  publ c R getTopFacets( nt n) {
     return null;
   }
 
-  @Override
-  public void reset(FacetLabelProvider facetLabelProvider) {
+  @Overr de
+  publ c vo d reset(FacetLabelProv der facetLabelProv der) {
   }
 
 }

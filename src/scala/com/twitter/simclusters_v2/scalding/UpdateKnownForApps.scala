@@ -1,307 +1,307 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.pluck.source.cassowary.SimsCandidatesSource
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.ClusterScoresForNode
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.NeighborhoodInformation
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import scala.util.Success
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter.pluck.s ce.cassowary.Follow ngsCos neS m lar  esManhattanS ce
+ mport com.tw ter.pluck.s ce.cassowary.S msCand datesS ce
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut onArgs
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchDescr pt on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchF rstT  
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Batch ncre nt
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Tw terSc duledExecut onApp
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.UpdateKnownFor.ClusterScoresForNode
+ mport com.tw ter.s mclusters_v2.scald ng.UpdateKnownFor.Ne ghborhood nformat on
+ mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser sKnownFor
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport scala.ut l.Success
 
 object UpdateKnownForApps {
 
   /**
-   * Average edge weight of an input graph
-   * @param graph a TypedPipe with nodeId as key and adjacency list as value. We don't care about
-   *              the keys in this method.
-   * @return avg edge weight wrapped in an option in an execution
+   * Average edge   ght of an  nput graph
+   * @param graph a TypedP pe w h node d as key and adjacency l st as value.   don't care about
+   *              t  keys  n t   thod.
+   * @return avg edge   ght wrapped  n an opt on  n an execut on
    */
-  def getGlobalAvgWeight(graph: TypedPipe[(Long, Map[Long, Float])]): Execution[Option[Double]] = {
+  def getGlobalAvg  ght(graph: TypedP pe[(Long, Map[Long, Float])]): Execut on[Opt on[Double]] = {
     graph.values
       .flatMap(_.values)
       .map { x => (x.toDouble, 1L) }
       .sum
-      .toOptionExecution
+      .toOpt onExecut on
       .map {
-        case Some((sum, cnt)) =>
+        case So ((sum, cnt)) =>
           val res = sum / cnt
-          println("globalAvgWeight is " + res)
-          Some(res)
+          pr ntln("globalAvg  ght  s " + res)
+          So (res)
         case _ =>
-          println("Input graph to globalAvgWeight seems to be empty")
+          pr ntln(" nput graph to globalAvg  ght seems to be empty")
           None
       }
   }
 
   /**
-   * Average membership score for a particular knownFor assignment
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
-   *                 membership scores. We don't care about the keys in this method.
-   * @return average membership score
+   * Average  mbersh p score for a part cular knownFor ass gn nt
+   * @param knownFor TypedP pe from node d to t  clusters  's been ass gned to along w h
+   *                  mbersh p scores.   don't care about t  keys  n t   thod.
+   * @return average  mbersh p score
    */
-  def getAvgMembershipScore(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Double] = {
+  def getAvg mbersh pScore(knownFor: TypedP pe[(Long, Array[( nt, Float)])]): Execut on[Double] = {
     knownFor.values
       .flatMap(_.map(_._2))
       .map { x => (x, 1L) }
       .sum
       .map { case (num, den) => num / den.toDouble }
-      .getExecution
+      .getExecut on
       .onComplete {
-        case Success(x) => println("Avg. membership score is " + x)
-        case _ => println("Failed to calculate avg. membership score")
+        case Success(x) => pr ntln("Avg.  mbersh p score  s " + x)
+        case _ => pr ntln("Fa led to calculate avg.  mbersh p score")
       }
   }
 
   /**
-   * For each cluster, get two statistics about it: the number of nodes assigned to it, and the
-   * sum of the membership scores
+   * For each cluster, get two stat st cs about  : t  number of nodes ass gned to  , and t 
+   * sum of t   mbersh p scores
    *
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
-   *                 membership scores.
-   * @return Map giving the NeighborhoodInformation for each cluster. The nodeCount and
-   *         sumOfMembershipWeights fields in NeighborhoodInformation are populated, others are 0.
+   * @param knownFor TypedP pe from node d to t  clusters  's been ass gned to along w h
+   *                  mbersh p scores.
+   * @return Map g v ng t  Ne ghborhood nformat on for each cluster. T  nodeCount and
+   *         sumOf mbersh p  ghts f elds  n Ne ghborhood nformat on are populated, ot rs are 0.
    */
   def getClusterStats(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[Map[Int, NeighborhoodInformation]] = {
+    knownFor: TypedP pe[(Long, Array[( nt, Float)])]
+  ): Execut on[Map[ nt, Ne ghborhood nformat on]] = {
     knownFor
       .flatMap {
         case (_, clusterArray) =>
           clusterArray.map {
-            case (clusterId, score) =>
-              Map(clusterId -> (1, score))
+            case (cluster d, score) =>
+              Map(cluster d -> (1, score))
           }
       }
       .sum
-      .getExecution
+      .getExecut on
       .map { map =>
         map.mapValues {
           case (count, sum) =>
-            NeighborhoodInformation(count, 0, 0, sum)
+            Ne ghborhood nformat on(count, 0, 0, sum)
         }
       }
   }
 
   /**
-   * Adds self-loops and also potentially raises all edge weights to an exponent
-   * (typically exponent > 1, and has the effect of increasing inequality in edge weights to
-   * "clarify" structure in the graph - currently we just set exponent to 1).
-   * @param symmetrizedSims input symmetrized similarity graph
-   * @param exponentForEdgeWeight exponent to raise all edge weights to.
-   *                              Set to 1.0 to make this a no-op
-   * @param maxWtToSelfLoopWtMultFactor What to multiply the max wt among non-self-loop edges to
-   *                                    derive the weight on the self-loop edge.
+   * Adds self-loops and also potent ally ra ses all edge   ghts to an exponent
+   * (typ cally exponent > 1, and has t  effect of  ncreas ng  nequal y  n edge   ghts to
+   * "clar fy" structure  n t  graph - currently   just set exponent to 1).
+   * @param sym tr zedS ms  nput sym tr zed s m lar y graph
+   * @param exponentForEdge  ght exponent to ra se all edge   ghts to.
+   *                              Set to 1.0 to make t  a no-op
+   * @param maxWtToSelfLoopWtMultFactor What to mult ply t  max wt among non-self-loop edges to
+   *                                    der ve t    ght on t  self-loop edge.
    * @return New graph
    */
-  def simsGraphForUpdateFromSymmetrizedSims(
-    symmetrizedSims: TypedPipe[(Long, Map[Long, Float])],
-    exponentForEdgeWeight: Float,
+  def s msGraphForUpdateFromSym tr zedS ms(
+    sym tr zedS ms: TypedP pe[(Long, Map[Long, Float])],
+    exponentForEdge  ght: Float,
     maxWtToSelfLoopWtMultFactor: Float
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    val expWeighted = symmetrizedSims.mapValues { y =>
-      y.mapValues { x => math.pow(x, exponentForEdgeWeight).toFloat }
+  ): TypedP pe[(Long, Map[Long, Float])] = {
+    val exp  ghted = sym tr zedS ms.mapValues { y =>
+      y.mapValues { x => math.pow(x, exponentForEdge  ght).toFloat }
     }
 
-    TopUsersSimilarityGraph.addSelfLoop(
-      input = expWeighted,
-      maxToSelfLoopWeight = { x: Float => x * maxWtToSelfLoopWtMultFactor }
+    TopUsersS m lar yGraph.addSelfLoop(
+       nput = exp  ghted,
+      maxToSelfLoop  ght = { x: Float => x * maxWtToSelfLoopWtMultFactor }
     )
   }
 
   /**
-   * Runs the job
-   * @param args args which specify many parameters
-   * @param inputKnownFor
-   * @param inputSimsGraph
-   * @param defaultEmailAddress by default, the email address to send an to email to, which has
-   *                            a bunch of evaluation metrics
-   * @param writeKnownForFunction function that takes a knownFor and writes to some
-   *                              persistent location
-   * @param readKnownForFunction function that reads the knownFor which was written to using the
-   *                             writeKnownForFunction
-   * @param dateRange dateRange, used for reading UserSource
-   * @param uniqueID need for creating stats
-   * @return Execution[Unit] encapsulating the whole job
+   * Runs t  job
+   * @param args args wh ch spec fy many para ters
+   * @param  nputKnownFor
+   * @param  nputS msGraph
+   * @param defaultEma lAddress by default, t  ema l address to send an to ema l to, wh ch has
+   *                            a bunch of evaluat on  tr cs
+   * @param wr eKnownForFunct on funct on that takes a knownFor and wr es to so 
+   *                              pers stent locat on
+   * @param readKnownForFunct on funct on that reads t  knownFor wh ch was wr ten to us ng t 
+   *                             wr eKnownForFunct on
+   * @param dateRange dateRange, used for read ng UserS ce
+   * @param un que D need for creat ng stats
+   * @return Execut on[Un ] encapsulat ng t  whole job
    */
-  def runUpdateKnownForGeneric(
+  def runUpdateKnownForGener c(
     args: Args,
-    inputKnownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    inputSimsGraph: TypedPipe[Candidates],
-    defaultEmailAddress: String,
-    writeKnownForFunction: TypedPipe[(Long, Array[(Int, Float)])] => Execution[Unit],
-    readKnownForFunction: => TypedPipe[(Long, Array[(Int, Float)])],
-    includeEvaluationResultsInEmail: Boolean
+     nputKnownFor: TypedP pe[(Long, Array[( nt, Float)])],
+     nputS msGraph: TypedP pe[Cand dates],
+    defaultEma lAddress: Str ng,
+    wr eKnownForFunct on: TypedP pe[(Long, Array[( nt, Float)])] => Execut on[Un ],
+    readKnownForFunct on: => TypedP pe[(Long, Array[( nt, Float)])],
+     ncludeEvaluat onResults nEma l: Boolean
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val minActiveFollowers = args.int("minActiveFollowers", 400)
-    val topK = args.int("topK")
-    val maxSimsNeighborsForUpdate =
-      args.int("maxSimsNeighborsForUpdate", 40)
-    val minNeighborsInCluster = args.int("minNeighborsInCluster", 2)
+     mpl c  dateRange: DateRange,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val m nAct veFollo rs = args. nt("m nAct veFollo rs", 400)
+    val topK = args. nt("topK")
+    val maxS msNe ghborsForUpdate =
+      args. nt("maxS msNe ghborsForUpdate", 40)
+    val m nNe ghbors nCluster = args. nt("m nNe ghbors nCluster", 2)
     val maxWtToSelfLoopWtMultFactor =
       args.float("maxWtToSelfLoopWtMultFactor", 2)
-    val exponentForEdgeWeight = args.float("exponentForEdgeWeights", 1.0f)
-    val updateMethod: ClusterScoresForNode => Double = args("updateMethod") match {
-      case "sumScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.sumScoreIgnoringMembershipScores
+    val exponentForEdge  ght = args.float("exponentForEdge  ghts", 1.0f)
+    val update thod: ClusterScoresForNode => Double = args("update thod") match {
+      case "sumScore gnor ng mbersh pScores" => { x: ClusterScoresForNode =>
+        x.sumScore gnor ng mbersh pScores
       }
-      case "ratioScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreIgnoringMembershipScores
+      case "rat oScore gnor ng mbersh pScores" => { x: ClusterScoresForNode =>
+        x.rat oScore gnor ng mbersh pScores
       }
-      case "ratioScoreUsingMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreUsingMembershipScores
+      case "rat oScoreUs ng mbersh pScores" => { x: ClusterScoresForNode =>
+        x.rat oScoreUs ng mbersh pScores
       }
       case x @ _ =>
-        throw new Exception(s"value for --updateMethod $x is unknown. It must be one of " +
-          s"[sumScoreIgnoringMembershipScores, ratioScoreIgnoringMembershipScores, ratioScoreUsingMembershipScores]")
+        throw new Except on(s"value for --update thod $x  s unknown.   must be one of " +
+          s"[sumScore gnor ng mbersh pScores, rat oScore gnor ng mbersh pScores, rat oScoreUs ng mbersh pScores]")
     }
-    val truePositiveWtFactor = args.float("truePositiveWtFactor", 10)
-    val modelVersion = args("outputModelVersion")
-    val emailAddress =
-      args.optional("emailAddress").getOrElse(defaultEmailAddress)
+    val truePos  veWtFactor = args.float("truePos  veWtFactor", 10)
+    val modelVers on = args("outputModelVers on")
+    val ema lAddress =
+      args.opt onal("ema lAddress").getOrElse(defaultEma lAddress)
 
-    val topUsers = TopUsersSimilarityGraph
-      .topUserIds(
+    val topUsers = TopUsersS m lar yGraph
+      .topUser ds(
         DAL
-          .readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange)
-          .toTypedPipe,
-        minActiveFollowers,
+          .readMostRecentSnapshot(Users ceFlatScalaDataset, dateRange)
+          .toTypedP pe,
+        m nAct veFollo rs,
         topK).count("num_top_users")
 
-    TopUsersSimilarityGraph
-      .getSubgraphFromUserGroupedInput(
-        fullGraph = inputSimsGraph,
-        usersToInclude = topUsers,
-        maxNeighborsPerNode = maxSimsNeighborsForUpdate,
-        degreeThresholdForStat = minNeighborsInCluster
+    TopUsersS m lar yGraph
+      .getSubgraphFromUserGrouped nput(
+        fullGraph =  nputS msGraph,
+        usersTo nclude = topUsers,
+        maxNe ghborsPerNode = maxS msNe ghborsForUpdate,
+        degreeThresholdForStat = m nNe ghbors nCluster
       )
-      .forceToDiskExecution
-      .flatMap { symmetrizedSims =>
-        val modifiedSims =
-          UpdateKnownForApps.simsGraphForUpdateFromSymmetrizedSims(
-            symmetrizedSims = symmetrizedSims,
-            exponentForEdgeWeight = exponentForEdgeWeight,
+      .forceToD skExecut on
+      .flatMap { sym tr zedS ms =>
+        val mod f edS ms =
+          UpdateKnownForApps.s msGraphForUpdateFromSym tr zedS ms(
+            sym tr zedS ms = sym tr zedS ms,
+            exponentForEdge  ght = exponentForEdge  ght,
             maxWtToSelfLoopWtMultFactor = maxWtToSelfLoopWtMultFactor
           )
 
-        val previouslyFamousUsersExec = inputKnownFor
-          .leftJoin(topUsers.asKeys)
-          .collect { case (userId, (clusters, None)) => userId }
-          .getSummaryString(
-            "Users previously in known for but not in topUsers anymore",
+        val prev ouslyFamousUsersExec =  nputKnownFor
+          .leftJo n(topUsers.asKeys)
+          .collect { case (user d, (clusters, None)) => user d }
+          .getSummaryStr ng(
+            "Users prev ously  n known for but not  n topUsers anymore",
             numRecords = 20)
 
-        val clusterStatsExec = UpdateKnownForApps.getClusterStats(inputKnownFor)
+        val clusterStatsExec = UpdateKnownForApps.getClusterStats( nputKnownFor)
 
-        val globalAvgWeightExec =
-          UpdateKnownForApps.getGlobalAvgWeight(modifiedSims)
+        val globalAvg  ghtExec =
+          UpdateKnownForApps.getGlobalAvg  ght(mod f edS ms)
 
-        val globalAvgMembershipScoreExec = UpdateKnownForApps.getAvgMembershipScore(inputKnownFor)
+        val globalAvg mbersh pScoreExec = UpdateKnownForApps.getAvg mbersh pScore( nputKnownFor)
 
-        Execution.zip(globalAvgWeightExec, clusterStatsExec, globalAvgMembershipScoreExec).flatMap {
-          case (Some(globalAvgWeight), clusterStats, globalAvgMembershipScore) =>
-            println("Size of clusterStats: " + clusterStats.size)
-            println("First few entries from clusterStats: " + clusterStats.take(5))
-            println("globalAvgWeight: " + globalAvgWeight)
-            println("globalAvgMembershipScore: " + globalAvgMembershipScore)
+        Execut on.z p(globalAvg  ghtExec, clusterStatsExec, globalAvg mbersh pScoreExec).flatMap {
+          case (So (globalAvg  ght), clusterStats, globalAvg mbersh pScore) =>
+            pr ntln("S ze of clusterStats: " + clusterStats.s ze)
+            pr ntln("F rst few entr es from clusterStats: " + clusterStats.take(5))
+            pr ntln("globalAvg  ght: " + globalAvg  ght)
+            pr ntln("globalAvg mbersh pScore: " + globalAvg mbersh pScore)
 
-            val knownForWithUnnormalizedScores = UpdateKnownFor
+            val knownForW hUnnormal zedScores = UpdateKnownFor
               .newKnownForScores(
-                inputKnownFor,
-                modifiedSims,
-                globalAvgWeight,
+                 nputKnownFor,
+                mod f edS ms,
+                globalAvg  ght,
                 clusterStats,
-                globalAvgMembershipScore
+                globalAvg mbersh pScore
               )
-            val writeNewKnownForExec = writeKnownForFunction(
-              UpdateKnownFor.updateGeneric(
-                modifiedSims,
-                knownForWithUnnormalizedScores,
+            val wr eNewKnownForExec = wr eKnownForFunct on(
+              UpdateKnownFor.updateGener c(
+                mod f edS ms,
+                knownForW hUnnormal zedScores,
                 clusterStats,
-                minNeighborsInCluster,
-                globalAvgWeight,
-                globalAvgMembershipScore,
-                truePositiveWtFactor,
-                updateMethod
+                m nNe ghbors nCluster,
+                globalAvg  ght,
+                globalAvg mbersh pScore,
+                truePos  veWtFactor,
+                update thod
               )
             )
 
-            writeNewKnownForExec.flatMap { _ =>
-              Util.getCustomCountersString(writeNewKnownForExec).flatMap { customCountersString =>
-                if (includeEvaluationResultsInEmail) {
-                  // It's unfortunate that we're not using the newKnownFor directly, but are instead
-                  // first writing it out and then reading it back in. The reason for doing it in this
-                  // convoluted way is that when we directly use the newKnownFor, the clusterEvaluation
-                  // metrics are being incorrectly computed.
+            wr eNewKnownForExec.flatMap { _ =>
+              Ut l.getCustomCountersStr ng(wr eNewKnownForExec).flatMap { customCountersStr ng =>
+                 f ( ncludeEvaluat onResults nEma l) {
+                  //  's unfortunate that  're not us ng t  newKnownFor d rectly, but are  nstead
+                  // f rst wr  ng   out and t n read ng   back  n. T  reason for do ng    n t 
+                  // convoluted way  s that w n   d rectly use t  newKnownFor, t  clusterEvaluat on
+                  //  tr cs are be ng  ncorrectly computed.
 
-                  val newKnownFor = readKnownForFunction
+                  val newKnownFor = readKnownForFunct on
 
                   val newResultsExec =
-                    ClusterEvaluation
-                      .overallEvaluation(symmetrizedSims, newKnownFor, "newKnownForEval")
+                    ClusterEvaluat on
+                      .overallEvaluat on(sym tr zedS ms, newKnownFor, "newKnownForEval")
                   val oldResultsExec =
-                    ClusterEvaluation
-                      .overallEvaluation(symmetrizedSims, inputKnownFor, "oldKnownForEval")
-                  val minSizeOfBiggerClusterForComparison = 10
-                  val compareExec = CompareClusters.summarize(
+                    ClusterEvaluat on
+                      .overallEvaluat on(sym tr zedS ms,  nputKnownFor, "oldKnownForEval")
+                  val m nS zeOfB ggerClusterForCompar son = 10
+                  val compareExec = CompareClusters.summar ze(
                     CompareClusters.compare(
-                      KnownForSources.transpose(inputKnownFor),
-                      KnownForSources.transpose(newKnownFor),
-                      minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
+                      KnownForS ces.transpose( nputKnownFor),
+                      KnownForS ces.transpose(newKnownFor),
+                      m nS zeOfB ggerCluster = m nS zeOfB ggerClusterForCompar son
                     ))
 
-                  Execution
-                    .zip(oldResultsExec, newResultsExec, compareExec, previouslyFamousUsersExec)
+                  Execut on
+                    .z p(oldResultsExec, newResultsExec, compareExec, prev ouslyFamousUsersExec)
                     .map {
-                      case (oldResults, newResults, compareResults, previouslyFamousUsersString) =>
-                        val emailText = "Evaluation Results for existing knownFor:\n" +
-                          Util.prettyJsonMapper.writeValueAsString(oldResults) +
+                      case (oldResults, newResults, compareResults, prev ouslyFamousUsersStr ng) =>
+                        val ema lText = "Evaluat on Results for ex st ng knownFor:\n" +
+                          Ut l.prettyJsonMapper.wr eValueAsStr ng(oldResults) +
                           "\n\n-------------------\n\n" +
-                          "Evaluation Results for new knownFor:\n" +
-                          Util.prettyJsonMapper.writeValueAsString(newResults) +
+                          "Evaluat on Results for new knownFor:\n" +
+                          Ut l.prettyJsonMapper.wr eValueAsStr ng(newResults) +
                           "\n\n-------------------\n\n" +
-                          s"Cosine similarity distribution between cluster membership vectors for " +
-                          s"clusters with at least $minSizeOfBiggerClusterForComparison members\n" +
-                          Util.prettyJsonMapper
-                            .writeValueAsString(compareResults) +
+                          s"Cos ne s m lar y d str but on bet en cluster  mbersh p vectors for " +
+                          s"clusters w h at least $m nS zeOfB ggerClusterForCompar son  mbers\n" +
+                          Ut l.prettyJsonMapper
+                            .wr eValueAsStr ng(compareResults) +
                           "\n\n-------------------\n\n" +
-                          "Custom counters:\n" + customCountersString +
+                          "Custom counters:\n" + customCountersStr ng +
                           "\n\n-------------------\n\n" +
-                          previouslyFamousUsersString
+                          prev ouslyFamousUsersStr ng
 
-                        Util
-                          .sendEmail(
-                            emailText,
-                            s"Evaluation results of new knownFor $modelVersion",
-                            emailAddress)
+                        Ut l
+                          .sendEma l(
+                            ema lText,
+                            s"Evaluat on results of new knownFor $modelVers on",
+                            ema lAddress)
                     }
                 } else {
-                  Util
-                    .sendEmail(
-                      customCountersString,
-                      s"Change in cluster assignments for update of knownFor $modelVersion",
-                      emailAddress
+                  Ut l
+                    .sendEma l(
+                      customCountersStr ng,
+                      s"Change  n cluster ass gn nts for update of knownFor $modelVers on",
+                      ema lAddress
                     )
-                  Execution.unit
+                  Execut on.un 
                 }
 
               }
@@ -311,66 +311,66 @@ object UpdateKnownForApps {
   }
 }
 
-trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+tra  UpdateKnownForBatch extends Tw terSc duledExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
 
-  def firstTime: String
+  def f rstT  : Str ng
 
-  val batchIncrement: Duration = Days(30)
+  val batch ncre nt: Durat on = Days(30)
 
-  def batchDescription: String
+  def batchDescr pt on: Str ng
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(batchDescription),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate lazy val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(batchDescr pt on),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  val emailAddress: String = "no-reply@twitter.com"
+  val ema lAddress: Str ng = "no-reply@tw ter.com"
 
-  def inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  def  nputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]]
 
-  def inputModelVersion: String
+  def  nputModelVers on: Str ng
 
-  def outputModelVersion: String
+  def outputModelVers on: Str ng
 
-  def outputPath: String
+  def outputPath: Str ng
 
-  def outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  def outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]]
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val inputKnownFor =
-            KnownForSources.readDALDataset(inputDALDataset, Days(30), inputModelVersion)
+  overr de def sc duledJob: Execut on[Un ] =
+    Analyt csBatchExecut on(execArgs) {  mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
+          val  nputKnownFor =
+            KnownForS ces.readDALDataset( nputDALDataset, Days(30),  nputModelVers on)
 
-          val inputSimsGraph = TypedPipe
-            .from(FollowingsCosineSimilaritiesManhattanSource())
+          val  nputS msGraph = TypedP pe
+            .from(Follow ngsCos neS m lar  esManhattanS ce())
             .map(_._2)
 
-          def writeKnownFor(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Unit] = {
-            KnownForSources
-              .toKeyVal(knownFor, outputModelVersion)
-              .writeDALVersionedKeyValExecution(
+          def wr eKnownFor(knownFor: TypedP pe[(Long, Array[( nt, Float)])]): Execut on[Un ] = {
+            KnownForS ces
+              .toKeyVal(knownFor, outputModelVers on)
+              .wr eDALVers onedKeyValExecut on(
                 outputDALDataset,
-                D.Suffix(outputPath)
+                D.Suff x(outputPath)
               )
           }
 
           def readKnownFor =
-            KnownForSources.readDALDataset(outputDALDataset, Days(1), outputModelVersion)
+            KnownForS ces.readDALDataset(outputDALDataset, Days(1), outputModelVers on)
 
-          UpdateKnownForApps.runUpdateKnownForGeneric(
+          UpdateKnownForApps.runUpdateKnownForGener c(
             args,
-            inputKnownFor,
-            inputSimsGraph,
-            emailAddress,
-            writeKnownFor,
+             nputKnownFor,
+             nputS msGraph,
+            ema lAddress,
+            wr eKnownFor,
             readKnownFor,
-            includeEvaluationResultsInEmail = false
+             ncludeEvaluat onResults nEma l = false
           )
         }
       }
@@ -378,65 +378,65 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron update_known_for_20M_145k \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally --start_cron update_known_for_20M_145k \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
 object UpdateKnownFor20M145K extends UpdateKnownForBatch {
-  override val firstTime: String = "2019-06-06"
+  overr de val f rstT  : Str ng = "2019-06-06"
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override val batchDescription: String =
-    "com.twitter.simclusters_v2.scalding.UpdateKnownFor20M145K"
+  overr de val batchDescr pt on: Str ng =
+    "com.tw ter.s mclusters_v2.scald ng.UpdateKnownFor20M145K"
 
-  override val inputModelVersion: String = ModelVersions.Model20M145KUpdated
+  overr de val  nputModelVers on: Str ng = ModelVers ons.Model20M145KUpdated
 
-  override val inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+  overr de val  nputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]] =
+    S mclustersV2RawKnownFor20M145KUpdatedScalaDataset
 
-  override val outputModelVersion: String = ModelVersions.Model20M145KUpdated
+  overr de val outputModelVers on: Str ng = ModelVers ons.Model20M145KUpdated
 
-  override val outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+  overr de val outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]] =
+    S mclustersV2RawKnownFor20M145KUpdatedScalaDataset
 
-  override val outputPath: String = InternalDataPaths.RawKnownForUpdatedPath
+  overr de val outputPath: Str ng =  nternalDataPaths.RawKnownForUpdatedPath
 }
 
-/** This one's end-to-end, doesn't save any intermediate data etc. **/
-object UpdateKnownForAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+/** T  one's end-to-end, doesn't save any  nter d ate data etc. **/
+object UpdateKnownForAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val date: DateRange = DateRange.parse(args("date"))
-          val defaultEmailAddress = "your_ldap@twitter.com"
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+           mpl c  val date: DateRange = DateRange.parse(args("date"))
+          val defaultEma lAddress = "y _ldap@tw ter.com"
 
-          val inputKnownFor = args.optional("inputKnownForDir") match {
-            case Some(inputKnownForDir) => KnownForSources.readKnownFor(inputKnownForDir)
-            case None => KnownForSources.knownFor_20M_Dec11_145K
+          val  nputKnownFor = args.opt onal(" nputKnownForD r") match {
+            case So ( nputKnownForD r) => KnownForS ces.readKnownFor( nputKnownForD r)
+            case None => KnownForS ces.knownFor_20M_Dec11_145K
           }
 
-          val inputSimsGraph = TopUsersSimilarityGraph.readSimsInput(
-            args.boolean("simsInputIsKeyValSource"),
-            args("simsInputDir")
+          val  nputS msGraph = TopUsersS m lar yGraph.readS ms nput(
+            args.boolean("s ms nput sKeyValS ce"),
+            args("s ms nputD r")
           )
 
-          def readKnownFor() = KnownForSources.readKnownFor(args("outputDir"))
+          def readKnownFor() = KnownForS ces.readKnownFor(args("outputD r"))
 
-          UpdateKnownForApps.runUpdateKnownForGeneric(
+          UpdateKnownForApps.runUpdateKnownForGener c(
             args,
-            inputKnownFor,
-            inputSimsGraph,
-            defaultEmailAddress,
-            { input: TypedPipe[(Long, Array[(Int, Float)])] =>
-              KnownForSources.writeKnownForTypedTsv(input, args("outputDir"))
+             nputKnownFor,
+             nputS msGraph,
+            defaultEma lAddress,
+            {  nput: TypedP pe[(Long, Array[( nt, Float)])] =>
+              KnownForS ces.wr eKnownForTypedTsv( nput, args("outputD r"))
             },
             readKnownFor,
-            includeEvaluationResultsInEmail = true
+             ncludeEvaluat onResults nEma l = true
           )
         }
     }

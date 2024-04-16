@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["**/*.scala"],
+scala_l brary(
+    s ces = ["**/*.scala"],
     platform = "java8",
-    provides = scala_artifact(
-        org = "com.twitter",
-        name = "servo-request",
-        repo = artifactory,
+    prov des = scala_art fact(
+        org = "com.tw ter",
+        na  = "servo-request",
+        repo = art factory,
     ),
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "tweetypie/servo/util",
-        "twitter-config/yaml",
-        "util/util-stats/src/main/scala",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle-core/src/ma n",
+        "t etyp e/servo/ut l",
+        "tw ter-conf g/yaml",
+        "ut l/ut l-stats/src/ma n/scala",
     ],
     exports = [
-        "tweetypie/servo/util",
+        "t etyp e/servo/ut l",
     ],
 )

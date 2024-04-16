@@ -1,11 +1,11 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.tw ter.fr gate.pushserv ce.refresh_handler.cross
 
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
+ mport com.tw ter.fr gate.common.ut l.MRPushCopy
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
 
 /**
  *
- * @param candidate: [[RawCandidate]] is a recommendation candidate
- * @param pushCopy: [[MRPushCopy]] eligible for candidate
+ * @param cand date: [[RawCand date]]  s a recom ndat on cand date
+ * @param pushCopy: [[MRPushCopy]] el g ble for cand date
  */
-case class CandidateCopyPair(candidate: RawCandidate, pushCopy: MRPushCopy)
+case class Cand dateCopyPa r(cand date: RawCand date, pushCopy: MRPushCopy)

@@ -1,391 +1,391 @@
-namespace java com.twitter.tweetypie.thriftjava.graphql
-#@namespace scala com.twitter.tweetypie.thriftscala.graphql
-#@namespace strato com.twitter.tweetypie.graphql
+na space java com.tw ter.t etyp e.thr ftjava.graphql
+#@na space scala com.tw ter.t etyp e.thr ftscala.graphql
+#@na space strato com.tw ter.t etyp e.graphql
 
 /**
- * Reasons for defining "prefetch" structs:
- * i)  It enables GraphQL prefetch caching
- * ii) All tweet mutation operations are defined to support prefetch caching for API consistency
- *     and future flexibility. (Populating the cache with VF results being a potential use case.)
+ * Reasons for def n ng "prefetch" structs:
+ *  )    enables GraphQL prefetch cach ng
+ *   ) All t et mutat on operat ons are def ned to support prefetch cach ng for AP  cons stency
+ *     and future flex b l y. (Populat ng t  cac  w h VF results be ng a potent al use case.)
  */
-include "com/twitter/ads/callback/engagement_request.thrift"
-include "com/twitter/strato/graphql/existsAndPrefetch.thrift"
+ nclude "com/tw ter/ads/callback/engage nt_request.thr ft"
+ nclude "com/tw ter/strato/graphql/ex stsAndPrefetch.thr ft"
 
-struct UnretweetRequest {
+struct Unret etRequest {
   /**
-   * Tweet ID of the source tweet being referenced in the unretweet.
-   * Note: The retweet_id isn't being passed here as it will result in a
-   * successful response, but won't have any effect. This is due to
-   * how Tweetypie's unretweet endpoint works.
+   * T et  D of t  s ce t et be ng referenced  n t  unret et.
+   * Note: T  ret et_ d  sn't be ng passed  re as   w ll result  n a
+   * successful response, but won't have any effect. T   s due to
+   * how T etyp e's unret et endpo nt works.
    */
-  1: required i64 source_tweet_id (
-      strato.json.numbers.type='string',
-      strato.description='The source tweet to be unretweeted.'
+  1: requ red  64 s ce_t et_ d (
+      strato.json.numbers.type='str ng',
+      strato.descr pt on='T  s ce t et to be unret eted.'
     )
-  2: optional string comparison_id (
-     strato.description='Correlates requests originating from REST endpoints and GraphQL endpoints.'
+  2: opt onal str ng compar son_ d (
+     strato.descr pt on='Correlates requests or g nat ng from REST endpo nts and GraphQL endpo nts.'
    )
-} (strato.graphql.typename='UnretweetRequest')
+} (strato.graphql.typena ='Unret etRequest')
 
-struct UnretweetResponse {
+struct Unret etResponse {
   /**
-   * The response contains the source tweet's ID being unretweeted.
-   * Reasons for this:
-   * i)   The operation should return a non-void response to retain consistency
-   *      with other tweet mutation APIs.
-   * ii)  The response struct should define at least one field due to requirements
-   *      of the GraphQL infrastructure.
-   * iii) This allows the caller to hydrate the source tweet if required and request
-   *      updated counts on the source tweet if desired. (since this operation decrements
-   *      the source tweet's retweet count)
+   * T  response conta ns t  s ce t et's  D be ng unret eted.
+   * Reasons for t :
+   *  )   T  operat on should return a non-vo d response to reta n cons stency
+   *      w h ot r t et mutat on AP s.
+   *   )  T  response struct should def ne at least one f eld due to requ re nts
+   *      of t  GraphQL  nfrastructure.
+   *    ) T  allows t  caller to hydrate t  s ce t et  f requ red and request
+   *      updated counts on t  s ce t et  f des red. (s nce t  operat on decre nts
+   *      t  s ce t et's ret et count)
    */
-  1: optional i64 source_tweet_id (
-    strato.space='Tweet',
-    strato.graphql.fieldname='source_tweet',
-    strato.description='The source tweet that was unretweeted.'
+  1: opt onal  64 s ce_t et_ d (
+    strato.space='T et',
+    strato.graphql.f eldna ='s ce_t et',
+    strato.descr pt on='T  s ce t et that was unret eted.'
   )
-} (strato.graphql.typename='UnretweetResponse')
+} (strato.graphql.typena ='Unret etResponse')
 
-struct UnretweetResponseWithSubqueryPrefetchItems {
-  1: optional UnretweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+struct Unret etResponseW hSubqueryPrefetch ems {
+  1: opt onal Unret etResponse data
+  2: opt onal ex stsAndPrefetch.Prefetc dData subqueryPrefetch ems
 }
 
 
-struct CreateRetweetRequest {
-  1: required i64 tweet_id (strato.json.numbers.type='string')
+struct CreateRet etRequest {
+  1: requ red  64 t et_ d (strato.json.numbers.type='str ng')
 
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.nullcast
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.nullcast
   2: bool nullcast = 0 (
-    strato.description='Do not deliver this retweet to a user\'s followers. http://go/nullcast'
+    strato.descr pt on='Do not del ver t  ret et to a user\'s follo rs. http://go/nullcast'
   )
 
-  // @see com.twitter.ads.callback.thriftscala.EngagementRequest
-  3: optional engagement_request.EngagementRequest engagement_request (
-    strato.description='The ad engagement from which this retweet was created.'
+  // @see com.tw ter.ads.callback.thr ftscala.Engage ntRequest
+  3: opt onal engage nt_request.Engage ntRequest engage nt_request (
+    strato.descr pt on='T  ad engage nt from wh ch t  ret et was created.'
   )
 
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.PostTweetRequest.comparison_id
-  4: optional string comparison_id (
-    strato.description='Correlates requests originating from REST endpoints and GraphQL endpoints. UUID v4 (random) 36 character string.'
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.PostT etRequest.compar son_ d
+  4: opt onal str ng compar son_ d (
+    strato.descr pt on='Correlates requests or g nat ng from REST endpo nts and GraphQL endpo nts. UU D v4 (random) 36 character str ng.'
   )
-} (strato.graphql.typename='CreateRetweetRequest')
+} (strato.graphql.typena ='CreateRet etRequest')
 
-struct CreateRetweetResponse {
-  1: optional i64 retweet_id (
-    strato.space='Tweet',
-    strato.graphql.fieldname='retweet',
-    strato.description='The created retweet.'
+struct CreateRet etResponse {
+  1: opt onal  64 ret et_ d (
+    strato.space='T et',
+    strato.graphql.f eldna ='ret et',
+    strato.descr pt on='T  created ret et.'
   )
-} (strato.graphql.typename='CreateRetweetResponse')
+} (strato.graphql.typena ='CreateRet etResponse')
 
-struct CreateRetweetResponseWithSubqueryPrefetchItems {
-  1: optional CreateRetweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+struct CreateRet etResponseW hSubqueryPrefetch ems {
+  1: opt onal CreateRet etResponse data
+  2: opt onal ex stsAndPrefetch.Prefetc dData subqueryPrefetch ems
 }
 
-struct TweetReply {
-  //@see com.twitter.tweetypie.thriftscala.PostTweetRequest.in_reply_to_tweet_id
-  1: i64 in_reply_to_tweet_id (
-    strato.json.numbers.type='string',
-    strato.description='The id of the tweet that this tweet is replying to.'
+struct T etReply {
+  //@see com.tw ter.t etyp e.thr ftscala.PostT etRequest. n_reply_to_t et_ d
+  1:  64  n_reply_to_t et_ d (
+    strato.json.numbers.type='str ng',
+    strato.descr pt on='T   d of t  t et that t  t et  s reply ng to.'
   )
-  //@see com.twitter.tweetypie.thriftscala.PostTweetRequest.exclude_reply_user_ids
-  2: list<i64> exclude_reply_user_ids = [] (
-    strato.json.numbers.type='string',
-    strato.description='Screen names appearing in the mention prefix can be excluded. Because the mention prefix must always include the leading mention to preserve directed-at addressing for the in-reply-to tweet author, attempting to exclude that user id will have no effect. Specifying a user id not in the prefix will be silently ignored.'
+  //@see com.tw ter.t etyp e.thr ftscala.PostT etRequest.exclude_reply_user_ ds
+  2: l st< 64> exclude_reply_user_ ds = [] (
+    strato.json.numbers.type='str ng',
+    strato.descr pt on='Screen na s appear ng  n t   nt on pref x can be excluded. Because t   nt on pref x must always  nclude t  lead ng  nt on to preserve d rected-at address ng for t   n-reply-to t et author, attempt ng to exclude that user  d w ll have no effect. Spec fy ng a user  d not  n t  pref x w ll be s lently  gnored.'
   )
-} (strato.graphql.typename='TweetReply')
+} (strato.graphql.typena ='T etReply')
 
-struct TweetMediaEntity {
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.media_upload_ids
-  1: i64 media_id (
-    strato.json.numbers.type='string',
-    strato.description='Media id as obtained from the User Image Service when uploaded.'
+struct T et d aEnt y {
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest. d a_upload_ ds
+  1:  64  d a_ d (
+    strato.json.numbers.type='str ng',
+    strato.descr pt on=' d a  d as obta ned from t  User  mage Serv ce w n uploaded.'
   )
 
-  // @see com.twitter.tweetypie.thriftscala.Tweet.media_tags
-  2: list<i64> tagged_users = [] (
-    strato.json.numbers.type='string',
-    strato.description='List of user_ids to tag in this media entity. Requires Client App Privelege MEDIA_TAGS. Contributors (http://go/teams) are not supported. Tags are silently dropped when unauthorized.'
+  // @see com.tw ter.t etyp e.thr ftscala.T et. d a_tags
+  2: l st< 64> tagged_users = [] (
+    strato.json.numbers.type='str ng',
+    strato.descr pt on='L st of user_ ds to tag  n t   d a ent y. Requ res Cl ent App Pr velege MED A_TAGS. Contr butors (http://go/teams) are not supported. Tags are s lently dropped w n unauthor zed.'
   )
-} (strato.graphql.typename='TweetMediaEntity')
+} (strato.graphql.typena ='T et d aEnt y')
 
-struct TweetMedia {
-  1: list<TweetMediaEntity> media_entities = [] (
-    strato.description='You may include up to 4 photos or 1 animated GIF or 1 video in a Tweet.'
+struct T et d a {
+  1: l st<T et d aEnt y>  d a_ent  es = [] (
+    strato.descr pt on='  may  nclude up to 4 photos or 1 an mated G F or 1 v deo  n a T et.'
   )
 
   /**
-   * @deprecated @see com.twitter.tweetypie.thriftscala.PostTweetRequest.possibly_sensitive for
-   * more details on why this field is ignored.
+   * @deprecated @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.poss bly_sens  ve for
+   * more deta ls on why t  f eld  s  gnored.
    */
-  2: bool possibly_sensitive = 0 (
-    strato.description='Mark this tweet as possibly containing objectionable media.'
+  2: bool poss bly_sens  ve = 0 (
+    strato.descr pt on='Mark t  t et as poss bly conta n ng object onable  d a.'
   )
-} (strato.graphql.typename='TweetMedia')
+} (strato.graphql.typena ='T et d a')
 
-//This is similar to the APITweetAnnotation struct except that here all the id fields are required.
-struct TweetAnnotation {
-  1: i64 group_id (strato.json.numbers.type='string')
-  2: i64 domain_id (strato.json.numbers.type='string')
-  3: i64 entity_id (strato.json.numbers.type='string')
-} (strato.graphql.typename='TweetAnnotation', strato.case.format='preserve')
+//T   s s m lar to t  AP T etAnnotat on struct except that  re all t   d f elds are requ red.
+struct T etAnnotat on {
+  1:  64 group_ d (strato.json.numbers.type='str ng')
+  2:  64 doma n_ d (strato.json.numbers.type='str ng')
+  3:  64 ent y_ d (strato.json.numbers.type='str ng')
+} (strato.graphql.typena ='T etAnnotat on', strato.case.format='preserve')
 
-struct TweetGeoCoordinates {
-  1: double latitude (strato.description='The latitude of the location this Tweet refers to. The valid range for latitude is -90.0 to +90.0 (North is positive) inclusive.')
-  2: double longitude (strato.description='The longitude of the location this Tweet refers to. The valid range for longitude is -180.0 to +180.0 (East is positive) inclusive.')
-  3: bool display_coordinates = 1 (strato.description='Whether or not make the coordinates public. When false, geo coordinates are persisted with the Tweet but are not shared publicly.')
-} (strato.graphql.typename='TweetGeoCoordinates')
+struct T etGeoCoord nates {
+  1: double lat ude (strato.descr pt on='T  lat ude of t  locat on t  T et refers to. T  val d range for lat ude  s -90.0 to +90.0 (North  s pos  ve)  nclus ve.')
+  2: double long ude (strato.descr pt on='T  long ude of t  locat on t  T et refers to. T  val d range for long ude  s -180.0 to +180.0 (East  s pos  ve)  nclus ve.')
+  3: bool d splay_coord nates = 1 (strato.descr pt on='W t r or not make t  coord nates publ c. W n false, geo coord nates are pers sted w h t  T et but are not shared publ cly.')
+} (strato.graphql.typena ='T etGeoCoord nates')
 
-struct TweetGeo {
-  1: optional TweetGeoCoordinates coordinates (
-    strato.description='The geo coordinates of the location this Tweet refers to.'
+struct T etGeo {
+  1: opt onal T etGeoCoord nates coord nates (
+    strato.descr pt on='T  geo coord nates of t  locat on t  T et refers to.'
   )
-  2: optional string place_id (
-    strato.description='A place in the world. See also https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/geo#place'
+  2: opt onal str ng place_ d (
+    strato.descr pt on='A place  n t  world. See also https://developer.tw ter.com/en/docs/tw ter-ap /v1/data-d ct onary/object-model/geo#place'
   )
-  3: optional string geo_search_request_id (
-    strato.description='See https://confluence.twitter.biz/display/GEO/Passing+the+geo+search+request+ID'
+  3: opt onal str ng geo_search_request_ d (
+    strato.descr pt on='See https://confluence.tw ter.b z/d splay/GEO/Pass ng+t +geo+search+request+ D'
   )
 } (
-  strato.graphql.typename='TweetGeo',
-  strato.description='Tweet geo location metadata. See https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/geo'
+  strato.graphql.typena ='T etGeo',
+  strato.descr pt on='T et geo locat on  tadata. See https://developer.tw ter.com/en/docs/tw ter-ap /v1/data-d ct onary/object-model/geo'
 )
 
 enum BatchComposeMode {
-  BATCH_FIRST = 1 (strato.description='This is the first Tweet in a batch.')
-  BATCH_SUBSEQUENT = 2 (strato.description='This is any of the subsequent Tweets in a batch.')
+  BATCH_F RST = 1 (strato.descr pt on='T   s t  f rst T et  n a batch.')
+  BATCH_SUBSEQUENT = 2 (strato.descr pt on='T   s any of t  subsequent T ets  n a batch.')
 }(
-  strato.graphql.typename='BatchComposeMode',
-  strato.description='Indicates whether a Tweet was created using a batch composer, and if so position of a Tweet within the batch. A value of None, indicates that the tweet was not created in a batch. More info: go/batchcompose.'
+  strato.graphql.typena ='BatchComposeMode',
+  strato.descr pt on=' nd cates w t r a T et was created us ng a batch composer, and  f so pos  on of a T et w h n t  batch. A value of None,  nd cates that t  t et was not created  n a batch. More  nfo: go/batchcompose.'
 )
 
 /**
- * Conversation Controls
+ * Conversat on Controls
  * See also:
- *   tweet.thrift/Tweet.conversation_control
- *   tweet_service.thrift/TweetCreateConversationControl
- *   tweet_service.thrift/PostTweetRequest.conversation_control
+ *   t et.thr ft/T et.conversat on_control
+ *   t et_serv ce.thr ft/T etCreateConversat onControl
+ *   t et_serv ce.thr ft/PostT etRequest.conversat on_control
  *
- * These types are isomorphic/equivalent to tweet_service.thrift/TweetCreateConversationControl* to
- * avoid exposing internal service thrift types.
+ * T se types are  somorph c/equ valent to t et_serv ce.thr ft/T etCreateConversat onControl* to
+ * avo d expos ng  nternal serv ce thr ft types.
  */
-enum ConversationControlMode {
-  BY_INVITATION = 1 (strato.description='Users that the conversation owner mentions by @screenname in the tweet text are invited.')
-  COMMUNITY = 2 (strato.description='The conversation owner, invited users, and users who the conversation owner follows can reply.')
+enum Conversat onControlMode {
+  BY_ NV TAT ON = 1 (strato.descr pt on='Users that t  conversat on owner  nt ons by @screenna   n t  t et text are  nv ed.')
+  COMMUN TY = 2 (strato.descr pt on='T  conversat on owner,  nv ed users, and users who t  conversat on owner follows can reply.')
 } (
-  strato.graphql.typename='ConversationControlMode'
+  strato.graphql.typena ='Conversat onControlMode'
 )
 
-struct TweetConversationControl {
-  1: ConversationControlMode mode
+struct T etConversat onControl {
+  1: Conversat onControlMode mode
 } (
-  strato.graphql.typename='TweetConversationControl',
-  strato.description='Specifies limits on user participation in a conversation. See also http://go/dont-at-me. Up to one value may be provided. (Conceptually this is a union, however graphql doesn\'t support union types as inputs.)'
+  strato.graphql.typena ='T etConversat onControl',
+  strato.descr pt on='Spec f es l m s on user part c pat on  n a conversat on. See also http://go/dont-at- . Up to one value may be prov ded. (Conceptually t   s a un on, ho ver graphql doesn\'t support un on types as  nputs.)'
 )
 
-// empty for now, but intended to be populated in later iterations of the super follows project.
-struct ExclusiveTweetControlOptions {} (
-  strato.description='Marks a tweet as exclusive. See go/superfollows.',
-  strato.graphql.typename='ExclusiveTweetControlOptions',
+// empty for now, but  ntended to be populated  n later  erat ons of t  super follows project.
+struct Exclus veT etControlOpt ons {} (
+  strato.descr pt on='Marks a t et as exclus ve. See go/superfollows.',
+  strato.graphql.typena ='Exclus veT etControlOpt ons',
 )
 
-struct EditOptions {
-  1: optional i64 previous_tweet_id (strato.json.numbers.type='string', strato.description='previous Tweet id')
+struct Ed Opt ons {
+  1: opt onal  64 prev ous_t et_ d (strato.json.numbers.type='str ng', strato.descr pt on='prev ous T et  d')
 } (
-  strato.description='Edit options for a Tweet.',
-  strato.graphql.typename='EditOptions',
+  strato.descr pt on='Ed  opt ons for a T et.',
+  strato.graphql.typena ='Ed Opt ons',
 )
 
-struct TweetPeriscopeContext {
-  1: bool is_live = 0 (
-    strato.description='Indicates if the tweet contains live streaming video. A value of false is equivalent to this struct being undefined in the CreateTweetRequest.'
+struct T etPer scopeContext {
+  1: bool  s_l ve = 0 (
+    strato.descr pt on=' nd cates  f t  t et conta ns l ve stream ng v deo. A value of false  s equ valent to t  struct be ng undef ned  n t  CreateT etRequest.'
   )
 
-  // Note that the REST API also defines a context_periscope_creator_id param. The GraphQL
-  // API infers this value from the TwitterContext Viewer.userId since it should always be
-  // the same as the Tweet.coreData.userId which is also inferred from Viewer.userId.
+  // Note that t  REST AP  also def nes a context_per scope_creator_ d param. T  GraphQL
+  // AP   nfers t  value from t  Tw terContext V e r.user d s nce   should always be
+  // t  sa  as t  T et.coreData.user d wh ch  s also  nferred from V e r.user d.
 } (
-  strato.description='Specifies information about live video streaming. Note that the Periscope product was shut down in March 2021, however some live video streaming features remain in the Twitter app. This struct keeps the Periscope naming convention to retain parity and traceability to other areas of the codebase that also retain the Periscope name.',
-  strato.graphql.typename='TweetPeriscopeContext',
+  strato.descr pt on='Spec f es  nformat on about l ve v deo stream ng. Note that t  Per scope product was shut down  n March 2021, ho ver so  l ve v deo stream ng features rema n  n t  Tw ter app. T  struct keeps t  Per scope nam ng convent on to reta n par y and traceab l y to ot r areas of t  codebase that also reta n t  Per scope na .',
+  strato.graphql.typena ='T etPer scopeContext',
 )
 
-struct TrustedFriendsControlOptions {
-  1: required i64 trusted_friends_list_id (
-    strato.json.numbers.type='string',
-    strato.description='The ID of the Trusted Friends List whose members can view this tweet.'
+struct TrustedFr endsControlOpt ons {
+  1: requ red  64 trusted_fr ends_l st_ d (
+    strato.json.numbers.type='str ng',
+    strato.descr pt on='T   D of t  Trusted Fr ends L st whose  mbers can v ew t  t et.'
   )
 } (
-  strato.description='Specifies information for a Trusted Friends tweet.  See go/trusted-friends',
-  strato.graphql.typename='TrustedFriendsControlOptions',
+  strato.descr pt on='Spec f es  nformat on for a Trusted Fr ends t et.  See go/trusted-fr ends',
+  strato.graphql.typena ='TrustedFr endsControlOpt ons',
 )
 
 enum CollabControlType {
-  COLLAB_INVITATION = 1 (strato.description='This represents a CollabInvitation.')
-  // Note that a CollabTweet cannot be created through external graphql request,
-  // rather a user can create a CollabInvitation (which is automatically nullcasted) and a
-  // public CollabTweet will be created when all Collaborators have accepted the CollabInvitation,
-  // triggering a strato column to instantiate the CollabTweet directly
+  COLLAB_ NV TAT ON = 1 (strato.descr pt on='T  represents a Collab nv at on.')
+  // Note that a CollabT et cannot be created through external graphql request,
+  // rat r a user can create a Collab nv at on (wh ch  s automat cally nullcasted) and a
+  // publ c CollabT et w ll be created w n all Collaborators have accepted t  Collab nv at on,
+  // tr gger ng a strato column to  nstant ate t  CollabT et d rectly
 }(
-  strato.graphql.typename='CollabControlType',
+  strato.graphql.typena ='CollabControlType',
 )
 
-struct CollabControlOptions {
-  1: required CollabControlType collabControlType
-  2: required list<i64> collaborator_user_ids (
-  strato.json.numbers.type='string',
-  strato.description='A list of user ids representing all Collaborators on a CollabTweet or CollabInvitation')
+struct CollabControlOpt ons {
+  1: requ red CollabControlType collabControlType
+  2: requ red l st< 64> collaborator_user_ ds (
+  strato.json.numbers.type='str ng',
+  strato.descr pt on='A l st of user  ds represent ng all Collaborators on a CollabT et or Collab nv at on')
 }(
-  strato.graphql.typename='CollabControlOptions',
-  strato.description='Specifies information about a CollabTweet or CollabInvitation (a union is used to ensure CollabControl defines one or the other). See more at go/collab-tweets.'
+  strato.graphql.typena ='CollabControlOpt ons',
+  strato.descr pt on='Spec f es  nformat on about a CollabT et or Collab nv at on (a un on  s used to ensure CollabControl def nes one or t  ot r). See more at go/collab-t ets.'
 )
 
-struct NoteTweetOptions {
-  1: required i64 note_tweet_id (
-  strato.json.numbers.type='string',
-  strato.description='The ID of the Note Tweet that has to be associated with the created Tweet.')
+struct NoteT etOpt ons {
+  1: requ red  64 note_t et_ d (
+  strato.json.numbers.type='str ng',
+  strato.descr pt on='T   D of t  Note T et that has to be assoc ated w h t  created T et.')
   // Deprecated
-  2: optional list<string> mentioned_screen_names (
-  strato.description = 'Screen names of the users mentioned in the NoteTweet. This is used to set conversation control on the Tweet.')
+  2: opt onal l st<str ng>  nt oned_screen_na s (
+  strato.descr pt on = 'Screen na s of t  users  nt oned  n t  NoteT et. T   s used to set conversat on control on t  T et.')
 
-  3: optional list<i64> mentioned_user_ids (
-  strato.description = 'User ids of mentioned users in the NoteTweet. This is used to set conversation control on the Tweet, send mentioned user ids to TLS'
+  3: opt onal l st< 64>  nt oned_user_ ds (
+  strato.descr pt on = 'User  ds of  nt oned users  n t  NoteT et. T   s used to set conversat on control on t  T et, send  nt oned user  ds to TLS'
   )
-  4: optional bool is_expandable (
-  strato.description = 'Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text'
-  )
-} (
-  strato.graphql.typename='NoteTweetOptions',
-  strato.description='Note Tweet options for a Tweet.'
-)
-
-// NOTE: Some clients were using the dark_request directive in GraphQL to signal that a Tweet should not be persisted
-// but this is not recommended, since the dark_request directive is not meant to be used for business logic. 
-struct UndoOptions {
-  1: required bool is_undo (
-  strato.description='Set to true if the Tweet is undo-able. Tweetypie will process the Tweet but will not persist it.'
+  4: opt onal bool  s_expandable (
+  strato.descr pt on = 'Spec f es  f t  T et can be expanded  nto t  NoteT et, or  f t y have t  sa  text'
   )
 } (
-  strato.graphql.typename='UndoOptions'
+  strato.graphql.typena ='NoteT etOpt ons',
+  strato.descr pt on='Note T et opt ons for a T et.'
 )
 
-struct CreateTweetRequest {
-  1: string tweet_text = "" (
-    strato.description='The user-supplied text of the tweet. Defaults to empty string. Leading & trailing whitespace are trimmed, remaining value may be empty if and only if one or more media entity ids are also provided.'
+// NOTE: So  cl ents  re us ng t  dark_request d rect ve  n GraphQL to s gnal that a T et should not be pers sted
+// but t   s not recom nded, s nce t  dark_request d rect ve  s not  ant to be used for bus ness log c. 
+struct UndoOpt ons {
+  1: requ red bool  s_undo (
+  strato.descr pt on='Set to true  f t  T et  s undo-able. T etyp e w ll process t  T et but w ll not pers st  .'
+  )
+} (
+  strato.graphql.typena ='UndoOpt ons'
+)
+
+struct CreateT etRequest {
+  1: str ng t et_text = "" (
+    strato.descr pt on='T  user-suppl ed text of t  t et. Defaults to empty str ng. Lead ng & tra l ng wh espace are tr m d, rema n ng value may be empty  f and only  f one or more  d a ent y  ds are also prov ded.'
   )
 
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.nullcast
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.nullcast
   2: bool nullcast = 0 (
-    strato.description='Do not deliver this tweet to a user\'s followers. http://go/nullcast'
+    strato.descr pt on='Do not del ver t  t et to a user\'s follo rs. http://go/nullcast'
   )
 
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.PostTweetRequest.comparison_id
-  3: optional string comparison_id (
-    strato.description='Correlates requests originating from REST endpoints and GraphQL endpoints. UUID v4 (random) 36 character string.'
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.PostT etRequest.compar son_ d
+  3: opt onal str ng compar son_ d (
+    strato.descr pt on='Correlates requests or g nat ng from REST endpo nts and GraphQL endpo nts. UU D v4 (random) 36 character str ng.'
   )
 
-  // @see com.twitter.ads.callback.thriftscala.EngagementRequest
-  4: optional engagement_request.EngagementRequest engagement_request (
-    strato.description='The ad engagement from which this tweet was created.'
+  // @see com.tw ter.ads.callback.thr ftscala.Engage ntRequest
+  4: opt onal engage nt_request.Engage ntRequest engage nt_request (
+    strato.descr pt on='T  ad engage nt from wh ch t  t et was created.'
   )
 
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.attachment_url
-  5: optional string attachment_url (
-    strato.description='Tweet permalink (i.e. Quoted Tweet) or Direct Message deep link. This URL is not included in the visible_text_range.'
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.attach nt_url
+  5: opt onal str ng attach nt_url (
+    strato.descr pt on='T et permal nk ( .e. Quoted T et) or D rect  ssage deep l nk. T  URL  s not  ncluded  n t  v s ble_text_range.'
   )
 
-  // @see com.twitter.tweetypie.thriftscala.Tweet.card_reference
-  6: optional string card_uri (
-    strato.description='Link to the card to associate with a tweet.'
+  // @see com.tw ter.t etyp e.thr ftscala.T et.card_reference
+  6: opt onal str ng card_ur  (
+    strato.descr pt on='L nk to t  card to assoc ate w h a t et.'
   )
 
-  7: optional TweetReply reply (
-    strato.description='Reply parameters.'
+  7: opt onal T etReply reply (
+    strato.descr pt on='Reply para ters.'
   )
 
-  8: optional TweetMedia media (
-    strato.description='Media parameters.'
+  8: opt onal T et d a  d a (
+    strato.descr pt on=' d a para ters.'
   )
 
-  9: optional list<TweetAnnotation> semantic_annotation_ids (
-    strato.description='Escherbird Annotations.'
+  9: opt onal l st<T etAnnotat on> semant c_annotat on_ ds (
+    strato.descr pt on='Esc rb rd Annotat ons.'
   )
 
-  10: optional TweetGeo geo (
-    strato.description='Tweet geo location metadata. See https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/geo'
+  10: opt onal T etGeo geo (
+    strato.descr pt on='T et geo locat on  tadata. See https://developer.tw ter.com/en/docs/tw ter-ap /v1/data-d ct onary/object-model/geo'
   )
 
-  11: optional BatchComposeMode batch_compose (
-    strato.description='Batch Compose Mode. See go/batchcompose'
+  11: opt onal BatchComposeMode batch_compose (
+    strato.descr pt on='Batch Compose Mode. See go/batchcompose'
   )
 
-  12: optional ExclusiveTweetControlOptions exclusive_tweet_control_options (
-    strato.description='When defined, this tweet will be marked as exclusive. Leave undefined to signify a regular, non-exclusive tweet. See go/superfollows.'
+  12: opt onal Exclus veT etControlOpt ons exclus ve_t et_control_opt ons (
+    strato.descr pt on='W n def ned, t  t et w ll be marked as exclus ve. Leave undef ned to s gn fy a regular, non-exclus ve t et. See go/superfollows.'
   )
 
-  13: optional TweetConversationControl conversation_control (
-    strato.description='Restrict replies to this tweet. See http://go/dont-at-me-api. Only valid for conversation root tweets. Applies to all replies to this tweet.'
+  13: opt onal T etConversat onControl conversat on_control (
+    strato.descr pt on='Restr ct repl es to t  t et. See http://go/dont-at- -ap . Only val d for conversat on root t ets. Appl es to all repl es to t  t et.'
   )
 
-  14: optional TweetPeriscopeContext periscope (
-    strato.description='Specifies information about live video streaming. Note that the Periscope product was shut down in March 2021, however some live video streaming features remain in the Twitter app. This struct keeps the Periscope naming convention to retain parity and traceability to other areas of the codebase that also retain the Periscope name. Note: A value of periscope.isLive=false is equivalent to this struct being left undefined.'
+  14: opt onal T etPer scopeContext per scope (
+    strato.descr pt on='Spec f es  nformat on about l ve v deo stream ng. Note that t  Per scope product was shut down  n March 2021, ho ver so  l ve v deo stream ng features rema n  n t  Tw ter app. T  struct keeps t  Per scope nam ng convent on to reta n par y and traceab l y to ot r areas of t  codebase that also reta n t  Per scope na . Note: A value of per scope. sL ve=false  s equ valent to t  struct be ng left undef ned.'
   )
 
-  15: optional TrustedFriendsControlOptions trusted_friends_control_options (
-    strato.description='Trusted Friends parameters.'
+  15: opt onal TrustedFr endsControlOpt ons trusted_fr ends_control_opt ons (
+    strato.descr pt on='Trusted Fr ends para ters.'
   )
 
-  16: optional CollabControlOptions collab_control_options (
-    strato.description='Collab Tweet & Collab Invitation parameters.'
+  16: opt onal CollabControlOpt ons collab_control_opt ons (
+    strato.descr pt on='Collab T et & Collab  nv at on para ters.'
   )
 
-  17: optional EditOptions edit_options (
-    strato.description='when defined, this tweet will be marked as an edit of the tweet represented by previous_tweet_id in edit_options.'
+  17: opt onal Ed Opt ons ed _opt ons (
+    strato.descr pt on='w n def ned, t  t et w ll be marked as an ed  of t  t et represented by prev ous_t et_ d  n ed _opt ons.'
   )
 
-  18: optional NoteTweetOptions note_tweet_options (
-    strato.description='The Note Tweet that is to be associated with the created Tweet.',
-    strato.graphql.skip='true'
+  18: opt onal NoteT etOpt ons note_t et_opt ons (
+    strato.descr pt on='T  Note T et that  s to be assoc ated w h t  created T et.',
+    strato.graphql.sk p='true'
   )
 
-  19: optional UndoOptions undo_options (
-    strato.description='If the user has Undo Tweets enabled, the Tweet is created so that it can be previewed by the client but is not persisted.',
+  19: opt onal UndoOpt ons undo_opt ons (
+    strato.descr pt on=' f t  user has Undo T ets enabled, t  T et  s created so that   can be prev e d by t  cl ent but  s not pers sted.',
   )
-} (strato.graphql.typename='CreateTweetRequest')
+} (strato.graphql.typena ='CreateT etRequest')
 
-struct CreateTweetResponse {
-  1: optional i64 tweet_id (
-    strato.space='Tweet',
-    strato.graphql.fieldname='tweet',
-    strato.description='The created tweet.'
+struct CreateT etResponse {
+  1: opt onal  64 t et_ d (
+    strato.space='T et',
+    strato.graphql.f eldna ='t et',
+    strato.descr pt on='T  created t et.'
   )
-} (strato.graphql.typename='CreateTweetResponse')
+} (strato.graphql.typena ='CreateT etResponse')
 
-struct CreateTweetResponseWithSubqueryPrefetchItems {
-  1: optional CreateTweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+struct CreateT etResponseW hSubqueryPrefetch ems {
+  1: opt onal CreateT etResponse data
+  2: opt onal ex stsAndPrefetch.Prefetc dData subqueryPrefetch ems
 }
 
-// Request struct, ResponseStruct, ResponseWithPrefetchStruct
-struct DeleteTweetRequest {
-  1: required i64 tweet_id (strato.json.numbers.type='string')
+// Request struct, ResponseStruct, ResponseW hPrefetchStruct
+struct DeleteT etRequest {
+  1: requ red  64 t et_ d (strato.json.numbers.type='str ng')
 
-  // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.PostTweetRequest.comparison_id
-  2: optional string comparison_id (
-    strato.description='Correlates requests originating from REST endpoints and GraphQL endpoints. UUID v4 (random) 36 character string.'
+  // @see com.tw ter.t etyp e.thr ftscala.PostT etRequest.PostT etRequest.compar son_ d
+  2: opt onal str ng compar son_ d (
+    strato.descr pt on='Correlates requests or g nat ng from REST endpo nts and GraphQL endpo nts. UU D v4 (random) 36 character str ng.'
   )
-} (strato.graphql.typename='DeleteTweetRequest')
+} (strato.graphql.typena ='DeleteT etRequest')
 
-struct DeleteTweetResponse {
-  1: optional i64 tweet_id (
-    strato.space='Tweet',
-    strato.graphql.fieldname='tweet',
-    strato.description='The deleted Tweet. Since the Tweet will always be not found after deletion, the TweetResult will always be empty.'
+struct DeleteT etResponse {
+  1: opt onal  64 t et_ d (
+    strato.space='T et',
+    strato.graphql.f eldna ='t et',
+    strato.descr pt on='T  deleted T et. S nce t  T et w ll always be not found after delet on, t  T etResult w ll always be empty.'
   )
-} (strato.graphql.typename='DeleteTweetResponse')
+} (strato.graphql.typena ='DeleteT etResponse')
 
-struct DeleteTweetResponseWithSubqueryPrefetchItems {
-  1: optional DeleteTweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+struct DeleteT etResponseW hSubqueryPrefetch ems {
+  1: opt onal DeleteT etResponse data
+  2: opt onal ex stsAndPrefetch.Prefetc dData subqueryPrefetch ems
 }

@@ -1,56 +1,56 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
-import "tensorflow_serving/apis/model.proto";
+ mport "tensorflow/core/protobuf/conf g.proto";
+ mport "tensorflow/core/protobuf/na d_tensor.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-message SessionRunRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
+ ssage Sess onRunRequest {
+  // Model Spec f cat on.  f vers on  s not spec f ed, w ll use t  latest
+  // (nu r cal) vers on.
   ModelSpec model_spec = 1;
 
-  // Tensors to be fed in the step. Each feed is a named tensor.
-  repeated NamedTensorProto feed = 2;
+  // Tensors to be fed  n t  step. Each feed  s a na d tensor.
+  repeated Na dTensorProto feed = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to
-  // be returned for each fetch[i] (see RunResponse.tensor). The
-  // order of specified fetches does not change the execution order.
-  repeated string fetch = 3;
+  // Fetc s. A l st of tensor na s. T  caller expects a tensor to
+  // be returned for each fetch[ ] (see RunResponse.tensor). T 
+  // order of spec f ed fetc s does not change t  execut on order.
+  repeated str ng fetch = 3;
 
-  // Target Nodes. A list of node names. The named nodes will be run
-  // to but their outputs will not be fetched.
-  repeated string target = 4;
+  // Target Nodes. A l st of node na s. T  na d nodes w ll be run
+  // to but t  r outputs w ll not be fetc d.
+  repeated str ng target = 4;
 
-  // If true, treat names in feed/fetch/target as alias names than actual tensor
-  // names (that appear in the TF graph). Alias names are resolved to actual
-  // names using `SignatureDef` in SavedModel associated with the model.
-  bool tensor_name_is_alias = 6;
+  //  f true, treat na s  n feed/fetch/target as al as na s than actual tensor
+  // na s (that appear  n t  TF graph). Al as na s are resolved to actual
+  // na s us ng `S gnatureDef`  n SavedModel assoc ated w h t  model.
+  bool tensor_na _ s_al as = 6;
 
-  // Options for the run call. **Currently ignored.**
-  RunOptions options = 5;
+  // Opt ons for t  run call. **Currently  gnored.**
+  RunOpt ons opt ons = 5;
 }
 
-message SessionRunResponse {
-  // Effective Model Specification used for session run.
+ ssage Sess onRunResponse {
+  // Effect ve Model Spec f cat on used for sess on run.
   ModelSpec model_spec = 3;
 
-  // NOTE: The order of the returned tensors may or may not match
-  // the fetch order specified in RunRequest.
-  repeated NamedTensorProto tensor = 1;
+  // NOTE: T  order of t  returned tensors may or may not match
+  // t  fetch order spec f ed  n RunRequest.
+  repeated Na dTensorProto tensor = 1;
 
-  // Returned metadata if requested in the options.
-  RunMetadata metadata = 2;
+  // Returned  tadata  f requested  n t  opt ons.
+  Run tadata  tadata = 2;
 }
 
-// SessionService defines a service with which a client can interact to execute
-// Tensorflow model inference. The SessionService::SessionRun method is similar
-// to MasterService::RunStep of Tensorflow, except that all sessions are ready
-// to run, and you request a specific model/session with ModelSpec.
-service SessionService {
-  // Runs inference of a given model.
-  rpc SessionRun(SessionRunRequest) returns (SessionRunResponse);
+// Sess onServ ce def nes a serv ce w h wh ch a cl ent can  nteract to execute
+// Tensorflow model  nference. T  Sess onServ ce::Sess onRun  thod  s s m lar
+// to MasterServ ce::RunStep of Tensorflow, except that all sess ons are ready
+// to run, and   request a spec f c model/sess on w h ModelSpec.
+serv ce Sess onServ ce {
+  // Runs  nference of a g ven model.
+  rpc Sess onRun(Sess onRunRequest) returns (Sess onRunResponse);
 }

@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-public class PipelineStageRuntimeException extends RuntimeException {
-  public PipelineStageRuntimeException(String msg) {
+publ c class P pel neStageRunt  Except on extends Runt  Except on {
+  publ c P pel neStageRunt  Except on(Str ng msg) {
     super(msg);
   }
 }

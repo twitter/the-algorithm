@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+ mport com.tw ter.follow_recom ndat ons.common.models.Cl entContextConverter
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
 
-case class RecommendationRequest(
-  clientContext: ClientContext,
-  displayLocation: DisplayLocation,
-  displayContext: Option[DisplayContext],
-  maxResults: Option[Int],
-  cursor: Option[String],
-  excludedIds: Option[Seq[Long]],
-  fetchPromotedContent: Option[Boolean],
-  debugParams: Option[DebugParams] = None,
-  userLocationState: Option[String] = None,
-  isSoftUser: Boolean = false) {
-  def toOfflineThrift: offline.OfflineRecommendationRequest = offline.OfflineRecommendationRequest(
-    ClientContextConverter.toFRSOfflineClientContextThrift(clientContext),
-    displayLocation.toOfflineThrift,
-    displayContext.map(_.toOfflineThrift),
+case class Recom ndat onRequest(
+  cl entContext: Cl entContext,
+  d splayLocat on: D splayLocat on,
+  d splayContext: Opt on[D splayContext],
+  maxResults: Opt on[ nt],
+  cursor: Opt on[Str ng],
+  excluded ds: Opt on[Seq[Long]],
+  fetchPromotedContent: Opt on[Boolean],
+  debugParams: Opt on[DebugParams] = None,
+  userLocat onState: Opt on[Str ng] = None,
+   sSoftUser: Boolean = false) {
+  def toOffl neThr ft: offl ne.Offl neRecom ndat onRequest = offl ne.Offl neRecom ndat onRequest(
+    Cl entContextConverter.toFRSOffl neCl entContextThr ft(cl entContext),
+    d splayLocat on.toOffl neThr ft,
+    d splayContext.map(_.toOffl neThr ft),
     maxResults,
     cursor,
-    excludedIds,
+    excluded ds,
     fetchPromotedContent,
-    debugParams.map(DebugParams.toOfflineThrift)
+    debugParams.map(DebugParams.toOffl neThr ft)
   )
 }

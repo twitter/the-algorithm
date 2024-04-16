@@ -1,9 +1,9 @@
 """
-This module is responsible for running saved_model_cli.
+T  module  s respons ble for runn ng saved_model_cl .
 """
-import sys
+ mport sys
 
-from tensorflow.python.tools import saved_model_cli
+from tensorflow.python.tools  mport saved_model_cl 
 
-if __name__ == '__main__':
-  sys.exit(saved_model_cli.main())
+ f __na __ == '__ma n__':
+  sys.ex (saved_model_cl .ma n())

@@ -2,255 +2,255 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/compiler/xla/pjrt/distributed/protocol.proto";
-import "tensorflow/core/framework/device_attributes.proto";
+ mport "tensorflow/comp ler/xla/pjrt/d str buted/protocol.proto";
+ mport "tensorflow/core/fra work/dev ce_attr butes.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Represents a remote worker task, specified by job name and task id.
-message CoordinatedTask {
-  string job_name = 1;
-  int32 task_id = 2;
+// Represents a remote worker task, spec f ed by job na  and task  d.
+ ssage Coord natedTask {
+  str ng job_na  = 1;
+   nt32 task_ d = 2;
 }
 
-// Status payload for all coordination service errors.
-// Note: an empty proto may be set if the error is triggered by the task's own
-// agent calls (i.e. not propagated by the service from another remote task).
-message CoordinationServiceError {
-  // Removed fields which used to specify the error origin.
+// Status payload for all coord nat on serv ce errors.
+// Note: an empty proto may be set  f t  error  s tr ggered by t  task's own
+// agent calls ( .e. not propagated by t  serv ce from anot r remote task).
+ ssage Coord nat onServ ceError {
+  // Removed f elds wh ch used to spec fy t  error or g n.
   reserved 1, 2;
-  // If true, error is reported via the agent API by the user (and not an
-  // internal service error).
-  bool is_reported_error = 3;
-  // Denotes which task hit the error. If unset, the error originated from the
-  // same task that is processing this error.
-  CoordinatedTask source_task = 4;
+  //  f true, error  s reported v a t  agent AP  by t  user (and not an
+  //  nternal serv ce error).
+  bool  s_reported_error = 3;
+  // Denotes wh ch task h  t  error.  f unset, t  error or g nated from t 
+  // sa  task that  s process ng t  error.
+  Coord natedTask s ce_task = 4;
 }
 
-// Represent device information from different runtimes.
-message TfDeviceList {
-  repeated DeviceAttributes devices = 1;
+// Represent dev ce  nformat on from d fferent runt  s.
+ ssage TfDev ceL st {
+  repeated Dev ceAttr butes dev ces = 1;
 }
-message XlaDeviceList {
-  xla.GlobalTopologyProto devices = 1;
+ ssage XlaDev ceL st {
+  xla.GlobalTopologyProto dev ces = 1;
 }
-message CoordinationServiceDeviceInfo {
+ ssage Coord nat onServ ceDev ce nfo {
   oneof type {
-    TfDeviceList tf = 1;
-    XlaDeviceList xla = 2;
+    TfDev ceL st tf = 1;
+    XlaDev ceL st xla = 2;
   }
 }
 
-// Request and response messages for registering a worker to the cluster leader.
-// Use `job` and `task` to represent the role of the worker, and use
-// `incarnation` to uniquely identify a worker process. Leader responds with its
-// `incarnation` to identify a leader process.
-message RegisterWorkerRequest {
-  // Removed fields which used to specify the task.
+// Request and response  ssages for reg ster ng a worker to t  cluster leader.
+// Use `job` and `task` to represent t  role of t  worker, and use
+// ` ncarnat on` to un quely  dent fy a worker process. Leader responds w h  s
+// ` ncarnat on` to  dent fy a leader process.
+ ssage Reg sterWorkerRequest {
+  // Removed f elds wh ch used to spec fy t  task.
   reserved 1, 2;
-  fixed64 incarnation = 3;
-  // Moved the field `local_device_attributes` from this request message to
-  // WaitForAllTasksRequest defined below.
+  f xed64  ncarnat on = 3;
+  // Moved t  f eld `local_dev ce_attr butes` from t  request  ssage to
+  // Wa ForAllTasksRequest def ned below.
   reserved 4;
-  CoordinatedTask source_task = 5;
+  Coord natedTask s ce_task = 5;
 }
 
-message RegisterWorkerResponse {
-  fixed64 leader_incarnation = 1;
+ ssage Reg sterWorkerResponse {
+  f xed64 leader_ ncarnat on = 1;
 }
 
-// Request and response messages for sending heartbeats.
-message HeartbeatRequest {
-  // Removed fields which used to specify the remote task.
+// Request and response  ssages for send ng  artbeats.
+ ssage  artbeatRequest {
+  // Removed f elds wh ch used to spec fy t  remote task.
   reserved 1, 2;
-  fixed64 incarnation = 3;
-  CoordinatedTask source_task = 4;
+  f xed64  ncarnat on = 3;
+  Coord natedTask s ce_task = 4;
 }
 
-message HeartbeatResponse {
-  fixed64 leader_incarnation = 1;
-  // If there are failures in cluster, use additional metadata in response to
-  // broadcast error code and message to other workers.
+ ssage  artbeatResponse {
+  f xed64 leader_ ncarnat on = 1;
+  //  f t re are fa lures  n cluster, use add  onal  tadata  n response to
+  // broadcast error code and  ssage to ot r workers.
 }
 
-// Request and response messages for waiting for all tasks.
-message WaitForAllTasksRequest {
-  // Removed fields which used to specify the remote task.
+// Request and response  ssages for wa  ng for all tasks.
+ ssage Wa ForAllTasksRequest {
+  // Removed f elds wh ch used to spec fy t  remote task.
   reserved 1, 2;
-  // Removed field that specifically used TF device info.
+  // Removed f eld that spec f cally used TF dev ce  nfo.
   reserved 3;
-  // All local device attributes on the request sender.
-  CoordinationServiceDeviceInfo local_device_info = 4;
-  CoordinatedTask source_task = 5;
+  // All local dev ce attr butes on t  request sender.
+  Coord nat onServ ceDev ce nfo local_dev ce_ nfo = 4;
+  Coord natedTask s ce_task = 5;
 }
 
-message WaitForAllTasksResponse {
-  fixed64 leader_incarnation = 1;
-  // Removed field that specifically used TF device info.
+ ssage Wa ForAllTasksResponse {
+  f xed64 leader_ ncarnat on = 1;
+  // Removed f eld that spec f cally used TF dev ce  nfo.
   reserved 2;
-  // All devices in the cluster.
-  CoordinationServiceDeviceInfo cluster_device_info = 3;
+  // All dev ces  n t  cluster.
+  Coord nat onServ ceDev ce nfo cluster_dev ce_ nfo = 3;
 }
 
-// Request and response messages for reporting errors to task.
-message ReportErrorToAgentRequest {
-  int32 error_code = 1;
-  string error_message = 2;
-  // Removed fields that are embedded in payload.
+// Request and response  ssages for report ng errors to task.
+ ssage ReportErrorToAgentRequest {
+   nt32 error_code = 1;
+  str ng error_ ssage = 2;
+  // Removed f elds that are embedded  n payload.
   reserved 3, 4;
-  CoordinationServiceError error_payload = 5;
+  Coord nat onServ ceError error_payload = 5;
 }
 
-message ReportErrorToAgentResponse {}
+ ssage ReportErrorToAgentResponse {}
 
-// Request and response messages for reporting errors to service instance.
-message ReportErrorToServiceRequest {
-  int32 error_code = 1;
-  string error_message = 2;
-  // Removed fields which used to specify the error origin.
+// Request and response  ssages for report ng errors to serv ce  nstance.
+ ssage ReportErrorToServ ceRequest {
+   nt32 error_code = 1;
+  str ng error_ ssage = 2;
+  // Removed f elds wh ch used to spec fy t  error or g n.
   reserved 3, 4;
-  CoordinatedTask error_origin = 5;
+  Coord natedTask error_or g n = 5;
 }
 
-message ReportErrorToServiceResponse {}
+ ssage ReportErrorToServ ceResponse {}
 
-// Message for configuration key value.
-// Key is structured like Unix file system, with multiple levels of directory
-// names separated by the slash ('/') characters.
-message KeyValueEntry {
-  string key = 1;
+//  ssage for conf gurat on key value.
+// Key  s structured l ke Un x f le system, w h mult ple levels of d rectory
+// na s separated by t  slash ('/') characters.
+ ssage KeyValueEntry {
+  str ng key = 1;
   bytes value = 2;
 }
 
-// Request and response messages for inserting configuration key-value data.
-message InsertKeyValueRequest {
+// Request and response  ssages for  nsert ng conf gurat on key-value data.
+ ssage  nsertKeyValueRequest {
   KeyValueEntry kv = 1;
 }
 
-message InsertKeyValueResponse {}
+ ssage  nsertKeyValueResponse {}
 
-// Request and response messages for getting configuration key-value data.
-message GetKeyValueRequest {
-  string key = 1;
+// Request and response  ssages for gett ng conf gurat on key-value data.
+ ssage GetKeyValueRequest {
+  str ng key = 1;
 }
 
-message GetKeyValueResponse {
+ ssage GetKeyValueResponse {
   KeyValueEntry kv = 1;
 }
 
-// Request and response messages for deleting configuration key-value data.
-// When is_directory is true, delete key-values recursively under `key`.
-message DeleteKeyValueRequest {
-  string key = 1;
-  bool is_directory = 2;
+// Request and response  ssages for delet ng conf gurat on key-value data.
+// W n  s_d rectory  s true, delete key-values recurs vely under `key`.
+ ssage DeleteKeyValueRequest {
+  str ng key = 1;
+  bool  s_d rectory = 2;
 }
 
-message DeleteKeyValueResponse {}
+ ssage DeleteKeyValueResponse {}
 
-// Request and response messages for generic sync barriers.
-message BarrierRequest {
-  string barrier_id = 1;
-  int64 barrier_timeout_in_ms = 2;
-  // Denotes list of tasks that will wait for the barrier. If unspecified, it
-  // implies that the entire cluster is participating in the barrier.
-  repeated CoordinatedTask tasks = 3;
-  // Task that is making the request.
-  CoordinatedTask source_task = 4;
+// Request and response  ssages for gener c sync barr ers.
+ ssage Barr erRequest {
+  str ng barr er_ d = 1;
+   nt64 barr er_t  out_ n_ms = 2;
+  // Denotes l st of tasks that w ll wa  for t  barr er.  f unspec f ed,  
+  //  mpl es that t  ent re cluster  s part c pat ng  n t  barr er.
+  repeated Coord natedTask tasks = 3;
+  // Task that  s mak ng t  request.
+  Coord natedTask s ce_task = 4;
 }
 
-message BarrierResponse {}
+ ssage Barr erResponse {}
 
-// Request and response messages for  cancelling generic sync barriers.
-message CancelBarrierRequest {
-  string barrier_id = 1;
-  // Task that is making the request.
-  CoordinatedTask source_task = 2;
+// Request and response  ssages for  cancell ng gener c sync barr ers.
+ ssage CancelBarr erRequest {
+  str ng barr er_ d = 1;
+  // Task that  s mak ng t  request.
+  Coord natedTask s ce_task = 2;
 }
 
-message CancelBarrierResponse {}
+ ssage CancelBarr erResponse {}
 
-// Coordination Service defines a TensorFlow service that controls and
-// coordinates distributed execution in a cluster of multiple workers.
+// Coord nat on Serv ce def nes a TensorFlow serv ce that controls and
+// coord nates d str buted execut on  n a cluster of mult ple workers.
 //
-// The service keeps track of the cluster configuration and the state of cluster
-// members or the leader depending on the role of the current worker. The
-// distributed runtime leverages this service to coordinate and perform cluster
-// initialization, check the healthiness of workers, and propagate error
-// messages to the cluster.
-service CoordinationService {
-  // Register task to coordination service so that the service starts to track
-  // liveness of the task. RPC blocks and returns only when it registers to
-  // the service successfully, or error happens in the registering process.
-  rpc RegisterWorker(RegisterWorkerRequest) returns (RegisterWorkerResponse);
+// T  serv ce keeps track of t  cluster conf gurat on and t  state of cluster
+//  mbers or t  leader depend ng on t  role of t  current worker. T 
+// d str buted runt   leverages t  serv ce to coord nate and perform cluster
+//  n  al zat on, c ck t   alth ness of workers, and propagate error
+//  ssages to t  cluster.
+serv ce Coord nat onServ ce {
+  // Reg ster task to coord nat on serv ce so that t  serv ce starts to track
+  // l veness of t  task. RPC blocks and returns only w n   reg sters to
+  // t  serv ce successfully, or error happens  n t  reg ster ng process.
+  rpc Reg sterWorker(Reg sterWorkerRequest) returns (Reg sterWorkerResponse);
 
-  // Heartbeat message from task to coordination service. Heartbeat is sent from
-  // a task to refresh its timestamp on leader to avoid it becoming stale.
-  // RPC responds immediately after refreshing the timestamp on leader.
-  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  //  artbeat  ssage from task to coord nat on serv ce.  artbeat  s sent from
+  // a task to refresh  s t  stamp on leader to avo d   becom ng stale.
+  // RPC responds  m d ately after refresh ng t  t  stamp on leader.
+  rpc  artbeat( artbeatRequest) returns ( artbeatResponse);
 
-  // Wait for all tasks in the cluster to be up and running. The RPC request
-  // only gets responded when all workers are registered, or some error occurs.
-  rpc WaitForAllTasks(WaitForAllTasksRequest) returns (WaitForAllTasksResponse);
+  // Wa  for all tasks  n t  cluster to be up and runn ng. T  RPC request
+  // only gets responded w n all workers are reg stered, or so  error occurs.
+  rpc Wa ForAllTasks(Wa ForAllTasksRequest) returns (Wa ForAllTasksResponse);
 
-  // Report error to the task. RPC sets the receiving instance of coordination
-  // service agent to error state permanently.
-  // TODO(b/195990880): Consider splitting this into a different RPC service.
+  // Report error to t  task. RPC sets t  rece v ng  nstance of coord nat on
+  // serv ce agent to error state permanently.
+  // TODO(b/195990880): Cons der spl t ng t   nto a d fferent RPC serv ce.
   rpc ReportErrorToAgent(ReportErrorToAgentRequest)
       returns (ReportErrorToAgentResponse);
 
-  // Report task error to coordination service. RPC sets the service-side task
-  // state to error, and propagate the error to other tasks in the cluster.
-  rpc ReportErrorToService(ReportErrorToServiceRequest)
-      returns (ReportErrorToServiceResponse);
+  // Report task error to coord nat on serv ce. RPC sets t  serv ce-s de task
+  // state to error, and propagate t  error to ot r tasks  n t  cluster.
+  rpc ReportErrorToServ ce(ReportErrorToServ ceRequest)
+      returns (ReportErrorToServ ceResponse);
 
-  // Insert configuration key-value that will be accessible to all cluster
-  // workers. The key can be formatted as Unix file path with hierarchy. The
-  // coordination service key-value store should only be used for cluster
-  // configuration data.
-  rpc InsertKeyValue(InsertKeyValueRequest) returns (InsertKeyValueResponse);
+  //  nsert conf gurat on key-value that w ll be access ble to all cluster
+  // workers. T  key can be formatted as Un x f le path w h h erarchy. T 
+  // coord nat on serv ce key-value store should only be used for cluster
+  // conf gurat on data.
+  rpc  nsertKeyValue( nsertKeyValueRequest) returns ( nsertKeyValueResponse);
 
-  // Get configuration key-value. The request blocks until the key-value data
-  // becomes available (i.e., set by a worker in the cluster).
+  // Get conf gurat on key-value. T  request blocks unt l t  key-value data
+  // beco s ava lable ( .e., set by a worker  n t  cluster).
   rpc GetKeyValue(GetKeyValueRequest) returns (GetKeyValueResponse);
 
-  // Delete configuration key-value. If is_directory is set in request,
-  // recursively clean up all key-values under the path specified by `key`.
+  // Delete conf gurat on key-value.  f  s_d rectory  s set  n request,
+  // recurs vely clean up all key-values under t  path spec f ed by `key`.
   rpc DeleteKeyValue(DeleteKeyValueRequest) returns (DeleteKeyValueResponse);
 
-  // Blocks until all (or a subset of) tasks are at the barrier or the barrier
-  // fails.
+  // Blocks unt l all (or a subset of) tasks are at t  barr er or t  barr er
+  // fa ls.
   //
-  // `barrier_id` should be unique across barriers. Once the barrier has passed
-  // or failed, subsequent calls will not block, and immediately respond with
-  // the previous response.
+  // `barr er_ d` should be un que across barr ers. Once t  barr er has passed
+  // or fa led, subsequent calls w ll not block, and  m d ately respond w h
+  // t  prev ous response.
   //
-  // The first WaitAtBarrier() call received by the service for a particular
-  // barrier id is special in that it determines the barrier deadline based on
-  // timeout duration.
-  // However, if subsequent calls by different agents specify a different set of
-  // `tasks` for the same `barrier_id`, the barrier will fail instantly.
+  // T  f rst Wa AtBarr er() call rece ved by t  serv ce for a part cular
+  // barr er  d  s spec al  n that   determ nes t  barr er deadl ne based on
+  // t  out durat on.
+  // Ho ver,  f subsequent calls by d fferent agents spec fy a d fferent set of
+  // `tasks` for t  sa  `barr er_ d`, t  barr er w ll fa l  nstantly.
   //
-  // If no tasks are specified (default), the barrier will block for all the
+  //  f no tasks are spec f ed (default), t  barr er w ll block for all t 
   // connected tasks.
   //
-  // Possible service errors:
-  //   - DeadlineExceeded: Timed out waiting for specified tasks at the barrier.
-  //      Deadline is determined by the server timestamp when it receives the
-  //      first WaitAtBarrier() + timeout duration.
-  //   - Cancelled: One of the tasks called CancelBarrier().
-  //   - Aborted: Service is shutting down.
-  //   - Internal: Any participating task is in ERROR state.
-  //   - InvalidArgument: (1) Conflicting tasks specified by different agents
-  //       for the same barrier, (2) one of the participating tasks is not in
-  //       the cluster, or (3) task making the request is not included in the
-  //       list of participating tasks.
-  rpc Barrier(BarrierRequest) returns (BarrierResponse);
+  // Poss ble serv ce errors:
+  //   - Deadl neExceeded: T  d out wa  ng for spec f ed tasks at t  barr er.
+  //      Deadl ne  s determ ned by t  server t  stamp w n   rece ves t 
+  //      f rst Wa AtBarr er() + t  out durat on.
+  //   - Cancelled: One of t  tasks called CancelBarr er().
+  //   - Aborted: Serv ce  s shutt ng down.
+  //   -  nternal: Any part c pat ng task  s  n ERROR state.
+  //   -  nval dArgu nt: (1) Confl ct ng tasks spec f ed by d fferent agents
+  //       for t  sa  barr er, (2) one of t  part c pat ng tasks  s not  n
+  //       t  cluster, or (3) task mak ng t  request  s not  ncluded  n t 
+  //       l st of part c pat ng tasks.
+  rpc Barr er(Barr erRequest) returns (Barr erResponse);
 
-  // Aborts the barrier if it is ongoing.
-  // Current and future WaitAtBarrier() calls with the same id will return a
+  // Aborts t  barr er  f    s ongo ng.
+  // Current and future Wa AtBarr er() calls w h t  sa   d w ll return a
   // CANCELLED error status.
-  // Possible service errors:
-  //   - FailedPrecondition: Barrier has already been passed.
-  //   - NotFound: No barrier with the specified id is found.
-  rpc CancelBarrier(CancelBarrierRequest) returns (CancelBarrierResponse);
+  // Poss ble serv ce errors:
+  //   - Fa ledPrecond  on: Barr er has already been passed.
+  //   - NotFound: No barr er w h t  spec f ed  d  s found.
+  rpc CancelBarr er(CancelBarr erRequest) returns (CancelBarr erResponse);
 }

@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.HasEntryNamespace
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.HasEntryNa space
 
-sealed trait CursorType extends HasEntryNamespace
+sealed tra  CursorType extends HasEntryNa space
 
 case object TopCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("top")
+  overr de val entryNa space: EntryNa space = EntryNa space("top")
 }
 case object BottomCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("bottom")
+  overr de val entryNa space: EntryNa space = EntryNa space("bottom")
 }
 case object GapCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("gap")
+  overr de val entryNa space: EntryNa space = EntryNa space("gap")
 }
-case object PivotCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("pivot")
+case object P votCursor extends CursorType {
+  overr de val entryNa space: EntryNa space = EntryNa space("p vot")
 }
 case object SubBranchCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("subbranch")
+  overr de val entryNa space: EntryNa space = EntryNa space("subbranch")
 }
 case object ShowMoreCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmore")
+  overr de val entryNa space: EntryNa space = EntryNa space("showmore")
 }
 case object ShowMoreThreadsCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmorethreads")
+  overr de val entryNa space: EntryNa space = EntryNa space("showmorethreads")
 }
 case object ShowMoreThreadsPromptCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmorethreadsprompt")
+  overr de val entryNa space: EntryNa space = EntryNa space("showmorethreadsprompt")
 }
-case object SecondRepliesSectionCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("secondrepliessection")
+case object SecondRepl esSect onCursor extends CursorType {
+  overr de val entryNa space: EntryNa space = EntryNa space("secondrepl essect on")
 }
-case object ThirdRepliesSectionCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("thirdrepliessection")
+case object Th rdRepl esSect onCursor extends CursorType {
+  overr de val entryNa space: EntryNa space = EntryNa space("th rdrepl essect on")
 }

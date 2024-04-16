@@ -1,14 +1,14 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter:base",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/common",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "kafka/f nagle-kafka/f natra-kafka/src/ma n/scala",
+        "src/thr ft/com/tw ter/t  l neserv ce/server/ nternal:thr ft-scala",
+        "un f ed_user_act ons/adapter/src/ma n/scala/com/tw ter/un f ed_user_act ons/adapter:base",
+        "un f ed_user_act ons/adapter/src/ma n/scala/com/tw ter/un f ed_user_act ons/adapter/common",
+        "un f ed_user_act ons/thr ft/src/ma n/thr ft/com/tw ter/un f ed_user_act ons:un f ed_user_act ons-scala",
     ],
 )

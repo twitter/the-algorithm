@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.product.registry
+package com.tw ter.product_m xer.core.product.reg stry
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neConf g
 
-trait ProductPipelineRegistryConfig {
-  def productPipelineConfigs: Seq[ProductPipelineConfig[_ <: Request, _ <: PipelineQuery, _]]
+tra  ProductP pel neReg stryConf g {
+  def productP pel neConf gs: Seq[ProductP pel neConf g[_ <: Request, _ <: P pel neQuery, _]]
 }

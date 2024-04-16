@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.keyvalue.KeyValueResult
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
-trait ObservedKeyValueResultHandler {
-  val statsReceiver: StatsReceiver
-  val statScope: String
+tra  ObservedKeyValueResultHandler {
+  val statsRece ver: StatsRece ver
+  val statScope: Str ng
 
-  private lazy val scopedStatsReceiver = statsReceiver.scope(statScope)
-  private lazy val keyTotalCounter = scopedStatsReceiver.counter("key/total")
-  private lazy val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private lazy val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private lazy val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
+  pr vate lazy val scopedStatsRece ver = statsRece ver.scope(statScope)
+  pr vate lazy val keyTotalCounter = scopedStatsRece ver.counter("key/total")
+  pr vate lazy val keyFoundCounter = scopedStatsRece ver.counter("key/found")
+  pr vate lazy val keyLossCounter = scopedStatsRece ver.counter("key/loss")
+  pr vate lazy val keyFa lureCounter = scopedStatsRece ver.counter("key/fa lure")
 
   def observedGet[K, V](
-    key: Option[K],
+    key: Opt on[K],
     keyValueResult: KeyValueResult[K, V],
-  ): Try[Option[V]] = {
-    if (key.nonEmpty) {
-      keyTotalCounter.incr()
+  ): Try[Opt on[V]] = {
+     f (key.nonEmpty) {
+      keyTotalCounter. ncr()
       keyValueResult(key.get) match {
-        case Return(Some(value)) =>
-          keyFoundCounter.incr()
-          Return(Some(value))
+        case Return(So (value)) =>
+          keyFoundCounter. ncr()
+          Return(So (value))
         case Return(None) =>
-          keyLossCounter.incr()
+          keyLossCounter. ncr()
           Return(None)
-        case Throw(exception) =>
-          keyFailureCounter.incr()
-          Throw(exception)
+        case Throw(except on) =>
+          keyFa lureCounter. ncr()
+          Throw(except on)
         case _ =>
-          // never reaches here
+          // never reac s  re
           Return(None)
       }
     } else {
-      Throw(MissingKeyException)
+      Throw(M ss ngKeyExcept on)
     }
   }
 }

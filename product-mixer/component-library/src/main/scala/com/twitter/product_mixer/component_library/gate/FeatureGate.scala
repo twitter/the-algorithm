@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.gate
+package com.tw ter.product_m xer.component_l brary.gate
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import com.twitter.util.Throw
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.M ss ngFeatureExcept on
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.GateResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.M sconf guredFeatureMapFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
 
-trait ShouldContinue[Value] {
+tra  ShouldCont nue[Value] {
 
-  /** Given the [[Feature]] value, returns whether the execution should continue */
+  /** G ven t  [[Feature]] value, returns w t r t  execut on should cont nue */
   def apply(featureValue: Value): Boolean
 
-  /** If the [[Feature]] is a failure, use this value */
-  def onFailedFeature(t: Throwable): GateResult = GateResult.Stop
+  /**  f t  [[Feature]]  s a fa lure, use t  value */
+  def onFa ledFeature(t: Throwable): GateResult = GateResult.Stop
 
   /**
-   * If the [[Feature]], or [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]],
-   * is missing use this value
+   *  f t  [[Feature]], or [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]],
+   *  s m ss ng use t  value
    */
-  def onMissingFeature: GateResult = GateResult.Stop
+  def onM ss ngFeature: GateResult = GateResult.Stop
 }
 
 object FeatureGate {
@@ -32,50 +32,50 @@ object FeatureGate {
   def fromFeature(
     feature: Feature[_, Boolean]
   ): FeatureGate[Boolean] =
-    FeatureGate.fromFeature(GateIdentifier(feature.toString), feature)
+    FeatureGate.fromFeature(Gate dent f er(feature.toStr ng), feature)
 
   def fromNegatedFeature(
     feature: Feature[_, Boolean]
   ): FeatureGate[Boolean] =
-    FeatureGate.fromNegatedFeature(GateIdentifier(feature.toString), feature)
+    FeatureGate.fromNegatedFeature(Gate dent f er(feature.toStr ng), feature)
 
   def fromFeature(
-    gateIdentifier: GateIdentifier,
+    gate dent f er: Gate dent f er,
     feature: Feature[_, Boolean]
   ): FeatureGate[Boolean] =
-    FeatureGate[Boolean](gateIdentifier, feature, identity)
+    FeatureGate[Boolean](gate dent f er, feature,  dent y)
 
   def fromNegatedFeature(
-    gateIdentifier: GateIdentifier,
+    gate dent f er: Gate dent f er,
     feature: Feature[_, Boolean]
   ): FeatureGate[Boolean] =
-    FeatureGate[Boolean](gateIdentifier, feature, !identity(_))
+    FeatureGate[Boolean](gate dent f er, feature, ! dent y(_))
 
 }
 
 /**
- * A [[Gate]] that is actuated based upon the value of the provided feature
+ * A [[Gate]] that  s actuated based upon t  value of t  prov ded feature
  */
 case class FeatureGate[Value](
-  gateIdentifier: GateIdentifier,
+  gate dent f er: Gate dent f er,
   feature: Feature[_, Value],
-  continue: ShouldContinue[Value])
-    extends Gate[PipelineQuery] {
+  cont nue: ShouldCont nue[Value])
+    extends Gate[P pel neQuery] {
 
-  override val identifier: GateIdentifier = gateIdentifier
+  overr de val  dent f er: Gate dent f er = gate dent f er
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    Stitch
+  overr de def shouldCont nue(query: P pel neQuery): St ch[Boolean] = {
+    St ch
       .value(
         query.features.map(_.getTry(feature)) match {
-          case Some(Return(value)) => continue(value)
-          case Some(Throw(_: MissingFeatureException)) => continue.onMissingFeature.continue
-          case Some(Throw(t)) => continue.onFailedFeature(t).continue
+          case So (Return(value)) => cont nue(value)
+          case So (Throw(_: M ss ngFeatureExcept on)) => cont nue.onM ss ngFeature.cont nue
+          case So (Throw(t)) => cont nue.onFa ledFeature(t).cont nue
           case None =>
-            throw PipelineFailure(
-              MisconfiguredFeatureMapFailure,
-              "Expected a FeatureMap to be present but none was found, ensure that your" +
-                "PipelineQuery has a FeatureMap configured before gating on Feature values"
+            throw P pel neFa lure(
+              M sconf guredFeatureMapFa lure,
+              "Expected a FeatureMap to be present but none was found, ensure that y " +
+                "P pel neQuery has a FeatureMap conf gured before gat ng on Feature values"
             )
         }
       )

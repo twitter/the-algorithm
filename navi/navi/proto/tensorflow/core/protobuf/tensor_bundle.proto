@@ -2,65 +2,65 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/tensor_slice.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/framework/versions.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/tensor_sl ce.proto";
+ mport "tensorflow/core/fra work/types.proto";
+ mport "tensorflow/core/fra work/vers ons.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorBundleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "TensorBundleProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.ut l";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Protos used in the tensor bundle module (tf/core/util/tensor_bundle/).
+// Protos used  n t  tensor bundle module (tf/core/ut l/tensor_bundle/).
 
-// Special header that is associated with a bundle.
+// Spec al  ader that  s assoc ated w h a bundle.
 //
-// TODO(zongheng,zhifengc): maybe in the future, we can add information about
-// which binary produced this checkpoint, timestamp, etc. Sometime, these can be
-// valuable debugging information. And if needed, these can be used as defensive
-// information ensuring reader (binary version) of the checkpoint and the writer
-// (binary version) must match within certain range, etc.
-message BundleHeaderProto {
-  // Number of data files in the bundle.
-  int32 num_shards = 1;
+// TODO(zong ng,zh fengc): maybe  n t  future,   can add  nformat on about
+// wh ch b nary produced t  c ckpo nt, t  stamp, etc. So t  , t se can be
+// valuable debugg ng  nformat on. And  f needed, t se can be used as defens ve
+//  nformat on ensur ng reader (b nary vers on) of t  c ckpo nt and t  wr er
+// (b nary vers on) must match w h n certa n range, etc.
+ ssage Bundle aderProto {
+  // Number of data f les  n t  bundle.
+   nt32 num_shards = 1;
 
-  // An enum indicating the endianness of the platform that produced this
-  // bundle.  A bundle can only be read by a platform with matching endianness.
-  // Defaults to LITTLE, as most modern platforms are little-endian.
+  // An enum  nd cat ng t  end anness of t  platform that produced t 
+  // bundle.  A bundle can only be read by a platform w h match ng end anness.
+  // Defaults to L TTLE, as most modern platforms are l tle-end an.
   //
-  // Affects the binary tensor data bytes only, not the metadata in protobufs.
-  enum Endianness {
-    LITTLE = 0;
-    BIG = 1;
+  // Affects t  b nary tensor data bytes only, not t   tadata  n protobufs.
+  enum End anness {
+    L TTLE = 0;
+    B G = 1;
   }
-  Endianness endianness = 2;
+  End anness end anness = 2;
 
-  // Versioning of the tensor bundle format.
-  VersionDef version = 3;
+  // Vers on ng of t  tensor bundle format.
+  Vers onDef vers on = 3;
 }
 
-// Describes the metadata related to a checkpointed tensor.
-message BundleEntryProto {
-  // The tensor dtype and shape.
+// Descr bes t   tadata related to a c ckpo nted tensor.
+ ssage BundleEntryProto {
+  // T  tensor dtype and shape.
   DataType dtype = 1;
   TensorShapeProto shape = 2;
-  // The binary content of the tensor lies in:
-  //   File "shard_id": bytes [offset, offset + size).
-  int32 shard_id = 3;
-  int64 offset = 4;
-  int64 size = 5;
+  // T  b nary content of t  tensor l es  n:
+  //   F le "shard_ d": bytes [offset, offset + s ze).
+   nt32 shard_ d = 3;
+   nt64 offset = 4;
+   nt64 s ze = 5;
 
-  // The CRC32C checksum of the tensor bytes.
-  fixed32 crc32c = 6;
+  // T  CRC32C c cksum of t  tensor bytes.
+  f xed32 crc32c = 6;
 
-  // Iff present, this entry represents a partitioned tensor.  The previous
-  // fields are interpreted as follows:
+  //  ff present, t  entry represents a part  oned tensor.  T  prev ous
+  // f elds are  nterpreted as follows:
   //
-  //   "dtype", "shape": describe the full tensor.
-  //   "shard_id", "offset", "size", "crc32c": all IGNORED.
-  //      These information for each slice can be looked up in their own
-  //      BundleEntryProto, keyed by each "slice_name".
-  repeated TensorSliceProto slices = 7;
+  //   "dtype", "shape": descr be t  full tensor.
+  //   "shard_ d", "offset", "s ze", "crc32c": all  GNORED.
+  //      T se  nformat on for each sl ce can be looked up  n t  r own
+  //      BundleEntryProto, keyed by each "sl ce_na ".
+  repeated TensorSl ceProto sl ces = 7;
 }

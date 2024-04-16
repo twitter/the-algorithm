@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasFeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ReplaceableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.MarkUnreadableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Conta nsFeedbackAct on nfos
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.HasCl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.HasFeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.P nnableEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.ReplaceableEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.MarkUnreadableEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleFooter
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module ader
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module tadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav or
 
-sealed trait TimelineEntry
-    extends HasEntryIdentifier
-    with HasSortIndex
-    with HasExpirationTime
-    with PinnableEntry
-    with ReplaceableEntry
-    with MarkUnreadableEntry
+sealed tra  T  l neEntry
+    extends HasEntry dent f er
+    w h HasSort ndex
+    w h HasExp rat onT  
+    w h P nnableEntry
+    w h ReplaceableEntry
+    w h MarkUnreadableEntry
 
-trait TimelineItem extends TimelineEntry with HasClientEventInfo with HasFeedbackActionInfo
+tra  T  l ne em extends T  l neEntry w h HasCl entEvent nfo w h HasFeedbackAct on nfo
 
-case class ModuleItem(
-  item: TimelineItem,
-  dispensable: Option[Boolean],
-  treeDisplay: Option[ModuleItemTreeDisplay])
+case class Module em(
+   em: T  l ne em,
+  d spensable: Opt on[Boolean],
+  treeD splay: Opt on[Module emTreeD splay])
 
-case class TimelineModule(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val entryNamespace: EntryNamespace,
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  items: Seq[ModuleItem],
-  displayType: ModuleDisplayType,
-  header: Option[ModuleHeader],
-  footer: Option[ModuleFooter],
-  metadata: Option[ModuleMetadata],
-  showMoreBehavior: Option[ModuleShowMoreBehavior])
-    extends TimelineEntry
-    with HasClientEventInfo
-    with HasFeedbackActionInfo
-    with ContainsFeedbackActionInfos {
-  override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] = {
-    items.map(_.item.feedbackActionInfo) :+ feedbackActionInfo
+case class T  l neModule(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val entryNa space: EntryNa space,
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  overr de val  sP nned: Opt on[Boolean],
+   ems: Seq[Module em],
+  d splayType: ModuleD splayType,
+   ader: Opt on[Module ader],
+  footer: Opt on[ModuleFooter],
+   tadata: Opt on[Module tadata],
+  showMoreBehav or: Opt on[ModuleShowMoreBehav or])
+    extends T  l neEntry
+    w h HasCl entEvent nfo
+    w h HasFeedbackAct on nfo
+    w h Conta nsFeedbackAct on nfos {
+  overr de def feedbackAct on nfos: Seq[Opt on[FeedbackAct on nfo]] = {
+     ems.map(_. em.feedbackAct on nfo) :+ feedbackAct on nfo
   }
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }
 
-trait TimelineOperation extends TimelineEntry
+tra  T  l neOperat on extends T  l neEntry

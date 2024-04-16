@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.tw ter.product_m xer.core.p pel ne.product
 
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class ProductPipelineRequest[RequestType](request: RequestType, params: Params)
+case class ProductP pel neRequest[RequestType](request: RequestType, params: Params)

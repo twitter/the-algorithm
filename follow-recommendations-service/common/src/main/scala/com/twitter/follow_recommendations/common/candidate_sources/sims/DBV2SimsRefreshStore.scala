@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.NewSimsRefreshOnUserClientColumn
-import com.twitter.util.Duration
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.NewS msRefreshOnUserCl entColumn
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
+ mport javax. nject. nject
 
-@Singleton
-class DBV2SimsRefreshStore @Inject() (
-  newSimsRefreshOnUserClientColumn: NewSimsRefreshOnUserClientColumn)
-    extends StratoBasedSimsCandidateSourceWithUnitView(
-      fetcher = newSimsRefreshOnUserClientColumn.fetcher,
-      identifier = DBV2SimsRefreshStore.Identifier)
+@S ngleton
+class DBV2S msRefreshStore @ nject() (
+  newS msRefreshOnUserCl entColumn: NewS msRefreshOnUserCl entColumn)
+    extends StratoBasedS msCand dateS ceW hUn V ew(
+      fetc r = newS msRefreshOnUserCl entColumn.fetc r,
+       dent f er = DBV2S msRefreshStore. dent f er)
 
-@Singleton
-class CachedDBV2SimsRefreshStore @Inject() (
-  newSimsRefreshOnUserClientColumn: NewSimsRefreshOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends CacheBasedSimsStore(
-      id = DBV2SimsRefreshStore.Identifier,
-      fetcher = newSimsRefreshOnUserClientColumn.fetcher,
-      maxCacheSize = DBV2SimsRefreshStore.MaxCacheSize,
-      cacheTtl = DBV2SimsRefreshStore.CacheTTL,
-      statsReceiver = statsReceiver.scope("CachedDBV2SimsRefreshStore", "cache")
+@S ngleton
+class Cac dDBV2S msRefreshStore @ nject() (
+  newS msRefreshOnUserCl entColumn: NewS msRefreshOnUserCl entColumn,
+  statsRece ver: StatsRece ver)
+    extends Cac BasedS msStore(
+       d = DBV2S msRefreshStore. dent f er,
+      fetc r = newS msRefreshOnUserCl entColumn.fetc r,
+      maxCac S ze = DBV2S msRefreshStore.MaxCac S ze,
+      cac Ttl = DBV2S msRefreshStore.Cac TTL,
+      statsRece ver = statsRece ver.scope("Cac dDBV2S msRefreshStore", "cac ")
     )
 
-object DBV2SimsRefreshStore {
-  val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
-  val MaxCacheSize = 5000
-  val CacheTTL: Duration = Duration.fromHours(24)
+object DBV2S msRefreshStore {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.S ms.toStr ng)
+  val MaxCac S ze = 5000
+  val Cac TTL: Durat on = Durat on.fromH s(24)
 }

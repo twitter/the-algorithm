@@ -1,125 +1,125 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.user_user_graph
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserDisplayLocation
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.recos.user_user_graph.thriftscala.RecommendedUser
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.follow_recom ndat ons.common.models._
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.recos.recos_common.thr ftscala.UserSoc alProofType
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserD splayLocat on
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserRequest
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserResponse
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndedUser
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-class UserUserGraphCandidateSource @Inject() (
-  @Named(GuiceNamedConstants.USER_USER_GRAPH_FETCHER)
-  fetcher: Fetcher[RecommendUserRequest, Unit, RecommendUserResponse],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      UserUserGraphCandidateSource.Target,
-      CandidateUser
+@S ngleton
+class UserUserGraphCand dateS ce @ nject() (
+  @Na d(Gu ceNa dConstants.USER_USER_GRAPH_FETCHER)
+  fetc r: Fetc r[Recom ndUserRequest, Un , Recom ndUserResponse],
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[
+      UserUserGraphCand dateS ce.Target,
+      Cand dateUser
     ] {
 
-  override val identifier: CandidateSourceIdentifier = UserUserGraphCandidateSource.Identifier
-  val stats: StatsReceiver = statsReceiver.scope("UserUserGraph")
+  overr de val  dent f er: Cand dateS ce dent f er = UserUserGraphCand dateS ce. dent f er
+  val stats: StatsRece ver = statsRece ver.scope("UserUserGraph")
   val requestCounter: Counter = stats.counter("requests")
 
-  override def apply(
-    target: UserUserGraphCandidateSource.Target
-  ): Stitch[Seq[CandidateUser]] = {
-    if (target.params(UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap)) {
-      requestCounter.incr()
-      buildRecommendUserRequest(target)
+  overr de def apply(
+    target: UserUserGraphCand dateS ce.Target
+  ): St ch[Seq[Cand dateUser]] = {
+     f (target.params(UserUserGraphParams.UserUserGraphCand dateS ceEnabled n  ghtMap)) {
+      requestCounter. ncr()
+      bu ldRecom ndUserRequest(target)
         .map { request =>
-          fetcher
+          fetc r
             .fetch(request)
             .map(_.v)
             .map { responseOpt =>
               responseOpt
                 .map { response =>
-                  response.recommendedUsers
+                  response.recom ndedUsers
                     .sortBy(-_.score)
-                    .map(convertToCandidateUsers)
-                    .map(_.withCandidateSource(identifier))
-                }.getOrElse(Nil)
+                    .map(convertToCand dateUsers)
+                    .map(_.w hCand dateS ce( dent f er))
+                }.getOrElse(N l)
             }
-        }.getOrElse(Stitch.Nil)
+        }.getOrElse(St ch.N l)
     } else {
-      Stitch.Nil
+      St ch.N l
     }
   }
 
-  private[this] def buildRecommendUserRequest(
-    target: UserUserGraphCandidateSource.Target
-  ): Option[RecommendUserRequest] = {
-    (target.getOptionalUserId, target.recentFollowedUserIds) match {
-      case (Some(userId), Some(recentFollowedUserIds)) =>
-        // use recentFollowedUserIds as seeds for initial experiment
-        val seedsWithWeights: Map[Long, Double] = recentFollowedUserIds.map {
-          recentFollowedUserId =>
-            recentFollowedUserId -> UserUserGraphCandidateSource.DefaultSeedWeight
+  pr vate[t ] def bu ldRecom ndUserRequest(
+    target: UserUserGraphCand dateS ce.Target
+  ): Opt on[Recom ndUserRequest] = {
+    (target.getOpt onalUser d, target.recentFollo dUser ds) match {
+      case (So (user d), So (recentFollo dUser ds)) =>
+        // use recentFollo dUser ds as seeds for  n  al exper  nt
+        val seedsW h  ghts: Map[Long, Double] = recentFollo dUser ds.map {
+          recentFollo dUser d =>
+            recentFollo dUser d -> UserUserGraphCand dateS ce.DefaultSeed  ght
         }.toMap
-        val request = RecommendUserRequest(
-          requesterId = userId,
-          displayLocation = UserUserGraphCandidateSource.DisplayLocation,
-          seedsWithWeights = seedsWithWeights,
-          excludedUserIds = Some(target.excludedUserIds),
-          maxNumResults = Some(target.params.getInt(UserUserGraphParams.MaxCandidatesToReturn)),
-          maxNumSocialProofs = Some(UserUserGraphCandidateSource.MaxNumSocialProofs),
-          minUserPerSocialProof = Some(UserUserGraphCandidateSource.MinUserPerSocialProof),
-          socialProofTypes = Some(Seq(UserUserGraphCandidateSource.SocialProofType))
+        val request = Recom ndUserRequest(
+          requester d = user d,
+          d splayLocat on = UserUserGraphCand dateS ce.D splayLocat on,
+          seedsW h  ghts = seedsW h  ghts,
+          excludedUser ds = So (target.excludedUser ds),
+          maxNumResults = So (target.params.get nt(UserUserGraphParams.MaxCand datesToReturn)),
+          maxNumSoc alProofs = So (UserUserGraphCand dateS ce.MaxNumSoc alProofs),
+          m nUserPerSoc alProof = So (UserUserGraphCand dateS ce.M nUserPerSoc alProof),
+          soc alProofTypes = So (Seq(UserUserGraphCand dateS ce.Soc alProofType))
         )
-        Some(request)
+        So (request)
       case _ => None
     }
   }
 
-  private[this] def convertToCandidateUsers(
-    recommendedUser: RecommendedUser
-  ): CandidateUser = {
-    val socialProofUserIds =
-      recommendedUser.socialProofs.getOrElse(UserUserGraphCandidateSource.SocialProofType, Nil)
-    val reasonOpt = if (socialProofUserIds.nonEmpty) {
-      Some(
+  pr vate[t ] def convertToCand dateUsers(
+    recom ndedUser: Recom ndedUser
+  ): Cand dateUser = {
+    val soc alProofUser ds =
+      recom ndedUser.soc alProofs.getOrElse(UserUserGraphCand dateS ce.Soc alProofType, N l)
+    val reasonOpt =  f (soc alProofUser ds.nonEmpty) {
+      So (
         Reason(
-          Some(AccountProof(followProof =
-            Some(FollowProof(socialProofUserIds, socialProofUserIds.size)))))
+          So (AccountProof(followProof =
+            So (FollowProof(soc alProofUser ds, soc alProofUser ds.s ze)))))
       )
     } else {
       None
     }
-    CandidateUser(
-      id = recommendedUser.userId,
-      score = Some(recommendedUser.score),
+    Cand dateUser(
+       d = recom ndedUser.user d,
+      score = So (recom ndedUser.score),
       reason = reasonOpt)
   }
 }
 
-object UserUserGraphCandidateSource {
+object UserUserGraphCand dateS ce {
   type Target = HasParams
-    with HasClientContext
-    with HasRecentFollowedUserIds
-    with HasExcludedUserIds
+    w h HasCl entContext
+    w h HasRecentFollo dUser ds
+    w h HasExcludedUser ds
 
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.UserUserGraph.toString)
-  //Use HomeTimeline for experiment
-  val DisplayLocation: RecommendUserDisplayLocation = RecommendUserDisplayLocation.HomeTimeLine
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.UserUserGraph.toStr ng)
+  //Use Ho T  l ne for exper  nt
+  val D splayLocat on: Recom ndUserD splayLocat on = Recom ndUserD splayLocat on.Ho T  L ne
 
-  //Default params used in MagicRecs
-  val DefaultSeedWeight: Double = 1.0
-  val SocialProofType = UserSocialProofType.Follow
-  val MaxNumSocialProofs = 10
-  val MinUserPerSocialProof: Map[UserSocialProofType, Int] =
-    Map[UserSocialProofType, Int]((SocialProofType, 2))
+  //Default params used  n Mag cRecs
+  val DefaultSeed  ght: Double = 1.0
+  val Soc alProofType = UserSoc alProofType.Follow
+  val MaxNumSoc alProofs = 10
+  val M nUserPerSoc alProof: Map[UserSoc alProofType,  nt] =
+    Map[UserSoc alProofType,  nt]((Soc alProofType, 2))
 }

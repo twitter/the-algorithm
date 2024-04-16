@@ -1,93 +1,93 @@
-package com.twitter.product_mixer.component_library.selector.ads
+package com.tw ter.product_m xer.component_l brary.selector.ads
 
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
-import com.twitter.goldfinch.api.AdsInjectorAdditionalRequestParams
-import com.twitter.goldfinch.api.AdsInjectorOutput
-import com.twitter.goldfinch.api.{AdsInjector => GoldfinchAdsInjector}
-import com.twitter.product_mixer.component_library.model.query.ads._
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.goldf nch.ap .Ads nject onSurfaceAreas.SurfaceAreaNa 
+ mport com.tw ter.goldf nch.ap .Ads njectorAdd  onalRequestParams
+ mport com.tw ter.goldf nch.ap .Ads njectorOutput
+ mport com.tw ter.goldf nch.ap .{Ads njector => Goldf nchAds njector}
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads._
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport Cand dateScope.Part  onedCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Injects the sequence of AdCandidates in the `result` in the
- * sequence of the Other Candidates(which are not ads).
+ *  njects t  sequence of AdCand dates  n t  `result`  n t 
+ * sequence of t  Ot r Cand dates(wh ch are not ads).
  *
- * Every SurfaceArea or DisplayLocation runs their own desired set of adjusters(set in pipeline)
- * to inject ads and reposition the ads in the sequence of other candidates of `result` :
- * which are fetched by AdsInjectionSurfaceAreaAdjustersMap
- * Note: The original sequence of non_promoted entries(non-ads) is retained and the ads
- * are inserted in the sequence using `goldfinch` library based on the 'insertion-position'
- * hydrated in AdsCandidate by Adserver/Admixer.
+ * Every SurfaceArea or D splayLocat on runs t  r own des red set of adjusters(set  n p pel ne)
+ * to  nject ads and repos  on t  ads  n t  sequence of ot r cand dates of `result` :
+ * wh ch are fetc d by Ads nject onSurfaceAreaAdjustersMap
+ * Note: T  or g nal sequence of non_promoted entr es(non-ads)  s reta ned and t  ads
+ * are  nserted  n t  sequence us ng `goldf nch` l brary based on t  ' nsert on-pos  on'
+ * hydrated  n AdsCand date by Adserver/Adm xer.
  *
- * ***** Goldfinch recommends to run this selector as close to the marshalling of candidates to have
- * more realistic view of served-timeline in Goldfinch-BQ-Logs and avoid any further updates on the
- * timeline(sequence of entries) created. ****
+ * ***** Goldf nch recom nds to run t  selector as close to t  marshall ng of cand dates to have
+ * more real st c v ew of served-t  l ne  n Goldf nch-BQ-Logs and avo d any furt r updates on t 
+ * t  l ne(sequence of entr es) created. ****
  *
- * Any surface area like `search_tweets(surface_area)` can call
- * InsertAdResults(surfaceArea = "TweetSearch", candidatePipeline = adsCandidatePipeline.identifier,
- * ProductMixerAdsInjector = productMixerAdsInjector)
- * where the pipeline config can call
- * productMixerAdsInjector.forSurfaceArea("TweetSearch") to get AdsInjector Object
+ * Any surface area l ke `search_t ets(surface_area)` can call
+ *  nsertAdResults(surfaceArea = "T etSearch", cand dateP pel ne = adsCand dateP pel ne. dent f er,
+ * ProductM xerAds njector = productM xerAds njector)
+ * w re t  p pel ne conf g can call
+ * productM xerAds njector.forSurfaceArea("T etSearch") to get Ads njector Object
  *
  * @example
- * `Seq(source1NonAd_Id1, source1NonAd_Id2, source2NonAd_Id1, source2NonAd_Id2,source1NonAd_Id3, source3NonAd_Id3,source3Ad_Id1_InsertionPos1, source3Ad_Id2_InsertionPos4)`
- * then the output result can be
- * `Seq(source1NonAd_Id1, source3Ad_Id1_InsertionPos1, source1NonAd_Id2, source2NonAd_Id1, source3Ad_Id2_InsertionPos4,source2NonAd_Id2, source1NonAd_Id3, source3NonAd_Id3)`
- * depending on the insertion position of Ads and other adjusters shifting the ads
+ * `Seq(s ce1NonAd_ d1, s ce1NonAd_ d2, s ce2NonAd_ d1, s ce2NonAd_ d2,s ce1NonAd_ d3, s ce3NonAd_ d3,s ce3Ad_ d1_ nsert onPos1, s ce3Ad_ d2_ nsert onPos4)`
+ * t n t  output result can be
+ * `Seq(s ce1NonAd_ d1, s ce3Ad_ d1_ nsert onPos1, s ce1NonAd_ d2, s ce2NonAd_ d1, s ce3Ad_ d2_ nsert onPos4,s ce2NonAd_ d2, s ce1NonAd_ d3, s ce3NonAd_ d3)`
+ * depend ng on t   nsert on pos  on of Ads and ot r adjusters sh ft ng t  ads
  */
-case class InsertAdResults(
-  surfaceAreaName: SurfaceAreaName,
-  adsInjector: GoldfinchAdsInjector[
-    PipelineQuery with AdsQuery,
-    CandidateWithDetails,
-    CandidateWithDetails
+case class  nsertAdResults(
+  surfaceAreaNa : SurfaceAreaNa ,
+  ads njector: Goldf nchAds njector[
+    P pel neQuery w h AdsQuery,
+    Cand dateW hDeta ls,
+    Cand dateW hDeta ls
   ],
-  adsCandidatePipeline: CandidatePipelineIdentifier)
-    extends Selector[PipelineQuery with AdsQuery] {
+  adsCand dateP pel ne: Cand dateP pel ne dent f er)
+    extends Selector[P pel neQuery w h AdsQuery] {
 
-  override val pipelineScope: CandidateScope = SpecificPipeline(adsCandidatePipeline)
+  overr de val p pel neScope: Cand dateScope = Spec f cP pel ne(adsCand dateP pel ne)
 
-  override def apply(
-    query: PipelineQuery with AdsQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery w h AdsQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    // Read into ads and non-ads candidates.
-    val PartitionedCandidates(adCandidates, otherRemainingCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    // Read  nto ads and non-ads cand dates.
+    val Part  onedCand dates(adCand dates, ot rRema n ngCand dates) =
+      p pel neScope.part  on(rema n ngCand dates)
 
-    // Create this param from Query/AdsCandidate based on surface_area, if required.
-    val adsInjectorAdditionalRequestParams =
-      AdsInjectorAdditionalRequestParams(budgetAwareExperimentId = None)
+    // Create t  param from Query/AdsCand date based on surface_area,  f requ red.
+    val ads njectorAdd  onalRequestParams =
+      Ads njectorAdd  onalRequestParams(budgetAwareExper  nt d = None)
 
-    val adsInjectorOutput: AdsInjectorOutput[CandidateWithDetails, CandidateWithDetails] =
-      adsInjector.applyForAllEntries(
+    val ads njectorOutput: Ads njectorOutput[Cand dateW hDeta ls, Cand dateW hDeta ls] =
+      ads njector.applyForAllEntr es(
         query = query,
-        nonPromotedEntries = result,
-        promotedEntries = adCandidates,
-        adsInjectorAdditionalRequestParams = adsInjectorAdditionalRequestParams)
+        nonPromotedEntr es = result,
+        promotedEntr es = adCand dates,
+        ads njectorAdd  onalRequestParams = ads njectorAdd  onalRequestParams)
 
-    val updatedRemainingCandidates = otherRemainingCandidates ++
-      GoldfinchResults(adsInjectorOutput.unusedEntries).adapt
-    val mergedResults = GoldfinchResults(adsInjectorOutput.mergedEntries).adapt
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = mergedResults)
+    val updatedRema n ngCand dates = ot rRema n ngCand dates ++
+      Goldf nchResults(ads njectorOutput.unusedEntr es).adapt
+    val  rgedResults = Goldf nchResults(ads njectorOutput. rgedEntr es).adapt
+    SelectorResult(rema n ngCand dates = updatedRema n ngCand dates, result =  rgedResults)
   }
 
   /**
-   * Goldfinch separates NonPromotedEntryType and PromotedEntryType models, while in ProMix both
-   * non-promoted and promoted entries are CandidateWithDetails. As such, we need to flatten the
-   * result back into a single Seq of CandidateWithDetails. See [[AdsInjectorOutput]]
+   * Goldf nch separates NonPromotedEntryType and PromotedEntryType models, wh le  n ProM x both
+   * non-promoted and promoted entr es are Cand dateW hDeta ls. As such,   need to flatten t 
+   * result back  nto a s ngle Seq of Cand dateW hDeta ls. See [[Ads njectorOutput]]
    */
-  case class GoldfinchResults(results: Seq[Either[CandidateWithDetails, CandidateWithDetails]]) {
-    def adapt: Seq[CandidateWithDetails] = {
+  case class Goldf nchResults(results: Seq[E  r[Cand dateW hDeta ls, Cand dateW hDeta ls]]) {
+    def adapt: Seq[Cand dateW hDeta ls] = {
       results.collect {
-        case Right(value) => value
+        case R ght(value) => value
         case Left(value) => value
       }
     }

@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.search.earlybird.thriftscala._
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+ mport com.tw ter.search.earlyb rd.thr ftscala._
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.model.User d
 
-object Tweet {
-  def fromThrift(tweet: thrift.Tweet): Tweet = {
-    Tweet(id = tweet.id)
+object T et {
+  def fromThr ft(t et: thr ft.T et): T et = {
+    T et( d = t et. d)
   }
 }
 
-case class Tweet(
-  id: TweetId,
-  userId: Option[UserId] = None,
-  sourceTweetId: Option[TweetId] = None,
-  sourceUserId: Option[UserId] = None)
-    extends TimelineEntry {
+case class T et(
+   d: T et d,
+  user d: Opt on[User d] = None,
+  s ceT et d: Opt on[T et d] = None,
+  s ceUser d: Opt on[User d] = None)
+    extends T  l neEntry {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def throwIfInvalid(): Unit = {}
+  def throw f nval d(): Un  = {}
 
-  def toThrift: thrift.Tweet = {
-    thrift.Tweet(
-      id = id,
-      userId = userId,
-      sourceTweetId = sourceTweetId,
-      sourceUserId = sourceUserId)
+  def toThr ft: thr ft.T et = {
+    thr ft.T et(
+       d =  d,
+      user d = user d,
+      s ceT et d = s ceT et d,
+      s ceUser d = s ceUser d)
   }
 
-  def toTimelineEntryThrift: thrift.TimelineEntry = {
-    thrift.TimelineEntry.Tweet(toThrift)
+  def toT  l neEntryThr ft: thr ft.T  l neEntry = {
+    thr ft.T  l neEntry.T et(toThr ft)
   }
 
-  def toThriftSearchResult: ThriftSearchResult = {
-    val metadata = ThriftSearchResultMetadata(
-      resultType = ThriftSearchResultType.Recency,
-      fromUserId = userId match {
-        case Some(id) => id
+  def toThr ftSearchResult: Thr ftSearchResult = {
+    val  tadata = Thr ftSearchResult tadata(
+      resultType = Thr ftSearchResultType.Recency,
+      fromUser d = user d match {
+        case So ( d) =>  d
         case None => 0L
       },
-      isRetweet =
-        if (sourceUserId.isDefined || sourceUserId.isDefined) Some(true)
+       sRet et =
+         f (s ceUser d. sDef ned || s ceUser d. sDef ned) So (true)
         else
           None,
-      sharedStatusId = sourceTweetId match {
-        case Some(id) => id
+      sharedStatus d = s ceT et d match {
+        case So ( d) =>  d
         case None => 0L
       },
-      referencedTweetAuthorId = sourceUserId match {
-        case Some(id) => id
+      referencedT etAuthor d = s ceUser d match {
+        case So ( d) =>  d
         case None => 0L
       }
     )
-    ThriftSearchResult(
-      id = id,
-      metadata = Some(metadata)
+    Thr ftSearchResult(
+       d =  d,
+       tadata = So ( tadata)
     )
   }
 }

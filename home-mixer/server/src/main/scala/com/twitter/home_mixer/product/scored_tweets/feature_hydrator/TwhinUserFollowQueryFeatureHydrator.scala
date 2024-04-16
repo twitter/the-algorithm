@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinUserFollowFeatureRepository
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.twhin_embeddings.TwhinUserFollowEmbeddingsAdapter
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Twh nUserFollowFeatureRepos ory
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.twh n_embedd ngs.Twh nUserFollowEmbedd ngsAdapter
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .{thr ftscala => ml}
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
-object TwhinUserFollowFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object Twh nUserFollowFeature
+    extends DataRecord nAFeature[P pel neQuery]
+    w h FeatureW hDefaultOnFa lure[P pel neQuery, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class TwhinUserFollowQueryFeatureHydrator @Inject() (
-  @Named(TwhinUserFollowFeatureRepository)
-  client: KeyValueRepository[Seq[Long], Long, ml.FloatTensor],
-  statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+class Twh nUserFollowQueryFeatureHydrator @ nject() (
+  @Na d(Twh nUserFollowFeatureRepos ory)
+  cl ent: KeyValueRepos ory[Seq[Long], Long, ml.FloatTensor],
+  statsRece ver: StatsRece ver)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TwhinUserFollow")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Twh nUserFollow")
 
-  override val features: Set[Feature[_, _]] = Set(TwhinUserFollowFeature)
+  overr de val features: Set[Feature[_, _]] = Set(Twh nUserFollowFeature)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate val keyFoundCounter = scopedStatsRece ver.counter("key/found")
+  pr vate val keyLossCounter = scopedStatsRece ver.counter("key/loss")
+  pr vate val keyFa lureCounter = scopedStatsRece ver.counter("key/fa lure")
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    Stitch.callFuture(client(Seq(userId))).map { results =>
-      val embedding: Option[ml.FloatTensor] = results(userId) match {
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val user d = query.getRequ redUser d
+    St ch.callFuture(cl ent(Seq(user d))).map { results =>
+      val embedd ng: Opt on[ml.FloatTensor] = results(user d) match {
         case Return(value) =>
-          if (value.exists(_.floats.nonEmpty)) keyFoundCounter.incr()
-          else keyLossCounter.incr()
+           f (value.ex sts(_.floats.nonEmpty)) keyFoundCounter. ncr()
+          else keyLossCounter. ncr()
           value
         case Throw(_) =>
-          keyFailureCounter.incr()
+          keyFa lureCounter. ncr()
           None
         case _ =>
           None
       }
 
-      val dataRecord = TwhinUserFollowEmbeddingsAdapter.adaptToDataRecords(embedding).asScala.head
+      val dataRecord = Twh nUserFollowEmbedd ngsAdapter.adaptToDataRecords(embedd ng).asScala. ad
 
-      FeatureMapBuilder()
-        .add(TwhinUserFollowFeature, dataRecord)
-        .build()
+      FeatureMapBu lder()
+        .add(Twh nUserFollowFeature, dataRecord)
+        .bu ld()
     }
   }
 }

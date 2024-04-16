@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.core.pipeline.step.candidate_source
+package com.tw ter.product_m xer.core.p pel ne.step.cand date_s ce
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.BaseCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.BaseCand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_s ce_executor.Cand dateS ceExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_s ce_executor.Cand dateS ceExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A candidate source step, which takes the query and gets csandidates from the candidate source.
+ * A cand date s ce step, wh ch takes t  query and gets csand dates from t  cand date s ce.
  *
- * @param candidateSourceExecutor Candidate Source Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @param cand dateS ceExecutor Cand date S ce Executor
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Cand date Type of Cand dates to f lter
+ * @tparam State T  p pel ne state doma n model.
  */
-case class CandidateSourceStep[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[Candidate, State]] @Inject() (
-  candidateSourceExecutor: CandidateSourceExecutor)
+case class Cand dateS ceStep[
+  Query <: P pel neQuery,
+  Cand dateS ceQuery,
+  Cand dateS ceResult,
+  Cand date <: Un versalNoun[Any],
+  State <: HasQuery[Query, State] w h HasCand datesW hFeatures[Cand date, State]] @ nject() (
+  cand dateS ceExecutor: Cand dateS ceExecutor)
     extends Step[
       State,
-      CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate],
+      Cand dateS ceConf g[Query, Cand dateS ceQuery, Cand dateS ceResult, Cand date],
       Query,
-      CandidateSourceExecutorResult[
-        Candidate
+      Cand dateS ceExecutorResult[
+        Cand date
       ]
     ] {
-  override def isEmpty(
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
+  overr de def  sEmpty(
+    conf g: Cand dateS ceConf g[Query, Cand dateS ceQuery, Cand dateS ceResult, Cand date]
   ): Boolean = false
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
+    conf g: Cand dateS ceConf g[Query, Cand dateS ceQuery, Cand dateS ceResult, Cand date]
   ): Query = state.query
 
-  override def arrow(
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate],
+  overr de def arrow(
+    conf g: Cand dateS ceConf g[Query, Cand dateS ceQuery, Cand dateS ceResult, Cand date],
     context: Executor.Context
-  ): Arrow[Query, CandidateSourceExecutorResult[Candidate]] = candidateSourceExecutor.arrow(
-    config.candidateSource,
-    config.queryTransformer,
-    config.resultTransformer,
-    config.resultFeaturesTransformers,
+  ): Arrow[Query, Cand dateS ceExecutorResult[Cand date]] = cand dateS ceExecutor.arrow(
+    conf g.cand dateS ce,
+    conf g.queryTransfor r,
+    conf g.resultTransfor r,
+    conf g.resultFeaturesTransfor rs,
     context
   )
 
-  override def updateState(
+  overr de def updateState(
     state: State,
-    executorResult: CandidateSourceExecutorResult[Candidate],
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
+    executorResult: Cand dateS ceExecutorResult[Cand date],
+    conf g: Cand dateS ceConf g[Query, Cand dateS ceQuery, Cand dateS ceResult, Cand date]
   ): State = state
     .updateQuery(
       state.query
-        .withFeatureMap(executorResult.candidateSourceFeatureMap).asInstanceOf[
-          Query]).updateCandidatesWithFeatures(executorResult.candidates)
+        .w hFeatureMap(executorResult.cand dateS ceFeatureMap).as nstanceOf[
+          Query]).updateCand datesW hFeatures(executorResult.cand dates)
 }
 
-case class CandidateSourceConfig[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Candidate <: UniversalNoun[Any]
+case class Cand dateS ceConf g[
+  Query <: P pel neQuery,
+  Cand dateS ceQuery,
+  Cand dateS ceResult,
+  Cand date <: Un versalNoun[Any]
 ](
-  candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult],
-  queryTransformer: BaseCandidatePipelineQueryTransformer[
+  cand dateS ce: BaseCand dateS ce[Cand dateS ceQuery, Cand dateS ceResult],
+  queryTransfor r: BaseCand dateP pel neQueryTransfor r[
     Query,
-    CandidateSourceQuery
+    Cand dateS ceQuery
   ],
-  resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Candidate],
-  resultFeaturesTransformers: Seq[CandidateFeatureTransformer[CandidateSourceResult]])
+  resultTransfor r: Cand dateP pel neResultsTransfor r[Cand dateS ceResult, Cand date],
+  resultFeaturesTransfor rs: Seq[Cand dateFeatureTransfor r[Cand dateS ceResult]])

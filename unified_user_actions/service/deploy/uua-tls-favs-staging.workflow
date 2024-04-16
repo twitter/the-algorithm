@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-tls-favs-staging",
-  "config-files": [
+  "role": "d scode",
+  "na ": "uua-tls-favs-stag ng",
+  "conf g-f les": [
     "uua-tls-favs.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tls-favs"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-tls-favs"
       },
       {
         "type": "packer",
-        "name": "uua-tls-favs-staging",
-        "artifact": "./dist/uua-tls-favs.zip"
+        "na ": "uua-tls-favs-stag ng",
+        "art fact": "./d st/uua-tls-favs.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-tls-favs-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-tls-favs"
+          "na ": "uua-tls-favs-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-tls-favs"
         }
       ]
     }

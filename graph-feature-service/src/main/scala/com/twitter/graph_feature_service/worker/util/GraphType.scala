@@ -1,16 +1,16 @@
-package com.twitter.graph_feature_service.worker.util
+package com.tw ter.graph_feature_serv ce.worker.ut l
 
-//These classes are to help the GraphContainer choose the right data structure to answer queries
-sealed trait GraphType
+//T se classes are to  lp t  GraphConta ner choose t  r ght data structure to ans r quer es
+sealed tra  GraphType
 
 object FollowGraph extends GraphType
 
-object FavoriteGraph extends GraphType
+object Favor eGraph extends GraphType
 
-object RetweetGraph extends GraphType
+object Ret etGraph extends GraphType
 
 object ReplyGraph extends GraphType
 
-object MentionGraph extends GraphType
+object  nt onGraph extends GraphType
 
 object MutualFollowGraph extends GraphType

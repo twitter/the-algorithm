@@ -1,26 +1,26 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.geoduck.backend.hydration.thriftscala.HydrationContext
-import com.twitter.geoduck.common.thriftscala.Constants
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.PlaceQueryFields
-import com.twitter.geoduck.service.common.clientmodules.GeoduckGeohashLocate
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.geoduck.util.primitives.LatLon
-import com.twitter.geoduck.util.primitives.{Geohash => GDGeohash}
-import com.twitter.geoduck.util.primitives.{Place => GDPlace}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.repository.GeoduckPlaceConverter
-import com.twitter.tweetypie.{thriftscala => TP}
+ mport com.tw ter.geoduck.backend.hydrat on.thr ftscala.Hydrat onContext
+ mport com.tw ter.geoduck.common.thr ftscala.Constants
+ mport com.tw ter.geoduck.common.thr ftscala.PlaceQuery
+ mport com.tw ter.geoduck.common.thr ftscala.PlaceQueryF elds
+ mport com.tw ter.geoduck.serv ce.common.cl entmodules.GeoduckGeohashLocate
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter.geoduck.ut l.pr m  ves.LatLon
+ mport com.tw ter.geoduck.ut l.pr m  ves.{Geohash => GDGeohash}
+ mport com.tw ter.geoduck.ut l.pr m  ves.{Place => GDPlace}
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.repos ory.GeoduckPlaceConverter
+ mport com.tw ter.t etyp e.{thr ftscala => TP}
 
 object ReverseGeocoder {
   val log: Logger = Logger(getClass)
 
-  private def validatingRGC(rgc: ReverseGeocoder): ReverseGeocoder =
+  pr vate def val dat ngRGC(rgc: ReverseGeocoder): ReverseGeocoder =
     FutureArrow {
-      case (coords: TP.GeoCoordinates, language: PlaceLanguage) =>
-        if (LatLon.isValid(coords.latitude, coords.longitude))
+      case (coords: TP.GeoCoord nates, language: PlaceLanguage) =>
+         f (LatLon. sVal d(coords.lat ude, coords.long ude))
           rgc((coords, language))
         else
           Future.None
@@ -30,42 +30,42 @@ object ReverseGeocoder {
    * create a Geo backed ReverseGeocoder
    */
   def fromGeoduck(geohashLocate: GeoduckGeohashLocate): ReverseGeocoder =
-    validatingRGC(
+    val dat ngRGC(
       FutureArrow {
-        case (geo: TP.GeoCoordinates, language: PlaceLanguage) =>
-          if (log.isDebugEnabled) {
-            log.debug("RGC'ing " + geo.toString() + " with geoduck")
+        case (geo: TP.GeoCoord nates, language: PlaceLanguage) =>
+           f (log. sDebugEnabled) {
+            log.debug("RGC' ng " + geo.toStr ng() + " w h geoduck")
           }
 
-          val hydrationContext =
-            HydrationContext(
-              placeFields = Set[PlaceQueryFields](
-                PlaceQueryFields.PlaceNames
+          val hydrat onContext =
+            Hydrat onContext(
+              placeF elds = Set[PlaceQueryF elds](
+                PlaceQueryF elds.PlaceNa s
               )
             )
 
-          val gh = GDGeohash(LatLon(lat = geo.latitude, lon = geo.longitude))
-          val placeQuery = PlaceQuery(placeTypes = Some(Constants.ConsumerPlaceTypes))
+          val gh = GDGeohash(LatLon(lat = geo.lat ude, lon = geo.long ude))
+          val placeQuery = PlaceQuery(placeTypes = So (Constants.Consu rPlaceTypes))
 
           geohashLocate
-            .locateGeohashes(Seq(gh.toThrift), placeQuery, hydrationContext)
-            .onFailure { case ex => log.warn("failed to rgc " + geo.toString(), ex) }
+            .locateGeohas s(Seq(gh.toThr ft), placeQuery, hydrat onContext)
+            .onFa lure { case ex => log.warn("fa led to rgc " + geo.toStr ng(), ex) }
             .map {
-              (resp: Seq[Try[LocationResponse]]) =>
-                resp.headOption.flatMap {
+              (resp: Seq[Try[Locat onResponse]]) =>
+                resp. adOpt on.flatMap {
                   case Throw(ex) =>
-                    log.warn("rgc failed for coords: " + geo.toString(), ex)
+                    log.warn("rgc fa led for coords: " + geo.toStr ng(), ex)
                     None
-                  case Return(locationResponse) =>
-                    GDPlace.tryLocationResponse(locationResponse) match {
+                  case Return(locat onResponse) =>
+                    GDPlace.tryLocat onResponse(locat onResponse) match {
                       case Throw(ex) =>
                         log
-                          .warn("rgc failed in response handling for coords: " + geo.toString(), ex)
+                          .warn("rgc fa led  n response handl ng for coords: " + geo.toStr ng(), ex)
                         None
                       case Return(tplaces) =>
-                        GDPlace.pickConsumerLocation(tplaces).map { place: GDPlace =>
-                          if (log.isDebugEnabled) {
-                            log.debug("successfully rgc'd " + geo + " to " + place.id)
+                        GDPlace.p ckConsu rLocat on(tplaces).map { place: GDPlace =>
+                           f (log. sDebugEnabled) {
+                            log.debug("successfully rgc'd " + geo + " to " + place. d)
                           }
                           GeoduckPlaceConverter(language, place)
                         }

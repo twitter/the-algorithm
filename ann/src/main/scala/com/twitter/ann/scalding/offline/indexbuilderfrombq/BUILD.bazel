@@ -1,37 +1,37 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "src/scala/com/twitter/scalding_internal/bigquery",
-        "src/scala/com/twitter/scalding_internal/job",
+    dependenc es = [
+        "3rdparty/src/jvm/com/tw ter/scald ng:args",
+        "3rdparty/src/jvm/com/tw ter/scald ng:core",
+        "ann/src/ma n/scala/com/tw ter/ann/annoy",
+        "ann/src/ma n/scala/com/tw ter/ann/brute_force",
+        "ann/src/ma n/scala/com/tw ter/ann/common",
+        "ann/src/ma n/scala/com/tw ter/ann/hnsw",
+        "ann/src/ma n/scala/com/tw ter/ann/ser al zat on",
+        "ann/src/ma n/scala/com/tw ter/ann/ut l",
+        "src/scala/com/tw ter/cortex/ml/embedd ngs/common: lpers",
+        "src/scala/com/tw ter/scald ng_ nternal/b gquery",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
     ],
 )
 
-hadoop_binary(
-    name = "ann-index-builder",
-    main = "com.twitter.ann.scalding.offline.indexbuilderfrombq.IndexBuilderFromBQApp",
+hadoop_b nary(
+    na  = "ann- ndex-bu lder",
+    ma n = "com.tw ter.ann.scald ng.offl ne. ndexbu lderfrombq. ndexBu lderFromBQApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":indexbuilderfrombq",
+    dependenc es = [
+        ": ndexbu lderfrombq",
     ],
 )

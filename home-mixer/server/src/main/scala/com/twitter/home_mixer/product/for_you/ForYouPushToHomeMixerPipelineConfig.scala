@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.product.for_you
+package com.tw ter.ho _m xer.product.for_ 
 
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ClearCacheInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ParamGatedIncludeInstruction
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.UrtDoma nMarshaller
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.AddEntr es nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ClearCac  nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.OrderedBottomCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.OrderedTopCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ParamGated nclude nstruct on
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Stat cT  l neScr beConf gBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Urt tadataBu lder
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.UrtTransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.M xerP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.m xer.M xerP pel neConf g
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForYouPushToHomeMixerPipelineConfig @Inject() (
-  forYouPushToHomeTweetCandidatePipelineConfig: ForYouPushToHomeTweetCandidatePipelineConfig,
+@S ngleton
+class For PushToHo M xerP pel neConf g @ nject() (
+  for PushToHo T etCand dateP pel neConf g: For PushToHo T etCand dateP pel neConf g,
   urtTransportMarshaller: UrtTransportMarshaller)
-    extends MixerPipelineConfig[ForYouQuery, Timeline, urt.TimelineResponse] {
+    extends M xerP pel neConf g[For Query, T  l ne, urt.T  l neResponse] {
 
-  override val identifier: MixerPipelineIdentifier = MixerPipelineIdentifier("ForYouPushToHome")
+  overr de val  dent f er: M xerP pel ne dent f er = M xerP pel ne dent f er("For PushToHo ")
 
-  override val candidatePipelines: Seq[CandidatePipelineConfig[ForYouQuery, _, _, _]] =
-    Seq(forYouPushToHomeTweetCandidatePipelineConfig)
+  overr de val cand dateP pel nes: Seq[Cand dateP pel neConf g[For Query, _, _, _]] =
+    Seq(for PushToHo T etCand dateP pel neConf g)
 
-  override val resultSelectors: Seq[Selector[ForYouQuery]] =
-    Seq(InsertAppendResults(forYouPushToHomeTweetCandidatePipelineConfig.identifier))
+  overr de val resultSelectors: Seq[Selector[For Query]] =
+    Seq( nsertAppendResults(for PushToHo T etCand dateP pel neConf g. dent f er))
 
-  override val domainMarshaller: DomainMarshaller[ForYouQuery, Timeline] = {
-    val instructionBuilders = Seq(
-      ClearCacheInstructionBuilder(
-        ParamGatedIncludeInstruction(ForYouParam.EnableClearCacheOnPushToHome)),
-      AddEntriesInstructionBuilder())
+  overr de val doma nMarshaller: Doma nMarshaller[For Query, T  l ne] = {
+    val  nstruct onBu lders = Seq(
+      ClearCac  nstruct onBu lder(
+        ParamGated nclude nstruct on(For Param.EnableClearCac OnPushToHo )),
+      AddEntr es nstruct onBu lder())
 
-    val idSelector: PartialFunction[UniversalNoun[_], Long] = { case item: TweetItem => item.id }
-    val topCursorBuilder = OrderedTopCursorBuilder(idSelector)
-    val bottomCursorBuilder = OrderedBottomCursorBuilder(idSelector)
+    val  dSelector: Part alFunct on[Un versalNoun[_], Long] = { case  em: T et em =>  em. d }
+    val topCursorBu lder = OrderedTopCursorBu lder( dSelector)
+    val bottomCursorBu lder = OrderedBottomCursorBu lder( dSelector)
 
-    val metadataBuilder = UrtMetadataBuilder(
-      title = None,
-      scribeConfigBuilder = Some(
-        StaticTimelineScribeConfigBuilder(
-          TimelineScribeConfig(
-            page = Some("for_you_push_to_home"),
-            section = None,
-            entityToken = None)
+    val  tadataBu lder = Urt tadataBu lder(
+      t le = None,
+      scr beConf gBu lder = So (
+        Stat cT  l neScr beConf gBu lder(
+          T  l neScr beConf g(
+            page = So ("for_ _push_to_ho "),
+            sect on = None,
+            ent yToken = None)
         )
       )
     )
 
-    UrtDomainMarshaller(
-      instructionBuilders = instructionBuilders,
-      metadataBuilder = Some(metadataBuilder),
-      cursorBuilders = Seq(topCursorBuilder, bottomCursorBuilder)
+    UrtDoma nMarshaller(
+       nstruct onBu lders =  nstruct onBu lders,
+       tadataBu lder = So ( tadataBu lder),
+      cursorBu lders = Seq(topCursorBu lder, bottomCursorBu lder)
     )
   }
 
-  override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
+  overr de val transportMarshaller: TransportMarshaller[T  l ne, urt.T  l neResponse] =
     urtTransportMarshaller
 }

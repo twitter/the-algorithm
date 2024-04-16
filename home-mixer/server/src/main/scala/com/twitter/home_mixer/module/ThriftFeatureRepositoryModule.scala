@@ -1,310 +1,310 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.graph_feature_service.{thriftscala => gfs}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EarlybirdRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.GraphTwoHopRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.InterestsThriftServiceClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserFollowedTopicIdsRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UtegSocialProofRepository
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.inject.TwitterModule
-import com.twitter.interests.{thriftscala => int}
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.product_mixer.shared_library.thrift_client.FinagleThriftClientBuilder
-import com.twitter.product_mixer.shared_library.thrift_client.Idempotent
-import com.twitter.recos.recos_common.{thriftscala => rc}
-import com.twitter.recos.user_tweet_entity_graph.{thriftscala => uteg}
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedSerializer
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.MemcacheCacheFactory
-import com.twitter.servo.cache.NonLockingCache
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.keyvalue.KeyValueResultBuilder
-import com.twitter.servo.repository.CachingKeyValueRepository
-import com.twitter.servo.repository.ChunkingStrategy
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.servo.repository.keysAsQuery
-import com.twitter.spam.rtf.{thriftscala => sp}
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Future
-import com.twitter.util.Return
-import javax.inject.Named
-import javax.inject.Singleton
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.graph_feature_serv ce.{thr ftscala => gfs}
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Earlyb rdRepos ory
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.GraphTwoHopRepos ory
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s. nterestsThr ftServ ceCl ent
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T etyp eContentRepos ory
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserFollo dTop c dsRepos ory
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UtegSoc alProofRepos ory
+ mport com.tw ter.ho _m xer.ut l.earlyb rd.Earlyb rdRequestUt l
+ mport com.tw ter.ho _m xer.ut l.t etyp e.RequestF elds
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nterests.{thr ftscala =>  nt}
+ mport com.tw ter.product_m xer.shared_l brary. mcac d_cl ent. mcac dCl entBu lder
+ mport com.tw ter.product_m xer.shared_l brary.thr ft_cl ent.F nagleThr ftCl entBu lder
+ mport com.tw ter.product_m xer.shared_l brary.thr ft_cl ent. dempotent
+ mport com.tw ter.recos.recos_common.{thr ftscala => rc}
+ mport com.tw ter.recos.user_t et_ent y_graph.{thr ftscala => uteg}
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
+ mport com.tw ter.servo.cac .Cac d
+ mport com.tw ter.servo.cac .Cac dSer al zer
+ mport com.tw ter.servo.cac .F nagle mcac Factory
+ mport com.tw ter.servo.cac . mcac Cac Factory
+ mport com.tw ter.servo.cac .NonLock ngCac 
+ mport com.tw ter.servo.cac .Thr ftSer al zer
+ mport com.tw ter.servo.keyvalue.KeyValueResultBu lder
+ mport com.tw ter.servo.repos ory.Cach ngKeyValueRepos ory
+ mport com.tw ter.servo.repos ory.Chunk ngStrategy
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.servo.repos ory.KeyValueResult
+ mport com.tw ter.servo.repos ory.keysAsQuery
+ mport com.tw ter.spam.rtf.{thr ftscala => sp}
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
-object ThriftFeatureRepositoryModule extends TwitterModule {
+object Thr ftFeatureRepos oryModule extends Tw terModule {
 
-  private val DefaultRPCChunkSize = 50
-  private val GFSInteractionIdsLimit = 10
+  pr vate val DefaultRPCChunkS ze = 50
+  pr vate val GFS nteract on dsL m  = 10
 
-  type EarlybirdQuery = (Seq[Long], Long)
+  type Earlyb rdQuery = (Seq[Long], Long)
   type UtegQuery = (Seq[Long], (Long, Map[Long, Double]))
 
-  @Provides
-  @Singleton
-  @Named(InterestsThriftServiceClient)
-  def providesInterestsThriftServiceClient(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): int.InterestsThriftService.MethodPerEndpoint = {
-    FinagleThriftClientBuilder
-      .buildFinagleMethodPerEndpoint[
-        int.InterestsThriftService.ServicePerEndpoint,
-        int.InterestsThriftService.MethodPerEndpoint](
-        serviceIdentifier = serviceIdentifier,
-        clientId = clientId,
-        dest = "/s/interests-thrift-service/interests-thrift-service",
-        label = "interests",
-        statsReceiver = statsReceiver,
-        idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 350.milliseconds,
-        timeoutTotal = 350.milliseconds
+  @Prov des
+  @S ngleton
+  @Na d( nterestsThr ftServ ceCl ent)
+  def prov des nterestsThr ftServ ceCl ent(
+    cl ent d: Cl ent d,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  nt. nterestsThr ftServ ce. thodPerEndpo nt = {
+    F nagleThr ftCl entBu lder
+      .bu ldF nagle thodPerEndpo nt[
+         nt. nterestsThr ftServ ce.Serv cePerEndpo nt,
+         nt. nterestsThr ftServ ce. thodPerEndpo nt](
+        serv ce dent f er = serv ce dent f er,
+        cl ent d = cl ent d,
+        dest = "/s/ nterests-thr ft-serv ce/ nterests-thr ft-serv ce",
+        label = " nterests",
+        statsRece ver = statsRece ver,
+         dempotency =  dempotent(1.percent),
+        t  outPerRequest = 350.m ll seconds,
+        t  outTotal = 350.m ll seconds
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserFollowedTopicIdsRepository)
-  def providesUserFollowedTopicIdsRepository(
-    @Named(InterestsThriftServiceClient) client: int.InterestsThriftService.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, Seq[Long]] = {
+  @Prov des
+  @S ngleton
+  @Na d(UserFollo dTop c dsRepos ory)
+  def prov desUserFollo dTop c dsRepos ory(
+    @Na d( nterestsThr ftServ ceCl ent) cl ent:  nt. nterestsThr ftServ ce. thodPerEndpo nt
+  ): KeyValueRepos ory[Seq[Long], Long, Seq[Long]] = {
 
-    val lookupContext = Some(
-      int.ExplicitInterestLookupContext(Some(Seq(int.InterestRelationType.Followed)))
+    val lookupContext = So (
+       nt.Expl c  nterestLookupContext(So (Seq( nt. nterestRelat onType.Follo d)))
     )
 
-    def lookup(userId: Long): Future[Seq[Long]] = {
-      client.getUserExplicitInterests(userId, lookupContext).map { interests =>
-        interests.flatMap {
-          _.interestId match {
-            case int.InterestId.SemanticCore(semanticCoreInterest) => Some(semanticCoreInterest.id)
+    def lookup(user d: Long): Future[Seq[Long]] = {
+      cl ent.getUserExpl c  nterests(user d, lookupContext).map {  nterests =>
+         nterests.flatMap {
+          _. nterest d match {
+            case  nt. nterest d.Semant cCore(semant cCore nterest) => So (semant cCore nterest. d)
             case _ => None
           }
         }
       }
     }
 
-    val keyValueRepository = toRepository(lookup)
+    val keyValueRepos ory = toRepos ory(lookup)
 
-    keyValueRepository
+    keyValueRepos ory
   }
 
-  @Provides
-  @Singleton
-  @Named(UtegSocialProofRepository)
-  def providesUtegSocialProofRepository(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): KeyValueRepository[UtegQuery, Long, uteg.TweetRecommendation] = {
-    val client = FinagleThriftClientBuilder.buildFinagleMethodPerEndpoint[
-      uteg.UserTweetEntityGraph.ServicePerEndpoint,
-      uteg.UserTweetEntityGraph.MethodPerEndpoint](
-      serviceIdentifier = serviceIdentifier,
-      clientId = clientId,
-      dest = "/s/cassowary/user_tweet_entity_graph",
-      label = "uteg-social-proof-repo",
-      statsReceiver = statsReceiver,
-      idempotency = Idempotent(1.percent),
-      timeoutPerRequest = 150.milliseconds,
-      timeoutTotal = 250.milliseconds
+  @Prov des
+  @S ngleton
+  @Na d(UtegSoc alProofRepos ory)
+  def prov desUtegSoc alProofRepos ory(
+    cl ent d: Cl ent d,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): KeyValueRepos ory[UtegQuery, Long, uteg.T etRecom ndat on] = {
+    val cl ent = F nagleThr ftCl entBu lder.bu ldF nagle thodPerEndpo nt[
+      uteg.UserT etEnt yGraph.Serv cePerEndpo nt,
+      uteg.UserT etEnt yGraph. thodPerEndpo nt](
+      serv ce dent f er = serv ce dent f er,
+      cl ent d = cl ent d,
+      dest = "/s/cassowary/user_t et_ent y_graph",
+      label = "uteg-soc al-proof-repo",
+      statsRece ver = statsRece ver,
+       dempotency =  dempotent(1.percent),
+      t  outPerRequest = 150.m ll seconds,
+      t  outTotal = 250.m ll seconds
     )
 
-    val utegSocialProofTypes = Seq(
-      rc.SocialProofType.Favorite,
-      rc.SocialProofType.Retweet,
-      rc.SocialProofType.Reply
+    val utegSoc alProofTypes = Seq(
+      rc.Soc alProofType.Favor e,
+      rc.Soc alProofType.Ret et,
+      rc.Soc alProofType.Reply
     )
 
     def lookup(
-      tweetIds: Seq[Long],
-      view: (Long, Map[Long, Double])
-    ): Future[Seq[Option[uteg.TweetRecommendation]]] = {
-      val (userId, seedsWithWeights) = view
-      val socialProofRequest = uteg.SocialProofRequest(
-        requesterId = Some(userId),
-        seedsWithWeights = seedsWithWeights,
-        inputTweets = tweetIds,
-        socialProofTypes = Some(utegSocialProofTypes)
+      t et ds: Seq[Long],
+      v ew: (Long, Map[Long, Double])
+    ): Future[Seq[Opt on[uteg.T etRecom ndat on]]] = {
+      val (user d, seedsW h  ghts) = v ew
+      val soc alProofRequest = uteg.Soc alProofRequest(
+        requester d = So (user d),
+        seedsW h  ghts = seedsW h  ghts,
+         nputT ets = t et ds,
+        soc alProofTypes = So (utegSoc alProofTypes)
       )
-      client.findTweetSocialProofs(socialProofRequest).map { result =>
-        val resultMap = result.socialProofResults.map(t => t.tweetId -> t).toMap
-        tweetIds.map(resultMap.get)
+      cl ent.f ndT etSoc alProofs(soc alProofRequest).map { result =>
+        val resultMap = result.soc alProofResults.map(t => t.t et d -> t).toMap
+        t et ds.map(resultMap.get)
       }
     }
 
-    toRepositoryBatchWithView(lookup, chunkSize = 200)
+    toRepos oryBatchW hV ew(lookup, chunkS ze = 200)
   }
 
-  @Provides
-  @Singleton
-  @Named(TweetypieContentRepository)
-  def providesTweetypieContentRepository(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): KeyValueRepository[Seq[Long], Long, tp.Tweet] = {
-    val client = FinagleThriftClientBuilder
-      .buildFinagleMethodPerEndpoint[
-        tp.TweetService.ServicePerEndpoint,
-        tp.TweetService.MethodPerEndpoint](
-        serviceIdentifier = serviceIdentifier,
-        clientId = clientId,
-        dest = "/s/tweetypie/tweetypie",
-        label = "tweetypie-content-repo",
-        statsReceiver = statsReceiver,
-        idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 300.milliseconds,
-        timeoutTotal = 500.milliseconds
+  @Prov des
+  @S ngleton
+  @Na d(T etyp eContentRepos ory)
+  def prov desT etyp eContentRepos ory(
+    cl ent d: Cl ent d,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): KeyValueRepos ory[Seq[Long], Long, tp.T et] = {
+    val cl ent = F nagleThr ftCl entBu lder
+      .bu ldF nagle thodPerEndpo nt[
+        tp.T etServ ce.Serv cePerEndpo nt,
+        tp.T etServ ce. thodPerEndpo nt](
+        serv ce dent f er = serv ce dent f er,
+        cl ent d = cl ent d,
+        dest = "/s/t etyp e/t etyp e",
+        label = "t etyp e-content-repo",
+        statsRece ver = statsRece ver,
+         dempotency =  dempotent(1.percent),
+        t  outPerRequest = 300.m ll seconds,
+        t  outTotal = 500.m ll seconds
       )
 
-    def lookup(tweetIds: Seq[Long]): Future[Seq[Option[tp.Tweet]]] = {
-      val getTweetFieldsOptions = tp.GetTweetFieldsOptions(
-        tweetIncludes = RequestFields.ContentFields,
-        includeRetweetedTweet = false,
-        includeQuotedTweet = false,
-        forUserId = None,
-        safetyLevel = Some(sp.SafetyLevel.FilterNone),
-        visibilityPolicy = tp.TweetVisibilityPolicy.NoFiltering
+    def lookup(t et ds: Seq[Long]): Future[Seq[Opt on[tp.T et]]] = {
+      val getT etF eldsOpt ons = tp.GetT etF eldsOpt ons(
+        t et ncludes = RequestF elds.ContentF elds,
+         ncludeRet etedT et = false,
+         ncludeQuotedT et = false,
+        forUser d = None,
+        safetyLevel = So (sp.SafetyLevel.F lterNone),
+        v s b l yPol cy = tp.T etV s b l yPol cy.NoF lter ng
       )
 
-      val request = tp.GetTweetFieldsRequest(tweetIds = tweetIds, options = getTweetFieldsOptions)
+      val request = tp.GetT etF eldsRequest(t et ds = t et ds, opt ons = getT etF eldsOpt ons)
 
-      client.getTweetFields(request).map { results =>
+      cl ent.getT etF elds(request).map { results =>
         results.map {
-          case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), _, _) =>
-            Some(found.tweet)
+          case tp.GetT etF eldsResult(_, tp.T etF eldsResultState.Found(found), _, _) =>
+            So (found.t et)
           case _ => None
         }
       }
     }
 
-    val keyValueRepository = toRepositoryBatch(lookup, chunkSize = 20)
+    val keyValueRepos ory = toRepos oryBatch(lookup, chunkS ze = 20)
 
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      numConnections = 1,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 200.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+    val cac Cl ent =  mcac dCl entBu lder.bu ldRaw mcac dCl ent(
+      numTr es = 1,
+      numConnect ons = 1,
+      requestT  out = 200.m ll seconds,
+      globalT  out = 200.m ll seconds,
+      connectT  out = 200.m ll seconds,
+      acqu s  onT  out = 200.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 
-    val finagleMemcacheFactory =
-      FinagleMemcacheFactory(cacheClient, "/s/cache/home_content_features:twemcaches")
-    val cacheValueTransformer =
-      new ThriftSerializer[tp.Tweet](tp.Tweet, new TCompactProtocol.Factory())
-    val cachedSerializer = CachedSerializer.binary(cacheValueTransformer)
+    val f nagle mcac Factory =
+      F nagle mcac Factory(cac Cl ent, "/s/cac /ho _content_features:t mcac s")
+    val cac ValueTransfor r =
+      new Thr ftSer al zer[tp.T et](tp.T et, new TCompactProtocol.Factory())
+    val cac dSer al zer = Cac dSer al zer.b nary(cac ValueTransfor r)
 
-    val cache = MemcacheCacheFactory(
-      memcache = finagleMemcacheFactory(),
-      ttl = 48.hours
-    )[Long, Cached[tp.Tweet]](cachedSerializer)
+    val cac  =  mcac Cac Factory(
+       mcac  = f nagle mcac Factory(),
+      ttl = 48.h s
+    )[Long, Cac d[tp.T et]](cac dSer al zer)
 
-    val lockingCache = new NonLockingCache(cache)
-    val cachedKeyValueRepository = new CachingKeyValueRepository(
-      keyValueRepository,
-      lockingCache,
+    val lock ngCac  = new NonLock ngCac (cac )
+    val cac dKeyValueRepos ory = new Cach ngKeyValueRepos ory(
+      keyValueRepos ory,
+      lock ngCac ,
       keysAsQuery[Long]
     )
-    cachedKeyValueRepository
+    cac dKeyValueRepos ory
   }
 
-  @Provides
-  @Singleton
-  @Named(GraphTwoHopRepository)
-  def providesGraphTwoHopRepository(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): KeyValueRepository[(Seq[Long], Long), Long, Seq[gfs.IntersectionValue]] = {
-    val client = FinagleThriftClientBuilder
-      .buildFinagleMethodPerEndpoint[gfs.Server.ServicePerEndpoint, gfs.Server.MethodPerEndpoint](
-        serviceIdentifier = serviceIdentifier,
-        clientId = clientId,
-        dest = "/s/cassowary/graph_feature_service-server",
+  @Prov des
+  @S ngleton
+  @Na d(GraphTwoHopRepos ory)
+  def prov desGraphTwoHopRepos ory(
+    cl ent d: Cl ent d,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): KeyValueRepos ory[(Seq[Long], Long), Long, Seq[gfs. ntersect onValue]] = {
+    val cl ent = F nagleThr ftCl entBu lder
+      .bu ldF nagle thodPerEndpo nt[gfs.Server.Serv cePerEndpo nt, gfs.Server. thodPerEndpo nt](
+        serv ce dent f er = serv ce dent f er,
+        cl ent d = cl ent d,
+        dest = "/s/cassowary/graph_feature_serv ce-server",
         label = "gfs-repo",
-        statsReceiver = statsReceiver,
-        idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 350.milliseconds,
-        timeoutTotal = 500.milliseconds
+        statsRece ver = statsRece ver,
+         dempotency =  dempotent(1.percent),
+        t  outPerRequest = 350.m ll seconds,
+        t  outTotal = 500.m ll seconds
       )
 
     def lookup(
-      userIds: Seq[Long],
-      viewerId: Long
-    ): Future[Seq[Option[Seq[gfs.IntersectionValue]]]] = {
-      val gfsIntersectionRequest = gfs.GfsPresetIntersectionRequest(
-        userId = viewerId,
-        candidateUserIds = userIds,
+      user ds: Seq[Long],
+      v e r d: Long
+    ): Future[Seq[Opt on[Seq[gfs. ntersect onValue]]]] = {
+      val gfs ntersect onRequest = gfs.GfsPreset ntersect onRequest(
+        user d = v e r d,
+        cand dateUser ds = user ds,
         presetFeatureTypes = gfs.PresetFeatureTypes.HtlTwoHop,
-        intersectionIdLimit = Some(GFSInteractionIdsLimit)
+         ntersect on dL m  = So (GFS nteract on dsL m )
       )
 
-      client
-        .getPresetIntersection(gfsIntersectionRequest)
-        .map { graphFeatureServiceResponse =>
-          val resultMap = graphFeatureServiceResponse.results
-            .map(result => result.candidateUserId -> result.intersectionValues).toMap
-          userIds.map(resultMap.get(_))
+      cl ent
+        .getPreset ntersect on(gfs ntersect onRequest)
+        .map { graphFeatureServ ceResponse =>
+          val resultMap = graphFeatureServ ceResponse.results
+            .map(result => result.cand dateUser d -> result. ntersect onValues).toMap
+          user ds.map(resultMap.get(_))
         }
     }
 
-    toRepositoryBatchWithView(lookup, chunkSize = 200)
+    toRepos oryBatchW hV ew(lookup, chunkS ze = 200)
   }
 
-  @Provides
-  @Singleton
-  @Named(EarlybirdRepository)
-  def providesEarlybirdSearchRepository(
-    client: eb.EarlybirdService.MethodPerEndpoint,
-    clientId: ClientId
-  ): KeyValueRepository[EarlybirdQuery, Long, eb.ThriftSearchResult] = {
+  @Prov des
+  @S ngleton
+  @Na d(Earlyb rdRepos ory)
+  def prov desEarlyb rdSearchRepos ory(
+    cl ent: eb.Earlyb rdServ ce. thodPerEndpo nt,
+    cl ent d: Cl ent d
+  ): KeyValueRepos ory[Earlyb rdQuery, Long, eb.Thr ftSearchResult] = {
 
     def lookup(
-      tweetIds: Seq[Long],
-      viewerId: Long
-    ): Future[Seq[Option[eb.ThriftSearchResult]]] = {
-      val request = EarlybirdRequestUtil.getTweetsFeaturesRequest(
-        userId = Some(viewerId),
-        tweetIds = Some(tweetIds),
-        clientId = Some(clientId.name),
+      t et ds: Seq[Long],
+      v e r d: Long
+    ): Future[Seq[Opt on[eb.Thr ftSearchResult]]] = {
+      val request = Earlyb rdRequestUt l.getT etsFeaturesRequest(
+        user d = So (v e r d),
+        t et ds = So (t et ds),
+        cl ent d = So (cl ent d.na ),
         authorScoreMap = None,
-        tensorflowModel = Some("timelines_rectweet_replica")
+        tensorflowModel = So ("t  l nes_rect et_repl ca")
       )
 
-      client
+      cl ent
         .search(request).map { response =>
           val resultMap = response.searchResults
-            .map(_.results.map { result => result.id -> result }.toMap).getOrElse(Map.empty)
-          tweetIds.map(resultMap.get)
+            .map(_.results.map { result => result. d -> result }.toMap).getOrElse(Map.empty)
+          t et ds.map(resultMap.get)
         }
     }
-    toRepositoryBatchWithView(lookup)
+    toRepos oryBatchW hV ew(lookup)
   }
 
-  protected def toRepository[K, V](
+  protected def toRepos ory[K, V](
     hydrate: K => Future[V]
-  ): KeyValueRepository[Seq[K], K, V] = {
-    def asRepository(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
-      Future.collect(keys.map(hydrate(_).liftToTry)).map { results =>
+  ): KeyValueRepos ory[Seq[K], K, V] = {
+    def asRepos ory(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
+      Future.collect(keys.map(hydrate(_).l ftToTry)).map { results =>
         keys
-          .zip(results)
-          .foldLeft(new KeyValueResultBuilder[K, V]()) {
+          .z p(results)
+          .foldLeft(new KeyValueResultBu lder[K, V]()) {
             case (bldr, (k, result)) =>
               result match {
                 case Return(v) => bldr.addFound(k, v)
@@ -314,62 +314,62 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
       }
     }
 
-    asRepository
+    asRepos ory
   }
 
-  protected def toRepositoryBatch[K, V](
-    hydrate: Seq[K] => Future[Seq[Option[V]]],
-    chunkSize: Int = DefaultRPCChunkSize
-  ): KeyValueRepository[Seq[K], K, V] = {
-    def repository(keys: Seq[K]): Future[KeyValueResult[K, V]] =
-      batchRepositoryProcess(keys, hydrate(keys))
+  protected def toRepos oryBatch[K, V](
+    hydrate: Seq[K] => Future[Seq[Opt on[V]]],
+    chunkS ze:  nt = DefaultRPCChunkS ze
+  ): KeyValueRepos ory[Seq[K], K, V] = {
+    def repos ory(keys: Seq[K]): Future[KeyValueResult[K, V]] =
+      batchRepos oryProcess(keys, hydrate(keys))
 
-    KeyValueRepository.chunked(repository, ChunkingStrategy.equalSize(chunkSize))
+    KeyValueRepos ory.chunked(repos ory, Chunk ngStrategy.equalS ze(chunkS ze))
   }
 
-  protected def toRepositoryBatchWithView[K, T, V](
-    hydrate: (Seq[K], T) => Future[Seq[Option[V]]],
-    chunkSize: Int = DefaultRPCChunkSize
-  ): KeyValueRepository[(Seq[K], T), K, V] = {
-    def repository(input: (Seq[K], T)): Future[KeyValueResult[K, V]] = {
-      val (keys, view) = input
-      batchRepositoryProcess(keys, hydrate(keys, view))
+  protected def toRepos oryBatchW hV ew[K, T, V](
+    hydrate: (Seq[K], T) => Future[Seq[Opt on[V]]],
+    chunkS ze:  nt = DefaultRPCChunkS ze
+  ): KeyValueRepos ory[(Seq[K], T), K, V] = {
+    def repos ory( nput: (Seq[K], T)): Future[KeyValueResult[K, V]] = {
+      val (keys, v ew) =  nput
+      batchRepos oryProcess(keys, hydrate(keys, v ew))
     }
 
-    KeyValueRepository.chunked(repository, CustomChunkingStrategy.equalSizeWithView(chunkSize))
+    KeyValueRepos ory.chunked(repos ory, CustomChunk ngStrategy.equalS zeW hV ew(chunkS ze))
   }
 
-  private def batchRepositoryProcess[K, V](
+  pr vate def batchRepos oryProcess[K, V](
     keys: Seq[K],
-    f: Future[Seq[Option[V]]]
+    f: Future[Seq[Opt on[V]]]
   ): Future[KeyValueResult[K, V]] = {
-    f.liftToTry
+    f.l ftToTry
       .map {
         case Return(values) =>
           keys
-            .zip(values)
-            .foldLeft(new KeyValueResultBuilder[K, V]()) {
+            .z p(values)
+            .foldLeft(new KeyValueResultBu lder[K, V]()) {
               case (bldr, (k, value)) =>
                 value match {
-                  case Some(v) => bldr.addFound(k, v)
+                  case So (v) => bldr.addFound(k, v)
                   case _ => bldr.addNotFound(k)
                 }
             }.result
         case _ =>
           keys
-            .foldLeft(new KeyValueResultBuilder[K, V]()) {
+            .foldLeft(new KeyValueResultBu lder[K, V]()) {
               case (bldr, k) => bldr.addNotFound(k)
             }.result
       }
   }
 
-  // Use only for cases not already covered by Servo's [[ChunkingStrategy]]
-  object CustomChunkingStrategy {
-    def equalSizeWithView[K, T](maxSize: Int): ((Seq[K], T)) => Seq[(Seq[K], T)] = {
-      case (keys, view) =>
-        ChunkingStrategy
-          .equalSize[K](maxSize)(keys)
-          .map { chunk: Seq[K] => (chunk, view) }
+  // Use only for cases not already covered by Servo's [[Chunk ngStrategy]]
+  object CustomChunk ngStrategy {
+    def equalS zeW hV ew[K, T](maxS ze:  nt): ((Seq[K], T)) => Seq[(Seq[K], T)] = {
+      case (keys, v ew) =>
+        Chunk ngStrategy
+          .equalS ze[K](maxS ze)(keys)
+          .map { chunk: Seq[K] => (chunk, v ew) }
     }
   }
 }

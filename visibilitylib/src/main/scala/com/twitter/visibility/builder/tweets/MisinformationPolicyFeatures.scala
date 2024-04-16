@@ -1,85 +1,85 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.EscherbirdEntityAnnotations
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.MisinformationPolicySource
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.MisinformationPolicy
-import com.twitter.visibility.models.SemanticCoreMisinformation
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.Esc rb rdEnt yAnnotat ons
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.M s nformat onPol cyS ce
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.M s nformat onPol cy
+ mport com.tw ter.v s b l y.models.Semant cCoreM s nformat on
+ mport com.tw ter.v s b l y.models.V e rContext
 
-class MisinformationPolicyFeatures(
-  misinformationPolicySource: MisinformationPolicySource,
-  statsReceiver: StatsReceiver) {
+class M s nformat onPol cyFeatures(
+  m s nformat onPol cyS ce: M s nformat onPol cyS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("misinformation_policy_features")
+  pr vate[t ] val scopedStatsRece ver =
+    statsRece ver.scope("m s nformat on_pol cy_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetMisinformationPolicies =
-    scopedStatsReceiver.scope(TweetMisinformationPolicies.name).counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val t etM s nformat onPol c es =
+    scopedStatsRece ver.scope(T etM s nformat onPol c es.na ).counter("requests")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetMisinformationPolicies.incr()
+  def forT et(
+    t et: T et,
+    v e rContext: V e rContext
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    t etM s nformat onPol c es. ncr()
 
-    _.withFeature(
-      TweetMisinformationPolicies,
-      misinformationPolicy(tweet.escherbirdEntityAnnotations, viewerContext))
-      .withFeature(
-        TweetEnglishMisinformationPolicies,
-        misinformationPolicyEnglishOnly(tweet.escherbirdEntityAnnotations))
+    _.w hFeature(
+      T etM s nformat onPol c es,
+      m s nformat onPol cy(t et.esc rb rdEnt yAnnotat ons, v e rContext))
+      .w hFeature(
+        T etEngl shM s nformat onPol c es,
+        m s nformat onPol cyEngl shOnly(t et.esc rb rdEnt yAnnotat ons))
   }
 
-  def misinformationPolicyEnglishOnly(
-    escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-  ): Stitch[Seq[MisinformationPolicy]] = {
-    val locale = Some(
-      MisinformationPolicySource.LanguageAndCountry(
-        language = Some("en"),
-        country = Some("us")
+  def m s nformat onPol cyEngl shOnly(
+    esc rb rdEnt yAnnotat ons: Opt on[Esc rb rdEnt yAnnotat ons],
+  ): St ch[Seq[M s nformat onPol cy]] = {
+    val locale = So (
+      M s nformat onPol cyS ce.LanguageAndCountry(
+        language = So ("en"),
+        country = So ("us")
       ))
-    fetchMisinformationPolicy(escherbirdEntityAnnotations, locale)
+    fetchM s nformat onPol cy(esc rb rdEnt yAnnotat ons, locale)
   }
 
-  def misinformationPolicy(
-    escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-    viewerContext: ViewerContext
-  ): Stitch[Seq[MisinformationPolicy]] = {
-    val locale = viewerContext.requestLanguageCode.map { language =>
-      MisinformationPolicySource.LanguageAndCountry(
-        language = Some(language),
-        country = viewerContext.requestCountryCode
+  def m s nformat onPol cy(
+    esc rb rdEnt yAnnotat ons: Opt on[Esc rb rdEnt yAnnotat ons],
+    v e rContext: V e rContext
+  ): St ch[Seq[M s nformat onPol cy]] = {
+    val locale = v e rContext.requestLanguageCode.map { language =>
+      M s nformat onPol cyS ce.LanguageAndCountry(
+        language = So (language),
+        country = v e rContext.requestCountryCode
       )
     }
-    fetchMisinformationPolicy(escherbirdEntityAnnotations, locale)
+    fetchM s nformat onPol cy(esc rb rdEnt yAnnotat ons, locale)
   }
 
-  def fetchMisinformationPolicy(
-    escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-    locale: Option[MisinformationPolicySource.LanguageAndCountry]
-  ): Stitch[Seq[MisinformationPolicy]] = {
-    Stitch.collect(
-      escherbirdEntityAnnotations
-        .map(_.entityAnnotations)
+  def fetchM s nformat onPol cy(
+    esc rb rdEnt yAnnotat ons: Opt on[Esc rb rdEnt yAnnotat ons],
+    locale: Opt on[M s nformat onPol cyS ce.LanguageAndCountry]
+  ): St ch[Seq[M s nformat onPol cy]] = {
+    St ch.collect(
+      esc rb rdEnt yAnnotat ons
+        .map(_.ent yAnnotat ons)
         .getOrElse(Seq.empty)
-        .filter(_.domainId == SemanticCoreMisinformation.domainId)
-        .map(annotation =>
-          misinformationPolicySource
+        .f lter(_.doma n d == Semant cCoreM s nformat on.doma n d)
+        .map(annotat on =>
+          m s nformat onPol cyS ce
             .fetch(
-              annotation,
+              annotat on,
               locale
             )
-            .map(misinformation =>
-              MisinformationPolicy(
-                annotation = annotation,
-                misinformation = misinformation
+            .map(m s nformat on =>
+              M s nformat onPol cy(
+                annotat on = annotat on,
+                m s nformat on = m s nformat on
               )))
     )
   }

@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.InferParameter
-import inference.GrpcService.ModelInferRequest
-import scala.collection.JavaConverters._
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.ModelSelector
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport  nference.GrpcServ ce. nferPara ter
+ mport  nference.GrpcServ ce.Model nferRequest
+ mport scala.collect on.JavaConverters._
 
-class ModelInferRequestBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  queryInferInputTensorBuilders: Seq[QueryInferInputTensorBuilder[Query, Any]],
-  candidateInferInputTensorBuilders: Seq[
-    CandidateInferInputTensorBuilder[Candidate, Any]
+class Model nferRequestBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  query nfer nputTensorBu lders: Seq[Query nfer nputTensorBu lder[Query, Any]],
+  cand date nfer nputTensorBu lders: Seq[
+    Cand date nfer nputTensorBu lder[Cand date, Any]
   ],
-  modelSignatureName: String,
+  modelS gnatureNa : Str ng,
   modelSelector: ModelSelector[Query]) {
 
-  private val modelSignature: InferParameter =
-    InferParameter.newBuilder().setStringParam(modelSignatureName).build()
+  pr vate val modelS gnature:  nferPara ter =
+     nferPara ter.newBu lder().setStr ngParam(modelS gnatureNa ).bu ld()
 
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]],
-  ): ModelInferRequest = {
-    val inferRequest = ModelInferRequest
-      .newBuilder()
-      .putParameters("signature_name", modelSignature)
-    modelSelector.apply(query).foreach { modelName =>
-      inferRequest.setModelName(modelName)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]],
+  ): Model nferRequest = {
+    val  nferRequest = Model nferRequest
+      .newBu lder()
+      .putPara ters("s gnature_na ", modelS gnature)
+    modelSelector.apply(query).foreach { modelNa  =>
+       nferRequest.setModelNa (modelNa )
     }
-    queryInferInputTensorBuilders.foreach { builder =>
-      inferRequest.addAllInputs(builder(query).asJava)
+    query nfer nputTensorBu lders.foreach { bu lder =>
+       nferRequest.addAll nputs(bu lder(query).asJava)
     }
-    candidateInferInputTensorBuilders.foreach { builder =>
-      inferRequest.addAllInputs(builder(candidates).asJava)
+    cand date nfer nputTensorBu lders.foreach { bu lder =>
+       nferRequest.addAll nputs(bu lder(cand dates).asJava)
     }
-    inferRequest.build()
+     nferRequest.bu ld()
   }
 }

@@ -1,79 +1,79 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.tw ter.fr gate.pushserv ce.refresh_handler.cross
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.MRNtabCopy
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.MRNtabCopy
+ mport com.tw ter.fr gate.common.ut l.MRPushCopy
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.ut l.Future
 
-abstract class BaseCopyFramework(statsReceiver: StatsReceiver) {
+abstract class BaseCopyFra work(statsRece ver: StatsRece ver) {
 
-  private val NoAvailableCopyStat = statsReceiver.scope("no_copy_for_crt")
-  private val NoAvailableNtabCopyStat = statsReceiver.scope("no_ntab_copy")
-
-  /**
-   * Instantiate push copy filters
-   */
-  protected final val copyFilters = new CopyFilters(statsReceiver.scope("filters"))
+  pr vate val NoAva lableCopyStat = statsRece ver.scope("no_copy_for_crt")
+  pr vate val NoAva lableNtabCopyStat = statsRece ver.scope("no_ntab_copy")
 
   /**
-   *
-   * The following method fetches all the push copies for a [[com.twitter.frigate.thriftscala.CommonRecommendationType]]
-   * associated with a candidate and then filters the eligible copies based on
-   * [[PushTypes.PushCandidate]] features. These filters are defined in
-   * [[CopyFilters]]
-   *
-   * @param rawCandidate - [[RawCandidate]] object representing a recommendation candidate
-   *
-   * @return - set of eligible push copies for a given candidate
+   *  nstant ate push copy f lters
    */
-  protected[cross] final def getEligiblePushCopiesFromCandidate(
-    rawCandidate: RawCandidate
+  protected f nal val copyF lters = new CopyF lters(statsRece ver.scope("f lters"))
+
+  /**
+   *
+   * T  follow ng  thod fetc s all t  push cop es for a [[com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType]]
+   * assoc ated w h a cand date and t n f lters t  el g ble cop es based on
+   * [[PushTypes.PushCand date]] features. T se f lters are def ned  n
+   * [[CopyF lters]]
+   *
+   * @param rawCand date - [[RawCand date]] object represent ng a recom ndat on cand date
+   *
+   * @return - set of el g ble push cop es for a g ven cand date
+   */
+  protected[cross] f nal def getEl g blePushCop esFromCand date(
+    rawCand date: RawCand date
   ): Future[Seq[MRPushCopy]] = {
-    val pushCopiesFromRectype = CandidateToCopy.getPushCopiesFromRectype(rawCandidate.commonRecType)
+    val pushCop esFromRectype = Cand dateToCopy.getPushCop esFromRectype(rawCand date.commonRecType)
 
-    if (pushCopiesFromRectype.isEmpty) {
-      NoAvailableCopyStat.counter(rawCandidate.commonRecType.name).incr()
-      throw new IllegalStateException(s"No Copy defined for CRT: " + rawCandidate.commonRecType)
+     f (pushCop esFromRectype. sEmpty) {
+      NoAva lableCopyStat.counter(rawCand date.commonRecType.na ). ncr()
+      throw new  llegalStateExcept on(s"No Copy def ned for CRT: " + rawCand date.commonRecType)
     }
-    pushCopiesFromRectype
-      .map(pushCopySet => copyFilters.execute(rawCandidate, pushCopySet.toSeq))
+    pushCop esFromRectype
+      .map(pushCopySet => copyF lters.execute(rawCand date, pushCopySet.toSeq))
       .getOrElse(Future.value(Seq.empty))
   }
 
   /**
    *
-   * This method essentially forms the base for cross-step for the MagicRecs Copy Framework. Given
-   * a recommendation type this returns a set of tuples wherein each tuple is a pair of push and
-   * ntab copy eligible for the said recommendation type
+   * T   thod essent ally forms t  base for cross-step for t  Mag cRecs Copy Fra work. G ven
+   * a recom ndat on type t  returns a set of tuples w re n each tuple  s a pa r of push and
+   * ntab copy el g ble for t  sa d recom ndat on type
    *
-   * @param rawCandidate - [[RawCandidate]] object representing a recommendation candidate
-   * @return    - Set of eligible [[MRPushCopy]], Option[[MRNtabCopy]] for a given recommendation type
+   * @param rawCand date - [[RawCand date]] object represent ng a recom ndat on cand date
+   * @return    - Set of el g ble [[MRPushCopy]], Opt on[[MRNtabCopy]] for a g ven recom ndat on type
    */
-  protected[cross] final def getEligiblePushAndNtabCopiesFromCandidate(
-    rawCandidate: RawCandidate
-  ): Future[Seq[(MRPushCopy, Option[MRNtabCopy])]] = {
+  protected[cross] f nal def getEl g blePushAndNtabCop esFromCand date(
+    rawCand date: RawCand date
+  ): Future[Seq[(MRPushCopy, Opt on[MRNtabCopy])]] = {
 
-    val eligiblePushCopies = getEligiblePushCopiesFromCandidate(rawCandidate)
+    val el g blePushCop es = getEl g blePushCop esFromCand date(rawCand date)
 
-    eligiblePushCopies.map { pushCopies =>
-      val setBuilder = Set.newBuilder[(MRPushCopy, Option[MRNtabCopy])]
-      pushCopies.foreach { pushCopy =>
-        val ntabCopies = CandidateToCopy.getNtabcopiesFromPushcopy(pushCopy)
-        val pushNtabCopyPairs = ntabCopies match {
-          case Some(ntabCopySet) =>
-            if (ntabCopySet.isEmpty) {
-              NoAvailableNtabCopyStat.counter(s"copy_id: ${pushCopy.copyId}").incr()
+    el g blePushCop es.map { pushCop es =>
+      val setBu lder = Set.newBu lder[(MRPushCopy, Opt on[MRNtabCopy])]
+      pushCop es.foreach { pushCopy =>
+        val ntabCop es = Cand dateToCopy.getNtabcop esFromPushcopy(pushCopy)
+        val pushNtabCopyPa rs = ntabCop es match {
+          case So (ntabCopySet) =>
+             f (ntabCopySet. sEmpty) {
+              NoAva lableNtabCopyStat.counter(s"copy_ d: ${pushCopy.copy d}"). ncr()
               Set(pushCopy -> None)
             } // push copy only
-            else ntabCopySet.map(pushCopy -> Some(_))
+            else ntabCopySet.map(pushCopy -> So (_))
 
           case None =>
-            Set.empty[(MRPushCopy, Option[MRNtabCopy])] // no push or ntab copy
+            Set.empty[(MRPushCopy, Opt on[MRNtabCopy])] // no push or ntab copy
         }
-        setBuilder ++= pushNtabCopyPairs
+        setBu lder ++= pushNtabCopyPa rs
       }
-      setBuilder.result().toSeq
+      setBu lder.result().toSeq
     }
   }
 }

@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import scala.Some;
+ mport scala.So ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.decider.Decider;
-import com.twitter.decider.Decider$;
-import com.twitter.decider.RandomRecipient$;
-import com.twitter.decider.Recipient;
-import com.twitter.decider.decisionmaker.MutableDecisionMaker;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.decider.SearchDeciderFactory;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.dec der.Dec der$;
+ mport com.tw ter.dec der.RandomRec p ent$;
+ mport com.tw ter.dec der.Rec p ent;
+ mport com.tw ter.dec der.dec s onmaker.MutableDec s onMaker;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common.dec der.SearchDec derFactory;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
 
 /**
- * A Singleton to let any code in Earlybird have the ability to be guarded by a decider key.
+ * A S ngleton to let any code  n Earlyb rd have t  ab l y to be guarded by a dec der key.
  *
- * EarlybirdDecider is a thin wrapper around the Twitter Decider library to provide global access to a single
- * decider configuration. This way any code anywhere can easily be guarded by a Decider key. The initializer requires
- * EarlybirdConfig to be initialized already. Defaults to a NullDecider, which causes all requests for keys to return
+ * Earlyb rdDec der  s a th n wrapper around t  Tw ter Dec der l brary to prov de global access to a s ngle
+ * dec der conf gurat on. T  way any code anyw re can eas ly be guarded by a Dec der key. T   n  al zer requ res
+ * Earlyb rdConf g to be  n  al zed already. Defaults to a NullDec der, wh ch causes all requests for keys to return
  * false.
  */
-public final class EarlybirdDecider {
-  public static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(EarlybirdDecider.class);
-  public static final String DECIDER_CONFIG = "./config/earlybird-decider.yml";
+publ c f nal class Earlyb rdDec der {
+  publ c stat c f nal org.slf4j.Logger LOG =
+      org.slf4j.LoggerFactory.getLogger(Earlyb rdDec der.class);
+  publ c stat c f nal Str ng DEC DER_CONF G = "./conf g/earlyb rd-dec der.yml";
 
-  private static volatile Decider earlybirdDecider = Decider$.MODULE$.NullDecider();
-  private static volatile MutableDecisionMaker mutableDecisionMaker;
+  pr vate stat c volat le Dec der earlyb rdDec der = Dec der$.MODULE$.NullDec der();
+  pr vate stat c volat le MutableDec s onMaker mutableDec s onMaker;
 
-  private EarlybirdDecider() { }
+  pr vate Earlyb rdDec der() { }
 
   /**
-   * Initializes the global decider accessor. Requires EarlybirdConfig to be initialized.
+   *  n  al zes t  global dec der accessor. Requ res Earlyb rdConf g to be  n  al zed.
    *
-   * @return the new decider interface.
+   * @return t  new dec der  nterface.
    */
-  public static Decider initialize() {
-    return initialize(DECIDER_CONFIG);
+  publ c stat c Dec der  n  al ze() {
+    return  n  al ze(DEC DER_CONF G);
   }
 
   /**
-   * Initializes the global decider accessor. Requires EarlybirdConfig to be initialized.
+   *  n  al zes t  global dec der accessor. Requ res Earlyb rdConf g to be  n  al zed.
    *
-   * @param configPath path to the base decider config file.
-   * @return the new decider interface.
+   * @param conf gPath path to t  base dec der conf g f le.
+   * @return t  new dec der  nterface.
    */
-  @VisibleForTesting public static Decider initialize(String configPath) {
-    synchronized (EarlybirdDecider.class) {
-      Preconditions.checkState(earlybirdDecider == Decider$.MODULE$.NullDecider(),
-                               "EarlybirdDecider can be initialized only once.");
+  @V s bleForTest ng publ c stat c Dec der  n  al ze(Str ng conf gPath) {
+    synchron zed (Earlyb rdDec der.class) {
+      Precond  ons.c ckState(earlyb rdDec der == Dec der$.MODULE$.NullDec der(),
+                               "Earlyb rdDec der can be  n  al zed only once.");
 
-      mutableDecisionMaker = new MutableDecisionMaker();
+      mutableDec s onMaker = new MutableDec s onMaker();
 
-      if (EarlybirdProperty.USE_DECIDER_OVERLAY.get(false)) {
-        String category = EarlybirdProperty.DECIDER_OVERLAY_CONFIG.get();
-        earlybirdDecider =
-            SearchDeciderFactory.createDeciderWithoutRefreshBaseWithOverlay(
-                configPath, category, mutableDecisionMaker);
-        LOG.info("EarlybirdDecider set to use the decider overlay " + category);
+       f (Earlyb rdProperty.USE_DEC DER_OVERLAY.get(false)) {
+        Str ng category = Earlyb rdProperty.DEC DER_OVERLAY_CONF G.get();
+        earlyb rdDec der =
+            SearchDec derFactory.createDec derW houtRefreshBaseW hOverlay(
+                conf gPath, category, mutableDec s onMaker);
+        LOG. nfo("Earlyb rdDec der set to use t  dec der overlay " + category);
       } else {
-        earlybirdDecider =
-            SearchDeciderFactory.createDeciderWithRefreshBaseWithoutOverlay(
-                configPath, mutableDecisionMaker);
-        LOG.info("EarlybirdDecider set to only use the base config");
+        earlyb rdDec der =
+            SearchDec derFactory.createDec derW hRefreshBaseW houtOverlay(
+                conf gPath, mutableDec s onMaker);
+        LOG. nfo("Earlyb rdDec der set to only use t  base conf g");
       }
-      return earlybirdDecider;
+      return earlyb rdDec der;
     }
   }
 
   /**
-   * Check if feature is available based on randomness
+   * C ck  f feature  s ava lable based on randomness
    *
-   * @param feature the feature name to test
-   * @return true if the feature is available, false otherwise
+   * @param feature t  feature na  to test
+   * @return true  f t  feature  s ava lable, false ot rw se
    */
-  public static boolean isFeatureAvailable(String feature) {
-    return isFeatureAvailable(feature, RandomRecipient$.MODULE$);
+  publ c stat c boolean  sFeatureAva lable(Str ng feature) {
+    return  sFeatureAva lable(feature, RandomRec p ent$.MODULE$);
   }
 
   /**
-   * Check if the feature is available based on the user
+   * C ck  f t  feature  s ava lable based on t  user
    *
-   * The recipient'd id is hashed and used as the value to compare with the decider percentage. Therefore, the same user
-   * will always get the same result for a given percentage, and higher percentages should always be a superset of the
-   * lower percentage users.
+   * T  rec p ent'd  d  s has d and used as t  value to compare w h t  dec der percentage. T refore, t  sa  user
+   * w ll always get t  sa  result for a g ven percentage, and h g r percentages should always be a superset of t 
+   * lo r percentage users.
    *
-   * RandomRecipient can be used to get a random value for every call.
+   * RandomRec p ent can be used to get a random value for every call.
    *
-   * @param feature the feature name to test
-   * @param recipient the recipient to base a decision on
-   * @return true if the feature is available, false otherwise
+   * @param feature t  feature na  to test
+   * @param rec p ent t  rec p ent to base a dec s on on
+   * @return true  f t  feature  s ava lable, false ot rw se
    */
-  public static boolean isFeatureAvailable(String feature, Recipient recipient) {
-    if (earlybirdDecider == Decider$.MODULE$.NullDecider()) {
-      LOG.warn("EarlybirdDecider is uninitialized but requested feature " + feature);
+  publ c stat c boolean  sFeatureAva lable(Str ng feature, Rec p ent rec p ent) {
+     f (earlyb rdDec der == Dec der$.MODULE$.NullDec der()) {
+      LOG.warn("Earlyb rdDec der  s un n  al zed but requested feature " + feature);
     }
 
-    return earlybirdDecider.isAvailable(feature, Some.apply(recipient));
+    return earlyb rdDec der. sAva lable(feature, So .apply(rec p ent));
   }
 
   /**
-   * Get the raw decider value for a given feature.
+   * Get t  raw dec der value for a g ven feature.
    *
-   * @param feature the feature name
-   * @return the integer value of the decider
+   * @param feature t  feature na 
+   * @return t   nteger value of t  dec der
    */
-  public static int getAvailability(String feature) {
-    return DeciderUtil.getAvailability(earlybirdDecider, feature);
+  publ c stat c  nt getAva lab l y(Str ng feature) {
+    return Dec derUt l.getAva lab l y(earlyb rdDec der, feature);
   }
 
-  public static Decider getDecider() {
-    checkInitialized();
-    return earlybirdDecider;
+  publ c stat c Dec der getDec der() {
+    c ck n  al zed();
+    return earlyb rdDec der;
   }
 
-  public static MutableDecisionMaker getMutableDecisionMaker() {
-    checkInitialized();
-    return mutableDecisionMaker;
+  publ c stat c MutableDec s onMaker getMutableDec s onMaker() {
+    c ck n  al zed();
+    return mutableDec s onMaker;
   }
 
-  private static void checkInitialized() {
-    Preconditions.checkState(earlybirdDecider != Decider$.MODULE$.NullDecider(),
-        "EarlybirdDecider is not initialized.");
+  pr vate stat c vo d c ck n  al zed() {
+    Precond  ons.c ckState(earlyb rdDec der != Dec der$.MODULE$.NullDec der(),
+        "Earlyb rdDec der  s not  n  al zed.");
   }
 }

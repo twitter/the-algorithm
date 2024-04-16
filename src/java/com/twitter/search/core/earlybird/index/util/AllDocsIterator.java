@@ -1,80 +1,80 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.tw ter.search.core.earlyb rd. ndex.ut l;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntAtom cReader;
 
 /**
- * Used to iterate through all of the documents in an Earlybird segment. This is necessary so that
- * we can ensure all of the documents we are reading have been published to the readers. If we used
- * the doc ID mapper to iterate through documents, it would return documents that have been only
- * partially added to the index, and could return bogus search results (SEARCH-27711).
+ * Used to  erate through all of t  docu nts  n an Earlyb rd seg nt. T   s necessary so that
+ *   can ensure all of t  docu nts   are read ng have been publ s d to t  readers.  f   used
+ * t  doc  D mapper to  erate through docu nts,   would return docu nts that have been only
+ * part ally added to t   ndex, and could return bogus search results (SEARCH-27711).
  */
-public class AllDocsIterator extends DocIdSetIterator {
-  public static final String ALL_DOCS_TERM = "__all_docs";
+publ c class AllDocs erator extends Doc dSet erator {
+  publ c stat c f nal Str ng ALL_DOCS_TERM = "__all_docs";
 
-  private final DocIdSetIterator delegate;
+  pr vate f nal Doc dSet erator delegate;
 
-  public AllDocsIterator(LeafReader reader) throws IOException {
-    delegate = buildDISI(reader);
+  publ c AllDocs erator(LeafReader reader) throws  OExcept on {
+    delegate = bu ldD S (reader);
   }
 
-  private static DocIdSetIterator buildDISI(LeafReader reader) throws IOException {
-    if (!isRealtimeUnoptimizedSegment(reader)) {
+  pr vate stat c Doc dSet erator bu ldD S (LeafReader reader) throws  OExcept on {
+     f (! sRealt  Unopt m zedSeg nt(reader)) {
       return all(reader.maxDoc());
     }
 
     Terms terms =
-        reader.terms(EarlybirdFieldConstants.EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
-    if (terms == null) {
+        reader.terms(Earlyb rdF eldConstants.Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa ());
+     f (terms == null) {
       return all(reader.maxDoc());
     }
 
-    TermsEnum termsEnum = terms.iterator();
+    TermsEnum termsEnum = terms. erator();
     boolean hasTerm = termsEnum.seekExact(new BytesRef(ALL_DOCS_TERM));
-    if (hasTerm) {
-      return termsEnum.postings(null);
+     f (hasTerm) {
+      return termsEnum.post ngs(null);
     }
 
     return empty();
   }
 
-  @Override
-  public int docID() {
-    return delegate.docID();
+  @Overr de
+  publ c  nt doc D() {
+    return delegate.doc D();
   }
 
-  @Override
-  public int nextDoc() throws IOException {
+  @Overr de
+  publ c  nt nextDoc() throws  OExcept on {
     return delegate.nextDoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
+  @Overr de
+  publ c  nt advance( nt target) throws  OExcept on {
     return delegate.advance(target);
   }
 
-  @Override
-  public long cost() {
+  @Overr de
+  publ c long cost() {
     return delegate.cost();
   }
 
   /**
-   * Returns whether this is a realtime segment in the realtime index that is still unoptimized and
+   * Returns w t r t   s a realt   seg nt  n t  realt    ndex that  s st ll unopt m zed and
    * mutable.
    */
-  private static boolean isRealtimeUnoptimizedSegment(LeafReader reader) {
-    if (reader instanceof EarlybirdRealtimeIndexSegmentAtomicReader) {
-      EarlybirdRealtimeIndexSegmentAtomicReader realtimeReader =
-          (EarlybirdRealtimeIndexSegmentAtomicReader) reader;
-      return !realtimeReader.getSegmentData().isOptimized();
+  pr vate stat c boolean  sRealt  Unopt m zedSeg nt(LeafReader reader) {
+     f (reader  nstanceof Earlyb rdRealt   ndexSeg ntAtom cReader) {
+      Earlyb rdRealt   ndexSeg ntAtom cReader realt  Reader =
+          (Earlyb rdRealt   ndexSeg ntAtom cReader) reader;
+      return !realt  Reader.getSeg ntData(). sOpt m zed();
     }
 
     return false;

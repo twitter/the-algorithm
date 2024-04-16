@@ -1,58 +1,58 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("FeatureId")
-.Attr("feature_names: list(string)")
-.Output("output: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("Feature d")
+.Attr("feature_na s: l st(str ng)")
+.Output("output:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that hashes a list of strings into int64. This is used for feature name hashing.
+A tensorflow OP that has s a l st of str ngs  nto  nt64. T   s used for feature na  hash ng.
 
 Attr
-  feature_names: a list of string feature names (list(string)).
+  feature_na s: a l st of str ng feature na s (l st(str ng)).
 
 Outputs
-  ouput: hashes corresponding to the string feature names (int64).
+  ouput: has s correspond ng to t  str ng feature na s ( nt64).
 )doc");
 
 
-class FeatureId : public OpKernel {
- private:
-    std::vector<string> input_vector;
+class Feature d : publ c OpKernel {
+ pr vate:
+    std::vector<str ng>  nput_vector;
 
- public:
-  explicit FeatureId(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_names", &input_vector));
+ publ c:
+  expl c  Feature d(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_na s", & nput_vector));
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Get size of the input_vector and create TensorShape shape
-    const int total_size = static_cast<int>(input_vector.size());
-    TensorShape shape = {total_size};
+  vo d Compute(OpKernelContext* context) overr de {
+    // Get s ze of t   nput_vector and create TensorShape shape
+    const  nt total_s ze = stat c_cast< nt>( nput_vector.s ze());
+    TensorShape shape = {total_s ze};
 
     // Create an output tensor
     Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape,
+    OP_REQU RES_OK(context, context->allocate_output(0, shape,
                              &output_tensor));
-    auto output_flat = output_tensor->flat<int64>();
+    auto output_flat = output_tensor->flat< nt64>();
 
-    // Transform the input tensor into a int64
-    for (int i = 0; i < total_size; i++) {
-      output_flat(i) = twml::featureId(input_vector[i]);
+    // Transform t   nput tensor  nto a  nt64
+    for ( nt   = 0;   < total_s ze;  ++) {
+      output_flat( ) = twml::feature d( nput_vector[ ]);
     }
   }
 };
 
 
-REGISTER_KERNEL_BUILDER(
-  Name("FeatureId")
-  .Device(DEVICE_CPU),
-  FeatureId);
+REG STER_KERNEL_BU LDER(
+  Na ("Feature d")
+  .Dev ce(DEV CE_CPU),
+  Feature d);

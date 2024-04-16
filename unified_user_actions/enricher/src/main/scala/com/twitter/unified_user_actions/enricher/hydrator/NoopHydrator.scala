@@ -1,27 +1,27 @@
-package com.twitter.unified_user_actions.enricher.hydrator
-import com.twitter.unified_user_actions.enricher.ImplementationException
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
+package com.tw ter.un f ed_user_act ons.enr c r.hydrator
+ mport com.tw ter.un f ed_user_act ons.enr c r. mple ntat onExcept on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.ut l.Future
 
 /**
- * This hydrator does nothing. If it's used by mistake for any reason, an exception will be thrown.
- * Use this when you expect to have no hydration (for example, the planner shouldn't hydrate anything
- * and only would perform the partitioning function).
+ * T  hydrator does noth ng.  f  's used by m stake for any reason, an except on w ll be thrown.
+ * Use t  w n   expect to have no hydrat on (for example, t  planner shouldn't hydrate anyth ng
+ * and only would perform t  part  on ng funct on).
  */
 object NoopHydrator {
-  val OutputTopic: Option[String] = None
+  val OutputTop c: Opt on[Str ng] = None
 }
 
 class NoopHydrator extends Hydrator {
-  override def hydrate(
-    instruction: EnrichmentInstruction,
-    key: Option[EnrichmentKey],
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop] = {
-    throw new ImplementationException(
-      "NoopHydrator shouldn't be invoked when configure. Check your " +
-        "enrichment plan.")
+  overr de def hydrate(
+     nstruct on: Enr ch nt nstruct on,
+    key: Opt on[Enr ch ntKey],
+    envelop: Enr ch ntEnvelop
+  ): Future[Enr ch ntEnvelop] = {
+    throw new  mple ntat onExcept on(
+      "NoopHydrator shouldn't be  nvoked w n conf gure. C ck y  " +
+        "enr ch nt plan.")
   }
 }

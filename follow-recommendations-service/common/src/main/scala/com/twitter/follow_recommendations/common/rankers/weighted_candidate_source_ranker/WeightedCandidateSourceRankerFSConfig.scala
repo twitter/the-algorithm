@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class WeightedCandidateSourceRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(WeightedCandidateSourceRankerParams.ScribeRankingInfoInWeightedRanker)
+@S ngleton
+class   ghtedCand dateS ceRankerFSConf g @ nject() extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] =
+    Seq(  ghtedCand dateS ceRankerParams.Scr beRank ng nfo n  ghtedRanker)
 }

@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_tlx
 
-import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.scorer.tweet_tlx.TLXScore
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.ml.featureStore.TimelineScorerTweetScoresV1ClientColumn
-import com.twitter.timelinescorer.thriftscala.v1
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ml.featurestore.t  l nes.thr ftscala.T  l neScorerScoreV ew
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.component_l brary.scorer.t et_tlx.TLXScore
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.ml.featureStore.T  l neScorerT etScoresV1Cl entColumn
+ mport com.tw ter.t  l nescorer.thr ftscala.v1
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Hydrate Tweet Scores via Timeline Scorer (TLX)
+ * Hydrate T et Scores v a T  l ne Scorer (TLX)
  *
- * Note that this is the [[CandidateFeatureHydrator]] version of
- * [[com.twitter.product_mixer.component_library.scorer.tweet_tlx.TweetTLXStratoScorer]]
+ * Note that t   s t  [[Cand dateFeatureHydrator]] vers on of
+ * [[com.tw ter.product_m xer.component_l brary.scorer.t et_tlx.T etTLXStratoScorer]]
  */
-@Singleton
-class TweetTLXScoreCandidateFeatureHydrator @Inject() (
-  column: TimelineScorerTweetScoresV1ClientColumn)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class T etTLXScoreCand dateFeatureHydrator @ nject() (
+  column: T  l neScorerT etScoresV1Cl entColumn)
+    extends Cand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetTLXScore")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("T etTLXScore")
 
-  override val features: Set[Feature[_, _]] = Set(TLXScore)
+  overr de val features: Set[Feature[_, _]] = Set(TLXScore)
 
-  private val NoScoreMap = FeatureMapBuilder()
+  pr vate val NoScoreMap = FeatureMapBu lder()
     .add(TLXScore, None)
-    .build()
+    .bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    query.getOptionalUserId match {
-      case Some(userId) =>
-        column.fetcher
-          .fetch(candidate.id, TimelineScorerScoreView(Some(userId)))
-          .map(scoredTweet =>
-            scoredTweet.v match {
-              case Some(v1.ScoredTweet(Some(_), score, _, _)) =>
-                FeatureMapBuilder()
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: T etCand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = {
+    query.getOpt onalUser d match {
+      case So (user d) =>
+        column.fetc r
+          .fetch(cand date. d, T  l neScorerScoreV ew(So (user d)))
+          .map(scoredT et =>
+            scoredT et.v match {
+              case So (v1.ScoredT et(So (_), score, _, _)) =>
+                FeatureMapBu lder()
                   .add(TLXScore, score)
-                  .build()
-              case _ => throw new Exception(s"Invalid response from TLX: ${scoredTweet.v}")
+                  .bu ld()
+              case _ => throw new Except on(s" nval d response from TLX: ${scoredT et.v}")
             })
       case _ =>
-        Stitch.value(NoScoreMap)
+        St ch.value(NoScoreMap)
     }
   }
 }

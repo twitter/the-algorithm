@@ -1,109 +1,109 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.google.common.util.concurrent.MoreExecutors
-import com.google.inject.Module
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.app.Flag
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+ mport com.google.common.ut l.concurrent.MoreExecutors
+ mport com.google. nject.Module
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.common.thr ftscala.{D stance => Serv ceD stance}
+ mport com.tw ter.ann.common.thr ftscala.{Runt  Params => Serv ceRunt  Params}
+ mport com.tw ter.app.Flag
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.cortex.ml.embedd ngs.common.Ent yK nd
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftRouter
+ mport java.ut l.concurrent.ExecutorServ ce
+ mport java.ut l.concurrent.Executors
+ mport java.ut l.concurrent.ThreadPoolExecutor
+ mport java.ut l.concurrent.T  Un 
 
 /**
- * This class is used when you do not know the generic parameters of the Server at compile time.
- * If you want compile time checks that your parameters are correct use QueryIndexServer instead.
- * In particular, when you want to have these id, distance and the runtime params as cli options you
- * should extend this class.
+ * T  class  s used w n   do not know t  gener c para ters of t  Server at comp le t  .
+ *  f   want comp le t   c cks that y  para ters are correct use Query ndexServer  nstead.
+ *  n part cular, w n   want to have t se  d, d stance and t  runt   params as cl  opt ons  
+ * should extend t  class.
  */
-abstract class UnsafeQueryIndexServer[R <: RuntimeParams] extends BaseQueryIndexServer {
-  private[this] val metricName = flag[String]("metric", "metric")
-  private[this] val idType = flag[String]("id_type", "type of ids to use")
-  private[query_server] val queryThreads =
-    flag[Int](
+abstract class UnsafeQuery ndexServer[R <: Runt  Params] extends BaseQuery ndexServer {
+  pr vate[t ] val  tr cNa  = flag[Str ng](" tr c", " tr c")
+  pr vate[t ] val  dType = flag[Str ng](" d_type", "type of  ds to use")
+  pr vate[query_server] val queryThreads =
+    flag[ nt](
       "threads",
       System
-        .getProperty("mesos.resources.cpu", s"${Runtime.getRuntime.availableProcessors()}").toInt,
-      "Size of thread pool for concurrent querying"
+        .getProperty(" sos.res ces.cpu", s"${Runt  .getRunt  .ava lableProcessors()}").to nt,
+      "S ze of thread pool for concurrent query ng"
     )
-  private[query_server] val dimension = flag[Int]("dimension", "dimension")
-  private[query_server] val indexDirectory = flag[String]("index_directory", "index directory")
-  private[query_server] val refreshable =
-    flag[Boolean]("refreshable", false, "if index is refreshable or not")
-  private[query_server] val refreshableInterval =
-    flag[Int]("refreshable_interval_minutes", 10, "refreshable index update interval")
-  private[query_server] val sharded =
-    flag[Boolean]("sharded", false, "if index is sharded")
-  private[query_server] val shardedHours =
-    flag[Int]("sharded_hours", "how many shards load at once")
-  private[query_server] val shardedWatchLookbackIndexes =
-    flag[Int]("sharded_watch_lookback_indexes", "how many indexes backwards to watch")
-  private[query_server] val shardedWatchIntervalMinutes =
-    flag[Int]("sharded_watch_interval_minutes", "interval at which hdfs is watched for changes")
-  private[query_server] val minIndexSizeBytes =
-    flag[Long]("min_index_size_byte", 0, "min index size in bytes")
-  private[query_server] val maxIndexSizeBytes =
-    flag[Long]("max_index_size_byte", Long.MaxValue, "max index size in bytes")
-  private[query_server] val grouped =
-    flag[Boolean]("grouped", false, "if indexes are grouped")
-  private[query_server] val qualityFactorEnabled =
+  pr vate[query_server] val d  ns on = flag[ nt]("d  ns on", "d  ns on")
+  pr vate[query_server] val  ndexD rectory = flag[Str ng](" ndex_d rectory", " ndex d rectory")
+  pr vate[query_server] val refreshable =
+    flag[Boolean]("refreshable", false, " f  ndex  s refreshable or not")
+  pr vate[query_server] val refreshable nterval =
+    flag[ nt]("refreshable_ nterval_m nutes", 10, "refreshable  ndex update  nterval")
+  pr vate[query_server] val sharded =
+    flag[Boolean]("sharded", false, " f  ndex  s sharded")
+  pr vate[query_server] val shardedH s =
+    flag[ nt]("sharded_h s", "how many shards load at once")
+  pr vate[query_server] val shardedWatchLookback ndexes =
+    flag[ nt]("sharded_watch_lookback_ ndexes", "how many  ndexes backwards to watch")
+  pr vate[query_server] val shardedWatch ntervalM nutes =
+    flag[ nt]("sharded_watch_ nterval_m nutes", " nterval at wh ch hdfs  s watc d for changes")
+  pr vate[query_server] val m n ndexS zeBytes =
+    flag[Long]("m n_ ndex_s ze_byte", 0, "m n  ndex s ze  n bytes")
+  pr vate[query_server] val max ndexS zeBytes =
+    flag[Long]("max_ ndex_s ze_byte", Long.MaxValue, "max  ndex s ze  n bytes")
+  pr vate[query_server] val grouped =
+    flag[Boolean]("grouped", false, " f  ndexes are grouped")
+  pr vate[query_server] val qual yFactorEnabled =
     flag[Boolean](
-      "quality_factor_enabled",
+      "qual y_factor_enabled",
       false,
-      "Enable dynamically reducing search complexity when cgroups container is throttled. Useful to disable when load testing"
+      "Enable dynam cally reduc ng search complex y w n cgroups conta ner  s throttled. Useful to d sable w n load test ng"
     )
-  private[query_server] val warmup_enabled: Flag[Boolean] =
-    flag("warmup", false, "Enable warmup before the query server starts up")
+  pr vate[query_server] val warmup_enabled: Flag[Boolean] =
+    flag("warmup", false, "Enable warmup before t  query server starts up")
 
-  // Time to wait for the executor to finish before terminating the JVM
-  private[this] val terminationTimeoutMs = 100
-  protected lazy val executor: ExecutorService = MoreExecutors.getExitingExecutorService(
-    Executors.newFixedThreadPool(queryThreads()).asInstanceOf[ThreadPoolExecutor],
-    terminationTimeoutMs,
-    TimeUnit.MILLISECONDS
+  // T   to wa  for t  executor to f n sh before term nat ng t  JVM
+  pr vate[t ] val term nat onT  outMs = 100
+  protected lazy val executor: ExecutorServ ce = MoreExecutors.getEx  ngExecutorServ ce(
+    Executors.newF xedThreadPool(queryThreads()).as nstanceOf[ThreadPoolExecutor],
+    term nat onT  outMs,
+    T  Un .M LL SECONDS
   )
 
-  protected lazy val unsafeMetric: Metric[_] with Injection[_, ServiceDistance] = {
-    Metric.fromString(metricName())
+  protected lazy val unsafe tr c:  tr c[_] w h  nject on[_, Serv ceD stance] = {
+     tr c.fromStr ng( tr cNa ())
   }
 
-  override protected val additionalModules: Seq[Module] = Seq()
+  overr de protected val add  onalModules: Seq[Module] = Seq()
 
-  override final def addController(router: ThriftRouter): Unit = {
-    router.add(queryIndexThriftController)
+  overr de f nal def addController(router: Thr ftRouter): Un  = {
+    router.add(query ndexThr ftController)
   }
 
-  protected def unsafeQueryableMap[T, D <: Distance[D]]: Queryable[T, R, D]
-  protected val runtimeInjection: Injection[R, ServiceRuntimeParams]
+  protected def unsafeQueryableMap[T, D <: D stance[D]]: Queryable[T, R, D]
+  protected val runt   nject on:  nject on[R, Serv ceRunt  Params]
 
-  private[this] def queryIndexThriftController[
+  pr vate[t ] def query ndexThr ftController[
     T,
-    D <: Distance[D]
-  ]: QueryIndexThriftController[T, R, D] = {
-    val controller = new QueryIndexThriftController[T, R, D](
-      statsReceiver.scope("ann_server"),
-      unsafeQueryableMap.asInstanceOf[Queryable[T, R, D]],
-      runtimeInjection,
-      unsafeMetric.asInstanceOf[Injection[D, ServiceDistance]],
-      idInjection[T]()
+    D <: D stance[D]
+  ]: Query ndexThr ftController[T, R, D] = {
+    val controller = new Query ndexThr ftController[T, R, D](
+      statsRece ver.scope("ann_server"),
+      unsafeQueryableMap.as nstanceOf[Queryable[T, R, D]],
+      runt   nject on,
+      unsafe tr c.as nstanceOf[ nject on[D, Serv ceD stance]],
+       d nject on[T]()
     )
 
-    logger.info("QueryIndexThriftController created....")
+    logger. nfo("Query ndexThr ftController created....")
     controller
   }
 
-  protected final def idInjection[T](): Injection[T, Array[Byte]] = {
-    val idInjection = idType() match {
-      case "string" => AnnInjections.StringInjection
-      case "long" => AnnInjections.LongInjection
-      case "int" => AnnInjections.IntInjection
-      case entityKind => EntityKind.getEntityKind(entityKind).byteInjection
+  protected f nal def  d nject on[T]():  nject on[T, Array[Byte]] = {
+    val  d nject on =  dType() match {
+      case "str ng" => Ann nject ons.Str ng nject on
+      case "long" => Ann nject ons.Long nject on
+      case " nt" => Ann nject ons. nt nject on
+      case ent yK nd => Ent yK nd.getEnt yK nd(ent yK nd).byte nject on
     }
 
-    idInjection.asInstanceOf[Injection[T, Array[Byte]]]
+     d nject on.as nstanceOf[ nject on[T, Array[Byte]]]
   }
 }

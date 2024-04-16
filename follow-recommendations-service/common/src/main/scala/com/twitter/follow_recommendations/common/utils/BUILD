@@ -1,13 +1,13 @@
-scala_library(
+scala_l brary(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller/request",
-        "stitch/stitch-core",
-        "util/util-slf4j-api/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/base",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/marshaller",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/marshaller/request",
+        "st ch/st ch-core",
+        "ut l/ut l-slf4j-ap /src/ma n/scala",
     ],
 )

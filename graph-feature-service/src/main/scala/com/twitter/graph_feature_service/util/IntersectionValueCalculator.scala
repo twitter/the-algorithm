@@ -1,176 +1,176 @@
-package com.twitter.graph_feature_service.util
+package com.tw ter.graph_feature_serv ce.ut l
 
-import com.twitter.graph_feature_service.thriftscala.{
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.{
   FeatureType,
-  IntersectionValue,
-  WorkerIntersectionValue
+   ntersect onValue,
+  Worker ntersect onValue
 }
-import java.nio.ByteBuffer
-import scala.collection.mutable.ArrayBuffer
+ mport java.n o.ByteBuffer
+ mport scala.collect on.mutable.ArrayBuffer
 
 /**
- * Functions for computing feature values based on the values returned by constantDB.
+ * Funct ons for comput ng feature values based on t  values returned by constantDB.
  */
-object IntersectionValueCalculator {
+object  ntersect onValueCalculator {
 
   /**
-   * Compute the size of the array in a ByteBuffer.
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * Compute t  s ze of t  array  n a ByteBuffer.
+   * Note that t  funct on assu s t  ByteBuffer  s encoded us ng  nject ons.seqLong2ByteBuffer
    */
-  def computeArraySize(x: ByteBuffer): Int = {
-    x.remaining() >> 3 // divide 8
+  def computeArrayS ze(x: ByteBuffer):  nt = {
+    x.rema n ng() >> 3 // d v de 8
   }
 
   /**
    *
    */
-  def apply(x: ByteBuffer, y: ByteBuffer, intersectionIdLimit: Int): WorkerIntersectionValue = {
+  def apply(x: ByteBuffer, y: ByteBuffer,  ntersect on dL m :  nt): Worker ntersect onValue = {
 
-    val xSize = computeArraySize(x)
-    val ySize = computeArraySize(y)
+    val xS ze = computeArrayS ze(x)
+    val yS ze = computeArrayS ze(y)
 
-    val largerArray = if (xSize > ySize) x else y
-    val smallerArray = if (xSize > ySize) y else x
+    val largerArray =  f (xS ze > yS ze) x else y
+    val smallerArray =  f (xS ze > yS ze) y else x
 
-    if (intersectionIdLimit == 0) {
-      val result = computeIntersectionUsingBinarySearchOnLargerByteBuffer(smallerArray, largerArray)
-      WorkerIntersectionValue(result, xSize, ySize)
+     f ( ntersect on dL m  == 0) {
+      val result = compute ntersect onUs ngB narySearchOnLargerByteBuffer(smallerArray, largerArray)
+      Worker ntersect onValue(result, xS ze, yS ze)
     } else {
-      val (result, ids) = computeIntersectionWithIds(smallerArray, largerArray, intersectionIdLimit)
-      WorkerIntersectionValue(result, xSize, ySize, ids)
+      val (result,  ds) = compute ntersect onW h ds(smallerArray, largerArray,  ntersect on dL m )
+      Worker ntersect onValue(result, xS ze, yS ze,  ds)
     }
   }
 
   /**
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * Note that t  funct on assu s t  ByteBuffer  s encoded us ng  nject ons.seqLong2ByteBuffer
    *
    */
-  def computeIntersectionUsingBinarySearchOnLargerByteBuffer(
+  def compute ntersect onUs ngB narySearchOnLargerByteBuffer(
     smallArray: ByteBuffer,
     largeArray: ByteBuffer
-  ): Int = {
-    var res: Int = 0
-    var i: Int = 0
+  ):  nt = {
+    var res:  nt = 0
+    var  :  nt = 0
 
-    while (i < smallArray.remaining()) {
-      if (binarySearch(largeArray, smallArray.getLong(i)) >= 0) {
+    wh le (  < smallArray.rema n ng()) {
+       f (b narySearch(largeArray, smallArray.getLong( )) >= 0) {
         res += 1
       }
-      i += 8
+        += 8
     }
     res
   }
 
-  def computeIntersectionWithIds(
+  def compute ntersect onW h ds(
     smallArray: ByteBuffer,
     largeArray: ByteBuffer,
-    intersectionLimit: Int
-  ): (Int, Seq[Long]) = {
-    var res: Int = 0
-    var i: Int = 0
-    // Most of the intersectionLimit is smaller than default size: 16
-    val idBuffer = ArrayBuffer[Long]()
+     ntersect onL m :  nt
+  ): ( nt, Seq[Long]) = {
+    var res:  nt = 0
+    var  :  nt = 0
+    // Most of t   ntersect onL m   s smaller than default s ze: 16
+    val  dBuffer = ArrayBuffer[Long]()
 
-    while (i < smallArray.remaining()) {
-      val value = smallArray.getLong(i)
-      if (binarySearch(largeArray, value) >= 0) {
+    wh le (  < smallArray.rema n ng()) {
+      val value = smallArray.getLong( )
+       f (b narySearch(largeArray, value) >= 0) {
         res += 1
-        // Always get the smaller ids
-        if (idBuffer.size < intersectionLimit) {
-          idBuffer += value
+        // Always get t  smaller  ds
+         f ( dBuffer.s ze <  ntersect onL m ) {
+           dBuffer += value
         }
       }
-      i += 8
+        += 8
     }
-    (res, idBuffer)
+    (res,  dBuffer)
   }
 
   /**
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * Note that t  funct on assu s t  ByteBuffer  s encoded us ng  nject ons.seqLong2ByteBuffer
    *
    */
-  private[util] def binarySearch(arr: ByteBuffer, value: Long): Int = {
+  pr vate[ut l] def b narySearch(arr: ByteBuffer, value: Long):  nt = {
     var start = 0
-    var end = arr.remaining()
+    var end = arr.rema n ng()
 
-    while (start <= end && start < arr.remaining()) {
-      val mid = ((start + end) >> 1) & ~7 // take mid - mid % 8
-      if (arr.getLong(mid) == value) {
-        return mid // return the index of the value
-      } else if (arr.getLong(mid) < value) {
-        start = mid + 8
+    wh le (start <= end && start < arr.rema n ng()) {
+      val m d = ((start + end) >> 1) & ~7 // take m d - m d % 8
+       f (arr.getLong(m d) == value) {
+        return m d // return t   ndex of t  value
+      } else  f (arr.getLong(m d) < value) {
+        start = m d + 8
       } else {
-        end = mid - 1
+        end = m d - 1
       }
     }
-    // if not existed, return -1
+    //  f not ex sted, return -1
     -1
   }
 
   /**
-   * TODO: for now it only computes intersection size. Will add more feature types (e.g., dot
-   * product, maximum value).
+   * TODO: for now   only computes  ntersect on s ze. W ll add more feature types (e.g., dot
+   * product, max mum value).
    *
-   * NOTE that this function assumes both x and y are SORTED arrays.
-   * In graph feature service, the sorting is done in the offline Scalding job.
+   * NOTE that t  funct on assu s both x and y are SORTED arrays.
+   *  n graph feature serv ce, t  sort ng  s done  n t  offl ne Scald ng job.
    *
-   * @param x                     source user's array
-   * @param y                     candidate user's array
+   * @param x                     s ce user's array
+   * @param y                     cand date user's array
    * @param featureType           feature type
    * @return
    */
-  def apply(x: Array[Long], y: Array[Long], featureType: FeatureType): IntersectionValue = {
+  def apply(x: Array[Long], y: Array[Long], featureType: FeatureType):  ntersect onValue = {
 
-    val xSize = x.length
-    val ySize = y.length
+    val xS ze = x.length
+    val yS ze = y.length
 
-    val intersection =
-      if (xSize.min(ySize) * math.log(xSize.max(ySize)) < (xSize + ySize).toDouble) {
-        if (xSize < ySize) {
-          computeIntersectionUsingBinarySearchOnLargerArray(x, y)
+    val  ntersect on =
+       f (xS ze.m n(yS ze) * math.log(xS ze.max(yS ze)) < (xS ze + yS ze).toDouble) {
+         f (xS ze < yS ze) {
+          compute ntersect onUs ngB narySearchOnLargerArray(x, y)
         } else {
-          computeIntersectionUsingBinarySearchOnLargerArray(y, x)
+          compute ntersect onUs ngB narySearchOnLargerArray(y, x)
         }
       } else {
-        computeIntersectionUsingListMerging(x, y)
+        compute ntersect onUs ngL st rg ng(x, y)
       }
 
-    IntersectionValue(
+     ntersect onValue(
       featureType,
-      Some(intersection.toInt),
+      So ( ntersect on.to nt),
       None, // return None for now
-      Some(xSize),
-      Some(ySize)
+      So (xS ze),
+      So (yS ze)
     )
   }
 
   /**
-   * Function for computing the intersections of two SORTED arrays by list merging.
+   * Funct on for comput ng t   ntersect ons of two SORTED arrays by l st  rg ng.
    *
    * @param x one array
-   * @param y another array
-   * @param ordering ordering function for comparing values of T
+   * @param y anot r array
+   * @param order ng order ng funct on for compar ng values of T
    * @tparam T type
-   * @return The intersection size and the list of intersected elements
+   * @return T   ntersect on s ze and t  l st of  ntersected ele nts
    */
-  private[util] def computeIntersectionUsingListMerging[T](
+  pr vate[ut l] def compute ntersect onUs ngL st rg ng[T](
     x: Array[T],
     y: Array[T]
   )(
-    implicit ordering: Ordering[T]
-  ): Int = {
+     mpl c  order ng: Order ng[T]
+  ):  nt = {
 
-    var res: Int = 0
-    var i: Int = 0
-    var j: Int = 0
+    var res:  nt = 0
+    var  :  nt = 0
+    var j:  nt = 0
 
-    while (i < x.length && j < y.length) {
-      val comp = ordering.compare(x(i), y(j))
-      if (comp > 0) j += 1
-      else if (comp < 0) i += 1
+    wh le (  < x.length && j < y.length) {
+      val comp = order ng.compare(x( ), y(j))
+       f (comp > 0) j += 1
+      else  f (comp < 0)   += 1
       else {
         res += 1
-        i += 1
+          += 1
         j += 1
       }
     }
@@ -178,65 +178,65 @@ object IntersectionValueCalculator {
   }
 
   /**
-   * Function for computing the intersections of two arrays by binary search on the larger array.
-   * Note that the larger array MUST be SORTED.
+   * Funct on for comput ng t   ntersect ons of two arrays by b nary search on t  larger array.
+   * Note that t  larger array MUST be SORTED.
    *
    * @param smallArray            smaller array
    * @param largeArray            larger array
-   * @param ordering ordering function for comparing values of T
+   * @param order ng order ng funct on for compar ng values of T
    * @tparam T type
    *
-   * @return The intersection size and the list of intersected elements
+   * @return T   ntersect on s ze and t  l st of  ntersected ele nts
    */
-  private[util] def computeIntersectionUsingBinarySearchOnLargerArray[T](
+  pr vate[ut l] def compute ntersect onUs ngB narySearchOnLargerArray[T](
     smallArray: Array[T],
     largeArray: Array[T]
   )(
-    implicit ordering: Ordering[T]
-  ): Int = {
-    var res: Int = 0
-    var i: Int = 0
-    while (i < smallArray.length) {
-      val currentValue: T = smallArray(i)
-      if (binarySearch(largeArray, currentValue) >= 0) {
+     mpl c  order ng: Order ng[T]
+  ):  nt = {
+    var res:  nt = 0
+    var  :  nt = 0
+    wh le (  < smallArray.length) {
+      val currentValue: T = smallArray( )
+       f (b narySearch(largeArray, currentValue) >= 0) {
         res += 1
       }
-      i += 1
+        += 1
     }
     res
   }
 
   /**
-   * Function for doing the binary search
+   * Funct on for do ng t  b nary search
    *
    * @param arr array
-   * @param value the target value for searching
-   * @param ordering ordering function
+   * @param value t  target value for search ng
+   * @param order ng order ng funct on
    * @tparam T type
-   * @return the index of element in the larger array.
-   *         If there is no such element in the array, return -1.
+   * @return t   ndex of ele nt  n t  larger array.
+   *          f t re  s no such ele nt  n t  array, return -1.
    */
-  private[util] def binarySearch[T](
+  pr vate[ut l] def b narySearch[T](
     arr: Array[T],
     value: T
   )(
-    implicit ordering: Ordering[T]
-  ): Int = {
+     mpl c  order ng: Order ng[T]
+  ):  nt = {
     var start = 0
     var end = arr.length - 1
 
-    while (start <= end) {
-      val mid = (start + end) >> 1
-      val comp = ordering.compare(arr(mid), value)
-      if (comp == 0) {
-        return mid // return the index of the value
-      } else if (comp < 0) {
-        start = mid + 1
+    wh le (start <= end) {
+      val m d = (start + end) >> 1
+      val comp = order ng.compare(arr(m d), value)
+       f (comp == 0) {
+        return m d // return t   ndex of t  value
+      } else  f (comp < 0) {
+        start = m d + 1
       } else {
-        end = mid - 1
+        end = m d - 1
       }
     }
-    // if not existed, return -1
+    //  f not ex sted, return -1
     -1
   }
 }

@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-import com.twitter.search.earlybird.partition.SegmentWriter;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntWr er;
 
 /**
-   * Data collected and created while indexing tweets for a single segment.
+   * Data collected and created wh le  ndex ng t ets for a s ngle seg nt.
    */
-class SegmentTweetsIndexingResult {
-  private final long minRecordTimestampMs;
-  private final long maxRecordTimestampMs;
-  private final long maxIndexedTweetId;
-  private final SegmentWriter segmentWriter;
+class Seg ntT ets ndex ngResult {
+  pr vate f nal long m nRecordT  stampMs;
+  pr vate f nal long maxRecordT  stampMs;
+  pr vate f nal long max ndexedT et d;
+  pr vate f nal Seg ntWr er seg ntWr er;
 
-  public SegmentTweetsIndexingResult(long minRecordTimestampMs, long maxRecordTimestampMs,
-                                     long maxIndexedTweetId,
-                                     SegmentWriter segmentWriter) {
-    this.minRecordTimestampMs = minRecordTimestampMs;
-    this.maxRecordTimestampMs = maxRecordTimestampMs;
-    this.maxIndexedTweetId = maxIndexedTweetId;
-    this.segmentWriter = segmentWriter;
+  publ c Seg ntT ets ndex ngResult(long m nRecordT  stampMs, long maxRecordT  stampMs,
+                                     long max ndexedT et d,
+                                     Seg ntWr er seg ntWr er) {
+    t .m nRecordT  stampMs = m nRecordT  stampMs;
+    t .maxRecordT  stampMs = maxRecordT  stampMs;
+    t .max ndexedT et d = max ndexedT et d;
+    t .seg ntWr er = seg ntWr er;
   }
 
-  public long getMinRecordTimestampMs() {
-    return minRecordTimestampMs;
+  publ c long getM nRecordT  stampMs() {
+    return m nRecordT  stampMs;
   }
 
-  public long getMaxRecordTimestampMs() {
-    return maxRecordTimestampMs;
+  publ c long getMaxRecordT  stampMs() {
+    return maxRecordT  stampMs;
   }
 
-  public SegmentWriter getSegmentWriter() {
-    return segmentWriter;
+  publ c Seg ntWr er getSeg ntWr er() {
+    return seg ntWr er;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  publ c long getMax ndexedT et d() {
+    return max ndexedT et d;
   }
 
-  @Override
-  public String toString() {
-    return String.format("Start time: %d, end time: %d, segment name: %s, max indexed: %d",
-        minRecordTimestampMs, maxRecordTimestampMs,
-        segmentWriter.getSegmentInfo().getSegmentName(),
-        maxIndexedTweetId);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return Str ng.format("Start t  : %d, end t  : %d, seg nt na : %s, max  ndexed: %d",
+        m nRecordT  stampMs, maxRecordT  stampMs,
+        seg ntWr er.getSeg nt nfo().getSeg ntNa (),
+        max ndexedT et d);
   }
 }

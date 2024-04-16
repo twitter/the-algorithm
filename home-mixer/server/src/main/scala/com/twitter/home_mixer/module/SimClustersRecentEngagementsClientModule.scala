@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.BatchedStratoClientWithModerateTimeout
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClient
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClientImpl
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Batc dStratoCl entW hModerateT  out
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.t  l nes.cl ents.strato.tw stly.S mClustersRecentEngage ntS m lar yCl ent
+ mport com.tw ter.t  l nes.cl ents.strato.tw stly.S mClustersRecentEngage ntS m lar yCl ent mpl
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object SimClustersRecentEngagementsClientModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesSimilarityClient(
-    @Named(BatchedStratoClientWithModerateTimeout)
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): SimClustersRecentEngagementSimilarityClient = {
-    new SimClustersRecentEngagementSimilarityClientImpl(stratoClient, statsReceiver)
+object S mClustersRecentEngage ntsCl entModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desS m lar yCl ent(
+    @Na d(Batc dStratoCl entW hModerateT  out)
+    stratoCl ent: Cl ent,
+    statsRece ver: StatsRece ver
+  ): S mClustersRecentEngage ntS m lar yCl ent = {
+    new S mClustersRecentEngage ntS m lar yCl ent mpl(stratoCl ent, statsRece ver)
   }
 }

@@ -1,101 +1,101 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.tw ter.recos.user_t et_ent y_graph
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala._
+ mport com.tw ter.ut l.Future
 
-trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+tra  Logg ngUserT etEnt yGraph extends thr ftscala.UserT etEnt yGraph. thodPerEndpo nt {
+  pr vate[t ] val accessLog = Logger("access")
 
-  abstract override def recommendTweets(
-    request: RecommendTweetEntityRequest
-  ): Future[RecommendTweetEntityResponse] = {
-    val time = System.currentTimeMillis
-    super.recommendTweets(request) onSuccess { resp =>
-      accessLog.info(
-        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tRecommendTweetResponse size: %s\t%s in %d ms"
+  abstract overr de def recom ndT ets(
+    request: Recom ndT etEnt yRequest
+  ): Future[Recom ndT etEnt yResponse] = {
+    val t   = System.currentT  M ll s
+    super.recom ndT ets(request) onSuccess { resp =>
+      accessLog. nfo(
+        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tRecom ndT etResponse s ze: %s\t%s  n %d ms"
           .format(
-            time,
-            Trace.id.toString(),
-            request.requesterId,
-            request.displayLocation,
-            request.recommendationTypes,
+            t  ,
+            Trace. d.toStr ng(),
+            request.requester d,
+            request.d splayLocat on,
+            request.recom ndat onTypes,
             request.maxResultsByType,
-            request.excludedTweetIds.map(_.take(5)),
-            request.excludedTweetIds.map(_.size),
-            request.seedsWithWeights.take(5),
-            request.seedsWithWeights.size,
-            request.maxTweetAgeInMillis,
-            request.maxUserSocialProofSize,
-            request.maxTweetSocialProofSize,
-            request.minUserSocialProofSizes,
-            request.tweetTypes,
-            request.socialProofTypes,
-            request.socialProofTypeUnions,
-            resp.recommendations.size,
-            resp.recommendations.take(20).toList map {
-              case UserTweetEntityRecommendationUnion.TweetRec(tweetRec) =>
-                (tweetRec.tweetId, tweetRec.socialProofByType.map { case (k, v) => (k, v.size) })
-              case UserTweetEntityRecommendationUnion.HashtagRec(hashtagRec) =>
-                (hashtagRec.id, hashtagRec.socialProofByType.map { case (k, v) => (k, v.size) })
-              case UserTweetEntityRecommendationUnion.UrlRec(urlRec) =>
-                (urlRec.id, urlRec.socialProofByType.map { case (k, v) => (k, v.size) })
+            request.excludedT et ds.map(_.take(5)),
+            request.excludedT et ds.map(_.s ze),
+            request.seedsW h  ghts.take(5),
+            request.seedsW h  ghts.s ze,
+            request.maxT etAge nM ll s,
+            request.maxUserSoc alProofS ze,
+            request.maxT etSoc alProofS ze,
+            request.m nUserSoc alProofS zes,
+            request.t etTypes,
+            request.soc alProofTypes,
+            request.soc alProofTypeUn ons,
+            resp.recom ndat ons.s ze,
+            resp.recom ndat ons.take(20).toL st map {
+              case UserT etEnt yRecom ndat onUn on.T etRec(t etRec) =>
+                (t etRec.t et d, t etRec.soc alProofByType.map { case (k, v) => (k, v.s ze) })
+              case UserT etEnt yRecom ndat onUn on.HashtagRec(hashtagRec) =>
+                (hashtagRec. d, hashtagRec.soc alProofByType.map { case (k, v) => (k, v.s ze) })
+              case UserT etEnt yRecom ndat onUn on.UrlRec(urlRec) =>
+                (urlRec. d, urlRec.soc alProofByType.map { case (k, v) => (k, v.s ze) })
               case _ =>
-                throw new Exception("Unsupported recommendation types")
+                throw new Except on("Unsupported recom ndat on types")
             },
-            System.currentTimeMillis - time
+            System.currentT  M ll s - t  
           )
       )
-    } onFailure { exc =>
+    } onFa lure { exc =>
       accessLog.error(
-        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s in %d ms".format(
-          time,
-          Trace.id.toString(),
-          request.requesterId,
-          request.displayLocation,
-          request.recommendationTypes,
+        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s  n %d ms".format(
+          t  ,
+          Trace. d.toStr ng(),
+          request.requester d,
+          request.d splayLocat on,
+          request.recom ndat onTypes,
           request.maxResultsByType,
-          request.excludedTweetIds.map(_.take(5)),
-          request.excludedTweetIds.map(_.size),
-          request.seedsWithWeights.take(5),
-          request.seedsWithWeights.size,
-          request.maxTweetAgeInMillis,
-          request.maxUserSocialProofSize,
-          request.maxTweetSocialProofSize,
-          request.minUserSocialProofSizes,
-          request.tweetTypes,
-          request.socialProofTypes,
-          request.socialProofTypeUnions,
+          request.excludedT et ds.map(_.take(5)),
+          request.excludedT et ds.map(_.s ze),
+          request.seedsW h  ghts.take(5),
+          request.seedsW h  ghts.s ze,
+          request.maxT etAge nM ll s,
+          request.maxUserSoc alProofS ze,
+          request.maxT etSoc alProofS ze,
+          request.m nUserSoc alProofS zes,
+          request.t etTypes,
+          request.soc alProofTypes,
+          request.soc alProofTypeUn ons,
           exc,
-          System.currentTimeMillis - time
+          System.currentT  M ll s - t  
         )
       )
     }
   }
 
-  abstract override def findTweetSocialProofs(
-    request: SocialProofRequest
-  ): Future[SocialProofResponse] = {
-    val time = System.currentTimeMillis
-    super.findTweetSocialProofs(request) onSuccess { resp =>
-      accessLog.info(
-        "%s\t%s\t%d\tResponse: %s\tin %d ms".format(
-          Trace.id.toString,
-          request.requesterId,
-          request.seedsWithWeights.size,
-          resp.socialProofResults.toList,
-          System.currentTimeMillis - time
+  abstract overr de def f ndT etSoc alProofs(
+    request: Soc alProofRequest
+  ): Future[Soc alProofResponse] = {
+    val t   = System.currentT  M ll s
+    super.f ndT etSoc alProofs(request) onSuccess { resp =>
+      accessLog. nfo(
+        "%s\t%s\t%d\tResponse: %s\t n %d ms".format(
+          Trace. d.toStr ng,
+          request.requester d,
+          request.seedsW h  ghts.s ze,
+          resp.soc alProofResults.toL st,
+          System.currentT  M ll s - t  
         )
       )
-    } onFailure { exc =>
-      accessLog.info(
-        "%s\t%s\t%d\tException: %s\tin %d ms".format(
-          Trace.id.toString,
-          request.requesterId,
-          request.seedsWithWeights.size,
+    } onFa lure { exc =>
+      accessLog. nfo(
+        "%s\t%s\t%d\tExcept on: %s\t n %d ms".format(
+          Trace. d.toStr ng,
+          request.requester d,
+          request.seedsW h  ghts.s ze,
           exc,
-          System.currentTimeMillis - time
+          System.currentT  M ll s - t  
         )
       )
     }

@@ -1,33 +1,33 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensorflow.serv ng;
+opt on cc_enable_arenas = true;
 
-import "google/protobuf/wrappers.proto";
+ mport "google/protobuf/wrappers.proto";
 
-// Metadata for an inference request such as the model name and version.
-message ModelSpec {
-  // Required servable name.
-  string name = 1;
+//  tadata for an  nference request such as t  model na  and vers on.
+ ssage ModelSpec {
+  // Requ red servable na .
+  str ng na  = 1;
 
-  // Optional choice of which version of the model to use.
+  // Opt onal cho ce of wh ch vers on of t  model to use.
   //
-  // Recommended to be left unset in the common case. Should be specified only
-  // when there is a strong version consistency requirement.
+  // Recom nded to be left unset  n t  common case. Should be spec f ed only
+  // w n t re  s a strong vers on cons stency requ re nt.
   //
-  // When left unspecified, the system will serve the best available version.
-  // This is typically the latest version, though during version transitions,
-  // notably when serving on a fleet of instances, may be either the previous or
-  // new version.
-  oneof version_choice {
-    // Use this specific version number.
-    google.protobuf.Int64Value version = 2;
+  // W n left unspec f ed, t  system w ll serve t  best ava lable vers on.
+  // T   s typ cally t  latest vers on, though dur ng vers on trans  ons,
+  // notably w n serv ng on a fleet of  nstances, may be e  r t  prev ous or
+  // new vers on.
+  oneof vers on_cho ce {
+    // Use t  spec f c vers on number.
+    google.protobuf. nt64Value vers on = 2;
 
-    // Use the version associated with the given label.
-    string version_label = 4;
+    // Use t  vers on assoc ated w h t  g ven label.
+    str ng vers on_label = 4;
   }
 
-  // A named signature to evaluate. If unspecified, the default signature will
+  // A na d s gnature to evaluate.  f unspec f ed, t  default s gnature w ll
   // be used.
-  string signature_name = 3;
+  str ng s gnature_na  = 3;
 }

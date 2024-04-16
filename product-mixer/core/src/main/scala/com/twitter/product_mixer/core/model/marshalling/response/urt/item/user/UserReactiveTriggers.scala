@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.TimelineReaction
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.react on.T  l neReact on
 
-case class UserReactiveTriggers(onFollow: Option[TimelineReaction])
+case class UserReact veTr ggers(onFollow: Opt on[T  l neReact on])

@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.controllers
+package com.tw ter.product_m xer.core.controllers
 
-import com.twitter.finagle.http.Request
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftMethod
-import com.twitter.scrooge.schema.ThriftDefinitions
-import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeDefBuilder
-import com.twitter.scrooge.schema.serialization.thrift.ReferenceResolver
-import com.twitter.scrooge.schema.serialization.thrift.ThriftDefinitionsSerializer
-import com.twitter.scrooge.schema.{thriftscala => THRIFT}
+ mport com.tw ter.f nagle.http.Request
+ mport com.tw ter.scrooge.B naryThr ftStructSer al zer
+ mport com.tw ter.scrooge.Thr ft thod
+ mport com.tw ter.scrooge.sc ma.Thr ftDef n  ons
+ mport com.tw ter.scrooge.sc ma.scrooge.scala.Comp ledScroogeDefBu lder
+ mport com.tw ter.scrooge.sc ma.ser al zat on.thr ft.ReferenceResolver
+ mport com.tw ter.scrooge.sc ma.ser al zat on.thr ft.Thr ftDef n  onsSer al zer
+ mport com.tw ter.scrooge.sc ma.{thr ftscala => THR FT}
 
 /**
- * Endpoint to expose a Mixer's expected query configuration, including the request schema.
+ * Endpo nt to expose a M xer's expected query conf gurat on,  nclud ng t  request sc ma.
  *
- * @param debugEndpoint the debug Thrift endpoint. Passing [[None]] disables the query debugging
+ * @param debugEndpo nt t  debug Thr ft endpo nt. Pass ng [[None]] d sables t  query debugg ng
  *                      feature.
- * @tparam ServiceIface a thrift service containing the [[debugEndpoint]]
+ * @tparam Serv ce face a thr ft serv ce conta n ng t  [[debugEndpo nt]]
  */
-case class GetDebugConfigurationHandler[ServiceIface](
-  thriftMethod: ThriftMethod
+case class GetDebugConf gurat onHandler[Serv ce face](
+  thr ft thod: Thr ft thod
 )(
-  implicit val serviceIFace: Manifest[ServiceIface]) {
+   mpl c  val serv ce Face: Man fest[Serv ce face]) {
 
-  // We need to binary encode the service def because the underlying Thrift isn't sufficiently
-  // annotated to be serialized/deserialized by Jackson
-  private val serviceDef = {
-    val fullServiceDefinition: ThriftDefinitions.ServiceDef = CompiledScroogeDefBuilder
-      .build(serviceIFace).asInstanceOf[ThriftDefinitions.ServiceDef]
+  //   need to b nary encode t  serv ce def because t  underly ng Thr ft  sn't suff c ently
+  // annotated to be ser al zed/deser al zed by Jackson
+  pr vate val serv ceDef = {
+    val fullServ ceDef n  on: Thr ftDef n  ons.Serv ceDef = Comp ledScroogeDefBu lder
+      .bu ld(serv ce Face).as nstanceOf[Thr ftDef n  ons.Serv ceDef]
 
-    val endpointDefinition: ThriftDefinitions.ServiceEndpointDef =
-      fullServiceDefinition.endpointsByName(thriftMethod.name)
+    val endpo ntDef n  on: Thr ftDef n  ons.Serv ceEndpo ntDef =
+      fullServ ceDef n  on.endpo ntsByNa (thr ft thod.na )
 
-    // Create a service definition which just contains the debug endpoint. At a bare minimum, we need
-    // to give callers a way to identify the debug endpoint. Sending back all the endpoints is
+    // Create a serv ce def n  on wh ch just conta ns t  debug endpo nt. At a bare m n mum,   need
+    // to g ve callers a way to  dent fy t  debug endpo nt. Send ng back all t  endpo nts  s
     // redundant.
-    val serviceDefinition: ThriftDefinitions.ServiceDef =
-      fullServiceDefinition.copy(endpoints = Seq(endpointDefinition))
+    val serv ceDef n  on: Thr ftDef n  ons.Serv ceDef =
+      fullServ ceDef n  on.copy(endpo nts = Seq(endpo ntDef n  on))
 
-    val thriftDefinitionsSerializer = {
-      // We don't make use of references but a reference resolver is required by the Scrooge API
+    val thr ftDef n  onsSer al zer = {
+      //   don't make use of references but a reference resolver  s requ red by t  Scrooge AP 
       val noopReferenceResolver: ReferenceResolver =
-        (_: THRIFT.ReferenceDef) => throw new Exception("no references")
+        (_: THR FT.ReferenceDef) => throw new Except on("no references")
 
-      new ThriftDefinitionsSerializer(noopReferenceResolver, enableReferences = false)
+      new Thr ftDef n  onsSer al zer(noopReferenceResolver, enableReferences = false)
     }
 
-    val thriftBinarySerializer = BinaryThriftStructSerializer.apply(THRIFT.Definition)
+    val thr ftB narySer al zer = B naryThr ftStructSer al zer.apply(THR FT.Def n  on)
 
-    val serializedServiceDef = thriftDefinitionsSerializer(serviceDefinition)
+    val ser al zedServ ceDef = thr ftDef n  onsSer al zer(serv ceDef n  on)
 
-    thriftBinarySerializer.toBytes(serializedServiceDef)
+    thr ftB narySer al zer.toBytes(ser al zedServ ceDef)
   }
 
-  def apply(request: Request): DebugConfigurationResponse =
-    DebugConfigurationResponse(thriftMethod.name, serviceDef)
+  def apply(request: Request): DebugConf gurat onResponse =
+    DebugConf gurat onResponse(thr ft thod.na , serv ceDef)
 }
 
-case class DebugConfigurationResponse(
-  debugEndpointName: String,
-  serviceDefinition: Array[Byte])
+case class DebugConf gurat onResponse(
+  debugEndpo ntNa : Str ng,
+  serv ceDef n  on: Array[Byte])

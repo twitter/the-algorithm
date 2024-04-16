@@ -1,422 +1,422 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.tw ter.search.earlyb rd.search.relevance;
 
-import java.util.Arrays;
-import java.util.List;
+ mport java.ut l.Arrays;
+ mport java.ut l.L st;
 
-import com.google.common.collect.Lists;
+ mport com.google.common.collect.L sts;
 
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+ mport com.tw ter.search.common.constants.SearchCardType;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
 
-public class LinearScoringData {
-  public static final float NO_BOOST_VALUE = 1.0f;
+publ c class L nearScor ngData {
+  publ c stat c f nal float NO_BOOST_VALUE = 1.0f;
 
-  // A signal value so we can tell if something is unset, also used in explanation.
-  public static final int UNSET_SIGNAL_VALUE = -999;
+  // A s gnal value so   can tell  f so th ng  s unset, also used  n explanat on.
+  publ c stat c f nal  nt UNSET_S GNAL_VALUE = -999;
 
-  //This is somewhat arbitrary, and is here so that we have some limit on
-  //how many offline experimental features we support per query
-  public static final int MAX_OFFLINE_EXPERIMENTAL_FIELDS = 5;
+  //T   s so what arb rary, and  s  re so that   have so  l m  on
+  //how many offl ne exper  ntal features   support per query
+  publ c stat c f nal  nt MAX_OFFL NE_EXPER MENTAL_F ELDS = 5;
 
-  public enum SkipReason {
-    NOT_SKIPPED,
-    ANTIGAMING,
-    LOW_REPUTATION,
+  publ c enum Sk pReason {
+    NOT_SK PPED,
+    ANT GAM NG,
+    LOW_REPUTAT ON,
     LOW_TEXT_SCORE,
     LOW_RETWEET_COUNT,
     LOW_FAV_COUNT,
-    SOCIAL_FILTER,
-    LOW_FINAL_SCORE
+    SOC AL_F LTER,
+    LOW_F NAL_SCORE
   }
 
-  // When you add fields here, make sure you also update the clear() function.
-  public double luceneScore;
-  public double textScore;
-  //I am not sure why this has to be double...
-  public double tokenAt140DividedByNumTokensBucket;
-  public double userRep;
-  public double parusScore;
-  public final double[] offlineExpFeatureValues = new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  // W n   add f elds  re, make sure   also update t  clear() funct on.
+  publ c double luceneScore;
+  publ c double textScore;
+  //  am not sure why t  has to be double...
+  publ c double tokenAt140D v dedByNumTokensBucket;
+  publ c double userRep;
+  publ c double parusScore;
+  publ c f nal double[] offl neExpFeatureValues = new double[MAX_OFFL NE_EXPER MENTAL_F ELDS];
 
-  // v1 engagement counters
-  public double retweetCountPostLog2;
-  public double favCountPostLog2;
-  public double replyCountPostLog2;
-  public double embedsImpressionCount;
-  public double embedsUrlCount;
-  public double videoViewCount;
+  // v1 engage nt counters
+  publ c double ret etCountPostLog2;
+  publ c double favCountPostLog2;
+  publ c double replyCountPostLog2;
+  publ c double embeds mpress onCount;
+  publ c double embedsUrlCount;
+  publ c double v deoV ewCount;
 
-  // v2 engagement counters (that have a v1 counter part)
-  public double retweetCountV2;
-  public double favCountV2;
-  public double replyCountV2;
-  public double embedsImpressionCountV2;
-  public double embedsUrlCountV2;
-  public double videoViewCountV2;
-  // pure v2 engagement counters, they started v2 only
-  public double quotedCount;
-  public double weightedRetweetCount;
-  public double weightedReplyCount;
-  public double weightedFavCount;
-  public double weightedQuoteCount;
+  // v2 engage nt counters (that have a v1 counter part)
+  publ c double ret etCountV2;
+  publ c double favCountV2;
+  publ c double replyCountV2;
+  publ c double embeds mpress onCountV2;
+  publ c double embedsUrlCountV2;
+  publ c double v deoV ewCountV2;
+  // pure v2 engage nt counters, t y started v2 only
+  publ c double quotedCount;
+  publ c double   ghtedRet etCount;
+  publ c double   ghtedReplyCount;
+  publ c double   ghtedFavCount;
+  publ c double   ghtedQuoteCount;
 
-  // card related properties
-  public boolean hasCard;
-  public byte cardType;
+  // card related propert es
+  publ c boolean hasCard;
+  publ c byte cardType;
 
-  public boolean hasUrl;
-  public boolean isReply;
-  public boolean isRetweet;
-  public boolean isOffensive;
-  public boolean hasTrend;
-  public boolean isFromVerifiedAccount;
-  public boolean isFromBlueVerifiedAccount;
-  public boolean isUserSpam;
-  public boolean isUserNSFW;
-  public boolean isUserBot;
-  public boolean isUserAntiSocial;
-  public boolean hasVisibleLink;
+  publ c boolean hasUrl;
+  publ c boolean  sReply;
+  publ c boolean  sRet et;
+  publ c boolean  sOffens ve;
+  publ c boolean hasTrend;
+  publ c boolean  sFromVer f edAccount;
+  publ c boolean  sFromBlueVer f edAccount;
+  publ c boolean  sUserSpam;
+  publ c boolean  sUserNSFW;
+  publ c boolean  sUserBot;
+  publ c boolean  sUserAnt Soc al;
+  publ c boolean hasV s bleL nk;
 
-  public double luceneContrib;
-  public double reputationContrib;
-  public double textScoreContrib;
-  public double favContrib;
-  public double replyContrib;
-  public double multipleReplyContrib;
-  public double retweetContrib;
-  public double parusContrib;
-  public final double[] offlineExpFeatureContributions =
-      new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
-  public double embedsImpressionContrib;
-  public double embedsUrlContrib;
-  public double videoViewContrib;
-  public double quotedContrib;
+  publ c double luceneContr b;
+  publ c double reputat onContr b;
+  publ c double textScoreContr b;
+  publ c double favContr b;
+  publ c double replyContr b;
+  publ c double mult pleReplyContr b;
+  publ c double ret etContr b;
+  publ c double parusContr b;
+  publ c f nal double[] offl neExpFeatureContr but ons =
+      new double[MAX_OFFL NE_EXPER MENTAL_F ELDS];
+  publ c double embeds mpress onContr b;
+  publ c double embedsUrlContr b;
+  publ c double v deoV ewContr b;
+  publ c double quotedContr b;
 
-  public double hasUrlContrib;
-  public double isReplyContrib;
-  public double isFollowRetweetContrib;
-  public double isTrustedRetweetContrib;
+  publ c double hasUrlContr b;
+  publ c double  sReplyContr b;
+  publ c double  sFollowRet etContr b;
+  publ c double  sTrustedRet etContr b;
 
-  // Value passed in the request (ThriftRankingParams.querySpecificScoreAdjustments)
-  public double querySpecificScore;
+  // Value passed  n t  request (Thr ftRank ngParams.querySpec f cScoreAdjust nts)
+  publ c double querySpec f cScore;
 
-  // Value passed in the request (ThriftRankingParams.authorSpecificScoreAdjustments)
-  public double authorSpecificScore;
+  // Value passed  n t  request (Thr ftRank ngParams.authorSpec f cScoreAdjust nts)
+  publ c double authorSpec f cScore;
 
-  public double normalizedLuceneScore;
+  publ c double normal zedLuceneScore;
 
-  public int tweetLangId;
-  public double uiLangMult;
-  public double userLangMult;
-  public boolean hasDifferentLang;
-  public boolean hasEnglishTweetAndDifferentUILang;
-  public boolean hasEnglishUIAndDifferentTweetLang;
+  publ c  nt t etLang d;
+  publ c double u LangMult;
+  publ c double userLangMult;
+  publ c boolean hasD fferentLang;
+  publ c boolean hasEngl shT etAndD fferentU Lang;
+  publ c boolean hasEngl shU AndD fferentT etLang;
 
-  public int tweetAgeInSeconds;
-  public double ageDecayMult;
+  publ c  nt t etAge nSeconds;
+  publ c double ageDecayMult;
 
-  // Intermediate scores
-  public double scoreBeforeBoost;
-  public double scoreAfterBoost;
-  public double scoreFinal;
-  public double scoreReturned;
+  //  nter d ate scores
+  publ c double scoreBeforeBoost;
+  publ c double scoreAfterBoost;
+  publ c double scoreF nal;
+  publ c double scoreReturned;
 
-  public SkipReason skipReason;
+  publ c Sk pReason sk pReason;
 
-  public boolean isTrusted;
-  public boolean isFollow;
-  public boolean spamUserDampApplied;
-  public boolean nsfwUserDampApplied;
-  public boolean botUserDampApplied;
-  public boolean trustedCircleBoostApplied;
-  public boolean directFollowBoostApplied;
-  public boolean outOfNetworkReplyPenaltyApplied;
-  public boolean hasMultipleHashtagsOrTrends;
+  publ c boolean  sTrusted;
+  publ c boolean  sFollow;
+  publ c boolean spamUserDampAppl ed;
+  publ c boolean nsfwUserDampAppl ed;
+  publ c boolean botUserDampAppl ed;
+  publ c boolean trustedC rcleBoostAppl ed;
+  publ c boolean d rectFollowBoostAppl ed;
+  publ c boolean outOfNetworkReplyPenaltyAppl ed;
+  publ c boolean hasMult pleHashtagsOrTrends;
 
-  public boolean tweetHasTrendsBoostApplied;
-  public boolean tweetFromVerifiedAccountBoostApplied;
-  public boolean tweetFromBlueVerifiedAccountBoostApplied;
-  public boolean hasCardBoostApplied;
-  public boolean cardDomainMatchBoostApplied;
-  public boolean cardAuthorMatchBoostApplied;
-  public boolean cardTitleMatchBoostApplied;
-  public boolean cardDescriptionMatchBoostApplied;
+  publ c boolean t etHasTrendsBoostAppl ed;
+  publ c boolean t etFromVer f edAccountBoostAppl ed;
+  publ c boolean t etFromBlueVer f edAccountBoostAppl ed;
+  publ c boolean hasCardBoostAppl ed;
+  publ c boolean cardDoma nMatchBoostAppl ed;
+  publ c boolean cardAuthorMatchBoostAppl ed;
+  publ c boolean cardT leMatchBoostAppl ed;
+  publ c boolean cardDescr pt onMatchBoostAppl ed;
 
-  public List<String> hitFields;
-  public boolean hasNoTextHitDemotionApplied;
-  public boolean hasUrlOnlyHitDemotionApplied;
-  public boolean hasNameOnlyHitDemotionApplied;
-  public boolean hasSeparateTextAndNameHitDemotionApplied;
-  public boolean hasSeparateTextAndUrlHitDemotionApplied;
+  publ c L st<Str ng> h F elds;
+  publ c boolean hasNoTextH Demot onAppl ed;
+  publ c boolean hasUrlOnlyH Demot onAppl ed;
+  publ c boolean hasNa OnlyH Demot onAppl ed;
+  publ c boolean hasSeparateTextAndNa H Demot onAppl ed;
+  publ c boolean hasSeparateTextAndUrlH Demot onAppl ed;
 
-  public long fromUserId;
-  // This is actually retweet status ID, or the ID of the original tweet being (natively) retweeted
-  public long sharedStatusId;
-  public long referenceAuthorId; // SEARCH-8564
+  publ c long fromUser d;
+  // T   s actually ret et status  D, or t   D of t  or g nal t et be ng (nat vely) ret eted
+  publ c long sharedStatus d;
+  publ c long referenceAuthor d; // SEARCH-8564
 
-  public boolean isSelfTweet;
-  public boolean selfTweetBoostApplied;
-  public double selfTweetMult;
+  publ c boolean  sSelfT et;
+  publ c boolean selfT etBoostAppl ed;
+  publ c double selfT etMult;
 
-  public boolean hasImageUrl;
-  public boolean hasVideoUrl;
-  public boolean hasMedialUrlBoostApplied;
-  public boolean hasNewsUrl;
-  public boolean hasNewsUrlBoostApplied;
+  publ c boolean has mageUrl;
+  publ c boolean hasV deoUrl;
+  publ c boolean has d alUrlBoostAppl ed;
+  publ c boolean hasNewsUrl;
+  publ c boolean hasNewsUrlBoostAppl ed;
 
-  public boolean hasConsumerVideo;
-  public boolean hasProVideo;
-  public boolean hasVine;
-  public boolean hasPeriscope;
-  public boolean hasNativeImage;
-  public boolean isNullcast;
-  public boolean hasQuote;
+  publ c boolean hasConsu rV deo;
+  publ c boolean hasProV deo;
+  publ c boolean hasV ne;
+  publ c boolean hasPer scope;
+  publ c boolean hasNat ve mage;
+  publ c boolean  sNullcast;
+  publ c boolean hasQuote;
 
-  public boolean isSensitiveContent;
-  public boolean hasMultipleMediaFlag;
-  public boolean profileIsEggFlag;
-  public boolean isUserNewFlag;
+  publ c boolean  sSens  veContent;
+  publ c boolean hasMult ple d aFlag;
+  publ c boolean prof le sEggFlag;
+  publ c boolean  sUserNewFlag;
 
-  public int numMentions;
-  public int numHashtags;
-  public int linkLanguage;
-  public int prevUserTweetEngagement;
+  publ c  nt num nt ons;
+  publ c  nt numHashtags;
+  publ c  nt l nkLanguage;
+  publ c  nt prevUserT etEngage nt;
 
-  public boolean isComposerSourceCamera;
+  publ c boolean  sComposerS ceCa ra;
 
-  // health model scores by HML
-  public double toxicityScore; // go/toxicity
-  public double pBlockScore; // go/pblock
-  public double pSpammyTweetScore; // go/pspammytweet
-  public double pReportedTweetScore; // go/preportedtweet
-  public double spammyTweetContentScore; // go/spammy-tweet-content
-  public double experimentalHealthModelScore1;
-  public double experimentalHealthModelScore2;
-  public double experimentalHealthModelScore3;
-  public double experimentalHealthModelScore4;
+  //  alth model scores by HML
+  publ c double tox c yScore; // go/tox c y
+  publ c double pBlockScore; // go/pblock
+  publ c double pSpam T etScore; // go/pspam t et
+  publ c double pReportedT etScore; // go/preportedt et
+  publ c double spam T etContentScore; // go/spam -t et-content
+  publ c double exper  ntal althModelScore1;
+  publ c double exper  ntal althModelScore2;
+  publ c double exper  ntal althModelScore3;
+  publ c double exper  ntal althModelScore4;
 
-  public LinearScoringData() {
-    hitFields = Lists.newArrayList();
+  publ c L nearScor ngData() {
+    h F elds = L sts.newArrayL st();
     clear();
   }
 
-  // the following three counters were added later and they got denormalized in standard way,
-  // you can choose to apply scalding (for legacy LinearScoringFunction) or
-  // not apply (for returning in metadata and display in debug).
-  public double getEmbedsImpressionCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(embedsImpressionCount) : embedsImpressionCount;
+  // t  follow ng three counters  re added later and t y got denormal zed  n standard way,
+  //   can choose to apply scald ng (for legacy L nearScor ngFunct on) or
+  // not apply (for return ng  n  tadata and d splay  n debug).
+  publ c double getEmbeds mpress onCount(boolean scaleForScor ng) {
+    return scaleForScor ng ? logW h0(embeds mpress onCount) : embeds mpress onCount;
   }
-  public double getEmbedsUrlCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(embedsUrlCount) : embedsUrlCount;
+  publ c double getEmbedsUrlCount(boolean scaleForScor ng) {
+    return scaleForScor ng ? logW h0(embedsUrlCount) : embedsUrlCount;
   }
-  public double getVideoViewCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(videoViewCount) : videoViewCount;
+  publ c double getV deoV ewCount(boolean scaleForScor ng) {
+    return scaleForScor ng ? logW h0(v deoV ewCount) : v deoV ewCount;
   }
-  private static double logWith0(double value) {
+  pr vate stat c double logW h0(double value) {
     return value > 0 ? Math.log(value) : 0.0;
   }
 
   /**
-   * Returns a string description of all data stored in this instance.
+   * Returns a str ng descr pt on of all data stored  n t   nstance.
    */
-  public String getPropertyExplanation() {
-    StringBuilder sb = new StringBuilder();
+  publ c Str ng getPropertyExplanat on() {
+    Str ngBu lder sb = new Str ngBu lder();
     sb.append(hasCard ? "CARD " + SearchCardType.cardTypeFromByteValue(cardType) : "");
     sb.append(hasUrl ? "URL " : "");
-    sb.append(isReply ? "REPLY " : "");
-    sb.append(isRetweet ? "RETWEET " : "");
-    sb.append(isOffensive ? "OFFENSIVE " : "");
+    sb.append( sReply ? "REPLY " : "");
+    sb.append( sRet et ? "RETWEET " : "");
+    sb.append( sOffens ve ? "OFFENS VE " : "");
     sb.append(hasTrend ? "TREND " : "");
-    sb.append(hasMultipleHashtagsOrTrends ? "HASHTAG/TREND+ " : "");
-    sb.append(isFromVerifiedAccount ? "VERIFIED " : "");
-    sb.append(isFromBlueVerifiedAccount ? "BLUE_VERIFIED " : "");
-    sb.append(isUserSpam ? "SPAM " : "");
-    sb.append(isUserNSFW ? "NSFW " : "");
-    sb.append(isUserBot ? "BOT " : "");
-    sb.append(isUserAntiSocial ? "ANTISOCIAL " : "");
-    sb.append(isTrusted ? "TRUSTED " : "");
-    sb.append(isFollow ? "FOLLOW " : "");
-    sb.append(isSelfTweet ? "SELF " : "");
-    sb.append(hasImageUrl ? "IMAGE " : "");
-    sb.append(hasVideoUrl ? "VIDEO " : "");
+    sb.append(hasMult pleHashtagsOrTrends ? "HASHTAG/TREND+ " : "");
+    sb.append( sFromVer f edAccount ? "VER F ED " : "");
+    sb.append( sFromBlueVer f edAccount ? "BLUE_VER F ED " : "");
+    sb.append( sUserSpam ? "SPAM " : "");
+    sb.append( sUserNSFW ? "NSFW " : "");
+    sb.append( sUserBot ? "BOT " : "");
+    sb.append( sUserAnt Soc al ? "ANT SOC AL " : "");
+    sb.append( sTrusted ? "TRUSTED " : "");
+    sb.append( sFollow ? "FOLLOW " : "");
+    sb.append( sSelfT et ? "SELF " : "");
+    sb.append(has mageUrl ? " MAGE " : "");
+    sb.append(hasV deoUrl ? "V DEO " : "");
     sb.append(hasNewsUrl ? "NEWS " : "");
-    sb.append(isNullcast ? "NULLCAST" : "");
+    sb.append( sNullcast ? "NULLCAST" : "");
     sb.append(hasQuote ? "QUOTE" : "");
-    sb.append(isComposerSourceCamera ? "Composer Source: CAMERA" : "");
+    sb.append( sComposerS ceCa ra ? "Composer S ce: CAMERA" : "");
     sb.append(favCountPostLog2 > 0 ? "Faves:" + favCountPostLog2 + " " : "");
-    sb.append(retweetCountPostLog2 > 0 ? "Retweets:" + retweetCountPostLog2 + " " : "");
-    sb.append(replyCountPostLog2 > 0 ? "Replies:" + replyCountPostLog2 + " " : "");
-    sb.append(getEmbedsImpressionCount(false) > 0
-        ? "Embedded Imps:" + getEmbedsImpressionCount(false) + " " : "");
+    sb.append(ret etCountPostLog2 > 0 ? "Ret ets:" + ret etCountPostLog2 + " " : "");
+    sb.append(replyCountPostLog2 > 0 ? "Repl es:" + replyCountPostLog2 + " " : "");
+    sb.append(getEmbeds mpress onCount(false) > 0
+        ? "Embedded  mps:" + getEmbeds mpress onCount(false) + " " : "");
     sb.append(getEmbedsUrlCount(false) > 0
         ? "Embedded Urls:" + getEmbedsUrlCount(false) + " " : "");
-    sb.append(getVideoViewCount(false) > 0
-        ? "Video views:" + getVideoViewCount(false) + " " : "");
-    sb.append(weightedRetweetCount > 0 ? "Weighted Retweets:"
-        + ((int) weightedRetweetCount) + " " : "");
-    sb.append(weightedReplyCount > 0
-        ? "Weighted Replies:" + ((int) weightedReplyCount) + " " : "");
-    sb.append(weightedFavCount > 0
-        ? "Weighted Faves:" + ((int) weightedFavCount) + " " : "");
-    sb.append(weightedQuoteCount > 0
-        ? "Weighted Quotes:" + ((int) weightedQuoteCount) + " " : "");
-    return sb.toString();
+    sb.append(getV deoV ewCount(false) > 0
+        ? "V deo v ews:" + getV deoV ewCount(false) + " " : "");
+    sb.append(  ghtedRet etCount > 0 ? "  ghted Ret ets:"
+        + (( nt)   ghtedRet etCount) + " " : "");
+    sb.append(  ghtedReplyCount > 0
+        ? "  ghted Repl es:" + (( nt)   ghtedReplyCount) + " " : "");
+    sb.append(  ghtedFavCount > 0
+        ? "  ghted Faves:" + (( nt)   ghtedFavCount) + " " : "");
+    sb.append(  ghtedQuoteCount > 0
+        ? "  ghted Quotes:" + (( nt)   ghtedQuoteCount) + " " : "");
+    return sb.toStr ng();
   }
 
   /**
-   * Resets all data stored in this instance.
+   * Resets all data stored  n t   nstance.
    */
-  public void clear() {
-    luceneScore = UNSET_SIGNAL_VALUE;
-    textScore = UNSET_SIGNAL_VALUE;
-    tokenAt140DividedByNumTokensBucket = UNSET_SIGNAL_VALUE;
-    userRep = UNSET_SIGNAL_VALUE;
-    retweetCountPostLog2 = UNSET_SIGNAL_VALUE;
-    favCountPostLog2 = UNSET_SIGNAL_VALUE;
-    replyCountPostLog2 = UNSET_SIGNAL_VALUE;
-    parusScore = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureValues, 0);
-    embedsImpressionCount = UNSET_SIGNAL_VALUE;
-    embedsUrlCount = UNSET_SIGNAL_VALUE;
-    videoViewCount = UNSET_SIGNAL_VALUE;
-    // v2 engagement, these each have a v1 counterpart
-    retweetCountV2 = UNSET_SIGNAL_VALUE;
-    favCountV2 = UNSET_SIGNAL_VALUE;
-    replyCountV2 = UNSET_SIGNAL_VALUE;
-    embedsImpressionCountV2 = UNSET_SIGNAL_VALUE;
-    embedsUrlCountV2 = UNSET_SIGNAL_VALUE;
-    videoViewCountV2 = UNSET_SIGNAL_VALUE;
-    // new engagement counters, they only have one version with the v2 normalizer
-    quotedCount = UNSET_SIGNAL_VALUE;
-    weightedRetweetCount = UNSET_SIGNAL_VALUE;
-    weightedReplyCount = UNSET_SIGNAL_VALUE;
-    weightedFavCount = UNSET_SIGNAL_VALUE;
-    weightedQuoteCount = UNSET_SIGNAL_VALUE;
+  publ c vo d clear() {
+    luceneScore = UNSET_S GNAL_VALUE;
+    textScore = UNSET_S GNAL_VALUE;
+    tokenAt140D v dedByNumTokensBucket = UNSET_S GNAL_VALUE;
+    userRep = UNSET_S GNAL_VALUE;
+    ret etCountPostLog2 = UNSET_S GNAL_VALUE;
+    favCountPostLog2 = UNSET_S GNAL_VALUE;
+    replyCountPostLog2 = UNSET_S GNAL_VALUE;
+    parusScore = UNSET_S GNAL_VALUE;
+    Arrays.f ll(offl neExpFeatureValues, 0);
+    embeds mpress onCount = UNSET_S GNAL_VALUE;
+    embedsUrlCount = UNSET_S GNAL_VALUE;
+    v deoV ewCount = UNSET_S GNAL_VALUE;
+    // v2 engage nt, t se each have a v1 counterpart
+    ret etCountV2 = UNSET_S GNAL_VALUE;
+    favCountV2 = UNSET_S GNAL_VALUE;
+    replyCountV2 = UNSET_S GNAL_VALUE;
+    embeds mpress onCountV2 = UNSET_S GNAL_VALUE;
+    embedsUrlCountV2 = UNSET_S GNAL_VALUE;
+    v deoV ewCountV2 = UNSET_S GNAL_VALUE;
+    // new engage nt counters, t y only have one vers on w h t  v2 normal zer
+    quotedCount = UNSET_S GNAL_VALUE;
+      ghtedRet etCount = UNSET_S GNAL_VALUE;
+      ghtedReplyCount = UNSET_S GNAL_VALUE;
+      ghtedFavCount = UNSET_S GNAL_VALUE;
+      ghtedQuoteCount = UNSET_S GNAL_VALUE;
 
     hasUrl = false;
-    isReply = false;
-    isRetweet = false;
-    isOffensive = false;
+     sReply = false;
+     sRet et = false;
+     sOffens ve = false;
     hasTrend = false;
-    isFromVerifiedAccount = false;
-    isFromBlueVerifiedAccount = false;
-    isUserSpam = false;
-    isUserNSFW = false;
-    isUserBot = false;
-    isUserAntiSocial = false;
-    hasVisibleLink = false;
-    isNullcast = false;
+     sFromVer f edAccount = false;
+     sFromBlueVer f edAccount = false;
+     sUserSpam = false;
+     sUserNSFW = false;
+     sUserBot = false;
+     sUserAnt Soc al = false;
+    hasV s bleL nk = false;
+     sNullcast = false;
 
-    luceneContrib = UNSET_SIGNAL_VALUE;
-    reputationContrib = UNSET_SIGNAL_VALUE;
-    textScoreContrib = UNSET_SIGNAL_VALUE;
-    replyContrib = UNSET_SIGNAL_VALUE;
-    multipleReplyContrib = UNSET_SIGNAL_VALUE;
-    retweetContrib = UNSET_SIGNAL_VALUE;
-    favContrib = UNSET_SIGNAL_VALUE;
-    parusContrib = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureContributions, 0);
-    embedsImpressionContrib = UNSET_SIGNAL_VALUE;
-    embedsUrlContrib = UNSET_SIGNAL_VALUE;
-    videoViewContrib = UNSET_SIGNAL_VALUE;
-    hasUrlContrib = UNSET_SIGNAL_VALUE;
-    isReplyContrib = UNSET_SIGNAL_VALUE;
+    luceneContr b = UNSET_S GNAL_VALUE;
+    reputat onContr b = UNSET_S GNAL_VALUE;
+    textScoreContr b = UNSET_S GNAL_VALUE;
+    replyContr b = UNSET_S GNAL_VALUE;
+    mult pleReplyContr b = UNSET_S GNAL_VALUE;
+    ret etContr b = UNSET_S GNAL_VALUE;
+    favContr b = UNSET_S GNAL_VALUE;
+    parusContr b = UNSET_S GNAL_VALUE;
+    Arrays.f ll(offl neExpFeatureContr but ons, 0);
+    embeds mpress onContr b = UNSET_S GNAL_VALUE;
+    embedsUrlContr b = UNSET_S GNAL_VALUE;
+    v deoV ewContr b = UNSET_S GNAL_VALUE;
+    hasUrlContr b = UNSET_S GNAL_VALUE;
+     sReplyContr b = UNSET_S GNAL_VALUE;
 
-    querySpecificScore = UNSET_SIGNAL_VALUE;
-    authorSpecificScore = UNSET_SIGNAL_VALUE;
+    querySpec f cScore = UNSET_S GNAL_VALUE;
+    authorSpec f cScore = UNSET_S GNAL_VALUE;
 
-    normalizedLuceneScore = NO_BOOST_VALUE;
+    normal zedLuceneScore = NO_BOOST_VALUE;
 
-    tweetLangId = ThriftLanguage.UNKNOWN.getValue();
-    uiLangMult = NO_BOOST_VALUE;
+    t etLang d = Thr ftLanguage.UNKNOWN.getValue();
+    u LangMult = NO_BOOST_VALUE;
     userLangMult = NO_BOOST_VALUE;
-    hasDifferentLang = false;
-    hasEnglishTweetAndDifferentUILang = false;
-    hasEnglishUIAndDifferentTweetLang = false;
+    hasD fferentLang = false;
+    hasEngl shT etAndD fferentU Lang = false;
+    hasEngl shU AndD fferentT etLang = false;
 
-    tweetAgeInSeconds = 0;
+    t etAge nSeconds = 0;
     ageDecayMult = NO_BOOST_VALUE;
 
-    // Intermediate scores
-    scoreBeforeBoost = UNSET_SIGNAL_VALUE;
-    scoreAfterBoost = UNSET_SIGNAL_VALUE;
-    scoreFinal = UNSET_SIGNAL_VALUE;
-    scoreReturned = UNSET_SIGNAL_VALUE;
+    //  nter d ate scores
+    scoreBeforeBoost = UNSET_S GNAL_VALUE;
+    scoreAfterBoost = UNSET_S GNAL_VALUE;
+    scoreF nal = UNSET_S GNAL_VALUE;
+    scoreReturned = UNSET_S GNAL_VALUE;
 
-    skipReason = SkipReason.NOT_SKIPPED;
+    sk pReason = Sk pReason.NOT_SK PPED;
 
-    isTrusted = false;  // Set later
-    isFollow = false; // Set later
-    trustedCircleBoostApplied = false;
-    directFollowBoostApplied = false;
-    outOfNetworkReplyPenaltyApplied = false;
-    hasMultipleHashtagsOrTrends = false;
-    spamUserDampApplied = false;
-    nsfwUserDampApplied = false;
-    botUserDampApplied = false;
+     sTrusted = false;  // Set later
+     sFollow = false; // Set later
+    trustedC rcleBoostAppl ed = false;
+    d rectFollowBoostAppl ed = false;
+    outOfNetworkReplyPenaltyAppl ed = false;
+    hasMult pleHashtagsOrTrends = false;
+    spamUserDampAppl ed = false;
+    nsfwUserDampAppl ed = false;
+    botUserDampAppl ed = false;
 
-    tweetHasTrendsBoostApplied = false;
-    tweetFromVerifiedAccountBoostApplied = false;
-    tweetFromBlueVerifiedAccountBoostApplied = false;
+    t etHasTrendsBoostAppl ed = false;
+    t etFromVer f edAccountBoostAppl ed = false;
+    t etFromBlueVer f edAccountBoostAppl ed = false;
 
-    fromUserId = UNSET_SIGNAL_VALUE;
-    sharedStatusId = UNSET_SIGNAL_VALUE;
-    referenceAuthorId = UNSET_SIGNAL_VALUE;
+    fromUser d = UNSET_S GNAL_VALUE;
+    sharedStatus d = UNSET_S GNAL_VALUE;
+    referenceAuthor d = UNSET_S GNAL_VALUE;
 
-    isSelfTweet = false;
-    selfTweetBoostApplied = false;
-    selfTweetMult = NO_BOOST_VALUE;
+     sSelfT et = false;
+    selfT etBoostAppl ed = false;
+    selfT etMult = NO_BOOST_VALUE;
 
-    trustedCircleBoostApplied = false;
-    directFollowBoostApplied = false;
+    trustedC rcleBoostAppl ed = false;
+    d rectFollowBoostAppl ed = false;
 
-    hasImageUrl = false;
-    hasVideoUrl = false;
-    hasMedialUrlBoostApplied = false;
+    has mageUrl = false;
+    hasV deoUrl = false;
+    has d alUrlBoostAppl ed = false;
     hasNewsUrl = false;
-    hasNewsUrlBoostApplied = false;
+    hasNewsUrlBoostAppl ed = false;
 
     hasCard = false;
     cardType = SearchCardType.UNKNOWN.getByteValue();
-    hasCardBoostApplied = false;
-    cardDomainMatchBoostApplied = false;
-    cardAuthorMatchBoostApplied = false;
-    cardTitleMatchBoostApplied = false;
-    cardDescriptionMatchBoostApplied = false;
+    hasCardBoostAppl ed = false;
+    cardDoma nMatchBoostAppl ed = false;
+    cardAuthorMatchBoostAppl ed = false;
+    cardT leMatchBoostAppl ed = false;
+    cardDescr pt onMatchBoostAppl ed = false;
 
-    hitFields.clear();
-    hasNoTextHitDemotionApplied = false;
-    hasUrlOnlyHitDemotionApplied = false;
-    hasNameOnlyHitDemotionApplied = false;
-    hasSeparateTextAndNameHitDemotionApplied = false;
-    hasSeparateTextAndUrlHitDemotionApplied = false;
+    h F elds.clear();
+    hasNoTextH Demot onAppl ed = false;
+    hasUrlOnlyH Demot onAppl ed = false;
+    hasNa OnlyH Demot onAppl ed = false;
+    hasSeparateTextAndNa H Demot onAppl ed = false;
+    hasSeparateTextAndUrlH Demot onAppl ed = false;
 
-    hasConsumerVideo = false;
-    hasProVideo = false;
-    hasVine = false;
-    hasPeriscope = false;
-    hasNativeImage = false;
+    hasConsu rV deo = false;
+    hasProV deo = false;
+    hasV ne = false;
+    hasPer scope = false;
+    hasNat ve mage = false;
 
-    isSensitiveContent = false;
-    hasMultipleMediaFlag = false;
-    profileIsEggFlag = false;
-    numMentions = 0;
+     sSens  veContent = false;
+    hasMult ple d aFlag = false;
+    prof le sEggFlag = false;
+    num nt ons = 0;
     numHashtags = 0;
-    isUserNewFlag = false;
-    linkLanguage = 0;
-    prevUserTweetEngagement = 0;
+     sUserNewFlag = false;
+    l nkLanguage = 0;
+    prevUserT etEngage nt = 0;
 
-    isComposerSourceCamera = false;
+     sComposerS ceCa ra = false;
 
-    // health model scores by HML
-    toxicityScore = UNSET_SIGNAL_VALUE;
-    pBlockScore = UNSET_SIGNAL_VALUE;
-    pSpammyTweetScore = UNSET_SIGNAL_VALUE;
-    pReportedTweetScore = UNSET_SIGNAL_VALUE;
-    spammyTweetContentScore = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore1 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore2 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore3 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore4 = UNSET_SIGNAL_VALUE;
+    //  alth model scores by HML
+    tox c yScore = UNSET_S GNAL_VALUE;
+    pBlockScore = UNSET_S GNAL_VALUE;
+    pSpam T etScore = UNSET_S GNAL_VALUE;
+    pReportedT etScore = UNSET_S GNAL_VALUE;
+    spam T etContentScore = UNSET_S GNAL_VALUE;
+    exper  ntal althModelScore1 = UNSET_S GNAL_VALUE;
+    exper  ntal althModelScore2 = UNSET_S GNAL_VALUE;
+    exper  ntal althModelScore3 = UNSET_S GNAL_VALUE;
+    exper  ntal althModelScore4 = UNSET_S GNAL_VALUE;
   }
 }

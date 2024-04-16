@@ -1,562 +1,562 @@
-""" This file contains tf.train.SessionRunHooks defined by TWML """
-from datetime import datetime
-import json
-import operator
-import os
+""" T  f le conta ns tf.tra n.Sess onRunHooks def ned by TWML """
+from datet    mport datet  
+ mport json
+ mport operator
+ mport os
 
-from absl import logging
-import numpy as np
-import tensorflow.compat.v1 as tf
-from tensorflow.python.training.basic_session_run_hooks import NeverTriggerTimer, SecondOrStepTimer
-import twml
+from absl  mport logg ng
+ mport numpy as np
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.tra n ng.bas c_sess on_run_hooks  mport NeverTr ggerT  r, SecondOrStepT  r
+ mport twml
 
 
-class StepProgressHook(tf.train.SessionRunHook):
-  """Hook that displays a progress bar to monitor global step progress """
+class StepProgressHook(tf.tra n.Sess onRunHook):
+  """Hook that d splays a progress bar to mon or global step progress """
 
-  def __init__(self, max_step):
+  def __ n __(self, max_step):
     """
-    Initializes a `StepProgressHook`.
-    This hook displays a progress bar for max_steps.
+     n  al zes a `StepProgressHook`.
+    T  hook d splays a progress bar for max_steps.
 
-    Note that this hook only works for training and calibration.
+    Note that t  hook only works for tra n ng and cal brat on.
 
     Args:
       max_steps:
-        maximum steps to monitor in progress bar.
-        When this many steps is reached, the progress bar will be full.
+        max mum steps to mon or  n progress bar.
+        W n t  many steps  s reac d, t  progress bar w ll be full.
     """
     self._max_step = max_step
     self._start_step = 0
     self._global_step_tensor = None
     self._progress_bar = None
 
-  def begin(self):
-    """ sets the global_step_tensor """
-    self._global_step_tensor = tf.train.get_or_create_global_step()
-    if self._global_step_tensor is None:
-      raise RuntimeError("Global step should be created to use StepProgressHook.")
+  def beg n(self):
+    """ sets t  global_step_tensor """
+    self._global_step_tensor = tf.tra n.get_or_create_global_step()
+     f self._global_step_tensor  s None:
+      ra se Runt  Error("Global step should be created to use StepProgressHook.")
 
-  def after_create_session(self, session, coord):
-    """ creates the progress bar and keeps track of the first global step upon session creation """
-    global_step = session.run(self._global_step_tensor)
+  def after_create_sess on(self, sess on, coord):
+    """ creates t  progress bar and keeps track of t  f rst global step upon sess on creat on """
+    global_step = sess on.run(self._global_step_tensor)
     self._start_step = global_step
-    self._progress_bar = tf.keras.utils.Progbar(self._max_step)
+    self._progress_bar = tf.keras.ut ls.Progbar(self._max_step)
 
-  def before_run(self, run_context):  # pylint: disable=unused-argument
-    """ invoked before calling session.run """
-    return tf.train.SessionRunArgs(self._global_step_tensor)
+  def before_run(self, run_context):  # pyl nt: d sable=unused-argu nt
+    """  nvoked before call ng sess on.run """
+    return tf.tra n.Sess onRunArgs(self._global_step_tensor)
 
   def after_run(self, run_context, run_values):
-    """ invoked after run is called. Updates the progress bar. """
-    step = run_context.session.run(self._global_step_tensor)
+    """  nvoked after run  s called. Updates t  progress bar. """
+    step = run_context.sess on.run(self._global_step_tensor)
     self._progress_bar.update(step - self._start_step)
 
 
-class GetMetricsHook(tf.train.SessionRunHook):
+class Get tr csHook(tf.tra n.Sess onRunHook):
   """
-  Hook used to obtain evaluation metrics.
-  Typically used for early-stopping by obtaining the value of a
-  metric at the end of an epoch.
-  Note that the metric tensor and its commensurate update Op
-  are responsible for aggregating the metric during the session
-  (one session per epoch). Used for evaluation.
+  Hook used to obta n evaluat on  tr cs.
+  Typ cally used for early-stopp ng by obta n ng t  value of a
+   tr c at t  end of an epoch.
+  Note that t   tr c tensor and  s com nsurate update Op
+  are respons ble for aggregat ng t   tr c dur ng t  sess on
+  (one sess on per epoch). Used for evaluat on.
   """
 
-  def __init__(self, get_metrics_fn):
-    """GetMetricsHook constructor.
+  def __ n __(self, get_ tr cs_fn):
+    """Get tr csHook constructor.
 
     Args:
-      get_metrics_fn:
-        Function that returns a dict mapping metric keys to
+      get_ tr cs_fn:
+        Funct on that returns a d ct mapp ng  tr c keys to
         tensors as a tf.Tensor.
-        See Trainer.learn for an example use-case.
+        See Tra ner.learn for an example use-case.
     """
 
-    self._get_metrics_fn = get_metrics_fn
-    self._metric_tensors = None
-    self.metric_values = None
+    self._get_ tr cs_fn = get_ tr cs_fn
+    self._ tr c_tensors = None
+    self. tr c_values = None
 
-  def begin(self):
-    """ sets the global_step_tensor and metric tensor"""
-    self._metric_tensors = self._get_metrics_fn()
-    assert isinstance(self._metric_tensors, dict)
+  def beg n(self):
+    """ sets t  global_step_tensor and  tr c tensor"""
+    self._ tr c_tensors = self._get_ tr cs_fn()
+    assert  s nstance(self._ tr c_tensors, d ct)
 
-  def end(self, session):
-    self.metric_values = session.run(self._metric_tensors)
+  def end(self, sess on):
+    self. tr c_values = sess on.run(self._ tr c_tensors)
 
 
-class EarlyStopHook(GetMetricsHook):
+class EarlyStopHook(Get tr csHook):
   """
-  A GetMetricsHook augmented with early-stopping logic for use
-  within the Trainer.learn method.
+  A Get tr csHook aug nted w h early-stopp ng log c for use
+  w h n t  Tra ner.learn  thod.
   """
 
-  def __init__(self,
-               metric,
-               patience,
-               minimize,
-               get_estimator_spec_fn,
-               checkpoint_dir,
-               file_path=None,
-               exit_on_end=True,
+  def __ n __(self,
+                tr c,
+               pat ence,
+               m n m ze,
+               get_est mator_spec_fn,
+               c ckpo nt_d r,
+               f le_path=None,
+               ex _on_end=True,
                start_epoch=0,
                tolerance=0):
     """
-    Prepare early-stopping hook and variables.
+    Prepare early-stopp ng hook and var ables.
 
     Args:
-      metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-      minimize:
-        Set this to True for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
+       tr c:
+        Str ng spec fy ng t   tr c to early-stop on. Requ red w h pos  ve
+        ``early_stop_pat ence``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
+        T  str ng  s used to extract t  relevant tensor Op from t  d ct returned by
+        t  get_eval_ tr c_ops  thod. For `` tr cs`` pass to t  constructor,
+        t  str ng  s one of those. For mult -class (that  s, mult - tr c)
+         tr cs, t  str ng may be appended w h a ``_0``, ``_1``, etc. or one
+        of t  ``mult _ tr c_na s`` (one per class).
+      pat ence:
+        Max mum number of epochs to wa  for an  mprove nt  n t  early_stop_ tr c
+        before break ng off tra n ng. For example, a pat ence of 10  ans that
+        tra n ng w ll have 10 epochs to  mprove t   tr c before    s k lled.
+        W never t   tr c  s  mproved before runn ng out of pat ence,
+        pat ence  s reset to ``early_stop_pat ence``.
+      m n m ze:
+        Set t  to True for  tr cs that need to be m n m zed
+        (l ke ``loss``).  tr cs l ke ``accuracy`` that need to be max m zed
+        should set t  to False.
       tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        e.g. when maximizing the condition is current_metric > best_metric + tolerance."
+        A non-negat ve tolerance for compar ng early_stop_ tr c.
+        e.g. w n max m z ng t  cond  on  s current_ tr c > best_ tr c + tolerance."
         Defaults to 0.
-      get_estimator_spec_fn:
-        function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
-      checkpoint_dir:
-        path to directory containing the Estimator checkpoints.
-      file_path:
-        path to file that is used by this hook to communicate early-stopping
-        to StopIfExistsHook. This hook would be used for evaluation, while
-        the StopIfExistsHooks (the listeners) would be used for training.
-        When the file is created, the StopIfExistsHooks detect and terminate training.
-        This argument is used by ``Trainer.train_and_evaluate``.
-      exit_on_end:
-        when the end() method is called to indicate that the session is terminating,
-        and exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the evaluation job.
-        This is set to False by the trainer for non distributed jobs.
+      get_est mator_spec_fn:
+        funct on that returns t  current Est matorSpec.
+        T  Est matorSpec  s used to obta n t  current eval_ tr c_ops.
+      c ckpo nt_d r:
+        path to d rectory conta n ng t  Est mator c ckpo nts.
+      f le_path:
+        path to f le that  s used by t  hook to commun cate early-stopp ng
+        to Stop fEx stsHook. T  hook would be used for evaluat on, wh le
+        t  Stop fEx stsHooks (t  l steners) would be used for tra n ng.
+        W n t  f le  s created, t  Stop fEx stsHooks detect and term nate tra n ng.
+        T  argu nt  s used by ``Tra ner.tra n_and_evaluate``.
+      ex _on_end:
+        w n t  end()  thod  s called to  nd cate that t  sess on  s term nat ng,
+        and ex _on_end  s True, twml.errors.EarlyStopError()  s tr ggered to stop t  evaluat on job.
+        T   s set to False by t  tra ner for non d str buted jobs.
       start_epoch:
-        Specifies the starting epoch number. This is used for logging purposes only.
+        Spec f es t  start ng epoch number. T   s used for logg ng purposes only.
     """
-    if not isinstance(metric, str):
-      raise ValueError("Expecting string for metric arg")
-    if not isinstance(patience, int):
-      raise ValueError("Expecting positive number for metric arg")
+     f not  s nstance( tr c, str):
+      ra se ValueError("Expect ng str ng for  tr c arg")
+     f not  s nstance(pat ence,  nt):
+      ra se ValueError("Expect ng pos  ve number for  tr c arg")
 
     self.should_stop = False
-    self._metric = metric
-    self._patience = patience
-    self._current_patience = patience
-    self._checkpoint_dir = checkpoint_dir
-    self._exit_on_end = exit_on_end
-    self._latest_checkpoint_path = None
-    # used for distributed training (tf.estimator.train_and_evaluate)
-    self._file_path = file_path
+    self._ tr c =  tr c
+    self._pat ence = pat ence
+    self._current_pat ence = pat ence
+    self._c ckpo nt_d r = c ckpo nt_d r
+    self._ex _on_end = ex _on_end
+    self._latest_c ckpo nt_path = None
+    # used for d str buted tra n ng (tf.est mator.tra n_and_evaluate)
+    self._f le_path = f le_path
     self._epoch = start_epoch
-    if self._file_path is not None:
-      # TODO try to read epoch from a file that we create
-      if tf.io.gfile.exists(self._file_path):
-        # delete the file if it exists (not sure this makes sense)
-        logging.info("EarlyStopHook: Removing existing file: %s.", self._file_path)
-        tf.io.gfile.remove(self._file_path)
+     f self._f le_path  s not None:
+      # TODO try to read epoch from a f le that   create
+       f tf. o.gf le.ex sts(self._f le_path):
+        # delete t  f le  f   ex sts (not sure t  makes sense)
+        logg ng. nfo("EarlyStopHook: Remov ng ex st ng f le: %s.", self._f le_path)
+        tf. o.gf le.remove(self._f le_path)
 
-    # best_checkpoint dir will contain the best checkpoint
-    self._best_checkpoint_path = os.path.join(checkpoint_dir, 'best_checkpoint')
-    self._eval_checkpoint_path = os.path.join(checkpoint_dir, 'eval_checkpoint')
-    self._best_metric_path = os.path.join(self._best_checkpoint_path, self._metric)
+    # best_c ckpo nt d r w ll conta n t  best c ckpo nt
+    self._best_c ckpo nt_path = os.path.jo n(c ckpo nt_d r, 'best_c ckpo nt')
+    self._eval_c ckpo nt_path = os.path.jo n(c ckpo nt_d r, 'eval_c ckpo nt')
+    self._best_ tr c_path = os.path.jo n(self._best_c ckpo nt_path, self._ tr c)
 
-    if tf.io.gfile.exists(self._best_metric_path):
-      with tf.io.gfile.GFile(self._best_metric_path, mode="r") as f:
-        best_metric_from_file = float(f.read())
+     f tf. o.gf le.ex sts(self._best_ tr c_path):
+      w h tf. o.gf le.GF le(self._best_ tr c_path, mode="r") as f:
+        best_ tr c_from_f le = float(f.read())
     else:
-      best_metric_from_file = None
+      best_ tr c_from_f le = None
 
-    if minimize:
-      # current < best : is better
-      self._is_better_than = operator.lt
-      # worse metric possible
-      if best_metric_from_file is None:
-        self._best_metric = np.inf
+     f m n m ze:
+      # current < best :  s better
+      self._ s_better_than = operator.lt
+      # worse  tr c poss ble
+       f best_ tr c_from_f le  s None:
+        self._best_ tr c = np. nf
       else:
-        self._best_metric = best_metric_from_file - tolerance
-      # used for printing
-      self._early_stop_name = "minimum"
+        self._best_ tr c = best_ tr c_from_f le - tolerance
+      # used for pr nt ng
+      self._early_stop_na  = "m n mum"
     else:
-      # current > best : is better
-      self._is_better_than = operator.gt
-      # worse metric possible
-      if best_metric_from_file is None:
-        self._best_metric = -np.inf
+      # current > best :  s better
+      self._ s_better_than = operator.gt
+      # worse  tr c poss ble
+       f best_ tr c_from_f le  s None:
+        self._best_ tr c = -np. nf
       else:
-        self._best_metric = best_metric_from_file + tolerance
-      # used for printing
-      self._early_stop_name = "maximum"
+        self._best_ tr c = best_ tr c_from_f le + tolerance
+      # used for pr nt ng
+      self._early_stop_na  = "max mum"
 
-    def get_metrics_fn():
-      """ function to get metric tensors to early-stopping """
-      estimator_spec = get_estimator_spec_fn()
-      eval_metric_ops = estimator_spec.eval_metric_ops
-      if metric not in eval_metric_ops:
-        raise ValueError(
-          "Expecting early_stop_metric '%s' key in eval_metric_ops dict"
-          % (metric))
-      # get the value_op from the (value_op, update_op) value
-      return {k: v[0] for k, v in eval_metric_ops.items()}
+    def get_ tr cs_fn():
+      """ funct on to get  tr c tensors to early-stopp ng """
+      est mator_spec = get_est mator_spec_fn()
+      eval_ tr c_ops = est mator_spec.eval_ tr c_ops
+       f  tr c not  n eval_ tr c_ops:
+        ra se ValueError(
+          "Expect ng early_stop_ tr c '%s' key  n eval_ tr c_ops d ct"
+          % ( tr c))
+      # get t  value_op from t  (value_op, update_op) value
+      return {k: v[0] for k, v  n eval_ tr c_ops. ems()}
 
-    # initialize GetMetricsHook to get current value of metric from session
-    super(EarlyStopHook, self).__init__(get_metrics_fn=get_metrics_fn)
+    #  n  al ze Get tr csHook to get current value of  tr c from sess on
+    super(EarlyStopHook, self).__ n __(get_ tr cs_fn=get_ tr cs_fn)
 
   def early_stop(self, epoch):
     """
-    Looks at the current value of the early stopping metric.
-    Decrements current patience. If metric improves, patience is reset
-    and latest checkpoint is moved to checkpoint_dir/best_checkpoint.
-    If current patience reaches zero, returns True.
+    Looks at t  current value of t  early stopp ng  tr c.
+    Decre nts current pat ence.  f  tr c  mproves, pat ence  s reset
+    and latest c ckpo nt  s moved to c ckpo nt_d r/best_c ckpo nt.
+     f current pat ence reac s zero, returns True.
 
     Args:
       epoch:
-        The current epoch number.
+        T  current epoch number.
 
     Returns:
-      True when early-stopped. False otherwise.
+      True w n early-stopped. False ot rw se.
     """
-    # decrement patience
-    self._current_patience -= 1
+    # decre nt pat ence
+    self._current_pat ence -= 1
 
-    # get the current metric value
-    current_metric = self.metric_values[self._metric]
+    # get t  current  tr c value
+    current_ tr c = self. tr c_values[self._ tr c]
 
-    if self._is_better_than(current_metric, self._best_metric):
-      # save best version of model
-      self._best_metric = current_metric
-      logging.info(
+     f self._ s_better_than(current_ tr c, self._best_ tr c):
+      # save best vers on of model
+      self._best_ tr c = current_ tr c
+      logg ng. nfo(
         "Found new %s %s=%f @ epoch %d",
-        self._early_stop_name, self._metric, self._best_metric, epoch)
-      # backup the file to checkpoint_dir/best_checkpoint
-      assert self._latest_checkpoint_path, "expecting latest checkpoint"
-      logging.info("Backing up " + self._latest_checkpoint_path)
+        self._early_stop_na , self._ tr c, self._best_ tr c, epoch)
+      # backup t  f le to c ckpo nt_d r/best_c ckpo nt
+      assert self._latest_c ckpo nt_path, "expect ng latest c ckpo nt"
+      logg ng. nfo("Back ng up " + self._latest_c ckpo nt_path)
 
       try:
-        eval_checkpoint = tf.train.latest_checkpoint(self._eval_checkpoint_path)
-        twml.util.backup_checkpoint(
-          checkpoint_path_prefix=eval_checkpoint,
-          backup_path=self._best_checkpoint_path)
-      except twml.errors.CheckpointNotFoundError as ex:
-        msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-        raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+        eval_c ckpo nt = tf.tra n.latest_c ckpo nt(self._eval_c ckpo nt_path)
+        twml.ut l.backup_c ckpo nt(
+          c ckpo nt_path_pref x=eval_c ckpo nt,
+          backup_path=self._best_c ckpo nt_path)
+      except twml.errors.C ckpo ntNotFoundError as ex:
+        msg = "Cons der  ncreas ng 'keep_c ckpo nt_max' or 'save_c ckpo nt_secs'"
+        ra se twml.errors.C ckpo ntNotFoundError(str(ex) + "\n" + msg)
 
-      tf.io.gfile.makedirs(os.path.dirname(self._best_metric_path))
-      with tf.io.gfile.GFile(self._best_metric_path, mode="w") as f:
-        # Write with enough precision
-        f.write("%.8f" % self._best_metric)
+      tf. o.gf le.maked rs(os.path.d rna (self._best_ tr c_path))
+      w h tf. o.gf le.GF le(self._best_ tr c_path, mode="w") as f:
+        # Wr e w h enough prec s on
+        f.wr e("%.8f" % self._best_ tr c)
 
-      # reset patience
-      self._current_patience = self._patience
+      # reset pat ence
+      self._current_pat ence = self._pat ence
 
-    elif self._current_patience > 0:
-      logging.info("No new %s found after %d epochs",
-                   self._early_stop_name, self._patience - self._current_patience)
-    elif self._current_patience == 0:
-      logging.info(
-        "No new %s found after %d epochs. Early-stopping experiment.",
-        self._early_stop_name, self._patience)
+    el f self._current_pat ence > 0:
+      logg ng. nfo("No new %s found after %d epochs",
+                   self._early_stop_na , self._pat ence - self._current_pat ence)
+    el f self._current_pat ence == 0:
+      logg ng. nfo(
+        "No new %s found after %d epochs. Early-stopp ng exper  nt.",
+        self._early_stop_na , self._pat ence)
       return True
 
     return False
 
-  def cleanup_checkpoints(self):
+  def cleanup_c ckpo nts(self):
     """
-    makes it so that the best checkpoint is the only checkpoint
-    in checkpoint_dir.
+    makes   so that t  best c ckpo nt  s t  only c ckpo nt
+     n c ckpo nt_d r.
     """
-    raise NotImplementedError("cleanup_checkpoints is no longer supported")
+    ra se Not mple ntedError("cleanup_c ckpo nts  s no longer supported")
 
-  def end(self, session):
+  def end(self, sess on):
     """
-    This method is called at the end of an evaluation/epoch.
-    When file_path constructor argument is provided, this
-    will call ``early_stop()``.
-    When ``early_stop()`` returns True, it creates the file_path,
-    which will be detected by StopIfExistsHooks
-    and stop training for all workers and the chief. It will
-    also call ``cleanup_checkpoints()``.
+    T   thod  s called at t  end of an evaluat on/epoch.
+    W n f le_path constructor argu nt  s prov ded, t 
+    w ll call ``early_stop()``.
+    W n ``early_stop()`` returns True,   creates t  f le_path,
+    wh ch w ll be detected by Stop fEx stsHooks
+    and stop tra n ng for all workers and t  ch ef.   w ll
+    also call ``cleanup_c ckpo nts()``.
     """
-    super(EarlyStopHook, self).end(session)
+    super(EarlyStopHook, self).end(sess on)
 
-    # Checks for early stopping criteria and makes a backup
+    # C cks for early stopp ng cr er a and makes a backup
     self.should_stop = self.early_stop(self._epoch)
 
-    if self._file_path is not None:
-      if self.should_stop:
-        # create a file to inform workers
-        with tf.io.gfile.GFile(self._file_path, "wb") as gfile:
-          gfile.write("early-stop\n")
-        # makes the best checkpoint the only checkpoint in save_dir.
-        msg = "early-stopping evaluation at epoch %d" % self._epoch
-        logging.info(msg)
-        if self._exit_on_end:
-          raise twml.errors.EarlyStopError(msg)
+     f self._f le_path  s not None:
+       f self.should_stop:
+        # create a f le to  nform workers
+        w h tf. o.gf le.GF le(self._f le_path, "wb") as gf le:
+          gf le.wr e("early-stop\n")
+        # makes t  best c ckpo nt t  only c ckpo nt  n save_d r.
+        msg = "early-stopp ng evaluat on at epoch %d" % self._epoch
+        logg ng. nfo(msg)
+         f self._ex _on_end:
+          ra se twml.errors.EarlyStopError(msg)
       else:
-        self._latest_checkpoint_path = None
+        self._latest_c ckpo nt_path = None
 
     self._epoch += 1
 
-  def begin(self):
+  def beg n(self):
     """
-    Saves the latest_checkpoint in case it gets superseded by another checkpoint.
-    Remember that when used with train_and_evaluate, the chief saves checkpoints
-    continuouly. The chief could save a checkpoint after evaluation started.
-    So saving the checkpoint at the beginning of evaluation ensures that we
-    later save the correct best checkpoint.
+    Saves t  latest_c ckpo nt  n case   gets superseded by anot r c ckpo nt.
+    Re mber that w n used w h tra n_and_evaluate, t  ch ef saves c ckpo nts
+    cont nuouly. T  ch ef could save a c ckpo nt after evaluat on started.
+    So sav ng t  c ckpo nt at t  beg nn ng of evaluat on ensures that  
+    later save t  correct best c ckpo nt.
     """
-    super(EarlyStopHook, self).begin()
-    self._latest_checkpoint_path = tf.train.latest_checkpoint(self._checkpoint_dir)
+    super(EarlyStopHook, self).beg n()
+    self._latest_c ckpo nt_path = tf.tra n.latest_c ckpo nt(self._c ckpo nt_d r)
 
-    assert self._latest_checkpoint_path, "expecting latest checkpoint"
-    # Backup to temporary directory
+    assert self._latest_c ckpo nt_path, "expect ng latest c ckpo nt"
+    # Backup to temporary d rectory
     try:
-      twml.util.backup_checkpoint(
-        checkpoint_path_prefix=self._latest_checkpoint_path,
-        backup_path=self._eval_checkpoint_path)
-    except twml.errors.CheckpointNotFoundError as ex:
-      msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-      raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+      twml.ut l.backup_c ckpo nt(
+        c ckpo nt_path_pref x=self._latest_c ckpo nt_path,
+        backup_path=self._eval_c ckpo nt_path)
+    except twml.errors.C ckpo ntNotFoundError as ex:
+      msg = "Cons der  ncreas ng 'keep_c ckpo nt_max' or 'save_c ckpo nt_secs'"
+      ra se twml.errors.C ckpo ntNotFoundError(str(ex) + "\n" + msg)
 
 
-class MetricsUpdateHook(GetMetricsHook):
+class  tr csUpdateHook(Get tr csHook):
   """
-  A GetMetricsHook augmented with logic to map SessionRun events to metrics updates.
-  It is mainly used by `TrackRun` to persist model metrics via Model Repo.
+  A Get tr csHook aug nted w h log c to map Sess onRun events to  tr cs updates.
+     s ma nly used by `TrackRun` to pers st model  tr cs v a Model Repo.
   """
 
-  def __init__(self,
-               get_estimator_spec_fn,
-               add_metrics_fn,
-               every_n_iter=None,
+  def __ n __(self,
+               get_est mator_spec_fn,
+               add_ tr cs_fn,
+               every_n_ er=None,
                every_n_secs=None
                ):
     """
     Args:
-      get_estimator_spec_fn:
-        function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
-      add_metrics_fn: `function` callback used to report metrics, called automatically
-        at the end of every epoch.
-      every_n_iter: `int`, log the metrics once every N local
-        steps taken in the current epoch.
-      every_n_secs: `int` or `float`, log the metrics once every N
-        seconds passed in the current epoch. Exactly one of `every_n_iter` and `every_n_secs`
-        should be provided.
-    Raises:
-      ValueError: if `every_n_iter` is non-positive or if not exactly one of `every_n_iter` and
-        `every_n_secs` is set when `add_progress_metrics_fn` is provided.
+      get_est mator_spec_fn:
+        funct on that returns t  current Est matorSpec.
+        T  Est matorSpec  s used to obta n t  current eval_ tr c_ops.
+      add_ tr cs_fn: `funct on` callback used to report  tr cs, called automat cally
+        at t  end of every epoch.
+      every_n_ er: ` nt`, log t   tr cs once every N local
+        steps taken  n t  current epoch.
+      every_n_secs: ` nt` or `float`, log t   tr cs once every N
+        seconds passed  n t  current epoch. Exactly one of `every_n_ er` and `every_n_secs`
+        should be prov ded.
+    Ra ses:
+      ValueError:  f `every_n_ er`  s non-pos  ve or  f not exactly one of `every_n_ er` and
+        `every_n_secs`  s set w n `add_progress_ tr cs_fn`  s prov ded.
     """
-    only_log_at_end = (every_n_iter is None) and (every_n_secs is None)
+    only_log_at_end = (every_n_ er  s None) and (every_n_secs  s None)
 
-    if (not only_log_at_end and every_n_iter and every_n_secs):
-      raise ValueError(
-        'exactly one of every_n_iter and every_n_secs must be provided'
+     f (not only_log_at_end and every_n_ er and every_n_secs):
+      ra se ValueError(
+        'exactly one of every_n_ er and every_n_secs must be prov ded'
       )
 
-    # TODO: should have a minimum to avoid too many calls to ModelRepo?
-    if every_n_iter is not None and every_n_iter <= 0:
-      raise ValueError("invalid every_n_iter=%s." % every_n_iter)
+    # TODO: should have a m n mum to avo d too many calls to ModelRepo?
+     f every_n_ er  s not None and every_n_ er <= 0:
+      ra se ValueError(" nval d every_n_ er=%s." % every_n_ er)
 
-    self._timer = (
-      NeverTriggerTimer() if only_log_at_end else
-      SecondOrStepTimer(every_secs=every_n_secs, every_steps=every_n_iter)
+    self._t  r = (
+      NeverTr ggerT  r()  f only_log_at_end else
+      SecondOrStepT  r(every_secs=every_n_secs, every_steps=every_n_ er)
     )
 
-    self._should_trigger = False
-    self._iter_count = 0
+    self._should_tr gger = False
+    self._ er_count = 0
 
-    self._add_metrics_fn = add_metrics_fn
+    self._add_ tr cs_fn = add_ tr cs_fn
 
-    def get_metrics_fn():
+    def get_ tr cs_fn():
       """
-      Function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
+      Funct on that returns t  current Est matorSpec.
+        T  Est matorSpec  s used to obta n t  current eval_ tr c_ops.
       """
-      estimator_spec = get_estimator_spec_fn()
-      eval_metric_ops = estimator_spec.eval_metric_ops
-      # get the value_op from the (value_op, update_op) value
-      return {k: v[0] for k, v in eval_metric_ops.items()}
-    super(MetricsUpdateHook, self).__init__(get_metrics_fn=get_metrics_fn)
+      est mator_spec = get_est mator_spec_fn()
+      eval_ tr c_ops = est mator_spec.eval_ tr c_ops
+      # get t  value_op from t  (value_op, update_op) value
+      return {k: v[0] for k, v  n eval_ tr c_ops. ems()}
+    super( tr csUpdateHook, self).__ n __(get_ tr cs_fn=get_ tr cs_fn)
 
-  def report_metrics(self):
+  def report_ tr cs(self):
     """
-    Triggers a metrics report.
+    Tr ggers a  tr cs report.
     """
-    self._timer.update_last_triggered_step(self._iter_count)
-    if self.metric_values is not None:
-      self._add_metrics_fn(self.metric_values)
+    self._t  r.update_last_tr ggered_step(self._ er_count)
+     f self. tr c_values  s not None:
+      self._add_ tr cs_fn(self. tr c_values)
 
-  def begin(self):
+  def beg n(self):
     """
-    Triggered before each epoch.
+    Tr ggered before each epoch.
     """
-    self._timer.reset()
-    self._iter_count = 0
-    return super(MetricsUpdateHook, self).begin()
+    self._t  r.reset()
+    self._ er_count = 0
+    return super( tr csUpdateHook, self).beg n()
 
   def before_run(self, run_context):
     """
-    Triggered before each step.
+    Tr ggered before each step.
     """
-    self._should_trigger = self._timer.should_trigger_for_step(self._iter_count)
-    return super(MetricsUpdateHook, self).before_run(run_context)
+    self._should_tr gger = self._t  r.should_tr gger_for_step(self._ er_count)
+    return super( tr csUpdateHook, self).before_run(run_context)
 
   def after_run(self, run_context, run_values):
     """
-    Triggered after each step.
+    Tr ggered after each step.
     """
-    if self._should_trigger:
-      self.report_metrics()
-    self._iter_count += 1
-    return super(MetricsUpdateHook, self).after_run(run_context, run_values)
+     f self._should_tr gger:
+      self.report_ tr cs()
+    self._ er_count += 1
+    return super( tr csUpdateHook, self).after_run(run_context, run_values)
 
-  def end(self, session):
+  def end(self, sess on):
     """
-    Triggered after each epoch.
+    Tr ggered after each epoch.
     """
-    self.report_metrics()
-    return super(MetricsUpdateHook, self).end(session)
+    self.report_ tr cs()
+    return super( tr csUpdateHook, self).end(sess on)
 
 
-class EarlyStopDuration(tf.train.SessionRunHook):
+class EarlyStopDurat on(tf.tra n.Sess onRunHook):
   """
-  Hook that can be used to terminate a job (training or validation) after a certain duration.
-  The hook is fault tolerant, i.e., if a job is allotted 1 hour to run and fails after 45 minutes,
-  then it will only run for 15 minutes once restarted.
+  Hook that can be used to term nate a job (tra n ng or val dat on) after a certa n durat on.
+  T  hook  s fault tolerant,  .e.,  f a job  s allotted 1 h  to run and fa ls after 45 m nutes,
+  t n   w ll only run for 15 m nutes once restarted.
 
   Args:
-    max_duration: 
-      A float. When this argument is defined, the job will automatically terminate after
-      `max_duration` seconds if it has not already compeleted. 
+    max_durat on: 
+      A float. W n t  argu nt  s def ned, t  job w ll automat cally term nate after
+      `max_durat on` seconds  f   has not already compeleted. 
     
-    overwrite:
-      A boolean. If set to True, this hook will overwrite the file containing the elapsed time
-      since the beginning of the job. In a distributed setting, this will be used so only one 
-      job writes to the file while all others will have read access. In a distributed setting,
-      if all executors have this parameter set to False, then it just means that the hook will 
-      not be fault tolerant. When restarted, the job will restart the clock from 0.
+    overwr e:
+      A boolean.  f set to True, t  hook w ll overwr e t  f le conta n ng t  elapsed t  
+      s nce t  beg nn ng of t  job.  n a d str buted sett ng, t  w ll be used so only one 
+      job wr es to t  f le wh le all ot rs w ll have read access.  n a d str buted sett ng,
+       f all executors have t  para ter set to False, t n   just  ans that t  hook w ll 
+      not be fault tolerant. W n restarted, t  job w ll restart t  clock from 0.
       
-    save_dir:
-      String. A directory (located on a file system that is Tensorflow compatible) where 
-      we can store the file which contains the record of the elapsed time. This file is what makes 
-      the hook faul tolerant.
+    save_d r:
+      Str ng. A d rectory (located on a f le system that  s Tensorflow compat ble) w re 
+        can store t  f le wh ch conta ns t  record of t  elapsed t  . T  f le  s what makes 
+      t  hook faul tolerant.
 
-    exit_on_end:
-      when exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the job.
-      This is usually set to True to kill a validation job in a distributed setting.
+    ex _on_end:
+      w n ex _on_end  s True, twml.errors.EarlyStopError()  s tr ggered to stop t  job.
+      T   s usually set to True to k ll a val dat on job  n a d str buted sett ng.
    """
 
-  def __init__(self, max_duration: float, exit_on_end: bool, save_dir: str, overwrite: bool):
-    self._overwrite = overwrite
-    self._save_dir = save_dir
-    self._exit_on_end = exit_on_end
-    self._max_duration = max_duration
-    self._last_time_check = datetime.now()
+  def __ n __(self, max_durat on: float, ex _on_end: bool, save_d r: str, overwr e: bool):
+    self._overwr e = overwr e
+    self._save_d r = save_d r
+    self._ex _on_end = ex _on_end
+    self._max_durat on = max_durat on
+    self._last_t  _c ck = datet  .now()
 
-    # Initialize elapse time file
-    if overwrite:
-      self.elapsed_time()
+    #  n  al ze elapse t   f le
+     f overwr e:
+      self.elapsed_t  ()
 
   @property
-  def elapsed_file_path(self):
-    return os.path.join(self._save_dir, "early_stop_duration.txt")
+  def elapsed_f le_path(self):
+    return os.path.jo n(self._save_d r, "early_stop_durat on.txt")
 
   def early_stop(self) -> bool:
-    return self.elapsed_time() > self._max_duration
+    return self.elapsed_t  () > self._max_durat on
 
-  def elapsed_time(self) -> float:
-    # Recorded elapsed time is 0 unless it's been recorded in a file already
-    recorded_elapsed_time = 0
-    if tf.io.gfile.exists(self.elapsed_file_path):
-      with tf.io.gfile.GFile(self.elapsed_file_path, mode="r") as file:
-        recorded_elapsed_time = json.loads(file.read())["elapsed_time"]
+  def elapsed_t  (self) -> float:
+    # Recorded elapsed t    s 0 unless  's been recorded  n a f le already
+    recorded_elapsed_t   = 0
+     f tf. o.gf le.ex sts(self.elapsed_f le_path):
+      w h tf. o.gf le.GF le(self.elapsed_f le_path, mode="r") as f le:
+        recorded_elapsed_t   = json.loads(f le.read())["elapsed_t  "]
 
-    elapsed_time = recorded_elapsed_time + (datetime.now() - self._last_time_check).total_seconds()
-    self._last_time_check = datetime.now()
+    elapsed_t   = recorded_elapsed_t   + (datet  .now() - self._last_t  _c ck).total_seconds()
+    self._last_t  _c ck = datet  .now()
 
-    if self._overwrite:
-      # Record the actualized new elapsed time to the file
-      tf.io.gfile.makedirs(os.path.dirname(self.elapsed_file_path))
-      with tf.io.gfile.GFile(self.elapsed_file_path, mode="w") as file:
+     f self._overwr e:
+      # Record t  actual zed new elapsed t   to t  f le
+      tf. o.gf le.maked rs(os.path.d rna (self.elapsed_f le_path))
+      w h tf. o.gf le.GF le(self.elapsed_f le_path, mode="w") as f le:
         record = {
-          "elapsed_time": elapsed_time,
-          "max_duration": self._max_duration
+          "elapsed_t  ": elapsed_t  ,
+          "max_durat on": self._max_durat on
         }
-        file.write(json.dumps(record, indent=2))
+        f le.wr e(json.dumps(record,  ndent=2))
 
-    return elapsed_time
+    return elapsed_t  
 
-  def before_run(self, run_context: tf.estimator.SessionRunContext) -> None:
-    if self.early_stop():
-      message = f"""
-        Stopping job which now exceeded the maximum duration of {self._max_duration} seconds. 
+  def before_run(self, run_context: tf.est mator.Sess onRunContext) -> None:
+     f self.early_stop():
+       ssage = f"""
+        Stopp ng job wh ch now exceeded t  max mum durat on of {self._max_durat on} seconds. 
       """
-      logging.info(message)
+      logg ng. nfo( ssage)
       run_context.request_stop()
 
-      if self._exit_on_end:
-        raise twml.errors.EarlyStopError(message)
+       f self._ex _on_end:
+        ra se twml.errors.EarlyStopError( ssage)
 
 
-class StopAtStepHook(tf.train.StopAtStepHook):
+class StopAtStepHook(tf.tra n.StopAtStepHook):
   """
-  Overrides ``tf.train.StopAtStepHook`` so that
-  a ``stop_requested`` property can be accessed to determine
-  if this hook requested a stop.
+  Overr des ``tf.tra n.StopAtStepHook`` so that
+  a ``stop_requested`` property can be accessed to determ ne
+   f t  hook requested a stop.
   """
 
-  def __init__(self, *args, **kwargs):
-    super(StopAtStepHook, self).__init__(*args, **kwargs)
+  def __ n __(self, *args, **kwargs):
+    super(StopAtStepHook, self).__ n __(*args, **kwargs)
     self._stop_requested = False
 
   @property
   def stop_requested(self):
-    """ true if this hook requested a stop """
+    """ true  f t  hook requested a stop """
     return self._stop_requested
 
   def after_run(self, run_context, run_values):
-    """ sets self.stop_requested to true when requesting a stop """
+    """ sets self.stop_requested to true w n request ng a stop """
     super(StopAtStepHook, self).after_run(run_context, run_values)
     self._stop_requested = run_context.stop_requested
 
 
-class StopIfExistsHook(tf.train.SessionRunHook):
+class Stop fEx stsHook(tf.tra n.Sess onRunHook):
   """
-  Hook that requests stop if a file exists.
-  This hook is used with the EarlyStopHook to implement
-  early-stopping for distributed training (tf.estimator.train_and_evaluate).
+  Hook that requests stop  f a f le ex sts.
+  T  hook  s used w h t  EarlyStopHook to  mple nt
+  early-stopp ng for d str buted tra n ng (tf.est mator.tra n_and_evaluate).
   """
 
-  def __init__(self, file_path):
+  def __ n __(self, f le_path):
     """
-    Arguments:
-      file_path:
-        path to file. When this hook detects that the file exists,
-        it requests a stop, which effectively kills this worker.
+    Argu nts:
+      f le_path:
+        path to f le. W n t  hook detects that t  f le ex sts,
+          requests a stop, wh ch effect vely k lls t  worker.
     """
-    self._file_path = file_path
+    self._f le_path = f le_path
     self._stop_requested = False
 
   def after_run(self, run_context, run_values):
-    if tf.io.gfile.exists(self._file_path):
-      logging.info("Early-stopping file detected; requesting stop")
+     f tf. o.gf le.ex sts(self._f le_path):
+      logg ng. nfo("Early-stopp ng f le detected; request ng stop")
       run_context.request_stop()
       self._stop_requested = True
 
   @property
   def stop_requested(self):
-    """ true if this hook requested a stop """
+    """ true  f t  hook requested a stop """
     return self._stop_requested

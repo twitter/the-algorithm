@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms
 
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
+ mport com.google. nject.S ngleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
+ mport javax. nject. nject
 
-@Singleton
-class SimsStore @Inject() (
-  @Named(GuiceNamedConstants.SIMS_FETCHER) fetcher: Fetcher[Long, Unit, Candidates])
-    extends StratoBasedSimsCandidateSourceWithUnitView(fetcher, identifier = SimsStore.Identifier)
+@S ngleton
+class S msStore @ nject() (
+  @Na d(Gu ceNa dConstants.S MS_FETCHER) fetc r: Fetc r[Long, Un , Cand dates])
+    extends StratoBasedS msCand dateS ceW hUn V ew(fetc r,  dent f er = S msStore. dent f er)
 
-@Singleton
-class CachedSimsStore @Inject() (
-  @Named(GuiceNamedConstants.SIMS_FETCHER) fetcher: Fetcher[Long, Unit, Candidates],
-  statsReceiver: StatsReceiver)
-    extends CacheBasedSimsStore(
-      id = SimsStore.Identifier,
-      fetcher = fetcher,
-      maxCacheSize = SimsStore.MaxCacheSize,
-      cacheTtl = SimsStore.CacheTTL,
-      statsReceiver = statsReceiver.scope("CachedSimsStore", "cache")
+@S ngleton
+class Cac dS msStore @ nject() (
+  @Na d(Gu ceNa dConstants.S MS_FETCHER) fetc r: Fetc r[Long, Un , Cand dates],
+  statsRece ver: StatsRece ver)
+    extends Cac BasedS msStore(
+       d = S msStore. dent f er,
+      fetc r = fetc r,
+      maxCac S ze = S msStore.MaxCac S ze,
+      cac Ttl = S msStore.Cac TTL,
+      statsRece ver = statsRece ver.scope("Cac dS msStore", "cac ")
     )
 
-object SimsStore {
-  val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
-  val MaxCacheSize = 50000
-  val CacheTTL: Duration = Duration.fromHours(24)
+object S msStore {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.S ms.toStr ng)
+  val MaxCac S ze = 50000
+  val Cac TTL: Durat on = Durat on.fromH s(24)
 }

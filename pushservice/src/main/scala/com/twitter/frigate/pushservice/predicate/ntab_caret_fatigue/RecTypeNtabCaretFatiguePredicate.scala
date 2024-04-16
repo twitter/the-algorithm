@@ -1,87 +1,87 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.predicate.CaretFeedbackHistoryFilter
-import com.twitter.frigate.pushservice.predicate.{
-  TargetNtabCaretClickFatiguePredicate => CommonNtabCaretClickFatiguePredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.CaretFeedback toryF lter
+ mport com.tw ter.fr gate.pushserv ce.pred cate.{
+  TargetNtabCaretCl ckFat guePred cate => CommonNtabCaretCl ckFat guePred cate
 }
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.thr ftscala.Not f cat onD splayLocat on
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-object RecTypeNtabCaretClickFatiguePredicate {
-  val defaultName = "RecTypeNtabCaretClickFatiguePredicateForCandidate"
+object RecTypeNtabCaretCl ckFat guePred cate {
+  val defaultNa  = "RecTypeNtabCaretCl ckFat guePred cateForCand date"
 
-  private def candidateFatiguePredicate(
-    genericTypeCategories: Seq[String],
+  pr vate def cand dateFat guePred cate(
+    gener cTypeCategor es: Seq[Str ng],
     crts: Set[CRT]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date
   ] = {
-    val name = "f1TriggeredCRTBasedFatiguePredciate"
-    val scopedStats = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (candidate.frigateNotification.notificationDisplayLocation == NotificationDisplayLocation.PushToMobileDevice) {
-          if (candidate.target.params(PushParams.EnableFatigueNtabCaretClickingParam)) {
-            NtabCaretClickContFnFatiguePredicate
-              .ntabCaretClickContFnFatiguePredicates(
-                filterHistory = FatiguePredicate.recTypesOnlyFilter(crts),
-                filterCaretFeedbackHistory =
-                  CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(genericTypeCategories),
-                filterInlineFeedbackHistory =
-                  NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(crts)
-              ).apply(Seq(candidate))
-              .map(_.headOption.getOrElse(false))
+    val na  = "f1Tr ggeredCRTBasedFat guePredc ate"
+    val scopedStats = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+         f (cand date.fr gateNot f cat on.not f cat onD splayLocat on == Not f cat onD splayLocat on.PushToMob leDev ce) {
+           f (cand date.target.params(PushParams.EnableFat gueNtabCaretCl ck ngParam)) {
+            NtabCaretCl ckContFnFat guePred cate
+              .ntabCaretCl ckContFnFat guePred cates(
+                f lter tory = Fat guePred cate.recTypesOnlyF lter(crts),
+                f lterCaretFeedback tory =
+                  CaretFeedback toryF lter.caretFeedback toryF lter(gener cTypeCategor es),
+                f lter nl neFeedback tory =
+                  NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(crts)
+              ).apply(Seq(cand date))
+              .map(_. adOpt on.getOrElse(false))
           } else Future.True
         } else {
           Future.True
         }
-      }.withStats(scopedStats)
-      .withName(name)
+      }.w hStats(scopedStats)
+      .w hNa (na )
   }
 
   def apply(
-    genericTypeCategories: Seq[String],
+    gener cTypeCategor es: Seq[Str ng],
     crts: Set[CRT],
-    calculateFatiguePeriod: Seq[CaretFeedbackDetails] => Duration,
-    useMostRecentDislikeTime: Boolean,
-    name: String = defaultName
+    calculateFat guePer od: Seq[CaretFeedbackDeta ls] => Durat on,
+    useMostRecentD sl keT  : Boolean,
+    na : Str ng = defaultNa 
   )(
-    implicit globalStats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    val commonNtabCaretClickFatiguePredicate = CommonNtabCaretClickFatiguePredicate(
-      filterCaretFeedbackHistory =
-        CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(genericTypeCategories),
-      filterHistory = FatiguePredicate.recTypesOnlyFilter(crts),
-      calculateFatiguePeriod = calculateFatiguePeriod,
-      useMostRecentDislikeTime = useMostRecentDislikeTime,
-      name = name
+     mpl c  globalStats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val scopedStats = globalStats.scope(na )
+    val commonNtabCaretCl ckFat guePred cate = CommonNtabCaretCl ckFat guePred cate(
+      f lterCaretFeedback tory =
+        CaretFeedback toryF lter.caretFeedback toryF lter(gener cTypeCategor es),
+      f lter tory = Fat guePred cate.recTypesOnlyF lter(crts),
+      calculateFat guePer od = calculateFat guePer od,
+      useMostRecentD sl keT   = useMostRecentD sl keT  ,
+      na  = na 
     )(globalStats)
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (candidate.frigateNotification.notificationDisplayLocation == NotificationDisplayLocation.PushToMobileDevice) {
-          if (candidate.target.params(PushParams.EnableFatigueNtabCaretClickingParam)) {
-            commonNtabCaretClickFatiguePredicate
-              .apply(Seq(candidate.target))
-              .map(_.headOption.getOrElse(false))
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+         f (cand date.fr gateNot f cat on.not f cat onD splayLocat on == Not f cat onD splayLocat on.PushToMob leDev ce) {
+           f (cand date.target.params(PushParams.EnableFat gueNtabCaretCl ck ngParam)) {
+            commonNtabCaretCl ckFat guePred cate
+              .apply(Seq(cand date.target))
+              .map(_. adOpt on.getOrElse(false))
           } else Future.True
         } else {
           Future.True
         }
-      }.andThen(candidateFatiguePredicate(genericTypeCategories, crts))
-      .withStats(scopedStats)
-      .withName(name)
+      }.andT n(cand dateFat guePred cate(gener cTypeCategor es, crts))
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 }

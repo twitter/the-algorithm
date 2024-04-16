@@ -1,461 +1,461 @@
-package com.twitter.frigate.pushservice.config
+package com.tw ter.fr gate.pushserv ce.conf g
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.audience_rewards.thriftscala.HasSuperFollowingRelationshipRequest
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.datatools.entityservice.entities.sports.thriftscala._
-import com.twitter.decider.Decider
-import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.escherbird.common.thriftscala.QualifiedId
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.history._
-import com.twitter.frigate.common.ml.base._
-import com.twitter.frigate.common.ml.feature._
-import com.twitter.frigate.common.store._
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.common.store.interests.UserId
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common._
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryKey
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushcap.thriftscala.PushcapUserHistory
-import com.twitter.frigate.pushservice.ml._
-import com.twitter.frigate.pushservice.params.DeciderKey
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushFeatureSwitches
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.send_handler.SendHandlerPushCandidateHydrator
-import com.twitter.frigate.pushservice.refresh_handler.PushCandidateHydrator
-import com.twitter.frigate.pushservice.store._
-import com.twitter.frigate.pushservice.store.{Ibis2Store => PushIbis2Store}
-import com.twitter.frigate.pushservice.take.NotificationServiceRequest
-import com.twitter.frigate.pushservice.thriftscala.PushRequestScribe
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.frigate.thriftscala._
-import com.twitter.frigate.user_states.thriftscala.MRUserHmmState
-import com.twitter.geoduck.common.thriftscala.{Location => GeoLocation}
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.tweetypie.Perspective
-import com.twitter.hermit.predicate.tweetypie.UserTweet
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.hermit.store.tweetypie.{UserTweet => TweetyPieUserTweet}
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.{UserInterests => Interests}
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.livevideo.timeline.domain.v2.{Event => LiveEvent}
-import com.twitter.ml.api.thriftscala.{DataRecord => ThriftDataRecord}
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStore
-import com.twitter.notificationservice.scribe.manhattan.GenericNotificationsFeedbackRequest
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.nrel.heavyranker.CandidateFeatureHydrator
-import com.twitter.nrel.heavyranker.{FeatureHydrator => MRFeatureHydrator}
-import com.twitter.nrel.heavyranker.{TargetFeatureHydrator => RelevanceTargetFeatureHydrator}
-import com.twitter.onboarding.task.service.thriftscala.FatigueFlowEnrollment
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityResponse
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWProducer
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
-import com.twitter.search.common.features.thriftscala.ThriftSearchResultFeatures
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.service.gen.scarecrow.thriftscala.Event
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.columns.frigate.logged_out_web_notifications.thriftscala.LOWebNotificationMetadata
-import com.twitter.strato.columns.notifications.thriftscala.SourceDestUserRequest
-import com.twitter.strato.client.{UserId => StratoUserId}
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelinescorer.thriftscala.v1.ScoredTweet
-import com.twitter.topiclisting.TopicListing
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.ubs.thriftscala.SellerTrack
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.ubs.thriftscala.Participants
-import com.twitter.ubs.thriftscala.SellerApplicationState
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngRequest
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngResponse
+ mport com.tw ter.aud ence_rewards.thr ftscala.HasSuperFollow ngRelat onsh pRequest
+ mport com.tw ter.channels.common.thr ftscala.Ap L st
+ mport com.tw ter.datatools.ent yserv ce.ent  es.sports.thr ftscala._
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.d scovery.common.conf gap .Conf gParamsBu lder
+ mport com.tw ter.esc rb rd.common.thr ftscala.Qual f ed d
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.eventbus.cl ent.EventBusPubl s r
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date._
+ mport com.tw ter.fr gate.common. tory._
+ mport com.tw ter.fr gate.common.ml.base._
+ mport com.tw ter.fr gate.common.ml.feature._
+ mport com.tw ter.fr gate.common.store._
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfo
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.common.store. nterests.User d
+ mport com.tw ter.fr gate.common.ut l._
+ mport com.tw ter.fr gate.data_p pel ne.features_common._
+ mport com.tw ter.fr gate.data_p pel ne.thr ftscala.User toryKey
+ mport com.tw ter.fr gate.data_p pel ne.thr ftscala.User toryValue
+ mport com.tw ter.fr gate.dau_model.thr ftscala.DauProbab l y
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.pushcap.thr ftscala.PushcapUser tory
+ mport com.tw ter.fr gate.pushserv ce.ml._
+ mport com.tw ter.fr gate.pushserv ce.params.Dec derKey
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw c s
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.send_handler.SendHandlerPushCand dateHydrator
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.PushCand dateHydrator
+ mport com.tw ter.fr gate.pushserv ce.store._
+ mport com.tw ter.fr gate.pushserv ce.store.{ b s2Store => Push b s2Store}
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceRequest
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushRequestScr be
+ mport com.tw ter.fr gate.scr be.thr ftscala.Not f cat onScr be
+ mport com.tw ter.fr gate.thr ftscala._
+ mport com.tw ter.fr gate.user_states.thr ftscala.MRUserHmmState
+ mport com.tw ter.geoduck.common.thr ftscala.{Locat on => GeoLocat on}
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopT ets nPlace
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. rm .pred cate.t etyp e.Perspect ve
+ mport com.tw ter. rm .pred cate.t etyp e.UserT et
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter. rm .store.t etyp e.{UserT et => T etyP eUserT et}
+ mport com.tw ter. rm .stp.thr ftscala.STPResult
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnalResponse
+ mport com.tw ter. nterests.thr ftscala. nterest d
+ mport com.tw ter. nterests.thr ftscala.{User nterests =>  nterests}
+ mport com.tw ter. nterests_d scovery.thr ftscala.NonPersonal zedRecom ndedL sts
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsRequest
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsResponse
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.{Event => L veEvent}
+ mport com.tw ter.ml.ap .thr ftscala.{DataRecord => Thr ftDataRecord}
+ mport com.tw ter.ml.featurestore.l b.dynam c.Dynam cFeatureStoreCl ent
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.FeedbackPromptValue
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.Gener cFeedbackStore
+ mport com.tw ter.not f cat onserv ce.scr be.manhattan.Gener cNot f cat onsFeedbackRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onResponse
+ mport com.tw ter.nrel. avyranker.Cand dateFeatureHydrator
+ mport com.tw ter.nrel. avyranker.{FeatureHydrator => MRFeatureHydrator}
+ mport com.tw ter.nrel. avyranker.{TargetFeatureHydrator => RelevanceTargetFeatureHydrator}
+ mport com.tw ter.onboard ng.task.serv ce.thr ftscala.Fat gueFlowEnroll nt
+ mport com.tw ter.perm ss ons_storage.thr ftscala.AppPerm ss on
+ mport com.tw ter.recom ndat on. nterests.d scovery.core.model. nterestDoma n
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.Recom ndT etEnt yRequest
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.Recom ndT etEnt yResponse
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserRequest
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserResponse
+ mport com.tw ter.rux.common.strato.thr ftscala.UserTarget ngProperty
+ mport com.tw ter.sc o.nsfw_user_seg ntat on.thr ftscala.NSFWProducer
+ mport com.tw ter.sc o.nsfw_user_seg ntat on.thr ftscala.NSFWUserSeg ntat on
+ mport com.tw ter.search.common.features.thr ftscala.Thr ftSearchResultFeatures
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdRequest
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.Event
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct onResult
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.Locat on
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.UserLanguages
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.columns.fr gate.logged_out_ b_not f cat ons.thr ftscala.LO bNot f cat on tadata
+ mport com.tw ter.strato.columns.not f cat ons.thr ftscala.S ceDestUserRequest
+ mport com.tw ter.strato.cl ent.{User d => StratoUser d}
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.t  l nes.conf gap .Compos eConf g
+ mport com.tw ter.t  l nescorer.thr ftscala.v1.ScoredT et
+ mport com.tw ter.top cl st ng.Top cL st ng
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pDoma n
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pT ets
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofResponse
+ mport com.tw ter.ubs.thr ftscala.SellerTrack
+ mport com.tw ter.ubs.thr ftscala.Aud oSpace
+ mport com.tw ter.ubs.thr ftscala.Part c pants
+ mport com.tw ter.ubs.thr ftscala.SellerAppl cat onState
+ mport com.tw ter.user_sess on_store.thr ftscala.UserSess on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.wtf.scald ng.common.thr ftscala.UserFeatures
 
-trait Config {
+tra  Conf g {
   self =>
 
-  def isServiceLocal: Boolean
+  def  sServ ceLocal: Boolean
 
-  def localConfigRepoPath: String
+  def localConf gRepoPath: Str ng
 
-  def inMemCacheOff: Boolean
+  def  n mCac Off: Boolean
 
-  def historyStore: PushServiceHistoryStore
+  def  toryStore: PushServ ce toryStore
 
-  def emailHistoryStore: PushServiceHistoryStore
+  def ema l toryStore: PushServ ce toryStore
 
-  def strongTiesStore: ReadableStore[Long, STPResult]
+  def strongT esStore: ReadableStore[Long, STPResult]
 
   def safeUserStore: ReadableStore[Long, User]
 
-  def deviceInfoStore: ReadableStore[Long, DeviceInfo]
+  def dev ce nfoStore: ReadableStore[Long, Dev ce nfo]
 
-  def edgeStore: ReadableStore[RelationEdge, Boolean]
+  def edgeStore: ReadableStore[Relat onEdge, Boolean]
 
-  def socialGraphServiceProcessStore: ReadableStore[RelationEdge, Boolean]
+  def soc alGraphServ ceProcessStore: ReadableStore[Relat onEdge, Boolean]
 
-  def userUtcOffsetStore: ReadableStore[Long, Duration]
+  def userUtcOffsetStore: ReadableStore[Long, Durat on]
 
-  def cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult]
+  def cac dT etyP eStoreV2: ReadableStore[Long, T etyP eResult]
 
-  def safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult]
+  def safeCac dT etyP eStoreV2: ReadableStore[Long, T etyP eResult]
 
-  def userTweetTweetyPieStore: ReadableStore[TweetyPieUserTweet, TweetyPieResult]
+  def userT etT etyP eStore: ReadableStore[T etyP eUserT et, T etyP eResult]
 
-  def safeUserTweetTweetyPieStore: ReadableStore[TweetyPieUserTweet, TweetyPieResult]
+  def safeUserT etT etyP eStore: ReadableStore[T etyP eUserT et, T etyP eResult]
 
-  def cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult]
+  def cac dT etyP eStoreV2NoVF: ReadableStore[Long, T etyP eResult]
 
-  def tweetContentFeatureCacheStore: ReadableStore[Long, ThriftDataRecord]
+  def t etContentFeatureCac Store: ReadableStore[Long, Thr ftDataRecord]
 
-  def scarecrowCheckEventStore: ReadableStore[Event, TieredActionResult]
+  def scarecrowC ckEventStore: ReadableStore[Event, T eredAct onResult]
 
-  def userTweetPerspectiveStore: ReadableStore[UserTweet, Perspective]
+  def userT etPerspect veStore: ReadableStore[UserT et, Perspect ve]
 
-  def userCountryStore: ReadableStore[Long, Location]
+  def userCountryStore: ReadableStore[Long, Locat on]
 
-  def pushInfoStore: ReadableStore[Long, UserForPushTargeting]
+  def push nfoStore: ReadableStore[Long, UserForPushTarget ng]
 
-  def loggedOutPushInfoStore: ReadableStore[Long, LOWebNotificationMetadata]
+  def loggedOutPush nfoStore: ReadableStore[Long, LO bNot f cat on tadata]
 
-  def tweetImpressionStore: ReadableStore[Long, Seq[Long]]
+  def t et mpress onStore: ReadableStore[Long, Seq[Long]]
 
-  def audioSpaceStore: ReadableStore[String, AudioSpace]
+  def aud oSpaceStore: ReadableStore[Str ng, Aud oSpace]
 
-  def basketballGameScoreStore: ReadableStore[QualifiedId, BasketballGameLiveUpdate]
+  def basketballGa ScoreStore: ReadableStore[Qual f ed d, BasketballGa L veUpdate]
 
-  def baseballGameScoreStore: ReadableStore[QualifiedId, BaseballGameLiveUpdate]
+  def baseballGa ScoreStore: ReadableStore[Qual f ed d, BaseballGa L veUpdate]
 
-  def cricketMatchScoreStore: ReadableStore[QualifiedId, CricketMatchLiveUpdate]
+  def cr cketMatchScoreStore: ReadableStore[Qual f ed d, Cr cketMatchL veUpdate]
 
-  def soccerMatchScoreStore: ReadableStore[QualifiedId, SoccerMatchLiveUpdate]
+  def soccerMatchScoreStore: ReadableStore[Qual f ed d, SoccerMatchL veUpdate]
 
-  def nflGameScoreStore: ReadableStore[QualifiedId, NflFootballGameLiveUpdate]
+  def nflGa ScoreStore: ReadableStore[Qual f ed d, NflFootballGa L veUpdate]
 
-  def topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse]
+  def top cSoc alProofServ ceStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse]
 
-  def spaceDeviceFollowStore: ReadableStore[SourceDestUserRequest, Boolean]
+  def spaceDev ceFollowStore: ReadableStore[S ceDestUserRequest, Boolean]
 
-  def audioSpaceParticipantsStore: ReadableStore[String, Participants]
+  def aud oSpacePart c pantsStore: ReadableStore[Str ng, Part c pants]
 
-  def notificationServiceSender: ReadableStore[
-    NotificationServiceRequest,
-    CreateGenericNotificationResponse
+  def not f cat onServ ceSender: ReadableStore[
+    Not f cat onServ ceRequest,
+    CreateGener cNot f cat onResponse
   ]
 
-  def ocfFatigueStore: ReadableStore[OCFHistoryStoreKey, FatigueFlowEnrollment]
+  def ocfFat gueStore: ReadableStore[OCF toryStoreKey, Fat gueFlowEnroll nt]
 
-  def dauProbabilityStore: ReadableStore[Long, DauProbability]
+  def dauProbab l yStore: ReadableStore[Long, DauProbab l y]
 
-  def hydratedLabeledPushRecsStore: ReadableStore[UserHistoryKey, UserHistoryValue]
+  def hydratedLabeledPushRecsStore: ReadableStore[User toryKey, User toryValue]
 
-  def userHTLLastVisitStore: ReadableStore[Long, Seq[Long]]
+  def userHTLLastV s Store: ReadableStore[Long, Seq[Long]]
 
   def userLanguagesStore: ReadableStore[Long, UserLanguages]
 
-  def topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[
+  def topT etsByGeoStore: ReadableStore[ nterestDoma n[Str ng], Map[Str ng, L st[
     (Long, Double)
   ]]]
 
-  def topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace]
+  def topT etsByGeoV2Vers onedStore: ReadableStore[Str ng, PopT ets nPlace]
 
-  lazy val pushRecItemStore: ReadableStore[PushRecItemsKey, RecItems] = PushRecItemStore(
+  lazy val pushRec emStore: ReadableStore[PushRec emsKey, Rec ems] = PushRec emStore(
     hydratedLabeledPushRecsStore
   )
 
-  lazy val labeledPushRecsVerifyingStore: ReadableStore[
-    LabeledPushRecsVerifyingStoreKey,
-    LabeledPushRecsVerifyingStoreResponse
+  lazy val labeledPushRecsVer fy ngStore: ReadableStore[
+    LabeledPushRecsVer fy ngStoreKey,
+    LabeledPushRecsVer fy ngStoreResponse
   ] =
-    LabeledPushRecsVerifyingStore(
+    LabeledPushRecsVer fy ngStore(
       hydratedLabeledPushRecsStore,
-      historyStore
+       toryStore
     )
 
-  lazy val labeledPushRecsDecideredStore: ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue] =
-    LabeledPushRecsDecideredStore(
-      labeledPushRecsVerifyingStore,
-      useHydratedLabeledSendsForFeaturesDeciderKey,
-      verifyHydratedLabeledSendsForFeaturesDeciderKey
+  lazy val labeledPushRecsDec deredStore: ReadableStore[LabeledPushRecsStoreKey, User toryValue] =
+    LabeledPushRecsDec deredStore(
+      labeledPushRecsVer fy ngStore,
+      useHydratedLabeledSendsForFeaturesDec derKey,
+      ver fyHydratedLabeledSendsForFeaturesDec derKey
     )
 
-  def onlineUserHistoryStore: ReadableStore[OnlineUserHistoryKey, UserHistoryValue]
+  def onl neUser toryStore: ReadableStore[Onl neUser toryKey, User toryValue]
 
-  def nsfwConsumerStore: ReadableStore[Long, NSFWUserSegmentation]
+  def nsfwConsu rStore: ReadableStore[Long, NSFWUserSeg ntat on]
 
   def nsfwProducerStore: ReadableStore[Long, NSFWProducer]
 
-  def popGeoLists: ReadableStore[String, NonPersonalizedRecommendedLists]
+  def popGeoL sts: ReadableStore[Str ng, NonPersonal zedRecom ndedL sts]
 
-  def listAPIStore: ReadableStore[Long, ApiList]
+  def l stAP Store: ReadableStore[Long, Ap L st]
 
-  def openedPushByHourAggregatedStore: ReadableStore[Long, Map[Int, Int]]
+  def openedPushByH AggregatedStore: ReadableStore[Long, Map[ nt,  nt]]
 
-  def userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse]
+  def user althS gnalStore: ReadableStore[Long, User althS gnalResponse]
 
-  def reactivatedUserInfoStore: ReadableStore[Long, String]
+  def react vatedUser nfoStore: ReadableStore[Long, Str ng]
 
-  def weightedOpenOrNtabClickModelScorer: PushMLModelScorer
+  def   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer
 
   def optoutModelScorer: PushMLModelScorer
 
-  def filteringModelScorer: PushMLModelScorer
+  def f lter ngModelScorer: PushMLModelScorer
 
   def recentFollowsStore: ReadableStore[Long, Seq[Long]]
 
-  def geoDuckV2Store: ReadableStore[UserId, LocationResponse]
+  def geoDuckV2Store: ReadableStore[User d, Locat onResponse]
 
-  def realGraphScoresTop500InStore: ReadableStore[Long, Map[Long, Double]]
+  def realGraphScoresTop500 nStore: ReadableStore[Long, Map[Long, Double]]
 
-  def tweetEntityGraphStore: ReadableStore[
-    RecommendTweetEntityRequest,
-    RecommendTweetEntityResponse
+  def t etEnt yGraphStore: ReadableStore[
+    Recom ndT etEnt yRequest,
+    Recom ndT etEnt yResponse
   ]
 
-  def userUserGraphStore: ReadableStore[RecommendUserRequest, RecommendUserResponse]
+  def userUserGraphStore: ReadableStore[Recom ndUserRequest, Recom ndUserResponse]
 
   def userFeaturesStore: ReadableStore[Long, UserFeatures]
 
-  def userTargetingPropertyStore: ReadableStore[Long, UserTargetingProperty]
+  def userTarget ngPropertyStore: ReadableStore[Long, UserTarget ngProperty]
 
-  def timelinesUserSessionStore: ReadableStore[Long, UserSession]
+  def t  l nesUserSess onStore: ReadableStore[Long, UserSess on]
 
-  def optOutUserInterestsStore: ReadableStore[UserId, Seq[InterestId]]
+  def optOutUser nterestsStore: ReadableStore[User d, Seq[ nterest d]]
 
-  def ntabCaretFeedbackStore: ReadableStore[GenericNotificationsFeedbackRequest, Seq[
-    CaretFeedbackDetails
+  def ntabCaretFeedbackStore: ReadableStore[Gener cNot f cat onsFeedbackRequest, Seq[
+    CaretFeedbackDeta ls
   ]]
 
-  def genericFeedbackStore: ReadableStore[FeedbackRequest, Seq[
+  def gener cFeedbackStore: ReadableStore[FeedbackRequest, Seq[
     FeedbackPromptValue
   ]]
 
-  def genericNotificationFeedbackStore: GenericFeedbackStore
+  def gener cNot f cat onFeedbackStore: Gener cFeedbackStore
 
-  def semanticCoreMegadataStore: ReadableStore[
-    SemanticEntityForQuery,
-    EntityMegadata
+  def semant cCore gadataStore: ReadableStore[
+    Semant cEnt yForQuery,
+    Ent y gadata
   ]
 
-  def tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse]
 
-  def earlybirdFeatureStore: ReadableStore[Long, ThriftSearchResultFeatures]
+  def earlyb rdFeatureStore: ReadableStore[Long, Thr ftSearchResultFeatures]
 
-  def earlybirdFeatureBuilder: FeatureBuilder[Long]
+  def earlyb rdFeatureBu lder: FeatureBu lder[Long]
 
-  // Feature builders
+  // Feature bu lders
 
-  def tweetAuthorLocationFeatureBuilder: FeatureBuilder[Location]
+  def t etAuthorLocat onFeatureBu lder: FeatureBu lder[Locat on]
 
-  def tweetAuthorLocationFeatureBuilderById: FeatureBuilder[Long]
+  def t etAuthorLocat onFeatureBu lderBy d: FeatureBu lder[Long]
 
-  def socialContextActionsFeatureBuilder: FeatureBuilder[SocialContextActions]
+  def soc alContextAct onsFeatureBu lder: FeatureBu lder[Soc alContextAct ons]
 
-  def tweetContentFeatureBuilder: FeatureBuilder[Long]
+  def t etContentFeatureBu lder: FeatureBu lder[Long]
 
-  def tweetAuthorRecentRealGraphFeatureBuilder: FeatureBuilder[RealGraphEdge]
+  def t etAuthorRecentRealGraphFeatureBu lder: FeatureBu lder[RealGraphEdge]
 
-  def socialContextRecentRealGraphFeatureBuilder: FeatureBuilder[Set[RealGraphEdge]]
+  def soc alContextRecentRealGraphFeatureBu lder: FeatureBu lder[Set[RealGraphEdge]]
 
-  def tweetSocialProofFeatureBuilder: FeatureBuilder[TweetSocialProofKey]
+  def t etSoc alProofFeatureBu lder: FeatureBu lder[T etSoc alProofKey]
 
-  def targetUserFullRealGraphFeatureBuilder: FeatureBuilder[TargetFullRealGraphFeatureKey]
+  def targetUserFullRealGraphFeatureBu lder: FeatureBu lder[TargetFullRealGraphFeatureKey]
 
-  def postProcessingFeatureBuilder: PostProcessingFeatureBuilder
+  def postProcess ngFeatureBu lder: PostProcess ngFeatureBu lder
 
-  def mrOfflineUserCandidateSparseAggregatesFeatureBuilder: FeatureBuilder[
-    OfflineSparseAggregateKey
+  def mrOffl neUserCand dateSparseAggregatesFeatureBu lder: FeatureBu lder[
+    Offl neSparseAggregateKey
   ]
 
-  def mrOfflineUserAggregatesFeatureBuilder: FeatureBuilder[Long]
+  def mrOffl neUserAggregatesFeatureBu lder: FeatureBu lder[Long]
 
-  def mrOfflineUserCandidateAggregatesFeatureBuilder: FeatureBuilder[OfflineAggregateKey]
+  def mrOffl neUserCand dateAggregatesFeatureBu lder: FeatureBu lder[Offl neAggregateKey]
 
-  def tweetAnnotationsFeatureBuilder: FeatureBuilder[Long]
+  def t etAnnotat onsFeatureBu lder: FeatureBu lder[Long]
 
-  def targetUserMediaRepresentationFeatureBuilder: FeatureBuilder[Long]
+  def targetUser d aRepresentat onFeatureBu lder: FeatureBu lder[Long]
 
-  def targetLevelFeatureBuilder: FeatureBuilder[MrRequestContextForFeatureStore]
+  def targetLevelFeatureBu lder: FeatureBu lder[MrRequestContextForFeatureStore]
 
-  def candidateLevelFeatureBuilder: FeatureBuilder[EntityRequestContextForFeatureStore]
+  def cand dateLevelFeatureBu lder: FeatureBu lder[Ent yRequestContextForFeatureStore]
 
   def targetFeatureHydrator: RelevanceTargetFeatureHydrator
 
-  def useHydratedLabeledSendsForFeaturesDeciderKey: String =
-    DeciderKey.useHydratedLabeledSendsForFeaturesDeciderKey.toString
+  def useHydratedLabeledSendsForFeaturesDec derKey: Str ng =
+    Dec derKey.useHydratedLabeledSendsForFeaturesDec derKey.toStr ng
 
-  def verifyHydratedLabeledSendsForFeaturesDeciderKey: String =
-    DeciderKey.verifyHydratedLabeledSendsForFeaturesDeciderKey.toString
+  def ver fyHydratedLabeledSendsForFeaturesDec derKey: Str ng =
+    Dec derKey.ver fyHydratedLabeledSendsForFeaturesDec derKey.toStr ng
 
-  def lexServiceStore: ReadableStore[EventRequest, LiveEvent]
+  def lexServ ceStore: ReadableStore[EventRequest, L veEvent]
 
-  def userMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
+  def user d aRepresentat onStore: ReadableStore[Long, User d aRepresentat on]
 
-  def producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
+  def producer d aRepresentat onStore: ReadableStore[Long, User d aRepresentat on]
 
-  def mrUserStatePredictionStore: ReadableStore[Long, MRUserHmmState]
+  def mrUserStatePred ct onStore: ReadableStore[Long, MRUserHmmState]
 
-  def pushcapDynamicPredictionStore: ReadableStore[Long, PushcapUserHistory]
+  def pushcapDynam cPred ct onStore: ReadableStore[Long, PushcapUser tory]
 
-  def earlybirdCandidateSource: EarlybirdCandidateSource
+  def earlyb rdCand dateS ce: Earlyb rdCand dateS ce
 
-  def earlybirdSearchStore: ReadableStore[EarlybirdRequest, Seq[ThriftSearchResult]]
+  def earlyb rdSearchStore: ReadableStore[Earlyb rdRequest, Seq[Thr ftSearchResult]]
 
-  def earlybirdSearchDest: String
+  def earlyb rdSearchDest: Str ng
 
-  def pushserviceThriftClientId: ClientId
+  def pushserv ceThr ftCl ent d: Cl ent d
 
-  def simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities]
+  def s mClusterToEnt yStore: ReadableStore[ nt, S mClusters nferredEnt  es]
 
-  def fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent]
-
-  /**
-   * PostRanking Feature Store Client
-   */
-  def postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
+  def fanout tadataStore: ReadableStore[(Long, Long), FanoutEvent]
 
   /**
-   * ReadableStore to fetch [[UserInterests]] from INTS service
+   * PostRank ng Feature Store Cl ent
    */
-  def interestsWithLookupContextStore: ReadableStore[InterestsLookupRequestWithContext, Interests]
+  def postRank ngFeatureStoreCl ent: Dynam cFeatureStoreCl ent[MrRequestContextForFeatureStore]
 
   /**
-   *
-   * @return: [[TopicListing]] object to fetch paused topics and scope from productId
+   * ReadableStore to fetch [[User nterests]] from  NTS serv ce
    */
-  def topicListing: TopicListing
+  def  nterestsW hLookupContextStore: ReadableStore[ nterestsLookupRequestW hContext,  nterests]
 
   /**
    *
-   * @return: [[UttEntityHydrationStore]] object
+   * @return: [[Top cL st ng]] object to fetch paused top cs and scope from product d
    */
-  def uttEntityHydrationStore: UttEntityHydrationStore
+  def top cL st ng: Top cL st ng
 
-  def appPermissionStore: ReadableStore[(Long, (String, String)), AppPermission]
+  /**
+   *
+   * @return: [[UttEnt yHydrat onStore]] object
+   */
+  def uttEnt yHydrat onStore: UttEnt yHydrat onStore
 
-  lazy val userTweetEntityGraphCandidates: UserTweetEntityGraphCandidates =
-    UserTweetEntityGraphCandidates(
-      cachedTweetyPieStoreV2,
-      tweetEntityGraphStore,
-      PushParams.UTEGTweetCandidateSourceParam,
-      PushFeatureSwitchParams.NumberOfMaxUTEGCandidatesQueriedParam,
-      PushParams.AllowOneSocialProofForTweetInUTEGParam,
-      PushParams.OutNetworkTweetsOnlyForUTEGParam,
-      PushFeatureSwitchParams.MaxTweetAgeParam
-    )(statsReceiver)
+  def appPerm ss onStore: ReadableStore[(Long, (Str ng, Str ng)), AppPerm ss on]
 
-  def pushSendEventBusPublisher: EventBusPublisher[NotificationScribe]
+  lazy val userT etEnt yGraphCand dates: UserT etEnt yGraphCand dates =
+    UserT etEnt yGraphCand dates(
+      cac dT etyP eStoreV2,
+      t etEnt yGraphStore,
+      PushParams.UTEGT etCand dateS ceParam,
+      PushFeatureSw chParams.NumberOfMaxUTEGCand datesQuer edParam,
+      PushParams.AllowOneSoc alProofForT et nUTEGParam,
+      PushParams.OutNetworkT etsOnlyForUTEGParam,
+      PushFeatureSw chParams.MaxT etAgeParam
+    )(statsRece ver)
 
-  // miscs.
+  def pushSendEventBusPubl s r: EventBusPubl s r[Not f cat onScr be]
 
-  def isProd: Boolean
+  // m scs.
 
-  implicit def statsReceiver: StatsReceiver
+  def  sProd: Boolean
 
-  def decider: Decider
+   mpl c  def statsRece ver: StatsRece ver
 
-  def abDecider: LoggingABDecider
+  def dec der: Dec der
+
+  def abDec der: Logg ngABDec der
 
   def casLock: CasLock
 
-  def pushIbisV2Store: PushIbis2Store
+  def push b sV2Store: Push b s2Store
 
-  // scribe
-  def notificationScribe(data: NotificationScribe): Unit
+  // scr be
+  def not f cat onScr be(data: Not f cat onScr be): Un 
 
-  def requestScribe(data: PushRequestScribe): Unit
+  def requestScr be(data: PushRequestScr be): Un 
 
-  def init(): Future[Unit] = Future.Done
+  def  n (): Future[Un ] = Future.Done
 
-  def configParamsBuilder: ConfigParamsBuilder
+  def conf gParamsBu lder: Conf gParamsBu lder
 
-  def candidateFeatureHydrator: CandidateFeatureHydrator
+  def cand dateFeatureHydrator: Cand dateFeatureHydrator
 
   def featureHydrator: MRFeatureHydrator
 
-  def candidateHydrator: PushCandidateHydrator
+  def cand dateHydrator: PushCand dateHydrator
 
-  def sendHandlerCandidateHydrator: SendHandlerPushCandidateHydrator
+  def sendHandlerCand dateHydrator: SendHandlerPushCand dateHydrator
 
-  lazy val overridesConfig: configapi.Config = {
-    val pushFeatureSwitchConfigs: configapi.Config = PushFeatureSwitches(
-      deciderGateBuilder = new DeciderGateBuilder(decider),
-      statsReceiver = statsReceiver
-    ).config
+  lazy val overr desConf g: conf gap .Conf g = {
+    val pushFeatureSw chConf gs: conf gap .Conf g = PushFeatureSw c s(
+      dec derGateBu lder = new Dec derGateBu lder(dec der),
+      statsRece ver = statsRece ver
+    ).conf g
 
-    new CompositeConfig(Seq(pushFeatureSwitchConfigs))
+    new Compos eConf g(Seq(pushFeatureSw chConf gs))
   }
 
-  def realTimeClientEventStore: RealTimeClientEventStore
+  def realT  Cl entEventStore: RealT  Cl entEventStore
 
-  def inlineActionHistoryStore: ReadableStore[Long, Seq[(Long, String)]]
+  def  nl neAct on toryStore: ReadableStore[Long, Seq[(Long, Str ng)]]
 
-  def softUserGeoLocationStore: ReadableStore[Long, GeoLocation]
+  def softUserGeoLocat onStore: ReadableStore[Long, GeoLocat on]
 
-  def tweetTranslationStore: ReadableStore[TweetTranslationStore.Key, TweetTranslationStore.Value]
+  def t etTranslat onStore: ReadableStore[T etTranslat onStore.Key, T etTranslat onStore.Value]
 
-  def tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets]
+  def tr pT etCand dateStore: ReadableStore[Tr pDoma n, Tr pT ets]
 
-  def softUserFollowingStore: ReadableStore[User, Seq[Long]]
+  def softUserFollow ngStore: ReadableStore[User, Seq[Long]]
 
-  def superFollowEligibilityUserStore: ReadableStore[Long, Boolean]
+  def superFollowEl g b l yUserStore: ReadableStore[Long, Boolean]
 
-  def superFollowCreatorTweetCountStore: ReadableStore[StratoUserId, Int]
+  def superFollowCreatorT etCountStore: ReadableStore[StratoUser d,  nt]
 
-  def hasSuperFollowingRelationshipStore: ReadableStore[
-    HasSuperFollowingRelationshipRequest,
+  def hasSuperFollow ngRelat onsh pStore: ReadableStore[
+    HasSuperFollow ngRelat onsh pRequest,
     Boolean
   ]
 
-  def superFollowApplicationStatusStore: ReadableStore[(Long, SellerTrack), SellerApplicationState]
+  def superFollowAppl cat onStatusStore: ReadableStore[(Long, SellerTrack), SellerAppl cat onState]
 
-  def recentHistoryCacheClient: RecentHistoryCacheClient
+  def recent toryCac Cl ent: Recent toryCac Cl ent
 
   def openAppUserStore: ReadableStore[Long, Boolean]
 
-  def loggedOutHistoryStore: PushServiceHistoryStore
+  def loggedOut toryStore: PushServ ce toryStore
 
-  def idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse]
+  def  dsStore: ReadableStore[Recom ndedL stsRequest, Recom ndedL stsResponse]
 
-  def htlScoreStore(userId: Long): ReadableStore[Long, ScoredTweet]
+  def htlScoreStore(user d: Long): ReadableStore[Long, ScoredT et]
 }

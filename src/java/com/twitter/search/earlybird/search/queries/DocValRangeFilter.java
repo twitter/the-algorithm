@@ -1,179 +1,179 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Objects;
+ mport java. o. OExcept on;
+ mport java.ut l.Objects;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
 
 /**
- * Filters tweets according to the specified CSF field value.
- * Note that min value is inclusive, and max value is exclusive.
+ * F lters t ets accord ng to t  spec f ed CSF f eld value.
+ * Note that m n value  s  nclus ve, and max value  s exclus ve.
  */
-public final class DocValRangeFilter extends Query {
-  private final String csfField;
-  private final ThriftCSFType csfFieldType;
-  private final Number minValInclusive;
-  private final Number maxValExclusive;
+publ c f nal class DocValRangeF lter extends Query {
+  pr vate f nal Str ng csfF eld;
+  pr vate f nal Thr ftCSFType csfF eldType;
+  pr vate f nal Number m nVal nclus ve;
+  pr vate f nal Number maxValExclus ve;
 
   /**
-   * Returns a query that filters hits based on the value of a CSF.
+   * Returns a query that f lters h s based on t  value of a CSF.
    *
-   * @param csfField The CSF name.
-   * @param csfFieldType The CSF type.
-   * @param minVal The minimum acceptable value (inclusive).
-   * @param maxVal The maximum acceptable value (exclusive).
-   * @return A query that filters hits based on the value of a CSF.
+   * @param csfF eld T  CSF na .
+   * @param csfF eldType T  CSF type.
+   * @param m nVal T  m n mum acceptable value ( nclus ve).
+   * @param maxVal T  max mum acceptable value (exclus ve).
+   * @return A query that f lters h s based on t  value of a CSF.
    */
-  public static Query getDocValRangeQuery(String csfField, ThriftCSFType csfFieldType,
-                                          double minVal, double maxVal) {
-    return new BooleanQuery.Builder()
-        .add(new DocValRangeFilter(csfField, csfFieldType, minVal, maxVal),
-             BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getDocValRangeQuery(Str ng csfF eld, Thr ftCSFType csfF eldType,
+                                          double m nVal, double maxVal) {
+    return new BooleanQuery.Bu lder()
+        .add(new DocValRangeF lter(csfF eld, csfF eldType, m nVal, maxVal),
+             BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
   /**
-   * Returns a query that filters hits based on the value of a CSF.
+   * Returns a query that f lters h s based on t  value of a CSF.
    *
-   * @param csfField The CSF name.
-   * @param csfFieldType The CSF type.
-   * @param minVal The minimum acceptable value (inclusive).
-   * @param maxVal The maximum acceptable value (exclusive).
-   * @return A query that filters hits based on the value of a CSF.
+   * @param csfF eld T  CSF na .
+   * @param csfF eldType T  CSF type.
+   * @param m nVal T  m n mum acceptable value ( nclus ve).
+   * @param maxVal T  max mum acceptable value (exclus ve).
+   * @return A query that f lters h s based on t  value of a CSF.
    */
-  public static Query getDocValRangeQuery(String csfField, ThriftCSFType csfFieldType,
-                                          long minVal, long maxVal) {
-    return new BooleanQuery.Builder()
-        .add(new DocValRangeFilter(csfField, csfFieldType, minVal, maxVal),
-             BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getDocValRangeQuery(Str ng csfF eld, Thr ftCSFType csfF eldType,
+                                          long m nVal, long maxVal) {
+    return new BooleanQuery.Bu lder()
+        .add(new DocValRangeF lter(csfF eld, csfF eldType, m nVal, maxVal),
+             BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private DocValRangeFilter(String csfField, ThriftCSFType csfFieldType,
-                            double minVal, double maxVal) {
-    this.csfField = csfField;
-    this.csfFieldType = csfFieldType;
-    this.minValInclusive = new Float(minVal);
-    this.maxValExclusive = new Float(maxVal);
+  pr vate DocValRangeF lter(Str ng csfF eld, Thr ftCSFType csfF eldType,
+                            double m nVal, double maxVal) {
+    t .csfF eld = csfF eld;
+    t .csfF eldType = csfF eldType;
+    t .m nVal nclus ve = new Float(m nVal);
+    t .maxValExclus ve = new Float(maxVal);
   }
 
-  private DocValRangeFilter(String csfField, ThriftCSFType csfFieldType,
-                            long minVal, long maxVal) {
-    this.csfField = csfField;
-    this.csfFieldType = csfFieldType;
-    this.minValInclusive = new Long(minVal);
-    this.maxValExclusive = new Long(maxVal);
+  pr vate DocValRangeF lter(Str ng csfF eld, Thr ftCSFType csfF eldType,
+                            long m nVal, long maxVal) {
+    t .csfF eld = csfF eld;
+    t .csfF eldType = csfF eldType;
+    t .m nVal nclus ve = new Long(m nVal);
+    t .maxValExclus ve = new Long(maxVal);
   }
 
-  @Override
-  public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 29
-        + (csfFieldType == null ? 0 : csfFieldType.hashCode()) * 17
-        + minValInclusive.hashCode() * 7
-        + maxValExclusive.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return (csfF eld == null ? 0 : csfF eld.hashCode()) * 29
+        + (csfF eldType == null ? 0 : csfF eldType.hashCode()) * 17
+        + m nVal nclus ve.hashCode() * 7
+        + maxValExclus ve.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof DocValRangeFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof DocValRangeF lter)) {
       return false;
     }
 
-    DocValRangeFilter filter = DocValRangeFilter.class.cast(obj);
-    return Objects.equals(csfField, filter.csfField)
-        && (csfFieldType == filter.csfFieldType)
-        && minValInclusive.equals(filter.minValInclusive)
-        && maxValExclusive.equals(filter.maxValExclusive);
+    DocValRangeF lter f lter = DocValRangeF lter.class.cast(obj);
+    return Objects.equals(csfF eld, f lter.csfF eld)
+        && (csfF eldType == f lter.csfF eldType)
+        && m nVal nclus ve.equals(f lter.m nVal nclus ve)
+        && maxValExclus ve.equals(f lter.maxValExclus ve);
   }
 
-  @Override
-  public String toString(String field) {
-    return "DocValRangeFilter:" + csfField
-        + ",type:" + csfFieldType.toString()
-        + ",min:" + this.minValInclusive.toString()
-        + ",max:" + this.maxValExclusive.toString();
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "DocValRangeF lter:" + csfF eld
+        + ",type:" + csfF eldType.toStr ng()
+        + ",m n:" + t .m nVal nclus ve.toStr ng()
+        + ",max:" + t .maxValExclus ve.toStr ng();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
         LeafReader reader = context.reader();
-        if (csfFieldType == null) {
-          return new AllDocsIterator(reader);
+         f (csfF eldType == null) {
+          return new AllDocs erator(reader);
         }
 
-        int smallestDoc = (reader instanceof EarlybirdIndexSegmentAtomicReader)
-            ? ((EarlybirdIndexSegmentAtomicReader) reader).getSmallestDocID() : 0;
-        int largestDoc = reader.maxDoc() - 1;
-        return new CSFRangeDocIdSetIterator(reader, csfField, csfFieldType,
+         nt smallestDoc = (reader  nstanceof Earlyb rd ndexSeg ntAtom cReader)
+            ? ((Earlyb rd ndexSeg ntAtom cReader) reader).getSmallestDoc D() : 0;
+         nt largestDoc = reader.maxDoc() - 1;
+        return new CSFRangeDoc dSet erator(reader, csfF eld, csfF eldType,
                                             smallestDoc, largestDoc,
-                                            minValInclusive, maxValExclusive);
+                                            m nVal nclus ve, maxValExclus ve);
       }
     };
   }
 
-  private static final class CSFRangeDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues numericDocValues;
-    private final ThriftCSFType csfType;
-    private final Number minValInclusive;
-    private final Number maxValExclusive;
+  pr vate stat c f nal class CSFRangeDoc dSet erator extends RangeF lterD S  {
+    pr vate f nal Nu r cDocValues nu r cDocValues;
+    pr vate f nal Thr ftCSFType csfType;
+    pr vate f nal Number m nVal nclus ve;
+    pr vate f nal Number maxValExclus ve;
 
-    public CSFRangeDocIdSetIterator(LeafReader reader,
-                                    String csfField,
-                                    ThriftCSFType csfType,
-                                    int smallestDocID,
-                                    int largestDocID,
-                                    Number minValInclusive,
-                                    Number maxValExclusive) throws IOException {
-      super(reader, smallestDocID, largestDocID);
-      this.numericDocValues = reader.getNumericDocValues(csfField);
-      this.csfType = csfType;
-      this.minValInclusive = minValInclusive;
-      this.maxValExclusive = maxValExclusive;
+    publ c CSFRangeDoc dSet erator(LeafReader reader,
+                                    Str ng csfF eld,
+                                    Thr ftCSFType csfType,
+                                     nt smallestDoc D,
+                                     nt largestDoc D,
+                                    Number m nVal nclus ve,
+                                    Number maxValExclus ve) throws  OExcept on {
+      super(reader, smallestDoc D, largestDoc D);
+      t .nu r cDocValues = reader.getNu r cDocValues(csfF eld);
+      t .csfType = csfType;
+      t .m nVal nclus ve = m nVal nclus ve;
+      t .maxValExclus ve = maxValExclus ve;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      if (!numericDocValues.advanceExact(docID())) {
+    @Overr de
+    protected boolean shouldReturnDoc() throws  OExcept on {
+       f (!nu r cDocValues.advanceExact(doc D())) {
         return false;
       }
 
-      long val = numericDocValues.longValue();
-      switch (csfType) {
+      long val = nu r cDocValues.longValue();
+      sw ch (csfType) {
         case DOUBLE:
-          double doubleVal = Double.longBitsToDouble(val);
-          return doubleVal >= minValInclusive.doubleValue()
-              && doubleVal < maxValExclusive.doubleValue();
+          double doubleVal = Double.longB sToDouble(val);
+          return doubleVal >= m nVal nclus ve.doubleValue()
+              && doubleVal < maxValExclus ve.doubleValue();
         case FLOAT:
-          float floatVal = Float.intBitsToFloat((int) val);
-          return floatVal >= minValInclusive.doubleValue()
-              && floatVal < maxValExclusive.doubleValue();
+          float floatVal = Float. ntB sToFloat(( nt) val);
+          return floatVal >= m nVal nclus ve.doubleValue()
+              && floatVal < maxValExclus ve.doubleValue();
         case LONG:
-          return val >= minValInclusive.longValue() && val < maxValExclusive.longValue();
-        case INT:
-          return val >= minValInclusive.longValue() && (int) val < maxValExclusive.longValue();
+          return val >= m nVal nclus ve.longValue() && val < maxValExclus ve.longValue();
+        case  NT:
+          return val >= m nVal nclus ve.longValue() && ( nt) val < maxValExclus ve.longValue();
         case BYTE:
-          return (byte) val >= minValInclusive.longValue()
-              && (byte) val < maxValExclusive.longValue();
+          return (byte) val >= m nVal nclus ve.longValue()
+              && (byte) val < maxValExclus ve.longValue();
         default:
           return false;
       }
@@ -181,15 +181,15 @@ public final class DocValRangeFilter extends Query {
   }
 
   //////////////////////////
-  // for unit tests only
+  // for un  tests only
   //////////////////////////
-  @VisibleForTesting
-  public Number getMinValForTest() {
-    return minValInclusive;
+  @V s bleForTest ng
+  publ c Number getM nValForTest() {
+    return m nVal nclus ve;
   }
 
-  @VisibleForTesting
-  public Number getMaxValForTest() {
-    return maxValExclusive;
+  @V s bleForTest ng
+  publ c Number getMaxValForTest() {
+    return maxValExclus ve;
   }
 }

@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.top c
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic.TopicCandidateUrtItemBuilder.TopicClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicFunctionalityTypeBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.top c.Top cCand dateUrt emBu lder.Top cCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseTop cCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.top c.BaseTop cD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.top c.BaseTop cFunct onal yTypeBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top c em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object TopicCandidateUrtItemBuilder {
-  val TopicClientEventInfoElement: String = "topic"
+object Top cCand dateUrt emBu lder {
+  val Top cCl entEvent nfoEle nt: Str ng = "top c"
 }
 
-case class TopicCandidateUrtItemBuilder[-Query <: PipelineQuery, Candidate <: BaseTopicCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  topicFunctionalityTypeBuilder: Option[BaseTopicFunctionalityTypeBuilder[Query, Candidate]] = None,
-  topicDisplayTypeBuilder: Option[BaseTopicDisplayTypeBuilder[Query, Candidate]] = None,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
+case class Top cCand dateUrt emBu lder[-Query <: P pel neQuery, Cand date <: BaseTop cCand date](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Cand date],
+  top cFunct onal yTypeBu lder: Opt on[BaseTop cFunct onal yTypeBu lder[Query, Cand date]] = None,
+  top cD splayTypeBu lder: Opt on[BaseTop cD splayTypeBu lder[Query, Cand date]] = None,
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Cand date]
   ] = None)
-    extends CandidateUrtEntryBuilder[Query, Candidate, TopicItem] {
+    extends Cand dateUrtEntryBu lder[Query, Cand date, Top c em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    topicCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): TopicItem =
-    TopicItem(
-      id = topicCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
+    top cCand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Top c em =
+    Top c em(
+       d = top cCand date. d,
+      sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query,
-        topicCandidate,
-        candidateFeatures,
-        Some(TopicClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      topicFunctionalityType =
-        topicFunctionalityTypeBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      topicDisplayType =
-        topicDisplayTypeBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures))
+        top cCand date,
+        cand dateFeatures,
+        So (Top cCl entEvent nfoEle nt)),
+      feedbackAct on nfo =
+        feedbackAct on nfoBu lder.flatMap(_.apply(query, top cCand date, cand dateFeatures)),
+      top cFunct onal yType =
+        top cFunct onal yTypeBu lder.flatMap(_.apply(query, top cCand date, cand dateFeatures)),
+      top cD splayType =
+        top cD splayTypeBu lder.flatMap(_.apply(query, top cCand date, cand dateFeatures))
     )
 }

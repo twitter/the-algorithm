@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_v s b l y_reason
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => SPAM}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.spam.rtf.{thr ftscala => SPAM}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.{T etyP e => T etyp eSt chCl ent}
+ mport com.tw ter.t etyp e.{thr ftscala => TP}
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object VisibilityReason
-    extends FeatureWithDefaultOnFailure[TweetCandidate, Option[SPAM.FilteredReason]] {
-  override val defaultValue = None
+object V s b l yReason
+    extends FeatureW hDefaultOnFa lure[T etCand date, Opt on[SPAM.F lteredReason]] {
+  overr de val defaultValue = None
 }
 
 /**
- * A [[BulkCandidateFeatureHydrator]] that hydrates TweetCandidates with VisibilityReason features
- * by [[SPAM.SafetyLevel]] when present. The [[VisibilityReason]] feature represents a VisibilityFiltering
- * [[SPAM.FilteredReason]], which contains safety filtering verdict information including action (e.g.
- * Drop, Avoid) and reason (e.g. Misinformation, Abuse). This feature can inform downstream services'
- * handling and presentation of Tweets (e.g. ad avoidance).
+ * A [[BulkCand dateFeatureHydrator]] that hydrates T etCand dates w h V s b l yReason features
+ * by [[SPAM.SafetyLevel]] w n present. T  [[V s b l yReason]] feature represents a V s b l yF lter ng
+ * [[SPAM.F lteredReason]], wh ch conta ns safety f lter ng verd ct  nformat on  nclud ng act on (e.g.
+ * Drop, Avo d) and reason (e.g. M s nformat on, Abuse). T  feature can  nform downstream serv ces'
+ * handl ng and presentat on of T ets (e.g. ad avo dance).
  *
- * @param tweetypieStitchClient used to retrieve Tweet fields for BaseTweetCandidates
- * @param safetyLevel specifies VisibilityFiltering SafetyLabel
+ * @param t etyp eSt chCl ent used to retr eve T et f elds for BaseT etCand dates
+ * @param safetyLevel spec f es V s b l yF lter ng SafetyLabel
  */
 
-@Singleton
-case class TweetVisibilityReasonBulkCandidateFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient,
+@S ngleton
+case class T etV s b l yReasonBulkCand dateFeatureHydrator @ nject() (
+  t etyp eSt chCl ent: T etyp eSt chCl ent,
   safetyLevel: SPAM.SafetyLevel)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate]
-    with Logging {
+    extends BulkCand dateFeatureHydrator[P pel neQuery, BaseT etCand date]
+    w h Logg ng {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "TweetVisibilityReason")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    "T etV s b l yReason")
 
-  override def features: Set[Feature[_, _]] = Set(VisibilityReason)
+  overr de def features: Set[Feature[_, _]] = Set(V s b l yReason)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[BaseTweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(
-            tweetId = tweetId,
-            options = TP.GetTweetFieldsOptions(
-              forUserId = query.getOptionalUserId,
-              tweetIncludes = Set.empty,
-              doNotCache = true,
-              visibilityPolicy = TP.TweetVisibilityPolicy.UserVisible,
-              safetyLevel = Some(safetyLevel)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[BaseT etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    St ch
+      .traverse(cand dates.map(_.cand date. d)) { t et d =>
+        t etyp eSt chCl ent
+          .getT etF elds(
+            t et d = t et d,
+            opt ons = TP.GetT etF eldsOpt ons(
+              forUser d = query.getOpt onalUser d,
+              t et ncludes = Set.empty,
+              doNotCac  = true,
+              v s b l yPol cy = TP.T etV s b l yPol cy.UserV s ble,
+              safetyLevel = So (safetyLevel)
             )
-          ).liftToTry
-      }.map { getTweetFieldsResults: Seq[Try[TP.GetTweetFieldsResult]] =>
-        val tweetFields: Seq[Try[TP.TweetFieldsResultFound]] = getTweetFieldsResults.map {
-          case Return(TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), _, _)) =>
+          ).l ftToTry
+      }.map { getT etF eldsResults: Seq[Try[TP.GetT etF eldsResult]] =>
+        val t etF elds: Seq[Try[TP.T etF eldsResultFound]] = getT etF eldsResults.map {
+          case Return(TP.GetT etF eldsResult(_, TP.T etF eldsResultState.Found(found), _, _)) =>
             Return(found)
-          case Return(TP.GetTweetFieldsResult(_, resultState, _, _)) =>
+          case Return(TP.GetT etF eldsResult(_, resultState, _, _)) =>
             Throw(
-              VisibilityReasonFeatureHydrationFailure(
-                s"Unexpected tweet result state: ${resultState}"))
+              V s b l yReasonFeatureHydrat onFa lure(
+                s"Unexpected t et result state: ${resultState}"))
           case Throw(e) =>
             Throw(e)
         }
 
-        tweetFields.map { tweetFieldTry =>
-          val tweetFilteredReason = tweetFieldTry.map { tweetField =>
-            tweetField.suppressReason match {
-              case Some(suppressReason) => Some(suppressReason)
+        t etF elds.map { t etF eldTry =>
+          val t etF lteredReason = t etF eldTry.map { t etF eld =>
+            t etF eld.suppressReason match {
+              case So (suppressReason) => So (suppressReason)
               case _ => None
             }
           }
 
-          FeatureMapBuilder()
-            .add(VisibilityReason, tweetFilteredReason)
-            .build()
+          FeatureMapBu lder()
+            .add(V s b l yReason, t etF lteredReason)
+            .bu ld()
         }
       }
   }
 }
 
-case class VisibilityReasonFeatureHydrationFailure(message: String)
-    extends Exception(s"VisibilityReasonFeatureHydrationFailure($message)")
+case class V s b l yReasonFeatureHydrat onFa lure( ssage: Str ng)
+    extends Except on(s"V s b l yReasonFeatureHydrat onFa lure($ ssage)")

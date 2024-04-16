@@ -1,30 +1,30 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
 /**
- * Escape a String into Java or Scala String literal syntax (adds the
- * surrounding quotes.)
+ * Escape a Str ng  nto Java or Scala Str ng l eral syntax (adds t 
+ * surround ng quotes.)
  *
- * This is primarily for printing Strings for debugging or logging.
+ * T   s pr mar ly for pr nt ng Str ngs for debugg ng or logg ng.
  */
-object StringLiteral extends (String => String) {
-  private[this] val ControlLimit = ' '
-  private[this] val PrintableLimit = '\u007e'
-  private[this] val Specials =
+object Str ngL eral extends (Str ng => Str ng) {
+  pr vate[t ] val ControlL m  = ' '
+  pr vate[t ] val Pr ntableL m  = '\u007e'
+  pr vate[t ] val Spec als =
     Map('\n' -> 'n', '\r' -> 'r', '\t' -> 't', '"' -> '"', '\'' -> '\'', '\\' -> '\\')
 
-  def apply(str: String): String = {
-    val s = new StringBuilder(str.length)
+  def apply(str: Str ng): Str ng = {
+    val s = new Str ngBu lder(str.length)
     s.append('"')
-    var i = 0
-    while (i < str.length) {
-      val c = str(i)
-      Specials.get(c) match {
+    var   = 0
+    wh le (  < str.length) {
+      val c = str( )
+      Spec als.get(c) match {
         case None =>
-          if (c >= ControlLimit && c <= PrintableLimit) s.append(c)
-          else s.append("\\u%04x".format(c.toInt))
-        case Some(special) => s.append('\\').append(special)
+           f (c >= ControlL m  && c <= Pr ntableL m ) s.append(c)
+          else s.append("\\u%04x".format(c.to nt))
+        case So (spec al) => s.append('\\').append(spec al)
       }
-      i += 1
+        += 1
     }
     s.append('"').result
   }

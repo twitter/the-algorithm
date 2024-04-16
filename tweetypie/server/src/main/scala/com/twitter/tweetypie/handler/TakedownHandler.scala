@@ -1,76 +1,76 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.takedown.util.TakedownReasons._
-import com.twitter.tweetypie.store.Takedown
-import com.twitter.tweetypie.thriftscala.TakedownRequest
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.util.Takedowns
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.takedown.ut l.TakedownReasons._
+ mport com.tw ter.t etyp e.store.Takedown
+ mport com.tw ter.t etyp e.thr ftscala.TakedownRequest
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.ut l.Takedowns
 
 /**
- * This handler processes TakedownRequest objects sent to Tweetypie's takedown endpoint.
- * The request object specifies which takedown countries are being added and which are
- * being removed.  It also includes side effect flags for setting the tweet's has_takedown
- * bit, scribing to Guano, and enqueuing to EventBus.  For more information about inputs
- * to the takedown endpoint, see the TakedownRequest documentation in the thrift definition.
+ * T  handler processes TakedownRequest objects sent to T etyp e's takedown endpo nt.
+ * T  request object spec f es wh ch takedown countr es are be ng added and wh ch are
+ * be ng removed.    also  ncludes s de effect flags for sett ng t  t et's has_takedown
+ * b , scr b ng to Guano, and enqueu ng to EventBus.  For more  nformat on about  nputs
+ * to t  takedown endpo nt, see t  TakedownRequest docu ntat on  n t  thr ft def n  on.
  */
 object TakedownHandler {
-  type Type = FutureArrow[TakedownRequest, Unit]
+  type Type = FutureArrow[TakedownRequest, Un ]
 
   def apply(
-    getTweet: FutureArrow[TweetId, Tweet],
-    getUser: FutureArrow[UserId, User],
-    writeTakedown: FutureEffect[Takedown.Event]
+    getT et: FutureArrow[T et d, T et],
+    getUser: FutureArrow[User d, User],
+    wr eTakedown: FutureEffect[Takedown.Event]
   ): Type = {
     FutureArrow { request =>
       for {
-        tweet <- getTweet(request.tweetId)
-        user <- getUser(getUserId(tweet))
-        userHasTakedowns = user.takedowns.map(userTakedownsToReasons).exists(_.nonEmpty)
+        t et <- getT et(request.t et d)
+        user <- getUser(getUser d(t et))
+        userHasTakedowns = user.takedowns.map(userTakedownsToReasons).ex sts(_.nonEmpty)
 
-        existingTweetReasons = Takedowns.fromTweet(tweet).reasons
+        ex st ngT etReasons = Takedowns.fromT et(t et).reasons
 
-        reasonsToRemove = (request.countriesToRemove.map(countryCodeToReason) ++
-            request.reasonsToRemove.map(normalizeReason)).distinct.sortBy(_.toString)
+        reasonsToRemove = (request.countr esToRemove.map(countryCodeToReason) ++
+            request.reasonsToRemove.map(normal zeReason)).d st nct.sortBy(_.toStr ng)
 
-        reasonsToAdd = (request.countriesToAdd.map(countryCodeToReason) ++
-            request.reasonsToAdd.map(normalizeReason)).distinct.sortBy(_.toString)
+        reasonsToAdd = (request.countr esToAdd.map(countryCodeToReason) ++
+            request.reasonsToAdd.map(normal zeReason)).d st nct.sortBy(_.toStr ng)
 
-        updatedTweetTakedowns =
-          (existingTweetReasons ++ reasonsToAdd)
-            .filterNot(reasonsToRemove.contains)
+        updatedT etTakedowns =
+          (ex st ngT etReasons ++ reasonsToAdd)
+            .f lterNot(reasonsToRemove.conta ns)
             .toSeq
-            .sortBy(_.toString)
+            .sortBy(_.toStr ng)
 
-        (cs, rs) = Takedowns.partitionReasons(updatedTweetTakedowns)
+        (cs, rs) = Takedowns.part  onReasons(updatedT etTakedowns)
 
-        updatedTweet = Lens.setAll(
-          tweet,
-          // these fields are cached on the Tweet in CachingTweetStore and written in
-          // ManhattanTweetStore
-          TweetLenses.hasTakedown -> (updatedTweetTakedowns.nonEmpty || userHasTakedowns),
-          TweetLenses.tweetypieOnlyTakedownCountryCodes -> Some(cs).filter(_.nonEmpty),
-          TweetLenses.tweetypieOnlyTakedownReasons -> Some(rs).filter(_.nonEmpty)
+        updatedT et = Lens.setAll(
+          t et,
+          // t se f elds are cac d on t  T et  n Cach ngT etStore and wr ten  n
+          // ManhattanT etStore
+          T etLenses.hasTakedown -> (updatedT etTakedowns.nonEmpty || userHasTakedowns),
+          T etLenses.t etyp eOnlyTakedownCountryCodes -> So (cs).f lter(_.nonEmpty),
+          T etLenses.t etyp eOnlyTakedownReasons -> So (rs).f lter(_.nonEmpty)
         )
 
-        _ <- writeTakedown.when(tweet != updatedTweet) {
+        _ <- wr eTakedown.w n(t et != updatedT et) {
           Takedown.Event(
-            tweet = updatedTweet,
-            timestamp = Time.now,
-            user = Some(user),
-            takedownReasons = updatedTweetTakedowns,
+            t et = updatedT et,
+            t  stamp = T  .now,
+            user = So (user),
+            takedownReasons = updatedT etTakedowns,
             reasonsToAdd = reasonsToAdd,
             reasonsToRemove = reasonsToRemove,
-            auditNote = request.auditNote,
+            aud Note = request.aud Note,
             host = request.host,
-            byUserId = request.byUserId,
+            byUser d = request.byUser d,
             eventbusEnqueue = request.eventbusEnqueue,
-            scribeForAudit = request.scribeForAudit,
+            scr beForAud  = request.scr beForAud ,
             updateCodesAndReasons = true
           )
         }
-      } yield ()
+      } y eld ()
     }
   }
 }

@@ -1,85 +1,85 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-trait IncludeSelector[-Query <: PipelineQuery] {
+tra   ncludeSelector[-Query <: P pel neQuery] {
   def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): Boolean
 }
 
 /**
- * Run [[selector]] if [[includeSelector]] resolves to true, else no-op the selector
+ * Run [[selector]]  f [[ ncludeSelector]] resolves to true, else no-op t  selector
  */
-case class SelectConditionally[-Query <: PipelineQuery](
+case class SelectCond  onally[-Query <: P pel neQuery](
   selector: Selector[Query],
-  includeSelector: IncludeSelector[Query])
+   ncludeSelector:  ncludeSelector[Query])
     extends Selector[Query] {
 
-  override val pipelineScope: CandidateScope = selector.pipelineScope
+  overr de val p pel neScope: Cand dateScope = selector.p pel neScope
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    if (includeSelector(query, remainingCandidates, result)) {
-      selector(query, remainingCandidates, result)
-    } else SelectorResult(remainingCandidates = remainingCandidates, result = result)
+     f ( ncludeSelector(query, rema n ngCand dates, result)) {
+      selector(query, rema n ngCand dates, result)
+    } else SelectorResult(rema n ngCand dates = rema n ngCand dates, result = result)
   }
 }
 
-object SelectConditionally {
+object SelectCond  onally {
 
   /**
-   * Wrap each [[Selector]] in `selectors` in an [[IncludeSelector]] with `includeSelector` as the [[SelectConditionally.includeSelector]]
+   * Wrap each [[Selector]]  n `selectors`  n an [[ ncludeSelector]] w h ` ncludeSelector` as t  [[SelectCond  onally. ncludeSelector]]
    */
-  def apply[Query <: PipelineQuery](
+  def apply[Query <: P pel neQuery](
     selectors: Seq[Selector[Query]],
-    includeSelector: IncludeSelector[Query]
+     ncludeSelector:  ncludeSelector[Query]
   ): Seq[Selector[Query]] =
-    selectors.map(SelectConditionally(_, includeSelector))
+    selectors.map(SelectCond  onally(_,  ncludeSelector))
 
   /**
-   * A [[SelectConditionally]] based on a [[Param]]
+   * A [[SelectCond  onally]] based on a [[Param]]
    */
-  def paramGated[Query <: PipelineQuery](
+  def paramGated[Query <: P pel neQuery](
     selector: Selector[Query],
     enabledParam: Param[Boolean],
-  ): SelectConditionally[Query] =
-    SelectConditionally(selector, (query, _, _) => query.params(enabledParam))
+  ): SelectCond  onally[Query] =
+    SelectCond  onally(selector, (query, _, _) => query.params(enabledParam))
 
   /**
-   * Wrap each [[Selector]] in `selectors` in a [[SelectConditionally]] based on a [[Param]]
+   * Wrap each [[Selector]]  n `selectors`  n a [[SelectCond  onally]] based on a [[Param]]
    */
-  def paramGated[Query <: PipelineQuery](
+  def paramGated[Query <: P pel neQuery](
     selectors: Seq[Selector[Query]],
     enabledParam: Param[Boolean],
   ): Seq[Selector[Query]] =
-    selectors.map(SelectConditionally.paramGated(_, enabledParam))
+    selectors.map(SelectCond  onally.paramGated(_, enabledParam))
 
   /**
-   * A [[SelectConditionally]] based on an inverted [[Param]]
+   * A [[SelectCond  onally]] based on an  nverted [[Param]]
    */
-  def paramNotGated[Query <: PipelineQuery](
+  def paramNotGated[Query <: P pel neQuery](
     selector: Selector[Query],
-    enabledParamToInvert: Param[Boolean],
-  ): SelectConditionally[Query] =
-    SelectConditionally(selector, (query, _, _) => !query.params(enabledParamToInvert))
+    enabledParamTo nvert: Param[Boolean],
+  ): SelectCond  onally[Query] =
+    SelectCond  onally(selector, (query, _, _) => !query.params(enabledParamTo nvert))
 
   /**
-   * Wrap each [[Selector]] in `selectors` in a [[SelectConditionally]] based on an inverted [[Param]]
+   * Wrap each [[Selector]]  n `selectors`  n a [[SelectCond  onally]] based on an  nverted [[Param]]
    */
-  def paramNotGated[Query <: PipelineQuery](
+  def paramNotGated[Query <: P pel neQuery](
     selectors: Seq[Selector[Query]],
-    enabledParamToInvert: Param[Boolean],
+    enabledParamTo nvert: Param[Boolean],
   ): Seq[Selector[Query]] =
-    selectors.map(SelectConditionally.paramNotGated(_, enabledParamToInvert))
+    selectors.map(SelectCond  onally.paramNotGated(_, enabledParamTo nvert))
 }

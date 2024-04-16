@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.document;
+package com.tw ter.search.earlyb rd.docu nt;
 
-import com.twitter.common.text.token.TokenProcessor;
-import com.twitter.common.text.token.TwitterTokenStream;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+ mport com.tw ter.common.text.token.TokenProcessor;
+ mport com.tw ter.common.text.token.Tw terTokenStream;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common.sc ma.Sc maDocu ntFactory;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
 
-public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenStreamRewriter {
-  private static final int NEVER_TRUNCATE_CHARS_BELOW_POSITION = 140;
-  private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX =
-      "truncate_long_tweets_in_";
-  private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX =
-      "num_tweet_characters_supported_in_";
+publ c class Truncat onTokenStreamWr er  mple nts Sc maDocu ntFactory.TokenStreamRewr er {
+  pr vate stat c f nal  nt NEVER_TRUNCATE_CHARS_BELOW_POS T ON = 140;
+  pr vate stat c f nal Str ng TRUNCATE_LONG_TWEETS_DEC DER_KEY_PREF X =
+      "truncate_long_t ets_ n_";
+  pr vate stat c f nal Str ng NUM_TWEET_CHARACTERS_SUPPORTED_DEC DER_KEY_PREF X =
+      "num_t et_characters_supported_ n_";
 
-  private static final SearchCounter NUM_TWEETS_TRUNCATED =
-      SearchCounter.export("num_tweets_truncated");
-  private static final SearchLongGauge NUM_TWEET_CHARACTERS_SUPPORTED =
-      SearchLongGauge.export("num_tweet_characters_supported");
+  pr vate stat c f nal SearchCounter NUM_TWEETS_TRUNCATED =
+      SearchCounter.export("num_t ets_truncated");
+  pr vate stat c f nal SearchLongGauge NUM_TWEET_CHARACTERS_SUPPORTED =
+      SearchLongGauge.export("num_t et_characters_supported");
 
-  private final Decider decider;
-  private final String truncateLongTweetsDeciderKey;
-  private final String numCharsSupportedDeciderKey;
+  pr vate f nal Dec der dec der;
+  pr vate f nal Str ng truncateLongT etsDec derKey;
+  pr vate f nal Str ng numCharsSupportedDec derKey;
 
   /**
-   * Creates a TruncationTokenStreamWriter
+   * Creates a Truncat onTokenStreamWr er
    */
-  public TruncationTokenStreamWriter(EarlybirdCluster cluster, Decider decider) {
-    this.decider = decider;
+  publ c Truncat onTokenStreamWr er(Earlyb rdCluster cluster, Dec der dec der) {
+    t .dec der = dec der;
 
-    this.truncateLongTweetsDeciderKey =
-        TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
-    this.numCharsSupportedDeciderKey =
-        NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
+    t .truncateLongT etsDec derKey =
+        TRUNCATE_LONG_TWEETS_DEC DER_KEY_PREF X + cluster.na ().toLo rCase();
+    t .numCharsSupportedDec derKey =
+        NUM_TWEET_CHARACTERS_SUPPORTED_DEC DER_KEY_PREF X + cluster.na ().toLo rCase();
   }
 
-  @Override
-  public TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream) {
-    if (EarlybirdFieldConstant.TEXT_FIELD.getFieldName().equals(fieldInfo.getName())) {
-      final int maxPosition = getTruncatePosition();
-      NUM_TWEET_CHARACTERS_SUPPORTED.set(maxPosition);
-      if (maxPosition >= NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
+  @Overr de
+  publ c Tw terTokenStream rewr e(Sc ma.F eld nfo f eld nfo, Tw terTokenStream stream) {
+     f (Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa ().equals(f eld nfo.getNa ())) {
+      f nal  nt maxPos  on = getTruncatePos  on();
+      NUM_TWEET_CHARACTERS_SUPPORTED.set(maxPos  on);
+       f (maxPos  on >= NEVER_TRUNCATE_CHARS_BELOW_POS T ON) {
         return new TokenProcessor(stream) {
-          @Override
-          public final boolean incrementToken() {
-            if (incrementInputStream()) {
-              if (offset() < maxPosition) {
+          @Overr de
+          publ c f nal boolean  ncre ntToken() {
+             f ( ncre nt nputStream()) {
+               f (offset() < maxPos  on) {
                 return true;
               }
-              NUM_TWEETS_TRUNCATED.increment();
+              NUM_TWEETS_TRUNCATED. ncre nt();
             }
 
             return false;
@@ -65,22 +65,22 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
   }
 
   /**
-   * Get the truncation position.
+   * Get t  truncat on pos  on.
    *
-   * @return the truncation position or -1 if truncation is disabled.
+   * @return t  truncat on pos  on or -1  f truncat on  s d sabled.
    */
-  private int getTruncatePosition() {
-    int maxPosition;
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, truncateLongTweetsDeciderKey)) {
+  pr vate  nt getTruncatePos  on() {
+     nt maxPos  on;
+     f (!Dec derUt l. sAva lableForRandomRec p ent(dec der, truncateLongT etsDec derKey)) {
       return -1;
     }
-    maxPosition = DeciderUtil.getAvailability(decider, numCharsSupportedDeciderKey);
+    maxPos  on = Dec derUt l.getAva lab l y(dec der, numCharsSupportedDec derKey);
 
-    if (maxPosition < NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
-      // Never truncate below NEVER_TRUNCATE_CHARS_BELOW_POSITION chars
-      maxPosition = NEVER_TRUNCATE_CHARS_BELOW_POSITION;
+     f (maxPos  on < NEVER_TRUNCATE_CHARS_BELOW_POS T ON) {
+      // Never truncate below NEVER_TRUNCATE_CHARS_BELOW_POS T ON chars
+      maxPos  on = NEVER_TRUNCATE_CHARS_BELOW_POS T ON;
     }
 
-    return maxPosition;
+    return maxPos  on;
   }
 }

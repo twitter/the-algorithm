@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.scribe
+package com.tw ter.cr_m xer.scr be
 
 /**
- * Categories define scribe categories used in cr-mixer service.
+ * Categor es def ne scr be categor es used  n cr-m xer serv ce.
  */
-object ScribeCategories {
-  lazy val AllCategories =
-    List(AbDecider, TopLevelApiDdgMetrics, TweetsRecs)
+object Scr beCategor es {
+  lazy val AllCategor es =
+    L st(AbDec der, TopLevelAp Ddg tr cs, T etsRecs)
 
   /**
-   * AbDecider represents scribe logs for experiments
+   * AbDec der represents scr be logs for exper  nts
    */
-  lazy val AbDecider: ScribeCategory = ScribeCategory(
-    "abdecider_scribe",
-    "client_event"
+  lazy val AbDec der: Scr beCategory = Scr beCategory(
+    "abdec der_scr be",
+    "cl ent_event"
   )
 
   /**
-   * Top-Level Client event scribe logs, to record changes in system metrics (e.g. latency,
-   * candidates returned, empty rate ) per experiment bucket, and store them in DDG metric group
+   * Top-Level Cl ent event scr be logs, to record changes  n system  tr cs (e.g. latency,
+   * cand dates returned, empty rate ) per exper  nt bucket, and store t m  n DDG  tr c group
    */
-  lazy val TopLevelApiDdgMetrics: ScribeCategory = ScribeCategory(
-    "top_level_api_ddg_metrics_scribe",
-    "client_event"
+  lazy val TopLevelAp Ddg tr cs: Scr beCategory = Scr beCategory(
+    "top_level_ap _ddg_ tr cs_scr be",
+    "cl ent_event"
   )
 
-  lazy val TweetsRecs: ScribeCategory = ScribeCategory(
-    "get_tweets_recommendations_scribe",
-    "cr_mixer_get_tweets_recommendations"
+  lazy val T etsRecs: Scr beCategory = Scr beCategory(
+    "get_t ets_recom ndat ons_scr be",
+    "cr_m xer_get_t ets_recom ndat ons"
   )
 
-  lazy val VITTweetsRecs: ScribeCategory = ScribeCategory(
-    "get_vit_tweets_recommendations_scribe",
-    "cr_mixer_get_vit_tweets_recommendations"
+  lazy val V TT etsRecs: Scr beCategory = Scr beCategory(
+    "get_v _t ets_recom ndat ons_scr be",
+    "cr_m xer_get_v _t ets_recom ndat ons"
   )
 
-  lazy val RelatedTweets: ScribeCategory = ScribeCategory(
-    "get_related_tweets_scribe",
-    "cr_mixer_get_related_tweets"
+  lazy val RelatedT ets: Scr beCategory = Scr beCategory(
+    "get_related_t ets_scr be",
+    "cr_m xer_get_related_t ets"
   )
 
-  lazy val UtegTweets: ScribeCategory = ScribeCategory(
-    "get_uteg_tweets_scribe",
-    "cr_mixer_get_uteg_tweets"
+  lazy val UtegT ets: Scr beCategory = Scr beCategory(
+    "get_uteg_t ets_scr be",
+    "cr_m xer_get_uteg_t ets"
   )
 
-  lazy val AdsRecommendations: ScribeCategory = ScribeCategory(
-    "get_ads_recommendations_scribe",
-    "cr_mixer_get_ads_recommendations"
+  lazy val AdsRecom ndat ons: Scr beCategory = Scr beCategory(
+    "get_ads_recom ndat ons_scr be",
+    "cr_m xer_get_ads_recom ndat ons"
   )
 }
 
 /**
- * Category represents each scribe log data.
+ * Category represents each scr be log data.
  *
- * @param loggerFactoryNode loggerFactory node name in cr-mixer associated with this scribe category
- * @param scribeCategory    scribe category name (globally unique at Twitter)
+ * @param loggerFactoryNode loggerFactory node na   n cr-m xer assoc ated w h t  scr be category
+ * @param scr beCategory    scr be category na  (globally un que at Tw ter)
  */
-case class ScribeCategory(
-  loggerFactoryNode: String,
-  scribeCategory: String) {
-  def getProdLoggerFactoryNode: String = loggerFactoryNode
-  def getStagingLoggerFactoryNode: String = "staging_" + loggerFactoryNode
+case class Scr beCategory(
+  loggerFactoryNode: Str ng,
+  scr beCategory: Str ng) {
+  def getProdLoggerFactoryNode: Str ng = loggerFactoryNode
+  def getStag ngLoggerFactoryNode: Str ng = "stag ng_" + loggerFactoryNode
 }

@@ -1,153 +1,153 @@
-package com.twitter.representation_manager.common
+package com.tw ter.representat on_manager.common
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingIdCacheKeyBuilder
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-
-/*
- * NOTE - ALL the cache configs here are just placeholders, NONE of them is used anyweher in RMS yet
- * */
-sealed trait MemCacheParams
-sealed trait MemCacheConfig
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng dCac KeyBu lder
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on._
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Durat on
 
 /*
- * This holds params that is required to set up a memcache cache for a single embedding store
+ * NOTE - ALL t  cac  conf gs  re are just placeholders, NONE of t m  s used any  r  n RMS yet
  * */
-case class EnabledMemCacheParams(ttl: Duration) extends MemCacheParams
-object DisabledMemCacheParams extends MemCacheParams
+sealed tra   mCac Params
+sealed tra   mCac Conf g
 
 /*
- * We use this MemcacheConfig as the single source to set up the memcache for all RMS use cases
- * NO OVERRIDE FROM CLIENT
+ * T  holds params that  s requ red to set up a  mcac  cac  for a s ngle embedd ng store
  * */
-object MemCacheConfig {
-  val keyHasher: KeyHasher = KeyHasher.FNV1A_64
-  val hashKeyPrefix: String = "RMS"
-  val simclustersEmbeddingCacheKeyBuilder =
-    SimClustersEmbeddingIdCacheKeyBuilder(keyHasher.hashKey, hashKeyPrefix)
+case class Enabled mCac Params(ttl: Durat on) extends  mCac Params
+object D sabled mCac Params extends  mCac Params
 
-  val cacheParamsMap: Map[
-    (EmbeddingType, ModelVersion),
-    MemCacheParams
+/*
+ *   use t   mcac Conf g as t  s ngle s ce to set up t   mcac  for all RMS use cases
+ * NO OVERR DE FROM CL ENT
+ * */
+object  mCac Conf g {
+  val keyHas r: KeyHas r = KeyHas r.FNV1A_64
+  val hashKeyPref x: Str ng = "RMS"
+  val s mclustersEmbedd ngCac KeyBu lder =
+    S mClustersEmbedd ng dCac KeyBu lder(keyHas r.hashKey, hashKeyPref x)
+
+  val cac ParamsMap: Map[
+    (Embedd ngType, ModelVers on),
+     mCac Params
   ] = Map(
-    // Tweet Embeddings
-    (LogFavBasedTweet, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 10.minutes),
-    (LogFavBasedTweet, Model20m145k2020) -> EnabledMemCacheParams(ttl = 10.minutes),
-    (LogFavLongestL2EmbeddingTweet, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 10.minutes),
-    (LogFavLongestL2EmbeddingTweet, Model20m145k2020) -> EnabledMemCacheParams(ttl = 10.minutes),
-    // User - KnownFor Embeddings
-    (FavBasedProducer, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FollowBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (AggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (RelaxedAggregatableLogFavBasedProducer, Model20m145kUpdated) -> EnabledMemCacheParams(ttl =
-      12.hours),
-    (RelaxedAggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl =
-      12.hours),
-    // User - InterestedIn Embeddings
-    (LogFavBasedUserInterestedInFromAPE, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FollowBasedUserInterestedInFromAPE, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FollowBasedUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (LogFavBasedUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FavBasedUserInterestedInFromPE, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FilteredUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FilteredUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (FilteredUserInterestedInFromPE, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UnfilteredUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UnfilteredUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UserNextInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl =
-      30.minutes), //embedding is updated every 2 hours, keeping it lower to avoid staleness
+    // T et Embedd ngs
+    (LogFavBasedT et, Model20m145kUpdated) -> Enabled mCac Params(ttl = 10.m nutes),
+    (LogFavBasedT et, Model20m145k2020) -> Enabled mCac Params(ttl = 10.m nutes),
+    (LogFavLongestL2Embedd ngT et, Model20m145kUpdated) -> Enabled mCac Params(ttl = 10.m nutes),
+    (LogFavLongestL2Embedd ngT et, Model20m145k2020) -> Enabled mCac Params(ttl = 10.m nutes),
+    // User - KnownFor Embedd ngs
+    (FavBasedProducer, Model20m145kUpdated) -> Enabled mCac Params(ttl = 12.h s),
+    (FavBasedProducer, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (FollowBasedProducer, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (AggregatableLogFavBasedProducer, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (RelaxedAggregatableLogFavBasedProducer, Model20m145kUpdated) -> Enabled mCac Params(ttl =
+      12.h s),
+    (RelaxedAggregatableLogFavBasedProducer, Model20m145k2020) -> Enabled mCac Params(ttl =
+      12.h s),
+    // User -  nterested n Embedd ngs
+    (LogFavBasedUser nterested nFromAPE, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (FollowBasedUser nterested nFromAPE, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (FavBasedUser nterested n, Model20m145kUpdated) -> Enabled mCac Params(ttl = 12.h s),
+    (FavBasedUser nterested n, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (FollowBasedUser nterested n, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (LogFavBasedUser nterested n, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (FavBasedUser nterested nFromPE, Model20m145kUpdated) -> Enabled mCac Params(ttl = 12.h s),
+    (F lteredUser nterested n, Model20m145kUpdated) -> Enabled mCac Params(ttl = 12.h s),
+    (F lteredUser nterested n, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (F lteredUser nterested nFromPE, Model20m145kUpdated) -> Enabled mCac Params(ttl = 12.h s),
+    (Unf lteredUser nterested n, Model20m145kUpdated) -> Enabled mCac Params(ttl = 12.h s),
+    (Unf lteredUser nterested n, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (UserNext nterested n, Model20m145k2020) -> Enabled mCac Params(ttl =
+      30.m nutes), //embedd ng  s updated every 2 h s, keep ng   lo r to avo d staleness
     (
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
     (
-      LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      LogFavBasedUser nterestedAverageAddressBookFrom  APE,
+      Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
     (
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
     (
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
     (
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
     (
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    // Topic Embeddings
-    (FavTfgTopic, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (LogFavBasedKgoApeTopic, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
+      LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    // Top c Embedd ngs
+    (FavTfgTop c, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
+    (LogFavBasedKgoApeTop c, Model20m145k2020) -> Enabled mCac Params(ttl = 12.h s),
   )
 
-  def getCacheSetup(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): MemCacheParams = {
-    // When requested (embeddingType, modelVersion) doesn't exist, we return DisabledMemCacheParams
-    cacheParamsMap.getOrElse((embeddingType, modelVersion), DisabledMemCacheParams)
+  def getCac Setup(
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ):  mCac Params = {
+    // W n requested (embedd ngType, modelVers on) doesn't ex st,   return D sabled mCac Params
+    cac ParamsMap.getOrElse((embedd ngType, modelVers on), D sabled mCac Params)
   }
 
-  def getCacheKeyPrefix(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
-    s"${embeddingType.value}_${modelVersion.value}_"
+  def getCac KeyPref x(embedd ngType: Embedd ngType, modelVers on: ModelVers on) =
+    s"${embedd ngType.value}_${modelVers on.value}_"
 
-  def getStatsName(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
-    s"${embeddingType.name}_${modelVersion.name}_mem_cache"
+  def getStatsNa (embedd ngType: Embedd ngType, modelVers on: ModelVers on) =
+    s"${embedd ngType.na }_${modelVers on.na }_ m_cac "
 
   /**
-   * Build a ReadableStore based on MemCacheConfig.
+   * Bu ld a ReadableStore based on  mCac Conf g.
    *
-   * If memcache is disabled, it will return a normal readable store wrapper of the rawStore,
-   * with SimClustersEmbedding as value;
-   * If memcache is enabled, it will return a ObservedMemcachedReadableStore wrapper of the rawStore,
-   * with memcache set up according to the EnabledMemCacheParams
+   *  f  mcac   s d sabled,   w ll return a normal readable store wrapper of t  rawStore,
+   * w h S mClustersEmbedd ng as value;
+   *  f  mcac   s enabled,   w ll return a Observed mcac dReadableStore wrapper of t  rawStore,
+   * w h  mcac  set up accord ng to t  Enabled mCac Params
    * */
-  def buildMemCacheStoreForSimClustersEmbedding(
-    rawStore: ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding],
-    cacheClient: Client,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion,
-    stats: StatsReceiver
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    val cacheParams = getCacheSetup(embeddingType, modelVersion)
-    val store = cacheParams match {
-      case DisabledMemCacheParams => rawStore
-      case EnabledMemCacheParams(ttl) =>
-        val memCacheKeyPrefix = MemCacheConfig.getCacheKeyPrefix(
-          embeddingType,
-          modelVersion
+  def bu ld mCac StoreForS mClustersEmbedd ng(
+    rawStore: ReadableStore[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng],
+    cac Cl ent: Cl ent,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on,
+    stats: StatsRece ver
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+    val cac Params = getCac Setup(embedd ngType, modelVers on)
+    val store = cac Params match {
+      case D sabled mCac Params => rawStore
+      case Enabled mCac Params(ttl) =>
+        val  mCac KeyPref x =  mCac Conf g.getCac KeyPref x(
+          embedd ngType,
+          modelVers on
         )
-        val statsName = MemCacheConfig.getStatsName(
-          embeddingType,
-          modelVersion
+        val statsNa  =  mCac Conf g.getStatsNa (
+          embedd ngType,
+          modelVers on
         )
-        ObservedMemcachedReadableStore.fromCacheClient(
-          backingStore = rawStore,
-          cacheClient = cacheClient,
+        Observed mcac dReadableStore.fromCac Cl ent(
+          back ngStore = rawStore,
+          cac Cl ent = cac Cl ent,
           ttl = ttl
         )(
-          valueInjection = LZ4Injection.compose(BinaryScalaCodec(ThriftSimClustersEmbedding)),
-          statsReceiver = stats.scope(statsName),
-          keyToString = { k => memCacheKeyPrefix + k.toString }
+          value nject on = LZ4 nject on.compose(B naryScalaCodec(Thr ftS mClustersEmbedd ng)),
+          statsRece ver = stats.scope(statsNa ),
+          keyToStr ng = { k =>  mCac KeyPref x + k.toStr ng }
         )
     }
-    store.mapValues(SimClustersEmbedding(_))
+    store.mapValues(S mClustersEmbedd ng(_))
   }
 
 }

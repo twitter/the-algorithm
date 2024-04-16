@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.PivotVerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.RecommendationVerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.P votVert calGr d emTop cFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Recom ndat onVert calGr d emTop cFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d emTop cFunct onal yType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class VerticalGridItemTopicFunctionalityTypeMarshaller @Inject() () {
+@S ngleton
+class Vert calGr d emTop cFunct onal yTypeMarshaller @ nject() () {
 
   def apply(
-    verticalGridItemTopicFunctionalityType: VerticalGridItemTopicFunctionalityType
-  ): urt.VerticalGridItemTopicFunctionalityType = verticalGridItemTopicFunctionalityType match {
-    case PivotVerticalGridItemTopicFunctionalityType =>
-      urt.VerticalGridItemTopicFunctionalityType.Pivot
-    case RecommendationVerticalGridItemTopicFunctionalityType =>
-      urt.VerticalGridItemTopicFunctionalityType.Recommendation
+    vert calGr d emTop cFunct onal yType: Vert calGr d emTop cFunct onal yType
+  ): urt.Vert calGr d emTop cFunct onal yType = vert calGr d emTop cFunct onal yType match {
+    case P votVert calGr d emTop cFunct onal yType =>
+      urt.Vert calGr d emTop cFunct onal yType.P vot
+    case Recom ndat onVert calGr d emTop cFunct onal yType =>
+      urt.Vert calGr d emTop cFunct onal yType.Recom ndat on
   }
 }

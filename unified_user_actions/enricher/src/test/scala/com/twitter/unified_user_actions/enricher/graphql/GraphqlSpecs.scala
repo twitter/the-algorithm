@@ -1,40 +1,40 @@
-package com.twitter.unified_user_actions.enricher.graphql
+package com.tw ter.un f ed_user_act ons.enr c r.graphql
 
-import com.twitter.dynmap.DynMap
-import com.twitter.inject.Test
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import org.scalatest.matchers.should.Matchers
+ mport com.tw ter.dynmap.DynMap
+ mport com.tw ter. nject.Test
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport org.scalatest.matc rs.should.Matc rs
 
-class GraphqlSpecs extends Test with Matchers {
-  trait Fixtures {
+class GraphqlSpecs extends Test w h Matc rs {
+  tra  F xtures {
     val sampleError = """
       |{
       |  "errors": [
       |    {
-      |      "message": "Some err msg!",
+      |      " ssage": "So  err msg!",
       |      "code": 366,
-      |      "kind": "Validation",
-      |      "name": "QueryViolationError",
-      |      "source": "Client",
-      |      "tracing": {
-      |        "trace_id": "1234567890"
+      |      "k nd": "Val dat on",
+      |      "na ": "QueryV olat onError",
+      |      "s ce": "Cl ent",
+      |      "trac ng": {
+      |        "trace_ d": "1234567890"
       |      }
       |    }
       |  ]
-      |}""".stripMargin
+      |}""".str pMarg n
 
-    val sampleValidRsp =
+    val sampleVal dRsp =
       """
         |{
         |  "data": {
-        |    "tweet_result_by_rest_id": {
+        |    "t et_result_by_rest_ d": {
         |      "result": {
         |        "core": {
         |          "user": {
         |            "legacy": {
-        |              "id_str": "12"
+        |              " d_str": "12"
         |            }
         |          }
         |        }
@@ -42,29 +42,29 @@ class GraphqlSpecs extends Test with Matchers {
         |    }
         |  }
         |}
-        |""".stripMargin
+        |""".str pMarg n
 
-    val sampleValidRspExpected = Return(
-      Set(("data.tweet_result_by_rest_id.result.core.user.legacy.id_str", "12")))
+    val sampleVal dRspExpected = Return(
+      Set(("data.t et_result_by_rest_ d.result.core.user.legacy. d_str", "12")))
     val sampleErrorExpected = Throw(
       GraphqlRspErrors(
         DynMap.from(
-          "errors" -> List(
+          "errors" -> L st(
             Map(
-              "message" -> "Some err msg!",
+              " ssage" -> "So  err msg!",
               "code" -> 366,
-              "kind" -> "Validation",
-              "name" -> "QueryViolationError",
-              "source" -> "Client",
-              "tracing" -> Map("trace_id" -> "1234567890")
+              "k nd" -> "Val dat on",
+              "na " -> "QueryV olat onError",
+              "s ce" -> "Cl ent",
+              "trac ng" -> Map("trace_ d" -> "1234567890")
             )))))
-    def toFlattened(testStr: String): Try[Set[(String, Any)]] =
+    def toFlattened(testStr: Str ng): Try[Set[(Str ng, Any)]] =
       GraphqlRspParser.toDynMap(testStr).map { dm => dm.valuesFlattened.toSet }
   }
 
   test("Graphql Response Parser") {
-    new Fixtures {
-      toFlattened(sampleValidRsp) shouldBe sampleValidRspExpected
+    new F xtures {
+      toFlattened(sampleVal dRsp) shouldBe sampleVal dRspExpected
       toFlattened(sampleError) shouldBe sampleErrorExpected
     }
   }

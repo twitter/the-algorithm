@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models
 
-import com.twitter.addressbook.{thriftscala => t}
-import com.twitter.util.Time
+ mport com.tw ter.addressbook.{thr ftscala => t}
+ mport com.tw ter.ut l.T  
 
 case class Contact(
-  id: Long,
-  emails: Option[Set[String]],
-  phoneNumbers: Option[Set[String]],
-  firstName: Option[String],
-  lastName: Option[String],
-  name: Option[String],
-  appId: Option[Long],
-  appIds: Option[Set[Long]],
-  importedTimestamp: Option[Time])
+   d: Long,
+  ema ls: Opt on[Set[Str ng]],
+  phoneNumbers: Opt on[Set[Str ng]],
+  f rstNa : Opt on[Str ng],
+  lastNa : Opt on[Str ng],
+  na : Opt on[Str ng],
+  app d: Opt on[Long],
+  app ds: Opt on[Set[Long]],
+   mportedT  stamp: Opt on[T  ])
 
 object Contact {
-  def fromThrift(thriftContact: t.Contact): Contact = Contact(
-    thriftContact.id,
-    thriftContact.emails.map(_.toSet),
-    thriftContact.phoneNumbers.map(_.toSet),
-    thriftContact.firstName,
-    thriftContact.lastName,
-    thriftContact.name,
-    thriftContact.appId,
-    thriftContact.appIds.map(_.toSet),
-    thriftContact.importedTimestamp.map(Time.fromMilliseconds)
+  def fromThr ft(thr ftContact: t.Contact): Contact = Contact(
+    thr ftContact. d,
+    thr ftContact.ema ls.map(_.toSet),
+    thr ftContact.phoneNumbers.map(_.toSet),
+    thr ftContact.f rstNa ,
+    thr ftContact.lastNa ,
+    thr ftContact.na ,
+    thr ftContact.app d,
+    thr ftContact.app ds.map(_.toSet),
+    thr ftContact. mportedT  stamp.map(T  .fromM ll seconds)
   )
 }

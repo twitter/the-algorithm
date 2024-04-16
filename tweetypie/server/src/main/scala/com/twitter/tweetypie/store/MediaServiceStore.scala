@@ -1,62 +1,62 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.media._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter. d aserv ces.commons.thr ftscala. d aKey
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e. d a._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait MediaServiceStore
-    extends TweetStoreBase[MediaServiceStore]
-    with AsyncDeleteTweet.Store
-    with AsyncUndeleteTweet.Store {
-  def wrap(w: TweetStore.Wrap): MediaServiceStore =
-    new TweetStoreWrapper(w, this)
-      with MediaServiceStore
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
+tra   d aServ ceStore
+    extends T etStoreBase[ d aServ ceStore]
+    w h AsyncDeleteT et.Store
+    w h AsyncUndeleteT et.Store {
+  def wrap(w: T etStore.Wrap):  d aServ ceStore =
+    new T etStoreWrapper(w, t )
+      w h  d aServ ceStore
+      w h AsyncDeleteT et.StoreWrapper
+      w h AsyncUndeleteT et.StoreWrapper
 }
 
-object MediaServiceStore {
-  val Action: AsyncWriteAction.MediaDeletion.type = AsyncWriteAction.MediaDeletion
+object  d aServ ceStore {
+  val Act on: AsyncWr eAct on. d aDelet on.type = AsyncWr eAct on. d aDelet on
 
-  private def ownMedia(t: Tweet): Seq[(MediaKey, TweetId)] =
-    getMedia(t)
+  pr vate def own d a(t: T et): Seq[( d aKey, T et d)] =
+    get d a(t)
       .collect {
-        case m if Media.isOwnMedia(t.id, m) => (MediaKeyUtil.get(m), t.id)
+        case m  f  d a. sOwn d a(t. d, m) => ( d aKeyUt l.get(m), t. d)
       }
 
   def apply(
-    deleteMedia: FutureArrow[DeleteMediaRequest, Unit],
-    undeleteMedia: FutureArrow[UndeleteMediaRequest, Unit]
-  ): MediaServiceStore =
-    new MediaServiceStore {
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { e =>
-          Future.when(!isRetweet(e.tweet)) {
-            val ownMediaKeys: Seq[(MediaKey, TweetId)] = ownMedia(e.tweet)
-            val deleteMediaRequests = ownMediaKeys.map(DeleteMediaRequest.tupled)
-            Future.collect(deleteMediaRequests.map(deleteMedia))
+    delete d a: FutureArrow[Delete d aRequest, Un ],
+    undelete d a: FutureArrow[Undelete d aRequest, Un ]
+  ):  d aServ ceStore =
+    new  d aServ ceStore {
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        FutureEffect[AsyncDeleteT et.Event] { e =>
+          Future.w n(! sRet et(e.t et)) {
+            val own d aKeys: Seq[( d aKey, T et d)] = own d a(e.t et)
+            val delete d aRequests = own d aKeys.map(Delete d aRequest.tupled)
+            Future.collect(delete d aRequests.map(delete d a))
           }
         }
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        T etStore.retry(Act on, asyncDeleteT et)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        FutureEffect[AsyncUndeleteTweet.Event] { e =>
-          Future.when(!isRetweet(e.tweet)) {
-            val ownMediaKeys: Seq[(MediaKey, TweetId)] = ownMedia(e.tweet)
-            val unDeleteMediaRequests = ownMediaKeys.map(UndeleteMediaRequest.tupled)
-            Future.collect(unDeleteMediaRequests.map(undeleteMedia))
+      overr de val asyncUndeleteT et: FutureEffect[AsyncUndeleteT et.Event] =
+        FutureEffect[AsyncUndeleteT et.Event] { e =>
+          Future.w n(! sRet et(e.t et)) {
+            val own d aKeys: Seq[( d aKey, T et d)] = own d a(e.t et)
+            val unDelete d aRequests = own d aKeys.map(Undelete d aRequest.tupled)
+            Future.collect(unDelete d aRequests.map(undelete d a))
           }
         }
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      overr de val retryAsyncUndeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUndeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        T etStore.retry(Act on, asyncUndeleteT et)
     }
 }

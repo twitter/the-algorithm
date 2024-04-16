@@ -1,414 +1,414 @@
-# checkstyle: noqa
+# c ckstyle: noqa
 
-import time
-from collections import defaultdict
+ mport t  
+from collect ons  mport defaultd ct
 
-from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-from com.twitter.mlmetastore.modelrepo.core import FeatureImportance, FeatureNames
-from twitter.deepbird.io.util import match_feature_regex_list
+from com.tw ter.ml tastore.modelrepo.cl ent  mport ModelRepoCl ent
+from com.tw ter.ml tastore.modelrepo.core  mport Feature mportance, FeatureNa s
+from tw ter.deepb rd. o.ut l  mport match_feature_regex_l st
 
-from twml.contrib.feature_importances.helpers import (
-  _get_feature_name_from_config,
+from twml.contr b.feature_ mportances. lpers  mport (
+  _get_feature_na _from_conf g,
   _get_feature_types_from_records,
-  _get_metrics_hook,
-  _expand_prefix,
-  longest_common_prefix,
-  write_list_to_hdfs_gfile)
-from twml.contrib.feature_importances.feature_permutation import PermutedInputFnFactory
-from twml.tracking import ExperimentTracker
+  _get_ tr cs_hook,
+  _expand_pref x,
+  longest_common_pref x,
+  wr e_l st_to_hdfs_gf le)
+from twml.contr b.feature_ mportances.feature_permutat on  mport Permuted nputFnFactory
+from twml.track ng  mport Exper  ntTracker
 
-from tensorflow.compat.v1 import logging
-from requests.exceptions import HTTPError, RetryError
-from queue import Queue
+from tensorflow.compat.v1  mport logg ng
+from requests.except ons  mport HTTPError, RetryError
+from queue  mport Queue
 
 
-SERIAL = "serial"
+SER AL = "ser al"
 TREE = "tree"
-INDIVIDUAL = "Individual"
+ ND V DUAL = " nd v dual"
 GROUP = "Group"
 ROC_AUC = "roc_auc"
 RCE = "rce"
 LOSS = "loss"
 
 
-def _repartition(feature_list_queue, fnames_ftypes, split_feature_group_on_period):
+def _repart  on(feature_l st_queue, fna s_ftypes, spl _feature_group_on_per od):
   """
-  Iterate through letters to partition each feature by prefix, and then put each tuple
-    (prefix, feature_partition) into the feature_list_queue
+   erate through letters to part  on each feature by pref x, and t n put each tuple
+    (pref x, feature_part  on)  nto t  feature_l st_queue
   Args:
-    prefix (str): The prefix shared by each feature in list_of_feature_types
-    feature_list_queue (Queue<(str, list<(str, str)>)>): The queue of feature groups
-    fnames_ftypes (list<(str, str)>): List of (fname, ftype) pairs. Each fname begins with prefix
-    split_feature_group_on_period (str): If true, require that feature groups end in a period
+    pref x (str): T  pref x shared by each feature  n l st_of_feature_types
+    feature_l st_queue (Queue<(str, l st<(str, str)>)>): T  queue of feature groups
+    fna s_ftypes (l st<(str, str)>): L st of (fna , ftype) pa rs. Each fna  beg ns w h pref x
+    spl _feature_group_on_per od (str):  f true, requ re that feature groups end  n a per od
   Returns:
-    Updated queue with each group in fnames_ftypes
+    Updated queue w h each group  n fna s_ftypes
   """
-  assert len(fnames_ftypes) > 1
+  assert len(fna s_ftypes) > 1
 
-  split_character = "." if split_feature_group_on_period else None
-  # Compute the longest prefix of the words
-  prefix = longest_common_prefix(
-    strings=[fname for fname, _ in fnames_ftypes], split_character=split_character)
+  spl _character = "."  f spl _feature_group_on_per od else None
+  # Compute t  longest pref x of t  words
+  pref x = longest_common_pref x(
+    str ngs=[fna  for fna , _  n fna s_ftypes], spl _character=spl _character)
 
-  # Separate the features by prefix
-  prefix_to_features = defaultdict(list)
-  for fname, ftype in fnames_ftypes:
-    assert fname.startswith(prefix)
-    new_prefix = _expand_prefix(fname=fname, prefix=prefix, split_character=split_character)
-    prefix_to_features[new_prefix].append((fname, ftype))
+  # Separate t  features by pref x
+  pref x_to_features = defaultd ct(l st)
+  for fna , ftype  n fna s_ftypes:
+    assert fna .startsw h(pref x)
+    new_pref x = _expand_pref x(fna =fna , pref x=pref x, spl _character=spl _character)
+    pref x_to_features[new_pref x].append((fna , ftype))
 
-  # Add all of the new partitions to the queue
-  for new_prefix, fname_ftype_list in prefix_to_features.items():
-    extended_new_prefix = longest_common_prefix(
-      strings=[fname for fname, _ in fname_ftype_list], split_character=split_character)
-    assert extended_new_prefix.startswith(new_prefix)
-    feature_list_queue.put((extended_new_prefix, fname_ftype_list))
-  return feature_list_queue
+  # Add all of t  new part  ons to t  queue
+  for new_pref x, fna _ftype_l st  n pref x_to_features. ems():
+    extended_new_pref x = longest_common_pref x(
+      str ngs=[fna  for fna , _  n fna _ftype_l st], spl _character=spl _character)
+    assert extended_new_pref x.startsw h(new_pref x)
+    feature_l st_queue.put((extended_new_pref x, fna _ftype_l st))
+  return feature_l st_queue
 
 
-def _infer_if_is_metric_larger_the_better(stopping_metric):
-  # Infers whether a metric should be interpreted such that larger numbers are better (e.g. ROC_AUC), as opposed to
-  #   larger numbers being worse (e.g. LOSS)
-  if stopping_metric is None:
-    raise ValueError("Error: Stopping Metric cannot be None")
-  elif stopping_metric.startswith(LOSS):
-    logging.info("Interpreting {} to be a metric where larger numbers are worse".format(stopping_metric))
-    is_metric_larger_the_better = False
+def _ nfer_ f_ s_ tr c_larger_t _better(stopp ng_ tr c):
+  #  nfers w t r a  tr c should be  nterpreted such that larger numbers are better (e.g. ROC_AUC), as opposed to
+  #   larger numbers be ng worse (e.g. LOSS)
+   f stopp ng_ tr c  s None:
+    ra se ValueError("Error: Stopp ng  tr c cannot be None")
+  el f stopp ng_ tr c.startsw h(LOSS):
+    logg ng. nfo(" nterpret ng {} to be a  tr c w re larger numbers are worse".format(stopp ng_ tr c))
+     s_ tr c_larger_t _better = False
   else:
-    logging.info("Interpreting {} to be a metric where larger numbers are better".format(stopping_metric))
-    is_metric_larger_the_better = True
-  return is_metric_larger_the_better
+    logg ng. nfo(" nterpret ng {} to be a  tr c w re larger numbers are better".format(stopp ng_ tr c))
+     s_ tr c_larger_t _better = True
+  return  s_ tr c_larger_t _better
 
 
-def _check_whether_tree_should_expand(baseline_performance, computed_performance, sensitivity, stopping_metric, is_metric_larger_the_better):
+def _c ck_w t r_tree_should_expand(basel ne_performance, computed_performance, sens  v y, stopp ng_ tr c,  s_ tr c_larger_t _better):
   """
-  Returns True if
-    - the metric is positive (e.g. ROC_AUC) and computed_performance is nontrivially smaller than the baseline_performance
-    - the metric is negative (e.g. LOSS) and computed_performance is nontrivially larger than the baseline_performance
+  Returns True  f
+    - t   tr c  s pos  ve (e.g. ROC_AUC) and computed_performance  s nontr v ally smaller than t  basel ne_performance
+    - t   tr c  s negat ve (e.g. LOSS) and computed_performance  s nontr v ally larger than t  basel ne_performance
   """
-  difference = ((baseline_performance[stopping_metric] - computed_performance[stopping_metric]) /
-                 baseline_performance[stopping_metric])
+  d fference = ((basel ne_performance[stopp ng_ tr c] - computed_performance[stopp ng_ tr c]) /
+                 basel ne_performance[stopp ng_ tr c])
 
-  if not is_metric_larger_the_better:
-      difference = -difference
+   f not  s_ tr c_larger_t _better:
+      d fference = -d fference
 
-  logging.info(
-    "Found a {} difference of {}. Sensitivity is {}.".format("positive" if is_metric_larger_the_better else "negative", difference, sensitivity))
-  return difference > sensitivity
+  logg ng. nfo(
+    "Found a {} d fference of {}. Sens  v y  s {}.".format("pos  ve"  f  s_ tr c_larger_t _better else "negat ve", d fference, sens  v y))
+  return d fference > sens  v y
 
 
-def _compute_multiple_permuted_performances_from_trainer(
-    factory, fname_ftypes, trainer, parse_fn, record_count):
-  """Compute performances with fname and fype permuted
+def _compute_mult ple_permuted_performances_from_tra ner(
+    factory, fna _ftypes, tra ner, parse_fn, record_count):
+  """Compute performances w h fna  and fype permuted
   """
-  metrics_hook = _get_metrics_hook(trainer)
-  trainer._estimator.evaluate(
-    input_fn=factory.get_permuted_input_fn(
-      batch_size=trainer._params.eval_batch_size, parse_fn=parse_fn, fname_ftypes=fname_ftypes),
-    steps=(record_count + trainer._params.eval_batch_size) // trainer._params.eval_batch_size,
-    hooks=[metrics_hook],
-    checkpoint_path=trainer.best_or_latest_checkpoint)
-  return metrics_hook.metric_values
+   tr cs_hook = _get_ tr cs_hook(tra ner)
+  tra ner._est mator.evaluate(
+     nput_fn=factory.get_permuted_ nput_fn(
+      batch_s ze=tra ner._params.eval_batch_s ze, parse_fn=parse_fn, fna _ftypes=fna _ftypes),
+    steps=(record_count + tra ner._params.eval_batch_s ze) // tra ner._params.eval_batch_s ze,
+    hooks=[ tr cs_hook],
+    c ckpo nt_path=tra ner.best_or_latest_c ckpo nt)
+  return  tr cs_hook. tr c_values
 
 
-def _get_extra_feature_group_performances(factory, trainer, parse_fn, extra_groups, feature_to_type, record_count):
-  """Compute performance differences for the extra feature groups
+def _get_extra_feature_group_performances(factory, tra ner, parse_fn, extra_groups, feature_to_type, record_count):
+  """Compute performance d fferences for t  extra feature groups
   """
   extra_group_feature_performance_results = {}
-  for group_name, raw_feature_regex_list in extra_groups.items():
-    start = time.time()
-    fnames = match_feature_regex_list(
+  for group_na , raw_feature_regex_l st  n extra_groups. ems():
+    start = t  .t  ()
+    fna s = match_feature_regex_l st(
       features=feature_to_type.keys(),
-      feature_regex_list=[regex for regex in raw_feature_regex_list],
+      feature_regex_l st=[regex for regex  n raw_feature_regex_l st],
       preprocess=False,
-      as_dict=False)
+      as_d ct=False)
 
-    fnames_ftypes = [(fname, feature_to_type[fname]) for fname in fnames]
+    fna s_ftypes = [(fna , feature_to_type[fna ]) for fna   n fna s]
 
-    logging.info("Extracted extra group {} with features {}".format(group_name, fnames_ftypes))
-    extra_group_feature_performance_results[group_name] = _compute_multiple_permuted_performances_from_trainer(
-      factory=factory, fname_ftypes=fnames_ftypes,
-      trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-    logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-      group_name, int(time.time() - start)))
+    logg ng. nfo("Extracted extra group {} w h features {}".format(group_na , fna s_ftypes))
+    extra_group_feature_performance_results[group_na ] = _compute_mult ple_permuted_performances_from_tra ner(
+      factory=factory, fna _ftypes=fna s_ftypes,
+      tra ner=tra ner, parse_fn=parse_fn, record_count=record_count)
+    logg ng. nfo("\n\n mportances computed for {}  n {} seconds \n\n".format(
+      group_na ,  nt(t  .t  () - start)))
   return extra_group_feature_performance_results
 
 
-def _feature_importances_tree_algorithm(
-    data_dir, trainer, parse_fn, fnames, stopping_metric, file_list=None, datarecord_filter_fn=None, split_feature_group_on_period=True,
-    record_count=99999, is_metric_larger_the_better=None, sensitivity=0.025, extra_groups=None, dont_build_tree=False):
-  """Tree algorithm for feature and feature group importances. This algorithm build a prefix tree of
-  the feature names and then traverses the tree with a BFS. At each node (aka group of features with
-  a shared prefix) the algorithm computes the performance of the model when we permute all features
-  in the group. The algorithm only zooms-in on groups that impact the performance by more than
-  sensitivity. As a result, features that affect the model performance by less than sensitivity will
-  not have an exact importance.
+def _feature_ mportances_tree_algor hm(
+    data_d r, tra ner, parse_fn, fna s, stopp ng_ tr c, f le_l st=None, datarecord_f lter_fn=None, spl _feature_group_on_per od=True,
+    record_count=99999,  s_ tr c_larger_t _better=None, sens  v y=0.025, extra_groups=None, dont_bu ld_tree=False):
+  """Tree algor hm for feature and feature group  mportances. T  algor hm bu ld a pref x tree of
+  t  feature na s and t n traverses t  tree w h a BFS. At each node (aka group of features w h
+  a shared pref x) t  algor hm computes t  performance of t  model w n   permute all features
+   n t  group. T  algor hm only zooms- n on groups that  mpact t  performance by more than
+  sens  v y. As a result, features that affect t  model performance by less than sens  v y w ll
+  not have an exact  mportance.
   Args:
-    data_dir: (str): The location of the training or testing data to compute importances over.
-      If None, the trainer._eval_files are used
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    parse_fn: (function): The parse_fn used by eval_input_fn
-    fnames (list<string>): The list of feature names
-    stopping_metric (str): The metric to use to determine when to stop expanding trees
-    file_list (list<str>): The list of filenames. Exactly one of file_list and data_dir should be
-      provided
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
-    split_feature_group_on_period (boolean): If true, split feature groups by period rather than on
-      optimal prefix
-    record_count (int): The number of records to compute importances over
-    is_metric_larger_the_better (boolean): If true, assume that stopping_metric is a metric where larger
+    data_d r: (str): T  locat on of t  tra n ng or test ng data to compute  mportances over.
+       f None, t  tra ner._eval_f les are used
+    tra ner: (DataRecordTra ner): A DataRecordTra ner object
+    parse_fn: (funct on): T  parse_fn used by eval_ nput_fn
+    fna s (l st<str ng>): T  l st of feature na s
+    stopp ng_ tr c (str): T   tr c to use to determ ne w n to stop expand ng trees
+    f le_l st (l st<str>): T  l st of f lena s. Exactly one of f le_l st and data_d r should be
+      prov ded
+    datarecord_f lter_fn (funct on): a funct on takes a s ngle data sample  n com.tw ter.ml.ap .ttypes.DataRecord format
+        and return a boolean value, to  nd cate  f t  data record should be kept  n feature  mportance module or not.
+    spl _feature_group_on_per od (boolean):  f true, spl  feature groups by per od rat r than on
+      opt mal pref x
+    record_count ( nt): T  number of records to compute  mportances over
+     s_ tr c_larger_t _better (boolean):  f true, assu  that stopp ng_ tr c  s a  tr c w re larger
       values are better (e.g. ROC-AUC)
-    sensitivity (float): The smallest change in performance to continue to expand the tree
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
-      the names of the features in the group. You should only supply a value for this argument if you have a set
-      of features that you want to evaluate as a group but don't share a prefix
-    dont_build_tree (boolean): If True, don't build the tree and only compute the extra_groups importances
+    sens  v y (float): T  smallest change  n performance to cont nue to expand t  tree
+    extra_groups (d ct<str, l st<str>>): A d ct onary mapp ng t  na  of extra feature groups to t  l st of
+      t  na s of t  features  n t  group.   should only supply a value for t  argu nt  f   have a set
+      of features that   want to evaluate as a group but don't share a pref x
+    dont_bu ld_tree (boolean):  f True, don't bu ld t  tree and only compute t  extra_groups  mportances
   Returns:
-    A dictionary that contains the individual and group feature importances
+    A d ct onary that conta ns t   nd v dual and group feature  mportances
   """
-  factory = PermutedInputFnFactory(
-    data_dir=data_dir, record_count=record_count, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn)
-  baseline_performance = _compute_multiple_permuted_performances_from_trainer(
-    factory=factory, fname_ftypes=[],
-    trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-  out = {"None": baseline_performance}
+  factory = Permuted nputFnFactory(
+    data_d r=data_d r, record_count=record_count, f le_l st=f le_l st, datarecord_f lter_fn=datarecord_f lter_fn)
+  basel ne_performance = _compute_mult ple_permuted_performances_from_tra ner(
+    factory=factory, fna _ftypes=[],
+    tra ner=tra ner, parse_fn=parse_fn, record_count=record_count)
+  out = {"None": basel ne_performance}
 
-  if stopping_metric not in baseline_performance:
-    raise ValueError("The stopping metric '{}' not found in baseline_performance. Metrics are {}".format(
-      stopping_metric, list(baseline_performance.keys())))
+   f stopp ng_ tr c not  n basel ne_performance:
+    ra se ValueError("T  stopp ng  tr c '{}' not found  n basel ne_performance.  tr cs are {}".format(
+      stopp ng_ tr c, l st(basel ne_performance.keys())))
 
-  is_metric_larger_the_better = (
-    is_metric_larger_the_better if is_metric_larger_the_better is not None else _infer_if_is_metric_larger_the_better(stopping_metric))
-  logging.info("Using {} as the stopping metric for the tree algorithm".format(stopping_metric))
+   s_ tr c_larger_t _better = (
+     s_ tr c_larger_t _better  f  s_ tr c_larger_t _better  s not None else _ nfer_ f_ s_ tr c_larger_t _better(stopp ng_ tr c))
+  logg ng. nfo("Us ng {} as t  stopp ng  tr c for t  tree algor hm".format(stopp ng_ tr c))
 
-  feature_to_type = _get_feature_types_from_records(records=factory.records, fnames=fnames)
-  all_feature_types = list(feature_to_type.items())
+  feature_to_type = _get_feature_types_from_records(records=factory.records, fna s=fna s)
+  all_feature_types = l st(feature_to_type. ems())
 
-  individual_feature_performances = {}
+   nd v dual_feature_performances = {}
   feature_group_performances = {}
-  if dont_build_tree:
-    logging.info("Not building feature importance trie. Will only compute importances for the extra_groups")
+   f dont_bu ld_tree:
+    logg ng. nfo("Not bu ld ng feature  mportance tr e. W ll only compute  mportances for t  extra_groups")
   else:
-    logging.info("Building feature importance trie")
-    # Each element in the Queue will be a tuple of (prefix, list_of_feature_type_pairs) where
-    #   each feature in list_of_feature_type_pairs will have have the prefix "prefix"
-    feature_list_queue = _repartition(
-      feature_list_queue=Queue(), fnames_ftypes=all_feature_types, split_feature_group_on_period=split_feature_group_on_period)
+    logg ng. nfo("Bu ld ng feature  mportance tr e")
+    # Each ele nt  n t  Queue w ll be a tuple of (pref x, l st_of_feature_type_pa rs) w re
+    #   each feature  n l st_of_feature_type_pa rs w ll have have t  pref x "pref x"
+    feature_l st_queue = _repart  on(
+      feature_l st_queue=Queue(), fna s_ftypes=all_feature_types, spl _feature_group_on_per od=spl _feature_group_on_per od)
 
-    while not feature_list_queue.empty():
-      # Pop the queue. We should never have an empty list in the queue
-      prefix, fnames_ftypes = feature_list_queue.get()
-      assert len(fnames_ftypes) > 0
+    wh le not feature_l st_queue.empty():
+      # Pop t  queue.   should never have an empty l st  n t  queue
+      pref x, fna s_ftypes = feature_l st_queue.get()
+      assert len(fna s_ftypes) > 0
 
-      # Compute performance from permuting all features in fname_ftypes
-      logging.info(
-        "\n\nComputing importances for {} ({}...). {} elements left in the queue \n\n".format(
-          prefix, fnames_ftypes[:5], feature_list_queue.qsize()))
-      start = time.time()
-      computed_performance = _compute_multiple_permuted_performances_from_trainer(
-        factory=factory, fname_ftypes=fnames_ftypes,
-        trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-      logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-        prefix, int(time.time() - start)))
-      if len(fnames_ftypes) == 1:
-        individual_feature_performances[fnames_ftypes[0][0]] = computed_performance
+      # Compute performance from permut ng all features  n fna _ftypes
+      logg ng. nfo(
+        "\n\nComput ng  mportances for {} ({}...). {} ele nts left  n t  queue \n\n".format(
+          pref x, fna s_ftypes[:5], feature_l st_queue.qs ze()))
+      start = t  .t  ()
+      computed_performance = _compute_mult ple_permuted_performances_from_tra ner(
+        factory=factory, fna _ftypes=fna s_ftypes,
+        tra ner=tra ner, parse_fn=parse_fn, record_count=record_count)
+      logg ng. nfo("\n\n mportances computed for {}  n {} seconds \n\n".format(
+        pref x,  nt(t  .t  () - start)))
+       f len(fna s_ftypes) == 1:
+         nd v dual_feature_performances[fna s_ftypes[0][0]] = computed_performance
       else:
-        feature_group_performances[prefix] = computed_performance
-      # Dig deeper into the features in fname_ftypes only if there is more than one feature in the
-      #    list and the performance drop is nontrivial
-      logging.info("Checking performance for {} ({}...)".format(prefix, fnames_ftypes[:5]))
-      check = _check_whether_tree_should_expand(
-        baseline_performance=baseline_performance, computed_performance=computed_performance,
-        sensitivity=sensitivity, stopping_metric=stopping_metric, is_metric_larger_the_better=is_metric_larger_the_better)
-      if len(fnames_ftypes) > 1 and check:
-        logging.info("Expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
-        feature_list_queue = _repartition(
-          feature_list_queue=feature_list_queue, fnames_ftypes=fnames_ftypes, split_feature_group_on_period=split_feature_group_on_period)
+        feature_group_performances[pref x] = computed_performance
+      # D g deeper  nto t  features  n fna _ftypes only  f t re  s more than one feature  n t 
+      #    l st and t  performance drop  s nontr v al
+      logg ng. nfo("C ck ng performance for {} ({}...)".format(pref x, fna s_ftypes[:5]))
+      c ck = _c ck_w t r_tree_should_expand(
+        basel ne_performance=basel ne_performance, computed_performance=computed_performance,
+        sens  v y=sens  v y, stopp ng_ tr c=stopp ng_ tr c,  s_ tr c_larger_t _better= s_ tr c_larger_t _better)
+       f len(fna s_ftypes) > 1 and c ck:
+        logg ng. nfo("Expand ng {} ({}...)".format(pref x, fna s_ftypes[:5]))
+        feature_l st_queue = _repart  on(
+          feature_l st_queue=feature_l st_queue, fna s_ftypes=fna s_ftypes, spl _feature_group_on_per od=spl _feature_group_on_per od)
       else:
-        logging.info("Not expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
+        logg ng. nfo("Not expand ng {} ({}...)".format(pref x, fna s_ftypes[:5]))
 
-  # Baseline performance is grouped in with individual_feature_importance_results
-  individual_feature_performance_results = dict(
-    out, **{k: v for k, v in individual_feature_performances.items()})
-  group_feature_performance_results = {k: v for k, v in feature_group_performances.items()}
+  # Basel ne performance  s grouped  n w h  nd v dual_feature_ mportance_results
+   nd v dual_feature_performance_results = d ct(
+    out, **{k: v for k, v  n  nd v dual_feature_performances. ems()})
+  group_feature_performance_results = {k: v for k, v  n feature_group_performances. ems()}
 
-  if extra_groups is not None:
-    logging.info("Computing performances for extra groups {}".format(extra_groups.keys()))
-    for group_name, performances in _get_extra_feature_group_performances(
+   f extra_groups  s not None:
+    logg ng. nfo("Comput ng performances for extra groups {}".format(extra_groups.keys()))
+    for group_na , performances  n _get_extra_feature_group_performances(
         factory=factory,
-        trainer=trainer,
+        tra ner=tra ner,
         parse_fn=parse_fn,
         extra_groups=extra_groups,
         feature_to_type=feature_to_type,
-        record_count=record_count).items():
-      group_feature_performance_results[group_name] = performances
+        record_count=record_count). ems():
+      group_feature_performance_results[group_na ] = performances
   else:
-    logging.info("Not computing performances for extra groups")
+    logg ng. nfo("Not comput ng performances for extra groups")
 
-  return {INDIVIDUAL: individual_feature_performance_results,
+  return { ND V DUAL:  nd v dual_feature_performance_results,
           GROUP: group_feature_performance_results}
 
 
-def _feature_importances_serial_algorithm(
-    data_dir, trainer, parse_fn, fnames, file_list=None, datarecord_filter_fn=None, factory=None, record_count=99999):
-  """Serial algorithm for feature importances. This algorithm computes the
-  importance of each feature.
+def _feature_ mportances_ser al_algor hm(
+    data_d r, tra ner, parse_fn, fna s, f le_l st=None, datarecord_f lter_fn=None, factory=None, record_count=99999):
+  """Ser al algor hm for feature  mportances. T  algor hm computes t 
+   mportance of each feature.
   """
-  factory = PermutedInputFnFactory(
-    data_dir=data_dir, record_count=record_count, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn)
-  feature_to_type = _get_feature_types_from_records(records=factory.records, fnames=fnames)
+  factory = Permuted nputFnFactory(
+    data_d r=data_d r, record_count=record_count, f le_l st=f le_l st, datarecord_f lter_fn=datarecord_f lter_fn)
+  feature_to_type = _get_feature_types_from_records(records=factory.records, fna s=fna s)
 
   out = {}
-  for fname, ftype in list(feature_to_type.items()) + [(None, None)]:
-    logging.info("\n\nComputing importances for {}\n\n".format(fname))
-    start = time.time()
-    fname_ftypes = [(fname, ftype)] if fname is not None else []
-    out[str(fname)] = _compute_multiple_permuted_performances_from_trainer(
-      factory=factory, fname_ftypes=fname_ftypes,
-      trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-    logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-      fname, int(time.time() - start)))
-  # The serial algorithm does not compute group feature results.
-  return {INDIVIDUAL: out, GROUP: {}}
+  for fna , ftype  n l st(feature_to_type. ems()) + [(None, None)]:
+    logg ng. nfo("\n\nComput ng  mportances for {}\n\n".format(fna ))
+    start = t  .t  ()
+    fna _ftypes = [(fna , ftype)]  f fna   s not None else []
+    out[str(fna )] = _compute_mult ple_permuted_performances_from_tra ner(
+      factory=factory, fna _ftypes=fna _ftypes,
+      tra ner=tra ner, parse_fn=parse_fn, record_count=record_count)
+    logg ng. nfo("\n\n mportances computed for {}  n {} seconds \n\n".format(
+      fna ,  nt(t  .t  () - start)))
+  # T  ser al algor hm does not compute group feature results.
+  return { ND V DUAL: out, GROUP: {}}
 
 
-def _process_feature_name_for_mldash(feature_name):
-  # Using a forward slash in the name causes feature importance writing to fail because strato interprets it as
+def _process_feature_na _for_mldash(feature_na ):
+  # Us ng a forward slash  n t  na  causes feature  mportance wr  ng to fa l because strato  nterprets   as
   #   part of a url
-  return feature_name.replace("/", "__")
+  return feature_na .replace("/", "__")
 
 
-def compute_feature_importances(
-    trainer, data_dir=None, feature_config=None, algorithm=TREE, parse_fn=None, datarecord_filter_fn=None, **kwargs):
-  """Perform a feature importance analysis on a trained model
+def compute_feature_ mportances(
+    tra ner, data_d r=None, feature_conf g=None, algor hm=TREE, parse_fn=None, datarecord_f lter_fn=None, **kwargs):
+  """Perform a feature  mportance analys s on a tra ned model
   Args:
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    data_dir: (str): The location of the training or testing data to compute importances over.
-      If None, the trainer._eval_files are used
-    feature_config (contrib.FeatureConfig): The feature config object. If this is not provided, it
-      is taken from the trainer
-    algorithm (str): The algorithm to use
-    parse_fn: (function): The parse_fn used by eval_input_fn. By default this is
-      feature_config.get_parse_fn()
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+    tra ner: (DataRecordTra ner): A DataRecordTra ner object
+    data_d r: (str): T  locat on of t  tra n ng or test ng data to compute  mportances over.
+       f None, t  tra ner._eval_f les are used
+    feature_conf g (contr b.FeatureConf g): T  feature conf g object.  f t   s not prov ded,  
+       s taken from t  tra ner
+    algor hm (str): T  algor hm to use
+    parse_fn: (funct on): T  parse_fn used by eval_ nput_fn. By default t   s
+      feature_conf g.get_parse_fn()
+    datarecord_f lter_fn (funct on): a funct on takes a s ngle data sample  n com.tw ter.ml.ap .ttypes.DataRecord format
+        and return a boolean value, to  nd cate  f t  data record should be kept  n feature  mportance module or not.
   """
 
-  # We only use the trainer's eval files if an override data_dir is not provided
-  if data_dir is None:
-    logging.info("Using trainer._eval_files (found {} as files)".format(trainer._eval_files))
-    file_list = trainer._eval_files
+  #   only use t  tra ner's eval f les  f an overr de data_d r  s not prov ded
+   f data_d r  s None:
+    logg ng. nfo("Us ng tra ner._eval_f les (found {} as f les)".format(tra ner._eval_f les))
+    f le_l st = tra ner._eval_f les
   else:
-    logging.info("data_dir provided. Looking at {} for data.".format(data_dir))
-    file_list = None
+    logg ng. nfo("data_d r prov ded. Look ng at {} for data.".format(data_d r))
+    f le_l st = None
 
-  feature_config = feature_config or trainer._feature_config
+  feature_conf g = feature_conf g or tra ner._feature_conf g
   out = {}
-  if not feature_config:
-    logging.warn("WARN: Not computing feature importance because trainer._feature_config is None")
+   f not feature_conf g:
+    logg ng.warn("WARN: Not comput ng feature  mportance because tra ner._feature_conf g  s None")
     out = None
   else:
-    parse_fn = parse_fn if parse_fn is not None else feature_config.get_parse_fn()
-    fnames = _get_feature_name_from_config(feature_config)
-    logging.info("Computing importances for {}".format(fnames))
-    logging.info("Using the {} feature importance computation algorithm".format(algorithm))
-    algorithm = {
-      SERIAL: _feature_importances_serial_algorithm,
-      TREE: _feature_importances_tree_algorithm}[algorithm]
-    out = algorithm(data_dir=data_dir, trainer=trainer, parse_fn=parse_fn, fnames=fnames, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn, **kwargs)
+    parse_fn = parse_fn  f parse_fn  s not None else feature_conf g.get_parse_fn()
+    fna s = _get_feature_na _from_conf g(feature_conf g)
+    logg ng. nfo("Comput ng  mportances for {}".format(fna s))
+    logg ng. nfo("Us ng t  {} feature  mportance computat on algor hm".format(algor hm))
+    algor hm = {
+      SER AL: _feature_ mportances_ser al_algor hm,
+      TREE: _feature_ mportances_tree_algor hm}[algor hm]
+    out = algor hm(data_d r=data_d r, tra ner=tra ner, parse_fn=parse_fn, fna s=fna s, f le_l st=f le_l st, datarecord_f lter_fn=datarecord_f lter_fn, **kwargs)
   return out
 
 
-def write_feature_importances_to_hdfs(
-    trainer, feature_importances, output_path=None, metric="roc_auc"):
-  """Publish a feature importance analysis to hdfs as a tsv
+def wr e_feature_ mportances_to_hdfs(
+    tra ner, feature_ mportances, output_path=None,  tr c="roc_auc"):
+  """Publ sh a feature  mportance analys s to hdfs as a tsv
   Args:
-    (see compute_feature_importances for other args)
-    trainer (Trainer)
-    feature_importances (dict): Dictionary of feature importances
-    output_path (str): The remote or local file to write the feature importances to. If not
-      provided, this is inferred to be the trainer save dir
-    metric (str): The metric to write to tsv
+    (see compute_feature_ mportances for ot r args)
+    tra ner (Tra ner)
+    feature_ mportances (d ct): D ct onary of feature  mportances
+    output_path (str): T  remote or local f le to wr e t  feature  mportances to.  f not
+      prov ded, t   s  nferred to be t  tra ner save d r
+     tr c (str): T   tr c to wr e to tsv
   """
-  # String formatting appends (Individual) or (Group) to feature name depending on type
-  perfs = {"{} ({})".format(k, importance_key) if k != "None" else k: v[metric]
-    for importance_key, importance_value in feature_importances.items()
-    for k, v in importance_value.items()}
+  # Str ng formatt ng appends ( nd v dual) or (Group) to feature na  depend ng on type
+  perfs = {"{} ({})".format(k,  mportance_key)  f k != "None" else k: v[ tr c]
+    for  mportance_key,  mportance_value  n feature_ mportances. ems()
+    for k, v  n  mportance_value. ems()}
 
-  output_path = ("{}/feature_importances-{}".format(
-    trainer._save_dir[:-1] if trainer._save_dir.endswith('/') else trainer._save_dir,
-    output_path if output_path is not None else str(time.time())))
+  output_path = ("{}/feature_ mportances-{}".format(
+    tra ner._save_d r[:-1]  f tra ner._save_d r.endsw h('/') else tra ner._save_d r,
+    output_path  f output_path  s not None else str(t  .t  ())))
 
-  if len(perfs) > 0:
-    logging.info("Writing feature_importances for {} to hdfs".format(perfs.keys()))
-    entries = [
+   f len(perfs) > 0:
+    logg ng. nfo("Wr  ng feature_ mportances for {} to hdfs".format(perfs.keys()))
+    entr es = [
       {
-        "name": name,
-        "drop": perfs["None"] - perfs[name],
-        "pdrop": 100 * (perfs["None"] - perfs[name]) / (perfs["None"] + 1e-8),
-        "perf": perfs[name]
-      } for name in perfs.keys()]
-    out = ["Name\tPerformance Drop\tPercent Performance Drop\tPerformance"]
-    for entry in sorted(entries, key=lambda d: d["drop"]):
-      out.append("{name}\t{drop}\t{pdrop}%\t{perf}".format(**entry))
-    logging.info("\n".join(out))
-    write_list_to_hdfs_gfile(out, output_path)
-    logging.info("Wrote feature feature_importances to {}".format(output_path))
+        "na ": na ,
+        "drop": perfs["None"] - perfs[na ],
+        "pdrop": 100 * (perfs["None"] - perfs[na ]) / (perfs["None"] + 1e-8),
+        "perf": perfs[na ]
+      } for na   n perfs.keys()]
+    out = ["Na \tPerformance Drop\tPercent Performance Drop\tPerformance"]
+    for entry  n sorted(entr es, key=lambda d: d["drop"]):
+      out.append("{na }\t{drop}\t{pdrop}%\t{perf}".format(**entry))
+    logg ng. nfo("\n".jo n(out))
+    wr e_l st_to_hdfs_gf le(out, output_path)
+    logg ng. nfo("Wrote feature feature_ mportances to {}".format(output_path))
   else:
-    logging.info("Not writing feature_importances to hdfs")
+    logg ng. nfo("Not wr  ng feature_ mportances to hdfs")
   return output_path
 
 
-def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_config=None):
-  # type: (DataRecordTrainer, FeatureConfig, dict) -> None
-  """Publish feature importances + all feature names to ML Metastore
+def wr e_feature_ mportances_to_ml_dash(tra ner, feature_ mportances, feature_conf g=None):
+  # type: (DataRecordTra ner, FeatureConf g, d ct) -> None
+  """Publ sh feature  mportances + all feature na s to ML  tastore
   Args:
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    feature_config (contrib.FeatureConfig): The feature config object. If this is not provided, it
-      is taken from the trainer
-    feature_importances (dict, default=None): Dictionary of precomputed feature importances
-    feature_importance_metric (str, default=None): The metric to write to ML Dashboard
+    tra ner: (DataRecordTra ner): A DataRecordTra ner object
+    feature_conf g (contr b.FeatureConf g): T  feature conf g object.  f t   s not prov ded,  
+       s taken from t  tra ner
+    feature_ mportances (d ct, default=None): D ct onary of precomputed feature  mportances
+    feature_ mportance_ tr c (str, default=None): T   tr c to wr e to ML Dashboard
   """
-  experiment_tracking_path = trainer.experiment_tracker.tracking_path\
-    if trainer.experiment_tracker.tracking_path\
-    else ExperimentTracker.guess_path(trainer._save_dir)
+  exper  nt_track ng_path = tra ner.exper  nt_tracker.track ng_path\
+     f tra ner.exper  nt_tracker.track ng_path\
+    else Exper  ntTracker.guess_path(tra ner._save_d r)
 
-  logging.info('Computing feature importances for run: {}'.format(experiment_tracking_path))
+  logg ng. nfo('Comput ng feature  mportances for run: {}'.format(exper  nt_track ng_path))
 
-  feature_importance_list = []
-  for key in feature_importances:
-    for feature, imps in feature_importances[key].items():
-      logging.info('FEATURE NAME: {}'.format(feature))
-      feature_name = feature.split(' (').pop(0)
-      for metric_name, value in imps.items():
+  feature_ mportance_l st = []
+  for key  n feature_ mportances:
+    for feature,  mps  n feature_ mportances[key]. ems():
+      logg ng. nfo('FEATURE NAME: {}'.format(feature))
+      feature_na  = feature.spl (' (').pop(0)
+      for  tr c_na , value  n  mps. ems():
         try:
-          imps[metric_name] = float(value)
-          logging.info('Wrote feature importance value {} for metric: {}'.format(str(value), metric_name))
-        except Exception as ex:
-          logging.error("Skipping writing metric:{} to ML Metastore due to invalid metric value: {} or value type: {}. Exception: {}".format(metric_name, str(value), type(value), str(ex)))
+           mps[ tr c_na ] = float(value)
+          logg ng. nfo('Wrote feature  mportance value {} for  tr c: {}'.format(str(value),  tr c_na ))
+        except Except on as ex:
+          logg ng.error("Sk pp ng wr  ng  tr c:{} to ML  tastore due to  nval d  tr c value: {} or value type: {}. Except on: {}".format( tr c_na , str(value), type(value), str(ex)))
           pass
 
-      feature_importance_list.append(FeatureImportance(
-        run_id=experiment_tracking_path,
-        feature_name=_process_feature_name_for_mldash(feature_name),
-        feature_importance_metrics=imps,
-        is_group=key == GROUP
+      feature_ mportance_l st.append(Feature mportance(
+        run_ d=exper  nt_track ng_path,
+        feature_na =_process_feature_na _for_mldash(feature_na ),
+        feature_ mportance_ tr cs= mps,
+         s_group=key == GROUP
       ))
 
-# setting feature config to match the one used in compute_feature_importances
-  feature_config = feature_config or trainer._feature_config
-  feature_names = FeatureNames(
-    run_id=experiment_tracking_path,
-    names=list(feature_config.features.keys())
+# sett ng feature conf g to match t  one used  n compute_feature_ mportances
+  feature_conf g = feature_conf g or tra ner._feature_conf g
+  feature_na s = FeatureNa s(
+    run_ d=exper  nt_track ng_path,
+    na s=l st(feature_conf g.features.keys())
   )
 
   try:
-    client = ModelRepoClient()
-    logging.info('Writing feature importances to ML Metastore')
-    client.add_feature_importances(feature_importance_list)
-    logging.info('Writing feature names to ML Metastore')
-    client.add_feature_names(feature_names)
+    cl ent = ModelRepoCl ent()
+    logg ng. nfo('Wr  ng feature  mportances to ML  tastore')
+    cl ent.add_feature_ mportances(feature_ mportance_l st)
+    logg ng. nfo('Wr  ng feature na s to ML  tastore')
+    cl ent.add_feature_na s(feature_na s)
   except (HTTPError, RetryError) as err:
-    logging.error('Feature importance is not being written due to: '
-                  'HTTPError when attempting to write to ML Metastore: \n{}.'.format(err))
+    logg ng.error('Feature  mportance  s not be ng wr ten due to: '
+                  'HTTPError w n attempt ng to wr e to ML  tastore: \n{}.'.format(err))

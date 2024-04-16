@@ -1,103 +1,103 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object MediaTagsHydrator {
-  type Type = ValueHydrator[Option[TweetMediaTags], TweetCtx]
+object  d aTagsHydrator {
+  type Type = ValueHydrator[Opt on[T et d aTags], T etCtx]
 
   /**
-   * TweetMediaTags contains a map of MediaId to Seq[MediaTag].
-   * The outer traverse maps over each MediaId, while the inner
-   * traverse maps over each MediaTag.
+   * T et d aTags conta ns a map of  d a d to Seq[ d aTag].
+   * T  outer traverse maps over each  d a d, wh le t   nner
+   * traverse maps over each  d aTag.
    *
-   * A MediaTag has four fields:
+   * A  d aTag has f  f elds:
    *
-   *   1: MediaTagType tag_type
-   *   2: optional i64 user_id
-   *   3: optional string screen_name
-   *   4: optional string name
+   *   1:  d aTagType tag_type
+   *   2: opt onal  64 user_ d
+   *   3: opt onal str ng screen_na 
+   *   4: opt onal str ng na 
    *
-   * For each MediaTag, if the tag type is MediaTagType.User and the user id is defined
-   * (see mediaTagToKey) we look up the tagged user, using the tagging user (the tweet
-   * author) as the viewer id (this means that visibility rules between the tagged user
-   * and tagging user are applied).
+   * For each  d aTag,  f t  tag type  s  d aTagType.User and t  user  d  s def ned
+   * (see  d aTagToKey)   look up t  tagged user, us ng t  tagg ng user (t  t et
+   * author) as t  v e r  d (t   ans that v s b l y rules bet en t  tagged user
+   * and tagg ng user are appl ed).
    *
-   * If we get a taggable user back, we fill in the screen name and name fields. If not,
-   * we drop the tag.
+   *  f   get a taggable user back,   f ll  n t  screen na  and na  f elds.  f not,
+   *   drop t  tag.
    */
-  def apply(repo: UserViewRepository.Type): Type =
-    ValueHydrator[TweetMediaTags, TweetCtx] { (tags, ctx) =>
-      val mediaTagsByMediaId: Seq[(MediaId, Seq[MediaTag])] = tags.tagMap.toSeq
+  def apply(repo: UserV ewRepos ory.Type): Type =
+    ValueHydrator[T et d aTags, T etCtx] { (tags, ctx) =>
+      val  d aTagsBy d a d: Seq[( d a d, Seq[ d aTag])] = tags.tagMap.toSeq
 
-      Stitch
-        .traverse(mediaTagsByMediaId) {
-          case (mediaId, mediaTags) =>
-            Stitch.traverse(mediaTags)(tag => hydrateMediaTag(repo, tag, ctx.userId)).map {
-              ValueState.sequence(_).map(tags => (mediaId, tags.flatten))
+      St ch
+        .traverse( d aTagsBy d a d) {
+          case ( d a d,  d aTags) =>
+            St ch.traverse( d aTags)(tag => hydrate d aTag(repo, tag, ctx.user d)).map {
+              ValueState.sequence(_).map(tags => ( d a d, tags.flatten))
             }
         }
         .map {
-          // Reconstruct TweetMediaTags(tagMap: Map[MediaId, SeqMediaTag])
-          ValueState.sequence(_).map(s => TweetMediaTags(s.toMap))
+          // Reconstruct T et d aTags(tagMap: Map[ d a d, Seq d aTag])
+          ValueState.sequence(_).map(s => T et d aTags(s.toMap))
         }
-    }.onlyIf { (_, ctx) =>
-      !ctx.isRetweet && ctx.tweetFieldRequested(Tweet.MediaTagsField)
-    }.liftOption
+    }.only f { (_, ctx) =>
+      !ctx. sRet et && ctx.t etF eldRequested(T et. d aTagsF eld)
+    }.l ftOpt on
 
   /**
-   * A function to hydrate a single `MediaTag`. The return type is `Option[MediaTag]`
-   * because we may return `None` to filter out a `MediaTag` if the tagged user doesn't
-   * exist or isn't taggable.
+   * A funct on to hydrate a s ngle ` d aTag`. T  return type  s `Opt on[ d aTag]`
+   * because   may return `None` to f lter out a ` d aTag`  f t  tagged user doesn't
+   * ex st or  sn't taggable.
    */
-  private[this] def hydrateMediaTag(
-    repo: UserViewRepository.Type,
-    mediaTag: MediaTag,
-    authorId: UserId
-  ): Stitch[ValueState[Option[MediaTag]]] =
-    mediaTagToKey(mediaTag) match {
-      case None => Stitch.value(ValueState.unmodified(Some(mediaTag)))
-      case Some(key) =>
-        repo(toRepoQuery(key, authorId))
+  pr vate[t ] def hydrate d aTag(
+    repo: UserV ewRepos ory.Type,
+     d aTag:  d aTag,
+    author d: User d
+  ): St ch[ValueState[Opt on[ d aTag]]] =
+     d aTagToKey( d aTag) match {
+      case None => St ch.value(ValueState.unmod f ed(So ( d aTag)))
+      case So (key) =>
+        repo(toRepoQuery(key, author d))
           .map {
-            case user if user.mediaView.exists(_.canMediaTag) =>
-              ValueState.modified(
-                Some(
-                  mediaTag.copy(
-                    userId = Some(user.id),
-                    screenName = user.profile.map(_.screenName),
-                    name = user.profile.map(_.name)
+            case user  f user. d aV ew.ex sts(_.can d aTag) =>
+              ValueState.mod f ed(
+                So (
+                   d aTag.copy(
+                    user d = So (user. d),
+                    screenNa  = user.prof le.map(_.screenNa ),
+                    na  = user.prof le.map(_.na )
                   )
                 )
               )
 
-            // if `canMediaTag` is false, drop the tag
-            case _ => ValueState.modified(None)
+            //  f `can d aTag`  s false, drop t  tag
+            case _ => ValueState.mod f ed(None)
           }
           .handle {
-            // if user is not found, drop the tag
-            case NotFound => ValueState.modified(None)
+            //  f user  s not found, drop t  tag
+            case NotFound => ValueState.mod f ed(None)
           }
     }
 
-  private[this] val queryFields: Set[UserField] = Set(UserField.Profile, UserField.MediaView)
+  pr vate[t ] val queryF elds: Set[UserF eld] = Set(UserF eld.Prof le, UserF eld. d aV ew)
 
-  def toRepoQuery(userKey: UserKey, forUserId: UserId): UserViewRepository.Query =
-    UserViewRepository.Query(
+  def toRepoQuery(userKey: UserKey, forUser d: User d): UserV ewRepos ory.Query =
+    UserV ewRepos ory.Query(
       userKey = userKey,
-      // view is based on tagging user, not tweet viewer
-      forUserId = Some(forUserId),
-      visibility = UserVisibility.MediaTaggable,
-      queryFields = queryFields
+      // v ew  s based on tagg ng user, not t et v e r
+      forUser d = So (forUser d),
+      v s b l y = UserV s b l y. d aTaggable,
+      queryF elds = queryF elds
     )
 
-  private[this] def mediaTagToKey(mediaTag: MediaTag): Option[UserKey] =
-    mediaTag match {
-      case MediaTag(MediaTagType.User, Some(taggedUserId), _, _) => Some(UserKey(taggedUserId))
+  pr vate[t ] def  d aTagToKey( d aTag:  d aTag): Opt on[UserKey] =
+     d aTag match {
+      case  d aTag( d aTagType.User, So (taggedUser d), _, _) => So (UserKey(taggedUser d))
       case _ => None
     }
 }

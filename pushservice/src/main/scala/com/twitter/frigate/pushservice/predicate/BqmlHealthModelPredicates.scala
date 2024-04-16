@@ -1,129 +1,129 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.ml.HealthFeatureGetter
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.PushMLModel
-import com.twitter.util.Future
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.frigate.thriftscala.UserMediaRepresentation
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
-import com.twitter.storehaus.ReadableStore
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngRequest
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngResponse
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ml. althFeatureGetter
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.params.PushMLModel
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter.fr gate.thr ftscala.User d aRepresentat on
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnalResponse
+ mport com.tw ter.storehaus.ReadableStore
 
-object BqmlHealthModelPredicates {
+object Bqml althModelPred cates {
 
-  def healthModelOonPredicate(
-    bqmlHealthModelScorer: PushMLModelScorer,
-    producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation],
-    userHealthScoreStore: ReadableStore[Long, UserHealthSignalResponse],
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def  althModelOonPred cate(
+    bqml althModelScorer: PushMLModelScorer,
+    producer d aRepresentat onStore: ReadableStore[Long, User d aRepresentat on],
+    user althScoreStore: ReadableStore[Long, User althS gnalResponse],
+    t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType with TweetAuthor
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h T etCand date w h Recom ndat onType w h T etAuthor
   ] = {
-    val name = "bqml_health_model_based_predicate"
-    val scopedStatsReceiver = stats.scope(name)
+    val na  = "bqml_ alth_model_based_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
 
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val oonCandidatesCounter = scopedStatsReceiver.counter("oon_candidates")
-    val filteredOonCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
-    val emptyScoreCandidatesCounter = scopedStatsReceiver.counter("empty_score_candidates")
-    val healthScoreStat = scopedStatsReceiver.stat("health_model_dist")
+    val allCand datesCounter = scopedStatsRece ver.counter("all_cand dates")
+    val oonCand datesCounter = scopedStatsRece ver.counter("oon_cand dates")
+    val f lteredOonCand datesCounter =
+      scopedStatsRece ver.counter("f ltered_oon_cand dates")
+    val emptyScoreCand datesCounter = scopedStatsRece ver.counter("empty_score_cand dates")
+    val  althScoreStat = scopedStatsRece ver.stat(" alth_model_d st")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(candidate.commonRecType)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h Recom ndat onType =>
+        val target = cand date.target
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(cand date.commonRecType) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(cand date.commonRecType)
 
-        lazy val enableBqmlHealthModelPredicateParam =
-          target.params(PushFeatureSwitchParams.EnableBqmlHealthModelPredicateParam)
-        lazy val enableBqmlHealthModelPredictionForInNetworkCandidates =
+        lazy val enableBqml althModelPred cateParam =
+          target.params(PushFeatureSw chParams.EnableBqml althModelPred cateParam)
+        lazy val enableBqml althModelPred ct onFor nNetworkCand dates =
           target.params(
-            PushFeatureSwitchParams.EnableBqmlHealthModelPredictionForInNetworkCandidatesParam)
-        lazy val bqmlHealthModelPredicateFilterThresholdParam =
-          target.params(PushFeatureSwitchParams.BqmlHealthModelPredicateFilterThresholdParam)
-        lazy val healthModelId = target.params(PushFeatureSwitchParams.BqmlHealthModelTypeParam)
-        lazy val enableBqmlHealthModelScoreHistogramParam =
-          target.params(PushFeatureSwitchParams.EnableBqmlHealthModelScoreHistogramParam)
-        val healthModelScoreFeature = "bqml_health_model_score"
+            PushFeatureSw chParams.EnableBqml althModelPred ct onFor nNetworkCand datesParam)
+        lazy val bqml althModelPred cateF lterThresholdParam =
+          target.params(PushFeatureSw chParams.Bqml althModelPred cateF lterThresholdParam)
+        lazy val  althModel d = target.params(PushFeatureSw chParams.Bqml althModelTypeParam)
+        lazy val enableBqml althModelScore togramParam =
+          target.params(PushFeatureSw chParams.EnableBqml althModelScore togramParam)
+        val  althModelScoreFeature = "bqml_ alth_model_score"
 
-        val histogramBinSize = 0.05
-        lazy val healthCandidateScoreHistogramCounters =
-          bqmlHealthModelScorer.getScoreHistogramCounters(
-            scopedStatsReceiver,
-            "health_score_histogram",
-            histogramBinSize)
+        val  togramB nS ze = 0.05
+        lazy val  althCand dateScore togramCounters =
+          bqml althModelScorer.getScore togramCounters(
+            scopedStatsRece ver,
+            " alth_score_ togram",
+             togramB nS ze)
 
-        candidate match {
-          case candidate: PushCandidate with TweetAuthor with TweetAuthorDetails
-              if enableBqmlHealthModelPredicateParam && (isOonCandidate || enableBqmlHealthModelPredictionForInNetworkCandidates) =>
-            HealthFeatureGetter
+        cand date match {
+          case cand date: PushCand date w h T etAuthor w h T etAuthorDeta ls
+               f enableBqml althModelPred cateParam && ( sOonCand date || enableBqml althModelPred ct onFor nNetworkCand dates) =>
+             althFeatureGetter
               .getFeatures(
-                candidate,
-                producerMediaRepresentationStore,
-                userHealthScoreStore,
-                Some(tweetHealthScoreStore))
-              .flatMap { healthFeatures =>
-                allCandidatesCounter.incr()
-                candidate.mergeFeatures(healthFeatures)
+                cand date,
+                producer d aRepresentat onStore,
+                user althScoreStore,
+                So (t et althScoreStore))
+              .flatMap {  althFeatures =>
+                allCand datesCounter. ncr()
+                cand date. rgeFeatures( althFeatures)
 
-                val healthModelScoreFutOpt =
-                  if (candidate.numericFeatures.contains(healthModelScoreFeature)) {
-                    Future.value(candidate.numericFeatures.get(healthModelScoreFeature))
+                val  althModelScoreFutOpt =
+                   f (cand date.nu r cFeatures.conta ns( althModelScoreFeature)) {
+                    Future.value(cand date.nu r cFeatures.get( althModelScoreFeature))
                   } else
-                    bqmlHealthModelScorer.singlePredicationForModelVersion(
-                      healthModelId,
-                      candidate
+                    bqml althModelScorer.s nglePred cat onForModelVers on(
+                       althModel d,
+                      cand date
                     )
 
-                candidate.populateQualityModelScore(
-                  PushMLModel.HealthNsfwProbability,
-                  healthModelId,
-                  healthModelScoreFutOpt
+                cand date.populateQual yModelScore(
+                  PushMLModel. althNsfwProbab l y,
+                   althModel d,
+                   althModelScoreFutOpt
                 )
 
-                healthModelScoreFutOpt.map {
-                  case Some(healthModelScore) =>
-                    healthScoreStat.add((healthModelScore * 10000).toFloat)
-                    if (enableBqmlHealthModelScoreHistogramParam) {
-                      healthCandidateScoreHistogramCounters(
-                        math.ceil(healthModelScore / histogramBinSize).toInt).incr()
+                 althModelScoreFutOpt.map {
+                  case So ( althModelScore) =>
+                     althScoreStat.add(( althModelScore * 10000).toFloat)
+                     f (enableBqml althModelScore togramParam) {
+                       althCand dateScore togramCounters(
+                        math.ce l( althModelScore /  togramB nS ze).to nt). ncr()
                     }
 
-                    if (CandidateUtil.shouldApplyHealthQualityFilters(
-                        candidate) && isOonCandidate) {
-                      oonCandidatesCounter.incr()
-                      val threshold = bqmlHealthModelPredicateFilterThresholdParam
-                      candidate.cachePredicateInfo(
-                        name,
-                        healthModelScore,
+                     f (Cand dateUt l.shouldApply althQual yF lters(
+                        cand date) &&  sOonCand date) {
+                      oonCand datesCounter. ncr()
+                      val threshold = bqml althModelPred cateF lterThresholdParam
+                      cand date.cac Pred cate nfo(
+                        na ,
+                         althModelScore,
                         threshold,
-                        healthModelScore > threshold)
-                      if (healthModelScore > threshold) {
-                        filteredOonCandidatesCounter.incr()
+                         althModelScore > threshold)
+                       f ( althModelScore > threshold) {
+                        f lteredOonCand datesCounter. ncr()
                         false
                       } else true
                     } else true
                   case _ =>
-                    emptyScoreCandidatesCounter.incr()
+                    emptyScoreCand datesCounter. ncr()
                     true
                 }
               }
           case _ => Future.True
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

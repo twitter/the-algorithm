@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasScores {
-  def scores: Option[Scores]
+tra  HasScores {
+  def scores: Opt on[Scores]
 }

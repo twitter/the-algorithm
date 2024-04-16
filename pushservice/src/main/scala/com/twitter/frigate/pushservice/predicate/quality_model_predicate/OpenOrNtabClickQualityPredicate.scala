@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.predicate.quality_model_predicate
+package com.tw ter.fr gate.pushserv ce.pred cate.qual y_model_pred cate
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.ut l.Future
 
-object ExplicitOONCFilterPredicate extends QualityPredicateBase {
-  override lazy val name = "open_or_ntab_click_explicit_threshold"
+object Expl c OONCF lterPred cate extends Qual yPred cateBase {
+  overr de lazy val na  = "open_or_ntab_cl ck_expl c _threshold"
 
-  override lazy val thresholdExtractor = (t: Target) =>
-    Future.value(t.params(PushFeatureSwitchParams.QualityPredicateExplicitThresholdParam))
+  overr de lazy val thresholdExtractor = (t: Target) =>
+    Future.value(t.params(PushFeatureSw chParams.Qual yPred cateExpl c ThresholdParam))
 
-  override def scoreExtractor = (candidate: PushCandidate) =>
-    candidate.mrWeightedOpenOrNtabClickRankingProbability
+  overr de def scoreExtractor = (cand date: PushCand date) =>
+    cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y
 }
 
-object WeightedOpenOrNtabClickQualityPredicate extends QualityPredicateBase {
-  override lazy val name = "weighted_open_or_ntab_click_model"
+object   ghtedOpenOrNtabCl ckQual yPred cate extends Qual yPred cateBase {
+  overr de lazy val na  = "  ghted_open_or_ntab_cl ck_model"
 
-  override lazy val thresholdExtractor = (t: Target) => {
+  overr de lazy val thresholdExtractor = (t: Target) => {
     Future.value(0.0)
   }
 
-  override def scoreExtractor =
-    (candidate: PushCandidate) => candidate.mrWeightedOpenOrNtabClickFilteringProbability
+  overr de def scoreExtractor =
+    (cand date: PushCand date) => cand date.mr  ghtedOpenOrNtabCl ckF lter ngProbab l y
 }

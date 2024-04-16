@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
 case class SkAdNetworkData(
-  version: Option[String], // version of the SKAdNetwork protocol
-  srcAppId: Option[String], // app showing the ad (Twitter app or app promoting through MOPUB)
-  dstAppId: Option[String], // app being promoted
-  adNetworkId: Option[String], // the ad-network-id being used
-  campaignId: Option[Long], // the sk-campaign-id - different from the Twitter campaign id
-  impressionTimeInMillis: Option[Long], // the timestamp of the impression
-  nonce: Option[String], // nonce used to generate the signature
-  signature: Option[String], // the signed payload
-  fidelityType: Option[Long] // th
+  vers on: Opt on[Str ng], // vers on of t  SKAdNetwork protocol
+  srcApp d: Opt on[Str ng], // app show ng t  ad (Tw ter app or app promot ng through MOPUB)
+  dstApp d: Opt on[Str ng], // app be ng promoted
+  adNetwork d: Opt on[Str ng], // t  ad-network- d be ng used
+  campa gn d: Opt on[Long], // t  sk-campa gn- d - d fferent from t  Tw ter campa gn  d
+   mpress onT   nM ll s: Opt on[Long], // t  t  stamp of t   mpress on
+  nonce: Opt on[Str ng], // nonce used to generate t  s gnature
+  s gnature: Opt on[Str ng], // t  s gned payload
+  f del yType: Opt on[Long] // th
 )

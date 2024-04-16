@@ -1,74 +1,74 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.AddressBookParams.ReadFromABV2Only
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ForwardEmailBookClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.AddressBookParams.ReadFromABV2Only
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.AddressbookCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.EdgeType
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.Record dent f er
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RescueW hStatsUt ls.rescueW hStats
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.ForwardEma lBookCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForwardEmailBookSource @Inject() (
-  forwardEmailBookClientColumn: ForwardEmailBookClientColumn,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@S ngleton
+class ForwardEma lBookS ce @ nject() (
+  forwardEma lBookCl entColumn: ForwardEma lBookCl entColumn,
+  addressBookCl ent: AddressbookCl ent,
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Cand dateS ce[HasParams w h HasCl entContext, Cand dateUser] {
 
-  override val identifier: CandidateSourceIdentifier =
-    ForwardEmailBookSource.Identifier
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  overr de val  dent f er: Cand dateS ce dent f er =
+    ForwardEma lBookS ce. dent f er
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getS mpleNa )
 
   /**
-   * Generate a list of candidates for the target
+   * Generate a l st of cand dates for t  target
    */
-  override def apply(
-    target: HasParams with HasClientContext
-  ): Stitch[Seq[CandidateUser]] = {
-    val candidateUsers: Stitch[Seq[Long]] = target.getOptionalUserId
-      .map { userId =>
-        rescueWithStats(
-          addressBookClient.getUsers(
-            userId = userId,
-            identifiers =
-              Seq(RecordIdentifier(userId = Some(userId), email = None, phoneNumber = None)),
-            batchSize = AddressbookClient.AddressBook2BatchSize,
-            edgeType = ForwardEmailBookSource.DefaultEdgeType,
-            fetcherOption =
-              if (target.params.apply(ReadFromABV2Only)) None
-              else Some(forwardEmailBookClientColumn.fetcher),
-            queryOption = AddressbookClient
-              .createQueryOption(
-                edgeType = ForwardEmailBookSource.DefaultEdgeType,
-                isPhone = ForwardEmailBookSource.IsPhone)
+  overr de def apply(
+    target: HasParams w h HasCl entContext
+  ): St ch[Seq[Cand dateUser]] = {
+    val cand dateUsers: St ch[Seq[Long]] = target.getOpt onalUser d
+      .map { user d =>
+        rescueW hStats(
+          addressBookCl ent.getUsers(
+            user d = user d,
+             dent f ers =
+              Seq(Record dent f er(user d = So (user d), ema l = None, phoneNumber = None)),
+            batchS ze = AddressbookCl ent.AddressBook2BatchS ze,
+            edgeType = ForwardEma lBookS ce.DefaultEdgeType,
+            fetc rOpt on =
+               f (target.params.apply(ReadFromABV2Only)) None
+              else So (forwardEma lBookCl entColumn.fetc r),
+            queryOpt on = AddressbookCl ent
+              .createQueryOpt on(
+                edgeType = ForwardEma lBookS ce.DefaultEdgeType,
+                 sPhone = ForwardEma lBookS ce. sPhone)
           ),
           stats,
-          "AddressBookClient"
+          "AddressBookCl ent"
         )
-      }.getOrElse(Stitch.Nil)
+      }.getOrElse(St ch.N l)
 
-    candidateUsers
+    cand dateUsers
       .map(
-        _.take(ForwardEmailBookSource.NumEmailBookEntries)
-          .map(CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier)))
+        _.take(ForwardEma lBookS ce.NumEma lBookEntr es)
+          .map(Cand dateUser(_, score = So (Cand dateUser.DefaultCand dateScore))
+            .w hCand dateS ce( dent f er)))
   }
 }
 
-object ForwardEmailBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ForwardEmailBook.toString)
-  val NumEmailBookEntries: Int = 1000
-  val IsPhone = false
+object ForwardEma lBookS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.ForwardEma lBook.toStr ng)
+  val NumEma lBookEntr es:  nt = 1000
+  val  sPhone = false
   val DefaultEdgeType: EdgeType = EdgeType.Forward
 }

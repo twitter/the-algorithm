@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.tw ter.product_m xer.core.p pel ne.cand date
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.PassthroughCandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateExtractor
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.PassthroughCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateExtractor
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object PassthroughCandidatePipelineConfig {
+object PassthroughCand dateP pel neConf g {
 
   /**
-   * Build a [[PassthroughCandidatePipelineConfig]] with a [[PassthroughCandidateSource]] built from
-   * a [[CandidateExtractor]]
+   * Bu ld a [[PassthroughCand dateP pel neConf g]] w h a [[PassthroughCand dateS ce]] bu lt from
+   * a [[Cand dateExtractor]]
    */
-  def apply[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    identifier: CandidatePipelineIdentifier,
-    extractor: CandidateExtractor[Query, Candidate],
-    decorator: Option[CandidateDecorator[Query, Candidate]] = None
-  ): PassthroughCandidatePipelineConfig[Query, Candidate] = {
+  def apply[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+     dent f er: Cand dateP pel ne dent f er,
+    extractor: Cand dateExtractor[Query, Cand date],
+    decorator: Opt on[Cand dateDecorator[Query, Cand date]] = None
+  ): PassthroughCand dateP pel neConf g[Query, Cand date] = {
 
-    // Renaming variables to keep the interface clean, but avoid naming collisions when creating
-    // the anonymous class.
-    val _identifier = identifier
+    // Renam ng var ables to keep t   nterface clean, but avo d nam ng coll s ons w n creat ng
+    // t  anonymous class.
+    val _ dent f er =  dent f er
     val _extractor = extractor
     val _decorator = decorator
 
-    new PassthroughCandidatePipelineConfig[Query, Candidate] {
-      override val identifier = _identifier
-      override val candidateSource =
-        PassthroughCandidateSource(CandidateSourceIdentifier(_identifier.name), _extractor)
-      override val decorator = _decorator
+    new PassthroughCand dateP pel neConf g[Query, Cand date] {
+      overr de val  dent f er = _ dent f er
+      overr de val cand dateS ce =
+        PassthroughCand dateS ce(Cand dateS ce dent f er(_ dent f er.na ), _extractor)
+      overr de val decorator = _decorator
     }
   }
 }
 
-trait PassthroughCandidatePipelineConfig[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends CandidatePipelineConfig[Query, Query, Candidate, Candidate] {
+tra  PassthroughCand dateP pel neConf g[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]]
+    extends Cand dateP pel neConf g[Query, Query, Cand date, Cand date] {
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, Query] = identity
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[Query, Query] =  dent y
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[Candidate, Candidate] =
-    identity
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[Cand date, Cand date] =
+     dent y
 }

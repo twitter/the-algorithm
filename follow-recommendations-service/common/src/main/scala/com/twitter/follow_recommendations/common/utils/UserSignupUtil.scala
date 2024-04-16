@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.utils
+package com.tw ter.follow_recom ndat ons.common.ut ls
 
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
-object UserSignupUtil {
-  def signupTime(hasClientContext: HasClientContext): Option[Time] =
-    hasClientContext.clientContext.userId.flatMap(SnowflakeId.timeFromIdOpt)
+object UserS gnupUt l {
+  def s gnupT  (hasCl entContext: HasCl entContext): Opt on[T  ] =
+    hasCl entContext.cl entContext.user d.flatMap(Snowflake d.t  From dOpt)
 
-  def userSignupAge(hasClientContext: HasClientContext): Option[Duration] =
-    signupTime(hasClientContext).map(Time.now - _)
+  def userS gnupAge(hasCl entContext: HasCl entContext): Opt on[Durat on] =
+    s gnupT  (hasCl entContext).map(T  .now - _)
 }

@@ -1,12 +1,12 @@
-package com.twitter.recos.user_video_graph
+package com.tw ter.recos.user_v deo_graph
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.recos.recos_common.thriftscala._
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos.recos_common.thr ftscala._
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala._
+ mport com.tw ter.ut l.Future
 
-trait LoggingUserVideoGraph extends thriftscala.UserVideoGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+tra  Logg ngUserV deoGraph extends thr ftscala.UserV deoGraph. thodPerEndpo nt {
+  pr vate[t ] val accessLog = Logger("access")
 
 }

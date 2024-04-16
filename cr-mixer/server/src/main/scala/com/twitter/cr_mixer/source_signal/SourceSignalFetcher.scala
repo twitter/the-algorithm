@@ -1,45 +1,45 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.ut l.Future
 
 /***
- * A SourceSignalFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling Signals (eg., USS, FRS) fetch.
- * Currently, we define Signals as (but not limited to) a set of past engagements that
- * the user makes, such as RecentFav, RecentFollow, etc.
+ * A S ceS gnalFetc r  s a tra  that extends from `S ceFetc r`
+ * and  s spec al zed  n tackl ng S gnals (eg., USS, FRS) fetch.
+ * Currently,   def ne S gnals as (but not l m ed to) a set of past engage nts that
+ * t  user makes, such as RecentFav, RecentFollow, etc.
  *
- * The [[ResultType]] of a SourceSignalFetcher is `Seq[SourceInfo]`. When we pass in userId,
- * the underlying store returns a list of signals.
+ * T  [[ResultType]] of a S ceS gnalFetc r  s `Seq[S ce nfo]`. W n   pass  n user d,
+ * t  underly ng store returns a l st of s gnals.
  */
-trait SourceSignalFetcher extends SourceFetcher[Seq[SourceInfo]] {
+tra  S ceS gnalFetc r extends S ceFetc r[Seq[S ce nfo]] {
 
-  protected type SignalConvertType
+  protected type S gnalConvertType
 
   def trackStats(
-    query: FetcherQuery
+    query: Fetc rQuery
   )(
-    func: => Future[Option[Seq[SourceInfo]]]
-  ): Future[Option[Seq[SourceInfo]]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil
-      .trackOptionItemsStats(productScopedStats) {
-        StatsUtil
-          .trackOptionItemsStats(productUserStateScopedStats) {
+    func: => Future[Opt on[Seq[S ce nfo]]]
+  ): Future[Opt on[Seq[S ce nfo]]] = {
+    val productScopedStats = stats.scope(query.product.or g nalNa )
+    val productUserStateScopedStats = productScopedStats.scope(query.userState.toStr ng)
+    StatsUt l
+      .trackOpt on emsStats(productScopedStats) {
+        StatsUt l
+          .trackOpt on emsStats(productUserStateScopedStats) {
             func
           }
       }
   }
 
   /***
-   * Convert a list of Signals of type [[SignalConvertType]] into SourceInfo
+   * Convert a l st of S gnals of type [[S gnalConvertType]]  nto S ce nfo
    */
-  def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo]
+  def convertS ce nfo(
+    s ceType: S ceType,
+    s gnals: Seq[S gnalConvertType]
+  ): Seq[S ce nfo]
 }

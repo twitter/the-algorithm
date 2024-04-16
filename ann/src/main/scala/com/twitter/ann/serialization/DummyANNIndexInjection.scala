@@ -1,12 +1,12 @@
-package com.twitter.ann.serialization
+package com.tw ter.ann.ser al zat on
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
 
 /**
-Dummy injection required to writeup dummy dal dataset to ANN folder.
+Dum   nject on requ red to wr eup dum  dal dataset to ANN folder.
 **/
-object DummyANNIndexInjection {
-  val injection: KeyValInjection[Long, Long] =
-    KeyValInjection[Long, Long](Long2BigEndian, Long2BigEndian)
+object Dum ANN ndex nject on {
+  val  nject on: KeyVal nject on[Long, Long] =
+    KeyVal nject on[Long, Long](Long2B gEnd an, Long2B gEnd an)
 }

@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+package com.tw ter.follow_recom ndat ons.common.cl ents.phone_storage_serv ce
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.phonestorage.api.thriftscala.GetUserPhonesByUsersRequest
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cds.contact_consent_state.thr ftscala.PurposeOfProcess ng
+ mport com.tw ter.phonestorage.ap .thr ftscala.GetUserPhonesByUsersRequest
+ mport com.tw ter.phonestorage.ap .thr ftscala.PhoneStorageServ ce
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PhoneStorageServiceClient @Inject() (
-  val phoneStorageService: PhoneStorageService.MethodPerEndpoint) {
+@S ngleton
+class PhoneStorageServ ceCl ent @ nject() (
+  val phoneStorageServ ce: PhoneStorageServ ce. thodPerEndpo nt) {
 
   /**
-   * PSS can potentially return multiple phone records.
-   * The current implementation of getUserPhonesByUsers returns only a single phone for a single user_id but
-   * we can trivially support handling multiple in case that changes in the future.
+   * PSS can potent ally return mult ple phone records.
+   * T  current  mple ntat on of getUserPhonesByUsers returns only a s ngle phone for a s ngle user_ d but
+   *   can tr v ally support handl ng mult ple  n case that changes  n t  future.
    */
   def getPhoneNumbers(
-    userId: Long,
-    purposeOfProcessing: PurposeOfProcessing,
-    forceCarrierLookup: Option[Boolean] = None
-  ): Stitch[Seq[String]] = {
+    user d: Long,
+    purposeOfProcess ng: PurposeOfProcess ng,
+    forceCarr erLookup: Opt on[Boolean] = None
+  ): St ch[Seq[Str ng]] = {
     val req = GetUserPhonesByUsersRequest(
-      userIds = Seq(userId),
-      forceCarrierLookup = forceCarrierLookup,
-      purposesOfProcessing = Some(Seq(purposeOfProcessing))
+      user ds = Seq(user d),
+      forceCarr erLookup = forceCarr erLookup,
+      purposesOfProcess ng = So (Seq(purposeOfProcess ng))
     )
 
-    Stitch.callFuture(phoneStorageService.getUserPhonesByUsers(req)) map {
+    St ch.callFuture(phoneStorageServ ce.getUserPhonesByUsers(req)) map {
       _.userPhones.map(_.phoneNumber)
     }
   }

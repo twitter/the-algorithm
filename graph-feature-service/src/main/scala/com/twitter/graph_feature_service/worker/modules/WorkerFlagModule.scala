@@ -1,33 +1,33 @@
-package com.twitter.graph_feature_service.worker.modules
+package com.tw ter.graph_feature_serv ce.worker.modules
 
-import com.twitter.inject.TwitterModule
+ mport com.tw ter. nject.Tw terModule
 
-object WorkerFlagNames {
-  final val ServiceRole = "service.role"
-  final val ServiceEnv = "service.env"
-  final val ShardId = "service.shardId"
-  final val NumShards = "service.numShards"
-  final val HdfsCluster = "service.hdfsCluster"
-  final val HdfsClusterUrl = "service.hdfsClusterUrl"
+object WorkerFlagNa s {
+  f nal val Serv ceRole = "serv ce.role"
+  f nal val Serv ceEnv = "serv ce.env"
+  f nal val Shard d = "serv ce.shard d"
+  f nal val NumShards = "serv ce.numShards"
+  f nal val HdfsCluster = "serv ce.hdfsCluster"
+  f nal val HdfsClusterUrl = "serv ce.hdfsClusterUrl"
 }
 
 /**
- * Initializes references to the flag values defined in the aurora.deploy file.
- * To check what the flag values are initialized in runtime, search FlagsModule in stdout
+ *  n  al zes references to t  flag values def ned  n t  aurora.deploy f le.
+ * To c ck what t  flag values are  n  al zed  n runt  , search FlagsModule  n stdout
  */
-object WorkerFlagModule extends TwitterModule {
+object WorkerFlagModule extends Tw terModule {
 
-  import WorkerFlagNames._
+   mport WorkerFlagNa s._
 
-  flag[Int](ShardId, "Shard Id")
+  flag[ nt](Shard d, "Shard  d")
 
-  flag[Int](NumShards, "Num of Graph Shards")
+  flag[ nt](NumShards, "Num of Graph Shards")
 
-  flag[String](ServiceRole, "Service Role")
+  flag[Str ng](Serv ceRole, "Serv ce Role")
 
-  flag[String](ServiceEnv, "Service Env")
+  flag[Str ng](Serv ceEnv, "Serv ce Env")
 
-  flag[String](HdfsCluster, "Hdfs cluster to download graph files from")
+  flag[Str ng](HdfsCluster, "Hdfs cluster to download graph f les from")
 
-  flag[String](HdfsClusterUrl, "Hdfs cluster url to download graph files from")
+  flag[Str ng](HdfsClusterUrl, "Hdfs cluster url to download graph f les from")
 }

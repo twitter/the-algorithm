@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-public class ClientErrorException extends RuntimeException {
+publ c class Cl entErrorExcept on extends Runt  Except on {
 
-  public ClientErrorException() {
+  publ c Cl entErrorExcept on() {
   }
 
-  public ClientErrorException(String message) {
-    super(message);
+  publ c Cl entErrorExcept on(Str ng  ssage) {
+    super( ssage);
   }
 
-  public ClientErrorException(String message, Throwable cause) {
-    super(message, cause);
+  publ c Cl entErrorExcept on(Str ng  ssage, Throwable cause) {
+    super( ssage, cause);
   }
 
-  public ClientErrorException(Throwable cause) {
+  publ c Cl entErrorExcept on(Throwable cause) {
     super(cause);
   }
 
-  public ClientErrorException(String message, Throwable cause,
-                              boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
+  publ c Cl entErrorExcept on(Str ng  ssage, Throwable cause,
+                              boolean enableSuppress on, boolean wr ableStackTrace) {
+    super( ssage, cause, enableSuppress on, wr ableStackTrace);
   }
 }

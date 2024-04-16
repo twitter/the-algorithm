@@ -1,150 +1,150 @@
-package com.twitter.recosinjector.event_processors
+package com.tw ter.recos njector.event_processors
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.recosinjector.decider.RecosInjectorDeciderConstants
-import com.twitter.recosinjector.edges.TimelineEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.filters.TweetFilter
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.timelineservice.thriftscala.FavoriteEvent
-import com.twitter.timelineservice.thriftscala.UnfavoriteEvent
-import com.twitter.timelineservice.thriftscala.{Event => TimelineEvent}
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos njector.cl ents.G zmoduck
+ mport com.tw ter.recos njector.cl ents.T etyp e
+ mport com.tw ter.recos njector.dec der.Recos njectorDec der
+ mport com.tw ter.recos njector.dec der.Recos njectorDec derConstants
+ mport com.tw ter.recos njector.edges.T  l neEventToUserT etEnt yGraphBu lder
+ mport com.tw ter.recos njector.f lters.T etF lter
+ mport com.tw ter.recos njector.f lters.UserF lter
+ mport com.tw ter.recos njector.publ s rs.KafkaEventPubl s r
+ mport com.tw ter.recos njector.ut l.T etDeta ls
+ mport com.tw ter.recos njector.ut l.T etFavor eEventDeta ls
+ mport com.tw ter.recos njector.ut l.UserT etEngage nt
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.t  l neserv ce.thr ftscala.Favor eEvent
+ mport com.tw ter.t  l neserv ce.thr ftscala.Unfavor eEvent
+ mport com.tw ter.t  l neserv ce.thr ftscala.{Event => T  l neEvent}
+ mport com.tw ter.ut l.Future
 
 /**
- * Processor for Timeline events, such as Favorite (liking) tweets
+ * Processor for T  l ne events, such as Favor e (l k ng) t ets
  */
-class TimelineEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[TimelineEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  kafkaEventPublisher: KafkaEventPublisher,
-  userTweetEntityGraphTopic: String,
-  userTweetEntityGraphMessageBuilder: TimelineEventToUserTweetEntityGraphBuilder,
-  decider: RecosInjectorDecider,
-  gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie
+class T  l neEventProcessor(
+  overr de val eventBusStreamNa : Str ng,
+  overr de val thr ftStruct: Thr ftStructCodec[T  l neEvent],
+  overr de val serv ce dent f er: Serv ce dent f er,
+  kafkaEventPubl s r: KafkaEventPubl s r,
+  userT etEnt yGraphTop c: Str ng,
+  userT etEnt yGraph ssageBu lder: T  l neEventToUserT etEnt yGraphBu lder,
+  dec der: Recos njectorDec der,
+  g zmoduck: G zmoduck,
+  t etyp e: T etyp e
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TimelineEvent] {
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventBusProcessor[T  l neEvent] {
 
-  private val processEventDeciderCounter = statsReceiver.counter("num_process_timeline_event")
-  private val numFavoriteEventCounter = statsReceiver.counter("num_favorite_event")
-  private val numUnFavoriteEventCounter = statsReceiver.counter("num_unfavorite_event")
-  private val numNotFavoriteEventCounter = statsReceiver.counter("num_not_favorite_event")
+  pr vate val processEventDec derCounter = statsRece ver.counter("num_process_t  l ne_event")
+  pr vate val numFavor eEventCounter = statsRece ver.counter("num_favor e_event")
+  pr vate val numUnFavor eEventCounter = statsRece ver.counter("num_unfavor e_event")
+  pr vate val numNotFavor eEventCounter = statsRece ver.counter("num_not_favor e_event")
 
-  private val numSelfFavoriteCounter = statsReceiver.counter("num_self_favorite_event")
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numFavoriteUserUnsafeCounter = statsReceiver.counter("num_favorite_user_unsafe")
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("engage_user"))
-  private val tweetFilter = new TweetFilter(tweetypie)
+  pr vate val numSelfFavor eCounter = statsRece ver.counter("num_self_favor e_event")
+  pr vate val numNullCastT etCounter = statsRece ver.counter("num_null_cast_t et")
+  pr vate val numT etFa lSafetyLevelCounter = statsRece ver.counter("num_fa l_t etyp e_safety")
+  pr vate val numFavor eUserUnsafeCounter = statsRece ver.counter("num_favor e_user_unsafe")
+  pr vate val engageUserF lter = new UserF lter(g zmoduck)(statsRece ver.scope("engage_user"))
+  pr vate val t etF lter = new T etF lter(t etyp e)
 
-  private val numProcessFavorite = statsReceiver.counter("num_process_favorite")
-  private val numNoProcessFavorite = statsReceiver.counter("num_no_process_favorite")
+  pr vate val numProcessFavor e = statsRece ver.counter("num_process_favor e")
+  pr vate val numNoProcessFavor e = statsRece ver.counter("num_no_process_favor e")
 
-  private def getFavoriteEventDetails(
-    favoriteEvent: FavoriteEvent
-  ): TweetFavoriteEventDetails = {
+  pr vate def getFavor eEventDeta ls(
+    favor eEvent: Favor eEvent
+  ): T etFavor eEventDeta ls = {
 
-    val engagement = UserTweetEngagement(
-      engageUserId = favoriteEvent.userId,
-      engageUser = favoriteEvent.user,
-      action = Action.Favorite,
-      engagementTimeMillis = Some(favoriteEvent.eventTimeMs),
-      tweetId = favoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = favoriteEvent.tweet.map(TweetDetails) // tweet always exists
+    val engage nt = UserT etEngage nt(
+      engageUser d = favor eEvent.user d,
+      engageUser = favor eEvent.user,
+      act on = Act on.Favor e,
+      engage ntT  M ll s = So (favor eEvent.eventT  Ms),
+      t et d = favor eEvent.t et d, // t  t et, or s ce t et  f target t et  s a ret et
+      t etDeta ls = favor eEvent.t et.map(T etDeta ls) // t et always ex sts
     )
-    TweetFavoriteEventDetails(userTweetEngagement = engagement)
+    T etFavor eEventDeta ls(userT etEngage nt = engage nt)
   }
 
-  private def getUnfavoriteEventDetails(
-    unfavoriteEvent: UnfavoriteEvent
-  ): TweetFavoriteEventDetails = {
-    val engagement = UserTweetEngagement(
-      engageUserId = unfavoriteEvent.userId,
-      engageUser = unfavoriteEvent.user,
-      action = Action.Unfavorite,
-      engagementTimeMillis = Some(unfavoriteEvent.eventTimeMs),
-      tweetId = unfavoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = unfavoriteEvent.tweet.map(TweetDetails) // tweet always exists
+  pr vate def getUnfavor eEventDeta ls(
+    unfavor eEvent: Unfavor eEvent
+  ): T etFavor eEventDeta ls = {
+    val engage nt = UserT etEngage nt(
+      engageUser d = unfavor eEvent.user d,
+      engageUser = unfavor eEvent.user,
+      act on = Act on.Unfavor e,
+      engage ntT  M ll s = So (unfavor eEvent.eventT  Ms),
+      t et d = unfavor eEvent.t et d, // t  t et, or s ce t et  f target t et  s a ret et
+      t etDeta ls = unfavor eEvent.t et.map(T etDeta ls) // t et always ex sts
     )
-    TweetFavoriteEventDetails(userTweetEngagement = engagement)
+    T etFavor eEventDeta ls(userT etEngage nt = engage nt)
   }
 
-  private def shouldProcessFavoriteEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
-    val tweetId = engagement.tweetId
-    val authorIdOpt = engagement.tweetDetails.flatMap(_.authorId)
+  pr vate def shouldProcessFavor eEvent(event: T etFavor eEventDeta ls): Future[Boolean] = {
+    val engage nt = event.userT etEngage nt
+    val engageUser d = engage nt.engageUser d
+    val t et d = engage nt.t et d
+    val author dOpt = engage nt.t etDeta ls.flatMap(_.author d)
 
-    val isSelfFavorite = authorIdOpt.contains(engageUserId)
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafetyFut = tweetFilter.filterForTweetypieSafetyLevel(tweetId)
+    val  sSelfFavor e = author dOpt.conta ns(engageUser d)
+    val  sNullCastT et = engage nt.t etDeta ls.forall(_. sNullCastT et)
+    val  sEngageUserSafeFut = engageUserF lter.f lterByUser d(engageUser d)
+    val  sT etPassSafetyFut = t etF lter.f lterForT etyp eSafetyLevel(t et d)
 
-    Future.join(isEngageUserSafeFut, isTweetPassSafetyFut).map {
-      case (isEngageUserSafe, isTweetPassSafety) =>
-        if (isSelfFavorite) numSelfFavoriteCounter.incr()
-        if (isNullCastTweet) numNullCastTweetCounter.incr()
-        if (!isEngageUserSafe) numFavoriteUserUnsafeCounter.incr()
-        if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    Future.jo n( sEngageUserSafeFut,  sT etPassSafetyFut).map {
+      case ( sEngageUserSafe,  sT etPassSafety) =>
+         f ( sSelfFavor e) numSelfFavor eCounter. ncr()
+         f ( sNullCastT et) numNullCastT etCounter. ncr()
+         f (! sEngageUserSafe) numFavor eUserUnsafeCounter. ncr()
+         f (! sT etPassSafety) numT etFa lSafetyLevelCounter. ncr()
 
-        !isSelfFavorite && !isNullCastTweet && isEngageUserSafe && isTweetPassSafety
+        ! sSelfFavor e && ! sNullCastT et &&  sEngageUserSafe &&  sT etPassSafety
     }
   }
 
-  private def processFavoriteEvent(favoriteEvent: FavoriteEvent): Future[Unit] = {
-    val eventDetails = getFavoriteEventDetails(favoriteEvent)
-    shouldProcessFavoriteEvent(eventDetails).map {
+  pr vate def processFavor eEvent(favor eEvent: Favor eEvent): Future[Un ] = {
+    val eventDeta ls = getFavor eEventDeta ls(favor eEvent)
+    shouldProcessFavor eEvent(eventDeta ls).map {
       case true =>
-        numProcessFavorite.incr()
-        // Convert the event for UserTweetEntityGraph
-        userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
+        numProcessFavor e. ncr()
+        // Convert t  event for UserT etEnt yGraph
+        userT etEnt yGraph ssageBu lder.processEvent(eventDeta ls).map { edges =>
           edges.foreach { edge =>
-            kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+            kafkaEventPubl s r.publ sh(edge.convertToRecosHose ssage, userT etEnt yGraphTop c)
           }
         }
       case false =>
-        numNoProcessFavorite.incr()
+        numNoProcessFavor e. ncr()
     }
   }
 
-  private def processUnFavoriteEvent(unFavoriteEvent: UnfavoriteEvent): Future[Unit] = {
-    if (decider.isAvailable(RecosInjectorDeciderConstants.EnableUnfavoriteEdge)) {
-      val eventDetails = getUnfavoriteEventDetails(unFavoriteEvent)
-      // Convert the event for UserTweetEntityGraph
-      userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
+  pr vate def processUnFavor eEvent(unFavor eEvent: Unfavor eEvent): Future[Un ] = {
+     f (dec der. sAva lable(Recos njectorDec derConstants.EnableUnfavor eEdge)) {
+      val eventDeta ls = getUnfavor eEventDeta ls(unFavor eEvent)
+      // Convert t  event for UserT etEnt yGraph
+      userT etEnt yGraph ssageBu lder.processEvent(eventDeta ls).map { edges =>
         edges.foreach { edge =>
-          kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+          kafkaEventPubl s r.publ sh(edge.convertToRecosHose ssage, userT etEnt yGraphTop c)
         }
       }
     } else {
-      Future.Unit
+      Future.Un 
     }
   }
 
-  override def processEvent(event: TimelineEvent): Future[Unit] = {
-    processEventDeciderCounter.incr()
+  overr de def processEvent(event: T  l neEvent): Future[Un ] = {
+    processEventDec derCounter. ncr()
     event match {
-      case TimelineEvent.Favorite(favoriteEvent: FavoriteEvent) =>
-        numFavoriteEventCounter.incr()
-        processFavoriteEvent(favoriteEvent)
-      case TimelineEvent.Unfavorite(unFavoriteEvent: UnfavoriteEvent) =>
-        numUnFavoriteEventCounter.incr()
-        processUnFavoriteEvent(unFavoriteEvent)
+      case T  l neEvent.Favor e(favor eEvent: Favor eEvent) =>
+        numFavor eEventCounter. ncr()
+        processFavor eEvent(favor eEvent)
+      case T  l neEvent.Unfavor e(unFavor eEvent: Unfavor eEvent) =>
+        numUnFavor eEventCounter. ncr()
+        processUnFavor eEvent(unFavor eEvent)
       case _ =>
-        numNotFavoriteEventCounter.incr()
-        Future.Unit
+        numNotFavor eEventCounter. ncr()
+        Future.Un 
     }
   }
 }

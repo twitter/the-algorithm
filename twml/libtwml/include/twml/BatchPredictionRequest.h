@@ -1,26 +1,26 @@
 #pragma once
 
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/DataRecord.h>
-#include <twml/HashedDataRecord.h>
-#include <twml/Tensor.h>
+# nclude <twml/DataRecord.h>
+# nclude <twml/Has dDataRecord.h>
+# nclude <twml/Tensor.h>
 
-namespace twml {
+na space twml {
 
 template<class RecordType>
-class GenericBatchPredictionRequest {
- static_assert(std::is_same<RecordType, HashedDataRecord>::value ||
-               std::is_same<RecordType, DataRecord>::value,
-               "RecordType has to be HashedDatarecord or DataRecord");
- public:
-  typedef typename RecordType::Reader Reader;
-  GenericBatchPredictionRequest(int numOfLabels=0, int numOfWeights=0):
+class Gener cBatchPred ct onRequest {
+ stat c_assert(std:: s_sa <RecordType, Has dDataRecord>::value ||
+               std:: s_sa <RecordType, DataRecord>::value,
+               "RecordType has to be Has dDatarecord or DataRecord");
+ publ c:
+  typedef typena  RecordType::Reader Reader;
+  Gener cBatchPred ct onRequest( nt numOfLabels=0,  nt numOf  ghts=0):
       m_common_features(), m_requests(),
-      num_labels(numOfLabels), num_weights(numOfWeights)
+      num_labels(numOfLabels), num_  ghts(numOf  ghts)
   {}
 
-  void decode(Reader &reader);
+  vo d decode(Reader &reader);
 
   std::vector<RecordType>& requests() {
     return m_requests;
@@ -30,16 +30,16 @@ class GenericBatchPredictionRequest {
     return m_common_features;
   }
 
- private:
+ pr vate:
   RecordType m_common_features;
   std::vector<RecordType> m_requests;
-  int num_labels;
-  int num_weights;
+   nt num_labels;
+   nt num_  ghts;
 };
 
-using HashedBatchPredictionRequest = GenericBatchPredictionRequest<HashedDataRecord>;
-using BatchPredictionRequest = GenericBatchPredictionRequest<DataRecord>;
+us ng Has dBatchPred ct onRequest = Gener cBatchPred ct onRequest<Has dDataRecord>;
+us ng BatchPred ct onRequest = Gener cBatchPred ct onRequest<DataRecord>;
 
 }
 
-#endif
+#end f

@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.tw ter.product_m xer.core.serv ce.gate_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.Return
-import com.twitter.util.Throw
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.GateResult
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.Arrow. so
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on. mmutable.Queue
 
 /**
- * A GateExecutor takes a Seq[Gate], executes them all sequentially, and
- * determines a final Continue or Stop decision.
+ * A GateExecutor takes a Seq[Gate], executes t m all sequent ally, and
+ * determ nes a f nal Cont nue or Stop dec s on.
  */
-@Singleton
-class GateExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+@S ngleton
+class GateExecutor @ nject() (overr de val statsRece ver: StatsRece ver) extends Executor {
 
-  private val Continue = "continue"
-  private val Skipped = "skipped"
-  private val Stop = "stop"
+  pr vate val Cont nue = "cont nue"
+  pr vate val Sk pped = "sk pped"
+  pr vate val Stop = "stop"
 
-  def arrow[Query <: PipelineQuery](
+  def arrow[Query <: P pel neQuery](
     gates: Seq[BaseGate[Query]],
     context: Executor.Context
   ): Arrow[Query, GateExecutorResult] = {
 
-    val gateArrows = gates.map(getIsoArrowForGate(_, context))
-    val combinedArrow = isoArrowsSequentially(gateArrows)
+    val gateArrows = gates.map(get soArrowForGate(_, context))
+    val comb nedArrow =  soArrowsSequent ally(gateArrows)
 
     Arrow
       .map { query: Query => (query, GateExecutorResult(Queue.empty)) }
-      .andThen(combinedArrow)
+      .andT n(comb nedArrow)
       .map {
         case (_, gateExecutorResult) =>
-          // materialize the Queue into a List for faster future iterations
-          GateExecutorResult(gateExecutorResult.individualGateResults.toList)
+          // mater al ze t  Queue  nto a L st for faster future  erat ons
+          GateExecutorResult(gateExecutorResult. nd v dualGateResults.toL st)
       }
   }
 
   /**
-   * Each gate is transformed into a Iso Arrow over (Quest, List[GatewayResult]).
+   * Each gate  s transfor d  nto a  so Arrow over (Quest, L st[GatewayResult]).
    *
-   * This arrow:
-   * - Adapts the input and output types of the underlying Gate arrow (an [[Iso[(Query, QueryResult)]])
-   * - throws a [[StoppedGateException]] if [[GateResult.continue]] is false
-   * - if its not false, prepends the current results to the [[GateExecutorResult.individualGateResults]] list
+   * T  arrow:
+   * - Adapts t   nput and output types of t  underly ng Gate arrow (an [[ so[(Query, QueryResult)]])
+   * - throws a [[StoppedGateExcept on]]  f [[GateResult.cont nue]]  s false
+   * -  f  s not false, prepends t  current results to t  [[GateExecutorResult. nd v dualGateResults]] l st
    */
-  private def getIsoArrowForGate[Query <: PipelineQuery](
+  pr vate def get soArrowForGate[Query <: P pel neQuery](
     gate: BaseGate[Query],
     context: Executor.Context
-  ): Iso[(Query, GateExecutorResult)] = {
-    val broadcastStatsReceiver =
-      Executor.broadcastStatsReceiver(context, gate.identifier, statsReceiver)
+  ):  so[(Query, GateExecutorResult)] = {
+    val broadcastStatsRece ver =
+      Executor.broadcastStatsRece ver(context, gate. dent f er, statsRece ver)
 
-    val continueCounter = broadcastStatsReceiver.counter(Continue)
-    val skippedCounter = broadcastStatsReceiver.counter(Skipped)
-    val stopCounter = broadcastStatsReceiver.counter(Stop)
+    val cont nueCounter = broadcastStatsRece ver.counter(Cont nue)
+    val sk ppedCounter = broadcastStatsRece ver.counter(Sk pped)
+    val stopCounter = broadcastStatsRece ver.counter(Stop)
 
-    val observedArrow = wrapComponentWithExecutorBookkeeping(
+    val observedArrow = wrapComponentW hExecutorBookkeep ng(
       context,
-      gate.identifier,
+      gate. dent f er,
       onSuccess = { gateResult: GateResult =>
         gateResult match {
-          case GateResult.Continue => continueCounter.incr()
-          case GateResult.Skipped => skippedCounter.incr()
-          case GateResult.Stop => stopCounter.incr()
+          case GateResult.Cont nue => cont nueCounter. ncr()
+          case GateResult.Sk pped => sk ppedCounter. ncr()
+          case GateResult.Stop => stopCounter. ncr()
         }
       }
     )(gate.arrow)
 
-    val inputAdapted: Arrow[(Query, GateExecutorResult), GateResult] =
+    val  nputAdapted: Arrow[(Query, GateExecutorResult), GateResult] =
       Arrow
         .map[(Query, GateExecutorResult), Query] { case (query, _) => query }
-        .andThen(observedArrow)
+        .andT n(observedArrow)
 
-    val zipped = Arrow.zipWithArg(inputAdapted)
+    val z pped = Arrow.z pW hArg( nputAdapted)
 
-    // at each step, the current `GateExecutorResult.continue` value is correct for all already run gates
-    val withStoppedGatesAsExceptions = zipped.map {
-      case ((query, previousResults), currentResult) if currentResult.continue =>
+    // at each step, t  current `GateExecutorResult.cont nue` value  s correct for all already run gates
+    val w hStoppedGatesAsExcept ons = z pped.map {
+      case ((query, prev ousResults), currentResult)  f currentResult.cont nue =>
         Return(
           (
             query,
             GateExecutorResult(
-              previousResults.individualGateResults :+ ExecutedGateResult(
-                gate.identifier,
+              prev ousResults. nd v dualGateResults :+ ExecutedGateResult(
+                gate. dent f er,
                 currentResult))
           ))
-      case _ => Throw(StoppedGateException(gate.identifier))
-    }.lowerFromTry
+      case _ => Throw(StoppedGateExcept on(gate. dent f er))
+    }.lo rFromTry
 
     /**
-     * we gather stats before converting closed gates to exceptions because a closed gate
-     * isn't a failure for the gate, its a normal behavior
-     * but we do want to remap the the [[StoppedGateException]] created because the [[BaseGate]] is closed
-     * to the correct [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure]],
-     * so we remap with [[wrapWithErrorHandling]]
+     *   gat r stats before convert ng closed gates to except ons because a closed gate
+     *  sn't a fa lure for t  gate,  s a normal behav or
+     * but   do want to remap t  t  [[StoppedGateExcept on]] created because t  [[BaseGate]]  s closed
+     * to t  correct [[com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure]],
+     * so   remap w h [[wrapW hErrorHandl ng]]
      */
-    wrapWithErrorHandling(context, gate.identifier)(withStoppedGatesAsExceptions)
+    wrapW hErrorHandl ng(context, gate. dent f er)(w hStoppedGatesAsExcept ons)
   }
 }

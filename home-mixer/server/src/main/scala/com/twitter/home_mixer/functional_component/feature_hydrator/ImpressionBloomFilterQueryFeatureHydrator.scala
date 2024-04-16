@@ -1,62 +1,62 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.ImpressionBloomFilterFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.param.HomeGlobalParams.ImpressionBloomFilterFalsePositiveRateParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.manhattan.store.ManhattanStoreClient
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
-import com.twitter.timelines.impressionstore.impressionbloomfilter.ImpressionBloomFilter
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.model.Ho Features. mpress onBloomF lterFeature
+ mport com.tw ter.ho _m xer.model.request.HasSeenT et ds
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams. mpress onBloomF lterFalsePos  veRateParam
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.cl ents.manhattan.store.ManhattanStoreCl ent
+ mport com.tw ter.t  l nes. mpress onbloomf lter.{thr ftscala => blm}
+ mport com.tw ter.t  l nes. mpress onstore. mpress onbloomf lter. mpress onBloomF lter
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class ImpressionBloomFilterQueryFeatureHydrator[
-  Query <: PipelineQuery with HasSeenTweetIds] @Inject() (
-  bloomFilterClient: ManhattanStoreClient[
-    blm.ImpressionBloomFilterKey,
-    blm.ImpressionBloomFilterSeq
+@S ngleton
+case class  mpress onBloomF lterQueryFeatureHydrator[
+  Query <: P pel neQuery w h HasSeenT et ds] @ nject() (
+  bloomF lterCl ent: ManhattanStoreCl ent[
+    blm. mpress onBloomF lterKey,
+    blm. mpress onBloomF lterSeq
   ]) extends QueryFeatureHydrator[Query] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "ImpressionBloomFilter")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    " mpress onBloomF lter")
 
-  private val ImpressionBloomFilterTTL = 7.day
+  pr vate val  mpress onBloomF lterTTL = 7.day
 
-  override val features: Set[Feature[_, _]] = Set(ImpressionBloomFilterFeature)
+  overr de val features: Set[Feature[_, _]] = Set( mpress onBloomF lterFeature)
 
-  private val SurfaceArea = blm.SurfaceArea.HomeTimeline
+  pr vate val SurfaceArea = blm.SurfaceArea.Ho T  l ne
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    bloomFilterClient
-      .get(blm.ImpressionBloomFilterKey(userId, SurfaceArea))
-      .map(_.getOrElse(blm.ImpressionBloomFilterSeq(Seq.empty)))
-      .map { bloomFilterSeq =>
-        val updatedBloomFilterSeq =
-          if (query.seenTweetIds.forall(_.isEmpty)) bloomFilterSeq
+  overr de def hydrate(query: Query): St ch[FeatureMap] = {
+    val user d = query.getRequ redUser d
+    bloomF lterCl ent
+      .get(blm. mpress onBloomF lterKey(user d, SurfaceArea))
+      .map(_.getOrElse(blm. mpress onBloomF lterSeq(Seq.empty)))
+      .map { bloomF lterSeq =>
+        val updatedBloomF lterSeq =
+           f (query.seenT et ds.forall(_. sEmpty)) bloomF lterSeq
           else {
-            ImpressionBloomFilter.addSeenTweetIds(
+             mpress onBloomF lter.addSeenT et ds(
               surfaceArea = SurfaceArea,
-              tweetIds = query.seenTweetIds.get,
-              bloomFilterSeq = bloomFilterSeq,
-              timeToLive = ImpressionBloomFilterTTL,
-              falsePositiveRate = query.params(ImpressionBloomFilterFalsePositiveRateParam)
+              t et ds = query.seenT et ds.get,
+              bloomF lterSeq = bloomF lterSeq,
+              t  ToL ve =  mpress onBloomF lterTTL,
+              falsePos  veRate = query.params( mpress onBloomF lterFalsePos  veRateParam)
             )
           }
-        FeatureMapBuilder().add(ImpressionBloomFilterFeature, updatedBloomFilterSeq).build()
+        FeatureMapBu lder().add( mpress onBloomF lterFeature, updatedBloomF lterSeq).bu ld()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.8)
   )
 }

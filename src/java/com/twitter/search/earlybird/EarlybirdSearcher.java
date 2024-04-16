@@ -1,1824 +1,1824 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.HashMap;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.stream.Collectors;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Jo ner;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect. mmutableSet;
+ mport com.google.common.collect.L sts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.queryparser.class c.ParseExcept on;
+ mport org.apac .lucene.queryparser.class c.QueryParser;
+ mport org.apac .lucene.search.BooleanClause.Occur;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .thr ft.TExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.query.MappableField;
-import com.twitter.search.common.query.QueryHitAttributeHelper;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.search.TwitterEarlyTerminationCollector;
-import com.twitter.search.common.search.termination.QueryTimeoutFactory;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.exception.TransientException;
-import com.twitter.search.earlybird.index.facets.FacetSkipList;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.querycache.QueryCacheConversionRules;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.queryparser.DetectFieldAnnotationVisitor;
-import com.twitter.search.earlybird.queryparser.EarlybirdLuceneQueryVisitor;
-import com.twitter.search.earlybird.queryparser.HighFrequencyTermPairRewriteVisitor;
-import com.twitter.search.earlybird.queryparser.LuceneRelevanceQueryVisitor;
-import com.twitter.search.earlybird.queryparser.ProtectedOperatorQueryRewriter;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.queries.BadUserRepFilter;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.EarlybirdMultiSegmentSearcher;
-import com.twitter.search.earlybird.search.queries.MatchAllDocsQuery;
-import com.twitter.search.earlybird.search.queries.RequiredStatusIDsFilter;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.search.SearchResultsCollector;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.search.SocialFilter;
-import com.twitter.search.earlybird.search.SocialSearchResultsCollector;
-import com.twitter.search.earlybird.search.queries.UserFlagsExcludeFilter;
-import com.twitter.search.earlybird.search.queries.UserIdMultiSegmentQuery;
-import com.twitter.search.earlybird.search.facets.EntityAnnotationCollector;
-import com.twitter.search.earlybird.search.facets.ExpandedUrlCollector;
-import com.twitter.search.earlybird.search.facets.ExplainFacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.FacetRankingModule;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.FacetSearchRequestInfo;
-import com.twitter.search.earlybird.search.facets.NamedEntityCollector;
-import com.twitter.search.earlybird.search.facets.SpaceFacetCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.collectors.AbstractRelevanceCollector;
-import com.twitter.search.earlybird.search.relevance.collectors.BatchRelevanceTopCollector;
-import com.twitter.search.earlybird.search.relevance.collectors.RelevanceAllCollector;
-import com.twitter.search.earlybird.search.relevance.collectors.RelevanceTopCollector;
-import com.twitter.search.earlybird.search.relevance.scoring.RelevanceQuery;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
-import com.twitter.search.earlybird.search.relevance.scoring.TensorflowBasedScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdRPCStats;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.earlybird.util.EarlybirdSearchResultUtil;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.util.IdTimeRanges;
-import com.twitter.search.queryparser.visitors.ConversionVisitor;
-import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
-import com.twitter.search.queryparser.visitors.NamedDisjunctionVisitor;
-import com.twitter.search.queryparser.visitors.ProximityGroupRewriteVisitor;
-import com.twitter.search.queryparser.visitors.StripAnnotationsVisitor;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.query.MappableF eld;
+ mport com.tw ter.search.common.query.QueryH Attr bute lper;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorParams;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorTerm nat onParams;
+ mport com.tw ter.search.common.query.thr ftjava.EarlyTerm nat on nfo;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftRank ngParams;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftScor ngFunct onType;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH L st;
+ mport com.tw ter.search.common.sc ma.Sc maUt l;
+ mport com.tw ter.search.common.sc ma.SearchWh espaceAnalyzer;
+ mport com.tw ter.search.common.sc ma.base.F eld  ghtDefault;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.common.search.Tw terEarlyTerm nat onCollector;
+ mport com.tw ter.search.common.search.term nat on.QueryT  outFactory;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l;
+ mport com.tw ter.search.common.ut l.ml.tensorflow_eng ne.TensorflowModelsManager;
+ mport com.tw ter.search.common.ut l.thr ft.Thr ftUt ls;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCountState;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Cl entExcept on;
+ mport com.tw ter.search.earlyb rd.except on.Trans entExcept on;
+ mport com.tw ter.search.earlyb rd. ndex.facets.FacetSk pL st;
+ mport com.tw ter.search.earlyb rd.ml.Scor ngModelsManager;
+ mport com.tw ter.search.earlyb rd.part  on.Aud oSpaceTable;
+ mport com.tw ter.search.earlyb rd.part  on.Mult Seg ntTermD ct onaryManager;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Convers onRules;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.queryparser.DetectF eldAnnotat onV s or;
+ mport com.tw ter.search.earlyb rd.queryparser.Earlyb rdLuceneQueryV s or;
+ mport com.tw ter.search.earlyb rd.queryparser.H ghFrequencyTermPa rRewr eV s or;
+ mport com.tw ter.search.earlyb rd.queryparser.LuceneRelevanceQueryV s or;
+ mport com.tw ter.search.earlyb rd.queryparser.ProtectedOperatorQueryRewr er;
+ mport com.tw ter.search.earlyb rd.search.AbstractResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.Ant Gam ngF lter;
+ mport com.tw ter.search.earlyb rd.search.quer es.BadUserRepF lter;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdLuceneSearc r;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdMult Seg ntSearc r;
+ mport com.tw ter.search.earlyb rd.search.quer es.MatchAllDocsQuery;
+ mport com.tw ter.search.earlyb rd.search.quer es.Requ redStatus DsF lter;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.SearchResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.SearchResults nfo;
+ mport com.tw ter.search.earlyb rd.search.S mpleSearchResults;
+ mport com.tw ter.search.earlyb rd.search.Soc alF lter;
+ mport com.tw ter.search.earlyb rd.search.Soc alSearchResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.quer es.UserFlagsExcludeF lter;
+ mport com.tw ter.search.earlyb rd.search.quer es.User dMult Seg ntQuery;
+ mport com.tw ter.search.earlyb rd.search.facets.Ent yAnnotat onCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.ExpandedUrlCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.Expla nFacetResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetRank ngModule;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetSearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.facets.Na dEnt yCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.SpaceFacetCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchResults;
+ mport com.tw ter.search.earlyb rd.search.relevance.collectors.AbstractRelevanceCollector;
+ mport com.tw ter.search.earlyb rd.search.relevance.collectors.BatchRelevanceTopCollector;
+ mport com.tw ter.search.earlyb rd.search.relevance.collectors.RelevanceAllCollector;
+ mport com.tw ter.search.earlyb rd.search.relevance.collectors.RelevanceTopCollector;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.RelevanceQuery;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct onProv der;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.TensorflowBasedScor ngFunct on;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdRPCStats;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdDebug nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRelevanceOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultExtra tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csResults;
+ mport com.tw ter.search.earlyb rd.ut l.Earlyb rdSearchResultUt l;
+ mport com.tw ter.search.queryparser.parser.Ser al zedQueryParser;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.QueryNodeUt ls;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.annotat on.Annotat on;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.queryparser.ut l. dT  Ranges;
+ mport com.tw ter.search.queryparser.v s ors.Convers onV s or;
+ mport com.tw ter.search.queryparser.v s ors.DetectPos  veOperatorV s or;
+ mport com.tw ter.search.queryparser.v s ors.Na dD sjunct onV s or;
+ mport com.tw ter.search.queryparser.v s ors.Prox m yGroupRewr eV s or;
+ mport com.tw ter.search.queryparser.v s ors.Str pAnnotat onsV s or;
 
-import static com.twitter.search.queryparser.query.search.SearchOperator.Type.UNTIL_TIME;
+ mport stat c com.tw ter.search.queryparser.query.search.SearchOperator.Type.UNT L_T ME;
 
 /**
- * This class provides the basic search() method:
- * - converts the thrift request object into what lucene expects.
- * - gets the segment.
- * - handles all errors, and prepares the response in case of error.
+ * T  class prov des t  bas c search()  thod:
+ * - converts t  thr ft request object  nto what lucene expects.
+ * - gets t  seg nt.
+ * - handles all errors, and prepares t  response  n case of error.
  *
- * We have one instance of this class per search received.
+ *   have one  nstance of t  class per search rece ved.
  */
-public class EarlybirdSearcher {
-  public enum QueryMode {
-    // Please think before adding more query modes: can this be implemented in a general way?
-    RECENCY(new EarlybirdRPCStats("search_recency")),
-    FACETS(new EarlybirdRPCStats("search_facets")),
-    TERM_STATS(new EarlybirdRPCStats("search_termstats")),
-    RELEVANCE(new EarlybirdRPCStats("search_relevance")),
-    TOP_TWEETS(new EarlybirdRPCStats("search_toptweets"));
+publ c class Earlyb rdSearc r {
+  publ c enum QueryMode {
+    // Please th nk before add ng more query modes: can t  be  mple nted  n a general way?
+    RECENCY(new Earlyb rdRPCStats("search_recency")),
+    FACETS(new Earlyb rdRPCStats("search_facets")),
+    TERM_STATS(new Earlyb rdRPCStats("search_termstats")),
+    RELEVANCE(new Earlyb rdRPCStats("search_relevance")),
+    TOP_TWEETS(new Earlyb rdRPCStats("search_topt ets"));
 
-    private final EarlybirdRPCStats requestStats;
+    pr vate f nal Earlyb rdRPCStats requestStats;
 
-    QueryMode(EarlybirdRPCStats requestStats) {
-      this.requestStats = requestStats;
+    QueryMode(Earlyb rdRPCStats requestStats) {
+      t .requestStats = requestStats;
     }
 
-    public EarlybirdRPCStats getRequestStats() {
+    publ c Earlyb rdRPCStats getRequestStats() {
       return requestStats;
     }
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSearcher.class);
-  private static final String MATCH_ALL_SERIALIZED_QUERY = "(* )";
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdSearc r.class);
+  pr vate stat c f nal Str ng MATCH_ALL_SER AL ZED_QUERY = "(* )";
   /**
-   * generic field annotations can be mapped to a concrete field in the index using this mapping
-   * via {@link com.twitter.search.queryparser.query.annotation.Annotation.Type#MAPPABLE_FIELD}
+   * gener c f eld annotat ons can be mapped to a concrete f eld  n t   ndex us ng t  mapp ng
+   * v a {@l nk com.tw ter.search.queryparser.query.annotat on.Annotat on.Type#MAPPABLE_F ELD}
    */
-  private static final Map<MappableField, String> MAPPABLE_FIELD_MAP =
-      ImmutableMap.of(
-          MappableField.URL,
-          EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName());
+  pr vate stat c f nal Map<MappableF eld, Str ng> MAPPABLE_F ELD_MAP =
+       mmutableMap.of(
+          MappableF eld.URL,
+          Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa ());
 
-  private static final String ALLOW_QUERY_SPECIFIC_SIGNAL_DECIDER_KEY
-      = "allow_query_specific_score_adjustments";
+  pr vate stat c f nal Str ng ALLOW_QUERY_SPEC F C_S GNAL_DEC DER_KEY
+      = "allow_query_spec f c_score_adjust nts";
 
-  @VisibleForTesting
-  public static final String ALLOW_AUTHOR_SPECIFIC_SIGNAL_DECIDER_KEY
-      = "allow_author_specific_score_adjustments";
+  @V s bleForTest ng
+  publ c stat c f nal Str ng ALLOW_AUTHOR_SPEC F C_S GNAL_DEC DER_KEY
+      = "allow_author_spec f c_score_adjust nts";
 
-  private static final String USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY
-      = "use_multi_term_disjunction_for_liked_by_user_ids";
+  pr vate stat c f nal Str ng USE_MULT _TERM_D SJUNCT ON_FOR_L KED_BY_USER_ DS_DEC DER_KEY
+      = "use_mult _term_d sjunct on_for_l ked_by_user_ ds";
 
-  private static final String ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX
-      = "allow_camelcase_username_field_weight_override_in_";
+  pr vate stat c f nal Str ng ALLOW_CAMELCASE_USERNAME_F ELD_WE GHT_OVERR DE_DEC DER_KEY_PREF X
+      = "allow_ca lcase_userna _f eld_  ght_overr de_ n_";
 
-  private static final String ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX
-      = "allow_tokenized_display_name_field_weight_override_in_";
+  pr vate stat c f nal Str ng ALLOW_TOKEN ZED_D SPLAY_NAME_F ELD_WE GHT_OVERR DE_DEC DER_KEY_PREF X
+      = "allow_token zed_d splay_na _f eld_  ght_overr de_ n_";
 
-  private static final boolean ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_query_specific_score_adjustments", false);
+  pr vate stat c f nal boolean ALLOW_QUERY_SPEC F C_S GNAL_CONF G
+      = Earlyb rdConf g.getBool("allow_query_spec f c_score_adjust nts", false);
 
-  private static final boolean ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", false);
+  pr vate stat c f nal boolean ALLOW_AUTHOR_SPEC F C_S GNAL_CONF G
+      = Earlyb rdConf g.getBool("allow_author_spec f c_score_adjust nts", false);
 
-  public static final int DEFAULT_NUM_FACET_RESULTS = 100;
+  publ c stat c f nal  nt DEFAULT_NUM_FACET_RESULTS = 100;
 
-  private final ImmutableSchemaInterface schemaSnapshot;
-  private final EarlybirdCluster cluster;
+  pr vate f nal  mmutableSc ma nterface sc maSnapshot;
+  pr vate f nal Earlyb rdCluster cluster;
 
-  private final Clock clock;
-  private final Decider decider;
+  pr vate f nal Clock clock;
+  pr vate f nal Dec der dec der;
 
-  // The actual request thrift.
-  private final EarlybirdRequest request;
+  // T  actual request thr ft.
+  pr vate f nal Earlyb rdRequest request;
 
-  // searchQuery from inside the request.
-  private final ThriftSearchQuery searchQuery;
+  // searchQuery from  ns de t  request.
+  pr vate f nal Thr ftSearchQuery searchQuery;
 
-  // CollectorParams from inside the searchQuery;
-  private final CollectorParams collectorParams;
+  // CollectorParams from  ns de t  searchQuery;
+  pr vate f nal CollectorParams collectorParams;
 
-  // Parsed query (parsed from serialized query string in request).
-  private com.twitter.search.queryparser.query.Query parsedQuery;
-  private boolean parsedQueryAllowNullcast;
-  private IdTimeRanges idTimeRanges;
+  // Parsed query (parsed from ser al zed query str ng  n request).
+  pr vate com.tw ter.search.queryparser.query.Query parsedQuery;
+  pr vate boolean parsedQueryAllowNullcast;
+  pr vate  dT  Ranges  dT  Ranges;
 
-  // Lucene version of the above.  This is what we will actually be executing.
-  private org.apache.lucene.search.Query luceneQuery;
+  // Lucene vers on of t  above.  T   s what   w ll actually be execut ng.
+  pr vate org.apac .lucene.search.Query luceneQuery;
 
-  // Used for queries where we want to collect per-field hit attribution
+  // Used for quer es w re   want to collect per-f eld h  attr but on
   @Nullable
-  private QueryHitAttributeHelper hitAttributeHelper;
+  pr vate QueryH Attr bute lper h Attr bute lper;
 
-  // Debugging info can be appended to this buffer.
-  private final StringBuilder messageBuffer = new StringBuilder(1024);
-  private final EarlybirdDebugInfo debugInfo = new EarlybirdDebugInfo();
+  // Debugg ng  nfo can be appended to t  buffer.
+  pr vate f nal Str ngBu lder  ssageBuffer = new Str ngBu lder(1024);
+  pr vate f nal Earlyb rdDebug nfo debug nfo = new Earlyb rdDebug nfo();
 
-  // The segment we are searching, or null for the multi-searcher.
-  private Segment segment = null;
+  // T  seg nt   are search ng, or null for t  mult -searc r.
+  pr vate Seg nt seg nt = null;
 
-  // True iff we are searching all segments (multi-searcher).
-  private final boolean searchAllSegments;
+  // True  ff   are search ng all seg nts (mult -searc r).
+  pr vate f nal boolean searchAllSeg nts;
 
-  // Tracking termination criteria for this query
-  private final TerminationTracker terminationTracker;
+  // Track ng term nat on cr er a for t  query
+  pr vate f nal Term nat onTracker term nat onTracker;
 
-  private EarlybirdLuceneSearcher searcher = null;
+  pr vate Earlyb rdLuceneSearc r searc r = null;
 
-  private final SegmentManager segmentManager;
-  private final QueryCacheManager queryCacheManager;
-  private final ScoringModelsManager scoringModelsManager;
-  private final TensorflowModelsManager tensorflowModelsManager;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal QueryCac Manager queryCac Manager;
+  pr vate f nal Scor ngModelsManager scor ngModelsManager;
+  pr vate f nal TensorflowModelsManager tensorflowModelsManager;
 
-  private AntiGamingFilter antiGamingFilter = null;
+  pr vate Ant Gam ngF lter ant Gam ngF lter = null;
 
-  private final boolean searchHighFrequencyTermPairs =
-      EarlybirdConfig.getBool("search_high_frequency_term_pairs", false);
+  pr vate f nal boolean searchH ghFrequencyTermPa rs =
+      Earlyb rdConf g.getBool("search_h gh_frequency_term_pa rs", false);
 
-  // How long to allow post-termination when enforcing query timeout
-  private final int enforceQueryTimeoutBufferMillis =
-      EarlybirdConfig.getInt("enforce_query_timeout_buffer_millis", 50);
+  // How long to allow post-term nat on w n enforc ng query t  out
+  pr vate f nal  nt enforceQueryT  outBufferM ll s =
+      Earlyb rdConf g.get nt("enforce_query_t  out_buffer_m ll s", 50);
 
-  private EarlybirdRPCStats requestStats;
+  pr vate Earlyb rdRPCStats requestStats;
 
-  private QueryTimeoutFactory queryTimeoutFactory;
+  pr vate QueryT  outFactory queryT  outFactory;
 
   // Exported stats
-  private final EarlybirdSearcherStats searcherStats;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
 
-  @VisibleForTesting
-  public static final SearchCounter FIELD_WEIGHT_OVERRIDE_MAP_NON_NULL_COUNT =
-      SearchCounter.export("field_weight_override_map_non_null_count");
-  @VisibleForTesting
-  public static final SearchCounter DROPPED_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE =
-      SearchCounter.export("dropped_camelcase_username_field_weight_override");
-  @VisibleForTesting
-  public static final SearchCounter DROPPED_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE =
-      SearchCounter.export("dropped_tokenized_display_name_field_weight_override");
+  @V s bleForTest ng
+  publ c stat c f nal SearchCounter F ELD_WE GHT_OVERR DE_MAP_NON_NULL_COUNT =
+      SearchCounter.export("f eld_  ght_overr de_map_non_null_count");
+  @V s bleForTest ng
+  publ c stat c f nal SearchCounter DROPPED_CAMELCASE_USERNAME_F ELD_WE GHT_OVERR DE =
+      SearchCounter.export("dropped_ca lcase_userna _f eld_  ght_overr de");
+  @V s bleForTest ng
+  publ c stat c f nal SearchCounter DROPPED_TOKEN ZED_D SPLAY_NAME_F ELD_WE GHT_OVERR DE =
+      SearchCounter.export("dropped_token zed_d splay_na _f eld_  ght_overr de");
 
-  private static final SearchCounter RESPONSE_HAS_NO_THRIFT_SEARCH_RESULTS =
-      SearchCounter.export("tweets_earlybird_searcher_response_has_no_thrift_search_results");
-  private static final SearchCounter CLIENT_HAS_FEATURE_SCHEMA_COUNTER =
-      SearchCounter.export("tweets_earlybird_searcher_client_has_feature_schema");
-  private static final SearchCounter CLIENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER =
-      SearchCounter.export("tweet_earlybird_searcher_client_doesnt_have_feature_schema");
-  private static final SearchCounter COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER =
-      SearchCounter.export("collector_params_max_hits_to_process_not_set");
-  private static final SearchCounter POSITIVE_PROTECTED_OPERATOR_DETECTED_COUNTER =
-      SearchCounter.export("positive_protected_operator_detected_counter");
+  pr vate stat c f nal SearchCounter RESPONSE_HAS_NO_THR FT_SEARCH_RESULTS =
+      SearchCounter.export("t ets_earlyb rd_searc r_response_has_no_thr ft_search_results");
+  pr vate stat c f nal SearchCounter CL ENT_HAS_FEATURE_SCHEMA_COUNTER =
+      SearchCounter.export("t ets_earlyb rd_searc r_cl ent_has_feature_sc ma");
+  pr vate stat c f nal SearchCounter CL ENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER =
+      SearchCounter.export("t et_earlyb rd_searc r_cl ent_doesnt_have_feature_sc ma");
+  pr vate stat c f nal SearchCounter COLLECTOR_PARAMS_MAX_H TS_TO_PROCESS_NOT_SET_COUNTER =
+      SearchCounter.export("collector_params_max_h s_to_process_not_set");
+  pr vate stat c f nal SearchCounter POS T VE_PROTECTED_OPERATOR_DETECTED_COUNTER =
+      SearchCounter.export("pos  ve_protected_operator_detected_counter");
 
-  // Query mode we are executing.
-  private final QueryMode queryMode;
+  // Query mode   are execut ng.
+  pr vate f nal QueryMode queryMode;
 
-  // facetRequest from inside the request (or null).
-  private final ThriftFacetRequest facetRequest;
+  // facetRequest from  ns de t  request (or null).
+  pr vate f nal Thr ftFacetRequest facetRequest;
 
-  // termStatisticsRequest from inside the request (or null).
-  private final ThriftTermStatisticsRequest termStatisticsRequest;
+  // termStat st csRequest from  ns de t  request (or null).
+  pr vate f nal Thr ftTermStat st csRequest termStat st csRequest;
 
-  // Results fields filled in during searchInternal().
-  private ThriftSearchResults searchResults = null;
-  private ThriftFacetResults facetResults = null;
-  private ThriftTermStatisticsResults termStatisticsResults = null;
-  private EarlyTerminationInfo earlyTerminationInfo = null;
+  // Results f elds f lled  n dur ng search nternal().
+  pr vate Thr ftSearchResults searchResults = null;
+  pr vate Thr ftFacetResults facetResults = null;
+  pr vate Thr ftTermStat st csResults termStat st csResults = null;
+  pr vate EarlyTerm nat on nfo earlyTerm nat on nfo = null;
 
-  // Partition config used to fill in debugging info.
-  // If null, no debug info is written into results.
+  // Part  on conf g used to f ll  n debugg ng  nfo.
+  //  f null, no debug  nfo  s wr ten  nto results.
   @Nullable
-  private final PartitionConfig partitionConfig;
+  pr vate f nal Part  onConf g part  onConf g;
 
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
+  pr vate f nal Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager;
 
-  private final QualityFactor qualityFactor;
+  pr vate f nal Qual yFactor qual yFactor;
 
-  private Set<String> queriedFields;
-  private final AudioSpaceTable audioSpaceTable;
+  pr vate Set<Str ng> quer edF elds;
+  pr vate f nal Aud oSpaceTable aud oSpaceTable;
 
-  public EarlybirdSearcher(
-      EarlybirdRequest request,
-      SegmentManager segmentManager,
-      AudioSpaceTable audioSpaceTable,
-      QueryCacheManager queryCacheManager,
-      ImmutableSchemaInterface schema,
-      EarlybirdCluster cluster,
-      @Nullable PartitionConfig partitionConfig,
-      Decider decider,
-      EarlybirdSearcherStats searcherStats,
-      ScoringModelsManager scoringModelsManager,
+  publ c Earlyb rdSearc r(
+      Earlyb rdRequest request,
+      Seg ntManager seg ntManager,
+      Aud oSpaceTable aud oSpaceTable,
+      QueryCac Manager queryCac Manager,
+       mmutableSc ma nterface sc ma,
+      Earlyb rdCluster cluster,
+      @Nullable Part  onConf g part  onConf g,
+      Dec der dec der,
+      Earlyb rdSearc rStats searc rStats,
+      Scor ngModelsManager scor ngModelsManager,
       TensorflowModelsManager tensorflowModelsManager,
       Clock clock,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryTimeoutFactory queryTimeoutFactory,
-      QualityFactor qualityFactor) {
-    this.queryMode = getQueryMode(request);
-    this.schemaSnapshot = schema.getSchemaSnapshot();
-    // set the request stats as early as possible, so that we can track errors that happen
-    // early on in query processing.
-    this.requestStats = queryMode.getRequestStats();
-    this.facetRequest = request.isSetFacetRequest() ? request.getFacetRequest() : null;
-    this.termStatisticsRequest = request.isSetTermStatisticsRequest()
-        ? request.getTermStatisticsRequest() : null;
-    this.partitionConfig = partitionConfig;
-    this.searcherStats = searcherStats;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.clock = clock;
-    this.decider = decider;
-    this.request = request;
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
-    this.cluster = cluster;
-    this.scoringModelsManager = scoringModelsManager;
-    this.tensorflowModelsManager = tensorflowModelsManager;
-    this.audioSpaceTable = audioSpaceTable;
-    // Note: we're deferring the validation/nullchecks until validateRequest()
-    // for more contained exception handling
-    this.searchQuery = request.getSearchQuery();
-    this.collectorParams = this.searchQuery == null ? null : this.searchQuery.getCollectorParams();
-    // Search all segments if searchSegmentId is unset.
-    this.searchAllSegments = !request.isSetSearchSegmentId();
-    if (this.collectorParams == null
-        || !this.collectorParams.isSetTerminationParams()) {
-      this.terminationTracker = new TerminationTracker(clock);
-    } else if (request.isSetClientRequestTimeMs()) {
-      this.terminationTracker = new TerminationTracker(collectorParams.getTerminationParams(),
-          request.getClientRequestTimeMs(), clock,
-          getPostTerminationOverheadMillis(collectorParams.getTerminationParams()));
+      Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+      QueryT  outFactory queryT  outFactory,
+      Qual yFactor qual yFactor) {
+    t .queryMode = getQueryMode(request);
+    t .sc maSnapshot = sc ma.getSc maSnapshot();
+    // set t  request stats as early as poss ble, so that   can track errors that happen
+    // early on  n query process ng.
+    t .requestStats = queryMode.getRequestStats();
+    t .facetRequest = request. sSetFacetRequest() ? request.getFacetRequest() : null;
+    t .termStat st csRequest = request. sSetTermStat st csRequest()
+        ? request.getTermStat st csRequest() : null;
+    t .part  onConf g = part  onConf g;
+    t .searc rStats = searc rStats;
+    t .mult Seg ntTermD ct onaryManager = mult Seg ntTermD ct onaryManager;
+    t .clock = clock;
+    t .dec der = dec der;
+    t .request = request;
+    t .seg ntManager = seg ntManager;
+    t .queryCac Manager = queryCac Manager;
+    t .cluster = cluster;
+    t .scor ngModelsManager = scor ngModelsManager;
+    t .tensorflowModelsManager = tensorflowModelsManager;
+    t .aud oSpaceTable = aud oSpaceTable;
+    // Note:  're deferr ng t  val dat on/nullc cks unt l val dateRequest()
+    // for more conta ned except on handl ng
+    t .searchQuery = request.getSearchQuery();
+    t .collectorParams = t .searchQuery == null ? null : t .searchQuery.getCollectorParams();
+    // Search all seg nts  f searchSeg nt d  s unset.
+    t .searchAllSeg nts = !request. sSetSearchSeg nt d();
+     f (t .collectorParams == null
+        || !t .collectorParams. sSetTerm nat onParams()) {
+      t .term nat onTracker = new Term nat onTracker(clock);
+    } else  f (request. sSetCl entRequestT  Ms()) {
+      t .term nat onTracker = new Term nat onTracker(collectorParams.getTerm nat onParams(),
+          request.getCl entRequestT  Ms(), clock,
+          getPostTerm nat onOver adM ll s(collectorParams.getTerm nat onParams()));
     } else {
-      this.terminationTracker = new TerminationTracker(
-          collectorParams.getTerminationParams(), clock,
-          getPostTerminationOverheadMillis(collectorParams.getTerminationParams()));
+      t .term nat onTracker = new Term nat onTracker(
+          collectorParams.getTerm nat onParams(), clock,
+          getPostTerm nat onOver adM ll s(collectorParams.getTerm nat onParams()));
     }
-    this.queryTimeoutFactory = queryTimeoutFactory;
-    this.qualityFactor = qualityFactor;
+    t .queryT  outFactory = queryT  outFactory;
+    t .qual yFactor = qual yFactor;
   }
 
-  private int getPostTerminationOverheadMillis(CollectorTerminationParams terminationParams) {
-    // If enforcing timeouts, set the post-termination buffer to the smaller of the timeout or the
-    // configured buffer. This ensures that timeout >= buffer, and a request with a smaller timeout
-    // should just time out immediately (because timeout == buffer).
-    return (terminationParams.isEnforceQueryTimeout() && terminationParams.getTimeoutMs() > 0)
-        ? Math.min(enforceQueryTimeoutBufferMillis, terminationParams.getTimeoutMs()) : 0;
+  pr vate  nt getPostTerm nat onOver adM ll s(CollectorTerm nat onParams term nat onParams) {
+    //  f enforc ng t  outs, set t  post-term nat on buffer to t  smaller of t  t  out or t 
+    // conf gured buffer. T  ensures that t  out >= buffer, and a request w h a smaller t  out
+    // should just t   out  m d ately (because t  out == buffer).
+    return (term nat onParams. sEnforceQueryT  out() && term nat onParams.getT  outMs() > 0)
+        ? Math.m n(enforceQueryT  outBufferM ll s, term nat onParams.getT  outMs()) : 0;
   }
 
-  // Appends a debug string to the buffer.
-  private void appendMessage(String message) {
-    messageBuffer.append(message).append("\n");
+  // Appends a debug str ng to t  buffer.
+  pr vate vo d append ssage(Str ng  ssage) {
+     ssageBuffer.append( ssage).append("\n");
   }
 
   /**
-   * Processes an Earlybird search request.
-   * @return the earlybird response for this search request.
+   * Processes an Earlyb rd search request.
+   * @return t  earlyb rd response for t  search request.
    */
-  public EarlybirdResponse search() {
+  publ c Earlyb rdResponse search() {
     try {
-      debugInfo.setHost(DatabaseConfig.getLocalHostname());
+      debug nfo.setHost(DatabaseConf g.getLocalHostna ());
 
-      // Throws transient exception for invalid requests.
-      validateRequest();
+      // Throws trans ent except on for  nval d requests.
+      val dateRequest();
 
-      // Throws client exception for bad queries,
-      parseEarlybirdRequest();
+      // Throws cl ent except on for bad quer es,
+      parseEarlyb rdRequest();
 
-      // Modify the Lucene query if necessary.
+      // Mod fy t  Lucene query  f necessary.
       luceneQuery = postLuceneQueryProcess(luceneQuery);
 
-      // Might return PARTITION_NOT_FOUND or PARTITION_DISABLED.
-      EarlybirdResponseCode code = initSearcher();
-      if (code != EarlybirdResponseCode.SUCCESS) {
+      // M ght return PART T ON_NOT_FOUND or PART T ON_D SABLED.
+      Earlyb rdResponseCode code =  n Searc r();
+       f (code != Earlyb rdResponseCode.SUCCESS) {
         return respondError(code);
       }
 
-      return searchInternal();
+      return search nternal();
 
-    } catch (TransientException e) {
-      LOG.error(String.format("Transient exception in search() for EarlybirdRequest:\n%s", request),
+    } catch (Trans entExcept on e) {
+      LOG.error(Str ng.format("Trans ent except on  n search() for Earlyb rdRequest:\n%s", request),
                 e);
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
-    } catch (ClientException e) {
-      LOG.warn(String.format("Client exception in search() %s for EarlybirdRequest:\n %s",
+      append ssage(e.get ssage());
+      return respondError(Earlyb rdResponseCode.TRANS ENT_ERROR);
+    } catch (Cl entExcept on e) {
+      LOG.warn(Str ng.format("Cl ent except on  n search() %s for Earlyb rdRequest:\n %s",
           e, request));
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.CLIENT_ERROR);
-    } catch (Exception e) {
-      LOG.warn(String.format("Uncaught exception in search() for EarlybirdRequest:\n%s", request),
+      append ssage(e.get ssage());
+      return respondError(Earlyb rdResponseCode.CL ENT_ERROR);
+    } catch (Except on e) {
+      LOG.warn(Str ng.format("Uncaught except on  n search() for Earlyb rdRequest:\n%s", request),
                e);
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
-    } catch (AssertionError e) {
-      LOG.warn(String.format("Assertion error in search() for EarlybirdRequest:\n%s", request), e);
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
+      append ssage(e.get ssage());
+      return respondError(Earlyb rdResponseCode.TRANS ENT_ERROR);
+    } catch (Assert onError e) {
+      LOG.warn(Str ng.format("Assert on error  n search() for Earlyb rdRequest:\n%s", request), e);
+      append ssage(e.get ssage());
+      return respondError(Earlyb rdResponseCode.TRANS ENT_ERROR);
     } catch (Error e) {
-      // SEARCH-33166: If we got here, it means what was thrown was not an Exception, or anything
-      // we know how to handle. Log the Error for diagnostic purposes and propagate it.
-      LOG.error("Re-throwing uncaught error", e);
+      // SEARCH-33166:  f   got  re,    ans what was thrown was not an Except on, or anyth ng
+      //   know how to handle. Log t  Error for d agnost c purposes and propagate  .
+      LOG.error("Re-throw ng uncaught error", e);
       throw e;
     }
   }
 
-  public EarlybirdRPCStats getRequestStats() {
+  publ c Earlyb rdRPCStats getRequestStats() {
     return requestStats;
   }
 
   /**
-   * Wraps the given query with the provided filter queries.
+   * Wraps t  g ven query w h t  prov ded f lter quer es.
    *
-   * @param query the query to wrap with filters.
-   * @param filters the filters to wrap the query with.
-   * @return a BooleanQuery wrapped with filters
+   * @param query t  query to wrap w h f lters.
+   * @param f lters t  f lters to wrap t  query w h.
+   * @return a BooleanQuery wrapped w h f lters
    */
-  public static Query wrapFilters(Query query, Query... filters) {
-    boolean filtersEmpty = filters == null || filters.length == 0;
+  publ c stat c Query wrapF lters(Query query, Query... f lters) {
+    boolean f ltersEmpty = f lters == null || f lters.length == 0;
 
-    if (!filtersEmpty) {
-      filtersEmpty = true;
-      for (Query f : filters) {
-        if (f != null) {
-          filtersEmpty = false;
+     f (!f ltersEmpty) {
+      f ltersEmpty = true;
+      for (Query f : f lters) {
+         f (f != null) {
+          f ltersEmpty = false;
           break;
         }
       }
     }
 
-    if (filtersEmpty) {
-      if (query == null) {
+     f (f ltersEmpty) {
+       f (query == null) {
         return new MatchAllDocsQuery();
       } else {
         return query;
       }
     }
 
-    BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-    if (query != null) {
-      bqBuilder.add(query, Occur.MUST);
+    BooleanQuery.Bu lder bqBu lder = new BooleanQuery.Bu lder();
+     f (query != null) {
+      bqBu lder.add(query, Occur.MUST);
     }
-    for (Query f : filters) {
-      if (f != null) {
-        bqBuilder.add(f, Occur.FILTER);
+    for (Query f : f lters) {
+       f (f != null) {
+        bqBu lder.add(f, Occur.F LTER);
       }
     }
-    return bqBuilder.build();
+    return bqBu lder.bu ld();
   }
 
-  // Examine all fields in the request for sanity.
-  private void validateRequest() throws TransientException, ClientException {
-    // First try thrift's internal validate.  Should always succeed.
+  // Exam ne all f elds  n t  request for san y.
+  pr vate vo d val dateRequest() throws Trans entExcept on, Cl entExcept on {
+    // F rst try thr ft's  nternal val date.  Should always succeed.
     try {
-      request.validate();
-    } catch (TException e) {
-      throw new TransientException(e.getMessage(), e);
+      request.val date();
+    } catch (TExcept on e) {
+      throw new Trans entExcept on(e.get ssage(), e);
     }
 
-    if (searchQuery == null) {
-      throw new TransientException("No ThriftSearchQuery specified");
+     f (searchQuery == null) {
+      throw new Trans entExcept on("No Thr ftSearchQuery spec f ed");
     }
 
-    if (collectorParams == null) {
-      throw new TransientException("No CollectorParams specified");
+     f (collectorParams == null) {
+      throw new Trans entExcept on("No CollectorParams spec f ed");
     }
 
-    validateTermStatsRequest();
+    val dateTermStatsRequest();
 
-    if (!searchAllSegments) {
-      if (request.getSearchSegmentId() <= 0) {
-        String msg = "Bad time slice ID: " + request.getSearchSegmentId();
-        throw new TransientException(msg);
+     f (!searchAllSeg nts) {
+       f (request.getSearchSeg nt d() <= 0) {
+        Str ng msg = "Bad t   sl ce  D: " + request.getSearchSeg nt d();
+        throw new Trans entExcept on(msg);
       }
 
-      // Initialize the segment.
-      SegmentInfo segmentInfo = this.segmentManager.getSegmentInfo(request.getSearchSegmentId());
-      segment = segmentInfo != null ? segmentInfo.getSegment() : null;
+      //  n  al ze t  seg nt.
+      Seg nt nfo seg nt nfo = t .seg ntManager.getSeg nt nfo(request.getSearchSeg nt d());
+      seg nt = seg nt nfo != null ? seg nt nfo.getSeg nt() : null;
     }
 
-    if (collectorParams.getNumResultsToReturn() < 0) {
-      String msg = "Invalid numResults: " + collectorParams.getNumResultsToReturn();
-      throw new TransientException(msg);
+     f (collectorParams.getNumResultsToReturn() < 0) {
+      Str ng msg = " nval d numResults: " + collectorParams.getNumResultsToReturn();
+      throw new Trans entExcept on(msg);
     }
 
-    if (searchQuery.getNamedDisjunctionMapSize() > 0 && searchQuery.isSetLuceneQuery()) {
-      throw new ClientException("namedMultiTermDisjunctionMap does not support with luceneQuery");
+     f (searchQuery.getNa dD sjunct onMapS ze() > 0 && searchQuery. sSetLuceneQuery()) {
+      throw new Cl entExcept on("na dMult TermD sjunct onMap does not support w h luceneQuery");
     }
   }
 
-  private void validateTermStatsRequest() throws ClientException {
-    // Validate the field names and values for all ThriftTermRequests.
-    if (request.isSetTermStatisticsRequest()
-        && request.getTermStatisticsRequest().isSetTermRequests()) {
-      for (ThriftTermRequest termRequest : request.getTermStatisticsRequest().getTermRequests()) {
-        // If termRequest.fieldName is not set, it defaults to 'text', which is a string field,
-        // so we don't need to check the term.
-        if (termRequest.isSetFieldName()) {
-          String fieldName = termRequest.getFieldName();
-          Schema.FieldInfo facetFieldInfo = schemaSnapshot.getFacetFieldByFacetName(fieldName);
-          if (facetFieldInfo != null) {
-            // Facet fields are string fields, so we don't need to check the term.
-            continue;
+  pr vate vo d val dateTermStatsRequest() throws Cl entExcept on {
+    // Val date t  f eld na s and values for all Thr ftTermRequests.
+     f (request. sSetTermStat st csRequest()
+        && request.getTermStat st csRequest(). sSetTermRequests()) {
+      for (Thr ftTermRequest termRequest : request.getTermStat st csRequest().getTermRequests()) {
+        //  f termRequest.f eldNa   s not set,   defaults to 'text', wh ch  s a str ng f eld,
+        // so   don't need to c ck t  term.
+         f (termRequest. sSetF eldNa ()) {
+          Str ng f eldNa  = termRequest.getF eldNa ();
+          Sc ma.F eld nfo facetF eld nfo = sc maSnapshot.getFacetF eldByFacetNa (f eldNa );
+           f (facetF eld nfo != null) {
+            // Facet f elds are str ng f elds, so   don't need to c ck t  term.
+            cont nue;
           }
 
-          Schema.FieldInfo fieldInfo = schemaSnapshot.getFieldInfo(fieldName);
-          if (fieldInfo == null) {
-            throw new ClientException("Field " + fieldName + " is not present in the schema.");
+          Sc ma.F eld nfo f eld nfo = sc maSnapshot.getF eld nfo(f eldNa );
+           f (f eld nfo == null) {
+            throw new Cl entExcept on("F eld " + f eldNa  + "  s not present  n t  sc ma.");
           }
 
           try {
-            SchemaUtil.toBytesRef(fieldInfo, termRequest.getTerm());
-          } catch (UnsupportedOperationException e) {
-            throw new ClientException("Term " + termRequest.getTerm() + " is not compatible with "
-                                      + "the type of field " + fieldName);
+            Sc maUt l.toBytesRef(f eld nfo, termRequest.getTerm());
+          } catch (UnsupportedOperat onExcept on e) {
+            throw new Cl entExcept on("Term " + termRequest.getTerm() + "  s not compat ble w h "
+                                      + "t  type of f eld " + f eldNa );
           }
         }
       }
     }
   }
 
-  private void setQueriesInDebugInfo(
-      com.twitter.search.queryparser.query.Query parsedQ,
-      org.apache.lucene.search.Query luceneQ) {
-    debugInfo.setParsedQuery(parsedQ == null ? null : parsedQ.serialize());
-    debugInfo.setLuceneQuery(luceneQ == null ? null : luceneQ.toString());
+  pr vate vo d setQuer es nDebug nfo(
+      com.tw ter.search.queryparser.query.Query parsedQ,
+      org.apac .lucene.search.Query luceneQ) {
+    debug nfo.setParsedQuery(parsedQ == null ? null : parsedQ.ser al ze());
+    debug nfo.setLuceneQuery(luceneQ == null ? null : luceneQ.toStr ng());
   }
 
   /**
-   * Takes the EarlybirdRequest that came into the service and after various parsing and processing
-   * steps ultimately produces a Lucene query.
+   * Takes t  Earlyb rdRequest that ca   nto t  serv ce and after var ous pars ng and process ng
+   * steps ult mately produces a Lucene query.
    */
-  private void parseEarlybirdRequest() throws ClientException {
-    SerializedQueryParser parser = new SerializedQueryParser(EarlybirdConfig.getPenguinVersion());
+  pr vate vo d parseEarlyb rdRequest() throws Cl entExcept on {
+    Ser al zedQueryParser parser = new Ser al zedQueryParser(Earlyb rdConf g.getPengu nVers on());
 
     try {
-      // if the deprecated iterativeQueries field is set, return an error to the client
-      // indicating that support for it has been removed.
-      if (searchQuery.isSetDeprecated_iterativeQueries()) {
-        throw new ClientException("Invalid request: iterativeQueries feature has been removed");
+      //  f t  deprecated  erat veQuer es f eld  s set, return an error to t  cl ent
+      //  nd cat ng that support for   has been removed.
+       f (searchQuery. sSetDeprecated_ erat veQuer es()) {
+        throw new Cl entExcept on(" nval d request:  erat veQuer es feature has been removed");
       }
 
-      // we parse the actual query from the user, if any
+      //   parse t  actual query from t  user,  f any
       luceneQuery = null;
-      parsedQuery = null;  // this will be set by parseQueryHelper()
+      parsedQuery = null;  // t  w ll be set by parseQuery lper()
 
-      if (searchQuery.getLikedByUserIDFilter64Size() > 0
-          && searchQuery.isSetLuceneQuery()) {
-        throw new ClientException("likedByUserIDFilter64 does not support with luceneQuery");
+       f (searchQuery.getL kedByUser DF lter64S ze() > 0
+          && searchQuery. sSetLuceneQuery()) {
+        throw new Cl entExcept on("l kedByUser DF lter64 does not support w h luceneQuery");
       }
 
-      if (!StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())) {
-        searcherStats.thriftQueryWithSerializedQuery.increment();
-        luceneQuery = parseSerializedQuery(searchQuery.getSerializedQuery(), parser, true);
-      } else if (!StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
-        searcherStats.thriftQueryWithLuceneQuery.increment();
+       f (!Str ngUt ls. sBlank(request.getSearchQuery().getSer al zedQuery())) {
+        searc rStats.thr ftQueryW hSer al zedQuery. ncre nt();
+        luceneQuery = parseSer al zedQuery(searchQuery.getSer al zedQuery(), parser, true);
+      } else  f (!Str ngUt ls. sBlank(request.getSearchQuery().getLuceneQuery())) {
+        searc rStats.thr ftQueryW hLuceneQuery. ncre nt();
         luceneQuery = parseLuceneQuery(searchQuery.getLuceneQuery());
-        LOG.info("lucene query: {}", searchQuery.getLuceneQuery());
-        if (luceneQuery != null) {
-          LOG.info("Using lucene query directly from the request: " + luceneQuery.toString());
+        LOG. nfo("lucene query: {}", searchQuery.getLuceneQuery());
+         f (luceneQuery != null) {
+          LOG. nfo("Us ng lucene query d rectly from t  request: " + luceneQuery.toStr ng());
         }
       } else {
-        searcherStats.thriftQueryWithoutTextQuery.increment();
-        luceneQuery = parseSerializedQuery(
-            MATCH_ALL_SERIALIZED_QUERY,
+        searc rStats.thr ftQueryW houtTextQuery. ncre nt();
+        luceneQuery = parseSer al zedQuery(
+            MATCH_ALL_SER AL ZED_QUERY,
             parser,
             queryMode != QueryMode.TERM_STATS);
       }
-    } catch (QueryParserException | BooleanQuery.TooManyClauses e) {
-      LOG.info("Exception parsing query during search", e);
-      appendMessage(e.getMessage());
-      throw new ClientException(e);
+    } catch (QueryParserExcept on | BooleanQuery.TooManyClauses e) {
+      LOG. nfo("Except on pars ng query dur ng search", e);
+      append ssage(e.get ssage());
+      throw new Cl entExcept on(e);
     }
   }
 
   /**
-   * Parses a serialized query and creates a Lucene query out of it.
+   * Parses a ser al zed query and creates a Lucene query out of  .
    *
-   * To see how serialized queries look like, go to go/searchsyntax.
+   * To see how ser al zed quer es look l ke, go to go/searchsyntax.
    */
-  private Query parseSerializedQuery(
-      String serializedQuery,
-      SerializedQueryParser parser,
-      boolean shouldAdjustQueryBasedOnRequestParameters) throws QueryParserException {
-    // Parse the serialized query.
-    parsedQuery = parser.parse(serializedQuery);
-    if (parsedQuery == null) {
+  pr vate Query parseSer al zedQuery(
+      Str ng ser al zedQuery,
+      Ser al zedQueryParser parser,
+      boolean shouldAdjustQueryBasedOnRequestPara ters) throws QueryParserExcept on {
+    // Parse t  ser al zed query.
+    parsedQuery = parser.parse(ser al zedQuery);
+     f (parsedQuery == null) {
       return null;
     }
 
-    // rewrite query if positive 'protected' operator is detected
-    if (parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.PROTECTED))) {
-      POSITIVE_PROTECTED_OPERATOR_DETECTED_COUNTER.increment();
-      ProtectedOperatorQueryRewriter rewriter = new ProtectedOperatorQueryRewriter();
-      parsedQuery = rewriter.rewrite(
+    // rewr e query  f pos  ve 'protected' operator  s detected
+     f (parsedQuery.accept(new DetectPos  veOperatorV s or(SearchOperatorConstants.PROTECTED))) {
+      POS T VE_PROTECTED_OPERATOR_DETECTED_COUNTER. ncre nt();
+      ProtectedOperatorQueryRewr er rewr er = new ProtectedOperatorQueryRewr er();
+      parsedQuery = rewr er.rewr e(
           parsedQuery,
-          request.followedUserIds,
-          segmentManager.getUserTable());
+          request.follo dUser ds,
+          seg ntManager.getUserTable());
     }
 
-    ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
-    if (shouldAdjustQueryBasedOnRequestParameters) {
-      // If likedByUserIDFilter64 is set, combine it with query
-      // Note: we deal with likedByUserIDFilter64 here instead of in postLuceneQueryProcess as we
-      // want annotate query with ranks.
-      if (searchQuery.isSetLikedByUserIDFilter64()
-          && searchQuery.getLikedByUserIDFilter64Size() > 0) {
-        parsedQuery = combineWithLikedByUserIdFilter64(
-            parsedQuery, searchQuery.getLikedByUserIDFilter64());
+    Thr ftSearchRelevanceOpt ons opt ons = searchQuery.getRelevanceOpt ons();
+     f (shouldAdjustQueryBasedOnRequestPara ters) {
+      //  f l kedByUser DF lter64  s set, comb ne   w h query
+      // Note:   deal w h l kedByUser DF lter64  re  nstead of  n postLuceneQueryProcess as  
+      // want annotate query w h ranks.
+       f (searchQuery. sSetL kedByUser DF lter64()
+          && searchQuery.getL kedByUser DF lter64S ze() > 0) {
+        parsedQuery = comb neW hL kedByUser dF lter64(
+            parsedQuery, searchQuery.getL kedByUser DF lter64());
       }
 
-      // If namedListMap field is set, replace the named lists in the serialized query.
-      if (searchQuery.getNamedDisjunctionMapSize() > 0) {
+      //  f na dL stMap f eld  s set, replace t  na d l sts  n t  ser al zed query.
+       f (searchQuery.getNa dD sjunct onMapS ze() > 0) {
         parsedQuery = parsedQuery.accept(
-            new NamedDisjunctionVisitor(searchQuery.getNamedDisjunctionMap()));
+            new Na dD sjunct onV s or(searchQuery.getNa dD sjunct onMap()));
       }
 
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isCollectFieldHitAttributions()) {
-        // NOTE: Before we do any modifications to the serialized query tree, annotate the query
-        // nodes with their node rank in the original query.
-        this.hitAttributeHelper =
-            QueryHitAttributeHelper.from(parsedQuery, schemaSnapshot);
-        parsedQuery = hitAttributeHelper.getAnnotatedQuery();
+       f (searchQuery. sSetRelevanceOpt ons()
+          && searchQuery.getRelevanceOpt ons(). sCollectF eldH Attr but ons()) {
+        // NOTE: Before   do any mod f cat ons to t  ser al zed query tree, annotate t  query
+        // nodes w h t  r node rank  n t  or g nal query.
+        t .h Attr bute lper =
+            QueryH Attr bute lper.from(parsedQuery, sc maSnapshot);
+        parsedQuery = h Attr bute lper.getAnnotatedQuery();
       }
 
-      // Currently antisocial/nullcast tweets are dropped when we build index, but some tweets may
-      // become antisocial with realtime updates. For consistency, we should always filter out
-      // antisocial/nullcast tweets if the user is not explicitly including it.
-      final boolean allowAntisocial =
-          parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.ANTISOCIAL));
-      if (!allowAntisocial) {
-        parsedQuery = QueryNodeUtils.appendAsConjunction(
+      // Currently ant soc al/nullcast t ets are dropped w n   bu ld  ndex, but so  t ets may
+      // beco  ant soc al w h realt   updates. For cons stency,   should always f lter out
+      // ant soc al/nullcast t ets  f t  user  s not expl c ly  nclud ng  .
+      f nal boolean allowAnt soc al =
+          parsedQuery.accept(new DetectPos  veOperatorV s or(SearchOperatorConstants.ANT SOC AL));
+       f (!allowAnt soc al) {
+        parsedQuery = QueryNodeUt ls.appendAsConjunct on(
             parsedQuery,
-            QueryCacheConversionRules.CACHED_EXCLUDE_ANTISOCIAL);
+            QueryCac Convers onRules.CACHED_EXCLUDE_ANT SOC AL);
       }
       parsedQueryAllowNullcast =
-          parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST));
-      if (!parsedQueryAllowNullcast) {
-        parsedQuery = QueryNodeUtils.appendAsConjunction(
-            parsedQuery, new SearchOperator("filter", SearchOperatorConstants.NULLCAST).negate());
+          parsedQuery.accept(new DetectPos  veOperatorV s or(SearchOperatorConstants.NULLCAST));
+       f (!parsedQueryAllowNullcast) {
+        parsedQuery = QueryNodeUt ls.appendAsConjunct on(
+            parsedQuery, new SearchOperator("f lter", SearchOperatorConstants.NULLCAST).negate());
       }
 
-      // Strip all annotations from the filters that will be converted to query cache filters.
+      // Str p all annotat ons from t  f lters that w ll be converted to query cac  f lters.
       // See SEARCH-15552.
       parsedQuery = parsedQuery.accept(
-          new StripAnnotationsVisitor(QueryCacheConversionRules.STRIP_ANNOTATIONS_QUERIES));
+          new Str pAnnotat onsV s or(QueryCac Convers onRules.STR P_ANNOTAT ONS_QUER ES));
 
-      // Convert certain filters into cached filters, also consolidate them.
+      // Convert certa n f lters  nto cac d f lters, also consol date t m.
       parsedQuery = parsedQuery.accept(
-          new ConversionVisitor(QueryCacheConversionRules.DEFAULT_RULES));
+          new Convers onV s or(QueryCac Convers onRules.DEFAULT_RULES));
 
-      // add proximity if needed
-      if (options != null
-          && options.isProximityScoring()
-          && searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY) {
-        parsedQuery = parsedQuery.accept(new ProximityGroupRewriteVisitor()).simplify();
+      // add prox m y  f needed
+       f (opt ons != null
+          && opt ons. sProx m yScor ng()
+          && searchQuery.getRank ngMode() != Thr ftSearchRank ngMode.RECENCY) {
+        parsedQuery = parsedQuery.accept(new Prox m yGroupRewr eV s or()).s mpl fy();
       }
     }
 
-    if (request.isSkipVeryRecentTweets()) {
-      parsedQuery = restrictQueryToFullyIndexedTweets(parsedQuery);
+     f (request. sSk pVeryRecentT ets()) {
+      parsedQuery = restr ctQueryToFully ndexedT ets(parsedQuery);
     }
 
-    parsedQuery = parsedQuery.simplify();
-    debugInfo.setParsedQuery(parsedQuery.serialize());
+    parsedQuery = parsedQuery.s mpl fy();
+    debug nfo.setParsedQuery(parsedQuery.ser al ze());
 
-    // Extract top-level since-id for pagination optimizations.
-    idTimeRanges = IdTimeRanges.fromQuery(parsedQuery);
+    // Extract top-level s nce- d for pag nat on opt m zat ons.
+     dT  Ranges =  dT  Ranges.fromQuery(parsedQuery);
 
-    // Does any final processing specific to EarlybirdSearch class.
+    // Does any f nal process ng spec f c to Earlyb rdSearch class.
     parsedQuery = preLuceneQueryProcess(parsedQuery);
 
     // Convert to a lucene query.
-    EarlybirdLuceneQueryVisitor luceneVisitor = getLuceneVisitor(
-        options == null ? null : options.getFieldWeightMapOverride());
+    Earlyb rdLuceneQueryV s or luceneV s or = getLuceneV s or(
+        opt ons == null ? null : opt ons.getF eld  ghtMapOverr de());
 
-    if (options != null) {
-      luceneVisitor
-          .setProximityPhraseWeight((float) options.getProximityPhraseWeight())
-          .setProximityPhraseSlop(options.getProximityPhraseSlop());
+     f (opt ons != null) {
+      luceneV s or
+          .setProx m yPhrase  ght((float) opt ons.getProx m yPhrase  ght())
+          .setProx m yPhraseSlop(opt ons.getProx m yPhraseSlop());
     }
 
-    // Propagate hit attribute helper to the lucene visitor if it has been setup.
-    luceneVisitor.setFieldHitAttributeHelper(this.hitAttributeHelper);
+    // Propagate h  attr bute  lper to t  lucene v s or  f   has been setup.
+    luceneV s or.setF eldH Attr bute lper(t .h Attr bute lper);
 
-    org.apache.lucene.search.Query query = parsedQuery.accept(luceneVisitor);
-    if (query != null) {
-      debugInfo.setLuceneQuery(query.toString());
+    org.apac .lucene.search.Query query = parsedQuery.accept(luceneV s or);
+     f (query != null) {
+      debug nfo.setLuceneQuery(query.toStr ng());
     }
 
-    queriedFields = luceneVisitor.getQueriedFields();
+    quer edF elds = luceneV s or.getQuer edF elds();
 
     return query;
   }
 
-  private Query parseLuceneQuery(String query) {
+  pr vate Query parseLuceneQuery(Str ng query) {
     QueryParser parser = new QueryParser(
-        EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-        new SearchWhitespaceAnalyzer());
-    parser.setSplitOnWhitespace(true);
+        Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa (),
+        new SearchWh espaceAnalyzer());
+    parser.setSpl OnWh espace(true);
     try {
       return parser.parse(query);
-    } catch (ParseException e) {
+    } catch (ParseExcept on e) {
       LOG.error("Cannot parse raw lucene query: " + query, e);
-    } catch (NullPointerException e) {
-      LOG.error("NullPointerException while parsing raw lucene query: " + query
-          + ", probably your grammar is wrong.\n", e);
+    } catch (NullPo nterExcept on e) {
+      LOG.error("NullPo nterExcept on wh le pars ng raw lucene query: " + query
+          + ", probably y  grammar  s wrong.\n", e);
     }
     return null;
   }
 
-  private com.twitter.search.queryparser.query.Query combineWithLikedByUserIdFilter64(
-      com.twitter.search.queryparser.query.Query query,
-      List<Long> ids) throws QueryParserException {
-    return QueryNodeUtils.appendAsConjunction(query, getLikedByUserIdQuery(ids));
+  pr vate com.tw ter.search.queryparser.query.Query comb neW hL kedByUser dF lter64(
+      com.tw ter.search.queryparser.query.Query query,
+      L st<Long>  ds) throws QueryParserExcept on {
+    return QueryNodeUt ls.appendAsConjunct on(query, getL kedByUser dQuery( ds));
   }
 
   /**
-   * initSearcher initializes the segmentSearcher, and returns SUCCESS if OK
-   * or some other response code it not OK.
+   *  n Searc r  n  al zes t  seg ntSearc r, and returns SUCCESS  f OK
+   * or so  ot r response code   not OK.
    */
-  private EarlybirdResponseCode initSearcher() throws IOException {
-    searcher = null;
-    if (searchAllSegments) {
-      return initMultiSegmentSearcher();
+  pr vate Earlyb rdResponseCode  n Searc r() throws  OExcept on {
+    searc r = null;
+     f (searchAllSeg nts) {
+      return  n Mult Seg ntSearc r();
     } else {
-      return initSingleSegmentSearcher();
+      return  n S ngleSeg ntSearc r();
     }
   }
 
-  private EarlybirdResponseCode initSingleSegmentSearcher() throws IOException {
-    if (segment == null) {
-      String message = "Segment not found for time slice: " + request.getSearchSegmentId();
-      LOG.warn(message);
-      appendMessage(message);
-      return EarlybirdResponseCode.PARTITION_NOT_FOUND;
+  pr vate Earlyb rdResponseCode  n S ngleSeg ntSearc r() throws  OExcept on {
+     f (seg nt == null) {
+      Str ng  ssage = "Seg nt not found for t   sl ce: " + request.getSearchSeg nt d();
+      LOG.warn( ssage);
+      append ssage( ssage);
+      return Earlyb rdResponseCode.PART T ON_NOT_FOUND;
     }
 
-    EarlybirdResponseCode code = this.segmentManager.checkSegment(segment);
-    if (code != EarlybirdResponseCode.SUCCESS) {
-      String message = "Segment " + segment + " either disabled or dropped";
-      LOG.warn(message);
-      appendMessage(message);
+    Earlyb rdResponseCode code = t .seg ntManager.c ckSeg nt(seg nt);
+     f (code != Earlyb rdResponseCode.SUCCESS) {
+      Str ng  ssage = "Seg nt " + seg nt + " e  r d sabled or dropped";
+      LOG.warn( ssage);
+      append ssage( ssage);
       return code;
     }
 
-    searcher = segmentManager.getSearcher(segment, schemaSnapshot);
-    if (searcher == null) {
-      String message = "Could not construct searcher for segment " + segment;
-      LOG.error(message);
-      appendMessage(message);
-      return EarlybirdResponseCode.PERSISTENT_ERROR;
+    searc r = seg ntManager.getSearc r(seg nt, sc maSnapshot);
+     f (searc r == null) {
+      Str ng  ssage = "Could not construct searc r for seg nt " + seg nt;
+      LOG.error( ssage);
+      append ssage( ssage);
+      return Earlyb rdResponseCode.PERS STENT_ERROR;
     } else {
-      appendMessage("Searching segment: " + segment);
-      return EarlybirdResponseCode.SUCCESS;
+      append ssage("Search ng seg nt: " + seg nt);
+      return Earlyb rdResponseCode.SUCCESS;
     }
   }
 
-  private EarlybirdResponseCode initMultiSegmentSearcher() throws IOException {
-    EarlybirdMultiSegmentSearcher multiSearcher =
-        segmentManager.getMultiSearcher(schemaSnapshot);
-    searcher = multiSearcher;
-    Preconditions.checkNotNull(searcher);
+  pr vate Earlyb rdResponseCode  n Mult Seg ntSearc r() throws  OExcept on {
+    Earlyb rdMult Seg ntSearc r mult Searc r =
+        seg ntManager.getMult Searc r(sc maSnapshot);
+    searc r = mult Searc r;
+    Precond  ons.c ckNotNull(searc r);
 
-    // Set a top level since id to skip entire segments when possible.
-    multiSearcher.setIdTimeRanges(idTimeRanges);
-    return EarlybirdResponseCode.SUCCESS;
+    // Set a top level s nce  d to sk p ent re seg nts w n poss ble.
+    mult Searc r.set dT  Ranges( dT  Ranges);
+    return Earlyb rdResponseCode.SUCCESS;
   }
 
-  private com.twitter.search.queryparser.query.Query
-  restrictQueryToFullyIndexedTweets(com.twitter.search.queryparser.query.Query query) {
-    long untilTimeSeconds =
-        RecentTweetRestriction.recentTweetsUntilTime(decider, (int) (clock.nowMillis() / 1000));
-    if (untilTimeSeconds == 0) {
+  pr vate com.tw ter.search.queryparser.query.Query
+  restr ctQueryToFully ndexedT ets(com.tw ter.search.queryparser.query.Query query) {
+    long unt lT  Seconds =
+        RecentT etRestr ct on.recentT etsUnt lT  (dec der, ( nt) (clock.nowM ll s() / 1000));
+     f (unt lT  Seconds == 0) {
       return query;
     }
 
-    SearchOperator timeLimit = new SearchOperator(UNTIL_TIME, untilTimeSeconds);
-    return new Conjunction(query, timeLimit);
+    SearchOperator t  L m  = new SearchOperator(UNT L_T ME, unt lT  Seconds);
+    return new Conjunct on(query, t  L m );
   }
 
-  private EarlybirdResponse newResponse(EarlybirdResponseCode code, boolean setDebugInfo) {
-    EarlybirdResponse response = new EarlybirdResponse();
+  pr vate Earlyb rdResponse newResponse(Earlyb rdResponseCode code, boolean setDebug nfo) {
+    Earlyb rdResponse response = new Earlyb rdResponse();
     response.setResponseCode(code);
-    if (setDebugInfo) {
-      response.setDebugInfo(debugInfo);
-      if (messageBuffer.length() > 0) {
-        response.setDebugString(DatabaseConfig.getLocalHostname()
-                                + ":\n" + messageBuffer.toString());
+     f (setDebug nfo) {
+      response.setDebug nfo(debug nfo);
+       f ( ssageBuffer.length() > 0) {
+        response.setDebugStr ng(DatabaseConf g.getLocalHostna ()
+                                + ":\n" +  ssageBuffer.toStr ng());
       }
     }
     return response;
   }
 
-  private EarlybirdResponse respondError(EarlybirdResponseCode code) {
-    appendMessage("Responding with error code " + code);
-    // Always respond with an error message, even when request.debug is false
+  pr vate Earlyb rdResponse respondError(Earlyb rdResponseCode code) {
+    append ssage("Respond ng w h error code " + code);
+    // Always respond w h an error  ssage, even w n request.debug  s false
     return newResponse(code, true);
   }
 
-  @VisibleForTesting
-  public TerminationTracker getTerminationTracker() {
-    return terminationTracker;
+  @V s bleForTest ng
+  publ c Term nat onTracker getTerm nat onTracker() {
+    return term nat onTracker;
   }
 
-  public void maybeSetCollectorDebugInfo(TwitterEarlyTerminationCollector collector) {
-    if (request.isSetDebugOptions() && request.getDebugOptions().isIncludeCollectorDebugInfo()) {
-      debugInfo.setCollectorDebugInfo(collector.getDebugInfo());
+  publ c vo d maybeSetCollectorDebug nfo(Tw terEarlyTerm nat onCollector collector) {
+     f (request. sSetDebugOpt ons() && request.getDebugOpt ons(). s ncludeCollectorDebug nfo()) {
+      debug nfo.setCollectorDebug nfo(collector.getDebug nfo());
     }
   }
 
-  public void setTermStatisticsDebugInfo(List<String> termStatisticsDebugInfo) {
-    debugInfo.setTermStatisticsDebugInfo(termStatisticsDebugInfo);
+  publ c vo d setTermStat st csDebug nfo(L st<Str ng> termStat st csDebug nfo) {
+    debug nfo.setTermStat st csDebug nfo(termStat st csDebug nfo);
   }
 
-  private EarlybirdResponse searchInternal() throws TransientException, ClientException {
-    searchResults = new ThriftSearchResults();
+  pr vate Earlyb rdResponse search nternal() throws Trans entExcept on, Cl entExcept on {
+    searchResults = new Thr ftSearchResults();
 
-    SearchResultsInfo searchResultsInfo;
+    SearchResults nfo searchResults nfo;
     try {
-      switch (queryMode) {
+      sw ch (queryMode) {
         case RECENCY:
-          searchResultsInfo = processRealtimeQuery();
+          searchResults nfo = processRealt  Query();
           break;
         case RELEVANCE:
-          // Relevance search and Model-based search differ only on the scoring function used.
-          SearchTimer timer = searcherStats.createTimer();
-          timer.start();
-          searchResultsInfo = processRelevanceQuery();
-          timer.stop();
-          searcherStats.recordRelevanceStats(timer, request);
+          // Relevance search and Model-based search d ffer only on t  scor ng funct on used.
+          SearchT  r t  r = searc rStats.createT  r();
+          t  r.start();
+          searchResults nfo = processRelevanceQuery();
+          t  r.stop();
+          searc rStats.recordRelevanceStats(t  r, request);
           break;
         case FACETS:
-          searchResultsInfo = processFacetsQuery();
+          searchResults nfo = processFacetsQuery();
           break;
         case TERM_STATS:
-          searchResultsInfo = processTermStatsQuery();
+          searchResults nfo = processTermStatsQuery();
           break;
         case TOP_TWEETS:
-          searchResultsInfo = processTopTweetsQuery();
+          searchResults nfo = processTopT etsQuery();
           break;
         default:
-          throw new TransientException("Unknown query mode " + queryMode);
+          throw new Trans entExcept on("Unknown query mode " + queryMode);
       }
 
-      return respondSuccess(searchResults, facetResults, termStatisticsResults,
-          earlyTerminationInfo, searchResultsInfo);
-    } catch (IOException e) {
-      throw new TransientException(e.getMessage(), e);
+      return respondSuccess(searchResults, facetResults, termStat st csResults,
+          earlyTerm nat on nfo, searchResults nfo);
+    } catch ( OExcept on e) {
+      throw new Trans entExcept on(e.get ssage(), e);
     }
   }
 
   /**
-   * Helper method to process facets query.
+   *  lper  thod to process facets query.
    */
-  private SearchResultsInfo processFacetsQuery() throws ClientException, IOException {
-    // figure out which fields we need to count
+  pr vate SearchResults nfo processFacetsQuery() throws Cl entExcept on,  OExcept on {
+    // f gure out wh ch f elds   need to count
     FacetCountState facetCountState = newFacetCountState();
 
-    // Additionally wrap our query into a skip list boolean query for faster counting.
-    if (!facetRequest.isUsingQueryCache()) {
-      // Only if all fields to be counted use skip lists, then we can add a required clause
-      // that filters out all results that do not contain those fields
-      boolean cannotAddRequiredClause = facetCountState.hasFieldToCountWithoutSkipList();
-      final Query facetSkipListFilter =
-          cannotAddRequiredClause ? null : FacetSkipList.getSkipListQuery(facetCountState);
-      final Query antisocialFilter = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(
-          segmentManager.getUserTable(), true, true, false);
-      luceneQuery = wrapFilters(luceneQuery,
-          facetSkipListFilter,
-          antisocialFilter);
+    // Add  onally wrap   query  nto a sk p l st boolean query for faster count ng.
+     f (!facetRequest. sUs ngQueryCac ()) {
+      // Only  f all f elds to be counted use sk p l sts, t n   can add a requ red clause
+      // that f lters out all results that do not conta n those f elds
+      boolean cannotAddRequ redClause = facetCountState.hasF eldToCountW houtSk pL st();
+      f nal Query facetSk pL stF lter =
+          cannotAddRequ redClause ? null : FacetSk pL st.getSk pL stQuery(facetCountState);
+      f nal Query ant soc alF lter = UserFlagsExcludeF lter.getUserFlagsExcludeF lter(
+          seg ntManager.getUserTable(), true, true, false);
+      luceneQuery = wrapF lters(luceneQuery,
+          facetSk pL stF lter,
+          ant soc alF lter);
     }
 
-    facetResults = new ThriftFacetResults(new HashMap<>());
+    facetResults = new Thr ftFacetResults(new HashMap<>());
 
-    FacetSearchRequestInfo searchRequestInfo =
-        new FacetSearchRequestInfo(searchQuery, facetRequest.getFacetRankingOptions(),
-            luceneQuery, facetCountState, terminationTracker);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    if (searchQuery.getMaxHitsPerUser() > 0) {
-      antiGamingFilter = new AntiGamingFilter(
-          searchQuery.getMaxHitsPerUser(),
-          searchQuery.getMaxTweepcredForAntiGaming(),
+    FacetSearchRequest nfo searchRequest nfo =
+        new FacetSearchRequest nfo(searchQuery, facetRequest.getFacetRank ngOpt ons(),
+            luceneQuery, facetCountState, term nat onTracker);
+    searchRequest nfo.set dT  Ranges( dT  Ranges);
+     f (searchQuery.getMaxH sPerUser() > 0) {
+      ant Gam ngF lter = new Ant Gam ngF lter(
+          searchQuery.getMaxH sPerUser(),
+          searchQuery.getMaxT epcredForAnt Gam ng(),
           luceneQuery);
     }
 
     AbstractResultsCollector<
-        FacetSearchRequestInfo, EarlybirdLuceneSearcher.FacetSearchResults> collector;
-    if (request.getDebugMode() > 2) {
-      collector = new ExplainFacetResultsCollector(schemaSnapshot,
-          searchRequestInfo, antiGamingFilter, searcherStats, clock, request.debugMode);
+        FacetSearchRequest nfo, Earlyb rdLuceneSearc r.FacetSearchResults> collector;
+     f (request.getDebugMode() > 2) {
+      collector = new Expla nFacetResultsCollector(sc maSnapshot,
+          searchRequest nfo, ant Gam ngF lter, searc rStats, clock, request.debugMode);
     } else {
-      collector = new FacetResultsCollector(schemaSnapshot,
-          searchRequestInfo, antiGamingFilter, searcherStats, clock, request.debugMode);
+      collector = new FacetResultsCollector(sc maSnapshot,
+          searchRequest nfo, ant Gam ngF lter, searc rStats, clock, request.debugMode);
     }
 
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    searcher.search(searchRequestInfo.getLuceneQuery(), collector);
-    EarlybirdLuceneSearcher.FacetSearchResults hits = collector.getResults();
+    setQuer es nDebug nfo(parsedQuery, searchRequest nfo.getLuceneQuery());
+    searc r.search(searchRequest nfo.getLuceneQuery(), collector);
+    Earlyb rdLuceneSearc r.FacetSearchResults h s = collector.getResults();
 
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    Set<Long> userIDWhitelist =
-        antiGamingFilter != null ? antiGamingFilter.getUserIDWhitelist() : null;
-    prepareFacetResults(facetResults, hits, facetCountState, userIDWhitelist,
+    Earlyb rdSearchResultUt l.setResultStat st cs(searchResults, h s);
+    earlyTerm nat on nfo = Earlyb rdSearchResultUt l.prepareEarlyTerm nat on nfo(h s);
+    Set<Long> user DWh el st =
+        ant Gam ngF lter != null ? ant Gam ngF lter.getUser DWh el st() : null;
+    prepareFacetResults(facetResults, h s, facetCountState, user DWh el st,
         request.getDebugMode());
-    facetResults.setUserIDWhitelist(userIDWhitelist);
+    facetResults.setUser DWh el st(user DWh el st);
 
-    maybeSetCollectorDebugInfo(collector);
+    maybeSetCollectorDebug nfo(collector);
 
-    if (collector instanceof ExplainFacetResultsCollector) {
-      ((ExplainFacetResultsCollector) collector).setExplanations(facetResults);
+     f (collector  nstanceof Expla nFacetResultsCollector) {
+      ((Expla nFacetResultsCollector) collector).setExplanat ons(facetResults);
     }
 
-    return hits;
+    return h s;
   }
 
   /**
-   * Helper method to process term-stats query.
+   *  lper  thod to process term-stats query.
    */
-  private SearchResultsInfo processTermStatsQuery() throws IOException {
-    // first extract the terms that we need to count
-    TermStatisticsRequestInfo searchRequestInfo =
-        new TermStatisticsRequestInfo(searchQuery, luceneQuery, termStatisticsRequest,
-            terminationTracker);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    TermStatisticsCollector.TermStatisticsSearchResults hits =
-        searcher.collectTermStatistics(searchRequestInfo, this, request.getDebugMode());
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    if (hits.results != null) {
-      termStatisticsResults = new ThriftTermStatisticsResults();
-      prepareTermStatisticsResults(termStatisticsResults, hits, request.getDebugMode());
+  pr vate SearchResults nfo processTermStatsQuery() throws  OExcept on {
+    // f rst extract t  terms that   need to count
+    TermStat st csRequest nfo searchRequest nfo =
+        new TermStat st csRequest nfo(searchQuery, luceneQuery, termStat st csRequest,
+            term nat onTracker);
+    searchRequest nfo.set dT  Ranges( dT  Ranges);
+    setQuer es nDebug nfo(parsedQuery, searchRequest nfo.getLuceneQuery());
+    TermStat st csCollector.TermStat st csSearchResults h s =
+        searc r.collectTermStat st cs(searchRequest nfo, t , request.getDebugMode());
+    Earlyb rdSearchResultUt l.setResultStat st cs(searchResults, h s);
+    earlyTerm nat on nfo = Earlyb rdSearchResultUt l.prepareEarlyTerm nat on nfo(h s);
+     f (h s.results != null) {
+      termStat st csResults = new Thr ftTermStat st csResults();
+      prepareTermStat st csResults(termStat st csResults, h s, request.getDebugMode());
     }
 
-    return hits;
+    return h s;
   }
 
   /**
-   * Helper method to process realtime query.
+   *  lper  thod to process realt   query.
    */
-  private SearchResultsInfo processRealtimeQuery() throws IOException, ClientException {
-    // Disable maxHitsToProcess.
-    if (!collectorParams.isSetTerminationParams()) {
-      collectorParams.setTerminationParams(new CollectorTerminationParams());
-      collectorParams.getTerminationParams().setMaxHitsToProcess(-1);
-      COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER.increment();
+  pr vate SearchResults nfo processRealt  Query() throws  OExcept on, Cl entExcept on {
+    // D sable maxH sToProcess.
+     f (!collectorParams. sSetTerm nat onParams()) {
+      collectorParams.setTerm nat onParams(new CollectorTerm nat onParams());
+      collectorParams.getTerm nat onParams().setMaxH sToProcess(-1);
+      COLLECTOR_PARAMS_MAX_H TS_TO_PROCESS_NOT_SET_COUNTER. ncre nt();
     }
 
-    SearchRequestInfo searchRequestInfo = new SearchRequestInfo(
-      searchQuery, luceneQuery, terminationTracker);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    searchRequestInfo.setHitAttributeHelper(hitAttributeHelper);
-    searchRequestInfo.setTimestamp(getQueryTimestamp(searchQuery));
+    SearchRequest nfo searchRequest nfo = new SearchRequest nfo(
+      searchQuery, luceneQuery, term nat onTracker);
+    searchRequest nfo.set dT  Ranges( dT  Ranges);
+    searchRequest nfo.setH Attr bute lper(h Attr bute lper);
+    searchRequest nfo.setT  stamp(getQueryT  stamp(searchQuery));
 
-    AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> collector;
-    if (searchQuery.isSetSocialFilterType()) {
-      if (!searchRequestInfo.getSearchQuery().isSetDirectFollowFilter()
-          || !searchRequestInfo.getSearchQuery().isSetTrustedFilter()) {
-        searcherStats.unsetFiltersForSocialFilterTypeQuery.increment();
-        throw new ClientException(
-            "SocialFilterType specified without a TrustedFilter or DirectFollowFilter");
+    AbstractResultsCollector<SearchRequest nfo, S mpleSearchResults> collector;
+     f (searchQuery. sSetSoc alF lterType()) {
+       f (!searchRequest nfo.getSearchQuery(). sSetD rectFollowF lter()
+          || !searchRequest nfo.getSearchQuery(). sSetTrustedF lter()) {
+        searc rStats.unsetF ltersForSoc alF lterTypeQuery. ncre nt();
+        throw new Cl entExcept on(
+            "Soc alF lterType spec f ed w hout a TrustedF lter or D rectFollowF lter");
       }
-      SocialFilter socialFilter = new SocialFilter(
-          searchQuery.getSocialFilterType(),
-          searchRequestInfo.getSearchQuery().getSearcherId(),
-          searchRequestInfo.getSearchQuery().getTrustedFilter(),
-          searchRequestInfo.getSearchQuery().getDirectFollowFilter());
-      collector = new SocialSearchResultsCollector(
-          schemaSnapshot,
-          searchRequestInfo,
-          socialFilter,
-          searcherStats,
+      Soc alF lter soc alF lter = new Soc alF lter(
+          searchQuery.getSoc alF lterType(),
+          searchRequest nfo.getSearchQuery().getSearc r d(),
+          searchRequest nfo.getSearchQuery().getTrustedF lter(),
+          searchRequest nfo.getSearchQuery().getD rectFollowF lter());
+      collector = new Soc alSearchResultsCollector(
+          sc maSnapshot,
+          searchRequest nfo,
+          soc alF lter,
+          searc rStats,
           cluster,
-          segmentManager.getUserTable(),
+          seg ntManager.getUserTable(),
           request.getDebugMode());
     } else {
       collector = new SearchResultsCollector(
-          schemaSnapshot,
-          searchRequestInfo,
+          sc maSnapshot,
+          searchRequest nfo,
           clock,
-          searcherStats,
+          searc rStats,
           cluster,
-          segmentManager.getUserTable(),
+          seg ntManager.getUserTable(),
           request.getDebugMode());
     }
 
-    setQueriesInDebugInfo(parsedQuery, luceneQuery);
-    searcher.search(luceneQuery, collector);
+    setQuer es nDebug nfo(parsedQuery, luceneQuery);
+    searc r.search(luceneQuery, collector);
 
-    SimpleSearchResults hits = collector.getResults();
+    S mpleSearchResults h s = collector.getResults();
 
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    EarlybirdSearchResultUtil.prepareResultsArray(
-        searchResults.getResults(), hits, request.debugMode > 0 ? partitionConfig : null);
-    searchResults.setHitCounts(collector.getHitCountMap());
+    Earlyb rdSearchResultUt l.setResultStat st cs(searchResults, h s);
+    earlyTerm nat on nfo = Earlyb rdSearchResultUt l.prepareEarlyTerm nat on nfo(h s);
+    Earlyb rdSearchResultUt l.prepareResultsArray(
+        searchResults.getResults(), h s, request.debugMode > 0 ? part  onConf g : null);
+    searchResults.setH Counts(collector.getH CountMap());
 
-    maybeSetCollectorDebugInfo(collector);
+    maybeSetCollectorDebug nfo(collector);
 
     addResultPayloads();
 
-    return hits;
+    return h s;
   }
 
   /**
-   * Helper method to process relevance query.
+   *  lper  thod to process relevance query.
    */
-  private SearchResultsInfo processRelevanceQuery() throws IOException, ClientException {
-    if (!searchQuery.isSetRelevanceOptions()) {
-      LOG.warn("Relevance query with no relevance options!");
-      searchQuery.setRelevanceOptions(new ThriftSearchRelevanceOptions());
+  pr vate SearchResults nfo processRelevanceQuery() throws  OExcept on, Cl entExcept on {
+     f (!searchQuery. sSetRelevanceOpt ons()) {
+      LOG.warn("Relevance query w h no relevance opt ons!");
+      searchQuery.setRelevanceOpt ons(new Thr ftSearchRelevanceOpt ons());
     }
 
-    // Note: today the assumption is that if you specify hasSpecifiedTweets,
-    // you really do want all tweets scored and returned.
-    final boolean hasSpecifiedTweets = searchQuery.getSearchStatusIdsSize() > 0;
-    if (hasSpecifiedTweets) {
-      collectorParams.setNumResultsToReturn(searchQuery.getSearchStatusIdsSize());
+    // Note: today t  assumpt on  s that  f   spec fy hasSpec f edT ets,
+    //   really do want all t ets scored and returned.
+    f nal boolean hasSpec f edT ets = searchQuery.getSearchStatus dsS ze() > 0;
+     f (hasSpec f edT ets) {
+      collectorParams.setNumResultsToReturn(searchQuery.getSearchStatus dsS ze());
     }
-    // If we have explicit user ids, we will want to look at all results from those users, and will
-    // not need to use the AntiGamingFilter.
-    final boolean hasSpecifiedFromUserIds = searchQuery.getFromUserIDFilter64Size() > 0;
+    //  f   have expl c  user  ds,   w ll want to look at all results from those users, and w ll
+    // not need to use t  Ant Gam ngF lter.
+    f nal boolean hasSpec f edFromUser ds = searchQuery.getFromUser DF lter64S ze() > 0;
 
-    createRelevanceAntiGamingFilter(hasSpecifiedTweets, hasSpecifiedFromUserIds);
+    createRelevanceAnt Gam ngF lter(hasSpec f edT ets, hasSpec f edFromUser ds);
 
-    if (searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
+     f (searchQuery.getRelevanceOpt ons(). sSetRank ngParams()) {
+      Thr ftRank ngParams rank ngParams = searchQuery.getRelevanceOpt ons().getRank ngParams();
 
-      // The score adjustment signals that are passed in the request are disabled for the archive
-      // cluster or when the features are decidered off. If the request provides those fields,
-      // we unset them since checking the hashmap when scoring can cause a slight bump in
+      // T  score adjust nt s gnals that are passed  n t  request are d sabled for t  arch ve
+      // cluster or w n t  features are dec dered off.  f t  request prov des those f elds,
+      //   unset t m s nce c ck ng t  hashmap w n scor ng can cause a sl ght bump  n
       // latency.
       //
-      // Verify that the signal query specific scores for tweets signal is enabled
-      if (rankingParams.isSetQuerySpecificScoreAdjustments()) {
-        if (ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
-            && DeciderUtil.isAvailableForRandomRecipient(
-            decider, ALLOW_QUERY_SPECIFIC_SIGNAL_DECIDER_KEY)) {
-          searcherStats.querySpecificSignalQueriesUsed.increment();
-          searcherStats.querySpecificSignalMapTotalSize.add(
-              rankingParams.getQuerySpecificScoreAdjustmentsSize());
+      // Ver fy that t  s gnal query spec f c scores for t ets s gnal  s enabled
+       f (rank ngParams. sSetQuerySpec f cScoreAdjust nts()) {
+         f (ALLOW_QUERY_SPEC F C_S GNAL_CONF G
+            && Dec derUt l. sAva lableForRandomRec p ent(
+            dec der, ALLOW_QUERY_SPEC F C_S GNAL_DEC DER_KEY)) {
+          searc rStats.querySpec f cS gnalQuer esUsed. ncre nt();
+          searc rStats.querySpec f cS gnalMapTotalS ze.add(
+              rank ngParams.getQuerySpec f cScoreAdjust ntsS ze());
         } else {
-          searchQuery.getRelevanceOptions().getRankingParams().unsetQuerySpecificScoreAdjustments();
-          searcherStats.querySpecificSignalQueriesErased.increment();
+          searchQuery.getRelevanceOpt ons().getRank ngParams().unsetQuerySpec f cScoreAdjust nts();
+          searc rStats.querySpec f cS gnalQuer esErased. ncre nt();
         }
       }
 
-      // Verify that the signal author specific scores signal is enabled
-      if (rankingParams.isSetAuthorSpecificScoreAdjustments()) {
-        if (ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
-            && DeciderUtil.isAvailableForRandomRecipient(
-            decider, ALLOW_AUTHOR_SPECIFIC_SIGNAL_DECIDER_KEY)) {
-          searcherStats.authorSpecificSignalQueriesUsed.increment();
-          searcherStats.authorSpecificSignalMapTotalSize.add(
-              rankingParams.getAuthorSpecificScoreAdjustmentsSize());
+      // Ver fy that t  s gnal author spec f c scores s gnal  s enabled
+       f (rank ngParams. sSetAuthorSpec f cScoreAdjust nts()) {
+         f (ALLOW_AUTHOR_SPEC F C_S GNAL_CONF G
+            && Dec derUt l. sAva lableForRandomRec p ent(
+            dec der, ALLOW_AUTHOR_SPEC F C_S GNAL_DEC DER_KEY)) {
+          searc rStats.authorSpec f cS gnalQuer esUsed. ncre nt();
+          searc rStats.authorSpec f cS gnalMapTotalS ze.add(
+              rank ngParams.getAuthorSpec f cScoreAdjust ntsS ze());
         } else {
-          searchQuery.getRelevanceOptions().getRankingParams()
-              .unsetAuthorSpecificScoreAdjustments();
-          searcherStats.authorSpecificSignalQueriesErased.increment();
+          searchQuery.getRelevanceOpt ons().getRank ngParams()
+              .unsetAuthorSpec f cScoreAdjust nts();
+          searc rStats.authorSpec f cS gnalQuer esErased. ncre nt();
         }
       }
     }
 
-    ScoringFunction scoringFunction =
-        new ScoringFunctionProvider.DefaultScoringFunctionProvider(
-            request, schemaSnapshot, searchQuery, antiGamingFilter,
-            segmentManager.getUserTable(), hitAttributeHelper,
-            parsedQuery, scoringModelsManager, tensorflowModelsManager)
-            .getScoringFunction();
-    scoringFunction.setDebugMode(request.getDebugMode());
+    Scor ngFunct on scor ngFunct on =
+        new Scor ngFunct onProv der.DefaultScor ngFunct onProv der(
+            request, sc maSnapshot, searchQuery, ant Gam ngF lter,
+            seg ntManager.getUserTable(), h Attr bute lper,
+            parsedQuery, scor ngModelsManager, tensorflowModelsManager)
+            .getScor ngFunct on();
+    scor ngFunct on.setDebugMode(request.getDebugMode());
 
-    RelevanceQuery relevanceQuery = new RelevanceQuery(luceneQuery, scoringFunction);
-    RelevanceSearchRequestInfo searchRequestInfo =
-        new RelevanceSearchRequestInfo(
-            searchQuery, relevanceQuery, terminationTracker, qualityFactor);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    searchRequestInfo.setHitAttributeHelper(hitAttributeHelper);
-    searchRequestInfo.setTimestamp(getQueryTimestamp(searchQuery));
+    RelevanceQuery relevanceQuery = new RelevanceQuery(luceneQuery, scor ngFunct on);
+    RelevanceSearchRequest nfo searchRequest nfo =
+        new RelevanceSearchRequest nfo(
+            searchQuery, relevanceQuery, term nat onTracker, qual yFactor);
+    searchRequest nfo.set dT  Ranges( dT  Ranges);
+    searchRequest nfo.setH Attr bute lper(h Attr bute lper);
+    searchRequest nfo.setT  stamp(getQueryT  stamp(searchQuery));
 
-    if (shouldUseTensorFlowCollector()
-        && searchQuery.getRelevanceOptions().isUseRelevanceAllCollector()) {
-      throw new ClientException("Tensorflow scoring does not work with the RelevanceAllCollector");
+     f (shouldUseTensorFlowCollector()
+        && searchQuery.getRelevanceOpt ons(). sUseRelevanceAllCollector()) {
+      throw new Cl entExcept on("Tensorflow scor ng does not work w h t  RelevanceAllCollector");
     }
 
-    final AbstractRelevanceCollector collector;
-    // First check if the Tensorflow results collector should be used, because the
-    // TensorflowBasedScoringFunction only works with the BatchRelevanceTopCollector
-    if (shouldUseTensorFlowCollector()) {
+    f nal AbstractRelevanceCollector collector;
+    // F rst c ck  f t  Tensorflow results collector should be used, because t 
+    // TensorflowBasedScor ngFunct on only works w h t  BatchRelevanceTopCollector
+     f (shouldUseTensorFlowCollector()) {
       // Collect top numResults.
       collector = new BatchRelevanceTopCollector(
-          schemaSnapshot,
-          searchRequestInfo,
-          scoringFunction,
-          searcherStats,
+          sc maSnapshot,
+          searchRequest nfo,
+          scor ngFunct on,
+          searc rStats,
           cluster,
-          segmentManager.getUserTable(),
+          seg ntManager.getUserTable(),
           clock,
           request.getDebugMode());
-    } else if (hasSpecifiedTweets
-        || searchQuery.getRelevanceOptions().isUseRelevanceAllCollector()) {
+    } else  f (hasSpec f edT ets
+        || searchQuery.getRelevanceOpt ons(). sUseRelevanceAllCollector()) {
       // Collect all.
       collector = new RelevanceAllCollector(
-          schemaSnapshot,
-          searchRequestInfo,
-          scoringFunction,
-          searcherStats,
+          sc maSnapshot,
+          searchRequest nfo,
+          scor ngFunct on,
+          searc rStats,
           cluster,
-          segmentManager.getUserTable(),
+          seg ntManager.getUserTable(),
           clock,
           request.getDebugMode());
     } else {
       // Collect top numResults.
       collector = new RelevanceTopCollector(
-          schemaSnapshot,
-          searchRequestInfo,
-          scoringFunction,
-          searcherStats,
+          sc maSnapshot,
+          searchRequest nfo,
+          scor ngFunct on,
+          searc rStats,
           cluster,
-          segmentManager.getUserTable(),
+          seg ntManager.getUserTable(),
           clock,
           request.getDebugMode());
     }
 
-    // Make sure that the Tensorflow scoring function and the Tensorflow results collector are
-    // always used together. If this fails it will result in a TRANSIENT_ERROR response.
-    Preconditions.checkState((collector instanceof BatchRelevanceTopCollector)
-        == (scoringFunction instanceof TensorflowBasedScoringFunction));
+    // Make sure that t  Tensorflow scor ng funct on and t  Tensorflow results collector are
+    // always used toget r.  f t  fa ls   w ll result  n a TRANS ENT_ERROR response.
+    Precond  ons.c ckState((collector  nstanceof BatchRelevanceTopCollector)
+        == (scor ngFunct on  nstanceof TensorflowBasedScor ngFunct on));
 
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    searcher.search(searchRequestInfo.getLuceneQuery(), collector);
+    setQuer es nDebug nfo(parsedQuery, searchRequest nfo.getLuceneQuery());
+    searc r.search(searchRequest nfo.getLuceneQuery(), collector);
 
-    RelevanceSearchResults hits = collector.getResults();
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    searchResults.setScoringTimeNanos(hits.getScoringTimeNanos());
+    RelevanceSearchResults h s = collector.getResults();
+    Earlyb rdSearchResultUt l.setResultStat st cs(searchResults, h s);
+    searchResults.setScor ngT  Nanos(h s.getScor ngT  Nanos());
 
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    EarlybirdSearchResultUtil.setLanguageHistogram(searchResults, collector.getLanguageHistogram());
-    EarlybirdSearchResultUtil.prepareRelevanceResultsArray(
+    earlyTerm nat on nfo = Earlyb rdSearchResultUt l.prepareEarlyTerm nat on nfo(h s);
+    Earlyb rdSearchResultUt l.setLanguage togram(searchResults, collector.getLanguage togram());
+    Earlyb rdSearchResultUt l.prepareRelevanceResultsArray(
         searchResults.getResults(),
-        hits,
-        antiGamingFilter != null ? antiGamingFilter.getUserIDWhitelist() : null,
-        request.getDebugMode() > 0 ? partitionConfig : null);
+        h s,
+        ant Gam ngF lter != null ? ant Gam ngF lter.getUser DWh el st() : null,
+        request.getDebugMode() > 0 ? part  onConf g : null);
 
-    searchResults.setHitCounts(collector.getHitCountMap());
-    searchResults.setRelevanceStats(hits.getRelevanceStats());
+    searchResults.setH Counts(collector.getH CountMap());
+    searchResults.setRelevanceStats(h s.getRelevanceStats());
 
-    maybeSetCollectorDebugInfo(collector);
+    maybeSetCollectorDebug nfo(collector);
 
-    if (explanationsEnabled(request.getDebugMode())) {
-      searcher.explainSearchResults(searchRequestInfo, hits, searchResults);
+     f (explanat onsEnabled(request.getDebugMode())) {
+      searc r.expla nSearchResults(searchRequest nfo, h s, searchResults);
     }
 
     addResultPayloads();
 
-    return hits;
+    return h s;
   }
 
-  public static boolean explanationsEnabled(int debugLevel) {
+  publ c stat c boolean explanat onsEnabled( nt debugLevel) {
     return debugLevel > 1;
   }
 
-  private boolean shouldUseTensorFlowCollector() {
-    return tensorflowModelsManager.isEnabled()
-        && searchQuery.getRelevanceOptions().isSetRankingParams()
-        && searchQuery.getRelevanceOptions().getRankingParams().isSetType()
-        && searchQuery.getRelevanceOptions().getRankingParams().getType()
-        == ThriftScoringFunctionType.TENSORFLOW_BASED;
+  pr vate boolean shouldUseTensorFlowCollector() {
+    return tensorflowModelsManager. sEnabled()
+        && searchQuery.getRelevanceOpt ons(). sSetRank ngParams()
+        && searchQuery.getRelevanceOpt ons().getRank ngParams(). sSetType()
+        && searchQuery.getRelevanceOpt ons().getRank ngParams().getType()
+        == Thr ftScor ngFunct onType.TENSORFLOW_BASED;
   }
   /**
-   * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwize, no
-   * AntiGamingFilter will be used for this query.
-   * @param hasSpecifiedTweets whether the request has searchStatusIds specified.
-   * @param hasSpecifiedFromUserIds whether the request has fromUserIDFilter64 specified.
+   * Opt onally,  f requested and needed, w ll create a new Ant Gam ngF lter. Ot rw ze, no
+   * Ant Gam ngF lter w ll be used for t  query.
+   * @param hasSpec f edT ets w t r t  request has searchStatus ds spec f ed.
+   * @param hasSpec f edFromUser ds w t r t  request has fromUser DF lter64 spec f ed.
    */
-  private void createRelevanceAntiGamingFilter(
-      boolean hasSpecifiedTweets, boolean hasSpecifiedFromUserIds) {
+  pr vate vo d createRelevanceAnt Gam ngF lter(
+      boolean hasSpec f edT ets, boolean hasSpec f edFromUser ds) {
 
-    // Anti-gaming filter (turned off for specified tweets mode, or when you're explicitly asking
-    // for specific users' tweets).
-    if (searchQuery.getMaxHitsPerUser() > 0 && !hasSpecifiedTweets && !hasSpecifiedFromUserIds) {
-      searcherStats.relevanceAntiGamingFilterUsed.increment();
-      antiGamingFilter = new AntiGamingFilter(
-          searchQuery.getMaxHitsPerUser(),
-          searchQuery.getMaxTweepcredForAntiGaming(),
+    // Ant -gam ng f lter (turned off for spec f ed t ets mode, or w n   expl c ly ask ng
+    // for spec f c users' t ets).
+     f (searchQuery.getMaxH sPerUser() > 0 && !hasSpec f edT ets && !hasSpec f edFromUser ds) {
+      searc rStats.relevanceAnt Gam ngF lterUsed. ncre nt();
+      ant Gam ngF lter = new Ant Gam ngF lter(
+          searchQuery.getMaxH sPerUser(),
+          searchQuery.getMaxT epcredForAnt Gam ng(),
           luceneQuery);
-    } else if (searchQuery.getMaxHitsPerUser() <= 0) {
-      searcherStats.relevanceAntiGamingFilterNotRequested.increment();
-    } else if (hasSpecifiedTweets && hasSpecifiedFromUserIds) {
-      searcherStats.relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds.increment();
-    } else if (hasSpecifiedTweets) {
-      searcherStats.relevanceAntiGamingFilterSpecifiedTweets.increment();
-    } else if (hasSpecifiedFromUserIds) {
-      searcherStats.relevanceAntiGamingFilterSpecifiedFromUserIds.increment();
+    } else  f (searchQuery.getMaxH sPerUser() <= 0) {
+      searc rStats.relevanceAnt Gam ngF lterNotRequested. ncre nt();
+    } else  f (hasSpec f edT ets && hasSpec f edFromUser ds) {
+      searc rStats.relevanceAnt Gam ngF lterSpec f edT etsAndFromUser ds. ncre nt();
+    } else  f (hasSpec f edT ets) {
+      searc rStats.relevanceAnt Gam ngF lterSpec f edT ets. ncre nt();
+    } else  f (hasSpec f edFromUser ds) {
+      searc rStats.relevanceAnt Gam ngF lterSpec f edFromUser ds. ncre nt();
     }
   }
 
   /**
-   * Check to make sure that there are no nullcast documents in results.  If there exists nullcasts
-   * in results, we should log error and increment counters correspondingly.
+   * C ck to make sure that t re are no nullcast docu nts  n results.   f t re ex sts nullcasts
+   *  n results,   should log error and  ncre nt counters correspond ngly.
    */
-  @VisibleForTesting
-  public void logAndIncrementStatsIfNullcastInResults(ThriftSearchResults thriftSearchResults) {
-    if (!thriftSearchResults.isSetResults()) {
+  @V s bleForTest ng
+  publ c vo d logAnd ncre ntStats fNullcast nResults(Thr ftSearchResults thr ftSearchResults) {
+     f (!thr ftSearchResults. sSetResults()) {
       return;
     }
 
-    Set<Long> unexpectedNullcastStatusIds =
-        EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(thriftSearchResults, request);
+    Set<Long> unexpectedNullcastStatus ds =
+        Earlyb rdResponseUt l.f ndUnexpectedNullcastStatus ds(thr ftSearchResults, request);
 
-    if (!unexpectedNullcastStatusIds.isEmpty()) {
-      searcherStats.nullcastUnexpectedQueries.increment();
-      searcherStats.nullcastUnexpectedResults.add(unexpectedNullcastStatusIds.size());
+     f (!unexpectedNullcastStatus ds. sEmpty()) {
+      searc rStats.nullcastUnexpectedQuer es. ncre nt();
+      searc rStats.nullcastUnexpectedResults.add(unexpectedNullcastStatus ds.s ze());
 
-      String base64Request;
+      Str ng base64Request;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(request);
-      } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+        base64Request = Thr ftUt ls.toBase64EncodedStr ng(request);
+      } catch (TExcept on e) {
+        base64Request = "Fa led to parse base 64 request";
       }
       LOG.error(
-          "Found unexpected nullcast tweets: {} | parsedQuery: {} | request: {} | response: {} | "
+          "Found unexpected nullcast t ets: {} | parsedQuery: {} | request: {} | response: {} | "
               + "request base 64: {}",
-          Joiner.on(",").join(unexpectedNullcastStatusIds),
-          parsedQuery.serialize(),
+          Jo ner.on(",").jo n(unexpectedNullcastStatus ds),
+          parsedQuery.ser al ze(),
           request,
-          thriftSearchResults,
+          thr ftSearchResults,
           base64Request);
     }
   }
 
-  private void addResultPayloads() throws IOException {
-    if (searchQuery.getResultMetadataOptions() != null) {
-      if (searchQuery.getResultMetadataOptions().isGetTweetUrls()) {
-        searcher.fillFacetResults(new ExpandedUrlCollector(), searchResults);
+  pr vate vo d addResultPayloads() throws  OExcept on {
+     f (searchQuery.getResult tadataOpt ons() != null) {
+       f (searchQuery.getResult tadataOpt ons(). sGetT etUrls()) {
+        searc r.f llFacetResults(new ExpandedUrlCollector(), searchResults);
       }
 
-      if (searchQuery.getResultMetadataOptions().isGetNamedEntities()) {
-        searcher.fillFacetResults(new NamedEntityCollector(), searchResults);
+       f (searchQuery.getResult tadataOpt ons(). sGetNa dEnt  es()) {
+        searc r.f llFacetResults(new Na dEnt yCollector(), searchResults);
       }
 
-      if (searchQuery.getResultMetadataOptions().isGetEntityAnnotations()) {
-        searcher.fillFacetResults(new EntityAnnotationCollector(), searchResults);
+       f (searchQuery.getResult tadataOpt ons(). sGetEnt yAnnotat ons()) {
+        searc r.f llFacetResults(new Ent yAnnotat onCollector(), searchResults);
       }
 
-      if (searchQuery.getResultMetadataOptions().isGetSpaces()) {
-        searcher.fillFacetResults(new SpaceFacetCollector(audioSpaceTable), searchResults);
+       f (searchQuery.getResult tadataOpt ons(). sGetSpaces()) {
+        searc r.f llFacetResults(new SpaceFacetCollector(aud oSpaceTable), searchResults);
       }
     }
   }
 
   /**
-   * Helper method to process top tweets query.
+   *  lper  thod to process top t ets query.
    */
-  private SearchResultsInfo processTopTweetsQuery() throws IOException, ClientException {
-    // set dummy relevance options if it's not available, but this shouldn't happen in prod
-    if (!searchQuery.isSetRelevanceOptions()) {
-      searchQuery.setRelevanceOptions(new ThriftSearchRelevanceOptions());
+  pr vate SearchResults nfo processTopT etsQuery() throws  OExcept on, Cl entExcept on {
+    // set dum  relevance opt ons  f  's not ava lable, but t  shouldn't happen  n prod
+     f (!searchQuery. sSetRelevanceOpt ons()) {
+      searchQuery.setRelevanceOpt ons(new Thr ftSearchRelevanceOpt ons());
     }
-    if (!searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      searchQuery.getRelevanceOptions().setRankingParams(
-          // this is important, or it's gonna pick DefaultScoringFunction which pretty much
-          // does nothing.
-          new ThriftRankingParams().setType(ThriftScoringFunctionType.TOPTWEETS));
+     f (!searchQuery.getRelevanceOpt ons(). sSetRank ngParams()) {
+      searchQuery.getRelevanceOpt ons().setRank ngParams(
+          // t   s  mportant, or  's gonna p ck DefaultScor ngFunct on wh ch pretty much
+          // does noth ng.
+          new Thr ftRank ngParams().setType(Thr ftScor ngFunct onType.TOPTWEETS));
     }
-    ScoringFunction scoringFunction = new ScoringFunctionProvider.DefaultScoringFunctionProvider(
-        request, schemaSnapshot, searchQuery, null,
-        segmentManager.getUserTable(), hitAttributeHelper, parsedQuery,
-        scoringModelsManager, tensorflowModelsManager)
-        .getScoringFunction();
-    scoringFunction.setDebugMode(request.getDebugMode());
+    Scor ngFunct on scor ngFunct on = new Scor ngFunct onProv der.DefaultScor ngFunct onProv der(
+        request, sc maSnapshot, searchQuery, null,
+        seg ntManager.getUserTable(), h Attr bute lper, parsedQuery,
+        scor ngModelsManager, tensorflowModelsManager)
+        .getScor ngFunct on();
+    scor ngFunct on.setDebugMode(request.getDebugMode());
 
-    RelevanceQuery relevanceQuery = new RelevanceQuery(luceneQuery, scoringFunction);
-    RelevanceSearchRequestInfo searchRequestInfo =
-        new RelevanceSearchRequestInfo(
-            searchQuery, relevanceQuery, terminationTracker, qualityFactor);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    searchRequestInfo.setTimestamp(getQueryTimestamp(searchQuery));
+    RelevanceQuery relevanceQuery = new RelevanceQuery(luceneQuery, scor ngFunct on);
+    RelevanceSearchRequest nfo searchRequest nfo =
+        new RelevanceSearchRequest nfo(
+            searchQuery, relevanceQuery, term nat onTracker, qual yFactor);
+    searchRequest nfo.set dT  Ranges( dT  Ranges);
+    searchRequest nfo.setT  stamp(getQueryT  stamp(searchQuery));
 
-    final AbstractRelevanceCollector collector =
+    f nal AbstractRelevanceCollector collector =
         new RelevanceTopCollector(
-            schemaSnapshot,
-            searchRequestInfo,
-            scoringFunction,
-            searcherStats,
+            sc maSnapshot,
+            searchRequest nfo,
+            scor ngFunct on,
+            searc rStats,
             cluster,
-            segmentManager.getUserTable(),
+            seg ntManager.getUserTable(),
             clock,
             request.getDebugMode());
 
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    searcher.search(searchRequestInfo.getLuceneQuery(), collector);
+    setQuer es nDebug nfo(parsedQuery, searchRequest nfo.getLuceneQuery());
+    searc r.search(searchRequest nfo.getLuceneQuery(), collector);
 
-    RelevanceSearchResults hits = collector.getResults();
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    searchResults.setScoringTimeNanos(hits.getScoringTimeNanos());
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    EarlybirdSearchResultUtil.setLanguageHistogram(
+    RelevanceSearchResults h s = collector.getResults();
+    Earlyb rdSearchResultUt l.setResultStat st cs(searchResults, h s);
+    searchResults.setScor ngT  Nanos(h s.getScor ngT  Nanos());
+    earlyTerm nat on nfo = Earlyb rdSearchResultUt l.prepareEarlyTerm nat on nfo(h s);
+    Earlyb rdSearchResultUt l.setLanguage togram(
         searchResults,
-        collector.getLanguageHistogram());
-    EarlybirdSearchResultUtil.prepareRelevanceResultsArray(
+        collector.getLanguage togram());
+    Earlyb rdSearchResultUt l.prepareRelevanceResultsArray(
         searchResults.getResults(),
-        hits,
+        h s,
         null,
-        request.getDebugMode() > 0 ? partitionConfig : null);
+        request.getDebugMode() > 0 ? part  onConf g : null);
 
-    searchResults.setHitCounts(collector.getHitCountMap());
-    searchResults.setRelevanceStats(hits.getRelevanceStats());
+    searchResults.setH Counts(collector.getH CountMap());
+    searchResults.setRelevanceStats(h s.getRelevanceStats());
 
-    maybeSetCollectorDebugInfo(collector);
+    maybeSetCollectorDebug nfo(collector);
 
-    if (explanationsEnabled(request.getDebugMode())
-        && searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      searcher.explainSearchResults(searchRequestInfo, hits, searchResults);
+     f (explanat onsEnabled(request.getDebugMode())
+        && searchQuery. sSetRelevanceOpt ons()
+        && searchQuery.getRelevanceOpt ons(). sSetRank ngParams()) {
+      searc r.expla nSearchResults(searchRequest nfo, h s, searchResults);
     }
 
     addResultPayloads();
 
-    return hits;
+    return h s;
   }
 
-  private FacetCountState newFacetCountState() throws ClientException {
-    int minNumFacetResults = DEFAULT_NUM_FACET_RESULTS;
-    if (facetRequest.isSetFacetRankingOptions()
-        && facetRequest.getFacetRankingOptions().isSetNumCandidatesFromEarlybird()) {
-      minNumFacetResults = facetRequest.getFacetRankingOptions().getNumCandidatesFromEarlybird();
+  pr vate FacetCountState newFacetCountState() throws Cl entExcept on {
+     nt m nNumFacetResults = DEFAULT_NUM_FACET_RESULTS;
+     f (facetRequest. sSetFacetRank ngOpt ons()
+        && facetRequest.getFacetRank ngOpt ons(). sSetNumCand datesFromEarlyb rd()) {
+      m nNumFacetResults = facetRequest.getFacetRank ngOpt ons().getNumCand datesFromEarlyb rd();
     }
 
-    // figure out which fields we need to count
-    FacetCountState facetCountState = new FacetCountState(schemaSnapshot, minNumFacetResults);
+    // f gure out wh ch f elds   need to count
+    FacetCountState facetCountState = new FacetCountState(sc maSnapshot, m nNumFacetResults);
 
-    // all categories if none!
-    if (facetRequest.getFacetFields() == null || facetRequest.getFacetFields().isEmpty()) {
-      for (Schema.FieldInfo facetField : schemaSnapshot.getFacetFields()) {
+    // all categor es  f none!
+     f (facetRequest.getFacetF elds() == null || facetRequest.getFacetF elds(). sEmpty()) {
+      for (Sc ma.F eld nfo facetF eld : sc maSnapshot.getFacetF elds()) {
         facetCountState.addFacet(
-            facetField.getFieldType().getFacetName(), DEFAULT_NUM_FACET_RESULTS);
+            facetF eld.getF eldType().getFacetNa (), DEFAULT_NUM_FACET_RESULTS);
       }
     } else {
-      Iterator<ThriftFacetFieldRequest> it = facetRequest.getFacetFieldsIterator();
-      while (it.hasNext()) {
-        ThriftFacetFieldRequest facetFieldRequest = it.next();
-        Schema.FieldInfo facet = schemaSnapshot.getFacetFieldByFacetName(
-            facetFieldRequest.getFieldName());
-        if (facet != null) {
+       erator<Thr ftFacetF eldRequest>   = facetRequest.getFacetF elds erator();
+      wh le ( .hasNext()) {
+        Thr ftFacetF eldRequest facetF eldRequest =  .next();
+        Sc ma.F eld nfo facet = sc maSnapshot.getFacetF eldByFacetNa (
+            facetF eldRequest.getF eldNa ());
+         f (facet != null) {
           facetCountState.addFacet(
-              facet.getFieldType().getFacetName(), facetFieldRequest.getNumResults());
+              facet.getF eldType().getFacetNa (), facetF eldRequest.getNumResults());
         } else {
-          throw new ClientException("Unknown facet field: " + facetFieldRequest.getFieldName());
+          throw new Cl entExcept on("Unknown facet f eld: " + facetF eldRequest.getF eldNa ());
         }
       }
     }
     return facetCountState;
   }
 
-  private com.twitter.search.queryparser.query.Query preLuceneQueryProcess(
-      com.twitter.search.queryparser.query.Query twitterQuery) throws QueryParserException {
+  pr vate com.tw ter.search.queryparser.query.Query preLuceneQueryProcess(
+      com.tw ter.search.queryparser.query.Query tw terQuery) throws QueryParserExcept on {
 
-    com.twitter.search.queryparser.query.Query query = twitterQuery;
-    if (searchHighFrequencyTermPairs && !includesCardField(searchQuery, query)) {
-      // Process high frequency term pairs. Works best when query is as flat as possible.
-      query = HighFrequencyTermPairRewriteVisitor.safeRewrite(
+    com.tw ter.search.queryparser.query.Query query = tw terQuery;
+     f (searchH ghFrequencyTermPa rs && ! ncludesCardF eld(searchQuery, query)) {
+      // Process h gh frequency term pa rs. Works best w n query  s as flat as poss ble.
+      query = H ghFrequencyTermPa rRewr eV s or.safeRewr e(
           query,
-          DeciderUtil.isAvailableForRandomRecipient(
-              decider, "enable_hf_term_pair_negative_disjunction_rewrite"));
+          Dec derUt l. sAva lableForRandomRec p ent(
+              dec der, "enable_hf_term_pa r_negat ve_d sjunct on_rewr e"));
     }
-    return query.simplify();
+    return query.s mpl fy();
   }
 
-  private Query postLuceneQueryProcess(final Query query) throws ClientException {
-    if (StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())
-        && StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
-      searcherStats.numRequestsWithBlankQuery.get(queryMode).increment();
-      if (searchQuery.getSearchStatusIdsSize() == 0
-          && searchQuery.getFromUserIDFilter64Size() == 0
-          && searchQuery.getLikedByUserIDFilter64Size() == 0) {
-        // No query or ids to search.  This is only allowed in some modes.
-        if (queryMode == QueryMode.RECENCY
+  pr vate Query postLuceneQueryProcess(f nal Query query) throws Cl entExcept on {
+     f (Str ngUt ls. sBlank(request.getSearchQuery().getSer al zedQuery())
+        && Str ngUt ls. sBlank(request.getSearchQuery().getLuceneQuery())) {
+      searc rStats.numRequestsW hBlankQuery.get(queryMode). ncre nt();
+       f (searchQuery.getSearchStatus dsS ze() == 0
+          && searchQuery.getFromUser DF lter64S ze() == 0
+          && searchQuery.getL kedByUser DF lter64S ze() == 0) {
+        // No query or  ds to search.  T   s only allo d  n so  modes.
+         f (queryMode == QueryMode.RECENCY
             || queryMode == QueryMode.RELEVANCE
             || queryMode == QueryMode.TOP_TWEETS) {
-          throw new ClientException(
-              "No query or status ids for " + queryMode.toString().toLowerCase() + " query");
+          throw new Cl entExcept on(
+              "No query or status  ds for " + queryMode.toStr ng().toLo rCase() + " query");
         }
       }
     }
 
-    // Wrap the query as needed with additional query filters.
-    List<Query> filters = Lists.newArrayList();
+    // Wrap t  query as needed w h add  onal query f lters.
+    L st<Query> f lters = L sts.newArrayL st();
 
-    // Min tweep cred filter.
-    if (searchQuery.isSetMinTweepCredFilter()) {
-      searcherStats.addedFilterBadUserRep.increment();
-      filters.add(BadUserRepFilter.getBadUserRepFilter(searchQuery.getMinTweepCredFilter()));
+    // M n t ep cred f lter.
+     f (searchQuery. sSetM nT epCredF lter()) {
+      searc rStats.addedF lterBadUserRep. ncre nt();
+      f lters.add(BadUserRepF lter.getBadUserRepF lter(searchQuery.getM nT epCredF lter()));
     }
 
-    if (searchQuery.getFromUserIDFilter64Size() > 0) {
-      this.queriedFields.add(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
-      this.searcherStats.addedFilterFromUserIds.increment();
+     f (searchQuery.getFromUser DF lter64S ze() > 0) {
+      t .quer edF elds.add(Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa ());
+      t .searc rStats.addedF lterFromUser ds. ncre nt();
       try {
-        filters.add(UserIdMultiSegmentQuery.createIdDisjunctionQuery(
-            "from_user_id_filter",
-            searchQuery.getFromUserIDFilter64(),
-            EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-            schemaSnapshot,
-            multiSegmentTermDictionaryManager,
-            decider,
+        f lters.add(User dMult Seg ntQuery.create dD sjunct onQuery(
+            "from_user_ d_f lter",
+            searchQuery.getFromUser DF lter64(),
+            Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa (),
+            sc maSnapshot,
+            mult Seg ntTermD ct onaryManager,
+            dec der,
             cluster,
-            Lists.newArrayList(),
+            L sts.newArrayL st(),
             null,
-            queryTimeoutFactory.createQueryTimeout(request, terminationTracker, clock)));
-      } catch (QueryParserException e) {
-        throw new ClientException(e);
+            queryT  outFactory.createQueryT  out(request, term nat onTracker, clock)));
+      } catch (QueryParserExcept on e) {
+        throw new Cl entExcept on(e);
       }
     }
 
-    // Wrap the lucene query with these filters.
-    Query wrappedQuery = wrapFilters(query, filters.toArray(new Query[filters.size()]));
+    // Wrap t  lucene query w h t se f lters.
+    Query wrappedQuery = wrapF lters(query, f lters.toArray(new Query[f lters.s ze()]));
 
-    // If searchStatusIds is set, additionally modify the query to search exactly these
-    // ids, using the luceneQuery only for scoring.
-    if (searchQuery.getSearchStatusIdsSize() > 0) {
-      this.searcherStats.addedFilterTweetIds.increment();
+    //  f searchStatus ds  s set, add  onally mod fy t  query to search exactly t se
+    //  ds, us ng t  luceneQuery only for scor ng.
+     f (searchQuery.getSearchStatus dsS ze() > 0) {
+      t .searc rStats.addedF lterT et ds. ncre nt();
 
-      final Query queryForScoring = wrappedQuery;
-      final Query queryForRetrieval =
-          RequiredStatusIDsFilter.getRequiredStatusIDsQuery(searchQuery.getSearchStatusIds());
+      f nal Query queryForScor ng = wrappedQuery;
+      f nal Query queryForRetr eval =
+          Requ redStatus DsF lter.getRequ redStatus DsQuery(searchQuery.getSearchStatus ds());
 
-      return new BooleanQuery.Builder()
-          .add(queryForRetrieval, Occur.MUST)
-          .add(queryForScoring, Occur.SHOULD)
-          .build();
+      return new BooleanQuery.Bu lder()
+          .add(queryForRetr eval, Occur.MUST)
+          .add(queryForScor ng, Occur.SHOULD)
+          .bu ld();
     }
 
     return wrappedQuery;
   }
 
-  private com.twitter.search.queryparser.query.Query getLikedByUserIdQuery(
-      List<Long> ids) throws QueryParserException {
-    if (DeciderUtil.isAvailableForRandomRecipient(
-        decider, USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY)) {
-      // rewrite LikedByUserIdFilter64 to a multi_term_disjuntion query
-      return createMultiTermDisjunctionQueryForLikedByUserIds(ids);
+  pr vate com.tw ter.search.queryparser.query.Query getL kedByUser dQuery(
+      L st<Long>  ds) throws QueryParserExcept on {
+     f (Dec derUt l. sAva lableForRandomRec p ent(
+        dec der, USE_MULT _TERM_D SJUNCT ON_FOR_L KED_BY_USER_ DS_DEC DER_KEY)) {
+      // rewr e L kedByUser dF lter64 to a mult _term_d sjunt on query
+      return createMult TermD sjunct onQueryForL kedByUser ds( ds);
     } else {
-      // rewrite LikedByUserIdFilter64 to a disjunction of multiple liked_by_user_ids query
-      return createDisjunctionQueryForLikedByUserIds(ids);
+      // rewr e L kedByUser dF lter64 to a d sjunct on of mult ple l ked_by_user_ ds query
+      return createD sjunct onQueryForL kedByUser ds( ds);
     }
   }
 
   /**
-   * Returns the Lucene query visitor that should be applied to the original request.
+   * Returns t  Lucene query v s or that should be appl ed to t  or g nal request.
    *
-   * @param fieldWeightMapOverride The per-field weight overrides.
+   * @param f eld  ghtMapOverr de T  per-f eld   ght overr des.
    */
-  @VisibleForTesting
-  public EarlybirdLuceneQueryVisitor getLuceneVisitor(
-      Map<String, Double> fieldWeightMapOverride) {
-    String clusterName = cluster.getNameForStats();
-    // Iff in relevance mode _and_ intepreteSinceId is false, we turn off since_id
-    // operator by using LuceneRelevanceQueryVisitor.
+  @V s bleForTest ng
+  publ c Earlyb rdLuceneQueryV s or getLuceneV s or(
+      Map<Str ng, Double> f eld  ghtMapOverr de) {
+    Str ng clusterNa  = cluster.getNa ForStats();
+    //  ff  n relevance mode _and_  ntepreteS nce d  s false,   turn off s nce_ d
+    // operator by us ng LuceneRelevanceQueryV s or.
 
-    if (searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE
-        && searchQuery.getRelevanceOptions() != null
-        && !searchQuery.getRelevanceOptions().isInterpretSinceId()) {
-      // hack!  reset top level since id, which is the same thing LuceneRelevanceVisitor
-      // is doing.
-      idTimeRanges = null;
-      return new LuceneRelevanceQueryVisitor(
-          schemaSnapshot,
-          queryCacheManager,
-          segmentManager.getUserTable(),
-          segmentManager.getUserScrubGeoMap(),
-          terminationTracker,
-          FieldWeightDefault.overrideFieldWeightMap(
-              schemaSnapshot.getFieldWeightMap(),
-              dropBadFieldWeightOverrides(fieldWeightMapOverride, decider, clusterName)),
-          MAPPABLE_FIELD_MAP,
-          multiSegmentTermDictionaryManager,
-          decider,
+     f (searchQuery.getRank ngMode() == Thr ftSearchRank ngMode.RELEVANCE
+        && searchQuery.getRelevanceOpt ons() != null
+        && !searchQuery.getRelevanceOpt ons(). s nterpretS nce d()) {
+      // hack!  reset top level s nce  d, wh ch  s t  sa  th ng LuceneRelevanceV s or
+      //  s do ng.
+       dT  Ranges = null;
+      return new LuceneRelevanceQueryV s or(
+          sc maSnapshot,
+          queryCac Manager,
+          seg ntManager.getUserTable(),
+          seg ntManager.getUserScrubGeoMap(),
+          term nat onTracker,
+          F eld  ghtDefault.overr deF eld  ghtMap(
+              sc maSnapshot.getF eld  ghtMap(),
+              dropBadF eld  ghtOverr des(f eld  ghtMapOverr de, dec der, clusterNa )),
+          MAPPABLE_F ELD_MAP,
+          mult Seg ntTermD ct onaryManager,
+          dec der,
           cluster,
-          queryTimeoutFactory.createQueryTimeout(
-              request, terminationTracker, clock));
+          queryT  outFactory.createQueryT  out(
+              request, term nat onTracker, clock));
     } else {
-      return new EarlybirdLuceneQueryVisitor(
-          schemaSnapshot,
-          queryCacheManager,
-          segmentManager.getUserTable(),
-          segmentManager.getUserScrubGeoMap(),
-          terminationTracker,
-          FieldWeightDefault.overrideFieldWeightMap(
-              schemaSnapshot.getFieldWeightMap(),
-              dropBadFieldWeightOverrides(fieldWeightMapOverride, decider, clusterName)),
-          MAPPABLE_FIELD_MAP,
-          multiSegmentTermDictionaryManager,
-          decider,
+      return new Earlyb rdLuceneQueryV s or(
+          sc maSnapshot,
+          queryCac Manager,
+          seg ntManager.getUserTable(),
+          seg ntManager.getUserScrubGeoMap(),
+          term nat onTracker,
+          F eld  ghtDefault.overr deF eld  ghtMap(
+              sc maSnapshot.getF eld  ghtMap(),
+              dropBadF eld  ghtOverr des(f eld  ghtMapOverr de, dec der, clusterNa )),
+          MAPPABLE_F ELD_MAP,
+          mult Seg ntTermD ct onaryManager,
+          dec der,
           cluster,
-          queryTimeoutFactory.createQueryTimeout(
-              request, terminationTracker, clock));
+          queryT  outFactory.createQueryT  out(
+              request, term nat onTracker, clock));
     }
   }
 
-  private void prepareFacetResults(ThriftFacetResults thriftFacetResults,
-                                     EarlybirdLuceneSearcher.FacetSearchResults hits,
-                                     FacetCountState<ThriftFacetFieldResults> facetCountState,
-                                     Set<Long> userIDWhitelist,
-                                     byte debugMode) throws IOException {
-    for (FacetRankingModule rankingModule : FacetRankingModule.REGISTERED_RANKING_MODULES) {
-      rankingModule.prepareResults(hits, facetCountState);
+  pr vate vo d prepareFacetResults(Thr ftFacetResults thr ftFacetResults,
+                                     Earlyb rdLuceneSearc r.FacetSearchResults h s,
+                                     FacetCountState<Thr ftFacetF eldResults> facetCountState,
+                                     Set<Long> user DWh el st,
+                                     byte debugMode) throws  OExcept on {
+    for (FacetRank ngModule rank ngModule : FacetRank ngModule.REG STERED_RANK NG_MODULES) {
+      rank ngModule.prepareResults(h s, facetCountState);
     }
 
-    Map<Term, ThriftFacetCount> allFacetResults = new HashMap<>();
+    Map<Term, Thr ftFacetCount> allFacetResults = new HashMap<>();
 
-    Iterator<FacetCountState.FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
-        facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
+     erator<FacetCountState.FacetF eldResults<Thr ftFacetF eldResults>> f eldResults erator =
+        facetCountState.getFacetF eldResults erator();
+    wh le (f eldResults erator.hasNext()) {
 
-      FacetCountState.FacetFieldResults<ThriftFacetFieldResults> facetFieldResults =
-          fieldResultsIterator.next();
+      FacetCountState.FacetF eldResults<Thr ftFacetF eldResults> facetF eldResults =
+          f eldResults erator.next();
 
-      if (facetFieldResults.results == null) {
-        // return empty resultset for this facet
-        List<ThriftFacetCount> emptyList = new ArrayList<>();
-        facetFieldResults.results = new ThriftFacetFieldResults(emptyList, 0);
+       f (facetF eldResults.results == null) {
+        // return empty resultset for t  facet
+        L st<Thr ftFacetCount> emptyL st = new ArrayL st<>();
+        facetF eldResults.results = new Thr ftFacetF eldResults(emptyL st, 0);
       }
-      thriftFacetResults.putToFacetFields(facetFieldResults.facetName,
-          facetFieldResults.results);
+      thr ftFacetResults.putToFacetF elds(facetF eldResults.facetNa ,
+          facetF eldResults.results);
 
-      Schema.FieldInfo field = schemaSnapshot.getFacetFieldByFacetName(
-          facetFieldResults.facetName);
+      Sc ma.F eld nfo f eld = sc maSnapshot.getFacetF eldByFacetNa (
+          facetF eldResults.facetNa );
 
-      for (ThriftFacetCount result : facetFieldResults.results.topFacets) {
-        if (result.facetLabel != null) {
-          allFacetResults.put(new Term(field.getName(), result.facetLabel), result);
+      for (Thr ftFacetCount result : facetF eldResults.results.topFacets) {
+         f (result.facetLabel != null) {
+          allFacetResults.put(new Term(f eld.getNa (), result.facetLabel), result);
         } else {
-          LOG.warn("Null facetLabel, field: {}, result: {}", field.getName(), result);
+          LOG.warn("Null facetLabel, f eld: {}, result: {}", f eld.getNa (), result);
         }
       }
     }
 
-    searcher.fillFacetResultMetadata(allFacetResults, schemaSnapshot, debugMode);
+    searc r.f llFacetResult tadata(allFacetResults, sc maSnapshot, debugMode);
 
-    if (userIDWhitelist != null) {
-      for (ThriftFacetCount facetCount : allFacetResults.values()) {
-        ThriftFacetCountMetadata metadata = facetCount.getMetadata();
-        if (metadata != null) {
-          metadata.setDontFilterUser(userIDWhitelist.contains(metadata.getTwitterUserId()));
+     f (user DWh el st != null) {
+      for (Thr ftFacetCount facetCount : allFacetResults.values()) {
+        Thr ftFacetCount tadata  tadata = facetCount.get tadata();
+         f ( tadata != null) {
+           tadata.setDontF lterUser(user DWh el st.conta ns( tadata.getTw terUser d()));
         }
       }
     }
   }
 
-  private void prepareTermStatisticsResults(
-      ThriftTermStatisticsResults termStatistics,
-      TermStatisticsCollector.TermStatisticsSearchResults hits,
-      byte debugMode) throws IOException {
+  pr vate vo d prepareTermStat st csResults(
+      Thr ftTermStat st csResults termStat st cs,
+      TermStat st csCollector.TermStat st csSearchResults h s,
+      byte debugMode) throws  OExcept on {
 
-    termStatistics.setBinIds(hits.binIds);
-    termStatistics.setHistogramSettings(termStatisticsRequest.getHistogramSettings());
-    termStatistics.setTermResults(hits.results);
-    setTermStatisticsDebugInfo(hits.getTermStatisticsDebugInfo());
+    termStat st cs.setB n ds(h s.b n ds);
+    termStat st cs.set togramSett ngs(termStat st csRequest.get togramSett ngs());
+    termStat st cs.setTermResults(h s.results);
+    setTermStat st csDebug nfo(h s.getTermStat st csDebug nfo());
 
-    if (hits.lastCompleteBinId != -1) {
-      termStatistics.setMinCompleteBinId(hits.lastCompleteBinId);
+     f (h s.lastCompleteB n d != -1) {
+      termStat st cs.setM nCompleteB n d(h s.lastCompleteB n d);
     } else {
-      SearchRateCounter.export(String.format(
-          "term_stats_%s_unset_min_complete_bin_id", request.getClientId())).increment();
+      SearchRateCounter.export(Str ng.format(
+          "term_stats_%s_unset_m n_complete_b n_ d", request.getCl ent d())). ncre nt();
     }
 
-    if (idTimeRanges != null
-        && idTimeRanges.getUntilTimeExclusive().isPresent()
-        && hits.getMinSearchedTime() > idTimeRanges.getUntilTimeExclusive().get()) {
-      SearchRateCounter.export(String.format(
-          "term_stats_%s_min_searched_time_after_until_time", request.getClientId())).increment();
+     f ( dT  Ranges != null
+        &&  dT  Ranges.getUnt lT  Exclus ve(). sPresent()
+        && h s.getM nSearc dT  () >  dT  Ranges.getUnt lT  Exclus ve().get()) {
+      SearchRateCounter.export(Str ng.format(
+          "term_stats_%s_m n_searc d_t  _after_unt l_t  ", request.getCl ent d())). ncre nt();
     }
 
-    searcher.fillTermStatsMetadata(termStatistics, schemaSnapshot, debugMode);
+    searc r.f llTermStats tadata(termStat st cs, sc maSnapshot, debugMode);
   }
 
-  private EarlybirdResponse respondSuccess(
-      ThriftSearchResults thriftSearchResults,
-      ThriftFacetResults thriftFacetResults,
-      ThriftTermStatisticsResults termStatisticResults,
-      @Nonnull EarlyTerminationInfo earlyTerminationState,
-      @Nonnull SearchResultsInfo searchResultsInfo) {
+  pr vate Earlyb rdResponse respondSuccess(
+      Thr ftSearchResults thr ftSearchResults,
+      Thr ftFacetResults thr ftFacetResults,
+      Thr ftTermStat st csResults termStat st cResults,
+      @Nonnull EarlyTerm nat on nfo earlyTerm nat onState,
+      @Nonnull SearchResults nfo searchResults nfo) {
 
-    Preconditions.checkNotNull(earlyTerminationState);
-    Preconditions.checkNotNull(searchResultsInfo);
+    Precond  ons.c ckNotNull(earlyTerm nat onState);
+    Precond  ons.c ckNotNull(searchResults nfo);
 
-    exportEarlyTerminationStats(earlyTerminationState);
+    exportEarlyTerm nat onStats(earlyTerm nat onState);
 
-    EarlybirdResponse response =
-        newResponse(EarlybirdResponseCode.SUCCESS, request.getDebugMode() > 0);
-    response.setEarlyTerminationInfo(earlyTerminationState);
-    response.setNumSearchedSegments(searchResultsInfo.getNumSearchedSegments());
+    Earlyb rdResponse response =
+        newResponse(Earlyb rdResponseCode.SUCCESS, request.getDebugMode() > 0);
+    response.setEarlyTerm nat on nfo(earlyTerm nat onState);
+    response.setNumSearc dSeg nts(searchResults nfo.getNumSearc dSeg nts());
 
-    if (thriftSearchResults != null) {
-      // Nullcast check is only used when parsed query is available: if there is no parsed query,
-      // we would not add possible exclude nullcast filter.
-      if (parsedQuery != null && !parsedQueryAllowNullcast) {
-        logAndIncrementStatsIfNullcastInResults(thriftSearchResults);
+     f (thr ftSearchResults != null) {
+      // Nullcast c ck  s only used w n parsed query  s ava lable:  f t re  s no parsed query,
+      //   would not add poss ble exclude nullcast f lter.
+       f (parsedQuery != null && !parsedQueryAllowNullcast) {
+        logAnd ncre ntStats fNullcast nResults(thr ftSearchResults);
       }
-      response.setSearchResults(thriftSearchResults);
+      response.setSearchResults(thr ftSearchResults);
     } else {
-      RESPONSE_HAS_NO_THRIFT_SEARCH_RESULTS.increment();
+      RESPONSE_HAS_NO_THR FT_SEARCH_RESULTS. ncre nt();
     }
-    if (thriftFacetResults != null) {
-      response.setFacetResults(thriftFacetResults);
+     f (thr ftFacetResults != null) {
+      response.setFacetResults(thr ftFacetResults);
     }
-    if (termStatisticResults != null) {
-      response.setTermStatisticsResults(termStatisticResults);
+     f (termStat st cResults != null) {
+      response.setTermStat st csResults(termStat st cResults);
     }
 
-    appendFeatureSchemaIfNeeded(response);
+    appendFeatureSc ma fNeeded(response);
 
-    appendLikedByUserIdsIfNeeded(response);
+    appendL kedByUser ds fNeeded(response);
 
     return response;
   }
 
-  private void exportEarlyTerminationStats(@Nonnull EarlyTerminationInfo earlyTerminationState) {
-    if (earlyTerminationState.isSetEarlyTerminationReason()) {
-      SearchRateCounter.export(String.format("early_termination_%s_%s",
-          ClientIdUtil.formatClientId(request.getClientId()),
-          earlyTerminationState.getEarlyTerminationReason())).increment();
-      SearchRateCounter.export(String.format("early_termination_%s_%s",
-          ClientIdUtil.formatClientIdAndRequestType(
-              request.getClientId(), queryMode.name().toLowerCase()),
-          earlyTerminationState.getEarlyTerminationReason())).increment();
+  pr vate vo d exportEarlyTerm nat onStats(@Nonnull EarlyTerm nat on nfo earlyTerm nat onState) {
+     f (earlyTerm nat onState. sSetEarlyTerm nat onReason()) {
+      SearchRateCounter.export(Str ng.format("early_term nat on_%s_%s",
+          Cl ent dUt l.formatCl ent d(request.getCl ent d()),
+          earlyTerm nat onState.getEarlyTerm nat onReason())). ncre nt();
+      SearchRateCounter.export(Str ng.format("early_term nat on_%s_%s",
+          Cl ent dUt l.formatCl ent dAndRequestType(
+              request.getCl ent d(), queryMode.na ().toLo rCase()),
+          earlyTerm nat onState.getEarlyTerm nat onReason())). ncre nt();
     }
   }
 
   /**
-   * Builds a rank -> userId map for liked_by_user_id queries that request hit attribution, and
-   * appends the resulting map to the response.
+   * Bu lds a rank -> user d map for l ked_by_user_ d quer es that request h  attr but on, and
+   * appends t  result ng map to t  response.
    */
-  private void appendLikedByUserIdsIfNeeded(EarlybirdResponse response) {
-    // Check if user asked for likedByUserIds list in response
-    ThriftSearchRelevanceOptions resultRelevanceOptions =
-        request.getSearchQuery().getRelevanceOptions();
-    if ((resultRelevanceOptions == null)
-        || !resultRelevanceOptions.isCollectFieldHitAttributions()) {
+  pr vate vo d appendL kedByUser ds fNeeded(Earlyb rdResponse response) {
+    // C ck  f user asked for l kedByUser ds l st  n response
+    Thr ftSearchRelevanceOpt ons resultRelevanceOpt ons =
+        request.getSearchQuery().getRelevanceOpt ons();
+     f ((resultRelevanceOpt ons == null)
+        || !resultRelevanceOpt ons. sCollectF eldH Attr but ons()) {
       return;
     }
 
-    // Make sure we have results in response and hit attribution helper is set up correctly
-    if (!response.isSetSearchResults() || hitAttributeHelper == null) {
+    // Make sure   have results  n response and h  attr but on  lper  s set up correctly
+     f (!response. sSetSearchResults() || h Attr bute lper == null) {
       return;
     }
 
     // Get rank to node map
-    Map<com.twitter.search.queryparser.query.Query, Integer> nodeToRankMap =
-        Preconditions.checkNotNull(hitAttributeHelper.getNodeToRankMap());
+    Map<com.tw ter.search.queryparser.query.Query,  nteger> nodeToRankMap =
+        Precond  ons.c ckNotNull(h Attr bute lper.getNodeToRankMap());
 
-    Map<com.twitter.search.queryparser.query.Query, List<Integer>> expandedNodeToRankMap =
-        Preconditions.checkNotNull(hitAttributeHelper.getExpandedNodeToRankMap());
+    Map<com.tw ter.search.queryparser.query.Query, L st< nteger>> expandedNodeToRankMap =
+        Precond  ons.c ckNotNull(h Attr bute lper.getExpandedNodeToRankMap());
 
-    // Build a rank to id map
-    ImmutableMap.Builder<Integer, Long> builder = ImmutableMap.builder();
-    for (com.twitter.search.queryparser.query.Query query : nodeToRankMap.keySet()) {
-      if (query instanceof SearchOperator) {
+    // Bu ld a rank to  d map
+     mmutableMap.Bu lder< nteger, Long> bu lder =  mmutableMap.bu lder();
+    for (com.tw ter.search.queryparser.query.Query query : nodeToRankMap.keySet()) {
+       f (query  nstanceof SearchOperator) {
         SearchOperator op = (SearchOperator) query;
-        if (expandedNodeToRankMap.containsKey(query)) {
-          // for multi_term_disjunction case
-          List<Integer> ranks = expandedNodeToRankMap.get(op);
-          Preconditions.checkArgument(op.getNumOperands() == ranks.size() + 1);
-          for (int i = 0; i < ranks.size(); ++i) {
-            builder.put(ranks.get(i), Long.valueOf(op.getOperands().get(i + 1)));
+         f (expandedNodeToRankMap.conta nsKey(query)) {
+          // for mult _term_d sjunct on case
+          L st< nteger> ranks = expandedNodeToRankMap.get(op);
+          Precond  ons.c ckArgu nt(op.getNumOperands() == ranks.s ze() + 1);
+          for ( nt   = 0;   < ranks.s ze(); ++ ) {
+            bu lder.put(ranks.get( ), Long.valueOf(op.getOperands().get(  + 1)));
           }
-        } else if (op.getOperatorType() == SearchOperator.Type.LIKED_BY_USER_ID) {
-          // for liked_by_user_id case
-          Preconditions.checkArgument(op.getAnnotationOf(Annotation.Type.NODE_RANK).isPresent());
-          builder.put(
-              (Integer) op.getAnnotationOf(Annotation.Type.NODE_RANK).get().getValue(),
+        } else  f (op.getOperatorType() == SearchOperator.Type.L KED_BY_USER_ D) {
+          // for l ked_by_user_ d case
+          Precond  ons.c ckArgu nt(op.getAnnotat onOf(Annotat on.Type.NODE_RANK). sPresent());
+          bu lder.put(
+              ( nteger) op.getAnnotat onOf(Annotat on.Type.NODE_RANK).get().getValue(),
               Long.valueOf(op.getOperands().get(0)));
         }
       }
     }
-    Map<Integer, Long> rankToIdMap = builder.build();
+    Map< nteger, Long> rankTo dMap = bu lder.bu ld();
 
-    // Append liked_by_user_id filed into result
-    for (ThriftSearchResult result : response.getSearchResults().getResults()) {
-      if (result.isSetMetadata()
-          && result.getMetadata().isSetFieldHitAttribution()
-          && result.getMetadata().getFieldHitAttribution().isSetHitMap()) {
+    // Append l ked_by_user_ d f led  nto result
+    for (Thr ftSearchResult result : response.getSearchResults().getResults()) {
+       f (result. sSet tadata()
+          && result.get tadata(). sSetF eldH Attr but on()
+          && result.get tadata().getF eldH Attr but on(). sSetH Map()) {
 
-        List<Long> likedByUserIdList = Lists.newArrayList();
+        L st<Long> l kedByUser dL st = L sts.newArrayL st();
 
-        Map<Integer, FieldHitList> hitMap =
-            result.getMetadata().getFieldHitAttribution().getHitMap();
-        // iterate hit attributions
-        for (int rank : hitMap.keySet()) {
-          if (rankToIdMap.containsKey(rank)) {
-            likedByUserIdList.add(rankToIdMap.get(rank));
+        Map< nteger, F eldH L st> h Map =
+            result.get tadata().getF eldH Attr but on().getH Map();
+        //  erate h  attr but ons
+        for ( nt rank : h Map.keySet()) {
+           f (rankTo dMap.conta nsKey(rank)) {
+            l kedByUser dL st.add(rankTo dMap.get(rank));
           }
         }
-        if (!result.getMetadata().isSetExtraMetadata()) {
-          result.getMetadata().setExtraMetadata(new ThriftSearchResultExtraMetadata());
+         f (!result.get tadata(). sSetExtra tadata()) {
+          result.get tadata().setExtra tadata(new Thr ftSearchResultExtra tadata());
         }
-        result.getMetadata().getExtraMetadata().setLikedByUserIds(likedByUserIdList);
+        result.get tadata().getExtra tadata().setL kedByUser ds(l kedByUser dL st);
       }
     }
   }
 
-  private void appendFeatureSchemaIfNeeded(EarlybirdResponse response) {
-    // Do not append the schema if the client didn't request it.
-    ThriftSearchResultMetadataOptions resultMetadataOptions =
-        request.getSearchQuery().getResultMetadataOptions();
-    if ((resultMetadataOptions == null) || !resultMetadataOptions.isReturnSearchResultFeatures()) {
+  pr vate vo d appendFeatureSc ma fNeeded(Earlyb rdResponse response) {
+    // Do not append t  sc ma  f t  cl ent d dn't request  .
+    Thr ftSearchResult tadataOpt ons result tadataOpt ons =
+        request.getSearchQuery().getResult tadataOpt ons();
+     f ((result tadataOpt ons == null) || !result tadataOpt ons. sReturnSearchResultFeatures()) {
       return;
     }
 
-    if (!response.isSetSearchResults()) {
+     f (!response. sSetSearchResults()) {
       return;
     }
 
-    ThriftSearchFeatureSchema featureSchema = schemaSnapshot.getSearchFeatureSchema();
-    Preconditions.checkState(
-        featureSchema.isSetSchemaSpecifier(),
-        "The feature schema doesn't have a schema specifier set: {}", featureSchema);
+    Thr ftSearchFeatureSc ma featureSc ma = sc maSnapshot.getSearchFeatureSc ma();
+    Precond  ons.c ckState(
+        featureSc ma. sSetSc maSpec f er(),
+        "T  feature sc ma doesn't have a sc ma spec f er set: {}", featureSc ma);
 
-    // If the client has this schema, we only need to return the schema version.
-    // If the client doesn't have this schema, we need to return the schema entries too.
-    if (resultMetadataOptions.isSetFeatureSchemasAvailableInClient()
-        && resultMetadataOptions.getFeatureSchemasAvailableInClient().contains(
-        featureSchema.getSchemaSpecifier())) {
-      CLIENT_HAS_FEATURE_SCHEMA_COUNTER.increment();
-      ThriftSearchFeatureSchema responseFeatureSchema = new ThriftSearchFeatureSchema();
-      responseFeatureSchema.setSchemaSpecifier(featureSchema.getSchemaSpecifier());
-      response.getSearchResults().setFeatureSchema(responseFeatureSchema);
+    //  f t  cl ent has t  sc ma,   only need to return t  sc ma vers on.
+    //  f t  cl ent doesn't have t  sc ma,   need to return t  sc ma entr es too.
+     f (result tadataOpt ons. sSetFeatureSc masAva lable nCl ent()
+        && result tadataOpt ons.getFeatureSc masAva lable nCl ent().conta ns(
+        featureSc ma.getSc maSpec f er())) {
+      CL ENT_HAS_FEATURE_SCHEMA_COUNTER. ncre nt();
+      Thr ftSearchFeatureSc ma responseFeatureSc ma = new Thr ftSearchFeatureSc ma();
+      responseFeatureSc ma.setSc maSpec f er(featureSc ma.getSc maSpec f er());
+      response.getSearchResults().setFeatureSc ma(responseFeatureSc ma);
     } else {
-      CLIENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER.increment();
-      Preconditions.checkState(featureSchema.isSetEntries(),
-          "Entries are not set in the feature schema: " + featureSchema);
-      response.getSearchResults().setFeatureSchema(featureSchema);
+      CL ENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER. ncre nt();
+      Precond  ons.c ckState(featureSc ma. sSetEntr es(),
+          "Entr es are not set  n t  feature sc ma: " + featureSc ma);
+      response.getSearchResults().setFeatureSc ma(featureSc ma);
     }
   }
 
-  private static long getQueryTimestamp(ThriftSearchQuery query) {
-    return query != null && query.isSetTimestampMsecs() ? query.getTimestampMsecs() : 0;
+  pr vate stat c long getQueryT  stamp(Thr ftSearchQuery query) {
+    return query != null && query. sSetT  stampMsecs() ? query.getT  stampMsecs() : 0;
   }
 
-  private static boolean includesCardField(ThriftSearchQuery searchQuery,
-                                           com.twitter.search.queryparser.query.Query query)
-      throws QueryParserException {
+  pr vate stat c boolean  ncludesCardF eld(Thr ftSearchQuery searchQuery,
+                                           com.tw ter.search.queryparser.query.Query query)
+      throws QueryParserExcept on {
 
-    if (searchQuery.isSetRelevanceOptions()) {
-      ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
-      if (options.isSetFieldWeightMapOverride()
-          && (options.getFieldWeightMapOverride().containsKey(
-              EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName())
-          || options.getFieldWeightMapOverride()
-          .containsKey(EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName()))) {
+     f (searchQuery. sSetRelevanceOpt ons()) {
+      Thr ftSearchRelevanceOpt ons opt ons = searchQuery.getRelevanceOpt ons();
+       f (opt ons. sSetF eld  ghtMapOverr de()
+          && (opt ons.getF eld  ghtMapOverr de().conta nsKey(
+              Earlyb rdF eldConstant.CARD_T TLE_F ELD.getF eldNa ())
+          || opt ons.getF eld  ghtMapOverr de()
+          .conta nsKey(Earlyb rdF eldConstant.CARD_DESCR PT ON_F ELD.getF eldNa ()))) {
 
         return true;
       }
     }
 
-    return query.accept(new DetectFieldAnnotationVisitor(ImmutableSet.of(
-        EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-        EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName())));
+    return query.accept(new DetectF eldAnnotat onV s or( mmutableSet.of(
+        Earlyb rdF eldConstant.CARD_T TLE_F ELD.getF eldNa (),
+        Earlyb rdF eldConstant.CARD_DESCR PT ON_F ELD.getF eldNa ())));
   }
 
-  private static QueryMode getQueryMode(EarlybirdRequest request) {
-    if (request.isSetFacetRequest()) {
+  pr vate stat c QueryMode getQueryMode(Earlyb rdRequest request) {
+     f (request. sSetFacetRequest()) {
       return QueryMode.FACETS;
-    } else if (request.isSetTermStatisticsRequest()) {
+    } else  f (request. sSetTermStat st csRequest()) {
       return QueryMode.TERM_STATS;
     }
 
-    // Recency mode until we determine otherwise.
+    // Recency mode unt l   determ ne ot rw se.
     QueryMode queryMode = QueryMode.RECENCY;
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (searchQuery != null) {
-      switch (searchQuery.getRankingMode()) {
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
+     f (searchQuery != null) {
+      sw ch (searchQuery.getRank ngMode()) {
         case RECENCY:
           queryMode = QueryMode.RECENCY;
           break;
@@ -1833,86 +1833,86 @@ public class EarlybirdSearcher {
       }
     }
 
-    if (searchQuery == null
-        || !searchQuery.isSetSerializedQuery()
-        || searchQuery.getSerializedQuery().isEmpty()) {
+     f (searchQuery == null
+        || !searchQuery. sSetSer al zedQuery()
+        || searchQuery.getSer al zedQuery(). sEmpty()) {
       LOG.debug("Search query was empty, query mode was " + queryMode);
     }
 
     return queryMode;
   }
 
-  private static <V> ImmutableMap<String, V> dropBadFieldWeightOverrides(
-      Map<String, V> map, Decider decider, String clusterName) {
+  pr vate stat c <V>  mmutableMap<Str ng, V> dropBadF eld  ghtOverr des(
+      Map<Str ng, V> map, Dec der dec der, Str ng clusterNa ) {
 
-    if (map == null) {
+     f (map == null) {
       return null;
     }
 
-    FIELD_WEIGHT_OVERRIDE_MAP_NON_NULL_COUNT.increment();
-    ImmutableMap.Builder<String, V> builder = ImmutableMap.builder();
+    F ELD_WE GHT_OVERR DE_MAP_NON_NULL_COUNT. ncre nt();
+     mmutableMap.Bu lder<Str ng, V> bu lder =  mmutableMap.bu lder();
 
-    for (Map.Entry<String, V> entry : map.entrySet()) {
-      if (EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName().equals(entry.getKey())
-          && !isAllowedCamelcaseUsernameFieldWeightOverride(decider, clusterName)) {
-        DROPPED_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE.increment();
-      } else if (EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName().equals(
+    for (Map.Entry<Str ng, V> entry : map.entrySet()) {
+       f (Earlyb rdF eldConstant.CAMELCASE_USER_HANDLE_F ELD.getF eldNa ().equals(entry.getKey())
+          && ! sAllo dCa lcaseUserna F eld  ghtOverr de(dec der, clusterNa )) {
+        DROPPED_CAMELCASE_USERNAME_F ELD_WE GHT_OVERR DE. ncre nt();
+      } else  f (Earlyb rdF eldConstant.TOKEN ZED_USER_NAME_F ELD.getF eldNa ().equals(
                      entry.getKey())
-          && !isAllowedTokenizedScreenNameFieldWeightOverride(decider, clusterName)) {
-        DROPPED_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE.increment();
+          && ! sAllo dToken zedScreenNa F eld  ghtOverr de(dec der, clusterNa )) {
+        DROPPED_TOKEN ZED_D SPLAY_NAME_F ELD_WE GHT_OVERR DE. ncre nt();
       } else {
-        builder.put(entry.getKey(), entry.getValue());
+        bu lder.put(entry.getKey(), entry.getValue());
       }
     }
 
-    return builder.build();
+    return bu lder.bu ld();
   }
 
-  private static boolean isAllowedCamelcaseUsernameFieldWeightOverride(
-      Decider decider, String clusterName) {
-    return DeciderUtil.isAvailableForRandomRecipient(decider,
-        ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX + clusterName);
+  pr vate stat c boolean  sAllo dCa lcaseUserna F eld  ghtOverr de(
+      Dec der dec der, Str ng clusterNa ) {
+    return Dec derUt l. sAva lableForRandomRec p ent(dec der,
+        ALLOW_CAMELCASE_USERNAME_F ELD_WE GHT_OVERR DE_DEC DER_KEY_PREF X + clusterNa );
   }
 
-  private static boolean isAllowedTokenizedScreenNameFieldWeightOverride(
-      Decider decider, String clusterName) {
-    return DeciderUtil.isAvailableForRandomRecipient(decider,
-        ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX + clusterName);
+  pr vate stat c boolean  sAllo dToken zedScreenNa F eld  ghtOverr de(
+      Dec der dec der, Str ng clusterNa ) {
+    return Dec derUt l. sAva lableForRandomRec p ent(dec der,
+        ALLOW_TOKEN ZED_D SPLAY_NAME_F ELD_WE GHT_OVERR DE_DEC DER_KEY_PREF X + clusterNa );
   }
 
-  private static com.twitter.search.queryparser.query.Query
-  createMultiTermDisjunctionQueryForLikedByUserIds(List<Long> ids) throws QueryParserException {
-    List<String> operands = new ArrayList<>(ids.size() + 1);
-    operands.add(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName());
-    for (long id : ids) {
-      operands.add(String.valueOf(id));
+  pr vate stat c com.tw ter.search.queryparser.query.Query
+  createMult TermD sjunct onQueryForL kedByUser ds(L st<Long>  ds) throws QueryParserExcept on {
+    L st<Str ng> operands = new ArrayL st<>( ds.s ze() + 1);
+    operands.add(Earlyb rdF eldConstant.L KED_BY_USER_ D_F ELD.getF eldNa ());
+    for (long  d :  ds) {
+      operands.add(Str ng.valueOf( d));
     }
-    return new SearchOperator(SearchOperator.Type.MULTI_TERM_DISJUNCTION, operands)
-        .simplify();
+    return new SearchOperator(SearchOperator.Type.MULT _TERM_D SJUNCT ON, operands)
+        .s mpl fy();
   }
 
-  private static com.twitter.search.queryparser.query.Query createDisjunctionQueryForLikedByUserIds(
-      List<Long> ids) throws QueryParserException {
-    return new Disjunction(
-        ids.stream()
-            .map(id -> new SearchOperator(SearchOperator.Type.LIKED_BY_USER_ID, id))
-            .collect(Collectors.toList()))
-        .simplify();
+  pr vate stat c com.tw ter.search.queryparser.query.Query createD sjunct onQueryForL kedByUser ds(
+      L st<Long>  ds) throws QueryParserExcept on {
+    return new D sjunct on(
+         ds.stream()
+            .map( d -> new SearchOperator(SearchOperator.Type.L KED_BY_USER_ D,  d))
+            .collect(Collectors.toL st()))
+        .s mpl fy();
   }
 
-  public com.twitter.search.queryparser.query.Query getParsedQuery() {
+  publ c com.tw ter.search.queryparser.query.Query getParsedQuery() {
     return parsedQuery;
   }
 
   /**
-   * Get the index fields that were queried after this searcher completed its job.
+   * Get t   ndex f elds that  re quer ed after t  searc r completed  s job.
    * @return
    */
-  public Set<String> getQueriedFields() {
-    return queriedFields;
+  publ c Set<Str ng> getQuer edF elds() {
+    return quer edF elds;
   }
 
-  public Query getLuceneQuery() {
+  publ c Query getLuceneQuery() {
     return luceneQuery;
   }
 }

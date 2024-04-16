@@ -1,202 +1,202 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+ mport java.text.S mpleDateFormat;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
 
-import com.google.common.collect.Lists;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.BuildInfo;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.util.Duration;
+ mport com.tw ter.common.ut l.Bu ld nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
+ mport com.tw ter.ut l.Durat on;
 
 /**
- * High level status of an Earlybird server. SEARCH-28016
+ * H gh level status of an Earlyb rd server. SEARCH-28016
  */
-public final class EarlybirdStatus {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdStatus.class);
+publ c f nal class Earlyb rdStatus {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdStatus.class);
 
-  private static final String BUILD_SHA = getBuildShaFromVars();
+  pr vate stat c f nal Str ng BU LD_SHA = getBu ldShaFromVars();
 
-  protected static long startTime;
-  protected static EarlybirdStatusCode statusCode;
-  protected static String statusMessage;
-  protected static final AtomicBoolean THRIFT_PORT_OPEN = new AtomicBoolean(false);
-  protected static final AtomicBoolean WARMUP_THRIFT_PORT_OPEN = new AtomicBoolean(false);
-  protected static final AtomicBoolean THRIFT_SERVICE_STARTED = new AtomicBoolean(false);
+  protected stat c long startT  ;
+  protected stat c Earlyb rdStatusCode statusCode;
+  protected stat c Str ng status ssage;
+  protected stat c f nal Atom cBoolean THR FT_PORT_OPEN = new Atom cBoolean(false);
+  protected stat c f nal Atom cBoolean WARMUP_THR FT_PORT_OPEN = new Atom cBoolean(false);
+  protected stat c f nal Atom cBoolean THR FT_SERV CE_STARTED = new Atom cBoolean(false);
 
-  private static final List<EarlybirdEvent> EARLYBIRD_SERVER_EVENTS = Lists.newArrayList();
-  private static class EarlybirdEvent {
-    private final String eventName;
-    private final long timestampMillis;
-    private final long timeSinceServerStartMillis;
-    private final long durationMillis;
+  pr vate stat c f nal L st<Earlyb rdEvent> EARLYB RD_SERVER_EVENTS = L sts.newArrayL st();
+  pr vate stat c class Earlyb rdEvent {
+    pr vate f nal Str ng eventNa ;
+    pr vate f nal long t  stampM ll s;
+    pr vate f nal long t  S nceServerStartM ll s;
+    pr vate f nal long durat onM ll s;
 
-    public EarlybirdEvent(String eventName, long timestampMillis) {
-      this(eventName, timestampMillis, -1);
+    publ c Earlyb rdEvent(Str ng eventNa , long t  stampM ll s) {
+      t (eventNa , t  stampM ll s, -1);
     }
 
-    public EarlybirdEvent(
-        String eventName,
-        long timestampMillis,
-        long eventDurationMillis) {
-      this.eventName = eventName;
-      this.timestampMillis = timestampMillis;
-      this.timeSinceServerStartMillis = timestampMillis - startTime;
-      this.durationMillis = eventDurationMillis;
+    publ c Earlyb rdEvent(
+        Str ng eventNa ,
+        long t  stampM ll s,
+        long eventDurat onM ll s) {
+      t .eventNa  = eventNa ;
+      t .t  stampM ll s = t  stampM ll s;
+      t .t  S nceServerStartM ll s = t  stampM ll s - startT  ;
+      t .durat onM ll s = eventDurat onM ll s;
     }
 
-    public String getEventLogString() {
-      String result = String.format(
+    publ c Str ng getEventLogStr ng() {
+      Str ng result = Str ng.format(
           "%s %s",
-          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(timestampMillis)),
-          eventName);
+          new S mpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(t  stampM ll s)),
+          eventNa );
 
-      if (durationMillis > 0) {
-        result += String.format(
-            ", took: %s", Duration.apply(durationMillis, TimeUnit.MILLISECONDS).toString());
+       f (durat onM ll s > 0) {
+        result += Str ng.format(
+            ", took: %s", Durat on.apply(durat onM ll s, T  Un .M LL SECONDS).toStr ng());
       }
 
-      result += String.format(
-          ", time since server start: %s",
-          Duration.apply(timeSinceServerStartMillis, TimeUnit.MILLISECONDS).toString()
+      result += Str ng.format(
+          ", t   s nce server start: %s",
+          Durat on.apply(t  S nceServerStartM ll s, T  Un .M LL SECONDS).toStr ng()
       );
 
       return result;
     }
   }
 
-  private EarlybirdStatus() {
+  pr vate Earlyb rdStatus() {
   }
 
-  public static synchronized void setStartTime(long time) {
-    startTime = time;
-    LOG.info("startTime set to " + time);
+  publ c stat c synchron zed vo d setStartT  (long t  ) {
+    startT   = t  ;
+    LOG. nfo("startT   set to " + t  );
   }
 
-  public static synchronized void setStatus(EarlybirdStatusCode code) {
+  publ c stat c synchron zed vo d setStatus(Earlyb rdStatusCode code) {
     setStatus(code, null);
   }
 
-  public static synchronized void setStatus(EarlybirdStatusCode code, String message) {
+  publ c stat c synchron zed vo d setStatus(Earlyb rdStatusCode code, Str ng  ssage) {
     statusCode = code;
-    statusMessage = message;
-    LOG.info("status set to " + code + (message != null ? " with message " + message : ""));
+    status ssage =  ssage;
+    LOG. nfo("status set to " + code + ( ssage != null ? " w h  ssage " +  ssage : ""));
   }
 
-  public static synchronized long getStartTime() {
-    return startTime;
+  publ c stat c synchron zed long getStartT  () {
+    return startT  ;
   }
 
-  public static synchronized boolean isStarting() {
-    return statusCode == EarlybirdStatusCode.STARTING;
+  publ c stat c synchron zed boolean  sStart ng() {
+    return statusCode == Earlyb rdStatusCode.START NG;
   }
 
-  public static synchronized boolean hasStarted() {
-    return statusCode == EarlybirdStatusCode.CURRENT;
+  publ c stat c synchron zed boolean hasStarted() {
+    return statusCode == Earlyb rdStatusCode.CURRENT;
   }
 
-  public static boolean isThriftServiceStarted() {
-    return THRIFT_SERVICE_STARTED.get();
+  publ c stat c boolean  sThr ftServ ceStarted() {
+    return THR FT_SERV CE_STARTED.get();
   }
 
-  public static synchronized EarlybirdStatusCode getStatusCode() {
+  publ c stat c synchron zed Earlyb rdStatusCode getStatusCode() {
     return statusCode;
   }
 
-  public static synchronized String getStatusMessage() {
-    return (statusMessage == null ? "" : statusMessage + ", ")
-        + "warmup thrift port is " + (WARMUP_THRIFT_PORT_OPEN.get() ? "OPEN" : "CLOSED")
-        + ", production thrift port is " + (THRIFT_PORT_OPEN.get() ? "OPEN" : "CLOSED");
+  publ c stat c synchron zed Str ng getStatus ssage() {
+    return (status ssage == null ? "" : status ssage + ", ")
+        + "warmup thr ft port  s " + (WARMUP_THR FT_PORT_OPEN.get() ? "OPEN" : "CLOSED")
+        + ", product on thr ft port  s " + (THR FT_PORT_OPEN.get() ? "OPEN" : "CLOSED");
   }
 
-  public static synchronized void recordEarlybirdEvent(String eventName) {
-    long timeMillis = System.currentTimeMillis();
-    EARLYBIRD_SERVER_EVENTS.add(new EarlybirdEvent(eventName, timeMillis));
+  publ c stat c synchron zed vo d recordEarlyb rdEvent(Str ng eventNa ) {
+    long t  M ll s = System.currentT  M ll s();
+    EARLYB RD_SERVER_EVENTS.add(new Earlyb rdEvent(eventNa , t  M ll s));
   }
 
-  private static String getBeginEventMessage(String eventName) {
-    return "[Begin Event] " + eventName;
+  pr vate stat c Str ng getBeg nEvent ssage(Str ng eventNa ) {
+    return "[Beg n Event] " + eventNa ;
   }
 
-  private static String getEndEventMessage(String eventName) {
-    return "[ End Event ] " + eventName;
+  pr vate stat c Str ng getEndEvent ssage(Str ng eventNa ) {
+    return "[ End Event ] " + eventNa ;
   }
 
   /**
-   * Records the beginning of the given event.
+   * Records t  beg nn ng of t  g ven event.
    *
-   * @param eventName The event name.
-   * @param startupMetric The metric that will be used to keep track of the time for this event.
+   * @param eventNa  T  event na .
+   * @param startup tr c T   tr c that w ll be used to keep track of t  t   for t  event.
    */
-  public static synchronized void beginEvent(String eventName,
-                                             SearchIndexingMetricSet.StartupMetric startupMetric) {
-    long timeMillis = System.currentTimeMillis();
-    String eventMessage = getBeginEventMessage(eventName);
-    LOG.info(eventMessage);
-    EARLYBIRD_SERVER_EVENTS.add(new EarlybirdEvent(eventMessage, timeMillis));
+  publ c stat c synchron zed vo d beg nEvent(Str ng eventNa ,
+                                             Search ndex ng tr cSet.Startup tr c startup tr c) {
+    long t  M ll s = System.currentT  M ll s();
+    Str ng event ssage = getBeg nEvent ssage(eventNa );
+    LOG. nfo(event ssage);
+    EARLYB RD_SERVER_EVENTS.add(new Earlyb rdEvent(event ssage, t  M ll s));
 
-    startupMetric.begin();
+    startup tr c.beg n();
   }
 
   /**
-   * Records the end of the given event.
+   * Records t  end of t  g ven event.
    *
-   * @param eventName The event name.
-   * @param startupMetric The metric used to keep track of the time for this event.
+   * @param eventNa  T  event na .
+   * @param startup tr c T   tr c used to keep track of t  t   for t  event.
    */
-  public static synchronized void endEvent(String eventName,
-                                           SearchIndexingMetricSet.StartupMetric startupMetric) {
-    long timeMillis = System.currentTimeMillis();
+  publ c stat c synchron zed vo d endEvent(Str ng eventNa ,
+                                           Search ndex ng tr cSet.Startup tr c startup tr c) {
+    long t  M ll s = System.currentT  M ll s();
 
-    String beginEventMessage = getBeginEventMessage(eventName);
-    Optional<EarlybirdEvent> beginEventOpt = EARLYBIRD_SERVER_EVENTS.stream()
-        .filter(event -> event.eventName.equals(beginEventMessage))
-        .findFirst();
+    Str ng beg nEvent ssage = getBeg nEvent ssage(eventNa );
+    Opt onal<Earlyb rdEvent> beg nEventOpt = EARLYB RD_SERVER_EVENTS.stream()
+        .f lter(event -> event.eventNa .equals(beg nEvent ssage))
+        .f ndF rst();
 
-    String eventMessage = getEndEventMessage(eventName);
-    LOG.info(eventMessage);
-    EarlybirdEvent endEvent = new EarlybirdEvent(
-        eventMessage,
-        timeMillis,
-        beginEventOpt.map(e -> timeMillis - e.timestampMillis).orElse(-1L));
+    Str ng event ssage = getEndEvent ssage(eventNa );
+    LOG. nfo(event ssage);
+    Earlyb rdEvent endEvent = new Earlyb rdEvent(
+        event ssage,
+        t  M ll s,
+        beg nEventOpt.map(e -> t  M ll s - e.t  stampM ll s).orElse(-1L));
 
-    EARLYBIRD_SERVER_EVENTS.add(endEvent);
+    EARLYB RD_SERVER_EVENTS.add(endEvent);
 
-    startupMetric.end(endEvent.durationMillis);
+    startup tr c.end(endEvent.durat onM ll s);
   }
 
-  public static synchronized void clearAllEvents() {
-    EARLYBIRD_SERVER_EVENTS.clear();
+  publ c stat c synchron zed vo d clearAllEvents() {
+    EARLYB RD_SERVER_EVENTS.clear();
   }
 
-  public static String getBuildSha() {
-    return BUILD_SHA;
+  publ c stat c Str ng getBu ldSha() {
+    return BU LD_SHA;
   }
 
   /**
-   * Returns the list of all earlybird events that happened since the server started.
+   * Returns t  l st of all earlyb rd events that happened s nce t  server started.
    */
-  public static synchronized Iterable<String> getEarlybirdEvents() {
-    List<String> eventLog = Lists.newArrayListWithCapacity(EARLYBIRD_SERVER_EVENTS.size());
-    for (EarlybirdEvent event : EARLYBIRD_SERVER_EVENTS) {
-      eventLog.add(event.getEventLogString());
+  publ c stat c synchron zed  erable<Str ng> getEarlyb rdEvents() {
+    L st<Str ng> eventLog = L sts.newArrayL stW hCapac y(EARLYB RD_SERVER_EVENTS.s ze());
+    for (Earlyb rdEvent event : EARLYB RD_SERVER_EVENTS) {
+      eventLog.add(event.getEventLogStr ng());
     }
     return eventLog;
   }
 
-  private static String getBuildShaFromVars() {
-    BuildInfo buildInfo = new BuildInfo();
-    String buildSha = buildInfo.getProperties().getProperty(BuildInfo.Key.GIT_REVISION.value);
-    if (buildSha != null) {
-      return buildSha;
+  pr vate stat c Str ng getBu ldShaFromVars() {
+    Bu ld nfo bu ld nfo = new Bu ld nfo();
+    Str ng bu ldSha = bu ld nfo.getPropert es().getProperty(Bu ld nfo.Key.G T_REV S ON.value);
+     f (bu ldSha != null) {
+      return bu ldSha;
     } else {
       return "UNKNOWN";
     }

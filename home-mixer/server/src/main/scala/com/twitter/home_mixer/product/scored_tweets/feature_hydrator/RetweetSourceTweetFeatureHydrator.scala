@@ -1,75 +1,75 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.thriftscala.CandidateTweet
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_ranker.T  l neRanker nNetworkS ceT etsByT et dMapFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.search.common.features.thr ftscala.Thr ftT etFeatures
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l neranker.thr ftscala.Cand dateT et
 
-object SourceTweetEarlybirdFeature extends Feature[TweetCandidate, Option[ThriftTweetFeatures]]
+object S ceT etEarlyb rdFeature extends Feature[T etCand date, Opt on[Thr ftT etFeatures]]
 
 /**
- * Feature Hydrator that bulk hydrates source tweets' features to retweet candidates
+ * Feature Hydrator that bulk hydrates s ce t ets' features to ret et cand dates
  */
-object RetweetSourceTweetFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+object Ret etS ceT etFeatureHydrator
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RetweetSourceTweet")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Ret etS ceT et")
 
-  override val features: Set[Feature[_, _]] = Set(
-    SourceTweetEarlybirdFeature,
+  overr de val features: Set[Feature[_, _]] = Set(
+    S ceT etEarlyb rdFeature,
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(SourceTweetEarlybirdFeature, None)
-    .build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add(S ceT etEarlyb rdFeature, None)
+    .bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val sourceTweetsByTweetId: Option[Map[Long, CandidateTweet]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val s ceT etsByT et d: Opt on[Map[Long, Cand dateT et]] = {
       query.features.map(
         _.getOrElse(
-          TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature,
-          Map.empty[Long, CandidateTweet]))
+          T  l neRanker nNetworkS ceT etsByT et dMapFeature,
+          Map.empty[Long, Cand dateT et]))
     }
 
     /**
-     * Return DefaultFeatureMap (no-op to candidate) when it is unfeasible to hydrate the
-     * source tweet's feature to the current candidate: early bird does not return source
-     * tweets info / candidate is not a retweet / sourceTweetId is not found
+     * Return DefaultFeatureMap (no-op to cand date) w n    s unfeas ble to hydrate t 
+     * s ce t et's feature to t  current cand date: early b rd does not return s ce
+     * t ets  nfo / cand date  s not a ret et / s ceT et d  s not found
      */
-    Stitch.value {
-      if (sourceTweetsByTweetId.exists(_.nonEmpty)) {
-        candidates.map { candidate =>
-          val candidateIsRetweet = candidate.features.getOrElse(IsRetweetFeature, false)
-          val sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None)
-          if (!candidateIsRetweet || sourceTweetId.isEmpty) {
+    St ch.value {
+       f (s ceT etsByT et d.ex sts(_.nonEmpty)) {
+        cand dates.map { cand date =>
+          val cand date sRet et = cand date.features.getOrElse( sRet etFeature, false)
+          val s ceT et d = cand date.features.getOrElse(S ceT et dFeature, None)
+           f (!cand date sRet et || s ceT et d. sEmpty) {
             DefaultFeatureMap
           } else {
-            val sourceTweet = sourceTweetsByTweetId.flatMap(_.get(sourceTweetId.get))
-            if (sourceTweet.nonEmpty) {
-              val source = sourceTweet.get
-              FeatureMapBuilder()
-                .add(SourceTweetEarlybirdFeature, source.features)
-                .build()
+            val s ceT et = s ceT etsByT et d.flatMap(_.get(s ceT et d.get))
+             f (s ceT et.nonEmpty) {
+              val s ce = s ceT et.get
+              FeatureMapBu lder()
+                .add(S ceT etEarlyb rdFeature, s ce.features)
+                .bu ld()
             } else {
               DefaultFeatureMap
             }
           }
         }
       } else {
-        candidates.map(_ => DefaultFeatureMap)
+        cand dates.map(_ => DefaultFeatureMap)
       }
     }
   }

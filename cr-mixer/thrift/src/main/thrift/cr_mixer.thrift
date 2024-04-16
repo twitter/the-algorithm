@@ -1,104 +1,104 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-include "ads.thrift"
-include "candidate_generation_key.thrift"
-include "product.thrift"
-include "product_context.thrift"
-include "validation.thrift"
-include "metric_tags.thrift"
-include "related_tweet.thrift"
-include "uteg.thrift"
-include "frs_based_tweet.thrift"
-include "related_video_tweet.thrift"
-include "topic_tweet.thrift"
+ nclude "ads.thr ft"
+ nclude "cand date_generat on_key.thr ft"
+ nclude "product.thr ft"
+ nclude "product_context.thr ft"
+ nclude "val dat on.thr ft"
+ nclude " tr c_tags.thr ft"
+ nclude "related_t et.thr ft"
+ nclude "uteg.thr ft"
+ nclude "frs_based_t et.thr ft"
+ nclude "related_v deo_t et.thr ft"
+ nclude "top c_t et.thr ft"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/timelines/render/response.thrift"
-include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/strato/graphql/slice.thrift"
+ nclude "com/tw ter/product_m xer/core/cl ent_context.thr ft"
+ nclude "com/tw ter/t  l nes/render/response.thr ft"
+ nclude "f natra-thr ft/f natra_thr ft_except ons.thr ft"
+ nclude "com/tw ter/strato/graphql/sl ce.thr ft"
 
-struct CrMixerTweetRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct CrM xerT etRequest {
+	1: requ red cl ent_context.Cl entContext cl entContext
+	2: requ red product.Product product
+	# Product-spec f c para ters should be placed  n t  Product Context
+	3: opt onal product_context.ProductContext productContext
+	4: opt onal l st< 64> excludedT et ds (personalDataType = 'T et d')
+} (pers sted='true', hasPersonalData='true')
 
-struct TweetRecommendation {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required double score
-  3: optional list<metric_tags.MetricTag> metricTags
-  # 4: the author of the tweet candidate. To be used by Content-Mixer to unblock the Hydra experiment.
-  4: optional i64 authorId (personalDataType = 'UserId')
-  # 5: extra info about candidate generation. To be used by Content-Mixer to unblock the Hydra experiment.
-  5: optional candidate_generation_key.CandidateGenerationKey candidateGenerationKey
-  # 1001: the latest timestamp of fav signals. If null, the candidate is not generated from fav signals
-  1001: optional i64 latestSourceSignalTimestampInMillis(personalDataType = 'PublicTimestamp')
-} (persisted='true', hasPersonalData = 'true')
+struct T etRecom ndat on {
+  1: requ red  64 t et d (personalDataType = 'T et d')
+  2: requ red double score
+  3: opt onal l st< tr c_tags. tr cTag>  tr cTags
+  # 4: t  author of t  t et cand date. To be used by Content-M xer to unblock t  Hydra exper  nt.
+  4: opt onal  64 author d (personalDataType = 'User d')
+  # 5: extra  nfo about cand date generat on. To be used by Content-M xer to unblock t  Hydra exper  nt.
+  5: opt onal cand date_generat on_key.Cand dateGenerat onKey cand dateGenerat onKey
+  # 1001: t  latest t  stamp of fav s gnals.  f null, t  cand date  s not generated from fav s gnals
+  1001: opt onal  64 latestS ceS gnalT  stamp nM ll s(personalDataType = 'Publ cT  stamp')
+} (pers sted='true', hasPersonalData = 'true')
 
-struct CrMixerTweetResponse {
- 1: required list<TweetRecommendation> tweets
-} (persisted='true')
+struct CrM xerT etResponse {
+ 1: requ red l st<T etRecom ndat on> t ets
+} (pers sted='true')
 
-service CrMixer {
-  CrMixerTweetResponse getTweetRecommendations(1: CrMixerTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+serv ce CrM xer {
+  CrM xerT etResponse getT etRecom ndat ons(1: CrM xerT etRequest request) throws (
+    # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+    1: val dat on.Val dat onExcept onL st val dat onErrors;
+    # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+    2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  # getRelatedTweetsForQueryTweet and getRelatedTweetsForQueryAuthor do very similar things
-  # We can merge these two endpoints into one unified endpoint
-  related_tweet.RelatedTweetResponse getRelatedTweetsForQueryTweet(1: related_tweet.RelatedTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  # getRelatedT etsForQueryT et and getRelatedT etsForQueryAuthor do very s m lar th ngs
+  #   can  rge t se two endpo nts  nto one un f ed endpo nt
+  related_t et.RelatedT etResponse getRelatedT etsForQueryT et(1: related_t et.RelatedT etRequest request) throws (
+    # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+    1: val dat on.Val dat onExcept onL st val dat onErrors;
+    # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+    2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  related_tweet.RelatedTweetResponse getRelatedTweetsForQueryAuthor(1: related_tweet.RelatedTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  related_t et.RelatedT etResponse getRelatedT etsForQueryAuthor(1: related_t et.RelatedT etRequest request) throws (
+    # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+    1: val dat on.Val dat onExcept onL st val dat onErrors;
+    # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+    2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  uteg.UtegTweetResponse getUtegTweetRecommendations(1: uteg.UtegTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  uteg.UtegT etResponse getUtegT etRecom ndat ons(1: uteg.UtegT etRequest request) throws (
+    # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+    1: val dat on.Val dat onExcept onL st val dat onErrors;
+    # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+    2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  frs_based_tweet.FrsTweetResponse getFrsBasedTweetRecommendations(1: frs_based_tweet.FrsTweetRequest request) throws (
-     # Validation errors - the details of which will be reported to clients on failure
-     1: validation.ValidationExceptionList validationErrors;
-     # Server errors - the details of which will not be reported to clients
-     2: finatra_thrift_exceptions.ServerError serverError
+  frs_based_t et.FrsT etResponse getFrsBasedT etRecom ndat ons(1: frs_based_t et.FrsT etRequest request) throws (
+     # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+     1: val dat on.Val dat onExcept onL st val dat onErrors;
+     # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+     2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  related_video_tweet.RelatedVideoTweetResponse getRelatedVideoTweetsForQueryTweet(1: related_video_tweet.RelatedVideoTweetRequest request) throws (
-      # Validation errors - the details of which will be reported to clients on failure
-      1: validation.ValidationExceptionList validationErrors;
-      # Server errors - the details of which will not be reported to clients
-      2: finatra_thrift_exceptions.ServerError serverError
+  related_v deo_t et.RelatedV deoT etResponse getRelatedV deoT etsForQueryT et(1: related_v deo_t et.RelatedV deoT etRequest request) throws (
+      # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+      1: val dat on.Val dat onExcept onL st val dat onErrors;
+      # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+      2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  ads.AdsResponse getAdsRecommendations(1: ads.AdsRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  ads.AdsResponse getAdsRecom ndat ons(1: ads.AdsRequest request) throws (
+    # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+    1: val dat on.Val dat onExcept onL st val dat onErrors;
+    # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+    2: f natra_thr ft_except ons.ServerError serverError
   )
 
-  topic_tweet.TopicTweetResponse getTopicTweetRecommendations(1: topic_tweet.TopicTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  top c_t et.Top cT etResponse getTop cT etRecom ndat ons(1: top c_t et.Top cT etRequest request) throws (
+    # Val dat on errors - t  deta ls of wh ch w ll be reported to cl ents on fa lure
+    1: val dat on.Val dat onExcept onL st val dat onErrors;
+    # Server errors - t  deta ls of wh ch w ll not be reported to cl ents
+    2: f natra_thr ft_except ons.ServerError serverError
   )
 }

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.fat gue_ranker
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ImpressionBasedFatigueRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(ImpressionBasedFatigueRankerParams.ScribeRankingInfoInFatigueRanker)
+@S ngleton
+class  mpress onBasedFat gueRankerFSConf g @ nject() extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] =
+    Seq( mpress onBasedFat gueRankerParams.Scr beRank ng nfo nFat gueRanker)
 }

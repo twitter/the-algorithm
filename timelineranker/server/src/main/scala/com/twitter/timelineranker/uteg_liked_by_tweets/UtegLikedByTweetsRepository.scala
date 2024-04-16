@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.model.Cand dateT etsResult
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * A repository of YML tweets candidiates
+ * A repos ory of YML t ets cand d ates
  */
-class UtegLikedByTweetsRepository(source: UtegLikedByTweetsSource) {
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.get(query)
+class UtegL kedByT etsRepos ory(s ce: UtegL kedByT etsS ce) {
+  def get(query: RecapQuery): Future[Cand dateT etsResult] = {
+    s ce.get(query)
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.get(queries)
+  def get(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    s ce.get(quer es)
   }
 }

@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.util.Duration
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .constant.SharedFeatures.T MESTAMP
+ mport com.tw ter.ut l.Durat on
 
 /**
- * The default TimeDecay implementation for real time aggregates.
+ * T  default T  Decay  mple ntat on for real t   aggregates.
  *
- * @param featureIdToHalfLife A precomputed map from aggregate feature ids to their half lives.
- * @param timestampFeatureId A discrete timestamp feature id.
+ * @param feature dToHalfL fe A precomputed map from aggregate feature  ds to t  r half l ves.
+ * @param t  stampFeature d A d screte t  stamp feature  d.
  */
-case class RealTimeAggregateTimeDecay(
-  featureIdToHalfLife: Map[Long, Duration],
-  timestampFeatureId: Long = TIMESTAMP.getFeatureId) {
+case class RealT  AggregateT  Decay(
+  feature dToHalfL fe: Map[Long, Durat on],
+  t  stampFeature d: Long = T MESTAMP.getFeature d) {
 
   /**
-   * Mutates the data record which is just a reference to the input.
+   * Mutates t  data record wh ch  s just a reference to t   nput.
    *
-   * @param record    Data record to apply decay to (is mutated).
-   * @param timeNow   The current read time (in milliseconds) to decay counts forward to.
+   * @param record    Data record to apply decay to ( s mutated).
+   * @param t  Now   T  current read t   ( n m ll seconds) to decay counts forward to.
    */
-  def apply(record: DataRecord, timeNow: Long): Unit = {
-    if (record.isSetDiscreteFeatures) {
-      val discreteFeatures = record.getDiscreteFeatures
-      if (discreteFeatures.containsKey(timestampFeatureId)) {
-        if (record.isSetContinuousFeatures) {
-          val ctsFeatures = record.getContinuousFeatures
+  def apply(record: DataRecord, t  Now: Long): Un  = {
+     f (record. sSetD screteFeatures) {
+      val d screteFeatures = record.getD screteFeatures
+       f (d screteFeatures.conta nsKey(t  stampFeature d)) {
+         f (record. sSetCont nuousFeatures) {
+          val ctsFeatures = record.getCont nuousFeatures
 
-          val storedTimestamp: Long = discreteFeatures.get(timestampFeatureId)
-          val scaledDt = if (timeNow > storedTimestamp) {
-            (timeNow - storedTimestamp).toDouble * math.log(2)
+          val storedT  stamp: Long = d screteFeatures.get(t  stampFeature d)
+          val scaledDt =  f (t  Now > storedT  stamp) {
+            (t  Now - storedT  stamp).toDouble * math.log(2)
           } else 0.0
-          featureIdToHalfLife.foreach {
-            case (featureId, halfLife) =>
-              if (ctsFeatures.containsKey(featureId)) {
-                val storedValue = ctsFeatures.get(featureId)
+          feature dToHalfL fe.foreach {
+            case (feature d, halfL fe) =>
+               f (ctsFeatures.conta nsKey(feature d)) {
+                val storedValue = ctsFeatures.get(feature d)
                 val alpha =
-                  if (halfLife.inMilliseconds != 0) math.exp(-scaledDt / halfLife.inMilliseconds)
+                   f (halfL fe. nM ll seconds != 0) math.exp(-scaledDt / halfL fe. nM ll seconds)
                   else 0
                 val decayedValue: Double = alpha * storedValue
-                record.putToContinuousFeatures(featureId, decayedValue)
+                record.putToCont nuousFeatures(feature d, decayedValue)
               }
           }
         }
-        discreteFeatures.remove(timestampFeatureId)
+        d screteFeatures.remove(t  stampFeature d)
       }
     }
   }

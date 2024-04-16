@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
 /**
- * Hydrates the conversationId field for any tweet that is a reply to another tweet.
- * It uses that other tweet's conversationId.
+ * Hydrates t  conversat on d f eld for any t et that  s a reply to anot r t et.
+ *   uses that ot r t et's conversat on d.
  */
-object ConversationIdHydrator {
-  type Type = ValueHydrator[Option[ConversationId], TweetCtx]
+object Conversat on dHydrator {
+  type Type = ValueHydrator[Opt on[Conversat on d], T etCtx]
 
-  val hydratedField: FieldByPath =
-    fieldByPath(Tweet.CoreDataField, TweetCoreData.ConversationIdField)
+  val hydratedF eld: F eldByPath =
+    f eldByPath(T et.CoreDataF eld, T etCoreData.Conversat on dF eld)
 
-  def apply(repo: ConversationIdRepository.Type): Type =
-    ValueHydrator[Option[ConversationId], TweetCtx] { (_, ctx) =>
-      ctx.inReplyToTweetId match {
+  def apply(repo: Conversat on dRepos ory.Type): Type =
+    ValueHydrator[Opt on[Conversat on d], T etCtx] { (_, ctx) =>
+      ctx. nReplyToT et d match {
         case None =>
-          // Not a reply to another tweet, use tweet id as conversation root
-          Stitch.value(ValueState.modified(Some(ctx.tweetId)))
-        case Some(parentId) =>
-          // Lookup conversation id from in-reply-to tweet
-          repo(ConversationIdKey(ctx.tweetId, parentId)).liftToTry.map {
-            case Return(rootId) => ValueState.modified(Some(rootId))
-            case Throw(_) => ValueState.partial(None, hydratedField)
+          // Not a reply to anot r t et, use t et  d as conversat on root
+          St ch.value(ValueState.mod f ed(So (ctx.t et d)))
+        case So (parent d) =>
+          // Lookup conversat on  d from  n-reply-to t et
+          repo(Conversat on dKey(ctx.t et d, parent d)).l ftToTry.map {
+            case Return(root d) => ValueState.mod f ed(So (root d))
+            case Throw(_) => ValueState.part al(None, hydratedF eld)
           }
       }
-    }.onlyIf((curr, _) => curr.isEmpty)
+    }.only f((curr, _) => curr. sEmpty)
 }

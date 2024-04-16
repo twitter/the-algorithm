@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import inference.GrpcService.InferTensorContents
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport  nference.GrpcServ ce. nferTensorContents
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-case object SparseMapInferInputTensorBuilder
-    extends InferInputTensorBuilder[Option[Map[Int, Double]]] {
+case object SparseMap nfer nputTensorBu lder
+    extends  nfer nputTensorBu lder[Opt on[Map[ nt, Double]]] {
 
-  private final val batchFeatureNameSuffix: String = "batch"
-  private final val keyFeatureNameSuffix: String = "key"
-  private final val valueFeatureNameSuffix: String = "value"
+  pr vate f nal val batchFeatureNa Suff x: Str ng = "batch"
+  pr vate f nal val keyFeatureNa Suff x: Str ng = "key"
+  pr vate f nal val valueFeatureNa Suff x: Str ng = "value"
 
   def apply(
-    featureName: String,
-    featureValues: Seq[Option[Map[Int, Double]]]
-  ): Seq[InferInputTensor] = {
-    val batchIdsTensorContents = InferTensorContents.newBuilder()
-    val sparseKeysTensorContents = InferTensorContents.newBuilder()
-    val sparseValuesTensorContents = InferTensorContents.newBuilder()
-    featureValues.zipWithIndex.foreach {
-      case (featureValueOption, batchIndex) =>
-        featureValueOption.foreach { featureValue =>
+    featureNa : Str ng,
+    featureValues: Seq[Opt on[Map[ nt, Double]]]
+  ): Seq[ nfer nputTensor] = {
+    val batch dsTensorContents =  nferTensorContents.newBu lder()
+    val sparseKeysTensorContents =  nferTensorContents.newBu lder()
+    val sparseValuesTensorContents =  nferTensorContents.newBu lder()
+    featureValues.z pW h ndex.foreach {
+      case (featureValueOpt on, batch ndex) =>
+        featureValueOpt on.foreach { featureValue =>
           featureValue.foreach {
             case (sparseKey, sparseValue) =>
-              batchIdsTensorContents.addInt64Contents(batchIndex.toLong)
-              sparseKeysTensorContents.addInt64Contents(sparseKey.toLong)
+              batch dsTensorContents.add nt64Contents(batch ndex.toLong)
+              sparseKeysTensorContents.add nt64Contents(sparseKey.toLong)
               sparseValuesTensorContents.addFp32Contents(sparseValue.floatValue)
           }
         }
     }
 
-    val batchIdsInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, batchFeatureNameSuffix).mkString("_"))
-      .addShape(batchIdsTensorContents.getInt64ContentsCount)
+    val batch ds nputTensor =  nfer nputTensor
+      .newBu lder()
+      .setNa (Seq(featureNa , batchFeatureNa Suff x).mkStr ng("_"))
+      .addShape(batch dsTensorContents.get nt64ContentsCount)
       .addShape(1)
-      .setDatatype("INT64")
-      .setContents(batchIdsTensorContents)
-      .build()
+      .setDatatype(" NT64")
+      .setContents(batch dsTensorContents)
+      .bu ld()
 
-    val sparseKeysInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, keyFeatureNameSuffix).mkString("_"))
-      .addShape(sparseKeysTensorContents.getInt64ContentsCount)
+    val sparseKeys nputTensor =  nfer nputTensor
+      .newBu lder()
+      .setNa (Seq(featureNa , keyFeatureNa Suff x).mkStr ng("_"))
+      .addShape(sparseKeysTensorContents.get nt64ContentsCount)
       .addShape(1)
-      .setDatatype("INT64")
+      .setDatatype(" NT64")
       .setContents(sparseKeysTensorContents)
-      .build()
+      .bu ld()
 
-    val sparseValuesInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, valueFeatureNameSuffix).mkString("_"))
+    val sparseValues nputTensor =  nfer nputTensor
+      .newBu lder()
+      .setNa (Seq(featureNa , valueFeatureNa Suff x).mkStr ng("_"))
       .addShape(sparseValuesTensorContents.getFp32ContentsCount)
       .addShape(1)
       .setDatatype("FP32")
       .setContents(sparseValuesTensorContents)
-      .build()
+      .bu ld()
 
-    Seq(batchIdsInputTensor, sparseKeysInputTensor, sparseValuesInputTensor)
+    Seq(batch ds nputTensor, sparseKeys nputTensor, sparseValues nputTensor)
   }
 }

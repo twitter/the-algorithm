@@ -1,63 +1,63 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.model.notification.ActivityNotification
-import com.twitter.notificationservice.model.notification.MentionNotification
-import com.twitter.notificationservice.model.notification.MentionQuoteNotification
-import com.twitter.notificationservice.model.notification.Notification
-import com.twitter.notificationservice.model.notification.QuoteTweetNotification
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetSource
-import com.twitter.visibility.features.NotificationIsOnCommunityTweet
-import com.twitter.visibility.models.CommunityTweet
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.not f cat onserv ce.model.not f cat on.Act v yNot f cat on
+ mport com.tw ter.not f cat onserv ce.model.not f cat on. nt onNot f cat on
+ mport com.tw ter.not f cat onserv ce.model.not f cat on. nt onQuoteNot f cat on
+ mport com.tw ter.not f cat onserv ce.model.not f cat on.Not f cat on
+ mport com.tw ter.not f cat onserv ce.model.not f cat on.QuoteT etNot f cat on
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.T etS ce
+ mport com.tw ter.v s b l y.features.Not f cat on sOnCommun yT et
+ mport com.tw ter.v s b l y.models.Commun yT et
 
-object CommunityNotificationFeatures {
-  def ForNonCommunityTweetNotification: FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(NotificationIsOnCommunityTweet, false)
+object Commun yNot f cat onFeatures {
+  def ForNonCommun yT etNot f cat on: FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(Not f cat on sOnCommun yT et, false)
   }
 }
 
-class CommunityNotificationFeatures(
-  tweetSource: TweetSource,
-  enableCommunityTweetHydration: Gate[Long],
-  statsReceiver: StatsReceiver) {
+class Commun yNot f cat onFeatures(
+  t etS ce: T etS ce,
+  enableCommun yT etHydrat on: Gate[Long],
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("community_notification_features")
-  private[this] val requestsCounter = scopedStatsReceiver.counter("requests")
-  private[this] val hydrationsCounter = scopedStatsReceiver.counter("hydrations")
-  private[this] val notificationIsOnCommunityTweetCounter =
-    scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("true")
-  private[this] val notificationIsNotOnCommunityTweetCounter =
-    scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("false")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("commun y_not f cat on_features")
+  pr vate[t ] val requestsCounter = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val hydrat onsCounter = scopedStatsRece ver.counter("hydrat ons")
+  pr vate[t ] val not f cat on sOnCommun yT etCounter =
+    scopedStatsRece ver.scope(Not f cat on sOnCommun yT et.na ).counter("true")
+  pr vate[t ] val not f cat on sNotOnCommun yT etCounter =
+    scopedStatsRece ver.scope(Not f cat on sOnCommun yT et.na ).counter("false")
 
-  def forNotification(notification: Notification): FeatureMapBuilder => FeatureMapBuilder = {
-    requestsCounter.incr()
-    val isCommunityTweetResult = getTweetIdOption(notification) match {
-      case Some(tweetId) if enableCommunityTweetHydration(notification.target) =>
-        hydrationsCounter.incr()
-        tweetSource
-          .getTweet(tweetId)
+  def forNot f cat on(not f cat on: Not f cat on): FeatureMapBu lder => FeatureMapBu lder = {
+    requestsCounter. ncr()
+    val  sCommun yT etResult = getT et dOpt on(not f cat on) match {
+      case So (t et d)  f enableCommun yT etHydrat on(not f cat on.target) =>
+        hydrat onsCounter. ncr()
+        t etS ce
+          .getT et(t et d)
           .map {
-            case Some(tweet) if CommunityTweet(tweet).nonEmpty =>
-              notificationIsOnCommunityTweetCounter.incr()
+            case So (t et)  f Commun yT et(t et).nonEmpty =>
+              not f cat on sOnCommun yT etCounter. ncr()
               true
             case _ =>
-              notificationIsNotOnCommunityTweetCounter.incr()
+              not f cat on sNotOnCommun yT etCounter. ncr()
               false
           }
-      case _ => Stitch.False
+      case _ => St ch.False
     }
-    _.withFeature(NotificationIsOnCommunityTweet, isCommunityTweetResult)
+    _.w hFeature(Not f cat on sOnCommun yT et,  sCommun yT etResult)
   }
 
-  private[this] def getTweetIdOption(notification: Notification): Option[Long] = {
-    notification match {
-      case n: MentionNotification => Some(n.mentioningTweetId)
-      case n: MentionQuoteNotification => Some(n.mentioningTweetId)
-      case n: QuoteTweetNotification => Some(n.quotedTweetId)
-      case n: ActivityNotification[_] if n.visibilityTweets.contains(n.objectId) => Some(n.objectId)
+  pr vate[t ] def getT et dOpt on(not f cat on: Not f cat on): Opt on[Long] = {
+    not f cat on match {
+      case n:  nt onNot f cat on => So (n. nt on ngT et d)
+      case n:  nt onQuoteNot f cat on => So (n. nt on ngT et d)
+      case n: QuoteT etNot f cat on => So (n.quotedT et d)
+      case n: Act v yNot f cat on[_]  f n.v s b l yT ets.conta ns(n.object d) => So (n.object d)
       case _ => None
     }
   }

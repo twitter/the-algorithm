@@ -1,250 +1,250 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.tw ter.product_m xer.core.p pel ne.cand date
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.transformer._
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseQueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r._
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf gCompan on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
 
-sealed trait BaseCandidatePipelineConfig[
-  -Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]]
-    extends PipelineConfig {
+sealed tra  BaseCand dateP pel neConf g[
+  -Query <: P pel neQuery,
+  Cand dateS ceQuery,
+  Cand dateS ceResult,
+  Result <: Un versalNoun[Any]]
+    extends P pel neConf g {
 
-  val identifier: CandidatePipelineIdentifier
+  val  dent f er: Cand dateP pel ne dent f er
 
   /**
-   * A candidate pipeline can fetch query-level features for use within the candidate source. It's
-   * generally recommended to set a hydrator in the parent recos or mixer pipeline if multiple
-   * candidate pipelines share the same feature but if a specific query feature hydrator is used
-   * by one pipeline and you don't want to block the others, you could explicitly set it here.
-   * If a feature is hydrated both in the parent pipeline or here, this one takes priority.
+   * A cand date p pel ne can fetch query-level features for use w h n t  cand date s ce.  's
+   * generally recom nded to set a hydrator  n t  parent recos or m xer p pel ne  f mult ple
+   * cand date p pel nes share t  sa  feature but  f a spec f c query feature hydrator  s used
+   * by one p pel ne and   don't want to block t  ot rs,   could expl c ly set    re.
+   *  f a feature  s hydrated both  n t  parent p pel ne or  re, t  one takes pr or y.
    */
-  def queryFeatureHydration: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
+  def queryFeatureHydrat on: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
 
   /**
-   * For query-level features that are dependent on query-level features from [[queryFeatureHydration]]
+   * For query-level features that are dependent on query-level features from [[queryFeatureHydrat on]]
    */
-  def queryFeatureHydrationPhase2: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
+  def queryFeatureHydrat onPhase2: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
 
   /**
-   * When these Params are defined, they will automatically be added as Gates in the pipeline
-   * by the CandidatePipelineBuilder
+   * W n t se Params are def ned, t y w ll automat cally be added as Gates  n t  p pel ne
+   * by t  Cand dateP pel neBu lder
    *
-   * The enabled decider param can to be used to quickly disable a Candidate Pipeline via Decider
+   * T  enabled dec der param can to be used to qu ckly d sable a Cand date P pel ne v a Dec der
    */
-  val enabledDeciderParam: Option[DeciderParam[Boolean]] = None
+  val enabledDec derParam: Opt on[Dec derParam[Boolean]] = None
 
   /**
-   * This supported client feature switch param can be used with a Feature Switch to control the
-   * rollout of a new Candidate Pipeline from dogfood to experiment to production
+   * T  supported cl ent feature sw ch param can be used w h a Feature Sw ch to control t 
+   * rollout of a new Cand date P pel ne from dogfood to exper  nt to product on
    */
-  val supportedClientParam: Option[FSParam[Boolean]] = None
+  val supportedCl entParam: Opt on[FSParam[Boolean]] = None
 
-  /** [[Gate]]s that are applied sequentially, the pipeline will only run if all the Gates are open */
+  /** [[Gate]]s that are appl ed sequent ally, t  p pel ne w ll only run  f all t  Gates are open */
   def gates: Seq[BaseGate[Query]] = Seq.empty
 
   /**
-   * A pair of transforms to adapt the underlying candidate source to the pipeline's query and result types
-   * Complex use cases such as those that need access to features should construct their own transformer, but
-   * for simple use cases, you can pass in an anonymous function.
+   * A pa r of transforms to adapt t  underly ng cand date s ce to t  p pel ne's query and result types
+   * Complex use cases such as those that need access to features should construct t  r own transfor r, but
+   * for s mple use cases,   can pass  n an anonymous funct on.
    * @example
-   * {{{ override val queryTransformer: CandidatePipelineQueryTransformer[Query, CandidateSourceQuery] = { query =>
-   *   query.toExampleThrift
+   * {{{ overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[Query, Cand dateS ceQuery] = { query =>
+   *   query.toExampleThr ft
    *  }
    * }}}
    */
-  def queryTransformer: BaseCandidatePipelineQueryTransformer[
+  def queryTransfor r: BaseCand dateP pel neQueryTransfor r[
     Query,
-    CandidateSourceQuery
+    Cand dateS ceQuery
   ]
 
-  /** Source for Candidates for this Pipeline */
-  def candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult]
+  /** S ce for Cand dates for t  P pel ne */
+  def cand dateS ce: BaseCand dateS ce[Cand dateS ceQuery, Cand dateS ceResult]
 
   /**
-   * [[CandidateFeatureTransformer]] allow you to define [[com.twitter.product_mixer.core.feature.Feature]] extraction logic from your [[CandidateSource]] results.
-   * If your candidate sources return [[com.twitter.product_mixer.core.feature.Feature]]s alongside the candidate that might be useful later on,
-   * add transformers for constructing feature maps.
+   * [[Cand dateFeatureTransfor r]] allow   to def ne [[com.tw ter.product_m xer.core.feature.Feature]] extract on log c from y  [[Cand dateS ce]] results.
+   *  f y  cand date s ces return [[com.tw ter.product_m xer.core.feature.Feature]]s alongs de t  cand date that m ght be useful later on,
+   * add transfor rs for construct ng feature maps.
    *
-   * @note If multiple transformers extract the same feature, the last one takes priority and is kept.
+   * @note  f mult ple transfor rs extract t  sa  feature, t  last one takes pr or y and  s kept.
    */
-  def featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[CandidateSourceResult]
+  def featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[Cand dateS ceResult]
   ] = Seq.empty
 
   /**
-   * a result Transformer may throw PipelineFailure for candidates that are malformed and
-   * should be removed. This should be exceptional behavior, and not a replacement for adding a Filter.
-   * Complex use cases such as those that need access to features should construct their own transformer, but
-   * for simple use cases, you can pass in an anonymous function.
+   * a result Transfor r may throw P pel neFa lure for cand dates that are malfor d and
+   * should be removed. T  should be except onal behav or, and not a replace nt for add ng a F lter.
+   * Complex use cases such as those that need access to features should construct t  r own transfor r, but
+   * for s mple use cases,   can pass  n an anonymous funct on.
    * @example
-   * {{{ override val queryTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Result] = { sourceResult =>
-   *   ExampleCandidate(sourceResult.id)
+   * {{{ overr de val queryTransfor r: Cand dateP pel neResultsTransfor r[Cand dateS ceResult, Result] = { s ceResult =>
+   *   ExampleCand date(s ceResult. d)
    *  }
    * }}}
    *
    */
-  val resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Result]
+  val resultTransfor r: Cand dateP pel neResultsTransfor r[Cand dateS ceResult, Result]
 
   /**
-   * Before filters are run, you can fetch features for each candidate.
+   * Before f lters are run,   can fetch features for each cand date.
    *
-   * Uses Stitch, so you're encouraged to use a working Stitch Adaptor to batch between candidates.
+   * Uses St ch, so   enc aged to use a work ng St ch Adaptor to batch bet en cand dates.
    *
-   * The existing features (from the candidate source) are passed in as an input. You are not expected
-   * to put them into the resulting feature map yourself - they will be merged for you by the platform.
+   * T  ex st ng features (from t  cand date s ce) are passed  n as an  nput.   are not expected
+   * to put t m  nto t  result ng feature map y self - t y w ll be  rged for   by t  platform.
    *
-   * This API is likely to change when Product Mixer does managed feature hydration
+   * T  AP   s l kely to change w n Product M xer does managed feature hydrat on
    */
-  val preFilterFeatureHydrationPhase1: Seq[BaseCandidateFeatureHydrator[Query, Result, _]] =
+  val preF lterFeatureHydrat onPhase1: Seq[BaseCand dateFeatureHydrator[Query, Result, _]] =
     Seq.empty
 
   /**
-   * A second phase of feature hydration that can be run before filtering and after the first phase
-   * of [[preFilterFeatureHydrationPhase1]]. You are not expected to put them into the resulting
-   * feature map yourself - they will be merged for you by the platform.
+   * A second phase of feature hydrat on that can be run before f lter ng and after t  f rst phase
+   * of [[preF lterFeatureHydrat onPhase1]].   are not expected to put t m  nto t  result ng
+   * feature map y self - t y w ll be  rged for   by t  platform.
    */
-  val preFilterFeatureHydrationPhase2: Seq[BaseCandidateFeatureHydrator[Query, Result, _]] =
+  val preF lterFeatureHydrat onPhase2: Seq[BaseCand dateFeatureHydrator[Query, Result, _]] =
     Seq.empty
 
-  /** A list of filters to apply. Filters will be applied in sequential order. */
-  def filters: Seq[Filter[Query, Result]] = Seq.empty
+  /** A l st of f lters to apply. F lters w ll be appl ed  n sequent al order. */
+  def f lters: Seq[F lter[Query, Result]] = Seq.empty
 
   /**
-   * After filters are run, you can fetch features for each candidate.
+   * After f lters are run,   can fetch features for each cand date.
    *
-   * Uses Stitch, so you're encouraged to use a working Stitch Adaptor to batch between candidates.
+   * Uses St ch, so   enc aged to use a work ng St ch Adaptor to batch bet en cand dates.
    *
-   * The existing features (from the candidate source) & pre-filtering are passed in as an input.
-   * You are not expected to put them into the resulting feature map yourself -
-   * they will be merged for you by the platform.
+   * T  ex st ng features (from t  cand date s ce) & pre-f lter ng are passed  n as an  nput.
+   *   are not expected to put t m  nto t  result ng feature map y self -
+   * t y w ll be  rged for   by t  platform.
    *
-   * This API is likely to change when Product Mixer does managed feature hydration
+   * T  AP   s l kely to change w n Product M xer does managed feature hydrat on
    */
-  val postFilterFeatureHydration: Seq[BaseCandidateFeatureHydrator[Query, Result, _]] = Seq.empty
+  val postF lterFeatureHydrat on: Seq[BaseCand dateFeatureHydrator[Query, Result, _]] = Seq.empty
 
   /**
-   * Decorators allow for adding Presentations to candidates. While the Presentation can contain any
-   * arbitrary data, Decorators are often used to add a UrtItemPresentation for URT item support, or
-   * a UrtModulePresentation for grouping the candidates in a URT module.
+   * Decorators allow for add ng Presentat ons to cand dates. Wh le t  Presentat on can conta n any
+   * arb rary data, Decorators are often used to add a Urt emPresentat on for URT  em support, or
+   * a UrtModulePresentat on for group ng t  cand dates  n a URT module.
    */
-  val decorator: Option[CandidateDecorator[Query, Result]] = None
+  val decorator: Opt on[Cand dateDecorator[Query, Result]] = None
 
   /**
-   * A candidate pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A cand date p pel ne can def ne a part al funct on to rescue fa lures  re. T y w ll be treated as fa lures
+   * from a mon or ng standpo nt, and cancellat on except ons w ll always be propagated (t y cannot be caught  re).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def fa lureClass f er: Part alFunct on[Throwable, P pel neFa lure] = Part alFunct on.empty
 
   /**
-   * Scorers for candidates. Scorers are executed in parallel. Order does not matter.
+   * Scorers for cand dates. Scorers are executed  n parallel. Order does not matter.
    */
   def scorers: Seq[Scorer[Query, Result]] = Seq.empty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alerts can be used to  nd cate t  p pel ne's serv ce level object ves. Alerts and
+   * dashboards w ll be automat cally created based on t   nformat on.
    */
   val alerts: Seq[Alert] = Seq.empty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * T   thod  s used by t  product m xer fra work to bu ld t  p pel ne.
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    factory: CandidatePipelineBuilderFactory
-  ): CandidatePipeline[Query] = {
-    factory.get.build(parentComponentIdentifierStack, this)
+  pr vate[core] f nal def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    factory: Cand dateP pel neBu lderFactory
+  ): Cand dateP pel ne[Query] = {
+    factory.get.bu ld(parentComponent dent f erStack, t )
   }
 }
 
-trait CandidatePipelineConfig[
-  -Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]]
-    extends BaseCandidatePipelineConfig[
+tra  Cand dateP pel neConf g[
+  -Query <: P pel neQuery,
+  Cand dateS ceQuery,
+  Cand dateS ceResult,
+  Result <: Un versalNoun[Any]]
+    extends BaseCand dateP pel neConf g[
       Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
+      Cand dateS ceQuery,
+      Cand dateS ceResult,
       Result
     ] {
-  override val gates: Seq[Gate[Query]] = Seq.empty
+  overr de val gates: Seq[Gate[Query]] = Seq.empty
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
     Query,
-    CandidateSourceQuery
+    Cand dateS ceQuery
   ]
 }
 
-trait DependentCandidatePipelineConfig[
-  -Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]]
-    extends BaseCandidatePipelineConfig[
+tra  DependentCand dateP pel neConf g[
+  -Query <: P pel neQuery,
+  Cand dateS ceQuery,
+  Cand dateS ceResult,
+  Result <: Un versalNoun[Any]]
+    extends BaseCand dateP pel neConf g[
       Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
+      Cand dateS ceQuery,
+      Cand dateS ceResult,
       Result
     ]
 
 /**
- * Contains [[PipelineStepIdentifier]]s for the Steps that are available for all [[BaseCandidatePipelineConfig]]s
+ * Conta ns [[P pel neStep dent f er]]s for t  Steps that are ava lable for all [[BaseCand dateP pel neConf g]]s
  */
-object CandidatePipelineConfig extends PipelineConfigCompanion {
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val fetchQueryFeaturesStep: PipelineStepIdentifier = PipelineStepIdentifier("FetchQueryFeatures")
-  val fetchQueryFeaturesPhase2Step: PipelineStepIdentifier = PipelineStepIdentifier(
+object Cand dateP pel neConf g extends P pel neConf gCompan on {
+  val gatesStep: P pel neStep dent f er = P pel neStep dent f er("Gates")
+  val fetchQueryFeaturesStep: P pel neStep dent f er = P pel neStep dent f er("FetchQueryFeatures")
+  val fetchQueryFeaturesPhase2Step: P pel neStep dent f er = P pel neStep dent f er(
     "FetchQueryFeaturesPhase2")
-  val candidateSourceStep: PipelineStepIdentifier = PipelineStepIdentifier("CandidateSource")
-  val preFilterFeatureHydrationPhase1Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("PreFilterFeatureHydration")
-  val preFilterFeatureHydrationPhase2Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("PreFilterFeatureHydrationPhase2")
-  val filtersStep: PipelineStepIdentifier = PipelineStepIdentifier("Filters")
-  val postFilterFeatureHydrationStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("PostFilterFeatureHydration")
-  val scorersStep: PipelineStepIdentifier = PipelineStepIdentifier("Scorer")
-  val decoratorStep: PipelineStepIdentifier = PipelineStepIdentifier("Decorator")
-  val resultStep: PipelineStepIdentifier = PipelineStepIdentifier("Result")
+  val cand dateS ceStep: P pel neStep dent f er = P pel neStep dent f er("Cand dateS ce")
+  val preF lterFeatureHydrat onPhase1Step: P pel neStep dent f er =
+    P pel neStep dent f er("PreF lterFeatureHydrat on")
+  val preF lterFeatureHydrat onPhase2Step: P pel neStep dent f er =
+    P pel neStep dent f er("PreF lterFeatureHydrat onPhase2")
+  val f ltersStep: P pel neStep dent f er = P pel neStep dent f er("F lters")
+  val postF lterFeatureHydrat onStep: P pel neStep dent f er =
+    P pel neStep dent f er("PostF lterFeatureHydrat on")
+  val scorersStep: P pel neStep dent f er = P pel neStep dent f er("Scorer")
+  val decoratorStep: P pel neStep dent f er = P pel neStep dent f er("Decorator")
+  val resultStep: P pel neStep dent f er = P pel neStep dent f er("Result")
 
-  /** All the steps which are executed by a [[CandidatePipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
+  /** All t  steps wh ch are executed by a [[Cand dateP pel ne]]  n t  order  n wh ch t y are run */
+  overr de val steps nOrder: Seq[P pel neStep dent f er] = Seq(
     gatesStep,
     fetchQueryFeaturesStep,
     fetchQueryFeaturesPhase2Step,
-    asyncFeaturesStep(candidateSourceStep),
-    candidateSourceStep,
-    asyncFeaturesStep(preFilterFeatureHydrationPhase1Step),
-    preFilterFeatureHydrationPhase1Step,
-    asyncFeaturesStep(preFilterFeatureHydrationPhase2Step),
-    preFilterFeatureHydrationPhase2Step,
-    asyncFeaturesStep(filtersStep),
-    filtersStep,
-    asyncFeaturesStep(postFilterFeatureHydrationStep),
-    postFilterFeatureHydrationStep,
+    asyncFeaturesStep(cand dateS ceStep),
+    cand dateS ceStep,
+    asyncFeaturesStep(preF lterFeatureHydrat onPhase1Step),
+    preF lterFeatureHydrat onPhase1Step,
+    asyncFeaturesStep(preF lterFeatureHydrat onPhase2Step),
+    preF lterFeatureHydrat onPhase2Step,
+    asyncFeaturesStep(f ltersStep),
+    f ltersStep,
+    asyncFeaturesStep(postF lterFeatureHydrat onStep),
+    postF lterFeatureHydrat onStep,
     asyncFeaturesStep(scorersStep),
     scorersStep,
     asyncFeaturesStep(decoratorStep),
@@ -252,12 +252,12 @@ object CandidatePipelineConfig extends PipelineConfigCompanion {
     resultStep
   )
 
-  override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
-    candidateSourceStep,
-    preFilterFeatureHydrationPhase1Step,
-    preFilterFeatureHydrationPhase2Step,
-    filtersStep,
-    postFilterFeatureHydrationStep,
+  overr de val stepsAsyncFeatureHydrat onCanBeCompletedBy: Set[P pel neStep dent f er] = Set(
+    cand dateS ceStep,
+    preF lterFeatureHydrat onPhase1Step,
+    preF lterFeatureHydrat onPhase2Step,
+    f ltersStep,
+    postF lterFeatureHydrat onStep,
     scorersStep,
     decoratorStep
   )

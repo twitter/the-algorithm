@@ -1,82 +1,82 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":candidate-algorithm-adapter",
-        ":client-context-adapter",
-        ":post-nux-algorithm-adapter",
-        ":pre-fetched-feature-adapter",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":cand date-algor hm-adapter",
+        ":cl ent-context-adapter",
+        ":post-nux-algor hm-adapter",
+        ":pre-fetc d-feature-adapter",
     ],
 )
 
 target(
-    name = "common",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/strato",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/onboarding/relevance/util/metadata",
-        "util/util-slf4j-api/src/main/scala",
+    na  = "common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/base",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/cl ents/strato",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/constants",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/feature_hydrat on/common",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/ut ls",
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/ml/ap /ut l",
+        "src/scala/com/tw ter/onboard ng/relevance/ut l/ tadata",
+        "ut l/ut l-slf4j-ap /src/ma n/scala",
     ],
 )
 
-scala_library(
-    name = "candidate-algorithm-adapter",
-    sources = [
-        "CandidateAlgorithmAdapter.scala",
+scala_l brary(
+    na  = "cand date-algor hm-adapter",
+    s ces = [
+        "Cand dateAlgor hmAdapter.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/constants",
+        " rm / rm -core/src/ma n/scala/com/tw ter/ rm /constants",
     ],
 )
 
-scala_library(
-    name = "client-context-adapter",
-    sources = [
-        "ClientContextAdapter.scala",
+scala_l brary(
+    na  = "cl ent-context-adapter",
+    s ces = [
+        "Cl entContextAdapter.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "snowflake/src/ma n/scala/com/tw ter/snowflake/ d",
     ],
 )
 
-scala_library(
-    name = "post-nux-algorithm-adapter",
-    sources = [
-        "PostNuxAlgorithmAdapter.scala",
+scala_l brary(
+    na  = "post-nux-algor hm-adapter",
+    s ces = [
+        "PostNuxAlgor hmAdapter.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/customer_journey:post-nux-algorithm-aggregate",
+        "src/scala/com/tw ter/ml/featurestore/catalog/features/custo r_j ney:post-nux-algor hm-aggregate",
     ],
 )
 
-scala_library(
-    name = "pre-fetched-feature-adapter",
-    sources = [
-        "PreFetchedFeatureAdapter.scala",
+scala_l brary(
+    na  = "pre-fetc d-feature-adapter",
+    s ces = [
+        "PreFetc dFeatureAdapter.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
     ],
 )

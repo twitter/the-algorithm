@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.tw ter.search.earlyb rd.search.relevance;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene.search.Query;
 
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.earlyb rd.Qual yFactor;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRelevanceOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
 
-public class RelevanceSearchRequestInfo extends SearchRequestInfo {
-  private final ThriftSearchRelevanceOptions relevanceOptions;
+publ c class RelevanceSearchRequest nfo extends SearchRequest nfo {
+  pr vate f nal Thr ftSearchRelevanceOpt ons relevanceOpt ons;
 
-  public RelevanceSearchRequestInfo(
-      ThriftSearchQuery searchQuery, Query query,
-      TerminationTracker terminationTracker, QualityFactor qualityFactor) {
-    super(addResultMetadataOptionsIfUnset(searchQuery), query, terminationTracker, qualityFactor);
-    this.relevanceOptions = searchQuery.getRelevanceOptions();
+  publ c RelevanceSearchRequest nfo(
+      Thr ftSearchQuery searchQuery, Query query,
+      Term nat onTracker term nat onTracker, Qual yFactor qual yFactor) {
+    super(addResult tadataOpt ons fUnset(searchQuery), query, term nat onTracker, qual yFactor);
+    t .relevanceOpt ons = searchQuery.getRelevanceOpt ons();
   }
 
-  private static ThriftSearchQuery addResultMetadataOptionsIfUnset(ThriftSearchQuery searchQuery) {
-    if (!searchQuery.isSetResultMetadataOptions()) {
-      searchQuery.setResultMetadataOptions(new ThriftSearchResultMetadataOptions());
+  pr vate stat c Thr ftSearchQuery addResult tadataOpt ons fUnset(Thr ftSearchQuery searchQuery) {
+     f (!searchQuery. sSetResult tadataOpt ons()) {
+      searchQuery.setResult tadataOpt ons(new Thr ftSearchResult tadataOpt ons());
     }
     return searchQuery;
   }
 
-  @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    ThriftSearchRelevanceOptions searchRelevanceOptions = thriftSearchQuery.getRelevanceOptions();
+  @Overr de
+  protected  nt calculateMaxH sToProcess(Thr ftSearchQuery thr ftSearchQuery) {
+    Thr ftSearchRelevanceOpt ons searchRelevanceOpt ons = thr ftSearchQuery.getRelevanceOpt ons();
 
-    // Don't use the value from the ThriftSearchQuery object if one is provided in the
-    // relevance options
-    int requestedMaxHitsToProcess = searchRelevanceOptions.isSetMaxHitsToProcess()
-        ? searchRelevanceOptions.getMaxHitsToProcess()
-        : super.calculateMaxHitsToProcess(thriftSearchQuery);
+    // Don't use t  value from t  Thr ftSearchQuery object  f one  s prov ded  n t 
+    // relevance opt ons
+     nt requestedMaxH sToProcess = searchRelevanceOpt ons. sSetMaxH sToProcess()
+        ? searchRelevanceOpt ons.getMaxH sToProcess()
+        : super.calculateMaxH sToProcess(thr ftSearchQuery);
 
-    return qualityFactorMaxHitsToProcess(getNumResultsRequested(), requestedMaxHitsToProcess);
+    return qual yFactorMaxH sToProcess(getNumResultsRequested(), requestedMaxH sToProcess);
   }
 
-  public ThriftSearchRelevanceOptions getRelevanceOptions() {
-    return this.relevanceOptions;
+  publ c Thr ftSearchRelevanceOpt ons getRelevanceOpt ons() {
+    return t .relevanceOpt ons;
   }
 
   /**
-   * Reduces maxHitsToProcess based on quality factor. Never reduces it beyond
+   * Reduces maxH sToProcess based on qual y factor. Never reduces   beyond
    * numResults.
    * @param numResults
-   * @param maxHitsToProcess
-   * @return Reduced maxHitsToProcess.
+   * @param maxH sToProcess
+   * @return Reduced maxH sToProcess.
    */
-  public int qualityFactorMaxHitsToProcess(int numResults, int maxHitsToProcess) {
-    Preconditions.checkNotNull(qualityFactor);
+  publ c  nt qual yFactorMaxH sToProcess( nt numResults,  nt maxH sToProcess) {
+    Precond  ons.c ckNotNull(qual yFactor);
 
-    // Do not quality factor if there is no lower bound on maxHitsToProcess.
-    if (numResults > maxHitsToProcess) {
-      return maxHitsToProcess;
+    // Do not qual y factor  f t re  s no lo r bound on maxH sToProcess.
+     f (numResults > maxH sToProcess) {
+      return maxH sToProcess;
     }
 
-    double currentQualityFactor = qualityFactor.get();
-    return Math.max(numResults, (int) (currentQualityFactor * maxHitsToProcess));
+    double currentQual yFactor = qual yFactor.get();
+    return Math.max(numResults, ( nt) (currentQual yFactor * maxH sToProcess));
   }
 }

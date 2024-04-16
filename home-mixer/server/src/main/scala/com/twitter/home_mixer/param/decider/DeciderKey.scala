@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.param.decider
+package com.tw ter.ho _m xer.param.dec der
 
-import com.twitter.servo.decider.DeciderKeyEnum
+ mport com.tw ter.servo.dec der.Dec derKeyEnum
 
 /**
- * These values must correspond to the deciders configured in the
- * home-mixer/server/src/main/resources/config/decider.yml file
+ * T se values must correspond to t  dec ders conf gured  n t 
+ * ho -m xer/server/src/ma n/res ces/conf g/dec der.yml f le
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.enabledDeciderKey]]
+ * @see [[com.tw ter.product_m xer.core.product.ProductParamConf g.enabledDec derKey]]
  */
-object DeciderKey extends DeciderKeyEnum {
+object Dec derKey extends Dec derKeyEnum {
   // Products
-  val EnableForYouProduct = Value("enable_for_you_product")
+  val EnableFor Product = Value("enable_for_ _product")
 
-  val EnableFollowingProduct = Value("enable_following_product")
+  val EnableFollow ngProduct = Value("enable_follow ng_product")
 
-  val EnableScoredTweetsProduct = Value("enable_scored_tweets_product")
+  val EnableScoredT etsProduct = Value("enable_scored_t ets_product")
 
-  val EnableListTweetsProduct = Value("enable_list_tweets_product")
+  val EnableL stT etsProduct = Value("enable_l st_t ets_product")
 
-  val EnableListRecommendedUsersProduct = Value("enable_list_recommended_users_product")
+  val EnableL stRecom ndedUsersProduct = Value("enable_l st_recom nded_users_product")
 
-  val EnableSubscribedProduct = Value("enable_subscribed_product")
+  val EnableSubscr bedProduct = Value("enable_subscr bed_product")
 
-  // Candidate Pipelines
-  val EnableForYouScoredTweetsCandidatePipeline =
-    Value("enable_for_you_scored_tweets_candidate_pipeline")
+  // Cand date P pel nes
+  val EnableFor ScoredT etsCand dateP pel ne =
+    Value("enable_for_ _scored_t ets_cand date_p pel ne")
 
-  val EnableScoredTweetsTweetMixerCandidatePipeline =
-    Value("enable_scored_tweets_tweet_mixer_candidate_pipeline")
+  val EnableScoredT etsT etM xerCand dateP pel ne =
+    Value("enable_scored_t ets_t et_m xer_cand date_p pel ne")
 
-  val EnableScoredTweetsInNetworkCandidatePipeline =
-    Value("enable_scored_tweets_in_network_candidate_pipeline")
+  val EnableScoredT ets nNetworkCand dateP pel ne =
+    Value("enable_scored_t ets_ n_network_cand date_p pel ne")
 
-  val EnableScoredTweetsUtegCandidatePipeline =
-    Value("enable_scored_tweets_uteg_candidate_pipeline")
+  val EnableScoredT etsUtegCand dateP pel ne =
+    Value("enable_scored_t ets_uteg_cand date_p pel ne")
 
-  val EnableScoredTweetsFrsCandidatePipeline =
-    Value("enable_scored_tweets_frs_candidate_pipeline")
+  val EnableScoredT etsFrsCand dateP pel ne =
+    Value("enable_scored_t ets_frs_cand date_p pel ne")
 
-  val EnableScoredTweetsListsCandidatePipeline =
-    Value("enable_scored_tweets_lists_candidate_pipeline")
+  val EnableScoredT etsL stsCand dateP pel ne =
+    Value("enable_scored_t ets_l sts_cand date_p pel ne")
 
-  val EnableScoredTweetsPopularVideosCandidatePipeline =
-    Value("enable_scored_tweets_popular_videos_candidate_pipeline")
+  val EnableScoredT etsPopularV deosCand dateP pel ne =
+    Value("enable_scored_t ets_popular_v deos_cand date_p pel ne")
 
-  val EnableScoredTweetsBackfillCandidatePipeline =
-    Value("enable_scored_tweets_backfill_candidate_pipeline")
+  val EnableScoredT etsBackf llCand dateP pel ne =
+    Value("enable_scored_t ets_backf ll_cand date_p pel ne")
 
-  val EnableSimClustersSimilarityFeatureHydration =
-    Value("enable_simclusters_similarity_feature_hydration")
+  val EnableS mClustersS m lar yFeatureHydrat on =
+    Value("enable_s mclusters_s m lar y_feature_hydrat on")
 }

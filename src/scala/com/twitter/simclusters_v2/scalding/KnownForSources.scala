@@ -1,128 +1,128 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, ProcAtla}
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.{
+  Analyt csBatchExecut on,
+  Analyt csBatchExecut onArgs,
+  BatchDescr pt on,
+  BatchF rstT  ,
+  Batch ncre nt,
+  Tw terSc duledExecut onApp
 }
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsKnownFor, UserToKnownForClusterScores}
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import java.util.TimeZone
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.{ClustersUser sKnownFor, UserToKnownForClusterScores}
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport com.tw ter.users ce.snapshot.flat.thr ftscala.FlatUser
+ mport java.ut l.T  Zone
 
-object KnownForSources {
-  implicit val tz: TimeZone = DateOps.UTC
-  implicit val parser: DateParser = DateParser.default
+object KnownForS ces {
+   mpl c  val tz: T  Zone = DateOps.UTC
+   mpl c  val parser: DateParser = DateParser.default
 
   def readDALDataset(
-    d: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]],
-    noOlderThan: Duration,
-    modelVersionToKeep: String
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
+    d: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]],
+    noOlderThan: Durat on,
+    modelVers onToKeep: Str ng
+  ): TypedP pe[(Long, Array[( nt, Float)])] = {
     fromKeyVal(
       DAL
         .readMostRecentSnapshotNoOlderThan(d, noOlderThan)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      modelVersionToKeep
+        .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+        .toTypedP pe,
+      modelVers onToKeep
     )
   }
 
   def fromKeyVal(
-    in: TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]],
-    modelVersionToKeep: String
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    in.collect {
-      case KeyVal(userId, knownForClusters)
-          if knownForClusters.knownForModelVersion == modelVersionToKeep =>
+     n: TypedP pe[KeyVal[Long, ClustersUser sKnownFor]],
+    modelVers onToKeep: Str ng
+  ): TypedP pe[(Long, Array[( nt, Float)])] = {
+     n.collect {
+      case KeyVal(user d, knownForClusters)
+           f knownForClusters.knownForModelVers on == modelVers onToKeep =>
         (
-          userId,
-          knownForClusters.clusterIdToScores.toArray
+          user d,
+          knownForClusters.cluster dToScores.toArray
             .map {
-              case (clusterId, scores) =>
-                (clusterId, scores.knownForScore.getOrElse(0.0).toFloat)
+              case (cluster d, scores) =>
+                (cluster d, scores.knownForScore.getOrElse(0.0).toFloat)
             }
             .sortBy(-_._2))
     }
   }
 
   def toKeyVal(
-    in: TypedPipe[(Long, Array[(Int, Float)])],
-    modelVersion: String
-  ): TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]] = {
-    in.map {
-      case (userId, clustersArray) =>
+     n: TypedP pe[(Long, Array[( nt, Float)])],
+    modelVers on: Str ng
+  ): TypedP pe[KeyVal[Long, ClustersUser sKnownFor]] = {
+     n.map {
+      case (user d, clustersArray) =>
         val mappedClusters = clustersArray.map {
-          case (clusterId, score) =>
-            (clusterId, UserToKnownForClusterScores(Some(score)))
+          case (cluster d, score) =>
+            (cluster d, UserToKnownForClusterScores(So (score)))
         }.toMap
-        KeyVal(userId, ClustersUserIsKnownFor(modelVersion, mappedClusters))
+        KeyVal(user d, ClustersUser sKnownFor(modelVers on, mappedClusters))
     }
   }
 
-  val knownFor_20M_Dec11_145K: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KDec11ScalaDataset,
+  val knownFor_20M_Dec11_145K: TypedP pe[(Long, Array[( nt, Float)])] = readDALDataset(
+    S mclustersV2KnownFor20M145KDec11ScalaDataset,
     Days(30),
-    ModelVersions.Model20M145KDec11
+    ModelVers ons.Model20M145KDec11
   )
 
-  val knownFor_20M_145K_updated: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KUpdatedScalaDataset,
+  val knownFor_20M_145K_updated: TypedP pe[(Long, Array[( nt, Float)])] = readDALDataset(
+    S mclustersV2KnownFor20M145KUpdatedScalaDataset,
     Days(30),
-    ModelVersions.Model20M145KUpdated
+    ModelVers ons.Model20M145KUpdated
   )
 
-  val clusterToKnownFor_20M_Dec11_145K: TypedPipe[(Int, List[(Long, Float)])] =
+  val clusterToKnownFor_20M_Dec11_145K: TypedP pe[( nt, L st[(Long, Float)])] =
     transpose(
       knownFor_20M_Dec11_145K
     )
 
-  val clusterToKnownFor_20M_145K_updated: TypedPipe[(Int, List[(Long, Float)])] =
+  val clusterToKnownFor_20M_145K_updated: TypedP pe[( nt, L st[(Long, Float)])] =
     transpose(
       knownFor_20M_145K_updated
     )
 
-  private val log = Logger()
+  pr vate val log = Logger()
 
-  def readKnownFor(textFile: String): TypedPipe[(Long, Array[(Int, Float)])] = {
-    TypedPipe
-      .from(TextLine(textFile))
+  def readKnownFor(textF le: Str ng): TypedP pe[(Long, Array[( nt, Float)])] = {
+    TypedP pe
+      .from(TextL ne(textF le))
       .flatMap { str =>
-        if (!str.startsWith("#")) {
+         f (!str.startsW h("#")) {
           try {
-            val tokens = str.trim.split("\\s+")
-            val res = Array.newBuilder[(Int, Float)]
-            val userId = tokens(0).toLong
-            for (i <- 1 until tokens.length) {
-              val Array(cIdStr, scoreStr) = tokens(i).split(":")
-              val clusterId = cIdStr.toInt
+            val tokens = str.tr m.spl ("\\s+")
+            val res = Array.newBu lder[( nt, Float)]
+            val user d = tokens(0).toLong
+            for (  <- 1 unt l tokens.length) {
+              val Array(c dStr, scoreStr) = tokens( ).spl (":")
+              val cluster d = c dStr.to nt
               val score = scoreStr.toFloat
-              val newEntry = (clusterId, score)
+              val newEntry = (cluster d, score)
               res += newEntry
             }
             val result = res.result
-            if (result.nonEmpty) {
-              Some((userId, res.result()))
+             f (result.nonEmpty) {
+              So ((user d, res.result()))
             } else None
           } catch {
             case ex: Throwable =>
-              log.warning(
-                s"Error while loading knownFor from $textFile for line <$str>: " +
-                  ex.getMessage
+              log.warn ng(
+                s"Error wh le load ng knownFor from $textF le for l ne <$str>: " +
+                  ex.get ssage
               )
               None
           }
@@ -130,144 +130,144 @@ object KnownForSources {
       }
   }
 
-  def stringifyKnownFor(
-    input: TypedPipe[(Long, Array[(Int, Float)])]
-  ): TypedPipe[(Long, String)] = {
-    input.mapValues { arr =>
-      arr.map { case (clusterId, score) => "%d:%.2g".format(clusterId, score) }.mkString("\t")
+  def str ng fyKnownFor(
+     nput: TypedP pe[(Long, Array[( nt, Float)])]
+  ): TypedP pe[(Long, Str ng)] = {
+     nput.mapValues { arr =>
+      arr.map { case (cluster d, score) => "%d:%.2g".format(cluster d, score) }.mkStr ng("\t")
     }
   }
 
-  def writeKnownForTypedTsv(
-    input: TypedPipe[(Long, Array[(Int, Float)])],
-    outputDir: String
-  ): Execution[Unit] = {
-    stringifyKnownFor(input).writeExecution(TypedTsv(outputDir))
+  def wr eKnownForTypedTsv(
+     nput: TypedP pe[(Long, Array[( nt, Float)])],
+    outputD r: Str ng
+  ): Execut on[Un ] = {
+    str ng fyKnownFor( nput).wr eExecut on(TypedTsv(outputD r))
   }
 
   def makeKnownForTypedTsv(
-    input: TypedPipe[(Long, Array[(Int, Float)])],
-    outputDir: String
-  ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
-    Execution.getMode.flatMap { mode =>
+     nput: TypedP pe[(Long, Array[( nt, Float)])],
+    outputD r: Str ng
+  ): Execut on[TypedP pe[(Long, Array[( nt, Float)])]] = {
+    Execut on.getMode.flatMap { mode =>
       try {
-        val dest = TextLine(outputDir)
-        dest.validateTaps(mode)
-        Execution.from(KnownForSources.readKnownFor(outputDir))
+        val dest = TextL ne(outputD r)
+        dest.val dateTaps(mode)
+        Execut on.from(KnownForS ces.readKnownFor(outputD r))
       } catch {
-        case ivs: InvalidSourceException =>
-          writeKnownForTypedTsv(input, outputDir).map { _ => input }
+        case  vs:  nval dS ceExcept on =>
+          wr eKnownForTypedTsv( nput, outputD r).map { _ =>  nput }
       }
     }
 
   }
 
   def transpose(
-    userToCluster: TypedPipe[(Long, Array[(Int, Float)])]
-  ): TypedPipe[(Int, List[(Long, Float)])] = {
+    userToCluster: TypedP pe[(Long, Array[( nt, Float)])]
+  ): TypedP pe[( nt, L st[(Long, Float)])] = {
     userToCluster
       .flatMap {
-        case (userId, clusterWeightPairs) =>
-          clusterWeightPairs.map {
-            case (clusterId, weight) =>
-              (clusterId, List(userId -> weight))
+        case (user d, cluster  ghtPa rs) =>
+          cluster  ghtPa rs.map {
+            case (cluster d,   ght) =>
+              (cluster d, L st(user d ->   ght))
           }
       }
       .sumByKey
-      .toTypedPipe
+      .toTypedP pe
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron known_for_to_mh \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally --start_cron known_for_to_mh \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object KnownForToMHBatch extends TwitterScheduledExecutionApp {
+object KnownForToMHBatch extends Tw terSc duledExecut onApp {
 
-  import KnownForSources._
+   mport KnownForS ces._
 
   /**
-   * A simple update function which updates the source by removing deactivated and suspended users.
-   * This will be eventually replaced by a regular cluster updating method.
+   * A s mple update funct on wh ch updates t  s ce by remov ng deact vated and suspended users.
+   * T  w ll be eventually replaced by a regular cluster updat ng  thod.
    */
-  def updateKnownForSource(
-    knownForSource: TypedPipe[(Long, ClustersUserIsKnownFor)],
-    userSource: TypedPipe[FlatUser]
+  def updateKnownForS ce(
+    knownForS ce: TypedP pe[(Long, ClustersUser sKnownFor)],
+    userS ce: TypedP pe[FlatUser]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsKnownFor)] = {
-    val numValidUsers = Stat("num_valid_users")
-    val numInvalidUsers = Stat("num_invalid_users")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(Long, ClustersUser sKnownFor)] = {
+    val numVal dUsers = Stat("num_val d_users")
+    val num nval dUsers = Stat("num_ nval d_users")
     val numKnownForUsersLeft = Stat("num_known_for_users_left")
     val numRemovedKnownForUsers = Stat("num_removed_known_for_users")
 
-    val validUsers =
-      userSource.flatMap {
+    val val dUsers =
+      userS ce.flatMap {
         case flatUser
-            if !flatUser.deactivated.contains(true) && !flatUser.suspended
-              .contains(true)
-              && flatUser.id.nonEmpty =>
-          numValidUsers.inc()
-          flatUser.id
+             f !flatUser.deact vated.conta ns(true) && !flatUser.suspended
+              .conta ns(true)
+              && flatUser. d.nonEmpty =>
+          numVal dUsers. nc()
+          flatUser. d
         case _ =>
-          numInvalidUsers.inc()
+          num nval dUsers. nc()
           None
       }
 
-    knownForSource.leftJoin(validUsers.asKeys).flatMap {
-      case (userId, (clustersWithScore, Some(_))) =>
-        numKnownForUsersLeft.inc()
-        Some((userId, clustersWithScore))
+    knownForS ce.leftJo n(val dUsers.asKeys).flatMap {
+      case (user d, (clustersW hScore, So (_))) =>
+        numKnownForUsersLeft. nc()
+        So ((user d, clustersW hScore))
       case _ =>
-        numRemovedKnownForUsers.inc()
+        numRemovedKnownForUsers. nc()
         None
     }
   }
 
-  // this should happen before InterestedInFromKnownForBatch
-  private val firstTime: String = "2019-03-22"
+  // t  should happen before  nterested nFromKnownForBatch
+  pr vate val f rstT  : Str ng = "2019-03-22"
 
-  private val batchIncrement: Duration = Days(7)
+  pr vate val batch ncre nt: Durat on = Days(7)
 
-  private val outputPath: String = InternalDataPaths.RawKnownForDec11Path
+  pr vate val outputPath: Str ng =  nternalDataPaths.RawKnownForDec11Path
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
+  overr de def sc duledJob: Execut on[Un ] =
+    Analyt csBatchExecut on(execArgs) {  mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
         val numKnownForUsers = Stat("num_known_for_users")
 
-        val userSource =
+        val userS ce =
           DAL
-            .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-            .toTypedPipe
+            .readMostRecentSnapshotNoOlderThan(Users ceFlatScalaDataset, Days(7))
+            .toTypedP pe
 
         val knownForData = DAL
           .readMostRecentSnapshotNoOlderThan(
-            SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
+            S mclustersV2RawKnownFor20M145KDec11ScalaDataset,
             Days(30))
-          .toTypedPipe
+          .toTypedP pe
           .map {
-            case KeyVal(userId, knownForClusters) =>
-              numKnownForUsers.inc()
-              (userId, knownForClusters)
+            case KeyVal(user d, knownForClusters) =>
+              numKnownForUsers. nc()
+              (user d, knownForClusters)
           }
 
-        val result = updateKnownForSource(knownForData, userSource).map {
-          case (userId, knownForClusters) =>
-            KeyVal(userId, knownForClusters)
+        val result = updateKnownForS ce(knownForData, userS ce).map {
+          case (user d, knownForClusters) =>
+            KeyVal(user d, knownForClusters)
         }
 
-        Util.printCounters(
-          result.writeDALVersionedKeyValExecution(
-            dataset = SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
-            pathLayout = D.Suffix(outputPath)
+        Ut l.pr ntCounters(
+          result.wr eDALVers onedKeyValExecut on(
+            dataset = S mclustersV2RawKnownFor20M145KDec11ScalaDataset,
+            pathLa t = D.Suff x(outputPath)
           )
         )
       }

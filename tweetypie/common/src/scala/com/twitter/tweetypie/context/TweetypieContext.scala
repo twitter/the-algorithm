@@ -1,47 +1,47 @@
-package com.twitter.tweetypie.context
+package com.tw ter.t etyp e.context
 
-import com.twitter.context.TwitterContext
-import com.twitter.finagle.Filter
-import com.twitter.finagle.Service
-import com.twitter.finagle.SimpleFilter
-import com.twitter.finagle.context.Contexts
-import com.twitter.io.Buf
-import com.twitter.io.Buf.ByteArray.Owned
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphql.common.core.GraphQlClientApplication
-import com.twitter.util.Try
-import java.nio.charset.StandardCharsets.UTF_8
-import scala.util.matching.Regex
+ mport com.tw ter.context.Tw terContext
+ mport com.tw ter.f nagle.F lter
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.S mpleF lter
+ mport com.tw ter.f nagle.context.Contexts
+ mport com.tw ter. o.Buf
+ mport com.tw ter. o.Buf.ByteArray.Owned
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphql.common.core.GraphQlCl entAppl cat on
+ mport com.tw ter.ut l.Try
+ mport java.n o.charset.StandardCharsets.UTF_8
+ mport scala.ut l.match ng.Regex
 
 /**
- * Context and filters to help track callers of Tweetypie's endpoints. This context and its
- * filters were originally added to provide visibility into callers of Tweetypie who are
- * using the birdherd library to access tweets.
+ * Context and f lters to  lp track callers of T etyp e's endpo nts. T  context and  s
+ * f lters  re or g nally added to prov de v s b l y  nto callers of T etyp e who are
+ * us ng t  b rd rd l brary to access t ets.
  *
- * This context data is intended to be marshalled by callers to Tweetypie, but then the
- * context data is stripped (moved from broadcast to local). This happens so that the
- * context data is not forwarded down tweetypie's backend rpc chains, which often result
- * in transitive calls back into tweetypie. This effectively creates single-hop marshalling.
+ * T  context data  s  ntended to be marshalled by callers to T etyp e, but t n t 
+ * context data  s str pped (moved from broadcast to local). T  happens so that t 
+ * context data  s not forwarded down t etyp e's backend rpc cha ns, wh ch often result
+ *  n trans  ve calls back  nto t etyp e. T  effect vely creates s ngle-hop marshall ng.
  */
-object TweetypieContext {
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+object T etyp eContext {
+  // Br ng T etyp e perm ted Tw terContext  nto scope
+  val Tw terContext: Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 
-  case class Ctx(via: String)
+  case class Ctx(v a: Str ng)
   val Empty = Ctx("")
 
   object Broadcast {
-    private[this] object Key extends Contexts.broadcast.Key[Ctx](id = Ctx.getClass.getName) {
+    pr vate[t ] object Key extends Contexts.broadcast.Key[Ctx]( d = Ctx.getClass.getNa ) {
 
-      override def marshal(value: Ctx): Buf =
-        Owned(value.via.getBytes(UTF_8))
+      overr de def marshal(value: Ctx): Buf =
+        Owned(value.v a.getBytes(UTF_8))
 
-      override def tryUnmarshal(buf: Buf): Try[Ctx] =
-        Try(Ctx(new String(Owned.extract(buf), UTF_8)))
+      overr de def tryUnmarshal(buf: Buf): Try[Ctx] =
+        Try(Ctx(new Str ng(Owned.extract(buf), UTF_8)))
     }
 
-    private[TweetypieContext] def current(): Option[Ctx] =
+    pr vate[T etyp eContext] def current(): Opt on[Ctx] =
       Contexts.broadcast.get(Key)
 
     def currentOrElse(default: Ctx): Ctx =
@@ -51,83 +51,83 @@ object TweetypieContext {
       Contexts.broadcast.letClear(Key)(f)
 
     def let[T](ctx: Ctx)(f: => T): T =
-      if (Empty == ctx) {
+       f (Empty == ctx) {
         letClear(f)
       } else {
         Contexts.broadcast.let(Key, ctx)(f)
       }
 
-    // ctx has to be by name so we can re-evaluate it for every request (for usage in ServiceTwitter.scala)
-    def filter(ctx: => Ctx): Filter.TypeAgnostic =
-      new Filter.TypeAgnostic {
-        override def toFilter[Req, Rep]: Filter[Req, Rep, Req, Rep] =
-          (request: Req, service: Service[Req, Rep]) => Broadcast.let(ctx)(service(request))
+    // ctx has to be by na  so   can re-evaluate   for every request (for usage  n Serv ceTw ter.scala)
+    def f lter(ctx: => Ctx): F lter.TypeAgnost c =
+      new F lter.TypeAgnost c {
+        overr de def toF lter[Req, Rep]: F lter[Req, Rep, Req, Rep] =
+          (request: Req, serv ce: Serv ce[Req, Rep]) => Broadcast.let(ctx)(serv ce(request))
       }
   }
 
   object Local {
-    private[this] val Key =
+    pr vate[t ] val Key =
       new Contexts.local.Key[Ctx]
 
-    private[TweetypieContext] def let[T](ctx: Option[Ctx])(f: => T): T =
+    pr vate[T etyp eContext] def let[T](ctx: Opt on[Ctx])(f: => T): T =
       ctx match {
-        case Some(ctx) if ctx != Empty => Contexts.local.let(Key, ctx)(f)
+        case So (ctx)  f ctx != Empty => Contexts.local.let(Key, ctx)(f)
         case None => Contexts.local.letClear(Key)(f)
       }
 
-    def current(): Option[Ctx] =
+    def current(): Opt on[Ctx] =
       Contexts.local.get(Key)
 
-    def filter[Req, Rep]: SimpleFilter[Req, Rep] =
-      (request: Req, service: Service[Req, Rep]) => {
+    def f lter[Req, Rep]: S mpleF lter[Req, Rep] =
+      (request: Req, serv ce: Serv ce[Req, Rep]) => {
         val ctx = Broadcast.current()
-        Broadcast.letClear(Local.let(ctx)(service(request)))
+        Broadcast.letClear(Local.let(ctx)(serv ce(request)))
       }
 
-    private[this] def clientAppIdToName(clientAppId: Long) =
-      GraphQlClientApplication.AllById.get(clientAppId).map(_.name).getOrElse("nonTOO")
+    pr vate[t ] def cl entApp dToNa (cl entApp d: Long) =
+      GraphQlCl entAppl cat on.AllBy d.get(cl entApp d).map(_.na ).getOrElse("nonTOO")
 
-    private[this] val pathRegexes: Seq[(Regex, String)] = Seq(
-      ("timeline_conversation_.*_json".r, "timeline_conversation__slug__json"),
-      ("user_timeline_.*_json".r, "user_timeline__user__json"),
-      ("[0-9]{2,}".r, "_id_")
+    pr vate[t ] val pathRegexes: Seq[(Regex, Str ng)] = Seq(
+      ("t  l ne_conversat on_.*_json".r, "t  l ne_conversat on__slug__json"),
+      ("user_t  l ne_.*_json".r, "user_t  l ne__user__json"),
+      ("[0-9]{2,}".r, "_ d_")
     )
 
-    // `context.via` will either be a string like: "birdherd" or "birdherd:/1.1/statuses/show/123.json,
-    // depending on whether birdherd code was able to determine the path of the request.
-    private[this] def getViaAndPath(via: String): (String, Option[String]) =
-      via.split(":", 2) match {
-        case Array(via, path) =>
-          val sanitizedPath = path
+    // `context.v a` w ll e  r be a str ng l ke: "b rd rd" or "b rd rd:/1.1/statuses/show/123.json,
+    // depend ng on w t r b rd rd code was able to determ ne t  path of t  request.
+    pr vate[t ] def getV aAndPath(v a: Str ng): (Str ng, Opt on[Str ng]) =
+      v a.spl (":", 2) match {
+        case Array(v a, path) =>
+          val san  zedPath = path
             .replace('/', '_')
             .replace('.', '_')
 
-          // Apply each regex in turn
-          val normalizedPath = pathRegexes.foldLeft(sanitizedPath) {
-            case (path, (regex, replacement)) => regex.replaceAllIn(path, replacement)
+          // Apply each regex  n turn
+          val normal zedPath = pathRegexes.foldLeft(san  zedPath) {
+            case (path, (regex, replace nt)) => regex.replaceAll n(path, replace nt)
           }
 
-          (via, Some(normalizedPath))
-        case Array(via) => (via, None)
+          (v a, So (normal zedPath))
+        case Array(v a) => (v a, None)
       }
 
-    def trackStats[U](scopes: StatsReceiver*): Unit =
+    def trackStats[U](scopes: StatsRece ver*): Un  =
       for {
-        tweetypieCtx <- TweetypieContext.Local.current()
-        (via, pathOpt) = getViaAndPath(tweetypieCtx.via)
-        twitterCtx <- TwitterContext()
-        clientAppId <- twitterCtx.clientApplicationId
-      } yield {
-        val clientAppName = clientAppIdToName(clientAppId)
+        t etyp eCtx <- T etyp eContext.Local.current()
+        (v a, pathOpt) = getV aAndPath(t etyp eCtx.v a)
+        tw terCtx <- Tw terContext()
+        cl entApp d <- tw terCtx.cl entAppl cat on d
+      } y eld {
+        val cl entAppNa  = cl entApp dToNa (cl entApp d)
         scopes.foreach { stats =>
           val ctxStats = stats.scope("context")
-          val viaStats = ctxStats.scope("via", via)
-          viaStats.scope("all").counter("requests").incr()
-          val viaClientStats = viaStats.scope("by_client", clientAppName)
-          viaClientStats.counter("requests").incr()
+          val v aStats = ctxStats.scope("v a", v a)
+          v aStats.scope("all").counter("requests"). ncr()
+          val v aCl entStats = v aStats.scope("by_cl ent", cl entAppNa )
+          v aCl entStats.counter("requests"). ncr()
           pathOpt.foreach { path =>
-            val viaPathStats = viaStats.scope("by_path", path)
-            viaPathStats.counter("requests").incr()
+            val v aPathStats = v aStats.scope("by_path", path)
+            v aPathStats.counter("requests"). ncr()
           }
         }
       }

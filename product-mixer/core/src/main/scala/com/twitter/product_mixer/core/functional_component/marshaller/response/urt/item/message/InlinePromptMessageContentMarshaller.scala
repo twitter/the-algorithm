@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Soc alContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. nl nePrompt ssageContent
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class InlinePromptMessageContentMarshaller @Inject() (
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  userFacepileMarshaller: UserFacepileMarshaller) {
+@S ngleton
+class  nl nePrompt ssageContentMarshaller @ nject() (
+   ssageTextAct onMarshaller:  ssageTextAct onMarshaller,
+  r chTextMarshaller: R chTextMarshaller,
+  soc alContextMarshaller: Soc alContextMarshaller,
+  userFacep leMarshaller: UserFacep leMarshaller) {
 
-  def apply(inlinePromptMessageContent: InlinePromptMessageContent): urt.MessageContent =
-    urt.MessageContent.InlinePrompt(
-      urt.InlinePrompt(
-        headerText = inlinePromptMessageContent.headerText,
-        bodyText = inlinePromptMessageContent.bodyText,
-        primaryButtonAction =
-          inlinePromptMessageContent.primaryButtonAction.map(messageTextActionMarshaller(_)),
-        secondaryButtonAction =
-          inlinePromptMessageContent.secondaryButtonAction.map(messageTextActionMarshaller(_)),
-        headerRichText = inlinePromptMessageContent.headerRichText.map(richTextMarshaller(_)),
-        bodyRichText = inlinePromptMessageContent.bodyRichText.map(richTextMarshaller(_)),
-        socialContext = inlinePromptMessageContent.socialContext.map(socialContextMarshaller(_)),
-        userFacepile = inlinePromptMessageContent.userFacepile.map(userFacepileMarshaller(_))
+  def apply( nl nePrompt ssageContent:  nl nePrompt ssageContent): urt. ssageContent =
+    urt. ssageContent. nl nePrompt(
+      urt. nl nePrompt(
+         aderText =  nl nePrompt ssageContent. aderText,
+        bodyText =  nl nePrompt ssageContent.bodyText,
+        pr maryButtonAct on =
+           nl nePrompt ssageContent.pr maryButtonAct on.map( ssageTextAct onMarshaller(_)),
+        secondaryButtonAct on =
+           nl nePrompt ssageContent.secondaryButtonAct on.map( ssageTextAct onMarshaller(_)),
+         aderR chText =  nl nePrompt ssageContent. aderR chText.map(r chTextMarshaller(_)),
+        bodyR chText =  nl nePrompt ssageContent.bodyR chText.map(r chTextMarshaller(_)),
+        soc alContext =  nl nePrompt ssageContent.soc alContext.map(soc alContextMarshaller(_)),
+        userFacep le =  nl nePrompt ssageContent.userFacep le.map(userFacep leMarshaller(_))
       )
     )
 }

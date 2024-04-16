@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c
 
-sealed trait TopicFollowPromptDisplayType
+sealed tra  Top cFollowPromptD splayType
 
-case object IncentiveFocusTopicFollowPromptDisplayType extends TopicFollowPromptDisplayType
-case object TopicFocusTopicFollowPromptDisplayType extends TopicFollowPromptDisplayType
+case object  ncent veFocusTop cFollowPromptD splayType extends Top cFollowPromptD splayType
+case object Top cFocusTop cFollowPromptD splayType extends Top cFollowPromptD splayType

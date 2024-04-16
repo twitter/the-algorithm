@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.tw ter.follow_recom ndat ons.common.pred cates.sgs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason. nval dRelat onsh pTypes
+ mport com.tw ter.soc algraph.thr ftscala.Ex stsRequest
+ mport com.tw ter.soc algraph.thr ftscala.Ex stsResult
+ mport com.tw ter.soc algraph.thr ftscala.LookupContext
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh p
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-class SgsRelationshipsByUserIdPredicate(
-  socialGraph: SocialGraph,
-  relationshipMappings: Seq[RelationshipMapping],
-  statsReceiver: StatsReceiver)
-    extends Predicate[(Option[Long], CandidateUser)]
-    with Logging {
-  private val InvalidFromPrimaryCandidateSourceName = "invalid_from_primary_candidate_source"
-  private val InvalidFromCandidateSourceName = "invalid_from_candidate_source"
-  private val NoPrimaryCandidateSource = "no_primary_candidate_source"
+class SgsRelat onsh psByUser dPred cate(
+  soc alGraph: Soc alGraph,
+  relat onsh pMapp ngs: Seq[Relat onsh pMapp ng],
+  statsRece ver: StatsRece ver)
+    extends Pred cate[(Opt on[Long], Cand dateUser)]
+    w h Logg ng {
+  pr vate val  nval dFromPr maryCand dateS ceNa  = " nval d_from_pr mary_cand date_s ce"
+  pr vate val  nval dFromCand dateS ceNa  = " nval d_from_cand date_s ce"
+  pr vate val NoPr maryCand dateS ce = "no_pr mary_cand date_s ce"
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getNa )
 
-  override def apply(
-    pair: (Option[Long], CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (idOpt, candidate) = pair
-    val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
-      Relationship(
-        relationshipMapping.relationshipType,
-        relationshipMapping.includeBasedOnRelationship)
+  overr de def apply(
+    pa r: (Opt on[Long], Cand dateUser)
+  ): St ch[Pred cateResult] = {
+    val ( dOpt, cand date) = pa r
+    val relat onsh ps = relat onsh pMapp ngs.map { relat onsh pMapp ng: Relat onsh pMapp ng =>
+      Relat onsh p(
+        relat onsh pMapp ng.relat onsh pType,
+        relat onsh pMapp ng. ncludeBasedOnRelat onsh p)
     }
-    idOpt
-      .map { id: Long =>
-        val existsRequest = ExistsRequest(
-          id,
-          candidate.id,
-          relationships = relationships,
-          context = SgsRelationshipsByUserIdPredicate.UnionLookupContext
+     dOpt
+      .map {  d: Long =>
+        val ex stsRequest = Ex stsRequest(
+           d,
+          cand date. d,
+          relat onsh ps = relat onsh ps,
+          context = SgsRelat onsh psByUser dPred cate.Un onLookupContext
         )
-        socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
-              candidate.getPrimaryCandidateSource match {
-                case Some(candidateSource) =>
+        soc alGraph
+          .ex sts(ex stsRequest).map { ex stsResult: Ex stsResult =>
+             f (ex stsResult.ex sts) {
+              cand date.getPr maryCand dateS ce match {
+                case So (cand dateS ce) =>
                   stats
-                    .scope(InvalidFromPrimaryCandidateSourceName).counter(
-                      candidateSource.name).incr()
+                    .scope( nval dFromPr maryCand dateS ceNa ).counter(
+                      cand dateS ce.na ). ncr()
                 case None =>
                   stats
-                    .scope(InvalidFromPrimaryCandidateSourceName).counter(
-                      NoPrimaryCandidateSource).incr()
+                    .scope( nval dFromPr maryCand dateS ceNa ).counter(
+                      NoPr maryCand dateS ce). ncr()
               }
-              candidate.getCandidateSources.foreach({
-                case (candidateSource, _) =>
+              cand date.getCand dateS ces.foreach({
+                case (cand dateS ce, _) =>
                   stats
-                    .scope(InvalidFromCandidateSourceName).counter(candidateSource.name).incr()
+                    .scope( nval dFromCand dateS ceNa ).counter(cand dateS ce.na ). ncr()
               })
-              PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
-                .map { relationshipMapping: RelationshipMapping =>
-                  relationshipMapping.relationshipType
-                }.mkString(", "))))
+              Pred cateResult. nval d(Set( nval dRelat onsh pTypes(relat onsh pMapp ngs
+                .map { relat onsh pMapp ng: Relat onsh pMapp ng =>
+                  relat onsh pMapp ng.relat onsh pType
+                }.mkStr ng(", "))))
             } else {
-              PredicateResult.Valid
+              Pred cateResult.Val d
             }
           }
       }
-      // if no user id is present, return true by default
-      .getOrElse(Stitch.value(PredicateResult.Valid))
+      //  f no user  d  s present, return true by default
+      .getOrElse(St ch.value(Pred cateResult.Val d))
   }
 }
 
-object SgsRelationshipsByUserIdPredicate {
-  // OR Operation
-  @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+object SgsRelat onsh psByUser dPred cate {
+  // OR Operat on
+  @V s bleForTest ng
+  pr vate[follow_recom ndat ons] val Un onLookupContext = So (
+    LookupContext(performUn on = So (true)))
 }
 
-@Singleton
-class ExcludeNonFollowersSgsPredicate @Inject() (
-  socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
-      socialGraph,
-      Seq(RelationshipMapping(RelationshipType.FollowedBy, includeBasedOnRelationship = false)),
-      statsReceiver)
+@S ngleton
+class ExcludeNonFollo rsSgsPred cate @ nject() (
+  soc alGraph: Soc alGraph,
+  statsRece ver: StatsRece ver)
+    extends SgsRelat onsh psByUser dPred cate(
+      soc alGraph,
+      Seq(Relat onsh pMapp ng(Relat onsh pType.Follo dBy,  ncludeBasedOnRelat onsh p = false)),
+      statsRece ver)
 
-@Singleton
-class ExcludeNonFollowingSgsPredicate @Inject() (
-  socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
-      socialGraph,
-      Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = false)),
-      statsReceiver)
+@S ngleton
+class ExcludeNonFollow ngSgsPred cate @ nject() (
+  soc alGraph: Soc alGraph,
+  statsRece ver: StatsRece ver)
+    extends SgsRelat onsh psByUser dPred cate(
+      soc alGraph,
+      Seq(Relat onsh pMapp ng(Relat onsh pType.Follow ng,  ncludeBasedOnRelat onsh p = false)),
+      statsRece ver)
 
-@Singleton
-class ExcludeFollowingSgsPredicate @Inject() (
-  socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
-      socialGraph,
-      Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = true)),
-      statsReceiver)
+@S ngleton
+class ExcludeFollow ngSgsPred cate @ nject() (
+  soc alGraph: Soc alGraph,
+  statsRece ver: StatsRece ver)
+    extends SgsRelat onsh psByUser dPred cate(
+      soc alGraph,
+      Seq(Relat onsh pMapp ng(Relat onsh pType.Follow ng,  ncludeBasedOnRelat onsh p = true)),
+      statsRece ver)

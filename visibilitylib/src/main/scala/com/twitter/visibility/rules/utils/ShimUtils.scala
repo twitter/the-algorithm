@@ -1,60 +1,60 @@
-package com.twitter.visibility.rules.utils
+package com.tw ter.v s b l y.rules.ut ls
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Filtered
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.RuleBase.RuleMap
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.F ltered
+ mport com.tw ter.v s b l y.rules.Rule
+ mport com.tw ter.v s b l y.rules.RuleBase
+ mport com.tw ter.v s b l y.rules.RuleBase.RuleMap
+ mport com.tw ter.v s b l y.rules.prov ders.Prov dedEvaluat onContext
+ mport com.tw ter.v s b l y.rules.prov ders.Pol cyProv der
 
-object ShimUtils {
+object Sh mUt ls {
 
-  def preFilterFeatureMap(
+  def preF lterFeatureMap(
     featureMap: FeatureMap,
     safetyLevel: SafetyLevel,
-    contentId: ContentId,
-    evaluationContext: ProvidedEvaluationContext,
-    policyProviderOpt: Option[PolicyProvider] = None,
+    content d: Content d,
+    evaluat onContext: Prov dedEvaluat onContext,
+    pol cyProv derOpt: Opt on[Pol cyProv der] = None,
   ): FeatureMap = {
-    val safetyLevelRules: Seq[Rule] = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider
-          .policyForSurface(safetyLevel)
-          .forContentId(contentId)
-      case _ => RuleMap(safetyLevel).forContentId(contentId)
+    val safetyLevelRules: Seq[Rule] = pol cyProv derOpt match {
+      case So (pol cyProv der) =>
+        pol cyProv der
+          .pol cyForSurface(safetyLevel)
+          .forContent d(content d)
+      case _ => RuleMap(safetyLevel).forContent d(content d)
     }
 
-    val afterDisabledRules =
-      safetyLevelRules.filter(evaluationContext.ruleEnabledInContext)
+    val afterD sabledRules =
+      safetyLevelRules.f lter(evaluat onContext.ruleEnabled nContext)
 
-    val afterMissingFeatureRules =
-      afterDisabledRules.filter(rule => {
-        val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
-          case feature: Feature[_] if !featureMap.contains(feature) => feature
+    val afterM ss ngFeatureRules =
+      afterD sabledRules.f lter(rule => {
+        val m ss ngFeatures: Set[Feature[_]] = rule.featureDependenc es.collect {
+          case feature: Feature[_]  f !featureMap.conta ns(feature) => feature
         }
-        if (missingFeatures.isEmpty) {
+         f (m ss ngFeatures. sEmpty) {
           true
         } else {
           false
         }
       })
 
-    val afterPreFilterRules = afterMissingFeatureRules.filter(rule => {
-      rule.preFilter(evaluationContext, featureMap.constantMap, null) match {
-        case Filtered =>
+    val afterPreF lterRules = afterM ss ngFeatureRules.f lter(rule => {
+      rule.preF lter(evaluat onContext, featureMap.constantMap, null) match {
+        case F ltered =>
           false
         case _ =>
           true
       }
     })
 
-    val filteredFeatureMap =
-      RuleBase.removeUnusedFeaturesFromFeatureMap(featureMap, afterPreFilterRules)
+    val f lteredFeatureMap =
+      RuleBase.removeUnusedFeaturesFromFeatureMap(featureMap, afterPreF lterRules)
 
-    filteredFeatureMap
+    f lteredFeatureMap
   }
 }

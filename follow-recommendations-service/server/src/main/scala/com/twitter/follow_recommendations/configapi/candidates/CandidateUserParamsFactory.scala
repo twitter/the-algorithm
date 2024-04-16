@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.tw ter.follow_recom ndat ons.conf gap .cand dates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * CandidateParamsFactory is primarily used for "producer side" experiments, don't use it on consumer side experiments
+ * Cand dateParamsFactory  s pr mar ly used for "producer s de" exper  nts, don't use   on consu r s de exper  nts
  */
-@Singleton
-class CandidateUserParamsFactory[T <: HasParams with HasDisplayLocation] @Inject() (
-  config: Config,
-  candidateContextFactory: CandidateUserContextFactory,
-  statsReceiver: StatsReceiver) {
-  private val stats = new MemoizingStatsReceiver(statsReceiver.scope("configapi_candidate_params"))
-  def apply(candidateContext: CandidateUser, request: T): CandidateUser = {
-    if (candidateContext.params == Params.Invalid) {
-      if (request.params(GlobalParams.EnableCandidateParamHydrations)) {
-        candidateContext.copy(params =
-          config(candidateContextFactory(candidateContext, request.displayLocation), stats))
+@S ngleton
+class Cand dateUserParamsFactory[T <: HasParams w h HasD splayLocat on] @ nject() (
+  conf g: Conf g,
+  cand dateContextFactory: Cand dateUserContextFactory,
+  statsRece ver: StatsRece ver) {
+  pr vate val stats = new  mo z ngStatsRece ver(statsRece ver.scope("conf gap _cand date_params"))
+  def apply(cand dateContext: Cand dateUser, request: T): Cand dateUser = {
+     f (cand dateContext.params == Params. nval d) {
+       f (request.params(GlobalParams.EnableCand dateParamHydrat ons)) {
+        cand dateContext.copy(params =
+          conf g(cand dateContextFactory(cand dateContext, request.d splayLocat on), stats))
       } else {
-        candidateContext.copy(params = Params.Empty)
+        cand dateContext.copy(params = Params.Empty)
       }
     } else {
-      candidateContext
+      cand dateContext
     }
   }
 }

@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-case class GridCarouselMetadata(numRows: Option[Int])
+case class Gr dCarousel tadata(numRows: Opt on[ nt])

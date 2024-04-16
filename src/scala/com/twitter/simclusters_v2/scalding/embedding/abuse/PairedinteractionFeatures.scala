@@ -1,122 +1,122 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{SimClusterWithScore, SimClustersEmbedding}
-import com.twitter.util.Try
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClusterW hScore, S mClustersEmbedd ng}
+ mport com.tw ter.ut l.Try
 
-object ClusterPair {
+object ClusterPa r {
   def apply(
-    clusterId: ClusterId,
-    healthyScore: Double,
-    unhealthyScore: Double
-  ): Option[ClusterPair] = {
-    if (healthyScore + unhealthyScore == 0.0) {
+    cluster d: Cluster d,
+     althyScore: Double,
+    un althyScore: Double
+  ): Opt on[ClusterPa r] = {
+     f ( althyScore + un althyScore == 0.0) {
       None
     } else {
-      Some(new ClusterPair(clusterId, healthyScore, unhealthyScore))
+      So (new ClusterPa r(cluster d,  althyScore, un althyScore))
     }
   }
 }
 
-case class ClusterPair private (
-  clusterId: ClusterId,
-  healthyScore: Double,
-  unhealthyScore: Double) {
+case class ClusterPa r pr vate (
+  cluster d: Cluster d,
+   althyScore: Double,
+  un althyScore: Double) {
 
-  def totalScores: Double = healthyScore + unhealthyScore
+  def totalScores: Double =  althyScore + un althyScore
 
-  def healthRatio: Double = unhealthyScore / (unhealthyScore + healthyScore)
+  def  althRat o: Double = un althyScore / (un althyScore +  althyScore)
 }
 
-object PairedInteractionFeatures {
-  def smoothedHealthRatio(
-    unhealthySum: Double,
-    healthySum: Double,
-    smoothingFactor: Double,
-    prior: Double
+object Pa red nteract onFeatures {
+  def smoot d althRat o(
+    un althySum: Double,
+     althySum: Double,
+    smooth ngFactor: Double,
+    pr or: Double
   ): Double =
-    (unhealthySum + smoothingFactor * prior) / (unhealthySum + healthySum + smoothingFactor)
+    (un althySum + smooth ngFactor * pr or) / (un althySum +  althySum + smooth ngFactor)
 }
 
 /**
- * Class used to derive features for abuse models. We pair a healthy embedding with an unhealthy
- * embedding. All the public methods on this class are derived features of these embeddings.
+ * Class used to der ve features for abuse models.   pa r a  althy embedd ng w h an un althy
+ * embedd ng. All t  publ c  thods on t  class are der ved features of t se embedd ngs.
  *
- * @param healthyInteractionSimClusterEmbedding SimCluster embedding of healthy interactions (for
- *                                              instance favs or impressions)
- * @param unhealthyInteractionSimClusterEmbedding SimCluster embedding of unhealthy interactions
- *                                                (for instance blocks or abuse reports)
+ * @param  althy nteract onS mClusterEmbedd ng S mCluster embedd ng of  althy  nteract ons (for
+ *                                               nstance favs or  mpress ons)
+ * @param un althy nteract onS mClusterEmbedd ng S mCluster embedd ng of un althy  nteract ons
+ *                                                (for  nstance blocks or abuse reports)
  */
-case class PairedInteractionFeatures(
-  healthyInteractionSimClusterEmbedding: SimClustersEmbedding,
-  unhealthyInteractionSimClusterEmbedding: SimClustersEmbedding) {
+case class Pa red nteract onFeatures(
+   althy nteract onS mClusterEmbedd ng: S mClustersEmbedd ng,
+  un althy nteract onS mClusterEmbedd ng: S mClustersEmbedd ng) {
 
-  private[this] val scorePairs: Seq[ClusterPair] = {
-    val clusterToScoreMap = healthyInteractionSimClusterEmbedding.embedding.map {
-      simClusterWithScore =>
-        simClusterWithScore.clusterId -> simClusterWithScore.score
+  pr vate[t ] val scorePa rs: Seq[ClusterPa r] = {
+    val clusterToScoreMap =  althy nteract onS mClusterEmbedd ng.embedd ng.map {
+      s mClusterW hScore =>
+        s mClusterW hScore.cluster d -> s mClusterW hScore.score
     }.toMap
 
-    unhealthyInteractionSimClusterEmbedding.embedding.flatMap { simClusterWithScore =>
-      val clusterId = simClusterWithScore.clusterId
-      val postiveScoreOption = clusterToScoreMap.get(clusterId)
-      postiveScoreOption.flatMap { postiveScore =>
-        ClusterPair(clusterId, postiveScore, simClusterWithScore.score)
+    un althy nteract onS mClusterEmbedd ng.embedd ng.flatMap { s mClusterW hScore =>
+      val cluster d = s mClusterW hScore.cluster d
+      val post veScoreOpt on = clusterToScoreMap.get(cluster d)
+      post veScoreOpt on.flatMap { post veScore =>
+        ClusterPa r(cluster d, post veScore, s mClusterW hScore.score)
       }
     }
   }
 
   /**
-   * Get the pair of clusters with the most total interactions.
+   * Get t  pa r of clusters w h t  most total  nteract ons.
    */
-  val highestScoreClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.totalScores)).toOption
+  val h g stScoreClusterPa r: Opt on[ClusterPa r] =
+    Try(scorePa rs.maxBy(_.totalScores)).toOpt on
 
   /**
-   * Get the pair of clusters with the highest unhealthy to healthy ratio.
+   * Get t  pa r of clusters w h t  h g st un althy to  althy rat o.
    */
-  val highestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.healthRatio)).toOption
+  val h g st althRat oClusterPa r: Opt on[ClusterPa r] =
+    Try(scorePa rs.maxBy(_. althRat o)).toOpt on
 
   /**
-   * Get the pair of clusters with the lowest unhealthy to healthy ratio.
+   * Get t  pa r of clusters w h t  lo st un althy to  althy rat o.
    */
-  val lowestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.minBy(_.healthRatio)).toOption
+  val lo st althRat oClusterPa r: Opt on[ClusterPa r] =
+    Try(scorePa rs.m nBy(_. althRat o)).toOpt on
 
   /**
-   * Get an embedding whose values are the ratio of unhealthy to healthy for that simcluster.
+   * Get an embedd ng whose values are t  rat o of un althy to  althy for that s mcluster.
    */
-  val healthRatioEmbedding: SimClustersEmbedding = {
-    val scores = scorePairs.map { pair =>
-      SimClusterWithScore(pair.clusterId, pair.healthRatio)
+  val  althRat oEmbedd ng: S mClustersEmbedd ng = {
+    val scores = scorePa rs.map { pa r =>
+      S mClusterW hScore(pa r.cluster d, pa r. althRat o)
     }
-    SimClustersEmbedding(scores)
+    S mClustersEmbedd ng(scores)
   }
 
   /**
-   * Sum of the healthy scores for all the simclusters
+   * Sum of t   althy scores for all t  s mclusters
    */
-  val healthySum: Double = healthyInteractionSimClusterEmbedding.embedding.map(_.score).sum
+  val  althySum: Double =  althy nteract onS mClusterEmbedd ng.embedd ng.map(_.score).sum
 
   /**
-   * Sum of the unhealthy scores for all the simclusters
+   * Sum of t  un althy scores for all t  s mclusters
    */
-  val unhealthySum: Double = unhealthyInteractionSimClusterEmbedding.embedding.map(_.score).sum
+  val un althySum: Double = un althy nteract onS mClusterEmbedd ng.embedd ng.map(_.score).sum
 
   /**
-   * ratio of unhealthy to healthy for all simclusters
+   * rat o of un althy to  althy for all s mclusters
    */
-  val healthRatio: Double = unhealthySum / (unhealthySum + healthySum)
+  val  althRat o: Double = un althySum / (un althySum +  althySum)
 
   /**
-   * Ratio of unhealthy to healthy for all simclusters that is smoothed toward the prior with when
-   * we have fewer observations.
+   * Rat o of un althy to  althy for all s mclusters that  s smoot d toward t  pr or w h w n
+   *   have fe r observat ons.
    *
-   * @param smoothingFactor The higher this value the more interactions we need to move the returned
-   *                        ratio
-   * @param prior The unhealthy to healthy for all interactions.
+   * @param smooth ngFactor T  h g r t  value t  more  nteract ons   need to move t  returned
+   *                        rat o
+   * @param pr or T  un althy to  althy for all  nteract ons.
    */
-  def smoothedHealthRatio(smoothingFactor: Double, prior: Double): Double =
-    PairedInteractionFeatures.smoothedHealthRatio(unhealthySum, healthySum, smoothingFactor, prior)
+  def smoot d althRat o(smooth ngFactor: Double, pr or: Double): Double =
+    Pa red nteract onFeatures.smoot d althRat o(un althySum,  althySum, smooth ngFactor, pr or)
 }

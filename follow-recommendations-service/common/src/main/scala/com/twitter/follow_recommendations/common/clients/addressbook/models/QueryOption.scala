@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models
 
-import com.twitter.addressbook.{thriftscala => t}
+ mport com.tw ter.addressbook.{thr ftscala => t}
 
-case class QueryOption(
-  onlyDiscoverableInExpansion: Boolean,
-  onlyConfirmedInExpansion: Boolean,
-  onlyDiscoverableInResult: Boolean,
-  onlyConfirmedInResult: Boolean,
-  fetchGlobalApiNamespace: Boolean,
-  isDebugRequest: Boolean,
-  resolveEmails: Boolean,
+case class QueryOpt on(
+  onlyD scoverable nExpans on: Boolean,
+  onlyConf r d nExpans on: Boolean,
+  onlyD scoverable nResult: Boolean,
+  onlyConf r d nResult: Boolean,
+  fetchGlobalAp Na space: Boolean,
+   sDebugRequest: Boolean,
+  resolveEma ls: Boolean,
   resolvePhoneNumbers: Boolean) {
-  def toThrift: t.QueryOption = t.QueryOption(
-    onlyDiscoverableInExpansion,
-    onlyConfirmedInExpansion,
-    onlyDiscoverableInResult,
-    onlyConfirmedInResult,
-    fetchGlobalApiNamespace,
-    isDebugRequest,
-    resolveEmails,
+  def toThr ft: t.QueryOpt on = t.QueryOpt on(
+    onlyD scoverable nExpans on,
+    onlyConf r d nExpans on,
+    onlyD scoverable nResult,
+    onlyConf r d nResult,
+    fetchGlobalAp Na space,
+     sDebugRequest,
+    resolveEma ls,
     resolvePhoneNumbers
   )
 }

@@ -1,46 +1,46 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.finagle.memcached.util.NotFound
-import scala.util.Random
+ mport com.tw ter.f nagle. mcac d.ut l.NotFound
+ mport scala.ut l.Random
 
 /**
- * wrap a ReadCache, forcing a miss rate. useful for playing back
- * the same logs over and over, but simulating expected cache misses
+ * wrap a ReadCac , forc ng a m ss rate. useful for play ng back
+ * t  sa  logs over and over, but s mulat ng expected cac  m sses
  */
-class MissingReadCache[K, V](
-  underlyingCache: ReadCache[K, V],
-  hitRate: Float,
+class M ss ngReadCac [K, V](
+  underly ngCac : ReadCac [K, V],
+  h Rate: Float,
   rand: Random = new Random)
-    extends ReadCache[K, V] {
-  assert(hitRate > 1 || hitRate < 0, "hitRate must be <= 1 and => 0")
+    extends ReadCac [K, V] {
+  assert(h Rate > 1 || h Rate < 0, "h Rate must be <= 1 and => 0")
 
-  protected def filterResult[W](lr: KeyValueResult[K, W]) = {
-    val found = lr.found.filter { _ =>
-      rand.nextFloat <= hitRate
+  protected def f lterResult[W](lr: KeyValueResult[K, W]) = {
+    val found = lr.found.f lter { _ =>
+      rand.nextFloat <= h Rate
     }
     val notFound = lr.notFound ++ NotFound(lr.found.keySet, found.keySet)
-    KeyValueResult(found, notFound, lr.failed)
+    KeyValueResult(found, notFound, lr.fa led)
   }
 
-  override def get(keys: Seq[K]) =
-    underlyingCache.get(keys) map { filterResult(_) }
+  overr de def get(keys: Seq[K]) =
+    underly ngCac .get(keys) map { f lterResult(_) }
 
-  override def getWithChecksum(keys: Seq[K]) =
-    underlyingCache.getWithChecksum(keys) map { filterResult(_) }
+  overr de def getW hC cksum(keys: Seq[K]) =
+    underly ngCac .getW hC cksum(keys) map { f lterResult(_) }
 
-  override def release() = underlyingCache.release()
+  overr de def release() = underly ngCac .release()
 }
 
-class MissingCache[K, V](
-  override val underlyingCache: Cache[K, V],
-  hitRate: Float,
+class M ss ngCac [K, V](
+  overr de val underly ngCac : Cac [K, V],
+  h Rate: Float,
   rand: Random = new Random)
-    extends MissingReadCache[K, V](underlyingCache, hitRate, rand)
-    with CacheWrapper[K, V]
+    extends M ss ngReadCac [K, V](underly ngCac , h Rate, rand)
+    w h Cac Wrapper[K, V]
 
-class MissingTtlCache[K, V](
-  override val underlyingCache: TtlCache[K, V],
-  hitRate: Float,
+class M ss ngTtlCac [K, V](
+  overr de val underly ngCac : TtlCac [K, V],
+  h Rate: Float,
   rand: Random = new Random)
-    extends MissingReadCache[K, V](underlyingCache, hitRate, rand)
-    with TtlCacheWrapper[K, V]
+    extends M ss ngReadCac [K, V](underly ngCac , h Rate, rand)
+    w h TtlCac Wrapper[K, V]

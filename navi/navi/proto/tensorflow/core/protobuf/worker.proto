@@ -1,611 +1,611 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2016 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/cost_graph.proto";
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/step_stats.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/coordination_config.proto";
-import "tensorflow/core/protobuf/debug.proto";
-import "tensorflow/core/protobuf/error_codes.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
-import "tensorflow/core/protobuf/tensorflow_server.proto";
+ mport "google/protobuf/any.proto";
+ mport "tensorflow/core/fra work/cost_graph.proto";
+ mport "tensorflow/core/fra work/dev ce_attr butes.proto";
+ mport "tensorflow/core/fra work/graph.proto";
+ mport "tensorflow/core/fra work/step_stats.proto";
+ mport "tensorflow/core/fra work/tensor.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
+ mport "tensorflow/core/protobuf/conf g.proto";
+ mport "tensorflow/core/protobuf/coord nat on_conf g.proto";
+ mport "tensorflow/core/protobuf/debug.proto";
+ mport "tensorflow/core/protobuf/error_codes.proto";
+ mport "tensorflow/core/protobuf/na d_tensor.proto";
+ mport "tensorflow/core/protobuf/tensorflow_server.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "WorkerProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "WorkerProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.d strunt  ";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// GetStatus method request/response messages
+// GetStatus  thod request/response  ssages
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message GetStatusRequest {}
+ ssage GetStatusRequest {}
 
-message GetStatusResponse {
-  repeated DeviceAttributes device_attributes = 1;
+ ssage GetStatusResponse {
+  repeated Dev ceAttr butes dev ce_attr butes = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CreateSession method request/response messages
+// CreateSess on  thod request/response  ssages
 //
-// For each session,
+// For each sess on,
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CreateWorkerSessionRequest {
-  // Sessions are identified by a given handle.
-  string session_handle = 1;
+ ssage CreateWorkerSess onRequest {
+  // Sess ons are  dent f ed by a g ven handle.
+  str ng sess on_handle = 1;
 
-  // Defines the configuration of a TensorFlow worker.
+  // Def nes t  conf gurat on of a TensorFlow worker.
   ServerDef server_def = 2;
 
-  // If true, any resources such as Variables used in the session will not be
-  // shared with other sessions.
-  bool isolate_session_state = 3;
+  //  f true, any res ces such as Var ables used  n t  sess on w ll not be
+  // shared w h ot r sess ons.
+  bool  solate_sess on_state = 3;
 
-  // The device attributes of all the devices in the cluster.
-  repeated DeviceAttributes cluster_device_attributes = 4;
+  // T  dev ce attr butes of all t  dev ces  n t  cluster.
+  repeated Dev ceAttr butes cluster_dev ce_attr butes = 4;
 
-  // The master task name from which the request is sent.
-  string master_task = 5;
+  // T  master task na  from wh ch t  request  s sent.
+  str ng master_task = 5;
 
-  // The incarnation ID of the master task local CPU device.
-  // If the target worker already has a WorkerSession created previously with
-  // the same master task name but a different incarnation, it usually indicates
-  // that the previous master failed before deleting the WorkerSession on the
-  // worker. To prevent memory leaks, the worker should garbage collect the old
-  // WorkerSessions.
-  int64 master_incarnation = 6;
+  // T   ncarnat on  D of t  master task local CPU dev ce.
+  //  f t  target worker already has a WorkerSess on created prev ously w h
+  // t  sa  master task na  but a d fferent  ncarnat on,   usually  nd cates
+  // that t  prev ous master fa led before delet ng t  WorkerSess on on t 
+  // worker. To prevent  mory leaks, t  worker should garbage collect t  old
+  // WorkerSess ons.
+   nt64 master_ ncarnat on = 6;
 
-  // Configures coordination service within worker sessions.
-  CoordinationServiceConfig coordination_service_config = 7;
+  // Conf gures coord nat on serv ce w h n worker sess ons.
+  Coord nat onServ ceConf g coord nat on_serv ce_conf g = 7;
 }
 
-message CreateWorkerSessionResponse {}
+ ssage CreateWorkerSess onResponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// DeleteSession method request/response messages
+// DeleteSess on  thod request/response  ssages
 //
-// Deletes all worker-side state associated with the given session handle.
+// Deletes all worker-s de state assoc ated w h t  g ven sess on handle.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message DeleteWorkerSessionRequest {
-  // Sessions are identified by a given handle.
-  string session_handle = 1;
+ ssage DeleteWorkerSess onRequest {
+  // Sess ons are  dent f ed by a g ven handle.
+  str ng sess on_handle = 1;
 }
 
-message DeleteWorkerSessionResponse {}
+ ssage DeleteWorkerSess onResponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RegisterGraph method request/response messages
+// Reg sterGraph  thod request/response  ssages
 //
-// For each session, after the master placed every node on a device,
-// it partitions the whole graph into many subgraphs. All the nodes in
-// a subgraph were in the same worker, but potentially on many devices
-// owned by that worker (e.g. cpu0, plus gpu0, gpu1, ..., gpu7). The
-// master registers subgraphs for a worker before running any steps. A
-// successful registration returns a graph handle to be used in latter
+// For each sess on, after t  master placed every node on a dev ce,
+//   part  ons t  whole graph  nto many subgraphs. All t  nodes  n
+// a subgraph  re  n t  sa  worker, but potent ally on many dev ces
+// owned by that worker (e.g. cpu0, plus gpu0, gpu1, ..., gpu7). T 
+// master reg sters subgraphs for a worker before runn ng any steps. A
+// successful reg strat on returns a graph handle to be used  n latter
 // RunGraph requests.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RegisterGraphRequest {
-  // Subgraphs are scoped within one session.
-  string session_handle = 1;
+ ssage Reg sterGraphRequest {
+  // Subgraphs are scoped w h n one sess on.
+  str ng sess on_handle = 1;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 6;
+  // Set to true  f `CreateWorkerSess on` was called for `sess on_handle`.
+  bool create_worker_sess on_called = 6;
 
-  // "graph_def" has the subgraph of nodes for this worker, with each node
-  // having its device_name filled in.
+  // "graph_def" has t  subgraph of nodes for t  worker, w h each node
+  // hav ng  s dev ce_na  f lled  n.
   GraphDef graph_def = 2;
 
-  // True iff the graph (before partitioning) contains control flow nodes.
+  // True  ff t  graph (before part  on ng) conta ns control flow nodes.
   //
-  // As of 01/11/2015, this is no longer set by clients.
+  // As of 01/11/2015, t   s no longer set by cl ents.
   bool has_control_flow = 3 [deprecated = true];
 
-  // Configuration options for the session in which this graph was created.
-  GraphOptions graph_options = 4;
+  // Conf gurat on opt ons for t  sess on  n wh ch t  graph was created.
+  GraphOpt ons graph_opt ons = 4;
 
-  // Field(s) used by TensorFlow Debugger (tfdbg).
-  DebugOptions debug_options = 5;
+  // F eld(s) used by TensorFlow Debugger (tfdbg).
+  DebugOpt ons debug_opt ons = 5;
 
-  // If graph_def contains any collective ops this must be a positive
-  // integer used to coordinate execution with other graphs.  All
-  // graphs in a distributed execution with the same
-  // collective_graph_key will coordinate to use the same step_id
-  // concurrently so that BufRendezvous entries will make the correct
-  // values accessible.
-  int64 collective_graph_key = 7;
+  //  f graph_def conta ns any collect ve ops t  must be a pos  ve
+  //  nteger used to coord nate execut on w h ot r graphs.  All
+  // graphs  n a d str buted execut on w h t  sa 
+  // collect ve_graph_key w ll coord nate to use t  sa  step_ d
+  // concurrently so that BufRendezvous entr es w ll make t  correct
+  // values access ble.
+   nt64 collect ve_graph_key = 7;
 
-  // ConfigProto from the session in which this graph was created.
-  // Contains additional parameters beyond graph_options, including
-  // the name of the requested executor.
-  ConfigProto config_proto = 8;
+  // Conf gProto from t  sess on  n wh ch t  graph was created.
+  // Conta ns add  onal para ters beyond graph_opt ons,  nclud ng
+  // t  na  of t  requested executor.
+  Conf gProto conf g_proto = 8;
 }
 
-message RegisterGraphResponse {
-  // If the registration succeeds, returns an opaque graph_handle to
-  // the master. The master calls RunGraph with graph_handle to
-  // compute different steps.
-  string graph_handle = 1;
+ ssage Reg sterGraphResponse {
+  //  f t  reg strat on succeeds, returns an opaque graph_handle to
+  // t  master. T  master calls RunGraph w h graph_handle to
+  // compute d fferent steps.
+  str ng graph_handle = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// DeregisterGraph method request/response messages
+// Dereg sterGraph  thod request/response  ssages
 //
-// The master deregisters the given graph_handle when the graph is no
-// longer needed (e.g., the overall graph is re-scheduled and nodes
+// T  master dereg sters t  g ven graph_handle w n t  graph  s no
+// longer needed (e.g., t  overall graph  s re-sc duled and nodes
 // are re-placed).
 //
-// The worker deregisters a graph_handle automatically according to on
-// a TTL-base policy in case of master restarts.
+// T  worker dereg sters a graph_handle automat cally accord ng to on
+// a TTL-base pol cy  n case of master restarts.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message DeregisterGraphRequest {
-  // The session_handle used when registering the graph. If session_handle is
-  // empty, a single global namespace is used.
-  string session_handle = 2;
+ ssage Dereg sterGraphRequest {
+  // T  sess on_handle used w n reg ster ng t  graph.  f sess on_handle  s
+  // empty, a s ngle global na space  s used.
+  str ng sess on_handle = 2;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 3;
+  // Set to true  f `CreateWorkerSess on` was called for `sess on_handle`.
+  bool create_worker_sess on_called = 3;
 
-  // REQUIRED: graph_handle must be returned by a RegisterGraph call
-  // to the same WorkerService.
-  string graph_handle = 1;
+  // REQU RED: graph_handle must be returned by a Reg sterGraph call
+  // to t  sa  WorkerServ ce.
+  str ng graph_handle = 1;
 }
 
-message DeregisterGraphResponse {
-  // TODO(mrry): Optionally add summary stats for the graph.
+ ssage Dereg sterGraphResponse {
+  // TODO(mrry): Opt onally add summary stats for t  graph.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CleanupAll method request/response messages
+// CleanupAll  thod request/response  ssages
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CleanupAllRequest {
-  // A list of container names.
+ ssage CleanupAllRequest {
+  // A l st of conta ner na s.
   //
-  // If 'container' is not empty, releases resources in the given
-  // containers in all devices.
+  //  f 'conta ner'  s not empty, releases res ces  n t  g ven
+  // conta ners  n all dev ces.
   //
-  // If 'container' is empty, releases resources in the default
-  // container in all devices.
-  repeated string container = 1;
+  //  f 'conta ner'  s empty, releases res ces  n t  default
+  // conta ner  n all dev ces.
+  repeated str ng conta ner = 1;
 }
 
-message CleanupAllResponse {}
+ ssage CleanupAllResponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RunGraph request / response messages
+// RunGraph request / response  ssages
 //
-// The worker executes all subgraphs registered under graph_handle.
-// RunGraph returns after the execution finishes or an error is
+// T  worker executes all subgraphs reg stered under graph_handle.
+// RunGraph returns after t  execut on f n s s or an error  s
 // encountered.
-// A sequence of RunGraphRequests with is_partial may be sent to RunGraph for
-// partial graph execution.
+// A sequence of RunGraphRequests w h  s_part al may be sent to RunGraph for
+// part al graph execut on.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Options specific to the execution of a single step.
-message ExecutorOpts {
+// Opt ons spec f c to t  execut on of a s ngle step.
+ ssage ExecutorOpts {
   bool record_costs = 1;
-  bool record_timeline = 3;
-  bool record_partition_graphs = 4;
-  bool report_tensor_allocations_upon_oom = 5;
+  bool record_t  l ne = 3;
+  bool record_part  on_graphs = 4;
+  bool report_tensor_allocat ons_upon_oom = 5;
 }
 
-message RunGraphRequest {
-  // session_handle is the master-generated unique id for this session.
-  // If session_handle is non-empty, it must be the same as used when
-  // registering the graph. If it is empty, a single global namespace is used to
-  // search for the graph_handle.
-  string session_handle = 8;
+ ssage RunGraphRequest {
+  // sess on_handle  s t  master-generated un que  d for t  sess on.
+  //  f sess on_handle  s non-empty,   must be t  sa  as used w n
+  // reg ster ng t  graph.  f    s empty, a s ngle global na space  s used to
+  // search for t  graph_handle.
+  str ng sess on_handle = 8;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 10;
+  // Set to true  f `CreateWorkerSess on` was called for `sess on_handle`.
+  bool create_worker_sess on_called = 10;
 
-  // REQUIRED: graph_handle must be returned by a RegisterGraph call
-  // to the same WorkerService.
-  string graph_handle = 1;
+  // REQU RED: graph_handle must be returned by a Reg sterGraph call
+  // to t  sa  WorkerServ ce.
+  str ng graph_handle = 1;
 
-  // A unique ID to distinguish different runs of the same graph.
+  // A un que  D to d st ngu sh d fferent runs of t  sa  graph.
   //
-  // The master generates a global unique `step_id` to distinguish
-  // different runs of the graph computation. Subgraphs communicate
-  // (e.g., send/recv ops) with each other using `step_id` to
-  // distinguish tensors generated by different runs.
-  int64 step_id = 2;
+  // T  master generates a global un que `step_ d` to d st ngu sh
+  // d fferent runs of t  graph computat on. Subgraphs commun cate
+  // (e.g., send/recv ops) w h each ot r us ng `step_ d` to
+  // d st ngu sh tensors generated by d fferent runs.
+   nt64 step_ d = 2;
 
-  // Options for this step.
+  // Opt ons for t  step.
   ExecutorOpts exec_opts = 5;
 
-  // Runs the graph.
+  // Runs t  graph.
   //
-  // Sends the tensors in "send" into the graph before the run and
-  // fetches the keys into `RunGraphResponse.recv` after the run.
-  repeated NamedTensorProto send = 3;
-  repeated string recv_key = 4;
+  // Sends t  tensors  n "send"  nto t  graph before t  run and
+  // fetc s t  keys  nto `RunGraphResponse.recv` after t  run.
+  repeated Na dTensorProto send = 3;
+  repeated str ng recv_key = 4;
 
-  // True if the RunGraphRequest is a partial run request.
-  bool is_partial = 6;
-  // True if this is the last partial run request in a sequence of requests.
-  bool is_last_partial_run = 7;
+  // True  f t  RunGraphRequest  s a part al run request.
+  bool  s_part al = 6;
+  // True  f t   s t  last part al run request  n a sequence of requests.
+  bool  s_last_part al_run = 7;
 
-  // If true then some errors, e.g., execution errors that have long
-  // error messages, may return an OK RunGraphResponse with the actual
-  // error saved in the status_code/status_error_message fields of the
-  // response body. This is a workaround since the RPC subsystem may
-  // truncate long metadata messages.
-  bool store_errors_in_response_body = 9;
+  //  f true t n so  errors, e.g., execut on errors that have long
+  // error  ssages, may return an OK RunGraphResponse w h t  actual
+  // error saved  n t  status_code/status_error_ ssage f elds of t 
+  // response body. T   s a workaround s nce t  RPC subsystem may
+  // truncate long  tadata  ssages.
+  bool store_errors_ n_response_body = 9;
 
-  // Unique identifier for this request. Every RunGraphRequest must have a
-  // unique request_id, and retried RunGraphRequests must have the same
-  // request_id. If request_id is zero, retry detection is disabled.
+  // Un que  dent f er for t  request. Every RunGraphRequest must have a
+  // un que request_ d, and retr ed RunGraphRequests must have t  sa 
+  // request_ d.  f request_ d  s zero, retry detect on  s d sabled.
   //
-  // Retried RunGraphRequests are problematic because they may issue a
-  // RecvTensor that will have no corresponding sender and will wait forever.
-  // Workers use request_ids to reject retried RunGraph requests instead of
-  // waiting forever.
-  int64 request_id = 11;
+  // Retr ed RunGraphRequests are problemat c because t y may  ssue a
+  // RecvTensor that w ll have no correspond ng sender and w ll wa  forever.
+  // Workers use request_ ds to reject retr ed RunGraph requests  nstead of
+  // wa  ng forever.
+   nt64 request_ d = 11;
 
   // Next: 12
 }
 
-message RunGraphResponse {
-  // A list of tensors corresponding to those requested by
+ ssage RunGraphResponse {
+  // A l st of tensors correspond ng to those requested by
   // `RunGraphRequest.recv_key`.
-  repeated NamedTensorProto recv = 1;
+  repeated Na dTensorProto recv = 1;
 
-  // If the request asked for execution stats, the cost graph, or the partition
-  // graphs, these are returned here.
-  // TODO(suharshs): Package these in a RunMetadata instead.
+  //  f t  request asked for execut on stats, t  cost graph, or t  part  on
+  // graphs, t se are returned  re.
+  // TODO(suharshs): Package t se  n a Run tadata  nstead.
   StepStats step_stats = 2;
   CostGraphDef cost_graph = 3;
-  repeated GraphDef partition_graph = 4;
+  repeated GraphDef part  on_graph = 4;
 
-  // If store_errors_in_response_body is true in the request, then
-  // optionally the server may return an OK status for the RPC and
-  // fill the true status into the fields below, to allow for messages
-  // that are too long to fit in metadata.
+  //  f store_errors_ n_response_body  s true  n t  request, t n
+  // opt onally t  server may return an OK status for t  RPC and
+  // f ll t  true status  nto t  f elds below, to allow for  ssages
+  // that are too long to f   n  tadata.
   error.Code status_code = 5;
-  string status_error_message = 6;
+  str ng status_error_ ssage = 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CleanupGraph method request/response messages
+// CleanupGraph  thod request/response  ssages
 //
-// After the master receives RunGraph responses from all workers, the
-// master instructs every worker to cleanup any remaining state of a
-// step (e.g. tensors buffered by a `Send` op but not picked up by
-// other workers). The master does not necessarily need to wait for
-// completion of CleanupGraph calls.
+// After t  master rece ves RunGraph responses from all workers, t 
+// master  nstructs every worker to cleanup any rema n ng state of a
+// step (e.g. tensors buffered by a `Send` op but not p cked up by
+// ot r workers). T  master does not necessar ly need to wa  for
+// complet on of CleanupGraph calls.
 //
-// Workers should cleanup step states automatically according to a
-// TTL-based policy in case of master restarts.
+// Workers should cleanup step states automat cally accord ng to a
+// TTL-based pol cy  n case of master restarts.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CleanupGraphRequest {
-  int64 step_id = 1;
+ ssage CleanupGraphRequest {
+   nt64 step_ d = 1;
 }
 
-message CleanupGraphResponse {}
+ ssage CleanupGraphResponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RecvTensor method request/response messages
+// RecvTensor  thod request/response  ssages
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RecvTensorRequest {
-  // The step in which the tensor will be produced.
+ ssage RecvTensorRequest {
+  // T  step  n wh ch t  tensor w ll be produced.
   //
-  // REQUIRED: This must eventually correspond to the `step_id` passed
-  // into a RunGraph call on the same WorkerService.
-  int64 step_id = 1;
+  // REQU RED: T  must eventually correspond to t  `step_ d` passed
+  //  nto a RunGraph call on t  sa  WorkerServ ce.
+   nt64 step_ d = 1;
 
-  // A key identifying the channel to receive tensors from. A RecvTensor request
-  // retrieves one tensor from the channel, but multiple tensors can be sent and
-  // received over the same channel with multiple RecvTensor requests. See
-  // rendezvous.h for details.
-  string rendezvous_key = 2;
+  // A key  dent fy ng t  channel to rece ve tensors from. A RecvTensor request
+  // retr eves one tensor from t  channel, but mult ple tensors can be sent and
+  // rece ved over t  sa  channel w h mult ple RecvTensor requests. See
+  // rendezvous.h for deta ls.
+  str ng rendezvous_key = 2;
 
-  // If true, use an out-of-band DMA mechanism to transfer the
-  // received tensor.
+  //  f true, use an out-of-band DMA  chan sm to transfer t 
+  // rece ved tensor.
   bool dma_ok = 3;
 
-  // Optional information on client-side device locality.
-  DeviceLocality client_locality = 4;
+  // Opt onal  nformat on on cl ent-s de dev ce local y.
+  Dev ceLocal y cl ent_local y = 4;
 
-  // Optional information on server-side device locality.
-  DeviceLocality server_locality = 5;
+  // Opt onal  nformat on on server-s de dev ce local y.
+  Dev ceLocal y server_local y = 5;
 
-  // Optional information needed by the RPC subsystem.
-  google.protobuf.Any transport_options = 6;
+  // Opt onal  nformat on needed by t  RPC subsystem.
+  google.protobuf.Any transport_opt ons = 6;
 
-  // Unique identifier for this request. Every RecvTensorRequest must have a
-  // unique request_id, and retried RecvTensorRequests must have the same
-  // request_id. If request_id is zero, retry detection and response cache
-  // are disabled.
+  // Un que  dent f er for t  request. Every RecvTensorRequest must have a
+  // un que request_ d, and retr ed RecvTensorRequests must have t  sa 
+  // request_ d.  f request_ d  s zero, retry detect on and response cac 
+  // are d sabled.
   //
-  // Retried RecvTensorRequests are problematic because a RecvTensor with no
-  // corresponding sender will wait forever, and the tensor may have been
-  // delivered to a previous retry. Workers use request_ids to reject retried
-  // RecvTensor requests instead of waiting forever.
-  int64 request_id = 7;
+  // Retr ed RecvTensorRequests are problemat c because a RecvTensor w h no
+  // correspond ng sender w ll wa  forever, and t  tensor may have been
+  // del vered to a prev ous retry. Workers use request_ ds to reject retr ed
+  // RecvTensor requests  nstead of wa  ng forever.
+   nt64 request_ d = 7;
 }
 
-message RecvTensorResponse {
-  // The tensor as a proto.
+ ssage RecvTensorResponse {
+  // T  tensor as a proto.
   TensorProto tensor = 1;
 
-  // If true, this tensor was the output of a dead node, and the
-  // content is invalid.
-  bool is_dead = 2;
+  //  f true, t  tensor was t  output of a dead node, and t 
+  // content  s  nval d.
+  bool  s_dead = 2;
 
-  // The time at which tensor was available and started to be returned.
-  int64 send_start_micros = 3;
+  // T  t   at wh ch tensor was ava lable and started to be returned.
+   nt64 send_start_m cros = 3;
 
-  // Optional additional information about how to receive the tensor,
-  // e.g. in the event that `RecvTensorRequest.dma_ok` was true.
-  google.protobuf.Any transport_options = 4;
+  // Opt onal add  onal  nformat on about how to rece ve t  tensor,
+  // e.g.  n t  event that `RecvTensorRequest.dma_ok` was true.
+  google.protobuf.Any transport_opt ons = 4;
 
-  // Whether the receiver should send a MarkRecvFinishedRequest to the sender
-  // to ack the message.
-  bool require_ack = 5;
+  // W t r t  rece ver should send a MarkRecvF n s dRequest to t  sender
+  // to ack t   ssage.
+  bool requ re_ack = 5;
 }
 
-// Message for managing the response cache maintained on the sender side.
-// Currently only used by the gRPC worker service.
-message MarkRecvFinishedRequest {
-  int64 request_id = 1;
+//  ssage for manag ng t  response cac  ma nta ned on t  sender s de.
+// Currently only used by t  gRPC worker serv ce.
+ ssage MarkRecvF n s dRequest {
+   nt64 request_ d = 1;
 }
 
-message MarkRecvFinishedResponse {}
+ ssage MarkRecvF n s dResponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Logging method request/response messages
+// Logg ng  thod request/response  ssages
 //
-// NOTE(mrry): This feature is not supported in the open-source
-// version, and these messages are expected to change.
+// NOTE(mrry): T  feature  s not supported  n t  open-s ce
+// vers on, and t se  ssages are expected to change.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Out-of-band request to begin or end logging, or
-// to retrieve logs for particular steps.
-message LoggingRequest {
-  // If true, RPC logging will be enabled.
-  bool enable_rpc_logging = 1;
+// Out-of-band request to beg n or end logg ng, or
+// to retr eve logs for part cular steps.
+ ssage Logg ngRequest {
+  //  f true, RPC logg ng w ll be enabled.
+  bool enable_rpc_logg ng = 1;
 
-  // If true, RPC logging will be disabled.
-  bool disable_rpc_logging = 4;
+  //  f true, RPC logg ng w ll be d sabled.
+  bool d sable_rpc_logg ng = 4;
 
-  // If true, discard any saved logging data (for all steps).
+  //  f true, d scard any saved logg ng data (for all steps).
   bool clear = 2;
 
-  // When set, requests all saved log data pertaining to the step.
-  // Any log data retrieved is eliminated from the store and cannot be
-  // retrieved again.
-  repeated int64 fetch_step_id = 3;
+  // W n set, requests all saved log data perta n ng to t  step.
+  // Any log data retr eved  s el m nated from t  store and cannot be
+  // retr eved aga n.
+  repeated  nt64 fetch_step_ d = 3;
 }
 
-message LabeledStepStats {
-  int64 step_id = 1;
+ ssage LabeledStepStats {
+   nt64 step_ d = 1;
   StepStats step_stats = 2;
 }
 
-message LoggingResponse {
+ ssage Logg ngResponse {
   repeated LabeledStepStats step = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Tracing method request/response messages
+// Trac ng  thod request/response  ssages
 //
-// NOTE(mrry): This feature is not supported in the open-source
-// version, and these messages are expected to change.
+// NOTE(mrry): T  feature  s not supported  n t  open-s ce
+// vers on, and t se  ssages are expected to change.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message TraceOpts {
-  // Length of the trace to be taken, in seconds.
-  double duration = 1;
-  // If true, capture step profile locally in each worker. Currently
-  // unimplemented.
-  bool use_step_profiler = 2;
-  // If true, capture kernel events from each worker.
-  bool use_kernel_profiler = 3;
-  // If true, capture extended profiling events from TensorFlow process.
-  bool use_extended_profiler = 4;
-  // If true, capture GPU profiling events locally on each
-  // machine. Currently unimplemented.
-  bool use_gpu_profiler = 5;
-  // If true, collect sampled profile events. Currently unimplemented.
-  bool use_sample_profiler = 6;
+ ssage TraceOpts {
+  // Length of t  trace to be taken,  n seconds.
+  double durat on = 1;
+  //  f true, capture step prof le locally  n each worker. Currently
+  // un mple nted.
+  bool use_step_prof ler = 2;
+  //  f true, capture kernel events from each worker.
+  bool use_kernel_prof ler = 3;
+  //  f true, capture extended prof l ng events from TensorFlow process.
+  bool use_extended_prof ler = 4;
+  //  f true, capture GPU prof l ng events locally on each
+  // mach ne. Currently un mple nted.
+  bool use_gpu_prof ler = 5;
+  //  f true, collect sampled prof le events. Currently un mple nted.
+  bool use_sample_prof ler = 6;
 }
 
-// Out-of-band request to configure distributed tracing.
-message TracingRequest {
-  TraceOpts options = 1;
+// Out-of-band request to conf gure d str buted trac ng.
+ ssage Trac ngRequest {
+  TraceOpts opt ons = 1;
 }
 
-message TracingResponse {}
+ ssage Trac ngResponse {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Raw data transfers in support of Collective Ops.
-// These methods are experimental and subject to change.
+// Raw data transfers  n support of Collect ve Ops.
+// T se  thods are exper  ntal and subject to change.
 //
-// The intention is to allow collectives to take advantage of the most
-// efficient methods available on a platform, e.g. RDMA, and not be
-// constrained to use the RPC system in use by other methods.
+// T   ntent on  s to allow collect ves to take advantage of t  most
+// eff c ent  thods ava lable on a platform, e.g. RDMA, and not be
+// constra ned to use t  RPC system  n use by ot r  thods.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RecvBufRequest {
-  // Use of the fields below may vary by implementation.  For example
-  // the buf_ptr and num_bytes may be set only for local operations and
-  // not sent on the wire, or only sent on the wire in one direction.
+ ssage RecvBufRequest {
+  // Use of t  f elds below may vary by  mple ntat on.  For example
+  // t  buf_ptr and num_bytes may be set only for local operat ons and
+  // not sent on t  w re, or only sent on t  w re  n one d rect on.
 
-  // Used at server side to find the correct BufRendezvous.
-  int64 step_id = 1;
+  // Used at server s de to f nd t  correct BufRendezvous.
+   nt64 step_ d = 1;
 
-  // Arbitrary string identifying a BufRendezvous entry.
-  string buf_rendezvous_key = 2;
+  // Arb rary str ng  dent fy ng a BufRendezvous entry.
+  str ng buf_rendezvous_key = 2;
 
-  // Size of value expected, must agree with BufRendezvous entry.
-  int64 num_bytes = 3;
+  // S ze of value expected, must agree w h BufRendezvous entry.
+   nt64 num_bytes = 3;
 
-  // When RDMA is in use, address of destination field on client.
-  fixed64 buf_ptr = 4;
+  // W n RDMA  s  n use, address of dest nat on f eld on cl ent.
+  f xed64 buf_ptr = 4;
 
-  // Optional information on client-side device locality.
-  DeviceLocality client_locality = 5;
+  // Opt onal  nformat on on cl ent-s de dev ce local y.
+  Dev ceLocal y cl ent_local y = 5;
 
-  // Optional information on server-side device locality.
-  DeviceLocality server_locality = 6;
+  // Opt onal  nformat on on server-s de dev ce local y.
+  Dev ceLocal y server_local y = 6;
 
-  // Optional, implementation-specific data.
-  google.protobuf.Any transport_options = 7;
-  // For annotating timeline and device incarnation check.
-  string src_device = 8;
-  // Optional, for annotating the timeline.
-  string dst_device = 9;
+  // Opt onal,  mple ntat on-spec f c data.
+  google.protobuf.Any transport_opt ons = 7;
+  // For annotat ng t  l ne and dev ce  ncarnat on c ck.
+  str ng src_dev ce = 8;
+  // Opt onal, for annotat ng t  t  l ne.
+  str ng dst_dev ce = 9;
 
-  // Depending on the RPC system in use, it may be necessary to set this
-  // id to detect resends of RPCs where the server is not aware that
-  // the prior RPC failed.
-  int64 request_id = 10;
+  // Depend ng on t  RPC system  n use,   may be necessary to set t 
+  //  d to detect resends of RPCs w re t  server  s not aware that
+  // t  pr or RPC fa led.
+   nt64 request_ d = 10;
 
-  // Incarnation number of the source device, used to detect worker failures.
-  uint64 src_incarnation = 11;
+  //  ncarnat on number of t  s ce dev ce, used to detect worker fa lures.
+  u nt64 src_ ncarnat on = 11;
 }
 
-message RecvBufResponse {
-  // Use of the fields below may vary by implementation.  Comments give
-  // intended use.
+ ssage RecvBufResponse {
+  // Use of t  f elds below may vary by  mple ntat on.  Com nts g ve
+  //  ntended use.
 
-  fixed64 buf_ptr = 1;  // Address of source field on server.
-  int64 num_bytes = 2;  // Byte length of buf_ptr field, if set.
-  bool is_dead = 3;     // True if value is 'dead' like a tensor.
-  // Optional, implementation-specific data.
-  google.protobuf.Any transport_options = 4;
-  // Optional, for timeline.
-  int64 send_start_micros = 5;
+  f xed64 buf_ptr = 1;  // Address of s ce f eld on server.
+   nt64 num_bytes = 2;  // Byte length of buf_ptr f eld,  f set.
+  bool  s_dead = 3;     // True  f value  s 'dead' l ke a tensor.
+  // Opt onal,  mple ntat on-spec f c data.
+  google.protobuf.Any transport_opt ons = 4;
+  // Opt onal, for t  l ne.
+   nt64 send_start_m cros = 5;
 
-  // Whether the receiver should send a MarkRecvFinishedRequest to the sender
-  // to ack the message.
-  bool require_ack = 6;
+  // W t r t  rece ver should send a MarkRecvF n s dRequest to t  sender
+  // to ack t   ssage.
+  bool requ re_ack = 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Collective Op dynamic group resolution messages.
+// Collect ve Op dynam c group resolut on  ssages.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Supplies one or more device names as members of the group identified by
-// group_key.  Service will respond when all group_size devices become known.
-// All devices in group must have same type.
-message CompleteGroupRequest {
-  int32 group_key = 1;
-  int32 group_size = 2;
-  string device_type = 3;
-  int32 collective_type = 5;
-  DeviceAttributes device_attributes = 6;
+// Suppl es one or more dev ce na s as  mbers of t  group  dent f ed by
+// group_key.  Serv ce w ll respond w n all group_s ze dev ces beco  known.
+// All dev ces  n group must have sa  type.
+ ssage CompleteGroupRequest {
+   nt32 group_key = 1;
+   nt32 group_s ze = 2;
+  str ng dev ce_type = 3;
+   nt32 collect ve_type = 5;
+  Dev ceAttr butes dev ce_attr butes = 6;
 
   reserved 4;
 }
 
-// Gives the complete membership of the group identified by group_key.
-message CompleteGroupResponse {
-  int32 group_key = 1;
-  int32 group_size = 2;
-  string device_type = 3;
-  int32 num_tasks = 4;  // number of distinct tasks hosting the devices
-  bytes communicator_key = 7;
-  repeated DeviceAttributes device_attributes = 8;
+// G ves t  complete  mbersh p of t  group  dent f ed by group_key.
+ ssage CompleteGroupResponse {
+   nt32 group_key = 1;
+   nt32 group_s ze = 2;
+  str ng dev ce_type = 3;
+   nt32 num_tasks = 4;  // number of d st nct tasks host ng t  dev ces
+  bytes commun cator_key = 7;
+  repeated Dev ceAttr butes dev ce_attr butes = 8;
 
   reserved 5, 6;
 }
 
-// Supplies data about one collective op belonging to the instance identified
-// by instance_key.  Service will respond when all group_size ops have
-// become known.  Most of the data being sent is for correctness checking,
-// to ensure that all ops in the instance share common attributes.
-message CompleteInstanceRequest {
-  string name = 1;
-  int32 type = 2;
+// Suppl es data about one collect ve op belong ng to t   nstance  dent f ed
+// by  nstance_key.  Serv ce w ll respond w n all group_s ze ops have
+// beco  known.  Most of t  data be ng sent  s for correctness c ck ng,
+// to ensure that all ops  n t   nstance share common attr butes.
+ ssage Complete nstanceRequest {
+  str ng na  = 1;
+   nt32 type = 2;
   DataType data_type = 3;
   TensorShapeProto shape = 4;
-  int32 group_key = 5;
-  int32 group_size = 6;
-  int32 instance_key = 7;
-  string device_type = 8;
-  repeated int32 subdiv_offset = 9;
-  string device = 10;
-  bool is_source = 11;
+   nt32 group_key = 5;
+   nt32 group_s ze = 6;
+   nt32  nstance_key = 7;
+  str ng dev ce_type = 8;
+  repeated  nt32 subd v_offset = 9;
+  str ng dev ce = 10;
+  bool  s_s ce = 11;
 }
 
-// Confirms that every op in the instance has consistently declared itself.
-// Also gives the source_rank in case of broadcast.
-message CompleteInstanceResponse {
-  int32 instance_key = 1;
-  int32 source_rank = 2;
+// Conf rms that every op  n t   nstance has cons stently declared  self.
+// Also g ves t  s ce_rank  n case of broadcast.
+ ssage Complete nstanceResponse {
+   nt32  nstance_key = 1;
+   nt32 s ce_rank = 2;
   reserved 3;
 }
 
-// Request for next agreed-upon step_id for the specified graph_keys.
-// This is used to enable multiple graphs containing nodes from
-// a common collective instance to coordinate using the same step_ids.
-message GetStepSequenceRequest {
-  repeated int64 graph_key = 1;
+// Request for next agreed-upon step_ d for t  spec f ed graph_keys.
+// T   s used to enable mult ple graphs conta n ng nodes from
+// a common collect ve  nstance to coord nate us ng t  sa  step_ ds.
+ ssage GetStepSequenceRequest {
+  repeated  nt64 graph_key = 1;
 }
 
-message StepSequence {
-  int64 graph_key = 1;
-  int64 next_step_id = 2;
+ ssage StepSequence {
+   nt64 graph_key = 1;
+   nt64 next_step_ d = 2;
 }
 
-// Next valid step_ids for one or more graph_keys.
-message GetStepSequenceResponse {
+// Next val d step_ ds for one or more graph_keys.
+ ssage GetStepSequenceResponse {
   repeated StepSequence step_sequence = 1;
 }

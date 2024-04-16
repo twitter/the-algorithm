@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.product.following
+package com.tw ter.ho _m xer.product.follow ng
 
-import com.twitter.home_mixer.candidate_pipeline.FollowingEarlybirdResponseFeatureTransformer
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.cand date_p pel ne.Follow ngEarlyb rdResponseFeatureTransfor r
+ mport com.tw ter.ho _m xer.funct onal_component.cand date_s ce.Earlyb rdCand dateS ce
+ mport com.tw ter.ho _m xer.product.follow ng.model.Follow ngQuery
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersFeature
+ mport com.tw ter.product_m xer.component_l brary.gate.NonEmptySeqFeatureGate
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class FollowingEarlybirdCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  followingEarlybirdQueryTransformer: FollowingEarlybirdQueryTransformer)
-    extends CandidatePipelineConfig[
-      FollowingQuery,
-      t.EarlybirdRequest,
-      t.ThriftSearchResult,
-      TweetCandidate
+@S ngleton
+class Follow ngEarlyb rdCand dateP pel neConf g @ nject() (
+  earlyb rdCand dateS ce: Earlyb rdCand dateS ce,
+  follow ngEarlyb rdQueryTransfor r: Follow ngEarlyb rdQueryTransfor r)
+    extends Cand dateP pel neConf g[
+      Follow ngQuery,
+      t.Earlyb rdRequest,
+      t.Thr ftSearchResult,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("FollowingEarlybird")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("Follow ngEarlyb rd")
 
-  override val candidateSource: BaseCandidateSource[t.EarlybirdRequest, t.ThriftSearchResult] =
-    earlybirdCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[t.Earlyb rdRequest, t.Thr ftSearchResult] =
+    earlyb rdCand dateS ce
 
-  override val gates: Seq[Gate[FollowingQuery]] = Seq(
-    NonEmptySeqFeatureGate(SGSFollowedUsersFeature)
+  overr de val gates: Seq[Gate[Follow ngQuery]] = Seq(
+    NonEmptySeqFeatureGate(SGSFollo dUsersFeature)
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    FollowingQuery,
-    t.EarlybirdRequest
-  ] = followingEarlybirdQueryTransformer
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    Follow ngQuery,
+    t.Earlyb rdRequest
+  ] = follow ngEarlyb rdQueryTransfor r
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.ThriftSearchResult]
-  ] = Seq(FollowingEarlybirdResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[t.Thr ftSearchResult]
+  ] = Seq(Follow ngEarlyb rdResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    t.Thr ftSearchResult,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult. d) }
 }

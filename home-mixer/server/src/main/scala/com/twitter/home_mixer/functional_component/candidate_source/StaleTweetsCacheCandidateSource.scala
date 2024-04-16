@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+package com.tw ter.ho _m xer.funct onal_component.cand date_s ce
 
-import com.google.inject.name.Named
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.StaleT etsCac 
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class StaleTweetsCacheCandidateSource @Inject() (
-  @Named(StaleTweetsCache) staleTweetsCache: MemcachedClient)
-    extends CandidateSource[Seq[Long], Long] {
+@S ngleton
+class StaleT etsCac Cand dateS ce @ nject() (
+  @Na d(StaleT etsCac ) staleT etsCac :  mcac dCl ent)
+    extends Cand dateS ce[Seq[Long], Long] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("StaleTweetsCache")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("StaleT etsCac ")
 
-  private val StaleTweetsCacheKeyPrefix = "v1_"
+  pr vate val StaleT etsCac KeyPref x = "v1_"
 
-  override def apply(request: Seq[Long]): Stitch[Seq[Long]] = {
-    val keys = request.map(StaleTweetsCacheKeyPrefix + _)
+  overr de def apply(request: Seq[Long]): St ch[Seq[Long]] = {
+    val keys = request.map(StaleT etsCac KeyPref x + _)
 
-    Stitch.callFuture(staleTweetsCache.get(keys).map { tweets =>
-      tweets.map {
-        case (k, _) => k.replaceFirst(StaleTweetsCacheKeyPrefix, "").toLong
+    St ch.callFuture(staleT etsCac .get(keys).map { t ets =>
+      t ets.map {
+        case (k, _) => k.replaceF rst(StaleT etsCac KeyPref x, "").toLong
       }.toSeq
     })
   }

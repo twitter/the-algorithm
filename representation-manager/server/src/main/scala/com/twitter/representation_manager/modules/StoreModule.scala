@@ -1,24 +1,24 @@
-package com.twitter.representation_manager.modules
+package com.tw ter.representat on_manager.modules
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.decider.Decider
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.representation_manager.common.RepresentationManagerDecider
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+ mport com.google. nject.Prov des
+ mport javax. nject.S ngleton
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.representat on_manager.common.Representat onManagerDec der
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
 
-object StoreModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesMhMtlsParams(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVClientMtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier)
+object StoreModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desMhMtlsParams(
+    serv ce dent f er: Serv ce dent f er
+  ): ManhattanKVCl entMtlsParams = ManhattanKVCl entMtlsParams(serv ce dent f er)
 
-  @Singleton
-  @Provides
-  def providesRmsDecider(
-    decider: Decider
-  ): RepresentationManagerDecider = RepresentationManagerDecider(decider)
+  @S ngleton
+  @Prov des
+  def prov desRmsDec der(
+    dec der: Dec der
+  ): Representat onManagerDec der = Representat onManagerDec der(dec der)
 
 }

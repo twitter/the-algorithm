@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+ mport java. o.Closeable;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport java.ut l.concurrent.Sc duledFuture;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
 
 /**
- * Executes a single periodic task.
+ * Executes a s ngle per od c task.
  */
-public abstract class OneTaskScheduledExecutorManager
-    extends ScheduledExecutorManager implements Closeable {
-  private final ScheduledExecutorTask scheduledTask;
-  private final PeriodicActionParams periodicActionParams;
+publ c abstract class OneTaskSc duledExecutorManager
+    extends Sc duledExecutorManager  mple nts Closeable {
+  pr vate f nal Sc duledExecutorTask sc duledTask;
+  pr vate f nal Per od cAct onParams per od cAct onParams;
 
-  public OneTaskScheduledExecutorManager(
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      String threadNameFormat,
-      boolean isDaemon,
-      PeriodicActionParams periodicActionParams,
-      ShutdownWaitTimeParams shutdownTiming,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(executorServiceFactory.build(threadNameFormat, isDaemon), periodicActionParams,
-        shutdownTiming, searchStatsReceiver, criticalExceptionHandler);
+  publ c OneTaskSc duledExecutorManager(
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      Str ng threadNa Format,
+      boolean  sDaemon,
+      Per od cAct onParams per od cAct onParams,
+      ShutdownWa T  Params shutdownT m ng,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t (executorServ ceFactory.bu ld(threadNa Format,  sDaemon), per od cAct onParams,
+        shutdownT m ng, searchStatsRece ver, cr  calExcept onHandler);
   }
 
-  public OneTaskScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      PeriodicActionParams periodicActionParams,
-      ShutdownWaitTimeParams shutdownTiming,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(executor, periodicActionParams, shutdownTiming, searchStatsReceiver, null,
-        criticalExceptionHandler, Clock.SYSTEM_CLOCK);
+  publ c OneTaskSc duledExecutorManager(
+      Sc duledExecutorServ ce executor,
+      Per od cAct onParams per od cAct onParams,
+      ShutdownWa T  Params shutdownT m ng,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t (executor, per od cAct onParams, shutdownT m ng, searchStatsRece ver, null,
+        cr  calExcept onHandler, Clock.SYSTEM_CLOCK);
   }
 
-  public OneTaskScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      PeriodicActionParams periodicActionParams,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchCounter iterationCounter,
-      CriticalExceptionHandler criticalExceptionHandler,
+  publ c OneTaskSc duledExecutorManager(
+      Sc duledExecutorServ ce executor,
+      Per od cAct onParams per od cAct onParams,
+      ShutdownWa T  Params shutdownWa T  Params,
+      SearchStatsRece ver searchStatsRece ver,
+      SearchCounter  erat onCounter,
+      Cr  calExcept onHandler cr  calExcept onHandler,
       Clock clock) {
-    super(executor, shutdownWaitTimeParams, searchStatsReceiver, iterationCounter,
-        criticalExceptionHandler, clock);
+    super(executor, shutdownWa T  Params, searchStatsRece ver,  erat onCounter,
+        cr  calExcept onHandler, clock);
 
-    this.periodicActionParams = periodicActionParams;
-    this.scheduledTask = new ScheduledExecutorTask(getIterationCounter(), clock) {
-      @Override
-      protected void runOneIteration() {
-        OneTaskScheduledExecutorManager.this.runOneIteration();
+    t .per od cAct onParams = per od cAct onParams;
+    t .sc duledTask = new Sc duledExecutorTask(get erat onCounter(), clock) {
+      @Overr de
+      protected vo d runOne erat on() {
+        OneTaskSc duledExecutorManager.t .runOne erat on();
       }
     };
   }
 
   /**
-   * Schedule the single internally specified task returned by getScheduledTask.
+   * Sc dule t  s ngle  nternally spec f ed task returned by getSc duledTask.
    */
-  public ScheduledFuture schedule() {
-    return this.scheduleNewTask(
-        this.getScheduledTask(),
-        this.periodicActionParams
+  publ c Sc duledFuture sc dule() {
+    return t .sc duleNewTask(
+        t .getSc duledTask(),
+        t .per od cAct onParams
     );
   }
 
   /**
-   * The code that the task executes.
+   * T  code that t  task executes.
    */
-  protected abstract void runOneIteration();
+  protected abstract vo d runOne erat on();
 
-  public ScheduledExecutorTask getScheduledTask() {
-    return scheduledTask;
+  publ c Sc duledExecutorTask getSc duledTask() {
+    return sc duledTask;
   }
 
-  @Override
-  public void close() throws IOException {
+  @Overr de
+  publ c vo d close() throws  OExcept on {
     try {
       shutdown();
-    } catch (InterruptedException e) {
-      throw new IOException(e);
+    } catch ( nterruptedExcept on e) {
+      throw new  OExcept on(e);
     }
   }
 }

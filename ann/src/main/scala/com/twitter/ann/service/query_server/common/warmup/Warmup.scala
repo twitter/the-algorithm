@@ -1,50 +1,50 @@
-package com.twitter.ann.service.query_server.common.warmup
+package com.tw ter.ann.serv ce.query_server.common.warmup
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import scala.annotation.tailrec
-import scala.util.Random
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport scala.annotat on.ta lrec
+ mport scala.ut l.Random
 
-trait Warmup extends Logging {
-  protected def minSuccessfulTries: Int
-  protected def maxTries: Int
-  protected def randomQueryDimension: Int
-  protected def timeout: Duration
+tra  Warmup extends Logg ng {
+  protected def m nSuccessfulTr es:  nt
+  protected def maxTr es:  nt
+  protected def randomQueryD  ns on:  nt
+  protected def t  out: Durat on
 
-  @tailrec
-  final protected def run(
-    iteration: Int = 0,
-    successes: Int = 0,
-    name: String,
+  @ta lrec
+  f nal protected def run(
+     erat on:  nt = 0,
+    successes:  nt = 0,
+    na : Str ng,
     f: => Future[_]
-  ): Unit = {
-    if (successes == minSuccessfulTries || iteration == maxTries) {
-      info(s"Warmup finished after ${iteration} iterations with ${successes} successes")
+  ): Un  = {
+     f (successes == m nSuccessfulTr es ||  erat on == maxTr es) {
+       nfo(s"Warmup f n s d after ${ erat on}  erat ons w h ${successes} successes")
     } else {
-      Try(Await.result(f.liftToTry, timeout)) match {
+      Try(Awa .result(f.l ftToTry, t  out)) match {
         case Return(Return(_)) =>
-          debug(s"[$name] Iteration $iteration Success")
-          run(iteration + 1, successes + 1, name, f)
+          debug(s"[$na ]  erat on $ erat on Success")
+          run( erat on + 1, successes + 1, na , f)
         case Return(Throw(e)) =>
-          warn(s"[$name] Iteration $iteration has failed: ${e.getMessage}. ", e)
-          run(iteration + 1, successes, name, f)
+          warn(s"[$na ]  erat on $ erat on has fa led: ${e.get ssage}. ", e)
+          run( erat on + 1, successes, na , f)
         case Throw(e) =>
-          info(s"[$name] Iteration $iteration was too slow: ${e.getMessage}. ", e)
-          run(iteration + 1, successes, name, f)
+           nfo(s"[$na ]  erat on $ erat on was too slow: ${e.get ssage}. ", e)
+          run( erat on + 1, successes, na , f)
       }
     }
   }
 
-  private val rng = new Random()
-  protected def randomQuery(): EmbeddingVector =
-    Embedding(Array.fill(randomQueryDimension)(-1 + 2 * rng.nextFloat()))
+  pr vate val rng = new Random()
+  protected def randomQuery(): Embedd ngVector =
+    Embedd ng(Array.f ll(randomQueryD  ns on)(-1 + 2 * rng.nextFloat()))
 
-  def warmup(): Unit
+  def warmup(): Un 
 }

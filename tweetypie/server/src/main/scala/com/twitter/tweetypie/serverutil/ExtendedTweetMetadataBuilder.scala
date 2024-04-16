@@ -1,52 +1,52 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.twitter.tweetypie.getCashtags
-import com.twitter.tweetypie.getHashtags
-import com.twitter.tweetypie.getMedia
-import com.twitter.tweetypie.getMentions
-import com.twitter.tweetypie.getText
-import com.twitter.tweetypie.getUrls
-import com.twitter.tweetypie.thriftscala.ExtendedTweetMetadata
-import com.twitter.tweetypie.thriftscala.ShortenedUrl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.tweetypie.tweettext.TextEntity
-import com.twitter.tweetypie.tweettext.Truncator
-import com.twitter.tweetypie.tweettext.TweetText
-import com.twitter.tweetypie.thriftscala.entities.Implicits._
+ mport com.tw ter.t etyp e.getCashtags
+ mport com.tw ter.t etyp e.getHashtags
+ mport com.tw ter.t etyp e.get d a
+ mport com.tw ter.t etyp e.get nt ons
+ mport com.tw ter.t etyp e.getText
+ mport com.tw ter.t etyp e.getUrls
+ mport com.tw ter.t etyp e.thr ftscala.ExtendedT et tadata
+ mport com.tw ter.t etyp e.thr ftscala.ShortenedUrl
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.t ettext.Offset
+ mport com.tw ter.t etyp e.t ettext.TextEnt y
+ mport com.tw ter.t etyp e.t ettext.Truncator
+ mport com.tw ter.t etyp e.t ettext.T etText
+ mport com.tw ter.t etyp e.thr ftscala.ent  es. mpl c s._
 
 /**
- * Computes the appropriate truncation index to support rendering on legacy clients.
+ * Computes t  appropr ate truncat on  ndex to support render ng on legacy cl ents.
  */
-object ExtendedTweetMetadataBuilder {
-  import TweetText._
+object ExtendedT et tadataBu lder {
+   mport T etText._
 
-  def apply(tweet: Tweet, selfPermalink: ShortenedUrl): ExtendedTweetMetadata = {
+  def apply(t et: T et, selfPermal nk: ShortenedUrl): ExtendedT et tadata = {
 
-    def entityRanges[T: TextEntity](entities: Seq[T]): Seq[(Int, Int)] =
-      entities.map(e => (TextEntity.fromIndex(e).toInt, TextEntity.toIndex(e).toInt))
+    def ent yRanges[T: TextEnt y](ent  es: Seq[T]): Seq[( nt,  nt)] =
+      ent  es.map(e => (TextEnt y.from ndex(e).to nt, TextEnt y.to ndex(e).to nt))
 
-    val allEntityRanges =
-      Offset.Ranges.fromCodePointPairs(
-        entityRanges(getUrls(tweet)) ++
-          entityRanges(getMentions(tweet)) ++
-          entityRanges(getMedia(tweet)) ++
-          entityRanges(getHashtags(tweet)) ++
-          entityRanges(getCashtags(tweet))
+    val allEnt yRanges =
+      Offset.Ranges.fromCodePo ntPa rs(
+        ent yRanges(getUrls(t et)) ++
+          ent yRanges(get nt ons(t et)) ++
+          ent yRanges(get d a(t et)) ++
+          ent yRanges(getHashtags(t et)) ++
+          ent yRanges(getCashtags(t et))
       )
 
-    val text = getText(tweet)
+    val text = getText(t et)
 
-    val apiCompatibleTruncationIndex =
-      // need to leave enough space for ellipsis, space, and self-permalink
-      Truncator.truncationPoint(
+    val ap Compat bleTruncat on ndex =
+      // need to leave enough space for ell ps s, space, and self-permal nk
+      Truncator.truncat onPo nt(
         text = text,
-        maxDisplayLength = OriginalMaxDisplayLength - selfPermalink.shortUrl.length - 2,
-        atomicUnits = allEntityRanges
+        maxD splayLength = Or g nalMaxD splayLength - selfPermal nk.shortUrl.length - 2,
+        atom cUn s = allEnt yRanges
       )
 
-    ExtendedTweetMetadata(
-      apiCompatibleTruncationIndex = apiCompatibleTruncationIndex.codePointOffset.toInt
+    ExtendedT et tadata(
+      ap Compat bleTruncat on ndex = ap Compat bleTruncat on ndex.codePo ntOffset.to nt
     )
   }
 }

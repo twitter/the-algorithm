@@ -1,78 +1,78 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.CandidateSourceRegistry
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Cand dateS ceReg stry
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardPhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReverseEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReversePhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryBackF llS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeohashS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.crowd_search_accounts.CrowdSearchAccountsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.ppm _locale_follow.PPM LocaleFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts.TopOrgan cFollowsAccountsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.real_graph.RealGraphOonV2S ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt.RepeatedProf leV s sS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentEngage ntS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentFollow ngS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.soc algraph.RecentFollow ngRecentFollow ngExpans onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Offl neStrongT ePred ct onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.tr angular_loops.Tr angularLoopsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.user_user_graph.UserUserGraphCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
-  // social based
-  forwardPhoneBookSource: ForwardPhoneBookSource,
-  forwardEmailBookSource: ForwardEmailBookSource,
-  reversePhoneBookSource: ReversePhoneBookSource,
-  reverseEmailBookSource: ReverseEmailBookSource,
-  offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
-  triangularLoopsSource: TriangularLoopsSource,
-  userUserGraphCandidateSource: UserUserGraphCandidateSource,
-  realGraphOonSource: RealGraphOonV2Source,
-  recentFollowingRecentFollowingExpansionSource: RecentFollowingRecentFollowingExpansionSource,
-  // activity based
-  recentFollowingSimilarUsersSource: RecentFollowingSimilarUsersSource,
-  recentEngagementSimilarUsersSource: RecentEngagementSimilarUsersSource,
-  repeatedProfileVisitsSource: RepeatedProfileVisitsSource,
+@S ngleton
+class ContentRecom nderFlowCand dateS ceReg stry @ nject() (
+  // soc al based
+  forwardPhoneBookS ce: ForwardPhoneBookS ce,
+  forwardEma lBookS ce: ForwardEma lBookS ce,
+  reversePhoneBookS ce: ReversePhoneBookS ce,
+  reverseEma lBookS ce: ReverseEma lBookS ce,
+  offl neStrongT ePred ct onS ce: Offl neStrongT ePred ct onS ce,
+  tr angularLoopsS ce: Tr angularLoopsS ce,
+  userUserGraphCand dateS ce: UserUserGraphCand dateS ce,
+  realGraphOonS ce: RealGraphOonV2S ce,
+  recentFollow ngRecentFollow ngExpans onS ce: RecentFollow ngRecentFollow ngExpans onS ce,
+  // act v y based
+  recentFollow ngS m larUsersS ce: RecentFollow ngS m larUsersS ce,
+  recentEngage ntS m larUsersS ce: RecentEngage ntS m larUsersS ce,
+  repeatedProf leV s sS ce: RepeatedProf leV s sS ce,
   // geo based
-  popCountrySource: PopCountrySource,
-  popGeohashSource: PopGeohashSource,
-  popCountryBackFillSource: PopCountryBackFillSource,
-  crowdSearchAccountsSource: CrowdSearchAccountsSource,
-  topOrganicFollowsAccountsSource: TopOrganicFollowsAccountsSource,
-  ppmiLocaleFollowSource: PPMILocaleFollowSource,
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSourceRegistry[ContentRecommenderRequest, CandidateUser] {
+  popCountryS ce: PopCountryS ce,
+  popGeohashS ce: PopGeohashS ce,
+  popCountryBackF llS ce: PopCountryBackF llS ce,
+  crowdSearchAccountsS ce: CrowdSearchAccountsS ce,
+  topOrgan cFollowsAccountsS ce: TopOrgan cFollowsAccountsS ce,
+  ppm LocaleFollowS ce: PPM LocaleFollowS ce,
+  baseStatsRece ver: StatsRece ver)
+    extends Cand dateS ceReg stry[ContentRecom nderRequest, Cand dateUser] {
 
-  override val statsReceiver = baseStatsReceiver
-    .scope("content_recommender_flow", "candidate_sources")
+  overr de val statsRece ver = baseStatsRece ver
+    .scope("content_recom nder_flow", "cand date_s ces")
 
-  override val sources: Set[CandidateSource[ContentRecommenderRequest, CandidateUser]] = Seq(
-    forwardPhoneBookSource,
-    forwardEmailBookSource,
-    reversePhoneBookSource,
-    reverseEmailBookSource,
-    offlineStrongTiePredictionSource,
-    triangularLoopsSource,
-    userUserGraphCandidateSource,
-    realGraphOonSource,
-    recentFollowingRecentFollowingExpansionSource,
-    recentFollowingSimilarUsersSource,
-    recentEngagementSimilarUsersSource,
-    repeatedProfileVisitsSource,
-    popCountrySource,
-    popGeohashSource,
-    popCountryBackFillSource,
-    crowdSearchAccountsSource,
-    topOrganicFollowsAccountsSource,
-    ppmiLocaleFollowSource,
+  overr de val s ces: Set[Cand dateS ce[ContentRecom nderRequest, Cand dateUser]] = Seq(
+    forwardPhoneBookS ce,
+    forwardEma lBookS ce,
+    reversePhoneBookS ce,
+    reverseEma lBookS ce,
+    offl neStrongT ePred ct onS ce,
+    tr angularLoopsS ce,
+    userUserGraphCand dateS ce,
+    realGraphOonS ce,
+    recentFollow ngRecentFollow ngExpans onS ce,
+    recentFollow ngS m larUsersS ce,
+    recentEngage ntS m larUsersS ce,
+    repeatedProf leV s sS ce,
+    popCountryS ce,
+    popGeohashS ce,
+    popCountryBackF llS ce,
+    crowdSearchAccountsS ce,
+    topOrgan cFollowsAccountsS ce,
+    ppm LocaleFollowS ce,
   ).toSet
 }

@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.tw ter.follow_recom ndat ons.common.pred cates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason.ExcludedId
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.stitch.Stitch
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason.Excluded d
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasExcludedUser ds
+ mport com.tw ter.st ch.St ch
 
-object ExcludedUserIdPredicate extends Predicate[(HasExcludedUserIds, CandidateUser)] {
+object ExcludedUser dPred cate extends Pred cate[(HasExcludedUser ds, Cand dateUser)] {
 
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val ExcludedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(ExcludedId)))
+  val Val dSt ch: St ch[Pred cateResult.Val d.type] = St ch.value(Pred cateResult.Val d)
+  val ExcludedSt ch: St ch[Pred cateResult. nval d] =
+    St ch.value(Pred cateResult. nval d(Set(Excluded d)))
 
-  override def apply(pair: (HasExcludedUserIds, CandidateUser)): Stitch[PredicateResult] = {
-    val (excludedUserIds, candidate) = pair
-    if (excludedUserIds.excludedUserIds.contains(candidate.id)) {
-      ExcludedStitch
+  overr de def apply(pa r: (HasExcludedUser ds, Cand dateUser)): St ch[Pred cateResult] = {
+    val (excludedUser ds, cand date) = pa r
+     f (excludedUser ds.excludedUser ds.conta ns(cand date. d)) {
+      ExcludedSt ch
     } else {
-      ValidStitch
+      Val dSt ch
     }
   }
 }

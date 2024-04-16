@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.cr_m xer.{thr ftscala => t}
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.ut l.Durat on
 
-object CrMixerClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.CrMixer.ServicePerEndpoint,
-      t.CrMixer.MethodPerEndpoint
+object CrM xerCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      t.CrM xer.Serv cePerEndpo nt,
+      t.CrM xer. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "cr-mixer"
-  override val dest = "/s/cr-mixer/cr-mixer"
+  overr de val label = "cr-m xer"
+  overr de val dest = "/s/cr-m xer/cr-m xer"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(500.millis)
-      .withTimeoutTotal(750.millis)
-      .idempotent(1.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(500.m ll s)
+      .w hT  outTotal(750.m ll s)
+      . dempotent(1.percent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

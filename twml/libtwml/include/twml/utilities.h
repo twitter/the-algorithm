@@ -1,18 +1,18 @@
 #pragma once
-#ifdef __cplusplus
-namespace twml {
+# fdef __cplusplus
+na space twml {
 
-inline int64_t mixDiscreteIdAndValue(int64_t key, int64_t value) {
+ nl ne  nt64_t m xD screte dAndValue( nt64_t key,  nt64_t value) {
   key ^= ((17LL + value) * 2654435761LL);
   return key;
 }
 
-inline int64_t mixStringIdAndValue(int64_t key, int32_t str_len, const uint8_t *str) {
-  int32_t hash = 0;
-  for (int32_t i = 0; i < str_len; i++) {
-    hash = (31 * hash) + (int32_t)str[i];
+ nl ne  nt64_t m xStr ng dAndValue( nt64_t key,  nt32_t str_len, const u nt8_t *str) {
+   nt32_t hash = 0;
+  for ( nt32_t   = 0;   < str_len;  ++) {
+    hash = (31 * hash) + ( nt32_t)str[ ];
   }
   return key ^ hash;
 }
 }
-#endif
+#end f

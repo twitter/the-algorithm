@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutEventHydratedCandidate
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventHydratedCand date
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TextValue
+ mport com.tw ter.ut l.Future
 
-trait MagicFanoutNewsEventNTabRequestHydrator extends EventNTabRequestHydrator {
-  self: PushCandidate with MagicFanoutEventHydratedCandidate =>
-  override lazy val tapThroughFut: Future[String] = Future.value(s"i/events/$eventId")
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    eventTitleFut.map { eventTitle =>
-      Seq(DisplayTextEntity(name = "title", value = TextValue.Text(eventTitle)))
+tra  Mag cFanoutNewsEventNTabRequestHydrator extends EventNTabRequestHydrator {
+  self: PushCand date w h Mag cFanoutEventHydratedCand date =>
+  overr de lazy val tapThroughFut: Future[Str ng] = Future.value(s" /events/$event d")
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] =
+    eventT leFut.map { eventT le =>
+      Seq(D splayTextEnt y(na  = "t le", value = TextValue.Text(eventT le)))
     }
 }

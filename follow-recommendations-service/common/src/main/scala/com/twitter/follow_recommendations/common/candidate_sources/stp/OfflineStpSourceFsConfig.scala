@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class OfflineStpSourceFsConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    OfflineStpSourceParams.UseDenserPmiMatrix
+@S ngleton
+class Offl neStpS ceFsConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean] w h FSNa ] = Seq(
+    Offl neStpS ceParams.UseDenserPm Matr x
   )
 }

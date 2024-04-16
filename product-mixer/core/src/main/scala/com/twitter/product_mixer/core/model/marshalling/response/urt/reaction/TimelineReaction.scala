@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.reaction
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.react on
 
-case class TimelineReaction(
-  execution: TimelineReactionExecution,
-  maxExecutionCount: Option[Short])
+case class T  l neReact on(
+  execut on: T  l neReact onExecut on,
+  maxExecut onCount: Opt on[Short])

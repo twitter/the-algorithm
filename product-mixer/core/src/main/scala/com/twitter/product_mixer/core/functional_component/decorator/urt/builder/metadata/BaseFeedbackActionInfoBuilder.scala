@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseFeedbackActionInfoBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+tra  BaseFeedbackAct on nfoBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]] {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo]
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[FeedbackAct on nfo]
 }

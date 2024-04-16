@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import org.apache.lucene.search.Explanation;
+ mport org.apac .lucene.search.Explanat on;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
 /*
- * A sample scorer, doesn't really do anything, returns the same score for every document.
+ * A sample scorer, doesn't really do anyth ng, returns t  sa  score for every docu nt.
  */
-public class DefaultScoringFunction extends ScoringFunction {
-  private float score;
+publ c class DefaultScor ngFunct on extends Scor ngFunct on {
+  pr vate float score;
 
-  public DefaultScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  publ c DefaultScor ngFunct on( mmutableSc ma nterface sc ma) {
+    super(sc ma);
   }
 
-  @Override
+  @Overr de
   protected float score(float luceneQueryScore) {
     score = luceneQueryScore;
     return luceneQueryScore;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    // just an example - this scoring function will go away soon
-    return Explanation.match(luceneScore, "luceneScore=" + luceneScore);
+  @Overr de
+  protected Explanat on doExpla n(float luceneScore) {
+    // just an example - t  scor ng funct on w ll go away soon
+    return Explanat on.match(luceneScore, "luceneScore=" + luceneScore);
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @Overr de
+  publ c vo d updateRelevanceStats(Thr ftSearchResultsRelevanceStats relevanceStats) {
     relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
-    if (score == ScoringFunction.SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
+     f (score == Scor ngFunct on.SK P_H T) {
+      relevanceStats.setNumSk pped(relevanceStats.getNumSk pped() + 1);
     }
   }
 }

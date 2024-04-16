@@ -1,107 +1,107 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date._
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-object GenericCandidates {
+object Gener cCand dates {
   type Target =
     TargetUser
-      with UserDetails
-      with TargetDecider
-      with TargetABDecider
-      with TweetImpressionHistory
-      with HTLVisitHistory
-      with MaxTweetAge
-      with NewUserDetails
-      with FrigateHistory
-      with TargetWithSeedUsers
+      w h UserDeta ls
+      w h TargetDec der
+      w h TargetABDec der
+      w h T et mpress on tory
+      w h HTLV s  tory
+      w h MaxT etAge
+      w h NewUserDeta ls
+      w h Fr gate tory
+      w h TargetW hSeedUsers
 }
 
-case class GenericCandidateAdaptor(
-  genericCandidates: CandidateSource[GenericCandidates.Target, Candidate],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  stats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case class Gener cCand dateAdaptor(
+  gener cCand dates: Cand dateS ce[Gener cCand dates.Target, Cand date],
+  t etyP eStore: ReadableStore[Long, T etyP eResult],
+  t etyP eStoreNoVF: ReadableStore[Long, T etyP eResult],
+  stats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  override val name: String = genericCandidates.name
+  overr de val na : Str ng = gener cCand dates.na 
 
-  private def generateTweetFavCandidate(
+  pr vate def generateT etFavCand date(
     _target: Target,
-    _tweetId: Long,
-    _socialContextActions: Seq[SocialContextAction],
-    socialContextActionsAllTypes: Seq[SocialContextAction],
-    _tweetyPieResult: Option[TweetyPieResult]
-  ): RawCandidate = {
-    new RawCandidate with TweetFavoriteCandidate {
-      override val socialContextActions = _socialContextActions
-      override val socialContextAllTypeActions =
-        socialContextActionsAllTypes
-      val tweetId = _tweetId
+    _t et d: Long,
+    _soc alContextAct ons: Seq[Soc alContextAct on],
+    soc alContextAct onsAllTypes: Seq[Soc alContextAct on],
+    _t etyP eResult: Opt on[T etyP eResult]
+  ): RawCand date = {
+    new RawCand date w h T etFavor eCand date {
+      overr de val soc alContextAct ons = _soc alContextAct ons
+      overr de val soc alContextAllTypeAct ons =
+        soc alContextAct onsAllTypes
+      val t et d = _t et d
       val target = _target
-      val tweetyPieResult = _tweetyPieResult
+      val t etyP eResult = _t etyP eResult
     }
   }
 
-  private def generateTweetRetweetCandidate(
+  pr vate def generateT etRet etCand date(
     _target: Target,
-    _tweetId: Long,
-    _socialContextActions: Seq[SocialContextAction],
-    socialContextActionsAllTypes: Seq[SocialContextAction],
-    _tweetyPieResult: Option[TweetyPieResult]
-  ): RawCandidate = {
-    new RawCandidate with TweetRetweetCandidate {
-      override val socialContextActions = _socialContextActions
-      override val socialContextAllTypeActions = socialContextActionsAllTypes
-      val tweetId = _tweetId
+    _t et d: Long,
+    _soc alContextAct ons: Seq[Soc alContextAct on],
+    soc alContextAct onsAllTypes: Seq[Soc alContextAct on],
+    _t etyP eResult: Opt on[T etyP eResult]
+  ): RawCand date = {
+    new RawCand date w h T etRet etCand date {
+      overr de val soc alContextAct ons = _soc alContextAct ons
+      overr de val soc alContextAllTypeAct ons = soc alContextAct onsAllTypes
+      val t et d = _t et d
       val target = _target
-      val tweetyPieResult = _tweetyPieResult
+      val t etyP eResult = _t etyP eResult
     }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    genericCandidates.get(inputTarget).map { candidatesOpt =>
-      candidatesOpt
-        .map { candidates =>
-          val candidatesSeq =
-            candidates.collect {
-              case tweetRetweet: TweetRetweetCandidate
-                  if inputTarget.params(PushParams.MRTweetRetweetRecsParam) =>
-                generateTweetRetweetCandidate(
-                  inputTarget,
-                  tweetRetweet.tweetId,
-                  tweetRetweet.socialContextActions,
-                  tweetRetweet.socialContextAllTypeActions,
-                  tweetRetweet.tweetyPieResult)
-              case tweetFavorite: TweetFavoriteCandidate
-                  if inputTarget.params(PushParams.MRTweetFavRecsParam) =>
-                generateTweetFavCandidate(
-                  inputTarget,
-                  tweetFavorite.tweetId,
-                  tweetFavorite.socialContextActions,
-                  tweetFavorite.socialContextAllTypeActions,
-                  tweetFavorite.tweetyPieResult)
+  overr de def get( nputTarget: Target): Future[Opt on[Seq[RawCand date]]] = {
+    gener cCand dates.get( nputTarget).map { cand datesOpt =>
+      cand datesOpt
+        .map { cand dates =>
+          val cand datesSeq =
+            cand dates.collect {
+              case t etRet et: T etRet etCand date
+                   f  nputTarget.params(PushParams.MRT etRet etRecsParam) =>
+                generateT etRet etCand date(
+                   nputTarget,
+                  t etRet et.t et d,
+                  t etRet et.soc alContextAct ons,
+                  t etRet et.soc alContextAllTypeAct ons,
+                  t etRet et.t etyP eResult)
+              case t etFavor e: T etFavor eCand date
+                   f  nputTarget.params(PushParams.MRT etFavRecsParam) =>
+                generateT etFavCand date(
+                   nputTarget,
+                  t etFavor e.t et d,
+                  t etFavor e.soc alContextAct ons,
+                  t etFavor e.soc alContextAllTypeAct ons,
+                  t etFavor e.t etyP eResult)
             }
-          candidatesSeq.foreach { candidate =>
-            stats.counter(s"${candidate.commonRecType}_count").incr()
+          cand datesSeq.foreach { cand date =>
+            stats.counter(s"${cand date.commonRecType}_count"). ncr()
           }
-          candidatesSeq
+          cand datesSeq
         }
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil.isRecommendationsEligible(target).map { isAvailable =>
-      isAvailable && target.params(PushParams.GenericCandidateAdaptorDecider)
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
+    PushDev ceUt l. sRecom ndat onsEl g ble(target).map {  sAva lable =>
+       sAva lable && target.params(PushParams.Gener cCand dateAdaptorDec der)
     }
   }
 }

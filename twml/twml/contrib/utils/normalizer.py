@@ -1,39 +1,39 @@
-import tensorflow.compat.v1 as tf
-from twml.contrib.utils import math_fns
+ mport tensorflow.compat.v1 as tf
+from twml.contr b.ut ls  mport math_fns
 
 
-def mean_max_normalizaiton(dense_tensor):
+def  an_max_normal za on(dense_tensor):
   """
-  In-batch normalization
+   n-batch normal zat on
   Args:
     dense_tensor: A dense `Tensor`.
   Returns:
-    (dense_tensor - mean) / abs(max value)
+    (dense_tensor -  an) / abs(max value)
   Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
+    w n dense_tensor  s of s ze [1, ?]   w ll g ve 0
+     f t   s not what   want handle   outs de t  funct on
   """
-  dense_mean = tf.reduce_mean(dense_tensor, reduction_indices=[0])
-  dense_abs_max = tf.abs(tf.reduce_max(dense_tensor, reduction_indices=[0]))
-  dense_tensor = math_fns.safe_div(dense_tensor - dense_mean, dense_abs_max,
-    'mean_max_normalization_in_batch')
+  dense_ an = tf.reduce_ an(dense_tensor, reduct on_ nd ces=[0])
+  dense_abs_max = tf.abs(tf.reduce_max(dense_tensor, reduct on_ nd ces=[0]))
+  dense_tensor = math_fns.safe_d v(dense_tensor - dense_ an, dense_abs_max,
+    ' an_max_normal zat on_ n_batch')
   return dense_tensor
 
 
-def standard_normalizaiton(dense_tensor):
+def standard_normal za on(dense_tensor):
   """
-  In-batch normalization
-  z-normalization or standard_normalization in batch
+   n-batch normal zat on
+  z-normal zat on or standard_normal zat on  n batch
   Args:
     dense_tensor: A dense `Tensor`.
   Returns:
-    (dense_tensor - mean) / variance
+    (dense_tensor -  an) / var ance
   Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
+    w n dense_tensor  s of s ze [1, ?]   w ll g ve 0
+     f t   s not what   want handle   outs de t  funct on
   """
-  epsilon = 1E-7
-  dense_mean, dense_variance = tf.nn.moments(dense_tensor, 0)
-  # using epsilon is safer than math_fns.safe_div in here
-  dense_tensor = (dense_tensor - dense_mean) / (dense_variance + epsilon)
+  eps lon = 1E-7
+  dense_ an, dense_var ance = tf.nn.mo nts(dense_tensor, 0)
+  # us ng eps lon  s safer than math_fns.safe_d v  n  re
+  dense_tensor = (dense_tensor - dense_ an) / (dense_var ance + eps lon)
   return dense_tensor

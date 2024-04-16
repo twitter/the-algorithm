@@ -1,63 +1,63 @@
-package com.twitter.tsp.stores
+package com.tw ter.tsp.stores
 
-import com.twitter.escherbird.topicannotation.strato.thriftscala.TopicAnnotationValue
-import com.twitter.escherbird.topicannotation.strato.thriftscala.TopicAnnotationView
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.util.Future
+ mport com.tw ter.esc rb rd.top cannotat on.strato.thr ftscala.Top cAnnotat onValue
+ mport com.tw ter.esc rb rd.top cannotat on.strato.thr ftscala.Top cAnnotat onV ew
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter.s mclusters_v2.common.Top c d
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.ut l.Future
 
 /**
- * This is copied from `src/scala/com/twitter/topic_recos/stores/SemanticCoreAnnotationStore.scala`
- * Unfortunately their version assumes (incorrectly) that there is no View which causes warnings.
- * While these warnings may not cause any problems in practice, better safe than sorry.
+ * T   s cop ed from `src/scala/com/tw ter/top c_recos/stores/Semant cCoreAnnotat onStore.scala`
+ * Unfortunately t  r vers on assu s ( ncorrectly) that t re  s no V ew wh ch causes warn ngs.
+ * Wh le t se warn ngs may not cause any problems  n pract ce, better safe than sorry.
  */
-object SemanticCoreAnnotationStore {
-  private val column = "semanticCore/topicannotation/topicAnnotation.Tweet"
+object Semant cCoreAnnotat onStore {
+  pr vate val column = "semant cCore/top cannotat on/top cAnnotat on.T et"
 
-  def getStratoStore(stratoClient: Client): ReadableStore[TweetId, TopicAnnotationValue] = {
+  def getStratoStore(stratoCl ent: Cl ent): ReadableStore[T et d, Top cAnnotat onValue] = {
     StratoFetchableStore
-      .withView[TweetId, TopicAnnotationView, TopicAnnotationValue](
-        stratoClient,
+      .w hV ew[T et d, Top cAnnotat onV ew, Top cAnnotat onValue](
+        stratoCl ent,
         column,
-        TopicAnnotationView())
+        Top cAnnotat onV ew())
   }
 
-  case class TopicAnnotation(
-    topicId: TopicId,
-    ignoreSimClustersFilter: Boolean,
-    modelVersionId: Long)
+  case class Top cAnnotat on(
+    top c d: Top c d,
+     gnoreS mClustersF lter: Boolean,
+    modelVers on d: Long)
 }
 
 /**
- * Given a tweet Id, return the list of annotations defined by the TSIG team.
+ * G ven a t et  d, return t  l st of annotat ons def ned by t  TS G team.
  */
-case class SemanticCoreAnnotationStore(stratoStore: ReadableStore[TweetId, TopicAnnotationValue])
-    extends ReadableStore[TweetId, Seq[SemanticCoreAnnotationStore.TopicAnnotation]] {
-  import SemanticCoreAnnotationStore._
+case class Semant cCoreAnnotat onStore(stratoStore: ReadableStore[T et d, Top cAnnotat onValue])
+    extends ReadableStore[T et d, Seq[Semant cCoreAnnotat onStore.Top cAnnotat on]] {
+   mport Semant cCoreAnnotat onStore._
 
-  override def multiGet[K1 <: TweetId](
+  overr de def mult Get[K1 <: T et d](
     ks: Set[K1]
-  ): Map[K1, Future[Option[Seq[TopicAnnotation]]]] = {
+  ): Map[K1, Future[Opt on[Seq[Top cAnnotat on]]]] = {
     stratoStore
-      .multiGet(ks)
-      .mapValues(_.map(_.map { topicAnnotationValue =>
-        topicAnnotationValue.annotationsPerModel match {
-          case Some(annotationWithVersions) =>
-            annotationWithVersions.flatMap { annotations =>
-              annotations.annotations.map { annotation =>
-                TopicAnnotation(
-                  annotation.entityId,
-                  annotation.ignoreQualityFilter.getOrElse(false),
-                  annotations.modelVersionId
+      .mult Get(ks)
+      .mapValues(_.map(_.map { top cAnnotat onValue =>
+        top cAnnotat onValue.annotat onsPerModel match {
+          case So (annotat onW hVers ons) =>
+            annotat onW hVers ons.flatMap { annotat ons =>
+              annotat ons.annotat ons.map { annotat on =>
+                Top cAnnotat on(
+                  annotat on.ent y d,
+                  annotat on. gnoreQual yF lter.getOrElse(false),
+                  annotat ons.modelVers on d
                 )
               }
             }
           case _ =>
-            Nil
+            N l
         }
       }))
   }

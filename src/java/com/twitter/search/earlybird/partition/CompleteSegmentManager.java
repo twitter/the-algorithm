@@ -1,348 +1,348 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Supplier;
+ mport java. o. OExcept on;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.funct on.Suppl er;
 
-import com.google.common.collect.Lists;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.seg nt.Seg ntDataProv der;
 
 /**
- * CompleteSegmentManager is used to parallelize indexing of complete (not partial) segments
- * on startup.  It also populates the fields used by the PartitionManager.
+ * CompleteSeg ntManager  s used to parallel ze  ndex ng of complete (not part al) seg nts
+ * on startup.    also populates t  f elds used by t  Part  onManager.
  */
-public class CompleteSegmentManager {
-  private static final Logger LOG = LoggerFactory.getLogger(CompleteSegmentManager.class);
+publ c class CompleteSeg ntManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(CompleteSeg ntManager.class);
 
-  private static final String INDEX_COMPLETED_SEGMENTS =
-      "indexing, optimizing and flushing complete segments";
-  private static final String LOAD_COMPLETED_SEGMENTS = "loading complete segments";
-  private static final String INDEX_UPDATES_FOR_COMPLETED_SEGMENTS =
-      "indexing updates for complete segments";
-  private static final String BUILD_MULTI_SEGMENT_TERM_DICT =
-      "build multi segment term dictionaries";
+  pr vate stat c f nal Str ng  NDEX_COMPLETED_SEGMENTS =
+      " ndex ng, opt m z ng and flush ng complete seg nts";
+  pr vate stat c f nal Str ng LOAD_COMPLETED_SEGMENTS = "load ng complete seg nts";
+  pr vate stat c f nal Str ng  NDEX_UPDATES_FOR_COMPLETED_SEGMENTS =
+      " ndex ng updates for complete seg nts";
+  pr vate stat c f nal Str ng BU LD_MULT _SEGMENT_TERM_D CT =
+      "bu ld mult  seg nt term d ct onar es";
 
-  // Max number of segments being loaded / indexed concurrently.
-  private final int maxConcurrentSegmentIndexers =
-      EarlybirdProperty.MAX_CONCURRENT_SEGMENT_INDEXERS.get(3);
+  // Max number of seg nts be ng loaded /  ndexed concurrently.
+  pr vate f nal  nt maxConcurrentSeg nt ndexers =
+      Earlyb rdProperty.MAX_CONCURRENT_SEGMENT_ NDEXERS.get(3);
 
-  // The state we are building.
-  protected final SegmentDataProvider segmentDataProvider;
-  private final InstrumentedQueue<ThriftVersionedEvents> retryQueue;
+  // T  state   are bu ld ng.
+  protected f nal Seg ntDataProv der seg ntDataProv der;
+  pr vate f nal  nstru ntedQueue<Thr ftVers onedEvents> retryQueue;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  pr vate f nal UserUpdatesStream ndexer userUpdatesStream ndexer;
+  pr vate f nal UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer;
 
-  private final SegmentManager segmentManager;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final Clock clock;
-  private MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final SegmentSyncConfig segmentSyncConfig;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal ZooKeeperTryLockFactory zkTryLockFactory;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal Clock clock;
+  pr vate Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
-  private boolean interrupted = false;
+  pr vate boolean  nterrupted = false;
 
-  public CompleteSegmentManager(
+  publ c CompleteSeg ntManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      SegmentDataProvider segmentDataProvider,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SegmentManager segmentManager,
-      InstrumentedQueue<ThriftVersionedEvents> retryQueue,
-      SearchIndexingMetricSet searchIndexingMetricSet,
+      Seg ntDataProv der seg ntDataProv der,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      Seg ntManager seg ntManager,
+       nstru ntedQueue<Thr ftVers onedEvents> retryQueue,
+      Search ndex ng tr cSet search ndex ng tr cSet,
       Clock clock,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.segmentDataProvider = segmentDataProvider;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.clock = clock;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.retryQueue = retryQueue;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+      Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+      Seg ntSyncConf g seg ntSyncConf g,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t .zkTryLockFactory = zooKeeperTryLockFactory;
+    t .seg ntDataProv der = seg ntDataProv der;
+    t .userUpdatesStream ndexer = userUpdatesStream ndexer;
+    t .userScrubGeoEventStream ndexer = userScrubGeoEventStream ndexer;
+    t .seg ntManager = seg ntManager;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .clock = clock;
+    t .mult Seg ntTermD ct onaryManager = mult Seg ntTermD ct onaryManager;
+    t .seg ntSyncConf g = seg ntSyncConf g;
+    t .retryQueue = retryQueue;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
   }
 
   /**
-   * Indexes all user events.
+   *  ndexes all user events.
    */
-  public void indexUserEvents() {
-    LOG.info("Loading/indexing user events.");
-    StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
-        searchIndexingMetricSet,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
+  publ c vo d  ndexUserEvents() {
+    LOG. nfo("Load ng/ ndex ng user events.");
+    StartupUserEvent ndexer startupUserEvent ndexer = new StartupUserEvent ndexer(
+        search ndex ng tr cSet,
+        userUpdatesStream ndexer,
+        userScrubGeoEventStream ndexer,
+        seg ntManager,
         clock
     );
 
-    startupUserEventIndexer.indexAllEvents();
-    LOG.info("Finished loading/indexing user events.");
+    startupUserEvent ndexer. ndexAllEvents();
+    LOG. nfo("F n s d load ng/ ndex ng user events.");
   }
 
   /**
-   * Loads or indexes from scratch all complete segments.
+   * Loads or  ndexes from scratch all complete seg nts.
    *
-   * @param segmentsToIndexProvider A supplier that provides the list of all complete segments.
+   * @param seg ntsTo ndexProv der A suppl er that prov des t  l st of all complete seg nts.
    */
-  public void indexCompleteSegments(
-      Supplier<Iterable<SegmentInfo>> segmentsToIndexProvider) throws Exception {
-    List<Thread> segmentIndexers = Lists.newArrayList();
+  publ c vo d  ndexCompleteSeg nts(
+      Suppl er< erable<Seg nt nfo>> seg ntsTo ndexProv der) throws Except on {
+    L st<Thread> seg nt ndexers = L sts.newArrayL st();
 
-    EarlybirdStatus.beginEvent(
-        INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
-    while (!interrupted && !Thread.currentThread().isInterrupted()) {
+    Earlyb rdStatus.beg nEvent(
+         NDEX_COMPLETED_SEGMENTS, search ndex ng tr cSet.startup n ndexCompletedSeg nts);
+    wh le (! nterrupted && !Thread.currentThread(). s nterrupted()) {
       try {
-        // Get the refreshed list of local segment databases.
-        segmentManager.updateSegments(segmentDataProvider.newSegmentList());
-        Iterator<SegmentInfo> segmentsToIndex = segmentsToIndexProvider.get().iterator();
+        // Get t  refres d l st of local seg nt databases.
+        seg ntManager.updateSeg nts(seg ntDataProv der.newSeg ntL st());
+         erator<Seg nt nfo> seg ntsTo ndex = seg ntsTo ndexProv der.get(). erator();
 
-        // Start up to max concurrent segment indexers.
-        segmentIndexers.clear();
-        while (segmentsToIndex.hasNext() && segmentIndexers.size() < maxConcurrentSegmentIndexers) {
-          SegmentInfo nextSegment = segmentsToIndex.next();
-          if (!nextSegment.isComplete()) {
-            Thread thread = new Thread(new SingleSegmentIndexer(nextSegment),
-                                       "startup-segment-indexer-" + nextSegment.getSegmentName());
+        // Start up to max concurrent seg nt  ndexers.
+        seg nt ndexers.clear();
+        wh le (seg ntsTo ndex.hasNext() && seg nt ndexers.s ze() < maxConcurrentSeg nt ndexers) {
+          Seg nt nfo nextSeg nt = seg ntsTo ndex.next();
+           f (!nextSeg nt. sComplete()) {
+            Thread thread = new Thread(new S ngleSeg nt ndexer(nextSeg nt),
+                                       "startup-seg nt- ndexer-" + nextSeg nt.getSeg ntNa ());
             thread.start();
-            segmentIndexers.add(thread);
+            seg nt ndexers.add(thread);
           }
         }
 
-        // No remaining indexer threads, we're done.
-        if (segmentIndexers.size() == 0) {
-          LOG.info("Finished indexing complete segments");
-          EarlybirdStatus.endEvent(
-              INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
+        // No rema n ng  ndexer threads,  're done.
+         f (seg nt ndexers.s ze() == 0) {
+          LOG. nfo("F n s d  ndex ng complete seg nts");
+          Earlyb rdStatus.endEvent(
+               NDEX_COMPLETED_SEGMENTS, search ndex ng tr cSet.startup n ndexCompletedSeg nts);
           break;
         }
 
-        // Wait for threads to complete fully.
-        LOG.info("Started {} indexing threads", segmentIndexers.size());
-        for (Thread thread : segmentIndexers) {
-          thread.join();
+        // Wa  for threads to complete fully.
+        LOG. nfo("Started {}  ndex ng threads", seg nt ndexers.s ze());
+        for (Thread thread : seg nt ndexers) {
+          thread.jo n();
         }
-        LOG.info("Joined all {} indexing threads", segmentIndexers.size());
-      } catch (IOException e) {
-        LOG.error("IOException in SegmentStartupManager loop", e);
-      } catch (InterruptedException e) {
-        interrupted = true;
-        LOG.error("Interrupted joining segment indexer thread", e);
+        LOG. nfo("Jo ned all {}  ndex ng threads", seg nt ndexers.s ze());
+      } catch ( OExcept on e) {
+        LOG.error(" OExcept on  n Seg ntStartupManager loop", e);
+      } catch ( nterruptedExcept on e) {
+         nterrupted = true;
+        LOG.error(" nterrupted jo n ng seg nt  ndexer thread", e);
       }
     }
   }
 
   /**
-   * Loads all given complete segments.
+   * Loads all g ven complete seg nts.
    *
-   * @param completeSegments The list of all complete segments to be loaded.
+   * @param completeSeg nts T  l st of all complete seg nts to be loaded.
    */
-  public void loadCompleteSegments(List<SegmentInfo> completeSegments) throws Exception {
-    if (!interrupted && !Thread.currentThread().isInterrupted()) {
-      LOG.info("Starting to load {} complete segments.", completeSegments.size());
-      EarlybirdStatus.beginEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+  publ c vo d loadCompleteSeg nts(L st<Seg nt nfo> completeSeg nts) throws Except on {
+     f (! nterrupted && !Thread.currentThread(). s nterrupted()) {
+      LOG. nfo("Start ng to load {} complete seg nts.", completeSeg nts.s ze());
+      Earlyb rdStatus.beg nEvent(
+          LOAD_COMPLETED_SEGMENTS, search ndex ng tr cSet.startup nLoadCompletedSeg nts);
 
-      List<Thread> segmentThreads = Lists.newArrayList();
-      List<SegmentInfo> segmentsToBeLoaded = Lists.newArrayList();
-      for (SegmentInfo segmentInfo : completeSegments) {
-        if (segmentInfo.isEnabled()) {
-          segmentsToBeLoaded.add(segmentInfo);
-          Thread segmentLoaderThread = new Thread(
-              () -> new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
-                  .load(segmentInfo),
-              "startup-segment-loader-" + segmentInfo.getSegmentName());
-          segmentThreads.add(segmentLoaderThread);
-          segmentLoaderThread.start();
+      L st<Thread> seg ntThreads = L sts.newArrayL st();
+      L st<Seg nt nfo> seg ntsToBeLoaded = L sts.newArrayL st();
+      for (Seg nt nfo seg nt nfo : completeSeg nts) {
+         f (seg nt nfo. sEnabled()) {
+          seg ntsToBeLoaded.add(seg nt nfo);
+          Thread seg ntLoaderThread = new Thread(
+              () -> new Seg ntLoader(seg ntSyncConf g, cr  calExcept onHandler)
+                  .load(seg nt nfo),
+              "startup-seg nt-loader-" + seg nt nfo.getSeg ntNa ());
+          seg ntThreads.add(seg ntLoaderThread);
+          seg ntLoaderThread.start();
         } else {
-          LOG.info("Will not load segment {} because it's disabled.", segmentInfo.getSegmentName());
+          LOG. nfo("W ll not load seg nt {} because  's d sabled.", seg nt nfo.getSeg ntNa ());
         }
       }
 
-      for (Thread segmentLoaderThread : segmentThreads) {
-        segmentLoaderThread.join();
+      for (Thread seg ntLoaderThread : seg ntThreads) {
+        seg ntLoaderThread.jo n();
       }
 
-      for (SegmentInfo segmentInfo : segmentsToBeLoaded) {
-        if (!segmentInfo.getSyncInfo().isLoaded()) {
-          // Throw an exception if a segment could not be loaded: We do not want earlybirds to
-          // startup with missing segments.
-          throw new RuntimeException("Could not load segment " + segmentInfo.getSegmentName());
+      for (Seg nt nfo seg nt nfo : seg ntsToBeLoaded) {
+         f (!seg nt nfo.getSync nfo(). sLoaded()) {
+          // Throw an except on  f a seg nt could not be loaded:   do not want earlyb rds to
+          // startup w h m ss ng seg nts.
+          throw new Runt  Except on("Could not load seg nt " + seg nt nfo.getSeg ntNa ());
         }
       }
 
-      LOG.info("Loaded all complete segments, starting indexing all updates.");
-      EarlybirdStatus.beginEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+      LOG. nfo("Loaded all complete seg nts, start ng  ndex ng all updates.");
+      Earlyb rdStatus.beg nEvent(
+           NDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
+          search ndex ng tr cSet.startup n ndexUpdatesForCompletedSeg nts);
 
-      // Index all updates for all complete segments until we're fully caught up.
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        segmentThreads.clear();
-        for (SegmentInfo segmentInfo : completeSegments) {
-          if (segmentInfo.isEnabled()) {
-            Thread segmentUpdatesThread = new Thread(
-                () -> new SimpleUpdateIndexer(
-                    segmentDataProvider.getSegmentDataReaderSet(),
-                    searchIndexingMetricSet,
+      //  ndex all updates for all complete seg nts unt l  're fully caught up.
+       f (!Earlyb rdCluster. sArch ve(seg ntManager.getEarlyb rd ndexConf g().getCluster())) {
+        seg ntThreads.clear();
+        for (Seg nt nfo seg nt nfo : completeSeg nts) {
+           f (seg nt nfo. sEnabled()) {
+            Thread seg ntUpdatesThread = new Thread(
+                () -> new S mpleUpdate ndexer(
+                    seg ntDataProv der.getSeg ntDataReaderSet(),
+                    search ndex ng tr cSet,
                     retryQueue,
-                    criticalExceptionHandler).indexAllUpdates(segmentInfo),
-                "startup-complete-segment-update-indexer-" + segmentInfo.getSegmentName());
-            segmentThreads.add(segmentUpdatesThread);
-            segmentUpdatesThread.start();
+                    cr  calExcept onHandler). ndexAllUpdates(seg nt nfo),
+                "startup-complete-seg nt-update- ndexer-" + seg nt nfo.getSeg ntNa ());
+            seg ntThreads.add(seg ntUpdatesThread);
+            seg ntUpdatesThread.start();
           } else {
-            LOG.info("Will not index updates for segment {} because it's disabled.",
-                     segmentInfo.getSegmentName());
+            LOG. nfo("W ll not  ndex updates for seg nt {} because  's d sabled.",
+                     seg nt nfo.getSeg ntNa ());
           }
         }
 
-        for (Thread segmentUpdatesThread : segmentThreads) {
-          segmentUpdatesThread.join();
+        for (Thread seg ntUpdatesThread : seg ntThreads) {
+          seg ntUpdatesThread.jo n();
         }
       }
-      LOG.info("Indexed updates for all complete segments.");
-      EarlybirdStatus.endEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+      LOG. nfo(" ndexed updates for all complete seg nts.");
+      Earlyb rdStatus.endEvent(
+           NDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
+          search ndex ng tr cSet.startup n ndexUpdatesForCompletedSeg nts);
 
-      EarlybirdStatus.endEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+      Earlyb rdStatus.endEvent(
+          LOAD_COMPLETED_SEGMENTS, search ndex ng tr cSet.startup nLoadCompletedSeg nts);
     }
   }
 
   /**
-   * Builds the term dictionary that spans all earlybird segments. Some fields share the term
-   * dictionary across segments as an optimization.
+   * Bu lds t  term d ct onary that spans all earlyb rd seg nts. So  f elds share t  term
+   * d ct onary across seg nts as an opt m zat on.
    */
-  public void buildMultiSegmentTermDictionary() {
-    EarlybirdStatus.beginEvent(
-        BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
-    if (!interrupted && !Thread.currentThread().isInterrupted()) {
-      LOG.info("Building multi segment term dictionaries.");
-      boolean built = multiSegmentTermDictionaryManager.buildDictionary();
-      LOG.info("Done building multi segment term dictionaries, result: {}", built);
+  publ c vo d bu ldMult Seg ntTermD ct onary() {
+    Earlyb rdStatus.beg nEvent(
+        BU LD_MULT _SEGMENT_TERM_D CT,
+        search ndex ng tr cSet.startup nMult Seg ntTermD ct onaryUpdates);
+     f (! nterrupted && !Thread.currentThread(). s nterrupted()) {
+      LOG. nfo("Bu ld ng mult  seg nt term d ct onar es.");
+      boolean bu lt = mult Seg ntTermD ct onaryManager.bu ldD ct onary();
+      LOG. nfo("Done bu ld ng mult  seg nt term d ct onar es, result: {}", bu lt);
     }
-    EarlybirdStatus.endEvent(
-        BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+    Earlyb rdStatus.endEvent(
+        BU LD_MULT _SEGMENT_TERM_D CT,
+        search ndex ng tr cSet.startup nMult Seg ntTermD ct onaryUpdates);
   }
 
   /**
-   * Warms up the data in the given segments. The warm up will usually make sure that all necessary
-   * is loaded in RAM and all relevant data structures are created before the segments starts
-   * serving real requests.
+   * Warms up t  data  n t  g ven seg nts. T  warm up w ll usually make sure that all necessary
+   *  s loaded  n RAM and all relevant data structures are created before t  seg nts starts
+   * serv ng real requests.
    *
-   * @param segments The list of segments to warm up.
+   * @param seg nts T  l st of seg nts to warm up.
    */
-  public final void warmSegments(Iterable<SegmentInfo> segments) throws InterruptedException {
-    int threadId = 1;
-    Iterator<SegmentInfo> it = segments.iterator();
+  publ c f nal vo d warmSeg nts( erable<Seg nt nfo> seg nts) throws  nterruptedExcept on {
+     nt thread d = 1;
+     erator<Seg nt nfo>   = seg nts. erator();
 
     try {
-      List<Thread> segmentWarmers = Lists.newLinkedList();
-      while (it.hasNext()) {
+      L st<Thread> seg ntWar rs = L sts.newL nkedL st();
+      wh le ( .hasNext()) {
 
-        segmentWarmers.clear();
-        while (it.hasNext() && segmentWarmers.size() < maxConcurrentSegmentIndexers) {
-          final SegmentInfo segment = it.next();
+        seg ntWar rs.clear();
+        wh le ( .hasNext() && seg ntWar rs.s ze() < maxConcurrentSeg nt ndexers) {
+          f nal Seg nt nfo seg nt =  .next();
           Thread t = new Thread(() ->
-            new SegmentWarmer(criticalExceptionHandler).warmSegmentIfNecessary(segment),
-              "startup-warmer-" + threadId++);
+            new Seg ntWar r(cr  calExcept onHandler).warmSeg nt fNecessary(seg nt),
+              "startup-war r-" + thread d++);
 
           t.start();
-          segmentWarmers.add(t);
+          seg ntWar rs.add(t);
         }
 
-        for (Thread t : segmentWarmers) {
-          t.join();
+        for (Thread t : seg ntWar rs) {
+          t.jo n();
         }
       }
-    } catch (InterruptedException e) {
-      LOG.error("Interrupted segment warmer thread", e);
-      Thread.currentThread().interrupt();
+    } catch ( nterruptedExcept on e) {
+      LOG.error(" nterrupted seg nt war r thread", e);
+      Thread.currentThread(). nterrupt();
       throw e;
     }
   }
 
   /**
-   * Indexes a complete segment.
+   *  ndexes a complete seg nt.
    */
-  private class SingleSegmentIndexer implements Runnable {
-    private final SegmentInfo segmentInfo;
+  pr vate class S ngleSeg nt ndexer  mple nts Runnable {
+    pr vate f nal Seg nt nfo seg nt nfo;
 
-    public SingleSegmentIndexer(SegmentInfo segmentInfo) {
-      this.segmentInfo = segmentInfo;
+    publ c S ngleSeg nt ndexer(Seg nt nfo seg nt nfo) {
+      t .seg nt nfo = seg nt nfo;
     }
 
-    @Override
-    public void run() {
-      // 0) Check if the segment can be loaded. This might copy the segment from HDFS.
-      if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
-          .downloadSegment(segmentInfo)) {
-        LOG.info("Will not index segment {} because it was downloaded from HDFS.",
-                 segmentInfo.getSegmentName());
-        segmentInfo.setComplete(true);
+    @Overr de
+    publ c vo d run() {
+      // 0) C ck  f t  seg nt can be loaded. T  m ght copy t  seg nt from HDFS.
+       f (new Seg ntLoader(seg ntSyncConf g, cr  calExcept onHandler)
+          .downloadSeg nt(seg nt nfo)) {
+        LOG. nfo("W ll not  ndex seg nt {} because   was downloaded from HDFS.",
+                 seg nt nfo.getSeg ntNa ());
+        seg nt nfo.setComplete(true);
         return;
       }
 
-      LOG.info("SingleSegmentIndexer starting for segment: " + segmentInfo);
+      LOG. nfo("S ngleSeg nt ndexer start ng for seg nt: " + seg nt nfo);
 
-      // 1) Index all tweets in this segment.
-      RecordReader<TweetDocument> tweetReader;
+      // 1)  ndex all t ets  n t  seg nt.
+      RecordReader<T etDocu nt> t etReader;
       try {
-        tweetReader = segmentDataProvider.getSegmentDataReaderSet().newDocumentReader(segmentInfo);
-        if (tweetReader != null) {
-          tweetReader.setExhaustStream(true);
+        t etReader = seg ntDataProv der.getSeg ntDataReaderSet().newDocu ntReader(seg nt nfo);
+         f (t etReader != null) {
+          t etReader.setExhaustStream(true);
         }
-      } catch (Exception e) {
-        throw new RuntimeException("Could not create tweet reader for segment: " + segmentInfo, e);
+      } catch (Except on e) {
+        throw new Runt  Except on("Could not create t et reader for seg nt: " + seg nt nfo, e);
       }
 
-      new SimpleSegmentIndexer(tweetReader, searchIndexingMetricSet).indexSegment(segmentInfo);
+      new S mpleSeg nt ndexer(t etReader, search ndex ng tr cSet). ndexSeg nt(seg nt nfo);
 
-      if (!segmentInfo.isComplete() || segmentInfo.isIndexing()) {
-        throw new RuntimeException("Segment does not appear to be complete: " + segmentInfo);
+       f (!seg nt nfo. sComplete() || seg nt nfo. s ndex ng()) {
+        throw new Runt  Except on("Seg nt does not appear to be complete: " + seg nt nfo);
       }
 
-      // 2) Index all updates in this segment (archive earlybirds don't have updates).
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        new SimpleUpdateIndexer(
-            segmentDataProvider.getSegmentDataReaderSet(),
-            searchIndexingMetricSet,
+      // 2)  ndex all updates  n t  seg nt (arch ve earlyb rds don't have updates).
+       f (!Earlyb rdCluster. sArch ve(seg ntManager.getEarlyb rd ndexConf g().getCluster())) {
+        new S mpleUpdate ndexer(
+            seg ntDataProv der.getSeg ntDataReaderSet(),
+            search ndex ng tr cSet,
             retryQueue,
-            criticalExceptionHandler).indexAllUpdates(segmentInfo);
+            cr  calExcept onHandler). ndexAllUpdates(seg nt nfo);
       }
 
-      // 3) Optimize the segment.
-      SegmentOptimizer.optimize(segmentInfo);
+      // 3) Opt m ze t  seg nt.
+      Seg ntOpt m zer.opt m ze(seg nt nfo);
 
-      // 4) Flush to HDFS if necessary.
-      new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
-          .flushSegmentToDiskAndHDFS(segmentInfo);
+      // 4) Flush to HDFS  f necessary.
+      new Seg ntHdfsFlus r(zkTryLockFactory, seg ntSyncConf g)
+          .flushSeg ntToD skAndHDFS(seg nt nfo);
 
-      // 5) Unload the segment from memory.
-      segmentInfo.getIndexSegment().close();
+      // 5) Unload t  seg nt from  mory.
+      seg nt nfo.get ndexSeg nt().close();
     }
   }
 

@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-class SkippedPickedCounter {
-  private long skipped;
-  private long picked;
-  private String name;
+class Sk ppedP ckedCounter {
+  pr vate long sk pped;
+  pr vate long p cked;
+  pr vate Str ng na ;
 
-  public SkippedPickedCounter(String name) {
-    this.skipped = 0;
-    this.picked = 0;
-    this.name = name;
+  publ c Sk ppedP ckedCounter(Str ng na ) {
+    t .sk pped = 0;
+    t .p cked = 0;
+    t .na  = na ;
   }
 
-  @Override
-  public String toString() {
-    return String.format("[%s - picked: %,d, skipped: %,d]",
-        name, picked, skipped);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return Str ng.format("[%s - p cked: %,d, sk pped: %,d]",
+        na , p cked, sk pped);
   }
 
-  void incrementSkipped() {
-    skipped++;
+  vo d  ncre ntSk pped() {
+    sk pped++;
   }
-  void incrementPicked() {
-    picked++;
+  vo d  ncre ntP cked() {
+    p cked++;
   }
 }

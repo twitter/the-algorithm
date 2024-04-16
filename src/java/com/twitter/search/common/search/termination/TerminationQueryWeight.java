@@ -1,53 +1,53 @@
-package com.twitter.search.common.search.termination;
+package com.tw ter.search.common.search.term nat on;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * Weight implementation that adds termination support for an underlying query.
- * Meant to be used in conjunction with {@link TerminationQuery}.
+ *   ght  mple ntat on that adds term nat on support for an underly ng query.
+ *  ant to be used  n conjunct on w h {@l nk Term nat onQuery}.
  */
-public class TerminationQueryWeight extends Weight {
-  private final Weight inner;
-  private final QueryTimeout timeout;
+publ c class Term nat onQuery  ght extends   ght {
+  pr vate f nal   ght  nner;
+  pr vate f nal QueryT  out t  out;
 
-  TerminationQueryWeight(TerminationQuery query, Weight inner, QueryTimeout timeout) {
+  Term nat onQuery  ght(Term nat onQuery query,   ght  nner, QueryT  out t  out) {
     super(query);
-    this.inner = inner;
-    this.timeout = Preconditions.checkNotNull(timeout);
+    t . nner =  nner;
+    t .t  out = Precond  ons.c ckNotNull(t  out);
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  @Overr de
+  publ c Explanat on expla n(LeafReaderContext context,  nt doc)
+      throws  OExcept on {
+    return  nner.expla n(context, doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    Scorer innerScorer = inner.scorer(context);
-    if (innerScorer != null) {
-      return new TerminationQueryScorer(this, innerScorer, timeout);
+  @Overr de
+  publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+    Scorer  nnerScorer =  nner.scorer(context);
+     f ( nnerScorer != null) {
+      return new Term nat onQueryScorer(t ,  nnerScorer, t  out);
     }
 
     return null;
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  @Overr de
+  publ c vo d extractTerms(Set<Term> terms) {
+     nner.extractTerms(terms);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  @Overr de
+  publ c boolean  sCac able(LeafReaderContext ctx) {
+    return  nner. sCac able(ctx);
   }
 }

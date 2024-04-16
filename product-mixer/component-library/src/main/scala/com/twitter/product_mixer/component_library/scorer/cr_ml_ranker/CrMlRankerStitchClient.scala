@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
+package com.tw ter.product_m xer.component_l brary.scorer.cr_ml_ranker
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Try
+ mport com.tw ter.cr_ml_ranker.{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Try
 
 case class CrMlRankerResult(
-  tweetId: Long,
+  t et d: Long,
   score: Double)
 
-class CrMlRankerScoreStitchClient(
-  crMLRanker: t.CrMLRanker.MethodPerEndpoint,
-  maxBatchSize: Int) {
+class CrMlRankerScoreSt chCl ent(
+  crMLRanker: t.CrMLRanker. thodPerEndpo nt,
+  maxBatchS ze:  nt) {
 
   def getScore(
-    userId: Long,
-    tweetCandidate: BaseTweetCandidate,
-    rankingConfig: t.RankingConfig,
+    user d: Long,
+    t etCand date: BaseT etCand date,
+    rank ngConf g: t.Rank ngConf g,
     commonFeatures: t.CommonFeatures
-  ): Stitch[CrMlRankerResult] = {
-    Stitch.call(
-      tweetCandidate,
+  ): St ch[CrMlRankerResult] = {
+    St ch.call(
+      t etCand date,
       CrMlRankerGroup(
-        userId = userId,
-        rankingConfig = rankingConfig,
+        user d = user d,
+        rank ngConf g = rank ngConf g,
         commonFeatures = commonFeatures
       )
     )
   }
 
-  private case class CrMlRankerGroup(
-    userId: Long,
-    rankingConfig: t.RankingConfig,
+  pr vate case class CrMlRankerGroup(
+    user d: Long,
+    rank ngConf g: t.Rank ngConf g,
     commonFeatures: t.CommonFeatures)
-      extends SeqGroup[BaseTweetCandidate, CrMlRankerResult] {
+      extends SeqGroup[BaseT etCand date, CrMlRankerResult] {
 
-    override val maxSize: Int = maxBatchSize
+    overr de val maxS ze:  nt = maxBatchS ze
 
-    override protected def run(
-      tweetCandidates: Seq[BaseTweetCandidate]
+    overr de protected def run(
+      t etCand dates: Seq[BaseT etCand date]
     ): Future[Seq[Try[CrMlRankerResult]]] = {
-      val crMlRankerCandidates =
-        tweetCandidates.map { tweetCandidate =>
-          t.RankingCandidate(
-            tweetId = tweetCandidate.id,
-            hydrationContext = Some(
-              t.FeatureHydrationContext.HomeHydrationContext(t
-                .HomeFeatureHydrationContext(tweetAuthor = None)))
+      val crMlRankerCand dates =
+        t etCand dates.map { t etCand date =>
+          t.Rank ngCand date(
+            t et d = t etCand date. d,
+            hydrat onContext = So (
+              t.FeatureHydrat onContext.Ho Hydrat onContext(t
+                .Ho FeatureHydrat onContext(t etAuthor = None)))
           )
         }
 
-      val thriftResults = crMLRanker.getRankedResults(
-        t.RankingRequest(
-          requestContext = t.RankingRequestContext(
-            userId = userId,
-            config = rankingConfig
+      val thr ftResults = crMLRanker.getRankedResults(
+        t.Rank ngRequest(
+          requestContext = t.Rank ngRequestContext(
+            user d = user d,
+            conf g = rank ngConf g
           ),
-          candidates = crMlRankerCandidates,
+          cand dates = crMlRankerCand dates,
           commonFeatures = commonFeatures.commonFeatures
         )
       )
 
-      thriftResults.map { response =>
-        response.scoredTweets.map { scoredTweet =>
+      thr ftResults.map { response =>
+        response.scoredT ets.map { scoredT et =>
           Return(
             CrMlRankerResult(
-              tweetId = scoredTweet.tweetId,
-              score = scoredTweet.score
+              t et d = scoredT et.t et d,
+              score = scoredT et.score
             )
           )
         }

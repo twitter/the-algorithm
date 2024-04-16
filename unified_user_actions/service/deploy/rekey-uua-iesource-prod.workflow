@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "rekey-uua-iesource-prod",
-  "config-files": [
-    "rekey-uua-iesource.aurora"
+  "role": "d scode",
+  "na ": "rekey-uua- es ce-prod",
+  "conf g-f les": [
+    "rekey-uua- es ce.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:rekey-uua-iesource"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:rekey-uua- es ce"
       },
       {
         "type": "packer",
-        "name": "rekey-uua-iesource",
-        "artifact": "./dist/rekey-uua-iesource.zip"
+        "na ": "rekey-uua- es ce",
+        "art fact": "./d st/rekey-uua- es ce.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "rekey-uua-iesource-prod-atla",
-          "key": "atla/discode/prod/rekey-uua-iesource"
+          "na ": "rekey-uua- es ce-prod-atla",
+          "key": "atla/d scode/prod/rekey-uua- es ce"
         },
         {
-          "name": "rekey-uua-iesource-prod-pdxa",
-          "key": "pdxa/discode/prod/rekey-uua-iesource"
+          "na ": "rekey-uua- es ce-prod-pdxa",
+          "key": "pdxa/d scode/prod/rekey-uua- es ce"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
    {
      "type": "SLACK",
-     "recipients": [
+     "rec p ents": [
        {
-         "to": "discode-oncall"
+         "to": "d scode-oncall"
        }
      ],
      "events": ["WORKFLOW_SUCCESS"]
    },
    {
      "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
+     "rec p ents": [{
+       "to": "d scode-oncall"
      }],
-     "events": ["*FAILED"]
+     "events": ["*FA LED"]
    }
   ]
 }

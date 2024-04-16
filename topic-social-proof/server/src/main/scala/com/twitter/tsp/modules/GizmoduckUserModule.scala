@@ -1,35 +1,35 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Module
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+ mport com.google. nject.Module
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.g zmoduck.thr ftscala.UserServ ce
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
 
-object GizmoduckUserModule
-    extends ThriftMethodBuilderClientModule[
-      UserService.ServicePerEndpoint,
-      UserService.MethodPerEndpoint
+object G zmoduckUserModule
+    extends Thr ft thodBu lderCl entModule[
+      UserServ ce.Serv cePerEndpo nt,
+      UserServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label: String = "gizmoduck"
-  override val dest: String = "/s/gizmoduck/gizmoduck"
-  override val modules: Seq[Module] = Seq(TSPClientIdModule)
+  overr de val label: Str ng = "g zmoduck"
+  overr de val dest: Str ng = "/s/g zmoduck/g zmoduck"
+  overr de val modules: Seq[Module] = Seq(TSPCl ent dModule)
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent = {
     super
-      .configureThriftMuxClient(injector, client)
-      .withMutualTls(injector.instance[ServiceIdentifier])
-      .withClientId(injector.instance[ClientId])
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("giz"))
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hMutualTls( njector. nstance[Serv ce dent f er])
+      .w hCl ent d( njector. nstance[Cl ent d])
+      .w hStatsRece ver( njector. nstance[StatsRece ver].scope("g z"))
   }
 }

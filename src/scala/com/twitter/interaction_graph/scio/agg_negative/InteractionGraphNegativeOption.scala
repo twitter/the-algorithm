@@ -1,18 +1,18 @@
-package com.twitter.interaction_graph.scio.agg_negative
+package com.tw ter. nteract on_graph.sc o.agg_negat ve
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+ mport com.tw ter.beam. o.dal.DALOpt ons
+ mport com.tw ter.beam.job.DateRangeOpt ons
+ mport org.apac .beam.sdk.opt ons.Descr pt on
+ mport org.apac .beam.sdk.opt ons.Val dat on.Requ red
 
-trait InteractionGraphNegativeOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+tra   nteract onGraphNegat veOpt on extends DALOpt ons w h DateRangeOpt ons {
+  @Requ red
+  @Descr pt on("Output path for stor ng t  f nal dataset")
+  def getOutputPath: Str ng
+  def setOutputPath(value: Str ng): Un 
 
-  @Description("BQ dataset prefix")
-  def getBqDataset: String
-  def setBqDataset(value: String): Unit
+  @Descr pt on("BQ dataset pref x")
+  def getBqDataset: Str ng
+  def setBqDataset(value: Str ng): Un 
 
 }

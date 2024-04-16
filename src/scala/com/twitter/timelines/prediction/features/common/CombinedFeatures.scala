@@ -1,536 +1,536 @@
-package com.twitter.timelines.prediction.features.common
+package com.tw ter.t  l nes.pred ct on.features.common
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
-import com.twitter.ml.api.Feature.Binary
-import java.lang.{Boolean => JBoolean}
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureType
+ mport com.tw ter.ml.ap .Feature.B nary
+ mport java.lang.{Boolean => JBoolean}
+ mport scala.collect on.JavaConverters._
 
-object CombinedFeatures {
-  val IS_CLICKED =
-    new Binary("timelines.engagement.is_clicked", Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_DWELLED =
-    new Binary("timelines.engagement.is_dwelled", Set(TweetsViewed, EngagementsPrivate).asJava)
-  val IS_DWELLED_IN_BOUNDS_V1 = new Binary(
-    "timelines.engagement.is_dwelled_in_bounds_v1",
-    Set(TweetsViewed, EngagementsPrivate).asJava)
-  val IS_FAVORITED = new Binary(
-    "timelines.engagement.is_favorited",
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_FOLLOWED = new Binary(
-    "timelines.engagement.is_followed",
-    Set(EngagementsPrivate, EngagementsPublic, Follow).asJava)
-  val IS_IMPRESSED =
-    new Binary("timelines.engagement.is_impressed", Set(TweetsViewed, EngagementsPrivate).asJava)
-  val IS_OPEN_LINKED = new Binary(
-    "timelines.engagement.is_open_linked",
-    Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED = new Binary(
-    "timelines.engagement.is_photo_expanded",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED = new Binary(
-    "timelines.engagement.is_profile_clicked",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_QUOTED = new Binary(
-    "timelines.engagement.is_quoted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED = new Binary(
-    "timelines.engagement.is_replied",
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_RETWEETED = new Binary(
-    "timelines.engagement.is_retweeted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_RETWEETED_WITHOUT_QUOTE = new Binary(
-    "timelines.enagagement.is_retweeted_without_quote",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_SHARE_DM_CLICKED =
-    new Binary("timelines.engagement.is_tweet_share_dm_clicked", Set(EngagementsPrivate).asJava)
-  val IS_SHARE_DM_SENT =
-    new Binary("timelines.engagement.is_tweet_share_dm_sent", Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_25 = new Binary(
-    "timelines.engagement.is_video_playback_25",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_50 = new Binary(
-    "timelines.engagement.is_video_playback_50",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_75 = new Binary(
-    "timelines.engagement.is_video_playback_75",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_95 = new Binary(
-    "timelines.engagement.is_video_playback_95",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_COMPLETE = new Binary(
-    "timelines.engagement.is_video_playback_complete",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_START = new Binary(
-    "timelines.engagement.is_video_playback_start",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_VIEWED = new Binary(
-    "timelines.engagement.is_video_viewed",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_QUALITY_VIEWED = new Binary(
-    "timelines.engagement.is_video_quality_viewed",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava
+object Comb nedFeatures {
+  val  S_CL CKED =
+    new B nary("t  l nes.engage nt. s_cl cked", Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_DWELLED =
+    new B nary("t  l nes.engage nt. s_d lled", Set(T etsV e d, Engage ntsPr vate).asJava)
+  val  S_DWELLED_ N_BOUNDS_V1 = new B nary(
+    "t  l nes.engage nt. s_d lled_ n_bounds_v1",
+    Set(T etsV e d, Engage ntsPr vate).asJava)
+  val  S_FAVOR TED = new B nary(
+    "t  l nes.engage nt. s_favor ed",
+    Set(Publ cL kes, Pr vateL kes, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_FOLLOWED = new B nary(
+    "t  l nes.engage nt. s_follo d",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Follow).asJava)
+  val  S_ MPRESSED =
+    new B nary("t  l nes.engage nt. s_ mpressed", Set(T etsV e d, Engage ntsPr vate).asJava)
+  val  S_OPEN_L NKED = new B nary(
+    "t  l nes.engage nt. s_open_l nked",
+    Set(Engage ntsPr vate, L nksCl ckedOn).asJava)
+  val  S_PHOTO_EXPANDED = new B nary(
+    "t  l nes.engage nt. s_photo_expanded",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_QUOTED = new B nary(
+    "t  l nes.engage nt. s_quoted",
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_REPL ED = new B nary(
+    "t  l nes.engage nt. s_repl ed",
+    Set(Publ cRepl es, Pr vateRepl es, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_RETWEETED = new B nary(
+    "t  l nes.engage nt. s_ret eted",
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_RETWEETED_W THOUT_QUOTE = new B nary(
+    "t  l nes.enagage nt. s_ret eted_w hout_quote",
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_SHARE_DM_CL CKED =
+    new B nary("t  l nes.engage nt. s_t et_share_dm_cl cked", Set(Engage ntsPr vate).asJava)
+  val  S_SHARE_DM_SENT =
+    new B nary("t  l nes.engage nt. s_t et_share_dm_sent", Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_25 = new B nary(
+    "t  l nes.engage nt. s_v deo_playback_25",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_50 = new B nary(
+    "t  l nes.engage nt. s_v deo_playback_50",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_75 = new B nary(
+    "t  l nes.engage nt. s_v deo_playback_75",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_95 = new B nary(
+    "t  l nes.engage nt. s_v deo_playback_95",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_COMPLETE = new B nary(
+    "t  l nes.engage nt. s_v deo_playback_complete",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_START = new B nary(
+    "t  l nes.engage nt. s_v deo_playback_start",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_V EWED = new B nary(
+    "t  l nes.engage nt. s_v deo_v e d",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava)
+  val  S_V DEO_QUAL TY_V EWED = new B nary(
+    "t  l nes.engage nt. s_v deo_qual y_v e d",
+    Set( d aEngage ntAct v  es, Engage ntsPr vate).asJava
   ) 
-  // v1: post click engagements: fav, reply
-  val IS_GOOD_CLICKED_CONVO_DESC_V1 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_favorited_or_replied",
+  // v1: post cl ck engage nts: fav, reply
+  val  S_GOOD_CL CKED_CONVO_DESC_V1 = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_favor ed_or_repl ed",
     Set(
-      TweetsClicked,
-      PublicLikes,
-      PrivateLikes,
-      PublicReplies,
-      PrivateReplies,
-      EngagementsPrivate,
-      EngagementsPublic).asJava)
-  // v2: post click engagements: click
-  val IS_GOOD_CLICKED_CONVO_DESC_V2 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_v2",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_WITH_DWELL_SUM_GTE_60S = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_favorited_or_replied_or_dwell_sum_gte_60_secs",
+      T etsCl cked,
+      Publ cL kes,
+      Pr vateL kes,
+      Publ cRepl es,
+      Pr vateRepl es,
+      Engage ntsPr vate,
+      Engage ntsPubl c).asJava)
+  // v2: post cl ck engage nts: cl ck
+  val  S_GOOD_CL CKED_CONVO_DESC_V2 = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_v2",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_W TH_DWELL_SUM_GTE_60S = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_favor ed_or_repl ed_or_d ll_sum_gte_60_secs",
     Set(
-      TweetsClicked,
-      PublicLikes,
-      PrivateLikes,
-      PublicReplies,
-      PrivateReplies,
-      EngagementsPrivate,
-      EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_FAVORITED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_favorited",
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_REPLIED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_replied",
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_RETWEETED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_retweeted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_CLICKED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_clicked",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_FOLLOWED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_followed",
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_SHARE_DM_CLICKED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_share_dm_clicked",
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_PROFILE_CLICKED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_profile_clicked",
-    Set(EngagementsPrivate).asJava)
+      T etsCl cked,
+      Publ cL kes,
+      Pr vateL kes,
+      Publ cRepl es,
+      Pr vateRepl es,
+      Engage ntsPr vate,
+      Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_FAVOR TED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_favor ed",
+    Set(Publ cL kes, Pr vateL kes, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_REPL ED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_repl ed",
+    Set(Publ cRepl es, Pr vateRepl es, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_RETWEETED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_ret eted",
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_CL CKED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_cl cked",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_FOLLOWED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_follo d",
+    Set(Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_SHARE_DM_CL CKED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_share_dm_cl cked",
+    Set(Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_PROF LE_CL CKED = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_prof le_cl cked",
+    Set(Engage ntsPr vate).asJava)
 
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_0 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_0",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_1 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_1",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_2 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_2",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_3 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_3",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_0 = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_uam_gt_0",
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_1 = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_uam_gt_1",
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_2 = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_uam_gt_2",
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_3 = new B nary(
+    "t  l nes.engage nt. s_good_cl cked_convo_desc_uam_gt_3",
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
 
-  val IS_TWEET_DETAIL_DWELLED = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_8_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_8_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_15_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_15_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_25_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_25_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_30_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+  val  S_TWEET_DETA L_DWELLED = new B nary(
+    "t  l nes.engage nt. s_t et_deta l_d lled",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_8_SEC = new B nary(
+    "t  l nes.engage nt. s_t et_deta l_d lled_8_sec",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_15_SEC = new B nary(
+    "t  l nes.engage nt. s_t et_deta l_d lled_15_sec",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_25_SEC = new B nary(
+    "t  l nes.engage nt. s_t et_deta l_d lled_25_sec",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_30_SEC = new B nary(
+    "t  l nes.engage nt. s_t et_deta l_d lled_30_sec",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
 
-  val IS_PROFILE_DWELLED = new Binary(
-    "timelines.engagement.is_profile_dwelled",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_10_SEC = new Binary(
-    "timelines.engagement.is_profile_dwelled_10_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_20_SEC = new Binary(
-    "timelines.engagement.is_profile_dwelled_20_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_profile_dwelled_30_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
+  val  S_PROF LE_DWELLED = new B nary(
+    "t  l nes.engage nt. s_prof le_d lled",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_DWELLED_10_SEC = new B nary(
+    "t  l nes.engage nt. s_prof le_d lled_10_sec",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_DWELLED_20_SEC = new B nary(
+    "t  l nes.engage nt. s_prof le_d lled_20_sec",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_DWELLED_30_SEC = new B nary(
+    "t  l nes.engage nt. s_prof le_d lled_30_sec",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED = new B nary(
+    "t  l nes.engage nt. s_fullscreen_v deo_d lled",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_5_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_5_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_5_SEC = new B nary(
+    "t  l nes.engage nt. s_fullscreen_v deo_d lled_5_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_10_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_10_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_10_SEC = new B nary(
+    "t  l nes.engage nt. s_fullscreen_v deo_d lled_10_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_20_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_20_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_20_SEC = new B nary(
+    "t  l nes.engage nt. s_fullscreen_v deo_d lled_20_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_30_SEC = new B nary(
+    "t  l nes.engage nt. s_fullscreen_v deo_d lled_30_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_LINK_DWELLED_15_SEC = new Binary(
-    "timelines.engagement.is_link_dwelled_15_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_L NK_DWELLED_15_SEC = new B nary(
+    "t  l nes.engage nt. s_l nk_d lled_15_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_LINK_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_link_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_L NK_DWELLED_30_SEC = new B nary(
+    "t  l nes.engage nt. s_l nk_d lled_30_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_LINK_DWELLED_60_SEC = new Binary(
-    "timelines.engagement.is_link_dwelled_60_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_L NK_DWELLED_60_SEC = new B nary(
+    "t  l nes.engage nt. s_l nk_d lled_60_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_HOME_LATEST_VISITED =
-    new Binary("timelines.engagement.is_home_latest_visited", Set(EngagementsPrivate).asJava)
+  val  S_HOME_LATEST_V S TED =
+    new B nary("t  l nes.engage nt. s_ho _latest_v s ed", Set(Engage ntsPr vate).asJava)
 
-  val IS_BOOKMARKED =
-    new Binary("timelines.engagement.is_bookmarked", Set(EngagementsPrivate).asJava)
-  val IS_SHARED =
-    new Binary("timelines.engagement.is_shared", Set(EngagementsPrivate).asJava)
-  val IS_SHARE_MENU_CLICKED =
-    new Binary("timelines.engagement.is_share_menu_clicked", Set(EngagementsPrivate).asJava)
+  val  S_BOOKMARKED =
+    new B nary("t  l nes.engage nt. s_bookmarked", Set(Engage ntsPr vate).asJava)
+  val  S_SHARED =
+    new B nary("t  l nes.engage nt. s_shared", Set(Engage ntsPr vate).asJava)
+  val  S_SHARE_MENU_CL CKED =
+    new B nary("t  l nes.engage nt. s_share_ nu_cl cked", Set(Engage ntsPr vate).asJava)
 
-  // Negative engagements
-  val IS_DONT_LIKE = new Binary("timelines.engagement.is_dont_like", Set(EngagementsPrivate).asJava)
-  val IS_BLOCK_CLICKED = new Binary(
-    "timelines.engagement.is_block_clicked",
-    Set(Blocks, TweetsClicked, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_BLOCK_DIALOG_BLOCKED = new Binary(
-    "timelines.engagement.is_block_dialog_blocked",
-    Set(Blocks, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_MUTE_CLICKED = new Binary(
-    "timelines.engagement.is_mute_clicked",
-    Set(Mutes, TweetsClicked, EngagementsPrivate).asJava)
-  val IS_MUTE_DIALOG_MUTED =
-    new Binary("timelines.engagement.is_mute_dialog_muted", Set(Mutes, EngagementsPrivate).asJava)
-  val IS_REPORT_TWEET_CLICKED = new Binary(
-    "timelines.engagement.is_report_tweet_clicked",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_CARET_CLICKED =
-    new Binary("timelines.engagement.is_caret_clicked", Set(EngagementsPrivate).asJava)
-  val IS_NOT_ABOUT_TOPIC =
-    new Binary("timelines.engagement.is_not_about_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_RECENT =
-    new Binary("timelines.engagement.is_not_recent", Set(EngagementsPrivate).asJava)
-  val IS_NOT_RELEVANT =
-    new Binary("timelines.engagement.is_not_relevant", Set(EngagementsPrivate).asJava)
-  val IS_SEE_FEWER =
-    new Binary("timelines.engagement.is_see_fewer", Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC =
-    new Binary("timelines.engagement.is_unfollow_topic", Set(EngagementsPrivate).asJava)
-  val IS_FOLLOW_TOPIC =
-    new Binary("timelines.engagement.is_follow_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_TOPIC =
-    new Binary("timelines.engagement.is_not_interested_in_topic", Set(EngagementsPrivate).asJava)
-  val IS_NEGATIVE_FEEDBACK =
-    new Binary("timelines.engagement.is_negative_feedback", Set(EngagementsPrivate).asJava)
-  val IS_IMPLICIT_POSITIVE_FEEDBACK_UNION =
-    new Binary(
-      "timelines.engagement.is_implicit_positive_feedback_union",
-      Set(EngagementsPrivate).asJava)
-  val IS_EXPLICIT_POSITIVE_FEEDBACK_UNION =
-    new Binary(
-      "timelines.engagement.is_explicit_positive_feedback_union",
-      Set(EngagementsPrivate).asJava)
-  val IS_ALL_NEGATIVE_FEEDBACK_UNION =
-    new Binary(
-      "timelines.engagement.is_all_negative_feedback_union",
-      Set(EngagementsPrivate).asJava)
-  // Reciprocal engagements for reply forward engagement
-  val IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_impressed_by_author",
-    Set(EngagementsPrivate).asJava)
-  val IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_favorited_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava)
-  val IS_REPLIED_REPLY_QUOTED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_quoted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava)
-  val IS_REPLIED_REPLY_REPLIED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_replied_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava)
-  val IS_REPLIED_REPLY_RETWEETED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_retweeted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava)
-  val IS_REPLIED_REPLY_BLOCKED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_blocked_by_author",
-    Set(Blocks, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_FOLLOWED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_followed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, Follow).asJava)
-  val IS_REPLIED_REPLY_UNFOLLOWED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_unfollowed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_MUTED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_muted_by_author",
-    Set(Mutes, EngagementsPrivate).asJava)
-  val IS_REPLIED_REPLY_REPORTED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_reported_by_author",
-    Set(EngagementsPrivate).asJava)
+  // Negat ve engage nts
+  val  S_DONT_L KE = new B nary("t  l nes.engage nt. s_dont_l ke", Set(Engage ntsPr vate).asJava)
+  val  S_BLOCK_CL CKED = new B nary(
+    "t  l nes.engage nt. s_block_cl cked",
+    Set(Blocks, T etsCl cked, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_BLOCK_D ALOG_BLOCKED = new B nary(
+    "t  l nes.engage nt. s_block_d alog_blocked",
+    Set(Blocks, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_MUTE_CL CKED = new B nary(
+    "t  l nes.engage nt. s_mute_cl cked",
+    Set(Mutes, T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_MUTE_D ALOG_MUTED =
+    new B nary("t  l nes.engage nt. s_mute_d alog_muted", Set(Mutes, Engage ntsPr vate).asJava)
+  val  S_REPORT_TWEET_CL CKED = new B nary(
+    "t  l nes.engage nt. s_report_t et_cl cked",
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_CARET_CL CKED =
+    new B nary("t  l nes.engage nt. s_caret_cl cked", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ABOUT_TOP C =
+    new B nary("t  l nes.engage nt. s_not_about_top c", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_RECENT =
+    new B nary("t  l nes.engage nt. s_not_recent", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_RELEVANT =
+    new B nary("t  l nes.engage nt. s_not_relevant", Set(Engage ntsPr vate).asJava)
+  val  S_SEE_FEWER =
+    new B nary("t  l nes.engage nt. s_see_fe r", Set(Engage ntsPr vate).asJava)
+  val  S_UNFOLLOW_TOP C =
+    new B nary("t  l nes.engage nt. s_unfollow_top c", Set(Engage ntsPr vate).asJava)
+  val  S_FOLLOW_TOP C =
+    new B nary("t  l nes.engage nt. s_follow_top c", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ NTERESTED_ N_TOP C =
+    new B nary("t  l nes.engage nt. s_not_ nterested_ n_top c", Set(Engage ntsPr vate).asJava)
+  val  S_NEGAT VE_FEEDBACK =
+    new B nary("t  l nes.engage nt. s_negat ve_feedback", Set(Engage ntsPr vate).asJava)
+  val  S_ MPL C T_POS T VE_FEEDBACK_UN ON =
+    new B nary(
+      "t  l nes.engage nt. s_ mpl c _pos  ve_feedback_un on",
+      Set(Engage ntsPr vate).asJava)
+  val  S_EXPL C T_POS T VE_FEEDBACK_UN ON =
+    new B nary(
+      "t  l nes.engage nt. s_expl c _pos  ve_feedback_un on",
+      Set(Engage ntsPr vate).asJava)
+  val  S_ALL_NEGAT VE_FEEDBACK_UN ON =
+    new B nary(
+      "t  l nes.engage nt. s_all_negat ve_feedback_un on",
+      Set(Engage ntsPr vate).asJava)
+  // Rec procal engage nts for reply forward engage nt
+  val  S_REPL ED_REPLY_ MPRESSED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_ mpressed_by_author",
+    Set(Engage ntsPr vate).asJava)
+  val  S_REPL ED_REPLY_FAVOR TED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_favor ed_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateL kes, Publ cL kes).asJava)
+  val  S_REPL ED_REPLY_QUOTED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_quoted_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava)
+  val  S_REPL ED_REPLY_REPL ED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_repl ed_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRepl es, Publ cRepl es).asJava)
+  val  S_REPL ED_REPLY_RETWEETED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_ret eted_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava)
+  val  S_REPL ED_REPLY_BLOCKED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_blocked_by_author",
+    Set(Blocks, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_REPL ED_REPLY_FOLLOWED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_follo d_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Follow).asJava)
+  val  S_REPL ED_REPLY_UNFOLLOWED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_unfollo d_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_REPL ED_REPLY_MUTED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_muted_by_author",
+    Set(Mutes, Engage ntsPr vate).asJava)
+  val  S_REPL ED_REPLY_REPORTED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_repl ed_reply_reported_by_author",
+    Set(Engage ntsPr vate).asJava)
 
-  // Reciprocal engagements for fav forward engagement
-  val IS_FAVORITED_FAV_FAVORITED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_favorited_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava
+  // Rec procal engage nts for fav forward engage nt
+  val  S_FAVOR TED_FAV_FAVOR TED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_favor ed_fav_favor ed_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateL kes, Publ cL kes).asJava
   )
-  val IS_FAVORITED_FAV_REPLIED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_replied_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava
+  val  S_FAVOR TED_FAV_REPL ED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_favor ed_fav_repl ed_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRepl es, Publ cRepl es).asJava
   )
-  val IS_FAVORITED_FAV_RETWEETED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_retweeted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava
+  val  S_FAVOR TED_FAV_RETWEETED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_favor ed_fav_ret eted_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava
   )
-  val IS_FAVORITED_FAV_FOLLOWED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_followed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava
+  val  S_FAVOR TED_FAV_FOLLOWED_BY_AUTHOR = new B nary(
+    "t  l nes.engage nt. s_favor ed_fav_follo d_by_author",
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava
   )
 
-  // define good profile click by considering following engagements (follow, fav, reply, retweet, etc.) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_FOLLOW = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_follow",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, Follow).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_FAV = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_fav",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateLikes, PublicLikes).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_REPLY = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_reply",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateReplies, PublicReplies).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_RETWEET = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_retweet",
+  // def ne good prof le cl ck by cons der ng follow ng engage nts (follow, fav, reply, ret et, etc.) at prof le page
+  val  S_PROF LE_CL CKED_AND_PROF LE_FOLLOW = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_follow",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Follow).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_FAV = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_fav",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Pr vateL kes, Publ cL kes).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_REPLY = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_reply",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Pr vateRepl es, Publ cRepl es).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_RETWEET = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_ret et",
     Set(
-      ProfilesViewed,
-      ProfilesClicked,
-      EngagementsPrivate,
-      PrivateRetweets,
-      PublicRetweets).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_tweet_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, TweetsClicked).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_SHARE_DM_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_share_dm_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of all binary features above
-  val IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_engaged",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, EngagementsPublic).asJava)
+      Prof lesV e d,
+      Prof lesCl cked,
+      Engage ntsPr vate,
+      Pr vateRet ets,
+      Publ cRet ets).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_TWEET_CL CK = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_t et_cl ck",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, T etsCl cked).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_SHARE_DM_CL CK = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_share_dm_cl ck",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // T  der ved label  s t  un on of all b nary features above
+  val  S_PROF LE_CL CKED_AND_PROF LE_ENGAGED = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_engaged",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Engage ntsPubl c).asJava)
 
-  // define bad profile click by considering following engagements (user report, tweet report, mute, block, etc) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_USER_REPORT_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_user_report_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_REPORT_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_tweet_report_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_MUTE = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_mute",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_block",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
-  val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
-    "timelines.engagement.is_negative_feedback_v2",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_NEGATIVE_FEEDBACK_UNION = new Binary(
-    "timelines.engagement.is_negative_feedback_union",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // don't like, mute or profile page -> mute
-  val IS_WEAK_NEGATIVE_FEEDBACK = new Binary(
-    "timelines.engagement.is_weak_negative_feedback",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // report, block or profile page -> report, block
-  val IS_STRONG_NEGATIVE_FEEDBACK = new Binary(
-    "timelines.engagement.is_strong_negative_feedback",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // engagement for following user from any surface area
-  val IS_FOLLOWED_FROM_ANY_SURFACE_AREA = new Binary(
-    "timelines.engagement.is_followed_from_any_surface_area",
-    Set(EngagementsPublic, EngagementsPrivate).asJava)
-  val IS_RELEVANCE_PROMPT_YES_CLICKED = new Binary(
-    "timelines.engagement.is_relevance_prompt_yes_clicked",
-    Set(EngagementsPublic, EngagementsPrivate).asJava)
+  // def ne bad prof le cl ck by cons der ng follow ng engage nts (user report, t et report, mute, block, etc) at prof le page
+  val  S_PROF LE_CL CKED_AND_PROF LE_USER_REPORT_CL CK = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_user_report_cl ck",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_TWEET_REPORT_CL CK = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_t et_report_cl ck",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_MUTE = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_mute",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_BLOCK = new B nary(
+    "t  l nes.engage nt. s_prof le_cl cked_and_prof le_block",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // T  der ved label  s t  un on of bad prof le cl ck engage nts and ex st ng negat ve feedback
+  val  S_NEGAT VE_FEEDBACK_V2 = new B nary(
+    "t  l nes.engage nt. s_negat ve_feedback_v2",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_NEGAT VE_FEEDBACK_UN ON = new B nary(
+    "t  l nes.engage nt. s_negat ve_feedback_un on",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // don't l ke, mute or prof le page -> mute
+  val  S_WEAK_NEGAT VE_FEEDBACK = new B nary(
+    "t  l nes.engage nt. s_ ak_negat ve_feedback",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // report, block or prof le page -> report, block
+  val  S_STRONG_NEGAT VE_FEEDBACK = new B nary(
+    "t  l nes.engage nt. s_strong_negat ve_feedback",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // engage nt for follow ng user from any surface area
+  val  S_FOLLOWED_FROM_ANY_SURFACE_AREA = new B nary(
+    "t  l nes.engage nt. s_follo d_from_any_surface_area",
+    Set(Engage ntsPubl c, Engage ntsPr vate).asJava)
+  val  S_RELEVANCE_PROMPT_YES_CL CKED = new B nary(
+    "t  l nes.engage nt. s_relevance_prompt_yes_cl cked",
+    Set(Engage ntsPubl c, Engage ntsPr vate).asJava)
 
-  // Reply downvote engagements
-  val IS_REPLY_DOWNVOTED =
-    new Binary("timelines.engagement.is_reply_downvoted", Set(EngagementsPrivate).asJava)
-  val IS_REPLY_DOWNVOTE_REMOVED =
-    new Binary("timelines.engagement.is_reply_downvote_removed", Set(EngagementsPrivate).asJava)
+  // Reply downvote engage nts
+  val  S_REPLY_DOWNVOTED =
+    new B nary("t  l nes.engage nt. s_reply_downvoted", Set(Engage ntsPr vate).asJava)
+  val  S_REPLY_DOWNVOTE_REMOVED =
+    new B nary("t  l nes.engage nt. s_reply_downvote_removed", Set(Engage ntsPr vate).asJava)
 
   /**
-   * Contains all engagements that are used/consumed by real-time
-   * aggregates summingbird jobs. These engagements need to be
-   * extractable from [[ClientEvent]].
+   * Conta ns all engage nts that are used/consu d by real-t  
+   * aggregates summ ngb rd jobs. T se engage nts need to be
+   * extractable from [[Cl entEvent]].
    */
-  val EngagementsRealTime: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_DWELLED,
-    IS_FAVORITED,
-    IS_FOLLOWED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_PROFILE_CLICKED,
-    IS_QUOTED,
-    IS_REPLIED,
-    IS_RETWEETED,
-    IS_RETWEETED_WITHOUT_QUOTE,
-    IS_SHARE_DM_CLICKED,
-    IS_SHARE_DM_SENT,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_VIEWED,
-    IS_VIDEO_QUALITY_VIEWED
+  val Engage ntsRealT  : Set[Feature[JBoolean]] = Set(
+     S_CL CKED,
+     S_DWELLED,
+     S_FAVOR TED,
+     S_FOLLOWED,
+     S_OPEN_L NKED,
+     S_PHOTO_EXPANDED,
+     S_PROF LE_CL CKED,
+     S_QUOTED,
+     S_REPL ED,
+     S_RETWEETED,
+     S_RETWEETED_W THOUT_QUOTE,
+     S_SHARE_DM_CL CKED,
+     S_SHARE_DM_SENT,
+     S_V DEO_PLAYBACK_50,
+     S_V DEO_V EWED,
+     S_V DEO_QUAL TY_V EWED
   )
 
-  val NegativeEngagementsRealTime: Set[Feature[JBoolean]] = Set(
-    IS_REPORT_TWEET_CLICKED,
-    IS_BLOCK_CLICKED,
-    IS_MUTE_CLICKED
+  val Negat veEngage ntsRealT  : Set[Feature[JBoolean]] = Set(
+     S_REPORT_TWEET_CL CKED,
+     S_BLOCK_CL CKED,
+     S_MUTE_CL CKED
   )
 
-  val NegativeEngagementsRealTimeDontLike: Set[Feature[JBoolean]] = Set(
-    IS_DONT_LIKE
+  val Negat veEngage ntsRealT  DontL ke: Set[Feature[JBoolean]] = Set(
+     S_DONT_L KE
   )
 
-  val NegativeEngagementsSecondary: Set[Feature[JBoolean]] = Set(
-    IS_NOT_INTERESTED_IN_TOPIC,
-    IS_NOT_ABOUT_TOPIC,
-    IS_NOT_RECENT,
-    IS_NOT_RELEVANT,
-    IS_SEE_FEWER,
-    IS_UNFOLLOW_TOPIC
+  val Negat veEngage ntsSecondary: Set[Feature[JBoolean]] = Set(
+     S_NOT_ NTERESTED_ N_TOP C,
+     S_NOT_ABOUT_TOP C,
+     S_NOT_RECENT,
+     S_NOT_RELEVANT,
+     S_SEE_FEWER,
+     S_UNFOLLOW_TOP C
   )
 
-  val PrivateEngagements: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_DWELLED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_PROFILE_CLICKED,
-    IS_QUOTED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED
+  val Pr vateEngage nts: Set[Feature[JBoolean]] = Set(
+     S_CL CKED,
+     S_DWELLED,
+     S_OPEN_L NKED,
+     S_PHOTO_EXPANDED,
+     S_PROF LE_CL CKED,
+     S_QUOTED,
+     S_V DEO_PLAYBACK_50,
+     S_V DEO_QUAL TY_V EWED
   )
 
-  val ImpressedEngagements: Set[Feature[JBoolean]] = Set(
-    IS_IMPRESSED
+  val  mpressedEngage nts: Set[Feature[JBoolean]] = Set(
+     S_ MPRESSED
   )
 
-  val PrivateEngagementsV2: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_PROFILE_CLICKED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED
-  ) ++ ImpressedEngagements
+  val Pr vateEngage ntsV2: Set[Feature[JBoolean]] = Set(
+     S_CL CKED,
+     S_OPEN_L NKED,
+     S_PHOTO_EXPANDED,
+     S_PROF LE_CL CKED,
+     S_V DEO_PLAYBACK_50,
+     S_V DEO_QUAL TY_V EWED
+  ) ++  mpressedEngage nts
 
-  val CoreEngagements: Set[Feature[JBoolean]] = Set(
-    IS_FAVORITED,
-    IS_REPLIED,
-    IS_RETWEETED
+  val CoreEngage nts: Set[Feature[JBoolean]] = Set(
+     S_FAVOR TED,
+     S_REPL ED,
+     S_RETWEETED
   )
 
-  val DwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_DWELLED
+  val D llEngage nts: Set[Feature[JBoolean]] = Set(
+     S_DWELLED
   )
 
-  val PrivateCoreEngagements: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED
+  val Pr vateCoreEngage nts: Set[Feature[JBoolean]] = Set(
+     S_CL CKED,
+     S_OPEN_L NKED,
+     S_PHOTO_EXPANDED,
+     S_V DEO_PLAYBACK_50,
+     S_V DEO_QUAL TY_V EWED
   )
 
-  val ConditionalEngagements: Set[Feature[JBoolean]] = Set(
-    IS_GOOD_CLICKED_CONVO_DESC_V1,
-    IS_GOOD_CLICKED_CONVO_DESC_V2,
-    IS_GOOD_CLICKED_WITH_DWELL_SUM_GTE_60S
+  val Cond  onalEngage nts: Set[Feature[JBoolean]] = Set(
+     S_GOOD_CL CKED_CONVO_DESC_V1,
+     S_GOOD_CL CKED_CONVO_DESC_V2,
+     S_GOOD_CL CKED_W TH_DWELL_SUM_GTE_60S
   )
 
-  val ShareEngagements: Set[Feature[JBoolean]] = Set(
-    IS_SHARED,
-    IS_SHARE_MENU_CLICKED
+  val ShareEngage nts: Set[Feature[JBoolean]] = Set(
+     S_SHARED,
+     S_SHARE_MENU_CL CKED
   )
 
-  val BookmarkEngagements: Set[Feature[JBoolean]] = Set(
-    IS_BOOKMARKED
+  val BookmarkEngage nts: Set[Feature[JBoolean]] = Set(
+     S_BOOKMARKED
   )
 
-  val TweetDetailDwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_TWEET_DETAIL_DWELLED,
-    IS_TWEET_DETAIL_DWELLED_8_SEC,
-    IS_TWEET_DETAIL_DWELLED_15_SEC,
-    IS_TWEET_DETAIL_DWELLED_25_SEC,
-    IS_TWEET_DETAIL_DWELLED_30_SEC
+  val T etDeta lD llEngage nts: Set[Feature[JBoolean]] = Set(
+     S_TWEET_DETA L_DWELLED,
+     S_TWEET_DETA L_DWELLED_8_SEC,
+     S_TWEET_DETA L_DWELLED_15_SEC,
+     S_TWEET_DETA L_DWELLED_25_SEC,
+     S_TWEET_DETA L_DWELLED_30_SEC
   )
 
-  val ProfileDwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_PROFILE_DWELLED,
-    IS_PROFILE_DWELLED_10_SEC,
-    IS_PROFILE_DWELLED_20_SEC,
-    IS_PROFILE_DWELLED_30_SEC
+  val Prof leD llEngage nts: Set[Feature[JBoolean]] = Set(
+     S_PROF LE_DWELLED,
+     S_PROF LE_DWELLED_10_SEC,
+     S_PROF LE_DWELLED_20_SEC,
+     S_PROF LE_DWELLED_30_SEC
   )
 
-  val FullscreenVideoDwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_FULLSCREEN_VIDEO_DWELLED,
-    IS_FULLSCREEN_VIDEO_DWELLED_5_SEC,
-    IS_FULLSCREEN_VIDEO_DWELLED_10_SEC,
-    IS_FULLSCREEN_VIDEO_DWELLED_20_SEC,
-    IS_FULLSCREEN_VIDEO_DWELLED_30_SEC
+  val FullscreenV deoD llEngage nts: Set[Feature[JBoolean]] = Set(
+     S_FULLSCREEN_V DEO_DWELLED,
+     S_FULLSCREEN_V DEO_DWELLED_5_SEC,
+     S_FULLSCREEN_V DEO_DWELLED_10_SEC,
+     S_FULLSCREEN_V DEO_DWELLED_20_SEC,
+     S_FULLSCREEN_V DEO_DWELLED_30_SEC
   )
 
-  // Please do not add new engagements here until having estimated the impact
-  // to capacity requirements. User-author real-time aggregates have a very
+  // Please do not add new engage nts  re unt l hav ng est mated t   mpact
+  // to capac y requ re nts. User-author real-t   aggregates have a very
   // large key space.
-  val UserAuthorEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ DwellEngagements ++ Set(
-    IS_CLICKED,
-    IS_PROFILE_CLICKED,
-    IS_PHOTO_EXPANDED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_NEGATIVE_FEEDBACK_UNION
+  val UserAuthorEngage nts: Set[Feature[JBoolean]] = CoreEngage nts ++ D llEngage nts ++ Set(
+     S_CL CKED,
+     S_PROF LE_CL CKED,
+     S_PHOTO_EXPANDED,
+     S_V DEO_PLAYBACK_50,
+     S_NEGAT VE_FEEDBACK_UN ON
   )
 
-  val ImplicitPositiveEngagements: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_DWELLED,
-    IS_OPEN_LINKED,
-    IS_PROFILE_CLICKED,
-    IS_QUOTED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED,
-    IS_TWEET_DETAIL_DWELLED,
-    IS_GOOD_CLICKED_CONVO_DESC_V1,
-    IS_GOOD_CLICKED_CONVO_DESC_V2,
-    IS_SHARED,
-    IS_SHARE_MENU_CLICKED,
-    IS_SHARE_DM_SENT,
-    IS_SHARE_DM_CLICKED
+  val  mpl c Pos  veEngage nts: Set[Feature[JBoolean]] = Set(
+     S_CL CKED,
+     S_DWELLED,
+     S_OPEN_L NKED,
+     S_PROF LE_CL CKED,
+     S_QUOTED,
+     S_V DEO_PLAYBACK_50,
+     S_V DEO_QUAL TY_V EWED,
+     S_TWEET_DETA L_DWELLED,
+     S_GOOD_CL CKED_CONVO_DESC_V1,
+     S_GOOD_CL CKED_CONVO_DESC_V2,
+     S_SHARED,
+     S_SHARE_MENU_CL CKED,
+     S_SHARE_DM_SENT,
+     S_SHARE_DM_CL CKED
   )
 
-  val ExplicitPositiveEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ Set(
-    IS_FOLLOWED,
-    IS_QUOTED
+  val Expl c Pos  veEngage nts: Set[Feature[JBoolean]] = CoreEngage nts ++ Set(
+     S_FOLLOWED,
+     S_QUOTED
   )
 
-  val AllNegativeEngagements: Set[Feature[JBoolean]] =
-    NegativeEngagementsRealTime ++ NegativeEngagementsRealTimeDontLike ++ Set(
-      IS_NOT_RECENT,
-      IS_NOT_RELEVANT,
-      IS_SEE_FEWER
+  val AllNegat veEngage nts: Set[Feature[JBoolean]] =
+    Negat veEngage ntsRealT   ++ Negat veEngage ntsRealT  DontL ke ++ Set(
+       S_NOT_RECENT,
+       S_NOT_RELEVANT,
+       S_SEE_FEWER
     )
 }

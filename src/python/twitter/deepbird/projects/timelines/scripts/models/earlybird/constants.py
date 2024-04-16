@@ -1,21 +1,21 @@
-# checkstyle: noqa
+# c ckstyle: noqa
 
-INDEX_BY_LABEL = {
-  "is_clicked": 1,
-  "is_favorited": 2,
-  "is_open_linked": 3,
-  "is_photo_expanded": 4,
-  "is_profile_clicked": 5,
-  "is_replied": 6,
-  "is_retweeted": 7,
-  "is_video_playback_50": 8
+ NDEX_BY_LABEL = {
+  " s_cl cked": 1,
+  " s_favor ed": 2,
+  " s_open_l nked": 3,
+  " s_photo_expanded": 4,
+  " s_prof le_cl cked": 5,
+  " s_repl ed": 6,
+  " s_ret eted": 7,
+  " s_v deo_playback_50": 8
 }
 
-TARGET_LABEL_IDX = 0
-EB_SCORE_IDX = 9
+TARGET_LABEL_ DX = 0
+EB_SCORE_ DX = 9
 
-LABEL_NAMES = [label_name for label_name, _ in sorted(INDEX_BY_LABEL.items(), key=lambda item: item[1])]
+LABEL_NAMES = [label_na  for label_na , _  n sorted( NDEX_BY_LABEL. ems(), key=lambda  em:  em[1])]
 
-PREDICTED_CLASSES = \
-  ["tf_target"] + ["tf_" + label_name for label_name in LABEL_NAMES] + ["tf_timelines.earlybird_score"] + \
-  ["lolly_target"] + ["lolly_" + label_name for label_name in LABEL_NAMES] + ["lolly_timelines.earlybird_score"]
+PRED CTED_CLASSES = \
+  ["tf_target"] + ["tf_" + label_na  for label_na   n LABEL_NAMES] + ["tf_t  l nes.earlyb rd_score"] + \
+  ["lolly_target"] + ["lolly_" + label_na  for label_na   n LABEL_NAMES] + ["lolly_t  l nes.earlyb rd_score"]

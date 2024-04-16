@@ -1,23 +1,23 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.TweetIsModerated
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features.T et sModerated
 
-class ModerationFeatures(moderationSource: Long => Boolean, statsReceiver: StatsReceiver) {
+class Moderat onFeatures(moderat onS ce: Long => Boolean, statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver: StatsReceiver =
-    statsReceiver.scope("moderation_features")
+  pr vate[t ] val scopedStatsRece ver: StatsRece ver =
+    statsRece ver.scope("moderat on_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val tweetIsModerated =
-    scopedStatsReceiver.scope(TweetIsModerated.name).counter("requests")
+  pr vate[t ] val t et sModerated =
+    scopedStatsRece ver.scope(T et sModerated.na ).counter("requests")
 
-  def forTweetId(tweetId: Long): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    requests.incr()
-    tweetIsModerated.incr()
+  def forT et d(t et d: Long): FeatureMapBu lder => FeatureMapBu lder = { featureMapBu lder =>
+    requests. ncr()
+    t et sModerated. ncr()
 
-    featureMapBuilder.withConstantFeature(TweetIsModerated, moderationSource(tweetId))
+    featureMapBu lder.w hConstantFeature(T et sModerated, moderat onS ce(t et d))
   }
 }

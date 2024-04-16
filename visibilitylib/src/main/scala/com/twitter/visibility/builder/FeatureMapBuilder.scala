@@ -1,64 +1,64 @@
-package com.twitter.visibility.builder
+package com.tw ter.v s b l y.bu lder
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.features._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import scala.collection.mutable
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.common.st ch.St ch lpers
+ mport scala.collect on.mutable
 
-object FeatureMapBuilder {
-  type Build = Seq[FeatureMapBuilder => FeatureMapBuilder] => FeatureMap
+object FeatureMapBu lder {
+  type Bu ld = Seq[FeatureMapBu lder => FeatureMapBu lder] => FeatureMap
 
   def apply(
-    statsReceiver: StatsReceiver = NullStatsReceiver,
-    enableStitchProfiling: Gate[Unit] = Gate.False
-  ): Build =
+    statsRece ver: StatsRece ver = NullStatsRece ver,
+    enableSt chProf l ng: Gate[Un ] = Gate.False
+  ): Bu ld =
     fns =>
-      Function
-        .chain(fns).apply(
-          new FeatureMapBuilder(statsReceiver, enableStitchProfiling)
-        ).build
+      Funct on
+        .cha n(fns).apply(
+          new FeatureMapBu lder(statsRece ver, enableSt chProf l ng)
+        ).bu ld
 }
 
-class FeatureMapBuilder private[builder] (
-  statsReceiver: StatsReceiver,
-  enableStitchProfiling: Gate[Unit] = Gate.False) {
+class FeatureMapBu lder pr vate[bu lder] (
+  statsRece ver: StatsRece ver,
+  enableSt chProf l ng: Gate[Un ] = Gate.False) {
 
-  private[this] val hydratedScope =
-    statsReceiver.scope("visibility_result_builder").scope("hydrated")
+  pr vate[t ] val hydratedScope =
+    statsRece ver.scope("v s b l y_result_bu lder").scope("hydrated")
 
-  val mapBuilder: mutable.Builder[(Feature[_], Stitch[_]), Map[Feature[_], Stitch[_]]] =
-    Map.newBuilder[Feature[_], Stitch[_]]
+  val mapBu lder: mutable.Bu lder[(Feature[_], St ch[_]), Map[Feature[_], St ch[_]]] =
+    Map.newBu lder[Feature[_], St ch[_]]
 
-  val constantMapBuilder: mutable.Builder[(Feature[_], Any), Map[Feature[_], Any]] =
-    Map.newBuilder[Feature[_], Any]
+  val constantMapBu lder: mutable.Bu lder[(Feature[_], Any), Map[Feature[_], Any]] =
+    Map.newBu lder[Feature[_], Any]
 
-  def build: FeatureMap = new FeatureMap(mapBuilder.result(), constantMapBuilder.result())
+  def bu ld: FeatureMap = new FeatureMap(mapBu lder.result(), constantMapBu lder.result())
 
-  def withConstantFeature[T](feature: Feature[T], value: T): FeatureMapBuilder = {
-    val anyValue: Any = value.asInstanceOf[Any]
-    constantMapBuilder += (feature -> anyValue)
-    this
+  def w hConstantFeature[T](feature: Feature[T], value: T): FeatureMapBu lder = {
+    val anyValue: Any = value.as nstanceOf[Any]
+    constantMapBu lder += (feature -> anyValue)
+    t 
   }
 
-  def withFeature[T](feature: Feature[T], stitch: Stitch[T]): FeatureMapBuilder = {
-    val profiledStitch = if (enableStitchProfiling()) {
-      val featureScope = hydratedScope.scope(feature.name)
-      StitchHelpers.profileStitch(stitch, Seq(hydratedScope, featureScope))
+  def w hFeature[T](feature: Feature[T], st ch: St ch[T]): FeatureMapBu lder = {
+    val prof ledSt ch =  f (enableSt chProf l ng()) {
+      val featureScope = hydratedScope.scope(feature.na )
+      St ch lpers.prof leSt ch(st ch, Seq(hydratedScope, featureScope))
     } else {
-      stitch
+      st ch
     }
 
-    val featureStitchRef = Stitch.ref(profiledStitch)
+    val featureSt chRef = St ch.ref(prof ledSt ch)
 
-    mapBuilder += FeatureMap.rescueFeatureTuple(feature -> featureStitchRef)
+    mapBu lder += FeatureMap.rescueFeatureTuple(feature -> featureSt chRef)
 
-    this
+    t 
   }
 
-  def withConstantFeature[T](feature: Feature[T], option: Option[T]): FeatureMapBuilder = {
-    option.map(withConstantFeature(feature, _)).getOrElse(this)
+  def w hConstantFeature[T](feature: Feature[T], opt on: Opt on[T]): FeatureMapBu lder = {
+    opt on.map(w hConstantFeature(feature, _)).getOrElse(t )
   }
 }

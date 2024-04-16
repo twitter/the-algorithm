@@ -1,71 +1,71 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanValue
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.ut l.T  
 
 /**
- * Deletes data for the scrubbed field and writes a metadata record.
- * Provides scrub functionality. Right now, we only allow the scrubbing of the geo field.
- * It should be simple to add more fields to the allowlist if needed.
+ * Deletes data for t  scrubbed f eld and wr es a  tadata record.
+ * Prov des scrub funct onal y. R ght now,   only allow t  scrubb ng of t  geo f eld.
+ *   should be s mple to add more f elds to t  allowl st  f needed.
  */
 object ScrubHandler {
 
-  val scrubFieldsAllowlist: Set[Field] = Set(Field.Geo)
+  val scrubF eldsAllowl st: Set[F eld] = Set(F eld.Geo)
 
   def apply(
-    insert: ManhattanOperations.Insert,
-    delete: ManhattanOperations.Delete,
-    scribe: Scribe,
-    stats: StatsReceiver
-  ): TweetStorageClient.Scrub =
-    (unfilteredTweetIds: Seq[TweetId], columns: Seq[Field]) => {
-      val tweetIds = unfilteredTweetIds.filter(_ > 0)
+     nsert: ManhattanOperat ons. nsert,
+    delete: ManhattanOperat ons.Delete,
+    scr be: Scr be,
+    stats: StatsRece ver
+  ): T etStorageCl ent.Scrub =
+    (unf lteredT et ds: Seq[T et d], columns: Seq[F eld]) => {
+      val t et ds = unf lteredT et ds.f lter(_ > 0)
 
-      require(columns.nonEmpty, "Must specify fields to scrub")
-      require(
-        columns.toSet.size == columns.size,
-        s"Duplicate fields to scrub specified: $columns"
+      requ re(columns.nonEmpty, "Must spec fy f elds to scrub")
+      requ re(
+        columns.toSet.s ze == columns.s ze,
+        s"Dupl cate f elds to scrub spec f ed: $columns"
       )
-      require(
-        columns.forall(scrubFieldsAllowlist.contains(_)),
-        s"Cannot scrub $columns; scrubbable fields are restricted to $scrubFieldsAllowlist"
+      requ re(
+        columns.forall(scrubF eldsAllowl st.conta ns(_)),
+        s"Cannot scrub $columns; scrubbable f elds are restr cted to $scrubF eldsAllowl st"
       )
 
-      Stats.addWidthStat("scrub", "ids", tweetIds.size, stats)
-      val mhTimestamp = Time.now
+      Stats.addW dthStat("scrub", " ds", t et ds.s ze, stats)
+      val mhT  stamp = T  .now
 
-      val stitches = tweetIds.map { tweetId =>
-        val deletionStitches = columns.map { field =>
-          val mhKeyToDelete = TweetKey.fieldKey(tweetId, field.id)
-          delete(mhKeyToDelete, Some(mhTimestamp)).liftToTry
+      val st c s = t et ds.map { t et d =>
+        val delet onSt c s = columns.map { f eld =>
+          val mhKeyToDelete = T etKey.f eldKey(t et d, f eld. d)
+          delete(mhKeyToDelete, So (mhT  stamp)).l ftToTry
         }
 
-        val collectedStitch =
-          Stitch.collect(deletionStitches).map(collectWithRateLimitCheck).lowerFromTry
+        val collectedSt ch =
+          St ch.collect(delet onSt c s).map(collectW hRateL m C ck).lo rFromTry
 
-        collectedStitch
+        collectedSt ch
           .flatMap { _ =>
-            val scrubbedStitches = columns.map { column =>
-              val scrubbedKey = TweetKey.scrubbedFieldKey(tweetId, column.id)
+            val scrubbedSt c s = columns.map { column =>
+              val scrubbedKey = T etKey.scrubbedF eldKey(t et d, column. d)
               val record =
-                TweetManhattanRecord(
+                T etManhattanRecord(
                   scrubbedKey,
-                  ManhattanValue(StringCodec.toByteBuffer(""), Some(mhTimestamp))
+                  ManhattanValue(Str ngCodec.toByteBuffer(""), So (mhT  stamp))
                 )
 
-              insert(record).liftToTry
+               nsert(record).l ftToTry
             }
 
-            Stitch.collect(scrubbedStitches)
+            St ch.collect(scrubbedSt c s)
           }
-          .map(collectWithRateLimitCheck)
+          .map(collectW hRateL m C ck)
       }
 
-      Stitch.collect(stitches).map(collectWithRateLimitCheck).lowerFromTry.onSuccess { _ =>
-        tweetIds.foreach { id => scribe.logScrubbed(id, columns.map(_.id.toInt), mhTimestamp) }
+      St ch.collect(st c s).map(collectW hRateL m C ck).lo rFromTry.onSuccess { _ =>
+        t et ds.foreach {  d => scr be.logScrubbed( d, columns.map(_. d.to nt), mhT  stamp) }
       }
     }
 }

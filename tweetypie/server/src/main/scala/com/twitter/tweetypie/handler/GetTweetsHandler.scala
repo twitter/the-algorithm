@@ -1,108 +1,108 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.container.thriftscala.MaterializeAsTweetRequest
-import com.twitter.context.TestingSignalsContext
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.servo.util.FutureArrow
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.conta ner.thr ftscala.Mater al zeAsT etRequest
+ mport com.tw ter.context.Test ngS gnalsContext
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.servo.except on.thr ftscala.Cl entErrorCause
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.spam.rtf.thr ftscala.F lteredReason
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
 /**
- * Handler for the `getTweets` endpoint.
+ * Handler for t  `getT ets` endpo nt.
  */
-object GetTweetsHandler {
-  type Type = FutureArrow[GetTweetsRequest, Seq[GetTweetResult]]
+object GetT etsHandler {
+  type Type = FutureArrow[GetT etsRequest, Seq[GetT etResult]]
 
   /**
-   * A `TweetQuery.Include` instance with options set as the default base options
-   * for the `getTweets` endpoint.
+   * A `T etQuery. nclude`  nstance w h opt ons set as t  default base opt ons
+   * for t  `getT ets` endpo nt.
    */
-  val BaseInclude: TweetQuery.Include =
-    TweetQuery.Include(
-      tweetFields = Set(
-        Tweet.CoreDataField.id,
-        Tweet.UrlsField.id,
-        Tweet.MentionsField.id,
-        Tweet.MediaField.id,
-        Tweet.HashtagsField.id,
-        Tweet.CashtagsField.id,
-        Tweet.TakedownCountryCodesField.id,
-        Tweet.TakedownReasonsField.id,
-        Tweet.DeviceSourceField.id,
-        Tweet.LanguageField.id,
-        Tweet.ContributorField.id,
-        Tweet.QuotedTweetField.id,
-        Tweet.UnderlyingCreativesContainerIdField.id,
+  val Base nclude: T etQuery. nclude =
+    T etQuery. nclude(
+      t etF elds = Set(
+        T et.CoreDataF eld. d,
+        T et.UrlsF eld. d,
+        T et. nt onsF eld. d,
+        T et. d aF eld. d,
+        T et.HashtagsF eld. d,
+        T et.CashtagsF eld. d,
+        T et.TakedownCountryCodesF eld. d,
+        T et.TakedownReasonsF eld. d,
+        T et.Dev ceS ceF eld. d,
+        T et.LanguageF eld. d,
+        T et.Contr butorF eld. d,
+        T et.QuotedT etF eld. d,
+        T et.Underly ngCreat vesConta ner dF eld. d,
       ),
-      pastedMedia = true
+      pasted d a = true
     )
 
   def apply(
-    tweetRepo: TweetResultRepository.Type,
-    creativesContainerRepo: CreativesContainerMaterializationRepository.GetTweetType,
-    deletedTweetVisibilityRepo: DeletedTweetVisibilityRepository.Type,
-    stats: StatsReceiver,
-    shouldMaterializeContainers: Gate[Unit]
+    t etRepo: T etResultRepos ory.Type,
+    creat vesConta nerRepo: Creat vesConta nerMater al zat onRepos ory.GetT etType,
+    deletedT etV s b l yRepo: DeletedT etV s b l yRepos ory.Type,
+    stats: StatsRece ver,
+    shouldMater al zeConta ners: Gate[Un ]
   ): Type = {
-    FutureArrow[GetTweetsRequest, Seq[GetTweetResult]] { request =>
-      val requestOptions = request.options.getOrElse(GetTweetOptions())
+    FutureArrow[GetT etsRequest, Seq[GetT etResult]] { request =>
+      val requestOpt ons = request.opt ons.getOrElse(GetT etOpt ons())
 
-      val invalidAdditionalFields =
-        requestOptions.additionalFieldIds.filter(!AdditionalFields.isAdditionalFieldId(_))
+      val  nval dAdd  onalF elds =
+        requestOpt ons.add  onalF eld ds.f lter(!Add  onalF elds. sAdd  onalF eld d(_))
 
-      if (invalidAdditionalFields.nonEmpty) {
-        Future.exception(
-          ClientError(
-            ClientErrorCause.BadRequest,
-            "Requested additional fields contain invalid field id " +
-              s"${invalidAdditionalFields.mkString(", ")}. Additional fields ids must be greater than 100."
+       f ( nval dAdd  onalF elds.nonEmpty) {
+        Future.except on(
+          Cl entError(
+            Cl entErrorCause.BadRequest,
+            "Requested add  onal f elds conta n  nval d f eld  d " +
+              s"${ nval dAdd  onalF elds.mkStr ng(", ")}. Add  onal f elds  ds must be greater than 100."
           )
         )
       } else {
-        val opts = toTweetQueryOptions(requestOptions)
-        val measureRacyReads: TweetId => Unit = trackLossyReadsAfterWrite(
-          stats.stat("racy_reads", "get_tweets"),
-          Duration.fromSeconds(3)
+        val opts = toT etQueryOpt ons(requestOpt ons)
+        val  asureRacyReads: T et d => Un  = trackLossyReadsAfterWr e(
+          stats.stat("racy_reads", "get_t ets"),
+          Durat on.fromSeconds(3)
         )
 
-        Stitch.run(
-          Stitch.traverse(request.tweetIds) { id =>
-            tweetRepo(id, opts).liftToTry
+        St ch.run(
+          St ch.traverse(request.t et ds) {  d =>
+            t etRepo( d, opts).l ftToTry
               .flatMap {
                 case Throw(NotFound) =>
-                  measureRacyReads(id)
+                   asureRacyReads( d)
 
-                  Stitch.value(GetTweetResult(id, StatusState.NotFound))
+                  St ch.value(GetT etResult( d, StatusState.NotFound))
                 case Throw(ex) =>
-                  failureResult(deletedTweetVisibilityRepo, id, requestOptions, ex)
+                  fa lureResult(deletedT etV s b l yRepo,  d, requestOpt ons, ex)
                 case Return(r) =>
-                  toGetTweetResult(
-                    deletedTweetVisibilityRepo,
-                    creativesContainerRepo,
-                    requestOptions,
-                    tweetResult = r,
-                    includeSourceTweet = requestOptions.includeSourceTweet,
-                    includeQuotedTweet = requestOptions.includeQuotedTweet,
+                  toGetT etResult(
+                    deletedT etV s b l yRepo,
+                    creat vesConta nerRepo,
+                    requestOpt ons,
+                    t etResult = r,
+                     ncludeS ceT et = requestOpt ons. ncludeS ceT et,
+                     ncludeQuotedT et = requestOpt ons. ncludeQuotedT et,
                     stats,
-                    shouldMaterializeContainers
+                    shouldMater al zeConta ners
                   )
-              }.flatMap { getTweetResult =>
-                // check if tweet data is backed by creatives container and needs to be hydrated from creatives
-                // container service.
-                hydrateCreativeContainerBackedTweet(
-                  getTweetResult,
-                  requestOptions,
-                  creativesContainerRepo,
+              }.flatMap { getT etResult =>
+                // c ck  f t et data  s backed by creat ves conta ner and needs to be hydrated from creat ves
+                // conta ner serv ce.
+                hydrateCreat veConta nerBackedT et(
+                  getT etResult,
+                  requestOpt ons,
+                  creat vesConta nerRepo,
                   stats,
-                  shouldMaterializeContainers
+                  shouldMater al zeConta ners
                 )
               }
           }
@@ -111,305 +111,305 @@ object GetTweetsHandler {
     }
   }
 
-  def toTweetQueryOptions(options: GetTweetOptions): TweetQuery.Options = {
-    val shouldSkipCache = TestingSignalsContext().flatMap(_.simulateBackPressure).nonEmpty
-    val cacheControl =
-      if (shouldSkipCache) CacheControl.NoCache
-      else if (options.doNotCache) CacheControl.ReadOnlyCache
-      else CacheControl.ReadWriteCache
+  def toT etQueryOpt ons(opt ons: GetT etOpt ons): T etQuery.Opt ons = {
+    val shouldSk pCac  = Test ngS gnalsContext().flatMap(_.s mulateBackPressure).nonEmpty
+    val cac Control =
+       f (shouldSk pCac ) Cac Control.NoCac 
+      else  f (opt ons.doNotCac ) Cac Control.ReadOnlyCac 
+      else Cac Control.ReadWr eCac 
 
-    val countsFields = toCountsFields(options)
-    val mediaFields = toMediaFields(options)
+    val countsF elds = toCountsF elds(opt ons)
+    val  d aF elds = to d aF elds(opt ons)
 
-    TweetQuery.Options(
-      include = BaseInclude.also(
-        tweetFields = toTweetFields(options, countsFields),
-        countsFields = countsFields,
-        mediaFields = mediaFields,
-        quotedTweet = Some(options.includeQuotedTweet)
+    T etQuery.Opt ons(
+       nclude = Base nclude.also(
+        t etF elds = toT etF elds(opt ons, countsF elds),
+        countsF elds = countsF elds,
+         d aF elds =  d aF elds,
+        quotedT et = So (opt ons. ncludeQuotedT et)
       ),
-      cacheControl = cacheControl,
-      cardsPlatformKey = options.cardsPlatformKey,
-      excludeReported = options.excludeReported,
-      enforceVisibilityFiltering = !options.bypassVisibilityFiltering,
-      safetyLevel = options.safetyLevel.getOrElse(SafetyLevel.FilterDefault),
-      forUserId = options.forUserId,
-      languageTag = options.languageTag,
-      extensionsArgs = options.extensionsArgs,
-      forExternalConsumption = true,
-      simpleQuotedTweet = options.simpleQuotedTweet
+      cac Control = cac Control,
+      cardsPlatformKey = opt ons.cardsPlatformKey,
+      excludeReported = opt ons.excludeReported,
+      enforceV s b l yF lter ng = !opt ons.bypassV s b l yF lter ng,
+      safetyLevel = opt ons.safetyLevel.getOrElse(SafetyLevel.F lterDefault),
+      forUser d = opt ons.forUser d,
+      languageTag = opt ons.languageTag,
+      extens onsArgs = opt ons.extens onsArgs,
+      forExternalConsumpt on = true,
+      s mpleQuotedT et = opt ons.s mpleQuotedT et
     )
   }
 
-  private def toTweetFields(opts: GetTweetOptions, countsFields: Set[FieldId]): Set[FieldId] = {
-    val bldr = Set.newBuilder[FieldId]
+  pr vate def toT etF elds(opts: GetT etOpt ons, countsF elds: Set[F eld d]): Set[F eld d] = {
+    val bldr = Set.newBu lder[F eld d]
 
-    bldr ++= opts.additionalFieldIds
+    bldr ++= opts.add  onalF eld ds
 
-    if (opts.includePlaces) bldr += Tweet.PlaceField.id
-    if (opts.forUserId.nonEmpty) {
-      if (opts.includePerspectivals) bldr += Tweet.PerspectiveField.id
-      if (opts.includeConversationMuted) bldr += Tweet.ConversationMutedField.id
+     f (opts. ncludePlaces) bldr += T et.PlaceF eld. d
+     f (opts.forUser d.nonEmpty) {
+       f (opts. ncludePerspect vals) bldr += T et.Perspect veF eld. d
+       f (opts. ncludeConversat onMuted) bldr += T et.Conversat onMutedF eld. d
     }
-    if (opts.includeCards && opts.cardsPlatformKey.isEmpty) bldr += Tweet.CardsField.id
-    if (opts.includeCards && opts.cardsPlatformKey.nonEmpty) bldr += Tweet.Card2Field.id
-    if (opts.includeProfileGeoEnrichment) bldr += Tweet.ProfileGeoEnrichmentField.id
+     f (opts. ncludeCards && opts.cardsPlatformKey. sEmpty) bldr += T et.CardsF eld. d
+     f (opts. ncludeCards && opts.cardsPlatformKey.nonEmpty) bldr += T et.Card2F eld. d
+     f (opts. ncludeProf leGeoEnr ch nt) bldr += T et.Prof leGeoEnr ch ntF eld. d
 
-    if (countsFields.nonEmpty) bldr += Tweet.CountsField.id
+     f (countsF elds.nonEmpty) bldr += T et.CountsF eld. d
 
-    if (opts.includeCardUri) bldr += Tweet.CardReferenceField.id
-
-    bldr.result()
-  }
-
-  private def toCountsFields(opts: GetTweetOptions): Set[FieldId] = {
-    val bldr = Set.newBuilder[FieldId]
-
-    if (opts.includeRetweetCount) bldr += StatusCounts.RetweetCountField.id
-    if (opts.includeReplyCount) bldr += StatusCounts.ReplyCountField.id
-    if (opts.includeFavoriteCount) bldr += StatusCounts.FavoriteCountField.id
-    if (opts.includeQuoteCount) bldr += StatusCounts.QuoteCountField.id
+     f (opts. ncludeCardUr ) bldr += T et.CardReferenceF eld. d
 
     bldr.result()
   }
 
-  private def toMediaFields(opts: GetTweetOptions): Set[FieldId] = {
-    if (opts.includeMediaAdditionalMetadata)
-      Set(MediaEntity.AdditionalMetadataField.id)
+  pr vate def toCountsF elds(opts: GetT etOpt ons): Set[F eld d] = {
+    val bldr = Set.newBu lder[F eld d]
+
+     f (opts. ncludeRet etCount) bldr += StatusCounts.Ret etCountF eld. d
+     f (opts. ncludeReplyCount) bldr += StatusCounts.ReplyCountF eld. d
+     f (opts. ncludeFavor eCount) bldr += StatusCounts.Favor eCountF eld. d
+     f (opts. ncludeQuoteCount) bldr += StatusCounts.QuoteCountF eld. d
+
+    bldr.result()
+  }
+
+  pr vate def to d aF elds(opts: GetT etOpt ons): Set[F eld d] = {
+     f (opts. nclude d aAdd  onal tadata)
+      Set( d aEnt y.Add  onal tadataF eld. d)
     else
       Set.empty
   }
 
   /**
-   * Converts a `TweetResult` into a `GetTweetResult`.
+   * Converts a `T etResult`  nto a `GetT etResult`.
    */
-  def toGetTweetResult(
-    deletedTweetVisibilityRepo: DeletedTweetVisibilityRepository.Type,
-    creativesContainerRepo: CreativesContainerMaterializationRepository.GetTweetType,
-    options: GetTweetOptions,
-    tweetResult: TweetResult,
-    includeSourceTweet: Boolean,
-    includeQuotedTweet: Boolean,
-    stats: StatsReceiver,
-    shouldMaterializeContainers: Gate[Unit]
-  ): Stitch[GetTweetResult] = {
-    val tweetData = tweetResult.value
+  def toGetT etResult(
+    deletedT etV s b l yRepo: DeletedT etV s b l yRepos ory.Type,
+    creat vesConta nerRepo: Creat vesConta nerMater al zat onRepos ory.GetT etType,
+    opt ons: GetT etOpt ons,
+    t etResult: T etResult,
+     ncludeS ceT et: Boolean,
+     ncludeQuotedT et: Boolean,
+    stats: StatsRece ver,
+    shouldMater al zeConta ners: Gate[Un ]
+  ): St ch[GetT etResult] = {
+    val t etData = t etResult.value
 
-    // only include missing fields if non empty
-    def asMissingFields(set: Set[FieldByPath]): Option[Set[FieldByPath]] =
-      if (set.isEmpty) None else Some(set)
+    // only  nclude m ss ng f elds  f non empty
+    def asM ss ngF elds(set: Set[F eldByPath]): Opt on[Set[F eldByPath]] =
+       f (set. sEmpty) None else So (set)
 
-    val missingFields = asMissingFields(tweetResult.state.failedFields)
+    val m ss ngF elds = asM ss ngF elds(t etResult.state.fa ledF elds)
 
-    val sourceTweetResult =
-      tweetData.sourceTweetResult
-        .filter(_ => includeSourceTweet)
+    val s ceT etResult =
+      t etData.s ceT etResult
+        .f lter(_ =>  ncludeS ceT et)
 
-    val sourceTweetData = tweetData.sourceTweetResult
-      .getOrElse(tweetResult)
+    val s ceT etData = t etData.s ceT etResult
+      .getOrElse(t etResult)
       .value
-    val quotedTweetResult: Option[QuotedTweetResult] = sourceTweetData.quotedTweetResult
-      .filter(_ => includeQuotedTweet)
+    val quotedT etResult: Opt on[QuotedT etResult] = s ceT etData.quotedT etResult
+      .f lter(_ =>  ncludeQuotedT et)
 
-    val qtFilteredReasonStitch =
-      ((sourceTweetData.tweet.quotedTweet, quotedTweetResult) match {
-        case (Some(quotedTweet), Some(QuotedTweetResult.Filtered(filteredState))) =>
-          deletedTweetVisibilityRepo(
-            DeletedTweetVisibilityRepository.VisibilityRequest(
-              filteredState,
-              quotedTweet.tweetId,
-              options.safetyLevel,
-              options.forUserId,
-              isInnerQuotedTweet = true
+    val qtF lteredReasonSt ch =
+      ((s ceT etData.t et.quotedT et, quotedT etResult) match {
+        case (So (quotedT et), So (QuotedT etResult.F ltered(f lteredState))) =>
+          deletedT etV s b l yRepo(
+            DeletedT etV s b l yRepos ory.V s b l yRequest(
+              f lteredState,
+              quotedT et.t et d,
+              opt ons.safetyLevel,
+              opt ons.forUser d,
+               s nnerQuotedT et = true
             )
           )
-        case _ => Stitch.None
+        case _ => St ch.None
       })
-      //Use quotedTweetResult filtered reason when VF filtered reason is not present
-        .map(fsOpt => fsOpt.orElse(quotedTweetResult.flatMap(_.filteredReason)))
+      //Use quotedT etResult f ltered reason w n VF f ltered reason  s not present
+        .map(fsOpt => fsOpt.orElse(quotedT etResult.flatMap(_.f lteredReason)))
 
-    val suppress = tweetData.suppress.orElse(tweetData.sourceTweetResult.flatMap(_.value.suppress))
+    val suppress = t etData.suppress.orElse(t etData.s ceT etResult.flatMap(_.value.suppress))
 
-    val quotedTweetStitch: Stitch[Option[Tweet]] =
-      quotedTweetResult match {
-        // check if quote tweet is backed by creatives container and needs to be hydrated from creatives
-        // container service. detail see go/creatives-containers-tdd
-        case Some(QuotedTweetResult.Found(tweetResult)) =>
-          hydrateCreativeContainerBackedTweet(
-            originalGetTweetResult = GetTweetResult(
-              tweetId = tweetResult.value.tweet.id,
-              tweetState = StatusState.Found,
-              tweet = Some(tweetResult.value.tweet)
+    val quotedT etSt ch: St ch[Opt on[T et]] =
+      quotedT etResult match {
+        // c ck  f quote t et  s backed by creat ves conta ner and needs to be hydrated from creat ves
+        // conta ner serv ce. deta l see go/creat ves-conta ners-tdd
+        case So (QuotedT etResult.Found(t etResult)) =>
+          hydrateCreat veConta nerBackedT et(
+            or g nalGetT etResult = GetT etResult(
+              t et d = t etResult.value.t et. d,
+              t etState = StatusState.Found,
+              t et = So (t etResult.value.t et)
             ),
-            getTweetRequestOptions = options,
-            creativesContainerRepo = creativesContainerRepo,
+            getT etRequestOpt ons = opt ons,
+            creat vesConta nerRepo = creat vesConta nerRepo,
             stats = stats,
-            shouldMaterializeContainers
-          ).map(_.tweet)
+            shouldMater al zeConta ners
+          ).map(_.t et)
         case _ =>
-          Stitch.value(
-            quotedTweetResult
-              .flatMap(_.toOption)
-              .map(_.value.tweet)
+          St ch.value(
+            quotedT etResult
+              .flatMap(_.toOpt on)
+              .map(_.value.t et)
           )
       }
 
-    Stitch.join(qtFilteredReasonStitch, quotedTweetStitch).map {
-      case (qtFilteredReason, quotedTweet) =>
-        GetTweetResult(
-          tweetId = tweetData.tweet.id,
-          tweetState =
-            if (suppress.nonEmpty) StatusState.Suppress
-            else if (missingFields.nonEmpty) StatusState.Partial
+    St ch.jo n(qtF lteredReasonSt ch, quotedT etSt ch).map {
+      case (qtF lteredReason, quotedT et) =>
+        GetT etResult(
+          t et d = t etData.t et. d,
+          t etState =
+             f (suppress.nonEmpty) StatusState.Suppress
+            else  f (m ss ngF elds.nonEmpty) StatusState.Part al
             else StatusState.Found,
-          tweet = Some(tweetData.tweet),
-          missingFields = missingFields,
-          filteredReason = suppress.map(_.filteredReason),
-          sourceTweet = sourceTweetResult.map(_.value.tweet),
-          sourceTweetMissingFields = sourceTweetResult
-            .map(_.state.failedFields)
-            .flatMap(asMissingFields),
-          quotedTweet = quotedTweet,
-          quotedTweetMissingFields = quotedTweetResult
-            .flatMap(_.toOption)
-            .map(_.state.failedFields)
-            .flatMap(asMissingFields),
-          quotedTweetFilteredReason = qtFilteredReason
+          t et = So (t etData.t et),
+          m ss ngF elds = m ss ngF elds,
+          f lteredReason = suppress.map(_.f lteredReason),
+          s ceT et = s ceT etResult.map(_.value.t et),
+          s ceT etM ss ngF elds = s ceT etResult
+            .map(_.state.fa ledF elds)
+            .flatMap(asM ss ngF elds),
+          quotedT et = quotedT et,
+          quotedT etM ss ngF elds = quotedT etResult
+            .flatMap(_.toOpt on)
+            .map(_.state.fa ledF elds)
+            .flatMap(asM ss ngF elds),
+          quotedT etF lteredReason = qtF lteredReason
         )
     }
   }
 
-  private[this] val AuthorAccountIsInactive = FilteredReason.AuthorAccountIsInactive(true)
+  pr vate[t ] val AuthorAccount s nact ve = F lteredReason.AuthorAccount s nact ve(true)
 
-  def failureResult(
-    deletedTweetVisibilityRepo: DeletedTweetVisibilityRepository.Type,
-    tweetId: TweetId,
-    options: GetTweetOptions,
+  def fa lureResult(
+    deletedT etV s b l yRepo: DeletedT etV s b l yRepos ory.Type,
+    t et d: T et d,
+    opt ons: GetT etOpt ons,
     ex: Throwable
-  ): Stitch[GetTweetResult] = {
+  ): St ch[GetT etResult] = {
     def deletedState(deleted: Boolean, statusState: StatusState) =
-      if (deleted && options.enableDeletedState) {
+       f (deleted && opt ons.enableDeletedState) {
         statusState
       } else {
         StatusState.NotFound
       }
 
     ex match {
-      case FilteredState.Unavailable.Author.Deactivated =>
-        Stitch.value(GetTweetResult(tweetId, StatusState.DeactivatedUser))
-      case FilteredState.Unavailable.Author.NotFound =>
-        Stitch.value(GetTweetResult(tweetId, StatusState.NotFound))
-      case FilteredState.Unavailable.Author.Offboarded =>
-        Stitch.value(
-          GetTweetResult(tweetId, StatusState.Drop, filteredReason = Some(AuthorAccountIsInactive)))
-      case FilteredState.Unavailable.Author.Suspended =>
-        Stitch.value(GetTweetResult(tweetId, StatusState.SuspendedUser))
-      case FilteredState.Unavailable.Author.Protected =>
-        Stitch.value(GetTweetResult(tweetId, StatusState.ProtectedUser))
-      case FilteredState.Unavailable.Author.Unsafe =>
-        Stitch.value(GetTweetResult(tweetId, StatusState.Drop))
-      //Handle delete state with optional FilteredReason
-      case FilteredState.Unavailable.TweetDeleted =>
-        deletedTweetVisibilityRepo(
-          DeletedTweetVisibilityRepository.VisibilityRequest(
+      case F lteredState.Unava lable.Author.Deact vated =>
+        St ch.value(GetT etResult(t et d, StatusState.Deact vatedUser))
+      case F lteredState.Unava lable.Author.NotFound =>
+        St ch.value(GetT etResult(t et d, StatusState.NotFound))
+      case F lteredState.Unava lable.Author.Offboarded =>
+        St ch.value(
+          GetT etResult(t et d, StatusState.Drop, f lteredReason = So (AuthorAccount s nact ve)))
+      case F lteredState.Unava lable.Author.Suspended =>
+        St ch.value(GetT etResult(t et d, StatusState.SuspendedUser))
+      case F lteredState.Unava lable.Author.Protected =>
+        St ch.value(GetT etResult(t et d, StatusState.ProtectedUser))
+      case F lteredState.Unava lable.Author.Unsafe =>
+        St ch.value(GetT etResult(t et d, StatusState.Drop))
+      //Handle delete state w h opt onal F lteredReason
+      case F lteredState.Unava lable.T etDeleted =>
+        deletedT etV s b l yRepo(
+          DeletedT etV s b l yRepos ory.V s b l yRequest(
             ex,
-            tweetId,
-            options.safetyLevel,
-            options.forUserId,
-            isInnerQuotedTweet = false
+            t et d,
+            opt ons.safetyLevel,
+            opt ons.forUser d,
+             s nnerQuotedT et = false
           )
-        ).map(filteredReasonOpt => {
+        ).map(f lteredReasonOpt => {
           val deleteState = deletedState(deleted = true, StatusState.Deleted)
-          GetTweetResult(tweetId, deleteState, filteredReason = filteredReasonOpt)
+          GetT etResult(t et d, deleteState, f lteredReason = f lteredReasonOpt)
         })
 
-      case FilteredState.Unavailable.BounceDeleted =>
-        deletedTweetVisibilityRepo(
-          DeletedTweetVisibilityRepository.VisibilityRequest(
+      case F lteredState.Unava lable.BounceDeleted =>
+        deletedT etV s b l yRepo(
+          DeletedT etV s b l yRepos ory.V s b l yRequest(
             ex,
-            tweetId,
-            options.safetyLevel,
-            options.forUserId,
-            isInnerQuotedTweet = false
+            t et d,
+            opt ons.safetyLevel,
+            opt ons.forUser d,
+             s nnerQuotedT et = false
           )
-        ).map(filteredReasonOpt => {
+        ).map(f lteredReasonOpt => {
           val deleteState = deletedState(deleted = true, StatusState.BounceDeleted)
-          GetTweetResult(tweetId, deleteState, filteredReason = filteredReasonOpt)
+          GetT etResult(t et d, deleteState, f lteredReason = f lteredReasonOpt)
         })
 
-      case FilteredState.Unavailable.SourceTweetNotFound(d) =>
-        deletedTweetVisibilityRepo(
-          DeletedTweetVisibilityRepository.VisibilityRequest(
+      case F lteredState.Unava lable.S ceT etNotFound(d) =>
+        deletedT etV s b l yRepo(
+          DeletedT etV s b l yRepos ory.V s b l yRequest(
             ex,
-            tweetId,
-            options.safetyLevel,
-            options.forUserId,
-            isInnerQuotedTweet = false
+            t et d,
+            opt ons.safetyLevel,
+            opt ons.forUser d,
+             s nnerQuotedT et = false
           )
-        ).map(filteredReasonOpt => {
+        ).map(f lteredReasonOpt => {
           val deleteState = deletedState(d, StatusState.Deleted)
-          GetTweetResult(tweetId, deleteState, filteredReason = filteredReasonOpt)
+          GetT etResult(t et d, deleteState, f lteredReason = f lteredReasonOpt)
         })
-      case FilteredState.Unavailable.Reported =>
-        Stitch.value(GetTweetResult(tweetId, StatusState.ReportedTweet))
-      case fs: FilteredState.HasFilteredReason =>
-        Stitch.value(
-          GetTweetResult(tweetId, StatusState.Drop, filteredReason = Some(fs.filteredReason)))
-      case OverCapacity(_) => Stitch.value(GetTweetResult(tweetId, StatusState.OverCapacity))
-      case _ => Stitch.value(GetTweetResult(tweetId, StatusState.Failed))
+      case F lteredState.Unava lable.Reported =>
+        St ch.value(GetT etResult(t et d, StatusState.ReportedT et))
+      case fs: F lteredState.HasF lteredReason =>
+        St ch.value(
+          GetT etResult(t et d, StatusState.Drop, f lteredReason = So (fs.f lteredReason)))
+      case OverCapac y(_) => St ch.value(GetT etResult(t et d, StatusState.OverCapac y))
+      case _ => St ch.value(GetT etResult(t et d, StatusState.Fa led))
     }
   }
 
-  private def hydrateCreativeContainerBackedTweet(
-    originalGetTweetResult: GetTweetResult,
-    getTweetRequestOptions: GetTweetOptions,
-    creativesContainerRepo: CreativesContainerMaterializationRepository.GetTweetType,
-    stats: StatsReceiver,
-    shouldMaterializeContainers: Gate[Unit]
-  ): Stitch[GetTweetResult] = {
-    // creatives container backed tweet stats
-    val ccTweetMaterialized = stats.scope("creatives_container", "get_tweets")
-    val ccTweetMaterializeFiltered = ccTweetMaterialized.scope("filtered")
-    val ccTweetMaterializeSuccess = ccTweetMaterialized.counter("success")
-    val ccTweetMaterializeFailed = ccTweetMaterialized.counter("failed")
-    val ccTweetMaterializeRequests = ccTweetMaterialized.counter("requests")
+  pr vate def hydrateCreat veConta nerBackedT et(
+    or g nalGetT etResult: GetT etResult,
+    getT etRequestOpt ons: GetT etOpt ons,
+    creat vesConta nerRepo: Creat vesConta nerMater al zat onRepos ory.GetT etType,
+    stats: StatsRece ver,
+    shouldMater al zeConta ners: Gate[Un ]
+  ): St ch[GetT etResult] = {
+    // creat ves conta ner backed t et stats
+    val ccT etMater al zed = stats.scope("creat ves_conta ner", "get_t ets")
+    val ccT etMater al zeF ltered = ccT etMater al zed.scope("f ltered")
+    val ccT etMater al zeSuccess = ccT etMater al zed.counter("success")
+    val ccT etMater al zeFa led = ccT etMater al zed.counter("fa led")
+    val ccT etMater al zeRequests = ccT etMater al zed.counter("requests")
 
-    val tweetId = originalGetTweetResult.tweetId
-    val tweetState = originalGetTweetResult.tweetState
-    val underlyingCreativesContainerId =
-      originalGetTweetResult.tweet.flatMap(_.underlyingCreativesContainerId)
+    val t et d = or g nalGetT etResult.t et d
+    val t etState = or g nalGetT etResult.t etState
+    val underly ngCreat vesConta ner d =
+      or g nalGetT etResult.t et.flatMap(_.underly ngCreat vesConta ner d)
     (
-      tweetState,
-      underlyingCreativesContainerId,
-      getTweetRequestOptions.disableTweetMaterialization,
-      shouldMaterializeContainers()
+      t etState,
+      underly ngCreat vesConta ner d,
+      getT etRequestOpt ons.d sableT etMater al zat on,
+      shouldMater al zeConta ners()
     ) match {
-      // 1. creatives container backed tweet is determined by `underlyingCreativesContainerId` field presence.
-      // 2. if the frontend tweet is suppressed by any reason, respect that and not do this hydration.
-      // (this logic can be revisited and improved further)
+      // 1. creat ves conta ner backed t et  s determ ned by `underly ngCreat vesConta ner d` f eld presence.
+      // 2.  f t  frontend t et  s suppressed by any reason, respect that and not do t  hydrat on.
+      // (t  log c can be rev s ed and  mproved furt r)
       case (_, None, _, _) =>
-        Stitch.value(originalGetTweetResult)
-      case (_, Some(_), _, false) =>
-        ccTweetMaterializeFiltered.counter("decider_suppressed").incr()
-        Stitch.value(GetTweetResult(tweetId, StatusState.NotFound))
-      case (StatusState.Found, Some(containerId), false, _) =>
-        ccTweetMaterializeRequests.incr()
-        val materializationRequest =
-          MaterializeAsTweetRequest(containerId, tweetId, Some(originalGetTweetResult))
-        creativesContainerRepo(
-          materializationRequest,
-          Some(getTweetRequestOptions)
-        ).onSuccess(_ => ccTweetMaterializeSuccess.incr())
-          .onFailure(_ => ccTweetMaterializeFailed.incr())
+        St ch.value(or g nalGetT etResult)
+      case (_, So (_), _, false) =>
+        ccT etMater al zeF ltered.counter("dec der_suppressed"). ncr()
+        St ch.value(GetT etResult(t et d, StatusState.NotFound))
+      case (StatusState.Found, So (conta ner d), false, _) =>
+        ccT etMater al zeRequests. ncr()
+        val mater al zat onRequest =
+          Mater al zeAsT etRequest(conta ner d, t et d, So (or g nalGetT etResult))
+        creat vesConta nerRepo(
+          mater al zat onRequest,
+          So (getT etRequestOpt ons)
+        ).onSuccess(_ => ccT etMater al zeSuccess. ncr())
+          .onFa lure(_ => ccT etMater al zeFa led. ncr())
           .handle {
-            case _ => GetTweetResult(tweetId, StatusState.Failed)
+            case _ => GetT etResult(t et d, StatusState.Fa led)
           }
-      case (_, Some(_), true, _) =>
-        ccTweetMaterializeFiltered.counter("suppressed").incr()
-        Stitch.value(GetTweetResult(tweetId, StatusState.NotFound))
-      case (state, Some(_), _, _) =>
-        ccTweetMaterializeFiltered.counter(state.name).incr()
-        Stitch.value(originalGetTweetResult)
+      case (_, So (_), true, _) =>
+        ccT etMater al zeF ltered.counter("suppressed"). ncr()
+        St ch.value(GetT etResult(t et d, StatusState.NotFound))
+      case (state, So (_), _, _) =>
+        ccT etMater al zeF ltered.counter(state.na ). ncr()
+        St ch.value(or g nalGetT etResult)
     }
   }
 }

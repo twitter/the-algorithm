@@ -1,41 +1,41 @@
-package com.twitter.unified_user_actions.adapter.user_modification
+package com.tw ter.un f ed_user_act ons.adapter.user_mod f cat on
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.gizmoduck.thriftscala.UserModification
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.user_modification_event.UserCreate
-import com.twitter.unified_user_actions.adapter.user_modification_event.UserUpdate
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.g zmoduck.thr ftscala.UserMod f cat on
+ mport com.tw ter.un f ed_user_act ons.adapter.AbstractAdapter
+ mport com.tw ter.un f ed_user_act ons.adapter.user_mod f cat on_event.UserCreate
+ mport com.tw ter.un f ed_user_act ons.adapter.user_mod f cat on_event.UserUpdate
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
 
-class UserModificationAdapter
-    extends AbstractAdapter[UserModification, UnKeyed, UnifiedUserAction] {
+class UserMod f cat onAdapter
+    extends AbstractAdapter[UserMod f cat on, UnKeyed, Un f edUserAct on] {
 
-  import UserModificationAdapter._
+   mport UserMod f cat onAdapter._
 
-  override def adaptOneToKeyedMany(
-    input: UserModification,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  overr de def adaptOneToKeyedMany(
+     nput: UserMod f cat on,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[(UnKeyed, Un f edUserAct on)] =
+    adaptEvent( nput).map { e => (UnKeyed, e) }
 }
 
-object UserModificationAdapter {
+object UserMod f cat onAdapter {
 
-  def adaptEvent(input: UserModification): Seq[UnifiedUserAction] =
-    Option(input).toSeq.flatMap { e =>
-      if (e.create.isDefined) { // User create
-        Some(UserCreate.getUUA(input))
-      } else if (e.update.isDefined) { // User updates
-        Some(UserUpdate.getUUA(input))
-      } else if (e.destroy.isDefined) {
+  def adaptEvent( nput: UserMod f cat on): Seq[Un f edUserAct on] =
+    Opt on( nput).toSeq.flatMap { e =>
+       f (e.create. sDef ned) { // User create
+        So (UserCreate.getUUA( nput))
+      } else  f (e.update. sDef ned) { // User updates
+        So (UserUpdate.getUUA( nput))
+      } else  f (e.destroy. sDef ned) {
         None
-      } else if (e.erase.isDefined) {
+      } else  f (e.erase. sDef ned) {
         None
       } else {
-        throw new IllegalArgumentException(
-          "None of the possible events is defined, there must be something with the source")
+        throw new  llegalArgu ntExcept on(
+          "None of t  poss ble events  s def ned, t re must be so th ng w h t  s ce")
       }
     }
 }

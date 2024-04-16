@@ -1,115 +1,115 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.f rst_n_ranker
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasQualityFactor
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasQual yFactor
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ut ls.Ut ls
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * This class is meant to filter candidates between stages of our ranker by taking the first N
- * candidates, merging any candidate source information for candidates with multiple entries.
- * To allow us to chain this truncation operation any number of times sequentially within the main
- * ranking builder, we abstract the truncation as a separate Ranker
+ * T  class  s  ant to f lter cand dates bet en stages of   ranker by tak ng t  f rst N
+ * cand dates,  rg ng any cand date s ce  nformat on for cand dates w h mult ple entr es.
+ * To allow us to cha n t  truncat on operat on any number of t  s sequent ally w h n t  ma n
+ * rank ng bu lder,   abstract t  truncat on as a separate Ranker
  */
-@Singleton
-class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFactor] @Inject() (
-  stats: StatsReceiver)
-    extends Ranker[Target, CandidateUser] {
+@S ngleton
+class F rstNRanker[Target <: HasCl entContext w h HasParams w h HasQual yFactor] @ nject() (
+  stats: StatsRece ver)
+    extends Ranker[Target, Cand dateUser] {
 
-  val name: String = this.getClass.getSimpleName
-  private val baseStats = stats.scope("first_n_ranker")
-  val scaledDownByQualityFactorCounter =
-    baseStats.counter("scaled_down_by_quality_factor")
-  private val mergeStat = baseStats.scope("merged_candidates")
-  private val mergeStat2 = mergeStat.counter("2")
-  private val mergeStat3 = mergeStat.counter("3")
-  private val mergeStat4 = mergeStat.counter("4+")
-  private val candidateSizeStats = baseStats.scope("candidate_size")
+  val na : Str ng = t .getClass.getS mpleNa 
+  pr vate val baseStats = stats.scope("f rst_n_ranker")
+  val scaledDownByQual yFactorCounter =
+    baseStats.counter("scaled_down_by_qual y_factor")
+  pr vate val  rgeStat = baseStats.scope(" rged_cand dates")
+  pr vate val  rgeStat2 =  rgeStat.counter("2")
+  pr vate val  rgeStat3 =  rgeStat.counter("3")
+  pr vate val  rgeStat4 =  rgeStat.counter("4+")
+  pr vate val cand dateS zeStats = baseStats.scope("cand date_s ze")
 
-  private case class CandidateSourceScore(
-    candidateId: Long,
-    sourceId: CandidateSourceIdentifier,
-    score: Option[Double])
+  pr vate case class Cand dateS ceScore(
+    cand date d: Long,
+    s ce d: Cand dateS ce dent f er,
+    score: Opt on[Double])
 
   /**
-   * Adds the rank of each candidate based on the primary candidate source's score.
-   * In the event where the provided ordering of candidates do not align with the score,
-   * we will respect the score, since the ordering might have been mixed up due to other previous
-   * steps like the shuffleFn in the `WeightedCandidateSourceRanker`.
-   * @param candidates  ordered list of candidates
-   * @return            same ordered list of candidates, but with the rank information appended
+   * Adds t  rank of each cand date based on t  pr mary cand date s ce's score.
+   *  n t  event w re t  prov ded order ng of cand dates do not al gn w h t  score,
+   *   w ll respect t  score, s nce t  order ng m ght have been m xed up due to ot r prev ous
+   * steps l ke t  shuffleFn  n t  `  ghtedCand dateS ceRanker`.
+   * @param cand dates  ordered l st of cand dates
+   * @return            sa  ordered l st of cand dates, but w h t  rank  nformat on appended
    */
-  def addRank(candidates: Seq[CandidateUser]): Seq[CandidateUser] = {
-    val candidateSourceRanks = for {
-      (sourceIdOpt, sourceCandidates) <- candidates.groupBy(_.getPrimaryCandidateSource)
-      (candidate, rank) <- sourceCandidates.sortBy(-_.score.getOrElse(0.0)).zipWithIndex
-    } yield {
-      (candidate, sourceIdOpt) -> rank
+  def addRank(cand dates: Seq[Cand dateUser]): Seq[Cand dateUser] = {
+    val cand dateS ceRanks = for {
+      (s ce dOpt, s ceCand dates) <- cand dates.groupBy(_.getPr maryCand dateS ce)
+      (cand date, rank) <- s ceCand dates.sortBy(-_.score.getOrElse(0.0)).z pW h ndex
+    } y eld {
+      (cand date, s ce dOpt) -> rank
     }
-    candidates.map { c =>
-      c.getPrimaryCandidateSource
-        .map { sourceId =>
-          val sourceRank = candidateSourceRanks((c, c.getPrimaryCandidateSource))
-          c.addCandidateSourceRanksMap(Map(sourceId -> sourceRank))
+    cand dates.map { c =>
+      c.getPr maryCand dateS ce
+        .map { s ce d =>
+          val s ceRank = cand dateS ceRanks((c, c.getPr maryCand dateS ce))
+          c.addCand dateS ceRanksMap(Map(s ce d -> s ceRank))
         }.getOrElse(c)
     }
   }
 
-  override def rank(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
+  overr de def rank(target: Target, cand dates: Seq[Cand dateUser]): St ch[Seq[Cand dateUser]] = {
 
     val scaleDownFactor = Math.max(
-      target.qualityFactor.getOrElse(1.0d),
-      target.params(FirstNRankerParams.MinNumCandidatesScoredScaleDownFactor)
+      target.qual yFactor.getOrElse(1.0d),
+      target.params(F rstNRankerParams.M nNumCand datesScoredScaleDownFactor)
     )
 
-    if (scaleDownFactor < 1.0d)
-      scaledDownByQualityFactorCounter.incr()
+     f (scaleDownFactor < 1.0d)
+      scaledDownByQual yFactorCounter. ncr()
 
-    val n = (target.params(FirstNRankerParams.CandidatesToRank) * scaleDownFactor).toInt
-    val scribeRankingInfo: Boolean =
-      target.params(FirstNRankerParams.ScribeRankingInfoInFirstNRanker)
-    candidateSizeStats.counter(s"n$n").incr()
-    val candidatesWithRank = addRank(candidates)
-    if (target.params(FirstNRankerParams.GroupDuplicateCandidates)) {
-      val groupedCandidates: Map[Long, Seq[CandidateUser]] = candidatesWithRank.groupBy(_.id)
-      val topN = candidates
+    val n = (target.params(F rstNRankerParams.Cand datesToRank) * scaleDownFactor).to nt
+    val scr beRank ng nfo: Boolean =
+      target.params(F rstNRankerParams.Scr beRank ng nfo nF rstNRanker)
+    cand dateS zeStats.counter(s"n$n"). ncr()
+    val cand datesW hRank = addRank(cand dates)
+     f (target.params(F rstNRankerParams.GroupDupl cateCand dates)) {
+      val groupedCand dates: Map[Long, Seq[Cand dateUser]] = cand datesW hRank.groupBy(_. d)
+      val topN = cand dates
         .map { c =>
-          merge(groupedCandidates(c.id))
-        }.distinct.take(n)
-      Stitch.value(if (scribeRankingInfo) Utils.addRankingInfo(topN, name) else topN)
+           rge(groupedCand dates(c. d))
+        }.d st nct.take(n)
+      St ch.value( f (scr beRank ng nfo) Ut ls.addRank ng nfo(topN, na ) else topN)
     } else {
-      Stitch.value(
-        if (scribeRankingInfo) Utils.addRankingInfo(candidatesWithRank, name).take(n)
-        else candidatesWithRank.take(n))
-    } // for efficiency, if don't need to deduplicate
+      St ch.value(
+         f (scr beRank ng nfo) Ut ls.addRank ng nfo(cand datesW hRank, na ).take(n)
+        else cand datesW hRank.take(n))
+    } // for eff c ency,  f don't need to dedupl cate
   }
 
   /**
-   * we use the primary candidate source of the first entry, and aggregate all of the other entries'
-   * candidate source scores into the first entry's candidateSourceScores
-   * @param candidates list of candidates with the same id
-   * @return           a single merged candidate
+   *   use t  pr mary cand date s ce of t  f rst entry, and aggregate all of t  ot r entr es'
+   * cand date s ce scores  nto t  f rst entry's cand dateS ceScores
+   * @param cand dates l st of cand dates w h t  sa   d
+   * @return           a s ngle  rged cand date
    */
-  private[first_n_ranker] def merge(candidates: Seq[CandidateUser]): CandidateUser = {
-    if (candidates.size == 1) {
-      candidates.head
+  pr vate[f rst_n_ranker] def  rge(cand dates: Seq[Cand dateUser]): Cand dateUser = {
+     f (cand dates.s ze == 1) {
+      cand dates. ad
     } else {
-      candidates.size match {
-        case 2 => mergeStat2.incr()
-        case 3 => mergeStat3.incr()
-        case i if i >= 4 => mergeStat4.incr()
+      cand dates.s ze match {
+        case 2 =>  rgeStat2. ncr()
+        case 3 =>  rgeStat3. ncr()
+        case    f   >= 4 =>  rgeStat4. ncr()
         case _ =>
       }
-      val allSources = candidates.flatMap(_.getCandidateSources).toMap
-      val allRanks = candidates.flatMap(_.getCandidateRanks).toMap
-      candidates.head.addCandidateSourceScoresMap(allSources).addCandidateSourceRanksMap(allRanks)
+      val allS ces = cand dates.flatMap(_.getCand dateS ces).toMap
+      val allRanks = cand dates.flatMap(_.getCand dateRanks).toMap
+      cand dates. ad.addCand dateS ceScoresMap(allS ces).addCand dateS ceRanksMap(allRanks)
     }
   }
 }

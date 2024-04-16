@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.products.explore_tab
+package com.tw ter.follow_recom ndat ons.products.explore_tab
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.explore_tab.configapi.ExploreTabParams
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.base.BaseRecom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlFlow
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlRequestBu lder
+ mport com.tw ter.follow_recom ndat ons.products.common.Product
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductRequest
+ mport com.tw ter.follow_recom ndat ons.products.explore_tab.conf gap .ExploreTabParams
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ExploreTabProduct @Inject() (
+@S ngleton
+class ExploreTabProduct @ nject() (
   postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder)
+  postNuxMlRequestBu lder: PostNuxMlRequestBu lder)
     extends Product {
-  override val name: String = "Explore Tab"
+  overr de val na : Str ng = "Explore Tab"
 
-  override val identifier: String = "explore-tab"
+  overr de val  dent f er: Str ng = "explore-tab"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.ExploreTab
+  overr de val d splayLocat on: D splayLocat on = D splayLocat on.ExploreTab
 
-  override def selectWorkflows(
+  overr de def selectWorkflows(
     request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
+  ): St ch[Seq[BaseRecom ndat onFlow[ProductRequest, _ <: Recom ndat on]]] = {
+    postNuxMlRequestBu lder.bu ld(request).map { postNuxMlRequest =>
       Seq(postNuxMlFlow.mapKey({ _: ProductRequest => postNuxMlRequest }))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] =
-    new IdentityTransform[ProductRequest, Recommendation]
+  overr de val blender: Transform[ProductRequest, Recom ndat on] =
+    new  dent yTransform[ProductRequest, Recom ndat on]
 
-  override def resultsTransformer(
+  overr de def resultsTransfor r(
     request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ): St ch[Transform[ProductRequest, Recom ndat on]] =
+    St ch.value(new  dent yTransform[ProductRequest, Recom ndat on])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] = {
-    // Ideally we should hook up is_soft_user as custom FS field and disable the product through FS
-    val enabledForUserType = !request.recommendationRequest.isSoftUser || request.params(
+  overr de def enabled(request: ProductRequest): St ch[Boolean] = {
+    //  deally   should hook up  s_soft_user as custom FS f eld and d sable t  product through FS
+    val enabledForUserType = !request.recom ndat onRequest. sSoftUser || request.params(
       ExploreTabParams.EnableProductForSoftUser)
-    Stitch.value(request.params(ExploreTabParams.EnableProduct) && enabledForUserType)
+    St ch.value(request.params(ExploreTabParams.EnableProduct) && enabledForUserType)
   }
 }

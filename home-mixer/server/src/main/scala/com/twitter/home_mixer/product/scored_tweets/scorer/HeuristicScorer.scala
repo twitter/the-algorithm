@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.tw ter.ho _m xer.product.scored_t ets.scorer
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.st ch.St ch
 
 /**
- * Apply various heuristics to the model score
+ * Apply var ous  ur st cs to t  model score
  */
-object HeuristicScorer extends Scorer[ScoredTweetsQuery, TweetCandidate] {
+object  ur st cScorer extends Scorer[ScoredT etsQuery, T etCand date] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("Heuristic")
+  overr de val  dent f er: Scorer dent f er = Scorer dent f er(" ur st c")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  overr de val features: Set[Feature[_, _]] = Set(ScoreFeature)
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  overr de def apply(
+    query: ScoredT etsQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
     val rescorers = Seq(
       RescoreOutOfNetwork,
-      RescoreReplies,
-      RescoreBlueVerified,
+      RescoreRepl es,
+      RescoreBlueVer f ed,
       RescoreCreators,
-      RescoreMTLNormalization,
-      RescoreAuthorDiversity(AuthorDiversityDiscountProvider(candidates)),
-      RescoreFeedbackFatigue(query)
+      RescoreMTLNormal zat on,
+      RescoreAuthorD vers y(AuthorD vers yD scountProv der(cand dates)),
+      RescoreFeedbackFat gue(query)
     )
 
-    val updatedScores = candidates.map { candidate =>
-      val score = candidate.features.getOrElse(ScoreFeature, None)
-      val scaleFactor = rescorers.map(_(query, candidate)).product
+    val updatedScores = cand dates.map { cand date =>
+      val score = cand date.features.getOrElse(ScoreFeature, None)
+      val scaleFactor = rescorers.map(_(query, cand date)).product
       val updatedScore = score.map(_ * scaleFactor)
-      FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+      FeatureMapBu lder().add(ScoreFeature, updatedScore).bu ld()
     }
 
-    Stitch.value(updatedScores)
+    St ch.value(updatedScores)
   }
 }

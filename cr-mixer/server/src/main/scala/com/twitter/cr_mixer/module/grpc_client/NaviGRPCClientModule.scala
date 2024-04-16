@@ -1,90 +1,90 @@
-package com.twitter.cr_mixer.module.grpc_client
+package com.tw ter.cr_m xer.module.grpc_cl ent
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
-import io.grpc.ManagedChannel
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.grpc.F nagleChannelBu lder
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent.MtlsStackCl entSyntax
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ut l.Durat on
+ mport  o.grpc.ManagedChannel
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object NaviGRPCClientModule extends TwitterModule {
+object Nav GRPCCl entModule extends Tw terModule {
 
   val maxRetryAttempts = 3
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.HomeNaviGRPCClient)
-  def providesHomeNaviGRPCClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Ho Nav GRPCCl ent)
+  def prov desHo Nav GRPCCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
   ): ManagedChannel = {
-    val label = "navi-wals-recommended-tweets-home-client"
-    val dest = "/s/ads-prediction/navi-wals-recommended-tweets-home"
-    buildClient(serviceIdentifier, timeoutConfig, statsReceiver, dest, label)
+    val label = "nav -wals-recom nded-t ets-ho -cl ent"
+    val dest = "/s/ads-pred ct on/nav -wals-recom nded-t ets-ho "
+    bu ldCl ent(serv ce dent f er, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsFavedNaviGRPCClient)
-  def providesAdsFavedNaviGRPCClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.AdsFavedNav GRPCCl ent)
+  def prov desAdsFavedNav GRPCCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
   ): ManagedChannel = {
-    val label = "navi-wals-ads-faved-tweets"
-    val dest = "/s/ads-prediction/navi-wals-ads-faved-tweets"
-    buildClient(serviceIdentifier, timeoutConfig, statsReceiver, dest, label)
+    val label = "nav -wals-ads-faved-t ets"
+    val dest = "/s/ads-pred ct on/nav -wals-ads-faved-t ets"
+    bu ldCl ent(serv ce dent f er, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsMonetizableNaviGRPCClient)
-  def providesAdsMonetizableNaviGRPCClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.AdsMonet zableNav GRPCCl ent)
+  def prov desAdsMonet zableNav GRPCCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
   ): ManagedChannel = {
-    val label = "navi-wals-ads-monetizable-tweets"
-    val dest = "/s/ads-prediction/navi-wals-ads-monetizable-tweets"
-    buildClient(serviceIdentifier, timeoutConfig, statsReceiver, dest, label)
+    val label = "nav -wals-ads-monet zable-t ets"
+    val dest = "/s/ads-pred ct on/nav -wals-ads-monet zable-t ets"
+    bu ldCl ent(serv ce dent f er, t  outConf g, statsRece ver, dest, label)
   }
 
-  private def buildClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    dest: String,
-    label: String
+  pr vate def bu ldCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+    dest: Str ng,
+    label: Str ng
   ): ManagedChannel = {
 
-    val stats = statsReceiver.scope("clnt").scope(label)
+    val stats = statsRece ver.scope("clnt").scope(label)
 
-    val client = Http.client
-      .withLabel(label)
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(timeoutConfig.naviRequestTimeout)
-      .withTransport.connectTimeout(Duration.fromMilliseconds(10000))
-      .withSession.acquisitionTimeout(Duration.fromMilliseconds(20000))
-      .withStatsReceiver(stats)
-      .withHttpStats
+    val cl ent = Http.cl ent
+      .w hLabel(label)
+      .w hMutualTls(serv ce dent f er)
+      .w hRequestT  out(t  outConf g.nav RequestT  out)
+      .w hTransport.connectT  out(Durat on.fromM ll seconds(10000))
+      .w hSess on.acqu s  onT  out(Durat on.fromM ll seconds(20000))
+      .w hStatsRece ver(stats)
+      .w hHttpStats
 
-    FinagleChannelBuilder
+    F nagleChannelBu lder
       .forTarget(dest)
-      .overrideAuthority("rustserving")
+      .overr deAuthor y("rustserv ng")
       .maxRetryAttempts(maxRetryAttempts)
-      .enableRetryForStatus(io.grpc.Status.RESOURCE_EXHAUSTED)
-      .enableRetryForStatus(io.grpc.Status.UNKNOWN)
-      .enableUnsafeFullyBufferingMode()
-      .httpClient(client)
-      .build()
+      .enableRetryForStatus( o.grpc.Status.RESOURCE_EXHAUSTED)
+      .enableRetryForStatus( o.grpc.Status.UNKNOWN)
+      .enableUnsafeFullyBuffer ngMode()
+      .httpCl ent(cl ent)
+      .bu ld()
 
   }
 }

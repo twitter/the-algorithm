@@ -1,236 +1,236 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftFacetEarlyb rdSort ngMode;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftFacetRank ngOpt ons;
+ mport com.tw ter.search.common.relevance.features.Earlyb rdDocu ntFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetAccumulator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount erator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.search.Ant Gam ngF lter;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetResultsCollector.Accumulator;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
 
-public class DefaultFacetScorer extends FacetScorer {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetScorer.class.getName());
-  private static final double DEFAULT_FEATURE_WEIGHT = 0.0;
-  private static final byte DEFAULT_PENALTY = 1;
+publ c class DefaultFacetScorer extends FacetScorer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FacetScorer.class.getNa ());
+  pr vate stat c f nal double DEFAULT_FEATURE_WE GHT = 0.0;
+  pr vate stat c f nal byte DEFAULT_PENALTY = 1;
 
-  private static final byte DEFAULT_REPUTATION_MIN = 45;
+  pr vate stat c f nal byte DEFAULT_REPUTAT ON_M N = 45;
 
-  private final AntiGamingFilter antiGamingFilter;
+  pr vate f nal Ant Gam ngF lter ant Gam ngF lter;
 
-  // tweepcreds below this value will not be counted at all
-  private final byte reputationMinFilterThresholdVal;
+  // t epcreds below t  value w ll not be counted at all
+  pr vate f nal byte reputat onM nF lterThresholdVal;
 
-  // tweepcreds between reputationMinFilterThresholdVal and this value will be counted
-  // with a score of 1
-  private final byte reputationMinScoreVal;
+  // t epcreds bet en reputat onM nF lterThresholdVal and t  value w ll be counted
+  // w h a score of 1
+  pr vate f nal byte reputat onM nScoreVal;
 
-  private final double userRepWeight;
-  private final double favoritesWeight;
-  private final double parusWeight;
-  private final double parusBase;
-  private final double queryIndependentPenaltyWeight;
+  pr vate f nal double userRep  ght;
+  pr vate f nal double favor es  ght;
+  pr vate f nal double parus  ght;
+  pr vate f nal double parusBase;
+  pr vate f nal double query ndependentPenalty  ght;
 
-  private final ThriftLanguage uiLang;
-  private final double langEnglishUIBoost;
-  private final double langEnglishFacetBoost;
-  private final double langDefaultBoost;
+  pr vate f nal Thr ftLanguage u Lang;
+  pr vate f nal double langEngl shU Boost;
+  pr vate f nal double langEngl shFacetBoost;
+  pr vate f nal double langDefaultBoost;
 
-  private final int antigamingPenalty;
-  private final int offensiveTweetPenalty;
-  private final int multipleHashtagsOrTrendsPenalty;
+  pr vate f nal  nt ant gam ngPenalty;
+  pr vate f nal  nt offens veT etPenalty;
+  pr vate f nal  nt mult pleHashtagsOrTrendsPenalty;
 
-  private final int maxScorePerTweet;
-  private final ThriftFacetEarlybirdSortingMode sortingMode;
+  pr vate f nal  nt maxScorePerT et;
+  pr vate f nal Thr ftFacetEarlyb rdSort ngMode sort ngMode;
 
-  private EarlybirdIndexSegmentAtomicReader reader;
-  private EarlybirdDocumentFeatures features;
+  pr vate Earlyb rd ndexSeg ntAtom cReader reader;
+  pr vate Earlyb rdDocu ntFeatures features;
 
   /**
    * Creates a new facet scorer.
    */
-  public DefaultFacetScorer(ThriftSearchQuery searchQuery,
-                            ThriftFacetRankingOptions rankingOptions,
-                            AntiGamingFilter antiGamingFilter,
-                            ThriftFacetEarlybirdSortingMode sortingMode) {
-    this.sortingMode = sortingMode;
-    this.antiGamingFilter = antiGamingFilter;
+  publ c DefaultFacetScorer(Thr ftSearchQuery searchQuery,
+                            Thr ftFacetRank ngOpt ons rank ngOpt ons,
+                            Ant Gam ngF lter ant Gam ngF lter,
+                            Thr ftFacetEarlyb rdSort ngMode sort ngMode) {
+    t .sort ngMode = sort ngMode;
+    t .ant Gam ngF lter = ant Gam ngF lter;
 
-    maxScorePerTweet =
-        rankingOptions.isSetMaxScorePerTweet()
-        ? rankingOptions.getMaxScorePerTweet()
-        : Integer.MAX_VALUE;
+    maxScorePerT et =
+        rank ngOpt ons. sSetMaxScorePerT et()
+        ? rank ngOpt ons.getMaxScorePerT et()
+        :  nteger.MAX_VALUE;
 
-    // filters
-    reputationMinFilterThresholdVal =
-        rankingOptions.isSetMinTweepcredFilterThreshold()
-        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 0xFF)
-        : DEFAULT_REPUTATION_MIN;
+    // f lters
+    reputat onM nF lterThresholdVal =
+        rank ngOpt ons. sSetM nT epcredF lterThreshold()
+        ? (byte) (rank ngOpt ons.getM nT epcredF lterThreshold() & 0xFF)
+        : DEFAULT_REPUTAT ON_M N;
 
-    // weights
-    // reputationMinScoreVal must be >= reputationMinFilterThresholdVal
-    reputationMinScoreVal =
-        (byte) Math.max(rankingOptions.isSetReputationParams()
-        ? (byte) rankingOptions.getReputationParams().getMin()
-        : DEFAULT_REPUTATION_MIN, reputationMinFilterThresholdVal);
+    //   ghts
+    // reputat onM nScoreVal must be >= reputat onM nF lterThresholdVal
+    reputat onM nScoreVal =
+        (byte) Math.max(rank ngOpt ons. sSetReputat onParams()
+        ? (byte) rank ngOpt ons.getReputat onParams().getM n()
+        : DEFAULT_REPUTAT ON_M N, reputat onM nF lterThresholdVal);
 
-    parusWeight =
-        rankingOptions.isSetParusScoreParams() && rankingOptions.getParusScoreParams().isSetWeight()
-        ? rankingOptions.getParusScoreParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
-    // compute this once so that base ** parusScore is backwards-compatible
-    parusBase = Math.sqrt(1 + parusWeight);
+    parus  ght =
+        rank ngOpt ons. sSetParusScoreParams() && rank ngOpt ons.getParusScoreParams(). sSet  ght()
+        ? rank ngOpt ons.getParusScoreParams().get  ght()
+        : DEFAULT_FEATURE_WE GHT;
+    // compute t  once so that base ** parusScore  s backwards-compat ble
+    parusBase = Math.sqrt(1 + parus  ght);
 
-    userRepWeight =
-        rankingOptions.isSetReputationParams() && rankingOptions.getReputationParams().isSetWeight()
-        ? rankingOptions.getReputationParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    userRep  ght =
+        rank ngOpt ons. sSetReputat onParams() && rank ngOpt ons.getReputat onParams(). sSet  ght()
+        ? rank ngOpt ons.getReputat onParams().get  ght()
+        : DEFAULT_FEATURE_WE GHT;
 
-    favoritesWeight =
-        rankingOptions.isSetFavoritesParams() && rankingOptions.getFavoritesParams().isSetWeight()
-        ? rankingOptions.getFavoritesParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    favor es  ght =
+        rank ngOpt ons. sSetFavor esParams() && rank ngOpt ons.getFavor esParams(). sSet  ght()
+        ? rank ngOpt ons.getFavor esParams().get  ght()
+        : DEFAULT_FEATURE_WE GHT;
 
-    queryIndependentPenaltyWeight =
-        rankingOptions.isSetQueryIndependentPenaltyWeight()
-        ? rankingOptions.getQueryIndependentPenaltyWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    query ndependentPenalty  ght =
+        rank ngOpt ons. sSetQuery ndependentPenalty  ght()
+        ? rank ngOpt ons.getQuery ndependentPenalty  ght()
+        : DEFAULT_FEATURE_WE GHT;
 
-    // penalty increment
-    antigamingPenalty =
-        rankingOptions.isSetAntigamingPenalty()
-        ? rankingOptions.getAntigamingPenalty()
+    // penalty  ncre nt
+    ant gam ngPenalty =
+        rank ngOpt ons. sSetAnt gam ngPenalty()
+        ? rank ngOpt ons.getAnt gam ngPenalty()
         : DEFAULT_PENALTY;
 
-    offensiveTweetPenalty =
-        rankingOptions.isSetOffensiveTweetPenalty()
-        ? rankingOptions.getOffensiveTweetPenalty()
+    offens veT etPenalty =
+        rank ngOpt ons. sSetOffens veT etPenalty()
+        ? rank ngOpt ons.getOffens veT etPenalty()
         : DEFAULT_PENALTY;
 
-    multipleHashtagsOrTrendsPenalty =
-        rankingOptions.isSetMultipleHashtagsOrTrendsPenalty()
-        ? rankingOptions.getMultipleHashtagsOrTrendsPenalty()
+    mult pleHashtagsOrTrendsPenalty =
+        rank ngOpt ons. sSetMult pleHashtagsOrTrendsPenalty()
+        ? rank ngOpt ons.getMult pleHashtagsOrTrendsPenalty()
         : DEFAULT_PENALTY;
 
-    // query information
-    if (!searchQuery.isSetUiLang() || searchQuery.getUiLang().isEmpty()) {
-      uiLang = ThriftLanguage.UNKNOWN;
+    // query  nformat on
+     f (!searchQuery. sSetU Lang() || searchQuery.getU Lang(). sEmpty()) {
+      u Lang = Thr ftLanguage.UNKNOWN;
     } else {
-      uiLang = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang());
+      u Lang = Thr ftLanguageUt l.getThr ftLanguageOf(searchQuery.getU Lang());
     }
-    langEnglishUIBoost = rankingOptions.getLangEnglishUIBoost();
-    langEnglishFacetBoost = rankingOptions.getLangEnglishFacetBoost();
-    langDefaultBoost = rankingOptions.getLangDefaultBoost();
+    langEngl shU Boost = rank ngOpt ons.getLangEngl shU Boost();
+    langEngl shFacetBoost = rank ngOpt ons.getLangEngl shFacetBoost();
+    langDefaultBoost = rank ngOpt ons.getLangDefaultBoost();
   }
 
-  @Override
-  protected void startSegment(EarlybirdIndexSegmentAtomicReader segmentReader) throws IOException {
-    reader = segmentReader;
-    features = new EarlybirdDocumentFeatures(reader);
-    if (antiGamingFilter != null) {
-      antiGamingFilter.startSegment(reader);
+  @Overr de
+  protected vo d startSeg nt(Earlyb rd ndexSeg ntAtom cReader seg ntReader) throws  OExcept on {
+    reader = seg ntReader;
+    features = new Earlyb rdDocu ntFeatures(reader);
+     f (ant Gam ngF lter != null) {
+      ant Gam ngF lter.startSeg nt(reader);
     }
   }
 
-  @Override
-  public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
-    FacetCountIterator.IncrementData data = accumulator.accessor.incrementData;
+  @Overr de
+  publ c vo d  ncre ntCounts(Accumulator accumulator,  nt  nternalDoc D) throws  OExcept on {
+    FacetCount erator. ncre ntData data = accumulator.accessor. ncre ntData;
     data.accumulators = accumulator.accumulators;
-    features.advance(internalDocID);
+    features.advance( nternalDoc D);
 
-    // Also keep track of the tweet language of tweet themselves.
-    data.languageId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
+    // Also keep track of t  t et language of t et t mselves.
+    data.language d = ( nt) features.getFeatureValue(Earlyb rdF eldConstant.LANGUAGE);
 
-    if (antigamingPenalty > 0
-        && antiGamingFilter != null
-        && !antiGamingFilter.accept(internalDocID)) {
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = antigamingPenalty;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
+     f (ant gam ngPenalty > 0
+        && ant Gam ngF lter != null
+        && !ant Gam ngF lter.accept( nternalDoc D)) {
+      data.  ghtedCount ncre nt = 0;
+      data.penalty ncre nt = ant gam ngPenalty;
+      data.t epCred = 0;
+      accumulator.accessor.collect( nternalDoc D);
       return;
     }
 
-    if (offensiveTweetPenalty > 0 && features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = offensiveTweetPenalty;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
+     f (offens veT etPenalty > 0 && features. sFlagSet(Earlyb rdF eldConstant. S_OFFENS VE_FLAG)) {
+      data.  ghtedCount ncre nt = 0;
+      data.penalty ncre nt = offens veT etPenalty;
+      data.t epCred = 0;
+      accumulator.accessor.collect( nternalDoc D);
       return;
     }
 
-    byte userRep = (byte) features.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    byte userRep = (byte) features.getFeatureValue(Earlyb rdF eldConstant.USER_REPUTAT ON);
 
-    if (userRep < reputationMinFilterThresholdVal) {
-      // don't penalize
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = 0;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
+     f (userRep < reputat onM nF lterThresholdVal) {
+      // don't penal ze
+      data.  ghtedCount ncre nt = 0;
+      data.penalty ncre nt = 0;
+      data.t epCred = 0;
+      accumulator.accessor.collect( nternalDoc D);
       return;
     }
 
-    // Other non-terminating penalties
-    int penalty = 0;
-    if (multipleHashtagsOrTrendsPenalty > 0
-        && features.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG)) {
-      penalty += multipleHashtagsOrTrendsPenalty;
+    // Ot r non-term nat ng penalt es
+     nt penalty = 0;
+     f (mult pleHashtagsOrTrendsPenalty > 0
+        && features. sFlagSet(Earlyb rdF eldConstant.HAS_MULT PLE_HASHTAGS_OR_TRENDS_FLAG)) {
+      penalty += mult pleHashtagsOrTrendsPenalty;
     }
 
-    double parus = 0xFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    double parus = 0xFF & (byte) features.getFeatureValue(Earlyb rdF eldConstant.PARUS_SCORE);
 
-    double score = Math.pow(1 + userRepWeight, Math.max(0, userRep - reputationMinScoreVal));
+    double score = Math.pow(1 + userRep  ght, Math.max(0, userRep - reputat onM nScoreVal));
 
-    if (parus > 0) {
+     f (parus > 0) {
       score += Math.pow(parusBase, parus);
     }
 
-    int favoriteCount =
-        (int) features.getUnnormalizedFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
-    if (favoriteCount > 0) {
-      score += favoriteCount * favoritesWeight;
+     nt favor eCount =
+        ( nt) features.getUnnormal zedFeatureValue(Earlyb rdF eldConstant.FAVOR TE_COUNT);
+     f (favor eCount > 0) {
+      score += favor eCount * favor es  ght;
     }
 
     // Language preferences
-    int tweetLinkLangId = (int) features.getFeatureValue(EarlybirdFieldConstant.LINK_LANGUAGE);
-    if (tweetLinkLangId == ThriftLanguage.UNKNOWN.getValue()) {
-      // fall back to use the tweet language itself.
-      tweetLinkLangId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
+     nt t etL nkLang d = ( nt) features.getFeatureValue(Earlyb rdF eldConstant.L NK_LANGUAGE);
+     f (t etL nkLang d == Thr ftLanguage.UNKNOWN.getValue()) {
+      // fall back to use t  t et language  self.
+      t etL nkLang d = ( nt) features.getFeatureValue(Earlyb rdF eldConstant.LANGUAGE);
     }
-    if (uiLang != ThriftLanguage.UNKNOWN && uiLang.getValue() != tweetLinkLangId) {
-      if (uiLang == ThriftLanguage.ENGLISH) {
-        score *= langEnglishUIBoost;
-      } else if (tweetLinkLangId == ThriftLanguage.ENGLISH.getValue()) {
-        score *= langEnglishFacetBoost;
+     f (u Lang != Thr ftLanguage.UNKNOWN && u Lang.getValue() != t etL nkLang d) {
+       f (u Lang == Thr ftLanguage.ENGL SH) {
+        score *= langEngl shU Boost;
+      } else  f (t etL nkLang d == Thr ftLanguage.ENGL SH.getValue()) {
+        score *= langEngl shFacetBoost;
       } else {
         score *= langDefaultBoost;
       }
     }
 
-    // make sure a single tweet can't contribute too high a score
-    if (score > maxScorePerTweet) {
-      score = maxScorePerTweet;
+    // make sure a s ngle t et can't contr bute too h gh a score
+     f (score > maxScorePerT et) {
+      score = maxScorePerT et;
     }
 
-    data.weightedCountIncrement = (int) score;
-    data.penaltyIncrement = penalty;
-    data.tweepCred = userRep & 0xFF;
-    accumulator.accessor.collect(internalDocID);
+    data.  ghtedCount ncre nt = ( nt) score;
+    data.penalty ncre nt = penalty;
+    data.t epCred = userRep & 0xFF;
+    accumulator.accessor.collect( nternalDoc D);
   }
 
-  @Override
-  public FacetAccumulator getFacetAccumulator(FacetLabelProvider labelProvider) {
-    return new HashingAndPruningFacetAccumulator(labelProvider, queryIndependentPenaltyWeight,
-            HashingAndPruningFacetAccumulator.getComparator(sortingMode));
+  @Overr de
+  publ c FacetAccumulator getFacetAccumulator(FacetLabelProv der labelProv der) {
+    return new Hash ngAndPrun ngFacetAccumulator(labelProv der, query ndependentPenalty  ght,
+            Hash ngAndPrun ngFacetAccumulator.getComparator(sort ngMode));
   }
 }
